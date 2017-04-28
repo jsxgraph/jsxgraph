@@ -135,14 +135,14 @@ define([
 
         /**
          * Sets the fill color and fills an area.
-         * @param {JXG.GeometryElement} element An arbitrary JSXGraph element, preferably one with an area.
+         * @param {JXG.GeometryElement} el An arbitrary JSXGraph element, preferably one with an area.
          * @private
          */
-        _fill: function (element) {
+        _fill: function (el) {
             var context = this.context;
 
             context.save();
-            if (this._setColor(element, 'fill')) {
+            if (this._setColor(el, 'fill')) {
                 context.fill();
             }
             context.restore();
@@ -188,27 +188,27 @@ define([
          * Sets color and opacity for filling and stroking.
          * type is the attribute from visProp and targetType the context[targetTypeStyle].
          * This is necessary, because the fill style of a text is set by the stroke attributes of the text element.
-         * @param {JXG.GeometryElement} element Any JSXGraph element.
+         * @param {JXG.GeometryElement} el Any JSXGraph element.
          * @param {String} [type='stroke'] Either <em>fill</em> or <em>stroke</em>.
          * @param {String} [targetType=type] (optional) Either <em>fill</em> or <em>stroke</em>.
          * @returns {Boolean} If the color could be set, <tt>true</tt> is returned.
          * @private
          */
-        _setColor: function (element, type, targetType) {
+        _setColor: function (el, type, targetType) {
             var hasColor = true, isTrace = false,
-                ev = element.visProp, hl, sw,
+                ev = el.visProp, hl, sw,
                 rgba, rgbo, c, o, oo;
 
             type = type || 'stroke';
             targetType = targetType || type;
 
-            if (!Type.exists(element.board) || !Type.exists(element.board.highlightedObjects)) {
+            if (!Type.exists(el.board) || !Type.exists(el.board.highlightedObjects)) {
                 // This case handles trace elements.
                 // To make them work, we simply neglect highlighting.
                 isTrace = true;
             }
 
-            if (!isTrace && Type.exists(element.board.highlightedObjects[element.id])) {
+            if (!isTrace && Type.exists(el.board.highlightedObjects[el.id])) {
                 hl = 'highlight';
             } else {
                 hl = '';
@@ -256,12 +256,12 @@ define([
 
         /**
          * Sets color and opacity for drawing paths and lines and draws the paths and lines.
-         * @param {JXG.GeometryElement} element An JSXGraph element with a stroke.
+         * @param {JXG.GeometryElement} el An JSXGraph element with a stroke.
          * @private
          */
-        _stroke: function (element) {
+        _stroke: function (el) {
             var context = this.context,
-                ev_dash = Type.evaluate(element.visProp.dash);
+                ev_dash = Type.evaluate(el.visProp.dash);
 
             context.save();
 
@@ -273,7 +273,7 @@ define([
                 this.context.lineDashArray = [];
             }
 
-            if (this._setColor(element, 'stroke')) {
+            if (this._setColor(el, 'stroke')) {
                 context.stroke();
             }
 
@@ -625,8 +625,8 @@ define([
         },
 
         // already documented in JXG.AbstractRenderer
-        updateInternalText: function (element) {
-            this.drawInternalText(element);
+        updateInternalText: function (el) {
+            this.drawInternalText(el);
         },
 
         // documented in JXG.AbstractRenderer

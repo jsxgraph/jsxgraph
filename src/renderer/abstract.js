@@ -183,38 +183,38 @@ define([
          * @param {Boolean} [enhanced=false] If true, {@link JXG.AbstractRenderer#enhancedRendering} is assumed to be true.
          * @private
          */
-        _updateVisual: function (element, not, enhanced) {
+        _updateVisual: function (el, not, enhanced) {
             if (enhanced || this.enhancedRendering) {
                 not = not || {};
 
-                this.setObjectTransition(element);
-                if (!Type.evaluate(element.visProp.draft)) {
+                this.setObjectTransition(el);
+                if (!Type.evaluate(el.visProp.draft)) {
                     if (!not.stroke) {
-                        this.setObjectStrokeColor(element,
-                            element.visProp.strokecolor,
-                            element.visProp.strokeopacity);
-                        this.setObjectStrokeWidth(element, element.visProp.strokewidth);
+                        this.setObjectStrokeColor(el,
+                            el.visProp.strokecolor,
+                            el.visProp.strokeopacity);
+                        this.setObjectStrokeWidth(el, el.visProp.strokewidth);
                     }
 
                     if (!not.fill) {
-                        this.setObjectFillColor(element,
-                            element.visProp.fillcolor,
-                            element.visProp.fillopacity);
+                        this.setObjectFillColor(el,
+                            el.visProp.fillcolor,
+                            el.visProp.fillopacity);
                     }
 
                     if (!not.dash) {
-                        this.setDashStyle(element, element.visProp);
+                        this.setDashStyle(el, el.visProp);
                     }
 
                     if (!not.shadow) {
-                        this.setShadow(element);
+                        this.setShadow(el);
                     }
 
                     if (!not.gradient) {
-                        this.setShadow(element);
+                        this.setShadow(el);
                     }
                 } else {
-                    this.setDraft(element);
+                    this.setDraft(el);
                 }
             }
         },
@@ -226,17 +226,17 @@ define([
 
         /**
          * Draws a point on the {@link JXG.Board}.
-         * @param {JXG.Point} element Reference to a {@link JXG.Point} object that has to be drawn.
+         * @param {JXG.Point} el Reference to a {@link JXG.Point} object that has to be drawn.
          * @see Point
          * @see JXG.Point
          * @see JXG.AbstractRenderer#updatePoint
          * @see JXG.AbstractRenderer#changePointStyle
          */
-        drawPoint: function (element) {
+        drawPoint: function (el) {
             var prim,
-                // sometimes element is not a real point and lacks the methods of a JXG.Point instance,
-                // in these cases to not use element directly.
-                face = Options.normalizePointFace(Type.evaluate(element.visProp.face));
+                // sometimes el is not a real point and lacks the methods of a JXG.Point instance,
+                // in these cases to not use el directly.
+                face = Options.normalizePointFace(Type.evaluate(el.visProp.face));
 
             // determine how the point looks like
             if (face === 'o') {
@@ -249,47 +249,47 @@ define([
                 prim = 'path';
             }
 
-            element.rendNode = this.appendChildPrim(this.createPrim(prim, element.id), Type.evaluate(element.visProp.layer));
-            this.appendNodesToElement(element, prim);
+            el.rendNode = this.appendChildPrim(this.createPrim(prim, el.id), Type.evaluate(el.visProp.layer));
+            this.appendNodesToElement(el, prim);
 
             // adjust visual propertys
-            this._updateVisual(element, {dash: true, shadow: true}, true);
+            this._updateVisual(el, {dash: true, shadow: true}, true);
 
             // By now we only created the xml nodes and set some styles, in updatePoint
             // the attributes are filled with data.
-            this.updatePoint(element);
+            this.updatePoint(el);
         },
 
         /**
          * Updates visual appearance of the renderer element assigned to the given {@link JXG.Point}.
-         * @param {JXG.Point} element Reference to a {@link JXG.Point} object, that has to be updated.
+         * @param {JXG.Point} el Reference to a {@link JXG.Point} object, that has to be updated.
          * @see Point
          * @see JXG.Point
          * @see JXG.AbstractRenderer#drawPoint
          * @see JXG.AbstractRenderer#changePointStyle
          */
-        updatePoint: function (element) {
-            var size = Type.evaluate(element.visProp.size),
-                // sometimes element is not a real point and lacks the methods of a JXG.Point instance,
-                // in these cases to not use element directly.
-                face = Options.normalizePointFace(Type.evaluate(element.visProp.face));
+        updatePoint: function (el) {
+            var size = Type.evaluate(el.visProp.size),
+                // sometimes el is not a real point and lacks the methods of a JXG.Point instance,
+                // in these cases to not use el directly.
+                face = Options.normalizePointFace(Type.evaluate(el.visProp.face));
 
-            if (!isNaN(element.coords.scrCoords[2] + element.coords.scrCoords[1])) {
-                size *= ((!element.board || !element.board.options.point.zoom) ?
-                    1.0 : Math.sqrt(element.board.zoomX * element.board.zoomY));
+            if (!isNaN(el.coords.scrCoords[2] + el.coords.scrCoords[1])) {
+                size *= ((!el.board || !el.board.options.point.zoom) ?
+                    1.0 : Math.sqrt(el.board.zoomX * el.board.zoomY));
 
                 if (face === 'o') { // circle
-                    this.updateEllipsePrim(element.rendNode, element.coords.scrCoords[1],
-                         element.coords.scrCoords[2], size + 1, size + 1);
+                    this.updateEllipsePrim(el.rendNode, el.coords.scrCoords[1],
+                         el.coords.scrCoords[2], size + 1, size + 1);
                 } else if (face === '[]') { // rectangle
-                    this.updateRectPrim(element.rendNode, element.coords.scrCoords[1] - size,
-                         element.coords.scrCoords[2] - size, size * 2, size * 2);
+                    this.updateRectPrim(el.rendNode, el.coords.scrCoords[1] - size,
+                         el.coords.scrCoords[2] - size, size * 2, size * 2);
                 } else { // x, +, <>, ^, v, <, >
-                    this.updatePathPrim(element.rendNode,
-                        this.updatePathStringPoint(element, size, face), element.board);
+                    this.updatePathPrim(el.rendNode,
+                        this.updatePathStringPoint(el, size, face), el.board);
                 }
-                this._updateVisual(element, {dash: false, shadow: false});
-                this.setShadow(element);
+                this._updateVisual(el, {dash: false, shadow: false});
+                this.setShadow(el);
             }
         },
 
@@ -298,14 +298,14 @@ define([
          * elements have to be drawn, e.g. if the point is marked by a "x" or a "+" two lines are drawn, if
          * it's marked by spot a circle is drawn. This method removes the old renderer element(s) and creates
          * the new one(s).
-         * @param {JXG.Point} element Reference to a {@link JXG.Point} object, that's style is changed.
+         * @param {JXG.Point} el Reference to a {@link JXG.Point} object, that's style is changed.
          * @see Point
          * @see JXG.Point
          * @see JXG.AbstractRenderer#updatePoint
          * @see JXG.AbstractRenderer#drawPoint
          */
-        changePointStyle: function (element) {
-            var node = this.getElementById(element.id);
+        changePointStyle: function (el) {
+            var node = this.getElementById(el.id);
 
             // remove the existing point rendering node
             if (Type.exists(node)) {
@@ -313,15 +313,15 @@ define([
             }
 
             // and make a new one
-            this.drawPoint(element);
-            Type.clearVisPropOld(element);
+            this.drawPoint(el);
+            Type.clearVisPropOld(el);
 
-            if (!element.visProp.visible) {
-                this.hide(element);
+            if (!el.visProp.visible) {
+                this.hide(el);
             }
 
-            if (Type.evaluate(element.visProp.draft)) {
-                this.setDraft(element);
+            if (Type.evaluate(el.visProp.draft)) {
+                this.setDraft(el);
             }
         },
 
@@ -331,50 +331,50 @@ define([
 
         /**
          * Draws a line on the {@link JXG.Board}.
-         * @param {JXG.Line} element Reference to a line object, that has to be drawn.
+         * @param {JXG.Line} el Reference to a line object, that has to be drawn.
          * @see Line
          * @see JXG.Line
          * @see JXG.AbstractRenderer#updateLine
          */
-        drawLine: function (element) {
-            element.rendNode = this.appendChildPrim(this.createPrim('line', element.id),
-                                    Type.evaluate(element.visProp.layer));
-            this.appendNodesToElement(element, 'lines');
-            this.updateLine(element);
+        drawLine: function (el) {
+            el.rendNode = this.appendChildPrim(this.createPrim('line', el.id),
+                                    Type.evaluate(el.visProp.layer));
+            this.appendNodesToElement(el, 'lines');
+            this.updateLine(el);
         },
 
         /**
          * Updates visual appearance of the renderer element assigned to the given {@link JXG.Line}.
-         * @param {JXG.Line} element Reference to the {@link JXG.Line} object that has to be updated.
+         * @param {JXG.Line} el Reference to the {@link JXG.Line} object that has to be updated.
          * @see Line
          * @see JXG.Line
          * @see JXG.AbstractRenderer#drawLine
          */
-        updateLine: function (element) {
-            var c1 = new Coords(Const.COORDS_BY_USER, element.point1.coords.usrCoords, element.board),
-                c2 = new Coords(Const.COORDS_BY_USER, element.point2.coords.usrCoords, element.board),
+        updateLine: function (el) {
+            var c1 = new Coords(Const.COORDS_BY_USER, el.point1.coords.usrCoords, el.board),
+                c2 = new Coords(Const.COORDS_BY_USER, el.point2.coords.usrCoords, el.board),
                 obj, margin = null;
 
-            margin = Type.evaluate(element.visProp.margin);
-            Geometry.calcStraight(element, c1, c2, margin);
+            margin = Type.evaluate(el.visProp.margin);
+            Geometry.calcStraight(el, c1, c2, margin);
 
-            obj = this.getPositionArrowHead(element, c1, c2);
+            obj = this.getPositionArrowHead(el, c1, c2);
 
-            this.updateLinePrim(element.rendNode,
+            this.updateLinePrim(el.rendNode,
                 obj.c1.scrCoords[1] + obj.d1x, obj.c1.scrCoords[2] + obj.d1y,
-                obj.c2.scrCoords[1] - obj.d2x, obj.c2.scrCoords[2] - obj.d2y, element.board);
+                obj.c2.scrCoords[1] - obj.d2x, obj.c2.scrCoords[2] - obj.d2y, el.board);
 
-            this.makeArrows(element);
-            this._updateVisual(element);
+            this.makeArrows(el);
+            this._updateVisual(el);
 
-            if (Type.evaluate(element.visProp.firstarrow)) {
-                this._setArrowWidth(element.rendNodeTriangleStart, obj.sFirst, element.rendNode);
+            if (Type.evaluate(el.visProp.firstarrow)) {
+                this._setArrowWidth(el.rendNodeTriangleStart, obj.sFirst, el.rendNode);
             }
-            if (Type.evaluate(element.visProp.lastarrow)) {
-                this._setArrowWidth(element.rendNodeTriangleEnd, obj.sLast, element.rendNode);
+            if (Type.evaluate(el.visProp.lastarrow)) {
+                this._setArrowWidth(el.rendNodeTriangleEnd, obj.sLast, el.rendNode);
             }
 
-            this.setLineCap(element);
+            this.setLineCap(el);
         },
 
         /**
@@ -382,7 +382,7 @@ define([
          * the start or end point and such that the arrow head ends exactly
          * at the start / end position of the line.
          *
-         * @param  {JXG.Line} element Reference to the line object that gets arrow heads.
+         * @param  {JXG.Line} el Reference to the line object that gets arrow heads.
          * @param  {JXG.Coords} c1   Coords of the first point of the line (after {@link JXG.Geometry#calcStraight}).
          * @param  {JXG.Coords} c2  Coords of the second point of the line (after {@link JXG.Geometry#calcStraight}).
          * @return {object}        Object containing how much the line has to be shortened.
@@ -391,15 +391,15 @@ define([
          * Additionally, if one of these values is zero, the arrow is not displayed. This is the case, if the
          * line length is very short.
          */
-        getPositionArrowHead: function(element, c1, c2) {
+        getPositionArrowHead: function(el, c1, c2) {
             var s, s1, s2, d, d1x, d1y, d2x, d2y,
                 minlen = Mat.eps,
                 typeFirst, typeLast,
                 sFirst = 0,
                 sLast = 0,
                 sw,
-                vp_fa = Type.evaluate(element.visProp.firstarrow),
-                vp_la = Type.evaluate(element.visProp.lastarrow);
+                vp_fa = Type.evaluate(el.visProp.firstarrow),
+                vp_la = Type.evaluate(el.visProp.lastarrow);
 
             d1x = d1y = d2x = d2y = 0.0;
             /*
@@ -409,25 +409,25 @@ define([
                These 10 units are scaled to strokeWidth*3 pixels or minlen pixels.
             */
             if (vp_fa || vp_la) {
-                s1 = Type.evaluate(element.point1.visProp.size) + Type.evaluate(element.point1.visProp.strokewidth);
-                s2 = Type.evaluate(element.point2.visProp.size) + Type.evaluate(element.point2.visProp.strokewidth);
+                s1 = Type.evaluate(el.point1.visProp.size) + Type.evaluate(el.point1.visProp.strokewidth);
+                s2 = Type.evaluate(el.point2.visProp.size) + Type.evaluate(el.point2.visProp.strokewidth);
                 s = s1 + s2;
 
                 // Handle touchlastpoint /touchfirstpoint
-                if (vp_la && Type.evaluate(element.visProp.touchlastpoint)) {
+                if (vp_la && Type.evaluate(el.visProp.touchlastpoint)) {
                     d = c1.distance(Const.COORDS_BY_SCREEN, c2);
                     if (d > s) {
                         d2x = (c2.scrCoords[1] - c1.scrCoords[1]) * s2 / d;
                         d2y = (c2.scrCoords[2] - c1.scrCoords[2]) * s2 / d;
-                        c2 = new Coords(Const.COORDS_BY_SCREEN, [c2.scrCoords[1] - d2x, c2.scrCoords[2] - d2y], element.board);
+                        c2 = new Coords(Const.COORDS_BY_SCREEN, [c2.scrCoords[1] - d2x, c2.scrCoords[2] - d2y], el.board);
                     }
                 }
-                if (vp_fa && Type.evaluate(element.visProp.touchfirstpoint)) {
+                if (vp_fa && Type.evaluate(el.visProp.touchfirstpoint)) {
                     d = c1.distance(Const.COORDS_BY_SCREEN, c2);
                     if (d > s) {
                         d1x = (c2.scrCoords[1] - c1.scrCoords[1]) * s1 / d;
                         d1y = (c2.scrCoords[2] - c1.scrCoords[2]) * s1 / d;
-                        c1 = new Coords(Const.COORDS_BY_SCREEN, [c1.scrCoords[1] + d1x, c1.scrCoords[2] + d1y], element.board);
+                        c1 = new Coords(Const.COORDS_BY_SCREEN, [c1.scrCoords[1] + d1x, c1.scrCoords[2] + d1y], el.board);
                     }
                 }
 
@@ -442,7 +442,7 @@ define([
                     typeLast = Type.evaluate(vp_la.type);
                 }
 
-                sw = Type.evaluate(element.visProp.strokewidth);
+                sw = Type.evaluate(el.visProp.strokewidth);
                 sFirst = sLast = sw * 3;
                 if (vp_fa) {
                     if (typeFirst === 2) {
@@ -468,7 +468,7 @@ define([
                 }
 
                 if (vp_fa &&
-                    element.board.renderer.type !== 'vml') {
+                    el.board.renderer.type !== 'vml') {
                     if (d >= minlen) {
                         d1x = (c2.scrCoords[1] - c1.scrCoords[1]) * sFirst / d;
                         d1y = (c2.scrCoords[2] - c1.scrCoords[2]) * sFirst / d;
@@ -478,7 +478,7 @@ define([
                 }
 
                 if (vp_la &&
-                    element.board.renderer.type !== 'vml') {
+                    el.board.renderer.type !== 'vml') {
 
                     if (d >= minlen) {
                         d2x = (c2.scrCoords[1] - c1.scrCoords[1]) * sLast / d;
@@ -515,16 +515,16 @@ define([
 
         /**
          * Creates a rendering node for ticks added to a line.
-         * @param {JXG.Line} element A arbitrary line.
+         * @param {JXG.Line} el A arbitrary line.
          * @see Line
          * @see Ticks
          * @see JXG.Line
          * @see JXG.Ticks
          * @see JXG.AbstractRenderer#updateTicks
          */
-        drawTicks: function (element) {
-            element.rendNode = this.appendChildPrim(this.createPrim('path', element.id), Type.evaluate(element.visProp.layer));
-            this.appendNodesToElement(element, 'path');
+        drawTicks: function (el) {
+            el.rendNode = this.appendChildPrim(this.createPrim('path', el.id), Type.evaluate(el.visProp.layer));
+            this.appendNodesToElement(el, 'path');
         },
 
         /**
@@ -545,47 +545,47 @@ define([
 
         /**
          * Draws a {@link JXG.Curve} on the {@link JXG.Board}.
-         * @param {JXG.Curve} element Reference to a graph object, that has to be plotted.
+         * @param {JXG.Curve} el Reference to a graph object, that has to be plotted.
          * @see Curve
          * @see JXG.Curve
          * @see JXG.AbstractRenderer#updateCurve
          */
-        drawCurve: function (element) {
-            element.rendNode = this.appendChildPrim(this.createPrim('path', element.id), Type.evaluate(element.visProp.layer));
-            this.appendNodesToElement(element, 'path');
-            if (element.numberPoints > 1) {
-                this.makeArrows(element);
+        drawCurve: function (el) {
+            el.rendNode = this.appendChildPrim(this.createPrim('path', el.id), Type.evaluate(el.visProp.layer));
+            this.appendNodesToElement(el, 'path');
+            if (el.numberPoints > 1) {
+                this.makeArrows(el);
             }
-            this._updateVisual(element, {shadow: true}, true);
-            this.updateCurve(element);
+            this._updateVisual(el, {shadow: true}, true);
+            this.updateCurve(el);
         },
 
         /**
          * Updates visual appearance of the renderer element assigned to the given {@link JXG.Curve}.
-         * @param {JXG.Curve} element Reference to a {@link JXG.Curve} object, that has to be updated.
+         * @param {JXG.Curve} el Reference to a {@link JXG.Curve} object, that has to be updated.
          * @see Curve
          * @see JXG.Curve
          * @see JXG.AbstractRenderer#drawCurve
          */
-        updateCurve: function (element) {
-            var w = Type.evaluate(element.visProp.strokewidth);
+        updateCurve: function (el) {
+            var w = Type.evaluate(el.visProp.strokewidth);
 
-            if (Type.evaluate(element.visProp.handdrawing)) {
-                this.updatePathPrim(element.rendNode, this.updatePathStringBezierPrim(element), element.board);
+            if (Type.evaluate(el.visProp.handdrawing)) {
+                this.updatePathPrim(el.rendNode, this.updatePathStringBezierPrim(el), el.board);
             } else {
-                this.updatePathPrim(element.rendNode, this.updatePathStringPrim(element), element.board);
+                this.updatePathPrim(el.rendNode, this.updatePathStringPrim(el), el.board);
             }
 
-            if (element.numberPoints > 1) {
-                this.makeArrows(element);
-                if (Type.evaluate(element.visProp.firstarrow)) {
-                    this._setArrowWidth(element.rendNodeTriangleStart, w, element.rendNode);
+            if (el.numberPoints > 1) {
+                this.makeArrows(el);
+                if (Type.evaluate(el.visProp.firstarrow)) {
+                    this._setArrowWidth(el.rendNodeTriangleStart, w, el.rendNode);
                 }
-                if (Type.evaluate(element.visProp.lastarrow)) {
-                    this._setArrowWidth(element.rendNodeTriangleEnd, w, element.rendNode);
+                if (Type.evaluate(el.visProp.lastarrow)) {
+                    this._setArrowWidth(el.rendNodeTriangleEnd, w, el.rendNode);
                 }
             }
-            this._updateVisual(element);
+            this._updateVisual(el);
 
         },
 
@@ -595,38 +595,38 @@ define([
 
         /**
          * Draws a {@link JXG.Circle}
-         * @param {JXG.Circle} element Reference to a {@link JXG.Circle} object that has to be drawn.
+         * @param {JXG.Circle} el Reference to a {@link JXG.Circle} object that has to be drawn.
          * @see Circle
          * @see JXG.Circle
          * @see JXG.AbstractRenderer#updateEllipse
          */
-        drawEllipse: function (element) {
-            element.rendNode = this.appendChildPrim(this.createPrim('ellipse', element.id),
-                                    Type.evaluate(element.visProp.layer));
-            this.appendNodesToElement(element, 'ellipse');
-            this.updateEllipse(element);
+        drawEllipse: function (el) {
+            el.rendNode = this.appendChildPrim(this.createPrim('ellipse', el.id),
+                                    Type.evaluate(el.visProp.layer));
+            this.appendNodesToElement(el, 'ellipse');
+            this.updateEllipse(el);
         },
 
         /**
          * Updates visual appearance of a given {@link JXG.Circle} on the {@link JXG.Board}.
-         * @param {JXG.Circle} element Reference to a {@link JXG.Circle} object, that has to be updated.
+         * @param {JXG.Circle} el Reference to a {@link JXG.Circle} object, that has to be updated.
          * @see Circle
          * @see JXG.Circle
          * @see JXG.AbstractRenderer#drawEllipse
          */
-        updateEllipse: function (element) {
-            this._updateVisual(element);
+        updateEllipse: function (el) {
+            this._updateVisual(el);
 
-            var radius = element.Radius();
+            var radius = el.Radius();
 
             if (radius > 0.0 &&
-                    Math.abs(element.center.coords.usrCoords[0]) > Mat.eps &&
-                    !isNaN(radius + element.center.coords.scrCoords[1] + element.center.coords.scrCoords[2]) &&
-                    radius * element.board.unitX < 2000000) {
-                this.updateEllipsePrim(element.rendNode, element.center.coords.scrCoords[1],
-                    element.center.coords.scrCoords[2],
-                    (radius * element.board.unitX),
-                    (radius * element.board.unitY));
+                    Math.abs(el.center.coords.usrCoords[0]) > Mat.eps &&
+                    !isNaN(radius + el.center.coords.scrCoords[1] + el.center.coords.scrCoords[2]) &&
+                    radius * el.board.unitX < 2000000) {
+                this.updateEllipsePrim(el.rendNode, el.center.coords.scrCoords[1],
+                    el.center.coords.scrCoords[2],
+                    (radius * el.board.unitX),
+                    (radius * el.board.unitY));
             }
         },
 
@@ -637,48 +637,48 @@ define([
 
         /**
          * Draws a {@link JXG.Polygon} on the {@link JXG.Board}.
-         * @param {JXG.Polygon} element Reference to a Polygon object, that is to be drawn.
+         * @param {JXG.Polygon} el Reference to a Polygon object, that is to be drawn.
          * @see Polygon
          * @see JXG.Polygon
          * @see JXG.AbstractRenderer#updatePolygon
          */
-        drawPolygon: function (element) {
-            element.rendNode = this.appendChildPrim(this.createPrim('polygon', element.id),
-                                        Type.evaluate(element.visProp.layer));
-            this.appendNodesToElement(element, 'polygon');
-            this.updatePolygon(element);
+        drawPolygon: function (el) {
+            el.rendNode = this.appendChildPrim(this.createPrim('polygon', el.id),
+                                        Type.evaluate(el.visProp.layer));
+            this.appendNodesToElement(el, 'polygon');
+            this.updatePolygon(el);
         },
 
         /**
          * Updates properties of a {@link JXG.Polygon}'s rendering node.
-         * @param {JXG.Polygon} element Reference to a {@link JXG.Polygon} object, that has to be updated.
+         * @param {JXG.Polygon} el Reference to a {@link JXG.Polygon} object, that has to be updated.
          * @see Polygon
          * @see JXG.Polygon
          * @see JXG.AbstractRenderer#drawPolygon
          */
-        updatePolygon: function (element) {
+        updatePolygon: function (el) {
             var i, len, polIsReal;
 
             // here originally strokecolor wasn't updated but strokewidth was
             // but if there's no strokecolor i don't see why we should update strokewidth.
-            this._updateVisual(element, {stroke: true, dash: true});
-            this.updatePolygonPrim(element.rendNode, element);
+            this._updateVisual(el, {stroke: true, dash: true});
+            this.updatePolygonPrim(el.rendNode, el);
 
-            len = element.vertices.length;
+            len = el.vertices.length;
             polIsReal = true;
             for (i = 0; i < len; ++i) {
-                if (!element.vertices[i].isReal) {
+                if (!el.vertices[i].isReal) {
                     polIsReal = false;
                     break;
                 }
             }
 
-            len = element.borders.length;
+            len = el.borders.length;
             for (i = 0; i < len; ++i) {
-                if (polIsReal && element.borders[i].visProp.visible) {
-                    this.show(element.borders[i]);
+                if (polIsReal && el.borders[i].visProp.visible) {
+                    this.show(el.borders[i]);
                 } else {
-                    this.hide(element.borders[i]);
+                    this.hide(el.borders[i]);
                 }
             }
         },
@@ -722,7 +722,7 @@ define([
 
         /**
          * Displays a {@link JXG.Text} on the {@link JXG.Board} by putting a HTML div over it.
-         * @param {JXG.Text} element Reference to an {@link JXG.Text} object, that has to be displayed
+         * @param {JXG.Text} el Reference to an {@link JXG.Text} object, that has to be displayed
          * @see Text
          * @see JXG.Text
          * @see JXG.AbstractRenderer#drawInternalText
@@ -730,16 +730,16 @@ define([
          * @see JXG.AbstractRenderer#updateInternalText
          * @see JXG.AbstractRenderer#updateTextStyle
          */
-        drawText: function (element) {
+        drawText: function (el) {
             var node, z, level;
 
-            if (Type.evaluate(element.visProp.display) === 'html' && Env.isBrowser && this.type !== 'no') {
+            if (Type.evaluate(el.visProp.display) === 'html' && Env.isBrowser && this.type !== 'no') {
                 node = this.container.ownerDocument.createElement('div');
                 //node = this.container.ownerDocument.createElementNS('http://www.w3.org/1999/xhtml', 'div'); //
                 node.style.position = 'absolute';
-                node.className = Type.evaluate(element.visProp.cssclass);
+                node.className = Type.evaluate(el.visProp.cssclass);
 
-                level = Type.evaluate(element.visProp.layer);
+                level = Type.evaluate(el.visProp.layer);
                 if (!Type.exists(level)) { // trace nodes have level not set
                     level = 0;
                 }
@@ -753,14 +753,14 @@ define([
                 node.style.zIndex = z + level;
                 this.container.appendChild(node);
 
-                node.setAttribute('id', this.container.id + '_' + element.id);
+                node.setAttribute('id', this.container.id + '_' + el.id);
             } else {
-                node = this.drawInternalText(element);
+                node = this.drawInternalText(el);
             }
 
-            element.rendNode = node;
-            element.htmlStr = '';
-            this.updateText(element);
+            el.rendNode = node;
+            el.htmlStr = '';
+            this.updateText(el);
         },
 
         /**
@@ -910,7 +910,7 @@ define([
         /**
          * Updates font-size, color and opacity propertiey and CSS style properties of a {@link JXG.Text} node.
          * This function is also called by highlight() and nohighlight().
-         * @param {JXG.Text} element Reference to the {@link JXG.Text} object, that has to be updated.
+         * @param {JXG.Text} el Reference to the {@link JXG.Text} object, that has to be updated.
          * @param {Boolean} doHighlight
          * @see Text
          * @see JXG.Text
@@ -920,9 +920,9 @@ define([
          * @see JXG.AbstractRenderer#updateInternalText
          * @see JXG.AbstractRenderer#updateInternalTextStyle
          */
-        updateTextStyle: function (element, doHighlight) {
+        updateTextStyle: function (el, doHighlight) {
             var fs, so, sc, css, node,
-                ev = element.visProp,
+                ev = el.visProp,
                 display = Env.isBrowser ? ev.display : 'internal',
                 nodeList = ['rendNode', 'rendNodeTag', 'rendNodeLabel'],
                 cssList, prop, style, cssString,
@@ -953,51 +953,51 @@ define([
                     // then to
                     // ev.cssstyle of ev.highlightcssstyle
                     cssString = Type.evaluate(ev[((doHighlight) ? 'highlight' : '') + styleList[style]]);
-                    if (cssString !== '' && element.visPropOld[styleList[style]] !== cssString) {
+                    if (cssString !== '' && el.visPropOld[styleList[style]] !== cssString) {
                         cssList = this._css2js(cssString);
                         for (node in nodeList) {
-                            if (Type.exists(element[nodeList[node]])) {
+                            if (Type.exists(el[nodeList[node]])) {
                                 for (prop in cssList) {
-                                    element[nodeList[node]].style[cssList[prop].key] = cssList[prop].val;
+                                    el[nodeList[node]].style[cssList[prop].key] = cssList[prop].val;
                                 }
                             }
                         }
-                        element.visPropOld[styleList[style]] = cssString;
+                        el.visPropOld[styleList[style]] = cssString;
                     }
                 }
 
                 fs = Type.evaluate(ev.fontsize);
-                if (element.visPropOld.fontsize !== fs) {
-                    element.needsSizeUpdate = true;
+                if (el.visPropOld.fontsize !== fs) {
+                    el.needsSizeUpdate = true;
                     try {
                         for (node in nodeList) {
-                            if (Type.exists(element[nodeList[node]])) {
-                                element[nodeList[node]].style.fontSize = fs + 'px';
+                            if (Type.exists(el[nodeList[node]])) {
+                                el[nodeList[node]].style.fontSize = fs + 'px';
                             }
                         }
                     } catch (e) {
                         // IE needs special treatment.
                         for (node in nodeList) {
-                            if (Type.exists(element[nodeList[node]])) {
-                                element[nodeList[node]].style.fontSize = fs;
+                            if (Type.exists(el[nodeList[node]])) {
+                                el[nodeList[node]].style.fontSize = fs;
                             }
                         }
                     }
-                    element.visPropOld.fontsize = fs;
+                    el.visPropOld.fontsize = fs;
                 }
             }
 
-            this.setObjectTransition(element);
+            this.setObjectTransition(el);
             if (display === 'html' && this.type !== 'no') {
                 // Set new CSS class
-                if (element.visPropOld.cssclass !== css) {
-                    element.rendNode.className = css;
-                    element.visPropOld.cssclass = css;
-                    element.needsSizeUpdate = true;
+                if (el.visPropOld.cssclass !== css) {
+                    el.rendNode.className = css;
+                    el.visPropOld.cssclass = css;
+                    el.needsSizeUpdate = true;
                 }
-                this.setObjectStrokeColor(element, sc, so);
+                this.setObjectStrokeColor(el, sc, so);
             } else {
-                this.updateInternalTextStyle(element, sc, so);
+                this.updateInternalTextStyle(el, sc, so);
             }
 
             return this;
@@ -1011,8 +1011,8 @@ define([
          * @see JXG.AbstractRenderer#updateTextStyle
          * @see JXG.SVGRenderer#updateInternalTextStyle
          */
-        updateInternalTextStyle: function (element, strokeColor, strokeOpacity) {
-            this.setObjectStrokeColor(element, strokeColor, strokeOpacity);
+        updateInternalTextStyle: function (el, strokeColor, strokeOpacity) {
+            this.setObjectStrokeColor(el, strokeColor, strokeOpacity);
         },
 
         /* **************************
@@ -1031,18 +1031,18 @@ define([
 
         /**
          * Updates the properties of an {@link JXG.Image} element.
-         * @param {JXG.Image} element Reference to an {@link JXG.Image} object, that has to be updated.
+         * @param {JXG.Image} el Reference to an {@link JXG.Image} object, that has to be updated.
          * @see Image
          * @see JXG.Image
          * @see JXG.AbstractRenderer#drawImage
          */
-        updateImage: function (element) {
-            this.updateRectPrim(element.rendNode, element.coords.scrCoords[1],
-                element.coords.scrCoords[2] - element.size[1], element.size[0], element.size[1]);
+        updateImage: function (el) {
+            this.updateRectPrim(el.rendNode, el.coords.scrCoords[1],
+                el.coords.scrCoords[2] - el.size[1], el.size[0], el.size[1]);
 
-            this.updateImageURL(element);
-            this.transformImage(element, element.transformations);
-            this._updateVisual(element, {stroke: true, dash: true}, true);
+            this.updateImageURL(el);
+            this.transformImage(el, el.transformations);
+            this._updateVisual(el, {stroke: true, dash: true}, true);
         },
 
         /**
@@ -1051,17 +1051,17 @@ define([
          * coords. Then, the stretch factors are divided out. After the transformations in user coords, the stretch
          * factors are multiplied in again, and the origin in user coords is translated back to its position. This
          * method does not have to be implemented in a new renderer.
-         * @param {JXG.GeometryElement} element A JSXGraph element. We only need its board property.
+         * @param {JXG.GeometryElement} el A JSXGraph element. We only need its board property.
          * @param {Array} transformations An array of JXG.Transformations.
          * @returns {Array} A matrix represented by a two dimensional array of numbers.
          * @see JXG.AbstractRenderer#transformImage
          */
-        joinTransforms: function (element, transformations) {
+        joinTransforms: function (el, transformations) {
             var i,
-                ox = element.board.origin.scrCoords[1],
-                oy = element.board.origin.scrCoords[2],
-                ux = element.board.unitX,
-                uy = element.board.unitY,
+                ox = el.board.origin.scrCoords[1],
+                oy = el.board.origin.scrCoords[2],
+                ux = el.board.unitX,
+                uy = el.board.unitY,
                 // Translate to 0,0 in screen coords
                 /*
                 m = [[1, 0, 0], [0, 1, 0], [0, 0, 1]],
@@ -1315,47 +1315,47 @@ define([
         /**
          * Puts an object into draft mode, i.e. it's visual appearance will be changed. For GEONE<sub>x</sub>T backwards
          * compatibility.
-         * @param {JXG.GeometryElement} element Reference of the object that is in draft mode.
+         * @param {JXG.GeometryElement} el Reference of the object that is in draft mode.
          */
-        setDraft: function (element) {
-            if (!Type.evaluate(element.visProp.draft)) {
+        setDraft: function (el) {
+            if (!Type.evaluate(el.visProp.draft)) {
                 return;
             }
-            var draftColor = element.board.options.elements.draft.color,
-                draftOpacity = element.board.options.elements.draft.opacity;
+            var draftColor = el.board.options.elements.draft.color,
+                draftOpacity = el.board.options.elements.draft.opacity;
 
-            this.setObjectTransition(element);
-            if (element.type === Const.OBJECT_TYPE_POLYGON) {
-                this.setObjectFillColor(element, draftColor, draftOpacity);
+            this.setObjectTransition(el);
+            if (el.type === Const.OBJECT_TYPE_POLYGON) {
+                this.setObjectFillColor(el, draftColor, draftOpacity);
             } else {
-                if (element.elementClass === Const.OBJECT_CLASS_POINT) {
-                    this.setObjectFillColor(element, draftColor, draftOpacity);
+                if (el.elementClass === Const.OBJECT_CLASS_POINT) {
+                    this.setObjectFillColor(el, draftColor, draftOpacity);
                 } else {
-                    this.setObjectFillColor(element, 'none', 0);
+                    this.setObjectFillColor(el, 'none', 0);
                 }
-                this.setObjectStrokeColor(element, draftColor, draftOpacity);
-                this.setObjectStrokeWidth(element, element.board.options.elements.draft.strokeWidth);
+                this.setObjectStrokeColor(el, draftColor, draftOpacity);
+                this.setObjectStrokeWidth(el, el.board.options.elements.draft.strokeWidth);
             }
         },
 
         /**
          * Puts an object from draft mode back into normal mode.
-         * @param {JXG.GeometryElement} element Reference of the object that no longer is in draft mode.
+         * @param {JXG.GeometryElement} el Reference of the object that no longer is in draft mode.
          */
-        removeDraft: function (element) {
-            this.setObjectTransition(element);
-            if (element.type === Const.OBJECT_TYPE_POLYGON) {
-                this.setObjectFillColor(element,
-                    element.visProp.fillcolor,
-                    element.visProp.fillopacity);
+        removeDraft: function (el) {
+            this.setObjectTransition(el);
+            if (el.type === Const.OBJECT_TYPE_POLYGON) {
+                this.setObjectFillColor(el,
+                    el.visProp.fillcolor,
+                    el.visProp.fillopacity);
             } else {
-                if (element.type === Const.OBJECT_CLASS_POINT) {
-                    this.setObjectFillColor(element,
-                        element.visProp.fillcolor,
-                        element.visProp.fillopacity);
+                if (el.type === Const.OBJECT_CLASS_POINT) {
+                    this.setObjectFillColor(el,
+                        el.visProp.fillcolor,
+                        el.visProp.fillopacity);
                 }
-                this.setObjectStrokeColor(element, element.visProp.strokecolor, element.visProp.strokeopacity);
-                this.setObjectStrokeWidth(element, element.visProp.strokewidth);
+                this.setObjectStrokeColor(el, el.visProp.strokecolor, el.visProp.strokeopacity);
+                this.setObjectStrokeWidth(el, el.visProp.strokewidth);
             }
         },
 
@@ -1416,41 +1416,41 @@ define([
 
         /**
          * Highlights an object, i.e. changes the current colors of the object to its highlighting colors
-         * @param {JXG.GeometryElement} element Reference of the object that will be highlighted.
+         * @param {JXG.GeometryElement} el Reference of the object that will be highlighted.
          * @returns {JXG.AbstractRenderer} Reference to the renderer
          * @see JXG.AbstractRenderer#updateTextStyle
          */
-        highlight: function (element) {
-            var i, ev = element.visProp;
+        highlight: function (el) {
+            var i, ev = el.visProp;
 
-            this.setObjectTransition(element);
+            this.setObjectTransition(el);
             if (!ev.draft) {
-                if (element.type === Const.OBJECT_TYPE_POLYGON) {
-                    this.setObjectFillColor(element,
+                if (el.type === Const.OBJECT_TYPE_POLYGON) {
+                    this.setObjectFillColor(el,
                         ev.highlightfillcolor,
                         ev.highlightfillopacity);
-                    for (i = 0; i < element.borders.length; i++) {
-                        this.setObjectStrokeColor(element.borders[i],
-                            element.borders[i].visProp.highlightstrokecolor,
-                            element.borders[i].visProp.highlightstrokeopacity);
+                    for (i = 0; i < el.borders.length; i++) {
+                        this.setObjectStrokeColor(el.borders[i],
+                            el.borders[i].visProp.highlightstrokecolor,
+                            el.borders[i].visProp.highlightstrokeopacity);
                     }
                 } else {
-                    if (element.elementClass === Const.OBJECT_CLASS_TEXT) {
-                        this.updateTextStyle(element, true);
-                    } else if (element.type === Const.OBJECT_TYPE_IMAGE) {
-                        this.updateImageStyle(element, true);
-                        this.setObjectFillColor(element,
+                    if (el.elementClass === Const.OBJECT_CLASS_TEXT) {
+                        this.updateTextStyle(el, true);
+                    } else if (el.type === Const.OBJECT_TYPE_IMAGE) {
+                        this.updateImageStyle(el, true);
+                        this.setObjectFillColor(el,
                             ev.highlightfillcolor,
                             ev.highlightfillopacity);
                     } else {
-                        this.setObjectStrokeColor(element, ev.highlightstrokecolor, ev.highlightstrokeopacity);
-                        this.setObjectFillColor(element,
+                        this.setObjectStrokeColor(el, ev.highlightstrokecolor, ev.highlightstrokeopacity);
+                        this.setObjectFillColor(el,
                             ev.highlightfillcolor,
                             ev.highlightfillopacity);
                     }
                 }
                 if (ev.highlightstrokewidth) {
-                    this.setObjectStrokeWidth(element, Math.max(ev.highlightstrokewidth, ev.strokewidth));
+                    this.setObjectStrokeWidth(el, Math.max(ev.highlightstrokewidth, ev.strokewidth));
                 }
             }
 
@@ -1459,42 +1459,42 @@ define([
 
         /**
          * Uses the normal colors of an object, i.e. the opposite of {@link JXG.AbstractRenderer#highlight}.
-         * @param {JXG.GeometryElement} element Reference of the object that will get its normal colors.
+         * @param {JXG.GeometryElement} el Reference of the object that will get its normal colors.
          * @returns {JXG.AbstractRenderer} Reference to the renderer
          * @see JXG.AbstractRenderer#updateTextStyle
          */
-        noHighlight: function (element) {
-            var i, ev = element.visProp;
+        noHighlight: function (el) {
+            var i, ev = el.visProp;
 
-            this.setObjectTransition(element);
-            if (!Type.evaluate(element.visProp.draft)) {
-                if (element.type === Const.OBJECT_TYPE_POLYGON) {
-                    this.setObjectFillColor(element,
+            this.setObjectTransition(el);
+            if (!Type.evaluate(el.visProp.draft)) {
+                if (el.type === Const.OBJECT_TYPE_POLYGON) {
+                    this.setObjectFillColor(el,
                         ev.fillcolor,
                         ev.fillopacity);
-                    for (i = 0; i < element.borders.length; i++) {
-                        this.setObjectStrokeColor(element.borders[i],
-                            element.borders[i].visProp.strokecolor,
-                            element.borders[i].visProp.strokeopacity);
+                    for (i = 0; i < el.borders.length; i++) {
+                        this.setObjectStrokeColor(el.borders[i],
+                            el.borders[i].visProp.strokecolor,
+                            el.borders[i].visProp.strokeopacity);
                     }
                 } else {
-                    if (element.elementClass === Const.OBJECT_CLASS_TEXT) {
-                        this.updateTextStyle(element, false);
-                    } else if (element.type === Const.OBJECT_TYPE_IMAGE) {
-                        this.updateImageStyle(element, false);
-                        this.setObjectFillColor(element,
+                    if (el.elementClass === Const.OBJECT_CLASS_TEXT) {
+                        this.updateTextStyle(el, false);
+                    } else if (el.type === Const.OBJECT_TYPE_IMAGE) {
+                        this.updateImageStyle(el, false);
+                        this.setObjectFillColor(el,
                             ev.fillcolor,
                             ev.fillopacity);
                     } else {
-                        this.setObjectStrokeColor(element,
+                        this.setObjectStrokeColor(el,
                             ev.strokecolor,
                             ev.strokeopacity);
-                        this.setObjectFillColor(element,
+                        this.setObjectFillColor(el,
                             ev.fillcolor,
                             ev.fillopacity);
                     }
                 }
-                this.setObjectStrokeWidth(element, ev.strokewidth);
+                this.setObjectStrokeWidth(el, ev.strokewidth);
             }
 
             return this;
@@ -1638,20 +1638,20 @@ define([
          * Remove an element and provide a function that inserts it into its original position. This method
          * is taken from this article {@link https://developers.google.com/speed/articles/javascript-dom}.
          * @author KeeKim Heng, Google Web Developer
-         * @param {Element} element The element to be temporarily removed
+         * @param {Element} el The element to be temporarily removed
          * @returns {Function} A function that inserts the element into its original position
          */
-        removeToInsertLater: function (element) {
-            var parentNode = element.parentNode,
-                nextSibling = element.nextSibling;
+        removeToInsertLater: function (el) {
+            var parentNode = el.parentNode,
+                nextSibling = el.nextSibling;
 
-            parentNode.removeChild(element);
+            parentNode.removeChild(el);
 
             return function () {
                 if (nextSibling) {
-                    parentNode.insertBefore(element, nextSibling);
+                    parentNode.insertBefore(el, nextSibling);
                 } else {
-                    parentNode.appendChild(element);
+                    parentNode.appendChild(el);
                 }
             };
         },
