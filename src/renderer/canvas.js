@@ -260,13 +260,14 @@ define([
          * @private
          */
         _stroke: function (element) {
-            var context = this.context;
+            var context = this.context,
+                ev_dash = Type.evaluate(element.visProp.dash);
 
             context.save();
 
-            if (element.visProp.dash > 0) {
+            if (ev_dash > 0) {
                 if (context.setLineDash) {
-                    context.setLineDash(this.dashArray[element.visProp.dash]);
+                    context.setLineDash(this.dashArray[ev_dash]);
                 }
             } else {
                 this.context.lineDashArray = [];
@@ -307,8 +308,8 @@ define([
 
         // documented in AbstractRenderer
         drawPoint: function (el) {
-            var f = el.visProp.face,
-                size = el.visProp.size,
+            var f = Type.evaluate(el.visProp.face),
+                size = Type.evaluate(el.visProp.size),
                 scr = el.coords.scrCoords,
                 sqrt32 = size * Math.sqrt(3) * 0.5,
                 s05 = size * 0.5,
@@ -437,13 +438,15 @@ define([
             var obj,
                 c1 = new Coords(Const.COORDS_BY_USER, el.point1.coords.usrCoords, el.board),
                 c2 = new Coords(Const.COORDS_BY_USER, el.point2.coords.usrCoords, el.board),
-                margin = null;
+                margin = null,
+                ev_fa = Type.evaluate(el.visProp.firstarrow),
+                ev_la = Type.evaluate(el.visProp.lastarrow);
 
             if (!el.visProp.visible) {
                 return;
             }
 
-            if (el.visProp.firstarrow || el.visProp.lastarrow) {
+            if (ev_fa || ev_la) {
                 margin = -4;
             }
             Geometry.calcStraight(el, c1, c2, margin);
@@ -455,8 +458,8 @@ define([
             this.context.lineTo(obj.c2.scrCoords[1] - obj.d2x, obj.c2.scrCoords[2] - obj.d2y);
             this._stroke(el);
 
-            if ((el.visProp.firstarrow && obj.sFirst > 0) ||
-                (el.visProp.lastarrow && obj.sLast > 0)) {
+            if ((ev_fa && obj.sFirst > 0) ||
+                (ev_la && obj.sLast > 0)) {
                 this.makeArrows(el, obj.c1, obj.c2);
             }
         },
@@ -507,7 +510,7 @@ define([
 
         // documented in AbstractRenderer
         drawCurve: function (el) {
-            if (el.visProp.handdrawing) {
+            if (Type.evaluate(el.visProp.handdrawing)) {
                 this.updatePathStringBezierPrim(el);
             } else {
                 this.updatePathStringPrim(el);
@@ -589,33 +592,29 @@ define([
 
         // already documented in JXG.AbstractRenderer
         drawInternalText: function (el) {
-            var fs, context = this.context;
+            var ev_fs = Type.evaluate(el.visProp.fontsize),
+                ev_ax = Type.evaluate(el.visProp.anchorx),
+                ev_ay = Type.evaluate(el.visProp.anchory),
+                context = this.context;
 
             context.save();
-            // el.rendNode.setAttributeNS(null, "class", el.visProp.cssclass);
-            if (this._setColor(el, 'stroke', 'fill') && !isNaN(el.coords.scrCoords[1] + el.coords.scrCoords[2])) {
-                if (el.visProp.fontsize) {
-                    if (Type.isFunction(el.visProp.fontsize)) {
-                        fs = el.visProp.fontsize();
-                        context.font = (fs > 0 ? fs : 0) + 'px Arial';
-                    } else {
-                        context.font = (el.visProp.fontsize) + 'px Arial';
-                    }
-                }
+            if (this._setColor(el, 'stroke', 'fill') &&
+                    !isNaN(el.coords.scrCoords[1] + el.coords.scrCoords[2])) {
+                context.font = (ev_fs > 0 ? ev_fs : 0) + 'px Arial';
 
                 this.transformImage(el, el.transformations);
-                if (el.visProp.anchorx === 'left') {
+                if (ev_ax === 'left') {
                     context.textAlign = 'left';
-                } else if (el.visProp.anchorx === 'right') {
+                } else if (ev_ax === 'right') {
                     context.textAlign = 'right';
-                } else if (el.visProp.anchorx === 'middle') {
+                } else if (ev_ax === 'middle') {
                     context.textAlign = 'center';
                 }
-                if (el.visProp.anchory === 'bottom') {
+                if (ev_ay === 'bottom') {
                     context.textBaseline = 'bottom';
-                } else if (el.visProp.anchory === 'top') {
+                } else if (ev_ay === 'top') {
                     context.textBaseline = 'top';
-                } else if (el.visProp.anchory === 'middle') {
+                } else if (ev_ay === 'middle') {
                     context.textBaseline = 'middle';
                 }
                 context.fillText(el.plaintext, el.coords.scrCoords[1], el.coords.scrCoords[2]);
@@ -657,7 +656,7 @@ define([
                     oo = o * rgbo[1];
                 }
                 node = el.rendNode;
-                if (el.elementClass === Const.OBJECT_CLASS_TEXT && el.visProp.display === 'html') {
+                if (el.elementClass === Const.OBJECT_CLASS_TEXT && Type.evaluate(el.visProp.display) === 'html') {
                     node.style.color = c;
                     node.style.opacity = oo;
                 }
@@ -770,11 +769,12 @@ define([
                     [ w,    w * 0.5]
                 ],
                 context = this.context,
-                type;
+                type,
+                ev_fa = Type.evaluate(el.visProp.firstarrow),
+                ev_la = Type.evaluate(el.visProp.lastarrow);
 
-            if (el.visProp.strokecolor !== 'none' &&
-                (el.visProp.lastarrow || el.visProp.firstarrow)
-               ) {
+            if (Type.evaluate(el.visProp.strokecolor) !== 'none' &&
+                    (ev_fa || ev_la)) {
                 if (el.elementClass === Const.OBJECT_CLASS_LINE) {
                     x1 = scr1.scrCoords[1];
                     y1 = scr1.scrCoords[2];
@@ -788,10 +788,10 @@ define([
                     return;
                 }
 
-                if (el.visProp.firstarrow &&
-                    Type.exists(el.visProp.firstarrow.type)) {
+                if (ev_fa &&
+                    Type.exists(ev_fa.type)) {
 
-                    type = el.visProp.firstarrow.type;
+                    type = Type.evaluate(ev_fa.type);
                     if (type === 2) {
                         arrowTail = [
                                 [ w,      -w * 0.5],
@@ -809,10 +809,10 @@ define([
                     }
 
                 }
-                if (el.visProp.lastarrow &&
-                    Type.exists(el.visProp.lastarrow.type)) {
+                if (ev_la &&
+                    Type.exists(ev_la.type)) {
 
-                    type = el.visProp.lastarrow.type;
+                    type = Type.evaluate(ev_la.type);
                     if (type === 2) {
                         arrowHead = [
                             [ -w, -w * 0.5],
@@ -833,11 +833,11 @@ define([
                 context.save();
                 if (this._setColor(el, 'stroke', 'fill')) {
                     ang = Math.atan2(y2 - y1, x2 - x1);
-                    if (el.visProp.lastarrow) {
+                    if (ev_la) {
                         this._drawFilledPolygon(this._translateShape(this._rotateShape(arrowHead, ang), x2, y2));
                     }
 
-                    if (el.visProp.firstarrow) {
+                    if (ev_fa) {
                         this._drawFilledPolygon(this._translateShape(this._rotateShape(arrowTail, ang), x1, y1));
                     }
                 }
@@ -853,7 +853,6 @@ define([
                 symbc = 'C',
                 nextSymb = symbm,
                 maxSize = 5000.0,
-                //isNotPlot = (el.visProp.curvetype !== 'plot'),
                 context = this.context;
 
             if (el.numberPoints <= 0) {
@@ -931,7 +930,7 @@ define([
                 nextSymb = symbm,
                 maxSize = 5000.0,
                 f = Type.evaluate(el.visProp.strokewidth),
-                isNoPlot = (el.visProp.curvetype !== 'plot'),
+                isNoPlot = (Type.evaluate(el.visProp.curvetype) !== 'plot'),
                 context = this.context;
 
             if (el.numberPoints <= 0) {
@@ -1067,7 +1066,7 @@ define([
 
         // documented in AbstractRenderer
         highlight: function (obj) {
-            if (obj.elementClass === Const.OBJECT_CLASS_TEXT && obj.visProp.display === 'html') {
+            if (obj.elementClass === Const.OBJECT_CLASS_TEXT && Type.evaluate(obj.visProp.display) === 'html') {
                 this.updateTextStyle(obj, true);
             } else {
                 obj.board.prepareUpdate();
@@ -1080,7 +1079,7 @@ define([
 
         // documented in AbstractRenderer
         noHighlight: function (obj) {
-            if (obj.elementClass === Const.OBJECT_CLASS_TEXT && obj.visProp.display === 'html') {
+            if (obj.elementClass === Const.OBJECT_CLASS_TEXT && Type.evaluate(obj.visProp.display) === 'html') {
                 this.updateTextStyle(obj, false);
             } else {
                 obj.board.prepareUpdate();
