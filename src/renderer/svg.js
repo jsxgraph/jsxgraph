@@ -204,27 +204,27 @@ define([
         /**
          * Creates an arrow DOM node. Arrows are displayed in SVG with a <em>marker</em> tag.
          * @private
-         * @param {JXG.GeometryElement} element A JSXGraph element, preferably one that can have an arrow attached.
+         * @param {JXG.GeometryElement} el A JSXGraph element, preferably one that can have an arrow attached.
          * @param {String} [idAppendix=''] A string that is added to the node's id.
          * @returns {Node} Reference to the node added to the DOM.
          */
-        _createArrowHead: function (element, idAppendix) {
+        _createArrowHead: function (el, idAppendix) {
             var node2, node3,
-                id = element.id + 'Triangle',
+                id = el.id + 'Triangle',
                 type = null,
                 w, s,
-                ev_fa = Type.evaluate(element.visProp.firstarrow),
-                ev_la = Type.evaluate(element.visProp.lastarrow);
+                ev_fa = Type.evaluate(el.visProp.firstarrow),
+                ev_la = Type.evaluate(el.visProp.lastarrow);
 
             if (Type.exists(idAppendix)) {
                 id += idAppendix;
             }
             node2 = this.createPrim('marker', id);
 
-            node2.setAttributeNS(null, 'stroke', Type.evaluate(element.visProp.strokecolor));
-            node2.setAttributeNS(null, 'stroke-opacity', Type.evaluate(element.visProp.strokeopacity));
-            node2.setAttributeNS(null, 'fill', Type.evaluate(element.visProp.strokecolor));
-            node2.setAttributeNS(null, 'fill-opacity', Type.evaluate(element.visProp.strokeopacity));
+            node2.setAttributeNS(null, 'stroke', Type.evaluate(el.visProp.strokecolor));
+            node2.setAttributeNS(null, 'stroke-opacity', Type.evaluate(el.visProp.strokeopacity));
+            node2.setAttributeNS(null, 'fill', Type.evaluate(el.visProp.strokecolor));
+            node2.setAttributeNS(null, 'fill-opacity', Type.evaluate(el.visProp.strokeopacity));
             node2.setAttributeNS(null, 'stroke-width', 0);  // this is the stroke-width of the arrow head.
                                                             // Should be zero to simplify the calculations
 
@@ -286,9 +286,9 @@ define([
          * @param {Node} node The arrow node.
          * @param {String} color Color value in a HTML compatible format, e.g. <tt>#00ff00</tt> or <tt>green</tt> for green.
          * @param {Number} opacity
-         * @param {JXG.GeometryElement} element The element the arrows are to be attached to
+         * @param {JXG.GeometryElement} el The element the arrows are to be attached to
          */
-        _setArrowColor: function (node, color, opacity, element) {
+        _setArrowColor: function (node, color, opacity, el) {
             var s, d;
 
             if (node) {
@@ -298,11 +298,11 @@ define([
                         node.setAttributeNS(null, 'fill', color);
                         node.setAttributeNS(null, 'stroke-opacity', opacity);
                         node.setAttributeNS(null, 'fill-opacity', opacity);
-                    }, element.visPropOld.fillcolor);
+                    }, el.visPropOld.fillcolor);
                 }
 
                 if (this.isIE) {
-                    element.rendNode.parentNode.insertBefore(element.rendNode, element.rendNode);
+                    el.rendNode.parentNode.insertBefore(el.rendNode, el.rendNode);
                 }
             }
 
@@ -464,8 +464,8 @@ define([
          * @see JXG.AbstractRenderer#updateTextStyle
          * @see JXG.AbstractRenderer#updateInternalTextStyle
          */
-        updateInternalTextStyle: function (element, strokeColor, strokeOpacity, duration) {
-            this.setObjectFillColor(element, strokeColor, strokeOpacity);
+        updateInternalTextStyle: function (el, strokeColor, strokeOpacity, duration) {
+            this.setObjectFillColor(el, strokeColor, strokeOpacity);
         },
 
         /* **************************

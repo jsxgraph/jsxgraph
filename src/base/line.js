@@ -548,10 +548,10 @@ define([
                 fs = 0,
                 c1 = new Coords(Const.COORDS_BY_USER, this.point1.coords.usrCoords, this.board),
                 c2 = new Coords(Const.COORDS_BY_USER, this.point2.coords.usrCoords, this.board),
-                vp_sf = Type.evaluate(this.visProp.straightfirst),
-                vp_sl = Type.evaluate(this.visProp.straightlast);
+                ev_sf = Type.evaluate(this.visProp.straightfirst),
+                ev_sl = Type.evaluate(this.visProp.straightlast);
 
-            if (vp_sf || vp_sl) {
+            if (ev_sf || ev_sl) {
                 Geometry.calcStraight(this, c1, c2, 0);
             }
 
@@ -591,7 +591,7 @@ define([
             }
 
             // Correct coordinates if the label seems to be outside of canvas.
-            if (vp_sf || vp_sl) {
+            if (ev_sf || ev_sl) {
                 if (Type.exists(this.label)) {  // Does not exist during createLabel
                     fs = Type.evaluate(this.label.visProp.fontsize);
                 }

@@ -228,7 +228,7 @@ define([
                 prec = this.board.options.precision.hasPoint,
                 dist = Infinity,
                 ux2, uy2,
-                vp_ct,
+                ev_ct,
                 suspendUpdate = true;
 
             checkPoint = new Coords(Const.COORDS_BY_SCREEN, [x, y], this.board, false);
@@ -254,9 +254,9 @@ define([
                 y = c[2];
             }
 
-            vp_ct = Type.evaluate(this.visProp.curvetype);
-            if (vp_ct === 'parameter' ||
-                    vp_ct === 'polar') {
+            ev_ct = Type.evaluate(this.visProp.curvetype);
+            if (ev_ct === 'parameter' ||
+                    ev_ct === 'polar') {
 
                 prec = prec * prec;
 
@@ -273,8 +273,8 @@ define([
 
                     t += d;
                 }
-            } else if (vp_ct === 'plot' ||
-                        vp_ct === 'functiongraph') {
+            } else if (ev_ct === 'plot' ||
+                        ev_ct === 'functiongraph') {
 
                 if (!Type.exists(start) || start < 0) {
                     start = 0;

@@ -1475,8 +1475,8 @@ define([
                 d, res,
                 cnt = 0,
                 len = cu.numberPoints,
-                vp_sf = Type.evaluate(li.visProp.straightfirst),
-                vp_sl = Type.evaluate(li.visProp.straightlast);
+                ev_sf = Type.evaluate(li.visProp.straightfirst),
+                ev_sl = Type.evaluate(li.visProp.straightlast);
 
             // In case, no intersection will be found we will take this
             q = new Coords(Const.COORDS_BY_USER, [0, NaN, NaN], board);
@@ -1522,7 +1522,7 @@ define([
                                 * But it may be discussed if it is the desired behavior.
                                 */
                                 if (testSegment &&
-                                        ((!vp_sf && p[2] < 0) || (!vp_sl && p[2] > 1))) {
+                                        ((!ev_sf && p[2] < 0) || (!ev_sl && p[2] > 1))) {
                                     return q;  // break;
                                 }
 

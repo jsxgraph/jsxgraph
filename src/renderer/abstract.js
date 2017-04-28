@@ -398,8 +398,8 @@ define([
                 sFirst = 0,
                 sLast = 0,
                 sw,
-                vp_fa = Type.evaluate(el.visProp.firstarrow),
-                vp_la = Type.evaluate(el.visProp.lastarrow);
+                ev_fa = Type.evaluate(el.visProp.firstarrow),
+                ev_la = Type.evaluate(el.visProp.lastarrow);
 
             d1x = d1y = d2x = d2y = 0.0;
             /*
@@ -408,13 +408,13 @@ define([
                The arrow head is an isosceles triangle with base length 10 and height 10.
                These 10 units are scaled to strokeWidth*3 pixels or minlen pixels.
             */
-            if (vp_fa || vp_la) {
+            if (ev_fa || ev_la) {
                 s1 = Type.evaluate(el.point1.visProp.size) + Type.evaluate(el.point1.visProp.strokewidth);
                 s2 = Type.evaluate(el.point2.visProp.size) + Type.evaluate(el.point2.visProp.strokewidth);
                 s = s1 + s2;
 
                 // Handle touchlastpoint /touchfirstpoint
-                if (vp_la && Type.evaluate(el.visProp.touchlastpoint)) {
+                if (ev_la && Type.evaluate(el.visProp.touchlastpoint)) {
                     d = c1.distance(Const.COORDS_BY_SCREEN, c2);
                     if (d > s) {
                         d2x = (c2.scrCoords[1] - c1.scrCoords[1]) * s2 / d;
@@ -422,7 +422,7 @@ define([
                         c2 = new Coords(Const.COORDS_BY_SCREEN, [c2.scrCoords[1] - d2x, c2.scrCoords[2] - d2y], el.board);
                     }
                 }
-                if (vp_fa && Type.evaluate(el.visProp.touchfirstpoint)) {
+                if (ev_fa && Type.evaluate(el.visProp.touchfirstpoint)) {
                     d = c1.distance(Const.COORDS_BY_SCREEN, c2);
                     if (d > s) {
                         d1x = (c2.scrCoords[1] - c1.scrCoords[1]) * s1 / d;
@@ -435,16 +435,16 @@ define([
                 d1x = d1y = d2x = d2y = 0.0;
                 d = c1.distance(Const.COORDS_BY_SCREEN, c2);
 
-                if (Type.exists(vp_fa.type)) {
-                    typeFirst = Type.evaluate(vp_fa.type);
+                if (Type.exists(ev_fa.type)) {
+                    typeFirst = Type.evaluate(ev_fa.type);
                 }
-                if (Type.exists(vp_la.type)) {
-                    typeLast = Type.evaluate(vp_la.type);
+                if (Type.exists(ev_la.type)) {
+                    typeLast = Type.evaluate(ev_la.type);
                 }
 
                 sw = Type.evaluate(el.visProp.strokewidth);
                 sFirst = sLast = sw * 3;
-                if (vp_fa) {
+                if (ev_fa) {
                     if (typeFirst === 2) {
                         sFirst *= 0.5;
                         minlen += sw*3;
@@ -455,7 +455,7 @@ define([
                         minlen += sw*3;
                     }
                 }
-                if (vp_la) {
+                if (ev_la) {
                     if (typeLast === 2) {
                         sLast *= 0.5;
                         minlen += sw*3;
@@ -467,7 +467,7 @@ define([
                     }
                 }
 
-                if (vp_fa &&
+                if (ev_fa &&
                     el.board.renderer.type !== 'vml') {
                     if (d >= minlen) {
                         d1x = (c2.scrCoords[1] - c1.scrCoords[1]) * sFirst / d;
@@ -477,7 +477,7 @@ define([
                     }
                 }
 
-                if (vp_la &&
+                if (ev_la &&
                     el.board.renderer.type !== 'vml') {
 
                     if (d >= minlen) {

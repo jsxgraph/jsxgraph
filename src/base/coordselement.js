@@ -241,7 +241,7 @@ define([
                 angle,
                 cp, c, invMat, newCoords, newPos,
                 doRound = false,
-                vp_sw, vp_sel,
+                ev_sw, ev_sel,
                 slide = this.slideObject;
 
             this.needsUpdateFromParent = false;
@@ -362,13 +362,13 @@ define([
                 // Snap the glider point of the slider into its appropiate position
                 // First, recalculate the new value of this.position
                 // Second, call update(fromParent==true) to make the positioning snappier.
-                vp_sw = Type.evaluate(this.visProp.snapwidth);
-                if (Type.evaluate(vp_sw) > 0.0 &&
+                ev_sw = Type.evaluate(this.visProp.snapwidth);
+                if (Type.evaluate(ev_sw) > 0.0 &&
                     Math.abs(this._smax - this._smin) >= Mat.eps) {
                     newPos = Math.max(Math.min(newPos, 1), 0);
 
                     v = newPos * (this._smax - this._smin) + this._smin;
-                    v = Math.round(v / vp_sw) * vp_sw;
+                    v = Math.round(v / ev_sw) * ev_sw;
                     newPos = (v - this._smin) / (this._smax - this._smin);
                     this.update(true);
                 }
@@ -405,9 +405,9 @@ define([
                     beta = Geometry.rad(slide.radiuspoint, slide.center, slide.anglepoint);
                     newPos = angle;
 
-                    vp_sw = Type.evaluate(slide.visProp.selection);
-                    if ((vp_sw === 'minor' && beta > Math.PI) ||
-                        (vp_sw === 'major' && beta < Math.PI)) {
+                    ev_sw = Type.evaluate(slide.visProp.selection);
+                    if ((ev_sw === 'minor' && beta > Math.PI) ||
+                        (ev_sw === 'major' && beta < Math.PI)) {
                         alpha = beta;
                         beta = 2 * Math.PI;
                     }
@@ -557,7 +557,7 @@ define([
                     }
 
                     delta = beta - alpha;
-                    if (vp_ig) {
+                    if (ev_ig) {
                         delta = 1.0;
                     }
                     angle = this.position * delta;
@@ -737,27 +737,27 @@ define([
                 len,
                 dMax = Infinity,
                 c = null,
-                vp_au, vp_ad,
-                vp_is2p = Type.evaluate(this.visProp.ignoredsnaptopoints),
+                ev_au, ev_ad,
+                ev_is2p = Type.evaluate(this.visProp.ignoredsnaptopoints),
                 len2, j, ignore = false;
 
             len = this.board.objectsList.length;
 
-            if (vp_is2p) {
-                len2 = vp_is2p.length;
+            if (ev_is2p) {
+                len2 = ev_is2p.length;
             }
 
             if (Type.evaluate(this.visProp.snaptopoints) || force) {
-                vp_au = Type.evaluate(this.visProp.attractorunit);
-                vp_ad = Type.evaluate(this.visProp.attractordistance);
+                ev_au = Type.evaluate(this.visProp.attractorunit);
+                ev_ad = Type.evaluate(this.visProp.attractordistance);
 
                 for (i = 0; i < len; i++) {
                     pEl = this.board.objectsList[i];
 
-                    if (vp_is2p) {
+                    if (ev_is2p) {
                         ignore = false;
                         for (j = 0; j < len2; j++) {
-                            if (pEl == this.board.select(vp_is2p[j])) {
+                            if (pEl == this.board.select(ev_is2p[j])) {
                                 ignore = true;
                                 break;
                             }
@@ -769,13 +769,13 @@ define([
 
                     if (Type.isPoint(pEl) && pEl !== this && pEl.visProp.visible) {
                         pCoords = Geometry.projectPointToPoint(this, pEl, this.board);
-                        if (vp_au === 'screen') {
+                        if (ev_au === 'screen') {
                             d = pCoords.distance(Const.COORDS_BY_SCREEN, this.coords);
                         } else {
                             d = pCoords.distance(Const.COORDS_BY_USER, this.coords);
                         }
 
-                        if (d < vp_ad && d < dMax) {
+                        if (d < ev_ad && d < dMax) {
                             dMax = d;
                             c = pCoords;
                         }
@@ -814,18 +814,18 @@ define([
             var i, el, projCoords,
                 d = 0.0,
                 projection,
-                vp_au = Type.evaluate(this.visProp.attractorunit),
-                vp_ad = Type.evaluate(this.visProp.attractordistance),
-                vp_sd = Type.evaluate(this.visProp.snatchdistance),
-                vp_a = Type.evaluate(this.visProp.attractors),
-                len = vp_a.length;
+                ev_au = Type.evaluate(this.visProp.attractorunit),
+                ev_ad = Type.evaluate(this.visProp.attractordistance),
+                ev_sd = Type.evaluate(this.visProp.snatchdistance),
+                ev_a = Type.evaluate(this.visProp.attractors),
+                len = ev_a.length;
 
-            if (vp_ad === 0.0) {
+            if (ev_ad === 0.0) {
                 return;
             }
 
             for (i = 0; i < len; i++) {
-                el = this.board.select(vp_a[i]);
+                el = this.board.select(ev_a[i]);
 
                 if (Type.exists(el) && el !== this) {
                     if (Type.isPoint(el)) {
@@ -850,20 +850,20 @@ define([
                         projCoords = Geometry.projectPointToTurtle(this, el, this.board);
                     }
 
-                    if (vp_a === 'screen') {
+                    if (ev_a === 'screen') {
                         d = projCoords.distance(Const.COORDS_BY_SCREEN, this.coords);
                     } else {
                         d = projCoords.distance(Const.COORDS_BY_USER, this.coords);
                     }
 
-                    if (d < vp_ad) {
+                    if (d < ev_ad) {
                         if (!(this.type === Const.OBJECT_TYPE_GLIDER && this.slideObject === el)) {
                             this.makeGlider(el);
                         }
 
                         break;       // bind the point to the first attractor in its list.
                     } else {
-                        if (el === this.slideObject && d >= vp_sd) {
+                        if (el === this.slideObject && d >= ev_sd) {
                             this.popSlideObject();
                         }
                     }
@@ -1278,10 +1278,10 @@ define([
 
             this.XEval = function () {
                 var sx, coords, anchor,
-                    vp_o = Type.evaluate(this.visProp.offset);
+                    ev_o = Type.evaluate(this.visProp.offset);
 
                 if (Type.evaluate(this.visProp.islabel)) {
-                    sx =  parseFloat(vp_o[0]);
+                    sx =  parseFloat(ev_o[0]);
                     anchor = this.element.getLabelAnchor();
                     coords = new Coords(Const.COORDS_BY_SCREEN,
                         [sx + this.relativeCoords.scrCoords[1] + anchor.scrCoords[1], 0], this.board);
@@ -1295,10 +1295,10 @@ define([
 
             this.YEval = function () {
                 var sy, coords, anchor,
-                    vp_o = Type.evaluate(this.visProp.offset);
+                    ev_o = Type.evaluate(this.visProp.offset);
 
                 if (Type.evaluate(this.visProp.islabel)) {
-                    sy = -parseFloat(vp_o[1]);
+                    sy = -parseFloat(ev_o[1]);
                     anchor = this.element.getLabelAnchor();
                     coords = new Coords(Const.COORDS_BY_SCREEN,
                         [0, sy + this.relativeCoords.scrCoords[2] + anchor.scrCoords[2]], this.board);

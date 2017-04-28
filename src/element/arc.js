@@ -155,11 +155,11 @@ define([
                 A = this.radiuspoint,
                 B = this.center,
                 C = this.anglepoint,
-                vp_s = Type.evaluate(this.visProp.selection);
+                ev_s = Type.evaluate(this.visProp.selection);
 
             phi = Geometry.rad(A, B, C);
-            if ((vp_s === 'minor' && phi > Math.PI) ||
-                    (vp_s === 'major' && phi < Math.PI)) {
+            if ((ev_s === 'minor' && phi > Math.PI) ||
+                    (ev_s === 'major' && phi < Math.PI)) {
                 sgn = -1;
             }
 
@@ -236,7 +236,7 @@ define([
                 invMat, c,
                 prec,
                 r = this.Radius(),
-                vp_s = Type.evaluate(this.visProp.selection);
+                ev_s = Type.evaluate(this.visProp.selection);
 
             prec = this.board.options.precision.hasPoint / Math.min(this.board.unitX, this.board.unitY);
             checkPoint = new Coords(Const.COORDS_BY_SCREEN, [x, y], this.board);
@@ -261,8 +261,8 @@ define([
                 alpha = 0.0;
                 beta = Geometry.rad(this.radiuspoint, this.center, this.anglepoint);
 
-                if ((vp_s === 'minor' && beta > Math.PI) ||
-                        (vp_s === 'major' && beta < Math.PI)) {
+                if ((ev_s === 'minor' && beta > Math.PI) ||
+                        (ev_s === 'major' && beta < Math.PI)) {
                     alpha = beta;
                     beta = 2 * Math.PI;
                 }
@@ -289,15 +289,15 @@ define([
                 r = this.Radius(),
                 dist = this.center.coords.distance(Const.COORDS_BY_USER, checkPoint),
                 has = (dist < r),
-                vp_s = Type.evaluate(this.visProp.selection);
+                ev_s = Type.evaluate(this.visProp.selection);
 
             if (has) {
                 angle = Geometry.rad(this.radiuspoint, this.center, checkPoint.usrCoords.slice(1));
                 alpha = 0;
                 beta = Geometry.rad(this.radiuspoint, this.center, this.anglepoint);
 
-                if ((vp_s === 'minor' && beta > Math.PI) ||
-                        (vp_s === 'major' && beta < Math.PI)) {
+                if ((ev_s === 'minor' && beta > Math.PI) ||
+                        (ev_s === 'major' && beta < Math.PI)) {
                     alpha = beta;
                     beta = 2 * Math.PI;
                 }
@@ -324,15 +324,15 @@ define([
                 pmc = this.center.coords.usrCoords,
                 bxminusax = p2c[1] - pmc[1],
                 byminusay = p2c[2] - pmc[2],
-                vp_s = Type.evaluate(this.visProp.selection);
+                ev_s = Type.evaluate(this.visProp.selection);
 
             // If this is uncommented, the angle label can not be dragged
             //if (Type.exists(this.label)) {
             //    this.label.relativeCoords = new Coords(Const.COORDS_BY_SCREEN, [0, 0], this.board);
             //}
 
-            if ((vp_s === 'minor' && angle > Math.PI) ||
-                    (vp_s === 'major' && angle < Math.PI)) {
+            if ((ev_s === 'minor' && angle > Math.PI) ||
+                    (ev_s === 'major' && angle < Math.PI)) {
                 angle = -(2 * Math.PI - angle);
             }
 

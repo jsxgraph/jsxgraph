@@ -180,20 +180,20 @@ define([
          */
         _setUpdateText: function (text) {
             var updateText, resolvedText,
-                vp_p = Type.evaluate(this.visProp.parse),
-                vp_um = Type.evaluate(this.visProp.usemathjax);
+                ev_p = Type.evaluate(this.visProp.parse),
+                ev_um = Type.evaluate(this.visProp.usemathjax);
 
             this.orgText = text;
             if (Type.isFunction(text)) {
                 this.updateText = function () {
                     resolvedText = text().toString();
-                    if (vp_p && !vp_um) {
+                    if (ev_p && !ev_um) {
                         this.plaintext = this.replaceSub(this.replaceSup(this.convertGeonext2CSS(resolvedText)));
                     } else {
                         this.plaintext = resolvedText;
                     }
                 };
-            } else if (Type.isString(text) && !vp_p) {
+            } else if (Type.isString(text) && !ev_p) {
                 this.updateText = function () {
                     this.plaintext = text;
                 };
@@ -204,7 +204,7 @@ define([
                     if (Type.evaluate(this.visProp.useasciimathml)) {
                         // Convert via ASCIIMathML
                         this.content = "'`" + text + "`'";
-                    } else if (vp_um) {
+                    } else if (ev_um) {
                         this.content = "'" + text + "'";
                     } else {
                         // Converts GEONExT syntax into JavaScript string
@@ -287,7 +287,7 @@ define([
          */
         updateSize: function () {
             var tmp, s, that, node,
-                vp_d = Type.evaluate(this.visProp.display);
+                ev_d = Type.evaluate(this.visProp.display);
 
             if (!Env.isBrowser || this.board.renderer.type === 'no') {
                 return this;
@@ -298,7 +298,7 @@ define([
             /**
              * offsetWidth and offsetHeight seem to be supported for internal vml elements by IE10+ in IE8 mode.
              */
-            if (vp_d === 'html' || this.board.renderer.type === 'vml') {
+            if (ev_d === 'html' || this.board.renderer.type === 'vml') {
                 if (Type.exists(node.offsetWidth)) {
                     s = [node.offsetWidth, node.offsetHeight];
                     if (s[0] === 0 && s[1] === 0) { // Some browsers need some time to set offsetWidth and offsetHeight
@@ -312,7 +312,7 @@ define([
                 } else {
                     this.size = this.crudeSizeEstimate();
                 }
-            } else if (vp_d === 'internal') {
+            } else if (ev_d === 'internal') {
                 if (this.board.renderer.type === 'svg') {
                     try {
                         tmp = node.getBBox();
@@ -331,8 +331,8 @@ define([
          * @returns {Array}
          */
         crudeSizeEstimate: function () {
-            var vp_fs = parseFloat(Type.evaluate(this.visProp.fontsize));
-            return [vp_fs * this.plaintext.length * 0.45, vp_fs * 0.9];
+            var ev_fs = parseFloat(Type.evaluate(this.visProp.fontsize));
+            return [ev_fs * this.plaintext.length * 0.45, ev_fs * 0.9];
         },
 
         /**

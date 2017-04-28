@@ -1249,8 +1249,8 @@ define([
          * @private
          */
         createGradient: function () {
-            var vp_g = Type.evaluate(this.visProp.gradient);
-            if (vp_g === 'linear' || vp_g === 'radial') {
+            var ev_g = Type.evaluate(this.visProp.gradient);
+            if (ev_g === 'linear' || ev_g === 'radial') {
                 this.board.renderer.setGradient(this);
             }
         },

@@ -367,7 +367,7 @@ define([
          */
         getZeroCoordinates: function () {
             var c1x, c1y, c1z, c2x, c2y, c2z,
-                vp_a = Type.evaluate(this.visProp.anchor);
+                ev_a = Type.evaluate(this.visProp.anchor);
 
             if (this.line.type === Const.OBJECT_TYPE_AXIS) {
                 return Geometry.projectPointToLine({
@@ -384,19 +384,19 @@ define([
             c2x = this.line.point2.coords.usrCoords[1];
             c2y = this.line.point2.coords.usrCoords[2];
 
-            if (vp_a === 'right') {
+            if (ev_a === 'right') {
                 return this.line.point2.coords;
-            } else if (vp_a === 'middle') {
+            } else if (ev_a === 'middle') {
                 return new Coords(Const.COORDS_BY_USER, [
                     (c1z + c2z) * 0.5,
                     (c1x + c2x) * 0.5,
                     (c1y + c2y) * 0.5
                 ], this.board);
-            } else if (Type.isNumber(vp_a)) {
+            } else if (Type.isNumber(ev_a)) {
                 return new Coords(Const.COORDS_BY_USER, [
-                    c1z + (c2z - c1z) * vp_a,
-                    c1x + (c2x - c1x) * vp_a,
-                    c1y + (c2y - c1y) * vp_a
+                    c1z + (c2z - c1z) * ev_a,
+                    c1x + (c2x - c1x) * ev_a,
+                    c1y + (c2y - c1y) * ev_a
                 ], this.board);
             }
 
@@ -431,9 +431,9 @@ define([
                     point2.scrCoords[2] >= 0.0 && point2.scrCoords[2] <= this.board.canvasHeight),
                 // We use the distance from zero to P1 and P2 to establish lower and higher points
                 dZeroPoint1, dZeroPoint2,
-                vp_sf = Type.evaluate(this.line.visProp.straightfirst),
-                vp_sl = Type.evaluate(this.line.visProp.straightlast),
-                vp_i = Type.evaluate(this.visProp.includeboundaries);
+                ev_sf = Type.evaluate(this.line.visProp.straightfirst),
+                ev_sl = Type.evaluate(this.line.visProp.straightlast),
+                ev_i = Type.evaluate(this.visProp.includeboundaries);
 
             // Adjust line limit points to be within the board
             if (Type.exists(type) || type === 'tickdistance') {
@@ -455,20 +455,20 @@ define([
             // we can compare dZeroPoint1 and dZeroPoint2 to establish the line direction
             if (dZeroPoint1 < dZeroPoint2) { // Line goes P1->P2
                 lowerBound = dZeroPoint1;
-                if (!vp_sf && isPoint1inBoard && !vp_i) {
+                if (!ev_sf && isPoint1inBoard && !ev_i) {
                     lowerBound += Mat.eps;
                 }
                 upperBound = dZeroPoint2;
-                if (!vp_sl && isPoint2inBoard && !vp_i) {
+                if (!ev_sl && isPoint2inBoard && !ev_i) {
                     upperBound -= Mat.eps;
                 }
             } else if (dZeroPoint2 < dZeroPoint1) { // Line goes P2->P1
                 lowerBound = dZeroPoint2;
-                if (!vp_sl && isPoint2inBoard && !vp_i) {
+                if (!ev_sl && isPoint2inBoard && !ev_i) {
                     lowerBound += Mat.eps;
                 }
                 upperBound = dZeroPoint1;
-                if (!vp_sf && isPoint1inBoard && !vp_i) {
+                if (!ev_sf && isPoint1inBoard && !ev_i) {
                     upperBound -= Mat.eps;
                 }
             } else { // P1 = P2 = Zero, we can't do a thing
@@ -529,16 +529,16 @@ define([
                 deltas = this.getXandYdeltas(),
                 // Distance between two major ticks in user coordinates
                 ticksDelta = (this.equidistant ? this.ticksFunction(1) : this.ticksDelta),
-                vp_it = Type.evaluate(this.visProp.insertticks),
-                vp_mt = Type.evaluate(this.visProp.minorticks);
+                ev_it = Type.evaluate(this.visProp.insertticks),
+                ev_mt = Type.evaluate(this.visProp.minorticks);
 
             // adjust ticks distance
             ticksDelta *= Type.evaluate(this.visProp.scale);
-            if (vp_it && this.minTicksDistance > Mat.eps) {
+            if (ev_it && this.minTicksDistance > Mat.eps) {
                 ticksDelta = this.adjustTickDistance(ticksDelta, coordsZero, deltas);
-                ticksDelta /= (vp_mt + 1);
-            } else if (!vp_it) {
-                ticksDelta /= (vp_mt + 1);
+                ticksDelta /= (ev_mt + 1);
+            } else if (!ev_it) {
+                ticksDelta /= (ev_mt + 1);
             }
             this.ticksDelta = ticksDelta;
 
@@ -655,7 +655,7 @@ define([
                 hasLabelOverrides = Type.isArray(this.visProp.labels),
                 // Calculate X and Y distance between two major points in the line
                 deltas = this.getXandYdeltas(),
-                vp_dl = Type.evaluate(this.visProp.drawlabels);
+                ev_dl = Type.evaluate(this.visProp.drawlabels);
 
             for (i = 0; i < this.fixedTicks.length; i++) {
                 x = coordsZero.usrCoords[1] + this.fixedTicks[i] * deltas.x;
@@ -669,7 +669,7 @@ define([
                     this.fixedTicks[i] <= bounds.upper) {
                     this.ticks.push(ti);
 
-                    if (vp_dl && (hasLabelOverrides || Type.exists(this.visProp.labels[i]))) {
+                    if (ev_dl && (hasLabelOverrides || Type.exists(this.visProp.labels[i]))) {
                         labelText = hasLabelOverrides ? Type.evaluate(this.visProp.labels[i]) : this.fixedTicks[i];
                         this.labels.push(
                             this.generateLabel(this.generateLabelText(tickCoords, coordsZero, labelText), tickCoords, i)
@@ -796,7 +796,7 @@ define([
          */
         formatLabelText: function(value) {
             var labelText = value.toString(),
-                vp_s = Type.evaluate(this.visProp.scalesymbol);
+                ev_s = Type.evaluate(this.visProp.scalesymbol);
 
             // if value is Number
             if (Type.isNumber(value)) {
@@ -812,13 +812,13 @@ define([
                 }
             }
 
-            if (vp_s.length > 0) {
+            if (ev_s.length > 0) {
                 if (labelText === '1') {
-                    labelText = vp_s;
+                    labelText = ev_s;
                 } else if (labelText === '-1') {
-                    labelText = '-' + vp_s;
+                    labelText = '-' + ev_s;
                 } else if (labelText !== '0') {
-                    labelText = labelText + vp_s;
+                    labelText = labelText + ev_s;
                 }
             }
 
