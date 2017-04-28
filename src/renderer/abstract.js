@@ -188,7 +188,7 @@ define([
                 not = not || {};
 
                 this.setObjectTransition(element);
-                if (!element.visProp.draft) {
+                if (!Type.evaluate(element.visProp.draft)) {
                     if (!not.stroke) {
                         this.setObjectStrokeColor(element,
                             element.visProp.strokecolor,
@@ -236,7 +236,7 @@ define([
             var prim,
                 // sometimes element is not a real point and lacks the methods of a JXG.Point instance,
                 // in these cases to not use element directly.
-                face = Options.normalizePointFace(element.visProp.face);
+                face = Options.normalizePointFace(Type.evaluate(element.visProp.face));
 
             // determine how the point looks like
             if (face === 'o') {
@@ -249,7 +249,7 @@ define([
                 prim = 'path';
             }
 
-            element.rendNode = this.appendChildPrim(this.createPrim(prim, element.id), element.visProp.layer);
+            element.rendNode = this.appendChildPrim(this.createPrim(prim, element.id), Type.evaluate(element.visProp.layer));
             this.appendNodesToElement(element, prim);
 
             // adjust visual propertys
@@ -269,10 +269,10 @@ define([
          * @see JXG.AbstractRenderer#changePointStyle
          */
         updatePoint: function (element) {
-            var size = element.visProp.size,
+            var size = Type.evaluate(element.visProp.size),
                 // sometimes element is not a real point and lacks the methods of a JXG.Point instance,
                 // in these cases to not use element directly.
-                face = Options.normalizePointFace(element.visProp.face);
+                face = Options.normalizePointFace(Type.evaluate(element.visProp.face));
 
             if (!isNaN(element.coords.scrCoords[2] + element.coords.scrCoords[1])) {
                 size *= ((!element.board || !element.board.options.point.zoom) ?
@@ -320,7 +320,7 @@ define([
                 this.hide(element);
             }
 
-            if (element.visProp.draft) {
+            if (Type.evaluate(element.visProp.draft)) {
                 this.setDraft(element);
             }
         },
@@ -337,7 +337,8 @@ define([
          * @see JXG.AbstractRenderer#updateLine
          */
         drawLine: function (element) {
-            element.rendNode = this.appendChildPrim(this.createPrim('line', element.id), element.visProp.layer);
+            element.rendNode = this.appendChildPrim(this.createPrim('line', element.id),
+                                    Type.evaluate(element.visProp.layer));
             this.appendNodesToElement(element, 'lines');
             this.updateLine(element);
         },
@@ -354,7 +355,7 @@ define([
                 c2 = new Coords(Const.COORDS_BY_USER, element.point2.coords.usrCoords, element.board),
                 obj, margin = null;
 
-            margin = element.visProp.margin;
+            margin = Type.evaluate(element.visProp.margin);
             Geometry.calcStraight(element, c1, c2, margin);
 
             obj = this.getPositionArrowHead(element, c1, c2);
@@ -366,10 +367,10 @@ define([
             this.makeArrows(element);
             this._updateVisual(element);
 
-            if (element.visProp.firstarrow) {
+            if (Type.evaluate(element.visProp.firstarrow)) {
                 this._setArrowWidth(element.rendNodeTriangleStart, obj.sFirst, element.rendNode);
             }
-            if (element.visProp.lastarrow) {
+            if (Type.evaluate(element.visProp.lastarrow)) {
                 this._setArrowWidth(element.rendNodeTriangleEnd, obj.sLast, element.rendNode);
             }
 
@@ -396,7 +397,9 @@ define([
                 typeFirst, typeLast,
                 sFirst = 0,
                 sLast = 0,
-                sw;
+                sw,
+                vp_fa = Type.evaluate(element.visProp.firstarrow),
+                vp_la = Type.evaluate(element.visProp.lastarrow);
 
             d1x = d1y = d2x = d2y = 0.0;
             /*
@@ -405,13 +408,13 @@ define([
                The arrow head is an isosceles triangle with base length 10 and height 10.
                These 10 units are scaled to strokeWidth*3 pixels or minlen pixels.
             */
-            if (element.visProp.lastarrow || element.visProp.firstarrow) {
+            if (vp_fa || vp_la) {
                 s1 = Type.evaluate(element.point1.visProp.size) + Type.evaluate(element.point1.visProp.strokewidth);
                 s2 = Type.evaluate(element.point2.visProp.size) + Type.evaluate(element.point2.visProp.strokewidth);
                 s = s1 + s2;
 
                 // Handle touchlastpoint /touchfirstpoint
-                if (element.visProp.lastarrow && element.visProp.touchlastpoint) {
+                if (vp_la && Type.evaluate(element.visProp.touchlastpoint)) {
                     d = c1.distance(Const.COORDS_BY_SCREEN, c2);
                     if (d > s) {
                         d2x = (c2.scrCoords[1] - c1.scrCoords[1]) * s2 / d;
@@ -419,7 +422,7 @@ define([
                         c2 = new Coords(Const.COORDS_BY_SCREEN, [c2.scrCoords[1] - d2x, c2.scrCoords[2] - d2y], element.board);
                     }
                 }
-                if (element.visProp.firstarrow && element.visProp.touchfirstpoint) {
+                if (vp_fa && Type.evaluate(element.visProp.touchfirstpoint)) {
                     d = c1.distance(Const.COORDS_BY_SCREEN, c2);
                     if (d > s) {
                         d1x = (c2.scrCoords[1] - c1.scrCoords[1]) * s1 / d;
@@ -432,16 +435,16 @@ define([
                 d1x = d1y = d2x = d2y = 0.0;
                 d = c1.distance(Const.COORDS_BY_SCREEN, c2);
 
-                if (Type.exists(element.visProp.firstarrow.type)) {
-                    typeFirst = element.visProp.firstarrow.type;
+                if (Type.exists(vp_fa.type)) {
+                    typeFirst = Type.evaluate(vp_fa.type);
                 }
-                if (Type.exists(element.visProp.lastarrow.type)) {
-                    typeLast = element.visProp.lastarrow.type;
+                if (Type.exists(vp_la.type)) {
+                    typeLast = Type.evaluate(vp_la.type);
                 }
 
                 sw = Type.evaluate(element.visProp.strokewidth);
                 sFirst = sLast = sw * 3;
-                if (element.visProp.firstarrow) {
+                if (vp_fa) {
                     if (typeFirst === 2) {
                         sFirst *= 0.5;
                         minlen += sw*3;
@@ -452,7 +455,7 @@ define([
                         minlen += sw*3;
                     }
                 }
-                if (element.visProp.lastarrow) {
+                if (vp_la) {
                     if (typeLast === 2) {
                         sLast *= 0.5;
                         minlen += sw*3;
@@ -464,7 +467,7 @@ define([
                     }
                 }
 
-                if (element.visProp.firstarrow &&
+                if (vp_fa &&
                     element.board.renderer.type !== 'vml') {
                     if (d >= minlen) {
                         d1x = (c2.scrCoords[1] - c1.scrCoords[1]) * sFirst / d;
@@ -474,7 +477,7 @@ define([
                     }
                 }
 
-                if (element.visProp.lastarrow &&
+                if (vp_la &&
                     element.board.renderer.type !== 'vml') {
 
                     if (d >= minlen) {
@@ -520,7 +523,7 @@ define([
          * @see JXG.AbstractRenderer#updateTicks
          */
         drawTicks: function (element) {
-            element.rendNode = this.appendChildPrim(this.createPrim('path', element.id), element.visProp.layer);
+            element.rendNode = this.appendChildPrim(this.createPrim('path', element.id), Type.evaluate(element.visProp.layer));
             this.appendNodesToElement(element, 'path');
         },
 
@@ -548,7 +551,7 @@ define([
          * @see JXG.AbstractRenderer#updateCurve
          */
         drawCurve: function (element) {
-            element.rendNode = this.appendChildPrim(this.createPrim('path', element.id), element.visProp.layer);
+            element.rendNode = this.appendChildPrim(this.createPrim('path', element.id), Type.evaluate(element.visProp.layer));
             this.appendNodesToElement(element, 'path');
             if (element.numberPoints > 1) {
                 this.makeArrows(element);
@@ -567,7 +570,7 @@ define([
         updateCurve: function (element) {
             var w = Type.evaluate(element.visProp.strokewidth);
 
-            if (element.visProp.handdrawing) {
+            if (Type.evaluate(element.visProp.handdrawing)) {
                 this.updatePathPrim(element.rendNode, this.updatePathStringBezierPrim(element), element.board);
             } else {
                 this.updatePathPrim(element.rendNode, this.updatePathStringPrim(element), element.board);
@@ -575,10 +578,10 @@ define([
 
             if (element.numberPoints > 1) {
                 this.makeArrows(element);
-                if (element.visProp.firstarrow) {
+                if (Type.evaluate(element.visProp.firstarrow)) {
                     this._setArrowWidth(element.rendNodeTriangleStart, w, element.rendNode);
                 }
-                if (element.visProp.lastarrow) {
+                if (Type.evaluate(element.visProp.lastarrow)) {
                     this._setArrowWidth(element.rendNodeTriangleEnd, w, element.rendNode);
                 }
             }
@@ -598,7 +601,8 @@ define([
          * @see JXG.AbstractRenderer#updateEllipse
          */
         drawEllipse: function (element) {
-            element.rendNode = this.appendChildPrim(this.createPrim('ellipse', element.id), element.visProp.layer);
+            element.rendNode = this.appendChildPrim(this.createPrim('ellipse', element.id),
+                                    Type.evaluate(element.visProp.layer));
             this.appendNodesToElement(element, 'ellipse');
             this.updateEllipse(element);
         },
@@ -639,7 +643,8 @@ define([
          * @see JXG.AbstractRenderer#updatePolygon
          */
         drawPolygon: function (element) {
-            element.rendNode = this.appendChildPrim(this.createPrim('polygon', element.id), element.visProp.layer);
+            element.rendNode = this.appendChildPrim(this.createPrim('polygon', element.id),
+                                        Type.evaluate(element.visProp.layer));
             this.appendNodesToElement(element, 'polygon');
             this.updatePolygon(element);
         },
@@ -728,13 +733,13 @@ define([
         drawText: function (element) {
             var node, z, level;
 
-            if (element.visProp.display === 'html' && Env.isBrowser && this.type !== 'no') {
+            if (Type.evaluate(element.visProp.display) === 'html' && Env.isBrowser && this.type !== 'no') {
                 node = this.container.ownerDocument.createElement('div');
                 //node = this.container.ownerDocument.createElementNS('http://www.w3.org/1999/xhtml', 'div'); //
                 node.style.position = 'absolute';
-                node.className = element.visProp.cssclass;
+                node.className = Type.evaluate(element.visProp.cssclass);
 
-                level = element.visProp.layer;
+                level = Type.evaluate(element.visProp.layer);
                 if (!Type.exists(level)) { // trace nodes have level not set
                     level = 0;
                 }
@@ -776,7 +781,7 @@ define([
             if (el.visProp.visible) {
                 this.updateTextStyle(el, false);
 
-                if (el.visProp.display === 'html' && this.type !== 'no') {
+                if (Type.evaluate(el.visProp.display) === 'html' && this.type !== 'no') {
                     // Set the position
                     if (!isNaN(el.coords.scrCoords[1] + el.coords.scrCoords[2])) {
 
@@ -855,11 +860,11 @@ define([
                         }
                         el.htmlStr = content;
 
-                        if (el.visProp.usemathjax) {
+                        if (Type.evaluate(el.visProp.usemathjax)) {
                             // typesetting directly might not work because mathjax was not loaded completely
                             // see http://www.mathjax.org/docs/1.1/typeset.html
                             MathJax.Hub.Queue(['Typeset', MathJax.Hub, el.rendNode]);
-                        } else if (el.visProp.useasciimathml) {
+                        } else if (Type.evaluate(el.visProp.useasciimathml)) {
                             // This is not a constructor.
                             // See http://www1.chapman.edu/~jipsen/mathml/asciimath.html for more information
                             // about AsciiMathML and the project's source code.
@@ -1127,7 +1132,7 @@ define([
          * @see JXG.AbstractRenderer#noHighlight
          */
         updateImageStyle: function (el, doHighlight) {
-            el.rendNode.className = doHighlight ? el.visProp.highlightcssclass : el.visProp.cssclass;
+            el.rendNode.className = Type.evaluate(doHighlight ? el.visProp.highlightcssclass : el.visProp.cssclass);
         },
 
 
@@ -1313,7 +1318,7 @@ define([
          * @param {JXG.GeometryElement} element Reference of the object that is in draft mode.
          */
         setDraft: function (element) {
-            if (!element.visProp.draft) {
+            if (!Type.evaluate(element.visProp.draft)) {
                 return;
             }
             var draftColor = element.board.options.elements.draft.color,
@@ -1462,7 +1467,7 @@ define([
             var i, ev = element.visProp;
 
             this.setObjectTransition(element);
-            if (!element.visProp.draft) {
+            if (!Type.evaluate(element.visProp.draft)) {
                 if (element.type === Const.OBJECT_TYPE_POLYGON) {
                     this.setObjectFillColor(element,
                         ev.fillcolor,
