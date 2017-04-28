@@ -373,7 +373,7 @@ define([
 
             this.visProp.draft = attr.draft && attr.draft.draft;
             this.visProp.gradientangle = '270';
-            this.visProp.gradientsecondopacity = this.visProp.fillopacity;
+            this.visProp.gradientsecondopacity = Type.evaluate(this.visProp.fillopacity);
             this.visProp.gradientpositionx = 0.5;
             this.visProp.gradientpositiony = 0.5;
         }
@@ -609,7 +609,7 @@ define([
          * @returns {boolean}
          */
         draggable: function () {
-            return this.isDraggable && !this.visProp.fixed &&
+            return this.isDraggable && !Type.evaluate(this.visProp.fixed) &&
                 /*!this.visProp.frozen &&*/ this.type !== Const.OBJECT_TYPE_GLIDER;
         },
 
@@ -795,7 +795,7 @@ define([
          * Can be used sometimes to commit changes to the object.
          */
         update: function () {
-            if (this.visProp.trace) {
+            if (Type.evaluate(this.visProp.trace)) {
                 this.cloneToBackground();
             }
             return this;
@@ -1079,7 +1079,8 @@ define([
                         }
                         break;
                     case 'rotate':
-                        if ((this.elementClass === Const.OBJECT_CLASS_TEXT && this.visProp.display === 'internal') ||
+                        if ((this.elementClass === Const.OBJECT_CLASS_TEXT
+                                && Type.evaluate(this.visProp.display) === 'internal') ||
                                 this.type === Const.OBJECT_TYPE_IMAGE) {
                             this.addRotation(value);
                         }
@@ -1120,7 +1121,7 @@ define([
 
             this.triggerEventHandlers(['attribute'], [properties, this]);
 
-            if (!this.visProp.needsregularupdate) {
+            if (!Type.evaluate(this.visProp.needsregularupdate)) {
                 this.board.fullUpdate();
             } else {
                 this.board.update(this);
@@ -1248,7 +1249,8 @@ define([
          * @private
          */
         createGradient: function () {
-            if (this.visProp.gradient === 'linear' || this.visProp.gradient === 'radial') {
+            var vp_g = Type.evaluate(this.visProp.gradient);
+            if (vp_g === 'linear' || vp_g === 'radial') {
                 this.board.renderer.setGradient(this);
             }
         },
@@ -1317,7 +1319,8 @@ define([
             //    through dehighlightAll.
 
             // highlight only if not highlighted
-            if (this.visProp.highlight && (!this.highlighted || force)) {
+            if (Type.evaluate(this.visProp.highlight)
+                    && (!this.highlighted || force)) {
                 this.highlighted = true;
                 this.board.highlightedObjects[this.id] = this;
                 this.board.renderer.highlight(this);
@@ -1420,7 +1423,8 @@ define([
             var tOffInv, tOff, tS, tSInv, tRot,
                 that = this;
 
-            if (((this.elementClass === Const.OBJECT_CLASS_TEXT && this.visProp.display === 'internal') ||
+            if (((this.elementClass === Const.OBJECT_CLASS_TEXT &&
+                    Type.evaluate(this.visProp.display) === 'internal') ||
                     this.type === Const.OBJECT_TYPE_IMAGE) && angle !== 0) {
 
                 tOffInv = this.board.create('transform', [
@@ -1662,35 +1666,14 @@ define([
                 //i, len, g, el, p,
                 boardBB,
                 needsSnapToGrid = false,
-                sX = this.visProp.snapsizex,
-                sY = this.visProp.snapsizey;
+                sX = Type.evaluate(this.visProp.snapsizex),
+                sY = Type.evaluate(this.visProp.snapsizey);
 
             if (!Type.exists(this.coords)) {
                 return this;
             }
 
-            needsSnapToGrid = this.visProp.snaptogrid || force === true;
-
-            // Test if in any of the groups this element is member of
-            // there is an element with snaptogrid == true.
-            /*
-            if (!needsSnapToGrid && Type.exists(this.groups)) {
-                len = this.groups.length;
-                for (i = 0; i < len; ++i) {
-                    g = this.board.groups[this.groups[i]];
-                    for (el in g.objects) {
-                        if (g.objects.hasOwnProperty(el)) {
-                            if (g.objects[el].point.visProp.snaptogrid) {
-                                needsSnapToGrid = true;
-                                // Leave both loops immediately
-                                i = len;
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-            */
+            needsSnapToGrid = Type.evaluate(this.visProp.snaptogrid) || force === true;
 
             if (needsSnapToGrid) {
                 x = this.coords.usrCoords[1];
@@ -1698,12 +1681,12 @@ define([
 
                 if (sX <= 0 && this.board.defaultAxes && this.board.defaultAxes.x.defaultTicks) {
                     ticks = this.board.defaultAxes.x.defaultTicks;
-                    sX = ticks.ticksDelta * (ticks.visProp.minorticks + 1);
+                    sX = ticks.ticksDelta * (Type.evaluate(ticks.visProp.minorticks) + 1);
                 }
 
                 if (sY <= 0 && this.board.defaultAxes && this.board.defaultAxes.y.defaultTicks) {
                     ticks = this.board.defaultAxes.y.defaultTicks;
-                    sY = ticks.ticksDelta * (ticks.visProp.minorticks + 1);
+                    sY = ticks.ticksDelta * (Type.evaluate(ticks.visProp.minorticks) + 1);
                 }
 
                 // if no valid snap sizes are available, don't change the coords.
