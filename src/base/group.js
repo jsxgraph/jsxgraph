@@ -108,7 +108,7 @@ define([
         for (i = 0; i < objArray.length; i++) {
             obj = this.board.select(objArray[i]);
 
-            if ((!obj.visProp.fixed) && Type.exists(obj.coords)) {
+            if ((!Type.evaluate(obj.visProp.fixed)) && Type.exists(obj.coords)) {
                 this.addPoint(obj);
             }
         }

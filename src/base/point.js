@@ -106,7 +106,8 @@ define([
          */
         hasPoint: function (x, y) {
             var coordsScr = this.coords.scrCoords, r;
-            r = parseFloat(this.visProp.size) + parseFloat(this.visProp.strokewidth) * 0.5;
+            r = parseFloat(Type.evaluate(this.visProp.size)) +
+                    parseFloat(Type.evaluate(this.visProp.strokewidth)) * 0.5;
             if (r < this.board.options.precision.hasPoint) {
                 r = this.board.options.precision.hasPoint;
             }
@@ -124,7 +125,7 @@ define([
 
             this.updateCoords(fromParent);
 
-            if (this.visProp.trace) {
+            if (Type.evaluate(this.visProp.trace)) {
                 this.cloneToBackground(true);
             }
 
@@ -164,7 +165,7 @@ define([
          * @private
          */
         updateRenderer: function () {
-            if (this.visProp.size > 0) {
+            if (Type.evaluate(this.visProp.size) > 0) {
                 this.updateRendererGeneric('updatePoint');
             }
             return this;
@@ -187,7 +188,8 @@ define([
             el1 = this.board.select(el1);
             el2 = this.board.select(el2);
 
-            func = Geometry.intersectionFunction(this.board, el1, el2, i, j, this.visProp.alwaysintersect);
+            func = Geometry.intersectionFunction(this.board, el1, el2, i, j,
+                    Type.evaluate(this.visProp.alwaysintersect));
             this.addConstraint([func]);
 
             try {
@@ -474,6 +476,7 @@ define([
 
         el = board.create('point', [0, 0, 0], attr);
 
+        // el.visProp.alwaysintersect is evaluated as late as in the returned function
         func = Geometry.intersectionFunction(board, el1, el2, i, j, el.visProp.alwaysintersect);
         el.addConstraint([func]);
 

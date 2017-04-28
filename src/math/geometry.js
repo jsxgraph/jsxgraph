@@ -961,15 +961,6 @@ define([
                     return that.meetCurveCurve(el1, el2, i, j, el1.board);
                 };
 
-            //} else if ((el1.type === Const.OBJECT_TYPE_ARC && el2.elementClass === Const.OBJECT_CLASS_LINE) ||
-//  //                (el2.type === Const.OBJECT_TYPE_ARC && el1.elementClass === Const.OBJECT_CLASS_LINE)) {
-                // arc - line   (arcs are of class curve, but are intersected like circles)
-                // TEMPORARY FIX!!!
-                /** @ignore */
-//  //            func = function () {
-                    //return that..meet(el1.stdform, el2.stdform, i, el1.board);
-                //};
-
             } else if ((el1.elementClass === Const.OBJECT_CLASS_CURVE && el2.elementClass === Const.OBJECT_CLASS_LINE) ||
                     (el2.elementClass === Const.OBJECT_CLASS_CURVE && el1.elementClass === Const.OBJECT_CLASS_LINE)) {
                 // curve - line (this includes intersections between conic sections and lines
@@ -994,7 +985,7 @@ define([
                      * of the segment or ray we call
                      * meetSegmentSegment
                      */
-                    if (!alwaysintersect && (!first1 || !last1 || !first2 || !last2)) {
+                    if (!Type.evaluate(alwaysintersect) && (!first1 || !last1 || !first2 || !last2)) {
                         res = that.meetSegmentSegment(
                             el1.point1.coords.usrCoords,
                             el1.point2.coords.usrCoords,
