@@ -151,13 +151,13 @@ define([
 
             if (!Type.exists(ticks.rendNode)) {
                 ticks.rendNode = this.createPrim('path', ticks.id);
-                this.appendChildPrim(ticks.rendNode, ticks.visProp.layer);
+                this.appendChildPrim(ticks.rendNode, Type.evaluate(ticks.visProp.layer));
             }
 
             this._setAttr(ticks.rendNode, 'stroked', 'true');
-            this._setAttr(ticks.rendNode, 'strokecolor', ticks.visProp.strokecolor, 1);
-            this._setAttr(ticks.rendNode, 'strokeweight', ticks.visProp.strokewidth);
-            this._setAttr(ticks.rendNodeStroke, 'opacity', (ticks.visProp.strokeopacity * 100) + '%');
+            this._setAttr(ticks.rendNode, 'strokecolor', Type.evaluate(ticks.visProp.strokecolor), 1);
+            this._setAttr(ticks.rendNode, 'strokeweight', Type.evaluate(ticks.visProp.strokewidth));
+            this._setAttr(ticks.rendNodeStroke, 'opacity', (Type.evaluate(ticks.visProp.strokeopacity) * 100) + '%');
             this.updatePathPrim(ticks.rendNode, tickArr, ticks.board);
         },
 
@@ -191,13 +191,6 @@ define([
             var node;
             node = this.createNode('textbox');
             node.style.position = 'absolute';
-            /*
-             if (this.container.ownerDocument.documentMode === 8) {                 // IE 8
-             node.setAttribute('class', el.visProp.cssclass);
-             } else {
-             node.setAttribute(this.container.ownerDocument.all ? 'className' : 'class', el.visProp.cssclass);
-             }
-             */
             el.rendNodeText = this.container.ownerDocument.createTextNode('');
             node.appendChild(el.rendNodeText);
             this.appendChildPrim(node, 9);
@@ -213,22 +206,24 @@ define([
                 offset = [0, 0],
                 maxX, maxY, minX, minY, i,
                 node = el.rendNode,
-                p = [];
+                p = [],
+                ev_ax = Type.evaluate(el.visProp.anchorx),
+                ev_ay = Type.evaluate(el.visProp.anchory);
 
             if (!isNaN(el.coords.scrCoords[1] + el.coords.scrCoords[2])) {
                 // Horizontal
-                if (el.visProp.anchorx === 'right') {
+                if (ev_ax === 'right') {
                     offset[0] = 1;
-                } else if (el.visProp.anchorx === 'middle') {
+                } else if (ev_ax === 'middle') {
                     offset[0] = 0.5;
-                } // default (el.visProp.anchorx === 'left') offset[0] = 0;
+                } // default (ev_ax === 'left') offset[0] = 0;
 
                 // Vertical
-                if (el.visProp.anchory === 'bottom') {
+                if (ev_ay === 'bottom') {
                     offset[1] = 1;
-                } else if (el.visProp.anchory === 'middle') {
+                } else if (ev_ay === 'middle') {
                     offset[1] = 0.5;
-                } // default (el.visProp.anchory === 'top') offset[1] = 0;
+                } // default (ev_ay === 'top') offset[1] = 0;
 
                 // Compute maxX, maxY, minX, minY
                 p[0] = Mat.matVecMult(m, [1,
@@ -265,7 +260,7 @@ define([
 
                 // Horizontal
                 v = offset[0] === 1 ? Math.floor(el.board.canvasWidth - maxX) : Math.floor(minX);
-                if (el.visPropOld.left !== (el.visProp.anchorx + v)) {
+                if (el.visPropOld.left !== (ev_ax + v)) {
                     if (offset[0] === 1) {
                         el.rendNode.style.right = v + 'px';
                         el.rendNode.style.left = 'auto';
@@ -273,12 +268,12 @@ define([
                         el.rendNode.style.left = v + 'px';
                         el.rendNode.style.right = 'auto';
                     }
-                    el.visPropOld.left = el.visProp.anchorx + v;
+                    el.visPropOld.left = ev_ax + v;
                 }
 
                 // Vertical
                 v = offset[1] === 1 ? Math.floor(el.board.canvasHeight - maxY) : Math.floor(minY);
-                if (el.visPropOld.top !== (el.visProp.anchory + v)) {
+                if (el.visPropOld.top !== (ev_ay + v)) {
                     if (offset[1] === 1) {
                         el.rendNode.style.bottom = v + 'px';
                         el.rendNode.style.top = 'auto';
@@ -286,7 +281,7 @@ define([
                         el.rendNode.style.top = v + 'px';
                         el.rendNode.style.bottom = 'auto';
                     }
-                    el.visPropOld.top = el.visProp.anchory + v;
+                    el.visPropOld.top = ev_ay + v;
                 }
 
             }
@@ -318,7 +313,7 @@ define([
             this._setAttr(node, 'id', this.container.id + '_' + el.id);
 
             this.container.appendChild(node);
-            this.appendChildPrim(node, el.visProp.layer);
+            this.appendChildPrim(node, Type.evaluate(el.visProp.layer));
 
             // Adding the rotation filter. This is always filter item 0:
             // node.filters.item(0), see transformImage
@@ -463,13 +458,15 @@ define([
 
         // already documented in JXG.AbstractRenderer
         makeArrows: function (el) {
-            var nodeStroke;
+            var nodeStroke,
+                ev_fa = Type.evaluate(el.visProp.firstarrow),
+                ev_la = Type.evaluate(el.visProp.lastarrow);
 
-            if (el.visPropOld.firstarrow === el.visProp.firstarrow && el.visPropOld.lastarrow === el.visProp.lastarrow) {
+            if (el.visPropOld.firstarrow === ev_fa && el.visPropOld.lastarrow === ev_la) {
                 return;
             }
 
-            if (el.visProp.firstarrow) {
+            if (ev_fa) {
                 nodeStroke = el.rendNodeStroke;
                 this._setAttr(nodeStroke, 'startarrow', 'block');
                 this._setAttr(nodeStroke, 'startarrowlength', 'long');
@@ -480,7 +477,7 @@ define([
                 }
             }
 
-            if (el.visProp.lastarrow) {
+            if (ev_la) {
                 nodeStroke = el.rendNodeStroke;
                 this._setAttr(nodeStroke, 'id', this.container.id + '_' + el.id + "stroke");
                 this._setAttr(nodeStroke, 'endarrow', 'block');
@@ -491,8 +488,8 @@ define([
                     this._setAttr(nodeStroke, 'endarrow', 'none');
                 }
             }
-            el.visPropOld.firstarrow = el.visProp.firstarrow;
-            el.visPropOld.lastarrow = el.visProp.lastarrow;
+            el.visPropOld.firstarrow = ev_fa;
+            el.visPropOld.lastarrow = ev_la;
         },
 
         // already documented in JXG.AbstractRenderer
@@ -601,7 +598,6 @@ define([
                 symbl = ' l ',
                 symbc = ' c ',
                 nextSymb = symbm,
-                // isNotPlot = (el.visProp.curvetype !== 'plot'),
                 len = Math.min(el.numberPoints, 8192); // otherwise IE 7 crashes in hilbert.html
 
             if (el.numberPoints <= 0) {
@@ -667,13 +663,13 @@ define([
         updatePathStringBezierPrim: function (el) {
             var i, j, k, scr, lx, ly,
                 pStr = [],
-                f = el.visProp.strokewidth,
+                f = Type.evaluate(el.visProp.strokewidth),
                 r = this.resolution,
                 mround = Math.round,
                 symbm = ' m ',
                 symbl = ' c ',
                 nextSymb = symbm,
-                isNoPlot = (el.visProp.curvetype !== 'plot'),
+                isNoPlot = (Type.evaluate(el.visProp.curvetype) !== 'plot'),
                 len = Math.min(el.numberPoints, 8192); // otherwise IE 7 crashes in hilbert.html
 
             if (el.numberPoints <= 0) {
@@ -831,18 +827,20 @@ define([
 
         // already documented in JXG.AbstractRenderer
         setGradient: function (el) {
-            var nodeFill = el.rendNodeFill;
+            var nodeFill = el.rendNodeFill,
+                ev_g = Type.evaluate(el.visProp.gradient);
 
-            if (el.visProp.gradient === 'linear') {
+            if (ev_g === 'linear') {
                 this._setAttr(nodeFill, 'type', 'gradient');
-                this._setAttr(nodeFill, 'color2', el.visProp.gradientsecondcolor);
-                this._setAttr(nodeFill, 'opacity2', el.visProp.gradientsecondopacity);
-                this._setAttr(nodeFill, 'angle', el.visProp.gradientangle);
-            } else if (el.visProp.gradient === 'radial') {
+                this._setAttr(nodeFill, 'color2', Type.evaluate(el.visProp.gradientsecondcolor));
+                this._setAttr(nodeFill, 'opacity2', Type.evaluate(el.visProp.gradientsecondopacity));
+                this._setAttr(nodeFill, 'angle', Type.evaluate(el.visProp.gradientangle));
+            } else if (ev_g === 'radial') {
                 this._setAttr(nodeFill, 'type', 'gradientradial');
-                this._setAttr(nodeFill, 'color2', el.visProp.gradientsecondcolor);
-                this._setAttr(nodeFill, 'opacity2', el.visProp.gradientsecondopacity);
-                this._setAttr(nodeFill, 'focusposition', el.visProp.gradientpositionx * 100 + '%,' + el.visProp.gradientpositiony * 100 + '%');
+                this._setAttr(nodeFill, 'color2', Type.evaluate(el.visProp.gradientsecondcolor));
+                this._setAttr(nodeFill, 'opacity2', Type.evaluate(el.visProp.gradientsecondopacity));
+                this._setAttr(nodeFill, 'focusposition', Type.evaluate(el.visProp.gradientpositionx) * 100 + '%,' +
+                            Type.evaluate(el.visProp.gradientpositiony) * 100 + '%');
                 this._setAttr(nodeFill, 'focussize', '0,0');
             } else {
                 this._setAttr(nodeFill, 'type', 'solid');
@@ -990,13 +988,14 @@ define([
 
         // already documented in JXG.AbstractRenderer
         setShadow: function (el) {
-            var nodeShadow = el.rendNodeShadow;
+            var nodeShadow = el.rendNodeShadow,
+                ev_s = Type.evaluate(el.visProp.shadow);
 
-            if (!nodeShadow || el.visPropOld.shadow === el.visProp.shadow) {
+            if (!nodeShadow || el.visPropOld.shadow === ev_s) {
                 return;
             }
 
-            if (el.visProp.shadow) {
+            if (ev_s) {
                 this._setAttr(nodeShadow, 'On', 'True');
                 this._setAttr(nodeShadow, 'Offset', '3pt,3pt');
                 this._setAttr(nodeShadow, 'Opacity', '60%');
@@ -1005,7 +1004,7 @@ define([
                 this._setAttr(nodeShadow, 'On', 'False');
             }
 
-            el.visPropOld.shadow = el.visProp.shadow;
+            el.visPropOld.shadow = ev_s;
         },
 
         /* **************************
