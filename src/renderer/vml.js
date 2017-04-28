@@ -400,14 +400,14 @@ define([
         },
 
         // already documented in JXG.AbstractRenderer
-        appendNodesToElement: function (element, type) {
+        appendNodesToElement: function (el, type) {
             if (type === 'shape' || type === 'path' || type === 'polygon') {
-                element.rendNodePath = this.getElementById(element.id + '_path');
+                el.rendNodePath = this.getElementById(el.id + '_path');
             }
-            element.rendNodeFill = this.getElementById(element.id + '_fill');
-            element.rendNodeStroke = this.getElementById(element.id + '_stroke');
-            element.rendNodeShadow = this.getElementById(element.id + '_shadow');
-            element.rendNode = this.getElementById(element.id);
+            el.rendNodeFill = this.getElementById(el.id + '_fill');
+            el.rendNodeStroke = this.getElementById(el.id + '_stroke');
+            el.rendNodeShadow = this.getElementById(el.id + '_shadow');
+            el.rendNode = this.getElementById(el.id);
         },
 
         // already documented in JXG.AbstractRenderer
