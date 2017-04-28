@@ -592,8 +592,8 @@ define([
                 margin = 10;
             }
 
-            straightFirst = el.visProp.straightfirst;
-            straightLast = el.visProp.straightlast;
+            straightFirst = Type.evaluate(el.visProp.straightfirst);
+            straightLast = Type.evaluate(el.visProp.straightlast);
 
             // If one of the point is an ideal point in homogeneous coordinates
             // drawing of line segments or rays are not possible.
@@ -736,8 +736,8 @@ define([
                 takePoint1 = false,
                 takePoint2 = false;
 
-            straightFirst = el.visProp.straightfirst;
-            straightLast = el.visProp.straightlast;
+            straightFirst = Type.evaluate(el.visProp.straightfirst);
+            straightLast = Type.evaluate(el.visProp.straightlast);
 
             // If one of the point is an ideal point in homogeneous coordinates
             // drawing of line segments or rays are not possible.
@@ -974,10 +974,10 @@ define([
                 /** @ignore */
                 func = function () {
                     var res, c,
-                        first1 = el1.visProp.straightfirst,
-                        first2 = el2.visProp.straightfirst,
-                        last1 = el1.visProp.straightlast,
-                        last2 = el2.visProp.straightlast;
+                        first1, first2, last1, last2;
+
+                    first1 = first2 = Type.evaluate(el1.visProp.straightfirst);
+                    last1 = last2 = Type.evaluate(el1.visProp.straightlast);
 
                     /**
                      * If one of the lines is a segment or ray and
@@ -1302,7 +1302,7 @@ define([
                 li = el1;
             }
 
-            if (cu.visProp.curvetype === 'plot') {
+            if (Type.evaluate(cu.visProp.curvetype) === 'plot') {
                 v = this.meetCurveLineDiscrete(cu, li, nr, board, !alwaysIntersect);
             } else {
                 v = this.meetCurveLineContinuous(cu, li, nr, board);
@@ -1474,7 +1474,9 @@ define([
                 lip2 = li.point2.coords.usrCoords,
                 d, res,
                 cnt = 0,
-                len = cu.numberPoints;
+                len = cu.numberPoints,
+                vp_sf = Type.evaluate(li.visProp.straightfirst),
+                vp_sl = Type.evaluate(li.visProp.straightlast);
 
             // In case, no intersection will be found we will take this
             q = new Coords(Const.COORDS_BY_USER, [0, NaN, NaN], board);
@@ -1519,8 +1521,8 @@ define([
                                 * This prevents jumping of the intersection points.
                                 * But it may be discussed if it is the desired behavior.
                                 */
-                                if (testSegment && ((!li.visProp.straightfirst && p[2] < 0) ||
-                                        (!li.visProp.straightlast && p[2] > 1))) {
+                                if (testSegment &&
+                                        ((!vp_sf && p[2] < 0) || (!vp_sl && p[2] > 1))) {
                                     return q;  // break;
                                 }
 
@@ -2192,7 +2194,7 @@ define([
                 board = curve.board;
             }
 
-            if (curve.visProp.curvetype === 'plot') {
+            if (Type.evaluate(curve.visProp.curvetype) === 'plot') {
                 t = 0;
                 mindist = infty;
 
