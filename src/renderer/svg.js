@@ -212,19 +212,21 @@ define([
             var node2, node3,
                 id = element.id + 'Triangle',
                 type = null,
-                w, s;
+                w, s,
+                ev_fa = Type.evaluate(element.visProp.firstarrow),
+                ev_la = Type.evaluate(element.visProp.lastarrow);
 
             if (Type.exists(idAppendix)) {
                 id += idAppendix;
             }
             node2 = this.createPrim('marker', id);
 
-            node2.setAttributeNS(null, 'stroke', 'red'); //Type.evaluate(element.visProp.strokecolor));
+            node2.setAttributeNS(null, 'stroke', Type.evaluate(element.visProp.strokecolor));
             node2.setAttributeNS(null, 'stroke-opacity', Type.evaluate(element.visProp.strokeopacity));
-            node2.setAttributeNS(null, 'fill', 'red'); //Type.evaluate(element.visProp.strokecolor));
+            node2.setAttributeNS(null, 'fill', Type.evaluate(element.visProp.strokecolor));
             node2.setAttributeNS(null, 'fill-opacity', Type.evaluate(element.visProp.strokeopacity));
             node2.setAttributeNS(null, 'stroke-width', 0);  // this is the stroke-width of the arrow head.
-                                                            // Should be zero to make the positioning easy
+                                                            // Should be zero to simplify the calculations
 
             node2.setAttributeNS(null, 'orient', 'auto');
             node2.setAttributeNS(null, 'markerUnits', 'strokeWidth'); // 'strokeWidth' 'userSpaceOnUse');
@@ -241,8 +243,8 @@ define([
             node3 = this.container.ownerDocument.createElementNS(this.svgNamespace, 'path');
             if (idAppendix === 'End') {
                 // First arrow
-                if (JXG.exists(element.visProp.firstarrow.type)) {
-                    type = element.visProp.firstarrow.type;
+                if (JXG.exists(ev_fa.type)) {
+                    type = Type.evaluate(ev_fa.type);
                 }
 
                 node2.setAttributeNS(null, 'refY', 5);
@@ -258,8 +260,8 @@ define([
                 }
             } else {
                 // Last arrow
-                if (JXG.exists(element.visProp.lastarrow.type)) {
-                    type = element.visProp.lastarrow.type;
+                if (JXG.exists(ev_la.type)) {
+                    type = Type.evaluate(ev_la.type);
                 }
 
                 node2.setAttributeNS(null, 'refY', 5);
@@ -362,13 +364,13 @@ define([
 
             if (!Type.exists(node)) {
                 node = this.createPrim('path', ticks.id);
-                this.appendChildPrim(node, ticks.visProp.layer);
+                this.appendChildPrim(node, Type.evaluate(ticks.visProp.layer));
                 ticks.rendNode = node;
             }
 
-            node.setAttributeNS(null, 'stroke', ticks.visProp.strokecolor);
-            node.setAttributeNS(null, 'stroke-opacity', ticks.visProp.strokeopacity);
-            node.setAttributeNS(null, 'stroke-width', ticks.visProp.strokewidth);
+            node.setAttributeNS(null, 'stroke', Type.evaluate(ticks.visProp.strokecolor));
+            node.setAttributeNS(null, 'stroke-opacity', Type.evaluate(ticks.visProp.strokeopacity));
+            node.setAttributeNS(null, 'stroke-width', Type.evaluate(ticks.visProp.strokewidth));
             this.updatePathPrim(node, tickStr, ticks.board);
         },
 
@@ -392,7 +394,6 @@ define([
         drawInternalText: function (el) {
             var node = this.createPrim('text', el.id);
 
-            //node.setAttributeNS(null, "class", el.visProp.cssclass);
             //node.setAttributeNS(null, "style", "alignment-baseline:middle"); // Not yet supported by Firefox
 
             // Preserve spaces
@@ -400,51 +401,53 @@ define([
 
             el.rendNodeText = this.container.ownerDocument.createTextNode('');
             node.appendChild(el.rendNodeText);
-            this.appendChildPrim(node,  el.visProp.layer);
+            this.appendChildPrim(node,  Type.evaluate(el.visProp.layer));
 
             return node;
         },
 
         // already documented in JXG.AbstractRenderer
         updateInternalText: function (el) {
-            var content = el.plaintext, v;
+            var content = el.plaintext, v,
+                ev_ax = Type.evaluate(el.visProp.anchorx),
+                ev_ay = Type.evaluate(el.visProp.anchory);
 
             if (el.rendNode.getAttributeNS(null, "class") !== el.visProp.cssclass) {
-                el.rendNode.setAttributeNS(null, "class", el.visProp.cssclass);
+                el.rendNode.setAttributeNS(null, "class", Type.evaluate(el.visProp.cssclass));
                 el.needsSizeUpdate = true;
             }
-            if (!isNaN(el.coords.scrCoords[1] + el.coords.scrCoords[2])) {
 
+            if (!isNaN(el.coords.scrCoords[1] + el.coords.scrCoords[2])) {
                 // Horizontal
                 v = el.coords.scrCoords[1];
-                if (el.visPropOld.left !== (el.visProp.anchorx + v)) {
+                if (el.visPropOld.left !== (ev_ax + v)) {
                     el.rendNode.setAttributeNS(null, 'x', v + 'px');
 
-                    if (el.visProp.anchorx === 'left') {
+                    if (ev_ax === 'left') {
                         el.rendNode.setAttributeNS(null, 'text-anchor', 'start');
-                    } else if (el.visProp.anchorx === 'right') {
+                    } else if (ev_ax === 'right') {
                         el.rendNode.setAttributeNS(null, 'text-anchor', 'end');
-                    } else if (el.visProp.anchorx === 'middle') {
+                    } else if (ev_ax === 'middle') {
                         el.rendNode.setAttributeNS(null, 'text-anchor', 'middle');
                     }
-                    el.visPropOld.left = el.visProp.anchorx + v;
+                    el.visPropOld.left = ev_ax + v;
                 }
 
                 // Vertical
                 v = el.coords.scrCoords[2];
-                if (el.visPropOld.top !== (el.visProp.anchory + v)) {
+                if (el.visPropOld.top !== (ev_ay + v)) {
                     el.rendNode.setAttributeNS(null, 'y', (v + this.vOffsetText * 0.5) + 'px');
 
-                    if (el.visProp.anchory === 'bottom') {
+                    if (ev_ay === 'bottom') {
                         el.rendNode.setAttributeNS(null, 'dominant-baseline', 'text-after-edge');
-                    } else if (el.visProp.anchory === 'top') {
+                    } else if (ev_ay === 'top') {
                         el.rendNode.setAttributeNS(null, 'dy', '1.6ex');
                         //el.rendNode.setAttributeNS(null, 'dominant-baseline', 'text-before-edge'); // Not supported by IE, edge
-                    } else if (el.visProp.anchory === 'middle') {
+                    } else if (ev_ay === 'middle') {
                         //el.rendNode.setAttributeNS(null, 'dominant-baseline', 'middle');
                         el.rendNode.setAttributeNS(null, 'dy', '0.6ex');
                     }
-                    el.visPropOld.top = el.visProp.anchory + v;
+                    el.visPropOld.top = ev_ay + v;
                 }
             }
             if (el.htmlStr !== content) {
@@ -474,7 +477,7 @@ define([
             var node = this.createPrim('image', el.id);
 
             node.setAttributeNS(null, 'preserveAspectRatio', 'none');
-            this.appendChildPrim(node, el.visProp.layer);
+            this.appendChildPrim(node, Type.evaluate(el.visProp.layer));
             el.rendNode = node;
 
             this.updateImage(el);
@@ -504,7 +507,7 @@ define([
 
         // already documented in JXG.AbstractRenderer
         updateImageStyle: function (el, doHighlight) {
-            var css = doHighlight ? el.visProp.highlightcssclass : el.visProp.cssclass;
+            var css = Type.evaluate(doHighlight ? el.visProp.highlightcssclass : el.visProp.cssclass);
 
             el.rendNode.setAttributeNS(null, 'class', css);
         },
@@ -547,18 +550,20 @@ define([
 
         // already documented in JXG.AbstractRenderer
         makeArrows: function (el) {
-            var node2;
+            var node2,
+                ev_fa = Type.evaluate(el.visProp.firstarrow),
+                ev_la = Type.evaluate(el.visProp.lastarrow);
 
-            if (el.visPropOld.firstarrow === el.visProp.firstarrow &&
-                el.visPropOld.lastarrow === el.visProp.lastarrow) {
+            if (el.visPropOld.firstarrow === ev_fa &&
+                el.visPropOld.lastarrow === ev_la) {
                 if (this.isIE && el.visProp.visible &&
-                    (el.visProp.firstarrow || el.visProp.lastarrow)) {
+                    (ev_fa || ev_la)) {
                     el.rendNode.parentNode.insertBefore(el.rendNode, el.rendNode);
                 }
                 return;
             }
 
-            if (el.visProp.firstarrow) {
+            if (ev_fa) {
                 node2 = el.rendNodeTriangleStart;
                 if (!Type.exists(node2)) {
                     node2 = this._createArrowHead(el, 'End');
@@ -574,7 +579,7 @@ define([
                     this.remove(node2);
                 }
             }
-            if (el.visProp.lastarrow) {
+            if (ev_la) {
                 node2 = el.rendNodeTriangleEnd;
                 if (!Type.exists(node2)) {
                     node2 = this._createArrowHead(el, 'Start');
@@ -590,8 +595,8 @@ define([
                     this.remove(node2);
                 }
             }
-            el.visPropOld.firstarrow = el.visProp.firstarrow;
-            el.visPropOld.lastarrow = el.visProp.lastarrow;
+            el.visPropOld.firstarrow = ev_fa;
+            el.visPropOld.lastarrow = ev_la;
         },
 
         // already documented in JXG.AbstractRenderer
@@ -695,7 +700,6 @@ define([
                 nextSymb = symbm,
                 maxSize = 5000.0,
                 pStr = '';
-                // isNotPlot = (el.visProp.curvetype !== 'plot');
 
             if (el.numberPoints <= 0) {
                 return '';
@@ -704,13 +708,6 @@ define([
             len = Math.min(el.points.length, el.numberPoints);
 
             if (el.bezierDegree === 1) {
-                /*
-                if (isNotPlot && el.visProp.rdpsmoothing) {
-                    el.points = Numerics.RamerDouglasPeucker(el.points, 0.5);
-                    el.numberPoints = el.points.length;
-                }
-                */
-
                 for (i = 0; i < len; i++) {
                     scr = el.points[i].scrCoords;
                     if (isNaN(scr[1]) || isNaN(scr[2])) {  // PenUp
@@ -758,8 +755,8 @@ define([
                 nextSymb = symbm,
                 maxSize = 5000.0,
                 pStr = '',
-                f = el.visProp.strokewidth,
-                isNoPlot = (el.visProp.curvetype !== 'plot');
+                f = Type.evaluate(el.visProp.strokewidth),
+                isNoPlot = (Type.evaluate(el.visProp.curvetype) !== 'plot');
 
             if (el.numberPoints <= 0) {
                 return '';
@@ -881,9 +878,10 @@ define([
 
         // documented in JXG.AbstractRenderer
         setDashStyle: function (el) {
-            var dashStyle = el.visProp.dash, node = el.rendNode;
+            var dashStyle = Type.evaluate(el.visProp.dash),
+                node = el.rendNode;
 
-            if (el.visProp.dash > 0) {
+            if (dashStyle > 0) {
                 node.setAttributeNS(null, 'stroke-dasharray', this.dashArray[dashStyle - 1]);
             } else {
                 if (node.hasAttributeNS(null, 'stroke-dasharray')) {
@@ -895,14 +893,14 @@ define([
         // documented in JXG.AbstractRenderer
         setGradient: function (el) {
             var fillNode = el.rendNode, col, op,
-                node, node2, node3, x1, x2, y1, y2;
+                node, node2, node3, x1, x2, y1, y2,
+                ev_g = Type.evaluate(el.visProp.gradient);
 
             op = Type.evaluate(el.visProp.fillopacity);
             op = (op > 0) ? op : 0;
-
             col = Type.evaluate(el.visProp.fillcolor);
 
-            if (el.visProp.gradient === 'linear') {
+            if (ev_g === 'linear') {
                 node = this.createPrim('linearGradient', el.id + '_gradient');
                 x1 = '0%';
                 x2 = '100%';
@@ -918,25 +916,27 @@ define([
                 node2.setAttributeNS(null, 'style', 'stop-color:' + col + ';stop-opacity:' + op);
                 node3 = this.createPrim('stop', el.id + '_gradient2');
                 node3.setAttributeNS(null, 'offset', '100%');
-                node3.setAttributeNS(null, 'style', 'stop-color:' + el.visProp.gradientsecondcolor + ';stop-opacity:' + el.visProp.gradientsecondopacity);
+                node3.setAttributeNS(null, 'style', 'stop-color:' + Type.evaluate(el.visProp.gradientsecondcolor) +
+                            ';stop-opacity:' + Type.evaluate(el.visProp.gradientsecondopacity));
                 node.appendChild(node2);
                 node.appendChild(node3);
                 this.defs.appendChild(node);
                 fillNode.setAttributeNS(null, 'style', 'fill:url(#' + this.container.id + '_' + el.id + '_gradient)');
                 el.gradNode1 = node2;
                 el.gradNode2 = node3;
-            } else if (el.visProp.gradient === 'radial') {
+            } else if (ev_g === 'radial') {
                 node = this.createPrim('radialGradient', el.id + '_gradient');
 
                 node.setAttributeNS(null, 'cx', '50%');
                 node.setAttributeNS(null, 'cy', '50%');
                 node.setAttributeNS(null, 'r', '50%');
-                node.setAttributeNS(null, 'fx', el.visProp.gradientpositionx * 100 + '%');
-                node.setAttributeNS(null, 'fy', el.visProp.gradientpositiony * 100 + '%');
+                node.setAttributeNS(null, 'fx', Type.evaluate(el.visProp.gradientpositionx) * 100 + '%');
+                node.setAttributeNS(null, 'fy', Type.evaluate(el.visProp.gradientpositiony) * 100 + '%');
 
                 node2 = this.createPrim('stop', el.id + '_gradient1');
                 node2.setAttributeNS(null, 'offset', '0%');
-                node2.setAttributeNS(null, 'style', 'stop-color:' + el.visProp.gradientsecondcolor + ';stop-opacity:' + el.visProp.gradientsecondopacity);
+                node2.setAttributeNS(null, 'style', 'stop-color:' + Type.evaluate(el.visProp.gradientsecondcolor) +
+                                ';stop-opacity:' + Type.evaluate(el.visProp.gradientsecondopacity));
                 node3 = this.createPrim('stop', el.id + '_gradient2');
                 node3.setAttributeNS(null, 'offset', '100%');
                 node3.setAttributeNS(null, 'style', 'stop-color:' + col + ';stop-opacity:' + op);
@@ -956,7 +956,8 @@ define([
         updateGradient: function (el) {
             var col, op,
                 node2 = el.gradNode1,
-                node3 = el.gradNode2;
+                node3 = el.gradNode2,
+                ev_g = Type.evaluate(el.visProp.gradient);
 
             if (!Type.exists(node2) || !Type.exists(node3)) {
                 return;
@@ -964,14 +965,15 @@ define([
 
             op = Type.evaluate(el.visProp.fillopacity);
             op = (op > 0) ? op : 0;
-
             col = Type.evaluate(el.visProp.fillcolor);
 
-            if (el.visProp.gradient === 'linear') {
+            if (ev_g === 'linear') {
                 node2.setAttributeNS(null, 'style', 'stop-color:' + col + ';stop-opacity:' + op);
-                node3.setAttributeNS(null, 'style', 'stop-color:' + el.visProp.gradientsecondcolor + ';stop-opacity:' + el.visProp.gradientsecondopacity);
-            } else if (el.visProp.gradient === 'radial') {
-                node2.setAttributeNS(null, 'style', 'stop-color:' + el.visProp.gradientsecondcolor + ';stop-opacity:' + el.visProp.gradientsecondopacity);
+                node3.setAttributeNS(null, 'style', 'stop-color:' + Type.evaluate(el.visProp.gradientsecondcolor) +
+                        ';stop-opacity:' + Type.evaluate(el.visProp.gradientsecondopacity));
+            } else if (ev_g === 'radial') {
+                node2.setAttributeNS(null, 'style', 'stop-color:' + Type.evaluate(el.visProp.gradientsecondcolor) +
+                        ';stop-opacity:' + Type.evaluate(el.visProp.gradientsecondopacity));
                 node3.setAttributeNS(null, 'style', 'stop-color:' + col + ';stop-opacity:' + op);
             }
         },
@@ -985,11 +987,11 @@ define([
                          'rendNodeTriangleEnd'];
 
             if (duration === undefined) {
-                duration = el.visProp.transitionduration;
+                duration = Type.evaluate(el.visProp.transitionduration);
             }
 
             if (el.elementClass === Const.OBJECT_CLASS_TEXT &&
-                el.visProp.display === 'html') {
+                Type.evaluate(el.visProp.display) === 'html') {
                 transitionStr = ' color ' + duration + 'ms,' +
                             ' opacity ' + duration + 'ms';
             } else {
@@ -1115,7 +1117,7 @@ define([
                 node = el.rendNode;
 
                 if (el.elementClass === Const.OBJECT_CLASS_TEXT) {
-                    if (el.visProp.display === 'html') {
+                    if (Type.evaluate(el.visProp.display) === 'html') {
                         this._setAttribute(function() {
                                 node.style.color = c;
                                 node.style.opacity = oo;
@@ -1136,11 +1138,11 @@ define([
 
                 if (el.elementClass === Const.OBJECT_CLASS_CURVE ||
                     el.elementClass === Const.OBJECT_CLASS_LINE) {
-                    if (el.visProp.firstarrow) {
+                    if (Type.evaluate(el.visProp.firstarrow)) {
                         this._setArrowColor(el.rendNodeTriangleStart, c, oo, el);
                     }
 
-                    if (el.visProp.lastarrow) {
+                    if (Type.evaluate(el.visProp.lastarrow)) {
                         this._setArrowColor(el.rendNodeTriangleEnd, c, oo, el);
                     }
                 }
@@ -1167,11 +1169,11 @@ define([
 
                 // if (el.elementClass === Const.OBJECT_CLASS_CURVE ||
                 // el.elementClass === Const.OBJECT_CLASS_LINE) {
-                //     if (el.visProp.firstarrow) {
+                //     if (Type.evaluate(el.visProp.firstarrow)) {
                 //         this._setArrowWidth(el.rendNodeTriangleStart, w, el.rendNode);
                 //     }
                 //
-                //     if (el.visProp.lastarrow) {
+                //     if (Type.evaluate(el.visProp.lastarrow)) {
                 //         this._setArrowWidth(el.rendNodeTriangleEnd, w, el.rendNode);
                 //     }
                 // }
@@ -1181,7 +1183,7 @@ define([
 
         // documented in JXG.AbstractRenderer
         setLineCap: function (el) {
-            var capStyle = el.visProp.linecap;
+            var capStyle = Type.evaluate(el.visProp.linecap);
 
             if (capStyle === undefined || capStyle === '' || el.visPropOld.linecap === capStyle ||
                 !Type.exists(el.rendNode)) {
@@ -1195,18 +1197,19 @@ define([
 
         // documented in JXG.AbstractRenderer
         setShadow: function (el) {
-            if (el.visPropOld.shadow === el.visProp.shadow) {
+            var ev_s = Type.evaluate(el.visProp.shadow);
+            if (el.visPropOld.shadow === ev_s) {
                 return;
             }
 
             if (Type.exists(el.rendNode)) {
-                if (el.visProp.shadow) {
+                if (ev_s) {
                     el.rendNode.setAttributeNS(null, 'filter', 'url(#' + this.container.id + '_' + 'f1)');
                 } else {
                     el.rendNode.removeAttributeNS(null, 'filter');
                 }
             }
-            el.visPropOld.shadow = el.visProp.shadow;
+            el.visPropOld.shadow = ev_s;
         },
 
         /* **************************
