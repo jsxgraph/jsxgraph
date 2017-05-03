@@ -376,18 +376,18 @@ define([
         }
 
         // Save the visibility attribute of the sub-elements
-        for (el in p3.subs) {
-            p3.subs[el].status = {
-                visible: p3.subs[el].visProp.visible
-            };
-        }
+        // for (el in p3.subs) {
+        //     p3.subs[el].status = {
+        //         visible: p3.subs[el].visProp.visible
+        //     };
+        // }
 
         p3.hideElement = function () {
             var el;
             GeometryElement.prototype.hideElement.call(this);
 
             for (el in this.subs) {
-                this.subs[el].status.visible = this.subs[el].visProp.visible;
+                // this.subs[el].status.visible = this.subs[el].visProp.visible;
                 this.subs[el].hideElement();
             }
         };
@@ -397,9 +397,9 @@ define([
             GeometryElement.prototype.showElement.call(this);
 
             for (el in this.subs) {
-                if (this.subs[el].status.visible) {
-                    this.subs[el].showElement();
-                }
+//                if (this.subs[el].status.visible) {
+                this.subs[el].showElement();
+//                }
             }
         };
 

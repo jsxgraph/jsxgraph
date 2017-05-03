@@ -3725,7 +3725,7 @@ define([
 
         /**
          * Please use {@link JXG.Board#on} instead.
-         * @param {Function} hook A function to be called by the board after an update occured.
+         * @param {Function} hook A function to be called by the board after an update occurred.
          * @param {String} [m='update'] When the hook is to be called. Possible values are <i>mouseup</i>, <i>mousedown</i> and <i>update</i>.
          * @param {Object} [context=board] Determines the execution context the hook is called. This parameter is optional, default is the
          * board object the hook is attached to.
@@ -3788,7 +3788,7 @@ define([
 
         /**
          * Adds a dependent board to this board.
-         * @param {JXG.Board} board A reference to board which will be updated after an update of this board occured.
+         * @param {JXG.Board} board A reference to board which will be updated after an update of this board occurred.
          * @returns {JXG.Board} Reference to the board
          */
         addChild: function (board) {

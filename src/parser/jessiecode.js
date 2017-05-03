@@ -830,6 +830,62 @@ define([
         },
 
         /**
+         * Get abstract syntax tree (AST) from JessieCode code.
+         * This consists of generating an AST with parser.parse.
+         *
+         * @param {String} code
+         * @param {Boolean} [geonext=false] Geonext compatibility mode.
+         * @param {Boolean} dontstore
+         * @return {Node}  AST
+         */
+        getAST: function (code, geonext, dontstore) {
+            var i, setTextBackup, ast, result,
+                ccode = code.replace(/\r\n/g, '\n').split('\n'),
+                cleaned = [];
+
+            if (!dontstore) {
+                this.code += code + '\n';
+            }
+
+            if (Text) {
+                setTextBackup = Text.Text.prototype.setText;
+                Text.Text.prototype.setText = Text.Text.prototype.setTextJessieCode;
+            }
+
+            try {
+                if (!Type.exists(geonext)) {
+                    geonext = false;
+                }
+
+                for (i = 0; i < ccode.length; i++) {
+                    if (geonext) {
+                        ccode[i] = JXG.GeonextParser.geonext2JS(ccode[i], this.board);
+                    }
+                    cleaned.push(ccode[i]);
+                }
+
+                code = cleaned.join('\n');
+                ast = parser.parse(code);
+
+                if (false && this.CA) {
+                    ast = this.CA.expandDerivatives(ast, null, ast);
+                    //console.log(this.compile(ast));
+                    ast = this.CA.removeTrivialNodes(ast);
+                }
+                result = ast;
+            } catch (e) {  // catch is mandatory in old IEs
+                console.log(e);
+            } finally {
+                // make sure the original text method is back in place
+                if (Text) {
+                    Text.Text.prototype.setText = setTextBackup;
+                }
+            }
+
+            return result;
+        },
+
+        /**
          * Parses a JessieCode snippet, e.g. "3+4", and wraps it into a function, if desired.
          * @param {String} code A small snippet of JessieCode. Must not be an assignment.
          * @param {Boolean} funwrap If true, the code is wrapped in a function.
