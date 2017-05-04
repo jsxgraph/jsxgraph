@@ -1399,6 +1399,17 @@ define([
             /**#@-*/
         },
 
+        /* special options for Msector of 3 points */
+        msector: {
+            strokeColor: '#000000', // Msector line
+            point: {               // Msector point
+                visible: false,
+                fixed: false,
+                withLabel: false,
+                name: ''
+            }
+        },
+
         /* special button options */
         button: {
             /**#@+
