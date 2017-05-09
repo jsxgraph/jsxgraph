@@ -319,7 +319,8 @@ define([
 
                 makeRadPointFun = function (j, fun, xc) {
                     return function () {
-                        var s, t = 0, i, rad;
+                        var s, i, rad,
+                            t = 0;
 
                         for (i = 0; i <= j; i++) {
                             t += parseFloat(Type.evaluate(y[i]));

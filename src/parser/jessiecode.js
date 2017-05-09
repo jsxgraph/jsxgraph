@@ -719,15 +719,17 @@ define([
         },
 
         /**
-         * Parses JessieCode.
-         * This consists of generating an AST with parser.parse, apply simplifying rules
-         * from CA and executing the ast by calling this.execute(ast).
-         *
-         * @param {String} code
+         * Generic method to parse JessieCode.
+         * This consists of generating an AST with parser.parse,
+         * apply simplifying rules from CA and
+         * manipulate the AST according to the second parameter "cmd".
+         * @param  {String} code      JessieCode code to be parsed
+         * @param  {String} cmd       Type of manipulation to be done with AST
          * @param {Boolean} [geonext=false] Geonext compatibility mode.
-         * @param {Boolean} dontstore
+         * @param {Boolean} dontstore If false, the code string is stored in this.code.
+         * @return {Object}           Returns result of computation as directed in cmd.
          */
-        parse: function (code, geonext, dontstore) {
+        _genericParse:  function (code, cmd, geonext, dontstore) {
             var i, setTextBackup, ast, result,
                 ccode = code.replace(/\r\n/g, '\n').split('\n'),
                 cleaned = [];
@@ -759,7 +761,19 @@ define([
                     ast = this.CA.expandDerivatives(ast, null, ast);
                     ast = this.CA.removeTrivialNodes(ast);
                 }
-                result = this.execute(ast);
+                switch (cmd) {
+                    case 'parse':
+                        result = this.execute(ast);
+                        break;
+                    case 'manipulate':
+                        result = this.compile(ast);
+                        break;
+                    case 'getAst':
+                        result = ast;
+                        break;
+                    default:
+                        result = false;
+                }
             } catch (e) {  // catch is mandatory in old IEs
                 console.log(e);
             } finally {
@@ -773,60 +787,32 @@ define([
         },
 
         /**
-         * Manipulate JessieCode.
-         * This consists of generating an AST with parser.parse, apply simlifying rules from CA
-         * and compile the ast back to JessieCode.
+         * Parses JessieCode.
+         * This consists of generating an AST with parser.parse, apply simplifying rules
+         * from CA and executing the ast by calling this.execute(ast).
          *
-         * @param {String} code
+         * @param {String} code             JessieCode code to be parsed
          * @param {Boolean} [geonext=false] Geonext compatibility mode.
-         * @param {Boolean} dontstore
-         * @return {String}  Simplified code
+         * @param {Boolean} dontstore       If false, the code string is stored in this.code.
+         * @return {Object}                 Parse JessieCode code and execute it..
+         */
+        parse: function (code, geonext, dontstore) {
+            return this._genericParse(code, 'parse', geonext, dontstore);
+        },
+
+        /**
+         * Manipulate JessieCode.
+         * This consists of generating an AST with parser.parse,
+         * apply simlifying rules from CA
+         * and compile the AST back to JessieCode.
+         *
+         * @param {String} code             JessieCode code to be parsed
+         * @param {Boolean} [geonext=false] Geonext compatibility mode.
+         * @param {Boolean} dontstore       If false, the code string is stored in this.code.
+         * @return {String}                 Simplified JessieCode code
          */
         manipulate: function (code, geonext, dontstore) {
-            var i, setTextBackup, ast, result,
-                ccode = code.replace(/\r\n/g, '\n').split('\n'),
-                cleaned = [];
-
-            if (!dontstore) {
-                this.code += code + '\n';
-            }
-
-            if (Text) {
-                setTextBackup = Text.Text.prototype.setText;
-                Text.Text.prototype.setText = Text.Text.prototype.setTextJessieCode;
-            }
-
-            try {
-                if (!Type.exists(geonext)) {
-                    geonext = false;
-                }
-
-                for (i = 0; i < ccode.length; i++) {
-                    if (geonext) {
-                        ccode[i] = JXG.GeonextParser.geonext2JS(ccode[i], this.board);
-                    }
-                    cleaned.push(ccode[i]);
-                }
-
-                code = cleaned.join('\n');
-                ast = parser.parse(code);
-
-                if (this.CA) {
-                    ast = this.CA.expandDerivatives(ast, null, ast);
-                    //console.log(this.compile(ast));
-                    ast = this.CA.removeTrivialNodes(ast);
-                }
-                return this.compile(ast);
-            } catch (e) {  // catch is mandatory in old IEs
-                console.log(e);
-            } finally {
-                // make sure the original text method is back in place
-                if (Text) {
-                    Text.Text.prototype.setText = setTextBackup;
-                }
-            }
-
-            return result;
+            return this._genericParse(code, 'manipulate', geonext, dontstore);
         },
 
         /**
@@ -839,50 +825,7 @@ define([
          * @return {Node}  AST
          */
         getAST: function (code, geonext, dontstore) {
-            var i, setTextBackup, ast, result,
-                ccode = code.replace(/\r\n/g, '\n').split('\n'),
-                cleaned = [];
-
-            if (!dontstore) {
-                this.code += code + '\n';
-            }
-
-            if (Text) {
-                setTextBackup = Text.Text.prototype.setText;
-                Text.Text.prototype.setText = Text.Text.prototype.setTextJessieCode;
-            }
-
-            try {
-                if (!Type.exists(geonext)) {
-                    geonext = false;
-                }
-
-                for (i = 0; i < ccode.length; i++) {
-                    if (geonext) {
-                        ccode[i] = JXG.GeonextParser.geonext2JS(ccode[i], this.board);
-                    }
-                    cleaned.push(ccode[i]);
-                }
-
-                code = cleaned.join('\n');
-                ast = parser.parse(code);
-
-                if (false && this.CA) {
-                    ast = this.CA.expandDerivatives(ast, null, ast);
-                    //console.log(this.compile(ast));
-                    ast = this.CA.removeTrivialNodes(ast);
-                }
-                result = ast;
-            } catch (e) {  // catch is mandatory in old IEs
-                console.log(e);
-            } finally {
-                // make sure the original text method is back in place
-                if (Text) {
-                    Text.Text.prototype.setText = setTextBackup;
-                }
-            }
-
-            return result;
+            return this._genericParse(code, 'getAst', geonext, dontstore);
         },
 
         /**
