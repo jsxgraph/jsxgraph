@@ -1410,7 +1410,9 @@ define([
                 zbar, zbarDisplay,
                 cssTxt;
 
-            if (this.type === 'no') {        snippet: function (code, funwrap, varname, geonext) {
+            if (this.type === 'no') {
+                return;
+            }
 
             w = bas.scale * parseFloat(board.containerObj.style.width);
             h = bas.scale * parseFloat(board.containerObj.style.height);
