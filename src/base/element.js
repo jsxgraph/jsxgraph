@@ -1312,7 +1312,7 @@ define([
 
                     if (!Type.evaluate(this.visProp.visible)) {
                         this.label.hiddenByParent = true;
-                        this.label.visProp.visible = false;
+                        this.label.visPropCalc.visible = false;
                     }
                     this.hasLabel = true;
                 }
