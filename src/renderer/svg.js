@@ -1470,6 +1470,7 @@ define([
 
             // Create screenshot in canvas
             this.dumpToCanvas(id, w, h);
+            // Show image in img tag
             setTimeout(function() {
                 img.src = canvas.toDataURL('image/png');
             }, 400);

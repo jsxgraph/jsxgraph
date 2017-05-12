@@ -905,7 +905,6 @@ define([
 
         showElement: function () {
             var i;
-
             GeometryElement.prototype.showElement.call(this);
 
             for (i = 0; i < this.ticks.length; i++) {

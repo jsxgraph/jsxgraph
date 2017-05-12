@@ -832,6 +832,7 @@ define([
         hideElement: function () {
             this.visPropCalc.visible = false;
             this.board.renderer.hide(this);
+console.log('hide element', this.id);
 
             if (Type.exists(this.label) && this.hasLabel) {
                 this.label.hiddenByParent = true;
@@ -1041,6 +1042,8 @@ define([
                         } else {
                             this.visProp.visible = value;
                         }
+                        
+console.log("ShowElement", this.id, this.visProp.visible, this.visPropCalc.visible);
                         this.visPropCalc.visible = Type.evaluate(this.visProp.visible);
                         if (this.visPropCalc.visible) {
                             this.showElement();
@@ -1102,9 +1105,9 @@ define([
                         }
                         break;
                     case 'rotate':
-                        if ((this.elementClass === Const.OBJECT_CLASS_TEXT
-                                && Type.evaluate(this.visProp.display) === 'internal') ||
-                                this.type === Const.OBJECT_TYPE_IMAGE) {
+                        if ((this.elementClass === Const.OBJECT_CLASS_TEXT &&
+                             Type.evaluate(this.visProp.display) === 'internal') ||
+                            this.type === Const.OBJECT_TYPE_IMAGE) {
                             this.addRotation(value);
                         }
                         break;
