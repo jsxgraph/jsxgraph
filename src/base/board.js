@@ -3835,7 +3835,7 @@ define([
             if (this.attr.minimizereflow === 'svg' && this.renderer.type === 'svg') {
                 insert = this.renderer.removeToInsertLater(this.renderer.svgRoot);
             }
-            this.prepareUpdate().updateElements(drag).updateConditions();
+            this.prepareUpdate().updateElements(drag).updateConditions().updateVisibility();
 
             this.renderer.suspendRedraw(this);
             this.updateRenderer();

@@ -858,6 +858,10 @@ define([
             return this;
         },
 
+        updateVisibility: function() {
+            this.visPropCalc.visible = Type.evaluate(this.visProp.visible);
+        },
+
         /**
          * Sets the value of property <tt>property</tt> to <tt>value</tt>.
          * @param {String} property The property's name.
