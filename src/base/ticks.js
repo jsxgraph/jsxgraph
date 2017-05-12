@@ -872,7 +872,7 @@ define([
                     highlightStrokeColor: this.board.options.text.strokeColor,
                     highlightStrokeWidth: this.board.options.text.strokeWidth,
                     highlightStrokeOpacity: this.board.options.text.strokeOpacity,
-                    visible: this.visProp.visible,
+                    visible: this.visPropCalc.visible,
                     priv: this.visProp.priv
                 };
 
@@ -939,8 +939,7 @@ define([
          */
         update: function () {
             if (this.needsUpdate) {
-console.log("Ticks:", this.visProp.visible, this.visPropCalc.visible);
-                //this.visPropCalc.visible = Type.evaluate(this.visProp.visible);
+                this.visPropCalc.visible = Type.evaluate(this.visProp.visible);
                 // A canvas with no width or height will create an endless loop, so ignore it
                 if (this.board.canvasWidth !== 0 && this.board.canvasHeight !== 0) {
                     this.calculateTicksCoordinates();
@@ -968,7 +967,6 @@ console.log("Ticks:", this.visProp.visible, this.visPropCalc.visible);
 
             this.visPropCalc.visible = false;
             this.board.renderer.hide(this);
-console.log('TICKS hide');
             for (i = 0; i < this.labels.length; i++) {
                 if (Type.exists(this.labels[i])) {
                     this.labels[i].hideElement();
@@ -980,7 +978,6 @@ console.log('TICKS hide');
 
         showElement: function () {
             var i;
-console.log('Ticks show');
             this.visPropCalc.visible = true;
             this.board.renderer.show(this);
 

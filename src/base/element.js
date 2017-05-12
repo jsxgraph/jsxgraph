@@ -832,7 +832,6 @@ define([
         hideElement: function () {
             this.visPropCalc.visible = false;
             this.board.renderer.hide(this);
-console.log('hide element', this.id);
 
             if (Type.exists(this.label) && this.hasLabel) {
                 this.label.hiddenByParent = true;
@@ -1042,8 +1041,7 @@ console.log('hide element', this.id);
                         } else {
                             this.visProp.visible = value;
                         }
-                        
-console.log("ShowElement", this.id, this.visProp.visible, this.visPropCalc.visible);
+
                         this.visPropCalc.visible = Type.evaluate(this.visProp.visible);
                         if (this.visPropCalc.visible) {
                             this.showElement();
