@@ -382,26 +382,26 @@ define([
         //     };
         // }
 
-        p3.hideElement = function () {
-            var el;
-            GeometryElement.prototype.hideElement.call(this);
+        // p3.hideElement = function () {
+        //     var el;
+        //     GeometryElement.prototype.hideElement.call(this);
+        //
+        //     for (el in this.subs) {
+        //         // this.subs[el].status.visible = this.subs[el].visProp.visible;
+        //         this.subs[el].hideElement();
+        //     }
+        // };
 
-            for (el in this.subs) {
-                // this.subs[el].status.visible = this.subs[el].visProp.visible;
-                this.subs[el].hideElement();
-            }
-        };
-
-        p3.showElement = function () {
-            var el;
-            GeometryElement.prototype.showElement.call(this);
-
-            for (el in this.subs) {
-//                if (this.subs[el].status.visible) {
-                this.subs[el].showElement();
-//                }
-            }
-        };
+//         p3.showElement = function () {
+//             var el;
+//             GeometryElement.prototype.showElement.call(this);
+//
+//             for (el in this.subs) {
+// //                if (this.subs[el].status.visible) {
+//                 this.subs[el].showElement();
+// //                }
+//             }
+//         };
 
         return p3;
     };

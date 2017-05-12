@@ -3633,7 +3633,8 @@ define([
                 // For updates of an element we distinguish if the dragged element is updated or
                 // other elements are updated.
                 // The difference lies in the treatment of gliders.
-                pEl.update(!Type.exists(drag) || pEl.id !== drag.id);
+                pEl.update(!Type.exists(drag) || pEl.id !== drag.id)
+                   .updateVisibility();
 
                 /*
                 if (this.attr.updatetype === 'hierarchical') {
@@ -3835,7 +3836,7 @@ define([
             if (this.attr.minimizereflow === 'svg' && this.renderer.type === 'svg') {
                 insert = this.renderer.removeToInsertLater(this.renderer.svgRoot);
             }
-            this.prepareUpdate().updateElements(drag).updateConditions().updateVisibility();
+            this.prepareUpdate().updateElements(drag).updateConditions();
 
             this.renderer.suspendRedraw(this);
             this.updateRenderer();
@@ -3948,7 +3949,7 @@ define([
             }
 
             if (el.prepareUpdate && el.update && el.updateRenderer) {
-                el.prepareUpdate().update().updateRenderer();
+                el.prepareUpdate().update().updateVisibility().updateRenderer();
             }
             return el;
         },
@@ -4119,7 +4120,7 @@ define([
                             delete o.animationPath;
                         } else {
                             o.setPositionDirectly(Const.COORDS_BY_USER, newCoords);
-                            o.prepareUpdate().update().updateRenderer();
+                            o.prepareUpdate().update().updateVisibility().updateRenderer();
                             obj = o;
                         }
                     }
@@ -4246,7 +4247,7 @@ define([
                 this.elementsByName[dest.name] = dest;
             }
 
-            this.prepareUpdate().update().updateRenderer();
+            this.prepareUpdate().update().updateVisibility().updateRenderer();
 
             return this;
         },
@@ -4519,7 +4520,7 @@ define([
             this.selectionPolygon.setAttribute({visible: true});
             this.selectingBox = [[0, 0], [0, 0]];
             this._setSelectionPolygonFromBox();
-            this.selectionPolygon.prepareUpdate().update().updateRenderer();
+            this.selectionPolygon.prepareUpdate().update().updateVisibility().updateRenderer();
         },
 
         /**
@@ -4556,7 +4557,7 @@ define([
             if (this.isSelecting) {
                 this.selectingBox[1] = [pos[0], pos[1]];
                 this._setSelectionPolygonFromBox();
-                this.selectionPolygon.prepareUpdate().update().updateRenderer();
+                this.selectionPolygon.prepareUpdate().update().updateVisibility().updateRenderer();
             }
         },
 

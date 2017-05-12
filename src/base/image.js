@@ -175,7 +175,6 @@ define([
                 return this;
             }
 
-            this.visPropCalc.visible = Type.evaluate(this.visProp.visible);
             this.updateCoords(fromParent);
             this.updateSize();
             this.updateSpan();
@@ -275,7 +274,7 @@ define([
 
         /**
          * Set the width and height of the image. After setting a new size,
-         * board.update() or image.prepareUpdate().update().updateRenderer()
+         * board.update() or image.prepareUpdate().update().updateVisibility().updateRenderer()
          * has to be called to make the change visible.
          * @param  {number, function, string} width  Number, function or string
          *                            that determines the new width of the image
@@ -335,7 +334,7 @@ define([
             this.W = Type.createFunction(width, this.board, '');
             this.H = Type.createFunction(height, this.board, '');
 
-            // this.prepareUpdate().update().updateRenderer();
+            // this.prepareUpdate().update().updateVisibility().updateRenderer();
 
             return this;
         },

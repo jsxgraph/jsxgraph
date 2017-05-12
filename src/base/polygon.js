@@ -275,51 +275,51 @@ define([
          * @param {Boolean} [borderless=false] If set to true, the polygon is treated as a polygon without
          * borders, i.e. the borders will not be hidden.
          */
-        hideElement: function (borderless) {
-            var i;
-
-            this.visPropCalc.visible = false;
-            this.board.renderer.hide(this);
-
-            if (!borderless) {
-                for (i = 0; i < this.borders.length; i++) {
-                    this.borders[i].hideElement();
-                }
-            }
-
-            if (this.hasLabel && Type.exists(this.label)) {
-                this.label.hiddenByParent = true;
-                if (this.label.visPropCalc.visible) {
-                    this.label.hideElement();
-                }
-            }
-        },
+        // hideElement: function (borderless) {
+        //     var i;
+        //
+        //     this.visPropCalc.visible = false;
+        //     this.board.renderer.hide(this);
+        //
+        //     if (!borderless) {
+        //         for (i = 0; i < this.borders.length; i++) {
+        //             this.borders[i].hideElement();
+        //         }
+        //     }
+        //
+        //     if (this.hasLabel && Type.exists(this.label)) {
+        //         this.label.hiddenByParent = true;
+        //         if (this.label.visPropCalc.visible) {
+        //             this.label.hideElement();
+        //         }
+        //     }
+        // },
 
         /**
          * Make the element visible.
          * @param {Boolean} [borderless=false] If set to true, the polygon is treated as a polygon without
          * borders, i.e. the borders will not be shown.
          */
-        showElement: function (borderless) {
-            var i;
-
-            this.visPropCalc.visible = true;
-            this.board.renderer.show(this);
-
-            if (!borderless) {
-                for (i = 0; i < this.borders.length; i++) {
-                    this.borders[i].showElement();
-                    this.borders[i].updateRenderer();
-                }
-            }
-
-            if (Type.exists(this.label) && this.hasLabel && this.label.hiddenByParent) {
-                this.label.hiddenByParent = false;
-                if (!this.label.visPropCalc.visible) {
-                    this.label.showElement().updateRenderer();
-                }
-            }
-        },
+        // showElement: function (borderless) {
+        //     var i;
+        //
+        //     this.visPropCalc.visible = true;
+        //     this.board.renderer.show(this);
+        //
+        //     if (!borderless) {
+        //         for (i = 0; i < this.borders.length; i++) {
+        //             this.borders[i].showElement();
+        //             this.borders[i].updateRenderer();
+        //         }
+        //     }
+        //
+        //     if (Type.exists(this.label) && this.hasLabel && this.label.hiddenByParent) {
+        //         this.label.hiddenByParent = false;
+        //         if (!this.label.visPropCalc.visible) {
+        //             this.label.showElement().updateRenderer();
+        //         }
+        //     }
+        // },
 
         /**
          * Area of (not self-intersecting) polygon
@@ -1006,7 +1006,7 @@ define([
             rot = board.create('transform', [Math.PI * (2 - (n - 2) / n), p[i - 1]], {type: 'rotate'});
             if (pointsExist) {
                 p[i].addTransform(p[i - 2], rot);
-                p[i].prepareUpdate().update().updateRenderer();
+                p[i].prepareUpdate().update().updateVisibility().updateRenderer();
             } else {
                 if (Type.isArray(attr.ids) && attr.ids.length >= n - 2) {
                     attr.id = attr.ids[i - 2];

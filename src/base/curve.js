@@ -354,7 +354,6 @@ define([
          */
         update: function () {
             if (this.needsUpdate) {
-                this.visPropCalc.visible = Type.evaluate(this.visProp.visible);
                 if (Type.evaluate(this.visProp.trace)) {
                     this.cloneToBackground(true);
                 }

@@ -178,7 +178,7 @@ define([
         label._setText(function () {
             return Type.toFixed(el.Value(), Type.evaluate(label.visProp.digits));
         });
-        label.prepareUpdate().update().updateRenderer();
+        label.prepareUpdate().update().updateVisibility().updateRenderer();
 
         el.glider = glider;
         el.basepoint = basepoint;

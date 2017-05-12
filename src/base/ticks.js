@@ -872,7 +872,7 @@ define([
                     highlightStrokeColor: this.board.options.text.strokeColor,
                     highlightStrokeWidth: this.board.options.text.strokeWidth,
                     highlightStrokeOpacity: this.board.options.text.strokeOpacity,
-                    visible: this.visPropCalc.visible,
+                    visible: this.visProp.label.visible,
                     priv: this.visProp.priv
                 };
 
@@ -939,10 +939,16 @@ define([
          */
         update: function () {
             if (this.needsUpdate) {
-                this.visPropCalc.visible = Type.evaluate(this.visProp.visible);
+                //this.visPropCalc.visible = Type.evaluate(this.visProp.visible);
                 // A canvas with no width or height will create an endless loop, so ignore it
                 if (this.board.canvasWidth !== 0 && this.board.canvasHeight !== 0) {
                     this.calculateTicksCoordinates();
+                }
+                this.updateVisibility(this.line.visPropCalc.visible);
+                for (var i = 0; i < this.labels.length; i++) {
+                    if (this.labels[i] !== null) {
+                        this.labels[i].prepareUpdate().updateVisibility(this.line.visPropCalc.visible).updateRenderer();
+                    }
                 }
             }
 
@@ -954,9 +960,10 @@ define([
          * @returns {JXG.Ticks}
          */
         updateRenderer: function () {
-            if (this.needsUpdate) {
+           if (this.needsUpdate) {
                 if (this.visPropCalc.visible) {
                     this.board.renderer.updateTicks(this);
+                    this.board.renderer.show(this);
                 } else {
                     this.board.renderer.hide(this);
                 }
@@ -964,36 +971,36 @@ define([
             }
 
             return this;
-        },
-
-        hideElement: function () {
-            var i;
-
-            this.visPropCalc.visible = false;
-            //this.visProp.visible = false;
-            this.board.renderer.hide(this);
-            for (i = 0; i < this.labels.length; i++) {
-                if (Type.exists(this.labels[i])) {
-                    this.labels[i].hideElement();
-                }
-            }
-
-            return this;
-        },
-
-        showElement: function () {
-            var i;
-            this.visPropCalc.visible = true;
-            this.board.renderer.show(this);
-
-            for (i = 0; i < this.labels.length; i++) {
-                if (Type.exists(this.labels[i])) {
-                    this.labels[i].showElement();
-                }
-            }
-
-            return this;
         }
+
+        // hideElement: function () {
+        //     var i;
+        //
+        //     this.visPropCalc.visible = false;
+        //     //this.visProp.visible = false;
+        //     this.board.renderer.hide(this);
+        //     for (i = 0; i < this.labels.length; i++) {
+        //         if (Type.exists(this.labels[i])) {
+        //             this.labels[i].hideElement();
+        //         }
+        //     }
+        //
+        //     return this;
+        // },
+        //
+        // showElement: function () {
+        //     var i;
+        //     this.visPropCalc.visible = true;
+        //     this.board.renderer.show(this);
+        //
+        //     for (i = 0; i < this.labels.length; i++) {
+        //         if (Type.exists(this.labels[i])) {
+        //             this.labels[i].showElement();
+        //         }
+        //     }
+        //
+        //     return this;
+        // }
     });
 
     /**

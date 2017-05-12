@@ -268,7 +268,6 @@ define([
                 return this;
             }
 
-            this.visPropCalc.visible = Type.evaluate(this.visProp.visible);
             if (this.constrained) {
                 if (Type.isFunction(this.funps)) {
                     funps = this.funps();
@@ -412,23 +411,38 @@ define([
                         this.point2.coords.usrCoords[1] + this.point2.coords.usrCoords[2]) &&
                         (Mat.innerProduct(this.stdform, this.stdform, 3) >= Mat.eps * Mat.eps));
 
-                if (this.isReal) {
-                    if (wasReal !== this.isReal) {
-                        this.board.renderer.show(this);
-                        if (this.hasLabel && this.label.visPropCalc.visible) {
-                            this.board.renderer.show(this.label);
-                        }
-                    }
-                    this.board.renderer.updateLine(this);
-                } else {
-                    if (wasReal !== this.isReal) {
-                        this.board.renderer.hide(this);
-                        if (this.hasLabel && this.label.visPropCalc.visible) {
-                            this.board.renderer.hide(this.label);
-                        }
-                    }
+                // if (this.isReal) {
+                //     if (wasReal !== this.isReal) {
+                //         this.board.renderer.show(this);
+                //         if (this.hasLabel && this.label.visPropCalc.visible) {
+                //             this.board.renderer.show(this.label);
+                //         }
+                //     }
+                //     this.board.renderer.updateLine(this);
+                // } else {
+                //     if (wasReal !== this.isReal) {
+                //         this.board.renderer.hide(this);
+                //         if (this.hasLabel && this.label.visPropCalc.visible) {
+                //             this.board.renderer.hide(this.label);
+                //         }
+                //     }
+                // }
+                if (!this.isReal) {
+                    this.updateVisibility(false);
                 }
 
+                if (this.visPropCalc.visible) {
+                    this.board.renderer.show(this);
+                    this.board.renderer.updateLine(this);
+                    if (this.hasLabel && this.label.visPropCalc.visible) {
+                        this.board.renderer.show(this.label);
+                    }
+                } else {
+                    this.board.renderer.hide(this);
+                    if (this.hasLabel && this.label.visPropCalc.visible) {
+                        this.board.renderer.hide(this.label);
+                    }
+                }
                 this.needsUpdate = false;
             }
 
@@ -893,24 +907,24 @@ define([
             }
         },
 
-        hideElement: function () {
-            var i;
-
-            GeometryElement.prototype.hideElement.call(this);
-
-            for (i = 0; i < this.ticks.length; i++) {
-                this.ticks[i].hideElement();
-            }
-        },
-
-        showElement: function () {
-            var i;
-            GeometryElement.prototype.showElement.call(this);
-
-            for (i = 0; i < this.ticks.length; i++) {
-                this.ticks[i].showElement();
-            }
-        }
+        // hideElement: function () {
+        //     var i;
+        //
+        //     GeometryElement.prototype.hideElement.call(this);
+        //
+        //     for (i = 0; i < this.ticks.length; i++) {
+        //         this.ticks[i].hideElement();
+        //     }
+        // },
+        //
+        // showElement: function () {
+        //     var i;
+        //     GeometryElement.prototype.showElement.call(this);
+        //
+        //     for (i = 0; i < this.ticks.length; i++) {
+        //         this.ticks[i].showElement();
+        //     }
+        // }
     });
 
     /**
@@ -1326,10 +1340,6 @@ define([
             }
 
             attr_ticks = Type.copyAttributes(attributes, board.options, 'axis', 'ticks');
-            // We may need this
-            if (!Type.exists(attr_ticks.visible)) {
-                attr_ticks.visible = attr.visible;
-            }
             if (Type.exists(attr_ticks.ticksdistance)) {
                 dist = attr_ticks.ticksdistance;
             } else if (Type.isArray(attr_ticks.ticks)) {
@@ -1345,9 +1355,7 @@ define([
              * @type JXG.Ticks
              */
             el.defaultTicks = board.create('ticks', [el, dist], attr_ticks);
-
             el.defaultTicks.dump = false;
-
             el.elType = 'axis';
             el.subs = {
                 ticks: el.defaultTicks

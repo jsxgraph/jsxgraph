@@ -810,8 +810,6 @@ define([
          * Can be used sometimes to commit changes to the object.
          */
         update: function () {
-            this.visPropCalc.visible = Type.evaluate(this.visProp.visible);
-
             if (Type.evaluate(this.visProp.trace)) {
                 this.cloneToBackground();
             }
@@ -829,37 +827,102 @@ define([
         /**
          * Hide the element. It will still exist but not visible on the board.
          */
-        hideElement: function () {
-            this.visPropCalc.visible = false;
-            this.board.renderer.hide(this);
-
-            if (Type.exists(this.label) && this.hasLabel) {
-                this.label.hiddenByParent = true;
-                if (this.label.visPropCalc.visible) {
-                    this.label.hideElement();
-                }
-            }
-            return this;
-        },
+        // hideElement: function () {
+        //     this.visPropCalc.visible = false;
+        //     this.board.renderer.hide(this);
+        //
+        //     if (Type.exists(this.label) && this.hasLabel) {
+        //         this.label.hiddenByParent = true;
+        //         if (this.label.visPropCalc.visible) {
+        //             this.label.hideElement();
+        //         }
+        //     }
+        //     return this;
+        // },
 
         /**
          * Make the element visible.
          */
-        showElement: function () {
-            this.visPropCalc.visible = true;
-            this.board.renderer.show(this);
+        // showElement: function () {
+        //     this.visPropCalc.visible = true;
+        //     this.board.renderer.show(this);
+        //
+        //     if (Type.exists(this.label) && this.hasLabel && this.label.hiddenByParent) {
+        //         this.label.hiddenByParent = false;
+        //         if (!this.label.visPropCalc.visible) {
+        //             this.label.showElement().updateRenderer();
+        //         }
+        //     }
+        //     return this;
+        // },
 
-            if (Type.exists(this.label) && this.hasLabel && this.label.hiddenByParent) {
-                this.label.hiddenByParent = false;
-                if (!this.label.visPropCalc.visible) {
-                    this.label.showElement().updateRenderer();
+            updateVisibility: function(parent_val) {
+            var i, len, val,
+                s, ty, subtypes;
+
+            if (this.needsUpdate) {
+                if (parent_val !== undefined) {
+                    this.visPropCalc.visible = parent_val;
+                } else {
+                    val = Type.evaluate(this.visProp.visible);
+                    if (val !== 'inherit') {
+                        this.visPropCalc.visible = val;
+                    }
                 }
-            }
-            return this;
-        },
 
-        updateVisibility: function() {
-            this.visPropCalc.visible = Type.evaluate(this.visProp.visible);
+                subtypes = ['subs', 'ticks', 'labels'];
+                for (s = 0; s < subtypes.length; s++) {
+                    ty = subtypes[s];
+                    if (true && Type.exists(this[ty])) {
+                        len = this[ty].length;
+                        for (i = 0; i < len; i++) {
+                            if (Type.exists(this[ty][i]) && Type.exists(this[ty][i].visProp)) {
+                                val = Type.evaluate(this[ty][i].visProp.visible);
+                                if (val === 'inherit') {
+                                    this[ty][i].prepareUpdate().updateVisibility(this.visPropCalc.visible);
+                                }
+                            }
+                        }
+                    }
+                }
+/*
+                if (true && Type.exists(this.ticks)) {
+                    len = this.ticks.length;
+                    for (i = 0; i < len; i++) {
+                        if (Type.exists(this.ticks[i].visProp)) {
+                            val = Type.evaluate(this.ticks[i].visProp.visible);
+                            if (val === 'inherit') {
+                                this.ticks[i].updateVisibility(this.visPropCalc.visible);
+                            }
+                            console.log("Tick", i, val, this.visPropCalc.visible);
+                        }
+                    }
+                }
+                if (true && Type.exists(this.labels)) {
+                    len = this.labels.length;
+                    for (i = 0; i < len; i++) {
+                        if (Type.exists(this.labels[i]) && Type.exists(this.labels[i].visProp)) {
+                            val = Type.evaluate(this.labels[i].visProp.visible);
+                            if (val === 'inherit') {
+                                this.labels[i].updateVisibility(this.visPropCalc.visible);
+                            }
+                            console.log("Labels", i, val, this.visPropCalc.visible);
+                        }
+                    }
+                }
+*/
+                if (Type.exists(this.label)) {
+                    if (Type.exists(this.label.visProp)) {
+                        val = Type.evaluate(this.label.visProp.visible);
+                        if (val === 'inherit') {
+                            this.label.prepareUpdate().updateVisibility(this.visPropCalc.visible);
+                        }
+                    }
+                }
+
+            }
+
+            return this;
         },
 
         /**
@@ -1045,13 +1108,13 @@ define([
                         } else {
                             this.visProp.visible = value;
                         }
-
-                        this.visPropCalc.visible = Type.evaluate(this.visProp.visible);
-                        if (this.visPropCalc.visible) {
-                            this.showElement();
-                        } else {
-                            this.hideElement();
-                        }
+                        //this.prepareUpdate().updateVisibility();
+                        // this.visPropCalc.visible = Type.evaluate(this.visProp.visible);
+                        // if (this.visPropCalc.visible) {
+                        //     this.showElement();
+                        // } else {
+                        //     this.hideElement();
+                        // }
                         break;
                     case 'face':
                         if (Type.isPoint(this)) {
@@ -1298,7 +1361,6 @@ define([
                 attr =  Type.deepCopy(this.visProp.label, null);
                 attr.id = this.id + 'Label';
                 attr.isLabel = true;
-                attr.visible = this.visProp.visible;
                 attr.anchor = this;
                 attr.priv = this.visProp.priv;
 

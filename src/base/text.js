@@ -232,7 +232,7 @@ define([
             // First evaluation of the string.
             // We need this for display='internal' and Canvas
             this.updateText();
-            this.prepareUpdate().update().updateRenderer();
+            this.prepareUpdate().update().updateVisibility().updateRenderer();
 
             // We do not call updateSize for the infobox to speed up rendering
             if (!this.board.infobox || this.id !== this.board.infobox.id) {
@@ -458,7 +458,7 @@ define([
 
             // this should be a local update, otherwise there might be problems
             // with the tick update routine resulting in orphaned tick labels
-            this.prepareUpdate().update().updateRenderer();
+            this.prepareUpdate().update().updateVisibility().updateRenderer();
 
             return this;
         },
@@ -473,7 +473,6 @@ define([
                 return this;
             }
 
-            this.visPropCalc.visible = Type.evaluate(this.visProp.visible);
             this.updateCoords(fromParent);
             this.updateText();
 

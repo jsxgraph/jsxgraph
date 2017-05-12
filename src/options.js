@@ -155,6 +155,7 @@ define([
                             offset: [0, -3]
                         },
                         drawZero: false,
+                        visible: 'inherit'
                     }
                 },
                 y: {
@@ -167,6 +168,7 @@ define([
                             offset: [-6, 0]
                         },
                         drawZero: false,
+                        visible: 'inherit'
                     }
                 }
             },
@@ -1049,6 +1051,7 @@ define([
             strokeWidth: 1,
             strokeColor: 'black',
             highlightStrokeColor: '#888888',
+            visible: 'inherit',
 
             /**
              * Whether line boundaries should be counted or not in the lower and upper bounds when
@@ -1270,7 +1273,7 @@ define([
              */
 
             name: '',                            // By default, do not generate names for axes.
-            needsRegularUpdate: false,         // Axes only updated after zooming and moving of the origin.
+            needsRegularUpdate: true,         // Axes only updated after zooming and moving of the origin.
             strokeWidth: 1,
             strokeColor: '#666666',
             highlightStrokeWidth: 1,
@@ -1297,7 +1300,8 @@ define([
                     display: 'internal',
                     layer: 9
                 },
-                needsRegularUpdate: false,
+                visible: 'inherit',
+                needsRegularUpdate: true,
                 strokeWidth: 1,
                 strokeColor: '#666666',
                 highlightStrokeColor: '#888888',
@@ -2094,6 +2098,7 @@ define([
              * @visprop
              */
 
+            visible: 'inherit',
             strokeColor: 'black',
             strokeOpacity: 1,
             highlightStrokeOpacity: 0.666666,
@@ -2261,7 +2266,8 @@ define([
                 majorHeight: -1,         // if <0: full width and height
                 minorTicks: 4,
                 defaultDistance: 1,
-                strokeOpacity: 0.3
+                strokeOpacity: 0.3,
+                visible: 'inherit'
             },
 
             /**
@@ -3107,7 +3113,8 @@ define([
                 strokeOpacity: 1,
                 strokeWidth: 1,
                 tickEndings: [0, 1],
-                strokeColor: '#000000'
+                strokeColor: '#000000',
+                visible: 'inherit'
 
             },
 
@@ -3326,7 +3333,8 @@ define([
                 defaultDistance: 0.1,
                 strokeOpacity: 1,
                 strokeWidth: 1,
-                strokeColor: '#000000'
+                strokeColor: '#000000',
+                visible: 'inherit'
             },
 
             /**
