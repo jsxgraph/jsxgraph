@@ -1357,8 +1357,8 @@ define([
                 // Scale twice the CSS size to make the image crisp
                 cv.style.width = parseFloat(w) + 'px';
                 cv.style.height = parseFloat(h) + 'px';
-                cv.setAttribute('width', (2 * parseFloat(wOrg)) + 'px');
-                cv.setAttribute('height',(2 * parseFloat(hOrg)) + 'px');
+                cv.setAttribute('width',  2 * parseFloat(wOrg));
+                cv.setAttribute('height', 2 * parseFloat(hOrg));
                 ctx.scale(2 * wOrg / w, 2 * hOrg / h);
             }
 
