@@ -1308,7 +1308,7 @@ define([
      * </script><pre>
      */
     JXG.createAxis = function (board, parents, attributes) {
-        var attr, el, els, dist;
+        var attr, attr_ticks, el, els, dist;
 
         // Arrays oder Punkte, mehr brauchen wir nicht.
         if ((Type.isArray(parents[0]) || Type.isPoint(parents[0])) && (Type.isArray(parents[1]) || Type.isPoint(parents[1]))) {
@@ -1325,11 +1325,15 @@ define([
                 }
             }
 
-            attr = Type.copyAttributes(attributes, board.options, 'axis', 'ticks');
-            if (Type.exists(attr.ticksdistance)) {
-                dist = attr.ticksdistance;
-            } else if (Type.isArray(attr.ticks)) {
-                dist = attr.ticks;
+            attr_ticks = Type.copyAttributes(attributes, board.options, 'axis', 'ticks');
+            // We may need this
+            if (!Type.exists(attr_ticks.visible)) {
+                attr_ticks.visible = attr.visible;
+            }
+            if (Type.exists(attr_ticks.ticksdistance)) {
+                dist = attr_ticks.ticksdistance;
+            } else if (Type.isArray(attr_ticks.ticks)) {
+                dist = attr_ticks.ticks;
             } else {
                 dist = 1.0;
             }
@@ -1340,7 +1344,7 @@ define([
              * @name defaultTicks
              * @type JXG.Ticks
              */
-            el.defaultTicks = board.create('ticks', [el, dist], attr);
+            el.defaultTicks = board.create('ticks', [el, dist], attr_ticks);
 
             el.defaultTicks.dump = false;
 

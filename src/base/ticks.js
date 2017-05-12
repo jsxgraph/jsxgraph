@@ -955,7 +955,11 @@ define([
          */
         updateRenderer: function () {
             if (this.needsUpdate) {
-                this.board.renderer.updateTicks(this);
+                if (this.visPropCalc.visible) {
+                    this.board.renderer.updateTicks(this);
+                } else {
+                    this.board.renderer.hide(this);
+                }
                 this.needsUpdate = false;
             }
 
@@ -966,6 +970,7 @@ define([
             var i;
 
             this.visPropCalc.visible = false;
+            //this.visProp.visible = false;
             this.board.renderer.hide(this);
             for (i = 0; i < this.labels.length; i++) {
                 if (Type.exists(this.labels[i])) {
