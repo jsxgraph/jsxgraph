@@ -199,16 +199,50 @@ define([
          * Uses the boards renderer to update the polygon.
          */
         updateRenderer: function () {
-            if (this.needsUpdate && this.visPropCalc.visible) {
-                this.board.renderer.updatePolygon(this);
-                this.needsUpdate = false;
+            var wasReal, i, len;
+
+            if (!this.needsUpdate) {
+                return this;
             }
 
-            if (this.hasLabel && this.label.visPropCalc.visible) {
+            if (this.visPropCalc.visible) {
+                wasReal = this.isReal;
+
+                len = el.vertices.length;
+                this.isReal = true;
+                for (i = 0; i < len; ++i) {
+                    if (!el.vertices[i].isReal) {
+                        this.isReal = false;
+                        break;
+                    }
+                }
+
+                if (wasReal && !this.isReal) {
+                    this.updateVisibility(false);
+                }
+            }
+
+            if (this.visPropCalc.visible) {
+                this.board.renderer.updatePolygon(this);
+            }
+
+            /* Update the label if visible. */
+            if (this.hasLabel && this.visPropCalc.visible && this.label &&
+                this.label.visPropCalc.visible && this.isReal) {
+
                 this.label.update();
                 this.board.renderer.updateText(this.label);
             }
 
+            // Update rendNode display
+            if (this.visPropCalc.visible !== this.visPropOld.visible) {
+                this.board.renderer.display(this, this.visPropCalc.visible);
+                if (this.hasLabel) {
+                    this.board.renderer.display(this.label, this.label.visPropCalc.visible);
+                }
+            }
+
+            this.needsUpdate = false;
             return this;
         },
 
@@ -275,51 +309,55 @@ define([
          * @param {Boolean} [borderless=false] If set to true, the polygon is treated as a polygon without
          * borders, i.e. the borders will not be hidden.
          */
-        // hideElement: function (borderless) {
-        //     var i;
-        //
-        //     this.visPropCalc.visible = false;
-        //     this.board.renderer.hide(this);
-        //
-        //     if (!borderless) {
-        //         for (i = 0; i < this.borders.length; i++) {
-        //             this.borders[i].hideElement();
-        //         }
-        //     }
-        //
-        //     if (this.hasLabel && Type.exists(this.label)) {
-        //         this.label.hiddenByParent = true;
-        //         if (this.label.visPropCalc.visible) {
-        //             this.label.hideElement();
-        //         }
-        //     }
-        // },
+        hideElement: function (borderless) {
+            var i;
+
+            JXG.deprecated('Element.hideElement()', 'Element.setDisplayRendNode()');
+
+            this.visPropCalc.visible = false;
+            this.board.renderer.display(this, false);
+
+            if (!borderless) {
+                for (i = 0; i < this.borders.length; i++) {
+                    this.borders[i].hideElement();
+                }
+            }
+
+            if (this.hasLabel && Type.exists(this.label)) {
+                this.label.hiddenByParent = true;
+                if (this.label.visPropCalc.visible) {
+                    this.label.hideElement();
+                }
+            }
+        },
 
         /**
          * Make the element visible.
          * @param {Boolean} [borderless=false] If set to true, the polygon is treated as a polygon without
          * borders, i.e. the borders will not be shown.
          */
-        // showElement: function (borderless) {
-        //     var i;
-        //
-        //     this.visPropCalc.visible = true;
-        //     this.board.renderer.show(this);
-        //
-        //     if (!borderless) {
-        //         for (i = 0; i < this.borders.length; i++) {
-        //             this.borders[i].showElement();
-        //             this.borders[i].updateRenderer();
-        //         }
-        //     }
-        //
-        //     if (Type.exists(this.label) && this.hasLabel && this.label.hiddenByParent) {
-        //         this.label.hiddenByParent = false;
-        //         if (!this.label.visPropCalc.visible) {
-        //             this.label.showElement().updateRenderer();
-        //         }
-        //     }
-        // },
+        showElement: function (borderless) {
+            var i;
+
+            JXG.deprecated('Element.showElement()', 'Element.setDisplayRendNode()');
+
+            this.visPropCalc.visible = true;
+            this.board.renderer.display(this, true);
+
+            if (!borderless) {
+                for (i = 0; i < this.borders.length; i++) {
+                    this.borders[i].showElement().updateRenderer();
+                }
+            }
+
+            if (Type.exists(this.label) && this.hasLabel && this.label.hiddenByParent) {
+                this.label.hiddenByParent = false;
+                if (!this.label.visPropCalc.visible) {
+                    this.label.showElement().updateRenderer();
+                }
+            }
+            return this;
+        },
 
         /**
          * Area of (not self-intersecting) polygon

@@ -947,7 +947,9 @@ define([
                 this.updateVisibility(this.line.visPropCalc.visible);
                 for (var i = 0; i < this.labels.length; i++) {
                     if (this.labels[i] !== null) {
-                        this.labels[i].prepareUpdate().updateVisibility(this.line.visPropCalc.visible).updateRenderer();
+                        this.labels[i].prepareUpdate()
+                            .updateVisibility(this.line.visPropCalc.visible)
+                            .updateRenderer();
                     }
                 }
             }
@@ -963,44 +965,50 @@ define([
            if (this.needsUpdate) {
                 if (this.visPropCalc.visible) {
                     this.board.renderer.updateTicks(this);
-                    this.board.renderer.show(this);
-                } else {
-                    this.board.renderer.hide(this);
                 }
+
+                if (this.visPropCalc.visible != this.visPropOld.visible) {
+                    this.board.renderer.display(this, this.visPropCalc.visible);
+                }
+
                 this.needsUpdate = false;
             }
 
             return this;
-        }
+        },
 
-        // hideElement: function () {
-        //     var i;
-        //
-        //     this.visPropCalc.visible = false;
-        //     //this.visProp.visible = false;
-        //     this.board.renderer.hide(this);
-        //     for (i = 0; i < this.labels.length; i++) {
-        //         if (Type.exists(this.labels[i])) {
-        //             this.labels[i].hideElement();
-        //         }
-        //     }
-        //
-        //     return this;
-        // },
-        //
-        // showElement: function () {
-        //     var i;
-        //     this.visPropCalc.visible = true;
-        //     this.board.renderer.show(this);
-        //
-        //     for (i = 0; i < this.labels.length; i++) {
-        //         if (Type.exists(this.labels[i])) {
-        //             this.labels[i].showElement();
-        //         }
-        //     }
-        //
-        //     return this;
-        // }
+        hideElement: function () {
+            var i;
+
+            JXG.deprecated('Element.hideElement()', 'Element.setDisplayRendNode()');
+
+            this.visPropCalc.visible = false;
+            this.board.renderer.display(this, false);
+            for (i = 0; i < this.labels.length; i++) {
+                if (Type.exists(this.labels[i])) {
+                    this.labels[i].hideElement();
+                }
+            }
+
+            return this;
+        },
+
+        showElement: function () {
+            var i;
+
+            JXG.deprecated('Element.showElement()', 'Element.setDisplayRendNode()');
+
+            this.visPropCalc.visible = true;
+            this.board.renderer.display(this, false);
+
+            for (i = 0; i < this.labels.length; i++) {
+                if (Type.exists(this.labels[i])) {
+                    this.labels[i].showElement();
+                }
+            }
+
+            return this;
+        }
     });
 
     /**

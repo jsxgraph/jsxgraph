@@ -824,43 +824,77 @@ define([
             return this;
         },
 
+        setDisplayRendNode: function(val) {
+            var i, len,
+                s, ty, subtypes;
+
+            this.board.renderer.display(this, val);
+
+            subtypes = ['subs', 'ticks', 'labels', 'borders'];
+            for (s = 0; s < subtypes.length; s++) {
+                ty = subtypes[s];
+                if (Type.exists(this[ty])) {
+                    len = this[ty].length;
+                    for (i = 0; i < len; i++) {
+                        if (Type.exists(this[ty][i]) && Type.exists(this[ty][i].rendNode)) {
+                            this[ty][i].setDisplayRendNode(val);
+                        }
+                    }
+                }
+            }
+
+            if (Type.exists(this.label) && Type.exists(this.label.rendNode)) {
+                    this.label.setDisplayRendNode(val);
+            }
+
+            return this;
+        },
+
         /**
          * Hide the element. It will still exist but not visible on the board.
          */
-        // hideElement: function () {
-        //     this.visPropCalc.visible = false;
-        //     this.board.renderer.hide(this);
-        //
-        //     if (Type.exists(this.label) && this.hasLabel) {
-        //         this.label.hiddenByParent = true;
-        //         if (this.label.visPropCalc.visible) {
-        //             this.label.hideElement();
-        //         }
-        //     }
-        //     return this;
-        // },
+        hideElement: function () {
+            JXG.deprecated('Element.hideElement()', 'Element.setDisplayRendNode()');
+
+            this.visPropCalc.visible = false;
+            this.board.renderer.display(this, false);
+
+            if (Type.exists(this.label) && this.hasLabel) {
+                this.label.hiddenByParent = true;
+                if (this.label.visPropCalc.visible) {
+                    this.label.hideElement();
+                }
+            }
+            return this;
+        },
 
         /**
          * Make the element visible.
          */
-        // showElement: function () {
-        //     this.visPropCalc.visible = true;
-        //     this.board.renderer.show(this);
-        //
-        //     if (Type.exists(this.label) && this.hasLabel && this.label.hiddenByParent) {
-        //         this.label.hiddenByParent = false;
-        //         if (!this.label.visPropCalc.visible) {
-        //             this.label.showElement().updateRenderer();
-        //         }
-        //     }
-        //     return this;
-        // },
+        showElement: function () {
+            JXG.deprecated('Element.showElement()', 'Element.setDisplayRendNode()');
 
-            updateVisibility: function(parent_val) {
+            this.visPropCalc.visible = true;
+            this.board.renderer.display(this, true);
+
+            if (Type.exists(this.label) && this.hasLabel && this.label.hiddenByParent) {
+                this.label.hiddenByParent = false;
+                if (!this.label.visPropCalc.visible) {
+                    this.label.showElement().updateRenderer();
+                }
+            }
+            return this;
+        },
+
+        updateVisibility: function(parent_val) {
             var i, len, val,
                 s, ty, subtypes;
 
             if (this.needsUpdate) {
+                // this.visPropOld.visible may be used in
+                //  setDisplayRendNode() and
+                //  updateRenderer()
+                this.visPropOld.visible = this.visPropCalc.visible;
                 if (parent_val !== undefined) {
                     this.visPropCalc.visible = parent_val;
                 } else {
@@ -870,10 +904,10 @@ define([
                     }
                 }
 
-                subtypes = ['subs', 'ticks', 'labels'];
+                subtypes = ['subs', 'ticks', 'labels', 'borders'];
                 for (s = 0; s < subtypes.length; s++) {
                     ty = subtypes[s];
-                    if (true && Type.exists(this[ty])) {
+                    if (Type.exists(this[ty])) {
                         len = this[ty].length;
                         for (i = 0; i < len; i++) {
                             if (Type.exists(this[ty][i]) && Type.exists(this[ty][i].visProp)) {
@@ -885,32 +919,7 @@ define([
                         }
                     }
                 }
-/*
-                if (true && Type.exists(this.ticks)) {
-                    len = this.ticks.length;
-                    for (i = 0; i < len; i++) {
-                        if (Type.exists(this.ticks[i].visProp)) {
-                            val = Type.evaluate(this.ticks[i].visProp.visible);
-                            if (val === 'inherit') {
-                                this.ticks[i].updateVisibility(this.visPropCalc.visible);
-                            }
-                            console.log("Tick", i, val, this.visPropCalc.visible);
-                        }
-                    }
-                }
-                if (true && Type.exists(this.labels)) {
-                    len = this.labels.length;
-                    for (i = 0; i < len; i++) {
-                        if (Type.exists(this.labels[i]) && Type.exists(this.labels[i].visProp)) {
-                            val = Type.evaluate(this.labels[i].visProp.visible);
-                            if (val === 'inherit') {
-                                this.labels[i].updateVisibility(this.visPropCalc.visible);
-                            }
-                            console.log("Labels", i, val, this.visPropCalc.visible);
-                        }
-                    }
-                }
-*/
+
                 if (Type.exists(this.label)) {
                     if (Type.exists(this.label.visProp)) {
                         val = Type.evaluate(this.label.visProp.visible);
@@ -1108,6 +1117,7 @@ define([
                         } else {
                             this.visProp.visible = value;
                         }
+                        this.setDisplayRendNode(Type.evaluate(this.visProp.visible));
                         //this.prepareUpdate().updateVisibility();
                         // this.visPropCalc.visible = Type.evaluate(this.visProp.visible);
                         // if (this.visPropCalc.visible) {
@@ -1151,16 +1161,10 @@ define([
                                 this.label.hideElement();
                             }
                         } else {
-                            if (this.label) {
-                                if (Type.evaluate(this.visProp.visible)) {
-                                    this.label.showElement();
-                                }
-                            } else {
+                            if (!this.label) {
                                 this.createLabel();
-                                if (!Type.evaluate(this.visProp.visible)) {
-                                    this.label.hideElement();
-                                }
                             }
+                            this.label.setDisplayRendNode(Type.evaluate(this.visProp.visible));
                         }
                         this.hasLabel = value;
                         break;

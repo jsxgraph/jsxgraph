@@ -711,7 +711,7 @@ define([
          */
         finalizeAdding: function (obj) {
             if (!Type.evaluate(obj.visProp.visible)) {
-                this.renderer.hide(obj);
+                this.renderer.display(obj, false);
             }
         },
 
@@ -719,7 +719,7 @@ define([
             if (obj.hasLabel &&
                 !Type.evaluate(obj.label.visProp.islabel) &&
                 !Type.evaluate(obj.label.visProp.visible)) {
-                this.renderer.hide(obj.label);
+                this.renderer.display(obj.label, false);
             }
         },
 
@@ -1020,8 +1020,9 @@ define([
             if (Type.exists(drag.coords)) {
                 drag.setPositionDirectly(Const.COORDS_BY_SCREEN, this.drag_position);
             } else {
-                this.renderer.hide(this.infobox); // Hide infobox in case the user has touched an intersection point
-                                                  // and drags the underlying line now.
+                this.renderer.display(this.infobox, false);
+                                    // Hide infobox in case the user has touched an intersection point
+                                    // and drags the underlying line now.
 
                 if (!isNaN(o.targets[0].Xprev + o.targets[0].Yprev)) {
                     drag.setPositionDirectly(Const.COORDS_BY_SCREEN,
@@ -1961,7 +1962,7 @@ define([
 
             if (this.mode !== this.BOARD_MODE_DRAG) {
                 this.dehighlightAll();
-                this.renderer.hide(this.infobox);
+                this.renderer.display(this.infobox, false);
             }
 
             if (this.mode !== this.BOARD_MODE_NONE) {
@@ -2038,7 +2039,7 @@ define([
             // Hiding the infobox is commented out, since it prevents showing the infobox
             // on IE 11+ on 'over'
             //if (this.mode !== this.BOARD_MODE_DRAG) {
-                //this.renderer.hide(this.infobox);
+                //this.renderer.display(this.infobox, false);
             //}
 
             this.options.precision.hasPoint = this.options.precision.mouse;
@@ -2056,7 +2057,7 @@ define([
             var i, j, found;
 
             this.triggerEventHandlers(['touchend', 'up', 'pointerup', 'MSPointerUp'], [evt]);
-            this.renderer.hide(this.infobox);
+            this.renderer.display(this.infobox, false);
 
             if (evt) {
                 for (i = 0; i < this.touches.length; i++) {
@@ -2341,7 +2342,7 @@ define([
             // }
 
             if (this.mode !== this.BOARD_MODE_DRAG) {
-                this.renderer.hide(this.infobox);
+                this.renderer.display(this.infobox, false);
             }
 
             this.options.precision.hasPoint = this.options.precision.touch;
@@ -2400,7 +2401,7 @@ define([
             }
 
             if (this.mode !== this.BOARD_MODE_DRAG) {
-                this.renderer.hide(this.infobox);
+                this.renderer.display(this.infobox, false);
             }
 
             /*
@@ -2424,7 +2425,7 @@ define([
                 evtTouches = evt && evt[JXG.touchProperty];
 
             this.triggerEventHandlers(['touchend', 'up'], [evt]);
-            this.renderer.hide(this.infobox);
+            this.renderer.display(this.infobox, false);
 
             // selection
             if (this.selectingMode) {
@@ -2637,7 +2638,7 @@ define([
 
             if (this.mode !== this.BOARD_MODE_DRAG) {
                 this.dehighlightAll();
-                this.renderer.hide(this.infobox);
+                this.renderer.display(this.infobox, false);
             }
 
             // we have to check for four cases:
@@ -2775,7 +2776,7 @@ define([
                     this.highlightCustomInfobox(el.infoboxText, el);
                 }
 
-                this.renderer.show(this.infobox);
+                this.renderer.display(this.infobox, true);
             }
             return this;
         },
@@ -3490,7 +3491,7 @@ define([
 
             this.infobox.dump = false;
 
-            this.renderer.hide(this.infobox);
+            this.renderer.display(this.infobox, false);
             return this;
         },
 

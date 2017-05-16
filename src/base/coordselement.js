@@ -610,35 +610,35 @@ define([
                 //Homogeneous coords: ideal point
                 this.isReal = (Math.abs(this.coords.usrCoords[0]) > Mat.eps) ? this.isReal : false;
 
-                if (this.isReal) {
-                    if (wasReal !== this.isReal) {
-                        this.board.renderer.show(this);
 
-                        if (this.hasLabel && this.label.visPropCalc.visible) {
-                            this.board.renderer.show(this.label);
-                        }
-                    }
-                    this.board.renderer[rendererMethod](this);
-                } else {
-                    if (wasReal !== this.isReal) {
-                        this.board.renderer.hide(this);
-
-                        if (this.hasLabel && this.label.visPropCalc.visible) {
-                            this.board.renderer.hide(this.label);
-                        }
-                    }
+                if (wasReal && !this.isReal) {
+                    this.updateVisibility(false);
                 }
             }
 
-            /* Update the label if visible. */
+            // Update the position
+            if (this.visPropCalc.visible) {
+                this.board.renderer[rendererMethod](this);
+            }
+
+            // Update the label if visible.
             if (this.hasLabel && this.visPropCalc.visible && this.label &&
-                    this.label.visPropCalc.visible && this.isReal) {
+                this.label.visPropCalc.visible && this.isReal) {
+
                 this.label.update();
                 this.board.renderer.updateText(this.label);
             }
 
-            this.needsUpdate = false;
+            // Update rendNode display
+            if (this.visPropCalc.visible !== this.visPropOld.visible) {
+                this.board.renderer.display(this, this.visPropCalc.visible);
+                if (this.hasLabel) {
+                    this.board.renderer.display(this.label, this.label.visPropCalc.visible);
+                }
+                console.log("XXXXXXXXXXXXXXXXX", this.id, this.visPropCalc.visible, this.visPropOld.visible);
+            }
 
+            this.needsUpdate = false;
             return this;
         },
 

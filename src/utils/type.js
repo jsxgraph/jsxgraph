@@ -1060,7 +1060,8 @@ define([
                 strokecolor: '',
                 strokeopacity: '',
                 strokewidth: '',
-                top: -100000
+                top: -100000,
+                visible: -1
             };
 
             return el;

@@ -440,7 +440,7 @@
                             id: id,
                             anchor: el
                         });
-                        board.renderer.hide(el.label);
+                        board.renderer.display(el.label, false);
                         el.image = im;
                     } else if (el.elementClass === JXG.OBJECT_CLASS_CIRCLE) {
                         // A circle containing an image

@@ -657,30 +657,13 @@ define([
          * @see JXG.AbstractRenderer#drawPolygon
          */
         updatePolygon: function (el) {
-            var i, len, polIsReal;
+            var i;
+            //, len, polIsReal;
 
             // here originally strokecolor wasn't updated but strokewidth was
             // but if there's no strokecolor i don't see why we should update strokewidth.
             this._updateVisual(el, {stroke: true, dash: true});
             this.updatePolygonPrim(el.rendNode, el);
-
-            len = el.vertices.length;
-            polIsReal = true;
-            for (i = 0; i < len; ++i) {
-                if (!el.vertices[i].isReal) {
-                    polIsReal = false;
-                    break;
-                }
-            }
-
-            len = el.borders.length;
-            for (i = 0; i < len; ++i) {
-                if (polIsReal && el.borders[i].visPropCalc.visible) {
-                    this.show(el.borders[i]);
-                } else {
-                    this.hide(el.borders[i]);
-                }
-            }
         },
 
         /* **************************

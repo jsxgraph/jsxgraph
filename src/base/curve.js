@@ -370,37 +370,40 @@ define([
         updateRenderer: function () {
             var wasReal;
 
-            if (this.needsUpdate && this.visPropCalc.visible) {
+            if (!this.needsUpdate) {
+                return this;
+            }
+
+            if (this.visPropCalc.visible) {
                 wasReal = this.isReal;
 
                 this.checkReal();
 
-                if (this.isReal || wasReal) {
-                    this.board.renderer.updateCurve(this);
-                }
-
-                if (this.isReal) {
-                    if (wasReal !== this.isReal) {
-                        this.board.renderer.show(this);
-                        if (this.hasLabel && this.label.visPropCalc.visible) {
-                            this.board.renderer.show(this.label);
-                        }
-                    }
-                } else {
-                    if (wasReal !== this.isReal) {
-                        this.board.renderer.hide(this);
-                        if (this.hasLabel && this.label.visPropCalc.visible) {
-                            this.board.renderer.hide(this.label);
-                        }
-                    }
-                }
-
-                // Update the label if visible.
-                if (this.hasLabel && Type.exists(this.label.visPropCalc) && this.label.visPropCalc.visible) {
-                    this.label.update();
-                    this.board.renderer.updateText(this.label);
+                if (wasReal && !this.isReal) {
+                    this.updateVisibility(false);
                 }
             }
+
+            if (this.visPropCalc.visible) {
+                this.board.renderer.updateLine(this);
+            }
+
+            /* Update the label if visible. */
+            if (this.hasLabel && this.visPropCalc.visible && this.label &&
+                this.label.visPropCalc.visible && this.isReal) {
+
+                this.label.update();
+                this.board.renderer.updateText(this.label);
+            }
+
+            // Update rendNode display
+            if (this.visPropCalc.visible !== this.visPropOld.visible) {
+                this.board.renderer.display(this, this.visPropCalc.visible);
+                if (this.hasLabel) {
+                    this.board.renderer.display(this.label, this.label.visPropCalc.visible);
+                }
+            }
+
             this.needsUpdate = false;
             return this;
         },

@@ -1273,7 +1273,7 @@ define([
              */
 
             name: '',                            // By default, do not generate names for axes.
-            needsRegularUpdate: true,         // Axes only updated after zooming and moving of the origin.
+            needsRegularUpdate: false,           // Axes only updated after zooming and moving of the origin.
             strokeWidth: 1,
             strokeColor: '#666666',
             highlightStrokeWidth: 1,
@@ -1301,7 +1301,7 @@ define([
                     layer: 9
                 },
                 visible: 'inherit',
-                needsRegularUpdate: true,
+                needsRegularUpdate: false,
                 strokeWidth: 1,
                 strokeColor: '#666666',
                 highlightStrokeColor: '#888888',
