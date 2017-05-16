@@ -803,7 +803,20 @@ define([
         },
 
         // already documented in JXG.AbstractRenderer
+        display: function(el, val) {
+            if (el && el.rendNode) {
+                if (val) {
+                    el.rendNode.style.visibility = "inherit";
+                } else {
+                    el.rendNode.style.visibility = "hidden";
+                }
+            }
+        },
+
+        // already documented in JXG.AbstractRenderer
         show: function (el) {
+            JXG.deprecated('Board.renderer.show()', 'Board.renderer.display()');
+
             if (el && el.rendNode) {
                 el.rendNode.style.visibility = "inherit";
             }
@@ -811,6 +824,8 @@ define([
 
         // already documented in JXG.AbstractRenderer
         hide: function (el) {
+            JXG.deprecated('Board.renderer.hide()', 'Board.renderer.display()');
+
             if (el && el.rendNode) {
                 el.rendNode.style.visibility = "hidden";
             }

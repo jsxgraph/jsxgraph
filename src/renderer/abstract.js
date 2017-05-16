@@ -1266,16 +1266,29 @@ define([
         setPropertyPrim: function (node, key, val) { /* stub */ },
 
         /**
+         * Shows or hides an element on the canvas; Only a stub, requires implementation in the derived renderer.
+         * @param {JXG.GeometryElement} element Reference to the object that has to appear.
+         * @param {Boolean} value true to show the element, false to hide the element.
+         */
+        display: function (element, value) { /* stub */ },
+
+        /**
          * Shows a hidden element on the canvas; Only a stub, requires implementation in the derived renderer.
+         *
+         * Please use JXG.AbstractRenderer#display instead
          * @param {JXG.GeometryElement} element Reference to the object that has to appear.
          * @see JXG.AbstractRenderer#hide
+         * @deprecated
          */
         show: function (element) { /* stub */ },
 
         /**
          * Hides an element on the canvas; Only a stub, requires implementation in the derived renderer.
+         *
+         * Please use JXG.AbstractRenderer#display instead
          * @param {JXG.GeometryElement} element Reference to the geometry element that has to disappear.
          * @see JXG.AbstractRenderer#show
+         * @deprecated
          */
         hide: function (element) { /* stub */ },
 
