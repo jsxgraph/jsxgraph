@@ -1270,7 +1270,7 @@ define([
              */
 
             name: '',                            // By default, do not generate names for axes.
-            needsRegularUpdate: false,         // Axes only updated after zooming and moving of the origin.
+            needsRegularUpdate: true,         // Axes only updated after zooming and moving of the origin.
             strokeWidth: 1,
             strokeColor: '#666666',
             highlightStrokeWidth: 1,
@@ -1293,11 +1293,11 @@ define([
                 label: {
                     offset: [4, -12 + 3],     // This seems to be a good offset for 12 point fonts
                     parse: false,
-                    needsRegularUpdate: false,
+                    needsRegularUpdate: true,
                     display: 'internal',
                     layer: 9
                 },
-                needsRegularUpdate: false,
+                needsRegularUpdate: true,
                 strokeWidth: 1,
                 strokeColor: '#666666',
                 highlightStrokeColor: '#888888',
