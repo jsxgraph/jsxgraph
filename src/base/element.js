@@ -808,6 +808,7 @@ define([
         /**
          * General update method. Should be overwritten by the element itself.
          * Can be used sometimes to commit changes to the object.
+         * @return {JXG.GeometryElement} Reference to the element
          */
         update: function () {
             if (Type.evaluate(this.visProp.trace)) {
@@ -818,12 +819,20 @@ define([
 
         /**
          * Provide updateRenderer method.
+         * @return {JXG.GeometryElement} Reference to the element
          * @private
          */
         updateRenderer: function () {
             return this;
         },
 
+        /**
+         * Show the element or hide it. If hidden, it will still exist but not be
+         * visible on the board.
+         * @param  {Boolean} val true: show the element, false: hide the element
+         * @return {JXG.GeometryElement} Reference to the element
+         * @private
+         */
         setDisplayRendNode: function(val) {
             var i, len,
                 s, ty, subtypes;
@@ -852,6 +861,9 @@ define([
 
         /**
          * Hide the element. It will still exist but not visible on the board.
+         * @return {JXG.GeometryElement} Reference to the element
+         * @deprecated
+         * @private
          */
         hideElement: function () {
             JXG.deprecated('Element.hideElement()', 'Element.setDisplayRendNode()');
@@ -870,6 +882,9 @@ define([
 
         /**
          * Make the element visible.
+         * @return {JXG.GeometryElement} Reference to the element
+         * @deprecated
+         * @private
          */
         showElement: function () {
             JXG.deprecated('Element.showElement()', 'Element.setDisplayRendNode()');
@@ -886,6 +901,11 @@ define([
             return this;
         },
 
+        /**
+         * [description]
+         * @param  {[type]} parent_val [description]
+         * @return {JXG.GeometryElement} Reference to the element
+         */
         updateVisibility: function(parent_val) {
             var i, len, val,
                 s, ty, subtypes;
@@ -895,7 +915,7 @@ define([
                 //  setDisplayRendNode() and
                 //  updateRenderer()
                 this.visPropOld.visible = this.visPropCalc.visible;
-                
+
                 if (parent_val !== undefined) {
                     this.visPropCalc.visible = parent_val;
                 } else {
