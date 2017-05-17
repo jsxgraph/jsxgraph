@@ -855,6 +855,7 @@ define([
             if (el && el.rendNode) {
                 node = el.rendNode;
 
+//console.log("DISPLAY", el.id, val);
                 if (val) {
                     node.setAttributeNS(null, 'display', 'inline');
                     node.style.visibility = "inherit";

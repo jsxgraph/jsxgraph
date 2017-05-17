@@ -423,7 +423,7 @@ define([
             if (this.visPropCalc.visible) {
                 this.board.renderer.updateLine(this);
             }
-            
+
             /* Update the label if visible. */
             if (this.hasLabel && this.visPropCalc.visible && this.label &&
                 this.label.visPropCalc.visible && this.isReal) {

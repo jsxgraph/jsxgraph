@@ -2806,6 +2806,10 @@ define([
 
         /**
          * Set infobox visible / invisible.
+         *
+         * It uses its property hiddenByParent to memorize its status.
+         * In this way, many DOM access can be avoided.
+         * 
          * @param  {Boolean} val true for visible, false for invisible
          * @return {JXG.Board} Reference to the board.
          */
