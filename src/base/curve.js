@@ -385,7 +385,7 @@ define([
             }
 
             if (this.visPropCalc.visible) {
-                this.board.renderer.updateLine(this);
+                this.board.renderer.updateCurve(this);
             }
 
             /* Update the label if visible. */

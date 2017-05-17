@@ -635,7 +635,6 @@ define([
                 if (this.hasLabel) {
                     this.board.renderer.display(this.label, this.label.visPropCalc.visible);
                 }
-                console.log("XXXXXXXXXXXXXXXXX", this.id, this.visPropCalc.visible, this.visPropOld.visible);
             }
 
             this.needsUpdate = false;

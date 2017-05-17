@@ -132,11 +132,11 @@ Drag the point P to change the figure or change with the radio buttons the numbe
         // n-Eck
         var p = new Array(n);
         for(var i = 0; i < n; i++) {
-            p[i] = board.createElement('point', [r*Math.sin(i*2*Math.PI/n), r*Math.cos(i*2*Math.PI/n)] , {fixed:true,fillColor:'blue'});
+            p[i] = board.create('point', [r*Math.sin(i*2*Math.PI/n), r*Math.cos(i*2*Math.PI/n)] , {fixed:true,fillColor:'blue'});
         }
         
         // Zieh-Punkt im Inneren
-        var q = board.createElement('point',[-0.3,-0.3],{fillColor:'red',strokeColor:'red',name:'P'});
+        var q = board.create('point',[-0.3,-0.3],{fillColor:'red',strokeColor:'red',name:'P'});
         
         // Polygone
         var polygones = new Array(n);
@@ -144,26 +144,26 @@ Drag the point P to change the figure or change with the radio buttons the numbe
         for(var i=0; i<n; i++) {
             if(i < n-1) {
                 if(i % 2 == 0) {
-                    polygones[i] = board.createElement('polygon',[q,p[i],p[i+1]], {fillColor:'#3CB371',name:''});
+                    polygones[i] = board.create('polygon',[q,p[i],p[i+1]], {fillColor:'#3CB371',name:''});
                 }
                 else {
-                    polygones[i] = board.createElement('polygon',[q,p[i],p[i+1]], {fillColor:'#DA70D6',name:''});
+                    polygones[i] = board.create('polygon',[q,p[i],p[i+1]], {fillColor:'#DA70D6',name:''});
                 }
                 
                 // Labels fuer die Polygone....
-                mp[i] = board.createElement('circumcircleMidpoint',[q,p[i],p[i+1]], {name:'',visible:false});
-                board.createElement('text',[
+                mp[i] = board.create('circumcircleMidpoint',[q,p[i],p[i+1]], {name:'',visible:false});
+                board.create('text',[
                     (function(j){ return function(){ return mp[j].X();}; })(i),
                     (function(j){ return function(){ return mp[j].Y();}; })(i),
                     'A<sub>'+(i+1)+'</sub>'
                 ],{});
             }
             else {
-                polygones[i] = board.createElement('polygon',[q,p[i],p[0]], {fillColor:'#DA70D6',name:''});
+                polygones[i] = board.create('polygon',[q,p[i],p[0]], {fillColor:'#DA70D6',name:''});
                 
                 // Labels fuer die Polygone....
-                mp[i] = board.createElement('circumcircleMidpoint',[q,p[i],p[0]], {name:'',visible:false});
-                board.createElement('text',[
+                mp[i] = board.create('circumcircleMidpoint',[q,p[i],p[0]], {name:'',visible:false});
+                board.create('text',[
                     (function(j){ return function(){ return mp[j].X();}; })(i),
                     (function(j){ return function(){ return mp[j].Y();}; })(i),
                     'A<sub>'+(i+1)+'</sub>'

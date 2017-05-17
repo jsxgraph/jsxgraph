@@ -208,10 +208,10 @@ define([
             if (this.visPropCalc.visible) {
                 wasReal = this.isReal;
 
-                len = el.vertices.length;
+                len = this.vertices.length;
                 this.isReal = true;
                 for (i = 0; i < len; ++i) {
-                    if (!el.vertices[i].isReal) {
+                    if (!this.vertices[i].isReal) {
                         this.isReal = false;
                         break;
                     }
