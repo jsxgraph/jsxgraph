@@ -895,6 +895,7 @@ define([
                 //  setDisplayRendNode() and
                 //  updateRenderer()
                 this.visPropOld.visible = this.visPropCalc.visible;
+                
                 if (parent_val !== undefined) {
                     this.visPropCalc.visible = parent_val;
                 } else {

@@ -1020,7 +1020,7 @@ define([
             if (Type.exists(drag.coords)) {
                 drag.setPositionDirectly(Const.COORDS_BY_SCREEN, this.drag_position);
             } else {
-                this.renderer.display(this.infobox, false);
+                this.showInfobox(false);
                                     // Hide infobox in case the user has touched an intersection point
                                     // and drags the underlying line now.
 
@@ -1962,7 +1962,7 @@ define([
 
             if (this.mode !== this.BOARD_MODE_DRAG) {
                 this.dehighlightAll();
-                this.renderer.display(this.infobox, false);
+                this.showInfobox(false);
             }
 
             if (this.mode !== this.BOARD_MODE_NONE) {
@@ -2039,7 +2039,7 @@ define([
             // Hiding the infobox is commented out, since it prevents showing the infobox
             // on IE 11+ on 'over'
             //if (this.mode !== this.BOARD_MODE_DRAG) {
-                //this.renderer.display(this.infobox, false);
+                //this.showInfobox(false);
             //}
 
             this.options.precision.hasPoint = this.options.precision.mouse;
@@ -2057,7 +2057,7 @@ define([
             var i, j, found;
 
             this.triggerEventHandlers(['touchend', 'up', 'pointerup', 'MSPointerUp'], [evt]);
-            this.renderer.display(this.infobox, false);
+            this.showInfobox(false);;
 
             if (evt) {
                 for (i = 0; i < this.touches.length; i++) {
@@ -2342,7 +2342,7 @@ define([
             // }
 
             if (this.mode !== this.BOARD_MODE_DRAG) {
-                this.renderer.display(this.infobox, false);
+                this.showInfobox(false);
             }
 
             this.options.precision.hasPoint = this.options.precision.touch;
@@ -2401,7 +2401,7 @@ define([
             }
 
             if (this.mode !== this.BOARD_MODE_DRAG) {
-                this.renderer.display(this.infobox, false);
+                this.showInfobox(false);
             }
 
             /*
@@ -2425,7 +2425,7 @@ define([
                 evtTouches = evt && evt[JXG.touchProperty];
 
             this.triggerEventHandlers(['touchend', 'up'], [evt]);
-            this.renderer.display(this.infobox, false);
+            this.showInfobox(false);
 
             // selection
             if (this.selectingMode) {
@@ -2638,7 +2638,7 @@ define([
 
             if (this.mode !== this.BOARD_MODE_DRAG) {
                 this.dehighlightAll();
-                this.renderer.display(this.infobox, false);
+                this.showInfobox(false);
             }
 
             // we have to check for four cases:
@@ -2740,6 +2740,28 @@ define([
          *
          **********************************************************/
 
+         /**
+          * Initialize the info box object which is used to display
+          * the coordinates of points near the mouse pointer,
+          * @returns {JXG.Board} Reference to the board
+          */
+         initInfobox: function () {
+             var  attr = Type.copyAttributes({}, this.options, 'infobox');
+
+             attr.id = this.id + '_infobox';
+
+             this.infobox = this.create('text', [0, 0, '0,0'], attr);
+
+             this.infobox.distanceX = -20;
+             this.infobox.distanceY = 25;
+             // this.infobox.needsUpdateSize = false;  // That is not true, but it speeds drawing up.
+
+             this.infobox.dump = false;
+
+             this.showInfobox(false);
+             return this;
+         },
+
         /**
          * Updates and displays a little info box to show coordinates of current selected points.
          * @param {JXG.GeometryElement} el A GeometryElement
@@ -2752,6 +2774,7 @@ define([
             if (!Type.evaluate(el.visProp.showinfobox)) {
                 return this;
             }
+
             if (Type.isPoint(el)) {
                 xc = el.coords.usrCoords[1];
                 yc = el.coords.usrCoords[2];
@@ -2776,19 +2799,21 @@ define([
                     this.highlightCustomInfobox(el.infoboxText, el);
                 }
 
-                this.renderer.display(this.infobox, true);
+                this.showInfobox(true);
             }
             return this;
         },
 
         /**
-         * Changes the text of the info box to what is provided via text.
-         * @param {String} text
-         * @param {JXG.GeometryElement} [el]
-         * @returns {JXG.Board} Reference to the board.
+         * Set infobox visible / invisible.
+         * @param  {Boolean} val true for visible, false for invisible
+         * @return {JXG.Board} Reference to the board.
          */
-        highlightCustomInfobox: function (text, el) {
-            this.infobox.setText(text);
+        showInfobox: function(val) {
+            if (this.infobox.hiddenByParent == val) {
+                this.infobox.hiddenByParent = !val;
+                this.renderer.display(this.infobox, val);
+            }
             return this;
         },
 
@@ -2801,6 +2826,17 @@ define([
          */
         highlightInfobox: function (x, y, el) {
             this.highlightCustomInfobox('(' + x + ', ' + y + ')', el);
+            return this;
+        },
+
+        /**
+         * Changes the text of the info box to what is provided via text.
+         * @param {String} text
+         * @param {JXG.GeometryElement} [el]
+         * @returns {JXG.Board} Reference to the board.
+         */
+        highlightCustomInfobox: function (text, el) {
+            this.infobox.setText(text);
             return this;
         },
 
@@ -3470,28 +3506,6 @@ define([
                 visible: false
             });
 
-            return this;
-        },
-
-        /**
-         * Initialize the info box object which is used to display
-         * the coordinates of points near the mouse pointer,
-         * @returns {JXG.Board} Reference to the board
-         */
-        initInfobox: function () {
-            var  attr = Type.copyAttributes({}, this.options, 'infobox');
-
-            attr.id = this.id + '_infobox';
-
-            this.infobox = this.create('text', [0, 0, '0,0'], attr);
-
-            this.infobox.distanceX = -20;
-            this.infobox.distanceY = 25;
-            // this.infobox.needsUpdateSize = false;  // That is not true, but it speeds drawing up.
-
-            this.infobox.dump = false;
-
-            this.renderer.display(this.infobox, false);
             return this;
         },
 
