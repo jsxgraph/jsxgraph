@@ -1961,6 +1961,7 @@ define([
                                          // with display=='internal'
             visible: true,
             parse: false,
+            transitionDuration: 0,
             needsRegularUpdate: false
 
             /**#@-*/

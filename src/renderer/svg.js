@@ -1011,6 +1011,10 @@ define([
                 duration = Type.evaluate(el.visProp.transitionduration);
             }
 
+            if (duration === el.visPropOld.transitionduration) {
+                return;
+            }
+
             if (el.elementClass === Const.OBJECT_CLASS_TEXT &&
                 Type.evaluate(el.visProp.display) === 'html') {
                 transitionStr = ' color ' + duration + 'ms,' +
@@ -1027,6 +1031,8 @@ define([
                 node = el[nodes[i]];
                 node.style.transition = transitionStr;
             }
+
+            el.visPropOld.transitionduration = duration;
         },
 
         /**
