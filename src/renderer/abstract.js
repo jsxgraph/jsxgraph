@@ -908,8 +908,10 @@ define([
                 ev = el.visProp,
                 display = Env.isBrowser ? ev.display : 'internal',
                 nodeList = ['rendNode', 'rendNodeTag', 'rendNodeLabel'],
+                lenN = nodeList.length,
                 cssList, prop, style, cssString,
-                styleList = ['cssdefaultstyle', 'cssstyle'], len;
+                styleList = ['cssdefaultstyle', 'cssstyle'],
+                lenS = styleList.length;
 
             if (doHighlight) {
                 sc = ev.highlightstrokecolor;
@@ -931,8 +933,7 @@ define([
             if ((this.type !== 'no') &&
                 (display === 'html' || this.type !== 'canvas')
                ) {
-                len = styleList.length;
-                for (style = 0; style < len; style++) {
+                for (style = 0; style < lenS; style++) {
                     // First set cssString to
                     // ev.cssdefaultstyle of ev.highlightcssdefaultstyle,
                     // then to
@@ -941,10 +942,12 @@ define([
                     if (cssString !== '' &&
                         el.visPropOld[styleList[style]] !== cssString) {
                         cssList = this._css2js(cssString);
-                        for (node in nodeList) {
+                        for (node = 0; node < lenN; node++) {
                             if (Type.exists(el[nodeList[node]])) {
                                 for (prop in cssList) {
-                                    el[nodeList[node]].style[cssList[prop].key] = cssList[prop].val;
+                                    if (cssList.hasOwnProperty(prop)) {
+                                        el[nodeList[node]].style[cssList[prop].key] = cssList[prop].val;
+                                    }
                                 }
                             }
                         }
@@ -956,14 +959,14 @@ define([
                 if (el.visPropOld.fontsize !== fs) {
                     el.needsSizeUpdate = true;
                     try {
-                        for (node in nodeList) {
+                        for (node = 0; node < lenN; node++) {
                             if (Type.exists(el[nodeList[node]])) {
                                 el[nodeList[node]].style.fontSize = fs + 'px';
                             }
                         }
                     } catch (e) {
                         // IE needs special treatment.
-                        for (node in nodeList) {
+                        for (node = 0; node < lenN; node++) {
                             if (Type.exists(el[nodeList[node]])) {
                                 el[nodeList[node]].style.fontSize = fs;
                             }
