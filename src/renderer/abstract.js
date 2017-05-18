@@ -909,7 +909,7 @@ define([
                 display = Env.isBrowser ? ev.display : 'internal',
                 nodeList = ['rendNode', 'rendNodeTag', 'rendNodeLabel'],
                 cssList, prop, style, cssString,
-                styleList = ['cssdefaultstyle', 'cssstyle'];
+                styleList = ['cssdefaultstyle', 'cssstyle'], len;
 
             if (doHighlight) {
                 sc = ev.highlightstrokecolor;
@@ -929,14 +929,17 @@ define([
             //  canvas     +         -
             //  no         -         -
             if ((this.type !== 'no') &&
-                (display === 'html' || this.type !== 'canvas')) {
-                for (style in styleList) {
+                (display === 'html' || this.type !== 'canvas')
+               ) {
+                len = styleList.length;
+                for (style = 0; style < len; style++) {
                     // First set cssString to
                     // ev.cssdefaultstyle of ev.highlightcssdefaultstyle,
                     // then to
                     // ev.cssstyle of ev.highlightcssstyle
                     cssString = Type.evaluate(ev[((doHighlight) ? 'highlight' : '') + styleList[style]]);
-                    if (cssString !== '' && el.visPropOld[styleList[style]] !== cssString) {
+                    if (cssString !== '' &&
+                        el.visPropOld[styleList[style]] !== cssString) {
                         cssList = this._css2js(cssString);
                         for (node in nodeList) {
                             if (Type.exists(el[nodeList[node]])) {
