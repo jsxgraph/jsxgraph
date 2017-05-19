@@ -905,14 +905,15 @@ define([
                 if (this.board.canvasWidth !== 0 && this.board.canvasHeight !== 0) {
                     this.calculateTicksCoordinates();
                 }
-                this.updateVisibility(this.line.visPropCalc.visible);
-                for (var i = 0; i < this.labels.length; i++) {
-                    if (this.labels[i] !== null) {
-                        this.labels[i].prepareUpdate()
-                            .updateVisibility(this.line.visPropCalc.visible)
-                            .updateRenderer();
-                    }
-                }
+                // this.updateVisibility(this.line.visPropCalc.visible);
+                //
+                // for (var i = 0; i < this.labels.length; i++) {
+                //     if (this.labels[i] !== null) {
+                //         this.labels[i].prepareUpdate()
+                //             .updateVisibility(this.line.visPropCalc.visible)
+                //             .updateRenderer();
+                //     }
+                // }
             }
 
             return this;
@@ -923,20 +924,20 @@ define([
          * @returns {JXG.Ticks} Reference to the object.
          */
         updateRenderer: function () {
-           if (this.needsUpdate) {
-                if (this.visPropCalc.visible) {
-                    this.board.renderer.updateTicks(this);
-
-                }
-                this.updateRendererLabels();
-
-                if (this.visPropCalc.visible != this.visPropOld.visible) {
-                    this.board.renderer.display(this, this.visPropCalc.visible);
-                }
-
-                this.needsUpdate = false;
+            if (!this.needsUpdate) {
+                return this;
             }
 
+            if (this.visPropCalc.visible) {
+                this.board.renderer.updateTicks(this);
+                this.updateRendererLabels();
+            }
+
+            if (this.visPropCalc.visible != this.visPropOld.visible) {
+                this.board.renderer.display(this, this.visPropCalc.visible);
+            }
+
+            this.needsUpdate = false;
             return this;
         },
 
@@ -954,6 +955,7 @@ define([
 
             lenData = this.labelsData.length;
             lenLabels = this.labels.length;
+
             for (i = 0, j = 0; i < lenData; i++) {
                 if (this.labelsData[i] === null) {
                     continue;
@@ -966,6 +968,7 @@ define([
                     highlightStrokeColor: this.board.options.text.strokeColor,
                     highlightStrokeWidth: this.board.options.text.strokeWidth,
                     highlightStrokeOpacity: this.board.options.text.strokeOpacity,
+//                    visible: this.visPropCalc.visible,
                     priv: this.visProp.priv
                 };
                 attr = Type.deepCopy(attr, this.visProp.label);
@@ -973,7 +976,7 @@ define([
                     // Take an already existing text element
                     label = this.labels[j];
                     label.setText(ld.t);
-                    label.setAttribute(attr);
+                    //label.setAttribute(attr);
                     label.setCoords(ld.x, ld.y);
                     j++;
                 } else {
@@ -985,7 +988,11 @@ define([
                     label.dump = false;
                     this.labels.push(label);
                 }
-                label.prepareUpdate().updateVisibility(this.visPropCalc.visible).updateRenderer();
+                label.prepareUpdate()
+                    .updateVisibility(this.visPropCalc.visible)
+                    .updateRenderer();
+                this.board.renderer.display(label, this.visPropCalc.visible);
+
                 label.distanceX = Type.evaluate(this.visProp.label.offset[0]);
                 label.distanceY = Type.evaluate(this.visProp.label.offset[1]);
             }

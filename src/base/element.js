@@ -902,9 +902,30 @@ define([
         },
 
         /**
-         * [description]
-         * @param  {[type]} parent_val [description]
-         * @return {JXG.GeometryElement} Reference to the element
+         * Set the visibility of an element. The visibility is influenced by
+         * (listed in ascending priority):
+         * <ol>
+         * <li> The value of the element's attribute 'visible'
+         * <li> The visibility of a parent element. (Example: label)
+         * This overrules the value of the element's attribute value only if
+         * this attribute value of the element is 'inherit'.
+         * <li> being inside of the canvas
+         * </ol>
+         *
+         * Here, also the previous value is stored in
+         * "this.visPropOld.visible". This reduces DOM accesses.
+         * <p>
+         * This method is called three times for most elements:
+         * <ol>
+         * <li> between {@link JXG.GeometryElement#update}
+         * and {@link JXG.GeometryElement#updateRenderer}. In case the value is 'inherit', nothing is done.
+         * <li> Recursively, called by itself for child elements. Here, 'inherit' is overruled by the parent's value.
+         * <li> In {@link JXG.GeometryElement#updateRenderer}, if the element is outside of the canvas.
+         * </ol>
+         *
+         * @param  {Boolean} parent_val Visibility of the parent element.
+         * @return {JXG.GeometryElement} Reference to the element.
+         * @private
          */
         updateVisibility: function(parent_val) {
             var i, len, val,
@@ -966,8 +987,12 @@ define([
 
             // Search for entries in visProp with "color" as part of the property name
             // and containing a RGBA string
-            if (this.visProp.hasOwnProperty(property) && property.indexOf('color') >= 0 &&
-                    Type.isString(value) && value.length === 9 && value.charAt(0) === '#') {
+            if (this.visProp.hasOwnProperty(property) &&
+                  property.indexOf('color') >= 0 &&
+                  Type.isString(value) &&
+                  value.length === 9 &&
+                  value.charAt(0) === '#') {
+
                 value = Color.rgba2rgbo(value);
                 this.visProp[property] = value[0];
                 // Previously: *=. But then, we can only decrease opacity.
@@ -1138,6 +1163,7 @@ define([
                         } else {
                             this.visProp.visible = value;
                         }
+
                         this.setDisplayRendNode(Type.evaluate(this.visProp.visible));
                         //this.prepareUpdate().updateVisibility();
                         // this.visPropCalc.visible = Type.evaluate(this.visProp.visible);

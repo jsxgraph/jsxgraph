@@ -4007,7 +4007,7 @@ define([
         unsuspendUpdate: function () {
             if (this.isSuspendedUpdate) {
                 this.isSuspendedUpdate = false;
-                this.update();
+                this.fullUpdate();
             }
             return this;
         },
