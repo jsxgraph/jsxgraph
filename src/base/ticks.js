@@ -928,6 +928,7 @@ define([
                 return this;
             }
 
+console.log(this.visProp.visible, this.visPropCalc.visible);
             if (this.visPropCalc.visible) {
                 this.board.renderer.updateTicks(this);
                 this.updateRendererLabels();
@@ -1101,7 +1102,7 @@ define([
         el.isDraggable = true;
 
         if (Type.evaluate(el.visProp.visible) == 'inherit') {
-            el.prepareUpdate().update().updateVisibility(parents[0].visPropCalc.visible).updateRenderer();
+            el.fullUpdate(parents[0].visPropCalc.visible);
         }
 
         return el;

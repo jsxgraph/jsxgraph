@@ -828,11 +828,14 @@ define([
 
         /**
          * Run through the full update chain of an element.
+         * @param  {Boolean} visible Set visibility in case the elements attribute value is 'inherit'. null is allowed.
+         * @return {JXG.GeometryElement} Reference to the element
+         * @private
          */
-        fullUpdate: function() {
+        fullUpdate: function(visible) {
             return this.prepareUpdate()
                 .update()
-                .updateVisibility()
+                .updateVisibility(visible)
                 .updateRenderer();
         },
 

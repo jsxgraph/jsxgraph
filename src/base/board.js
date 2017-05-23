@@ -710,7 +710,7 @@ define([
          * @param {Object} obj The object to add.
          */
         finalizeAdding: function (obj) {
-            if (!Type.evaluate(obj.visProp.visible)) {
+            if (Type.evaluate(obj.visProp.visible) === false) {
                 this.renderer.display(obj, false);
             }
         },
@@ -718,7 +718,7 @@ define([
         finalizeLabel: function (obj) {
             if (obj.hasLabel &&
                 !Type.evaluate(obj.label.visProp.islabel) &&
-                !Type.evaluate(obj.label.visProp.visible)) {
+                Type.evaluate(obj.label.visProp.visible) === false) {
                 this.renderer.display(obj.label, false);
             }
         },
