@@ -1100,10 +1100,7 @@ console.log(this.visProp.visible, this.visPropCalc.visible);
 
         el.setParents(parents[0]);
         el.isDraggable = true;
-
-        if (Type.evaluate(el.visProp.visible) == 'inherit') {
-            el.fullUpdate(parents[0].visPropCalc.visible);
-        }
+        el.fullUpdate(parents[0].visPropCalc.visible);
 
         return el;
     };
