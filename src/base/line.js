@@ -346,14 +346,14 @@ define([
                             this.point1.X() + (this.point2.X() - this.point1.X()) * dnew / d,
                             this.point1.Y() + (this.point2.Y() - this.point1.Y()) * dnew / d
                         ]);
-                        this.point2.prepareUpdate().updateRenderer();
+                        this.point2.fullUpdate();
                     } else if ((d1 <= d2 && drag1) ||
                             (d1 > d2 && drag1 && !drag2)) {
                         this.point1.setPositionDirectly(Const.COORDS_BY_USER, [
                             this.point2.X() + (this.point1.X() - this.point2.X()) * dnew / d,
                             this.point2.Y() + (this.point1.Y() - this.point2.Y()) * dnew / d
                         ]);
-                        this.point1.prepareUpdate().updateRenderer();
+                        this.point1.fullUpdate();
                     }
                     // Second case: the two points are identical. In this situation
                     // we choose a random direction.
@@ -367,13 +367,13 @@ define([
                             this.point1.X() + x * dnew / d,
                             this.point1.Y() + y * dnew / d
                         ]);
-                        this.point2.prepareUpdate().updateRenderer();
+                        this.point2.fullUpdate();
                     } else if (drag1) {
                         this.point1.setPositionDirectly(Const.COORDS_BY_USER, [
                             this.point2.X() + x * dnew / d,
                             this.point2.Y() + y * dnew / d
                         ]);
-                        this.point1.prepareUpdate().updateRenderer();
+                        this.point1.fullUpdate();
                     }
                 }
                 // Finally, we save the position of the two points.

@@ -1100,6 +1100,10 @@ define([
         el.setParents(parents[0]);
         el.isDraggable = true;
 
+        if (Type.evaluate(el.visProp.visible) == 'inherit') {
+            el.prepareUpdate().update().updateVisibility(parents[0].visPropCalc.visible).updateRenderer();
+        }
+
         return el;
     };
 

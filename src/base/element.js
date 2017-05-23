@@ -827,6 +827,16 @@ define([
         },
 
         /**
+         * Run through the full update chain of an element.
+         */
+        fullUpdate: function() {
+            return this.prepareUpdate()
+                .update()
+                .updateVisibility()
+                .updateRenderer();
+        },
+
+        /**
          * Show the element or hide it. If hidden, it will still exist but not be
          * visible on the board.
          * @param  {Boolean} val true: show the element, false: hide the element

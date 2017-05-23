@@ -3960,7 +3960,7 @@ define([
             }
 
             if (el.prepareUpdate && el.update && el.updateRenderer) {
-                el.prepareUpdate().update().updateVisibility().updateRenderer();
+                el.fullUpdate();
             }
             return el;
         },
@@ -4131,7 +4131,7 @@ define([
                             delete o.animationPath;
                         } else {
                             o.setPositionDirectly(Const.COORDS_BY_USER, newCoords);
-                            o.prepareUpdate().update().updateVisibility().updateRenderer();
+                            o.fullUpdate();
                             obj = o;
                         }
                     }
@@ -4258,7 +4258,7 @@ define([
                 this.elementsByName[dest.name] = dest;
             }
 
-            this.prepareUpdate().update().updateVisibility().updateRenderer();
+            this.fullUpdate();
 
             return this;
         },
@@ -4531,7 +4531,7 @@ define([
             this.selectionPolygon.setAttribute({visible: true});
             this.selectingBox = [[0, 0], [0, 0]];
             this._setSelectionPolygonFromBox();
-            this.selectionPolygon.prepareUpdate().update().updateVisibility().updateRenderer();
+            this.selectionPolygon.fullUpdate();
         },
 
         /**
@@ -4568,7 +4568,7 @@ define([
             if (this.isSelecting) {
                 this.selectingBox[1] = [pos[0], pos[1]];
                 this._setSelectionPolygonFromBox();
-                this.selectionPolygon.prepareUpdate().update().updateVisibility().updateRenderer();
+                this.selectionPolygon.fullUpdate();
             }
         },
 

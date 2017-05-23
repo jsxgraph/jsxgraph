@@ -1044,7 +1044,7 @@ define([
             rot = board.create('transform', [Math.PI * (2 - (n - 2) / n), p[i - 1]], {type: 'rotate'});
             if (pointsExist) {
                 p[i].addTransform(p[i - 2], rot);
-                p[i].prepareUpdate().update().updateVisibility().updateRenderer();
+                p[i].fullUpdate();
             } else {
                 if (Type.isArray(attr.ids) && attr.ids.length >= n - 2) {
                     attr.id = attr.ids[i - 2];

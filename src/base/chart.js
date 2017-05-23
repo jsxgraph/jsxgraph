@@ -342,14 +342,14 @@ define([
 
                     if (Type.exists(this.label)) {
                         this.label.rendNode.style.fontSize = (s * Type.evaluate(this.label.visProp.fontsize)) + 'px';
-                        this.label.prepareUpdate().update().updateVisibility().updateRenderer();
+                        this.label.fullUpdate();
                     }
 
                     this.point2.coords = new Coords(Const.COORDS_BY_USER, [
                         this.point1.coords.usrCoords[1] + dx * f,
                         this.point1.coords.usrCoords[2] + dy * f
                     ], this.board);
-                    this.prepareUpdate().update().updateVisibility().updateRenderer();
+                    this.fullUpdate();
                 },
 
                 highlightFun = function () {
