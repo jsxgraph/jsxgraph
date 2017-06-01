@@ -2352,10 +2352,14 @@ define([
                     slope1 = parents[0].stdform.slice(1),
                     slope2 = slope1;
 
-                if (slope1[1] > 0) {
-                    slope1 = Statistics.multiply(slope1, -1);
-                    slope2 = slope1;
-                }
+                // This is wrong. Example:
+                // var line = board.create('line', [0, -1, -1]);
+                // var ineq = board.create('inequality', [line]);
+                //
+                // if (slope1[1] > 0) {
+                //     slope1 = Statistics.multiply(slope1, -1);
+                //     slope2 = slope1;
+                // }
 
                 // calculate the area height = 2* the distance of the line to the point in the middle of the top/bottom border.
                 h = expansion * Math.max(Geometry.perpendicular(parents[0], dp, board)[0].distance(Const.COORDS_BY_USER, dp.coords), w);
