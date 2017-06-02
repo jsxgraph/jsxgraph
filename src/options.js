@@ -1403,17 +1403,6 @@ define([
             /**#@-*/
         },
 
-        /* special options for Msector of 3 points */
-        msector: {
-            strokeColor: '#000000', // Msector line
-            point: {               // Msector point
-                visible: false,
-                fixed: false,
-                withLabel: false,
-                name: ''
-            }
-        },
-
         /* special button options */
         button: {
             /**#@+
@@ -2378,6 +2367,17 @@ define([
             /**#@-*/
         },
 
+        /* special options for Msector of 3 points */
+        msector: {
+            strokeColor: '#000000', // Msector line
+            point: {               // Msector point
+                visible: false,
+                fixed: false,
+                withLabel: false,
+                name: ''
+            }
+        },
+
         /* special options for normal lines */
         normal: {
             /**#@+
@@ -2401,7 +2401,7 @@ define([
             /**#@-*/
         },
 
-        /* special options for orthogonal projectionn points */
+        /* special options for orthogonal projection points */
         orthogonalprojection: {
             /**#@+
              * @visprop
