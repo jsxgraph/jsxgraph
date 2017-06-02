@@ -2284,6 +2284,9 @@ define([
      * @class Creates an area indicating the solution of a linear inequality.
      * @pseudo
      * @description Display the solution set of a linear inequality (less than or equal to).
+     * To be precise, the solution set of the inequality <i>y <= b/a * x + c/a</i> is shown.
+     * In case <i>a = 0</i>, that is if the equation of the line is <i>bx + c = 0</i>,
+     * the area of the inequality <i>bx + c <= 0</i> is shown.
      * @param {JXG.Line} l The area drawn will be the area below this line. With the attribute
      * inverse:true, the inequality 'greater than or equal to' is shown.
      * @constructor
