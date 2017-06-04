@@ -998,6 +998,12 @@ define([
                     "\nPossible parent types: [point,point], [[x1,y1],[x2,y2]], [a,b,c]");
             }
 
+            if (p1 === null || p2 === null) {
+                throw new Error("JSXGraph: Can't create line with parent types '" +
+                    (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
+                    "\nPossible parent types: [point,point], [[x1,y1],[x2,y2]], [a,b,c]");
+            }
+
             attr = Type.copyAttributes(attributes, board.options, 'line');
 
             el = new JXG.Line(board, p1, p2, attr);
