@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2016
+    Copyright 2008-2017
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -216,10 +216,10 @@ define([
                 dist = Math.sqrt(dx * dx + dy * dy);
 
                 // We have to use usrCoords, since Radius is available in usrCoords only.
-                prec += this.visProp.strokewidth * 0.5;
+                prec += Type.evaluate(this.visProp.strokewidth) * 0.5;
                 prec /= Math.sqrt(this.board.unitX * this.board.unitY);
 
-            if (this.visProp.hasinnerpoints) {
+            if (Type.evaluate(this.visProp.hasinnerpoints)) {
                 return (dist < r + prec);
             }
 
@@ -328,7 +328,9 @@ define([
          */
         update: function () {
             if (this.needsUpdate) {
-                if (this.visProp.trace) {
+                this.visPropCalc.visible = Type.evaluate(this.visProp.visible);
+
+                if (Type.evaluate(this.visProp.trace)) {
                     this.cloneToBackground(true);
                 }
 
@@ -389,7 +391,7 @@ define([
         updateRenderer: function () {
             var wasReal;
 
-            if (this.needsUpdate && this.visProp.visible) {
+            if (this.needsUpdate && this.visPropCalc.visible) {
                 wasReal = this.isReal;
                 this.isReal = (!isNaN(this.center.coords.usrCoords[1] + this.center.coords.usrCoords[2] + this.Radius())) && this.center.isReal;
 
@@ -397,7 +399,7 @@ define([
                     if (wasReal !== this.isReal) {
                         this.board.renderer.show(this);
 
-                        if (this.hasLabel && this.label.visProp.visible) {
+                        if (this.hasLabel && this.label.visPropCalc.visible) {
                             this.board.renderer.show(this.label);
                         }
                     }
@@ -406,7 +408,7 @@ define([
                     if (wasReal !== this.isReal) {
                         this.board.renderer.hide(this);
 
-                        if (this.hasLabel && this.label.visProp.visible) {
+                        if (this.hasLabel && this.label.visPropCalc.visible) {
                             this.board.renderer.hide(this.label);
                         }
                     }
@@ -415,7 +417,7 @@ define([
             }
 
             // Update the label if visible.
-            if (this.hasLabel && this.label.visProp.visible && this.isReal) {
+            if (this.hasLabel && this.label.visPropCalc.visible && this.isReal) {
                 this.label.update();
                 this.board.renderer.updateText(this.label);
             }
@@ -497,7 +499,7 @@ define([
                 r = this.Radius(),
                 c = this.center.coords.usrCoords;
 
-            switch (this.visProp.label.position) {
+            switch (Type.evaluate(this.visProp.label.position)) {
             case 'lft':
                 x = c[1] - r;
                 y = c[2];
@@ -594,7 +596,7 @@ define([
 
         // see element.js
         snapToGrid: function () {
-            var forceIt = this.visProp.snaptogrid;
+            var forceIt = Type.evaluate(this.visProp.snaptogrid);
 
             this.center.handleSnapToGrid(forceIt, true);
             if (this.method === 'twoPoints') {
@@ -606,7 +608,7 @@ define([
 
         // see element.js
         snapToPoints: function () {
-            var forceIt = this.visProp.snaptopoints;
+            var forceIt = Type.evaluate(this.visProp.snaptopoints);
 
             this.center.handleSnapToPoints(forceIt);
             if (this.method === 'twoPoints') {

@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2016
+    Copyright 2008-2017
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -963,7 +963,9 @@ define([
             majorHeight: 10,
 
             /**
-             * Decides in which direction finite ticks are visible. Possible values are 0=false or 1=true.
+             * Decides in which direction finite ticks are visible. Possible values are either the constants
+             * 0=false or 1=true or a function returning 0 or 1.
+             *
              * In case of [0,1] the tick is only visible to the right of the line. In case of
              * [1,0] the tick is only visible to the left of the line.
              *
@@ -1268,7 +1270,7 @@ define([
              */
 
             name: '',                            // By default, do not generate names for axes.
-            needsRegularUpdate: false,         // Axes only updated after zooming and moving of the origin.
+            needsRegularUpdate: true,         // Axes only updated after zooming and moving of the origin.
             strokeWidth: 1,
             strokeColor: '#666666',
             highlightStrokeWidth: 1,
@@ -1291,11 +1293,11 @@ define([
                 label: {
                     offset: [4, -12 + 3],     // This seems to be a good offset for 12 point fonts
                     parse: false,
-                    needsRegularUpdate: false,
+                    needsRegularUpdate: true,
                     display: 'internal',
                     layer: 9
                 },
-                needsRegularUpdate: false,
+                needsRegularUpdate: true,
                 strokeWidth: 1,
                 strokeColor: '#666666',
                 highlightStrokeColor: '#888888',
@@ -1395,6 +1397,17 @@ define([
             }
 
             /**#@-*/
+        },
+
+        /* special options for Msector of 3 points */
+        msector: {
+            strokeColor: '#000000', // Msector line
+            point: {               // Msector point
+                visible: false,
+                fixed: false,
+                withLabel: false,
+                name: ''
+            }
         },
 
         /* special button options */

@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2016
+    Copyright 2008-2017
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -84,7 +84,7 @@ define([
         this.constructor(board, attributes, Const.OBJECT_TYPE_TEXT, Const.OBJECT_CLASS_TEXT);
 
         this.element = this.board.select(attributes.anchor);
-        this.coordsConstructor(coords, this.visProp.islabel);
+        this.coordsConstructor(coords, Type.evaluate(this.visProp.islabel));
 
         this.content = '';
         this.plaintext = '';
@@ -179,30 +179,32 @@ define([
          * @private
          */
         _setUpdateText: function (text) {
-            var updateText, resolvedText;
+            var updateText, resolvedText,
+                ev_p = Type.evaluate(this.visProp.parse),
+                ev_um = Type.evaluate(this.visProp.usemathjax);
 
             this.orgText = text;
             if (Type.isFunction(text)) {
                 this.updateText = function () {
                     resolvedText = text().toString();
-                    if (this.visProp.parse && !this.visProp.usemathjax) {
+                    if (ev_p && !ev_um) {
                         this.plaintext = this.replaceSub(this.replaceSup(this.convertGeonext2CSS(resolvedText)));
                     } else {
                         this.plaintext = resolvedText;
                     }
                 };
-            } else if (Type.isString(text) && !this.visProp.parse) {
+            } else if (Type.isString(text) && !ev_p) {
                 this.updateText = function () {
                     this.plaintext = text;
                 };
             } else {
                 if (Type.isNumber(text)) {
-                    this.content = Type.toFixed(text, this.visProp.digits);
+                    this.content = Type.toFixed(text, Type.evaluate(this.visProp.digits));
                 } else {
-                    if (this.visProp.useasciimathml) {
+                    if (Type.evaluate(this.visProp.useasciimathml)) {
                         // Convert via ASCIIMathML
                         this.content = "'`" + text + "`'";
-                    } else if (this.visProp.usemathjax) {
+                    } else if (ev_um) {
                         this.content = "'" + text + "'";
                     } else {
                         // Converts GEONExT syntax into JavaScript string
@@ -284,7 +286,8 @@ define([
          * for aligning text.
          */
         updateSize: function () {
-            var tmp, s, that, node;
+            var tmp, s, that, node,
+                ev_d = Type.evaluate(this.visProp.display);
 
             if (!Env.isBrowser || this.board.renderer.type === 'no') {
                 return this;
@@ -295,7 +298,7 @@ define([
             /**
              * offsetWidth and offsetHeight seem to be supported for internal vml elements by IE10+ in IE8 mode.
              */
-            if (this.visProp.display === 'html' || this.board.renderer.type === 'vml') {
+            if (ev_d === 'html' || this.board.renderer.type === 'vml') {
                 if (Type.exists(node.offsetWidth)) {
                     s = [node.offsetWidth, node.offsetHeight];
                     if (s[0] === 0 && s[1] === 0) { // Some browsers need some time to set offsetWidth and offsetHeight
@@ -309,7 +312,7 @@ define([
                 } else {
                     this.size = this.crudeSizeEstimate();
                 }
-            } else if (this.visProp.display === 'internal') {
+            } else if (ev_d === 'internal') {
                 if (this.board.renderer.type === 'svg') {
                     try {
                         tmp = node.getBBox();
@@ -328,7 +331,8 @@ define([
          * @returns {Array}
          */
         crudeSizeEstimate: function () {
-            return [parseFloat(this.visProp.fontsize) * this.plaintext.length * 0.45, parseFloat(this.visProp.fontsize) * 0.9];
+            var ev_fs = parseFloat(Type.evaluate(this.visProp.fontsize));
+            return [ev_fs * this.plaintext.length * 0.45, ev_fs * 0.9];
         },
 
         /**
@@ -433,7 +437,7 @@ define([
                 x = x[0];
             }
 
-            if (this.visProp.islabel && Type.exists(this.element)) {
+            if (Type.evaluate(this.visProp.islabel) && Type.exists(this.element)) {
                 coordsAnchor = this.element.getLabelAnchor();
                 dx = (x - coordsAnchor.usrCoords[1]) * this.board.unitX;
                 dy = -(y - coordsAnchor.usrCoords[2]) * this.board.unitY;
@@ -469,10 +473,11 @@ define([
                 return this;
             }
 
+            this.visPropCalc.visible = Type.evaluate(this.visProp.visible);
             this.updateCoords(fromParent);
             this.updateText();
 
-            if (this.visProp.display === 'internal') {
+            if (Type.evaluate(this.visProp.display) === 'internal') {
                 this.plaintext = this.utf8_decode(this.plaintext);
             }
 
@@ -580,7 +585,7 @@ define([
                         // output of a value tag
                         if (Type.isNumber((Type.bind(this.board.jc.snippet(res, true, '', false), this))())) {
                             // may also be a string
-                            plaintext += '+(' + res + ').toFixed(' + (this.visProp.digits) + ')';
+                            plaintext += '+(' + res + ').toFixed(' + (Type.evaluate(this.visProp.digits)) + ')';
                         } else {
                             plaintext += '+(' + res + ')';
                         }
@@ -672,7 +677,7 @@ define([
         bounds: function () {
             var c = this.coords.usrCoords;
 
-            if (this.visProp.islabel || this.board.unitY === 0 || this.board.unitX === 0) {
+            if (Type.evaluate(this.visProp.islabel) || this.board.unitY === 0 || this.board.unitX === 0) {
                 return [0, 0, 0, 0];
             } else {
                 return [c[1], c[2] + this.size[1] / this.board.unitY, c[1] + this.size[0] / this.board.unitX, c[2]];

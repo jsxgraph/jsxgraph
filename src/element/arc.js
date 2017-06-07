@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2016
+    Copyright 2008-2017
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -154,11 +154,12 @@ define([
                 sgn = 1,
                 A = this.radiuspoint,
                 B = this.center,
-                C = this.anglepoint;
+                C = this.anglepoint,
+                ev_s = Type.evaluate(this.visProp.selection);
 
             phi = Geometry.rad(A, B, C);
-            if ((this.visProp.selection === 'minor' && phi > Math.PI) ||
-                    (this.visProp.selection === 'major' && phi < Math.PI)) {
+            if ((ev_s === 'minor' && phi > Math.PI) ||
+                    (ev_s === 'major' && phi < Math.PI)) {
                 sgn = -1;
             }
 
@@ -234,7 +235,8 @@ define([
                 has, angle, alpha, beta,
                 invMat, c,
                 prec,
-                r = this.Radius();
+                r = this.Radius(),
+                ev_s = Type.evaluate(this.visProp.selection);
 
             prec = this.board.options.precision.hasPoint / Math.min(this.board.unitX, this.board.unitY);
             checkPoint = new Coords(Const.COORDS_BY_SCREEN, [x, y], this.board);
@@ -259,8 +261,8 @@ define([
                 alpha = 0.0;
                 beta = Geometry.rad(this.radiuspoint, this.center, this.anglepoint);
 
-                if ((this.visProp.selection === 'minor' && beta > Math.PI) ||
-                        (this.visProp.selection === 'major' && beta < Math.PI)) {
+                if ((ev_s === 'minor' && beta > Math.PI) ||
+                        (ev_s === 'major' && beta < Math.PI)) {
                     alpha = beta;
                     beta = 2 * Math.PI;
                 }
@@ -286,15 +288,16 @@ define([
                 checkPoint = new Coords(Const.COORDS_BY_SCREEN, [x, y], this.board),
                 r = this.Radius(),
                 dist = this.center.coords.distance(Const.COORDS_BY_USER, checkPoint),
-                has = (dist < r);
+                has = (dist < r),
+                ev_s = Type.evaluate(this.visProp.selection);
 
             if (has) {
                 angle = Geometry.rad(this.radiuspoint, this.center, checkPoint.usrCoords.slice(1));
                 alpha = 0;
                 beta = Geometry.rad(this.radiuspoint, this.center, this.anglepoint);
 
-                if ((this.visProp.selection === 'minor' && beta > Math.PI) ||
-                        (this.visProp.selection === 'major' && beta < Math.PI)) {
+                if ((ev_s === 'minor' && beta > Math.PI) ||
+                        (ev_s === 'major' && beta < Math.PI)) {
                     alpha = beta;
                     beta = 2 * Math.PI;
                 }
@@ -320,15 +323,16 @@ define([
                 p2c = this.point2.coords.usrCoords,
                 pmc = this.center.coords.usrCoords,
                 bxminusax = p2c[1] - pmc[1],
-                byminusay = p2c[2] - pmc[2];
+                byminusay = p2c[2] - pmc[2],
+                ev_s = Type.evaluate(this.visProp.selection);
 
             // If this is uncommented, the angle label can not be dragged
             //if (Type.exists(this.label)) {
             //    this.label.relativeCoords = new Coords(Const.COORDS_BY_SCREEN, [0, 0], this.board);
             //}
 
-            if ((this.visProp.selection === 'minor' && angle > Math.PI) ||
-                    (this.visProp.selection === 'major' && angle < Math.PI)) {
+            if ((ev_s === 'minor' && angle > Math.PI) ||
+                    (ev_s === 'major' && angle < Math.PI)) {
                 angle = -(2 * Math.PI - angle);
             }
 

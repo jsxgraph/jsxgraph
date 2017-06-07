@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2016
+    Copyright 2008-2017
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -327,7 +327,8 @@ define([
                     A = this.point2,
                     B = this.point1,
                     C = this.point3,
-                    phi, sgn = 1;
+                    phi, sgn = 1,
+                    ev_s = Type.evaluate(this.visProp.selection);
 
                 if (!A.isReal || !B.isReal || !C.isReal) {
                     this.dataX = [NaN];
@@ -336,8 +337,8 @@ define([
                 }
 
                 phi = Geometry.rad(A, B, C);
-                if ((this.visProp.selection === 'minor' && phi > Math.PI) ||
-                        (this.visProp.selection === 'major' && phi < Math.PI)) {
+                if ((ev_s === 'minor' && phi > Math.PI) ||
+                        (ev_s === 'major' && phi < Math.PI)) {
                     sgn = -1;
                 }
 
@@ -395,7 +396,8 @@ define([
                 checkPoint = new Coords(Const.COORDS_BY_SCREEN, [x, y], this.board),
                 r = this.Radius(),
                 dist = this.center.coords.distance(Const.COORDS_BY_USER, checkPoint),
-                has;
+                has,
+                ev_s = Type.evaluate(this.visProp.selection);
 
             prec = this.board.options.precision.hasPoint / Math.min(this.board.unitX, this.board.unitY);
             has = (Math.abs(dist - r) < prec);
@@ -404,8 +406,8 @@ define([
                 alpha = 0;
                 beta = Geometry.rad(this.point2, this.center, this.point3);
 
-                if ((this.visProp.selection === 'minor' && beta > Math.PI) ||
-                        (this.visProp.selection === 'major' && beta < Math.PI)) {
+                if ((ev_s === 'minor' && beta > Math.PI) ||
+                        (ev_s === 'major' && beta < Math.PI)) {
                     alpha = beta;
                     beta = 2 * Math.PI;
                 }
@@ -434,15 +436,16 @@ define([
                 dist = this.point1.coords.distance(Const.COORDS_BY_USER, checkPoint),
                 alpha,
                 beta,
-                has = (dist < r);
+                has = (dist < r),
+                ev_s = Type.evaluate(this.visProp.selection);
 
             if (has) {
                 angle = Geometry.rad(this.radiuspoint, this.center, checkPoint.usrCoords.slice(1));
                 alpha = 0.0;
                 beta = Geometry.rad(this.radiuspoint, this.center, this.anglepoint);
 
-                if ((this.visProp.selection === 'minor' && beta > Math.PI) ||
-                        (this.visProp.selection === 'major' && beta < Math.PI)) {
+                if ((ev_s === 'minor' && beta > Math.PI) ||
+                        (ev_s === 'major' && beta < Math.PI)) {
                     alpha = beta;
                     beta = 2 * Math.PI;
                 }
@@ -455,7 +458,8 @@ define([
         };
 
         el.hasPoint = function (x, y) {
-            if (this.visProp.highlightonsector || this.visProp.hasinnerpoints) {
+            if (Type.evaluate(this.visProp.highlightonsector) ||
+                    Type.evaluate(this.visProp.hasinnerpoints)) {
                 return this.hasPointSector(x, y);
             }
 
@@ -479,15 +483,16 @@ define([
                 p2c = this.point2.coords.usrCoords,
                 pmc = this.point1.coords.usrCoords,
                 bxminusax = p2c[1] - pmc[1],
-                byminusay = p2c[2] - pmc[2];
+                byminusay = p2c[2] - pmc[2],
+                ev_s = Type.evaluate(this.visProp.selection);
 
             // If this is uncommented, the angle label can not be dragged
             //if (Type.exists(this.label)) {
             //    this.label.relativeCoords = new Coords(Const.COORDS_BY_SCREEN, [0, 0], this.board);
             //}
 
-            if ((this.visProp.selection === 'minor' && angle > Math.PI) ||
-                    (this.visProp.selection === 'major' && angle < Math.PI)) {
+            if ((ev_s === 'minor' && angle > Math.PI) ||
+                    (ev_s === 'major' && angle < Math.PI)) {
                 angle = -(2 * Math.PI - angle);
             }
 
@@ -851,11 +856,12 @@ define([
                     d = B.Dist(A),
                     ar,
                     phi,
-                    sgn = 1;
+                    sgn = 1,
+                    ev_s = Type.evaluate(this.visProp.selection);
 
                 phi = Geometry.rad(A, B, C);
-                if ((this.visProp.selection === 'minor' && phi > Math.PI) ||
-                        (this.visProp.selection === 'major' && phi < Math.PI)) {
+                if ((ev_s === 'minor' && phi > Math.PI) ||
+                        (ev_s === 'major' && phi < Math.PI)) {
                     sgn = -1;
                 }
 
@@ -1003,7 +1009,7 @@ define([
 
         // GEONExT compatible labels.
         if (Type.exists(el.visProp.text)) {
-            el.label.setText(el.visProp.text);
+            el.label.setText(Type.evaluate(el.visProp.text));
         }
 
         el.elType = 'angle';
@@ -1059,16 +1065,17 @@ define([
         };
 
         el.updateDataArray = function () {
-            var type = this.visProp.type,
-                deg = Geometry.trueAngle(this.point2, this.point1, this.point3);
+            var type = Type.evaluate(this.visProp.type),
+                deg = Geometry.trueAngle(this.point2, this.point1, this.point3),
+                ev_s = Type.evaluate(this.visProp.selection);
 
-            if ((this.visProp.selection === 'minor' && deg > 180.0) ||
-                    (this.visProp.selection === 'major' && deg < 180.0)) {
+            if ((ev_s === 'minor' && deg > 180.0) ||
+                    (ev_s === 'major' && deg < 180.0)) {
                 deg = 360.0 - deg;
             }
 
-            if (Math.abs(deg - 90.0) < this.visProp.orthosensitivity + Mat.eps) {
-                type = this.visProp.orthotype;
+            if (Math.abs(deg - 90.0) < Type.evaluate(this.visProp.orthosensitivity) + Mat.eps) {
+                type = Type.evaluate(this.visProp.orthotype);
             }
 
             if (type === 'none') {
@@ -1079,12 +1086,12 @@ define([
                 this.updateDataArraySector();
             } else if (type === 'sectordot') {
                 this.updateDataArraySector();
-                if (!this.dot.visProp.visible) {
+                if (!this.dot.visPropCalc.visible) {
                     this.dot.setAttribute({visible: true});
                 }
             }
 
-            if (!this.visProp.visible || (type !== 'sectordot' && this.dot.visProp.visible)) {
+            if (!this.visPropCalc.visible || (type !== 'sectordot' && this.dot.visPropCalc.visible)) {
                 this.dot.setAttribute({visible: false});
             }
         };
@@ -1100,7 +1107,8 @@ define([
         attrsub = Type.copyAttributes(attributes, board.options, 'angle', 'dot');
         el.dot = board.create('point', [function () {
             var A, B, r, d, a2, co, si, mat,
-                point1, point2, point3;
+                point1, point2, point3,
+                ev_s;
 
             if (Type.exists(el.dot) && !el.dot.visProp.visible) {
                 return [0, 0];
@@ -1112,8 +1120,9 @@ define([
             d = Geometry.distance(A, B, 3);
             a2 = Geometry.rad(el.point2, el.point1, el.point3);
 
-            if ((el.visProp.selection === 'minor' && a2 > Math.PI) ||
-                    (el.visProp.selection === 'major' && a2 < Math.PI)) {
+            ev_s = Type.evaluate(el.visProp.selection);
+            if ((ev_s === 'minor' && a2 > Math.PI) ||
+                    (ev_s === 'major' && a2 < Math.PI)) {
                 a2 = -(2 * Math.PI - a2);
             }
             a2 *= 0.5;
@@ -1147,7 +1156,8 @@ define([
         // documented in GeometryElement
         el.getLabelAnchor = function () {
             var vec, dx = 12, dy = 12,
-                A, B, r, d, a2, co, si, mat;
+                A, B, r, d, a2, co, si, mat,
+                ev_s = Type.evaluate(el.visProp.selection);
 
             // If this is uncommented, the angle label can not be dragged
             //if (Type.exists(this.label)) {
@@ -1155,8 +1165,7 @@ define([
             //}
 
             if (Type.exists(this.label.visProp.fontSize)) {
-                dx = this.label.visProp.fontSize;
-                dy = this.label.visProp.fontSize;
+                dx = dy = Type.evaluate(this.label.visProp.fontSize);
             }
             dx /= this.board.unitX;
             dy /= this.board.unitY;
@@ -1166,8 +1175,8 @@ define([
             r = el.Radius();
             d = Geometry.distance(A, B, 3);
             a2 = Geometry.rad(el.point2, el.point1, el.point3);
-            if ((el.visProp.selection === 'minor' && a2 > Math.PI) ||
-                    (el.visProp.selection === 'major' && a2 < Math.PI)) {
+            if ((ev_s === 'minor' && a2 > Math.PI) ||
+                    (ev_s === 'major' && a2 < Math.PI)) {
                 a2 = -(2 * Math.PI - a2);
             }
             a2 *= 0.5;

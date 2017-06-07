@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2016
+    Copyright 2008-2017
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -238,7 +238,7 @@ define([
         curve.hasPoint =  function (x, y) {
             var ac, bc, r, p, dist;
 
-            if (this.visProp.hasinnerpoints) {
+            if (Type.evaluate(this.visProp.hasinnerpoints)) {
                 ac = F[0].coords;
                 bc = F[1].coords;
                 r = this.majorAxis();

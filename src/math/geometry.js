@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2016
+    Copyright 2008-2017
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -213,6 +213,58 @@ define([
 
             if (phiA > phiC) {
                 phi += Math.PI;
+            }
+
+            x = Math.cos(phi) + Bc[1];
+            y = Math.sin(phi) + Bc[2];
+
+            return new Coords(Const.COORDS_BY_USER, [1, x, y], board);
+        },
+
+        /**
+         * Calculates a point on the m-section line between the three points A, B, C.
+         * As a result, the m-section line is defined by two points:
+         * Parameter B and the point with the coordinates calculated in this function.
+         * The m-section generalizes the bisector to any real number.
+         * For example, the trisectors of an angle are simply the 1/3-sector and the 2/3-sector.
+         * Does not work for ideal points.
+         * @param {JXG.Point} A Point
+         * @param {JXG.Point} B Point
+         * @param {JXG.Point} C Point
+         * @param {Number} m Number
+         * @param [board=A.board] Reference to the board
+         * @returns {JXG.Coords} Coordinates of the second point defining the bisection.
+         */
+        angleMsector: function (A, B, C, m, board) {
+            var phiA, phiC, phi,
+                Ac = A.coords.usrCoords,
+                Bc = B.coords.usrCoords,
+                Cc = C.coords.usrCoords,
+                x, y;
+
+            if (!Type.exists(board)) {
+                board = A.board;
+            }
+
+            // Parallel lines
+            if (Bc[0] === 0) {
+                return new Coords(Const.COORDS_BY_USER,
+                    [1, (Ac[1] + Cc[1]) * m, (Ac[2] + Cc[2]) * m], board);
+            }
+
+            // Non-parallel lines
+            x = Ac[1] - Bc[1];
+            y = Ac[2] - Bc[2];
+            phiA =  Math.atan2(y, x);
+
+            x = Cc[1] - Bc[1];
+            y = Cc[2] - Bc[2];
+            phiC =  Math.atan2(y, x);
+
+            phi = phiA + ((phiC - phiA) * m);
+
+            if (phiA - phiC > Math.PI) {
+                phi += 2*m*Math.PI;
             }
 
             x = Math.cos(phi) + Bc[1];
@@ -592,8 +644,8 @@ define([
                 margin = 10;
             }
 
-            straightFirst = el.visProp.straightfirst;
-            straightLast = el.visProp.straightlast;
+            straightFirst = Type.evaluate(el.visProp.straightfirst);
+            straightLast = Type.evaluate(el.visProp.straightlast);
 
             // If one of the point is an ideal point in homogeneous coordinates
             // drawing of line segments or rays are not possible.
@@ -736,8 +788,8 @@ define([
                 takePoint1 = false,
                 takePoint2 = false;
 
-            straightFirst = el.visProp.straightfirst;
-            straightLast = el.visProp.straightlast;
+            straightFirst = Type.evaluate(el.visProp.straightfirst);
+            straightLast = Type.evaluate(el.visProp.straightlast);
 
             // If one of the point is an ideal point in homogeneous coordinates
             // drawing of line segments or rays are not possible.
@@ -961,15 +1013,6 @@ define([
                     return that.meetCurveCurve(el1, el2, i, j, el1.board);
                 };
 
-            //} else if ((el1.type === Const.OBJECT_TYPE_ARC && el2.elementClass === Const.OBJECT_CLASS_LINE) ||
-//  //                (el2.type === Const.OBJECT_TYPE_ARC && el1.elementClass === Const.OBJECT_CLASS_LINE)) {
-                // arc - line   (arcs are of class curve, but are intersected like circles)
-                // TEMPORARY FIX!!!
-                /** @ignore */
-//  //            func = function () {
-                    //return that..meet(el1.stdform, el2.stdform, i, el1.board);
-                //};
-
             } else if ((el1.elementClass === Const.OBJECT_CLASS_CURVE && el2.elementClass === Const.OBJECT_CLASS_LINE) ||
                     (el2.elementClass === Const.OBJECT_CLASS_CURVE && el1.elementClass === Const.OBJECT_CLASS_LINE)) {
                 // curve - line (this includes intersections between conic sections and lines
@@ -983,10 +1026,10 @@ define([
                 /** @ignore */
                 func = function () {
                     var res, c,
-                        first1 = el1.visProp.straightfirst,
-                        first2 = el2.visProp.straightfirst,
-                        last1 = el1.visProp.straightlast,
-                        last2 = el2.visProp.straightlast;
+                        first1, first2, last1, last2;
+
+                    first1 = first2 = Type.evaluate(el1.visProp.straightfirst);
+                    last1 = last2 = Type.evaluate(el1.visProp.straightlast);
 
                     /**
                      * If one of the lines is a segment or ray and
@@ -994,7 +1037,7 @@ define([
                      * of the segment or ray we call
                      * meetSegmentSegment
                      */
-                    if (!alwaysintersect && (!first1 || !last1 || !first2 || !last2)) {
+                    if (!Type.evaluate(alwaysintersect) && (!first1 || !last1 || !first2 || !last2)) {
                         res = that.meetSegmentSegment(
                             el1.point1.coords.usrCoords,
                             el1.point2.coords.usrCoords,
@@ -1311,7 +1354,7 @@ define([
                 li = el1;
             }
 
-            if (cu.visProp.curvetype === 'plot') {
+            if (Type.evaluate(cu.visProp.curvetype) === 'plot') {
                 v = this.meetCurveLineDiscrete(cu, li, nr, board, !alwaysIntersect);
             } else {
                 v = this.meetCurveLineContinuous(cu, li, nr, board);
@@ -1483,7 +1526,9 @@ define([
                 lip2 = li.point2.coords.usrCoords,
                 d, res,
                 cnt = 0,
-                len = cu.numberPoints;
+                len = cu.numberPoints,
+                ev_sf = Type.evaluate(li.visProp.straightfirst),
+                ev_sl = Type.evaluate(li.visProp.straightlast);
 
             // In case, no intersection will be found we will take this
             q = new Coords(Const.COORDS_BY_USER, [0, NaN, NaN], board);
@@ -1528,8 +1573,8 @@ define([
                                 * This prevents jumping of the intersection points.
                                 * But it may be discussed if it is the desired behavior.
                                 */
-                                if (testSegment && ((!li.visProp.straightfirst && p[2] < 0) ||
-                                        (!li.visProp.straightlast && p[2] > 1))) {
+                                if (testSegment &&
+                                        ((!ev_sf && p[2] < 0) || (!ev_sl && p[2] > 1))) {
                                     return q;  // break;
                                 }
 
@@ -2201,7 +2246,7 @@ define([
                 board = curve.board;
             }
 
-            if (curve.visProp.curvetype === 'plot') {
+            if (Type.evaluate(curve.visProp.curvetype) === 'plot') {
                 t = 0;
                 mindist = infty;
 

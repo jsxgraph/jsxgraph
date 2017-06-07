@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2016
+    Copyright 2008-2017
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -152,8 +152,12 @@ define([
          * @returns {Number}
          */
         p3.Value = function () {
-            var sdiff = this._smax - this._smin;
-            return p3.visProp.snapwidth === -1 ? this.position * sdiff + this._smin : Math.round((this.position * sdiff + this._smin) / this.visProp.snapwidth) * this.visProp.snapwidth;
+            var sdiff = this._smax - this._smin,
+                ev_sw = Type.evaluate(this.visProp.snapwidth);
+
+            return ev_sw === -1 ?
+                        this.position * sdiff + this._smin :
+                        Math.round((this.position * sdiff + this._smin) / ev_sw) * ev_sw;
         };
 
         p3.methodMap = Type.deepCopy(p3.methodMap, {
@@ -372,18 +376,18 @@ define([
         }
 
         // Save the visibility attribute of the sub-elements
-        for (el in p3.subs) {
-            p3.subs[el].status = {
-                visible: p3.subs[el].visProp.visible
-            };
-        }
+        // for (el in p3.subs) {
+        //     p3.subs[el].status = {
+        //         visible: p3.subs[el].visProp.visible
+        //     };
+        // }
 
         p3.hideElement = function () {
             var el;
             GeometryElement.prototype.hideElement.call(this);
 
             for (el in this.subs) {
-                this.subs[el].status.visible = this.subs[el].visProp.visible;
+                // this.subs[el].status.visible = this.subs[el].visProp.visible;
                 this.subs[el].hideElement();
             }
         };
@@ -393,9 +397,9 @@ define([
             GeometryElement.prototype.showElement.call(this);
 
             for (el in this.subs) {
-                if (this.subs[el].status.visible) {
-                    this.subs[el].showElement();
-                }
+//                if (this.subs[el].status.visible) {
+                this.subs[el].showElement();
+//                }
             }
         };
 

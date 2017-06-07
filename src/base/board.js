@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2016
+    Copyright 2008-2017
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -710,13 +710,15 @@ define([
          * @param {Object} obj The object to add.
          */
         finalizeAdding: function (obj) {
-            if (!obj.visProp.visible) {
+            if (!Type.evaluate(obj.visProp.visible)) {
                 this.renderer.hide(obj);
             }
         },
 
         finalizeLabel: function (obj) {
-            if (obj.hasLabel && !obj.label.visProp.islabel && !obj.label.visProp.visible) {
+            if (obj.hasLabel &&
+                !Type.evaluate(obj.label.visProp.islabel) &&
+                !Type.evaluate(obj.label.visProp.visible)) {
                 this.renderer.hide(obj.label);
             }
         },
@@ -910,7 +912,7 @@ define([
                 pEl = this.objectsList[el];
                 haspoint = pEl.hasPoint && pEl.hasPoint(x, y);
 
-                if (pEl.visProp.visible && haspoint) {
+                if (pEl.visPropCalc.visible && haspoint) {
                     pEl.triggerEventHandlers([type + 'down', 'down'], [evt]);
                     this.downObjects.push(pEl);
                 }
@@ -920,8 +922,8 @@ define([
                           pEl.elementClass === Const.OBJECT_CLASS_TEXT)) ||
                         !this.geonextCompatibilityMode) &&
                         pEl.isDraggable &&
-                        pEl.visProp.visible &&
-                        (!pEl.visProp.fixed) && /*(!pEl.visProp.frozen) &&*/
+                        pEl.visPropCalc.visible &&
+                        (!Type.evaluate(pEl.visProp.fixed)) && /*(!pEl.visProp.frozen) &&*/
                         haspoint) {
                     // Elements in the highest layer get priority.
                     if (pEl.visProp.layer > dragEl.visProp.layer ||
@@ -933,7 +935,8 @@ define([
                         // This only works if we assume that every browser runs
                         // through this.objects in the right order, i.e. an element A
                         // added before element B turns up here before B does.
-                        if (!this.attr.ignorelabels || (!Type.exists(dragEl.label) || pEl !== dragEl.label)) {
+                        if (!this.attr.ignorelabels ||
+                            (!Type.exists(dragEl.label) || pEl !== dragEl.label)) {
                             dragEl = pEl;
                             collect.push(dragEl);
 
@@ -973,7 +976,7 @@ define([
             // Move drag element to the top of the layer
             if (this.renderer.type === 'svg' &&
                 Type.exists(collect[0]) &&
-                collect[0].visProp.dragtotopoflayer &&
+                Type.evaluate(collect[0].visProp.dragtotopoflayer) &&
                 collect.length === 1 &&
                 Type.exists(collect[0].rendNode)) {
 
@@ -1139,7 +1142,7 @@ define([
                 //omid = Mat.matVecMult(t2.matrix, omid);
 
                 t1.melt(t2);
-                if (drag.visProp.scalable) {
+                if (Type.evaluate(drag.visProp.scalable)) {
                     // Scale
                     d = Geometry.distance(np1, np2) / Geometry.distance(op1, op2);
                     t3 = this.create('transform', [-nmid[1], -nmid[2]], {type: 'translate'});
@@ -1209,7 +1212,7 @@ define([
                 t3 = this.create('transform', [alpha], {type: 'rotate'});
                 t1.melt(t2).melt(t3);
 
-                if (drag.visProp.scalable) {
+                if (Type.evaluate(drag.visProp.scalable)) {
                     d = Geometry.distance(np1, np2) / Geometry.distance(op1, op2);
                     t4 = this.create('transform', [d, d], {type: 'scale'});
                     t1.melt(t4);
@@ -1244,7 +1247,7 @@ define([
             for (el = 0; el < len; el++) {
                 pEl = this.objectsList[el];
                 pId = pEl.id;
-                if (Type.exists(pEl.hasPoint) && pEl.visProp.visible && pEl.hasPoint(x, y)) {
+                if (Type.exists(pEl.hasPoint) && pEl.visPropCalc.visible && pEl.hasPoint(x, y)) {
                     // this is required in any case because otherwise the box won't be shown until the point is dragged
                     this.updateInfobox(pEl);
 
@@ -2742,24 +2745,26 @@ define([
          * @returns {JXG.Board} Reference to the board
          */
         updateInfobox: function (el) {
-            var x, y, xc, yc;
+            var x, y, xc, yc,
+            vpinfoboxdigits;
 
-            if (!el.visProp.showinfobox) {
+            if (!Type.evaluate(el.visProp.showinfobox)) {
                 return this;
             }
             if (Type.isPoint(el)) {
                 xc = el.coords.usrCoords[1];
                 yc = el.coords.usrCoords[2];
 
+                vpinfoboxdigits = Type.evaluate(el.visProp.infoboxdigits);
                 this.infobox.setCoords(xc + this.infobox.distanceX / this.unitX, yc + this.infobox.distanceY / this.unitY);
 
                 if (typeof el.infoboxText !== 'string') {
-                    if (el.visProp.infoboxdigits === 'auto') {
+                    if (vpinfoboxdigits === 'auto') {
                         x = Type.autoDigits(xc);
                         y = Type.autoDigits(yc);
-                    } else if (Type.isNumber(el.visProp.infoboxdigits)) {
-                        x = Type.toFixed(xc, el.visProp.infoboxdigits);
-                        y = Type.toFixed(yc, el.visProp.infoboxdigits);
+                    } else if (Type.isNumber(vpinfoboxdigits)) {
+                        x = Type.toFixed(xc, vpinfoboxdigits);
+                        y = Type.toFixed(yc, vpinfoboxdigits);
                     } else {
                         x = xc;
                         y = yc;
@@ -2818,7 +2823,7 @@ define([
                     // In highlightedObjects should only be objects which fulfill all these conditions
                     // And in case of complex elements, like a turtle based fractal, it should be faster to
                     // just de-highlight the element instead of checking hasPoint...
-                    // if ((!Type.exists(pEl.hasPoint)) || !pEl.hasPoint(x, y) || !pEl.visProp.visible)
+                    // if ((!Type.exists(pEl.hasPoint)) || !pEl.hasPoint(x, y) || !pEl.visPropCalc.visible)
                 }
             }
 
@@ -2893,7 +2898,7 @@ define([
 
             for (el = 0; el < len; el++) {
                 pEl = this.objectsList[el];
-                if (pEl.visProp.visible && pEl.hasPoint && pEl.hasPoint(dx, dy)) {
+                if (pEl.visPropCalc.visible && pEl.hasPoint && pEl.hasPoint(dx, dy)) {
                     elList[elList.length] = pEl;
                 }
             }
@@ -2913,7 +2918,7 @@ define([
                 el = this.objectsList[ob];
 
                 if (Type.exists(el.coords)) {
-                    if (el.visProp.frozen) {
+                    if (Type.evaluate(el.visProp.frozen)) {
                         el.coords.screen2usr();
                     } else {
                         el.coords.usr2screen();
@@ -3231,7 +3236,7 @@ define([
             for (el = 0; el < len; el++) {
                 pEl = this.objectsList[el];
 
-                if (Type.isPoint(pEl) && pEl.visProp.visible) {
+                if (Type.isPoint(pEl) && pEl.visPropCalc.visible) {
                     if (pEl.coords.usrCoords[1] < minX) {
                         minX = pEl.coords.usrCoords[1];
                     } else if (pEl.coords.usrCoords[1] > maxX) {
@@ -3382,7 +3387,7 @@ define([
                 delete this.elementsByName[object.name];
 
 
-                if (object.visProp && object.visProp.trace) {
+                if (object.visProp && Type.evaluate(object.visProp.trace)) {
                     object.clearTrace();
                 }
 
@@ -3720,7 +3725,7 @@ define([
 
         /**
          * Please use {@link JXG.Board#on} instead.
-         * @param {Function} hook A function to be called by the board after an update occured.
+         * @param {Function} hook A function to be called by the board after an update occurred.
          * @param {String} [m='update'] When the hook is to be called. Possible values are <i>mouseup</i>, <i>mousedown</i> and <i>update</i>.
          * @param {Object} [context=board] Determines the execution context the hook is called. This parameter is optional, default is the
          * board object the hook is attached to.
@@ -3783,7 +3788,7 @@ define([
 
         /**
          * Adds a dependent board to this board.
-         * @param {JXG.Board} board A reference to board which will be updated after an update of this board occured.
+         * @param {JXG.Board} board A reference to board which will be updated after an update of this board occurred.
          * @returns {JXG.Board} Reference to the board
          */
         addChild: function (board) {
@@ -3830,7 +3835,6 @@ define([
             if (this.attr.minimizereflow === 'svg' && this.renderer.type === 'svg') {
                 insert = this.renderer.removeToInsertLater(this.renderer.svgRoot);
             }
-
             this.prepareUpdate().updateElements(drag).updateConditions();
 
             this.renderer.suspendRedraw(this);
@@ -4281,10 +4285,10 @@ define([
                             };
                         }
                         o.setAttribute({
-                            strokecolor: Color.rgb2cb(o.visPropOriginal.strokecolor, deficiency),
-                            fillcolor: Color.rgb2cb(o.visPropOriginal.fillcolor, deficiency),
-                            highlightstrokecolor: Color.rgb2cb(o.visPropOriginal.highlightstrokecolor, deficiency),
-                            highlightfillcolor: Color.rgb2cb(o.visPropOriginal.highlightfillcolor, deficiency)
+                            strokecolor: Color.rgb2cb(Type.evaluate(o.visPropOriginal.strokecolor), deficiency),
+                            fillcolor: Color.rgb2cb(Type.evaluate(o.visPropOriginal.fillcolor), deficiency),
+                            highlightstrokecolor: Color.rgb2cb(Type.evaluate(o.visPropOriginal.highlightstrokecolor), deficiency),
+                            highlightfillcolor: Color.rgb2cb(Type.evaluate(o.visPropOriginal.highlightfillcolor), deficiency)
                         });
                     } else if (Type.exists(o.visPropOriginal)) {
                         JXG.extend(o.visProp, o.visPropOriginal);

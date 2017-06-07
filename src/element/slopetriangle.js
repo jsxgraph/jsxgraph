@@ -175,7 +175,9 @@ define([
             function () { return ''; }
         ], attr);
 
-        label._setText(function () { return Type.toFixed(el.Value(), label.visProp.digits); });
+        label._setText(function () {
+            return Type.toFixed(el.Value(), Type.evaluate(label.visProp.digits));
+        });
         label.prepareUpdate().update().updateRenderer();
 
         el.glider = glider;

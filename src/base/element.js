@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2016
+    Copyright 2008-2017
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -291,6 +291,21 @@ define([
          */
         this.visProp = {};
 
+        /**
+         * An associative array containing visual properties which are calculated from
+         * the attribute values (i.e. visProp) and from other constraints.
+         * An example: if an intersection point does not have real coordinates,
+         * visPropCalc.visible is set to false.
+         * Additionally, the user can control visibility with the attribute "visible",
+         * even by supplying a functions as value.
+         *
+         * @type Object
+         * @default empty object
+         */
+        this.visPropCalc = {
+            visible: false
+        };
+
         EventEmitter.eventify(this);
 
         /**
@@ -373,7 +388,7 @@ define([
 
             this.visProp.draft = attr.draft && attr.draft.draft;
             this.visProp.gradientangle = '270';
-            this.visProp.gradientsecondopacity = this.visProp.fillopacity;
+            this.visProp.gradientsecondopacity = Type.evaluate(this.visProp.fillopacity);
             this.visProp.gradientpositionx = 0.5;
             this.visProp.gradientpositiony = 0.5;
         }
@@ -609,7 +624,7 @@ define([
          * @returns {boolean}
          */
         draggable: function () {
-            return this.isDraggable && !this.visProp.fixed &&
+            return this.isDraggable && !Type.evaluate(this.visProp.fixed) &&
                 /*!this.visProp.frozen &&*/ this.type !== Const.OBJECT_TYPE_GLIDER;
         },
 
@@ -795,7 +810,9 @@ define([
          * Can be used sometimes to commit changes to the object.
          */
         update: function () {
-            if (this.visProp.trace) {
+            this.visPropCalc.visible = Type.evaluate(this.visProp.visible);
+
+            if (Type.evaluate(this.visProp.trace)) {
                 this.cloneToBackground();
             }
             return this;
@@ -813,12 +830,12 @@ define([
          * Hide the element. It will still exist but not visible on the board.
          */
         hideElement: function () {
-            this.visProp.visible = false;
+            this.visPropCalc.visible = false;
             this.board.renderer.hide(this);
 
             if (Type.exists(this.label) && this.hasLabel) {
                 this.label.hiddenByParent = true;
-                if (this.label.visProp.visible) {
+                if (this.label.visPropCalc.visible) {
                     this.label.hideElement();
                 }
             }
@@ -829,12 +846,12 @@ define([
          * Make the element visible.
          */
         showElement: function () {
-            this.visProp.visible = true;
+            this.visPropCalc.visible = true;
             this.board.renderer.show(this);
 
             if (Type.exists(this.label) && this.hasLabel && this.label.hiddenByParent) {
                 this.label.hiddenByParent = false;
-                if (!this.label.visProp.visible) {
+                if (!this.label.visPropCalc.visible) {
                     this.label.showElement().updateRenderer();
                 }
             }
@@ -1017,12 +1034,19 @@ define([
                         }
                         break;
                     case 'visible':
-                        if (value === 'false' || value === false) {
+                        if (value === 'false') {
                             this.visProp.visible = false;
-                            this.hideElement();
-                        } else if (value === 'true' || value === true) {
+                        } else if (value === 'true') {
                             this.visProp.visible = true;
+                        } else {
+                            this.visProp.visible = value;
+                        }
+
+                        this.visPropCalc.visible = Type.evaluate(this.visProp.visible);
+                        if (this.visPropCalc.visible) {
                             this.showElement();
+                        } else {
+                            this.hideElement();
                         }
                         break;
                     case 'face':
@@ -1055,18 +1079,18 @@ define([
                         break;
                     case 'withlabel':
                         this.visProp.withlabel = value;
-                        if (!value) {
+                        if (!Type.evaluate(value)) {
                             if (this.label && this.hasLabel) {
                                 this.label.hideElement();
                             }
                         } else {
                             if (this.label) {
-                                if (this.visProp.visible) {
+                                if (Type.evaluate(this.visProp.visible)) {
                                     this.label.showElement();
                                 }
                             } else {
                                 this.createLabel();
-                                if (!this.visProp.visible) {
+                                if (!Type.evaluate(this.visProp.visible)) {
                                     this.label.hideElement();
                                 }
                             }
@@ -1079,8 +1103,9 @@ define([
                         }
                         break;
                     case 'rotate':
-                        if ((this.elementClass === Const.OBJECT_CLASS_TEXT && this.visProp.display === 'internal') ||
-                                this.type === Const.OBJECT_TYPE_IMAGE) {
+                        if ((this.elementClass === Const.OBJECT_CLASS_TEXT &&
+                             Type.evaluate(this.visProp.display) === 'internal') ||
+                            this.type === Const.OBJECT_TYPE_IMAGE) {
                             this.addRotation(value);
                         }
                         break;
@@ -1120,7 +1145,7 @@ define([
 
             this.triggerEventHandlers(['attribute'], [properties, this]);
 
-            if (!this.visProp.needsregularupdate) {
+            if (!Type.evaluate(this.visProp.needsregularupdate)) {
                 this.board.fullUpdate();
             } else {
                 this.board.update(this);
@@ -1248,7 +1273,8 @@ define([
          * @private
          */
         createGradient: function () {
-            if (this.visProp.gradient === 'linear' || this.visProp.gradient === 'radial') {
+            var ev_g = Type.evaluate(this.visProp.gradient);
+            if (ev_g === 'linear' || ev_g === 'radial') {
                 this.board.renderer.setGradient(this);
             }
         },
@@ -1284,9 +1310,9 @@ define([
 
                     this.label.dump = false;
 
-                    if (!this.visProp.visible) {
+                    if (!Type.evaluate(this.visProp.visible)) {
                         this.label.hiddenByParent = true;
-                        this.label.visProp.visible = false;
+                        this.label.visPropCalc.visible = false;
                     }
                     this.hasLabel = true;
                 }
@@ -1317,7 +1343,8 @@ define([
             //    through dehighlightAll.
 
             // highlight only if not highlighted
-            if (this.visProp.highlight && (!this.highlighted || force)) {
+            if (Type.evaluate(this.visProp.highlight)
+                    && (!this.highlighted || force)) {
                 this.highlighted = true;
                 this.board.highlightedObjects[this.id] = this;
                 this.board.renderer.highlight(this);
@@ -1420,7 +1447,8 @@ define([
             var tOffInv, tOff, tS, tSInv, tRot,
                 that = this;
 
-            if (((this.elementClass === Const.OBJECT_CLASS_TEXT && this.visProp.display === 'internal') ||
+            if (((this.elementClass === Const.OBJECT_CLASS_TEXT &&
+                    Type.evaluate(this.visProp.display) === 'internal') ||
                     this.type === Const.OBJECT_TYPE_IMAGE) && angle !== 0) {
 
                 tOffInv = this.board.create('transform', [
@@ -1662,35 +1690,14 @@ define([
                 //i, len, g, el, p,
                 boardBB,
                 needsSnapToGrid = false,
-                sX = this.visProp.snapsizex,
-                sY = this.visProp.snapsizey;
+                sX = Type.evaluate(this.visProp.snapsizex),
+                sY = Type.evaluate(this.visProp.snapsizey);
 
             if (!Type.exists(this.coords)) {
                 return this;
             }
 
-            needsSnapToGrid = this.visProp.snaptogrid || force === true;
-
-            // Test if in any of the groups this element is member of
-            // there is an element with snaptogrid == true.
-            /*
-            if (!needsSnapToGrid && Type.exists(this.groups)) {
-                len = this.groups.length;
-                for (i = 0; i < len; ++i) {
-                    g = this.board.groups[this.groups[i]];
-                    for (el in g.objects) {
-                        if (g.objects.hasOwnProperty(el)) {
-                            if (g.objects[el].point.visProp.snaptogrid) {
-                                needsSnapToGrid = true;
-                                // Leave both loops immediately
-                                i = len;
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-            */
+            needsSnapToGrid = Type.evaluate(this.visProp.snaptogrid) || force === true;
 
             if (needsSnapToGrid) {
                 x = this.coords.usrCoords[1];
@@ -1698,12 +1705,12 @@ define([
 
                 if (sX <= 0 && this.board.defaultAxes && this.board.defaultAxes.x.defaultTicks) {
                     ticks = this.board.defaultAxes.x.defaultTicks;
-                    sX = ticks.ticksDelta * (ticks.visProp.minorticks + 1);
+                    sX = ticks.ticksDelta * (Type.evaluate(ticks.visProp.minorticks) + 1);
                 }
 
                 if (sY <= 0 && this.board.defaultAxes && this.board.defaultAxes.y.defaultTicks) {
                     ticks = this.board.defaultAxes.y.defaultTicks;
-                    sY = ticks.ticksDelta * (ticks.visProp.minorticks + 1);
+                    sY = ticks.ticksDelta * (Type.evaluate(ticks.visProp.minorticks) + 1);
                 }
 
                 // if no valid snap sizes are available, don't change the coords.

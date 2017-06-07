@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2016
+    Copyright 2008-2017
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -175,6 +175,7 @@ define([
                 return this;
             }
 
+            this.visPropCalc.visible = Type.evaluate(this.visProp.visible);
             this.updateCoords(fromParent);
             this.updateSize();
             this.updateSpan();

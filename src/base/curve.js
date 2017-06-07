@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2016
+    Copyright 2008-2017
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -79,7 +79,7 @@ define([
          * between numberPointsLow and numberPointsHigh.
          * It is set in {@link JXG.Curve#updateCurve}.
          */
-        this.numberPoints = this.visProp.numberpointshigh;
+        this.numberPoints = Type.evaluate(this.visProp.numberpointshigh);
 
         this.bezierDegree = 1;
 
@@ -155,7 +155,7 @@ define([
         minX: function () {
             var leftCoords;
 
-            if (this.visProp.curvetype === 'polar') {
+            if (Type.evaluate(this.visProp.curvetype) === 'polar') {
                 return 0;
             }
 
@@ -171,7 +171,7 @@ define([
         maxX: function () {
             var rightCoords;
 
-            if (this.visProp.curvetype === 'polar') {
+            if (Type.evaluate(this.visProp.curvetype) === 'polar') {
                 return 2 * Math.PI;
             }
             rightCoords = new Coords(Const.COORDS_BY_SCREEN, [this.board.canvasWidth, 0], this.board, false);
@@ -223,11 +223,12 @@ define([
         hasPoint: function (x, y, start) {
             var t, checkPoint, len, invMat, c,
                 i, j, tX, tY, res, points, qdt,
-                steps = this.visProp.numberpointslow,
+                steps = Type.evaluate(this.visProp.numberpointslow),
                 d = (this.maxX() - this.minX()) / steps,
                 prec = this.board.options.precision.hasPoint,
                 dist = Infinity,
                 ux2, uy2,
+                ev_ct,
                 suspendUpdate = true;
 
             checkPoint = new Coords(Const.COORDS_BY_SCREEN, [x, y], this.board, false);
@@ -253,8 +254,9 @@ define([
                 y = c[2];
             }
 
-            if (this.visProp.curvetype === 'parameter' ||
-                    this.visProp.curvetype === 'polar') {
+            ev_ct = Type.evaluate(this.visProp.curvetype);
+            if (ev_ct === 'parameter' ||
+                    ev_ct === 'polar') {
 
                 prec = prec * prec;
 
@@ -271,14 +273,14 @@ define([
 
                     t += d;
                 }
-            } else if (this.visProp.curvetype === 'plot' ||
-                    this.visProp.curvetype === 'functiongraph') {
+            } else if (ev_ct === 'plot' ||
+                        ev_ct === 'functiongraph') {
 
                 if (!Type.exists(start) || start < 0) {
                     start = 0;
                 }
 
-                if (Type.exists(this.qdt) && this.visProp.useqdt && this.bezierDegree !== 3) {
+                if (Type.exists(this.qdt) && Type.evaluate(this.visProp.useqdt) && this.bezierDegree !== 3) {
                     qdt = this.qdt.query(new Coords(Const.COORDS_BY_USER, [x, y], this.board));
                     points = qdt.points;
                     len = points.length;
@@ -352,7 +354,8 @@ define([
          */
         update: function () {
             if (this.needsUpdate) {
-                if (this.visProp.trace) {
+                this.visPropCalc.visible = Type.evaluate(this.visProp.visible);
+                if (Type.evaluate(this.visProp.trace)) {
                     this.cloneToBackground(true);
                 }
                 this.updateCurve();
@@ -368,7 +371,7 @@ define([
         updateRenderer: function () {
             var wasReal;
 
-            if (this.needsUpdate && this.visProp.visible) {
+            if (this.needsUpdate && this.visPropCalc.visible) {
                 wasReal = this.isReal;
 
                 this.checkReal();
@@ -380,21 +383,21 @@ define([
                 if (this.isReal) {
                     if (wasReal !== this.isReal) {
                         this.board.renderer.show(this);
-                        if (this.hasLabel && this.label.visProp.visible) {
+                        if (this.hasLabel && this.label.visPropCalc.visible) {
                             this.board.renderer.show(this.label);
                         }
                     }
                 } else {
                     if (wasReal !== this.isReal) {
                         this.board.renderer.hide(this);
-                        if (this.hasLabel && this.label.visProp.visible) {
+                        if (this.hasLabel && this.label.visPropCalc.visible) {
                             this.board.renderer.hide(this.label);
                         }
                     }
                 }
 
                 // Update the label if visible.
-                if (this.hasLabel && Type.exists(this.label.visProp) && this.label.visProp.visible) {
+                if (this.hasLabel && Type.exists(this.label.visPropCalc) && this.label.visPropCalc.visible) {
                     this.label.update();
                     this.board.renderer.updateText(this.label);
                 }
@@ -697,15 +700,15 @@ define([
                 }
             // continuous x data
             } else {
-                if (this.visProp.doadvancedplot) {
+                if (Type.evaluate(this.visProp.doadvancedplot)) {
                     this.updateParametricCurve(mi, ma, len);
-                } else if (this.visProp.doadvancedplotold) {
+                } else if (Type.evaluate(this.visProp.doadvancedplotold)) {
                     this.updateParametricCurveOld(mi, ma, len);
                 } else {
                     if (this.board.updateQuality === this.board.BOARD_QUALITY_HIGH) {
-                        this.numberPoints = this.visProp.numberpointshigh;
+                        this.numberPoints = Type.evaluate(this.visProp.numberpointshigh);
                     } else {
-                        this.numberPoints = this.visProp.numberpointslow;
+                        this.numberPoints = Type.evaluate(this.visProp.numberpointslow);
                     }
 
                     // It is possible, that the array length has increased.
@@ -714,7 +717,7 @@ define([
                 }
                 len = this.numberPoints;
 
-                if (this.visProp.useqdt && this.board.updateQuality === this.board.BOARD_QUALITY_HIGH) {
+                if (Type.evaluate(this.visProp.useqdt) && this.board.updateQuality === this.board.BOARD_QUALITY_HIGH) {
                     this.qdt = new QDT(this.board.getBoundingBox());
                     for (i = 0; i < this.points.length; i++) {
                         this.qdt.insert(this.points[i]);
@@ -734,7 +737,7 @@ define([
                 }
             }
 
-            if (this.visProp.curvetype !== 'plot' && this.visProp.rdpsmoothing) {
+            if (Type.evaluate(this.visProp.curvetype) !== 'plot' && Type.evaluate(this.visProp.rdpsmoothing)) {
                 this.points = Numerics.RamerDouglasPeucker(this.points, 0.2);
                 this.numberPoints = this.points.length;
             }
@@ -1604,7 +1607,7 @@ define([
                 bx = 0.95 * this.board.canvasWidth,
                 by = 0.95 * this.board.canvasHeight;
 
-            switch (this.visProp.label.position) {
+            switch (Type.evaluate(this.visProp.label.position)) {
             case 'ulft':
                 x = ax;
                 y = ay;

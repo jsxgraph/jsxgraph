@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2016
+    Copyright 2008-2017
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -163,11 +163,11 @@ define([
 
             var i, j, len, c = false;
 
-            if (this.visProp.hasinnerpoints) {
+            if (Type.evaluate(this.visProp.hasinnerpoints)) {
                 // All points of the polygon trigger hasPoint: inner and boundary points
                 len = this.vertices.length;
-                // See http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html for a reference
-                // Jordan method
+                // See http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
+                // for a reference of Jordan method
                 for (i = 0, j = len - 2; i < len - 1; j = i++) {
                     if (((this.vertices[i].coords.scrCoords[2] > y) !== (this.vertices[j].coords.scrCoords[2] > y)) &&
                             (x < (this.vertices[j].coords.scrCoords[1] - this.vertices[i].coords.scrCoords[1]) * (y - this.vertices[i].coords.scrCoords[2]) /
@@ -199,12 +199,12 @@ define([
          * Uses the boards renderer to update the polygon.
          */
         updateRenderer: function () {
-            if (this.needsUpdate && this.visProp.visible) {
+            if (this.needsUpdate && this.visPropCalc.visible) {
                 this.board.renderer.updatePolygon(this);
                 this.needsUpdate = false;
             }
 
-            if (this.hasLabel && this.label.visProp.visible) {
+            if (this.hasLabel && this.label.visPropCalc.visible) {
                 this.label.update();
                 this.board.renderer.updateText(this.label);
             }
@@ -278,7 +278,7 @@ define([
         hideElement: function (borderless) {
             var i;
 
-            this.visProp.visible = false;
+            this.visPropCalc.visible = false;
             this.board.renderer.hide(this);
 
             if (!borderless) {
@@ -289,7 +289,7 @@ define([
 
             if (this.hasLabel && Type.exists(this.label)) {
                 this.label.hiddenByParent = true;
-                if (this.label.visProp.visible) {
+                if (this.label.visPropCalc.visible) {
                     this.label.hideElement();
                 }
             }
@@ -303,7 +303,7 @@ define([
         showElement: function (borderless) {
             var i;
 
-            this.visProp.visible = true;
+            this.visPropCalc.visible = true;
             this.board.renderer.show(this);
 
             if (!borderless) {
@@ -315,7 +315,7 @@ define([
 
             if (Type.exists(this.label) && this.hasLabel && this.label.hiddenByParent) {
                 this.label.hiddenByParent = false;
-                if (!this.label.visProp.visible) {
+                if (!this.label.visPropCalc.visible) {
                     this.label.showElement().updateRenderer();
                 }
             }
@@ -636,7 +636,7 @@ define([
         snapToGrid: function () {
             var i, force;
 
-            if (this.visProp.snaptogrid) {
+            if (Type.evaluate(this.visProp.snaptogrid)) {
                 force = true;
             } else {
                 force = false;

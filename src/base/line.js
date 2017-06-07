@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2016
+    Copyright 2008-2017
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -187,7 +187,8 @@ define([
                 return false;
             }
 
-            if (this.visProp.straightfirst && this.visProp.straightlast) {
+            if (Type.evaluate(this.visProp.straightfirs) &&
+                    Type.evaluate(this.visProp.straightlast)) {
                 return true;
             }
 
@@ -251,11 +252,11 @@ define([
                 pos = (vnew[i] - p1c[i]) / d;
             }
 
-            if (!this.visProp.straightfirst && pos < 0) {
+            if (!Type.evaluate(this.visProp.straightfirst) && pos < 0) {
                 return false;
             }
 
-            return !(!this.visProp.straightlast && pos > 1);
+            return !(!Type.evaluate(this.visProp.straightlast) && pos > 1);
 
         },
 
@@ -267,6 +268,7 @@ define([
                 return this;
             }
 
+            this.visPropCalc.visible = Type.evaluate(this.visProp.visible);
             if (this.constrained) {
                 if (Type.isFunction(this.funps)) {
                     funps = this.funps();
@@ -298,7 +300,7 @@ define([
             this.updateSegmentFixedLength();
             this.updateStdform();
 
-            if (this.visProp.trace) {
+            if (Type.evaluate(this.visProp.trace)) {
                 this.cloneToBackground(true);
             }
 
@@ -327,8 +329,12 @@ define([
 
             // If the position of the points or the fixed length function has been changed we have to work.
             if (d1 > Mat.eps || d2 > Mat.eps || d !== dnew) {
-                drag1 = this.point1.isDraggable && (this.point1.type !== Const.OBJECT_TYPE_GLIDER) && !this.point1.visProp.fixed;
-                drag2 = this.point2.isDraggable && (this.point2.type !== Const.OBJECT_TYPE_GLIDER) && !this.point2.visProp.fixed;
+                drag1 = this.point1.isDraggable &&
+                            (this.point1.type !== Const.OBJECT_TYPE_GLIDER) &&
+                            !Type.evaluate(this.point1.visProp.fixed);
+                drag2 = this.point2.isDraggable &&
+                            (this.point2.type !== Const.OBJECT_TYPE_GLIDER) &&
+                            !Type.evaluate(this.point2.visProp.fixed);
 
                 // First case: the two points are different
                 // Then we try to adapt the point that was not dragged
@@ -400,7 +406,7 @@ define([
         updateRenderer: function () {
             var wasReal;
 
-            if (this.needsUpdate && this.visProp.visible) {
+            if (this.needsUpdate && this.visPropCalc.visible) {
                 wasReal = this.isReal;
                 this.isReal = (!isNaN(this.point1.coords.usrCoords[1] + this.point1.coords.usrCoords[2] +
                         this.point2.coords.usrCoords[1] + this.point2.coords.usrCoords[2]) &&
@@ -409,7 +415,7 @@ define([
                 if (this.isReal) {
                     if (wasReal !== this.isReal) {
                         this.board.renderer.show(this);
-                        if (this.hasLabel && this.label.visProp.visible) {
+                        if (this.hasLabel && this.label.visPropCalc.visible) {
                             this.board.renderer.show(this.label);
                         }
                     }
@@ -417,7 +423,7 @@ define([
                 } else {
                     if (wasReal !== this.isReal) {
                         this.board.renderer.hide(this);
-                        if (this.hasLabel && this.label.visProp.visible) {
+                        if (this.hasLabel && this.label.visPropCalc.visible) {
                             this.board.renderer.hide(this.label);
                         }
                     }
@@ -427,7 +433,7 @@ define([
             }
 
             /* Update the label if visible. */
-            if (this.hasLabel && this.label.visProp.visible && this.isReal) {
+            if (this.hasLabel && this.label.visPropCalc.visible && this.isReal) {
                 this.label.update();
                 this.board.renderer.updateText(this.label);
             }
@@ -542,9 +548,11 @@ define([
             var x, y,
                 fs = 0,
                 c1 = new Coords(Const.COORDS_BY_USER, this.point1.coords.usrCoords, this.board),
-                c2 = new Coords(Const.COORDS_BY_USER, this.point2.coords.usrCoords, this.board);
+                c2 = new Coords(Const.COORDS_BY_USER, this.point2.coords.usrCoords, this.board),
+                ev_sf = Type.evaluate(this.visProp.straightfirst),
+                ev_sl = Type.evaluate(this.visProp.straightlast);
 
-            if (this.visProp.straightfirst || this.visProp.straightlast) {
+            if (ev_sf || ev_sl) {
                 Geometry.calcStraight(this, c1, c2, 0);
             }
 
@@ -555,7 +563,7 @@ define([
                 return new Coords(Const.COORDS_BY_SCREEN, [NaN, NaN], this.board);
             }
 
-            switch (this.label.visProp.position) {
+            switch (Type.evaluate(this.label.visProp.position)) {
             case 'lft':
             case 'llft':
             case 'ulft':
@@ -584,20 +592,22 @@ define([
             }
 
             // Correct coordinates if the label seems to be outside of canvas.
-            if (this.visProp.straightfirst || this.visProp.straightlast) {
+            if (ev_sf || ev_sl) {
                 if (Type.exists(this.label)) {  // Does not exist during createLabel
-                    fs = this.label.visProp.fontsize;
+                    fs = Type.evaluate(this.label.visProp.fontsize);
                 }
 
                 if (Math.abs(x) < Mat.eps) {
                     x = 0;
-                } else if (this.board.canvasWidth + Mat.eps > x && x > this.board.canvasWidth - fs - Mat.eps) {
+                } else if (this.board.canvasWidth + Mat.eps > x &&
+                            x > this.board.canvasWidth - fs - Mat.eps) {
                     x = this.board.canvasWidth - fs;
                 }
 
                 if (Mat.eps + fs > y && y > -Mat.eps) {
                     y = fs;
-                } else if (this.board.canvasHeight + Mat.eps > y && y > this.board.canvasHeight - fs - Mat.eps) {
+                } else if (this.board.canvasHeight + Mat.eps > y &&
+                            y > this.board.canvasHeight - fs - Mat.eps) {
                     y = this.board.canvasHeight;
                 }
             }
@@ -665,18 +675,13 @@ define([
             var c1, c2, dc, t, ticks,
                 x, y, sX, sY;
 
-            if (this.visProp.snaptogrid) {
+            if (Type.evaluate(this.visProp.snaptogrid)) {
                 if (this.parents.length < 3) {    // Line through two points
                     this.point1.handleSnapToGrid(true, true);
                     this.point2.handleSnapToGrid(true, true);
-                /*
-                if (this.point1.visProp.snaptogrid || this.point2.visProp.snaptogrid) {
-                    this.point1.snapToGrid();
-                    this.point2.snapToGrid();
-                */
             } else if (Type.exists(pos)) {       // Free line
-                    sX = this.visProp.snapsizex;
-                    sY = this.visProp.snapsizey;
+                    sX = Type.evaluate(this.visProp.snapsizex);
+                    sY = Type.evaluate(this.visProp.snapsizey);
 
                     c1 = new Coords(Const.COORDS_BY_SCREEN, [pos.Xprev, pos.Yprev], this.board);
 
@@ -685,11 +690,11 @@ define([
 
                     if (sX <= 0 && this.board.defaultAxes && this.board.defaultAxes.x.defaultTicks) {
                         ticks = this.board.defaultAxes.x.defaultTicks;
-                        sX = ticks.ticksDelta * (ticks.visProp.minorticks + 1);
+                        sX = ticks.ticksDelta * (Type.evaluate(ticks.visProp.minorticks) + 1);
                     }
                     if (sY <= 0 && this.board.defaultAxes && this.board.defaultAxes.y.defaultTicks) {
                         ticks = this.board.defaultAxes.y.defaultTicks;
-                        sY = ticks.ticksDelta * (ticks.visProp.minorticks + 1);
+                        sY = ticks.ticksDelta * (Type.evaluate(ticks.visProp.minorticks) + 1);
                     }
 
                     // if no valid snap sizes are available, don't change the coords.
@@ -717,7 +722,7 @@ define([
 
         // see element.js
         snapToPoints: function () {
-            var forceIt = this.visProp.snaptopoints;
+            var forceIt = Type.evaluate(this.visProp.snaptopoints);
 
             if (this.parents.length < 3) {    // Line through two points
                 this.point1.handleSnapToPoints(forceIt);
@@ -900,7 +905,6 @@ define([
 
         showElement: function () {
             var i;
-
             GeometryElement.prototype.showElement.call(this);
 
             for (i = 0; i < this.ticks.length; i++) {
@@ -1304,7 +1308,7 @@ define([
      * </script><pre>
      */
     JXG.createAxis = function (board, parents, attributes) {
-        var attr, el, els, dist;
+        var attr, attr_ticks, el, els, dist;
 
         // Arrays oder Punkte, mehr brauchen wir nicht.
         if ((Type.isArray(parents[0]) || Type.isPoint(parents[0])) && (Type.isArray(parents[1]) || Type.isPoint(parents[1]))) {
@@ -1321,11 +1325,15 @@ define([
                 }
             }
 
-            attr = Type.copyAttributes(attributes, board.options, 'axis', 'ticks');
-            if (Type.exists(attr.ticksdistance)) {
-                dist = attr.ticksdistance;
-            } else if (Type.isArray(attr.ticks)) {
-                dist = attr.ticks;
+            attr_ticks = Type.copyAttributes(attributes, board.options, 'axis', 'ticks');
+            // We may need this
+            if (!Type.exists(attr_ticks.visible)) {
+                attr_ticks.visible = attr.visible;
+            }
+            if (Type.exists(attr_ticks.ticksdistance)) {
+                dist = attr_ticks.ticksdistance;
+            } else if (Type.isArray(attr_ticks.ticks)) {
+                dist = attr_ticks.ticks;
             } else {
                 dist = 1.0;
             }
@@ -1336,7 +1344,7 @@ define([
              * @name defaultTicks
              * @type JXG.Ticks
              */
-            el.defaultTicks = board.create('ticks', [el, dist], attr);
+            el.defaultTicks = board.create('ticks', [el, dist], attr_ticks);
 
             el.defaultTicks.dump = false;
 
@@ -1410,7 +1418,7 @@ define([
             tangent = board.create('line', [c.point1, c.point2], attributes);
             tangent.glider = p;
         } else if (c.elementClass === Const.OBJECT_CLASS_CURVE && c.type !== Const.OBJECT_TYPE_CONIC) {
-            if (c.visProp.curvetype !== 'plot') {
+            if (Type.evaluate(c.visProp.curvetype) !== 'plot') {
                 g = c.X;
                 f = c.Y;
                 tangent = board.create('line', [

@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2016
+    Copyright 2008-2017
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -873,7 +873,7 @@ define([
 
         /**
          * Generates an attributes object that is filled with default values from the Options object
-         * and overwritten by the user speciified attributes.
+         * and overwritten by the user specified attributes.
          * @param {Object} attributes user specified attributes
          * @param {Object} options defaults options
          * @param {String} s variable number of strings, e.g. 'slider', subtype 'point1'.

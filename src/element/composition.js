@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2016
+    Copyright 2008-2017
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -61,6 +61,7 @@
  * following compositions can be found: <ul>
  *   <li>{@link Arrowparallel} (currently private)</li>
  *   <li>{@link Bisector}</li>
+ *   <li>{@link Msector}</li>
  *   <li>{@link Circumcircle}</li>
  *   <li>{@link Circumcirclemidpoint}</li>
  *   <li>{@link Integral}</li>
@@ -953,7 +954,7 @@ define([
         } else if (c.elementClass === Const.OBJECT_CLASS_CIRCLE) {
             l = board.create('line', [c.midpoint, p], attr);
         } else if (c.elementClass === Const.OBJECT_CLASS_CURVE) {
-            if (c.visProp.curvetype !== 'plot') {
+            if (Type.evaluate(c.visProp.curvetype) !== 'plot') {
                 g = c.X;
                 f = c.Y;
                 l = board.create('line', [
@@ -1313,6 +1314,84 @@ define([
         };
 
         return ret;
+    };
+
+    /**
+     * @class An m-sector is a line which divides an angle into two angles. It is given by three points A, B, and
+     * C and a real number m, and divides an angle into two angles, an angle with amplitude m and an angle with
+     * amplitude (1-m)
+     * @pseudo
+     * @constructor
+     * @name Msector
+     * @type JXG.Line
+     * @augments JXG.Line
+     * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
+     * @param {JXG.Point_JXG.Point_JXG.Point} p1,p2,p3 The angle described by <tt>p1</tt>, <tt>p2</tt> and <tt>p3</tt> will
+     * be divided into two angles according to the value of <tt>m</tt>.
+     * @example
+     * var p1 = board.create('point', [6.0, 4.0]);
+     * var p2 = board.create('point', [3.0, 2.0]);
+     * var p3 = board.create('point', [1.0, 7.0]);
+     *
+     * var bi1 = board.create('msector', [p1, p2, p3], 1/5);
+     * </pre><div id="0d58cea8-b06a-407c-b27c-0908f508f5a4" style="width: 400px; height: 400px;"></div>
+     * <script type="text/javascript">
+     * (function () {
+     *   var board = JXG.JSXGraph.initBoard('0d58cea8-b06a-407c-b27c-0908f508f5a4', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
+     *   var p1 = board.create('point', [6.0, 4.0]);
+     *   var p2 = board.create('point', [3.0, 2.0]);
+     *   var p3 = board.create('point', [1.0, 7.0]);
+     *   var bi1 = board.create('msector', [p1, p2, p3], 1/5);
+     * })();
+     * </script><pre>
+     */
+    JXG.createMsector = function (board, parents, attributes) {
+        var p, l, i, attr;
+
+        if (parents[0].elementClass === Const.OBJECT_CLASS_POINT &&
+                parents[1].elementClass === Const.OBJECT_CLASS_POINT &&
+                parents[2].elementClass === Const.OBJECT_CLASS_POINT) {
+            // hidden and fixed helper
+            attr = Type.copyAttributes(attributes, board.options, 'msector', 'point');
+            p = board.create('point', [
+                function () {
+                    return Geometry.angleMsector(parents[0], parents[1], parents[2], parents[3], board);
+                }
+            ], attr);
+            p.dump = false;
+
+            for (i = 0; i < 3; i++) {
+                // required for algorithm requiring dependencies between elements
+                parents[i].addChild(p);
+            }
+
+            if (!Type.exists(attributes.layer)) {
+                attributes.layer = board.options.layer.line;
+            }
+
+            attr = Type.copyAttributes(attributes, board.options, 'msector');
+            l = Line.createLine(board, [parents[1], p], attr);
+
+            /**
+             * Helper point
+             * @memberOf Msector.prototype
+             * @type Point
+             * @name point
+             */
+            l.point = p;
+
+            l.elType = 'msector';
+            l.parents = [parents[0].id, parents[1].id, parents[2].id];
+            l.subs = {
+                point: p
+            };
+
+            return l;
+        }
+
+        throw new Error("JSXGraph: Can't create angle msector with parent types '" +
+            (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
+            "\nPossible parent types: [point,point,point,Number]");
     };
 
     /**
@@ -1809,14 +1888,14 @@ define([
         attr = Type.copyAttributes(attributes, board.options, 'integral', 'baseLeft');
         pa_on_axis = board.create('point', [
             function () {
-                if (p.visProp.axis === 'y') {
+                if (Type.evaluate(p.visProp.axis) === 'y') {
                     return 0;
                 }
 
                 return pa_on_curve.X();
             },
             function () {
-                if (p.visProp.axis === 'y') {
+                if (Type.evaluate(p.visProp.axis) === 'y') {
                     return pa_on_curve.Y();
                 }
 
@@ -1833,13 +1912,13 @@ define([
         attr = Type.copyAttributes(attributes, board.options, 'integral', 'baseRight');
         pb_on_axis = board.create('point', [
             function () {
-                if (p.visProp.axis === 'y') {
+                if (Type.evaluate(p.visProp.axis) === 'y') {
                     return 0;
                 }
                 return pb_on_curve.X();
             },
             function () {
-                if (p.visProp.axis === 'y') {
+                if (Type.evaluate(p.visProp.axis) === 'y') {
                     return pb_on_curve.Y();
                 }
 
@@ -1855,7 +1934,7 @@ define([
             t = board.create('text', [
                 function () {
                     var off = new Coords(Const.COORDS_BY_SCREEN, [
-                            this.visProp.offset[0] + this.board.origin.scrCoords[1],
+                            Type.evaluate(this.visProp.offset[0]) + this.board.origin.scrCoords[1],
                             0
                         ], this.board, false),
                         bb = this.board.getBoundingBox(),
@@ -1873,7 +1952,7 @@ define([
                 function () {
                     var off = new Coords(Const.COORDS_BY_SCREEN, [
                             0,
-                            this.visProp.offset[1] + this.board.origin.scrCoords[2]
+                            Type.evaluate(this.visProp.offset[1]) + this.board.origin.scrCoords[2]
                         ], this.board, false),
                         bb = this.board.getBoundingBox(),
                         dy = (bb[1] - bb[3]) * 0.1,
@@ -1934,7 +2013,7 @@ define([
                 lowx, upx,
                 lowy, upy;
 
-            if (this.visProp.axis === 'y') {
+            if (Type.evaluate(this.visProp.axis) === 'y') {
                 if (pa_on_curve.Y() < pb_on_curve.Y()) {
                     lowx = pa_on_curve.X();
                     lowy = pa_on_curve.Y();
@@ -2089,17 +2168,19 @@ define([
 
         c.updateDataArray = function () {
             var start, end, i, topLeft, bottomRight,
-                gridX = this.visProp.gridx,
-                gridY = this.visProp.gridy;
+                gridX = Type.evaluate(this.visProp.gridx),
+                gridY = Type.evaluate(this.visProp.gridy);
 
             if (Type.isArray(this.visProp.topleft)) {
-                topLeft = new Coords(this.visProp.tltype || Const.COORDS_BY_USER, this.visProp.topleft, board);
+                topLeft = new Coords(Type.evaluate(this.visProp.tltype) || Const.COORDS_BY_USER,
+                                    this.visProp.topleft, board);
             } else {
                 topLeft = new Coords(Const.COORDS_BY_SCREEN, [0, 0], board);
             }
 
             if (Type.isArray(this.visProp.bottomright)) {
-                bottomRight = new Coords(this.visProp.brtype || Const.COORDS_BY_USER, this.visProp.bottomright, board);
+                bottomRight = new Coords(Type.evaluate(this.visProp.brtype) || Const.COORDS_BY_USER,
+                                    this.visProp.bottomright, board);
             } else {
                 bottomRight = new Coords(Const.COORDS_BY_SCREEN, [board.canvasWidth, board.canvasHeight], board);
             }
@@ -2203,6 +2284,9 @@ define([
      * @class Creates an area indicating the solution of a linear inequality.
      * @pseudo
      * @description Display the solution set of a linear inequality (less than or equal to).
+     * To be precise, the solution set of the inequality <i>y <= b/a * x + c/a</i> is shown.
+     * In case <i>a = 0</i>, that is if the equation of the line is <i>bx + c = 0</i>,
+     * the area of the inequality <i>bx + c <= 0</i> is shown.
      * @param {JXG.Line} l The area drawn will be the area below this line. With the attribute
      * inverse:true, the inequality 'greater than or equal to' is shown.
      * @constructor
@@ -2271,10 +2355,14 @@ define([
                     slope1 = parents[0].stdform.slice(1),
                     slope2 = slope1;
 
-                if (slope1[1] > 0) {
-                    slope1 = Statistics.multiply(slope1, -1);
-                    slope2 = slope1;
-                }
+                // This is wrong. Example:
+                // var line = board.create('line', [0, -1, -1]);
+                // var ineq = board.create('inequality', [line]);
+                //
+                // if (slope1[1] > 0) {
+                //     slope1 = Statistics.multiply(slope1, -1);
+                //     slope2 = slope1;
+                // }
 
                 // calculate the area height = 2* the distance of the line to the point in the middle of the top/bottom border.
                 h = expansion * Math.max(Geometry.perpendicular(parents[0], dp, board)[0].distance(Const.COORDS_BY_USER, dp.coords), w);
@@ -2319,6 +2407,7 @@ define([
     JXG.registerElement('arrowparallel', JXG.createArrowParallel);
     JXG.registerElement('bisector', JXG.createBisector);
     JXG.registerElement('bisectorlines', JXG.createAngularBisectorsOfTwoLines);
+    JXG.registerElement('msector', JXG.createMsector);
     JXG.registerElement('circumcircle', JXG.createCircumcircle);
     JXG.registerElement('circumcirclemidpoint', JXG.createCircumcenter);
     JXG.registerElement('circumcenter', JXG.createCircumcenter);

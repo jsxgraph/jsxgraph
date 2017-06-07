@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2016
+    Copyright 2008-2017
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -2838,14 +2838,15 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
         /**
          *
          * Find minimum of an univariate function f.
+         * <p>
+         * Algorithm:
+         *  G.Forsythe, M.Malcolm, C.Moler, Computer methods for mathematical
+         *  computations. M., Mir, 1980, p.180 of the Russian edition
+         * 
          * @param {function} f Function, whose minimum is to be found
          * @param {Array} x0  Start interval enclosing the minimum
          * @param {Object} context Parent object in case f is method of it
          * @returns {Number} the approximation of the minimum value position
-         * Algorithm:
-         *  G.Forsythe, M.Malcolm, C.Moler, Computer methods for mathematical
-         *  computations. M., Mir, 1980, p.180 of the Russian edition
-         * x0
          * @memberof JXG.Math.Numerics
          **/
         fminbr: function (f, x0, context) {

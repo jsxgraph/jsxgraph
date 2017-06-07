@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2016
+    Copyright 2008-2017
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -183,7 +183,7 @@ define([
             return function () {
                 var delta, b, dist;
 
-                if (this.visProp.insertticks) {
+                if (Type.evaluate(this.visProp.insertticks)) {
                     b = this.getLowerAndUpperBounds(this.getZeroCoordinates(), 'ticksdistance');
                     dist = b.upper - b.lower;
                     delta = Math.pow(10, Math.floor(Math.log(0.6 * dist) / Math.LN10));
@@ -207,9 +207,10 @@ define([
         hasPoint: function (x, y) {
             var i, t,
                 len = (this.ticks && this.ticks.length) || 0,
-                r = this.board.options.precision.hasPoint + this.visProp.strokewidth * 0.5;
+                r = this.board.options.precision.hasPoint +
+                        Type.evaluate(this.visProp.strokewidth) * 0.5;
 
-            if (!this.line.visProp.scalable) {
+            if (!Type.evaluate(this.line.visProp.scalable)) {
                 return false;
             }
 
@@ -259,7 +260,7 @@ define([
                 oldc = new Coords(method, oldcoords, this.board),
                 bb = this.board.getBoundingBox();
 
-            if (!this.line.visProp.scalable) {
+            if (!Type.evaluate(this.line.visProp.scalable)) {
                 return this;
             }
 
@@ -326,8 +327,8 @@ define([
          */
         setTicksSizeVariables: function () {
             var d,
-                distMaj = this.visProp.majorheight * 0.5,
-                distMin = this.visProp.minorheight * 0.5;
+                distMaj = Type.evaluate(this.visProp.majorheight) * 0.5,
+                distMin = Type.evaluate(this.visProp.minorheight) * 0.5;
 
             // ticks width and height in screen units
             this.dxMaj = this.line.stdform[1];
@@ -350,15 +351,8 @@ define([
             this.dyMin *= distMin / d * this.board.unitY;
 
             // Grid-like ticks?
-            this.minStyle = 'finite';
-            if (this.visProp.minorheight < 0) {
-                this.minStyle = 'infinite';
-            }
-
-            this.majStyle = 'finite';
-            if (this.visProp.majorheight < 0) {
-                this.majStyle = 'infinite';
-            }
+            this.minStyle= (Type.evaluate(this.visProp.minorheight) < 0) ? 'infinite' : 'finite';
+            this.majStyle= (Type.evaluate(this.visProp.majorheight) < 0) ? 'infinite' : 'finite';
         },
 
         /**
@@ -372,7 +366,8 @@ define([
          * @private
          */
         getZeroCoordinates: function () {
-            var c1x, c1y, c1z, c2x, c2y, c2z;
+            var c1x, c1y, c1z, c2x, c2y, c2z,
+                ev_a = Type.evaluate(this.visProp.anchor);
 
             if (this.line.type === Const.OBJECT_TYPE_AXIS) {
                 return Geometry.projectPointToLine({
@@ -389,19 +384,19 @@ define([
             c2x = this.line.point2.coords.usrCoords[1];
             c2y = this.line.point2.coords.usrCoords[2];
 
-            if (this.visProp.anchor === 'right') {
+            if (ev_a === 'right') {
                 return this.line.point2.coords;
-            } else if (this.visProp.anchor === 'middle') {
+            } else if (ev_a === 'middle') {
                 return new Coords(Const.COORDS_BY_USER, [
                     (c1z + c2z) * 0.5,
                     (c1x + c2x) * 0.5,
                     (c1y + c2y) * 0.5
                 ], this.board);
-            } else if (Type.isNumber(this.visProp.anchor)) {
+            } else if (Type.isNumber(ev_a)) {
                 return new Coords(Const.COORDS_BY_USER, [
-                    c1z + (c2z - c1z) * this.visProp.anchor,
-                    c1x + (c2x - c1x) * this.visProp.anchor,
-                    c1y + (c2y - c1y) * this.visProp.anchor
+                    c1z + (c2z - c1z) * ev_a,
+                    c1x + (c2x - c1x) * ev_a,
+                    c1y + (c2y - c1y) * ev_a
                 ], this.board);
             }
 
@@ -413,9 +408,11 @@ define([
          * If {@link JXG.Ticks#includeBoundaries} is false, the boundaries will exclude point1 and point2
          *
          * @param  {JXG.Coords} coordsZero
-         * @returns {String} type  (Optional) If type=='ticksdistance' the bounds are the intersection of the line with the bounding box of the board.
-         *              Otherwise it is the projection of the corners of the bounding box to the line. The first case i s needed to automatically
-         *              generate ticks. The second case is for drawing of the ticks.
+         * @returns {String} type  (Optional) If type=='ticksdistance' the bounds are
+         *                         the intersection of the line with the bounding box of the board.
+         *                         Otherwise it is the projection of the corners of the bounding box
+         *                         to the line. The first case i s needed to automatically
+         *                         generate ticks. The second case is for drawing of the ticks.
          * @returns {Object}     contains the lower and upper bounds
          *
          * @private
@@ -433,13 +430,16 @@ define([
                     point2.scrCoords[1] >= 0.0 && point2.scrCoords[1] <= this.board.canvasWidth &&
                     point2.scrCoords[2] >= 0.0 && point2.scrCoords[2] <= this.board.canvasHeight),
                 // We use the distance from zero to P1 and P2 to establish lower and higher points
-                dZeroPoint1, dZeroPoint2;
+                dZeroPoint1, dZeroPoint2,
+                ev_sf = Type.evaluate(this.line.visProp.straightfirst),
+                ev_sl = Type.evaluate(this.line.visProp.straightlast),
+                ev_i = Type.evaluate(this.visProp.includeboundaries);
 
             // Adjust line limit points to be within the board
             if (Type.exists(type) || type === 'tickdistance') {
                 // The good old calcStraight is needed for determining the distance between major ticks.
                 // Here, only the visual area is of importance
-                Geometry.calcStraight(this.line, point1, point2, this.line.visProp.margin);
+                Geometry.calcStraight(this.line, point1, point2, Type.evaluate(this.line.visProp.margin));
             } else {
                 // This function projects the corners of the board to the line.
                 // This is important for diagonal lines with infinite tick lines.
@@ -455,20 +455,20 @@ define([
             // we can compare dZeroPoint1 and dZeroPoint2 to establish the line direction
             if (dZeroPoint1 < dZeroPoint2) { // Line goes P1->P2
                 lowerBound = dZeroPoint1;
-                if (!this.line.visProp.straightfirst && isPoint1inBoard && !this.visProp.includeboundaries) {
+                if (!ev_sf && isPoint1inBoard && !ev_i) {
                     lowerBound += Mat.eps;
                 }
                 upperBound = dZeroPoint2;
-                if (!this.line.visProp.straightlast && isPoint2inBoard && !this.visProp.includeboundaries) {
+                if (!ev_sl && isPoint2inBoard && !ev_i) {
                     upperBound -= Mat.eps;
                 }
             } else if (dZeroPoint2 < dZeroPoint1) { // Line goes P2->P1
                 lowerBound = dZeroPoint2;
-                if (!this.line.visProp.straightlast && isPoint2inBoard && !this.visProp.includeboundaries) {
+                if (!ev_sl && isPoint2inBoard && !ev_i) {
                     lowerBound += Mat.eps;
                 }
                 upperBound = dZeroPoint1;
-                if (!this.line.visProp.straightfirst && isPoint1inBoard && !this.visProp.includeboundaries) {
+                if (!ev_sf && isPoint1inBoard && !ev_i) {
                     upperBound -= Mat.eps;
                 }
             } else { // P1 = P2 = Zero, we can't do a thing
@@ -503,7 +503,7 @@ define([
 
                     distance *= -1;
                 }
-            } else if (this.visProp.anchor === 'right') {
+            } else if (Type.evaluate(this.visProp.anchor) === 'right') {
                 if (Geometry.isSameDirection(zero, this.line.point1.coords, point)) {
                     distance *= -1;
                 }
@@ -528,15 +528,17 @@ define([
                 // Calculate X and Y distance between two major ticks
                 deltas = this.getXandYdeltas(),
                 // Distance between two major ticks in user coordinates
-                ticksDelta = (this.equidistant ? this.ticksFunction(1) : this.ticksDelta);
+                ticksDelta = (this.equidistant ? this.ticksFunction(1) : this.ticksDelta),
+                ev_it = Type.evaluate(this.visProp.insertticks),
+                ev_mt = Type.evaluate(this.visProp.minorticks);
 
             // adjust ticks distance
-            ticksDelta *= this.visProp.scale;
-            if (this.visProp.insertticks && this.minTicksDistance > Mat.eps) {
+            ticksDelta *= Type.evaluate(this.visProp.scale);
+            if (ev_it && this.minTicksDistance > Mat.eps) {
                 ticksDelta = this.adjustTickDistance(ticksDelta, coordsZero, deltas);
-                ticksDelta /= (this.visProp.minorticks + 1);
-            } else if (!this.visProp.insertticks) {
-                ticksDelta /= (this.visProp.minorticks + 1);
+                ticksDelta /= (ev_mt + 1);
+            } else if (!ev_it) {
+                ticksDelta /= (ev_mt + 1);
             }
             this.ticksDelta = ticksDelta;
 
@@ -546,7 +548,7 @@ define([
 
             // Position ticks from zero to the positive side while not reaching the upper boundary
             tickPosition = 0;
-            if (!this.visProp.drawzero) {
+            if (!Type.evaluate(this.visProp.drawzero)) {
                 tickPosition = ticksDelta;
             }
             while (tickPosition <= bounds.upper) {
@@ -587,7 +589,7 @@ define([
             nx = coordsZero.usrCoords[1] + deltas.x * ticksDelta;
             ny = coordsZero.usrCoords[2] + deltas.y * ticksDelta;
             distScr = coordsZero.distance(Const.COORDS_BY_SCREEN, new Coords(Const.COORDS_BY_USER, [nx, ny], this.board));
-            while (distScr / (this.visProp.minorticks + 1) < this.minTicksDistance) {
+            while (distScr / (Type.evaluate(this.visProp.minorticks) + 1) < this.minTicksDistance) {
                 if (sgn === 1) {
                     ticksDelta *= 2;
                 } else {
@@ -623,7 +625,7 @@ define([
             // Test if tick is a major tick.
             // This is the case if tickPosition/ticksDelta is
             // a multiple of the number of minorticks+1
-            tickCoords.major = Math.round(tickPosition / ticksDelta) % (this.visProp.minorticks + 1) === 0;
+            tickCoords.major = Math.round(tickPosition / ticksDelta) % (Type.evaluate(this.visProp.minorticks) + 1) === 0;
 
             // Compute the start position and the end position of a tick.
             // If both positions are out of the canvas, ti is empty.
@@ -631,7 +633,7 @@ define([
             if (ti.length === 3) {
                 this.ticks.push(ti);
 
-                if (tickCoords.major && this.visProp.drawlabels) {
+                if (tickCoords.major && Type.evaluate(this.visProp.drawlabels)) {
                     labelText = this.generateLabelText(tickCoords, coordsZero);
                     this.labels.push(this.generateLabel(labelText, tickCoords, this.ticks.length));
                 } else {
@@ -652,7 +654,8 @@ define([
                 x, y,
                 hasLabelOverrides = Type.isArray(this.visProp.labels),
                 // Calculate X and Y distance between two major points in the line
-                deltas = this.getXandYdeltas();
+                deltas = this.getXandYdeltas(),
+                ev_dl = Type.evaluate(this.visProp.drawlabels);
 
             for (i = 0; i < this.fixedTicks.length; i++) {
                 x = coordsZero.usrCoords[1] + this.fixedTicks[i] * deltas.x;
@@ -666,8 +669,8 @@ define([
                     this.fixedTicks[i] <= bounds.upper) {
                     this.ticks.push(ti);
 
-                    if (this.visProp.drawlabels && (hasLabelOverrides || Type.exists(this.visProp.labels[i]))) {
-                        labelText = hasLabelOverrides ? this.visProp.labels[i] : this.fixedTicks[i];
+                    if (ev_dl && (hasLabelOverrides || Type.exists(this.visProp.labels[i]))) {
+                        labelText = hasLabelOverrides ? Type.evaluate(this.visProp.labels[i]) : this.fixedTicks[i];
                         this.labels.push(
                             this.generateLabel(this.generateLabelText(tickCoords, coordsZero, labelText), tickCoords, i)
                         );
@@ -770,10 +773,10 @@ define([
                 y[0] = intersection[0].scrCoords[2];
                 y[1] = intersection[1].scrCoords[2];
             } else {
-                x[0] = c[1] + dxs * this.visProp.tickendings[0];
-                y[0] = c[2] - dys * this.visProp.tickendings[0];
-                x[1] = c[1] - dxs * this.visProp.tickendings[1];
-                y[1] = c[2] + dys * this.visProp.tickendings[1];
+                x[0] = c[1] + dxs * Type.evaluate(this.visProp.tickendings[0]);
+                y[0] = c[2] - dys * Type.evaluate(this.visProp.tickendings[0]);
+                x[1] = c[1] - dxs * Type.evaluate(this.visProp.tickendings[1]);
+                y[1] = c[2] + dys * Type.evaluate(this.visProp.tickendings[1]);
             }
 
             // Check if (parts of) the tick is inside the canvas.
@@ -792,12 +795,14 @@ define([
          * @private
          */
         formatLabelText: function(value) {
-            var labelText = value.toString();
+            var labelText = value.toString(),
+                ev_s = Type.evaluate(this.visProp.scalesymbol);
 
             // if value is Number
             if (Type.isNumber(value)) {
-                if (labelText.length > this.visProp.maxlabellength || labelText.indexOf('e') !== -1) {
-                    labelText = value.toPrecision(this.visProp.precision).toString();
+                if (labelText.length > Type.evaluate(this.visProp.maxlabellength) ||
+                        labelText.indexOf('e') !== -1) {
+                    labelText = value.toPrecision(Type.evaluate(this.visProp.precision)).toString();
                 }
                 if (labelText.indexOf('.') > -1 && labelText.indexOf('e') === -1) {
                     // trim trailing zeros
@@ -807,17 +812,17 @@ define([
                 }
             }
 
-            if (this.visProp.scalesymbol.length > 0) {
+            if (ev_s.length > 0) {
                 if (labelText === '1') {
-                    labelText = this.visProp.scalesymbol;
+                    labelText = ev_s;
                 } else if (labelText === '-1') {
-                    labelText = '-' + this.visProp.scalesymbol;
+                    labelText = '-' + ev_s;
                 } else if (labelText !== '0') {
-                    labelText = labelText + this.visProp.scalesymbol;
+                    labelText = labelText + ev_s;
                 }
             }
 
-            if (this.visProp.useunicodeminus) {
+            if (Type.evaluate(this.visProp.useunicodeminus)) {
                 labelText = labelText.replace(/-/g, '\u2212');
             }
             return labelText;
@@ -841,7 +846,7 @@ define([
             } else {
                 // No value provided, equidistant, so assign distance as value
                 if (!Type.exists(value)) { // could be null or undefined
-                    value = distance / this.visProp.scale;
+                    value = distance / Type.evaluate(this.visProp.scale);
                 }
 
                 labelText = this.formatLabelText(value);
@@ -867,7 +872,7 @@ define([
                     highlightStrokeColor: this.board.options.text.strokeColor,
                     highlightStrokeWidth: this.board.options.text.strokeWidth,
                     highlightStrokeOpacity: this.board.options.text.strokeOpacity,
-                    visible: this.visProp.visible,
+                    visible: this.visPropCalc.visible,
                     priv: this.visProp.priv
                 };
 
@@ -897,8 +902,8 @@ define([
             label.isDraggable = false;
             label.dump = false;
 
-            label.distanceX = this.visProp.label.offset[0];
-            label.distanceY = this.visProp.label.offset[1];
+            label.distanceX = Type.evaluate(this.visProp.label.offset[0]);
+            label.distanceY = Type.evaluate(this.visProp.label.offset[1]);
             label.setCoords(
                 tick.usrCoords[1] + label.distanceX / (this.board.unitX),
                 tick.usrCoords[2] + label.distanceY / (this.board.unitY)
@@ -934,6 +939,7 @@ define([
          */
         update: function () {
             if (this.needsUpdate) {
+                this.visPropCalc.visible = Type.evaluate(this.visProp.visible);
                 // A canvas with no width or height will create an endless loop, so ignore it
                 if (this.board.canvasWidth !== 0 && this.board.canvasHeight !== 0) {
                     this.calculateTicksCoordinates();
@@ -949,7 +955,11 @@ define([
          */
         updateRenderer: function () {
             if (this.needsUpdate) {
-                this.board.renderer.updateTicks(this);
+                if (this.visPropCalc.visible) {
+                    this.board.renderer.updateTicks(this);
+                } else {
+                    this.board.renderer.hide(this);
+                }
                 this.needsUpdate = false;
             }
 
@@ -959,9 +969,9 @@ define([
         hideElement: function () {
             var i;
 
-            this.visProp.visible = false;
+            this.visPropCalc.visible = false;
+            //this.visProp.visible = false;
             this.board.renderer.hide(this);
-
             for (i = 0; i < this.labels.length; i++) {
                 if (Type.exists(this.labels[i])) {
                     this.labels[i].hideElement();
@@ -973,8 +983,7 @@ define([
 
         showElement: function () {
             var i;
-
-            this.visProp.visible = true;
+            this.visPropCalc.visible = true;
             this.board.renderer.show(this);
 
             for (i = 0; i < this.labels.length; i++) {
