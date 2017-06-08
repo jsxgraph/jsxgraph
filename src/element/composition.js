@@ -2284,6 +2284,9 @@ define([
      * @class Creates an area indicating the solution of a linear inequality.
      * @pseudo
      * @description Display the solution set of a linear inequality (less than or equal to).
+     * To be precise, the solution set of the inequality <i>y <= b/a * x + c/a</i> is shown.
+     * In case <i>a = 0</i>, that is if the equation of the line is <i>bx + c = 0</i>,
+     * the area of the inequality <i>bx + c <= 0</i> is shown.
      * @param {JXG.Line} l The area drawn will be the area below this line. With the attribute
      * inverse:true, the inequality 'greater than or equal to' is shown.
      * @constructor
@@ -2352,10 +2355,14 @@ define([
                     slope1 = parents[0].stdform.slice(1),
                     slope2 = slope1;
 
-                if (slope1[1] > 0) {
-                    slope1 = Statistics.multiply(slope1, -1);
-                    slope2 = slope1;
-                }
+                // This is wrong. Example:
+                // var line = board.create('line', [0, -1, -1]);
+                // var ineq = board.create('inequality', [line]);
+                //
+                // if (slope1[1] > 0) {
+                //     slope1 = Statistics.multiply(slope1, -1);
+                //     slope2 = slope1;
+                // }
 
                 // calculate the area height = 2* the distance of the line to the point in the middle of the top/bottom border.
                 h = expansion * Math.max(Geometry.perpendicular(parents[0], dp, board)[0].distance(Const.COORDS_BY_USER, dp.coords), w);
