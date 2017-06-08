@@ -223,6 +223,13 @@ define([
         this.subs = {};
 
         /**
+         * Inherits contains the subelements, which may have an attribute
+         * (in partuclar the attribute "visible") having value 'inherit'.
+         * @type Object
+         */
+        this.inherits = [];
+
+        /**
          * The position of this element inside the {@link JXG.Board#objectsList}.
          * @type {Number}
          * @default -1

@@ -230,6 +230,10 @@ define([
         curve.subs = {
             center: curve.center
         }
+        curve.inherits.push(curve.center, F[0], F[1]);
+        if (Type.isPoint(C)) {
+            curve.inherits.push(C);
+        }
 
         /**
          * Checks whether (x,y) is near the ellipse line or inside of the ellipse
@@ -438,6 +442,10 @@ define([
         curve.subs = {
             center: curve.center;
         }
+        curve.inherits.push(curve.center, F[0], F[1]);
+        if (Type.isPoint(C)) {
+            curve.inherits.push(C);
+        }
         curve.type = Const.OBJECT_TYPE_CONIC;
 
         M.addChild(curve);
@@ -544,6 +552,7 @@ define([
         curve.subs = {
             center: curve.center
         };
+        this.inherits.push(curve.center);
 
         /** @ignore */
         polarForm = function (t, suspendUpdate) {
@@ -616,6 +625,7 @@ define([
 
         if (Type.isPoint(F1)) {
             F1.addChild(curve);
+            this.inherits.push(F1);
         }
 
         l.addChild(curve);
@@ -671,7 +681,7 @@ define([
             ],
             points = [],
             p = [],
-            attr_foci = Type.copyAttributes(attributes, board.options, 'conic', 'foci'),
+            attr_point = Type.copyAttributes(attributes, board.options, 'conic', 'point'),
             attr_center = Type.copyAttributes(attributes, board.options, 'conic', 'center'),
             attr_curve = Type.copyAttributes(attributes, board.options, 'conic');
 
@@ -687,7 +697,7 @@ define([
             for (i = 0; i < 5; i++) {
                 // point i given by coordinates
                 if (parents[i].length > 1) {
-                    points[i] = board.create('point', parents[i], attr_foci);
+                    points[i] = board.create('point', parents[i], attr_point);
                 // point i given by point
                 } else if (Type.isPoint(parents[i])) {
                     points[i] = board.select(parents[i]);
@@ -900,6 +910,8 @@ define([
         curve.subs = {
             center: curve.center
         };
+        this.inherits.push(curve.center);
+        this.inherits = this.inherits.concat(points);
 
         if (givenByPoints) {
             for (i = 0; i < 5; i++) {
@@ -909,7 +921,7 @@ define([
             }
             curve.setParents(parents);
         }
-        curve.addChild(curve.midpoint);
+        curve.addChild(curve.center);
 
         return curve;
     };

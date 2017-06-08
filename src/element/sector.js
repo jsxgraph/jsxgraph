@@ -296,6 +296,7 @@ define([
             // useDirection is necessary for circumCircleSectors
             el.useDirection = attributes.usedirection;
             el.setParents(points);
+            el.inherits = el.inherits.concat(points);
 
             /**
             * Defines the sectors orientation in case of circumCircleSectors.
@@ -385,6 +386,7 @@ define([
             el.subs = {
                 arc: el.arc
             };
+            el.inherits.push(el.arc);
             el.addChild(el.arc);
         }   // end '3points'
 
@@ -1146,6 +1148,7 @@ define([
 
         el.dot.dump = false;
         el.subs.dot = el.dot;
+        el.inherits.push(el.dot);
 
         if (type === '2lines') {
             for (i = 0; i < 2; i++) {
@@ -1155,6 +1158,7 @@ define([
             for (i = 0; i < 3; i++) {
                 board.select(points[i]).addChild(el.dot);
             }
+            this.inherits = this.inherits.concat(points);
         }
 
         // documented in GeometryElement

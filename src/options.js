@@ -1627,6 +1627,17 @@ define([
                 name: ''
             }
 
+            /**
+             * Attributes for points defining the conic, if given as coordinates.
+             *
+             * @type Point
+             * @name Conic#point
+             */
+            point: {
+                withLabel: false,
+                name: ''
+            }
+
             /**#@-*/
         },
 
@@ -2779,7 +2790,9 @@ define([
             /**#@-*/
         },
 
-        /* special prescribed angle options */
+        /* special prescribed angle options
+        * Not yet implemented. But angle.setAngle(val) is implemented.
+        */
         prescribedangle: {
             /**#@+
              * @visprop
