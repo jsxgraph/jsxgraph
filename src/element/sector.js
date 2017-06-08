@@ -628,6 +628,7 @@ define([
         el.subs = {
             center: mp
         };
+        el.inherits = el.inherits.push(mp);
 
         return el;
     };

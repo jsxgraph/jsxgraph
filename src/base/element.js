@@ -854,21 +854,35 @@ define([
          * @private
          */
         setDisplayRendNode: function(val) {
-            var i, len,
-                s, ty, subtypes;
+            var i, len, s, len_s, obj,
+                ty, subtypes;
 
             this.board.renderer.display(this, val);
 
-            subtypes = ['subs', 'ticks', 'labels', 'borders'];
-            for (s = 0; s < subtypes.length; s++) {
-                ty = subtypes[s];
-                if (Type.exists(this[ty])) {
-                    len = this[ty].length;
-                    for (i = 0; i < len; i++) {
-                        if (Type.exists(this[ty][i]) && Type.exists(this[ty][i].rendNode)) {
-                            this[ty][i].setDisplayRendNode(val);
+            // subtypes = ['subs', 'ticks', 'labels', 'borders'];
+            // for (s = 0; s < subtypes.length; s++) {
+            //     ty = subtypes[s];
+            //     if (Type.exists(this[ty])) {
+            //         len = this[ty].length;
+            //         for (i = 0; i < len; i++) {
+            //             if (Type.exists(this[ty][i]) && Type.exists(this[ty][i].rendNode)) {
+            //                 this[ty][i].setDisplayRendNode(val);
+            //             }
+            //         }
+            //     }
+            // }
+            len = this.inherits.length;
+            for (s = 0; s < len; s++) {
+                obj = this.inherits[s];
+                if (Type.isArray(obj)) {
+                    len_s = obj.length;
+                    for (i = 0; i < len_s; i++) {
+                        if (Type.exists(obj[i]) && Type.exists(obj[i].rendNode)) {
+                            obj[i].setDisplayRendNode(val);
                         }
                     }
+                } else {
+                    obj.setDisplayRendNode(val);
                 }
             }
 
@@ -948,8 +962,9 @@ define([
          * @private
          */
         updateVisibility: function(parent_val) {
-            var i, len, val,
-                s, ty, subtypes;
+            var i, len, s, len_s, obj,
+                val,
+                ty, subtypes;
 
             if (this.needsUpdate) {
                 // this.visPropOld.visible may be used in
@@ -966,18 +981,38 @@ define([
                     }
                 }
 
-                subtypes = ['subs', 'ticks', 'labels', 'borders'];
-                for (s = 0; s < subtypes.length; s++) {
-                    ty = subtypes[s];
-                    if (Type.exists(this[ty])) {
-                        len = this[ty].length;
-                        for (i = 0; i < len; i++) {
-                            if (Type.exists(this[ty][i]) && Type.exists(this[ty][i].visProp)) {
-                                val = Type.evaluate(this[ty][i].visProp.visible);
+                // subtypes = ['subs', 'ticks', 'labels', 'borders'];
+                // for (s = 0; s < subtypes.length; s++) {
+                //     ty = subtypes[s];
+                //     if (Type.exists(this[ty])) {
+                //         len = this[ty].length;
+                //         for (i = 0; i < len; i++) {
+                //             if (Type.exists(this[ty][i]) && Type.exists(this[ty][i].visProp)) {
+                //                 val = Type.evaluate(this[ty][i].visProp.visible);
+                //                 if (val === 'inherit') {
+                //                     this[ty][i].prepareUpdate().updateVisibility(this.visPropCalc.visible);
+                //                 }
+                //             }
+                //         }
+                //     }
+                // }
+                len = this.inherits.length;
+                for (s = 0; s < len; s++) {
+                    obj = this.inherits[s];
+                    if (Type.isArray(obj)) {
+                        len_s = obj.length;
+                        for (i = 0; i < len_s; i++) {
+                            if (Type.exists(obj[i]) && Type.exists(obj[i].rendNode)) {
+                                val = Type.evaluate(obj[i].visProp.visible);
                                 if (val === 'inherit') {
-                                    this[ty][i].prepareUpdate().updateVisibility(this.visPropCalc.visible);
+                                    obj[i].prepareUpdate().updateVisibility(this.visPropCalc.visible);
                                 }
                             }
+                        }
+                    } else {
+                        val = Type.evaluate(obj.visProp.visible);
+                        if (val === 'inherit') {
+                            obj.prepareUpdate().updateVisibility(this.visPropCalc.visible);
                         }
                     }
                 }

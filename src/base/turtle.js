@@ -196,6 +196,11 @@ define([
             this.arrow = this.board.create('line', [this.turtle, this.turtle2], this.visProp.arrow);
             this.objects.push(this.arrow);
 
+            this.subs = {
+                arrow: this.arrow
+            };
+            this.inherits.push(this.arrow);
+
             this.right(90 - dir);
             this.board.update();
         },

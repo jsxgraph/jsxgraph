@@ -369,10 +369,12 @@ define([
             baseLine: l1,
             highLine: l2
         };
+        p3.inherits.push(p1, p2, l1, l2);
 
         if (withTicks) {
             ti.dump = false;
             p3.subs.ticks = ti;
+            p3.inherits.push(ti);
         }
 
         // Save the visibility attribute of the sub-elements

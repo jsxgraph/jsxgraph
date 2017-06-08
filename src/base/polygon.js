@@ -67,7 +67,7 @@ define([
     JXG.Polygon = function (board, vertices, attributes) {
         this.constructor(board, attributes, Const.OBJECT_TYPE_POLYGON, Const.OBJECT_CLASS_AREA);
 
-        var i, vertex, l, len, j,
+        var i, l, len, j,
             attr_line = Type.copyAttributes(attributes, board.options, 'polygon', 'borders');
 
         this.withLines = attributes.withlines;
@@ -79,8 +79,7 @@ define([
          */
         this.vertices = [];
         for (i = 0; i < vertices.length; i++) {
-            vertex = this.board.select(vertices[i]);
-            this.vertices[i] = vertex;
+            this.vertices[i] = this.board.select(vertices[i]);
         }
 
         // Close the polygon
@@ -101,7 +100,8 @@ define([
                 i = (j + 1) % len;
                 attr_line.id = attr_line.ids && attr_line.ids[i];
                 attr_line.name = attr_line.names && attr_line.names[i];
-                attr_line.strokecolor = (Type.isArray(attr_line.colors) && attr_line.colors[i % attr_line.colors.length]) || attr_line.strokecolor;
+                attr_line.strokecolor = (Type.isArray(attr_line.colors) && attr_line.colors[i % attr_line.colors.length]) ||
+                                            attr_line.strokecolor;
                 attr_line.visible = Type.exists(attributes.borders.visible) ? attributes.borders.visible : attributes.visible;
 
                 if (attr_line.strokecolor === false) {
@@ -114,15 +114,15 @@ define([
                 l.parentPolygon = this;
             }
         }
-
+        this.inherits.push(vertices, borders);
+        
         // Register polygon at board
         // This needs to be done BEFORE the points get this polygon added in their descendants list
         this.id = this.board.setId(this, 'Py');
 
         // Add polygon as child to defining points
         for (i = 0; i < this.vertices.length - 1; i++) {
-            vertex = this.board.select(this.vertices[i]);
-            vertex.addChild(this);
+            this.board.select(this.vertices[i]).addChild(this);
         }
 
         this.board.renderer.drawPolygon(this);

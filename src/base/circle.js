@@ -808,6 +808,11 @@ define([
         el.isDraggable = isDraggable;
         el.setParents(p);
         el.elType = 'circle';
+        for (i = 0; i < p.length; i++) {
+            if (Type.isPoint(p[i])) {
+                el.inherits.push(p[i]);
+            }
+        }
         return el;
     };
 

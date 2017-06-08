@@ -131,6 +131,7 @@ define([
         this.point1.addChild(this);
         this.point2.addChild(this);
 
+        this.inherits.push(this.point1, this.point2);
 
         this.updateStdform(); // This is needed in the following situation:
         // * the line is defined by three coordinates
@@ -156,7 +157,6 @@ define([
     };
 
     JXG.Line.prototype = new GeometryElement();
-
 
     JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
         /**
@@ -1351,6 +1351,8 @@ define([
             el.subs = {
                 ticks: el.defaultTicks
             };
+            el.inherits.push(el.defaultTicks);
+
         } else {
             throw new Error("JSXGraph: Can't create axis with parent types '" +
                 (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +

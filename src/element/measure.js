@@ -129,6 +129,7 @@ define([
             attr = Type.copyAttributes(attributes, board.options, 'tapemeasure', 'ticks');
             //ticks  = 2;
             ti = board.create('ticks', [li, 0.1], attr);
+            li.inherits.push(ti);
         }
 
         // override the segments's remove method to ensure the removal of all elements

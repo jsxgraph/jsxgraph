@@ -186,6 +186,15 @@ define([
         el.toppoint = toppoint;
         el.label = label;
 
+        el.subs = {
+            glider: glider,
+            basePoint: basepoint,
+            baseLine: baseline,
+            topPoint: toppoint,
+            label: label
+        };
+        el.inherits.push(glider, basepoint, baseline, toppoint, label);
+
         el.methodMap = JXG.deepCopy(el.methodMap, {
             tangent: 'tangent',
             glider: 'glider',
