@@ -1245,8 +1245,8 @@ define([
             C = a * d * d - (b[0] * n[0] + b[1] * n[1]) * d + c;
 
             k = B * B - 4 * A * C;
-            if (k >= 0) {
-                k = Math.sqrt(k);
+            if (k > -Mat.eps * Mat.eps) {
+                k = Math.sqrt(Math.abs(k));
                 t = [(-B + k) / (2 * A), (-B - k) / (2 * A)];
 
                 return ((i === 0) ?
