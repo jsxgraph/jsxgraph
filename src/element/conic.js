@@ -91,6 +91,7 @@ define([
             // focus 1 and focus 2
             F = [],
             attr_foci = Type.copyAttributes(attributes, board.options, 'conic', 'foci'),
+            attr_center = Type.copyAttributes(attributes, board.options, 'conic', 'center'),
             attr_curve = Type.copyAttributes(attributes, board.options, 'conic');
 
         // The foci and the third point are either points or coordinate arrays.
@@ -160,7 +161,7 @@ define([
             function () {
                 return (F[0].Y() + F[1].Y()) * 0.5;
             }
-        ], attr_foci);
+        ], attr_center);
 
         curve = board.create('curve', [
             function (x) {
@@ -224,8 +225,11 @@ define([
             return F[0].Y() + Math.sin(beta + phi) * b;
         };
 
-        curve.midpoint = M;
+        curve.midpoint = curve.center = M;
         curve.type = Const.OBJECT_TYPE_CONIC;
+        curve.subs = {
+            center: curve.center
+        }
 
         /**
          * Checks whether (x,y) is near the ellipse line or inside of the ellipse
@@ -300,6 +304,7 @@ define([
             // focus 1 and focus 2
             F = [],
             attr_foci = Type.copyAttributes(attributes, board.options, 'conic', 'foci'),
+            attr_center = Type.copyAttributes(attributes, board.options, 'conic', 'center'),
             attr_curve = Type.copyAttributes(attributes, board.options, 'conic');
 
         // The foci and the third point are either points or coordinate arrays.
@@ -369,7 +374,7 @@ define([
             function () {
                 return (F[0].Y() + F[1].Y()) * 0.5;
             }
-        ], attr_foci);
+        ], attr_center);
 
         curve = board.create('curve', [
             function (x) {
@@ -429,7 +434,10 @@ define([
             return F[0].Y() + Math.sin(beta + phi) * b;
         };
 
-        curve.midpoint = M;
+        curve.midpoint = curve.center = M;
+        curve.subs = {
+            center: curve.center;
+        }
         curve.type = Const.OBJECT_TYPE_CONIC;
 
         M.addChild(curve);
@@ -481,6 +489,7 @@ define([
             // directrix
             l = parents[1],
             attr_foci = Type.copyAttributes(attributes, board.options, 'conic', 'foci'),
+            attr_center = Type.copyAttributes(attributes, board.options, 'conic', 'center'),
             attr_curve = Type.copyAttributes(attributes, board.options, 'conic');
 
         // focus 1 given by coordinates
@@ -520,7 +529,7 @@ define([
                 */
                 return Geometry.projectPointToLine(F1, l, board).usrCoords;
             }
-        ], attr_foci);
+        ], attr_center);
 
         /** @ignore */
         curve = board.create('curve', [
@@ -530,6 +539,11 @@ define([
             function (x) {
                 return 0;
             }, parents[2], parents[3]], attr_curve);
+
+        curve.midpoint = curve.center = M;
+        curve.subs = {
+            center: curve.center
+        };
 
         /** @ignore */
         polarForm = function (t, suspendUpdate) {
@@ -658,6 +672,7 @@ define([
             points = [],
             p = [],
             attr_foci = Type.copyAttributes(attributes, board.options, 'conic', 'foci'),
+            attr_center = Type.copyAttributes(attributes, board.options, 'conic', 'center'),
             attr_curve = Type.copyAttributes(attributes, board.options, 'conic');
 
         if (parents.length === 5) {
@@ -878,9 +893,13 @@ define([
                     m[0][1] * m[1][2] - m[1][1] * m[0][2]
                 ];
             }
-        ], attr_foci);
+        ], attr_center);
 
         curve.type = Const.OBJECT_TYPE_CONIC;
+        curve.center = curve.midpoint;
+        curve.subs = {
+            center: curve.center
+        };
 
         if (givenByPoints) {
             for (i = 0; i < 5; i++) {

@@ -382,6 +382,9 @@ define([
             attr.withLabel = false;
             attr.name += '_arc';
             el.arc = board.create('arc', [el.point1, el.point2, el.point3], attr);
+            el.subs = {
+                arc: el.arc
+            };
             el.addChild(el.arc);
         }   // end '3points'
 
@@ -1014,7 +1017,8 @@ define([
 
         el.elType = 'angle';
         el.type = Const.OBJECT_TYPE_ANGLE;
-        el.subs = {};
+        // Do we have to clear it?
+        // el.subs = {};
 
         el.updateDataArraySquare = function () {
             var A, B, C,

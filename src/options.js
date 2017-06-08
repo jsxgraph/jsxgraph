@@ -1614,6 +1614,19 @@ define([
                 withLabel: false,
                 name: ''
             }
+
+            /**
+             * Attributes for center point.
+             *
+             * @type Point
+             * @name Conic#center
+             */
+            center: {
+                visible: false,
+                withLabel: false,
+                name: ''
+            }
+
             /**#@-*/
         },
 
@@ -2887,7 +2900,7 @@ define([
             highlightStrokeWidth: 0,
 
             /**
-             * Attributes for sub-element arc.
+             * Attributes for sub-element arc. It is only available, if the sector is defined by three points.
              *
              * @type Arc
              * @name Sector#arc
@@ -2898,7 +2911,7 @@ define([
             },
 
             /**
-             * Attributes for helper point radiuspoint.
+             * Attributes for helper point radiuspoint in case it is provided by coordinates.
              *
              * @type Point
              * @name Sector#radiuspoint
@@ -2909,7 +2922,7 @@ define([
             },
 
             /**
-             * Attributes for helper point center.
+             * Attributes for helper point center in case it is provided by coordinates.
              *
              * @type Point
              * @name Sector#center
@@ -2920,7 +2933,7 @@ define([
             },
 
             /**
-             * Attributes for helper point anglepoint.
+             * Attributes for helper point anglepoint in case it is provided by coordinates.
              *
              * @type Point
              * @name Sector#anglepoint
