@@ -1271,7 +1271,7 @@ define([
         meetCircleCircle: function (circ1, circ2, i, board) {
             var radicalAxis;
 
-            // Radius are zero, return center of circle, if on other circle
+            // Radius is zero, return center of circle, if on other circle
             if (circ1[4] < Mat.eps) {
                 if (Math.abs(this.distance(circ1.slice(6, 2), circ2.slice(6, 8)) - circ2[4]) < Mat.eps) {
                     return new Coords(Const.COORDS_BY_USER, circ1.slice(6, 8), board);
@@ -1280,7 +1280,7 @@ define([
                 return new Coords(Const.COORDS_BY_USER, [0, 0, 0], board);
             }
 
-            // Radius are zero, return center of circle, if on other circle
+            // Radius is zero, return center of circle, if on other circle
             if (circ2[4] < Mat.eps) {
                 if (Math.abs(this.distance(circ2.slice(6, 2), circ1.slice(6, 8)) - circ1[4]) < Mat.eps) {
                     return new Coords(Const.COORDS_BY_USER, circ2.slice(6, 8), board);
