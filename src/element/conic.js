@@ -552,7 +552,7 @@ define([
         curve.subs = {
             center: curve.center
         };
-        this.inherits.push(curve.center);
+        curve.inherits.push(curve.center);
 
         /** @ignore */
         polarForm = function (t, suspendUpdate) {
@@ -625,7 +625,7 @@ define([
 
         if (Type.isPoint(F1)) {
             F1.addChild(curve);
-            this.inherits.push(F1);
+            curve.inherits.push(F1);
         }
 
         l.addChild(curve);
@@ -910,8 +910,8 @@ define([
         curve.subs = {
             center: curve.center
         };
-        this.inherits.push(curve.center);
-        this.inherits = this.inherits.concat(points);
+        curve.inherits.push(curve.center);
+        curve.inherits = curve.inherits.concat(points);
 
         if (givenByPoints) {
             for (i = 0; i < 5; i++) {
