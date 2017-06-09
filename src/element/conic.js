@@ -440,7 +440,7 @@ define([
 
         curve.midpoint = curve.center = M;
         curve.subs = {
-            center: curve.center;
+            center: curve.center
         }
         curve.inherits.push(curve.center, F[0], F[1]);
         if (Type.isPoint(C)) {

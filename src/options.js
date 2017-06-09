@@ -1273,7 +1273,7 @@ define([
              */
 
             name: '',                            // By default, do not generate names for axes.
-            needsRegularUpdate: true,            // Axes only updated after zooming and moving of the origin.
+            needsRegularUpdate: false,            // Axes only updated after zooming and moving of the origin.
             strokeWidth: 1,
             strokeColor: '#666666',
             highlightStrokeWidth: 1,
@@ -1296,7 +1296,7 @@ define([
                 label: {
                     offset: [4, -12 + 3],     // This seems to be a good offset for 12 point fonts
                     parse: false,
-                    needsRegularUpdate: true,
+                    needsRegularUpdate: false,
                     display: 'internal',
                     layer: 9
                 },
@@ -1613,7 +1613,7 @@ define([
                 visible: false,
                 withLabel: false,
                 name: ''
-            }
+            },
 
             /**
              * Attributes for center point.
@@ -1625,10 +1625,10 @@ define([
                 visible: false,
                 withLabel: false,
                 name: ''
-            }
+            },
 
             /**
-             * Attributes for points defining the conic, if given as coordinates.
+             * Attributes for five points defining the conic, if some of them are given as coordinates.
              *
              * @type Point
              * @name Conic#point
