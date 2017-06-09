@@ -163,6 +163,7 @@ define([
 
         this.id = this.line.addTicks(this);
         this.elType = 'ticks';
+        this.inherits.push(this.labels);
         this.board.setId(this, 'Ti');
     };
 
@@ -928,7 +929,6 @@ define([
                 return this;
             }
 
-console.log(this.visProp.visible, this.visPropCalc.visible);
             if (this.visPropCalc.visible) {
                 this.board.renderer.updateTicks(this);
                 this.updateRendererLabels();
@@ -954,7 +954,9 @@ console.log(this.visProp.visible, this.visPropCalc.visible);
                 attr,
                 label, ld;
 
+            // The number of labels needed
             lenData = this.labelsData.length;
+            // The number of labels which already exist
             lenLabels = this.labels.length;
 
             for (i = 0, j = 0; i < lenData; i++) {
@@ -963,27 +965,27 @@ console.log(this.visProp.visible, this.visPropCalc.visible);
                 }
 
                 ld = this.labelsData[i];
-                attr = {
-                    isLabel: true,
-                    layer: this.board.options.layer.line,
-                    highlightStrokeColor: this.board.options.text.strokeColor,
-                    highlightStrokeWidth: this.board.options.text.strokeWidth,
-                    highlightStrokeOpacity: this.board.options.text.strokeOpacity,
-//                    visible: this.visPropCalc.visible,
-                    priv: this.visProp.priv
-                };
-                attr = Type.deepCopy(attr, this.visProp.label);
                 if (j < lenLabels) {
                     // Take an already existing text element
                     label = this.labels[j];
                     label.setText(ld.t);
-                    //label.setAttribute(attr);
                     label.setCoords(ld.x, ld.y);
                     j++;
                 } else {
                     // A new text element is needed
                     this.labelCounter += 1;
+
+                    attr = {
+                        isLabel: true,
+                        layer: this.board.options.layer.line,
+                        highlightStrokeColor: this.board.options.text.strokeColor,
+                        highlightStrokeWidth: this.board.options.text.strokeWidth,
+                        highlightStrokeOpacity: this.board.options.text.strokeOpacity,
+                        priv: this.visProp.priv
+                    };
+                    attr = Type.deepCopy(attr, this.visProp.label);
                     attr.id = this.id + ld.i + 'Label' + this.labelCounter;
+
                     label = Text.createText(this.board, [ld.x, ld.y, ld.t], attr);
                     label.isDraggable = false;
                     label.dump = false;

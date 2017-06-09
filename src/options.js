@@ -1298,6 +1298,7 @@ define([
                     parse: false,
                     needsRegularUpdate: false,
                     display: 'internal',
+                    visible: 'inherit',
                     layer: 9
                 },
                 visible: 'inherit',
@@ -1324,7 +1325,8 @@ define([
              * @name Axis#point1
              */
             point1: {                  // Default values for point1 if created by line
-                needsRegularUpdate: false
+                needsRegularUpdate: false,
+                visible: false
             },
 
             /**
@@ -1334,7 +1336,8 @@ define([
              * @name Axis#point2
              */
             point2: {                  // Default values for point2 if created by line
-                needsRegularUpdate: false
+                needsRegularUpdate: false,
+                visible: false
             },
 
             /**

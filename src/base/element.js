@@ -854,39 +854,34 @@ define([
          * @private
          */
         setDisplayRendNode: function(val) {
-            var i, len, s, len_s, obj,
-                ty, subtypes;
+            var i, len, s, len_s, obj;
 
+            // Set display of the element itself
             this.board.renderer.display(this, val);
 
-            // subtypes = ['subs', 'ticks', 'labels', 'borders'];
-            // for (s = 0; s < subtypes.length; s++) {
-            //     ty = subtypes[s];
-            //     if (Type.exists(this[ty])) {
-            //         len = this[ty].length;
-            //         for (i = 0; i < len; i++) {
-            //             if (Type.exists(this[ty][i]) && Type.exists(this[ty][i].rendNode)) {
-            //                 this[ty][i].setDisplayRendNode(val);
-            //             }
-            //         }
-            //     }
-            // }
+            // Set the visibility of elements which inherit the attribute 'visible'
             len = this.inherits.length;
             for (s = 0; s < len; s++) {
                 obj = this.inherits[s];
                 if (Type.isArray(obj)) {
                     len_s = obj.length;
                     for (i = 0; i < len_s; i++) {
-                        if (Type.exists(obj[i]) && Type.exists(obj[i].rendNode)) {
+                        if (Type.exists(obj[i]) && Type.exists(obj[i].rendNode) &&
+                            Type.evaluate(obj[i].visProp.visible) === 'inherit') {
                             obj[i].setDisplayRendNode(val);
                         }
                     }
                 } else {
-                    obj.setDisplayRendNode(val);
+                    if (Type.exists(obj) && Type.exists(obj.rendNode) &&
+                        Type.evaluate(obj.visProp.visible) === 'inherit') {
+                            obj.setDisplayRendNode(val);
+                    }
                 }
             }
 
-            if (Type.exists(this.label) && Type.exists(this.label.rendNode)) {
+            // Set the visibility of the label if it inherits the attribute 'visible'
+            if (Type.exists(this.label) && Type.exists(this.label.rendNode) &&
+                Type.evaluate(this.label.visProp.visible) === 'inherit') {
                     this.label.setDisplayRendNode(val);
             }
 
@@ -962,9 +957,7 @@ define([
          * @private
          */
         updateVisibility: function(parent_val) {
-            var i, len, s, len_s, obj,
-                val,
-                ty, subtypes;
+            var i, len, s, len_s, obj, val;
 
             if (this.needsUpdate) {
                 // this.visPropOld.visible may be used in
@@ -972,6 +965,7 @@ define([
                 //  updateRenderer()
                 this.visPropOld.visible = this.visPropCalc.visible;
 
+                // Handle the element
                 if (parent_val !== undefined) {
                     this.visPropCalc.visible = parent_val;
                 } else {
@@ -981,49 +975,30 @@ define([
                     }
                 }
 
-                // subtypes = ['subs', 'ticks', 'labels', 'borders'];
-                // for (s = 0; s < subtypes.length; s++) {
-                //     ty = subtypes[s];
-                //     if (Type.exists(this[ty])) {
-                //         len = this[ty].length;
-                //         for (i = 0; i < len; i++) {
-                //             if (Type.exists(this[ty][i]) && Type.exists(this[ty][i].visProp)) {
-                //                 val = Type.evaluate(this[ty][i].visProp.visible);
-                //                 if (val === 'inherit') {
-                //                     this[ty][i].prepareUpdate().updateVisibility(this.visPropCalc.visible);
-                //                 }
-                //             }
-                //         }
-                //     }
-                // }
+                // Handle elements which inherit the visibility
                 len = this.inherits.length;
                 for (s = 0; s < len; s++) {
                     obj = this.inherits[s];
                     if (Type.isArray(obj)) {
                         len_s = obj.length;
                         for (i = 0; i < len_s; i++) {
-                            if (Type.exists(obj[i]) && Type.exists(obj[i].rendNode)) {
-                                val = Type.evaluate(obj[i].visProp.visible);
-                                if (val === 'inherit') {
-                                    obj[i].prepareUpdate().updateVisibility(this.visPropCalc.visible);
-                                }
+                            if (Type.exists(obj[i]) && Type.exists(obj[i].rendNode) &&
+                                Type.evaluate(obj[i].visProp.visible) === 'inherit') {
+                                obj[i].prepareUpdate().updateVisibility(this.visPropCalc.visible);
                             }
                         }
                     } else {
-                        val = Type.evaluate(obj.visProp.visible);
-                        if (val === 'inherit') {
+                        if (Type.exists(obj) && Type.exists(obj.rendNode) &&
+                            Type.evaluate(obj.visProp.visible) === 'inherit') {
                             obj.prepareUpdate().updateVisibility(this.visPropCalc.visible);
                         }
                     }
                 }
 
-                if (Type.exists(this.label)) {
-                    if (Type.exists(this.label.visProp)) {
-                        val = Type.evaluate(this.label.visProp.visible);
-                        if (val === 'inherit') {
-                            this.label.prepareUpdate().updateVisibility(this.visPropCalc.visible);
-                        }
-                    }
+                // Handle the label if it inherits the visibility
+                if (Type.exists(this.label)  && Type.exists(this.label.visProp) &&
+                    Type.evaluate(this.label.visProp.visible)) {
+                    this.label.prepareUpdate().updateVisibility(this.visPropCalc.visible);
                 }
 
             }
