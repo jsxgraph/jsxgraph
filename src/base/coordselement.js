@@ -623,7 +623,6 @@ define([
             // Update the label if visible.
             if (this.hasLabel && this.visPropCalc.visible && this.label &&
                 this.label.visPropCalc.visible && this.isReal) {
-
                 this.label.update();
                 this.board.renderer.updateText(this.label);
             }
@@ -631,7 +630,7 @@ define([
             // Update rendNode display
             if (this.visPropCalc.visible !== this.visPropOld.visible) {
                 this.board.renderer.display(this, this.visPropCalc.visible);
-                
+
                 if (this.hasLabel) {
                     this.board.renderer.display(this.label, this.label.visPropCalc.visible);
                 }
@@ -1247,9 +1246,8 @@ define([
             * We have to do an update. Otherwise, elements relying on this point will receive NaN.
             */
             this.prepareUpdate().update();
-
             if (!this.board.isSuspendedUpdate) {
-                this.updateRenderer();
+                this.updateVisibility().updateRenderer();
             }
 
             return this;

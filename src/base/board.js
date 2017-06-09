@@ -3671,7 +3671,7 @@ define([
          * @returns {JXG.Board} Reference to the board
          */
         updateRenderer: function () {
-            var el, pEl,
+            var el,
                 len = this.objectsList.length;
 
             /*
@@ -3691,8 +3691,7 @@ define([
                 this.updateRendererCanvas();
             } else {
                 for (el = 0; el < len; el++) {
-                    pEl = this.objectsList[el];
-                    pEl.updateRenderer();
+                    this.objectsList[el].updateRenderer();
                 }
             }
             return this;

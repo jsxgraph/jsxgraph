@@ -292,7 +292,6 @@ define([
             if (!Env.isBrowser || this.board.renderer.type === 'no') {
                 return this;
             }
-
             node = this.rendNode;
 
             /**
@@ -305,6 +304,8 @@ define([
                         that = this;
                         window.setTimeout(function () {
                             that.size = [node.offsetWidth, node.offsetHeight];
+                            that.needsUpdate = true;
+                            that.updateRenderer();
                         }, 0);
                     } else {
                         this.size = s;

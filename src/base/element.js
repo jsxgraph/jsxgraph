@@ -1453,14 +1453,14 @@ define([
                         return that.name;
                     }], attr);
                     this.label.needsUpdate = true;
+                    this.label.dump = false;
                     this.label.update();
 
-                    this.label.dump = false;
-
-                    if (!Type.evaluate(this.visProp.visible)) {
-                        this.label.hiddenByParent = true;
-                        this.label.visPropCalc.visible = false;
-                    }
+                    // if (!Type.evaluate(this.visProp.visible)) {
+                    //     this.label.hiddenByParent = true;
+                    //     this.label.visPropCalc.visible = false;
+                    // }
+                    // this.label.fullUpdate();
                     this.hasLabel = true;
                 }
             } else {
