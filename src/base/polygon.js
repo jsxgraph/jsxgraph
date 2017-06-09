@@ -114,8 +114,8 @@ define([
                 l.parentPolygon = this;
             }
         }
-        this.inherits.push(vertices, borders);
-        
+        this.inherits.push(this.vertices, this.borders);
+
         // Register polygon at board
         // This needs to be done BEFORE the points get this polygon added in their descendants list
         this.id = this.board.setId(this, 'Py');
