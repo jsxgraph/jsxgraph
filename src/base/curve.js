@@ -222,7 +222,9 @@ define([
          */
         hasPoint: function (x, y, start) {
             var t, checkPoint, len, invMat, c,
-                i, j, tX, tY, res, points, qdt,
+                i, j, tX, tY,
+                res = [],
+                points, qdt,
                 steps = Type.evaluate(this.visProp.numberpointslow),
                 d = (this.maxX() - this.minX()) / steps,
                 prec = this.board.options.precision.hasPoint,
