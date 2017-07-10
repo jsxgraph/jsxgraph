@@ -1,3 +1,82 @@
+0.99.6
+====
+
+Preliminary version
+
+New Features
+------------
+
+* new board attribute "showZoom"
+* new board attribute "defaultAxes"
+* Symbolic differentiation in JessieCode
+* Allow positioning of hatches and ticks, see example in doc
+* Allow CSS transistions for highlighting of objects: attribute "transitionDuration"
+* centripetal parametrization for Cardinal splines and Catmull-Rom splines
+* Touch devices: enable pan and zoom independently
+* New polygon method "Perimeter()"
+* Options for pan and zoom to be restricted to horizontal or vertical axis
+* Visvalingam-Whyatt algorithm for curve simplification
+* More arrow heads
+* New line attribute "lineCap"
+* New attribute: "dragToTopOfLayer"
+* New text attribute: "cssStyle"
+* Screenshots for SVG renderer 
+* Allow function as value for attribute "visible"
+* (New element "msector")
+
+Improvements
+------------
+
+* navigation bar can be controlled with the navbar attribute subject
+* Improved docs
+* JSXGraph is (again) working in AMD, CommonJS, and much more
+* Improved Cardinal splines
+* Allow adding of points for Cardinal splines
+* Improved alignment of tick labels for default axes
+* Speed improvements: prevent updates triggered by sub-pixel movements
+* Better merging of attributes for axes and default axes
+* Color selection for integrals
+* Unify handling of shift and ctrl key
+* Improved zoom and pan experience
+* Crisp lines in canvas renderer
+* Improved sensitivity for very thick lines
+* Adapt mediawiki and wordpress JSXGraph plug-ins to work with https
+* Initial support for arrows on curves
+* dumpToCanvas()
+* Tick labels for sliders
+* Moodle plug-in is now a separate githup project at https://github.com/jsxgraph/moodle-jsxgraph-plugin
+* Work on charts
+* Allow functions as values for attributes anchorX, anchorY and dragArea
+* Cathedes in slope triangles are now vectors
+* Improve evaluation of attribute values given by functions
+* Improved toFixed() method
+
+Bug fixes
+---------
+
+* Touch support for IE
+* Hide context menu
+* JessieCode
+* infinte loop in parser
+* Axis labels which are mostly outside of the canvas are hidden
+* Bug fix: two finger meovement of objects
+* Unique Ids
+* hasPoint for curves
+* Development: update dependencies
+* Disable text selection in navigation bar
+* Refactoring
+* Fill correct half-plane for inequality
+* "Intersection" of circle and tangent
+
+Contributors:
+* Christian Lawson-Perfect
+* Kaspar Peulen
+* Markus Henn
+* micahscopes
+* Ninmesara
+
+
+
 0.99.5
 ====
 
