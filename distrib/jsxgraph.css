@@ -43,6 +43,14 @@
     /* touch-action: none; */ /* Set with JavaScript */
 }
 
+.jxgbox svg text {
+    cursor: default;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
 .JXGtext {
     font-family: Courier, monospace; 
     /** 
