@@ -1631,6 +1631,7 @@ define([
          */
         gestureChangeListener: function (evt) {
             var c,
+                // Save zoomFactors
                 zx = this.attr.zoom.factorx,
                 zy = this.attr.zoom.factory,
                 factor,
@@ -1691,7 +1692,10 @@ define([
                     cx = c.usrCoords[1];
                     cy = c.usrCoords[2];
                 }
+
                 this.zoomIn(cx, cy);
+
+                // Restore zoomFactors
                 this.attr.zoom.factorx = zx;
                 this.attr.zoom.factory = zy;
             }
@@ -3155,9 +3159,13 @@ define([
                 dX = (bb[2] - bb[0]) * (1.0 - 1.0 / zX),
                 dY = (bb[1] - bb[3]) * (1.0 - 1.0 / zY),
                 lr = 0.5,
-                tr = 0.5;
+                tr = 0.5,
+                mi = this.attr.zoom.eps || this.attr.zoom.min || 0.001;  // this.attr.zoom.eps is deprecated
 
-            if (this.zoomX > this.attr.zoom.max || this.zoomY > this.attr.zoom.max) {
+            if ((this.zoomX > this.attr.zoom.max && zX > 1.0) ||
+                (this.zoomY > this.attr.zoom.max && zY > 1.0) ||
+                (this.zoomX < mi && zX < 1.0) ||  // zoomIn is used for all zooms on touch devices
+                (this.zoomY < mi && zY < 1.0)) {
                 return this;
             }
 

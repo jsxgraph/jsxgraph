@@ -384,7 +384,7 @@ define([
              *
              *   pinchHorizontal: true // Allow pinch-to-zoom to zoom only horizontal axis
              *   pinchVertical: true   // Allow pinch-to-zoom to zoom only vertical axis
-             *   pinchSensitivity: 7   // Sensitivity (in degree) for recognizing horizontal or vertical pinch-to-zoom gestures.
+             *   pinchSensitivity: 7   // Sensitivity (in degrees) for recognizing horizontal or vertical pinch-to-zoom gestures.
              * }
              * </pre>
              *
@@ -1270,7 +1270,7 @@ define([
              */
 
             name: '',                            // By default, do not generate names for axes.
-            needsRegularUpdate: true,         // Axes only updated after zooming and moving of the origin.
+            needsRegularUpdate: false,         // Axes only updated after zooming and moving of the origin.
             strokeWidth: 1,
             strokeColor: '#666666',
             highlightStrokeWidth: 1,
@@ -1293,11 +1293,12 @@ define([
                 label: {
                     offset: [4, -12 + 3],     // This seems to be a good offset for 12 point fonts
                     parse: false,
-                    needsRegularUpdate: true,
+                    needsRegularUpdate: false,
                     display: 'internal',
                     layer: 9
                 },
-                needsRegularUpdate: true,
+                needsRegularUpdate: false,
+                visible: 'inherit',
                 strokeWidth: 1,
                 strokeColor: '#666666',
                 highlightStrokeColor: '#888888',

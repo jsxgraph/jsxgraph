@@ -8,6 +8,7 @@ New Features
 
 * new board attribute "showZoom"
 * new board attribute "defaultAxes"
+* new attribute "inherit"
 * Symbolic differentiation in JessieCode
 * Allow positioning of hatches and ticks, see example in doc
 * Allow CSS transistions for highlighting of objects: attribute "transitionDuration"
