@@ -155,6 +155,7 @@ define([
                             offset: [0, -3]
                         },
                         drawZero: false,
+                        visible: 'inherit'
                     }
                 },
                 y: {
@@ -167,6 +168,7 @@ define([
                             offset: [-6, 0]
                         },
                         drawZero: false,
+                        visible: 'inherit'
                     }
                 }
             },
@@ -1049,6 +1051,7 @@ define([
             strokeWidth: 1,
             strokeColor: 'black',
             highlightStrokeColor: '#888888',
+            visible: 'inherit',
 
             /**
              * Whether line boundaries should be counted or not in the lower and upper bounds when
@@ -1270,7 +1273,7 @@ define([
              */
 
             name: '',                            // By default, do not generate names for axes.
-            needsRegularUpdate: false,         // Axes only updated after zooming and moving of the origin.
+            needsRegularUpdate: false,           // Axes only updated after zooming and moving of the origin.
             strokeWidth: 1,
             strokeColor: '#666666',
             highlightStrokeWidth: 1,
@@ -1295,10 +1298,11 @@ define([
                     parse: false,
                     needsRegularUpdate: false,
                     display: 'internal',
+                    visible: 'inherit',
                     layer: 9
                 },
-                needsRegularUpdate: false,
                 visible: 'inherit',
+                needsRegularUpdate: false,
                 strokeWidth: 1,
                 strokeColor: '#666666',
                 highlightStrokeColor: '#888888',
@@ -1321,7 +1325,8 @@ define([
              * @name Axis#point1
              */
             point1: {                  // Default values for point1 if created by line
-                needsRegularUpdate: false
+                needsRegularUpdate: false,
+                visible: false
             },
 
             /**
@@ -1331,7 +1336,8 @@ define([
              * @name Axis#point2
              */
             point2: {                  // Default values for point2 if created by line
-                needsRegularUpdate: false
+                needsRegularUpdate: false,
+                visible: false
             },
 
             /**
@@ -1398,17 +1404,6 @@ define([
             }
 
             /**#@-*/
-        },
-
-        /* special options for Msector of 3 points */
-        msector: {
-            strokeColor: '#000000', // Msector line
-            point: {               // Msector point
-                visible: false,
-                fixed: false,
-                withLabel: false,
-                name: ''
-            }
         },
 
         /* special button options */
@@ -1621,7 +1616,31 @@ define([
                 visible: false,
                 withLabel: false,
                 name: ''
+            },
+
+            /**
+             * Attributes for center point.
+             *
+             * @type Point
+             * @name Conic#center
+             */
+            center: {
+                visible: false,
+                withLabel: false,
+                name: ''
+            },
+
+            /**
+             * Attributes for five points defining the conic, if some of them are given as coordinates.
+             *
+             * @type Point
+             * @name Conic#point
+             */
+            point: {
+                withLabel: false,
+                name: ''
             }
+
             /**#@-*/
         },
 
@@ -1958,6 +1977,7 @@ define([
                                          // with display=='internal'
             visible: true,
             parse: false,
+            transitionDuration: 0,
             needsRegularUpdate: false
 
             /**#@-*/
@@ -2095,6 +2115,7 @@ define([
              * @visprop
              */
 
+            visible: 'inherit',
             strokeColor: 'black',
             strokeOpacity: 1,
             highlightStrokeOpacity: 0.666666,
@@ -2262,7 +2283,8 @@ define([
                 majorHeight: -1,         // if <0: full width and height
                 minorTicks: 4,
                 defaultDistance: 1,
-                strokeOpacity: 0.3
+                strokeOpacity: 0.3,
+                visible: 'inherit'
             },
 
             /**
@@ -2372,6 +2394,17 @@ define([
             /**#@-*/
         },
 
+        /* special options for Msector of 3 points */
+        msector: {
+            strokeColor: '#000000', // Msector line
+            point: {               // Msector point
+                visible: false,
+                fixed: false,
+                withLabel: false,
+                name: ''
+            }
+        },
+
         /* special options for normal lines */
         normal: {
             /**#@+
@@ -2395,7 +2428,7 @@ define([
             /**#@-*/
         },
 
-        /* special options for orthogonal projectionn points */
+        /* special options for orthogonal projection points */
         orthogonalprojection: {
             /**#@+
              * @visprop
@@ -2760,7 +2793,9 @@ define([
             /**#@-*/
         },
 
-        /* special prescribed angle options */
+        /* special prescribed angle options
+        * Not yet implemented. But angle.setAngle(val) is implemented.
+        */
         prescribedangle: {
             /**#@+
              * @visprop
@@ -2881,7 +2916,7 @@ define([
             highlightStrokeWidth: 0,
 
             /**
-             * Attributes for sub-element arc.
+             * Attributes for sub-element arc. It is only available, if the sector is defined by three points.
              *
              * @type Arc
              * @name Sector#arc
@@ -2892,7 +2927,7 @@ define([
             },
 
             /**
-             * Attributes for helper point radiuspoint.
+             * Attributes for helper point radiuspoint in case it is provided by coordinates.
              *
              * @type Point
              * @name Sector#radiuspoint
@@ -2903,7 +2938,7 @@ define([
             },
 
             /**
-             * Attributes for helper point center.
+             * Attributes for helper point center in case it is provided by coordinates.
              *
              * @type Point
              * @name Sector#center
@@ -2914,7 +2949,7 @@ define([
             },
 
             /**
-             * Attributes for helper point anglepoint.
+             * Attributes for helper point anglepoint in case it is provided by coordinates.
              *
              * @type Point
              * @name Sector#anglepoint
@@ -3108,7 +3143,8 @@ define([
                 strokeOpacity: 1,
                 strokeWidth: 1,
                 tickEndings: [0, 1],
-                strokeColor: '#000000'
+                strokeColor: '#000000',
+                visible: 'inherit'
 
             },
 
@@ -3327,7 +3363,8 @@ define([
                 defaultDistance: 0.1,
                 strokeOpacity: 1,
                 strokeWidth: 1,
-                strokeColor: '#000000'
+                strokeColor: '#000000',
+                visible: 'inherit'
             },
 
             /**

@@ -657,30 +657,13 @@ define([
          * @see JXG.AbstractRenderer#drawPolygon
          */
         updatePolygon: function (el) {
-            var i, len, polIsReal;
+            var i;
+            //, len, polIsReal;
 
             // here originally strokecolor wasn't updated but strokewidth was
             // but if there's no strokecolor i don't see why we should update strokewidth.
             this._updateVisual(el, {stroke: true, dash: true});
             this.updatePolygonPrim(el.rendNode, el);
-
-            len = el.vertices.length;
-            polIsReal = true;
-            for (i = 0; i < len; ++i) {
-                if (!el.vertices[i].isReal) {
-                    polIsReal = false;
-                    break;
-                }
-            }
-
-            len = el.borders.length;
-            for (i = 0; i < len; ++i) {
-                if (polIsReal && el.borders[i].visPropCalc.visible) {
-                    this.show(el.borders[i]);
-                } else {
-                    this.hide(el.borders[i]);
-                }
-            }
         },
 
         /* **************************
@@ -925,8 +908,10 @@ define([
                 ev = el.visProp,
                 display = Env.isBrowser ? ev.display : 'internal',
                 nodeList = ['rendNode', 'rendNodeTag', 'rendNodeLabel'],
+                lenN = nodeList.length,
                 cssList, prop, style, cssString,
-                styleList = ['cssdefaultstyle', 'cssstyle'];
+                styleList = ['cssdefaultstyle', 'cssstyle'],
+                lenS = styleList.length;
 
             if (doHighlight) {
                 sc = ev.highlightstrokecolor;
@@ -946,19 +931,23 @@ define([
             //  canvas     +         -
             //  no         -         -
             if ((this.type !== 'no') &&
-                (display === 'html' || this.type !== 'canvas')) {
-                for (style in styleList) {
+                (display === 'html' || this.type !== 'canvas')
+               ) {
+                for (style = 0; style < lenS; style++) {
                     // First set cssString to
                     // ev.cssdefaultstyle of ev.highlightcssdefaultstyle,
                     // then to
                     // ev.cssstyle of ev.highlightcssstyle
                     cssString = Type.evaluate(ev[((doHighlight) ? 'highlight' : '') + styleList[style]]);
-                    if (cssString !== '' && el.visPropOld[styleList[style]] !== cssString) {
+                    if (cssString !== '' &&
+                        el.visPropOld[styleList[style]] !== cssString) {
                         cssList = this._css2js(cssString);
-                        for (node in nodeList) {
+                        for (node = 0; node < lenN; node++) {
                             if (Type.exists(el[nodeList[node]])) {
                                 for (prop in cssList) {
-                                    el[nodeList[node]].style[cssList[prop].key] = cssList[prop].val;
+                                    if (cssList.hasOwnProperty(prop)) {
+                                        el[nodeList[node]].style[cssList[prop].key] = cssList[prop].val;
+                                    }
                                 }
                             }
                         }
@@ -970,14 +959,14 @@ define([
                 if (el.visPropOld.fontsize !== fs) {
                     el.needsSizeUpdate = true;
                     try {
-                        for (node in nodeList) {
+                        for (node = 0; node < lenN; node++) {
                             if (Type.exists(el[nodeList[node]])) {
                                 el[nodeList[node]].style.fontSize = fs + 'px';
                             }
                         }
                     } catch (e) {
                         // IE needs special treatment.
-                        for (node in nodeList) {
+                        for (node = 0; node < lenN; node++) {
                             if (Type.exists(el[nodeList[node]])) {
                                 el[nodeList[node]].style.fontSize = fs;
                             }
@@ -1283,16 +1272,29 @@ define([
         setPropertyPrim: function (node, key, val) { /* stub */ },
 
         /**
+         * Shows or hides an element on the canvas; Only a stub, requires implementation in the derived renderer.
+         * @param {JXG.GeometryElement} element Reference to the object that has to appear.
+         * @param {Boolean} value true to show the element, false to hide the element.
+         */
+        display: function (element, value) { /* stub */ },
+
+        /**
          * Shows a hidden element on the canvas; Only a stub, requires implementation in the derived renderer.
+         *
+         * Please use JXG.AbstractRenderer#display instead
          * @param {JXG.GeometryElement} element Reference to the object that has to appear.
          * @see JXG.AbstractRenderer#hide
+         * @deprecated
          */
         show: function (element) { /* stub */ },
 
         /**
          * Hides an element on the canvas; Only a stub, requires implementation in the derived renderer.
+         *
+         * Please use JXG.AbstractRenderer#display instead
          * @param {JXG.GeometryElement} element Reference to the geometry element that has to disappear.
          * @see JXG.AbstractRenderer#show
+         * @deprecated
          */
         hide: function (element) { /* stub */ },
 

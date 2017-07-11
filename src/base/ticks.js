@@ -150,10 +150,10 @@ define([
         this.labels = [];
 
         /**
-         * A list of labels that are currently unused and ready for reassignment.
+         * A list of labels which have to be displayed in updateRenderer.
          * @type {Array}
          */
-        this.labelsRepo = [];
+        this.labelData = [];
 
         /**
          * To ensure the uniqueness of label ids this counter is used.
@@ -163,6 +163,7 @@ define([
 
         this.id = this.line.addTicks(this);
         this.elType = 'ticks';
+        this.inherits.push(this.labels);
         this.board.setId(this, 'Ti');
     };
 
@@ -286,13 +287,13 @@ define([
          * @private
          */
         calculateTicksCoordinates: function () {
-            var coordsZero, bounds, i,
-                oldRepoLength = this.labelsRepo.length;
+            var coordsZero, bounds;
 
             // Calculate Ticks width and height in Screen and User Coordinates
             this.setTicksSizeVariables();
             // If the parent line is not finite, we can stop here.
-            if (Math.abs(this.dx) < Mat.eps && Math.abs(this.dy) < Mat.eps) {
+            if (Math.abs(this.dx) < Mat.eps &&
+                Math.abs(this.dy) < Mat.eps) {
                 return;
             }
 
@@ -303,10 +304,8 @@ define([
             bounds = this.getLowerAndUpperBounds(coordsZero);
 
             // Clean up
-            this.removeTickLabels();
             this.ticks = [];
-            this.labels = [];
-
+            this.labelsData = [];
             // Create Ticks Coordinates and Labels
             if (this.equidistant) {
                 this.generateEquidistantTicks(coordsZero, bounds);
@@ -314,10 +313,7 @@ define([
                 this.generateFixedTicks(coordsZero, bounds);
             }
 
-            // Hide unused labels in labelsRepo
-            for (i = oldRepoLength; i < this.labelsRepo.length; i++) {
-                this.labelsRepo[i].setAttribute({visible: false});
-            }
+            return this;
         },
 
         /**
@@ -615,7 +611,7 @@ define([
          * @private
          */
         processTickPosition: function (coordsZero, tickPosition, ticksDelta, deltas) {
-            var x, y, tickCoords, ti, labelText;
+            var x, y, tickCoords, ti;
 
             // Calculates tick coordinates
             x = coordsZero.usrCoords[1] + tickPosition * deltas.x;
@@ -632,12 +628,16 @@ define([
             ti = this.tickEndings(tickCoords, tickCoords.major);
             if (ti.length === 3) {
                 this.ticks.push(ti);
-
                 if (tickCoords.major && Type.evaluate(this.visProp.drawlabels)) {
-                    labelText = this.generateLabelText(tickCoords, coordsZero);
-                    this.labels.push(this.generateLabel(labelText, tickCoords, this.ticks.length));
+                    this.labelsData.push(
+                        this.generateLabelData(
+                            this.generateLabelText(tickCoords, coordsZero),
+                            tickCoords,
+                            this.ticks.length
+                        )
+                    );
                 } else {
-                    this.labels.push(null);
+                    this.labelsData.push(null);
                 }
             }
         },
@@ -669,13 +669,19 @@ define([
                     this.fixedTicks[i] <= bounds.upper) {
                     this.ticks.push(ti);
 
-                    if (ev_dl && (hasLabelOverrides || Type.exists(this.visProp.labels[i]))) {
-                        labelText = hasLabelOverrides ? Type.evaluate(this.visProp.labels[i]) : this.fixedTicks[i];
-                        this.labels.push(
-                            this.generateLabel(this.generateLabelText(tickCoords, coordsZero, labelText), tickCoords, i)
+                    if (ev_dl &&
+                            (hasLabelOverrides || Type.exists(this.visProp.labels[i]))) {
+                        labelText = hasLabelOverrides ?
+                                        Type.evaluate(this.visProp.labels[i]) : this.fixedTicks[i];
+                        this.labelsData.push(
+                            this.generateLabelData(
+                                this.generateLabelText(tickCoords, coordsZero, labelText),
+                                tickCoords,
+                                i
+                            )
                         );
                     } else {
-                        this.labels.push(null);
+                        this.labelsData.push(null);
                     }
                 }
             }
@@ -856,82 +862,38 @@ define([
         },
 
         /**
-         * Create a tick label
+         * Create a tick label data, i.e. text and coordinates
          * @param  {String}     labelText
          * @param  {JXG.Coords} tick
          * @param  {Number}     tickNumber
-         * @returns {JXG.Text}
+         * @returns {Object} with properties 'x', 'y', 't' (text), 'i' (tick number) or null in case of o label
          * @private
          */
-        generateLabel: function (labelText, tick, tickNumber) {
-            var label,
-                xa, ya, m,
-                attr = {
-                    isLabel: true,
-                    layer: this.board.options.layer.line,
-                    highlightStrokeColor: this.board.options.text.strokeColor,
-                    highlightStrokeWidth: this.board.options.text.strokeWidth,
-                    highlightStrokeOpacity: this.board.options.text.strokeOpacity,
-                    visible: this.visPropCalc.visible,
-                    priv: this.visProp.priv
-                };
+         generateLabelData: function (labelText, tick, tickNumber) {
+             var xa, ya, m, fs;
 
-            attr = Type.deepCopy(attr, this.visProp.label);
+             // Test if large portions of the label are inside of the canvas
+             // This is the last chance to abandon the creation of the label if it is mostly
+             // outside of the canvas.
+             fs = Type.evaluate(this.visProp.label.fontsize);
+             xa = [tick.scrCoords[1], tick.scrCoords[1]];
+             ya = [tick.scrCoords[2], tick.scrCoords[2]];
+             m = (fs === undefined) ? 12 : fs;
+             m *= 1.5;
+             if (!this._isInsideCanvas(xa, ya, m)) {
+                 return null;
+             }
 
-            // Test if large portions of the label are inside of the canvas
-            // This is the last chance to abandon the creation of the label if it is mostly
-            // outside of the canvas.
-            xa = [tick.scrCoords[1], tick.scrCoords[1]];
-            ya = [tick.scrCoords[2], tick.scrCoords[2]];
-            m = (attr.fontSize === undefined) ? 12 : attr.fontSize;
-            m *= 1.5;
-            if (!this._isInsideCanvas(xa, ya, m)) {
-                return null;
-            }
+             xa = Type.evaluate(this.visProp.label.offset[0]);
+             ya = Type.evaluate(this.visProp.label.offset[1]);
 
-            if (this.labelsRepo.length > 0) {
-                label = this.labelsRepo.pop();
-                label.setText(labelText);
-                label.setAttribute(attr);
-            } else {
-                this.labelCounter += 1;
-                attr.id = this.id + tickNumber + 'Label' + this.labelCounter;
-                label = Text.createText(this.board, [tick.usrCoords[1], tick.usrCoords[2], labelText], attr);
-            }
-
-            label.isDraggable = false;
-            label.dump = false;
-
-            label.distanceX = Type.evaluate(this.visProp.label.offset[0]);
-            label.distanceY = Type.evaluate(this.visProp.label.offset[1]);
-            label.setCoords(
-                tick.usrCoords[1] + label.distanceX / (this.board.unitX),
-                tick.usrCoords[2] + label.distanceY / (this.board.unitY)
-            );
-
-            return label;
-        },
-
-        /**
-         * Removes the HTML divs of the tick labels
-         * before repositioning
-         * @private
-         */
-        removeTickLabels: function () {
-            var j;
-
-            // remove existing tick labels
-            if (Type.exists(this.labels)) {
-                if ((this.board.needsFullUpdate || this.needsRegularUpdate || this.needsUpdate) &&
-                        !(this.board.renderer.type === 'canvas' && this.board.options.text.display === 'internal')) {
-                    for (j = 0; j < this.labels.length; j++) {
-                        if (Type.exists(this.labels[j])) {
-                            this.labelsRepo.push(this.labels[j]);
-                        }
-                    }
-                }
-            }
-        },
+             return {
+                 x: tick.usrCoords[1] + xa / (this.board.unitX),
+                 y: tick.usrCoords[2] + ya / (this.board.unitY),
+                 t: labelText,
+                 i: tickNumber
+             };
+         },
 
         /**
          * Recalculate the tick positions and the labels.
@@ -939,11 +901,20 @@ define([
          */
         update: function () {
             if (this.needsUpdate) {
-                this.visPropCalc.visible = Type.evaluate(this.visProp.visible);
+                //this.visPropCalc.visible = Type.evaluate(this.visProp.visible);
                 // A canvas with no width or height will create an endless loop, so ignore it
                 if (this.board.canvasWidth !== 0 && this.board.canvasHeight !== 0) {
                     this.calculateTicksCoordinates();
                 }
+                // this.updateVisibility(this.line.visPropCalc.visible);
+                //
+                // for (var i = 0; i < this.labels.length; i++) {
+                //     if (this.labels[i] !== null) {
+                //         this.labels[i].prepareUpdate()
+                //             .updateVisibility(this.line.visPropCalc.visible)
+                //             .updateRenderer();
+                //     }
+                // }
             }
 
             return this;
@@ -951,16 +922,87 @@ define([
 
         /**
          * Uses the boards renderer to update the arc.
-         * @returns {JXG.Ticks}
+         * @returns {JXG.Ticks} Reference to the object.
          */
         updateRenderer: function () {
-            if (this.needsUpdate) {
-                if (this.visPropCalc.visible) {
-                    this.board.renderer.updateTicks(this);
-                } else {
-                    this.board.renderer.hide(this);
+            if (!this.needsUpdate) {
+                return this;
+            }
+
+            if (this.visPropCalc.visible) {
+                this.board.renderer.updateTicks(this);
+                this.updateRendererLabels();
+            }
+
+            if (this.visPropCalc.visible != this.visPropOld.visible) {
+                this.board.renderer.display(this, this.visPropCalc.visible);
+            }
+
+            this.needsUpdate = false;
+            return this;
+        },
+
+        /**
+         * Updates the label elements of the major ticks.
+         *
+         * @private
+         * @returns {JXG.Ticks} Reference to the object.
+         */
+        updateRendererLabels: function() {
+            var i, j,
+                lenData, lenLabels,
+                attr,
+                label, ld;
+
+            // The number of labels needed
+            lenData = this.labelsData.length;
+            // The number of labels which already exist
+            lenLabels = this.labels.length;
+
+            for (i = 0, j = 0; i < lenData; i++) {
+                if (this.labelsData[i] === null) {
+                    continue;
                 }
-                this.needsUpdate = false;
+
+                ld = this.labelsData[i];
+                if (j < lenLabels) {
+                    // Take an already existing text element
+                    label = this.labels[j];
+                    label.setText(ld.t);
+                    label.setCoords(ld.x, ld.y);
+                    j++;
+                } else {
+                    // A new text element is needed
+                    this.labelCounter += 1;
+
+                    attr = {
+                        isLabel: true,
+                        layer: this.board.options.layer.line,
+                        highlightStrokeColor: this.board.options.text.strokeColor,
+                        highlightStrokeWidth: this.board.options.text.strokeWidth,
+                        highlightStrokeOpacity: this.board.options.text.strokeOpacity,
+                        priv: this.visProp.priv
+                    };
+                    attr = Type.deepCopy(attr, this.visProp.label);
+                    attr.id = this.id + ld.i + 'Label' + this.labelCounter;
+
+                    label = Text.createText(this.board, [ld.x, ld.y, ld.t], attr);
+                    label.isDraggable = false;
+                    label.dump = false;
+                    this.labels.push(label);
+                }
+                label.prepareUpdate()
+                    .updateVisibility(this.visPropCalc.visible)
+                    .updateRenderer();
+                this.board.renderer.display(label, this.visPropCalc.visible);
+
+                label.distanceX = Type.evaluate(this.visProp.label.offset[0]);
+                label.distanceY = Type.evaluate(this.visProp.label.offset[1]);
+            }
+            // Hide unused labels
+            lenData = j;
+            for (j = lenData; j < lenLabels; j++) {
+                this.board.renderer.display(this.labels[j], false);
             }
 
             return this;
@@ -969,9 +1011,10 @@ define([
         hideElement: function () {
             var i;
 
+            JXG.deprecated('Element.hideElement()', 'Element.setDisplayRendNode()');
+
             this.visPropCalc.visible = false;
-            //this.visProp.visible = false;
-            this.board.renderer.hide(this);
+            this.board.renderer.display(this, false);
             for (i = 0; i < this.labels.length; i++) {
                 if (Type.exists(this.labels[i])) {
                     this.labels[i].hideElement();
@@ -983,8 +1026,11 @@ define([
 
         showElement: function () {
             var i;
+
+            JXG.deprecated('Element.showElement()', 'Element.setDisplayRendNode()');
+
             this.visPropCalc.visible = true;
-            this.board.renderer.show(this);
+            this.board.renderer.display(this, false);
 
             for (i = 0; i < this.labels.length; i++) {
                 if (Type.exists(this.labels[i])) {
@@ -1056,6 +1102,7 @@ define([
 
         el.setParents(parents[0]);
         el.isDraggable = true;
+        el.fullUpdate(parents[0].visPropCalc.visible);
 
         return el;
     };

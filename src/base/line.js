@@ -131,6 +131,7 @@ define([
         this.point1.addChild(this);
         this.point2.addChild(this);
 
+        this.inherits.push(this.point1, this.point2);
 
         this.updateStdform(); // This is needed in the following situation:
         // * the line is defined by three coordinates
@@ -156,7 +157,6 @@ define([
     };
 
     JXG.Line.prototype = new GeometryElement();
-
 
     JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
         /**
@@ -268,7 +268,6 @@ define([
                 return this;
             }
 
-            this.visPropCalc.visible = Type.evaluate(this.visProp.visible);
             if (this.constrained) {
                 if (Type.isFunction(this.funps)) {
                     funps = this.funps();
@@ -347,14 +346,14 @@ define([
                             this.point1.X() + (this.point2.X() - this.point1.X()) * dnew / d,
                             this.point1.Y() + (this.point2.Y() - this.point1.Y()) * dnew / d
                         ]);
-                        this.point2.prepareUpdate().updateRenderer();
+                        this.point2.fullUpdate();
                     } else if ((d1 <= d2 && drag1) ||
                             (d1 > d2 && drag1 && !drag2)) {
                         this.point1.setPositionDirectly(Const.COORDS_BY_USER, [
                             this.point2.X() + (this.point1.X() - this.point2.X()) * dnew / d,
                             this.point2.Y() + (this.point1.Y() - this.point2.Y()) * dnew / d
                         ]);
-                        this.point1.prepareUpdate().updateRenderer();
+                        this.point1.fullUpdate();
                     }
                     // Second case: the two points are identical. In this situation
                     // we choose a random direction.
@@ -368,13 +367,13 @@ define([
                             this.point1.X() + x * dnew / d,
                             this.point1.Y() + y * dnew / d
                         ]);
-                        this.point2.prepareUpdate().updateRenderer();
+                        this.point2.fullUpdate();
                     } else if (drag1) {
                         this.point1.setPositionDirectly(Const.COORDS_BY_USER, [
                             this.point2.X() + x * dnew / d,
                             this.point2.Y() + y * dnew / d
                         ]);
-                        this.point1.prepareUpdate().updateRenderer();
+                        this.point1.fullUpdate();
                     }
                 }
                 // Finally, we save the position of the two points.
@@ -406,38 +405,44 @@ define([
         updateRenderer: function () {
             var wasReal;
 
-            if (this.needsUpdate && this.visPropCalc.visible) {
+            if (!this.needsUpdate) {
+                return this;
+            }
+
+            if (this.visPropCalc.visible) {
                 wasReal = this.isReal;
                 this.isReal = (!isNaN(this.point1.coords.usrCoords[1] + this.point1.coords.usrCoords[2] +
                         this.point2.coords.usrCoords[1] + this.point2.coords.usrCoords[2]) &&
                         (Mat.innerProduct(this.stdform, this.stdform, 3) >= Mat.eps * Mat.eps));
 
-                if (this.isReal) {
-                    if (wasReal !== this.isReal) {
-                        this.board.renderer.show(this);
-                        if (this.hasLabel && this.label.visPropCalc.visible) {
-                            this.board.renderer.show(this.label);
-                        }
-                    }
-                    this.board.renderer.updateLine(this);
-                } else {
-                    if (wasReal !== this.isReal) {
-                        this.board.renderer.hide(this);
-                        if (this.hasLabel && this.label.visPropCalc.visible) {
-                            this.board.renderer.hide(this.label);
-                        }
-                    }
+                if (wasReal && !this.isReal) {
+                    this.updateVisibility(false);
                 }
+            }
 
-                this.needsUpdate = false;
+            if (this.visPropCalc.visible) {
+                this.board.renderer.updateLine(this);
             }
 
             /* Update the label if visible. */
-            if (this.hasLabel && this.label.visPropCalc.visible && this.isReal) {
+            if (this.hasLabel && this.visPropCalc.visible && this.label &&
+                this.label.visPropCalc.visible && this.isReal) {
+
                 this.label.update();
                 this.board.renderer.updateText(this.label);
             }
 
+            // Update rendNode display
+            if (this.visPropCalc.visible !== this.visPropOld.visible) {
+                //this.setDisplayRendNode(this.visPropCalc.visible);
+                this.board.renderer.display(this, this.visPropCalc.visible);
+
+                if (this.hasLabel) {
+                    this.board.renderer.display(this.label, this.label.visPropCalc.visible);
+                }
+            }
+
+            this.needsUpdate = false;
             return this;
         },
 
@@ -893,24 +898,24 @@ define([
             }
         },
 
-        hideElement: function () {
-            var i;
-
-            GeometryElement.prototype.hideElement.call(this);
-
-            for (i = 0; i < this.ticks.length; i++) {
-                this.ticks[i].hideElement();
-            }
-        },
-
-        showElement: function () {
-            var i;
-            GeometryElement.prototype.showElement.call(this);
-
-            for (i = 0; i < this.ticks.length; i++) {
-                this.ticks[i].showElement();
-            }
-        }
+        // hideElement: function () {
+        //     var i;
+        //
+        //     GeometryElement.prototype.hideElement.call(this);
+        //
+        //     for (i = 0; i < this.ticks.length; i++) {
+        //         this.ticks[i].hideElement();
+        //     }
+        // },
+        //
+        // showElement: function () {
+        //     var i;
+        //     GeometryElement.prototype.showElement.call(this);
+        //
+        //     for (i = 0; i < this.ticks.length; i++) {
+        //         this.ticks[i].showElement();
+        //     }
+        // }
     });
 
     /**
@@ -1326,10 +1331,6 @@ define([
             }
 
             attr_ticks = Type.copyAttributes(attributes, board.options, 'axis', 'ticks');
-            // We may need this
-            if (!Type.exists(attr_ticks.visible)) {
-                attr_ticks.visible = attr.visible;
-            }
             if (Type.exists(attr_ticks.ticksdistance)) {
                 dist = attr_ticks.ticksdistance;
             } else if (Type.isArray(attr_ticks.ticks)) {
@@ -1345,13 +1346,13 @@ define([
              * @type JXG.Ticks
              */
             el.defaultTicks = board.create('ticks', [el, dist], attr_ticks);
-
             el.defaultTicks.dump = false;
-
             el.elType = 'axis';
             el.subs = {
                 ticks: el.defaultTicks
             };
+            el.inherits.push(el.defaultTicks);
+
         } else {
             throw new Error("JSXGraph: Can't create axis with parent types '" +
                 (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +

@@ -440,7 +440,6 @@ define([
         }
         attr = Type.copyAttributes(attributes, board.options, 'perpendicularsegment', 'point');
         t = JXG.createPerpendicularPoint(board, [l, p], attr);
-
         t.dump = false;
 
         if (!Type.exists(attributes.layer)) {
@@ -467,6 +466,7 @@ define([
         pd.subs = {
             point: t
         };
+        pd.inherits.push(t);
 
         return pd;
     };
@@ -796,13 +796,16 @@ define([
                 return Mat.crossProduct([1, 0, 0], li());
             }
         ], attr);
-
         pp.isDraggable = true;
 
         attr = Type.copyAttributes(attributes, board.options, 'parallel');
         pl = board.create('line', [p, pp], attr);
 
         pl.elType = 'parallel';
+        pl.subs = {
+            point: pp
+        };
+        pl.inherits.push(pp);
         pl.setParents([parents[0].id, parents[1].id]);
         if (parents.length === 3) {
             pl.addParents(parents[2].id);
@@ -951,6 +954,10 @@ define([
              * @memberOf Normal.prototype
              */
             l.point = pp;
+            l.subs = {
+                point: pp
+            };
+            l.inherits.push(pp);
         } else if (c.elementClass === Const.OBJECT_CLASS_CIRCLE) {
             l = board.create('line', [c.midpoint, p], attr);
         } else if (c.elementClass === Const.OBJECT_CLASS_CURVE) {
@@ -1178,6 +1185,7 @@ define([
             l.subs = {
                 point: p
             };
+            l.inherits.push(p);
 
             return l;
         }
@@ -1312,6 +1320,7 @@ define([
             line1: g1,
             line2: g2
         };
+        ret.inherits.push(g1, g2);
 
         return ret;
     };
@@ -1385,6 +1394,7 @@ define([
             l.subs = {
                 point: p
             };
+            l.inherits.push(p);
 
             return l;
         }
@@ -1586,6 +1596,7 @@ define([
             c.subs = {
                 center: p
             };
+            c.inherits.push(c);
         } catch (e) {
             throw new Error("JSXGraph: Can't create circumcircle with parent types '" +
                 (typeof parents[0]) + "', '" + (typeof parents[1]) + "' and '" + (typeof parents[2]) + "'." +
@@ -1662,8 +1673,10 @@ define([
             c.center = p;
 
             c.subs = {
-                center: p
+                center: c.center
             };
+            c.inherits.push(p);
+
         } catch (e) {
             throw new Error("JSXGraph: Can't create circumcircle with parent types '" +
                 (typeof parents[0]) + "', '" + (typeof parents[1]) + "' and '" + (typeof parents[2]) + "'." +
@@ -1993,9 +2006,11 @@ define([
             curveRight: pb_on_curve,
             baseRight: pb_on_axis
         };
+        p.inherits.push(pa_on_curve, pa_on_axis, pb_on_curve, pb_on_axis);
 
         if (attr.withLabel) {
             p.subs.label = t;
+            p.inherits.push(t);
         }
 
         /** @ignore */

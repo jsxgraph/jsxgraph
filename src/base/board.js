@@ -710,16 +710,16 @@ define([
          * @param {Object} obj The object to add.
          */
         finalizeAdding: function (obj) {
-            if (!Type.evaluate(obj.visProp.visible)) {
-                this.renderer.hide(obj);
+            if (Type.evaluate(obj.visProp.visible) === false) {
+                this.renderer.display(obj, false);
             }
         },
 
         finalizeLabel: function (obj) {
             if (obj.hasLabel &&
                 !Type.evaluate(obj.label.visProp.islabel) &&
-                !Type.evaluate(obj.label.visProp.visible)) {
-                this.renderer.hide(obj.label);
+                Type.evaluate(obj.label.visProp.visible) === false) {
+                this.renderer.display(obj.label, false);
             }
         },
 
@@ -1020,8 +1020,9 @@ define([
             if (Type.exists(drag.coords)) {
                 drag.setPositionDirectly(Const.COORDS_BY_SCREEN, this.drag_position);
             } else {
-                this.renderer.hide(this.infobox); // Hide infobox in case the user has touched an intersection point
-                                                  // and drags the underlying line now.
+                this.showInfobox(false);
+                                    // Hide infobox in case the user has touched an intersection point
+                                    // and drags the underlying line now.
 
                 if (!isNaN(o.targets[0].Xprev + o.targets[0].Yprev)) {
                     drag.setPositionDirectly(Const.COORDS_BY_SCREEN,
@@ -1965,7 +1966,7 @@ define([
 
             if (this.mode !== this.BOARD_MODE_DRAG) {
                 this.dehighlightAll();
-                this.renderer.hide(this.infobox);
+                this.showInfobox(false);
             }
 
             if (this.mode !== this.BOARD_MODE_NONE) {
@@ -2042,7 +2043,7 @@ define([
             // Hiding the infobox is commented out, since it prevents showing the infobox
             // on IE 11+ on 'over'
             //if (this.mode !== this.BOARD_MODE_DRAG) {
-                //this.renderer.hide(this.infobox);
+                //this.showInfobox(false);
             //}
 
             this.options.precision.hasPoint = this.options.precision.mouse;
@@ -2060,7 +2061,7 @@ define([
             var i, j, found;
 
             this.triggerEventHandlers(['touchend', 'up', 'pointerup', 'MSPointerUp'], [evt]);
-            this.renderer.hide(this.infobox);
+            this.showInfobox(false);;
 
             if (evt) {
                 for (i = 0; i < this.touches.length; i++) {
@@ -2345,7 +2346,7 @@ define([
             // }
 
             if (this.mode !== this.BOARD_MODE_DRAG) {
-                this.renderer.hide(this.infobox);
+                this.showInfobox(false);
             }
 
             this.options.precision.hasPoint = this.options.precision.touch;
@@ -2404,7 +2405,7 @@ define([
             }
 
             if (this.mode !== this.BOARD_MODE_DRAG) {
-                this.renderer.hide(this.infobox);
+                this.showInfobox(false);
             }
 
             /*
@@ -2428,7 +2429,7 @@ define([
                 evtTouches = evt && evt[JXG.touchProperty];
 
             this.triggerEventHandlers(['touchend', 'up'], [evt]);
-            this.renderer.hide(this.infobox);
+            this.showInfobox(false);
 
             // selection
             if (this.selectingMode) {
@@ -2641,7 +2642,7 @@ define([
 
             if (this.mode !== this.BOARD_MODE_DRAG) {
                 this.dehighlightAll();
-                this.renderer.hide(this.infobox);
+                this.showInfobox(false);
             }
 
             // we have to check for four cases:
@@ -2743,6 +2744,28 @@ define([
          *
          **********************************************************/
 
+         /**
+          * Initialize the info box object which is used to display
+          * the coordinates of points near the mouse pointer,
+          * @returns {JXG.Board} Reference to the board
+          */
+         initInfobox: function () {
+             var  attr = Type.copyAttributes({}, this.options, 'infobox');
+
+             attr.id = this.id + '_infobox';
+
+             this.infobox = this.create('text', [0, 0, '0,0'], attr);
+
+             this.infobox.distanceX = -20;
+             this.infobox.distanceY = 25;
+             // this.infobox.needsUpdateSize = false;  // That is not true, but it speeds drawing up.
+
+             this.infobox.dump = false;
+
+             this.showInfobox(false);
+             return this;
+         },
+
         /**
          * Updates and displays a little info box to show coordinates of current selected points.
          * @param {JXG.GeometryElement} el A GeometryElement
@@ -2755,6 +2778,7 @@ define([
             if (!Type.evaluate(el.visProp.showinfobox)) {
                 return this;
             }
+
             if (Type.isPoint(el)) {
                 xc = el.coords.usrCoords[1];
                 yc = el.coords.usrCoords[2];
@@ -2779,19 +2803,25 @@ define([
                     this.highlightCustomInfobox(el.infoboxText, el);
                 }
 
-                this.renderer.show(this.infobox);
+                this.showInfobox(true);
             }
             return this;
         },
 
         /**
-         * Changes the text of the info box to what is provided via text.
-         * @param {String} text
-         * @param {JXG.GeometryElement} [el]
-         * @returns {JXG.Board} Reference to the board.
+         * Set infobox visible / invisible.
+         *
+         * It uses its property hiddenByParent to memorize its status.
+         * In this way, many DOM access can be avoided.
+         *
+         * @param  {Boolean} val true for visible, false for invisible
+         * @return {JXG.Board} Reference to the board.
          */
-        highlightCustomInfobox: function (text, el) {
-            this.infobox.setText(text);
+        showInfobox: function(val) {
+            if (this.infobox.hiddenByParent == val) {
+                this.infobox.hiddenByParent = !val;
+                this.renderer.display(this.infobox, val);
+            }
             return this;
         },
 
@@ -2804,6 +2834,17 @@ define([
          */
         highlightInfobox: function (x, y, el) {
             this.highlightCustomInfobox('(' + x + ', ' + y + ')', el);
+            return this;
+        },
+
+        /**
+         * Changes the text of the info box to what is provided via text.
+         * @param {String} text
+         * @param {JXG.GeometryElement} [el]
+         * @returns {JXG.Board} Reference to the board.
+         */
+        highlightCustomInfobox: function (text, el) {
+            this.infobox.setText(text);
             return this;
         },
 
@@ -3481,28 +3522,6 @@ define([
         },
 
         /**
-         * Initialize the info box object which is used to display
-         * the coordinates of points near the mouse pointer,
-         * @returns {JXG.Board} Reference to the board
-         */
-        initInfobox: function () {
-            var  attr = Type.copyAttributes({}, this.options, 'infobox');
-
-            attr.id = this.id + '_infobox';
-
-            this.infobox = this.create('text', [0, 0, '0,0'], attr);
-
-            this.infobox.distanceX = -20;
-            this.infobox.distanceY = 25;
-            // this.infobox.needsUpdateSize = false;  // That is not true, but it speeds drawing up.
-
-            this.infobox.dump = false;
-
-            this.renderer.hide(this.infobox);
-            return this;
-        },
-
-        /**
          * Change the height and width of the board's container.
          * After doing so, {@link JXG.JSXGraph#setBoundingBox} is called using
          * the actual size of the bounding box and the actual value of keepaspectratio.
@@ -3641,15 +3660,8 @@ define([
                 // For updates of an element we distinguish if the dragged element is updated or
                 // other elements are updated.
                 // The difference lies in the treatment of gliders.
-                pEl.update(!Type.exists(drag) || pEl.id !== drag.id);
-
-                /*
-                if (this.attr.updatetype === 'hierarchical') {
-                    for (childId in pEl.childElements) {
-                        pEl.childElements[childId].needsUpdate = pEl.childElements[childId].needsRegularUpdate;
-                    }
-                }
-                */
+                pEl.update(!Type.exists(drag) || pEl.id !== drag.id)
+                   .updateVisibility();
             }
 
             // update groups last
@@ -3667,7 +3679,7 @@ define([
          * @returns {JXG.Board} Reference to the board
          */
         updateRenderer: function () {
-            var el, pEl,
+            var el,
                 len = this.objectsList.length;
 
             /*
@@ -3687,8 +3699,7 @@ define([
                 this.updateRendererCanvas();
             } else {
                 for (el = 0; el < len; el++) {
-                    pEl = this.objectsList[el];
-                    pEl.updateRenderer();
+                    this.objectsList[el].updateRenderer();
                 }
             }
             return this;
@@ -3956,7 +3967,7 @@ define([
             }
 
             if (el.prepareUpdate && el.update && el.updateRenderer) {
-                el.prepareUpdate().update().updateRenderer();
+                el.fullUpdate();
             }
             return el;
         },
@@ -4003,7 +4014,7 @@ define([
         unsuspendUpdate: function () {
             if (this.isSuspendedUpdate) {
                 this.isSuspendedUpdate = false;
-                this.update();
+                this.fullUpdate();
             }
             return this;
         },
@@ -4127,7 +4138,7 @@ define([
                             delete o.animationPath;
                         } else {
                             o.setPositionDirectly(Const.COORDS_BY_USER, newCoords);
-                            o.prepareUpdate().update().updateRenderer();
+                            o.fullUpdate();
                             obj = o;
                         }
                     }
@@ -4254,7 +4265,7 @@ define([
                 this.elementsByName[dest.name] = dest;
             }
 
-            this.prepareUpdate().update().updateRenderer();
+            this.fullUpdate();
 
             return this;
         },
@@ -4527,7 +4538,7 @@ define([
             this.selectionPolygon.setAttribute({visible: true});
             this.selectingBox = [[0, 0], [0, 0]];
             this._setSelectionPolygonFromBox();
-            this.selectionPolygon.prepareUpdate().update().updateRenderer();
+            this.selectionPolygon.fullUpdate();
         },
 
         /**
@@ -4564,7 +4575,7 @@ define([
             if (this.isSelecting) {
                 this.selectingBox[1] = [pos[0], pos[1]];
                 this._setSelectionPolygonFromBox();
-                this.selectionPolygon.prepareUpdate().update().updateRenderer();
+                this.selectionPolygon.fullUpdate();
             }
         },
 

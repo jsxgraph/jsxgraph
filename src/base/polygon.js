@@ -67,7 +67,7 @@ define([
     JXG.Polygon = function (board, vertices, attributes) {
         this.constructor(board, attributes, Const.OBJECT_TYPE_POLYGON, Const.OBJECT_CLASS_AREA);
 
-        var i, vertex, l, len, j,
+        var i, l, len, j,
             attr_line = Type.copyAttributes(attributes, board.options, 'polygon', 'borders');
 
         this.withLines = attributes.withlines;
@@ -79,8 +79,7 @@ define([
          */
         this.vertices = [];
         for (i = 0; i < vertices.length; i++) {
-            vertex = this.board.select(vertices[i]);
-            this.vertices[i] = vertex;
+            this.vertices[i] = this.board.select(vertices[i]);
         }
 
         // Close the polygon
@@ -101,7 +100,8 @@ define([
                 i = (j + 1) % len;
                 attr_line.id = attr_line.ids && attr_line.ids[i];
                 attr_line.name = attr_line.names && attr_line.names[i];
-                attr_line.strokecolor = (Type.isArray(attr_line.colors) && attr_line.colors[i % attr_line.colors.length]) || attr_line.strokecolor;
+                attr_line.strokecolor = (Type.isArray(attr_line.colors) && attr_line.colors[i % attr_line.colors.length]) ||
+                                            attr_line.strokecolor;
                 attr_line.visible = Type.exists(attributes.borders.visible) ? attributes.borders.visible : attributes.visible;
 
                 if (attr_line.strokecolor === false) {
@@ -114,6 +114,7 @@ define([
                 l.parentPolygon = this;
             }
         }
+        this.inherits.push(this.vertices, this.borders);
 
         // Register polygon at board
         // This needs to be done BEFORE the points get this polygon added in their descendants list
@@ -121,8 +122,7 @@ define([
 
         // Add polygon as child to defining points
         for (i = 0; i < this.vertices.length - 1; i++) {
-            vertex = this.board.select(this.vertices[i]);
-            vertex.addChild(this);
+            this.board.select(this.vertices[i]).addChild(this);
         }
 
         this.board.renderer.drawPolygon(this);
@@ -199,16 +199,50 @@ define([
          * Uses the boards renderer to update the polygon.
          */
         updateRenderer: function () {
-            if (this.needsUpdate && this.visPropCalc.visible) {
-                this.board.renderer.updatePolygon(this);
-                this.needsUpdate = false;
+            var wasReal, i, len;
+
+            if (!this.needsUpdate) {
+                return this;
             }
 
-            if (this.hasLabel && this.label.visPropCalc.visible) {
+            if (this.visPropCalc.visible) {
+                wasReal = this.isReal;
+
+                len = this.vertices.length;
+                this.isReal = true;
+                for (i = 0; i < len; ++i) {
+                    if (!this.vertices[i].isReal) {
+                        this.isReal = false;
+                        break;
+                    }
+                }
+
+                if (wasReal && !this.isReal) {
+                    this.updateVisibility(false);
+                }
+            }
+
+            if (this.visPropCalc.visible) {
+                this.board.renderer.updatePolygon(this);
+            }
+
+            /* Update the label if visible. */
+            if (this.hasLabel && this.visPropCalc.visible && this.label &&
+                this.label.visPropCalc.visible && this.isReal) {
+
                 this.label.update();
                 this.board.renderer.updateText(this.label);
             }
 
+            // Update rendNode display
+            if (this.visPropCalc.visible !== this.visPropOld.visible) {
+                this.board.renderer.display(this, this.visPropCalc.visible);
+                if (this.hasLabel) {
+                    this.board.renderer.display(this.label, this.label.visPropCalc.visible);
+                }
+            }
+
+            this.needsUpdate = false;
             return this;
         },
 
@@ -278,8 +312,10 @@ define([
         hideElement: function (borderless) {
             var i;
 
+            JXG.deprecated('Element.hideElement()', 'Element.setDisplayRendNode()');
+
             this.visPropCalc.visible = false;
-            this.board.renderer.hide(this);
+            this.board.renderer.display(this, false);
 
             if (!borderless) {
                 for (i = 0; i < this.borders.length; i++) {
@@ -303,13 +339,14 @@ define([
         showElement: function (borderless) {
             var i;
 
+            JXG.deprecated('Element.showElement()', 'Element.setDisplayRendNode()');
+
             this.visPropCalc.visible = true;
-            this.board.renderer.show(this);
+            this.board.renderer.display(this, true);
 
             if (!borderless) {
                 for (i = 0; i < this.borders.length; i++) {
-                    this.borders[i].showElement();
-                    this.borders[i].updateRenderer();
+                    this.borders[i].showElement().updateRenderer();
                 }
             }
 
@@ -319,6 +356,7 @@ define([
                     this.label.showElement().updateRenderer();
                 }
             }
+            return this;
         },
 
         /**
@@ -1006,7 +1044,7 @@ define([
             rot = board.create('transform', [Math.PI * (2 - (n - 2) / n), p[i - 1]], {type: 'rotate'});
             if (pointsExist) {
                 p[i].addTransform(p[i - 2], rot);
-                p[i].prepareUpdate().update().updateRenderer();
+                p[i].fullUpdate();
             } else {
                 if (Type.isArray(attr.ids) && attr.ids.length >= n - 2) {
                     attr.id = attr.ids[i - 2];

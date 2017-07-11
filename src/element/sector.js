@@ -296,6 +296,7 @@ define([
             // useDirection is necessary for circumCircleSectors
             el.useDirection = attributes.usedirection;
             el.setParents(points);
+            el.inherits = el.inherits.concat(points);
 
             /**
             * Defines the sectors orientation in case of circumCircleSectors.
@@ -382,6 +383,10 @@ define([
             attr.withLabel = false;
             attr.name += '_arc';
             el.arc = board.create('arc', [el.point1, el.point2, el.point3], attr);
+            el.subs = {
+                arc: el.arc
+            };
+            el.inherits.push(el.arc);
             el.addChild(el.arc);
         }   // end '3points'
 
@@ -623,6 +628,7 @@ define([
         el.subs = {
             center: mp
         };
+        el.inherits = el.inherits.push(mp);
 
         return el;
     };
@@ -1014,7 +1020,8 @@ define([
 
         el.elType = 'angle';
         el.type = Const.OBJECT_TYPE_ANGLE;
-        el.subs = {};
+        // Do we have to clear it?
+        // el.subs = {};
 
         el.updateDataArraySquare = function () {
             var A, B, C,
@@ -1142,6 +1149,7 @@ define([
 
         el.dot.dump = false;
         el.subs.dot = el.dot;
+        el.inherits.push(el.dot);
 
         if (type === '2lines') {
             for (i = 0; i < 2; i++) {
@@ -1151,6 +1159,7 @@ define([
             for (i = 0; i < 3; i++) {
                 board.select(points[i]).addChild(el.dot);
             }
+            this.inherits = this.inherits.concat(points);
         }
 
         // documented in GeometryElement

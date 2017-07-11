@@ -232,7 +232,7 @@ define([
             // First evaluation of the string.
             // We need this for display='internal' and Canvas
             this.updateText();
-            this.prepareUpdate().update().updateRenderer();
+            this.fullUpdate();
 
             // We do not call updateSize for the infobox to speed up rendering
             if (!this.board.infobox || this.id !== this.board.infobox.id) {
@@ -292,7 +292,6 @@ define([
             if (!Env.isBrowser || this.board.renderer.type === 'no') {
                 return this;
             }
-
             node = this.rendNode;
 
             /**
@@ -305,6 +304,8 @@ define([
                         that = this;
                         window.setTimeout(function () {
                             that.size = [node.offsetWidth, node.offsetHeight];
+                            that.needsUpdate = true;
+                            that.updateRenderer();
                         }, 0);
                     } else {
                         this.size = s;
@@ -458,7 +459,7 @@ define([
 
             // this should be a local update, otherwise there might be problems
             // with the tick update routine resulting in orphaned tick labels
-            this.prepareUpdate().update().updateRenderer();
+            this.fullUpdate();
 
             return this;
         },
@@ -473,7 +474,6 @@ define([
                 return this;
             }
 
-            this.visPropCalc.visible = Type.evaluate(this.visProp.visible);
             this.updateCoords(fromParent);
             this.updateText();
 

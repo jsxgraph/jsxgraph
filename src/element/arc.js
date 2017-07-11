@@ -421,6 +421,7 @@ define([
         el.subs = {
             midpoint: mp
         };
+        el.inherits.push(mp);
 
         /**
          * The midpoint of the two defining points.
@@ -489,6 +490,7 @@ define([
         el.subs = {
             center: mp
         };
+        el.inherits.push(mp);
 
         /**
          * The midpoint of the circumcircle of the three points defining the circumcircle arc.

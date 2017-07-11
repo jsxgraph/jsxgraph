@@ -223,6 +223,13 @@ define([
         this.subs = {};
 
         /**
+         * Inherits contains the subelements, which may have an attribute
+         * (in partuclar the attribute "visible") having value 'inherit'.
+         * @type Object
+         */
+        this.inherits = [];
+
+        /**
          * The position of this element inside the {@link JXG.Board#objectsList}.
          * @type {Number}
          * @default -1
@@ -808,10 +815,9 @@ define([
         /**
          * General update method. Should be overwritten by the element itself.
          * Can be used sometimes to commit changes to the object.
+         * @return {JXG.GeometryElement} Reference to the element
          */
         update: function () {
-            this.visPropCalc.visible = Type.evaluate(this.visProp.visible);
-
             if (Type.evaluate(this.visProp.trace)) {
                 this.cloneToBackground();
             }
@@ -820,6 +826,7 @@ define([
 
         /**
          * Provide updateRenderer method.
+         * @return {JXG.GeometryElement} Reference to the element
          * @private
          */
         updateRenderer: function () {
@@ -827,11 +834,71 @@ define([
         },
 
         /**
+         * Run through the full update chain of an element.
+         * @param  {Boolean} visible Set visibility in case the elements attribute value is 'inherit'. null is allowed.
+         * @return {JXG.GeometryElement} Reference to the element
+         * @private
+         */
+        fullUpdate: function(visible) {
+            return this.prepareUpdate()
+                .update()
+                .updateVisibility(visible)
+                .updateRenderer();
+        },
+
+        /**
+         * Show the element or hide it. If hidden, it will still exist but not be
+         * visible on the board.
+         * @param  {Boolean} val true: show the element, false: hide the element
+         * @return {JXG.GeometryElement} Reference to the element
+         * @private
+         */
+        setDisplayRendNode: function(val) {
+            var i, len, s, len_s, obj;
+
+            // Set display of the element itself
+            this.board.renderer.display(this, val);
+
+            // Set the visibility of elements which inherit the attribute 'visible'
+            len = this.inherits.length;
+            for (s = 0; s < len; s++) {
+                obj = this.inherits[s];
+                if (Type.isArray(obj)) {
+                    len_s = obj.length;
+                    for (i = 0; i < len_s; i++) {
+                        if (Type.exists(obj[i]) && Type.exists(obj[i].rendNode) &&
+                            Type.evaluate(obj[i].visProp.visible) === 'inherit') {
+                            obj[i].setDisplayRendNode(val);
+                        }
+                    }
+                } else {
+                    if (Type.exists(obj) && Type.exists(obj.rendNode) &&
+                        Type.evaluate(obj.visProp.visible) === 'inherit') {
+                            obj.setDisplayRendNode(val);
+                    }
+                }
+            }
+
+            // Set the visibility of the label if it inherits the attribute 'visible'
+            if (Type.exists(this.label) && Type.exists(this.label.rendNode) &&
+                Type.evaluate(this.label.visProp.visible) === 'inherit') {
+                    this.label.setDisplayRendNode(val);
+            }
+
+            return this;
+        },
+
+        /**
          * Hide the element. It will still exist but not visible on the board.
+         * @return {JXG.GeometryElement} Reference to the element
+         * @deprecated
+         * @private
          */
         hideElement: function () {
+            JXG.deprecated('Element.hideElement()', 'Element.setDisplayRendNode()');
+
             this.visPropCalc.visible = false;
-            this.board.renderer.hide(this);
+            this.board.renderer.display(this, false);
 
             if (Type.exists(this.label) && this.hasLabel) {
                 this.label.hiddenByParent = true;
@@ -844,10 +911,15 @@ define([
 
         /**
          * Make the element visible.
+         * @return {JXG.GeometryElement} Reference to the element
+         * @deprecated
+         * @private
          */
         showElement: function () {
+            JXG.deprecated('Element.showElement()', 'Element.setDisplayRendNode()');
+
             this.visPropCalc.visible = true;
-            this.board.renderer.show(this);
+            this.board.renderer.display(this, true);
 
             if (Type.exists(this.label) && this.hasLabel && this.label.hiddenByParent) {
                 this.label.hiddenByParent = false;
@@ -855,6 +927,82 @@ define([
                     this.label.showElement().updateRenderer();
                 }
             }
+            return this;
+        },
+
+        /**
+         * Set the visibility of an element. The visibility is influenced by
+         * (listed in ascending priority):
+         * <ol>
+         * <li> The value of the element's attribute 'visible'
+         * <li> The visibility of a parent element. (Example: label)
+         * This overrules the value of the element's attribute value only if
+         * this attribute value of the element is 'inherit'.
+         * <li> being inside of the canvas
+         * </ol>
+         *
+         * Here, also the previous value is stored in
+         * "this.visPropOld.visible". This reduces DOM accesses.
+         * <p>
+         * This method is called three times for most elements:
+         * <ol>
+         * <li> between {@link JXG.GeometryElement#update}
+         * and {@link JXG.GeometryElement#updateRenderer}. In case the value is 'inherit', nothing is done.
+         * <li> Recursively, called by itself for child elements. Here, 'inherit' is overruled by the parent's value.
+         * <li> In {@link JXG.GeometryElement#updateRenderer}, if the element is outside of the canvas.
+         * </ol>
+         *
+         * @param  {Boolean} parent_val Visibility of the parent element.
+         * @return {JXG.GeometryElement} Reference to the element.
+         * @private
+         */
+        updateVisibility: function(parent_val) {
+            var i, len, s, len_s, obj, val;
+
+            if (this.needsUpdate) {
+                // this.visPropOld.visible may be used in
+                //  setDisplayRendNode() and
+                //  updateRenderer()
+                this.visPropOld.visible = this.visPropCalc.visible;
+
+                // Handle the element
+                if (parent_val !== undefined) {
+                    this.visPropCalc.visible = parent_val;
+                } else {
+                    val = Type.evaluate(this.visProp.visible);
+                    if (val !== 'inherit') {
+                        this.visPropCalc.visible = val;
+                    }
+                }
+
+                // Handle elements which inherit the visibility
+                len = this.inherits.length;
+                for (s = 0; s < len; s++) {
+                    obj = this.inherits[s];
+                    if (Type.isArray(obj)) {
+                        len_s = obj.length;
+                        for (i = 0; i < len_s; i++) {
+                            if (Type.exists(obj[i]) && Type.exists(obj[i].rendNode) &&
+                                Type.evaluate(obj[i].visProp.visible) === 'inherit') {
+                                obj[i].prepareUpdate().updateVisibility(this.visPropCalc.visible);
+                            }
+                        }
+                    } else {
+                        if (Type.exists(obj) && Type.exists(obj.rendNode) &&
+                            Type.evaluate(obj.visProp.visible) === 'inherit') {
+                            obj.prepareUpdate().updateVisibility(this.visPropCalc.visible);
+                        }
+                    }
+                }
+
+                // Handle the label if it inherits the visibility
+                if (Type.exists(this.label)  && Type.exists(this.label.visProp) &&
+                    Type.evaluate(this.label.visProp.visible)) {
+                    this.label.prepareUpdate().updateVisibility(this.visPropCalc.visible);
+                }
+
+            }
+
             return this;
         },
 
@@ -869,8 +1017,12 @@ define([
 
             // Search for entries in visProp with "color" as part of the property name
             // and containing a RGBA string
-            if (this.visProp.hasOwnProperty(property) && property.indexOf('color') >= 0 &&
-                    Type.isString(value) && value.length === 9 && value.charAt(0) === '#') {
+            if (this.visProp.hasOwnProperty(property) &&
+                  property.indexOf('color') >= 0 &&
+                  Type.isString(value) &&
+                  value.length === 9 &&
+                  value.charAt(0) === '#') {
+
                 value = Color.rgba2rgbo(value);
                 this.visProp[property] = value[0];
                 // Previously: *=. But then, we can only decrease opacity.
@@ -1042,12 +1194,14 @@ define([
                             this.visProp.visible = value;
                         }
 
-                        this.visPropCalc.visible = Type.evaluate(this.visProp.visible);
-                        if (this.visPropCalc.visible) {
-                            this.showElement();
-                        } else {
-                            this.hideElement();
-                        }
+                        this.setDisplayRendNode(Type.evaluate(this.visProp.visible));
+                        //this.prepareUpdate().updateVisibility();
+                        // this.visPropCalc.visible = Type.evaluate(this.visProp.visible);
+                        // if (this.visPropCalc.visible) {
+                        //     this.showElement();
+                        // } else {
+                        //     this.hideElement();
+                        // }
                         break;
                     case 'face':
                         if (Type.isPoint(this)) {
@@ -1084,16 +1238,10 @@ define([
                                 this.label.hideElement();
                             }
                         } else {
-                            if (this.label) {
-                                if (Type.evaluate(this.visProp.visible)) {
-                                    this.label.showElement();
-                                }
-                            } else {
+                            if (!this.label) {
                                 this.createLabel();
-                                if (!Type.evaluate(this.visProp.visible)) {
-                                    this.label.hideElement();
-                                }
                             }
+                            this.label.setDisplayRendNode(Type.evaluate(this.visProp.visible));
                         }
                         this.hasLabel = value;
                         break;
@@ -1294,7 +1442,6 @@ define([
                 attr =  Type.deepCopy(this.visProp.label, null);
                 attr.id = this.id + 'Label';
                 attr.isLabel = true;
-                attr.visible = this.visProp.visible;
                 attr.anchor = this;
                 attr.priv = this.visProp.priv;
 
@@ -1306,14 +1453,14 @@ define([
                         return that.name;
                     }], attr);
                     this.label.needsUpdate = true;
+                    this.label.dump = false;
                     this.label.update();
 
-                    this.label.dump = false;
-
-                    if (!Type.evaluate(this.visProp.visible)) {
-                        this.label.hiddenByParent = true;
-                        this.label.visPropCalc.visible = false;
-                    }
+                    // if (!Type.evaluate(this.visProp.visible)) {
+                    //     this.label.hiddenByParent = true;
+                    //     this.label.visPropCalc.visible = false;
+                    // }
+                    // this.label.fullUpdate();
                     this.hasLabel = true;
                 }
             } else {

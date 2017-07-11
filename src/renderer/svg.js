@@ -849,26 +849,47 @@ define([
             node.setAttributeNS(null, key, val);
         },
 
-        // documented in JXG.AbstractRenderer
-        show: function (el) {
+        display: function(el, val) {
             var node;
 
             if (el && el.rendNode) {
                 node = el.rendNode;
-                node.setAttributeNS(null, 'display', 'inline');
-                node.style.visibility = "inherit";
+
+//console.log("DISPLAY", el.id, val);
+                if (val) {
+                    node.setAttributeNS(null, 'display', 'inline');
+                    node.style.visibility = "inherit";
+                } else {
+                    node.setAttributeNS(null, 'display', 'none');
+                    node.style.visibility = "hidden";
+                }
             }
         },
 
         // documented in JXG.AbstractRenderer
-        hide: function (el) {
-            var node;
+        show: function (el) {
+            JXG.deprecated('Board.renderer.show()', 'Board.renderer.display()');
+            this.display(el, true);
+            // var node;
+            //
+            // if (el && el.rendNode) {
+            //     node = el.rendNode;
+            //     node.setAttributeNS(null, 'display', 'inline');
+            //     node.style.visibility = "inherit";
+            // }
+        },
 
-            if (el && el.rendNode) {
-                node = el.rendNode;
-                node.setAttributeNS(null, 'display', 'none');
-                node.style.visibility = "hidden";
-            }
+        // documented in JXG.AbstractRenderer
+        hide: function (el) {
+            JXG.deprecated('Board.renderer.hide()', 'Board.renderer.display()');
+            this.display(el, false);
+            // var node;
+            //
+            // if (el && el.rendNode) {
+            //     node = el.rendNode;
+            //     node.setAttributeNS(null, 'display', 'none');
+            //     node.style.visibility = "hidden";
+            // }
         },
 
         // documented in JXG.AbstractRenderer
@@ -990,6 +1011,10 @@ define([
                 duration = Type.evaluate(el.visProp.transitionduration);
             }
 
+            if (duration === el.visPropOld.transitionduration) {
+                return;
+            }
+
             if (el.elementClass === Const.OBJECT_CLASS_TEXT &&
                 Type.evaluate(el.visProp.display) === 'html') {
                 transitionStr = ' color ' + duration + 'ms,' +
@@ -1006,6 +1031,8 @@ define([
                 node = el[nodes[i]];
                 node.style.transition = transitionStr;
             }
+
+            el.visPropOld.transitionduration = duration;
         },
 
         /**
