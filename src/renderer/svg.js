@@ -233,7 +233,7 @@ define([
 
             /*
                The arrow head is an isosceles triangle with base length 10 and height 10.
-               This 10 units are scaled to strokeWidth*3 pixels or minimum 10 pixels, see
+               This 10 units are scaled to strokeWidth * arrowSize pixels, see
                this._setArrowWidth().
 
                See also abstractRenderer.updateLine() where the line path is shortened accordingly.
@@ -309,7 +309,7 @@ define([
         },
 
         // already documented in JXG.AbstractRenderer
-        _setArrowWidth: function (node, width, parentNode) {
+        _setArrowWidth: function (node, width, parentNode, size) {
             var s, d;
 
             if (node) {
@@ -318,7 +318,7 @@ define([
                 } else {
                     s = width;
                     //d = Math.max(s * 3, 10);
-                    d = s * 3;
+                    d = s * size;
                     //node.setAttributeNS(null, 'viewBox', (-s) + ' ' + (-s) + ' ' + (s * 10) + ' ' + (s * 10));
                     node.setAttributeNS(null, 'viewBox', (0) + ' ' + (0) + ' ' + (s * 10) + ' ' + (s * 10));
                     node.setAttributeNS(null, 'markerHeight', d);

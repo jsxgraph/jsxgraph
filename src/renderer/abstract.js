@@ -353,7 +353,8 @@ define([
         updateLine: function (el) {
             var c1 = new Coords(Const.COORDS_BY_USER, el.point1.coords.usrCoords, el.board),
                 c2 = new Coords(Const.COORDS_BY_USER, el.point2.coords.usrCoords, el.board),
-                obj, margin = null;
+                obj, margin = null,
+                size, ev_fa, ev_la;
 
             margin = Type.evaluate(el.visProp.margin);
             Geometry.calcStraight(el, c1, c2, margin);
@@ -367,11 +368,24 @@ define([
             this.makeArrows(el);
             this._updateVisual(el);
 
-            if (Type.evaluate(el.visProp.firstarrow)) {
-                this._setArrowWidth(el.rendNodeTriangleStart, obj.sFirst, el.rendNode);
+            ev_fa = Type.evaluate(el.visProp.firstarrow);
+            if (ev_fa) {
+                if (Type.exists(ev_fa.size)) {
+                    size = Type.evaluate(ev_fa.size);
+                } else {
+                    size = 3;
+                }
+
+                this._setArrowWidth(el.rendNodeTriangleStart,  obj.sFirst, el.rendNode, size);
             }
-            if (Type.evaluate(el.visProp.lastarrow)) {
-                this._setArrowWidth(el.rendNodeTriangleEnd, obj.sLast, el.rendNode);
+            ev_la = Type.evaluate(el.visProp.lastarrow);
+            if (ev_la) {
+                if (Type.exists(ev_la.size)) {
+                    size = Type.evaluate(ev_la.size);
+                } else {
+                    size = 3;
+                }
+                this._setArrowWidth(el.rendNodeTriangleEnd, obj.sLast, el.rendNode, size);
             }
 
             this.setLineCap(el);
@@ -387,7 +401,7 @@ define([
          * @param  {JXG.Coords} c2  Coords of the second point of the line (after {@link JXG.Geometry#calcStraight}).
          * @return {object}        Object containing how much the line has to be shortened.
          * Data structure: {d1x, d1y, d2x, d2y, sFirst, sLast}. sFirst and sLast is the length by which
-         * firstArrow and lastArrow have to shifted such that there is no gab between arrow head and line.
+         * firstArrow and lastArrow have to shifted such that there is no gap between arrow head and line.
          * Additionally, if one of these values is zero, the arrow is not displayed. This is the case, if the
          * line length is very short.
          */
@@ -399,14 +413,15 @@ define([
                 sLast = 0,
                 sw,
                 ev_fa = Type.evaluate(el.visProp.firstarrow),
-                ev_la = Type.evaluate(el.visProp.lastarrow);
+                ev_la = Type.evaluate(el.visProp.lastarrow),
+                size;
 
             d1x = d1y = d2x = d2y = 0.0;
             /*
                Handle arrow heads.
 
-               The arrow head is an isosceles triangle with base length 10 and height 10.
-               These 10 units are scaled to strokeWidth*3 pixels or minlen pixels.
+               The arrow head is an isosceles triangle with base length 10 units and height 10 units.
+               These 10 units are scaled to strokeWidth * arrowSize pixels pixels.
             */
             if (ev_fa || ev_la) {
                 s1 = Type.evaluate(el.point1.visProp.size) + Type.evaluate(el.point1.visProp.strokewidth);
@@ -443,27 +458,38 @@ define([
                 }
 
                 sw = Type.evaluate(el.visProp.strokewidth);
-                sFirst = sLast = sw * 3;
                 if (ev_fa) {
+                    if (Type.exists(ev_fa.size)) {
+                        size = Type.evaluate(ev_fa.size);
+                    } else {
+                        size = 3;
+                    }
+                    sFirst = sw * size;
                     if (typeFirst === 2) {
                         sFirst *= 0.5;
-                        minlen += sw*3;
+                        minlen += sw * size;
                     } else if (typeFirst === 3) {
                         sFirst = sw;
                         minlen += sw;
                     } else {
-                        minlen += sw*3;
+                        minlen += sw * size;
                     }
                 }
                 if (ev_la) {
+                    if (Type.exists(ev_la.size)) {
+                        size = Type.evaluate(ev_la.size);
+                    } else {
+                        size = 3;
+                    }
+                    sLast = sw * size;
                     if (typeLast === 2) {
                         sLast *= 0.5;
-                        minlen += sw*3;
+                        minlen += sw * size;
                     } else if (typeLast === 3) {
                         sLast = sw;
                         minlen += sw;
                     } else {
-                        minlen += sw*3;
+                        minlen += sw * size;
                     }
                 }
 
@@ -568,7 +594,8 @@ define([
          * @see JXG.AbstractRenderer#drawCurve
          */
         updateCurve: function (el) {
-            var w = Type.evaluate(el.visProp.strokewidth);
+            var w = Type.evaluate(el.visProp.strokewidth),
+                size, ev_fa, ev_la;
 
             if (Type.evaluate(el.visProp.handdrawing)) {
                 this.updatePathPrim(el.rendNode, this.updatePathStringBezierPrim(el), el.board);
@@ -578,11 +605,25 @@ define([
 
             if (el.numberPoints > 1) {
                 this.makeArrows(el);
-                if (Type.evaluate(el.visProp.firstarrow)) {
-                    this._setArrowWidth(el.rendNodeTriangleStart, w, el.rendNode);
+
+                ev_fa = Type.evaluate(el.visProp.firstarrow);
+                if (ev_fa) {
+                    if (Type.exists(ev_fa.size)) {
+                        size = Type.evaluate(ev_fa.size);
+                    } else {
+                        size = 3;
+                    }
+
+                    this._setArrowWidth(el.rendNodeTriangleStart, w, el.rendNode, size);
                 }
-                if (Type.evaluate(el.visProp.lastarrow)) {
-                    this._setArrowWidth(el.rendNodeTriangleEnd, w, el.rendNode);
+                ev_la = Type.evaluate(el.visProp.lastarrow);
+                if (ev_la) {
+                    if (Type.exists(ev_la.size)) {
+                        size = Type.evaluate(ev_la.size);
+                    } else {
+                        size = 3;
+                    }
+                    this._setArrowWidth(el.rendNodeTriangleEnd, w, el.rendNode, size);
                 }
             }
             this._updateVisual(el);

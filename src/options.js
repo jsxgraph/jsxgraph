@@ -1275,13 +1275,16 @@ define([
             name: '',                            // By default, do not generate names for axes.
             needsRegularUpdate: false,           // Axes only updated after zooming and moving of the origin.
             strokeWidth: 1,
+            lastArrow: {
+                type: 1,
+                size: 8
+            },
             strokeColor: '#666666',
             highlightStrokeWidth: 1,
             highlightStrokeColor: '#888888',
             withTicks: true,
             straightFirst: true,
             straightLast: true,
-            lastArrow: true,
             margin: -4,
             withLabel: false,
             scalable: false,
@@ -2185,7 +2188,7 @@ define([
              * @name Line#firstArrow
              * @see Line#lastArrow
              * @see Line#touchFirstPoint
-             * @type Boolean
+             * @type Boolean / Object
              * @default false
              */
             firstArrow: false,
@@ -2197,10 +2200,11 @@ define([
              * @name Line#lastArrow
              * @see Line#firstArrow
              * @see Line#touchLastPoint
-             * @type Boolean
+             * @type Boolean / Object
              * @default false
              */
             lastArrow: false,
+
 
             /**
              * This number (pixel value) controls where infinite lines end at the canvas border. If zero, the line

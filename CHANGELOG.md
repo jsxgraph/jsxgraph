@@ -17,7 +17,8 @@ New Features
 * New polygon method "Perimeter()"
 * Options for pan and zoom to be restricted to horizontal or vertical axis
 * Visvalingam-Whyatt algorithm for curve simplification
-* More arrow heads
+* More arrow heads and individual sizing of arrow heads.
+    lastArrow: {type: 2, size: 8}
 * New line attribute "lineCap"
 * New attribute: "dragToTopOfLayer"
 * New text attribute: "cssStyle"
