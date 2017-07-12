@@ -1381,7 +1381,7 @@ define([
                 eps = Mat.eps,
                 epsLow = Mat.eps,
                 steps, delta, tnew, i,
-                tmin, fmin;
+                tmin, fmin, ft;
 
             v = this.meetCurveLineDiscrete(cu, li, nr, board, testSegment);
             x = v.usrCoords[1];
@@ -1408,8 +1408,9 @@ define([
             tmin = NaN;
             for (i = 0; i < steps; i++) {
                 t = Numerics.root(func0, [tnew, tnew + delta]);
-                if (Math.abs(func0(t)) <= fmin  ) {
-                    fmin = Math.abs(func0(t));
+                ft = Math.abs(func0(t));
+                if (ft <= fmin) {
+                    fmin = ft;
                     tmin = t;
                     //break;
                 }

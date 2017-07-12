@@ -2842,7 +2842,7 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
          * Algorithm:
          *  G.Forsythe, M.Malcolm, C.Moler, Computer methods for mathematical
          *  computations. M., Mir, 1980, p.180 of the Russian edition
-         * 
+         *
          * @param {function} f Function, whose minimum is to be found
          * @param {Array} x0  Start interval enclosing the minimum
          * @param {Object} context Parent object in case f is method of it
