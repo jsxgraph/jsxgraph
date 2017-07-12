@@ -1400,7 +1400,7 @@ define([
             };
 
             // Find t
-            steps = 100;
+            steps = 50;
             delta = (cu.maxX() - cu.minX()) / steps;
             tnew = cu.minX();
 
@@ -1412,7 +1412,9 @@ define([
                 if (ft <= fmin) {
                     fmin = ft;
                     tmin = t;
-                    //break;
+                    if (fmin < eps) {
+                        break;
+                    }
                 }
 
                 tnew += delta;
@@ -1421,9 +1423,10 @@ define([
             // Compute "exact" t
             t = Numerics.root(func1, [t - delta, t + delta]);
 
+            ft = func1(t);
             // Is the point on the line?
-            if (Math.abs(func1(t)) > epsLow) {
-                z = NaN;
+            if (isNaN(ft) || Math.abs(ft) > epsLow) {
+                z = 0.0; //NaN;
             } else {
                 z = 1.0;
             }
