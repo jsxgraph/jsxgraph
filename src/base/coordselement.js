@@ -597,7 +597,7 @@ define([
         },
 
         updateRendererGeneric: function (rendererMethod) {
-            var wasReal;
+            //var wasReal;
 
             if (!this.needsUpdate) {
                 return this;
@@ -605,12 +605,12 @@ define([
 
             /* Call the renderer only if point is visible. */
             if (this.visPropCalc.visible) {
-                wasReal = this.isReal;
+                //wasReal = this.isReal;
                 this.isReal = (!isNaN(this.coords.usrCoords[1] + this.coords.usrCoords[2]));
                 //Homogeneous coords: ideal point
                 this.isReal = (Math.abs(this.coords.usrCoords[0]) > Mat.eps) ? this.isReal : false;
 
-                if (wasReal && !this.isReal) {
+                if (/*wasReal &&*/ !this.isReal) {
                     this.updateVisibility(false);
                 }
             }
