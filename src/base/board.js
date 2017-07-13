@@ -486,12 +486,12 @@ define([
          */
         this.hasPointerHandlers = false;
 
-        /**
-         * This bool flag stores the current state of the mobile Safari specific gesture event handlers.
-         * @type {boolean}
-         * @default false
-         */
-        this.hasGestureHandlers = false;
+        // /**
+        //  * This bool flag stores the current state of the mobile Safari specific gesture event handlers.
+        //  * @type {boolean}
+        //  * @default false
+        //  */
+        // this.hasGestureHandlers = false;
 
         /**
          * A flag which tells if the board the JXG.Board#mouseUpListener is currently registered.
@@ -1336,7 +1336,7 @@ define([
         mouseOriginMoveStart: function (evt) {
             var r, pos;
 
-            r = this._isCorrectKeyPressed(evt, 'pan');
+            r = this._isRequiredKeyPressed(evt, 'pan');
             if (r) {
                 pos = this.getMousePosition(evt);
                 this.initMoveOrigin(pos[0], pos[1]);
@@ -1730,7 +1730,7 @@ define([
         },
 
         /**
-         * Test if the correct key combination is pressed for wheel zoom, move origin and
+         * Test if the required key combination is pressed for wheel zoom, move origin and
          * selection
          * @private
          * @param  {Object}  evt    Mouse or pen event
@@ -1738,7 +1738,7 @@ define([
          * Corresponds to the attribute subobject.
          * @return {Boolean}        true or false.
          */
-        _isCorrectKeyPressed: function (evt, action) {
+        _isRequiredKeyPressed: function (evt, action) {
             var obj = this.attr[action];
             if (!obj.enabled) {
                 return false;
@@ -1946,7 +1946,7 @@ define([
                         this.originMoveEnd();
                     }
                     this.gestureStartListener(evt);
-                    this.hasGestureHandlers = true;
+                    //this.hasGestureHandlers = true;
                 }
             }
 
@@ -2061,7 +2061,7 @@ define([
             var i, j, found;
 
             this.triggerEventHandlers(['touchend', 'up', 'pointerup', 'MSPointerUp'], [evt]);
-            this.showInfobox(false);;
+            this.showInfobox(false);
 
             if (evt) {
                 for (i = 0; i < this.touches.length; i++) {
@@ -2306,7 +2306,7 @@ define([
                     this.originMoveEnd();
                 }
                 this.gestureStartListener(evt);
-                this.hasGestureHandlers = true;
+                //this.hasGestureHandlers = true;
             }
 
             this.options.precision.hasPoint = this.options.precision.mouse;
@@ -2718,7 +2718,7 @@ define([
          * @returns {Boolean}
          */
         mouseWheelListener: function (evt) {
-            if (!this.attr.zoom.wheel || !this._isCorrectKeyPressed(evt, 'zoom')) {
+            if (!this.attr.zoom.wheel || !this._isRequiredKeyPressed(evt, 'zoom')) {
                 return true;
             }
 
@@ -4612,7 +4612,7 @@ define([
          * @param  {Object} evt Event object
          */
         _testForSelection: function (evt) {
-            if (this._isCorrectKeyPressed(evt, 'selection')) {
+            if (this._isRequiredKeyPressed(evt, 'selection')) {
                 if (!Type.exists(this.selectionPolygon)) {
                     this._createSelectionPolygon(this.attr);
                 }
