@@ -1922,10 +1922,10 @@ define([
                 }
             }
 
-            if (this.touches.length > 0) {
-                evt.preventDefault();
-                evt.stopPropagation();
-            }
+            // if (this.touches.length > 0) {
+            //     evt.preventDefault();
+            //     evt.stopPropagation();
+            // }
 
             this.options.precision.hasPoint = this.options.precision.mouse;
 
