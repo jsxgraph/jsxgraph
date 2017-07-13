@@ -1484,7 +1484,7 @@ define([
             button.style.cssText = bas.cssButton;
             button.appendChild(buttonText);
             button.onclick = function() {
-                node.remove();
+                node.parentNode.removeChild(node);
             };
 
             // Add all nodes
@@ -1504,7 +1504,6 @@ define([
             this.dumpToCanvas(id, w, h);
             // Show image in img tag
             setTimeout(function() {
-
                 img.src = canvas.toDataURL('image/png');
             }, 400);
 
