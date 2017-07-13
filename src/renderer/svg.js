@@ -395,9 +395,9 @@ define([
             var node = this.createPrim('text', el.id);
 
             //node.setAttributeNS(null, "style", "alignment-baseline:middle"); // Not yet supported by Firefox
-
             // Preserve spaces
-            node.setAttributeNS("http://www.w3.org/XML/1998/namespace", "space", "preserve");
+            //node.setAttributeNS("http://www.w3.org/XML/1998/namespace", "space", "preserve");
+            node.style.whiteSpace = 'nowrap';
 
             el.rendNodeText = this.container.ownerDocument.createTextNode('');
             node.appendChild(el.rendNodeText);
@@ -1349,7 +1349,8 @@ define([
             var svgRoot = this.svgRoot,
                 btoa = window.btoa || Base64.encode,
                 svg, tmpImg, cv, ctx,
-                wOrg, hOrg;
+                wOrg, hOrg,
+                uriPayload;
 
             // Move all HTML tags (beside the SVG root) of the container
             // to the foreignObject element inside of the svgRoot node
@@ -1388,17 +1389,22 @@ define([
             }
 
             tmpImg = new Image();
-            //tmpImg.crossOrigin = 'anonymous';
-
             if (true) {
-                tmpImg.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
-
                 tmpImg.onload = function () {
                     // IE needs a pause...
-                    setTimeout(function(){
+                    window.setTimeout(function(){
                         ctx.drawImage(tmpImg, 0, 0, w, h);
                     }, 200);
                 };
+
+                tmpImg.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
+                // uriPayload = encodeURIComponent(svg.replace(/\n+/g, '')) // remove newlines // encode URL-unsafe characters
+                //             .replace(/%20/g, ' ') // put spaces back in
+                //             .replace(/%3D/g, '=') // ditto equals signs
+                //             .replace(/%3A/g, ':') // ditto colons
+                //             .replace(/%2F/g, '/') // ditto slashes
+                //             .replace(/%22/g, "'");
+                // tmpImg.src = 'data:image/svg+xml,' + uriPayload;
             } else {
                 // Alternative version
                 var DOMURL = window.URL || window.webkitURL || window;
@@ -1465,7 +1471,7 @@ define([
             canvas.setAttribute('height', h);
             canvas.style.width = w + 'px';
             canvas.style.height = w + 'px';
-            canvas.style.display = 'inline';
+            canvas.style.display = 'none';
 
             img = new Image(); //doc.createElement('img');
             img.style.width = w + 'px';
