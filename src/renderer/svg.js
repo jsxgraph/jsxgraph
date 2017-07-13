@@ -1392,7 +1392,7 @@ define([
             if (true) {
                 tmpImg.onload = function () {
                     // IE needs a pause...
-                    window.setTimeout(function(){
+                    setTimeout(function(){
                         ctx.drawImage(tmpImg, 0, 0, w, h);
                     }, 200);
                 };
@@ -1504,6 +1504,7 @@ define([
             this.dumpToCanvas(id, w, h);
             // Show image in img tag
             setTimeout(function() {
+
                 img.src = canvas.toDataURL('image/png');
             }, 400);
 
