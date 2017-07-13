@@ -1768,6 +1768,7 @@ define([
                     break;
                 }
             }
+
             if (!found) {
                 this._board_touches.push({
                     pointerId: evt.pointerId,
@@ -1781,7 +1782,6 @@ define([
 
         _pointerRemoveBoardTouches: function (evt) {
             var i;
-
             for (i = 0; i < this._board_touches.length; i++) {
                 if (this._board_touches[i].pointerId === evt.pointerId) {
                     this._board_touches.splice(i, 1);
@@ -1846,7 +1846,7 @@ define([
             //  1. collect all elements under the current pointer
             //  2. run through the touches control structure
             //    a. look for the object collected in step 1.
-            //    b. if an object is found, check the number of pointers. if appropriate, add the pointer.
+            //    b. if an object is found, check the number of pointers. If appropriate, add the pointer.
 
             pos = this.getMousePosition(evt);
 
@@ -1945,6 +1945,7 @@ define([
                     if (this.mode === this.BOARD_MODE_MOVE_ORIGIN) {
                         this.originMoveEnd();
                     }
+
                     this.gestureStartListener(evt);
                     //this.hasGestureHandlers = true;
                 }
@@ -2100,7 +2101,10 @@ define([
                 }
             }
 
-            if (this.touches.length === 0) {
+            this._pointerRemoveBoardTouches(evt);
+
+            // if (this.touches.length === 0) {
+            if (this._board_touches.length === 0) {
                 if (this.hasPointerUp) {
                     if (window.navigator.pointerEnabled) {  // IE11+
                         Env.removeEvent(this.document, 'pointerup', this.pointerUpListener, this);
@@ -2112,12 +2116,12 @@ define([
 
                 this.dehighlightAll();
                 this.updateQuality = this.BOARD_QUALITY_HIGH;
+                this.mode = this.BOARD_MODE_NONE;
 
                 this.originMoveEnd();
                 this.update();
             }
 
-            this._pointerRemoveBoardTouches(evt);
 
             return true;
         },
