@@ -620,7 +620,6 @@ define([
                 context.fillText(el.plaintext, el.coords.scrCoords[1], el.coords.scrCoords[2]);
             }
             context.restore();
-
             return null;
         },
 
@@ -757,17 +756,10 @@ define([
         makeArrows: function (el, scr1, scr2) {
             // not done yet for curves and arcs.
             var x1, y1, x2, y2, ang,
-                w = Type.evaluate(el.visProp.strokewidth) * 3,
-                arrowHead = [
-                    [ -w, -w * 0.5],
-                    [ 0.0,     0.0],
-                    [ -w,  w * 0.5]
-                ],
-                arrowTail = [
-                    [ w,   -w * 0.5],
-                    [ 0.0,      0.0],
-                    [ w,    w * 0.5]
-                ],
+                size,
+                w = Type.evaluate(el.visProp.strokewidth),
+                arrowHead,
+                arrowTail,
                 context = this.context,
                 type,
                 ev_fa = Type.evaluate(el.visProp.firstarrow),
@@ -791,6 +783,13 @@ define([
                 if (ev_fa &&
                     Type.exists(ev_fa.type)) {
 
+                    if (Type.exists(ev_fa.size)) {
+                        size = Type.evaluate(ev_fa.size);
+                    } else {
+                        size = 3;
+                    }
+                    w *= size;
+
                     type = Type.evaluate(ev_fa.type);
                     if (type === 2) {
                         arrowTail = [
@@ -806,11 +805,24 @@ define([
                                 [ 0.0,        w * 0.5],
                                 [ w / 3.0,    w * 0.5]
                             ];
+                    } else {
+                        arrowTail = [
+                            [ w,   -w * 0.5],
+                            [ 0.0,      0.0],
+                            [ w,    w * 0.5]
+                        ];
                     }
 
                 }
                 if (ev_la &&
                     Type.exists(ev_la.type)) {
+
+                    if (Type.exists(ev_la.size)) {
+                        size = Type.evaluate(ev_la.size);
+                    } else {
+                        size = 3;
+                    }
+                    w *= size;
 
                     type = Type.evaluate(ev_la.type);
                     if (type === 2) {
@@ -827,6 +839,12 @@ define([
                                 [ 0.0,        w * 0.5],
                                 [-w / 3.0,    w * 0.5]
                             ];
+                    } else {
+                        arrowHead = [
+                            [ -w, -w * 0.5],
+                            [ 0.0,     0.0],
+                            [ -w,  w * 0.5]
+                        ];
                     }
                 }
 
@@ -1023,9 +1041,10 @@ define([
             }
         },
 
-        /* **************************
+        /***************************
          *  Set Attributes
-         * **************************/
+         **************************
+         */
 
          // already documented in JXG.AbstractRenderer
          display: function(el, val) {

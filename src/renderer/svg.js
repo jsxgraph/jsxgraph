@@ -855,7 +855,6 @@ define([
             if (el && el.rendNode) {
                 node = el.rendNode;
 
-//console.log("DISPLAY", el.id, val);
                 if (val) {
                     node.setAttributeNS(null, 'display', 'inline');
                     node.style.visibility = "inherit";
@@ -1352,10 +1351,9 @@ define([
                 svg, tmpImg, cv, ctx,
                 wOrg, hOrg;
 
-
             // Move all HTML tags (beside the SVG root) of the container
             // to the foreignObject element inside of the svgRoot node
-            if (this.container.hasChildNodes()) {
+            if (this.container.hasChildNodes() && Type.exists(this.foreignObjLayer)) {
                 while (svgRoot.nextSibling) {
                     this.foreignObjLayer.appendChild(svgRoot.nextSibling);
                 }
@@ -1394,6 +1392,7 @@ define([
 
             if (true) {
                 tmpImg.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
+
                 tmpImg.onload = function () {
                     // IE needs a pause...
                     setTimeout(function(){
@@ -1418,7 +1417,7 @@ define([
 
             // Move all HTML tags back from
             // the foreignObject element to the container
-            if (this.foreignObjLayer.hasChildNodes()) {
+            if (Type.exists(this.foreignObjLayer) && this.foreignObjLayer.hasChildNodes()) {
                 while (this.foreignObjLayer.firstChild) {
                     this.container.appendChild(this.foreignObjLayer.firstChild);
                 }
@@ -1455,7 +1454,7 @@ define([
             // Position the div exactly over the JSXGraph board
             cPos = board.getCoordsTopLeftCorner();
             node.style.position= 'absolute';
-            node.style.left = (cPos[0]) + 'px';
+            node.style.left = (500+ cPos[0]) + 'px';
             node.style.top = (cPos[1]) + 'px';
 
             // Create canvas element
@@ -1466,7 +1465,7 @@ define([
             canvas.setAttribute('height', h);
             canvas.style.width = w + 'px';
             canvas.style.height = w + 'px';
-            canvas.style.display = 'none';
+            canvas.style.display = 'inline';
 
             img = new Image(); //doc.createElement('img');
             img.style.width = w + 'px';
