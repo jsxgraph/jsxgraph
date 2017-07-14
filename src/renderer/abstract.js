@@ -360,7 +360,6 @@ define([
             Geometry.calcStraight(el, c1, c2, margin);
 
             obj = this.getPositionArrowHead(el, c1, c2);
-
             this.updateLinePrim(el.rendNode,
                 obj.c1.scrCoords[1] + obj.d1x, obj.c1.scrCoords[2] + obj.d1y,
                 obj.c2.scrCoords[1] - obj.d2x, obj.c2.scrCoords[2] - obj.d2y, el.board);

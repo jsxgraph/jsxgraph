@@ -931,8 +931,8 @@ define([
 
             if (this.visPropCalc.visible) {
                 this.board.renderer.updateTicks(this);
-                this.updateRendererLabels();
             }
+            this.updateRendererLabels();
 
             if (this.visPropCalc.visible != this.visPropOld.visible) {
                 this.board.renderer.display(this, this.visPropCalc.visible);
@@ -991,6 +991,7 @@ define([
                     label.dump = false;
                     this.labels.push(label);
                 }
+
                 label.prepareUpdate()
                     .updateVisibility(this.visPropCalc.visible)
                     .updateRenderer();

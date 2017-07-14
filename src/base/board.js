@@ -486,13 +486,6 @@ define([
          */
         this.hasPointerHandlers = false;
 
-        // /**
-        //  * This bool flag stores the current state of the mobile Safari specific gesture event handlers.
-        //  * @type {boolean}
-        //  * @default false
-        //  */
-        // this.hasGestureHandlers = false;
-
         /**
          * A flag which tells if the board the JXG.Board#mouseUpListener is currently registered.
          * @type Boolean
@@ -1497,7 +1490,6 @@ define([
                     // Gesture listener are called in touchStart and touchMove.
                     //Env.addEvent(this.containerObj, 'gesturestart', this.gestureStartListener, this);
                     //Env.addEvent(this.containerObj, 'gesturechange', this.gestureChangeListener, this);
-                    this.hasGestureHandlers = true;
                 }
                 */
 
@@ -1566,14 +1558,6 @@ define([
                     Env.removeEvent(this.document, 'touchend', this.touchEndListener, this);
                     this.hasTouchEnd = false;
                 }
-
-                /*
-                if (this.hasGestureHandlers) {
-                    //Env.removeEvent(this.containerObj, 'gesturestart', this.gestureStartListener, this);
-                    //Env.removeEvent(this.containerObj, 'gesturechange', this.gestureChangeListener, this);
-                    this.hasGestureHandlers = false;
-                }
-                */
 
                 this.hasTouchHandlers = false;
             }
@@ -1922,10 +1906,10 @@ define([
                 }
             }
 
-            // if (this.touches.length > 0) {
-            //     evt.preventDefault();
-            //     evt.stopPropagation();
-            // }
+            if (this.touches.length > 0) {
+                evt.preventDefault();
+                evt.stopPropagation();
+            }
 
             this.options.precision.hasPoint = this.options.precision.mouse;
 
@@ -1947,7 +1931,6 @@ define([
                     }
 
                     this.gestureStartListener(evt);
-                    //this.hasGestureHandlers = true;
                 }
             }
 
@@ -2218,7 +2201,8 @@ define([
                 }
             }
 
-            // we just re-mapped the targettouches to our existing touches list. now we have to initialize some touches from additional targettouches
+            // we just re-mapped the targettouches to our existing touches list.
+            // now we have to initialize some touches from additional targettouches
             for (i = 0; i < evtTouches.length; i++) {
                 if (!evtTouches[i].jxg_isused) {
 
@@ -2300,9 +2284,11 @@ define([
             // Touch events on empty areas of the board are handled here:
             // 1. case: one finger. If allowed, this triggers pan with one finger
             if (this.mode === this.BOARD_MODE_NONE && this.touchOriginMoveStart(evt)) {
-            } else if ((this.mode === this.BOARD_MODE_NONE ||
-                        this.mode === this.BOARD_MODE_MOVE_ORIGIN) &&
-                       evtTouches.length == 2) {
+            } else if (evtTouches.length == 2 &&
+                        (this.mode === this.BOARD_MODE_NONE ||
+                         this.mode === this.BOARD_MODE_MOVE_ORIGIN /*||
+                         (this.mode === this.BOARD_MODE_DRAG && this.touches.length == 1) */
+                        )) {
                 // 2. case: two fingers: pinch to zoom or pan with two fingers needed.
                 // This happens when the second finger hits the device. First, the
                 // "one finger pan mode" has to be cancelled.
@@ -2310,7 +2296,6 @@ define([
                     this.originMoveEnd();
                 }
                 this.gestureStartListener(evt);
-                //this.hasGestureHandlers = true;
             }
 
             this.options.precision.hasPoint = this.options.precision.mouse;
@@ -2384,7 +2369,9 @@ define([
                                     this.moveObject(pos1[0], pos1[1], this.touches[i], evt, 'touch');
                                 }
                                 // Touch by two fingers: moving lines
-                            } else if (this.touches[i].targets.length === 2 && this.touches[i].targets[0].num > -1 && this.touches[i].targets[1].num > -1) {
+                            } else if (this.touches[i].targets.length === 2 &&
+                                        this.touches[i].targets[0].num > -1 &&
+                                        this.touches[i].targets[1].num > -1) {
                                 if (evtTouches[this.touches[i].targets[0].num] && evtTouches[this.touches[i].targets[1].num]) {
                                     pos1 = this.getMousePosition(evt, this.touches[i].targets[0].num);
                                     pos2 = this.getMousePosition(evt, this.touches[i].targets[1].num);

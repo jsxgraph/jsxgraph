@@ -149,6 +149,7 @@ define([
                     name: 'x',
                     ticks: {
                         label: {
+                            visible: 'inherit',
                             anchorX: 'middle',
                             anchorY: 'top',
                             fontSize: 12,
@@ -162,6 +163,7 @@ define([
                     name: 'y',
                     ticks: {
                         label: {
+                            visible: 'inherit',
                             anchorX: 'right',
                             anchorY: 'middle',
                             fontSize: 12,
@@ -3317,6 +3319,7 @@ define([
              * @name Tapemeasure#point1
              */
             point1: {
+                visible: 'inherit',
                 strokeColor: '#000000',
                 fillColor: '#ffffff',
                 fillOpacity: 0.0,
@@ -3337,6 +3340,7 @@ define([
              * @name Tapemeasure#point2
              */
             point2: {
+                visible: 'inherit',
                 strokeColor: '#000000',
                 fillColor: '#ffffff',
                 fillOpacity: 0.0,

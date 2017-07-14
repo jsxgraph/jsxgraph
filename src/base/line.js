@@ -1352,7 +1352,7 @@ define([
                 ticks: el.defaultTicks
             };
             el.inherits.push(el.defaultTicks);
-
+            
         } else {
             throw new Error("JSXGraph: Can't create axis with parent types '" +
                 (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
