@@ -1233,7 +1233,10 @@
                  arg = node.children[1],
                  newNode;
 
-             //console.log(arg);
+             // Catch errors of the form sin()
+             if (arg.length == 0) {
+                 return node;
+             }
 
              switch (fun) {
              // sin(0) -> 0
