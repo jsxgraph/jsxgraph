@@ -1159,7 +1159,7 @@ define([
             for (i = 0; i < 3; i++) {
                 board.select(points[i]).addChild(el.dot);
             }
-            this.inherits = this.inherits.concat(points);
+            el.inherits = el.inherits.concat(points);
         }
 
         // documented in GeometryElement
