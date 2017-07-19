@@ -503,7 +503,8 @@ define([
      * </script><pre>
      */
     JXG.createMidpoint = function (board, parents, attributes) {
-        var a, b, t, i;
+        var a, b, t, i,
+            attr;
 
         for (i = 0; i < parents.length; ++i) {
             parents[i] = board.select(parents[i]);
@@ -520,6 +521,7 @@ define([
                 "\nPossible parent types: [point,point], [line]");
         }
 
+        attr = Type.copyAttributes(attributes, board.options, 'midpoint');
         t = board.create('point', [
             function () {
                 var x = a.coords.usrCoords[1] + b.coords.usrCoords[1];
@@ -536,7 +538,7 @@ define([
                 }
 
                 return y * 0.5;
-            }], attributes);
+            }], attr);
         a.addChild(t);
         b.addChild(t);
 
