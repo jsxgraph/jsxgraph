@@ -960,11 +960,6 @@ define([
             var i, len, s, len_s, obj, val;
 
             if (this.needsUpdate) {
-                // this.visPropOld.visible may be used in
-                //  setDisplayRendNode() and
-                //  updateRenderer()
-                this.visPropOld.visible = this.visPropCalc.visible;
-
                 // Handle the element
                 if (parent_val !== undefined) {
                     this.visPropCalc.visible = parent_val;
@@ -1195,13 +1190,6 @@ define([
                         }
 
                         this.setDisplayRendNode(Type.evaluate(this.visProp.visible));
-                        //this.prepareUpdate().updateVisibility();
-                        // this.visPropCalc.visible = Type.evaluate(this.visProp.visible);
-                        // if (this.visPropCalc.visible) {
-                        //     this.showElement();
-                        // } else {
-                        //     this.hideElement();
-                        // }
                         break;
                     case 'face':
                         if (Type.isPoint(this)) {

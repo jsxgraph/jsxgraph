@@ -113,6 +113,7 @@ define([
             attr.withlabel = true;
         }
         li = board.create('segment', [p1, p2], attr);
+        // p1, p2 are already added to li.inherits
 
         if (withText) {
             if (attributes.name && attributes.name !== '') {
@@ -170,6 +171,11 @@ define([
         li.methodMap = JXG.deepCopy(li.methodMap, {
             Value: 'Value'
         });
+
+        li.prepareUpdate().update();
+        if (!board.isSuspendedUpdate) {
+            li.updateVisibility().updateRenderer();
+        }
 
         return li;
     };

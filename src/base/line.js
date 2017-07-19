@@ -436,6 +436,7 @@ define([
             if (this.visPropCalc.visible !== this.visPropOld.visible) {
                 //this.setDisplayRendNode(this.visPropCalc.visible);
                 this.board.renderer.display(this, this.visPropCalc.visible);
+                this.visPropOld.visible = this.visPropCalc.visible;
 
                 if (this.hasLabel) {
                     this.board.renderer.display(this.label, this.label.visPropCalc.visible);
@@ -1352,7 +1353,7 @@ define([
                 ticks: el.defaultTicks
             };
             el.inherits.push(el.defaultTicks);
-            
+
         } else {
             throw new Error("JSXGraph: Can't create axis with parent types '" +
                 (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
