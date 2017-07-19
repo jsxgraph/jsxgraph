@@ -272,7 +272,8 @@ define([
             var size = Type.evaluate(el.visProp.size),
                 // sometimes el is not a real point and lacks the methods of a JXG.Point instance,
                 // in these cases to not use el directly.
-                face = Options.normalizePointFace(Type.evaluate(el.visProp.face));
+                face = Options.normalizePointFace(Type.evaluate(el.visProp.face)),
+                s1 = (size === 0) ? 0 : size + 1;
 
             if (!isNaN(el.coords.scrCoords[2] + el.coords.scrCoords[1])) {
                 size *= ((!el.board || !el.board.options.point.zoom) ?
@@ -280,7 +281,7 @@ define([
 
                 if (face === 'o') { // circle
                     this.updateEllipsePrim(el.rendNode, el.coords.scrCoords[1],
-                         el.coords.scrCoords[2], size + 1, size + 1);
+                         el.coords.scrCoords[2], s1, s1);
                 } else if (face === '[]') { // rectangle
                     this.updateRectPrim(el.rendNode, el.coords.scrCoords[1] - size,
                          el.coords.scrCoords[2] - size, size * 2, size * 2);

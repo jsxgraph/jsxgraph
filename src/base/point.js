@@ -165,9 +165,7 @@ define([
          * @private
          */
         updateRenderer: function () {
-            if (Type.evaluate(this.visProp.size) > 0) {
-                this.updateRendererGeneric('updatePoint');
-            }
+            this.updateRendererGeneric('updatePoint');
             return this;
         },
 
