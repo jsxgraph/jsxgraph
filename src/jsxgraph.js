@@ -458,7 +458,9 @@ define([
             for (i = 0; i < scripts.length; i++) {
                 type = scripts[i].getAttribute('type', false);
 
-                if (Type.exists(type) && (type.toLowerCase() === 'text/jessiescript' || type.toLowerCase() === 'jessiescript' || type.toLowerCase() === 'text/jessiecode' || type.toLowerCase() === 'jessiecode')) {
+                if (Type.exists(type) &&
+                    (type.toLowerCase() === 'text/jessiescript' || type.toLowerCase() === 'jessiescript' ||
+                     type.toLowerCase() === 'text/jessiecode' || type.toLowerCase() === 'jessiecode')) {
                     width = scripts[i].getAttribute('width', false) || '500px';
                     height = scripts[i].getAttribute('height', false) || '500px';
                     bbox = scripts[i].getAttribute('boundingbox', false) || '-5, 5, 5, -5';
