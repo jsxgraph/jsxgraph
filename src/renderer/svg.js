@@ -317,9 +317,7 @@ define([
                     node.setAttributeNS(null, 'display', 'none');
                 } else {
                     s = width;
-                    //d = Math.max(s * 3, 10);
                     d = s * size;
-                    //node.setAttributeNS(null, 'viewBox', (-s) + ' ' + (-s) + ' ' + (s * 10) + ' ' + (s * 10));
                     node.setAttributeNS(null, 'viewBox', (0) + ' ' + (0) + ' ' + (s * 10) + ' ' + (s * 10));
                     node.setAttributeNS(null, 'markerHeight', d);
                     node.setAttributeNS(null, 'markerWidth', d);

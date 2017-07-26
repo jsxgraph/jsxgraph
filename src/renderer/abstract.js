@@ -344,29 +344,24 @@ define([
             this.updateLine(el);
         },
 
-        /**
-         * Updates visual appearance of the renderer element assigned to the given {@link JXG.Line}.
-         * @param {JXG.Line} el Reference to the {@link JXG.Line} object that has to be updated.
-         * @see Line
-         * @see JXG.Line
-         * @see JXG.AbstractRenderer#drawLine
-         */
-        updateLine: function (el) {
+        updateLineEndings: function(el, strokewidth) {
             var c1 = new Coords(Const.COORDS_BY_USER, el.point1.coords.usrCoords, el.board),
                 c2 = new Coords(Const.COORDS_BY_USER, el.point2.coords.usrCoords, el.board),
-                obj, margin = null,
-                size, ev_fa, ev_la;
+                obj, margin = null;
 
             margin = Type.evaluate(el.visProp.margin);
             Geometry.calcStraight(el, c1, c2, margin);
 
-            obj = this.getPositionArrowHead(el, c1, c2);
+            obj = this.getPositionArrowHead(el, c1, c2, strokewidth);
             this.updateLinePrim(el.rendNode,
                 obj.c1.scrCoords[1] + obj.d1x, obj.c1.scrCoords[2] + obj.d1y,
                 obj.c2.scrCoords[1] - obj.d2x, obj.c2.scrCoords[2] - obj.d2y, el.board);
 
-            this.makeArrows(el);
-            this._updateVisual(el);
+            return obj;
+        },
+
+        updateArrowSize: function(el, obj) {
+            var size, ev_fa, ev_la, obj;
 
             ev_fa = Type.evaluate(el.visProp.firstarrow);
             if (ev_fa) {
@@ -388,6 +383,23 @@ define([
                 this._setArrowWidth(el.rendNodeTriangleEnd, obj.sLast, el.rendNode, size);
             }
 
+            return this;
+        },
+
+        /**
+         * Updates visual appearance of the renderer element assigned to the given {@link JXG.Line}.
+         * @param {JXG.Line} el Reference to the {@link JXG.Line} object that has to be updated.
+         * @see Line
+         * @see JXG.Line
+         * @see JXG.AbstractRenderer#drawLine
+         */
+        updateLine: function (el) {
+            var obj;
+
+            obj = this.updateLineEndings(el, Type.evaluate(el.visProp.strokewidth));
+            this.makeArrows(el);
+            this._updateVisual(el);
+            this.updateArrowSize(el, obj);
             this.setLineCap(el);
         },
 
@@ -405,13 +417,12 @@ define([
          * Additionally, if one of these values is zero, the arrow is not displayed. This is the case, if the
          * line length is very short.
          */
-        getPositionArrowHead: function(el, c1, c2) {
+        getPositionArrowHead: function(el, c1, c2, strokewidth) {
             var s, s1, s2, d, d1x, d1y, d2x, d2y,
                 minlen = Mat.eps,
                 typeFirst, typeLast,
                 sFirst = 0,
                 sLast = 0,
-                sw,
                 ev_fa = Type.evaluate(el.visProp.firstarrow),
                 ev_la = Type.evaluate(el.visProp.lastarrow),
                 size;
@@ -457,22 +468,21 @@ define([
                     typeLast = Type.evaluate(ev_la.type);
                 }
 
-                sw = Type.evaluate(el.visProp.strokewidth);
                 if (ev_fa) {
                     if (Type.exists(ev_fa.size)) {
                         size = Type.evaluate(ev_fa.size);
                     } else {
                         size = 3;
                     }
-                    sFirst = sw * size;
+                    sFirst = strokewidth * size;
                     if (typeFirst === 2) {
                         sFirst *= 0.5;
-                        minlen += sw * size;
+                        minlen += strokewidth * size;
                     } else if (typeFirst === 3) {
-                        sFirst = sw;
-                        minlen += sw;
+                        sFirst = strokewidth;
+                        minlen += strokewidth;
                     } else {
-                        minlen += sw * size;
+                        minlen += strokewidth * size;
                     }
                 }
                 if (ev_la) {
@@ -481,15 +491,15 @@ define([
                     } else {
                         size = 3;
                     }
-                    sLast = sw * size;
+                    sLast = strokewidth * size;
                     if (typeLast === 2) {
                         sLast *= 0.5;
-                        minlen += sw * size;
+                        minlen += strokewidth * size;
                     } else if (typeLast === 3) {
-                        sLast = sw;
-                        minlen += sw;
+                        sLast = strokewidth;
+                        minlen += strokewidth;
                     } else {
-                        minlen += sw * size;
+                        minlen += strokewidth * size;
                     }
                 }
 
@@ -1459,12 +1469,14 @@ define([
 
         /**
          * Highlights an object, i.e. changes the current colors of the object to its highlighting colors
+         * and highlighting stroke width.
          * @param {JXG.GeometryElement} el Reference of the object that will be highlighted.
          * @returns {JXG.AbstractRenderer} Reference to the renderer
          * @see JXG.AbstractRenderer#updateTextStyle
          */
         highlight: function (el) {
-            var i, ev = el.visProp;
+            var i, ev = el.visProp,
+                sw, obj;
 
             this.setObjectTransition(el);
             if (!ev.draft) {
@@ -1493,7 +1505,13 @@ define([
                     }
                 }
                 if (ev.highlightstrokewidth) {
-                    this.setObjectStrokeWidth(el, Math.max(ev.highlightstrokewidth, ev.strokewidth));
+                    sw = Math.max(Type.evaluate(ev.highlightstrokewidth), Type.evaluate(ev.strokewidth));
+                    this.setObjectStrokeWidth(el, sw);
+                    if (el.elementClass === Const.OBJECT_CLASS_LINE) {
+                        obj = this.updateLineEndings(el, sw);
+                        this.makeArrows(el);
+                        this.updateArrowSize(el, obj);
+                    }
                 }
             }
 
@@ -1507,7 +1525,8 @@ define([
          * @see JXG.AbstractRenderer#updateTextStyle
          */
         noHighlight: function (el) {
-            var i, ev = el.visProp;
+            var i, ev = el.visProp,
+                obj, sw;
 
             this.setObjectTransition(el);
             if (!Type.evaluate(el.visProp.draft)) {
@@ -1537,7 +1556,15 @@ define([
                             ev.fillopacity);
                     }
                 }
-                this.setObjectStrokeWidth(el, ev.strokewidth);
+
+                sw = Type.evaluate(ev.strokewidth);
+                this.setObjectStrokeWidth(el, sw);
+                if (el.elementClass === Const.OBJECT_CLASS_LINE) {
+                    obj = this.updateLineEndings(el, sw);
+                    this.makeArrows(el);
+                    this.updateArrowSize(el, obj);
+                }
+
             }
 
             return this;
