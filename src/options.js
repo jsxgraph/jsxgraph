@@ -2865,7 +2865,7 @@ define([
                 layer: 5,
                 label: {
                     position: 'top'
-                }
+                },
             },
 
             /**

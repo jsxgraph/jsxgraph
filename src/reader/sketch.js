@@ -903,9 +903,9 @@
                     }
                     set_str += ' ]';
                     set_str += ', name: \'\'';
-                    set_str += ', fillColor: \'' + JXG.Options.intersection.fillColor + '\'';
-                    set_str += ', strokeColor: \'' + JXG.Options.intersection.strokeColor + '\'';
-                    set_str += ', opacity: \'' + JXG.Options.intersection.opacity + '\'';
+                    // set_str += ', fillColor: \'' + JXG.Options.regularpolygon.fillColor + '\'';
+                    // set_str += ', strokeColor: \'' + JXG.Options.intersection.strokeColor + '\'';
+                    // set_str += ', opacity: \'' + JXG.Options.intersection.opacity + '\'';
                     set_str += '>>, ' + attrid;
                     set_str += ' fillOpacity: ' + JXG.Options.opacityLevel;
                     set_str += ', hasInnerPoints_Org: ' + JXG.Options.polygon.hasInnerPoints;
