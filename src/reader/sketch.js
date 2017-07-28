@@ -960,7 +960,8 @@
                     set_str += 'basepoint: <<id: \'' + step.dest_sub_ids[0] + '\', priv: false >>, baseline: <<id: \'' + step.dest_sub_ids[1] + '\', priv: true >>,';
                     set_str += 'glider: <<id: \'' + step.dest_sub_ids[2] + '\', priv: false >>, toppoint: <<id: \'' + step.dest_sub_ids[3] + '\', priv: false >>';
                     if (step.dest_sub_ids.length === 8) {  // The test is needed for backwards compatibility
-                        set_str += ', tangent: <<id: \'' + step.dest_sub_ids[2] + '\', priv: true, point1: <<priv: true >>, point2: <<priv: true >> >>';
+                        set_str += ', tangent: <<id: \'' + step.dest_sub_ids[2] +
+                                    '\', priv: true, point1: <<priv: true >>, point2: <<priv: true >> >>';
                     }
                     set_str += '>>;';
                     reset_str = 'delete ' + step.dest_id + '; ';
