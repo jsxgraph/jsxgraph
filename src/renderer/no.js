@@ -490,7 +490,11 @@ define(['jxg', 'renderer/abstract'], function (JXG, AbstractRenderer) {
          * @param {JXG.GeometryElement} element Reference to the object that has to appear.
          * @param {Boolean} value true to show the element, false to hide the element.
          */
-        display: function (element, value) { /* stub */ },
+        display: function (element, value) {
+            if (element) {
+                element.visPropOld.visible = value;
+            }
+        },
 
         /**
          * Shows a hidden element on the canvas; Only a stub, requires implementation in the derived renderer.
