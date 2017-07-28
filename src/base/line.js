@@ -433,15 +433,13 @@ define([
             }
 
             // Update rendNode display
-            if (this.visPropCalc.visible !== this.visPropOld.visible) {
-                //this.setDisplayRendNode(this.visPropCalc.visible);
-                this.board.renderer.display(this, this.visPropCalc.visible);
-                this.visPropOld.visible = this.visPropCalc.visible;
-
-                if (this.hasLabel) {
-                    this.board.renderer.display(this.label, this.label.visPropCalc.visible);
-                }
-            }
+            this.setDisplayRendNode();
+            // if (this.visPropCalc.visible !== this.visPropOld.visible) {
+            //     this.setDisplayRendNode(this.visPropCalc.visible);
+            //     if (this.hasLabel) {
+            //         this.board.renderer.display(this.label, this.label.visPropCalc.visible);
+            //     }
+            // }
 
             this.needsUpdate = false;
             return this;

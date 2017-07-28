@@ -92,6 +92,7 @@ define([
         this.orgText = '';
 
         this.needsSizeUpdate = false;
+        // Only used by infobox anymore
         this.hiddenByParent = false;
 
         this.size = [1.0, 1.0];

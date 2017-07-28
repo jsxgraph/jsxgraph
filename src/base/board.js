@@ -2775,7 +2775,8 @@ define([
                 yc = el.coords.usrCoords[2];
 
                 vpinfoboxdigits = Type.evaluate(el.visProp.infoboxdigits);
-                this.infobox.setCoords(xc + this.infobox.distanceX / this.unitX, yc + this.infobox.distanceY / this.unitY);
+                this.infobox.setCoords(xc + this.infobox.distanceX / this.unitX,
+                                       yc + this.infobox.distanceY / this.unitY);
 
                 if (typeof el.infoboxText !== 'string') {
                     if (vpinfoboxdigits === 'auto') {
@@ -2811,7 +2812,7 @@ define([
         showInfobox: function(val) {
             if (this.infobox.hiddenByParent == val) {
                 this.infobox.hiddenByParent = !val;
-                this.renderer.display(this.infobox, val);
+                this.infobox.prepareUpdate().updateVisibility(val).updateRenderer();
             }
             return this;
         },

@@ -1049,6 +1049,7 @@ define([
          // already documented in JXG.AbstractRenderer
          display: function(el, val) {
              if (el && el.rendNode) {
+                 el.visPropOld.visible = val;
                  if (val) {
                      el.rendNode.style.visibility = "inherit";
                  } else {

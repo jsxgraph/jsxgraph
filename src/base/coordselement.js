@@ -603,7 +603,6 @@ define([
                 return this;
             }
 
-            /* Call the renderer only if point is visible. */
             if (this.visPropCalc.visible) {
                 //wasReal = this.isReal;
                 this.isReal = (!isNaN(this.coords.usrCoords[1] + this.coords.usrCoords[2]));
@@ -615,6 +614,7 @@ define([
                 }
             }
 
+            // Call the renderer only if element is visible.
             // Update the position
             if (this.visPropCalc.visible) {
                 this.board.renderer[rendererMethod](this);
@@ -628,14 +628,15 @@ define([
             }
 
             // Update rendNode display
-            if (this.visPropCalc.visible !== this.visPropOld.visible) {
-                this.board.renderer.display(this, this.visPropCalc.visible);
-                this.visPropOld.visible = this.visPropCalc.visible;
-
-                if (this.hasLabel) {
-                    this.board.renderer.display(this.label, this.label.visPropCalc.visible);
-                }
-            }
+            this.setDisplayRendNode();
+            // if (this.visPropCalc.visible !== this.visPropOld.visible) {
+            //     this.board.renderer.display(this, this.visPropCalc.visible);
+            //     this.visPropOld.visible = this.visPropCalc.visible;
+            //
+            //     if (this.hasLabel) {
+            //         this.board.renderer.display(this.label, this.label.visPropCalc.visible);
+            //     }
+            // }
 
             this.needsUpdate = false;
             return this;

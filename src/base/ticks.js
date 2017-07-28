@@ -934,10 +934,11 @@ define([
             }
             this.updateRendererLabels();
 
-            if (this.visPropCalc.visible != this.visPropOld.visible) {
-                this.board.renderer.display(this, this.visPropCalc.visible);
-                this.visPropOld.visible = this.visPropCalc.visible;
-            }
+            this.setDisplayRendNode();
+            // if (this.visPropCalc.visible != this.visPropOld.visible) {
+            //     this.board.renderer.display(this, this.visPropCalc.visible);
+            //     this.visPropOld.visible = this.visPropCalc.visible;
+            // }
 
             this.needsUpdate = false;
             return this;

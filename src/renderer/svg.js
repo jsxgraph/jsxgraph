@@ -851,8 +851,8 @@ define([
             var node;
 
             if (el && el.rendNode) {
+                el.visPropOld.visible = val;
                 node = el.rendNode;
-
                 if (val) {
                     node.setAttributeNS(null, 'display', 'inline');
                     node.style.visibility = "inherit";

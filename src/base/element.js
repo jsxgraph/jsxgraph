@@ -856,6 +856,14 @@ define([
         setDisplayRendNode: function(val) {
             var i, len, s, len_s, obj;
 
+            if (val === undefined) {
+                val = this.visPropCalc.visible;
+            }
+
+            if (val === this.visPropOld.visible) {
+                return this;
+            }
+
             // Set display of the element itself
             this.board.renderer.display(this, val);
 
@@ -880,9 +888,10 @@ define([
             }
 
             // Set the visibility of the label if it inherits the attribute 'visible'
-            if (Type.exists(this.label) && Type.exists(this.label.rendNode) &&
-                Type.evaluate(this.label.visProp.visible) === 'inherit') {
+            if (this.hasLabel && Type.exists(this.label) && Type.exists(this.label.rendNode)) {
+                if (Type.evaluate(this.label.visProp.visible) === 'inherit') {
                     this.label.setDisplayRendNode(val);
+                }
             }
 
             return this;
@@ -940,9 +949,6 @@ define([
          * this attribute value of the element is 'inherit'.
          * <li> being inside of the canvas
          * </ol>
-         *
-         * Here, also the previous value is stored in
-         * "this.visPropOld.visible". This reduces DOM accesses.
          * <p>
          * This method is called three times for most elements:
          * <ol>
@@ -965,6 +971,11 @@ define([
                     this.visPropCalc.visible = parent_val;
                 } else {
                     val = Type.evaluate(this.visProp.visible);
+
+                    // infobox uses hiddenByParent
+                    if (Type.exists(this.hiddenByParent) && this.hiddenByParent) {
+                        val = false;
+                    }
                     if (val !== 'inherit') {
                         this.visPropCalc.visible = val;
                     }
@@ -995,9 +1006,7 @@ define([
                     Type.evaluate(this.label.visProp.visible)) {
                     this.label.prepareUpdate().updateVisibility(this.visPropCalc.visible);
                 }
-
             }
-
             return this;
         },
 
