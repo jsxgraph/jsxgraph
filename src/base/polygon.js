@@ -531,7 +531,7 @@ define([
                 }
 
                 tmp.push(this.board.create('segment', [this.vertices[idx + npoints.length], this.vertices[idx + npoints.length + 1]], this.attr_line));
-                this.borders = tmp.concat(this.borders.slice(idx));
+                this.borders = tmp.concat(this.borders.slice(idx + 1));
             }
 
             this.board.update();
