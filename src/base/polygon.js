@@ -641,7 +641,7 @@ define([
                 }
 
                 // if the first and/or the last vertex is removed, the closing border is created at the end.
-                if (partition[0][1] === 5 || partition[partition.length - 1][1] === 0) {
+                if (partition[0][1] === this.vertices.length - 1 || partition[partition.length - 1][1] === 0) {
                     this.borders.push(this.board.create('segment', [this.vertices[0], this.vertices[this.vertices.length - 2]], this.attr_line));
                 }
             }
