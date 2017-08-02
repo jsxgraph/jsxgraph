@@ -571,6 +571,11 @@ define([
                 }
             }
 
+            // remove the polygon from each removed point's children
+            for (i = 0; i < nidx.length; i++) {
+                this.vertices[nidx[i]].removeChild(this);
+            }
+
             // sort the elements to be eliminated
             nidx = nidx.sort();
             nvertices = this.vertices.slice();
