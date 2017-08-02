@@ -561,8 +561,9 @@ define([
 
             // collect all valid parameters as indices in nidx
             for (i = 0; i < arguments.length; i++) {
-                if (Type.isPoint(arguments[i])) {
-                    idx = this.findPoint(arguments[i]);
+                idx = arguments[i];
+                if (Type.isPoint(idx)) {
+                    idx = this.findPoint(idx);
                 }
 
                 if (Type.isNumber(idx) && idx > -1 && idx < this.vertices.length && Type.indexOf(nidx, idx) === -1) {
