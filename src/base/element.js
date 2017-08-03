@@ -1408,7 +1408,7 @@ define([
                 this.elType = 'arrow';
             }
 
-            this.prepareUpdate().update();
+            this.prepareUpdate().update().updateVisibility().updateRenderer();
             return this;
         },
 

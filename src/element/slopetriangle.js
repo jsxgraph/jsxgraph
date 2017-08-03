@@ -165,8 +165,9 @@ define([
         el.tangent = tangent;
         el._isPrivateTangent = isPrivateTangent;
 
-        el.borders[0].setArrow(false, true);
-        el.borders[1].setArrow(false, true);
+        //el.borders[0].setArrow(false, {type: 2, size: 10});
+        //el.borders[1].setArrow(false, {type: 2, size: 10});
+        el.borders[2].setArrow(false, false);
 
         attr = Type.copyAttributes(attributes, board.options, 'slopetriangle', 'label');
         label = board.create('text', [
