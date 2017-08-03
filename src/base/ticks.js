@@ -1002,10 +1002,16 @@ define([
                 label.distanceX = Type.evaluate(this.visProp.label.offset[0]);
                 label.distanceY = Type.evaluate(this.visProp.label.offset[1]);
             }
+
             // Hide unused labels
             lenData = j;
             for (j = lenData; j < lenLabels; j++) {
                 this.board.renderer.display(this.labels[j], false);
+                // Tick labels have the attribute "visible: 'inherit'"
+                // This must explicitely set to false, otherwise
+                // this labels would be set to visible in the upcoming
+                // update of the labels.
+                this.labels[j].visProp.visible = false;
             }
 
             return this;
