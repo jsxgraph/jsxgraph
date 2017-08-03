@@ -2768,6 +2768,10 @@ define([
                 layer: 5,
                 label: {
                     position: 'top'
+                },
+                lastArrow: {
+                    type: 2,
+                    size: 10
                 }
             },
 
