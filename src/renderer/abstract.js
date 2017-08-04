@@ -344,6 +344,27 @@ define([
             this.updateLine(el);
         },
 
+        /**
+         * Corrects the line length if there are arrow heads, such that
+         * the arrow ends exactly at the intended position.
+         * Calls the renderer method to draw the line.
+         *
+         * @param {JXG.Line} el Reference to a line object, that has to be drawn.
+         * @param {Number} strokeWidth Stroke width of the line. This determines the size of the
+         *  arrow head.
+         *
+         * @returns {Object} Returns the object returned by
+         *  {@link JXG.AbstractRenderer#getPositionArrowHead}. This contains the information in
+         * horizontal and vertical pixels how much
+         * the line has to be shortened on each end.
+         *
+         * @private
+         * @see Line
+         * @see JXG.Line
+         * @see JXG.AbstractRenderer#updateLine
+         * @see JXG.AbstractRenderer#getPositionArrowHead
+         *
+         */
         updateLineEndings: function(el, strokewidth) {
             var c1 = new Coords(Const.COORDS_BY_USER, el.point1.coords.usrCoords, el.board),
                 c2 = new Coords(Const.COORDS_BY_USER, el.point2.coords.usrCoords, el.board),
@@ -360,6 +381,21 @@ define([
             return obj;
         },
 
+        /**
+         * Read the attribute "size" of the arrow heads. Multiplied with the stroke width of the line
+         * this gives the absolute size of the arrow heads. Then the arrow heads are redrawn by the renderer.
+         * 
+         * @param {JXG.Line} el Reference to a line object, that has to be drawn.
+         * @param {Object} obj Reference to a object returned by
+         *     {@link JXG.AbstractRenderer#getPositionArrowHead}
+         * @returns {JXG.AbstractRenderer} Reference to the renderer
+         *
+         * @private
+         * @see Line
+         * @see JXG.Line
+         * @see JXG.AbstractRenderer#updateLine
+         * @see JXG.AbstractRenderer#getPositionArrowHead
+         */
         updateArrowSize: function(el, obj) {
             var size, ev_fa, ev_la, obj;
 
