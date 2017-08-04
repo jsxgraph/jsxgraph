@@ -429,7 +429,8 @@ define([
                 dZeroPoint1, dZeroPoint2,
                 ev_sf = Type.evaluate(this.line.visProp.straightfirst),
                 ev_sl = Type.evaluate(this.line.visProp.straightlast),
-                ev_i = Type.evaluate(this.visProp.includeboundaries);
+                ev_i = Type.evaluate(this.visProp.includeboundaries),
+                obj;
 
             // Adjust line limit points to be within the board
             if (Type.exists(type) || type === 'tickdistance') {
@@ -441,6 +442,17 @@ define([
                 // This is important for diagonal lines with infinite tick lines.
                 Geometry.calcLineDelimitingPoints(this.line, point1, point2);
             }
+            // Shorten ticks bounds such that ticks are not through arrow heads
+            obj = this.board.renderer.getPositionArrowHead(this.line, point1, point2,
+                        Type.evaluate(this.line.visProp.strokewidth));
+            point1.setCoordinates(Const.COORDS_BY_SCREEN, [
+                    point1.scrCoords[1] - obj.d1x,
+                    point1.scrCoords[2] - obj.d1y,
+                ]);
+            point2.setCoordinates(Const.COORDS_BY_SCREEN, [
+                    point2.scrCoords[1] - obj.d2x,
+                    point2.scrCoords[2] - obj.d2y,
+                ]);
 
             // Calculate distance from Zero to P1 and to P2
             dZeroPoint1 = this.getDistanceFromZero(coordsZero, point1);

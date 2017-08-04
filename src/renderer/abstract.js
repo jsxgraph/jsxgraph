@@ -384,7 +384,7 @@ define([
         /**
          * Read the attribute "size" of the arrow heads. Multiplied with the stroke width of the line
          * this gives the absolute size of the arrow heads. Then the arrow heads are redrawn by the renderer.
-         * 
+         *
          * @param {JXG.Line} el Reference to a line object, that has to be drawn.
          * @param {Object} obj Reference to a object returned by
          *     {@link JXG.AbstractRenderer#getPositionArrowHead}
