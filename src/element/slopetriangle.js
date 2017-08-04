@@ -159,6 +159,7 @@ define([
         }], attr);
 
         attr = Type.copyAttributes(attributes, board.options, 'slopetriangle');
+        attr.borders = Type.copyAttributes(attr.borders, board.options, 'slopetriangle', 'borders');
         el = board.create('polygon', [tglide, glider, toppoint], attr);
 
         el.Value = priv.Value;

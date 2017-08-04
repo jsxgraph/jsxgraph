@@ -2768,10 +2768,6 @@ define([
                 layer: 5,
                 label: {
                     position: 'top'
-                },
-                lastArrow: {
-                    type: 2,
-                    size: 10
                 }
             },
 
@@ -3195,6 +3191,13 @@ define([
             fillOpacity: 0.4,
             highlightFillColor: 'red',
             highlightFillOpacity: 0.3,
+
+            borders: {
+                lastArrow: {
+                    type: 2,
+                    size: 10
+                }
+            },
 
             /**
              * Attributes for the gliding helper point.
