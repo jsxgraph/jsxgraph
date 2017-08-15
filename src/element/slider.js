@@ -239,15 +239,29 @@ define([
                     return (p2.Y() - p1.Y()) * 0.05 + p2.Y();
                 },
                 function () {
-                    var n;
+                    var n,
+                        sl = Type.evaluate(p3.visProp.suffixlabel),
+                        ul = Type.evaluate(p3.visProp.unitlabel),
+                        pl = Type.evaluate(p3.visProp.postlabel);
 
-                    if (p3.name && p3.name !== '') {
+                    if (sl !== null) {
+                        n = sl;
+                    } else if (p3.name && p3.name !== '') {
                         n = p3.name + ' = ';
                     } else {
                         n = '';
                     }
 
-                    return n + Type.toFixed(p3.Value(), precision);
+                    n += Type.toFixed(p3.Value(), precision);
+
+                    if (ul !== null) {
+                        n += ul;
+                    }
+                    if (pl !== null) {
+                        n += pl;
+                    }
+
+                    return n;
                 }
             ], attr);
 

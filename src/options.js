@@ -3057,6 +3057,10 @@ define([
              */
             withLabel: true,
 
+            suffixLabel: null,
+            unitLabel: null,
+            postLabel: null,
+
             layer: 9,
             showInfobox: false,
             name: '',

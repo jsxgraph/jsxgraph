@@ -190,16 +190,29 @@ define([
                 this.setObjectTransition(el);
                 if (!Type.evaluate(el.visProp.draft)) {
                     if (!not.stroke) {
-                        this.setObjectStrokeColor(el,
-                            el.visProp.strokecolor,
-                            el.visProp.strokeopacity);
-                        this.setObjectStrokeWidth(el, el.visProp.strokewidth);
+                        if (el.highlighted) {
+                            this.setObjectStrokeColor(el,
+                                el.visProp.highlightstrokecolor,
+                                el.visProp.highlightstrokeopacity);
+                            this.setObjectStrokeWidth(el, el.visProp.highlightstrokewidth);
+                        } else {
+                            this.setObjectStrokeColor(el,
+                                el.visProp.strokecolor,
+                                el.visProp.strokeopacity);
+                            this.setObjectStrokeWidth(el, el.visProp.strokewidth);
+                        }
                     }
 
                     if (!not.fill) {
-                        this.setObjectFillColor(el,
-                            el.visProp.fillcolor,
-                            el.visProp.fillopacity);
+                        if (el.highlighted) {
+                            this.setObjectFillColor(el,
+                                el.visProp.highlightfillcolor,
+                                el.visProp.highlightfillopacity);
+                        } else {
+                            this.setObjectFillColor(el,
+                                el.visProp.fillcolor,
+                                el.visProp.fillopacity);
+                        }
                     }
 
                     if (!not.dash) {
