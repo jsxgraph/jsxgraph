@@ -8,22 +8,22 @@ New Features
 
 * new board attribute "showZoom"
 * new board attribute "defaultAxes"
-* new attribute "inherit"
-* Symbolic differentiation in JessieCode
-* Allow positioning of hatches and ticks, see example in doc
-* Allow CSS transistions for highlighting of objects: attribute "transitionDuration"
+* board attributes zoom and pan: pan and zoom can be restricted to horizontal or vertical axis
+* new attribute value "visible:inherit"
+* symbolic differentiation in JessieCode
+* allow positioning of hatches and ticks, see example in doc
+* allow CSS transistions for highlighting of objects: attribute "transitionDuration"
 * centripetal parametrization for Cardinal splines and Catmull-Rom splines
-* Touch devices: enable pan and zoom independently
-* New polygon method "Perimeter()"
-* Options for pan and zoom to be restricted to horizontal or vertical axis
+* touch devices: enable pan and zoom independently
+* new polygon method "Perimeter()"
 * Visvalingam-Whyatt algorithm for curve simplification
-* More arrow heads and individual sizing of arrow heads.
+* more arrow heads and individual sizing of arrow heads.
     lastArrow: {type: 2, size: 8}
-* New line attribute "lineCap"
-* New attribute: "dragToTopOfLayer"
-* New text attribute: "cssStyle"
-* Screenshots for SVG renderer 
-* Allow function as value for attribute "visible"
+* new line attribute "lineCap"
+* new attribute: "dragToTopOfLayer"
+* new text attribute: "cssStyle"
+* screenshots for SVG renderer
+* allow function as value for attribute "visible"
 * (New element "msector")
 
 Improvements
@@ -69,11 +69,13 @@ Bug fixes
 * Refactoring
 * Fill correct half-plane for inequality
 * "Intersection" of circle and tangent
+* Add /remove points to polygon
 
 Contributors:
 * Christian Lawson-Perfect
 * Kaspar Peulen
 * Markus Henn
+* Martin ?
 * micahscopes
 * Ninmesara
 

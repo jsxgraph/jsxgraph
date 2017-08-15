@@ -966,7 +966,8 @@ define([
             var i, j,
                 lenData, lenLabels,
                 attr,
-                label, ld;
+                label, ld,
+                visible;
 
             // The number of labels needed
             lenData = this.labelsData.length;
@@ -1006,10 +1007,14 @@ define([
                     this.labels.push(label);
                 }
 
+                visible = Type.evaluate(this.visProp.label.visible);
+                if (visible === 'inherit') {
+                    visible = this.visPropCalc.visible;
+                }
                 label.prepareUpdate()
-                    .updateVisibility(this.visPropCalc.visible)
+                    .updateVisibility(visible)
                     .updateRenderer();
-                this.board.renderer.display(label, this.visPropCalc.visible);
+                //this.board.renderer.display(label, visible);
 
                 label.distanceX = Type.evaluate(this.visProp.label.offset[0]);
                 label.distanceY = Type.evaluate(this.visProp.label.offset[1]);

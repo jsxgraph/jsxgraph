@@ -1150,6 +1150,21 @@ define([
                     value = properties[i];
                     oldvalue = this.visProp[key];
 
+                    // This handles the subobjects, if the key:value pairs are contained in an object.
+                    // Example
+                    // ticks.setAttribute({
+                    //      strokeColor: 'blue',
+                    //      label: {
+                    //          visible: false
+                    //      }
+                    // })
+                    // Now, only the supplied label attributes are overwritten.
+                    // Otherwise, the the value of label would be {visible:false} only.
+                    if (Type.isObject(value) && Type.exists(this.visProp[key])) {
+                        this.visProp[key] = Type.merge(this.visProp[key], value);
+                        continue;
+                    }
+
                     switch (key) {
                     case 'name':
                         oldvalue = this.name;
@@ -1276,9 +1291,12 @@ define([
                         }
                         break;
                     default:
-                        if (Type.exists(this.visProp[key]) && (!JXG.Validator[key] || (JXG.Validator[key] &&
-                                JXG.Validator[key](value)) || (JXG.Validator[key] &&
-                                Type.isFunction(value) && JXG.Validator[key](value())))) {
+                        if (Type.exists(this.visProp[key]) &&
+                            (!JXG.Validator[key] ||
+                                (JXG.Validator[key] && JXG.Validator[key](value)) ||
+                                (JXG.Validator[key] && Type.isFunction(value) && JXG.Validator[key](value()))
+                            )
+                        ) {
                             value = value.toLowerCase && value.toLowerCase() === 'false' ? false : value;
                             this._set(key, value);
                         }
