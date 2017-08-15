@@ -531,7 +531,7 @@ define([
                 }
 
                 tmp.push(this.board.create('segment', [this.vertices[idx + npoints.length], this.vertices[idx + npoints.length + 1]], this.attr_line));
-                this.borders = tmp.concat(this.borders.slice(idx));
+                this.borders = tmp.concat(this.borders.slice(idx + 1));
             }
 
             this.board.update();
@@ -561,13 +561,19 @@ define([
 
             // collect all valid parameters as indices in nidx
             for (i = 0; i < arguments.length; i++) {
-                if (Type.isPoint(arguments[i])) {
-                    idx = this.findPoint(arguments[i]);
+                idx = arguments[i];
+                if (Type.isPoint(idx)) {
+                    idx = this.findPoint(idx);
                 }
 
                 if (Type.isNumber(idx) && idx > -1 && idx < this.vertices.length && Type.indexOf(nidx, idx) === -1) {
                     nidx.push(idx);
                 }
+            }
+
+            // remove the polygon from each removed point's children
+            for (i = 0; i < nidx.length; i++) {
+                this.vertices[nidx[i]].removeChild(this);
             }
 
             // sort the elements to be eliminated
@@ -641,7 +647,7 @@ define([
                 }
 
                 // if the first and/or the last vertex is removed, the closing border is created at the end.
-                if (partition[0][1] === 5 || partition[partition.length - 1][1] === 0) {
+                if (partition[0][1] === this.vertices.length - 1 || partition[partition.length - 1][1] === 0) {
                     this.borders.push(this.board.create('segment', [this.vertices[0], this.vertices[this.vertices.length - 2]], this.attr_line));
                 }
             }
