@@ -3057,8 +3057,37 @@ define([
              */
             withLabel: true,
 
+            /**
+             * If not null, this replaces the part "name = " in the slider label.
+             * Possible types: string, number or function.
+             * @type {String}
+             * @name suffixLabel
+             * @default null
+             * @see JXG.Slider#unitLabel
+             * @see JXG.Slider#postLabel
+             */
             suffixLabel: null,
+
+            /**
+             * If not null, this is appended to the value in the slider label.
+             * Possible types: string, number or function.
+             * @type {String}
+             * @name unitLabel
+             * @default null
+             * @see JXG.Slider#suffixLabel
+             * @see JXG.Slider#postLabel
+             */
             unitLabel: null,
+
+            /**
+             * If not null, this is appended to the value and to unitLabel in the slider label.
+             * Possible types: string, number or function.
+             * @type {String}
+             * @name postLabel
+             * @default null
+             * @see JXG.Slider#suffixLabel
+             * @see JXG.Slider#unitLabel
+             */
             postLabel: null,
 
             layer: 9,
