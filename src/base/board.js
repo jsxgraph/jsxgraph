@@ -2735,27 +2735,26 @@ define([
          *
          **********************************************************/
 
-         /**
-          * Initialize the info box object which is used to display
-          * the coordinates of points near the mouse pointer,
-          * @returns {JXG.Board} Reference to the board
-          */
-         initInfobox: function () {
-             var  attr = Type.copyAttributes({}, this.options, 'infobox');
+        /**
+         * Initialize the info box object which is used to display
+         * the coordinates of points near the mouse pointer,
+         * @returns {JXG.Board} Reference to the board
+        */
+        initInfobox: function () {
+            var  attr = Type.copyAttributes({}, this.options, 'infobox');
 
-             attr.id = this.id + '_infobox';
+            attr.id = this.id + '_infobox';
+            this.infobox = this.create('text', [0, 0, '0,0'], attr);
 
-             this.infobox = this.create('text', [0, 0, '0,0'], attr);
+            this.infobox.distanceX = -20;
+            this.infobox.distanceY = 25;
+            // this.infobox.needsUpdateSize = false;  // That is not true, but it speeds drawing up.
 
-             this.infobox.distanceX = -20;
-             this.infobox.distanceY = 25;
-             // this.infobox.needsUpdateSize = false;  // That is not true, but it speeds drawing up.
+            this.infobox.dump = false;
 
-             this.infobox.dump = false;
-
-             this.showInfobox(false);
-             return this;
-         },
+            this.showInfobox(false);
+            return this;
+        },
 
         /**
          * Updates and displays a little info box to show coordinates of current selected points.
