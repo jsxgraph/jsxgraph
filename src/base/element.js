@@ -1122,7 +1122,7 @@ define([
          * });
          */
         setAttribute: function (attributes) {
-            var i, key, value, arg, opacity, pair, oldvalue,
+            var i, j, le, key, value, arg, opacity, pair, oldvalue,
                 properties = {};
 
             // normalize the user input
@@ -1162,6 +1162,13 @@ define([
                     // Otherwise, the the value of label would be {visible:false} only.
                     if (Type.isObject(value) && Type.exists(this.visProp[key])) {
                         this.visProp[key] = Type.merge(this.visProp[key], value);
+
+                        if (this.type === Const.OBJECT_TYPE_TICKS && Type.exists(this.labels)) {
+                            le = this.labels.length;
+                            for (j = 0; j < le; j++) {
+                                this.labels[j].setAttribute(value);
+                            }
+                        }
                         continue;
                     }
 
