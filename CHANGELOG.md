@@ -9,12 +9,12 @@ New Features
 * new board attribute "showZoom"
 * new board attribute "defaultAxes"
 * board attributes zoom and pan: pan and zoom can be restricted to horizontal or vertical axis
+* board zoom and pan on touch devices: enable pan and zoom independently
 * new attribute value "visible:inherit"
 * symbolic differentiation in JessieCode
 * allow positioning of hatches and ticks, see example in doc
 * allow CSS transistions for highlighting of objects: attribute "transitionDuration"
 * centripetal parametrization for Cardinal splines and Catmull-Rom splines
-* touch devices: enable pan and zoom independently
 * new polygon method "Perimeter()"
 * Visvalingam-Whyatt algorithm for curve simplification
 * more arrow heads and individual sizing of arrow heads.
@@ -29,6 +29,7 @@ New Features
 Improvements
 ------------
 
+* Moodle plug-in is now a separate githup project at https://github.com/jsxgraph/moodle-jsxgraph-plugin
 * navigation bar can be controlled with the navbar attribute subject
 * Improved docs
 * JSXGraph is (again) working in AMD, CommonJS, and much more
@@ -46,7 +47,6 @@ Improvements
 * Initial support for arrows on curves
 * dumpToCanvas()
 * Tick labels for sliders
-* Moodle plug-in is now a separate githup project at https://github.com/jsxgraph/moodle-jsxgraph-plugin
 * Work on charts
 * Allow functions as values for attributes anchorX, anchorY and dragArea
 * Cathedes in slope triangles are now vectors

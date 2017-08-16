@@ -221,57 +221,57 @@ define([
             return new Coords(Const.COORDS_BY_USER, [1, x, y], board);
         },
 
-        /**
-         * Calculates a point on the m-section line between the three points A, B, C.
-         * As a result, the m-section line is defined by two points:
-         * Parameter B and the point with the coordinates calculated in this function.
-         * The m-section generalizes the bisector to any real number.
-         * For example, the trisectors of an angle are simply the 1/3-sector and the 2/3-sector.
-         * Does not work for ideal points.
-         * @param {JXG.Point} A Point
-         * @param {JXG.Point} B Point
-         * @param {JXG.Point} C Point
-         * @param {Number} m Number
-         * @param [board=A.board] Reference to the board
-         * @returns {JXG.Coords} Coordinates of the second point defining the bisection.
-         */
-        angleMsector: function (A, B, C, m, board) {
-            var phiA, phiC, phi,
-                Ac = A.coords.usrCoords,
-                Bc = B.coords.usrCoords,
-                Cc = C.coords.usrCoords,
-                x, y;
+        // /**
+        //  * Calculates a point on the m-section line between the three points A, B, C.
+        //  * As a result, the m-section line is defined by two points:
+        //  * Parameter B and the point with the coordinates calculated in this function.
+        //  * The m-section generalizes the bisector to any real number.
+        //  * For example, the trisectors of an angle are simply the 1/3-sector and the 2/3-sector.
+        //  * Does not work for ideal points.
+        //  * @param {JXG.Point} A Point
+        //  * @param {JXG.Point} B Point
+        //  * @param {JXG.Point} C Point
+        //  * @param {Number} m Number
+        //  * @param [board=A.board] Reference to the board
+        //  * @returns {JXG.Coords} Coordinates of the second point defining the bisection.
+        //  */
+        // angleMsector: function (A, B, C, m, board) {
+        //     var phiA, phiC, phi,
+        //         Ac = A.coords.usrCoords,
+        //         Bc = B.coords.usrCoords,
+        //         Cc = C.coords.usrCoords,
+        //         x, y;
 
-            if (!Type.exists(board)) {
-                board = A.board;
-            }
+        //     if (!Type.exists(board)) {
+        //         board = A.board;
+        //     }
 
-            // Parallel lines
-            if (Bc[0] === 0) {
-                return new Coords(Const.COORDS_BY_USER,
-                    [1, (Ac[1] + Cc[1]) * m, (Ac[2] + Cc[2]) * m], board);
-            }
+        //     // Parallel lines
+        //     if (Bc[0] === 0) {
+        //         return new Coords(Const.COORDS_BY_USER,
+        //             [1, (Ac[1] + Cc[1]) * m, (Ac[2] + Cc[2]) * m], board);
+        //     }
 
-            // Non-parallel lines
-            x = Ac[1] - Bc[1];
-            y = Ac[2] - Bc[2];
-            phiA =  Math.atan2(y, x);
+        //     // Non-parallel lines
+        //     x = Ac[1] - Bc[1];
+        //     y = Ac[2] - Bc[2];
+        //     phiA =  Math.atan2(y, x);
 
-            x = Cc[1] - Bc[1];
-            y = Cc[2] - Bc[2];
-            phiC =  Math.atan2(y, x);
+        //     x = Cc[1] - Bc[1];
+        //     y = Cc[2] - Bc[2];
+        //     phiC =  Math.atan2(y, x);
 
-            phi = phiA + ((phiC - phiA) * m);
+        //     phi = phiA + ((phiC - phiA) * m);
 
-            if (phiA - phiC > Math.PI) {
-                phi += 2*m*Math.PI;
-            }
+        //     if (phiA - phiC > Math.PI) {
+        //         phi += 2*m*Math.PI;
+        //     }
 
-            x = Math.cos(phi) + Bc[1];
-            y = Math.sin(phi) + Bc[2];
+        //     x = Math.cos(phi) + Bc[1];
+        //     y = Math.sin(phi) + Bc[2];
 
-            return new Coords(Const.COORDS_BY_USER, [1, x, y], board);
-        },
+        //     return new Coords(Const.COORDS_BY_USER, [1, x, y], board);
+        // },
 
         /**
          * Reflects the point along the line.

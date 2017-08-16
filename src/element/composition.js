@@ -1327,84 +1327,84 @@ define([
         return ret;
     };
 
-    /**
-     * @class An m-sector is a line which divides an angle into two angles. It is given by three points A, B, and
-     * C and a real number m, and divides an angle into two angles, an angle with amplitude m and an angle with
-     * amplitude (1-m)
-     * @pseudo
-     * @constructor
-     * @name Msector
-     * @type JXG.Line
-     * @augments JXG.Line
-     * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
-     * @param {JXG.Point_JXG.Point_JXG.Point} p1,p2,p3 The angle described by <tt>p1</tt>, <tt>p2</tt> and <tt>p3</tt> will
-     * be divided into two angles according to the value of <tt>m</tt>.
-     * @example
-     * var p1 = board.create('point', [6.0, 4.0]);
-     * var p2 = board.create('point', [3.0, 2.0]);
-     * var p3 = board.create('point', [1.0, 7.0]);
-     *
-     * var bi1 = board.create('msector', [p1, p2, p3], 1/5);
-     * </pre><div id="0d58cea8-b06a-407c-b27c-0908f508f5a4" style="width: 400px; height: 400px;"></div>
-     * <script type="text/javascript">
-     * (function () {
-     *   var board = JXG.JSXGraph.initBoard('0d58cea8-b06a-407c-b27c-0908f508f5a4', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
-     *   var p1 = board.create('point', [6.0, 4.0]);
-     *   var p2 = board.create('point', [3.0, 2.0]);
-     *   var p3 = board.create('point', [1.0, 7.0]);
-     *   var bi1 = board.create('msector', [p1, p2, p3], 1/5);
-     * })();
-     * </script><pre>
-     */
-    JXG.createMsector = function (board, parents, attributes) {
-        var p, l, i, attr;
+    // /**
+    //  * @class An m-sector is a line which divides an angle into two angles. It is given by three points A, B, and
+    //  * C and a real number m, and divides an angle into two angles, an angle with amplitude m and an angle with
+    //  * amplitude (1-m)
+    //  * @pseudo
+    //  * @constructor
+    //  * @name Msector
+    //  * @type JXG.Line
+    //  * @augments JXG.Line
+    //  * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
+    //  * @param {JXG.Point_JXG.Point_JXG.Point} p1,p2,p3 The angle described by <tt>p1</tt>, <tt>p2</tt> and <tt>p3</tt> will
+    //  * be divided into two angles according to the value of <tt>m</tt>.
+    //  * @example
+    //  * var p1 = board.create('point', [6.0, 4.0]);
+    //  * var p2 = board.create('point', [3.0, 2.0]);
+    //  * var p3 = board.create('point', [1.0, 7.0]);
+    //  *
+    //  * var bi1 = board.create('msector', [p1, p2, p3], 1/5);
+    //  * </pre><div id="0d58cea8-b06a-407c-b27c-0908f508f5a4" style="width: 400px; height: 400px;"></div>
+    //  * <script type="text/javascript">
+    //  * (function () {
+    //  *   var board = JXG.JSXGraph.initBoard('0d58cea8-b06a-407c-b27c-0908f508f5a4', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
+    //  *   var p1 = board.create('point', [6.0, 4.0]);
+    //  *   var p2 = board.create('point', [3.0, 2.0]);
+    //  *   var p3 = board.create('point', [1.0, 7.0]);
+    //  *   var bi1 = board.create('msector', [p1, p2, p3], 1/5);
+    //  * })();
+    //  * </script><pre>
+    //  */
+    // JXG.createMsector = function (board, parents, attributes) {
+    //     var p, l, i, attr;
 
-        if (parents[0].elementClass === Const.OBJECT_CLASS_POINT &&
-                parents[1].elementClass === Const.OBJECT_CLASS_POINT &&
-                parents[2].elementClass === Const.OBJECT_CLASS_POINT) {
-            // hidden and fixed helper
-            attr = Type.copyAttributes(attributes, board.options, 'msector', 'point');
-            p = board.create('point', [
-                function () {
-                    return Geometry.angleMsector(parents[0], parents[1], parents[2], parents[3], board);
-                }
-            ], attr);
-            p.dump = false;
+    //     if (parents[0].elementClass === Const.OBJECT_CLASS_POINT &&
+    //             parents[1].elementClass === Const.OBJECT_CLASS_POINT &&
+    //             parents[2].elementClass === Const.OBJECT_CLASS_POINT) {
+    //         // hidden and fixed helper
+    //         attr = Type.copyAttributes(attributes, board.options, 'msector', 'point');
+    //         p = board.create('point', [
+    //             function () {
+    //                 return Geometry.angleMsector(parents[0], parents[1], parents[2], parents[3], board);
+    //             }
+    //         ], attr);
+    //         p.dump = false;
 
-            for (i = 0; i < 3; i++) {
-                // required for algorithm requiring dependencies between elements
-                parents[i].addChild(p);
-            }
+    //         for (i = 0; i < 3; i++) {
+    //             // required for algorithm requiring dependencies between elements
+    //             parents[i].addChild(p);
+    //         }
 
-            if (!Type.exists(attributes.layer)) {
-                attributes.layer = board.options.layer.line;
-            }
+    //         if (!Type.exists(attributes.layer)) {
+    //             attributes.layer = board.options.layer.line;
+    //         }
 
-            attr = Type.copyAttributes(attributes, board.options, 'msector');
-            l = Line.createLine(board, [parents[1], p], attr);
+    //         attr = Type.copyAttributes(attributes, board.options, 'msector');
+    //         l = Line.createLine(board, [parents[1], p], attr);
 
-            /**
-             * Helper point
-             * @memberOf Msector.prototype
-             * @type Point
-             * @name point
-             */
-            l.point = p;
+    //         /**
+    //          * Helper point
+    //          * @memberOf Msector.prototype
+    //          * @type Point
+    //          * @name point
+    //          */
+    //         l.point = p;
 
-            l.elType = 'msector';
-            l.parents = [parents[0].id, parents[1].id, parents[2].id];
-            l.subs = {
-                point: p
-            };
-            l.inherits.push(p);
+    //         l.elType = 'msector';
+    //         l.parents = [parents[0].id, parents[1].id, parents[2].id];
+    //         l.subs = {
+    //             point: p
+    //         };
+    //         l.inherits.push(p);
 
-            return l;
-        }
+    //         return l;
+    //     }
 
-        throw new Error("JSXGraph: Can't create angle msector with parent types '" +
-            (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
-            "\nPossible parent types: [point,point,point,Number]");
-    };
+    //     throw new Error("JSXGraph: Can't create angle msector with parent types '" +
+    //         (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
+    //         "\nPossible parent types: [point,point,point,Number]");
+    // };
 
     /**
      * @class Constructs the midpoint of a {@link Circumcircle}. Like the circumcircle the circumcenter
