@@ -3941,7 +3941,11 @@ define([
             }
 
             for (i = 0; i < parents.length; i++) {
-                if (Type.isString(parents[i]) && (elementType !== 'text' || i !== 2)) {
+                if (Type.isString(parents[i]) &&
+                    !(elementType === 'text' && i === 2) &&
+                    !((elementType === 'input' || elementType === 'checkbox' || elementType === 'button') &&
+                      (i === 2 || i == 3))
+                ) {
                     parents[i] = this.select(parents[i]);
                 }
             }

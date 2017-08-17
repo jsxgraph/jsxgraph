@@ -135,7 +135,9 @@ define([
 
         par = [parents[0], parents[1],
             '<form style="display:inline; white-space:nowrap; padding:5px;">' +
-            '<span></span><input type="text" maxlength="' + attr.maxlength + '" style="width:100%"/>' +
+            '<span></span><input type="text" maxlength="' +
+                attr.maxlength +
+                '" style="width:100%"/>' +
             '</form>'
             ];
 

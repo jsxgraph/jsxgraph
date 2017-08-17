@@ -22,6 +22,7 @@ New Features
 * new line attribute "lineCap"
 * new attribute: "dragToTopOfLayer"
 * new text attribute: "cssStyle"
+* new input attribute: "maxlength"
 * screenshots for SVG renderer
 * allow function as value for attribute "visible"
 * (New element "msector")
