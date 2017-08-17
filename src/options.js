@@ -3185,6 +3185,7 @@ define([
                     display: 'internal'
                 },
 
+                minTicksDistance: 30,
                 insertTicks: true,
                 minorHeight: 4,         // if <0: full width and height
                 majorHeight: 5,        // if <0: full width and height

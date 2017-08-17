@@ -46,7 +46,7 @@ Improvements
 * Adapt mediawiki and wordpress JSXGraph plug-ins to work with https
 * Initial support for arrows on curves
 * dumpToCanvas()
-* Tick labels for sliders
+* Ticks labels for sliders
 * Work on charts
 * Allow functions as values for attributes anchorX, anchorY and dragArea
 * Cathedes in slope triangles are now vectors
