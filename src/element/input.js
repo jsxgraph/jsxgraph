@@ -138,7 +138,8 @@ define([
             '</form>'
             ];
 
-        t = JXG.createText(board, par, attr);
+        //t = JXG.createText(board, par, attr);
+        t = board.create('text', par, attr);
         t.type = Type.OBJECT_TYPE_INPUT;
 
         t.rendNodeForm = t.rendNode.childNodes[0];
