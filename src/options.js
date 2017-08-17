@@ -2090,6 +2090,17 @@ define([
              */
             disabled: false,
 
+            /**
+             * Control the attribute "maxlength" of the HTML input field.
+             *
+             * @name maxlength
+             * @memberOf Input.prototype
+             *
+             * @type Number
+             * @default 524288 (as in HTML)
+             */
+            maxlength: 524288
+
             /**#@-*/
         },
 

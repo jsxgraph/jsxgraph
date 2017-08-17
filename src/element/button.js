@@ -119,9 +119,9 @@ define([
             //    "\nPossible parents are: [x, y, label, handler]");
         //}
 
-        par = [parents[0], parents[1], '<button type="button"></button>'];
+        par = [parents[0], parents[1], '<button type="button" style="width:100%;"></button>'];
 
-        t = JXG.createText(board, par, attr);
+        t = board.create('text', par, attr);
         t.type = Type.OBJECT_TYPE_BUTTON;
 
         t.rendNodeButton = t.rendNode.childNodes[0];
@@ -148,6 +148,10 @@ define([
         }
 
         Env.addEvent(t.rendNodeButton, 'click', priv.ButtonClickEventHandler, t);
+
+        Env.addEvent(t.rendNodeButton, 'mousedown', function(evt) { evt.stopPropagation(); }, t);
+        Env.addEvent(t.rendNodeButton, 'touchstart', function(evt) { evt.stopPropagation(); }, t);
+        Env.addEvent(t.rendNodeButton, 'pointerdown', function(evt) { evt.stopPropagation(); }, t);
 
         return t;
     };

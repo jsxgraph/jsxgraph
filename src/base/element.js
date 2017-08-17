@@ -1297,6 +1297,12 @@ define([
                             this.rendNodeTag.disabled = !!value;
                         }
                         break;
+                    case 'maxlength':
+                        // input. Is not available on initial call.
+                        if (Type.exists(this.rendNodeTag)) {
+                            this.rendNodeTag.maxlength = !!value;
+                        }
+                        break;
                     default:
                         if (Type.exists(this.visProp[key]) &&
                             (!JXG.Validator[key] ||

@@ -58,7 +58,8 @@ define([
 
     /**
      * @class This element is used to provide a constructor for special texts containing a form input element.
-     *
+     * <p>
+     * If the width of element is set with the attribute "cssStyle", the width of the label must be added.
      * @pseudo
      * @description
      * @name Input
@@ -77,7 +78,7 @@ define([
      *
      * @example
      *  // Create an input element at position [1,4].
-     *  var input = board.create('input', [0, 1, 'sin(x)*x', 'f(x)='], {});
+     *  var input = board.create('input', [0, 1, 'sin(x)*x', 'f(x)='], {cssStyle: 'width: 100px'});
      *  var f = board.jc.snippet(input.Value(), true, 'x', false);
      *  var graph = board.create('functiongraph',[f,
      *          function() {text:dsddfghj
@@ -100,7 +101,7 @@ define([
      * </pre><div class="jxgbox" id="c70f55f1-21ba-4719-a37d-a93ae2943faa" style="width: 500px; height: 300px;"></div>
      * <script type="text/javascript">
      *   var t1_board = JXG.JSXGraph.initBoard('c70f55f1-21ba-4719-a37d-a93ae2943faa', {boundingbox: [-3, 6, 5, -3], axis: true, showcopyright: false, shownavigation: false});
-     *   var input = t1_board.create('input', [1, 4, 'sin(x)*x', 'f(x)='], {});
+     *   var input = t1_board.create('input', [1, 4, 'sin(x)*x', 'f(x)='], {cssStyle: 'width: 100px'});
      *   var f = t1_board.jc.snippet(input.Value(), true, 'x', false);
      *   var graph = t1_board.create('functiongraph',[f,
      *          function() {
@@ -133,8 +134,8 @@ define([
         //}
 
         par = [parents[0], parents[1],
-            '<form style="display:inline">' +
-            '<span></span><input type="text" />' +
+            '<form style="display:inline; white-space:nowrap; padding:5px;">' +
+            '<span></span><input type="text" maxlength="' + attr.maxlength + '" style="width:100%"/>' +
             '</form>'
             ];
 
@@ -175,7 +176,9 @@ define([
 
         Env.addEvent(t.rendNodeInput, 'input', priv.InputInputEventHandler, t);
 
-        //Env.addEvent(t.rendNodeInput, 'mousedown', function(evt) { evt.stopPropagation(); }, t);
+        Env.addEvent(t.rendNodeInput, 'mousedown', function(evt) { evt.stopPropagation(); }, t);
+        Env.addEvent(t.rendNodeInput, 'touchstart', function(evt) { evt.stopPropagation(); }, t);
+        Env.addEvent(t.rendNodeInput, 'pointerdown', function(evt) { evt.stopPropagation(); }, t);
 
         return t;
     };
