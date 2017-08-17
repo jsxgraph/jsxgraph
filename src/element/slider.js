@@ -85,12 +85,12 @@ define([
      * </script><pre>
      * @example
      * // Create a slider taking integer values between 1 and 50. Initial value is 50.
-     * var s = board.create('slider', [[1, 3], [3, 1], [1, 10, 50]], {snapWidth: 1});
+     * var s = board.create('slider', [[1, 3], [3, 1], [0, 10, 50]], {snapWidth: 1, ticks: { drawLabels: true }});
      * </pre><div class="jxgbox" id="e17128e6-a25d-462a-9074-49460b0d66f4" style="width: 200px; height: 200px;"></div>
      * <script type="text/javascript">
      *   (function () {
      *     var board = JXG.JSXGraph.initBoard('e17128e6-a25d-462a-9074-49460b0d66f4', {boundingbox: [-1, 5, 5, -1], axis: true, showcopyright: false, shownavigation: false});
-     *     var s = board.create('slider', [[1, 3], [3, 1], [1, 10, 50]], {snapWidth: 1});
+     *     var s = board.create('slider', [[1, 3], [3, 1], [1, 10, 50]], {snapWidth: 1, ticks: { drawLabels: true }});
      *   })();
      * </script><pre>
      */
