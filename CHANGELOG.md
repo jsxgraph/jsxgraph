@@ -10,22 +10,21 @@ New Features
 * new board attribute "defaultAxes"
 * board attributes zoom and pan: pan and zoom can be restricted to horizontal or vertical axis
 * board zoom and pan on touch devices: enable pan and zoom independently
+* allow function as value for attribute "visible"
 * new attribute value "visible:inherit"
-* symbolic differentiation in JessieCode
-* allow positioning of hatches and ticks, see example in doc
 * allow CSS transistions for highlighting of objects: attribute "transitionDuration"
 * centripetal parametrization for Cardinal splines and Catmull-Rom splines
-* new polygon method "Perimeter()"
 * Visvalingam-Whyatt algorithm for curve simplification
+* new polygon method "Perimeter()"
+* new line attribute "lineCap"
 * more arrow heads and individual sizing of arrow heads.
     lastArrow: {type: 2, size: 8}
-* new line attribute "lineCap"
 * new attribute: "dragToTopOfLayer"
 * new text attribute: "cssStyle"
 * new input attribute: "maxlength"
 * screenshots for SVG renderer
-* allow function as value for attribute "visible"
-* (New element "msector")
+* symbolic differentiation in JessieCode
+* allow positioning of hatches and ticks, see example in doc
 
 Improvements
 ------------
@@ -39,7 +38,7 @@ Improvements
 * Improved alignment of tick labels for default axes
 * Speed improvements: prevent updates triggered by sub-pixel movements
 * Better merging of attributes for axes and default axes
-* Color selection for integrals
+* More tasteful color selection for integrals
 * Unify handling of shift and ctrl key
 * Improved zoom and pan experience
 * Crisp lines in canvas renderer

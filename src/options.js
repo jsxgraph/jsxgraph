@@ -3505,7 +3505,7 @@ define([
             /**
              * Default CSS properties of the HTML text element.
              * <p>
-             * The CSS properties which are set here, are haded over to the style property
+             * The CSS properties which are set here, are handed over to the style property
              * of the HTML text element. That means, they have higher property than any
              * CSS class.
              * <p>
