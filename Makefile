@@ -109,10 +109,10 @@ moodle: core core-min $(READERSOUT)
 	$(MKDIR) $(MKDIRFLAGS) $(TMP)/jsxgraph
 	$(CP) $(BUILDBIN)/jsxgraphcore.min.js $(TMP)/jsxgraph/jsxgraphcore.js
 	$(CP) distrib/jsxgraph.css $(TMP)/jsxgraph/jsxgraph.css
-	$(CP) plugins/moodle/moodle2/*.php $(TMP)/jsxgraph/
-	$(CP) plugins/moodle/moodle2/styles.css $(TMP)/jsxgraph/
-	$(CP) plugins/moodle/moodle2/readme.txt $(TMP)/jsxgraph/
-	$(CP) -r plugins/moodle/moodle2/lang $(TMP)/jsxgraph/
+	$(CP) ../moodle-jsxgraph-plugin/moodle2/*.php $(TMP)/jsxgraph/
+	$(CP) ../moodle-jsxgraph-plugin/moodle2/styles.css $(TMP)/jsxgraph/
+	$(CP) ../moodle-jsxgraph-plugin/README.md $(TMP)/jsxgraph/
+	$(CP) -r ../moodle-jsxgraph-plugin/moodle2/lang $(TMP)/jsxgraph/
 	$(CP) $(BUILDREADERS)/* $(TMP)/jsxgraph/
 
 	# zip -r tmp/jsxgraph.zip tmp/jsxgraph
