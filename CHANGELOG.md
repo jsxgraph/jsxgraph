@@ -1,8 +1,6 @@
 0.99.6
 ====
 
-Preliminary version
-
 New Features
 ------------
 

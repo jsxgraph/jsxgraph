@@ -52,6 +52,7 @@ define([
     'server/server',
     'parser/datasource',
     'parser/jessiecode',
+    'parser/ca',
     'utils/dump',
     'renderer/svg',
     'renderer/vml',
