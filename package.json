@@ -61,7 +61,7 @@
     "jshint": "2.9.x",
     "jslint": "0.10.x",
     "jstestdriver": "1.0.x",
-    "sinon": "1.14.x",
+    "sinon": "3.2.x",
     "uglify-js": "2.8.x"
   },
   "engines": {
