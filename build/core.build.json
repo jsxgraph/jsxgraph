@@ -5,7 +5,7 @@
         "../build/core.deps.js"
     ],
     "wrap": {
-        "start": "(function (root, factory) {\n if (typeof define === 'function' && define.amd) {\n  define([], factory);\n } else if (typeof module === 'object' && module.exports) {\n  module.exports = factory();\n } else {\n  root.returnExports = factory();\n }\n}(this, function () {\n",
+        "start": "(function (root, factory) {\n if (typeof define === 'function' && define.amd) {\n  define('jsxgraphcore', [], factory);\n } else if (typeof module === 'object' && module.exports) {\n  module.exports = factory();\n } else {\n  root.returnExports = factory();\n }\n}(this, function () {\n",
         "end": " return require('../build/core.deps.js');\n}));"
     },
     "out": "./bin/jsxgraphcore.js",

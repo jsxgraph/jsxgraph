@@ -149,18 +149,22 @@ define([
         t.type = Type.OBJECT_TYPE_CHECKBOX;
 
         t.rendNodeForm = t.rendNode.childNodes[0];
-        t.rendNodeForm.id = t.rendNode.id + '_form';
 
         t.rendNodeCheckbox = t.rendNodeForm.childNodes[0];
-        t.rendNodeCheckbox.id = t.rendNode.id + '_checkbox';
 
         t.rendNodeTag = t.rendNodeCheckbox; // Needed for unified treatment in setAttribute
         t.rendNodeTag.disabled = !!attr.disabled;
 
         t.rendNodeLabel = t.rendNodeForm.childNodes[1];
-        t.rendNodeLabel.id = t.rendNode.id + '_label';
         t.rendNodeLabel.innerHTML = parents[2];
 
+        try {
+             t.rendNodeForm.id = t.rendNode.id + '_form';
+             t.rendNodeCheckbox.id = t.rendNode.id + '_checkbox';
+             t.rendNodeLabel.id = t.rendNode.id + '_label';
+        } catch(e) {
+            JXG.debug(e);
+        }
         // This sets the font-size of the checkbox itself
         t.visPropOld.fontsize = "0px";
         board.renderer.updateTextStyle(t, false);

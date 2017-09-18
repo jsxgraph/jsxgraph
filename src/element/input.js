@@ -81,7 +81,7 @@ define([
      *  var input = board.create('input', [0, 1, 'sin(x)*x', 'f(x)='], {cssStyle: 'width: 100px'});
      *  var f = board.jc.snippet(input.Value(), true, 'x', false);
      *  var graph = board.create('functiongraph',[f,
-     *          function() {text:dsddfghj
+     *          function() {
      *            var c = new JXG.Coords(JXG.COORDS_BY_SCREEN,[0,0],board);
      *            return c.usrCoords[1];
      *          },
@@ -146,18 +146,23 @@ define([
         t.type = Type.OBJECT_TYPE_INPUT;
 
         t.rendNodeForm = t.rendNode.childNodes[0];
-        t.rendNodeForm.id = t.rendNode.id + '_form';
 
         t.rendNodeLabel = t.rendNodeForm.childNodes[0];
-        t.rendNodeLabel.id = t.rendNode.id + '_label';
         t.rendNodeLabel.innerHTML = parents[3];
 
         t.rendNodeInput = t.rendNodeForm.childNodes[1];
-        t.rendNodeInput.id = t.rendNode.id + '_input';
         t.rendNodeInput.value = parents[2];
 
         t.rendNodeTag = t.rendNodeInput; // Needed for unified treatment in setAttribute
         t.rendNodeTag.disabled = !!attr.disabled;
+
+        try {
+            t.rendNodeForm.id = t.rendNode.id + '_form';
+            t.rendNodeLabel.id = t.rendNode.id + '_label';
+            t.rendNodeInput.id = t.rendNode.id + '_input';
+        } catch(e) {
+            JXG.debug(e);
+        }
 
         // This sets the font-size of the input HTML element
         t.visPropOld.fontsize = "0px";
