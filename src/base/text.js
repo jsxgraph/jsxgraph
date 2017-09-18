@@ -818,10 +818,8 @@ define([
         t.type = Type.OBJECT_TYPE_HTMLSLIDER;
 
         t.rendNodeForm = t.rendNode.childNodes[0];
-        t.rendNodeForm.id = t.rendNode.id + '_form';
 
         t.rendNodeRange = t.rendNodeForm.childNodes[0];
-        t.rendNodeRange.id = t.rendNode.id + '_range';
         t.rendNodeRange.min = parents[1][0];
         t.rendNodeRange.max = parents[1][2];
         t.rendNodeRange.step = attr.step;
@@ -835,8 +833,15 @@ define([
         }
 
         t.rendNodeOut = t.rendNodeForm.childNodes[2];
-        t.rendNodeOut.id = t.rendNode.id + '_out';
         t.rendNodeOut.value = parents[1][1];
+
+        try {
+            t.rendNodeForm.id = t.rendNode.id + '_form';
+            t.rendNodeRange.id = t.rendNode.id + '_range';
+            t.rendNodeOut.id = t.rendNode.id + '_out';
+	} catch (e) {
+            JXG.debug(e);
+        }
 
         t.rendNodeRange.style.width = attr.widthrange + 'px';
         t.rendNodeRange.style.verticalAlign = 'middle';

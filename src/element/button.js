@@ -125,7 +125,11 @@ define([
         t.type = Type.OBJECT_TYPE_BUTTON;
 
         t.rendNodeButton = t.rendNode.childNodes[0];
-        t.rendNodeButton.id = t.rendNode.id + '_button';
+        try {
+            t.rendNodeButton.id = t.rendNode.id + '_button';
+        } catch (e) {
+            JXG.debug(e);
+        }
         t.rendNodeButton.innerHTML = parents[2];
 
         t.rendNodeTag = t.rendNodeButton; // Needed for unified treatment in setAttribute
