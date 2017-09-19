@@ -150,18 +150,18 @@ define([
 
         t.rendNodeForm = t.rendNode.childNodes[0];
 
-        t.rendNodeCheckbox = t.rendNodeForm.childNodes[0];
-
-        t.rendNodeTag = t.rendNodeCheckbox; // Needed for unified treatment in setAttribute
-        t.rendNodeTag.disabled = !!attr.disabled;
-
-        t.rendNodeLabel = t.rendNodeForm.childNodes[1];
-        t.rendNodeLabel.innerHTML = parents[2];
 
         try {
-             t.rendNodeForm.id = t.rendNode.id + '_form';
-             t.rendNodeCheckbox.id = t.rendNode.id + '_checkbox';
-             t.rendNodeLabel.id = t.rendNode.id + '_label';
+            t.rendNodeCheckbox = t.rendNodeForm.childNodes[0];
+            
+            t.rendNodeTag = t.rendNodeCheckbox; // Needed for unified treatment in setAttribute
+            t.rendNodeTag.disabled = !!attr.disabled;
+
+            t.rendNodeLabel = t.rendNodeForm.childNodes[1];
+            t.rendNodeLabel.innerHTML = parents[2];
+            t.rendNodeForm.id = t.rendNode.id + '_form';
+            t.rendNodeCheckbox.id = t.rendNode.id + '_checkbox';
+            t.rendNodeLabel.id = t.rendNode.id + '_label';
         } catch(e) {
             JXG.debug(e);
         }
