@@ -72,7 +72,7 @@ define([
      *                      The position of the text is fixed,
      *                     x and y are numbers. The position is variable if x or y are functions.
      *                     <p>
-     *                     The label of the input element may be given  as string.
+     *                     The label of the input element may be given as string.
      *
      * @example
      *   // Create a checkbox element at position [0,3].
