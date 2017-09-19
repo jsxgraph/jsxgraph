@@ -125,15 +125,11 @@ define([
         t.type = Type.OBJECT_TYPE_BUTTON;
 
         t.rendNodeButton = t.rendNode.childNodes[0];
-        try {
-            t.rendNodeButton.id = t.rendNode.id + '_button';
-            t.rendNodeButton.innerHTML = parents[2];
+        t.rendNodeButton.id = t.rendNode.id + '_button';
+        t.rendNodeButton.innerHTML = parents[2];
             
-            t.rendNodeTag = t.rendNodeButton; // Needed for unified treatment in setAttribute
-            t.rendNodeTag.disabled = !!attr.disabled;
-        } catch (e) {
-            JXG.debug(e);
-        }
+        t.rendNodeTag = t.rendNodeButton; // Needed for unified treatment in setAttribute
+        t.rendNodeTag.disabled = !!attr.disabled;
 
         // This sets the font-size of the button text
         t.visPropOld.fontsize = "0px";

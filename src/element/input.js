@@ -124,7 +124,7 @@ define([
      * </script><pre>
      */
     JXG.createInput = function (board, parents, attributes) {
-        var t, par,
+        var t, par, node,
             attr = Type.copyAttributes(attributes, board.options, 'input');
 
         par = [parents[0], parents[1],
@@ -139,44 +139,46 @@ define([
         t = board.create('text', par, attr);
         t.type = Type.OBJECT_TYPE_INPUT;
 
-//        setTimeout(function(){
+        node = t.rendNode.childNodes[0];
+        if (node.tagName.toLowerCase() === 'span') {
+            t.rendNodeLabel = t.rendNode.childNodes[0];
+            t.rendNodeInput = t.rendNode.childNodes[1];
+        } else if (node.tagName.toLowerCase() === 'form') {
+            t.rendNodeLabel = t.rendNode.childNodes[0].childNodes[0];
+            t.rendNodeInput = t.rendNode.childNodes[0].childNodes[1];
+        } else {
+            throw new Error("JSXGraph: A problem with the DOM tree occurred while creating an input element");
+        }
 
-            console.log("LOAD");
-            t.rendNodeForm = t.rendNode.childNodes[0];
+        t.rendNodeLabel.innerHTML = parents[3];
+        t.rendNodeInput.value = parents[2];
 
-            t.rendNodeLabel = t.rendNodeForm.childNodes[0];
-            t.rendNodeInput = t.rendNodeForm.childNodes[1];
+        t.rendNodeTag = t.rendNodeInput; // Needed for unified treatment in setAttribute
+        t.rendNodeTag.disabled = !!attr.disabled;
 
-            t.rendNodeLabel.innerHTML = parents[3];
-            t.rendNodeInput.value = parents[2];
+        t.rendNodeLabel.id = t.rendNode.id + '_label';
+        t.rendNodeInput.id = t.rendNode.id + '_input';
 
-            t.rendNodeTag = t.rendNodeInput; // Needed for unified treatment in setAttribute
-            t.rendNodeTag.disabled = !!attr.disabled;
+        t._value = parents[2];
+        t.update = function () {
+            if (this.needsUpdate) {
+                this._value = this.rendNodeInput.value;
+            }
+            return this;
+        };
+        t.Value = function () {
+            return this._value;
+        };
 
-            t.rendNodeForm.id = t.rendNode.id + '_form';
-            t.rendNodeLabel.id = t.rendNode.id + '_label';
-            t.rendNodeInput.id = t.rendNode.id + '_input';
+        Env.addEvent(t.rendNodeInput, 'input', priv.InputInputEventHandler, t);
+        Env.addEvent(t.rendNodeInput, 'mousedown', function(evt) { evt.stopPropagation(); }, t);
+        Env.addEvent(t.rendNodeInput, 'touchstart', function(evt) { evt.stopPropagation(); }, t);
+        Env.addEvent(t.rendNodeInput, 'pointerdown', function(evt) { evt.stopPropagation(); }, t);
 
-            t._value = parents[2];
-            t.update = function () {
-                if (this.needsUpdate) {
-                    this._value = this.rendNodeInput.value;
-                }
-                return this;
-            };
-            t.Value = function () {
-                return this._value;
-            };
+        // This sets the font-size of the input HTML element
+        t.visPropOld.fontsize = "0px";
+        board.renderer.updateTextStyle(t, false);
 
-            Env.addEvent(t.rendNodeInput, 'input', priv.InputInputEventHandler, t);
-            Env.addEvent(t.rendNodeInput, 'mousedown', function(evt) { evt.stopPropagation(); }, t);
-            Env.addEvent(t.rendNodeInput, 'touchstart', function(evt) { evt.stopPropagation(); }, t);
-            Env.addEvent(t.rendNodeInput, 'pointerdown', function(evt) { evt.stopPropagation(); }, t);
-
-            // This sets the font-size of the input HTML element
-            t.visPropOld.fontsize = "0px";
-            board.renderer.updateTextStyle(t, false);
-//        }, 2000);
         return t;
     };
 

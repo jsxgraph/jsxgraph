@@ -129,7 +129,7 @@ define([
      * </script><pre>
      */
     JXG.createCheckbox = function (board, parents, attributes) {
-        var t, par,
+        var t, par, node,
             attr = Type.copyAttributes(attributes, board.options, 'checkbox');
 
         //if (parents.length !== 3) {
@@ -148,23 +148,24 @@ define([
         t = board.create('text', par, attr);
         t.type = Type.OBJECT_TYPE_CHECKBOX;
 
-        t.rendNodeForm = t.rendNode.childNodes[0];
-
-
-        try {
-            t.rendNodeCheckbox = t.rendNodeForm.childNodes[0];
-            
-            t.rendNodeTag = t.rendNodeCheckbox; // Needed for unified treatment in setAttribute
-            t.rendNodeTag.disabled = !!attr.disabled;
-
-            t.rendNodeLabel = t.rendNodeForm.childNodes[1];
-            t.rendNodeLabel.innerHTML = parents[2];
-            t.rendNodeForm.id = t.rendNode.id + '_form';
-            t.rendNodeCheckbox.id = t.rendNode.id + '_checkbox';
-            t.rendNodeLabel.id = t.rendNode.id + '_label';
-        } catch(e) {
-            JXG.debug(e);
+        node = t.rendNode.childNodes[0];
+        if (node.tagName.toLowerCase() === 'checkbox') {
+            t.rendNodeCheckbox = t.rendNode.childNodes[0];
+            t.rendNodeLabel = t.rendNode.childNodes[1];
+        } else if (node.tagName.toLowerCase() === 'form') {
+            t.rendNodeCheckbox = t.rendNode.childNodes[0].childNodes[0];
+            t.rendNodeLabel = t.rendNode.childNodes[0].childNodes[1];
+        } else {
+            throw new Error("JSXGraph: A problem with the DOM tree occurred while creating an checkbox element");
         }
+            
+        t.rendNodeTag = t.rendNodeCheckbox; // Needed for unified treatment in setAttribute
+        t.rendNodeTag.disabled = !!attr.disabled;
+
+        t.rendNodeLabel.innerHTML = parents[2];
+        t.rendNodeCheckbox.id = t.rendNode.id + '_checkbox';
+        t.rendNodeLabel.id = t.rendNode.id + '_label';
+
         // This sets the font-size of the checkbox itself
         t.visPropOld.fontsize = "0px";
         board.renderer.updateTextStyle(t, false);
