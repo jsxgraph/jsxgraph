@@ -124,31 +124,23 @@ define([
      * </script><pre>
      */
     JXG.createInput = function (board, parents, attributes) {
-        var t, par, node,
+        var t, par, 
             attr = Type.copyAttributes(attributes, board.options, 'input');
 
         par = [parents[0], parents[1],
-            '<form style="display:inline; white-space:nowrap; padding:0px;">' +
+            '<span style="display:inline; white-space:nowrap; padding:0px;">' +
             '<span></span><input type="text" maxlength="' +
                 attr.maxlength +
                 '" style="width:100%"/>' +
-            '</form>'
+            '</span>'
             ];
 
         //t = JXG.createText(board, par, attr);
         t = board.create('text', par, attr);
         t.type = Type.OBJECT_TYPE_INPUT;
 
-        node = t.rendNode.childNodes[0];
-        if (node.tagName.toLowerCase() === 'span') {
-            t.rendNodeLabel = t.rendNode.childNodes[0];
-            t.rendNodeInput = t.rendNode.childNodes[1];
-        } else if (node.tagName.toLowerCase() === 'form') {
-            t.rendNodeLabel = t.rendNode.childNodes[0].childNodes[0];
-            t.rendNodeInput = t.rendNode.childNodes[0].childNodes[1];
-        } else {
-            throw new Error("JSXGraph: A problem with the DOM tree occurred while creating an input element");
-        }
+        t.rendNodeLabel = t.rendNode.childNodes[0].childNodes[0];
+        t.rendNodeInput = t.rendNode.childNodes[0].childNodes[1];
 
         t.rendNodeLabel.innerHTML = parents[3];
         t.rendNodeInput.value = parents[2];

@@ -129,7 +129,7 @@ define([
      * </script><pre>
      */
     JXG.createCheckbox = function (board, parents, attributes) {
-        var t, par, node,
+        var t, par,
             attr = Type.copyAttributes(attributes, board.options, 'checkbox');
 
         //if (parents.length !== 3) {
@@ -139,26 +139,18 @@ define([
         //}
 
         par = [parents[0], parents[1],
-            '<form style="display:inline">' +
+            '<span style="display:inline">' +
             '<input type="checkbox" /><span></span>' +
-            '</form>'
+            '</span>'
             ];
 
         //t = JXG.createText(board, par, attr);
         t = board.create('text', par, attr);
         t.type = Type.OBJECT_TYPE_CHECKBOX;
 
-        node = t.rendNode.childNodes[0];
-        if (node.tagName.toLowerCase() === 'checkbox') {
-            t.rendNodeCheckbox = t.rendNode.childNodes[0];
-            t.rendNodeLabel = t.rendNode.childNodes[1];
-        } else if (node.tagName.toLowerCase() === 'form') {
-            t.rendNodeCheckbox = t.rendNode.childNodes[0].childNodes[0];
-            t.rendNodeLabel = t.rendNode.childNodes[0].childNodes[1];
-        } else {
-            throw new Error("JSXGraph: A problem with the DOM tree occurred while creating an checkbox element");
-        }
-            
+        t.rendNodeCheckbox = t.rendNode.childNodes[0].childNodes[0];
+        t.rendNodeLabel = t.rendNode.childNodes[0].childNodes[1];
+
         t.rendNodeTag = t.rendNodeCheckbox; // Needed for unified treatment in setAttribute
         t.rendNodeTag.disabled = !!attr.disabled;
 
