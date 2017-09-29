@@ -151,10 +151,10 @@ define([
          * @param {Array} line|point_pair|"four coordinates" In case of 'reflect' the parameters could
          *                be a line, a pair of points or four number (or functions) p_x, p_y, q_x, q_y,
          *                determining a line through points (p_x, p_y) and (q_x, q_y).
-         * @param {Array} angle,x,y In case of 'rotate' the parameters are an angle or angle function,
+         * @param {Array} angle,x,y|angle,[x,y] In case of 'rotate' the parameters are an angle or angle function,
          *                returning the angle in Radians and - optionally - a coordinate pair or a point defining the
          *                returning the angle in Radians and - optionally - a coordinate pair defining the
-         *                reotation center. If the rotation center is not given, the transformation rotates around (0,0).
+         *                rotation center. If the rotation center is not given, the transformation rotates around (0,0).
          * @param {Array} shear_x,shear_y Shear vector (number or function) in case of 'shear'.
          * @param {Array} a,b,c,d,e,f,g,h,i Nine matrix entries (numbers or functions) for a generic
          *                projective transformation  in case of 'generic'.
@@ -262,7 +262,7 @@ define([
                 } else if (params.length > 0 && params.length <= 2) {
                     this.evalParam = Type.createEvalFunction(board, params, 1);
 
-                    if (params.length === 2) {
+                    if (params.length === 2 && !Type.isArray(params[1])) {
                         params[1] = board.select(params[1]);
                     }
                 }
@@ -284,8 +284,13 @@ define([
                             x = this.evalParam(1);
                             y = this.evalParam(2);
                         } else {
-                            x = params[1].X();
-                            y = params[1].Y();
+                            if (Type.isArray(params[1])) {
+                                x = params[1][0];
+                                y = params[1][1];
+                            } else {
+                                x = params[1].X();
+                                y = params[1].Y();
+                            }
                         }
                         this.matrix[1][0] = x * (1 - co) + y * si;
                         this.matrix[2][0] = y * (1 - co) - x * si;
@@ -339,7 +344,7 @@ define([
         },
 
         /**
-         * Applies a transformation once to a GeometryElement.
+         * Applies a transformation once to a GeometryElement or an array of elements.
          * If it is a free point, then it can be dragged around later
          * and will overwrite the transformed coordinates.
          * @param {JXG.Point,Array} p
@@ -361,8 +366,9 @@ define([
         },
 
         /**
-         * Binds a transformation to a GeometryElement. In every update of the
-         * GeometryElement, the transformation is executed.
+         * Binds a transformation to a GeometryElement or an array of elements. In every update of the
+         * GeometryElement(s), the transformation is executed. That means, in order to immediately
+         * apply the transformation, a call of board.update() has to follow.
          * @param  {Array,JXG.Object} p JXG.Object or array of JXG.Object to
          *                            which the transformation is bound to.
          */
