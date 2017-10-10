@@ -222,8 +222,8 @@ define([
                  * d is set to something close to infinity, namely 1/eps.
                  * The ideal point is (temporarily) replaced by a finite point which has
                  * distance d from the other point.
-                 * This is accomplishrd by extracting the x- and y-coordinates (x,y)=:v of the ideal point.
-                 * v determines the direction of the line. v is normalized, i.e. set to length 1 by deividing through its length.
+                 * This is accomplished by extracting the x- and y-coordinates (x,y)=:v of the ideal point.
+                 * v determines the direction of the line. v is normalized, i.e. set to length 1 by dividing through its length.
                  * Finally, the new point is the sum of the other point and v*d.
                  *
                  */
