@@ -956,15 +956,17 @@
                     // step.src_ids[0] may contain one or two parent elements.
                     set_str = assign + 'slopetriangle(' + step.src_ids.join(', ') + ') <<';
                     set_str += attrid + ' name: \'\',';
-                    set_str += 'borders: <<ids: [\'' + step.dest_sub_ids[4] + '\', \'' + step.dest_sub_ids[5] + '\', \'' + step.dest_sub_ids[6] + '\']>>,';
-                    set_str += 'basepoint: <<id: \'' + step.dest_sub_ids[0] + '\', priv: false >>, baseline: <<id: \'' + step.dest_sub_ids[1] + '\', priv: true >>,';
-                    set_str += 'glider: <<id: \'' + step.dest_sub_ids[2] + '\', priv: false >>, toppoint: <<id: \'' + step.dest_sub_ids[3] + '\', priv: false >>';
+                    set_str += 'borders:   <<ids: [\'' + step.dest_sub_ids[4] + '\', \'' + step.dest_sub_ids[5] + '\', \'' + step.dest_sub_ids[6] + '\']>>,';
+                    set_str += 'basepoint: <<id: \'' + step.dest_sub_ids[0] + '\', priv: true >>, ';
+                    set_str += 'baseline:  <<id: \'' + step.dest_sub_ids[1] + '\', priv: true >>,';
+                    set_str += 'glider:    <<id: \'' + step.dest_sub_ids[2] + '\', priv: false >>, ';
+                    set_str += 'toppoint:  <<id: \'' + step.dest_sub_ids[3] + '\', priv: false >>';
                     if (step.dest_sub_ids.length === 8) {  // The test is needed for backwards compatibility
-                        set_str += ', tangent: <<id: \'' + step.dest_sub_ids[2] +
+                        set_str += ', tangent: <<id: \'' + step.dest_sub_ids[7] +
                                     '\', priv: true, point1: <<priv: true >>, point2: <<priv: true >> >>';
                     }
                     set_str += '>>;';
-                    reset_str = 'delete ' + step.dest_id + '; ';
+                    reset_str = 'remove(' + step.dest_id + '); ';
 
                     break;
 

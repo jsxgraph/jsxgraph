@@ -3391,7 +3391,8 @@ define([
                 return this;
             }
 
-            try {
+            //try {
+            console.log("Remove", object.id);
                 // remove all children.
                 for (el in object.childElements) {
                     if (object.childElements.hasOwnProperty(el)) {
@@ -3435,9 +3436,9 @@ define([
                 if (Type.exists(object.remove)) {
                     object.remove();
                 }
-            } catch (e) {
-                JXG.debug(object.id + ': Could not be removed: ' + e);
-            }
+            //} catch (e) {
+            //    JXG.debug(object.id + ': Could not be removed: ' + e);
+            //}
 
             this.update();
 
