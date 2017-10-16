@@ -581,7 +581,6 @@ define([
                         term = this.expandShortMath(term);
                     }
                     if (avoidGeonext2JS) {
-                        console.log("avoid");
                         res = term;
                     } else {
                         res = GeonextParser.geonext2JS(term, this.board);
