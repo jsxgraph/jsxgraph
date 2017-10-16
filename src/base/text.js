@@ -210,7 +210,8 @@ define([
                     } else {
                         // Converts GEONExT syntax into JavaScript string
                         // Short math is allowed
-                        this.content = this.generateTerm(text, true);
+                        // Avoid geonext2JS calls
+                        this.content = this.generateTerm(text, true, true);
                     }
                 }
                 updateText = this.board.jc.snippet(this.content, true, '', false);
@@ -544,10 +545,12 @@ define([
          *
          * @param{String} contentStr String to be parsed
          * @param{Boolean} [expand] Optional flag if shortened math syntax is allowed (e.g. 3x instead of 3*x).
+         * @param{Boolean} [avoidGeonext2JS] Optional flag if geonext2JS should be called. For backwards compatibility
+         * this has to be set explicitely to true.
          * @private
          * @see JXG.GeonextParser.geonext2JS.
          */
-        generateTerm: function (contentStr, expand) {
+        generateTerm: function (contentStr, expand, avoidGeonext2JS) {
             var res, term, i, j,
                 plaintext = '""';
 
@@ -577,7 +580,12 @@ define([
                     if (expand === true) {
                         term = this.expandShortMath(term);
                     }
-                    res = GeonextParser.geonext2JS(term, this.board);
+                    if (avoidGeonext2JS) {
+                        console.log("avoid");
+                        res = term;
+                    } else {
+                        res = GeonextParser.geonext2JS(term, this.board);
+                    }
                     res = res.replace(/\\"/g, "'");
                     res = res.replace(/\\'/g, "'");
 
