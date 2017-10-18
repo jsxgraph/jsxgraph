@@ -3239,8 +3239,8 @@ define([
 
             borders: {
                 lastArrow: {
-                    type: 2,
-                    size: 10
+                    type: 1,
+                    size: 6
                 }
             },
 
