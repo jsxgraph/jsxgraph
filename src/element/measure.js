@@ -175,6 +175,9 @@ define([
         li.prepareUpdate().update();
         if (!board.isSuspendedUpdate) {
             li.updateVisibility().updateRenderer();
+            // The point updates are necessary in case of snapToGrid==true
+            li.point1.updateVisibility().updateRenderer();
+            li.point2.updateVisibility().updateRenderer();
         }
 
         return li;
