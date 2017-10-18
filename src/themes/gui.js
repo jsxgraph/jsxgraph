@@ -266,7 +266,8 @@ JXG.Options = JXG.merge(JXG.Options, {
         strokeColor: '#222',
         highlightStrokeColor: '#222',
         strokeOpacity: 1,
-        highlightStrokeOpacity: 0.66666
+        highlightStrokeOpacity: 0.66666,
+        digits: 2
     },
 
     trunclen: 2
