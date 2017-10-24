@@ -63,9 +63,9 @@ define([
 // the splitting is necessary due to the shortcut for the circumcircleMidpoint method to circumcenter.
 
     JXG.extend(Mat.Geometry, /** @lends JXG.Math.Geometry */ {
-        /****************************************/
-        /**** GENERAL GEOMETRIC CALCULATIONS ****/
-        /****************************************/
+        /* ***************************************/
+        /* *** GENERAL GEOMETRIC CALCULATIONS ****/
+        /* ***************************************/
 
         /**
          * Calculates the angle defined by the points A, B, C.

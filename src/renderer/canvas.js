@@ -1041,10 +1041,7 @@ define([
             }
         },
 
-        /***************************
-         *  Set Attributes
-         **************************
-         */
+        // **************************  Set Attributes *************************
 
          // already documented in JXG.AbstractRenderer
          display: function(el, val) {
