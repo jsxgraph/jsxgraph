@@ -580,7 +580,7 @@ define([
                     if (expand === true) {
                         term = this.expandShortMath(term);
                     }
-                    if (false && avoidGeonext2JS) {
+                    if (avoidGeonext2JS) {
                         res = term;
                     } else {
                         res = GeonextParser.geonext2JS(term, this.board);
