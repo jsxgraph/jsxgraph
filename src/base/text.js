@@ -194,11 +194,11 @@ define([
                         this.plaintext = resolvedText;
                     }
                 };
-            } else if (Type.isString(text) && !ev_p) {
+            } else if (Type.isString(text) && !ev_p) {   // Do not parse
                 this.updateText = function () {
                     this.plaintext = text;
                 };
-            } else {
+            } else {                                     // Parse
                 if (Type.isNumber(text)) {
                     this.content = Type.toFixed(text, Type.evaluate(this.visProp.digits));
                 } else {
