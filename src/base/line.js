@@ -602,7 +602,7 @@ define([
                 }
 
                 if (Math.abs(x) < Mat.eps) {
-                    x = 0;
+                    x = fs + 0;
                 } else if (this.board.canvasWidth + Mat.eps > x &&
                             x > this.board.canvasWidth - fs - Mat.eps) {
                     x = this.board.canvasWidth - fs;
@@ -612,7 +612,7 @@ define([
                     y = fs;
                 } else if (this.board.canvasHeight + Mat.eps > y &&
                             y > this.board.canvasHeight - fs - Mat.eps) {
-                    y = this.board.canvasHeight;
+                    y = this.board.canvasHeight - fs;
                 }
             }
 
