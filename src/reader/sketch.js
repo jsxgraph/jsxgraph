@@ -680,7 +680,7 @@
                         }
 
                         set_str = 'point(' + str1.join(', ') + ') <<id: \'' + pid1 + '\', name: \'\', visible: true, ';
-                        set_str += 'snaptogrid: false, snaptopoints: false, priv: false>>; ';
+                        set_str += 'snaptogrid: ' + JXG.Options.elements.snapToGrid + ', snaptopoints: false, priv: false>>; ';
                         reset_str = 'delete ' + pid1 + '; ';
                     } else {
                         pid1 = step.src_ids[j];
@@ -696,7 +696,7 @@
 
                         set_str += 'point(' + str1.join(', ') + ') <<id: \'' + pid2 + '\', name: \'\', visible: true, ';
                         set_str += 'layer: ' + JXG.Options.layer.line + ', opacity: 0.2, ';
-                        set_str += 'snaptogrid: false, snaptopoints: false, priv: false>>; ';
+                        set_str += 'snaptogrid: ' + JXG.Options.elements.snapToGrid + ', snaptopoints: false, priv: false>>; ';
                         reset_str = 'delete ' + pid2 + '; ' + reset_str;
                     } else {
                         pid2 = step.src_ids[j];
