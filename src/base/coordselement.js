@@ -557,7 +557,7 @@ define([
                     }
 
                     delta = beta - alpha;
-                    if (ev_ig) {
+                    if (Type.evaluate(this.visProp.isgeonext)) {
                         delta = 1.0;
                     }
                     angle = this.position * delta;
