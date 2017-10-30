@@ -1060,7 +1060,7 @@ define([
         },
 
         /**
-         * Sets a label and it's text
+         * Sets a label and its text
          * If label doesn't exist, it creates one
          * @param {String} str
          */
