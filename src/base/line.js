@@ -187,7 +187,7 @@ define([
                 return false;
             }
 
-            if (Type.evaluate(this.visProp.straightfirs) &&
+            if (Type.evaluate(this.visProp.straightfirst) &&
                     Type.evaluate(this.visProp.straightlast)) {
                 return true;
             }
