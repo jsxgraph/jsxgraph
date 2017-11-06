@@ -86,7 +86,7 @@ define([
 
         /**
          * Startpoint of the line. You really should not set this field directly as it may break JSXGraph's
-         * udpate system so your construction won't be updated properly.
+         * update system so your construction won't be updated properly.
          * @type JXG.Point
          */
         this.point1 = this.board.select(p1);
