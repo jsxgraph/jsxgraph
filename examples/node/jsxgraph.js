@@ -17634,7 +17634,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
         this.handleAttractors();
                 
         if(this.group.length > 0) {
-            // Here used to be the udpate of the groups. I'm not sure why we don't need to execute
+            // Here used to be the update of the groups. I'm not sure why we don't need to execute
             // the else branch if there are groups defined on this point, hence I'll let the if live.
         } else {
             // Update the initial coordinates. This is needed for free points
@@ -18657,7 +18657,7 @@ JXG.Line = function (board, p1, p2, attributes) {
 
     /**
      * Startpoint of the line. You really should not set this field directly as it may break JSXGraph's
-     * udpate system so your construction won't be updated properly.
+     * update system so your construction won't be updated properly.
      * @type JXG.Point
      */
     this.point1 = JXG.getReference(this.board, p1);
