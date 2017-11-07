@@ -992,6 +992,20 @@
 
                     break;
 
+                case JXG.GENTYPE_PATH:
+                        set_str = assign +  'curve(';
+                        set_str += '[' + step.args.x.join() + '],';
+                        set_str += '[' + step.args.y.join() + ']';
+
+                        set_str += ') <<';
+
+                        set_str += attrid + 'name: \'\', withLabel: false, ';
+                        set_str += 'strokeWidth: ' + step.args.strokeWidth + ', ';
+                        set_str += 'strokeColor: \'' + step.args.strokeColor+ '\' >>; ';
+                        reset_str = 'delete ' + step.dest_id + '; ';
+
+                        break;
+
                 case JXG.GENTYPE_SLIDER:
                     set_str = assign + 'slider([' + pn(step.args.x1) + ', ' + pn(step.args.y1) + '], [' + pn(step.args.x2);
                     set_str += ', ' + pn(step.args.y2) + '], [' + pn(step.args.start) + ', ' + pn(step.args.ini) + ', ';
