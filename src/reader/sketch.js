@@ -993,10 +993,16 @@
                     break;
 
                 case JXG.GENTYPE_PATH:
-                        set_str = assign +  'curve(';
+                        if (step.args.doSpline) {
+                            set_str = assign +  'cardinalspline([';
+                        } else {
+                            set_str = assign +  'curve(';
+                        }
                         set_str += '[' + step.args.x.join() + '],';
                         set_str += '[' + step.args.y.join() + ']';
-
+                        if (step.args.doSpline) {
+                            set_str += '], ' + step.args.tau + ', ' + step.args.type;
+                        }
                         set_str += ') <<';
 
                         set_str += attrid + 'name: \'\', withLabel: false, ';
