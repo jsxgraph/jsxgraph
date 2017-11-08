@@ -1431,6 +1431,19 @@ define([
             /**#@-*/
         },
 
+        cardinalspline: {
+            reducePoints: 0,
+            points: {
+                strokeOpacity: 0.05,
+                fillOpacity: 0.05,
+                highlightStrokeOpacity: 1.0,
+                highlightFillOpacity: 1.0,
+                withLabel: false,
+                name: '',
+                fixed: false,
+            }
+        },
+
         /* special chart options */
         chart: {
             /**#@+

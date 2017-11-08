@@ -1956,7 +1956,7 @@ define([
      *   <li> an array of functions returning coordinate pairs</li>
      *   <li> an array consisting of an array with x-coordinates and an array of y-coordinates</li>
      *   </ul>
-     *   All individual entries of coordinates arrays may be numbers or functions returing numbers.
+     *   All individual entries of coordinates arrays may be numbers or functions returning numbers.
      * @param {Object} attributes Define color, width, ... of the spline
      * @returns {JXG.Curve} Returns reference to an object of type JXG.Curve.
      * @see JXG.Curve
@@ -2065,6 +2065,92 @@ define([
      * @private
      */
     JXG.registerElement('spline', JXG.createSpline);
+
+    /**
+     * @class This element is used to provide a constructor for cardinal spline curves.
+     * Create a dynamic cardinal spline interpolated curve given by sample points p_1 to p_n.
+     * @pseudo
+     * @description
+     * @name Cardinalspline
+     * @augments JXG.Curve
+     * @constructor
+     * @type JXG.Curve
+     * @param {JXG.Board} board Reference to the board the cardinal spline is drawn on.
+     * @param {Array} parents Array with three entries.
+     * <p>
+     *   First entry: Array of points the spline interpolates. This can be
+     *   <ul>
+     *   <li> an array of JXGGraph points</li>
+     *   <li> an array of coordinate pairs</li>
+     *   <li> an array of functions returning coordinate pairs</li>
+     *   <li> an array consisting of an array with x-coordinates and an array of y-coordinates</li>
+     *   </ul>
+     *   All individual entries of coordinates arrays may be numbers or functions returning numbers.
+     *   <p>
+     *   Second entry: tau number or function
+     *   <p>
+     *   Third entry: type string containing 'uniform' (default) or 'centripetal'.
+     * @param {Object} attributes Define color, width, ... of the cardinal spline
+     * @returns {JXG.Curve} Returns reference to an object of type JXG.Curve.
+     * @see JXG.Curve
+     */
+    JXG.createCardinalSpline = function (board, parents, attributes) {
+        var el,
+            points, tau, type,
+            p, p2, q, i, le,
+            splineArr,
+            errStr = "\nPossible parent types: [points:array, tau:number|function, type:string]";
+
+        if (!Type.exists(parents[0]) || !Type.isArray(parents[0])) {
+            throw new Error("JSXGraph: JXG.createCardinalSpline: argument 1 'points' has to be array of points or coordinate pairs" + errStr);
+        }
+        if (!Type.exists(parents[1]) || (!Type.isNumber(parents[1]) && !Type.isFunction(parents[1]))) {
+            throw new Error("JSXGraph: JXG.createCardinalSpline: argument 2 'tau' has to be number between [0,1] or function'" + errStr);
+        }
+        if (!Type.exists(parents[2]) || !Type.isString(parents[2])) {
+            throw new Error("JSXGraph: JXG.createCardinalSpline: argument 3 'type' has to be string 'uniform' or 'centripetal'" + errStr);
+        }
+
+        attributes = Type.copyAttributes(attributes, board.options, 'curve');
+        attributes.curvetype = 'parameter';
+
+        points = Type.providePoints(board, parents[0], attributes, 'cardinalspline', ['points']);
+        //points = parents[0];
+        tau = parents[1];
+        type = parents[2];
+
+        // console.log(attributes);
+        // if (attributes.reducepoints != 0) {
+        //     p = [];
+        //     le = points.length;
+        //     for (i = 0; i < le; i++) {
+        //         p.push(points[i].coords);
+        //     }
+        //     p2 = Numerics.Visvalingam(p, attributes.reducePoints);
+        //
+        //     le = p2.length;
+        //     console.log(attributes.reducepoints, le);
+        //     q = [];
+        //     for (i = 0; i < le; i++) {
+        //         q[i] = [p2[i].usrCoords[1], p2[i].usrCoords[2]];
+        //     }
+        //     points = Type.providePoints(board, q, attributes, 'cardinalspline', ['points']);
+        // }
+
+        splineArr = ['x'].concat(Numerics.CardinalSpline(points, tau));
+
+        el = new JXG.Curve(board, splineArr, attributes);
+        el.setParents(parents[0]);
+        el.elType = 'cardinalspline';
+
+        return el;
+    };
+
+    /**
+     * Register the element type spline at JSXGraph
+     * @private
+     */
+    JXG.registerElement('cardinalspline', JXG.createCardinalSpline);
 
     /**
      * @class This element is used to provide a constructor for Riemann sums, which is realized as a special curve.
