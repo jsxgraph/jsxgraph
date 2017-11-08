@@ -2043,8 +2043,8 @@ define([
                         }
                     }
 
-                    // The array D has only to be calculated when the position of one or more sample point
-                    // changes. otherwise D is always the same for all points on the spline.
+                    // The array D has only to be calculated when the position of one or more sample points
+                    // changes. Otherwise D is always the same for all points on the spline.
                     D = Numerics.splineDef(x, y);
                 }
                 return Numerics.splineEval(t, x, y, D);
