@@ -260,8 +260,6 @@ define([
             if (ev_ct === 'parameter' ||
                     ev_ct === 'polar') {
 
-                prec = prec * prec;
-
                 // Brute force search for a point on the curve close to the mouse pointer
                 for (i = 0, t = this.minX(); i < steps; i++) {
                     tX = this.X(t, suspendUpdate);
