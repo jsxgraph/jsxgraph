@@ -199,14 +199,15 @@ define([
          * Uses the boards renderer to update the polygon.
          */
         updateRenderer: function () {
-            var wasReal, i, len;
+            var i, len; // wasReal,
+
 
             if (!this.needsUpdate) {
                 return this;
             }
 
             if (this.visPropCalc.visible) {
-                wasReal = this.isReal;
+                // wasReal = this.isReal;
 
                 len = this.vertices.length;
                 this.isReal = true;
@@ -217,7 +218,8 @@ define([
                     }
                 }
 
-                if (wasReal && !this.isReal) {
+                if (//wasReal &&
+                    !this.isReal) {
                     this.updateVisibility(false);
                 }
             }

@@ -403,22 +403,24 @@ define([
          * @private
          */
         updateRenderer: function () {
-            var wasReal;
+            //var wasReal;
 
             if (!this.needsUpdate) {
                 return this;
             }
 
             if (this.visPropCalc.visible) {
-                wasReal = this.isReal;
+                // wasReal = this.isReal;
                 this.isReal = (!isNaN(this.point1.coords.usrCoords[1] + this.point1.coords.usrCoords[2] +
                         this.point2.coords.usrCoords[1] + this.point2.coords.usrCoords[2]) &&
                         (Mat.innerProduct(this.stdform, this.stdform, 3) >= Mat.eps * Mat.eps));
 
-                if (wasReal && !this.isReal) {
+                if (//wasReal &&
+                    !this.isReal) {
                     this.updateVisibility(false);
                 }
             }
+
 
             if (this.visPropCalc.visible) {
                 this.board.renderer.updateLine(this);

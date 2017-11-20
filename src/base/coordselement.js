@@ -609,7 +609,8 @@ define([
                 //Homogeneous coords: ideal point
                 this.isReal = (Math.abs(this.coords.usrCoords[0]) > Mat.eps) ? this.isReal : false;
 
-                if (/*wasReal &&*/ !this.isReal) {
+                if (// wasReal &&
+                    !this.isReal) {
                     this.updateVisibility(false);
                 }
             }

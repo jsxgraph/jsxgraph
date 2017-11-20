@@ -368,18 +368,19 @@ define([
          * @returns {JXG.Curve} Reference to the curve object.
          */
         updateRenderer: function () {
-            var wasReal;
+            //var wasReal;
 
             if (!this.needsUpdate) {
                 return this;
             }
 
             if (this.visPropCalc.visible) {
-                wasReal = this.isReal;
+                // wasReal = this.isReal;
 
                 this.checkReal();
 
-                if (wasReal && !this.isReal) {
+                if (//wasReal &&
+                    !this.isReal) {
                     this.updateVisibility(false);
                 }
             }
@@ -2158,7 +2159,7 @@ define([
                         }
                     }
 
-   
+
         points = Type.providePoints(board, q, attributes, 'cardinalspline', ['points']);
         //points = parents[0];
         tau = parents[1];

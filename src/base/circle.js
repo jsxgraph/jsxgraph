@@ -387,17 +387,18 @@ define([
          * @private
          */
         updateRenderer: function () {
-            var wasReal;
+            // var wasReal;
 
             if (!this.needsUpdate) {
                 return this;
             }
 
             if (this.visPropCalc.visible) {
-                wasReal = this.isReal;
+                // wasReal = this.isReal;
                 this.isReal = (!isNaN(this.center.coords.usrCoords[1] + this.center.coords.usrCoords[2] + this.Radius())) && this.center.isReal;
 
-                if (wasReal && !this.isReal) {
+                if (//wasReal && 
+                    !this.isReal) {
                     this.updateVisibility(false);
                 }
             }
