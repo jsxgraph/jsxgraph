@@ -14387,7 +14387,7 @@ define('options',[
 
             /**
              * Attributes for the default axes in case of the attribute
-             * axis:true in {@link JXG.JSXGraph#iniBoard}.
+             * axis:true in {@link JXG.JSXGraph#initBoard}.
              *
              * @name JXG.Board#defaultAxes
              * @type {Object}
