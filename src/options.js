@@ -800,9 +800,16 @@ define([
             /**
              * Determines whether two-finger manipulation of this object may change its size.
              * If set to false, the object is only rotated and translated.
+             * <p>
+             * In case the element is a horizontal or vertical line having ticks, "scalable==true"
+             * enables zooming of the board by dragging ticks lines. This feature is enabled,
+             * for the ticks element of the line element the attribute "fixed" has to be false
+             * and the line element's scalable attribute has to be true.
+             *
              * @type Boolean
              * @default true
              * @name JXG.GeometryElement#scalable
+             * @see JXG.Ticks#fixed
              */
             scalable: true,
 
@@ -3172,6 +3179,7 @@ define([
             baseline: {
                 needsRegularUpdate: false,
                 fixed: true,
+                scalable: false,
                 name: '',
                 strokeWidth: 1,
                 strokeColor: '#000000',
