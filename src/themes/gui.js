@@ -39,6 +39,7 @@ JXG.Options = JXG.merge(JXG.Options, {
     },
 
     axis: {
+        scalable: false,
         ticks: {
             strokeColor: '#aaa',
             strokeOpacity: 0.4,
@@ -174,7 +175,8 @@ JXG.Options = JXG.merge(JXG.Options, {
             strokeOpacity: 0.5,
             highlightStrokeOpacity: 0.5,
             needsRegularUpdate: true,
-            fixed: false
+            fixed: false,
+            scalable: false
         },
         highline: {
             strokeColor: '#444444',

@@ -881,7 +881,7 @@ define([
          * @returns {Object} with properties 'x', 'y', 't' (text), 'i' (tick number) or null in case of o label
          * @private
          */
-         generateLabelData: function (labelText, tick, tickNumber) {
+        generateLabelData: function (labelText, tick, tickNumber) {
              var xa, ya, m, fs;
 
              // Test if large portions of the label are inside of the canvas
