@@ -244,21 +244,20 @@ define([
             ux2 = this.board.unitX * this.board.unitX;
             uy2 = this.board.unitY * this.board.unitY;
 
-            if (this.transformations.length > 0) {
-                /**
-                 * Transform the mouse/touch coordinates
-                 * back to the original position of the curve.
-                 */
-                this.updateTransformMatrix();
-                invMat = Mat.inverse(this.transformMat);
-                c = Mat.matVecMult(invMat, [1, x, y]);
-                x = c[1];
-                y = c[2];
-            }
 
             ev_ct = Type.evaluate(this.visProp.curvetype);
-            if (ev_ct === 'parameter' ||
-                    ev_ct === 'polar') {
+            if (ev_ct === 'parameter' || ev_ct === 'polar') {
+                if (this.transformations.length > 0) {
+                    /**
+                     * Transform the mouse/touch coordinates
+                     * back to the original position of the curve.
+                     */
+                    this.updateTransformMatrix();
+                    invMat = Mat.inverse(this.transformMat);
+                    c = Mat.matVecMult(invMat, [1, x, y]);
+                    x = c[1];
+                    y = c[2];
+                }
 
                 // Brute force search for a point on the curve close to the mouse pointer
                 for (i = 0, t = this.minX(); i < steps; i++) {
