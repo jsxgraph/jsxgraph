@@ -132,6 +132,7 @@
         generateJCode: function (step, board, step_log) {
             var i, j, k, sub_id, str, str1, str2, objects, pid1, pid2, pid3,
                 xstart, ystart, el, arr, step2, options, assign, attrid,
+                le, x, y,
                 copy_log = [],
                 set_str = '',
                 reset_str = '',
@@ -998,8 +999,16 @@
                         } else {
                             set_str = assign +  'curve(';
                         }
-                        set_str += '[' + step.args.x.join() + '],';
-                        set_str += '[' + step.args.y.join() + ']';
+                        le = step.args.x.length;
+                        x = [];
+                        y = [];
+                        for (i = 0; i < le; i++) {
+                            x.push(step.args.x[i].toPrecision(4));
+                            y.push(step.args.y[i].toPrecision(4));
+                        }
+
+                        set_str += '[' + x.join() + '],';
+                        set_str += '[' + y.join() + ']';
                         if (step.args.doSpline) {
                             set_str += '], ' + step.args.tau + ', ' + step.args.type;
                         }
