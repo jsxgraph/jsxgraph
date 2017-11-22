@@ -1006,6 +1006,7 @@
                         set_str += ') <<';
 
                         set_str += attrid + 'name: \'\', withLabel: false, ';
+                        set_str += 'fixed: false, ';
                         set_str += 'strokeWidth: ' + step.args.strokeWidth + ', ';
                         set_str += 'strokeColor: \'' + step.args.strokeColor+ '\' >>; ';
                         reset_str = 'delete ' + step.dest_id + '; ';
