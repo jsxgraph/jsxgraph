@@ -838,32 +838,36 @@ define([
                 }
             } else {
                 c = {};
-                for (i in obj) if (obj.hasOwnProperty(i)) {
-                    i2 = toLower ? i.toLowerCase() : i;
-                    prop = obj[i];
-                    if (prop !== null && typeof prop === 'object') {
-                        if (this.exists(prop.board)) {
-                            c[i2] = prop.id;
+                for (i in obj) {
+                    if (obj.hasOwnProperty(i)) {
+                        i2 = toLower ? i.toLowerCase() : i;
+                        prop = obj[i];
+                        if (prop !== null && typeof prop === 'object') {
+                            if (this.exists(prop.board)) {
+                                c[i2] = prop.id;
+                            } else {
+                                c[i2] = this.deepCopy(prop);
+                            }
                         } else {
-                            c[i2] = this.deepCopy(prop);
+                            c[i2] = prop;
                         }
-                    } else {
-                        c[i2] = prop;
                     }
                 }
 
-                for (i in obj2) if (obj2.hasOwnProperty(i)) {
-                    i2 = toLower ? i.toLowerCase() : i;
+                for (i in obj2) {
+                    if (obj2.hasOwnProperty(i)) {
+                        i2 = toLower ? i.toLowerCase() : i;
 
-                    prop = obj2[i];
-                    if (typeof prop === 'object') {
-                        if (this.isArray(prop) || !this.exists(c[i2])) {
-                            c[i2] = this.deepCopy(prop);
+                        prop = obj2[i];
+                        if (typeof prop === 'object') {
+                            if (this.isArray(prop) || !this.exists(c[i2])) {
+                                c[i2] = this.deepCopy(prop);
+                            } else {
+                                c[i2] = this.deepCopy(c[i2], prop, toLower);
+                            }
                         } else {
-                            c[i2] = this.deepCopy(c[i2], prop, toLower);
+                            c[i2] = prop;
                         }
-                    } else {
-                        c[i2] = prop;
                     }
                 }
             }
@@ -970,8 +974,10 @@ define([
             var key;
 
             subObject.prototype[constructorName] = superObject.prototype.constructor;
-            for (key in superObject.prototype) if (superObject.prototype.hasOwnProperty(key)) {
-                subObject.prototype[key] = superObject.prototype[key];
+            for (key in superObject.prototype) {
+                if (superObject.prototype.hasOwnProperty(key)) {
+                    subObject.prototype[key] = superObject.prototype[key];
+                }
             }
         },
 
