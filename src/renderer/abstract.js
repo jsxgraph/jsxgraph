@@ -449,7 +449,7 @@ define([
             this.makeArrows(el);
             this._updateVisual(el);
             this.updateArrowSize(el, obj);
-            this.setLineCap(el);
+            //this.setLineCap(el);
         },
 
         /**
@@ -975,14 +975,14 @@ define([
         _css2js: function(cssString) {
             var pairs = [],
                 i, len, key, val, s,
-                list = cssString.trim().replace(/;$/, '').split(";");
+                list = Type.trim(cssString).replace(/;$/, '').split(";");
 
             len = list.length;
             for (i = 0; i < len; ++i) {
-                if (list[i].trim() !== '') {
+                if (Type.trim(list[i]) !== '') {
                     s = list[i].split(':');
-                    key = s[0].replace(/-([a-z])/g, function (g) { return g[1].toUpperCase(); }).trim();
-                    val = s[1].trim();
+                    key = Type.trim(s[0].replace(/-([a-z])/g, function (g) { return g[1].toUpperCase(); }));
+                    val = Type.trim(s[1]);
                     pairs.push({'key': key, 'val': val});
                 }
             }

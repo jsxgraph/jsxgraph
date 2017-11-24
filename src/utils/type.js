@@ -1203,10 +1203,11 @@ define([
          * @returns {String}
          */
         trim: function (str) {
-            str = str.replace(/^\s+/, '');
-            str = str.replace(/\s+$/, '');
-
-            return str;
+            // str = str.replace(/^\s+/, '');
+            // str = str.replace(/\s+$/, '');
+            //
+            // return str;
+            return str.replace(/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g, '');
         },
 
         /**
