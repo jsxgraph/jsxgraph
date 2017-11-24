@@ -211,7 +211,7 @@ define([
                 type: 'png',
                 symbol: '\u2318', //'\u22b9', //'\u26f6',
                 css: 'background-color:#eeeeee; opacity:1.0; border:2px solid black; border-radius:10px; text-align:center',
-                cssButton:  'padding: 4px 10px; border: solid #356AA0 1px; border-radius: 5px; position: absolute; right: 2ex; top: 2ex; background-color: rgba(255, 255, 255, 0.3);',
+                cssButton:  'padding: 4px 10px; border: solid #356AA0 1px; border-radius: 5px; position: absolute; right: 2ex; top: 2ex; background-color: rgba(255, 255, 255, 0.3);'
             },
 
             /**
@@ -1433,7 +1433,7 @@ define([
              * @type Boolean
              * @default false
              */
-            disabled: false,
+            disabled: false
 
             /**#@-*/
         },
@@ -1447,7 +1447,7 @@ define([
                 highlightFillOpacity: 1.0,
                 withLabel: false,
                 name: '',
-                fixed: false,
+                fixed: false
             }
         },
 
@@ -1487,7 +1487,7 @@ define([
              * @type Boolean
              * @default false
              */
-            disabled: false,
+            disabled: false
 
             /**#@-*/
         },
@@ -2896,7 +2896,7 @@ define([
                 layer: 5,
                 label: {
                     position: 'top'
-                },
+                }
             },
 
             /**

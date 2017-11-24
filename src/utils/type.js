@@ -1062,7 +1062,7 @@ define([
                 strokewidth: '',
                 transitionduration: 0,
                 top: -100000,
-                visible: null,
+                visible: null
             };
 
             return el;

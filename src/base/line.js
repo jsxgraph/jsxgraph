@@ -897,7 +897,7 @@ define([
                     break;
                 }
             }
-        },
+        }
 
         // hideElement: function () {
         //     var i;
