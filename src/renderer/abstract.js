@@ -410,7 +410,7 @@ define([
          * @see JXG.AbstractRenderer#getPositionArrowHead
          */
         updateArrowSize: function(el, obj) {
-            var size, ev_fa, ev_la, obj;
+            var size, ev_fa, ev_la;
 
             ev_fa = Type.evaluate(el.visProp.firstarrow);
             if (ev_fa) {

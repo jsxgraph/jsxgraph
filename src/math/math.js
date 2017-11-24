@@ -46,7 +46,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
 
     "use strict";
 
-    var undef = undefined,
+    var undef,
 
         /*
          * Dynamic programming approach for recursive functions.

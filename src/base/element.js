@@ -1518,8 +1518,7 @@ define([
             //    through dehighlightAll.
 
             // highlight only if not highlighted
-            if (Type.evaluate(this.visProp.highlight)
-                    && (!this.highlighted || force)) {
+            if (Type.evaluate(this.visProp.highlight) && (!this.highlighted || force)) {
                 this.highlighted = true;
                 this.board.highlightedObjects[this.id] = this;
                 this.board.renderer.highlight(this);
