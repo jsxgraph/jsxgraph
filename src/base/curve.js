@@ -1585,11 +1585,13 @@ define([
          */
         notifyParents: function (contentStr) {
             var fstr, dep,
-                isJessieCode = false;
+                isJessieCode = false,
+                obj;
 
             // Read dependencies found by the JessieCode parser
-            for (fstr in {'xterm': 1, 'yterm': 1}) {
-                if (this.hasOwnProperty(fstr) && this[fstr].origin) {
+            obj = {'xterm': 1, 'yterm': 1};
+            for (fstr in obj) {
+                if (obj.hasOwnProperty(fstr) && this.hasOwnProperty(fstr) && this[fstr].origin) {
                     isJessieCode = true;
                     for (dep in this[fstr].origin.deps) {
                         if (this[fstr].origin.deps.hasOwnProperty(dep)) {
@@ -1683,7 +1685,8 @@ define([
         // already documented in GeometryElement
         bounds: function () {
             var minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity,
-                l = this.points.length, i;
+                l = this.points.length, i,
+                bezier, up;
 
             if (this.bezierDegree === 3) {
                 // Add methods X(), Y()
@@ -1691,8 +1694,8 @@ define([
                     this.points[i].X = Type.bind(function() { return this.usrCoords[1]; }, this.points[i]);
                     this.points[i].Y = Type.bind(function() { return this.usrCoords[2]; }, this.points[i]);
                 }
-                var bezier = Numerics.bezier(this.points);
-                var up = bezier[3]();
+                bezier = Numerics.bezier(this.points);
+                up = bezier[3]();
                 minX = Numerics.fminbr(function(t) { return bezier[0](t); }, [0, up]);
                 maxX = Numerics.fminbr(function(t) { return -bezier[0](t); }, [0, up]);
                 minY = Numerics.fminbr(function(t) { return bezier[1](t); }, [0, up]);

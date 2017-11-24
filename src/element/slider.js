@@ -336,7 +336,7 @@ define([
 
                 function (tick) {
                     var dFull = p3.point1.Dist(p3.point2),
-                        d = p1p3.point1.coords.distance(Const.COORDS_BY_USER, tick);
+                        d = p3.point1.coords.distance(Const.COORDS_BY_USER, tick);
 
                     if (dFull < Mat.eps) {
                         return 0;
