@@ -266,9 +266,11 @@ define([
                             yp,
                             attr.labels[i]], attrSub);
 
-                        text.visProp.anchory = (function(txt) { return function() {
-                            return (txt.Y() >= 0) ? 'bottom' : 'top';
-                        }; })(text);
+                        text.visProp.anchory = (function(txt) {
+                            return function() {
+                                    return (txt.Y() >= 0) ? 'bottom' : 'top';
+                                };
+                            })(text);
 
                     }
                 }

@@ -1024,9 +1024,11 @@ define([
             }
 
             len = nodes.length;
-            for (i = 0; i < len; ++i) if (el[nodes[i]]) {
-                node = el[nodes[i]];
-                node.style.transition = transitionStr;
+            for (i = 0; i < len; ++i) {
+                if (el[nodes[i]]) {
+                    node = el[nodes[i]];
+                    node.style.transition = transitionStr;
+                }
             }
 
             el.visPropOld.transitionduration = duration;
@@ -1348,7 +1350,8 @@ define([
                 btoa = window.btoa || Base64.encode,
                 svg, tmpImg, cv, ctx,
                 wOrg, hOrg,
-                uriPayload;
+                uriPayload,
+                DOMURL, svgBlob, url;
 
             // Move all HTML tags (beside the SVG root) of the container
             // to the foreignObject element inside of the svgRoot node
@@ -1405,9 +1408,9 @@ define([
                 // tmpImg.src = 'data:image/svg+xml,' + uriPayload;
             } else {
                 // Alternative version
-                var DOMURL = window.URL || window.webkitURL || window;
-                var svgBlob = new Blob([svg], {type: 'image/svg+xml'});
-                var url = DOMURL.createObjectURL(svgBlob);
+                DOMURL = window.URL || window.webkitURL || window;
+                svgBlob = new Blob([svg], {type: 'image/svg+xml'});
+                url = DOMURL.createObjectURL(svgBlob);
                 tmpImg.src = url;
 
                 tmpImg.onload = function () {
