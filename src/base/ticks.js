@@ -102,6 +102,8 @@ define([
          */
         this.equidistant = false;
 
+        this.labelsData = [];
+
         if (Type.isFunction(ticks)) {
             this.ticksFunction = ticks;
             throw new Error("Function arguments are no longer supported.");
@@ -591,13 +593,14 @@ define([
         adjustTickDistance: function (ticksDelta, coordsZero, deltas) {
             var nx, ny, bounds,
                 distScr,
-                sgn = 1;
+                sgn = 1,
+                ev_minti = Type.evaluate(this.visProp.minorticks);
 
             bounds = this.getLowerAndUpperBounds(coordsZero, 'ticksdistance');
             nx = coordsZero.usrCoords[1] + deltas.x * ticksDelta;
             ny = coordsZero.usrCoords[2] + deltas.y * ticksDelta;
             distScr = coordsZero.distance(Const.COORDS_BY_SCREEN, new Coords(Const.COORDS_BY_USER, [nx, ny], this.board));
-            while (distScr / (Type.evaluate(this.visProp.minorticks) + 1) < this.minTicksDistance) {
+            while (distScr / (ev_minti + 1) < this.minTicksDistance) {
                 if (sgn === 1) {
                     ticksDelta *= 2;
                 } else {

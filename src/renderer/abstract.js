@@ -449,7 +449,7 @@ define([
             this.makeArrows(el);
             this._updateVisual(el);
             this.updateArrowSize(el, obj);
-            //this.setLineCap(el);
+            this.setLineCap(el);
         },
 
         /**
@@ -596,7 +596,7 @@ define([
          * @see JXG.Line
          * @see JXG.AbstractRenderer#updateLine
          */
-        setLinecap: function() { /* stub */ },
+        setLineCap: function() { /* stub */ },
 
         /**
          * Creates a rendering node for ticks added to a line.
