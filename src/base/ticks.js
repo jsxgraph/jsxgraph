@@ -449,11 +449,11 @@ define([
                         Type.evaluate(this.line.visProp.strokewidth));
             point1.setCoordinates(Const.COORDS_BY_SCREEN, [
                     point1.scrCoords[1] - obj.d1x,
-                    point1.scrCoords[2] - obj.d1y,
+                    point1.scrCoords[2] - obj.d1y
                 ]);
             point2.setCoordinates(Const.COORDS_BY_SCREEN, [
                     point2.scrCoords[1] - obj.d2x,
-                    point2.scrCoords[2] - obj.d2y,
+                    point2.scrCoords[2] - obj.d2y
                 ]);
 
             // Calculate distance from Zero to P1 and to P2

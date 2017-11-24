@@ -199,6 +199,7 @@ define([
         setCoordinates: function (coord_type, coordinates, doRound, noevent) {
             var uc = this.usrCoords,
                 sc = this.scrCoords,
+                // Original values
                 ou = [uc[0], uc[1], uc[2]],
                 os = [sc[0], sc[1], sc[2]];
 
