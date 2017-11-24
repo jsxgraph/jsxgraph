@@ -1892,9 +1892,9 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
                                 dt1 = Math.sqrt(dt1);
                                 dt2 = Math.sqrt(dt2);
 
-                                if (dt1 < Mat.eps) dt1 = 1.0;
-                                if (dt0 < Mat.eps) dt0 = dt1;
-                                if (dt2 < Mat.eps) dt2 = dt1;
+                                if (dt1 < Mat.eps) { dt1 = 1.0; }
+                                if (dt0 < Mat.eps) { dt0 = dt1; }
+                                if (dt2 < Mat.eps) { dt2 = dt1; }
 
                                 t1 = (p[s + 1][which]() - p[s][which]()) / dt0 -
                                      (p[s + 2][which]() - p[s][which]()) / (dt1 + dt0) +
@@ -1932,7 +1932,8 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
                     // This is necessary for our advanced plotting algorithm:
                     if (t <= 0.0) {
                         return points[0][which]();
-                    } else if (t >= len) {
+                    }
+                    if (t >= len) {
                         return points[len - 1][which]();
                     }
 

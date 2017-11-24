@@ -675,7 +675,8 @@ define([
          * @returns {String} Unique id for an element.
          */
         setId: function (obj, type) {
-            var num = this.numObjects,
+            var randomNumber,
+                num = this.numObjects,
                 elId = obj.id;
 
             this.numObjects += 1;

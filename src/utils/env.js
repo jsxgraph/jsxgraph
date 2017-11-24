@@ -204,7 +204,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          * @type Number
          */
         ieVersion: (function () {
-            var undef, div, all,
+            var div, all,
                 v = 3;
 
             if (typeof document !== 'object') {
@@ -218,7 +218,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                 div.innerHTML = '<!--[if gt IE ' + (++v) + ']><' + 'i><' + '/i><![endif]-->';
             } while (all[0]);
 
-            return v > 4 ? v : undef;
+            return v > 4 ? v : undefined;
 
         }()),
 
@@ -607,7 +607,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          */
         getCSSTransformMatrix: function (obj) {
             var i, j, str, arrstr, start, len, len2, arr,
-                st, tr,
+                st,
                 doc = obj.ownerDocument,
                 t = ['transform', 'webkitTransform', 'MozTransform', 'msTransform', 'oTransform'],
                 mat = [[1, 0, 0],

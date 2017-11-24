@@ -1038,7 +1038,7 @@ define([
                     // ev.cssdefaultstyle of ev.highlightcssdefaultstyle,
                     // then to
                     // ev.cssstyle of ev.highlightcssstyle
-                    cssString = Type.evaluate(ev[((doHighlight) ? 'highlight' : '') + styleList[style]]);
+                    cssString = Type.evaluate(ev[(doHighlight ? 'highlight' : '') + styleList[style]]);
                     if (cssString !== '' &&
                         el.visPropOld[styleList[style]] !== cssString) {
                         cssList = this._css2js(cssString);
