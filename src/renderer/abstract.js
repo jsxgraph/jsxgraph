@@ -981,7 +981,7 @@ define([
             for (i = 0; i < len; ++i) {
                 if (Type.trim(list[i]) !== '') {
                     s = list[i].split(':');
-                    key = Type.trim(s[0].replace(/-([a-z])/g, function (g) { return g[1].toUpperCase(); }));
+                    key = Type.trim(s[0].replace(/-([a-z])/gi, function(match, char) { return char.toUpperCase(); }));
                     val = Type.trim(s[1]);
                     pairs.push({'key': key, 'val': val});
                 }

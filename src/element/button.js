@@ -127,7 +127,7 @@ define([
         t.rendNodeButton = t.rendNode.childNodes[0];
         t.rendNodeButton.id = t.rendNode.id + '_button';
         t.rendNodeButton.innerHTML = parents[2];
-            
+
         t.rendNodeTag = t.rendNodeButton; // Needed for unified treatment in setAttribute
         t.rendNodeTag.disabled = !!attr.disabled;
 
@@ -149,9 +149,9 @@ define([
 
         Env.addEvent(t.rendNodeButton, 'click', priv.ButtonClickEventHandler, t);
 
-        Env.addEvent(t.rendNodeButton, 'mousedown', function(evt) { evt.stopPropagation(); }, t);
-        Env.addEvent(t.rendNodeButton, 'touchstart', function(evt) { evt.stopPropagation(); }, t);
-        Env.addEvent(t.rendNodeButton, 'pointerdown', function(evt) { evt.stopPropagation(); }, t);
+        Env.addEvent(t.rendNodeButton, 'mousedown', function(evt) { if (Type.exists(evt.stopPropagation)) evt.stopPropagation(); }, t);
+        Env.addEvent(t.rendNodeButton, 'touchstart', function(evt) { if (Type.exists(evt.stopPropagation)) evt.stopPropagation(); }, t);
+        Env.addEvent(t.rendNodeButton, 'pointerdown', function(evt) { if (Type.exists(evt.stopPropagation)) evt.stopPropagation(); }, t);
 
         return t;
     };

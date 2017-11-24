@@ -124,7 +124,7 @@ define([
      * </script><pre>
      */
     JXG.createInput = function (board, parents, attributes) {
-        var t, par, 
+        var t, par,
             attr = Type.copyAttributes(attributes, board.options, 'input');
 
         par = [parents[0], parents[1],
@@ -163,9 +163,9 @@ define([
         };
 
         Env.addEvent(t.rendNodeInput, 'input', priv.InputInputEventHandler, t);
-        Env.addEvent(t.rendNodeInput, 'mousedown', function(evt) { evt.stopPropagation(); }, t);
-        Env.addEvent(t.rendNodeInput, 'touchstart', function(evt) { evt.stopPropagation(); }, t);
-        Env.addEvent(t.rendNodeInput, 'pointerdown', function(evt) { evt.stopPropagation(); }, t);
+        Env.addEvent(t.rendNodeInput, 'mousedown', function(evt) { if (Type.exists(evt.stopPropagation)) evt.stopPropagation(); }, t);
+        Env.addEvent(t.rendNodeInput, 'touchstart', function(evt) { if (Type.exists(evt.stopPropagation)) evt.stopPropagation(); }, t);
+        Env.addEvent(t.rendNodeInput, 'pointerdown', function(evt) { if (Type.exists(evt.stopPropagation)) evt.stopPropagation(); }, t);
 
         // This sets the font-size of the input HTML element
         t.visPropOld.fontsize = "0px";
