@@ -596,7 +596,7 @@ define([
     	 */
     	_decimalAdjust: function(type, value, exp) {
     		// If the exp is undefined or zero...
-    		if (typeof exp === 'undefined' || +exp === 0) {
+    		if (exp === undefined || +exp === 0) {
     			return Math[type](value);
     		}
 
@@ -838,7 +838,7 @@ define([
                 }
             } else {
                 c = {};
-                for (i in obj) {
+                for (i in obj) if (obj.hasOwnProperty(i)) {
                     i2 = toLower ? i.toLowerCase() : i;
                     prop = obj[i];
                     if (prop !== null && typeof prop === 'object') {
@@ -852,7 +852,7 @@ define([
                     }
                 }
 
-                for (i in obj2) {
+                for (i in obj2) if (obj2.hasOwnProperty(i)) {
                     i2 = toLower ? i.toLowerCase() : i;
 
                     prop = obj2[i];
@@ -970,7 +970,7 @@ define([
             var key;
 
             subObject.prototype[constructorName] = superObject.prototype.constructor;
-            for (key in superObject.prototype)  {
+            for (key in superObject.prototype) if (superObject.prototype.hasOwnProperty(key)) {
                 subObject.prototype[key] = superObject.prototype[key];
             }
         },
