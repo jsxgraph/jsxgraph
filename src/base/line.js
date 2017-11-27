@@ -935,6 +935,9 @@ define([
      * @param {Number,function_Number,function_Number,function} c,a,b A line can also be created providing three numbers. The line is then described by
      * the set of solutions of the equation <tt>a*x+b*y+c*z = 0</tt>. It is possible to provide three functions returning numbers, too.
      * @param {function} f This function must return an array containing three numbers forming the line's homogeneous coordinates.
+     * <p>
+     * Additionally, a line can be created by giving a line and a transformation (or an array of transformations).
+     * Then, the result is a line which is the transformation of the supplied line.
      * @example
      * // Create a line using point and coordinates/
      * // The second point will be fixed and invisible.
