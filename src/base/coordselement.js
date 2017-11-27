@@ -1755,11 +1755,7 @@ define([
                     el.baseElement = el;
                 }
                 el.isDraggable = true;
-            } else if (Type.isObject(coords[0]) &&
-                (Type.isObject(coords[1]) || // Transformation
-                 (Type.isArray(coords[1]) && coords[1].length > 0 && Type.isObject(coords[1][0]))
-                )) { // Array of transformations
-
+            } else if (Type.isObject(coords[0]) && Type.isTransformationOrArray(coords[1])) {
                 // Transformation
                 el = new Callback(board, [0, 0], attr, arg1, arg2);
                 el.addTransform(coords[0], coords[1]);

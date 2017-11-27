@@ -98,6 +98,7 @@ define(['jxg'], function (JXG) {
         OBJECT_TYPE_CHECKBOX: 27,
         OBJECT_TYPE_INPUT: 28,
         OBJECT_TYPE_BUTTON: 29,
+        OBJECT_TYPE_TRANSFORMATION: 30,
 
         // object classes
         OBJECT_CLASS_POINT: 1,

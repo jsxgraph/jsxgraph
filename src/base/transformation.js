@@ -108,6 +108,7 @@ define([
      */
     JXG.Transformation = function (board, type, params) {
         this.elementClass = Const.OBJECT_CLASS_OTHER;
+        this.type = Const.OBJECT_TYPE_TRANSFORMATION;
         this.matrix = [
             [1, 0, 0],
             [0, 1, 0],

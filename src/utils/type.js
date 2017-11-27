@@ -171,6 +171,23 @@ define([
         },
 
         /**
+         * Checks if a given variable is a reference of a JSXGraph transformation element or an array
+         * of JSXGraph transformation elements.
+         * @param v A variable of any type.
+         * @returns {Boolean} True, if v is of type JXG.Transformation.
+         */
+        isTransformationOrArray: function(v) {
+            if (v !== null) {
+                if (this.isArray(v) && v.length > 0) {
+                    return this.isTransformationOrArray(v[0]);
+                } else if (typeof v === 'object') {
+                    return (v.type === Const.OBJECT_TYPE_TRANSFORMATION);
+                }
+            }
+            return false;
+        },
+
+        /**
          * Checks if a given variable is neither undefined nor null. You should not use this together with global
          * variables!
          * @param v A variable of any type.
