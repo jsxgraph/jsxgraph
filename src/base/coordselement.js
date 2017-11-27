@@ -1757,6 +1757,7 @@ define([
                 el.isDraggable = true;
             } else if (Type.isObject(coords[0]) && Type.isTransformationOrArray(coords[1])) {
                 // Transformation
+                // TODO less general specification of isObject
                 el = new Callback(board, [0, 0], attr, arg1, arg2);
                 el.addTransform(coords[0], coords[1]);
                 el.isDraggable = false;
