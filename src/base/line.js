@@ -954,10 +954,34 @@ define([
      *   var glex2_board = JXG.JSXGraph.initBoard('cf45e462-f964-4ba4-be3a-c9db94e2593f', {boundingbox: [-1, 7, 7, -1], axis: true, showcopyright: false, shownavigation: false});
      *   var glex2_l1 = glex2_board.create('line', [1.0, -2.0, 3.0]);
      * </script><pre>
+     * @example
+     *         // Create a line (l2) as reflection of another line (l1)
+     *         // reflection line
+     *         var li = board.create('line', [1,1,1], {strokeColor: '#aaaaaa'});
+     *         var reflect = board.create('transform', [li], {type: 'reflect'});
+     *
+     *         var l1 = board.create('line', [1,-5,1]);
+     *         var l2 = board.create('line', [l1, reflect]);
+     *
+     * </pre><div id="a00d7dd6-d38c-11e7-93b3-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     *     (function() {
+     *         var board = JXG.JSXGraph.initBoard('a00d7dd6-d38c-11e7-93b3-901b0e1b8723',
+     *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+     *             // reflection line
+     *             var li = board.create('line', [1,1,1], {strokeColor: '#aaaaaa'});
+     *             var reflect = board.create('transform', [li], {type: 'reflect'});
+     *
+     *             var l1 = board.create('line', [1,-5,1]);
+     *             var l2 = board.create('line', [l1, reflect]);
+     *     })();
+     *
+     * </script><pre>
      */
     JXG.createLine = function (board, parents, attributes) {
         var ps, el, p1, p2, i, attr,
             c = [],
+            doTransform = false,
             constrained = false,
             isDraggable;
 
@@ -979,6 +1003,10 @@ define([
                 attr = Type.copyAttributes(attributes, board.options, 'line', 'point1');
                 p1 = Point.createPoint(board, parents[0](), attr);
                 constrained = true;
+            } else if (Type.isObject(parents[0]) && Type.isTransformationOrArray(parents[1])) {
+                doTransform = true;
+                attr = Type.copyAttributes(attributes, board.options, 'line', 'point1');
+                p1 = board.create('point', [parents[0].point1, parents[1]], attr);
             } else {
                 throw new Error("JSXGraph: Can't create line with parent types '" +
                     (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
@@ -986,7 +1014,10 @@ define([
             }
 
             // point 2 given by coordinates
-            if (Type.isArray(parents[1]) && parents[1].length > 1) {
+            if (doTransform) {
+                attr = Type.copyAttributes(attributes, board.options, 'line', 'point2');
+                p2 = board.create('point', [parents[0].point2, parents[1]], attr);
+            } else if (Type.isArray(parents[1]) && parents[1].length > 1) {
                 attr = Type.copyAttributes(attributes, board.options, 'line', 'point2');
                 p2 = board.create('point', parents[1], attr);
             } else if (Type.isString(parents[1]) || Type.isPoint(parents[1])) {
@@ -1007,11 +1038,12 @@ define([
             attr = Type.copyAttributes(attributes, board.options, 'line');
 
             el = new JXG.Line(board, p1, p2, attr);
+
             if (constrained) {
                 el.constrained = true;
                 el.funp1 = parents[0];
                 el.funp2 = parents[1];
-            } else {
+            } else if (!doTransform) {
                 el.isDraggable = true;
             }
 
