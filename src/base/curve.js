@@ -1825,6 +1825,10 @@ define([
      *                     <p>
      *                     Default values are a=-10 and b=10.
      *                     </p>
+     * <p>
+     * Additionally, a curve can be created by providing a curve and a transformation (or an array of transformations).
+     * The result is a curve which is the transformation of the supplied curve.
+     *
      * @see JXG.Curve
      * @example
      * // Parametric curve
@@ -1901,6 +1905,27 @@ define([
      *              {strokeColor:'red', name:"curve", strokeWidth:5, fixed: false}); // Draggable curve
      *  c.addParents(p);
      * })();
+     * </script><pre>
+     *
+     * @example
+     *         // The curve cu2 is the reflection of cu1 against line li
+     *         var li = board.create('line', [1,1,1], {strokeColor: '#aaaaaa'});
+     *         var reflect = board.create('transform', [li], {type: 'reflect'});
+     *         var cu1 = board.create('curve', [[-1, -1, -0.5, -1, -1, -0.5], [-3, -2, -2, -2, -2.5, -2.5]]);
+     *         var cu2 = board.create('curve', [cu1, reflect], {strokeColor: 'red'});
+     *
+     * </pre><div id="866dc7a2-d448-11e7-93b3-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     *     (function() {
+     *         var board = JXG.JSXGraph.initBoard('866dc7a2-d448-11e7-93b3-901b0e1b8723',
+     *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+     *             var li = board.create('line', [1,1,1], {strokeColor: '#aaaaaa'});
+     *             var reflect = board.create('transform', [li], {type: 'reflect'});
+     *             var cu1 = board.create('curve', [[-1, -1, -0.5, -1, -1, -0.5], [-3, -2, -2, -2, -2.5, -2.5]]);
+     *             var cu2 = board.create('curve', [cu1, reflect], {strokeColor: 'red'});
+     *
+     *     })();
+     *
      * </script><pre>
      *
      *
