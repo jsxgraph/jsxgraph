@@ -1692,15 +1692,16 @@ define([
     /**
      * @class This element is used to construct a reflected point.
      * @pseudo
-     * @description A reflected point is given by a point and a line.
-     * It is determined by the reflection of the given point
+     * @description A reflected element (point, line or curve) is given by a given
+     * object of the same type and a line.
+     * It is determined by the reflection of the given element
      * against the given line.
      * @constructor
      * @name Reflection
-     * @type JXG.Point
-     * @augments JXG.Point
+     * @type JXG.GeometryElement
+     * @augments JXG.GeometryElement
      * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
-     * @param {JXG.Point_JXG.Line} p,l The reflection point is the reflection of p against l.
+     * @param {JXG.Point|JXG.Line|JXG.Curve_JXG.Line} p,l The reflection element is the reflection of p against l.
      * @example
      * var p1 = board.create('point', [0.0, 4.0]);
      * var p2 = board.create('point', [6.0, 1.0]);
@@ -1717,6 +1718,43 @@ define([
      *   var rpex1_p3 = rpex1_board.create('point', [3.0, 3.0]);
      *   var rpex1_rp1 = rpex1_board.create('reflection', [rpex1_p3, rpex1_l1]);
      * </script><pre>
+     * @example
+     *         // Reflection of more elements
+     *         // reflection line
+     *         var li = board.create('line', [1,1,1], {strokeColor: '#aaaaaa'});
+     *         var reflect = board.create('transform', [li], {type: 'reflect'});
+     *
+     *         var p1 = board.create('point', [-3,-1], {name: "A"});
+     *         var q1 = board.create('reflection', [p1, li], {name: "A'"});
+     *
+     *         var l1 = board.create('line', [1,-5,1]);
+     *         var l2 = board.create('reflection', [l1, li]);
+     *
+     *         var cu1 = board.create('curve', [[-1, -1, -0.5, -1, -1, -0.5], [-3, -2, -2, -2, -2.5, -2.5]]);
+     *         var cu2 = board.create('reflection', [cu1, li], {strokeColor: 'red'});
+     *
+     * </pre><div id="8f763af4-d449-11e7-93b3-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     *     (function() {
+     *         var board = JXG.JSXGraph.initBoard('8f763af4-d449-11e7-93b3-901b0e1b8723',
+     *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+     *             // reflection line
+     *             var li = board.create('line', [1,1,1], {strokeColor: '#aaaaaa'});
+     *             var reflect = board.create('transform', [li], {type: 'reflect'});
+     *
+     *             var p1 = board.create('point', [-3,-1], {name: "A"});
+     *             var q1 = board.create('reflection', [p1, li], {name: "A'"});
+     *
+     *             var l1 = board.create('line', [1,-5,1]);
+     *             var l2 = board.create('reflection', [l1, li]);
+     *
+     *             var cu1 = board.create('curve', [[-1, -1, -0.5, -1, -1, -0.5], [-3, -2, -2, -2, -2.5, -2.5]]);
+     *             var cu2 = board.create('reflection', [cu1, li], {strokeColor: 'red'});
+     *
+     *     })();
+     *
+     * </script><pre>
+     *
      */
     JXG.createReflection = function (board, parents, attributes) {
         var l, org, r, t, i;
