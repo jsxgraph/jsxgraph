@@ -139,7 +139,9 @@ define([
 
         this.methodMap = Type.deepCopy(this.methodMap, {
             generateTerm: 'generateTerm',
-            setTerm: 'generateTerm'
+            setTerm: 'generateTerm',
+            move: 'moveTo',
+            moveTo: 'moveTo'
         });
     };
 
@@ -1739,6 +1741,30 @@ define([
             }
 
             return p;
+        },
+
+        /**
+         * Shift the curve by the vector 'where'.
+         *
+         * @param {Array} where Array containing the x and y coordinate of the target location.
+         * @returns {JXG.Curve} Reference to itself.
+         */
+        moveTo: function(where) {
+            // TODO add animation
+            var delta = [], p;
+            if (this.points.length > 0 && !Type.evaluate(this.visProp.fixed)) {
+                p = this.points[0];
+                if (where.length === 3) {
+                    delta = [where[0] - p.usrCoords[0],
+                            where[1] - p.usrCoords[1],
+                            where[2] - p.usrCoords[2]];
+                } else {
+                    delta = [where[0] - p.usrCoords[1],
+                            where[1] - p.usrCoords[2]];
+                }
+                this.setPosition(Const.COORDS_BY_USER, delta);
+            }
+            return this;
         }
     });
 

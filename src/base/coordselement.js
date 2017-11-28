@@ -1527,7 +1527,8 @@ define([
                     return i / steps;
                 };
 
-            if (!Type.exists(time) || time === 0 || (Math.abs(where.usrCoords[0] - this.coords.usrCoords[0]) > Mat.eps)) {
+            if (!Type.exists(time) || time === 0 ||
+                (Math.abs(where.usrCoords[0] - this.coords.usrCoords[0]) > Mat.eps)) {
                 this.setPosition(Const.COORDS_BY_USER, where.usrCoords);
                 return this.board.update(this);
             }

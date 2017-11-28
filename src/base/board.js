@@ -1305,11 +1305,16 @@ define([
             } else if (Type.isPoint(obj) || obj.type === Const.OBJECT_TYPE_GLIDER) {
                 xy.push(obj.coords.usrCoords);
             } else if (obj.elementClass === Const.OBJECT_CLASS_CURVE) {
-                if (Type.exists(obj.parents)) {
-                    len = obj.parents.length;
-                    for (i = 0; i < len; i++) {
-                        xy.push(this.select(obj.parents[i]).coords.usrCoords);
-                    }
+                // if (Type.exists(obj.parents)) {
+                //     len = obj.parents.length;
+                //     if (len > 0) {
+                //         for (i = 0; i < len; i++) {
+                //             xy.push(this.select(obj.parents[i]).coords.usrCoords);
+                //         }
+                //     } else
+                // }
+                if (obj.points.length > 0) {
+                    xy.push(obj.points[0].usrCoords);
                 }
             } else {
                 try {
