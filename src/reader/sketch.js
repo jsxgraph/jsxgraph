@@ -256,7 +256,11 @@
                         set_str += ', strokeColor: \'' + step.args.strokeColor + '\'';
                         set_str += ', opacity: \'' + step.args.opacity + '\'';
                     }
-                    set_str += ', name: "' + step.args.name + '">>; ';
+                    set_str += ', name: "' + step.args.name + '"';
+                    if (step.args.name !== '') {
+                        set_str += ', withLabel: true';
+                    }
+                    set_str += '>>; ';
                     reset_str = 'delete ' + step.dest_id + '; ';
                     break;
 
