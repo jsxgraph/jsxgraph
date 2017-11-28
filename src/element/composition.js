@@ -388,7 +388,6 @@ define([
         return t;
     };
 
-
     /**
      * @class This element is used to provide a constructor for a perpendicular segment.
      * @pseudo
@@ -1693,7 +1692,8 @@ define([
     /**
      * @class This element is used to construct a reflected point.
      * @pseudo
-     * @description A reflected point is given by a point and a line. It is determined by the reflection of the given point
+     * @description A reflected point is given by a point and a line.
+     * It is determined by the reflection of the given point
      * against the given line.
      * @constructor
      * @name Reflection
@@ -1719,58 +1719,79 @@ define([
      * </script><pre>
      */
     JXG.createReflection = function (board, parents, attributes) {
-        var l, p, r, t, i;
+        var l, org, r, t, i;
 
         for (i = 0; i < parents.length; ++i) {
             parents[i] = board.select(parents[i]);
         }
-        if (Type.isPoint(parents[0]) && parents[1].elementClass === Const.OBJECT_CLASS_LINE) {
-            p = Type.providePoints(board, [parents[0]], attributes, 'point')[0];
-            l = parents[1];
-        } else if (Type.isPoint(parents[1]) && parents[0].elementClass === Const.OBJECT_CLASS_LINE) {
-            p = Type.providePoints(board, [parents[1]], attributes, 'point')[0];
-            l = parents[0];
+
+        // if (Type.isPoint(parents[0]) && parents[1].elementClass === Const.OBJECT_CLASS_LINE) {
+        //     org = Type.providePoints(board, [parents[0]], attributes, 'point')[0];
+        //     l = parents[1];
+        // } else if (Type.isPoint(parents[1]) && parents[0].elementClass === Const.OBJECT_CLASS_LINE) {
+        //     org = Type.providePoints(board, [parents[1]], attributes, 'point')[0];
+        //     l = parents[0];
+        if (Type.isPoint(parents[0])) {
+            org = Type.providePoints(board, [parents[0]], attributes, 'point')[0];
+        } else if (parents[0].elementClass === Const.OBJECT_CLASS_CURVE ||
+                    parents[0].elementClass === Const.OBJECT_CLASS_LINE) {
+            org = parents[0];
         } else {
             throw new Error("JSXGraph: Can't create reflection point with parent types '" +
                 (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
-                "\nPossible parent types: [line,point]");
+                "\nPossible parent types: [point|curve, line|point]");
+        }
+
+        if (parents[1].elementClass === Const.OBJECT_CLASS_LINE) {
+            l = parents[1];
+        } else {
+            throw new Error("JSXGraph: Can't create reflection point with parent types '" +
+                (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
+                "\nPossible parent types: [point|curve, line|point]");
         }
 
         t = Transform.createTransform(board, [l], {type: 'reflect'});
-        r = Point.createPoint(board, [p, t], attributes);
-        p.addChild(r);
+        if (Type.isPoint(org)) {
+            r = Point.createPoint(board, [org, t], attributes);
+        } else if (org.elementClass === Const.OBJECT_CLASS_CURVE){
+            r = Curve.createCurve(board, [org, t], attributes);
+        } else if (org.elementClass === Const.OBJECT_CLASS_LINE){
+            r = Line.createLine(board, [org, t], attributes);
+        }
+        org.addChild(r);
         l.addChild(r);
 
         r.elType = 'reflection';
         r.setParents(parents);
-
         r.prepareUpdate().update();
 
-        r.generatePolynomial = function () {
-            /*
-             *  Reflection takes a point R and a line L and creates point P, which is the reflection of R on L.
-             *  L is defined by two points A and B.
-             *
-             * So we have two conditions:
-             *
-             *   (a)   RP  _|_  AB            (orthogonality condition)
-             *   (b)   AR  ==   AP            (distance condition)
-             *
-             */
-            var a1 = l.point1.symbolic.x,
-                a2 = l.point1.symbolic.y,
-                b1 = l.point2.symbolic.x,
-                b2 = l.point2.symbolic.y,
-                p1 = p.symbolic.x,
-                p2 = p.symbolic.y,
-                r1 = r.symbolic.x,
-                r2 = r.symbolic.y,
+        if (Type.isPoint(r)) {
+            r.generatePolynomial = function () {
+                /*
+                 *  Reflection takes a point R and a line L and creates point P, which is the reflection of R on L.
+                 *  L is defined by two points A and B.
+                 *
+                 * So we have two conditions:
+                 *
+                 *   (a)   RP  _|_  AB            (orthogonality condition)
+                 *   (b)   AR  ==   AP            (distance condition)
+                 *
+                 */
+                var a1 = l.point1.symbolic.x,
+                    a2 = l.point1.symbolic.y,
+                    b1 = l.point2.symbolic.x,
+                    b2 = l.point2.symbolic.y,
+                    p1 = org.symbolic.x,
+                    p2 = org.symbolic.y,
+                    r1 = r.symbolic.x,
+                    r2 = r.symbolic.y,
 
-                poly1 = ['((', r2, ')-(', p2, '))*((', a2, ')-(', b2, '))+((', a1, ')-(', b1, '))*((', r1, ')-(', p1, '))'].join(''),
-                poly2 = ['((', r1, ')-(', a1, '))^2+((', r2, ')-(', a2, '))^2-((', p1, ')-(', a1, '))^2-((', p2, ')-(', a2, '))^2'].join('');
+                    poly1 = ['((', r2, ')-(', p2, '))*((', a2, ')-(', b2, '))+((', a1, ')-(', b1, '))*((', r1, ')-(', p1, '))'].join(''),
+                    poly2 = ['((', r1, ')-(', a1, '))^2+((', r2, ')-(', a2, '))^2-((', p1, ')-(', a1, '))^2-((', p2, ')-(', a2, '))^2'].join('');
 
-            return [poly1, poly2];
-        };
+                return [poly1, poly2];
+            };
+        }
 
         return r;
     };
