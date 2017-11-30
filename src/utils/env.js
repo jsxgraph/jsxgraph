@@ -126,7 +126,8 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          * @returns {Boolean}
          */
         supportsPointerEvents: function () {
-            return this.isBrowser && window.navigator && (window.navigator.msPointerEnabled || window.navigator.pointerEnabled);
+            return !!(this.isBrowser && window.navigator &&
+                    (window.PointerEvent || window.navigator.pointerEnabled || window.navigator.msPointerEnabled));
         },
 
         /**
