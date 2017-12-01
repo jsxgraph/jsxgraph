@@ -1291,6 +1291,18 @@ define([
             strokeColor: '#666666',
             highlightStrokeWidth: 1,
             highlightStrokeColor: '#888888',
+
+
+            /**
+             * Show / hide ticks.
+             *
+             * Deprecated. Suggested alternative is "ticks: {visible: false}"
+             *
+             * @type Boolean
+             * @name Axis#withTicks
+             * @default true
+             * @deprecated
+             */
             withTicks: true,
             straightFirst: true,
             straightLast: true,
