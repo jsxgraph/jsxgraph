@@ -1780,7 +1780,7 @@ define([
                     parents[0].type === Const.OBJECT_TYPE_POLYGON) {
             org = parents[0];
         } else {
-            throw new Error("JSXGraph: Can't create reflection point with parent types '" +
+            throw new Error("JSXGraph: Can't create reflection element with parent types '" +
                 (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
                 "\nPossible parent types: [point|line|curve|polygon, line]");
         }
@@ -1788,7 +1788,7 @@ define([
         if (parents[1].elementClass === Const.OBJECT_CLASS_LINE) {
             l = parents[1];
         } else {
-            throw new Error("JSXGraph: Can't create reflection point with parent types '" +
+            throw new Error("JSXGraph: Can't create reflected element with parent types '" +
                 (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
                 "\nPossible parent types: [point|line|curve|polygon, line]");
         }
@@ -1803,15 +1803,14 @@ define([
         }  else if (org.type === Const.OBJECT_TYPE_POLYGON){
             r = Line.createPolygon(board, [org, t], attributes);
         } else {
-            throw new Error("JSXGraph: Can't create reflection point with parent types '" +
+            throw new Error("JSXGraph: Can't create reflected element with parent types '" +
                 (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
                 "\nPossible parent types: [point|line|curve|polygon, line]");
         }
         org.addChild(r);
         l.addChild(r);
-
         r.elType = 'reflection';
-        r.setParents(parents);
+        r.setParents([org, l]);
         r.prepareUpdate().update();
 
         if (Type.isPoint(r)) {
@@ -1869,32 +1868,71 @@ define([
      * </script><pre>
      */
     JXG.createMirrorPoint = function (board, parents, attributes) {
-        var p, i;
+        var org, m, r, t;
 
-        parents = Type.providePoints(board, parents, attributes, 'point');
-        if (Type.isPoint(parents[0]) && Type.isPoint(parents[1])) {
-            p = Point.createPoint(board, [
-                function () {
-                    return Geometry.rotation(parents[0], parents[1], Math.PI, board);
-                }
-            ], attributes);
+        // parents = Type.providePoints(board, parents, attributes, 'point');
+        // if (Type.isPoint(parents[0]) && Type.isPoint(parents[1])) {
+        //     p = Point.createPoint(board, [
+        //         function () {
+        //             return Geometry.rotation(parents[0], parents[1], Math.PI, board);
+        //         }
+        //     ], attributes);
+        //
+        //     for (i = 0; i < 2; i++) {
+        //         parents[i].addChild(p);
+        //     }
+        //
+        //     p.elType = 'mirrorpoint';
+        //     p.setParents(parents);
+        //
+        // } else {
+        //     throw new Error("JSXGraph: Can't create mirror point with parent types '" +
+        //         (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
+        //         "\nPossible parent types: [point,point]");
+        // }
+        /////////////////////////////////
+        if (Type.isPoint(parents[0])) {
+            org = Type.providePoints(board, [parents[0]], attributes, 'point')[0];
+        } else if (parents[0].elementClass === Const.OBJECT_CLASS_CURVE ||
+                    parents[0].elementClass === Const.OBJECT_CLASS_LINE ||
+                    parents[0].type === Const.OBJECT_TYPE_POLYGON) {
+            org = parents[0];
+        } else {
+            throw new Error("JSXGraph: Can't create mirrot element with parent types '" +
+                (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
+                "\nPossible parent types: [point|line|curve|polygon, line]");
+        }
 
-            for (i = 0; i < 2; i++) {
-                parents[i].addChild(p);
-            }
+        if (Type.isPoint(parents[1])) {
+            m = Type.providePoints(board, [parents[1]], attributes, 'point')[0];
+        } else {
+            throw new Error("JSXGraph: Can't create mirror element with parent types '" +
+                (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
+                "\nPossible parent types: [point|line|curve|polygon, line]");
+        }
 
-            p.elType = 'mirrorpoint';
-            p.setParents(parents);
-
+        t = Transform.createTransform(board, [Math.PI, m], {type: 'rotate'});
+        if (Type.isPoint(org)) {
+            r = Point.createPoint(board, [org, t], attributes);
+        } else if (org.elementClass === Const.OBJECT_CLASS_CURVE){
+            r = Curve.createCurve(board, [org, t], attributes);
+        } else if (org.elementClass === Const.OBJECT_CLASS_LINE){
+            r = Line.createLine(board, [org, t], attributes);
+        }  else if (org.type === Const.OBJECT_TYPE_POLYGON){
+            r = Line.createPolygon(board, [org, t], attributes);
         } else {
             throw new Error("JSXGraph: Can't create mirror point with parent types '" +
                 (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
-                "\nPossible parent types: [point,point]");
+                "\nPossible parent types: [point|line|curve|polygon, line]");
         }
 
-        p.prepareUpdate().update();
+        org.addChild(r);
+        m.addChild(r);
+        r.elType = 'mirrorpoint';
+        r.setParents([org, m]);
+        r.prepareUpdate().update();
 
-        return p;
+        return r;
     };
 
     /**
