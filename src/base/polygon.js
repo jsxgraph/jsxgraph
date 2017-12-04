@@ -917,6 +917,10 @@ define([
      * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
      * @param {Array} vertices The polygon's vertices. If the first and the last vertex don't match the first one will be
      * added to the array by the creator.
+     *
+     * Additionally, a polygon can be created by providing a polygon and a transformation (or an array of transformations).
+     * The result is a polygon which is the transformation of the supplied polygon.
+     *
      * @example
      * var p1 = board.create('point', [0.0, 2.0]);
      * var p2 = board.create('point', [2.0, 1.0]);
@@ -969,12 +973,25 @@ define([
      * </script><pre>
      */
     JXG.createPolygon = function (board, parents, attributes) {
-        var el, i, points = [],
+        var el, i, le, obj,
+            points = [],
             attr, p;
 
-        points = Type.providePoints(board, parents, attributes, 'polygon', ['vertices']);
-        if (points === false) {
-            throw new Error("JSXGraph: Can't create polygon with parent types other than 'point' and 'coordinate arrays' or a function returning an array of coordinates");
+        obj = board.select(parents[0]);
+        if (Type.isObject(obj) && obj.type === Const.OBJECT_TYPE_POLYGON &&
+            Type.isTransformationOrArray(parents[1])) {
+
+            le = obj.vertices.length - 1;
+            attr = Type.copyAttributes(attributes, board.options, 'polygon', 'vertices');
+            for (i = 0; i < le; i++) {
+                points.push(board.create('point', [obj.vertices[i], parents[1]], attr));
+            }
+
+        } else {
+            points = Type.providePoints(board, parents, attributes, 'polygon', ['vertices']);
+            if (points === false) {
+                throw new Error("JSXGraph: Can't create polygon with parent types other than 'point' and 'coordinate arrays' or a function returning an array of coordinates. Alternatively, a polygon and a transformation can be supplied");
+            }
         }
 
         attr = Type.copyAttributes(attributes, board.options, 'polygon');
@@ -983,7 +1000,6 @@ define([
 
         return el;
     };
-
 
     /**
      * @class Constructs a regular polygon. It needs two points which define the base line and the number of vertices.
@@ -1025,6 +1041,28 @@ define([
      *       cc1 = board.create('regularpolygon', [p1, p2, p3]);
      * })();
      * </script><pre>
+     *
+     * @example
+     *         // Line of reflection
+     *         var li = board.create('line', [1,1,1], {strokeColor: '#aaaaaa'});
+     *         var reflect = board.create('transform', [li], {type: 'reflect'});
+     *         var pol1 = board.create('polygon', [[-3,-2], [-1,-4], [-2,-0.5]]);
+     *         var pol2 = board.create('polygon', [pol1, reflect]);
+     *
+     * </pre><div id="58fc3078-d8d1-11e7-93b3-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     *     (function() {
+     *         var board = JXG.JSXGraph.initBoard('58fc3078-d8d1-11e7-93b3-901b0e1b8723',
+     *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+     *             var li = board.create('line', [1,1,1], {strokeColor: '#aaaaaa'});
+     *             var reflect = board.create('transform', [li], {type: 'reflect'});
+     *             var pol1 = board.create('polygon', [[-3,-2], [-1,-4], [-2,-0.5]]);
+     *             var pol2 = board.create('polygon', [pol1, reflect]);
+     *
+     *     })();
+     *
+     * </script><pre>
+     *
      */
     JXG.createRegularPolygon = function (board, parents, attributes) {
         var el, i, n,
