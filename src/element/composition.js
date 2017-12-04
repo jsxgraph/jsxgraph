@@ -1693,15 +1693,15 @@ define([
      * @class This element is used to construct a reflected point.
      * @pseudo
      * @description A reflected element (point, line or curve) is given by a given
-     * object of the same type and a line.
+     * object of the same type and a line of reflection.
      * It is determined by the reflection of the given element
-     * against the given line.
+     * across the given line.
      * @constructor
      * @name Reflection
      * @type JXG.GeometryElement
      * @augments JXG.GeometryElement
      * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
-     * @param {JXG.Point|JXG.Line|JXG.Curve_JXG.Line} p,l The reflection element is the reflection of p against l.
+     * @param {JXG.Point|JXG.Line|JXG.Curve|JXG:POLYGON_JXG.Line} p,l The reflection element is the reflection of p across the line l.
      * @example
      * var p1 = board.create('point', [0.0, 4.0]);
      * var p2 = board.create('point', [6.0, 1.0]);
@@ -1733,6 +1733,8 @@ define([
      *         var cu1 = board.create('curve', [[-1, -1, -0.5, -1, -1, -0.5], [-3, -2, -2, -2, -2.5, -2.5]]);
      *         var cu2 = board.create('reflection', [cu1, li], {strokeColor: 'red'});
      *
+     *         var pol1 = board.create('polygon', [[-3,-2], [-1,-4], [-2,-0.5]]);
+     *         var pol2 = board.create('reflection', [pol1, li]);
      * </pre><div id="8f763af4-d449-11e7-93b3-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
      *     (function() {
@@ -1751,6 +1753,8 @@ define([
      *             var cu1 = board.create('curve', [[-1, -1, -0.5, -1, -1, -0.5], [-3, -2, -2, -2, -2.5, -2.5]]);
      *             var cu2 = board.create('reflection', [cu1, li], {strokeColor: 'red'});
      *
+     *             var pol1 = board.create('polygon', [[-3,-2], [-1,-4], [-2,-0.5]]);
+     *             var pol2 = board.create('reflection', [pol1, li]);
      *     })();
      *
      * </script><pre>
@@ -1772,12 +1776,13 @@ define([
         if (Type.isPoint(parents[0])) {
             org = Type.providePoints(board, [parents[0]], attributes, 'point')[0];
         } else if (parents[0].elementClass === Const.OBJECT_CLASS_CURVE ||
-                    parents[0].elementClass === Const.OBJECT_CLASS_LINE) {
+                    parents[0].elementClass === Const.OBJECT_CLASS_LINE ||
+                    parents[0].type === Const.OBJECT_TYPE_POLYGON) {
             org = parents[0];
         } else {
             throw new Error("JSXGraph: Can't create reflection point with parent types '" +
                 (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
-                "\nPossible parent types: [point|curve, line|point]");
+                "\nPossible parent types: [point|line|curve|polygon, line]");
         }
 
         if (parents[1].elementClass === Const.OBJECT_CLASS_LINE) {
@@ -1785,7 +1790,7 @@ define([
         } else {
             throw new Error("JSXGraph: Can't create reflection point with parent types '" +
                 (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
-                "\nPossible parent types: [point|curve, line|point]");
+                "\nPossible parent types: [point|line|curve|polygon, line]");
         }
 
         t = Transform.createTransform(board, [l], {type: 'reflect'});
@@ -1795,6 +1800,12 @@ define([
             r = Curve.createCurve(board, [org, t], attributes);
         } else if (org.elementClass === Const.OBJECT_CLASS_LINE){
             r = Line.createLine(board, [org, t], attributes);
+        }  else if (org.type === Const.OBJECT_TYPE_POLYGON){
+            r = Line.createPolygon(board, [org, t], attributes);
+        } else {
+            throw new Error("JSXGraph: Can't create reflection point with parent types '" +
+                (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
+                "\nPossible parent types: [point|line|curve|polygon, line]");
         }
         org.addChild(r);
         l.addChild(r);
