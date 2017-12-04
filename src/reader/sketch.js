@@ -264,8 +264,8 @@
                     reset_str = 'delete ' + step.dest_id + '; ';
                     break;
 
-                case JXG.GENTYPE_MIRRORPOINT:
-                    set_str = assign + 'mirrorpoint(' + step.src_ids[1] + ', ' + step.src_ids[0] + ') <<' + attrid;
+                case JXG.GENTYPE_MIRRORELEMENT:
+                    set_str = assign + 'mirrorelement(' + step.src_ids[0] + ', ' + step.src_ids[1] + ') <<' + attrid;
                     set_str += 'fillColor: \'' + step.args.fillColor + '\'';
                     if (JXG.exists(step.args.strokeColor)) {
                         set_str += ', strokeColor: \'' + step.args.strokeColor + '\'';

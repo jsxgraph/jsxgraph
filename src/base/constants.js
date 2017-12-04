@@ -114,7 +114,7 @@ define(['jxg'], function (JXG) {
         GENTYPE_AXIS: 2,
         GENTYPE_MID: 3,
         GENTYPE_REFLECTION: 4,
-        GENTYPE_MIRRORPOINT: 5,
+        GENTYPE_MIRRORELEMENT: 5,
         GENTYPE_TANGENT: 6,
         GENTYPE_PARALLEL: 7,
         GENTYPE_BISECTORLINES: 8,

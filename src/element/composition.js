@@ -1701,7 +1701,7 @@ define([
      * @type JXG.GeometryElement
      * @augments JXG.GeometryElement
      * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
-     * @param {JXG.Point|JXG.Line|JXG.Curve|JXG:POLYGON_JXG.Line} p,l The reflection element is the reflection of p across the line l.
+     * @param {JXG.Point|JXG.Line|JXG.Curve|JXG.Polygon_JXG.Line} p,l The reflection element is the reflection of p across the line l.
      * @example
      * var p1 = board.create('point', [0.0, 4.0]);
      * var p2 = board.create('point', [6.0, 1.0]);
@@ -1845,52 +1845,61 @@ define([
     };
 
     /**
-     * @class A mirror point will be constructed.
+     * @class A mirror element will be constructed.
      * @pseudo
-     * @description A mirror point is determined by the reflection of a given point against another given point.
+     * @description A mirror element is determined by the reflection of a given point across another given point.
      * @constructor
-     * @name Mirrorpoint
-     * @type JXG.Point
-     * @augments JXG.Point
+     * @name Mirrorelement
+     * @type JXG.GeometryElement
+     * @augments JXG.GeometryElement
      * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
-     * @param {JXG.Point_JXG.Point} p1,p2 The constructed point is the reflection of p2 against p1.
+     * @param {JXG.Point|JXG.Line|JXG.Curve|JXG.Ppolygon_JXG.Point} p1,p2 The constructed element is the mirror image of p2 across p1.
      * @example
-     * var p1 = board.create('point', [3.0, 3.0]);
-     * var p2 = board.create('point', [6.0, 1.0]);
+     *         // point of reflection
+     *         var mirr = board.create('point', [-1,-1], {color: '#aaaaaa'});
+     *         var t = board.create('transform', [Math.PI, mirr], {type: 'rotate'});
      *
-     * var mp1 = board.create('mirrorpoint', [p1, p2]);
-     * </pre><div class="jxgbox" id="7eb2a814-6c4b-4caa-8cfa-4183a948d25b" style="width: 400px; height: 400px;"></div>
+     *         var p1 = board.create('point', [-3,-1], {name: "A"});
+     *         var q1 = board.create('mirrorelement', [p1, mirr], {name: "A'"});
+     *
+     *         var l1 = board.create('line', [1,-5,1]);
+     *         var l2 = board.create('mirrorelement', [l1, mirr]);
+     *
+     *         var cu1 = board.create('curve', [[-1, -1, -0.5, -1, -1, -0.5], [-3, -2, -2, -2, -2.5, -2.5]]);
+     *         var cu2 = board.create('mirrorelement', [cu1, mirr], {strokeColor: 'red'});
+     *
+     *         var pol1 = board.create('polygon', [[-3,-2], [-1,-4], [-2,-0.5]]);
+     *         var pol2 = board.create('mirrorelement', [pol1, mirr]);
+     *
+     * </pre><div id="026c779c-d8d9-11e7-93b3-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
-     *   var mpex1_board = JXG.JSXGraph.initBoard('7eb2a814-6c4b-4caa-8cfa-4183a948d25b', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
-     *   var mpex1_p1 = mpex1_board.create('point', [3.0, 3.0]);
-     *   var mpex1_p2 = mpex1_board.create('point', [6.0, 1.0]);
-     *   var mpex1_mp1 = mpex1_board.create('mirrorpoint', [mpex1_p1, mpex1_p2]);
+     *     (function() {
+     *         var board = JXG.JSXGraph.initBoard('026c779c-d8d9-11e7-93b3-901b0e1b8723',
+     *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+     *             // point of reflection
+     *             var mirr = board.create('point', [-1,-1], {color: '#aaaaaa'});
+     *             var t = board.create('transform', [Math.PI, mirr], {type: 'rotate'});
+     *
+     *             var p1 = board.create('point', [-3,-1], {name: "A"});
+     *             var q1 = board.create('mirrorelement', [p1, mirr], {name: "A'"});
+     *
+     *             var l1 = board.create('line', [1,-5,1]);
+     *             var l2 = board.create('mirrorelement', [l1, mirr]);
+     *
+     *             var cu1 = board.create('curve', [[-1, -1, -0.5, -1, -1, -0.5], [-3, -2, -2, -2, -2.5, -2.5]]);
+     *             var cu2 = board.create('mirrorelement', [cu1, mirr], {strokeColor: 'red'});
+     *
+     *             var pol1 = board.create('polygon', [[-3,-2], [-1,-4], [-2,-0.5]]);
+     *             var pol2 = board.create('mirrorelement', [pol1, mirr]);
+     *
+     *
+     *     })();
+     *
      * </script><pre>
      */
-    JXG.createMirrorPoint = function (board, parents, attributes) {
+    JXG.createMirrorElement = function (board, parents, attributes) {
         var org, m, r, t;
 
-        // parents = Type.providePoints(board, parents, attributes, 'point');
-        // if (Type.isPoint(parents[0]) && Type.isPoint(parents[1])) {
-        //     p = Point.createPoint(board, [
-        //         function () {
-        //             return Geometry.rotation(parents[0], parents[1], Math.PI, board);
-        //         }
-        //     ], attributes);
-        //
-        //     for (i = 0; i < 2; i++) {
-        //         parents[i].addChild(p);
-        //     }
-        //
-        //     p.elType = 'mirrorpoint';
-        //     p.setParents(parents);
-        //
-        // } else {
-        //     throw new Error("JSXGraph: Can't create mirror point with parent types '" +
-        //         (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
-        //         "\nPossible parent types: [point,point]");
-        // }
-        /////////////////////////////////
         if (Type.isPoint(parents[0])) {
             org = Type.providePoints(board, [parents[0]], attributes, 'point')[0];
         } else if (parents[0].elementClass === Const.OBJECT_CLASS_CURVE ||
@@ -1933,6 +1942,35 @@ define([
         r.prepareUpdate().update();
 
         return r;
+    };
+
+    /**
+     * @class A mirror point will be constructed.
+     * @pseudo
+     * @description A mirror point is determined by the reflection of a given point against another given point.
+     * @constructor
+     * @name Mirrorpoint
+     * @type JXG.Point
+     * @augments JXG.Point
+     * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
+     * @param {JXG.Point_JXG.Point} p1,p2 The constructed point is the reflection of p2 against p1.
+     *
+     * This method is superseeded by the more general {@link JXG.createMirrorElement}.
+     * @example
+     * var p1 = board.create('point', [3.0, 3.0]);
+     * var p2 = board.create('point', [6.0, 1.0]);
+     *
+     * var mp1 = board.create('mirrorpoint', [p1, p2]);
+     * </pre><div class="jxgbox" id="7eb2a814-6c4b-4caa-8cfa-4183a948d25b" style="width: 400px; height: 400px;"></div>
+     * <script type="text/javascript">
+     *   var mpex1_board = JXG.JSXGraph.initBoard('7eb2a814-6c4b-4caa-8cfa-4183a948d25b', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
+     *   var mpex1_p1 = mpex1_board.create('point', [3.0, 3.0]);
+     *   var mpex1_p2 = mpex1_board.create('point', [6.0, 1.0]);
+     *   var mpex1_mp1 = mpex1_board.create('mirrorpoint', [mpex1_p1, mpex1_p2]);
+     * </script><pre>
+     */
+    JXG.createMirrorPoint = function (board, parents, attributes) {
+        return JXG.createMirrorElement(board, parents, attributes);
     };
 
     /**
@@ -2540,6 +2578,7 @@ define([
     JXG.registerElement('incircle', JXG.createIncircle);
     JXG.registerElement('integral', JXG.createIntegral);
     JXG.registerElement('midpoint', JXG.createMidpoint);
+    JXG.registerElement('mirrorelement', JXG.createMirrorElement);
     JXG.registerElement('mirrorpoint', JXG.createMirrorPoint);
     JXG.registerElement('normal', JXG.createNormal);
     JXG.registerElement('orthogonalprojection', JXG.createOrthogonalProjection);
@@ -2562,6 +2601,7 @@ define([
         createIncircle: JXG.createIncircle,
         createIntegral: JXG.createIntegral,
         createMidpoint: JXG.createMidpoint,
+        createMirrorElement: JXG.createMirrorElement,
         createMirrorPoint: JXG.createMirrorPoint,
         createNormal: JXG.createNormal,
         createOrthogonalProjection: JXG.createOrthogonalProjection,
