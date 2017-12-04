@@ -1947,7 +1947,7 @@ define([
                     this.dataY.push(obj.points[i].usrCoords[2]);
                 }
                 return this;
-            }
+            };
             cu.addTransform(parents[1]);
             return cu;
         } else {
