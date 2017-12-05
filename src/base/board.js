@@ -1446,12 +1446,12 @@ define([
          */
         addPointerEventHandlers: function () {
             if (!this.hasPointerHandlers && Env.isBrowser) {
-                if (window.PointerEvent || window.navigator.pointerEnabled) {  // IE11+
-                    Env.addEvent(this.containerObj, 'pointerdown', this.pointerDownListener, this);
-                    Env.addEvent(this.containerObj, 'pointermove', this.pointerMoveListener, this);
-                } else {
+                if (window.navigator.msPointerEnabled) {  // IE10-
                     Env.addEvent(this.containerObj, 'MSPointerDown', this.pointerDownListener, this);
                     Env.addEvent(this.containerObj, 'MSPointerMove', this.pointerMoveListener, this);
+                } else {
+                    Env.addEvent(this.containerObj, 'pointerdown', this.pointerDownListener, this);
+                    Env.addEvent(this.containerObj, 'pointermove', this.pointerMoveListener, this);
                 }
                 Env.addEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
                 Env.addEvent(this.containerObj, 'DOMMouseScroll', this.mouseWheelListener, this);
@@ -1508,22 +1508,22 @@ define([
          */
         removePointerEventHandlers: function () {
             if (this.hasPointerHandlers && Env.isBrowser) {
-                if (window.PointerEvent || window.navigator.pointerEnabled) {  // IE11+
-                    Env.removeEvent(this.containerObj, 'pointerdown', this.pointerDownListener, this);
-                    Env.removeEvent(this.containerObj, 'pointermove', this.pointerMoveListener, this);
-                } else {
+                if (window.navigator.msPointerEnabled) {  // IE10-
                     Env.removeEvent(this.containerObj, 'MSPointerDown', this.pointerDownListener, this);
                     Env.removeEvent(this.containerObj, 'MSPointerMove', this.pointerMoveListener, this);
+                } else {
+                    Env.removeEvent(this.containerObj, 'pointerdown', this.pointerDownListener, this);
+                    Env.removeEvent(this.containerObj, 'pointermove', this.pointerMoveListener, this);
                 }
 
                 Env.removeEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
                 Env.removeEvent(this.containerObj, 'DOMMouseScroll', this.mouseWheelListener, this);
 
                 if (this.hasPointerUp) {
-                    if (window.PointerEvent || window.navigator.pointerEnabled) {  // IE11+
-                        Env.removeEvent(this.document, 'pointerup', this.pointerUpListener, this);
-                    } else {
+                    if (window.navigator.msPointerEnabled) {  // IE10-
                         Env.removeEvent(this.document, 'MSPointerUp', this.pointerUpListener, this);
+                    } else {
+                        Env.removeEvent(this.document, 'pointerup', this.pointerUpListener, this);
                     }
                     this.hasPointerUp = false;
                 }
@@ -1794,10 +1794,10 @@ define([
                 found, target, result;
 
             if (!this.hasPointerUp) {
-                if (window.PointerEvent || window.navigator.pointerEnabled) {  // IE11+
-                    Env.addEvent(this.document, 'pointerup', this.pointerUpListener, this);
-                } else {
+                if (window.navigator.msPointerEnabled) {  // IE10-
                     Env.addEvent(this.document, 'MSPointerUp', this.pointerUpListener, this);
+                } else {
+                    Env.addEvent(this.document, 'pointerup', this.pointerUpListener, this);
                 }
                 this.hasPointerUp = true;
             }
@@ -2095,10 +2095,10 @@ define([
             // if (this.touches.length === 0) {
             if (this._board_touches.length === 0) {
                 if (this.hasPointerUp) {
-                    if (window.PointerEvent || window.navigator.pointerEnabled) {  // IE11+
-                        Env.removeEvent(this.document, 'pointerup', this.pointerUpListener, this);
-                    } else {
+                    if (window.navigator.msPointerEnabled) {  // IE10-
                         Env.removeEvent(this.document, 'MSPointerUp', this.pointerUpListener, this);
+                    } else {
+                        Env.removeEvent(this.document, 'pointerup', this.pointerUpListener, this);
                     }
                     this.hasPointerUp = false;
                 }
