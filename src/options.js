@@ -1103,7 +1103,7 @@ define([
          * </pre>
          */
         precision: {
-            touch: 30,
+            touch: 15,
             touchMax: 100,
             mouse: 4,
             epsilon: 0.0001,
