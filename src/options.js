@@ -1263,6 +1263,15 @@ define([
              * @visprop
              */
 
+            /**
+             * Type of arc. Possible values are 'minor', 'major', and 'auto'.
+             *
+             * @type String
+             * @name Arc#selection
+             * @default 'auto'
+             */
+            selection: 'auto',
+
             label: {},
             firstArrow: false,
             lastArrow: false,
@@ -2963,6 +2972,15 @@ define([
             highlightFillOpacity: 0.3,
             highlightOnSector: false,
             highlightStrokeWidth: 0,
+
+            /**
+             * Type of sector. Possible values are 'minor', 'major', and 'auto'.
+             *
+             * @type String
+             * @name Sector#selection
+             * @default 'auto'
+             */
+            selection: 'auto',
 
             /**
              * Attributes for sub-element arc. It is only available, if the sector is defined by three points.
