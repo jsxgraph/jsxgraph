@@ -1,26 +1,26 @@
 <?php
 /*
-    Copyright 2008-2013
+    Copyright 2008-2017
         Alfred Wassermann,
         Peter Wilfahrt
 
     This file is part of JSXGraph.
 
     JSXGraph is free software dual licensed under the GNU LGPL or MIT License.
-    
+
     You can redistribute it and/or modify it under the terms of the
-    
+
       * GNU Lesser General Public License as published by
         the Free Software Foundation, either version 3 of the License, or
         (at your option) any later version
       OR
       * MIT License: https://github.com/jsxgraph/jsxgraph/blob/master/LICENSE.MIT
-    
+
     JSXGraph is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Lesser General Public License for more details.
-    
+
     You should have received a copy of the GNU Lesser General Public License and
     the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
     and <http://opensource.org/licenses/MIT/>.
@@ -32,12 +32,12 @@
  *
  * @author Alfred Wassermann
  * @author Peter Wilfahrt
- * @version 0.3.1
+ * @version 0.99.6
  */
 
 /** Requirements:
  *  Allowing upload of .gxt-Files:
- *  - Add the following two lines to LocalSettings.php: 
+ *  - Add the following two lines to LocalSettings.php:
  *      $wgFileExtensions[] = 'gxt';
  *      $wgVerifyMimeType = false;
  *  - Place this file into:
@@ -63,26 +63,26 @@
  *   box:      default: jxgbox
  *   board:    default: brd
  */
-$jsxgraph_version = '0.3.1';
+$jsxgraph_version = '0.99.6';
 
 // CHANGE this to load local files:
-$outputURI        = 'https://jsxgraph.uni-bayreuth.de/distrib';
-$outputURICDN     = 'https://cdnjs.cloudflare.com/ajax/libs/jsxgraph/0.94';
+$outputURI        = '//jsxgraph.uni-bayreuth.de/distrib';
+$outputURICDN     = '//cdnjs.cloudflare.com/ajax/libs/jsxgraph/0.99.6';
 
 if(!defined('MEDIAWIKI')) {
   echo("This is an extension to the MediaWiki package and cannot be run standalone.\n");
   die(-1);
 }
-		
+
 //Avoid unstubbing $wgParser too early on modern (1.12+) MW versions, as per r35980
 if ( defined( 'MW_SUPPORTS_PARSERFIRSTCALLINIT' ) ) {
-    $wgHooks['ParserFirstCallInit'][] = 'jsxgraphSetup';
-    $wgHooks['ParserAfterTidy'][] = 'jsxgraphParserAfterTidy';
+  $wgHooks['ParserFirstCallInit'][] = 'jsxgraphSetup';
+  $wgHooks['ParserAfterTidy'][] = 'jsxgraphParserAfterTidy';
 } else {
-    $wgExtensionFunctions[] = 'jsxgraphSetup';
-    $wgHooks['ParserAfterTidy'][] = 'jsxgraphParserAfterTidy';
+  $wgExtensionFunctions[] = 'jsxgraphSetup';
+  $wgHooks['ParserAfterTidy'][] = 'jsxgraphParserAfterTidy';
 }
- 
+
 $wgExtensionCredits['parserhook'][] = array(
   'name'        => 'JSXGraph MediaWiki Plugin',
   'author'      => 'Alfred Wassermann, Peter Wilfahrt',
@@ -90,13 +90,13 @@ $wgExtensionCredits['parserhook'][] = array(
   'description' => 'Add [https://www.jsxgraph.org JSXGraph] to MediaWiki pages.',
   'version'     => $jsxgraph_version
 );
- 
+
 function jsxgraphSetup() {
-    global $wgParser;
-    $wgParser->setHook( 'jsxgraph', 'jsxgraphOutput' );
-    return true;
+  global $wgParser;
+  $wgParser->setHook( 'jsxgraph', 'jsxgraphOutput' );
+  return true;
 }
- 
+
 $markerList = array();
 function jsxgraphOutput($input, $args, $parser) {
   global $wgServer; // URL of the WIKI's server
@@ -113,7 +113,7 @@ function jsxgraphOutput($input, $args, $parser) {
     $error_message = "Missing parameter (width or height, filename, string or input).";
   }
   $output  = "<!-- JSXGraph MediaWiki extension " . $jsxgraph_version . " -->";
-  
+
   $markercount = count($markerList);
   if ($markercount>0) {
     $defaultBoard = "brd".$markercount;
@@ -130,22 +130,23 @@ function jsxgraphOutput($input, $args, $parser) {
   // Load necessary stylesheet und scripts
   if ($markercount==0) {
     $output .= "<link rel='stylesheet' type='text/css' href='".$outputURI."/jsxgraph.css' />";
-    if (preg_match("/^XXXX132\.180/",getenv("REMOTE_ADDR"))) {
-	     $output .= "<script src='".$outputURI."/jsxgraphcore.js' type='text/javascript'></script>";
-	     $output .= "<script src='".$outputURI."/GeonextReader.js' type='text/javascript'></script>";
-	 } else {
-        $output .= "<script src='".$outputURICDN."/jsxgraphcore.js' type='text/javascript'></script>";
-        $output .= "<script src='".$outputURICDN."/GeonextReader.min.js' type='text/javascript'></script>";
+    if (FALSE && preg_match("/^132\.180/",getenv("REMOTE_ADDR"))) {
+      // Use the local version when developing
+	    $output .= "<script src='".$outputURI."/jsxgraphcore.js' type='text/javascript'></script>";
+	    $output .= "<script src='".$outputURI."/GeonextReader.js' type='text/javascript'></script>";
+	  } else {
+      $output .= "<script src='".$outputURICDN."/jsxgraphcore.js' type='text/javascript'></script>";
+      $output .= "<script src='".$outputURICDN."/GeonextReader.min.js' type='text/javascript'></script>";
     }
   }
 
-  if (isset($args['modules']) && trim($args['modules'])!="") { 
+  if (isset($args['modules']) && trim($args['modules'])!="") {
     $modules = explode(',', $args['modules']);
     for ($i = 0; $i < count($modules); $i++) {
       $output .= "<script src='".$outputURI."/".$modules[$i].".js' type='text/javascript'></script>";
     }
   }
-  
+
   // Output div
   $output .= "<div id='". $outputDivId ."' class='jxgbox' style='width:". $width ."px; height:". $height ."px;'></div>";
   $output .= "<script type='text/javascript'>";
@@ -172,7 +173,7 @@ function jsxgraphOutput($input, $args, $parser) {
 
   // if error occured, discard and output error message
   if ($error_message != "no error") {
-        $output = "<p>Error in MediaWiki extension (JSXGraph.php): <em>" . $error_message. "</em></p>" . $CRLF;
+    $output = "<p>Error in MediaWiki extension (JSXGraph.php): <em>" . $error_message. "</em></p>" . $CRLF;
   }
 
   // Send the output to the browser
@@ -181,18 +182,18 @@ function jsxgraphOutput($input, $args, $parser) {
   return $marker;
 }
 
-function jsxgraphParserAfterTidy($parser, $text) {
-    // find markers in $text
-    // replace markers with actual output
-    global $markerList;
-    $keys = array();
-    $marker_count = count($markerList);
-    
-    for ($i = 0; $i < $marker_count; $i++) {
-        $keys[] = 'jsxgraph-marker' . $i . '-jsxgraph';
-    }
-    $text = str_replace($keys, $markerList, $text);
-    return true;
+function jsxgraphParserAfterTidy($parser, &$text) {
+  // find markers in $text
+  // replace markers with actual output
+  global $markerList;
+  $keys = array();
+  $marker_count = count($markerList);
+
+  for ($i = 0; $i < $marker_count; $i++) {
+    $keys[] = 'jsxgraph-marker' . $i . '-jsxgraph';
+  }
+  $text = str_replace($keys, $markerList, $text);
+  return true;
 }
 
 ?>
