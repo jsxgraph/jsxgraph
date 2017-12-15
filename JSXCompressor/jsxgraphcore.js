@@ -54000,7 +54000,7 @@ define('base/ticks',[
     };
 
     /**
-     * @class Hashes can be used to mark congruent lines.
+     * @class Hatches can be used to mark congruent lines.
      * @pseudo
      * @description
      * @name Hatch
