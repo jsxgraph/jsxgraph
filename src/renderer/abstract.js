@@ -946,12 +946,20 @@ define([
                         if (Type.evaluate(el.visProp.usemathjax)) {
                             // typesetting directly might not work because mathjax was not loaded completely
                             // see http://www.mathjax.org/docs/1.1/typeset.html
-                            MathJax.Hub.Queue(['Typeset', MathJax.Hub, el.rendNode]);
+                            try {
+                                MathJax.Hub.Queue(['Typeset', MathJax.Hub, el.rendNode]);
+                            } catch (e) {
+                                JXG.debug('MathJax (not yet) loaded');
+                            }
                         } else if (Type.evaluate(el.visProp.useasciimathml)) {
                             // This is not a constructor.
                             // See http://www1.chapman.edu/~jipsen/mathml/asciimath.html for more information
                             // about AsciiMathML and the project's source code.
-                            AMprocessNode(el.rendNode, false);
+                            try {
+                                AMprocessNode(el.rendNode, false);
+                            } catch (e) {
+                                JXG.debug('AsciiMathML (not yet) loaded');
+                            }
                         }
                     }
                     this.transformImage(el, el.transformations);
