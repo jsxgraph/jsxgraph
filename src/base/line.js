@@ -1469,15 +1469,16 @@ define([
                         return -Numerics.D(g)(p.position);
                     }
                 ], attributes);
-                p.addChild(tangent);
 
+                p.addChild(tangent);
                 // this is required for the geogebra reader to display a slope
                 tangent.glider = p;
             } else {  // curveType 'plot'
                 // equation of the line segment: 0 = y*(x1-x2) + x*(y2-y1) + y1*x2-x1*y2
                 tangent = board.create('line', [
                     function () {
-                        var i = Math.floor(p.position);
+                        var i = Math.floor(p.position),
+                            p1, p2;
 
                         if (i === c.numberPoints - 1) {
                             i--;
@@ -1487,10 +1488,16 @@ define([
                             return 1;
                         }
 
-                        return c.Y(i) * c.X(i + 1) - c.X(i) * c.Y(i + 1);
+                        // The curve points are transformed (if there is a transformation)
+                        // c.X(i) is not transformed.
+                        p1 = c.points[i].usrCoords;
+                        p2 = c.points[i + 1].usrCoords;
+                        return p1[2] * p2[1] - p1[1] * p2[2];
+                        //return c.Y(i) * c.X(i + 1) - c.X(i) * c.Y(i + 1);
                     },
                     function () {
-                        var i = Math.floor(p.position);
+                        var i = Math.floor(p.position),
+                            p1, p2, q1, q2;
 
                         if (i === c.numberPoints - 1) {
                             i--;
@@ -1500,10 +1507,16 @@ define([
                             return 0;
                         }
 
-                        return c.Y(i + 1) - c.Y(i);
+                        // The curve points are transformed (if there is a transformation)
+                        // c.X(i) is not transformed.
+                        p1 = c.points[i].usrCoords;
+                        p2 = c.points[i + 1].usrCoords;
+                        return p2[2] - p1[2];
+                        // return c.Y(i + 1) - c.Y(i);
                     },
                     function () {
-                        var i = Math.floor(p.position);
+                        var i = Math.floor(p.position),
+                            p1, p2, q1, q2;
 
                         if (i === c.numberPoints - 1) {
                             i--;
@@ -1513,11 +1526,15 @@ define([
                             return 0.0;
                         }
 
-                        return c.X(i) - c.X(i + 1);
+                        // The curve points are transformed (if there is a transformation)
+                        // c.X(i) is not transformed.
+                        p1 = c.points[i].usrCoords;
+                        p2 = c.points[i + 1].usrCoords;
+                        return p1[1] - p2[1];
+                        // return c.X(i) - c.X(i + 1);
                     }], attributes);
 
                 p.addChild(tangent);
-
                 // this is required for the geogebra reader to display a slope
                 tangent.glider = p;
             }
