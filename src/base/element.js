@@ -906,7 +906,8 @@ define([
         hideElement: function () {
             JXG.deprecated('Element.hideElement()', 'Element.setDisplayRendNode()');
 
-            this.visPropCalc.visible = false;
+            // TODO: Does override value of  this.visProp.visible
+            this.visPropCalc.visible = this.visProp.visible = false;
             this.board.renderer.display(this, false);
 
             if (Type.exists(this.label) && this.hasLabel) {
@@ -927,7 +928,7 @@ define([
         showElement: function () {
             JXG.deprecated('Element.showElement()', 'Element.setDisplayRendNode()');
 
-            this.visPropCalc.visible = true;
+            this.visPropCalc.visible = this.visProp.visible = true;
             this.board.renderer.display(this, true);
 
             if (Type.exists(this.label) && this.hasLabel && this.label.hiddenByParent) {
@@ -1260,7 +1261,8 @@ define([
                             if (!this.label) {
                                 this.createLabel();
                             }
-                            this.label.setDisplayRendNode(Type.evaluate(this.visProp.visible));
+                            this.label.showElement();
+                            //this.label.setDisplayRendNode(Type.evaluate(this.visProp.visible));
                         }
                         this.hasLabel = value;
                         break;
