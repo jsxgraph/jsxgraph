@@ -316,7 +316,7 @@ define([
 
         // documented in geometry element
         el.getLabelAnchor = function () {
-            var coords, vecx, vecy, len,
+            var coords, vec, vecx, vecy, len,
                 angle = Geometry.rad(this.radiuspoint, this.center, this.anglepoint),
                 dx = 10 / this.board.unitX,
                 dy = 10 / this.board.unitY,
@@ -324,7 +324,8 @@ define([
                 pmc = this.center.coords.usrCoords,
                 bxminusax = p2c[1] - pmc[1],
                 byminusay = p2c[2] - pmc[2],
-                ev_s = Type.evaluate(this.visProp.selection);
+                ev_s = Type.evaluate(this.visProp.selection),
+                l_vp = this.label ? this.label.visProp : this.visProp.label;
 
             // If this is uncommented, the angle label can not be dragged
             //if (Type.exists(this.label)) {
@@ -347,8 +348,11 @@ define([
             len = Math.sqrt(vecx * vecx + vecy * vecy);
             vecx = vecx * (len + dx) / len;
             vecy = vecy * (len + dy) / len;
+            vec = [pmc[1] + vecx, pmc[2] + vecy];
+            
+            l_vp.position = Geometry.calcLabelQuadrant(Geometry.rad([1,0],[0,0],vec));
 
-            return new Coords(Const.COORDS_BY_USER, [pmc[1] + vecx, pmc[2] + vecy], this.board);
+            return new Coords(Const.COORDS_BY_USER, vec, this.board);
         };
 
         // documentation in jxg.circle

@@ -3687,26 +3687,26 @@ define([
             anchor: null,
 
             /**
-             * The horizontal alignment of the text. Possible values include <tt>'left'</tt>, <tt>'middle'</tt>, and
+             * The horizontal alignment of the text. Possible values include <tt>'auto</tt>, <tt>'left'</tt>, <tt>'middle'</tt>, and
              * <tt>'right'</tt>.
              *
              * @name anchorX
              * @memberOf Text.prototype
-             * @default 'left'
+             * @default 'auto'
              * @type String
              */
-            anchorX: 'left',
+            anchorX: 'auto',
 
             /**
-             * The vertical alignment of the text. Possible values include <tt>'top'</tt>, <tt>'middle'</tt>, and
+             * The vertical alignment of the text. Possible values include <tt>'auto</tt>, <tt>'top'</tt>, <tt>'middle'</tt>, and
              * <tt>'bottom'</tt>.
              *
              * @name anchorY
              * @memberOf Text.prototype
-             * @default 'middle'
+             * @default 'auto'
              * @type String
              */
-            anchorY: 'middle',
+            anchorY: 'auto',
 
             /**
              * CSS class of the text in non-highlighted view.

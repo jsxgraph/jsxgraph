@@ -916,6 +916,19 @@ define([
         },
 
         /**
+         * Calculates the visProp.position corresponding to a given angle.
+         * @param {number} angle angle in radians. Must be in range (-2pi,2pi).
+         */
+        calcLabelQuadrant: function(angle) {
+            var q;
+            if (angle < 0) {
+                angle += 2*Math.PI;
+            }
+            q = Math.floor((angle+Math.PI/8)/(Math.PI/4))%8;
+            return ['rt','urt','top','ulft','lft','llft','lrt'][q];
+        },
+
+        /**
          * The vectors <tt>p2-p1</tt> and <tt>i2-i1</tt> are supposed to be collinear. If their cosine is positive
          * they point into the same direction otherwise they point in opposite direction.
          * @param {JXG.Coords} p1

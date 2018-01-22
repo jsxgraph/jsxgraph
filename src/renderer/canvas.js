@@ -593,8 +593,8 @@ define([
         // already documented in JXG.AbstractRenderer
         drawInternalText: function (el) {
             var ev_fs = Type.evaluate(el.visProp.fontsize),
-                ev_ax = Type.evaluate(el.visProp.anchorx),
-                ev_ay = Type.evaluate(el.visProp.anchory),
+                ev_ax = el.getAnchorX(),
+                ev_ay = el.getAnchorY(),
                 context = this.context;
 
             context.save();

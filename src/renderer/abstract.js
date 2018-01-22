@@ -872,7 +872,7 @@ define([
                         c = el.coords.scrCoords[1];
                         // webkit seems to fail for extremely large values for c.
                         c = Math.abs(c) < 1000000 ? c : 1000000;
-                        ax = Type.evaluate(el.visProp.anchorx);
+                        ax = el.getAnchorX();
 
                         if (ax === 'right') {
                             v = Math.floor(el.board.canvasWidth - c);
@@ -901,7 +901,7 @@ define([
                         // Vertical
                         c = el.coords.scrCoords[2] + this.vOffsetText;
                         c = Math.abs(c) < 1000000 ? c : 1000000;
-                        ay = Type.evaluate(el.visProp.anchory);
+                        ay = el.getAnchorY();
 
                         if (ay === 'bottom') {
                             v = Math.floor(el.board.canvasHeight - c);
