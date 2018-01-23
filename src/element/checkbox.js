@@ -144,7 +144,7 @@ define([
 
         par = [parents[0], parents[1],
             '<span style="display:inline">' +
-            '<input type="checkbox" /><span></span>' +
+            '<input type="checkbox" /><label for=""></label>' +
             '</span>'
             ];
 
@@ -161,6 +161,7 @@ define([
         t.rendNodeLabel.innerHTML = parents[2];
         t.rendNodeCheckbox.id = t.rendNode.id + '_checkbox';
         t.rendNodeLabel.id = t.rendNode.id + '_label';
+        t.rendNodeLabel.setAttribute('for', t.rendNodeCheckbox.id);
 
         // This sets the font-size of the checkbox itself
         t.visPropOld.fontsize = "0px";
