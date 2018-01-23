@@ -40,7 +40,6 @@ if __name__ == '__main__':
         sys.exit(0) 
     f = open(filename, "r")
     text = f.read()
-    #text = base64.b64encode(zlib.compress(urllib.quote(text), 9))
     text = urllib.unquote(zlib.decompress(base64.b64decode(text)))
     print text
     
