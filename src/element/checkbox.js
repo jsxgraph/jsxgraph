@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2017
+    Copyright 2008-2018
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -73,6 +73,9 @@ define([
      *                     x and y are numbers. The position is variable if x or y are functions.
      *                     <p>
      *                     The label of the input element may be given as string.
+     *                     <p>
+     *                     The value of the checkbox can be controlled with the attribute <tt>checked</tt>
+     *                     <p>The HTML node can be accessed with <tt>element.rendNodeCheckbox</tt>
      *
      * @example
      *   // Create a checkbox element at position [0,3].
@@ -167,8 +170,9 @@ define([
         t.visPropOld.fontsize = "0px";
         board.renderer.updateTextStyle(t, false);
 
-        t._value = false;
+        t.rendNodeCheckbox.checked = attr.checked;
 
+        t._value = attr.checked;
         t.Value = function () {
             return this._value;
         };

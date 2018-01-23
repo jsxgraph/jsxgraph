@@ -1508,7 +1508,19 @@ define([
              * @type Boolean
              * @default false
              */
-            disabled: false
+            disabled: false,
+
+            /**
+             * Control the attribute "checked" of the HTML checkbox.
+             *
+             * @name checked
+             * @memberOf Checkbox.prototype
+             *
+             * @type Boolean
+             * @default false
+             */
+             checked: false
+
 
             /**#@-*/
         },
