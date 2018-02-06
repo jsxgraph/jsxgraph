@@ -2188,50 +2188,49 @@ define([
 
 
         p = parents[0];
-                    q = [];
+        q = [];
 
-                    // given as [x[], y[]]
-                    if (p.length === 2 && Type.isArray(p[0]) && Type.isArray(p[1]) && p[0].length === p[1].length) {
-                        for (i = 0; i < p[0].length; i++) {
-                            q[i] = [];
-                            if (Type.isFunction(p[0][i])) {
-                                q[i].push(p[0][i]());
-                            } else {
-                                q[i].push(p[0][i]);
-                            }
+        // given as [x[], y[]]
+        if (p.length === 2 && Type.isArray(p[0]) && Type.isArray(p[1]) && p[0].length === p[1].length) {
+            for (i = 0; i < p[0].length; i++) {
+                q[i] = [];
+                if (Type.isFunction(p[0][i])) {
+                    q[i].push(p[0][i]());
+                } else {
+                    q[i].push(p[0][i]);
+                }
 
-                            if (Type.isFunction(p[1][i])) {
-                                q[i].push(p[1][i]());
-                            } else {
-                                q[i].push(p[1][i]);
-                            }
-                        }
+                if (Type.isFunction(p[1][i])) {
+                    q[i].push(p[1][i]());
+                } else {
+                    q[i].push(p[1][i]);
+                }
+            }
+        } else {
+            for (i = 0; i < p.length; i++) {
+                if (Type.isPoint(p[i])) {
+                    q.push(p[i]);
+                // given as [[x1,y1], [x2, y2], ...]
+                } else if (Type.isArray(p[i]) && p[i].length === 2) {
+                //for (j = 0; j < p[i].length; j++) {
+                    q[i] = [];
+                    if (Type.isFunction(p[i][0])) {
+                        q[i].push(p[i][0]());
                     } else {
-                        for (i = 0; i < p.length; i++) {
-                            if (Type.isPoint(p[i])) {
-                                q.push(p[i]);
-                            // given as [[x1,y1], [x2, y2], ...]
-                            } else if (Type.isArray(p[i]) && p[i].length === 2) {
-                                //for (j = 0; j < p[i].length; j++) {
-                                    q[i] = [];
-                                    if (Type.isFunction(p[i][0])) {
-                                        q[i].push(p[i][0]());
-                                    } else {
-                                        q[i].push(p[i][0]);
-                                    }
-
-                                    if (Type.isFunction(p[i][1])) {
-                                        q[i].push(p[i][1]());
-                                    } else {
-                                        q[i].push(p[i][1]);
-                                    }
-                                //}
-                            } else if (Type.isFunction(p[i]) && p[i]().length === 2) {
-                                q.push(parents[i]());
-                            }
-                        }
+                        q[i].push(p[i][0]);
                     }
 
+                    if (Type.isFunction(p[i][1])) {
+                        q[i].push(p[i][1]());
+                    } else {
+                        q[i].push(p[i][1]);
+                    }
+                //}
+                } else if (Type.isFunction(p[i]) && p[i]().length === 2) {
+                    q.push(parents[i]());
+                }
+            }
+        }
 
         points = Type.providePoints(board, q, attributes, 'cardinalspline', ['points']);
         //points = parents[0];
