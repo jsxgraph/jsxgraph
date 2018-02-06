@@ -1333,31 +1333,40 @@ define([
         /**
          * Convert the SVG construction into an HTML canvas image.
          * This works for all SVG supporting browsers.
-         * For IE it works from version 9.
-         * But HTML texts are ignored on IE. The drawing is done with a delay of
-         * 200 ms. Otherwise there are problems with IE.
+         * For IE it works from version 9, with the execption that HTML texts
+         * are ignored on IE. The drawing is done with a delay of
+         * 200 ms. Otherwise there would be problems with IE.
+         *
          *
          * @param {String} canvasId Id of an HTML canvas element
          * @param {Number} w Width in pixel of the dumped image, i.e. of the canvas tag.
          * @param {Number} h Height in pixel of the dumped image, i.e. of the canvas tag.
+         * @param {Boolean} takeForeignObjectOut If true, the foreignObject tag is taken out from the SVG root.
+         * This is necessary for Safari.
          * @returns {Object}          the svg renderer object.
          *
          * @example
          * 	board.renderer.dumpToCanvas('canvas');
          */
-        dumpToCanvas: function(canvasId, w, h) {
+        dumpToCanvas: function(canvasId, w, h, takeForeignObjectOut) {
             var svgRoot = this.svgRoot,
                 btoa = window.btoa || Base64.encode,
                 svg, tmpImg, cv, ctx,
                 wOrg, hOrg,
-                uriPayload,
-                DOMURL, svgBlob, url;
+                // uriPayload,
+                // DOMURL, svgBlob, url,
+                virtualNode, doc;
 
             // Move all HTML tags (beside the SVG root) of the container
             // to the foreignObject element inside of the svgRoot node
             if (this.container.hasChildNodes() && Type.exists(this.foreignObjLayer)) {
                 while (svgRoot.nextSibling) {
                     this.foreignObjLayer.appendChild(svgRoot.nextSibling);
+                }
+                if (takeForeignObjectOut === true) {
+                    doc = board.containerObj.ownerDocument;
+                    virtualNode = doc.createElement('div');
+                    virtualNode.appendChild(this.foreignObjLayer);
                 }
             }
 
@@ -1367,16 +1376,16 @@ define([
 
             svg = new XMLSerializer().serializeToString(svgRoot);
 
-            // In IE we have to remove the second appearance of the namespace again.
+            if (false) {
+                // Debug: example svg image
+                svg = '<svg xmlns="http://www.w3.org/2000/svg" version="1.0" width="220" height="220"><rect width="66" height="30" x="21" y="32" stroke="#204a87" stroke-width="2" fill="none" /></svg>';
+            }
+
+            // In IE we have to remove the namespace again.
             if ((svg.match(/xmlns=\"http:\/\/www.w3.org\/2000\/svg\"/g) || []).length > 1) {
                 svg = svg.replace(/xmlns=\"http:\/\/www.w3.org\/2000\/svg\"/g, '');
             }
 
-/*
-            if ((svg.match(/xmlns=\"http:\/\/www.w3.org\/1999\/xhtml\"/g) || []).length > 0) {
-                svg = svg.replace(/xmlns=\"http:\/\/www.w3.org\/1999\/xhtml\"/g, '');
-            }
-*/
             // Safari fails if the svg string contains a "&nbsp;"
             svg = svg.replace(/&nbsp;/g, ' ');
 
@@ -1396,13 +1405,6 @@ define([
 
             tmpImg = new Image();
             if (true) {
-                tmpImg.onload = function () {
-                    // IE needs a pause...
-                    setTimeout(function(){
-                        ctx.drawImage(tmpImg, 0, 0, w, h);
-                    }, 200);
-                };
-
                 tmpImg.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
                 // uriPayload = encodeURIComponent(svg.replace(/\n+/g, '')) // remove newlines // encode URL-unsafe characters
                 //             .replace(/%20/g, ' ') // put spaces back in
@@ -1411,6 +1413,13 @@ define([
                 //             .replace(/%2F/g, '/') // ditto slashes
                 //             .replace(/%22/g, "'");
                 // tmpImg.src = 'data:image/svg+xml,' + uriPayload;
+
+                tmpImg.onload = function () {
+                    // IE needs a pause...
+                    setTimeout(function(){
+                        ctx.drawImage(tmpImg, 0, 0, w, h);
+                    }, 200);
+                };
             } else {
                 // // Alternative version
                 // DOMURL = window.URL || window.webkitURL || window;
@@ -1430,6 +1439,9 @@ define([
             // Move all HTML tags back from
             // the foreignObject element to the container
             if (Type.exists(this.foreignObjLayer) && this.foreignObjLayer.hasChildNodes()) {
+                if (takeForeignObjectOut === true) {
+                    svgRoot.appendChild(this.foreignObjLayer);
+                }
                 while (this.foreignObjLayer.firstChild) {
                     this.container.appendChild(this.foreignObjLayer.firstChild);
                 }
@@ -1439,9 +1451,20 @@ define([
         },
 
         /**
-         * [description]
-         * @param  {[type]} board [description]
-         * @return {[type]}       [description]
+         * Display SVG image in html img-tag which enables
+         * easy download for the user.
+         *
+         * Support:
+         * <ul>
+         * <li> IE: No
+         * <li> Edge: full
+         * <li>Firefox: full
+         * <li> Chrome: full
+         * <li> Safari: supported, but no texts (to be precise, no foreignObject-element is allowed in SVG)
+         * </ul>
+         *
+         * @param  {JXG.Board} board Link to the board.
+         * @return {Object}       the svg renderer object
          */
         screenshot: function(board) {
             var node, doc, cPos,
@@ -1450,11 +1473,11 @@ define([
                 button, buttonText,
                 w, h,
                 bas = board.attr.screenshot,
-                zbar, zbarDisplay,
-                cssTxt;
+                zbar, zbarDisplay, cssTxt,
+                isDebug = false;
 
             if (this.type === 'no') {
-                return;
+                return this;
             }
 
             w = bas.scale * parseFloat(board.containerObj.style.width);
@@ -1471,23 +1494,31 @@ define([
             // Position the div exactly over the JSXGraph board
             cPos = board.getCoordsTopLeftCorner();
             node.style.position= 'absolute';
-            node.style.left = (500+ cPos[0]) + 'px';
+            node.style.left = (500 + cPos[0]) + 'px';
             node.style.top = (cPos[1]) + 'px';
 
-            // Create canvas element
-            canvas = doc.createElement('canvas');
-            id = Math.random().toString(36).substr(2, 5);
-            canvas.setAttribute('id', id);
-            canvas.setAttribute('width', w);
-            canvas.setAttribute('height', h);
-            canvas.style.width = w + 'px';
-            canvas.style.height = w + 'px';
-            canvas.style.display = 'none';
+            if (!isDebug) {
+                // Create canvas element
+                canvas = doc.createElement('canvas');
+                id = Math.random().toString(36).substr(2, 5);
+                canvas.setAttribute('id', id);
+                canvas.setAttribute('width', w);
+                canvas.setAttribute('height', h);
+                canvas.style.width = w + 'px';
+                canvas.style.height = w + 'px';
+                canvas.style.display = 'none';
+                node.appendChild(canvas);
+            } else {
+                // Debug: use canvas element
+                // 'jxgbox_canvas' from jsxdev/dump.html
+                id = 'jxgbox_canvas';
+                canvas = document.getElementById(id);
+            }
 
             img = new Image(); //doc.createElement('img');
             img.style.width = w + 'px';
             img.style.height = h + 'px';
-            //img.crossOrigin = 'anonymous';
+            // img.crossOrigin = 'anonymous';
 
             // Create close button
             button = doc.createElement('span');
@@ -1499,7 +1530,6 @@ define([
             };
 
             // Add all nodes
-            node.appendChild(canvas);
             node.appendChild(img);
             node.appendChild(button);
             board.containerObj.parentNode.appendChild(node);
@@ -1512,10 +1542,11 @@ define([
             }
 
             // Create screenshot in canvas
-            this.dumpToCanvas(id, w, h);
+            this.dumpToCanvas(id, w, h, false);
 
             // Show image in img tag
             setTimeout(function() {
+                //console.log(canvas.toDataURL('image/png'));
                 img.src = canvas.toDataURL('image/png');
             }, 400);
 
@@ -1523,6 +1554,8 @@ define([
             if (Type.exists(zbar)) {
                 zbar.style.display = zbarDisplay;
             }
+
+            return this;
         }
 
     });
