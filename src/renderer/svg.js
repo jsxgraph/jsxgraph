@@ -1341,14 +1341,14 @@ define([
          * @param {String} canvasId Id of an HTML canvas element
          * @param {Number} w Width in pixel of the dumped image, i.e. of the canvas tag.
          * @param {Number} h Height in pixel of the dumped image, i.e. of the canvas tag.
-         * @param {Boolean} takeForeignObjectOut If true, the foreignObject tag is taken out from the SVG root.
+         * @param {Boolean} ignoreTexts If true, the foreignObject tag is taken out from the SVG root.
          * This is necessary for Safari.
          * @returns {Object}          the svg renderer object.
          *
          * @example
          * 	board.renderer.dumpToCanvas('canvas');
          */
-        dumpToCanvas: function(canvasId, w, h, takeForeignObjectOut) {
+        dumpToCanvas: function(canvasId, w, h, ignoreTexts) {
             var svgRoot = this.svgRoot,
                 btoa = window.btoa || Base64.encode,
                 svg, tmpImg, cv, ctx,
@@ -1463,10 +1463,12 @@ define([
          * <li> Safari: supported, but no texts (to be precise, no foreignObject-element is allowed in SVG)
          * </ul>
          *
-         * @param  {JXG.Board} board Link to the board.
+         * @param {JXG.Board} board Link to the board.
+         * @param {Boolean} ignoreTexts If set to true, the foreignObject is taken out of the
+         *  SVGRoot and texts are not displayed. This is mandatory for Safari.
          * @return {Object}       the svg renderer object
          */
-        screenshot: function(board) {
+        screenshot: function(board, ignoreTexts) {
             var node, doc, cPos,
                 canvas, id,
                 img,
@@ -1542,7 +1544,7 @@ define([
             }
 
             // Create screenshot in canvas
-            this.dumpToCanvas(id, w, h, false);
+            this.dumpToCanvas(id, w, h, ignoreTexts);
 
             // Show image in img tag
             setTimeout(function() {
