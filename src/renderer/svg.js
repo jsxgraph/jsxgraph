@@ -170,7 +170,7 @@ define([
         }
 
         // already documented in JXG.AbstractRenderer
-        this.supportsForeignObject = document.implementation.hasFeature("www.http://w3.org/TR/SVG11/feature#Extensibility", "1.1");
+        this.supportsForeignObject = document.implementation.hasFeature("http://w3.org/TR/SVG11/feature#Extensibility", "1.1");
 
         if (this.supportsForeignObject) {
             this.foreignObjLayer = this.container.ownerDocument.createElementNS(this.svgNamespace, 'foreignObject');
@@ -1367,11 +1367,16 @@ define([
 
             svg = new XMLSerializer().serializeToString(svgRoot);
 
-            // In IE we have to remove the namespace again.
+            // In IE we have to remove the second appearance of the namespace again.
             if ((svg.match(/xmlns=\"http:\/\/www.w3.org\/2000\/svg\"/g) || []).length > 1) {
                 svg = svg.replace(/xmlns=\"http:\/\/www.w3.org\/2000\/svg\"/g, '');
             }
 
+/*
+            if ((svg.match(/xmlns=\"http:\/\/www.w3.org\/1999\/xhtml\"/g) || []).length > 0) {
+                svg = svg.replace(/xmlns=\"http:\/\/www.w3.org\/1999\/xhtml\"/g, '');
+            }
+*/
             // Safari fails if the svg string contains a "&nbsp;"
             svg = svg.replace(/&nbsp;/g, ' ');
 
@@ -1407,19 +1412,19 @@ define([
                 //             .replace(/%22/g, "'");
                 // tmpImg.src = 'data:image/svg+xml,' + uriPayload;
             } else {
-                // Alternative version
-                DOMURL = window.URL || window.webkitURL || window;
-                svgBlob = new Blob([svg], {type: 'image/svg+xml'});
-                url = DOMURL.createObjectURL(svgBlob);
-                tmpImg.src = url;
-
-                tmpImg.onload = function () {
-                    // IE needs a pause...
-                    setTimeout(function(){
-                        ctx.drawImage(tmpImg, 0, 0, w, h);
-                    }, 200);
-                    DOMURL.revokeObjectURL(url);
-                };
+                // // Alternative version
+                // DOMURL = window.URL || window.webkitURL || window;
+                // svgBlob = new Blob([svg], {type: 'image/svg+xml'});
+                // url = DOMURL.createObjectURL(svgBlob);
+                // tmpImg.src = url;
+                //
+                // tmpImg.onload = function () {
+                //     // IE needs a pause...
+                //     setTimeout(function(){
+                //         ctx.drawImage(tmpImg, 0, 0, w, h);
+                //     }, 200);
+                //     DOMURL.revokeObjectURL(url);
+                // };
             }
 
             // Move all HTML tags back from
@@ -1433,6 +1438,11 @@ define([
             return this;
         },
 
+        /**
+         * [description]
+         * @param  {[type]} board [description]
+         * @return {[type]}       [description]
+         */
         screenshot: function(board) {
             var node, doc, cPos,
                 canvas, id,
@@ -1503,6 +1513,7 @@ define([
 
             // Create screenshot in canvas
             this.dumpToCanvas(id, w, h);
+
             // Show image in img tag
             setTimeout(function() {
                 img.src = canvas.toDataURL('image/png');

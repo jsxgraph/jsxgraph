@@ -2832,7 +2832,8 @@ define([
                 layer: 5,
                 label: {
                     position: 'top'
-                }
+                },
+                visible: 'inherit'
             },
 
             /**
@@ -2847,7 +2848,8 @@ define([
                 name: '',
                 strokeColor: '#ff0000',
                 fillColor: '#ff0000',
-                fixed: false
+                fixed: false,
+                visible: 'inherit'
             },
 
             /**
