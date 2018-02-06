@@ -1460,6 +1460,7 @@ define([
         },
 
         cardinalspline: {
+            createPoints: true,
             reducePoints: 0,
             points: {
                 strokeOpacity: 0.05,

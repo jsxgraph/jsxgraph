@@ -2184,8 +2184,8 @@ define([
         }
 
         attributes = Type.copyAttributes(attributes, board.options, 'curve');
+        attributes = Type.copyAttributes(attributes, board.options, 'cardinalspline');
         attributes.curvetype = 'parameter';
-
 
         p = parents[0];
         q = [];
@@ -2232,8 +2232,21 @@ define([
             }
         }
 
-        points = Type.providePoints(board, q, attributes, 'cardinalspline', ['points']);
-        //points = parents[0];
+        if (attributes.createpoints === true) {
+            points = Type.providePoints(board, q, attributes, 'cardinalspline', ['points']);
+        } else {
+            points = [];
+            for (i = 0; i < q.length; i++) {
+                points.push(
+                    (function(ii) { return {
+                            X: function() { return q[ii][0]; },
+                            Y: function() { return q[ii][1]; }
+                        };
+                    })(i)
+                );
+            }
+        }
+
         tau = parents[1];
         type = parents[2];
 
