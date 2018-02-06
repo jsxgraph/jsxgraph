@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2017
+    Copyright 2008-2018
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -1363,8 +1363,8 @@ define([
                 while (svgRoot.nextSibling) {
                     this.foreignObjLayer.appendChild(svgRoot.nextSibling);
                 }
-                if (takeForeignObjectOut === true) {
-                    doc = board.containerObj.ownerDocument;
+                if (ignoreTexts === true) {
+                    doc = this.container.ownerDocument;
                     virtualNode = doc.createElement('div');
                     virtualNode.appendChild(this.foreignObjLayer);
                 }
@@ -1439,7 +1439,7 @@ define([
             // Move all HTML tags back from
             // the foreignObject element to the container
             if (Type.exists(this.foreignObjLayer) && this.foreignObjLayer.hasChildNodes()) {
-                if (takeForeignObjectOut === true) {
+                if (ignoreTexts === true) {
                     svgRoot.appendChild(this.foreignObjLayer);
                 }
                 while (this.foreignObjLayer.firstChild) {
@@ -1464,43 +1464,63 @@ define([
          * </ul>
          *
          * @param {JXG.Board} board Link to the board.
+         * @param {String} imgId Optional id of an img object. If given and different from the empty string,
+         * the screenshot is copied to this img object. The width and height will be set to the values of the
+         * JSXGraph container.
          * @param {Boolean} ignoreTexts If set to true, the foreignObject is taken out of the
          *  SVGRoot and texts are not displayed. This is mandatory for Safari. Default: false
          * @return {Object}       the svg renderer object
          */
-        screenshot: function(board, ignoreTexts) {
-            var node, doc, cPos,
+        screenshot: function(board, imgId, ignoreTexts) {
+            var node,
+                doc = this.container.ownerDocument,
+                parent = this.container.parentNode,
+                cPos,
                 canvas, id,
                 img,
                 button, buttonText,
                 w, h,
                 bas = board.attr.screenshot,
                 zbar, zbarDisplay, cssTxt,
+                newImg = false,
                 isDebug = false;
 
             if (this.type === 'no') {
                 return this;
             }
 
-            w = bas.scale * parseFloat(board.containerObj.style.width);
-            h = bas.scale * parseFloat(board.containerObj.style.height);
+            w = bas.scale * parseFloat(this.container.style.width);
+            h = bas.scale * parseFloat(this.container.style.height);
+
+            if (imgId == undefined && imgId !== '') {
+                newImg = true;
+                img = new Image(); //doc.createElement('img');
+                img.style.width = w + 'px';
+                img.style.height = h + 'px';
+            } else {
+                newImg = false;
+                img = doc.getElementById(imgId);
+            }
+            // img.crossOrigin = 'anonymous';
 
             // Create div which contains canvas element and close button
-            doc = board.containerObj.ownerDocument;
-            node = doc.createElement('div');
-            node.style.cssText = bas.css;
-            node.style.width = (w) + 'px';
-            node.style.height = (h) + 'px';
-            node.style.zIndex = board.containerObj.style.zIndex + 120;
+            if (newImg) {
+                node = doc.createElement('div');
+                node.style.cssText = bas.css;
+                node.style.width = (w) + 'px';
+                node.style.height = (h) + 'px';
+                node.style.zIndex = this.container.style.zIndex + 120;
 
-            // Position the div exactly over the JSXGraph board
-            cPos = board.getCoordsTopLeftCorner();
-            node.style.position= 'absolute';
-            node.style.left = (500 + cPos[0]) + 'px';
-            node.style.top = (cPos[1]) + 'px';
+                // Position the div exactly over the JSXGraph board
+                cPos = board.getCoordsTopLeftCorner();
+                node.style.position= 'absolute';
+                node.style.left = (cPos[0]) + 'px';
+                node.style.top = (cPos[1]) + 'px';
+            }
 
             if (!isDebug) {
-                // Create canvas element
+                // Create canvas element and add it to the DOM
+                // It will be removed after the image has been stored.
                 canvas = doc.createElement('canvas');
                 id = Math.random().toString(36).substr(2, 5);
                 canvas.setAttribute('id', id);
@@ -1509,7 +1529,7 @@ define([
                 canvas.style.width = w + 'px';
                 canvas.style.height = w + 'px';
                 canvas.style.display = 'none';
-                node.appendChild(canvas);
+                parent.append(canvas);
             } else {
                 // Debug: use canvas element
                 // 'jxgbox_canvas' from jsxdev/dump.html
@@ -1517,27 +1537,24 @@ define([
                 canvas = document.getElementById(id);
             }
 
-            img = new Image(); //doc.createElement('img');
-            img.style.width = w + 'px';
-            img.style.height = h + 'px';
-            // img.crossOrigin = 'anonymous';
+            if (newImg) {
+                // Create close button
+                button = doc.createElement('span');
+                buttonText = doc.createTextNode('\u2716');
+                button.style.cssText = bas.cssButton;
+                button.appendChild(buttonText);
+                button.onclick = function() {
+                    node.parentNode.removeChild(node);
+                };
 
-            // Create close button
-            button = doc.createElement('span');
-            buttonText = doc.createTextNode('\u2716');
-            button.style.cssText = bas.cssButton;
-            button.appendChild(buttonText);
-            button.onclick = function() {
-                node.parentNode.removeChild(node);
-            };
-
-            // Add all nodes
-            node.appendChild(img);
-            node.appendChild(button);
-            board.containerObj.parentNode.appendChild(node);
+                // Add all nodes
+                node.appendChild(img);
+                node.appendChild(button);
+                parent.appendChild(node);
+            }
 
             // Hide navigation bar in board
-            zbar = document.getElementById(board.containerObj.id + '_navigationbar');
+            zbar = document.getElementById(this.container.id + '_navigationbar');
             if (Type.exists(zbar)) {
                 zbarDisplay = zbar.style.display;
                 zbar.style.display = 'none';
@@ -1550,6 +1567,11 @@ define([
             setTimeout(function() {
                 //console.log(canvas.toDataURL('image/png'));
                 img.src = canvas.toDataURL('image/png');
+
+                // Remove canvas node
+                if (!isDebug) {
+                    parent.removeChild(canvas);
+                }
             }, 400);
 
             // Show navigation bar in board

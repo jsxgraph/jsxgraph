@@ -1722,7 +1722,7 @@ define([
                 if (board.attr.showscreenshot) {
                     createButton(board.attr.screenshot.symbol, function () {
                         setTimeout(function() {
-                            board.renderer.screenshot(board);
+                            board.renderer.screenshot(board, '', false);
                         }, 330);
                     });
                 }
