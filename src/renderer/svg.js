@@ -1342,7 +1342,7 @@ define([
          * @param {Number} w Width in pixel of the dumped image, i.e. of the canvas tag.
          * @param {Number} h Height in pixel of the dumped image, i.e. of the canvas tag.
          * @param {Boolean} ignoreTexts If true, the foreignObject tag is taken out from the SVG root.
-         * This is necessary for Safari.
+         * This is necessary for Safari. Default: false
          * @returns {Object}          the svg renderer object.
          *
          * @example
@@ -1465,7 +1465,7 @@ define([
          *
          * @param {JXG.Board} board Link to the board.
          * @param {Boolean} ignoreTexts If set to true, the foreignObject is taken out of the
-         *  SVGRoot and texts are not displayed. This is mandatory for Safari.
+         *  SVGRoot and texts are not displayed. This is mandatory for Safari. Default: false
          * @return {Object}       the svg renderer object
          */
         screenshot: function(board, ignoreTexts) {
