@@ -1388,9 +1388,13 @@ define([
             y = v.usrCoords[2];
 
             func0 = function (t) {
-                var c1 = x - cu.X(t),
-                    c2 = y - cu.Y(t);
+                var c1, c2;
 
+                if (t > cu.maxX() || t < cu.minX()) {
+                    return Infinity;
+                }
+                c1 = x - cu.X(t);
+                c2 = y - cu.Y(t);
                 return c1 * c1 + c2 * c2;
             };
 
@@ -1407,7 +1411,7 @@ define([
             fmin = 0.0001; //eps;
             tmin = NaN;
             for (i = 0; i < steps; i++) {
-                t = Numerics.root(func0, [tnew, tnew + delta]);
+                t = Numerics.root(func0, [Math.max(tnew, cu.minX()), Math.min(tnew + delta, cu.maxX())]);
                 ft = Math.abs(func0(t));
                 if (ft <= fmin) {
                     fmin = ft;
@@ -1421,7 +1425,7 @@ define([
             }
             t = tmin;
             // Compute "exact" t
-            t = Numerics.root(func1, [t - delta, t + delta]);
+            t = Numerics.root(func1, [Math.max(t - delta, cu.minX()), Math.min(t + delta, cu.maxX())]);
 
             ft = func1(t);
             // Is the point on the line?
@@ -2309,8 +2313,12 @@ define([
                 newCoordsObj = new Coords(Const.COORDS_BY_USER, newCoords, board);
             } else {   // 'parameter', 'polar', 'functiongraph'
                 minfunc = function (t) {
-                    var dx = x - curve.X(t),
-                        dy = y - curve.Y(t);
+                    var dx, dy;
+                    if (t < curve.minX() || t > curve.maxX()) {
+                        return NaN;
+                    }
+                    dx = x - curve.X(t);
+                    dy = y - curve.Y(t);
                     return dx * dx + dy * dy;
                 };
 
