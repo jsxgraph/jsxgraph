@@ -1459,6 +1459,7 @@ define([
             /**#@-*/
         },
 
+        /* special cardinal spline options */
         cardinalspline: {
             createPoints: true,
             reducePoints: 0,

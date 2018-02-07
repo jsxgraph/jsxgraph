@@ -1492,7 +1492,7 @@ define([
             w = bas.scale * parseFloat(this.container.style.width);
             h = bas.scale * parseFloat(this.container.style.height);
 
-            if (imgId == undefined && imgId !== '') {
+            if (imgId === undefined || imgId === '') {
                 newImg = true;
                 img = new Image(); //doc.createElement('img');
                 img.style.width = w + 'px';
