@@ -2248,6 +2248,7 @@ define([
                 mindist, dist, lbda, v, coords, d,
                 p1, p2, res,
                 minfunc, tnew, fnew, fold, delta, steps,
+                minX, maxX,
                 infty = Number.POSITIVE_INFINITY;
 
             if (!Type.exists(board)) {
@@ -2341,14 +2342,24 @@ define([
                 //t = Numerics.root(Numerics.D(minfunc), t);
                 t = Numerics.fminbr(minfunc, [t - delta, t + delta]);
 
-                if (t < curve.minX()) {
-                    t = curve.maxX() + t - curve.minX();
-                }
 
-                // Cyclically
-                if (t > curve.maxX()) {
-                    t = curve.minX() + t - curve.maxX();
-                }
+                minX = curve.minX();
+                maxX = curve.maxX();
+                // Distinction between closed and open curves is not necessary.
+                // If closed, the cyclic projection shift will work anyhow
+                // if (Math.abs(curve.X(minX) - curve.X(maxX)) < Mat.eps &&
+                //     Math.abs(curve.Y(minX) - curve.Y(maxX)) < Mat.eps) {
+                //     // Cyclically
+                //     if (t < minX) {
+                //         t = maxX + t - minX;
+                //     }
+                //     if (t > maxX) {
+                //         t = minX + t - maxX;
+                //     }
+                // } else {
+                    t = (t < minX) ? minX : t;
+                    t = (t > maxX) ? maxX : t;
+                // }
 
                 newCoordsObj = new Coords(Const.COORDS_BY_USER, [curve.X(t), curve.Y(t)], board);
             }
