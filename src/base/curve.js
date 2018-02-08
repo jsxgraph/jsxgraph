@@ -186,7 +186,7 @@ define([
          * @param {Number} t A number between {@link JXG.Curve#minX} and {@link JXG.Curve#maxX}.
          * @param {Boolean} suspendUpdate A boolean flag which is false for the
          * first call of the function during a fresh plot of the curve and true
-         * for all other calss of the function. This may be used to speed up the
+         * for all subsequent calls of the function. This may be used to speed up the
          * plotting of the curve, if the e.g. the curve depends on some input elements.
          * @returns {Number} x-coordinate of the curve at t.
          */
@@ -198,7 +198,7 @@ define([
         * @param {Number} t A number between {@link JXG.Curve#minX} and {@link JXG.Curve#maxX}.
         * @param {Boolean} suspendUpdate A boolean flag which is false for the
         * first call of the function during a fresh plot of the curve and true
-        * for all other calss of the function. This may be used to speed up the
+        * for all subsequent calls of the function. This may be used to speed up the
         * plotting of the curve, if the e.g. the curve depends on some input elements.
         * @returns {Number} y-coordinate of the curve at t.
          */
