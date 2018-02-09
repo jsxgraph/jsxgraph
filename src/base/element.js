@@ -1299,6 +1299,12 @@ define([
                             this.rendNodeTag.disabled = !!value;
                         }
                         break;
+                    case 'checked':
+                        // checkbox Is not available on initial call.
+                        if (Type.exists(this.rendNodeTag)) {
+                            this.rendNodeCheckbox.checked = !!value;
+                        }
+                            break;
                     case 'maxlength':
                         // input. Is not available on initial call.
                         if (Type.exists(this.rendNodeTag)) {

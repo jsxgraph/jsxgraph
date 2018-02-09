@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2017
+    Copyright 2008-2018
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -447,7 +447,7 @@ define([
                         newPos = c[1];
                     } else {
                         // side-effect: this.position is overwritten
-                        //this.coords.setCoordinates(Const.COORDS_BY_USER, Geometry.projectPointToCurve(this, slide, this.board).usrCoords, false);
+                        // this.coords.setCoordinates(Const.COORDS_BY_USER, Geometry.projectPointToCurve(this, slide, this.board).usrCoords, false);
                         newCoords = Geometry.projectPointToCurve(this, slide, this.board);
                         newPos = this.position; // save position for the overwriting below
                     }

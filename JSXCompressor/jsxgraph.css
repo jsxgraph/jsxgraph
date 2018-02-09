@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2013
+    Copyright 2008-2016
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -40,12 +40,29 @@
     border-radius: 10px;
     -webkit-border-radius: 10px;
     -ms-touch-action: none;
+    /* touch-action: none; */ /* Set with JavaScript */
+}
+
+.jxgbox svg text {
+    cursor: default;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 .JXGtext {
-    /* May produce artefacts in IE. Solution: setting a color explicitly. */
+    font-family: Courier, monospace; 
+    /** 
+     * The default font family is now set in 
+     * JXG.Options.text.cssdefaultstyle = 'font-family: Arial, Helvetica, Geneva, sans-serif;'
+     */
+    /* 
+        font-family: Arial, Helvetica, Geneva, sans-serif; 
+    */
+    
+    /* "background-color: transparent;" may produce artefacts in IE. Solution: setting a color explicitly. */
     background-color: transparent;
-    font-family: Arial, Helvetica, Geneva, sans-serif;
     padding: 0;
     margin: 0;
 }
@@ -56,11 +73,12 @@
     border-color: black;
 }
 
+/* CSS attributes will (permantely) overwrite attributes set in JSXGraph */
 .JXGimage {
-    opacity: 1.0;
+    /* opacity: 1.0; */
 }
 
 .JXGimageHighlight {
-    opacity: 0.6;
+    /* opacity: 0.6; */
 }
 

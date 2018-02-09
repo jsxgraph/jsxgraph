@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2017
+    Copyright 2008-2018
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -1401,9 +1401,13 @@ define([
             y = v.usrCoords[2];
 
             func0 = function (t) {
-                var c1 = x - cu.X(t),
-                    c2 = y - cu.Y(t);
+                var c1, c2;
 
+                if (t > cu.maxX() || t < cu.minX()) {
+                    return Infinity;
+                }
+                c1 = x - cu.X(t);
+                c2 = y - cu.Y(t);
                 return c1 * c1 + c2 * c2;
             };
 
@@ -1420,7 +1424,7 @@ define([
             fmin = 0.0001; //eps;
             tmin = NaN;
             for (i = 0; i < steps; i++) {
-                t = Numerics.root(func0, [tnew, tnew + delta]);
+                t = Numerics.root(func0, [Math.max(tnew, cu.minX()), Math.min(tnew + delta, cu.maxX())]);
                 ft = Math.abs(func0(t));
                 if (ft <= fmin) {
                     fmin = ft;
@@ -1434,7 +1438,7 @@ define([
             }
             t = tmin;
             // Compute "exact" t
-            t = Numerics.root(func1, [t - delta, t + delta]);
+            t = Numerics.root(func1, [Math.max(t - delta, cu.minX()), Math.min(t + delta, cu.maxX())]);
 
             ft = func1(t);
             // Is the point on the line?
@@ -2257,6 +2261,7 @@ define([
                 mindist, dist, lbda, v, coords, d,
                 p1, p2, res,
                 minfunc, tnew, fnew, fold, delta, steps,
+                minX, maxX,
                 infty = Number.POSITIVE_INFINITY;
 
             if (!Type.exists(board)) {
@@ -2322,8 +2327,12 @@ define([
                 newCoordsObj = new Coords(Const.COORDS_BY_USER, newCoords, board);
             } else {   // 'parameter', 'polar', 'functiongraph'
                 minfunc = function (t) {
-                    var dx = x - curve.X(t),
-                        dy = y - curve.Y(t);
+                    var dx, dy;
+                    if (t < curve.minX() || t > curve.maxX()) {
+                        return NaN;
+                    }
+                    dx = x - curve.X(t);
+                    dy = y - curve.Y(t);
                     return dx * dx + dy * dy;
                 };
 
@@ -2346,14 +2355,24 @@ define([
                 //t = Numerics.root(Numerics.D(minfunc), t);
                 t = Numerics.fminbr(minfunc, [t - delta, t + delta]);
 
-                if (t < curve.minX()) {
-                    t = curve.maxX() + t - curve.minX();
-                }
 
-                // Cyclically
-                if (t > curve.maxX()) {
-                    t = curve.minX() + t - curve.maxX();
-                }
+                minX = curve.minX();
+                maxX = curve.maxX();
+                // Distinction between closed and open curves is not necessary.
+                // If closed, the cyclic projection shift will work anyhow
+                // if (Math.abs(curve.X(minX) - curve.X(maxX)) < Mat.eps &&
+                //     Math.abs(curve.Y(minX) - curve.Y(maxX)) < Mat.eps) {
+                //     // Cyclically
+                //     if (t < minX) {
+                //         t = maxX + t - minX;
+                //     }
+                //     if (t > maxX) {
+                //         t = minX + t - maxX;
+                //     }
+                // } else {
+                    t = (t < minX) ? minX : t;
+                    t = (t > maxX) ? maxX : t;
+                // }
 
                 newCoordsObj = new Coords(Const.COORDS_BY_USER, [curve.X(t), curve.Y(t)], board);
             }

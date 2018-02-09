@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2017
+    Copyright 2008-2018
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -1944,6 +1944,9 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
 
                     t -= s;
                     c = coeffs[which][s];
+                    if (c === undefined) {
+                        return NaN;
+                    }
 
                     return (((c[3] * t + c[2]) * t + c[1]) * t + c[0]);
                 };

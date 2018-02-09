@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2017
+    Copyright 2008-2018
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -186,7 +186,7 @@ define([
          * @param {Number} t A number between {@link JXG.Curve#minX} and {@link JXG.Curve#maxX}.
          * @param {Boolean} suspendUpdate A boolean flag which is false for the
          * first call of the function during a fresh plot of the curve and true
-         * for all other calss of the function. This may be used to speed up the
+         * for all subsequent calls of the function. This may be used to speed up the
          * plotting of the curve, if the e.g. the curve depends on some input elements.
          * @returns {Number} x-coordinate of the curve at t.
          */
@@ -198,7 +198,7 @@ define([
         * @param {Number} t A number between {@link JXG.Curve#minX} and {@link JXG.Curve#maxX}.
         * @param {Boolean} suspendUpdate A boolean flag which is false for the
         * first call of the function during a fresh plot of the curve and true
-        * for all other calss of the function. This may be used to speed up the
+        * for all subsequent calls of the function. This may be used to speed up the
         * plotting of the curve, if the e.g. the curve depends on some input elements.
         * @returns {Number} y-coordinate of the curve at t.
          */
@@ -2184,57 +2184,69 @@ define([
         }
 
         attributes = Type.copyAttributes(attributes, board.options, 'curve');
+        attributes = Type.copyAttributes(attributes, board.options, 'cardinalspline');
         attributes.curvetype = 'parameter';
 
-
         p = parents[0];
-                    q = [];
+        q = [];
 
-                    // given as [x[], y[]]
-                    if (p.length === 2 && Type.isArray(p[0]) && Type.isArray(p[1]) && p[0].length === p[1].length) {
-                        for (i = 0; i < p[0].length; i++) {
-                            q[i] = [];
-                            if (Type.isFunction(p[0][i])) {
-                                q[i].push(p[0][i]());
-                            } else {
-                                q[i].push(p[0][i]);
-                            }
+        // given as [x[], y[]]
+        if (p.length === 2 && Type.isArray(p[0]) && Type.isArray(p[1]) && p[0].length === p[1].length) {
+            for (i = 0; i < p[0].length; i++) {
+                q[i] = [];
+                if (Type.isFunction(p[0][i])) {
+                    q[i].push(p[0][i]());
+                } else {
+                    q[i].push(p[0][i]);
+                }
 
-                            if (Type.isFunction(p[1][i])) {
-                                q[i].push(p[1][i]());
-                            } else {
-                                q[i].push(p[1][i]);
-                            }
-                        }
+                if (Type.isFunction(p[1][i])) {
+                    q[i].push(p[1][i]());
+                } else {
+                    q[i].push(p[1][i]);
+                }
+            }
+        } else {
+            for (i = 0; i < p.length; i++) {
+                if (Type.isPoint(p[i])) {
+                    q.push(p[i]);
+                // given as [[x1,y1], [x2, y2], ...]
+                } else if (Type.isArray(p[i]) && p[i].length === 2) {
+                //for (j = 0; j < p[i].length; j++) {
+                    q[i] = [];
+                    if (Type.isFunction(p[i][0])) {
+                        q[i].push(p[i][0]());
                     } else {
-                        for (i = 0; i < p.length; i++) {
-                            if (Type.isPoint(p[i])) {
-                                q.push(p[i]);
-                            // given as [[x1,y1], [x2, y2], ...]
-                            } else if (Type.isArray(p[i]) && p[i].length === 2) {
-                                //for (j = 0; j < p[i].length; j++) {
-                                    q[i] = [];
-                                    if (Type.isFunction(p[i][0])) {
-                                        q[i].push(p[i][0]());
-                                    } else {
-                                        q[i].push(p[i][0]);
-                                    }
-
-                                    if (Type.isFunction(p[i][1])) {
-                                        q[i].push(p[i][1]());
-                                    } else {
-                                        q[i].push(p[i][1]);
-                                    }
-                                //}
-                            } else if (Type.isFunction(p[i]) && p[i]().length === 2) {
-                                q.push(parents[i]());
-                            }
-                        }
+                        q[i].push(p[i][0]);
                     }
 
+                    if (Type.isFunction(p[i][1])) {
+                        q[i].push(p[i][1]());
+                    } else {
+                        q[i].push(p[i][1]);
+                    }
+                //}
+                } else if (Type.isFunction(p[i]) && p[i]().length === 2) {
+                    q.push(parents[i]());
+                }
+            }
+        }
 
-        points = Type.providePoints(board, q, attributes, 'cardinalspline', ['points']);
-        //points = parents[0];
+        if (attributes.createpoints === true) {
+            points = Type.providePoints(board, q, attributes, 'cardinalspline', ['points']);
+        } else {
+            points = [];
+            for (i = 0; i < q.length; i++) {
+                points.push(
+                    (function(ii) { return {
+                            X: function() { return q[ii][0]; },
+                            Y: function() { return q[ii][1]; }
+                        };
+                    })(i)
+                );
+            }
+        }
+
         tau = parents[1];
         type = parents[2];
 

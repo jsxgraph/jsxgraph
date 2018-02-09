@@ -159,7 +159,10 @@ define([
 
         /**
          * True if the browsers' SVG engine supports foreignObject.
-         * Not supporting browsers are IE 9 - 11.
+         * Not supported browsers are IE 9 - 11.
+         * All other browsers return ture, since it is tested with
+         * document.implementation.hasFeature() which is deprecated.
+         *
          * @type Boolean
          * @private
          */
@@ -1719,7 +1722,7 @@ define([
                 if (board.attr.showscreenshot) {
                     createButton(board.attr.screenshot.symbol, function () {
                         setTimeout(function() {
-                            board.renderer.screenshot(board);
+                            board.renderer.screenshot(board, '', false);
                         }, 330);
                     });
                 }
@@ -1827,6 +1830,12 @@ define([
          */
         dumpToCanvas: function(canvasId) {},
 
+        /**
+         * Display SVG image in html img-tag which enables
+         * easy download for the user.
+         *
+         * See JXG.SVGRenderer#screenshot
+         */
         screenshot: function(board) {}
 
     });
