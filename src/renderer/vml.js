@@ -207,8 +207,8 @@ define([
                 maxX, maxY, minX, minY, i,
                 node = el.rendNode,
                 p = [],
-                ev_ax = Type.evaluate(el.visProp.anchorx),
-                ev_ay = Type.evaluate(el.visProp.anchory);
+                ev_ax = el.getAnchorX(),
+                ev_ay = el.getAnchorY();
 
             if (!isNaN(el.coords.scrCoords[1] + el.coords.scrCoords[2])) {
                 // Horizontal

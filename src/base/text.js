@@ -144,7 +144,7 @@ define([
                 y = lft[2];
             }
 
-            ax = Type.evaluate(this.visProp.anchorx);
+            ax = this.getAnchorX();
             if (ax === 'right') {
                 lft = this.coords.scrCoords[1] - this.size[0];
             } else if (ax === 'middle') {
@@ -154,7 +154,7 @@ define([
             }
             rt = lft + this.size[0];
 
-            ay = Type.evaluate(this.visProp.anchory);
+            ay = this.getAnchorY();
             if (ay === 'top') {
                 bot = this.coords.scrCoords[2] + this.size[1];
             } else if (ay === 'middle') {
@@ -690,6 +690,48 @@ define([
             } else {
                 return [c[1], c[2] + this.size[1] / this.board.unitY, c[1] + this.size[0] / this.board.unitX, c[2]];
             }
+        },
+
+        getAnchorX: function() {
+            var a = Type.evaluate(this.visProp.anchorx);
+            if (a == 'auto') {
+                switch (this.visProp.position) {
+                    case 'top':
+                    case 'bot':
+                        return 'middle';
+                    case 'rt':
+                    case 'lrt':
+                    case 'urt':
+                        return 'left';
+                    case 'lft':
+                    case 'llft':
+                    case 'ulft':
+                    default:
+                        return 'right';
+                }
+            }
+            return a;
+        },
+
+        getAnchorY: function() {
+            var a = Type.evaluate(this.visProp.anchory);
+            if (a == 'auto') {
+                switch (this.visProp.position) {
+                    case 'top':
+                    case 'ulft':
+                    case 'urt':
+                        return 'bottom';
+                    case 'bot':
+                    case 'lrt':
+                    case 'llft':
+                        return 'top';
+                    case 'rt':
+                    case 'lft':
+                    default:
+                        return 'middle';
+                }
+            }
+            return a;
         }
     });
 

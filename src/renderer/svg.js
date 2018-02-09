@@ -407,8 +407,8 @@ define([
         // already documented in JXG.AbstractRenderer
         updateInternalText: function (el) {
             var content = el.plaintext, v,
-                ev_ax = Type.evaluate(el.visProp.anchorx),
-                ev_ay = Type.evaluate(el.visProp.anchory);
+                ev_ax = el.getAnchorX(),
+                ev_ay = el.getAnchorY();
 
             if (el.rendNode.getAttributeNS(null, "class") !== el.visProp.cssclass) {
                 el.rendNode.setAttributeNS(null, "class", Type.evaluate(el.visProp.cssclass));
