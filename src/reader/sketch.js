@@ -250,18 +250,56 @@
                     break;
 
                 case JXG.GENTYPE_REFLECTION:
-                    set_str = assign + 'reflection(' + step.src_ids[0] + ', ' + step.src_ids[1] + ') <<' + attrid;
-                    set_str += 'fillColor: \'' + step.args.fillColor + '\'';
-                    if (JXG.exists(step.args.strokeColor)) {
-                        set_str += ', strokeColor: \'' + step.args.strokeColor + '\'';
-                        set_str += ', opacity: \'' + step.args.opacity + '\'';
+                    // Polygon:
+                    if (step.src_ids.length > 2) {
+                        set_str = '';
+                        el = step.src_ids[step.src_ids.length - 1];
+                        for (i = 1; i < step.src_ids.length - 1; i++) {
+                            set_str += assign + 'reflection(' + step.src_ids[i] + ', ' + el + ') <<id:"' + step.dest_sub_ids[i - 1] + '"';
+                            set_str += ', name: ""';
+                            set_str += ', snaptogrid: ' + JXG.Options.elements.snapToGrid;
+                            set_str += ', snaptopoints: ' + JXG.Options.elements.snapToPoints + '>>;\n';
+                        }
+
+                        le = step.dest_sub_ids.length / 2;
+                        set_str += assign + 'polygon(';
+                        set_str += step.dest_sub_ids.slice(0, le).join();
+                        set_str += ') <<borders: <<ids: [\'' + step.dest_sub_ids.slice(le, 2*le).join("\', \'") + '\']';
+                        x = [];
+                        for (i = 0; i < le; i++) {
+                            x.push("\'\'");
+                        }
+                        set_str += ', names: [' + x.join() + ']';
+                        set_str += '>>, ' + attrid + ' fillOpacity: ';
+                        set_str += step.args.opacity + ', name: \'\', hasInnerPoints:' + JXG.Options.polygon.hasInnerPoints;
+                        set_str += ', fillColor: \'' + step.args.fillColor + '\'';
+                        set_str += ', snaptogrid: ' + JXG.Options.elements.snapToGrid;
+                        set_str += ', snaptopoints: ' + JXG.Options.elements.snapToPoints + ', scalable:true>>; ';
+
+                        for (i = 0; i < step.dest_sub_ids.length; i++) {
+                            if (step.dest_sub_ids[i] !== 0) {
+                                reset_str = 'delete ' + step.dest_sub_ids[i] + '; ' + reset_str;
+                            }
+                        }
+
+                        reset_str = 'delete ' + step.dest_id + '; ' + reset_str;
+
+                    } else {
+                        set_str = assign + 'reflection(' + step.src_ids[0] + ', ' + step.src_ids[1] + ') <<' + attrid;
+                        set_str += 'fillColor: \'' + step.args.fillColor + '\'';
+                        if (JXG.exists(step.args.strokeColor)) {
+                            set_str += ', strokeColor: \'' + step.args.strokeColor + '\'';
+                            set_str += ', opacity: \'' + step.args.opacity + '\'';
+                        }
+                        set_str += ', name: "' + step.args.name + '"';
+                        set_str += ', id: "' + step.dest_id + '"';
+                        if (step.args.name !== '') {
+                            set_str += ', withLabel: true';
+                        }
+                        set_str += '>>; ';
+                        reset_str = 'delete ' + step.dest_id + '; ';
                     }
-                    set_str += ', name: "' + step.args.name + '"';
-                    if (step.args.name !== '') {
-                        set_str += ', withLabel: true';
-                    }
-                    set_str += '>>; ';
-                    reset_str = 'delete ' + step.dest_id + '; ';
+
                     break;
 
                 case JXG.GENTYPE_MIRRORELEMENT:

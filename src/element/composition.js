@@ -1767,12 +1767,6 @@ define([
             parents[i] = board.select(parents[i]);
         }
 
-        // if (Type.isPoint(parents[0]) && parents[1].elementClass === Const.OBJECT_CLASS_LINE) {
-        //     org = Type.providePoints(board, [parents[0]], attributes, 'point')[0];
-        //     l = parents[1];
-        // } else if (Type.isPoint(parents[1]) && parents[0].elementClass === Const.OBJECT_CLASS_LINE) {
-        //     org = Type.providePoints(board, [parents[1]], attributes, 'point')[0];
-        //     l = parents[0];
         if (Type.isPoint(parents[0])) {
             org = Type.providePoints(board, [parents[0]], attributes, 'point')[0];
         } else if (parents[0].elementClass === Const.OBJECT_CLASS_CURVE ||
