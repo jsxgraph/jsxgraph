@@ -3167,6 +3167,7 @@ define([
              * Possible types: string, number or function.
              * @type {String}
              * @name suffixLabel
+             * @memberOf Slider.prototype
              * @default null
              * @see JXG.Slider#unitLabel
              * @see JXG.Slider#postLabel
@@ -3178,6 +3179,7 @@ define([
              * Possible types: string, number or function.
              * @type {String}
              * @name unitLabel
+             * @memberOf Slider.prototype
              * @default null
              * @see JXG.Slider#suffixLabel
              * @see JXG.Slider#postLabel
@@ -3189,6 +3191,7 @@ define([
              * Possible types: string, number or function.
              * @type {String}
              * @name postLabel
+             * @memberOf Slider.prototype
              * @default null
              * @see JXG.Slider#suffixLabel
              * @see JXG.Slider#unitLabel

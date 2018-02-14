@@ -2212,6 +2212,7 @@ define([
          */
         projectCoordsToBeziersegment: function (pos, curve, start) {
             var t0,
+                /** @ignore */
                 minfunc = function (t) {
                     var z = [1, curve.X(start + t), curve.Y(start + t)];
 
@@ -2334,6 +2335,7 @@ define([
 
                 newCoordsObj = new Coords(Const.COORDS_BY_USER, newCoords, board);
             } else {   // 'parameter', 'polar', 'functiongraph'
+                /** @ignore */
                 minfunc = function (t) {
                     var dx, dy;
                     if (t < curve.minX() || t > curve.maxX()) {
