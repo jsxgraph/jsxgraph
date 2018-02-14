@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2017
+    Copyright 2008-2018
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -76,7 +76,7 @@ define([
      * Constructs a new Board object.
      * @class JXG.Board controls all properties and methods used to manage a geonext board like managing geometric
      * elements, managing mouse and touch events, etc. You probably don't want to use this constructor directly.
-     * Please use {@link JXG.JSXGraph#initBoard} to initialize a board.
+     * Please use {@link JXG.JSXGraph.initBoard} to initialize a board.
      * @constructor
      * @param {String} container The id or reference of the HTML DOM element the board is drawn in. This is usually a HTML div.
      * @param {JXG.AbstractRenderer} renderer The reference of a renderer.
@@ -88,7 +88,7 @@ define([
      * @param {Number} unitY Units in y-axis direction
      * @param {Number} canvasWidth  The width of canvas
      * @param {Number} canvasHeight The height of canvas
-     * @param {Object} attributes The attributes object given to {@link JXG.JSXGraph#initBoard}
+     * @param {Object} attributes The attributes object given to {@link JXG.JSXGraph.initBoard}
      * @borrows JXG.EventEmitter#on as this.on
      * @borrows JXG.EventEmitter#off as this.off
      * @borrows JXG.EventEmitter#triggerEventHandlers as this.triggerEventHandlers
@@ -392,7 +392,8 @@ define([
         this.touches = [];
 
         /**
-         * A string containing the XML text of the construction. This is set in {@link JXG.FileReader#parseString}.
+         * A string containing the XML text of the construction.
+         * This is set in {@link JXG.FileReader.parseString}.
          * Only useful if a construction is read from a GEONExT-, Intergeo-, Geogebra-, or Cinderella-File.
          * @type String
          */
@@ -452,10 +453,10 @@ define([
         /**
          * If GEONExT constructions are displayed, then this property should be set to true.
          * At the moment there should be no difference. But this may change.
-         * This is set in {@link JXG.GeonextReader#readGeonext}.
+         * This is set in {@link JXG.GeonextReader.readGeonext}.
          * @type Boolean
          * @default false
-         * @see JXG.GeonextReader#readGeonext
+         * @see JXG.GeonextReader.readGeonext
          */
         this.geonextCompatibilityMode = false;
 
@@ -3520,7 +3521,7 @@ define([
 
         /**
          * Change the height and width of the board's container.
-         * After doing so, {@link JXG.JSXGraph#setBoundingBox} is called using
+         * After doing so, {@link JXG.JSXGraph.setBoundingBox} is called using
          * the actual size of the bounding box and the actual value of keepaspectratio.
          * If setBoundingbox() should not be called automatically,
          * call resizeContainer with dontSetBoundingBox == true.
@@ -3740,7 +3741,7 @@ define([
         },
 
         /**
-         * Please use {@link JXG.Board#on} instead.
+         * Please use {@link JXG.Board.on} instead.
          * @param {Function} hook A function to be called by the board after an update occurred.
          * @param {String} [m='update'] When the hook is to be called. Possible values are <i>mouseup</i>, <i>mousedown</i> and <i>update</i>.
          * @param {Object} [context=board] Determines the execution context the hook is called. This parameter is optional, default is the
@@ -3761,12 +3762,12 @@ define([
         },
 
         /**
-         * Alias of {@link JXG.Board#on}.
+         * Alias of {@link JXG.Board.on}.
          */
         addEvent: JXG.shortcut(JXG.Board.prototype, 'on'),
 
         /**
-         * Please use {@link JXG.Board#off} instead.
+         * Please use {@link JXG.Board.off} instead.
          * @param {Number|function} id The number you got when you added the hook or a reference to the event handler.
          * @returns {JXG.Board} Reference to the board
          * @deprecated
@@ -3782,7 +3783,7 @@ define([
         },
 
         /**
-         * Alias of {@link JXG.Board#off}.
+         * Alias of {@link JXG.Board.off}.
          */
         removeEvent: JXG.shortcut(JXG.Board.prototype, 'off'),
 
@@ -3974,7 +3975,7 @@ define([
         },
 
         /**
-         * Deprecated name for {@link JXG.Board#create}.
+         * Deprecated name for {@link JXG.Board.create}.
          * @deprecated
          */
         createElement: function () {
@@ -4409,7 +4410,7 @@ define([
 
         /**
          * Update CSS transformations of sclaing type. It is used to correct the mouse position
-         * in {@link JXG.Board#getMousePosition}.
+         * in {@link JXG.Board.getMousePosition}.
          * The inverse transformation matrix is updated on each mouseDown and touchStart event.
          *
          * It is up to the user to call this method after an update of the CSS transformation
@@ -4609,7 +4610,7 @@ define([
 
         /**
          * Test if a down event should start a selection. Test if the
-         * required keys are pressed. If yes, {@link JXG.Board#startSelectionMode} is called.
+         * required keys are pressed. If yes, {@link JXG.Board.startSelectionMode} is called.
          * @param  {Object} evt Event object
          */
         _testForSelection: function (evt) {
@@ -4791,7 +4792,7 @@ define([
         /**
          * @event
          * @description Select a region is started during a down event or by calling
-         * {@link JXG.Board#startSelectionMode}
+         * {@link JXG.Board.startSelectionMode}
          * @name JXG.Board#startselecting
          */
          __evt__startselecting: function () { },
@@ -4800,7 +4801,7 @@ define([
          * @event
          * @description Select a region is started during a down event
          * from a device sending mouse events or by calling
-         * {@link JXG.Board#startSelectionMode}.
+         * {@link JXG.Board.startSelectionMode}.
          * @name JXG.Board#mousestartselecting
          */
          __evt__mousestartselecting: function () { },
@@ -4809,7 +4810,7 @@ define([
          * @event
          * @description Select a region is started during a down event
          * from a device sending pointer events or by calling
-         * {@link JXG.Board#startSelectionMode}.
+         * {@link JXG.Board.startSelectionMode}.
          * @name JXG.Board#pointerstartselecting
          */
          __evt__pointerstartselecting: function () { },
@@ -4818,7 +4819,7 @@ define([
          * @event
          * @description Select a region is started during a down event
          * from a device sending touch events or by calling
-         * {@link JXG.Board#startSelectionMode}.
+         * {@link JXG.Board.startSelectionMode}.
          * @name JXG.Board#touchstartselecting
          */
          __evt__touchstartselecting: function () { },

@@ -3647,7 +3647,7 @@ define([
              * of the HTML text element. That means, they have higher property than any
              * CSS class.
              *
-             * @name cssDefaultStyle
+             * @name highlightCssDefaultStyle
              * @memberOf Text.prototype
              * @default  'font-family: Arial, Helvetica, Geneva, sans-serif;'
              * @type String
@@ -3681,7 +3681,7 @@ define([
              * of the HTML text element. That means, they have higher property than any
              * CSS class.
              *
-             * @name cssDefaultStyle
+             * @name highlightCssStyle
              * @memberOf Text.prototype
              * @default  ''
              * @type String

@@ -109,7 +109,6 @@ define([
          * {@link JXG.Point#makeGlider} and DO NOT set this property directly
          * as it will break the dependency tree.
          * @type JXG.GeometryElement
-         * @name Glider#slideObject
          */
         this.slideObject = null;
 

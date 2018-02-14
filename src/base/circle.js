@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2017
+    Copyright 2008-2018
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -397,7 +397,7 @@ define([
                 // wasReal = this.isReal;
                 this.isReal = (!isNaN(this.center.coords.usrCoords[1] + this.center.coords.usrCoords[2] + this.Radius())) && this.center.isReal;
 
-                if (//wasReal && 
+                if (//wasReal &&
                     !this.isReal) {
                     this.updateVisibility(false);
                 }
