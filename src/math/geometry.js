@@ -631,6 +631,7 @@ define([
          * @param {JXG.Coords} point2 Coordinates of the point where line drawing ends. This value is calculated and set
          * by this method.
          * @param {Number} margin Optional margin, to avoid the display of the small sides of lines.
+         * @returns null
          * @see Line
          * @see JXG.Line
          */
@@ -1344,6 +1345,11 @@ define([
         /**
          * Intersection of curve with line,
          * Order of input does not matter for el1 and el2.
+         * From version 0.99.7 on this method calls
+         * {@link JXG.Math.Geometry.meetCurveLineDiscrete}.
+         * If higher precision is needed, {@link JXG.Math.Geometry.meetCurveLineContinuous}
+         * has to be used.
+         *
          * @param {JXG.Curve,JXG.Line} el1 Curve or Line
          * @param {JXG.Curve,JXG.Line} el2 Curve or Line
          * @param {Number} nr the nr-th intersection point will be returned.
@@ -1367,11 +1373,11 @@ define([
                 li = el1;
             }
 
-            if (Type.evaluate(cu.visProp.curvetype) === 'plot') {
+            // if (Type.evaluate(cu.visProp.curvetype) === 'plot') {
                 v = this.meetCurveLineDiscrete(cu, li, nr, board, !alwaysIntersect);
-            } else {
-                v = this.meetCurveLineContinuous(cu, li, nr, board);
-            }
+            // } else {
+            //     v = this.meetCurveLineContinuous(cu, li, nr, board);
+            // }
 
             return v;
         },
@@ -1380,8 +1386,7 @@ define([
          * Intersection of line and curve, continuous case.
          * Finds the nr-the intersection point
          * Uses {@link JXG.Math.Geometry.meetCurveLineDiscrete} as a first approximation.
-         * A more exact solution is then found with
-         * {@link JXG.Math.Geometry.meetCurveLineDiscrete}.
+         * A more exact solution is then found with {@link JXG.Math.Numerics.root}.
          *
          * @param {JXG.Curve} cu Curve
          * @param {JXG.Line} li Line
@@ -1617,6 +1622,9 @@ define([
          * This double loop, i.e. the outer loop runs along the red curve and the inner loop runs along the blue curve, defines
          * the n-th intersection point. The segments are either line segments or Bezier curves of degree 3. This depends on
          * the property bezierDegree of the curves.
+         * <p>
+         * This method works also for transformed curves, since only the already
+         * transformed points are used.
          *
          * @param {JXG.Curve} red
          * @param {JXG.Curve} blue
