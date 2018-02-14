@@ -95,6 +95,12 @@ define([
         // Only used by infobox anymore
         this.hiddenByParent = false;
 
+        /**
+         * Width and height of the the text element in pixel.
+         *
+         * @private
+         * @type {Array}
+         */
         this.size = [1.0, 1.0];
         this.id = this.board.setId(this, 'T');
 
@@ -279,13 +285,15 @@ define([
 
         /**
          * Recompute the width and the height of the text box.
-         * Update array this.size with pixel values.
+         * Updates the array {@link JXG.Text#size} with pixel values.
          * The result may differ from browser to browser
          * by some pixels.
          * In canvas an old IEs we use a very crude estimation of the dimensions of
          * the textbox.
-         * In JSXGraph this.size is necessary for applying rotations in IE and
+         * JSXGraph needs {@link JXG.Text#size} for applying rotations in IE and
          * for aligning text.
+         *
+         * @return {[type]} [description]
          */
         updateSize: function () {
             var tmp, s, that, node,
