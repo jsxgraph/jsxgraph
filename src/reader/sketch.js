@@ -1,5 +1,5 @@
 /*
- Copyright 2008-2017
+ Copyright 2008-2018
  Matthias Ehmann,
  Michael Gerhaeuser,
  Carsten Miller,
