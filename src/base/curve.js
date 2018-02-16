@@ -1777,7 +1777,7 @@ define([
      * <ul>
      *  <li> parametric curves: t mapsto (x(t),y(t)), where x() and y() are univariate functions.
      *  <li> polar curves: curves commonly written with polar equations like spirals and cardioids.
-     *  <li> data plots: plot linbe segments through a given list of coordinates.
+     *  <li> data plots: plot line segments through a given list of coordinates.
      * </ul>
      * @pseudo
      * @description
