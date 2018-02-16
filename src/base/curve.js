@@ -2237,13 +2237,17 @@ define([
         } else {
             points = [];
             for (i = 0; i < q.length; i++) {
-                points.push(
-                    (function(ii) { return {
+                if (Type.isPoint(q[i])) {
+                    points.push(q[i]);
+                } else {
+                    points.push(
+                        (function(ii) { return {
                             X: function() { return q[ii][0]; },
                             Y: function() { return q[ii][1]; }
-                        };
-                    })(i)
-                );
+                            };
+                        })(i)
+                    );
+                }
             }
         }
 
