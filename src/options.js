@@ -1272,7 +1272,10 @@ define([
              */
             selection: 'auto',
 
-            label: {},
+            label: {
+                anchorX: 'auto',
+                anchorY: 'auto'
+            },
             firstArrow: false,
             lastArrow: false,
             fillColor: 'none',
@@ -3077,7 +3080,9 @@ define([
              * @name Sector#label
              */
             label: {
-                offset: [0, 0]
+                offset: [0, 0],
+                anchorX: 'auto',
+                anchorY: 'auto'
             }
 
             /**#@-*/
@@ -3739,10 +3744,10 @@ define([
              *
              * @name anchorX
              * @memberOf Text.prototype
-             * @default 'auto'
+             * @default 'left'
              * @type String
              */
-            anchorX: 'auto',
+            anchorX: 'left',
 
             /**
              * The vertical alignment of the text. Possible values include <tt>'auto</tt>, <tt>'top'</tt>, <tt>'middle'</tt>, and
@@ -3753,7 +3758,7 @@ define([
              * @default 'auto'
              * @type String
              */
-            anchorY: 'auto',
+            anchorY: 'middle',
 
             /**
              * CSS class of the text in non-highlighted view.
