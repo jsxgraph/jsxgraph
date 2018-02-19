@@ -2208,7 +2208,9 @@ define([
             }
         } else {
             for (i = 0; i < p.length; i++) {
-                if (Type.isPoint(p[i])) {
+                if (Type.isString(p[i])) {
+                    q.push(board.select(p[i]));
+                } else if (Type.isPoint(p[i])) {
                     q.push(p[i]);
                 // given as [[x1,y1], [x2, y2], ...]
                 } else if (Type.isArray(p[i]) && p[i].length === 2) {
