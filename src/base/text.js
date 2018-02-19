@@ -488,7 +488,9 @@ define([
             this.updateText();
 
             if (Type.evaluate(this.visProp.display) === 'internal') {
-                this.plaintext = this.utf8_decode(this.plaintext);
+                if (Type.isString(this.plaintext)) {
+                    this.plaintext = this.utf8_decode(this.plaintext);
+                }
             }
 
             this.checkForSizeUpdate();
