@@ -2259,7 +2259,13 @@ define([
         splineArr = ['x'].concat(Numerics.CardinalSpline(points, tau));
 
         el = new JXG.Curve(board, splineArr, attributes);
-        el.setParents(parents[0]);
+        le = points.length;
+        el.setParents(points);
+        for (i = 0; i < le; i++) {
+            if (Type.isPoint(points[i])) {
+                points[i].addChild(el);
+            }
+        }
         el.elType = 'cardinalspline';
 
         return el;
