@@ -43,6 +43,7 @@ JXG.Options = JXG.merge(JXG.Options, {
         ticks: {
             strokeColor: '#aaa',
             strokeOpacity: 0.4,
+            minorHeight: -1,
             label: {
                 fontSize: 14,
                 display: 'internal'
