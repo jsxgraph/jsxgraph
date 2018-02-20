@@ -44,8 +44,8 @@
  */
 
 define([
-    'jxg', 'utils/env', 'utils/type'
-], function (JXG, Env, Type) {
+    'jxg', 'utils/env', 'utils/type', 'base/text'
+], function (JXG, Env, Type, Text) {
 
     "use strict";
 
@@ -141,19 +141,17 @@ define([
 
         t.rendNodeLabel = t.rendNode.childNodes[0].childNodes[0];
         t.rendNodeInput = t.rendNode.childNodes[0].childNodes[1];
-
         t.rendNodeLabel.innerHTML = parents[3];
         t.rendNodeInput.value = parents[2];
-
         t.rendNodeTag = t.rendNodeInput; // Needed for unified treatment in setAttribute
         t.rendNodeTag.disabled = !!attr.disabled;
-
         t.rendNodeLabel.id = t.rendNode.id + '_label';
         t.rendNodeInput.id = t.rendNode.id + '_input';
 
         t._value = parents[2];
         t.update = function () {
             if (this.needsUpdate) {
+                JXG.Text.prototype.update.call(this);
                 this._value = this.rendNodeInput.value;
             }
             return this;

@@ -179,6 +179,7 @@ define([
 
         t.update = function () {
             if (this.needsUpdate) {
+                JXG.Text.prototype.update.call(this);
                 this._value = this.rendNodeCheckbox.checked;
             }
             return this;
