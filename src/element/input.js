@@ -44,8 +44,8 @@
  */
 
 define([
-    'jxg', 'utils/env', 'utils/type', 'base/text'
-], function (JXG, Env, Type, Text) {
+    'jxg', 'utils/env', 'utils/type'
+], function (JXG, Env, Type) {
 
     "use strict";
 
