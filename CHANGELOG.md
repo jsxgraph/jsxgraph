@@ -1,3 +1,52 @@
+0.99.7
+====
+
+New Features
+------------
+* New elements: 'cardinalspline', 'derivative'
+* New element 'reflection': allows point, line, curve, polygon, circle
+* New element 'mirrorelement': allows point, line, curve, polygon
+* New possibility to create line: supply line + transformation
+* New possibility to create polygon: supply polygon + transformation
+* New method `Curve.moveTo()`
+* Add option`'auto'` for `anchorX` and `anchorY` attribute of labels
+* SVGRenderer.screenshot: Add parameter "ignoreTexts
+* New element: (numerical) derivative (experimental).
+Improvements
+------------
+
+* require.js support (especially in moodle)
+* Documentation
+* Enable transformation "rotate" of type `[angle, [x,y]]`
+* Default position of line labels
+* Improved `trim()` method
+* Improve code quality by using suggestion from jslint
+* Add method `Type.isTransformationOrArray()`
+* New default value `selection:'auto'` for arcs and sectors
+* Use `<label for>` for checkbox label
+* Add attribute "checked" for checkboxes
+* Improved screenshot functionality
+* Cardinal spline: attribute to prevent creation of points
+* OImprove stability of glider and intersection computations on curves
+* New default values for pinch / zoom: shift+wheel is true now for zoom
+
+Bug fixes
+---------
+* HTML elements: set id and allow anchors
+* Glider on arcs and sectors
+* line.hasPoint()
+* hasPoint() for polar and parametric curves
+* Visibility of non-existing objects
+* slider dragging
+* Remove trailing commas
+* Mediawiki plug-in
+* Catch error if MathJax loading is not yet complete
+* Correct handling of UTF-8 characters in JSXCompressor
+* Intersection of line / curve with transformed curved
+
+Contributors:
+
+
 0.99.6
 ====
 
