@@ -148,7 +148,8 @@ define(['jxg'], function (JXG) {
         GENTYPE_NONREFLEXANGLE: 36,
         GENTYPE_REFLEXANGLE: 37,
         GENTYPE_PATH: 38,
-        // 39 ... 40 // unused ...
+        GENTYPE_DERIVATIVE: 39,
+        // 40 // unused ...
         GENTYPE_DELETE: 41,
         GENTYPE_COPY: 42,
         GENTYPE_MIRROR: 43,

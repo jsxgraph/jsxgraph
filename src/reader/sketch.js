@@ -1108,6 +1108,13 @@
 
                         break;
 
+                case JXG.GENTYPE_DERIVATIVE:
+                        set_str = assign +  'derivative(' + step.src_ids + ')';
+                        set_str += ' <<';
+                        set_str += 'dash: 2';
+                        set_str += ' >>;';
+                        break;
+
                 case JXG.GENTYPE_SLIDER:
                     set_str = assign + 'slider([' + pn(step.args.x1) + ', ' + pn(step.args.y1) + '], [' + pn(step.args.x2);
                     set_str += ', ' + pn(step.args.y2) + '], [' + pn(step.args.start) + ', ' + pn(step.args.ini) + ', ';

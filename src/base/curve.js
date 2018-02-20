@@ -2600,6 +2600,41 @@ define([
 
     JXG.registerElement('stepfunction', JXG.createStepfunction);
 
+    /**
+     * [description]
+     * @param  {[type]} board      [description]
+     * @param  {[type]} parents    [description]
+     * @param  {[type]} attributes [description]
+     * @return {[type]}            [description]
+     */
+    JXG.createDerivative = function (board, parents, attributes) {
+        var c,
+            curve, dx, dy,
+            attr;
+        if (parents.length !== 1 && parents[0].class !== Const.OBJECT_CLASS_CURVE) {
+            throw new Error("JSXGraph: Can't create derivative curve with given parent'" +
+                "\nPossible parent types: [curve]");
+        }
+
+        attr = Type.copyAttributes(attributes, board.options, 'curve');
+
+        curve = parents[0];
+        var dx = Numerics.D(curve.X);
+        var dy = Numerics.D(curve.Y);
+
+        c = board.create('curve', [
+                function(t) { return curve.X(t); },
+                function(t) { return dy(t) / dx(t); },
+                curve.minX(), curve.maxX()
+            ], attr);
+
+        c.setParents(curve);
+
+        return c;
+    };
+
+    JXG.registerElement('derivative', JXG.createDerivative);
+
     return {
         Curve: JXG.Curve,
         createCurve: JXG.createCurve,
