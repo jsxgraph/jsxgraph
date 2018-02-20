@@ -117,9 +117,11 @@ JXG.Options = JXG.merge(JXG.Options, {
         highlightStrokeOpacity: 0.4,
 
         // snap on majorTicks
-
         snapX: -1,
-        snapY: -1
+        snapY: -1,
+
+        snapsizeX: 0.5,
+        snapsizeY: 0.5
     },
 
     polygon: {
