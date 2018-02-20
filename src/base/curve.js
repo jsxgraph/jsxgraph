@@ -2601,11 +2601,33 @@ define([
     JXG.registerElement('stepfunction', JXG.createStepfunction);
 
     /**
-     * [description]
-     * @param  {[type]} board      [description]
-     * @param  {[type]} parents    [description]
-     * @param  {[type]} attributes [description]
-     * @return {[type]}            [description]
+     * @class This element is used to provide a constructor for the graph showing
+     * the (numerical) derivative of a given curve.
+     *
+     * @pseudo
+     * @description
+     * @name Derivative
+     * @augments JXG.Curve
+     * @constructor
+     * @type JXG.Curve
+     * @param {JXG.Curve} Parent Curve for which the derivative is generated.
+     * @see JXG.Curve
+     * @example
+     * var cu = board.create('cardinalspline', [[[-3,0], [-1,2], [0,1], [2,0], [3,1]], 0.5, 'centripetal'], {createPoints: false});
+     * var d = board.create('derivative', [cu], {dash: 2});
+     *
+     * </pre><div id="b9600738-1656-11e8-8184-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     *     (function() {
+     *         var board = JXG.JSXGraph.initBoard('b9600738-1656-11e8-8184-901b0e1b8723',
+     *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+     *     var cu = board.create('cardinalspline', [[[-3,0], [-1,2], [0,1], [2,0], [3,1]], 0.5, 'centripetal'], {createPoints: false});
+     *     var d = board.create('derivative', [cu], {dash: 2});
+     *
+     *     })();
+     *
+     * </script><pre>
+     *
      */
     JXG.createDerivative = function (board, parents, attributes) {
         var c,
