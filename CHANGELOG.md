@@ -12,6 +12,7 @@ New Features
 * Add option`'auto'` for `anchorX` and `anchorY` attribute of labels
 * SVGRenderer.screenshot: Add parameter "ignoreTexts
 * New element: (numerical) derivative (experimental).
+
 Improvements
 ------------
 

@@ -196,7 +196,8 @@ define(['jxg'], function (JXG) {
         GENTYPE_CTX_LABELSTICKY: 78,
         GENTYPE_CTX_TYPE_I: 79,
         GENTYPE_CTX_HASINNERPOINTS: 80,
-        GENTYPE_CTX_SNAPWIDTH: 81
+        GENTYPE_CTX_SNAPWIDTH: 81,
+        GENTYPE_CTX_SNAPTOGRID: 82
     };
 
     JXG.extend(JXG, constants);
