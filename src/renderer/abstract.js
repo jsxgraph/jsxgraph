@@ -590,8 +590,9 @@ define([
         },
 
         /**
-         * Set the line endings (linecap) of a straight line. Possible values
-         * for the attribute 'linecap' are: 'butt', 'round', 'square'.
+         * Update the line endings (linecap) of a straight line from its attribute
+         * 'linecap'. 
+         * Possible values for the attribute 'linecap' are: 'butt', 'round', 'square'.
          * The default value is 'butt'. Not available for VML renderer.
          *
          * @param {JXG.Line} element A arbitrary line.
@@ -599,7 +600,7 @@ define([
          * @see JXG.Line
          * @see JXG.AbstractRenderer#updateLine
          */
-        setLineCap: function() { /* stub */ },
+        setLineCap: function(el) { /* stub */ },
 
         /**
          * Creates a rendering node for ticks added to a line.
@@ -1765,7 +1766,10 @@ define([
          * node.
          */
         getElementById: function (id) {
-            return this.container.ownerDocument.getElementById(this.container.id + '_' + id);
+            if (Type.exists(this.container)) {
+                return this.container.ownerDocument.getElementById(this.container.id + '_' + id);
+            }
+            return '';
         },
 
         /**

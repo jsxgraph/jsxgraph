@@ -295,7 +295,7 @@ define([
             takeSizeFromFile: false,
 
             /**
-             * Default rendering engine. Possible values are 'svg', 'canvas', 'vml', 'no'.
+             * Default rendering engine. Possible values are 'svg', 'canvas', 'vml', 'no', or 'auto'.
              * If the rendering engine is not available JSXGraph tries to detect a different engine.
              *
              * <p>
@@ -304,9 +304,9 @@ define([
              *
              * @name JXG.Board#renderer
              * @type String
-             * @default 'svg'
+             * @default 'auto'
              */
-            renderer: 'svg',
+            renderer: 'auto',
 
             /**
              * Time (in msec) between two animation steps. Used in

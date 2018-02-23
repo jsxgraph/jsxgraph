@@ -141,6 +141,10 @@ define([
                 boxid = box;
             }
 
+            // If attrRenderer is not supplied take the first available renderer
+            if (attrRenderer === undefined || attrRenderer === 'auto') {
+                attrRenderer = this.rendererType;
+            }
             // create the renderer
             if (attrRenderer === 'svg') {
                 renderer = new SVGRenderer(boxid, dim);
@@ -306,7 +310,7 @@ define([
             attr.navbar = Type.copyAttributes(attr.navbar, Options, 'navbar');
 
             dimensions = Env.getDimensions(box, attr.document);
-            renderer = this.initRenderer(box, dimensions, attr.document);
+            renderer = this.initRenderer(box, dimensions, attr.document, attr.renderer);
 
             /* User default parameters, in parse* the values in the gxt files are submitted to board */
             board = new Board(box, renderer, '', [150, 150], 1, 1, 50, 50, dimensions.width, dimensions.height, attr);

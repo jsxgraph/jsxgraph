@@ -3080,7 +3080,7 @@ define([
                 el = this.elementsByName[Type.unescapeHTML(name)];
 
                 property = left.slice(m + 1).replace(/\s+/g, '').toLowerCase(); // remove whitespace in property
-                right = Type.createfunction (right, this, '', true);
+                right = Type.createFunction (right, this, '', true);
 
                 // Debug
                 if (!Type.exists(this.elementsByName[name])) {
