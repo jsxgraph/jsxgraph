@@ -356,7 +356,7 @@
         } else if (bspname=='beispiele_matthias') {
             board = JXG.JSXGraph.loadBoardFromFile('box','bspnc/Probleme/'+value, format);
         } else {
-            board = JXG.JSXGraph.loadBoardFromFile('box','bspnc/'+value, format, {renderer: 'no'}, function (board) {
+            board = JXG.JSXGraph.loadBoardFromFile('box','bspnc/'+value, format, {renderer: 'auto'}, function (board) {
                 document.getElementById('debug').innerHTML = "<b>Done loading " + value + "</b>";
             });
         }
