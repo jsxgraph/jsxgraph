@@ -90,6 +90,7 @@ define([
          * @type {array}
          */
         this.dataX = null;
+
         /**
          * Array holding the y-coordinates of a data plot.
          * This array can be updated during run time by overwriting

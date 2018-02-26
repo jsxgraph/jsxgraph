@@ -88,14 +88,12 @@ define([
          * Startpoint of the line. You really should not set this field directly as it may break JSXGraph's
          * update system so your construction won't be updated properly.
          * @type JXG.Point
-         * @memberOf Line.prototype
          */
         this.point1 = this.board.select(p1);
 
         /**
          * Endpoint of the line. Just like {@link JXG.Line.point1} you shouldn't write this field directly.
          * @type JXG.Point
-         * @memberOf Line.prototype
          */
         this.point2 = this.board.select(p2);
 
@@ -103,7 +101,6 @@ define([
          * Array of ticks storing all the ticks on this line. Do not set this field directly and use
          * {@link JXG.Line#addTicks} and {@link JXG.Line#removeTicks} to add and remove ticks to and from the line.
          * @type Array
-         * @memberOf Line.prototype
          * @see JXG.Ticks
          */
         this.ticks = [];
@@ -111,7 +108,6 @@ define([
         /**
          * Reference of the ticks created automatically when constructing an axis.
          * @type JXG.Ticks
-         * @memberOf Line.prototype
          * @see JXG.Ticks
          */
         this.defaultTicks = null;
@@ -120,7 +116,6 @@ define([
          * If the line is the border of a polygon, the polygon object is stored, otherwise null.
          * @type JXG.Polygon
          * @default null
-         * @memberOf Line.prototype
          * @private
          */
         this.parentPolygon = null;
