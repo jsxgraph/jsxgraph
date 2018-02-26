@@ -2244,32 +2244,36 @@ define([
 
         /**
          * The point on the axis initially corresponding to the lower value of the interval.
-         * @memberOf Integral.prototype
+         *
          * @name baseLeft
+         * @memberOf Integral
          * @type JXG.Point
          */
         p.baseLeft = pa_on_axis;
 
         /**
          * The point on the axis initially corresponding to the higher value of the interval.
-         * @memberOf Integral.prototype
+         *
          * @name baseRight
+         * @memberOf Integral
          * @type JXG.Point
          */
         p.baseRight = pb_on_axis;
 
         /**
          * The glider on the curve corresponding to the lower value of the interval.
-         * @memberOf Integral.prototype
+         *
          * @name curveLeft
+         * @memberOf Integral
          * @type Glider
          */
         p.curveLeft = pa_on_curve;
 
         /**
          * The glider on the axis corresponding to the higher value of the interval.
-         * @memberOf Integral.prototype
+         *
          * @name curveRight
+         * @memberOf Integral
          * @type Glider
          */
         p.curveRight = pb_on_curve;

@@ -2082,6 +2082,7 @@ define([
 
             axis: 'x',        // 'x' or 'y'
             withLabel: true,    // Show integral value as text
+            fixed: true,
             strokeWidth: 0,
             strokeOpacity: 0,
             fillColor: 'red',
