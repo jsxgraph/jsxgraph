@@ -169,6 +169,7 @@ define([
                             fontSize: 12,
                             offset: [-6, 0]
                         },
+                        tickEndings: [1, 0],
                         drawZero: false,
                         visible: 'inherit'
                     }
