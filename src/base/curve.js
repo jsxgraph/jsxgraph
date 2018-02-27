@@ -1938,6 +1938,7 @@ define([
         obj = board.select(parents[0]);
         if (Type.isObject(obj) && obj.type === Const.OBJECT_TYPE_CURVE &&
             Type.isTransformationOrArray(parents[1])) {
+
             cu = new JXG.Curve(board, ['x', [], []], attr);
             cu.updateDataArray = function() {
                 var i, le = obj.points.length;
@@ -2192,7 +2193,9 @@ define([
         q = [];
 
         // given as [x[], y[]]
-        if (p.length === 2 && Type.isArray(p[0]) && Type.isArray(p[1]) && p[0].length === p[1].length) {
+        if (!attributes.isarrayofcoordinates &&
+            p.length === 2 && Type.isArray(p[0]) && Type.isArray(p[1]) &&
+            p[0].length === p[1].length) {
             for (i = 0; i < p[0].length; i++) {
                 q[i] = [];
                 if (Type.isFunction(p[0][i])) {
@@ -2208,14 +2211,14 @@ define([
                 }
             }
         } else {
+            // given as [[x0, y0], [x1, y1], point, ...]
             for (i = 0; i < p.length; i++) {
                 if (Type.isString(p[i])) {
                     q.push(board.select(p[i]));
                 } else if (Type.isPoint(p[i])) {
                     q.push(p[i]);
-                // given as [[x1,y1], [x2, y2], ...]
+                // given as [[x0,y0], [x1, y2], ...]
                 } else if (Type.isArray(p[i]) && p[i].length === 2) {
-                //for (j = 0; j < p[i].length; j++) {
                     q[i] = [];
                     if (Type.isFunction(p[i][0])) {
                         q[i].push(p[i][0]());
@@ -2228,7 +2231,6 @@ define([
                     } else {
                         q[i].push(p[i][1]);
                     }
-                //}
                 } else if (Type.isFunction(p[i]) && p[i]().length === 2) {
                     q.push(parents[i]());
                 }

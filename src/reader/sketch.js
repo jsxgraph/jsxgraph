@@ -1071,14 +1071,13 @@
                     break;
 
                 case JXG.GENTYPE_PATH:
+                        le = step.args.points.length;
+
                         if (step.args.doSpline) {
                             set_str = assign +  'cardinalspline([';
                         } else {
                             set_str = assign +  'curve(';
                         }
-
-                        le = step.args.points.length;
-                        points = [];
                         for (i = 0; i < le; i++) {
                             if (JXG.isString(step.args.points[i])) {
                                 set_str += '\'' + step.args.points[i] + '\'';
@@ -1092,7 +1091,7 @@
                             }
                         }
 
-                        if (step.args.doSpline) {
+                        if (step.args.doSpline ) {
                             set_str += '], ' + step.args.tau + ', ' + step.args.type;
                         }
                         set_str += ') <<';
@@ -1102,6 +1101,7 @@
                         if (step.args.doSpline) {
                             set_str += 'createPoints: false, ';
                         }
+                        set_str += 'isArrayOfCoordinates: true, ';
                         set_str += 'strokeWidth: ' + step.args.strokeWidth + ', ';
                         set_str += 'strokeColor: \'' + step.args.strokeColor+ '\' >>; ';
                         reset_str = 'delete ' + step.dest_id + '; ';
