@@ -1736,7 +1736,8 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
             var w = [],
                 /** @ignore */
                 fct = function (x, suspendedUpdate) {
-                    var i, j, k, xi, s, M,
+                    var i, // j, 
+                        k, xi, s, //M,
                         len = p.length,
                         num = 0,
                         denom = 0;
@@ -1755,11 +1756,10 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
                             w[i] = 1 / w[i];
                         }
 
-                        M = [];
-
-                        for (j = 0; j < len; j++) {
-                            M.push([1]);
-                        }
+                        // M = [];
+                        // for (k = 0; k < len; k++) {
+                        //     M.push([1]);
+                        // }
                     }
 
                     for (i = 0; i < len; i++) {
