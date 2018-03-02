@@ -41,11 +41,14 @@ Thank you very much!
 Website
 -------
 
-* Project web site: http://jsxgraph.uni-bayreuth.de/
-* Project wiki with hundreds of examples: http://jsxgraph.uni-bayreuth.de/wiki/
-* SourceForge project site: http://sf.net/projects/jsxgraph
+* Project web site: https://jsxgraph.org/
+* Project wiki with hundreds of examples: https://jsxgraph.org/wiki/
 * GitHub project site: https://github.com/jsxgraph/jsxgraph
 * Mailing List/Google Group: http://groups.google.com/group/jsxgraph
+* JSXGraph questions at https://stackoverflow.com/search?tab=newest&q=jsxgraph
+* jsFiddle template: https://jsfiddle.net/vcL7aepo/1/
+* Moodle plug-in: https://github.com/jsxgraph/moodle-jsxgraph-plugin
+* (outdated: SourceForge project site: https://sf.net/projects/jsxgraph)
 
 Please report bugs to our issue tracking system found at
 https://github.com/jsxgraph/jsxgraph/issues
