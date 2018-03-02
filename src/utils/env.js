@@ -127,8 +127,11 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          */
         supportsPointerEvents: function () {
             return !!(this.isBrowser && window.navigator &&
-                     // Chrome/IE11+                IE11+                              IE10-
-                    (/*window.PointerEvent ||*/ window.navigator.pointerEnabled || window.navigator.msPointerEnabled));
+                     (  window.PointerEvent ||              // Chrome/Edge/IE11+
+                        window.navigator.pointerEnabled || // IE11+
+                        window.navigator.msPointerEnabled  // IE10-
+                     )
+            );
         },
 
         /**
