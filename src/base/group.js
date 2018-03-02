@@ -87,6 +87,15 @@ define([
         }
         delete this.type;
 
+        /**
+         * Cache coordinates of points. From this and the actual position
+         * of the points, the translation is determined.
+         * It has to be kept updated in this class "by hand"-
+         *
+         * @private
+         * @type {Object}
+         * @see JXG.Group#_updateCoordsCache
+         */
         this.coords = {};
         this.needsRegularUpdate = attributes.needsregularupdate;
 
@@ -199,7 +208,22 @@ define([
         },
 
         /**
-         * Sends an update to all group members. This method is called from the points' coords object event listeners
+         * Update the cached coordinates of a group element.
+         * @param  {String} el element id of the group element whose cached coordinates
+         * are going to be updated.
+         * @return null
+         */
+        _updateCoordsCache: function(el) {
+            var obj;
+            if (el !== "" && Type.exists(this.objects[el])) {
+                obj = this.objects[el].point;
+                this.coords[obj.id] = {usrCoords: obj.coords.usrCoords.slice(0)};
+            }
+        },
+
+        /**
+         * Sends an update to all group members.
+         * This method is called from the points' coords object event listeners
          * and not by the board.
          * @param{JXG.GeometryElement} drag Element that caused the update.
          * @returns {JXG.Group} returns this group
@@ -212,8 +236,8 @@ define([
             }
 
             drag = this._update_find_drag_type();
-
             if (drag.action === 'nothing') {
+                this._updateCoordsCache(drag.id);
                 return this;
             }
 
@@ -290,8 +314,7 @@ define([
             // we can update the bookkeeping of the coordinates of the group elements.
             for (el in this.objects) {
                 if (this.objects.hasOwnProperty(el)) {
-                    obj = this.objects[el].point;
-                    this.coords[obj.id] = {usrCoords: obj.coords.usrCoords.slice(0)};
+                    this._updateCoordsCache(el);
                 }
             }
 
@@ -425,7 +448,8 @@ define([
          */
         addPoint: function (object) {
             this.objects[object.id] = {point: this.board.select(object)};
-            this.coords[object.id] = {usrCoords: object.coords.usrCoords.slice(0) };
+            this._updateCoordsCache(object.id);
+            //this.coords[object.id] = {usrCoords: object.coords.usrCoords.slice(0) };
             this.translationPoints.push(object);
 
             object.groups.push(this.id);
@@ -531,7 +555,8 @@ define([
         },
 
         /**
-         * Adds a point to the set of the translation points of the group. Dragging at one of these points results into a translation of the whole group.
+         * Adds a point to the set of the translation points of the group.
+         * Dragging one of these points results into a translation of the whole group.
          * @param {JXG.Point} point {@link JXG.Point} element.
          * @returns {JXG.Group} returns this group
          */
