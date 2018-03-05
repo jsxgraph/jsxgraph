@@ -403,8 +403,8 @@ define([
 
         /**
          * Combine two transformations to one transformation. This only works if
-         * both of the transformation matrices consist of numbers, solely (and do not
-         * contain functions).
+         * both of the transformation matrices consist solely of numbers, and do not
+         * contain functions.
          *
          * Multiplies the transformation with a transformation t from the left.
          * i.e. (this) = (t) join (this)
