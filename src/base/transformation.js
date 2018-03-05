@@ -403,7 +403,7 @@ define([
 
         /**
          * Combine two transformations to one transformation. This only works if
-         * the both transformation  matrices consist of numbers, solely (and do not
+         * both of the transformation matrices consist of numbers, solely (and do not
          * contain functions).
          *
          * Multiplies the transformation with a transformation t from the left.
