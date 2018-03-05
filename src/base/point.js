@@ -296,6 +296,10 @@ define([
             copy.board = this.board;
             Type.clearVisPropOld(copy);
 
+            copy.visPropCalc = {
+                visible: Type.evaluate(copy.visProp.visible)
+            };
+
             this.board.renderer.drawPoint(copy);
             this.traces[copy.id] = copy.rendNode;
 

@@ -1675,7 +1675,9 @@ define([
             this.numTraces++;
 
             Type.clearVisPropOld(copy);
-
+            copy.visPropCalc = {
+                visible: Type.evaluate(copy.visProp.visible)
+            };
             er = this.board.renderer.enhancedRendering;
             this.board.renderer.enhancedRendering = true;
             this.board.renderer.drawCurve(copy);

@@ -638,6 +638,9 @@ define([
             copy.visProp = Type.deepCopy(this.visProp, this.visProp.traceattributes, true);
             copy.visProp.layer = this.board.options.layer.trace;
             Type.clearVisPropOld(copy);
+            copy.visPropCalc = {
+                visible: Type.evaluate(copy.visProp.visible)
+            };
 
             s = this.getSlope();
             r = this.getRise();
