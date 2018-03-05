@@ -330,7 +330,7 @@ define([
 
         /**
          * Transform a GeometryElement:
-         * First, the transformation matrix is updated, the do the matrix-vector-multiplication.
+         * First, the transformation matrix is updated, then do the matrix-vector-multiplication.
          * @param {JXG.GeometryElement} p element which is transformed
          * @param {String} 'self' Apply the transformation to the initialCoords instead of the coords if this is set.
          * @returns {Array}
