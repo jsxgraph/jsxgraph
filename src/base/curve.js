@@ -702,6 +702,7 @@ define([
                         // The last parameter prevents rounding in usr2screen().
                         this.points[i].setCoordinates(Const.COORDS_BY_USER, [this.dataX[i], this.Y(y, suspendUpdate)], false);
                     }
+                    this.points[i]._t = i;
 
                     this.updateTransform(this.points[i]);
                     suspendUpdate = true;
@@ -745,7 +746,8 @@ define([
                 }
             }
 
-            if (Type.evaluate(this.visProp.curvetype) !== 'plot' && Type.evaluate(this.visProp.rdpsmoothing)) {
+            if (Type.evaluate(this.visProp.curvetype) !== 'plot' &&
+                    Type.evaluate(this.visProp.rdpsmoothing)) {
                 this.points = Numerics.RamerDouglasPeucker(this.points, 0.2);
                 this.numberPoints = this.points.length;
             }
@@ -801,6 +803,7 @@ define([
                 t = mi + i * stepSize;
                 // The last parameter prevents rounding in usr2screen().
                 this.points[i].setCoordinates(Const.COORDS_BY_USER, [this.X(t, suspendUpdate), this.Y(t, suspendUpdate)], false);
+                this.points[i]._t = t;
                 suspendUpdate = true;
             }
             return this;
@@ -931,6 +934,7 @@ define([
                 }
 
                 this.points[j] = new Coords(Const.COORDS_BY_SCREEN, [x, y], this.board, false);
+                this.points[j]._t = t;
                 j += 1;
 
                 x0 = x;
@@ -996,7 +1000,7 @@ define([
          * @private
          * @param {JXG.Coords} pnt Coords to add to the list of points
          */
-        _insertPoint: function (pnt) {
+        _insertPoint: function (pnt, t) {
             var lastReal = !isNaN(this._lastCrds[1] + this._lastCrds[2]),     // The last point was real
                 newReal = !isNaN(pnt.scrCoords[1] + pnt.scrCoords[2]),        // New point is real point
                 cw = this.board.canvasWidth,
@@ -1014,6 +1018,7 @@ define([
                     (newReal && (!lastReal ||
                         Math.abs(pnt.scrCoords[1] - this._lastCrds[1]) > 0.7 ||
                         Math.abs(pnt.scrCoords[2] - this._lastCrds[2]) > 0.7))) {
+                pnt._t = t;
                 this.points.push(pnt);
                 this._lastCrds = pnt.copy('scrCoords');
             }
@@ -1344,13 +1349,13 @@ define([
             --depth;
 
             if (isJump) {
-                this._insertPoint(new Coords(Const.COORDS_BY_SCREEN, [NaN, NaN], this.board, false));
+                this._insertPoint(new Coords(Const.COORDS_BY_SCREEN, [NaN, NaN], this.board, false), tc);
             } else if (depth <= mindepth || isSmooth) {
-                this._insertPoint(pnt);
+                this._insertPoint(pnt, tc);
                 //if (this._borderCase(a, b, c, ta, tb, tc, depth)) {}
             } else {
                 this._plotRecursive(a, ta, c, tc, depth, delta);
-                this._insertPoint(pnt);
+                this._insertPoint(pnt, tc);
                 this._plotRecursive(c, tc, b, tb, depth, delta);
             }
 
@@ -1393,9 +1398,11 @@ define([
             pb.setCoordinates(Const.COORDS_BY_USER, [this.X(tb, suspendUpdate), this.Y(tb, suspendUpdate)], false);
             b = pb.copy('scrCoords');
 
+            pa._t = ta;
             this.points.push(pa);
             this._lastCrds = pa.copy('scrCoords');   //Used in _insertPoint
             this._plotRecursive(a, ta, b, tb, depth, delta);
+            pb._t = tb;
             this.points.push(pb);
 
             this.numberPoints = this.points.length;
