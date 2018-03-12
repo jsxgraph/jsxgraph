@@ -402,9 +402,9 @@ define([
         setAttribute: function (term) { },
 
         /**
-         * Combine two transformations to one transformations. This only works if
-         * the both transformation  matrices consist of numbers, solely (and do not
-         * contain functions).
+         * Combine two transformations to one transformation. This only works if
+         * both of the transformation matrices consist solely of numbers, and do not
+         * contain functions.
          *
          * Multiplies the transformation with a transformation t from the left.
          * i.e. (this) = (t) join (this)
