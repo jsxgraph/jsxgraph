@@ -330,7 +330,7 @@ define([
 
         /**
          * Transform a GeometryElement:
-         * First, the transformation matrix is updated, the do the matrix-vector-multiplication.
+         * First, the transformation matrix is updated, then do the matrix-vector-multiplication.
          * @param {JXG.GeometryElement} p element which is transformed
          * @param {String} 'self' Apply the transformation to the initialCoords instead of the coords if this is set.
          * @returns {Array}
@@ -402,9 +402,9 @@ define([
         setAttribute: function (term) { },
 
         /**
-         * Combine two transformations to one transformations. This only works if
-         * the both transformation  matrices consist of numbers, solely (and do not
-         * contain functions).
+         * Combine two transformations to one transformation. This only works if
+         * both of the transformation matrices consist solely of numbers, and do not
+         * contain functions.
          *
          * Multiplies the transformation with a transformation t from the left.
          * i.e. (this) = (t) join (this)
