@@ -952,7 +952,15 @@ define([
          * @param {Object} result An object where the referenced elements will be stored. Access key is their id.
          */
         collectDependencies: function (node, result) {
-            var i, v, e;
+            var i, v, e, le;
+
+            if (Type.isArray(node)) {
+                le = node.length;
+                for (i = 0; i < le; i++) {
+                    this.collectDependencies(node[i], result);
+                }
+                return;
+            }
 
             v = node.value;
 
