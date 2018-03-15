@@ -3433,7 +3433,6 @@ define([
                 delete this.objects[object.id];
                 delete this.elementsByName[object.name];
 
-
                 if (object.visProp && Type.evaluate(object.visProp.trace)) {
                     object.clearTrace();
                 }

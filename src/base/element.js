@@ -1255,13 +1255,15 @@ define([
                         this.visProp.withlabel = value;
                         if (!Type.evaluate(value)) {
                             if (this.label && this.hasLabel) {
-                                this.label.hideElement();
+                                //this.label.hideElement();
+                                this.label.setAttribute({visible: false});
                             }
                         } else {
                             if (!this.label) {
                                 this.createLabel();
                             }
-                            this.label.showElement();
+                            //this.label.showElement();
+                            this.label.setAttribute({visible: 'inherit'});
                             //this.label.setDisplayRendNode(Type.evaluate(this.visProp.visible));
                         }
                         this.hasLabel = value;
