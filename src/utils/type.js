@@ -155,7 +155,7 @@ define([
          * @returns {Boolean} True, if v is of type JXG.Point.
          */
         isPointType: function (board, v) {
-            var val;
+            var val, p;
 
             if (this.isArray(v)) {
                 return true;
@@ -166,8 +166,8 @@ define([
                     return true;
                 }
             }
-            v = board.select(v);
-            return this.isPoint(v);
+            p = board.select(v);
+            return this.isPoint(p);
         },
 
         /**
