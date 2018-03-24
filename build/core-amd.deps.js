@@ -58,6 +58,7 @@ define([
     'renderer/vml',
     'renderer/canvas',
     'renderer/no',
+    'element/comb',
     'element/slopetriangle',
     'element/checkbox',
     'element/input',
