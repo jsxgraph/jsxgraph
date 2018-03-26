@@ -72,6 +72,15 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                 'setAttribute',
 
                 /**
+                * Invokes setParents for every stored element with a setParents method and hands over the given arguments.
+                * See {@link JXG.GeometryElement#setParents} for further description, valid parameters and return values.
+                * @name setParents
+                * @memberOf JXG.Composition.prototype
+                * @function
+                */
+                'setParents',
+
+                /**
                  * Invokes prepareUpdate for every stored element with a prepareUpdate method and hands over the given arguments.
                  * See {@link JXG.GeometryElement#prepareUpdate} for further description, valid parameters and return values.
                  * @name prepareUpdate
@@ -97,6 +106,15 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                  * @function
                  */
                 'update',
+
+                /**
+                 * Invokes fullUpdate for every stored element with a fullUpdate method and hands over the given arguments.
+                 * See {@link JXG.GeometryElement#fullUpdate} for further description, valid parameters and return values.
+                 * @name fullUpdate
+                 * @memberOf JXG.Composition.prototype
+                 * @function
+                 */
+                'fullUpdate',
 
                 /**
                  * Invokes highlight for every stored element with a highlight method and hands over the given arguments.
@@ -147,6 +165,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
         this.methodMap = {
             setAttribute: 'setAttribute',
             setProperty: 'setAttribute',
+            setParents: 'setParents',
             add: 'add',
             remove: 'remove',
             select: 'select'

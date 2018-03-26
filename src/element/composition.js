@@ -1321,7 +1321,7 @@ define([
             line1: g1,
             line2: g2
         };
-        ret.inherits.push(g1, g2);
+        // ret.inherits.push(g1, g2);
 
         return ret;
     };
