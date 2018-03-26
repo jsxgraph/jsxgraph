@@ -127,10 +127,13 @@ define([
         }
 
         c.updateDataArray = function() {
-            var s = 0;
-            var max_s = p1.Dist(p2);
-            var cs = Math.cos(angle), sn = Math.sin(angle);
-            var dx = (p2.X() - p1.X()) / max_s, dy = (p2.Y() - p1.Y()) / max_s;
+            var s = 0,
+                max_s = p1.Dist(p2),
+                cs = Math.cos(angle),
+                sn = Math.sin(angle),
+                dx = (p2.X() - p1.X()) / max_s,
+                dy = (p2.Y() - p1.Y()) / max_s,
+                f;
 
             // But instead of lifting by sin(angle), we want lifting by width.
             cs *= width / Math.abs(sn);
@@ -144,8 +147,9 @@ define([
                 var y = p1.Y() + dy * s;
 
                 // We may need to cut the last piece of a comb.
-                sn *= Math.min(cs, max_s - s) / Math.abs(cs);
-                cs *= Math.min(cs, max_s - s) / Math.abs(cs);
+                f = Math.min(cs, max_s - s) / Math.abs(cs);
+                sn *= f;
+                cs *= f;
 
                 this.dataX.push(x);
                 this.dataY.push(y);

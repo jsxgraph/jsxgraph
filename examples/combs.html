@@ -18,10 +18,10 @@
         board = JXG.JSXGraph.initBoard('jxgbox', {originX: 50, originY: 300, unitX: 50, unitY: 50, axis: true});
         board.snapToGrid = true;
 
-        p1 = board.createElement('point', [5, 0]);
-        p2 = board.createElement('point', [7, 0]);
-        c1 = board.createElement('comb', [p1, p2], {width: 0.5});
-        c2 = board.createElement('comb', [[-10, 0], [3, 0]], {width: 0.5, reverse: true});
+        p1 = board.create('point', [5, 0]);
+        p2 = board.create('point', [7, 0]);
+        c1 = board.create('comb', [p1, p2], {width: 0.5});
+        c2 = board.create('comb', [[-10, 0], [3, 0]], {width: 0.5, reverse: true});
 
   /* ]]> */
   </script>
