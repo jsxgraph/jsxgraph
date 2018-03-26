@@ -1,0 +1,29 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../distrib/prototype.js"></script>
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+</head>
+<body>
+<h2>Combs</h2>
+<div style="width:800px">
+  <div id="jxgbox" class="jxgbox" style="width:600px; height:450px; float:left"></div>
+</div>
+<div id="debug" style="display:none;"></div>
+   <script type="text/javascript">
+    /* <![CDATA[ */
+
+        var p1, p2, l1;
+        board = JXG.JSXGraph.initBoard('jxgbox', {originX: 50, originY: 300, unitX: 50, unitY: 50, axis: true});
+        board.snapToGrid = true;
+
+        p1 = board.createElement('point', [5, 0]);
+        p2 = board.createElement('point', [7, 0]);
+        c1 = board.createElement('comb', [p1, p2], {width: 0.5});
+        c2 = board.createElement('comb', [[-10, 0], [3, 0]], {width: 0.5, reverse: true});
+
+  /* ]]> */
+  </script>
+</body>
+</html>
