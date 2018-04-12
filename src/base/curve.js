@@ -726,7 +726,8 @@ define([
                 }
                 len = this.numberPoints;
 
-                if (Type.evaluate(this.visProp.useqdt) && this.board.updateQuality === this.board.BOARD_QUALITY_HIGH) {
+                if (Type.evaluate(this.visProp.useqdt) &&
+                    this.board.updateQuality === this.board.BOARD_QUALITY_HIGH) {
                     this.qdt = new QDT(this.board.getBoundingBox());
                     for (i = 0; i < this.points.length; i++) {
                         this.qdt.insert(this.points[i]);
@@ -1376,12 +1377,12 @@ define([
                 depth, delta;
 
             if (this.board.updateQuality === this.board.BOARD_QUALITY_LOW) {
-                depth = 13;
+                depth = Type.evaluate(this.visProp.recursiondepthlow) || 13;
                 delta = 2;
                 this.smoothLevel = depth - 7;
                 this.jumpLevel = 5;
             } else {
-                depth = 17;
+                depth = Type.evaluate(this.visProp.recursiondepthhigh) || 17;
                 delta = 2;
                 this.smoothLevel = depth - 7; // 9
                 this.jumpLevel = 3;

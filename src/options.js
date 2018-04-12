@@ -1487,7 +1487,7 @@ define([
              * If set to true, the supplied coordinates are interpreted as
              * [[x_0, y_0], [x_1, y_1], p, ...].
              * Otherwise, if the data consists of two arrays of equal length,
-             * it is interpreted as 
+             * it is interpreted as
              * [[x_o x_1, ..., x_n], [y_0, y_1, ..., y_n]]
              *
              * @name isArrayOfCoordinates
@@ -1797,7 +1797,9 @@ define([
             RDPsmoothing: false,     // Apply the Ramer-Douglas-Peuker algorithm
 
             /**
-             * Number of points used for plotting triggered by up events in case {@link Curve#doAdvancedPlot} is false.
+             * Number of points used for plotting triggered by up events
+             * (i.e. high quality plotting) in case
+             * {@link Curve#doAdvancedPlot} is false.
              *
              * @name Curve#numberPointsHigh
              * @see Curve#doAdvancedPlot
@@ -1807,7 +1809,9 @@ define([
             numberPointsHigh: 1600,  // Number of points on curves after mouseUp
 
             /**
-             * Number of points used for plotting triggered by move events in case {@link Curve#doAdvancedPlot} is false.
+             * Number of points used for plotting triggered by move events
+             * (i.e. lower quality plotting but fast) in case
+             * {@link Curve#doAdvancedPlot} is false.
              *
              * @name Curve#numberPointsLow
              * @see Curve#doAdvancedPlot
@@ -1826,6 +1830,31 @@ define([
              * @default true
              */
             doAdvancedPlot: true,
+
+            /**
+             *
+             * Recursion depth used for plotting triggered by up events
+             * (i.e. high quality plotting) in case
+             * {@link Curve#doAdvancedPlot} is true.
+             *
+             * @name Curve#recursionDepthHigh
+             * @see Curve#doAdvancedPlot
+             * @type Number
+             * @default 17
+             */
+             recursionDepthHigh: 17,
+
+            /**
+             * Number of points used for plotting triggered by move events in case
+             * (i.e. lower quality plotting but fast)
+             * {@link Curve#doAdvancedPlot} is true.
+             *
+             * @name Curve#recursionDepthLow
+             * @see Curve#doAdvancedPlot
+             * @type Number
+             * @default 13
+             */
+             recursionDepthLow: 13,
 
             /**
              * If true use the algorithm by Gillam and Hohenwarter, which was default until version 0.98.
