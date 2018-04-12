@@ -710,9 +710,9 @@ define([
             // continuous x data
             } else {
                 if (Type.evaluate(this.visProp.doadvancedplot)) {
-                    this.updateParametricCurve(mi, ma, len);
+                    this.updateParametricCurve(mi, ma);
                 } else if (Type.evaluate(this.visProp.doadvancedplotold)) {
-                    this.updateParametricCurveOld(mi, ma, len);
+                    this.updateParametricCurveOld(mi, ma);
                 } else {
                     if (this.board.updateQuality === this.board.BOARD_QUALITY_HIGH) {
                         this.numberPoints = Type.evaluate(this.visProp.numberpointshigh);
@@ -1374,6 +1374,7 @@ define([
                 pa = new Coords(Const.COORDS_BY_USER, [0, 0], this.board, false),
                 pb = new Coords(Const.COORDS_BY_USER, [0, 0], this.board, false),
                 depth, delta;
+
             if (this.board.updateQuality === this.board.BOARD_QUALITY_LOW) {
                 depth = 13;
                 delta = 2;
