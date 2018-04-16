@@ -2442,12 +2442,18 @@ define([
     };
 
     /**
-     * @class Creates an area indicating the solution of a linear inequality.
+     * @class Creates an area indicating the solution of a linear inequality or an inequality
+     * of a function graph, i.e. an inequality of type y <= f(x).
      * @pseudo
      * @description Display the solution set of a linear inequality (less than or equal to).
      * To be precise, the solution set of the inequality <i>y <= b/a * x + c/a</i> is shown.
      * In case <i>a = 0</i>, that is if the equation of the line is <i>bx + c = 0</i>,
      * the area of the inequality <i>bx + c <= 0</i> is shown.
+     * <p>
+     * For function graphs the area below the function graph is filled, i.e. the
+     * area of the inequality y <= f(x).
+     * With the attribute inverse:true the area of the inequality y >= f(x) is filled.
+     *
      * @param {JXG.Line} l The area drawn will be the area below this line. With the attribute
      * inverse:true, the inequality 'greater than or equal to' is shown.
      * @constructor
@@ -2487,6 +2493,29 @@ define([
      *      ineq = board.create('inequality', [l], {inverse:true});
      * })();
      * </script><pre>
+     *
+     * @example
+     * var f = board.create('functiongraph', ['sin(x)', -2*Math.PI, 2*Math.PI]);
+     *
+     * var ineq_lower = board.create('inequality', [f]);
+     * var ineq_greater = board.create('inequality', [f], {inverse: true, fillColor: 'yellow'});
+     *
+     *
+     * </pre><div id="db68c574-414c-11e8-839a-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     *     (function() {
+     *         var board = JXG.JSXGraph.initBoard('db68c574-414c-11e8-839a-901b0e1b8723',
+     *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+     *     var f = board.create('functiongraph', ['sin(x)', -2*Math.PI, 2*Math.PI]);
+     *
+     *     var ineq_lower = board.create('inequality', [f]);
+     *     var ineq_greater = board.create('inequality', [f], {inverse: true, fillColor: 'yellow'});
+     *
+     *
+     *     })();
+     *
+     * </script><pre>
+     *
      */
     JXG.createInequality = function (board, parents, attributes) {
         var f, a, attr;
@@ -2553,6 +2582,38 @@ define([
                 this.dataX = [i1[1], i1[1] + slope1[0] * h, i2[1] + slope2[0] * h, i2[1], i1[1]];
                 this.dataY = [i1[2], i1[2] + slope1[1] * h, i2[2] + slope2[1] * h, i2[2], i1[2]];
             };
+        } else if (parents[0].elementClass === Const.OBJECT_CLASS_CURVE &&
+            parents[0].visProp.curvetype === 'functiongraph') {
+
+            a = board.create('curve', [[], []], attr);
+
+            a.hasPoint = function () {
+                return false;
+            };
+            a.updateDataArray = function () {
+                var bb = this.board.getBoundingBox(),
+                factor = attr.inverse ? -1 : 1,
+                expansion = 1.5,
+                // inverse == true <=> y >= f(x)
+                hline = expansion * (attr.inverse ? bb[1] : bb[3]),
+                i, le;
+
+                this.dataX = [];
+                this.dataY = [];
+
+                le = parents[0].points.length;
+                if (le <= 0) {
+                    return;
+                }
+                this.dataX.push(parents[0].points[0].usrCoords[1]);
+                this.dataY.push(hline);
+                for (i = 0; i < le; i++) {
+                    this.dataX.push(parents[0].points[i].usrCoords[1]);
+                    this.dataY.push(parents[0].points[i].usrCoords[2]);
+                }
+                this.dataX.push(parents[0].points[le - 1].usrCoords[1]);
+                this.dataY.push(hline);
+            };
         } else {
             f = Type.createFunction(parents[0]);
             if (!Type.exists(f)) {
@@ -2561,6 +2622,7 @@ define([
             }
         }
 
+        a.addParents(parents[0]);
         return a;
     };
 

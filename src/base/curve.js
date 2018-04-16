@@ -1879,13 +1879,14 @@ define([
      *   var graph = board.create('curve',
      *                        [function(phi){ return a.Value()*(1-Math.cos(phi));},
      *                         [1,0],
-     *                         0, 2*Math.PI]
+     *                         0, 2*Math.PI],
+     *                         {curveType: 'polar'}
      *                     );
      * </pre><div class="jxgbox" id="d0bc7a2a-8124-45ca-a6e7-142321a8f8c2" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
      *   var c2_board = JXG.JSXGraph.initBoard('d0bc7a2a-8124-45ca-a6e7-142321a8f8c2', {boundingbox: [-3,3,3,-3], axis: true, showcopyright: false, shownavigation: false});
      *   var a = c2_board.create('slider',[[0,2],[2,2],[0,1,2]]);
-     *   var graph2 = c2_board.create('curve', [function(phi){ return a.Value()*(1-Math.cos(phi));}, [1,0], 0, 2*Math.PI]);
+     *   var graph2 = c2_board.create('curve', [function(phi){ return a.Value()*(1-Math.cos(phi));}, [1,0], 0, 2*Math.PI], {curveType: 'polar'});
      * </script><pre>
      *
      * @example
