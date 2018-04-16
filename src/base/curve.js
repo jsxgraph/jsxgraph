@@ -1379,12 +1379,13 @@ define([
             if (this.board.updateQuality === this.board.BOARD_QUALITY_LOW) {
                 depth = Type.evaluate(this.visProp.recursiondepthlow) || 13;
                 delta = 2;
-                this.smoothLevel = depth - 7;
+                this.smoothLevel = 5; //depth - 7;
                 this.jumpLevel = 5;
             } else {
                 depth = Type.evaluate(this.visProp.recursiondepthhigh) || 17;
                 delta = 2;
-                this.smoothLevel = depth - 7; // 9
+                // smoothLevel has to be small for graphs in a huge interval.
+                this.smoothLevel = 3; //depth - 7; // 9
                 this.jumpLevel = 3;
             }
             this.nanLevel = depth - 4;
