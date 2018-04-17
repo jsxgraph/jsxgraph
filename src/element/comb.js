@@ -51,11 +51,15 @@ define([
      * @augments JXG.Curve
      * @constructor
      * @type JXG.Curve
-     * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
+     * @throws {Error} If the element cannot be constructed with the given parent
+     *  objects an exception is thrown.
      * Parameter options:
-     * @param {JXG.Point,array,function_JXG.Point,array,function} point1,point2 Parent elements can be two elements either of type {@link JXG.Point} or array of
-     * numbers describing the coordinates of a point. In the latter case the point will be constructed automatically as a fixed invisible point.
-     * It is possible to provide a function returning an array or a point, instead of providing an array or a point.
+     * @param {JXG.Point,array,function_JXG.Point,array,function} point1,point2 Parent elements
+     * can be two elements either of type {@link JXG.Point} or array of
+     * numbers describing the coordinates of a point. In the latter case the point
+     * will be constructed automatically as a fixed invisible point.
+     * It is possible to provide a function returning an array or a point,
+     * instead of providing an array or a point.
      * @example
      * // Create a simple horizontal comb with invisible endpoints
      * var c = board.create('comb', [[1, 0], [3, 0]]);
