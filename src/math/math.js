@@ -654,6 +654,28 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
         },
 
         /**
+         * Least common multiple (lcm) of two numbers.
+         *
+         * @param  {Number} a First number
+         * @param  {Number} b Second number
+         * @returns {Number}   lcm(a, b) if a and b are numbers, NaN else.
+         */
+        lcm: function (a,b) {
+            var ret;
+
+            if (!(Type.isNumber(a) && Type.isNumber(b))) {
+                return NaN;
+            }
+            
+            ret = a * b;
+            if (ret !== 0) {
+                return ret / this.gcd(a, b);
+            }
+
+            return 0;
+        },
+
+        /**
          * Normalize the standard form [c, b0, b1, a, k, r, q0, q1].
          * @private
          * @param {Array} stdform The standard form to be normalized.
