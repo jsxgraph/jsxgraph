@@ -1250,7 +1250,7 @@ define([
                     if (!Type.exists(this.highlightedObjects[pId])) { // highlight only if not highlighted
                         overObjects[pId] = pEl;
                         pEl.highlight();
-                        this.triggerEventHandlers(['mousehit', 'hit'], [evt, pEl, target]);
+                        pEl.triggerEventHandlers(['mousehit', 'hit'], [evt, pEl, target]);
                     }
 
                     if (pEl.mouseover) {
