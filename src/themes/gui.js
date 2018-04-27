@@ -128,7 +128,7 @@ JXG.Options = JXG.merge(JXG.Options, {
         fillColor: '#ffff00',
         highlightFillColor: '#ffff00',
         hasInnerPoints: true,
-
+        
         borders: {
             strokeColor: '#444444',
             strokeOpacity: 0.9,
