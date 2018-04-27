@@ -71,7 +71,7 @@ release: core-min docs
 	$(CP) $(BUILDBIN)/jsxgraphcore.min.js $(TMP)/jsxgraphcore.js
 	$(CP) $(BUILDBIN)/jsxgraphcore.js $(TMP)/jsxgraphsrc.js
 	$(CP) $(OUTPUT)/docs.zip $(TMP)/docs.zip
-	$(CP) distrib/jsxgraph.css $(TMP)/jsxgraph.css
+	$(CP) $(OUTPUT)/jsxgraph.css $(TMP)/jsxgraph.css
 	$(CP) -r src/themes $(TMP)/themes
 	$(CP) README.md LICENSE.MIT LICENSE.LGPL $(TMP)/
 	$(CD) $(TMP) && $(ZIP) $(ZIPFLAGS) jsxgraph.zip jsxgraph* themes/ docs.zip README.md LICENSE.*
@@ -85,9 +85,9 @@ docs: core core-min
 	$(MKDIR) $(MKDIRFLAGS) $(OUTPUT)
 
 	# update template related files
-	$(CP) distrib/jquery.min.js $(JSDOC2TPLSTAT)/jquery.min.js
+	$(CP) $(OUTPUT)/jquery.min.js $(JSDOC2TPLSTAT)/jquery.min.js
 	$(CP) $(BUILDBIN)/jsxgraphcore.min.js $(JSDOC2TPLSTAT)/jsxgraphcore.js
-	$(CP) distrib/jsxgraph.css $(JSDOC2TPLSTAT)/jsxgraph.css
+	$(CP) $(OUTPUT)/jsxgraph.css $(JSDOC2TPLSTAT)/jsxgraph.css
 
 	# update the plugin
 	$(CP) $(JSDOC2PLG)/*.js ./node_modules/jsdoc2/app/plugins/
@@ -108,7 +108,7 @@ moodle: core core-min $(READERSOUT)
 	$(MKDIR) $(MKDIRFLAGS) $(TMP)
 	$(MKDIR) $(MKDIRFLAGS) $(TMP)/jsxgraph
 	$(CP) $(BUILDBIN)/jsxgraphcore.min.js $(TMP)/jsxgraph/jsxgraphcore.js
-	$(CP) distrib/jsxgraph.css $(TMP)/jsxgraph/jsxgraph.css
+	$(CP) $(OUTPUT)/jsxgraph.css $(TMP)/jsxgraph/jsxgraph.css
 	$(CP) ../moodle-jsxgraph-plugin/moodle2/*.php $(TMP)/jsxgraph/
 	$(CP) ../moodle-jsxgraph-plugin/moodle2/styles.css $(TMP)/jsxgraph/
 	$(CP) ../moodle-jsxgraph-plugin/README.md $(TMP)/jsxgraph/
@@ -133,7 +133,7 @@ compressor: core
 	$(REQUIREJS) -o build/compressor.build.json
 	{ $(CAT) JSXCompressor/COPYING; $(CAT) $(BUILDBIN)/jsxcompressor.js; } > JSXCompressor/jsxcompressor.min.js
 	$(CP) $(BUILDBIN)/jsxgraphcore.js JSXCompressor/jsxgraphcore.js
-	$(CP) distrib/jsxgraph.css JSXCompressor/jsxgraph.css
+	$(CP) $(OUTPUT)/jsxgraph.css JSXCompressor/jsxgraph.css
 
 plot:
 	$(MKDIR) $(MKDIRFLAGS) $(BUILDBIN)
