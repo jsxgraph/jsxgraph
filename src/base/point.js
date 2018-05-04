@@ -105,9 +105,15 @@ define([
          * @private
          */
         hasPoint: function (x, y) {
-            var coordsScr = this.coords.scrCoords, r;
-            r = parseFloat(Type.evaluate(this.visProp.size)) +
-                    parseFloat(Type.evaluate(this.visProp.strokewidth)) * 0.5;
+            var coordsScr = this.coords.scrCoords, r,
+                unit = Type.evaluate(this.visProp.sizeunit);
+
+            r = parseFloat(Type.evaluate(this.visProp.size));
+            if (unit == 'user') {
+                r *= Math.sqrt(this.board.unitX * this.board.unitY)
+            }
+
+            r += parseFloat(Type.evaluate(this.visProp.strokewidth)) * 0.5;
             if (r < this.board.options.precision.hasPoint) {
                 r = this.board.options.precision.hasPoint;
             }

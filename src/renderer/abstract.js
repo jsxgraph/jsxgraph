@@ -289,11 +289,17 @@ define([
                 // sometimes el is not a real point and lacks the methods of a JXG.Point instance,
                 // in these cases to not use el directly.
                 face = Options.normalizePointFace(Type.evaluate(el.visProp.face)),
-                s1 = (size === 0) ? 0 : size + 1;
+                unit = Type.evaluate(el.visProp.sizeunit),
+                zoom = Type.evaluate(el.visProp.zoom),
+                s1;
 
             if (!isNaN(el.coords.scrCoords[2] + el.coords.scrCoords[1])) {
-                size *= ((!el.board || !el.board.options.point.zoom) ?
+                if (unit === 'user') {
+                    size *= Math.sqrt(el.board.unitX * el.board.unitY)
+                }
+                size *= ((!el.board || !zoom) ?
                     1.0 : Math.sqrt(el.board.zoomX * el.board.zoomY));
+                s1 = (size === 0) ? 0 : size + 1;
 
                 if (face === 'o') { // circle
                     this.updateEllipsePrim(el.rendNode, el.coords.scrCoords[1],
@@ -591,7 +597,7 @@ define([
 
         /**
          * Update the line endings (linecap) of a straight line from its attribute
-         * 'linecap'. 
+         * 'linecap'.
          * Possible values for the attribute 'linecap' are: 'butt', 'round', 'square'.
          * The default value is 'butt'. Not available for VML renderer.
          *

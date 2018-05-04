@@ -2690,17 +2690,30 @@ define([
             face: 'o',
 
             /**
-             * Size of a point.
+             * Size of a point, either in pixel or user coordinates.
              * Means radius resp. half the width of a point (depending on the face).
              *
              * @name Point#size
              *
              * @see Point#face
              * @see Point#setStyle
+             * @see Point#sizeUnit
              * @type number
              * @default 3
              */
             size: 3,
+
+            /**
+             * Unit for size.
+             * Possible values are 'screen' and 'user.
+             *
+             * @name Point#sizeUnit
+             *
+             * @see Point#size
+             * @type string
+             * @default 'screen'
+             */
+            sizeUnit: 'screen',
 
             fillColor: '#ff0000',
             highlightFillColor: '#EEEEEE',
