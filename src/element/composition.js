@@ -78,8 +78,8 @@
 
 define([
     'jxg', 'math/math', 'math/geometry', 'math/numerics', 'math/statistics', 'base/coords', 'utils/type', 'base/constants',
-    'base/point', 'base/line', 'base/circle', 'base/transformation', 'base/composition', 'base/curve', 'base/text'
-], function (JXG, Mat, Geometry, Numerics, Statistics, Coords, Type, Const, Point, Line, Circle, Transform, Composition, Curve, Text) {
+    'base/point', 'base/line', 'base/circle', 'base/transformation', 'base/composition', 'base/curve', 'base/text', 'base/polygon'
+], function (JXG, Mat, Geometry, Numerics, Statistics, Coords, Type, Const, Point, Line, Circle, Transform, Composition, Curve, Text, Polygon) {
 
     "use strict";
 
@@ -1730,13 +1730,13 @@ define([
      *         var l1 = board.create('line', [1,-5,1]);
      *         var l2 = board.create('reflection', [l1, li]);
      *
-     *         var cu1 = board.create('curve', [[-1, -1, -0.5, -1, -1, -0.5], [-3, -2, -2, -2, -2.5, -2.5]]);
-     *         var cu2 = board.create('reflection', [cu1, li], {strokeColor: 'red'});
+     *         var cu1 = board.create('curve', [[-3, -3, -2.5, -3, -3, -2.5], [-3, -2, -2, -2, -2.5, -2.5]], {strokeWidth:3});
+     *         var cu2 = board.create('reflection', [cu1, li], {strokeColor: 'red', strokeWidth:3});
      *
-     *         var pol1 = board.create('polygon', [[-3,-2], [-1,-4], [-2,-0.5]]);
+     *         var pol1 = board.create('polygon', [[-6,-3], [-4,-5], [-5,-1.5]]);
      *         var pol2 = board.create('reflection', [pol1, li]);
      *
-     *         var c1 = board.create('circle', [[-2,-2], [-2, -1]];
+     *         var c1 = board.create('circle', [[-2,-2], [-2, -1]]);
      *         var c2 = board.create('reflection', [c1, li]);
      *
      * </pre><div id="8f763af4-d449-11e7-93b3-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
@@ -1754,13 +1754,13 @@ define([
      *             var l1 = board.create('line', [1,-5,1]);
      *             var l2 = board.create('reflection', [l1, li]);
      *
-     *             var cu1 = board.create('curve', [[-1, -1, -0.5, -1, -1, -0.5], [-3, -2, -2, -2, -2.5, -2.5]]);
-     *             var cu2 = board.create('reflection', [cu1, li], {strokeColor: 'red'});
+     *             var cu1 = board.create('curve', [[-3, -3, -2.5, -3, -3, -2.5], [-3, -2, -2, -2, -2.5, -2.5]], {strokeWidth:3});
+     *             var cu2 = board.create('reflection', [cu1, li], {strokeColor: 'red', strokeWidth:3});
      *
-     *             var pol1 = board.create('polygon', [[-3,-2], [-1,-4], [-2,-0.5]]);
+     *             var pol1 = board.create('polygon', [[-6,-3], [-4,-5], [-5,-1.5]]);
      *             var pol2 = board.create('reflection', [pol1, li]);
      *
-     *             var c1 = board.create('circle', [[-2,-2], [-2, -1]];
+     *             var c1 = board.create('circle', [[-2,-2], [-2, -1]]);
      *             var c2 = board.create('reflection', [c1, li]);
      *     })();
      *
@@ -1784,7 +1784,7 @@ define([
         } else {
             throw new Error("JSXGraph: Can't create reflection element with parent types '" +
                 (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
-                "\nPossible parent types: [point|line|curve|polygon,circle, line]");
+                "\nPossible parent types: [point|line|curve|polygon|circle, line]");
         }
 
         if (parents[1].elementClass === Const.OBJECT_CLASS_LINE) {
@@ -1792,7 +1792,7 @@ define([
         } else {
             throw new Error("JSXGraph: Can't create reflected element with parent types '" +
                 (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
-                "\nPossible parent types: [point|line|curve|polygon, line]");
+                "\nPossible parent types: [point|line|curve|polygon|circle, line]");
         }
 
         t = Transform.createTransform(board, [l], {type: 'reflect'});
@@ -1803,7 +1803,7 @@ define([
         } else if (org.elementClass === Const.OBJECT_CLASS_LINE){
             r = Line.createLine(board, [org, t], attributes);
         } else if (org.type === Const.OBJECT_TYPE_POLYGON){
-            r = Line.createPolygon(board, [org, t], attributes);
+            r = Polygon.createPolygon(board, [org, t], attributes);
         } else if (org.elementClass === Const.OBJECT_CLASS_CIRCLE){
             r = Circle.createCircle(board, [org, t], attributes);
         } else {
@@ -1866,14 +1866,17 @@ define([
      *         var p1 = board.create('point', [-3,-1], {name: "A"});
      *         var q1 = board.create('mirrorelement', [p1, mirr], {name: "A'"});
      *
-     *         var l1 = board.create('line', [1,-5,1]);
+     *         var l1 = board.create('line', [1, -5, 1]);
      *         var l2 = board.create('mirrorelement', [l1, mirr]);
      *
-     *         var cu1 = board.create('curve', [[-1, -1, -0.5, -1, -1, -0.5], [-3, -2, -2, -2, -2.5, -2.5]]);
-     *         var cu2 = board.create('mirrorelement', [cu1, mirr], {strokeColor: 'red'});
+     *         var cu1 = board.create('curve', [[-3, -3, -2.5, -3, -3, -2.5], [-3, -2, -2, -2, -2.5, -2.5]], {strokeWidth:3});
+     *         var cu2 = board.create('mirrorelement', [cu1, mirr], {strokeColor: 'red', strokeWidth:3});
      *
-     *         var pol1 = board.create('polygon', [[-3,-2], [-1,-4], [-2,-0.5]]);
+     *         var pol1 = board.create('polygon', [[-6,-2], [-4,-4], [-5,-0.5]]);
      *         var pol2 = board.create('mirrorelement', [pol1, mirr]);
+     *
+     *         var c1 = board.create('circle', [[-6,-6], [-6, -5]]);
+     *         var c2 = board.create('mirrorelement', [c1, mirr]);
      *
      * </pre><div id="026c779c-d8d9-11e7-93b3-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
@@ -1887,16 +1890,17 @@ define([
      *             var p1 = board.create('point', [-3,-1], {name: "A"});
      *             var q1 = board.create('mirrorelement', [p1, mirr], {name: "A'"});
      *
-     *             var l1 = board.create('line', [1,-5,1]);
+     *             var l1 = board.create('line', [1,-5, 1]);
      *             var l2 = board.create('mirrorelement', [l1, mirr]);
      *
-     *             var cu1 = board.create('curve', [[-1, -1, -0.5, -1, -1, -0.5], [-3, -2, -2, -2, -2.5, -2.5]]);
-     *             var cu2 = board.create('mirrorelement', [cu1, mirr], {strokeColor: 'red'});
+     *             var cu1 = board.create('curve', [[-3, -3, -2.5, -3, -3, -2.5], [-3, -2, -2, -2, -2.5, -2.5]], {strokeWidth:3});
+     *             var cu2 = board.create('mirrorelement', [cu1, mirr], {strokeColor: 'red', strokeWidth:3});
      *
-     *             var pol1 = board.create('polygon', [[-3,-2], [-1,-4], [-2,-0.5]]);
+     *             var pol1 = board.create('polygon', [[-6,-2], [-4,-4], [-5,-0.5]]);
      *             var pol2 = board.create('mirrorelement', [pol1, mirr]);
      *
-     *
+     *             var c1 = board.create('circle', [[-6,-6], [-6, -5]]);
+     *             var c2 = board.create('mirrorelement', [c1, mirr]);
      *     })();
      *
      * </script><pre>
@@ -1908,12 +1912,13 @@ define([
             org = Type.providePoints(board, [parents[0]], attributes, 'point')[0];
         } else if (parents[0].elementClass === Const.OBJECT_CLASS_CURVE ||
                     parents[0].elementClass === Const.OBJECT_CLASS_LINE ||
-                    parents[0].type === Const.OBJECT_TYPE_POLYGON) {
+                    parents[0].type === Const.OBJECT_TYPE_POLYGON ||
+                    parents[0].elementClass === Const.OBJECT_CLASS_CIRCLE) {
             org = parents[0];
         } else {
             throw new Error("JSXGraph: Can't create mirrot element with parent types '" +
                 (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
-                "\nPossible parent types: [point|line|curve|polygon, line]");
+                "\nPossible parent types: [point|line|curve|polygon|circle, line]");
         }
 
         if (Type.isPoint(parents[1])) {
@@ -1921,7 +1926,7 @@ define([
         } else {
             throw new Error("JSXGraph: Can't create mirror element with parent types '" +
                 (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
-                "\nPossible parent types: [point|line|curve|polygon, line]");
+                "\nPossible parent types: [point|line|curve|polygon|circle, line]");
         }
 
         t = Transform.createTransform(board, [Math.PI, m], {type: 'rotate'});
@@ -1932,7 +1937,9 @@ define([
         } else if (org.elementClass === Const.OBJECT_CLASS_LINE){
             r = Line.createLine(board, [org, t], attributes);
         }  else if (org.type === Const.OBJECT_TYPE_POLYGON){
-            r = Line.createPolygon(board, [org, t], attributes);
+            r = Polygon.createPolygon(board, [org, t], attributes);
+        } else if (org.elementClass === Const.OBJECT_CLASS_CIRCLE){
+            r = Circle.createCircle(board, [org, t], attributes);
         } else {
             throw new Error("JSXGraph: Can't create mirror point with parent types '" +
                 (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
