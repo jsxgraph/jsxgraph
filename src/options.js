@@ -1273,6 +1273,16 @@ define([
              */
             selection: 'auto',
 
+            /**
+             * If <tt>true</tt>, moving the mouse over inner points triggers hasPoint.
+             *
+             * @see JXG.GeometryElement#hasPoint
+             * @name Arc#hasInnerPoints
+             * @type Boolean
+             * @default false
+             */
+            hasInnerPoints: false,
+
             label: {
                 anchorX: 'auto',
                 anchorY: 'auto'
@@ -1284,6 +1294,8 @@ define([
             strokeColor: '#0000ff',
             highlightStrokeColor: '#C3D9FF',
             useDirection: false
+
+
 
             /**#@-*/
         },

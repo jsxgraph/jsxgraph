@@ -238,6 +238,10 @@ define([
                 r = this.Radius(),
                 ev_s = Type.evaluate(this.visProp.selection);
 
+            if (Type.evaluate(this.visProp.hasinnerpoints)) {
+                return this.hasPointSector(x, y);
+            }
+
             prec = this.board.options.precision.hasPoint / Math.min(this.board.unitX, this.board.unitY);
             checkPoint = new Coords(Const.COORDS_BY_SCREEN, [x, y], this.board);
 
@@ -255,6 +259,7 @@ define([
 
             /**
              * At that point we know that the user has touched the circle line.
+             * Now, we have to check, if the user has hit the arc path.
              */
             if (has) {
                 angle = Geometry.rad(this.radiuspoint, this.center, checkPoint.usrCoords.slice(1));
@@ -349,7 +354,7 @@ define([
             vecx = vecx * (len + dx) / len;
             vecy = vecy * (len + dy) / len;
             vec = [pmc[1] + vecx, pmc[2] + vecy];
-            
+
             l_vp.position = Geometry.calcLabelQuadrant(Geometry.rad([1,0],[0,0],vec));
 
             return new Coords(Const.COORDS_BY_USER, vec, this.board);
