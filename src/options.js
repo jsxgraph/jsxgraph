@@ -1293,9 +1293,34 @@ define([
             highlightFillColor: 'none',
             strokeColor: '#0000ff',
             highlightStrokeColor: '#C3D9FF',
-            useDirection: false
+            useDirection: false,
 
+            /**
+             * Attributes for center point.
+             *
+             * @type Point
+             * @name Arc#center
+             */
+            center: {
+            },
 
+            /**
+             * Attributes for radius point.
+             *
+             * @type Point
+             * @name Arc#radiuspoint
+             */
+            radiuspoint: {
+            },
+
+            /**
+             * Attributes for angle point.
+             *
+             * @type Point
+             * @name Arc#anglepoint
+             */
+            anglepoint: {
+            },
 
             /**#@-*/
         },

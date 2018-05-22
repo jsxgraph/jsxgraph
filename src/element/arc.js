@@ -90,16 +90,45 @@ define([
      * </script><pre>
      */
     JXG.createArc = function (board, parents, attributes) {
-        var el, attr, i, points;
+        var el, attr, i, points, obj;
 
-        // This method is used to create circumcirclearcs, too. If a circumcirclearc is created we get a fourth
-        // point, that's why we need to check that case, too.
-        points = Type.providePoints(board, parents, attributes, 'point');
+        obj = board.select(parents[0]);
+        if (Type.isObject(obj) && obj.type === Const.OBJECT_TYPE_ARC &&
+            Type.isTransformationOrArray(parents[1])) {
+
+            points = [];
+
+            attr = Type.copyAttributes(attributes, board.options, 'arc', 'center');
+            attr.name = (attr.withlabel && obj.center.name === '') ? '' : (obj.center.name + "'");
+            points.push(board.create('point', [obj.center, parents[1]], attr));
+
+            attr = Type.copyAttributes(attributes, board.options, 'arc', 'radiuspoint');
+            attr.name = (attr.withlabel && obj.point2.name === '') ? '' : (obj.point2.name + "'");
+            points.push(board.create('point', [obj.point2, parents[1]], attr));
+
+            attr = Type.copyAttributes(attributes, board.options, 'arc', 'anglepoint');
+            attr.name = (attr.withlabel && obj.point3.name === '') ? '' : (obj.point3.name + "'");
+            points.push(board.create('point', [obj.point3, parents[1]], attr));
+        } else {
+            // This method is used to create circumcirclearcs, too.
+            // If a circumcirclearc is created we get a fourth
+            // point, that's why we need to check that case, too.
+            points = Type.providePoints(board, parents, attributes, 'point');
+            if (points[0]) {
+                points[0].setAttribute(Type.copyAttributes(attributes, board.options, 'arc', 'center'));
+            }
+            if (points[1]) {
+                points[1].setAttribute(Type.copyAttributes(attributes, board.options, 'arc', 'radiuspoint'));
+            }
+            if (points[2]) {
+                points[2].setAttribute(Type.copyAttributes(attributes, board.options, 'arc', 'anglepoint'));
+            }
+        }
         if (points === false || points.length < 3) {
             throw new Error("JSXGraph: Can't create Arc with parent types '" +
                 (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" +
                 (typeof parents[2]) + "'." +
-                "\nPossible parent types: [point,point,point]");
+                "\nPossible parent types: [point,point,point], [arc, transformation]");
         }
 
         attr = Type.copyAttributes(attributes, board.options, 'arc');
