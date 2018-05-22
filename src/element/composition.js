@@ -1735,6 +1735,10 @@ define([
      *
      *         var pol1 = board.create('polygon', [[-3,-2], [-1,-4], [-2,-0.5]]);
      *         var pol2 = board.create('reflection', [pol1, li]);
+     *
+     *         var c1 = board.create('circle', [[-2,-2], [-2, -1]];
+     *         var c2 = board.create('reflection', [c1, li]);
+     *
      * </pre><div id="8f763af4-d449-11e7-93b3-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
      *     (function() {
@@ -1755,6 +1759,9 @@ define([
      *
      *             var pol1 = board.create('polygon', [[-3,-2], [-1,-4], [-2,-0.5]]);
      *             var pol2 = board.create('reflection', [pol1, li]);
+     *
+     *             var c1 = board.create('circle', [[-2,-2], [-2, -1]];
+     *             var c2 = board.create('reflection', [c1, li]);
      *     })();
      *
      * </script><pre>
@@ -1771,12 +1778,13 @@ define([
             org = Type.providePoints(board, [parents[0]], attributes, 'point')[0];
         } else if (parents[0].elementClass === Const.OBJECT_CLASS_CURVE ||
                     parents[0].elementClass === Const.OBJECT_CLASS_LINE ||
-                    parents[0].type === Const.OBJECT_TYPE_POLYGON) {
+                    parents[0].type === Const.OBJECT_TYPE_POLYGON ||
+                    parents[0].elementClass === Const.OBJECT_CLASS_CIRCLE) {
             org = parents[0];
         } else {
             throw new Error("JSXGraph: Can't create reflection element with parent types '" +
                 (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
-                "\nPossible parent types: [point|line|curve|polygon, line]");
+                "\nPossible parent types: [point|line|curve|polygon,circle, line]");
         }
 
         if (parents[1].elementClass === Const.OBJECT_CLASS_LINE) {
@@ -1794,12 +1802,14 @@ define([
             r = Curve.createCurve(board, [org, t], attributes);
         } else if (org.elementClass === Const.OBJECT_CLASS_LINE){
             r = Line.createLine(board, [org, t], attributes);
-        }  else if (org.type === Const.OBJECT_TYPE_POLYGON){
+        } else if (org.type === Const.OBJECT_TYPE_POLYGON){
             r = Line.createPolygon(board, [org, t], attributes);
+        } else if (org.elementClass === Const.OBJECT_CLASS_CIRCLE){
+            r = Circle.createCircle(board, [org, t], attributes);
         } else {
             throw new Error("JSXGraph: Can't create reflected element with parent types '" +
                 (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
-                "\nPossible parent types: [point|line|curve|polygon, line]");
+                "\nPossible parent types: [point|line|curve|polygon|circle, line]");
         }
         org.addChild(r);
         l.addChild(r);

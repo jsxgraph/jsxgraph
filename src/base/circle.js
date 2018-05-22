@@ -758,9 +758,26 @@ define([
      * var c2 = board.create('circle', [function() { return [p1.X(), p1.Y() + 1];}, function() { return c1.Radius(); }]);
      * })();
      * </script><pre>
+     * @example
+     * var li = board.create('line', [1,1,1], {strokeColor: '#aaaaaa'});
+     * var reflect = board.create('transform', [li], {type: 'reflect'});
+     * var c1 = board.create('circle', [[-2,-2], [-2, -1]], {center: {visible:true}});
+     * var c2 = board.create('circle', [c1, reflect]);
+     *      * </pre><div id="a2a5a870-5dbb-11e8-9fb9-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     *     (function() {
+     *         var board = JXG.JSXGraph.initBoard('a2a5a870-5dbb-11e8-9fb9-901b0e1b8723',
+     *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+     *             var li = board.create('line', [1,1,1], {strokeColor: '#aaaaaa'});
+     *             var reflect = board.create('transform', [li], {type: 'reflect'});
+     *             var c1 = board.create('circle', [[-2,-2], [-2, -1]], {center: {visible:true}});
+     *             var c2 = board.create('circle', [c1, reflect]);
+     *     })();
+     *
+     * </script><pre>
      */
     JXG.createCircle = function (board, parents, attributes) {
-        var el, p, i, attr,
+        var el, p, i, attr, obj,
             isDraggable = true;
 
         p = [];
@@ -775,15 +792,31 @@ define([
             }
         }
 
+        obj = board.select(parents[0]);
+
+        // TODO
+        // Circle transformations work only for rotation and reflection
+        if (Type.isObject(obj) && obj.elementClass === Const.OBJECT_CLASS_CIRCLE &&
+            Type.isTransformationOrArray(parents[1])) {
+
+            p = [];
+            attr = Type.copyAttributes(attributes, board.options, 'circle', 'center');
+            // Create transformed point
+            p.push(board.create('point', [obj.center, parents[1]], attr));
+            p.push(function() { return obj.Radius(); });
+        }
+
         attr = Type.copyAttributes(attributes, board.options, 'circle');
 
         if (p.length === 2 && Type.isPoint(p[0]) && Type.isPoint(p[1])) {
             // Point/Point
             el = new JXG.Circle(board, 'twoPoints', p[0], p[1], attr);
-        } else if ((Type.isNumber(p[0]) || Type.isFunction(p[0]) || Type.isString(p[0])) && Type.isPoint(p[1])) {
+        } else if ((Type.isNumber(p[0]) || Type.isFunction(p[0]) || Type.isString(p[0])) &&
+                    Type.isPoint(p[1])) {
             // Number/Point
             el = new JXG.Circle(board, 'pointRadius', p[1], p[0], attr);
-        } else if ((Type.isNumber(p[1]) || Type.isFunction(p[1]) || Type.isString(p[1])) && Type.isPoint(p[0])) {
+        } else if ((Type.isNumber(p[1]) || Type.isFunction(p[1]) || Type.isString(p[1])) &&
+                Type.isPoint(p[0])) {
             // Point/Number
             el = new JXG.Circle(board, 'pointRadius', p[0], p[1], attr);
         } else if ((p[0].elementClass === Const.OBJECT_CLASS_CIRCLE) && Type.isPoint(p[1])) {
@@ -806,10 +839,11 @@ define([
             } else {
                 throw new Error('JSXGraph: Can\'t create circle with three points. Please include the circumcircle element (element/composition).');
             }
+
         } else {
             throw new Error("JSXGraph: Can't create circle with parent types '" +
                 (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
-                "\nPossible parent types: [point,point], [point,number], [point,function], [point,circle], [point,point,point]");
+                "\nPossible parent types: [point,point], [point,number], [point,function], [point,circle], [point,point,point], [circle,transformation]");
         }
 
         el.isDraggable = isDraggable;
