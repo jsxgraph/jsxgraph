@@ -299,7 +299,7 @@ define([
             copy.visProp.layer = this.board.options.layer.trace;
             copy.board = this.board;
             Type.clearVisPropOld(copy);
-            
+
             copy.visPropCalc = {
                 visible: Type.evaluate(copy.visProp.visible)
             };
@@ -988,6 +988,9 @@ define([
             le = obj.vertices.length - 1;
             attr = Type.copyAttributes(attributes, board.options, 'polygon', 'vertices');
             for (i = 0; i < le; i++) {
+                if (attr.withlabel) {
+                    attr.name = (obj.vertices[i].name === '') ? '' : (obj.vertices[i].name + "'");
+                }
                 points.push(board.create('point', [obj.vertices[i], parents[1]], attr));
             }
 
