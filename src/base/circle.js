@@ -761,7 +761,7 @@ define([
      * @example
      * var li = board.create('line', [1,1,1], {strokeColor: '#aaaaaa'});
      * var reflect = board.create('transform', [li], {type: 'reflect'});
-     * 
+     *
      * var c1 = board.create('circle', [[-2,-2], [-2, -1]], {center: {visible:true}});
      * var c2 = board.create('circle', [c1, reflect]);
      *      * </pre><div id="a2a5a870-5dbb-11e8-9fb9-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
@@ -783,29 +783,28 @@ define([
             isDraggable = true;
 
         p = [];
-        for (i = 0; i < parents.length; i++) {
-            if (Type.isPointType(board, parents[i])) {
-                p = p.concat(Type.providePoints(board, [parents[i]], attributes, 'circle', ['center']));
-                if (p[p.length - 1] === false) {
-                    throw new Error('JSXGraph: Can\'t create circle from this type. Please provide a point type.');
-                }
-            } else {
-                p.push(parents[i]);
-            }
-        }
-
         obj = board.select(parents[0]);
-
-        // TODO
-        // Circle transformations work only for rotation and reflection
         if (Type.isObject(obj) && obj.elementClass === Const.OBJECT_CLASS_CIRCLE &&
             Type.isTransformationOrArray(parents[1])) {
+            // TODO
+            // Circle transformations work only for rotation and reflection
 
-            p = [];
             attr = Type.copyAttributes(attributes, board.options, 'circle', 'center');
             // Create transformed point
             p.push(board.create('point', [obj.center, parents[1]], attr));
             p.push(function() { return obj.Radius(); });
+        } else {
+            // Circle defined by points
+            for (i = 0; i < parents.length; i++) {
+                if (Type.isPointType(board, parents[i])) {
+                    p = p.concat(Type.providePoints(board, [parents[i]], attributes, 'circle', ['center']));
+                    if (p[p.length - 1] === false) {
+                        throw new Error('JSXGraph: Can\'t create circle from this type. Please provide a point type.');
+                    }
+                } else {
+                    p.push(parents[i]);
+                }
+            }
         }
 
         attr = Type.copyAttributes(attributes, board.options, 'circle');
