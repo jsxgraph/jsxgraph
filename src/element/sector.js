@@ -148,7 +148,12 @@ define([
             attr.name = (attr.withlabel && obj.point3.name === '') ? '' : (obj.point3.name + "'");
             points.push(board.create('point', [obj.point3, parents[1]], attr));
 
-            type = '3points';
+            el = JXG.createSector(board, [obj.center, obj.point2, obj.point3], attributes);
+            // Apply transformation
+            parents[1].bindTo(el);
+
+            return el;
+
         } else {
             // Three points?
             if (parents[0].elementClass === Const.OBJECT_CLASS_LINE &&
@@ -166,16 +171,6 @@ define([
                         (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" +
                         (typeof parents[2]) + "'.");
                 }
-                if (points[0]) {
-                    points[0].setAttribute(Type.copyAttributes(attributes, board.options, 'sector', 'center'));
-                }
-                if (points[1]) {
-                    points[1].setAttribute(Type.copyAttributes(attributes, board.options, 'sector', 'radiuspoint'));
-                }
-                if (points[2]) {
-                    points[2].setAttribute(Type.copyAttributes(attributes, board.options, 'sector', 'anglepoint'));
-                }
-console.log(points);
                 type = '3points';
             }
         }

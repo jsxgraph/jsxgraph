@@ -79,10 +79,10 @@
 define([
     'jxg', 'math/math', 'math/geometry', 'math/numerics', 'math/statistics', 'base/coords',
     'utils/type', 'base/constants', 'base/point', 'base/line', 'base/circle', 'base/transformation',
-    'base/composition', 'base/curve', 'base/text', 'base/polygon', 'element/arc'
+    'base/composition', 'base/curve', 'base/text', 'base/polygon', 'element/arc', 'element/sector'
 ], function (JXG, Mat, Geometry, Numerics, Statistics, Coords,
     Type, Const, Point, Line, Circle, Transform,
-    Composition, Curve, Text, Polygon, Arc) {
+    Composition, Curve, Text, Polygon, Arc, Sector) {
 
     "use strict";
 
@@ -1771,7 +1771,8 @@ define([
      *
      */
     JXG.createReflection = function (board, parents, attributes) {
-        var l, org, r, t, i;
+        var l, org, r, t, i,
+            errStr = "\nPossible parent types: [point|line|curve|polygon|circle|arc|sector, line]";
 
         for (i = 0; i < parents.length; ++i) {
             parents[i] = board.select(parents[i]);
@@ -1783,20 +1784,19 @@ define([
                     parents[0].elementClass === Const.OBJECT_CLASS_LINE ||
                     parents[0].type === Const.OBJECT_TYPE_POLYGON ||
                     parents[0].elementClass === Const.OBJECT_CLASS_CIRCLE||
-                    parents[0].type === Const.OBJECT_TYPE_ARC) {
+                    parents[0].type === Const.OBJECT_TYPE_ARC ||
+                    parents[0].type === Const.OBJECT_TYPE_SECTOR) {
             org = parents[0];
         } else {
             throw new Error("JSXGraph: Can't create reflection element with parent types '" +
-                (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
-                "\nPossible parent types: [point|line|curve|polygon|circle|arc, line]");
+                (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." + errStr);
         }
 
         if (parents[1].elementClass === Const.OBJECT_CLASS_LINE) {
             l = parents[1];
         } else {
             throw new Error("JSXGraph: Can't create reflected element with parent types '" +
-                (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
-                "\nPossible parent types: [point|line|curve|polygon|circle|arc, line]");
+                (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." + errStr);
         }
 
         t = Transform.createTransform(board, [l], {type: 'reflect'});
@@ -1804,6 +1804,8 @@ define([
             r = Point.createPoint(board, [org, t], attributes);
         } else if (org.type === Const.OBJECT_TYPE_ARC){
             r = Arc.createArc(board, [org, t], attributes);
+        } else if (org.type === Const.OBJECT_TYPE_SECTOR){
+            r = Sector.createSector(board, [org, t], attributes);
         } else if (org.elementClass === Const.OBJECT_CLASS_CURVE){
             r = Curve.createCurve(board, [org, t], attributes);
         } else if (org.elementClass === Const.OBJECT_CLASS_LINE){
@@ -1814,8 +1816,7 @@ define([
             r = Circle.createCircle(board, [org, t], attributes);
         } else {
             throw new Error("JSXGraph: Can't create reflected element with parent types '" +
-                (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
-                "\nPossible parent types: [point|line|curve|polygon|circle|arc, line]");
+                (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." + errStr);
         }
         org.addChild(r);
         l.addChild(r);
@@ -1912,7 +1913,8 @@ define([
      * </script><pre>
      */
     JXG.createMirrorElement = function (board, parents, attributes) {
-        var org, m, r, t;
+        var org, m, r, t,
+            errStr = "\nPossible parent types: [point|line|curve|polygon|circle|arc|sector, point]";
 
         if (Type.isPoint(parents[0])) {
             org = Type.providePoints(board, [parents[0]], attributes, 'point')[0];
@@ -1920,20 +1922,19 @@ define([
                     parents[0].elementClass === Const.OBJECT_CLASS_LINE ||
                     parents[0].type === Const.OBJECT_TYPE_POLYGON ||
                     parents[0].elementClass === Const.OBJECT_CLASS_CIRCLE ||
-                    parents[0].type === Const.OBJECT_TYPE_ARC) {
+                    parents[0].type === Const.OBJECT_TYPE_ARC ||
+                    parents[0].type === Const.OBJECT_TYPE_SECTOR) {
             org = parents[0];
         } else {
-            throw new Error("JSXGraph: Can't create mirrot element with parent types '" +
-                (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
-                "\nPossible parent types: [point|line|curve|polygon|circle|arc, line]");
+            throw new Error("JSXGraph: Can't create mirror element with parent types '" +
+                (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." + errStr);
         }
 
         if (Type.isPoint(parents[1])) {
             m = Type.providePoints(board, [parents[1]], attributes, 'point')[0];
         } else {
             throw new Error("JSXGraph: Can't create mirror element with parent types '" +
-                (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
-                "\nPossible parent types: [point|line|curve|polygon|circle|arc, line]");
+                (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." + errStr);
         }
 
         t = Transform.createTransform(board, [Math.PI, m], {type: 'rotate'});
@@ -1941,6 +1942,8 @@ define([
             r = Point.createPoint(board, [org, t], attributes);
         }  else if (org.type === Const.OBJECT_TYPE_ARC){
             r = Arc.createArc(board, [org, t], attributes);
+        }  else if (org.type === Const.OBJECT_TYPE_SECTOR){
+            r = Sector.createSector(board, [org, t], attributes);
         } else if (org.elementClass === Const.OBJECT_CLASS_CURVE){
             r = Curve.createCurve(board, [org, t], attributes);
         } else if (org.elementClass === Const.OBJECT_CLASS_LINE){
@@ -1950,9 +1953,8 @@ define([
         } else if (org.elementClass === Const.OBJECT_CLASS_CIRCLE){
             r = Circle.createCircle(board, [org, t], attributes);
         } else {
-            throw new Error("JSXGraph: Can't create mirror point with parent types '" +
-                (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
-                "\nPossible parent types: [point|line|curve|polygon|circle|arc, line]");
+            throw new Error("JSXGraph: Can't create mirror element with parent types '" +
+                (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." + errStr);
         }
 
         org.addChild(r);
