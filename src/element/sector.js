@@ -124,31 +124,62 @@ define([
      * </script><pre>
      */
     JXG.createSector = function (board, parents, attributes) {
-        var el, i, attr,
+        var el, i, attr, obj,
             type = 'invalid',
             s, v,
             attrPoints = ['center', 'radiuspoint', 'anglepoint'],
             points;
 
-        // Three points?
-        if (parents[0].elementClass === Const.OBJECT_CLASS_LINE &&
-                parents[1].elementClass === Const.OBJECT_CLASS_LINE &&
-                (Type.isArray(parents[2]) || Type.isNumber(parents[2])) &&
-                (Type.isArray(parents[3]) || Type.isNumber(parents[3])) &&
-                (Type.isNumber(parents[4]) || Type.isFunction(parents[4]))) {
+        obj = board.select(parents[0]);
+        if (Type.isObject(obj) && obj.type === Const.OBJECT_TYPE_SECTOR &&
+            Type.isTransformationOrArray(parents[1])) {
 
-            type = '2lines';
+            points = [];
 
-        } else {
-            points = Type.providePoints(board, parents, attributes, 'sector', attrPoints);
-            if (points === false) {
-                throw new Error("JSXGraph: Can't create Sector with parent types '" +
-                    (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" +
-                    (typeof parents[2]) + "'.");
-            }
+            attr = Type.copyAttributes(attributes, board.options, 'sector', 'center');
+            attr.name = (attr.withlabel && obj.center.name === '') ? '' : (obj.center.name + "'");
+            points.push(board.create('point', [obj.center, parents[1]], attr));
+
+            attr = Type.copyAttributes(attributes, board.options, 'sector', 'radiuspoint');
+            attr.name = (attr.withlabel && obj.point2.name === '') ? '' : (obj.point2.name + "'");
+            points.push(board.create('point', [obj.point2, parents[1]], attr));
+
+            attr = Type.copyAttributes(attributes, board.options, 'sector', 'anglepoint');
+            attr.name = (attr.withlabel && obj.point3.name === '') ? '' : (obj.point3.name + "'");
+            points.push(board.create('point', [obj.point3, parents[1]], attr));
 
             type = '3points';
+        } else {
+            // Three points?
+            if (parents[0].elementClass === Const.OBJECT_CLASS_LINE &&
+                    parents[1].elementClass === Const.OBJECT_CLASS_LINE &&
+                    (Type.isArray(parents[2]) || Type.isNumber(parents[2])) &&
+                    (Type.isArray(parents[3]) || Type.isNumber(parents[3])) &&
+                    (Type.isNumber(parents[4]) || Type.isFunction(parents[4]))) {
+
+                type = '2lines';
+
+            } else {
+                points = Type.providePoints(board, parents, attributes, 'sector', attrPoints);
+                if (points === false) {
+                    throw new Error("JSXGraph: Can't create Sector with parent types '" +
+                        (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" +
+                        (typeof parents[2]) + "'.");
+                }
+                if (points[0]) {
+                    points[0].setAttribute(Type.copyAttributes(attributes, board.options, 'sector', 'center'));
+                }
+                if (points[1]) {
+                    points[1].setAttribute(Type.copyAttributes(attributes, board.options, 'sector', 'radiuspoint'));
+                }
+                if (points[2]) {
+                    points[2].setAttribute(Type.copyAttributes(attributes, board.options, 'sector', 'anglepoint'));
+                }
+console.log(points);
+                type = '3points';
+            }
         }
+
 
         attr = Type.copyAttributes(attributes, board.options, 'sector');
         el = board.create('curve', [[0], [0]], attr);

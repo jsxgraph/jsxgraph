@@ -1320,7 +1320,7 @@ define([
              * @name Arc#anglepoint
              */
             anglepoint: {
-            },
+            }
 
             /**#@-*/
         },
@@ -3204,9 +3204,9 @@ define([
              * Attributes for center point of the semicircle.
              *
              * @type Point
-             * @name Semicircle#midpoint
+             * @name Semicircle#center
              */
-            midpoint: {
+            center: {
                 visible: false,
                 withLabel: false,
                 fixed: false,

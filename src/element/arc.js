@@ -109,20 +109,18 @@ define([
             attr = Type.copyAttributes(attributes, board.options, 'arc', 'anglepoint');
             attr.name = (attr.withlabel && obj.point3.name === '') ? '' : (obj.point3.name + "'");
             points.push(board.create('point', [obj.point3, parents[1]], attr));
+
+            el = JXG.createArc(board, [obj.center, obj.point2, obj.point3], attributes);
+            // Apply transformation
+            parents[1].bindTo(el);
+
+            return el;
+
         } else {
             // This method is used to create circumcirclearcs, too.
             // If a circumcirclearc is created we get a fourth
             // point, that's why we need to check that case, too.
-            points = Type.providePoints(board, parents, attributes, 'point');
-            if (points[0]) {
-                points[0].setAttribute(Type.copyAttributes(attributes, board.options, 'arc', 'center'));
-            }
-            if (points[1]) {
-                points[1].setAttribute(Type.copyAttributes(attributes, board.options, 'arc', 'radiuspoint'));
-            }
-            if (points[2]) {
-                points[2].setAttribute(Type.copyAttributes(attributes, board.options, 'arc', 'anglepoint'));
-            }
+            points = Type.providePoints(board, parents, attributes, 'arc', ['center', 'radiuspoint', 'anglepoint']);
         }
         if (points === false || points.length < 3) {
             throw new Error("JSXGraph: Can't create Arc with parent types '" +
@@ -448,7 +446,7 @@ define([
                 "\nPossible parent types: [point,point]");
         }
 
-        attr = Type.copyAttributes(attributes, board.options, 'semicircle', 'midpoint');
+        attr = Type.copyAttributes(attributes, board.options, 'semicircle', 'center');
         mp = board.create('midpoint', points, attr);
         mp.dump = false;
 

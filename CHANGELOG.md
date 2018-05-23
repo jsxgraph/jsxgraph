@@ -1,6 +1,9 @@
 0.99.7
 ====
 
+Compatibility:
+Option.semicirclearc.midpoint -> Option.semicirclearc.center
+
 New Features
 ------------
 * New elements: 'cardinalspline', 'derivative'
