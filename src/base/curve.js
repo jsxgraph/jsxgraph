@@ -1971,9 +1971,9 @@ define([
             attr = Type.copyAttributes(attr, board.options, 'curve');
 
             cu = new JXG.Curve(board, ['x', [], []], attr);
-            cu.bezierDegree = obj.bezierDegree;
             cu.updateDataArray = function() {
                     var i, le = obj.numberPoints;
+                    this.bezierDegree = obj.bezierDegree;
                     this.dataX = [];
                     this.dataY = [];
                     for (i = 0; i < le; i++) {
