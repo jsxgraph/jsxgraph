@@ -89,6 +89,25 @@ define([
      *       a = board.create('arc', [p1, p2, p3]);
      * })();
      * </script><pre>
+     * 
+     * @example
+     * var t = board.create('transform', [2, 1.5], {type: 'scale'});
+     * var a1 = board.create('arc', [[1, 1], [0, 1], [1, 0]], {strokeColor: 'red'});
+     * var a2 = board.create('curve', [a1, t], {strokeColor: 'red'});
+     *
+     * </pre><div id="1949da46-6339-11e8-9fb9-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     *     (function() {
+     *         var board = JXG.JSXGraph.initBoard('1949da46-6339-11e8-9fb9-901b0e1b8723',
+     *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+     *     var t = board.create('transform', [2, 1.5], {type: 'scale'});
+     *     var a1 = board.create('arc', [[1, 1], [0, 1], [1, 0]], {strokeColor: 'red'});
+     *     var a2 = board.create('curve', [a1, t], {strokeColor: 'red'});
+     *
+     *     })();
+     *
+     * </script><pre>
+     *
      */
     JXG.createArc = function (board, parents, attributes) {
         var el, attr, i, points, obj, tmp;

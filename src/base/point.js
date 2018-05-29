@@ -88,6 +88,7 @@ define([
         this.board.finalizeAdding(this);
 
         this.createLabel();
+
     };
 
     /**

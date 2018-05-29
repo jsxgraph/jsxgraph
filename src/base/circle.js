@@ -777,6 +777,25 @@ define([
      *     })();
      *
      * </script><pre>
+     * 
+     * @example
+     * var t = board.create('transform', [2, 1.5], {type: 'scale'});
+     * var c1 = board.create('circle', [[1.3, 1.3], [0, 1.3]], {strokeColor: 'black', center: {visible:true}});
+     * var c2 = board.create('circle', [c1, t], {strokeColor: 'black'});
+     *
+     * </pre><div id="0686a222-6339-11e8-9fb9-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     *     (function() {
+     *         var board = JXG.JSXGraph.initBoard('0686a222-6339-11e8-9fb9-901b0e1b8723',
+     *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+     *     var t = board.create('transform', [2, 1.5], {type: 'scale'});
+     *     var c1 = board.create('circle', [[1.3, 1.3], [0, 1.3]], {strokeColor: 'black', center: {visible:true}});
+     *     var c2 = board.create('circle', [c1, t], {strokeColor: 'black'});
+     *
+     *     })();
+     *
+     * </script><pre>
+     *
      */
     JXG.createCircle = function (board, parents, attributes) {
         var el, p, i, attr, obj,

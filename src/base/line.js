@@ -983,6 +983,25 @@ define([
      *     })();
      *
      * </script><pre>
+     * 
+     * @example
+     * var t = board.create('transform', [2, 1.5], {type: 'scale'});
+     * var l1 = board.create('line', [1, -5, 1]);
+     * var l2 = board.create('line', [l1, t]);
+     *
+     * </pre><div id="d16d5b58-6338-11e8-9fb9-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     *     (function() {
+     *         var board = JXG.JSXGraph.initBoard('d16d5b58-6338-11e8-9fb9-901b0e1b8723',
+     *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+     *     var t = board.create('transform', [2, 1.5], {type: 'scale'});
+     *     var l1 = board.create('line', [1, -5, 1]);
+     *     var l2 = board.create('line', [l1, t]);
+     *
+     *     })();
+     *
+     * </script><pre>
+     *
      */
     JXG.createLine = function (board, parents, attributes) {
         var ps, el, p1, p2, i, attr,

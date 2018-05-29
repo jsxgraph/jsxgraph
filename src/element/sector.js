@@ -122,6 +122,29 @@ define([
      *     sec2 = board.create('sector', [li1, li2, 1, -1, 4]);
      * })();
      * </script><pre>
+     *
+     * @example
+     * var t = board.create('transform', [2, 1.5], {type: 'scale'});
+     * var s1 = board.create('sector', [[-3.5,-3], [-3.5, -2], [-3.5,-4]], {
+     *                 anglepoint: {visible:true}, center: {visible: true}, radiuspoint: {visible: true},
+     *                 fillColor: 'yellow', strokeColor: 'black'});
+     * var s2 = board.create('curve', [s1, t], {fillColor: 'yellow', strokeColor: 'black'});
+     *
+     * </pre><div id="2e70ee14-6339-11e8-9fb9-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     *     (function() {
+     *         var board = JXG.JSXGraph.initBoard('2e70ee14-6339-11e8-9fb9-901b0e1b8723',
+     *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+     *     var t = board.create('transform', [2, 1.5], {type: 'scale'});
+     *     var s1 = board.create('sector', [[-3.5,-3], [-3.5, -2], [-3.5,-4]], {
+     *                     anglepoint: {visible:true}, center: {visible: true}, radiuspoint: {visible: true},
+     *                     fillColor: 'yellow', strokeColor: 'black'});
+     *     var s2 = board.create('curve', [s1, t], {fillColor: 'yellow', strokeColor: 'black'});
+     *
+     *     })();
+     *
+     * </script><pre>
+     *
      */
     JXG.createSector = function (board, parents, attributes) {
         var el, i, attr, obj,
@@ -810,6 +833,25 @@ define([
      *     a2 = board.create('angle', [li1, li2, 1, -1], { radius:2 });
      * })();
      * </script><pre>
+     * 
+     * @example
+     * var t = board.create('transform', [2, 1.5], {type: 'scale'});
+     * var an1 = board.create('angle', [[-4,3.9], [-3, 4], [-3, 3]]);
+     * var an2 = board.create('curve', [an1, t]);
+     *
+     * </pre><div id="4c8d9ed8-6339-11e8-9fb9-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     *     (function() {
+     *         var board = JXG.JSXGraph.initBoard('4c8d9ed8-6339-11e8-9fb9-901b0e1b8723',
+     *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+     *     var t = board.create('transform', [2, 1.5], {type: 'scale'});
+     *     var an1 = board.create('angle', [[-4,3.9], [-3, 4], [-3, 3]]);
+     *     var an2 = board.create('curve', [an1, t]);
+     *
+     *     })();
+     *
+     * </script><pre>
+     *
      */
     JXG.createAngle = function (board, parents, attributes) {
         var el, radius, text, attr, attrsub,

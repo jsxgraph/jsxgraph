@@ -975,25 +975,53 @@ define([
      *       cc1 = board.create('polygon', [f1, f2, f3, f4]);
      *  })();
      * </script><pre>
+     *
+     * @example
+     * var t = board.create('transform', [2, 1.5], {type: 'scale'});
+     * var a = board.create('point', [-3,-2], {name: 'a'});
+     * var b = board.create('point', [-1,-4], {name: 'b'});
+     * var c = board.create('point', [-2,-0.5], {name: 'c'});
+     * var pol1 = board.create('polygon', [a,b,c], {vertices: {withLabel: false}});
+     * var pol2 = board.create('polygon', [pol1, t], {vertices: {withLabel: true}});
+     *
+     * </pre><div id="6530a69c-6339-11e8-9fb9-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     *     (function() {
+     *         var board = JXG.JSXGraph.initBoard('6530a69c-6339-11e8-9fb9-901b0e1b8723',
+     *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+     *     var t = board.create('transform', [2, 1.5], {type: 'scale'});
+     *     var a = board.create('point', [-3,-2], {name: 'a'});
+     *     var b = board.create('point', [-1,-4], {name: 'b'});
+     *     var c = board.create('point', [-2,-0.5], {name: 'c'});
+     *     var pol1 = board.create('polygon', [a,b,c], {vertices: {withLabel: false}});
+     *     var pol2 = board.create('polygon', [pol1, t], {vertices: {withLabel: true}});
+     *
+     *     })();
+     *
+     * </script><pre>
+     *
      */
     JXG.createPolygon = function (board, parents, attributes) {
         var el, i, le, obj,
             points = [],
-            attr, p;
+            attr, attr_points, p,
+            is_transform = false;
 
+        attr = Type.copyAttributes(attributes, board.options, 'polygon');
         obj = board.select(parents[0]);
         if (Type.isObject(obj) && obj.type === Const.OBJECT_TYPE_POLYGON &&
             Type.isTransformationOrArray(parents[1])) {
 
+            is_transform = true;
             le = obj.vertices.length - 1;
-            attr = Type.copyAttributes(attributes, board.options, 'polygon', 'vertices');
+            attr_points = Type.copyAttributes(attributes, board.options, 'polygon', 'vertices');
             for (i = 0; i < le; i++) {
-                if (attr.withlabel) {
-                    attr.name = (obj.vertices[i].name === '') ? '' : (obj.vertices[i].name + "'");
+                if (attr_points.withlabel) {
+                    attr_points.name = (obj.vertices[i].name === '') ? '' : (obj.vertices[i].name + "'");
                 }
-                points.push(board.create('point', [obj.vertices[i], parents[1]], attr));
+                points.push(board.create('point', [obj.vertices[i], parents[1]], attr_points));
+                //points[i].prepareUpdate().update().updateVisibility(attr.visible).updateRenderer();
             }
-
         } else {
             points = Type.providePoints(board, parents, attributes, 'polygon', ['vertices']);
             if (points === false) {
@@ -1004,6 +1032,14 @@ define([
         attr = Type.copyAttributes(attributes, board.options, 'polygon');
         el = new JXG.Polygon(board, points, attr);
         el.isDraggable = true;
+
+        // Put the points to their position
+        if (is_transform) {
+            le = obj.vertices.length - 1;
+            for (i = 0; i < le; i++) {
+                points[i].prepareUpdate().update().updateVisibility(Type.evaluate(el.visProp.visible)).updateRenderer();
+            }
+        }
 
         return el;
     };

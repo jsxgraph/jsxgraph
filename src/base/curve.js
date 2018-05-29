@@ -1941,8 +1941,6 @@ define([
      *     })();
      *
      * </script><pre>
-     *
-     *
      */
     JXG.createCurve = function (board, parents, attributes) {
         var obj, cu,
