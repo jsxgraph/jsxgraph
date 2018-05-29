@@ -1725,7 +1725,6 @@ define([
      *         // Reflection of more elements
      *         // reflection line
      *         var li = board.create('line', [1,1,1], {strokeColor: '#aaaaaa'});
-     *         var reflect = board.create('transform', [li], {type: 'reflect'});
      *
      *         var p1 = board.create('point', [-3,-1], {name: "A"});
      *         var q1 = board.create('reflection', [p1, li], {name: "A'"});
@@ -1742,6 +1741,17 @@ define([
      *         var c1 = board.create('circle', [[-2,-2], [-2, -1]]);
      *         var c2 = board.create('reflection', [c1, li]);
      *
+     *         var a1 = board.create('arc', [[1, 1], [0, 1], [1, 0]], {strokeColor: 'red'});
+     *         var a2 = board.create('reflection', [a1, li], {strokeColor: 'red'});
+     *
+     *         var s1 = board.create('sector', [[-3.5,-3], [-3.5, -2], [-3.5,-4]], {
+     *                           anglepoint: {visible:true}, center: {visible: true}, radiuspoint: {visible: true},
+     *                           fillColor: 'yellow', strokeColor: 'black'});
+     *         var s2 = board.create('reflection', [s1, li], {fillColor: 'yellow', strokeColor: 'black', fillOpacity: 0.5});
+     *
+     *         var an1 = board.create('angle', [[-4,3.9], [-3, 4], [-3, 3]]);
+     *         var an2 = board.create('reflection', [an1, li]);
+     *
      * </pre><div id="8f763af4-d449-11e7-93b3-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
      *     (function() {
@@ -1749,7 +1759,6 @@ define([
      *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
      *             // reflection line
      *             var li = board.create('line', [1,1,1], {strokeColor: '#aaaaaa'});
-     *             var reflect = board.create('transform', [li], {type: 'reflect'});
      *
      *             var p1 = board.create('point', [-3,-1], {name: "A"});
      *             var q1 = board.create('reflection', [p1, li], {name: "A'"});
@@ -1765,6 +1774,18 @@ define([
      *
      *             var c1 = board.create('circle', [[-2,-2], [-2, -1]]);
      *             var c2 = board.create('reflection', [c1, li]);
+     *
+     *         var a1 = board.create('arc', [[1, 1], [0, 1], [1, 0]], {strokeColor: 'red'});
+     *         var a2 = board.create('reflection', [a1, li], {strokeColor: 'red'});
+     *
+     *         var s1 = board.create('sector', [[-3.5,-3], [-3.5, -2], [-3.5,-4]], {
+     *                           anglepoint: {visible:true}, center: {visible: true}, radiuspoint: {visible: true},
+     *                           fillColor: 'yellow', strokeColor: 'black'});
+     *         var s2 = board.create('reflection', [s1, li], {fillColor: 'yellow', strokeColor: 'black', fillOpacity: 0.5});
+     *
+     *         var an1 = board.create('angle', [[-4,3.9], [-3, 4], [-3, 3]]);
+     *         var an2 = board.create('reflection', [an1, li]);
+     *
      *     })();
      *
      * </script><pre>
@@ -1864,7 +1885,6 @@ define([
      * @example
      *         // point of reflection
      *         var mirr = board.create('point', [-1,-1], {color: '#aaaaaa'});
-     *         var t = board.create('transform', [Math.PI, mirr], {type: 'rotate'});
      *
      *         var p1 = board.create('point', [-3,-1], {name: "A"});
      *         var q1 = board.create('mirrorelement', [p1, mirr], {name: "A'"});
@@ -1881,6 +1901,18 @@ define([
      *         var c1 = board.create('circle', [[-6,-6], [-6, -5]]);
      *         var c2 = board.create('mirrorelement', [c1, mirr]);
      *
+     *         var a1 = board.create('arc', [[1, 1], [0, 1], [1, 0]], {strokeColor: 'red'});
+     *         var a2 = board.create('mirrorelement', [a1, mirr], {strokeColor: 'red'});
+     *
+     *         var s1 = board.create('sector', [[-3.5,-3], [-3.5, -2], [-3.5,-4]], {
+     *                           anglepoint: {visible:true}, center: {visible: true}, radiuspoint: {visible: true},
+     *                           fillColor: 'yellow', strokeColor: 'black'});
+     *         var s2 = board.create('mirrorelement', [s1, mirr], {fillColor: 'yellow', strokeColor: 'black', fillOpacity: 0.5});
+     *
+     *         var an1 = board.create('angle', [[-4,3.9], [-3, 4], [-3, 3]]);
+     *         var an2 = board.create('mirrorelement', [an1, mirr]);
+     *
+     *
      * </pre><div id="026c779c-d8d9-11e7-93b3-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
      *     (function() {
@@ -1888,7 +1920,6 @@ define([
      *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
      *             // point of reflection
      *             var mirr = board.create('point', [-1,-1], {color: '#aaaaaa'});
-     *             var t = board.create('transform', [Math.PI, mirr], {type: 'rotate'});
      *
      *             var p1 = board.create('point', [-3,-1], {name: "A"});
      *             var q1 = board.create('mirrorelement', [p1, mirr], {name: "A'"});
@@ -1904,6 +1935,18 @@ define([
      *
      *             var c1 = board.create('circle', [[-6,-6], [-6, -5]]);
      *             var c2 = board.create('mirrorelement', [c1, mirr]);
+     *
+     *         var a1 = board.create('arc', [[1, 1], [0, 1], [1, 0]], {strokeColor: 'red'});
+     *         var a2 = board.create('mirrorelement', [a1, mirr], {strokeColor: 'red'});
+     *
+     *         var s1 = board.create('sector', [[-3.5,-3], [-3.5, -2], [-3.5,-4]], {
+     *                           anglepoint: {visible:true}, center: {visible: true}, radiuspoint: {visible: true},
+     *                           fillColor: 'yellow', strokeColor: 'black'});
+     *         var s2 = board.create('mirrorelement', [s1, mirr], {fillColor: 'yellow', strokeColor: 'black', fillOpacity: 0.5});
+     *
+     *         var an1 = board.create('angle', [[-4,3.9], [-3, 4], [-3, 3]]);
+     *         var an2 = board.create('mirrorelement', [an1, mirr]);
+     *
      *     })();
      *
      * </script><pre>
