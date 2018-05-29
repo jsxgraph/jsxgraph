@@ -1802,10 +1802,6 @@ define([
         t = Transform.createTransform(board, [l], {type: 'reflect'});
         if (Type.isPoint(org)) {
             r = Point.createPoint(board, [org, t], attributes);
-        } else if (org.type === Const.OBJECT_TYPE_ARC){
-            r = Arc.createArc(board, [org, t], attributes);
-        } else if (org.type === Const.OBJECT_TYPE_SECTOR){
-            r = Sector.createSector(board, [org, t], attributes);
         } else if (org.elementClass === Const.OBJECT_CLASS_CURVE){
             r = Curve.createCurve(board, [org, t], attributes);
         } else if (org.elementClass === Const.OBJECT_CLASS_LINE){
@@ -1940,10 +1936,6 @@ define([
         t = Transform.createTransform(board, [Math.PI, m], {type: 'rotate'});
         if (Type.isPoint(org)) {
             r = Point.createPoint(board, [org, t], attributes);
-        }  else if (org.type === Const.OBJECT_TYPE_ARC){
-            r = Arc.createArc(board, [org, t], attributes);
-        }  else if (org.type === Const.OBJECT_TYPE_SECTOR){
-            r = Sector.createSector(board, [org, t], attributes);
         } else if (org.elementClass === Const.OBJECT_CLASS_CURVE){
             r = Curve.createCurve(board, [org, t], attributes);
         } else if (org.elementClass === Const.OBJECT_CLASS_LINE){

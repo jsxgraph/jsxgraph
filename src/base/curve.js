@@ -1949,20 +1949,23 @@ define([
             attr = Type.copyAttributes(attributes, board.options, 'curve');
 
         obj = board.select(parents[0]);
-        if (Type.isObject(obj) && obj.type === Const.OBJECT_TYPE_CURVE &&
+        if (Type.isObject(obj) &&
+            (obj.type === Const.OBJECT_TYPE_CURVE ||
+             obj.type === Const.OBJECT_TYPE_ARC) &&
             Type.isTransformationOrArray(parents[1])) {
 
             cu = new JXG.Curve(board, ['x', [], []], attr);
+            cu.bezierDegree = obj.bezierDegree;
             cu.updateDataArray = function() {
-                var i, le = obj.points.length;
-                this.dataX = [];
-                this.dataY = [];
-                for (i = 0; i < le; i++) {
-                    this.dataX.push(obj.points[i].usrCoords[1]);
-                    this.dataY.push(obj.points[i].usrCoords[2]);
-                }
-                return this;
-            };
+                    var i, le = obj.numberPoints;
+                    this.dataX = [];
+                    this.dataY = [];
+                    for (i = 0; i < le; i++) {
+                        this.dataX.push(obj.points[i].usrCoords[1]);
+                        this.dataY.push(obj.points[i].usrCoords[2]);
+                    }
+                    return this;
+                };
             cu.addTransform(parents[1]);
             return cu;
         } else {
