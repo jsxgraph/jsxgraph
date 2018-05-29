@@ -54,8 +54,8 @@
  */
 
 define([
-    'jxg', 'base/element', 'base/coords', 'base/constants', 'parser/geonext', 'utils/type'
-], function (JXG, GeometryElement, Coords, Const, GeonextParser, Type) {
+    'jxg', 'base/element', 'base/coords', 'base/constants', 'element/conic', 'parser/geonext', 'utils/type'
+], function (JXG, GeometryElement, Coords, Const, Conic, GeonextParser, Type) {
 
     "use strict";
 
@@ -786,13 +786,12 @@ define([
         obj = board.select(parents[0]);
         if (Type.isObject(obj) && obj.elementClass === Const.OBJECT_CLASS_CIRCLE &&
             Type.isTransformationOrArray(parents[1])) {
-            // TODO
-            // Circle transformations work only for rotation and reflection
 
-            attr = Type.copyAttributes(attributes, board.options, 'circle', 'center');
-            // Create transformed point
-            p.push(board.create('point', [obj.center, parents[1]], attr));
-            p.push(function() { return obj.Radius(); });
+            attr = Type.copyAttributes(attributes, board.options, 'circle');
+            el = Conic.createEllipse(board, [obj.center, obj.center, function() { return 2 * obj.Radius(); }], attr);
+            el.addTransform(parents[1]);
+            return el;
+
         } else {
             // Circle defined by points
             for (i = 0; i < parents.length; i++) {
