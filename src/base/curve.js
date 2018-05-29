@@ -1953,6 +1953,7 @@ define([
             (obj.type === Const.OBJECT_TYPE_CURVE ||
              obj.type === Const.OBJECT_TYPE_ANGLE ||
              obj.type === Const.OBJECT_TYPE_ARC   ||
+             obj.type === Const.OBJECT_TYPE_CONIC ||
              obj.type === Const.OBJECT_TYPE_SECTOR) &&
             Type.isTransformationOrArray(parents[1])) {
 
