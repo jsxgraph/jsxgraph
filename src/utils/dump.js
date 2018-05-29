@@ -288,7 +288,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          * @returns {String} The given object stored in a JCAN string.
          */
         toJCAN: function (obj) {
-            var s, i, list, prop;
+            var i, list, prop;
 
             switch (typeof obj) {
             case 'object':

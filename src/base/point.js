@@ -110,8 +110,8 @@ define([
                 unit = Type.evaluate(this.visProp.sizeunit);
 
             r = parseFloat(Type.evaluate(this.visProp.size));
-            if (unit == 'user') {
-                r *= Math.sqrt(this.board.unitX * this.board.unitY)
+            if (unit === 'user') {
+                r *= Math.sqrt(this.board.unitX * this.board.unitY);
             }
 
             r += parseFloat(Type.evaluate(this.visProp.strokewidth)) * 0.5;

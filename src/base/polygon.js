@@ -1004,7 +1004,7 @@ define([
     JXG.createPolygon = function (board, parents, attributes) {
         var el, i, le, obj,
             points = [],
-            attr, attr_points, p,
+            attr, attr_points,
             is_transform = false;
 
         attr = Type.copyAttributes(attributes, board.options, 'polygon');
@@ -1108,7 +1108,7 @@ define([
      */
     JXG.createRegularPolygon = function (board, parents, attributes) {
         var el, i, n,
-            p = [], rot, c, len, pointsExist, attr;
+            p = [], rot, len, pointsExist, attr;
 
         len = parents.length;
         n = parents[len - 1];

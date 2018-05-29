@@ -89,7 +89,7 @@ define([
      *       a = board.create('arc', [p1, p2, p3]);
      * })();
      * </script><pre>
-     * 
+     *
      * @example
      * var t = board.create('transform', [2, 1.5], {type: 'scale'});
      * var a1 = board.create('arc', [[1, 1], [0, 1], [1, 0]], {strokeColor: 'red'});
@@ -110,27 +110,9 @@ define([
      *
      */
     JXG.createArc = function (board, parents, attributes) {
-        var el, attr, i, points, obj, tmp;
+        var el, attr, points;
 
-        obj = board.select(parents[0]);
-        // if (Type.isObject(obj) && obj.type === Const.OBJECT_TYPE_ARC &&
-        //     Type.isTransformationOrArray(parents[1])) {
-        //
-        //     //
-        //     //
-        //     tmp = obj.type;
-        //     obj.type = Const.OBJECT_TYPE_CURVE;
-        //     el = JXG.createCurve(board, [obj, parents[1]], attributes);
-        //     obj.type = tmp;
-        //
-        //     return el;
-        //
-        // } else {
-            // This method is used to create circumcirclearcs, too.
-            // If a circumcirclearc is created we get a fourth
-            // point, that's why we need to check that case, too.
-            points = Type.providePoints(board, parents, attributes, 'arc', ['center', 'radiuspoint', 'anglepoint']);
-        // }
+        points = Type.providePoints(board, parents, attributes, 'arc', ['center', 'radiuspoint', 'anglepoint']);
         if (points === false || points.length < 3) {
             throw new Error("JSXGraph: Can't create Arc with parent types '" +
                 (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" +
@@ -186,7 +168,7 @@ define([
 
         // documented in JXG.Curve
         el.updateDataArray = function () {
-            var ar, phi, v, det, p0c, p1c, p2c,
+            var ar, phi, det, p0c, p1c, p2c,
                 sgn = 1,
                 A = this.radiuspoint,
                 B = this.center,

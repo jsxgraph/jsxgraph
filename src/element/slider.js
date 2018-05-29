@@ -97,8 +97,7 @@ define([
     JXG.createSlider = function (board, parents, attributes) {
         var pos0, pos1, smin, start, smax, sdiff,
             p1, p2, l1, ticks, ti, startx, starty, p3, l2, t,
-            g,
-            withText, withTicks, snapWidth, attr, precision, el;
+            withText, withTicks, snapWidth, attr, precision;
 
         attr = Type.copyAttributes(attributes, board.options, 'slider');
         withTicks = attr.withticks;

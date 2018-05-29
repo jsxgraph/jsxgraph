@@ -983,7 +983,7 @@ define([
      *     })();
      *
      * </script><pre>
-     * 
+     *
      * @example
      * var t = board.create('transform', [2, 1.5], {type: 'scale'});
      * var l1 = board.create('line', [1, -5, 1]);
@@ -1519,7 +1519,7 @@ define([
                     },
                     function () {
                         var i = Math.floor(p.position),
-                            p1, p2, q1, q2;
+                            p1, p2;
 
                         if (i === c.numberPoints - 1) {
                             i--;
@@ -1538,7 +1538,7 @@ define([
                     },
                     function () {
                         var i = Math.floor(p.position),
-                            p1, p2, q1, q2;
+                            p1, p2;
 
                         if (i === c.numberPoints - 1) {
                             i--;

@@ -1075,7 +1075,8 @@ define([
          * if the element is currently a glider, will remove the slideObject reference.
          */
         free: function () {
-            var ancestorId, ancestor, child;
+            var ancestorId, ancestor;
+                // child;
 
             if (this.type !== Const.OBJECT_TYPE_GLIDER) {
                 // remove all transformations
@@ -1160,7 +1161,7 @@ define([
          * @see JXG.GeonextParser#geonext2JS
          */
         addConstraint: function (terms) {
-            var fs, i, v, t,
+            var i, v,
                 newfuncs = [],
                 what = ['X', 'Y'],
 

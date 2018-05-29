@@ -149,9 +149,9 @@ define([
 
         Env.addEvent(t.rendNodeButton, 'click', priv.ButtonClickEventHandler, t);
 
-        Env.addEvent(t.rendNodeButton, 'mousedown', function(evt) { if (Type.exists(evt.stopPropagation)) evt.stopPropagation(); }, t);
-        Env.addEvent(t.rendNodeButton, 'touchstart', function(evt) { if (Type.exists(evt.stopPropagation)) evt.stopPropagation(); }, t);
-        Env.addEvent(t.rendNodeButton, 'pointerdown', function(evt) { if (Type.exists(evt.stopPropagation)) evt.stopPropagation(); }, t);
+        Env.addEvent(t.rendNodeButton, 'mousedown', function (evt) { if (Type.exists(evt.stopPropagation)) evt.stopPropagation(); }, t);
+        Env.addEvent(t.rendNodeButton, 'touchstart', function (evt) { if (Type.exists(evt.stopPropagation)) evt.stopPropagation(); }, t);
+        Env.addEvent(t.rendNodeButton, 'pointerdown', function (evt) { if (Type.exists(evt.stopPropagation)) evt.stopPropagation(); }, t);
 
         return t;
     };

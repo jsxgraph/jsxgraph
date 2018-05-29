@@ -147,56 +147,29 @@ define([
      *
      */
     JXG.createSector = function (board, parents, attributes) {
-        var el, i, attr, obj,
+        var el, attr,
             type = 'invalid',
             s, v,
             attrPoints = ['center', 'radiuspoint', 'anglepoint'],
             points;
 
-        obj = board.select(parents[0]);
-        // if (Type.isObject(obj) && obj.type === Const.OBJECT_TYPE_SECTOR &&
-        //     Type.isTransformationOrArray(parents[1])) {
-        //
-        //     points = [];
-        //
-        //     attr = Type.copyAttributes(attributes, board.options, 'sector', 'center');
-        //     attr.name = (attr.withlabel && obj.center.name === '') ? '' : (obj.center.name + "'");
-        //     points.push(board.create('point', [obj.center, parents[1]], attr));
-        //
-        //     attr = Type.copyAttributes(attributes, board.options, 'sector', 'radiuspoint');
-        //     attr.name = (attr.withlabel && obj.point2.name === '') ? '' : (obj.point2.name + "'");
-        //     points.push(board.create('point', [obj.point2, parents[1]], attr));
-        //
-        //     attr = Type.copyAttributes(attributes, board.options, 'sector', 'anglepoint');
-        //     attr.name = (attr.withlabel && obj.point3.name === '') ? '' : (obj.point3.name + "'");
-        //     points.push(board.create('point', [obj.point3, parents[1]], attr));
-        //
-        //     el = JXG.createSector(board, [obj.center, obj.point2, obj.point3], attributes);
-        //     // Apply transformation
-        //     parents[1].bindTo(el);
-        //
-        //     return el;
-        //
-        // } else {
-            // Three points?
-            if (parents[0].elementClass === Const.OBJECT_CLASS_LINE &&
-                    parents[1].elementClass === Const.OBJECT_CLASS_LINE &&
-                    (Type.isArray(parents[2]) || Type.isNumber(parents[2])) &&
-                    (Type.isArray(parents[3]) || Type.isNumber(parents[3])) &&
-                    (Type.isNumber(parents[4]) || Type.isFunction(parents[4]))) {
+        // Three points?
+        if (parents[0].elementClass === Const.OBJECT_CLASS_LINE &&
+                parents[1].elementClass === Const.OBJECT_CLASS_LINE &&
+                (Type.isArray(parents[2]) || Type.isNumber(parents[2])) &&
+                (Type.isArray(parents[3]) || Type.isNumber(parents[3])) &&
+                (Type.isNumber(parents[4]) || Type.isFunction(parents[4]))) {
 
-                type = '2lines';
-
-            } else {
-                points = Type.providePoints(board, parents, attributes, 'sector', attrPoints);
-                if (points === false) {
-                    throw new Error("JSXGraph: Can't create Sector with parent types '" +
-                        (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" +
-                        (typeof parents[2]) + "'.");
-                }
-                type = '3points';
+            type = '2lines';
+        } else {
+            points = Type.providePoints(board, parents, attributes, 'sector', attrPoints);
+            if (points === false) {
+                throw new Error("JSXGraph: Can't create Sector with parent types '" +
+                    (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" +
+                    (typeof parents[2]) + "'.");
             }
-        // }
+            type = '3points';
+        }
 
 
         attr = Type.copyAttributes(attributes, board.options, 'sector');
@@ -593,7 +566,7 @@ define([
          */
         if (type === '3points') {
             el.setPositionDirectly = function (method, coords, oldcoords) {
-                var dc, t, i, len,
+                var dc, t, i,
                     c = new Coords(method, coords, this.board),
                     oldc = new Coords(method, oldcoords, this.board);
 
@@ -833,7 +806,7 @@ define([
      *     a2 = board.create('angle', [li1, li2, 1, -1], { radius:2 });
      * })();
      * </script><pre>
-     * 
+     *
      * @example
      * var t = board.create('transform', [2, 1.5], {type: 'scale'});
      * var an1 = board.create('angle', [[-4,3.9], [-3, 4], [-3, 3]]);
@@ -854,8 +827,8 @@ define([
      *
      */
     JXG.createAngle = function (board, parents, attributes) {
-        var el, radius, text, attr, attrsub,
-            i, dot, points,
+        var el, radius, attr, attrsub,
+            i, points,
             type = 'invalid';
 
         // Two lines or three points?
@@ -1179,7 +1152,6 @@ define([
         attrsub = Type.copyAttributes(attributes, board.options, 'angle', 'dot');
         el.dot = board.create('point', [function () {
             var A, B, r, d, a2, co, si, mat,
-                point1, point2, point3,
                 vp_s;
 
             if (Type.exists(el.dot) && !el.dot.visProp.visible) {
@@ -1227,7 +1199,7 @@ define([
 
         // documented in GeometryElement
         el.getLabelAnchor = function () {
-            var vec, dx = 12, dy = 12,
+            var vec, dx = 12,
                 A, B, r, d, a2, co, si, mat,
                 vp_s = Type.evaluate(el.visProp.selection),
                 l_vp = this.label ? this.label.visProp : this.visProp.label;
@@ -1241,7 +1213,6 @@ define([
                 dx = dy = Type.evaluate(this.label.visProp.fontSize);
             }
             dx /= this.board.unitX;
-            dy /= this.board.unitY;
 
             A = el.point2.coords.usrCoords;
             B = el.point1.coords.usrCoords;

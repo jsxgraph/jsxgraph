@@ -2655,11 +2655,10 @@ define([
             };
             a.updateDataArray = function () {
                 var bb = this.board.getBoundingBox(),
-                factor = attr.inverse ? -1 : 1,
-                expansion = 1.5,
-                // inverse == true <=> y >= f(x)
-                hline = expansion * (attr.inverse ? bb[1] : bb[3]),
-                i, le;
+                    expansion = 1.5,
+                    // inverse == true <=> y >= f(x)
+                    hline = expansion * (attr.inverse ? bb[1] : bb[3]),
+                    i, le;
 
                 this.dataX = [];
                 this.dataY = [];

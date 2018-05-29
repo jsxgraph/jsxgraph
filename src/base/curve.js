@@ -225,7 +225,7 @@ define([
          */
         hasPoint: function (x, y, start) {
             var t, checkPoint, len, invMat, c,
-                i, j, tX, tY,
+                i, tX, tY,
                 res = [],
                 points, qdt,
                 steps = Type.evaluate(this.visProp.numberpointslow),
@@ -757,7 +757,7 @@ define([
         },
 
         updateTransformMatrix: function () {
-            var t, c, i,
+            var t, i,
                 len = this.transformations.length;
 
             this.transformMat = [[1, 0, 0], [0, 1, 0], [0, 0, 1]];
@@ -820,7 +820,7 @@ define([
          * @returns {JXG.Curve} Reference to the curve object.
          */
         updateParametricCurveOld: function (mi, ma) {
-            var i, t, t0, d,
+            var i, t, d,
                 x, y, x0, y0, top, depth,
                 MAX_DEPTH, MAX_XDIST, MAX_YDIST,
                 suspendUpdate = false,
@@ -1124,8 +1124,7 @@ define([
                  t_nan, t_real, t_real2,
                  box,
                  vx, vy, vx2, vy2, dx, dy,
-                 x, y,
-                 asymptote, border, intersection;
+                 asymptote;
 
 
              if (depth <= 1) {
@@ -1459,7 +1458,7 @@ define([
             var data = 'data' + which;
 
             return function (t, suspendedUpdate) {
-                var i, j, f1, f2, z, t0, t1,
+                var i, j, t0, t1,
                     arr = this[data],
                     len = arr.length,
                     f = [];
@@ -2203,7 +2202,7 @@ define([
     JXG.createCardinalSpline = function (board, parents, attributes) {
         var el,
             points, tau, type,
-            p, q, i, j, le,
+            p, q, i, le,
             splineArr,
             errStr = "\nPossible parent types: [points:array, tau:number|function, type:string]";
 
@@ -2482,7 +2481,7 @@ define([
         c = board.create('curve', [[0], [0]], attr);
 
         c.updateDataArray = function () {
-            var i, step, t, el, pEl, x, y, v, from, savetrace,
+            var i, step, t, el, pEl, x, y, from, savetrace,
                 le = attr.numberpoints,
                 savePos = glider.position,
                 slideObj = glider.slideObject,
@@ -2668,6 +2667,7 @@ define([
         var c,
             curve, dx, dy,
             attr;
+
         if (parents.length !== 1 && parents[0].class !== Const.OBJECT_CLASS_CURVE) {
             throw new Error("JSXGraph: Can't create derivative curve with given parent'" +
                 "\nPossible parent types: [curve]");
@@ -2676,8 +2676,8 @@ define([
         attr = Type.copyAttributes(attributes, board.options, 'curve');
 
         curve = parents[0];
-        var dx = Numerics.D(curve.X);
-        var dy = Numerics.D(curve.Y);
+        dx = Numerics.D(curve.X);
+        dy = Numerics.D(curve.Y);
 
         c = board.create('curve', [
                 function(t) { return curve.X(t); },

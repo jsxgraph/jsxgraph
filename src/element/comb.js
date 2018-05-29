@@ -43,7 +43,6 @@ define([
 
     "use strict";
 
-    // TODO Example with endpoints attached to X axis?
     /**
      * @class A comb to display domains of inequalities.
      * @pseudo
@@ -92,7 +91,8 @@ define([
      *
      */
     JXG.createComb = function(board, parents, attributes) {
-        var p1, p2, c, attr;
+        var p1, p2, c, attr, parent_types,
+            ds, angle, width, p;
 
         if (parents.length === 2) {
             // point 1 given by coordinates
@@ -129,7 +129,7 @@ define([
                     "\nPossible parent types: [point,point], [[x1,y1],[x2,y2]]");
             }
         } else {
-            var parent_types = parents.map(function(parent) { return "'" + (typeof parent) + "'"; });
+            parent_types = parents.map(function(parent) { return "'" + (typeof parent) + "'"; });
             throw new Error("JSXGraph: Can't create comb with parent types " +
                 parent_types.join(", ") + "." +
                 "\nPossible parent types: [point,point], [[x1,y1],[x2,y2]]");
@@ -139,11 +139,11 @@ define([
         c = board.create('curve', [[0], [0]], attr);
 
         attr = Type.copyAttributes(attributes, board.options, 'comb');
-        var ds = attr.frequency;
-        var angle = -attr.angle;
-        var width = attr.width;
+        ds = attr.frequency;
+        angle = -attr.angle;
+        width = attr.width;
         if (attr.reverse) {
-            var p = p1;
+            p = p1;
             p1 = p2;
             p2 = p;
             angle = -angle;
@@ -156,7 +156,7 @@ define([
                 sn = Math.sin(angle),
                 dx = (p2.X() - p1.X()) / max_s,
                 dy = (p2.Y() - p1.Y()) / max_s,
-                f;
+                x, y, f;
 
             // But instead of lifting by sin(angle), we want lifting by width.
             cs *= width / Math.abs(sn);
@@ -166,8 +166,8 @@ define([
             this.dataY = [];
             // TODO Handle infinite boundaries?
             while (s < max_s) {
-                var x = p1.X() + dx * s;
-                var y = p1.Y() + dy * s;
+                x = p1.X() + dx * s;
+                y = p1.Y() + dy * s;
 
                 // We may need to cut the last piece of a comb.
                 f = Math.min(cs, max_s - s) / Math.abs(cs);
