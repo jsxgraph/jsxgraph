@@ -1020,7 +1020,6 @@ define([
                     attr_points.name = (obj.vertices[i].name === '') ? '' : (obj.vertices[i].name + "'");
                 }
                 points.push(board.create('point', [obj.vertices[i], parents[1]], attr_points));
-                //points[i].prepareUpdate().update().updateVisibility(attr.visible).updateRenderer();
             }
         } else {
             points = Type.providePoints(board, parents, attributes, 'polygon', ['vertices']);
