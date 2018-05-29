@@ -7,16 +7,19 @@ Option.semicirclearc.midpoint -> Option.semicirclearc.center
 New Features
 ------------
 * New elements: 'cardinalspline', 'derivative', 'comb'
-* New element 'reflection': allows point, line, curve, polygon, circle
-* New element 'mirrorelement': allows point, line, curve, polygon
-* New possibility to create line: supply line + transformation
-* New possibility to create polygon: supply polygon + transformation
+* New element 'reflection': allows point, line, curve, polygon, circle, arc, sector and angle
+* New element 'mirrorelement': allows point, line, curve, polygon, circle, arc, sector and angle
+* New possibility to create element by supplying element + transformation: This is possible for point, line, curve, polygon, circle, arc, conics, sector and angle.  
 * New method `Curve.moveTo()`
 * Add option`'auto'` for `anchorX` and `anchorY` attribute of labels
 * SVGRenderer.screenshot: Add parameter "ignoreTexts
 * New element: (numerical) derivative (experimental).
 * New board attribute value for renderer: 'auto'.
 * Pointer events are enbled now for Chrome and Edge on Windows
+* New curve attributes `recursionDepthLow` and `recursionDepthHigh` allow user controlled plot quality
+* The inequality element takes now also the functiongraph element as input
+* New function `JXG.Math.lcm(a, b)`
+* New attribute 'sizeUnit` to enable the user to supply the point size in COORDS_BY_USER units
 
 Improvements
 ------------
@@ -33,9 +36,12 @@ Improvements
 * Add attribute "checked" for checkboxes
 * Improved screenshot functionality
 * Cardinal spline: attribute to prevent creation of points
-* OImprove stability of glider and intersection computations on curves
+* Improve stability of glider and intersection computations on curves
 * New default values for pinch / zoom: shift+wheel is true now for zoom
 * New attribute `isArrayOfCoordinates` for cardinalspline element
+* Improved output in Dump.toJavaScript()
+* Add attribute `hasInnerPoints` for all arc types: arc, sector, angle
+* Polygon reflection now creates vertex names `A'`, `B'`, ...
 
 Bug fixes
 ---------
@@ -51,6 +57,9 @@ Bug fixes
 * Correct handling of UTF-8 characters in JSXCompressor
 * Intersection of line / curve with transformed curve
 * Update of group elements
+* Visibility of in cloneToBackground
+* Automatic detection of dependencies among elements
+* Fix events `hit`, `mousehit`
 
 Contributors:
 * Saluev: comb element
