@@ -32,12 +32,6 @@ JSXGraph is developed at the
 Lehrstuhl für Mathematik und ihre Didaktik
 University of Bayreuth, Germany
 
-### March 2nd, 2018: JSXGraph survey
-Please support JSXGraph and take a few seconds to fill out this form: https://goo.gl/forms/lyCy5PEC0SyCAYYL2 .
-
-Thank you very much!
-
-
 Website
 -------
 

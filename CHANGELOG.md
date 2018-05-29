@@ -6,7 +6,7 @@ Option.semicirclearc.midpoint -> Option.semicirclearc.center
 
 New Features
 ------------
-* New elements: 'cardinalspline', 'derivative'
+* New elements: 'cardinalspline', 'derivative', 'comb'
 * New element 'reflection': allows point, line, curve, polygon, circle
 * New element 'mirrorelement': allows point, line, curve, polygon
 * New possibility to create line: supply line + transformation
@@ -15,6 +15,8 @@ New Features
 * Add option`'auto'` for `anchorX` and `anchorY` attribute of labels
 * SVGRenderer.screenshot: Add parameter "ignoreTexts
 * New element: (numerical) derivative (experimental).
+* New board attribute value for renderer: 'auto'.
+* Pointer events are enbled now for Chrome and Edge on Windows
 
 Improvements
 ------------
@@ -33,6 +35,7 @@ Improvements
 * Cardinal spline: attribute to prevent creation of points
 * OImprove stability of glider and intersection computations on curves
 * New default values for pinch / zoom: shift+wheel is true now for zoom
+* New attribute `isArrayOfCoordinates` for cardinalspline element
 
 Bug fixes
 ---------
@@ -46,10 +49,13 @@ Bug fixes
 * Mediawiki plug-in
 * Catch error if MathJax loading is not yet complete
 * Correct handling of UTF-8 characters in JSXCompressor
-* Intersection of line / curve with transformed curved
+* Intersection of line / curve with transformed curve
+* Update of group elements
 
 Contributors:
-
+* Saluev: comb element
+* nikolas: documentation
+* Nik: documentation
 
 0.99.6
 ====
