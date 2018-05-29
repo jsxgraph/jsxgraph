@@ -240,7 +240,7 @@ define([
                 angle,
                 cp, c, invMat, newCoords, newPos,
                 doRound = false,
-                ev_sw, ev_sel,
+                ev_sw,
                 slide = this.slideObject;
 
             this.needsUpdateFromParent = false;
@@ -470,8 +470,7 @@ define([
             var p1c, p2c, r, lbda, c,
                 slide = this.slideObject,
                 baseangle, alpha, angle, beta,
-                delta = 2.0 * Math.PI,
-                newPos;
+                delta = 2.0 * Math.PI;
 
             if (!this.needsUpdateFromParent) {
                 this.needsUpdateFromParent = true;
@@ -851,7 +850,7 @@ define([
                         projCoords = Geometry.projectPointToTurtle(this, el, this.board);
                     }
 
-                    if (ev_a === 'screen') {
+                    if (ev_au === 'screen') {
                         d = projCoords.distance(Const.COORDS_BY_SCREEN, this.coords);
                     } else {
                         d = projCoords.distance(Const.COORDS_BY_USER, this.coords);

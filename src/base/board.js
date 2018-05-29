@@ -151,7 +151,7 @@ define([
         // this.document = attributes.document || document;
         if (Type.exists(attributes.document) && attributes.document !== false) {
             this.document = attributes.document;
-        } else if (typeof document !== 'undefined' && Type.isObject(document)) {
+        } else if (document !== undefined && Type.isObject(document)) {
             this.document = document;
         }
 

@@ -2,7 +2,7 @@
   "name": "jsxgraph",
   "description": "Interactive geometry, plotting, visualization",
   "homepage": "http://jsxgraph.org",
-  "version": "0.99.7dev",
+  "version": "0.99.7",
   "main": "distrib/jsxgraphcore.js",
   "maintainers": [
     {

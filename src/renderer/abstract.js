@@ -295,7 +295,7 @@ define([
 
             if (!isNaN(el.coords.scrCoords[2] + el.coords.scrCoords[1])) {
                 if (unit === 'user') {
-                    size *= Math.sqrt(el.board.unitX * el.board.unitY)
+                    size *= Math.sqrt(el.board.unitX * el.board.unitY);
                 }
                 size *= ((!el.board || !zoom) ?
                     1.0 : Math.sqrt(el.board.zoomX * el.board.zoomY));
@@ -767,10 +767,7 @@ define([
          * @see JXG.AbstractRenderer#drawPolygon
          */
         updatePolygon: function (el) {
-            var i;
-            //, len, polIsReal;
-
-            // here originally strokecolor wasn't updated but strokewidth was
+            // Here originally strokecolor wasn't updated but strokewidth was
             // but if there's no strokecolor i don't see why we should update strokewidth.
             this._updateVisual(el, {stroke: true, dash: true});
             this.updatePolygonPrim(el.rendNode, el);

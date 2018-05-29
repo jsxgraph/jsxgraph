@@ -179,8 +179,6 @@ define([
                 renderer,
                 w, h, dimensions,
                 bbox, attr, axattr, axattr_x, axattr_y,
-                defaultaxesattr,
-                selectionattr,
                 board;
 
             attributes = attributes || {};
