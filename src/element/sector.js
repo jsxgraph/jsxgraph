@@ -131,30 +131,30 @@ define([
             points;
 
         obj = board.select(parents[0]);
-        if (Type.isObject(obj) && obj.type === Const.OBJECT_TYPE_SECTOR &&
-            Type.isTransformationOrArray(parents[1])) {
-
-            points = [];
-
-            attr = Type.copyAttributes(attributes, board.options, 'sector', 'center');
-            attr.name = (attr.withlabel && obj.center.name === '') ? '' : (obj.center.name + "'");
-            points.push(board.create('point', [obj.center, parents[1]], attr));
-
-            attr = Type.copyAttributes(attributes, board.options, 'sector', 'radiuspoint');
-            attr.name = (attr.withlabel && obj.point2.name === '') ? '' : (obj.point2.name + "'");
-            points.push(board.create('point', [obj.point2, parents[1]], attr));
-
-            attr = Type.copyAttributes(attributes, board.options, 'sector', 'anglepoint');
-            attr.name = (attr.withlabel && obj.point3.name === '') ? '' : (obj.point3.name + "'");
-            points.push(board.create('point', [obj.point3, parents[1]], attr));
-
-            el = JXG.createSector(board, [obj.center, obj.point2, obj.point3], attributes);
-            // Apply transformation
-            parents[1].bindTo(el);
-
-            return el;
-
-        } else {
+        // if (Type.isObject(obj) && obj.type === Const.OBJECT_TYPE_SECTOR &&
+        //     Type.isTransformationOrArray(parents[1])) {
+        //
+        //     points = [];
+        //
+        //     attr = Type.copyAttributes(attributes, board.options, 'sector', 'center');
+        //     attr.name = (attr.withlabel && obj.center.name === '') ? '' : (obj.center.name + "'");
+        //     points.push(board.create('point', [obj.center, parents[1]], attr));
+        //
+        //     attr = Type.copyAttributes(attributes, board.options, 'sector', 'radiuspoint');
+        //     attr.name = (attr.withlabel && obj.point2.name === '') ? '' : (obj.point2.name + "'");
+        //     points.push(board.create('point', [obj.point2, parents[1]], attr));
+        //
+        //     attr = Type.copyAttributes(attributes, board.options, 'sector', 'anglepoint');
+        //     attr.name = (attr.withlabel && obj.point3.name === '') ? '' : (obj.point3.name + "'");
+        //     points.push(board.create('point', [obj.point3, parents[1]], attr));
+        //
+        //     el = JXG.createSector(board, [obj.center, obj.point2, obj.point3], attributes);
+        //     // Apply transformation
+        //     parents[1].bindTo(el);
+        //
+        //     return el;
+        //
+        // } else {
             // Three points?
             if (parents[0].elementClass === Const.OBJECT_CLASS_LINE &&
                     parents[1].elementClass === Const.OBJECT_CLASS_LINE &&
@@ -173,7 +173,7 @@ define([
                 }
                 type = '3points';
             }
-        }
+        // }
 
 
         attr = Type.copyAttributes(attributes, board.options, 'sector');

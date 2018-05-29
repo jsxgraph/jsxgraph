@@ -1783,9 +1783,7 @@ define([
         } else if (parents[0].elementClass === Const.OBJECT_CLASS_CURVE ||
                     parents[0].elementClass === Const.OBJECT_CLASS_LINE ||
                     parents[0].type === Const.OBJECT_TYPE_POLYGON ||
-                    parents[0].elementClass === Const.OBJECT_CLASS_CIRCLE||
-                    parents[0].type === Const.OBJECT_TYPE_ARC ||
-                    parents[0].type === Const.OBJECT_TYPE_SECTOR) {
+                    parents[0].elementClass === Const.OBJECT_CLASS_CIRCLE) {
             org = parents[0];
         } else {
             throw new Error("JSXGraph: Can't create reflection element with parent types '" +
@@ -1802,6 +1800,8 @@ define([
         t = Transform.createTransform(board, [l], {type: 'reflect'});
         if (Type.isPoint(org)) {
             r = Point.createPoint(board, [org, t], attributes);
+
+        // Arcs and sectors are treated as curves
         } else if (org.elementClass === Const.OBJECT_CLASS_CURVE){
             r = Curve.createCurve(board, [org, t], attributes);
         } else if (org.elementClass === Const.OBJECT_CLASS_LINE){
@@ -1917,9 +1917,7 @@ define([
         } else if (parents[0].elementClass === Const.OBJECT_CLASS_CURVE ||
                     parents[0].elementClass === Const.OBJECT_CLASS_LINE ||
                     parents[0].type === Const.OBJECT_TYPE_POLYGON ||
-                    parents[0].elementClass === Const.OBJECT_CLASS_CIRCLE ||
-                    parents[0].type === Const.OBJECT_TYPE_ARC ||
-                    parents[0].type === Const.OBJECT_TYPE_SECTOR) {
+                    parents[0].elementClass === Const.OBJECT_CLASS_CIRCLE) {
             org = parents[0];
         } else {
             throw new Error("JSXGraph: Can't create mirror element with parent types '" +
@@ -1936,6 +1934,8 @@ define([
         t = Transform.createTransform(board, [Math.PI, m], {type: 'rotate'});
         if (Type.isPoint(org)) {
             r = Point.createPoint(board, [org, t], attributes);
+
+        // Arcs and sectors are treated as curves
         } else if (org.elementClass === Const.OBJECT_CLASS_CURVE){
             r = Curve.createCurve(board, [org, t], attributes);
         } else if (org.elementClass === Const.OBJECT_CLASS_LINE){

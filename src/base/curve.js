@@ -1951,8 +1951,24 @@ define([
         obj = board.select(parents[0]);
         if (Type.isObject(obj) &&
             (obj.type === Const.OBJECT_TYPE_CURVE ||
-             obj.type === Const.OBJECT_TYPE_ARC) &&
+             obj.type === Const.OBJECT_TYPE_ANGLE ||
+             obj.type === Const.OBJECT_TYPE_ARC   ||
+             obj.type === Const.OBJECT_TYPE_SECTOR) &&
             Type.isTransformationOrArray(parents[1])) {
+
+            if (obj.type === Const.OBJECT_TYPE_SECTOR) {
+                attr = Type.copyAttributes(attributes, board.options, 'sector');
+            } else if (obj.type === Const.OBJECT_TYPE_ARC) {
+                attr = Type.copyAttributes(attributes, board.options, 'arc');
+            } else if (obj.type === Const.OBJECT_TYPE_ANGLE) {
+                if (!Type.exists(attributes.withLabel)) {
+                    attributes.withLabel = false;
+                }
+                attr = Type.copyAttributes(attributes, board.options, 'angle');
+            } else {
+                attr = Type.copyAttributes(attributes, board.options, 'curve');
+            }
+            attr = Type.copyAttributes(attr, board.options, 'curve');
 
             cu = new JXG.Curve(board, ['x', [], []], attr);
             cu.bezierDegree = obj.bezierDegree;
@@ -1969,6 +1985,7 @@ define([
             cu.addTransform(parents[1]);
             return cu;
         } else {
+            attr = Type.copyAttributes(attributes, board.options, 'curve');
             return new JXG.Curve(board, ['x'].concat(parents), attr);
         }
     };
