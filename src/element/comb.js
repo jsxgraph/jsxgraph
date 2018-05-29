@@ -71,6 +71,25 @@ define([
      *     c = board.create('comb', [[1, 0], [3, 0]]);
      * })();
      * </script><pre>
+     *
+     * @example
+     * var p1 = board.create('glider', [-3, 0, board.defaultAxes.x]);
+     * var p2 = board.create('glider', [-1, 0, board.defaultAxes.x]);
+     * var c1 = board.create('comb', [p1, p2], {width: 0.2, frequency: 0.1, angle: Math.PI / 4});
+     *
+     * </pre><div id="04186fd2-6340-11e8-9fb9-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     *     (function() {
+     *         var board = JXG.JSXGraph.initBoard('04186fd2-6340-11e8-9fb9-901b0e1b8723',
+     *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+     *     var p1 = board.create('glider', [-3, 0, board.defaultAxes.x]);
+     *     var p2 = board.create('glider', [-1, 0, board.defaultAxes.x]);
+     *     var c1 = board.create('comb', [p1, p2], {width: 0.2, frequency: 0.1, angle: Math.PI / 4});
+     *
+     *     })();
+     *
+     * </script><pre>
+     *
      */
     JXG.createComb = function(board, parents, attributes) {
         var p1, p2, c, attr;
