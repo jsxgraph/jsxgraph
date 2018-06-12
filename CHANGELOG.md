@@ -15,7 +15,7 @@ New Features
 * SVGRenderer.screenshot: Add parameter "ignoreTexts
 * New element: (numerical) derivative (experimental).
 * New board attribute value for renderer: 'auto'.
-* Pointer events are enbled now for Chrome and Edge on Windows
+* Pointer events are enabled now for Chrome and Edge on Windows
 * New curve attributes `recursionDepthLow` and `recursionDepthHigh` allow user controlled plot quality
 * The inequality element takes now also the functiongraph element as input
 * New function `JXG.Math.lcm(a, b)`
