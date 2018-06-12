@@ -6,14 +6,14 @@ Option.semicirclearc.midpoint -> Option.semicirclearc.center
 
 New Features
 ------------
-* New elements: 'cardinalspline', 'derivative', 'comb'
+* New elements: 'cardinalspline', 'comb':
+* New element: (numerical) derivative (experimental).
 * New element 'reflection': allows point, line, curve, polygon, circle, arc, sector and angle
 * New element 'mirrorelement': allows point, line, curve, polygon, circle, arc, sector and angle
-* New possibility to create element by supplying element + transformation: This is possible for point, line, curve, polygon, circle, arc, conics, sector and angle.  
+* New possibility to create element by supplying element + transformation: This is possible for point, line, curve, polygon, circle, arc, conics, sector and angle.
 * New method `Curve.moveTo()`
 * Add option`'auto'` for `anchorX` and `anchorY` attribute of labels
 * SVGRenderer.screenshot: Add parameter "ignoreTexts
-* New element: (numerical) derivative (experimental).
 * New board attribute value for renderer: 'auto'.
 * Pointer events are enbled now for Chrome and Edge on Windows
 * New curve attributes `recursionDepthLow` and `recursionDepthHigh` allow user controlled plot quality
