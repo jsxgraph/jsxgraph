@@ -1098,6 +1098,7 @@ define([
          *   touch: 30,
          *   touchMax: 100,
          *   mouse: 4,
+         *   pen: 4,
          *   epsilon: 0.0001,
          *   hasPoint: 4
          * }
@@ -1107,6 +1108,7 @@ define([
             touch: 15,
             touchMax: 100,
             mouse: 4,
+            pen: 4,
             epsilon: 0.0001,
             hasPoint: 4
         },

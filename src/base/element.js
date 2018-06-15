@@ -2014,6 +2014,14 @@ define([
 
         /**
          * @event
+         * @description This event is fired whenever the user drags the element with a pen.
+         * @name JXG.GeometryElement#pendrag
+         * @param {Event} e The browser's event object.
+         */
+        __evt__pendrag: function (e) { },
+
+        /**
+         * @event
          * @description This event is fired whenever the user drags the element on a touch device.
          * @name JXG.GeometryElement#touchdrag
          * @param {Event} e The browser's event object.
@@ -2038,6 +2046,14 @@ define([
 
         /**
          * @event
+         * @description Whenever the user taps an element with the pen.
+         * @name JXG.GeometryElement#pendown
+         * @param {Event} e The browser's event object.
+         */
+        __evt__pendown: function (e) { },
+
+        /**
+         * @event
          * @description Whenever the user starts to touch an element.
          * @name JXG.GeometryElement#touchdown
          * @param {Event} e The browser's event object.
@@ -2059,6 +2075,14 @@ define([
          * @param {Event} e The browser's event object.
          */
         __evt__mouseup: function (e) { },
+
+        /**
+         * @event
+         * @description Whenever the user lifts the pen over an element.
+         * @name JXG.GeometryElement#penup
+         * @param {Event} e The browser's event object.
+         */
+        __evt__penup: function (e) { },
 
         /**
          * @event

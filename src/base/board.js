@@ -890,7 +890,7 @@ define([
          * @param {Number} x Current mouse/touch coordinates
          * @param {Number} y current mouse/touch coordinates
          * @param {Object} evt An event object
-         * @param {String} type What type of event? 'touch' or 'mouse'.
+         * @param {String} type What type of event? 'touch', 'mouse' or 'pen'.
          * @returns {Array} A list of geometric elements.
          */
         initMoveObject: function (x, y, evt, type) {
@@ -1784,6 +1784,38 @@ define([
         },
 
         /**
+         * Determine which input device is used for this action.
+         * Possible devices are 'touch', 'pen' and 'mouse'.
+         * This affects the precision and certain events.
+         * In case of no browser, 'mouse' is used.
+         *
+         * @see JXG.Board#pointerDownListener
+         * @see JXG.Board#pointerMoveListener
+         * @see JXG.Board#initMoveObject
+         * @see JXG.Board#moveObject
+         *
+         * @param {Event} evt The browsers event object.
+         * @returns {String} 'mouse', 'pen', or 'touch'
+         * @private
+         */
+        _getPointerInputDevice: function(evt) {
+            if (Env.isBrowser) {
+                if (evt.pointerType === 'touch' || // New
+                    (window.navigator.msMaxTouchPoints && // Old
+                        window.navigator.msMaxTouchPoints > 1)) {
+                    return 'touch';
+                }
+                if (evt.pointerType === 'mouse') {
+                    return 'mouse';
+                }
+                if (evt.pointerType === 'pen') {
+                    return 'pen';
+                }
+            }
+            return 'mouse';
+        },
+
+        /**
          * This method is called by the browser when a pointing device is pressed on the screen.
          * @param {Event} evt The browsers event object.
          * @param {Object} object If the object to be dragged is already known, it can be submitted via this parameter
@@ -1791,7 +1823,8 @@ define([
          */
         pointerDownListener: function (evt, object) {
             var i, j, k, pos, elements, sel,
-                eps = this.options.precision.touch,
+                type = 'mouse', // in case of no browser
+                eps,
                 found, target, result;
 
             if (!this.hasPointerUp) {
@@ -1811,7 +1844,7 @@ define([
                 this.removeTouchEventHandlers();
             }
 
-            // prevent accidental selection of text
+            // Prevent accidental selection of text
             if (this.document.selection && Type.isFunction(this.document.selection.empty)) {
                 this.document.selection.empty();
             } else if (window.getSelection) {
@@ -1823,13 +1856,10 @@ define([
                 }
             }
 
-            // Touch or pen device
-            if (Env.isBrowser &&
-                    (evt.pointerType === 'touch' || // New
-                    (window.navigator.msMaxTouchPoints && window.navigator.msMaxTouchPoints > 1)) // Old
-                ) {
-                this.options.precision.hasPoint = eps;
-            }
+            // Mouse, touch or pen device
+            type = this._getPointerInputDevice(evt);
+            eps = this.options.precision[type];
+            this.options.precision.hasPoint = eps;
 
             // This should be easier than the touch events. Every pointer device gets its own pointerId, e.g. the mouse
             // always has id 1, fingers and pens get unique ids every time a pointerDown event is fired and they will
@@ -1853,7 +1883,7 @@ define([
                 elements = [ object ];
                 this.mode = this.BOARD_MODE_DRAG;
             } else {
-                elements = this.initMoveObject(pos[0], pos[1], evt, 'mouse');
+                elements = this.initMoveObject(pos[0], pos[1], evt, type);
             }
 
             // if no draggable object can be found, get out here immediately
@@ -1918,8 +1948,6 @@ define([
                 evt.stopPropagation();
             }
 
-            this.options.precision.hasPoint = this.options.precision.mouse;
-
             if (Env.isBrowser && evt.pointerType !== 'touch') {
                 if (this.mode === this.BOARD_MODE_NONE) {
                     this.mouseOriginMoveStart(evt);
@@ -1942,8 +1970,6 @@ define([
             }
 
             this.triggerEventHandlers(['touchstart', 'down', 'pointerdown', 'MSPointerDown'], [evt]);
-
-            //return result;
             return false;
         },
 
@@ -1953,7 +1979,8 @@ define([
          * @returns {Boolean}
          */
         pointerMoveListener: function (evt) {
-            var i, j, pos;
+            var i, j, pos,
+                type = this._getPointerInputDevice(evt);
 
             if (this.mode !== this.BOARD_MODE_DRAG) {
                 this.dehighlightAll();
@@ -1965,13 +1992,6 @@ define([
                 evt.stopPropagation();
             }
 
-            // Touch or pen device
-            if (Env.isBrowser &&
-                    (evt.pointerType === 'touch' || // New
-                    (window.navigator.msMaxTouchPoints && window.navigator.msMaxTouchPoints > 1)) // Old
-                ) {
-                this.options.precision.hasPoint = this.options.precision.touch;
-            }
             this.updateQuality = this.BOARD_QUALITY_LOW;
 
             // selection
@@ -1990,7 +2010,7 @@ define([
                                     this.touches[i].targets[j].X = evt.pageX;
                                     this.touches[i].targets[j].Y = evt.pageY;
                                     pos = this.getMousePosition(evt);
-                                    this.moveObject(pos[0], pos[1], this.touches[i], evt, 'touch');
+                                    this.moveObject(pos[0], pos[1], this.touches[i], evt, type);
                                 // Touch by two fingers: moving lines
                                 } else if (this.touches[i].targets.length === 2 &&
                                     this.touches[i].targets[0].num > -1 && this.touches[i].targets[1].num > -1) {
@@ -2036,8 +2056,6 @@ define([
             //if (this.mode !== this.BOARD_MODE_DRAG) {
                 //this.showInfobox(false);
             //}
-
-            this.options.precision.hasPoint = this.options.precision.mouse;
             this.triggerEventHandlers(['touchmove', 'move', 'pointermove', 'MSPointerMove'], [evt, this.mode]);
 
             return this.mode === this.BOARD_MODE_NONE;
@@ -2111,7 +2129,6 @@ define([
                 this.originMoveEnd();
                 this.update();
             }
-
 
             return true;
         },
@@ -2197,7 +2214,8 @@ define([
 
                         eps *= 2;
 
-                    } while (this.touches[i].targets[j].num === -1 && eps < this.options.precision.touchMax);
+                    } while (this.touches[i].targets[j].num === -1 &&
+                             eps < this.options.precision.touchMax);
 
                     if (this.touches[i].targets[j].num === -1) {
                         JXG.debug('i couldn\'t find a targettouches for target no ' + j + ' on ' + this.touches[i].obj.name + ' (' + this.touches[i].obj.id + '). Removed the target.');
@@ -4665,6 +4683,14 @@ define([
 
         /**
          * @event
+         * @description Whenever the user taps the pen on the board.
+         * @name JXG.Board#pendown
+         * @param {Event} e The browser's event object.
+         */
+        __evt__pendown: function (e) { },
+
+        /**
+         * @event
          * @description Whenever the user starts to click on the board with a
          * device sending pointer events.
          * @name JXG.Board#pointerdown
@@ -4732,6 +4758,16 @@ define([
          * @see {JXG.Board#mode}
          */
         __evt__mousemove: function (e, mode) { },
+
+        /**
+         * @event
+         * @description This event is fired whenever the user is moving the pen over the board.
+         * @name JXG.Board#penmove
+         * @param {Event} e The browser's event object.
+         * @param {Number} mode The mode the board currently is in
+         * @see {JXG.Board#mode}
+         */
+        __evt__penmove: function (e, mode) { },
 
         /**
          * @event
