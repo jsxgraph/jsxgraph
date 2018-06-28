@@ -1003,7 +1003,7 @@ define([
                 }
 
                 // Handle the label if it inherits the visibility
-                if (Type.exists(this.label)  && Type.exists(this.label.visProp) &&
+                if (Type.exists(this.label) && Type.exists(this.label.visProp) &&
                     Type.evaluate(this.label.visProp.visible)) {
                     this.label.prepareUpdate().updateVisibility(this.visPropCalc.visible);
                 }
@@ -1494,11 +1494,6 @@ define([
                     this.label.dump = false;
                     this.label.update();
 
-                    // if (!Type.evaluate(this.visProp.visible)) {
-                    //     this.label.hiddenByParent = true;
-                    //     this.label.visPropCalc.visible = false;
-                    // }
-                    // this.label.fullUpdate();
                     this.hasLabel = true;
                 }
             } else {

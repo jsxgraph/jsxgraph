@@ -821,7 +821,8 @@ define([
          * @see JXG.AbstractRenderer#updateTextStyle
          */
         drawText: function (el) {
-            var node, z, level;
+            var node, z, level,
+                ev_visible;
 
             if (Type.evaluate(el.visProp.display) === 'html' && Env.isBrowser && this.type !== 'no') {
                 node = this.container.ownerDocument.createElement('div');
@@ -850,6 +851,14 @@ define([
 
             el.rendNode = node;
             el.htmlStr = '';
+
+            // Set el.visPropCalc.visible
+            if (el.visProp.islabel) {
+                ev_visible = Type.evaluate(el.visProp.anchor.visProp.visible);
+                el.prepareUpdate().updateVisibility(ev_visible);
+            } else {
+                el.prepareUpdate().updateVisibility();
+            }
             this.updateText(el);
         },
 
