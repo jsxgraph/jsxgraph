@@ -340,7 +340,7 @@ define([
             Type.clearVisPropOld(el);
 
             if (!el.visPropCalc.visible) {
-                this.hide(el);
+                this.display(el, false);
             }
 
             if (Type.evaluate(el.visProp.draft)) {
