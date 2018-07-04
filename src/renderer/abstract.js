@@ -853,7 +853,7 @@ define([
             el.htmlStr = '';
 
             // Set el.visPropCalc.visible
-            if (el.visProp.islabel) {
+            if (el.visProp.islabel && Type.exists(el.visProp.anchor)) {
                 ev_visible = Type.evaluate(el.visProp.anchor.visProp.visible);
                 el.prepareUpdate().updateVisibility(ev_visible);
             } else {
