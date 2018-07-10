@@ -979,6 +979,15 @@ define([
 
             for (i = 0, j = 0; i < lenData; i++) {
                 if (this.labelsData[i] === null) {
+                    if (j < lenLabels) {
+                        this.board.renderer.display(this.labels[j], false);
+                        // Tick labels have the attribute "visible: 'inherit'"
+                        // This must explicitely set to false, otherwise
+                        // this labels would be set to visible in the upcoming
+                        // update of the labels.
+                        this.labels[j].visProp.visible = this.labels[j].visPropCalc.visible = false;
+                        j++;
+                    }
                     continue;
                 }
 
@@ -1031,7 +1040,7 @@ define([
                 // This must explicitely set to false, otherwise
                 // this labels would be set to visible in the upcoming
                 // update of the labels.
-                this.labels[j].visProp.visible = false;
+                this.labels[j].visProp.visible = this.labels[j].visPropCalc.visible = false;
             }
 
             return this;
