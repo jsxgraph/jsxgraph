@@ -2044,10 +2044,11 @@ define([
                             evt.touches = this._board_touches;
                             this.gestureChangeListener(evt);
                         }
-                    } else {
-                        pos = this.getMousePosition(evt);
-                        this.highlightElements(pos[0], pos[1], evt, -1);
                     }
+
+                    // Move event without dragging an element
+                    pos = this.getMousePosition(evt);
+                    this.highlightElements(pos[0], pos[1], evt, -1);
                 }
             }
 
@@ -2416,6 +2417,9 @@ define([
                         if (evtTouches.length == 2) {
                             this.gestureChangeListener(evt);
                         }
+                        // Move event without dragging an element
+                        pos = this.getMousePosition(evt);
+                        this.highlightElements(pos[0], pos[1], evt, -1);
                     }
                 }
             }
@@ -2676,6 +2680,7 @@ define([
                 if (this.mode === this.BOARD_MODE_DRAG) {
                     this.moveObject(pos[0], pos[1], this.mouse, evt, 'mouse');
                 } else { // BOARD_MODE_NONE
+                    // Move event without dragging an element
                     this.highlightElements(pos[0], pos[1], evt, -1);
                 }
                 this.triggerEventHandlers(['mousemove', 'move'], [evt, this.mode]);
