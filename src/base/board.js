@@ -2345,21 +2345,6 @@ define([
                 evt.stopPropagation();
             }
 
-            // Reduce update frequency for Android devices
-            // if (false && Env.isWebkitAndroid()) {
-            //     time = new Date();
-            //     time = time.getTime();
-            //
-            //     if (time - this.touchMoveLast < 80) {
-            //         this.updateQuality = this.BOARD_QUALITY_HIGH;
-            //         this.triggerEventHandlers(['touchmove', 'move'], [evt, this.mode]);
-            //
-            //         return false;
-            //     }
-            //
-            //     this.touchMoveLast = time;
-            // }
-
             if (this.mode !== this.BOARD_MODE_DRAG) {
                 this.dehighlightAll();
                 this.showInfobox(false);
