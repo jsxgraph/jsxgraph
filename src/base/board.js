@@ -2361,6 +2361,7 @@ define([
             // }
 
             if (this.mode !== this.BOARD_MODE_DRAG) {
+                this.dehighlightAll();
                 this.showInfobox(false);
             }
 
@@ -2418,8 +2419,8 @@ define([
                             this.gestureChangeListener(evt);
                         }
                         // Move event without dragging an element
-                        pos = this.getMousePosition(evt);
-                        this.highlightElements(pos[0], pos[1], evt, -1);
+                        pos1 = this.getMousePosition(evt, 0);
+                        this.highlightElements(pos1[0], pos1[1], evt, -1);
                     }
                 }
             }
