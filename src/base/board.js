@@ -1250,7 +1250,8 @@ define([
                     if (!Type.exists(this.highlightedObjects[pId])) { // highlight only if not highlighted
                         overObjects[pId] = pEl;
                         pEl.highlight();
-                        pEl.triggerEventHandlers(['mousehit', 'hit'], [evt, pEl, target]);
+                        // triggers board event.
+                        this.triggerEventHandlers(['mousehit', 'hit'], [evt, pEl, target]);
                     }
 
                     if (pEl.mouseover) {
@@ -4788,6 +4789,26 @@ define([
          * @param {Event} e The browser's event object.
          * @param {JXG.GeometryElement} el The hit element.
          * @param target
+         *
+         * @example
+         * var c = board.create('circle', [[1, 1], 2]);
+         * board.on('hit', function(evt, el) {
+         *     console.log("Hit element", el);
+         * });
+         *
+         * </pre><div id="19eb31ac-88e6-11e8-bcb5-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('19eb31ac-88e6-11e8-bcb5-901b0e1b8723',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *     var c = board.create('circle', [[1, 1], 2]);
+         *     board.on('hit', function(evt, el) {
+         *         console.log("Hit element", el);
+         *     });
+         *
+         *     })();
+         *
+         * </script><pre>
          */
         __evt__hit: function (e, el, target) { },
 
@@ -4795,6 +4816,7 @@ define([
          * @event
          * @description Whenever an element is highlighted this event is fired.
          * @name JXG.Board#mousehit
+         * @see JXG.Board#hit
          * @param {Event} e The browser's event object.
          * @param {JXG.GeometryElement} el The hit element.
          * @param target
