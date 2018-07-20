@@ -894,7 +894,7 @@ define([
              xa = [tick.scrCoords[1], tick.scrCoords[1]];
              ya = [tick.scrCoords[2], tick.scrCoords[2]];
              m = (fs === undefined) ? 12 : fs;
-             m *= 1.5;
+             m *= 0.5;
              if (!this._isInsideCanvas(xa, ya, m)) {
                  return null;
              }
