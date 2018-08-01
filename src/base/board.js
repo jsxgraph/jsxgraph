@@ -3536,7 +3536,7 @@ define([
          * call resizeContainer with dontSetBoundingBox == true.
          * @param {Number} canvasWidth New width of the container.
          * @param {Number} canvasHeight New height of the container.
-         * @param {Boolean} [dontset=false] If true do not set the height of the DOM element.
+         * @param {Boolean} [dontset=false] If true do not set the CSS width and height of the DOM element.
          * @param {Boolean} [dontSetBoundingBox=false] If true do not call setBoundingBox().
          * @returns {JXG.Board} Reference to the board
          */
