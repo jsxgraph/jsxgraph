@@ -1040,12 +1040,15 @@ define([
 
             // No updates for very small movements of coordsElements
             if (!drag.coords ||
-                dragScrCoords[1] !== newDragScrCoords[1] || dragScrCoords[2] !== newDragScrCoords[2]) {
+                dragScrCoords[1] !== newDragScrCoords[1] ||
+                dragScrCoords[2] !== newDragScrCoords[2]) {
 
                 drag.triggerEventHandlers([type + 'drag', 'drag'], [evt]);
+
                 this.update();
             }
             drag.highlight(true);
+            this.triggerEventHandlers(['mousehit', 'hit'], [evt, drag]);
 
             drag.lastDragTime = new Date();
         },
