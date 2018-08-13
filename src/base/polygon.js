@@ -963,7 +963,8 @@ define([
      *       f3 = function() { return [4.0, 6.0]; },
      *       f4 = function() { return [1.0, 4.0]; },
      *       cc1 = board.create('polygon', [f1, f2, f3, f4]);
-     *
+     *       board.update();
+     *       
      * </pre><div class="jxgbox" id="ceb09915-b783-44db-adff-7877ae3534c8" style="width: 400px; height: 400px;"></div>
      * <script type="text/javascript">
      *  (function () {
@@ -973,6 +974,7 @@ define([
      *       f3 = function() { return [4.0, 6.0]; },
      *       f4 = function() { return [1.0, 4.0]; },
      *       cc1 = board.create('polygon', [f1, f2, f3, f4]);
+     *       board.update();
      *  })();
      * </script><pre>
      *

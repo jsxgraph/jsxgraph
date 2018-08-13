@@ -256,7 +256,7 @@
                         el = step.src_ids[step.src_ids.length - 1];
                         for (i = 1; i < step.src_ids.length - 1; i++) {
                             set_str += assign + 'reflection(' + step.src_ids[i] + ', ' + el + ') <<id:"' + step.dest_sub_ids[i - 1] + '"';
-                            set_str += ', name: ""';
+                            set_str += ', name:\"' + step.args.subnames[i - 1] + '\"';
                             set_str += ', snaptogrid: ' + JXG.Options.elements.snapToGrid;
                             set_str += ', snaptopoints: ' + JXG.Options.elements.snapToPoints + '>>;\n';
                         }
@@ -269,9 +269,14 @@
                         for (i = 0; i < le; i++) {
                             x.push("\'\'");
                         }
+
                         set_str += ', names: [' + x.join() + ']';
                         set_str += '>>, ' + attrid + ' fillOpacity: ';
                         set_str += step.args.opacity + ', name: \'\', hasInnerPoints:' + JXG.Options.polygon.hasInnerPoints;
+                        if (step.args.name !== '') {
+                            set_str += ', name: "' + step.args.name + '"';
+                            set_str += ', withLabel: true';
+                        }
                         set_str += ', fillColor: \'' + step.args.fillColor + '\'';
                         set_str += ', snaptogrid: ' + JXG.Options.elements.snapToGrid;
                         set_str += ', snaptopoints: ' + JXG.Options.elements.snapToPoints + ', scalable:true>>; ';
