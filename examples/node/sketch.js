@@ -1,11 +1,10 @@
-
-
 (function () {
 
     'use strict';
 
     var fs = require('fs'),
-        JXG = require('./jsxgraph.js');
+        //JXG = require('../../distrib/jsxgraphcore.js');
+        JXG = require('../../src/jsxgraphnode.js');
 
     module.exports = {
         test: function (file, pic) {
