@@ -644,6 +644,7 @@ define([
             if (ti.length === 3) {
                 this.ticks.push(ti);
                 if (tickCoords.major && Type.evaluate(this.visProp.drawlabels)) {
+                    // major tick label
                     this.labelsData.push(
                         this.generateLabelData(
                             this.generateLabelText(tickCoords, coordsZero),
@@ -652,6 +653,7 @@ define([
                         )
                     );
                 } else {
+                    // minor ticks have no labels
                     this.labelsData.push(null);
                 }
             }
@@ -975,19 +977,13 @@ define([
             // The number of labels needed
             lenData = this.labelsData.length;
             // The number of labels which already exist
+            // The existing labels are stored in this.labels[]
+            // The new label positions and label values are stored in this.labelsData[]
             lenLabels = this.labels.length;
 
             for (i = 0, j = 0; i < lenData; i++) {
                 if (this.labelsData[i] === null) {
-                    if (j < lenLabels) {
-                        this.board.renderer.display(this.labels[j], false);
-                        // Tick labels have the attribute "visible: 'inherit'"
-                        // This must explicitely set to false, otherwise
-                        // this labels would be set to visible in the upcoming
-                        // update of the labels.
-                        this.labels[j].visProp.visible = this.labels[j].visPropCalc.visible = false;
-                        j++;
-                    }
+                    // This is a tick without label
                     continue;
                 }
 
@@ -1027,7 +1023,6 @@ define([
                 label.prepareUpdate()
                     .updateVisibility(visible)
                     .updateRenderer();
-                // this.board.renderer.display(label, visible);
 
                 label.distanceX = Type.evaluate(this.visProp.label.offset[0]);
                 label.distanceY = Type.evaluate(this.visProp.label.offset[1]);
