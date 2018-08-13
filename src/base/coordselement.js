@@ -1316,7 +1316,8 @@ define([
                 this.coords.setCoordinates(Const.COORDS_BY_USER, [this.ZEval(), this.XEval(), this.YEval()]);
             };
 
-            this.coords = new Coords(Const.COORDS_BY_SCREEN, [0, 0], this.board);
+            this.updateConstraint();
+            //this.coords = new Coords(Const.COORDS_BY_SCREEN, [0, 0], this.board);
         },
 
         /**
