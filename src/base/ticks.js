@@ -1023,10 +1023,11 @@ define([
                 if (visible === 'inherit') {
                     visible = this.visPropCalc.visible;
                 }
+
                 label.prepareUpdate()
                     .updateVisibility(visible)
                     .updateRenderer();
-                //this.board.renderer.display(label, visible);
+                // this.board.renderer.display(label, visible);
 
                 label.distanceX = Type.evaluate(this.visProp.label.offset[0]);
                 label.distanceY = Type.evaluate(this.visProp.label.offset[1]);
