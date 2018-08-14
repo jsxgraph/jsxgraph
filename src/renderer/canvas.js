@@ -451,7 +451,7 @@ define([
             }
             Geometry.calcStraight(el, c1, c2, margin);
 
-            obj = this.getPositionArrowHead(el, c1, c2);
+            obj = this.getPositionArrowHead(el, c1, c2, Type.evaluate(el.visProp.strokewidth));
 
             this.context.beginPath();
             this.context.moveTo(obj.c1.scrCoords[1] + obj.d1x, obj.c1.scrCoords[2] + obj.d1y);
@@ -757,7 +757,8 @@ define([
             // not done yet for curves and arcs.
             var x1, y1, x2, y2, ang,
                 size,
-                w = Type.evaluate(el.visProp.strokewidth),
+                w0 = Type.evaluate(el.visProp.strokewidth),
+                w,
                 arrowHead,
                 arrowTail,
                 context = this.context,
@@ -788,7 +789,7 @@ define([
                     } else {
                         size = 3;
                     }
-                    w *= size;
+                    w = w0 * size;
 
                     type = Type.evaluate(ev_fa.type);
                     if (type === 2) {
@@ -822,7 +823,7 @@ define([
                     } else {
                         size = 3;
                     }
-                    w *= size;
+                    w = w0 * size;
 
                     type = Type.evaluate(ev_la.type);
                     if (type === 2) {
