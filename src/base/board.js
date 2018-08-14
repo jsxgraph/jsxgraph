@@ -2018,7 +2018,6 @@ define([
                                 // Touch by two fingers: moving lines
                                 } else if (this.touches[i].targets.length === 2 &&
                                     this.touches[i].targets[0].num > -1 && this.touches[i].targets[1].num > -1) {
-
                                     this.touches[i].targets[j].X = evt.pageX;
                                     this.touches[i].targets[j].Y = evt.pageY;
 
