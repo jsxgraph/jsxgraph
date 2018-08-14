@@ -133,6 +133,7 @@
             var i, j, k, sub_id, str, str1, str2, objects, pid1, pid2, pid3,
                 xstart, ystart, el, arr, step2, options, assign, attrid,
                 le, x, y, points,
+                key, val,
                 copy_log = [],
                 set_str = '',
                 reset_str = '',
@@ -256,7 +257,11 @@
                         el = step.src_ids[step.src_ids.length - 1];
                         for (i = 1; i < step.src_ids.length - 1; i++) {
                             set_str += assign + 'reflection(' + step.src_ids[i] + ', ' + el + ') <<id:"' + step.dest_sub_ids[i - 1] + '"';
-                            set_str += ', name:\"' + step.args.subnames[i - 1] + '\"';
+                            if (JXG.exists(step.args.subnames)) {
+                                set_str += ', name:\"' + step.args.subnames[i - 1] + '\"';
+                            } else {
+                                set_str += ', name: ""';
+                            }
                             set_str += ', snaptogrid: ' + JXG.Options.elements.snapToGrid;
                             set_str += ', snaptopoints: ' + JXG.Options.elements.snapToPoints + '>>;\n';
                         }
@@ -298,6 +303,12 @@
                         }
                         set_str += ', name: "' + step.args.name + '"';
                         set_str += ', id: "' + step.dest_id + '"';
+                        if (JXG.exists(step.args.attr)) {
+                            for (key in step.args.attr) if (step.args.attr.hasOwnProperty(key)) {
+                                set_str += ', ' + key + ': ' + step.args.attr[key] + '';
+                            }
+                        }
+
                         if (step.args.name !== '') {
                             set_str += ', withLabel: true';
                         }
@@ -313,7 +324,11 @@
                         el = step.src_ids[step.src_ids.length - 1];
                         for (i = 1; i < step.src_ids.length - 1; i++) {
                             set_str += assign + 'mirrorelement(' + step.src_ids[i] + ', ' + el + ') <<id:"' + step.dest_sub_ids[i - 1] + '"';
-                            set_str += ', name: ""';
+                            if (JXG.exists(step.args.subnames)) {
+                                set_str += ', name:\"' + step.args.subnames[i - 1] + '\"';
+                            } else {
+                                set_str += ', name: ""';
+                            }
                             set_str += ', snaptogrid: ' + JXG.Options.elements.snapToGrid;
                             set_str += ', snaptopoints: ' + JXG.Options.elements.snapToPoints + '>>;\n';
                         }
@@ -329,6 +344,10 @@
                         set_str += ', names: [' + x.join() + ']';
                         set_str += '>>, ' + attrid + ' fillOpacity: ';
                         set_str += step.args.opacity + ', name: \'\', hasInnerPoints:' + JXG.Options.polygon.hasInnerPoints;
+                        if (step.args.name !== '') {
+                            set_str += ', name: "' + step.args.name + '"';
+                            set_str += ', withLabel: true';
+                        }
                         set_str += ', fillColor: \'' + step.args.fillColor + '\'';
                         set_str += ', snaptogrid: ' + JXG.Options.elements.snapToGrid;
                         set_str += ', snaptopoints: ' + JXG.Options.elements.snapToPoints + ', scalable:true>>; ';
@@ -348,7 +367,18 @@
                             set_str += ', strokeColor: \'' + step.args.strokeColor + '\'';
                             set_str += ', opacity: \'' + step.args.opacity + '\'';
                         }
-                        set_str += ', name: "' + step.args.name + '">>; ';
+                        set_str += ', id: "' + step.dest_id + '"';
+                        set_str += ', name: "' + step.args.name + '"';
+                        if (JXG.exists(step.args.attr)) {
+                            for (key in step.args.attr) if (step.args.attr.hasOwnProperty(key)) {
+                                set_str += ', ' + key + ': ' + step.args.attr[key] + '';
+                            }
+                        }
+                        if (step.args.name !== '') {
+                            set_str += ', withLabel: true';
+                        }
+                        set_str += '>>; ';
+
                         reset_str = 'delete ' + step.dest_id + '; ';
                     }
                     break;
