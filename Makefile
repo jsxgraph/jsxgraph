@@ -9,7 +9,7 @@ JSDOC2=nodejs ./node_modules/.bin/jsdoc2
 LINT=./node_modules/.bin/jslint
 HINT=./node_modules/.bin/jshint
 JSTESTDRIVER=java -jar ./node_modules/jstestdriver/lib/jstestdriver.jar
-INTERN=./node_modules/.bin/intern-client
+INTERN=./node_modules/.bin/intern
 
 # general tools
 CP=cp
