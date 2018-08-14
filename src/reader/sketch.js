@@ -286,14 +286,6 @@
                         set_str += ', snaptogrid: ' + JXG.Options.elements.snapToGrid;
                         set_str += ', snaptopoints: ' + JXG.Options.elements.snapToPoints + ', scalable:true>>; ';
 
-                        for (i = 0; i < step.dest_sub_ids.length; i++) {
-                            if (step.dest_sub_ids[i] !== 0) {
-                                reset_str = 'delete ' + step.dest_sub_ids[i] + '; ' + reset_str;
-                            }
-                        }
-
-                        reset_str = 'delete ' + step.dest_id + '; ' + reset_str;
-
                     } else {
                         set_str = assign + 'reflection(' + step.src_ids[0] + ', ' + step.src_ids[1] + ') <<' + attrid;
                         set_str += 'fillColor: \'' + step.args.fillColor + '\'';
@@ -313,8 +305,15 @@
                             set_str += ', withLabel: true';
                         }
                         set_str += '>>; ';
-                        reset_str = 'delete ' + step.dest_id + '; ';
                     }
+
+                    reset_str = '';
+                    for (i = 0; i < step.dest_sub_ids.length; i++) {
+                        if (step.dest_sub_ids[i] !== 0) {
+                            reset_str += 'delete ' + step.dest_sub_ids[i] + '; ' + reset_str;
+                        }
+                    }
+                    reset_str += 'delete ' + step.dest_id + '; ' + reset_str;
 
                     break;
 
@@ -352,13 +351,6 @@
                         set_str += ', snaptogrid: ' + JXG.Options.elements.snapToGrid;
                         set_str += ', snaptopoints: ' + JXG.Options.elements.snapToPoints + ', scalable:true>>; ';
 
-                        for (i = 0; i < step.dest_sub_ids.length; i++) {
-                            if (step.dest_sub_ids[i] !== 0) {
-                                reset_str = 'delete ' + step.dest_sub_ids[i] + '; ' + reset_str;
-                            }
-                        }
-
-                        reset_str = 'delete ' + step.dest_id + '; ' + reset_str;
 
                     } else {
                         set_str = assign + 'mirrorelement(' + step.src_ids[0] + ', ' + step.src_ids[1] + ') <<' + attrid;
@@ -379,8 +371,17 @@
                         }
                         set_str += '>>; ';
 
-                        reset_str = 'delete ' + step.dest_id + '; ';
                     }
+
+                    reset_str = '';
+                    for (i = 0; i < step.dest_sub_ids.length; i++) {
+                        if (step.dest_sub_ids[i] !== 0) {
+                            reset_str += 'delete ' + step.dest_sub_ids[i] + '; ' + reset_str;
+                        }
+                    }
+                    reset_str += 'delete ' + step.dest_id + '; ' + reset_str;
+
+
                     break;
 
                 case JXG.GENTYPE_TANGENT:
