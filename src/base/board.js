@@ -2056,9 +2056,7 @@ define([
                                             clientX: this.touches[i].targets[1].X,
                                             clientY: this.touches[i].targets[1].Y
                                         }),
-                                        this.touches[i],
-                                        evt
-                                    );
+                                        this.touches[i], evt);
                                 }
 
                                 // there is only one pointer in the evt object, there's no point in looking further
