@@ -1062,6 +1062,7 @@ define([
          */
         twoFingerMove: function (p1, p2, o, evt) {
             var np1c, np2c, drag;
+
             if (Type.exists(o) && Type.exists(o.obj)) {
                 drag = o.obj;
             } else {
@@ -1078,6 +1079,7 @@ define([
             } else if (drag.elementClass === Const.OBJECT_CLASS_CIRCLE) {
                 this.twoFingerTouchCircle(np1c, np2c, o, drag);
             }
+
             drag.triggerEventHandlers(['touchdrag', 'drag'], [evt]);
 
             o.targets[0].Xprev = np1c.scrCoords[1];
@@ -1223,6 +1225,7 @@ define([
                     t1.applyOnce([drag.center]);
                 }
 
+
                 if (drag.method === 'twoPoints') {
                     if (drag.point2.draggable()) {
                         t1.applyOnce([drag.point2]);
@@ -1232,6 +1235,7 @@ define([
                         drag.setRadius(drag.radius * d);
                     }
                 }
+
                 this.update(drag.center);
                 drag.highlight(true);
             }
@@ -2031,8 +2035,9 @@ define([
                 this.triggerEventHandlers(['touchmoveselecting', 'moveselecting', 'pointermoveselecting'], [evt, this.mode]);
             } else if (!this.mouseOriginMove(evt)) {
                 if (this.mode === this.BOARD_MODE_DRAG) {
-                    // Runs through all elements which are touched by at least one finger.
+                    // Runs through all jsxgraph elements which are touched by at least one finger.
                     for (i = 0; i < this.touches.length; i++) {
+                        // Run through all touch events which have been started on this jsxgraph element.
                         for (j = 0; j < this.touches[i].targets.length; j++) {
                             if (this.touches[i].targets[j].num === evt.pointerId) {
                                 // Touch by one finger:  this is possible for all elements that can be dragged
@@ -2041,9 +2046,12 @@ define([
                                     this.touches[i].targets[j].Y = evt.pageY;
                                     pos = this.getMousePosition(evt);
                                     this.moveObject(pos[0], pos[1], this.touches[i], evt, type);
-                                // Touch by two fingers: moving lines
+
                                 } else if (this.touches[i].targets.length === 2 &&
-                                    this.touches[i].targets[0].num > -1 && this.touches[i].targets[1].num > -1) {
+                                    this.touches[i].targets[0].num > -1 &&
+                                    this.touches[i].targets[1].num > -1) {
+
+                                    // Touch by two fingers: e.g. moving lines
                                     this.touches[i].targets[j].X = evt.pageX;
                                     this.touches[i].targets[j].Y = evt.pageY;
 
@@ -2280,7 +2288,14 @@ define([
                                 obj.type === Const.OBJECT_TYPE_TICKS ||
                                 obj.type === Const.OBJECT_TYPE_IMAGE) {
                             // it's a point, so it's single touch, so we just push it to our touches
-                            targets = [{ num: i, X: evtTouches[i].screenX, Y: evtTouches[i].screenY, Xprev: NaN, Yprev: NaN, Xstart: [], Ystart: [], Zstart: [] }];
+                            targets = [{num: i,
+                                        X: evtTouches[i].screenX,
+                                        Y: evtTouches[i].screenY,
+                                        Xprev: NaN,
+                                        Yprev: NaN,
+                                        Xstart: [],
+                                        Ystart: [],
+                                        Zstart: [] }];
 
                             // For the UNDO/REDO of object moves
                             this.saveStartPos(obj, targets[0]);
@@ -2300,7 +2315,14 @@ define([
                                     found = true;
                                     // only add it, if we don't have two targets in there already
                                     if (this.touches[j].targets.length === 1) {
-                                        target = { num: i, X: evtTouches[i].screenX, Y: evtTouches[i].screenY, Xprev: NaN, Yprev: NaN, Xstart: [], Ystart: [], Zstart: [] };
+                                        target = {num: i,
+                                                  X: evtTouches[i].screenX,
+                                                  Y: evtTouches[i].screenY,
+                                                  Xprev: NaN,
+                                                  Yprev: NaN,
+                                                  Xstart: [],
+                                                  Ystart: [],
+                                                  Zstart: [] };
 
                                         // For the UNDO/REDO of object moves
                                         this.saveStartPos(obj, target);
@@ -2315,7 +2337,14 @@ define([
                             // IF there is a second touch targetting this line, we will find it later on, and then add it to
                             // the touches control object.
                             if (!found) {
-                                targets = [{ num: i, X: evtTouches[i].screenX, Y: evtTouches[i].screenY, Xprev: NaN, Yprev: NaN, Xstart: [], Ystart: [], Zstart: [] }];
+                                targets = [{num: i,
+                                            X: evtTouches[i].screenX,
+                                            Y: evtTouches[i].screenY,
+                                            Xprev: NaN,
+                                            Yprev: NaN,
+                                            Xstart: [],
+                                            Ystart: [],
+                                            Zstart: [] }];
 
                                 // For the UNDO/REDO of object moves
                                 this.saveStartPos(obj, targets[0]);

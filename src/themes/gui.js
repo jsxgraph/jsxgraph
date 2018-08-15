@@ -11,7 +11,9 @@ JXG.Options = JXG.merge(JXG.Options, {
     lastSliderIni: 1,
 
     board: {
-        minimizeReflow: 'all', // 'svg', 'all', 'none'
+        // Because firefox sends multiple pointer events on multitouch,
+        // reflow can not be 'all'
+        minimizeReflow: 'svg', //'all', // 'svg', 'all', 'none'
         zoom: {
             enabled: true,
             wheel: true,
@@ -128,7 +130,7 @@ JXG.Options = JXG.merge(JXG.Options, {
         fillColor: '#ffff00',
         highlightFillColor: '#ffff00',
         hasInnerPoints: true,
-        
+
         borders: {
             strokeColor: '#444444',
             strokeOpacity: 0.9,
