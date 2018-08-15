@@ -1748,10 +1748,30 @@ define([
             return false;
         },
 
+
+        /**
+         * Fix for Firefox browser: When using a second finger, the
+         * touch event for the first finger is sent again.
+         *
+         * @param  {[type]} evt Event object
+         * @return {Boolean} true if down event has already been sent.
+         * @private
+         */
+        _isPointerEventAlreadyThere: function (evt) {
+            var i;
+
+            for (i = 0; i < this._board_touches.length; i++) {
+                if (this._board_touches[i].pointerId === evt.pointerId) {
+                    return true;
+                }
+            }
+
+            return false;
+        },
+
         /**
          * pointer-Events
          */
-
         _pointerAddBoardTouches: function (evt) {
             var i, found;
 
@@ -1830,6 +1850,12 @@ define([
                 type = 'mouse', // in case of no browser
                 eps,
                 found, target, result;
+
+            // Temporary fix for Firefox pointer events:
+            // When using two fingers, the first touch down event is fired again.
+            if (this._isPointerEventAlreadyThere(evt)) {
+                return false;
+            }
 
             if (!this.hasPointerUp) {
                 if (window.navigator.msPointerEnabled) {  // IE10-
