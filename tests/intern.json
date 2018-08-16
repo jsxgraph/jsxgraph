@@ -1,22 +1,11 @@
 {
     "proxyPort": 9000,
     "proxyUrl": "http://localhost:9000/",
-    "capabilities": {
-        "selenium-version": "2.41.0"
-    },
-
     "environments": [
-        { "browserName": "safari", "version": "6", "platform": "OS X 10.8" },
-        { "browserName": "internet explorer", "version": "11", "platform": "Windows 8.1" },
-        { "browserName": "internet explorer", "version": "10", "platform": "Windows 8" },
-        { "browserName": "internet explorer", "version": "9", "platform": "Windows 7" },
-        { "browserName": "firefox", "version": "28", "platform": [ "OS X 10.9", "Windows 7", "Linux" ] },
-        { "browserName": "chrome", "version": "34", "platform": [ "OS X 10.9", "Windows 7", "Linux" ] },
-        { "browserName": "safari", "version": "7", "platform": "OS X 10.9" }
-    ],
+            { "browserName": "chrome"}
+        ],
 
     "maxConcurrency": 3,
-
     "loaderOptions": {
         "packages": [
             { "name": "JSXGraph", "location": "src" }
@@ -35,11 +24,5 @@
         "tests/unit/utils/encoding",
         "tests/unit/utils/type",
         "tests/unit/utils/uuid"
-    ],
-
-    "functionalSuites": [  ],
-
-    "excludeInstrumentation": "/^(?:tests|node_modules)\//",
-
-    "reporters+": "htmlcoverage"
+    ]
 }

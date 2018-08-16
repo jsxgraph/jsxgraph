@@ -152,4 +152,4 @@ test: core
 	$(JSTESTDRIVER) $(JSTESTSERVER) $(JSTESTFLAGS) --basePath ./ --config test/jsTestDriver.conf
 
 tests:
-	$(INTERN) config=tests/intern
+	$(INTERN) config=tests/intern.json
