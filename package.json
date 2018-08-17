@@ -51,7 +51,6 @@
     "jsdoc2": ">=2.4.x",
     "jshint": ">=2.9.x",
     "jslint": ">=0.10.x",
-    "jstestdriver": ">=1.0.x",
     "sinon": ">=1.14.x",
     "uglify-js": ">=2.8.x"
   },
