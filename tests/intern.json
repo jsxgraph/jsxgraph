@@ -4,18 +4,15 @@
     "environments": [
             { "browserName": "chrome"}
         ],
-
-    "maxConcurrency": 3,
+        
     "loaderOptions": {
         "packages": [
             { "name": "JSXGraph", "location": "src" }
-        ],
-        "baseUrl": "src/",
-        "paths": {
-            "tests": "../tests/",
-            "node": "../node_modules/"
-        }
+        ]
     },
+
+
+    "maxConcurrency": 3,
 
     "suites": [
         "tests/unit/jxg",
@@ -24,5 +21,15 @@
         "tests/unit/utils/encoding",
         "tests/unit/utils/type",
         "tests/unit/utils/uuid"
-    ]
+    ],
+
+    "tunnel": "selenium",
+    "tunnelOptions": {
+        "hostname": "localhost",
+    	"port": 4444,
+    	"drivers": [
+    		{
+    			"name": "chrome"    		}
+    	]
+    }
 }

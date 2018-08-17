@@ -1,9 +1,10 @@
 define([
-    'intern!object',
-    'intern/chai!assert',
     'node/sinon/lib/sinon',
     'jxg'
-], function (registerSuite, assert, sinon, JXG) {
+], function (sinon, JXG) {
+    const { assert } = intern.getPlugin('chai');
+    const { registerSuite } = intern.getPlugin('interface.object');
+
     registerSuite({
         _properties_initalValues: function () {
             assert.isDefined(JXG.boards, 'boards property is undefined');
