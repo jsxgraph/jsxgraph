@@ -170,7 +170,7 @@ define([
          * @param {Object} [attributes.zoom] Allow the user to zoom with the mouse wheel or the two-fingers-zoom gesture.
          * @param {Object} [attributes.pan] Allow the user to pan with shift+drag mouse or two-fingers-pan gesture.
          * @param {Boolean} [attributes.axis=false] If set to true, show the axis. Can also be set to an object that is given to both axes as an attribute object.
-         * @param {Boolean|Object} [attributes.grid] If set to true, shows the grid. Can also bet set to an object that is given to the grid as its attribute object.
+         * @param {Boolean|Object} [attributes.grid] If set to true, shows the grid. Can also be set to an object that is given to the grid as its attribute object.
          * @param {Boolean} [attributes.registerEvents=true] Register mouse / touch events.
          * @returns {JXG.Board} Reference to the created board.
          */
