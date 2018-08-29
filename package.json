@@ -22,7 +22,7 @@
     "Heiko Vogel",
     "Peter Wilfahrt"
   ],
-  "license" : "(MIT OR LGPL-3.0-or-later)",
+  "license": "(MIT OR LGPL-3.0-or-later)",
   "keywords": [
     "geometry",
     "dynamic geometry",
@@ -40,19 +40,19 @@
     "url": "https://github.com/jsxgraph/jsxgraph.git"
   },
   "dependencies": {
-    "requirejs": "2.3.x"
+    "requirejs": "^2.3.5"
   },
   "optionalDependencies": {
-    "canvas": "1.3.x"
+    "canvas": "^1.6.11"
   },
   "devDependencies": {
-    "almond": ">=0.3.x",
-    "intern": ">=3.4.x",
-    "jsdoc2": ">=2.4.x",
-    "jshint": ">=2.9.x",
+    "almond": "^0.3.3",
+    "intern": "^3.4.x",
+    "jsdoc2": "^2.4.0",
+    "jshint": "^2.9.6",
     "jslint": ">=0.10.x",
-    "sinon": ">=1.14.x",
-    "uglify-js": ">=2.8.x"
+    "sinon": "^1.14.0",
+    "uglify-js": "^3.4.7"
   },
   "engines": {
     "node": ">=0.6.0"

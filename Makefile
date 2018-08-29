@@ -9,7 +9,7 @@ JSDOC2=nodejs ./node_modules/.bin/jsdoc2
 LINT=./node_modules/.bin/jslint
 HINT=./node_modules/.bin/jshint
 #JSTESTDRIVER=java -jar ./node_modules/jstestdriver/lib/jstestdriver.jar
-INTERN=./node_modules/.bin/intern
+INTERN=./node_modules/.bin/intern-client
 
 # general tools
 CP=cp
@@ -152,4 +152,4 @@ lint:
 #	$(JSTESTDRIVER) $(JSTESTSERVER) $(JSTESTFLAGS) --basePath ./ --config test/jsTestDriver.conf
 
 tests:
-	$(INTERN) config=tests/intern.json
+	$(INTERN) config=tests/intern
