@@ -978,6 +978,11 @@ define([
                 collect[0].rendNode.parentNode.appendChild(collect[0].rendNode);
             }
 
+            if (collect.length >= 1) {
+                collect[0].highlight(true);
+                this.triggerEventHandlers(['mousehit', 'hit'], [evt, collect[0]]);
+            }
+
             return collect;
         },
 
