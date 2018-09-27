@@ -1358,7 +1358,7 @@ define([
      * @type JXG.Line
      * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
      * @param {JXG.Point,array_JXG.Point,array} point1,point2 Parent elements can be two elements either of type {@link JXG.Point} or array of numbers describing the
-     * coordinates of a point. In the latter case the point will be constructed automatically as a fixed invisible point.
+     * coordinates of a point. In the latter case, the point will be constructed automatically as a fixed invisible point.
      * @param {Number_Number_Number} a,b,c A line can also be created providing three numbers. The line is then described by the set of solutions
      * of the equation <tt>a*x+b*y+c*z = 0</tt>.
      * @example
@@ -1373,8 +1373,10 @@ define([
     JXG.createAxis = function (board, parents, attributes) {
         var attr, attr_ticks, el, els, dist;
 
-        // Arrays oder Punkte, mehr brauchen wir nicht.
+        // Arrays or points, that is all we need.
         if ((Type.isArray(parents[0]) || Type.isPoint(parents[0])) && (Type.isArray(parents[1]) || Type.isPoint(parents[1]))) {
+
+            // Create line
             attr = Type.copyAttributes(attributes, board.options, 'axis');
             el = board.create('line', parents, attr);
             el.type = Const.OBJECT_TYPE_AXIS;
@@ -1388,6 +1390,7 @@ define([
                 }
             }
 
+            // Create ticks
             attr_ticks = Type.copyAttributes(attributes, board.options, 'axis', 'ticks');
             if (Type.exists(attr_ticks.ticksdistance)) {
                 dist = attr_ticks.ticksdistance;

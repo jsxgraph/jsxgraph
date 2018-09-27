@@ -189,6 +189,7 @@ define([
                 if (Type.evaluate(this.visProp.insertticks)) {
                     b = this.getLowerAndUpperBounds(this.getZeroCoordinates(), 'ticksdistance');
                     dist = b.upper - b.lower;
+
                     delta = Math.pow(10, Math.floor(Math.log(0.6 * dist) / Math.LN10));
                     if (dist <= 6 * delta) {
                         delta *= 0.5;
@@ -456,7 +457,7 @@ define([
                     point2.scrCoords[2] - obj.d2y
                 ]);
 
-            // Calculate distance from Zero to P1 and to P2
+            // Calculate (signed) distance from Zero to P1 and to P2
             dZeroPoint1 = this.getDistanceFromZero(coordsZero, point1);
             dZeroPoint2 = this.getDistanceFromZero(coordsZero, point2);
 
@@ -493,7 +494,9 @@ define([
         },
 
         /**
-         * Calculates the distance in user coordinates from zero to a given point including its sign
+         * Calculates the distance in user coordinates from zero to a given point including its sign.
+         * Sign is positive, if the direction from zero to point is the same as the direction
+         * zero to point2 of the line.
          *
          * @param  {JXG.Coords} zero  coordinates of the point considered zero
          * @param  {JXG.Coords} point coordinates of the point to find out the distance
@@ -505,15 +508,19 @@ define([
                 distance = zero.distance(Const.COORDS_BY_USER, point);
 
             // Establish sign
-            if (this.line.type === Const.OBJECT_TYPE_AXIS) {
-                if ((Mat.relDif(zero.usrCoords[1], point.usrCoords[1]) > eps &&
-                        zero.usrCoords[1] - point.usrCoords[1] > eps) ||
-                    (Mat.relDif(zero.usrCoords[2], point.usrCoords[2]) > eps &&
-                        zero.usrCoords[2] - point.usrCoords[2] > eps)) {
 
-                    distance *= -1;
-                }
-            } else if (Type.evaluate(this.visProp.anchor) === 'right') {
+            // Why are axes treated different from lines?
+            // if (this.line.type === Const.OBJECT_TYPE_AXIS) {
+            //     var a, b;
+            //     a = (Mat.relDif(zero.usrCoords[1], point.usrCoords[1]) > eps &&
+            //                       zero.usrCoords[1] - point.usrCoords[1] > eps);
+            //     b = (Mat.relDif(zero.usrCoords[2], point.usrCoords[2]) > eps &&
+            //                       zero.usrCoords[2] - point.usrCoords[2] > eps);
+            //     if ( a || b ){
+            //         distance *= -1;
+            //     }
+            // } else
+            if (Type.evaluate(this.visProp.anchor) === 'right') {
                 if (Geometry.isSameDirection(zero, this.line.point1.coords, point)) {
                     distance *= -1;
                 }
