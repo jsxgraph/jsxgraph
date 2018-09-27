@@ -387,7 +387,7 @@ define([
          * @see JXG.AbstractRenderer#getPositionArrowHead
          *
          */
-        updateLineEndings: function(el, strokewidth) {
+        updateLineEndings: function(el, strokewidth, doHighlight) {
             var c1 = new Coords(Const.COORDS_BY_USER, el.point1.coords.usrCoords, el.board),
                 c2 = new Coords(Const.COORDS_BY_USER, el.point2.coords.usrCoords, el.board),
                 obj, margin = null;
@@ -395,7 +395,7 @@ define([
             margin = Type.evaluate(el.visProp.margin);
             Geometry.calcStraight(el, c1, c2, margin);
 
-            obj = this.getPositionArrowHead(el, c1, c2, strokewidth);
+            obj = this.getPositionArrowHead(el, c1, c2, strokewidth, doHighlight);
             this.updateLinePrim(el.rendNode,
                 obj.c1.scrCoords[1] + obj.d1x, obj.c1.scrCoords[2] + obj.d1y,
                 obj.c2.scrCoords[1] - obj.d2x, obj.c2.scrCoords[2] - obj.d2y, el.board);
@@ -418,13 +418,15 @@ define([
          * @see JXG.AbstractRenderer#updateLine
          * @see JXG.AbstractRenderer#getPositionArrowHead
          */
-        updateArrowSize: function(el, obj) {
+        updateArrowSize: function(el, obj, doHighlight) {
             var size, ev_fa, ev_la;
 
             ev_fa = Type.evaluate(el.visProp.firstarrow);
             if (ev_fa) {
-                if (Type.exists(ev_fa.size)) {
+                if (doHighlight !== true && Type.exists(ev_fa.size)) {
                     size = Type.evaluate(ev_fa.size);
+                } else if (doHighlight === true && Type.exists(ev_fa.highlightsize)) {
+                    size = Type.evaluate(ev_fa.highlightsize);
                 } else {
                     size = 3;
                 }
@@ -433,8 +435,10 @@ define([
             }
             ev_la = Type.evaluate(el.visProp.lastarrow);
             if (ev_la) {
-                if (Type.exists(ev_la.size)) {
+                if (doHighlight !== true && Type.exists(ev_la.size)) {
                     size = Type.evaluate(ev_la.size);
+                } else if (doHighlight === true && Type.exists(ev_la.highlightsize)) {
+                      size = Type.evaluate(ev_la.highlightsize);
                 } else {
                     size = 3;
                 }
@@ -475,7 +479,7 @@ define([
          * Additionally, if one of these values is zero, the arrow is not displayed. This is the case, if the
          * line length is very short.
          */
-        getPositionArrowHead: function(el, c1, c2, strokewidth) {
+        getPositionArrowHead: function(el, c1, c2, strokewidth, doHighlight) {
             var s, s1, s2, d, d1x, d1y, d2x, d2y,
                 minlen = Mat.eps,
                 typeFirst, typeLast,
@@ -527,8 +531,10 @@ define([
                 }
 
                 if (ev_fa) {
-                    if (Type.exists(ev_fa.size)) {
+                    if (doHighlight !== true && Type.exists(ev_fa.size)) {
                         size = Type.evaluate(ev_fa.size);
+                    } else if (doHighlight === true && Type.exists(ev_fa.highlightsize)) {
+                        size = Type.evaluate(ev_fa.highlightsize);
                     } else {
                         size = 3;
                     }
@@ -544,8 +550,10 @@ define([
                     }
                 }
                 if (ev_la) {
-                    if (Type.exists(ev_la.size)) {
+                    if (doHighlight !== true && Type.exists(ev_la.size)) {
                         size = Type.evaluate(ev_la.size);
+                    } else if (doHighlight === true && Type.exists(ev_la.highlightsize)) {
+                        size = Type.evaluate(ev_la.highlightsize);
                     } else {
                         size = 3;
                     }
@@ -1585,9 +1593,9 @@ define([
                     sw = Math.max(Type.evaluate(ev.highlightstrokewidth), Type.evaluate(ev.strokewidth));
                     this.setObjectStrokeWidth(el, sw);
                     if (el.elementClass === Const.OBJECT_CLASS_LINE) {
-                        obj = this.updateLineEndings(el, sw);
+                        obj = this.updateLineEndings(el, sw, true);
                         this.makeArrows(el);
-                        this.updateArrowSize(el, obj);
+                        this.updateArrowSize(el, obj, true);
                     }
                 }
             }
@@ -1637,9 +1645,9 @@ define([
                 sw = Type.evaluate(ev.strokewidth);
                 this.setObjectStrokeWidth(el, sw);
                 if (el.elementClass === Const.OBJECT_CLASS_LINE) {
-                    obj = this.updateLineEndings(el, sw);
+                    obj = this.updateLineEndings(el, sw, false);
                     this.makeArrows(el);
-                    this.updateArrowSize(el, obj);
+                    this.updateArrowSize(el, obj, false);
                 }
 
             }
