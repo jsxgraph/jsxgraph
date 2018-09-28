@@ -1338,6 +1338,7 @@ define([
             strokeWidth: 1,
             lastArrow: {
                 type: 1,
+                highlightSize: 8,
                 size: 8
             },
             strokeColor: '#666666',
@@ -2366,7 +2367,17 @@ define([
 
             /**
              * Line has an arrow head at the position of its first point or the corresponding
-             * intersection with the canvas border.
+             * intersection with the canvas border
+             *
+             * In case firstArrow is an object it has the sub-attributes:
+             * <pre>
+             * {
+             *      type: 1, // possible values are 1, 2, 3
+             *      size: 3,  // size of the arrow head.
+             *               //This value is multiplied with the strokeWidth of the line
+             *      highlightSize: 3, // size of the arrow head in case the element is highlighted
+             * }
+             * </pre>
              *
              * @name Line#firstArrow
              * @see Line#lastArrow
@@ -2379,6 +2390,51 @@ define([
             /**
              * Line has an arrow head at the position of its second point or the corresponding
              * intersection with the canvas border.
+             *
+             * In case firstArrow is an object it has the sub-attributes:
+             * <pre>
+             * 
+             * @example
+             *     var p1 = board.create('point', [-5, 2], {size:1});
+             *     var p2 = board.create('point', [5, 2], {size:10});
+             *     var li = board.create('segment', ['A','B'],
+             *         {name:'seg',
+             *          strokeColor:'#000000',
+             *          strokeWidth:1,
+             *          highlightStrokeWidth: 5,
+             *          lastArrow: {type: 2, size: 8, highlightSize: 6},
+             *          touchLastPoint: true,
+             *          firstArrow: {type: 3, size: 8}
+             *         });
+             *
+             * </pre><div id="184e915c-c2ef-11e8-bece-04d3b0c2aad3" class="jxgbox" style="width: 300px; height: 300px;"></div>
+             * <script type="text/javascript">
+             *     (function() {
+             *         var board = JXG.JSXGraph.initBoard('184e915c-c2ef-11e8-bece-04d3b0c2aad3',
+             *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+             *         var p1 = board.create('point', [-5, 2], {size:1});
+             *         var p2 = board.create('point', [5, 2], {size:10});
+             *         var li = board.create('segment', ['A','B'],
+             *             {name:'seg',
+             *              strokeColor:'#000000',
+             *              strokeWidth:1,
+             *              highlightStrokeWidth: 5,
+             *              lastArrow: {type: 2, size: 8, highlightSize: 6},
+             *              touchLastPoint: true,
+             *              firstArrow: {type: 3, size: 8}
+             *             });
+             *
+             *     })();
+             *
+             * </script><pre>
+             *
+             * {
+             *      type: 1, // possible values are 1, 2, 3
+             *      size: 3,  // size of the arrow head.
+             *               //This value is multiplied with the strokeWidth of the line
+             *      highlightSize: 3, // size of the arrow head in case the element is highlighted
+             * }
+             * </pre>
              *
              * @name Line#lastArrow
              * @see Line#firstArrow

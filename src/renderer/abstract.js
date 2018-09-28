@@ -374,6 +374,8 @@ define([
          * @param {JXG.Line} el Reference to a line object, that has to be drawn.
          * @param {Number} strokeWidth Stroke width of the line. This determines the size of the
          *  arrow head.
+         * @param  {Boolean} doHighlight true if the object is to be highlighted, false otherwise. This parameter
+         *  is necessary for the attribute highlightSize of the arrow heads.
          *
          * @returns {Object} Returns the object returned by
          *  {@link JXG.AbstractRenderer#getPositionArrowHead}. This contains the information in
@@ -410,6 +412,8 @@ define([
          * @param {JXG.Line} el Reference to a line object, that has to be drawn.
          * @param {Object} obj Reference to a object returned by
          *     {@link JXG.AbstractRenderer#getPositionArrowHead}
+         * @param  {Boolean} doHighlight true if the object is to be highlighted, false otherwise. This parameter
+         *  is necessary for the attribute highlightSize of the arrow heads.
          * @returns {JXG.AbstractRenderer} Reference to the renderer
          *
          * @private
@@ -473,6 +477,8 @@ define([
          * @param  {JXG.Line} el Reference to the line object that gets arrow heads.
          * @param  {JXG.Coords} c1   Coords of the first point of the line (after {@link JXG.Geometry#calcStraight}).
          * @param  {JXG.Coords} c2  Coords of the second point of the line (after {@link JXG.Geometry#calcStraight}).
+         * @param  {Boolean} doHighlight true if the object is to be highlighted, false otherwise. This parameter
+         *  is necessary for the attribute highlightSize of the arrow heads.
          * @return {object}        Object containing how much the line has to be shortened.
          * Data structure: {d1x, d1y, d2x, d2y, sFirst, sLast}. sFirst and sLast is the length by which
          * firstArrow and lastArrow have to shifted such that there is no gap between arrow head and line.
