@@ -290,7 +290,8 @@ define([
          * @private
          */
         calculateTicksCoordinates: function () {
-            var coordsZero, bounds;
+            var coordsZero, bounds,
+                r_max, bb;
 
             // Calculate Ticks width and height in Screen and User Coordinates
             this.setTicksSizeVariables();
@@ -305,6 +306,12 @@ define([
 
             // Calculate lower bound and upper bound limits based on distance between p1 and centre and p2 and centre
             bounds = this.getLowerAndUpperBounds(coordsZero);
+            if (Type.evaluate(this.visProp.type) === 'polar') {
+                bb = board.getBoundingBox();
+                r_max = Math.max(Math.sqrt(bb[0] * bb[0] + bb[1] * bb[1]),
+                    Math.sqrt(bb[2] * bb[2] + bb[3] * bb[3]));
+                bounds.upper = r_max;
+            }
 
             // Clean up
             this.ticks = [];
@@ -409,8 +416,8 @@ define([
          * @param  {JXG.Coords} coordsZero
          * @returns {String} type  (Optional) If type=='ticksdistance' the bounds are
          *                         the intersection of the line with the bounding box of the board.
-         *                         Otherwise it is the projection of the corners of the bounding box
-         *                         to the line. The first case i s needed to automatically
+         *                         Otherwise, it is the projection of the corners of the bounding box
+         *                         to the line. The first case is needed to automatically
          *                         generate ticks. The second case is for drawing of the ticks.
          * @returns {Object}     contains the lower and upper bounds
          *
@@ -769,7 +776,7 @@ define([
         /**
          * @param {JXG.Coords} coords Coordinates of the tick on the line.
          * @param {Boolean} major True if tick is major tick.
-         * @returns {Array} Array of length 3 containing start and end coordinates in screen coordinates
+         * @returns {Array} Array of length 3 containing path coordinates in screen coordinates
          *                 of the tick (arrays of length 2). 3rd entry is true if major tick otherwise false.
          *                 If the tick is outside of the canvas, the return array is empty.
          * @private
@@ -801,7 +808,7 @@ define([
                 var i, r, r_max,
                     bb = this.board.getBoundingBox(),
                     full = 2.0 * Math.PI,
-                    delta = full / 60,
+                    delta = full / 180,
                     ratio = this.board.unitY / this.board.X;
 
                 // usrCoords: Test if 'circle' is inside of the canvas
