@@ -344,18 +344,37 @@ define([
 
         // documented in AbstractRenderer
         updateTicks: function (ticks) {
-            var i, c, node, x, y,
+            var i, j, c, node, x, y,
                 tickStr = '',
-                len = ticks.ticks.length;
+                len = ticks.ticks.length,
+                len2, str,
+                isReal = true;
 
             for (i = 0; i < len; i++) {
                 c = ticks.ticks[i];
                 x = c[0];
                 y = c[1];
 
-                if (Type.isNumber(x[0]) && Type.isNumber(x[1])) {
-                    tickStr += "M " + (x[0]) + " " + (y[0]) + " L " + (x[1]) + " " + (y[1]) + " ";
+                len2 = x.length;
+                str = ' M ' + x[0] + ' ' + y[0];
+                if (!Type.isNumber(x[0])) {
+                    isReal = false;
                 }
+                for (j = 1; isReal && j < len2; ++j) {
+                    if (Type.isNumber(x[j])) {
+                        str += ' L ' + x[j] + ' ' + y[j];
+                    } else {
+                        isReal = false;
+                    }
+
+                }
+                // if (Type.isNumber(x[0]) && Type.isNumber(x[1])) {
+                //     tickStr += " M " + (x[0]) + " " + (y[0]) + " L " + (x[1]) + " " + (y[1]) + " ";
+                // }
+                if (isReal) {
+                    tickStr += str;
+                }
+                // console.log(tickStr, isReal);
             }
 
             node = ticks.rendNode;
@@ -367,6 +386,7 @@ define([
             }
 
             node.setAttributeNS(null, 'stroke', Type.evaluate(ticks.visProp.strokecolor));
+            node.setAttributeNS(null, 'fill', 'none');
             node.setAttributeNS(null, 'stroke-opacity', Type.evaluate(ticks.visProp.strokeopacity));
             node.setAttributeNS(null, 'stroke-width', Type.evaluate(ticks.visProp.strokewidth));
             this.updatePathPrim(node, tickStr, ticks.board);

@@ -1071,7 +1071,16 @@ define([
              * @name Ticks#includeBoundaries
              * @default false
              */
-            includeBoundaries: false
+            includeBoundaries: false,
+
+            /**
+             * Possible values. 'line' or 'string'
+             *
+             * @type string
+             * @default 'line'
+             */
+            type: 'line'
+
             // close the meta tag
             /**#@-*/
         },
@@ -2393,7 +2402,7 @@ define([
              *
              * In case firstArrow is an object it has the sub-attributes:
              * <pre>
-             * 
+             *
              * @example
              *     var p1 = board.create('point', [-5, 2], {size:1});
              *     var p2 = board.create('point', [5, 2], {size:10});

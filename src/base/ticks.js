@@ -647,7 +647,7 @@ define([
 
             // Compute the start position and the end position of a tick.
             // If both positions are out of the canvas, ti is empty.
-            ti = this.tickEndings(tickCoords, tickCoords.major);
+            ti = this.createTickPath(tickCoords, tickCoords.major);
             if (ti.length === 3) {
                 this.ticks.push(ti);
                 if (tickCoords.major && Type.evaluate(this.visProp.drawlabels)) {
@@ -688,7 +688,7 @@ define([
 
                 // Compute the start position and the end position of a tick.
                 // If tick is out of the canvas, ti is empty.
-                ti = this.tickEndings(tickCoords, true);
+                ti = this.createTickPath(tickCoords, true);
                 if (ti.length === 3 && this.fixedTicks[i] >= bounds.lower &&
                     this.fixedTicks[i] <= bounds.upper) {
                     this.ticks.push(ti);
@@ -774,7 +774,7 @@ define([
          *                 If the tick is outside of the canvas, the return array is empty.
          * @private
          */
-        tickEndings: function (coords, major) {
+        createTickPath: function (coords, major) {
             var c, lineStdForm, intersection,
                 dxs, dys,
                 style,
@@ -796,22 +796,50 @@ define([
             // For all ticks regardless if of finite or infinite
             // tick length the intersection with the canvas border is
             // computed.
-            if (style === 'infinite') {
-                intersection = Geometry.meetLineBoard(lineStdForm, this.board);
-                x[0] = intersection[0].scrCoords[1];
-                x[1] = intersection[1].scrCoords[1];
-                y[0] = intersection[0].scrCoords[2];
-                y[1] = intersection[1].scrCoords[2];
-            } else {
-                x[0] = c[1] + dxs * Type.evaluate(this.visProp.tickendings[0]);
-                y[0] = c[2] - dys * Type.evaluate(this.visProp.tickendings[0]);
-                x[1] = c[1] - dxs * Type.evaluate(this.visProp.tickendings[1]);
-                y[1] = c[2] + dys * Type.evaluate(this.visProp.tickendings[1]);
-            }
+            if (major && Type.evaluate(this.visProp.type) == 'polar') {
+                // polar style
+                var i, r, r_max,
+                    bb = this.board.getBoundingBox(),
+                    full = 2.0 * Math.PI,
+                    delta = full / 60,
+                    ratio = this.board.unitY / this.board.X;
 
-            // Check if (parts of) the tick is inside the canvas.
-            if (this._isInsideCanvas(x, y)) {
-                return [x, y, major];
+                // usrCoords: Test if 'circle' is inside of the canvas
+                c = coords.usrCoords;
+                r = Math.sqrt(c[1] * c[1] + c[2] * c[2]);
+                r_max = Math.max(Math.sqrt(bb[0] * bb[0] + bb[1] * bb[1]),
+                                Math.sqrt(bb[2] * bb[2] + bb[3] * bb[3]));
+
+                if (r < r_max) {
+                    // Now, switch to screen coords
+                    x = [];
+                    y = [];
+                    for (i = 0; i <= full; i += delta) {
+                        x.push(this.board.origin.scrCoords[1] + r * Math.cos(i) * this.board.unitX);
+                        y.push(this.board.origin.scrCoords[2] + r * Math.sin(i) * this.board.unitY);
+                    }
+                    return [x, y, major];
+                }
+
+            } else {
+                // line style
+                if (style === 'infinite') {
+                    intersection = Geometry.meetLineBoard(lineStdForm, this.board);
+                    x[0] = intersection[0].scrCoords[1];
+                    x[1] = intersection[1].scrCoords[1];
+                    y[0] = intersection[0].scrCoords[2];
+                    y[1] = intersection[1].scrCoords[2];
+                } else {
+                    x[0] = c[1] + dxs * Type.evaluate(this.visProp.tickendings[0]);
+                    y[0] = c[2] - dys * Type.evaluate(this.visProp.tickendings[0]);
+                    x[1] = c[1] - dxs * Type.evaluate(this.visProp.tickendings[1]);
+                    y[1] = c[2] + dys * Type.evaluate(this.visProp.tickendings[1]);
+                }
+
+                // Check if (parts of) the tick is inside the canvas.
+                if (this._isInsideCanvas(x, y)) {
+                    return [x, y, major];
+                }
             }
 
             return [];
