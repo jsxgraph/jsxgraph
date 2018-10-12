@@ -235,6 +235,24 @@ define([
             }
         },
 
+        _getHighlighted: function(el) {
+            var isTrace = false,
+                hl;
+
+            if (!Type.exists(el.board) || !Type.exists(el.board.highlightedObjects)) {
+                // This case handles trace elements.
+                // To make them work, we simply neglect highlighting.
+                isTrace = true;
+            }
+
+            if (!isTrace && Type.exists(el.board.highlightedObjects[el.id])) {
+                hl = 'highlight';
+            } else {
+                hl = '';
+            }
+            return hl;
+        },
+
 
         /* ******************************** *
          *    Point drawing and updating    *
@@ -389,7 +407,7 @@ define([
          * @see JXG.AbstractRenderer#getPositionArrowHead
          *
          */
-        updateLineEndings: function(el, strokewidth, doHighlight) {
+        updateLineEndings: function(el, strokewidth, hl) {
             var c1 = new Coords(Const.COORDS_BY_USER, el.point1.coords.usrCoords, el.board),
                 c2 = new Coords(Const.COORDS_BY_USER, el.point2.coords.usrCoords, el.board),
                 obj, margin = null;
@@ -397,7 +415,7 @@ define([
             margin = Type.evaluate(el.visProp.margin);
             Geometry.calcStraight(el, c1, c2, margin);
 
-            obj = this.getPositionArrowHead(el, c1, c2, strokewidth, doHighlight);
+            obj = this.getPositionArrowHead(el, c1, c2, strokewidth, hl);
             this.updateLinePrim(el.rendNode,
                 obj.c1.scrCoords[1] + obj.d1x, obj.c1.scrCoords[2] + obj.d1y,
                 obj.c2.scrCoords[1] - obj.d2x, obj.c2.scrCoords[2] - obj.d2y, el.board);
@@ -422,7 +440,7 @@ define([
          * @see JXG.AbstractRenderer#updateLine
          * @see JXG.AbstractRenderer#getPositionArrowHead
          */
-        updateArrowSize: function(el, obj, doHighlight) {
+        updateArrowSize: function(el, obj, hl) {
             var size, ev_fa, ev_la;
 
             ev_fa = Type.evaluate(el.visProp.firstarrow);
@@ -431,11 +449,10 @@ define([
                 if (Type.exists(ev_fa.size)) {
                     size = Type.evaluate(ev_fa.size);
                 }
-                if (doHighlight === true && Type.exists(ev_fa.highlightsize)) {
+                if (hl !== '' && Type.exists(ev_fa[hl + 'size'])) {
                     size = Type.evaluate(ev_fa.highlightsize);
                 }
-
-                this._setArrowWidth(el.rendNodeTriangleStart,  obj.sFirst, el.rendNode, size);
+                this._setArrowWidth(el.rendNodeTriangleStart, obj.sFirst, el.rendNode, size);
             }
             ev_la = Type.evaluate(el.visProp.lastarrow);
             if (ev_la) {
@@ -443,12 +460,22 @@ define([
                 if (Type.exists(ev_la.size)) {
                     size = Type.evaluate(ev_la.size);
                 }
-                if (doHighlight === true && Type.exists(ev_la.highlightsize)) {
-                      size = Type.evaluate(ev_la.highlightsize);
+                if (hl !== '' && Type.exists(ev_la[hl + 'size'])) {
+                    size = Type.evaluate(ev_la[hl + 'size']);
                 }
                 this._setArrowWidth(el.rendNodeTriangleEnd, obj.sLast, el.rendNode, size);
             }
             return this;
+        },
+
+        updateLineEndsArrows: function(el, strokeWidth, doHighlight) {
+            var hl, obj;
+
+            hl = doHighlight ? 'highlight' : '';
+            obj = this.updateLineEndings(el, Type.evaluate(el.visProp[hl + 'strokewidth']), hl);
+
+            this.makeArrows(el);
+            this.updateArrowSize(el, obj, hl);
         },
 
         /**
@@ -459,12 +486,8 @@ define([
          * @see JXG.AbstractRenderer#drawLine
          */
         updateLine: function (el) {
-            var obj;
-
-            obj = this.updateLineEndings(el, Type.evaluate(el.visProp.strokewidth));
-            this.makeArrows(el);
             this._updateVisual(el);
-            this.updateArrowSize(el, obj);
+            this.updateLineEndsArrows(el, Type.evaluate(el.visProp.strokewidth));
             this.setLineCap(el);
         },
 
@@ -478,13 +501,13 @@ define([
          * @param  {JXG.Coords} c2  Coords of the second point of the line (after {@link JXG.Geometry#calcStraight}).
          * @param  {Boolean} doHighlight true if the object is to be highlighted, false otherwise. This parameter
          *  is necessary for the attribute highlightSize of the arrow heads.
-         * @return {object}        Object containing how much the line has to be shortened.
-         * Data structure: {d1x, d1y, d2x, d2y, sFirst, sLast}. sFirst and sLast is the length by which
+         * @return {object} Object containing how much the line has to be shortened.
+         * Data structure: {c1, c2, d1x, d1y, d2x, d2y, sFirst, sLast}. sFirst and sLast is the length by which
          * firstArrow and lastArrow have to shifted such that there is no gap between arrow head and line.
          * Additionally, if one of these values is zero, the arrow is not displayed. This is the case, if the
          * line length is very short.
          */
-        getPositionArrowHead: function(el, c1, c2, strokewidth, doHighlight) {
+        getPositionArrowHead: function(el, c1, c2, strokewidth, hl) {
             var s, s1, s2, d, d1x, d1y, d2x, d2y,
                 minlen = Mat.eps,
                 typeFirst, typeLast,
@@ -540,8 +563,8 @@ define([
                     if (Type.exists(ev_fa.size)) {
                         size = Type.evaluate(ev_fa.size);
                     }
-                    if (doHighlight === true && Type.exists(ev_fa.highlightsize)) {
-                        size = Type.evaluate(ev_fa.highlightsize);
+                    if (hl !== '' && Type.exists(ev_fa[hl + 'size'])) {
+                        size = Type.evaluate(ev_fa[hl + 'size']);
                     }
                     sFirst = strokewidth * size;
                     if (typeFirst === 2) {
@@ -559,8 +582,8 @@ define([
                     if (Type.exists(ev_la.size)) {
                         size = Type.evaluate(ev_la.size);
                     }
-                    if (doHighlight === true && Type.exists(ev_la.highlightsize)) {
-                        size = Type.evaluate(ev_la.highlightsize);
+                    if (hl !== '' && Type.exists(ev_la[hl + 'size'])) {
+                        size = Type.evaluate(ev_la[hl + 'size']);
                     }
                     sLast = strokewidth * size;
                     if (typeLast === 2) {
@@ -586,7 +609,6 @@ define([
 
                 if (ev_la &&
                     el.board.renderer.type !== 'vml') {
-
                     if (d >= minlen) {
                         d2x = (c2.scrCoords[1] - c1.scrCoords[1]) * sLast / d;
                         d2y = (c2.scrCoords[2] - c1.scrCoords[2]) * sLast / d;
@@ -1304,6 +1326,7 @@ define([
          * Can be used to create the nodes to display arrows. This is an abstract method which has to be implemented
          * in any descendant renderer.
          * @param {JXG.GeometryElement} element The element the arrows are to be attached to.
+         *
          */
         makeArrows: function (element) { /* stub */ },
 
@@ -1598,9 +1621,7 @@ define([
                     sw = Math.max(Type.evaluate(ev.highlightstrokewidth), Type.evaluate(ev.strokewidth));
                     this.setObjectStrokeWidth(el, sw);
                     if (el.elementClass === Const.OBJECT_CLASS_LINE) {
-                        obj = this.updateLineEndings(el, sw, true);
-                        this.makeArrows(el);
-                        this.updateArrowSize(el, obj, true);
+                        this.updateLineEndsArrows(el, sw, true);
                     }
                 }
             }
@@ -1650,9 +1671,7 @@ define([
                 sw = Type.evaluate(ev.strokewidth);
                 this.setObjectStrokeWidth(el, sw);
                 if (el.elementClass === Const.OBJECT_CLASS_LINE) {
-                    obj = this.updateLineEndings(el, sw, false);
-                    this.makeArrows(el);
-                    this.updateArrowSize(el, obj, false);
+                    this.updateLineEndsArrows(el, sw, false);
                 }
 
             }

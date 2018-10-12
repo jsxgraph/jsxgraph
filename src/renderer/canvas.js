@@ -113,7 +113,7 @@ define([
         /**
          * Draws a filled polygon.
          * @param {Array} shape A matrix presented by a two dimensional array of numbers.
-         * @see JXG.AbstractRenderer#makeArrows
+         * @see JXG.AbstractRenderer#drawArrows
          * @private
          */
         _drawFilledPolygon: function (shape) {
@@ -195,24 +195,14 @@ define([
          * @private
          */
         _setColor: function (el, type, targetType) {
-            var hasColor = true, isTrace = false,
+            var hasColor = true,
                 ev = el.visProp, hl, sw,
                 rgba, rgbo, c, o, oo;
 
             type = type || 'stroke';
             targetType = targetType || type;
 
-            if (!Type.exists(el.board) || !Type.exists(el.board.highlightedObjects)) {
-                // This case handles trace elements.
-                // To make them work, we simply neglect highlighting.
-                isTrace = true;
-            }
-
-            if (!isTrace && Type.exists(el.board.highlightedObjects[el.id])) {
-                hl = 'highlight';
-            } else {
-                hl = '';
-            }
+            hl = this._getHighlighted(el);
 
             // type is equal to 'fill' or 'stroke'
             rgba = Type.evaluate(ev[hl + type + 'color']);
@@ -238,7 +228,7 @@ define([
                 hasColor = false;
             }
 
-            sw = parseFloat(Type.evaluate(ev.strokewidth));
+            sw = parseFloat(Type.evaluate(ev[hl + 'strokewidth']));
             if (type === 'stroke' && !isNaN(sw)) {
                 if (sw === 0) {
                     this.context.globalAlpha = 0;
@@ -434,11 +424,132 @@ define([
          * ******************************** */
 
         // documented in AbstractRenderer
+        drawArrows: function (el, scr1, scr2, hl) {
+             // not done yet for curves and arcs.
+             var x1, y1, x2, y2, ang,
+                 size,
+                 w0, w,
+                 arrowHead,
+                 arrowTail,
+                 context = this.context,
+                 type,
+                 ev_fa = Type.evaluate(el.visProp.firstarrow),
+                 ev_la = Type.evaluate(el.visProp.lastarrow);
+
+            if (Type.evaluate(el.visProp.strokecolor) !== 'none' &&
+                     (ev_fa || ev_la)) {
+
+                if (el.elementClass === Const.OBJECT_CLASS_LINE) {
+                    x1 = scr1.scrCoords[1];
+                    y1 = scr1.scrCoords[2];
+                    x2 = scr2.scrCoords[1];
+                    y2 = scr2.scrCoords[2];
+                } else {
+                    x1 = el.points[0].scrCoords[1];
+                    y1 = el.points[0].scrCoords[2];
+                    x2 = el.points[el.points.length - 1].scrCoords[1];
+                    y2 = el.points[el.points.length - 1].scrCoords[2];
+                    return;
+                }
+
+                w0 = Type.evaluate(el.visProp[hl + 'strokewidth']);
+
+                if (ev_fa) {
+                    size = 3;
+                    if (Type.exists(ev_fa.size)) {
+                        size = Type.evaluate(ev_fa.size);
+                    }
+                    if (hl !== '' && Type.exists(ev_fa[hl + 'size'])) {
+                        size = Type.evaluate(ev_fa[hl + 'size']);
+                    }
+                    w = w0 * size;
+
+                    type = 1;
+                    if (Type.exists(ev_fa.type)) {
+                        type = Type.evaluate(ev_fa.type);
+                    }
+                    if (type === 2) {
+                        arrowTail = [
+                                 [ w,      -w * 0.5],
+                                 [ 0.0,         0.0],
+                                 [ w,       w * 0.5],
+                                 [ w * 0.5,     0.0],
+                             ];
+                    } else if (type === 3) {
+                        arrowTail = [
+                                 [ w / 3.0,   -w * 0.5],
+                                 [ 0.0,       -w * 0.5],
+                                 [ 0.0,        w * 0.5],
+                                 [ w / 3.0,    w * 0.5]
+                             ];
+                    } else {
+                        arrowTail = [
+                             [ w,   -w * 0.5],
+                             [ 0.0,      0.0],
+                             [ w,    w * 0.5]
+                        ];
+                    }
+                }
+
+                if (ev_la) {
+                    size = 3;
+                    if (Type.exists(ev_la.size)) {
+                        size = Type.evaluate(ev_la.size);
+                    }
+                    if (hl !== '' && Type.exists(ev_la[hl + 'size'])) {
+                        size = Type.evaluate(ev_la[hl + 'size']);
+                    }
+                    w = w0 * size;
+
+                    type = 1;
+                    if (Type.exists(ev_la.type)) {
+                        type = Type.evaluate(ev_la.type);
+                    }
+                    if (type === 2) {
+                        arrowHead = [
+                             [ -w, -w * 0.5],
+                             [ 0.0,     0.0],
+                             [ -w,  w * 0.5],
+                             [ -w * 0.5, 0.0]
+                        ];
+                    } else if (type === 3) {
+                        arrowHead = [
+                                 [-w / 3.0,   -w * 0.5],
+                                 [ 0.0,       -w * 0.5],
+                                 [ 0.0,        w * 0.5],
+                                 [-w / 3.0,    w * 0.5]
+                             ];
+                    } else {
+                        arrowHead = [
+                             [ -w, -w * 0.5],
+                             [ 0.0,     0.0],
+                             [ -w,  w * 0.5]
+                         ];
+                    }
+                }
+
+                context.save();
+                if (this._setColor(el, 'stroke', 'fill')) {
+                    ang = Math.atan2(y2 - y1, x2 - x1);
+                    if (ev_la) {
+                        this._drawFilledPolygon(this._translateShape(this._rotateShape(arrowHead, ang), x2, y2));
+                    }
+
+                    if (ev_fa) {
+                        this._drawFilledPolygon(this._translateShape(this._rotateShape(arrowTail, ang), x1, y1));
+                    }
+                }
+                context.restore();
+            }
+        },
+
+        // documented in AbstractRenderer
         drawLine: function (el) {
             var obj,
                 c1 = new Coords(Const.COORDS_BY_USER, el.point1.coords.usrCoords, el.board),
                 c2 = new Coords(Const.COORDS_BY_USER, el.point2.coords.usrCoords, el.board),
                 margin = null,
+                hl,
                 ev_fa = Type.evaluate(el.visProp.firstarrow),
                 ev_la = Type.evaluate(el.visProp.lastarrow);
 
@@ -451,7 +562,8 @@ define([
             }
             Geometry.calcStraight(el, c1, c2, margin);
 
-            obj = this.getPositionArrowHead(el, c1, c2, Type.evaluate(el.visProp.strokewidth));
+            hl = this._getHighlighted(el);
+            obj = this.getPositionArrowHead(el, c1, c2, Type.evaluate(el.visProp[hl + 'strokewidth']), hl);
 
             this.context.beginPath();
             this.context.moveTo(obj.c1.scrCoords[1] + obj.d1x, obj.c1.scrCoords[2] + obj.d1y);
@@ -460,7 +572,8 @@ define([
 
             if ((ev_fa && obj.sFirst > 0) ||
                 (ev_la && obj.sLast > 0)) {
-                this.makeArrows(el, obj.c1, obj.c2);
+
+                this.drawArrows(el, obj.c1, obj.c2, hl);
             }
         },
 
@@ -524,7 +637,7 @@ define([
                 this.updatePathStringPrim(el);
             }
             if (el.numberPoints > 1) {
-                this.makeArrows(el);
+                this.drawArrows(el);
             }
         },
 
@@ -761,118 +874,6 @@ define([
         },
 
         // documented in AbstractRenderer
-        makeArrows: function (el, scr1, scr2) {
-            // not done yet for curves and arcs.
-            var x1, y1, x2, y2, ang,
-                size,
-                w0 = Type.evaluate(el.visProp.strokewidth),
-                w,
-                arrowHead,
-                arrowTail,
-                context = this.context,
-                type,
-                ev_fa = Type.evaluate(el.visProp.firstarrow),
-                ev_la = Type.evaluate(el.visProp.lastarrow);
-
-            if (Type.evaluate(el.visProp.strokecolor) !== 'none' &&
-                    (ev_fa || ev_la)) {
-                if (el.elementClass === Const.OBJECT_CLASS_LINE) {
-                    x1 = scr1.scrCoords[1];
-                    y1 = scr1.scrCoords[2];
-                    x2 = scr2.scrCoords[1];
-                    y2 = scr2.scrCoords[2];
-                } else {
-                    x1 = el.points[0].scrCoords[1];
-                    y1 = el.points[0].scrCoords[2];
-                    x2 = el.points[el.points.length - 1].scrCoords[1];
-                    y2 = el.points[el.points.length - 1].scrCoords[2];
-                    return;
-                }
-
-                if (ev_fa &&
-                    Type.exists(ev_fa.type)) {
-
-                    if (Type.exists(ev_fa.size)) {
-                        size = Type.evaluate(ev_fa.size);
-                    } else {
-                        size = 3;
-                    }
-                    w = w0 * size;
-
-                    type = Type.evaluate(ev_fa.type);
-                    if (type === 2) {
-                        arrowTail = [
-                                [ w,      -w * 0.5],
-                                [ 0.0,         0.0],
-                                [ w,       w * 0.5],
-                                [ w * 0.5,     0.0],
-                            ];
-                    } else if (type === 3) {
-                        arrowTail = [
-                                [ w / 3.0,   -w * 0.5],
-                                [ 0.0,       -w * 0.5],
-                                [ 0.0,        w * 0.5],
-                                [ w / 3.0,    w * 0.5]
-                            ];
-                    } else {
-                        arrowTail = [
-                            [ w,   -w * 0.5],
-                            [ 0.0,      0.0],
-                            [ w,    w * 0.5]
-                        ];
-                    }
-
-                }
-                if (ev_la &&
-                    Type.exists(ev_la.type)) {
-
-                    if (Type.exists(ev_la.size)) {
-                        size = Type.evaluate(ev_la.size);
-                    } else {
-                        size = 3;
-                    }
-                    w = w0 * size;
-
-                    type = Type.evaluate(ev_la.type);
-                    if (type === 2) {
-                        arrowHead = [
-                            [ -w, -w * 0.5],
-                            [ 0.0,     0.0],
-                            [ -w,  w * 0.5],
-                            [ -w * 0.5, 0.0]
-                        ];
-                    } else if (type === 3) {
-                        arrowHead = [
-                                [-w / 3.0,   -w * 0.5],
-                                [ 0.0,       -w * 0.5],
-                                [ 0.0,        w * 0.5],
-                                [-w / 3.0,    w * 0.5]
-                            ];
-                    } else {
-                        arrowHead = [
-                            [ -w, -w * 0.5],
-                            [ 0.0,     0.0],
-                            [ -w,  w * 0.5]
-                        ];
-                    }
-                }
-
-                context.save();
-                if (this._setColor(el, 'stroke', 'fill')) {
-                    ang = Math.atan2(y2 - y1, x2 - x1);
-                    if (ev_la) {
-                        this._drawFilledPolygon(this._translateShape(this._rotateShape(arrowHead, ang), x2, y2));
-                    }
-
-                    if (ev_fa) {
-                        this._drawFilledPolygon(this._translateShape(this._rotateShape(arrowTail, ang), x1, y1));
-                    }
-                }
-                context.restore();
-            }
-        },
-
-        // documented in AbstractRenderer
         updatePathStringPrim: function (el) {
             var i, scr, scr1, scr2, len,
                 symbm = 'M',
@@ -1052,8 +1053,8 @@ define([
 
         // **************************  Set Attributes *************************
 
-         // already documented in JXG.AbstractRenderer
-         display: function(el, val) {
+        // already documented in JXG.AbstractRenderer
+        display: function(el, val) {
              if (el && el.rendNode) {
                  el.visPropOld.visible = val;
                  if (val) {
