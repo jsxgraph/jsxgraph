@@ -571,7 +571,7 @@ define([
                         sFirst *= 0.5;
                         minlen += strokewidth * size;
                     } else if (typeFirst === 3) {
-                        sFirst = strokewidth;
+                        sFirst = strokewidth * size / 3;
                         minlen += strokewidth;
                     } else {
                         minlen += strokewidth * size;
@@ -590,7 +590,7 @@ define([
                         sLast *= 0.5;
                         minlen += strokewidth * size;
                     } else if (typeLast === 3) {
-                        sLast = strokewidth;
+                        sLast = strokewidth * size / 3;
                         minlen += strokewidth;
                     } else {
                         minlen += strokewidth * size;
