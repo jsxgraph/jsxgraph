@@ -374,7 +374,6 @@ define([
                 if (isReal) {
                     tickStr += str;
                 }
-                // console.log(tickStr, isReal);
             }
 
             node = ticks.rendNode;

@@ -480,6 +480,7 @@ define([
         updateTicks: function (ticks) {
             var i, c, x, y,
                 len = ticks.ticks.length,
+                len2, j,
                 context = this.context;
 
             context.beginPath();
@@ -487,8 +488,15 @@ define([
                 c = ticks.ticks[i];
                 x = c[0];
                 y = c[1];
+
+                // context.moveTo(x[0], y[0]);
+                // context.lineTo(x[1], y[1]);
+                len2 = x.length;
                 context.moveTo(x[0], y[0]);
-                context.lineTo(x[1], y[1]);
+                for (j = 1; j < len2; ++j) {
+                    context.lineTo(x[j], y[j]);
+                }
+
             }
             // Labels
             for (i = 0; i < len; i++) {
