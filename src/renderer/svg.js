@@ -252,7 +252,7 @@ define([
                     node2.setAttributeNS(null, 'refX', 4.9);
                     node3.setAttributeNS(null, 'd', 'M 10,0 L 0,5 L 10,10 L 5,5 z');
                 } else if (type === 3) {
-                    node2.setAttributeNS(null, 'refX', 1.33);
+                    node2.setAttributeNS(null, 'refX', 3.33);
                     node3.setAttributeNS(null, 'd', 'M 0,0 L 3.33,0 L 3.33,10 L 0,10 z');
                 } else {
                     node2.setAttributeNS(null, 'refX', 9.9);
@@ -270,7 +270,6 @@ define([
                     node3.setAttributeNS(null, 'd', 'M 0,0 L 10,5 L 0,10 L 5,5 z');
                 } else if (type === 3) {
                     node2.setAttributeNS(null, 'refX', 0.1);
-                    //node3.setAttributeNS(null, 'd', 'M 0,0 L 3.33,0 L 3.33,10 L 0,10 z');
                     node3.setAttributeNS(null, 'd', 'M 0,0 L 3.33,0 L 3.33,10 L 0,10 z');
                 } else {
                     node2.setAttributeNS(null, 'refX', 0.1);
