@@ -619,15 +619,15 @@ define([
 
             }
             // Labels
-            for (i = 0; i < len; i++) {
-                c = ticks.ticks[i].scrCoords;
-                if (ticks.ticks[i].major &&
-                        (ticks.board.needsFullUpdate || ticks.needsRegularUpdate) &&
-                        ticks.labels[i] &&
-                        ticks.labels[i].visPropCalc.visible) {
-                    this.updateText(ticks.labels[i]);
-                }
-            }
+            // for (i = 0; i < len; i++) {
+            //     c = ticks.ticks[i].scrCoords;
+            //     if (ticks.ticks[i].major &&
+            //             (ticks.board.needsFullUpdate || ticks.needsRegularUpdate) &&
+            //             ticks.labels[i] &&
+            //             ticks.labels[i].visPropCalc.visible) {
+            //         this.updateText(ticks.labels[i]);
+            //     }
+            // }
             context.lineCap = 'round';
             this._stroke(ticks);
         },

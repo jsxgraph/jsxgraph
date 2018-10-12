@@ -368,9 +368,6 @@ define([
                     }
 
                 }
-                // if (Type.isNumber(x[0]) && Type.isNumber(x[1])) {
-                //     tickStr += " M " + (x[0]) + " " + (y[0]) + " L " + (x[1]) + " " + (y[1]) + " ";
-                // }
                 if (isReal) {
                     tickStr += str;
                 }
