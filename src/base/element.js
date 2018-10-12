@@ -1038,6 +1038,8 @@ define([
                 if (value !== null &&Type.isObject(value) &&
                     !Type.exists(value['id']) &&
                     !Type.exists(value['name'])) {
+                    // value is of type {prop: val, prop: val,...}
+                    // Convert these attributes to lowercase, too
                     this.visProp[property] = {};
                     for (el in value) {
                         if (value.hasOwnProperty(el)) {
