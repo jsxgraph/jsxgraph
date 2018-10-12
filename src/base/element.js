@@ -1018,6 +1018,8 @@ define([
          * @private
          */
         _set: function (property, value) {
+            var el;
+
             property = property.toLocaleLowerCase();
 
             // Search for entries in visProp with "color" as part of the property name
@@ -1033,7 +1035,18 @@ define([
                 // Previously: *=. But then, we can only decrease opacity.
                 this.visProp[property.replace('color', 'opacity')] = value[1];
             } else {
-                this.visProp[property] = value;
+                if (value !== null &&Type.isObject(value) &&
+                    !Type.exists(value['id']) &&
+                    !Type.exists(value['name'])) {
+                    this.visProp[property] = {};
+                    for (el in value) {
+                        if (value.hasOwnProperty(el)) {
+                            this.visProp[property][el.toLocaleLowerCase()] = value[el];
+                        }
+                    }
+                } else {
+                    this.visProp[property] = value;
+                }
             }
         },
 
@@ -1320,7 +1333,7 @@ define([
                                 (JXG.Validator[key] && Type.isFunction(value) && JXG.Validator[key](value()))
                             )
                         ) {
-                            value = value.toLowerCase && value.toLowerCase() === 'false' ? false : value;
+                            value = (value.toLowerCase && value.toLowerCase() === 'false') ? false : value;
                             this._set(key, value);
                         }
                         break;
