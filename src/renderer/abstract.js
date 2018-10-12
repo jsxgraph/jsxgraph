@@ -180,7 +180,7 @@ define([
 
         /**
          * Update visual properties, but only if {@link JXG.AbstractRenderer#enhancedRendering} or <tt>enhanced</tt> is set to true.
-         * @param {JXG.GeometryElement} element The element to update
+         * @param {JXG.GeometryElement} el The element to update
          * @param {Object} [not={}] Select properties you don't want to be updated: <tt>{fill: true, dash: true}</tt> updates
          * everything except for fill and dash. Possible values are <tt>stroke, fill, dash, shadow, gradient</tt>.
          * @param {Boolean} [enhanced=false] If true, {@link JXG.AbstractRenderer#enhancedRendering} is assumed to be true.
@@ -235,6 +235,12 @@ define([
             }
         },
 
+        /**
+         * Get information if element is highlighted.
+         * @param {JXG.GeometryElement} el The element which is tested for being highlighted.
+         * @returns {String} 'highlight' if highlighted, otherwise the ampty string '' is returned.
+         * @private
+         */
         _getHighlighted: function(el) {
             var isTrace = false,
                 hl;
@@ -252,7 +258,6 @@ define([
             }
             return hl;
         },
-
 
         /* ******************************** *
          *    Point drawing and updating    *

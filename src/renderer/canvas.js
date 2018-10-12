@@ -423,7 +423,14 @@ define([
          *           Lines                  *
          * ******************************** */
 
-        // documented in AbstractRenderer
+        /**
+         * Draws arrows of an element (usually a line) in canvas renderer.
+         * @param {JXG.GeometryElement} el Line to be drawn.
+         * @param {Array} scr1 Screen coordinates of the start position of the line or curve.
+         * @param {Array} scr2 Screen coordinates of the end position of the line or curve.
+         * @param {String} hl String which carries information if the element is highlighted. Used for getting the correct attribute.
+         * @private
+         */
         drawArrows: function (el, scr1, scr2, hl) {
              // not done yet for curves and arcs.
              var x1, y1, x2, y2, ang,
