@@ -427,28 +427,27 @@ define([
 
             ev_fa = Type.evaluate(el.visProp.firstarrow);
             if (ev_fa) {
-                if (doHighlight !== true && Type.exists(ev_fa.size)) {
+                size = 3;
+                if (Type.exists(ev_fa.size)) {
                     size = Type.evaluate(ev_fa.size);
-                } else if (doHighlight === true && Type.exists(ev_fa.highlightsize)) {
+                }
+                if (doHighlight === true && Type.exists(ev_fa.highlightsize)) {
                     size = Type.evaluate(ev_fa.highlightsize);
-                } else {
-                    size = 3;
                 }
 
                 this._setArrowWidth(el.rendNodeTriangleStart,  obj.sFirst, el.rendNode, size);
             }
             ev_la = Type.evaluate(el.visProp.lastarrow);
             if (ev_la) {
-                if (doHighlight !== true && Type.exists(ev_la.size)) {
+                size = 3;
+                if (Type.exists(ev_la.size)) {
                     size = Type.evaluate(ev_la.size);
-                } else if (doHighlight === true && Type.exists(ev_la.highlightsize)) {
+                }
+                if (doHighlight === true && Type.exists(ev_la.highlightsize)) {
                       size = Type.evaluate(ev_la.highlightsize);
-                } else {
-                    size = 3;
                 }
                 this._setArrowWidth(el.rendNodeTriangleEnd, obj.sLast, el.rendNode, size);
             }
-
             return this;
         },
 
@@ -537,12 +536,12 @@ define([
                 }
 
                 if (ev_fa) {
-                    if (doHighlight !== true && Type.exists(ev_fa.size)) {
+                    size = 3;
+                    if (Type.exists(ev_fa.size)) {
                         size = Type.evaluate(ev_fa.size);
-                    } else if (doHighlight === true && Type.exists(ev_fa.highlightsize)) {
+                    }
+                    if (doHighlight === true && Type.exists(ev_fa.highlightsize)) {
                         size = Type.evaluate(ev_fa.highlightsize);
-                    } else {
-                        size = 3;
                     }
                     sFirst = strokewidth * size;
                     if (typeFirst === 2) {
@@ -556,12 +555,12 @@ define([
                     }
                 }
                 if (ev_la) {
-                    if (doHighlight !== true && Type.exists(ev_la.size)) {
+                    size = 3;
+                    if (Type.exists(ev_la.size)) {
                         size = Type.evaluate(ev_la.size);
-                    } else if (doHighlight === true && Type.exists(ev_la.highlightsize)) {
+                    }
+                    if (doHighlight === true && Type.exists(ev_la.highlightsize)) {
                         size = Type.evaluate(ev_la.highlightsize);
-                    } else {
-                        size = 3;
                     }
                     sLast = strokewidth * size;
                     if (typeLast === 2) {
