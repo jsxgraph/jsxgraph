@@ -148,7 +148,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                     pl = p.toLowerCase();
 
                     if (typeof def[p] !== 'object' && def[p] === copy[pl]) {
-                        console.log("delete", p);
+                        // console.log("delete", p);
                         delete copy[pl];
                     }
                 }
