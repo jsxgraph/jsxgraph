@@ -2326,7 +2326,7 @@ define([
      *         <p>
      *         n determines the number of bars, it is either a fixed number or a function.
      *         <p>
-     *         type is a string or function returning one of the values:  'left', 'right', 'middle', 'lower', 'upper', 'random', 'simpson', or 'trapezodial'.
+     *         type is a string or function returning one of the values:  'left', 'right', 'middle', 'lower', 'upper', 'random', 'simpson', or 'trapezoidal'.
      *         Default value is 'left'.
      *         <p>
      *         Further parameters are an optional number or function for the left interval border a,

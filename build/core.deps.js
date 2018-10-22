@@ -66,11 +66,11 @@ define([
 ], function (JXG, Env) {
     "use strict";
 
-    // we're in the browser, export JXG to the global JXG symbol for backwards compatiblity
+    // We're in the browser, export JXG to the global JXG symbol for backwards compatibility
     if (Env.isBrowser) {
         window.JXG = JXG;
 
-    // in node there are two cases:
+    // In node there are two cases:
     // 1) jsxgraph is used without requirejs (e.g. as jsxgraphcore.js)
     // 2) jsxgraph is loaded using requirejs (e.g. the dev version)
     //
