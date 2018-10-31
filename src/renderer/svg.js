@@ -1347,6 +1347,29 @@ define([
         },
 
         /**
+         * Walk recursively through the DOM subtree of a node and collect all
+         * value attributes together with the id of that node.
+         * <b>Attention:</b> Only values of nodes having a valid id are taken.
+         * @param  {Node} node   root node of DOM subtree that will be searched recursively.
+         * @return {Array}      Array with entries of the form [id, value]
+         * @private
+         */
+        _getValuesOfDOMElements: function(node) {
+            var values = [];
+            if (node.nodeType == 1) {
+                node = node.firstChild;
+                while (node) {
+                    if (node.id !== undefined && node.value !== undefined) {
+                        values.push([node.id, node.value]);
+                    }
+                    values = values.concat(this._getValuesOfDOMElements(node));
+                    node = node.nextSibling;
+                }
+            }
+            return values;
+        },
+
+        /**
          * Convert the SVG construction into an HTML canvas image.
          * This works for all SVG supporting browsers.
          * For IE it works from version 9, with the execption that HTML texts
@@ -1371,15 +1394,24 @@ define([
                 wOrg, hOrg,
                 // uriPayload,
                 // DOMURL, svgBlob, url,
-                virtualNode, doc;
+                virtualNode, doc,
+                i, len, values = [];
 
+            console.log("ignoreTexts", ignoreTexts);
             // Move all HTML tags (beside the SVG root) of the container
             // to the foreignObject element inside of the svgRoot node
+            // Problem:
+            // input values are not copied. This can be verified by looking at an innerHTML output
+            // of an input element. Therefore, we do it "by hand".
             if (this.container.hasChildNodes() && Type.exists(this.foreignObjLayer)) {
                 while (svgRoot.nextSibling) {
+                    // Copy all value attributes
+                    values = values.concat(this._getValuesOfDOMElements(svgRoot.nextSibling));
                     this.foreignObjLayer.appendChild(svgRoot.nextSibling);
                 }
                 if (ignoreTexts === true) {
+                    // Take out foreignObjLayer, so that it will not be visible
+                    // in the dump.
                     doc = this.container.ownerDocument;
                     virtualNode = doc.createElement('div');
                     virtualNode.appendChild(this.foreignObjLayer);
@@ -1392,8 +1424,16 @@ define([
 
             svg = new XMLSerializer().serializeToString(svgRoot);
 
+            if (ignoreTexts !== true) {
+                // Insert all value attributes back into the svg string
+                len = values.length;
+                for (i = 0; i < len; i++) {
+                    svg = svg.replace('id="' + values[i][0] + '"', 'id="' + values[i][0] + '" value="' + values[i][1] +'"');
+                }
+            }
+
             if (false) {
-                // Debug: example svg image
+                // Debug: use example svg image
                 svg = '<svg xmlns="http://www.w3.org/2000/svg" version="1.0" width="220" height="220"><rect width="66" height="30" x="21" y="32" stroke="#204a87" stroke-width="2" fill="none" /></svg>';
             }
 
@@ -1403,6 +1443,7 @@ define([
             }
 
             // Safari fails if the svg string contains a "&nbsp;"
+            // Obsolete with Safari 12+
             svg = svg.replace(/&nbsp;/g, ' ');
 
             cv = document.getElementById(canvasId);
@@ -1456,8 +1497,10 @@ define([
             // the foreignObject element to the container
             if (Type.exists(this.foreignObjLayer) && this.foreignObjLayer.hasChildNodes()) {
                 if (ignoreTexts === true) {
+                    // Put foreignObjLayer back into the SVG
                     svgRoot.appendChild(this.foreignObjLayer);
                 }
+                // Restore all HTML elements
                 while (this.foreignObjLayer.firstChild) {
                     this.container.appendChild(this.foreignObjLayer.firstChild);
                 }
@@ -1476,7 +1519,7 @@ define([
          * <li> Edge: full
          * <li>Firefox: full
          * <li> Chrome: full
-         * <li> Safari: supported, but no texts (to be precise, no foreignObject-element is allowed in SVG)
+         * <li> Safari: full (No text support in versions prior to 12).
          * </ul>
          *
          * @param {JXG.Board} board Link to the board.

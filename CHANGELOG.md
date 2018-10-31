@@ -1,7 +1,16 @@
+0.99.8
+====
+
+Compatibility:
+------------
+* Since Safari 12, `board.renderer.screenshot()` also supports texts in Safari.
+
+
 0.99.7
 ====
 
 Compatibility:
+------------
 Option.semicirclearc.midpoint -> Option.semicirclearc.center
 
 New Features
