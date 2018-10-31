@@ -1397,7 +1397,6 @@ define([
                 virtualNode, doc,
                 i, len, values = [];
 
-            console.log("ignoreTexts", ignoreTexts);
             // Move all HTML tags (beside the SVG root) of the container
             // to the foreignObject element inside of the svgRoot node
             // Problem:
