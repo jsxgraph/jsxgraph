@@ -247,6 +247,11 @@ define([
                 this.updateSize();    // updateSize() is called at least once.
             }
 
+            // This may slow down canvas renderer
+            // if (this.board.renderer.type === 'canvas') {
+            //     this.board.fullUpdate();
+            // }
+
             return this;
         },
 
