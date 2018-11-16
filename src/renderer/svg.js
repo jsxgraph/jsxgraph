@@ -1369,6 +1369,22 @@ define([
             return values;
         },
 
+        _getDataUri: function(url, callback) {
+            var image = new Image();
+
+            image.onload = function () {
+                var canvas = document.createElement('canvas');
+                canvas.width = this.naturalWidth; // or 'width' if you want a special/scaled size
+                canvas.height = this.naturalHeight; // or 'height' if you want a special/scaled size
+
+                canvas.getContext('2d').drawImage(this, 0, 0);
+
+                callback(canvas.toDataURL('image/png'));
+            };
+
+            image.src = url;
+        },
+
         /**
          * Convert the SVG construction into an HTML canvas image.
          * This works for all SVG supporting browsers.
@@ -1392,10 +1408,10 @@ define([
                 btoa = window.btoa || Base64.encode,
                 svg, tmpImg, cv, ctx,
                 wOrg, hOrg,
-                // uriPayload,
                 // DOMURL, svgBlob, url,
                 virtualNode, doc,
-                i, len, values = [];
+                i, len, values = [],
+                txt;
 
             // Move all HTML tags (beside the SVG root) of the container
             // to the foreignObject element inside of the svgRoot node
@@ -1417,6 +1433,7 @@ define([
                 }
             }
 
+            // Convert the SVG graphic into a string containing SVG code
             svgRoot.setAttribute("xmlns", "http://www.w3.org/2000/svg");
             wOrg = svgRoot.getAttribute('width');
             hOrg = svgRoot.getAttribute('height');
@@ -1424,12 +1441,18 @@ define([
             svg = new XMLSerializer().serializeToString(svgRoot);
 
             if (ignoreTexts !== true) {
+                // Handle SVG texts
                 // Insert all value attributes back into the svg string
                 len = values.length;
                 for (i = 0; i < len; i++) {
                     svg = svg.replace('id="' + values[i][0] + '"', 'id="' + values[i][0] + '" value="' + values[i][1] +'"');
                 }
             }
+
+            // this._getDataUri('uccellino.jpg', function(data) {
+            //     console.log(data);
+            // });
+            // xlink:href="uccellino.jpg"
 
             if (false) {
                 // Debug: use example svg image
@@ -1445,10 +1468,10 @@ define([
             // Obsolete with Safari 12+
             svg = svg.replace(/&nbsp;/g, ' ');
 
+            // Prepare the canvas element
             cv = document.getElementById(canvasId);
             // Clear the canvas
             cv.width = cv.width;
-
             ctx = cv.getContext("2d");
             if (w !== undefined && h !== undefined) {
                 // Scale twice the CSS size to make the image crisp
@@ -1459,17 +1482,12 @@ define([
                 ctx.scale(2 * wOrg / w, 2 * hOrg / h);
             }
 
+            // Display the SVG string as data-uri in an HTML img.
             tmpImg = new Image();
             if (true) {
                 tmpImg.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
-                // uriPayload = encodeURIComponent(svg.replace(/\n+/g, '')) // remove newlines // encode URL-unsafe characters
-                //             .replace(/%20/g, ' ') // put spaces back in
-                //             .replace(/%3D/g, '=') // ditto equals signs
-                //             .replace(/%3A/g, ':') // ditto colons
-                //             .replace(/%2F/g, '/') // ditto slashes
-                //             .replace(/%22/g, "'");
-                // tmpImg.src = 'data:image/svg+xml,' + uriPayload;
 
+                // Finally, draw the HTML img in the canvas.
                 tmpImg.onload = function () {
                     // IE needs a pause...
                     setTimeout(function(){
