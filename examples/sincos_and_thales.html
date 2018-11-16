@@ -16,7 +16,7 @@
             <div id="box2" class="jxgbox" style="width:500px; height:500px;"></div>
         </td></tr>
       </table>
-      Die Kurven im rechten Board kann man sich auch &uuml;ber eine <a href="javascript:void(0);" onclick="animate(b1p1, -10, 41);">Animation</a>
+      Die Kurven im rechten Board kann man sich auch &uuml;ber eine <a href="javascript:void(0);" onclick="my_animate(b1p1, -10, 41);">Animation</a>
       des Gliders A im linken Bild erstellen lassen. Ganz neu: <strong>Hooks</strong>.
       
       <!-- Die Tabelle mit den Werten -->
@@ -66,7 +66,7 @@
 
         // Deklarationen fuer die Animation 
         var animated = false;
-        function animate(point, direction, count) {
+        function my_animate(point, direction, count) {
             if(animated) {
                 point.stopAnimation();
                 animated = false;

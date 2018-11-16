@@ -1344,7 +1344,7 @@ define([
          * @param {JXG.GeometryElement} el
          * @param {JXG.Transformation|Array} transform Either one {@link JXG.Transformation}
          * or an array of {@link JXG.Transformation}s.
-         * @returns {JXG.Point} Reference to this point object.
+         * @returns {JXG.CoordsElement} Reference to this point object.
          */
         addTransform: function (el, transform) {
             var i,
@@ -1366,18 +1366,65 @@ define([
         /**
          * Animate the point.
          * @param {Number} direction The direction the glider is animated. Can be +1 or -1.
-         * @param {Number} stepCount The number of steps.
+         * @param {Number} stepCount The number of steps in which the parent element is divided.
+         * Must be at least 1.
+         * @param {Number} delay Time in msec between two animation steps. Default is 250.
+         * @returns {JXG.CoordsElement} Reference to this point object.
+         *
          * @name Glider#startAnimation
          * @see Glider#stopAnimation
          * @function
+         * @example
+         * // Divide the circle line into 6 steps and
+         * // visit every step 330 msec counterclockwise.
+         * var ci = board.create('circle', [[-1,2], [2,1]]);
+         * var gl = board.create('glider', [0,2, ci]);
+         * gl.startAnimation(-1, 6, 330);
+         *
+         * </pre><div id="0f35a50e-e99d-11e8-a1ca-04d3b0c2aad3" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('0f35a50e-e99d-11e8-a1ca-04d3b0c2aad3',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *     // Divide the circle line into 6 steps and
+         *     // visit every step 330 msec counterclockwise.
+         *     var ci = board.create('circle', [[-1,2], [2,1]]);
+         *     var gl = board.create('glider', [0,2, ci]);
+         *     gl.startAnimation(-1, 6, 330);
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
+         * @example
+         * // Divide the slider area into 20 steps and
+         * // visit every step 30 msec.
+         * var n = board.create('slider',[[-2,4],[2,4],[1,5,100]],{name:'n'});
+         * n.startAnimation(1, 20, 30);
+         *
+         * </pre><div id="40ce04b8-e99c-11e8-a1ca-04d3b0c2aad3" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('40ce04b8-e99c-11e8-a1ca-04d3b0c2aad3',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *     // Divide the slider area into 20 steps and
+         *     // visit every step 30 msec.
+         *     var n = board.create('slider',[[-2,4],[2,4],[1,5,100]],{name:'n'});
+         *     n.startAnimation(1, 20, 30);
+         *
+         *     })();
+         * </script><pre>
+         *
          */
-        startAnimation: function (direction, stepCount) {
+        startAnimation: function (direction, stepCount, delay) {
             var that = this;
+
+            delay = delay || 250;
 
             if ((this.type === Const.OBJECT_TYPE_GLIDER) && !Type.exists(this.intervalCode)) {
                 this.intervalCode = window.setInterval(function () {
                     that._anim(direction, stepCount);
-                }, 250);
+                }, delay);
 
                 if (!Type.exists(this.intervalCount)) {
                     this.intervalCount = 0;
@@ -1613,7 +1660,8 @@ define([
         /**
          * Animates a glider. Is called by the browser after startAnimation is called.
          * @param {Number} direction The direction the glider is animated.
-         * @param {Number} stepCount The number of steps.
+         * @param {Number} stepCount The number of steps in which the parent element is divided.
+         * Must be at least 1.
          * @see #startAnimation
          * @see #stopAnimation
          * @private
