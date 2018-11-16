@@ -1323,7 +1323,7 @@ define([
         /**
          * Applies the transformations of the element.
          * This method applies to text and images. Point transformations are handled differently.
-         * @returns {JXG.CoordsElement} Reference to this object.
+         * @returns {JXG.CoordsElement} Reference to itself.
          */
         updateTransform: function () {
             var i;
@@ -1344,7 +1344,7 @@ define([
          * @param {JXG.GeometryElement} el
          * @param {JXG.Transformation|Array} transform Either one {@link JXG.Transformation}
          * or an array of {@link JXG.Transformation}s.
-         * @returns {JXG.CoordsElement} Reference to this point object.
+         * @returns {JXG.CoordsElement} Reference to itself.
          */
         addTransform: function (el, transform) {
             var i,
@@ -1369,7 +1369,7 @@ define([
          * @param {Number} stepCount The number of steps in which the parent element is divided.
          * Must be at least 1.
          * @param {Number} delay Time in msec between two animation steps. Default is 250.
-         * @returns {JXG.CoordsElement} Reference to this point object.
+         * @returns {JXG.CoordsElement} Reference to iself.
          *
          * @name Glider#startAnimation
          * @see Glider#stopAnimation
@@ -1438,6 +1438,7 @@ define([
          * @name Glider#stopAnimation
          * @see Glider#startAnimation
          * @function
+         * @returns {JXG.CoordsElement} Reference to itself.
          */
         stopAnimation: function () {
             if (Type.exists(this.intervalCode)) {
@@ -1461,7 +1462,7 @@ define([
          * @param {Boolean} [options.interpolate=true] If <tt>path</tt> is an array moveAlong()
          * will interpolate the path
          * using {@link JXG.Math.Numerics.Neville}. Set this flag to false if you don't want to use interpolation.
-         * @returns {JXG.Point} Reference to the point.
+         * @returns {JXG.CoordsElement} Reference to itself.
          */
         moveAlong: function (path, time, options) {
             options = options || {};
@@ -1550,7 +1551,7 @@ define([
          * @param {String} [options.effect='<>'] animation effects like speed fade in and out. possible values are
          * '<>' for speed increase on start and slow down at the end (default) and '--' for constant speed during
          * the whole animation.
-         * @returns {JXG.Point} Reference to itself.
+         * @returns {JXG.CoordsElement} Reference to itself.
          * @see #animate
          */
         moveTo: function (where, time, options) {
@@ -1608,7 +1609,7 @@ define([
          * '<>' for speed increase on start and slow down at the end (default) and '--' for constant speed during
          * the whole animation.
          * @param {Number} [options.repeat=1] How often this animation should be repeated.
-         * @returns {JXG.Point} Reference to itself.
+         * @returns {JXG.CoordsElement} Reference to itself.
          * @see #animate
          */
         visit: function (where, time, options) {
@@ -1665,9 +1666,11 @@ define([
          * @see #startAnimation
          * @see #stopAnimation
          * @private
+         * @returns {JXG.CoordsElement} Reference to itself.
          */
         _anim: function (direction, stepCount) {
             var distance, slope, dX, dY, alpha, startPoint, newX, radius,
+                sp1c, sp2c, d,
                 factor = 1;
 
             this.intervalCount += 1;
@@ -1676,39 +1679,35 @@ define([
             }
 
             if (this.slideObject.elementClass === Const.OBJECT_CLASS_LINE) {
-                distance = this.slideObject.point1.coords.distance(Const.COORDS_BY_SCREEN, this.slideObject.point2.coords);
-                slope = this.slideObject.getSlope();
-                if (slope !== Infinity) {
-                    alpha = Math.atan(slope);
-                    dX = Math.round((this.intervalCount / stepCount) * distance * Math.cos(alpha));
-                    dY = Math.round((this.intervalCount / stepCount) * distance * Math.sin(alpha));
-                } else {
-                    dX = 0;
-                    dY = Math.round((this.intervalCount / stepCount) * distance);
-                }
+                sp1c = this.slideObject.point1.coords.scrCoords;
+                sp2c = this.slideObject.point2.coords.scrCoords;
 
+                dX = Math.round((sp2c[1] - sp1c[1]) * this.intervalCount / stepCount);
+                dY = Math.round((sp2c[2] - sp1c[2]) * this.intervalCount / stepCount);
                 if (direction < 0) {
                     startPoint = this.slideObject.point2;
 
-                    if (this.slideObject.point2.coords.scrCoords[1] - this.slideObject.point1.coords.scrCoords[1] > 0) {
-                        factor = -1;
-                    } else if (this.slideObject.point2.coords.scrCoords[1] - this.slideObject.point1.coords.scrCoords[1] === 0) {
-                        if (this.slideObject.point2.coords.scrCoords[2] - this.slideObject.point1.coords.scrCoords[2] > 0) {
-                            factor = -1;
-                        }
-                    }
+                    // Why should we invert the direction?
+                    // if (sp2c[1] - sp1c[1] > 0) {
+                    //     factor = -1;
+                    // } else if (sp2c[1] - sp1c[1] === 0) {
+                    //     if (sp2c[2] - sp1c[2] > 0) {
+                    //         factor = -1;
+                    //     }
+                    // }
                 } else {
                     startPoint = this.slideObject.point1;
 
-                    if (this.slideObject.point1.coords.scrCoords[1] - this.slideObject.point2.coords.scrCoords[1] > 0) {
-                        factor = -1;
-                    } else if (this.slideObject.point1.coords.scrCoords[1] - this.slideObject.point2.coords.scrCoords[1] === 0) {
-                        if (this.slideObject.point1.coords.scrCoords[2] - this.slideObject.point2.coords.scrCoords[2] > 0) {
-                            factor = -1;
-                        }
-                    }
+                    // if (sp1c[1] - sp2c[1] > 0) {
+                    //     factor = -1;
+                    // } else if (sp1c[1] - sp2c[1] === 0) {
+                    //     if (sp1c[2] - sp2c[2] > 0) {
+                    //         factor = -1;
+                    //     }
+                    // }
                 }
 
+                console.log(factor);
                 this.coords.setCoordinates(Const.COORDS_BY_SCREEN, [
                     startPoint.coords.scrCoords[1] + factor * dX,
                     startPoint.coords.scrCoords[2] + factor * dY
@@ -1723,12 +1722,12 @@ define([
                 this.coords.setCoordinates(Const.COORDS_BY_SCREEN, [newX, 0]);
                 this.coords = Geometry.projectPointToCurve(this, this.slideObject, this.board);
             } else if (this.slideObject.elementClass === Const.OBJECT_CLASS_CIRCLE) {
+                alpha = 2 * Math.PI;
                 if (direction < 0) {
-                    alpha = this.intervalCount / stepCount * 2 * Math.PI;
+                    alpha *= this.intervalCount / stepCount;
                 } else {
-                    alpha = (stepCount - this.intervalCount) / stepCount * 2 * Math.PI;
+                    alpha *= (stepCount - this.intervalCount);
                 }
-
                 radius = this.slideObject.Radius();
 
                 this.coords.setCoordinates(Const.COORDS_BY_USER, [
