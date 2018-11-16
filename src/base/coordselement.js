@@ -1669,9 +1669,8 @@ define([
          * @returns {JXG.CoordsElement} Reference to itself.
          */
         _anim: function (direction, stepCount) {
-            var distance, slope, dX, dY, alpha, startPoint, newX, radius,
-                sp1c, sp2c, d,
-                factor = 1;
+            var dX, dY, alpha, startPoint, newX, radius,
+                sp1c, sp2c, d;
 
             this.intervalCount += 1;
             if (this.intervalCount > stepCount) {
@@ -1684,33 +1683,17 @@ define([
 
                 dX = Math.round((sp2c[1] - sp1c[1]) * this.intervalCount / stepCount);
                 dY = Math.round((sp2c[2] - sp1c[2]) * this.intervalCount / stepCount);
-                if (direction < 0) {
-                    startPoint = this.slideObject.point2;
-
-                    // Why should we invert the direction?
-                    // if (sp2c[1] - sp1c[1] > 0) {
-                    //     factor = -1;
-                    // } else if (sp2c[1] - sp1c[1] === 0) {
-                    //     if (sp2c[2] - sp1c[2] > 0) {
-                    //         factor = -1;
-                    //     }
-                    // }
-                } else {
+                if (direction > 0) {
                     startPoint = this.slideObject.point1;
-
-                    // if (sp1c[1] - sp2c[1] > 0) {
-                    //     factor = -1;
-                    // } else if (sp1c[1] - sp2c[1] === 0) {
-                    //     if (sp1c[2] - sp2c[2] > 0) {
-                    //         factor = -1;
-                    //     }
-                    // }
+                } else {
+                    startPoint = this.slideObject.point2;
+                    dX *= -1;
+                    dY *= -1;
                 }
 
-                console.log(factor);
                 this.coords.setCoordinates(Const.COORDS_BY_SCREEN, [
-                    startPoint.coords.scrCoords[1] + factor * dX,
-                    startPoint.coords.scrCoords[2] + factor * dY
+                    startPoint.coords.scrCoords[1] + dX,
+                    startPoint.coords.scrCoords[2] + dY
                 ]);
             } else if (this.slideObject.elementClass === Const.OBJECT_CLASS_CURVE) {
                 if (direction > 0) {
