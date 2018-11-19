@@ -751,6 +751,11 @@ define([
             /**
              * If true the element will be traced, i.e. on every movement the element will be copied
              * to the background. Use {@link JXG.GeometryElement#clearTrace} to delete the trace elements.
+             *
+             * The calling of element.setAttribute({trace:false}) additionally
+             * deletes all traces of this element. By calling
+             * element.setAttribute({trace:'off'})
+             * the removal of already existing traces can be prevented.
              * @see JXG.GeometryElement#clearTrace
              * @see JXG.GeometryElement#traces
              * @see JXG.GeometryElement#numTraces
