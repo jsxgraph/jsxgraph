@@ -1248,7 +1248,7 @@ define([
                         if (value === 'false' || value === false) {
                             this.clearTrace();
                             this.visProp.trace = false;
-                        } else if (value === 'off') {
+                        } else if (value === 'pause') {
                                 this.visProp.trace = false;
                         } else {
                             this.visProp.trace = true;

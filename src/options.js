@@ -754,7 +754,7 @@ define([
              *
              * The calling of element.setAttribute({trace:false}) additionally
              * deletes all traces of this element. By calling
-             * element.setAttribute({trace:'off'})
+             * element.setAttribute({trace:'pause'})
              * the removal of already existing traces can be prevented.
              * @see JXG.GeometryElement#clearTrace
              * @see JXG.GeometryElement#traces
