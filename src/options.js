@@ -759,7 +759,7 @@ define([
              * @see JXG.GeometryElement#clearTrace
              * @see JXG.GeometryElement#traces
              * @see JXG.GeometryElement#numTraces
-             * @type Boolean
+             * @type Boolean|String
              * @default false
              * @name JXG.GeometryElement#trace
              */
