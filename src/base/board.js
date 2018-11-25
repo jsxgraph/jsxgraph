@@ -1453,6 +1453,7 @@ define([
                 };
             }
 
+            this.addFullscreenEvents();
         },
 
         /**
@@ -1514,6 +1515,23 @@ define([
                 */
 
                 this.hasTouchHandlers = true;
+            }
+        },
+
+        /**
+         * Add fullscreen events which update the CSS transformation matrix to correct
+         * the mouse/touch/pointer positions in case of CSS transformations.
+         */
+        addFullscreenEvents: function() {
+            var i,
+                // standard/Edge, firefox, chrome/safari, IE11
+                events = ['fullscreenchange', 'mozfullscreenchange', 'webkitfullscreenchange', 'msfullscreenchange'],
+                le = events.length;
+
+            for (i = 0; i < le; i++) {
+                Env.addEvent(this.document, events[i], function(evt) {
+                    this.updateCSSTransforms();
+                }, this);
             }
         },
 
@@ -3452,7 +3470,7 @@ define([
          * before looping through the elements to be removed and call
          * board.unsuspendUpdate() after the loop. Further, it is advisable to loop
          * in reverse order, i.e. remove the object in reverse order of their creation time.
-         * 
+         *
          * @param {JXG.GeometryElement} object The object to remove.
          * @returns {JXG.Board} Reference to the board
          */
