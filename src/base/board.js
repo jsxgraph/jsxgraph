@@ -3446,6 +3446,13 @@ define([
 
         /**
          * Removes object from board and renderer.
+         * <p>
+         * <b>Performance hints:</b> It is recommended to use the object's id.
+         * If many elements are removed, it is best to call board.suspendUpdate()
+         * before looping through the elements to be removed and call
+         * board.unsuspendUpdate() after the loop. Further, it is advisable to loop
+         * in reverse order, i.e. remove the object in reverse order of their creation time.
+         * 
          * @param {JXG.GeometryElement} object The object to remove.
          * @returns {JXG.Board} Reference to the board
          */
@@ -4439,7 +4446,7 @@ define([
                     s = this.groups[s];
                 }
             // it's a function or an object, but not an element
-        } else if (Type.isFunction(s) || (Type.isObject(s) && !Type.isFunction(s.setAttribute))) {
+            } else if (Type.isFunction(s) || (Type.isObject(s) && !Type.isFunction(s.setAttribute))) {
 
                 flist = Type.filterElements(this.objectsList, s);
 
