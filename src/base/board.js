@@ -1453,7 +1453,7 @@ define([
                 };
             }
 
-            this.addFullscreenEvents();
+            this.addFullscreenEventHandlers();
         },
 
         /**
@@ -1522,7 +1522,7 @@ define([
          * Add fullscreen events which update the CSS transformation matrix to correct
          * the mouse/touch/pointer positions in case of CSS transformations.
          */
-        addFullscreenEvents: function() {
+        addFullscreenEventHandlers: function() {
             var i,
                 // standard/Edge, firefox, chrome/safari, IE11
                 events = ['fullscreenchange', 'mozfullscreenchange', 'webkitfullscreenchange', 'msfullscreenchange'],
@@ -1530,6 +1530,22 @@ define([
 
             for (i = 0; i < le; i++) {
                 Env.addEvent(this.document, events[i], function(evt) {
+                    this.updateCSSTransforms();
+                }, this);
+            }
+        },
+
+        /**
+         * Remove all registered event handlers regarding fullscreen mode.
+         */
+        removeFullscreenEventHandlers: function() {
+            var i,
+                // standard/Edge, firefox, chrome/safari, IE11
+                events = ['fullscreenchange', 'mozfullscreenchange', 'webkitfullscreenchange', 'msfullscreenchange'],
+                le = events.length;
+
+            for (i = 0; i < le; i++) {
+                Env.removeEvent(this.document, events[i], function(evt) {
                     this.updateCSSTransforms();
                 }, this);
             }
@@ -1608,6 +1624,9 @@ define([
             this.removeMouseEventHandlers();
             this.removeTouchEventHandlers();
             this.removePointerEventHandlers();
+
+            this.removeFullscreenEventHandlers();
+
         },
 
         /**
