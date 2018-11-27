@@ -331,8 +331,13 @@ define([
             } else if (ev_d === 'internal') {
                 if (this.board.renderer.type === 'svg') {
                     try {
-                        tmp = node.getBBox();
-                        this.size = [tmp.width, tmp.height];
+                        that = this;
+                        window.setTimeout(function(){
+                            tmp = node.getBBox();
+                            that.size = [tmp.width, tmp.height];
+                            that.needsUpdate = true;
+                            that.updateRenderer();
+                        }, 0);
                     } catch (e) {}
                 } else if (this.board.renderer.type === 'canvas') {
                     this.size = this.crudeSizeEstimate();
