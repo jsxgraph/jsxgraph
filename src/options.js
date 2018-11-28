@@ -4029,6 +4029,7 @@ define([
             /**
              * Sensitive area for dragging the text.
              * Possible values are 'all', or something else.
+             * If set to 'small', a sensitivity margin at the right and left border is taken.
              * This may be extended to left, right, ... in the future.
              *
              * @name Text#dragArea

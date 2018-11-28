@@ -172,11 +172,14 @@ define([
 
             if (Type.evaluate(this.visProp.dragarea) === 'all') {
                 return x >= lft - r && x < rt + r && y >= top - r  && y <= bot + r;
+            } else {
+                // e.g. 'small'
+                return (y >= top - r && y <= bot + r) &&
+                    ((x >= lft - r  && x <= lft + 2 * r) ||
+                    (x >= rt - 2 * r && x <= rt + r));
+
             }
 
-            return (y >= top - r && y <= bot + r) &&
-                ((x >= lft - r  && x <= lft + 2 * r) ||
-                (x >= rt - 2 * r && x <= rt + r));
         },
 
         /**
