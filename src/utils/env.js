@@ -709,7 +709,104 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                 };
 
             window.setTimeout(timerFun, 1);
+        },
+
+        /**
+         * [description]
+         * @param  {[type]} wrap_id  [description]
+         * @param  {[type]} inner_id [description]
+         * @param  {[type]} scale    [description]
+         * @param  {[type]} vshift   [description]
+         * @return {[type]}          [description]
+         */
+        scaleJSXGraphDiv: function(wrap_id, inner_id, scale, vshift) {
+            var len = document.styleSheets.length, style,
+
+                pseudo_keys = [':-webkit-full-screen', ':-moz-full-screen', ':fullscreen', ':-ms-fullscreen'],
+                len_pseudo = pseudo_keys.length, i,
+                // CSS rules to center the inner div horizontally and vertically.
+                rule_inner = '{margin:0 auto;transform:matrix(' + scale + ',0,0,' + scale + ',0,' + vshift + ');}',
+                // A previously installed CSS rule to center the JSXGraph div has to
+                // be searched and removed again.
+                regex = RegExp('.*' + wrap_id + ':.*full.*screen.*' + inner_id + '.*auto;.*transform:.*matrix');
+
+            if (len == 0) {
+                // In case there is not a single CSS rule defined.
+                style = document.createElement("style");
+                // WebKit hack :(
+            	style.appendChild(document.createTextNode(""));
+            	// Add the <style> element to the page
+            	document.body.appendChild(style);
+                len = document.styleSheets.length;
+            }
+
+            // Remove a previously installed CSS rule.
+            if (document.styleSheets[len-1].cssRules.length > 0 &&
+                regex.test(document.styleSheets[len-1].cssRules[0].cssText) &&
+                document.styleSheets[len - 1].deleteRule) {
+
+                document.styleSheets[len - 1].deleteRule(0);
+            }
+
+            // Install a CSS rule to center the JSXGraph div at the first position
+            // of the list.
+            for (i = 0; i < len_pseudo; i++) {
+                try {
+                    document.styleSheets[len - 1].insertRule(wrap_id + pseudo_keys[i] + ' ' + inner_id + rule_inner, 0);
+                    break;
+                } catch (err) {
+                    console.log(pseudo_keys[i] + ' not supported');
+                };
+            }
+        },
+
+        /**
+         * [description]
+         * @param  {[type]} wrap_id     [description]
+         * @param  {[type]} jsxgraph_id [description]
+         * @return {[type]}             [description]
+         */
+        toFullscreen: function(wrap_id, jsxgraph_id) {
+            var elem = document.getElementById(wrap_id),
+                elem_inner = document.getElementById(jsxgraph_id),
+
+                // height seems to be independent from zoom level on all browsers
+                height = parseInt(elem_inner.style.height),
+
+                // Determine the maximum scale factor.
+                r_w = window.screen.width / parseInt(elem_inner.style.width),
+                r_h = window.screen.height / parseInt(elem_inner.style.height),
+                scale = Math.min(r_w, r_h),
+
+                // Determine the vertical shift to place the div in the center of the screen
+                vshift = (window.screen.height - height) * 0.5;
+
+            // Adapt vshift and scale for landscape on tablets
+            if (window.matchMedia && window.matchMedia("(orientation:landscape)").matches &&
+                window.screen.width < window.screen.height) {
+                // Landscape on iOS: it returns 'landscape', but still width<height.
+                r_w = window.screen.height / parseInt(elem_inner.style.width),
+                r_h = window.screen.width / parseInt(elem_inner.style.height),
+                scale = Math.min(r_w, r_h),
+                vshift = (window.screen.width - height) * 0.5;
+
+            }
+            scale *= 0.85;
+
+            // Do the shifting and scaling via CSS pseudo rules
+            this.scaleJSXGraphDiv('#' + wrap_id, '#' + jsxgraph_id, scale, vshift);
+
+            // Trigger the fullscreen mode
+            elem.requestFullscreen = elem.requestFullscreen ||
+                        elem.webkitRequestFullscreen ||
+                        elem.mozRequestFullScreen ||
+                        elem.msRequestFullscreen;
+            if (elem.requestFullscreen) {
+                elem.requestFullscreen();
+            }
         }
+
+
     });
 
     return JXG;

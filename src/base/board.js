@@ -5046,6 +5046,30 @@ define([
         //endregion
 
         /**
+         * [description]
+         * @return {[type]} [description]
+         */
+        toFullscreen: function() {
+            var id = this.container,
+                wrap_id = 'fullscreenwrap_' + id,
+                wrapper = document.createElement('div'),
+                el;
+
+            // If necessary, wrap a div around the JSXGraph div.
+            if (!this.document.getElementById(wrap_id)) {
+                wrapper.classList.add('jxgbox_wrap_private');
+                wrapper.setAttribute('id', wrap_id);
+                el = this.containerObj;
+                el.parentNode.insertBefore(wrapper, el);
+                wrapper.appendChild(el);
+            }
+
+            Env.toFullscreen(wrap_id, id);
+            return this;
+        },
+
+
+        /**
          * Function to animate a curve rolling on another curve.
          * @param {Curve} c1 JSXGraph curve building the floor where c2 rolls
          * @param {Curve} c2 JSXGraph curve which rolls on c1.
