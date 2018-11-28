@@ -52,15 +52,15 @@
 }
 
 .JXGtext {
-    font-family: Courier, monospace; 
-    /** 
-     * The default font family is now set in 
+    font-family: Courier, monospace;
+    /**
+     * The default font family is now set in
      * JXG.Options.text.cssdefaultstyle = 'font-family: Arial, Helvetica, Geneva, sans-serif;'
      */
-    /* 
-        font-family: Arial, Helvetica, Geneva, sans-serif; 
+    /*
+        font-family: Arial, Helvetica, Geneva, sans-serif;
     */
-    
+
     /* "background-color: transparent;" may produce artefacts in IE. Solution: setting a color explicitly. */
     background-color: transparent;
     padding: 0;
@@ -82,3 +82,31 @@
     /* opacity: 0.6; */
 }
 
+/* CSS rules for wrapping div in fullscreen mode */
+.jxgbox_wrap_private:-moz-full-screen {
+   background-color: #cccccc;
+   padding: 0px;
+   width: 100%;
+   height: 100%;
+}
+
+.jxgbox_wrap_private:-webkit-full-screen {
+   background-color: #cccccc;
+   padding: 0px;
+   width: 100%;
+   height: 100%;
+}
+
+.jxgbox_wrap_private:fullscreen {
+   background-color: #cccccc;
+   padding: 0px;
+   width: 100%;
+   height: 100%;
+}
+
+.jxgbox_wrap_private:-ms-fullscreen {
+   background-color: #cccccc;
+   padding: 0px;
+   width: 100%;
+   height: 100%;
+}
