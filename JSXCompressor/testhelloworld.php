@@ -3,7 +3,7 @@
 function jxgcompress($filename) 
 {   
     if (file_exists($filename)) {
-        $base64 = base64_encode(gzcompress(rawurlencode(file_get_contents($filename)),9));
+        $base64 = base64_encode(gzcompress(rawurlencode(file_get_contents($filename)), 9));
         echo "var jxgcompressed = \"$base64\";\n";
     } else {
         throw new Exception("$filename not found");
