@@ -576,6 +576,16 @@ define(['jxg'], function (JXG) {
             return 0;
         }
 
+
+        /**
+         * nextFile:
+         * Extract the next file from the compressed archive.
+         * Calls skipdir() to proceed recursively.
+         *
+         * @return {Boolean}  false if the end of files' data section has baseElement
+         * reached. Then, then all recursive functions are stopped immediately.
+         *
+         */
         function nextFile() {
             var i, c, extralen, filelen, size, compSize, crc, method,
                 tmp = [];
@@ -667,7 +677,6 @@ define(['jxg'], function (JXG) {
                         }
 
                         SIZE = 0;
-
                         if (method === 8) {
                             deflateLoop();
                             unzipped[files] = new Array(2);
@@ -676,15 +685,31 @@ define(['jxg'], function (JXG) {
                             files++;
                         }
 
-                        skipdir();
+                        if (skipdir()) {
+                            // We are beyond the files' data in the zip archive.
+                            // Let's get out immediately...
+                            return false;
+                        }
                     }
+                    return true;
                 }
             } catch (e) {
                 throw e;
             }
+            return false;
         }
 
-        skipdir = function () {
+
+        /**
+         * Test if the end of the files' data part of the archive has baseElement
+         * reached. If not, uncompressing is resumed.
+         *
+         * @return {Boolean}  true if the end of the files' data sections have
+         * been reached.
+         *
+         * @private
+         */
+        function skipdir() {
             var crc, compSize, size, os, i, c,
                 tmp = [];
 
@@ -694,6 +719,11 @@ define(['jxg'], function (JXG) {
                 tmp[2] = readByte();
                 tmp[3] = readByte();
 
+                // signature for data descriptor record: 0x08074b50
+                // 12 bytes:
+                //  crc 4 bytes
+                //  compressed size 4 bytes
+                // uncompressed size 4 bytes
                 if (tmp[0] === 0x50 &&
                         tmp[1] === 0x4b &&
                         tmp[2] === 0x07 &&
@@ -718,14 +748,20 @@ define(['jxg'], function (JXG) {
             }
 
             if (modeZIP) {
-                nextFile();
+                if (nextFile()) {
+                    // A file has been decompressed, we have to proceed
+                    return false;
+                }
             }
 
             tmp[0] = readByte();
             if (tmp[0] !== 8) {
-                return;
+                // It seems, we are beyond the files' data in the zip archive.
+                // We'll skip the rest..
+                return true;
             }
 
+            // There is another file in the zip file. We proceed...
             gpflags = readByte();
 
             readByte();
@@ -788,8 +824,15 @@ define(['jxg'], function (JXG) {
             size |= (readByte() << 24);
 
             if (modeZIP) {
-                nextFile();
+                if (nextFile()) {
+                    // A file has been decompressed, we have to proceed
+                    return false;
+                }
             }
+
+            // We are here in non-ZIP-files only,
+            // In that case the eturn value doesn't matter
+            return false;
         };
 
         JXG.Util.Unzip.prototype.unzipFile = function (name) {
