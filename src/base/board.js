@@ -5046,8 +5046,38 @@ define([
         //endregion
 
         /**
-         * [description]
-         * @return {[type]} [description]
+         * Expand the JSXGraph construction to fullscreen.
+         * In order to preserve the proportions of the JSXGraph element,
+         * a wrapper div is created which is set to fullscreen.
+         * <p>
+         * The wrapping div has the CSS class 'jxgbox_wrap_private' which is
+         * defined in the file 'jsxgraph.css'
+         *
+         * @return {JXG.Board} Reference to the board
+         *
+         * @example
+         * &lt;div id='jxgbox' class='jxgbox' style='width:500px; height:200px;'&gt;&lt;/div&gt;
+         * &lt;button onClick="board.toFullscreen()"&gt;Fullscreen&lt;/button&gt;
+         *
+         * &lt;script language="Javascript" type='text/javascript'&gt;
+         * var board = JXG.JSXGraph.initBoard('jxgbox', {axis:true, boundingbox:[-5,5,5,-5]});
+         * var p = board.create('point', [0, 1]);
+         * &lt;/script&gt;
+         *
+         * </pre><div id="d5bab8b6-fd40-11e8-ab14-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <button onClick="board_d5bab8b6.toFullscreen()">Fullscreen</button>
+         * <script type="text/javascript">
+         *      var board_d5bab8b6;
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('d5bab8b6-fd40-11e8-ab14-901b0e1b8723',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *         var board = JXG.JSXGraph.initBoard('d5bab8b6-fd40-11e8-ab14-901b0e1b8723', {axis:true, boundingbox:[-5,5,5,-5]});
+         *         var p = board.create('point', [0, 1]);
+         *         board_d5bab8b6 = board;
+         *     })();
+         *
+         * </script><pre>
+         *
          */
         toFullscreen: function() {
             var id = this.container,

@@ -712,12 +712,18 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
         },
 
         /**
-         * [description]
-         * @param  {[type]} wrap_id  [description]
-         * @param  {[type]} inner_id [description]
-         * @param  {[type]} scale    [description]
-         * @param  {[type]} vshift   [description]
-         * @return {[type]}          [description]
+         * Scale and vertically shift a DOM element (usually a JSXGraph div)
+         * inside of a parent DOM
+         * element which is set to fullscreen.
+         * This is realized with a CSS transformation.
+         *
+         * @param  {String} wrap_id  id of the parent DOM element which is in fullscreen mode
+         * @param  {String} inner_id id of the DOM element which is scaled and shifted-
+         * @param  {Number} scale    Scaling factor
+         * @param  {Number} vshift   Vertical shift (in pixel)
+         *
+         * @private
+         * @see JXG#toFullscreen
          */
         scaleJSXGraphDiv: function(wrap_id, inner_id, scale, vshift) {
             var len = document.styleSheets.length, style,
@@ -750,23 +756,52 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
 
             // Install a CSS rule to center the JSXGraph div at the first position
             // of the list.
-            for (i = 0; i < len_pseudo; i++) {
+            for (i = 1; i < len_pseudo; i++) {
                 try {
                     document.styleSheets[len - 1].insertRule(wrap_id + pseudo_keys[i] + ' ' + inner_id + rule_inner, 0);
                     break;
                 } catch (err) {
-                    console.log(pseudo_keys[i] + ' not supported');
+                     console.log(pseudo_keys[i] + ' not supported');
                 };
             }
         },
 
         /**
-         * [description]
-         * @param  {[type]} wrap_id     [description]
-         * @param  {[type]} jsxgraph_id [description]
-         * @return {[type]}             [description]
+         * Set the DOM element with id='wrap_id' containing the the JSXGraph div
+         * element into fullscreen mode.
+         * By default, the JSXGraph element is scaled as large as possible while
+         * retaining its proportions.
+         *
+         * @param  {String} wrap_id     id of DOM element containing the JSXGraph
+         * div element.
+         *
+         * @param  {String} jsxgraph_id ID of the JSXGraph div element.
+         * @parame {Number} scale scale factor for the JSXGraph div. If null,
+         * the scaling factor is chosen as large as possible.
+         *
+         * @example
+         *
+         * &lt;div id="outer" class="jxgbox_wrap_private"&gt;
+         *      &lt;div id='jxgbox' class='jxgbox' style='width:300px; height:300px;'&gt;&lt;/div&gt;
+         * &lt;/div&gt;
+         * &lt;button onClick="JXG.toFullscreen('outer', 'jxgbox')"&gt;Fullscreen&lt;/button&gt;
+         * &lt;script&gt;
+         *     var board = JXG.JSXGraph.initBoard('jxgbox', {axis:true, boundingbox:[-8, 8, 8,-8]});
+         *     var p = board.create('point', [0, 1]);
+         * &lt;/script&gt;
+         *
+         * </pre><div id="f9b973ea4_outer" class="jxgbox_wrap_private"><div id="d9b973ea4-fd43-11e8-ab14-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div></div>
+         * <button onClick="JXG.toFullscreen('f9b973ea4_outer', 'd9b973ea4-fd43-11e8-ab14-901b0e1b8723')">Fullscreen</button>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('d9b973ea4-fd43-11e8-ab14-901b0e1b8723',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *         var p = board.create('point', [0, 1]);
+         *     })();
+         * </script><pre>
+         *
          */
-        toFullscreen: function(wrap_id, jsxgraph_id) {
+        toFullscreen: function(wrap_id, jsxgraph_id, scale) {
             var elem = document.getElementById(wrap_id),
                 elem_inner = document.getElementById(jsxgraph_id),
 
@@ -776,10 +811,12 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                 // Determine the maximum scale factor.
                 r_w = window.screen.width / parseInt(elem_inner.style.width),
                 r_h = window.screen.height / parseInt(elem_inner.style.height),
-                scale = Math.min(r_w, r_h),
 
                 // Determine the vertical shift to place the div in the center of the screen
                 vshift = (window.screen.height - height) * 0.5;
+
+            // Scaling factor: if not supplied, it's taken as large as possible
+            scale = scale || Math.min(r_w, r_h);
 
             // Adapt vshift and scale for landscape on tablets
             if (window.matchMedia && window.matchMedia("(orientation:landscape)").matches &&
@@ -805,8 +842,6 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                 elem.requestFullscreen();
             }
         }
-
-
     });
 
     return JXG;
