@@ -177,7 +177,7 @@ define([
             },
 
             /**
-             * Display of navigation arrows and zoom buttons
+             * Display of navigation arrows and zoom buttons in the navigation bar.
              *
              * @name JXG.Board#showNavigation
              * @type Boolean
@@ -186,7 +186,7 @@ define([
             showNavigation: true,
 
             /**
-             * Display of zoom buttons. To show zoom buttons, additionally
+             * Display of zoom buttons in the navigation bar. To show zoom buttons, additionally
              * showNavigation has to be set to true.
              *
              * @name JXG.Board#showZoom
@@ -196,8 +196,8 @@ define([
             showZoom: true,
 
             /**
-             * Show a button to force reload of a construction.
-             * Works only with the JessieCode tag
+             * Show a button in the navigation bar to force reload of a construction.
+             * Works only with the JessieCode tag.
              *
              * @name JXG.Board#showReload
              * @type Boolean
@@ -205,14 +205,85 @@ define([
              */
             showReload: false,
 
+            /**
+             * Show a button in the navigation bar to enable screenshots.
+             *
+             * @name JXG.Board#showScreenshot
+             * @type Boolean
+             * @default false
+             */
             showScreenshot: false,
 
+            /**
+             * Attributes to control the screenshot function.
+             * The following attributes can be set:
+             * <ul>
+             *  <li>scale: scaling factor (default=0)
+             *  <li>type: format of the screenshot image. Default: png
+             *  <li>symbol: Unicode symbol which is shown in the navigation bar. Default: '\u2318'
+             *  <li>css: CSS rules to format the div element containing the screen shot image
+             *  <li>cssButton: CSS rules to format the close button of the div element containing the screen shot image
+             * </ul>
+             *
+             * @name JXG.Board#screenshot
+             * @type {Object}
+             */
             screenshot: {
                 scale: 1.0,
                 type: 'png',
                 symbol: '\u2318', //'\u22b9', //'\u26f6',
                 css: 'background-color:#eeeeee; opacity:1.0; border:2px solid black; border-radius:10px; text-align:center',
                 cssButton:  'padding: 4px 10px; border: solid #356AA0 1px; border-radius: 5px; position: absolute; right: 2ex; top: 2ex; background-color: rgba(255, 255, 255, 0.3);'
+            },
+
+            /**
+             * Show a button in the navigation bar to start fullscreen mode.
+             *
+             * @name JXG.Board#showFullscreen
+             * @type Boolean
+             * @default false
+             */
+            showFullscreen: false,
+
+            /**
+             * Attribute(s) to control the fullscreen function.
+             * The following attribute(s) can be set:
+             * <ul>
+             *  <li>symbol: Unicode symbol which is shown in the navigation bar. Default: '\u25a1'
+             * </ul>
+             *
+             * @example
+             * var board = JXG.JSXGraph.initBoard('35bec5a2-fd4d-11e8-ab14-901b0e1b8723',
+             *             {boundingbox: [-8, 8, 8,-8], axis: true,
+             *             showcopyright: false,
+             *             showFullscreen: true,
+             *             fullscreen: {
+             *                  symbol: '\u22c7'
+             *              }
+             *             });
+             * var pol = board.create('polygon', [[0, 1], [3,4], [1,-4]], {fillColor: 'yellow'});
+             *
+             * </pre><div id="a35bec5a2-fd4d-11e8-ab14-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
+             * <script type="text/javascript">
+             *     (function() {
+             *         var board = JXG.JSXGraph.initBoard('a35bec5a2-fd4d-11e8-ab14-901b0e1b8723',
+             *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false,
+             *              showFullscreen: true,
+             *              fullscreen: {
+             *                  symbol: '\u22c7'
+             *                  }
+             *             });
+             *     var pol = board.create('polygon', [[0, 1], [3,4], [1,-4]], {fillColor: 'yellow'});
+             *
+             *     })();
+             *
+             * </script><pre>
+             *
+             * @name JXG.Board#fullscreen
+             * @type {Object}
+             */
+            fullscreen: {
+                symbol: '\u25a1'
             },
 
             /**

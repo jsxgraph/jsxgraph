@@ -1769,6 +1769,12 @@ define([
 
                 // For XHTML we need unicode instead of HTML entities
 
+                if (board.attr.showfullscreen) {
+                    createButton(board.attr.fullscreen.symbol, function () {
+                        board.toFullscreen();
+                    });
+                }
+
                 if (board.attr.showscreenshot) {
                     createButton(board.attr.screenshot.symbol, function () {
                         setTimeout(function() {
