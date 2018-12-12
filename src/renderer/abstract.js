@@ -1736,6 +1736,7 @@ define([
 
                     button.classList.add('JXG_navigation_button');
 
+                    // Highlighting is now done with CSS
                     // Env.addEvent(button, 'mouseover', function () {
                     //     this.style.backgroundColor = attr.highlightfillcolor;
                     // }, button);
