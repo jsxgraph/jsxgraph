@@ -756,7 +756,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
 
             // Install a CSS rule to center the JSXGraph div at the first position
             // of the list.
-            for (i = 1; i < len_pseudo; i++) {
+            for (i = 0; i < len_pseudo; i++) {
                 try {
                     document.styleSheets[len - 1].insertRule(wrap_id + pseudo_keys[i] + ' ' + inner_id + rule_inner, 0);
                     break;
