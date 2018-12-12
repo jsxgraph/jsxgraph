@@ -583,6 +583,8 @@ define([
          *   bottom: '5px'
          * },
          * </pre>
+         * These settings are overruled by the CSS class 'JXG_navigation'.
+         * @deprecated
          */
         navbar: {
             strokeColor: '#333333', //'#aaaaaa',

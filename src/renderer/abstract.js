@@ -1729,18 +1729,22 @@ define([
                     button = doc.createElement('span');
                     node.appendChild(button);
                     button.appendChild(doc.createTextNode(label));
+
+                    // Style settings are superseded by adding the CSS class below
                     button.style.paddingLeft = '7px';
                     button.style.paddingRight = '7px';
 
-                    Env.addEvent(button, 'mouseover', function () {
-                        this.style.backgroundColor = attr.highlightfillcolor;
-                    }, button);
-                    Env.addEvent(button, 'mouseover', function () {
-                        this.style.backgroundColor = attr.highlightfillcolor;
-                    }, button);
-                    Env.addEvent(button, 'mouseout', function () {
-                        this.style.backgroundColor = attr.fillcolor;
-                    }, button);
+                    button.classList.add('JXG_navigation_button');
+
+                    // Env.addEvent(button, 'mouseover', function () {
+                    //     this.style.backgroundColor = attr.highlightfillcolor;
+                    // }, button);
+                    // Env.addEvent(button, 'mouseover', function () {
+                    //     this.style.backgroundColor = attr.highlightfillcolor;
+                    // }, button);
+                    // Env.addEvent(button, 'mouseout', function () {
+                    //     this.style.backgroundColor = attr.fillcolor;
+                    // }, button);
 
                     Env.addEvent(button, 'click', function(e) { (Type.bind(handler, board))(); return false; }, board);
                     // prevent the click from bubbling down to the board
@@ -1756,6 +1760,7 @@ define([
 
                 node.setAttribute('id', board.containerObj.id + '_navigationbar');
 
+                // Style settings are superseded by adding the CSS class below
                 node.style.color = attr.strokecolor;
                 node.style.backgroundColor = attr.fillcolor;
                 node.style.padding = attr.padding;
@@ -1766,6 +1771,8 @@ define([
                 board.containerObj.appendChild(node);
                 node.style.right = attr.right;
                 node.style.bottom = attr.bottom;
+
+                node.classList.add('JXG_navigation');
 
                 // For XHTML we need unicode instead of HTML entities
 

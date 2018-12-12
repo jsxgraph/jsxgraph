@@ -781,7 +781,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          *
          * @example
          *
-         * &lt;div id="outer" class="jxgbox_wrap_private"&gt;
+         * &lt;div id="outer" class="JXG_wrap_private"&gt;
          *      &lt;div id='jxgbox' class='jxgbox' style='width:300px; height:300px;'&gt;&lt;/div&gt;
          * &lt;/div&gt;
          * &lt;button onClick="JXG.toFullscreen('outer', 'jxgbox')"&gt;Fullscreen&lt;/button&gt;
@@ -790,7 +790,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          *     var p = board.create('point', [0, 1]);
          * &lt;/script&gt;
          *
-         * </pre><div id="f9b973ea4_outer" class="jxgbox_wrap_private"><div id="d9b973ea4-fd43-11e8-ab14-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div></div>
+         * </pre><div id="f9b973ea4_outer" class="JXG_wrap_private"><div id="d9b973ea4-fd43-11e8-ab14-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div></div>
          * <button onClick="JXG.toFullscreen('f9b973ea4_outer', 'd9b973ea4-fd43-11e8-ab14-901b0e1b8723')">Fullscreen</button>
          * <script type="text/javascript">
          *     (function() {
