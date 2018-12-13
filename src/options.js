@@ -283,7 +283,7 @@ define([
              * @type {Object}
              */
             fullscreen: {
-                symbol: '\u25a1'
+                symbol: '\u26f6' //'\u25a1'
             },
 
             /**
