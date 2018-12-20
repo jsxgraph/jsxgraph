@@ -1844,7 +1844,7 @@ define([
         l.addChild(r);
         r.elType = 'reflection';
         r.setParents([org, l]);
-        r.prepareUpdate().update();
+        r.prepareUpdate().update(); //.updateVisibility(Type.evaluate(r.visProp.visible)).updateRenderer();
 
         if (Type.isPoint(r)) {
             r.generatePolynomial = function () {
