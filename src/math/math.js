@@ -530,8 +530,8 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                 return 0;
             }
 
+            // a is an integer
             if (Math.floor(exponent) === exponent) {
-                // a is an integer
                 return Math.pow(base, exponent);
             }
 
@@ -666,7 +666,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
             if (!(Type.isNumber(a) && Type.isNumber(b))) {
                 return NaN;
             }
-            
+
             ret = a * b;
             if (ret !== 0) {
                 return ret / this.gcd(a, b);
