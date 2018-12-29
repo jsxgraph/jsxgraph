@@ -522,6 +522,8 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          * @returns {Number} base to the power of exponent.
          */
         pow: function (base, exponent) {
+            var inv;
+
             if (base === 0) {
                 if (exponent === 0) {
                     return 1;
@@ -530,14 +532,20 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                 return 0;
             }
 
+            // a is an integer
             if (Math.floor(exponent) === exponent) {
-                // a is an integer
                 return Math.pow(base, exponent);
             }
 
             // a is not an integer
             if (base > 0) {
                 return Math.exp(exponent * Math.log(Math.abs(base)));
+            } else {
+                // Handle case x^(1 / n) for x < 0 and n odd
+                inv = 1 / exponent;
+                if (Math.floor(inv) === inv && inv % 2 === 1) {
+                    return -Math.exp(exponent * Math.log(Math.abs(base)));
+                }
             }
 
             return NaN;
@@ -666,7 +674,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
             if (!(Type.isNumber(a) && Type.isNumber(b))) {
                 return NaN;
             }
-            
+
             ret = a * b;
             if (ret !== 0) {
                 return ret / this.gcd(a, b);

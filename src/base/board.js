@@ -3491,9 +3491,14 @@ define([
          * in reverse order, i.e. remove the object in reverse order of their creation time.
          *
          * @param {JXG.GeometryElement} object The object to remove.
+         * @param {Boolean} saveMethod If true, the algorithm runs through all elements
+         * and tests if the element to be deleted is a child element. If yes, it will be
+         * removed from the list of child elements. If false (default), the element
+         * is removed from the lists of child elements of all its ancestors.
+         * This should be much faster.
          * @returns {JXG.Board} Reference to the board
          */
-        removeObject: function (object) {
+        removeObject: function (object, saveMethod) {
             var el, i;
 
             if (Type.isArray(object)) {
@@ -3513,7 +3518,7 @@ define([
             }
 
             try {
-                // remove all children.
+                // // remove all children.
                 for (el in object.childElements) {
                     if (object.childElements.hasOwnProperty(el)) {
                         object.childElements[el].board.removeObject(object.childElements[el]);
@@ -3527,10 +3532,30 @@ define([
                     }
                 }
 
-                for (el in this.objects) {
-                    if (this.objects.hasOwnProperty(el) && Type.exists(this.objects[el].childElements)) {
-                        delete this.objects[el].childElements[object.id];
-                        delete this.objects[el].descendants[object.id];
+                // Remove the element from the childElement list and the descendant list of all elements.
+                if (saveMethod) {
+                    // Running through all objects has quadratic complexity if many objects are deleted.
+                    for (el in this.objects) {
+                        if (this.objects.hasOwnProperty(el)) {
+                            if (Type.exists(this.objects[el].childElements) &&
+                                Type.exists(this.objects[el].childElements.hasOwnProperty(object.id))
+                            ) {
+                                delete this.objects[el].childElements[object.id];
+                                delete this.objects[el].descendants[object.id];
+                            }
+                        }
+                    }
+                } else if (Type.exists(object.ancestors)) {
+                    // Running through the ancestors should be much more efficient.
+                    for (el in object.ancestors) {
+                        if (object.ancestors.hasOwnProperty(el)) {
+                            if (Type.exists(object.ancestors[el].childElements) &&
+                                Type.exists(object.ancestors[el].childElements.hasOwnProperty(object.id))
+                            ) {
+                                delete object.ancestors[el].childElements[object.id];
+                                delete object.ancestors[el].descendants[object.id];
+                            }
+                        }
                     }
                 }
 

@@ -807,7 +807,11 @@ define([
             Type.isTransformationOrArray(parents[1])) {
 
             attr = Type.copyAttributes(attributes, board.options, 'circle');
-            el = Conic.createEllipse(board, [obj.center, obj.center, function() { return 2 * obj.Radius(); }], attr);
+            if (Type.exists(attr.type) && attr.type.toLowerCase() === 'euclidean') {
+                el = JXG.createCircle(board, [obj.center, function() { return obj.Radius(); }], attr);
+            } else {
+                el = Conic.createEllipse(board, [obj.center, obj.center, function() { return 2 * obj.Radius(); }], attr);
+            }
             el.addTransform(parents[1]);
             return el;
 
