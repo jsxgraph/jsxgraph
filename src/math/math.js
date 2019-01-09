@@ -516,6 +516,53 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
         },
 
         /**
+         * Compute n-th real root of a real number. n must be strictly positive integer.
+         * If n is odd, the real n-th root exists and is negative.
+         * For n even, for negative valuees of x NaN is returned
+         * @param  {Number} x radicand. Must be non-negative, if n even.
+         * @param  {Number} n index of the root. must be strictly positive integer.
+         * @return {Number} returns real root or NaN
+         *
+         * @example
+         * nthroot(16, 4): 2
+         * nthroot(-27, 3): -3
+         * nthroot(-4, 2): NaN
+         */
+        nthroot: function(x, n) {
+            var inv = 1 / n;
+            if (n <= 0 || Math.floor(n) !== n) {
+                return NaN;
+            }
+
+            if (x === 0.0) {
+                return 0.0;
+            }
+
+            if (x > 0) {
+                return Math.exp(inv * Math.log(x));
+            }
+
+            // From here on, x is negative
+            if (n % 2 === 1) {
+                return -Math.exp(inv * Math.log(-x));
+            }
+
+            // x negative, even root
+            return NaN;
+        },
+
+        /**
+         * Computes cube root of real number
+         * Polyfill for Math.cbrt().
+         *
+         * @param  {Number} x Radicand
+         * @return {Number} Cube root of x.
+         */
+        cbrt: Math.cbrt || function(x) {
+            return this.nthroot(x, 3);
+        },
+
+        /**
          * Compute base to the power of exponent.
          * @param {Number} base
          * @param {Number} exponent
@@ -528,7 +575,6 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                 if (exponent === 0) {
                     return 1;
                 }
-
                 return 0;
             }
 
@@ -539,15 +585,9 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
 
             // a is not an integer
             if (base > 0) {
-                return Math.exp(exponent * Math.log(Math.abs(base)));
-            } else {
-                // Handle case x^(1 / n) for x < 0 and n odd
-                inv = 1 / exponent;
-                if (Math.floor(inv) === inv && inv % 2 === 1) {
-                    return -Math.exp(exponent * Math.log(Math.abs(base)));
-                }
+                return Math.exp(exponent * Math.log(base));
             }
-
+            
             return NaN;
         },
 
@@ -601,6 +641,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
         /**
          * A square & multiply algorithm to compute base to the power of exponent.
          * Implementated by Wolfgang Riedl.
+         *
          * @param {Number} base
          * @param {Number} exponent
          * @returns {Number} Base to the power of exponent
