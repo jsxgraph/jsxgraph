@@ -502,7 +502,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          * @param {Number} x The number the cosine hyperbolicus will be calculated of.
          * @returns {Number} Cosine hyperbolicus of the given value.
          */
-        cosh: function (x) {
+        cosh: Math.cosh || function (x) {
             return (Math.exp(x) + Math.exp(-x)) * 0.5;
         },
 
@@ -511,7 +511,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          * @param {Number} x The number the sine hyperbolicus will be calculated of.
          * @returns {Number} Sine hyperbolicus of the given value.
          */
-        sinh: function (x) {
+        sinh: Math.sinh || function (x) {
             return (Math.exp(x) - Math.exp(-x)) * 0.5;
         },
 
@@ -530,6 +530,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          */
         nthroot: function(x, n) {
             var inv = 1 / n;
+            
             if (n <= 0 || Math.floor(n) !== n) {
                 return NaN;
             }
@@ -587,7 +588,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
             if (base > 0) {
                 return Math.exp(exponent * Math.log(base));
             }
-            
+
             return NaN;
         },
 

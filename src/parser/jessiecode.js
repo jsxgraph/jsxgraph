@@ -777,10 +777,7 @@ define([
                         result = false;
                 }
             } catch (e) {  // catch is mandatory in old IEs
-                // console.log(e);
-                // We throw the error again,
-                // so the user can catch it.
-                throw e;
+                console.log(e);
             } finally {
                 // make sure the original text method is back in place
                 if (Text) {
@@ -2074,9 +2071,12 @@ define([
                     ld: Mat.log2,
                     cosh: Mat.cosh,
                     sinh: Mat.sinh,
+                    nthroot: Mat.nthroot,
+                    cbrt: Mat.cbrt,
                     pow: Mat.pow,
                     gcd: Mat.gcd,
                     lcm: Mat.lcm,
+                    binomial: Mat.binomial,
                     IfThen: that.ifthen,
                     'import': that.importModule,
                     'use': that.use,
@@ -2113,9 +2113,12 @@ define([
             builtIn.ld.src = 'JXG.Math.log2';
             builtIn.cosh.src = 'JXG.Math.cosh';
             builtIn.sinh.src = 'JXG.Math.sinh';
+            builtIn.nthroot.src = 'JXG.Math.nthroot';
+            builtIn.cbrt.src = 'JXG.Math.cbrt';
             builtIn.pow.src = 'JXG.Math.pow';
             builtIn.gcd.src = 'JXG.Math.gcd';
             builtIn.lcm.src = 'JXG.Math.lcm';
+            builtIn.binomial.src = 'JXG.Math.binomial';
             builtIn['import'].src = '$jc$.importModule';
             builtIn.use.src = '$jc$.use';
             builtIn.remove.src = '$jc$.del';

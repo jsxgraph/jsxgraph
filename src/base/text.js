@@ -333,15 +333,15 @@ define([
                 }
             } else if (ev_d === 'internal') {
                 if (this.board.renderer.type === 'svg') {
-                    try {
-                        that = this;
-                        window.setTimeout(function(){
+                    that = this;
+                    window.setTimeout(function(){
+                        try {
                             tmp = node.getBBox();
                             that.size = [tmp.width, tmp.height];
                             that.needsUpdate = true;
                             that.updateRenderer();
-                        }, 0);
-                    } catch (e) {}
+                        } catch (e) {}
+                    }, 0);
                 } else if (this.board.renderer.type === 'canvas') {
                     this.size = this.crudeSizeEstimate();
                 }
