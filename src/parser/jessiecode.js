@@ -777,7 +777,10 @@ define([
                         result = false;
                 }
             } catch (e) {  // catch is mandatory in old IEs
-                console.log(e);
+                // console.log(e);
+                // We throw the error again,
+                // so the user can catch it.
+                throw e;
             } finally {
                 // make sure the original text method is back in place
                 if (Text) {
