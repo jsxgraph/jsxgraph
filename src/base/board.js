@@ -1529,9 +1529,7 @@ define([
                 le = events.length;
 
             for (i = 0; i < le; i++) {
-                Env.addEvent(this.document, events[i], function(evt) {
-                    this.updateCSSTransforms();
-                }, this);
+                Env.addEvent(this.document, events[i], this.fullscreenListener, this);
             }
         },
 
@@ -1545,9 +1543,7 @@ define([
                 le = events.length;
 
             for (i = 0; i < le; i++) {
-                Env.removeEvent(this.document, events[i], function(evt) {
-                    this.updateCSSTransforms();
-                }, this);
+                Env.removeEvent(this.document, events[i], this.fullscreenListener, this);
             }
         },
 
@@ -5123,6 +5119,16 @@ define([
             return this;
         },
 
+        /**
+         * If fullscreen mode is toggled, the possible CSS transformations
+         * which are applied to the JSXGraph canvas have to be reread.
+         * Otherwise the position of upper left corner is wrongly interpreted.
+         *
+         * @param  {Object} evt fullscreen event object
+         */
+        fullscreenListener: function(evt) {
+            this.updateCSSTransforms();
+        },
 
         /**
          * Function to animate a curve rolling on another curve.

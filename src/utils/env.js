@@ -351,7 +351,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
             i = Type.indexOf(owner['x_internal' + type], fn, 'origin');
 
             if (i === -1) {
-                JXG.debug('no such event function in internal list: ' + fn);
+                JXG.debug('removeEvent: no such event function in internal list: ' + fn);
                 return;
             }
 
