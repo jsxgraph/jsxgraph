@@ -252,7 +252,7 @@
 
                 case JXG.GENTYPE_REFLECTION:
                     // Polygon:
-                    if (step.src_ids.length > 2) {
+                    if (step.args.type === 'polygon') {
                         set_str = '';
                         el = step.src_ids[step.src_ids.length - 1];
                         for (i = 1; i < step.src_ids.length - 1; i++) {
@@ -262,6 +262,7 @@
                             } else {
                                 set_str += ', name: ""';
                             }
+                            set_str += ', color: \'' + step.args.strokeColor + '\'';
                             set_str += ', snaptogrid: ' + JXG.Options.elements.snapToGrid;
                             set_str += ', snaptopoints: ' + JXG.Options.elements.snapToPoints + '>>;\n';
                         }
@@ -285,6 +286,41 @@
                         set_str += ', fillColor: \'' + step.args.fillColor + '\'';
                         set_str += ', snaptogrid: ' + JXG.Options.elements.snapToGrid;
                         set_str += ', snaptopoints: ' + JXG.Options.elements.snapToPoints + ', scalable:true>>; ';
+
+                    } else if (step.args.type === 'line') {
+                        set_str = '';
+                        el = step.src_ids[step.src_ids.length - 1];
+                        // Create two end points.
+                        console.log(step.args);
+                        for (i = 1; i < step.src_ids.length - 1; i++) {
+                            set_str += assign + 'reflection(' + step.src_ids[i] + ', ' + el + ') <<id:"' + step.dest_sub_ids[i - 1] + '"';
+                            if (JXG.exists(step.args.subnames)) {
+                                set_str += ', name:\"' + step.args.subnames[i - 1] + '\"';
+                            } else {
+                                set_str += ', name: ""';
+                            }
+                            set_str += ', color: \'' + step.args.strokeColor + '\'';
+                            set_str += ', snaptogrid: ' + JXG.Options.elements.snapToGrid;
+                            set_str += ', snaptopoints: ' + JXG.Options.elements.snapToPoints + '>>;\n';
+                        }
+
+                        set_str += assign + 'line(' + step.dest_sub_ids[0] + ',' + step.dest_sub_ids[1] + ') ';
+                        set_str += '<<';
+                        set_str += attrid;
+                        set_str += 'strokeColor: \'' + step.args.strokeColor + '\'';
+                        set_str += ', opacity: \'' + step.args.opacity + '\'';
+                        set_str += ', name: "' + step.args.name + '"';
+                        set_str += ', id: "' + step.dest_id + '"';
+                        if (JXG.exists(step.args.attr)) {
+                            for (key in step.args.attr) if (step.args.attr.hasOwnProperty(key)) {
+                                set_str += ', ' + key + ': ' + step.args.attr[key] + '';
+                            }
+                        }
+
+                        if (step.args.name !== '') {
+                            set_str += ', withLabel: true';
+                        }
+                        set_str += '>>; ';
 
                     } else {
                         set_str = assign + 'reflection(' + step.src_ids[0] + ', ' + step.src_ids[1] + ') <<' + attrid;
@@ -310,15 +346,15 @@
                     reset_str = '';
                     for (i = 0; i < step.dest_sub_ids.length; i++) {
                         if (step.dest_sub_ids[i] !== 0) {
-                            reset_str += 'delete ' + step.dest_sub_ids[i] + '; ' + reset_str;
+                            reset_str += 'delete ' + step.dest_sub_ids[i] + '; ';
                         }
                     }
-                    reset_str += 'delete ' + step.dest_id + '; ' + reset_str;
+                    reset_str += 'delete ' + step.dest_id + '; ';
 
                     break;
 
                 case JXG.GENTYPE_MIRRORELEMENT:
-                    if (step.src_ids.length > 2) {
+                    if (step.args.type === 'polygon') {
                         set_str = '';
                         el = step.src_ids[step.src_ids.length - 1];
                         for (i = 1; i < step.src_ids.length - 1; i++) {
@@ -328,6 +364,7 @@
                             } else {
                                 set_str += ', name: ""';
                             }
+                            set_str += ', color: \'' + step.args.strokeColor + '\'';
                             set_str += ', snaptogrid: ' + JXG.Options.elements.snapToGrid;
                             set_str += ', snaptopoints: ' + JXG.Options.elements.snapToPoints + '>>;\n';
                         }
@@ -350,7 +387,39 @@
                         set_str += ', fillColor: \'' + step.args.fillColor + '\'';
                         set_str += ', snaptogrid: ' + JXG.Options.elements.snapToGrid;
                         set_str += ', snaptopoints: ' + JXG.Options.elements.snapToPoints + ', scalable:true>>; ';
+                    } else if (step.args.type === 'line') {
+                        set_str = '';
+                        el = step.src_ids[step.src_ids.length - 1];
+                        // Create two end points.
+                        for (i = 1; i < step.src_ids.length - 1; i++) {
+                            set_str += assign + 'mirrorelement(' + step.src_ids[i] + ', ' + el + ') <<id:"' + step.dest_sub_ids[i - 1] + '"';
+                            if (JXG.exists(step.args.subnames)) {
+                                set_str += ', name:\"' + step.args.subnames[i - 1] + '\"';
+                            } else {
+                                set_str += ', name: ""';
+                            }
+                            set_str += ', color: \'' + step.args.strokeColor + '\'';
+                            set_str += ', snaptogrid: ' + JXG.Options.elements.snapToGrid;
+                            set_str += ', snaptopoints: ' + JXG.Options.elements.snapToPoints + '>>;\n';
+                        }
 
+                        set_str += assign + 'line(' + step.dest_sub_ids[0] + ',' + step.dest_sub_ids[1] + ') ';
+                        set_str += '<<';
+                        set_str += attrid;
+                        set_str += 'strokeColor: \'' + step.args.strokeColor + '\'';
+                        set_str += ', opacity: \'' + step.args.opacity + '\'';
+                        set_str += ', name: "' + step.args.name + '"';
+                        set_str += ', id: "' + step.dest_id + '"';
+                        if (JXG.exists(step.args.attr)) {
+                            for (key in step.args.attr) if (step.args.attr.hasOwnProperty(key)) {
+                                set_str += ', ' + key + ': ' + step.args.attr[key] + '';
+                            }
+                        }
+
+                        if (step.args.name !== '') {
+                            set_str += ', withLabel: true';
+                        }
+                        set_str += '>>; ';
 
                     } else {
                         set_str = assign + 'mirrorelement(' + step.src_ids[0] + ', ' + step.src_ids[1] + ') <<' + attrid;
