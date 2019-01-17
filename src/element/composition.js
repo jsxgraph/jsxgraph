@@ -1831,7 +1831,7 @@ define([
             r = Polygon.createPolygon(board, [org, t], attributes);
         } else if (org.elementClass === Const.OBJECT_CLASS_CIRCLE) {
             if (attributes.type === 'Euclidean') {
-                r_c = Point.createPoint(board, [org.center, t], attributes);
+                r_c = Point.createPoint(board, [org.center, t], (Type.exists(attributes.point)) ? attributes.point:{});
                 r = Circle.createCircle(board, [r_c, function() {return org.Radius(); }], attributes);
             } else {
                 r = Circle.createCircle(board, [org, t], attributes);
@@ -1992,7 +1992,8 @@ define([
             r = Polygon.createPolygon(board, [org, t], attributes);
         } else if (org.elementClass === Const.OBJECT_CLASS_CIRCLE){
             if (attributes.type === 'Euclidean') {
-                r_c = Point.createPoint(board, [org.center, t], attributes);
+
+                r_c = Point.createPoint(board, [org.center, t], (Type.exists(attributes.point)) ? attributes.point:{});
                 r = Circle.createCircle(board, [r_c, function() {return org.Radius(); }], attributes);
             } else {
                 r = Circle.createCircle(board, [org, t], attributes);

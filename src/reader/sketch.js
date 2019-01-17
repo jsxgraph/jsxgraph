@@ -321,6 +321,34 @@
                             set_str += ', withLabel: true';
                         }
                         set_str += '>>; ';
+                    } else if (step.args.type === 'circle') {
+                        set_str += assign + 'reflection(' + step.src_ids[0] + ',' + step.src_ids[2] + ') ';
+                        set_str += '<<';
+                        set_str += attrid;
+                        set_str += 'strokeColor: \'' + step.args.strokeColor + '\'';
+                        set_str += ', opacity: \'' + step.args.opacity + '\'';
+                        set_str += ', name: "' + step.args.name + '"';
+                        set_str += ', id: "' + step.dest_id + '"';
+                        if (JXG.exists(step.args.attr)) {
+                            for (key in step.args.attr) if (step.args.attr.hasOwnProperty(key)) {
+                                set_str += ', ' + key + ': ' + step.args.attr[key] + '';
+                            }
+                        }
+                        if (step.args.name !== '') {
+                            set_str += ', withLabel: true';
+                        }
+
+                        set_str += ', point: <<id:"' + step.dest_sub_ids[0] + '"';
+                        if (JXG.exists(step.args.subnames)) {
+                            set_str += ', name:\"' + step.args.subnames[0] + '\"';
+                        } else {
+                            set_str += ', name: ""';
+                        }
+                        set_str += ', color: \'' + step.args.strokeColor + '\'';
+                        set_str += ', snaptogrid: ' + JXG.Options.elements.snapToGrid;
+                        set_str += ', snaptopoints: ' + JXG.Options.elements.snapToPoints + '>>';
+
+                        set_str += '>>; ';
 
                     } else {
                         set_str = assign + 'reflection(' + step.src_ids[0] + ', ' + step.src_ids[1] + ') <<' + attrid;
@@ -419,6 +447,34 @@
                         if (step.args.name !== '') {
                             set_str += ', withLabel: true';
                         }
+                        set_str += '>>; ';
+                    } else if (step.args.type === 'circle') {
+                        set_str += assign + 'mirrorelement(' + step.src_ids[0] + ',' + step.src_ids[2] + ') ';
+                        set_str += '<<';
+                        set_str += attrid;
+                        set_str += 'strokeColor: \'' + step.args.strokeColor + '\'';
+                        set_str += ', opacity: \'' + step.args.opacity + '\'';
+                        set_str += ', name: "' + step.args.name + '"';
+                        set_str += ', id: "' + step.dest_id + '"';
+                        if (JXG.exists(step.args.attr)) {
+                            for (key in step.args.attr) if (step.args.attr.hasOwnProperty(key)) {
+                                set_str += ', ' + key + ': ' + step.args.attr[key] + '';
+                            }
+                        }
+                        if (step.args.name !== '') {
+                            set_str += ', withLabel: true';
+                        }
+
+                        set_str += ', point: <<id:"' + step.dest_sub_ids[0] + '"';
+                        if (JXG.exists(step.args.subnames)) {
+                            set_str += ', name:\"' + step.args.subnames[0] + '\"';
+                        } else {
+                            set_str += ', name: ""';
+                        }
+                        set_str += ', color: \'' + step.args.strokeColor + '\'';
+                        set_str += ', snaptogrid: ' + JXG.Options.elements.snapToGrid;
+                        set_str += ', snaptopoints: ' + JXG.Options.elements.snapToPoints + '>>';
+
                         set_str += '>>; ';
 
                     } else {
