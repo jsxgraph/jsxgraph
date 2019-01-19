@@ -761,7 +761,8 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                     document.styleSheets[len - 1].insertRule(wrap_id + pseudo_keys[i] + ' ' + inner_id + rule_inner, 0);
                     break;
                 } catch (err) {
-                     console.log(pseudo_keys[i] + ' not supported');
+                     console.log('JXG.scaleJSXGraphDiv: Could not add CSS rule "' + pseudo_keys[i] + '".');
+                     console.log('One possible reason could be that the id of the JSXGraph container does not start with a letter.');
                 };
             }
         },
