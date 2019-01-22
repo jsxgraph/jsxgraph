@@ -287,7 +287,7 @@
                         set_str += ', snaptogrid: ' + JXG.Options.elements.snapToGrid;
                         set_str += ', snaptopoints: ' + JXG.Options.elements.snapToPoints + ', scalable:true>>; ';
 
-                    } else if (step.args.type === 'line') {
+                    } else if (step.args.type === 'line' || step.args.type === 'vector') {
                         set_str = '';
                         el = step.src_ids[step.src_ids.length - 1];
                         // Create two end points.
@@ -304,7 +304,11 @@
                             set_str += ', snaptopoints: ' + JXG.Options.elements.snapToPoints + '>>;\n';
                         }
 
-                        set_str += assign + 'line(' + step.dest_sub_ids[0] + ',' + step.dest_sub_ids[1] + ') ';
+                        if (step.args.type === 'vector') {
+                            set_str += assign + 'arrow(' + step.dest_sub_ids[0] + ',' + step.dest_sub_ids[1] + ') ';
+                        } else {
+                            set_str += assign + 'line(' + step.dest_sub_ids[0] + ',' + step.dest_sub_ids[1] + ') ';
+                        }
                         set_str += '<<';
                         set_str += attrid;
                         set_str += 'strokeColor: \'' + step.args.strokeColor + '\'';
@@ -415,7 +419,7 @@
                         set_str += ', fillColor: \'' + step.args.fillColor + '\'';
                         set_str += ', snaptogrid: ' + JXG.Options.elements.snapToGrid;
                         set_str += ', snaptopoints: ' + JXG.Options.elements.snapToPoints + ', scalable:true>>; ';
-                    } else if (step.args.type === 'line') {
+                    } else if (step.args.type === 'line' || step.args.type === 'vector') {
                         set_str = '';
                         el = step.src_ids[step.src_ids.length - 1];
                         // Create two end points.
@@ -431,7 +435,11 @@
                             set_str += ', snaptopoints: ' + JXG.Options.elements.snapToPoints + '>>;\n';
                         }
 
-                        set_str += assign + 'line(' + step.dest_sub_ids[0] + ',' + step.dest_sub_ids[1] + ') ';
+                        if (step.args.type === 'vector') {
+                            set_str += assign + 'arrow(' + step.dest_sub_ids[0] + ',' + step.dest_sub_ids[1] + ') ';
+                        } else {
+                            set_str += assign + 'line(' + step.dest_sub_ids[0] + ',' + step.dest_sub_ids[1] + ') ';
+                        }
                         set_str += '<<';
                         set_str += attrid;
                         set_str += 'strokeColor: \'' + step.args.strokeColor + '\'';
