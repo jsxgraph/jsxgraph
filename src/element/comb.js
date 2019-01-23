@@ -1,5 +1,5 @@
 /*
-    Copyright 2018
+    Copyright 2018-2019
         Alfred Wassermann,
         Tigran Saluev
 
