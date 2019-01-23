@@ -88,10 +88,10 @@ define([
      *
      *     st = board.create('slopetriangle', [t]);
      *
-     * </pre><div class="jxgbox" id="951ccb6a-52bc-4dc2-80e9-43db064f0f1b" style="width: 300px; height: 300px;"></div>
+     * </pre><div class="jxgbox" id="JXG951ccb6a-52bc-4dc2-80e9-43db064f0f1b" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
      * (function () {
-     *   var board = JXG.JSXGraph.initBoard('951ccb6a-52bc-4dc2-80e9-43db064f0f1b', {boundingbox: [-5, 5, 5, -5], axis: true, showcopyright: false, shownavigation: false}),
+     *   var board = JXG.JSXGraph.initBoard('JXG951ccb6a-52bc-4dc2-80e9-43db064f0f1b', {boundingbox: [-5, 5, 5, -5], axis: true, showcopyright: false, shownavigation: false}),
      *     f = board.create('plot', ['sin(x)']),
      *     g = board.create('glider', [1, 2, f]),
      *     t = board.create('tangent', [g]),
@@ -109,10 +109,10 @@ define([
      *
      *     st = board.create('slopetriangle', [li, p]);
      *
-     * </pre><div class="jxgbox" id="b52f451c-22cf-4677-852a-0bb9d764ee95" style="width: 300px; height: 300px;"></div>
+     * </pre><div class="jxgbox" id="JXGb52f451c-22cf-4677-852a-0bb9d764ee95" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
      * (function () {
-     *   var board = JXG.JSXGraph.initBoard('b52f451c-22cf-4677-852a-0bb9d764ee95', {boundingbox: [-5, 5, 5, -5], axis: true, showcopyright: false, shownavigation: false}),
+     *   var board = JXG.JSXGraph.initBoard('JXGb52f451c-22cf-4677-852a-0bb9d764ee95', {boundingbox: [-5, 5, 5, -5], axis: true, showcopyright: false, shownavigation: false}),
      *     p1 = board.create('point', [-2, 3]),
      *     p2 = board.create('point', [2, -3]),
      *     li = board.create('line', [p1, p2]),

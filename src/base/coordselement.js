@@ -1381,10 +1381,10 @@ define([
          * var gl = board.create('glider', [0,2, ci]);
          * gl.startAnimation(-1, 6, 330);
          *
-         * </pre><div id="0f35a50e-e99d-11e8-a1ca-04d3b0c2aad3" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * </pre><div id="JXG0f35a50e-e99d-11e8-a1ca-04d3b0c2aad3" class="jxgbox" style="width: 300px; height: 300px;"></div>
          * <script type="text/javascript">
          *     (function() {
-         *         var board = JXG.JSXGraph.initBoard('0f35a50e-e99d-11e8-a1ca-04d3b0c2aad3',
+         *         var board = JXG.JSXGraph.initBoard('JXG0f35a50e-e99d-11e8-a1ca-04d3b0c2aad3',
          *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
          *     // Divide the circle line into 6 steps and
          *     // visit every step 330 msec counterclockwise.
@@ -1402,10 +1402,10 @@ define([
          * var n = board.create('slider',[[-2,4],[2,4],[1,5,100]],{name:'n'});
          * n.startAnimation(1, 20, 30);
          *
-         * </pre><div id="40ce04b8-e99c-11e8-a1ca-04d3b0c2aad3" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * </pre><div id="JXG40ce04b8-e99c-11e8-a1ca-04d3b0c2aad3" class="jxgbox" style="width: 300px; height: 300px;"></div>
          * <script type="text/javascript">
          *     (function() {
-         *         var board = JXG.JSXGraph.initBoard('40ce04b8-e99c-11e8-a1ca-04d3b0c2aad3',
+         *         var board = JXG.JSXGraph.initBoard('JXG40ce04b8-e99c-11e8-a1ca-04d3b0c2aad3',
          *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
          *     // Divide the slider area into 20 steps and
          *     // visit every step 30 msec.

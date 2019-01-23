@@ -72,10 +72,10 @@ define([
      * var p2 = board.create('point', [1,1]);
      * var p3 = board.create('point', [3,1]);
      * var tape = board.create('tapemeasure', [[1, 2], [4, 2]], {name:'dist'});
-     * </pre><div class="jxgbox" id="6d9a2cda-22fe-4cd1-9d94-34283b1bdc01" style="width: 200px; height: 200px;"></div>
+     * </pre><div class="jxgbox" id="JXG6d9a2cda-22fe-4cd1-9d94-34283b1bdc01" style="width: 200px; height: 200px;"></div>
      * <script type="text/javascript">
      *   (function () {
-     *     var board = JXG.JSXGraph.initBoard('6d9a2cda-22fe-4cd1-9d94-34283b1bdc01', {boundingbox: [-1, 5, 5, -1], axis: true, showcopyright: false, shownavigation: false});
+     *     var board = JXG.JSXGraph.initBoard('JXG6d9a2cda-22fe-4cd1-9d94-34283b1bdc01', {boundingbox: [-1, 5, 5, -1], axis: true, showcopyright: false, shownavigation: false});
      *     var p1 = board.create('point', [0,0]);
      *     var p2 = board.create('point', [1,1]);
      *     var p3 = board.create('point', [3,1]);

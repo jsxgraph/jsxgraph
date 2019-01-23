@@ -526,10 +526,10 @@ define([
      *     t = board.create('transform', [function(){ return p0.X(); }, "Y(A)"], {type: 'translate'}),
      *     p1 = board.create('point', [p0, t], {color: 'blue'});
      *
-     * </pre><div class="jxgbox" id="14167b0c-2ad3-11e5-8dd9-901b0e1b8723" style="width: 300px; height: 300px;"></div>
+     * </pre><div class="jxgbox" id="JXG14167b0c-2ad3-11e5-8dd9-901b0e1b8723" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
      *     (function() {
-     *         var board = JXG.JSXGraph.initBoard('14167b0c-2ad3-11e5-8dd9-901b0e1b8723',
+     *         var board = JXG.JSXGraph.initBoard('JXG14167b0c-2ad3-11e5-8dd9-901b0e1b8723',
      *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
      *     var p0 = board.create('point', [0, 3], {name: 'A'}),
      *         t = board.create('transform', [function(){ return p0.X(); }, "Y(A)"], {type:'translate'}),
@@ -547,10 +547,10 @@ define([
      *     t = board.create('transform', [2, 0.5], {type: 'scale'}),
      *     p2 = board.create('point', [p1, t], {color: 'blue'});
      *
-     * </pre><div class="jxgbox" id="a6827a72-2ad3-11e5-8dd9-901b0e1b8723" style="width: 300px; height: 300px;"></div>
+     * </pre><div class="jxgbox" id="JXGa6827a72-2ad3-11e5-8dd9-901b0e1b8723" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
      *     (function() {
-     *         var board = JXG.JSXGraph.initBoard('a6827a72-2ad3-11e5-8dd9-901b0e1b8723',
+     *         var board = JXG.JSXGraph.initBoard('JXGa6827a72-2ad3-11e5-8dd9-901b0e1b8723',
      *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
      *     var p1 = board.create('point', [1, 1]),
      *         t = board.create('transform', [2, 0.5], {type: 'scale'}),
@@ -572,10 +572,10 @@ define([
      *     t = board.create('transform', ['Y(A)', p2], {type: 'rotate'}),
      *     p3 = board.create('point', [p1, t], {color: 'blue'});
      *
-     * </pre><div class="jxgbox" id="747cf11e-2ad4-11e5-8dd9-901b0e1b8723" style="width: 300px; height: 300px;"></div>
+     * </pre><div class="jxgbox" id="JXG747cf11e-2ad4-11e5-8dd9-901b0e1b8723" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
      *     (function() {
-     *         var board = JXG.JSXGraph.initBoard('747cf11e-2ad4-11e5-8dd9-901b0e1b8723',
+     *         var board = JXG.JSXGraph.initBoard('JXG747cf11e-2ad4-11e5-8dd9-901b0e1b8723',
      *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
      *     var p0 = board.create('point', [0, 3], {name: 'A'}),
      *         p1 = board.create('point', [1, 1]),
@@ -597,10 +597,10 @@ define([
      *     t3 = board.create('transform', [2, 1], {type: 'translate'}),
      *     p2 = board.create('point', [p1, [t1, t2, t3]], {color: 'blue'});
      *
-     * </pre><div class="jxgbox" id="f516d3de-2ad5-11e5-8dd9-901b0e1b8723" style="width: 300px; height: 300px;"></div>
+     * </pre><div class="jxgbox" id="JXGf516d3de-2ad5-11e5-8dd9-901b0e1b8723" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
      *     (function() {
-     *         var board = JXG.JSXGraph.initBoard('f516d3de-2ad5-11e5-8dd9-901b0e1b8723',
+     *         var board = JXG.JSXGraph.initBoard('JXGf516d3de-2ad5-11e5-8dd9-901b0e1b8723',
      *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
      *     var p1 = board.create('point', [1, 1]),
      *         t1 = board.create('transform', [-2, -1], {type:'translate'}),
@@ -621,10 +621,10 @@ define([
      *     t = board.create('transform', [l], {type: 'reflect'}),  // Possible are l, l.id, l.name
      *     p4 = board.create('point', [p1, t], {color: 'blue'});
      *
-     * </pre><div class="jxgbox" id="6f374a04-2ad6-11e5-8dd9-901b0e1b8723" style="width: 300px; height: 300px;"></div>
+     * </pre><div class="jxgbox" id="JXG6f374a04-2ad6-11e5-8dd9-901b0e1b8723" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
      *     (function() {
-     *         var board = JXG.JSXGraph.initBoard('6f374a04-2ad6-11e5-8dd9-901b0e1b8723',
+     *         var board = JXG.JSXGraph.initBoard('JXG6f374a04-2ad6-11e5-8dd9-901b0e1b8723',
      *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
      *     var p1 = board.create('point', [1, 1]),
      *         p2 = board.create('point', [1, 3]),
@@ -644,10 +644,10 @@ define([
      *     t = board.create('transform', [3, 2], {type: 'shear'});
      * t.applyOnce([p1, p2]);
      *
-     * </pre><div class="jxgbox" id="b6cee1c4-2ad6-11e5-8dd9-901b0e1b8723" style="width: 300px; height: 300px;"></div>
+     * </pre><div class="jxgbox" id="JXGb6cee1c4-2ad6-11e5-8dd9-901b0e1b8723" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
      *     (function() {
-     *         var board = JXG.JSXGraph.initBoard('b6cee1c4-2ad6-11e5-8dd9-901b0e1b8723',
+     *         var board = JXG.JSXGraph.initBoard('JXGb6cee1c4-2ad6-11e5-8dd9-901b0e1b8723',
      *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
      *     var p1 = board.create('point', [1, 1]),
      *         p2 = board.create('point', [-1, -2]),
@@ -689,10 +689,10 @@ define([
      *     // Apply the rotation to all but the first point of the square
      *     rot.bindTo(sq.slice(1));
      *
-     * </pre><div class="jxgbox" id="c7f9097e-2ad7-11e5-8dd9-901b0e1b8723" style="width: 300px; height: 300px;"></div>
+     * </pre><div class="jxgbox" id="JXGc7f9097e-2ad7-11e5-8dd9-901b0e1b8723" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
      *     (function() {
-     *         var board = JXG.JSXGraph.initBoard('c7f9097e-2ad7-11e5-8dd9-901b0e1b8723',
+     *         var board = JXG.JSXGraph.initBoard('JXGc7f9097e-2ad7-11e5-8dd9-901b0e1b8723',
      *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
      *     // Construct a square of side length 2 with the
      *     // help of transformations

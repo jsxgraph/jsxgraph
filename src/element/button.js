@@ -91,9 +91,9 @@ define([
      *      "$('p1').Y = $('p1').Y() - 0.5;"
      *  ], {});
      *
-     * </pre><div class="jxgbox" id="f19b1bce-dd00-4e35-be97-ff1817d11514" style="width: 500px; height: 300px;"></div>
+     * </pre><div class="jxgbox" id="JXGf19b1bce-dd00-4e35-be97-ff1817d11514" style="width: 500px; height: 300px;"></div>
      * <script type="text/javascript">
-     *  var t1_board = JXG.JSXGraph.initBoard('f19b1bce-dd00-4e35-be97-ff1817d11514', {boundingbox: [-3, 6, 5, -3], axis: true, showcopyright: false, shownavigation: false});
+     *  var t1_board = JXG.JSXGraph.initBoard('JXGf19b1bce-dd00-4e35-be97-ff1817d11514', {boundingbox: [-3, 6, 5, -3], axis: true, showcopyright: false, shownavigation: false});
      *  var p = t1_board.create('point', [0, -1], {id: 'p1'});
      *
      *  // Create a button element at position [1,2].

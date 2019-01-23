@@ -789,9 +789,9 @@ define([
      * @example
      * // Create a fixed text at position [0,1].
      *   var t1 = board.create('text',[0,1,"Hello World"]);
-     * </pre><div class="jxgbox" id="896013aa-f24e-4e83-ad50-7bc7df23f6b7" style="width: 300px; height: 300px;"></div>
+     * </pre><div class="jxgbox" id="JXG896013aa-f24e-4e83-ad50-7bc7df23f6b7" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
-     *   var t1_board = JXG.JSXGraph.initBoard('896013aa-f24e-4e83-ad50-7bc7df23f6b7', {boundingbox: [-3, 6, 5, -3], axis: true, showcopyright: false, shownavigation: false});
+     *   var t1_board = JXG.JSXGraph.initBoard('JXG896013aa-f24e-4e83-ad50-7bc7df23f6b7', {boundingbox: [-3, 6, 5, -3], axis: true, showcopyright: false, shownavigation: false});
      *   var t1 = t1_board.create('text',[0,1,"Hello World"]);
      * </script><pre>
      * @example
@@ -802,9 +802,9 @@ define([
      *                         function(){return "The value of s is"+JXG.toFixed(s.Value(), 2);}
      *                        ]
      *                     );
-     * </pre><div class="jxgbox" id="5441da79-a48d-48e8-9e53-75594c384a1c" style="width: 300px; height: 300px;"></div>
+     * </pre><div class="jxgbox" id="JXG5441da79-a48d-48e8-9e53-75594c384a1c" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
-     *   var t2_board = JXG.JSXGraph.initBoard('5441da79-a48d-48e8-9e53-75594c384a1c', {boundingbox: [-3, 6, 5, -3], axis: true, showcopyright: false, shownavigation: false});
+     *   var t2_board = JXG.JSXGraph.initBoard('JXG5441da79-a48d-48e8-9e53-75594c384a1c', {boundingbox: [-3, 6, 5, -3], axis: true, showcopyright: false, shownavigation: false});
      *   var s = t2_board.create('slider',[[0,4],[3,4],[-2,0,2]]);
      *   var t2 = t2_board.create('text',[function(x){ return s.Value();}, 1, function(){return "The value of s is "+JXG.toFixed(s.Value(), 2);}]);
      * </script><pre>
@@ -813,10 +813,10 @@ define([
      * var p = board.create('point',[0, 1]),
      *     t = board.create('text',[0, -1,"Hello World"], {anchor: p});
      *
-     * </pre><div class="jxgbox" id="ff5a64b2-2b9a-11e5-8dd9-901b0e1b8723" style="width: 300px; height: 300px;"></div>
+     * </pre><div class="jxgbox" id="JXGff5a64b2-2b9a-11e5-8dd9-901b0e1b8723" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
      *     (function() {
-     *         var board = JXG.JSXGraph.initBoard('ff5a64b2-2b9a-11e5-8dd9-901b0e1b8723',
+     *         var board = JXG.JSXGraph.initBoard('JXGff5a64b2-2b9a-11e5-8dd9-901b0e1b8723',
      *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
      *     var p = board.create('point',[0, 1]),
      *         t = board.create('text',[0, -1,"Hello World"], {anchor: p});

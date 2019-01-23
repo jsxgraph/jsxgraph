@@ -78,10 +78,10 @@ define([
      * var p3 = board.create('point', [3.5, 1.0]);
      *
      * var a = board.create('arc', [p1, p2, p3]);
-     * </pre><div class="jxgbox" id="114ef584-4a5e-4686-8392-c97501befb5b" style="width: 300px; height: 300px;"></div>
+     * </pre><div class="jxgbox" id="JXG114ef584-4a5e-4686-8392-c97501befb5b" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
      * (function () {
-     *   var board = JXG.JSXGraph.initBoard('114ef584-4a5e-4686-8392-c97501befb5b', {boundingbox: [-1, 7, 7, -1], axis: true, showcopyright: false, shownavigation: false}),
+     *   var board = JXG.JSXGraph.initBoard('JXG114ef584-4a5e-4686-8392-c97501befb5b', {boundingbox: [-1, 7, 7, -1], axis: true, showcopyright: false, shownavigation: false}),
      *       p1 = board.create('point', [2.0, 2.0]),
      *       p2 = board.create('point', [1.0, 0.5]),
      *       p3 = board.create('point', [3.5, 1.0]),
@@ -95,10 +95,10 @@ define([
      * var a1 = board.create('arc', [[1, 1], [0, 1], [1, 0]], {strokeColor: 'red'});
      * var a2 = board.create('curve', [a1, t], {strokeColor: 'red'});
      *
-     * </pre><div id="1949da46-6339-11e8-9fb9-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
+     * </pre><div id="JXG1949da46-6339-11e8-9fb9-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
      *     (function() {
-     *         var board = JXG.JSXGraph.initBoard('1949da46-6339-11e8-9fb9-901b0e1b8723',
+     *         var board = JXG.JSXGraph.initBoard('JXG1949da46-6339-11e8-9fb9-901b0e1b8723',
      *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
      *     var t = board.create('transform', [2, 1.5], {type: 'scale'});
      *     var a1 = board.create('arc', [[1, 1], [0, 1], [1, 0]], {strokeColor: 'red'});
@@ -415,10 +415,10 @@ define([
      * var p2 = board.create('point', [1.0, 0.5]);
      *
      * var a = board.create('semicircle', [p1, p2]);
-     * </pre><div class="jxgbox" id="5385d349-75d7-4078-b732-9ae808db1b0e" style="width: 300px; height: 300px;"></div>
+     * </pre><div class="jxgbox" id="JXG5385d349-75d7-4078-b732-9ae808db1b0e" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
      * (function () {
-     *   var board = JXG.JSXGraph.initBoard('5385d349-75d7-4078-b732-9ae808db1b0e', {boundingbox: [-1, 7, 7, -1], axis: true, showcopyright: false, shownavigation: false}),
+     *   var board = JXG.JSXGraph.initBoard('JXG5385d349-75d7-4078-b732-9ae808db1b0e', {boundingbox: [-1, 7, 7, -1], axis: true, showcopyright: false, shownavigation: false}),
      *       p1 = board.create('point', [4.5, 2.0]),
      *       p2 = board.create('point', [1.0, 0.5]),
      *
@@ -481,10 +481,10 @@ define([
      * var p3 = board.create('point', [3.5, 1.0]);
      *
      * var a = board.create('arc', [p1, p2, p3]);
-     * </pre><div class="jxgbox" id="87125fd4-823a-41c1-88ef-d1a1369504e3" style="width: 300px; height: 300px;"></div>
+     * </pre><div class="jxgbox" id="JXG87125fd4-823a-41c1-88ef-d1a1369504e3" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
      * (function () {
-     *   var board = JXG.JSXGraph.initBoard('87125fd4-823a-41c1-88ef-d1a1369504e3', {boundingbox: [-1, 7, 7, -1], axis: true, showcopyright: false, shownavigation: false}),
+     *   var board = JXG.JSXGraph.initBoard('JXG87125fd4-823a-41c1-88ef-d1a1369504e3', {boundingbox: [-1, 7, 7, -1], axis: true, showcopyright: false, shownavigation: false}),
      *       p1 = board.create('point', [2.0, 2.0]),
      *       p2 = board.create('point', [1.0, 0.5]),
      *       p3 = board.create('point', [3.5, 1.0]),
@@ -551,10 +551,10 @@ define([
      * var p3 = board.create('point', [3.5, 1.0]);
      *
      * var a = board.create('arc', [p1, p2, p3]);
-     * </pre><div class="jxgbox" id="64ba7ca2-8728-45f3-96e5-3c7a4414de2f" style="width: 300px; height: 300px;"></div>
+     * </pre><div class="jxgbox" id="JXG64ba7ca2-8728-45f3-96e5-3c7a4414de2f" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
      * (function () {
-     *   var board = JXG.JSXGraph.initBoard('64ba7ca2-8728-45f3-96e5-3c7a4414de2f', {boundingbox: [-1, 7, 7, -1], axis: true, showcopyright: false, shownavigation: false}),
+     *   var board = JXG.JSXGraph.initBoard('JXG64ba7ca2-8728-45f3-96e5-3c7a4414de2f', {boundingbox: [-1, 7, 7, -1], axis: true, showcopyright: false, shownavigation: false}),
      *       p1 = board.create('point', [2.0, 2.0]),
      *       p2 = board.create('point', [1.0, 0.5]),
      *       p3 = board.create('point', [3.5, 1.0]),
@@ -590,10 +590,10 @@ define([
      * var p3 = board.create('point', [3.5, 1.0]);
      *
      * var a = board.create('minorarc', [p1, p2, p3]);
-     * </pre><div class="jxgbox" id="17a10d38-5629-40a4-b150-f41806edee9f" style="width: 300px; height: 300px;"></div>
+     * </pre><div class="jxgbox" id="JXG17a10d38-5629-40a4-b150-f41806edee9f" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
      * (function () {
-     *   var board = JXG.JSXGraph.initBoard('17a10d38-5629-40a4-b150-f41806edee9f', {boundingbox: [-1, 7, 7, -1], axis: true, showcopyright: false, shownavigation: false}),
+     *   var board = JXG.JSXGraph.initBoard('JXG17a10d38-5629-40a4-b150-f41806edee9f', {boundingbox: [-1, 7, 7, -1], axis: true, showcopyright: false, shownavigation: false}),
      *       p1 = board.create('point', [2.0, 2.0]),
      *       p2 = board.create('point', [1.0, 0.5]),
      *       p3 = board.create('point', [3.5, 1.0]),

@@ -63,10 +63,10 @@ define([
      * // Create a simple horizontal comb with invisible endpoints
      * var c = board.create('comb', [[1, 0], [3, 0]]);
      *
-     * </pre><div class="jxgbox" id="951ccb6a-52bc-4dc2-80e9-43db064f0f1b" style="width: 300px; height: 300px;"></div>
+     * </pre><div class="jxgbox" id="JXG951ccb6a-52bc-4dc2-80e9-43db064f0f1b" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
      * (function () {
-     *   var board = JXG.JSXGraph.initBoard('951ccb6a-52bc-4dc2-80e9-43db064f0f1b', {boundingbox: [-5, 5, 5, -5], axis: true, showcopyright: false, shownavigation: false}),
+     *   var board = JXG.JSXGraph.initBoard('JXG951ccb6a-52bc-4dc2-80e9-43db064f0f1b', {boundingbox: [-5, 5, 5, -5], axis: true, showcopyright: false, shownavigation: false}),
      *     c = board.create('comb', [[1, 0], [3, 0]]);
      * })();
      * </script><pre>
@@ -76,10 +76,10 @@ define([
      * var p2 = board.create('glider', [-1, 0, board.defaultAxes.x]);
      * var c1 = board.create('comb', [p1, p2], {width: 0.2, frequency: 0.1, angle: Math.PI / 4});
      *
-     * </pre><div id="04186fd2-6340-11e8-9fb9-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
+     * </pre><div id="JXG04186fd2-6340-11e8-9fb9-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
      *     (function() {
-     *         var board = JXG.JSXGraph.initBoard('04186fd2-6340-11e8-9fb9-901b0e1b8723',
+     *         var board = JXG.JSXGraph.initBoard('JXG04186fd2-6340-11e8-9fb9-901b0e1b8723',
      *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
      *     var p1 = board.create('glider', [-3, 0, board.defaultAxes.x]);
      *     var p2 = board.create('glider', [-1, 0, board.defaultAxes.x]);

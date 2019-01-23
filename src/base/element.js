@@ -477,10 +477,10 @@ define([
          *           return a * (x - ax) * (x - ax) + ay;
          *      }, {fixed: false});
          * f.addParents([A, B]);
-         * </pre><div class="jxgbox" id="7c91d4d2-986c-4378-8135-24505027f251" style="width: 400px; height: 400px;"></div>
+         * </pre><div class="jxgbox" id="JXG7c91d4d2-986c-4378-8135-24505027f251" style="width: 400px; height: 400px;"></div>
          * <script type="text/javascript">
          * (function() {
-         *   var board = JXG.JSXGraph.initBoard('7c91d4d2-986c-4378-8135-24505027f251', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
+         *   var board = JXG.JSXGraph.initBoard('JXG7c91d4d2-986c-4378-8135-24505027f251', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
          *   var A = board.create('point', [1, 0], {name:'A'}),
          *       B = board.create('point', [3, 1], {name:'B'}),
          *       f = board.create('functiongraph', function(x) {

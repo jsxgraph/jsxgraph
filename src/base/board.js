@@ -4626,15 +4626,13 @@ define([
          *  });
          *
          *
-         * </pre><div class="jxgbox" id="11eff3a6-8c50-11e5-b01d-901b0e1b8723" style="width: 300px; height: 300px;"></div>
+         * </pre><div class="jxgbox" id="JXG11eff3a6-8c50-11e5-b01d-901b0e1b8723" style="width: 300px; height: 300px;"></div>
          * <script type="text/javascript">
          *     (function() {
-         *         var board = JXG.JSXGraph.initBoard('11eff3a6-8c50-11e5-b01d-901b0e1b8723',
-         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
          *     //
          *     // Set a new bounding box from the selection rectangle
          *     //
-         *     var board = JXG.JSXGraph.initBoard('11eff3a6-8c50-11e5-b01d-901b0e1b8723', {
+         *     var board = JXG.JSXGraph.initBoard('JXG11eff3a6-8c50-11e5-b01d-901b0e1b8723', {
          *             boundingBox:[-3,2,3,-2],
          *             keepAspectRatio: false,
          *             axis:true,
@@ -4921,10 +4919,10 @@ define([
          *     console.log("Hit element", el);
          * });
          *
-         * </pre><div id="19eb31ac-88e6-11e8-bcb5-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * </pre><div id="JXG19eb31ac-88e6-11e8-bcb5-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
          * <script type="text/javascript">
          *     (function() {
-         *         var board = JXG.JSXGraph.initBoard('19eb31ac-88e6-11e8-bcb5-901b0e1b8723',
+         *         var board = JXG.JSXGraph.initBoard('JXG19eb31ac-88e6-11e8-bcb5-901b0e1b8723',
          *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
          *     var c = board.create('circle', [[1, 1], 2]);
          *     board.on('hit', function(evt, el) {
@@ -5085,12 +5083,12 @@ define([
          * var p = board.create('point', [0, 1]);
          * &lt;/script&gt;
          *
-         * </pre><div id="d5bab8b6-fd40-11e8-ab14-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * </pre><div id="JXGd5bab8b6-fd40-11e8-ab14-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
          * <button onClick="board_d5bab8b6.toFullscreen()">Fullscreen</button>
          * <script type="text/javascript">
          *      var board_d5bab8b6;
          *     (function() {
-         *         var board = JXG.JSXGraph.initBoard('d5bab8b6-fd40-11e8-ab14-901b0e1b8723',
+         *         var board = JXG.JSXGraph.initBoard('JXGd5bab8b6-fd40-11e8-ab14-901b0e1b8723',
          *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
          *         var board = JXG.JSXGraph.initBoard('d5bab8b6-fd40-11e8-ab14-901b0e1b8723', {axis:true, boundingbox:[-5,5,5,-5]});
          *         var p = board.create('point', [0, 1]);
@@ -5170,9 +5168,9 @@ define([
          * var roll = brd.createRoulette(line, circle, 0, Math.PI/20, 1, 100, [C,P,B]);
          * roll.start() // Start the rolling, to be stopped by roll.stop()
          *
-         * </pre><div class="jxgbox" id="e5e1b53c-a036-4a46-9e35-190d196beca5" style="width: 300px; height: 300px;"></div>
+         * </pre><div class="jxgbox" id="JXGe5e1b53c-a036-4a46-9e35-190d196beca5" style="width: 300px; height: 300px;"></div>
          * <script type="text/javascript">
-         * var brd = JXG.JSXGraph.initBoard('e5e1b53c-a036-4a46-9e35-190d196beca5', {boundingbox: [-5, 5, 5, -5], axis: true, showcopyright:false, shownavigation: false});
+         * var brd = JXG.JSXGraph.initBoard('JXGe5e1b53c-a036-4a46-9e35-190d196beca5', {boundingbox: [-5, 5, 5, -5], axis: true, showcopyright:false, shownavigation: false});
          * // Line which will be the floor to roll upon.
          * var line = brd.create('curve', [function (t) { return t;}, function (t){ return 1;}], {strokeWidth:6});
          * // Center of the rolling circle

@@ -1736,7 +1736,7 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
             var w = [],
                 /** @ignore */
                 fct = function (x, suspendedUpdate) {
-                    var i, // j, 
+                    var i, // j,
                         k, xi, s, //M,
                         len = p.length,
                         num = 0,
@@ -2546,9 +2546,9 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
          *     dataY[i] = data[i][0];
          * }
          * var g = board.create('curve', [dataX, dataY], {strokeWidth:'2px'});
-         * </pre><div class="jxgbox" id="d2432d04-4ef7-4159-a90b-a2eb8d38c4f6" style="width: 300px; height: 300px;"></div>
+         * </pre><div class="jxgbox" id="JXGd2432d04-4ef7-4159-a90b-a2eb8d38c4f6" style="width: 300px; height: 300px;"></div>
          * <script type="text/javascript">
-         * var board = JXG.JSXGraph.initBoard('d2432d04-4ef7-4159-a90b-a2eb8d38c4f6', {boundingbox: [-1, 5, 5, -1], axis: true, showcopyright: false, shownavigation: false});
+         * var board = JXG.JSXGraph.initBoard('JXGd2432d04-4ef7-4159-a90b-a2eb8d38c4f6', {boundingbox: [-1, 5, 5, -1], axis: true, showcopyright: false, shownavigation: false});
          * function f(t, x) {
          *     // we have to copy the value.
          *     // return x; would just return the reference.
@@ -3173,10 +3173,10 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
          *     };
          *     board.update();
          *
-         * </pre><div id="ce0cc55c-b592-11e6-8270-104a7d3be7eb" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * </pre><div id="JXGce0cc55c-b592-11e6-8270-104a7d3be7eb" class="jxgbox" style="width: 300px; height: 300px;"></div>
          * <script type="text/javascript">
          *     (function() {
-         *         var board = JXG.JSXGraph.initBoard('ce0cc55c-b592-11e6-8270-104a7d3be7eb',
+         *         var board = JXG.JSXGraph.initBoard('JXGce0cc55c-b592-11e6-8270-104a7d3be7eb',
          *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
          *
          *         var i, p = [];
