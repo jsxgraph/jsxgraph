@@ -67,7 +67,7 @@ define([
      * @param {JXG.Point_JXG.Point_JXG.Point} p1,p2,p1 A sector is defined by three points: The sector's center <tt>p1</tt>,
      * a second point <tt>p2</tt> defining the radius and a third point <tt>p3</tt> defining the angle of the sector. The
      * Sector is always drawn counter clockwise from <tt>p2</tt> to <tt>p3</tt>
-     *
+     * <p>
      * Second possibility of input parameters are:
      * @param {JXG.Line_JXG.Line_array,number_array,number_number,function} line, line2, coords1 or direction1, coords2 or direction2, radius The sector is defined by two lines.
      * The two legs which define the sector are given by two coordinates arrays which are project initially two the two lines or by two directions (+/- 1).

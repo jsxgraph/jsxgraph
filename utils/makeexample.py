@@ -37,7 +37,8 @@ if __name__ == '__main__':
         print "%s%s" % (space, line.rstrip())
     print space
     
-    uid = "JXG" + uuid.uuid1()
+    uid = "JXG" + "%s" % (uuid.uuid4())
+
     ''' Print live code '''
     print "%s%s%s%s" % (space, "</pre><div id=\"", uid, "\" class=\"jxgbox\" style=\"width: 300px; height: 300px;\"></div>")
     print "%s%s"     % (space, "<script type=\"text/javascript\">")
