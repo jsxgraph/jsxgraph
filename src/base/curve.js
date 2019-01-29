@@ -1525,7 +1525,7 @@ define([
         },
 
         /**
-         * Converts the GEONExT syntax of the defining function term into JavaScript.
+         * Converts the JavaScript/JessieCode/GEONExT syntax of the defining function term into JavaScript.
          * New methods X() and Y() for the Curve object are generated, further
          * new methods for minX() and maxX().
          * @see JXG.GeonextParser.geonext2JS.
