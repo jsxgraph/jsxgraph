@@ -1528,6 +1528,39 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
          * f(t) = (x(t), y(t)), a number x1 (which equals 0) and a function x2 defining the curve's domain.
          * That means the curve is defined between x1 and x2(). x2 returns the (length of array p minus one).
          * @memberof JXG.Math.Numerics
+         *
+         * @example
+         * var p = [];
+         *
+         * p[0] = board.create('point', [0, -2], {size:2, name: 'C(a)'});
+         * p[1] = board.create('point', [-1.5, 5], {size:2, name: ''});
+         * p[2] = board.create('point', [1, 4], {size:2, name: ''});
+         * p[3] = board.create('point', [3, 3], {size:2, name: 'C(b)'});
+         *
+         * // Curve
+         * var fg = JXG.Math.Numerics.Neville(p);
+         * var graph = board.create('curve', fg, {strokeWidth:3, strokeOpacity:0.5});
+         *
+         * </pre><div id="JXG88a8b3a8-6561-44f5-a678-76bca13fd484" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG88a8b3a8-6561-44f5-a678-76bca13fd484',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *     var p = [];
+         *
+         *     p[0] = board.create('point', [0, -2], {size:2, name: 'C(a)'});
+         *     p[1] = board.create('point', [-1.5, 5], {size:2, name: ''});
+         *     p[2] = board.create('point', [1, 4], {size:2, name: ''});
+         *     p[3] = board.create('point', [3, 3], {size:2, name: 'C(b)'});
+         *
+         *     // Curve
+         *     var fg = JXG.Math.Numerics.Neville(p);
+         *     var graph = board.create('curve', fg, {strokeWidth:3, strokeOpacity:0.5});
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
          */
         Neville: function (p) {
             var w = [],
@@ -1733,6 +1766,33 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
          * @param {Array} p Array of JXG.Points
          * @returns {function} A function of one parameter which returns the value of the polynomial, whose graph runs through the given points.
          * @memberof JXG.Math.Numerics
+         *
+         * @example
+         * var p = [];
+         * p[0] = board.create('point', [-1,2], {size:4});
+         * p[1] = board.create('point', [0,3], {size:4});
+         * p[2] = board.create('point', [1,1], {size:4});
+         * p[3] = board.create('point', [3,-1], {size:4});
+         * var f = JXG.Math.Numerics.lagrangePolynomial(p);
+         * var graph = board.create('functiongraph', [f,-10, 10], {strokeWidth:3});
+         *
+         * </pre><div id="JXGc058aa6b-74d4-41e1-af94-df06169a2d89" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXGc058aa6b-74d4-41e1-af94-df06169a2d89',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *     var p = [];
+         *     p[0] = board.create('point', [-1,2], {size:4});
+         *     p[1] = board.create('point', [0,3], {size:4});
+         *     p[2] = board.create('point', [1,1], {size:4});
+         *     p[3] = board.create('point', [3,-1], {size:4});
+         *     var f = JXG.Math.Numerics.lagrangePolynomial(p);
+         *     var graph = board.create('functiongraph', [f,-10, 10], {strokeWidth:3});
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
          */
         lagrangePolynomial: function (p) {
             var w = [],
