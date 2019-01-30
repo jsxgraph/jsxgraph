@@ -1420,9 +1420,10 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
         },
 
         /**
-         * Abstract method to find roots of univariate functions.
+         * Abstract method to find roots of univariate functions, which - for the time being -
+         * is an alias for {@link JXG.Math.Numerics.fzero}
          * @param {function} f We search for a solution of f(x)=0.
-         * @param {Number} x initial guess for the root, i.e. starting value.
+         * @param {Number} x initial guess for the root, i.e. starting value, or start interval enclosing the root.
          * @param {Object} context optional object that is treated as "this" in the function body. This is useful if
          * the function is a method of an object and contains a reference to its parent object via "this".
          * @returns {Number} A root of the function f.
@@ -1524,7 +1525,8 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
          * The graph of the parametric curve [x(t),y(t)] runs through the given points.
          * @param {Array} p Array of JXG.Points
          * @returns {Array} An array consisting of two functions x(t), y(t) which define a parametric curve
-         * f(t) = (x(t), y(t)) and two numbers x1 and x2 defining the curve's domain. x1 always equals zero.
+         * f(t) = (x(t), y(t)), a number x1 (which equals 0) and a function x2 defining the curve's domain.
+         * That means the curve is defined between x1 and x2(). x2 returns the (length of array p minus one).
          * @memberof JXG.Math.Numerics
          */
         Neville: function (p) {
