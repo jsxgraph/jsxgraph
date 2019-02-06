@@ -912,14 +912,19 @@ define([
                     this.downObjects.push(pEl);
                 }
 
-                if (((this.geonextCompatibilityMode &&
+                if (haspoint &&
+                    pEl.isDraggable &&
+                    pEl.visPropCalc.visible &&
+                    ((this.geonextCompatibilityMode &&
                         (Type.isPoint(pEl) ||
-                          pEl.elementClass === Const.OBJECT_CLASS_TEXT)) ||
-                        !this.geonextCompatibilityMode) &&
-                        pEl.isDraggable &&
-                        pEl.visPropCalc.visible &&
-                        (!Type.evaluate(pEl.visProp.fixed)) && /*(!pEl.visProp.frozen) &&*/
-                        haspoint) {
+                         pEl.elementClass === Const.OBJECT_CLASS_TEXT)
+                     ) ||
+                     !this.geonextCompatibilityMode
+                    ) &&
+                    !Type.evaluate(pEl.visProp.fixed)
+                    /*(!pEl.visProp.frozen) &&*/
+                    ) {
+
                     // Elements in the highest layer get priority.
                     if (pEl.visProp.layer > dragEl.visProp.layer ||
                             (pEl.visProp.layer === dragEl.visProp.layer &&
