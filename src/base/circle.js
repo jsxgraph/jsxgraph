@@ -546,7 +546,6 @@ define([
             return new Coords(Const.COORDS_BY_USER, [x, y], this.board);
         },
 
-
         // documented in geometry element
         cloneToBackground: function () {
             var er,
