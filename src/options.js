@@ -880,10 +880,13 @@ define([
              * Determines whether two-finger manipulation of this object may change its size.
              * If set to false, the object is only rotated and translated.
              * <p>
-             * In case the element is a horizontal or vertical line having ticks, "scalable==true"
+             * In case the element is a horizontal or vertical line having ticks, "scalable:true"
              * enables zooming of the board by dragging ticks lines. This feature is enabled,
              * for the ticks element of the line element the attribute "fixed" has to be false
              * and the line element's scalable attribute has to be true.
+             * <p>
+             * In case the element is a polygon or line and it has the attribute "scalable:false",
+             * moving the element with two fingers results in a rotation or translation.
              *
              * @type Boolean
              * @default true

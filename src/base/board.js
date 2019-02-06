@@ -1099,7 +1099,7 @@ define([
         },
 
         /**
-         * Moves a line or polygon with two fingers
+         * Moves, rotates and scales a line or polygon with two fingers.
          * @param {JXG.Coords} np1c x,y coordinates of first touch
          * @param {JXG.Coords} np2c x,y coordinates of second touch
          * @param {object} o The touch object that is dragged: {JXG.Board#touches}.
@@ -1189,7 +1189,7 @@ define([
         },
 
         /*
-         * Moves a circle with two fingers
+         * Moves, rotates and scales a circle with two fingers.
          * @param {JXG.Coords} np1c x,y coordinates of first touch
          * @param {JXG.Coords} np2c x,y coordinates of second touch
          * @param {object} o The touch object that is dragged: {JXG.Board#touches}.
