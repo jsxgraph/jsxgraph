@@ -285,7 +285,7 @@
                         }
                         set_str += ', fillColor: \'' + step.args.fillColor + '\'';
                         set_str += ', snaptogrid: ' + JXG.Options.elements.snapToGrid;
-                        set_str += ', snaptopoints: ' + JXG.Options.elements.snapToPoints + ', scalable:true>>; ';
+                        set_str += ', snaptopoints: ' + JXG.Options.elements.snapToPoints + '>>; ';
 
                     } else if (step.args.type === 'line' || step.args.type === 'vector') {
                         set_str = '';
@@ -418,7 +418,7 @@
                         }
                         set_str += ', fillColor: \'' + step.args.fillColor + '\'';
                         set_str += ', snaptogrid: ' + JXG.Options.elements.snapToGrid;
-                        set_str += ', snaptopoints: ' + JXG.Options.elements.snapToPoints + ', scalable:true>>; ';
+                        set_str += ', snaptopoints: ' + JXG.Options.elements.snapToPoints + '>>; ';
                     } else if (step.args.type === 'line' || step.args.type === 'vector') {
                         set_str = '';
                         el = step.src_ids[step.src_ids.length - 1];
@@ -1017,7 +1017,7 @@
                     set_str += '>>, ' + attrid + ' fillOpacity: ';
                     set_str += JXG.Options.opacityLevel + ', name: \'\', hasInnerPoints:' + JXG.Options.polygon.hasInnerPoints;
                     set_str += ', snaptogrid: ' + JXG.Options.elements.snapToGrid;
-                    set_str += ', snaptopoints: ' + JXG.Options.elements.snapToPoints + ', scalable:true>>; ';
+                    set_str += ', snaptopoints: ' + JXG.Options.elements.snapToPoints + '>>; ';
                     break;
 
                 case JXG.GENTYPE_QUADRILATERAL:
@@ -1054,7 +1054,7 @@
                     set_str += ' fillOpacity: ';
                     set_str += JXG.Options.opacityLevel + ', name: \'\', hasInnerPoints:' + JXG.Options.polygon.hasInnerPoints;
                     set_str += ', snaptogrid: ' + JXG.Options.elements.snapToGrid;
-                    set_str += ', snaptopoints: ' + JXG.Options.elements.snapToPoints + ', scalable:true>>; ';
+                    set_str += ', snaptopoints: ' + JXG.Options.elements.snapToPoints + '>>; ';
                     break;
 
                 case JXG.GENTYPE_TEXT:
