@@ -337,7 +337,7 @@ define([
      * The resulting point is a clone of the base point transformed by the given Transformation. {@see JXG.Transformation}.
      *
      * @example
-     * // Create a free point using affine euclidean coordinates
+     * // Create a free point using affine Euclidean coordinates
      * var p1 = board.create('point', [3.5, 2.0]);
      * </pre><div class="jxgbox" id="JXG672f1764-7dfa-4abc-a2c6-81fbbf83e44b" style="width: 200px; height: 200px;"></div>
      * <script type="text/javascript">
@@ -389,7 +389,7 @@ define([
      * @type JXG.Point
      * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
      * @param {Number_Number_Number_JXG.GeometryElement} z_,x_,y_,GlideObject Parent elements can be two or three elements of type number and the object the glider lives on.
-     * The coordinates are completely optional. If not given the origin is used. If you provide two numbers for coordinates they will be interpreted as affine euclidean
+     * The coordinates are completely optional. If not given the origin is used. If you provide two numbers for coordinates they will be interpreted as affine Euclidean
      * coordinates, otherwise they will be interpreted as homogeneous coordinates. In any case the point will be projected on the glide object.
      * @example
      * // Create a glider with user defined coordinates. If the coordinates are not on

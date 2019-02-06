@@ -2724,6 +2724,46 @@ define([
             /**#@-*/
         },
 
+        /* special mirrorelement options */
+        mirrorelement: {
+            /**#@+
+             * @visprop
+             */
+
+            fixed: true,
+
+            /**
+             * Attributes of mirror point, i.e. the point along which the element is mirrored.
+             *
+             * @type Point
+             * @name mirrorelement#point
+             */
+            point: {},
+
+            /**
+             * Attributes of circle center, i.e. the center of the circle,
+             * if a circle is the mirror element and the transformation type is 'Euclidean'
+             *
+             * @type Point
+             * @name mirrorelement#center
+             */
+            center: {},
+
+            /**
+             * Type of transformation. Possible values are 'Euclidean', 'projective'.
+             *
+             * If the value is 'Euclidean', the mirror element of a circle is again a circle,
+             * otherwise it is a conic section.
+             *
+             * @type String
+             * @name mirrorelement#type
+             * @default 'Euclidean'
+             */
+            type: 'Euclidean'
+
+            /**#@-*/
+        },
+
         // /* special options for Msector of 3 points */
         // msector: {
         //     strokeColor: '#000000', // Msector line
@@ -3157,6 +3197,38 @@ define([
                 visible: false,
                 withLabel: false
             }
+
+            /**#@-*/
+        },
+
+        /* special reflection options */
+        reflection: {
+            /**#@+
+             * @visprop
+             */
+
+            fixed: true,
+
+            /**
+             * Attributes of circle center, i.e. the center of the circle,
+             * if a circle is the mirror element and the transformation type is 'Euclidean'
+             *
+             * @type Point
+             * @name mirrorelement#center
+             */
+            center: {},
+
+            /**
+             * Type of transformation. Possible values are 'Euclidean', 'projective'.
+             *
+             * If the value is 'Euclidean', the reflected element of a circle is again a circle,
+             * otherwise it is a conic section.
+             *
+             * @type String
+             * @name reflection#type
+             * @default 'Euclidean'
+             */
+            type: 'Euclidean'
 
             /**#@-*/
         },

@@ -342,7 +342,7 @@
                             set_str += ', withLabel: true';
                         }
 
-                        set_str += ', point: <<id:"' + step.dest_sub_ids[0] + '"';
+                        set_str += ', center: <<id:"' + step.dest_sub_ids[0] + '"';
                         if (JXG.exists(step.args.subnames)) {
                             set_str += ', name:\"' + step.args.subnames[0] + '\"';
                         } else {
@@ -473,7 +473,7 @@
                             set_str += ', withLabel: true';
                         }
 
-                        set_str += ', point: <<id:"' + step.dest_sub_ids[0] + '"';
+                        set_str += ', center: <<id:"' + step.dest_sub_ids[0] + '"';
                         if (JXG.exists(step.args.subnames)) {
                             set_str += ', name:\"' + step.args.subnames[0] + '\"';
                         } else {

@@ -451,7 +451,7 @@ define([
         },
 
         /**
-         * Calculates the euclidean norm for two given arrays of the same length.
+         * Calculates the Euclidean norm for two given arrays of the same length.
          * @param {Array} array1 Array of Number
          * @param {Array} array2 Array of Number
          * @param {Number} [n] Length of the arrays. Default is the minimum length of the given arrays.
@@ -473,8 +473,8 @@ define([
         },
 
         /**
-         * Calculates euclidean distance for two given arrays of the same length.
-         * If one of the arrays contains a zero in the first coordinate, and the euclidean distance
+         * Calculates Euclidean distance for two given arrays of the same length.
+         * If one of the arrays contains a zero in the first coordinate, and the Euclidean distance
          * is different from zero it is a point at infinity and we return Infinity.
          * @param {Array} array1 Array containing elements of type number.
          * @param {Array} array2 Array containing elements of type number.

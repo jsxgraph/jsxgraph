@@ -806,11 +806,13 @@ define([
             Type.isTransformationOrArray(parents[1])) {
 
             attr = Type.copyAttributes(attributes, board.options, 'circle');
-            if (Type.exists(attr.type) && attr.type.toLowerCase() === 'euclidean') {
-                el = JXG.createCircle(board, [obj.center, function() { return obj.Radius(); }], attr);
-            } else {
+            // if (!Type.exists(attr.type) || attr.type.toLowerCase() !== 'euclidean') {
+            //     // Create a circle element from a circle and a Euclidean transformation
+            //     el = JXG.createCircle(board, [obj.center, function() { return obj.Radius(); }], attr);
+            // } else {
+                // Create a conic element from a circle and a projective transformation
                 el = Conic.createEllipse(board, [obj.center, obj.center, function() { return 2 * obj.Radius(); }], attr);
-            }
+            // }
             el.addTransform(parents[1]);
             return el;
 

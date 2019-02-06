@@ -597,7 +597,7 @@ define([
     /**
      * @class This element is used to construct a parallel point.
      * @pseudo
-     * @description A parallel point is given by three points. Taking the euclidean vector from the first to the
+     * @description A parallel point is given by three points. Taking the Euclidean vector from the first to the
      * second point, the parallel point is determined by adding that vector to the third point.
      * The line determined by the first two points is parallel to the line determined by the third point and the constructed point.
      * @constructor
@@ -605,7 +605,7 @@ define([
      * @type JXG.Point
      * @augments JXG.Point
      * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
-     * @param {JXG.Point_JXG.Point_JXG.Point} p1,p2,p3 Taking the euclidean vector <tt>v=p2-p1</tt> the parallel point is determined by
+     * @param {JXG.Point_JXG.Point_JXG.Point} p1,p2,p3 Taking the Euclidean vector <tt>v=p2-p1</tt> the parallel point is determined by
      * <tt>p4 = p3+v</tt>
      * @param {JXG.Line_JXG.Point} l,p The resulting point will together with p specify a line which is parallel to l.
      * @example
@@ -1793,14 +1793,17 @@ define([
      */
     JXG.createReflection = function (board, parents, attributes) {
         var l, org, r, r_c, t, i,
+            attr, attr2,
             errStr = "\nPossible parent types: [point|line|curve|polygon|circle|arc|sector, line]";
 
         for (i = 0; i < parents.length; ++i) {
             parents[i] = board.select(parents[i]);
         }
 
+        attr = Type.copyAttributes(attributes, board.options, 'reflection');
+
         if (Type.isPoint(parents[0])) {
-            org = Type.providePoints(board, [parents[0]], attributes, 'point')[0];
+            org = Type.providePoints(board, [parents[0]], attr2)[0];
         } else if (parents[0].elementClass === Const.OBJECT_CLASS_CURVE ||
                     parents[0].elementClass === Const.OBJECT_CLASS_LINE ||
                     parents[0].type === Const.OBJECT_TYPE_POLYGON ||
@@ -1820,21 +1823,23 @@ define([
 
         t = Transform.createTransform(board, [l], {type: 'reflect'});
         if (Type.isPoint(org)) {
-            r = Point.createPoint(board, [org, t], attributes);
-
+            r = Point.createPoint(board, [org, t], attr);
         // Arcs and sectors are treated as curves
         } else if (org.elementClass === Const.OBJECT_CLASS_CURVE){
-            r = Curve.createCurve(board, [org, t], attributes);
+            r = Curve.createCurve(board, [org, t], attr);
         } else if (org.elementClass === Const.OBJECT_CLASS_LINE){
-            r = Line.createLine(board, [org, t], attributes);
+            r = Line.createLine(board, [org, t], attr);
         } else if (org.type === Const.OBJECT_TYPE_POLYGON){
-            r = Polygon.createPolygon(board, [org, t], attributes);
+            r = Polygon.createPolygon(board, [org, t], attr);
         } else if (org.elementClass === Const.OBJECT_CLASS_CIRCLE) {
-            if (attributes.type === 'Euclidean') {
-                r_c = Point.createPoint(board, [org.center, t], (Type.exists(attributes.point)) ? attributes.point:{});
-                r = Circle.createCircle(board, [r_c, function() {return org.Radius(); }], attributes);
+            if (attr.type.toLowerCase() === 'euclidean') {
+                // Create a circle element from a circle and a Euclidean transformation
+                attr2 = Type.copyAttributes(attributes, board.options, 'reflection', 'center');
+                r_c = Point.createPoint(board, [org.center, t], attr2);
+                r = Circle.createCircle(board, [r_c, function() {return org.Radius(); }], attr);
             } else {
-                r = Circle.createCircle(board, [org, t], attributes);
+                // Create a conic element from a circle and a projective transformation
+                r = Circle.createCircle(board, [org, t], attr);
             }
         } else {
             throw new Error("JSXGraph: Can't create reflected element with parent types '" +
@@ -1957,11 +1962,18 @@ define([
      * </script><pre>
      */
     JXG.createMirrorElement = function (board, parents, attributes) {
-        var org, m, r, r_c, t,
+        var org, i, m, r, r_c, t,
+            attr, attr2,
             errStr = "\nPossible parent types: [point|line|curve|polygon|circle|arc|sector, point]";
 
+        for (i = 0; i < parents.length; ++i) {
+            parents[i] = board.select(parents[i]);
+        }
+
+        attr = Type.copyAttributes(attributes, board.options, 'mirrorelement');
         if (Type.isPoint(parents[0])) {
-            org = Type.providePoints(board, [parents[0]], attributes, 'point')[0];
+            // Create point to be mirrored if supplied by coords array.
+            org = Type.providePoints(board, [parents[0]], attr)[0];
         } else if (parents[0].elementClass === Const.OBJECT_CLASS_CURVE ||
                     parents[0].elementClass === Const.OBJECT_CLASS_LINE ||
                     parents[0].type === Const.OBJECT_TYPE_POLYGON ||
@@ -1973,7 +1985,9 @@ define([
         }
 
         if (Type.isPoint(parents[1])) {
-            m = Type.providePoints(board, [parents[1]], attributes, 'point')[0];
+            attr2 = Type.copyAttributes(attributes, board.options, 'mirrorelement', 'point');
+            // Create mirror point if supplied by coords array.
+            m = Type.providePoints(board, [parents[1]], attr2)[0];
         } else {
             throw new Error("JSXGraph: Can't create mirror element with parent types '" +
                 (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." + errStr);
@@ -1981,22 +1995,24 @@ define([
 
         t = Transform.createTransform(board, [Math.PI, m], {type: 'rotate'});
         if (Type.isPoint(org)) {
-            r = Point.createPoint(board, [org, t], attributes);
+            r = Point.createPoint(board, [org, t], attr);
 
         // Arcs and sectors are treated as curves
         } else if (org.elementClass === Const.OBJECT_CLASS_CURVE){
-            r = Curve.createCurve(board, [org, t], attributes);
+            r = Curve.createCurve(board, [org, t], attr);
         } else if (org.elementClass === Const.OBJECT_CLASS_LINE){
-            r = Line.createLine(board, [org, t], attributes);
+            r = Line.createLine(board, [org, t], attr);
         }  else if (org.type === Const.OBJECT_TYPE_POLYGON){
-            r = Polygon.createPolygon(board, [org, t], attributes);
+            r = Polygon.createPolygon(board, [org, t], attr);
         } else if (org.elementClass === Const.OBJECT_CLASS_CIRCLE){
-            if (attributes.type === 'Euclidean') {
-
-                r_c = Point.createPoint(board, [org.center, t], (Type.exists(attributes.point)) ? attributes.point:{});
-                r = Circle.createCircle(board, [r_c, function() {return org.Radius(); }], attributes);
+            if (attr.type.toLowerCase() === 'euclidean') {
+                // Create a circle element from a circle and a Euclidean transformation
+                attr2 = Type.copyAttributes(attributes, board.options, 'mirrorelement', 'center');
+                r_c = Point.createPoint(board, [org.center, t], attr2);
+                r = Circle.createCircle(board, [r_c, function() {return org.Radius(); }], attr);
             } else {
-                r = Circle.createCircle(board, [org, t], attributes);
+                // Create a conic element from a circle and a projective transformation
+                r = Circle.createCircle(board, [org, t], attr);
             }
         } else {
             throw new Error("JSXGraph: Can't create mirror element with parent types '" +
@@ -2005,7 +2021,7 @@ define([
 
         org.addChild(r);
         m.addChild(r);
-        r.elType = 'mirrorpoint';
+        r.elType = 'mirrorelement';
         r.setParents([org, m]);
         r.prepareUpdate().update();
 
@@ -2038,7 +2054,9 @@ define([
      * </script><pre>
      */
     JXG.createMirrorPoint = function (board, parents, attributes) {
-        return JXG.createMirrorElement(board, parents, attributes);
+        var el = JXG.createMirrorElement(board, parents, attributes);
+        el.elType = 'mirrorpoint';
+        return el;
     };
 
     /**
