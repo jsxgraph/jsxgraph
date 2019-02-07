@@ -1334,11 +1334,13 @@ define([
             }
 
             ds = this._triangleDists(a, b, c);           // returns [d_ab, d_ac, d_cb, d_cd]
+
             isSmooth = (depth < this.smoothLevel) && (ds[3] < delta);
 
             isJump = (depth < this.jumpLevel) &&
                         ((ds[2] > 0.99 * ds[0]) || (ds[1] > 0.99 * ds[0]) ||
                         ds[0] === Infinity || ds[1] === Infinity || ds[2] === Infinity);
+                        
             isCusp = (depth < this.smoothLevel + 2) && (ds[0] < cusp_threshold * (ds[1] + ds[2]));
 
             if (isCusp) {
