@@ -1310,13 +1310,14 @@ define([
                 ds, mindepth = 0,
                 isSmooth, isJump, isCusp,
                 cusp_threshold = 0.5,
+                jump_threshold = 0.99,
                 pnt = new Coords(Const.COORDS_BY_USER, [0, 0], this.board, false);
 
             if (this.numberPoints > 65536) {
                 return;
             }
 
-            // Test if the function is undefined on an interval
+            // Test if the function is undefined in an interval
             if (depth < this.nanLevel && this._isUndefined(a, ta, b, tb)) {
                 return this;
             }
@@ -1325,7 +1326,7 @@ define([
                 return this;
             }
 
-            tc = 0.5 * (ta  + tb);
+            tc = (ta  + tb) * 0.5;
             pnt.setCoordinates(Const.COORDS_BY_USER, [this.X(tc, true), this.Y(tc, true)], false);
             c = pnt.scrCoords;
 
@@ -1338,9 +1339,10 @@ define([
             isSmooth = (depth < this.smoothLevel) && (ds[3] < delta);
 
             isJump = (depth < this.jumpLevel) &&
-                        ((ds[2] > 0.99 * ds[0]) || (ds[1] > 0.99 * ds[0]) ||
+                        ((ds[2] > jump_threshold * ds[0]) ||
+                         (ds[1] > jump_threshold * ds[0]) ||
                         ds[0] === Infinity || ds[1] === Infinity || ds[2] === Infinity);
-                        
+
             isCusp = (depth < this.smoothLevel + 2) && (ds[0] < cusp_threshold * (ds[1] + ds[2]));
 
             if (isCusp) {
@@ -1380,16 +1382,16 @@ define([
             if (this.board.updateQuality === this.board.BOARD_QUALITY_LOW) {
                 depth = Type.evaluate(this.visProp.recursiondepthlow) || 13;
                 delta = 2;
-                this.smoothLevel = 5; //depth - 7;
-                //this.smoothLevel = depth - 7;
+                // this.smoothLevel = 5; //depth - 7;
+                this.smoothLevel = depth - 7;
                 this.jumpLevel = 5;
             } else {
-                depth = Type.evaluate(this.visProp.recursiondepthhigh) || 17;
+                depth = Type.evaluate(this.visProp.recursiondepthhigh) || 16;
                 delta = 2;
                 // smoothLevel has to be small for graphs in a huge interval.
-                this.smoothLevel = 3; //depth - 7; // 9
-                //this.smoothLevel = depth - 7; // 9
-                this.jumpLevel = 3;
+                // this.smoothLevel = 3; //depth - 7; // 9
+                this.smoothLevel = depth - 10; // 9
+                this.jumpLevel = 2;
             }
             this.nanLevel = depth - 4;
 
