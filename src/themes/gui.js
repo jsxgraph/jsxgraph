@@ -89,7 +89,8 @@ JXG.Options = JXG.merge(JXG.Options, {
         //highlightStrokeOpacity: 0.3,
         strokeColor: '#36f',
         strokeOpacity: 0.9,
-        strokeWidth: 3
+        strokeWidth: 3,
+        scalable: false
     },
 
     midpoint: {
@@ -158,7 +159,8 @@ JXG.Options = JXG.merge(JXG.Options, {
         label: {
             position: 'bot',
             offsets: [0,-12]
-        }
+        },
+        scalable: false
     },
 
     slider: {
