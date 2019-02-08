@@ -1400,6 +1400,11 @@ define([
             ta = mi;
             pa.setCoordinates(Const.COORDS_BY_USER, [this.X(ta, suspendUpdate), this.Y(ta, suspendUpdate)], false);
             a = pa.copy('scrCoords');
+
+            // The first function calls of X() and Y() are done. We can now
+            // switch `suspendUpdate` on. If supported by the functions, this
+            // avoids for the rest of the plotting algorithm, evaluation of any
+            // parent elements.
             suspendUpdate = true;
 
             tb = ma;
