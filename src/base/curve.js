@@ -194,6 +194,7 @@ define([
         X: function (t) {
             return NaN;
         },
+
         /**
         * The parametric function which defines the y-coordinate of the curve.
         * @param {Number} t A number between {@link JXG.Curve#minX} and {@link JXG.Curve#maxX}.
@@ -234,6 +235,7 @@ define([
                 dist = Infinity,
                 ux2, uy2,
                 ev_ct,
+                mi, ma,
                 suspendUpdate = true;
 
             checkPoint = new Coords(Const.COORDS_BY_SCREEN, [x, y], this.board, false);
@@ -247,6 +249,13 @@ define([
             ux2 = this.board.unitX * this.board.unitX;
             uy2 = this.board.unitY * this.board.unitY;
 
+            mi = this.minX();
+            ma = this.maxX();
+            if (Type.exists(this._visibleArea)) {
+                mi = this._visibleArea[0];
+                ma = this._visibleArea[1];
+                d = (ma - mi) / steps;
+            }
 
             ev_ct = Type.evaluate(this.visProp.curvetype);
             if (ev_ct === 'parameter' || ev_ct === 'polar') {
@@ -263,7 +272,7 @@ define([
                 }
 
                 // Brute force search for a point on the curve close to the mouse pointer
-                for (i = 0, t = this.minX(); i < steps; i++) {
+                for (i = 0, t = mi; i < steps; i++) {
                     tX = this.X(t, suspendUpdate);
                     tY = this.Y(t, suspendUpdate);
 
@@ -282,7 +291,10 @@ define([
                     start = 0;
                 }
 
-                if (Type.exists(this.qdt) && Type.evaluate(this.visProp.useqdt) && this.bezierDegree !== 3) {
+                if (Type.exists(this.qdt) &&
+                    Type.evaluate(this.visProp.useqdt) &&
+                    this.bezierDegree !== 3
+                    ) {
                     qdt = this.qdt.query(new Coords(Const.COORDS_BY_USER, [x, y], this.board));
                     points = qdt.points;
                     len = points.length;
@@ -1518,7 +1530,11 @@ define([
             ret_arr = this._findStartPoint(pb.scrCoords, tb, pa.scrCoords, ta);
             pb.setCoordinates(Const.COORDS_BY_SCREEN, ret_arr[0], false);
             tb = ret_arr[1];
+            // Save the visible area.
+            // This can be used in Curve.hasPoint().
+            this._visibleArea = [ta, tb];
 
+            // Start recursive plotting algorithm
             a = pa.copy('scrCoords');
             b = pb.copy('scrCoords');
             pa._t = ta;
