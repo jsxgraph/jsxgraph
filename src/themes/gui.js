@@ -131,6 +131,7 @@ JXG.Options = JXG.merge(JXG.Options, {
         fillColor: '#ffff00',
         highlightFillColor: '#ffff00',
         hasInnerPoints: true,
+        hasInnerPoints_org: true,
 
         // Two finger event: rotates or translates
         scalable: false,
