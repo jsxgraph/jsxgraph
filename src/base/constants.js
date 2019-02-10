@@ -157,6 +157,7 @@ define(['jxg'], function (JXG) {
         GENTYPE_ABLATION: 45,
         GENTYPE_MIGRATE: 46,
         GENTYPE_VECTORCOPY: 47,
+        GENTYPE_POLYGONCOPY: 48,
 //        GENTYPE_TRANSFORM: 48, // unused
         // 49 ... 50 // unused ...
 

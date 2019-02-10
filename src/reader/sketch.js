@@ -1118,6 +1118,55 @@
                     reset_str = 'delete ' + step.dest_id + '; ';
                     break;
 
+                case JXG.GENTYPE_POLYGONCOPY:
+                    le = step.args.num_vertices;
+
+                    set_str = '';
+                    reset_str = '';
+
+                    for (i = 0; i < le; ++i) {
+                        set_str += assign + 'point(' + pn(step.args.points[i][1]) + ', ' +
+                                                    pn(step.args.points[i][2]);
+                        set_str += ')' + (options.useSymbols ? '' : ' <<id: \'' + step.dest_sub_ids[i] + '\''
+                                    + ', snaptogrid: ' + JXG.Options.elements.snapToGrid
+                                    + ', snaptopoints: ' + JXG.Options.elements.snapToPoints + '>>') + '; ';
+
+                        reset_str += 'delete ' + step.dest_sub_ids[i] + '; ';
+                    }
+
+                    set_str += assign + 'polygon(';
+
+                    for (i = 0; i < le; ++i) {
+                        set_str += step.dest_sub_ids[i];
+                        if (i !== le - 1) {
+                            set_str += ', ';
+                        }
+                    }
+
+                    set_str += ') <<borders: <<ids: [\'';
+
+                    for (i = le; i < step.dest_sub_ids.length; i++) {
+                        set_str += step.dest_sub_ids[i];
+                        if (i < step.dest_sub_ids.length - 1) {
+                            set_str += '\', \'';
+                        }
+                    }
+                    set_str += '\']';
+
+                    set_str += ', names: [';
+                    for (i = le; i < step.dest_sub_ids.length; i++) {
+                        set_str += '\'\'';
+                        if (i < step.dest_sub_ids.length - 1) {
+                            set_str += ', ';
+                        }
+                    }
+                    set_str += ']';
+                    set_str += ', name: \'\'>>, ' + attrid + ' fillOpacity: ' + JXG.Options.opacityLevel;
+                    set_str += ', name: \'\'>>; ';
+                    reset_str += 'delete ' + step.dest_id + '; ';
+                    break;
+
+
                 case JXG.GENTYPE_REGULARPOLYGON:
                     set_str = assign + 'regularpolygon(' + step.src_ids.join(', ') + ', ';
                     set_str += step.args.corners + ') <<borders: <<ids: [ ';
