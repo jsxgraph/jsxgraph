@@ -194,6 +194,7 @@ define([
         X: function (t) {
             return NaN;
         },
+
         /**
         * The parametric function which defines the y-coordinate of the curve.
         * @param {Number} t A number between {@link JXG.Curve#minX} and {@link JXG.Curve#maxX}.
@@ -234,6 +235,7 @@ define([
                 dist = Infinity,
                 ux2, uy2,
                 ev_ct,
+                mi, ma,
                 suspendUpdate = true;
 
             checkPoint = new Coords(Const.COORDS_BY_SCREEN, [x, y], this.board, false);
@@ -247,6 +249,13 @@ define([
             ux2 = this.board.unitX * this.board.unitX;
             uy2 = this.board.unitY * this.board.unitY;
 
+            mi = this.minX();
+            ma = this.maxX();
+            if (Type.exists(this._visibleArea)) {
+                mi = this._visibleArea[0];
+                ma = this._visibleArea[1];
+                d = (ma - mi) / steps;
+            }
 
             ev_ct = Type.evaluate(this.visProp.curvetype);
             if (ev_ct === 'parameter' || ev_ct === 'polar') {
@@ -263,7 +272,7 @@ define([
                 }
 
                 // Brute force search for a point on the curve close to the mouse pointer
-                for (i = 0, t = this.minX(); i < steps; i++) {
+                for (i = 0, t = mi; i < steps; i++) {
                     tX = this.X(t, suspendUpdate);
                     tY = this.Y(t, suspendUpdate);
 
@@ -282,7 +291,10 @@ define([
                     start = 0;
                 }
 
-                if (Type.exists(this.qdt) && Type.evaluate(this.visProp.useqdt) && this.bezierDegree !== 3) {
+                if (Type.exists(this.qdt) &&
+                    Type.evaluate(this.visProp.useqdt) &&
+                    this.bezierDegree !== 3
+                    ) {
                     qdt = this.qdt.query(new Coords(Const.COORDS_BY_USER, [x, y], this.board));
                     points = qdt.points;
                     len = points.length;
@@ -1275,10 +1287,11 @@ define([
 
         /**
          * Decide if a path segment is too far from the canvas that we do not need to draw it.
+         * @private
          * @param  {Array}  a  Screen coordinates of the start point of the segment
-         * @param  {Array}  ta Curve parameter of a.
+         * @param  {Array}  ta Curve parameter of a  (unused).
          * @param  {Array}  b  Screen coordinates of the end point of the segment
-         * @param  {Array}  tb Curve parameter of b.
+         * @param  {Array}  tb Curve parameter of b (unused).
          * @returns {Boolean}   True if the segment is too far away from the canvas, false otherwise.
          */
         _isOutside: function (a, ta, b, tb) {
@@ -1290,6 +1303,105 @@ define([
                 (a[2] < -off && b[2] < -off) ||
                 (a[1] > cw + off && b[1] > cw + off) ||
                 (a[2] > ch + off && b[2] > ch + off));
+        },
+
+        /**
+         * Decide if a point of a curve is too far from the canvas that we do not need to draw it.
+         * @private
+         * @param  {Array}  a  Screen coordinates of the point
+         * @returns {Boolean}  True if the point is too far away from the canvas, false otherwise.
+         */
+        _isOutsidePoint: function (a) {
+            var off = 500,
+                cw = this.board.canvasWidth,
+                ch = this.board.canvasHeight;
+
+            return !!(a[1] < -off ||
+                      a[2] < -off ||
+                      a[1] > cw + off ||
+                      a[2] > ch + off);
+        },
+
+        /**
+         * For a curve c(t) defined on the interval [ta, tb] find the first point
+         * which is in the visible area of the board (plus some outside margin).
+         * <p>
+         * This method is necessary to restrict the recursive plotting algorithm
+         * {@link JXG.Curve._plotRecursive} to the visible area and not waste
+         * recursion to areas far outside of the visible area.
+         * <p>
+         * This method can also be used to find the last visible  point
+         * by reversing the input parameters.
+         *
+         * @param  {Array}  a  Screen coordinates of the start point of the segment
+         * @param  {Array}  ta Curve parameter of a.
+         * @param  {Array}  b  Screen coordinates of the end point of the segment (unused)
+         * @param  {Array}  tb Curve parameter of b
+         * @return {Array}  Array of length two containing the screen ccordinates of
+         * the starting point and the curve parameter at this point.
+         * @private
+         */
+        _findStartPoint: function (a, ta, b, tb) {
+            var i, delta, tc,
+                td, z, isFound,
+                w2, h2,
+                pnt =  new Coords(Const.COORDS_BY_USER, [0, 0], this.board, false),
+                steps = 40,
+                bbox = this.board.getBoundingBox();
+
+            if (!this._isOutsidePoint(a)) {
+                return [a, ta];
+            }
+
+            w2 = (bbox[2] - bbox[0]) * 0.3;
+            h2 = (bbox[1] - bbox[3]) * 0.3;
+
+            delta = (tb - ta) / steps;
+            tc = ta + delta;
+            isFound = false;
+            for (i = 0; i < steps; ++i) {
+                // Left border
+                z = bbox[0] - w2;
+                td = Numerics.fzero(function(t) { return this.X(t, true) - z}, [tc-delta, tc], this);
+                if (Math.abs(this.X(td, true) - z) < Mat.eps) {
+                    isFound = true;
+                    break;
+                }
+                // Top border
+                z = bbox[1] + h2;
+                td = Numerics.fzero(function(t) { return this.Y(t, true) - z}, [tc-delta, tc], this);
+                if (Math.abs(this.Y(td, true) - z) < Mat.eps) {
+                    isFound = true;
+                    break;
+                }
+                // Right border
+                z = bbox[2] + w2;
+                td = Numerics.fzero(function(t) { return this.X(t, true) - z}, [tc-delta, tc], this);
+                if (Math.abs(this.X(td, true) - z) < Mat.eps) {
+                    isFound = true;
+                    break;
+                }
+                // Bottom border
+                z = bbox[3] - h2;
+                td = Numerics.fzero(function(t) { return this.Y(t, true) - z}, [tc-delta, tc], this);
+                if (Math.abs(this.Y(td, true) - z) < Mat.eps) {
+                    isFound = true;
+                    break;
+                }
+                // pnt.setCoordinates(Const.COORDS_BY_USER, [this.X(tc, true), this.Y(tc, true)], false);
+                // //console.log(i, tc, pnt.scrCoords);
+                // if (!this._isOutsidePoint(pnt.scrCoords)) {
+                //     return [pnt.scrCoords, tc];
+                // }
+                tc += delta;
+            }
+            if (isFound) {
+                pnt.setCoordinates(Const.COORDS_BY_USER, [this.X(td, true), this.Y(td, true)], false);
+                return [pnt.scrCoords, td];
+
+            }
+
+            return [a, ta];
         },
 
         /**
@@ -1377,20 +1489,22 @@ define([
                 suspendUpdate = false,
                 pa = new Coords(Const.COORDS_BY_USER, [0, 0], this.board, false),
                 pb = new Coords(Const.COORDS_BY_USER, [0, 0], this.board, false),
-                depth, delta;
+                depth, delta,
+                ret_arr;
 
+            //console.time("plot");
             if (this.board.updateQuality === this.board.BOARD_QUALITY_LOW) {
-                depth = Type.evaluate(this.visProp.recursiondepthlow) || 13;
+                depth = Type.evaluate(this.visProp.recursiondepthlow) || 15;
                 delta = 2;
                 // this.smoothLevel = 5; //depth - 7;
-                this.smoothLevel = depth - 7;
-                this.jumpLevel = 5;
+                this.smoothLevel = depth - 8;
+                this.jumpLevel = 2;
             } else {
-                depth = Type.evaluate(this.visProp.recursiondepthhigh) || 16;
+                depth = Type.evaluate(this.visProp.recursiondepthhigh) || 17;
                 delta = 2;
                 // smoothLevel has to be small for graphs in a huge interval.
                 // this.smoothLevel = 3; //depth - 7; // 9
-                this.smoothLevel = depth - 10; // 9
+                this.smoothLevel = depth - 9; // 9
                 this.jumpLevel = 2;
             }
             this.nanLevel = depth - 4;
@@ -1399,13 +1513,30 @@ define([
 
             ta = mi;
             pa.setCoordinates(Const.COORDS_BY_USER, [this.X(ta, suspendUpdate), this.Y(ta, suspendUpdate)], false);
-            a = pa.copy('scrCoords');
+
+            // The first function calls of X() and Y() are done. We can now
+            // switch `suspendUpdate` on. If supported by the functions, this
+            // avoids for the rest of the plotting algorithm, evaluation of any
+            // parent elements.
             suspendUpdate = true;
 
             tb = ma;
             pb.setCoordinates(Const.COORDS_BY_USER, [this.X(tb, suspendUpdate), this.Y(tb, suspendUpdate)], false);
-            b = pb.copy('scrCoords');
 
+            // Find start and end points of the visible area (plus a certain margin)
+            ret_arr = this._findStartPoint(pa.scrCoords, ta, pb.scrCoords, tb);
+            pa.setCoordinates(Const.COORDS_BY_SCREEN, ret_arr[0], false);
+            ta = ret_arr[1];
+            ret_arr = this._findStartPoint(pb.scrCoords, tb, pa.scrCoords, ta);
+            pb.setCoordinates(Const.COORDS_BY_SCREEN, ret_arr[0], false);
+            tb = ret_arr[1];
+            // Save the visible area.
+            // This can be used in Curve.hasPoint().
+            this._visibleArea = [ta, tb];
+
+            // Start recursive plotting algorithm
+            a = pa.copy('scrCoords');
+            b = pb.copy('scrCoords');
             pa._t = ta;
             this.points.push(pa);
             this._lastCrds = pa.copy('scrCoords');   //Used in _insertPoint
@@ -1414,6 +1545,7 @@ define([
             this.points.push(pb);
 
             this.numberPoints = this.points.length;
+            //console.timeEnd("plot");
 
             return this;
         },
