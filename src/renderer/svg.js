@@ -1388,7 +1388,7 @@ define([
         /**
          * Convert the SVG construction into an HTML canvas image.
          * This works for all SVG supporting browsers.
-         * For IE it works from version 9, with the execption that HTML texts
+         * For IE it works from version 9, with the exception that HTML texts
          * are ignored on IE. The drawing is done with a delay of
          * 200 ms. Otherwise there would be problems with IE.
          *
