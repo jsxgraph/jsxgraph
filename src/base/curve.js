@@ -1523,9 +1523,7 @@ define([
             }
             this.nanLevel = depth - 4;
 
-console.log("QUALITY", depth);
-
-
+console.log("Update", this.id, depth);
             this.points = [];
 
             if (this.xterm === 'x') {

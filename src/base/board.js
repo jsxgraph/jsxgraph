@@ -1013,6 +1013,7 @@ define([
             }
             drag = o.obj;
 
+console.log("JXG move event");
             // Save updates for very small movements of coordsElements, see below
             if (drag.coords) {
                 dragScrCoords = drag.coords.scrCoords.slice();
@@ -1045,13 +1046,15 @@ define([
                 o.targets[0].Yprev = newPos.scrCoords[2];
             }
             // This may be necessary for some gliders
-            drag.prepareUpdate().update(false).updateRenderer();
-            this.updateInfobox(drag);
-            drag.prepareUpdate().update(true).updateRenderer();
+            if (drag.type === Const.OBJECT_TYPE_GLIDER) {
+                drag.prepareUpdate().update(false).updateRenderer();
+                this.updateInfobox(drag);
+                drag.prepareUpdate().update(true).updateRenderer();
+            }
+
             if (drag.coords) {
                 newDragScrCoords = drag.coords.scrCoords;
             }
-
             // No updates for very small movements of coordsElements
             if (!drag.coords ||
                 dragScrCoords[1] !== newDragScrCoords[1] ||
@@ -4028,7 +4031,6 @@ define([
                 insert = this.renderer.removeToInsertLater(this.renderer.svgRoot);
             }
             this.prepareUpdate().updateElements(drag).updateConditions();
-
             this.renderer.suspendRedraw(this);
             this.updateRenderer();
             this.renderer.unsuspendRedraw();
