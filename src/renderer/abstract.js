@@ -1890,6 +1890,13 @@ define([
         updateTouchpoint: function (i, pos) {},
 
         /**
+         * Exports the complete renderer to SVG, including text labels.
+         *
+         * @see JXG.SVGRenderer#dumpToSVG
+         */
+        dumpToSVG: function() {},
+
+        /**
          * Convert SVG construction to base64 encoded SVG data URL.
          * Only available on SVGRenderer.
          *

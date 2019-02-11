@@ -1421,6 +1421,64 @@ define([
         },
 
         /**
+         * Exports the complete renderer to SVG, including text labels.
+         *
+         *
+         * @returns {Object}          the exported svg root node.
+         *
+         * @example
+         *  board.renderer.dumpToSVG();
+         */
+        dumpToSVG: function() {
+            var svgRoot = this.svgRoot,
+                btoa = window.btoa || Base64.encode,
+                svg, tmpImg, cv, ctx,
+                wOrg, hOrg,
+                // DOMURL, svgBlob, url,
+                virtualNode, doc,
+                i, len, values = [],
+                txt;
+
+            // Move all HTML tags (beside the SVG root) of the container
+            // to the foreignObject element inside of the svgRoot node
+            // Problem:
+            // input values are not copied. This can be verified by looking at an innerHTML output
+            // of an input element. Therefore, we do it "by hand".
+            if (this.container.hasChildNodes() && Type.exists(this.foreignObjLayer)) {
+                while (svgRoot.nextSibling) {
+                    // Copy all value attributes
+                    values = values.concat(this._getValuesOfDOMElements(svgRoot.nextSibling));
+                    this.foreignObjLayer.appendChild(svgRoot.nextSibling);
+                }
+            }
+
+            // Convert the SVG graphic into a string containing SVG code
+            svgRoot.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+            wOrg = svgRoot.getAttribute('width');
+            hOrg = svgRoot.getAttribute('height');
+
+            svg = new XMLSerializer().serializeToString(svgRoot);
+
+            // Handle SVG texts
+            // Insert all value attributes back into the svg string
+            len = values.length;
+            for (i = 0; i < len; i++) {
+                svg = svg.replace('id="' + values[i][0] + '"', 'id="' + values[i][0] + '" value="' + values[i][1] +'"');
+            }
+
+            // In IE we have to remove the namespace again.
+            if ((svg.match(/xmlns=\"http:\/\/www.w3.org\/2000\/svg\"/g) || []).length > 1) {
+                svg = svg.replace(/xmlns=\"http:\/\/www.w3.org\/2000\/svg\"/g, '');
+            }
+
+            // Safari fails if the svg string contains a "&nbsp;"
+            // Obsolete with Safari 12+
+            svg = svg.replace(/&nbsp;/g, ' ');
+
+            return svg;
+        },
+
+        /**
          *
          */
         dumpToDataURI: function (ignoreTexts) {
