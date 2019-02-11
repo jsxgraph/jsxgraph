@@ -1511,7 +1511,7 @@ define([
                 depth = Type.evaluate(this.visProp.recursiondepthlow) || 13;
                 delta = 2;
                 // this.smoothLevel = 5; //depth - 7;
-                this.smoothLevel = depth - 7;
+                this.smoothLevel = depth - 6;
                 this.jumpLevel = 3;
             } else {
                 depth = Type.evaluate(this.visProp.recursiondepthhigh) || 17;
@@ -1523,7 +1523,6 @@ define([
             }
             this.nanLevel = depth - 4;
 
-console.log("Update", this.id, depth);
             this.points = [];
 
             if (this.xterm === 'x') {

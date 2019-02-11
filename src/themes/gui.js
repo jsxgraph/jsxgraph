@@ -68,7 +68,7 @@ JXG.Options = JXG.merge(JXG.Options, {
         RDPSmoothing: false,
         strokeWidth: 3,
         strokeOpacity: 0.9,
-        recursionDepthLow: 6,
+        recursionDepthLow: 7,
         recursionDepthHigh: 17
     },
 

@@ -1013,7 +1013,6 @@ define([
             }
             drag = o.obj;
 
-console.log("JXG move event");
             // Save updates for very small movements of coordsElements, see below
             if (drag.coords) {
                 dragScrCoords = drag.coords.scrCoords.slice();
