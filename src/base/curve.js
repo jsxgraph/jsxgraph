@@ -1500,7 +1500,7 @@ define([
 
             //console.time("plot");
             if (this.board.updateQuality === this.board.BOARD_QUALITY_LOW) {
-                depth = Type.evaluate(this.visProp.recursiondepthlow) || 15;
+                depth = Type.evaluate(this.visProp.recursiondepthlow) || 13;
                 delta = 2;
                 // this.smoothLevel = 5; //depth - 7;
                 this.smoothLevel = depth - 8;
