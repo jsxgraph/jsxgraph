@@ -65,8 +65,11 @@ JXG.Options = JXG.merge(JXG.Options, {
     },
 
     curve: {
+        RDPSmoothing: false,
         strokeWidth: 3,
-        strokeOpacity: 0.9
+        strokeOpacity: 0.9,
+        recursionDepthLow: 6,
+        recursionDepthHigh: 17
     },
 
     elements: {

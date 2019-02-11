@@ -716,7 +716,7 @@ define([
                     }
                     this.points[i]._t = i;
 
-                    this.updateTransform(this.points[i]);
+                    // this.updateTransform(this.points[i]);
                     suspendUpdate = true;
                 }
             // continuous x data
@@ -754,15 +754,20 @@ define([
                     }
                 }
 
-                for (i = 0; i < len; i++) {
-                    this.updateTransform(this.points[i]);
-                }
+                // for (i = 0; i < len; i++) {
+                //     this.updateTransform(this.points[i]);
+                // }
             }
 
             if (Type.evaluate(this.visProp.curvetype) !== 'plot' &&
                     Type.evaluate(this.visProp.rdpsmoothing)) {
                 this.points = Numerics.RamerDouglasPeucker(this.points, 0.2);
                 this.numberPoints = this.points.length;
+            }
+
+            len = this.numberPoints;
+            for (i = 0; i < len; i++) {
+                this.updateTransform(this.points[i]);
             }
 
             return this;
@@ -1402,9 +1407,11 @@ define([
                 tc += delta;
             }
             if (isFound) {
+                // console.log("Found in step", i, td);
                 pnt.setCoordinates(Const.COORDS_BY_USER, [this.X(td, true), this.Y(td, true)], false);
                 return [pnt.scrCoords, td];
-
+            } else {
+                // console.log("not found", ta);
             }
 
             return [a, ta];
@@ -1496,6 +1503,7 @@ define([
                 pa = new Coords(Const.COORDS_BY_USER, [0, 0], this.board, false),
                 pb = new Coords(Const.COORDS_BY_USER, [0, 0], this.board, false),
                 depth, delta,
+                w2, h2, bbox,
                 ret_arr;
 
             //console.time("plot");
@@ -1503,8 +1511,8 @@ define([
                 depth = Type.evaluate(this.visProp.recursiondepthlow) || 13;
                 delta = 2;
                 // this.smoothLevel = 5; //depth - 7;
-                this.smoothLevel = depth - 8;
-                this.jumpLevel = 2;
+                this.smoothLevel = depth - 7;
+                this.jumpLevel = 3;
             } else {
                 depth = Type.evaluate(this.visProp.recursiondepthhigh) || 17;
                 delta = 2;
@@ -1515,9 +1523,23 @@ define([
             }
             this.nanLevel = depth - 4;
 
+console.log("QUALITY", depth);
+
+
             this.points = [];
 
-            ta = mi;
+            if (this.xterm === 'x') {
+                // For function graphs we can restrict the plot interval
+                // to the visible area +plus margin
+                bbox = this.board.getBoundingBox(),
+                w2 = (bbox[2] - bbox[0]) * 0.3;
+                h2 = (bbox[1] - bbox[3]) * 0.3;
+                ta = Math.max(mi, bbox[0] - w2);
+                tb = Math.min(ma, bbox[2] + w2);
+            } else {
+                ta = mi;
+                tb = ma;
+            }
             pa.setCoordinates(Const.COORDS_BY_USER, [this.X(ta, suspendUpdate), this.Y(ta, suspendUpdate)], false);
 
             // The first function calls of X() and Y() are done. We can now
@@ -1526,7 +1548,6 @@ define([
             // parent elements.
             suspendUpdate = true;
 
-            tb = ma;
             pb.setCoordinates(Const.COORDS_BY_USER, [this.X(tb, suspendUpdate), this.Y(tb, suspendUpdate)], false);
 
             // Find start and end points of the visible area (plus a certain margin)

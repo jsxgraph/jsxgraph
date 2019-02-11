@@ -987,7 +987,7 @@ define([
                     if (isNaN(scr[1]) || isNaN(scr[2])) {  // PenUp
                         nextSymb = symbm;
                     } else {
-                        // Chrome has problems with values  being too far away.
+                        // Chrome has problems with values being too far away.
                         if (scr[1] > maxSize) {
                             scr[1] = maxSize;
                         } else if (scr[1] < -maxSize) {

@@ -2164,6 +2164,7 @@ define([
                 //this.showInfobox(false);
             //}
             this.triggerEventHandlers(['touchmove', 'move', 'pointermove', 'MSPointerMove'], [evt, this.mode]);
+            this.updateQuality = this.BOARD_QUALITY_HIGH;
 
             return this.mode === this.BOARD_MODE_NONE;
         },
@@ -2549,11 +2550,10 @@ define([
                 this.showInfobox(false);
             }
 
-            /*
-              this.updateQuality = this.BOARD_QUALITY_HIGH; is set in touchEnd
-            */
-            this.options.precision.hasPoint = this.options.precision.mouse;
+
             this.triggerEventHandlers(['touchmove', 'move'], [evt, this.mode]);
+            this.options.precision.hasPoint = this.options.precision.mouse;
+            this.updateQuality = this.BOARD_QUALITY_HIGH;
 
             return this.mode === this.BOARD_MODE_NONE;
         },
