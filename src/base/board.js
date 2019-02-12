@@ -1849,6 +1849,19 @@ define([
         /**
          * pointer-Events
          */
+        _pointerIsTouchRegistered: function(evt) {
+            var i,
+                len = this._board_touches.length,
+                found = false;
+
+            for (i = 0; i < len; i++) {
+                if (this._board_touches[i].pointerId === evt.pointerId) {
+                    return true;
+                }
+            }
+            return false;
+        },
+
         _pointerAddBoardTouches: function (evt) {
             var i, found;
 
@@ -2055,7 +2068,7 @@ define([
                 evt.stopPropagation();
             }
 
-            if (Env.isBrowser && evt.pointerType !== 'touch') {
+            if (Env.isBrowser && this._getPointerInputDevice(evt) !== 'touch') {
                 if (this.mode === this.BOARD_MODE_NONE) {
                     this.mouseOriginMoveStart(evt);
                 }
@@ -2088,6 +2101,13 @@ define([
         pointerMoveListener: function (evt) {
             var i, j, pos,
                 type = this._getPointerInputDevice(evt);
+
+            if (this._getPointerInputDevice(evt) == 'touch' && !this._pointerIsTouchRegistered(evt)) {
+                // Test, if there was a previous down event of this _getPointerId
+                // (in case it is a touch event).
+                // Otherwise this move event is ignored. This is necessary e.g. for sketchometry.
+                return this.BOARD_MODE_NONE;
+            }
 
             if (this.mode !== this.BOARD_MODE_DRAG) {
                 this.dehighlightAll();
@@ -2146,7 +2166,7 @@ define([
                         }
                     }
                 } else {
-                    if (evt.pointerType == 'touch') {
+                    if (this._getPointerInputDevice(evt) == 'touch') {
                         this._pointerAddBoardTouches(evt);
                         if (this._board_touches.length == 2) {
                             evt.touches = this._board_touches;
