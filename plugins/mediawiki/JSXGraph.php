@@ -1,6 +1,6 @@
 <?php
 /*
-    Copyright 2008-2017
+    Copyright 2008-2019
         Alfred Wassermann,
         Peter Wilfahrt
 
@@ -32,7 +32,7 @@
  *
  * @author Alfred Wassermann
  * @author Peter Wilfahrt
- * @version 0.99.6
+ * @version 0.99.7
  */
 
 /** Requirements:
@@ -63,11 +63,11 @@
  *   box:      default: jxgbox
  *   board:    default: brd
  */
-$jsxgraph_version = '0.99.6';
+$jsxgraph_version = '0.99.7';
 
 // CHANGE this to load local files:
 $outputURI        = '//jsxgraph.uni-bayreuth.de/distrib';
-$outputURICDN     = '//cdnjs.cloudflare.com/ajax/libs/jsxgraph/0.99.6';
+$outputURICDN     = '//cdnjs.cloudflare.com/ajax/libs/jsxgraph/' . $jsxgraph_version;
 
 if(!defined('MEDIAWIKI')) {
   echo("This is an extension to the MediaWiki package and cannot be run standalone.\n");
@@ -133,10 +133,10 @@ function jsxgraphOutput($input, $args, $parser) {
     if (FALSE && preg_match("/^132\.180/",getenv("REMOTE_ADDR"))) {
       // Use the local version when developing
 	    $output .= "<script src='".$outputURI."/jsxgraphcore.js' type='text/javascript'></script>";
-	    $output .= "<script src='".$outputURI."/GeonextReader.js' type='text/javascript'></script>";
+	    $output .= "<script src='".$outputURI."/geonext.min.js' type='text/javascript'></script>";
 	  } else {
       $output .= "<script src='".$outputURICDN."/jsxgraphcore.js' type='text/javascript'></script>";
-      $output .= "<script src='".$outputURICDN."/GeonextReader.min.js' type='text/javascript'></script>";
+      $output .= "<script src='".$outputURICDN."/geonext.min.js' type='text/javascript'></script>";
     }
   }
 
