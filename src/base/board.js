@@ -1044,8 +1044,8 @@ define([
                 o.targets[0].Xprev = newPos.scrCoords[1];
                 o.targets[0].Yprev = newPos.scrCoords[2];
             }
-            // This may be necessary for some gliders
-            if (drag.type === Const.OBJECT_TYPE_GLIDER) {
+            // This may be necessary for some gliders and labels
+            if (Type.exists(drag.coords)) {
                 drag.prepareUpdate().update(false).updateRenderer();
                 this.updateInfobox(drag);
                 drag.prepareUpdate().update(true).updateRenderer();
