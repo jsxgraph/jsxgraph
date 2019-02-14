@@ -2109,7 +2109,7 @@ define([
         var obj, cu,
             attr = Type.copyAttributes(attributes, board.options, 'curve');
 
-        obj = board.select(parents[0]);
+        obj = board.select(parents[0], true);
         if (Type.isObject(obj) &&
             (obj.type === Const.OBJECT_TYPE_CURVE ||
              obj.type === Const.OBJECT_TYPE_ANGLE ||

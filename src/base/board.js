@@ -4522,6 +4522,8 @@ define([
          * Select a single or multiple elements at once.
          * @param {String|Object|function} str The name, id or a reference to a JSXGraph element on this board. An object will
          * be used as a filter to return multiple elements at once filtered by the properties of the object.
+         * @param {Boolean} onlyByIdOrName If true (default:false) elements are only filtered by their id, name or groupId.
+         * The advanced filters consisting of objects or functions are ignored.
          * @returns {JXG.GeometryElement|JXG.Composition}
          * @example
          * // select the element with name A
@@ -4545,7 +4547,7 @@ define([
          *   return true;
          * });
          */
-        select: function (str) {
+        select: function (str, onlyByIdOrName) {
             var flist, olist, i, l,
                 s = str;
 
@@ -4566,8 +4568,10 @@ define([
                     s = this.groups[s];
                 }
             // it's a function or an object, but not an element
-            } else if (Type.isFunction(s) || (Type.isObject(s) && !Type.isFunction(s.setAttribute))) {
-
+            } else if (!onlyByIdOrName &&
+                (Type.isFunction(s) ||
+                 (Type.isObject(s) && !Type.isFunction(s.setAttribute))
+                )) {
                 flist = Type.filterElements(this.objectsList, s);
 
                 olist = {};
