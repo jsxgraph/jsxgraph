@@ -536,8 +536,8 @@
                         sub_id = step.src_ids[0];
                     }
 
-                    set_str += assign + 'tangent(' + sub_id + ') <<' + attrid + 'point1: <<name: \'' + step.dest_sub_ids[0];
-                    set_str += '\', id: \'' + step.dest_sub_ids[0] + '\', priv: true>>, point2: <<name: \'' + step.dest_sub_ids[1];
+                    set_str += assign + 'tangent(' + sub_id + ') <<' + attrid + 'point1: <<name: \'';
+                    set_str += '\', id: \'' + step.dest_sub_ids[0] + '\', priv: true>>, point2: <<name: \'';
                     set_str += '\', id: \'' + step.dest_sub_ids[1] + '\', priv: true>> >>; ';
                     reset_str = 'delete ' + step.dest_sub_ids[0] + '; ' + reset_str;
                     reset_str = 'delete ' + step.dest_id + '; delete ' + step.dest_sub_ids[1] + '; ' + reset_str;
@@ -554,17 +554,17 @@
                     }
 
                     set_str += assign + 'parallel(' + step.src_ids[0] + ', ' + sub_id + ') <<' + attrid + 'name: \'\', point: <<id: \'';
-                    set_str += step.dest_sub_ids[0] + '\', name: \'' + step.dest_sub_ids[0] + '\'>> >>; ';
+                    set_str += step.dest_sub_ids[0] + '\', name: \'\'>> >>; ';
                     reset_str = 'delete ' + step.dest_id + '; delete ' + step.dest_sub_ids[0] + '; ' + reset_str;
                     break;
 
                 case JXG.GENTYPE_BISECTORLINES:
                     set_str = 'bisectorlines(' + step.src_ids[0] + ', ' + step.src_ids[1] + ') <<line1: <<id: \'';
                     set_str = set_str + step.dest_sub_ids[2] + '\', point1: <<id: \'' + step.dest_sub_ids[1];
-                    set_str += '\', name: \'' + step.dest_sub_ids[1] + '\'>>, point2: <<id: \'' + step.dest_sub_ids[0];
-                    set_str += '\', name: \'' + step.dest_sub_ids[0] + '\'>>>>, line2: <<id: \'' + step.dest_sub_ids[5];
-                    set_str += '\', point1: <<id: \'' + step.dest_sub_ids[4] + '\', name: \'' + step.dest_sub_ids[4];
-                    set_str += '\'>>, point2: <<id: \'' + step.dest_sub_ids[3] + '\', name: \'' + step.dest_sub_ids[3];
+                    set_str += '\', name: \'\'>>, point2: <<id: \'' + step.dest_sub_ids[0];
+                    set_str += '\', name: \'\'>>>>, line2: <<id: \'' + step.dest_sub_ids[5];
+                    set_str += '\', point1: <<id: \'' + step.dest_sub_ids[4] + '\', name: \'';
+                    set_str += '\'>>, point2: <<id: \'' + step.dest_sub_ids[3] + '\', name: \'';
                     set_str += '\'>>>>>>; ';
                     reset_str = 'delete ' + step.dest_sub_ids[5] + '; delete ' + step.dest_sub_ids[4] + '; delete ';
                     reset_str += step.dest_sub_ids[3] + '; delete ' + step.dest_sub_ids[2] + '; delete ';
@@ -632,14 +632,14 @@
                     }
 
                     set_str += assign + 'normal(' + sub_id + ', ' + step.src_ids[0] + ') <<' + attrid;
-                    set_str += 'name: \'\', point: <<id: \'' + step.dest_sub_ids[0] + '\', name: \'' + step.dest_sub_ids[0];
+                    set_str += 'name: \'\', point: <<id: \'' + step.dest_sub_ids[0] + '\', name: \'';
                     set_str += '\'>> >>; ';
                     reset_str = 'delete ' + step.dest_id + '; delete ' + step.dest_sub_ids[0] + '; ' + reset_str;
                     break;
 
                 case JXG.GENTYPE_PERPSEGMENT:
                     set_str += assign + 'perpendicularsegment(' + step.src_ids[1] + ', ' + step.src_ids[0] + ') <<' + attrid;
-                    set_str += 'name: \'\', point: <<id: \'' + step.dest_sub_ids[0] + '\', name: \'' + step.dest_sub_ids[0];
+                    set_str += 'name: \'\', point: <<id: \'' + step.dest_sub_ids[0] + '\', name: \'';
                     set_str += '\'>> >>; ';
                     reset_str = 'delete ' + step.dest_id + '; delete ' + step.dest_sub_ids[0] + '; ' + reset_str;
                     break;
@@ -765,7 +765,7 @@
                         reset_str = 'delete ' + step.dest_id + '; delete ' + step.dest_sub_ids[0] + '; ';
                     } else {
                         set_str = assign + 'circle(' + step.src_ids[0] + ', ' + step.src_ids[1] + ', ' + step.src_ids[2];
-                        set_str += ') <<center: <<id: \'' + step.dest_sub_ids[0] + '\', name: \'' + step.dest_sub_ids[0];
+                        set_str += ') <<center: <<id: \'' + step.dest_sub_ids[0] + '\', name: \'';
                         set_str += '\', visible: true>>, ' + attrid + 'name: \'\', fillOpacity: ' + JXG.Options.opacityLevel
                             + ', snaptogrid: ' + JXG.Options.elements.snapToGrid
                             + ', snaptopoints: ' + JXG.Options.elements.snapToPoints + '>>; ';
@@ -1234,7 +1234,7 @@
                 case JXG.GENTYPE_ANGLE:
                     set_str = assign + 'angle(' + step.src_ids.join(', ') + ') ';
                     set_str += '<<';
-                    set_str += 'dot: <<priv:true, id: \'' + step.dest_sub_ids[0] + '\', name: \'' + step.dest_sub_ids[0] + '\'>>, ';
+                    set_str += 'dot: <<priv:true, id: \'' + step.dest_sub_ids[0] + '\', name: \'\'>>, ';
                     set_str += attrid + ' fillOpacity: ' + JXG.Options.opacityLevel + '>>; ';
                     reset_str = 'delete ' + step.dest_id + '; ';
                     reset_str += 'delete ' + step.dest_sub_ids[0] + '; ';
@@ -1244,7 +1244,7 @@
                     set_str = assign + 'nonreflexangle(' + step.src_ids.join(', ') + ') ';
                     set_str += '<<';
                     set_str += 'dot: <<priv:true, id: \'' + step.dest_sub_ids[0] + '\', ';
-                    set_str += 'name: \'' + step.dest_sub_ids[0] + '\'>>, ';
+                    set_str += 'name: \'\'>>, ';
                     set_str += attrid + ' fillOpacity: ' + JXG.Options.opacityLevel + '>>; ';
                     reset_str = 'delete ' + step.dest_id + '; ';
                     reset_str += 'delete ' + step.dest_sub_ids[0] + '; ';
@@ -1254,7 +1254,7 @@
                     set_str = assign + 'reflexangle(' + step.src_ids.join(', ') + ') ';
                     set_str += '<<';
                     set_str += 'dot: <<priv:true, id: \'' + step.dest_sub_ids[0] + '\', ';
-                    set_str += 'name: \'' + step.dest_sub_ids[0] + '\'>>, ';
+                    set_str += 'name: \'\'>>, ';
                     set_str += attrid + ' fillOpacity: ' + JXG.Options.opacityLevel + '>>; ';
                     reset_str = 'delete ' + step.dest_id + '; ';
                     reset_str += 'delete ' + step.dest_sub_ids[0] + '; ';
@@ -1351,11 +1351,11 @@
                     set_str += pn(step.args.end) + ']) <<' + attrid;
                     set_str += ' snapWidth: 0.1, ';
                     set_str += 'baseline: <<id: \'';
-                    set_str += step.dest_sub_ids[0] + '\', name: \'' + step.dest_sub_ids[0] + '\', priv: true>>, highline: <<id: \'';
-                    set_str += step.dest_sub_ids[1] + '\', name: \'' + step.dest_sub_ids[1] + '\', priv: true>>, point1: <<id: \'';
-                    set_str += step.dest_sub_ids[2] + '\', name: \'' + step.dest_sub_ids[2] + '\', priv: false, frozen: true>>, point2: <<id: \'';
-                    set_str += step.dest_sub_ids[3] + '\', name: \'' + step.dest_sub_ids[3] + '\', priv: false, frozen: true>>, label: <<id: \'';
-                    set_str += step.dest_sub_ids[4] + '\', name: \'' + step.dest_sub_ids[4] + '\', priv: true>>';
+                    set_str += step.dest_sub_ids[0] + '\', name: \'\', priv: true>>, highline: <<id: \'';
+                    set_str += step.dest_sub_ids[1] + '\', name: \'\', priv: true>>, point1: <<id: \'';
+                    set_str += step.dest_sub_ids[2] + '\', name: \'\', priv: false, frozen: true>>, point2: <<id: \'';
+                    set_str += step.dest_sub_ids[3] + '\', name: \'\', priv: false, frozen: true>>, label: <<id: \'';
+                    set_str += step.dest_sub_ids[4] + '\', name: \'\', priv: true>>';
                     set_str += ', name: \'' + step.args.name + '\'>>; ';
 
                     reset_str = 'delete ' + step.dest_id + '; delete ' + step.dest_sub_ids[4] + '; delete ';
@@ -1389,7 +1389,7 @@
                  set_str += 'midpoint(' + step.src_ids[0] + ', ' + step.src_ids[1] + ') <<id: \'' + step.dest_sub_ids[0];
                  set_str += '\', fillColor: \'' + step.args.fillColor + '\'>>; ';
                  set_str += assign + 'normal(' + step.dest_sub_ids[0] + ', ' + sub_id + ') <<' + attrid;
-                 set_str += ' point: <<id: \'' + step.dest_sub_ids[1] + '\', name: \'' + step.dest_sub_ids[1];
+                 set_str += ' point: <<id: \'' + step.dest_sub_ids[1] + '\', name: \'';
                  set_str += '\'>> >>; ';
                  reset_str = 'delete ' + step.dest_sub_ids[0] + '; ' + reset_str;
                  reset_str = 'delete ' + step.dest_id + '; delete ' + step.dest_sub_ids[1] + '; ' + reset_str;
