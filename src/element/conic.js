@@ -471,7 +471,7 @@ define([
      * @constructor
      * @type JXG.Curve
      * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
-     * @param {JXG.Point,array_JXG.Line} point,line Parent elements are a point and a line.
+     * @param {JXG.Point,array_JXG.Line} point,line Parent elements are a point and a line or a pair of coordinates.
      * Optional parameters three and four are numbers which define the curve length (e.g. start/end). Default values are -pi and pi.
      * @example
      * // Create a parabola by a point C and a line l.
@@ -489,6 +489,21 @@ define([
      *   var C = glex1_board.create('point', [1,1]);
      *   var el = glex1_board.create('parabola',[C,l]);
      * </script><pre>
+     *
+     * @example
+     * var par = board.create('parabola',[[3.25, 0], [[0.25, 1],[0.25, 0]]]);
+     *
+     * </pre><div id="JXG09252542-b77a-4990-a109-66ffb649a472" class="jxgbox" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     *     (function() {
+     *         var board = JXG.JSXGraph.initBoard('JXG09252542-b77a-4990-a109-66ffb649a472',
+     *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+     *     var par = board.create('parabola',[[3.25, 0], [[0.25, 1],[0.25, 0]]]);
+     *
+     *     })();
+     *
+     * </script><pre>
+     *
      */
     JXG.createParabola = function (board, parents, attributes) {
         var polarForm, curve, M, i,
@@ -498,24 +513,32 @@ define([
             l = parents[1],
             attr_foci = Type.copyAttributes(attributes, board.options, 'conic', 'foci'),
             attr_center = Type.copyAttributes(attributes, board.options, 'conic', 'center'),
-            attr_curve = Type.copyAttributes(attributes, board.options, 'conic');
+            attr_curve = Type.copyAttributes(attributes, board.options, 'conic'),
+            attr_line;
 
         // focus 1 given by coordinates
         if (parents[0].length > 1) {
             F1 = board.create('point', parents[0], attr_foci);
-        // focus i given by point
+        // focus 1 given by point
         } else if (Type.isPoint(parents[0])) {
             F1 = board.select(parents[0]);
         // given by function
         } else if (Type.isFunction(parents[0]) && Type.isPoint(parents[0]()) ) {
             F1 = parents[0]();
-        // focus i given by point name
+        // focus 1 given by point name
         } else if (Type.isString(parents[0])) {
             F1 = board.select(parents[0]);
         } else {
             throw new Error("JSXGraph: Can't create Parabola with parent types '" +
                 (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
                 "\nPossible parent types: [point,line]");
+        }
+
+        // Create line if given as array of two points.
+        if (Type.isArray(l) && l.length == 2) {
+            attr_line = Type.copyAttributes(attributes, board.options, 'line');
+            attr_line.visible = false;
+            l = board.create('line', l, attr_line);
         }
 
         // to

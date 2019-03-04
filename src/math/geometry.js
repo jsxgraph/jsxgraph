@@ -1393,7 +1393,7 @@ define([
          * @param {JXG.Line} li Line
          * @param {Number} nr Will return the nr-th intersection point.
          * @param {JXG.Board} board
-         *
+         * @returns {JXG.Coords} Coords object containing the intersection.
          */
         meetCurveLineContinuous: function (cu, li, nr, board, testSegment) {
             var t, func0, func1, func0a, v, x, y, z,
