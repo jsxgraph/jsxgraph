@@ -1875,6 +1875,17 @@ define([
             point: {
                 withLabel: false,
                 name: ''
+            },
+
+            /**
+             * Attributes for parabola line incase the line is given by two
+             * points or coordinate pairs.
+             *
+             * @type Line
+             * @name Conic#line
+             */
+            line: {
+                visible: false
             }
 
             /**#@-*/
