@@ -753,7 +753,6 @@ define([
                 outputList = [],
                 inputList, i, j, S, E, cross,
 
-
                 // Determines if the point c3 is right of the line through c1 and c2.
                 // Since the polygons are sorted counter clockwise, "right of" and therefore >= is needed here
                 isInside = function(c1, c2, c3) {

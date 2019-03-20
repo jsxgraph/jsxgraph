@@ -1890,6 +1890,14 @@ define([
         updateTouchpoint: function (i, pos) {},
 
         /**
+         * Convert SVG construction to base64 encoded SVG data URL.
+         * Only available on SVGRenderer.
+         *
+         * @see JXG.SVGRenderer#dumpToDataURL
+         */
+        dumpToDataURI: function(ingnoreTexts) {},
+
+        /**
          * Convert SVG construction to canvas.
          * Only available on SVGRenderer.
          *

@@ -1386,29 +1386,12 @@ define([
         },
 
         /**
-         * Convert the SVG construction into an HTML canvas image.
-         * This works for all SVG supporting browsers.
-         * For IE it works from version 9, with the exception that HTML texts
-         * are ignored on IE. The drawing is done with a delay of
-         * 200 ms. Otherwise there would be problems with IE.
          *
-         *
-         * @param {String} canvasId Id of an HTML canvas element
-         * @param {Number} w Width in pixel of the dumped image, i.e. of the canvas tag.
-         * @param {Number} h Height in pixel of the dumped image, i.e. of the canvas tag.
-         * @param {Boolean} ignoreTexts If true, the foreignObject tag is taken out from the SVG root.
-         * This is necessary for Safari. Default: false
-         * @returns {Object}          the svg renderer object.
-         *
-         * @example
-         * 	board.renderer.dumpToCanvas('canvas');
          */
-        dumpToCanvas: function(canvasId, w, h, ignoreTexts) {
+        dumpToDataURI: function(ignoreTexts) {
             var svgRoot = this.svgRoot,
                 btoa = window.btoa || Base64.encode,
-                svg, tmpImg, cv, ctx,
-                wOrg, hOrg,
-                // DOMURL, svgBlob, url,
+                svg,
                 virtualNode, doc,
                 i, len, values = [],
                 txt;
@@ -1435,9 +1418,6 @@ define([
 
             // Convert the SVG graphic into a string containing SVG code
             svgRoot.setAttribute("xmlns", "http://www.w3.org/2000/svg");
-            wOrg = svgRoot.getAttribute('width');
-            hOrg = svgRoot.getAttribute('height');
-
             svg = new XMLSerializer().serializeToString(svgRoot);
 
             if (ignoreTexts !== true) {
@@ -1468,6 +1448,49 @@ define([
             // Obsolete with Safari 12+
             svg = svg.replace(/&nbsp;/g, ' ');
 
+            // Move all HTML tags back from
+            // the foreignObject element to the container
+            if (Type.exists(this.foreignObjLayer) && this.foreignObjLayer.hasChildNodes()) {
+                if (ignoreTexts === true) {
+                    // Put foreignObjLayer back into the SVG
+                    svgRoot.appendChild(this.foreignObjLayer);
+                }
+                // Restore all HTML elements
+                while (this.foreignObjLayer.firstChild) {
+                    this.container.appendChild(this.foreignObjLayer.firstChild);
+                }
+            }
+
+            return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
+        },
+
+        /**
+         * Convert the SVG construction into an HTML canvas image.
+         * This works for all SVG supporting browsers.
+         * For IE it works from version 9, with the exception that HTML texts
+         * are ignored on IE. The drawing is done with a delay of
+         * 200 ms. Otherwise there would be problems with IE.
+         *
+         *
+         * @param {String} canvasId Id of an HTML canvas element
+         * @param {Number} w Width in pixel of the dumped image, i.e. of the canvas tag.
+         * @param {Number} h Height in pixel of the dumped image, i.e. of the canvas tag.
+         * @param {Boolean} ignoreTexts If true, the foreignObject tag is taken out from the SVG root.
+         * This is necessary for Safari. Default: false
+         * @returns {Object}          the svg renderer object.
+         *
+         * @example
+         * 	board.renderer.dumpToCanvas('canvas');
+         */
+        dumpToCanvas: function(canvasId, w, h, ignoreTexts) {
+            var svgRoot = this.svgRoot,
+                svg, tmpImg, cv, ctx,
+                wOrg, hOrg;
+                // DOMURL, svgBlob, url,
+
+            wOrg = svgRoot.getAttribute('width');
+            hOrg = svgRoot.getAttribute('height');
+
             // Prepare the canvas element
             cv = document.getElementById(canvasId);
             // Clear the canvas
@@ -1485,7 +1508,8 @@ define([
             // Display the SVG string as data-uri in an HTML img.
             tmpImg = new Image();
             if (true) {
-                tmpImg.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
+                svg = this.dumpToDataURI(ignoreTexts);
+                tmpImg.src = svg;
 
                 // Finally, draw the HTML img in the canvas.
                 tmpImg.onload = function () {
@@ -1508,19 +1532,6 @@ define([
                 //     }, 200);
                 //     DOMURL.revokeObjectURL(url);
                 // };
-            }
-
-            // Move all HTML tags back from
-            // the foreignObject element to the container
-            if (Type.exists(this.foreignObjLayer) && this.foreignObjLayer.hasChildNodes()) {
-                if (ignoreTexts === true) {
-                    // Put foreignObjLayer back into the SVG
-                    svgRoot.appendChild(this.foreignObjLayer);
-                }
-                // Restore all HTML elements
-                while (this.foreignObjLayer.firstChild) {
-                    this.container.appendChild(this.foreignObjLayer.firstChild);
-                }
             }
 
             return this;
