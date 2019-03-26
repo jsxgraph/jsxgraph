@@ -142,7 +142,8 @@ JXG.Options = JXG.merge(JXG.Options, {
         borders: {
             strokeColor: '#444444',
             strokeOpacity: 0.9,
-            strokeWidth: 2
+            strokeWidth: 2,
+            fixed: true
         }
     },
 
