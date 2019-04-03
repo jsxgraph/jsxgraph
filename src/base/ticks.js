@@ -1232,7 +1232,6 @@ define([
      *
      * @example
      * // Alter the position of the hatch
-     * var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-10, 10, 10, -5], keepaspectratio:true});
      *
      * var p = board.create('point', [-5, 0]);
      * var q = board.create('point', [5, 0]);
@@ -1244,7 +1243,6 @@ define([
      *     (function() {
      *         var board = JXG.JSXGraph.initBoard('JXG05d720ee-99c9-11e6-a9c7-901b0e1b8723',
      *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
-     *     var board = JXG.JSXGraph.initBoard('', {boundingbox: [-10, 10, 10, -5], keepaspectratio:true});
      *
      *     var p = board.create('point', [-5, 0]);
      *     var q = board.create('point', [5, 0]);
