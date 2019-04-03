@@ -1138,10 +1138,44 @@ define([
              * @default 1
              */
             ticksDistance: 1,
+
+            /**
+             * Tick face for ticks of finite length.  By default (face: '|') this is a straight line.
+             * Possible other values are '<' and '>'. These faces are used in
+             * {@link JXG.Hatch} for hatch marking parallel lines.
+             * @type {String}
+             * @name{Ticks#face}
+             * @see hatch
+             * @default '|'
+             * @example
+             *   var p1 = board.create('point', [0, 3]);
+             *   var p2 = board.create('point', [1, 3]);
+             *   var l1 = board.create('line', [p1, p2]);
+             *   var t = board.create('ticks', [l1], {ticksDistance: 2, face: '>'});
+             *
+             * </pre><div id="JXG950a568a-1264-4e3a-b61d-b6881feecf4b" class="jxgbox" style="width: 300px; height: 300px;"></div>
+             * <script type="text/javascript">
+             *     (function() {
+             *         var board = JXG.JSXGraph.initBoard('JXG950a568a-1264-4e3a-b61d-b6881feecf4b',
+             *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+             *       var p1 = board.create('point', [0, 3]);
+             *       var p2 = board.create('point', [1, 3]);
+             *       var l1 = board.create('line', [p1, p2]);
+             *       var t = board.create('ticks', [l1], {ticksDistance: 2, face: '>'});
+             *
+             *     })();
+             *
+             * </script><pre>
+             *
+             */
+            face: '|',
+
             strokeOpacity: 1,
             strokeWidth: 1,
             strokeColor: 'black',
             highlightStrokeColor: '#888888',
+            fillColor: 'none',
+            highlightFillColor: 'none',
             visible: 'inherit',
 
             /**
@@ -1174,6 +1208,7 @@ define([
             drawZero: true,
             majorHeight: 20,
             anchor: 'middle',
+            face: '|',
             strokeWidth: 2,
             strokeColor: 'blue',
             ticksDistance: 0.2

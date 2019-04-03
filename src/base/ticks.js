@@ -783,7 +783,7 @@ define([
          */
         createTickPath: function (coords, major) {
             var c, lineStdForm, intersection,
-                dxs, dys,
+                dxs, dys, dxr, dyr, alpha,
                 style,
                 x = [-2000000, -2000000],
                 y = [-2000000, -2000000];
@@ -837,10 +837,27 @@ define([
                     y[0] = intersection[0].scrCoords[2];
                     y[1] = intersection[1].scrCoords[2];
                 } else {
-                    x[0] = c[1] + dxs * Type.evaluate(this.visProp.tickendings[0]);
-                    y[0] = c[2] - dys * Type.evaluate(this.visProp.tickendings[0]);
-                    x[1] = c[1] - dxs * Type.evaluate(this.visProp.tickendings[1]);
-                    y[1] = c[2] + dys * Type.evaluate(this.visProp.tickendings[1]);
+                    if (Type.evaluate(this.visProp.face) == '>') {
+                        alpha = Math.PI/4;
+                    } else if (Type.evaluate(this.visProp.face) == '<') {
+                            alpha = -Math.PI/4;
+                    } else {
+                        alpha = 0;
+                    }
+                    dxr = Math.cos(alpha) * dxs - Math.sin(alpha) * dys;
+                    dyr = Math.sin(alpha) * dxs + Math.cos(alpha) * dys;
+
+                    x[0] = c[1] + dxr * Type.evaluate(this.visProp.tickendings[0]);
+                    y[0] = c[2] - dyr * Type.evaluate(this.visProp.tickendings[0]);
+                    x[1] = c[1];
+                    y[1] = c[2];
+
+                    alpha = -alpha;
+                    dxr = Math.cos(alpha) * dxs - Math.sin(alpha) * dys;
+                    dyr = Math.sin(alpha) * dxs + Math.cos(alpha) * dys;
+
+                    x[2] = c[1] - dxr * Type.evaluate(this.visProp.tickendings[1]);
+                    y[2] = c[2] + dyr * Type.evaluate(this.visProp.tickendings[1]);
                 }
 
                 // Check if (parts of) the tick is inside the canvas.
@@ -1227,12 +1244,36 @@ define([
      *     (function() {
      *         var board = JXG.JSXGraph.initBoard('JXG05d720ee-99c9-11e6-a9c7-901b0e1b8723',
      *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
-     *     var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-10, 10, 10, -5], keepaspectratio:true});
+     *     var board = JXG.JSXGraph.initBoard('', {boundingbox: [-10, 10, 10, -5], keepaspectratio:true});
      *
      *     var p = board.create('point', [-5, 0]);
      *     var q = board.create('point', [5, 0]);
      *     var li = board.create('line', [p, q]);
      *     var h = board.create('hatch', [li, 2], {anchor: 0.2});
+     *
+     *     })();
+     *
+     * </script><pre>
+     *
+     * @example
+     * // Alternative hatch faces
+     *
+     * var li = board.create('line', [[-6,0], [6,3]]);
+     * var h1 = board.create('hatch', [li, 2], {tickEndings: [1,1], face:'|'});
+     * var h2 = board.create('hatch', [li, 2], {tickEndings: [1,1], face:'>', anchor: 0.3});
+     * var h3 = board.create('hatch', [li, 2], {tickEndings: [1,1], face:'<', anchor: 0.7});
+     *
+     * </pre><div id="JXG974f7e89-eac8-4187-9aa3-fb8068e8384b" class="jxgbox" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     *     (function() {
+     *         var board = JXG.JSXGraph.initBoard('JXG974f7e89-eac8-4187-9aa3-fb8068e8384b',
+     *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+     *     // Alternative hatch faces
+     *
+     *     var li = board.create('line', [[-6,0], [6,3]]);
+     *     var h1 = board.create('hatch', [li, 2], {tickEndings: [1,1], face:'|'});
+     *     var h2 = board.create('hatch', [li, 2], {tickEndings: [1,1], face:'>', anchor: 0.3});
+     *     var h3 = board.create('hatch', [li, 2], {tickEndings: [1,1], face:'<', anchor: 0.7});
      *
      *     })();
      *
