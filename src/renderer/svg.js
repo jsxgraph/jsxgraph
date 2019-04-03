@@ -1464,6 +1464,7 @@ define([
             return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
         },
 
+
         /**
          * Convert the SVG construction into an HTML canvas image.
          * This works for all SVG supporting browsers.
@@ -1476,65 +1477,67 @@ define([
          * @param {Number} w Width in pixel of the dumped image, i.e. of the canvas tag.
          * @param {Number} h Height in pixel of the dumped image, i.e. of the canvas tag.
          * @param {Boolean} ignoreTexts If true, the foreignObject tag is taken out from the SVG root.
-         * This is necessary for Safari. Default: false
-         * @returns {Object}          the svg renderer object.
+         * This is necessary for older versions of Safari. Default: false
+         * @returns {Promise}  Promise object
          *
          * @example
-         * 	board.renderer.dumpToCanvas('canvas');
+         * 	board.renderer.dumpToCanvas('canvas').then(function() { console.log('done'); });
          */
         dumpToCanvas: function(canvasId, w, h, ignoreTexts) {
             var svgRoot = this.svgRoot,
                 svg, tmpImg, cv, ctx,
-                wOrg, hOrg;
+                wOrg, hOrg, that;
                 // DOMURL, svgBlob, url,
 
             wOrg = svgRoot.getAttribute('width');
             hOrg = svgRoot.getAttribute('height');
+            that = this;
 
-            // Prepare the canvas element
-            cv = document.getElementById(canvasId);
-            // Clear the canvas
-            cv.width = cv.width;
-            ctx = cv.getContext("2d");
-            if (w !== undefined && h !== undefined) {
-                // Scale twice the CSS size to make the image crisp
-                cv.style.width = parseFloat(w) + 'px';
-                cv.style.height = parseFloat(h) + 'px';
-                cv.setAttribute('width',  2 * parseFloat(wOrg));
-                cv.setAttribute('height', 2 * parseFloat(hOrg));
-                ctx.scale(2 * wOrg / w, 2 * hOrg / h);
-            }
-
-            // Display the SVG string as data-uri in an HTML img.
-            tmpImg = new Image();
-            if (true) {
-                svg = this.dumpToDataURI(ignoreTexts);
-                tmpImg.src = svg;
-
-                // Finally, draw the HTML img in the canvas.
+            // Finally, draw the HTML img in the canvas.
+            if (!('Promise' in window)) {
                 tmpImg.onload = function () {
                     // IE needs a pause...
                     setTimeout(function(){
                         ctx.drawImage(tmpImg, 0, 0, w, h);
                     }, 200);
                 };
-            } else {
-                // // Alternative version
-                // DOMURL = window.URL || window.webkitURL || window;
-                // svgBlob = new Blob([svg], {type: 'image/svg+xml'});
-                // url = DOMURL.createObjectURL(svgBlob);
-                // tmpImg.src = url;
-                //
-                // tmpImg.onload = function () {
-                //     // IE needs a pause...
-                //     setTimeout(function(){
-                //         ctx.drawImage(tmpImg, 0, 0, w, h);
-                //     }, 200);
-                //     DOMURL.revokeObjectURL(url);
-                // };
+
+                return this;
             }
 
-            return this;
+            return new Promise(function(resolve, reject) {
+                try {
+                    // Prepare the canvas element
+                    cv = document.getElementById(canvasId);
+                    // Clear the canvas
+                    cv.width = cv.width;
+                    ctx = cv.getContext("2d");
+                    if (w !== undefined && h !== undefined) {
+                        // Scale twice the CSS size to make the image crisp
+                        cv.style.width = parseFloat(w) + 'px';
+                        cv.style.height = parseFloat(h) + 'px';
+                        cv.setAttribute('width',  2 * parseFloat(wOrg));
+                        cv.setAttribute('height', 2 * parseFloat(hOrg));
+                        ctx.scale(2 * wOrg / w, 2 * hOrg / h);
+                    }
+
+                    // Display the SVG string as data-uri in an HTML img.
+                    tmpImg = new Image();
+                    svg = that.dumpToDataURI(ignoreTexts);
+                    tmpImg.src = svg;
+
+                    tmpImg.onload = function () {
+                        // IE needs a pause...
+                        setTimeout(function(){
+                            ctx.drawImage(tmpImg, 0, 0, w, h);
+                            resolve('test');
+                        }, 200);
+                    };
+                } catch (e) {
+                    reject(e);
+                }
+            });
+
         },
 
         /**
@@ -1648,18 +1651,17 @@ define([
             }
 
             // Create screenshot in canvas
-            this.dumpToCanvas(id, w, h, ignoreTexts);
+            this.dumpToCanvas(id, w, h, ignoreTexts).then(
+                function() {
+                    // Show image in img tag
+                    img.src = canvas.toDataURL('image/png');
 
-            // Show image in img tag
-            setTimeout(function() {
-                //console.log(canvas.toDataURL('image/png'));
-                img.src = canvas.toDataURL('image/png');
-
-                // Remove canvas node
-                if (!isDebug) {
-                    parent.removeChild(canvas);
+                    // Remove canvas node
+                    if (!isDebug) {
+                        parent.removeChild(canvas);
+                    }
                 }
-            }, 400);
+            );
 
             // Show navigation bar in board
             if (Type.exists(zbar)) {
