@@ -843,7 +843,7 @@ define([
          * @param {Event} e Event object given by the browser.
          * @param {Number} [i] Only use in case of touch events. This determines which finger to use and should not be set
          * for mouseevents.
-         * @returns {Array} Contains the mouse coordinates in user coordinates, ready  for {@link JXG.Coords}
+         * @returns {Array} Contains the mouse coordinates in screen coordinates, ready for {@link JXG.Coords}
          */
         getMousePosition: function (e, i) {
             var cPos = this.getCoordsTopLeftCorner(),

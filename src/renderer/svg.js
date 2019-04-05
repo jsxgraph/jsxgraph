@@ -1467,11 +1467,12 @@ define([
 
         /**
          * Convert the SVG construction into an HTML canvas image.
-         * This works for all SVG supporting browsers.
-         * For IE it works from version 9, with the exception that HTML texts
+         * This works for all SVG supporting browsers. Implemented as Promise.
+         * <p>
+         * For IE, it is realized as function.
+         * It works from version 9, with the exception that HTML texts
          * are ignored on IE. The drawing is done with a delay of
          * 200 ms. Otherwise there would be problems with IE.
-         *
          *
          * @param {String} canvasId Id of an HTML canvas element
          * @param {Number} w Width in pixel of the dumped image, i.e. of the canvas tag.
@@ -1482,6 +1483,10 @@ define([
          *
          * @example
          * 	board.renderer.dumpToCanvas('canvas').then(function() { console.log('done'); });
+         * @example
+         *  // IE11 example:
+         * 	board.renderer.dumpToCanvas('canvas');
+         * 	setTimeout(function() { console.log('done'); }, 400);
          */
         dumpToCanvas: function(canvasId, w, h, ignoreTexts) {
             var svgRoot = this.svgRoot,
