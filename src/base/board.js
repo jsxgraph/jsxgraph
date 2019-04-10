@@ -3476,11 +3476,47 @@ define([
         },
 
         /**
-         * Reset the bounding box and the zoom level to 100% such that a given set of elements is within the board's viewport.
+         * Reset the bounding box and the zoom level to 100% such that a given set of elements is
+         * within the board's viewport.
          * @param {Array} elements A set of elements given by id, reference, or name.
          * @returns {JXG.Board} Reference to the board.
          */
         zoomElements: function (elements) {
+            var i, e, box,
+                newBBox = [Infinity, -Infinity, -Infinity, Infinity],
+                cx, cy, dx, dy, d;
+
+            if (!Type.isArray(elements) || elements.length === 0) {
+                return this;
+            }
+
+            for (i = 0; i < elements.length; i++) {
+                e = this.select(elements[i]);
+
+                box = e.bounds();
+                if (Type.isArray(box)) {
+                    if (box[0] < newBBox[0]) { newBBox[0] = box[0] };
+                    if (box[1] > newBBox[1]) { newBBox[1] = box[1] };
+                    if (box[2] > newBBox[2]) { newBBox[2] = box[2] };
+                    if (box[3] < newBBox[3]) { newBBox[3] = box[3] };
+                }
+            }
+
+            if (Type.isArray(newBBox)) {
+                this.zoomX = 1.0;
+                this.zoomY = 1.0;
+                cx = 0.5 * (newBBox[0] + newBBox[2]);
+                cy = 0.5 * (newBBox[1] + newBBox[3]);
+                dx = 1.5 * (newBBox[2] - newBBox[0]) * 0.5;
+                dy = 1.5 * (newBBox[1] - newBBox[3]) * 0.5;
+                d = Math.max(dx, dy);
+                this.setBoundingBox([cx - d, cy + d, cx + d, cy - d], true);
+            }
+
+            return this;
+        },
+
+        zoomElementsOld: function (elements) {
             var i, j, e, box,
                 newBBox = [0, 0, 0, 0],
                 dir = [1, -1, -1, 1];
