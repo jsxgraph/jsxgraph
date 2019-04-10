@@ -1521,9 +1521,14 @@ define([
             if (!('Promise' in window)) {
                 tmpImg.onload = function () {
                     // IE needs a pause...
+                    // Seems to be broken
                     setTimeout(function() {
-                        ctx.drawImage(tmpImg, 0, 0, w, h);
-                    }, 1000);
+                        try {
+                            ctx.drawImage(tmpImg, 0, 0, w, h);
+                        } catch (err) {
+                            console.log("screenshots not longer supported on IE");
+                        }
+                    }, 200);
                 };
                 return this;
             }
@@ -1623,8 +1628,7 @@ define([
                 canvas.style.display = 'none';
                 parent.appendChild(canvas);
             } else {
-                // Debug: use canvas element
-                // 'jxgbox_canvas' from jsxdev/dump.html
+                // Debug: use canvas element 'jxgbox_canvas' from jsxdev/dump.html
                 id = 'jxgbox_canvas';
                 canvas = document.getElementById(id);
             }
