@@ -304,7 +304,7 @@ define([
             // Get Zero
             coordsZero = this.getZeroCoordinates();
 
-            // Calculate lower bound and upper bound limits based on distance between p1 and centre and p2 and centre
+            // Calculate lower bound and upper bound limits based on distance between p1 and centre and p2 and center
             bounds = this.getLowerAndUpperBounds(coordsZero);
             if (Type.evaluate(this.visProp.type) === 'polar') {
                 bb = board.getBoundingBox();
@@ -614,6 +614,11 @@ define([
             nx = coordsZero.usrCoords[1] + deltas.x * ticksDelta;
             ny = coordsZero.usrCoords[2] + deltas.y * ticksDelta;
             distScr = coordsZero.distance(Const.COORDS_BY_SCREEN, new Coords(Const.COORDS_BY_USER, [nx, ny], this.board));
+
+            if (ticksDelta == 0.0) {
+                return 0.0;
+            }
+
             while (distScr / (ev_minti + 1) < this.minTicksDistance) {
                 if (sgn === 1) {
                     ticksDelta *= 2;
