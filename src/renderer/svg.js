@@ -1483,60 +1483,56 @@ define([
          *
          * @example
          * 	board.renderer.dumpToCanvas('canvas').then(function() { console.log('done'); });
+         *
          * @example
-         *  // IE11 example:
+         *  // IE 11 example:
          * 	board.renderer.dumpToCanvas('canvas');
          * 	setTimeout(function() { console.log('done'); }, 400);
          */
         dumpToCanvas: function(canvasId, w, h, ignoreTexts) {
             var svgRoot = this.svgRoot,
                 svg, tmpImg, cv, ctx,
-                wOrg, hOrg, that;
+                wOrg, hOrg;
                 // DOMURL, svgBlob, url,
 
             wOrg = svgRoot.getAttribute('width');
             hOrg = svgRoot.getAttribute('height');
-            that = this;
+
+            // Prepare the canvas element
+            cv = document.getElementById(canvasId);
+            // Clear the canvas
+            cv.width = cv.width;
+            ctx = cv.getContext("2d");
+            if (w !== undefined && h !== undefined) {
+                // Scale twice the CSS size to make the image crisp
+                cv.style.width = parseFloat(w) + 'px';
+                cv.style.height = parseFloat(h) + 'px';
+                cv.setAttribute('width',  2 * parseFloat(wOrg));
+                cv.setAttribute('height', 2 * parseFloat(hOrg));
+                ctx.scale(2 * wOrg / w, 2 * hOrg / h);
+            }
+
+            // Display the SVG string as data-uri in an HTML img.
+            tmpImg = new Image();
+            svg = this.dumpToDataURI(ignoreTexts);
+            tmpImg.src = svg;
 
             // Finally, draw the HTML img in the canvas.
             if (!('Promise' in window)) {
                 tmpImg.onload = function () {
                     // IE needs a pause...
-                    setTimeout(function(){
+                    setTimeout(function() {
                         ctx.drawImage(tmpImg, 0, 0, w, h);
-                    }, 200);
+                    }, 1000);
                 };
-
                 return this;
             }
 
             return new Promise(function(resolve, reject) {
                 try {
-                    // Prepare the canvas element
-                    cv = document.getElementById(canvasId);
-                    // Clear the canvas
-                    cv.width = cv.width;
-                    ctx = cv.getContext("2d");
-                    if (w !== undefined && h !== undefined) {
-                        // Scale twice the CSS size to make the image crisp
-                        cv.style.width = parseFloat(w) + 'px';
-                        cv.style.height = parseFloat(h) + 'px';
-                        cv.setAttribute('width',  2 * parseFloat(wOrg));
-                        cv.setAttribute('height', 2 * parseFloat(hOrg));
-                        ctx.scale(2 * wOrg / w, 2 * hOrg / h);
-                    }
-
-                    // Display the SVG string as data-uri in an HTML img.
-                    tmpImg = new Image();
-                    svg = that.dumpToDataURI(ignoreTexts);
-                    tmpImg.src = svg;
-
                     tmpImg.onload = function () {
-                        // IE needs a pause...
-                        setTimeout(function(){
-                            ctx.drawImage(tmpImg, 0, 0, w, h);
-                            resolve('test');
-                        }, 200);
+                        ctx.drawImage(tmpImg, 0, 0, w, h);
+                        resolve();
                     };
                 } catch (e) {
                     reject(e);
@@ -1578,6 +1574,7 @@ define([
                 bas = board.attr.screenshot,
                 zbar, zbarDisplay, cssTxt,
                 newImg = false,
+                _copyCanvasToImg,
                 isDebug = false;
 
             if (this.type === 'no') {
@@ -1624,7 +1621,7 @@ define([
                 canvas.style.width = w + 'px';
                 canvas.style.height = w + 'px';
                 canvas.style.display = 'none';
-                parent.append(canvas);
+                parent.appendChild(canvas);
             } else {
                 // Debug: use canvas element
                 // 'jxgbox_canvas' from jsxdev/dump.html
@@ -1655,18 +1652,24 @@ define([
                 zbar.style.display = 'none';
             }
 
-            // Create screenshot in canvas
-            this.dumpToCanvas(id, w, h, ignoreTexts).then(
-                function() {
-                    // Show image in img tag
-                    img.src = canvas.toDataURL('image/png');
+            _copyCanvasToImg = function() {
+                // Show image in img tag
+                img.src = canvas.toDataURL('image/png');
 
-                    // Remove canvas node
-                    if (!isDebug) {
-                        parent.removeChild(canvas);
-                    }
+                // Remove canvas node
+                if (!isDebug) {
+                    parent.removeChild(canvas);
                 }
-            );
+            };
+
+            // Create screenshot in image element
+            if ('Promise' in window) {
+                this.dumpToCanvas(id, w, h, ignoreTexts).then(_copyCanvasToImg);
+            } else {
+                // IE
+                this.dumpToCanvas(id, w, h, ignoreTexts);
+                setTimeout(_copyCanvasToImg, 200);
+            }
 
             // Show navigation bar in board
             if (Type.exists(zbar)) {
