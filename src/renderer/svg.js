@@ -174,10 +174,10 @@ define([
 
         if (this.supportsForeignObject) {
             this.foreignObjLayer = this.container.ownerDocument.createElementNS(this.svgNamespace, 'foreignObject');
-            this.foreignObjLayer.setAttribute("x",0);
-            this.foreignObjLayer.setAttribute("y",0);
-            this.foreignObjLayer.setAttribute("width","100%");
-            this.foreignObjLayer.setAttribute("height","100%");
+            this.foreignObjLayer.setAttribute("x", 0);
+            this.foreignObjLayer.setAttribute("y", 0);
+            this.foreignObjLayer.setAttribute("width", "100%");
+            this.foreignObjLayer.setAttribute("height", "100%");
             this.foreignObjLayer.setAttribute('id', this.container.id + '_foreignObj');
             this.svgRoot.appendChild(this.foreignObjLayer);
         }
@@ -226,7 +226,7 @@ define([
             node2.setAttributeNS(null, 'fill', Type.evaluate(el.visProp.strokecolor));
             node2.setAttributeNS(null, 'fill-opacity', Type.evaluate(el.visProp.strokeopacity));
             node2.setAttributeNS(null, 'stroke-width', 0);  // this is the stroke-width of the arrow head.
-                                                            // Should be zero to simplify the calculations
+            // Should be zero to simplify the calculations
 
             node2.setAttributeNS(null, 'orient', 'auto');
             node2.setAttributeNS(null, 'markerUnits', 'strokeWidth'); // 'strokeWidth' 'userSpaceOnUse');
@@ -293,7 +293,7 @@ define([
 
             if (node) {
                 if (Type.isString(color)) {
-                    this._setAttribute(function() {
+                    this._setAttribute(function () {
                         node.setAttributeNS(null, 'stroke', color);
                         node.setAttributeNS(null, 'fill', color);
                         node.setAttributeNS(null, 'stroke-opacity', opacity);
@@ -415,7 +415,7 @@ define([
 
             el.rendNodeText = this.container.ownerDocument.createTextNode('');
             node.appendChild(el.rendNodeText);
-            this.appendChildPrim(node,  Type.evaluate(el.visProp.layer));
+            this.appendChildPrim(node, Type.evaluate(el.visProp.layer));
 
             return node;
         },
@@ -674,32 +674,32 @@ define([
             } else if (type === '+') {
                 s = ' M ' + (scr[1] - size) + ' ' + (scr[2]) +
                     ' L ' + (scr[1] + size) + ' ' + (scr[2]) +
-                    ' M ' + (scr[1])        + ' ' + (scr[2] - size) +
-                    ' L ' + (scr[1])        + ' ' + (scr[2] + size);
+                    ' M ' + (scr[1]) + ' ' + (scr[2] - size) +
+                    ' L ' + (scr[1]) + ' ' + (scr[2] + size);
             } else if (type === '<>') {
                 s = ' M ' + (scr[1] - size) + ' ' + (scr[2]) +
-                    ' L ' + (scr[1])        + ' ' + (scr[2] + size) +
+                    ' L ' + (scr[1]) + ' ' + (scr[2] + size) +
                     ' L ' + (scr[1] + size) + ' ' + (scr[2]) +
-                    ' L ' + (scr[1])        + ' ' + (scr[2] - size) + ' Z ';
+                    ' L ' + (scr[1]) + ' ' + (scr[2] - size) + ' Z ';
             } else if (type === '^') {
-                s = ' M ' + (scr[1])          + ' ' + (scr[2] - size) +
+                s = ' M ' + (scr[1]) + ' ' + (scr[2] - size) +
                     ' L ' + (scr[1] - sqrt32) + ' ' + (scr[2] + s05) +
                     ' L ' + (scr[1] + sqrt32) + ' ' + (scr[2] + s05) +
                     ' Z ';  // close path
             } else if (type === 'v') {
-                s = ' M ' + (scr[1])          + ' ' + (scr[2] + size) +
+                s = ' M ' + (scr[1]) + ' ' + (scr[2] + size) +
                     ' L ' + (scr[1] - sqrt32) + ' ' + (scr[2] - s05) +
                     ' L ' + (scr[1] + sqrt32) + ' ' + (scr[2] - s05) +
                     ' Z ';
             } else if (type === '>') {
                 s = ' M ' + (scr[1] + size) + ' ' + (scr[2]) +
-                    ' L ' + (scr[1] - s05)  + ' ' + (scr[2] - sqrt32) +
-                    ' L ' + (scr[1] - s05)  + ' ' + (scr[2] + sqrt32) +
+                    ' L ' + (scr[1] - s05) + ' ' + (scr[2] - sqrt32) +
+                    ' L ' + (scr[1] - s05) + ' ' + (scr[2] + sqrt32) +
                     ' Z ';
             } else if (type === '<') {
                 s = ' M ' + (scr[1] - size) + ' ' + (scr[2]) +
-                    ' L ' + (scr[1] + s05)  + ' ' + (scr[2] - sqrt32) +
-                    ' L ' + (scr[1] + s05)  + ' ' + (scr[2] + sqrt32) +
+                    ' L ' + (scr[1] + s05) + ' ' + (scr[2] - sqrt32) +
+                    ' L ' + (scr[1] + s05) + ' ' + (scr[2] + sqrt32) +
                     ' Z ';
             }
             return s;
@@ -863,7 +863,7 @@ define([
             node.setAttributeNS(null, key, val);
         },
 
-        display: function(el, val) {
+        display: function (el, val) {
             var node;
 
             if (el && el.rendNode) {
@@ -951,7 +951,7 @@ define([
                 node3 = this.createPrim('stop', el.id + '_gradient2');
                 node3.setAttributeNS(null, 'offset', '100%');
                 node3.setAttributeNS(null, 'style', 'stop-color:' + Type.evaluate(el.visProp.gradientsecondcolor) +
-                            ';stop-opacity:' + Type.evaluate(el.visProp.gradientsecondopacity));
+                    ';stop-opacity:' + Type.evaluate(el.visProp.gradientsecondopacity));
                 node.appendChild(node2);
                 node.appendChild(node3);
                 this.defs.appendChild(node);
@@ -970,7 +970,7 @@ define([
                 node2 = this.createPrim('stop', el.id + '_gradient1');
                 node2.setAttributeNS(null, 'offset', '0%');
                 node2.setAttributeNS(null, 'style', 'stop-color:' + Type.evaluate(el.visProp.gradientsecondcolor) +
-                                ';stop-opacity:' + Type.evaluate(el.visProp.gradientsecondopacity));
+                    ';stop-opacity:' + Type.evaluate(el.visProp.gradientsecondopacity));
                 node3 = this.createPrim('stop', el.id + '_gradient2');
                 node3.setAttributeNS(null, 'offset', '100%');
                 node3.setAttributeNS(null, 'style', 'stop-color:' + col + ';stop-opacity:' + op);
@@ -1004,10 +1004,10 @@ define([
             if (ev_g === 'linear') {
                 node2.setAttributeNS(null, 'style', 'stop-color:' + col + ';stop-opacity:' + op);
                 node3.setAttributeNS(null, 'style', 'stop-color:' + Type.evaluate(el.visProp.gradientsecondcolor) +
-                        ';stop-opacity:' + Type.evaluate(el.visProp.gradientsecondopacity));
+                    ';stop-opacity:' + Type.evaluate(el.visProp.gradientsecondopacity));
             } else if (ev_g === 'radial') {
                 node2.setAttributeNS(null, 'style', 'stop-color:' + Type.evaluate(el.visProp.gradientsecondcolor) +
-                        ';stop-opacity:' + Type.evaluate(el.visProp.gradientsecondopacity));
+                    ';stop-opacity:' + Type.evaluate(el.visProp.gradientsecondopacity));
                 node3.setAttributeNS(null, 'style', 'stop-color:' + col + ';stop-opacity:' + op);
             }
         },
@@ -1017,8 +1017,8 @@ define([
             var node, transitionStr,
                 i, len,
                 nodes = ['rendNode',
-                         'rendNodeTriangleStart',
-                         'rendNodeTriangleEnd'];
+                    'rendNodeTriangleStart',
+                    'rendNodeTriangleEnd'];
 
             if (duration === undefined) {
                 duration = Type.evaluate(el.visProp.transitionduration);
@@ -1031,12 +1031,12 @@ define([
             if (el.elementClass === Const.OBJECT_CLASS_TEXT &&
                 Type.evaluate(el.visProp.display) === 'html') {
                 transitionStr = ' color ' + duration + 'ms,' +
-                            ' opacity ' + duration + 'ms';
+                    ' opacity ' + duration + 'ms';
             } else {
                 transitionStr = ' fill ' + duration + 'ms,' +
-                            ' fill-opacity ' + duration + 'ms,' +
-                            ' stroke ' + duration + 'ms,' +
-                            ' stroke-opacity ' + duration + 'ms';
+                    ' fill-opacity ' + duration + 'ms,' +
+                    ' stroke ' + duration + 'ms,' +
+                    ' stroke-opacity ' + duration + 'ms';
             }
 
             len = nodes.length;
@@ -1069,7 +1069,7 @@ define([
          * @see JXG.SVGRenderer#_setArrowColor
          * @private
          */
-        _setAttribute: function(setFunc, testAttribute) {
+        _setAttribute: function (setFunc, testAttribute) {
             if (testAttribute === '') {
                 setFunc();
             } else {
@@ -1106,24 +1106,24 @@ define([
                 }
 
                 if (c !== 'none') {
-                    this._setAttribute(function() {
-                            node.setAttributeNS(null, 'fill', c);
-                        }, el.visPropOld.fillcolor);
+                    this._setAttribute(function () {
+                        node.setAttributeNS(null, 'fill', c);
+                    }, el.visPropOld.fillcolor);
                 }
 
                 if (el.type === JXG.OBJECT_TYPE_IMAGE) {
-                    this._setAttribute(function() {
-                            node.setAttributeNS(null, 'opacity', oo);
-                        }, el.visPropOld.fillopacity);
+                    this._setAttribute(function () {
+                        node.setAttributeNS(null, 'opacity', oo);
+                    }, el.visPropOld.fillopacity);
                     //node.style['opacity'] = oo;  // This would overwrite values set by CSS class.
                 } else {
                     if (c === 'none') {  // This is done only for non-images
-                                         // because images have no fill color.
+                        // because images have no fill color.
                         oo = 0;
                     }
-                    this._setAttribute(function() {
-                            node.setAttributeNS(null, 'fill-opacity', oo);
-                        }, el.visPropOld.fillopacity);
+                    this._setAttribute(function () {
+                        node.setAttributeNS(null, 'fill-opacity', oo);
+                    }, el.visPropOld.fillopacity);
                 }
 
                 if (Type.exists(el.visProp.gradient)) {
@@ -1160,22 +1160,22 @@ define([
 
                 if (el.elementClass === Const.OBJECT_CLASS_TEXT) {
                     if (Type.evaluate(el.visProp.display) === 'html') {
-                        this._setAttribute(function() {
-                                node.style.color = c;
-                                node.style.opacity = oo;
-                            }, el.visPropOld.strokecolor);
+                        this._setAttribute(function () {
+                            node.style.color = c;
+                            node.style.opacity = oo;
+                        }, el.visPropOld.strokecolor);
 
                     } else {
-                        this._setAttribute(function() {
-                                node.setAttributeNS(null, "style", "fill:" + c);
-                                node.setAttributeNS(null, "style", "fill-opacity:" + oo);
-                            }, el.visPropOld.strokecolor);
+                        this._setAttribute(function () {
+                            node.setAttributeNS(null, "style", "fill:" + c);
+                            node.setAttributeNS(null, "style", "fill-opacity:" + oo);
+                        }, el.visPropOld.strokecolor);
                     }
                 } else {
-                    this._setAttribute(function() {
-                            node.setAttributeNS(null, 'stroke', c);
-                            node.setAttributeNS(null, 'stroke-opacity', oo);
-                        }, el.visPropOld.strokecolor);
+                    this._setAttribute(function () {
+                        node.setAttributeNS(null, 'stroke', c);
+                        node.setAttributeNS(null, 'stroke-opacity', oo);
+                    }, el.visPropOld.strokecolor);
                 }
 
                 if (el.elementClass === Const.OBJECT_CLASS_CURVE ||
@@ -1219,7 +1219,7 @@ define([
                 //         this._setArrowWidth(el.rendNodeTriangleEnd, w, el.rendNode);
                 //     }
                 // }
-             }
+            }
             el.visPropOld.strokewidth = w;
         },
 
@@ -1354,7 +1354,7 @@ define([
          * @return {Array}      Array with entries of the form [id, value]
          * @private
          */
-        _getValuesOfDOMElements: function(node) {
+        _getValuesOfDOMElements: function (node) {
             var values = [];
             if (node.nodeType == 1) {
                 node = node.firstChild;
@@ -1369,7 +1369,7 @@ define([
             return values;
         },
 
-        _getDataUri: function(url, callback) {
+        _getDataUri: function (url, callback) {
             var image = new Image();
 
             image.onload = function () {
@@ -1380,6 +1380,7 @@ define([
                 canvas.getContext('2d').drawImage(this, 0, 0);
 
                 callback(canvas.toDataURL('image/png'));
+                canvas.remove();
             };
 
             image.src = url;
@@ -1388,13 +1389,14 @@ define([
         /**
          *
          */
-        dumpToDataURI: function(ignoreTexts) {
+        dumpToDataURI: function (ignoreTexts) {
             var svgRoot = this.svgRoot,
                 btoa = window.btoa || Base64.encode,
                 svg,
                 virtualNode, doc,
-                i, len, values = [],
-                txt;
+                i, len, images, txt, img,
+                canvas, ctx, ur,
+                values = [];
 
             // Move all HTML tags (beside the SVG root) of the container
             // to the foreignObject element inside of the svgRoot node
@@ -1403,8 +1405,10 @@ define([
             // of an input element. Therefore, we do it "by hand".
             if (this.container.hasChildNodes() && Type.exists(this.foreignObjLayer)) {
                 while (svgRoot.nextSibling) {
+
                     // Copy all value attributes
                     values = values.concat(this._getValuesOfDOMElements(svgRoot.nextSibling));
+
                     this.foreignObjLayer.appendChild(svgRoot.nextSibling);
                 }
                 if (ignoreTexts === true) {
@@ -1416,6 +1420,32 @@ define([
                 }
             }
 
+            images = svgRoot.getElementsByTagName("image");
+            len = images.length;
+            if (len > 0) {
+                canvas = document.createElement('canvas');
+                img = new Image();
+                for (i = 0; i < len; i++) {
+                    images[i].setAttribute("crossorigin", "anonymous");
+                    // img.src = images[i].href;
+                    // img.onload = function() {
+                    ctx = canvas.getContext('2d');
+                    canvas.width = images[i].getAttribute("width");
+                    canvas.height = images[i].getAttribute("height");
+                    try {
+                        //ctx.drawImage(images[i], 0, 0, canvas.width, canvas.height);
+                        //ctx.drawImage(document.getElementById('testimg2'), 0, 0, canvas.width, canvas.height);
+
+                    // If the image is not png, the format must be specified here
+                        ur = canvas.toDataURL();
+                        images[i].setAttribute("xlink:href", ur);
+                    } catch (err) {
+                        console.log("CORS problem! Image can not be used", err);
+                    }
+                }
+                canvas.remove();
+            }
+
             // Convert the SVG graphic into a string containing SVG code
             svgRoot.setAttribute("xmlns", "http://www.w3.org/2000/svg");
             svg = new XMLSerializer().serializeToString(svgRoot);
@@ -1425,14 +1455,9 @@ define([
                 // Insert all value attributes back into the svg string
                 len = values.length;
                 for (i = 0; i < len; i++) {
-                    svg = svg.replace('id="' + values[i][0] + '"', 'id="' + values[i][0] + '" value="' + values[i][1] +'"');
+                    svg = svg.replace('id="' + values[i][0] + '"', 'id="' + values[i][0] + '" value="' + values[i][1] + '"');
                 }
             }
-
-            // this._getDataUri('uccellino.jpg', function(data) {
-            //     console.log(data);
-            // });
-            // xlink:href="uccellino.jpg"
 
             if (false) {
                 // Debug: use example svg image
@@ -1489,11 +1514,11 @@ define([
          * 	board.renderer.dumpToCanvas('canvas');
          * 	setTimeout(function() { console.log('done'); }, 400);
          */
-        dumpToCanvas: function(canvasId, w, h, ignoreTexts) {
+        dumpToCanvas: function (canvasId, w, h, ignoreTexts) {
             var svgRoot = this.svgRoot,
                 svg, tmpImg, cv, ctx,
                 wOrg, hOrg;
-                // DOMURL, svgBlob, url,
+            // DOMURL, svgBlob, url,
 
             wOrg = svgRoot.getAttribute('width');
             hOrg = svgRoot.getAttribute('height');
@@ -1507,7 +1532,7 @@ define([
                 // Scale twice the CSS size to make the image crisp
                 cv.style.width = parseFloat(w) + 'px';
                 cv.style.height = parseFloat(h) + 'px';
-                cv.setAttribute('width',  2 * parseFloat(wOrg));
+                cv.setAttribute('width', 2 * parseFloat(wOrg));
                 cv.setAttribute('height', 2 * parseFloat(hOrg));
                 ctx.scale(2 * wOrg / w, 2 * hOrg / h);
             }
@@ -1567,7 +1592,7 @@ define([
          *  SVGRoot and texts are not displayed. This is mandatory for Safari. Default: false
          * @return {Object}       the svg renderer object
          */
-        screenshot: function(board, imgId, ignoreTexts) {
+        screenshot: function (board, imgId, ignoreTexts) {
             var node,
                 doc = this.container.ownerDocument,
                 parent = this.container.parentNode,
@@ -1610,7 +1635,7 @@ define([
 
                 // Position the div exactly over the JSXGraph board
                 cPos = board.getCoordsTopLeftCorner();
-                node.style.position= 'absolute';
+                node.style.position = 'absolute';
                 node.style.left = (cPos[0]) + 'px';
                 node.style.top = (cPos[1]) + 'px';
             }
@@ -1639,7 +1664,7 @@ define([
                 buttonText = doc.createTextNode('\u2716');
                 button.style.cssText = bas.cssButton;
                 button.appendChild(buttonText);
-                button.onclick = function() {
+                button.onclick = function () {
                     node.parentNode.removeChild(node);
                 };
 
