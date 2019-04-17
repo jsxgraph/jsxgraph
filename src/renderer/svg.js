@@ -1380,6 +1380,7 @@ define([
                 canvas.getContext('2d').drawImage(this, 0, 0);
 
                 callback(canvas.toDataURL('image/png'));
+                canvas.remove();
             };
 
             image.src = url;
@@ -1393,7 +1394,7 @@ define([
                 btoa = window.btoa || Base64.encode,
                 svg,
                 virtualNode, doc,
-                i, len, images, txt,
+                i, len, images, txt, img,
                 canvas, ctx, ur,
                 values = [];
 
@@ -1419,23 +1420,29 @@ define([
                 }
             }
 
-
-            images = svgRoot.getElementsByTagName("image")
+            images = svgRoot.getElementsByTagName("image");
             len = images.length;
-            for (i = 0; i < len; i++) {
-                images[i].setAttribute("crossorigin", "Anonymous");
-
+            if (len > 0) {
                 canvas = document.createElement('canvas');
-                ctx = canvas.getContext('2d');
-                canvas.width = images[i].getAttribute("width");
-                canvas.height = images[i].getAttribute("height");
-                ctx.drawImage(images[i], 0, 0, canvas.width, canvas.height);
+                img = new Image();
+                for (i = 0; i < len; i++) {
+                    images[i].setAttribute("crossorigin", "anonymous");
+                    // img.src = images[i].href;
+                    // img.onload = function() {
+                    ctx = canvas.getContext('2d');
+                    canvas.width = images[i].getAttribute("width");
+                    canvas.height = images[i].getAttribute("height");
+                    try {
+                        //ctx.drawImage(images[i], 0, 0, canvas.width, canvas.height);
+                        //ctx.drawImage(document.getElementById('testimg2'), 0, 0, canvas.width, canvas.height);
 
-                // If the image is not png, the format
-                // must be specified here
-                ur = canvas.toDataURL();
-                images[i].setAttribute("xlink:href", ur);
-                
+                    // If the image is not png, the format must be specified here
+                        ur = canvas.toDataURL();
+                        images[i].setAttribute("xlink:href", ur);
+                    } catch (err) {
+                        console.log("CORS problem! Image can not be used", err);
+                    }
+                }
                 canvas.remove();
             }
 
@@ -1451,11 +1458,6 @@ define([
                     svg = svg.replace('id="' + values[i][0] + '"', 'id="' + values[i][0] + '" value="' + values[i][1] + '"');
                 }
             }
-
-            // this._getDataUri('uccellino.jpg', function(data) {
-            //     console.log(data);
-            // });
-            // xlink:href="uccellino.jpg"
 
             if (false) {
                 // Debug: use example svg image
