@@ -1393,8 +1393,9 @@ define([
                 btoa = window.btoa || Base64.encode,
                 svg,
                 virtualNode, doc,
-                i, len, values = [],
-                txt;
+                i, len, images, txt,
+                canvas, ctx, ur,
+                values = [];
 
             // Move all HTML tags (beside the SVG root) of the container
             // to the foreignObject element inside of the svgRoot node
@@ -1404,7 +1405,7 @@ define([
             if (this.container.hasChildNodes() && Type.exists(this.foreignObjLayer)) {
                 while (svgRoot.nextSibling) {
 
-                    // Copy all value attributes                    
+                    // Copy all value attributes
                     values = values.concat(this._getValuesOfDOMElements(svgRoot.nextSibling));
 
                     this.foreignObjLayer.appendChild(svgRoot.nextSibling);
@@ -1419,26 +1420,23 @@ define([
             }
 
 
-            var images = svgRoot.getElementsByTagName("image")
-            len = images.length
-            for (let i = 0; i < len; i++) {
+            images = svgRoot.getElementsByTagName("image")
+            len = images.length;
+            for (i = 0; i < len; i++) {
                 images[i].setAttribute("crossorigin", "Anonymous");
 
-                var canvas = document.createElement('canvas')
-                var ctx = canvas.getContext('2d')
-
-                canvas.width = images[i].getAttribute("width")
-                canvas.height = images[i].getAttribute("height")
-                ctx.drawImage(images[i], 0, 0, images[i].getAttribute("width"), images[i].getAttribute("height"));
+                canvas = document.createElement('canvas');
+                ctx = canvas.getContext('2d');
+                canvas.width = images[i].getAttribute("width");
+                canvas.height = images[i].getAttribute("height");
+                ctx.drawImage(images[i], 0, 0, canvas.width, canvas.height);
 
                 // If the image is not png, the format
                 // must be specified here
-                let ur = canvas.toDataURL()
-
+                ur = canvas.toDataURL();
                 images[i].setAttribute("xlink:href", ur);
-
-
-                // images[i].setAttribute("xlink:href", "https://www.rspb.org.uk/globalassets/images/birds-and-wildlife/bird-species-illustrations/wheatear_male_1200x675.jpg?preset=landscape_mobile");
+                
+                canvas.remove();
             }
 
             // Convert the SVG graphic into a string containing SVG code
