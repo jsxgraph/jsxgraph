@@ -516,6 +516,24 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
         },
 
         /**
+         * Computes the cotangent of x.
+         * @param {Number} x The number the cotangent will be calculated of.
+         * @returns {Number} Cotangent of the given value.
+         */
+        cot: function (x) {
+            return 1 / Math.tan(x);
+        },
+
+        /**
+         * Computes the inverse cotangent of x.
+         * @param {Number} x The number the inverse cotangent will be calculated of.
+         * @returns {Number} Inverse cotangent of the given value.
+         */
+        acot: function (x) {
+            return ((x >= 0) ? (0.5) : (-0.5)) * Math.PI - Math.atan(x);
+        },
+
+        /**
          * Compute n-th real root of a real number. n must be strictly positive integer.
          * If n is odd, the real n-th root exists and is negative.
          * For n even, for negative valuees of x NaN is returned
@@ -530,7 +548,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          */
         nthroot: function(x, n) {
             var inv = 1 / n;
-            
+
             if (n <= 0 || Math.floor(n) !== n) {
                 return NaN;
             }

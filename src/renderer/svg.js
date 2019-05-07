@@ -1386,6 +1386,40 @@ define([
             image.src = url;
         },
 
+        _getImgDataURL: function(svgRoot) {
+            var images, len, canvas, ctx,
+                img, ur, i;
+
+            images = svgRoot.getElementsByTagName("image");
+            len = images.length;
+            if (len > 0) {
+                canvas = document.createElement('canvas');
+                //img = new Image();
+                for (i = 0; i < len; i++) {
+                    images[i].setAttribute("crossorigin", "anonymous");
+                    //img.src = images[i].href;
+                    //img.onload = function() {
+                    // img.crossOrigin = "anonymous";
+                    ctx = canvas.getContext('2d');
+                    canvas.width = images[i].getAttribute("width");
+                    canvas.height = images[i].getAttribute("height");
+                    try {
+                        ctx.drawImage(images[i], 0, 0, canvas.width, canvas.height);
+                        //ctx.drawImage(document.getElementById('testimg2'), 0, 0, canvas.width, canvas.height);
+
+                        // If the image is not png, the format must be specified here
+                        ur = canvas.toDataURL();
+                        images[i].setAttribute("xlink:href", ur);
+                    } catch (err) {
+                        console.log("CORS problem! Image can not be used", err);
+                    }
+                    //};
+                }
+                //canvas.remove();
+            }
+            return true;
+        },
+
         /**
          *
          */
@@ -1420,31 +1454,7 @@ define([
                 }
             }
 
-            images = svgRoot.getElementsByTagName("image");
-            len = images.length;
-            if (len > 0) {
-                canvas = document.createElement('canvas');
-                img = new Image();
-                for (i = 0; i < len; i++) {
-                    images[i].setAttribute("crossorigin", "anonymous");
-                    // img.src = images[i].href;
-                    // img.onload = function() {
-                    ctx = canvas.getContext('2d');
-                    canvas.width = images[i].getAttribute("width");
-                    canvas.height = images[i].getAttribute("height");
-                    try {
-                        //ctx.drawImage(images[i], 0, 0, canvas.width, canvas.height);
-                        //ctx.drawImage(document.getElementById('testimg2'), 0, 0, canvas.width, canvas.height);
-
-                    // If the image is not png, the format must be specified here
-                        ur = canvas.toDataURL();
-                        images[i].setAttribute("xlink:href", ur);
-                    } catch (err) {
-                        console.log("CORS problem! Image can not be used", err);
-                    }
-                }
-                canvas.remove();
-            }
+            this._getImgDataURL(svgRoot);
 
             // Convert the SVG graphic into a string containing SVG code
             svgRoot.setAttribute("xmlns", "http://www.w3.org/2000/svg");
