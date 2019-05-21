@@ -1219,7 +1219,7 @@ define([
      * @param {JXG.Line} line The line the hatch marks are going to be attached to.
      * @param {Number} numberofhashes Number of dashes.
      * @example
-     * // Create an axis providing two coord pairs.
+     * // Create an axis providing two coords pairs.
      *   var p1 = board.create('point', [0, 3]);
      *   var p2 = board.create('point', [1, 3]);
      *   var l1 = board.create('line', [p1, p2]);

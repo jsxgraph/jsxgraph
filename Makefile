@@ -58,7 +58,6 @@ core:
 	$(MKDIR) $(MKDIRFLAGS) $(BUILDBIN)
 	$(REQUIREJS) -o $(BUILD)/core.build.json
 
-
 core-min:
 	$(MKDIR) $(MKDIRFLAGS) $(BUILDBIN)
 	$(REQUIREJS) -o $(BUILD)/core.build.json optimize=uglify2 out=$(BUILDBIN)/jsxgraphcore-min.js;

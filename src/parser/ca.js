@@ -170,6 +170,21 @@
                          );
                  break;
 
+             case 'cot':
+                 newNode = this.createNode('node_op', 'op_neg',
+                            this.createNode('node_op', 'op_div',
+                             this.createNode('node_const', 1.0),
+                             this.createNode('node_op', 'op_exp',
+                                 this.createNode('node_op', 'op_execfun',
+                                     this.createNode('node_var', 'sin'),
+                                     Type.deepCopy(arg)
+                                 ),
+                                 this.createNode('node_const', 2)
+                             )
+                            )
+                         );
+                 break;
+
              case 'exp':
                  newNode = this.createNode(node.type, node.value,
                              Type.deepCopy(node.children[0]),
@@ -275,6 +290,8 @@
                      );
                  break;
 
+             //case 'atan2':
+
              case 'atan':
                  newNode = this.createNode('node_op', 'op_div',
                              this.createNode('node_const', 1.0),
@@ -287,8 +304,22 @@
                              )
                          );
                  break;
+                 
+             case 'acot':
+                 newNode = this.createNode('node_op', 'op_neg',
+                            this.createNode('node_op', 'op_div',
+                             this.createNode('node_const', 1.0),
+                             this.createNode('node_op', 'op_add',
+                                 this.createNode('node_const', 1.0),
+                                 this.createNode('node_op', 'op_mul',
+                                     Type.deepCopy(arg[0]),
+                                     Type.deepCopy(arg[0])
+                                 )
+                             )
+                            )
+                         );
+                 break;
 
-             //case 'atan2':
              case 'sinh':
                  newNode = this.createNode('node_op', 'op_execfun',
                              this.createNode('node_var', 'cosh'),
