@@ -288,7 +288,7 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
          */
         Jacobi: function (Ain) {
             var i, j, k, aa, si, co, tt, ssum, amax,
-                eps = Mat.eps,
+                eps = Mat.eps * Mat.eps,
                 sum = 0.0,
                 n = Ain.length,
                 V = [
