@@ -1215,16 +1215,16 @@ define([
                 dy = (vy - vy2) / (t_real - t_real2);
 
                 // If the derivatives are large enough we draw the asymptote.
-                box = this.board.getBoundingBox();
-                if (Math.sqrt(dx * dx + dy * dy) > 500.0) {
-
-                    // The asymptote is a line of the form
-                    //  [c, a, b] = [dx * vy - dy * vx, dy, -dx]
-                    //  Now we have to find the intersection with the correct canvas border.
-                    asymptote = [dx * vy - dy * vx, dy, -dx];
-
-                    p_good = this._intersectWithBorder(asymptote, box, vx - vx2);
-                }
+                // box = this.board.getBoundingBox();
+                // if (Math.sqrt(dx * dx + dy * dy) > 500.0) {
+                //
+                //     // The asymptote is a line of the form
+                //     //  [c, a, b] = [dx * vy - dy * vx, dy, -dx]
+                //     //  Now we have to find the intersection with the correct canvas border.
+                //     asymptote = [dx * vy - dy * vx, dy, -dx];
+                //
+                //     p_good = this._intersectWithBorder(asymptote, box, vx - vx2);
+                // }
 
                 if (p_good !== null) {
                     this._insertPoint(new Coords(Const.COORDS_BY_USER, p_good, this.board, false));
