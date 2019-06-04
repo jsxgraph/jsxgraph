@@ -1152,7 +1152,7 @@ define([
                 S[1] /= S[0];
                 S[2] /= S[0];
 
-                if (Type.exists(evt.rotation)) {
+                if (Type.exists(evt.rotation) && evt.type != 'pointermove') {
                     // iOS touch events contain the angle for free
                     alpha = evt.rotation - this.previousRotation;
                     this.previousRotation = evt.rotation;
