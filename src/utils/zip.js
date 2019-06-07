@@ -128,7 +128,7 @@ define(['jxg'], function (JXG) {
      * @see http://www.cs.tut.fi/~albert
      */
     JXG.Util.Unzip = function (barray) {
-        var gpflags, crc, SIZE, fileout, flens, fmax, skipdir,
+        var gpflags, crc, SIZE, fileout, flens, fmax,
             outputArr = [],
             output = '',
             debug = false,
@@ -833,7 +833,7 @@ define(['jxg'], function (JXG) {
             // We are here in non-ZIP-files only,
             // In that case the eturn value doesn't matter
             return false;
-        };
+        }
 
         JXG.Util.Unzip.prototype.unzipFile = function (name) {
             var i;

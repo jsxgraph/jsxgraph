@@ -3495,10 +3495,10 @@ define([
 
                 box = e.bounds();
                 if (Type.isArray(box)) {
-                    if (box[0] < newBBox[0]) { newBBox[0] = box[0] };
-                    if (box[1] > newBBox[1]) { newBBox[1] = box[1] };
-                    if (box[2] > newBBox[2]) { newBBox[2] = box[2] };
-                    if (box[3] < newBBox[3]) { newBBox[3] = box[3] };
+                    if (box[0] < newBBox[0]) { newBBox[0] = box[0]; }
+                    if (box[1] > newBBox[1]) { newBBox[1] = box[1]; }
+                    if (box[2] > newBBox[2]) { newBBox[2] = box[2]; }
+                    if (box[3] < newBBox[3]) { newBBox[3] = box[3]; }
                 }
             }
 
