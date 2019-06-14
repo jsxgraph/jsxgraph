@@ -40,19 +40,23 @@
     "url": "https://github.com/jsxgraph/jsxgraph.git"
   },
   "dependencies": {
-    "requirejs": "^2.3.5"
+    "requirejs": "^2.3.6"
   },
   "optionalDependencies": {
-    "canvas": "^1.6.11"
+    "canvas": "^2.0.0"
   },
   "devDependencies": {
+    "handlebars": ">=4.0.14",
+    "js-yaml": ">=3.13.1",
+    "braces": ">=2.3.1",
+    "lodash": ">=4.17.11",
     "almond": "^0.3.3",
     "intern": "^3.4.x",
     "jsdoc2": "^2.4.0",
-    "jshint": "^2.9.6",
-    "jslint": ">=0.10.x",
+    "jshint": "^2.10.2",
+    "jslint": "^0.12.1",
     "sinon": "^1.14.0",
-    "uglify-js": "^3.4.7"
+    "uglify-js": "^3.6.0"
   },
   "engines": {
     "node": ">=0.6.0"

@@ -1369,7 +1369,7 @@ define([
             for (i = 0; i < steps; ++i) {
                 // Left border
                 z = bbox[0] - w2;
-                td = Numerics.fzero(function(t) { return this.X(t, true) - z}, [tc-delta, tc], this);
+                td = Numerics.fzero(function(t) { return this.X(t, true) - z; }, [tc-delta, tc], this);
                 // console.log("A", td, Math.abs(this.X(td, true) - z));
                 if (Math.abs(this.X(td, true) - z) < eps) { //} * Math.abs(z)) {
                     isFound = true;
@@ -1377,7 +1377,7 @@ define([
                 }
                 // Top border
                 z = bbox[1] + h2;
-                td = Numerics.fzero(function(t) { return this.Y(t, true) - z}, [tc-delta, tc], this);
+                td = Numerics.fzero(function(t) { return this.Y(t, true) - z; }, [tc-delta, tc], this);
                 // console.log("B", td, Math.abs(this.Y(td, true) - z));
                 if (Math.abs(this.Y(td, true) - z) < eps) { // * Math.abs(z)) {
                     isFound = true;
@@ -1385,7 +1385,7 @@ define([
                 }
                 // Right border
                 z = bbox[2] + w2;
-                td = Numerics.fzero(function(t) { return this.X(t, true) - z}, [tc-delta, tc], this);
+                td = Numerics.fzero(function(t) { return this.X(t, true) - z; }, [tc-delta, tc], this);
                 // console.log("C", td, Math.abs(this.X(td, true) - z));
                 if (Math.abs(this.X(td, true) - z) < eps) { // * Math.abs(z)) {
                     isFound = true;
@@ -1393,7 +1393,7 @@ define([
                 }
                 // Bottom border
                 z = bbox[3] - h2;
-                td = Numerics.fzero(function(t) { return this.Y(t, true) - z}, [tc-delta, tc], this);
+                td = Numerics.fzero(function(t) { return this.Y(t, true) - z; }, [tc-delta, tc], this);
                 // console.log("D", td, Math.abs(this.Y(td, true) - z));
                 if (Math.abs(this.Y(td, true) - z) < eps) { // * Math.abs(z)) {
                     isFound = true;
@@ -1528,7 +1528,7 @@ define([
             if (this.xterm === 'x') {
                 // For function graphs we can restrict the plot interval
                 // to the visible area +plus margin
-                bbox = this.board.getBoundingBox(),
+                bbox = this.board.getBoundingBox();
                 w2 = (bbox[2] - bbox[0]) * 0.3;
                 h2 = (bbox[1] - bbox[3]) * 0.3;
                 ta = Math.max(mi, bbox[0] - w2);

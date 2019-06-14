@@ -763,7 +763,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                 } catch (err) {
                      console.log('JXG.scaleJSXGraphDiv: Could not add CSS rule "' + pseudo_keys[i] + '".');
                      console.log('One possible reason could be that the id of the JSXGraph container does not start with a letter.');
-                };
+                }
             }
         },
 
@@ -823,11 +823,10 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
             if (window.matchMedia && window.matchMedia("(orientation:landscape)").matches &&
                 window.screen.width < window.screen.height) {
                 // Landscape on iOS: it returns 'landscape', but still width<height.
-                r_w = window.screen.height / parseInt(elem_inner.style.width),
-                r_h = window.screen.width / parseInt(elem_inner.style.height),
-                scale = Math.min(r_w, r_h),
+                r_w = window.screen.height / parseInt(elem_inner.style.width);
+                r_h = window.screen.width / parseInt(elem_inner.style.height);
+                scale = Math.min(r_w, r_h);
                 vshift = (window.screen.width - height) * 0.5;
-
             }
             scale *= 0.85;
 

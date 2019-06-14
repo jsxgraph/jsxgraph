@@ -138,7 +138,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                 defaults.push(arguments[i]);
             }
 
-            def = Type.deepCopy(def, JXG.Options['elements'], true);
+            def = Type.deepCopy(def, JXG.Options.elements, true);
             for (i = defaults.length; i > 0; i--) {
                 def = Type.deepCopy(def, defaults[i - 1], true);
             }
