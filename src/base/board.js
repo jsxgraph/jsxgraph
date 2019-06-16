@@ -3585,7 +3585,8 @@ define([
          * board.unsuspendUpdate() after the loop. Further, it is advisable to loop
          * in reverse order, i.e. remove the object in reverse order of their creation time.
          *
-         * @param {JXG.GeometryElement} object The object to remove.
+         * @param {JXG.GeometryElement|Array} object The object to remove or array of objects to be removed.
+         * The element(s) is/are given by name, id or a reference.
          * @param {Boolean} saveMethod If true, the algorithm runs through all elements
          * and tests if the element to be deleted is a child element. If yes, it will be
          * removed from the list of child elements. If false (default), the element
