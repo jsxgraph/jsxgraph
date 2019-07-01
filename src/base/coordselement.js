@@ -1082,6 +1082,10 @@ define([
                 // remove all transformations
                 this.transformations.length = 0;
 
+                this.updateConstraint = function () {
+                    return this;
+                };
+                
                 if (!this.isDraggable) {
                     this.isDraggable = true;
 
