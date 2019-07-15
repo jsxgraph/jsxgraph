@@ -1499,6 +1499,7 @@ define([
                 } else {
                     Env.addEvent(this.containerObj, 'pointerdown', this.pointerDownListener, this);
                     Env.addEvent(this.containerObj, 'pointermove', this.pointerMoveListener, this);
+                    Env.addEvent(this.containerObj, 'pointerout', this.pointerOutListener, this);
                 }
                 Env.addEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
                 Env.addEvent(this.containerObj, 'DOMMouseScroll', this.mouseWheelListener, this);
@@ -1593,6 +1594,7 @@ define([
                 } else {
                     Env.removeEvent(this.containerObj, 'pointerdown', this.pointerDownListener, this);
                     Env.removeEvent(this.containerObj, 'pointermove', this.pointerMoveListener, this);
+                    Env.removeEvent(this.containerObj, 'pointerout', this.pointerOutListener, this);
                 }
 
                 Env.removeEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
@@ -2091,6 +2093,21 @@ define([
 
             this.triggerEventHandlers(['touchstart', 'down', 'pointerdown', 'MSPointerDown'], [evt]);
             return false;
+        },
+
+        /**
+         * Called if pointer leaves an HTML tag. Is called by the inner-most tag.
+         * That means, if a JSXGraph text, i.e. an HTML div, is placed close
+         * to the border of the board, this pointerout event will be ignored.
+         * @param  {Event} evt
+         * @return {Boolean}
+         */
+        pointerOutListener: function (evt) {
+            if (evt.target === this.containerObj ||
+                (this.renderer.type == 'svg' && evt.target === this.renderer.foreignObjLayer)) {
+                this.pointerUpListener(evt);
+            }
+            return this.mode === this.BOARD_MODE_NONE;
         },
 
         /**
