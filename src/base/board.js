@@ -1945,7 +1945,7 @@ define([
 
             // Temporary fix for Firefox pointer events:
             // When using two fingers, the first touch down event is fired again.
-            if (this._isPointerEventAlreadyThere(evt)) {
+            if (!object && this._isPointerEventAlreadyThere(evt)) {
                 return false;
             }
 
