@@ -1499,7 +1499,7 @@ define([
                 } else {
                     Env.addEvent(this.containerObj, 'pointerdown', this.pointerDownListener, this);
                     Env.addEvent(this.containerObj, 'pointermove', this.pointerMoveListener, this);
-                    Env.addEvent(this.containerObj, 'pointerout', this.pointerOutListener, this);
+                    // Env.addEvent(this.containerObj, 'pointerout', this.pointerOutListener, this);
                 }
                 Env.addEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
                 Env.addEvent(this.containerObj, 'DOMMouseScroll', this.mouseWheelListener, this);
@@ -1594,7 +1594,7 @@ define([
                 } else {
                     Env.removeEvent(this.containerObj, 'pointerdown', this.pointerDownListener, this);
                     Env.removeEvent(this.containerObj, 'pointermove', this.pointerMoveListener, this);
-                    Env.removeEvent(this.containerObj, 'pointerout', this.pointerOutListener, this);
+                    // Env.removeEvent(this.containerObj, 'pointerout', this.pointerOutListener, this);
                 }
 
                 Env.removeEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
