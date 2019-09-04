@@ -2628,6 +2628,7 @@ define([
                     expansion = 1.5,
                     w = expansion * Math.max(bb[2] - bb[0], bb[1] - bb[3]),
                     // fake a point (for Math.Geometry.perpendicular)
+                    // contains centroid of the board
                     dp = {
                         coords: {
                             usrCoords: [1, (bb[0] + bb[2]) / 2, attr.inverse ? bb[1] : bb[3]]
@@ -2646,7 +2647,9 @@ define([
                 //     slope2 = slope1;
                 // }
 
-                // calculate the area height = 2* the distance of the line to the point in the middle of the top/bottom border.
+                // calculate the area height as
+                //  expansion times the distance of the line to the
+                // point in the middle of the top/bottom border.
                 h = expansion * Math.max(Geometry.perpendicular(parents[0], dp, board)[0].distance(Const.COORDS_BY_USER, dp.coords), w);
                 h *= factor;
 
@@ -2685,6 +2688,8 @@ define([
             a.updateDataArray = function () {
                 var bb = this.board.getBoundingBox(),
                     expansion = 1.5,
+                    points = parents[0].points,
+                    first, last,
                     // inverse == true <=> y >= f(x)
                     hline = expansion * (attr.inverse ? bb[1] : bb[3]),
                     i, le;
@@ -2692,20 +2697,33 @@ define([
                 this.dataX = [];
                 this.dataY = [];
 
-                le = parents[0].points.length;
+                le = points.length;
                 if (le <= 0) {
                     return;
                 }
-                this.dataX.push(parents[0].points[0].usrCoords[1]);
-                this.dataY.push(hline);
+
                 for (i = 0; i < le; i++) {
-                    this.dataX.push(parents[0].points[i].usrCoords[1]);
-                    this.dataY.push(parents[0].points[i].usrCoords[2]);
+                    first = i;
+                    if (points[i].isReal()) { break; }
                 }
-                this.dataX.push(parents[0].points[le - 1].usrCoords[1]);
+                for (i = le - 1; i >= first; i--) {
+                    last = i;
+                    if (points[i].isReal()) { break; }
+                }
+
+                this.dataX.push(points[first].usrCoords[1]);
+                this.dataY.push(hline);
+                for (i = first; i <= last; i++) {
+                    if (points[i].isReal()) {
+                        this.dataX.push(points[i].usrCoords[1]);
+                        this.dataY.push(points[i].usrCoords[2]);
+                    }
+                }
+                this.dataX.push(points[last].usrCoords[1]);
                 this.dataY.push(hline);
             };
         } else {
+            // Not yet practical?
             f = Type.createFunction(parents[0]);
             if (!Type.exists(f)) {
                 throw new Error("JSXGraph: Can't create area with the given parents." +

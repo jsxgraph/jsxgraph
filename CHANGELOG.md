@@ -5,6 +5,27 @@ Compatibility:
 ------------
 * Since Safari 12, `board.renderer.screenshot()` also supports texts in Safari.
 
+New Features
+------------
+
+* New math functions cot and acot 
+
+
+Improvements
+------------
+
+* JessieCode handling of sliders
+* documentation
+* Increase precision in JXG.Math.Numerics.Jacobi
+* Curve plotting
+
+Bug fixes
+---------
+
+* Fix call of free()
+* Address npm security alerts
+* Line rotation with pointer events on Edge
+
 
 0.99.7
 ====
@@ -166,7 +187,7 @@ New Features
 
 Improvements
 ------------
-* Handling of touch and mouse events should work now in all browsers, even if 
+* Handling of touch and mouse events should work now in all browsers, even if
 user-scalable viewport is allowed.
 * Improved pinch to zoom and pan
 * Much improved documentation: more examples, fixed links
