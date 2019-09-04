@@ -46,16 +46,16 @@
     "canvas": "^2.0.0"
   },
   "devDependencies": {
-    "handlebars": ">=4.0.14",
-    "js-yaml": ">=3.13.1",
-    "braces": ">=2.3.1",
-    "lodash": ">=4.17.11",
-    "diff": ">=3.5.0",
     "almond": "^0.3.3",
+    "braces": ">=2.3.1",
+    "diff": ">=3.5.0",
+    "handlebars": "^4.2.0",
     "intern": "^3.4.x",
+    "js-yaml": ">=3.13.1",
     "jsdoc2": "^2.4.0",
     "jshint": "^2.10.2",
     "jslint": "^0.12.1",
+    "lodash": ">=4.17.13",
     "sinon": "^1.14.0",
     "uglify-js": "^3.6.0"
   },
