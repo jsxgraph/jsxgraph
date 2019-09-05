@@ -185,6 +185,7 @@ define([
 
             // merge attributes
             attr = Type.copyAttributes(attributes, Options, 'board');
+            // The attributes which are objects have to be copied separately
             attr.zoom = Type.copyAttributes(attr, Options, 'board', 'zoom');
             attr.pan = Type.copyAttributes(attr, Options, 'board', 'pan');
             attr.selection = Type.copyAttributes(attr, Options, 'board', 'selection');
@@ -199,6 +200,11 @@ define([
                 unitY = Type.def(attr.unity, 50);
             } else {
                 bbox = attr.boundingbox;
+                if (bbox[0] < attr.maxboundingbox[0]) { bbox[0] = attr.maxboundingbox[0]; }
+                if (bbox[1] > attr.maxboundingbox[1]) { bbox[1] = attr.maxboundingbox[1]; }
+                if (bbox[2] > attr.maxboundingbox[2]) { bbox[2] = attr.maxboundingbox[2]; }
+                if (bbox[3] < attr.maxboundingbox[3]) { bbox[3] = attr.maxboundingbox[3]; }
+
                 w = parseInt(dimensions.width, 10);
                 h = parseInt(dimensions.height, 10);
 
@@ -237,6 +243,7 @@ define([
             JXG.boards[board.id] = board;
 
             board.keepaspectratio = attr.keepaspectratio;
+            board.maxboundingbox = attr.maxboundingbox;
             board.resizeContainer(dimensions.width, dimensions.height, true, true);
 
             // create elements like axes, grid, navigation, ...
@@ -302,6 +309,7 @@ define([
 
             // merge attributes
             attr = Type.copyAttributes(attributes, Options, 'board');
+            // The attributes which are objects have to be copied separately
             attr.zoom = Type.copyAttributes(attributes, Options, 'board', 'zoom');
             attr.pan = Type.copyAttributes(attributes, Options, 'board', 'pan');
             attr.selection = Type.copyAttributes(attr, Options, 'board', 'selection');
@@ -348,6 +356,7 @@ define([
 
             // merge attributes
             attr = Type.copyAttributes(attributes, Options, 'board');
+            // The attributes which are objects have to be copied separately
             attr.zoom = Type.copyAttributes(attributes, Options, 'board', 'zoom');
             attr.pan = Type.copyAttributes(attributes, Options, 'board', 'pan');
             attr.selection = Type.copyAttributes(attr, Options, 'board', 'selection');

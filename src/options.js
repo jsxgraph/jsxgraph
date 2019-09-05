@@ -83,6 +83,8 @@ define([
              */
             boundingBox: [-5, 5, 5, -5],
 
+            maxBoundingBox: [-Infinity, Infinity, Infinity, -Infinity],
+
             /**
              * Additional zoom factor multiplied to {@link JXG.Board#zoomX} and {@link JXG.Board#zoomY}.
              *

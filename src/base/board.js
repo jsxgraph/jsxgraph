@@ -3162,13 +3162,28 @@ define([
          * @returns {JXG.Board} Reference to this board.
          */
         moveOrigin: function (x, y, diff) {
+            var ox, oy, ul, lr;
             if (Type.exists(x) && Type.exists(y)) {
+                ox = this.origin.scrCoords[1];
+                oy = this.origin.scrCoords[2];
+
                 this.origin.scrCoords[1] = x;
                 this.origin.scrCoords[2] = y;
 
                 if (diff) {
                     this.origin.scrCoords[1] -= this.drag_dx;
                     this.origin.scrCoords[2] -= this.drag_dy;
+                }
+
+                ul = (new Coords(Const.COORDS_BY_SCREEN, [0, 0], this)).usrCoords,
+                lr = (new Coords(Const.COORDS_BY_SCREEN, [this.canvasWidth, this.canvasHeight], this)).usrCoords;
+                if (ul[1] < this.maxboundingbox[0] ||
+                    ul[2] > this.maxboundingbox[1] ||
+                    lr[1] > this.maxboundingbox[2] ||
+                    lr[2] < this.maxboundingbox[3]) {
+
+                    this.origin.scrCoords[1] = ox;
+                    this.origin.scrCoords[2] = oy;
                 }
             }
 
@@ -4283,6 +4298,12 @@ define([
                 dim = Env.getDimensions(this.container, this.document);
 
             if (!Type.isArray(bbox)) {
+                return this;
+            }
+            if (bbox[0] < this.maxboundingbox[0] ||
+                bbox[1] > this.maxboundingbox[1] ||
+                bbox[2] > this.maxboundingbox[2] ||
+                bbox[3] < this.maxboundingbox[3]) {
                 return this;
             }
 
