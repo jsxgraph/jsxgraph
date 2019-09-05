@@ -80,9 +80,51 @@ define([
              * @name JXG.Board#boundingbox
              * @type Array
              * @default [-5, 5, 5, -5]
+             * @example
+             * var board = JXG.JSXGraph.initBoard('jxgbox', {
+             *         boundingbox: [-5, 5, 5, -5],
+             *         axis: true
+             *     });
              */
             boundingBox: [-5, 5, 5, -5],
 
+            /**
+             * Maximal bounding box of the visible area in user coordinates.
+             * It is an array consisting of four values:
+             * [x<sub>1</sub>, y<sub>1</sub>, x<sub>2</sub>, y<sub>2</sub>]
+             *
+             * The bounding box of the canvas must be inside of this maximal
+             * boundings box.
+             * @name JXG.Board#maxboundingbox
+             * @type Array
+             * @see JXG.Board#boundingbox
+             * @default [-Infinity, Infinity, Infinity, -Infinity]
+             *
+             * @example
+             * var board = JXG.JSXGraph.initBoard('jxgbox', {
+             *         boundingbox: [-5, 5, 5, -5],
+             *         maxboundingbox: [-8, 8, 8, -8],
+             *         pan: {enabled: true},
+             *         axis: true
+             *     });
+             *
+             * </pre><div id="JXG065e2750-217c-48ed-a52b-7d7df6de7055" class="jxgbox" style="width: 300px; height: 300px;"></div>
+             * <script type="text/javascript">
+             *     (function() {
+             *         var board = JXG.JSXGraph.initBoard('JXG065e2750-217c-48ed-a52b-7d7df6de7055',
+             *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+             *     var board = JXG.JSXGraph.initBoard('jxgbox', {
+             *             boundingbox: [-5,5,5,-5],
+             *             maxboundingbox: [-8,8,8,-8],
+             *             pan: {enabled: true},
+             *             axis:true
+             *         });
+             *
+             *     })();
+             *
+             * </script><pre>
+             *
+             */
             maxBoundingBox: [-Infinity, Infinity, Infinity, -Infinity],
 
             /**

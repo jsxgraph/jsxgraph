@@ -4339,10 +4339,10 @@ define([
          * @returns {Array} bounding box [x1,y1,x2,y2] upper left corner, lower right corner
          */
         getBoundingBox: function () {
-            var ul = new Coords(Const.COORDS_BY_SCREEN, [0, 0], this),
-                lr = new Coords(Const.COORDS_BY_SCREEN, [this.canvasWidth, this.canvasHeight], this);
+            var ul = (new Coords(Const.COORDS_BY_SCREEN, [0, 0], this)).usrCoords,
+                lr = (new Coords(Const.COORDS_BY_SCREEN, [this.canvasWidth, this.canvasHeight], this)).usrCoords;
 
-            return [ul.usrCoords[1], ul.usrCoords[2], lr.usrCoords[1], lr.usrCoords[2]];
+            return [ul[1], ul[2], lr[1], lr[2]];
         },
 
         /**
