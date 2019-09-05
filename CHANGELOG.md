@@ -4,11 +4,23 @@
 Compatibility:
 ------------
 * Since Safari 12, `board.renderer.screenshot()` also supports texts in Safari.
+* JessieCode parse errors are handed over to the user and can be catched by try {} catch (e) {}
+
 
 New Features
 ------------
 
-* New math functions cot and acot 
+* New math functions cot and acot
+* New math functions nthroot, cbrt, binomial
+* Faces for hatch marks and ticks (|><)
+* Create parabola given by a point and a pair of coordinate pairs.
+* JXG.Math.pow: handle x^(1/n) for x < 0 and n odd integer
+* Realize styling and highlighting of navigation bars with CSS
+* Add board attributes "showFullscreen" and "fullscreen"
+* Add new parameter delay for CoordsElement.startAnimation()
+* Polar grids
+* Introduce new attribute "highlightSize" for arrow heads.
+* Reflection of of polygons
 
 
 Improvements
@@ -17,7 +29,28 @@ Improvements
 * JessieCode handling of sliders
 * documentation
 * Increase precision in JXG.Math.Numerics.Jacobi
-* Curve plotting
+* Curve plotting: massive speed improvements and plotting precision
+* Code refactoring
+* Multi-touch rotations with pointer events
+* screenshot and base64 dumps include images now (dumpToURI)
+* Improved zoomElements
+* Attributes for parabola sub element line
+* Update wordpress plug-in to use jsxgraphcore.js from jsxgraph.org
+* Update MediaWiki plug-in
+* Sketch reader: copy of polygons
+* Refactor reflection and mirrorelement
+* Skecth reader: enable reflection of circle to be circle
+* Massive speed-up if many elements are deleted
+* Use '\u26f6' unicode symbol for fullscreen
+* Work on unit tests
+* Update package.json
+* Fire `hit` event also when dragging an element
+* Better compromise for `_insideCanvas()` for labels.
+* Highlighting and hit event for touch and pointer events
+* Pointer events use different precision when using pen, mouse or touch. New events for pen: pendrag, pendown, penmove.
+* JessieCode: Use JSXGraph method `JXG.Math.pow` for a^b. This fixes problems like (-3)^(1/3)
+* JessieCode: Add JSXGraph's gcd and lcm math functions
+
 
 Bug fixes
 ---------
@@ -25,6 +58,26 @@ Bug fixes
 * Fix call of free()
 * Address npm security alerts
 * Line rotation with pointer events on Edge
+* Various changes in sketch reader for sketchometry
+* Dragging of labels
+* Input functions for curves failed for certain JessieCode functions
+* Pointer events
+* Speed up by preventing multiple updates of drag element.
+* hasPoint for curves
+* Make all examples in API docs ready for fullscreen mode
+* Fix a very old bug in unzip algorithm for multi-file archives
+* size[] for axis labels of display='internal'
+* Animation of gliders on lines with slope!=0
+* Fix arrow head placement for type=3
+* Convert attributes in subobjects to lowerCase
+* Ticks for certain axes which are neither horizontal nor vertical
+* Firefox multi-touch pointer events
+* Ticks labels in canvas renderer
+* JSXGraph with nodejs
+* Manipulating ticks visibility during board.suspendUpdate()
+* Prevent flickering of text elements during creation
+* Stop using deprecated hide method in changePointStyle
+* Geogebra reader: Fix argument order when mirroring across line
 
 
 0.99.7
