@@ -1499,7 +1499,6 @@ define([
                 } else {
                     Env.addEvent(this.containerObj, 'pointerdown', this.pointerDownListener, this);
                     Env.addEvent(this.containerObj, 'pointermove', this.pointerMoveListener, this);
-                    // Env.addEvent(this.containerObj, 'pointerout', this.pointerOutListener, this);
                 }
                 Env.addEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
                 Env.addEvent(this.containerObj, 'DOMMouseScroll', this.mouseWheelListener, this);
@@ -1594,7 +1593,6 @@ define([
                 } else {
                     Env.removeEvent(this.containerObj, 'pointerdown', this.pointerDownListener, this);
                     Env.removeEvent(this.containerObj, 'pointermove', this.pointerMoveListener, this);
-                    // Env.removeEvent(this.containerObj, 'pointerout', this.pointerOutListener, this);
                 }
 
                 Env.removeEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
@@ -1945,7 +1943,7 @@ define([
 
             // Temporary fix for Firefox pointer events:
             // When using two fingers, the first touch down event is fired again.
-            if (!object && this._isPointerEventAlreadyThere(evt)) {
+            if (this._isPointerEventAlreadyThere(evt)) {
                 return false;
             }
 
@@ -2093,21 +2091,6 @@ define([
 
             this.triggerEventHandlers(['touchstart', 'down', 'pointerdown', 'MSPointerDown'], [evt]);
             return false;
-        },
-
-        /**
-         * Called if pointer leaves an HTML tag. Is called by the inner-most tag.
-         * That means, if a JSXGraph text, i.e. an HTML div, is placed close
-         * to the border of the board, this pointerout event will be ignored.
-         * @param  {Event} evt
-         * @return {Boolean}
-         */
-        pointerOutListener: function (evt) {
-            if (evt.target === this.containerObj ||
-                (this.renderer.type == 'svg' && evt.target === this.renderer.foreignObjLayer)) {
-                this.pointerUpListener(evt);
-            }
-            return this.mode === this.BOARD_MODE_NONE;
         },
 
         /**
@@ -3162,28 +3145,13 @@ define([
          * @returns {JXG.Board} Reference to this board.
          */
         moveOrigin: function (x, y, diff) {
-            var ox, oy, ul, lr;
             if (Type.exists(x) && Type.exists(y)) {
-                ox = this.origin.scrCoords[1];
-                oy = this.origin.scrCoords[2];
-
                 this.origin.scrCoords[1] = x;
                 this.origin.scrCoords[2] = y;
 
                 if (diff) {
                     this.origin.scrCoords[1] -= this.drag_dx;
                     this.origin.scrCoords[2] -= this.drag_dy;
-                }
-
-                ul = (new Coords(Const.COORDS_BY_SCREEN, [0, 0], this)).usrCoords,
-                lr = (new Coords(Const.COORDS_BY_SCREEN, [this.canvasWidth, this.canvasHeight], this)).usrCoords;
-                if (ul[1] < this.maxboundingbox[0] ||
-                    ul[2] > this.maxboundingbox[1] ||
-                    lr[1] > this.maxboundingbox[2] ||
-                    lr[2] < this.maxboundingbox[3]) {
-
-                    this.origin.scrCoords[1] = ox;
-                    this.origin.scrCoords[2] = oy;
                 }
             }
 
@@ -4300,12 +4268,6 @@ define([
             if (!Type.isArray(bbox)) {
                 return this;
             }
-            if (bbox[0] < this.maxboundingbox[0] ||
-                bbox[1] > this.maxboundingbox[1] ||
-                bbox[2] > this.maxboundingbox[2] ||
-                bbox[3] < this.maxboundingbox[3]) {
-                return this;
-            }
 
             this.plainBB = bbox;
 
@@ -4339,10 +4301,10 @@ define([
          * @returns {Array} bounding box [x1,y1,x2,y2] upper left corner, lower right corner
          */
         getBoundingBox: function () {
-            var ul = (new Coords(Const.COORDS_BY_SCREEN, [0, 0], this)).usrCoords,
-                lr = (new Coords(Const.COORDS_BY_SCREEN, [this.canvasWidth, this.canvasHeight], this)).usrCoords;
+            var ul = new Coords(Const.COORDS_BY_SCREEN, [0, 0], this),
+                lr = new Coords(Const.COORDS_BY_SCREEN, [this.canvasWidth, this.canvasHeight], this);
 
-            return [ul[1], ul[2], lr[1], lr[2]];
+            return [ul.usrCoords[1], ul.usrCoords[2], lr.usrCoords[1], lr.usrCoords[2]];
         },
 
         /**

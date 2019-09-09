@@ -74,7 +74,7 @@ define([
      * @example
      * var p1 = board.create('glider', [-3, 0, board.defaultAxes.x]);
      * var p2 = board.create('glider', [-1, 0, board.defaultAxes.x]);
-     * var c1 = board.create('comb', [p1, p2], {width: 0.2, frequency: 0.1, angle: Math.PI / 4);
+     * var c1 = board.create('comb', [p1, p2], {width: 0.2, frequency: 0.1, angle: Math.PI / 4});
      *
      * </pre><div id="JXG04186fd2-6340-11e8-9fb9-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
@@ -89,46 +89,10 @@ define([
      *
      * </script><pre>
      *
-     * @example
-     * var s = board.create('slider', [[1,3], [4,3], [0.1, 0.3, 0.8]]);
-     * var p1 = board.create('glider', [-3, 0, board.defaultAxes.x]);
-     * var p2 = board.create('glider', [-1, 0, board.defaultAxes.x]);
-     * var c1 = board.create('comb', [p1, p2], {
-     *     width: function(){ return 4*s.Value(); },
-     *     reverse: function(){ return (s.Value()<0.5) ? false : true; },
-     *     frequency: function(){ return s.Value(); },
-     *     angle: function(){ return s.Value() * Math.PI / 2; },
-     *     curve: {
-     *         strokeColor: 'red'
-     *     }
-     * });
-     *
-     * </pre><div id="JXG6eb1bcd1-407e-4f13-8f0c-45ef39a0cfb3" class="jxgbox" style="width: 300px; height: 300px;"></div>
-     * <script type="text/javascript">
-     *     (function() {
-     *         var board = JXG.JSXGraph.initBoard('JXG6eb1bcd1-407e-4f13-8f0c-45ef39a0cfb3',
-     *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
-     *     var s = board.create('slider', [[1,3], [4,3], [0.1, 0.3, 0.8]]);
-     *     var p1 = board.create('glider', [-3, 0, board.defaultAxes.x]);
-     *     var p2 = board.create('glider', [-1, 0, board.defaultAxes.x]);
-     *     var c1 = board.create('comb', [p1, p2], {
-     *         width: function(){ return 4*s.Value(); },
-     *         reverse: function(){ return (s.Value()<0.5) ? false : true; },
-     *         frequency: function(){ return s.Value(); },
-     *         angle: function(){ return s.Value() * Math.PI / 2; },
-     *         curve: {
-     *             strokeColor: 'red'
-     *         }
-     *     });
-     *
-     *     })();
-     *
-     * </script><pre>
-     *
      */
     JXG.createComb = function(board, parents, attributes) {
-        var p1, p2, c, attr, attr2, parent_types;
-            //ds, angle, width, p;
+        var p1, p2, c, attr, parent_types,
+            ds, angle, width, p;
 
         if (parents.length === 2) {
             // point 1 given by coordinates
@@ -171,32 +135,28 @@ define([
                 "\nPossible parent types: [point,point], [[x1,y1],[x2,y2]]");
         }
 
-        // attr = Type.copyAttributes(attributes, board.options, 'comb', 'curve');
-        attr = Type.copyAttributes(attributes, board.options, 'comb');
-        Type.merge(attr, Type.copyAttributes(attributes, board.options, 'comb', 'curve'));
+        attr = Type.copyAttributes(attributes, board.options, 'comb', 'curve');
         c = board.create('curve', [[0], [0]], attr);
+
+        attr = Type.copyAttributes(attributes, board.options, 'comb');
+        ds = attr.frequency;
+        angle = -attr.angle;
+        width = attr.width;
+        if (attr.reverse) {
+            p = p1;
+            p1 = p2;
+            p2 = p;
+            angle = -angle;
+        }
 
         c.updateDataArray = function() {
             var s = 0,
                 max_s = p1.Dist(p2),
-                cs, sn, dx, dy,
-                x, y, f,
-                p1_inner = p1,
-                p2_inner = p2,
-                ds, angle, width;
-
-            ds = Type.evaluate(c.visProp.frequency);
-            angle = -Type.evaluate(c.visProp.angle);
-            width = Type.evaluate(c.visProp.width);
-            if (Type.evaluate(c.visProp.reverse)) {
-                p1_inner = p2;
-                p2_inner = p1;
-                angle = -angle;
-            }
-            cs = Math.cos(angle);
-            sn = Math.sin(angle);
-            dx = (p2_inner.X() - p1_inner.X()) / max_s;
-            dy = (p2_inner.Y() - p1_inner.Y()) / max_s;
+                cs = Math.cos(angle),
+                sn = Math.sin(angle),
+                dx = (p2.X() - p1.X()) / max_s,
+                dy = (p2.Y() - p1.Y()) / max_s,
+                x, y, f;
 
             // But instead of lifting by sin(angle), we want lifting by width.
             cs *= width / Math.abs(sn);
@@ -206,8 +166,8 @@ define([
             this.dataY = [];
             // TODO Handle infinite boundaries?
             while (s < max_s) {
-                x = p1_inner.X() + dx * s;
-                y = p1_inner.Y() + dy * s;
+                x = p1.X() + dx * s;
+                y = p1.Y() + dy * s;
 
                 // We may need to cut the last piece of a comb.
                 f = Math.min(cs, max_s - s) / Math.abs(cs);
