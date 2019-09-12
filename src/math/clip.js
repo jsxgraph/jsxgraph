@@ -172,10 +172,10 @@ define([
             return wn;
         },
 
-        Vertex: function(usrCoords, pP, path, pathname) {
-            var crds = new Coords(JXG.COORDS_BY_USER, usrCoords, board);
-            this.usrCoords = crds.usrCoords;
-            this.scrCoords = crds.scrCoords;
+        Vertex: function(coords, pP, path, pathname) {
+            this.coords = coords;
+            this.usrCoords = this.coords.usrCoords;
+            this.scrCoords = this.coords.scrCoords;
 
             this._prev = pP;
             this._next = pP._next;
@@ -198,7 +198,7 @@ define([
             this.entry_exit = false;
         },
 
-        findIntersections: function(S, C, S_intersect, C_intersect) {
+        findIntersections: function(S, C, S_intersect, C_intersect, board) {
             var pS = S[0],
                 pC = C[0],
                 res = [],
@@ -262,12 +262,8 @@ define([
                             continue;
                         }
 
-                        res[0][1] /= res[0][0];
-                        res[0][2] /= res[0][0];
-                        res[0][0] /= res[0][0];
-
-                        IS = new this.Vertex(res[0], pS, S, 'S');
-                        IC = new this.Vertex(res[0], pC, C, 'C');
+                        IS = new this.Vertex(crds, pS, S, 'S');
+                        IC = new this.Vertex(crds, pC, C, 'C');
                         IS.neighbour = IC;
                         IC.neighbour = IS;
 
@@ -335,7 +331,7 @@ define([
                         } else if (t_prev === 'in' && t_next === 'out') {
                             status = 'exit';
                         } else {
-                            console.log("Can not mark", P.cnt, P.usrCoords, t_prev, t_next);
+                            console.log("Can not mark", P.cnt, P.coords.usrCoords, t_prev, t_next);
                             //console.log( ":",winding_number(Pprev.usrCoords, path2), winding_number(Pnext.usrCoords, path2));
                             status = 'bounce';
                         }
@@ -359,7 +355,7 @@ define([
          * @param  {[type]} clip    [description]
          * @return {[type]}         [description]
          */
-        greinerHormann: function(subject, clip) {
+        greinerHormann: function(subject, clip, board) {
             var pS, pC, P, i, current, start,
                 S = subject.points,
                 C = clip.points,
@@ -378,7 +374,7 @@ define([
             this.doublyLinkedList(S);
             this.doublyLinkedList(C);
 
-            this.findIntersections(S, C, S_intersect, C_intersect);
+            this.findIntersections(S, C, S_intersect, C_intersect, board);
             // console.log(S_intersect, C_intersect);
 
             if (S_intersect.length === 0) {
