@@ -431,7 +431,7 @@ define([
                 do {
                     current.done = true;
                     // if (cnt < 10000)
-                    //     console.log(current.name, current.cnt, current.entry_exit, current.usrCoords[1].toFixed(3), current.usrCoords[2].toFixed(3));
+                    console.log(current.pathname, current.cnt, current.entry_exit, current.usrCoords[1].toFixed(3), current.usrCoords[2].toFixed(3));
 
                     // if (current.entry_exit == 'exit') { // Boolean op: union
                     //if ((P == S && current.entry_exit == 'exit') || (P != S && current.entry_exit == 'entry')) { // Boolean op: S \ C
@@ -445,9 +445,9 @@ define([
                             pathX.push(current.usrCoords[1]);
                             pathY.push(current.usrCoords[2]);
 
-                            if (!JXG.exists(current.intersect)) {  // In case there are two adjacent intersects
+                            //if (!JXG.exists(current.intersect)) {  // In case there are two adjacent intersects
                                 current = current._next;
-                            }
+                            //}
                         } while (/*!current._end && */(!JXG.exists(current.intersect) ||
                                   (JXG.exists(current.intersect) && current.entry_exit == 'bounce')) &&
                                  cnt < maxCnt);
@@ -459,9 +459,9 @@ define([
                             pathX.push(current.usrCoords[1]);
                             pathY.push(current.usrCoords[2]);
 
-                            if (!JXG.exists(current.intersect)) {  // In case there are two adjacent intersects
+                            //if (!JXG.exists(current.intersect)) {  // In case there are two adjacent intersects
                                 current = current._prev;
-                            }
+                            //}
                         } while (/*!current._end && */(!JXG.exists(current.intersect) ||
                                   (JXG.exists(current.intersect) && current.entry_exit == 'bounce'))
                                  && cnt < maxCnt);
