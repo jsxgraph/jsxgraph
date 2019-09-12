@@ -13,6 +13,7 @@ define([
     'math/statistics',
     'math/symbolic',
     'math/geometry',
+    'math/clip',
     'math/poly',
     'math/complex',
     'renderer/abstract',

@@ -416,22 +416,6 @@ define([
      *   var gpex2_c1 = gpex2_board.create('circle', [gpex2_p1, 2.0]);
      *   var gpex2_p2 = gpex2_board.create('glider', [gpex2_c1]);
      * </script><pre>
-     *@example
-     * //animate example 2
-     * var p1 = board.create('point', [2.0, 2.0]);
-     * var c1 = board.create('circle', [p1, 2.0]);
-     * var p2 = board.create('glider', [c1]);
-     * var button1 = board.create('button', [1, 7, 'start animation',function(){p2.startAnimation(1,4)}]);
-     * var button2 = board.create('button', [1, 5, 'stop animation',function(){p2.stopAnimation()}]);
-     * </pre><div class="jxgbox" id="JXG4de7f181-631a-44b1-a12f-bc4d133709e8" style="width: 200px; height: 200px;"></div>
-     * <script type="text/javascript">
-     *   var gpex3_board = JXG.JSXGraph.initBoard('JXG4de7f181-631a-44b1-a12f-bc4d133709e8', {boundingbox: [-1, 10, 10, -1], axis: true, showcopyright: false, shownavigation: false});
-     *   var gpex3_p1 = gpex2_board.create('point', [2.0, 2.0]);
-     *   var gpex3_c1 = gpex2_board.create('circle', [gpex2_p1, 2.0]);
-     *   var gpex3_p2 = gpex2_board.create('glider', [gpex2_c1]);
-     *   board.create('button', [1, 7, 'start animation',function(){gpex3_p2.startAnimation(1,4)}]);
-     *   board.create('button', [1, 5, 'stop animation',function(){gpex3_p2.stopAnimation()}]);
-     * </script><pre>
      */
     JXG.createGlider = function (board, parents, attributes) {
         var el, coords,

@@ -2362,35 +2362,6 @@ define([
      * @param {Object} attributes Define color, width, ... of the cardinal spline
      * @returns {JXG.Curve} Returns reference to an object of type JXG.Curve.
      * @see JXG.Curve
-     * @example
-     * //create a cardinal spline out of an array of JXG points with adjustable tension
-     * //create array of points
-     * var p1 = board.create('point',[0,0])
-     * var p2 = board.create('point',[1,4])
-     * var p3 = board.create('point',[4,5])
-     * var p4 = board.create('point',[2,3])
-     * var p5 = board.create('point',[3,0])
-     * var p = [p1,p2,p3,p4,p5]
-     *
-     * // tension
-     * tau = board.create('slider', [[4,3],[9,3],[0.001,0.5,1]], {name:'tau'});
-     * c = board.create('curve', JXG.Math.Numerics.CardinalSpline(p, function(){ return tau.Value();}), {strokeWidth:3});
-     * </pre><div id="JXG6c197afc-e482-11e5-b2af-901b0e1b8723" style="width: 300px; height: 300px;"></div>
-     * <script type="text/javascript">
-     *     (function() {
-     *         var board = JXG.JSXGraph.initBoard('JXG6c197afc-e482-11e5-b2af-901b0e1b8723',
-     *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
-     *
-     *     var p = [];
-     *     p[0] = board.create('point', [-2,2], {size: 4, face: 'o'});
-     *     p[1] = board.create('point', [0,-1], {size: 4, face: 'o'});
-     *     p[2] = board.create('point', [2,0], {size: 4, face: 'o'});
-     *     p[3] = board.create('point', [4,1], {size: 4, face: 'o'});
-     *
-     *     var c = board.create('spline', p, {strokeWidth:3});
-     *     })();
-     *
-     * </script><pre>
      */
     JXG.createCardinalSpline = function (board, parents, attributes) {
         var el,

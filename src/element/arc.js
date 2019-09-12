@@ -78,7 +78,6 @@ define([
      * var p3 = board.create('point', [3.5, 1.0]);
      *
      * var a = board.create('arc', [p1, p2, p3]);
-     * board.create('text',[1,6,function(){return 'arclength: '+Math.round(a.Value()*100)/100}])
      * </pre><div class="jxgbox" id="JXG114ef584-4a5e-4686-8392-c97501befb5b" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
      * (function () {
@@ -88,7 +87,6 @@ define([
      *       p3 = board.create('point', [3.5, 1.0]),
      *
      *       a = board.create('arc', [p1, p2, p3]);
-     *       board.create('text',[1,6,function(){return 'arclength: '+Math.round(a.Value()*100)/100}])
      * })();
      * </script><pre>
      *

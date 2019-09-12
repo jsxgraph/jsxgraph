@@ -421,7 +421,6 @@ define([
                 }
             }
 
-
             if (this.visPropCalc.visible) {
                 this.board.renderer.updateLine(this);
             }
@@ -1002,22 +1001,6 @@ define([
      *
      * </script><pre>
      *
-     * @example
-     * //create line between two points
-     * var p1 = board.create('point', [0,0]);
-     * var p2 = board.create('point', [2,2]);
-     * var l1 = board.create('line', [p1,p2], {straightFirst:false, straightLast:false});
-     * </pre><div id="d21d5b58-6338-11e8-9fb9-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
-     * <script type="text/javascript">
-     *     (function() {
-     *         var board = JXG.JSXGraph.initBoard('d21d5b58-6338-11e8-9fb9-901b0e1b8723',
-     *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
-     *             var ex5p1 = board.create('point', [0,0]);
-     *             var ex5p2 = board.create('point', [2,2]);
-     *             var ex5l1 = board.create('line', [p1,p2], {straightFirst:false, straightLast:false});
-     *     })();
-     *
-     * </script><pre>
      */
     JXG.createLine = function (board, parents, attributes) {
         var ps, el, p1, p2, i, attr,
