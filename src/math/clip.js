@@ -141,7 +141,7 @@ define([
                         return 1;
                     } else {
                         if (p1[2] === y && ((p2[1] > x) === (p1[1] < x))) {
-                            console.log('<<<<<<< Edge 1');
+                            console.log('<<<<<<< Edge 1', p1, p2, [x, y]);
                             return 1;
                         }
                     }
@@ -304,38 +304,40 @@ define([
                 if (Type.exists(P.intersect)) {
                     //console.log(P.cnt);
 
-                    Pprev = P._prev;
-                    Pnext = P._next;
-
-                    if (Pnext.intersect && Pnext.entry_exit) {
-                        status = Pnext.entry_exit;
-                    } else if (Pprev.intersect && Pprev.entry_exit) {
-                        status = Pprev.entry_exit;
-                    } else {
-                        while (Pnext.intersect) {
-                            Pnext = Pnext._next;
-                        }
-                        while (Pprev.intersect) {
-                            Pprev = Pprev._prev;
-                        }
-                        Pnext = Pnext._next;
-                        Pprev = Pprev._prev;
-
-                        // console.log("prev", Pprev.usrCoords, Pprev.scrCoords);
-                        // console.log("next", Pnext.usrCoords, Pnext.scrCoords);
-                        t_prev = (this.windingNumber(Pprev.usrCoords, path2) == 0) ? 'out':'in';
-                        t_next = (this.windingNumber(Pnext.usrCoords, path2) == 0) ? 'out':'in';
-
-                        if (t_prev === 'out' && t_next === 'in') {
-                            status = 'entry';
-                        } else if (t_prev === 'in' && t_next === 'out') {
-                            status = 'exit';
-                        } else {
-                            console.log("Can not mark", P.cnt, P.coords.usrCoords, t_prev, t_next);
-                            //console.log( ":",winding_number(Pprev.usrCoords, path2), winding_number(Pnext.usrCoords, path2));
-                            status = 'bounce';
-                        }
-                    }
+                    this.windingNumber(P.usrCoords, path2);
+                    // Pprev = P._prev;
+                    // Pnext = P._next;
+                    //
+                    // if (Pnext.intersect && Pnext.entry_exit) {
+                    //     status = Pnext.entry_exit;
+                    // } else if (Pprev.intersect && Pprev.entry_exit) {
+                    //     status = Pprev.entry_exit;
+                    // } else {
+                    //     while (Pnext.intersect) {
+                    //         Pnext = Pnext._next;
+                    //     }
+                    //     while (Pprev.intersect) {
+                    //         Pprev = Pprev._prev;
+                    //     }
+                    //     // Pnext = Pnext._next;
+                    //     // Pprev = Pprev._prev;
+                    //
+                    //     console.log(":::",Pprev.usrCoords, Pnext.usrCoords, P.usrCoords);
+                    //     t_prev = (this.windingNumber(Pprev.usrCoords, path2) == 0) ? 'out':'in';
+                    //     t_next = (this.windingNumber(Pnext.usrCoords, path2) == 0) ? 'out':'in';
+                    //
+                    //     if (t_prev === 'out' && t_next === 'in') {
+                    //         status = 'entry';
+                    //         console.log(status)
+                    //     } else if (t_prev === 'in' && t_next === 'out') {
+                    //         status = 'exit';
+                    //         console.log(status)
+                    //     } else {
+                    //         console.log("Can not mark", P.cnt, P.coords.usrCoords, t_prev, t_next);
+                    //         //console.log( ":",winding_number(Pprev.usrCoords, path2), winding_number(Pnext.usrCoords, path2));
+                    //         status = 'bounce';
+                    //     }
+                    // }
 
                     // console.log("MARKED", P.name, P.cnt, status);
                     P.entry_exit = status;
@@ -398,6 +400,10 @@ define([
             // Phase 2
             this.markEntryExit(S, C);
             this.markEntryExit(C, S);
+
+            console.log(S_intersect);
+            console.log();
+            console.log(C_intersect);
 
             // Phase 3
             cnt = 0;
