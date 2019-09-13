@@ -44,11 +44,20 @@
 /**
  * @fileoverview This file contains the Math.Clip namespace for clipping and computing boolean operations
  * on polygons and curves
+ *
+ * // TODO:
+ * * API docs
+ * * Enable other boolean operations on polygons
+ * * Allow polygons instead of paths. Can "expect" be used?
+ * * Check if input polygons are closed. If not, handle this case.
+ * * Copy subject and clip path instead od working with it directly
+ * * Handle  degenerate case if start of path is on the other path
+ * * Check if all trivial cases are handled
  */
 
 define([
-    'jxg', 'base/constants', 'base/coords', 'math/math', 'math/geometry', 'math/numerics', 'utils/type', 'utils/expect'
-], function (JXG, Const, Coords, Mat, Geometry, Numerics, Type, Expect) {
+    'jxg', 'base/constants', 'base/coords', 'math/math', 'math/geometry', utils/type', 'utils/expect'
+], function (JXG, Const, Coords, Mat, Geometry, Type, Expect) {
 
     "use strict";
 
