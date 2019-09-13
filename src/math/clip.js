@@ -53,6 +53,7 @@
  * * Copy subject and clip path instead od working with it directly
  * * Handle  degenerate case if start of path is on the other path
  * * Check if all trivial cases are handled
+ * * Handle circles
  */
 
 define([
