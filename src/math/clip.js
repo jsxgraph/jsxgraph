@@ -177,17 +177,6 @@ define([
             this.usrCoords = this.coords.usrCoords;
             this.scrCoords = this.coords.scrCoords;
 
-            // this._prev = path[i];
-            // this._next = path[i]._next;
-            //
-            // this._prev._next = this;
-            // this._next._prev = this;
-            //
-            // if (this._prev._end) {
-            //     delete this._prev._end;
-            //     this._end = true;
-            // }
-
             this.intersect = true;
             this.alpha = alpha;
             this.pos = i;
@@ -198,6 +187,7 @@ define([
             // Set after initialisation
             this.neighbour = null;
             this.entry_exit = false;
+            this.cnt = 0;
         },
 
         sortIntersections: function(P_crossings) {
@@ -231,7 +221,7 @@ define([
             var //pS = S[0],
                 //pC = C[0],
                 res = [],
-                i, j, k, ignore, min_S, min_C, max_S, max_C, swap, crds,
+                i, j, k, l, ignore, min_S, min_C, max_S, max_C, swap, crds,
                 P,
                 S_le = S.length - 1,
                 C_le = C.length - 1,
@@ -288,13 +278,14 @@ define([
 
                         ignore = false;
                         crds = new Coords(JXG.COORDS_BY_USER, res[0], board);
-                        for (k = 0; k < S_intersect.length; k++) {
-                            if (Math.round(0.5 * (crds.scrCoords[1] - S_intersect[k].scrCoords[1])) === 0 &&
-                                Math.round(0.5 * (crds.scrCoords[2] - S_intersect[k].scrCoords[2])) === 0) {
-                                    ignore = true;
-                                    break;
-                                }
-                        }
+                        // for (k = 0; k < i && !ignore; k++) {
+                        //     for (l = 0; l < S_crossings[k].length && !ignore; l++) {
+                        //         if (Math.round(0.5 * (crds.scrCoords[1] - S_crossings[k][l].scrCoords[1])) === 0 &&
+                        //             Math.round(0.5 * (crds.scrCoords[2] - S_crossings[k][l].scrCoords[2])) === 0) {
+                        //                 ignore = true;
+                        //             }
+                        //     }
+                        // }
                         if (ignore) {
                             continue;
                         }
@@ -340,7 +331,7 @@ define([
                 if (Type.exists(P.intersect)) {
                     //console.log(P.cnt);
 
-                    this.windingNumber(P.usrCoords, path2);
+                    //this.windingNumber(P.usrCoords, path2);
                     // Pprev = P._prev;
                     // Pnext = P._next;
                     //
@@ -416,7 +407,6 @@ define([
             res = this.findIntersections(S, C, board);
             S_intersect = res[0];
             C_intersect = res[1];
-            console.log(S_intersect, C_intersect);
 
             if (S_intersect.length === 0) {
                 // Test if one curve is contained by the other
@@ -440,13 +430,14 @@ define([
             this.markEntryExit(S, C);
             this.markEntryExit(C, S);
 
-            for (i = 0; i < S_intersect.length; i++) {
-                console.log('S', S_intersect[i].cnt, S_intersect[i].entry_exit, S_intersect[i].usrCoords);
-            }
-            console.log();
-            for (i = 0; i < C_intersect.length; i++) {
-                console.log('C', C_intersect[i].cnt, C_intersect[i].entry_exit, C_intersect[i].usrCoords);
-            }
+            // for (i = 0; i < S_intersect.length; i++) {
+            //     console.log('S', S_intersect[i].cnt, S_intersect[i].entry_exit, S_intersect[i].usrCoords);
+            // }
+            // console.log();
+            // for (i = 0; i < C_intersect.length; i++) {
+            //     console.log('C', C_intersect[i].cnt, C_intersect[i].entry_exit, C_intersect[i].usrCoords);
+            // }
+
             // console.log(S_intersect);
             // console.log();
             // console.log(C_intersect);
@@ -477,7 +468,7 @@ define([
                 do {
                     current.done = true;
                     // if (cnt < 10000)
-                    console.log(current.pathname, current.cnt, current.entry_exit, current.usrCoords[1].toFixed(3), current.usrCoords[2].toFixed(3));
+                    // console.log(current.pathname, current.cnt, current.entry_exit, current.usrCoords[1].toFixed(3), current.usrCoords[2].toFixed(3));
 
                     // if (current.entry_exit == 'exit') { // Boolean op: union
                     //if ((P == S && current.entry_exit == 'exit') || (P != S && current.entry_exit == 'entry')) { // Boolean op: S \ C
@@ -522,7 +513,7 @@ define([
                         console.log("BREAK!!!!!!!!!!!!!!!!!", cnt);
                         return [[0], [0]];
                     }
-                    console.log("Switch", current.pathname, current.cnt, "to", current.neighbour.pathname, current.neighbour.cnt);
+                    // console.log("Switch", current.pathname, current.cnt, "to", current.neighbour.pathname, current.neighbour.cnt);
                     current = current.neighbour;
                     if (current.done) {
                         break;
