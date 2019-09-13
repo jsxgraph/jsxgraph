@@ -401,9 +401,16 @@ define([
             this.markEntryExit(S, C);
             this.markEntryExit(C, S);
 
-            console.log(S_intersect);
+            for (i = 0; i < S_intersect.length; i++) {
+                console.log('S', S_intersect[i].cnt, S_intersect[i].entry_exit, S_intersect[i].usrCoords);
+            }
             console.log();
-            console.log(C_intersect);
+            for (i = 0; i < C_intersect.length; i++) {
+                console.log('C', C_intersect[i].cnt, C_intersect[i].entry_exit, C_intersect[i].usrCoords);
+            }
+            // console.log(S_intersect);
+            // console.log();
+            // console.log(C_intersect);
 
             // Phase 3
             cnt = 0;
