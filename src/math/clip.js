@@ -57,7 +57,7 @@
  */
 
 define([
-    'jxg', 'base/constants', 'base/coords', 'math/math', 'math/geometry', utils/type', 'utils/expect'
+    'jxg', 'base/constants', 'base/coords', 'math/math', 'math/geometry', 'utils/type', 'utils/expect'
 ], function (JXG, Const, Coords, Mat, Geometry, Type, Expect) {
 
     "use strict";
