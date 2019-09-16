@@ -404,7 +404,7 @@ define([
          * @param  {[type]} clip    [description]
          * @return {[type]}         [description]
          */
-        greinerHormann: function(subject, clip, board) {
+        greinerHormann: function(subject, clip, clip_type, board) {
             var pS, pC, P, i, current, start,
                 S = subject.points,
                 C = clip.points,
@@ -494,7 +494,11 @@ define([
                     //if ((P == S && current.entry_exit == 'exit') || (P != S && current.entry_exit == 'entry')) { // Boolean op: S \ C
                     // if ((P == S && current.entry_exit == 'entry') || (P != S && current.entry_exit == 'exit')) { // Boolean op: C \ S
 
-                    if (current.entry_exit == 'entry') {        // Boolean op: intersection
+                    if ((clip_type == 'intersection' && current.entry_exit == 'entry') ||
+                        (clip_type == 'union' && current.entry_exit == 'exit') ||
+                        (clip_type == 'setminus' && (P == S === current.entry_exit == 'exit'))
+                        ) {
+
                         current = current._next;
                         do {
                             cnt++;
@@ -547,7 +551,20 @@ define([
             }
 
             return [pathX, pathY];
+        },
+
+        union: function(path1, path2, board) {
+            return this.greinerHormann(path1, path2, 'union', board);
+        },
+
+        intersection: function(path1, path2, board) {
+            return this.greinerHormann(path1, path2, 'intersection', board);
+        },
+
+        setminus: function(path1, path2, board) {
+            return this.greinerHormann(path1, path2, 'setminus', board);
         }
+
     };
 
     JXG.extend(Mat.Clip, /** @lends JXG.Math.Clip */ {
