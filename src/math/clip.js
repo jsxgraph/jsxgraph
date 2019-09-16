@@ -48,10 +48,14 @@
  * // TODO:
  * * API docs
  * * Enable other boolean operations on polygons
- * * Allow polygons instead of paths. Can "expect" be used?
+ * * Allow polygons instead of paths. Can module "Expect" be used?
  * * Check if input polygons are closed. If not, handle this case.
- * * Copy subject and clip path instead od working with it directly
- * * Handle  degenerate case if start of path is on the other path
+ * * Copy subject and clip path instead of working with it directly:
+ *    Probably, this is not needed, since the doubly linked list structure
+ *    of the curve path points is created in every update from scratch.
+ *    All lonks to in intersction points are overwritten in "doublyLinkedList".
+ * * Handle degenerate case if start of path is on the other path:
+ *      Only remaining case is if starting points coincide
  * * Check if all trivial cases are handled
  * * Handle circles
  */
@@ -121,12 +125,12 @@ define([
                 return 0;
             }
 
-            // Infinite points are outside
+            // Infinite points are declared outside
             if (x === NaN || y === NaN) {
                 return 1;
             }
 
-            // The point is a vertex of
+            // The point is a vertex of the path
             if (path[0].usrCoords[1] === x &&
                 path[0].usrCoords[2] === y) {
 
@@ -152,7 +156,7 @@ define([
                     } else {
                         if (p1[2] === y && ((p2[1] > x) === (p1[1] < x))) {
                             console.log('<<<<<<< Edge 1', p1, p2, [x, y]);
-                            return 1;
+                            return 0;
                         }
                     }
                 }
@@ -164,6 +168,10 @@ define([
                             wn += sign;
                         } else {
                             d = this.det(p1, p2, usrCoords);
+                            if (d === 0) {
+                                console.log('<<<<<<< Edge 2');
+                                return 0;
+                            }
                             if ((d > 0) === (p2[2] > p1[2])) {
                                 wn += sign;
                             }
@@ -331,8 +339,10 @@ define([
                 P = path1[0];
 
             if (this.windingNumber(P.usrCoords, path2) === 0) {
+                // console.log('OUT');
                 status = 'entry';
             } else {
+                // console.log('IN');
                 status = 'exit';
             }
 
@@ -469,14 +479,14 @@ define([
                     pathY.push(NaN);
                 }
 
-                // Add the "current" vertex
-                pathX.push(current.usrCoords[1]);
-                pathY.push(current.usrCoords[2]);
-
                 start = current.cnt;
                 P = S;
                 do {
+                    // Add the "current" vertex
+                    pathX.push(current.usrCoords[1]);
+                    pathY.push(current.usrCoords[2]);
                     current.done = true;
+
                     // if (cnt < 10000)
                     // console.log(current.pathname, current.cnt, current.entry_exit, current.usrCoords[1].toFixed(3), current.usrCoords[2].toFixed(3));
 
@@ -495,9 +505,9 @@ define([
                             if (!JXG.exists(current.intersect)) {  // In case there are two adjacent intersects
                                 current = current._next;
                             }
-                        } while (/*!current._end && */(!JXG.exists(current.intersect) ||
-                                  (JXG.exists(current.intersect) && current.entry_exit == 'bounce')) &&
-                                 cnt < maxCnt);
+                        } while (!JXG.exists(current.intersect)
+                                // || (JXG.exists(current.intersect) && current.entry_exit == 'bounce'))
+                                && cnt < maxCnt);
                     } else {
                         current = current._prev;
                         do {
@@ -509,8 +519,8 @@ define([
                             if (!JXG.exists(current.intersect)) {  // In case there are two adjacent intersects
                                 current = current._prev;
                             }
-                        } while (/*!current._end && */(!JXG.exists(current.intersect) ||
-                                  (JXG.exists(current.intersect) && current.entry_exit == 'bounce'))
+                        } while (!JXG.exists(current.intersect)
+                                // || (JXG.exists(current.intersect) && current.entry_exit == 'bounce'))
                                  && cnt < maxCnt);
                     }
                     current.done = true;
@@ -523,6 +533,7 @@ define([
                         console.log("BREAK!!!!!!!!!!!!!!!!!", cnt);
                         return [[0], [0]];
                     }
+
                     // console.log("Switch", current.pathname, current.cnt, "to", current.neighbour.pathname, current.neighbour.cnt);
                     current = current.neighbour;
                     if (current.done) {
