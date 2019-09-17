@@ -470,7 +470,7 @@ define([
 
                     if ((clip_type == 'intersection' && current.entry_exit == 'entry') ||
                         (clip_type == 'union' && current.entry_exit == 'exit') ||
-                        (clip_type == 'setminus' && (P == S) === (current.entry_exit == 'exit'))
+                        (clip_type == 'difference' && (P == S) === (current.entry_exit == 'exit'))
                         ) {
 
                         current = current._next;
@@ -526,13 +526,13 @@ define([
          * @param  {[type]} subject   [description]
          * @param  {[type]} clip      [description]
          * @param  {String} clip_type Determines the type of boolean operation on the two paths.
-         *  Possible values are 'intersection', 'union', or 'setminus'.
+         *  Possible values are 'intersection', 'union', or 'difference'.
          * @param  {[type]} board     [description]
          * @return {[type]}           [description]
          *
          * @see JXG.Clip#intersection
          * @see JXG.Clip#union
-         * @see JXG.Clip#setminus
+         * @see JXG.Clip#difference
          */
         greinerHormann: function(subject, clip, clip_type, board) {
             var P, i, current, start,
@@ -569,7 +569,7 @@ define([
                     }
                 }
                 return [pathX, pathY];
-            } if (clip_type === 'setminus' && (S.length === 0 || C.length === 0)) {
+            } if (clip_type === 'difference' && (S.length === 0 || C.length === 0)) {
                 if (C.length == 0) {
                     for (i = 0; i < S.length; ++i) {
                         pathX.push(S[i].usrCoords[1]);
@@ -606,7 +606,7 @@ define([
                 // Test if one curve is contained by the other
                 if (this.windingNumber(S[0].usrCoords, C) === 0) {     // S is outside of C,
                     if (this.windingNumber(C[0].usrCoords, S) !== 0) { // C is inside of S, i.e. C subset of S
-                        if (clip_type === 'setminus') {
+                        if (clip_type === 'difference') {
                             for (i = 0; i < S.length; ++i) {
                                 pathX.push(S[i].usrCoords[1]);
                                 pathY.push(S[i].usrCoords[2]);
@@ -618,14 +618,14 @@ define([
                     } else {                                           // The curves are disjoint
                         if (clip_type === 'intersection') {
                             P = [];
-                        } else if (clip_type === 'setminus') {
+                        } else if (clip_type === 'difference') {
                             P = S;
                         }
                     }
                 } else {                                               // S inside of C, i.e. S subset of C
                     if (clip_type === 'intersection') {
                         P = S;
-                    } else if (clip_type === 'setminus') {
+                    } else if (clip_type === 'difference') {
                         P = [];
                     }
                 }
@@ -687,7 +687,7 @@ define([
          *
          * @see JXG.Clip#greinerHormann
          * @see JXG.Clip#union
-         * @see JXG.Clip#setminus
+         * @see JXG.Clip#difference
          */
         intersection: function(path1, path2, board) {
             return this.greinerHormann(path1, path2, 'intersection', board);
@@ -704,8 +704,8 @@ define([
          * @see JXG.Clip#intersection
          * @see JXG.Clip#union
          */
-        setminus: function(path1, path2, board) {
-            return this.greinerHormann(path1, path2, 'setminus', board);
+        difference: function(path1, path2, board) {
+            return this.greinerHormann(path1, path2, 'difference', board);
         }
 
     };
