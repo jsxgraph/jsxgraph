@@ -47,7 +47,6 @@
  *
  * // TODO:
  * * API docs
- * * Enable other boolean operations on polygons
  * * Allow polygons instead of paths. Can module "Expect" be used?
  * * Check if input polygons are closed. If not, handle this case.
  * * Copy subject and clip path instead of working with it directly:
@@ -448,6 +447,12 @@ define([
 
             // Phase 2
             this.markEntryExit(S, C);
+            if (S[0].distance(Const.COORDS_BY_USER, C[0]) === 0) {
+                // Randomly disturb the first point of the second path
+                // if both paths start at the same point.
+                C[0].usrCoords[1] *= 1 + Math.random() * 0.0001 - 0.00005;
+                C[0].usrCoords[2] *= 1 + Math.random() * 0.0001 - 0.00005;
+            }
             this.markEntryExit(C, S);
 
             // for (i = 0; i < S_intersect.length; i++) {
@@ -496,7 +501,7 @@ define([
 
                     if ((clip_type == 'intersection' && current.entry_exit == 'entry') ||
                         (clip_type == 'union' && current.entry_exit == 'exit') ||
-                        (clip_type == 'setminus' && (P == S === current.entry_exit == 'exit'))
+                        (clip_type == 'setminus' && (P == S) === (current.entry_exit == 'exit'))
                         ) {
 
                         current = current._next;
@@ -529,9 +534,9 @@ define([
                     }
                     current.done = true;
 
-                    if (current._end) {
-                        break;
-                    }
+                    // if (current._end) {
+                    //     break;
+                    // }
 
                     if (!current.neighbour) {
                         console.log("BREAK!!!!!!!!!!!!!!!!!", cnt);
@@ -541,11 +546,13 @@ define([
                     // console.log("Switch", current.pathname, current.cnt, "to", current.neighbour.pathname, current.neighbour.cnt);
                     current = current.neighbour;
                     if (current.done) {
+                        pathX.push(current.usrCoords[1]);
+                        pathY.push(current.usrCoords[2]);
                         break;
                     }
                     P = current.path;
 
-                } while (!(current.pathname == 'S' && current.cnt == start) /*&& !current.done*/ && cnt < maxCnt);
+                } while (!(current.pathname == 'S' && current.cnt == start) && cnt < maxCnt);
 
                 S_intersect_idx++;
             }
