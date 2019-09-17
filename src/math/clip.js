@@ -49,13 +49,6 @@
  * * API docs
  * * Allow polygons instead of paths. Can module "Expect" be used?
  * * Check if input polygons are closed. If not, handle this case.
- * * Copy subject and clip path instead of working with it directly:
- *    Probably, this is not needed, since the doubly linked list structure
- *    of the curve path points is created in every update from scratch.
- *    All lonks to in intersction points are overwritten in "doublyLinkedList".
- * * Handle degenerate case if start of path is on the other path:
- *      Only remaining case is if starting points coincide
- * * Check if all trivial cases are handled
  * * Handle circles
  */
 
@@ -405,8 +398,8 @@ define([
          */
         greinerHormann: function(subject, clip, clip_type, board) {
             var pS, pC, P, i, current, start,
-                S = subject.points,
-                C = clip.points,
+                S = [],
+                C = [],
                 S_intersect = [],
                 C_intersect = [],
                 S_intersect_idx, cnt,
@@ -415,7 +408,36 @@ define([
                 pathX = [],
                 pathY = [];
 
-            if (S.length == 0) {
+            if (Type.exists(subject.points)) {
+                S = subject.points;
+            }
+            if (Type.exists(clip.points)) {
+                C = clip.points;
+            }
+
+            // Handle degenerated cases
+            if (clip_type === 'intersection' && (S.length === 0 || C.length === 0)) {
+                return [pathX, pathY];
+            } else if (clip_type === 'union' && (S.length === 0 || C.length === 0)) {
+                if (S.length == 0) {
+                    for (i = 0; i < C.length; ++i) {
+                        pathX.push(C[i].usrCoords[1]);
+                        pathY.push(C[i].usrCoords[2]);
+                    }
+                } else {
+                    for (i = 0; i < S.length; ++i) {
+                        pathX.push(S[i].usrCoords[1]);
+                        pathY.push(S[i].usrCoords[2]);
+                    }
+                }
+                return [pathX, pathY];
+            } if (clip_type === 'setminus' && (S.length === 0 || C.length === 0)) {
+                if (C.length == 0) {
+                    for (i = 0; i < S.length; ++i) {
+                        pathX.push(S[i].usrCoords[1]);
+                        pathY.push(S[i].usrCoords[2]);
+                    }
+                }
                 return [pathX, pathY];
             }
 
@@ -428,20 +450,51 @@ define([
             C_intersect = res[1];
 
             if (S_intersect.length === 0) {
+                if (clip_type === 'union') {
+                    for (i = 0; i < S.length; ++i) {
+                        pathX.push(S[i].usrCoords[1]);
+                        pathY.push(S[i].usrCoords[2]);
+                    }
+                    pathX.push(NaN);
+                    pathY.push(NaN);
+                    for (i = 0; i < C.length; ++i) {
+                        pathX.push(C[i].usrCoords[1]);
+                        pathY.push(C[i].usrCoords[2]);
+                    }
+                    return [pathX, pathY];
+                }
+
                 // Test if one curve is contained by the other
                 if (this.windingNumber(S[0].usrCoords, C) === 0) {     // S is outside of C,
                     if (this.windingNumber(C[0].usrCoords, S) !== 0) { // C is inside of S, i.e. C subset of S
+                        if (clip_type === 'setminus') {
+                            for (i = 0; i < S.length; ++i) {
+                                pathX.push(S[i].usrCoords[1]);
+                                pathY.push(S[i].usrCoords[2]);
+                            }
+                            pathX.push(NaN);
+                            pathY.push(NaN);
+                        }
                         P = C;
-                    } else {                                           // The curve are disjoint
+                    } else {                                           // The curves are disjoint
+                        if (clip_type === 'intersection') {
+                            P = [];
+                        } else if (clip_type === 'setminus') {
+                            P = S;
+                        }
+                    }
+                } else {                                               // S inside of C, i.e. S subset of C
+                    if (clip_type === 'intersection') {
+                        P = S;
+                    } else if (clip_type === 'setminus') {
                         P = [];
                     }
-                } else {
-                    P = S;
                 }
                 for (i = 0; i < P.length; ++i) {
                     pathX.push(P[i].usrCoords[1]);
                     pathY.push(P[i].usrCoords[2]);
                 }
+
                 return [pathX, pathY];
             }
 
