@@ -67,6 +67,8 @@ define([
 
         /**
          * Add pointers to an array S such that it is a circular doubly-linked list.
+         *
+         * @private
          * @param  {Array} S Array
          * @return {Array} return the array S
          */
@@ -85,6 +87,14 @@ define([
             return S;
         },
 
+        /**
+         * [description]
+         * @private
+         * @param  {[type]} p1 [description]
+         * @param  {[type]} p2 [description]
+         * @param  {[type]} q  [description]
+         * @return {[type]}    [description]
+         */
         det: function(p1, p2, q) {
             return (p1[1] - q[1]) * (p2[2] - q[2]) - (p2[1] - q[1]) * (p1[2] - q[2]);
         },
@@ -182,6 +192,16 @@ define([
             return wn;
         },
 
+        /**
+         * [description]
+         * @private
+         * @param  {[type]} coords   [description]
+         * @param  {[type]} i        [description]
+         * @param  {[type]} alpha    [description]
+         * @param  {[type]} path     [description]
+         * @param  {[type]} pathname [description]
+         * @return {[type]}          [description]
+         */
         Vertex: function(coords, i, alpha, path, pathname) {
             this.coords = coords;
             this.usrCoords = this.coords.usrCoords;
@@ -200,6 +220,12 @@ define([
             this.cnt = 0;
         },
 
+        /**
+         * [description]
+         * @private
+         * @param  {[type]} P_crossings [description]
+         * @return {[type]}             [description]
+         */
         sortIntersections: function(P_crossings) {
             var i, j, P, last,
                 P_intersect = [],
@@ -227,6 +253,14 @@ define([
             return P_intersect;
         },
 
+        /**
+         * [description
+         * @private
+         * @param  {[type]} S     [description]
+         * @param  {[type]} C     [description]
+         * @param  {[type]} board [description]
+         * @return {[type]}       [description]
+         */
         findIntersections: function(S, C, board) {
             var res = [],
                 i, j, k, l, ignore, min_S, min_C, max_S, max_C, swap, crds,
@@ -285,7 +319,7 @@ define([
                         res[2] >= 0.0 && res[2] <= 1.0) {
 
                         // ignore = false;
-                        crds = new Coords(JXG.COORDS_BY_USER, res[0], board);
+                        crds = new Coords(Const.COORDS_BY_USER, res[0], board);
                         // for (k = 0; k < i && !ignore; k++) {
                         //     for (l = 0; l < S_crossings[k].length && !ignore; l++) {
                         //         if (Math.round(0.5 * (crds.scrCoords[1] - S_crossings[k][l].scrCoords[1])) === 0 &&
@@ -319,6 +353,13 @@ define([
             return [S_intersect, C_intersect];
         },
 
+        /**
+         * [description]
+         * @private
+         * @param  {[type]} path1 [description]
+         * @param  {[type]} path2 [description]
+         * @return {[type]}       [description]
+         */
         markEntryExit: function(path1, path2) {
             var status, Pprev, Pnext,
                 t_prev, t_next,
@@ -384,6 +425,16 @@ define([
             }
         },
 
+        /**
+         * [description]
+         * @private
+         * @param  {[type]} S           [description]
+         * @param  {[type]} C           [description]
+         * @param  {[type]} S_intersect [description]
+         * @param  {[type]} C_intersect [description]
+         * @param  {[type]} clip_type   [description]
+         * @return {[type]}             [description]
+         */
         tracing:  function(S, C, S_intersect, C_intersect, clip_type) {
             var P, current, start,
                 cnt = 0,
@@ -429,10 +480,10 @@ define([
                             pathX.push(current.usrCoords[1]);
                             pathY.push(current.usrCoords[2]);
 
-                            if (!JXG.exists(current.intersect)) {  // In case there are two adjacent intersects
+                            if (!Type.exists(current.intersect)) {  // In case there are two adjacent intersects
                                 current = current._next;
                             }
-                        } while (!JXG.exists(current.intersect) && cnt < maxCnt);
+                        } while (!Type.exists(current.intersect) && cnt < maxCnt);
                     } else {
                         current = current._prev;
                         do {
@@ -441,10 +492,10 @@ define([
                             pathX.push(current.usrCoords[1]);
                             pathY.push(current.usrCoords[2]);
 
-                            if (!JXG.exists(current.intersect)) {  // In case there are two adjacent intersects
+                            if (!Type.exists(current.intersect)) {  // In case there are two adjacent intersects
                                 current = current._prev;
                             }
-                        } while (!JXG.exists(current.intersect) && cnt < maxCnt);
+                        } while (!Type.exists(current.intersect) && cnt < maxCnt);
                     }
                     current.done = true;
 
@@ -472,9 +523,16 @@ define([
 
         /**
          * [description]
-         * @param  {[type]} subject [description]
-         * @param  {[type]} clip    [description]
-         * @return {[type]}         [description]
+         * @param  {[type]} subject   [description]
+         * @param  {[type]} clip      [description]
+         * @param  {String} clip_type Determines the type of boolean operation on the two paths.
+         *  Possible values are 'intersection', 'union', or 'setminus'.
+         * @param  {[type]} board     [description]
+         * @return {[type]}           [description]
+         *
+         * @see JXG.Clip#intersection
+         * @see JXG.Clip#union
+         * @see JXG.Clip#setminus
          */
         greinerHormann: function(subject, clip, clip_type, board) {
             var P, i, current, start,
@@ -606,14 +664,46 @@ define([
 
         },
 
+        /**
+         * [description]
+         * @param  {[type]} path1 [description]
+         * @param  {[type]} path2 [description]
+         * @param  {[type]} board [description]
+         * @return {[type]}       [description]
+         *
+         * @see JXG.Clip#greinerHormann
+         * @see JXG.Clip#union
+         */
         union: function(path1, path2, board) {
             return this.greinerHormann(path1, path2, 'union', board);
         },
 
+        /**
+         * [description]
+         * @param  {[type]} path1 [description]
+         * @param  {[type]} path2 [description]
+         * @param  {[type]} board [description]
+         * @return {[type]}       [description]
+         *
+         * @see JXG.Clip#greinerHormann
+         * @see JXG.Clip#union
+         * @see JXG.Clip#setminus
+         */
         intersection: function(path1, path2, board) {
             return this.greinerHormann(path1, path2, 'intersection', board);
         },
 
+        /**
+         * [description]
+         * @param  {[type]} path1 [description]
+         * @param  {[type]} path2 [description]
+         * @param  {[type]} board [description]
+         * @return {[type]}       [description]
+         *
+         * @see JXG.Clip#greinerHormann
+         * @see JXG.Clip#intersection
+         * @see JXG.Clip#union
+         */
         setminus: function(path1, path2, board) {
             return this.greinerHormann(path1, path2, 'setminus', board);
         }
