@@ -486,7 +486,6 @@ define([
                     pathY.push(current.usrCoords[2]);
                     current.done = true;
 
-                    // if (cnt < 10000)
                     // console.log(current.pathname, current.cnt, current.entry_exit, current.usrCoords[1].toFixed(3), current.usrCoords[2].toFixed(3));
 
                     if ((clip_type == 'intersection' && current.entry_exit == 'entry') ||
@@ -526,6 +525,7 @@ define([
                     }
 
                     // console.log("Switch", current.pathname, current.cnt, "to", current.neighbour.pathname, current.neighbour.cnt);
+
                     current = current.neighbour;
                     if (current.done) {
                         pathX.push(current.usrCoords[1]);
@@ -644,7 +644,7 @@ define([
                     S = subject.points;
             } else if (subject.type == Const.OBJECT_TYPE_POLYGON) {
                 for (i = 0; i < subject.vertices.length; i++) {
-                    S.push(subject.vertices[i].coords);
+                    S.push(new Coords(Const.COORDS_BY_USER, subject.vertices[i].coords.usrCoords, board));
                 }
             }
 
@@ -653,7 +653,7 @@ define([
                     C = clip.points;
             } else if (clip.type == Const.OBJECT_TYPE_POLYGON) {
                 for (i = 0; i < clip.vertices.length; i++) {
-                    C.push(clip.vertices[i].coords);
+                    C.push(new Coords(Const.COORDS_BY_USER, clip.vertices[i].coords.usrCoords, board));
                 }
             }
 
@@ -742,13 +742,13 @@ define([
             }
 
             // Phase 2: mark intersection points as entry or exit points
+            this.markEntryExit(S, C);
             if (S[0].distance(Const.COORDS_BY_USER, C[0]) === 0) {
                 // Randomly disturb the first point of the second path
                 // if both paths start at the same point.
                 C[0].usrCoords[1] *= 1 + Math.random() * 0.0001 - 0.00005;
                 C[0].usrCoords[2] *= 1 + Math.random() * 0.0001 - 0.00005;
             }
-            this.markEntryExit(S, C);
             this.markEntryExit(C, S);
 
             // for (i = 0; i < S_intersect.length; i++) {
