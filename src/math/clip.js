@@ -88,12 +88,14 @@ define([
         },
 
         /**
-         * [description]
+         * Determinant of three points in the Euclidean plane.
+         * Zero, if the points are collinear. Used to determine of a point q is left or
+         * right to a segment defined by points p1 and p2.
          * @private
-         * @param  {[type]} p1 [description]
-         * @param  {[type]} p2 [description]
-         * @param  {[type]} q  [description]
-         * @return {[type]}    [description]
+         * @param  {Array} p1 Coordinates of the first point of the segment. Array of length 3. First coordinate is equal to 1.
+         * @param  {Array} p2 Coordinates of the second point of the segment. Array of length 3. First coordinate is equal to 1.
+         * @param  {Array} q Coordinates of the point. Array of length 3. First coordinate is equal to 1.
+         * @return {Number} Signed area of the triangle formed by these three points.
          */
         det: function(p1, p2, q) {
             return (p1[1] - q[1]) * (p2[2] - q[2]) - (p2[1] - q[1]) * (p1[2] - q[2]);
@@ -105,6 +107,7 @@ define([
          * The point is regarded outside if the winding number is zero,
          * inside otherwise. The algorithm tries to find degenerate cases, i.e.
          * if the point is on the path. This is regarded as "outside".
+         * If the point is a vertex of the path, it is regarded as "inside".
          *
          * Implementation of algorithm 7 from "The point in polygon problem for
          * arbitrary polygons" by Kai Hormann and Alexander Agathos, Computational Geometry,
@@ -136,7 +139,7 @@ define([
             if (path[0].usrCoords[1] === x &&
                 path[0].usrCoords[2] === y) {
 
-                console.log('<<<<<<< Vertex 1');
+                // console.log('<<<<<<< Vertex 1');
                 return 1;
             }
 
@@ -153,11 +156,11 @@ define([
 
                 if (p2[2] === y) {
                     if (p2[1] === x) {
-                        console.log('<<<<<<< Vertex 2');
+                        // console.log('<<<<<<< Vertex 2');
                         return 1;
                     } else {
                         if (p1[2] === y && ((p2[1] > x) === (p1[1] < x))) {
-                            console.log('<<<<<<< Edge 1', p1, p2, [x, y]);
+                            // console.log('<<<<<<< Edge 1', p1, p2, [x, y]);
                             return 0;
                         }
                     }
@@ -171,7 +174,7 @@ define([
                         } else {
                             d = this.det(p1, p2, usrCoords);
                             if (d === 0) {
-                                console.log('<<<<<<< Edge 2');
+                                // console.log('<<<<<<< Edge 2');
                                 return 0;
                             }
                             if ((d > 0) === (p2[2] > p1[2])) {
@@ -193,14 +196,18 @@ define([
         },
 
         /**
-         * [description]
+         * JavaScript object containing the intersection of two paths. Every intersection point is on one path, but
+         * comes with a neighbour point having the same coordinates and being on the other path.
+         *
+         * The intersection point is inserted into the doubly linked list of the path.
+         *
          * @private
-         * @param  {[type]} coords   [description]
-         * @param  {[type]} i        [description]
-         * @param  {[type]} alpha    [description]
-         * @param  {[type]} path     [description]
-         * @param  {[type]} pathname [description]
-         * @return {[type]}          [description]
+         * @param  {JXG.Coords} coords JSXGraph Coords object conatining the coordinates of the intersection
+         * @param  {Number} i        Number of the segment of the subject path (first path) containing the intersection.
+         * @param  {Number} alpha    The intersection is a p_1 + alpha*(p_2 - p_1), where p_1 and p_2 are the end points
+         *      of the i-th segment.
+         * @param  {Array} path      Pointer to the path containing the intersection point
+         * @param  {String} pathname Name of the path: 'S' or 'C'.
          */
         Vertex: function(coords, i, alpha, path, pathname) {
             this.coords = coords;
@@ -221,7 +228,7 @@ define([
         },
 
         /**
-         * [description]
+         * Sort the intersection points into their path.
          * @private
          * @param  {[type]} P_crossings [description]
          * @return {[type]}             [description]
@@ -254,12 +261,15 @@ define([
         },
 
         /**
-         * [description
+         * Find all intersections between two paths.
          * @private
-         * @param  {[type]} S     [description]
-         * @param  {[type]} C     [description]
-         * @param  {[type]} board [description]
-         * @return {[type]}       [description]
+         * @param  {Array} S     Subject path
+         * @param  {Array} C     Clip path
+         * @param  {JXG.Board} board JSXGraph board object. It is needed to convert between
+         * user coordinates and screen coordinates.
+         * @return {Array}  Array containing two arrays. The first array contains the intersection vertices
+         * of the subject path and the second array contains the intersection vertices of the clip path.
+         * @see JXG.Clip#Vertex
          */
         findIntersections: function(S, C, board) {
             var res = [],
@@ -354,11 +364,16 @@ define([
         },
 
         /**
-         * [description]
+         * Mark the intersection vertices of path1 as entry points or as exit points
+         * in respect to path2.
+         *
+         * This is the simple algorithm as in
+         * Greiner, Günther; Kai Hormann (1998). "Efficient clipping of arbitrary polygons".
+         * ACM Transactions on Graphics. 17 (2): 71–83
+         *
          * @private
-         * @param  {[type]} path1 [description]
-         * @param  {[type]} path2 [description]
-         * @return {[type]}       [description]
+         * @param  {Array} path1 First path
+         * @param  {Array} path2 Second path
          */
         markEntryExit: function(path1, path2) {
             var status, Pprev, Pnext,
@@ -426,14 +441,20 @@ define([
         },
 
         /**
-         * [description]
+         * Tracing phase of the Greiner-Hormann algorithm, see
+         * Greiner, Günther; Kai Hormann (1998).
+         * "Efficient clipping of arbitrary polygons". ACM Transactions on Graphics. 17 (2): 71–83
+         *
+         * Boolean operations on polygons are distinguished: 'intersection', 'union', 'difference'.
+         *
          * @private
-         * @param  {[type]} S           [description]
-         * @param  {[type]} C           [description]
-         * @param  {[type]} S_intersect [description]
-         * @param  {[type]} C_intersect [description]
-         * @param  {[type]} clip_type   [description]
-         * @return {[type]}             [description]
+         * @param  {Array} S           Subject path
+         * @param  {Array} C           Clip path
+         * @param  {Array} S_intersect Array containing the intersection vertices of the subject path
+         * @param  {Array} C_intersect Array containing the intersection vertices of the clip path
+         * @param  {String} clip_type  contains the Boolean operation: 'intersection', 'union', or 'difference'
+         * @return {Array}             Array consisting of two arrays containing the x-coordinates and the y-coordintaes of
+         *      the resulting path.
          */
         tracing:  function(S, C, S_intersect, C_intersect, clip_type) {
             var P, current, start,
@@ -522,17 +543,89 @@ define([
         },
 
         /**
-         * [description]
+         * Determine the intersection, union or difference of two closed paths.
+         *
+         * This is an implementation of the Greiner-Hormann algorithm, see
+         * Greiner, Günther; Kai Hormann (1998).
+         * "Efficient clipping of arbitrary polygons". ACM Transactions on Graphics. 17 (2): 71–83.
+         *
          * @param  {[type]} subject   [description]
          * @param  {[type]} clip      [description]
          * @param  {String} clip_type Determines the type of boolean operation on the two paths.
          *  Possible values are 'intersection', 'union', or 'difference'.
-         * @param  {[type]} board     [description]
-         * @return {[type]}           [description]
+         * @param  {JXG.Board} board   JSXGraph board object. It is needed to convert between
+         * user coordinates and screen coordinates.
+         * @return {[type]}          Array consisting of two arrays containing the x-coordinates and the y-coordintaes of
+         *      the resulting path.
          *
          * @see JXG.Clip#intersection
          * @see JXG.Clip#union
          * @see JXG.Clip#difference
+         *
+         * @example
+         *     var board = JXG.JSXGraph.initBoard('jxgbox1', {
+         *         axis:true,
+         *         boundingbox:[-5, 5, 5, -5]
+         *     });
+         *
+         *     var curve1 = board.create('curve', [
+         *             [-3, 3, 0, -3],
+         *             [3, 3, 0, 3]
+         *         ],
+         *         {strokeColor: 'black'});
+         *
+         *     var curve2 = board.create('curve', [
+         *             [-4, 4, 0, -4],
+         *             [2, 2, 4, 2]
+         *         ],
+         *         {strokeColor: 'blue'});
+         *
+         *     var clip_path = board.create('curve', [[], []], {strokeWidth: 3, fillColor: 'yellow', fillOpacity: 0.6});
+         *     clip_path.updateDataArray = function() {
+         *         var a = JXG.Math.Clip.greinerHormann(curve2, curve1, 'intersection', this.board);
+         *
+         *         this.dataX = a[0];
+         *         this.dataY = a[1];
+         *     };
+         *
+         *     board.update();
+         *
+         * </pre><div id="JXG9d2a6acf-a43b-4035-8f8a-9b1bee580210" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG9d2a6acf-a43b-4035-8f8a-9b1bee580210',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *         var board = JXG.JSXGraph.initBoard('jxgbox1', {
+         *             axis:true,
+         *             boundingbox:[-5, 5, 5, -5]
+         *         });
+         *
+         *         var curve1 = board.create('curve', [
+         *                 [-3, 3, 0, -3],
+         *                 [3, 3, 0, 3]
+         *             ],
+         *             {strokeColor: 'black'});
+         *
+         *         var curve2 = board.create('curve', [
+         *                 [-4, 4, 0, -4],
+         *                 [2, 2, 4, 2]
+         *             ],
+         *             {strokeColor: 'blue'});
+         *
+         *         var clip_path = board.create('curve', [[], []], {strokeWidth: 3, fillColor: 'yellow', fillOpacity: 0.6});
+         *         clip_path.updateDataArray = function() {
+         *             var a = JXG.Math.Clip.greinerHormann(curve2, curve1, 'intersection', this.board);
+         *
+         *             this.dataX = a[0];
+         *             this.dataY = a[1];
+         *         };
+         *
+         *         board.update();
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
          */
         greinerHormann: function(subject, clip, clip_type, board) {
             var P, i, current, start,
@@ -638,13 +731,13 @@ define([
             }
 
             // Phase 2: mark intersection points as entry or exit points
-            this.markEntryExit(S, C);
             if (S[0].distance(Const.COORDS_BY_USER, C[0]) === 0) {
                 // Randomly disturb the first point of the second path
                 // if both paths start at the same point.
                 C[0].usrCoords[1] *= 1 + Math.random() * 0.0001 - 0.00005;
                 C[0].usrCoords[2] *= 1 + Math.random() * 0.0001 - 0.00005;
             }
+            this.markEntryExit(S, C);
             this.markEntryExit(C, S);
 
             // for (i = 0; i < S_intersect.length; i++) {
@@ -654,10 +747,6 @@ define([
             // for (i = 0; i < C_intersect.length; i++) {
             //     console.log('C', C_intersect[i].cnt, C_intersect[i].entry_exit, C_intersect[i].usrCoords);
             // }
-
-            // console.log(S_intersect);
-            // console.log();
-            // console.log(C_intersect);
 
             // Phase 3: tracing
             return this.tracing(S, C, S_intersect, C_intersect, clip_type)
@@ -672,7 +761,8 @@ define([
          * @return {[type]}       [description]
          *
          * @see JXG.Clip#greinerHormann
-         * @see JXG.Clip#union
+         * @see JXG.Clip#intersection
+         * @see JXG.Clip#difference
          */
         union: function(path1, path2, board) {
             return this.greinerHormann(path1, path2, 'union', board);
