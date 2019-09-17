@@ -542,6 +542,90 @@ define([
             return [pathX, pathY];
         },
 
+        isEmptyCase: function(S, C, clip_type, pathX, pathY) {
+            var i;
+
+            if (clip_type === 'intersection' && (S.length === 0 || C.length === 0)) {
+                return true; //[pathX, pathY];
+            } else if (clip_type === 'union' && (S.length === 0 || C.length === 0)) {
+                if (S.length == 0) {
+                    for (i = 0; i < C.length; ++i) {
+                        pathX.push(C[i].usrCoords[1]);
+                        pathY.push(C[i].usrCoords[2]);
+                    }
+                } else {
+                    for (i = 0; i < S.length; ++i) {
+                        pathX.push(S[i].usrCoords[1]);
+                        pathY.push(S[i].usrCoords[2]);
+                    }
+                }
+                return true; //[pathX, pathY];
+            } if (clip_type === 'difference' && (S.length === 0 || C.length === 0)) {
+                if (C.length == 0) {
+                    for (i = 0; i < S.length; ++i) {
+                        pathX.push(S[i].usrCoords[1]);
+                        pathY.push(S[i].usrCoords[2]);
+                    }
+                }
+                return true; //[pathX, pathY];
+            }
+
+            return false;
+        },
+
+        emptyIntersection: function(S, C, clip_type) {
+            var i, P,
+                pathX = [],
+                pathY = [];
+
+            if (clip_type === 'union') {
+                for (i = 0; i < S.length; ++i) {
+                    pathX.push(S[i].usrCoords[1]);
+                    pathY.push(S[i].usrCoords[2]);
+                }
+                pathX.push(NaN);
+                pathY.push(NaN);
+                for (i = 0; i < C.length; ++i) {
+                    pathX.push(C[i].usrCoords[1]);
+                    pathY.push(C[i].usrCoords[2]);
+                }
+                return [pathX, pathY];
+            }
+
+            // Test if one curve is contained by the other
+            if (this.windingNumber(S[0].usrCoords, C) === 0) {     // S is outside of C,
+                if (this.windingNumber(C[0].usrCoords, S) !== 0) { // C is inside of S, i.e. C subset of S
+                    if (clip_type === 'difference') {
+                        for (i = 0; i < S.length; ++i) {
+                            pathX.push(S[i].usrCoords[1]);
+                            pathY.push(S[i].usrCoords[2]);
+                        }
+                        pathX.push(NaN);
+                        pathY.push(NaN);
+                    }
+                    P = C;
+                } else {                                           // The curves are disjoint
+                    if (clip_type === 'intersection') {
+                        P = [];
+                    } else if (clip_type === 'difference') {
+                        P = S;
+                    }
+                }
+            } else {                                               // S inside of C, i.e. S subset of C
+                if (clip_type === 'intersection') {
+                    P = S;
+                } else if (clip_type === 'difference') {
+                    P = [];
+                }
+            }
+            for (i = 0; i < P.length; ++i) {
+                pathX.push(P[i].usrCoords[1]);
+                pathY.push(P[i].usrCoords[2]);
+            }
+
+            return [pathX, pathY];
+        },
+
         /**
          * Determine the intersection, union or difference of two closed paths.
          *
@@ -628,7 +712,9 @@ define([
          *
          */
         greinerHormann: function(subject, clip, clip_type, board) {
-            var P, i, j, current, start,
+            var P, i, r, rad,
+                steps = 179,
+                current, start,
                 S = [],
                 C = [],
                 S_intersect = [],
@@ -646,6 +732,16 @@ define([
                 for (i = 0; i < subject.vertices.length; i++) {
                     S.push(new Coords(Const.COORDS_BY_USER, subject.vertices[i].coords.usrCoords, board));
                 }
+            } else if (subject.elementClass == Const.OBJECT_CLASS_CIRCLE) {
+                r = subject.Radius();
+                rad = 2 * Math.PI / steps;
+                for (i = 0; i <= steps; i++) {
+                    S.push(new Coords(Const.COORDS_BY_USER, [
+                            subject.center.coords.usrCoords[0],
+                            subject.center.coords.usrCoords[1] + Math.cos(i * rad) * r,
+                            subject.center.coords.usrCoords[2] + Math.sin(i * rad) * r
+                        ], board));
+                }
             }
 
             if (clip.elementClass == Const.OBJECT_CLASS_CURVE &&
@@ -655,31 +751,20 @@ define([
                 for (i = 0; i < clip.vertices.length; i++) {
                     C.push(new Coords(Const.COORDS_BY_USER, clip.vertices[i].coords.usrCoords, board));
                 }
+            } else if (clip.elementClass == Const.OBJECT_CLASS_CIRCLE) {
+                r = clip.Radius();
+                rad = 2 * Math.PI / steps;
+                for (i = 0; i <= steps; i++) {
+                    C.push(new Coords(Const.COORDS_BY_USER, [
+                            clip.center.coords.usrCoords[0],
+                            clip.center.coords.usrCoords[1] + Math.cos(i * rad) * r,
+                            clip.center.coords.usrCoords[2] + Math.sin(i * rad) * r
+                        ], board));
+                }
             }
 
             // Handle cases where at least one of the paths is empty
-            if (clip_type === 'intersection' && (S.length === 0 || C.length === 0)) {
-                return [pathX, pathY];
-            } else if (clip_type === 'union' && (S.length === 0 || C.length === 0)) {
-                if (S.length == 0) {
-                    for (i = 0; i < C.length; ++i) {
-                        pathX.push(C[i].usrCoords[1]);
-                        pathY.push(C[i].usrCoords[2]);
-                    }
-                } else {
-                    for (i = 0; i < S.length; ++i) {
-                        pathX.push(S[i].usrCoords[1]);
-                        pathY.push(S[i].usrCoords[2]);
-                    }
-                }
-                return [pathX, pathY];
-            } if (clip_type === 'difference' && (S.length === 0 || C.length === 0)) {
-                if (C.length == 0) {
-                    for (i = 0; i < S.length; ++i) {
-                        pathX.push(S[i].usrCoords[1]);
-                        pathY.push(S[i].usrCoords[2]);
-                    }
-                }
+            if (this.isEmptyCase(S, C, clip_type, pathX, pathY)) {
                 return [pathX, pathY];
             }
 
@@ -693,52 +778,7 @@ define([
 
             // Handle cases without intersections
             if (S_intersect.length === 0) {
-                if (clip_type === 'union') {
-                    for (i = 0; i < S.length; ++i) {
-                        pathX.push(S[i].usrCoords[1]);
-                        pathY.push(S[i].usrCoords[2]);
-                    }
-                    pathX.push(NaN);
-                    pathY.push(NaN);
-                    for (i = 0; i < C.length; ++i) {
-                        pathX.push(C[i].usrCoords[1]);
-                        pathY.push(C[i].usrCoords[2]);
-                    }
-                    return [pathX, pathY];
-                }
-
-                // Test if one curve is contained by the other
-                if (this.windingNumber(S[0].usrCoords, C) === 0) {     // S is outside of C,
-                    if (this.windingNumber(C[0].usrCoords, S) !== 0) { // C is inside of S, i.e. C subset of S
-                        if (clip_type === 'difference') {
-                            for (i = 0; i < S.length; ++i) {
-                                pathX.push(S[i].usrCoords[1]);
-                                pathY.push(S[i].usrCoords[2]);
-                            }
-                            pathX.push(NaN);
-                            pathY.push(NaN);
-                        }
-                        P = C;
-                    } else {                                           // The curves are disjoint
-                        if (clip_type === 'intersection') {
-                            P = [];
-                        } else if (clip_type === 'difference') {
-                            P = S;
-                        }
-                    }
-                } else {                                               // S inside of C, i.e. S subset of C
-                    if (clip_type === 'intersection') {
-                        P = S;
-                    } else if (clip_type === 'difference') {
-                        P = [];
-                    }
-                }
-                for (i = 0; i < P.length; ++i) {
-                    pathX.push(P[i].usrCoords[1]);
-                    pathY.push(P[i].usrCoords[2]);
-                }
-
-                return [pathX, pathY];
+                return this.emptyIntersection(S, C, clip_type);
             }
 
             // Phase 2: mark intersection points as entry or exit points
@@ -752,11 +792,13 @@ define([
             this.markEntryExit(C, S);
 
             // for (i = 0; i < S_intersect.length; i++) {
-            //     console.log('S', S_intersect[i].cnt, S_intersect[i].entry_exit, S_intersect[i].usrCoords);
+            //     console.log('S', S_intersect[i].cnt, S_intersect[i].entry_exit, S_intersect[i].usrCoords,
+            //                 S_intersect[i].pos, S_intersect[i].alpha);
             // }
             // console.log();
             // for (i = 0; i < C_intersect.length; i++) {
-            //     console.log('C', C_intersect[i].cnt, C_intersect[i].entry_exit, C_intersect[i].usrCoords);
+            //     console.log('C', C_intersect[i].cnt, C_intersect[i].entry_exit, C_intersect[i].usrCoords,
+            //                 C_intersect[i].pos, C_intersect[i].alpha);
             // }
 
             // Phase 3: tracing
