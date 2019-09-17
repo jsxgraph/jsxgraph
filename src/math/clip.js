@@ -628,7 +628,7 @@ define([
          *
          */
         greinerHormann: function(subject, clip, clip_type, board) {
-            var P, i, current, start,
+            var P, i, j, current, start,
                 S = [],
                 C = [],
                 S_intersect = [],
@@ -639,11 +639,22 @@ define([
                 pathX = [],
                 pathY = [];
 
-            if (Type.exists(subject.points)) {
-                S = subject.points;
+            if (subject.elementClass == Const.OBJECT_CLASS_CURVE &&
+                Type.exists(subject.points)) {
+                    S = subject.points;
+            } else if (subject.type == Const.OBJECT_TYPE_POLYGON) {
+                for (i = 0; i < subject.vertices.length; i++) {
+                    S.push(subject.vertices[i].coords);
+                }
             }
-            if (Type.exists(clip.points)) {
-                C = clip.points;
+
+            if (clip.elementClass == Const.OBJECT_CLASS_CURVE &&
+                Type.exists(clip.points)) {
+                    C = clip.points;
+            } else if (clip.type == Const.OBJECT_TYPE_POLYGON) {
+                for (i = 0; i < clip.vertices.length; i++) {
+                    C.push(clip.vertices[i].coords);
+                }
             }
 
             // Handle cases where at least one of the paths is empty
