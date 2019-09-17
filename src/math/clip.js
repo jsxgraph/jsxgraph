@@ -228,9 +228,7 @@ define([
         },
 
         findIntersections: function(S, C, board) {
-            var //pS = S[0],
-                //pC = C[0],
-                res = [],
+            var res = [],
                 i, j, k, l, ignore, min_S, min_C, max_S, max_C, swap, crds,
                 P,
                 S_le = S.length - 1,
@@ -286,7 +284,7 @@ define([
                     if (res[1] >= 0.0 && res[1] <= 1.0 &&
                         res[2] >= 0.0 && res[2] <= 1.0) {
 
-                        ignore = false;
+                        // ignore = false;
                         crds = new Coords(JXG.COORDS_BY_USER, res[0], board);
                         // for (k = 0; k < i && !ignore; k++) {
                         //     for (l = 0; l < S_crossings[k].length && !ignore; l++) {
@@ -296,18 +294,14 @@ define([
                         //             }
                         //     }
                         // }
-                        if (ignore) {
-                            continue;
-                        }
+                        // if (ignore) {
+                        //     continue;
+                        // }
 
                         IS = new this.Vertex(crds, i, res[1], S, 'S');
                         IC = new this.Vertex(crds, j, res[2], C, 'C');
                         IS.neighbour = IC;
                         IC.neighbour = IS;
-
-                        // IS.cnt = cnt;
-                        // IC.cnt = cnt;
-                        // cnt++;
 
                         S_crossings[i].push(IS);
                         C_crossings[j].push(IC);
@@ -390,6 +384,92 @@ define([
             }
         },
 
+        tracing:  function(S, C, S_intersect, C_intersect, clip_type) {
+            var P, current, start,
+                cnt = 0,
+                maxCnt = 40000,
+                S_intersect_idx = 0,
+                pathX = [],
+                pathY = [];
+
+            // console.time('phase3');
+            while (S_intersect_idx < S_intersect.length && cnt < maxCnt) {
+                current = S_intersect[S_intersect_idx];
+                if (current.done) {
+                    S_intersect_idx++;
+                    continue;
+                }
+
+                //console.log("Start", current.usrCoords, current.entry_exit, S_intersect_idx);
+                if (pathX.length > 0) {    // Add a new path
+                    pathX.push(NaN);
+                    pathY.push(NaN);
+                }
+
+                start = current.cnt;
+                P = S;
+                do {
+                    // Add the "current" vertex
+                    pathX.push(current.usrCoords[1]);
+                    pathY.push(current.usrCoords[2]);
+                    current.done = true;
+
+                    // if (cnt < 10000)
+                    // console.log(current.pathname, current.cnt, current.entry_exit, current.usrCoords[1].toFixed(3), current.usrCoords[2].toFixed(3));
+
+                    if ((clip_type == 'intersection' && current.entry_exit == 'entry') ||
+                        (clip_type == 'union' && current.entry_exit == 'exit') ||
+                        (clip_type == 'setminus' && (P == S) === (current.entry_exit == 'exit'))
+                        ) {
+
+                        current = current._next;
+                        do {
+                            cnt++;
+
+                            pathX.push(current.usrCoords[1]);
+                            pathY.push(current.usrCoords[2]);
+
+                            if (!JXG.exists(current.intersect)) {  // In case there are two adjacent intersects
+                                current = current._next;
+                            }
+                        } while (!JXG.exists(current.intersect) && cnt < maxCnt);
+                    } else {
+                        current = current._prev;
+                        do {
+                            cnt++;
+
+                            pathX.push(current.usrCoords[1]);
+                            pathY.push(current.usrCoords[2]);
+
+                            if (!JXG.exists(current.intersect)) {  // In case there are two adjacent intersects
+                                current = current._prev;
+                            }
+                        } while (!JXG.exists(current.intersect) && cnt < maxCnt);
+                    }
+                    current.done = true;
+
+                    if (!current.neighbour) {
+                        console.log("BREAK!!!!!!!!!!!!!!!!!", cnt);
+                        return [[0], [0]];
+                    }
+
+                    // console.log("Switch", current.pathname, current.cnt, "to", current.neighbour.pathname, current.neighbour.cnt);
+                    current = current.neighbour;
+                    if (current.done) {
+                        pathX.push(current.usrCoords[1]);
+                        pathY.push(current.usrCoords[2]);
+                        break;
+                    }
+                    P = current.path;
+
+                } while (!(current.pathname == 'S' && current.cnt == start) && cnt < maxCnt);
+
+                S_intersect_idx++;
+            }
+
+            return [pathX, pathY];
+        },
+
         /**
          * [description]
          * @param  {[type]} subject [description]
@@ -397,7 +477,7 @@ define([
          * @return {[type]}         [description]
          */
         greinerHormann: function(subject, clip, clip_type, board) {
-            var pS, pC, P, i, current, start,
+            var P, i, current, start,
                 S = [],
                 C = [],
                 S_intersect = [],
@@ -415,7 +495,7 @@ define([
                 C = clip.points;
             }
 
-            // Handle degenerated cases
+            // Handle cases where one of the paths is empty
             if (clip_type === 'intersection' && (S.length === 0 || C.length === 0)) {
                 return [pathX, pathY];
             } else if (clip_type === 'union' && (S.length === 0 || C.length === 0)) {
@@ -441,7 +521,7 @@ define([
                 return [pathX, pathY];
             }
 
-            // pS, pC are pointers to the first elements the two doubly linked lists
+            // Add pointers for doubly linked lists
             this.doublyLinkedList(S);
             this.doublyLinkedList(C);
 
@@ -449,6 +529,7 @@ define([
             S_intersect = res[0];
             C_intersect = res[1];
 
+            // Handle cases without intersections
             if (S_intersect.length === 0) {
                 if (clip_type === 'union') {
                     for (i = 0; i < S.length; ++i) {
@@ -498,7 +579,7 @@ define([
                 return [pathX, pathY];
             }
 
-            // Phase 2
+            // Phase 2: mark intersection points as entry or exit points
             this.markEntryExit(S, C);
             if (S[0].distance(Const.COORDS_BY_USER, C[0]) === 0) {
                 // Randomly disturb the first point of the second path
@@ -520,97 +601,9 @@ define([
             // console.log();
             // console.log(C_intersect);
 
-            // Phase 3
-            cnt = 0;
-            S_intersect_idx = 0;
-            // console.time('phase3');
-            while (S_intersect_idx < S_intersect.length && cnt < maxCnt) {
-                current = S_intersect[S_intersect_idx];
-                if (current.done) {
-                    S_intersect_idx++;
-                    continue;
-                }
+            // Phase 3: tracing
+            return this.tracing(S, C, S_intersect, C_intersect, clip_type)
 
-                //console.log("Start", current.usrCoords, current.entry_exit, S_intersect_idx);
-                if (pathX.length > 0) {             // Add a new path
-                    pathX.push(NaN);
-                    pathY.push(NaN);
-                }
-
-                start = current.cnt;
-                P = S;
-                do {
-                    // Add the "current" vertex
-                    pathX.push(current.usrCoords[1]);
-                    pathY.push(current.usrCoords[2]);
-                    current.done = true;
-
-                    // if (cnt < 10000)
-                    // console.log(current.pathname, current.cnt, current.entry_exit, current.usrCoords[1].toFixed(3), current.usrCoords[2].toFixed(3));
-
-                    // if (current.entry_exit == 'exit') { // Boolean op: union
-                    //if ((P == S && current.entry_exit == 'exit') || (P != S && current.entry_exit == 'entry')) { // Boolean op: S \ C
-                    // if ((P == S && current.entry_exit == 'entry') || (P != S && current.entry_exit == 'exit')) { // Boolean op: C \ S
-
-                    if ((clip_type == 'intersection' && current.entry_exit == 'entry') ||
-                        (clip_type == 'union' && current.entry_exit == 'exit') ||
-                        (clip_type == 'setminus' && (P == S) === (current.entry_exit == 'exit'))
-                        ) {
-
-                        current = current._next;
-                        do {
-                            cnt++;
-
-                            pathX.push(current.usrCoords[1]);
-                            pathY.push(current.usrCoords[2]);
-
-                            if (!JXG.exists(current.intersect)) {  // In case there are two adjacent intersects
-                                current = current._next;
-                            }
-                        } while (!JXG.exists(current.intersect)
-                                // || (JXG.exists(current.intersect) && current.entry_exit == 'bounce'))
-                                && cnt < maxCnt);
-                    } else {
-                        current = current._prev;
-                        do {
-                            cnt++;
-
-                            pathX.push(current.usrCoords[1]);
-                            pathY.push(current.usrCoords[2]);
-
-                            if (!JXG.exists(current.intersect)) {  // In case there are two adjacent intersects
-                                current = current._prev;
-                            }
-                        } while (!JXG.exists(current.intersect)
-                                // || (JXG.exists(current.intersect) && current.entry_exit == 'bounce'))
-                                 && cnt < maxCnt);
-                    }
-                    current.done = true;
-
-                    // if (current._end) {
-                    //     break;
-                    // }
-
-                    if (!current.neighbour) {
-                        console.log("BREAK!!!!!!!!!!!!!!!!!", cnt);
-                        return [[0], [0]];
-                    }
-
-                    // console.log("Switch", current.pathname, current.cnt, "to", current.neighbour.pathname, current.neighbour.cnt);
-                    current = current.neighbour;
-                    if (current.done) {
-                        pathX.push(current.usrCoords[1]);
-                        pathY.push(current.usrCoords[2]);
-                        break;
-                    }
-                    P = current.path;
-
-                } while (!(current.pathname == 'S' && current.cnt == start) && cnt < maxCnt);
-
-                S_intersect_idx++;
-            }
-
-            return [pathX, pathY];
         },
 
         union: function(path1, path2, board) {
