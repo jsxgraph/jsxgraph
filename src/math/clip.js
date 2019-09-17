@@ -646,7 +646,7 @@ define([
                 C = clip.points;
             }
 
-            // Handle cases where one of the paths is empty
+            // Handle cases where at least one of the paths is empty
             if (clip_type === 'intersection' && (S.length === 0 || C.length === 0)) {
                 return [pathX, pathY];
             } else if (clip_type === 'union' && (S.length === 0 || C.length === 0)) {
