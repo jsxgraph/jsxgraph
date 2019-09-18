@@ -731,7 +731,6 @@ define([
          *     var curve2 = board.create('polygon', [[3, 4], [-4, 0], [-4, 4]],
          *             {strokeColor: 'blue', fillColor: 'red', fillOpacity: 0.3});
          *
-         *
          *     var clip_path = board.create('curve', [[], []], {strokeWidth: 3, fillColor: 'yellow', fillOpacity: 0.6});
          *     clip_path.updateDataArray = function() {
          *         var a = JXG.Math.Clip.greinerHormann(curve1, curve2, 'union', this.board);
@@ -779,7 +778,6 @@ define([
          *     var curve2 = board.create('circle', [[0, 0], [0, -2]],
          *             {strokeColor: 'blue', strokeWidth: 1, fillColor: 'red', fixed: true, fillOpacity: 0.3,
          *             center: {visible: true, size: 5}, point2: {size: 5}});
-         *
          *
          *     var clip_path = board.create('curve', [[], []], {strokeWidth: 3, fillColor: 'yellow', fillOpacity: 0.6});
          *     clip_path.updateDataArray = function() {
@@ -942,7 +940,6 @@ define([
          *     var curve2 = board.create('polygon', [[3, 4], [-4, 0], [-4, 4]],
          *             {strokeColor: 'blue', fillColor: 'none'});
          *
-         *
          *     var clip_path = board.create('curve', [[], []], {strokeWidth: 3, fillColor: 'yellow', fillOpacity: 0.3});
          *     clip_path.updateDataArray = function() {
          *         var a = JXG.Math.Clip.union(curve1, curve2, this.board);
@@ -1013,7 +1010,6 @@ define([
          *                                     [0, 0],
          *                                     0, 2 * Math.PI],
          *                       {curveType:'polar', strokeColor: 'blue', strokewidth:1});
-         *
          *
          * var clip_path = board.create('curve', [[], []], {strokeWidth: 3, fillColor: 'yellow', fillOpacity: 0.3});
          * clip_path.updateDataArray = function() {
@@ -1089,7 +1085,6 @@ define([
          *             [1, 1, 3, 1]
          *         ],
          *         {strokeColor: 'black', fillColor: 'none', fillOpacity: 0.8});
-         *
          *
          *     var clip_path = board.create('curve', [[], []], {strokeWidth: 3, fillColor: 'yellow', fillOpacity: 0.3});
          *     clip_path.updateDataArray = function() {
