@@ -713,7 +713,7 @@ define([
          */
         greinerHormann: function(subject, clip, clip_type, board) {
             var P, i, r, rad,
-                steps = 179,
+                steps = 359,
                 current, start,
                 S = [],
                 C = [],
