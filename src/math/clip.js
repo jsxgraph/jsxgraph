@@ -46,10 +46,7 @@
  * on polygons and curves
  *
  * // TODO:
- * * API docs
- * * Allow polygons instead of paths. Can module "Expect" be used?
  * * Check if input polygons are closed. If not, handle this case.
- * * Handle circles
  */
 
 define([
@@ -59,8 +56,10 @@ define([
     "use strict";
 
     /**
-     * Math.Clip namespace definition
+     * Math.Clip namespace definition. This namespace contains algorithms for Boolean operations on paths, i.e.
+     * intersection, union and difference of paths. Base is the Greiner-Hormann algorithm.
      * @name JXG.Math.Clip
+     * @exports Mat.Clip as JXG.Math.Clip
      * @namespace
      */
     Mat.Clip = {
@@ -114,7 +113,7 @@ define([
          * Volume 20, Issue 3, November 2001, Pages 131-144.
          *
          * @param  {Array} usrCoords Homogenous coordinates of the point
-         * @param  {Array} path      JXG.Coords array of the path, i.e. the vertices of the polygon.
+         * @param  {Array} path      Array of JXG.Coords determining a path, i.e. the vertices of the polygon.
          * @return {Number}          Winding number of the point. The point is
          *                           regarded outside if the winding number is zero,
          *                           inside otherwise.
@@ -230,8 +229,9 @@ define([
         /**
          * Sort the intersection points into their path.
          * @private
-         * @param  {[type]} P_crossings [description]
-         * @return {[type]}             [description]
+         * @param  {Array} P_crossings Array of arrays. Each array contains the intersections of the path
+         *      with one segment of the other path.
+         * @return {Array}  Array of intersection points ordered by first occurrence in the path.
          */
         sortIntersections: function(P_crossings) {
             var i, j, P, last,
@@ -633,25 +633,20 @@ define([
          * Greiner, Günther; Kai Hormann (1998).
          * "Efficient clipping of arbitrary polygons". ACM Transactions on Graphics. 17 (2): 71–83.
          *
-         * @param  {[type]} subject   [description]
-         * @param  {[type]} clip      [description]
+         * @param  {JXG.Circle|JXG.Curve|JXG.Polygon} subject   First closed path, usually called 'subject'.
+         * @param  {JXG.Circle|JXG.Curve|JXG.Polygon} clip      Second closed path, usually called 'clip'.
          * @param  {String} clip_type Determines the type of boolean operation on the two paths.
          *  Possible values are 'intersection', 'union', or 'difference'.
          * @param  {JXG.Board} board   JSXGraph board object. It is needed to convert between
          * user coordinates and screen coordinates.
-         * @return {[type]}          Array consisting of two arrays containing the x-coordinates and the y-coordintaes of
+         * @return {Array}          Array consisting of two arrays containing the x-coordinates and the y-coordinates of
          *      the resulting path.
          *
-         * @see JXG.Clip#intersection
-         * @see JXG.Clip#union
-         * @see JXG.Clip#difference
+         * @see JXG.Math.Clip#intersection
+         * @see JXG.Math.Clip#union
+         * @see JXG.Math.Clip#difference
          *
          * @example
-         *     var board = JXG.JSXGraph.initBoard('jxgbox1', {
-         *         axis:true,
-         *         boundingbox:[-5, 5, 5, -5]
-         *     });
-         *
          *     var curve1 = board.create('curve', [
          *             [-3, 3, 0, -3],
          *             [3, 3, 0, 3]
@@ -679,10 +674,6 @@ define([
          *     (function() {
          *         var board = JXG.JSXGraph.initBoard('JXG9d2a6acf-a43b-4035-8f8a-9b1bee580210',
          *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
-         *         var board = JXG.JSXGraph.initBoard('jxgbox1', {
-         *             axis:true,
-         *             boundingbox:[-5, 5, 5, -5]
-         *         });
          *
          *         var curve1 = board.create('curve', [
          *                 [-3, 3, 0, -3],
@@ -699,6 +690,106 @@ define([
          *         var clip_path = board.create('curve', [[], []], {strokeWidth: 3, fillColor: 'yellow', fillOpacity: 0.6});
          *         clip_path.updateDataArray = function() {
          *             var a = JXG.Math.Clip.greinerHormann(curve2, curve1, 'intersection', this.board);
+         *
+         *             this.dataX = a[0];
+         *             this.dataY = a[1];
+         *         };
+         *
+         *         board.update();
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
+         * @example
+         *     var curve1 = board.create('curve', [
+         *             [-3, 3, 0, -3],
+         *             [3, 3, 0, 3]
+         *         ],
+         *         {strokeColor: 'black', fillColor: 'none', fillOpacity: 0.8});
+         *
+         *     var curve2 = board.create('polygon', [[3, 4], [-4, 0], [-4, 4]],
+         *             {strokeColor: 'blue', fillColor: 'red', fillOpacity: 0.3});
+         *
+         *
+         *     var clip_path = board.create('curve', [[], []], {strokeWidth: 3, fillColor: 'yellow', fillOpacity: 0.6});
+         *     clip_path.updateDataArray = function() {
+         *         var a = JXG.Math.Clip.greinerHormann(curve1, curve2, 'union', this.board);
+         *         this.dataX = a[0];
+         *         this.dataY = a[1];
+         *     };
+         *
+         *     board.update();
+         *
+         * </pre><div id="JXG6075c918-4d57-4b72-b600-6597a6a4f44e" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG6075c918-4d57-4b72-b600-6597a6a4f44e',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *         var curve1 = board.create('curve', [
+         *                 [-3, 3, 0, -3],
+         *                 [3, 3, 0, 3]
+         *             ],
+         *             {strokeColor: 'black', fillColor: 'none', fillOpacity: 0.8});
+         *
+         *         var curve2 = board.create('polygon', [[3, 4], [-4, 0], [-4, 4]],
+         *                 {strokeColor: 'blue', fillColor: 'red', fillOpacity: 0.3});
+         *
+         *
+         *         var clip_path = board.create('curve', [[], []], {strokeWidth: 3, fillColor: 'yellow', fillOpacity: 0.6});
+         *         clip_path.updateDataArray = function() {
+         *             var a = JXG.Math.Clip.greinerHormann(curve1, curve2, 'union', this.board);
+         *             this.dataX = a[0];
+         *             this.dataY = a[1];
+         *         };
+         *
+         *         board.update();
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
+         * @example
+         *     var curve1 = board.create('curve', [
+         *             [-4, 4, 0, -4],
+         *             [4, 4, -2, 4]
+         *         ],
+         *         {strokeColor: 'black', fillColor: 'none', fillOpacity: 0.8});
+         *
+         *     var curve2 = board.create('circle', [[0, 0], [0, -2]],
+         *             {strokeColor: 'blue', strokeWidth: 1, fillColor: 'red', fixed: true, fillOpacity: 0.3,
+         *             center: {visible: true, size: 5}, point2: {size: 5}});
+         *
+         *
+         *     var clip_path = board.create('curve', [[], []], {strokeWidth: 3, fillColor: 'yellow', fillOpacity: 0.6});
+         *     clip_path.updateDataArray = function() {
+         *         var a = JXG.Math.Clip.greinerHormann(curve1, curve2, 'difference', this.board);
+         *
+         *         this.dataX = a[0];
+         *         this.dataY = a[1];
+         *     };
+         *
+         *     board.update();
+         *
+         * </pre><div id="JXG46b3316b-5ab9-4928-9473-ccb476ca4185" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG46b3316b-5ab9-4928-9473-ccb476ca4185',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *         var curve1 = board.create('curve', [
+         *                 [-4, 4, 0, -4],
+         *                 [4, 4, -2, 4]
+         *             ],
+         *             {strokeColor: 'black', fillColor: 'none', fillOpacity: 0.8});
+         *
+         *         var curve2 = board.create('circle', [[0, 0], [0, -2]],
+         *                 {strokeColor: 'blue', strokeWidth: 1, fillColor: 'red', fixed: true, fillOpacity: 0.3,
+         *                 center: {visible: true, size: 5}, point2: {size: 5}});
+         *
+         *
+         *         var clip_path = board.create('curve', [[], []], {strokeWidth: 3, fillColor: 'yellow', fillOpacity: 0.6});
+         *         clip_path.updateDataArray = function() {
+         *             var a = JXG.Math.Clip.greinerHormann(curve1, curve2, 'difference', this.board);
          *
          *             this.dataX = a[0];
          *             this.dataY = a[1];
@@ -807,50 +898,220 @@ define([
         },
 
         /**
-         * [description]
-         * @param  {[type]} path1 [description]
-         * @param  {[type]} path2 [description]
-         * @param  {[type]} board [description]
-         * @return {[type]}       [description]
+         * Union of two closed paths. The paths could be JSXGraph elements circle, curve, or polygon.
+         * Computed by the Greiner-Hormann algorithm.
          *
-         * @see JXG.Clip#greinerHormann
-         * @see JXG.Clip#intersection
-         * @see JXG.Clip#difference
+         * @param  {JXG.Circle|JXG.Curve|JXG.Polygon} subject   First closed path.
+         * @param  {JXG.Circle|JXG.Curve|JXG.Polygon} clip      Second closed path.
+         * @param  {JXG.Board} board   JSXGraph board object. It is needed to convert between
+         * user coordinates and screen coordinates.
+         * @return {Array}          Array consisting of two arrays containing the x-coordinates and the y-coordinates of
+         *      the resulting path.
+         *
+         * @see JXG.Math.Clip#greinerHormann
+         * @see JXG.Math.Clip#intersection
+         * @see JXG.Math.Clip#difference
+         *
+         * @example
+         *     var curve1 = board.create('curve', [
+         *             [-3, 3, 0, -3],
+         *             [3, 3, 0, 3]
+         *         ],
+         *         {strokeColor: 'black'});
+         *
+         *     var curve2 = board.create('polygon', [[3, 4], [-4, 0], [-4, 4]],
+         *             {strokeColor: 'blue', fillColor: 'none'});
+         *
+         *
+         *     var clip_path = board.create('curve', [[], []], {strokeWidth: 3, fillColor: 'yellow', fillOpacity: 0.3});
+         *     clip_path.updateDataArray = function() {
+         *         var a = JXG.Math.Clip.union(curve1, curve2, this.board);
+         *         this.dataX = a[0];
+         *         this.dataY = a[1];
+         *     };
+         *
+         *     board.update();
+         *
+         * </pre><div id="JXG7c5204aa-3824-4464-819c-80df7bf1d917" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG7c5204aa-3824-4464-819c-80df7bf1d917',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *         var curve1 = board.create('curve', [
+         *                 [-3, 3, 0, -3],
+         *                 [3, 3, 0, 3]
+         *             ],
+         *             {strokeColor: 'black'});
+         *
+         *         var curve2 = board.create('polygon', [[3, 4], [-4, 0], [-4, 4]],
+         *                 {strokeColor: 'blue', fillColor: 'none'});
+         *
+         *
+         *         var clip_path = board.create('curve', [[], []], {strokeWidth: 3, fillColor: 'yellow', fillOpacity: 0.3});
+         *         clip_path.updateDataArray = function() {
+         *             var a = JXG.Math.Clip.union(curve1, curve2, this.board);
+         *             this.dataX = a[0];
+         *             this.dataY = a[1];
+         *         };
+         *
+         *         board.update();
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
          */
         union: function(path1, path2, board) {
             return this.greinerHormann(path1, path2, 'union', board);
         },
 
         /**
-         * [description]
-         * @param  {[type]} path1 [description]
-         * @param  {[type]} path2 [description]
-         * @param  {[type]} board [description]
-         * @return {[type]}       [description]
+         * Intersection of two closed paths. The paths could be JSXGraph elements circle, curve, or polygon.
+         * Computed by the Greiner-Hormann algorithm.
          *
-         * @see JXG.Clip#greinerHormann
-         * @see JXG.Clip#union
-         * @see JXG.Clip#difference
+         * @param  {JXG.Circle|JXG.Curve|JXG.Polygon} subject   First closed path.
+         * @param  {JXG.Circle|JXG.Curve|JXG.Polygon} clip      Second closed path.
+         * @param  {JXG.Board} board   JSXGraph board object. It is needed to convert between
+         * user coordinates and screen coordinates.
+         * @return {Array}          Array consisting of two arrays containing the x-coordinates and the y-coordinates of
+         *      the resulting path.
+         *
+         * @see JXG.Math.Clip#greinerHormann
+         * @see JXG.Math.Clip#union
+         * @see JXG.Math.Clip#difference
+         *
+         * @example
+         * var p = [];
+         * p.push(board.create('point', [0, -5]));
+         * p.push(board.create('point', [-5, 0]));
+         * p.push(board.create('point', [-3, 3]));
+         *
+         * var curve1 = board.create('ellipse', p,
+         *                 {strokeColor: 'black'});
+         *
+         * var curve2 = board.create('curve', [function(phi){return 4 * Math.cos(2*phi); },
+         *                                     [0, 0],
+         *                                     0, 2 * Math.PI],
+         *                       {curveType:'polar', strokeColor: 'blue', strokewidth:1});
+         *
+         *
+         * var clip_path = board.create('curve', [[], []], {strokeWidth: 3, fillColor: 'yellow', fillOpacity: 0.3});
+         * clip_path.updateDataArray = function() {
+         *     var a = JXG.Math.Clip.intersection(curve2, curve1, this.board);
+         *
+         *     this.dataX = a[0];
+         *     this.dataY = a[1];
+         * };
+         *
+         * board.update();
+         *
+         * </pre><div id="JXG7ad547eb-7b6c-4a1a-a4d4-4ed298fc7998" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG7ad547eb-7b6c-4a1a-a4d4-4ed298fc7998',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *     var p = [];
+         *     p.push(board.create('point', [0, -5]));
+         *     p.push(board.create('point', [-5, 0]));
+         *     p.push(board.create('point', [-3, 3]));
+         *
+         *     var curve1 = board.create('ellipse', p,
+         *                     {strokeColor: 'black'});
+         *
+         *     var curve2 = board.create('curve', [function(phi){return 4 * Math.cos(2*phi); },
+         *                                         [0, 0],
+         *                                         0, 2 * Math.PI],
+         *                           {curveType:'polar', strokeColor: 'blue', strokewidth:1});
+         *
+         *
+         *     var clip_path = board.create('curve', [[], []], {strokeWidth: 3, fillColor: 'yellow', fillOpacity: 0.3});
+         *     clip_path.updateDataArray = function() {
+         *         var a = JXG.Math.Clip.intersection(curve2, curve1, this.board);
+         *
+         *         this.dataX = a[0];
+         *         this.dataY = a[1];
+         *     };
+         *
+         *     board.update();
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
+         *
          */
         intersection: function(path1, path2, board) {
             return this.greinerHormann(path1, path2, 'intersection', board);
         },
 
         /**
-         * [description]
-         * @param  {[type]} path1 [description]
-         * @param  {[type]} path2 [description]
-         * @param  {[type]} board [description]
-         * @return {[type]}       [description]
+         * Difference of two closed paths, i.e. path1 minus path2.
+         * The paths could be JSXGraph elements circle, curve, or polygon.
+         * Computed by the Greiner-Hormann algorithm.
          *
-         * @see JXG.Clip#greinerHormann
-         * @see JXG.Clip#intersection
-         * @see JXG.Clip#union
+         * @param  {JXG.Circle|JXG.Curve|JXG.Polygon} subject   First closed path.
+         * @param  {JXG.Circle|JXG.Curve|JXG.Polygon} clip      Second closed path.
+         * @param  {JXG.Board} board   JSXGraph board object. It is needed to convert between
+         * user coordinates and screen coordinates.
+         * @return {Array}          Array consisting of two arrays containing the x-coordinates and the y-coordinates of
+         *      the resulting path.
+         *
+         * @see JXG.Math.Clip#greinerHormann
+         * @see JXG.Math.Clip#intersection
+         * @see JXG.Math.Clip#union
+         *
+         * @example
+         *     var curve1 = board.create('polygon', [[-4, 4], [4, 4], [0, -1]],
+         *             {strokeColor: 'blue', fillColor: 'none'});
+         *
+         *     var curve2 = board.create('curve', [
+         *             [-1, 1, 0, -1],
+         *             [1, 1, 3, 1]
+         *         ],
+         *         {strokeColor: 'black', fillColor: 'none', fillOpacity: 0.8});
+         *
+         *
+         *     var clip_path = board.create('curve', [[], []], {strokeWidth: 3, fillColor: 'yellow', fillOpacity: 0.3});
+         *     clip_path.updateDataArray = function() {
+         *         var a = JXG.Math.Clip.difference(curve1, curve2, this.board);
+         *         this.dataX = a[0];
+         *         this.dataY = a[1];
+         *     };
+         *
+         *     board.update();
+         *
+         * </pre><div id="JXGc5ce6bb3-146c-457f-a48b-6b9081fb68a3" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXGc5ce6bb3-146c-457f-a48b-6b9081fb68a3',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *         var curve1 = board.create('polygon', [[-4, 4], [4, 4], [0, -1]],
+         *                 {strokeColor: 'blue', fillColor: 'none'});
+         *
+         *         var curve2 = board.create('curve', [
+         *                 [-1, 1, 0, -1],
+         *                 [1, 1, 3, 1]
+         *             ],
+         *             {strokeColor: 'black', fillColor: 'none', fillOpacity: 0.8});
+         *
+         *
+         *         var clip_path = board.create('curve', [[], []], {strokeWidth: 3, fillColor: 'yellow', fillOpacity: 0.3});
+         *         clip_path.updateDataArray = function() {
+         *             var a = JXG.Math.Clip.difference(curve1, curve2, this.board);
+         *             this.dataX = a[0];
+         *             this.dataY = a[1];
+         *         };
+         *
+         *         board.update();
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
          */
         difference: function(path1, path2, board) {
             return this.greinerHormann(path1, path2, 'difference', board);
         }
-
     };
 
     JXG.extend(Mat.Clip, /** @lends JXG.Math.Clip */ {
