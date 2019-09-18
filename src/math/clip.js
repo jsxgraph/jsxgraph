@@ -729,7 +729,7 @@ define([
          *         {strokeColor: 'black', fillColor: 'none', fillOpacity: 0.8});
          *
          *     var curve2 = board.create('polygon', [[3, 4], [-4, 0], [-4, 4]],
-         *             {strokeColor: 'blue', fillColor: 'red', fillOpacity: 0.3});
+         *             {strokeColor: 'blue', fillColor: 'none'});
          *
          *     var clip_path = board.create('curve', [[], []], {strokeWidth: 3, fillColor: 'yellow', fillOpacity: 0.6});
          *     clip_path.updateDataArray = function() {
@@ -752,7 +752,7 @@ define([
          *             {strokeColor: 'black', fillColor: 'none', fillOpacity: 0.8});
          *
          *         var curve2 = board.create('polygon', [[3, 4], [-4, 0], [-4, 4]],
-         *                 {strokeColor: 'blue', fillColor: 'red', fillOpacity: 0.3});
+         *                 {strokeColor: 'blue', fillColor: 'none'});
          *
          *
          *         var clip_path = board.create('curve', [[], []], {strokeWidth: 3, fillColor: 'yellow', fillOpacity: 0.6});
