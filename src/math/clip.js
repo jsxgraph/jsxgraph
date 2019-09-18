@@ -542,6 +542,16 @@ define([
             return [pathX, pathY];
         },
 
+        /**
+         * Handle path clipping if one of the two paths is empty.
+         * @private
+         * @param  {Array} S        First path, array of JXG.Coords
+         * @param  {Array} C        Second path, array of JXG.Coords
+         * @param  {String} clip_type Type of Boolean operation: 'intersection', 'union', 'differrence'.
+         * @param  {Array} pathX     Array of x-coordinates of the resulting path
+         * @param  {Array} pathY    Array of y-coordinates of the resulting path
+         * @return {Boolean}        true, if one of the input paths is empty, false otherwise.
+         */
         isEmptyCase: function(S, C, clip_type, pathX, pathY) {
             var i;
 
@@ -573,6 +583,16 @@ define([
             return false;
         },
 
+        /**
+         * Hynle cases when there are no intersection points of the two paths. This is the case if the
+         * paths are disjoint or one is contained in the other.
+         * @private
+         * @param  {Array} S        First path, array of JXG.Coords
+         * @param  {Array} C        Second path, array of JXG.Coords
+         * @param  {String} clip_type Type of Boolean operation: 'intersection', 'union', 'differrence'.
+         * @return {Array}          Array consisting of two arrays containing the x-coordinates and the y-coordinates of
+         *      the resulting path.
+         */
         emptyIntersection: function(S, C, clip_type) {
             var i, P,
                 pathX = [],
