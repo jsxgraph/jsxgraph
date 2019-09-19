@@ -88,6 +88,10 @@ JXG.Options = JXG.merge(JXG.Options, {
         opacity: 1
     },
 
+    label: {
+        autoPosition: true
+    },
+
     line: {
         //highlightStrokeOpacity: 0.3,
         strokeColor: '#36f',

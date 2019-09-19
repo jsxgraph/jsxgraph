@@ -545,7 +545,9 @@ define([
          * @private
          */
         updateRenderer: function () {
-            if (Type.evaluate(this.visProp.autoposition)) {
+            if (//this.board.updateQuality === this.board.BOARD_QUALITY_HIGH &&
+                Type.evaluate(this.visProp.autoposition)) {
+
                 this.setAutoPosition();
             }
             return this.updateRendererGeneric('updateText');
@@ -781,7 +783,7 @@ define([
             this.board.options.precision.hasPoint = Math.max(w, h) * 0.5;
 			for (i = 0, le = this.board.objectsList.length; i < le; i++) {
 				obj = this.board.objectsList[i];
-				if (Type.evaluate(obj.visProp.visible) &&
+				if (obj.visPropCalc.visible &&
                     obj.elType != 'axis' &&
                     obj.elType != 'ticks' &&
                     obj != this.board.infobox &&
