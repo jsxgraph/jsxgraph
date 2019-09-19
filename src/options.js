@@ -2522,8 +2522,22 @@ define([
              * @see Label#position
              * @type Array
              * @default [10,10]
-             **/
-            offset: [10, 10]
+             */
+            offset: [10, 10],
+
+            /**
+             * Automatic position of label text. When called first, the positioning algorithm
+             * starts at the position defined by offset.
+             * The algorithm tries to find a position with the least number of
+             * overlappings with other elements, while retaining the distance
+             * to the anchor element.
+             *
+             * @name Label#autoPosition
+             * @see Label#offset
+             * @type {Boolean}
+             * @default false
+             */
+            autoPosition: false
 
             /**#@-*/
         },
