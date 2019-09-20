@@ -89,6 +89,7 @@ JXG.Options = JXG.merge(JXG.Options, {
     },
 
     label: {
+        offset: [12, 12],
         autoPosition: true
     },
 
