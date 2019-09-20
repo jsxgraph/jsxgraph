@@ -829,23 +829,11 @@ define([
             cx = anchorCoords.scrCoords[1];
             cy = anchorCoords.scrCoords[2];
 
-            // Set x, y as the relative position of the center of the label
-            // to its anchor element.
-            dx = offset[0]; //this.coords.scrCoords[1];
-    	    // if (anchorX == 'left') {
-    	    // 	x += w * 0.5;
-    	    // } else if (anchorX == 'right') {
-    	    // 	x -= w * 0.5;
-    	    // }
+            // Set dx, dy as the relative position of the center of the label
+            // to its anchor element ignoring anchorx and anchory.
+            dx = offset[0];
+            dy = offset[1];
 
-            dy = offset[1]; //this.coords.scrCoords[2];
-    	    // if (anchorY == 'top') {
-    	    // 	y += h * 0.5;
-    	    // } else if (anchorY == 'bottom') {
-    	    // 	y -= h * 0.5;
-    	    // }
-
-            // console.log(">>>>", this.id);
             conflicts = this.getNumberofConflicts(cx + dx, cy - dy, w, h);
             if (conflicts === 0) {
                 return this;
@@ -856,7 +844,6 @@ define([
             start_angle = Math.atan2(dy, dx);
             min_angle = start_angle;
 
-            //console.log(":", start_angle*180/Math.PI, offset, dx, dy);
             for (j = 0, angle = start_angle; j < num_positions; j++) {
                 co = Math.cos(angle);
                 si = Math.sin(angle);
@@ -893,10 +880,7 @@ define([
             r = Geometry.distance([0, 0], offset, 2);
             co = Math.cos(min_angle);
             si = Math.sin(min_angle);
-            this.visProp.offset = [
-                    r * co,
-                    r * si
-                ];
+            this.visProp.offset = [r * co, r * si];
 
             if (co < -0.2) {
                 this.visProp.anchorx = 'right';
@@ -912,8 +896,6 @@ define([
             // } else {
             //     this.visProp.anchory = 'middle';
             // }
-
-            // console.log(this.id, this.getAnchorX(), this.getAnchorY());
 
             return this;
         }
