@@ -812,10 +812,11 @@ define([
                 h = this.size[1],
                 start_angle, angle,
                 min_conflicts = Infinity,
-                min_position,
+                min_angle,
                 conflicts, offset, r,
-                step = 2 * Math.PI / 12,
-                j;
+                num_positions = 12,
+                step = 2 * Math.PI / num_positions,
+                j, dx, dy, co, si;
 
             if (this === this.board.infobox || !Type.evaluate(this.visProp.islabel) || !this.element) {
                 return;
@@ -830,56 +831,89 @@ define([
 
             // Set x, y as the relative position of the center of the label
             // to its anchor element.
-            x = offset[0]; //this.coords.scrCoords[1];
-    	    if (anchorX == 'left') {
-    	    	x += w * 0.5;
-    	    } else if (anchorX == 'right') {
-    	    	x -= w * 0.5;
-    	    }
+            dx = offset[0]; //this.coords.scrCoords[1];
+    	    // if (anchorX == 'left') {
+    	    // 	x += w * 0.5;
+    	    // } else if (anchorX == 'right') {
+    	    // 	x -= w * 0.5;
+    	    // }
 
-            y = offset[1]; //this.coords.scrCoords[2];
-    	    if (anchorY == 'top') {
-    	    	y += h * 0.5;
-    	    } else if (anchorY == 'bottom') {
-    	    	y -= h * 0.5;
-    	    }
+            dy = offset[1]; //this.coords.scrCoords[2];
+    	    // if (anchorY == 'top') {
+    	    // 	y += h * 0.5;
+    	    // } else if (anchorY == 'bottom') {
+    	    // 	y -= h * 0.5;
+    	    // }
 
             // console.log(">>>>", this.id);
-            conflicts = this.getNumberofConflicts(cx + x, cy - y, w, h);
+            conflicts = this.getNumberofConflicts(cx + dx, cy - dy, w, h);
             if (conflicts === 0) {
                 return this;
             }
 
-            r = Geometry.distance([0, 0], [x, y], 2);
+            r = Geometry.distance([0, 0], [dx, dy], 2);
 
-            start_angle = Math.atan2(y, x);
-            // console.log(":", start_angle*180/Math.PI, offset, x, y);
+            start_angle = Math.atan2(dy, dx);
+            min_angle = start_angle;
 
-            for (j = 0, angle = start_angle; j < 12; j++) {
-                x = cx + r * Math.cos(angle);
-                y = cy - r * Math.sin(angle);
+            //console.log(":", start_angle*180/Math.PI, offset, dx, dy);
+            for (j = 0, angle = start_angle; j < num_positions; j++) {
+                co = Math.cos(angle);
+                si = Math.sin(angle);
+                x = cx + r * co;
+                if (co < -0.2) {
+                    x -= w * 0.5;
+                } else if (co > 0.2) {
+                    x += w * 0.5;
+                }
+
+                y = cy - r * si;
+                // if (si > -0.2 && si < 0.0) {
+                //         y += h * 0.5;
+                // } else if (si >= 0.0 && si < 0.2) {
+                //     y -= h * 0.5;
+                // }
+                // if (si < -0.2) {
+                //     y += h * 0.5;
+                // } else if (si > 0.2) {
+                //     y -= h * 0.5;
+                // }
+
                 conflicts = this.getNumberofConflicts(x, y, w, h);
                 if (conflicts < min_conflicts) {
                     min_conflicts = conflicts;
-                    min_position = angle;
+                    min_angle = angle;
                 }
                 if (min_conflicts === 0) {
-                    // console.log(j, start_angle*180/Math.PI, offset);
                     break;
                 }
                 angle += step;
             }
 
             r = Geometry.distance([0, 0], offset, 2);
+            co = Math.cos(min_angle);
+            si = Math.sin(min_angle);
             this.visProp.offset = [
-                    r * Math.cos(min_position),
-                    r * Math.sin(min_position)
+                    r * co,
+                    r * si
                 ];
-            this.visProp.anchorx = (this.visProp.offset[0] > 0) ? 'left' : 'right';
-            // this.visProp.anchory = (this.visProp.offset[1] > 0) ? 'bottom' : 'top';
-            // console.log(this.plaintext, ":", min_conflicts,
-            //     (start_angle*180/Math.PI).toFixed(2),
-            //     (min_position*180/Math.PI).toFixed(2), this.visProp.offset);
+
+            if (co < -0.2) {
+                this.visProp.anchorx = 'right';
+            } else if (co > 0.2) {
+                this.visProp.anchorx = 'left';
+            } else {
+                this.visProp.anchorx = 'middle';
+            }
+            // if (si < -0.2) {
+            //     this.visProp.anchory = 'top';
+            // } else if (si > 0.2) {
+            //     this.visProp.anchory = 'bottom';
+            // } else {
+            //     this.visProp.anchory = 'middle';
+            // }
+
+            // console.log(this.id, this.getAnchorX(), this.getAnchorY());
 
             return this;
         }
