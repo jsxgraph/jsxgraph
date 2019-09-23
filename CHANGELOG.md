@@ -1,10 +1,6 @@
 0.99.8
 ====
 
-max bounding box
-Polygon clipping
-auto position of labels
-
 Compatibility:
 ------------
 * Since Safari 12, `board.renderer.screenshot()` also supports texts in Safari.
@@ -25,7 +21,10 @@ New Features
 * Polar grids
 * Introduce new attribute "highlightSize" for arrow heads.
 * Reflection of of polygons
-
+* New board attribute: maxBoundingBox
+* Polygon / curve clipping and boolean operation on curves is now enabled.
+Possible are intersection, union or difference of curves, polygones or circles.
+* New attribute for labels *autoPosition: true/false* enables automatic positioning of labels.
 
 Improvements
 ------------

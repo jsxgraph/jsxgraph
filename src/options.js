@@ -2536,6 +2536,34 @@ define([
              * @see Label#offset
              * @type {Boolean}
              * @default false
+             *
+             * @example
+             * 	var p1 = board.create('point', [-2, 1], {id: 'A'});
+             * 	var p2 = board.create('point', [-0.85, 1], {
+             *      name: 'B', id: 'B', label:{autoPosition: true, offset:[10, 10]}
+             *  });
+             * 	var p3 = board.create('point', [-1, 1.2], {
+             *      name: 'C', id: 'C', label:{autoPosition: true, offset:[10, 10]}
+             *  });
+             *  var c = board.create('circle', [p1, p2]);
+             * 	var l = board.create('line', [p1, p2]);
+             *
+             * </pre><div id="JXG7d4dafe7-1a07-4d3f-95cb-bfed9d96dea2" class="jxgbox" style="width: 300px; height: 300px;"></div>
+             * <script type="text/javascript">
+             *     (function() {
+             *         var board = JXG.JSXGraph.initBoard('JXG7d4dafe7-1a07-4d3f-95cb-bfed9d96dea2',
+             *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+             *     	var p1 = board.create('point', [-2, 1], {id: 'A'});
+             *     	var p2 = board.create('point', [-0.85, 1], {name: 'B', id: 'B', label:{autoPosition: true, offset:[10, 10]}});
+             *     	var p3 = board.create('point', [-1, 1.2], {name: 'C', id: 'C', label:{autoPosition: true, offset:[10, 10]}});
+             *      var c = board.create('circle', [p1, p2]);
+             *     	var l = board.create('line', [p1, p2]);
+             * 
+             *     })();
+             * 
+             * </script><pre>
+             * 
+             *
              */
             autoPosition: false
 
