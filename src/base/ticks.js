@@ -266,7 +266,7 @@ define([
 
             if (this.line.type !== Const.OBJECT_TYPE_AXIS ||
                 !Type.evaluate(this.line.visProp.scalable)) {
-                    
+
                 return this;
             }
 
@@ -431,6 +431,7 @@ define([
          */
         getLowerAndUpperBounds: function (coordsZero, type) {
             var lowerBound, upperBound,
+                fA, lA,
                 // The line's defining points that will be adjusted to be within the board limits
                 point1 = new Coords(Const.COORDS_BY_USER, this.line.point1.coords.usrCoords, this.board),
                 point2 = new Coords(Const.COORDS_BY_USER, this.line.point2.coords.usrCoords, this.board),
@@ -458,17 +459,28 @@ define([
                 // This is important for diagonal lines with infinite tick lines.
                 Geometry.calcLineDelimitingPoints(this.line, point1, point2);
             }
+
             // Shorten ticks bounds such that ticks are not through arrow heads
-            obj = this.board.renderer.getPositionArrowHead(this.line, point1, point2,
+            fA = Type.evaluate(this.line.visProp.firstarrow);
+            lA = Type.evaluate(this.line.visProp.lastarrow);
+            if (fA || lA) {
+
+                obj = this.board.renderer.getPositionArrowHead(this.line, point1, point2,
                         Type.evaluate(this.line.visProp.strokewidth));
-            point1.setCoordinates(Const.COORDS_BY_SCREEN, [
-                    point1.scrCoords[1] - obj.d1x,
-                    point1.scrCoords[2] - obj.d1y
-                ]);
-            point2.setCoordinates(Const.COORDS_BY_SCREEN, [
-                    point2.scrCoords[1] - obj.d2x,
-                    point2.scrCoords[2] - obj.d2y
-                ]);
+
+                if (fA) {
+                    point1.setCoordinates(Const.COORDS_BY_SCREEN, [
+                        point1.scrCoords[1] - obj.d1x,
+                        point1.scrCoords[2] - obj.d1y
+                    ]);
+                }
+                if (lA) {
+                    point2.setCoordinates(Const.COORDS_BY_SCREEN, [
+                        point2.scrCoords[1] - obj.d2x,
+                        point2.scrCoords[2] - obj.d2y
+                    ]);
+                }
+            }
 
             // Calculate (signed) distance from Zero to P1 and to P2
             dZeroPoint1 = this.getDistanceFromZero(coordsZero, point1);
