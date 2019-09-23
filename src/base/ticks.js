@@ -264,18 +264,24 @@ define([
                 oldc = new Coords(method, oldcoords, this.board),
                 bb = this.board.getBoundingBox();
 
-            if (!Type.evaluate(this.line.visProp.scalable)) {
+            if (this.line.type !== Const.OBJECT_TYPE_AXIS ||
+                !Type.evaluate(this.line.visProp.scalable)) {
+                    
                 return this;
             }
 
             // horizontal line
-            if (Math.abs(this.line.stdform[1]) < Mat.eps && Math.abs(c.usrCoords[1] * oldc.usrCoords[1]) > Mat.eps) {
+            if (Math.abs(this.line.stdform[1]) < Mat.eps &&
+                Math.abs(c.usrCoords[1] * oldc.usrCoords[1]) > Mat.eps) {
+
                 dx = oldc.usrCoords[1] / c.usrCoords[1];
                 bb[0] *= dx;
                 bb[2] *= dx;
                 this.board.setBoundingBox(bb, false);
             // vertical line
-            } else if (Math.abs(this.line.stdform[2]) < Mat.eps && Math.abs(c.usrCoords[2] * oldc.usrCoords[2]) > Mat.eps) {
+            } else if (Math.abs(this.line.stdform[2]) < Mat.eps &&
+                       Math.abs(c.usrCoords[2] * oldc.usrCoords[2]) > Mat.eps) {
+
                 dy = oldc.usrCoords[2] / c.usrCoords[2];
                 bb[3] *= dy;
                 bb[1] *= dy;
@@ -549,7 +555,7 @@ define([
          */
         generateEquidistantTicks: function (coordsZero, bounds) {
             var tickPosition,
-                eps2 = Mat.eps * Mat.eps,
+                eps2 = Mat.eps,
                 // Calculate X and Y distance between two major ticks
                 deltas = this.getXandYdeltas(),
                 // Distance between two major ticks in user coordinates
@@ -689,7 +695,7 @@ define([
         generateFixedTicks: function (coordsZero, bounds) {
             var tickCoords, labelText, i, ti,
                 x, y,
-                eps2 = Mat.eps * Mat.eps,
+                eps2 = Mat.eps,
                 hasLabelOverrides = Type.isArray(this.visProp.labels),
                 // Calculate X and Y distance between two major points in the line
                 deltas = this.getXandYdeltas(),
