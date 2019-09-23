@@ -1,6 +1,10 @@
 0.99.8
 ====
 
+max bounding box
+Polygon clipping
+auto position of labels
+
 Compatibility:
 ------------
 * Since Safari 12, `board.renderer.screenshot()` also supports texts in Safari.

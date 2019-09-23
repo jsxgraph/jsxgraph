@@ -549,6 +549,7 @@ define([
          */
         generateEquidistantTicks: function (coordsZero, bounds) {
             var tickPosition,
+                eps2 = Mat.eps * Mat.eps,
                 // Calculate X and Y distance between two major ticks
                 deltas = this.getXandYdeltas(),
                 // Distance between two major ticks in user coordinates
@@ -575,9 +576,9 @@ define([
             if (!Type.evaluate(this.visProp.drawzero)) {
                 tickPosition = ticksDelta;
             }
-            while (tickPosition <= bounds.upper) {
+            while (tickPosition <= bounds.upper + eps2) {
                 // Only draw ticks when we are within bounds, ignore case where  tickPosition < lower < upper
-                if (tickPosition >= bounds.lower) {
+                if (tickPosition >= bounds.lower - eps2) {
                     this.processTickPosition(coordsZero, tickPosition, ticksDelta, deltas);
                 }
                 tickPosition += ticksDelta;
@@ -585,9 +586,9 @@ define([
 
             // Position ticks from zero (not inclusive) to the negative side while not reaching the lower boundary
             tickPosition = -ticksDelta;
-            while (tickPosition >= bounds.lower) {
+            while (tickPosition >= bounds.lower - eps2) {
                 // Only draw ticks when we are within bounds, ignore case where lower < upper < tickPosition
-                if (tickPosition <= bounds.upper) {
+                if (tickPosition <= bounds.upper + eps2) {
                     this.processTickPosition(coordsZero, tickPosition, ticksDelta, deltas);
                 }
                 tickPosition -= ticksDelta;
@@ -688,6 +689,7 @@ define([
         generateFixedTicks: function (coordsZero, bounds) {
             var tickCoords, labelText, i, ti,
                 x, y,
+                eps2 = Mat.eps * Mat.eps,
                 hasLabelOverrides = Type.isArray(this.visProp.labels),
                 // Calculate X and Y distance between two major points in the line
                 deltas = this.getXandYdeltas(),
@@ -701,8 +703,8 @@ define([
                 // Compute the start position and the end position of a tick.
                 // If tick is out of the canvas, ti is empty.
                 ti = this.createTickPath(tickCoords, true);
-                if (ti.length === 3 && this.fixedTicks[i] >= bounds.lower &&
-                    this.fixedTicks[i] <= bounds.upper) {
+                if (ti.length === 3 && this.fixedTicks[i] >= bounds.lower - eps2 &&
+                    this.fixedTicks[i] <= bounds.upper + eps2) {
                     this.ticks.push(ti);
 
                     if (ev_dl &&

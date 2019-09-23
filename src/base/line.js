@@ -1239,7 +1239,7 @@ define([
      * or array of numbers describing the
      * coordinates of a point. In the latter case the point will be constructed automatically as a fixed invisible point.
      * @param {number,function} length (optional) The points are adapted - if possible - such that their distance
-     * has a this value.
+     * has this value.
      * @see Line
      * @example
      * // Create a segment providing two points.
