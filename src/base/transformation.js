@@ -131,7 +131,7 @@ define([
 
     JXG.extend(JXG.Transformation.prototype, /** @lends JXG.Transformation.prototype */ {
         /**
-         * @private
+         * Updates the numerical data for the transformation, i.e. the entry of the subobject matrix.
          * @returns {JXG.Transform} returns pointer to itself
          */
         update: function () {
