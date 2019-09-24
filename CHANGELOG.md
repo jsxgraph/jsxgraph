@@ -10,50 +10,48 @@ Compatibility:
 New Features
 ------------
 
-* New math functions cot and acot
-* New math functions nthroot, cbrt, binomial
-* Faces for hatch marks and ticks (|><)
-* Create parabola given by a point and a pair of coordinate pairs.
-* JXG.Math.pow: handle x^(1/n) for x < 0 and n odd integer
-* Realize styling and highlighting of navigation bars with CSS
-* Add board attributes "showFullscreen" and "fullscreen"
-* Add new parameter delay for CoordsElement.startAnimation()
-* Polar grids
-* Introduce new attribute "highlightSize" for arrow heads.
-* Reflection of of polygons
-* New board attribute: maxBoundingBox
 * Polygon / curve clipping and boolean operation on curves is now enabled.
 Possible are intersection, union or difference of curves, polygones or circles.
-* New attribute for labels *autoPosition: true/false* enables automatic positioning of labels.
+* New math functions: cot and acot, nthroot, cbrt, binomial. Available as JXG.Math.cot, ...
+* JXG.Math.pow: handle x^(1/n) for x < 0 and n odd integer
+* Add board attributes "showFullscreen" and "fullscreen"
+* New board attribute `maxBoundingBox`
+* Faces for hatch marks and ticks (|><)
+* Create parabola given by a point and a pair of coordinate pairs.
+* Styling and highlighting of navigation bars with CSS
+* Add new parameter `delay` for CoordsElement.startAnimation()
+* Polar grids
+* New attribute `highlightSize` for arrow heads.
+* Reflection, mirroring of polygons
+* New attribute for labels `autoPosition: true/false` enables automatic positioning of labels.
 
 Improvements
 ------------
 
-* JessieCode handling of sliders
-* documentation
-* Increase precision in JXG.Math.Numerics.Jacobi
-* Curve plotting: massive speed improvements and plotting precision
-* Code refactoring
-* Multi-touch rotations with pointer events
 * screenshot and base64 dumps include images now (dumpToURI)
+* API documentation contains many new examples
+* Curve plotting: massive speed improvements and plotting precision
+* Multi-touch rotations are much more stable for pointer events
+* Pointer events use different precision when using pen, mouse or touch. New events for pen: pendrag, pendown, penmove.
+* Highlighting and hit event for touch and pointer events
+* Fire `hit` event also when dragging an element
+* Increased precision in JXG.Math.Numerics.Jacobi
 * Improved zoomElements
-* Attributes for parabola sub element line
-* Update wordpress plug-in to use jsxgraphcore.js from jsxgraph.org
-* Update MediaWiki plug-in
+* Enable attributes for parabola subelement line
 * Sketch reader: copy of polygons
-* Refactor reflection and mirrorelement
-* Skecth reader: enable reflection of circle to be circle
+* Sketch reader: enable reflection of circle to be circle
 * Massive speed-up if many elements are deleted
 * Use '\u26f6' unicode symbol for fullscreen
-* Work on unit tests
-* Update package.json
-* Fire `hit` event also when dragging an element
 * Better compromise for `_insideCanvas()` for labels.
-* Highlighting and hit event for touch and pointer events
-* Pointer events use different precision when using pen, mouse or touch. New events for pen: pendrag, pendown, penmove.
-* JessieCode: Use JSXGraph method `JXG.Math.pow` for a^b. This fixes problems like (-3)^(1/3)
-* JessieCode: Add JSXGraph's gcd and lcm math functions
-
+* JessieCode handling of sliders
+* JessieCode: Use JSXGraph method `JXG.Math.pow` for a^b. This fixes problems like plotting of (-3)^(1/3)
+* JessieCode: Add all JSXGraph math functions
+* Work on unit tests
+* Refactor reflection and mirrorelement
+* Code refactoring
+* Update wordpress plug-in to use jsxgraphcore.js from jsxgraph.org
+* Update MediaWiki plug-in
+* Update package.json
 
 Bug fixes
 ---------
@@ -61,25 +59,25 @@ Bug fixes
 * Fix call of free()
 * Address npm security alerts
 * Line rotation with pointer events on Edge
-* Various changes in sketch reader for sketchometry
 * Dragging of labels
 * Input functions for curves failed for certain JessieCode functions
-* Pointer events
-* Speed up by preventing multiple updates of drag element.
-* hasPoint for curves
+* Bug fix: handling of pointer events
+* Speed-up by preventing multiple updates of drag element.
+* Precision of `hasPoint` for curves
 * Make all examples in API docs ready for fullscreen mode
 * Fix a very old bug in unzip algorithm for multi-file archives
 * size[] for axis labels of display='internal'
 * Animation of gliders on lines with slope!=0
 * Fix arrow head placement for type=3
 * Convert attributes in subobjects to lowerCase
-* Ticks for certain axes which are neither horizontal nor vertical
+* Fix ticks for certain axes which are neither horizontal nor vertical
 * Firefox multi-touch pointer events
 * Ticks labels in canvas renderer
-* JSXGraph with nodejs
-* Manipulating ticks visibility during board.suspendUpdate()
+* Better support of JSXGraph with nodejs
+* Manipulating ticks visibility during `board.suspendUpdate()``
 * Prevent flickering of text elements during creation
-* Stop using deprecated hide method in changePointStyle
+* Stop using deprecated hide method in `changePointStyle`
+* Various changes in sketch reader for sketchometry
 * Geogebra reader: Fix argument order when mirroring across line
 
 
