@@ -1085,7 +1085,7 @@ define([
                 this.updateConstraint = function () {
                     return this;
                 };
-                
+
                 if (!this.isDraggable) {
                     this.isDraggable = true;
 
@@ -1254,6 +1254,9 @@ define([
             this.prepareUpdate().update();
             if (!this.board.isSuspendedUpdate) {
                 this.updateVisibility().updateRenderer();
+                if (this.hasLabel) {
+                    this.label.fullUpdate();
+                }
             }
 
             return this;

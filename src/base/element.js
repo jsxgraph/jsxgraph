@@ -1509,7 +1509,7 @@ define([
                     }], attr);
                     this.label.needsUpdate = true;
                     this.label.dump = false;
-                    this.label.update();
+                    this.label.fullUpdate();
 
                     this.hasLabel = true;
                 }
