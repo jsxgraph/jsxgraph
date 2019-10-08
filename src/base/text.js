@@ -317,17 +317,27 @@ define([
              */
             if (ev_d === 'html' || this.board.renderer.type === 'vml') {
                 if (Type.exists(node.offsetWidth)) {
-                    s = [node.offsetWidth, node.offsetHeight];
-                    if (s[0] === 0 && s[1] === 0) { // Some browsers need some time to set offsetWidth and offsetHeight
-                        that = this;
-                        window.setTimeout(function () {
-                            that.size = [node.offsetWidth, node.offsetHeight];
-                            that.needsUpdate = true;
-                            that.updateRenderer();
-                        }, 0);
-                    } else {
-                        this.size = s;
-                    }
+                    that = this;
+                    window.setTimeout(function () {
+                        that.size = [node.offsetWidth, node.offsetHeight];
+                        that.needsUpdate = true;
+                        that.updateRenderer();
+                    }, 0);
+                    // In case, there is non-zero padding or borders
+                    // the following approach does not longer work.
+                    // s = [node.offsetWidth, node.offsetHeight];
+                    // if (s[0] === 0 && s[1] === 0) { // Some browsers need some time to set offsetWidth and offsetHeight
+                    //     that = this;
+                    //     window.setTimeout(function () {
+                    //         that.size = [node.offsetWidth, node.offsetHeight];
+                    //         that.needsUpdate = true;
+                    //         that.updateRenderer();
+                    //     }, 0);
+                    //     console.log("HERE");
+                    // } else {
+                    //     console.log("tHERE");
+                    //     this.size = s;
+                    // }
                 } else {
                     this.size = this.crudeSizeEstimate();
                 }
