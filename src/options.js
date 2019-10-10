@@ -747,6 +747,9 @@ define([
              */
             highlightFillOpacity: 1,
 
+            // gradient: 'linear', 'radial', 'gradientsecondcolor'
+            //'gradientangle', 'gradientsecondopacity', 'gradientpositionx', 'gradientpositiony',
+
             /**
              * Transition duration (in milliseconds) for color and opacity
              * changes. Works in SVG renderer, only.
