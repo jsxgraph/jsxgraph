@@ -540,6 +540,7 @@ define([
                 this.updateConstraint();
                 c  = Geometry.projectPointToTurtle(this, slide, this.board).usrCoords;
             } else if (slide.elementClass === Const.OBJECT_CLASS_CURVE) {
+                // This is critical for reflected curves
                 this.coords.setCoordinates(Const.COORDS_BY_USER, [slide.Z(this.position), slide.X(this.position), slide.Y(this.position)]);
 
                 if (slide.type === Const.OBJECT_TYPE_ARC || slide.type === Const.OBJECT_TYPE_SECTOR) {
@@ -583,6 +584,7 @@ define([
                 } else {
                     // In case, the point is a constrained glider.
                     // side-effect: this.position is overwritten
+
                     this.updateConstraint();
                     c = Geometry.projectPointToCurve(this, slide, this.board).usrCoords;
                 }

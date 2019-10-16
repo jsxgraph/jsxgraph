@@ -2279,10 +2279,10 @@ define([
                 board = curve.board;
             }
 
+
             if (Type.evaluate(curve.visProp.curvetype) === 'plot') {
                 t = 0;
                 mindist = infty;
-
                 if (curve.numberPoints === 0) {
                     newCoords = [0, 1, 1];
                 } else {
@@ -2290,7 +2290,6 @@ define([
                 }
 
                 if (curve.numberPoints > 1) {
-
                     v = [1, x, y];
                     if (curve.bezierDegree === 3) {
                         j = 0;
@@ -2366,7 +2365,6 @@ define([
 
                 //t = Numerics.root(Numerics.D(minfunc), t);
                 t = Numerics.fminbr(minfunc, [t - delta, t + delta]);
-
 
                 minX = curve.minX();
                 maxX = curve.maxX();
