@@ -33,9 +33,10 @@ Website
 * CDN: Embed JSXGraph via
 
 ```
-     <script type="text/javascript" charset="UTF-8"
-     src="//cdnjs.cloudflare.com/ajax/libs/jsxgraph/0.99.7/jsxgraphcore.js"></script>
-    <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/jsxgraph/0.99.7/jsxgraph.css" />
+<script type="text/javascript" charset="UTF-8"
+ src="//cdnjs.cloudflare.com/ajax/libs/jsxgraph/0.99.7/jsxgraphcore.js"></script>
+<link rel="stylesheet" 
+ type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/jsxgraph/0.99.7/jsxgraph.css" />
 ```
 
 Please report bugs to our issue tracking system found at
