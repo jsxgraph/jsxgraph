@@ -1125,6 +1125,8 @@ define([
         /**
          * Sets an arbitrary number of attributes.
          * @param {Object} attributes An object with attributes.
+         * @returns {JXG.GeometryElement} A reference to the element.
+         *
          * @function
          * @example
          * // Set property directly on creation of an element using the attributes object parameter
@@ -1237,6 +1239,10 @@ define([
                         }
 
                         this.setDisplayRendNode(Type.evaluate(this.visProp.visible));
+                        if (Type.evaluate(this.visProp.visible) && Type.exists(this.updateSize)) {
+                            this.updateSize();
+                        }
+
                         break;
                     case 'face':
                         if (Type.isPoint(this)) {
