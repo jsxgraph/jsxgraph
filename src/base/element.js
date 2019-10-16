@@ -1149,7 +1149,7 @@ define([
             var i, j, le, key, value, arg, opacity, pair, oldvalue,
                 properties = {};
 
-            // normalize the user input
+            // Normalize the user input
             for (i = 0; i < arguments.length; i++) {
                 arg = arguments[i];
                 if (Type.isString(arg)) {
@@ -1165,17 +1165,16 @@ define([
                 }
             }
 
-            // handle shortcuts
+            // Handle shortcuts
             properties = this.resolveShortcuts(properties);
 
             for (i in properties) {
                 if (properties.hasOwnProperty(i)) {
                     key = i.replace(/\s+/g, '').toLowerCase();
                     value = properties[i];
-                    oldvalue = this.visProp[key];
 
                     // This handles the subobjects, if the key:value pairs are contained in an object.
-                    // Example
+                    // Example:
                     // ticks.setAttribute({
                     //      strokeColor: 'blue',
                     //      label: {
@@ -1183,19 +1182,32 @@ define([
                     //      }
                     // })
                     // Now, only the supplied label attributes are overwritten.
-                    // Otherwise, the the value of label would be {visible:false} only.
+                    // Otherwise, the value of label would be {visible:false} only.
                     if (Type.isObject(value) && Type.exists(this.visProp[key])) {
                         this.visProp[key] = Type.merge(this.visProp[key], value);
 
-                        if (this.type === Const.OBJECT_TYPE_TICKS && Type.exists(this.labels)) {
-                            le = this.labels.length;
-                            for (j = 0; j < le; j++) {
-                                this.labels[j].setAttribute(value);
+                //
+
+                        if (Type.exists(this[key])) {
+                            if (Type.isArray(this[key])) {
+                                for (j = 0; j < this[key].length; j++) {
+                                    this[key][j].setAttribute(value);
+                                }
+                            } else {
+                                this[key].setAttribute(value);
                             }
+                        } else { 
+                            if (this.type === Const.OBJECT_TYPE_TICKS && Type.exists(this.labels)) {
+                                le = this.labels.length;
+                                for (j = 0; j < le; j++) {
+                                    this.labels[j].setAttribute(value);
+                                }
+                            } 
                         }
                         continue;
                     }
 
+                    oldvalue = this.visProp[key];
                     switch (key) {
                     case 'name':
                         oldvalue = this.name;

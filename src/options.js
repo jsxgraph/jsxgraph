@@ -1401,6 +1401,7 @@ define([
                 visible: false,
                 name: ''
             },
+
             /**
              * @deprecated
              */
@@ -1419,6 +1420,7 @@ define([
                 withLabel: false,
                 name: ''
             },
+
             label: {
                 position: 'top',
                 offset: [0, 0],
@@ -1491,9 +1493,9 @@ define([
              * Attributes for angle point.
              *
              * @type Point
-             * @name Arc#anglepoint
+             * @name Arc#anglePoint
              */
-            anglepoint: {
+            anglePoint: {
             }
 
             /**#@-*/
@@ -3328,9 +3330,9 @@ define([
              * Attributes for the helper point of the prescribed angle.
              *
              * @type Point
-             * @name PrescribedAngle#anglepoint
+             * @name PrescribedAngle#anglePoint
              */
-            anglepoint: {
+            anglePoint: {
                 size: 2,
                 visible: false,
                 withLabel: false
@@ -3516,9 +3518,9 @@ define([
              * Attributes for helper point anglepoint in case it is provided by coordinates.
              *
              * @type Point
-             * @name Sector#anglepoint
+             * @name Sector#anglePoint
              */
-            anglepoint: {
+            anglePoint: {
                 visible: false,
                 withLabel: false
             },
@@ -3932,9 +3934,9 @@ define([
              * Attributes for the top point.
              *
              * @type Point
-             * @name Slopetriangle#toppoint
+             * @name Slopetriangle#topPoint
              */
-            toppoint: {
+            topPoint: {
                 visible: false,
                 withLabel: false,
                 name: ''
