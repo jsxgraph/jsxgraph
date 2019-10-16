@@ -6,18 +6,16 @@ JavaScript library for interactive math visualizations in the web browser.
 About
 -----
 
-JSXGraph is a cross-browser library for interactive geometry, function plotting,
+*JSXGraph* is a cross-browser library for interactive geometry, function plotting,
 charting, and data visualization in a web browser. It is implemented completely
-in JavaScript, does not rely on any other library, and uses SVG, VML, or canvas.
-JSXGraph is easy to embed and has a small footprint: less than 100 KByte if
+in JavaScript, does not rely on any other library, and uses SVG, canvas, or even the venerable VML.
+*JSXGraph* is easy to embed and has a small footprint: approx. 160 KByte if
 embedded in a web page. No plug-ins are required! Special care has been taken
 to optimize the performance.
 
-Starting with version 0.80, JSXGraph supports multitouch devices like the Apple
-iPad. Since version 0.82 the canvas element is supported, too. That means,
-JSXGraph also runs on Android devices.
+*JSXGraph* supports multi-touch events and runs on all major browsers, even on very old IEs.
 
-JSXGraph is developed at the
+*JSXGraph* is developed at the
 Lehrstuhl für Mathematik und ihre Didaktik
 University of Bayreuth, Germany
 
@@ -30,7 +28,7 @@ Website
 * Mailing List/Google Group: http://groups.google.com/group/jsxgraph
 * JSXGraph questions at https://stackoverflow.com/search?tab=newest&q=jsxgraph
 * jsFiddle template: https://jsfiddle.net/vcL7aepo/1/
-* Moodle plug-in: https://github.com/jsxgraph/moodle-jsxgraph-plugin
+* Moodle filter: https://github.com/jsxgraph/moodle-filter_jsxgraph
 * (outdated: SourceForge project site: https://sf.net/projects/jsxgraph)
 
 Please report bugs to our issue tracking system found at
@@ -40,7 +38,7 @@ https://github.com/jsxgraph/jsxgraph/issues
 Build JSXGraph
 --------------
 
-In order to build JSXGraph you need [node.js](http://nodejs.org/) v0.6+. First, install all
+In order to build *JSXGraph* you need [node.js](http://nodejs.org/) v0.6+. First, install all
 dependencies required to build JSXGraph using npm in the JSXGraph root directory:
 
     $ npm install
