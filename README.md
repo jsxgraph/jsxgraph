@@ -1,7 +1,7 @@
 JSXGraph
 ========
 
-Interactive Math Library for the Web.
+JavaScript library for interactive math visualizations in the web browser.
 
 About
 -----
