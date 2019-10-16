@@ -3,17 +3,6 @@ JSXGraph
 
 Interactive Math Library for the Web.
 
-    Copyright 2008-2019
-        Matthias Ehmann,
-        Michael Gerhaeuser,
-        Carsten Miller,
-        Emmanuel Ostenne,
-        Bianca Valentin,
-        Heiko Vogel,
-        Alfred Wassermann,
-        Peter Wilfahrt
-
-
 About
 -----
 
@@ -79,6 +68,17 @@ or [the API reference docs](http://jsxgraph.uni-bayreuth.de/docs/).
 
 License
 -------
+
+    Copyright 2008-2019
+        Matthias Ehmann,
+        Michael Gerhaeuser,
+        Carsten Miller,
+        Emmanuel Ostenne,
+        Bianca Valentin,
+        Heiko Vogel,
+        Alfred Wassermann,
+        Peter Wilfahrt
+
 
 JSXGraph is free software dual licensed under the GNU LGPL or MIT License.
 
