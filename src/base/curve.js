@@ -2145,6 +2145,9 @@ define([
                     return this;
                 };
             cu.addTransform(parents[1]);
+            obj.addChild(cu);
+            cu.setParents([obj]);
+
             return cu;
         } else {
             attr = Type.copyAttributes(attributes, board.options, 'curve');

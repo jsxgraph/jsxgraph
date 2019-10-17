@@ -1845,10 +1845,10 @@ define([
             throw new Error("JSXGraph: Can't create reflected element with parent types '" +
                 (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." + errStr);
         }
-        org.addChild(r);
+        //org.addChild(r);
         l.addChild(r);
         r.elType = 'reflection';
-        r.setParents([org, l]);
+        r.addParents(l);
         r.prepareUpdate().update(); //.updateVisibility(Type.evaluate(r.visProp.visible)).updateRenderer();
 
         if (Type.isPoint(r)) {
@@ -2019,10 +2019,10 @@ define([
                 (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." + errStr);
         }
 
-        org.addChild(r);
+        //org.addChild(r);
         m.addChild(r);
         r.elType = 'mirrorelement';
-        r.setParents([org, m]);
+        r.addParents(m);
         r.prepareUpdate().update();
 
         return r;
