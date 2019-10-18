@@ -435,8 +435,7 @@ define([
                     // In case, the point is a constrained glider.
                     this.updateConstraint();
 
-                    // Check if the curve comes from a transformation of a continous curve.
-                    // See updateGliderFromParent() for more info.
+                    // Handle the case if the curve comes from a transformation of a continous curve.
                     if (slide.transformations.length > 0) {
                         slide.updateTransformMatrix();
                         invMat = Mat.inverse(slide.transformMat);
@@ -445,11 +444,10 @@ define([
 
                         res = slide.getTransformationSource();
                         isTransformed = res[0];
-    
                         if (isTransformed) {
                             slide_org = res[1];
                             c = Geometry.projectCoordsToCurve(cp[1], cp[2], this.position || 0, slide_org, this.board);
-                            // projectPointCurve() already would do the transformation.
+                            // projectPointCurve() already would apply the transformation.
                             // Since we are projecting on the original curve, we have to do
                             // the transformation "by hand".
                             c[0] = new Coords(Const.COORDS_BY_USER, 
@@ -557,6 +555,7 @@ define([
                 this.updateConstraint();
                 c  = Geometry.projectPointToTurtle(this, slide, this.board).usrCoords;
             } else if (slide.elementClass === Const.OBJECT_CLASS_CURVE) {
+                // Handle the case if the curve comes from a transformation of a continous curve.
                 res = slide.getTransformationSource();
                 isTransformed = res[0];
                 if (isTransformed) {
