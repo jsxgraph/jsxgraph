@@ -242,7 +242,7 @@ define([
                 doRound = false,
                 ev_sw,
                 slide = this.slideObject,
-                slide_org, isTransformed;
+                res, slide_org, isTransformed;
 
             this.needsUpdateFromParent = false;
             if (slide.elementClass === Const.OBJECT_CLASS_CIRCLE) {
@@ -443,21 +443,11 @@ define([
                         c = Mat.matVecMult(invMat, this.coords.usrCoords);
                         cp = (new Coords(Const.COORDS_BY_USER, c, this.board)).usrCoords;
 
-                        isTransformed = false
-                        if (Type.evaluate(slide.visProp.curvetype) === 'plot' &&
-                            slide.transformations.length > 0 && 
-                            slide.parents.length > 0) {
-                        
-                            slide_org = this.board.select(slide.parents[0], true);
-                            if (Type.isObject(slide_org) &&
-                                slide_org.elementClass === Const.OBJECT_CLASS_CURVE &&
-                                Type.evaluate(slide_org.visProp.curvetype) !== 'plot') {
-                                
-                                isTransformed = true;
-                            }
-                        } 
+                        res = slide.getTransformationSource();
+                        isTransformed = res[0];
     
                         if (isTransformed) {
+                            slide_org = res[1];
                             c = Geometry.projectCoordsToCurve(cp[1], cp[2], this.position || 0, slide_org, this.board);
                             // projectPointCurve() already would do the transformation.
                             // Since we are projecting on the original curve, we have to do
@@ -495,7 +485,7 @@ define([
         updateGliderFromParent: function () {
             var p1c, p2c, r, lbda, c,
                 slide = this.slideObject,
-                slide_org, isTransformed,
+                res, slide_org, isTransformed,
                 baseangle, alpha, angle, beta,
                 delta = 2.0 * Math.PI;
 
@@ -567,26 +557,10 @@ define([
                 this.updateConstraint();
                 c  = Geometry.projectPointToTurtle(this, slide, this.board).usrCoords;
             } else if (slide.elementClass === Const.OBJECT_CLASS_CURVE) {
-                isTransformed = false;
-                if (Type.evaluate(slide.visProp.curvetype) === 'plot' &&
-                    slide.transformations.length > 0 && 
-                    slide.parents.length > 0) {
-                    // If the curve is the result of a transformation applied
-                    // to a continuous curve, the glider projection has to be done 
-                    // on the original curve. Otherwise there will be problems
-                    // when changing between high and low precision plotting,
-                    // since there number of points changes.
-                    // See also updateGlider.
-                    
-                    slide_org = this.board.select(slide.parents[0], true);
-                    if (Type.isObject(slide_org) &&
-                        slide_org.elementClass === Const.OBJECT_CLASS_CURVE &&
-                        Type.evaluate(slide_org.visProp.curvetype) !== 'plot') {
-
-                        isTransformed = true;
-                    }
-                } 
+                res = slide.getTransformationSource();
+                isTransformed = res[0];
                 if (isTransformed) {
+                    slide_org = res[1];
                     this.coords.setCoordinates(Const.COORDS_BY_USER, [
                         slide_org.Z(this.position), 
                         slide_org.X(this.position), 

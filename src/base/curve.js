@@ -1941,9 +1941,36 @@ define([
                 this.setPosition(Const.COORDS_BY_USER, delta);
             }
             return this;
-        }
-    });
+        },
 
+        /**
+         * If the curve is the result of a transformation applied
+         * to a continuous curve, the glider projection has to be done 
+         * on the original curve. Otherwise there will be problems
+         * when changing between high and low precision plotting,
+         * since there number of points changes.
+         * 
+         * @private
+         * @returns {Array} [Boolean, curve]: Array contining 'true' if curve is result of a transformation,
+         *   and the source curve of the transformation.
+         */
+        getTransformationSource: function() {
+            var isTransformed, curve_org;
+            if (Type.evaluate(this.visProp.curvetype) === 'plot' &&
+                this.transformations.length > 0 && 
+                this.parents.length > 0) {
+        
+                curve_org = this.board.select(this.parents[0], true);
+                if (Type.isObject(curve_org) &&
+                    curve_org.elementClass === Const.OBJECT_CLASS_CURVE &&
+                    Type.evaluate(curve_org.visProp.curvetype) !== 'plot') {
+                        isTransformed = true;
+                }
+            } 
+            return [isTransformed, curve_org];
+        }
+
+    });
 
     /**
      * @class This element is used to provide a constructor for curve, which is just a wrapper for element {@link Curve}.
