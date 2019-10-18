@@ -242,7 +242,9 @@ define([
                 doRound = false,
                 ev_sw,
                 slide = this.slideObject,
-                res, slide_org, isTransformed;
+                res, cu,
+                slides = [], 
+                isTransformed;
 
             this.needsUpdateFromParent = false;
             if (slide.elementClass === Const.OBJECT_CLASS_CIRCLE) {
@@ -437,22 +439,44 @@ define([
 
                     // Handle the case if the curve comes from a transformation of a continous curve.
                     if (slide.transformations.length > 0) {
-                        slide.updateTransformMatrix();
-                        invMat = Mat.inverse(slide.transformMat);
-                        c = Mat.matVecMult(invMat, this.coords.usrCoords);
-                        cp = (new Coords(Const.COORDS_BY_USER, c, this.board)).usrCoords;
-
+                        isTransformed = false;
                         res = slide.getTransformationSource();
-                        isTransformed = res[0];
+                        if (res[0]) {
+                            isTransformed = res[0];
+                            slides.push(slide);
+                            slides.push(res[1]);
+                        }
+                        // Recurse
+                        while (res[0] && Type.exists(res[1]._transformationSource)) {
+                            res = res[1].getTransformationSource();
+                            slides.push(res[1]);
+                        };
+
+                        cu = this.coords.usrCoords;
                         if (isTransformed) {
-                            slide_org = res[1];
-                            c = Geometry.projectCoordsToCurve(cp[1], cp[2], this.position || 0, slide_org, this.board);
+                            for (i = 0; i < slides.length; i++) {
+                                slides[i].updateTransformMatrix();
+                                invMat = Mat.inverse(slides[i].transformMat);
+                                cu = Mat.matVecMult(invMat, cu);
+                            }
+                            cp = (new Coords(Const.COORDS_BY_USER, cu, this.board)).usrCoords;
+                            c = Geometry.projectCoordsToCurve(cp[1], cp[2], 
+                                        this.position || 0, 
+                                        slides[slides.length - 1], 
+                                        this.board);
                             // projectPointCurve() already would apply the transformation.
                             // Since we are projecting on the original curve, we have to do
-                            // the transformation "by hand".
-                            c[0] = new Coords(Const.COORDS_BY_USER, 
-                                Mat.matVecMult(slide.transformMat, c[0].usrCoords), this.board);
+                            // the transformations "by hand".
+                            cu = c[0].usrCoords;
+                            for (i = slides.length - 2; i >= 0; i--) {
+                                cu = Mat.matVecMult(slides[i].transformMat, cu);
+                            }
+                            c[0] = new Coords(Const.COORDS_BY_USER, cu, this.board);
                         } else {
+                            slide.updateTransformMatrix();
+                            invMat = Mat.inverse(slide.transformMat);
+                            cu = Mat.matVecMult(invMat, cu);
+                            cp = (new Coords(Const.COORDS_BY_USER, cu, this.board)).usrCoords;
                             c = Geometry.projectCoordsToCurve(cp[1], cp[2], this.position || 0, slide, this.board);
                         }
 
@@ -483,7 +507,9 @@ define([
         updateGliderFromParent: function () {
             var p1c, p2c, r, lbda, c,
                 slide = this.slideObject,
-                res, slide_org, isTransformed,
+                slides = [], 
+                res, i,
+                isTransformed,
                 baseangle, alpha, angle, beta,
                 delta = 2.0 * Math.PI;
 
@@ -556,14 +582,23 @@ define([
                 c  = Geometry.projectPointToTurtle(this, slide, this.board).usrCoords;
             } else if (slide.elementClass === Const.OBJECT_CLASS_CURVE) {
                 // Handle the case if the curve comes from a transformation of a continous curve.
+                isTransformed = false;
                 res = slide.getTransformationSource();
-                isTransformed = res[0];
+                if (res[0]) {
+                    isTransformed = res[0];
+                    slides.push(slide);
+                    slides.push(res[1]);
+                }
+                // Recurse
+                while (res[0] && Type.exists(res[1]._transformationSource)) {
+                    res = res[1].getTransformationSource();
+                    slides.push(res[1]);
+                };
                 if (isTransformed) {
-                    slide_org = res[1];
                     this.coords.setCoordinates(Const.COORDS_BY_USER, [
-                        slide_org.Z(this.position), 
-                        slide_org.X(this.position), 
-                        slide_org.Y(this.position)]);
+                        slides[slides.length - 1].Z(this.position), 
+                        slides[slides.length - 1].X(this.position), 
+                        slides[slides.length - 1].Y(this.position)]);
                 } else {
                     this.coords.setCoordinates(Const.COORDS_BY_USER, [
                         slide.Z(this.position), 
@@ -612,15 +647,17 @@ define([
                 } else {
                     // In case, the point is a constrained glider.
                     // side-effect: this.position is overwritten
-
                     this.updateConstraint();
+
                     if (isTransformed) {
-                        c = Geometry.projectPointToCurve(this, slide_org, this.board).usrCoords;
+                        c = Geometry.projectPointToCurve(this, slides[slides.length - 1], this.board).usrCoords;
                         // projectPointCurve() already would do the transformation.
-                        // Since we are projecting on the original curve, we have to do
+                        // But since we are projecting on the original curve, we have to do
                         // the transformation "by hand".
-                        c = (new Coords(Const.COORDS_BY_USER, 
-                            Mat.matVecMult(slide.transformMat, c), this.board)).usrCoords;
+                        for (i = slides.length - 2; i >= 0; i--) {
+                            c = (new Coords(Const.COORDS_BY_USER, 
+                                Mat.matVecMult(slides[i].transformMat, c), this.board)).usrCoords;
+                        }
 
                     } else {
                         c = Geometry.projectPointToCurve(this, slide, this.board).usrCoords;

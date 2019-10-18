@@ -1956,14 +1956,11 @@ define([
          */
         getTransformationSource: function() {
             var isTransformed, curve_org;
-            if (Type.evaluate(this.visProp.curvetype) === 'plot' &&
-                this.transformations.length > 0 && 
-                this.parents.length > 0) {
-        
-                curve_org = this.board.select(this.parents[0], true);
-                if (Type.isObject(curve_org) &&
-                    curve_org.elementClass === Const.OBJECT_CLASS_CURVE &&
-                    Type.evaluate(curve_org.visProp.curvetype) !== 'plot') {
+            if (Type.exists(this._transformationSource)) {
+                curve_org = this._transformationSource;
+                if (curve_org.elementClass === Const.OBJECT_CLASS_CURVE //&&
+                    //Type.evaluate(curve_org.visProp.curvetype) !== 'plot'
+                    ) {
                         isTransformed = true;
                 }
             } 
@@ -2174,6 +2171,7 @@ define([
             cu.addTransform(parents[1]);
             obj.addChild(cu);
             cu.setParents([obj]);
+            cu._transformationSource = obj;
 
             return cu;
         } else {
