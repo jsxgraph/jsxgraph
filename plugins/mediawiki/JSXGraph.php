@@ -155,7 +155,7 @@ function jsxgraphOutput($input, $args, $parser) {
   if(isset($args['filename'])) { // string of url to gxt-file
     // retrieve URL of .gxt file
     $gxtBinary = htmlspecialchars(strip_tags($args['filename']));
-    $gxtFile = Image::newFromName($gxtBinary);
+    $gxtFile = wfFindFile($gxtBinary);
     if (!($gxtFile->exists() )) {
       $error_message = "File " . $gxtFile . " not found.";
     } else {
