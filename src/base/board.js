@@ -1262,7 +1262,6 @@ define([
                     t1.applyOnce([drag.center]);
                 }
 
-
                 if (drag.method === 'twoPoints') {
                     if (drag.point2.draggable()) {
                         t1.applyOnce([drag.point2]);
