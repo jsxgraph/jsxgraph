@@ -2535,7 +2535,6 @@ define([
                         // Runs over through all elements which are touched
                         // by at least one finger.
                         for (i = 0; i < this.touches.length; i++) {
-
                             if (this.touches[i].targets.length === 1) {
                                 // Touch by one finger:  this is possible for all elements that can be dragged
                                 if (evtTouches[this.touches[i].targets[0].num]) {
