@@ -2123,7 +2123,6 @@ define([
                 // Otherwise this move event is ignored. This is necessary e.g. for sketchometry.
                 return this.BOARD_MODE_NONE;
             }
-console.log(evt);
 
             if (this.mode !== this.BOARD_MODE_DRAG) {
                 this.dehighlightAll();
@@ -2157,9 +2156,7 @@ console.log(evt);
                                     pos = this.getMousePosition(evt);
                                     this.moveObject(pos[0], pos[1], this.touches[i], evt, type);
 
-                                } else if (this.touches[i].targets.length === 2) { // &&
-                                    // this.touches[i].targets[0].num > -1 &&
-                                    // this.touches[i].targets[1].num > -1) {
+                                } else if (this.touches[i].targets.length === 2) { 
 
                                     // Touch by two fingers: e.g. moving lines
                                     this.touches[i].targets[j].X = evt.pageX;
