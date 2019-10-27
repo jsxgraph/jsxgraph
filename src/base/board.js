@@ -1826,7 +1826,6 @@ define([
             return false;
         },
 
-
         /**
          * Fix for Firefox browser: When using a second finger, the
          * touch event for the first finger is sent again.
@@ -2124,6 +2123,7 @@ define([
                 // Otherwise this move event is ignored. This is necessary e.g. for sketchometry.
                 return this.BOARD_MODE_NONE;
             }
+console.log(evt);
 
             if (this.mode !== this.BOARD_MODE_DRAG) {
                 this.dehighlightAll();
@@ -2149,16 +2149,17 @@ define([
                         // Run through all touch events which have been started on this jsxgraph element.
                         for (j = 0; j < this.touches[i].targets.length; j++) {
                             if (this.touches[i].targets[j].num === evt.pointerId) {
-                                // Touch by one finger:  this is possible for all elements that can be dragged
                                 if (this.touches[i].targets.length === 1) {
+
+                                    // Touch by one finger:  this is possible for all elements that can be dragged
                                     this.touches[i].targets[j].X = evt.pageX;
                                     this.touches[i].targets[j].Y = evt.pageY;
                                     pos = this.getMousePosition(evt);
                                     this.moveObject(pos[0], pos[1], this.touches[i], evt, type);
 
-                                } else if (this.touches[i].targets.length === 2 &&
-                                    this.touches[i].targets[0].num > -1 &&
-                                    this.touches[i].targets[1].num > -1) {
+                                } else if (this.touches[i].targets.length === 2) { // &&
+                                    // this.touches[i].targets[0].num > -1 &&
+                                    // this.touches[i].targets[1].num > -1) {
 
                                     // Touch by two fingers: e.g. moving lines
                                     this.touches[i].targets[j].X = evt.pageX;
