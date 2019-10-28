@@ -1532,6 +1532,8 @@ define([
          * Register touch start and move and gesture start and change event handlers.
          * @param {Boolean} appleGestures If set to false the gesturestart and gesturechange event handlers
          * will not be registered.
+         *
+         * Since iOS 13, touch events were abandoned in favour of pointer events
          */
         addTouchEventHandlers: function (appleGestures) {
             if (!this.hasTouchHandlers && Env.isBrowser) {
