@@ -1733,7 +1733,7 @@ define([
             // pan detected
             if (this.attr.pan.enabled &&
                 this.attr.pan.needtwofingers &&
-                Math.abs(evt.scale - 1.0) < 0.4 &&
+                Math.abs(evt.scale - 1.0) < 0.7 &&
                 this._num_pan >= 0.8 * this._num_zoom) {
 
                 this._num_pan++;
@@ -3171,7 +3171,7 @@ define([
                     this.origin.scrCoords[2] -= this.drag_dy;
                 }
 
-                ul = (new Coords(Const.COORDS_BY_SCREEN, [0, 0], this)).usrCoords,
+                ul = (new Coords(Const.COORDS_BY_SCREEN, [0, 0], this)).usrCoords;
                 lr = (new Coords(Const.COORDS_BY_SCREEN, [this.canvasWidth, this.canvasHeight], this)).usrCoords;
                 if (ul[1] < this.maxboundingbox[0] ||
                     ul[2] > this.maxboundingbox[1] ||
