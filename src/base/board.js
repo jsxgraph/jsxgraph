@@ -2156,7 +2156,7 @@ define([
                                     pos = this.getMousePosition(evt);
                                     this.moveObject(pos[0], pos[1], this.touches[i], evt, type);
 
-                                } else if (this.touches[i].targets.length === 2) { 
+                                } else if (this.touches[i].targets.length === 2) {
 
                                     // Touch by two fingers: e.g. moving lines
                                     this.touches[i].targets[j].X = evt.pageX;
