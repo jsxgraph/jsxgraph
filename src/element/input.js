@@ -91,7 +91,7 @@ define([
      *          }
      *        ]);
      *
-     *  board.create('text', [1, 3, '<button onclick="updateGraph()">Update graph</button>']);
+     *  board.create('text', [1, 3, '&lt;button onclick="updateGraph()"&gt;Update graph&lt;/button&gt;']);
      *
      *  var updateGraph = function() {
      *      graph.Y = board.jc.snippet(input.Value(), true, 'x', false);
