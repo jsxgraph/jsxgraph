@@ -1707,6 +1707,10 @@ define([
          */
         gestureChangeListener: function (evt) {
             var c,
+                dir1 = [],
+                dir2 = [],
+                angle, mi = 10,
+                isPinch = false,
                 // Save zoomFactors
                 zx = this.attr.zoom.factorx,
                 zy = this.attr.zoom.factory,
@@ -1719,7 +1723,24 @@ define([
             }
             evt.preventDefault();
 
-            c = new Coords(Const.COORDS_BY_SCREEN, this.getMousePosition(evt, 0), this);
+            // Compute the angle of the two finger directions
+            dir1 = [evt.touches[0].clientX - this.prevCoords[0][0],
+                    evt.touches[0].clientY - this.prevCoords[0][1]];
+            dir2 = [evt.touches[1].clientX - this.prevCoords[1][0],
+                    evt.touches[1].clientY - this.prevCoords[1][1]];
+
+            if ((Math.abs(dir1[0]) < mi && Math.abs(dir1[1]) < mi) ||
+                (Math.abs(dir2[0]) < mi && Math.abs(dir2[1]) < mi)) {
+                    return false;
+            }
+
+            angle = Geometry.rad(dir1, [0,0], dir2);
+            if (this.isPreviousGesture !== 'pan' &&
+                Math.abs(angle) > Math.PI * 0.2 &&
+                Math.abs(angle) < Math.PI * 1.8) {
+                isPinch = true;
+            }
+
             dist = Geometry.distance([evt.touches[0].clientX, evt.touches[0].clientY],
                             [evt.touches[1].clientX, evt.touches[1].clientY], 2);
 
@@ -1729,21 +1750,30 @@ define([
                 evt.scale = dist / this.prevDist;
             }
 
+            if (this.isPreviousGesture !== 'pan' && !isPinch) {
+                if (Math.abs(evt.scale) < 0.77 || Math.abs(evt.scale) > 1.3) {
+                    isPinch = true;
+                }
+            }
+
             factor = evt.scale / this.prevScale;
             this.prevScale = evt.scale;
+            this.prevCoords = [[evt.touches[0].clientX, evt.touches[0].clientY],
+                               [evt.touches[1].clientX, evt.touches[1].clientY]];
 
-            // pan detected
+            c = new Coords(Const.COORDS_BY_SCREEN, this.getMousePosition(evt, 0), this);
+
             if (this.attr.pan.enabled &&
                 this.attr.pan.needtwofingers &&
-                Math.abs(evt.scale - 1.0) < 0.7 &&
-                this._num_pan >= 0.8 * this._num_zoom) {
+                !isPinch) {
+                // Pan detected
 
-                this._num_pan++;
+                this.isPreviousGesture = 'pan';
+
                 this.moveOrigin(c.scrCoords[1], c.scrCoords[2], true);
             } else if (this.attr.zoom.enabled &&
-                Math.abs(factor - 1.0) < 0.5) {
-
-                this._num_zoom++;
+                        Math.abs(factor - 1.0) < 0.5) {
+                // Pinch detected
 
                 if (this.attr.zoom.pinchhorizontal || this.attr.zoom.pinchvertical) {
                     dx = Math.abs(evt.touches[0].clientX - evt.touches[1].clientX);
@@ -1793,13 +1823,15 @@ define([
             // Android pinch to zoom
             this.prevDist = Geometry.distance([evt.touches[0].clientX, evt.touches[0].clientY],
                             [evt.touches[1].clientX, evt.touches[1].clientY], 2);
+            this.prevCoords = [[evt.touches[0].clientX, evt.touches[0].clientY],
+                               [evt.touches[1].clientX, evt.touches[1].clientY]];
+            this.isPreviousGesture = 'none';
 
             // If pinch-to-zoom is interpreted as panning
             // we have to prepare move origin
             pos = this.getMousePosition(evt, 0);
             this.initMoveOrigin(pos[0], pos[1]);
 
-            this._num_zoom = this._num_pan = 0;
             this.mode = this.BOARD_MODE_ZOOM;
             return false;
         },
