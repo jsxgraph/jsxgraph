@@ -255,13 +255,13 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                                     if(typeof defElements[j] == 'string') {
                                         defElements[j] = (function(el, board) { return function() {
                                                                     return JXG.getReference(board,el.charAt(0)).Dist(JXG.getReference(board,el.charAt(1))); // TODO
-                                                               }}
+                                                               };}
                                                   )(defElements[j], this);
                                     }
                                     else {
                                         defElements[j] = (function(el, board) { return function() {
                                                                     return JXG.getReference(board,el[0]).Dist(JXG.getReference(board,el[1])); // TODO
-                                                               }}
+                                                               };}
                                                   )(defElements[j], this);
                                     }
 
@@ -304,8 +304,8 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                                 output[objName] = output.circles[output.circles.length-1];
                             }
                         }
-                        else if(splitted[i].search(/^[A-Z]+.*\(\s*[0-9\.\-]+\s*[,\|]\s*[0-9\.\-]+\s*\)/) != -1
-                                && splitted[i].search(/Macro\((.*)\)/) == -1) { // Punkt, startet mit einem Grossbuchstaben! (definiert durch Koordinaten)
+                        else if(splitted[i].search(/^[A-Z]+.*\(\s*[0-9\.\-]+\s*[,\|]\s*[0-9\.\-]+\s*\)/) != -1 &&
+                                splitted[i].search(/Macro\((.*)\)/) == -1) { // Punkt, startet mit einem Grossbuchstaben! (definiert durch Koordinaten)
                             splitted[i].match(/^([A-Z]+\S*)\s*\(\s*(.*)\s*[,\|]\s*(.*)\s*\)$/);
                             objName = RegExp.$1; // Name
                             attributes.name = objName;
@@ -318,8 +318,8 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                             output.points.push(this.create('point',[1.0*RegExp.$2,1.0*RegExp.$3],attributes));
                             output[objName] = output.points[output.points.length-1];
                         }
-                        else if(splitted[i].search(/^[A-Z]+.*\(.+(([,\|]\s*[0-9\.\-]+\s*){2})?/) != -1
-                                && splitted[i].search(/Macro\((.*)\)/) == -1) { // Gleiter, mit oder ohne Koordinaten
+                        else if(splitted[i].search(/^[A-Z]+.*\(.+(([,\|]\s*[0-9\.\-]+\s*){2})?/) != -1 &&
+                                splitted[i].search(/Macro\((.*)\)/) == -1) { // Gleiter, mit oder ohne Koordinaten
                             splitted[i].match(/([A-Z]+.*)\((.*)\)/);
                             objName = RegExp.$1;
                             defElements = RegExp.$2;
@@ -575,11 +575,11 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                             obj = [];
                             obj[0] = (function(el, board) { return function() {
                                                                           return (1-el[0])*el[1].coords.usrCoords[1]+el[0]*el[2].coords.usrCoords[1];
-                                                           }}
+                                                           };}
                                               )(defElements, this);
                             obj[1] = (function(el, board) { return function() {
                                                                           return (1-el[0])*el[1].coords.usrCoords[2]+el[0]*el[2].coords.usrCoords[2];
-                                                           }}
+                                                           };}
                                               )(defElements, this);
                             if(objName != '') {
                                 attributes.name = objName;
