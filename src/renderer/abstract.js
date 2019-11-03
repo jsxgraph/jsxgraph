@@ -1895,7 +1895,7 @@ define([
          *
          * @see JXG.SVGRenderer#dumpToDataURL
          */
-        dumpToDataURI: function(ingnoreTexts) {},
+        dumpToDataURI: function (_ignoreTexts) {},
 
         /**
          * Convert SVG construction to canvas.
@@ -1903,7 +1903,7 @@ define([
          *
          * @see JXG.SVGRenderer#dumpToCanvas
          */
-        dumpToCanvas: function(canvasId) {},
+        dumpToCanvas: function (canvasId, w, h, _ignoreTexts) {},
 
         /**
          * Display SVG image in html img-tag which enables
@@ -1911,7 +1911,7 @@ define([
          *
          * See JXG.SVGRenderer#screenshot
          */
-        screenshot: function(board) {}
+        screenshot: function (board) {}
 
     });
 
