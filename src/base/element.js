@@ -1183,12 +1183,19 @@ define([
                     // })
                     // Now, only the supplied label attributes are overwritten.
                     // Otherwise, the value of label would be {visible:false} only.
-                    if (Type.isObject(value) && Type.exists(this.visProp[key])) {
+                    if (Type.isObject(value) &&
+                        Type.exists(this.visProp[key])) {
+
                         this.visProp[key] = Type.merge(this.visProp[key], value);
 
-                //
-
-                        if (Type.exists(this[key])) {
+                        // First, handle the special case
+                        // ticks.setAttribute({label: {anchorX: "right", ..., visible: true});
+                        if (this.type === Const.OBJECT_TYPE_TICKS && Type.exists(this.labels)) {
+                            le = this.labels.length;
+                            for (j = 0; j < le; j++) {
+                                this.labels[j].setAttribute(value);
+                            }
+                        } else if (Type.exists(this[key])) {
                             if (Type.isArray(this[key])) {
                                 for (j = 0; j < this[key].length; j++) {
                                     this[key][j].setAttribute(value);
@@ -1196,13 +1203,6 @@ define([
                             } else {
                                 this[key].setAttribute(value);
                             }
-                        } else { 
-                            if (this.type === Const.OBJECT_TYPE_TICKS && Type.exists(this.labels)) {
-                                le = this.labels.length;
-                                for (j = 0; j < le; j++) {
-                                    this.labels[j].setAttribute(value);
-                                }
-                            } 
                         }
                         continue;
                     }
