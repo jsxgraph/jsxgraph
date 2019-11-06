@@ -3,6 +3,7 @@
 
 Compatibility:
 ------------
+* Safari / iOS 13 use pointer events.
 * Since Safari 12, `board.renderer.screenshot()` also supports texts in Safari.
 * JessieCode parse errors are handed over to the user and can be catched by try {} catch (e) {}
 
@@ -10,10 +11,10 @@ Compatibility:
 New Features
 ------------
 
-* Polygon / curve clipping and boolean operation on curves is now enabled.
-Possible are intersection, union or difference of curves, polygones or circles.
+* Polygon / curve clipping and boolean operation on curves is now enabled. 
+Possible operations are intersection, union or difference of curves, polygones or circles.
 * New math functions: cot and acot, nthroot, cbrt, binomial. Available as JXG.Math.cot, ...
-* JXG.Math.pow: handle x^(1/n) for x < 0 and n odd integer
+* JXG.Math.pow: handle x^(1/n) for x<0 and n odd integer
 * Add board attributes "showFullscreen" and "fullscreen"
 * New board attribute `maxBoundingBox`
 * Faces for hatch marks and ticks (|><)
@@ -52,10 +53,12 @@ Improvements
 * Update wordpress plug-in to use jsxgraphcore.js from jsxgraph.org
 * Update MediaWiki plug-in
 * Update package.json
+* Improved pan / pinch-to-zoom handling
 
 Bug fixes
 ---------
 
+* Glider on transformed curves
 * Fix call of free()
 * Address npm security alerts
 * Line rotation with pointer events on Edge
@@ -79,6 +82,8 @@ Bug fixes
 * Stop using deprecated hide method in `changePointStyle`
 * Various changes in sketch reader for sketchometry
 * Geogebra reader: Fix argument order when mirroring across line
+* Update MediaWiki plug-in
+
 
 
 0.99.7
