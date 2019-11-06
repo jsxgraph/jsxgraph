@@ -304,7 +304,7 @@
                              )
                          );
                  break;
-                 
+
              case 'acot':
                  newNode = this.createNode('node_op', 'op_neg',
                             this.createNode('node_op', 'op_div',
