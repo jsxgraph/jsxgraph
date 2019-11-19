@@ -847,10 +847,12 @@ define([
             // For non-closed paths
             if (true && typeof subject_first_point_type === 'string') {
                 S[S.length - 1].neighbour = C[0];
+                // S[0].first_point_type = subject_first_point_type;
                 S[S.length - 1].first_point_type = subject_first_point_type;
             }
             if (true && typeof clip_first_point_type === 'string') {
                 C[C.length - 1].neighbour = S[0];
+                // C[0].first_point_type = clip_first_point_type;
                 C[C.length - 1].first_point_type = clip_first_point_type;
             }
 
