@@ -347,7 +347,7 @@ define([
                         this.label.fullUpdate();
                     }
 
-                    this.point2.coords = new Coords(Const.COORDS_BY_USER, [
+                    this.point2.coords = (Const.COORDS_BY_USER, [
                         this.point1.coords.usrCoords[1] + dx * f,
                         this.point1.coords.usrCoords[2] + dy * f
                     ], this.board);

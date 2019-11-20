@@ -446,6 +446,27 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
         },
 
         /**
+         * Euclidean norm of a vector.
+         *
+         * @param {Array} a Array containing a vector.
+         * @param {Number} n (Optional) length of the array.
+         * @returns {Number} Euclidean norm of the vector.
+         */
+        norm: function(a, n) {
+            var i, sum = 0.0;
+
+            if (n === undef || !Type.isNumber(n)) {
+                n = a.length;
+            }
+
+            for (i = 0; i < n; i++) {
+                sum += a[i] * a[i];
+            }
+
+            return Math.sqrt(sum);
+        },
+
+        /**
          * Compute the factorial of a positive integer. If a non-integer value
          * is given, the fraction will be ignored.
          * @function

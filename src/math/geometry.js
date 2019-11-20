@@ -452,7 +452,7 @@ define([
         },
 
         /**
-         * Calculates the Euclidean norm for two given arrays of the same length.
+         * Calculates the Euclidean distance for two given arrays of the same length.
          * @param {Array} array1 Array of Number
          * @param {Array} array2 Array of Number
          * @param {Number} [n] Length of the arrays. Default is the minimum length of the given arrays.
@@ -2537,7 +2537,6 @@ define([
 
             return Math.abs(nom) / Math.sqrt(a + b);
         },
-
 
         /**
          * Helper function to create curve which displays a Reuleaux polygons.
