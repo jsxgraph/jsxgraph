@@ -369,13 +369,13 @@ define([
             var status,
                 P = path1[0];
 
-            if (first_point_type === 'in') {
-                status = 'exit';
-                P.entry_exit = 'entry'; // For non-closed paths
-            } else if (first_point_type === 'out') {
-                status = 'entry';
-                P.entry_exit = 'exit';  // For non-closed paths
-            } else {
+            // if (first_point_type === 'in') {
+            //     status = 'exit';
+            //     P.entry_exit = 'entry'; // For non-closed paths
+            // } else if (first_point_type === 'out') {
+            //     status = 'entry';
+            //     P.entry_exit = 'exit';  // For non-closed paths
+            // } else {
                 if (this.windingNumber(P.usrCoords, path2) === 0) {
                     status = 'entry';
                     // console.log(P.usrCoords, 'OUT', status);
@@ -383,7 +383,7 @@ define([
                     status = 'exit';
                     // console.log(P.usrCoords, 'IN', status);
                 }
-            }
+            // }
 
             while (!P._end) {
                 P = P._next;
@@ -460,7 +460,7 @@ define([
                                 current = current._next;
                             }
                         } while (!Type.exists(current.intersect) &&
-                                 !Type.exists(current.first_point_type) &&
+                                //  !Type.exists(current.first_point_type) &&
                                  cnt < maxCnt);
                     } else {
                         current = current._prev;
@@ -474,7 +474,7 @@ define([
                                 current = current._prev;
                             }
                         } while (!Type.exists(current.intersect) &&
-                                 !Type.exists(current.first_point_type) &&
+                                //  !Type.exists(current.first_point_type) &&
                                  cnt < maxCnt);
                     }
                     current.done = true;
@@ -779,8 +779,8 @@ define([
          * </script><pre>
          *
          */
-        greinerHormann: function(subject, clip, clip_type, board,
-                subject_first_point_type, clip_first_point_type) {
+        greinerHormann: function(subject, clip, clip_type, board) { //},
+                // subject_first_point_type, clip_first_point_type) {
 
             var i, r, rad,
                 steps = 359,
@@ -845,16 +845,18 @@ define([
             C_intersect = res[1];
 
             // For non-closed paths
-            if (true && typeof subject_first_point_type === 'string') {
-                S[S.length - 1].neighbour = C[0];
-                // S[0].first_point_type = subject_first_point_type;
-                S[S.length - 1].first_point_type = subject_first_point_type;
-            }
-            if (true && typeof clip_first_point_type === 'string') {
-                C[C.length - 1].neighbour = S[0];
-                // C[0].first_point_type = clip_first_point_type;
-                C[C.length - 1].first_point_type = clip_first_point_type;
-            }
+            // if (true && typeof subject_first_point_type === 'string') {
+            //     S[0].neighbour = C[C.length - 1];
+            //     S[0].first_point_type = subject_first_point_type;
+            //     S[S.length - 1].neighbour = C[0];
+            //     S[S.length - 1].first_point_type = subject_first_point_type;
+            // }
+            // if (true && typeof clip_first_point_type === 'string') {
+            //     C[0].neighbour = S[S.length - 1];
+            //     C[0].first_point_type = clip_first_point_type;
+            //     C[C.length - 1].neighbour = S[0];
+            //     C[C.length - 1].first_point_type = clip_first_point_type;
+            // }
 
             // Handle cases without intersections
             if (S_intersect.length === 0) {
@@ -862,14 +864,14 @@ define([
             }
 
             // Phase 2: mark intersection points as entry or exit points
-            this.markEntryExit(S, C, subject_first_point_type);
+            this.markEntryExit(S, C); //, subject_first_point_type);
             if (S[0].distance(Const.COORDS_BY_USER, C[0]) === 0) {
                 // Randomly disturb the first point of the second path
                 // if both paths start at the same point.
                 C[0].usrCoords[1] *= 1 + Math.random() * 0.0001 - 0.00005;
                 C[0].usrCoords[2] *= 1 + Math.random() * 0.0001 - 0.00005;
             }
-            this.markEntryExit(C, S, clip_first_point_type);
+            this.markEntryExit(C, S); //, clip_first_point_type);
 
             if (false) {
                 for (i = 0; i < S_intersect.length; i++) {
