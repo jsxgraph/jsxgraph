@@ -409,13 +409,12 @@ define([
          *
          * @private
          * @param  {Array} S           Subject path
-         * @param  {Array} C           Clip path
          * @param  {Array} S_intersect Array containing the intersection vertices of the subject path
          * @param  {String} clip_type  contains the Boolean operation: 'intersection', 'union', or 'difference'
          * @return {Array}             Array consisting of two arrays containing the x-coordinates and the y-coordintaes of
          *      the resulting path.
          */
-        tracing:  function(S, C, S_intersect, clip_type) {
+        tracing:  function(S, S_intersect, clip_type) {
             var P, current, start,
                 cnt = 0,
                 maxCnt = 40000,
@@ -885,7 +884,7 @@ define([
                 }
             }
             // Phase 3: tracing
-            return this.tracing(S, C, S_intersect, clip_type);
+            return this.tracing(S, S_intersect, clip_type);
 
         },
 
