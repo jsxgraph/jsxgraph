@@ -393,8 +393,8 @@ define([
                     x =  B[2];
                     y = -B[1];
                 }
-                change = true;
 
+                change = true;
                 if (Math.abs(z) > Mat.eps && Math.abs(x - C[1]) < Mat.eps && Math.abs(y - C[2]) < Mat.eps) {
                     x = C[1] + A[2] - C[2];
                     y = C[2] - A[1] + C[1];
