@@ -807,7 +807,45 @@ define([
      * })();
      * </script><pre>
      *
+     *
      * @example
+     * // Display the angle value instead of the name
+     * var p1 = board.create('point', [0,2]);
+     * var p2 = board.create('point', [0,0]);
+     * var p3 = board.create('point', [-2,0.2]);
+     *
+     * var a = board.create('angle', [p1, p2, p3], {
+     * 	 radius: 1,
+     *   name: function() {
+     *   	return JXG.Math.Geometry.trueAngle(p1, p2, p3).toFixed(1) + '°';
+     *   }});
+     *
+     * </pre><div id="JXGc813f601-8dd3-4030-9892-25c6d8671512" class="jxgbox" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     *     (function() {
+     *         var board = JXG.JSXGraph.initBoard('JXGc813f601-8dd3-4030-9892-25c6d8671512',
+     *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+     *     const board = JXG.JSXGraph.initBoard('jxgbox', {
+     *         boundingbox: [-5, 5, 5, -5], axis:true
+     *     });
+     *
+     *     var p1 = board.create('point', [0,2]);
+     *     var p2 = board.create('point', [0,0]);
+     *     var p3 = board.create('point', [-2,0.2]);
+     *
+     *     var a = board.create('angle', [p1, p2, p3], {
+     *     	radius: 1,
+     *       name: function() {
+     *       	return JXG.Math.Geometry.trueAngle(p1, p2, p3).toFixed(1) + '°';
+     *       }});
+     *
+     *     })();
+     *
+     * </script><pre>
+     *
+     *
+     * @example
+     * // Apply a transformation to an angle.
      * var t = board.create('transform', [2, 1.5], {type: 'scale'});
      * var an1 = board.create('angle', [[-4,3.9], [-3, 4], [-3, 3]]);
      * var an2 = board.create('curve', [an1, t]);
