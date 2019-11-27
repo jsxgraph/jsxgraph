@@ -396,8 +396,8 @@ define([
                     "\nPossible parent types: [x,y], [z,x,y], [element,transformation]");
         }
 
-        if (Type.evaluate(attr.rotate) !== 0) {
-            im.addRotation(Type.evaluate(attr.rotate));
+        if (attr.rotate !== 0) {  // This is the default value, i.e. no rotation
+            im.addRotation(attr.rotate);
         }
 
         return im;

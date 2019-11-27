@@ -1703,7 +1703,9 @@ define([
                     }
                 ], {type: 'scale'});
 
-                tRot = this.board.create('transform', [angle * Math.PI / 180], {type: 'rotate'});
+                tRot = this.board.create('transform', [
+                        function() { return Type.evaluate(angle) * Math.PI / 180; }
+                    ], {type: 'rotate'});
 
                 tOffInv.bindTo(this);
                 tS.bindTo(this);

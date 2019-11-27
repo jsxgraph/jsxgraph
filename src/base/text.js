@@ -995,8 +995,8 @@ define([
                     "\nPossible parent types: [x,y], [z,x,y], [element,transformation]");
         }
 
-        if (Type.evaluate(attr.rotate) !== 0 && attr.display === 'internal') {
-            t.addRotation(Type.evaluate(attr.rotate));
+        if (attr.rotate !== 0 && attr.display === 'internal') { // This is the default value, i.e. no rotation
+            t.addRotation(attr.rotate);
         }
 
         return t;
