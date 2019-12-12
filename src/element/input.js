@@ -57,9 +57,13 @@ define([
         };
 
     /**
-     * @class This element is used to provide a constructor for special texts containing a form input element.
+     * @class This element is used to provide a constructor for special texts containing a
+     * HTML form input element.
      * <p>
-     * If the width of element is set with the attribute "cssStyle", the width of the label must be added.
+     * If the width of element is set with the attribute "cssStyle", the width of the
+     * label must be added.
+     * <p>
+     * For this element, the attribute "display" has to have the value 'html' (which is the default).
      * @pseudo
      * @description
      * @name Input

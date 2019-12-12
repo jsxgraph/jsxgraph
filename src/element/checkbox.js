@@ -57,7 +57,10 @@ define([
         };
 
     /**
-     * @class This element is used to provide a constructor for special texts containing a form checkbox element.
+     * @class This element is used to provide a constructor for special texts containing a
+     * form checkbox element.
+     * <p>
+     * For this element, the attribute "display" has to have the value 'html' (which is the default).
      *
      * @pseudo
      * @description

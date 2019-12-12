@@ -1672,7 +1672,9 @@ define([
              * @type Boolean
              * @default false
              */
-            disabled: false
+            disabled: false,
+
+            display: 'html'
 
             /**#@-*/
         },
@@ -1781,8 +1783,9 @@ define([
              * @type Boolean
              * @default false
              */
-             checked: false
+            checked: false,
 
+            display: 'html'
 
             /**#@-*/
         },
@@ -2455,7 +2458,9 @@ define([
              * @type Number
              * @default 524288 (as in HTML)
              */
-            maxlength: 524288
+            maxlength: 524288,
+
+            display: 'html'
 
             /**#@-*/
         },
