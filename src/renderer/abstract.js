@@ -450,7 +450,7 @@ define([
 
             ev_fa = Type.evaluate(el.visProp.firstarrow);
             if (ev_fa) {
-                size = 3;
+                size = 6;
                 if (Type.exists(ev_fa.size)) {
                     size = Type.evaluate(ev_fa.size);
                 }
@@ -461,7 +461,7 @@ define([
             }
             ev_la = Type.evaluate(el.visProp.lastarrow);
             if (ev_la) {
-                size = 3;
+                size = 6;
                 if (Type.exists(ev_la.size)) {
                     size = Type.evaluate(ev_la.size);
                 }

@@ -1501,6 +1501,23 @@ define([
             /**#@-*/
         },
 
+        /* special arc options */
+        arrow: {
+            /**#@+
+             * @visprop
+             */
+
+            firstArrow: false,
+
+            lastArrow: {
+                type: 1,
+                highlightSize: 6,
+                size: 6
+            }
+
+            /**#@-*/
+        },
+
         /* special axis options */
         axis: {
             /**#@+

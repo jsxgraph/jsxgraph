@@ -1349,11 +1349,12 @@ define([
      * </script><pre>
      */
     JXG.createArrow = function (board, parents, attributes) {
-        var el;
+        var el, attr;
 
-        attributes.firstArrow = false;
-        attributes.lastArrow = true;
-        el = board.create('line', parents, attributes).setStraight(false, false);
+        attributes.straightFirst = false;
+        attributes.straightLast = false;
+        attr = Type.copyAttributes(attributes, board.options, 'arrow');
+        el = board.create('line', parents, attr);
         //el.setArrow(false, true);
         el.type = Const.OBJECT_TYPE_VECTOR;
         el.elType = 'arrow';
