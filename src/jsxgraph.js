@@ -121,6 +121,18 @@ define([
             return Options.board.renderer;
         }()),
 
+        /**
+         * Initialize the rendering engine
+         *
+         * @param  {String} box        HTML id of the div-element which hosts the JSXGraph construction
+         * @param  {Object} dim        The dimensions of the board
+         * @param  {Object} doc        Usually, this is document object of the browser window.  If false or null, this defaults
+         * to the document object of the browser.
+         * @param  {Object} attrRenderer Attribute 'renderer', speficies the rendering engine. Possible values are 'auto', 'svg',
+         *  'canvas', 'no', and 'vml'.
+         * @returns {Object}           Reference to the rendering engine object.
+         * @private
+         */
         initRenderer: function (box, dim, doc, attrRenderer) {
             var boxid, renderer;
 
