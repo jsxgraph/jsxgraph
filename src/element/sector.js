@@ -589,7 +589,6 @@ define([
 
     JXG.registerElement('sector', JXG.createSector);
 
-
     /**
      * @class A circumcircle sector is different from a {@link Sector} mostly in the way the parent elements are interpreted.
      * At first, the circum centre is determined from the three given points. Then the sector is drawn from <tt>p1</tt> through
