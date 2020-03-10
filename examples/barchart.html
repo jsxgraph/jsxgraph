@@ -9,10 +9,10 @@
         <!-- Drawing area -->
         <script type="text/javascript">
             /* <![CDATA[ */
-            board = JXG.JSXGraph.initBoard('jxgbox', {showNavigation:false, showCopyright:false, originX: 50, originY: 450, unitX: 50, unitY: 50, axis:true});
-            board.suspendUpdate();           
+            board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-1, 9, 13, -3], axis:true});
 
-            var s = board.createElement('slider', [[8,7],[11,7],[1,1,1.5]], {name:'S',strokeColor:'black',fillColor:'white'});
+
+            var s = board.create('slider', [[8,7],[11,7],[1,1,1.5]], {name:'S', strokeColor:'black', fillColor:'white'});
             var f = [function(){return (s.Value()*4.5).toFixed(2);},
                      function(){return (s.Value()*(-1)).toFixed(2);},
                      function(){return (s.Value()*3).toFixed(2);},
@@ -25,16 +25,16 @@
                      function(){return (s.Value()*2).toFixed(2);},
                      function(){return (s.Value()*(-1.25)).toFixed(2);}
                      ];
-            var chart = board.createElement('chart', [f], 
+            var chart = board.create('chart', [f], 
                                             {chartStyle:'bar',width:0.8,labels:f,
                                              colorArray:['#8E1B77','#BE1679','#DC1765','#DA2130','#DB311B','#DF4917','#E36317','#E87F1A',
                                                          '#F1B112','#FCF302','#C1E212']});
             
             var dataArr = [4,1,3,2,5,6.5,1.5,2,0.5,1.5,-1];            
-            var chart2 = board.createElement('chart', dataArr, {chartStyle:'line,point'});
-            chart2[0].setProperty('strokeColor:black','strokeWidth:2pt');
+            var chart2 = board.create('chart', dataArr, {chartStyle:'line,point'});
+            chart2[0].setAttribute('strokeColor:black','strokeWidth:2pt');
             for(var i=0; i<11;i++) {
-                chart2[1][i].setProperty({strokeColor:'black',fillColor:'white',face:'[]', size:4, strokeWidth:'2pt'});
+                chart2[1][i].setAttribute({strokeColor:'black',fillColor:'white',face:'[]', size:4, strokeWidth:'2pt'});
             }
             board.unsuspendUpdate();
 

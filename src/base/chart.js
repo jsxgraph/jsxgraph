@@ -69,9 +69,6 @@ define([
 
      /**
       *
-      * TODO
-      * Chart plotting
-      *
       * The Chart class is a basic class for the chart object.
       * @class Creates a new basic chart object. Do not use this constructor to create a chart.
       * Use {@link JXG.Board#create} with type {@link Chart} instead.
@@ -599,27 +596,22 @@ define([
                     return t;
                 };
 
-            // TODO throw errors
             if (len <= 0) {
-                JXG.debug("No data");
-                return;
+                throw new Error('JSXGraph radar chart: no data');
             }
             // labels for axes
             paramArray = attributes.paramarray;
             if (!Type.exists(paramArray)) {
-                JXG.debug("Need paramArray attribute");
-                return;
+                throw new Error('JSXGraph radar chart: need paramArray attribute');
             }
             numofparams = paramArray.length;
             if (numofparams <= 1) {
-                JXG.debug("Need more than 1 param");
-                return;
+                throw new Error('JSXGraph radar chart: need more than one param in paramArray');
             }
 
             for (i = 0; i < len; i++) {
                 if (numofparams !== parents[i].length) {
-                    JXG.debug("Use data length equal to number of params (" + parents[i].length + " != " + numofparams + ")");
-                    return;
+                    throw new Error('JSXGraph radar chart: use data length equal to number of params (' + parents[i].length + ' != ' + numofparams + ')');
                 }
             }
 
@@ -685,23 +677,19 @@ define([
             }
 
             if (sshifts.length !== numofparams) {
-                JXG.debug("Start shifts length is not equal to number of parameters");
-                return;
+                throw new Error('JSXGraph radar chart: start shifts length is not equal to number of parameters');
             }
 
             if (eshifts.length !== numofparams) {
-                JXG.debug("End shifts length is not equal to number of parameters");
-                return;
+                throw new Error('JSXGraph radar chart: end shifts length is not equal to number of parameters');
             }
 
             if (starts.length !== numofparams) {
-                JXG.debug("Starts length is not equal to number of parameters");
-                return;
+                throw new Error('JSXGraph radar chart: starts length is not equal to number of parameters');
             }
 
             if (ends.length !== numofparams) {
-                JXG.debug("Ends length is not equal to number of parameters");
-                return;
+                throw new Error('JSXGraph radar chart: snds length is not equal to number of parameters');
             }
 
             // labels for legend
@@ -813,8 +801,7 @@ define([
                 ncircles = clabelArray.length;
 
                 if (ncircles < 2) {
-                    JXG.debug("Too less circles");
-                    return;
+                    throw new Error('JSXGraph radar chart: too less circles in circleLabelArray');
                 }
 
                 pcircles = [];
@@ -894,7 +881,7 @@ define([
      * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
      * @param {Array} x Array of x-coordinates (default case, see below for alternatives)
      * @param {Array} y Array of y-coordinates (default case, see below for alternatives)
-     *
+     * <p>
      * The parent array may be of one of the following forms:
      * <ol>
      * <li> Parents array looks like [number, number, number, ...]. It is interpreted as array of y-coordinates.
@@ -904,9 +891,294 @@ define([
      * Default case: [[x0,x1,x2,...],[y1,y2,y3,...]]
      * </ol>
      *
-     * The attribute value for the key 'style' determines the type(s) of the chart. 'style' is a comma
+     * The attribute value for the key 'chartStyle' determines the type(s) of the chart. 'chartStyle' is a comma
      * separated list of strings of the possible chart types
      * 'bar', 'fit', 'line',  'pie', 'point', 'radar', 'spline'.
+     *
+     * @example
+     *   board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-0.5,8,9,-2],axis:true});
+     *
+     *   var f = [4, 2, -1, 3, 6, 7, 2];
+     *   var chart = board.create('chart', f,
+     *                 {chartStyle:'bar',
+     *                  width:0.8,
+     *                  labels:f,
+     *                  colorArray:['#8E1B77','#BE1679','#DC1765','#DA2130','#DB311B','#DF4917','#E36317','#E87F1A',
+     *                              '#F1B112','#FCF302','#C1E212'],
+     *                  label: {fontSize:30, display:'internal', anchorX:'left', rotate:90}
+     *             });
+     *
+     * </pre><div id="JXG1528c395-9fa4-4210-ada6-7fc5652ed920" class="jxgbox" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     *     (function() {
+     *         var board = JXG.JSXGraph.initBoard('JXG1528c395-9fa4-4210-ada6-7fc5652ed920',
+     *             {boundingbox: [-0.5,8,9,-2], axis: true, showcopyright: false, shownavigation: false});
+     *                 var f = [4,2,-1,3,6,7,2];
+     *                 var chart = board.create('chart', f,
+     *                     {chartStyle:'bar',
+     *                      width:0.8,
+     *                      labels:f,
+     *                      colorArray:['#8E1B77','#BE1679','#DC1765','#DA2130','#DB311B','#DF4917','#E36317','#E87F1A',
+     *                                  '#F1B112','#FCF302','#C1E212'],
+     *                      label: {fontSize:30, display:'internal', anchorX:'left', rotate:90}
+     *                 });
+     *
+     *     })();
+     *
+     * </script><pre>
+     *
+     * @example
+     *   board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-1, 9, 13, -3], axis:true});
+     *
+     *   var s = board.create('slider', [[4,7],[8,7],[1,1,1.5]], {name:'S', strokeColor:'black', fillColor:'white'});
+     *   var f = [function(){return (s.Value()*4.5).toFixed(2);},
+     *                      function(){return (s.Value()*(-1)).toFixed(2);},
+     *                      function(){return (s.Value()*3).toFixed(2);},
+     *                      function(){return (s.Value()*2).toFixed(2);},
+     *                      function(){return (s.Value()*(-0.5)).toFixed(2);},
+     *                      function(){return (s.Value()*5.5).toFixed(2);},
+     *                      function(){return (s.Value()*2.5).toFixed(2);},
+     *                      function(){return (s.Value()*(-0.75)).toFixed(2);},
+     *                      function(){return (s.Value()*3.5).toFixed(2);},
+     *                      function(){return (s.Value()*2).toFixed(2);},
+     *                      function(){return (s.Value()*(-1.25)).toFixed(2);}
+     *                      ];
+     *   var chart = board.create('chart', [f],
+     *                                             {chartStyle:'bar',width:0.8,labels:f,
+     *                                              colorArray:['#8E1B77','#BE1679','#DC1765','#DA2130','#DB311B','#DF4917','#E36317','#E87F1A',
+     *                                                          '#F1B112','#FCF302','#C1E212']});
+     *
+     *   var dataArr = [4,1,3,2,5,6.5,1.5,2,0.5,1.5,-1];
+     *   var chart2 = board.create('chart', dataArr, {chartStyle:'line,point'});
+     *   chart2[0].setAttribute('strokeColor:black','strokeWidth:2pt');
+     *   for(var i=0; i<11;i++) {
+     *            chart2[1][i].setAttribute({strokeColor:'black',fillColor:'white',face:'[]', size:4, strokeWidth:'2pt'});
+     *   }
+     *   board.unsuspendUpdate();
+     *
+     * </pre><div id="JXG22deb158-48c6-41c3-8157-b88b4b968a55" class="jxgbox" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     *     (function() {
+     *         var board = JXG.JSXGraph.initBoard('JXG22deb158-48c6-41c3-8157-b88b4b968a55',
+     *             {boundingbox: [-1, 9, 13, -3], axis: true, showcopyright: false, shownavigation: false});
+     *                 var s = board.create('slider', [[4,7],[8,7],[1,1,1.5]], {name:'S', strokeColor:'black', fillColor:'white'});
+     *                 var f = [function(){return (s.Value()*4.5).toFixed(2);},
+     *                          function(){return (s.Value()*(-1)).toFixed(2);},
+     *                          function(){return (s.Value()*3).toFixed(2);},
+     *                          function(){return (s.Value()*2).toFixed(2);},
+     *                          function(){return (s.Value()*(-0.5)).toFixed(2);},
+     *                          function(){return (s.Value()*5.5).toFixed(2);},
+     *                          function(){return (s.Value()*2.5).toFixed(2);},
+     *                          function(){return (s.Value()*(-0.75)).toFixed(2);},
+     *                          function(){return (s.Value()*3.5).toFixed(2);},
+     *                          function(){return (s.Value()*2).toFixed(2);},
+     *                          function(){return (s.Value()*(-1.25)).toFixed(2);}
+     *                          ];
+     *                 var chart = board.create('chart', [f],
+     *                                                 {chartStyle:'bar',width:0.8,labels:f,
+     *                                                  colorArray:['#8E1B77','#BE1679','#DC1765','#DA2130','#DB311B','#DF4917','#E36317','#E87F1A',
+     *                                                              '#F1B112','#FCF302','#C1E212']});
+     *
+     *                 var dataArr = [4,1,3,2,5,6.5,1.5,2,0.5,1.5,-1];
+     *                 var chart2 = board.create('chart', dataArr, {chartStyle:'line,point'});
+     *                 chart2[0].setAttribute('strokeColor:black','strokeWidth:2pt');
+     *                 for(var i=0; i<11;i++) {
+     *                     chart2[1][i].setAttribute({strokeColor:'black',fillColor:'white',face:'[]', size:4, strokeWidth:'2pt'});
+     *                 }
+     *                 board.unsuspendUpdate();
+     *
+     *     })();
+     *
+     * </script><pre>
+     *
+     * @example
+     *     var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-1, 10, 11, -2], axis: true});
+     *     var dataArr = [4, 1, 3, 2, 5, 7, 1.5, 2];
+     *
+     *     // Line chart
+     *     function lineChart() {
+     *         JXG.JSXGraph.freeBoard(board);
+     *         board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-1, 10, 11, -2], axis: true});
+     *         board.suspendUpdate();
+     *         var a = board.create('chart', dataArr, {chartStyle:'line',strokeWidth:4,strokeColor:'#0000ff'});
+     *         board.unsuspendUpdate();
+     *     };
+     *
+     *     // Line chart with cubic splines
+     *     function splineChart() {
+     *         JXG.JSXGraph.freeBoard(board);
+     *         board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-1, 10, 11, -2], axis: true});
+     *         board.suspendUpdate();
+     *         var a = board.create('chart', dataArr, {chartStyle:'spline',strokeWidth:4,strokeColor:'#0000ff'});
+     *         board.unsuspendUpdate();
+     *     };
+     *
+     *     // Bar chart
+     *     function barChart() {
+     *         JXG.JSXGraph.freeBoard(board);
+     *         board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-1, 10, 11, -2], axis: true});
+     *         board.suspendUpdate();
+     *         var a = board.create('chart', dataArr, {chartStyle:'bar',width:0.6,labels:dataArr});
+     *         board.unsuspendUpdate();
+     *     };
+     *
+     *     // Single chart with multiple styles
+     *     function multiStyleChart() {
+     *         JXG.JSXGraph.freeBoard(board);
+     *         board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-1, 10, 11, -2], axis: true});
+     *         board.suspendUpdate();
+     *         var a = board.create('chart', dataArr, {chartStyle:'bar,line,point',width:0.8,size:4,labels:dataArr});
+     *         board.unsuspendUpdate();
+     *     };
+     *
+     *     // Two bar charts
+     *     function twoBarCharts() {
+     *         JXG.JSXGraph.freeBoard(board);
+     *         board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-1, 10, 11, -2], axis: true});
+     *         board.suspendUpdate();
+     *         var a = board.create('chart', [[1,3,5,7],[4,-1,3,2]], {chartStyle:'bar',width:0.8});
+     *         var b = board.create('chart', [[2,4,6,8],[3,1,2,5]], {chartStyle:'bar',fillColor:'#C3D9FF',width:0.8});
+     *         board.unsuspendUpdate();
+     *     };
+     *
+     *     // Bar chart with horizontal bars
+     *     function horizontalBarChart() {
+     *         JXG.JSXGraph.freeBoard(board);
+     *         board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-1, 10, 11, -2], axis: true});
+     *         board.suspendUpdate();
+     *         var a = board.create('chart', dataArr, {chartStyle:'bar',labels:dataArr,width:0.8,dir:'horizontal'});
+     *         board.unsuspendUpdate();
+     *     };
+     *
+     *     // Single chart with dynamic entries
+     *     function dynamicBarChart() {
+     *         JXG.JSXGraph.freeBoard(board);
+     *         board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-1, 10, 11, -2], axis: true});
+     *         board.suspendUpdate();
+     *         var s = board.create('slider', [[5,-1],[8,-1], [1,1,2]], {name:'S'});
+     *         var f = [function(){return Math.round(s.Value()*4,2);},
+     *                  function(){return Math.round(s.Value()*(-1),2);},
+     *                  function(){return Math.round(s.Value()*3,2);},
+     *                  function(){return Math.round(s.Value()*2,2);}];
+     *         var chart = board.create('chart', [f], {chartStyle:'bar',width:0.8,labels:f});
+     *         board.unsuspendUpdate();
+     *     };
+     *
+     *     // Regression curve
+     *     function fitChart(deg) {
+     *         JXG.JSXGraph.freeBoard(board);
+     *         board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-1, 10, 11, -2], axis: true});
+     *         board.suspendUpdate();
+     *         var a = board.create('chart', dataArr,
+     *             {chartStyle:'bar,fit', degree:deg, colorArray:['#B02B2C','#3F4C6B','#C79810','#D15600'], dash:2}
+     *         );
+     *         board.unsuspendUpdate();
+     *     }
+     *     lineChart();
+     *
+     * </pre>
+     * <input type="button" value="Line chart" onClick="lineChart()">
+     * <input type="button" value="Spline chart" onClick="splineChart()">
+     * <input type="button" value="Bar chart" onClick="barChart()">
+     * <input type="button" value="Multiple styles" onClick="multiStyleChart()">
+     * <input type="button" value="Two bar charts" onClick="twoBarCharts()">
+     * <input type="button" value="Horizontal bars" onClick="horizontalBarChart()">
+     * <input type="button" value="Dynamic bars" onClick="dynamicBarChart()">
+     * <input type="button" value="Regression line" onClick="fitChart(1)">
+     * <input type="button" value="Regression parabola" onClick="fitChart(2)">
+     *
+     * <div id="JXG381daf29-eae3-473d-a3be-d5925610ed37" class="jxgbox" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     *      var board;
+     *      var dataArr = [4, 1, 3, 2, 5, 7, 1.5, 2];
+     *     var jxgid = "JXG22deb158-48c6-41c3-8157-b88b4b968a55";
+     *     (function() {
+     *         board = JXG.JSXGraph.initBoard('JXG381daf29-eae3-473d-a3be-d5925610ed37',
+     *             {boundingbox: [-1, 10, 11, -2], axis: true, showcopyright: false, shownavigation: false});
+     *       })();
+     *
+     *         // Line chart
+     *         function lineChart() {
+     *             JXG.JSXGraph.freeBoard(board);
+     *             board = JXG.JSXGraph.initBoard(jxgid, {boundingbox: [-1, 10, 11, -2], axis: true});
+     *             board.suspendUpdate();
+     *             var a = board.create('chart', dataArr, {chartStyle:'line',strokeWidth:4,strokeColor:'#0000ff'});
+     *             board.unsuspendUpdate();
+     *         };
+     *
+     *         // Line chart with cubic splines
+     *         function splineChart() {
+     *             JXG.JSXGraph.freeBoard(board);
+     *             board = JXG.JSXGraph.initBoard(jxgid, {boundingbox: [-1, 10, 11, -2], axis: true});
+     *             board.suspendUpdate();
+     *             var a = board.create('chart', dataArr, {chartStyle:'spline',strokeWidth:4,strokeColor:'#0000ff'});
+     *             board.unsuspendUpdate();
+     *         };
+     *
+     *         // Bar chart
+     *         function barChart() {
+     *             JXG.JSXGraph.freeBoard(board);
+     *             board = JXG.JSXGraph.initBoard(jxgid, {boundingbox: [-1, 10, 11, -2], axis: true});
+     *             board.suspendUpdate();
+     *             var a = board.create('chart', dataArr, {chartStyle:'bar',width:0.6,labels:dataArr});
+     *             board.unsuspendUpdate();
+     *         };
+     *
+     *         // Single chart with multiple styles
+     *         function multiStyleChart() {
+     *             JXG.JSXGraph.freeBoard(board);
+     *             board = JXG.JSXGraph.initBoard(jxgid, {boundingbox: [-1, 10, 11, -2], axis: true});
+     *             board.suspendUpdate();
+     *             var a = board.create('chart', dataArr, {chartStyle:'bar,line,point',width:0.8,size:4,labels:dataArr});
+     *             board.unsuspendUpdate();
+     *         };
+     *
+     *         // Two bar charts
+     *         function twoBarCharts() {
+     *             JXG.JSXGraph.freeBoard(board);
+     *             board = JXG.JSXGraph.initBoard(jxgid, {boundingbox: [-1, 10, 11, -2], axis: true});
+     *             board.suspendUpdate();
+     *             var a = board.create('chart', [[1,3,5,7],[4,-1,3,2]], {chartStyle:'bar',width:0.8});
+     *             var b = board.create('chart', [[2,4,6,8],[3,1,2,5]], {chartStyle:'bar',fillColor:'#C3D9FF',width:0.8});
+     *             board.unsuspendUpdate();
+     *         };
+     *
+     *         // Bar chart with horizontal bars
+     *         function horizontalBarChart() {
+     *             JXG.JSXGraph.freeBoard(board);
+     *             board = JXG.JSXGraph.initBoard(jxgid, {boundingbox: [-1, 10, 11, -2], axis: true});
+     *             board.suspendUpdate();
+     *             var a = board.create('chart', dataArr, {chartStyle:'bar',labels:dataArr,width:0.8,dir:'horizontal'});
+     *             board.unsuspendUpdate();
+     *         };
+     *
+     *         // Single chart with dynamic entries
+     *         function dynamicBarChart() {
+     *             JXG.JSXGraph.freeBoard(board);
+     *             board = JXG.JSXGraph.initBoard(jxgid, {boundingbox: [-1, 10, 11, -2], axis: true});
+     *             board.suspendUpdate();
+     *             var s = board.create('slider', [[5,-1],[8,-1], [1,1,2]], {name:'S'});
+     *             var f = [function(){return Math.round(s.Value()*4,2);},
+     *                      function(){return Math.round(s.Value()*(-1),2);},
+     *                      function(){return Math.round(s.Value()*3,2);},
+     *                      function(){return Math.round(s.Value()*2,2);}];
+     *             var chart = board.create('chart', [f], {chartStyle:'bar',width:0.8,labels:f});
+     *             board.unsuspendUpdate();
+     *         };
+     *
+     *         // Regression curve
+     *         function fitChart(deg) {
+     *             JXG.JSXGraph.freeBoard(board);
+     *             board = JXG.JSXGraph.initBoard(jxgid, {boundingbox: [-1, 10, 11, -2], axis: true});
+     *             board.suspendUpdate();
+     *             var a = board.create('chart', dataArr,
+     *                 {chartStyle:'bar,fit', degree:deg, colorArray:['#B02B2C','#3F4C6B','#C79810','#D15600'], dash:2}
+     *             );
+     *             board.unsuspendUpdate();
+     *         }
+     *         lineChart();
+     * </script><pre>
+     *
      */
     JXG.createChart = function (board, parents, attributes) {
         var data, row, i, j, col,
