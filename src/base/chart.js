@@ -74,8 +74,7 @@ define([
       *
       * The Chart class is a basic class for the chart object.
       * @class Creates a new basic chart object. Do not use this constructor to create a chart.
-      * Use {@link JXG.Board#create} with
-      * type {@link Chart} instead.
+      * Use {@link JXG.Board#create} with type {@link Chart} instead.
       * @constructor
       * @augments JXG.GeometryElement
       * @param {String,JXG.Board} board The board the new chart is drawn on.
@@ -164,13 +163,13 @@ define([
 
     JXG.extend(JXG.Chart.prototype, /** @lends JXG.Chart.prototype */ {
         /**
-         * anonymous function - description
+         * Create line chart defined by two data arrays.
          *
-         * @param  {String,JXG.Board} board      description
-         * @param  {type} x          description
-         * @param  {type} y          description
-         * @param  {type} attributes description
-         * @returns {type}            description
+         * @param  {String,JXG.Board} board      The board the chart is drawn on
+         * @param  {Array} x          Array of x-coordinates
+         * @param  {Array} y          Array of y-coordinates
+         * @param  {Object} attributes  Javascript object containing attributes like colors
+         * @returns {JXG.Curve}       JSXGraph curve
          */
         drawLine: function (board, x, y, attributes) {
             // we don't want the line chart to be filled
@@ -181,13 +180,14 @@ define([
         },
 
         /**
-         * anonymous function - description
+         * Create line chart that consists of a natural spline curve
+         * defined by two data arrays.
          *
-         * @param  {String,JXG.Board} board      description
-         * @param  {type} x          description
-         * @param  {type} y          description
-         * @param  {type} attributes description
-         * @returns {type}            description
+         * @param  {String,JXG.Board} board      The board the chart is drawn on
+         * @param  {Array} x          Array of x-coordinates
+         * @param  {Array} y          Array of y-coordinates
+         * @param  {Object} attributes Javascript object containing attributes like colors
+         * @returns {JXG.Curve}       JSXGraph (natural) spline curve
          */
         drawSpline: function (board, x, y, attributes) {
             // we don't want the spline chart to be filled
@@ -198,13 +198,15 @@ define([
         },
 
         /**
-         * anonymous function - description
+         * Create line chart where the curve is given by a regression polynomial
+         * defined by two data arrays. The degree of the polynomial is supplied
+         * through the attribute "degree" in attributes.
          *
-         * @param  {type} board      description
-         * @param  {type} x          description
-         * @param  {type} y          description
-         * @param  {type} attributes description
-         * @returns {type}            description
+         * @param  {String,JXG.Board} board      The board the chart is drawn on
+         * @param  {Array} x          Array of x-coordinates
+         * @param  {Array} y          Array of y-coordinates
+         * @param  {Object} attributes Javascript object containing attributes like colors
+         * @returns {JXG.Curve}    JSXGraph function graph object
          */
         drawFit: function (board, x, y, attributes) {
             var deg = attributes.degree;
@@ -219,26 +221,31 @@ define([
         },
 
         /**
-         * anonymous function - description
+         * Create bar chart defined by two data arrays.
+         * Attributes to change the layout of the bar chart are:
+         * <ul>
+         * <li> width (optional)
+         * <li> dir: 'horizontal' or 'vertical'
+         * <li> colors: array of colors
+         * <li> labels: array of labels
+         * </ul>
          *
-         * @param  {type} board      description
-         * @param  {type} x          description
-         * @param  {type} y          description
-         * @param  {type} attributes description
-         * @returns {type}            description
+         * @param  {String,JXG.Board} board      The board the chart is drawn on
+         * @param  {Array} x          Array of x-coordinates
+         * @param  {Array} y          Array of y-coordinates
+         * @param  {Object} attributes Javascript object containing attributes like colors
+         * @returns {Array}    Array of JXG polygons defining the bars
          */
         drawBar: function (board, x, y, attributes) {
             var i, strwidth, text, w, xp0, xp1, xp2, yp, colors,
                 pols = [],
                 p = [],
                 attr, attrSub,
-
                 makeXpFun = function (i, f) {
                     return function () {
                         return x[i]() - f * w;
                     };
                 },
-
                 hiddenPoint = {
                     fixed: true,
                     withLabel: false,
@@ -338,13 +345,18 @@ define([
         },
 
         /**
-         * anonymous function - description
+         * Create chart consisting of JSXGraph points.
+         * Attributes to change the layout of the point chart are:
+         * <ul>
+         * <li> fixed (Boolean)
+         * <li> infoboxArray (Array): Texts for the infobox
+         * </ul>
          *
-         * @param  {type} board      description
-         * @param  {type} x          description
-         * @param  {type} y          description
-         * @param  {type} attributes description
-         * @returns {type}            description
+         * @param  {String,JXG.Board} board      The board the chart is drawn on
+         * @param  {Array} x          Array of x-coordinates
+         * @param  {Array} y          Array of y-coordinates
+         * @param  {Object} attributes Javascript object containing attributes like colors
+         * @returns {Array} Array of JSXGraph points
          */
         drawPoints: function (board, x, y, attributes) {
             var i,
@@ -363,12 +375,21 @@ define([
         },
 
         /**
-         * anonymous function - description
+         * Create pie chart.
+         * Attributes to change the layout of the pie chart are:
+         * <ul>
+         * <li> labels: array of labels
+         * <li> colors: (Array)
+         * <li> highlightColors (Array)
+         * <li> radius
+         * <li> center (coordinate array)
+         * <li> highlightOnSector (Boolean)
+         * </ul>
          *
-         * @param  {type} board      description
-         * @param  {type} y          description
-         * @param  {type} attributes description
-         * @returns {type}            description
+         * @param  {String,JXG.Board} board      The board the chart is drawn on
+         * @param  {Array} y          Array of x-coordinates
+         * @param  {Object} attributes Javascript object containing attributes like colors
+         * @returns {Object}  with keys: "{sectors, points, midpoint}"
          */
         drawPie: function (board, y, attributes) {
             var i, center,
@@ -506,12 +527,34 @@ define([
          */
 
         /**
-         * anonymous function - description
+         * Create radar chart.
+         * Attributes to change the layout of the pie chart are:
+         * <ul>
+         * <li> paramArray: labels for axes
+         * <li> startShiftRatio: 0 <= offset from chart center <=1
+         * <li> endShiftRatio:  0 <= offset from chart radius <=1
+         * <li> startShiftArray: Adjust offsets per each axis
+         * <li> endShiftArray: Adjust offsets per each axis
+         * <li> startArray: Values for inner circle. Default values: minimums
+         * <li> start: one value to overwrite all startArray values
+         * <li> endArray: Values for outer circle, maximums by default
+         * <li> end: one value to overwrite all endArray values
+         * <li> labelArray
+         * <li> polyStrokeWidth
+         * <li> colors
+         * <li> highlightcolors
+         * <li> labelArray
+         * <li> radius
+         * <li> legendPosition
+         * <li> showCircles
+         * <li> circleLabelArray
+         * <li> circleStrokeWidth
+         * </ul>
          *
-         * @param  {type} board      description
-         * @param  {Array} parents    description
-         * @param  {type} attributes description
-         * @returns {type}            description
+         * @param  {String,JXG.Board} board      The board the chart is drawn on
+         * @param  {Array} parents    Array of x-coordinates
+         * @param  {Object} attributes Javascript object containing attributes like colors
+         * @returns {Object} with keys "{circles, lines, points, midpoint, polygons}"
          */
         drawRadar: function (board, parents, attributes) {
             var i, j, paramArray, numofparams, maxes, mins,
@@ -556,6 +599,7 @@ define([
                     return t;
                 };
 
+            // TODO throw errors
             if (len <= 0) {
                 JXG.debug("No data");
                 return;
@@ -848,26 +892,21 @@ define([
      * @constructor
      * @type JXG.Chart
      * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
-     * @param {JXG.Point,array,function_JXG.Point,array,function} point1,point2 Parent elements can be two elements either of type {@link JXG.Point} or array of
-     * numbers describing the coordinates of a point. In the latter case the point will be constructed automatically as a fixed invisible point.
-     * It is possible to provide a function returning an array or a point, instead of providing an array or a point.
-     * @param {Number,function_Number,function_Number,function} c,a,b A line can also be created providing three numbers. The line is then described by
-     * the set of solutions of the equation <tt>a*x+b*y+c*z = 0</tt>. It is possible to provide three functions returning numbers, too.
-     * @param {function} f This function must return an array containing three numbers forming the line's homogeneous coordinates.
-     * <p>
-     * Additionally, a line can be created by providing a line and a transformation (or an array of transformations).
-     * Then, the result is a line which is the transformation of the supplied line.
-     * @example
-     * // Create a line using point and coordinates/
-     * // The second point will be fixed and invisible.
-     * var p1 = board.create('point', [4.5, 2.0]);
-     * var l1 = board.create('line', [p1, [1.0, 1.0]]);
-     * </pre><div class="jxgbox" id="JXGc0ae3461-10c4-4d39-b9be-81d74759d122" style="width: 300px; height: 300px;"></div>
-     * <script type="text/javascript">
-     *   var glex1_board = JXG.JSXGraph.initBoard('JXGc0ae3461-10c4-4d39-b9be-81d74759d122', {boundingbox: [-1, 7, 7, -1], axis: true, showcopyright: false, shownavigation: false});
-     *   var glex1_p1 = glex1_board.create('point', [4.5, 2.0]);
-     *   var glex1_l1 = glex1_board.create('line', [glex1_p1, [1.0, 1.0]]);
-     * </script><pre>
+     * @param {Array} x Array of x-coordinates (default case, see below for alternatives)
+     * @param {Array} y Array of y-coordinates (default case, see below for alternatives)
+     *
+     * The parent array may be of one of the following forms:
+     * <ol>
+     * <li> Parents array looks like [number, number, number, ...]. It is interpreted as array of y-coordinates.
+     * The x coordinates are automatically set to [1, 2, ...]
+     * <li> Parents array looks like [[number, number, number, ...]]. The content is interpreted as array of y-coordinates.
+     * The x coordinates are automatically set to [1, 2, ...]x coordinates are automatically set to [1, 2, ...]
+     * Default case: [[x0,x1,x2,...],[y1,y2,y3,...]]
+     * </ol>
+     *
+     * The attribute value for the key 'style' determines the type(s) of the chart. 'style' is a comma
+     * separated list of strings of the possible chart types
+     * 'bar', 'fit', 'line',  'pie', 'point', 'radar', 'spline'.
      */
     JXG.createChart = function (board, parents, attributes) {
         var data, row, i, j, col,

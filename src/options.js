@@ -2585,11 +2585,11 @@ define([
              *     	var p3 = board.create('point', [-1, 1.2], {name: 'C', id: 'C', label:{autoPosition: true, offset:[10, 10]}});
              *      var c = board.create('circle', [p1, p2]);
              *     	var l = board.create('line', [p1, p2]);
-             * 
+             *
              *     })();
-             * 
+             *
              * </script><pre>
-             * 
+             *
              *
              */
             autoPosition: false
