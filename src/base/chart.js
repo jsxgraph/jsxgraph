@@ -895,6 +895,14 @@ define([
      * separated list of strings of the possible chart types
      * 'bar', 'fit', 'line',  'pie', 'point', 'radar', 'spline'.
      *
+     * @see JXG.Chart#drawBar
+     * @see JXG.Chart#drawFit
+     * @see JXG.Chart#drawLine
+     * @see JXG.Chart#drawPie
+     * @see JXG.Chart#drawPoints
+     * @see JXG.Chart#drawRadar
+     * @see JXG.Chart#drawSpline
+     *
      * @example
      *   board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-0.5,8,9,-2],axis:true});
      *
@@ -991,202 +999,125 @@ define([
      *
      * </script><pre>
      *
-     * @example
-     *     var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-1, 10, 11, -2], axis: true});
-     *     var dataArr = [4, 1, 3, 2, 5, 7, 1.5, 2];
+      * @example
+     *         var dataArr = [4, 1.2, 3, 7, 5, 4, 1.54, function () { return 2; }];
+     *         var a = board.create('chart', dataArr, {
+     *                 chartStyle:'pie', colors:['#B02B2C','#3F4C6B','#C79810','#D15600'],
+     *                 fillOpacity:0.9,
+     *                 center:[5,2],
+     *                 strokeColor:'#ffffff',
+     *                 strokeWidth:6,
+     *                 highlightBySize:true,
+     *                 highlightOnSector:true
+     *             });
      *
-     *     // Line chart
-     *     function lineChart() {
-     *         JXG.JSXGraph.freeBoard(board);
-     *         board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-1, 10, 11, -2], axis: true});
-     *         board.suspendUpdate();
-     *         var a = board.create('chart', dataArr, {chartStyle:'line',strokeWidth:4,strokeColor:'#0000ff'});
-     *         board.unsuspendUpdate();
-     *     };
-     *
-     *     // Line chart with cubic splines
-     *     function splineChart() {
-     *         JXG.JSXGraph.freeBoard(board);
-     *         board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-1, 10, 11, -2], axis: true});
-     *         board.suspendUpdate();
-     *         var a = board.create('chart', dataArr, {chartStyle:'spline',strokeWidth:4,strokeColor:'#0000ff'});
-     *         board.unsuspendUpdate();
-     *     };
-     *
-     *     // Bar chart
-     *     function barChart() {
-     *         JXG.JSXGraph.freeBoard(board);
-     *         board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-1, 10, 11, -2], axis: true});
-     *         board.suspendUpdate();
-     *         var a = board.create('chart', dataArr, {chartStyle:'bar',width:0.6,labels:dataArr});
-     *         board.unsuspendUpdate();
-     *     };
-     *
-     *     // Single chart with multiple styles
-     *     function multiStyleChart() {
-     *         JXG.JSXGraph.freeBoard(board);
-     *         board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-1, 10, 11, -2], axis: true});
-     *         board.suspendUpdate();
-     *         var a = board.create('chart', dataArr, {chartStyle:'bar,line,point',width:0.8,size:4,labels:dataArr});
-     *         board.unsuspendUpdate();
-     *     };
-     *
-     *     // Two bar charts
-     *     function twoBarCharts() {
-     *         JXG.JSXGraph.freeBoard(board);
-     *         board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-1, 10, 11, -2], axis: true});
-     *         board.suspendUpdate();
-     *         var a = board.create('chart', [[1,3,5,7],[4,-1,3,2]], {chartStyle:'bar',width:0.8});
-     *         var b = board.create('chart', [[2,4,6,8],[3,1,2,5]], {chartStyle:'bar',fillColor:'#C3D9FF',width:0.8});
-     *         board.unsuspendUpdate();
-     *     };
-     *
-     *     // Bar chart with horizontal bars
-     *     function horizontalBarChart() {
-     *         JXG.JSXGraph.freeBoard(board);
-     *         board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-1, 10, 11, -2], axis: true});
-     *         board.suspendUpdate();
-     *         var a = board.create('chart', dataArr, {chartStyle:'bar',labels:dataArr,width:0.8,dir:'horizontal'});
-     *         board.unsuspendUpdate();
-     *     };
-     *
-     *     // Single chart with dynamic entries
-     *     function dynamicBarChart() {
-     *         JXG.JSXGraph.freeBoard(board);
-     *         board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-1, 10, 11, -2], axis: true});
-     *         board.suspendUpdate();
-     *         var s = board.create('slider', [[5,-1],[8,-1], [1,1,2]], {name:'S'});
-     *         var f = [function(){return Math.round(s.Value()*4,2);},
-     *                  function(){return Math.round(s.Value()*(-1),2);},
-     *                  function(){return Math.round(s.Value()*3,2);},
-     *                  function(){return Math.round(s.Value()*2,2);}];
-     *         var chart = board.create('chart', [f], {chartStyle:'bar',width:0.8,labels:f});
-     *         board.unsuspendUpdate();
-     *     };
-     *
-     *     // Regression curve
-     *     function fitChart(deg) {
-     *         JXG.JSXGraph.freeBoard(board);
-     *         board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-1, 10, 11, -2], axis: true});
-     *         board.suspendUpdate();
-     *         var a = board.create('chart', dataArr,
-     *             {chartStyle:'bar,fit', degree:deg, colorArray:['#B02B2C','#3F4C6B','#C79810','#D15600'], dash:2}
-     *         );
-     *         board.unsuspendUpdate();
-     *     }
-     *     lineChart();
-     *
-     * </pre>
-     * <input type="button" value="Line chart" onClick="lineChart()">
-     * <input type="button" value="Spline chart" onClick="splineChart()">
-     * <input type="button" value="Bar chart" onClick="barChart()">
-     * <input type="button" value="Multiple styles" onClick="multiStyleChart()">
-     * <input type="button" value="Two bar charts" onClick="twoBarCharts()">
-     * <input type="button" value="Horizontal bars" onClick="horizontalBarChart()">
-     * <input type="button" value="Dynamic bars" onClick="dynamicBarChart()">
-     * <input type="button" value="Regression line" onClick="fitChart(1)">
-     * <input type="button" value="Regression parabola" onClick="fitChart(2)">
-     *
-     * <div id="JXG381daf29-eae3-473d-a3be-d5925610ed37" class="jxgbox" style="width: 300px; height: 300px;"></div>
+     * </pre><div id="JXG1180b7dd-b048-436a-a5ad-87ffa82d5aff" class="jxgbox" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
-     *      var board;
-     *      var dataArr = [4, 1, 3, 2, 5, 7, 1.5, 2];
-     *     var jxgid = "JXG22deb158-48c6-41c3-8157-b88b4b968a55";
      *     (function() {
-     *         board = JXG.JSXGraph.initBoard('JXG381daf29-eae3-473d-a3be-d5925610ed37',
-     *             {boundingbox: [-1, 10, 11, -2], axis: true, showcopyright: false, shownavigation: false});
-     *       })();
+     *         var board = JXG.JSXGraph.initBoard('JXG1180b7dd-b048-436a-a5ad-87ffa82d5aff',
+     *             {boundingbox: [0, 8, 12, -4], axis: true, showcopyright: false, shownavigation: false});
+     *             var dataArr = [4, 1.2, 3, 7, 5, 4, 1.54, function () { return 2; }];
+     *             var a = board.create('chart', dataArr, {
+     *                     chartStyle:'pie', colors:['#B02B2C','#3F4C6B','#C79810','#D15600'],
+     *                     fillOpacity:0.9,
+     *                     center:[5,2],
+     *                     strokeColor:'#ffffff',
+     *                     strokeWidth:6,
+     *                     highlightBySize:true,
+     *                     highlightOnSector:true
+     *                 });
      *
-     *         // Line chart
-     *         function lineChart() {
-     *             JXG.JSXGraph.freeBoard(board);
-     *             board = JXG.JSXGraph.initBoard(jxgid, {boundingbox: [-1, 10, 11, -2], axis: true});
-     *             board.suspendUpdate();
-     *             var a = board.create('chart', dataArr, {chartStyle:'line',strokeWidth:4,strokeColor:'#0000ff'});
-     *             board.unsuspendUpdate();
-     *         };
+     *     })();
      *
-     *         // Line chart with cubic splines
-     *         function splineChart() {
-     *             JXG.JSXGraph.freeBoard(board);
-     *             board = JXG.JSXGraph.initBoard(jxgid, {boundingbox: [-1, 10, 11, -2], axis: true});
-     *             board.suspendUpdate();
-     *             var a = board.create('chart', dataArr, {chartStyle:'spline',strokeWidth:4,strokeColor:'#0000ff'});
-     *             board.unsuspendUpdate();
-     *         };
-     *
-     *         // Bar chart
-     *         function barChart() {
-     *             JXG.JSXGraph.freeBoard(board);
-     *             board = JXG.JSXGraph.initBoard(jxgid, {boundingbox: [-1, 10, 11, -2], axis: true});
-     *             board.suspendUpdate();
-     *             var a = board.create('chart', dataArr, {chartStyle:'bar',width:0.6,labels:dataArr});
-     *             board.unsuspendUpdate();
-     *         };
-     *
-     *         // Single chart with multiple styles
-     *         function multiStyleChart() {
-     *             JXG.JSXGraph.freeBoard(board);
-     *             board = JXG.JSXGraph.initBoard(jxgid, {boundingbox: [-1, 10, 11, -2], axis: true});
-     *             board.suspendUpdate();
-     *             var a = board.create('chart', dataArr, {chartStyle:'bar,line,point',width:0.8,size:4,labels:dataArr});
-     *             board.unsuspendUpdate();
-     *         };
-     *
-     *         // Two bar charts
-     *         function twoBarCharts() {
-     *             JXG.JSXGraph.freeBoard(board);
-     *             board = JXG.JSXGraph.initBoard(jxgid, {boundingbox: [-1, 10, 11, -2], axis: true});
-     *             board.suspendUpdate();
-     *             var a = board.create('chart', [[1,3,5,7],[4,-1,3,2]], {chartStyle:'bar',width:0.8});
-     *             var b = board.create('chart', [[2,4,6,8],[3,1,2,5]], {chartStyle:'bar',fillColor:'#C3D9FF',width:0.8});
-     *             board.unsuspendUpdate();
-     *         };
-     *
-     *         // Bar chart with horizontal bars
-     *         function horizontalBarChart() {
-     *             JXG.JSXGraph.freeBoard(board);
-     *             board = JXG.JSXGraph.initBoard(jxgid, {boundingbox: [-1, 10, 11, -2], axis: true});
-     *             board.suspendUpdate();
-     *             var a = board.create('chart', dataArr, {chartStyle:'bar',labels:dataArr,width:0.8,dir:'horizontal'});
-     *             board.unsuspendUpdate();
-     *         };
-     *
-     *         // Single chart with dynamic entries
-     *         function dynamicBarChart() {
-     *             JXG.JSXGraph.freeBoard(board);
-     *             board = JXG.JSXGraph.initBoard(jxgid, {boundingbox: [-1, 10, 11, -2], axis: true});
-     *             board.suspendUpdate();
-     *             var s = board.create('slider', [[5,-1],[8,-1], [1,1,2]], {name:'S'});
-     *             var f = [function(){return Math.round(s.Value()*4,2);},
-     *                      function(){return Math.round(s.Value()*(-1),2);},
-     *                      function(){return Math.round(s.Value()*3,2);},
-     *                      function(){return Math.round(s.Value()*2,2);}];
-     *             var chart = board.create('chart', [f], {chartStyle:'bar',width:0.8,labels:f});
-     *             board.unsuspendUpdate();
-     *         };
-     *
-     *         // Regression curve
-     *         function fitChart(deg) {
-     *             JXG.JSXGraph.freeBoard(board);
-     *             board = JXG.JSXGraph.initBoard(jxgid, {boundingbox: [-1, 10, 11, -2], axis: true});
-     *             board.suspendUpdate();
-     *             var a = board.create('chart', dataArr,
-     *                 {chartStyle:'bar,fit', degree:deg, colorArray:['#B02B2C','#3F4C6B','#C79810','#D15600'], dash:2}
-     *             );
-     *             board.unsuspendUpdate();
-     *         }
-     *         lineChart();
      * </script><pre>
      *
+
+     * @example
+     *             board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-12, 12, 20, -12], axis: false});
+     *             board.suspendUpdate();
+     *             // See labelArray and paramArray
+     *             var dataArr = [[23, 14, 15.0], [60, 8, 25.0], [0, 11.0, 25.0], [10, 15, 20.0]];
+     *
+     *             var a = board.create('chart', dataArr, {
+     *                 chartStyle:'radar',
+     *                 colorArray:['#0F408D','#6F1B75','#CA147A','#DA2228','#E8801B','#FCF302','#8DC922','#15993C','#87CCEE','#0092CE'],
+     *                 //fillOpacity:0.5,
+     *                 //strokeColor:'black',
+     *                 //strokeWidth:1,
+     *                 //polyStrokeWidth:1,
+     *                 paramArray:['Speed','Flexibility', 'Costs'],
+     *                 labelArray:['Ruby','JavaScript', 'PHP', 'Python'],
+     *                 //startAngle:Math.PI/4,
+     *                 legendPosition:'right',
+     *                 //"startShiftRatio": 0.1,
+     *                 //endShiftRatio:0.1,
+     *                 //startShiftArray:[0,0,0],
+     *                 //endShiftArray:[0.5,0.5,0.5],
+     *                 start:0
+     *                 //end:70,
+     *                 //startArray:[0,0,0],
+     *                 //endArray:[7,7,7],
+     *                 //radius:3,
+     *                 //showCircles:true,
+     *                 //circleLabelArray:[1,2,3,4,5],
+     *                 //highlightColorArray:['#E46F6A','#F9DF82','#F7FA7B','#B0D990','#69BF8E','#BDDDE4','#92C2DF','#637CB0','#AB91BC','#EB8EBF'],
+     *             });
+     *             board.unsuspendUpdate();
+     *
+     * </pre><div id="JXG985fbbe6-0488-4073-b73b-cb3ebaea488a" class="jxgbox" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     *     (function() {
+     *         var board = JXG.JSXGraph.initBoard('JXG985fbbe6-0488-4073-b73b-cb3ebaea488a',
+     *             {boundingbox: [-12, 12, 20, -12], axis: false, showcopyright: false, shownavigation: false});
+     *                 board.suspendUpdate();
+     *                 // See labelArray and paramArray
+     *                 var dataArr = [[23, 14, 15.0], [60, 8, 25.0], [0, 11.0, 25.0], [10, 15, 20.0]];
+     *
+     *                 var a = board.create('chart', dataArr, {
+     *                     chartStyle:'radar',
+     *                     colorArray:['#0F408D','#6F1B75','#CA147A','#DA2228','#E8801B','#FCF302','#8DC922','#15993C','#87CCEE','#0092CE'],
+     *                     //fillOpacity:0.5,
+     *                     //strokeColor:'black',
+     *                     //strokeWidth:1,
+     *                     //polyStrokeWidth:1,
+     *                     paramArray:['Speed','Flexibility', 'Costs'],
+     *                     labelArray:['Ruby','JavaScript', 'PHP', 'Python'],
+     *                     //startAngle:Math.PI/4,
+     *                     legendPosition:'right',
+     *                     //"startShiftRatio": 0.1,
+     *                     //endShiftRatio:0.1,
+     *                     //startShiftArray:[0,0,0],
+     *                     //endShiftArray:[0.5,0.5,0.5],
+     *                     start:0
+     *                     //end:70,
+     *                     //startArray:[0,0,0],
+     *                     //endArray:[7,7,7],
+     *                     //radius:3,
+     *                     //showCircles:true,
+     *                     //circleLabelArray:[1,2,3,4,5],
+     *                     //highlightColorArray:['#E46F6A','#F9DF82','#F7FA7B','#B0D990','#69BF8E','#BDDDE4','#92C2DF','#637CB0','#AB91BC','#EB8EBF'],
+     *                 });
+     *                 board.unsuspendUpdate();
+     *
+     *     })();
+     *
+     * </script><pre>
+     *
+     * For more examples see
+     * <ul>
+     * <li><a href="https://jsxgraph.org/wiki/index.php/Charts_from_HTML_tables_-_tutorial">JSXgraph wiki: Charts from HTML tables - tutorial</a>
+     * <li><a href="https://jsxgraph.org/wiki/index.php/Pie_chart">JSXgraph wiki: Pie chart</a>
+     * <li><a href="https://jsxgraph.org/wiki/index.php/Different_chart_styles">JSXgraph wiki: Various chart styles</a>
+     * <li><a href="https://jsxgraph.org/wiki/index.php/Dynamic_bar_chart">JSXgraph wiki: Dynamic bar chart</a>
+     * </ul>
      */
-    JXG.createChart = function (board, parents, attributes) {
-        var data, row, i, j, col,
-            charts = [],
-            w, x, showRows, attr,
-            originalWidth, name, strokeColor, fillColor,
-            hStrokeColor, hFillColor, len,
-            table = Env.isBrowser ? board.document.getElementById(parents[0]) : null;
+     JXG.createChart = function (board, parents, attributes) {
+         var data, row, i, j, col,
+             charts = [],
+             w, x, showRows, attr,
+             originalWidth, name, strokeColor, fillColor,
+             hStrokeColor, hFillColor, len,
+             table = Env.isBrowser ? board.document.getElementById(parents[0]) : null;
 
         if ((parents.length === 1) && (Type.isString(parents[0]))) {
             if (Type.exists(table)) {
