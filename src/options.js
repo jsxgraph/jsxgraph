@@ -2602,9 +2602,42 @@ define([
             /**
              * @visprop
              */
+
+             /**
+              * Default style of a legend element. The only possible value is 'vertical'.
+              * @name: Legend#style
+              * @type String
+              * @default 'vertical'
+              */
             style: 'vertical',
+
+            /**
+             * Label names of a legend element.
+             * @name: Legend#labels
+             * @type Array
+             * @default "['1', '2', '3', '4', '5', '6', '7', '8']"
+             */
             labels: ['1', '2', '3', '4', '5', '6', '7', '8'],
-            colors: ['#B02B2C', '#3F4C6B', '#C79810', '#D15600', '#FFFF88', '#C3D9FF', '#4096EE', '#008C00']
+
+            /**
+             * (Circular) array of label colors.
+             * @name: Legend#colors
+             * @type Array
+             * @default "['#B02B2C', '#3F4C6B', '#C79810', '#D15600', '#FFFF88', '#C3D9FF', '#4096EE', '#008C00']"
+             */
+            colors: ['#B02B2C', '#3F4C6B', '#C79810', '#D15600', '#FFFF88', '#C3D9FF', '#4096EE', '#008C00'],
+
+            /**
+             * Height (in px) of one legend entry
+             * @name: Legend#rowHeight
+             * @type Number
+             * @default 20
+             *
+             */
+            rowHeight: 20,
+
+            strokeWidth: 5
+
             /**#@-*/
         },
 
@@ -2698,7 +2731,9 @@ define([
              * This number (pixel value) controls where infinite lines end at the canvas border. If zero, the line
              * ends exactly at the border, if negative there is a margin to the inside, if positive the line
              * ends outside of the canvas (which is invisible).
-             * @type {Number}
+             *
+             * @name: Line#margin
+             * @type Number
              * @default 0
              */
             margin: 0,
