@@ -285,12 +285,14 @@ define([
              *
              * @name JXG.Board#showFullscreen
              * @type Boolean
+             * @see JXG.Board#fullscreen
              * @default false
              */
             showFullscreen: false,
 
             /**
-             * Attribute(s) to control the fullscreen function.
+             * Attribute(s) to control the fullscreen icon. The attribute "showFullscreen" 
+             * controls if the icon is shown.
              * The following attribute(s) can be set:
              * <ul>
              *  <li>symbol: Unicode symbol which is shown in the navigation bar. Default: '\u25a1'
@@ -324,6 +326,7 @@ define([
              * </script><pre>
              *
              * @name JXG.Board#fullscreen
+             * @see JXG.Board#showFullscreen
              * @type {Object}
              */
             fullscreen: {
@@ -331,7 +334,7 @@ define([
             },
 
             /**
-             * Show a button which allows to clear all traces of a board.
+             * Show a button which allows to clear all traces of a board. 
              *
              * @name JXG.Board#showClearTraces
              * @type Boolean
