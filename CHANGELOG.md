@@ -15,6 +15,7 @@ New Features
 Possible operations are intersection, union or difference of curves, polygones or circles.
 * New math functions: cot and acot, nthroot, cbrt, binomial. Available as JXG.Math.cot, ...
 * JXG.Math.pow: handle x^(1/n) for x<0 and n odd integer
+* New method `JXG.math.norm`: Euclidean norm of a vector
 * Add board attributes "showFullscreen" and "fullscreen"
 * New board attribute `maxBoundingBox`
 * Faces for hatch marks and ticks (|><)
@@ -31,6 +32,7 @@ Improvements
 
 * screenshot and base64 dumps include images now (dumpToURI)
 * API documentation contains many new examples
+* API documetation for Chart and Legend elements
 * Curve plotting: massive speed improvements and plotting precision
 * Multi-touch rotations are much more stable for pointer events
 * Pointer events use different precision when using pen, mouse or touch. New events for pen: pendrag, pendown, penmove.
