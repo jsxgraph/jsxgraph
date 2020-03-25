@@ -1,4 +1,4 @@
-0.99.8
+1.00.0
 ====
 
 Compatibility:
@@ -82,8 +82,6 @@ Bug fixes
 * Stop using deprecated hide method in `changePointStyle`
 * Various changes in sketch reader for sketchometry
 * Geogebra reader: Fix argument order when mirroring across line
-* Update MediaWiki plug-in
-
 
 
 0.99.7
