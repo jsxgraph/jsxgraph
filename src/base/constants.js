@@ -41,10 +41,10 @@ define(['jxg'], function (JXG) {
 
     "use strict";
 
-    var major = 0,
-        minor = 99,
-        patch = 8,
-        add = 'dev', //false, // 'dev',
+    var major = 1,
+        minor = 0,
+        patch = 0,
+        add = false, // 'dev',
         version = major + '.' + minor + '.' + patch + (add ? '-' + add : ''),
         constants;
 
