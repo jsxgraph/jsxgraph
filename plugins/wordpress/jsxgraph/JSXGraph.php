@@ -1,6 +1,6 @@
 <?php
 /*
-    Copyright 2008-2013
+    Copyright 2008-2020
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -35,7 +35,7 @@ Plugin Name: JSXGraph
 Plugin URI: https://jsxgraph.org
 Description: Embedding jsxgraph constructions
 Author: Peter Wilfahrt
-Version: 0.82
+Version: 1.00.0
 Author URI: http://www.webconsul.de/
 */
 

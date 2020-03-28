@@ -6,7 +6,7 @@
 
 - Requires at least: 2.2
 - Tested up to: 2.8.4
-- Stable tag: 0.78
+- Stable tag: 1.00.0
 
 Using the JSXGraph filter makes it a lot easier to embed JSXGraph constructions into wordpress pages/posts.
 
