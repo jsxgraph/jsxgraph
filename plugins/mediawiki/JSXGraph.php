@@ -32,7 +32,7 @@
  *
  * @author Alfred Wassermann
  * @author Peter Wilfahrt
- * @version 0.99.7
+ * @version 1.00.0
  */
 
 /** Requirements:
@@ -63,7 +63,7 @@
  *   box:      default: jxgbox
  *   board:    default: brd
  */
-$jsxgraph_version = '0.99.7';
+$jsxgraph_version = '1.00.0';
 
 // CHANGE this to load local files:
 $outputURI        = '//jsxgraph.uni-bayreuth.de/distrib';
@@ -130,7 +130,7 @@ function jsxgraphOutput($input, $args, $parser) {
   // Load necessary stylesheet und scripts
   if ($markercount==0) {
     $output .= "<link rel='stylesheet' type='text/css' href='".$outputURI."/jsxgraph.css' />";
-    if (FALSE && preg_match("/^132\.180/",getenv("REMOTE_ADDR"))) {
+    if (TRUE /* && preg_match("/^132\.180/",getenv("REMOTE_ADDR"))*/ ) {
       // Use the local version when developing
 	    $output .= "<script src='".$outputURI."/jsxgraphcore.js' type='text/javascript'></script>";
 	    $output .= "<script src='".$outputURI."/geonext.min.js' type='text/javascript'></script>";
