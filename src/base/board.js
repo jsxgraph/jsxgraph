@@ -5255,18 +5255,18 @@ define([
          * &lt;/script&gt;
          *
          * </pre><div id="JXGd5bab8b6-fd40-11e8-ab14-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
-         * <button onClick="board_d5bab8b6.toFullscreen()">Fullscreen</button>
          * <script type="text/javascript">
          *      var board_d5bab8b6;
          *     (function() {
          *         var board = JXG.JSXGraph.initBoard('JXGd5bab8b6-fd40-11e8-ab14-901b0e1b8723',
-         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
-         *         var board = JXG.JSXGraph.initBoard('d5bab8b6-fd40-11e8-ab14-901b0e1b8723', {axis:true, boundingbox:[-5,5,5,-5]});
+         *             {boundingbox:[-5,5,5,-5], axis: true, showcopyright: false, shownavigation: false});
          *         var p = board.create('point', [0, 1]);
          *         board_d5bab8b6 = board;
          *     })();
+         * <button onClick="board_d5bab8b6.toFullscreen()">Fullscreen</button>
          *
-         * </script><pre>
+         * </script>
+         * <pre>
          *
          */
         toFullscreen: function() {

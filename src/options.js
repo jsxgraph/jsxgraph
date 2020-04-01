@@ -111,9 +111,8 @@ define([
              * </pre><div id="JXG065e2750-217c-48ed-a52b-7d7df6de7055" class="jxgbox" style="width: 300px; height: 300px;"></div>
              * <script type="text/javascript">
              *     (function() {
-             *         var board = JXG.JSXGraph.initBoard('JXG065e2750-217c-48ed-a52b-7d7df6de7055',
-             *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
-             *     var board = JXG.JSXGraph.initBoard('jxgbox', {
+             *         var board = JXG.JSXGraph.initBoard('JXG065e2750-217c-48ed-a52b-7d7df6de7055', {
+             *             showcopyright: false, shownavigation: false,
              *             boundingbox: [-5,5,5,-5],
              *             maxboundingbox: [-8,8,8,-8],
              *             pan: {enabled: true},
@@ -320,7 +319,6 @@ define([
              *                  }
              *             });
              *     var pol = board.create('polygon', [[0, 1], [3,4], [1,-4]], {fillColor: 'yellow'});
-             *
              *     })();
              *
              * </script><pre>
