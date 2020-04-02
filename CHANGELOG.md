@@ -14,7 +14,6 @@ New Features
 * Polygon / curve clipping and boolean operation on curves is now enabled. 
 Possible operations are intersection, union or difference of curves, polygones or circles.
 * New math functions: cot and acot, nthroot, cbrt, binomial. Available as JXG.Math.cot, ...
-* JXG.Math.pow: handle x^(1/n) for x<0 and n odd integer
 * New method `JXG.math.norm`: Euclidean norm of a vector
 * Add board attributes "showFullscreen" and "fullscreen"
 * New board attribute `maxBoundingBox`
