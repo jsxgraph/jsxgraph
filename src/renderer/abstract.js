@@ -1003,7 +1003,13 @@ define([
                             // typesetting directly might not work because mathjax was not loaded completely
                             // see http://www.mathjax.org/docs/1.1/typeset.html
                             try {
-                                MathJax.Hub.Queue(['Typeset', MathJax.Hub, el.rendNode]);
+                                if (Type.exists(MathJax.typeset)) {
+                                    // Version 3
+                                    MathJax.typeset([el.rendNode]);
+                                } else {
+                                    // Version 2
+                                    MathJax.Hub.Queue(['Typeset', MathJax.Hub, el.rendNode]);
+                                }
                             } catch (e) {
                                 JXG.debug('MathJax (not yet) loaded');
                             }
