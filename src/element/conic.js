@@ -658,7 +658,13 @@ define([
 
     /**
      *
-     * @class This element is used to provide a constructor for a generic conic section uniquely defined by five points.
+     * @class This element is used to provide a constructor for a generic conic section uniquely defined by five points or
+     * a conic defined by the coefficients of the equation
+     * <p><i>Ax<sup>2</sup>+ Bxy+Cy<sup>2</sup> + Dx + Ey + F = 0</i></p>.
+     * Then the parameters are as follows:
+     * <pre>
+     *     board.create('conic', [A, C, F, B/2, D/2, E/2]);
+     * </pre>
      * @pseudo
      * @description
      * @name Conic
@@ -667,7 +673,7 @@ define([
      * @type JXG.Conic
      * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
      * @param {JXG.Point,Array_JXG.Point,Array_JXG.Point,Array_JXG.Point,Array_JXG.Point,Array} a,b,c,d,e Parent elements are five points.
-     * @param {Number_Number_Number_Number_Number_Number} a_00,a_11,a_22,a_01,a_12,a_22 6 numbers
+     * @param {Number_Number_Number_Number_Number_Number} a_00,a_11,a_22,a_01,a_02,a_12 6 numbers, i.e. A, C, F, B/2, D/2, E/2
      * @example
      * // Create a conic section through the points A, B, C, D, and E.
      *  var A = board.create('point', [1,5]);
@@ -686,6 +692,22 @@ define([
      *   var E = glex1_board.create('point', [-1,5]);
      *   var conic = glex1_board.create('conic',[A,B,C,D,E]);
      * </script><pre>
+     *
+     * @example
+     * // Parameters: A, C, F, B/2, D/2, E/2
+     * var conic = board.create('conic', [1, 2, -4, 0, 0, 0]s);
+     *
+     * </pre><div id="JXG8576a04a-52d8-4a7e-8d54-e32443910b97" class="jxgbox" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     *     (function() {
+     *         var board = JXG.JSXGraph.initBoard('JXG8576a04a-52d8-4a7e-8d54-e32443910b97',
+     *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+     *     // Parameters: A, C, F, B/2, D/2, E/2
+     *     var conic = board.create('conic', [1, 2, -4, 0, 0, 0]s);
+     *     })();
+     *
+     * </script><pre>
+     *
      */
     JXG.createConic = function (board, parents, attributes) {
         var polarForm, curve, fitConic, degconic, sym,
@@ -740,10 +762,6 @@ define([
              *   [A3,A1,A5],
              *   [A4,A5,A2]].
              * Our notation (z,x,y):
-             *  [[-A2   , A4*2.0, A5*0.5],
-             *   [A4*2.0,    -A0, A3*0.5],
-             *   [A5*0.5, A3*0.5,    -A1]]
-             * New: (z,x,y):
              *  [[A2, A4, A5],
              *   [A4, A0, A3],
              *   [A5, A3, A1]]
