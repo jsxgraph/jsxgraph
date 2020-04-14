@@ -1003,7 +1003,7 @@ define([
                             // typesetting directly might not work because mathjax was not loaded completely
                             // see http://www.mathjax.org/docs/1.1/typeset.html
                             try {
-                                if (Type.exists(MathJax.typeset)) {
+                                if (MathJax.typeset) {
                                     // Version 3
                                     MathJax.typeset([el.rendNode]);
                                 } else {
