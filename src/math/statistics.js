@@ -481,6 +481,35 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             }
 
             return [this.median(yintercepts), this.median(slopes), -1];
+        },
+
+        /**
+         * Generate values of a standard normal random variable with the Marsaglia polar method, see
+         * https://en.wikipedia.org/wiki/Marsaglia_polar_method .
+         *
+         * @param {Number} mean mean value of the normal distribution
+         * @param {Number} stdDev standard deviation of the normal distribution
+         * @returns {Number} value of a standard normal random variable
+         */
+        generateGaussian: function (mean, stdDev) {
+            var u, v, s;
+
+            if (this.hasSpare) {
+                this.hasSpare = false;
+                return this.spare * stdDev + this.mean;
+            }
+
+            do {
+                u = Math.random() * 2 - 1;
+                v = Math.random() * 2 - 1;
+                s = u * u + v * v;
+            } while (s >= 1 || s == 0);
+
+            s = Math.sqrt(-2.0 * Math.log(s) / s);
+
+            this.spare = v * s;
+            this.hasSpare = true;
+            return mean + stdDev * u * s;
         }
     };
 
