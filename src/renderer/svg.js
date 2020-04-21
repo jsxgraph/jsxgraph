@@ -1428,8 +1428,7 @@ define([
                 btoa = window.btoa || Base64.encode,
                 svg,
                 virtualNode, doc,
-                i, len, images, txt, img,
-                canvas, ctx, ur,
+                i, len,
                 values = [];
 
             // Move all HTML tags (beside the SVG root) of the container
@@ -1469,10 +1468,10 @@ define([
                 }
             }
 
-            if (false) {
-                // Debug: use example svg image
-                svg = '<svg xmlns="http://www.w3.org/2000/svg" version="1.0" width="220" height="220"><rect width="66" height="30" x="21" y="32" stroke="#204a87" stroke-width="2" fill="none" /></svg>';
-            }
+            // if (false) {
+            //     // Debug: use example svg image
+            //     svg = '<svg xmlns="http://www.w3.org/2000/svg" version="1.0" width="220" height="220"><rect width="66" height="30" x="21" y="32" stroke="#204a87" stroke-width="2" fill="none" /></svg>';
+            // }
 
             // In IE we have to remove the namespace again.
             if ((svg.match(/xmlns=\"http:\/\/www.w3.org\/2000\/svg\"/g) || []).length > 1) {
@@ -1539,12 +1538,14 @@ define([
             cv.width = cv.width;
             ctx = cv.getContext("2d");
             if (w !== undefined && h !== undefined) {
-                // Scale twice the CSS size to make the image crisp
                 cv.style.width = parseFloat(w) + 'px';
                 cv.style.height = parseFloat(h) + 'px';
-                cv.setAttribute('width', 2 * parseFloat(wOrg));
-                cv.setAttribute('height', 2 * parseFloat(hOrg));
-                ctx.scale(2 * wOrg / w, 2 * hOrg / h);
+                // Scale twice the CSS size to make the image crisp
+                // cv.setAttribute('width', 2 * parseFloat(wOrg));
+                // cv.setAttribute('height', 2 * parseFloat(hOrg));
+                // ctx.scale(2 * wOrg / w, 2 * hOrg / h);
+                cv.setAttribute('width', parseFloat(w));
+                cv.setAttribute('height', parseFloat(h));
             }
 
             // Display the SVG string as data-uri in an HTML img.
