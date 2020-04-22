@@ -343,7 +343,7 @@ define([
             /**
              * If set to true the bounding box might be changed such that
              * the ratio of width and height of the hosting HTML div is equal
-             * to the ratio of wifth and height of the bounding box.
+             * to the ratio of width and height of the bounding box.
              *
              * This is necessary if circles should look like circles and not
              * like ellipses. It is recommended to set keepAspectRatio = true
