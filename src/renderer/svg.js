@@ -1073,7 +1073,7 @@ define([
             if (testAttribute === '') {
                 setFunc();
             } else {
-                setTimeout(setFunc, 1);
+                window.setTimeout(setFunc, 1);
             }
         },
 
@@ -1558,7 +1558,7 @@ define([
                 tmpImg.onload = function () {
                     // IE needs a pause...
                     // Seems to be broken
-                    setTimeout(function() {
+                    window.setTimeout(function() {
                         try {
                             ctx.drawImage(tmpImg, 0, 0, w, h);
                         } catch (err) {
@@ -1708,7 +1708,7 @@ define([
             } else {
                 // IE
                 this.dumpToCanvas(id, w, h, ignoreTexts);
-                setTimeout(_copyCanvasToImg, 200);
+                window.setTimeout(_copyCanvasToImg, 200);
             }
 
             // Show navigation bar in board
