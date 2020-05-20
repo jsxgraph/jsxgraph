@@ -558,7 +558,8 @@ define([
             if (//this.board.updateQuality === this.board.BOARD_QUALITY_HIGH &&
                 Type.evaluate(this.visProp.autoposition)) {
 
-                this.setAutoPosition();
+                this.setAutoPosition()
+                    .updateConstraint();
             }
             return this.updateRendererGeneric('updateText');
         },
@@ -800,7 +801,6 @@ define([
                     obj !== this &&
                     obj.hasPoint(x, y)) {
 
-                    console.log("Hit", obj.elType, obj.id, w, h);
 					count++;
 				}
 			}
@@ -850,23 +850,22 @@ define([
                 return this;
             }
 
-            console.log(this.plaintext, conflicts, cx + dx, cy - dy)
-
             r = Geometry.distance([0, 0], [dx, dy], 2);
 
             start_angle = Math.atan2(dy, dx);
             min_angle = start_angle;
+            min_conflicts = conflicts;
 
-            for (j = 0, angle = start_angle; j < num_positions; j++) {
+            for (j = 1, angle = start_angle + step; j < num_positions; j++) {
                 co = Math.cos(angle);
                 si = Math.sin(angle);
 
                 x = cx + r * co;
-                if (co < -0.2) {
-                    x -= w * 0.5;
-                } else if (co > 0.2) {
-                    x += w * 0.5;
-                }
+                // if (co < -0.2) {
+                //     x -= w * 0.5;
+                // } else if (co > 0.2) {
+                //     x += w * 0.5;
+                // }
 
                 y = cy - r * si;
                 // if (si > -0.2 && si < 0.0) {
@@ -895,8 +894,6 @@ define([
             co = Math.cos(min_angle);
             si = Math.sin(min_angle);
             this.visProp.offset = [r * co, r * si];
-
-            console.log(min_conflicts, min_angle * 180 / Math.PI, co);
 
             if (co < -0.2) {
                 this.visProp.anchorx = 'right';
