@@ -968,12 +968,6 @@ define([
             } else if (ev_g === 'radial') {
                 node = this.createPrim('radialGradient', el.id + '_gradient');
 
-                node.setAttributeNS(null, 'cx', '50%');
-                node.setAttributeNS(null, 'cy', '50%');
-                node.setAttributeNS(null, 'r', '50%');
-                node.setAttributeNS(null, 'fx', Type.evaluate(el.visProp.gradientpositionx) * 100 + '%');
-                node.setAttributeNS(null, 'fy', Type.evaluate(el.visProp.gradientpositiony) * 100 + '%');
-
                 node2 = this.createPrim('stop', el.id + '_gradient1');
                 node2.setAttributeNS(null, 'offset', '0%');
                 node2.setAttributeNS(null, 'style', 'stop-color:' + Type.evaluate(el.visProp.gradientsecondcolor) +
@@ -1000,10 +994,7 @@ define([
             // 90: down
             // 180: <-
             // 90: up
-            var // radians = a.Value() * Math.PI / 180,
-                ratio = 1.0,
-                // el = pol, // global
-                // node = document.getElementById(this.board.container + '_' + el.id + '_gradient'),
+            var ratio = 1.0,
                 co = Math.cos(radians),
                 si = Math.sin(radians);
 
@@ -1029,13 +1020,20 @@ define([
             }
         },
 
+        updateGradientCircle(node, startx, starty, endx, endy, r) {
+            node.setAttributeNS(null, 'fx', startx * 100 + '%'); // Center second color / focal point
+            node.setAttributeNS(null, 'fy', starty * 100 + '%');
+            node.setAttributeNS(null, 'cx', endx * 100 + '%');   // Center first color
+            node.setAttributeNS(null, 'cy', endy * 100 + '%');
+            node.setAttributeNS(null, 'r', r * 100 + '%');
+        },
+
         // documented in JXG.AbstractRenderer
         updateGradient: function (el) {
             var col, op,
                 node2 = el.gradNode1,
                 node3 = el.gradNode2,
-                ev_g = Type.evaluate(el.visProp.gradient),
-                angle = Type.evaluate(el.visProp.gradientangle);
+                ev_g = Type.evaluate(el.visProp.gradient);
 
             if (!Type.exists(node2) || !Type.exists(node3)) {
                 return;
@@ -1047,14 +1045,23 @@ define([
 
             if (ev_g === 'linear') {
                 node2.setAttributeNS(null, 'style', 'stop-color:' + col + ';stop-opacity:' + op);
-                node3.setAttributeNS(null, 'style', 'stop-color:' + Type.evaluate(el.visProp.gradientsecondcolor) +
-                    ';stop-opacity:' + Type.evaluate(el.visProp.gradientsecondopacity));
+                node3.setAttributeNS(null, 'style',
+                    'stop-color:' + Type.evaluate(el.visProp.gradientsecondcolor) +
+                    ';stop-opacity:' + Type.evaluate(el.visProp.gradientsecondopacity)
+                );
+                this.updateGradientAngle(el.gradNode, Type.evaluate(el.visProp.gradientangle));
             } else if (ev_g === 'radial') {
                 node2.setAttributeNS(null, 'style', 'stop-color:' + Type.evaluate(el.visProp.gradientsecondcolor) +
                     ';stop-opacity:' + Type.evaluate(el.visProp.gradientsecondopacity));
                 node3.setAttributeNS(null, 'style', 'stop-color:' + col + ';stop-opacity:' + op);
+                this.updateGradientCircle(el.gradNode,
+                    Type.evaluate(el.visProp.gradientstartx),
+                    Type.evaluate(el.visProp.gradientstarty),
+                    Type.evaluate(el.visProp.gradientendx),
+                    Type.evaluate(el.visProp.gradientendy),
+                    Type.evaluate(el.visProp.gradientradius)
+                );
             }
-            this.updateGradientAngle(el.gradNode, angle);
         },
 
         // documented in JXG.AbstractRenderer

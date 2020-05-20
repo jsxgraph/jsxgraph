@@ -757,7 +757,11 @@ define([
             gradientAngle: 0,
 
             // radial:
-            // 'gradientpositionx', 'gradientpositiony',
+            gradientStartX: 0.5,
+            gradientStartY: 0.5,
+            gradientEndX: 0.5,
+            gradientEndY: 0.5,
+            gradientRadius: 0.5,
 
             /**
              * Transition duration (in milliseconds) for color and opacity

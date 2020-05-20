@@ -394,10 +394,10 @@ define([
             }
 
             this.visProp.draft = attr.draft && attr.draft.draft;
-            // this.visProp.gradientangle = '270';
+            //this.visProp.gradientangle = '270';
             // this.visProp.gradientsecondopacity = Type.evaluate(this.visProp.fillopacity);
-            // this.visProp.gradientpositionx = 0.5;
-            // this.visProp.gradientpositiony = 0.5;
+            //this.visProp.gradientpositionx = 0.5;
+            //this.visProp.gradientpositiony = 0.5;
         }
     };
 
