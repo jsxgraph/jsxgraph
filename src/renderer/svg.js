@@ -964,6 +964,7 @@ define([
                 fillNode.setAttributeNS(null, 'style', 'fill:url(#' + this.container.id + '_' + el.id + '_gradient)');
                 el.gradNode1 = node2;
                 el.gradNode2 = node3;
+                el.gradNode = node;
             } else if (ev_g === 'radial') {
                 node = this.createPrim('radialGradient', el.id + '_gradient');
 
@@ -987,8 +988,44 @@ define([
                 fillNode.setAttributeNS(null, 'style', 'fill:url(#' + this.container.id + '_' + el.id + '_gradient)');
                 el.gradNode1 = node2;
                 el.gradNode2 = node3;
+                el.gradNode = node;
             } else {
                 fillNode.removeAttributeNS(null, 'style');
+            }
+        },
+
+        updateGradientAngle: function(node, radians) {
+            // Angles:
+            // 0: ->
+            // 90: down
+            // 180: <-
+            // 90: up
+            var // radians = a.Value() * Math.PI / 180,
+                ratio = 1.0,
+                // el = pol, // global
+                // node = document.getElementById(this.board.container + '_' + el.id + '_gradient'),
+                co = Math.cos(radians),
+                si = Math.sin(radians);
+
+            if (Math.abs(co) > Math.abs(si)) {
+                ratio /= Math.abs(co);
+            } else {
+                ratio /= Math.abs(si);
+            }
+
+            if (co >= 0) {
+                node.setAttributeNS(null, 'x1', 0);
+                node.setAttributeNS(null, 'x2', co * ratio);
+            } else {
+                node.setAttributeNS(null, 'x1', -co * ratio);
+                node.setAttributeNS(null, 'x2', 0);
+            }
+            if (si >= 0) {
+                node.setAttributeNS(null, 'y1', 0);
+                node.setAttributeNS(null, 'y2', si * ratio);
+            } else {
+                node.setAttributeNS(null, 'y1', -si * ratio);
+                node.setAttributeNS(null, 'y2', 0);
             }
         },
 
@@ -997,7 +1034,8 @@ define([
             var col, op,
                 node2 = el.gradNode1,
                 node3 = el.gradNode2,
-                ev_g = Type.evaluate(el.visProp.gradient);
+                ev_g = Type.evaluate(el.visProp.gradient),
+                angle = Type.evaluate(el.visProp.gradientangle);
 
             if (!Type.exists(node2) || !Type.exists(node3)) {
                 return;
@@ -1016,6 +1054,7 @@ define([
                     ';stop-opacity:' + Type.evaluate(el.visProp.gradientsecondopacity));
                 node3.setAttributeNS(null, 'style', 'stop-color:' + col + ';stop-opacity:' + op);
             }
+            this.updateGradientAngle(el.gradNode, angle);
         },
 
         // documented in JXG.AbstractRenderer
@@ -1087,11 +1126,13 @@ define([
         setObjectFillColor: function (el, color, opacity, rendNode) {
             var node, c, rgbo, oo, t,
                 rgba = Type.evaluate(color),
-                o = Type.evaluate(opacity);
+                o = Type.evaluate(opacity),
+                grad = Type.evaluate(el.visProp.gradient);
 
             o = (o > 0) ? o : 0;
 
-            if (el.visPropOld.fillcolor === rgba && el.visPropOld.fillopacity === o) {
+            // TODO  save gradient and gradientangle
+            if (el.visPropOld.fillcolor === rgba && el.visPropOld.fillopacity === o && grad === null) {
                 return;
             }
 

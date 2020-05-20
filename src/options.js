@@ -748,8 +748,16 @@ define([
              */
             highlightFillOpacity: 1,
 
-            // gradient: 'linear', 'radial', 'gradientsecondcolor'
-            //'gradientangle', 'gradientsecondopacity', 'gradientpositionx', 'gradientpositiony',
+            gradient: null,
+            // gradient: 'linear', 'radial',
+
+            gradientSecondColor: '#ffffff',
+            gradientSecondOpacity: 1,
+
+            gradientAngle: 0,
+
+            // radial:
+            // 'gradientpositionx', 'gradientpositiony',
 
             /**
              * Transition duration (in milliseconds) for color and opacity
