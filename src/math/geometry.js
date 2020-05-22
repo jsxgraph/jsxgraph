@@ -504,34 +504,39 @@ define([
         sortVertices: function (p) {
             var i, ll,
                 ps = Expect.each(p, Expect.coordsArray),
-                N = ps.length;
+                N = ps.length,
+                lastPoint = null;
 
-            // find the point with the lowest y value
-            for (i = 1; i < N; i++) {
-                if ((ps[i][2] < ps[0][2]) ||
-                        // if the current and the lowest point have the same y value, pick the one with
-                        // the lowest x value.
-                        (Math.abs(ps[i][2] - ps[0][2]) < Mat.eps && ps[i][1] < ps[0][1])) {
-                    ps = Type.swap(ps, i, 0);
-                }
+            // If the last point equals the first point, we take the last point out of the array
+            // If the user closes the polygon, there will be two points at the end which equal the
+            // the first point. Therefore, we use a while lopp to pop the last points.
+            while (ps[0][0] == ps[N - 1][0] && ps[0][1] == ps[N - 1][1] && ps[0][2] == ps[N - 1][2]) {
+                lastPoint = ps.pop();
+                N--;
             }
+            // Find the point with the lowest y value
+            // for (i = 1; i < N; i++) {
+            //     if ((ps[i][2] < ps[0][2]) ||
+            //         // if the current and the lowest point have the same y value, pick the one with
+            //         // the lowest x value.
+            //         (Math.abs(ps[i][2] - ps[0][2]) < Mat.eps && ps[i][1] < ps[0][1])) {
+            //         console.log(i, 0);
+            //         ps = Type.swap(ps, i, 0);
+            //     }
+            // }
 
-            // sort ps in increasing order of the angle the points and the ll make with the x-axis
-            ll = ps.shift();
+            // Sort ps in increasing order of the angle between a point and the first point ll.
+            ll = ps[0];
             ps.sort(function (a, b) {
-                // atan is monotonically increasing, as we are only interested in the sign of the difference
-                // evaluating atan is not necessary
                 var rad1 = Math.atan2(a[2] - ll[2], a[1] - ll[1]),
                     rad2 = Math.atan2(b[2] - ll[2], b[1] - ll[1]);
-
                 return rad1 - rad2;
             });
 
-            // put ll back into the array
-            ps.unshift(ll);
-
-            // put the last element also in the beginning
-            ps.unshift(ps[ps.length - 1]);
+            // If the last point has been taken out of the array, we put it in again.
+            if (lastPoint !== null) {
+                ps.push(lastPoint);
+            }
 
             return ps;
         },
@@ -554,7 +559,7 @@ define([
         },
 
         /**
-         * Determine the signed area of a non-intersecting polygon.
+         * Determine the signed area of a non-selfintersecting polygon.
          * Surveyor's Formula
          *
          * @param {Array} p An array containing {@link JXG.Point}, {@link JXG.Coords}, and/or arrays.
@@ -574,7 +579,7 @@ define([
             if (!sort) {
                 ps = this.sortVertices(ps);
             } else {
-                // make sure the polygon is closed. If it is already closed this won't change the sum because the last
+                // Make sure the polygon is closed. If it is already closed this won't change the sum because the last
                 // summand will be 0.
                 ps.unshift(ps[ps.length - 1]);
             }

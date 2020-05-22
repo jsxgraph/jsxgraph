@@ -799,7 +799,7 @@ define([
          * Generic method for the intersection of this polygon with another polygon.
          * The parent object is the clipping polygon, it expects as parameter a polygon to be clipped.
          * Both polygons have to be convex.
-         * Calls {@link JXG.Polygon#sutherlandHodgman}.
+         * Calls the algorithm by Sutherland, Hodgman, {@link JXG.Polygon#sutherlandHodgman}.
          *
          * @param {JXG.Polygon} polygon Polygon which will be clipped.
          *
