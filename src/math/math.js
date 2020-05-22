@@ -88,7 +88,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
         /**
          * eps defines the closeness to zero. If the absolute value of a given number is smaller
          * than eps, it is considered to be equal to zero.
-         * @type number
+         * @type Number
          */
         eps: 0.000001,
 

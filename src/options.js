@@ -704,7 +704,7 @@ define([
 
             /**
              * Opacity for element's stroke color.
-             * @type number
+             * @type Number
              * @name JXG.GeometryElement#strokeOpacity
              * @see JXG.GeometryElement#strokeColor
              * @see JXG.GeometryElement#highlightStrokeColor
@@ -716,7 +716,7 @@ define([
 
             /**
              * Opacity for stroke color when the object is highlighted.
-             * @type number
+             * @type Number
              * @name JXG.GeometryElement#highlightStrokeOpacity
              * @see JXG.GeometryElement#strokeColor
              * @see JXG.GeometryElement#highlightStrokeColor
@@ -728,7 +728,7 @@ define([
 
             /**
              * Opacity for fill color.
-             * @type number
+             * @type Number
              * @name JXG.GeometryElement#fillOpacity
              * @see JXG.GeometryElement#fillColor
              * @see JXG.GeometryElement#highlightFillColor
@@ -739,7 +739,7 @@ define([
 
             /**
              * Opacity for fill color when the object is highlighted.
-             * @type number
+             * @type Number
              * @name JXG.GeometryElement#highlightFillOpacity
              * @see JXG.GeometryElement#fillColor
              * @see JXG.GeometryElement#highlightFillColor
@@ -748,20 +748,256 @@ define([
              */
             highlightFillOpacity: 1,
 
+            /**
+             * Gradient type. Possible values are 'linear'. 'radial' or null.
+             *
+             * @example
+             *     var a = board.create('slider', [[0, -0.2], [3.5, -0.2], [0, 0, 2 * Math.PI]], {name: 'angle'});
+             *     var b = board.create('slider', [[0, -0.4], [3.5, -0.4], [0, 0, 1]], {name: 'offset1'});
+             *     var c = board.create('slider', [[0, -0.6], [3.5, -0.6], [0, 1, 1]], {name: 'offset2'});
+             *
+             *     var pol = board.create('polygon', [[0, 0], [4, 0], [4,4], [0,4]], {
+             *                 fillOpacity: 1,
+             *                 fillColor: 'yellow',
+             *                 gradient: 'linear',
+             *                 gradientSecondColor: 'blue',
+             *                 gradientAngle: function() { return a.Value(); },
+             *                 gradientStartOffset: function() { return b.Value(); },
+             *                 gradientEndOffset: function() { return c.Value(); },
+             *                 hasInnerPoints: true
+             *         });
+             *
+             * </pre><div id="JXG3d04b5fd-0cd4-4f49-8c05-4e9686cd7ff0" class="jxgbox" style="width: 300px; height: 300px;"></div>
+             * <script type="text/javascript">
+             *     (function() {
+             *         var board = JXG.JSXGraph.initBoard('JXG3d04b5fd-0cd4-4f49-8c05-4e9686cd7ff0',
+             *             {boundingbox: [-1.5, 4.5, 5, -1.5], axis: true, showcopyright: false, shownavigation: false});
+             *         var a = board.create('slider', [[0, -0.2], [3.5, -0.2], [0, 0, 2 * Math.PI]], {name: 'angle'});
+             *         var b = board.create('slider', [[0, -0.4], [3.5, -0.4], [0, 0, 1]], {name: 'offset1'});
+             *         var c = board.create('slider', [[0, -0.6], [3.5, -0.6], [0, 1, 1]], {name: 'offset2'});
+             *
+             *         var pol = board.create('polygon', [[0, 0], [4, 0], [4,4], [0,4]], {
+             *                     fillOpacity: 1,
+             *                     fillColor: 'yellow',
+             *                     gradient: 'linear',
+             *                     gradientSecondColor: 'blue',
+             *                     gradientAngle: function() { return a.Value(); },
+             *                     gradientStartOffset: function() { return b.Value(); },
+             *                     gradientEndOffset: function() { return c.Value(); },
+             *                     hasInnerPoints: true
+             *             });
+             *
+             *     })();
+             *
+             * </script><pre>
+             *
+             * @example
+             *     var cx = board.create('slider', [[0, -.2], [3.5, -.2], [0, 0.5, 1]], {name: 'cx, cy'});
+             *     var fx = board.create('slider', [[0, -.4], [3.5, -.4], [0, 0.5, 1]], {name: 'fx, fy'});
+             *     var o1 = board.create('slider', [[0, -.6], [3.5, -.6], [0, 0.0, 1]], {name: 'offset1'});
+             *     var o2 = board.create('slider', [[0, -.8], [3.5, -.8], [0, 1, 1]], {name: 'offset2'});
+             *     var r = board.create('slider', [[0, -1], [3.5, -1], [0, 0.5, 1]], {name: 'r'});
+             *     var fr = board.create('slider', [[0, -1.2], [3.5, -1.2], [0, 0, 1]], {name: 'fr'});
+             *
+             *     var pol = board.create('polygon', [[0, 0], [4, 0], [4,4], [0,4]], {
+             *                 fillOpacity: 1,
+             *                 fillColor: 'yellow',
+             *                 gradient: 'radial',
+             *                 gradientSecondColor: 'blue',
+             *                 gradientCX: function() { return cx.Value(); },
+             *                 gradientCY: function() { return cx.Value(); },
+             *                 gradientR: function() { return r.Value(); },
+             *                 gradientFX: function() { return fx.Value(); },
+             *                 gradientFY: function() { return fx.Value(); },
+             *                 gradientFR: function() { return fr.Value(); },
+             *                 gradientStartOffset: function() { return o1.Value(); },
+             *                 gradientEndOffset: function() { return o2.Value(); },
+             *                 hasInnerPoints: true
+             *     });
+             * 
+             * </pre><div id="JXG6081ca7f-0d09-4525-87ac-325a02fe2225" class="jxgbox" style="width: 300px; height: 300px;"></div>
+             * <script type="text/javascript">
+             *     (function() {
+             *         var board = JXG.JSXGraph.initBoard('JXG6081ca7f-0d09-4525-87ac-325a02fe2225',
+             *             {boundingbox: [-1.5, 4.5, 5, -1.5], axis: true, showcopyright: false, shownavigation: false});
+             *         var cx = board.create('slider', [[0, -.2], [3.5, -.2], [0, 0.5, 1]], {name: 'cx, cy'});
+             *         var fx = board.create('slider', [[0, -.4], [3.5, -.4], [0, 0.5, 1]], {name: 'fx, fy'});
+             *         var o1 = board.create('slider', [[0, -.6], [3.5, -.6], [0, 0.0, 1]], {name: 'offset1'});
+             *         var o2 = board.create('slider', [[0, -.8], [3.5, -.8], [0, 1, 1]], {name: 'offset2'});
+             *         var r = board.create('slider', [[0, -1], [3.5, -1], [0, 0.5, 1]], {name: 'r'});
+             *         var fr = board.create('slider', [[0, -1.2], [3.5, -1.2], [0, 0, 1]], {name: 'fr'});
+             *
+             *         var pol = board.create('polygon', [[0, 0], [4, 0], [4,4], [0,4]], {
+             *                     fillOpacity: 1,
+             *                     fillColor: 'yellow',
+             *                     gradient: 'radial',
+             *                     gradientSecondColor: 'blue',
+             *                     gradientCX: function() { return cx.Value(); },
+             *                     gradientCY: function() { return cx.Value(); },
+             *                     gradientR: function() { return r.Value(); },
+             *                     gradientFX: function() { return fx.Value(); },
+             *                     gradientFY: function() { return fx.Value(); },
+             *                     gradientFR: function() { return fr.Value(); },
+             *                     gradientStartOffset: function() { return o1.Value(); },
+             *                     gradientEndOffset: function() { return o2.Value(); },
+             *                     hasInnerPoints: true
+             *         });
+             * 
+             *     })();
+             * 
+             * </script><pre>
+             * 
+             *
+             * @type String
+             * @name JXG.GeometryElement#gradient
+             * @see JXG.GeometryElement#gradientSecondColor
+             * @see JXG.GeometryElement#gradientSecondOpacity
+             * @default null
+             */
             gradient: null,
-            // gradient: 'linear', 'radial',
 
+            /**
+             * Second color for gradient.
+             * @type String
+             * @name JXG.GeometryElement#gradientSecondColor
+             * @see JXG.GeometryElement#gradient
+             * @see JXG.GeometryElement#gradientSecondOpacity
+             * @default '#ffffff'
+             */
             gradientSecondColor: '#ffffff',
+
+            /**
+             * Opacity of second gradient color. Takes a value between 0 and 1.
+             * @type Number
+             * @name JXG.GeometryElement#gradientSecondOpacity
+             * @see JXG.GeometryElement#gradient
+             * @see JXG.GeometryElement#gradientSecondColor
+             * @default 1
+             */
             gradientSecondOpacity: 1,
 
+            /**
+             * The gradientStartOffset attribute is a number (ranging from 0 to 1) which indicates where the first gradient stop is placed,
+             * see the SVG specification for more information.
+             * For linear gradients, this attribute represents a location along the gradient vector.
+             * For radial gradients, it represents a percentage distance from (fx,fy) to the edge of the outermost/largest circle.
+             * @type Number
+             * @name JXG.GeometryElement#gradientStartOffset
+             * @see JXG.GeometryElement#gradient
+             * @see JXG.GeometryElement#gradientEndOffset
+             * @default 0.0
+             */
+            gradientStartOffset: 0.0,
+
+            /**
+             * The gradientEndOffset attribute is a number (ranging from 0 to 1) which indicates where the second gradient stop is placed,
+             * see the SVG specification for more information.
+             * For linear gradients, this attribute represents a location along the gradient vector.
+             * For radial gradients, it represents a percentage distance from (fx,fy) to the edge of the outermost/largest circle.
+             * @type Number
+             * @name JXG.GeometryElement#gradientEndOffset
+             * @see JXG.GeometryElement#gradient
+             * @see JXG.GeometryElement#gradientStartOffset
+             * @default 1.0
+             */
+            gradientEndOffset: 1.0,
+
+
+            /**
+             * Angle (in radians) of the gradiant in case the gradient is of type 'linear'.
+             * If the angle is 0, the first color is on the left and the second color is on the right.
+             * If the angle is pi/4 the first color is on top and the second color at the
+             * bottom.
+             * @type Number
+             * @name JXG.GeometryElement#gradientAngle
+             * @see JXG.GeometryElement#gradient
+             * @default 0
+             */
             gradientAngle: 0,
 
-            // radial:
-            gradientStartX: 0.5,
-            gradientStartY: 0.5,
-            gradientEndX: 0.5,
-            gradientEndY: 0.5,
-            gradientRadius: 0.5,
+            /**
+             * From the SVG specification: ‘cx’, ‘cy’ and ‘r’ define the largest (i.e., outermost) circle for the radial gradient.
+             * The gradient will be drawn such that the 100% gradient stop is mapped to the perimeter of this largest (i.e., outermost) circle.
+             * For radial gradients in canvas this is the value 'x1'.
+             * Takes a value between 0 and 1.
+             * @type Number
+             * @name JXG.GeometryElement#gradientCX
+             * @see JXG.GeometryElement#gradient
+             * @see JXG.GeometryElement#gradientCY
+             * @see JXG.GeometryElement#gradientR
+             * @default 0.5
+             */
+            gradientCX: 0.5,
+
+            /**
+             * From the SVG specification: ‘cx’, ‘cy’ and ‘r’ define the largest (i.e., outermost) circle for the radial gradient.
+             * The gradient will be drawn such that the 100% gradient stop is mapped to the perimeter of this largest (i.e., outermost) circle.
+             * For radial gradients in canvas this is the value 'y1'.
+             * Takes a value between 0 and 1.
+             * @type Number
+             * @name JXG.GeometryElement#gradientCY
+             * @see JXG.GeometryElement#gradient
+             * @see JXG.GeometryElement#gradientCX
+             * @see JXG.GeometryElement#gradientR
+             * @default 0.5
+             */
+            gradientCY: 0.5,
+
+            /**
+             * From the SVG specification: ‘cx’, ‘cy’ and ‘r’ define the largest (i.e., outermost) circle for the radial gradient.
+             * The gradient will be drawn such that the 100% gradient stop is mapped to the perimeter of this largest (i.e., outermost) circle.
+             * For radial gradients in canvas this is the value 'r1'.
+             * Takes a value between 0 and 1.
+             * @type Number
+             * @name JXG.GeometryElement#gradientR
+             * @see JXG.GeometryElement#gradient
+             * @see JXG.GeometryElement#gradientCX
+             * @see JXG.GeometryElement#gradientCY
+             * @default 0.5
+             */
+            gradientR: 0.5,
+
+            /**
+             * ‘fx’ and ‘fy’ define the focal point for the radial gradient.
+             * The gradient will be drawn such that the 0% gradient stop is mapped to (fx, fy).
+             * For radial gradients in canvas this is the value 'x0'.
+             * Takes a value between 0 and 1.
+             * @type Number
+             * @name JXG.GeometryElement#gradientFX
+             * @see JXG.GeometryElement#gradient
+             * @see JXG.GeometryElement#gradientFY
+             * @see JXG.GeometryElement#gradientFR
+             * @default 0.5
+             */
+            gradientFX: 0.5,
+
+            /**
+             * y-coordinate of the circle center for the second color in case of gradient 'radial'. (The attribute fy in SVG)
+             * For radial gradients in canvas this is the value 'y0'.
+             * Takes a value between 0 and 1.
+             * @type Number
+             * @name JXG.GeometryElement#gradientFY
+             * @see JXG.GeometryElement#gradient
+             * @see JXG.GeometryElement#gradientFX
+             * @see JXG.GeometryElement#gradientFR
+             * @default 0.5
+             */
+            gradientFY: 0.5,
+
+
+            /**
+             * This attribute defines the radius of the start circle of the radial gradient.
+             * The gradient will be drawn such that the 0% &lt;stop&gt; is mapped to the perimeter of the start circle.
+             * For radial gradients in canvas this is the value 'r0'.
+             * Takes a value between 0 and 1.
+             * @type Number
+             * @name JXG.GeometryElement#gradientFR
+             * @see JXG.GeometryElement#gradient
+             * @see JXG.GeometryElement#gradientFX
+             * @see JXG.GeometryElement#gradientFY
+             * @default 0.0
+             */
+            gradientFR: 0.0,
 
             /**
              * Transition duration (in milliseconds) for color and opacity
@@ -782,7 +1018,7 @@ define([
 
             /**
              * Width of the element's stroke.
-             * @type number
+             * @type Number
              * @name JXG.GeometryElement#strokeWidth
              * @see JXG.GeometryElement#strokeColor
              * @see JXG.GeometryElement#highlightStrokeColor
@@ -794,7 +1030,7 @@ define([
 
             /**
              * Width of the element's stroke when the mouse is pointed over it.
-             * @type number
+             * @type Number
              * @name JXG.GeometryElement#highlightStrokeWidth
              * @see JXG.GeometryElement#strokeColor
              * @see JXG.GeometryElement#highlightStrokeColor
@@ -834,7 +1070,7 @@ define([
 
             /**
              * If false the element won't be visible on the board, otherwise it is shown.
-             * @type boolean
+             * @type Boolean
              * @name JXG.GeometryElement#visible
              * @see JXG.GeometryElement#hideElement
              * @see JXG.GeometryElement#showElement
@@ -875,7 +1111,7 @@ define([
 
             /**
              * If true the element will get a shadow.
-             * @type boolean
+             * @type Boolean
              * @name JXG.GeometryElement#shadow
              * @default false
              */
@@ -969,7 +1205,7 @@ define([
             draft: {
                 /**
                  * If true the element will be drawn in grey scale colors to visualize that it's only a draft.
-                 * @type boolean
+                 * @type Boolean
                  * @name JXG.GeometryElement#draft
                  * @default {@link JXG.Options.elements.draft#draft}
                  */
@@ -1251,7 +1487,7 @@ define([
             /**
              * Possible values. 'line' or 'string'
              *
-             * @type string
+             * @type String
              * @default 'line'
              */
             type: 'line'
@@ -2296,7 +2532,7 @@ define([
              *
              * @name Image#attractors
              *
-             * @type array
+             * @type Array
              * @default empty
              */
             attractors: []
@@ -3115,7 +3351,7 @@ define([
              *
              * @name Point#face
              *
-             * @type string
+             * @type String
              * @see Point#setStyle
              * @default circle
              */
@@ -3130,7 +3366,7 @@ define([
              * @see Point#face
              * @see Point#setStyle
              * @see Point#sizeUnit
-             * @type number
+             * @type Number
              * @default 3
              */
             size: 3,
@@ -3142,7 +3378,7 @@ define([
              * @name Point#sizeUnit
              *
              * @see Point#size
-             * @type string
+             * @type String
              * @default 'screen'
              */
             sizeUnit: 'screen',
@@ -3196,7 +3432,7 @@ define([
              *
              * @name Point#attractors
              *
-             * @type array
+             * @type Array
              * @default empty
              */
             attractors: [],
@@ -3211,7 +3447,7 @@ define([
              * @see Point#snatchDistance
              * @see Point#snapToPoints
              * @see Point#attractors
-             * @type string
+             * @type String
              * @default 'user'
              */
             attractorUnit: 'user',    // 'screen', 'user'
@@ -3224,7 +3460,7 @@ define([
              *
              * @name Point#attractorDistance
              *
-             * @type number
+             * @type Number
              * @default 0.0
              */
             attractorDistance: 0.0,
@@ -3237,7 +3473,7 @@ define([
              *
              * @name Point#snatchDistance
              *
-             * @type number
+             * @type Number
              * @default 0.0
              */
             snatchDistance: 0.0,
@@ -3303,7 +3539,7 @@ define([
              * List of elements which are ignored by snapToPoints.
              * @name Point#ignoredSnapToPoints
              *
-             * @type array
+             * @type Array
              * @default empty
              */
             ignoredSnapToPoints: []
@@ -3384,6 +3620,16 @@ define([
             label: {
                 offset: [0, 0]
             }
+
+            /**#@-*/
+        },
+
+        /* special polygonal chain options
+        */
+        polygonalchain: {
+            /**#@+
+             * @visprop
+             */
 
             /**#@-*/
         },
@@ -4447,7 +4693,7 @@ define([
              *
              * @name attractors
              * @memberOf Text.prototype
-             * @type array
+             * @type Array
              * @default empty
              */
             attractors: []

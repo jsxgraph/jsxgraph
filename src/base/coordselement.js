@@ -97,7 +97,7 @@ define([
 
         /**
          * Determines whether the element slides on a polygon if point is a glider.
-         * @type boolean
+         * @type Boolean
          * @default false
          * @private
          */
@@ -140,7 +140,7 @@ define([
 
         /**
          * Stores the groups of this element in an array of Group.
-         * @type array
+         * @type Array
          * @see JXG.Group
          * @private
          */

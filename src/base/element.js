@@ -339,21 +339,21 @@ define([
             /**
              * Type of the element.
              * @constant
-             * @type number
+             * @type Number
              */
             this.type = type;
 
             /**
              * Original type of the element at construction time. Used for removing glider property.
              * @constant
-             * @type number
+             * @type Number
              */
             this._org_type = type;
 
             /**
              * The element's class.
              * @constant
-             * @type number
+             * @type Number
              */
             this.elementClass = oclass || Const.OBJECT_CLASS_OTHER;
 
@@ -1632,7 +1632,7 @@ define([
 
         /**
          * EXPERIMENTAL. Generate JSON object code of visProp and other properties.
-         * @type string
+         * @type String
          * @private
          * @ignore
          * @returns JSON string containing element's properties.
@@ -1960,6 +1960,45 @@ define([
                 }
             }
             return this;
+        },
+
+        getBoundingBox: function() {
+            var i, le, v, x, y,
+                bb = [Infinity, Infinity, -Infinity, -Infinity];
+
+            if (this.type == Const.OBJECT_TYPE_POLYGON) {
+                le = this.vertices.length - 1;
+                if (le <= 0) {
+                    return bb;
+                }
+                for (i = 0; i < le; i++) {
+                    v = this.vertices[i].X();
+                    bb[0] = (v < bb[0]) ? v : bb[0];
+                    bb[2] = (v > bb[2]) ? v : bb[2];
+                    v = this.vertices[i].Y();
+                    bb[1] = (v < bb[1]) ? v : bb[1];
+                    bb[3] = (v > bb[3]) ? v : bb[3];
+                }
+            } else if (el.elementClass == Const.OBJECT_CLASS_CIRCLE) {
+                x = this.center.X();
+                y = this.center.Y();
+                bb = [x - this.radius, y + this.radius, x + this.radius, y - this.radius];
+            } else if (el.elementClass == Const.OBJECT_CLASS_CURVE) {
+                le = this.vertices.length;
+                if (le == 0) {
+                    return bb;
+                }
+                for (i = 0; i < le; i++) {
+                    v = this.points[i].coords.usrCoords[1];
+                    bb[0] = (v < bb[0]) ? v : bb[0];
+                    bb[2] = (v > bb[2]) ? v : bb[2];
+                    v = this.points[i].coords.usrCoords[1];
+                    bb[1] = (v < bb[1]) ? v : bb[1];
+                    bb[3] = (v > bb[3]) ? v : bb[3];
+                }
+            }
+
+            return bb;
         },
 
         /**

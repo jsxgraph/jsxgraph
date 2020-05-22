@@ -93,7 +93,7 @@ define([
          * <li><b>'pointRadius'</b> which means the circle is defined by its center and its radius given in user units or as term.</li>
          * <li><b>'pointLine'</b> which means the circle is defined by its center and its radius given by the distance from the startpoint and the endpoint of the line.</li>
          * <li><b>'pointCircle'</b> which means the circle is defined by its center and its radius given by the radius of another circle.</li></ul>
-         * @type string
+         * @type String
          * @see #center
          * @see #point2
          * @see #radius

@@ -185,6 +185,116 @@ define([
         },
 
         /**
+         * Set the gradient angle for linear color gradients.
+         *
+         * @private
+         * @param {JXG.GeometryElement} node An arbitrary JSXGraph element, preferably one with an area.
+         * @param {Number} radians angle value in radians. 0 is horizontal from left to right, Pi/4 is vertical from top to bottom.
+         */
+        updateGradientAngle: function(el, radians) {
+            // Angles:
+            // 0: ->
+            // 90: down
+            // 180: <-
+            // 90: up
+            var f = 1.0,
+                co = Math.cos(radians),
+                si = Math.sin(radians),
+                bb = el.getBoundingBox(),
+                c1, c2, x1, x2, y1, y2, x1s, x2s, y1s, y2s, dx, dy;
+
+            if (Math.abs(co) > Math.abs(si)) {
+                f /= Math.abs(co);
+            } else {
+                f /= Math.abs(si);
+            }
+            if (co >= 0) {
+                x1 = 0;
+                x2 = co * f;
+            } else {
+                x1 = -co * f;
+                x2 = 0;
+            }
+            if (si >= 0) {
+                y1 = 0;
+                y2 = si * f;
+            } else {
+                y1 = -si * f;
+                y2 = 0;
+            }
+
+            c1 = new Coords(Const.COORDS_BY_USER, [bb[0], bb[1]], el.board);
+            c2 = new Coords(Const.COORDS_BY_USER, [bb[2], bb[3]], el.board);
+            dx = c2.scrCoords[1] - c1.scrCoords[1];
+            dy = c2.scrCoords[2] - c1.scrCoords[2];
+            x1s = c1.scrCoords[1] + dx * x1;
+            y1s = c1.scrCoords[2] + dy * y1;
+            x2s = c1.scrCoords[1] + dx * x2;
+            y2s = c1.scrCoords[2] + dy * y2;
+
+            return this.context.createLinearGradient(x1s, y1s, x2s, y2s);
+        },
+
+        /**
+         * Set circles for radial color gradients.
+         *
+         * @private
+         * @param {SVGnode} node SVG gradient node
+         * @param {Number} cx Canvas value x1 (but value between 0 and 1)
+         * @param {Number} cy  Canvas value y1 (but value between 0 and 1)
+         * @param {Number} r  Canvas value r1 (but value between 0 and 1)
+         * @param {Number} fx  Canvas value x0 (but value between 0 and 1)
+         * @param {Number} fy  Canvas value x1 (but value between 0 and 1)
+         * @param {Number} fr  Canvas value r0 (but value between 0 and 1)
+         */
+        updateGradientCircle(el, cx, cy, r, fx, fy, fr) {
+            var bb = el.getBoundingBox(),
+                c1, c2, cxs, cys, rs, fxs, fys, frs, dx, dy;
+
+            c1 = new Coords(Const.COORDS_BY_USER, [bb[0], bb[1]], el.board);
+            c2 = new Coords(Const.COORDS_BY_USER, [bb[2], bb[3]], el.board);
+            dx = c2.scrCoords[1] - c1.scrCoords[1];
+            dy = c1.scrCoords[2] - c2.scrCoords[2];
+
+            cxs = c1.scrCoords[1] + dx * cx;
+            cys = c1.scrCoords[2] - dy * cy;
+            fxs = c1.scrCoords[1] + dx * fx;
+            fys = c1.scrCoords[2] - dy * fy;
+            rs = r * (dx + dy) * 0.5
+            frs = fr * (dx + dy) * 0.5
+
+            return this.context.createRadialGradient(fxs, fys, frs, cxs, cys, rs);
+        },
+
+        // documented in JXG.AbstractRenderer
+        updateGradient: function(el) {
+            var col, op,
+                ev_g = Type.evaluate(el.visProp.gradient),
+                gradient;
+
+            op = Type.evaluate(el.visProp.fillopacity);
+            op = (op > 0) ? op : 0;
+            col = Type.evaluate(el.visProp.fillcolor);
+
+            if (ev_g === 'linear') {
+                gradient = this.updateGradientAngle(el, Type.evaluate(el.visProp.gradientangle));
+            } else if (ev_g === 'radial') {
+                gradient = this.updateGradientCircle(el,
+                    Type.evaluate(el.visProp.gradientcx),
+                    Type.evaluate(el.visProp.gradientcy),
+                    Type.evaluate(el.visProp.gradientr),
+                    Type.evaluate(el.visProp.gradientfx),
+                    Type.evaluate(el.visProp.gradientfy),
+                    Type.evaluate(el.visProp.gradientfr)
+                );
+            }
+            gradient.addColorStop(Type.evaluate(el.visProp.gradientstartoffset), col);
+            gradient.addColorStop(Type.evaluate(el.visProp.gradientendoffset),
+                                  Type.evaluate(el.visProp.gradientsecondcolor));
+        return gradient;
+        },
+
+        /**
          * Sets color and opacity for filling and stroking.
          * type is the attribute from visProp and targetType the context[targetTypeStyle].
          * This is necessary, because the fill style of a text is set by the stroke attributes of the text element.
@@ -197,12 +307,20 @@ define([
         _setColor: function (el, type, targetType) {
             var hasColor = true,
                 ev = el.visProp, hl, sw,
-                rgba, rgbo, c, o, oo;
+                rgba, rgbo, c, o, oo,
+                grad;
 
             type = type || 'stroke';
             targetType = targetType || type;
 
             hl = this._getHighlighted(el);
+
+            grad = Type.evaluate(el.visProp.gradient);
+            if (grad == 'linear' || grad == 'radial') {
+                // TODO: opacity
+                this.context[targetType + 'Style'] = this.updateGradient(el);
+                return hasColor;
+            }
 
             // type is equal to 'fill' or 'stroke'
             rgba = Type.evaluate(ev[hl + type + 'color']);

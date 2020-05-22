@@ -1161,8 +1161,23 @@ define([
         return el;
     };
 
+    JXG.createPolygonalChain = function (board, parents, attributes) {
+        var attr, el;
+
+        attr = Type.copyAttributes(attributes, board.options, 'polygonalchain');
+        el = board.create('polygon', p, attr);
+        el.elType = 'polygonalchain';
+
+        // A polygonal chain is not necessarily closed.
+        el.vertices.pop();
+        el.borders.pop();
+
+        return el;
+    };
+
     JXG.registerElement('polygon', JXG.createPolygon);
     JXG.registerElement('regularpolygon', JXG.createRegularPolygon);
+    JXG.registerElement('polygonalchain', JXG.createPolygonalChain);
 
     return {
         Polygon: JXG.Polygon,

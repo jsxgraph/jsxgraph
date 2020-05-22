@@ -128,7 +128,7 @@ define([
         /**
          * The vertical offset for {@link Text} elements. Every {@link Text} element will
          * be placed this amount of pixels below the user given coordinates.
-         * @type number
+         * @type Number
          * @default 0
          */
         this.vOffsetText = 0;
