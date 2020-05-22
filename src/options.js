@@ -4560,11 +4560,233 @@ define([
 
             /**
              * If true MathJax will be used to render the input string.
+             *  Supports MathJax 2 as well as Mathjax 3
              *
              * @name useMathJax
              * @memberOf Text.prototype
              * @default false
              * @type Boolean
+             *
+             * @example
+             *  // Before loading MathJax, it has to be configured something like this:
+             * window.MathJax = {
+             *   tex: {
+             *     inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+             *     displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+             *     packages: ['base', 'ams']
+             *   },
+             *   options: {
+             *     ignoreHtmlClass: 'tex2jax_ignore',
+             *     processHtmlClass: 'tex2jax_process'
+             *   }
+             * };
+             *
+             * // Display style
+             * board.create('text',[ 2,2,  function(){return '$$X=\\frac{2}{x}$$'}], {
+             *     fontSize: 15, color:'green', useMathJax: true});
+             *
+             * // Inline style
+             * board.create('text',[-2,2,  function(){return '$X_A=\\frac{2}{x}$'}], {
+             *     fontSize: 15, color:'green', useMathJax: true});
+             *
+             * var A = board.create('point', [-2, 0]);
+             * var B = board.create('point', [1, 0]);
+             * var C = board.create('point', [0, 1]);
+             *
+             * var graph = board.create('ellipse', [A, B, C], {
+             *         fixed: true,
+             *         withLabel: true,
+             *         strokeColor: 'black',
+             *         strokeWidth: 2,
+             *         fillColor: '#cccccc',
+             *         fillOpacity: 0.3,
+             *         highlightStrokeColor: 'red',
+             *         highlightStrokeWidth: 3,
+             *         name: '$1=\\frac{(x-h)^2}{a^2}+\\frac{(y-k)^2}{b^2}$',
+             *         label: {useMathJax: true}
+             *     });
+             *
+             * var nvect1 = board.create('text', [-4, -3, '\\[\\overrightarrow{V}\\]'],
+             * {
+             *   fontSize: 24, parse: false
+             * });
+             * var nvect1 = board.create('text', [-2, -4, function() {return '$\\overrightarrow{G}$';}],
+             * {
+             *   fontSize: 24, useMathJax: true
+             * });
+             * ze: 24, useMathJax: true
+             * });
+             *
+             * </pre>
+             * <script>
+             * window.MathJax = {
+             *   tex: {
+             *     inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+             *     displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+             *     packages: ['base', 'ams']
+             *   },
+             *   options: {
+             *     ignoreHtmlClass: 'tex2jax_ignore',
+             *     processHtmlClass: 'tex2jax_process'
+             *   }
+             * };
+             * </script>
+             * <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" id="MathJax-script"></script>
+             * <div id="JXGe2a04876-5813-4db0-b7e8-e48bf4e220b9" class="jxgbox" style="width: 400px; height: 400px;"></div>
+             * <script type="text/javascript">
+             *     (function() {
+             *         var board = JXG.JSXGraph.initBoard('JXGe2a04876-5813-4db0-b7e8-e48bf4e220b9',
+             *             {boundingbox: [-5, 5, 5, -5], axis: true, showcopyright: false, shownavigation: false});
+             *     // Display style
+             *     board.create('text',[ 2,2,  function(){return '$$X=\\frac{2}{x}$$'}], {
+             *         fontSize: 15, color:'green', useMathJax: true});
+             *
+             *     // Inline style
+             *     board.create('text',[-2,2,  function(){return '$X_A=\\frac{2}{x}$'}], {
+             *         fontSize: 15, color:'green', useMathJax: true});
+             *
+             *     var A = board.create('point', [-2, 0]);
+             *     var B = board.create('point', [1, 0]);
+             *     var C = board.create('point', [0, 1]);
+             *
+             *     var graph = board.create('ellipse', [A, B, C], {
+             *             fixed: true,
+             *             withLabel: true,
+             *             strokeColor: 'black',
+             *             strokeWidth: 2,
+             *             fillColor: '#cccccc',
+             *             fillOpacity: 0.3,
+             *             highlightStrokeColor: 'red',
+             *             highlightStrokeWidth: 3,
+             *             name: '$1=\\frac{(x-h)^2}{a^2}+\\frac{(y-k)^2}{b^2}$',
+             *             label: {useMathJax: true}
+             *         });
+             *
+             *     var nvect1 = board.create('text', [-4, -3, '\\[\\overrightarrow{V}\\]'],
+             *     {
+             *       fontSize: 24, parse: false
+             *     });
+             *     var nvect1 = board.create('text', [-2, -4, function() {return '$\\overrightarrow{G}$';}],
+             *     {
+             *       fontSize: 24, useMathJax: true
+             *     });
+             *     ze: 24, useMathJax: true
+             *     });
+             *
+             *     })();
+             *
+             * </script><pre>
+             *
+             *
+             * @example
+             * // Load MathJax:
+             * // <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+             *
+             * // function and its derivative
+             * var f1 = function(x) { return x * x * x; },
+             * graph1 = board.create('functiongraph', [f1, -0.1, 1.1]),
+             *
+             * A = board.create('glider', [0.5, f1(0.5), graph1], {
+             *             name: 'f(x)',
+             *             color: 'black',
+             *             face:'x',
+             *             fixed: true,
+             *             size: 3,
+             *             label: {offset: [-30, 10], fontSize: 15}
+             *         }),
+             * B = board.create('glider', [0.7, f1(0.7), graph1], {
+             *             name: 'f(x+&Delta;x)',
+             *             size: 3,
+             *             label: {offset: [-60, 10], fontSize: 15}
+             *         }),
+             *
+             * secant_line = board.create('line', [A,B],{dash: 1, color: 'green'}),
+             * a_h_segment = board.create('segment', [A, [
+             *                     function(){ return B.X() > A.X() ? B.X() : A.X()},
+             *                     function(){ return B.X() > A.X() ? A.Y() : B.Y()}
+             *                 ]],{ name: '&Delta;x', dash: 1, color: 'black'});
+             *
+             * b_v_segment = board.create('segment', [B, [
+             *                     function(){ return B.X() > A.X() ? B.X() : A.X()},
+             *                     function(){ return B.X() > A.X() ? A.Y() : B.Y()}
+             *                 ]],{ name: '&Delta;y', dash: 1, color: 'black'}),
+             *
+             * ma = board.create('midpoint', [a_h_segment.point1, a_h_segment.point2
+             *     ], {visible: false});
+             *
+             * board.create('text', [0, 0, function() {return '\\[\\Delta_x='+(B.X()-A.X()).toFixed(4)+'\\]'}], {
+             *     anchor: ma, useMathJax: true, fixed: true, color: 'green', anchorY: 'top'
+             * });
+             *
+             * mb = board.create('midpoint', [b_v_segment.point1, b_v_segment.point2], {visible: false});
+             * board.create('text', [0, 0, function() {return '\\[\\Delta_y='+(B.Y()-A.Y()).toFixed(4)+'\\]'}], {
+             *     anchor: mb, useMathJax: true, fixed: true, color: 'green'
+             * });
+             *
+             * dval = board.create('text',[0.1, 0.8,
+             *     function(){
+             *         return '\\[\\frac{\\Delta_y}{\\Delta_x}=\\frac{' + ((B.Y()-A.Y()).toFixed(4)) + '}{' + ((B.X()-A.X()).toFixed(4)) +
+             *             '}=' + (((B.Y()-A.Y()).toFixed(4))/((B.X()-A.X()).toFixed(4))).toFixed(4) + '\\]';
+             *     }],{fontSize: 15, useMathJax: true});
+             *
+             * </pre>
+             * <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" id="MathJax-script"></script>
+             * <div id="JXG8c2b65e7-4fc4-43f7-b23c-5076a7fa9621" class="jxgbox" style="width: 400px; height: 400px;"></div>
+             * <script type="text/javascript">
+             *     (function() {
+             *         var board = JXG.JSXGraph.initBoard('JXG8c2b65e7-4fc4-43f7-b23c-5076a7fa9621',
+             *             {boundingbox: [-0.1, 1.1, 1.1, -0.1], axis: true, showcopyright: false, shownavigation: false});
+             *     // function and its derivative
+             *     var f1 = function(x) { return x * x * x; },
+             *     graph1 = board.create('functiongraph', [f1, -0.1, 1.1]),
+             *
+             *     A = board.create('glider', [0.5, f1(0.5), graph1], {
+             *                 name: 'f(x)',
+             *                 color: 'black',
+             *                 face:'x',
+             *                 fixed: true,
+             *                 size: 3,
+             *                 label: {offset: [-30, 10], fontSize: 15}
+             *             }),
+             *     B = board.create('glider', [0.7, f1(0.7), graph1], {
+             *                 name: 'f(x+&Delta;x)',
+             *                 size: 3,
+             *                 label: {offset: [-60, 10], fontSize: 15}
+             *             }),
+             *
+             *     secant_line = board.create('line', [A,B],{dash: 1, color: 'green'}),
+             *     a_h_segment = board.create('segment', [A, [
+             *                         function(){ return B.X() > A.X() ? B.X() : A.X()},
+             *                         function(){ return B.X() > A.X() ? A.Y() : B.Y()}
+             *                     ]],{ name: '&Delta;x', dash: 1, color: 'black'});
+             *
+             *     b_v_segment = board.create('segment', [B, [
+             *                         function(){ return B.X() > A.X() ? B.X() : A.X()},
+             *                         function(){ return B.X() > A.X() ? A.Y() : B.Y()}
+             *                     ]],{ name: '&Delta;y', dash: 1, color: 'black'}),
+             *
+             *     ma = board.create('midpoint', [a_h_segment.point1, a_h_segment.point2
+             *         ], {visible: false});
+             *
+             *     board.create('text', [0, 0, function() {return '\\[\\Delta_x='+(B.X()-A.X()).toFixed(4)+'\\]'}], {
+             *         anchor: ma, useMathJax: true, fixed: true, color: 'green', anchorY: 'top'
+             *     });
+             *
+             *     mb = board.create('midpoint', [b_v_segment.point1, b_v_segment.point2], {visible: false});
+             *     board.create('text', [0, 0, function() {return '\\[\\Delta_y='+(B.Y()-A.Y()).toFixed(4)+'\\]'}], {
+             *         anchor: mb, useMathJax: true, fixed: true, color: 'green'
+             *     });
+             *
+             *     dval = board.create('text',[0.1, 0.8,
+             *         function(){
+             *             return '\\[\\frac{\\Delta_y}{\\Delta_x}=\\frac{' + ((B.Y()-A.Y()).toFixed(4)) + '}{' + ((B.X()-A.X()).toFixed(4)) +
+             *                 '}=' + (((B.Y()-A.Y()).toFixed(4))/((B.X()-A.X()).toFixed(4))).toFixed(4) + '\\]';
+             *         }],{fontSize: 15, useMathJax: true});
+             *
+             *     })();
+             *
+             * </script><pre>
+             *
              */
             useMathJax: false,
 
