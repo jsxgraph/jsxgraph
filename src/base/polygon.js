@@ -848,7 +848,7 @@ define([
          *             });
          *
          *  // Dynamic version:
-         *  // the intersection polygon does  adapt to changes of pol1 or pol2.
+         *  // the intersection polygon does adapt to changes of pol1 or pol2.
          *  // For this a curve element is used.
          *  var curve = board.create('curve', [[],[]], {fillColor: 'blue', fillOpacity: 0.4});
          *  curve.updateDataArray = function() {
