@@ -1,3 +1,27 @@
+1.01.0
+====
+
+New Features
+------------
+
+* New JSXSGraph element `polygonalchain`
+* New attribute `gradient` for color gradients. See API documentation for more attributes like gradient angle.
+* New method `JXG.Math.statistics.generateGaussian`
+
+Improvements
+------------
+
+* Support for MathJax 3
+* Exact position of arrow heads for curves
+* Autoposition of labels
+* API documentation
+
+Bug fixes
+---------
+
+* Intersection of polygons with polygon1.intersect(polygon2)
+
+
 1.00.0
 ====
 
@@ -11,7 +35,7 @@ Compatibility:
 New Features
 ------------
 
-* Polygon / curve clipping and boolean operation on curves is now enabled. 
+* Polygon / curve clipping and boolean operation on curves is now enabled.
 Possible operations are intersection, union or difference of curves, polygones or circles.
 * New math functions: cot and acot, nthroot, cbrt, binomial. Available as JXG.Math.cot, ...
 * New method `JXG.math.norm`: Euclidean norm of a vector
@@ -282,7 +306,7 @@ New Features
     - QUADPACK routines
     - Gauss-Legendre
 * Docs for transformations
-* New attribute `ignoredSnapToPoints`   
+* New attribute `ignoredSnapToPoints`
 * New attribute for ticks: `useUnicodeMinus` (default true)
 * New board attribute `maxNameLength`: Controls the maximum number of digits of automatic labels. The default value has been reduced from 2 to 1
 * Allow shortened math syntax in `Text.generateTerm()` and in texts with &lt;value&rt;-tag

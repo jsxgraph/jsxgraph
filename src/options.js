@@ -4549,7 +4549,7 @@ define([
             highlightCssStyle: '',
 
             /**
-             * If true the input will be given to ASCIIMathML before rendering.
+             * If true, the input will be given to ASCIIMathML before rendering.
              *
              * @name useASCIIMathML
              * @memberOf Text.prototype
@@ -4559,7 +4559,7 @@ define([
             useASCIIMathML: false,
 
             /**
-             * If true MathJax will be used to render the input string.
+             * If true, MathJax will be used to render the input string.
              *  Supports MathJax 2 as well as Mathjax 3
              *
              * @name useMathJax
