@@ -728,19 +728,19 @@ define([
         },
 
         /**
-        * Algorithm by Sutherland and Hodgman to compute the intersection of two convex polygons.
-        * The polygon itself is the clipping polygon, it expects as parameter a polygon to be clipped.
-        * See <a href="https://en.wikipedia.org/wiki/Sutherland%E2%80%93Hodgman_algorithm">wikipedia entry</a>.
-        * Called by {@link JXG.Polygon#intersect}.
-        *
-        * @private
-        *
-        * @param {JXG.Polygon} polygon Polygon which will be clipped.
-        *
-        * @returns {Array} of (normalized homogeneous user) coordinates (i.e. [z, x, y], where z==1 in most cases,
-        *   representing the vertices of the intersection polygon.
-        *
-        */
+         * Algorithm by Sutherland and Hodgman to compute the intersection of two convex polygons.
+         * The polygon itself is the clipping polygon, it expects as parameter a polygon to be clipped.
+         * See <a href="https://en.wikipedia.org/wiki/Sutherland%E2%80%93Hodgman_algorithm">wikipedia entry</a>.
+         * Called by {@link JXG.Polygon#intersect}.
+         *
+         * @private
+         *
+         * @param {JXG.Polygon} polygon Polygon which will be clipped.
+         *
+         * @returns {Array} of (normalized homogeneous user) coordinates (i.e. [z, x, y], where z==1 in most cases,
+         *   representing the vertices of the intersection polygon.
+         *
+         */
         sutherlandHodgman: function(polygon) {
             // First the two polygons are sorted counter clockwise
             var clip = JXG.Math.Geometry.sortVertices(this.vertices),   // "this" is the clipping polygon
@@ -800,6 +800,9 @@ define([
          * The parent object is the clipping polygon, it expects as parameter a polygon to be clipped.
          * Both polygons have to be convex.
          * Calls the algorithm by Sutherland, Hodgman, {@link JXG.Polygon#sutherlandHodgman}.
+         * <p>
+         * An alternative is to use the methods from {@link JXG.Math.Clip}, where the algorithm by Greiner and Hormann
+         * is used.
          *
          * @param {JXG.Polygon} polygon Polygon which will be clipped.
          *
