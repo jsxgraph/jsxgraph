@@ -922,7 +922,7 @@ define([
      * @augments JXG.Polygon
      * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
      * @param {Array} vertices The polygon's vertices. If the first and the last vertex don't match the first one will be
-     * added to the array by the creator.
+     * added to the array by the creator. Here, two points match if they have the same 'id' attribute.
      *
      * Additionally, a polygon can be created by providing a polygon and a transformation (or an array of transformations).
      * The result is a polygon which is the transformation of the supplied polygon.
@@ -1161,15 +1161,75 @@ define([
         return el;
     };
 
+    /**
+     * @class  A polygonal chain is a connected series of line segments determined by
+     * <ul>
+     *    <li> a list of points or
+     *    <li> a list of coordinate arrays or
+     *    <li> a function returning a list of coordinate arrays.
+     * </ul>
+     * Each two consecutive points of the list define a line.
+     * In JSXGraph, a polygonal chain is simply realized as polygon without the last - closing - point.
+     * This may lead to unexpected results. Polygonal chains can be distinguished from polygons by the attribute 'elType' which
+     * is 'polygonalchain' for the first and 'polygon' for the latter.
+     * @pseudo
+     * @constructor
+     * @name PolygonalChain
+     * @type Polygon
+     * @augments JXG.Polygon
+     * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
+     * @param {Array} vertices The polygon's vertices.
+     *
+     * Additionally, a polygonal chain can be created by providing a polygonal chain and a transformation (or an array of transformations).
+     * The result is a polygonal chain which is the transformation of the supplied polygona chain.
+     *
+     * @example
+     *     var attr = {
+     *             snapToGrid: true
+     *         },
+     *         p = [];
+     *
+     * 	p.push(board.create('point', [-4, 0], attr));
+     * 	p.push(board.create('point', [-1, -3], attr));
+     * 	p.push(board.create('point', [0, 2], attr));
+     * 	p.push(board.create('point', [2, 1], attr));
+     * 	p.push(board.create('point', [4, -2], attr));
+     *
+     *  var chain = board.create('polygonalchain', p, {borders: {strokeWidth: 3}});
+     *
+     * </pre><div id="JXG878f93d8-3e49-46cf-aca2-d3bb7d60c5ae" class="jxgbox" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     *     (function() {
+     *         var board = JXG.JSXGraph.initBoard('JXG878f93d8-3e49-46cf-aca2-d3bb7d60c5ae',
+     *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+     *         var attr = {
+     *                 snapToGrid: true
+     *             },
+     *             p = [];
+     *
+     *     	p.push(board.create('point', [-4, 0], attr));
+     *     	p.push(board.create('point', [-1, -3], attr));
+     *     	p.push(board.create('point', [0, 2], attr));
+     *     	p.push(board.create('point', [2, 1], attr));
+     *     	p.push(board.create('point', [4, -2], attr));
+     *
+     *         var chain = board.create('polygonalchain', p, {borders: {strokeWidth: 3}});
+     *
+     *     })();
+     *
+     * </script><pre>
+     *
+     */
     JXG.createPolygonalChain = function (board, parents, attributes) {
         var attr, el;
 
         attr = Type.copyAttributes(attributes, board.options, 'polygonalchain');
-        el = board.create('polygon', p, attr);
+        el = board.create('polygon', parents, attr);
         el.elType = 'polygonalchain';
 
         // A polygonal chain is not necessarily closed.
         el.vertices.pop();
+        board.removeObject(el.borders[el.borders.length - 1]);
         el.borders.pop();
 
         return el;

@@ -807,8 +807,8 @@ define([
          * @see JXG.AbstractRenderer#drawPolygon
          */
         updatePolygon: function (el) {
-            // Here originally strokecolor wasn't updated but strokewidth was
-            // but if there's no strokecolor i don't see why we should update strokewidth.
+            // Here originally strokecolor wasn't updated but strokewidth was.
+            // But if there's no strokecolor i don't see why we should update strokewidth.
             this._updateVisual(el, {stroke: true, dash: true});
             this.updatePolygonPrim(el.rendNode, el);
         },

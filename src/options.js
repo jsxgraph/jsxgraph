@@ -3631,6 +3631,9 @@ define([
              * @visprop
              */
 
+            fillColor: 'none',
+            highlightFillColor: 'none'
+
             /**#@-*/
         },
 
