@@ -212,7 +212,7 @@ define([
             var node2, node3,
                 id = el.id + 'Triangle',
                 type = null,
-                w, s,
+                v,
                 ev_fa = Type.evaluate(el.visProp.firstarrow),
                 ev_la = Type.evaluate(el.visProp.lastarrow);
 
@@ -239,6 +239,10 @@ define([
                See also abstractRenderer.updateLine() where the line path is shortened accordingly.
 
                Changes here are also necessary in setArrowWidth().
+
+               So far, lines with arrow heads are shortenend to avoid overlapping of
+               arrow head and line. This is not the case for curves, yet.
+               Therefore, the offset refX has to be adapted to the path type.
             */
             node3 = this.container.ownerDocument.createElementNS(this.svgNamespace, 'path');
             if (idAppendix === 'End') {
@@ -247,15 +251,15 @@ define([
                     type = Type.evaluate(ev_fa.type);
                 }
 
-                node2.setAttributeNS(null, 'refY', 5);
                 if (type === 2) {
-                    node2.setAttributeNS(null, 'refX', 4.9);
+                    v = (el.elementClass === Const.OBJECT_CLASS_LINE) ? 4.9 : 0.0;
                     node3.setAttributeNS(null, 'd', 'M 10,0 L 0,5 L 10,10 L 5,5 z');
                 } else if (type === 3) {
-                    node2.setAttributeNS(null, 'refX', 3.33);
+                    //node2.setAttributeNS(null, 'refX', 3.33);
+                    v = (el.elementClass === Const.OBJECT_CLASS_LINE) ? 3.33 : 1;
                     node3.setAttributeNS(null, 'd', 'M 0,0 L 3.33,0 L 3.33,10 L 0,10 z');
                 } else {
-                    node2.setAttributeNS(null, 'refX', 9.9);
+                    v = (el.elementClass === Const.OBJECT_CLASS_LINE) ? 9.9 : 0.0;
                     node3.setAttributeNS(null, 'd', 'M 10,0 L 0,5 L 10,10 z');
                 }
             } else {
@@ -264,18 +268,20 @@ define([
                     type = Type.evaluate(ev_la.type);
                 }
 
-                node2.setAttributeNS(null, 'refY', 5);
                 if (type === 2) {
-                    node2.setAttributeNS(null, 'refX', 5.1);
+                    v = (el.elementClass === Const.OBJECT_CLASS_LINE) ? 5.1 : 9.9;
                     node3.setAttributeNS(null, 'd', 'M 0,0 L 10,5 L 0,10 L 5,5 z');
                 } else if (type === 3) {
-                    node2.setAttributeNS(null, 'refX', 0.1);
+                    //node2.setAttributeNS(null, 'refX', 0.1);
+                    v = (el.elementClass === Const.OBJECT_CLASS_LINE) ? 0.1 : 3.33;
                     node3.setAttributeNS(null, 'd', 'M 0,0 L 3.33,0 L 3.33,10 L 0,10 z');
                 } else {
-                    node2.setAttributeNS(null, 'refX', 0.1);
+                    v = (el.elementClass === Const.OBJECT_CLASS_LINE) ? 0.1 : 9.9;
                     node3.setAttributeNS(null, 'd', 'M 0,0 L 10,5 L 0,10 z');
                 }
             }
+            node2.setAttributeNS(null, 'refY', 5);
+            node2.setAttributeNS(null, 'refX', v);
 
             node2.appendChild(node3);
             return node2;
@@ -1073,7 +1079,7 @@ define([
             if (testAttribute === '') {
                 setFunc();
             } else {
-                setTimeout(setFunc, 1);
+                window.setTimeout(setFunc, 1);
             }
         },
 
@@ -1558,7 +1564,7 @@ define([
                 tmpImg.onload = function () {
                     // IE needs a pause...
                     // Seems to be broken
-                    setTimeout(function() {
+                    window.setTimeout(function() {
                         try {
                             ctx.drawImage(tmpImg, 0, 0, w, h);
                         } catch (err) {
@@ -1708,7 +1714,7 @@ define([
             } else {
                 // IE
                 this.dumpToCanvas(id, w, h, ignoreTexts);
-                setTimeout(_copyCanvasToImg, 200);
+                window.setTimeout(_copyCanvasToImg, 200);
             }
 
             // Show navigation bar in board

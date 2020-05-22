@@ -1361,10 +1361,10 @@ define([
             }
 
             this.XEval = function () {
-                var sx, coords, anchor,
-                    ev_o = Type.evaluate(this.visProp.offset);
+                var sx, coords, anchor, ev_o;
 
                 if (Type.evaluate(this.visProp.islabel)) {
+                    ev_o = Type.evaluate(this.visProp.offset);
                     sx =  parseFloat(ev_o[0]);
                     anchor = this.element.getLabelAnchor();
                     coords = new Coords(Const.COORDS_BY_SCREEN,
@@ -1378,10 +1378,10 @@ define([
             };
 
             this.YEval = function () {
-                var sy, coords, anchor,
-                    ev_o = Type.evaluate(this.visProp.offset);
+                var sy, coords, anchor, ev_o;
 
                 if (Type.evaluate(this.visProp.islabel)) {
+                    ev_o = Type.evaluate(this.visProp.offset);
                     sy = -parseFloat(ev_o[1]);
                     anchor = this.element.getLabelAnchor();
                     coords = new Coords(Const.COORDS_BY_SCREEN,

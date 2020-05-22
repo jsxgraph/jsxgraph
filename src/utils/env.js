@@ -795,7 +795,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          * <button onClick="JXG.toFullscreen('JXGf9b973ea4_outer', 'JXGd9b973ea4-fd43-11e8-ab14-901b0e1b8723')">Fullscreen</button>
          * <script type="text/javascript">
          *     (function() {
-         *         var board = JXG.JSXGraph.initBoard('d9b973ea4-fd43-11e8-ab14-901b0e1b8723',
+         *         var board = JXG.JSXGraph.initBoard('JXGd9b973ea4-fd43-11e8-ab14-901b0e1b8723',
          *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
          *         var p = board.create('point', [0, 1]);
          *     })();

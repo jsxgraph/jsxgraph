@@ -623,7 +623,7 @@ define([
         },
 
         /**
-         * A line can be a segment, a straight, or a ray. so it is not always delimited by point1 and point2
+         * A line can be a segment, a straight, or a ray. So it is not always delimited by point1 and point2
          * calcStraight determines the visual start point and end point of the line. A segment is only drawn
          * from start to end point, a straight line is drawn until it meets the boards boundaries.
          * @param {JXG.Line} el Reference to a line object, that needs calculation of start and end point.
