@@ -4095,7 +4095,16 @@ define([
              */
             label: {
                 strokeColor: '#000000'
-            }
+            },
+
+            /**
+             * If true, 'up' events on the baseline will trigger slider moves.
+             *
+             * @type: Boolean
+             * @name Slider:moveOnUp
+             * @default: true
+             */
+            moveOnUp: true
 
             /**#@-*/
         },

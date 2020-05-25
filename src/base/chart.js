@@ -77,6 +77,7 @@ define([
       * @param {String,JXG.Board} board The board the new chart is drawn on.
       * @param {Array} parent data arrays for the chart
       * @param {Object} attributes Javascript object containing attributes like name, id and colors.
+      *
       */
     JXG.Chart = function (board, parents, attributes) {
         this.constructor(board, attributes);
@@ -156,6 +157,7 @@ define([
 
         return this.elements;
     };
+
     JXG.Chart.prototype = new GeometryElement();
 
     JXG.extend(JXG.Chart.prototype, /** @lends JXG.Chart.prototype */ {

@@ -55,9 +55,9 @@
  */
 
 define([
-    'jxg', 'math/math', 'base/constants', 'utils/type', 'base/point', 'base/group',
+    'jxg', 'math/math', 'base/constants', 'base/coords', 'utils/type', 'base/point', 'base/group',
     'base/element', 'base/line', 'base/ticks', 'base/text'
-], function (JXG, Mat, Const, Type, Point, Group, GeometryElement, Line, Ticks, Text) {
+], function (JXG, Mat, Const, Coords, Type, Point, Group, GeometryElement, Line, Ticks, Text) {
 
     "use strict";
 
@@ -93,6 +93,33 @@ define([
      *     var s = board.create('slider', [[1, 3], [3, 1], [1, 10, 50]], {snapWidth: 1, ticks: { drawLabels: true }});
      *   })();
      * </script><pre>
+     * @example
+     *     // Draggable slider
+     *     var s1 = board.create('slider', [[-3,1], [2,1],[-10,1,10]], {
+     *         visible: true,
+     *         snapWidth: 2,
+     *         point1: {fixed: false},
+     *         point2: {fixed: false},
+     *         baseline: {fixed: false, needsRegularUpdate: true}
+     *     });
+     *
+     * </pre><div id="JXGbfc67817-2827-44a1-bc22-40bf312e76f8" class="jxgbox" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     *     (function() {
+     *         var board = JXG.JSXGraph.initBoard('JXGbfc67817-2827-44a1-bc22-40bf312e76f8',
+     *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+     *         var s1 = board.create('slider', [[-3,1], [2,1],[-10,1,10]], {
+     *             visible: true,
+     *             snapWidth: 2,
+     *             point1: {fixed: false},
+     *             point2: {fixed: false},
+     *             baseline: {fixed: false, needsRegularUpdate: true}
+     *         });
+     *
+     *     })();
+     *
+     * </script><pre>
+     *
      */
     JXG.createSlider = function (board, parents, attributes) {
         var pos0, pos1, smin, start, smax, sdiff,
@@ -114,11 +141,11 @@ define([
         p2 = board.create('point', parents[1],  attr);
         //g = board.create('group', [p1, p2]);
 
-        // slide line
+        // Base line
         attr = Type.copyAttributes(attributes, board.options, 'slider', 'baseline');
         l1 = board.create('segment', [p1, p2], attr);
 
-        // this is required for a correct projection of the glider onto the segment below
+        // This is required for a correct projection of the glider onto the segment below
         l1.updateStdform();
 
         pos0 = p1.coords.usrCoords.slice(1);
@@ -140,7 +167,7 @@ define([
         p3 = board.create('glider', [startx, starty, l1], attr);
         p3.setAttribute({snapwidth: snapWidth});
 
-        // segment from start point to glider point
+        // Segment from start point to glider point: highline
         attr = Type.copyAttributes(attributes, board.options, 'slider', 'highline');
         l2 = board.create('segment', [p1, p3],  attr);
 
@@ -389,6 +416,16 @@ define([
             p3.subs.ticks = ti;
             p3.inherits.push(ti);
         }
+
+        p3.baseline.on('up', function(evt) {
+            var pos, c;
+
+            if (Type.evaluate(p3.visProp.moveonup)) {
+                pos = l1.board.getMousePosition(evt, 0),
+                c = new Coords(Const.COORDS_BY_SCREEN, pos, this.board);
+                p3.moveTo([c.usrCoords[1], c.usrCoords[2]]);
+            }
+        });
 
         // Save the visibility attribute of the sub-elements
         // for (el in p3.subs) {
