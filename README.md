@@ -42,11 +42,20 @@ Website
 Please report bugs to our issue tracking system found at
 https://github.com/jsxgraph/jsxgraph/issues
 
+Usage
+-----
 
-Build JSXGraph
+Include jsxgraphcore.js and, if required, one or more file readers in your HTML
+file. For further usage instructions please consult our [wiki](https://jsxgraph.org/wiki/)
+especially our [tutorials](https://jsxgraph.org/wiki/index.php/Documentation)
+or [the API reference docs](https://jsxgraph.org/docs/).
+
+
+
+Build and develop JSXGraph
 --------------
 
-In order to build *JSXGraph* you need [node.js](https://nodejs.org/) v0.6+. First, install all
+In order to build and develop *JSXGraph* you need [node.js](https://nodejs.org/) v0.6+. First, install all
 dependencies required to build JSXGraph using npm in the JSXGraph root directory:
 
     $ npm install
@@ -61,15 +70,6 @@ which will output an unminified version of ```jsxgraphcore.js``` in ```build/bin
 version run
 
     $ make core-min
-
-
-Usage
------
-
-Include jsxgraphcore.js and, if required, one or more file readers in your HTML
-file. For further usage instructions please consult our [wiki](https://jsxgraph.org/wiki/)
-especially our [tutorials](https://jsxgraph.org/wiki/index.php/Documentation)
-or [the API reference docs](https://jsxgraph.org/docs/).
 
 
 License
