@@ -120,7 +120,28 @@ define([
      *
      * </script><pre>
      *
-     */
+     * @example
+     *     // Set the slider by clicking on the base line: attribute 'moveOnUp'
+     *     var s1 = board.create('slider', [[-3,1], [2,1],[-10,1,10]], {
+     *         snapWidth: 2,
+     *         moveOnUp: true // default value
+     *     });
+     *
+     * </pre><div id="JXGc0477c8a-b1a7-4111-992e-4ceb366fbccc" class="jxgbox" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     *     (function() {
+     *         var board = JXG.JSXGraph.initBoard('JXGc0477c8a-b1a7-4111-992e-4ceb366fbccc',
+     *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+     *         var s1 = board.create('slider', [[-3,1], [2,1],[-10,1,10]], {
+     *             snapWidth: 2,
+     *             moveOnUp: true // default value
+     *         });
+     *
+     *     })();
+     *
+     * </script><pre>
+     *
+ */
     JXG.createSlider = function (board, parents, attributes) {
         var pos0, pos1, smin, start, smax, sdiff,
             p1, p2, l1, ticks, ti, startx, starty, p3, l2, t,
