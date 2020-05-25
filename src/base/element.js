@@ -1657,7 +1657,6 @@ define([
             return json.join('');
         },
 
-
         /**
          * Rotate texts or images by a given degree. Works only for texts where JXG.Text#display equal to "internal".
          * @param {number} angle The degree of the rotation (90 means vertical text).
@@ -1752,7 +1751,6 @@ define([
             this.setAttribute({strokeWidth: width});
             return this;
         },
-
 
         /**
          * Set the fillColor of an element
