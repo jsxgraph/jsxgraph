@@ -46,7 +46,7 @@ https://github.com/jsxgraph/jsxgraph/issues
 Build JSXGraph
 --------------
 
-In order to build *JSXGraph* you need [node.js](http://nodejs.org/) v0.6+. First, install all
+In order to build *JSXGraph* you need [node.js](https://nodejs.org/) v0.6+. First, install all
 dependencies required to build JSXGraph using npm in the JSXGraph root directory:
 
     $ npm install
@@ -67,9 +67,9 @@ Usage
 -----
 
 Include jsxgraphcore.js and, if required, one or more file readers in your HTML
-file. For further usage instructions please consult our [wiki](http://jsxgraph.uni-bayreuth.de/wiki/)
-especially our [tutorials](http://jsxgraph.uni-bayreuth.de/wiki/index.php/Documentation)
-or [the API reference docs](http://jsxgraph.uni-bayreuth.de/docs/).
+file. For further usage instructions please consult our [wiki](https://jsxgraph.org/wiki/)
+especially our [tutorials](https://jsxgraph.org/wiki/index.php/Documentation)
+or [the API reference docs](https://jsxgraph.org/docs/).
 
 
 License
@@ -102,8 +102,8 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU Lesser General Public License for more details.
 
 You should have received a copy of the GNU Lesser General Public License and
-the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
-and <http://opensource.org/licenses/MIT/>.
+the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
+and <https://opensource.org/licenses/MIT/>.
 
 [![ITEMS](img/items_logo_blue.png)](https://itemspro.eu)
 [![Cofunded by the Erasmus+ programme of the European union](img/eu_flag_co_funded_pos_rgb_left_small.jpg)](https://ec.europa.eu/programmes/erasmus-plus/)
