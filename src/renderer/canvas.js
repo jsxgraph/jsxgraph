@@ -1152,6 +1152,9 @@ define([
             if (len <= 0 || !el.visPropCalc.visible) {
                 return;
             }
+            if (el.elType == 'polygonalchain') {
+                len++;
+            }
 
             context.beginPath();
             i = 0;

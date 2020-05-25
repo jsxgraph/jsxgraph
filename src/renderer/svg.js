@@ -830,6 +830,9 @@ define([
                 len = el.vertices.length;
 
             node.setAttributeNS(null, 'stroke', 'none');
+            if (el.elType == 'polygonalchain') {
+                len++;
+            }
 
             for (i = 0; i < len - 1; i++) {
                 if (el.vertices[i].isReal) {
