@@ -45,7 +45,7 @@ https://github.com/jsxgraph/jsxgraph/issues
 Usage
 -----
 
-Include jsxgraphcore.js and, if required, one or more file readers in your HTML
+Include `jsxgraphcore.js` and `jsxgraph.css` and, if required, one or more file readers in your HTML
 file. For further usage instructions please consult our [wiki](https://jsxgraph.org/wiki/)
 especially our [tutorials](https://jsxgraph.org/wiki/index.php/Documentation)
 or [the API reference docs](https://jsxgraph.org/docs/).
