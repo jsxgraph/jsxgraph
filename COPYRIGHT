@@ -1,7 +1,7 @@
 /*
     JSXGraph 1.00.0
 
-    Copyright 2008-2018
+    Copyright 2008-2020
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -27,14 +27,14 @@
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
-    and <http://opensource.org/licenses/MIT/>.
+    the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
+    and <https://opensource.org/licenses/MIT/>.
 */
 
 /**
  * almond 0.2.5 Copyright (c) 2011-2012, The Dojo Foundation All Rights Reserved.
  * Available via the MIT or new BSD license.
- * see: http://github.com/jrburke/almond for details
+ * see: https://github.com/jrburke/almond for details
  */
 
 /**
