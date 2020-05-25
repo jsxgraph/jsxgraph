@@ -25,7 +25,7 @@ Website
 * Project web site: https://jsxgraph.org/
 * Project wiki with hundreds of examples: https://jsxgraph.org/wiki/
 * GitHub project site: https://github.com/jsxgraph/jsxgraph
-* Mailing List/Google Group: http://groups.google.com/group/jsxgraph
+* Mailing List/Google Group: https://groups.google.com/group/jsxgraph
 * JSXGraph questions at https://stackoverflow.com/search?tab=newest&q=jsxgraph
 * jsFiddle template: https://jsfiddle.net/vcL7aepo/1/
 * Moodle filter: https://github.com/jsxgraph/moodle-filter_jsxgraph
@@ -35,7 +35,7 @@ Website
 ```
 <script type="text/javascript" charset="UTF-8"
  src="//cdnjs.cloudflare.com/ajax/libs/jsxgraph/0.99.7/jsxgraphcore.js"></script>
-<link rel="stylesheet" 
+<link rel="stylesheet"
  type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/jsxgraph/0.99.7/jsxgraph.css" />
 ```
 
