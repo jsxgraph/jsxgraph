@@ -1,0 +1,48 @@
+{
+  "name": "jsxgraph",
+  "description": "Interactive geometry, plotting, visualization",
+  "homepage": "https://jsxgraph.org",
+  "version": "1.00.0",
+  "main": "distrib/jsxgraphcore.js",
+  "maintainers": [
+    {
+      "name": "Alfred Wassermann",
+      "email": "Alfred.Wassermann@uni-bayreuth.de"
+    },
+    {
+      "name": "Michael Gerhaeuser",
+      "email": "michael.gerhaeuser@gmail.com"
+    }
+  ],
+  "contributors": [
+    "Matthias Ehmann <matthias.ehmann@uni-bayreuth.de>",
+    "Carsten Miller <carsten.miller@uni-bayreuth.de>",
+    "Rinat Shigapov",
+    "Bianca Valentin",
+    "Heiko Vogel",
+    "Peter Wilfahrt"
+  ],
+  "license": "(MIT OR LGPL-3.0-or-later)",
+  "keywords": [
+    "geometry",
+    "dynamic geometry",
+    "function plotting",
+    "mathematics education"
+  ],
+  "bugs": {
+    "url": "https://github.com/jsxgraph/jsxgraph/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jsxgraph/jsxgraph.git"
+  },
+  "dependencies": {
+    "requirejs": "^2.3.6"
+  },
+  "optionalDependencies": {
+    "canvas": "^2.0.0"
+  },
+  "engines": {
+    "node": ">=0.6.0"
+  }
+}
