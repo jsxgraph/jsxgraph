@@ -61,7 +61,7 @@ dependencies required to build JSXGraph using npm in the JSXGraph root directory
     $ npm install
 
 This will create a new subdirectory ```node_modules``` in the JSXGraph root directory which holds
-all tools and libraries required to build ```jsxgraphcore.js``` and run JSXGraph inside node. 
+all tools and libraries required to build ```jsxgraphcore.js```. 
 
 3) To build JSXGraph run
 
