@@ -16,6 +16,7 @@ Improvements
 * Exact position of arrow heads for curves
 * Autoposition of labels
 * API documentation
+* Support for arrow heads on curves in canvas renderer
 
 Bug fixes
 ---------
