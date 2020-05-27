@@ -63,6 +63,7 @@ core-min:
 	$(REQUIREJS) -o $(BUILD)/core.build.json optimize=uglify2 out=$(BUILDBIN)/jsxgraphcore-min.js;
 	{ $(CAT) COPYRIGHT; $(CAT) $(BUILDBIN)/jsxgraphcore-min.js; } > $(BUILDBIN)/jsxgraphcore.min.js
 	$(CP) $(BUILDBIN)/jsxgraphcore.min.js $(OUTPUT)/jsxgraphcore.js
+	$(CP) $(BUILDBIN)/jsxgraphcore.js $(OUTPUT)/jsxgraphsrc.js
 
 release: core-min docs
 	$(MKDIR) $(MKDIRFLAGS) $(TMP)
