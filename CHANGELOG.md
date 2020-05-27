@@ -21,6 +21,7 @@ Bug fixes
 ---------
 
 * Fix intersection of polygons with `polygon1.intersect(polygon2)`
+* Update build scripts
 
 
 1.00.0

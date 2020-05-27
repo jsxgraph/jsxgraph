@@ -551,13 +551,15 @@ define([
          */
         drawArrows: function (el, scr1, scr2, hl) {
              // not done yet for curves and arcs.
-             var x1, y1, x2, y2, ang,
-                 size,
+             var x1, y1, x2, y2,
                  w0, w,
                  arrowHead,
                  arrowTail,
                  context = this.context,
-                 type,
+                 size = 3,
+                 type = 1,
+                 d1x, d1y, d2x, d2y, last,
+                 ang1, ang2,
                  ev_fa = Type.evaluate(el.visProp.firstarrow),
                  ev_la = Type.evaluate(el.visProp.lastarrow);
 
@@ -569,12 +571,29 @@ define([
                     y1 = scr1.scrCoords[2];
                     x2 = scr2.scrCoords[1];
                     y2 = scr2.scrCoords[2];
+                    ang1 = ang2 = Math.atan2(y2 - y1, x2 - x1);
                 } else {
                     x1 = el.points[0].scrCoords[1];
                     y1 = el.points[0].scrCoords[2];
+
+                    last = el.points.length - 1;
+                    if (last < 1) {
+                        // No arrows for curves consisting of 1 point
+                        return;
+                    }
                     x2 = el.points[el.points.length - 1].scrCoords[1];
                     y2 = el.points[el.points.length - 1].scrCoords[2];
-                    return;
+
+                    d1x = el.points[1].scrCoords[1] - el.points[0].scrCoords[1];
+                    d1y = el.points[1].scrCoords[2] - el.points[0].scrCoords[2];
+                    d2x = el.points[last].scrCoords[1] - el.points[last - 1].scrCoords[1];
+                    d2y = el.points[last].scrCoords[2] - el.points[last - 1].scrCoords[2];
+                    if (ev_fa) {
+                        ang1 = Math.atan2(d1y, d1x);
+                    }
+                    if (ev_la) {
+                        ang2 = Math.atan2(d2y, d2x);
+                    }
                 }
 
                 w0 = Type.evaluate(el.visProp[hl + 'strokewidth']);
@@ -589,7 +608,6 @@ define([
                     }
                     w = w0 * size;
 
-                    type = 1;
                     if (Type.exists(ev_fa.type)) {
                         type = Type.evaluate(ev_fa.type);
                     }
@@ -626,7 +644,6 @@ define([
                     }
                     w = w0 * size;
 
-                    type = 1;
                     if (Type.exists(ev_la.type)) {
                         type = Type.evaluate(ev_la.type);
                     }
@@ -655,13 +672,11 @@ define([
 
                 context.save();
                 if (this._setColor(el, 'stroke', 'fill')) {
-                    ang = Math.atan2(y2 - y1, x2 - x1);
-                    if (ev_la) {
-                        this._drawFilledPolygon(this._translateShape(this._rotateShape(arrowHead, ang), x2, y2));
-                    }
-
                     if (ev_fa) {
-                        this._drawFilledPolygon(this._translateShape(this._rotateShape(arrowTail, ang), x1, y1));
+                        this._drawFilledPolygon(this._translateShape(this._rotateShape(arrowTail, ang1), x1, y1));
+                    }
+                    if (ev_la) {
+                        this._drawFilledPolygon(this._translateShape(this._rotateShape(arrowHead, ang2), x2, y2));
                     }
                 }
                 context.restore();
@@ -756,13 +771,16 @@ define([
 
         // documented in AbstractRenderer
         drawCurve: function (el) {
+            var hl;
+
             if (Type.evaluate(el.visProp.handdrawing)) {
                 this.updatePathStringBezierPrim(el);
             } else {
                 this.updatePathStringPrim(el);
             }
             if (el.numberPoints > 1) {
-                this.drawArrows(el);
+                hl = this._getHighlighted(el);
+                this.drawArrows(el, null, null, hl);
             }
         },
 
