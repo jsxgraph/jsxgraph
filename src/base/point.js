@@ -184,7 +184,7 @@ define([
         /**
          * Convert the point to intersection point and update the construction.
          * To move the point visual onto the intersection, a call of board update is necessary.
-         * TODO docu.
+         *
          * @param {String|Object} el1, el2, i, j The intersecting objects and the numbers.
          **/
         makeIntersection: function (el1, el2, i, j) {
