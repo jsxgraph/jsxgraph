@@ -830,7 +830,7 @@ define([
                 j, dx, dy, co, si;
 
             if (this === this.board.infobox || !Type.evaluate(this.visProp.islabel) || !this.element) {
-                return;
+                return this;
             }
 
             anchorX = Type.evaluate(this.visProp.anchorx);
