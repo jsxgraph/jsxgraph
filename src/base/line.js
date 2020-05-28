@@ -1463,7 +1463,7 @@ define([
     JXG.createTangent = function (board, parents, attributes) {
         var p, c, g, f, j, el, tangent;
 
-        // One arguments: glider on line, circle or curve
+        // One argument: glider on line, circle or curve
         if (parents.length === 1) {
             p = parents[0];
             c = p.slideObject;
