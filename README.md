@@ -27,7 +27,7 @@ Website
 * GitHub project site: https://github.com/jsxgraph/jsxgraph
 * Mailing List/Google Group: https://groups.google.com/group/jsxgraph
 * JSXGraph questions at https://stackoverflow.com/search?tab=newest&q=jsxgraph
-* jsFiddle template: https://jsfiddle.net/vcL7aepo/1/
+* jsFiddle template: https://jsfiddle.net/8kep9syd/
 * Moodle filter: https://github.com/jsxgraph/moodle-filter_jsxgraph
 * (outdated: SourceForge project site: https://sf.net/projects/jsxgraph)
 * CDN: Embed JSXGraph via
