@@ -196,8 +196,8 @@ define([
             // 180: <-
             // 90: up
             var f = 1.0,
-                co = Math.cos(radians),
-                si = Math.sin(radians),
+                co = Math.cos(-radians),
+                si = Math.sin(-radians),
                 bb = el.getBoundingBox(),
                 c1, c2, x1, x2, y1, y2, x1s, x2s, y1s, y2s, dx, dy;
 
@@ -255,9 +255,9 @@ define([
             dy = c1.scrCoords[2] - c2.scrCoords[2];
 
             cxs = c1.scrCoords[1] + dx * cx;
-            cys = c1.scrCoords[2] - dy * cy;
+            cys = c2.scrCoords[2] + dy * cy;
             fxs = c1.scrCoords[1] + dx * fx;
-            fys = c1.scrCoords[2] - dy * fy;
+            fys = c2.scrCoords[2] + dy * fy;
             rs = r * (dx + dy) * 0.5;
             frs = fr * (dx + dy) * 0.5;
 
