@@ -760,7 +760,7 @@ define([
          */
         cloneAndCopy: function (obj, obj2) {
             var r,
-                cObj = function () {};
+                cObj = function () { return undefined; };
 
             cObj.prototype = obj;
 
@@ -1241,7 +1241,7 @@ define([
          */
         sanitizeHTML: function (str, caja) {
             if (typeof html_sanitize === 'function' && caja) {
-                return html_sanitize(str, function () {}, function (id) { return id; });
+                return html_sanitize(str, function () { return undefined; }, function (id) { return id; });
             }
 
             if (str) {

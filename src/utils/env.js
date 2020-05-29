@@ -736,7 +736,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                 // be searched and removed again.
                 regex = RegExp('.*' + wrap_id + ':.*full.*screen.*' + inner_id + '.*auto;.*transform:.*matrix');
 
-            if (len == 0) {
+            if (len === 0) {
                 // In case there is not a single CSS rule defined.
                 style = document.createElement("style");
                 // WebKit hack :(
@@ -807,11 +807,11 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                 elem_inner = document.getElementById(jsxgraph_id),
 
                 // height seems to be independent from zoom level on all browsers
-                height = parseInt(elem_inner.style.height),
+                height = parseInt(elem_inner.style.height, 10),
 
                 // Determine the maximum scale factor.
-                r_w = window.screen.width / parseInt(elem_inner.style.width),
-                r_h = window.screen.height / parseInt(elem_inner.style.height),
+                r_w = window.screen.width / parseInt(elem_inner.style.width, 10),
+                r_h = window.screen.height / parseInt(elem_inner.style.height, 10),
 
                 // Determine the vertical shift to place the div in the center of the screen
                 vshift = (window.screen.height - height) * 0.5;
@@ -823,8 +823,8 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
             if (window.matchMedia && window.matchMedia("(orientation:landscape)").matches &&
                 window.screen.width < window.screen.height) {
                 // Landscape on iOS: it returns 'landscape', but still width<height.
-                r_w = window.screen.height / parseInt(elem_inner.style.width);
-                r_h = window.screen.width / parseInt(elem_inner.style.height);
+                r_w = window.screen.height / parseInt(elem_inner.style.width, 10);
+                r_h = window.screen.width / parseInt(elem_inner.style.height, 10);
                 scale = Math.min(r_w, r_h);
                 vshift = (window.screen.width - height) * 0.5;
             }

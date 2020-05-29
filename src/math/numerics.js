@@ -1203,7 +1203,7 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
                 resultObj = {},
                 area, errsum,
                 result0, abserr0, resabs0, resasc0,
-                result, abserr,
+                result,
                 tolerance,
                 iteration = 0,
                 roundoff_type1 = 0, roundoff_type2 = 0, error_type = 0,
@@ -1214,8 +1214,8 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
                 area1 = 0, area2 = 0, area12 = 0,
                 error1 = 0, error2 = 0, error12 = 0,
                 resasc1, resasc2,
-                resabs1, resabs2,
-                wsObj, resObj,
+                // resabs1, resabs2,
+                wsObj,
                 delta;
 
 
@@ -1237,7 +1237,7 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
 
             if (abserr0 <= round_off && abserr0 > tolerance) {
                 result = result0;
-                abserr = abserr0;
+                // abserr = abserr0;
 
                 JXG.warn('cannot reach tolerance because of roundoff error on first attempt');
                 return -Infinity;
@@ -1245,14 +1245,14 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
 
             if ((abserr0 <= tolerance && abserr0 !== resasc0) || abserr0 === 0.0) {
                 result = result0;
-                abserr = abserr0;
+                // abserr = abserr0;
 
                 return result;
             }
 
             if (limit === 1) {
                 result = result0;
-                abserr = abserr0;
+                // abserr = abserr0;
 
                 JXG.warn('a maximum of one iteration was insufficient');
                 return -Infinity;
@@ -1284,12 +1284,12 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
 
                 area1 = q.apply(this, [[a1, b1], f, resultObj]);
                 error1 = resultObj.abserr;
-                resabs1 = resultObj.resabs;
+                // resabs1 = resultObj.resabs;
                 resasc1 = resultObj.resasc;
 
                 area2 = q.apply(this, [[a2, b2], f, resultObj]);
                 error2 = resultObj.abserr;
-                resabs2 = resultObj.resabs;
+                // resabs2 = resultObj.resabs;
                 resasc2 = resultObj.resasc;
 
                 area12 = area1 + area2;
@@ -1335,7 +1335,7 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
             } while (iteration < limit && !error_type && errsum > tolerance);
 
             result = ws.sum_results();
-            abserr = errsum;
+            // abserr = errsum;
 /*
   if (errsum <= tolerance)
     {
@@ -1393,8 +1393,8 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
             var df,
                 i = 0,
                 h = Mat.eps,
-                newf = f.apply(context, [x]),
-                nfev = 1;
+                newf = f.apply(context, [x]);
+                // nfev = 1;
 
             // For compatibility
             if (Type.isArray(x)) {
@@ -1403,7 +1403,7 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
 
             while (i < 50 && Math.abs(newf) > h) {
                 df = this.D(f, context)(x);
-                nfev += 2;
+                // nfev += 2;
 
                 if (Math.abs(df) > h) {
                     x -= newf / df;
@@ -1412,7 +1412,7 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
                 }
 
                 newf = f.apply(context, [x]);
-                nfev += 1;
+                // nfev += 1;
                 i += 1;
             }
 
@@ -1907,7 +1907,7 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
                         // control point at the beginning and at the end
                         first, last,
                         t1, t2, dt0, dt1, dt2,
-                        dx, dy,
+                        // dx, dy,
                         len;
 
                     if (points.length < 2) {
@@ -2227,7 +2227,7 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
          * @memberof JXG.Math.Numerics
          */
         bspline: function (points, order) {
-            var knots, N = [],
+            var knots,
                 _knotVector = function (n, k) {
                     var j,
                         kn = [];
@@ -2245,7 +2245,7 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
                     return kn;
                 },
 
-                _evalBasisFuncs = function (t, kn, n, k, s) {
+                _evalBasisFuncs = function (t, kn, k, s) {
                     var i, j, a, b, den,
                         N = [];
 
@@ -2289,7 +2289,7 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
                 /** @ignore */
                 makeFct = function (which) {
                     return function (t, suspendedUpdate) {
-                        var y, j, s,
+                        var y, j, s, N = [],
                             len = points.length,
                             n = len - 1,
                             k = order;
@@ -2312,7 +2312,7 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
 
                         s = Math.floor(t) + k - 1;
                         knots = _knotVector(n, k);
-                        N = _evalBasisFuncs(t, knots, n, k, s);
+                        N = _evalBasisFuncs(t, knots, k, s);
 
                         y = 0.0;
                         for (j = s - k + 1; j <= s; j++) {
@@ -2750,8 +2750,8 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
                 new_step,
                 eps = Mat.eps,
                 maxiter = this.maxIterationsRoot,
-                niter = 0,
-                nfev = 0;
+                niter = 0;
+                // nfev = 0;
 
             if (Type.isArray(x0)) {
                 if (x0.length < 2) {
@@ -2760,14 +2760,14 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
 
                 a = x0[0];
                 fa = f.call(object, a);
-                nfev += 1;
+                // nfev += 1;
                 b = x0[1];
                 fb = f.call(object, b);
-                nfev += 1;
+                // nfev += 1;
             } else {
                 a = x0;
                 fa = f.call(object, a);
-                nfev += 1;
+                // nfev += 1;
 
                 // Try to get b.
                 if (a === 0) {
@@ -2782,7 +2782,7 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
                 for (i = 0; i < len; i++) {
                     b = blist[i];
                     fb = f.call(object, b);
-                    nfev += 1;
+                    // nfev += 1;
 
                     if (fa * fb <= 0) {
                         break;
@@ -2888,7 +2888,7 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
                 b += new_step;
                 fb = f.call(object, b);
                 // Do step to a new approxim.
-                nfev += 1;
+                // nfev += 1;
 
                 // Adjust c for it to have a sign opposite to that of b
                 if ((fb > 0 && fc > 0) || (fb < 0 && fc < 0)) {
@@ -2925,8 +2925,8 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
                 tol = Mat.eps,
                 sqrteps = Mat.eps, //Math.sqrt(Mat.eps),
                 maxiter = this.maxIterationsMinimize,
-                niter = 0,
-                nfev = 0;
+                niter = 0;
+                // nfev = 0;
 
             if (!Type.isArray(x0) || x0.length < 2) {
                 throw new Error("JXG.Math.Numerics.fminbr: length of array x0 has to be at least two.");
@@ -2938,7 +2938,7 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
             fv = f.call(context, v);
 
             // First step - always gold section
-            nfev += 1;
+            // nfev += 1;
             x = v;
             w = v;
             fx = fv;
@@ -3000,7 +3000,7 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
                 // Tentative point for the min
                 t = x + new_step;
                 ft = f.call(context, t);
-                nfev += 1;
+                // nfev += 1;
 
                 // t is a better approximation
                 if (ft <= fx) {

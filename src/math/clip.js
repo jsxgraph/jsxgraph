@@ -50,8 +50,8 @@
  */
 
 define([
-    'jxg', 'base/constants', 'base/coords', 'math/math', 'math/geometry', 'utils/type', 'utils/expect'
-], function (JXG, Const, Coords, Mat, Geometry, Type, Expect) {
+    'jxg', 'base/constants', 'base/coords', 'math/math', 'math/geometry', 'utils/type'
+], function (JXG, Const, Coords, Mat, Geometry, Type) {
 
     "use strict";
 
@@ -125,7 +125,7 @@ define([
                 y = usrCoords[2],
                 p1, p2, d, sign, i;
 
-            if (le == 0) {
+            if (le === 0) {
                 return 0;
             }
 
@@ -273,8 +273,7 @@ define([
          */
         findIntersections: function(S, C, board) {
             var res = [],
-                i, j, k, l, ignore, min_S, min_C, max_S, max_C, swap, crds,
-                P,
+                i, j, k, ignore, min_S, min_C, max_S, max_C, swap, crds,
                 S_le = S.length - 1,
                 C_le = C.length - 1,
                 // cnt = 0,
@@ -365,25 +364,15 @@ define([
          * @param  {Array} path1 First path
          * @param  {Array} path2 Second path
          */
-        markEntryExit: function(path1, path2, first_point_type) {
+        markEntryExit: function(path1, path2) {
             var status,
                 P = path1[0];
 
-            // if (first_point_type === 'in') {
-            //     status = 'exit';
-            //     P.entry_exit = 'entry'; // For non-closed paths
-            // } else if (first_point_type === 'out') {
-            //     status = 'entry';
-            //     P.entry_exit = 'exit';  // For non-closed paths
-            // } else {
-                if (this.windingNumber(P.usrCoords, path2) === 0) {
-                    status = 'entry';
-                    // console.log(P.usrCoords, 'OUT', status);
-                } else {
-                    status = 'exit';
-                    // console.log(P.usrCoords, 'IN', status);
-                }
-            // }
+            if (this.windingNumber(P.usrCoords, path2) === 0) {
+                status = 'entry';
+            } else {
+                status = 'exit';
+            }
 
             while (!P._end) {
                 P = P._next;
@@ -391,7 +380,7 @@ define([
                     // console.log("MARKED", status);
                     P.entry_exit = status;
 
-                    if (status == 'entry') {
+                    if (status === 'entry') {
                         status = 'exit';
                     } else {
                         status = 'entry';
@@ -444,9 +433,9 @@ define([
                     current.done = true;
 
                     // console.log(current.pathname, current.cnt, current.entry_exit, current.usrCoords[1].toFixed(3), current.usrCoords[2].toFixed(3));
-                    if ((clip_type == 'intersection' && current.entry_exit == 'entry') ||
-                        (clip_type == 'union' && current.entry_exit == 'exit') ||
-                        (clip_type == 'difference' && (P == S) === (current.entry_exit == 'exit'))
+                    if ((clip_type === 'intersection' && current.entry_exit === 'entry') ||
+                        (clip_type === 'union' && current.entry_exit === 'exit') ||
+                        (clip_type === 'difference' && (P === S) === (current.entry_exit === 'exit'))
                         ) {
                         current = current._next;
                         do {
@@ -492,7 +481,7 @@ define([
                     }
                     P = current.path;
 
-                } while (!(current.pathname == 'S' && current.cnt == start) && cnt < maxCnt);
+                } while (!(current.pathname === 'S' && current.cnt === start) && cnt < maxCnt);
 
                 S_idx++;
             }
@@ -516,7 +505,7 @@ define([
             if (clip_type === 'intersection' && (S.length === 0 || C.length === 0)) {
                 return true; //[pathX, pathY];
             } else if (clip_type === 'union' && (S.length === 0 || C.length === 0)) {
-                if (S.length == 0) {
+                if (S.length === 0) {
                     for (i = 0; i < C.length; ++i) {
                         pathX.push(C[i].usrCoords[1]);
                         pathY.push(C[i].usrCoords[2]);
@@ -529,7 +518,7 @@ define([
                 }
                 return true; //[pathX, pathY];
             } if (clip_type === 'difference' && (S.length === 0 || C.length === 0)) {
-                if (C.length == 0) {
+                if (C.length === 0) {
                     for (i = 0; i < S.length; ++i) {
                         pathX.push(S[i].usrCoords[1]);
                         pathY.push(S[i].usrCoords[2]);
@@ -786,19 +775,19 @@ define([
                 S = [],
                 C = [],
                 S_intersect = [],
-                C_intersect = [],
+                // C_intersect = [],
                 res = [],
                 pathX = [],
                 pathY = [];
 
             // Collect all points into subject array S
-            if (subject.elementClass == Const.OBJECT_CLASS_CURVE && Type.exists(subject.points)) {
+            if (subject.elementClass === Const.OBJECT_CLASS_CURVE && Type.exists(subject.points)) {
                     S = subject.points;
-            } else if (subject.type == Const.OBJECT_TYPE_POLYGON) {
+            } else if (subject.type === Const.OBJECT_TYPE_POLYGON) {
                 for (i = 0; i < subject.vertices.length; i++) {
                     S.push(new Coords(Const.COORDS_BY_USER, subject.vertices[i].coords.usrCoords, board));
                 }
-            } else if (subject.elementClass == Const.OBJECT_CLASS_CIRCLE) {
+            } else if (subject.elementClass === Const.OBJECT_CLASS_CIRCLE) {
                 r = subject.Radius();
                 rad = 2 * Math.PI / steps;
                 for (i = 0; i <= steps; i++) {
@@ -811,14 +800,14 @@ define([
             }
 
             // Collect all points into client array C
-            if (clip.elementClass == Const.OBJECT_CLASS_CURVE &&
+            if (clip.elementClass === Const.OBJECT_CLASS_CURVE &&
                 Type.exists(clip.points)) {
                     C = clip.points;
-            } else if (clip.type == Const.OBJECT_TYPE_POLYGON) {
+            } else if (clip.type === Const.OBJECT_TYPE_POLYGON) {
                 for (i = 0; i < clip.vertices.length; i++) {
                     C.push(new Coords(Const.COORDS_BY_USER, clip.vertices[i].coords.usrCoords, board));
                 }
-            } else if (clip.elementClass == Const.OBJECT_CLASS_CIRCLE) {
+            } else if (clip.elementClass === Const.OBJECT_CLASS_CIRCLE) {
                 r = clip.Radius();
                 rad = 2 * Math.PI / steps;
                 for (i = 0; i <= steps; i++) {
@@ -841,7 +830,7 @@ define([
 
             res = this.findIntersections(S, C, board);
             S_intersect = res[0];
-            C_intersect = res[1];
+            // C_intersect = res[1];
 
             // For non-closed paths
             // if (true && typeof subject_first_point_type === 'string') {
@@ -863,26 +852,26 @@ define([
             }
 
             // Phase 2: mark intersection points as entry or exit points
-            this.markEntryExit(S, C); //, subject_first_point_type);
+            this.markEntryExit(S, C);
             if (S[0].distance(Const.COORDS_BY_USER, C[0]) === 0) {
                 // Randomly disturb the first point of the second path
                 // if both paths start at the same point.
                 C[0].usrCoords[1] *= 1 + Math.random() * 0.0001 - 0.00005;
                 C[0].usrCoords[2] *= 1 + Math.random() * 0.0001 - 0.00005;
             }
-            this.markEntryExit(C, S); //, clip_first_point_type);
+            this.markEntryExit(C, S);
 
-            if (false) {
-                for (i = 0; i < S_intersect.length; i++) {
-                    console.log('S', S_intersect[i].cnt, S_intersect[i].entry_exit, S_intersect[i].usrCoords,
-                            S_intersect[i].pos, S_intersect[i].alpha);
-                }
-                console.log();
-                for (i = 0; i < C_intersect.length; i++) {
-                    console.log('C', C_intersect[i].cnt, C_intersect[i].entry_exit, C_intersect[i].usrCoords,
-                            C_intersect[i].pos, C_intersect[i].alpha);
-                }
-            }
+            // if (false) {
+            //     for (i = 0; i < S_intersect.length; i++) {
+            //         console.log('S', S_intersect[i].cnt, S_intersect[i].entry_exit, S_intersect[i].usrCoords,
+            //                 S_intersect[i].pos, S_intersect[i].alpha);
+            //     }
+            //     console.log();
+            //     for (i = 0; i < C_intersect.length; i++) {
+            //         console.log('C', C_intersect[i].cnt, C_intersect[i].entry_exit, C_intersect[i].usrCoords,
+            //                 C_intersect[i].pos, C_intersect[i].alpha);
+            //     }
+            // }
             // Phase 3: tracing
             return this.tracing(S, S_intersect, clip_type);
 

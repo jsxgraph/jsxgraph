@@ -503,7 +503,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
                 u = Math.random() * 2 - 1;
                 v = Math.random() * 2 - 1;
                 s = u * u + v * v;
-            } while (s >= 1 || s == 0);
+            } while (s >= 1 || s === 0);
 
             s = Math.sqrt(-2.0 * Math.log(s) / s);
 

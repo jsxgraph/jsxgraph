@@ -495,14 +495,14 @@ define([
         },
 
         /**
-         * Sort vertices counter clockwise starting with the point with the lowest y coordinate.
+         * Sort vertices counter clockwise starting with the first point.
          *
          * @param {Array} p An array containing {@link JXG.Point}, {@link JXG.Coords}, and/or arrays.
          *
          * @returns {Array}
          */
         sortVertices: function (p) {
-            var i, ll,
+            var ll,
                 ps = Expect.each(p, Expect.coordsArray),
                 N = ps.length,
                 lastPoint = null;
@@ -1402,7 +1402,7 @@ define([
          * @returns {JXG.Coords} Coords object containing the intersection.
          */
         meetCurveLineContinuous: function (cu, li, nr, board, testSegment) {
-            var t, func0, func1, func0a, v, x, y, z,
+            var t, func0, func1, v, x, y, z,
                 eps = Mat.eps,
                 epsLow = Mat.eps,
                 steps, delta, tnew, i,

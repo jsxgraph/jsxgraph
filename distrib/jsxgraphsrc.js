@@ -1729,7 +1729,7 @@ define('utils/type',[
          */
         cloneAndCopy: function (obj, obj2) {
             var r,
-                cObj = function () {};
+                cObj = function () { return undefined; };
 
             cObj.prototype = obj;
 
@@ -2210,7 +2210,7 @@ define('utils/type',[
          */
         sanitizeHTML: function (str, caja) {
             if (typeof html_sanitize === 'function' && caja) {
-                return html_sanitize(str, function () {}, function (id) { return id; });
+                return html_sanitize(str, function () { return undefined; }, function (id) { return id; });
             }
 
             if (str) {
@@ -2975,7 +2975,7 @@ define('utils/env',['jxg', 'utils/type'], function (JXG, Type) {
                 // be searched and removed again.
                 regex = RegExp('.*' + wrap_id + ':.*full.*screen.*' + inner_id + '.*auto;.*transform:.*matrix');
 
-            if (len == 0) {
+            if (len === 0) {
                 // In case there is not a single CSS rule defined.
                 style = document.createElement("style");
                 // WebKit hack :(
@@ -3046,11 +3046,11 @@ define('utils/env',['jxg', 'utils/type'], function (JXG, Type) {
                 elem_inner = document.getElementById(jsxgraph_id),
 
                 // height seems to be independent from zoom level on all browsers
-                height = parseInt(elem_inner.style.height),
+                height = parseInt(elem_inner.style.height, 10),
 
                 // Determine the maximum scale factor.
-                r_w = window.screen.width / parseInt(elem_inner.style.width),
-                r_h = window.screen.height / parseInt(elem_inner.style.height),
+                r_w = window.screen.width / parseInt(elem_inner.style.width, 10),
+                r_h = window.screen.height / parseInt(elem_inner.style.height, 10),
 
                 // Determine the vertical shift to place the div in the center of the screen
                 vshift = (window.screen.height - height) * 0.5;
@@ -3062,8 +3062,8 @@ define('utils/env',['jxg', 'utils/type'], function (JXG, Type) {
             if (window.matchMedia && window.matchMedia("(orientation:landscape)").matches &&
                 window.screen.width < window.screen.height) {
                 // Landscape on iOS: it returns 'landscape', but still width<height.
-                r_w = window.screen.height / parseInt(elem_inner.style.width);
-                r_h = window.screen.width / parseInt(elem_inner.style.height);
+                r_w = window.screen.height / parseInt(elem_inner.style.width, 10);
+                r_h = window.screen.width / parseInt(elem_inner.style.height, 10);
                 scale = Math.min(r_w, r_h);
                 vshift = (window.screen.width - height) * 0.5;
             }
@@ -3973,8 +3973,6 @@ define('math/math',['jxg', 'utils/type'], function (JXG, Type) {
          * @returns {Number} base to the power of exponent.
          */
         pow: function (base, exponent) {
-            var inv;
-
             if (base === 0) {
                 if (exponent === 0) {
                     return 1;
@@ -6051,7 +6049,7 @@ define('math/numerics',['jxg', 'utils/type', 'math/math'], function (JXG, Type, 
                 resultObj = {},
                 area, errsum,
                 result0, abserr0, resabs0, resasc0,
-                result, abserr,
+                result,
                 tolerance,
                 iteration = 0,
                 roundoff_type1 = 0, roundoff_type2 = 0, error_type = 0,
@@ -6062,8 +6060,8 @@ define('math/numerics',['jxg', 'utils/type', 'math/math'], function (JXG, Type, 
                 area1 = 0, area2 = 0, area12 = 0,
                 error1 = 0, error2 = 0, error12 = 0,
                 resasc1, resasc2,
-                resabs1, resabs2,
-                wsObj, resObj,
+                // resabs1, resabs2,
+                wsObj,
                 delta;
 
 
@@ -6085,7 +6083,7 @@ define('math/numerics',['jxg', 'utils/type', 'math/math'], function (JXG, Type, 
 
             if (abserr0 <= round_off && abserr0 > tolerance) {
                 result = result0;
-                abserr = abserr0;
+                // abserr = abserr0;
 
                 JXG.warn('cannot reach tolerance because of roundoff error on first attempt');
                 return -Infinity;
@@ -6093,14 +6091,14 @@ define('math/numerics',['jxg', 'utils/type', 'math/math'], function (JXG, Type, 
 
             if ((abserr0 <= tolerance && abserr0 !== resasc0) || abserr0 === 0.0) {
                 result = result0;
-                abserr = abserr0;
+                // abserr = abserr0;
 
                 return result;
             }
 
             if (limit === 1) {
                 result = result0;
-                abserr = abserr0;
+                // abserr = abserr0;
 
                 JXG.warn('a maximum of one iteration was insufficient');
                 return -Infinity;
@@ -6132,12 +6130,12 @@ define('math/numerics',['jxg', 'utils/type', 'math/math'], function (JXG, Type, 
 
                 area1 = q.apply(this, [[a1, b1], f, resultObj]);
                 error1 = resultObj.abserr;
-                resabs1 = resultObj.resabs;
+                // resabs1 = resultObj.resabs;
                 resasc1 = resultObj.resasc;
 
                 area2 = q.apply(this, [[a2, b2], f, resultObj]);
                 error2 = resultObj.abserr;
-                resabs2 = resultObj.resabs;
+                // resabs2 = resultObj.resabs;
                 resasc2 = resultObj.resasc;
 
                 area12 = area1 + area2;
@@ -6183,7 +6181,7 @@ define('math/numerics',['jxg', 'utils/type', 'math/math'], function (JXG, Type, 
             } while (iteration < limit && !error_type && errsum > tolerance);
 
             result = ws.sum_results();
-            abserr = errsum;
+            // abserr = errsum;
 /*
   if (errsum <= tolerance)
     {
@@ -6241,8 +6239,8 @@ define('math/numerics',['jxg', 'utils/type', 'math/math'], function (JXG, Type, 
             var df,
                 i = 0,
                 h = Mat.eps,
-                newf = f.apply(context, [x]),
-                nfev = 1;
+                newf = f.apply(context, [x]);
+                // nfev = 1;
 
             // For compatibility
             if (Type.isArray(x)) {
@@ -6251,7 +6249,7 @@ define('math/numerics',['jxg', 'utils/type', 'math/math'], function (JXG, Type, 
 
             while (i < 50 && Math.abs(newf) > h) {
                 df = this.D(f, context)(x);
-                nfev += 2;
+                // nfev += 2;
 
                 if (Math.abs(df) > h) {
                     x -= newf / df;
@@ -6260,7 +6258,7 @@ define('math/numerics',['jxg', 'utils/type', 'math/math'], function (JXG, Type, 
                 }
 
                 newf = f.apply(context, [x]);
-                nfev += 1;
+                // nfev += 1;
                 i += 1;
             }
 
@@ -6755,7 +6753,7 @@ define('math/numerics',['jxg', 'utils/type', 'math/math'], function (JXG, Type, 
                         // control point at the beginning and at the end
                         first, last,
                         t1, t2, dt0, dt1, dt2,
-                        dx, dy,
+                        // dx, dy,
                         len;
 
                     if (points.length < 2) {
@@ -7075,7 +7073,7 @@ define('math/numerics',['jxg', 'utils/type', 'math/math'], function (JXG, Type, 
          * @memberof JXG.Math.Numerics
          */
         bspline: function (points, order) {
-            var knots, N = [],
+            var knots,
                 _knotVector = function (n, k) {
                     var j,
                         kn = [];
@@ -7093,7 +7091,7 @@ define('math/numerics',['jxg', 'utils/type', 'math/math'], function (JXG, Type, 
                     return kn;
                 },
 
-                _evalBasisFuncs = function (t, kn, n, k, s) {
+                _evalBasisFuncs = function (t, kn, k, s) {
                     var i, j, a, b, den,
                         N = [];
 
@@ -7137,7 +7135,7 @@ define('math/numerics',['jxg', 'utils/type', 'math/math'], function (JXG, Type, 
                 /** @ignore */
                 makeFct = function (which) {
                     return function (t, suspendedUpdate) {
-                        var y, j, s,
+                        var y, j, s, N = [],
                             len = points.length,
                             n = len - 1,
                             k = order;
@@ -7160,7 +7158,7 @@ define('math/numerics',['jxg', 'utils/type', 'math/math'], function (JXG, Type, 
 
                         s = Math.floor(t) + k - 1;
                         knots = _knotVector(n, k);
-                        N = _evalBasisFuncs(t, knots, n, k, s);
+                        N = _evalBasisFuncs(t, knots, k, s);
 
                         y = 0.0;
                         for (j = s - k + 1; j <= s; j++) {
@@ -7598,8 +7596,8 @@ define('math/numerics',['jxg', 'utils/type', 'math/math'], function (JXG, Type, 
                 new_step,
                 eps = Mat.eps,
                 maxiter = this.maxIterationsRoot,
-                niter = 0,
-                nfev = 0;
+                niter = 0;
+                // nfev = 0;
 
             if (Type.isArray(x0)) {
                 if (x0.length < 2) {
@@ -7608,14 +7606,14 @@ define('math/numerics',['jxg', 'utils/type', 'math/math'], function (JXG, Type, 
 
                 a = x0[0];
                 fa = f.call(object, a);
-                nfev += 1;
+                // nfev += 1;
                 b = x0[1];
                 fb = f.call(object, b);
-                nfev += 1;
+                // nfev += 1;
             } else {
                 a = x0;
                 fa = f.call(object, a);
-                nfev += 1;
+                // nfev += 1;
 
                 // Try to get b.
                 if (a === 0) {
@@ -7630,7 +7628,7 @@ define('math/numerics',['jxg', 'utils/type', 'math/math'], function (JXG, Type, 
                 for (i = 0; i < len; i++) {
                     b = blist[i];
                     fb = f.call(object, b);
-                    nfev += 1;
+                    // nfev += 1;
 
                     if (fa * fb <= 0) {
                         break;
@@ -7736,7 +7734,7 @@ define('math/numerics',['jxg', 'utils/type', 'math/math'], function (JXG, Type, 
                 b += new_step;
                 fb = f.call(object, b);
                 // Do step to a new approxim.
-                nfev += 1;
+                // nfev += 1;
 
                 // Adjust c for it to have a sign opposite to that of b
                 if ((fb > 0 && fc > 0) || (fb < 0 && fc < 0)) {
@@ -7773,8 +7771,8 @@ define('math/numerics',['jxg', 'utils/type', 'math/math'], function (JXG, Type, 
                 tol = Mat.eps,
                 sqrteps = Mat.eps, //Math.sqrt(Mat.eps),
                 maxiter = this.maxIterationsMinimize,
-                niter = 0,
-                nfev = 0;
+                niter = 0;
+                // nfev = 0;
 
             if (!Type.isArray(x0) || x0.length < 2) {
                 throw new Error("JXG.Math.Numerics.fminbr: length of array x0 has to be at least two.");
@@ -7786,7 +7784,7 @@ define('math/numerics',['jxg', 'utils/type', 'math/math'], function (JXG, Type, 
             fv = f.call(context, v);
 
             // First step - always gold section
-            nfev += 1;
+            // nfev += 1;
             x = v;
             w = v;
             fx = fv;
@@ -7848,7 +7846,7 @@ define('math/numerics',['jxg', 'utils/type', 'math/math'], function (JXG, Type, 
                 // Tentative point for the min
                 t = x + new_step;
                 ft = f.call(context, t);
-                nfev += 1;
+                // nfev += 1;
 
                 // t is a better approximation
                 if (ft <= fx) {
@@ -8737,7 +8735,7 @@ define('math/statistics',['jxg', 'math/math', 'utils/type'], function (JXG, Mat,
                 u = Math.random() * 2 - 1;
                 v = Math.random() * 2 - 1;
                 s = u * u + v * v;
-            } while (s >= 1 || s == 0);
+            } while (s >= 1 || s === 0);
 
             s = Math.sqrt(-2.0 * Math.log(s) / s);
 
@@ -9247,14 +9245,14 @@ define('math/geometry',[
         },
 
         /**
-         * Sort vertices counter clockwise starting with the point with the lowest y coordinate.
+         * Sort vertices counter clockwise starting with the first point.
          *
          * @param {Array} p An array containing {@link JXG.Point}, {@link JXG.Coords}, and/or arrays.
          *
          * @returns {Array}
          */
         sortVertices: function (p) {
-            var i, ll,
+            var ll,
                 ps = Expect.each(p, Expect.coordsArray),
                 N = ps.length,
                 lastPoint = null;
@@ -10154,7 +10152,7 @@ define('math/geometry',[
          * @returns {JXG.Coords} Coords object containing the intersection.
          */
         meetCurveLineContinuous: function (cu, li, nr, board, testSegment) {
-            var t, func0, func1, func0a, v, x, y, z,
+            var t, func0, func1, v, x, y, z,
                 eps = Mat.eps,
                 epsLow = Mat.eps,
                 steps, delta, tnew, i,
@@ -13344,8 +13342,8 @@ define('math/symbolic',[
  */
 
 define('math/clip',[
-    'jxg', 'base/constants', 'base/coords', 'math/math', 'math/geometry', 'utils/type', 'utils/expect'
-], function (JXG, Const, Coords, Mat, Geometry, Type, Expect) {
+    'jxg', 'base/constants', 'base/coords', 'math/math', 'math/geometry', 'utils/type'
+], function (JXG, Const, Coords, Mat, Geometry, Type) {
 
     "use strict";
 
@@ -13419,7 +13417,7 @@ define('math/clip',[
                 y = usrCoords[2],
                 p1, p2, d, sign, i;
 
-            if (le == 0) {
+            if (le === 0) {
                 return 0;
             }
 
@@ -13567,8 +13565,7 @@ define('math/clip',[
          */
         findIntersections: function(S, C, board) {
             var res = [],
-                i, j, k, l, ignore, min_S, min_C, max_S, max_C, swap, crds,
-                P,
+                i, j, k, ignore, min_S, min_C, max_S, max_C, swap, crds,
                 S_le = S.length - 1,
                 C_le = C.length - 1,
                 // cnt = 0,
@@ -13659,25 +13656,15 @@ define('math/clip',[
          * @param  {Array} path1 First path
          * @param  {Array} path2 Second path
          */
-        markEntryExit: function(path1, path2, first_point_type) {
+        markEntryExit: function(path1, path2) {
             var status,
                 P = path1[0];
 
-            // if (first_point_type === 'in') {
-            //     status = 'exit';
-            //     P.entry_exit = 'entry'; // For non-closed paths
-            // } else if (first_point_type === 'out') {
-            //     status = 'entry';
-            //     P.entry_exit = 'exit';  // For non-closed paths
-            // } else {
-                if (this.windingNumber(P.usrCoords, path2) === 0) {
-                    status = 'entry';
-                    // console.log(P.usrCoords, 'OUT', status);
-                } else {
-                    status = 'exit';
-                    // console.log(P.usrCoords, 'IN', status);
-                }
-            // }
+            if (this.windingNumber(P.usrCoords, path2) === 0) {
+                status = 'entry';
+            } else {
+                status = 'exit';
+            }
 
             while (!P._end) {
                 P = P._next;
@@ -13685,7 +13672,7 @@ define('math/clip',[
                     // console.log("MARKED", status);
                     P.entry_exit = status;
 
-                    if (status == 'entry') {
+                    if (status === 'entry') {
                         status = 'exit';
                     } else {
                         status = 'entry';
@@ -13738,9 +13725,9 @@ define('math/clip',[
                     current.done = true;
 
                     // console.log(current.pathname, current.cnt, current.entry_exit, current.usrCoords[1].toFixed(3), current.usrCoords[2].toFixed(3));
-                    if ((clip_type == 'intersection' && current.entry_exit == 'entry') ||
-                        (clip_type == 'union' && current.entry_exit == 'exit') ||
-                        (clip_type == 'difference' && (P == S) === (current.entry_exit == 'exit'))
+                    if ((clip_type === 'intersection' && current.entry_exit === 'entry') ||
+                        (clip_type === 'union' && current.entry_exit === 'exit') ||
+                        (clip_type === 'difference' && (P === S) === (current.entry_exit === 'exit'))
                         ) {
                         current = current._next;
                         do {
@@ -13786,7 +13773,7 @@ define('math/clip',[
                     }
                     P = current.path;
 
-                } while (!(current.pathname == 'S' && current.cnt == start) && cnt < maxCnt);
+                } while (!(current.pathname === 'S' && current.cnt === start) && cnt < maxCnt);
 
                 S_idx++;
             }
@@ -13810,7 +13797,7 @@ define('math/clip',[
             if (clip_type === 'intersection' && (S.length === 0 || C.length === 0)) {
                 return true; //[pathX, pathY];
             } else if (clip_type === 'union' && (S.length === 0 || C.length === 0)) {
-                if (S.length == 0) {
+                if (S.length === 0) {
                     for (i = 0; i < C.length; ++i) {
                         pathX.push(C[i].usrCoords[1]);
                         pathY.push(C[i].usrCoords[2]);
@@ -13823,7 +13810,7 @@ define('math/clip',[
                 }
                 return true; //[pathX, pathY];
             } if (clip_type === 'difference' && (S.length === 0 || C.length === 0)) {
-                if (C.length == 0) {
+                if (C.length === 0) {
                     for (i = 0; i < S.length; ++i) {
                         pathX.push(S[i].usrCoords[1]);
                         pathY.push(S[i].usrCoords[2]);
@@ -14080,19 +14067,19 @@ define('math/clip',[
                 S = [],
                 C = [],
                 S_intersect = [],
-                C_intersect = [],
+                // C_intersect = [],
                 res = [],
                 pathX = [],
                 pathY = [];
 
             // Collect all points into subject array S
-            if (subject.elementClass == Const.OBJECT_CLASS_CURVE && Type.exists(subject.points)) {
+            if (subject.elementClass === Const.OBJECT_CLASS_CURVE && Type.exists(subject.points)) {
                     S = subject.points;
-            } else if (subject.type == Const.OBJECT_TYPE_POLYGON) {
+            } else if (subject.type === Const.OBJECT_TYPE_POLYGON) {
                 for (i = 0; i < subject.vertices.length; i++) {
                     S.push(new Coords(Const.COORDS_BY_USER, subject.vertices[i].coords.usrCoords, board));
                 }
-            } else if (subject.elementClass == Const.OBJECT_CLASS_CIRCLE) {
+            } else if (subject.elementClass === Const.OBJECT_CLASS_CIRCLE) {
                 r = subject.Radius();
                 rad = 2 * Math.PI / steps;
                 for (i = 0; i <= steps; i++) {
@@ -14105,14 +14092,14 @@ define('math/clip',[
             }
 
             // Collect all points into client array C
-            if (clip.elementClass == Const.OBJECT_CLASS_CURVE &&
+            if (clip.elementClass === Const.OBJECT_CLASS_CURVE &&
                 Type.exists(clip.points)) {
                     C = clip.points;
-            } else if (clip.type == Const.OBJECT_TYPE_POLYGON) {
+            } else if (clip.type === Const.OBJECT_TYPE_POLYGON) {
                 for (i = 0; i < clip.vertices.length; i++) {
                     C.push(new Coords(Const.COORDS_BY_USER, clip.vertices[i].coords.usrCoords, board));
                 }
-            } else if (clip.elementClass == Const.OBJECT_CLASS_CIRCLE) {
+            } else if (clip.elementClass === Const.OBJECT_CLASS_CIRCLE) {
                 r = clip.Radius();
                 rad = 2 * Math.PI / steps;
                 for (i = 0; i <= steps; i++) {
@@ -14135,7 +14122,7 @@ define('math/clip',[
 
             res = this.findIntersections(S, C, board);
             S_intersect = res[0];
-            C_intersect = res[1];
+            // C_intersect = res[1];
 
             // For non-closed paths
             // if (true && typeof subject_first_point_type === 'string') {
@@ -14157,26 +14144,26 @@ define('math/clip',[
             }
 
             // Phase 2: mark intersection points as entry or exit points
-            this.markEntryExit(S, C); //, subject_first_point_type);
+            this.markEntryExit(S, C);
             if (S[0].distance(Const.COORDS_BY_USER, C[0]) === 0) {
                 // Randomly disturb the first point of the second path
                 // if both paths start at the same point.
                 C[0].usrCoords[1] *= 1 + Math.random() * 0.0001 - 0.00005;
                 C[0].usrCoords[2] *= 1 + Math.random() * 0.0001 - 0.00005;
             }
-            this.markEntryExit(C, S); //, clip_first_point_type);
+            this.markEntryExit(C, S);
 
-            if (false) {
-                for (i = 0; i < S_intersect.length; i++) {
-                    console.log('S', S_intersect[i].cnt, S_intersect[i].entry_exit, S_intersect[i].usrCoords,
-                            S_intersect[i].pos, S_intersect[i].alpha);
-                }
-                console.log();
-                for (i = 0; i < C_intersect.length; i++) {
-                    console.log('C', C_intersect[i].cnt, C_intersect[i].entry_exit, C_intersect[i].usrCoords,
-                            C_intersect[i].pos, C_intersect[i].alpha);
-                }
-            }
+            // if (false) {
+            //     for (i = 0; i < S_intersect.length; i++) {
+            //         console.log('S', S_intersect[i].cnt, S_intersect[i].entry_exit, S_intersect[i].usrCoords,
+            //                 S_intersect[i].pos, S_intersect[i].alpha);
+            //     }
+            //     console.log();
+            //     for (i = 0; i < C_intersect.length; i++) {
+            //         console.log('C', C_intersect[i].cnt, C_intersect[i].entry_exit, C_intersect[i].usrCoords,
+            //                 C_intersect[i].pos, C_intersect[i].alpha);
+            //     }
+            // }
             // Phase 3: tracing
             return this.tracing(S, S_intersect, clip_type);
 
@@ -52292,8 +52279,8 @@ define('base/board',[
 */
 
 define('renderer/svg',[
-    'jxg', 'options', 'renderer/abstract', 'base/constants', 'utils/type', 'utils/env', 'utils/color', 'utils/base64', 'math/numerics'
-], function (JXG, Options, AbstractRenderer, Const, Type, Env, Color, Base64, Numerics) {
+    'jxg', 'options', 'renderer/abstract', 'base/constants', 'utils/type', 'utils/color', 'utils/base64', 'math/numerics'
+], function (JXG, Options, AbstractRenderer, Const, Type, Color, Base64, Numerics) {
 
     "use strict";
 
@@ -52543,8 +52530,6 @@ define('renderer/svg',[
          * @param {JXG.GeometryElement} el The element the arrows are to be attached to
          */
         _setArrowColor: function (node, color, opacity, el) {
-            var s, d;
-
             if (node) {
                 if (Type.isString(color)) {
                     this._setAttribute(function () {
@@ -53078,7 +53063,7 @@ define('renderer/svg',[
                 len = el.vertices.length;
 
             node.setAttributeNS(null, 'stroke', 'none');
-            if (el.elType == 'polygonalchain') {
+            if (el.elType === 'polygonalchain') {
                 len++;
             }
 
@@ -53187,7 +53172,7 @@ define('renderer/svg',[
                 node, node2, node3,
                 ev_g = Type.evaluate(el.visProp.gradient);
 
-            if (ev_g == 'linear' || ev_g == 'radial') {
+            if (ev_g === 'linear' || ev_g === 'radial') {
                 node = this.createPrim(ev_g + 'Gradient', el.id + '_gradient');
                 node2 = this.createPrim('stop', el.id + '_gradient1');
                 node3 = this.createPrim('stop', el.id + '_gradient2');
@@ -53254,7 +53239,7 @@ define('renderer/svg',[
          * @param {Number} fy  SVG value fy (value between 0 and 1)
          * @param {Number} fr  SVG value fr (value between 0 and 1)
          */
-        updateGradientCircle(node, cx, cy, r, fx, fy, fr) {
+        updateGradientCircle: function(node, cx, cy, r, fx, fy, fr) {
             node.setAttributeNS(null, 'cx', cx * 100 + '%');   // Center first color
             node.setAttributeNS(null, 'cy', cy * 100 + '%');
             node.setAttributeNS(null, 'r', r * 100 + '%');
@@ -53288,11 +53273,6 @@ define('renderer/svg',[
             if (ev_g === 'linear') {
                 this.updateGradientAngle(el.gradNode, Type.evaluate(el.visProp.gradientangle));
             } else if (ev_g === 'radial') {
-                // node2.setAttributeNS(null, 'style', 'stop-color:' + Type.evaluate(el.visProp.gradientsecondcolor) +
-                //     ';stop-opacity:' + Type.evaluate(el.visProp.gradientsecondopacity));
-
-                // node3.setAttributeNS(null, 'style', 'stop-color:' + col + ';stop-opacity:' + op);
-
                 this.updateGradientCircle(el.gradNode,
                     Type.evaluate(el.visProp.gradientcx),
                     Type.evaluate(el.visProp.gradientcy),
@@ -53302,7 +53282,6 @@ define('renderer/svg',[
                     Type.evaluate(el.visProp.gradientfr)
                 );
             }
-
         },
 
         // documented in JXG.AbstractRenderer
@@ -53372,7 +53351,7 @@ define('renderer/svg',[
 
         // documented in JXG.AbstractRenderer
         setObjectFillColor: function (el, color, opacity, rendNode) {
-            var node, c, rgbo, oo, t,
+            var node, c, rgbo, oo,
                 rgba = Type.evaluate(color),
                 o = Type.evaluate(opacity),
                 grad = Type.evaluate(el.visProp.gradient);
@@ -53421,7 +53400,7 @@ define('renderer/svg',[
                     }, el.visPropOld.fillopacity);
                 }
 
-                if (grad == 'linear' || grad == 'radial') {
+                if (grad === 'linear' || grad === 'radial') {
                     this.updateGradient(el);
                 }
             }
@@ -53492,8 +53471,7 @@ define('renderer/svg',[
         // documented in JXG.AbstractRenderer
         setObjectStrokeWidth: function (el, width) {
             var node,
-                w = Type.evaluate(width),
-                rgba, c, rgbo, o, oo;
+                w = Type.evaluate(width);
 
             if (isNaN(w) || el.visPropOld.strokewidth === w) {
                 return;
@@ -53651,7 +53629,7 @@ define('renderer/svg',[
          */
         _getValuesOfDOMElements: function (node) {
             var values = [];
-            if (node.nodeType == 1) {
+            if (node.nodeType === 1) {
                 node = node.firstChild;
                 while (node) {
                     if (node.id !== undefined && node.value !== undefined) {
@@ -53683,7 +53661,7 @@ define('renderer/svg',[
 
         _getImgDataURL: function(svgRoot) {
             var images, len, canvas, ctx,
-                img, ur, i;
+                ur, i;
 
             images = svgRoot.getElementsByTagName("image");
             len = images.length;
@@ -53819,13 +53797,12 @@ define('renderer/svg',[
          * 	setTimeout(function() { console.log('done'); }, 400);
          */
         dumpToCanvas: function (canvasId, w, h, ignoreTexts) {
-            var svgRoot = this.svgRoot,
-                svg, tmpImg, cv, ctx,
-                wOrg, hOrg;
-            // DOMURL, svgBlob, url,
+            var //svgRoot = this.svgRoot,
+                svg, tmpImg, cv, ctx;
+                // wOrg, hOrg;
 
-            wOrg = svgRoot.getAttribute('width');
-            hOrg = svgRoot.getAttribute('height');
+            // wOrg = svgRoot.getAttribute('width');
+            // hOrg = svgRoot.getAttribute('height');
 
             // Prepare the canvas element
             cv = document.getElementById(canvasId);
@@ -55129,8 +55106,6 @@ define('renderer/canvas',[
      * @see JXG.AbstractRenderer
      */
     JXG.CanvasRenderer = function (container, dim) {
-        var i;
-
         this.type = 'canvas';
 
         this.canvasRoot = null;
@@ -55311,7 +55286,7 @@ define('renderer/canvas',[
          * @param {Number} fy  Canvas value x1 (but value between 0 and 1)
          * @param {Number} fr  Canvas value r0 (but value between 0 and 1)
          */
-        updateGradientCircle(el, cx, cy, r, fx, fy, fr) {
+        updateGradientCircle: function(el, cx, cy, r, fx, fy, fr) {
             var bb = el.getBoundingBox(),
                 c1, c2, cxs, cys, rs, fxs, fys, frs, dx, dy;
 
@@ -55324,8 +55299,8 @@ define('renderer/canvas',[
             cys = c1.scrCoords[2] - dy * cy;
             fxs = c1.scrCoords[1] + dx * fx;
             fys = c1.scrCoords[2] - dy * fy;
-            rs = r * (dx + dy) * 0.5
-            frs = fr * (dx + dy) * 0.5
+            rs = r * (dx + dy) * 0.5;
+            frs = fr * (dx + dy) * 0.5;
 
             return this.context.createRadialGradient(fxs, fys, frs, cxs, cys, rs);
         },
@@ -55380,7 +55355,7 @@ define('renderer/canvas',[
             hl = this._getHighlighted(el);
 
             grad = Type.evaluate(el.visProp.gradient);
-            if (grad == 'linear' || grad == 'radial') {
+            if (grad === 'linear' || grad === 'radial') {
                 // TODO: opacity
                 this.context[targetType + 'Style'] = this.updateGradient(el);
                 return hasColor;
@@ -56234,7 +56209,7 @@ define('renderer/canvas',[
             if (len <= 0 || !el.visPropCalc.visible) {
                 return;
             }
-            if (el.elType == 'polygonalchain') {
+            if (el.elType === 'polygonalchain') {
                 len++;
             }
 

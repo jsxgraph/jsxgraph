@@ -44,8 +44,8 @@
 */
 
 define([
-    'jxg', 'options', 'renderer/abstract', 'base/constants', 'utils/type', 'utils/env', 'utils/color', 'utils/base64', 'math/numerics'
-], function (JXG, Options, AbstractRenderer, Const, Type, Env, Color, Base64, Numerics) {
+    'jxg', 'options', 'renderer/abstract', 'base/constants', 'utils/type', 'utils/color', 'utils/base64', 'math/numerics'
+], function (JXG, Options, AbstractRenderer, Const, Type, Color, Base64, Numerics) {
 
     "use strict";
 
@@ -295,8 +295,6 @@ define([
          * @param {JXG.GeometryElement} el The element the arrows are to be attached to
          */
         _setArrowColor: function (node, color, opacity, el) {
-            var s, d;
-
             if (node) {
                 if (Type.isString(color)) {
                     this._setAttribute(function () {
@@ -830,7 +828,7 @@ define([
                 len = el.vertices.length;
 
             node.setAttributeNS(null, 'stroke', 'none');
-            if (el.elType == 'polygonalchain') {
+            if (el.elType === 'polygonalchain') {
                 len++;
             }
 
@@ -939,7 +937,7 @@ define([
                 node, node2, node3,
                 ev_g = Type.evaluate(el.visProp.gradient);
 
-            if (ev_g == 'linear' || ev_g == 'radial') {
+            if (ev_g === 'linear' || ev_g === 'radial') {
                 node = this.createPrim(ev_g + 'Gradient', el.id + '_gradient');
                 node2 = this.createPrim('stop', el.id + '_gradient1');
                 node3 = this.createPrim('stop', el.id + '_gradient2');
@@ -1006,7 +1004,7 @@ define([
          * @param {Number} fy  SVG value fy (value between 0 and 1)
          * @param {Number} fr  SVG value fr (value between 0 and 1)
          */
-        updateGradientCircle(node, cx, cy, r, fx, fy, fr) {
+        updateGradientCircle: function(node, cx, cy, r, fx, fy, fr) {
             node.setAttributeNS(null, 'cx', cx * 100 + '%');   // Center first color
             node.setAttributeNS(null, 'cy', cy * 100 + '%');
             node.setAttributeNS(null, 'r', r * 100 + '%');
@@ -1040,11 +1038,6 @@ define([
             if (ev_g === 'linear') {
                 this.updateGradientAngle(el.gradNode, Type.evaluate(el.visProp.gradientangle));
             } else if (ev_g === 'radial') {
-                // node2.setAttributeNS(null, 'style', 'stop-color:' + Type.evaluate(el.visProp.gradientsecondcolor) +
-                //     ';stop-opacity:' + Type.evaluate(el.visProp.gradientsecondopacity));
-
-                // node3.setAttributeNS(null, 'style', 'stop-color:' + col + ';stop-opacity:' + op);
-
                 this.updateGradientCircle(el.gradNode,
                     Type.evaluate(el.visProp.gradientcx),
                     Type.evaluate(el.visProp.gradientcy),
@@ -1054,7 +1047,6 @@ define([
                     Type.evaluate(el.visProp.gradientfr)
                 );
             }
-
         },
 
         // documented in JXG.AbstractRenderer
@@ -1124,7 +1116,7 @@ define([
 
         // documented in JXG.AbstractRenderer
         setObjectFillColor: function (el, color, opacity, rendNode) {
-            var node, c, rgbo, oo, t,
+            var node, c, rgbo, oo,
                 rgba = Type.evaluate(color),
                 o = Type.evaluate(opacity),
                 grad = Type.evaluate(el.visProp.gradient);
@@ -1173,7 +1165,7 @@ define([
                     }, el.visPropOld.fillopacity);
                 }
 
-                if (grad == 'linear' || grad == 'radial') {
+                if (grad === 'linear' || grad === 'radial') {
                     this.updateGradient(el);
                 }
             }
@@ -1244,8 +1236,7 @@ define([
         // documented in JXG.AbstractRenderer
         setObjectStrokeWidth: function (el, width) {
             var node,
-                w = Type.evaluate(width),
-                rgba, c, rgbo, o, oo;
+                w = Type.evaluate(width);
 
             if (isNaN(w) || el.visPropOld.strokewidth === w) {
                 return;
@@ -1403,7 +1394,7 @@ define([
          */
         _getValuesOfDOMElements: function (node) {
             var values = [];
-            if (node.nodeType == 1) {
+            if (node.nodeType === 1) {
                 node = node.firstChild;
                 while (node) {
                     if (node.id !== undefined && node.value !== undefined) {
@@ -1435,7 +1426,7 @@ define([
 
         _getImgDataURL: function(svgRoot) {
             var images, len, canvas, ctx,
-                img, ur, i;
+                ur, i;
 
             images = svgRoot.getElementsByTagName("image");
             len = images.length;
@@ -1571,13 +1562,12 @@ define([
          * 	setTimeout(function() { console.log('done'); }, 400);
          */
         dumpToCanvas: function (canvasId, w, h, ignoreTexts) {
-            var svgRoot = this.svgRoot,
-                svg, tmpImg, cv, ctx,
-                wOrg, hOrg;
-            // DOMURL, svgBlob, url,
+            var //svgRoot = this.svgRoot,
+                svg, tmpImg, cv, ctx;
+                // wOrg, hOrg;
 
-            wOrg = svgRoot.getAttribute('width');
-            hOrg = svgRoot.getAttribute('height');
+            // wOrg = svgRoot.getAttribute('width');
+            // hOrg = svgRoot.getAttribute('height');
 
             // Prepare the canvas element
             cv = document.getElementById(canvasId);

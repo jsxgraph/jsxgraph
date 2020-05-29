@@ -609,8 +609,6 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          * @returns {Number} base to the power of exponent.
          */
         pow: function (base, exponent) {
-            var inv;
-
             if (base === 0) {
                 if (exponent === 0) {
                     return 1;

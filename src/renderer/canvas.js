@@ -65,8 +65,6 @@ define([
      * @see JXG.AbstractRenderer
      */
     JXG.CanvasRenderer = function (container, dim) {
-        var i;
-
         this.type = 'canvas';
 
         this.canvasRoot = null;
@@ -247,7 +245,7 @@ define([
          * @param {Number} fy  Canvas value x1 (but value between 0 and 1)
          * @param {Number} fr  Canvas value r0 (but value between 0 and 1)
          */
-        updateGradientCircle(el, cx, cy, r, fx, fy, fr) {
+        updateGradientCircle: function(el, cx, cy, r, fx, fy, fr) {
             var bb = el.getBoundingBox(),
                 c1, c2, cxs, cys, rs, fxs, fys, frs, dx, dy;
 
@@ -260,8 +258,8 @@ define([
             cys = c1.scrCoords[2] - dy * cy;
             fxs = c1.scrCoords[1] + dx * fx;
             fys = c1.scrCoords[2] - dy * fy;
-            rs = r * (dx + dy) * 0.5
-            frs = fr * (dx + dy) * 0.5
+            rs = r * (dx + dy) * 0.5;
+            frs = fr * (dx + dy) * 0.5;
 
             return this.context.createRadialGradient(fxs, fys, frs, cxs, cys, rs);
         },
@@ -316,7 +314,7 @@ define([
             hl = this._getHighlighted(el);
 
             grad = Type.evaluate(el.visProp.gradient);
-            if (grad == 'linear' || grad == 'radial') {
+            if (grad === 'linear' || grad === 'radial') {
                 // TODO: opacity
                 this.context[targetType + 'Style'] = this.updateGradient(el);
                 return hasColor;
@@ -1170,7 +1168,7 @@ define([
             if (len <= 0 || !el.visPropCalc.visible) {
                 return;
             }
-            if (el.elType == 'polygonalchain') {
+            if (el.elType === 'polygonalchain') {
                 len++;
             }
 
