@@ -1,8 +1,8 @@
-examples/
-doc/
-extensions/
-helpers/
-JSXCompressor/
-plugins/
-utils/
-update_cdnjs/
+# Exclude ervything
+*
+# Allow all JavaScript files from the src folder
+!src/*
+!src/*/*
+# Allow all JavaScript files from the distrib folder
+!distrib/*.js
+!distrib/*/*.js
