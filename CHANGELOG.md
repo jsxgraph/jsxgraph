@@ -1,4 +1,4 @@
-1.01.0
+1.1.0
 ====
 
 New Features
@@ -23,6 +23,7 @@ Bug fixes
 
 * Fix intersection of polygons with `polygon1.intersect(polygon2)`
 * Update build scripts
+* Remove unnecessary files from NPM repsository
 
 
 1.00.0
