@@ -4,7 +4,7 @@
 New Features
 ------------
 
-* New JSXSGraph element `polygonalchain`
+* New JSXGraph element `polygonalchain`
 * New attribute `gradient` for color gradients. See API documentation for more attributes like gradient angle.
 * New method `JXG.Math.statistics.generateGaussian`
 * Slider values can be set by "up" events on the base line.
