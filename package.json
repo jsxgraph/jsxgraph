@@ -43,7 +43,7 @@
     "requirejs": "^2.3.6"
   },
   "optionalDependencies": {
-    "canvas": "^2.0.0"
+    "canvas": "^2.6.0"
   },
   "devDependencies": {
     "almond": "^0.3.3",

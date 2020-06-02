@@ -3,7 +3,7 @@
 # build tools
 REQUIREJS=./node_modules/.bin/r.js
 UGLIFYJS=./node_modules/.bin/uglifyjs
-JSDOC2=nodejs ./node_modules/.bin/jsdoc2
+JSDOC2=node ./node_modules/.bin/jsdoc2
 #JSDOC2=nodejs ./node_modules/.bin/jsdoc
 
 LINT=./node_modules/.bin/jslint
@@ -80,7 +80,7 @@ release: core-min docs
 
 	$(RM) $(RMFLAGS) tmp
 
-docs: core core-min
+docs: #core core-min
 	# set up tmp dir
 	$(MKDIR) $(MKDIRFLAGS) $(TMP)
 	$(MKDIR) $(MKDIRFLAGS) $(OUTPUT)
