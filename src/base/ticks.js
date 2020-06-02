@@ -313,7 +313,7 @@ define([
             // Calculate lower bound and upper bound limits based on distance between p1 and centre and p2 and center
             bounds = this.getLowerAndUpperBounds(coordsZero);
             if (Type.evaluate(this.visProp.type) === 'polar') {
-                bb = board.getBoundingBox();
+                bb = this.board.getBoundingBox();
                 r_max = Math.max(Math.sqrt(bb[0] * bb[0] + bb[1] * bb[1]),
                     Math.sqrt(bb[2] * bb[2] + bb[3] * bb[3]));
                 bounds.upper = r_max;

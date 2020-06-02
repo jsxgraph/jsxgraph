@@ -1353,6 +1353,7 @@ define([
                 pnt =  new Coords(Const.COORDS_BY_USER, [0, 0], this.board, false),
                 steps = 40,
                 eps = 0.01,
+                fnX1, fnX2, fnY1, fnY2,
                 bbox = this.board.getBoundingBox();
 
             if (!this._isOutsidePoint(a)) {
@@ -1365,11 +1366,16 @@ define([
             delta = (tb - ta) / steps;
             tc = ta + delta;
             isFound = false;
-            //console.log("====================================");
+
+            fnX1 = function(t) { return this.X(t, true) - (bbox[0] - w2); };
+            fnY1 = function(t) { return this.X(t, true) - (bbox[1] + h2); };
+            fnX2 = function(t) { return this.X(t, true) - (bbox[2] + w2); };
+            fnY2 = function(t) { return this.X(t, true) - (bbox[1] - h2); };
+
             for (i = 0; i < steps; ++i) {
                 // Left border
                 z = bbox[0] - w2;
-                td = Numerics.fzero(function(t) { return this.X(t, true) - z; }, [tc-delta, tc], this);
+                td = Numerics.fzero(fnX1, [tc - delta, tc], this);
                 // console.log("A", td, Math.abs(this.X(td, true) - z));
                 if (Math.abs(this.X(td, true) - z) < eps) { //} * Math.abs(z)) {
                     isFound = true;
@@ -1377,7 +1383,7 @@ define([
                 }
                 // Top border
                 z = bbox[1] + h2;
-                td = Numerics.fzero(function(t) { return this.Y(t, true) - z; }, [tc-delta, tc], this);
+                td = Numerics.fzero(fnY1, [tc - delta, tc], this);
                 // console.log("B", td, Math.abs(this.Y(td, true) - z));
                 if (Math.abs(this.Y(td, true) - z) < eps) { // * Math.abs(z)) {
                     isFound = true;
@@ -1385,7 +1391,7 @@ define([
                 }
                 // Right border
                 z = bbox[2] + w2;
-                td = Numerics.fzero(function(t) { return this.X(t, true) - z; }, [tc-delta, tc], this);
+                td = Numerics.fzero(fnX2, [tc - delta, tc], this);
                 // console.log("C", td, Math.abs(this.X(td, true) - z));
                 if (Math.abs(this.X(td, true) - z) < eps) { // * Math.abs(z)) {
                     isFound = true;
@@ -1393,7 +1399,7 @@ define([
                 }
                 // Bottom border
                 z = bbox[3] - h2;
-                td = Numerics.fzero(function(t) { return this.Y(t, true) - z; }, [tc-delta, tc], this);
+                td = Numerics.fzero(fnY2, [tc - delta, tc], this);
                 // console.log("D", td, Math.abs(this.Y(td, true) - z));
                 if (Math.abs(this.Y(td, true) - z) < eps) { // * Math.abs(z)) {
                     isFound = true;
@@ -1546,7 +1552,6 @@ define([
             suspendUpdate = true;
 
             pb.setCoordinates(Const.COORDS_BY_USER, [this.X(tb, suspendUpdate), this.Y(tb, suspendUpdate)], false);
-
             // Find start and end points of the visible area (plus a certain margin)
             ret_arr = this._findStartPoint(pa.scrCoords, ta, pb.scrCoords, tb);
             pa.setCoordinates(Const.COORDS_BY_SCREEN, ret_arr[0], false);

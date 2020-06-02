@@ -442,7 +442,7 @@ define([
             var pos, c;
 
             if (Type.evaluate(p3.visProp.moveonup)) {
-                pos = l1.board.getMousePosition(evt, 0),
+                pos = l1.board.getMousePosition(evt, 0);
                 c = new Coords(Const.COORDS_BY_SCREEN, pos, this.board);
                 p3.moveTo([c.usrCoords[1], c.usrCoords[2]]);
             }

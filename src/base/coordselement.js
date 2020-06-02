@@ -450,7 +450,7 @@ define([
                         while (res[0] && Type.exists(res[1]._transformationSource)) {
                             res = res[1].getTransformationSource();
                             slides.push(res[1]);
-                        };
+                        }
 
                         cu = this.coords.usrCoords;
                         if (isTransformed) {
@@ -593,7 +593,7 @@ define([
                 while (res[0] && Type.exists(res[1]._transformationSource)) {
                     res = res[1].getTransformationSource();
                     slides.push(res[1]);
-                };
+                }
                 if (isTransformed) {
                     this.coords.setCoordinates(Const.COORDS_BY_USER, [
                         slides[slides.length - 1].Z(this.position), 
