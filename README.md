@@ -30,13 +30,22 @@ Website
 * jsFiddle template: https://jsfiddle.net/8kep9syd/
 * Moodle filter: https://github.com/jsxgraph/moodle-filter_jsxgraph
 * (outdated: SourceForge project site: https://sf.net/projects/jsxgraph)
-* CDN: Embed JSXGraph via
+* CDNs: Embed JSXGraph via
 
 ```
 <script type="text/javascript" charset="UTF-8"
- src="//cdnjs.cloudflare.com/ajax/libs/jsxgraph/0.99.7/jsxgraphcore.js"></script>
+ src="https://cdn.jsdelivr.net/npm/jsxgraph@1.1.0/distrib/jsxgraphcore.js"></script>
 <link rel="stylesheet"
- type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/jsxgraph/0.99.7/jsxgraph.css" />
+ type="text/css" href="https://cdn.jsdelivr.net/npm/jsxgraph@1.1.0/distrib/jsxgraph.css" />
+ ```
+
+or (soon to come)
+
+```
+<script type="text/javascript" charset="UTF-8"
+ src="//cdnjs.cloudflare.com/ajax/libs/jsxgraph/1.1.0/jsxgraphcore.js"></script>
+<link rel="stylesheet"
+ type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/jsxgraph/1.1.0/jsxgraph.css" />
 ```
 
 Please report bugs to our issue tracking system found at
@@ -45,8 +54,16 @@ https://github.com/jsxgraph/jsxgraph/issues
 Usage
 -----
 
-Include `jsxgraphcore.js` and `jsxgraph.css` and, if required, one or more file readers in your HTML
-file. For further usage instructions please consult our [wiki](https://jsxgraph.org/wiki/)
+Include 
+
+* `jsxgraphcore.js` and 
+* `jsxgraph.css` and, 
+* if required, one or more file readers 
+
+from a CDN or a local version in your HTML file. 
+
+For developing content, it is recommended to include `jsxgraphsrc.js` (`jsxgraphcore.js` is the minified version of `jsxgraphsrc.js`).
+For further usage instructions please consult our [wiki](https://jsxgraph.org/wiki/)
 especially our [tutorials](https://jsxgraph.org/wiki/index.php/Documentation)
 or [the API reference docs](https://jsxgraph.org/docs/).
 
