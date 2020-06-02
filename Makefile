@@ -22,6 +22,7 @@ UNZIP=unzip
 
 # directories
 OUTPUT=distrib
+THIRDPARTY=3rdparty
 BUILD=build
 TMP=tmp
 BUILDBIN=$(BUILD)/bin
@@ -85,7 +86,7 @@ docs: core core-min
 	$(MKDIR) $(MKDIRFLAGS) $(OUTPUT)
 
 	# update template related files
-	$(CP) $(OUTPUT)/jquery.min.js $(JSDOC2TPLSTAT)/jquery.min.js
+	$(CP) $(THIRDPARTY)/jquery.min.js $(JSDOC2TPLSTAT)/jquery.min.js
 	$(CP) $(BUILDBIN)/jsxgraphcore.min.js $(JSDOC2TPLSTAT)/jsxgraphcore.js
 	$(CP) $(OUTPUT)/jsxgraph.css $(JSDOC2TPLSTAT)/jsxgraph.css
 

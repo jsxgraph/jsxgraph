@@ -791,7 +791,7 @@ define('base/constants',['jxg'], function (JXG) {
     "use strict";
 
     var major = 1,
-        minor = 0,
+        minor = 1,
         patch = 0,
         add = false, // 'dev',
         version = major + '.' + minor + '.' + patch + (add ? '-' + add : ''),
@@ -27187,7 +27187,7 @@ define('base/coordselement',[
                         while (res[0] && Type.exists(res[1]._transformationSource)) {
                             res = res[1].getTransformationSource();
                             slides.push(res[1]);
-                        };
+                        }
 
                         cu = this.coords.usrCoords;
                         if (isTransformed) {
@@ -27330,7 +27330,7 @@ define('base/coordselement',[
                 while (res[0] && Type.exists(res[1]._transformationSource)) {
                     res = res[1].getTransformationSource();
                     slides.push(res[1]);
-                };
+                }
                 if (isTransformed) {
                     this.coords.setCoordinates(Const.COORDS_BY_USER, [
                         slides[slides.length - 1].Z(this.position), 
@@ -36923,6 +36923,7 @@ define('base/curve',[
                 pnt =  new Coords(Const.COORDS_BY_USER, [0, 0], this.board, false),
                 steps = 40,
                 eps = 0.01,
+                fnX1, fnX2, fnY1, fnY2,
                 bbox = this.board.getBoundingBox();
 
             if (!this._isOutsidePoint(a)) {
@@ -36935,11 +36936,16 @@ define('base/curve',[
             delta = (tb - ta) / steps;
             tc = ta + delta;
             isFound = false;
-            //console.log("====================================");
+
+            fnX1 = function(t) { return this.X(t, true) - (bbox[0] - w2); };
+            fnY1 = function(t) { return this.X(t, true) - (bbox[1] + h2); };
+            fnX2 = function(t) { return this.X(t, true) - (bbox[2] + w2); };
+            fnY2 = function(t) { return this.X(t, true) - (bbox[1] - h2); };
+
             for (i = 0; i < steps; ++i) {
                 // Left border
                 z = bbox[0] - w2;
-                td = Numerics.fzero(function(t) { return this.X(t, true) - z; }, [tc-delta, tc], this);
+                td = Numerics.fzero(fnX1, [tc - delta, tc], this);
                 // console.log("A", td, Math.abs(this.X(td, true) - z));
                 if (Math.abs(this.X(td, true) - z) < eps) { //} * Math.abs(z)) {
                     isFound = true;
@@ -36947,7 +36953,7 @@ define('base/curve',[
                 }
                 // Top border
                 z = bbox[1] + h2;
-                td = Numerics.fzero(function(t) { return this.Y(t, true) - z; }, [tc-delta, tc], this);
+                td = Numerics.fzero(fnY1, [tc - delta, tc], this);
                 // console.log("B", td, Math.abs(this.Y(td, true) - z));
                 if (Math.abs(this.Y(td, true) - z) < eps) { // * Math.abs(z)) {
                     isFound = true;
@@ -36955,7 +36961,7 @@ define('base/curve',[
                 }
                 // Right border
                 z = bbox[2] + w2;
-                td = Numerics.fzero(function(t) { return this.X(t, true) - z; }, [tc-delta, tc], this);
+                td = Numerics.fzero(fnX2, [tc - delta, tc], this);
                 // console.log("C", td, Math.abs(this.X(td, true) - z));
                 if (Math.abs(this.X(td, true) - z) < eps) { // * Math.abs(z)) {
                     isFound = true;
@@ -36963,7 +36969,7 @@ define('base/curve',[
                 }
                 // Bottom border
                 z = bbox[3] - h2;
-                td = Numerics.fzero(function(t) { return this.Y(t, true) - z; }, [tc-delta, tc], this);
+                td = Numerics.fzero(fnY2, [tc - delta, tc], this);
                 // console.log("D", td, Math.abs(this.Y(td, true) - z));
                 if (Math.abs(this.Y(td, true) - z) < eps) { // * Math.abs(z)) {
                     isFound = true;
@@ -37116,7 +37122,6 @@ define('base/curve',[
             suspendUpdate = true;
 
             pb.setCoordinates(Const.COORDS_BY_USER, [this.X(tb, suspendUpdate), this.Y(tb, suspendUpdate)], false);
-
             // Find start and end points of the visible area (plus a certain margin)
             ret_arr = this._findStartPoint(pa.scrCoords, ta, pb.scrCoords, tb);
             pa.setCoordinates(Const.COORDS_BY_SCREEN, ret_arr[0], false);
@@ -55237,8 +55242,8 @@ define('renderer/canvas',[
             // 180: <-
             // 90: up
             var f = 1.0,
-                co = Math.cos(radians),
-                si = Math.sin(radians),
+                co = Math.cos(-radians),
+                si = Math.sin(-radians),
                 bb = el.getBoundingBox(),
                 c1, c2, x1, x2, y1, y2, x1s, x2s, y1s, y2s, dx, dy;
 
@@ -55296,9 +55301,9 @@ define('renderer/canvas',[
             dy = c1.scrCoords[2] - c2.scrCoords[2];
 
             cxs = c1.scrCoords[1] + dx * cx;
-            cys = c1.scrCoords[2] - dy * cy;
+            cys = c2.scrCoords[2] + dy * cy;
             fxs = c1.scrCoords[1] + dx * fx;
-            fys = c1.scrCoords[2] - dy * fy;
+            fys = c2.scrCoords[2] + dy * fy;
             rs = r * (dx + dy) * 0.5;
             frs = fr * (dx + dy) * 0.5;
 
@@ -59425,7 +59430,7 @@ define('base/ticks',[
             // Calculate lower bound and upper bound limits based on distance between p1 and centre and p2 and center
             bounds = this.getLowerAndUpperBounds(coordsZero);
             if (Type.evaluate(this.visProp.type) === 'polar') {
-                bb = board.getBoundingBox();
+                bb = this.board.getBoundingBox();
                 r_max = Math.max(Math.sqrt(bb[0] * bb[0] + bb[1] * bb[1]),
                     Math.sqrt(bb[2] * bb[2] + bb[3] * bb[3]));
                 bounds.upper = r_max;
@@ -60895,7 +60900,7 @@ define('element/slider',[
             var pos, c;
 
             if (Type.evaluate(p3.visProp.moveonup)) {
-                pos = l1.board.getMousePosition(evt, 0),
+                pos = l1.board.getMousePosition(evt, 0);
                 c = new Coords(Const.COORDS_BY_SCREEN, pos, this.board);
                 p3.moveTo([c.usrCoords[1], c.usrCoords[2]]);
             }
@@ -61808,7 +61813,7 @@ define('base/chart',[
                         this.label.fullUpdate();
                     }
 
-                    this.point2.coords = (Const.COORDS_BY_USER, [
+                    this.point2.coords = new Coords(Const.COORDS_BY_USER, [
                         this.point1.coords.usrCoords[1] + dx * f,
                         this.point1.coords.usrCoords[2] + dy * f
                     ], this.board);
@@ -66149,9 +66154,9 @@ define('element/input',[
         };
 
         Env.addEvent(t.rendNodeInput, 'input', priv.InputInputEventHandler, t);
-        Env.addEvent(t.rendNodeInput, 'mousedown', function(evt) { if (Type.exists(evt.stopPropagation)) evt.stopPropagation(); }, t);
-        Env.addEvent(t.rendNodeInput, 'touchstart', function(evt) { if (Type.exists(evt.stopPropagation)) evt.stopPropagation(); }, t);
-        Env.addEvent(t.rendNodeInput, 'pointerdown', function(evt) { if (Type.exists(evt.stopPropagation)) evt.stopPropagation(); }, t);
+        Env.addEvent(t.rendNodeInput, 'mousedown', function(evt) { if (Type.exists(evt.stopPropagation)) { evt.stopPropagation(); } }, t);
+        Env.addEvent(t.rendNodeInput, 'touchstart', function(evt) { if (Type.exists(evt.stopPropagation)) { evt.stopPropagation(); } }, t);
+        Env.addEvent(t.rendNodeInput, 'pointerdown', function(evt) { if (Type.exists(evt.stopPropagation)) { evt.stopPropagation(); } }, t);
 
         // This sets the font-size of the input HTML element
         t.visPropOld.fontsize = "0px";
@@ -66321,9 +66326,9 @@ define('element/button',[
 
         Env.addEvent(t.rendNodeButton, 'click', priv.ButtonClickEventHandler, t);
 
-        Env.addEvent(t.rendNodeButton, 'mousedown', function (evt) { if (Type.exists(evt.stopPropagation)) evt.stopPropagation(); }, t);
-        Env.addEvent(t.rendNodeButton, 'touchstart', function (evt) { if (Type.exists(evt.stopPropagation)) evt.stopPropagation(); }, t);
-        Env.addEvent(t.rendNodeButton, 'pointerdown', function (evt) { if (Type.exists(evt.stopPropagation)) evt.stopPropagation(); }, t);
+        Env.addEvent(t.rendNodeButton, 'mousedown', function (evt) { if (Type.exists(evt.stopPropagation)) { evt.stopPropagation(); } }, t);
+        Env.addEvent(t.rendNodeButton, 'touchstart', function (evt) { if (Type.exists(evt.stopPropagation)) { evt.stopPropagation(); } }, t);
+        Env.addEvent(t.rendNodeButton, 'pointerdown', function (evt) { if (Type.exists(evt.stopPropagation)) { evt.stopPropagation(); } }, t);
 
         return t;
     };

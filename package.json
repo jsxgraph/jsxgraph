@@ -49,17 +49,17 @@
     "almond": "^0.3.3",
     "braces": ">=2.3.1",
     "diff": "^4.0.2",
-    "handlebars": "^4.7.3",
-    "intern": "^4.8.0",
-    "js-yaml": ">=3.13.1",
+    "handlebars": "^4.7.6",
+    "intern": "^4.8.6",
+    "js-yaml": "^3.14.0",
     "jsdoc2": "^2.4.0",
-    "jshint": "^2.11.0",
+    "jshint": "^2.11.1",
     "jslint": "^0.12.1",
     "lodash": ">=4.17.13",
     "lodash-amd": ">=4.17.13",
     "minimist": ">=1.2.3",
     "sinon": "^1.14.0",
-    "uglify-js": "^3.8.0"
+    "uglify-js": "^3.9.4"
   },
   "engines": {
     "node": ">=0.6.0"
