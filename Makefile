@@ -28,6 +28,7 @@ TMP=tmp
 BUILDBIN=$(BUILD)/bin
 BUILDREADERS=$(BUILDBIN)/readers
 JSDOC2PLG=doc/jsdoc-tk/plugins
+JSDOC2PTCH=doc/jsdoc-tk/patches
 JSDOC2TPL=doc/jsdoc-tk/template
 #JSDOC2TPL=./node_modules/ink-docstrap/template
 JSDOC2TPLSTAT=$(JSDOC2TPL)/static
@@ -89,6 +90,9 @@ docs: #core core-min
 	$(CP) $(THIRDPARTY)/jquery.min.js $(JSDOC2TPLSTAT)/jquery.min.js
 	$(CP) $(BUILDBIN)/jsxgraphcore.min.js $(JSDOC2TPLSTAT)/jsxgraphcore.js
 	$(CP) $(OUTPUT)/jsxgraph.css $(JSDOC2TPLSTAT)/jsxgraph.css
+
+	# patch run.js
+	$(CP) $(JSDOC2PTCH)/*.js ./node_modules/jsdoc2/app
 
 	# update the plugin
 	$(CP) $(JSDOC2PLG)/*.js ./node_modules/jsdoc2/app/plugins/
