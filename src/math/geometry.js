@@ -525,11 +525,15 @@ define([
             //     }
             // }
 
-            // Sort ps in increasing order of the angle between a point and the first point ll.
             ll = ps[0];
+            // Sort ps in increasing order of the angle between a point and the first point ll.
+            // If a point is equal to the first point ll, the angle is defined to -Infinity.
+            // Otherwise, the angle would be zero, which is a value which also attained by points
+            // on the same horizontal line.
             ps.sort(function (a, b) {
-                var rad1 = Math.atan2(a[2] - ll[2], a[1] - ll[1]),
-                    rad2 = Math.atan2(b[2] - ll[2], b[1] - ll[1]);
+                var rad1 = (a[2] == ll[2] && a[1] == ll[1]) ? -Infinity : Math.atan2(a[2] - ll[2], a[1] - ll[1]),
+                    rad2 = (b[2] == ll[2] && b[1] == ll[1]) ? -Infinity : Math.atan2(b[2] - ll[2], b[1] - ll[1]);
+
                 return rad1 - rad2;
             });
 
