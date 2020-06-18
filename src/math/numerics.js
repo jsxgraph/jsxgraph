@@ -1421,16 +1421,19 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
 
         /**
          * Abstract method to find roots of univariate functions, which - for the time being -
-         * is an alias for {@link JXG.Math.Numerics.fzero}
+         * is an alias for {@link JXG.Math.Numerics.chandrupatla}.
          * @param {function} f We search for a solution of f(x)=0.
          * @param {Number} x initial guess for the root, i.e. starting value, or start interval enclosing the root.
          * @param {Object} context optional object that is treated as "this" in the function body. This is useful if
          * the function is a method of an object and contains a reference to its parent object via "this".
          * @returns {Number} A root of the function f.
+         *
+         * @see JXG.Math.Numerics.chandrupatla
+         * @see JXG.Math.Numerics.fzero
          * @memberof JXG.Math.Numerics
          */
         root: function (f, x, context) {
-            return this.fzero(f, x, context);
+            return this.chandrupatla(f, x, context);
         },
 
         /**
@@ -2704,7 +2707,8 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
         },
 
         /**
-         * Maximum number of iterations in {@link JXG.Math.Numerics.fzero}
+         * Maximum number of iterations in {@link JXG.Math.Numerics.fzero} and
+         * {@link JXG.Math.Numerics.chandrupatla}
          * @type Number
          * @default 80
          * @memberof JXG.Math.Numerics
@@ -2730,6 +2734,8 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
          * @returns {Array} [x_0, f(x_0), x_1, f(x_1)]
          *
          * @see JXG.Math.Numerics.fzero
+         * @see JXG.Math.Numerics.chandrupatla
+         *
          * @memberof JXG.Math.Numerics
          */
         findBracket: function(f, x0, object) {
@@ -2791,6 +2797,7 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
          * @param {Object} object Parent object in case f is method of it
          * @returns {Number} the approximation of the root
          * Algorithm:
+         *  Brent's root finder from
          *  G.Forsythe, M.Malcolm, C.Moler, Computer methods for mathematical
          *  computations. M., Mir, 1980, p.180 of the Russian edition
          *
@@ -2798,6 +2805,9 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
          * algorithm 748 is applied. Otherwise, if x0 is a number,
          * the algorithm tries to bracket a zero of f starting from x0.
          * If this fails, we fall back to Newton's method.
+         *
+         * @see JXG.Math.Numerics.chandrupatla
+         * @see JXG.Math.Numerics.root
          * @memberof JXG.Math.Numerics
          */
         fzero: function (f, x0, object) {
@@ -2837,7 +2847,6 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
             }
 
             if (fa * fb > 0) {
-//console.log("Bracketing NOT successful");
                 // Bracketing not successful, fall back to Newton's method or to fminbr
                 if (Type.isArray(x0)) {
                     return this.fminbr(f, [a, b], object);
@@ -2845,11 +2854,9 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
 
                 return this.Newton(f, a, object);
             }
-//console.log("Bracketing successful");
 
             // OK, we have enclosed a zero of f.
             // Now we can start Brent's method
-
             c = a;
             fc = fa;
 
@@ -2938,6 +2945,124 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
             } // End while
 
             return b;
+        },
+
+        /**
+         * Find zero of an univariate function f.
+         * @param {function} f Function, whose root is to be found
+         * @param {Array,Number} x0  Start value or start interval enclosing the root
+         * @param {Object} object Parent object in case f is method of it
+         * @returns {Number} the approximation of the root
+         * Algorithm:
+         * Chandrupatla's method, see
+         * Tirupathi R. Chandrupatla,
+         * "A new hybrid quadratic/bisection algorithm for finding the zero of a nonlinear function without using derivatives",
+         * Advances in Engineering Software, Volume 28, Issue 3, April 1997, Pages 145-149.
+         *
+         * If x0 is an array containing lower and upper bound for the zero
+         * algorithm 748 is applied. Otherwise, if x0 is a number,
+         * the algorithm tries to bracket a zero of f starting from x0.
+         * If this fails, we fall back to Newton's method.
+         *
+         * @see JXG.Math.Numerics.root
+         * @see JXG.Math.Numerics.fzero
+         * @memberof JXG.Math.Numerics
+         */
+        chandrupatla: function (f, x0, object) {
+            var a, fa, b, fb, res,
+                niter = 0,
+                maxiter = this.maxIterationsRoot,
+                rand = (1 + Math.random() * 0.001),
+                t = 0.5 * rand,
+                eps = 1.e-10,
+                dlt = 0.00001,
+                x1, x2, x3, x,
+                f1, f2, f3, y,
+                xm, fm, tol, tl,
+                xi, ph, fl, fh,
+                AL, A, B, C, D;
+
+            if (Type.isArray(x0)) {
+                if (x0.length < 2) {
+                    throw new Error("JXG.Math.Numerics.fzero: length of array x0 has to be at least two.");
+                }
+
+                a = x0[0];
+                fa = f.call(object, a);
+                // nfev += 1;
+                b = x0[1];
+                fb = f.call(object, b);
+                // nfev += 1;
+            } else {
+                res = this.findBracket(f, x0, object);
+                a = res[0];
+                fa = res[1];
+                b = res[2];
+                fb = res[3];
+            }
+
+            if (fa * fb > 0) {
+                // Bracketing not successful, fall back to Newton's method or to fminbr
+                if (Type.isArray(x0)) {
+                    return this.fminbr(f, [a, b], object);
+                }
+
+                return this.Newton(f, a, object);
+            }
+
+            x1 = a;
+            x2 = b;
+            f1 = fa;
+            f2 = fb;
+            do {
+                x = x1 + t * (x2 - x1);
+                y = f.call(object, x);
+
+                // Arrange 2-1-3: 2-1 interval, 1 middle, 3 discarded point
+                if (Math.sign(y) === Math.sign(f1)) {
+                    x3 = x1; x1 = x;
+                    f3 = f1; f1 = y;
+                } else {
+                    x3 = x2; x2 = x1;
+                    f3 = f2; f2 = f1;
+                }
+                x1 = x; f1 = y;
+
+                xm = x1; fm = f1;
+                if (Math.abs(f2) < Math.abs(f1)) {
+                    xm = x2; fm = f2;
+                }
+                tol = 2 * eps * Math.abs(xm) + 0.5 * dlt;
+                tl = tol / Math.abs(x2 - x1);
+                if (tl > 0.5 || fm === 0) {
+                    break;
+                }
+                // If inverse quadratic interpolation holds, use it
+                xi = (x1 - x2) / (x3 - x2);
+                ph = (f1 - f2) / (f3 - f2);
+                fl = 1 - (1 - xi) * (1 - xi);
+                fh = xi * xi;
+                if (fl < ph && ph < fh) {
+                    AL = (x3 - x1) / (x2 - x1);
+                    A = f1 / (f2 - f1);
+                    B = f3 / (f2 - f3);
+                    C = f1 / (f3 - f1);
+                    D = f2 / (f3 - f2);
+                    t = A * B + C * D * AL;
+                } else {
+                    t = 0.5 * rand;
+                }
+                // Adjust t away from the interval boundary
+                if (t < tl) {
+                    t = tl;
+                }
+                if (t > 1 - tl) {
+                    t = 1 - tl;
+                }
+                niter++;
+            } while (niter <= maxiter);
+
+            return xm;
         },
 
         /**
