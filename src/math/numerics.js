@@ -1433,6 +1433,8 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
          * @memberof JXG.Math.Numerics
          */
         root: function (f, x, context) {
+            //return this.fzero(f, x, context);
+
             return this.chandrupatla(f, x, context);
         },
 
