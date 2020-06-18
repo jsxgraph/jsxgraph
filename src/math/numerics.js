@@ -2720,6 +2720,70 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
         maxIterationsMinimize: 500,
 
         /**
+         * Given a value x_0, this function tries to find a second value x_1 such that
+         * the function f has opposite signs at x_0 and x_1.
+         * The return values have to be tested if the method succeeded.
+         *
+         * @param {Function} f Function, whose root is to be found
+         * @param {Number} x0 Start value
+         * @param {Object} object Parent object in case f is method of it
+         * @returns {Array} [x_0, f(x_0), x_1, f(x_1)]
+         *
+         * @see JXG.Math.Numerics.fzero
+         * @memberof JXG.Math.Numerics
+         */
+        findBracket: function(f, x0, object) {
+            var a, aa, fa,
+                blist, b, fb,
+                u, fu,
+                i, len;
+
+            if (Type.isArray(x0)) {
+                return x0;
+            }
+
+            a = x0;
+            fa = f.call(object, a);
+            // nfev += 1;
+
+            // Try to get b, by trying several values related to a
+            aa = (a === 0) ? 1 : a;
+            blist = [
+                a - 0.1 * aa, a + 0.1 * aa,
+                a - 1, a + 1,
+                a - 0.5 * aa, a + 0.5 * aa,
+                a - 0.6 * aa, a + 0.6 * aa,
+                a - 1 * aa, a + 1 * aa,
+                a - 2 * aa, a + 2 * aa,
+                a - 5 * aa, a + 5 * aa,
+                a - 10 * aa, a + 10 * aa,
+                a - 50 * aa, a + 50 * aa,
+                a - 100 * aa, a + 100 * aa
+            ];
+            len = blist.length;
+
+            for (i = 0; i < len; i++) {
+                b = blist[i];
+                fb = f.call(object, b);
+                // nfev += 1;
+
+                if (fa * fb <= 0) {
+                    break;
+                }
+            }
+            if (b < a) {
+                u = a;
+                a = b;
+                b = u;
+
+                fu = fa;
+                fa = fb;
+                fb = fu;
+            }
+            return [a, fa, b, fb];
+        },
+
+        /**
          *
          * Find zero of an univariate function f.
          * @param {function} f Function, whose root is to be found
@@ -2739,7 +2803,7 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
         fzero: function (f, x0, object) {
             var a, b, c,
                 fa, fb, fc,
-                aa, blist, i, len, u, fu,
+                res,
                 prev_step, t1, cb, t2,
                 // Actual tolerance
                 tol_act,
@@ -2765,41 +2829,15 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
                 fb = f.call(object, b);
                 // nfev += 1;
             } else {
-                a = x0;
-                fa = f.call(object, a);
-                // nfev += 1;
-
-                // Try to get b.
-                if (a === 0) {
-                    aa = 1;
-                } else {
-                    aa = a;
-                }
-
-                blist = [0.9 * aa, 1.1 * aa, aa - 1, aa + 1, 0.5 * aa, 1.5 * aa, -aa, 2 * aa, -10 * aa, 10 * aa];
-                len = blist.length;
-
-                for (i = 0; i < len; i++) {
-                    b = blist[i];
-                    fb = f.call(object, b);
-                    // nfev += 1;
-
-                    if (fa * fb <= 0) {
-                        break;
-                    }
-                }
-                if (b < a) {
-                    u = a;
-                    a = b;
-                    b = u;
-
-                    fu = fa;
-                    fa = fb;
-                    fb = fu;
-                }
+                res = this.findBracket(f, x0, object);
+                a = res[0];
+                fa = res[1];
+                b = res[2];
+                fb = res[3];
             }
 
             if (fa * fb > 0) {
+//console.log("Bracketing NOT successful");
                 // Bracketing not successful, fall back to Newton's method or to fminbr
                 if (Type.isArray(x0)) {
                     return this.fminbr(f, [a, b], object);
@@ -2807,6 +2845,7 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
 
                 return this.Newton(f, a, object);
             }
+//console.log("Bracketing successful");
 
             // OK, we have enclosed a zero of f.
             // Now we can start Brent's method
