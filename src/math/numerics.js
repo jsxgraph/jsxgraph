@@ -2976,7 +2976,7 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
                 maxiter = this.maxIterationsRoot,
                 rand = (1 + Math.random() * 0.001),
                 t = 0.5 * rand,
-                eps = 1.e-10,
+                eps = Mat.eps, // 1.e-10,
                 dlt = 0.00001,
                 x1, x2, x3, x,
                 f1, f2, f3, y,
@@ -3012,10 +3012,8 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
                 return this.Newton(f, a, object);
             }
 
-            x1 = a;
-            x2 = b;
-            f1 = fa;
-            f2 = fb;
+            x1 = a;  x2 = b;
+            f1 = fa; f2 = fb;
             do {
                 x = x1 + t * (x2 - x1);
                 y = f.call(object, x);
@@ -3042,8 +3040,8 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
                 // If inverse quadratic interpolation holds, use it
                 xi = (x1 - x2) / (x3 - x2);
                 ph = (f1 - f2) / (f3 - f2);
-                fl = 1 - (1 - xi) * (1 - xi);
-                fh = xi * xi;
+                fl = 1 - Math.sqrt(1 - xi);
+                fh = Math.sqrt(xi);
                 if (fl < ph && ph < fh) {
                     AL = (x3 - x1) / (x2 - x1);
                     A = f1 / (f2 - f1);
@@ -3063,6 +3061,7 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
                 }
                 niter++;
             } while (niter <= maxiter);
+            // console.log(niter);
 
             return xm;
         },
