@@ -1681,11 +1681,10 @@ define([
                 node.style.height = (h) + 'px';
                 node.style.zIndex = this.container.style.zIndex + 120;
 
-                // Position the div exactly over the JSXGraph board
-                cPos = board.getCoordsTopLeftCorner();
+                // Try to position the div exactly over the JSXGraph board
                 node.style.position = 'absolute';
-                node.style.left = (cPos[0]) + 'px';
-                node.style.top = (cPos[1]) + 'px';
+                node.style.top = this.container.offsetTop + 'px';
+                node.style.left = this.container.offsetLeft + 'px';
             }
 
             if (!isDebug) {
@@ -1719,7 +1718,7 @@ define([
                 // Add all nodes
                 node.appendChild(img);
                 node.appendChild(button);
-                parent.appendChild(node);
+                parent.insertBefore(node, this.container.nextSibling);
             }
 
             // Hide navigation bar in board
