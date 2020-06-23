@@ -1459,7 +1459,13 @@ define([
         },
 
         /**
+         * Return a data URI of the SVG code representeing the construction.
+         * The SVG code of the construction is base64 encoded. The return string starts
+         * with "data:image/svg+xml;base64,...".
          *
+         * @param {Boolean} ignoreTexts If true, the foreignObject tag is taken out from the SVG root.
+         * This is necessary for older versions of Safari. Default: false
+         * @returns {String}  data URI string
          */
         dumpToDataURI: function (ignoreTexts) {
             var svgRoot = this.svgRoot,
