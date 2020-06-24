@@ -172,6 +172,45 @@ define([
         },
 
         /**
+         * Merge the user supplied attributes with the attributes in options.js
+         *
+         * @param {Object} attributes User supplied attributes
+         * @returns {Object} Merged attributes for the board
+         *
+         * @private
+         */
+        _setAttributes: function(attributes) {
+            // merge attributes
+            var attr = Type.copyAttributes(attributes, Options, 'board');
+
+            // The attributes which are objects have to be copied separately
+            attr.zoom = Type.copyAttributes(attr, Options, 'board', 'zoom');
+            attr.pan = Type.copyAttributes(attr, Options, 'board', 'pan');
+            attr.selection = Type.copyAttributes(attr, Options, 'board', 'selection');
+            attr.navbar = Type.copyAttributes(attr.navbar, Options, 'navbar');
+
+            return attr;
+        },
+
+        /**
+         * Further initialization of the board. Set some properties from attribute values.
+         *
+         * @param {JXG.Board} board
+         * @param {Object} attr attributes object
+         * @param {Object} dimensions Object containing dimensions of the canvas
+         *
+         * @private
+         */
+        _fillBoard: function(board, attr, dimensions) {
+            board.initInfobox();
+            board.maxboundingbox = attr.maxboundingbox;
+            board.resizeContainer(dimensions.width, dimensions.height, true, true);
+            board._createSelectionPolygon(attr);
+            board.renderer.drawZoomBar(board, attr.navbar);
+            JXG.boards[board.id] = board;
+        },
+
+        /**
          * Initialise a new board.
          * @param {String} box Html-ID to the Html-element in which the board is painted.
          * @param {Object} attributes An object that sets some of the board properties. Most of these properties can be set via JXG.Options.
@@ -194,14 +233,7 @@ define([
                 board;
 
             attributes = attributes || {};
-
-            // merge attributes
-            attr = Type.copyAttributes(attributes, Options, 'board');
-            // The attributes which are objects have to be copied separately
-            attr.zoom = Type.copyAttributes(attr, Options, 'board', 'zoom');
-            attr.pan = Type.copyAttributes(attr, Options, 'board', 'pan');
-            attr.selection = Type.copyAttributes(attr, Options, 'board', 'selection');
-            attr.navbar = Type.copyAttributes(attr.navbar, Options, 'navbar');
+            attr = this._setAttributes(attributes);
 
             dimensions = Env.getDimensions(box, attr.document);
 
@@ -252,16 +284,12 @@ define([
                         dimensions.width, dimensions.height,
                         attr);
 
-            JXG.boards[board.id] = board;
-
             board.keepaspectratio = attr.keepaspectratio;
-            board.maxboundingbox = attr.maxboundingbox;
-            board.resizeContainer(dimensions.width, dimensions.height, true, true);
+
+            this._fillBoard(board, attr, dimensions);
 
             // create elements like axes, grid, navigation, ...
             board.suspendUpdate();
-            board.initInfobox();
-
             if (attr.axis) {
                 axattr = typeof attr.axis === 'object' ? attr.axis : {};
 
@@ -280,20 +308,9 @@ define([
                 board.defaultAxes.x = board.create('axis', [[0, 0], [1, 0]], axattr_x);
                 board.defaultAxes.y = board.create('axis', [[0, 0], [0, 1]], axattr_y);
             }
-
             if (attr.grid) {
                 board.create('grid', [], (typeof attr.grid === 'object' ? attr.grid : {}));
             }
-
-            board._createSelectionPolygon(attr);
-            /*
-            selectionattr = Type.copyAttributes(attr, Options, 'board', 'selection');
-            if (selectionattr.enabled === true) {
-                board.selectionPolygon = board.create('polygon', [[0, 0], [0, 0], [0, 0], [0, 0]], selectionattr);
-            }
-            */
-
-            board.renderer.drawZoomBar(board, attr.navbar);
             board.unsuspendUpdate();
 
             return board;
@@ -318,31 +335,16 @@ define([
                 bbox, selectionattr;
 
             attributes = attributes || {};
-
-            // merge attributes
-            attr = Type.copyAttributes(attributes, Options, 'board');
-            // The attributes which are objects have to be copied separately
-            attr.zoom = Type.copyAttributes(attributes, Options, 'board', 'zoom');
-            attr.pan = Type.copyAttributes(attributes, Options, 'board', 'pan');
-            attr.selection = Type.copyAttributes(attr, Options, 'board', 'selection');
-            attr.navbar = Type.copyAttributes(attr.navbar, Options, 'navbar');
+            attr = this._setAttributes(attributes);
 
             dimensions = Env.getDimensions(box, attr.document);
             renderer = this.initRenderer(box, dimensions, attr.document, attr.renderer);
 
             /* User default parameters, in parse* the values in the gxt files are submitted to board */
             board = new Board(box, renderer, '', [150, 150], 1, 1, 50, 50, dimensions.width, dimensions.height, attr);
-            board.maxboundingbox = attr.maxboundingbox;
-            board.initInfobox();
-            board.resizeContainer(dimensions.width, dimensions.height, true, true);
 
+            this._fillBoard(board, attr, dimensions);
             FileReader.parseFileContent(file, board, format, true, callback);
-
-            selectionattr = Type.copyAttributes(attr, Options, 'board', 'selection');
-	        board.selectionPolygon = board.create('polygon', [[0, 0], [0, 0], [0, 0], [0, 0]], selectionattr);
-
-            board.renderer.drawZoomBar(board, attr.navbar);
-            JXG.boards[board.id] = board;
 
             return board;
         },
@@ -366,31 +368,16 @@ define([
                 selectionattr;
 
             attributes = attributes || {};
-
-            // merge attributes
-            attr = Type.copyAttributes(attributes, Options, 'board');
-            // The attributes which are objects have to be copied separately
-            attr.zoom = Type.copyAttributes(attributes, Options, 'board', 'zoom');
-            attr.pan = Type.copyAttributes(attributes, Options, 'board', 'pan');
-            attr.selection = Type.copyAttributes(attr, Options, 'board', 'selection');
-            attr.navbar = Type.copyAttributes(attr.navbar, Options, 'navbar');
+            attr = this._setAttributes(attributes);
 
             dimensions = Env.getDimensions(box, attr.document);
             renderer = this.initRenderer(box, dimensions, attr.document);
 
             /* User default parameters, in parse* the values in the gxt files are submitted to board */
             board = new Board(box, renderer, '', [150, 150], 1.0, 1.0, 50, 50, dimensions.width, dimensions.height, attr);
-            board.initInfobox();
-            board.resizeContainer(dimensions.width, dimensions.height, true, true);
-            board.maxboundingbox = attr.maxboundingbox;
 
+            this._fillBoard(board, attr, dimensions);
             FileReader.parseString(string, board, format, true, callback);
-
-            selectionattr = Type.copyAttributes(attr, Options, 'board', 'selection');
-	        board.selectionPolygon = board.create('polygon', [[0, 0], [0, 0], [0, 0], [0, 0]], selectionattr);
-
-            board.renderer.drawZoomBar(board, attr.navbar);
-            JXG.boards[board.id] = board;
 
             return board;
         },
