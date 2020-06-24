@@ -43,7 +43,6 @@
  */
 
 (function () {
-
     "use strict";
 
     JXG.GraphReader = function (board, str) {
@@ -53,7 +52,12 @@
 
     JXG.extend(JXG.GraphReader.prototype, /** @lends JXG.GraphReader.prototype */ {
         parseData: function (directed) {
-            var splitted, n, nodes = [], adjMatrix = [], i, j, tmp, nodenumbers = {}, tmp2, weighted = false,
+            var splitted, n, i, j, tmp,
+                tmp2,
+                nodes = [],
+                adjMatrix = [],
+                nodenumbers = {},
+                weighted = false,
                 boundingBox;
 
             splitted = this.data.split('\n');
@@ -71,7 +75,16 @@
             this.board.setBoundingBox(boundingBox, true);
             splitted.shift();
 
-            // second line: number of nodes
+            // second  line: graph/digraph?
+            if(splitted[0] == "digraph") {
+                directed = true;
+            }
+            else {
+                directed = false;
+            }
+            splitted.shift();
+
+            // third  line: number of nodes
             n = parseInt(splitted[0], 10);
 
             // nodes

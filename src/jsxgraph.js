@@ -315,7 +315,7 @@ define([
          */
         loadBoardFromFile: function (box, file, format, attributes, callback) {
             var attr, renderer, board, dimensions,
-                selectionattr;
+                bbox, selectionattr;
 
             attributes = attributes || {};
 
@@ -332,6 +332,7 @@ define([
 
             /* User default parameters, in parse* the values in the gxt files are submitted to board */
             board = new Board(box, renderer, '', [150, 150], 1, 1, 50, 50, dimensions.width, dimensions.height, attr);
+            board.maxboundingbox = attr.maxboundingbox;
             board.initInfobox();
             board.resizeContainer(dimensions.width, dimensions.height, true, true);
 
@@ -381,6 +382,7 @@ define([
             board = new Board(box, renderer, '', [150, 150], 1.0, 1.0, 50, 50, dimensions.width, dimensions.height, attr);
             board.initInfobox();
             board.resizeContainer(dimensions.width, dimensions.height, true, true);
+            board.maxboundingbox = attr.maxboundingbox;
 
             FileReader.parseString(string, board, format, true, callback);
 

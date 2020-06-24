@@ -102,38 +102,63 @@ define([
                 return;
             }
 
-            request.open("GET", url, async);
+            // Not working any more
+            // request.open("GET", url, async);
+            // if (format.toLowerCase() === 'raw') {
+            //     this.cbp = function () {
+            //         var req = request;
+            //         if (req.readyState === 4) {
+            //             board(req.responseText);
+            //         }
+            //     };
+            // } else {
+            //     this.cbp = function () {
+            //         var req = request,
+            //             text = '';
+
+            //         if (req.readyState === 4) {
+            //             if (Type.exists(req.responseStream) &&
+            //                     // PK: zip, geogebra
+            //                     // 31: gzip, cinderella
+            //                     (req.responseText.slice(0, 2) === "PK" ||
+            //                     Encoding.asciiCharCodeAt(req.responseText.slice(0, 1), 0) === 31)) {
+
+            //                 // After this, text contains the base64 encoded, zip-compressed string
+            //                 text = Base64.decode(jxgBinFileReader(req));
+            //             } else {
+            //                 text = req.responseText;
+            //             }
+            //             this.parseString(text, board, format, callback);
+            //         }
+            //     };
+            // }
 
             if (format.toLowerCase() === 'raw') {
-                this.cbp = function () {
-                    var req = request;
-                    if (req.readyState === 4) {
-                        board(req.responseText);
-                    }
+                this.cbp = function (e) {
+                    board(e.target.result);
                 };
             } else {
-                this.cbp = function () {
-                    var req = request,
-                        text = '';
-
-                    if (req.readyState === 4) {
-                        if (Type.exists(req.responseStream) &&
-                                // PK: zip, geogebra
+                this.cbp = function (e) {
+                    var text = '';
+                        if (    // PK: zip, geogebra
                                 // 31: gzip, cinderella
-                                (req.responseText.slice(0, 2) === "PK" ||
-                                Encoding.asciiCharCodeAt(req.responseText.slice(0, 1), 0) === 31)) {
+                                e.target.result.slice(0, 2) === "PK" ||
+                                    Encoding.asciiCharCodeAt(e.target.result.slice(0, 1), 0) === 31) {
 
                             // After this, text contains the base64 encoded, zip-compressed string
                             text = Base64.decode(jxgBinFileReader(req));
                         } else {
-                            text = req.responseText;
+                            text = e.target.result;
                         }
+                        console.log("JXG.Filereader:", text);
+
                         this.parseString(text, board, format, callback);
-                    }
                 };
             }
 
             this.cb = Type.bind(this.cbp, this);
+            /*
+            // Old style
             request.onreadystatechange = this.cb;
 
             try {
@@ -141,6 +166,17 @@ define([
             } catch (ex2) {
                 throw new Error("JSXGraph: A problem occurred while trying to read '" + url + "'.");
             }
+            */
+
+            var reader = new FileReader();
+            reader.onload = this.cb;
+            if (format.toLowerCase() === 'raw') {
+                reader.readAsText(url);
+            } else {
+                reader.readAsText(url);
+                //reader.readAsArrayBuffer(url);
+            }
+
         },
 
         /**
@@ -164,7 +200,6 @@ define([
                 read;
 
             format = format.toLowerCase();
-
             Reader = JXG.readers[format];
 
             if (Type.exists(Reader)) {
