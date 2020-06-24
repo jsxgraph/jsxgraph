@@ -135,6 +135,8 @@ define([
          * @param {String} format
          * @param {Boolean} async
          * @param {Function} callback
+         *
+         * @private
          */
         handleLocalFile: function(url, board, format, async, callback) {
             if (!Type.exists(async)) {
