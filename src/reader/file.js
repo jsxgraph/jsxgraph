@@ -51,6 +51,129 @@ define([
      * The FileReader object bundles the file input capabilities of JSXGraph.
      */
     JXG.FileReader = {
+        /**
+         * 
+         * @param {String} url
+         * @param {JXG.Board} board
+         * @param {String} format
+         * @param {Boolean} async
+         * @param {Function} callback
+         *
+         * @private
+         */
+        handleRemoteFile: function(url, board, format, async, callback) {
+
+            this.request = false;
+            try {
+                request = new XMLHttpRequest();
+                if (format.toLowerCase() === 'raw') {
+                    request.overrideMimeType('text/plain; charset=iso-8859-1');
+                } else {
+                    request.overrideMimeType('text/xml; charset=iso-8859-1');
+                }
+            } catch (e) {
+                try {
+                    request = new ActiveXObject("Msxml2.XMLHTTP");
+                } catch (ex) {
+                    try {
+                        request = new ActiveXObject("Microsoft.XMLHTTP");
+                    } catch (exc) {
+                        request = false;
+                    }
+                }
+            }
+            if (!request) {
+                JXG.debug("AJAX not activated!");
+                return;
+            }
+
+            request.open("GET", url, async);
+            if (format.toLowerCase() === 'raw') {
+                this.cbp = function () {
+                    var req = request;
+                    if (req.readyState === 4) {
+                        board(req.responseText);
+                    }
+                };
+            } else {
+                this.cbp = function () {
+                    var req = request,
+                        text = '';
+
+                    if (req.readyState === 4) {
+                        if (Type.exists(req.responseStream) &&
+                                // PK: zip, geogebra
+                                // 31: gzip, cinderella
+                                (req.responseText.slice(0, 2) === "PK" ||
+                                Encoding.asciiCharCodeAt(req.responseText.slice(0, 1), 0) === 31)) {
+
+                            // After this, text contains the base64 encoded, zip-compressed string
+                            text = Base64.decode(jxgBinFileReader(req));
+                        } else {
+                            text = req.responseText;
+                        }
+                        this.parseString(text, board, format, callback);
+                    }
+                };
+            }
+
+            this.cb = Type.bind(this.cbp, this);
+            // Old style
+            request.onreadystatechange = this.cb;
+
+            try {
+                request.send(null);
+            } catch (ex2) {
+                throw new Error("JSXGraph: A problem occurred while trying to read remote file '" + url + "'.");
+            }
+        },
+
+        /**
+         * 
+         * @param {Blob} url The Blob or File from which to read
+         * @param {JXG.Board} board
+         * @param {String} format
+         * @param {Boolean} async
+         * @param {Function} callback
+         */
+        handleLocalFile: function(url, board, format, async, callback) {
+            if (!Type.exists(async)) {
+                async = true;
+            }
+
+            if (format.toLowerCase() === 'raw') {
+                this.cbp = function (e) {
+                    board(e.target.result);
+                };
+            } else {
+                this.cbp = function (e) {
+                    var text = '';
+                    if (    // PK: zip, geogebra
+                            // 31: gzip, cinderella
+                            e.target.result.slice(0, 2) === "PK" ||
+                                Encoding.asciiCharCodeAt(e.target.result.slice(0, 1), 0) === 31) {
+                        // After this, text contains the base64 encoded, zip-compressed string
+                        text = Base64.decode(jxgBinFileReader(req));
+                    } else {
+                        text = e.target.result;
+                    }
+console.log("JXG.Filereader:", text);
+
+                    this.parseString(text, board, format, callback);
+                };
+            }
+
+            this.cb = Type.bind(this.cbp, this);
+
+            var reader = new FileReader();
+            reader.onload = this.cb;
+            if (format.toLowerCase() === 'raw') {
+                reader.readAsText(url);
+            } else {
+                reader.readAsText(url);
+                //reader.readAsArrayBuffer(url);
+            }
+        },
 
         /**
          * Opens a file using the given URL and passes the contents to {@link JXG.FileReader#parseString}
@@ -70,113 +193,11 @@ define([
          * @param {function} callback A function that is run when the board is ready.
          */
         parseFileContent: function (url, board, format, async, callback) {
-            var request = false;
-
-            if (!Type.exists(async)) {
-                async = true;
-            }
-
-            //this.request = false;
-
-            try {
-                request = new XMLHttpRequest();
-                if (format.toLowerCase() === 'raw') {
-                    request.overrideMimeType('text/plain; charset=iso-8859-1');
-                } else {
-                    request.overrideMimeType('text/xml; charset=iso-8859-1');
-                }
-            } catch (e) {
-                try {
-                    request = new ActiveXObject("Msxml2.XMLHTTP");
-                } catch (ex) {
-                    try {
-                        request = new ActiveXObject("Microsoft.XMLHTTP");
-                    } catch (exc) {
-                        request = false;
-                    }
-                }
-            }
-
-            if (!request) {
-                JXG.debug("AJAX not activated!");
-                return;
-            }
-
-            // Not working any more
-            // request.open("GET", url, async);
-            // if (format.toLowerCase() === 'raw') {
-            //     this.cbp = function () {
-            //         var req = request;
-            //         if (req.readyState === 4) {
-            //             board(req.responseText);
-            //         }
-            //     };
-            // } else {
-            //     this.cbp = function () {
-            //         var req = request,
-            //             text = '';
-
-            //         if (req.readyState === 4) {
-            //             if (Type.exists(req.responseStream) &&
-            //                     // PK: zip, geogebra
-            //                     // 31: gzip, cinderella
-            //                     (req.responseText.slice(0, 2) === "PK" ||
-            //                     Encoding.asciiCharCodeAt(req.responseText.slice(0, 1), 0) === 31)) {
-
-            //                 // After this, text contains the base64 encoded, zip-compressed string
-            //                 text = Base64.decode(jxgBinFileReader(req));
-            //             } else {
-            //                 text = req.responseText;
-            //             }
-            //             this.parseString(text, board, format, callback);
-            //         }
-            //     };
-            // }
-
-            if (format.toLowerCase() === 'raw') {
-                this.cbp = function (e) {
-                    board(e.target.result);
-                };
+            if (Type.isString(url)) {
+                this.handleRemoteFile(url, board, format, async, callback);
             } else {
-                this.cbp = function (e) {
-                    var text = '';
-                        if (    // PK: zip, geogebra
-                                // 31: gzip, cinderella
-                                e.target.result.slice(0, 2) === "PK" ||
-                                    Encoding.asciiCharCodeAt(e.target.result.slice(0, 1), 0) === 31) {
-
-                            // After this, text contains the base64 encoded, zip-compressed string
-                            text = Base64.decode(jxgBinFileReader(req));
-                        } else {
-                            text = e.target.result;
-                        }
-                        console.log("JXG.Filereader:", text);
-
-                        this.parseString(text, board, format, callback);
-                };
+                this.handleLocalFile(url, board, format, async, callback);
             }
-
-            this.cb = Type.bind(this.cbp, this);
-            /*
-            // Old style
-            request.onreadystatechange = this.cb;
-
-            try {
-                request.send(null);
-            } catch (ex2) {
-                throw new Error("JSXGraph: A problem occurred while trying to read '" + url + "'.");
-            }
-            */
-
-            var reader = new FileReader();
-            reader.onload = this.cb;
-            if (format.toLowerCase() === 'raw') {
-                reader.readAsText(url);
-            } else {
-                reader.readAsText(url);
-                //reader.readAsArrayBuffer(url);
-            }
-
         },
 
         /**
