@@ -52,7 +52,7 @@ define([
      */
     JXG.FileReader = {
         /**
-         * 
+         *
          * @param {String} url
          * @param {JXG.Board} board
          * @param {String} format
@@ -61,15 +61,15 @@ define([
          *
          * @private
          */
-        handleRemoteFile: function(url, board, format, async, callback) {
+        handleRemoteFile: function(url, board, format, async, encoding, callback) {
+            var request = false;
 
-            this.request = false;
             try {
                 request = new XMLHttpRequest();
                 if (format.toLowerCase() === 'raw') {
-                    request.overrideMimeType('text/plain; charset=iso-8859-1');
+                    request.overrideMimeType('text/plain; charset=' + encoding);
                 } else {
-                    request.overrideMimeType('text/xml; charset=iso-8859-1');
+                    request.overrideMimeType('text/xml; charset=' + encoding);
                 }
             } catch (e) {
                 try {
@@ -101,16 +101,20 @@ define([
                         text = '';
 
                     if (req.readyState === 4) {
+                        // Hack for ancient IEs:
+                        // We use the Visual Basic stuff from below.
                         if (Type.exists(req.responseStream) &&
                                 // PK: zip, geogebra
                                 // 31: gzip, cinderella
                                 (req.responseText.slice(0, 2) === "PK" ||
                                 Encoding.asciiCharCodeAt(req.responseText.slice(0, 1), 0) === 31)) {
 
-                            // After this, text contains the base64 encoded, zip-compressed string
+                            // After this, text contains the binary? zip-compressed string
                             text = Base64.decode(jxgBinFileReader(req));
                         } else {
+                            // This is for all browsers except ancient IEs.
                             text = req.responseText;
+                            console.log(text);
                         }
                         this.parseString(text, board, format, callback);
                     }
@@ -129,7 +133,7 @@ define([
         },
 
         /**
-         * 
+         *
          * @param {Blob} url The Blob or File from which to read
          * @param {JXG.Board} board
          * @param {String} format
@@ -138,7 +142,7 @@ define([
          *
          * @private
          */
-        handleLocalFile: function(url, board, format, async, callback) {
+        handleLocalFile: function(url, board, format, async, encoding, callback) {
             if (!Type.exists(async)) {
                 async = true;
             }
@@ -149,18 +153,8 @@ define([
                 };
             } else {
                 this.cbp = function (e) {
-                    var text = '';
-                    if (    // PK: zip, geogebra
-                            // 31: gzip, cinderella
-                            e.target.result.slice(0, 2) === "PK" ||
-                                Encoding.asciiCharCodeAt(e.target.result.slice(0, 1), 0) === 31) {
-                        // After this, text contains the base64 encoded, zip-compressed string
-                        text = Base64.decode(jxgBinFileReader(req));
-                    } else {
-                        text = e.target.result;
-                    }
-console.log("JXG.Filereader:", text);
-
+                    var text = e.target.result;
+                    //console.log(text);
                     this.parseString(text, board, format, callback);
                 };
             }
@@ -172,8 +166,7 @@ console.log("JXG.Filereader:", text);
             if (format.toLowerCase() === 'raw') {
                 reader.readAsText(url);
             } else {
-                reader.readAsText(url);
-                //reader.readAsArrayBuffer(url);
+                reader.readAsText(url, encoding);
             }
         },
 
@@ -194,11 +187,11 @@ console.log("JXG.Filereader:", text);
          * @param {Boolean} async Call ajax asynchonously.
          * @param {function} callback A function that is run when the board is ready.
          */
-        parseFileContent: function (url, board, format, async, callback) {
-            if (Type.isString(url)) {
-                this.handleRemoteFile(url, board, format, async, callback);
+        parseFileContent: function (url, board, format, async, encoding, callback) {
+            if (Type.isString(url) || typeof FileReader === "undefined") {
+                this.handleRemoteFile(url, board, format, async, encoding, callback);
             } else {
-                this.handleLocalFile(url, board, format, async, callback);
+                this.handleLocalFile(url, board, format, async, encoding, callback);
             }
         },
 

@@ -322,17 +322,38 @@ define([
          * @param {String} box HTML-ID to the HTML-element in which the board is painted.
          * @param {String} file base64 encoded string.
          * @param {String} format containing the file format: 'Geonext' or 'Intergeo'.
-         * @param {Object} [attributes]
+         * @param {Object} attributes Attributes for the board and 'encoding'.
+         *  Compressed files need encoding 'iso-8859-1'. Otherwise it probably is 'utf-8'.
+         * @param {Function} callback
          * @returns {JXG.Board} Reference to the created board.
          * @see JXG.FileReader
          * @see JXG.GeonextReader
          * @see JXG.GeogebraReader
          * @see JXG.IntergeoReader
          * @see JXG.CinderellaReader
+         *
+         * @example
+         * // Uncompressed file
+         * var board = JXG.JSXGraph.loadBoardFromFile('jxgbox', 'filename', 'geonext',
+         *      {encoding: 'utf-8'},
+         *      function (board) { console.log("Done loading"); }
+         * );
+         * // Compressed file
+         * var board = JXG.JSXGraph.loadBoardFromFile('jxgbox', 'filename', 'geonext',
+         *      {encoding: 'iso-8859-1'},
+         *      function (board) { console.log("Done loading"); }
+         * );
+         *
+         * @example
+         * // From <input type="file" id="localfile" />
+         * var file = document.getElementById('localfile').files[0];
+         * JXG.JSXGraph.loadBoardFromFile('jxgbox', file, 'geonext',
+         *      {encoding: 'utf-8'},
+         *      function (board) { console.log("Done loading"); }
+         * );
          */
         loadBoardFromFile: function (box, file, format, attributes, callback) {
-            var attr, renderer, board, dimensions,
-                bbox, selectionattr;
+            var attr, renderer, board, dimensions, encoding;
 
             attributes = attributes || {};
             attr = this._setAttributes(attributes);
@@ -342,9 +363,9 @@ define([
 
             /* User default parameters, in parse* the values in the gxt files are submitted to board */
             board = new Board(box, renderer, '', [150, 150], 1, 1, 50, 50, dimensions.width, dimensions.height, attr);
-
             this._fillBoard(board, attr, dimensions);
-            FileReader.parseFileContent(file, board, format, true, callback);
+            encoding = attr.encoding || 'iso-8859-1';
+            FileReader.parseFileContent(file, board, format, true, encoding, callback);
 
             return board;
         },
@@ -354,8 +375,10 @@ define([
          * Intergeo, Geogebra, or Cinderella.
          * @param {String} box HTML-ID to the HTML-element in which the board is painted.
          * @param {String} string base64 encoded string.
-         * @param {String} format containing the file format: 'Geonext' or 'Intergeo'.
-         * @param {Object} [attributes]
+         * @param {String} format containing the file format: 'Geonext', 'Intergeo', 'Geogebra'.
+         * @param {Object} attributes Attributes for the board and 'encoding'.
+         *  Compressed files need encoding 'iso-8859-1'. Otherwise it probably is 'utf-8'.
+         * @param {Function} callback
          * @returns {JXG.Board} Reference to the created board.
          * @see JXG.FileReader
          * @see JXG.GeonextReader
@@ -364,8 +387,7 @@ define([
          * @see JXG.CinderellaReader
          */
         loadBoardFromString: function (box, string, format, attributes, callback) {
-            var attr, renderer, dimensions, board,
-                selectionattr;
+            var attr, renderer, board, dimensions;
 
             attributes = attributes || {};
             attr = this._setAttributes(attributes);
@@ -375,7 +397,6 @@ define([
 
             /* User default parameters, in parse* the values in the gxt files are submitted to board */
             board = new Board(box, renderer, '', [150, 150], 1.0, 1.0, 50, 50, dimensions.width, dimensions.height, attr);
-
             this._fillBoard(board, attr, dimensions);
             FileReader.parseString(string, board, format, true, callback);
 
