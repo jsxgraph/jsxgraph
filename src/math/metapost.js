@@ -27,7 +27,35 @@
     You should have received a copy of the GNU Lesser General Public License and
     the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
     and <http://opensource.org/licenses/MIT/>.
- */
+
+
+    Metapost/Hobby curves
+    See https://bosker.wordpress.com/2013/11/13/beyond-bezier-curves/
+    Ported from the JavaScript port by Michael Schindler:
+
+    Ported to javascript from the PyX implementation (http://pyx.sourceforge.net/)
+    Copyright (C) 2011 Michael Schindler <m-schindler@users.sourceforge.net>
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
+    Internal functions of MetaPost
+    This file re-implements some of the functionality of MetaPost
+    (http://tug.org/metapost). MetaPost was developed by John D. Hobby and
+    others. The code of Metapost is in the public domain, which we understand as
+    an implicit permission to reuse the code here (see the comment at
+    http://www.gnu.org/licenses/license-list.html)
+
+    This file is based on the MetaPost version distributed by TeXLive:
+    svn://tug.org/texlive/trunk/Build/source/texk/web2c/mplibdir revision 22737 #
+    (2011-05-31)
+*/
 
 /*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
@@ -49,6 +77,7 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
     /**
      * The JXG.Math.Metapost namespace holds algorithms translated from Metapost
      * by D.E. Knuth and J.D. Hobby.
+     *
      *
      * @name JXG.Math.Metapost
      * @exports Mat.Metapost as JXG.Math.Metapost
