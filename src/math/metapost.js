@@ -586,8 +586,8 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
 
         /**
          *
-         * @param {*} point_list
-         * @param {*} controls
+         * @param {Array} point_list
+         * @param {Object} controls
          *
          * @returns {Array}
          */
