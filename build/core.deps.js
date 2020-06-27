@@ -10,6 +10,7 @@ define([
     'math/math',
     'math/qdt',
     'math/numerics',
+    'math/metapost',
     'math/statistics',
     'math/symbolic',
     'math/geometry',
