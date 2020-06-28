@@ -29,12 +29,11 @@
     and <http://opensource.org/licenses/MIT/>.
 
 
-    Metapost/Hobby curves
-    See https://bosker.wordpress.com/2013/11/13/beyond-bezier-curves/
-    Ported from the JavaScript port by Michael Schindler:
+    Metapost/Hobby curves, see e.g. https://bosker.wordpress.com/2013/11/13/beyond-bezier-curves/
 
-    Ported to javascript from the PyX implementation (http://pyx.sourceforge.net/)
-    Copyright (C) 2011 Michael Schindler <m-schindler@users.sourceforge.net>
+    * Ported to Python for the project PyX. Copyright (C) 2011 Michael Schindler <m-schindler@users.sourceforge.net>
+    * Ported to javascript from the PyX implementation (http://pyx.sourceforge.net/) by Vlad-X.
+    * Adapted to JSXGraph and some code changes by Alfred Wassermann 2020.
 
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
