@@ -232,8 +232,18 @@ define([
             node2.setAttributeNS(null, 'markerUnits', 'strokeWidth'); // 'strokeWidth' 'userSpaceOnUse');
 
             /*
+               Types 1, 2:
                The arrow head is an isosceles triangle with base length 10 and height 10.
-               This 10 units are scaled to strokeWidth * arrowSize pixels, see
+
+               Type 3:
+               A rectangle
+
+               Types 4, 5, 6:
+               Defined by Bezier curves from mp_arrowheads.html
+
+               In any case but type 3 the arrow head is 10 units long,
+               type 3 is 10 unitsb high.
+               These 10 units are scaled to strokeWidth * arrowSize pixels, see
                this._setArrowWidth().
 
                See also abstractRenderer.updateLine() where the line path is shortened accordingly.
