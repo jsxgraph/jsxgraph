@@ -156,6 +156,36 @@ define([
             zoomY: 1,
 
             /**
+             * Title string for the board.
+             * Primarily used in an invisible text element which is adressed by
+             * the attribute 'aria-labelledby' from the JSXGraph container.
+             * JSXGraph creates a new div-element with id "{containerid}_ARIAlabel"
+             * containing this string.
+             *
+             * @name JXG.Board#title
+             * @see JXG.Board#description
+             * @type String
+             * @default ''
+             *
+             */
+            title: '',
+
+            /**
+             * Description string for the board.
+             * Primarily used in an invisible text element which is adressed by
+             * the attribute 'aria-describedby' from the JSXGraph container.
+             * JSXGraph creates a new div-element with id "{containerid}_ARIAdescription"
+             * containing this string.
+             *
+             * @name JXG.Board#description
+             * @see JXG.Board#title
+             * @type String
+             * @default ''
+             *
+             */
+            description: '',
+
+            /**
              * Show copyright string in canvas.
              *
              * @name JXG.Board#showCopyright
@@ -4569,12 +4599,16 @@ define([
 
             /**
              * If true, MathJax will be used to render the input string.
-             *  Supports MathJax 2 as well as Mathjax 3
+             * Supports MathJax 2 as well as Mathjax 3.
+             * It is recommended to use this option together with the option
+             * "parse: false". Otherwise, 4 backslashes (e.g. \\\\alpha) are needed
+             * instead of two (e.g. \\alpha).
              *
              * @name useMathJax
              * @memberOf Text.prototype
              * @default false
              * @type Boolean
+             * @see JXG.Text#parse
              *
              * @example
              *  // Before loading MathJax, it has to be configured something like this:

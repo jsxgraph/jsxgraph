@@ -210,6 +210,37 @@ define([
             JXG.boards[board.id] = board;
         },
 
+        _setARIA: function(container, attr) {
+            var doc = attr.document || document,
+                node_jsx, newNode, parent,
+                id_label, id_description;
+
+            if (typeof doc !== 'object') {
+                return;
+            }
+
+            node_jsx = doc.getElementById(container);
+            parent = node_jsx.parentNode;
+
+            id_label = container + '_ARIAlabel';
+            id_description = container + '_ARIAdescription';
+
+            newNode = doc.createElement('div');
+            newNode.innerHTML = attr.title;
+            newNode.setAttribute('id', id_label);
+            newNode.style.display = 'none';
+            parent.insertBefore(newNode, node_jsx);
+
+            newNode = doc.createElement('div');
+            newNode.innerHTML = attr.description;
+            newNode.setAttribute('id', id_description);
+            newNode.style.display = 'none';
+            parent.insertBefore(newNode, node_jsx);
+
+            node_jsx.setAttribute('aria-labelledby', id_label);
+            node_jsx.setAttribute('aria-describedby', id_description);
+        },
+
         /**
          * Initialise a new board.
          * @param {String} box Html-ID to the Html-element in which the board is painted.
@@ -275,6 +306,7 @@ define([
             }
 
             renderer = this.initRenderer(box, dimensions, attr.document, attr.renderer);
+            this._setARIA(box, attr);
 
             // create the board
             board = new Board(box, renderer, attr.id, [originX, originY],
