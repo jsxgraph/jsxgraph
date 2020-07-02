@@ -212,7 +212,7 @@ define([
             var node2, node3,
                 id = el.id + 'Triangle',
                 type = null,
-                v,
+                v, h,
                 ev_fa = Type.evaluate(el.visProp.firstarrow),
                 ev_la = Type.evaluate(el.visProp.lastarrow);
 
@@ -245,6 +245,7 @@ define([
                Therefore, the offset refX has to be adapted to the path type.
             */
             node3 = this.container.ownerDocument.createElementNS(this.svgNamespace, 'path');
+            h = 5;
             if (idAppendix === 'End') {
                 // First arrow
                 if (JXG.exists(ev_fa.type)) {
@@ -258,8 +259,18 @@ define([
                     //node2.setAttributeNS(null, 'refX', 3.33);
                     v = (el.elementClass === Const.OBJECT_CLASS_LINE) ? 3.33 : 1;
                     node3.setAttributeNS(null, 'd', 'M 0,0 L 3.33,0 L 3.33,10 L 0,10 z');
+                } else if (type === 4) {
+                    // insetRatio:0.8 tipAngle:45 wingCurve:15 tailCurve:0
+                    v = (el.elementClass === Const.OBJECT_CLASS_LINE) ? 6.66 : 5;
+                    h = 3.31;
+                    node3.setAttributeNS(null, 'd', 'M 0.00,3.31 C 3.53,3.84 7.13,4.50 10.00,6.63 C 9.33,5.52 8.67,4.42 8.00,3.31 C 8.67,2.21 9.33,1.10 10.00,0.00 C 7.13,2.13 3.53,2.79 0.00,3.31');
+                } else if (type === 5) {
+                    // insetRatio:0.9 tipAngle:40 wingCurve:5 tailCurve:15
+                    v = (el.elementClass === Const.OBJECT_CLASS_LINE) ? 6.66 : 3.33;
+                    h = 3.28;
+                    node3.setAttributeNS(null, 'd', 'M 0.00,3.28 C 3.39,4.19 6.81,5.07 10.00,6.55 C 9.38,5.56 9.00,4.44 9.00,3.28 C 9.00,2.11 9.38,0.99 10.00,0.00 C 6.81,1.49 3.39,2.37 0.00,3.28');
                 } else {
-                    v = (el.elementClass === Const.OBJECT_CLASS_LINE) ? 9.9 : 0.0;
+                    v = (el.elementClass === Const.OBJECT_CLASS_LINE) ? 10.0 : 0.0;
                     node3.setAttributeNS(null, 'd', 'M 10,0 L 0,5 L 10,10 z');
                 }
             } else {
@@ -275,12 +286,22 @@ define([
                     //node2.setAttributeNS(null, 'refX', 0.1);
                     v = (el.elementClass === Const.OBJECT_CLASS_LINE) ? 0.1 : 3.33;
                     node3.setAttributeNS(null, 'd', 'M 0,0 L 3.33,0 L 3.33,10 L 0,10 z');
+                } else if (type === 4) {
+                    // insetRatio:0.8 tipAngle:45 wingCurve:15 tailCurve:0
+                    v = (el.elementClass === Const.OBJECT_CLASS_LINE) ? 3.33 : 5;
+                    h = 3.31;
+                    node3.setAttributeNS(null, 'd', 'M 10.00,3.31 C 6.47,3.84 2.87,4.50 0.00,6.63 C 0.67,5.52 1.33,4.42 2.00,3.31 C 1.33,2.21 0.67,1.10 0.00,0.00 C 2.87,2.13 6.47,2.79 10.00,3.31');
+                } else if (type === 5) {
+                    // insetRatio:0.9 tipAngle:40 wingCurve:5 tailCurve:15
+                    v = (el.elementClass === Const.OBJECT_CLASS_LINE) ? 3.33 : 6.66;
+                    h = 3.28;
+                    node3.setAttributeNS(null, 'd', 'M 10.00,3.28 C 6.61,4.19 3.19,5.07 0.00,6.55 C 0.62,5.56 1.00,4.44 1.00,3.28 C 1.00,2.11 0.62,0.99 0.00,0.00 C 3.19,1.49 6.61,2.37 10.00,3.28');
                 } else {
                     v = (el.elementClass === Const.OBJECT_CLASS_LINE) ? 0.1 : 9.9;
                     node3.setAttributeNS(null, 'd', 'M 0,0 L 10,5 L 0,10 z');
                 }
             }
-            node2.setAttributeNS(null, 'refY', 5);
+            node2.setAttributeNS(null, 'refY', h);
             node2.setAttributeNS(null, 'refX', v);
 
             node2.appendChild(node3);
