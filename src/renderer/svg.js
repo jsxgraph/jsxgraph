@@ -269,6 +269,11 @@ define([
                     v = (el.elementClass === Const.OBJECT_CLASS_LINE) ? 6.66 : 3.33;
                     h = 3.28;
                     node3.setAttributeNS(null, 'd', 'M 0.00,3.28 C 3.39,4.19 6.81,5.07 10.00,6.55 C 9.38,5.56 9.00,4.44 9.00,3.28 C 9.00,2.11 9.38,0.99 10.00,0.00 C 6.81,1.49 3.39,2.37 0.00,3.28');
+                } else if (type === 6) {
+                    // insetRatio:0.9 tipAngle:35 wingCurve:5 tailCurve:0
+                    v = (el.elementClass === Const.OBJECT_CLASS_LINE) ? 6.66 : 3.33;
+                    h = 2.84;
+                    node3.setAttributeNS(null, 'd', 'M 0.00,2.84 C 3.39,3.59 6.79,4.35 10.00,5.68 C 9.67,4.73 9.33,3.78 9.00,2.84 C 9.33,1.89 9.67,0.95 10.00,0.00 C 6.79,1.33 3.39,2.09 0.00,2.84');
                 } else {
                     v = (el.elementClass === Const.OBJECT_CLASS_LINE) ? 10.0 : 0.0;
                     node3.setAttributeNS(null, 'd', 'M 10,0 L 0,5 L 10,10 z');
@@ -296,6 +301,11 @@ define([
                     v = (el.elementClass === Const.OBJECT_CLASS_LINE) ? 3.33 : 6.66;
                     h = 3.28;
                     node3.setAttributeNS(null, 'd', 'M 10.00,3.28 C 6.61,4.19 3.19,5.07 0.00,6.55 C 0.62,5.56 1.00,4.44 1.00,3.28 C 1.00,2.11 0.62,0.99 0.00,0.00 C 3.19,1.49 6.61,2.37 10.00,3.28');
+                } else if (type === 6) {
+                    // insetRatio:0.9 tipAngle:35 wingCurve:5 tailCurve:0
+                    v = (el.elementClass === Const.OBJECT_CLASS_LINE) ? 3.33 : 6.66;
+                    h = 2.84;
+                    node3.setAttributeNS(null, 'd', 'M 10.00,2.84 C 6.61,3.59 3.21,4.35 0.00,5.68 C 0.33,4.73 0.67,3.78 1.00,2.84 C 0.67,1.89 0.33,0.95 0.00,0.00 C 3.21,1.33 6.61,2.09 10.00,2.84');
                 } else {
                     v = (el.elementClass === Const.OBJECT_CLASS_LINE) ? 0.1 : 9.9;
                     node3.setAttributeNS(null, 'd', 'M 0,0 L 10,5 L 0,10 z');

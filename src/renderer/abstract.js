@@ -578,7 +578,7 @@ define([
                     } else if (typeFirst === 3) {
                         sFirst = strokewidth * size / 3;
                         minlen += strokewidth;
-                    } else if (typeFirst === 4 || typeFirst === 5) {
+                    } else if (typeFirst === 4 || typeFirst === 5 || typeFirst === 6) {
                         sFirst = strokewidth * size / 1.5;
                         minlen += strokewidth * size;
                     } else {
@@ -600,7 +600,7 @@ define([
                     } else if (typeLast === 3) {
                         sLast = strokewidth * size / 3;
                         minlen += strokewidth;
-                    } else if (typeLast === 4 || typeLast === 5) {
+                    } else if (typeLast === 4 || typeLast === 5 || typeLast === 6) {
                         sLast = strokewidth * size / 1.5;
                         minlen += strokewidth * size;
                     } else {
