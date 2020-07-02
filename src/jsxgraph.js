@@ -249,6 +249,33 @@ define([
         },
 
         /**
+         * Remove the two corresponding ARIA divs when freeing a board
+         *
+         * @param {JXG.Board} board
+         *
+         * @private
+         */
+        _removeARIANodes: function(board) {
+            var node, id, doc;
+
+            doc = board.document || document;
+            if (typeof doc !== 'object') {
+                return;
+            }
+
+            id = board.containerObj.getAttribute('aria-labelledby');
+            node = document.getElementById(id);
+            if (node && node.parentNode) {
+                node.parentNode.removeChild(node);
+            }
+            id = board.containerObj.getAttribute('aria-describedby');
+            node = document.getElementById(id);
+            if (node && node.parentNode) {
+                node.parentNode.removeChild(node);
+            }
+        },
+
+        /**
          * Initialise a new board.
          * @param {String} box HTML-ID to the HTML-element in which the board is painted.
          * @param {Object} attributes An object that sets some of the board properties. Most of these properties can be set via JXG.Options.
@@ -455,6 +482,7 @@ define([
                 board = JXG.boards[board];
             }
 
+            this._removeARIANodes(board);
             board.removeEventHandlers();
             board.suspendUpdate();
 
