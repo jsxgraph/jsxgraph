@@ -210,6 +210,13 @@ define([
             JXG.boards[board.id] = board;
         },
 
+        /**
+         *
+         * @param {String} container HTML-ID to the HTML-element in which the board is painted.
+         * @param {*} attr An object that sets some of the board properties.
+         *
+         * @private
+         */
         _setARIA: function(container, attr) {
             var doc = attr.document || document,
                 node_jsx, newNode, parent,
@@ -243,7 +250,7 @@ define([
 
         /**
          * Initialise a new board.
-         * @param {String} box Html-ID to the Html-element in which the board is painted.
+         * @param {String} box HTML-ID to the HTML-element in which the board is painted.
          * @param {Object} attributes An object that sets some of the board properties. Most of these properties can be set via JXG.Options.
          * @param {Array} [attributes.boundingbox=[-5, 5, 5, -5]] An array containing four numbers describing the left, top, right and bottom boundary of the board in user coordinates
          * @param {Boolean} [attributes.keepaspectratio=false] If <tt>true</tt>, the bounding box is adjusted to the same aspect ratio as the aspect ratio of the div containing the board.
