@@ -507,9 +507,10 @@ define([
                 N = ps.length,
                 lastPoint = null;
 
-            // If the last point equals the first point, we take the last point out of the array
-            // If the user closes the polygon, there will be two points at the end which equal the
-            // the first point. Therefore, we use a while lopp to pop the last points.
+            // If the last point equals the first point, we take the last point out of the array.
+            // It may be that the several points at the end of the array are equal to the first point.
+            // The polygonal chain is been closed by JSXGraph, but this may also have been done by the user.
+            // Therefore, we use a while lopp to pop the last points.
             while (ps[0][0] == ps[N - 1][0] && ps[0][1] == ps[N - 1][1] && ps[0][2] == ps[N - 1][2]) {
                 lastPoint = ps.pop();
                 N--;
@@ -527,8 +528,8 @@ define([
 
             ll = ps[0];
             // Sort ps in increasing order of the angle between a point and the first point ll.
-            // If a point is equal to the first point ll, the angle is defined to -Infinity.
-            // Otherwise, the angle would be zero, which is a value which also attained by points
+            // If a point is equal to the first point ll, the angle is defined to be -Infinity.
+            // Otherwise, atan2 would return zero, which is a value which also attained by points
             // on the same horizontal line.
             ps.sort(function (a, b) {
                 var rad1 = (a[2] == ll[2] && a[1] == ll[1]) ? -Infinity : Math.atan2(a[2] - ll[2], a[1] - ll[1]),
