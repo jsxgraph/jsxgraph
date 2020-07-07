@@ -367,7 +367,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                                 }
                                 aa = vv[k] - aa * uu[k];
                                 bb = ww[k] - bb * uu[k];
-                                if (k =i== n) {
+                                if (k === n) {
                                     break;
                                 }
                             }
