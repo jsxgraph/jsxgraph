@@ -69,7 +69,7 @@
  * by D.E. Knuth and J.D. Hobby.
  */
 
-define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
+define(['utils/type', 'math/math'], function (Type, Mat) {
 
     "use strict";
 
@@ -176,9 +176,9 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
                     s = p;
                     n = knots.length;
 
-                    delta_x = [],
-                    delta_y = [],
-                    delta = [],
+                    delta_x = [];
+                    delta_y = [];
+                    delta = [];
                     psi = [null];
 
                     // tuple([]) = tuple([[], [], [], [null]]);
@@ -200,14 +200,14 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
                         }
                         k++;
                         s = t;
-                        if (s == q) {
+                        if (s === q) {
                             n = k;
                         }
                         if (k >= n && s.ltype !== this.MP_END_CYCLE) {
                             break;
                         }
                     }
-                    if (k == n) {
+                    if (k === n) {
                         psi.push(0);
                     } else {
                         psi.push(psi[1]);
@@ -247,7 +247,7 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
                 }
                 p = q;
 
-                if (p == h) {
+                if (p === h) {
                     break;
                 }
             }
@@ -261,7 +261,8 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
         mp_solve_choices: function (p, q, n, delta_x, delta_y, delta, psi) {
             var aa, acc, vv, bb, ldelta, ee, k, s,
                 ww, uu, lt, r, t, ff, theta, rt, dd, cc,
-                ct_st, ct, st, cf_sf, cf, sf, i;
+                ct_st, ct, st, cf_sf, cf, sf, i,
+                k_idx;
 
             ldelta = delta.length + 1;
             uu = new Array(ldelta);
@@ -276,7 +277,7 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
             r = 0;
             while (true) {
                 t = s.next;
-                if (k == 0) {
+                if (k === 0) {
                     // MP 306
                     if (s.rtype === this.MP_GIVEN) {
                         // MP 314
@@ -298,7 +299,7 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
                         }
                     } else if (s.rtype === this.MP_CURL) {
                         // MP 315
-                        if (t.ltype == this.MP_CURL) {
+                        if (t.ltype === this.MP_CURL) {
                             p.rtype = this.MP_EXPLICIT;
                             q.ltype = this.MP_EXPLICIT;
                             lt = Math.abs(q.left_tension());
@@ -361,12 +362,12 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
                             bb = this.FRACTION_ONE;
                             while (true) {
                                 k -= 1;
-                                if (k == 0) {
+                                if (k === 0) {
                                     k = n;
                                 }
                                 aa = vv[k] - aa * uu[k];
                                 bb = ww[k] - bb * uu[k];
-                                if (k == n) {
+                                if (k =i== n) {
                                     break;
                                 }
                             }
@@ -375,9 +376,9 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
                             vv[0] = aa;
                             // k_val = range(1, n);
                             // for (k_idx in k_val) {
-                            for (var k=1; k<n; k++) {
+                            for (k_idx = 1; k < n; k++) {
                               // k = k_val[k_idx];
-                              vv[k] = vv[k] + aa * ww[k];
+                              vv[k_idx] = vv[k_idx] + aa * ww[k_idx];
                             }
                             break;
                         }
@@ -421,7 +422,7 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
                 this.mp_set_controls(s, t, delta_x[k], delta_y[k], st, ct, sf, cf);
                 k++;
                 s = t;
-                if (k == n) {
+                if (k === n) {
                   break;
                 }
             }
@@ -446,13 +447,13 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
 
             // console.log('lt rt rr ss', lt, rt, rr, ss);
             if (p.right_tension() < 0 || q.left_tension() < 0) {
-                if (st >= 0 && sf >= 0 || st <= 0 && sf <= 0) {
+                if ((st >= 0 && sf >= 0) || (st <= 0 && sf <= 0)) {
                     sine = Math.abs(st) * cf + Math.abs(sf) * ct;
                     if (sine > 0) {
                         sine *= 1.00024414062;
                         if (p.right_tension() < 0) {
                             if (this.mp_ab_vs_cd(Math.abs(sf), this.FRACTION_ONE, rr, sine) < 0) {
-                                rr = abs(sf) / sine;
+                                rr = Math.abs(sf) / sine;
                             }
                         }
                         if (q.left_tension() < 0) {
@@ -496,7 +497,7 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
          * @private
          */
         mp_ab_vs_cd: function (a, b, c, d) {
-            if (a * b == c * d) {
+            if (a * b === c * d) {
                 return 0;
             }
             if (a * b > c * d) {
@@ -538,10 +539,10 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
          * @param {Boolean} cycle
          */
         makeknots: function (p, tension, cycle) {
-            var i, len;
-            tension = tension || 1;
+            var i, len, 
+                knots = [];
 
-            var knots = [];
+            tension = tension || 1;
 
             len = p.length;
             for (i = 0; i < len; i++) {
@@ -554,8 +555,8 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
                     ry: tension,
                     lx: tension,
                     rx: tension,
-                    left_tension: function() { if (!this.ly) this.ly = 1; return this.ly;},
-                    right_tension: function() { if (!this.ry) this.ry = 1; return this.ry;},
+                    left_tension: function() { if (!this.ly) { this.ly = 1; } return this.ly;},
+                    right_tension: function() { if (!this.ry) { this.ry = 1; }  return this.ry;},
                     left_curl: function() { return this.lx || 0;},
                     right_curl: function() { return this.rx || 0;},
                     set_right_curl: function(x) { this.rx = x || 0;},
@@ -593,7 +594,6 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
             var knots, len, i, val,
                 x = [],
                 y = [];
-;
 
             controls = controls || {
                     tension: 1,
@@ -627,10 +627,10 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
             for (i in controls.curl) {
                 if (controls.curl.hasOwnProperty(i)) {
                     val = Type.evaluate(controls.curl[i]);
-                    if (i == 0) {
+                    if (i === 0) {
                         knots[i].rx = val;
                         knots[i].rtype = this.MP_CURL;
-                    } else if (i == len - 1) {
+                    } else if (i === len - 1) {
                         knots[i].lx = val;
                         knots[i].ltype = this.MP_CURL;
                     }
