@@ -376,9 +376,9 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                             vv[0] = aa;
                             // k_val = range(1, n);
                             // for (k_idx in k_val) {
-                            for (k_idx = 1; k < n; k++) {
                               // k = k_val[k_idx];
-                              vv[k_idx] = vv[k_idx] + aa * ww[k_idx];
+                            for (k_idx = 1; k_idx < n; k_idx++) {
+                                vv[k_idx] = vv[k_idx] + aa * ww[k_idx];
                             }
                             break;
                         }
@@ -489,7 +489,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
 
             return Math.min (4.0,
                 ((3.0 - alpha) * alpha * alpha * gamma + beta * beta * beta) /
-                (alpha * alpha * alpha * gamma + (3.0 - beta) * beta * beta)
+                 (alpha * alpha * alpha * gamma + (3.0 - beta) * beta * beta)
                 );
         },
 
@@ -539,7 +539,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
          * @param {Boolean} cycle
          */
         makeknots: function (p, tension, cycle) {
-            var i, len, 
+            var i, len,
                 knots = [];
 
             tension = tension || 1;
@@ -555,12 +555,18 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                     ry: tension,
                     lx: tension,
                     rx: tension,
-                    left_tension: function() { if (!this.ly) { this.ly = 1; } return this.ly;},
-                    right_tension: function() { if (!this.ry) { this.ry = 1; }  return this.ry;},
-                    left_curl: function() { return this.lx || 0;},
-                    right_curl: function() { return this.rx || 0;},
-                    set_right_curl: function(x) { this.rx = x || 0;},
-                    set_left_curl: function(x) { this.lx = x || 0;}
+                    left_curl: function() { return this.lx || 0; },
+                    right_curl: function() { return this.rx || 0; },
+                    left_tension: function() {
+                            if (!this.ly) { this.ly = 1; }
+                            return this.ly;
+                        },
+                    right_tension: function() {
+                            if (!this.ry) { this.ry = 1; }
+                            return this.ry;
+                        },
+                    set_right_curl: function(x) { this.rx = x || 0; },
+                    set_left_curl: function(x) { this.lx = x || 0; }
                 });
             }
             len = knots.length;
@@ -628,11 +634,11 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                 if (controls.curl.hasOwnProperty(i)) {
                     val = Type.evaluate(controls.curl[i]);
                     if (i === 0) {
-                        knots[i].rx = val;
                         knots[i].rtype = this.MP_CURL;
+                        knots[i].set_right_curl(val);
                     } else if (i === len - 1) {
-                        knots[i].lx = val;
                         knots[i].ltype = this.MP_CURL;
+                        knots[i].set_left_curl(val);
                     }
                 }
             }
