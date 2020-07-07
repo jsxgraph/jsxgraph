@@ -633,10 +633,10 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
             for (i in controls.curl) {
                 if (controls.curl.hasOwnProperty(i)) {
                     val = Type.evaluate(controls.curl[i]);
-                    if (i === 0) {
+                    if (parseInt(i) === 0) {
                         knots[i].rtype = this.MP_CURL;
                         knots[i].set_right_curl(val);
-                    } else if (i === len - 1) {
+                    } else if (parseInt(i) === len - 1) {
                         knots[i].ltype = this.MP_CURL;
                         knots[i].set_left_curl(val);
                     }
