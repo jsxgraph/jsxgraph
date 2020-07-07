@@ -77,7 +77,6 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
      * The JXG.Math.Metapost namespace holds algorithms translated from Metapost
      * by D.E. Knuth and J.D. Hobby.
      *
-     *
      * @name JXG.Math.Metapost
      * @exports Mat.Metapost as JXG.Math.Metapost
      * @namespace
@@ -315,7 +314,7 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
                             cc = s.right_curl();
                             lt = Math.abs(t.left_tension());
                             rt = Math.abs(s.right_tension());
-                            uu[0] = this.this.mp_curl_ratio(cc, rt, lt);
+                            uu[0] = this.mp_curl_ratio(cc, rt, lt);
                             vv[0] = -psi[1] * uu[0];
                             ww[0] = 0;
                         }
@@ -387,7 +386,7 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
                             cc = s.left_curl();
                             lt = Math.abs(s.left_tension());
                             rt = Math.abs(r.right_tension());
-                            ff = this.this.mp_curl_ratio(cc, lt, rt);
+                            ff = this.mp_curl_ratio(cc, lt, rt);
                             theta[n] = -(vv[n - 1] * ff) / (this.FRACTION_ONE - ff * uu[n - 1]);
                             break;
                         } else {
@@ -629,11 +628,11 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
                 if (controls.curl.hasOwnProperty(i)) {
                     val = Type.evaluate(controls.curl[i]);
                     if (i == 0) {
-                        knots[i].rx = val * Math.PI / 180;
-                        knots[i].rtype = this.MP_GIVEN;
+                        knots[i].rx = val;
+                        knots[i].rtype = this.MP_CURL;
                     } else if (i == len - 1) {
-                        knots[i].lx = val * Math.PI / 180;
-                        knots[i].ltype = this.MP_GIVEN;
+                        knots[i].lx = val;
+                        knots[i].ltype = this.MP_CURL;
                     }
                 }
             }
