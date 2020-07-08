@@ -1950,11 +1950,11 @@ define([
 
         /**
          * If the curve is the result of a transformation applied
-         * to a continuous curve, the glider projection has to be done 
+         * to a continuous curve, the glider projection has to be done
          * on the original curve. Otherwise there will be problems
          * when changing between high and low precision plotting,
          * since there number of points changes.
-         * 
+         *
          * @private
          * @returns {Array} [Boolean, curve]: Array contining 'true' if curve is result of a transformation,
          *   and the source curve of the transformation.
@@ -1968,7 +1968,7 @@ define([
                     ) {
                         isTransformed = true;
                 }
-            } 
+            }
             return [isTransformed, curve_org];
         }
 
@@ -2532,10 +2532,221 @@ define([
     };
 
     /**
-     * Register the element type spline at JSXGraph
+     * Register the element type cardinalspline at JSXGraph
      * @private
      */
     JXG.registerElement('cardinalspline', JXG.createCardinalSpline);
+
+    /**
+     * @class This element is used to provide a constructor for metapost spline curves.
+     * Create a dynamic metapost spline interpolated curve given by sample points p_1 to p_n.
+     * @pseudo
+     * @description
+     * @name Metapostspline
+     * @augments JXG.Curve
+     * @constructor
+     * @type JXG.Curve
+     * @param {JXG.Board} board Reference to the board the metapost spline is drawn on.
+     * @param {Array} parents Array with two entries.
+     * <p>
+     *   First entry: Array of points the spline interpolates. This can be
+     *   <ul>
+     *   <li> an array of JXGGraph points</li>
+     *   <li> an object of coordinate pairs</li>
+     *   <li> an array of functions returning coordinate pairs</li>
+     *   <li> an array consisting of an array with x-coordinates and an array of y-coordinates</li>
+     *   </ul>
+     *   All individual entries of coordinates arrays may be numbers or functions returning numbers.
+     *   <p>
+     *   Second entry: JavaScript object containing the control values like tension, direction, curl.
+     * @param {Object} attributes Define color, width, ... of the metapost spline
+     * @returns {JXG.Curve} Returns reference to an object of type JXG.Curve.
+     * @see JXG.Curve
+     * @example
+     *     var po = [],
+     *         attr = {
+     *             size: 5,
+     *             color: 'red'
+     *         },
+     *         controls;
+     *
+     *     var tension = board.create('slider', [[-3, 6], [3, 6], [0, 1, 20]], {name: 'tension'});
+     *     var curl = board.create('slider', [[-3, 5], [3, 5], [0, 1, 30]], {name: 'curl A, D'});
+     *     var dir = board.create('slider', [[-3, 4], [3, 4], [-180, 0, 180]], {name: 'direction B'});
+     *
+     *     po.push(board.create('point', [-3, -3]));
+     *     po.push(board.create('point', [0, -3]));
+     *     po.push(board.create('point', [4, -5]));
+     *     po.push(board.create('point', [6, -2]));
+     *
+     *     var controls = {
+     *         tension: function() {return tension.Value(); },
+     *         direction: { 1: function() {return dir.Value(); } },
+     *         curl: { 0: function() {return curl.Value(); },
+     *                 3: function() {return curl.Value(); }
+     *             },
+     *         isClosed: false
+     *     };
+     *
+     *     // Plot a metapost curve
+     *     var cu = board.create('metapostspline', [po, controls], {strokeColor: 'blue', strokeWidth: 2});
+     *
+     *
+     * </pre><div id="JXGb8c6ffed-7419-41a3-9e55-3754b2327ae9" class="jxgbox" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     *     (function() {
+     *         var board = JXG.JSXGraph.initBoard('JXGb8c6ffed-7419-41a3-9e55-3754b2327ae9',
+     *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+     *         var po = [],
+     *             attr = {
+     *                 size: 5,
+     *                 color: 'red'
+     *             },
+     *             controls;
+     *
+     *         var tension = board.create('slider', [[-3, 6], [3, 6], [0, 1, 20]], {name: 'tension'});
+     *         var curl = board.create('slider', [[-3, 5], [3, 5], [0, 1, 30]], {name: 'curl A, D'});
+     *         var dir = board.create('slider', [[-3, 4], [3, 4], [-180, 0, 180]], {name: 'direction B'});
+     *
+     *         po.push(board.create('point', [-3, -3]));
+     *         po.push(board.create('point', [0, -3]));
+     *         po.push(board.create('point', [4, -5]));
+     *         po.push(board.create('point', [6, -2]));
+     *
+     *         var controls = {
+     *             tension: function() {return tension.Value(); },
+     *             direction: { 1: function() {return dir.Value(); } },
+     *             curl: { 0: function() {return curl.Value(); },
+     *                     3: function() {return curl.Value(); }
+     *                 },
+     *             isClosed: false
+     *         };
+     *
+     *         // Plot a metapost curve
+     *         var cu = board.create('metapostspline', [po, controls], {strokeColor: 'blue', strokeWidth: 2});
+     *
+     *
+     *     })();
+     *
+     * </script><pre>
+     *
+     */
+    JXG.createMetapostSpline = function (board, parents, attributes) {
+        var el,
+            points, controls,
+            p, q, i, le,
+            errStr = "\nPossible parent types: [points:array, controls:object";
+
+        if (!Type.exists(parents[0]) || !Type.isArray(parents[0])) {
+            throw new Error("JSXGraph: JXG.createMetapostSpline: argument 1 'points' has to be array of points or coordinate pairs" + errStr);
+        }
+        if (!Type.exists(parents[1]) || !Type.isObject(parents[1])) {
+            throw new Error("JSXGraph: JXG.createMetapostSpline: argument 2 'controls' has to be a JavaScript object'" + errStr);
+        }
+
+        attributes = Type.copyAttributes(attributes, board.options, 'curve');
+        attributes = Type.copyAttributes(attributes, board.options, 'metapostspline');
+        attributes.curvetype = 'parameter';
+
+        p = parents[0];
+        q = [];
+
+        // given as [x[], y[]]
+        if (!attributes.isarrayofcoordinates &&
+            p.length === 2 && Type.isArray(p[0]) && Type.isArray(p[1]) &&
+            p[0].length === p[1].length) {
+            for (i = 0; i < p[0].length; i++) {
+                q[i] = [];
+                if (Type.isFunction(p[0][i])) {
+                    q[i].push(p[0][i]());
+                } else {
+                    q[i].push(p[0][i]);
+                }
+
+                if (Type.isFunction(p[1][i])) {
+                    q[i].push(p[1][i]());
+                } else {
+                    q[i].push(p[1][i]);
+                }
+            }
+        } else {
+            // given as [[x0, y0], [x1, y1], point, ...]
+            for (i = 0; i < p.length; i++) {
+                if (Type.isString(p[i])) {
+                    q.push(board.select(p[i]));
+                } else if (Type.isPoint(p[i])) {
+                    q.push(p[i]);
+                // given as [[x0,y0], [x1, y2], ...]
+                } else if (Type.isArray(p[i]) && p[i].length === 2) {
+                    q[i] = [];
+                    if (Type.isFunction(p[i][0])) {
+                        q[i].push(p[i][0]());
+                    } else {
+                        q[i].push(p[i][0]);
+                    }
+
+                    if (Type.isFunction(p[i][1])) {
+                        q[i].push(p[i][1]());
+                    } else {
+                        q[i].push(p[i][1]);
+                    }
+                } else if (Type.isFunction(p[i]) && p[i]().length === 2) {
+                    q.push(parents[i]());
+                }
+            }
+        }
+
+        if (attributes.createpoints === true) {
+            points = Type.providePoints(board, q, attributes, 'metapostspline', ['points']);
+        } else {
+            points = [];
+            for (i = 0; i < q.length; i++) {
+                if (Type.isPoint(q[i])) {
+                    points.push(q[i]);
+                } else {
+                    points.push(
+                        (function(ii) { return {
+                            X: function() { return q[ii][0]; },
+                            Y: function() { return q[ii][1]; }
+                            };
+                        })(i)
+                    );
+                }
+            }
+        }
+
+        controls = parents[1];
+
+        el = new JXG.Curve(board, ['t', [], []], attributes);
+        el.updateDataArray = function () {
+            var res, i,
+                len = points.length,
+                p = [];
+
+            for (i = 0; i < len; i++) {
+                p.push([points[i].X(), points[i].Y()]);
+            }
+
+            res = JXG.Math.Metapost.curve(p, controls);
+            this.dataX = res[0];
+            this.dataY = res[1];
+        };
+        el.bezierDegree = 3;
+
+        le = points.length;
+        el.setParents(points);
+        for (i = 0; i < le; i++) {
+            if (Type.isPoint(points[i])) {
+                points[i].addChild(el);
+            }
+        }
+        el.elType = 'metapostspline';
+
+        return el;
+    };
+
+    JXG.registerElement('metapostspline', JXG.createMetapostSpline);
+
 
     /**
      * @class This element is used to provide a constructor for Riemann sums, which is realized as a special curve.
