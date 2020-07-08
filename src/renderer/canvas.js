@@ -114,16 +114,20 @@ define([
          * @see JXG.AbstractRenderer#drawArrows
          * @private
          */
-        _drawFilledPolygon: function (shape) {
+        _drawFilledPolygon: function (shape, degree) {
             var i, len = shape.length,
                 context = this.context;
 
             if (len > 0) {
                 context.beginPath();
                 context.moveTo(shape[0][0], shape[0][1]);
-                for (i = 0; i < len; i++) {
-                    if (i > 0) {
+                if (degree == 1) {
+                    for (i = 1; i < len; i++) {
                         context.lineTo(shape[i][0], shape[i][1]);
+                    }
+                } else {
+                    for (i = 1; i < len; i += 3) {
+                        context.bezierCurveTo(shape[i][0], shape[i][1], shape[i + 1][0], shape[i + 1][1], shape[i + 2][0], shape[i + 2][1]);
                     }
                 }
                 context.lineTo(shape[0][0], shape[0][1]);
@@ -556,6 +560,9 @@ define([
                  context = this.context,
                  size = 3,
                  type = 1,
+                 degree_fa = 1,
+                 degree_la = 1,
+                 i, len,
                  d1x, d1y, d2x, d2y, last,
                  ang1, ang2,
                  ev_fa = Type.evaluate(el.visProp.firstarrow),
@@ -623,6 +630,81 @@ define([
                                  [ 0.0,        w * 0.5],
                                  [ w / 3.0,    w * 0.5]
                              ];
+                    } else if (type === 4) {
+                        w /= 10;
+                        degree_fa = 3;
+                        arrowTail = [
+                            [10.00, 3.31],
+                            [6.47, 3.84],
+                            [2.87, 4.50],
+                            [0.00, 6.63],
+                            [0.67, 5.52],
+                            [1.33, 4.42],
+                            [2.00, 3.31],
+                            [1.33, 2.21],
+                            [0.67, 1.10],
+                            [0.00, 0.00],
+                            [2.87, 2.13],
+                            [6.47, 2.79],
+                            [10.00, 3.31]
+                        ];
+                        len = arrowTail.length;
+                        for (i = 0; i < len; i++) {
+                            arrowTail[i][0] *= -w;
+                            arrowTail[i][1] *= w;
+                            arrowTail[i][0] += 10 * w;
+                            arrowTail[i][1] -= 3.31 * w;
+                        }
+                    } else if (type === 5) {
+                        w /= 10;
+                        degree_fa = 3;
+                        arrowTail = [
+                            [10.00,3.28],
+                            [6.61,4.19],
+                            [3.19,5.07],
+                            [0.00,6.55],
+                            [0.62,5.56],
+                            [1.00,4.44],
+                            [1.00,3.28],
+                            [1.00,2.11],
+                            [0.62,0.99],
+                            [0.00,0.00],
+                            [3.19,1.49],
+                            [6.61,2.37],
+                            [10.00,3.28]
+                        ];
+                        len = arrowTail.length;
+                        for (i = 0; i < len; i++) {
+                            arrowTail[i][0] *= -w;
+                            arrowTail[i][1] *= w;
+                            arrowTail[i][0] += 10 * w;
+                            arrowTail[i][1] -= 3.28 * w;
+                        }
+                    } else if (type === 6) {
+                        w /= 10;
+                        degree_fa = 3;
+                        arrowTail = [
+                            [10.00,2.84],
+                            [6.61,3.59],
+                            [3.21,4.35],
+                            [0.00,5.68],
+                            [0.33,4.73],
+                            [0.67,3.78],
+                            [1.00,2.84],
+                            [0.67,1.89],
+                            [0.33,0.95],
+                            [0.00,0.00],
+                            [3.21,1.33],
+                            [6.61,2.09],
+                            [10.00,2.84]
+                        ];
+                        len = arrowTail.length;
+                        for (i = 0; i < len; i++) {
+                            arrowTail[i][0] *= -w;
+                            arrowTail[i][1] *= w;
+                            arrowTail[i][0] += 10 * w;
+                            arrowTail[i][1] -= 2.84 * w;
+                        }
                     } else {
                         arrowTail = [
                              [ w,   -w * 0.5],
@@ -659,6 +741,85 @@ define([
                                  [ 0.0,        w * 0.5],
                                  [-w / 3.0,    w * 0.5]
                              ];
+                    } else if (type === 4) {
+                        w /= 10;
+                        degree_la = 3;
+                        arrowHead = [
+                            [10.00, 3.31],
+                            [6.47, 3.84],
+                            [2.87, 4.50],
+                            [0.00, 6.63],
+                            [0.67, 5.52],
+                            [1.33, 4.42],
+                            [2.00, 3.31],
+                            [1.33, 2.21],
+                            [0.67, 1.10],
+                            [0.00, 0.00],
+                            [2.87, 2.13],
+                            [6.47, 2.79],
+                            [10.00, 3.31]
+                        ];
+                        len = arrowHead.length;
+                        for (i = 0; i < len; i++) {
+                            arrowHead[i][0] *= w;
+                            arrowHead[i][1] *= w;
+                            arrowHead[i][0] -= 10 * w;
+                            arrowHead[i][1] -= 3.31 * w;
+
+                        }
+                    } else if (type === 5) {
+                        w /= 10;
+                        degree_la = 3;
+                        arrowHead = [
+                            [10.00,3.28],
+                            [6.61,4.19],
+                            [3.19,5.07],
+                            [0.00,6.55],
+                            [0.62,5.56],
+                            [1.00,4.44],
+                            [1.00,3.28],
+                            [1.00,2.11],
+                            [0.62,0.99],
+                            [0.00,0.00],
+                            [3.19,1.49],
+                            [6.61,2.37],
+                            [10.00,3.28]
+                        ];
+                        len = arrowHead.length;
+                        for (i = 0; i < len; i++) {
+                            arrowHead[i][0] *= w;
+                            arrowHead[i][1] *= w;
+                            arrowHead[i][0] -= 10 * w;
+                            arrowHead[i][1] -= 3.28 * w;
+
+                        }
+                    } else if (type === 6) {
+                        w /= 10;
+                        degree_la = 3;
+                        arrowHead = [
+                            [10.00,2.84],
+                            [6.61,3.59],
+                            [3.21,4.35],
+                            [0.00,5.68],
+                            [0.33,4.73],
+                            [0.67,3.78],
+                            [1.00,2.84],
+                            [0.67,1.89],
+                            [0.33,0.95],
+                            [0.00,0.00],
+                            [3.21,1.33],
+                            [6.61,2.09],
+                            [10.00,2.84]
+                        ];
+                        len = arrowHead.length;
+                        for (i = 0; i < len; i++) {
+                            arrowHead[i][0] *= w;
+                            arrowHead[i][1] *= w;
+                            arrowHead[i][0] -= 10 * w;
+                            arrowHead[i][1] -= 2.84 * w;
+
+                        }
+
                     } else {
                         arrowHead = [
                              [ -w, -w * 0.5],
@@ -671,10 +832,10 @@ define([
                 context.save();
                 if (this._setColor(el, 'stroke', 'fill')) {
                     if (ev_fa) {
-                        this._drawFilledPolygon(this._translateShape(this._rotateShape(arrowTail, ang1), x1, y1));
+                        this._drawFilledPolygon(this._translateShape(this._rotateShape(arrowTail, ang1), x1, y1), degree_fa);
                     }
                     if (ev_la) {
-                        this._drawFilledPolygon(this._translateShape(this._rotateShape(arrowHead, ang2), x2, y2));
+                        this._drawFilledPolygon(this._translateShape(this._rotateShape(arrowHead, ang2), x2, y2), degree_la);
                     }
                 }
                 context.restore();
