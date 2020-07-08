@@ -31,26 +31,26 @@ if __name__ == '__main__':
     space = "     * "
     tab = "    "
     
-    print "%s%s" % (space, "@example")
+    print("%s%s" % (space, "@example"))
     ''' Print original code '''
     for line in code:
-        print "%s%s" % (space, line.rstrip())
-    print space
+        print("%s%s" % (space, line.rstrip()))
+    print(space)
     
     uid = "JXG" + "%s" % (uuid.uuid4())
 
     ''' Print live code '''
-    print "%s%s%s%s" % (space, "</pre><div id=\"", uid, "\" class=\"jxgbox\" style=\"width: 300px; height: 300px;\"></div>")
-    print "%s%s"     % (space, "<script type=\"text/javascript\">")
-    print "%s%s%s"   % (space, tab, "(function() {")
-    print "%s%s%s%s%s"   % (space, tab+tab, "var board = JXG.JSXGraph.initBoard('", uid, "',")
-    print "%s%s%s"   % (space, tab+tab+tab, "{boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});")
+    print("%s%s%s%s" % (space, "</pre><div id=\"", uid, "\" class=\"jxgbox\" style=\"width: 300px; height: 300px;\"></div>"))
+    print("%s%s"     % (space, "<script type=\"text/javascript\">"))
+    print("%s%s%s"   % (space, tab, "(function() {"))
+    print("%s%s%s%s%s"   % (space, tab+tab, "var board = JXG.JSXGraph.initBoard('", uid, "',"))
+    print("%s%s%s"   % (space, tab+tab+tab, "{boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});"))
     
     for line in code:
-        print "%s%s%s" % (space, tab, line.rstrip())
-    print space
+        print("%s%s%s" % (space, tab, line.rstrip()))
+    print(space)
 
-    print "%s%s%s"   % (space, tab, "})();")
-    print "%s"       % (space)
-    print "%s%s"     % (space, "</script><pre>")
-    print space
+    print("%s%s%s"   % (space, tab, "})();"))
+    print("%s"       % (space))
+    print("%s%s"     % (space, "</script><pre>"))
+    print(space)
