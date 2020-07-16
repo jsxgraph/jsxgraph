@@ -531,46 +531,21 @@ define([
          * @private
          */
         getDistanceFromZero: function (zero, point) {
-            var a, b,
-                eps = Mat.eps,
-                p1 = this.line.point1.coords,
+            var p1 = this.line.point1.coords,
                 p2 = this.line.point2.coords,
-                dir,
+                dirLine, dirPoint,
                 distance = zero.distance(Const.COORDS_BY_USER, point);
 
             // Establish sign
-            dir = [p2.usrCoords[0] - p1.usrCoords[0],
-                    p2.usrCoords[1] - p1.usrCoords[1],
-                    p2.usrCoords[2] - p1.usrCoords[2]];
-            if (Mat.innerProduct(point.usrCoords, dir, 3) < 0) {
+            dirLine = [p2.usrCoords[0] - p1.usrCoords[0],
+                p2.usrCoords[1] - p1.usrCoords[1],
+                p2.usrCoords[2] - p1.usrCoords[2]];
+            dirPoint = [point.usrCoords[0] - zero.usrCoords[0],
+                point.usrCoords[1] - zero.usrCoords[1],
+                point.usrCoords[2] - zero.usrCoords[2]];
+            if (Mat.innerProduct(dirLine, dirPoint, 3) < 0) {
                 distance *= -1;
             }
-            // // Why are axes treated different from lines?
-            // if (this.line.type === Const.OBJECT_TYPE_AXIS &&
-            //     (p1.usrCoords[1] === p2.usrCoords[1] ||
-            //      p1.usrCoords[2] === p2.usrCoords[2])
-            //  ) {
-            //     dir = [p2.usrCoords[0] - p1.usrCoords[0],
-            //             p2.usrCoords[1] - p1.usrCoords[1],
-            //             p2.usrCoords[2] - p1.usrCoords[2]];
-            //     if (Mat.innerProduct(point.usrCoords, dir, 3) < 0) {
-            //         distance *= -1;
-            //     }
-            // } else {
-
-            //     /*
-            //     if (Type.evaluate(this.visProp.anchor) === 'right') {
-            //         if (Geometry.isSameDirection(zero, p1, point)) {
-            //             distance *= -1;
-            //         }
-            //     } else {
-            //         if (!Geometry.isSameDirection(zero, p2, point)) {
-            //             distance *= -1;
-            //         }
-            //     }
-            //     console.log(zero.usrCoords, point.usrCoords, distance, Type.evaluate(this.visProp.anchor));
-            //     */
-            // }
 
             return distance;
         },

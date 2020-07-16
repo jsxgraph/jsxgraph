@@ -558,7 +558,7 @@ define([
                  arrowHead,
                  arrowTail,
                  context = this.context,
-                 size = 3,
+                 size = 6,
                  type = 1,
                  degree_fa = 1,
                  degree_la = 1,
@@ -604,7 +604,7 @@ define([
                 w0 = Type.evaluate(el.visProp[hl + 'strokewidth']);
 
                 if (ev_fa) {
-                    size = 3;
+                    size = 6;
                     if (Type.exists(ev_fa.size)) {
                         size = Type.evaluate(ev_fa.size);
                     }
@@ -715,7 +715,7 @@ define([
                 }
 
                 if (ev_la) {
-                    size = 3;
+                    size = 6;
                     if (Type.exists(ev_la.size)) {
                         size = Type.evaluate(ev_la.size);
                     }

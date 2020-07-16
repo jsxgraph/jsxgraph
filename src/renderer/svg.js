@@ -285,6 +285,7 @@ define([
                     h = 2.84;
                     node3.setAttributeNS(null, 'd', 'M 0.00,2.84 C 3.39,3.59 6.79,4.35 10.00,5.68 C 9.67,4.73 9.33,3.78 9.00,2.84 C 9.33,1.89 9.67,0.95 10.00,0.00 C 6.79,1.33 3.39,2.09 0.00,2.84');
                 } else {
+                    // type == 1 or > 6
                     v = (el.elementClass === Const.OBJECT_CLASS_LINE) ? 10.0 : 0.0;
                     node3.setAttributeNS(null, 'd', 'M 10,0 L 0,5 L 10,10 z');
                 }
@@ -317,6 +318,7 @@ define([
                     h = 2.84;
                     node3.setAttributeNS(null, 'd', 'M 10.00,2.84 C 6.61,3.59 3.21,4.35 0.00,5.68 C 0.33,4.73 0.67,3.78 1.00,2.84 C 0.67,1.89 0.33,0.95 0.00,0.00 C 3.21,1.33 6.61,2.09 10.00,2.84');
                 } else {
+                    // type == 1 or > 6
                     v = (el.elementClass === Const.OBJECT_CLASS_LINE) ? 0.1 : 9.9;
                     node3.setAttributeNS(null, 'd', 'M 0,0 L 10,5 L 0,10 z');
                 }
