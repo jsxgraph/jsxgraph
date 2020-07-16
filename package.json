@@ -50,7 +50,7 @@
     "braces": ">=2.3.1",
     "diff": "^4.0.2",
     "handlebars": "^4.7.6",
-    "intern": "^4.8.6",
+    "intern": "^4.8.7",
     "js-yaml": "^3.14.0",
     "jsdoc2": "^2.4.0",
     "jshint": "^2.11.1",
@@ -59,7 +59,7 @@
     "lodash-amd": ">=4.17.19",
     "minimist": ">=1.2.3",
     "sinon": "^1.14.0",
-    "uglify-js": "^3.9.4"
+    "uglify-js": "^3.10.0"
   },
   "engines": {
     "node": ">=0.6.0"
