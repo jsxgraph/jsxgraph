@@ -312,6 +312,7 @@ define([
 
             // Calculate lower bound and upper bound limits based on distance between p1 and centre and p2 and center
             bounds = this.getLowerAndUpperBounds(coordsZero);
+
             if (Type.evaluate(this.visProp.type) === 'polar') {
                 bb = this.board.getBoundingBox();
                 r_max = Math.max(Math.sqrt(bb[0] * bb[0] + bb[1] * bb[1]),
@@ -372,9 +373,10 @@ define([
          *
          * If the line is an {@link Axis}, the coordinates of the projection of the board's zero point is returned
          *
-         * Otherwise, the coordinates of the point that acts as zero are established depending on the value of {@link JXG.Ticks#anchor}
+         * Otherwise, the coordinates of the point that acts as zero are
+         * established depending on the value of {@link JXG.Ticks#anchor}
          *
-         * @returns {JXG.Coords} Coords object for the Zero point on the line
+         * @returns {JXG.Coords} Coords object for the zero point on the line
          * @private
          */
         getZeroCoordinates: function () {
@@ -529,31 +531,47 @@ define([
          * @private
          */
         getDistanceFromZero: function (zero, point) {
-            var eps = Mat.eps,
+            var a, b,
+                eps = Mat.eps,
+                p1 = this.line.point1.coords,
+                p2 = this.line.point2.coords,
+                dir,
                 distance = zero.distance(Const.COORDS_BY_USER, point);
 
             // Establish sign
-
-            // Why are axes treated different from lines?
-            // if (this.line.type === Const.OBJECT_TYPE_AXIS) {
-            //     var a, b;
-            //     a = (Mat.relDif(zero.usrCoords[1], point.usrCoords[1]) > eps &&
-            //                       zero.usrCoords[1] - point.usrCoords[1] > eps);
-            //     b = (Mat.relDif(zero.usrCoords[2], point.usrCoords[2]) > eps &&
-            //                       zero.usrCoords[2] - point.usrCoords[2] > eps);
-            //     if ( a || b ){
+            dir = [p2.usrCoords[0] - p1.usrCoords[0],
+                    p2.usrCoords[1] - p1.usrCoords[1],
+                    p2.usrCoords[2] - p1.usrCoords[2]];
+            if (Mat.innerProduct(point.usrCoords, dir, 3) < 0) {
+                distance *= -1;
+            }
+            // // Why are axes treated different from lines?
+            // if (this.line.type === Const.OBJECT_TYPE_AXIS &&
+            //     (p1.usrCoords[1] === p2.usrCoords[1] ||
+            //      p1.usrCoords[2] === p2.usrCoords[2])
+            //  ) {
+            //     dir = [p2.usrCoords[0] - p1.usrCoords[0],
+            //             p2.usrCoords[1] - p1.usrCoords[1],
+            //             p2.usrCoords[2] - p1.usrCoords[2]];
+            //     if (Mat.innerProduct(point.usrCoords, dir, 3) < 0) {
             //         distance *= -1;
             //     }
-            // } else
-            if (Type.evaluate(this.visProp.anchor) === 'right') {
-                if (Geometry.isSameDirection(zero, this.line.point1.coords, point)) {
-                    distance *= -1;
-                }
-            } else {
-                if (!Geometry.isSameDirection(zero, this.line.point2.coords, point)) {
-                    distance *= -1;
-                }
-            }
+            // } else {
+
+            //     /*
+            //     if (Type.evaluate(this.visProp.anchor) === 'right') {
+            //         if (Geometry.isSameDirection(zero, p1, point)) {
+            //             distance *= -1;
+            //         }
+            //     } else {
+            //         if (!Geometry.isSameDirection(zero, p2, point)) {
+            //             distance *= -1;
+            //         }
+            //     }
+            //     console.log(zero.usrCoords, point.usrCoords, distance, Type.evaluate(this.visProp.anchor));
+            //     */
+            // }
+
             return distance;
         },
 
@@ -1177,7 +1195,7 @@ define([
      * "ticksDistance". For arbitrary lines (and not axes) a "zero coordinate" is determined
      * which defines where the first tick is positioned. This zero coordinate
      * can be altered with the attribute "anchor". Possible values are "left", "middle", "right" or a number.
-     * The default value is "middle".
+     * The default value is "left".
      *
      * @example
      * // Create an axis providing two coord pairs.

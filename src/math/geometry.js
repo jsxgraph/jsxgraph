@@ -969,7 +969,7 @@ define([
         },
 
         /**
-         * If you're looking from point "start" towards point "s" and can see the point "p", true is returned.
+         * If you're looking from point "start" towards point "s" and you can see the point "p", return true.
          * Otherwise return false.
          * @param {JXG.Coords} start The point you're standing on.
          * @param {JXG.Coords} p The point in which direction you're looking.
