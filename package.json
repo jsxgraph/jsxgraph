@@ -55,8 +55,8 @@
     "jsdoc2": "^2.4.0",
     "jshint": "^2.11.1",
     "jslint": "^0.12.1",
-    "lodash": ">=4.17.13",
-    "lodash-amd": ">=4.17.13",
+    "lodash": ">=4.17.19",
+    "lodash-amd": ">=4.17.19",
     "minimist": ">=1.2.3",
     "sinon": "^1.14.0",
     "uglify-js": "^3.9.4"
