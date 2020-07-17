@@ -100,6 +100,15 @@ define([
         this.dataY = null;
 
         /**
+         * Array of ticks storing all the ticks on this curve. Do not set this field directly and use
+         * {@link JXG.Curve#addTicks} and {@link JXG.Curve#removeTicks} to add and remove ticks to and
+         * from the curve.
+         * @type Array
+         * @see JXG.Ticks
+         */
+        this.ticks = [];
+
+        /**
          * Stores a quad tree if it is required. The quad tree is generated in the curve
          * updates and can be used to speed up the hasPoint method.
          * @type {JXG.Math.Quadtree}
@@ -1624,12 +1633,14 @@ define([
          * @returns {function}
          **/
         interpolationFunctionFromArray: function (which) {
-            var data = 'data' + which;
+            var data = 'data' + which,
+                that = this;
 
             return function (t, suspendedUpdate) {
                 var i, j, t0, t1,
-                    arr = this[data],
+                    arr = that[data],
                     len = arr.length,
+                    last,
                     f = [];
 
                 if (isNaN(t)) {
@@ -1644,9 +1655,10 @@ define([
                     return arr[0];
                 }
 
-                if (this.bezierDegree === 3) {
-                    len /= 3;
-                    if (t >= len) {
+                if (that.bezierDegree === 3) {
+                    last = (len - 1) / 3;
+
+                    if (t >= last) {
                         if (Type.isFunction(arr[arr.length - 1])) {
                             return arr[arr.length - 1]();
                         }
@@ -1708,7 +1720,7 @@ define([
                 this.dataX = xterm;
 
                 this.numberPoints = this.dataX.length;
-                this.X = this.interpolationFunctionFromArray('X');
+                this.X = this.interpolationFunctionFromArray.apply(this, ['X']);
                 this.visProp.curvetype = 'plot';
                 this.isDraggable = true;
             } else {
@@ -1725,7 +1737,7 @@ define([
 
             if (Type.isArray(yterm)) {
                 this.dataY = yterm;
-                this.Y = this.interpolationFunctionFromArray('Y');
+                this.Y = this.interpolationFunctionFromArray.apply(this, ['Y']);
             } else {
                 this.Y = Type.createFunction(yterm, this.board, varname);
             }
@@ -2717,7 +2729,7 @@ define([
 
         controls = parents[1];
 
-        el = new JXG.Curve(board, ['t', [], []], attributes);
+        el = new JXG.Curve(board, ['t', [], [], 0, p.length - 1], attributes);
         el.updateDataArray = function () {
             var res, i,
                 len = points.length,

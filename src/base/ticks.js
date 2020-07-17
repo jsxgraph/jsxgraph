@@ -53,8 +53,8 @@
  */
 
 define([
-    'jxg', 'math/math', 'math/geometry', 'base/constants', 'base/element', 'base/coords', 'utils/type', 'base/text'
-], function (JXG, Mat, Geometry, Const, GeometryElement, Coords, Type, Text) {
+    'jxg', 'math/math', 'math/geometry', 'math/numerics', 'base/constants', 'base/element', 'base/coords', 'utils/type', 'base/text'
+], function (JXG, Mat, Geometry, Numerics, Const, GeometryElement, Coords, Type, Text) {
 
     "use strict";
 
@@ -204,6 +204,7 @@ define([
 
         /**
          * Checks whether (x,y) is near the line.
+         * Only available for line elements,  not for ticks on curves.
          * @param {Number} x Coordinate in x direction, screen coordinates.
          * @param {Number} y Coordinate in y direction, screen coordinates.
          * @returns {Boolean} True if (x,y) is near the line, False otherwise.
@@ -214,7 +215,8 @@ define([
                 r = this.board.options.precision.hasPoint +
                         Type.evaluate(this.visProp.strokewidth) * 0.5;
 
-            if (!Type.evaluate(this.line.visProp.scalable)) {
+            if (!Type.evaluate(this.line.visProp.scalable) ||
+                this.line.elementClass === Const.OBJECT_CLASS_CURVE) {
                 return false;
             }
 
@@ -299,19 +301,30 @@ define([
             var coordsZero, bounds,
                 r_max, bb;
 
-            // Calculate Ticks width and height in Screen and User Coordinates
-            this.setTicksSizeVariables();
-            // If the parent line is not finite, we can stop here.
-            if (Math.abs(this.dx) < Mat.eps &&
-                Math.abs(this.dy) < Mat.eps) {
-                return;
+            if (this.line.elementClass === Const.OBJECT_CLASS_LINE) {
+                // Calculate Ticks width and height in Screen and User Coordinates
+                this.setTicksSizeVariables();
+
+                // If the parent line is not finite, we can stop here.
+                if (Math.abs(this.dx) < Mat.eps &&
+                    Math.abs(this.dy) < Mat.eps) {
+                    return;
+                }
             }
 
-            // Get Zero
+            // Get Zero (coords element for lines , number for curves)
             coordsZero = this.getZeroCoordinates();
 
-            // Calculate lower bound and upper bound limits based on distance between p1 and centre and p2 and center
-            bounds = this.getLowerAndUpperBounds(coordsZero);
+            // Calculate lower bound and upper bound limits based on distance
+            // between p1 and center and p2 and center
+            if (this.line.elementClass === Const.OBJECT_CLASS_LINE) {
+                bounds = this.getLowerAndUpperBounds(coordsZero);
+            } else {
+                bounds = {
+                    lower: this.line.minX(),
+                    upper: this.line.maxX()
+                };
+            }
 
             if (Type.evaluate(this.visProp.type) === 'polar') {
                 bb = this.board.getBoundingBox();
@@ -338,14 +351,34 @@ define([
          *
          * @private
          */
-        setTicksSizeVariables: function () {
-            var d,
+        setTicksSizeVariables: function (pos) {
+            var d, mi, ma, len,
                 distMaj = Type.evaluate(this.visProp.majorheight) * 0.5,
                 distMin = Type.evaluate(this.visProp.minorheight) * 0.5;
 
-            // ticks width and height in screen units
-            this.dxMaj = this.line.stdform[1];
-            this.dyMaj = this.line.stdform[2];
+            // For curves:
+            if (Type.exists(pos)) {
+                mi = this.line.minX();
+                ma = this.line.maxX();
+                len = this.line.points.length;
+                if (len < 2) {
+                    this.dxMaj = 0;
+                    this.dyMaj = 0;
+                } else if (Mat.relDif(pos, mi) < Mat.eps) {
+                    this.dxMaj = this.line.points[0].usrCoords[2] - this.line.points[1].usrCoords[2];
+                    this.dyMaj = this.line.points[1].usrCoords[1] - this.line.points[0].usrCoords[1];
+                } else if (Mat.relDif(pos, ma) < Mat.eps) {
+                    this.dxMaj = this.line.points[len - 2].usrCoords[2] - this.line.points[len - 1].usrCoords[2];
+                    this.dyMaj = this.line.points[len - 1].usrCoords[1] - this.line.points[len - 2].usrCoords[1];
+                } else {
+                    this.dxMaj = -Numerics.D(this.line.Y)(pos);
+                    this.dyMaj = Numerics.D(this.line.X)(pos);
+                }
+            } else {
+                // ticks width and height in screen units
+                this.dxMaj = this.line.stdform[1];
+                this.dyMaj = this.line.stdform[2];
+            }
             this.dxMin = this.dxMaj;
             this.dyMin = this.dyMaj;
 
@@ -380,41 +413,55 @@ define([
          * @private
          */
         getZeroCoordinates: function () {
-            var c1x, c1y, c1z, c2x, c2y, c2z,
+            var c1x, c1y, c1z, c2x, c2y, c2z, t, mi, ma,
                 ev_a = Type.evaluate(this.visProp.anchor);
 
-            if (this.line.type === Const.OBJECT_TYPE_AXIS) {
-                return Geometry.projectPointToLine({
-                    coords: {
-                        usrCoords: [1, 0, 0]
-                    }
-                }, this.line, this.board);
+            if (this.line.elementClass === Const.OBJECT_CLASS_LINE) {
+                if (this.line.type === Const.OBJECT_TYPE_AXIS) {
+                    return Geometry.projectPointToLine({
+                        coords: {
+                            usrCoords: [1, 0, 0]
+                        }
+                    }, this.line, this.board);
+                }
+                c1z = this.line.point1.coords.usrCoords[0];
+                c1x = this.line.point1.coords.usrCoords[1];
+                c1y = this.line.point1.coords.usrCoords[2];
+                c2z = this.line.point2.coords.usrCoords[0];
+                c2x = this.line.point2.coords.usrCoords[1];
+                c2y = this.line.point2.coords.usrCoords[2];
+
+                if (ev_a === 'right') {
+                    return this.line.point2.coords;
+                } else if (ev_a === 'middle') {
+                    return new Coords(Const.COORDS_BY_USER, [
+                        (c1z + c2z) * 0.5,
+                        (c1x + c2x) * 0.5,
+                        (c1y + c2y) * 0.5
+                    ], this.board);
+                } else if (Type.isNumber(ev_a)) {
+                    return new Coords(Const.COORDS_BY_USER, [
+                        c1z + (c2z - c1z) * ev_a,
+                        c1x + (c2x - c1x) * ev_a,
+                        c1y + (c2y - c1y) * ev_a
+                    ], this.board);
+                }
+                return this.line.point1.coords;
+            } else {
+                mi = this.line.minX();
+                ma = this.line.maxX();
+                if (ev_a === 'right') {
+                    t = ma;
+                } else if (ev_a === 'middle') {
+                    t = (mi + ma) * 0.5;
+                } else if (Type.isNumber(ev_a)) {
+                    t = mi * (1 - ev_a) + ma * ev_a;
+                    // t = ev_a;
+                } else {
+                    t = mi;
+                }
+                return t;
             }
-
-            c1z = this.line.point1.coords.usrCoords[0];
-            c1x = this.line.point1.coords.usrCoords[1];
-            c1y = this.line.point1.coords.usrCoords[2];
-            c2z = this.line.point2.coords.usrCoords[0];
-            c2x = this.line.point2.coords.usrCoords[1];
-            c2y = this.line.point2.coords.usrCoords[2];
-
-            if (ev_a === 'right') {
-                return this.line.point2.coords;
-            } else if (ev_a === 'middle') {
-                return new Coords(Const.COORDS_BY_USER, [
-                    (c1z + c2z) * 0.5,
-                    (c1x + c2x) * 0.5,
-                    (c1y + c2y) * 0.5
-                ], this.board);
-            } else if (Type.isNumber(ev_a)) {
-                return new Coords(Const.COORDS_BY_USER, [
-                    c1z + (c2z - c1z) * ev_a,
-                    c1x + (c2x - c1x) * ev_a,
-                    c1y + (c2y - c1y) * ev_a
-                ], this.board);
-            }
-
-            return this.line.point1.coords;
         },
 
         /**
@@ -434,22 +481,31 @@ define([
         getLowerAndUpperBounds: function (coordsZero, type) {
             var lowerBound, upperBound,
                 fA, lA,
-                // The line's defining points that will be adjusted to be within the board limits
-                point1 = new Coords(Const.COORDS_BY_USER, this.line.point1.coords.usrCoords, this.board),
-                point2 = new Coords(Const.COORDS_BY_USER, this.line.point2.coords.usrCoords, this.board),
-                // Are the original defining points within the board?
-                isPoint1inBoard = (Math.abs(point1.usrCoords[0]) >= Mat.eps &&
-                    point1.scrCoords[1] >= 0.0 && point1.scrCoords[1] <= this.board.canvasWidth &&
-                    point1.scrCoords[2] >= 0.0 && point1.scrCoords[2] <= this.board.canvasHeight),
-                isPoint2inBoard = (Math.abs(point2.usrCoords[0]) >= Mat.eps &&
-                    point2.scrCoords[1] >= 0.0 && point2.scrCoords[1] <= this.board.canvasWidth &&
-                    point2.scrCoords[2] >= 0.0 && point2.scrCoords[2] <= this.board.canvasHeight),
+                point1, point2, isPoint1inBoard, isPoint2inBoard,
                 // We use the distance from zero to P1 and P2 to establish lower and higher points
                 dZeroPoint1, dZeroPoint2,
                 ev_sf = Type.evaluate(this.line.visProp.straightfirst),
                 ev_sl = Type.evaluate(this.line.visProp.straightlast),
                 ev_i = Type.evaluate(this.visProp.includeboundaries),
                 obj;
+
+            // The line's defining points that will be adjusted to be within the board limits
+            if (this.line.elementClass === Const.OBJECT_CLASS_CURVE) {
+                return {
+                    lower: this.line.minX(),
+                    upper: this.line.maxX()
+                };
+            }
+
+            point1 = new Coords(Const.COORDS_BY_USER, this.line.point1.coords.usrCoords, this.board);
+            point2 = new Coords(Const.COORDS_BY_USER, this.line.point2.coords.usrCoords, this.board);
+            // Are the original defining points within the board?
+            isPoint1inBoard = (Math.abs(point1.usrCoords[0]) >= Mat.eps &&
+                point1.scrCoords[1] >= 0.0 && point1.scrCoords[1] <= this.board.canvasWidth &&
+                point1.scrCoords[2] >= 0.0 && point1.scrCoords[2] <= this.board.canvasHeight);
+            isPoint2inBoard = (Math.abs(point2.usrCoords[0]) >= Mat.eps &&
+                point2.scrCoords[1] >= 0.0 && point2.scrCoords[1] <= this.board.canvasWidth &&
+                point2.scrCoords[2] >= 0.0 && point2.scrCoords[2] <= this.board.canvasHeight);
 
             // Adjust line limit points to be within the board
             if (Type.exists(type) || type === 'tickdistance') {
@@ -466,7 +522,6 @@ define([
             fA = Type.evaluate(this.line.visProp.firstarrow);
             lA = Type.evaluate(this.line.visProp.lastarrow);
             if (fA || lA) {
-
                 obj = this.board.renderer.getPositionArrowHead(this.line, point1, point2,
                         Type.evaluate(this.line.visProp.strokewidth));
 
@@ -483,6 +538,7 @@ define([
                     ]);
                 }
             }
+
 
             // Calculate (signed) distance from Zero to P1 and to P2
             dZeroPoint1 = this.getDistanceFromZero(coordsZero, point1);
@@ -531,10 +587,13 @@ define([
          * @private
          */
         getDistanceFromZero: function (zero, point) {
-            var p1 = this.line.point1.coords,
-                p2 = this.line.point2.coords,
+            var p1, p2,
                 dirLine, dirPoint,
-                distance = zero.distance(Const.COORDS_BY_USER, point);
+                distance;
+
+            p1 = this.line.point1.coords;
+            p2 = this.line.point2.coords;
+            distance = zero.distance(Const.COORDS_BY_USER, point);
 
             // Establish sign
             dirLine = [p2.usrCoords[0] - p1.usrCoords[0],
@@ -561,12 +620,16 @@ define([
         generateEquidistantTicks: function (coordsZero, bounds) {
             var tickPosition,
                 eps2 = Mat.eps,
-                // Calculate X and Y distance between two major ticks
-                deltas = this.getXandYdeltas(),
+                deltas,
                 // Distance between two major ticks in user coordinates
                 ticksDelta = (this.equidistant ? this.ticksFunction(1) : this.ticksDelta),
                 ev_it = Type.evaluate(this.visProp.insertticks),
                 ev_mt = Type.evaluate(this.visProp.minorticks);
+
+            if (this.line.elementClass === Const.OBJECT_CLASS_LINE) {
+                // Calculate X and Y distance between two major ticks
+                deltas = this.getXandYdeltas();
+            }
 
             // adjust ticks distance
             ticksDelta *= Type.evaluate(this.visProp.scale);
@@ -622,6 +685,9 @@ define([
                 sgn = 1,
                 ev_minti = Type.evaluate(this.visProp.minorticks);
 
+            if (this.line.elementClass === Const.OBJECT_CLASS_CURVE) {
+                return ticksDelta;
+            }
             bounds = this.getLowerAndUpperBounds(coordsZero, 'ticksdistance');
             nx = coordsZero.usrCoords[1] + deltas.x * ticksDelta;
             ny = coordsZero.usrCoords[2] + deltas.y * ticksDelta;
@@ -657,12 +723,23 @@ define([
          * @private
          */
         processTickPosition: function (coordsZero, tickPosition, ticksDelta, deltas) {
-            var x, y, tickCoords, ti;
+            var x, y, tickCoords, ti,
+                labelVal = null;
 
             // Calculates tick coordinates
-            x = coordsZero.usrCoords[1] + tickPosition * deltas.x;
-            y = coordsZero.usrCoords[2] + tickPosition * deltas.y;
+            if (this.line.elementClass === Const.OBJECT_CLASS_LINE) {
+                x = coordsZero.usrCoords[1] + tickPosition * deltas.x;
+                y = coordsZero.usrCoords[2] + tickPosition * deltas.y;
+            } else {
+                x = this.line.X(coordsZero + tickPosition);
+                y = this.line.Y(coordsZero + tickPosition);
+            }
             tickCoords = new Coords(Const.COORDS_BY_USER, [x, y], this.board);
+            if (this.line.elementClass === Const.OBJECT_CLASS_CURVE) {
+                labelVal = coordsZero + tickPosition;
+                this.setTicksSizeVariables(labelVal);
+
+            }
 
             // Test if tick is a major tick.
             // This is the case if tickPosition/ticksDelta is
@@ -678,7 +755,7 @@ define([
                     // major tick label
                     this.labelsData.push(
                         this.generateLabelData(
-                            this.generateLabelText(tickCoords, coordsZero),
+                            this.generateLabelText(tickCoords, coordsZero, labelVal),
                             tickCoords,
                             this.ticks.length
                         )
@@ -700,28 +777,42 @@ define([
         generateFixedTicks: function (coordsZero, bounds) {
             var tickCoords, labelText, i, ti,
                 x, y,
-                eps2 = Mat.eps,
+                eps2 = Mat.eps, fixedTick,
                 hasLabelOverrides = Type.isArray(this.visProp.labels),
-                // Calculate X and Y distance between two major points in the line
-                deltas = this.getXandYdeltas(),
+                deltas,
                 ev_dl = Type.evaluate(this.visProp.drawlabels);
 
+            // Calculate X and Y distance between two major points in the line
+            if (this.line.elementClass === Const.OBJECT_CLASS_LINE) {
+                deltas = this.getXandYdeltas();
+            }
             for (i = 0; i < this.fixedTicks.length; i++) {
-                x = coordsZero.usrCoords[1] + this.fixedTicks[i] * deltas.x;
-                y = coordsZero.usrCoords[2] + this.fixedTicks[i] * deltas.y;
+                if (this.line.elementClass === Const.OBJECT_CLASS_LINE) {
+                    fixedTick = this.fixedTicks[i];
+                    x = coordsZero.usrCoords[1] + fixedTick * deltas.x;
+                    y = coordsZero.usrCoords[2] + fixedTick * deltas.y;
+                } else {
+                    fixedTick = coordsZero + this.fixedTicks[i];
+                    x = this.line.X(fixedTick);
+                    y = this.line.Y(fixedTick);
+                }
                 tickCoords = new Coords(Const.COORDS_BY_USER, [x, y], this.board);
+
+                if (this.line.elementClass === Const.OBJECT_CLASS_CURVE) {
+                    this.setTicksSizeVariables(fixedTick);
+                }
 
                 // Compute the start position and the end position of a tick.
                 // If tick is out of the canvas, ti is empty.
                 ti = this.createTickPath(tickCoords, true);
-                if (ti.length === 3 && this.fixedTicks[i] >= bounds.lower - eps2 &&
-                    this.fixedTicks[i] <= bounds.upper + eps2) {
+                if (ti.length === 3 && fixedTick >= bounds.lower - eps2 &&
+                    fixedTick <= bounds.upper + eps2) {
                     this.ticks.push(ti);
 
                     if (ev_dl &&
                             (hasLabelOverrides || Type.exists(this.visProp.labels[i]))) {
                         labelText = hasLabelOverrides ?
-                                        Type.evaluate(this.visProp.labels[i]) : this.fixedTicks[i];
+                                        Type.evaluate(this.visProp.labels[i]) : fixedTick;
                         this.labelsData.push(
                             this.generateLabelData(
                                 this.generateLabelText(tickCoords, coordsZero, labelText),
@@ -762,7 +853,7 @@ define([
                     point1UsrCoords = this.line.point2.coords.usrCoords;
                     point2UsrCoords = this.line.point1.coords.usrCoords;
                 }
-            } else {
+            } else /* if (this.line.elementClass === Const.OBJECT_CLASS_LINE)*/ {
                 // line direction is always from P1 to P2 for non Axis types
                 point1UsrCoords = this.line.point1.coords.usrCoords;
                 point2UsrCoords = this.line.point2.coords.usrCoords;
@@ -938,19 +1029,17 @@ define([
          * @private
          */
         generateLabelText: function (tick, zero, value) {
-            var labelText,
+            var labelText, distance;
+
+            // No value provided, equidistant, so assign distance as value
+            if (!Type.exists(value)) { // could be null or undefined
                 distance = this.getDistanceFromZero(zero, tick);
-
-            if (Math.abs(distance) < Mat.eps) { // Point is zero
-                labelText = '0';
-            } else {
-                // No value provided, equidistant, so assign distance as value
-                if (!Type.exists(value)) { // could be null or undefined
-                    value = distance / Type.evaluate(this.visProp.scale);
+                if (Math.abs(distance) < Mat.eps) { // Point is zero
+                    return '0';
                 }
-
-                labelText = this.formatLabelText(value);
+                value = distance / Type.evaluate(this.visProp.scale);
             }
+            labelText = this.formatLabelText(value);
 
             return labelText;
         },
@@ -1156,7 +1245,7 @@ define([
     });
 
     /**
-     * @class Ticks are used as distance markers on a line.
+     * @class Ticks are used as distance markers on a line or curve.
      * @pseudo
      * @description
      * @name Ticks
@@ -1164,7 +1253,7 @@ define([
      * @constructor
      * @type JXG.Ticks
      * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
-     * @param {JXG.Line} line The parents consist of the line the ticks are going to be attached to.
+     * @param {JXG.Line|JXG.Curve} line The parents consist of the line or curve the ticks are going to be attached to.
      * @param {Number} distance Number defining the distance between two major ticks or an
      * array defining static ticks. Alternatively, the distance can be specified with the attribute
      * "ticksDistance". For arbitrary lines (and not axes) a "zero coordinate" is determined
@@ -1173,7 +1262,7 @@ define([
      * The default value is "left".
      *
      * @example
-     * // Create an axis providing two coord pairs.
+     * // Create an axis providing two coordinate pairs.
      *   var p1 = board.create('point', [0, 3]);
      *   var p2 = board.create('point', [1, 3]);
      *   var l1 = board.create('line', [p1, p2]);
@@ -1199,7 +1288,8 @@ define([
             dist = parents[1];
         }
 
-        if (parents[0].elementClass === Const.OBJECT_CLASS_LINE) {
+        if (parents[0].elementClass === Const.OBJECT_CLASS_LINE ||
+            parents[0].elementClass === Const.OBJECT_CLASS_CURVE) {
             el = new JXG.Ticks(parents[0], dist, attr);
         } else {
             throw new Error("JSXGraph: Can't create Ticks with parent types '" + (typeof parents[0]) + "'.");
@@ -1221,7 +1311,7 @@ define([
     };
 
     /**
-     * @class Hatches can be used to mark congruent lines.
+     * @class Hatches can be used to mark congruent lines or curves.
      * @pseudo
      * @description
      * @name Hatch
@@ -1229,7 +1319,7 @@ define([
      * @constructor
      * @type JXG.Ticks
      * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
-     * @param {JXG.Line} line The line the hatch marks are going to be attached to.
+     * @param {JXG.Line|JXG.curve} line The line or curve the hatch marks are going to be attached to.
      * @param {Number} numberofhashes Number of dashes.
      * @example
      * // Create an axis providing two coords pairs.
@@ -1301,7 +1391,8 @@ define([
             pos = [],
             attr = Type.copyAttributes(attributes, board.options, 'hatch');
 
-        if (parents[0].elementClass !== Const.OBJECT_CLASS_LINE || typeof parents[1] !== 'number') {
+        if ((parents[0].elementClass !== Const.OBJECT_CLASS_LINE &&
+            parents[0].elementClass !== Const.OBJECT_CLASS_CURVE) || typeof parents[1] !== 'number') {
             throw new Error("JSXGraph: Can't create Hatch mark with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + " and ''" + (typeof parents[2]) + "'.");
         }
 

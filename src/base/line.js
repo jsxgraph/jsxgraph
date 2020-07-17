@@ -143,10 +143,7 @@ define([
             getYIntersect: 'getRise',
             getAngle: 'getAngle',
             L: 'L',
-            length: 'L',
-            addTicks: 'addTicks',
-            removeTicks: 'removeTicks',
-            removeAllTicks: 'removeAllTicks'
+            length: 'L'
         });
     };
 
@@ -738,8 +735,9 @@ define([
         /**
          * Treat the line as parametric curve in homogeneous coordinates, where the parameter t runs from 0 to 1.
          * First we transform the interval [0,1] to [-1,1].
-         * If the line has homogeneous coordinates [c,a,b] = stdform[] then the direction of the line is [b,-a].
-         * Now, we take one finite point that defines the line, i.e. we take either point1 or point2 (in case the line is not the ideal line).
+         * If the line has homogeneous coordinates [c, a, b] = stdform[] then the direction of the line is [b, -a].
+         * Now, we take one finite point that defines the line, i.e. we take either point1 or point2
+         * (in case the line is not the ideal line).
          * Let the coordinates of that point be [z, x, y].
          * Then, the curve runs linearly from
          * [0, b, -a] (t=-1) to [z, x, y] (t=0)
@@ -831,70 +829,11 @@ define([
             return [Math.min(p1c[1], p2c[1]), Math.max(p1c[2], p2c[2]), Math.max(p1c[1], p2c[1]), Math.min(p1c[2], p2c[2])];
         },
 
-        /**
-         * Adds ticks to this line. Ticks can be added to any kind of line: line, arrow, and axis.
-         * @param {JXG.Ticks} ticks Reference to a ticks object which is describing the ticks (color, distance, how many, etc.).
-         * @returns {String} Id of the ticks object.
-         */
-        addTicks: function (ticks) {
-            if (ticks.id === '' || !Type.exists(ticks.id)) {
-                ticks.id = this.id + '_ticks_' + (this.ticks.length + 1);
-            }
-
-            this.board.renderer.drawTicks(ticks);
-            this.ticks.push(ticks);
-
-            return ticks.id;
-        },
-
         // documented in GeometryElement.js
         remove: function () {
             this.removeAllTicks();
             GeometryElement.prototype.remove.call(this);
         },
-
-        /**
-         * Removes all ticks from a line.
-         */
-        removeAllTicks: function () {
-            var t;
-
-            for (t = this.ticks.length; t > 0; t--) {
-                this.removeTicks(this.ticks[t - 1]);
-            }
-
-            this.ticks = [];
-            this.board.update();
-        },
-
-        /**
-         * Removes ticks identified by parameter named tick from this line.
-         * @param {JXG.Ticks} tick Reference to tick object to remove.
-         */
-        removeTicks: function (tick) {
-            var t, j;
-
-            if (Type.exists(this.defaultTicks) && this.defaultTicks === tick) {
-                this.defaultTicks = null;
-            }
-
-            for (t = this.ticks.length; t > 0; t--) {
-                if (this.ticks[t - 1] === tick) {
-                    this.board.removeObject(this.ticks[t - 1]);
-
-                    if (this.ticks[t - 1].ticks) {
-                        for (j = 0; j < this.ticks[t - 1].ticks.length; j++) {
-                            if (Type.exists(this.ticks[t - 1].labels[j])) {
-                                this.board.removeObject(this.ticks[t - 1].labels[j]);
-                            }
-                        }
-                    }
-
-                    delete this.ticks[t - 1];
-                    break;
-                }
-            }
-        }
 
         // hideElement: function () {
         //     var i;

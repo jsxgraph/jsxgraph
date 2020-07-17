@@ -238,7 +238,7 @@ define([
         this._pos = -1;
 
         /**
-         * [c,b0,b1,a,k,r,q0,q1]
+         * [c, b0, b1, a, k, r, q0, q1]
          *
          * See
          * A.E. Middleditch, T.W. Stacey, and S.B. Tor:
@@ -246,12 +246,12 @@ define([
          * ACM Transactions on Graphics, Vol. 8, 1, 1989, pp 25-40.
          *
          * The meaning of the parameters is:
-         * Circle: points p=[p0,p1] on the circle fulfill
-         *  a&lt;p,p&gt; + &lt;b,p&gt; + c = 0
+         * Circle: points p=[p0, p1] on the circle fulfill
+         *  a&lt;p, p&gt; + &lt;b, p&gt; + c = 0
          * For convenience we also store
          *  r: radius
          *  k: discriminant = sqrt(&lt;b,b&gt;-4ac)
-         *  q=[q0,q1] center
+         *  q=[q0, q1] center
          *
          * Points have radius = 0.
          * Lines have radius = infinity.
@@ -281,7 +281,10 @@ define([
             animate: 'animate',
             on: 'on',
             off: 'off',
-            trigger: 'trigger'
+            trigger: 'trigger',
+            addTicks: 'addTicks',
+            removeTicks: 'removeTicks',
+            removeAllTicks: 'removeAllTicks'
         };
 
         /**
@@ -1893,6 +1896,68 @@ define([
          */
         hasPoint: function (x, y) {
             return false;
+        },
+
+        /**
+         * Adds ticks to this line or curve. Ticks can be added to a curve or any kind of line: line, arrow, and axis.
+         * @param {JXG.Ticks} ticks Reference to a ticks object which is describing the ticks (color, distance, how many, etc.).
+         * @returns {String} Id of the ticks object.
+         */
+        addTicks: function (ticks) {
+            if (ticks.id === '' || !Type.exists(ticks.id)) {
+                ticks.id = this.id + '_ticks_' + (this.ticks.length + 1);
+            }
+
+            this.board.renderer.drawTicks(ticks);
+            this.ticks.push(ticks);
+
+            return ticks.id;
+        },
+
+        /**
+         * Removes all ticks from a line or curve.
+         */
+        removeAllTicks: function () {
+            var t;
+
+            if (Type.exists(this.ticks)) {
+                for (t = this.ticks.length; t > 0; t--) {
+                    this.removeTicks(this.ticks[t - 1]);
+                }
+                this.ticks = [];
+                this.board.update();
+            }
+        },
+
+        /**
+         * Removes ticks identified by parameter named tick from this line or curve.
+         * @param {JXG.Ticks} tick Reference to tick object to remove.
+         */
+        removeTicks: function (tick) {
+            var t, j;
+
+            if (Type.exists(this.defaultTicks) && this.defaultTicks === tick) {
+                this.defaultTicks = null;
+            }
+
+            if (Type.exists(this.ticks)) {
+                for (t = this.ticks.length; t > 0; t--) {
+                    if (this.ticks[t - 1] === tick) {
+                        this.board.removeObject(this.ticks[t - 1]);
+
+                        if (this.ticks[t - 1].ticks) {
+                            for (j = 0; j < this.ticks[t - 1].ticks.length; j++) {
+                                if (Type.exists(this.ticks[t - 1].labels[j])) {
+                                    this.board.removeObject(this.ticks[t - 1].labels[j]);
+                                }
+                            }
+                        }
+
+                        delete this.ticks[t - 1];
+                        break;
+                    }
+                }
+            }
         },
 
         /**
