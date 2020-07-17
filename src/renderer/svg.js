@@ -430,6 +430,8 @@ define([
 
             node.setAttributeNS(null, 'stroke', Type.evaluate(ticks.visProp.strokecolor));
             node.setAttributeNS(null, 'fill', 'none');
+            // node.setAttributeNS(null, 'fill', Type.evaluate(ticks.visProp.fillcolor));
+            // node.setAttributeNS(null, 'fill-opacity', Type.evaluate(ticks.visProp.fillopacity));
             node.setAttributeNS(null, 'stroke-opacity', Type.evaluate(ticks.visProp.strokeopacity));
             node.setAttributeNS(null, 'stroke-width', Type.evaluate(ticks.visProp.strokewidth));
             this.updatePathPrim(node, tickStr, ticks.board);
