@@ -1950,7 +1950,7 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
 
                         for (s = 0; s < len - 3; s++) {
                             if (type === 'centripetal') {
-                                // The order is importeant, since p[0].coords === undefined
+                                // The order is important, since p[0].coords === undefined
                                 dt0 = p[s].Dist(p[s + 1]);
                                 dt1 = p[s + 2].Dist(p[s + 1]);
                                 dt2 = p[s + 3].Dist(p[s + 2]);

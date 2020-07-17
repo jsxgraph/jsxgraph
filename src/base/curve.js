@@ -2517,7 +2517,12 @@ define([
                     points.push(
                         (function(ii) { return {
                             X: function() { return q[ii][0]; },
-                            Y: function() { return q[ii][1]; }
+                            Y: function() { return q[ii][1]; },
+                            Dist: function(p) {
+                                    var dx = this.X() - p.X(),
+                                        dy = this.Y() - p.Y();
+                                    return Math.sqrt(dx * dx + dy * dy);
+                                }
                             };
                         })(i)
                     );
@@ -2528,7 +2533,7 @@ define([
         tau = parents[1];
         type = parents[2];
 
-        splineArr = ['x'].concat(Numerics.CardinalSpline(points, tau));
+        splineArr = ['x'].concat(Numerics.CardinalSpline(points, tau, type));
 
         el = new JXG.Curve(board, splineArr, attributes);
         le = points.length;
