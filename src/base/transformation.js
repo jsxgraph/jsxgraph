@@ -470,7 +470,7 @@ define([
      * @constructor
      * @type JXG.Transformation
      * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
-     * @param {number,function} The parameters depend on the transformation type, supplied as attribute 'type'.
+     * @param {numbers,functions} parameters The parameters depend on the transformation type, supplied as attribute 'type'.
      * Possible transformation types are
      * <ul><li> 'translate'
      * <li> 'scale'
@@ -518,6 +518,8 @@ define([
      * ( d  e  f ) * ( x )
      * ( g  h  i )   ( y )
      * </pre>
+     *
+     * @see JXG.Transformation#setMatrix
      *
      * @example
      * // The point B is determined by taking twice the vector A from the origin
