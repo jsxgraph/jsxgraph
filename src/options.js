@@ -1706,9 +1706,18 @@ define([
                 strokeColor: '#0000FF'
             },
 
+            /**
+             * Attributes for sub-element arc. In general, the arc will run through the first point and
+             * thus will not have the same radius as the angle sector.
+             *
+             * @type Arc
+             * @name Angle#arc
+             * @default '{visible:false}'
+             */
             arc: {
-                visible: false
-            }
+                visible: false,
+                fillColor: 'none'
+            },
 
             /**#@-*/
         },
@@ -3892,6 +3901,7 @@ define([
              *
              * @type Arc
              * @name Sector#arc
+             * @default '{visible:false}'
              */
             arc: {
                 visible: false,
