@@ -1602,7 +1602,7 @@ define([
 
             if (len > 0) {
                 c = Mat.matVecMult(this.transformMat, p.usrCoords);
-                p.setCoordinates(Const.COORDS_BY_USER, [c[1], c[2]], false, true);
+                p.setCoordinates(Const.COORDS_BY_USER, c, false, true);
             }
 
             return p;
