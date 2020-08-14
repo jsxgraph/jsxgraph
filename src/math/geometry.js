@@ -1052,14 +1052,14 @@ define([
                 /** @ignore */
                 func = function () {
                     var res, c,
-                        first1, first2, last1, last2;
-
-                    first1 = first2 = Type.evaluate(el1.visProp.straightfirst);
-                    last1 = last2 = Type.evaluate(el1.visProp.straightlast);
+                        first1 = Type.evaluate(el1.visProp.straightfirst),
+                        last1 = Type.evaluate(el1.visProp.straightlast),
+                        first2 = Type.evaluate(el2.visProp.straightfirst),
+                        last2 = Type.evaluate(el2.visProp.straightlast);
 
                     /**
                      * If one of the lines is a segment or ray and
-                     * the the intersection point shpould disappear if outside
+                     * the the intersection point should disappear if outside
                      * of the segment or ray we call
                      * meetSegmentSegment
                      */
