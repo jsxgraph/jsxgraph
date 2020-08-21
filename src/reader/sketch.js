@@ -6,6 +6,7 @@
  Bianca Valentin,
  Heiko Vogel,
  Alfred Wassermann,
+ Andreas Walter,
  Peter Wilfahrt
 
  This file is part of JSXGraph.
@@ -47,7 +48,7 @@
 
 (function () {
 
-    "use strict";
+    'use strict';
 
     // this is a small workaround to adapt the SketchReader to our new file API
     // we don't have to change anything in sketchometry.
@@ -140,10 +141,10 @@
                 ctx_set_str = '',
                 ctx_reset_str = '',
 
-            // these two could be outsourced into the iife surrounding the SketchReader definition
+                // these two could be outsourced into the iife surrounding the SketchReader definition
 
-            // print number -- helper to prepare numbers
-            // for printing, e.g. trim them with toFixed()
+                // print number -- helper to prepare numbers
+                // for printing, e.g. trim them with toFixed()
                 pn = function (v) {
                     if (options.toFixed > 0) {
                         v = parseFloat(v);
@@ -168,8 +169,6 @@
 
                     return o;
                 };
-
-
 
             options = JXG.SketchReader.generator;
             objects = board.objects;
@@ -270,10 +269,10 @@
                         le = step.dest_sub_ids.length / 2;
                         set_str += assign + 'polygon(';
                         set_str += step.dest_sub_ids.slice(0, le).join();
-                        set_str += ') <<borders: <<ids: [\'' + step.dest_sub_ids.slice(le, 2*le).join("\', \'") + '\']';
+                        set_str += ') <<borders: <<ids: [\'' + step.dest_sub_ids.slice(le, 2 * le).join('\', \'') + '\']';
                         x = [];
                         for (i = 0; i < le; i++) {
-                            x.push("\'\'");
+                            x.push('\'\'');
                         }
 
                         set_str += ', names: [' + x.join() + ']';
@@ -406,10 +405,10 @@
                         le = step.dest_sub_ids.length / 2;
                         set_str += assign + 'polygon(';
                         set_str += step.dest_sub_ids.slice(0, le).join();
-                        set_str += ') <<borders: <<ids: [\'' + step.dest_sub_ids.slice(le, 2*le).join("\', \'") + '\']';
+                        set_str += ') <<borders: <<ids: [\'' + step.dest_sub_ids.slice(le, 2 * le).join('\', \'') + '\']';
                         x = [];
                         for (i = 0; i < le; i++) {
-                            x.push("\'\'");
+                            x.push('\'\'');
                         }
                         set_str += ', names: [' + x.join() + ']';
                         set_str += '>>, ' + attrid + ' fillOpacity: ';
@@ -518,7 +517,6 @@
                     }
                     reset_str += 'delete ' + step.dest_id + '; ' + reset_str;
 
-
                     break;
 
                 case JXG.GENTYPE_TANGENT:
@@ -572,10 +570,10 @@
                     break;
 
                 case JXG.GENTYPE_BOARDIMG:
-                    set_str = "image('" + step.args.s + "', [ " + step.args.anchor + " ], [ " + step.args.scale + " ]) ";
-                    set_str += "<<id: '" + step.dest_id + "'>>; ";
+                    set_str = 'image(\'' + step.args.s + '\', [ ' + step.args.anchor + ' ], [ ' + step.args.scale + ' ]) ';
+                    set_str += '<<id: \'' + step.dest_id + '\'>>; ';
 
-                    reset_str = "delete " + step.dest_id + "; ";
+                    reset_str = 'delete ' + step.dest_id + '; ';
                     break;
 
                 case JXG.GENTYPE_BISECTOR:
@@ -663,8 +661,8 @@
 
                     } else {
                         set_str = assign + 'point(' + pn(step.args.usrCoords[1]) + ', ' + pn(step.args.usrCoords[2]);
-                        set_str += ') <<' + attrid + 'fillColor: \'' +  JXG.Options.glider.fillColor + '\'';
-                        set_str += ', strokeColor: \'' +  JXG.Options.glider.strokeColor + '\'';
+                        set_str += ') <<' + attrid + 'fillColor: \'' + JXG.Options.glider.fillColor + '\'';
+                        set_str += ', strokeColor: \'' + JXG.Options.glider.strokeColor + '\'';
                         set_str += ', snapToGrid: false, snapToPoints: false';
                         set_str += '>>; ' + step.dest_id;
                         set_str += '.glide(' + step.src_ids[0] + '); ';
@@ -716,8 +714,8 @@
                         uc1 = o.coords.usrCoords[1];
                         uc2 = o.coords.usrCoords[2];
 
-                        reset_str +=  assign + 'point(' + uc1 + ', ' + uc2 + ') ';
-                        reset_str += '<<' + attrid + 'fillColor: \'' +  JXG.Options.glider.fillColor + '\'>>; ';
+                        reset_str += assign + 'point(' + uc1 + ', ' + uc2 + ') ';
+                        reset_str += '<<' + attrid + 'fillColor: \'' + JXG.Options.glider.fillColor + '\'>>; ';
                         reset_str += step.dest_id + '.glide(' + gl + '); ';
 
                     } else {
@@ -985,7 +983,7 @@
                         if (step.args.create_point[i]) {
                             set_str += 'point(' + pn(step.args.coords[i].usrCoords[1]) + ', ';
                             set_str += pn(step.args.coords[i].usrCoords[2]) + ') <<id: \'' + step.dest_sub_ids[i];
-                            set_str +=  '\', snaptogrid: ' + JXG.Options.elements.snapToGrid;
+                            set_str += '\', snaptogrid: ' + JXG.Options.elements.snapToGrid;
                             set_str += ', snaptopoints: ' + JXG.Options.elements.snapToPoints + '>>; ';
                         }
                     }
@@ -1043,6 +1041,7 @@
                     }
 
                     reset_str = 'delete ' + step.dest_id + '; ' + reset_str;
+
                     set_str += assign + 'polygon(';
 
                     for (i = 0; i < step.src_ids.length; i++) {
@@ -1094,7 +1093,24 @@
                     break;
 
                 case JXG.GENTYPE_POLYGON:
-                    set_str = assign + 'polygon(';
+                    for (i = 0; i < step.args.create_point.length; i++) {
+                        if (step.args.create_point[i]) {
+                            set_str += 'point(' + pn(step.args.coords[i].usrCoords[1]) + ', ';
+                            set_str += pn(step.args.coords[i].usrCoords[2]) + ') <<id: \'' + step.dest_sub_ids[i];
+                            set_str += '\', snaptogrid: ' + JXG.Options.elements.snapToGrid;
+                            set_str += ', snaptopoints: ' + JXG.Options.elements.snapToPoints + '>>; ';
+                        }
+                    }
+
+                    for (i = 0; i < step.dest_sub_ids.length; i++) {
+                        if (step.dest_sub_ids[i] !== 0) {
+                            reset_str = 'delete ' + step.dest_sub_ids[i] + '; ' + reset_str;
+                        }
+                    }
+
+                    reset_str = 'delete ' + step.dest_id + '; ' + reset_str;
+
+                    set_str += assign + 'polygon(';
 
                     for (i = 0; i < step.src_ids.length; i++) {
                         set_str += step.src_ids[i];
@@ -1126,6 +1142,8 @@
                     set_str += ', hasInnerPoints: ' + JXG.Options.polygon.hasInnerPoints;
                     set_str += ', name: \'\'>>; ';
                     reset_str = 'delete ' + step.dest_id + '; ';
+
+                    console.log(set_str);
                     break;
 
                 case JXG.GENTYPE_POLYGONCOPY:
@@ -1136,10 +1154,10 @@
 
                     for (i = 0; i < le; ++i) {
                         set_str += assign + 'point(' + pn(step.args.points[i][1]) + ', ' +
-                                                    pn(step.args.points[i][2]);
+                            pn(step.args.points[i][2]);
                         set_str += ')' + (options.useSymbols ? '' : ' <<id: \'' + step.dest_sub_ids[i] + '\''
-                                    + ', snaptogrid: ' + JXG.Options.elements.snapToGrid
-                                    + ', snaptopoints: ' + JXG.Options.elements.snapToPoints + '>>') + '; ';
+                            + ', snaptogrid: ' + JXG.Options.elements.snapToGrid
+                            + ', snaptopoints: ' + JXG.Options.elements.snapToPoints + '>>') + '; ';
 
                         reset_str += 'delete ' + step.dest_sub_ids[i] + '; ';
                     }
@@ -1177,7 +1195,6 @@
                     set_str += ', name: \'\'>>; ';
                     reset_str += 'delete ' + step.dest_id + '; ';
                     break;
-
 
                 case JXG.GENTYPE_REGULARPOLYGON:
                     set_str = assign + 'regularpolygon(' + step.src_ids.join(', ') + ', ';
@@ -1271,7 +1288,7 @@
                     set_str += 'toppoint:  <<id: \'' + step.dest_sub_ids[3] + '\', priv: false >>';
                     if (step.dest_sub_ids.length === 8) {  // The test is needed for backwards compatibility
                         set_str += ', tangent: <<id: \'' + step.dest_sub_ids[7] +
-                                    '\', priv: true, point1: <<priv: true >>, point2: <<priv: true >> >>';
+                            '\', priv: true, point1: <<priv: true >>, point2: <<priv: true >> >>';
                     }
                     set_str += '>>;';
                     reset_str = 'remove(' + step.dest_id + '); ';
@@ -1283,9 +1300,9 @@
                     set_str = assign + step.args.plot_type + '(' + step.args.func;
 
                     if (isNaN(step.args.a) || step.args.a === null || step.args.a === undefined)
-                        step.args.a = "-infinity";
-                    if (isNaN(step.args.b) || step.args.b ===  null || step.args.b === undefined)
-                        step.args.b = "infinity";
+                        step.args.a = '-infinity';
+                    if (isNaN(step.args.b) || step.args.b === null || step.args.b === undefined)
+                        step.args.b = 'infinity';
 
                     if (step.args.a != step.args.b)
                         set_str += ', ' + step.args.a + ', ' + step.args.b;
@@ -1301,49 +1318,49 @@
                     break;
 
                 case JXG.GENTYPE_PATH:
-                        le = step.args.points.length;
+                    le = step.args.points.length;
 
-                        if (step.args.doSpline) {
-                            set_str = assign +  'cardinalspline([';
+                    if (step.args.doSpline) {
+                        set_str = assign + 'cardinalspline([';
+                    } else {
+                        set_str = assign + 'curve(';
+                    }
+                    for (i = 0; i < le; i++) {
+                        if (JXG.isString(step.args.points[i])) {
+                            set_str += '\'' + step.args.points[i] + '\'';
                         } else {
-                            set_str = assign +  'curve(';
+                            x = step.args.points[i][0].toPrecision(4);
+                            y = step.args.points[i][1].toPrecision(4);
+                            set_str += '[' + x + ',' + y + ']';
                         }
-                        for (i = 0; i < le; i++) {
-                            if (JXG.isString(step.args.points[i])) {
-                                set_str += '\'' + step.args.points[i] + '\'';
-                            } else {
-                                x = step.args.points[i][0].toPrecision(4);
-                                y = step.args.points[i][1].toPrecision(4);
-                                set_str += '[' + x + ',' + y + ']';
-                            }
-                            if (i < le - 1) {
-                                set_str += ',';
-                            }
+                        if (i < le - 1) {
+                            set_str += ',';
                         }
+                    }
 
-                        if (step.args.doSpline ) {
-                            set_str += '], ' + step.args.tau + ', ' + step.args.type;
-                        }
-                        set_str += ') <<';
+                    if (step.args.doSpline) {
+                        set_str += '], ' + step.args.tau + ', ' + step.args.type;
+                    }
+                    set_str += ') <<';
 
-                        set_str += attrid + 'name: \'\', withLabel: false, ';
-                        set_str += 'fixed: false, ';
-                        if (step.args.doSpline) {
-                            set_str += 'createPoints: false, ';
-                        }
-                        set_str += 'isArrayOfCoordinates: true, ';
-                        set_str += 'strokeWidth: ' + step.args.strokeWidth + ', ';
-                        set_str += 'strokeColor: \'' + step.args.strokeColor+ '\' >>; ';
-                        reset_str = 'delete ' + step.dest_id + '; ';
+                    set_str += attrid + 'name: \'\', withLabel: false, ';
+                    set_str += 'fixed: false, ';
+                    if (step.args.doSpline) {
+                        set_str += 'createPoints: false, ';
+                    }
+                    set_str += 'isArrayOfCoordinates: true, ';
+                    set_str += 'strokeWidth: ' + step.args.strokeWidth + ', ';
+                    set_str += 'strokeColor: \'' + step.args.strokeColor + '\' >>; ';
+                    reset_str = 'delete ' + step.dest_id + '; ';
 
-                        break;
+                    break;
 
                 case JXG.GENTYPE_DERIVATIVE:
-                        set_str = assign +  'derivative(' + step.src_ids + ')';
-                        set_str += ' <<';
-                        set_str += 'dash: 2';
-                        set_str += ' >>;';
-                        break;
+                    set_str = assign + 'derivative(' + step.src_ids + ')';
+                    set_str += ' <<';
+                    set_str += 'dash: 2';
+                    set_str += ' >>;';
+                    break;
 
                 case JXG.GENTYPE_SLIDER:
                     set_str = assign + 'slider([' + pn(step.args.x1) + ', ' + pn(step.args.y1) + '], [' + pn(step.args.x2);
@@ -1556,7 +1573,7 @@
                     set_str += 'parallelpoint(\'' + step.src_ids[0] + '\',\'' + step.src_ids[1] + '\',\'' + step.dest_sub_ids[0] + '\') <<id: \'' + step.dest_sub_ids[1];
                     set_str += '\', strokeColor: \'#888888\', visible: true, priv: false, name: \'\', ';
                     set_str += 'layer: ' + JXG.Options.layer.line + ', opacity: 0.2, withLabel: false>>; ';
-                    set_str += 'arrow(\'' + step.dest_sub_ids[0] + '\',\'' + step.dest_sub_ids[1]  + '\') <<id: \'' + step.dest_sub_ids[2];
+                    set_str += 'arrow(\'' + step.dest_sub_ids[0] + '\',\'' + step.dest_sub_ids[1] + '\') <<id: \'' + step.dest_sub_ids[2];
                     set_str += '\', strokeColor: \'#888888\', visible: true, name: \'\', withLabel: false>>; ';
 
                     for (j = 0; j < step.src_ids.length; j++) {
@@ -1599,7 +1616,7 @@
                         }
 
                     } else if (step.args.obj_type === JXG.OBJECT_TYPE_POLYGON) {
-                        set_str = reset_str = "";
+                        set_str = reset_str = '';
 
                         for (i = 0; i < step.src_ids.length; i++) {
                             set_str += step.src_ids[i] + '.move([' + pn(step.args.coords[i].usrCoords[1]) + ', ';
@@ -1621,7 +1638,7 @@
                     break;
 
                 default:
-                    JXG.debug("No such GENTYPE!" + step.type);
+                    JXG.debug('No such GENTYPE!' + step.type);
                     return [];
             }
 
