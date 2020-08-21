@@ -1142,8 +1142,6 @@
                     set_str += ', hasInnerPoints: ' + JXG.Options.polygon.hasInnerPoints;
                     set_str += ', name: \'\'>>; ';
                     reset_str = 'delete ' + step.dest_id + '; ';
-
-                    console.log(set_str);
                     break;
 
                 case JXG.GENTYPE_POLYGONCOPY:
