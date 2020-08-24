@@ -995,6 +995,7 @@
                     }
 
                     reset_str = 'delete ' + step.dest_id + '; ' + reset_str;
+
                     set_str += assign + 'polygon(';
 
                     for (i = 0; i < step.src_ids.length; i++) {
@@ -1003,18 +1004,18 @@
                             set_str += ', ';
                         }
                     }
+                    /*
+                     for (i = 0; i < 3; i++) {
+                     if (step.dest_sub_ids[i] !== 0) {
+                     if (step.src_ids.length > 0 || i > 0) {
+                     set_str += ', ';
+                     }
+                     set_str += step.dest_sub_ids[i];
+                     }
+                     }
+                     */
 
-                    for (i = 0; i < 3; i++) {
-                        if (step.dest_sub_ids[i] !== 0) {
-                            if (step.src_ids.length > 0 || i > 0) {
-                                set_str += ', ';
-                            }
-                            set_str += step.dest_sub_ids[i];
-                        }
-                    }
-
-                    set_str += ') <<borders: <<ids: [\'' + step.dest_sub_ids[3] + '\', \'' + step.dest_sub_ids[4];
-                    set_str += '\', \'' + step.dest_sub_ids[5] + '\']';
+                    set_str += ') <<borders: <<ids: [\'' + step.dest_sub_ids[3] + '\', \'' + step.dest_sub_ids[4] + '\', \'' + step.dest_sub_ids[5] + '\']';
                     set_str += ', names: [\'\', \'\', \'\']';
                     set_str += '>>, ' + attrid + ' fillOpacity: ';
                     set_str += JXG.Options.opacityLevel + ', name: \'\' ';
@@ -1062,6 +1063,9 @@
                     set_str += ', hasInnerPoints: ' + JXG.Options.polygon.hasInnerPoints;
                     set_str += ', snaptogrid: ' + JXG.Options.elements.snapToGrid;
                     set_str += ', snaptopoints: ' + JXG.Options.elements.snapToPoints + '>>; ';
+
+                    console.log(set_str);
+
                     break;
 
                 case JXG.GENTYPE_TEXT:
