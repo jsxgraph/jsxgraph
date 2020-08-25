@@ -746,8 +746,10 @@
 
                     if (step.args.create_by_additional_point || /* backwards compatibility */ step.args.create_point) {
 
-                        set_str = 'point(' + pn(step.args.usrCoords[1]) + ', ' + pn(step.args.usrCoords[2]) + ') ';
-                        set_str += '<<id: \'' + step.dest_sub_ids[0] + '\', ' + withName + ' visible: true, priv: false>>; ';
+                        if (!JXG.exists(step.args.center_existing) || !step.args.center_existing) {
+                            set_str = 'point(' + pn(step.args.usrCoords[1]) + ', ' + pn(step.args.usrCoords[2]) + ') ';
+                            set_str += '<<id: \'' + step.dest_sub_ids[0] + '\', ' + withName + ' visible: true, priv: false>>; ';
+                        }
 
                         set_str += assign + 'circle(' + step.dest_sub_ids[0] + ', ' + step.src_ids[0] + ') <<' + attrid;
                         set_str += 'name: \'\', fillOpacity: ' + JXG.Options.opacityLevel
@@ -758,11 +760,14 @@
 
                     } else if (step.args.create_by_radius) {
 
-                        if (JXG.exists(step.args.x) && JXG.exists(step.args.y))
-                            set_str = 'point(' + pn(step.args.x) + ', ' + pn(step.args.y) + ') ';
-                        else
-                            set_str = 'point(' + pn(step.args.usrCoords[1]) + ', ' + pn(step.args.usrCoords[2]) + ') ';
-                        set_str += '<<id: \'' + step.dest_sub_ids[0] + '\', ' + withName + ' visible: true, priv: false>>; ';
+                        set_str = '';
+                        if (!JXG.exists(step.args.center_existing) || !step.args.center_existing) {
+                            if (JXG.exists(step.args.x) && JXG.exists(step.args.y))
+                                set_str += 'point(' + pn(step.args.x) + ', ' + pn(step.args.y) + ') ';
+                            else
+                                set_str += 'point(' + pn(step.args.usrCoords[1]) + ', ' + pn(step.args.usrCoords[2]) + ') ';
+                            set_str += '<<id: \'' + step.dest_sub_ids[0] + '\', ' + withName + ' visible: true, priv: false>>; ';
+                        }
 
                         if (JXG.exists(step.args.r))
                             set_str += assign + 'circle(\'' + step.dest_sub_ids[0] + '\', ' + pn(step.args.r) + ') <<' + attrid;
@@ -803,6 +808,7 @@
 
                 case JXG.GENTYPE_CIRCLE2POINTS:
                     if (step.args.create_two_points) {
+
                         set_str = 'point(' + pn(step.args.x1) + ', ' + pn(step.args.y1) + ') <<id: \'' + step.dest_sub_ids[0];
                         set_str += '\'>>; ';
                         set_str += 'point(' + pn(step.args.x2) + ', ' + pn(step.args.y2) + ') <<id: \'';
@@ -814,7 +820,9 @@
 
                         reset_str = 'delete ' + step.dest_id + '; delete ' + step.dest_sub_ids[1] + '; delete ';
                         reset_str += step.dest_sub_ids[0] + '; ';
+
                     } else if (step.args.create_point) {
+
                         set_str = 'point(' + pn(step.args.x) + ', ' + pn(step.args.y) + ') <<id: \'' + step.dest_sub_ids[0];
                         set_str += '\'>>; ';
                         set_str += assign + 'circle(' + step.dest_sub_ids[0] + ', ' + step.src_ids[0] + ') <<' + attrid;
@@ -823,14 +831,18 @@
                             + ', snaptopoints: ' + JXG.Options.elements.snapToPoints + '>>; ';
 
                         reset_str = 'delete ' + step.dest_id + '; delete ' + step.dest_sub_ids[0] + '; ';
+
                     } else if (step.args.create_by_radius) {
+
                         set_str = assign + 'circle(' + step.src_ids[0] + ', ' + step.args.r + ') <<' + attrid;
                         set_str += 'name: \'\', fillOpacity: ' + JXG.Options.opacityLevel
                             + ', snaptogrid: ' + JXG.Options.elements.snapToGrid
                             + ', snaptopoints: ' + JXG.Options.elements.snapToPoints + '>>; ';
 
                         reset_str = 'delete ' + step.dest_id + '; ';
+
                     } else {
+
                         set_str = assign + 'circle(' + step.src_ids[0] + ', ' + step.src_ids[1] + ') <<' + attrid;
                         set_str += 'name: \'\', fillOpacity: ' + JXG.Options.opacityLevel
                             + ', snaptogrid: ' + JXG.Options.elements.snapToGrid
