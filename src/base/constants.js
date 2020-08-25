@@ -29,7 +29,6 @@
     and <http://opensource.org/licenses/MIT/>.
  */
 
-
 /*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
@@ -38,7 +37,7 @@
  */
 
 define(['jxg'], function (JXG) {
-    "use strict";
+    'use strict';
 
     var major = 1,
         minor = 1,
@@ -136,7 +135,7 @@ define(['jxg'], function (JXG) {
         GENTYPE_GLIDER: 13,
         GENTYPE_INTERSECTION: 14,
         GENTYPE_CIRCLE: 15,
-        GENTYPE_CIRCLE2POINTS: 16,
+        GENTYPE_CIRCLE2POINTS: 16, // @deprecated NOT USED ANY MORE SINCE SKETCHOMETRY 2.0 (only for old constructions needed)
         GENTYPE_LINE: 17,
         GENTYPE_TRIANGLE: 18,
         GENTYPE_QUADRILATERAL: 19,
@@ -169,7 +168,7 @@ define(['jxg'], function (JXG) {
         GENTYPE_MIGRATE: 46,
         GENTYPE_VECTORCOPY: 47,
         GENTYPE_POLYGONCOPY: 48,
-//        GENTYPE_TRANSFORM: 48, // unused
+        //        GENTYPE_TRANSFORM: 48, // unused
         // 49 ... 50 // unused ...
 
         // IMPORTANT:

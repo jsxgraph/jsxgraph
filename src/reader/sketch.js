@@ -806,6 +806,10 @@
                     }
                     break;
 
+                /**
+                 * @deprecated
+                 * NOT USED ANY MORE SINCE SKETCHOMETRY 2.0 (only for old constructions needed)
+                 */
                 case JXG.GENTYPE_CIRCLE2POINTS:
                     if (step.args.create_two_points) {
 
