@@ -739,38 +739,66 @@
                     break;
 
                 case JXG.GENTYPE_CIRCLE:
-                    reset_str = 'delete ' + step.dest_sub_ids[0] + '; ';
+                    var withName = 'name: \'\', withLabel: true,';
 
-                    if (step.args.create_point) {
-                        set_str = 'point(' + pn(step.args.usrCoords[1]) + ', ' + pn(step.args.usrCoords[2]);
-                        set_str += ') <<id: \'' + step.dest_sub_ids[0] + '\', priv: false>>; ';
+                    if (step.args.withName)
+                        withName = 'withLabel: true,';
+
+                    if (step.args.create_by_additional_point || /* backwards compatibility */ step.args.create_point) {
+
+                        set_str = 'point(' + pn(step.args.usrCoords[1]) + ', ' + pn(step.args.usrCoords[2]) + ') ';
+                        set_str += '<<id: \'' + step.dest_sub_ids[0] + '\', ' + withName + ' visible: true, priv: false>>; ';
 
                         set_str += assign + 'circle(' + step.dest_sub_ids[0] + ', ' + step.src_ids[0] + ') <<' + attrid;
                         set_str += 'name: \'\', fillOpacity: ' + JXG.Options.opacityLevel
                             + ', snaptogrid: ' + JXG.Options.elements.snapToGrid
                             + ', snaptopoints: ' + JXG.Options.elements.snapToPoints + '>>;';
 
-                        reset_str = 'delete ' + step.dest_id + '; ' + reset_str;
+                        reset_str = 'delete ' + step.dest_id + '; delete ' + step.dest_sub_ids[0] + '; ';
+
                     } else if (step.args.create_by_radius) {
-                        set_str = 'point(' + pn(step.args.x) + ', ' + pn(step.args.y) + ') <<id: \'' + step.dest_sub_ids[0];
-                        set_str += '\', name: \'\', withLabel: true, visible: true, priv: false>>; ';
-                        set_str += step.dest_sub_ids[0] + '.visible = true; ';
-                        set_str += assign + 'circle(\'' + step.dest_sub_ids[0] + '\', ' + pn(step.args.r) + ') <<' + attrid;
+
+                        if (JXG.exists(step.args.x) && JXG.exists(step.args.y))
+                            set_str = 'point(' + pn(step.args.x) + ', ' + pn(step.args.y) + ') ';
+                        else
+                            set_str = 'point(' + pn(step.args.usrCoords[1]) + ', ' + pn(step.args.usrCoords[2]) + ') ';
+                        set_str += '<<id: \'' + step.dest_sub_ids[0] + '\', ' + withName + ' visible: true, priv: false>>; ';
+
+                        if (JXG.exists(step.args.r))
+                            set_str += assign + 'circle(\'' + step.dest_sub_ids[0] + '\', ' + pn(step.args.r) + ') <<' + attrid;
+                        else
+                            set_str += assign + 'circle(\'' + step.dest_sub_ids[0] + '\', ' + pn(step.args.radius) + ') <<' + attrid;
                         set_str += 'name: \'\', fillOpacity: ' + JXG.Options.opacityLevel
                             + ', snaptogrid: ' + JXG.Options.elements.snapToGrid
                             + ', snaptopoints: ' + JXG.Options.elements.snapToPoints + '>>;';
 
                         reset_str = 'delete ' + step.dest_id + '; delete ' + step.dest_sub_ids[0] + '; ';
+
                     } else {
-                        set_str = assign + 'circle(' + step.src_ids[0] + ', ' + step.src_ids[1] + ', ' + step.src_ids[2];
-                        set_str += ') <<center: <<id: \'' + step.dest_sub_ids[0] + '\', name: \'';
-                        set_str += '\', visible: true>>, ' + attrid + 'name: \'\', fillOpacity: ' + JXG.Options.opacityLevel
-                            + ', snaptogrid: ' + JXG.Options.elements.snapToGrid
-                            + ', snaptopoints: ' + JXG.Options.elements.snapToPoints + '>>; ';
 
-                        reset_str = 'delete ' + step.dest_id + '; ' + reset_str;
+                        if (step.src_ids.length === 2) {
+                            set_str = 'midpoint(' + step.src_ids[0] + ', ' + step.src_ids[1] + ')';
+                            set_str += '<<id: \'' + step.dest_sub_ids[0] + '\', ' + withName + ' visible: true, priv: false>>; ';
+
+                            set_str += assign + 'circle(' + step.dest_sub_ids[0] + ', ' + step.src_ids[0] + ') <<' + attrid;
+                            set_str += 'name: \'\', fillOpacity: ' + JXG.Options.opacityLevel
+                                + ', snaptogrid: ' + JXG.Options.elements.snapToGrid
+                                + ', snaptopoints: ' + JXG.Options.elements.snapToPoints + '>>;';
+
+                            reset_str = 'delete ' + step.dest_id + '; delete ' + step.dest_sub_ids[0] + '; ';
+
+                        } else {
+
+                            set_str = assign + 'circle(' + step.src_ids[0] + ', ' + step.src_ids[1] + ', ' + step.src_ids[2];
+                            set_str += ') <<center: <<id: \'' + step.dest_sub_ids[0] + '\', ' + withName;
+                            set_str += ' visible: true>>, ' + attrid + 'name: \'\', fillOpacity: ' + JXG.Options.opacityLevel
+                                + ', snaptogrid: ' + JXG.Options.elements.snapToGrid
+                                + ', snaptopoints: ' + JXG.Options.elements.snapToPoints + '>>; ';
+
+                            reset_str = 'delete ' + step.dest_id + '; delete ' + step.dest_sub_ids[0] + '; ';
+                        }
+
                     }
-
                     break;
 
                 case JXG.GENTYPE_CIRCLE2POINTS:
@@ -1004,16 +1032,15 @@
                             set_str += ', ';
                         }
                     }
-                    /*
-                     for (i = 0; i < 3; i++) {
-                     if (step.dest_sub_ids[i] !== 0) {
-                     if (step.src_ids.length > 0 || i > 0) {
-                     set_str += ', ';
-                     }
-                     set_str += step.dest_sub_ids[i];
-                     }
-                     }
-                     */
+
+                    for (i = 0; i < 3; i++) {
+                        if (step.dest_sub_ids[i] !== 0) {
+                            if (step.src_ids.length > 0 || i > 0) {
+                                set_str += ', ';
+                            }
+                            set_str += step.dest_sub_ids[i];
+                        }
+                    }
 
                     set_str += ') <<borders: <<ids: [\'' + step.dest_sub_ids[3] + '\', \'' + step.dest_sub_ids[4] + '\', \'' + step.dest_sub_ids[5] + '\']';
                     set_str += ', names: [\'\', \'\', \'\']';
@@ -1063,9 +1090,6 @@
                     set_str += ', hasInnerPoints: ' + JXG.Options.polygon.hasInnerPoints;
                     set_str += ', snaptogrid: ' + JXG.Options.elements.snapToGrid;
                     set_str += ', snaptopoints: ' + JXG.Options.elements.snapToPoints + '>>; ';
-
-                    console.log(set_str);
-
                     break;
 
                 case JXG.GENTYPE_TEXT:
@@ -1097,20 +1121,22 @@
                     break;
 
                 case JXG.GENTYPE_POLYGON:
-                    for (i = 0; i < step.args.create_point.length; i++) {
-                        if (step.args.create_point[i]) {
-                            set_str += 'point(' + pn(step.args.coords[i].usrCoords[1]) + ', ';
-                            set_str += pn(step.args.coords[i].usrCoords[2]) + ') <<id: \'' + step.dest_sub_ids[i];
-                            set_str += '\', snaptogrid: ' + JXG.Options.elements.snapToGrid;
-                            set_str += ', snaptopoints: ' + JXG.Options.elements.snapToPoints + '>>; ';
+                    if (step.args.create_point)
+                        for (i = 0; i < step.args.create_point.length; i++) {
+                            if (step.args.create_point[i]) {
+                                set_str += 'point(' + pn(step.args.coords[i].usrCoords[1]) + ', ';
+                                set_str += pn(step.args.coords[i].usrCoords[2]) + ') <<id: \'' + step.dest_sub_ids[i];
+                                set_str += '\', snaptogrid: ' + JXG.Options.elements.snapToGrid;
+                                set_str += ', snaptopoints: ' + JXG.Options.elements.snapToPoints + '>>; ';
+                            }
                         }
-                    }
 
-                    for (i = 0; i < step.dest_sub_ids.length; i++) {
-                        if (step.dest_sub_ids[i] !== 0) {
-                            reset_str = 'delete ' + step.dest_sub_ids[i] + '; ' + reset_str;
+                    if (step.dest_sub_ids)
+                        for (i = 0; i < step.dest_sub_ids.length; i++) {
+                            if (step.dest_sub_ids[i] !== 0) {
+                                reset_str = 'delete ' + step.dest_sub_ids[i] + '; ' + reset_str;
+                            }
                         }
-                    }
 
                     reset_str = 'delete ' + step.dest_id + '; ' + reset_str;
 

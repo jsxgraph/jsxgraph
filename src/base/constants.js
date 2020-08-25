@@ -43,7 +43,7 @@ define(['jxg'], function (JXG) {
     var major = 1,
         minor = 1,
         patch = 0,
-        add = false, // 'dev',
+        add = 'sketcho', // 'dev',
         version = major + '.' + minor + '.' + patch + (add ? '-' + add : ''),
         constants;
 
