@@ -356,7 +356,8 @@
                         set_str += '>>; ';
 
                     } else {
-                        set_str = assign + 'reflection(' + step.src_ids[0] + ', ' + step.src_ids[1] + ') <<' + attrid;
+                        set_str = assign + 'reflection(' + step
+                            .src_ids[0] + ', ' + step.src_ids[1] + ') <<' + attrid;
                         set_str += 'fillColor: \'' + step.args.fillColor + '\'';
                         if (JXG.exists(step.args.strokeColor)) {
                             set_str += ', strokeColor: \'' + step.args.strokeColor + '\'';
@@ -1326,13 +1327,13 @@
                     set_str = assign + 'slopetriangle(' + step.src_ids.join(', ') + ') <<';
                     set_str += attrid + ' name: \'\',';
                     set_str += 'borders:   <<ids: [\'' + step.dest_sub_ids[4] + '\', \'' + step.dest_sub_ids[5] + '\', \'' + step.dest_sub_ids[6] + '\']>>,';
-                    set_str += 'basepoint: <<id: \'' + step.dest_sub_ids[0] + '\', priv: true >>, ';
-                    set_str += 'baseline:  <<id: \'' + step.dest_sub_ids[1] + '\', priv: true >>,';
-                    set_str += 'glider:    <<id: \'' + step.dest_sub_ids[2] + '\', priv: false >>, ';
-                    set_str += 'toppoint:  <<id: \'' + step.dest_sub_ids[3] + '\', priv: false >>';
+                    set_str += 'basepoint: <<id: \'' + step.dest_sub_ids[0] + '\', name: \'\', priv: true >>, ';
+                    set_str += 'baseline:  <<id: \'' + step.dest_sub_ids[1] + '\', name: \'\', priv: true >>,';
+                    set_str += 'glider:    <<id: \'' + step.dest_sub_ids[2] + '\', name: \'\', priv: false >>, ';
+                    set_str += 'toppoint:  <<id: \'' + step.dest_sub_ids[3] + '\', name: \'\', priv: false >>';
                     if (step.dest_sub_ids.length === 8) {  // The test is needed for backwards compatibility
                         set_str += ', tangent: <<id: \'' + step.dest_sub_ids[7] +
-                            '\', priv: true, point1: <<priv: true >>, point2: <<priv: true >> >>';
+                            '\', priv: true, point1: <<name: \'\', priv: true >>, point2: <<name: \'\', priv: true >> >>';
                     }
                     set_str += '>>;';
                     reset_str = 'remove(' + step.dest_id + '); ';
