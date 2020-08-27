@@ -824,9 +824,6 @@ define([
      *     (function() {
      *         var board = JXG.JSXGraph.initBoard('JXGc813f601-8dd3-4030-9892-25c6d8671512',
      *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
-     *     const board = JXG.JSXGraph.initBoard('jxgbox', {
-     *         boundingbox: [-5, 5, 5, -5], axis:true
-     *     });
      *
      *     var p1 = board.create('point', [0,2]);
      *     var p2 = board.create('point', [0,0]);
