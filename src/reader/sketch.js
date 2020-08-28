@@ -1298,7 +1298,7 @@
                     set_str += '<<';
                     set_str += 'dot: <<priv:true, id: \'' + step.dest_sub_ids[0] + '\', name: \'\'>>, ';
                     set_str += attrid + ' fillOpacity: ' + JXG.Options.opacityLevel;
-                    if (JXG.exists(step.args.radius))
+                    if (JXG.exists(step.args) && JXG.exists(step.args.radius))
                         set_str += ', radius: ' + step.args.radius;
                     set_str += '>>; ';
                     reset_str = 'delete ' + step.dest_id + '; ';
@@ -1311,7 +1311,7 @@
                     set_str += 'dot: <<priv:true, id: \'' + step.dest_sub_ids[0] + '\', ';
                     set_str += 'name: \'\'>>, ';
                     set_str += attrid + ' fillOpacity: ' + JXG.Options.opacityLevel;
-                    if (JXG.exists(step.args.radius))
+                    if (JXG.exists(step.args) && JXG.exists(step.args.radius))
                         set_str += ', radius: ' + step.args.radius;
                     set_str += '>>; ';
                     reset_str = 'delete ' + step.dest_id + '; ';
@@ -1324,7 +1324,7 @@
                     set_str += 'dot: <<priv:true, id: \'' + step.dest_sub_ids[0] + '\', ';
                     set_str += 'name: \'\'>>, ';
                     set_str += attrid + ' fillOpacity: ' + JXG.Options.opacityLevel;
-                    if (JXG.exists(step.args.radius))
+                    if (JXG.exists(step.args) && JXG.exists(step.args.radius))
                         set_str += ', radius: ' + step.args.radius;
                     set_str += '>>; ';
                     reset_str = 'delete ' + step.dest_id + '; ';
