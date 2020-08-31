@@ -2188,7 +2188,10 @@ define([
          */
         _warn: function (msg) {
             if (typeof console === 'object') {
-                console.log('Warning(' + this.line + '): ' + msg);
+                if (Type.exists(console.warn))
+                    console.warn('Warning(' + this.line + '): ' + msg);
+                else
+                    console.log('Warning(' + this.line + '): ' + msg);
             } else if (Env.isBrowser && document && document.getElementById(this.warnLog) !== null) {
                 document.getElementById(this.warnLog).innerHTML += 'Warning(' + this.line + '): ' + msg + '<br />';
             }

@@ -231,11 +231,11 @@
                     set_str += step.dest_sub_ids[3] + '.visible = false; ';
                     set_str += step.dest_sub_ids[4] + '.visible = false; ';
 
-                    set_str += 'delete jxgBoard1_infobox; ';
+                    set_str += 'remove(jxgBoard1_infobox); ';
 
-                    reset_str = 'delete ' + step.dest_sub_ids[4] + '; delete ' + step.dest_sub_ids[3];
-                    reset_str += '; delete ' + step.dest_sub_ids[2] + '; ';
-                    reset_str += 'delete ' + step.dest_sub_ids[1] + '; delete ' + step.dest_sub_ids[0] + '; ';
+                    reset_str = 'remove(' + step.dest_sub_ids[4] + '); remove(' + step.dest_sub_ids[3];
+                    reset_str += '); remove(' + step.dest_sub_ids[2] + '); ';
+                    reset_str += 'remove(' + step.dest_sub_ids[1] + '); remove(' + step.dest_sub_ids[0] + '); ';
 
                     break;
 
@@ -246,7 +246,7 @@
                         set_str += ', strokeColor: \'' + step.args.strokeColor + '\'';
                     }
                     set_str += '>>; ';
-                    reset_str = 'delete ' + step.dest_id + '; ';
+                    reset_str = 'remove(' + step.dest_id + '); ';
                     break;
 
                 case JXG.GENTYPE_REFLECTION:
@@ -380,10 +380,10 @@
                     reset_str = '';
                     for (i = 0; i < step.dest_sub_ids.length; i++) {
                         if (step.dest_sub_ids[i] !== 0) {
-                            reset_str += 'delete ' + step.dest_sub_ids[i] + '; ';
+                            reset_str += 'remove(' + step.dest_sub_ids[i] + '); ';
                         }
                     }
-                    reset_str += 'delete ' + step.dest_id + '; ';
+                    reset_str += 'remove(' + step.dest_id + '); ';
 
                     break;
 
@@ -513,10 +513,10 @@
                     reset_str = '';
                     for (i = 0; i < step.dest_sub_ids.length; i++) {
                         if (step.dest_sub_ids[i] !== 0) {
-                            reset_str += 'delete ' + step.dest_sub_ids[i] + '; ' + reset_str;
+                            reset_str += 'remove(' + step.dest_sub_ids[i] + '); ' + reset_str;
                         }
                     }
-                    reset_str += 'delete ' + step.dest_id + '; ' + reset_str;
+                    reset_str += 'remove(' + step.dest_id + '); ' + reset_str;
 
                     break;
 
@@ -530,7 +530,7 @@
                         }
                         set_str += '>>; ' + sub_id + '.glide(';
                         set_str += step.src_ids[0] + '); ';
-                        reset_str = 'delete ' + sub_id + '; ';
+                        reset_str = 'remove(' + sub_id + '); ';
                     } else {
                         sub_id = step.src_ids[0];
                     }
@@ -538,8 +538,8 @@
                     set_str += assign + 'tangent(' + sub_id + ') <<' + attrid + 'point1: <<name: \'';
                     set_str += '\', id: \'' + step.dest_sub_ids[0] + '\', priv: true>>, point2: <<name: \'';
                     set_str += '\', id: \'' + step.dest_sub_ids[1] + '\', priv: true>> >>; ';
-                    reset_str = 'delete ' + step.dest_sub_ids[0] + '; ' + reset_str;
-                    reset_str = 'delete ' + step.dest_id + '; delete ' + step.dest_sub_ids[1] + '; ' + reset_str;
+                    reset_str = 'remove(' + step.dest_sub_ids[0] + '); ' + reset_str;
+                    reset_str = 'remove(' + step.dest_id + '); remove(' + step.dest_sub_ids[1] + '); ' + reset_str;
                     break;
 
                 case JXG.GENTYPE_PARALLEL:
@@ -547,14 +547,14 @@
                         sub_id = step.dest_sub_ids[1];
                         set_str = 'point(' + pn(step.args.usrCoords[1]) + ', ' + pn(step.args.usrCoords[2]) + ') <<id: \'';
                         set_str += sub_id + '\', name: \'\', visible: false, priv: true>>; ';
-                        reset_str = 'delete ' + sub_id + '; ';
+                        reset_str = 'remove(' + sub_id + '); ';
                     } else {
                         sub_id = step.src_ids[1];
                     }
 
                     set_str += assign + 'parallel(' + step.src_ids[0] + ', ' + sub_id + ') <<' + attrid + 'name: \'\', point: <<id: \'';
                     set_str += step.dest_sub_ids[0] + '\', name: \'\'>> >>; ';
-                    reset_str = 'delete ' + step.dest_id + '; delete ' + step.dest_sub_ids[0] + '; ' + reset_str;
+                    reset_str = 'remove(' + step.dest_id + '); remove(' + step.dest_sub_ids[0] + '); ' + reset_str;
                     break;
 
                 case JXG.GENTYPE_BISECTORLINES:
@@ -565,16 +565,16 @@
                     set_str += '\', point1: <<id: \'' + step.dest_sub_ids[4] + '\', name: \'';
                     set_str += '\'>>, point2: <<id: \'' + step.dest_sub_ids[3] + '\', name: \'';
                     set_str += '\'>>>>>>; ';
-                    reset_str = 'delete ' + step.dest_sub_ids[5] + '; delete ' + step.dest_sub_ids[4] + '; delete ';
-                    reset_str += step.dest_sub_ids[3] + '; delete ' + step.dest_sub_ids[2] + '; delete ';
-                    reset_str += step.dest_sub_ids[1] + '; delete ' + step.dest_sub_ids[0] + '; ';
+                    reset_str = 'remove(' + step.dest_sub_ids[5] + '); remove(' + step.dest_sub_ids[4] + '); remove(';
+                    reset_str += step.dest_sub_ids[3] + '); remove(' + step.dest_sub_ids[2] + '); remove(';
+                    reset_str += step.dest_sub_ids[1] + '); remove(' + step.dest_sub_ids[0] + '); ';
                     break;
 
                 case JXG.GENTYPE_BOARDIMG:
                     set_str = 'image(\'' + step.args.s + '\', [ ' + step.args.anchor + ' ], [ ' + step.args.scale + ' ]) ';
                     set_str += '<<id: \'' + step.dest_id + '\'>>; ';
 
-                    reset_str = 'delete ' + step.dest_id + '; ';
+                    reset_str = 'remove(' + step.dest_id + '); ';
                     break;
 
                 case JXG.GENTYPE_BISECTOR:
@@ -609,8 +609,8 @@
 
                         }
 
-                        reset_str += 'delete ' + pid1 + '; ';
-                        reset_str += 'delete ' + pid2 + '; ';
+                        reset_str += 'remove(' + pid1 + '); ';
+                        reset_str += 'remove(' + pid2 + '); ';
 
                         if (step.args.create_intersection) {
                             // intersection point
@@ -618,7 +618,7 @@
                             set_str += 'intersection(' + step.src_ids[0] + ', ' + step.src_ids[1] + ', 0) ';
                             set_str += '<<id:\'' + pid3 + '\', fillColor: \'' + step.args.fillColor + '\', ';
                             set_str += 'name:\'\', priv:true, visible:false >>; ';
-                            reset_str += 'delete ' + pid3 + '; ';
+                            reset_str += 'remove(' + pid3 + '); ';
                         } else {
                             pid3 = step.src_ids[2];
                         }
@@ -626,12 +626,12 @@
                         set_str += assign + 'bisector(' + pid1 + ', ' + pid3 + ', ' + pid2 + ') ';
                         set_str += '<<' + attrid + 'name: \'\', point: <<id: \'' + step.dest_sub_ids[0] + '\', priv: true, name: \'';
                         set_str += step.dest_sub_ids[0] + '\'>> >>;';
-                        reset_str += 'delete ' + step.dest_id + '; delete ' + step.dest_sub_ids[0] + ';';
+                        reset_str += 'remove(' + step.dest_id + '); remove(' + step.dest_sub_ids[0] + ');';
                     } else {
                         set_str = assign + 'bisector(' + step.src_ids[1] + ', ' + step.src_ids[2] + ', ' + step.src_ids[0];
                         set_str += ') <<' + attrid + 'name: \'\', point: <<id: \'' + step.dest_sub_ids[0] + '\', priv: true, name: \'';
                         set_str += step.dest_sub_ids[0] + '\'>>>>;';
-                        reset_str = 'delete ' + step.dest_id + '; delete ' + step.dest_sub_ids[0] + ';';
+                        reset_str = 'remove(' + step.dest_id + '); remove(' + step.dest_sub_ids[0] + ');';
                     }
                     break;
 
@@ -640,7 +640,7 @@
                         sub_id = step.dest_sub_ids[1];
                         set_str = 'point(' + pn(step.args.usrCoords[1]) + ', ' + pn(step.args.usrCoords[2]);
                         set_str += ') <<id: \'' + sub_id + '\', name: \'\', visible: false, priv: true>>; ';
-                        reset_str = 'delete ' + sub_id + '; ';
+                        reset_str = 'remove(' + sub_id + '); ';
                     } else {
                         sub_id = step.src_ids[1];
                     }
@@ -648,14 +648,14 @@
                     set_str += assign + 'normal(' + sub_id + ', ' + step.src_ids[0] + ') <<' + attrid;
                     set_str += 'name: \'\', point: <<id: \'' + step.dest_sub_ids[0] + '\', name: \'';
                     set_str += '\'>> >>; ';
-                    reset_str = 'delete ' + step.dest_id + '; delete ' + step.dest_sub_ids[0] + '; ' + reset_str;
+                    reset_str = 'remove(' + step.dest_id + '); remove(' + step.dest_sub_ids[0] + '); ' + reset_str;
                     break;
 
                 case JXG.GENTYPE_PERPSEGMENT:
                     set_str += assign + 'perpendicularsegment(' + step.src_ids[1] + ', ' + step.src_ids[0] + ') <<' + attrid;
                     set_str += 'name: \'\', point: <<id: \'' + step.dest_sub_ids[0] + '\', name: \'';
                     set_str += '\'>> >>; ';
-                    reset_str = 'delete ' + step.dest_id + '; delete ' + step.dest_sub_ids[0] + '; ' + reset_str;
+                    reset_str = 'remove(' + step.dest_id + '); remove(' + step.dest_sub_ids[0] + '); ' + reset_str;
                     break;
 
                 case JXG.GENTYPE_POINT:
@@ -664,7 +664,7 @@
                         + ', snaptogrid: ' + JXG.Options.elements.snapToGrid
                         + ', snaptopoints: ' + JXG.Options.elements.snapToPoints + '>>') + '; ';
 
-                    reset_str = 'delete ' + step.dest_id + '; ';
+                    reset_str = 'remove(' + step.dest_id + '); ';
                     break;
 
                 case JXG.GENTYPE_GLIDER:
@@ -686,7 +686,7 @@
                     set_str += step.dest_id + '.onPolygon = ' + !!step.args.onPolygon + ';';
 
                     if (!(step.args && step.args.undoIsEmpty)) {
-                        reset_str = 'delete ' + step.dest_id + '; ';
+                        reset_str = 'remove(' + step.dest_id + '); ';
                     }
 
                     break;
@@ -698,7 +698,7 @@
                     set_str += '>>; ';
 
                     if (!(step.args && step.args.undoIsEmpty)) {
-                        reset_str = 'delete ' + step.dest_id + '; ';
+                        reset_str = 'remove(' + step.dest_id + '); ';
                     }
 
                     break;
@@ -736,7 +736,7 @@
 
                     } else {
                         // Do nothing
-                        //reset_str = 'delete ' + step.dest_id + '; ';
+                        //reset_str = 'remove(' + step.dest_id + '); ';
                     }
 
                     break;
@@ -772,7 +772,7 @@
                             + ', snaptogrid: ' + JXG.Options.elements.snapToGrid
                             + ', snaptopoints: ' + JXG.Options.elements.snapToPoints + '>>;';
 
-                        reset_str = 'delete ' + step.dest_id + '; delete ' + step.dest_sub_ids[0] + '; ';
+                        reset_str = 'remove(' + step.dest_id + '); remove(' + step.dest_sub_ids[0] + '); ';
 
                     } else if (step.args.create_by_radius) {
 
@@ -793,7 +793,7 @@
                             + ', snaptogrid: ' + JXG.Options.elements.snapToGrid
                             + ', snaptopoints: ' + JXG.Options.elements.snapToPoints + '>>;';
 
-                        reset_str = 'delete ' + step.dest_id + '; delete ' + step.dest_sub_ids[0] + '; ';
+                        reset_str = 'remove(' + step.dest_id + '); remove(' + step.dest_sub_ids[0] + '); ';
 
                     } else {
 
@@ -806,7 +806,7 @@
                                 + ', snaptogrid: ' + JXG.Options.elements.snapToGrid
                                 + ', snaptopoints: ' + JXG.Options.elements.snapToPoints + '>>;';
 
-                            reset_str = 'delete ' + step.dest_id + '; delete ' + step.dest_sub_ids[0] + '; ';
+                            reset_str = 'remove(' + step.dest_id + '); remove(' + step.dest_sub_ids[0] + '); ';
 
                         } else {
 
@@ -816,7 +816,7 @@
                                 + ', snaptogrid: ' + JXG.Options.elements.snapToGrid
                                 + ', snaptopoints: ' + JXG.Options.elements.snapToPoints + '>>; ';
 
-                            reset_str = 'delete ' + step.dest_id + '; delete ' + step.dest_sub_ids[0] + '; ';
+                            reset_str = 'remove(' + step.dest_id + '); remove(' + step.dest_sub_ids[0] + '); ';
                         }
 
                     }
@@ -838,8 +838,8 @@
                             + ', snaptogrid: ' + JXG.Options.elements.snapToGrid
                             + ', snaptopoints: ' + JXG.Options.elements.snapToPoints + '>>; ';
 
-                        reset_str = 'delete ' + step.dest_id + '; delete ' + step.dest_sub_ids[1] + '; delete ';
-                        reset_str += step.dest_sub_ids[0] + '; ';
+                        reset_str = 'remove(' + step.dest_id + '); remove(' + step.dest_sub_ids[1] + '); remove(';
+                        reset_str += step.dest_sub_ids[0] + '); ';
 
                     } else if (step.args.create_point) {
 
@@ -850,7 +850,7 @@
                             + ', snaptogrid: ' + JXG.Options.elements.snapToGrid
                             + ', snaptopoints: ' + JXG.Options.elements.snapToPoints + '>>; ';
 
-                        reset_str = 'delete ' + step.dest_id + '; delete ' + step.dest_sub_ids[0] + '; ';
+                        reset_str = 'remove(' + step.dest_id + '); remove(' + step.dest_sub_ids[0] + '); ';
 
                     } else if (step.args.create_by_radius) {
 
@@ -859,7 +859,7 @@
                             + ', snaptogrid: ' + JXG.Options.elements.snapToGrid
                             + ', snaptopoints: ' + JXG.Options.elements.snapToPoints + '>>; ';
 
-                        reset_str = 'delete ' + step.dest_id + '; ';
+                        reset_str = 'remove(' + step.dest_id + '); ';
 
                     } else {
 
@@ -868,7 +868,7 @@
                             + ', snaptogrid: ' + JXG.Options.elements.snapToGrid
                             + ', snaptopoints: ' + JXG.Options.elements.snapToPoints + '>>; ';
 
-                        reset_str = 'delete ' + step.dest_id + '; ';
+                        reset_str = 'remove(' + step.dest_id + '); ';
                     }
 
                     break;
@@ -888,7 +888,7 @@
 
                         set_str = 'point(' + str1.join(', ') + ') <<id: \'' + pid1 + '\', name: \'\', visible: false, ';
                         set_str += 'snaptogrid: false, snaptopoints: false, priv: true>>; ';
-                        reset_str = 'delete ' + pid1 + '; ';
+                        reset_str = 'remove(' + pid1 + '); ';
                     } else {
                         pid1 = step.src_ids[j];
                         j += 1;
@@ -903,7 +903,7 @@
 
                         set_str += 'point(' + str1.join(', ') + ') <<id: \'' + pid2 + '\', name: \'\', visible: false, ';
                         set_str += 'snaptogrid: false, snaptopoints: false, priv: true>>; ';
-                        reset_str = 'delete ' + pid2 + '; ' + reset_str;
+                        reset_str = 'remove(' + pid2 + '); ' + reset_str;
                     } else {
                         pid2 = step.src_ids[j];
                         j += 1;
@@ -971,7 +971,7 @@
                             + ', snaptopoints: ' + JXG.Options.elements.snapToPoints + '>>; ';
                     }
 
-                    reset_str = 'delete ' + step.dest_id + '; ' + reset_str;
+                    reset_str = 'remove(' + step.dest_id + '); ' + reset_str;
 
                     break;
 
@@ -990,7 +990,7 @@
 
                         set_str = 'point(' + str1.join(', ') + ') <<id: \'' + pid1 + '\', name: \'\', visible: true, ';
                         set_str += 'snaptogrid: ' + JXG.Options.elements.snapToGrid + ', snaptopoints: false, priv: false>>; ';
-                        reset_str = 'delete ' + pid1 + '; ';
+                        reset_str = 'remove(' + pid1 + '); ';
                     } else {
                         pid1 = step.src_ids[j];
                         j += 1;
@@ -1006,7 +1006,7 @@
                         set_str += 'point(' + str1.join(', ') + ') <<id: \'' + pid2 + '\', name: \'\', visible: true, ';
                         set_str += 'layer: ' + JXG.Options.layer.line + ', opacity: 0.2, ';
                         set_str += 'snaptogrid: ' + JXG.Options.elements.snapToGrid + ', snaptopoints: false, priv: false>>; ';
-                        reset_str = 'delete ' + pid2 + '; ' + reset_str;
+                        reset_str = 'remove(' + pid2 + '); ' + reset_str;
                     } else {
                         pid2 = step.src_ids[j];
                         j += 1;
@@ -1034,7 +1034,7 @@
                             + ', snaptopoints: ' + JXG.Options.elements.snapToPoints + '>>; ';
                     }
 
-                    reset_str = 'delete ' + step.dest_id + '; ' + reset_str;
+                    reset_str = 'remove(' + step.dest_id + '); ' + reset_str;
 
                     break;
 
@@ -1050,11 +1050,11 @@
 
                     for (i = 0; i < step.dest_sub_ids.length; i++) {
                         if (step.dest_sub_ids[i] !== 0) {
-                            reset_str = 'delete ' + step.dest_sub_ids[i] + '; ' + reset_str;
+                            reset_str = 'remove(' + step.dest_sub_ids[i] + '); ' + reset_str;
                         }
                     }
 
-                    reset_str = 'delete ' + step.dest_id + '; ' + reset_str;
+                    reset_str = 'remove(' + step.dest_id + '); ' + reset_str;
 
                     set_str += assign + 'polygon(';
 
@@ -1096,11 +1096,11 @@
 
                     for (i = 0; i < step.dest_sub_ids.length; i++) {
                         if (step.dest_sub_ids[i] !== 0) {
-                            reset_str = 'delete ' + step.dest_sub_ids[i] + '; ' + reset_str;
+                            reset_str = 'remove(' + step.dest_sub_ids[i] + '); ' + reset_str;
                         }
                     }
 
-                    reset_str = 'delete ' + step.dest_id + '; ' + reset_str;
+                    reset_str = 'remove(' + step.dest_id + '); ' + reset_str;
 
                     set_str += assign + 'polygon(';
 
@@ -1132,7 +1132,7 @@
                     }
                     set_str += '>>; ' + step.dest_id + '.setText(' + step.args.str;
                     set_str += '); ';
-                    reset_str = 'delete ' + step.dest_id + '; ';
+                    reset_str = 'remove(' + step.dest_id + '); ';
                     break;
 
                 case JXG.GENTYPE_RULER:
@@ -1149,7 +1149,7 @@
                         + JXG.Options.elements.snapToGrid + '>>, '
                         + 'point2: <<id: \'' + step.dest_sub_ids[1] + '\'' + ', snaptogrid: '
                         + JXG.Options.elements.snapToGrid + '>> >>; ';
-                    reset_str = 'delete ' + step.dest_id + '; ';
+                    reset_str = 'remove(' + step.dest_id + '); ';
                     break;
 
                 case JXG.GENTYPE_POLYGON:
@@ -1166,11 +1166,11 @@
                     if (step.dest_sub_ids)
                         for (i = 0; i < step.dest_sub_ids.length; i++) {
                             if (step.dest_sub_ids[i] !== 0) {
-                                reset_str = 'delete ' + step.dest_sub_ids[i] + '; ' + reset_str;
+                                reset_str = 'remove(' + step.dest_sub_ids[i] + '); ' + reset_str;
                             }
                         }
 
-                    reset_str = 'delete ' + step.dest_id + '; ' + reset_str;
+                    reset_str = 'remove(' + step.dest_id + '); ' + reset_str;
 
                     set_str += assign + 'polygon(';
 
@@ -1203,7 +1203,7 @@
                     set_str += ', hasInnerPoints_Org: ' + JXG.Options.polygon.hasInnerPoints;
                     set_str += ', hasInnerPoints: ' + JXG.Options.polygon.hasInnerPoints;
                     set_str += ', name: \'\'>>; ';
-                    reset_str = 'delete ' + step.dest_id + '; ';
+                    reset_str = 'remove(' + step.dest_id + '); ';
                     break;
 
                 case JXG.GENTYPE_POLYGONCOPY:
@@ -1219,7 +1219,7 @@
                             + ', snaptogrid: ' + JXG.Options.elements.snapToGrid
                             + ', snaptopoints: ' + JXG.Options.elements.snapToPoints + '>>') + '; ';
 
-                        reset_str += 'delete ' + step.dest_sub_ids[i] + '; ';
+                        reset_str += 'remove(' + step.dest_sub_ids[i] + '); ';
                     }
 
                     set_str += assign + 'polygon(';
@@ -1253,7 +1253,7 @@
                     set_str += ', hasInnerPoints_Org: ' + JXG.Options.polygon.hasInnerPoints;
                     set_str += ', hasInnerPoints: ' + JXG.Options.polygon.hasInnerPoints;
                     set_str += ', name: \'\'>>; ';
-                    reset_str += 'delete ' + step.dest_id + '; ';
+                    reset_str += 'remove(' + step.dest_id + '); ';
                     break;
 
                 case JXG.GENTYPE_REGULARPOLYGON:
@@ -1265,7 +1265,7 @@
                         if (i !== step.args.corners - 1) {
                             set_str += ', ';
                         }
-                        reset_str = 'delete ' + step.dest_sub_ids[i] + '; ' + reset_str;
+                        reset_str = 'remove(' + step.dest_sub_ids[i] + '); ' + reset_str;
                     }
                     set_str += ']';
 
@@ -1284,7 +1284,7 @@
                         if (i !== step.args.corners - 3) {
                             set_str += ', ';
                         }
-                        reset_str = 'delete ' + step.dest_sub_ids[i + parseInt(step.args.corners, 10)] + '; ' + reset_str;
+                        reset_str = 'remove(' + step.dest_sub_ids[i + parseInt(step.args.corners, 10)] + '); ' + reset_str;
                     }
                     set_str += ' ]';
                     set_str += ', name: \'\'';
@@ -1296,7 +1296,7 @@
                     set_str += ', hasInnerPoints_Org: ' + JXG.Options.polygon.hasInnerPoints;
                     set_str += ', hasInnerPoints: ' + JXG.Options.polygon.hasInnerPoints;
                     set_str += ', name: \'\'>>; ';
-                    reset_str = 'delete ' + step.dest_id + '; ' + reset_str;
+                    reset_str = 'remove(' + step.dest_id + '); ' + reset_str;
 
                     break;
 
@@ -1305,7 +1305,7 @@
                     set_str += '<<';
                     set_str += attrid + ' name: \'\', fillOpacity: ' + JXG.Options.opacityLevel;
                     set_str += ', arc: <<id: \'' + step.dest_sub_ids[0] + '\', priv: true>> >>; ';
-                    reset_str = 'delete ' + step.dest_id + '; ';
+                    reset_str = 'remove(' + step.dest_id + '); ';
                     break;
 
                 case JXG.GENTYPE_ANGLE:
@@ -1316,8 +1316,8 @@
                     if (JXG.exists(step.args) && JXG.exists(step.args.radius))
                         set_str += ', radius: ' + step.args.radius;
                     set_str += '>>; ';
-                    reset_str = 'delete ' + step.dest_id + '; ';
-                    reset_str += 'delete ' + step.dest_sub_ids[0] + '; ';
+                    reset_str = 'remove(' + step.dest_id + '); ';
+                    reset_str += 'remove(' + step.dest_sub_ids[0] + '); ';
                     break;
 
                 case JXG.GENTYPE_NONREFLEXANGLE:
@@ -1329,8 +1329,8 @@
                     if (JXG.exists(step.args) && JXG.exists(step.args.radius))
                         set_str += ', radius: ' + step.args.radius;
                     set_str += '>>; ';
-                    reset_str = 'delete ' + step.dest_id + '; ';
-                    reset_str += 'delete ' + step.dest_sub_ids[0] + '; ';
+                    reset_str = 'remove(' + step.dest_id + '); ';
+                    reset_str += 'remove(' + step.dest_sub_ids[0] + '); ';
                     break;
 
                 case JXG.GENTYPE_REFLEXANGLE:
@@ -1342,8 +1342,8 @@
                     if (JXG.exists(step.args) && JXG.exists(step.args.radius))
                         set_str += ', radius: ' + step.args.radius;
                     set_str += '>>; ';
-                    reset_str = 'delete ' + step.dest_id + '; ';
-                    reset_str += 'delete ' + step.dest_sub_ids[0] + '; ';
+                    reset_str = 'remove(' + step.dest_id + '); ';
+                    reset_str += 'remove(' + step.dest_sub_ids[0] + '); ';
                     break;
 
                 case JXG.GENTYPE_SLOPETRIANGLE:
@@ -1382,7 +1382,7 @@
                         set_str += 'curveType: \'polar\', ';
 
                     set_str += attrid + 'name: \'\', withLabel: true, strokeColor: \'' + step.args.color + '\', doAdvancedPlot: true, doAdvancedPlotOld: false >>; ';
-                    reset_str = 'delete ' + step.dest_id + '; ';
+                    reset_str = 'remove(' + step.dest_id + '); ';
 
                     break;
 
@@ -1420,7 +1420,7 @@
                     set_str += 'isArrayOfCoordinates: true, ';
                     set_str += 'strokeWidth: ' + step.args.strokeWidth + ', ';
                     set_str += 'strokeColor: \'' + step.args.strokeColor + '\' >>; ';
-                    reset_str = 'delete ' + step.dest_id + '; ';
+                    reset_str = 'remove(' + step.dest_id + '); ';
 
                     break;
 
@@ -1444,10 +1444,10 @@
                     set_str += step.dest_sub_ids[4] + '\', name: \'\', priv: true>>';
                     set_str += ', name: \'' + step.args.name + '\'>>; ';
 
-                    reset_str = 'delete ' + step.dest_id + '; delete ' + step.dest_sub_ids[4] + '; delete ';
-                    reset_str += step.dest_sub_ids[3] + '; delete ' + step.dest_sub_ids[2] + '; delete ';
-                    reset_str += step.dest_sub_ids[1] + '; delete ';
-                    reset_str += step.dest_sub_ids[0] + '; ';
+                    reset_str = 'remove(' + step.dest_id + '); remove(' + step.dest_sub_ids[4] + '); remove(';
+                    reset_str += step.dest_sub_ids[3] + '); remove(' + step.dest_sub_ids[2] + '); remove(';
+                    reset_str += step.dest_sub_ids[1] + '); remove(';
+                    reset_str += step.dest_sub_ids[0] + '); ';
                     break;
 
                 /*
@@ -1457,8 +1457,8 @@
                  set_str += 'point(' + step.src_ids[0] + ', ' + step.dest_sub_ids[0] + ') <<id: \'' + step.dest_id;
                  set_str += '\', visible: true>>; ';
 
-                 reset_str = 'delete ' + step.dest_id + '; ';
-                 reset_str += 'delete ' + step.dest_sub_ids[0] + '; ';
+                 reset_str = 'remove(' + step.dest_id + '); ';
+                 reset_str += 'remove(' + step.dest_sub_ids[0] + '); ';
 
                  break;
 
@@ -1467,7 +1467,7 @@
                  sub_id = step.dest_sub_ids[2];
                  set_str = 'line(' + step.src_ids[0] + ', ' + step.src_ids[1] + ') <<id: \'' + sub_id;
                  set_str += '\', visible: true>>; ';
-                 reset_str = 'delete ' + sub_id + '; ';
+                 reset_str = 'remove(' + sub_id + '); ';
                  } else {
                  sub_id = step.src_ids[2];
                  }
@@ -1477,8 +1477,8 @@
                  set_str += assign + 'normal(' + step.dest_sub_ids[0] + ', ' + sub_id + ') <<' + attrid;
                  set_str += ' point: <<id: \'' + step.dest_sub_ids[1] + '\', name: \'';
                  set_str += '\'>> >>; ';
-                 reset_str = 'delete ' + step.dest_sub_ids[0] + '; ' + reset_str;
-                 reset_str = 'delete ' + step.dest_id + '; delete ' + step.dest_sub_ids[1] + '; ' + reset_str;
+                 reset_str = 'remove(' + step.dest_sub_ids[0] + '); ' + reset_str;
+                 reset_str = 'remove(' + step.dest_id + '); remove(' + step.dest_sub_ids[1] + '); ' + reset_str;
                  break;
                  */
 
@@ -1628,7 +1628,7 @@
                         set_str += '$board.migratePoint(' + step.dest_sub_ids[0] + ', ' + step.args.migrate + '); ';
                     }
 
-                    reset_str = 'delete ' + step.dest_sub_ids[1] + '; delete ' + step.dest_sub_ids[0] + '; ';
+                    reset_str = 'remove(' + step.dest_sub_ids[1] + '); remove(' + step.dest_sub_ids[0] + '); ';
 
                     break;
 
@@ -1655,7 +1655,7 @@
                         set_str += '$board.migratePoint(' + step.dest_sub_ids[0] + ', ' + step.args.migrate + '); ';
                     }
 
-                    reset_str = 'delete ' + step.dest_sub_ids[1] + '; delete ' + step.dest_sub_ids[0] + '; delete ' + step.dest_sub_ids[2] + ';';
+                    reset_str = 'remove(' + step.dest_sub_ids[1] + '); remove(' + step.dest_sub_ids[0] + '); remove(' + step.dest_sub_ids[2] + ');';
 
                     break;
 
