@@ -5,6 +5,7 @@
         Carsten Miller,
         Bianca Valentin,
         Alfred Wassermann,
+        Andreas Walter,
         Peter Wilfahrt
 
     This file is part of JSXGraph.
@@ -29,7 +30,6 @@
     and <http://opensource.org/licenses/MIT/>.
  */
 
-
 /*global JXG: true, document: true*/
 /*jslint nomen: true, plusplus: true, regexp: true*/
 
@@ -46,7 +46,7 @@ var JXG = {},
 
 (function () {
 
-    "use strict";
+    'use strict';
 
     // check and table are initialized at the end of the iife
     var i, s, n, arr, table,
@@ -133,34 +133,119 @@ var JXG = {},
     };
 
     JXG.require = function (libraryName) {
-       if (JXG.isMetroApp()) { // avoid inline code manipulation in Windows apps -- isMetroApp can't be used it is not yet available at this point
-            var scriptElement = document.createElement("script");
-            var typeAttribute = document.createAttribute("type");
-            typeAttribute.nodeValue = "text/javascript";
-            var srcAttribute = document.createAttribute("src");
+        if (JXG.isMetroApp()) { // avoid inline code manipulation in Windows apps -- isMetroApp can't be used it is not yet available at this point
+            var scriptElement = document.createElement('script');
+            var typeAttribute = document.createAttribute('type');
+            typeAttribute.nodeValue = 'text/javascript';
+            var srcAttribute = document.createAttribute('src');
             srcAttribute.nodeValue = libraryName;
             scriptElement.setAttributeNode(typeAttribute);
             scriptElement.setAttributeNode(srcAttribute);
-            var headElement = document.getElementsByTagName("head")[0];
+            var headElement = document.getElementsByTagName('head')[0];
             headElement.appendChild(scriptElement);
         } else {
             document.write('<script type="text/javascript" src="' + libraryName + '"><\/script>');
         }
     };
 
-    JXG.baseFiles = 'jxg,base/constants,utils/type,utils/xml,utils/env,utils/event,utils/expect,math/math,math/numerics,math/metapost,math/statistics,math/symbolic,math/geometry,math/clip,math/poly,math/complex,renderer/abstract,renderer/no,reader/file,parser/geonext,base/board,options,jsxgraph,base/element,base/coordselement,base/coords,base/point,base/line,base/group,base/circle,element/conic,base/polygon,base/curve,element/arc,element/sector,base/composition,element/composition,base/text,base/image,element/slider,element/measure,base/chart,base/transformation,base/turtle,utils/color,base/ticks,utils/zip,utils/base64,utils/uuid,utils/encoding,server/server,element/locus,parser/datasource,parser/ca,parser/jessiecode,utils/dump,renderer/svg,renderer/vml,renderer/canvas,renderer/no,element/comb,element/slopetriangle,math/qdt,element/checkbox,element/input,element/button';
     JXG.requirePath = '';
 
-    for (i = 0; i < document.getElementsByTagName("script").length; i++) {
-        s = document.getElementsByTagName("script")[i];
-        if (s.src && s.src.match(/loadjsxgraph\.js(\?.*)?$/)) {
-            JXG.requirePath = s.src.replace(/loadjsxgraph\.js(\?.*)?$/, '');
-            arr = JXG.baseFiles.split(',');
-            for (n = 0; n < arr.length; n++) {
-                JXG.require(JXG.requirePath + arr[n] + '.js');
+    JXG.loadJSfiles = function (fileArray, insertAtFile = 'loadjsxgraph.js', preventCaching = false) {
+        var i, scripts, requirePath = '', reg, postfix = '';
+
+        if (preventCaching) {
+            postfix = '?v=' + (new Date()).getTime();
+        }
+
+        scripts = document.getElementsByTagName('script');
+        reg = new RegExp(insertAtFile + '(\\?.*)?$');
+
+        for (i = 0; i < scripts.length; i++) {
+            s = scripts[i];
+            if (s.src && s.src.match(reg)) {
+                requirePath = s.src.replace(reg, '');
+                if (insertAtFile === 'loadjsxgraph.js') {
+                    // we are in JSXGraph
+                    JXG.requirePath = requirePath;
+                }
+                break;
             }
         }
-    }
+        for (i = 0; i < fileArray.length; i++) {
+            (function (include) {
+                JXG.require(requirePath + include + '.js' + postfix);
+            }(fileArray[i]));
+        }
+    };
+
+    JXG.loadJSfiles([
+        'jxg',
+        'base/constants',
+        'utils/type',
+        'utils/xml',
+        'utils/env',
+        'utils/event',
+        'utils/expect',
+        'math/math',
+        'math/numerics',
+        'math/metapost',
+        'math/statistics',
+        'math/symbolic',
+        'math/geometry',
+        'math/clip',
+        'math/poly',
+        'math/complex',
+        'renderer/abstract',
+        'renderer/no',
+        'reader/file',
+        'parser/geonext',
+        'base/board',
+        'options',
+        'jsxgraph',
+        'base/element',
+        'base/coordselement',
+        'base/coords',
+        'base/point',
+        'base/line',
+        'base/group',
+        'base/circle',
+        'element/conic',
+        'base/polygon',
+        'base/curve',
+        'element/arc',
+        'element/sector',
+        'base/composition',
+        'element/composition',
+        'base/text',
+        'base/image',
+        'element/slider',
+        'element/measure',
+        'base/chart',
+        'base/transformation',
+        'base/turtle',
+        'utils/color',
+        'base/ticks',
+        'utils/zip',
+        'utils/base64',
+        'utils/uuid',
+        'utils/encoding',
+        'server/server',
+        'element/locus',
+        'parser/datasource',
+        'parser/ca',
+        'parser/jessiecode',
+        'utils/dump',
+        'renderer/svg',
+        'renderer/vml',
+        'renderer/canvas',
+        'renderer/no',
+        'element/comb',
+        'element/slopetriangle',
+        'math/qdt',
+        'element/checkbox',
+        'element/input',
+        'element/button'
+    ]);
 
     JXG.baseFiles = null;
     JXG.serverBase = JXG.requirePath + 'server/';

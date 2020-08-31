@@ -5,6 +5,7 @@
         Carsten Miller,
         Bianca Valentin,
         Alfred Wassermann,
+        Andreas Walter,
         Peter Wilfahrt
 
     This file is part of JSXGraph and JSXCompressor.
@@ -34,7 +35,6 @@
 
  */
 
-
 /*global JXG: true, define: true, jQuery: true, window: true, document: true, navigator: true, require: true, module: true, console: true */
 /*jslint nomen:true, plusplus:true, forin:true*/
 
@@ -49,7 +49,7 @@
 
 define([], function () {
 
-    "use strict";
+    'use strict';
 
     /**
      * JXG is the top object of JSXGraph and defines the namespace
@@ -91,6 +91,45 @@ define([], function () {
                 }
 
                 object[e2] = extension[e];
+            }
+        }
+    };
+
+    /**
+     * Set a constant <tt>name</tt> in <tt>object</tt> to <tt>value</tt>. The value can't be changed after declaration.
+     * @param {Object} object
+     * @param {String} name
+     * @param value
+     */
+    jxg.defineConstant = function (object, name, value) {
+        Object.defineProperty(object, name, {
+            value: value,
+            writable: false,
+            enumerable: true,
+            configurable: false,
+        });
+    };
+
+    /**
+     * Copy all properties of the <tt>constants</tt> object in <tt>object</tt> as a constant.
+     * @param {Object} object
+     * @param {Object} constants
+     * @param {Boolean} [onlyOwn=false] Only consider properties that belong to extension itself, not any inherited properties.
+     * @param {Boolean} [toUpper=false] If true the keys are convert to lower case. This is needed for visProp, see JXG#copyAttributes
+     */
+    jxg.extendConstants = function (object, constants, onlyOwn = false, toUpper = false) {
+        var e, e2;
+
+        // the purpose of this for...in loop is indeed to use hasOwnProperty only if the caller explicitly wishes so.
+        for (e in constants) {
+            if (!onlyOwn || (onlyOwn && extension.hasOwnProperty(e))) {
+                if (toUpper) {
+                    e2 = e.toUpperCase();
+                } else {
+                    e2 = e;
+                }
+
+                this.defineConstant(object, e2, constants[e]);
             }
         }
     };
@@ -189,12 +228,12 @@ define([], function () {
          * @param  {String} s String of an HTML tag that hosts a JSXGraph board
          * @returns {Object} Reference to the board or null.
          */
-        getBoardByContainerId: function(s) {
+        getBoardByContainerId: function (s) {
             var b;
             for (b in JXG.boards) {
                 if (JXG.boards.hasOwnProperty(b) &&
                     JXG.boards[b].container === s) {
-                        return JXG.boards[b];
+                    return JXG.boards[b];
                 }
             }
 
@@ -245,7 +284,7 @@ define([], function () {
                 if (typeof window === 'object' && window.console && console.log) {
                     console.log(p);
                 } else if (typeof document === 'object' && document.getElementById('debug')) {
-                    document.getElementById('debug').innerHTML += p + "<br/>";
+                    document.getElementById('debug').innerHTML += p + '<br/>';
                 }
             }
         },

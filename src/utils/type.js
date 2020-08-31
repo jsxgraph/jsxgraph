@@ -5,6 +5,7 @@
         Carsten Miller,
         Bianca Valentin,
         Alfred Wassermann,
+        Andreas Walter,
         Peter Wilfahrt
 
     This file is part of JSXGraph.
@@ -29,7 +30,6 @@
     and <http://opensource.org/licenses/MIT/>.
  */
 
-
 /*global JXG: true, define: true, html_sanitize: true*/
 /*jslint nomen: true, plusplus: true*/
 
@@ -48,7 +48,7 @@ define([
     'jxg', 'base/constants'
 ], function (JXG, Const) {
 
-    "use strict";
+    'use strict';
 
     JXG.extend(JXG, /** @lends JXG */ {
         /**
@@ -87,7 +87,7 @@ define([
          * @returns {Boolean} True, if v is of type string.
          */
         isString: function (v) {
-            return typeof v === "string";
+            return typeof v === 'string';
         },
 
         /**
@@ -96,7 +96,7 @@ define([
          * @returns {Boolean} True, if v is of type number.
          */
         isNumber: function (v) {
-            return typeof v === "number" || Object.prototype.toString.call(v) === '[Object Number]';
+            return typeof v === 'number' || Object.prototype.toString.call(v) === '[Object Number]';
         },
 
         /**
@@ -105,7 +105,7 @@ define([
          * @returns {Boolean} True, if v is a function.
          */
         isFunction: function (v) {
-            return typeof v === "function";
+            return typeof v === 'function';
         },
 
         /**
@@ -120,7 +120,7 @@ define([
             if (Array.isArray) {
                 r = Array.isArray(v);
             } else {
-                r = (v !== null && typeof v === "object" && typeof v.splice === 'function' && typeof v.join === 'function');
+                r = (v !== null && typeof v === 'object' && typeof v.splice === 'function' && typeof v.join === 'function');
             }
 
             return r;
@@ -176,7 +176,7 @@ define([
          * @param v A variable of any type.
          * @returns {Boolean} True, if v is of type JXG.Transformation.
          */
-        isTransformationOrArray: function(v) {
+        isTransformationOrArray: function (v) {
             if (v !== null) {
                 if (this.isArray(v) && v.length > 0) {
                     return this.isTransformationOrArray(v[0]);
@@ -191,13 +191,28 @@ define([
          * Checks if a given variable is neither undefined nor null. You should not use this together with global
          * variables!
          * @param v A variable of any type.
+         * @param {Boolean} [checkEmptyString=false] If set to true, it is also checked whether v is not equal to ''.
          * @returns {Boolean} True, if v is neither undefined nor null.
          */
         exists: (function (undef) {
-            return function (v) {
-                return !(v === undef || v === null);
+            return function (v, checkEmptyString = false) {
+                var result = !(v === undef || v === null);
+                if (checkEmptyString) {
+                    return result && v !== '';
+                } else {
+                    return result;
+                }
             };
         }()),
+
+        /**
+         * Checks if v is an empty object or empty.
+         * @param v {Object|Array}
+         * @returns {boolean} True, if v is an empty object or array.
+         */
+        isEmpty: function(v) {
+            return Object.keys(v).length === 0;
+        },
 
         /**
          * Handle default parameters.
@@ -560,8 +575,7 @@ define([
                     if (!this.cmpArrays(a1[i], a2[i])) {
                         return false;
                     }
-                }
-                else if (a1[i] !== a2[i]) {
+                } else if (a1[i] !== a2[i]) {
                     return false;
                 }
             }
@@ -601,37 +615,37 @@ define([
         },
 
         /**
-    	 * Decimal adjustment of a number.
-    	 * From https://developer.mozilla.org/de/docs/Web/JavaScript/Reference/Global_Objects/Math/round
-    	 *
-    	 * @param	{String}	type	The type of adjustment.
-    	 * @param	{Number}	value	The number.
-    	 * @param	{Number}	exp		The exponent (the 10 logarithm of the adjustment base).
-    	 * @returns	{Number}			The adjusted value.
-    	 *
-    	 * @private
-    	 */
-    	_decimalAdjust: function(type, value, exp) {
-    		// If the exp is undefined or zero...
-    		if (exp === undefined || +exp === 0) {
-    			return Math[type](value);
-    		}
+         * Decimal adjustment of a number.
+         * From https://developer.mozilla.org/de/docs/Web/JavaScript/Reference/Global_Objects/Math/round
+         *
+         * @param    {String}    type    The type of adjustment.
+         * @param    {Number}    value    The number.
+         * @param    {Number}    exp        The exponent (the 10 logarithm of the adjustment base).
+         * @returns    {Number}            The adjusted value.
+         *
+         * @private
+         */
+        _decimalAdjust: function (type, value, exp) {
+            // If the exp is undefined or zero...
+            if (exp === undefined || +exp === 0) {
+                return Math[type](value);
+            }
 
-    		value = +value;
-    		exp = +exp;
-    		// If the value is not a number or the exp is not an integer...
-    		if (isNaN(value) || !(typeof exp === 'number' && exp % 1 === 0)) {
-    			return NaN;
-    		}
+            value = +value;
+            exp = +exp;
+            // If the value is not a number or the exp is not an integer...
+            if (isNaN(value) || !(typeof exp === 'number' && exp % 1 === 0)) {
+                return NaN;
+            }
 
             // Shift
-    		value = value.toString().split('e');
-    		value = Math[type](+(value[0] + 'e' + (value[1] ? (+value[1] - exp) : -exp)));
+            value = value.toString().split('e');
+            value = Math[type](+(value[0] + 'e' + (value[1] ? (+value[1] - exp) : -exp)));
 
-    		// Shift back
-    		value = value.toString().split('e');
-    		return +(value[0] + 'e' + (value[1] ? (+value[1] + exp) : exp));
-    	},
+            // Shift back
+            value = value.toString().split('e');
+            return +(value[0] + 'e' + (value[1] ? (+value[1] + exp) : exp));
+        },
 
         /**
          * Round a number to given number of decimal digits.
@@ -643,9 +657,9 @@ define([
          *
          * @private
          */
-    	_round10: function(value, exp) {
-    		return this._decimalAdjust('round', value, exp);
-		},
+        _round10: function (value, exp) {
+            return this._decimalAdjust('round', value, exp);
+        },
 
         /**
          * "Floor" a number to given number of decimal digits.
@@ -657,9 +671,9 @@ define([
          *
          * @private
          */
-        _floor10: function(value, exp) {
-    		return this._decimalAdjust('floor', value, exp);
-    	},
+        _floor10: function (value, exp) {
+            return this._decimalAdjust('floor', value, exp);
+        },
 
         /**
          * "Ceil" a number to given number of decimal digits.
@@ -671,9 +685,9 @@ define([
          *
          * @private
          */
-        _ceil10: function(value, exp) {
-    		return this._decimalAdjust('ceil', value, exp);
-    	},
+        _ceil10: function (value, exp) {
+            return this._decimalAdjust('ceil', value, exp);
+        },
 
         /**
          * Replacement of the default toFixed() method.
@@ -685,7 +699,7 @@ define([
          * @param  {Number} precision Decimal digits
          * @return {String}           Rounded number is returned as string
          */
-        toFixed: function(num, precision) {
+        toFixed: function (num, precision) {
             return this._round10(num, -precision).toFixed(precision);
         },
 
@@ -914,7 +928,6 @@ define([
                     'integral': 1
                 };
 
-
             len = arguments.length;
             if (len < 3 || primitives[s]) {
                 // default options from Options.elements
@@ -970,7 +983,7 @@ define([
                 }
             }
             if (isAvail && this.exists(o.label)) {
-                a.label =  JXG.deepCopy(o.label, a.label);
+                a.label = JXG.deepCopy(o.label, a.label);
             }
             a.label = JXG.deepCopy(options.label, a.label);
 
@@ -1021,42 +1034,42 @@ define([
             }
 
             switch (typeof obj) {
-            case 'object':
-                if (obj) {
-                    list = [];
+                case 'object':
+                    if (obj) {
+                        list = [];
 
-                    if (this.isArray(obj)) {
-                        for (i = 0; i < obj.length; i++) {
-                            list.push(JXG.toJSON(obj[i], noquote));
-                        }
-
-                        return '[' + list.join(',') + ']';
-                    }
-
-                    for (prop in obj) {
-                        if (obj.hasOwnProperty(prop)) {
-                            try {
-                                val = JXG.toJSON(obj[prop], noquote);
-                            } catch (e2) {
-                                val = '';
+                        if (this.isArray(obj)) {
+                            for (i = 0; i < obj.length; i++) {
+                                list.push(JXG.toJSON(obj[i], noquote));
                             }
 
-                            if (noquote) {
-                                list.push(prop + ':' + val);
-                            } else {
-                                list.push('"' + prop + '":' + val);
+                            return '[' + list.join(',') + ']';
+                        }
+
+                        for (prop in obj) {
+                            if (obj.hasOwnProperty(prop)) {
+                                try {
+                                    val = JXG.toJSON(obj[prop], noquote);
+                                } catch (e2) {
+                                    val = '';
+                                }
+
+                                if (noquote) {
+                                    list.push(prop + ':' + val);
+                                } else {
+                                    list.push('"' + prop + '":' + val);
+                                }
                             }
                         }
-                    }
 
-                    return '{' + list.join(',') + '} ';
-                }
-                return 'null';
-            case 'string':
-                return '\'' + obj.replace(/(["'])/g, '\\$1') + '\'';
-            case 'number':
-            case 'boolean':
-                return obj.toString();
+                        return '{' + list.join(',') + '} ';
+                    }
+                    return 'null';
+                case 'string':
+                    return '\'' + obj.replace(/(["'])/g, '\\$1') + '\'';
+                case 'number':
+                case 'boolean':
+                    return obj.toString();
             }
 
             return '0';
@@ -1155,7 +1168,7 @@ define([
             }
 
             if (str[0] === '.' || str[0] === ',') {
-                str = "0" + str;
+                str = '0' + str;
             }
 
             return str;

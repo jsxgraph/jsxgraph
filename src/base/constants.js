@@ -5,6 +5,7 @@
         Carsten Miller,
         Bianca Valentin,
         Alfred Wassermann,
+        Andreas Walter,
         Peter Wilfahrt
 
     This file is part of JSXGraph.
@@ -211,7 +212,7 @@ define(['jxg'], function (JXG) {
         GENTYPE_CTX_SNAPTOGRID: 82
     };
 
-    JXG.extend(JXG, constants);
+    JXG.extendConstants(JXG, constants);
 
     return constants;
 });
