@@ -5,6 +5,7 @@
         Carsten Miller,
         Bianca Valentin,
         Alfred Wassermann,
+        Andreas Walter,
         Peter Wilfahrt
 
     This file is part of JSXGraph.
@@ -2164,21 +2165,30 @@ define([
         /**
          * Calculates the coordinates of the orthogonal projection of a given point on a given line. I.o.w. the
          * intersection point of the given line and its perpendicular through the given point.
-         * @param {JXG.Point} point Point to project.
+         * @param {JXG.Point|JXG.Coords} point Point to project.
          * @param {JXG.Line} line Line on that the point is projected.
-         * @param {JXG.Board} [board=point.board] Reference to a board.
+         * @param {JXG.Board} [board=point.board|board=line.board] Reference to a board.
          * @returns {JXG.Coords} The coordinates of the projection of the given point on the given line.
          */
         projectPointToLine: function (point, line, board) {
-            // Homogeneous version
-            var v = [0, line.stdform[1], line.stdform[2]];
+            var v = [0, line.stdform[1], line.stdform[2]],
+                coords;
 
             if (!Type.exists(board)) {
-                board = point.board;
+                if (Type.exists(point.coords)) {
+                    board = point.board;
+                } else {
+                    board = line.board;
+                }
             }
 
-            v = Mat.crossProduct(v, point.coords.usrCoords);
-            //return this.meetLineLine(v, line.stdform, 0, board);
+            if (Type.exists(point.coords)) {
+                coords = point.coords.usrCoords;
+            } else {
+                coords = point.usrCoords;
+            }
+
+            v = Mat.crossProduct(v, coords);
             return new Coords(Const.COORDS_BY_USER, Mat.crossProduct(v, line.stdform), board);
         },
 
