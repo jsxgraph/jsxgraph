@@ -579,22 +579,37 @@
 
                 case JXG.GENTYPE_BISECTOR:
                     if (step.args.create_point) {
-                        // TODO: use "if (options.useGlider) {"
+                        set_str = '';
+                        reset_str = '';
 
-                        // Projection to first line
                         pid1 = step.dest_sub_ids[1];
-                        set_str = 'point(' + pn(step.args.usrCoords[1]) + ', ' + pn(step.args.usrCoords[2]) + ') ';
-                        set_str += '<<id:\'' + pid1 + '\', ';
-                        set_str += 'name:\'\', priv:true, visible:false >>; ';
-                        set_str += pid1 + '.glide(' + step.src_ids[0] + '); ';
-                        reset_str = 'delete ' + pid1 + '; ';
-
-                        // Projection to second line
                         pid2 = step.dest_sub_ids[2];
-                        set_str += 'point(' + pn(step.args.usrCoords[1]) + ', ' + pn(step.args.usrCoords[2]) + ') ';
-                        set_str += '<<id:\'' + pid2 + '\', ';
-                        set_str += 'name:\'\', priv:true, visible:false >>; ';
-                        set_str += pid2 + '.glide(' + step.src_ids[1] + '); ';
+
+                        if (options.useGlider) {
+
+                            set_str += 'glider(' + pn(step.args.usrCoords[1]) + ', ' + pn(step.args.usrCoords[2]) + ', ' + step.src_ids[0] + ')';
+                            set_str += '<<id: \'' + pid1 + '\', name:\'\', withLabel:false, priv:true, visible:false >>; ';
+
+                            set_str += 'glider(' + pn(step.args.usrCoords[1]) + ', ' + pn(step.args.usrCoords[2]) + ', ' + step.src_ids[1] + ')';
+                            set_str += '<<id: \'' + pid2 + '\', name:\'\', withLabel:false, priv:true, visible:false >>; ';
+
+                        } else {
+
+                            // Projection to first line
+                            set_str += 'point(' + pn(step.args.usrCoords[1]) + ', ' + pn(step.args.usrCoords[2]) + ') ';
+                            set_str += '<<id:\'' + pid1 + '\', ';
+                            set_str += 'name:\'\', withLabel:false, priv:true, visible:false >>; ';
+                            set_str += pid1 + '.glide(' + step.src_ids[0] + '); ';
+
+                            // Projection to second line
+                            set_str += 'point(' + pn(step.args.usrCoords[1]) + ', ' + pn(step.args.usrCoords[2]) + ') ';
+                            set_str += '<<id:\'' + pid2 + '\', ';
+                            set_str += 'name:\'\', priv:true, visible:false >>; ';
+                            set_str += pid2 + '.glide(' + step.src_ids[1] + '); ';
+
+                        }
+
+                        reset_str += 'delete ' + pid1 + '; ';
                         reset_str += 'delete ' + pid2 + '; ';
 
                         if (step.args.create_intersection) {
