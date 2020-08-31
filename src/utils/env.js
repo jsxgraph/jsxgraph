@@ -5,6 +5,7 @@
         Carsten Miller,
         Bianca Valentin,
         Alfred Wassermann,
+        Andreas Walter,
         Peter Wilfahrt
 
     This file is part of JSXGraph.
@@ -29,7 +30,6 @@
     and <http://opensource.org/licenses/MIT/>.
  */
 
-
 /*global JXG: true, define: true, window: true, document: true, navigator: true, module: true, global: true, self: true, require: true*/
 /*jslint nomen: true, plusplus: true*/
 
@@ -46,7 +46,7 @@
 
 define(['jxg', 'utils/type'], function (JXG, Type) {
 
-    "use strict";
+    'use strict';
 
     JXG.extend(JXG, /** @lends JXG */ {
         /**
@@ -62,6 +62,20 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          * @default false
          */
         isBrowser: typeof window === 'object' && typeof document === 'object',
+
+        /**
+         * Features of ECMAScript 6+ are available.
+         * @type Boolean
+         * @default false
+         */
+        supportsES6: (function () {
+            try {
+                new Function('(a = 0) => a');
+                return true;
+            } catch (err) {
+                return false;
+            }
+        })(),
 
         /**
          * Detect browser support for VML.
@@ -91,7 +105,8 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                 try {
                     c = (typeof module === 'object' ? module.require('canvas') : require('canvas'));
                     hasCanvas = !!c;
-                } catch (err) { }
+                } catch (err) {
+                }
             }
 
             return hasCanvas || (this.isBrowser && !!document.createElement('canvas').getContext);
@@ -104,7 +119,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
         isNode: function () {
             // this is not a 100% sure but should be valid in most cases
 
-                // we are not inside a browser
+            // we are not inside a browser
             return !this.isBrowser && (
                 // there is a module object (plain node, no requirejs)
                 (typeof module === 'object' && !!module.exports) ||
@@ -127,10 +142,10 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          */
         supportsPointerEvents: function () {
             return !!(this.isBrowser && window.navigator &&
-                     (  window.PointerEvent ||             // Chrome/Edge/IE11+
-                        window.navigator.pointerEnabled || // IE11+
-                        window.navigator.msPointerEnabled  // IE10-
-                     )
+                (window.PointerEvent ||             // Chrome/Edge/IE11+
+                    window.navigator.pointerEnabled || // IE11+
+                    window.navigator.msPointerEnabled  // IE10-
+                )
             );
         },
 
@@ -248,7 +263,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
             // Borrowed from prototype.js
             element = doc.getElementById(elementId);
             if (!Type.exists(element)) {
-                throw new Error("\nJSXGraph: HTML container element '" + elementId + "' not found.");
+                throw new Error('\nJSXGraph: HTML container element \'' + elementId + '\' not found.');
             }
 
             display = element.style.display;
@@ -512,7 +527,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
             // Non-IE
             if (doc.defaultView && doc.defaultView.getComputedStyle) {
                 r = doc.defaultView.getComputedStyle(obj, null).getPropertyValue(stylename);
-            // IE
+                // IE
             } else if (obj.currentStyle && JXG.ieVersion >= 9) {
                 r = obj.currentStyle[stylename];
             } else {
@@ -622,11 +637,11 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
             // This should work on all browsers except IE 6-8
             if (doc.defaultView && doc.defaultView.getComputedStyle) {
                 st = doc.defaultView.getComputedStyle(obj, null);
-                str = st.getPropertyValue("-webkit-transform") ||
-                     st.getPropertyValue("-moz-transform") ||
-                     st.getPropertyValue("-ms-transform") ||
-                     st.getPropertyValue("-o-transform") ||
-                     st.getPropertyValue("transform");
+                str = st.getPropertyValue('-webkit-transform') ||
+                    st.getPropertyValue('-moz-transform') ||
+                    st.getPropertyValue('-ms-transform') ||
+                    st.getPropertyValue('-o-transform') ||
+                    st.getPropertyValue('transform');
             } else {
                 // Take the first transformation matrix
                 len = t.length;
@@ -725,7 +740,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          * @private
          * @see JXG#toFullscreen
          */
-        scaleJSXGraphDiv: function(wrap_id, inner_id, scale, vshift) {
+        scaleJSXGraphDiv: function (wrap_id, inner_id, scale, vshift) {
             var len = document.styleSheets.length, style,
 
                 pseudo_keys = [':-webkit-full-screen', ':-moz-full-screen', ':fullscreen', ':-ms-fullscreen'],
@@ -738,17 +753,17 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
 
             if (len === 0) {
                 // In case there is not a single CSS rule defined.
-                style = document.createElement("style");
+                style = document.createElement('style');
                 // WebKit hack :(
-            	style.appendChild(document.createTextNode(""));
-            	// Add the <style> element to the page
-            	document.body.appendChild(style);
+                style.appendChild(document.createTextNode(''));
+                // Add the <style> element to the page
+                document.body.appendChild(style);
                 len = document.styleSheets.length;
             }
 
             // Remove a previously installed CSS rule.
-            if (document.styleSheets[len-1].cssRules.length > 0 &&
-                regex.test(document.styleSheets[len-1].cssRules[0].cssText) &&
+            if (document.styleSheets[len - 1].cssRules.length > 0 &&
+                regex.test(document.styleSheets[len - 1].cssRules[0].cssText) &&
                 document.styleSheets[len - 1].deleteRule) {
 
                 document.styleSheets[len - 1].deleteRule(0);
@@ -761,8 +776,8 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                     document.styleSheets[len - 1].insertRule(wrap_id + pseudo_keys[i] + ' ' + inner_id + rule_inner, 0);
                     break;
                 } catch (err) {
-                     console.log('JXG.scaleJSXGraphDiv: Could not add CSS rule "' + pseudo_keys[i] + '".');
-                     console.log('One possible reason could be that the id of the JSXGraph container does not start with a letter.');
+                    console.log('JXG.scaleJSXGraphDiv: Could not add CSS rule "' + pseudo_keys[i] + '".');
+                    console.log('One possible reason could be that the id of the JSXGraph container does not start with a letter.');
                 }
             }
         },
@@ -802,7 +817,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          * </script><pre>
          *
          */
-        toFullscreen: function(wrap_id, jsxgraph_id, scale) {
+        toFullscreen: function (wrap_id, jsxgraph_id, scale) {
             var elem = document.getElementById(wrap_id),
                 elem_inner = document.getElementById(jsxgraph_id),
 
@@ -820,7 +835,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
             scale = scale || Math.min(r_w, r_h);
 
             // Adapt vshift and scale for landscape on tablets
-            if (window.matchMedia && window.matchMedia("(orientation:landscape)").matches &&
+            if (window.matchMedia && window.matchMedia('(orientation:landscape)').matches &&
                 window.screen.width < window.screen.height) {
                 // Landscape on iOS: it returns 'landscape', but still width<height.
                 r_w = window.screen.height / parseInt(elem_inner.style.width, 10);
@@ -835,9 +850,9 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
 
             // Trigger the fullscreen mode
             elem.requestFullscreen = elem.requestFullscreen ||
-                        elem.webkitRequestFullscreen ||
-                        elem.mozRequestFullScreen ||
-                        elem.msRequestFullscreen;
+                elem.webkitRequestFullscreen ||
+                elem.mozRequestFullScreen ||
+                elem.msRequestFullscreen;
             if (elem.requestFullscreen) {
                 elem.requestFullscreen();
             }

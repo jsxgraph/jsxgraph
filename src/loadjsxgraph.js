@@ -48,8 +48,10 @@ var JXG = {},
 
     'use strict';
 
+    const preventCachingFiles = true;
+
     // check and table are initialized at the end of the iife
-    var i, s, n, arr, table,
+    var table,
         waitlist = [],
         checkwaitlist = true,
         checkJXG = function () {
@@ -150,8 +152,8 @@ var JXG = {},
 
     JXG.requirePath = '';
 
-    JXG.loadJSfiles = function (fileArray, insertAtFile = 'loadjsxgraph.js', preventCaching = false) {
-        var i, scripts, requirePath = '', reg, postfix = '';
+    JXG.loadJSfiles = function (fileArray, insertAtFile, preventCaching = false) {
+        var i, s, scripts, requirePath = '', reg, postfix = '';
 
         if (preventCaching) {
             postfix = '?v=' + (new Date()).getTime();
@@ -245,7 +247,7 @@ var JXG = {},
         'element/checkbox',
         'element/input',
         'element/button'
-    ]);
+    ], 'loadjsxgraph.js', preventCachingFiles);
 
     JXG.baseFiles = null;
     JXG.serverBase = JXG.requirePath + 'server/';
