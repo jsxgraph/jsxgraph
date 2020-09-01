@@ -68,14 +68,14 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          * @type Boolean
          * @default false
          */
-        supportsES6: (function () {
+        supportsES6: function () {
             try {
                 new Function('(a = 0) => a');
                 return true;
             } catch (err) {
                 return false;
             }
-        })(),
+        },
 
         /**
          * Detect browser support for VML.

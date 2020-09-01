@@ -48,7 +48,14 @@ var JXG = {},
 
     'use strict';
 
-    const preventCachingFiles = true;
+    //////////////////////////////////////////////////////////////////////////
+    //// Set this constant to 'true' to add an timestamp to each imported ////
+    //// file. This ensures that the most up-to-date files are always     ////
+    //// used during development.                                         ////
+    ////                                                                  ////
+    ////             Attention! Slows down the loading time!              ////
+    //////////////////////////////////////////////////////////////////////////
+    const preventCachingFiles = false;
 
     // check and table are initialized at the end of the iife
     var table,
@@ -150,9 +157,7 @@ var JXG = {},
         }
     };
 
-    JXG.requirePath = '';
-
-    JXG.loadJSfiles = function (fileArray, insertAtFile, preventCaching = false) {
+    JXG.loadJSfiles = function (fileArray, rootFile, preventCaching = false) {
         var i, s, scripts, requirePath = '', reg, postfix = '';
 
         if (preventCaching) {
@@ -160,13 +165,13 @@ var JXG = {},
         }
 
         scripts = document.getElementsByTagName('script');
-        reg = new RegExp(insertAtFile + '(\\?.*)?$');
+        reg = new RegExp(rootFile + '(\\?.*)?$');
 
         for (i = 0; i < scripts.length; i++) {
             s = scripts[i];
             if (s.src && s.src.match(reg)) {
                 requirePath = s.src.replace(reg, '');
-                if (insertAtFile === 'loadjsxgraph.js') {
+                if (rootFile === 'loadjsxgraph.js') {
                     // we are in JSXGraph
                     JXG.requirePath = requirePath;
                 }
@@ -180,75 +185,9 @@ var JXG = {},
         }
     };
 
-    JXG.loadJSfiles([
-        'jxg',
-        'base/constants',
-        'utils/type',
-        'utils/xml',
-        'utils/env',
-        'utils/event',
-        'utils/expect',
-        'math/math',
-        'math/numerics',
-        'math/metapost',
-        'math/statistics',
-        'math/symbolic',
-        'math/geometry',
-        'math/clip',
-        'math/poly',
-        'math/complex',
-        'renderer/abstract',
-        'renderer/no',
-        'reader/file',
-        'parser/geonext',
-        'base/board',
-        'options',
-        'jsxgraph',
-        'base/element',
-        'base/coordselement',
-        'base/coords',
-        'base/point',
-        'base/line',
-        'base/group',
-        'base/circle',
-        'element/conic',
-        'base/polygon',
-        'base/curve',
-        'element/arc',
-        'element/sector',
-        'base/composition',
-        'element/composition',
-        'base/text',
-        'base/image',
-        'element/slider',
-        'element/measure',
-        'base/chart',
-        'base/transformation',
-        'base/turtle',
-        'utils/color',
-        'base/ticks',
-        'utils/zip',
-        'utils/base64',
-        'utils/uuid',
-        'utils/encoding',
-        'server/server',
-        'element/locus',
-        'parser/datasource',
-        'parser/ca',
-        'parser/jessiecode',
-        'utils/dump',
-        'renderer/svg',
-        'renderer/vml',
-        'renderer/canvas',
-        'renderer/no',
-        'element/comb',
-        'element/slopetriangle',
-        'math/qdt',
-        'element/checkbox',
-        'element/input',
-        'element/button'
-    ], 'loadjsxgraph.js', preventCachingFiles);
-
+    JXG.requirePath = '';
+    JXG.baseFiles = 'jxg,base/constants,utils/type,utils/xml,utils/env,utils/event,utils/expect,math/math,math/numerics,math/metapost,math/statistics,math/symbolic,math/geometry,math/clip,math/poly,math/complex,renderer/abstract,renderer/no,reader/file,parser/geonext,base/board,options,jsxgraph,base/element,base/coordselement,base/coords,base/point,base/line,base/group,base/circle,element/conic,base/polygon,base/curve,element/arc,element/sector,base/composition,element/composition,base/text,base/image,element/slider,element/measure,base/chart,base/transformation,base/turtle,utils/color,base/ticks,utils/zip,utils/base64,utils/uuid,utils/encoding,server/server,element/locus,parser/datasource,parser/ca,parser/jessiecode,utils/dump,renderer/svg,renderer/vml,renderer/canvas,renderer/no,element/comb,element/slopetriangle,math/qdt,element/checkbox,element/input,element/button';
+    JXG.loadJSfiles(JXG.baseFiles.split(','), 'loadjsxgraph.js', preventCachingFiles);
     JXG.baseFiles = null;
     JXG.serverBase = JXG.requirePath + 'server/';
 
