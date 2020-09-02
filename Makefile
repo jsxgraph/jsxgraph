@@ -53,8 +53,12 @@ LINTFLAGS=--bitwise true --white true
 
 READERSOUT=build/bin/readers/geonext.min.js build/bin/readers/geogebra.min.js build/bin/readers/intergeo.min.js build/bin/readers/sketch.min.js
 
+#moodle
+MOODLEGIT=https://github.com/jsxgraph/moodle-filter_jsxgraph.git
+MOODLEDIR=../moodle-filter_jsxgraph
+
 # rules
-all: core core-min readers docs moodle
+all: core core-min readers docs
 
 core:
 	$(MKDIR) $(MKDIRFLAGS) $(BUILDBIN)
@@ -112,19 +116,21 @@ docs: #core core-min
 moodle: core core-min $(READERSOUT)
 	$(MKDIR) $(MKDIRFLAGS) $(TMP)
 	$(MKDIR) $(MKDIRFLAGS) $(TMP)/jsxgraph
+	if [ ! -d $(MOODLEDIR) ]; then \
+		git clone $(MOODLEGIT) $(MOODLEDIR); \
+	fi
+	git -C $(MOODLEDIR) pull;
+
+	$(CP) -r $(MOODLEDIR)/[!.]* $(TMP)/jsxgraph/
+	$(RM) $(RMFLAGS) $(TMP)/jsxgraph/screenshots $(TMP)/jsxgraph/libs/*_submodule
+
 	$(CP) $(BUILDBIN)/jsxgraphcore.min.js $(TMP)/jsxgraph/jsxgraphcore.js
 	$(CP) $(OUTPUT)/jsxgraph.css $(TMP)/jsxgraph/jsxgraph.css
-	$(CP) ../moodle-jsxgraph-plugin/moodle2/*.php $(TMP)/jsxgraph/
-	$(CP) ../moodle-jsxgraph-plugin/moodle2/styles.css $(TMP)/jsxgraph/
-	$(CP) ../moodle-jsxgraph-plugin/README.md $(TMP)/jsxgraph/
-	$(CP) -r ../moodle-jsxgraph-plugin/moodle2/lang $(TMP)/jsxgraph/
-	$(CP) $(BUILDREADERS)/* $(TMP)/jsxgraph/
 
-	# zip -r tmp/jsxgraph.zip tmp/jsxgraph
-	$(CD) $(TMP) && $(ZIP) $(ZIPFLAGS) jsxgraph_moodle.zip jsxgraph/
-	$(CP) $(TMP)/jsxgraph_moodle.zip $(OUTPUT)/jsxgraph_moodle.zip
+	$(CD) $(TMP) && $(ZIP) $(ZIPFLAGS) moodle-filter_jsxgraph.zip jsxgraph/
+	$(CP) $(TMP)/moodle-filter_jsxgraph.zip $(OUTPUT)/moodle-filter_jsxgraph.zip
 
-	$(RM) $(RMFLAGS) tmp
+	$(RM) $(RMFLAGS) $(TMP)
 
 readers: $(READERSOUT)
 	$(MKDIR) $(MKDIRFLAGS) $(OUTPUT)
