@@ -250,6 +250,7 @@
                     break;
 
                 case JXG.GENTYPE_REFLECTION:
+                case JXG.GENTYPE_REFLECTION_ON_LINE:
                     // Polygon:
                     if (step.args.type === 'polygon') {
                         set_str = '';
@@ -388,6 +389,7 @@
                     break;
 
                 case JXG.GENTYPE_MIRRORELEMENT:
+                case JXG.GENTYPE_REFLECTION_ON_POINT:
                     if (step.args.type === 'polygon') {
                         set_str = '';
                         el = step.src_ids[step.src_ids.length - 1];
