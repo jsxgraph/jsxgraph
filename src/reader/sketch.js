@@ -293,7 +293,6 @@
                         set_str = '';
                         el = step.src_ids[step.src_ids.length - 1];
                         // Create two end points.
-                        console.log(step.args);
                         for (i = 1; i < step.src_ids.length - 1; i++) {
                             set_str += assign + 'reflection(' + step.src_ids[i] + ', ' + el + ') <<id:"' + step.dest_sub_ids[i - 1] + '"';
                             if (JXG.exists(step.args.subnames)) {
