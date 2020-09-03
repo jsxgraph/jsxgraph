@@ -48,13 +48,74 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
 
     'use strict';
 
-    JXG.extend(JXG, /** @lends JXG */ {
+    JXG.extendConstants(JXG, /** @lends JXG */{
         /**
          * Determines the property that stores the relevant information in the event object.
          * @type {String}
          * @default 'touches'
          */
         touchProperty: 'touches',
+    });
+
+    JXG.extend(JXG, /** @lends JXG */ {
+        /**
+         * Determines whether evt is a touch event.
+         * @param evt {Event}
+         * @returns {Boolean}
+         */
+        isTouchEvent: function (evt) {
+            return JXG.exists(evt[JXG.touchProperty]);
+        },
+
+        /**
+         * Determines whether evt is a pointer event.
+         * @param evt {Event}
+         * @returns {Boolean}
+         */
+        isPointerEvent: function (evt) {
+            return JXG.exists(evt['pointerId']);
+        },
+
+        /**
+         * Determines whether evt is neither a touch event nor a pointer event.
+         * @param evt {Event}
+         * @returns {Boolean}
+         */
+        isMouseEvent: function (evt) {
+            return !JXG.isTouchEvent(evt)&&!JXG.isPointerEvent(evt);
+        },
+
+        /**
+         * Determines the number of touch points in a touch event.
+         * For other events, -1 is returned.
+         * @param evt {Event}
+         * @returns {Number}
+         */
+        getNumberOfTouchPoints: function (evt) {
+            let n = -1;
+
+            if (JXG.isTouchEvent(evt))
+                n = evt[JXG.touchProperty].length;
+
+            return n;
+        },
+
+        /**
+         * Checks whether an mouse, pointer or touch event evt is the first event of a multitouch event.
+         * Attention: When two or more pointer device types are being used concurrently,
+         *            it is only checked whether the passed event is the first one of its type!
+         * @param evt {Event}
+         * @returns {boolean}
+         */
+        isFirstTouch: function (evt) {
+            let touchPoints = JXG.getNumberOfTouchPoints(evt);
+
+            if (JXG.isPointerEvent(evt)) {
+                return evt.isPrimary;
+            }
+
+            return (touchPoints === 1);
+        },
 
         /**
          * A document/window environment is available.
