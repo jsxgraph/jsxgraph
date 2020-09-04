@@ -231,7 +231,7 @@
                     set_str += step.dest_sub_ids[3] + '.visible = false; ';
                     set_str += step.dest_sub_ids[4] + '.visible = false; ';
 
-                    set_str += 'remove(jxgBoard1_infobox); ';
+                    // set_str += 'remove(jxgBoard1_infobox); ';
 
                     reset_str = 'remove(' + step.dest_sub_ids[4] + '); remove(' + step.dest_sub_ids[3];
                     reset_str += '); remove(' + step.dest_sub_ids[2] + '); ';
