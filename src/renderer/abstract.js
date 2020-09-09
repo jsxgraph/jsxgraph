@@ -473,7 +473,7 @@ define([
             return this;
         },
 
-        updateLineEndsArrows: function(el, strokeWidth, doHighlight) {
+        updateLineEndsArrows: function(el, doHighlight) {
             var hl, obj;
 
             hl = doHighlight ? 'highlight' : '';
@@ -492,35 +492,8 @@ define([
          */
         updateLine: function (el) {
             this._updateVisual(el);
-            this.updateLineEndsArrows(el, Type.evaluate(el.visProp.strokewidth));
+            this.updateLineEndsArrows(el);
             this.setLineCap(el);
-        },
-
-        // Unused
-        handleTouchArrow: function(ev_la, ev_fa, el, c1, c2) {
-            var s1 = Type.evaluate(el.point1.visProp.size) + Type.evaluate(el.point1.visProp.strokewidth),
-                s2 = Type.evaluate(el.point2.visProp.size) + Type.evaluate(el.point2.visProp.strokewidth),
-                s = s1 + s2,
-                d, d1x, d1y;
-
-            // Handle touchlastpoint /touchfirstpoint
-            if (ev_la && Type.evaluate(el.visProp.touchlastpoint)) {
-                d = c1.distance(Const.COORDS_BY_SCREEN, c2);
-                if (d > s) {
-                    d2x = (c2.scrCoords[1] - c1.scrCoords[1]) * s2 / d;
-                    d2y = (c2.scrCoords[2] - c1.scrCoords[2]) * s2 / d;
-                    c2 = new Coords(Const.COORDS_BY_SCREEN, [c2.scrCoords[1] - d2x, c2.scrCoords[2] - d2y], el.board);
-                }
-            }
-            if (ev_fa && Type.evaluate(el.visProp.touchfirstpoint)) {
-                d = c1.distance(Const.COORDS_BY_SCREEN, c2);
-                if (d > s) {
-                    d1x = (c2.scrCoords[1] - c1.scrCoords[1]) * s1 / d;
-                    d1y = (c2.scrCoords[2] - c1.scrCoords[2]) * s1 / d;
-                    c1 = new Coords(Const.COORDS_BY_SCREEN, [c1.scrCoords[1] + d1x, c1.scrCoords[2] + d1y], el.board);
-                }
-            }
-            return [d1x, d1y, d2x, d2y, c1, c2];
         },
 
         /**
@@ -557,28 +530,27 @@ define([
                These 10 units are scaled to strokeWidth * arrowSize pixels pixels.
             */
             if (ev_fa || ev_la) {
+                s1 = Type.evaluate(el.point1.visProp.size) + Type.evaluate(el.point1.visProp.strokewidth);
+                s2 = Type.evaluate(el.point2.visProp.size) + Type.evaluate(el.point2.visProp.strokewidth);
+                s = s1 + s2;
 
-                // s1 = Type.evaluate(el.point1.visProp.size) + Type.evaluate(el.point1.visProp.strokewidth);
-                // s2 = Type.evaluate(el.point2.visProp.size) + Type.evaluate(el.point2.visProp.strokewidth);
-                // s = s1 + s2;
-
-                // // Handle touchlastpoint /touchfirstpoint
-                // if (ev_la && Type.evaluate(el.visProp.touchlastpoint)) {
-                //     d = c1.distance(Const.COORDS_BY_SCREEN, c2);
-                //     if (d > s) {
-                //         d2x = (c2.scrCoords[1] - c1.scrCoords[1]) * s2 / d;
-                //         d2y = (c2.scrCoords[2] - c1.scrCoords[2]) * s2 / d;
-                //         c2 = new Coords(Const.COORDS_BY_SCREEN, [c2.scrCoords[1] - d2x, c2.scrCoords[2] - d2y], el.board);
-                //     }
-                // }
-                // if (ev_fa && Type.evaluate(el.visProp.touchfirstpoint)) {
-                //     d = c1.distance(Const.COORDS_BY_SCREEN, c2);
-                //     if (d > s) {
-                //         d1x = (c2.scrCoords[1] - c1.scrCoords[1]) * s1 / d;
-                //         d1y = (c2.scrCoords[2] - c1.scrCoords[2]) * s1 / d;
-                //         c1 = new Coords(Const.COORDS_BY_SCREEN, [c1.scrCoords[1] + d1x, c1.scrCoords[2] + d1y], el.board);
-                //     }
-                // }
+                // Handle touchlastpoint /touchfirstpoint
+                if (ev_la && Type.evaluate(el.visProp.touchlastpoint)) {
+                    d = c1.distance(Const.COORDS_BY_SCREEN, c2);
+                    if (d > s) {
+                        d2x = (c2.scrCoords[1] - c1.scrCoords[1]) * s2 / d;
+                        d2y = (c2.scrCoords[2] - c1.scrCoords[2]) * s2 / d;
+                        c2 = new Coords(Const.COORDS_BY_SCREEN, [c2.scrCoords[1] - d2x, c2.scrCoords[2] - d2y], el.board);
+                    }
+                }
+                if (ev_fa && Type.evaluate(el.visProp.touchfirstpoint)) {
+                    d = c1.distance(Const.COORDS_BY_SCREEN, c2);
+                    if (d > s) {
+                        d1x = (c2.scrCoords[1] - c1.scrCoords[1]) * s1 / d;
+                        d1y = (c2.scrCoords[2] - c1.scrCoords[2]) * s1 / d;
+                        c1 = new Coords(Const.COORDS_BY_SCREEN, [c1.scrCoords[1] + d1x, c1.scrCoords[2] + d1y], el.board);
+                    }
+                }
 
                 // Correct the position of the arrow heads
                 d1x = d1y = d2x = d2y = 0.0;
@@ -729,6 +701,83 @@ define([
             this.updateCurve(el);
         },
 
+        getPositionArrowHeadCurves: function(el, strokewidth, hl) {
+            var minlen = Mat.eps,
+                typeFirst, typeLast,
+                sFirst = 0,
+                sLast = 0,
+                ev_fa = Type.evaluate(el.visProp.firstarrow),
+                ev_la = Type.evaluate(el.visProp.lastarrow),
+                size;
+
+            /*
+               Handle arrow heads.
+
+               The default arrow head is an isosceles triangle with base length 10 units and height 10 units.
+               These 10 units are scaled to strokeWidth * arrowSize pixels pixels.
+            */
+            if (ev_fa || ev_la) {
+
+                if (Type.exists(ev_fa.type)) {
+                    typeFirst = Type.evaluate(ev_fa.type);
+                }
+                if (Type.exists(ev_la.type)) {
+                    typeLast = Type.evaluate(ev_la.type);
+                }
+
+                if (ev_fa) {
+                    size = 6;
+                    if (Type.exists(ev_fa.size)) {
+                        size = Type.evaluate(ev_fa.size);
+                    }
+                    if (hl !== '' && Type.exists(ev_fa[hl + 'size'])) {
+                        size = Type.evaluate(ev_fa[hl + 'size']);
+                    }
+                    sFirst = strokewidth * size;
+                    if (typeFirst === 2) {
+                        sFirst *= 0.5;
+                        minlen += strokewidth * size;
+                    } else if (typeFirst === 3) {
+                        sFirst = strokewidth * size / 3;
+                        minlen += strokewidth;
+                    } else if (typeFirst === 4 || typeFirst === 5 || typeFirst === 6) {
+                        sFirst = strokewidth * size / 1.5;
+                        minlen += strokewidth * size;
+                    } else {
+                        minlen += strokewidth * size;
+                    }
+                }
+
+                if (ev_la) {
+                    size = 6;
+                    if (Type.exists(ev_la.size)) {
+                        size = Type.evaluate(ev_la.size);
+                    }
+                    if (hl !== '' && Type.exists(ev_la[hl + 'size'])) {
+                        size = Type.evaluate(ev_la[hl + 'size']);
+                    }
+                    sLast = strokewidth * size;
+                    if (typeLast === 2) {
+                        sLast *= 0.5;
+                        minlen += strokewidth * size;
+                    } else if (typeLast === 3) {
+                        sLast = strokewidth * size / 3;
+                        minlen += strokewidth;
+                    } else if (typeLast === 4 || typeLast === 5 || typeLast === 6) {
+                        sLast = strokewidth * size / 1.5;
+                        minlen += strokewidth * size;
+                    } else {
+                        minlen += strokewidth * size;
+                    }
+                }
+            }
+
+            return {
+                sFirst: sFirst,
+                sLast: sLast
+            };
+        },
+
         /**
          * Updates visual appearance of the renderer element assigned to the given {@link JXG.Curve}.
          * @param {JXG.Curve} el Reference to a {@link JXG.Curve} object, that has to be updated.
@@ -740,17 +789,18 @@ define([
             var w = Type.evaluate(el.visProp.strokewidth),
                 size, ev_fa, ev_la;
 
-            // var le = el.points.length,
-            //     c1 = el.points[le - 2],
-            //     c2 = el.points[le - 1],
-            //     obj, hl = false;
-            // obj = this.getPositionArrowHead(el, c1, c2, w, hl);
-            // console.log(obj);
+            var le = el.points.length,
+                obj, hl = false;
 
             if (Type.evaluate(el.visProp.handdrawing)) {
                 this.updatePathPrim(el.rendNode, this.updatePathStringBezierPrim(el), el.board);
             } else {
                 this.updatePathPrim(el.rendNode, this.updatePathStringPrim(el), el.board);
+
+                obj = this.getPositionArrowHeadCurves(el, w, hl);
+                le = el.rendNode.getTotalLength();
+                el.rendNode.style.strokeDasharray = (le - obj.sFirst - obj.sLast) + ' ' + obj.sLast;
+                el.rendNode.style.strokeDashoffset = -obj.sFirst;
             }
 
             if (el.numberPoints > 1) {
@@ -777,7 +827,6 @@ define([
                 }
             }
             this._updateVisual(el);
-
         },
 
         /* **************************
