@@ -496,13 +496,39 @@ define([
             this.setLineCap(el);
         },
 
+        handleTouchArrow: function(ev_la, ev_fa, el, c1, c2) {
+            var s1 = Type.evaluate(el.point1.visProp.size) + Type.evaluate(el.point1.visProp.strokewidth),
+                s2 = Type.evaluate(el.point2.visProp.size) + Type.evaluate(el.point2.visProp.strokewidth),
+                s = s1 + s2,
+                d, d1x, d1y;
+
+            // Handle touchlastpoint /touchfirstpoint
+            if (ev_la && Type.evaluate(el.visProp.touchlastpoint)) {
+                d = c1.distance(Const.COORDS_BY_SCREEN, c2);
+                if (d > s) {
+                    d2x = (c2.scrCoords[1] - c1.scrCoords[1]) * s2 / d;
+                    d2y = (c2.scrCoords[2] - c1.scrCoords[2]) * s2 / d;
+                    c2 = new Coords(Const.COORDS_BY_SCREEN, [c2.scrCoords[1] - d2x, c2.scrCoords[2] - d2y], el.board);
+                }
+            }
+            if (ev_fa && Type.evaluate(el.visProp.touchfirstpoint)) {
+                d = c1.distance(Const.COORDS_BY_SCREEN, c2);
+                if (d > s) {
+                    d1x = (c2.scrCoords[1] - c1.scrCoords[1]) * s1 / d;
+                    d1y = (c2.scrCoords[2] - c1.scrCoords[2]) * s1 / d;
+                    c1 = new Coords(Const.COORDS_BY_SCREEN, [c1.scrCoords[1] + d1x, c1.scrCoords[2] + d1y], el.board);
+                }
+            }
+            return [d1x, d1y, d2x, d2y, c1, c2];
+        },
+
         /**
          * Shorten the line length such that the arrow head touches
          * the start or end point and such that the arrow head ends exactly
          * at the start / end position of the line.
          *
          * @param  {JXG.Line} el Reference to the line object that gets arrow heads.
-         * @param  {JXG.Coords} c1   Coords of the first point of the line (after {@link JXG.Geometry#calcStraight}).
+         * @param  {JXG.Coords} c1  Coords of the first point of the line (after {@link JXG.Geometry#calcStraight}).
          * @param  {JXG.Coords} c2  Coords of the second point of the line (after {@link JXG.Geometry#calcStraight}).
          * @param  {Boolean} doHighlight true if the object is to be highlighted, false otherwise. This parameter
          *  is necessary for the attribute highlightSize of the arrow heads.
@@ -526,10 +552,11 @@ define([
             /*
                Handle arrow heads.
 
-               The arrow head is an isosceles triangle with base length 10 units and height 10 units.
+               The default arrow head is an isosceles triangle with base length 10 units and height 10 units.
                These 10 units are scaled to strokeWidth * arrowSize pixels pixels.
             */
             if (ev_fa || ev_la) {
+
                 s1 = Type.evaluate(el.point1.visProp.size) + Type.evaluate(el.point1.visProp.strokewidth);
                 s2 = Type.evaluate(el.point2.visProp.size) + Type.evaluate(el.point2.visProp.strokewidth);
                 s = s1 + s2;
@@ -551,6 +578,7 @@ define([
                         c1 = new Coords(Const.COORDS_BY_SCREEN, [c1.scrCoords[1] + d1x, c1.scrCoords[2] + d1y], el.board);
                     }
                 }
+                
 
                 // Correct the position of the arrow heads
                 d1x = d1y = d2x = d2y = 0.0;
@@ -712,6 +740,13 @@ define([
             var w = Type.evaluate(el.visProp.strokewidth),
                 size, ev_fa, ev_la;
 
+            // var le = el.points.length,
+            //     c1 = el.points[le - 2],
+            //     c2 = el.points[le - 1],
+            //     obj, hl = false;
+            // obj = this.getPositionArrowHead(el, c1, c2, w, hl);
+            // console.log(obj);
+
             if (Type.evaluate(el.visProp.handdrawing)) {
                 this.updatePathPrim(el.rendNode, this.updatePathStringBezierPrim(el), el.board);
             } else {
@@ -726,7 +761,7 @@ define([
                     if (Type.exists(ev_fa.size)) {
                         size = Type.evaluate(ev_fa.size);
                     } else {
-                        size = 3;
+                        size = 6;
                     }
 
                     this._setArrowWidth(el.rendNodeTriangleStart, w, el.rendNode, size);
@@ -736,7 +771,7 @@ define([
                     if (Type.exists(ev_la.size)) {
                         size = Type.evaluate(ev_la.size);
                     } else {
-                        size = 3;
+                        size = 6;
                     }
                     this._setArrowWidth(el.rendNodeTriangleEnd, w, el.rendNode, size);
                 }

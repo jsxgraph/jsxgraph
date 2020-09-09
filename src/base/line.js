@@ -796,7 +796,6 @@ define([
             return (1 - Math.abs(t)) * z;
         },
 
-
         /**
          * The distance between the two points defining the line.
          * @returns {Number}
