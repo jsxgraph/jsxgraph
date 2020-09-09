@@ -496,6 +496,7 @@ define([
             this.setLineCap(el);
         },
 
+        // Unused
         handleTouchArrow: function(ev_la, ev_fa, el, c1, c2) {
             var s1 = Type.evaluate(el.point1.visProp.size) + Type.evaluate(el.point1.visProp.strokewidth),
                 s2 = Type.evaluate(el.point2.visProp.size) + Type.evaluate(el.point2.visProp.strokewidth),
@@ -557,28 +558,27 @@ define([
             */
             if (ev_fa || ev_la) {
 
-                s1 = Type.evaluate(el.point1.visProp.size) + Type.evaluate(el.point1.visProp.strokewidth);
-                s2 = Type.evaluate(el.point2.visProp.size) + Type.evaluate(el.point2.visProp.strokewidth);
-                s = s1 + s2;
+                // s1 = Type.evaluate(el.point1.visProp.size) + Type.evaluate(el.point1.visProp.strokewidth);
+                // s2 = Type.evaluate(el.point2.visProp.size) + Type.evaluate(el.point2.visProp.strokewidth);
+                // s = s1 + s2;
 
-                // Handle touchlastpoint /touchfirstpoint
-                if (ev_la && Type.evaluate(el.visProp.touchlastpoint)) {
-                    d = c1.distance(Const.COORDS_BY_SCREEN, c2);
-                    if (d > s) {
-                        d2x = (c2.scrCoords[1] - c1.scrCoords[1]) * s2 / d;
-                        d2y = (c2.scrCoords[2] - c1.scrCoords[2]) * s2 / d;
-                        c2 = new Coords(Const.COORDS_BY_SCREEN, [c2.scrCoords[1] - d2x, c2.scrCoords[2] - d2y], el.board);
-                    }
-                }
-                if (ev_fa && Type.evaluate(el.visProp.touchfirstpoint)) {
-                    d = c1.distance(Const.COORDS_BY_SCREEN, c2);
-                    if (d > s) {
-                        d1x = (c2.scrCoords[1] - c1.scrCoords[1]) * s1 / d;
-                        d1y = (c2.scrCoords[2] - c1.scrCoords[2]) * s1 / d;
-                        c1 = new Coords(Const.COORDS_BY_SCREEN, [c1.scrCoords[1] + d1x, c1.scrCoords[2] + d1y], el.board);
-                    }
-                }
-                
+                // // Handle touchlastpoint /touchfirstpoint
+                // if (ev_la && Type.evaluate(el.visProp.touchlastpoint)) {
+                //     d = c1.distance(Const.COORDS_BY_SCREEN, c2);
+                //     if (d > s) {
+                //         d2x = (c2.scrCoords[1] - c1.scrCoords[1]) * s2 / d;
+                //         d2y = (c2.scrCoords[2] - c1.scrCoords[2]) * s2 / d;
+                //         c2 = new Coords(Const.COORDS_BY_SCREEN, [c2.scrCoords[1] - d2x, c2.scrCoords[2] - d2y], el.board);
+                //     }
+                // }
+                // if (ev_fa && Type.evaluate(el.visProp.touchfirstpoint)) {
+                //     d = c1.distance(Const.COORDS_BY_SCREEN, c2);
+                //     if (d > s) {
+                //         d1x = (c2.scrCoords[1] - c1.scrCoords[1]) * s1 / d;
+                //         d1y = (c2.scrCoords[2] - c1.scrCoords[2]) * s1 / d;
+                //         c1 = new Coords(Const.COORDS_BY_SCREEN, [c1.scrCoords[1] + d1x, c1.scrCoords[2] + d1y], el.board);
+                //     }
+                // }
 
                 // Correct the position of the arrow heads
                 d1x = d1y = d2x = d2y = 0.0;
