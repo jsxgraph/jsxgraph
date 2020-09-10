@@ -262,31 +262,32 @@ define([
                     type = Type.evaluate(ev_fa.type);
                 }
 
+                v = 0;
                 if (type === 2) {
-                    v = (el.elementClass === Const.OBJECT_CLASS_LINE) ? 4.9 : 0.0;
+                    // v = (el.elementClass === Const.OBJECT_CLASS_LINE) ? 4.9 : 0.0;
                     node3.setAttributeNS(null, 'd', 'M 10,0 L 0,5 L 10,10 L 5,5 z');
                 } else if (type === 3) {
                     //node2.setAttributeNS(null, 'refX', 3.33);
-                    v = (el.elementClass === Const.OBJECT_CLASS_LINE) ? 3.33 : 0; // 1;
+                    // v = (el.elementClass === Const.OBJECT_CLASS_LINE) ? 3.33 : 0; // 1;
                     node3.setAttributeNS(null, 'd', 'M 0,0 L 3.33,0 L 3.33,10 L 0,10 z');
                 } else if (type === 4) {
                     // insetRatio:0.8 tipAngle:45 wingCurve:15 tailCurve:0
-                    v = (el.elementClass === Const.OBJECT_CLASS_LINE) ? 6.66 : 0; // 5;
+                    // v = (el.elementClass === Const.OBJECT_CLASS_LINE) ? 6.66 : 0; // 5;
                     h = 3.31;
                     node3.setAttributeNS(null, 'd', 'M 0.00,3.31 C 3.53,3.84 7.13,4.50 10.00,6.63 C 9.33,5.52 8.67,4.42 8.00,3.31 C 8.67,2.21 9.33,1.10 10.00,0.00 C 7.13,2.13 3.53,2.79 0.00,3.31');
                 } else if (type === 5) {
                     // insetRatio:0.9 tipAngle:40 wingCurve:5 tailCurve:15
-                    v = (el.elementClass === Const.OBJECT_CLASS_LINE) ? 6.66 : 0; // 3.33;
+                    // v = (el.elementClass === Const.OBJECT_CLASS_LINE) ? 6.66 : 0; // 3.33;
                     h = 3.28;
                     node3.setAttributeNS(null, 'd', 'M 0.00,3.28 C 3.39,4.19 6.81,5.07 10.00,6.55 C 9.38,5.56 9.00,4.44 9.00,3.28 C 9.00,2.11 9.38,0.99 10.00,0.00 C 6.81,1.49 3.39,2.37 0.00,3.28');
                 } else if (type === 6) {
                     // insetRatio:0.9 tipAngle:35 wingCurve:5 tailCurve:0
-                    v = (el.elementClass === Const.OBJECT_CLASS_LINE) ? 6.66 : 0; // 3.33;
+                    // v = (el.elementClass === Const.OBJECT_CLASS_LINE) ? 6.66 : 0; // 3.33;
                     h = 2.84;
                     node3.setAttributeNS(null, 'd', 'M 0.00,2.84 C 3.39,3.59 6.79,4.35 10.00,5.68 C 9.67,4.73 9.33,3.78 9.00,2.84 C 9.33,1.89 9.67,0.95 10.00,0.00 C 6.79,1.33 3.39,2.09 0.00,2.84');
                 } else {
                     // type == 1 or > 6
-                    v = (el.elementClass === Const.OBJECT_CLASS_LINE) ? 10.0 : 0.0;
+                    // v = (el.elementClass === Const.OBJECT_CLASS_LINE) ? 10.0 : 0.0;
                     node3.setAttributeNS(null, 'd', 'M 10,0 L 0,5 L 10,10 z');
                 }
             } else {
@@ -295,31 +296,32 @@ define([
                     type = Type.evaluate(ev_la.type);
                 }
 
+                v = 9.9;
                 if (type === 2) {
-                    v = (el.elementClass === Const.OBJECT_CLASS_LINE) ? 5.1 : 9.9; // 9.9;
+                    // v = (el.elementClass === Const.OBJECT_CLASS_LINE) ? 5.1 : 9.9; // 9.9;
                     node3.setAttributeNS(null, 'd', 'M 0,0 L 10,5 L 0,10 L 5,5 z');
                 } else if (type === 3) {
                     //node2.setAttributeNS(null, 'refX', 0.1);
-                    v = (el.elementClass === Const.OBJECT_CLASS_LINE) ? 0.1 : 3.33; // 3.33;
+                    v = 3.3; // (el.elementClass === Const.OBJECT_CLASS_LINE) ? 0.1 : 3.33; // 3.33;
                     node3.setAttributeNS(null, 'd', 'M 0,0 L 3.33,0 L 3.33,10 L 0,10 z');
                 } else if (type === 4) {
                     // insetRatio:0.8 tipAngle:45 wingCurve:15 tailCurve:0
-                    v = (el.elementClass === Const.OBJECT_CLASS_LINE) ? 3.33 : 9.9; // 5;
+                    // v = (el.elementClass === Const.OBJECT_CLASS_LINE) ? 3.33 : 9.9; // 5;
                     h = 3.31;
                     node3.setAttributeNS(null, 'd', 'M 10.00,3.31 C 6.47,3.84 2.87,4.50 0.00,6.63 C 0.67,5.52 1.33,4.42 2.00,3.31 C 1.33,2.21 0.67,1.10 0.00,0.00 C 2.87,2.13 6.47,2.79 10.00,3.31');
                 } else if (type === 5) {
                     // insetRatio:0.9 tipAngle:40 wingCurve:5 tailCurve:15
-                    v = (el.elementClass === Const.OBJECT_CLASS_LINE) ? 3.33 : 9.9; // 6.66;
+                    // v = (el.elementClass === Const.OBJECT_CLASS_LINE) ? 3.33 : 9.9; // 6.66;
                     h = 3.28;
                     node3.setAttributeNS(null, 'd', 'M 10.00,3.28 C 6.61,4.19 3.19,5.07 0.00,6.55 C 0.62,5.56 1.00,4.44 1.00,3.28 C 1.00,2.11 0.62,0.99 0.00,0.00 C 3.19,1.49 6.61,2.37 10.00,3.28');
                 } else if (type === 6) {
                     // insetRatio:0.9 tipAngle:35 wingCurve:5 tailCurve:0
-                    v = (el.elementClass === Const.OBJECT_CLASS_LINE) ? 3.33 : 9.9; // 6.66;
+                    // v = (el.elementClass === Const.OBJECT_CLASS_LINE) ? 3.33 : 9.9; // 6.66;
                     h = 2.84;
                     node3.setAttributeNS(null, 'd', 'M 10.00,2.84 C 6.61,3.59 3.21,4.35 0.00,5.68 C 0.33,4.73 0.67,3.78 1.00,2.84 C 0.67,1.89 0.33,0.95 0.00,0.00 C 3.21,1.33 6.61,2.09 10.00,2.84');
                 } else {
                     // type == 1 or > 6
-                    v = (el.elementClass === Const.OBJECT_CLASS_LINE) ? 0.1 : 9.9; //9.9;
+                    // v = (el.elementClass === Const.OBJECT_CLASS_LINE) ? 0.1 : 9.9; //9.9;
                     node3.setAttributeNS(null, 'd', 'M 0,0 L 10,5 L 0,10 z');
                 }
             }

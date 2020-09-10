@@ -398,7 +398,7 @@ define([
                 sizeLast = 0,
                 ev_fa = Type.evaluate(el.visProp.firstarrow),
                 ev_la = Type.evaluate(el.visProp.lastarrow),
-                size;
+                s1, s2, s, off, size;
 
             /*
                Handle arrow heads.
@@ -415,6 +415,19 @@ define([
                     typeLast = Type.evaluate(ev_la.type);
                 }
 
+                // Handle touchlastpoint /touchfirstpoint
+                if (el.elementClass === Const.OBJECT_CLASS_LINE) {
+                    s1 = Type.evaluate(el.point1.visProp.size) + Type.evaluate(el.point1.visProp.strokewidth);
+                    s2 = Type.evaluate(el.point2.visProp.size) + Type.evaluate(el.point2.visProp.strokewidth);
+                    s = s1 + s2;
+                    if (ev_fa && Type.evaluate(el.visProp.touchfirstpoint)) {
+                        offFirst = s1;
+                    }
+                    if (ev_la && Type.evaluate(el.visProp.touchlastpoint)) {
+                        offLast = s2;
+                    }
+                }
+
                 if (ev_fa) {
                     size = 6;
                     if (Type.exists(ev_fa.size)) {
@@ -423,19 +436,20 @@ define([
                     if (hl !== '' && Type.exists(ev_fa[hl + 'size'])) {
                         size = Type.evaluate(ev_fa[hl + 'size']);
                     }
-                    offFirst = strokewidth * size;
+                    off = strokewidth * size;
                     if (typeFirst === 2) {
-                        offFirst *= 0.5;
+                        off *= 0.5;
                         minlen += strokewidth * size;
                     } else if (typeFirst === 3) {
-                        offFirst = strokewidth * size / 3;
+                        off = strokewidth * size / 3;
                         minlen += strokewidth;
                     } else if (typeFirst === 4 || typeFirst === 5 || typeFirst === 6) {
-                        offFirst = strokewidth * size / 1.5;
+                        off = strokewidth * size / 1.5;
                         minlen += strokewidth * size;
                     } else {
                         minlen += strokewidth * size;
                     }
+                    offFirst += off;
                     sizeFirst = size;
                 }
 
@@ -447,19 +461,20 @@ define([
                     if (hl !== '' && Type.exists(ev_la[hl + 'size'])) {
                         size = Type.evaluate(ev_la[hl + 'size']);
                     }
-                    offLast = strokewidth * size;
+                    off = strokewidth * size;
                     if (typeLast === 2) {
-                        offLast *= 0.5;
+                        off *= 0.5;
                         minlen += strokewidth * size;
                     } else if (typeLast === 3) {
-                        offLast = strokewidth * size / 3;
+                        off = strokewidth * size / 3;
                         minlen += strokewidth;
                     } else if (typeLast === 4 || typeLast === 5 || typeLast === 6) {
-                        offLast = strokewidth * size / 1.5;
+                        off = strokewidth * size / 1.5;
                         minlen += strokewidth * size;
                     } else {
                         minlen += strokewidth * size;
                     }
+                    offLast += off;
                     sizeLast = size;
                 }
             }
@@ -471,7 +486,8 @@ define([
                 offLast: offLast,
                 sizeFirst: sizeFirst,
                 sizeLast: sizeLast,
-                minLen: minlen
+                minLen: minlen,
+                strokeWidth: strokewidth
             };
         },
 
@@ -499,17 +515,45 @@ define([
          *
          */
         updateLineEndings: function(el, arrowData) {
-            var c1 = new Coords(Const.COORDS_BY_USER, el.point1.coords.usrCoords, el.board),
-                c2 = new Coords(Const.COORDS_BY_USER, el.point2.coords.usrCoords, el.board),
-                obj, margin = null;
+            var c1, c2, stroke,
+                le, obj, margin = null;
 
+            c1 = new Coords(Const.COORDS_BY_USER, el.point1.coords.usrCoords, el.board);
+            c2 = new Coords(Const.COORDS_BY_USER, el.point2.coords.usrCoords, el.board);
             margin = Type.evaluate(el.visProp.margin);
             Geometry.calcStraight(el, c1, c2, margin);
 
-            obj = this.getPositionArrowHead(el, c1, c2, arrowData);
-            this.updateLinePrim(el.rendNode,
-                obj.c1.scrCoords[1] + obj.d1x, obj.c1.scrCoords[2] + obj.d1y,
-                obj.c2.scrCoords[1] - obj.d2x, obj.c2.scrCoords[2] - obj.d2y, el.board);
+            if (!Type.exists(el.rendNode.getTotalLength)) {
+                obj = this.getPositionArrowHead(el, c1, c2, arrowData);
+                this.updateLinePrim(el.rendNode,
+                    obj.c1.scrCoords[1] + obj.d1x, obj.c1.scrCoords[2] + obj.d1y,
+                    obj.c2.scrCoords[1] - obj.d2x, obj.c2.scrCoords[2] - obj.d2y, el.board);
+            } else {
+                this.updateLinePrim(el.rendNode,
+                    c1.scrCoords[1], c1.scrCoords[2],
+                    c2.scrCoords[1], c2.scrCoords[2], el.board);
+
+
+                le = el.rendNode.getTotalLength();
+                stroke = le - arrowData.offFirst - arrowData.offLast;
+                el.rendNode.style.strokeDasharray = stroke + ' ' + arrowData.offFirst + ' ' + stroke;
+                el.rendNode.style.strokeDashoffset = stroke;
+            }
+
+            return this;
+        },
+
+        updatePathEndings: function(el, arrowData) {
+            var le;
+
+            if (Type.evaluate(el.visProp.handdrawing)) {
+                this.updatePathPrim(el.rendNode, this.updatePathStringBezierPrim(el), el.board);
+            } else {
+                this.updatePathPrim(el.rendNode, this.updatePathStringPrim(el), el.board);
+            }
+            le = el.rendNode.getTotalLength();
+            el.rendNode.style.strokeDasharray = (le - arrowData.offFirst - arrowData.offLast) + ' ' + arrowData.offLast;
+            el.rendNode.style.strokeDashoffset = -arrowData.offFirst;
 
             return this;
         },
@@ -533,10 +577,10 @@ define([
          */
         setArrowSize: function(el, a) {
             if (a.evFirst) {
-                this._setArrowWidth(el.rendNodeTriangleStart, a.offFirst, el.rendNode, a.sizeFirst);
+                this._setArrowWidth(el.rendNodeTriangleStart, a.strokeWidth, el.rendNode, a.sizeFirst);
             }
             if (a.evLast) {
-                this._setArrowWidth(el.rendNodeTriangleEnd, a.offLast, el.rendNode, a.sizeLast);
+                this._setArrowWidth(el.rendNodeTriangleEnd, a.strokeWidth, el.rendNode, a.sizeLast);
             }
             return this;
         },
@@ -544,12 +588,14 @@ define([
         updateArrowHeads: function(el, doHighlight) {
             var hl = doHighlight ? 'highlight' : '',
                 w = Type.evaluate(el.visProp[hl + 'strokewidth']),
-                arrowData;
+                arrowData, le;
 
             arrowData = this.getArrowHeadData(el, w, hl);
             this.makeArrows(el);
-            if (el.elementClass == Const.OBJECT_CLASS_LINE) {
+            if (el.elementClass === Const.OBJECT_CLASS_LINE) {
                 this.updateLineEndings(el, arrowData);
+            } else if (el.elementClass === Const.OBJECT_CLASS_CURVE) {
+                this.updatePathEndings(el, arrowData);
             }
             this.setArrowSize(el, arrowData);
         },
@@ -719,32 +765,7 @@ define([
          * @see JXG.AbstractRenderer#drawCurve
          */
         updateCurve: function (el) {
-            var w = Type.evaluate(el.visProp.strokewidth),
-                le, obj, hl = false;
-
-            if (Type.evaluate(el.visProp.handdrawing)) {
-                this.updatePathPrim(el.rendNode, this.updatePathStringBezierPrim(el), el.board);
-            } else {
-                this.updatePathPrim(el.rendNode, this.updatePathStringPrim(el), el.board);
-            }
-
-            obj = this.getArrowHeadData(el, w, hl);
-
-            if (el.numberPoints > 1 && (obj.evFirst || obj.evLast)) {
-                this.makeArrows(el);
-
-                if (obj.evFirst) {
-                    this._setArrowWidth(el.rendNodeTriangleStart, w, el.rendNode, obj.sizeFirst);
-                }
-                if (obj.evLast) {
-                    this._setArrowWidth(el.rendNodeTriangleEnd, w, el.rendNode, obj.sizeLast);
-                }
-
-                le = el.rendNode.getTotalLength();
-                el.rendNode.style.strokeDasharray = (le - obj.offFirst - obj.offLast) + ' ' + obj.offLast;
-                el.rendNode.style.strokeDashoffset = -obj.offFirst;
-            }
-
+            this.updateArrowHeads(el);
             this._updateVisual(el);
         },
 
