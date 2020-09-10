@@ -389,6 +389,92 @@ define([
             this.updateLine(el);
         },
 
+        getArrowHeadData: function(el, strokewidth, hl) {
+            var minlen = Mat.eps,
+                typeFirst, typeLast,
+                offFirst = 0,
+                offLast = 0,
+                sizeFirst = 0,
+                sizeLast = 0,
+                ev_fa = Type.evaluate(el.visProp.firstarrow),
+                ev_la = Type.evaluate(el.visProp.lastarrow),
+                size;
+
+            /*
+               Handle arrow heads.
+
+               The default arrow head is an isosceles triangle with base length 10 units and height 10 units.
+               These 10 units are scaled to strokeWidth * arrowSize pixels pixels.
+            */
+            if (ev_fa || ev_la) {
+
+                if (Type.exists(ev_fa.type)) {
+                    typeFirst = Type.evaluate(ev_fa.type);
+                }
+                if (Type.exists(ev_la.type)) {
+                    typeLast = Type.evaluate(ev_la.type);
+                }
+
+                if (ev_fa) {
+                    size = 6;
+                    if (Type.exists(ev_fa.size)) {
+                        size = Type.evaluate(ev_fa.size);
+                    }
+                    if (hl !== '' && Type.exists(ev_fa[hl + 'size'])) {
+                        size = Type.evaluate(ev_fa[hl + 'size']);
+                    }
+                    offFirst = strokewidth * size;
+                    if (typeFirst === 2) {
+                        offFirst *= 0.5;
+                        minlen += strokewidth * size;
+                    } else if (typeFirst === 3) {
+                        offFirst = strokewidth * size / 3;
+                        minlen += strokewidth;
+                    } else if (typeFirst === 4 || typeFirst === 5 || typeFirst === 6) {
+                        offFirst = strokewidth * size / 1.5;
+                        minlen += strokewidth * size;
+                    } else {
+                        minlen += strokewidth * size;
+                    }
+                    sizeFirst = size;
+                }
+
+                if (ev_la) {
+                    size = 6;
+                    if (Type.exists(ev_la.size)) {
+                        size = Type.evaluate(ev_la.size);
+                    }
+                    if (hl !== '' && Type.exists(ev_la[hl + 'size'])) {
+                        size = Type.evaluate(ev_la[hl + 'size']);
+                    }
+                    offLast = strokewidth * size;
+                    if (typeLast === 2) {
+                        offLast *= 0.5;
+                        minlen += strokewidth * size;
+                    } else if (typeLast === 3) {
+                        offLast = strokewidth * size / 3;
+                        minlen += strokewidth;
+                    } else if (typeLast === 4 || typeLast === 5 || typeLast === 6) {
+                        offLast = strokewidth * size / 1.5;
+                        minlen += strokewidth * size;
+                    } else {
+                        minlen += strokewidth * size;
+                    }
+                    sizeLast = size;
+                }
+            }
+
+            return {
+                evFirst: ev_fa,
+                evLast: ev_la,
+                offFirst: offFirst,
+                offLast: offLast,
+                sizeFirst: sizeFirst,
+                sizeLast: sizeLast,
+                minLen: minlen
+            };
+        },
+
         /**
          * Corrects the line length if there are arrow heads, such that
          * the arrow ends exactly at the intended position.
@@ -412,7 +498,7 @@ define([
          * @see JXG.AbstractRenderer#getPositionArrowHead
          *
          */
-        updateLineEndings: function(el, strokewidth, hl) {
+        updateLineEndings: function(el, arrowData) {
             var c1 = new Coords(Const.COORDS_BY_USER, el.point1.coords.usrCoords, el.board),
                 c2 = new Coords(Const.COORDS_BY_USER, el.point2.coords.usrCoords, el.board),
                 obj, margin = null;
@@ -420,16 +506,16 @@ define([
             margin = Type.evaluate(el.visProp.margin);
             Geometry.calcStraight(el, c1, c2, margin);
 
-            obj = this.getPositionArrowHead(el, c1, c2, strokewidth, hl);
+            obj = this.getPositionArrowHead(el, c1, c2, arrowData);
             this.updateLinePrim(el.rendNode,
                 obj.c1.scrCoords[1] + obj.d1x, obj.c1.scrCoords[2] + obj.d1y,
                 obj.c2.scrCoords[1] - obj.d2x, obj.c2.scrCoords[2] - obj.d2y, el.board);
 
-            return obj;
+            return this;
         },
 
         /**
-         * Read the attribute "size" of the arrow heads. Multiplied with the stroke width of the line
+         * Determine the attribute "size" of the arrow heads. Multiplied with the stroke width of the line
          * this gives the absolute size of the arrow heads. Then the arrow heads are redrawn by the renderer.
          *
          * @param {JXG.Line} el Reference to a line object, that has to be drawn.
@@ -445,42 +531,27 @@ define([
          * @see JXG.AbstractRenderer#updateLine
          * @see JXG.AbstractRenderer#getPositionArrowHead
          */
-        updateArrowSize: function(el, obj, hl) {
-            var size, ev_fa, ev_la;
-
-            ev_fa = Type.evaluate(el.visProp.firstarrow);
-            if (ev_fa) {
-                size = 6;
-                if (Type.exists(ev_fa.size)) {
-                    size = Type.evaluate(ev_fa.size);
-                }
-                if (hl !== '' && Type.exists(ev_fa[hl + 'size'])) {
-                    size = Type.evaluate(ev_fa.highlightsize);
-                }
-                this._setArrowWidth(el.rendNodeTriangleStart, obj.sFirst, el.rendNode, size);
+        setArrowSize: function(el, a) {
+            if (a.evFirst) {
+                this._setArrowWidth(el.rendNodeTriangleStart, a.offFirst, el.rendNode, a.sizeFirst);
             }
-            ev_la = Type.evaluate(el.visProp.lastarrow);
-            if (ev_la) {
-                size = 6;
-                if (Type.exists(ev_la.size)) {
-                    size = Type.evaluate(ev_la.size);
-                }
-                if (hl !== '' && Type.exists(ev_la[hl + 'size'])) {
-                    size = Type.evaluate(ev_la[hl + 'size']);
-                }
-                this._setArrowWidth(el.rendNodeTriangleEnd, obj.sLast, el.rendNode, size);
+            if (a.evLast) {
+                this._setArrowWidth(el.rendNodeTriangleEnd, a.offLast, el.rendNode, a.sizeLast);
             }
             return this;
         },
 
-        updateLineEndsArrows: function(el, doHighlight) {
-            var hl, obj;
+        updateArrowHeads: function(el, doHighlight) {
+            var hl = doHighlight ? 'highlight' : '',
+                w = Type.evaluate(el.visProp[hl + 'strokewidth']),
+                arrowData;
 
-            hl = doHighlight ? 'highlight' : '';
-            obj = this.updateLineEndings(el, Type.evaluate(el.visProp[hl + 'strokewidth']), hl);
-
+            arrowData = this.getArrowHeadData(el, w, hl);
             this.makeArrows(el);
-            this.updateArrowSize(el, obj, hl);
+            if (el.elementClass == Const.OBJECT_CLASS_LINE) {
+                this.updateLineEndings(el, arrowData);
+            }
+            this.setArrowSize(el, arrowData);
         },
 
         /**
@@ -492,7 +563,7 @@ define([
          */
         updateLine: function (el) {
             this._updateVisual(el);
-            this.updateLineEndsArrows(el);
+            this.updateArrowHeads(el);
             this.setLineCap(el);
         },
 
@@ -512,15 +583,8 @@ define([
          * Additionally, if one of these values is zero, the arrow is not displayed. This is the case, if the
          * line length is very short.
          */
-        getPositionArrowHead: function(el, c1, c2, strokewidth, hl) {
-            var s, s1, s2, d, d1x, d1y, d2x, d2y,
-                minlen = Mat.eps,
-                typeFirst, typeLast,
-                sFirst = 0,
-                sLast = 0,
-                ev_fa = Type.evaluate(el.visProp.firstarrow),
-                ev_la = Type.evaluate(el.visProp.lastarrow),
-                size;
+        getPositionArrowHead: function(el, c1, c2, a) {
+            var s, s1, s2, d, d1x, d1y, d2x, d2y;
 
             d1x = d1y = d2x = d2y = 0.0;
             /*
@@ -529,13 +593,13 @@ define([
                The default arrow head is an isosceles triangle with base length 10 units and height 10 units.
                These 10 units are scaled to strokeWidth * arrowSize pixels pixels.
             */
-            if (ev_fa || ev_la) {
+            if (a.evFirst || a.evLast) {
                 s1 = Type.evaluate(el.point1.visProp.size) + Type.evaluate(el.point1.visProp.strokewidth);
                 s2 = Type.evaluate(el.point2.visProp.size) + Type.evaluate(el.point2.visProp.strokewidth);
                 s = s1 + s2;
 
                 // Handle touchlastpoint /touchfirstpoint
-                if (ev_la && Type.evaluate(el.visProp.touchlastpoint)) {
+                if (a.evLast && Type.evaluate(el.visProp.touchlastpoint)) {
                     d = c1.distance(Const.COORDS_BY_SCREEN, c2);
                     if (d > s) {
                         d2x = (c2.scrCoords[1] - c1.scrCoords[1]) * s2 / d;
@@ -543,7 +607,7 @@ define([
                         c2 = new Coords(Const.COORDS_BY_SCREEN, [c2.scrCoords[1] - d2x, c2.scrCoords[2] - d2y], el.board);
                     }
                 }
-                if (ev_fa && Type.evaluate(el.visProp.touchfirstpoint)) {
+                if (a.evFirst && Type.evaluate(el.visProp.touchfirstpoint)) {
                     d = c1.distance(Const.COORDS_BY_SCREEN, c2);
                     if (d > s) {
                         d1x = (c2.scrCoords[1] - c1.scrCoords[1]) * s1 / d;
@@ -556,75 +620,23 @@ define([
                 d1x = d1y = d2x = d2y = 0.0;
                 d = c1.distance(Const.COORDS_BY_SCREEN, c2);
 
-                if (Type.exists(ev_fa.type)) {
-                    typeFirst = Type.evaluate(ev_fa.type);
-                }
-                if (Type.exists(ev_la.type)) {
-                    typeLast = Type.evaluate(ev_la.type);
-                }
-
-                if (ev_fa) {
-                    size = 6;
-                    if (Type.exists(ev_fa.size)) {
-                        size = Type.evaluate(ev_fa.size);
-                    }
-                    if (hl !== '' && Type.exists(ev_fa[hl + 'size'])) {
-                        size = Type.evaluate(ev_fa[hl + 'size']);
-                    }
-                    sFirst = strokewidth * size;
-                    if (typeFirst === 2) {
-                        sFirst *= 0.5;
-                        minlen += strokewidth * size;
-                    } else if (typeFirst === 3) {
-                        sFirst = strokewidth * size / 3;
-                        minlen += strokewidth;
-                    } else if (typeFirst === 4 || typeFirst === 5 || typeFirst === 6) {
-                        sFirst = strokewidth * size / 1.5;
-                        minlen += strokewidth * size;
-                    } else {
-                        minlen += strokewidth * size;
-                    }
-                }
-                if (ev_la) {
-                    size = 6;
-                    if (Type.exists(ev_la.size)) {
-                        size = Type.evaluate(ev_la.size);
-                    }
-                    if (hl !== '' && Type.exists(ev_la[hl + 'size'])) {
-                        size = Type.evaluate(ev_la[hl + 'size']);
-                    }
-                    sLast = strokewidth * size;
-                    if (typeLast === 2) {
-                        sLast *= 0.5;
-                        minlen += strokewidth * size;
-                    } else if (typeLast === 3) {
-                        sLast = strokewidth * size / 3;
-                        minlen += strokewidth;
-                    } else if (typeLast === 4 || typeLast === 5 || typeLast === 6) {
-                        sLast = strokewidth * size / 1.5;
-                        minlen += strokewidth * size;
-                    } else {
-                        minlen += strokewidth * size;
-                    }
-                }
-
-                if (ev_fa &&
+                if (a.evFirst &&
                     el.board.renderer.type !== 'vml') {
-                    if (d >= minlen) {
-                        d1x = (c2.scrCoords[1] - c1.scrCoords[1]) * sFirst / d;
-                        d1y = (c2.scrCoords[2] - c1.scrCoords[2]) * sFirst / d;
+                    if (d >= a.minLen) {
+                        d1x = (c2.scrCoords[1] - c1.scrCoords[1]) * a.offFirst / d;
+                        d1y = (c2.scrCoords[2] - c1.scrCoords[2]) * a.offFirst / d;
                     } else {
-                        sFirst = 0;
+                        a.offFirst = 0;
                     }
                 }
 
-                if (ev_la &&
+                if (a.evLast &&
                     el.board.renderer.type !== 'vml') {
-                    if (d >= minlen) {
-                        d2x = (c2.scrCoords[1] - c1.scrCoords[1]) * sLast / d;
-                        d2y = (c2.scrCoords[2] - c1.scrCoords[2]) * sLast / d;
+                    if (d >= a.minLen) {
+                        d2x = (c2.scrCoords[1] - c1.scrCoords[1]) * a.offLast / d;
+                        d2y = (c2.scrCoords[2] - c1.scrCoords[2]) * a.offLast / d;
                     } else {
-                        sLast = 0.0;
+                        a.offLast = 0.0;
                     }
                 }
             }
@@ -635,9 +647,7 @@ define([
                 d1x: d1x,
                 d1y: d1y,
                 d2x: d2x,
-                d2y: d2y,
-                sFirst: sFirst,
-                sLast: sLast
+                d2y: d2y
             };
         },
 
@@ -701,83 +711,6 @@ define([
             this.updateCurve(el);
         },
 
-        getPositionArrowHeadCurves: function(el, strokewidth, hl) {
-            var minlen = Mat.eps,
-                typeFirst, typeLast,
-                sFirst = 0,
-                sLast = 0,
-                ev_fa = Type.evaluate(el.visProp.firstarrow),
-                ev_la = Type.evaluate(el.visProp.lastarrow),
-                size;
-
-            /*
-               Handle arrow heads.
-
-               The default arrow head is an isosceles triangle with base length 10 units and height 10 units.
-               These 10 units are scaled to strokeWidth * arrowSize pixels pixels.
-            */
-            if (ev_fa || ev_la) {
-
-                if (Type.exists(ev_fa.type)) {
-                    typeFirst = Type.evaluate(ev_fa.type);
-                }
-                if (Type.exists(ev_la.type)) {
-                    typeLast = Type.evaluate(ev_la.type);
-                }
-
-                if (ev_fa) {
-                    size = 6;
-                    if (Type.exists(ev_fa.size)) {
-                        size = Type.evaluate(ev_fa.size);
-                    }
-                    if (hl !== '' && Type.exists(ev_fa[hl + 'size'])) {
-                        size = Type.evaluate(ev_fa[hl + 'size']);
-                    }
-                    sFirst = strokewidth * size;
-                    if (typeFirst === 2) {
-                        sFirst *= 0.5;
-                        minlen += strokewidth * size;
-                    } else if (typeFirst === 3) {
-                        sFirst = strokewidth * size / 3;
-                        minlen += strokewidth;
-                    } else if (typeFirst === 4 || typeFirst === 5 || typeFirst === 6) {
-                        sFirst = strokewidth * size / 1.5;
-                        minlen += strokewidth * size;
-                    } else {
-                        minlen += strokewidth * size;
-                    }
-                }
-
-                if (ev_la) {
-                    size = 6;
-                    if (Type.exists(ev_la.size)) {
-                        size = Type.evaluate(ev_la.size);
-                    }
-                    if (hl !== '' && Type.exists(ev_la[hl + 'size'])) {
-                        size = Type.evaluate(ev_la[hl + 'size']);
-                    }
-                    sLast = strokewidth * size;
-                    if (typeLast === 2) {
-                        sLast *= 0.5;
-                        minlen += strokewidth * size;
-                    } else if (typeLast === 3) {
-                        sLast = strokewidth * size / 3;
-                        minlen += strokewidth;
-                    } else if (typeLast === 4 || typeLast === 5 || typeLast === 6) {
-                        sLast = strokewidth * size / 1.5;
-                        minlen += strokewidth * size;
-                    } else {
-                        minlen += strokewidth * size;
-                    }
-                }
-            }
-
-            return {
-                sFirst: sFirst,
-                sLast: sLast
-            };
-        },
-
         /**
          * Updates visual appearance of the renderer element assigned to the given {@link JXG.Curve}.
          * @param {JXG.Curve} el Reference to a {@link JXG.Curve} object, that has to be updated.
@@ -787,45 +720,31 @@ define([
          */
         updateCurve: function (el) {
             var w = Type.evaluate(el.visProp.strokewidth),
-                size, ev_fa, ev_la;
-
-            var le = el.points.length,
-                obj, hl = false;
+                le, obj, hl = false;
 
             if (Type.evaluate(el.visProp.handdrawing)) {
                 this.updatePathPrim(el.rendNode, this.updatePathStringBezierPrim(el), el.board);
             } else {
                 this.updatePathPrim(el.rendNode, this.updatePathStringPrim(el), el.board);
-
-                obj = this.getPositionArrowHeadCurves(el, w, hl);
-                le = el.rendNode.getTotalLength();
-                el.rendNode.style.strokeDasharray = (le - obj.sFirst - obj.sLast) + ' ' + obj.sLast;
-                el.rendNode.style.strokeDashoffset = -obj.sFirst;
             }
 
-            if (el.numberPoints > 1) {
+            obj = this.getArrowHeadData(el, w, hl);
+
+            if (el.numberPoints > 1 && (obj.evFirst || obj.evLast)) {
                 this.makeArrows(el);
 
-                ev_fa = Type.evaluate(el.visProp.firstarrow);
-                if (ev_fa) {
-                    if (Type.exists(ev_fa.size)) {
-                        size = Type.evaluate(ev_fa.size);
-                    } else {
-                        size = 6;
-                    }
+                if (obj.evFirst) {
+                    this._setArrowWidth(el.rendNodeTriangleStart, w, el.rendNode, obj.sizeFirst);
+                }
+                if (obj.evLast) {
+                    this._setArrowWidth(el.rendNodeTriangleEnd, w, el.rendNode, obj.sizeLast);
+                }
 
-                    this._setArrowWidth(el.rendNodeTriangleStart, w, el.rendNode, size);
-                }
-                ev_la = Type.evaluate(el.visProp.lastarrow);
-                if (ev_la) {
-                    if (Type.exists(ev_la.size)) {
-                        size = Type.evaluate(ev_la.size);
-                    } else {
-                        size = 6;
-                    }
-                    this._setArrowWidth(el.rendNodeTriangleEnd, w, el.rendNode, size);
-                }
+                le = el.rendNode.getTotalLength();
+                el.rendNode.style.strokeDasharray = (le - obj.offFirst - obj.offLast) + ' ' + obj.offLast;
+                el.rendNode.style.strokeDashoffset = -obj.offFirst;
             }
+
             this._updateVisual(el);
         },
 
@@ -1721,8 +1640,8 @@ define([
                 if (ev.highlightstrokewidth) {
                     sw = Math.max(Type.evaluate(ev.highlightstrokewidth), Type.evaluate(ev.strokewidth));
                     this.setObjectStrokeWidth(el, sw);
-                    if (el.elementClass === Const.OBJECT_CLASS_LINE) {
-                        this.updateLineEndsArrows(el, sw, true);
+                    if (el.elementClass === Const.OBJECT_CLASS_LINE || el.elementClass === Const.OBJECT_CLASS_CURVE) {
+                        this.updateArrowHeads(el, true);
                     }
                 }
             }
@@ -1771,8 +1690,8 @@ define([
 
                 sw = Type.evaluate(ev.strokewidth);
                 this.setObjectStrokeWidth(el, sw);
-                if (el.elementClass === Const.OBJECT_CLASS_LINE) {
-                    this.updateLineEndsArrows(el, sw, false);
+                if (el.elementClass === Const.OBJECT_CLASS_LINE || el.elementClass === Const.OBJECT_CLASS_CURVE) {
+                    this.updateArrowHeads(el, false);
                 }
 
             }

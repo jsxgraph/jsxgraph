@@ -617,6 +617,7 @@ define([
                 ev_fa = Type.evaluate(el.visProp.firstarrow),
                 ev_la = Type.evaluate(el.visProp.lastarrow);
 
+            // Test if the arrow heads already exist
             if (el.visPropOld.firstarrow === ev_fa &&
                 el.visPropOld.lastarrow === ev_la) {
                 if (this.isIE && el.visPropCalc.visible &&

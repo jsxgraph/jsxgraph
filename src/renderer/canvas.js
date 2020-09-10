@@ -552,7 +552,6 @@ define([
          * @private
          */
         drawArrows: function (el, scr1, scr2, hl) {
-             // not done yet for curves and arcs.
              var x1, y1, x2, y2,
                  w0, w,
                  arrowHead,
