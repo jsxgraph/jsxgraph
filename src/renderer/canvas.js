@@ -131,7 +131,9 @@ define([
                     }
                 }
                 context.lineTo(shape[0][0], shape[0][1]);
+                context.closePath();
                 context.fill();
+                context.stroke();
             }
         },
 
@@ -830,6 +832,7 @@ define([
 
                 context.save();
                 if (this._setColor(el, 'stroke', 'fill')) {
+                    this._setColor(el, 'stroke');
                     if (ev_fa) {
                         this._drawFilledPolygon(this._translateShape(this._rotateShape(arrowTail, ang1), x1, y1), degree_fa);
                     }
@@ -843,8 +846,7 @@ define([
 
         // documented in AbstractRenderer
         drawLine: function (el) {
-            var c1_org = new Coords(Const.COORDS_BY_USER, el.point1.coords.usrCoords, el.board),
-                c2_org = new Coords(Const.COORDS_BY_USER, el.point2.coords.usrCoords, el.board),
+            var c1_org, c2_org,
                 c1 = new Coords(Const.COORDS_BY_USER, el.point1.coords.usrCoords, el.board),
                 c2 = new Coords(Const.COORDS_BY_USER, el.point2.coords.usrCoords, el.board),
                 margin = null,
@@ -862,14 +864,14 @@ define([
                 margin = -4;
             }
             Geometry.calcStraight(el, c1, c2, margin);
+            c1_org = new Coords(Const.COORDS_BY_USER, c1.usrCoords, el.board),
+            c2_org = new Coords(Const.COORDS_BY_USER, c2.usrCoords, el.board),
 
             this.getPositionArrowHead(el, c1, c2, arrowData);
 
             this.context.beginPath();
             this.context.moveTo(c1.scrCoords[1], c1.scrCoords[2]);
             this.context.lineTo(c2.scrCoords[1], c2.scrCoords[2]);
-            // this.context.moveTo(obj.c1.scrCoords[1] + obj.d1x, obj.c1.scrCoords[2] + obj.d1y);
-            // this.context.lineTo(obj.c2.scrCoords[1] - obj.d2x, obj.c2.scrCoords[2] - obj.d2y);
             this._stroke(el);
 
             if ((arrowData.evFirst/* && obj.sFirst > 0*/) ||
