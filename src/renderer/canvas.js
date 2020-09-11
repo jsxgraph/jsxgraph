@@ -843,24 +843,27 @@ define([
 
         // documented in AbstractRenderer
         drawLine: function (el) {
-            var c1 = new Coords(Const.COORDS_BY_USER, el.point1.coords.usrCoords, el.board),
+            var c1_org = new Coords(Const.COORDS_BY_USER, el.point1.coords.usrCoords, el.board),
+                c2_org = new Coords(Const.COORDS_BY_USER, el.point2.coords.usrCoords, el.board),
+                c1 = new Coords(Const.COORDS_BY_USER, el.point1.coords.usrCoords, el.board),
                 c2 = new Coords(Const.COORDS_BY_USER, el.point2.coords.usrCoords, el.board),
                 margin = null,
-                hl,
-                ev_fa = Type.evaluate(el.visProp.firstarrow),
-                ev_la = Type.evaluate(el.visProp.lastarrow);
+                hl, w, arrowData;
 
             if (!el.visPropCalc.visible) {
                 return;
             }
 
-            if (ev_fa || ev_la) {
+            hl = this._getHighlighted(el);
+            w = Type.evaluate(el.visProp[hl + 'strokewidth']),
+            arrowData = this.getArrowHeadData(el, w, hl);
+
+            if (arrowData.evFirst || arrowData.evLast) {
                 margin = -4;
             }
             Geometry.calcStraight(el, c1, c2, margin);
 
-            hl = this._getHighlighted(el);
-            this.getPositionArrowHead(el, c1, c2, Type.evaluate(el.visProp[hl + 'strokewidth']), hl);
+            this.getPositionArrowHead(el, c1, c2, arrowData);
 
             this.context.beginPath();
             this.context.moveTo(c1.scrCoords[1], c1.scrCoords[2]);
@@ -869,10 +872,10 @@ define([
             // this.context.lineTo(obj.c2.scrCoords[1] - obj.d2x, obj.c2.scrCoords[2] - obj.d2y);
             this._stroke(el);
 
-            if ((ev_fa/* && obj.sFirst > 0*/) ||
-                (ev_la/* && obj.sLast > 0*/)) {
+            if ((arrowData.evFirst/* && obj.sFirst > 0*/) ||
+                (arrowData.evLast/* && obj.sLast > 0*/)) {
 
-                this.drawArrows(el, c1, c2, hl);
+                this.drawArrows(el, c1_org, c2_org, hl);
             }
         },
 

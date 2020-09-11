@@ -1593,6 +1593,16 @@ define([
          */
         layer: {
             numlayers: 20, // only important in SVG
+            unused9: 19,
+            unused8: 18,
+            unused7: 17,
+            unused6: 16,
+            unused5: 15,
+            unused4: 14,
+            unused3: 13,
+            unused2: 12,
+            unused1: 11,
+            unused0: 10,
             text: 9,
             point: 9,
             glider: 9,

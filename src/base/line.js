@@ -412,7 +412,6 @@ define([
                 }
             }
 
-
             if (this.visPropCalc.visible) {
                 this.board.renderer.updateLine(this);
             }
