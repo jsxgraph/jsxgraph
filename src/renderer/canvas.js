@@ -843,8 +843,7 @@ define([
 
         // documented in AbstractRenderer
         drawLine: function (el) {
-            var obj,
-                c1 = new Coords(Const.COORDS_BY_USER, el.point1.coords.usrCoords, el.board),
+            var c1 = new Coords(Const.COORDS_BY_USER, el.point1.coords.usrCoords, el.board),
                 c2 = new Coords(Const.COORDS_BY_USER, el.point2.coords.usrCoords, el.board),
                 margin = null,
                 hl,
@@ -861,17 +860,19 @@ define([
             Geometry.calcStraight(el, c1, c2, margin);
 
             hl = this._getHighlighted(el);
-            obj = this.getPositionArrowHead(el, c1, c2, Type.evaluate(el.visProp[hl + 'strokewidth']), hl);
+            this.getPositionArrowHead(el, c1, c2, Type.evaluate(el.visProp[hl + 'strokewidth']), hl);
 
             this.context.beginPath();
-            this.context.moveTo(obj.c1.scrCoords[1] + obj.d1x, obj.c1.scrCoords[2] + obj.d1y);
-            this.context.lineTo(obj.c2.scrCoords[1] - obj.d2x, obj.c2.scrCoords[2] - obj.d2y);
+            this.context.moveTo(c1.scrCoords[1], c1.scrCoords[2]);
+            this.context.lineTo(c2.scrCoords[1], c2.scrCoords[2]);
+            // this.context.moveTo(obj.c1.scrCoords[1] + obj.d1x, obj.c1.scrCoords[2] + obj.d1y);
+            // this.context.lineTo(obj.c2.scrCoords[1] - obj.d2x, obj.c2.scrCoords[2] - obj.d2y);
             this._stroke(el);
 
-            if ((ev_fa && obj.sFirst > 0) ||
-                (ev_la && obj.sLast > 0)) {
+            if ((ev_fa/* && obj.sFirst > 0*/) ||
+                (ev_la/* && obj.sLast > 0*/)) {
 
-                this.drawArrows(el, obj.c1, obj.c2, hl);
+                this.drawArrows(el, c1, c2, hl);
             }
         },
 

@@ -398,7 +398,7 @@ define([
                 sizeLast = 0,
                 ev_fa = Type.evaluate(el.visProp.firstarrow),
                 ev_la = Type.evaluate(el.visProp.lastarrow),
-                s1, s2, s, off, size;
+                off, size;
 
             /*
                Handle arrow heads.
@@ -413,19 +413,6 @@ define([
                 }
                 if (Type.exists(ev_la.type)) {
                     typeLast = Type.evaluate(ev_la.type);
-                }
-
-                // Handle touchlastpoint /touchfirstpoint
-                if (el.elementClass === Const.OBJECT_CLASS_LINE) {
-                    s1 = Type.evaluate(el.point1.visProp.size) + Type.evaluate(el.point1.visProp.strokewidth);
-                    s2 = Type.evaluate(el.point2.visProp.size) + Type.evaluate(el.point2.visProp.strokewidth);
-                    s = s1 + s2;
-                    if (ev_fa && Type.evaluate(el.visProp.touchfirstpoint)) {
-                        offFirst = s1;
-                    }
-                    if (ev_la && Type.evaluate(el.visProp.touchlastpoint)) {
-                        offLast = s2;
-                    }
                 }
 
                 if (ev_fa) {
@@ -492,6 +479,102 @@ define([
         },
 
         /**
+         * Shorten the line length such that the arrow head touches
+         * the start or end point and such that the arrow head ends exactly
+         * at the start / end position of the line.
+         *
+         * @param  {JXG.Line} el Reference to the line object that gets arrow heads.
+         * @param  {JXG.Coords} c1  Coords of the first point of the line (after {@link JXG.Geometry#calcStraight}).
+         * @param  {JXG.Coords} c2  Coords of the second point of the line (after {@link JXG.Geometry#calcStraight}).
+         * @param  {Object}  a
+         * @return {object} Object containing how much the line has to be shortened.
+         * Data structure: {c1, c2, d1x, d1y, d2x, d2y, sFirst, sLast}. sFirst and sLast is the length by which
+         * firstArrow and lastArrow have to shifted such that there is no gap between arrow head and line.
+         * Additionally, if one of these values is zero, the arrow is not displayed. This is the case, if the
+         * line length is very short.
+         */
+        getPositionArrowHead: function(el, c1, c2, a) {
+            var d, d1x, d1y, d2x, d2y;
+
+            /*
+               Handle arrow heads.
+
+               The default arrow head is an isosceles triangle with base length 10 units and height 10 units.
+               These 10 units are scaled to strokeWidth * arrowSize pixels pixels.
+            */
+            if (a.evFirst || a.evLast) {
+                // Correct the position of the arrow heads
+                d1x = d1y = d2x = d2y = 0.0;
+                d = c1.distance(Const.COORDS_BY_SCREEN, c2);
+
+                if (a.evFirst &&
+                    el.board.renderer.type !== 'vml') {
+                    if (d >= a.minLen) {
+                        d1x = (c2.scrCoords[1] - c1.scrCoords[1]) * a.offFirst / d;
+                        d1y = (c2.scrCoords[2] - c1.scrCoords[2]) * a.offFirst / d;
+                    } else {
+                        a.offFirst = 0;
+                    }
+                }
+
+                if (a.evLast &&
+                    el.board.renderer.type !== 'vml') {
+                    if (d >= a.minLen) {
+                        d2x = (c2.scrCoords[1] - c1.scrCoords[1]) * a.offLast / d;
+                        d2y = (c2.scrCoords[2] - c1.scrCoords[2]) * a.offLast / d;
+                    } else {
+                        a.offLast = 0.0;
+                    }
+                }
+                c1.setCoordinates(Const.COORDS_BY_SCREEN, [c1.scrCoords[1] + d1x, c1.scrCoords[2] + d1y], false, true);
+                c2.setCoordinates(Const.COORDS_BY_SCREEN, [c2.scrCoords[1] - d2x, c2.scrCoords[2] - d2y], false, true);
+            }
+
+            return this;
+        },
+
+        /**
+         * Handle touchlastpoint / touchfirstpoint
+         *
+         * @param {JXG.GeometryElement} el
+         * @param {JXG.Coords} c1 Coordinates of the start of the line. The coordinates are changed in place.
+         * @param {JXG.Coords} c2 Coordinates of the end of the line. The coordinates are changed in place.
+         * @param {Object} a
+         */
+        handleTouchpoints: function(el, c1, c2, a) {
+            var s1, s2, s, d,
+                d1x, d1y, d2x, d2y;
+
+            if (a.evFirst || a.evLast) {
+                d = d1x = d1y = d2x = d2y = 0.0;
+
+                s1 = Type.evaluate(el.point1.visProp.size) + Type.evaluate(el.point1.visProp.strokewidth);
+                s2 = Type.evaluate(el.point2.visProp.size) + Type.evaluate(el.point2.visProp.strokewidth);
+                s = s1 + s2;
+
+                // Handle touchlastpoint /touchfirstpoint
+                if (a.evFirst && Type.evaluate(el.visProp.touchfirstpoint)) {
+                    d = c1.distance(Const.COORDS_BY_SCREEN, c2);
+                    if (d > s) {
+                        d1x = (c2.scrCoords[1] - c1.scrCoords[1]) * s1 / d;
+                        d1y = (c2.scrCoords[2] - c1.scrCoords[2]) * s1 / d;
+                    }
+                }
+                if (a.evLast && Type.evaluate(el.visProp.touchlastpoint)) {
+                    d = c1.distance(Const.COORDS_BY_SCREEN, c2);
+                    if (d > s) {
+                        d2x = (c2.scrCoords[1] - c1.scrCoords[1]) * s2 / d;
+                        d2y = (c2.scrCoords[2] - c1.scrCoords[2]) * s2 / d;
+                    }
+                }
+                c1.setCoordinates(Const.COORDS_BY_SCREEN, [c1.scrCoords[1] + d1x, c1.scrCoords[2] + d1y], false, true);
+                c2.setCoordinates(Const.COORDS_BY_SCREEN, [c2.scrCoords[1] - d2x, c2.scrCoords[2] - d2y], false, true);
+            }
+
+            return this;
+        },
+
+        /**
          * Corrects the line length if there are arrow heads, such that
          * the arrow ends exactly at the intended position.
          * Calls the renderer method to draw the line.
@@ -516,44 +599,51 @@ define([
          */
         updateLineEndings: function(el, arrowData) {
             var c1, c2, stroke,
-                le, obj, margin = null;
+                le, margin = null;
 
             c1 = new Coords(Const.COORDS_BY_USER, el.point1.coords.usrCoords, el.board);
             c2 = new Coords(Const.COORDS_BY_USER, el.point2.coords.usrCoords, el.board);
             margin = Type.evaluate(el.visProp.margin);
             Geometry.calcStraight(el, c1, c2, margin);
 
+            this.handleTouchpoints(el, c1, c2, arrowData);
+
             if (!Type.exists(el.rendNode.getTotalLength)) {
-                obj = this.getPositionArrowHead(el, c1, c2, arrowData);
-                this.updateLinePrim(el.rendNode,
-                    obj.c1.scrCoords[1] + obj.d1x, obj.c1.scrCoords[2] + obj.d1y,
-                    obj.c2.scrCoords[1] - obj.d2x, obj.c2.scrCoords[2] - obj.d2y, el.board);
-            } else {
-                this.updateLinePrim(el.rendNode,
-                    c1.scrCoords[1], c1.scrCoords[2],
-                    c2.scrCoords[1], c2.scrCoords[2], el.board);
+                this.getPositionArrowHead(el, c1, c2, arrowData);
+            }
 
+            this.updateLinePrim(el.rendNode,
+                c1.scrCoords[1], c1.scrCoords[2],
+                c2.scrCoords[1], c2.scrCoords[2], el.board);
 
+            if (Type.exists(el.rendNode.getTotalLength)) {
                 le = el.rendNode.getTotalLength();
                 stroke = le - arrowData.offFirst - arrowData.offLast;
-                el.rendNode.style.strokeDasharray = stroke + ' ' + arrowData.offFirst + ' ' + stroke;
-                el.rendNode.style.strokeDashoffset = stroke;
+                //if (stroke >= 0) {
+                    el.rendNode.style.strokeDasharray = stroke + ' ' + arrowData.offFirst + ' ' + stroke + ' ' + arrowData.offLast;
+                    el.rendNode.style.strokeDashoffset = stroke;
+                //}
+                // console.log(el.rendNode.style.strokeDasharray, el.rendNode.style.strokeDashoffset, le, arrowData.offFirst, arrowData.offLast, stroke)
             }
 
             return this;
         },
 
         updatePathEndings: function(el, arrowData) {
-            var le;
+            var le, stroke;
 
             if (Type.evaluate(el.visProp.handdrawing)) {
                 this.updatePathPrim(el.rendNode, this.updatePathStringBezierPrim(el), el.board);
             } else {
                 this.updatePathPrim(el.rendNode, this.updatePathStringPrim(el), el.board);
             }
+
             le = el.rendNode.getTotalLength();
-            el.rendNode.style.strokeDasharray = (le - arrowData.offFirst - arrowData.offLast) + ' ' + arrowData.offLast;
-            el.rendNode.style.strokeDashoffset = -arrowData.offFirst;
+            stroke = le - arrowData.offFirst - arrowData.offLast;
+            //if (stroke >= 0) {
+                el.rendNode.style.strokeDasharray = stroke + ' ' + arrowData.offFirst + ' ' + stroke + ' ' + arrowData.offLast;
+                el.rendNode.style.strokeDashoffset = stroke;
+            //}
 
             return this;
         },
@@ -585,13 +675,18 @@ define([
             return this;
         },
 
-        updateArrowHeads: function(el, doHighlight) {
+        updatePathWithArrowHeads: function(el, doHighlight) {
             var hl = doHighlight ? 'highlight' : '',
                 w = Type.evaluate(el.visProp[hl + 'strokewidth']),
-                arrowData, le;
+                arrowData;
 
+            // Get information if there are arrow heads and how large they are.
             arrowData = this.getArrowHeadData(el, w, hl);
+
+            // Create the SVG nodes if neccessary
             this.makeArrows(el);
+
+            // Draw the paths with arrow heads
             if (el.elementClass === Const.OBJECT_CLASS_LINE) {
                 this.updateLineEndings(el, arrowData);
             } else if (el.elementClass === Const.OBJECT_CLASS_CURVE) {
@@ -609,92 +704,8 @@ define([
          */
         updateLine: function (el) {
             this._updateVisual(el);
-            this.updateArrowHeads(el);
+            this.updatePathWithArrowHeads(el);
             this.setLineCap(el);
-        },
-
-        /**
-         * Shorten the line length such that the arrow head touches
-         * the start or end point and such that the arrow head ends exactly
-         * at the start / end position of the line.
-         *
-         * @param  {JXG.Line} el Reference to the line object that gets arrow heads.
-         * @param  {JXG.Coords} c1  Coords of the first point of the line (after {@link JXG.Geometry#calcStraight}).
-         * @param  {JXG.Coords} c2  Coords of the second point of the line (after {@link JXG.Geometry#calcStraight}).
-         * @param  {Boolean} doHighlight true if the object is to be highlighted, false otherwise. This parameter
-         *  is necessary for the attribute highlightSize of the arrow heads.
-         * @return {object} Object containing how much the line has to be shortened.
-         * Data structure: {c1, c2, d1x, d1y, d2x, d2y, sFirst, sLast}. sFirst and sLast is the length by which
-         * firstArrow and lastArrow have to shifted such that there is no gap between arrow head and line.
-         * Additionally, if one of these values is zero, the arrow is not displayed. This is the case, if the
-         * line length is very short.
-         */
-        getPositionArrowHead: function(el, c1, c2, a) {
-            var s, s1, s2, d, d1x, d1y, d2x, d2y;
-
-            d1x = d1y = d2x = d2y = 0.0;
-            /*
-               Handle arrow heads.
-
-               The default arrow head is an isosceles triangle with base length 10 units and height 10 units.
-               These 10 units are scaled to strokeWidth * arrowSize pixels pixels.
-            */
-            if (a.evFirst || a.evLast) {
-                s1 = Type.evaluate(el.point1.visProp.size) + Type.evaluate(el.point1.visProp.strokewidth);
-                s2 = Type.evaluate(el.point2.visProp.size) + Type.evaluate(el.point2.visProp.strokewidth);
-                s = s1 + s2;
-
-                // Handle touchlastpoint /touchfirstpoint
-                if (a.evLast && Type.evaluate(el.visProp.touchlastpoint)) {
-                    d = c1.distance(Const.COORDS_BY_SCREEN, c2);
-                    if (d > s) {
-                        d2x = (c2.scrCoords[1] - c1.scrCoords[1]) * s2 / d;
-                        d2y = (c2.scrCoords[2] - c1.scrCoords[2]) * s2 / d;
-                        c2 = new Coords(Const.COORDS_BY_SCREEN, [c2.scrCoords[1] - d2x, c2.scrCoords[2] - d2y], el.board);
-                    }
-                }
-                if (a.evFirst && Type.evaluate(el.visProp.touchfirstpoint)) {
-                    d = c1.distance(Const.COORDS_BY_SCREEN, c2);
-                    if (d > s) {
-                        d1x = (c2.scrCoords[1] - c1.scrCoords[1]) * s1 / d;
-                        d1y = (c2.scrCoords[2] - c1.scrCoords[2]) * s1 / d;
-                        c1 = new Coords(Const.COORDS_BY_SCREEN, [c1.scrCoords[1] + d1x, c1.scrCoords[2] + d1y], el.board);
-                    }
-                }
-
-                // Correct the position of the arrow heads
-                d1x = d1y = d2x = d2y = 0.0;
-                d = c1.distance(Const.COORDS_BY_SCREEN, c2);
-
-                if (a.evFirst &&
-                    el.board.renderer.type !== 'vml') {
-                    if (d >= a.minLen) {
-                        d1x = (c2.scrCoords[1] - c1.scrCoords[1]) * a.offFirst / d;
-                        d1y = (c2.scrCoords[2] - c1.scrCoords[2]) * a.offFirst / d;
-                    } else {
-                        a.offFirst = 0;
-                    }
-                }
-
-                if (a.evLast &&
-                    el.board.renderer.type !== 'vml') {
-                    if (d >= a.minLen) {
-                        d2x = (c2.scrCoords[1] - c1.scrCoords[1]) * a.offLast / d;
-                        d2y = (c2.scrCoords[2] - c1.scrCoords[2]) * a.offLast / d;
-                    } else {
-                        a.offLast = 0.0;
-                    }
-                }
-            }
-
-            return {
-                c1: c1,
-                c2: c2,
-                d1x: d1x,
-                d1y: d1y,
-                d2x: d2x,
-                d2y: d2y
-            };
         },
 
         /**
@@ -765,7 +776,7 @@ define([
          * @see JXG.AbstractRenderer#drawCurve
          */
         updateCurve: function (el) {
-            this.updateArrowHeads(el);
+            this.updatePathWithArrowHeads(el);
             this._updateVisual(el);
         },
 
@@ -1662,7 +1673,7 @@ define([
                     sw = Math.max(Type.evaluate(ev.highlightstrokewidth), Type.evaluate(ev.strokewidth));
                     this.setObjectStrokeWidth(el, sw);
                     if (el.elementClass === Const.OBJECT_CLASS_LINE || el.elementClass === Const.OBJECT_CLASS_CURVE) {
-                        this.updateArrowHeads(el, true);
+                        this.updatePathWithArrowHeads(el, true);
                     }
                 }
             }
@@ -1712,7 +1723,7 @@ define([
                 sw = Type.evaluate(ev.strokewidth);
                 this.setObjectStrokeWidth(el, sw);
                 if (el.elementClass === Const.OBJECT_CLASS_LINE || el.elementClass === Const.OBJECT_CLASS_CURVE) {
-                    this.updateArrowHeads(el, false);
+                    this.updatePathWithArrowHeads(el, false);
                 }
 
             }
