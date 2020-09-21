@@ -1893,6 +1893,9 @@ define([
             var parentNode = el.parentNode,
                 nextSibling = el.nextSibling;
 
+            if (parentNode === null) {
+                return;
+            }
             parentNode.removeChild(el);
 
             return function () {
