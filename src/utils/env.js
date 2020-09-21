@@ -92,10 +92,11 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          * @returns {Number}
          */
         getNumberOfTouchPoints: function (evt) {
-            let n = -1;
+            var n = -1;
 
-            if (JXG.isTouchEvent(evt))
+            if (JXG.isTouchEvent(evt)) {
                 n = evt[JXG.touchProperty].length;
+            }
 
             return n;
         },
@@ -108,7 +109,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          * @returns {boolean}
          */
         isFirstTouch: function (evt) {
-            let touchPoints = JXG.getNumberOfTouchPoints(evt);
+            var touchPoints = JXG.getNumberOfTouchPoints(evt);
 
             if (JXG.isPointerEvent(evt)) {
                 return evt.isPrimary;
@@ -594,7 +595,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
             } else {
                 if (obj.style) {
                     // make stylename lower camelcase
-                    stylename = stylename.replace(/-([a-z]|[0-9])/ig, function (all, letter) {
+                    stylename = stylename.replace(/-([a-z]|[0-9])/ig, function (letter) {
                         return letter.toUpperCase();
                     });
                     r = obj.style[stylename];
@@ -810,7 +811,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                 rule_inner = '{margin:0 auto;transform:matrix(' + scale + ',0,0,' + scale + ',0,' + vshift + ');}',
                 // A previously installed CSS rule to center the JSXGraph div has to
                 // be searched and removed again.
-                regex = RegExp('.*' + wrap_id + ':.*full.*screen.*' + inner_id + '.*auto;.*transform:.*matrix');
+                regex = new RegExp('.*' + wrap_id + ':.*full.*screen.*' + inner_id + '.*auto;.*transform:.*matrix');
 
             if (len === 0) {
                 // In case there is not a single CSS rule defined.
