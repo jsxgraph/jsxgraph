@@ -157,7 +157,7 @@ var JXG = {},
         }
     };
 
-    JXG.loadJSfiles = function (fileArray, rootFile, preventCaching = false) {
+    JXG.loadJSfiles = function (fileArray, rootFile, preventCaching/* = false*/) {
         var i, s, scripts, requirePath = '', reg, postfix = '';
 
         if (preventCaching) {
