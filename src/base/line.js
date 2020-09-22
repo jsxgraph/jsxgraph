@@ -594,7 +594,7 @@ define([
                 }
 
                 if (Math.abs(x) < Mat.eps) {
-                    x = fs + 0;
+                    x = fs;
                 } else if (this.board.canvasWidth + Mat.eps > x &&
                             x > this.board.canvasWidth - fs - Mat.eps) {
                     x = this.board.canvasWidth - fs;

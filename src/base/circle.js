@@ -816,17 +816,16 @@ define([
             el.addTransform(parents[1]);
             return el;
 
-        } else {
-            // Circle defined by points
-            for (i = 0; i < parents.length; i++) {
-                if (Type.isPointType(board, parents[i])) {
-                    p = p.concat(Type.providePoints(board, [parents[i]], attributes, 'circle', ['center']));
-                    if (p[p.length - 1] === false) {
-                        throw new Error('JSXGraph: Can\'t create circle from this type. Please provide a point type.');
-                    }
-                } else {
-                    p.push(parents[i]);
+        }
+        // Circle defined by points
+        for (i = 0; i < parents.length; i++) {
+            if (Type.isPointType(board, parents[i])) {
+                p = p.concat(Type.providePoints(board, [parents[i]], attributes, 'circle', ['center']));
+                if (p[p.length - 1] === false) {
+                    throw new Error('JSXGraph: Can\'t create circle from this type. Please provide a point type.');
                 }
+            } else {
+                p.push(parents[i]);
             }
         }
 

@@ -595,7 +595,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
             } else {
                 if (obj.style) {
                     // make stylename lower camelcase
-                    stylename = stylename.replace(/-([a-z]|[0-9])/ig, function (letter) {
+                    stylename = stylename.replace(/-([a-z]|[0-9])/ig, function (all, letter) {
                         return letter.toUpperCase();
                     });
                     r = obj.style[stylename];

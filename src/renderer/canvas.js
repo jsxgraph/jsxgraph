@@ -857,15 +857,15 @@ define([
             }
 
             hl = this._getHighlighted(el);
-            w = Type.evaluate(el.visProp[hl + 'strokewidth']),
+            w = Type.evaluate(el.visProp[hl + 'strokewidth']);
             arrowData = this.getArrowHeadData(el, w, hl);
 
             if (arrowData.evFirst || arrowData.evLast) {
                 margin = -4;
             }
             Geometry.calcStraight(el, c1, c2, margin);
-            c1_org = new Coords(Const.COORDS_BY_USER, c1.usrCoords, el.board),
-            c2_org = new Coords(Const.COORDS_BY_USER, c2.usrCoords, el.board),
+            c1_org = new Coords(Const.COORDS_BY_USER, c1.usrCoords, el.board);
+            c2_org = new Coords(Const.COORDS_BY_USER, c2.usrCoords, el.board);
 
             this.getPositionArrowHead(el, c1, c2, arrowData);
 

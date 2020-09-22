@@ -77,12 +77,12 @@
  */
 
 define([
-    'jxg', 'math/math', 'math/geometry', 'math/numerics', 'math/statistics', 'base/coords',
+    'jxg', 'math/math', 'math/geometry', 'math/numerics', 'base/coords',
     'utils/type', 'base/constants', 'base/point', 'base/line', 'base/circle', 'base/transformation',
-    'base/composition', 'base/curve', 'base/text', 'base/polygon', 'element/arc', 'element/sector'
-], function (JXG, Mat, Geometry, Numerics, Statistics, Coords,
+    'base/composition', 'base/curve', 'base/polygon'
+], function (JXG, Mat, Geometry, Numerics, Coords,
     Type, Const, Point, Line, Circle, Transform,
-    Composition, Curve, Text, Polygon, Arc, Sector) {
+    Composition, Curve, Polygon) {
 
     "use strict";
 

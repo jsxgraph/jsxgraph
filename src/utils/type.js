@@ -180,7 +180,8 @@ define([
             if (v !== null) {
                 if (this.isArray(v) && v.length > 0) {
                     return this.isTransformationOrArray(v[0]);
-                } else if (typeof v === 'object') {
+                }
+                if (typeof v === 'object') {
                     return (v.type === Const.OBJECT_TYPE_TRANSFORMATION);
                 }
             }
@@ -199,9 +200,8 @@ define([
                 var result = !(v === undef || v === null);
                 if (checkEmptyString) {
                     return result && v !== '';
-                } else {
-                    return result;
                 }
+                return result;
             };
         }()),
 

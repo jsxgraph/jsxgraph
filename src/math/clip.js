@@ -157,11 +157,10 @@ define([
                     if (p2[1] === x) {
                         // console.log('<<<<<<< Vertex 2');
                         return 1;
-                    } else {
-                        if (p1[2] === y && ((p2[1] > x) === (p1[1] < x))) {
-                            // console.log('<<<<<<< Edge 1', p1, p2, [x, y]);
-                            return 0;
-                        }
+                    }
+                    if (p1[2] === y && ((p2[1] > x) === (p1[1] < x))) {
+                        // console.log('<<<<<<< Edge 1', p1, p2, [x, y]);
+                        return 0;
                     }
                 }
 

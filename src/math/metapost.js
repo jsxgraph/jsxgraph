@@ -291,12 +291,12 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                             sf = cf_sf[1];
                             this.mp_set_controls(p, q, delta_x[0], delta_y[0], st, ct, -sf, cf);
                             return;
-                        } else {
-                            vv[0] = s.right_given() - Math.atan2(delta_y[0], delta_x[0]);
-                            vv[0] = this.reduce_angle(vv[0]);
-                            uu[0] = 0;
-                            ww[0] = 0;
                         }
+                        vv[0] = s.right_given() - Math.atan2(delta_y[0], delta_x[0]);
+                        vv[0] = this.reduce_angle(vv[0]);
+                        uu[0] = 0;
+                        ww[0] = 0;
+
                     } else if (s.rtype === this.MP_CURL) {
                         // MP 315
                         if (t.ltype === this.MP_CURL) {
@@ -311,14 +311,13 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                             q.lx = q.x - delta_x[0] * ff;
                             q.ly = q.y - delta_y[0] * ff;
                             return;
-                        } else {
-                            cc = s.right_curl();
-                            lt = Math.abs(t.left_tension());
-                            rt = Math.abs(s.right_tension());
-                            uu[0] = this.mp_curl_ratio(cc, rt, lt);
-                            vv[0] = -psi[1] * uu[0];
-                            ww[0] = 0;
                         }
+                        cc = s.right_curl();
+                        lt = Math.abs(t.left_tension());
+                        rt = Math.abs(s.right_tension());
+                        uu[0] = this.mp_curl_ratio(cc, rt, lt);
+                        vv[0] = -psi[1] * uu[0];
+                        ww[0] = 0;
                     } else {
                         if (s.rtype === this.MP_OPEN) {
                             uu[0] = 0;
@@ -390,12 +389,11 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                             ff = this.mp_curl_ratio(cc, lt, rt);
                             theta[n] = -(vv[n - 1] * ff) / (this.FRACTION_ONE - ff * uu[n - 1]);
                             break;
-                        } else {
-                            if (s.ltype === this.MP_GIVEN) {
-                                theta[n] = s.left_given() - Math.atan2(delta_y[n - 1], delta_x[n - 1]);
-                                theta[n] = this.reduce_angle(theta[n]);
-                                break;
-                            }
+                        }
+                        if (s.ltype === this.MP_GIVEN) {
+                            theta[n] = s.left_given() - Math.atan2(delta_y[n - 1], delta_x[n - 1]);
+                            theta[n] = this.reduce_angle(theta[n]);
+                            break;
                         }
                     }
                 }
@@ -633,10 +631,10 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
             for (i in controls.curl) {
                 if (controls.curl.hasOwnProperty(i)) {
                     val = Type.evaluate(controls.curl[i]);
-                    if (parseInt(i) === 0) {
+                    if (parseInt(i, 10) === 0) {
                         knots[i].rtype = this.MP_CURL;
                         knots[i].set_right_curl(val);
-                    } else if (parseInt(i) === len - 1) {
+                    } else if (parseInt(i, 10) === len - 1) {
                         knots[i].ltype = this.MP_CURL;
                         knots[i].set_left_curl(val);
                     }

@@ -2029,7 +2029,7 @@ define([
             var i, le, v, x, y,
                 bb = [Infinity, Infinity, -Infinity, -Infinity];
 
-            if (this.type == Const.OBJECT_TYPE_POLYGON) {
+            if (this.type === Const.OBJECT_TYPE_POLYGON) {
                 le = this.vertices.length - 1;
                 if (le <= 0) {
                     return bb;
@@ -2042,13 +2042,13 @@ define([
                     bb[1] = (v < bb[1]) ? v : bb[1];
                     bb[3] = (v > bb[3]) ? v : bb[3];
                 }
-            } else if (el.elementClass == Const.OBJECT_CLASS_CIRCLE) {
+            } else if (this.elementClass === Const.OBJECT_CLASS_CIRCLE) {
                 x = this.center.X();
                 y = this.center.Y();
                 bb = [x - this.radius, y + this.radius, x + this.radius, y - this.radius];
-            } else if (el.elementClass == Const.OBJECT_CLASS_CURVE) {
+            } else if (this.elementClass === Const.OBJECT_CLASS_CURVE) {
                 le = this.vertices.length;
-                if (le == 0) {
+                if (le === 0) {
                     return bb;
                 }
                 for (i = 0; i < le; i++) {

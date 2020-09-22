@@ -433,13 +433,15 @@ define([
 
                 if (ev_a === 'right') {
                     return this.line.point2.coords;
-                } else if (ev_a === 'middle') {
+                }
+                if (ev_a === 'middle') {
                     return new Coords(Const.COORDS_BY_USER, [
                         (c1z + c2z) * 0.5,
                         (c1x + c2x) * 0.5,
                         (c1y + c2y) * 0.5
                     ], this.board);
-                } else if (Type.isNumber(ev_a)) {
+                }
+                if (Type.isNumber(ev_a)) {
                     return new Coords(Const.COORDS_BY_USER, [
                         c1z + (c2z - c1z) * ev_a,
                         c1x + (c2x - c1x) * ev_a,
@@ -704,7 +706,7 @@ define([
             ny = coordsZero.usrCoords[2] + deltas.y * ticksDelta;
             distScr = coordsZero.distance(Const.COORDS_BY_SCREEN, new Coords(Const.COORDS_BY_USER, [nx, ny], this.board));
 
-            if (ticksDelta == 0.0) {
+            if (ticksDelta === 0.0) {
                 return 0.0;
             }
 
@@ -906,7 +908,8 @@ define([
                 dxs, dys, dxr, dyr, alpha,
                 style,
                 x = [-2000000, -2000000],
-                y = [-2000000, -2000000];
+                y = [-2000000, -2000000],
+                i, r, r_max, bb, full, delta;
 
             c = coords.scrCoords;
             if (major) {
@@ -923,13 +926,12 @@ define([
             // For all ticks regardless if of finite or infinite
             // tick length the intersection with the canvas border is
             // computed.
-            if (major && Type.evaluate(this.visProp.type) == 'polar') {
+            if (major && Type.evaluate(this.visProp.type) === 'polar') {
                 // polar style
-                var i, r, r_max,
-                    bb = this.board.getBoundingBox(),
-                    full = 2.0 * Math.PI,
-                    delta = full / 180,
-                    ratio = this.board.unitY / this.board.X;
+                bb = this.board.getBoundingBox();
+                full = 2.0 * Math.PI;
+                delta = full / 180;
+                //ratio = this.board.unitY / this.board.X;
 
                 // usrCoords: Test if 'circle' is inside of the canvas
                 c = coords.usrCoords;
@@ -957,9 +959,9 @@ define([
                     y[0] = intersection[0].scrCoords[2];
                     y[1] = intersection[1].scrCoords[2];
                 } else {
-                    if (Type.evaluate(this.visProp.face) == '>') {
+                    if (Type.evaluate(this.visProp.face) === '>') {
                         alpha = Math.PI/4;
-                    } else if (Type.evaluate(this.visProp.face) == '<') {
+                    } else if (Type.evaluate(this.visProp.face) === '<') {
                             alpha = -Math.PI/4;
                     } else {
                         alpha = 0;

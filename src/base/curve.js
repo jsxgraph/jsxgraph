@@ -53,9 +53,9 @@
  */
 
 define([
-    'jxg', 'base/constants', 'base/coords', 'base/element', 'math/math', 'math/statistics', 'math/numerics',
-    'math/geometry', 'parser/geonext', 'utils/type', 'base/transformation', 'math/qdt'
-], function (JXG, Const, Coords, GeometryElement, Mat, Statistics, Numerics, Geometry, GeonextParser, Type, Transform, QDT) {
+    'jxg', 'base/constants', 'base/coords', 'base/element', 'math/math', 'math/numerics',
+    'math/geometry', 'parser/geonext', 'utils/type', 'math/qdt'
+], function (JXG, Const, Coords, GeometryElement, Mat, Numerics, Geometry, GeonextParser, Type, QDT) {
 
     "use strict";
 
@@ -847,7 +847,7 @@ define([
          */
         updateParametricCurveOld: function (mi, ma) {
             var i, t, d,
-                x, y, x0, y0, top, depth,
+                x, y, t0, x0, y0, top, depth,
                 MAX_DEPTH, MAX_XDIST, MAX_YDIST,
                 suspendUpdate = false,
                 po = new Coords(Const.COORDS_BY_USER, [0, 0], this.board, false),
@@ -1148,10 +1148,8 @@ define([
                  max_it = 30,
                  is_undef = false,
                  t_nan, t_real, t_real2,
-                 box,
-                 vx, vy, vx2, vy2, dx, dy,
-                 asymptote;
-
+                 vx, vy, vx2, vy2, dx, dy;
+                 // asymptote;
 
              if (depth <= 1) {
                 pnt = new Coords(Const.COORDS_BY_USER, [0, 0], this.board, false);

@@ -1244,7 +1244,7 @@ define([
             //}
 
             if (Type.exists(this.label.visProp.fontSize)) {
-                dx = dy = Type.evaluate(this.label.visProp.fontSize);
+                dx = Type.evaluate(this.label.visProp.fontSize);
             }
             dx /= this.board.unitX;
 

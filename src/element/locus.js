@@ -55,8 +55,8 @@
  */
 
 define([
-    'jxg', 'math/symbolic', 'utils/type', 'base/constants', 'base/curve'
-], function (JXG, Symbolic, Type, Const, Curve) {
+    'jxg', 'math/symbolic', 'utils/type'
+], function (JXG, Symbolic, Type) {
 
     "use strict";
 

@@ -512,7 +512,7 @@ define([
             // It may be that the several points at the end of the array are equal to the first point.
             // The polygonal chain is been closed by JSXGraph, but this may also have been done by the user.
             // Therefore, we use a while lopp to pop the last points.
-            while (ps[0][0] == ps[N - 1][0] && ps[0][1] == ps[N - 1][1] && ps[0][2] == ps[N - 1][2]) {
+            while (ps[0][0] === ps[N - 1][0] && ps[0][1] === ps[N - 1][1] && ps[0][2] === ps[N - 1][2]) {
                 lastPoint = ps.pop();
                 N--;
             }
@@ -533,8 +533,8 @@ define([
             // Otherwise, atan2 would return zero, which is a value which also attained by points
             // on the same horizontal line.
             ps.sort(function (a, b) {
-                var rad1 = (a[2] == ll[2] && a[1] == ll[1]) ? -Infinity : Math.atan2(a[2] - ll[2], a[1] - ll[1]),
-                    rad2 = (b[2] == ll[2] && b[1] == ll[1]) ? -Infinity : Math.atan2(b[2] - ll[2], b[1] - ll[1]);
+                var rad1 = (a[2] === ll[2] && a[1] === ll[1]) ? -Infinity : Math.atan2(a[2] - ll[2], a[1] - ll[1]),
+                    rad2 = (b[2] === ll[2] && b[1] === ll[1]) ? -Infinity : Math.atan2(b[2] - ll[2], b[1] - ll[1]);
 
                 return rad1 - rad2;
             });
