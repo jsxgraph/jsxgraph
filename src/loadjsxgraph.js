@@ -160,6 +160,8 @@ var JXG = {},
     JXG.loadJSfiles = function (fileArray, rootFile, preventCaching/* = false*/) {
         var i, s, scripts, requirePath = '', reg, postfix = '';
 
+        preventCaching = preventCaching || false;
+
         if (preventCaching) {
             postfix = '?v=' + (new Date()).getTime();
         }

@@ -198,6 +198,9 @@ define([
         exists: (function (undef) {
             return function (v, checkEmptyString /*= false*/) {
                 var result = !(v === undef || v === null);
+
+                checkEmptyString = checkEmptyString || false;
+                
                 if (checkEmptyString) {
                     return result && v !== '';
                 }

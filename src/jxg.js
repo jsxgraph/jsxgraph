@@ -120,6 +120,9 @@ define([], function () {
     jxg.extendConstants = function (object, constants, onlyOwn /*= false*/, toUpper /*= false*/) {
         var e, e2;
 
+        onlyOwn = onlyOwn || false;
+        toUpper = toUpper || false;
+
         // the purpose of this for...in loop is indeed to use hasOwnProperty only if the caller explicitly wishes so.
         for (e in constants) {
             if (!onlyOwn || (onlyOwn && extension.hasOwnProperty(e))) {

@@ -41,9 +41,9 @@ define(['jxg'], function (JXG) {
     'use strict';
 
     var major = 1,
-        minor = 1,
+        minor = 2,
         patch = 0,
-        add = 'sketcho', // 'dev',
+        add = 'dev', // 'dev',
         version = major + '.' + minor + '.' + patch + (add ? '-' + add : ''),
         constants;
 
