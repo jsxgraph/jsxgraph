@@ -1781,7 +1781,9 @@ define([
                     button.style.paddingLeft = '7px';
                     button.style.paddingRight = '7px';
 
-                    button.classList.add('JXG_navigation_button');
+                    if (button.classList !== undefined) { // classList not available in IE 9
+                        button.classList.add('JXG_navigation_button');
+                    }
 
                     // Highlighting is now done with CSS
                     // Env.addEvent(button, 'mouseover', function () {
@@ -1820,8 +1822,9 @@ define([
                 node.style.right = attr.right;
                 node.style.bottom = attr.bottom;
 
-                node.classList.add('JXG_navigation');
-
+                if (node.classList !== undefined) { // classList not available in IE 9
+                    node.classList.add('JXG_navigation');
+                }
                 // For XHTML we need unicode instead of HTML entities
 
                 if (board.attr.showfullscreen) {
