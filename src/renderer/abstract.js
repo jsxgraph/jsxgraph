@@ -616,14 +616,13 @@ define([
                 c1.scrCoords[1], c1.scrCoords[2],
                 c2.scrCoords[1], c2.scrCoords[2], el.board);
 
-            if (Type.exists(el.rendNode.getTotalLength)) {
-                le = el.rendNode.getTotalLength();
-                stroke = le - arrowData.offFirst - arrowData.offLast;
-                //if (stroke >= 0) {
+           if (Type.exists(el.rendNode.getTotalLength)) {
+                try {
+                    le = el.rendNode.getTotalLength();
+                    stroke = le - arrowData.offFirst - arrowData.offLast;
                     el.rendNode.style.strokeDasharray = stroke + ' ' + arrowData.offFirst + ' ' + stroke + ' ' + arrowData.offLast;
                     el.rendNode.style.strokeDashoffset = stroke;
-                //}
-                // console.log(el.rendNode.style.strokeDasharray, el.rendNode.style.strokeDashoffset, le, arrowData.offFirst, arrowData.offLast, stroke)
+                } catch (err) {}
             }
 
             return this;
@@ -638,12 +637,14 @@ define([
                 this.updatePathPrim(el.rendNode, this.updatePathStringPrim(el), el.board);
             }
 
-            le = el.rendNode.getTotalLength();
-            stroke = le - arrowData.offFirst - arrowData.offLast;
-            //if (stroke >= 0) {
-                el.rendNode.style.strokeDasharray = stroke + ' ' + arrowData.offFirst + ' ' + stroke + ' ' + arrowData.offLast;
-                el.rendNode.style.strokeDashoffset = stroke;
-            //}
+           if (Type.exists(el.rendNode.getTotalLength)) {
+                try {
+                    le = el.rendNode.getTotalLength();
+                    stroke = le - arrowData.offFirst - arrowData.offLast;
+                    el.rendNode.style.strokeDasharray = stroke + ' ' + arrowData.offFirst + ' ' + stroke + ' ' + arrowData.offLast;
+                    el.rendNode.style.strokeDashoffset = stroke;
+                } catch (err) {}
+            }
 
             return this;
         },
