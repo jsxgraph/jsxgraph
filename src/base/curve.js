@@ -1412,7 +1412,7 @@ define([
                 }
                 // Bottom border
                 z = bbox[3];
-                td = Numerics.fzero(fnY2, [tc - delta, tc], this);
+                td = Numerics.root(fnY2, [tc - delta, tc], this);
                 // td = Numerics.fzero(fnY2, [tc - delta, tc], this);
                 // console.log("D", tc - delta, tc, td, Math.abs(this.Y(td, true) - z));
                 if (Math.abs(this.Y(td, true) - z) < eps) { // * Math.abs(z)) {
