@@ -196,7 +196,7 @@ define([
          * @returns {Boolean} True, if v is neither undefined nor null.
          */
         exists: (function (undef) {
-            return function (v, checkEmptyString /*= false*/) {
+            return function (v, checkEmptyString) {
                 var result = !(v === undef || v === null);
 
                 checkEmptyString = checkEmptyString || false;

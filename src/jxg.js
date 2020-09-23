@@ -117,7 +117,7 @@ define([], function () {
      * @param {Boolean} [onlyOwn=false] Only consider properties that belong to extension itself, not any inherited properties.
      * @param {Boolean} [toUpper=false] If true the keys are convert to lower case. This is needed for visProp, see JXG#copyAttributes
      */
-    jxg.extendConstants = function (object, constants, onlyOwn /*= false*/, toUpper /*= false*/) {
+    jxg.extendConstants = function (object, constants, onlyOwn, toUpper) {
         var e, e2;
 
         onlyOwn = onlyOwn || false;
