@@ -1434,7 +1434,6 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
          */
         root: function (f, x, context) {
             //return this.fzero(f, x, context);
-
             return this.chandrupatla(f, x, context);
         },
 
@@ -2802,6 +2801,7 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
          *  Brent's root finder from
          *  G.Forsythe, M.Malcolm, C.Moler, Computer methods for mathematical
          *  computations. M., Mir, 1980, p.180 of the Russian edition
+         *  http://www.netlib.org/c/brent.shar
          *
          * If x0 is an array containing lower and upper bound for the zero
          * algorithm 748 is applied. Otherwise, if x0 is a number,
@@ -2814,6 +2814,7 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
          */
         fzero: function (f, x0, object) {
             var a, b, c,
+                d, e,
                 fa, fb, fc,
                 res,
                 prev_step, t1, cb, t2,
@@ -2848,6 +2849,13 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
                 fb = res[3];
             }
 
+            if (Math.abs(fa) <= eps) {
+                return a;
+            }
+            if (Math.abs(fb) <= eps) {
+                return b;
+            }
+
             if (fa * fb > 0) {
                 // Bracketing not successful, fall back to Newton's method or to fminbr
                 if (Type.isArray(x0)) {
@@ -2880,7 +2888,7 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
                 tol_act = 2 * eps * Math.abs(b) + eps * 0.5;
                 new_step = (c - b) * 0.5;
 
-                if (Math.abs(new_step) <= tol_act && Math.abs(fb) <= eps) {
+                if (Math.abs(new_step) <= tol_act || Math.abs(fb) <= eps) {
                     //  Acceptable approx. is found
                     return b;
                 }
@@ -2923,15 +2931,11 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
 
                 // Adjust the step to be not less than tolerance
                 if (Math.abs(new_step) < tol_act) {
-                    if (new_step > 0) {
-                        new_step = tol_act;
-                    } else {
-                        new_step = -tol_act;
-                    }
+                    new_step = (new_step > 0) ? tol_act : -tol_act;
                 }
 
                 // Save the previous approx.
-                a = b;
+                a  = b;
                 fa = fb;
                 b += new_step;
                 fb = f.call(object, b);

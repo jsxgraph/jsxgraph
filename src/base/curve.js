@@ -1369,45 +1369,52 @@ define([
 
             w2 = (bbox[2] - bbox[0]) * 0.3;
             h2 = (bbox[1] - bbox[3]) * 0.3;
+            bbox[0] -= w2;
+            bbox[1] += h2;
+            bbox[2] += w2;
+            bbox[3] -= h2;
 
             delta = (tb - ta) / steps;
             tc = ta + delta;
             isFound = false;
 
-            fnX1 = function(t) { return this.X(t, true) - (bbox[0] - w2); };
-            fnY1 = function(t) { return this.X(t, true) - (bbox[1] + h2); };
-            fnX2 = function(t) { return this.X(t, true) - (bbox[2] + w2); };
-            fnY2 = function(t) { return this.X(t, true) - (bbox[1] - h2); };
-
+            fnX1 = function(t) { return this.X(t, true) - bbox[0]; };
+            fnY1 = function(t) { return this.Y(t, true) - bbox[1]; };
+            fnX2 = function(t) { return this.X(t, true) - bbox[2]; };
+            fnY2 = function(t) { return this.Y(t, true) - bbox[3]; };
             for (i = 0; i < steps; ++i) {
                 // Left border
-                z = bbox[0] - w2;
-                td = Numerics.fzero(fnX1, [tc - delta, tc], this);
-                // console.log("A", td, Math.abs(this.X(td, true) - z));
+                z = bbox[0];
+                td = Numerics.root(fnX1, [tc - delta, tc], this);
+                // td = Numerics.fzero(fnX1, [tc - delta, tc], this);
+                // console.log("A", tc - delta, tc, td, Math.abs(this.X(td, true) - z));
                 if (Math.abs(this.X(td, true) - z) < eps) { //} * Math.abs(z)) {
                     isFound = true;
                     break;
                 }
                 // Top border
-                z = bbox[1] + h2;
-                td = Numerics.fzero(fnY1, [tc - delta, tc], this);
-                // console.log("B", td, Math.abs(this.Y(td, true) - z));
+                z = bbox[1];
+                td = Numerics.root(fnY1, [tc - delta, tc], this);
+                // td = Numerics.fzero(fnY1, [tc - delta, tc], this);
+                // console.log("B", tc - delta, tc, td, Math.abs(this.Y(td, true) - z));
                 if (Math.abs(this.Y(td, true) - z) < eps) { // * Math.abs(z)) {
                     isFound = true;
                     break;
                 }
                 // Right border
-                z = bbox[2] + w2;
-                td = Numerics.fzero(fnX2, [tc - delta, tc], this);
-                // console.log("C", td, Math.abs(this.X(td, true) - z));
+                z = bbox[2];
+                td = Numerics.root(fnX2, [tc - delta, tc], this);
+                // td = Numerics.fzero(fnX2, [tc - delta, tc], this);
+                // console.log("C", tc - delta, tc, td, Math.abs(this.X(td, true) - z));
                 if (Math.abs(this.X(td, true) - z) < eps) { // * Math.abs(z)) {
                     isFound = true;
                     break;
                 }
                 // Bottom border
-                z = bbox[3] - h2;
+                z = bbox[3];
                 td = Numerics.fzero(fnY2, [tc - delta, tc], this);
-                // console.log("D", td, Math.abs(this.Y(td, true) - z));
+                // td = Numerics.fzero(fnY2, [tc - delta, tc], this);
+                // console.log("D", tc - delta, tc, td, Math.abs(this.Y(td, true) - z));
                 if (Math.abs(this.Y(td, true) - z) < eps) { // * Math.abs(z)) {
                     isFound = true;
                     break;
@@ -1420,11 +1427,9 @@ define([
                 tc += delta;
             }
             if (isFound) {
-                // console.log("Found in step", i, td);
                 pnt.setCoordinates(Const.COORDS_BY_USER, [this.X(td, true), this.Y(td, true)], false);
                 return [pnt.scrCoords, td];
             } else {
-                // console.log("not found", ta);
             }
 
             return [a, ta];
@@ -1559,6 +1564,7 @@ define([
             suspendUpdate = true;
 
             pb.setCoordinates(Const.COORDS_BY_USER, [this.X(tb, suspendUpdate), this.Y(tb, suspendUpdate)], false);
+
             // Find start and end points of the visible area (plus a certain margin)
             ret_arr = this._findStartPoint(pa.scrCoords, ta, pb.scrCoords, tb);
             pa.setCoordinates(Const.COORDS_BY_SCREEN, ret_arr[0], false);
@@ -1566,7 +1572,6 @@ define([
             ret_arr = this._findStartPoint(pb.scrCoords, tb, pa.scrCoords, ta);
             pb.setCoordinates(Const.COORDS_BY_SCREEN, ret_arr[0], false);
             tb = ret_arr[1];
-            // console.log(ta, tb);
 
             // Save the visible area.
             // This can be used in Curve.hasPoint().
@@ -1577,7 +1582,7 @@ define([
             b = pb.copy('scrCoords');
             pa._t = ta;
             this.points.push(pa);
-            this._lastCrds = pa.copy('scrCoords');   //Used in _insertPoint
+            this._lastCrds = pa.copy('scrCoords');   // Used in _insertPoint
             this._plotRecursive(a, ta, b, tb, depth, delta);
             pb._t = tb;
             this.points.push(pb);
