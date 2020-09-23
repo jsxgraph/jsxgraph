@@ -55,7 +55,7 @@ var JXG = {},
     ////                                                                  ////
     ////             Attention! Slows down the loading time!              ////
     //////////////////////////////////////////////////////////////////////////
-    /*const*/ var preventCachingFiles = false;
+    var preventCachingFiles = false;
 
     // check and table are initialized at the end of the iife
     var table,
@@ -157,7 +157,7 @@ var JXG = {},
         }
     };
 
-    JXG.loadJSfiles = function (fileArray, rootFile, preventCaching/* = false*/) {
+    JXG.loadJSfiles = function (fileArray, rootFile, preventCaching) {
         var i, s, scripts, requirePath = '', reg, postfix = '';
 
         preventCaching = preventCaching || false;
