@@ -389,6 +389,18 @@ define([
             this.updateLine(el);
         },
 
+        /**
+         * This method determines some data about the line endings of this element.
+         * If there are arrow heads, the offset is determined so that no parts of the line stroke
+         * overlap over the arrow head.
+         *
+         * @param {JXG.GeometryElement} el JSXGraph line or curve element
+         * @param {Number} strokewidth strokewidth of the element
+         * @param {String} hl Ither 'highlight' or empty string
+         * @returns {Object} object containing the data
+         *
+         * @private
+         */
         getArrowHeadData: function(el, strokewidth, hl) {
             var minlen = Mat.eps,
                 typeFirst, typeLast,
@@ -473,6 +485,8 @@ define([
                 offLast: offLast,
                 sizeFirst: sizeFirst,
                 sizeLast: sizeLast,
+                showFirst: 1, // Show arrow head. 0 if the distance is too small
+                showLast: 1,  // Show arrow head. 0 if the distance is too small
                 minLen: minlen,
                 strokeWidth: strokewidth
             };
@@ -513,7 +527,7 @@ define([
                         d1x = (c2.scrCoords[1] - c1.scrCoords[1]) * a.offFirst / d;
                         d1y = (c2.scrCoords[2] - c1.scrCoords[2]) * a.offFirst / d;
                     } else {
-                        a.offFirst = -1;
+                        a.showFirst = 0;
                     }
                 }
 
@@ -523,15 +537,11 @@ define([
                         d2x = (c2.scrCoords[1] - c1.scrCoords[1]) * a.offLast / d;
                         d2y = (c2.scrCoords[2] - c1.scrCoords[2]) * a.offLast / d;
                     } else {
-                        a.offLast = -1;
+                        a.showLast = 0;
                     }
                 }
-                if (a.offFirst !== -1) {
-                    c1.setCoordinates(Const.COORDS_BY_SCREEN, [c1.scrCoords[1] + d1x, c1.scrCoords[2] + d1y], false, true);
-                }
-                if (a.offLast !== -1) {
-                    c2.setCoordinates(Const.COORDS_BY_SCREEN, [c2.scrCoords[1] - d2x, c2.scrCoords[2] - d2y], false, true);
-                }
+                c1.setCoordinates(Const.COORDS_BY_SCREEN, [c1.scrCoords[1] + d1x, c1.scrCoords[2] + d1y], false, true);
+                c2.setCoordinates(Const.COORDS_BY_SCREEN, [c2.scrCoords[1] - d2x, c2.scrCoords[2] - d2y], false, true);
             }
 
             return this;
@@ -583,22 +593,17 @@ define([
          * the arrow ends exactly at the intended position.
          * Calls the renderer method to draw the line.
          *
-         * @param {JXG.Line} el Reference to a line object, that has to be drawn.
-         * @param {Number} strokeWidth Stroke width of the line. This determines the size of the
-         *  arrow head.
-         * @param  {Boolean} doHighlight true if the object is to be highlighted, false otherwise. This parameter
-         *  is necessary for the attribute highlightSize of the arrow heads.
+         * @param {JXG.Line} el Reference to a line object, that has to be drawn
+         * @param {Object} arrowData Data concerning possible arrow heads
          *
-         * @returns {Object} Returns the object returned by
-         *  {@link JXG.AbstractRenderer#getPositionArrowHead}. This contains the information in
-         * horizontal and vertical pixels how much
-         * the line has to be shortened on each end.
+         * @returns {JXG.AbstractRenderer} Reference to the renderer
          *
          * @private
          * @see Line
          * @see JXG.Line
          * @see JXG.AbstractRenderer#updateLine
          * @see JXG.AbstractRenderer#getPositionArrowHead
+         * @see JXG.AbstractRenderer#getArrowHeadData
          *
          */
         updateLineEndings: function(el, arrowData) {
@@ -633,9 +638,23 @@ define([
             return this;
         },
 
+        /**
+         *
+         * Calls the renderer method to draw the curve and
+         * corrects the curve length if there are arrow heads, such that
+         * the arrow ends exactly at the intended position.
+         *
+         * @param {JXG.GeometryElement} el Reference to a line object, that has to be drawn.
+         * @param {Object} arrowData Data concerning possible arrow heads
+         * @returns {JXG.AbstractRenderer} Reference to the renderer
+         *
+         * @private
+         * @see Curve
+         * @see JXG.Curve
+         * @see JXG.AbstractRenderer#updateCurve
+         * @see JXG.AbstractRenderer#getArrowHeadData
+         */
         updatePathEndings: function(el, arrowData) {
-            var le, stroke;
-
             if (Type.evaluate(el.visProp.handdrawing)) {
                 this.updatePathPrim(el.rendNode, this.updatePathStringBezierPrim(el), el.board);
             } else {
@@ -648,32 +667,44 @@ define([
         },
 
         /**
-         * Determine the attribute "size" of the arrow heads. Multiplied with the stroke width of the line
-         * this gives the absolute size of the arrow heads. Then the arrow heads are redrawn by the renderer.
+         * Set the arrow head size.
          *
-         * @param {JXG.Line} el Reference to a line object, that has to be drawn.
-         * @param {Object} obj Reference to a object returned by
-         *     {@link JXG.AbstractRenderer#getPositionArrowHead}
-         * @param  {Boolean} doHighlight true if the object is to be highlighted, false otherwise. This parameter
-         *  is necessary for the attribute highlightSize of the arrow heads.
+         * @param {JXG.GeometryElement} el Reference to a line or curve object that has to be drawn.
+         * @param {Object} arrowData Data concerning possible arrow heads
          * @returns {JXG.AbstractRenderer} Reference to the renderer
          *
          * @private
          * @see Line
          * @see JXG.Line
-         * @see JXG.AbstractRenderer#updateLine
-         * @see JXG.AbstractRenderer#getPositionArrowHead
+         * @see Curve
+         * @see JXG.Curve
+         * @see JXG.AbstractRenderer#updatePathWithArrowHeads
+         * @see JXG.AbstractRenderer#getArrowHeadData
          */
         setArrowSize: function(el, a) {
             if (a.evFirst) {
-                this._setArrowWidth(el.rendNodeTriangleStart, a.strokeWidth, el.rendNode, a.sizeFirst);
+                this._setArrowWidth(el.rendNodeTriangleStart, a.showFirst * a.strokeWidth, el.rendNode, a.sizeFirst);
             }
             if (a.evLast) {
-                this._setArrowWidth(el.rendNodeTriangleEnd, a.strokeWidth, el.rendNode, a.sizeLast);
+                this._setArrowWidth(el.rendNodeTriangleEnd, a.showLast * a.strokeWidth, el.rendNode, a.sizeLast);
             }
             return this;
         },
 
+        /**
+         * Handle arrow heads of a line or curve element and call the renderer primitive.
+         *
+         * @param {JXG.GeometryElement} el Reference to a line or curve object that has to be drawn.
+         * @param {Boolean} doHighlight
+         *
+         * @private
+         * @see Line
+         * @see JXG.Line
+         * @see Curve
+         * @see JXG.Curve
+         * @see JXG.AbstractRenderer#makeArrows
+         * @see JXG.AbstractRenderer#getArrowHeadData
+         */
         updatePathWithArrowHeads: function(el, doHighlight) {
             var hl = doHighlight ? 'highlight' : '',
                 w = Type.evaluate(el.visProp[hl + 'strokewidth']),
@@ -1965,6 +1996,17 @@ define([
          */
         screenshot: function (board) {},
 
+        /**
+         * Shorten SVG path at the beginning and at the end to avoid visible overlap of
+         * the line and its arrow heads. This method uses the SVG method getTotalLength.
+         *
+         * @param {Node} node Reference to a SVG node representing a line or curve.
+         * @param {Number} offFirst Shorten path at the beginning by this number of pixels
+         * @param {Number} offLast Shorten path at the end by this number of pixels
+         *
+         * @see JXG.AbstractRenderer#updatePathEndings
+         * @see JXG.AbstractRenderer#updateLineEndings
+         */
         shortenPath: function(node, offFirst, offLast) {}
 
     });

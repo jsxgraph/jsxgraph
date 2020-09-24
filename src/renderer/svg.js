@@ -371,16 +371,17 @@ define([
             var s, d;
 
             if (node) {
-                if (width === 0) {
-                    node.setAttributeNS(null, 'display', 'none');
-                } else {
+                // if (width === 0) {
+                //     // display:none does not work well in webkit
+                //     node.setAttributeNS(null, 'display', 'none');
+                // } else {
                     s = width;
                     d = s * size;
                     node.setAttributeNS(null, 'viewBox', (0) + ' ' + (0) + ' ' + (s * 10) + ' ' + (s * 10));
                     node.setAttributeNS(null, 'markerHeight', d);
                     node.setAttributeNS(null, 'markerWidth', d);
                     node.setAttributeNS(null, 'display', 'inherit');
-                }
+                // }
 
                 if (this.isIE) {
                     parentNode.parentNode.insertBefore(parentNode, parentNode);
@@ -388,6 +389,7 @@ define([
             }
         },
 
+        // already documented in JXG.AbstractRenderer
         shortenPath: function(node, offFirst, offLast) {
             var le, stroke;
 
