@@ -513,7 +513,7 @@ define([
                         d1x = (c2.scrCoords[1] - c1.scrCoords[1]) * a.offFirst / d;
                         d1y = (c2.scrCoords[2] - c1.scrCoords[2]) * a.offFirst / d;
                     } else {
-                        a.offFirst = 0;
+                        a.offFirst = -1;
                     }
                 }
 
@@ -523,11 +523,15 @@ define([
                         d2x = (c2.scrCoords[1] - c1.scrCoords[1]) * a.offLast / d;
                         d2y = (c2.scrCoords[2] - c1.scrCoords[2]) * a.offLast / d;
                     } else {
-                        a.offLast = 0.0;
+                        a.offLast = -1;
                     }
                 }
-                c1.setCoordinates(Const.COORDS_BY_SCREEN, [c1.scrCoords[1] + d1x, c1.scrCoords[2] + d1y], false, true);
-                c2.setCoordinates(Const.COORDS_BY_SCREEN, [c2.scrCoords[1] - d2x, c2.scrCoords[2] - d2y], false, true);
+                if (a.offFirst !== -1) {
+                    c1.setCoordinates(Const.COORDS_BY_SCREEN, [c1.scrCoords[1] + d1x, c1.scrCoords[2] + d1y], false, true);
+                }
+                if (a.offLast !== -1) {
+                    c2.setCoordinates(Const.COORDS_BY_SCREEN, [c2.scrCoords[1] - d2x, c2.scrCoords[2] - d2y], false, true);
+                }
             }
 
             return this;
@@ -555,17 +559,17 @@ define([
                 // Handle touchlastpoint /touchfirstpoint
                 if (a.evFirst && Type.evaluate(el.visProp.touchfirstpoint)) {
                     d = c1.distance(Const.COORDS_BY_SCREEN, c2);
-                    if (d > s) {
+                    //if (d > s) {
                         d1x = (c2.scrCoords[1] - c1.scrCoords[1]) * s1 / d;
                         d1y = (c2.scrCoords[2] - c1.scrCoords[2]) * s1 / d;
-                    }
+                    //}
                 }
                 if (a.evLast && Type.evaluate(el.visProp.touchlastpoint)) {
                     d = c1.distance(Const.COORDS_BY_SCREEN, c2);
-                    if (d > s) {
+                    //if (d > s) {
                         d2x = (c2.scrCoords[1] - c1.scrCoords[1]) * s2 / d;
                         d2y = (c2.scrCoords[2] - c1.scrCoords[2]) * s2 / d;
-                    }
+                    //}
                 }
                 c1.setCoordinates(Const.COORDS_BY_SCREEN, [c1.scrCoords[1] + d1x, c1.scrCoords[2] + d1y], false, true);
                 c2.setCoordinates(Const.COORDS_BY_SCREEN, [c2.scrCoords[1] - d2x, c2.scrCoords[2] - d2y], false, true);
@@ -598,8 +602,9 @@ define([
          *
          */
         updateLineEndings: function(el, arrowData) {
-            var c1, c2, stroke,
-                le, margin = null;
+            var c1, c2,
+                // useTotalLength = true,
+                margin = null;
 
             c1 = new Coords(Const.COORDS_BY_USER, el.point1.coords.usrCoords, el.board);
             c2 = new Coords(Const.COORDS_BY_USER, el.point2.coords.usrCoords, el.board);
@@ -608,22 +613,22 @@ define([
 
             this.handleTouchpoints(el, c1, c2, arrowData);
 
-            if (!Type.exists(el.rendNode.getTotalLength)) {
+            // Shorten path without el.rendNode.getTotalLength
+            // if (!Type.exists(el.rendNode.getTotalLength)) {
                 this.getPositionArrowHead(el, c1, c2, arrowData);
-            }
+            //     useTotalLength = false;
+            // }
 
             this.updateLinePrim(el.rendNode,
                 c1.scrCoords[1], c1.scrCoords[2],
                 c2.scrCoords[1], c2.scrCoords[2], el.board);
 
-           if (Type.exists(el.rendNode.getTotalLength)) {
-                try {
-                    le = el.rendNode.getTotalLength();
-                    stroke = le - arrowData.offFirst - arrowData.offLast;
-                    el.rendNode.style.strokeDasharray = stroke + ' ' + arrowData.offFirst + ' ' + stroke + ' ' + arrowData.offLast;
-                    el.rendNode.style.strokeDashoffset = stroke;
-                } catch (err) {}
-            }
+            // Shorten path with el.rendNode.getTotalLength
+            // This does not work sufficiently good in webkit.
+            // See also _createArrowHead for arrow head position
+            // if (useTotalLength) {
+            //     this.shortenPath(el.rendNode, arrowData.offFirst, arrowData.offLast);
+            // }
 
             return this;
         },
@@ -637,14 +642,7 @@ define([
                 this.updatePathPrim(el.rendNode, this.updatePathStringPrim(el), el.board);
             }
 
-           if (Type.exists(el.rendNode.getTotalLength)) {
-                try {
-                    le = el.rendNode.getTotalLength();
-                    stroke = le - arrowData.offFirst - arrowData.offLast;
-                    el.rendNode.style.strokeDasharray = stroke + ' ' + arrowData.offFirst + ' ' + stroke + ' ' + arrowData.offLast;
-                    el.rendNode.style.strokeDashoffset = stroke;
-                } catch (err) {}
-            }
+            this.shortenPath(el.rendNode, arrowData.offFirst, arrowData.offLast);
 
             return this;
         },
@@ -1965,7 +1963,9 @@ define([
          *
          * See JXG.SVGRenderer#screenshot
          */
-        screenshot: function (board) {}
+        screenshot: function (board) {},
+
+        shortenPath: function(node, offFirst, offLast) {}
 
     });
 

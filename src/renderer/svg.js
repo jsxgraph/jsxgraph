@@ -283,7 +283,7 @@ define([
                     // type == 1 or > 6
                     node3.setAttributeNS(null, 'd', 'M 10,0 L 0,5 L 10,10 z');
                 }
-                if (!Type.exists(el.rendNode.getTotalLength) && el.elementClass === Const.OBJECT_CLASS_LINE) {
+                if (/*!Type.exists(el.rendNode.getTotalLength) && */el.elementClass === Const.OBJECT_CLASS_LINE) {
                     if (type === 2) {
                         v = 4.9;
                     } else if (type === 3) {
@@ -322,7 +322,7 @@ define([
                     // type == 1 or > 6
                     node3.setAttributeNS(null, 'd', 'M 0,0 L 10,5 L 0,10 z');
                 }
-                if (!Type.exists(el.rendNode.getTotalLength) && el.elementClass === Const.OBJECT_CLASS_LINE) {
+                if (/*!Type.exists(el.rendNode.getTotalLength) &&*/ el.elementClass === Const.OBJECT_CLASS_LINE) {
                     if (type === 2) {
                         v = 5.1;
                     } else if (type === 3) {
@@ -385,6 +385,19 @@ define([
                 if (this.isIE) {
                     parentNode.parentNode.insertBefore(parentNode, parentNode);
                 }
+            }
+        },
+
+        shortenPath: function(node, offFirst, offLast) {
+            var le, stroke;
+
+            if (Type.exists(node.getTotalLength)) {
+                try {
+                    le = node.getTotalLength();
+                    stroke = le - offFirst - offLast;
+                    node.style.strokeDasharray = stroke + ' ' + offFirst + ' ' + stroke + ' ' + offLast;
+                    node.style.strokeDashoffset = stroke;
+                } catch (err) {}
             }
         },
 
