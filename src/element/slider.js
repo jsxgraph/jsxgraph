@@ -145,7 +145,7 @@ define([
     JXG.createSlider = function (board, parents, attributes) {
         var pos0, pos1, smin, start, smax, sdiff,
             p1, p2, l1, ticks, ti, startx, starty, p3, l2, t,
-            withText, withTicks, snapWidth, attr, precision;
+            withText, withTicks, snapWidth, sw, s, attr, precision;
 
         attr = Type.copyAttributes(attributes, board.options, 'slider');
         withTicks = attr.withticks;
@@ -176,8 +176,10 @@ define([
         smax = parents[2][2];
         sdiff = smax - smin;
 
-        startx = pos0[0] + (pos1[0] - pos0[0]) * (start - smin) / (smax - smin);
-        starty = pos0[1] + (pos1[1] - pos0[1]) * (start - smin) / (smax - smin);
+        sw = Type.evaluate(snapWidth);
+        s = (sw == -1) ? start : Math.round(start / sw) * sw;
+        startx = pos0[0] + (pos1[0] - pos0[0]) * (s - smin) / (smax - smin);
+        starty = pos0[1] + (pos1[1] - pos0[1]) * (s - smin) / (smax - smin);
 
         // glider point
         attr = Type.copyAttributes(attributes, board.options, 'slider');
@@ -441,7 +443,7 @@ define([
         p3.baseline.on('up', function(evt) {
             var pos, c;
 
-            if (Type.evaluate(p3.visProp.moveonup)) {
+            if (Type.evaluate(p3.visProp.moveonup) && !Type.evaluate(p3.visProp.fixed) ) {
                 pos = l1.board.getMousePosition(evt, 0);
                 c = new Coords(Const.COORDS_BY_SCREEN, pos, this.board);
                 p3.moveTo([c.usrCoords[1], c.usrCoords[2]]);
