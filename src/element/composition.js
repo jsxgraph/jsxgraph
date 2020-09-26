@@ -2247,7 +2247,14 @@ define([
             p.inherits.push(t);
         }
 
-        /** @ignore */
+        /**
+         * Returns the current value of the integral.
+         * @memberOf Integral
+         * @name Value
+         * @returns {Number}
+         */
+
+        */
         p.Value = function () {
             return Numerics.I([pa_on_axis.X(), pb_on_axis.X()], curve.Y);
         };
