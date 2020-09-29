@@ -956,7 +956,7 @@ define([
                 }
             }
 
-            if (collect.length > 0) {
+            if (this.attr.drag.enabled && collect.length > 0) {
                 this.mode = this.BOARD_MODE_DRAG;
             }
 
@@ -2033,7 +2033,7 @@ define([
                 return;     // don't continue as a normal click
             }
 
-            if (object) {
+            if (this.attr.drag.enabled && object) {
                 elements = [ object ];
                 this.mode = this.BOARD_MODE_DRAG;
             } else {

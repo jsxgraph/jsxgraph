@@ -580,6 +580,10 @@ define([
                 enabled: true
             },
 
+            drag: {
+                enabled: true
+            },
+
             /**
              * Control the possibilities for a selection rectangle.
              * Starting a selection event triggers the "startselecting" event.

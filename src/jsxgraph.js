@@ -186,6 +186,7 @@ define([
             // The attributes which are objects have to be copied separately
             attr.zoom = Type.copyAttributes(attr, Options, 'board', 'zoom');
             attr.pan = Type.copyAttributes(attr, Options, 'board', 'pan');
+            attr.drag = Type.copyAttributes(attr, Options, 'board', 'drag');
             attr.selection = Type.copyAttributes(attr, Options, 'board', 'selection');
             attr.navbar = Type.copyAttributes(attr.navbar, Options, 'navbar');
 
