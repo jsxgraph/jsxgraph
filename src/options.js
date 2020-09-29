@@ -565,14 +565,13 @@ define([
              * <pre>
              * pan: {
              *   enabled: true   // Allow panning
-             *   needTwoFingers: true, // panning is done with two fingers on touch devices
+             *   needTwoFingers: false, // panning is done with two fingers on touch devices
              *   needShift: true, // mouse panning needs pressing of the shift key
              * }
              * </pre>
              *
              * @name JXG.Board#pan
              * @type Object
-             * @default
              */
             pan: {
                 needShift: true,
@@ -580,6 +579,20 @@ define([
                 enabled: true
             },
 
+            /**
+             * Control the possibilities for dragging objects.
+             *
+             * Possible sub-attributes with default values are:
+             * <pre>
+             * drag: {
+             *   enabled: true   // Allow dragging
+             * }
+             * </pre>
+             *
+             * @name JXG.Board#drag
+             * @type Object
+             * @default {enabled: true}
+             */
             drag: {
                 enabled: true
             },
