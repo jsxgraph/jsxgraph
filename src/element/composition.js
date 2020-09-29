@@ -2254,7 +2254,6 @@ define([
          * @returns {Number}
          */
 
-        */
         p.Value = function () {
             return Numerics.I([pa_on_axis.X(), pb_on_axis.X()], curve.Y);
         };
