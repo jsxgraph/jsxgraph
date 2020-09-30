@@ -2626,14 +2626,14 @@ define([
             };
             a.updateDataArray = function () {
                 var i1, i2,
-                    // this will be the height of the area. We mustn't rely upon the board height because if we pan the view
+                    // This will be the height of the area. We mustn't rely upon the board height because if we pan the view
                     // such that the line is not visible anymore, the borders of the area will get visible in some cases.
                     h,
                     bb = board.getBoundingBox(),
                     factor = attr.inverse ? -1 : 1,
                     expansion = 1.5,
                     w = expansion * Math.max(bb[2] - bb[0], bb[1] - bb[3]),
-                    // fake a point (for Math.Geometry.perpendicular)
+                    // Fake a point (for Math.Geometry.perpendicular)
                     // contains centroid of the board
                     dp = {
                         coords: {
@@ -2653,7 +2653,7 @@ define([
                 //     slope2 = slope1;
                 // }
 
-                // calculate the area height as
+                // Calculate the area height as
                 //  expansion times the distance of the line to the
                 // point in the middle of the top/bottom border.
                 h = expansion * Math.max(Geometry.perpendicular(parents[0], dp, board)[0].distance(Const.COORDS_BY_USER, dp.coords), w);
@@ -2687,6 +2687,15 @@ define([
             parents[0].visProp.curvetype === 'functiongraph') {
 
             a = board.create('curve', [[], []], attr);
+            // a.updateDataArray = function() {
+            //     var bb = this.board.getBoundingBox(),
+            //         i,
+            //         canvas = {};
+
+            //     // var a = JXG.Math.Clip.difference(curve1, curve2, this.board);
+            //     // this.dataX = a[0];
+            //     // this.dataY = a[1];
+            // };
 
             a.hasPoint = function () {
                 return false;
@@ -2696,7 +2705,7 @@ define([
                     expansion = 1.5,
                     points = parents[0].points,
                     first, last,
-                    // inverse == true <=> y >= f(x)
+                    // inverse == true <=> Fill area with y >= f(x)
                     hline = expansion * (attr.inverse ? bb[1] : bb[3]),
                     i, le;
 
@@ -2708,6 +2717,10 @@ define([
                     return;
                 }
 
+                // Find the first and last real point on the curve
+                // and add the vertical projection of these points to the border
+                // of the canvas to the plot.
+                // This new curve is filled.
                 for (i = 0; i < le; i++) {
                     first = i;
                     if (points[i].isReal()) { break; }
