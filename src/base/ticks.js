@@ -1009,7 +1009,9 @@ define([
                     labelText = value.toPrecision(Type.evaluate(this.visProp.precision)).toString();
                 }
 
-                labelText = this.beautifyScientificNotationLabel(labelText);
+                if (this.board.options.board.beautifyScientificNotationLabel) {
+                    labelText = this.beautifyScientificNotationLabel(labelText);
+                }
 
                 if (labelText.indexOf('.') > -1 && labelText.indexOf('e') === -1) {
                     // trim trailing zeros
