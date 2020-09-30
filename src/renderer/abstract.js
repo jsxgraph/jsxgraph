@@ -2007,7 +2007,17 @@ define([
          * @see JXG.AbstractRenderer#updatePathEndings
          * @see JXG.AbstractRenderer#updateLineEndings
          */
-        shortenPath: function(node, offFirst, offLast) {}
+        shortenPath: function(node, offFirst, offLast) {},
+
+        /**
+         * Move element into new layer. This is trivial for canvas, but needs more effort in SVG.
+         * Does not work dynamically, i.e. if level is a function.
+         *
+         * @param {JXG.GeometryElement} el Element which is put into different layer
+         * @param {Number} value Layer number
+         * @private
+         */
+        setLayer(el, level) {}
 
     });
 

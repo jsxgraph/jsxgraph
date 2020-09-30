@@ -1350,12 +1350,16 @@ define([
                         if (Type.exists(this.rendNodeTag)) {
                             this.rendNodeCheckbox.checked = !!value;
                         }
-                            break;
+                        break;
                     case 'maxlength':
                         // input. Is not available on initial call.
                         if (Type.exists(this.rendNodeTag)) {
                             this.rendNodeTag.maxlength = !!value;
                         }
+                        break;
+                    case 'layer':
+                        this.board.renderer.setLayer(this, Type.evaluate(value));
+                        this._set(key, value);
                         break;
                     default:
                         if (Type.exists(this.visProp[key]) &&

@@ -638,6 +638,17 @@ define([
         },
 
         // already documented in JXG.AbstractRenderer
+        setLayer: function (el, level) {
+            if (!Type.exists(level)) {
+                level = 0;
+            } else if (level >= Options.layer.numlayers) {
+                level = Options.layer.numlayers - 1;
+            }
+
+            this.layer[level].appendChild(el.rendNode);
+        },
+
+        // already documented in JXG.AbstractRenderer
         makeArrows: function (el) {
             var node2,
                 ev_fa = Type.evaluate(el.visProp.firstarrow),
