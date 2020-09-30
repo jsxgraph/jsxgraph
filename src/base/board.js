@@ -1709,7 +1709,8 @@ define([
             var c,
                 dir1 = [],
                 dir2 = [],
-                angle, mi = 10,
+                angle,
+                mi = 10,
                 isPinch = false,
                 // Save zoomFactors
                 zx = this.attr.zoom.factorx,
@@ -1723,14 +1724,24 @@ define([
             }
             evt.preventDefault();
 
+            dist = Geometry.distance([evt.touches[0].clientX, evt.touches[0].clientY],
+                [evt.touches[1].clientX, evt.touches[1].clientY], 2);
+
+            // Android pinch to zoom
+            // evt.scale was available in iOS touch events (pre iOS 13)
+            // evt.scale is undefined in Android
+            if (evt.scale === undefined) {
+                evt.scale = dist / this.prevDist;
+            }
+
             // Compute the angle of the two finger directions
             dir1 = [evt.touches[0].clientX - this.prevCoords[0][0],
                     evt.touches[0].clientY - this.prevCoords[0][1]];
             dir2 = [evt.touches[1].clientX - this.prevCoords[1][0],
                     evt.touches[1].clientY - this.prevCoords[1][1]];
 
-            if ((Math.abs(dir1[0]) < mi && Math.abs(dir1[1]) < mi) ||
-                (Math.abs(dir2[0]) < mi && Math.abs(dir2[1]) < mi)) {
+            if ((dir1[0] * dir1[0] + dir1[1] * dir1[1] < mi * mi) &&
+                (dir2[0] * dir2[0] + dir2[1] * dir2[1] < mi * mi)) {
                     return false;
             }
 
@@ -1739,15 +1750,6 @@ define([
                 Math.abs(angle) > Math.PI * 0.2 &&
                 Math.abs(angle) < Math.PI * 1.8) {
                 isPinch = true;
-            }
-
-            dist = Geometry.distance([evt.touches[0].clientX, evt.touches[0].clientY],
-                            [evt.touches[1].clientX, evt.touches[1].clientY], 2);
-
-            // Android pinch to zoom
-            if (evt.scale === undefined) {
-                // evt.scale is undefined in Android
-                evt.scale = dist / this.prevDist;
             }
 
             if (this.isPreviousGesture !== 'pan' && !isPinch) {
