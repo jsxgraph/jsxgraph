@@ -1009,7 +1009,7 @@ define([
                     labelText = value.toPrecision(Type.evaluate(this.visProp.precision)).toString();
                 }
 
-                if (this.board.options.board.beautifyScientificNotationLabel) {
+                if (this.board.options.board.beautifulScientificTickLabels) {
                     labelText = this.beautifyScientificNotationLabel(labelText);
                 }
 
@@ -1057,7 +1057,8 @@ define([
             // Gets rid of + symbol since there is no need for it anymore.
             returnString = returnString.replace(/e(.*)$/g, function(match,$1){
                 let temp = '\u2022' + '10';
-
+                // Note: Since board ticks do not support HTTP elements like <sub>, we need to replace
+                // all the numbers with superscript Unicode characters.
                 temp +=  $1
                     .replace(/-/g, "\u207B")
                     .replace(/\+/g, '')
