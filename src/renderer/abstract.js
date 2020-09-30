@@ -706,9 +706,16 @@ define([
          * @see JXG.AbstractRenderer#getArrowHeadData
          */
         updatePathWithArrowHeads: function(el, doHighlight) {
-            var hl = doHighlight ? 'highlight' : '',
-                w = Type.evaluate(el.visProp[hl + 'strokewidth']),
+            var ev = el.visProp,
+                hl = doHighlight ? 'highlight' : '',
+                w,
                 arrowData;
+
+            if (doHighlight && ev.highlightstrokewidth) {
+                w = Math.max(Type.evaluate(ev.highlightstrokewidth), Type.evaluate(ev.strokewidth));
+            } else {
+                w = Type.evaluate(ev.strokewidth);
+            }
 
             // Get information if there are arrow heads and how large they are.
             arrowData = this.getArrowHeadData(el, w, hl);
@@ -2017,7 +2024,7 @@ define([
          * @param {Number} value Layer number
          * @private
          */
-        setLayer(el, level) {}
+        setLayer: function(el, level) {}
 
     });
 
