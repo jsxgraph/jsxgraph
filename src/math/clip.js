@@ -562,9 +562,20 @@ define([
             if (this.windingNumber(S[0].usrCoords, C) === 0) {     // S is outside of C,
                 if (this.windingNumber(C[0].usrCoords, S) !== 0) { // C is inside of S, i.e. C subset of S
                     if (clip_type === 'difference') {
-                        for (i = 0; i < S.length; ++i) {
-                            pathX.push(S[i].usrCoords[1]);
-                            pathY.push(S[i].usrCoords[2]);
+
+                        if (Geometry.signedPolygon(S) * Geometry.signedPolygon(C) > 0) {
+                            // Pathes have same orientation
+                            // We have to revert one.
+                            for (i = S.length - 1; i >= 0; --i) {
+                                pathX.push(S[i].usrCoords[1]);
+                                pathY.push(S[i].usrCoords[2]);
+                            }
+                        } else {
+                            // Pathes have different orientation
+                            for (i = 0; i < S.length; ++i) {
+                                pathX.push(S[i].usrCoords[1]);
+                                pathY.push(S[i].usrCoords[2]);
+                            }
                         }
                         pathX.push(NaN);
                         pathY.push(NaN);
@@ -765,11 +776,55 @@ define([
          *
          * </script><pre>
          *
+         * @example
+         * var clip_path = board.create('curve', [[], []], {strokeWidth: 1, fillColor: 'yellow', fillOpacity: 0.6});
+         * clip_path.updateDataArray = function() {
+         *     var bbox = this.board.getBoundingBox(),
+         *         canvas, triangle;
+         *
+         *     canvas = [[bbox[0], bbox[1]], // ul
+         *          [bbox[0], bbox[3]], // ll
+         *          [bbox[2], bbox[3]], // lr
+         *          [bbox[2], bbox[1]], // ur
+         *          [bbox[0], bbox[1]]] // ul
+         *     triangle = [[-1,1], [1,1], [0,-1], [-1,1]];
+         * 
+         *     var a = JXG.Math.Clip.greinerHormann(canvas, triangle, 'difference', this.board);
+         *     this.dataX = a[0];
+         *     this.dataY = a[1];
+         * };
+         * 
+         * </pre><div id="JXGe94da07a-2a01-4498-ad62-f71a327f8e25" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXGe94da07a-2a01-4498-ad62-f71a327f8e25',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *     var clip_path = board.create('curve', [[], []], {strokeWidth: 1, fillColor: 'yellow', fillOpacity: 0.6});
+         *     clip_path.updateDataArray = function() {
+         *         var bbox = this.board.getBoundingBox(),
+         *             canvas, triangle;
+         *     
+         *         canvas = [[bbox[0], bbox[1]], // ul
+         *              [bbox[0], bbox[3]], // ll
+         *              [bbox[2], bbox[3]], // lr
+         *              [bbox[2], bbox[1]], // ur
+         *              [bbox[0], bbox[1]]] // ul
+         *         triangle = [[-1,1], [1,1], [0,-1], [-1,1]];
+         *     
+         *         var a = JXG.Math.Clip.greinerHormann(canvas, triangle, 'difference', this.board);
+         *         this.dataX = a[0];
+         *         this.dataY = a[1];
+         *     };
+         * 
+         *     })();
+         * 
+         * </script><pre>
+         * 
          */
         greinerHormann: function(subject, clip, clip_type, board) { //},
                 // subject_first_point_type, clip_first_point_type) {
 
-            var i, r, rad,
+            var i, r, rad, len,
                 steps = 359,
                 S = [],
                 C = [],
@@ -796,6 +851,20 @@ define([
                             subject.center.coords.usrCoords[2] + Math.sin(i * rad) * r
                         ], board));
                 }
+            } else if (Type.isArray(subject)) {
+                len = subject.length;
+                for (i = 0; i < len; i++) {
+                    if (Type.exists(subject[i].coords)) {
+                        // Point type
+                        S.push(new Coords(Const.COORDS_BY_USER, subject[i].coords.usrCoords, board));
+                    } else if (Type.isArray(subject[i])) {
+                        // Coordinate pair
+                        S.push(new Coords(Const.COORDS_BY_USER, subject[i], board));
+                    } else if (Type.exists(subject[i].usrCoords)) {
+                        // JXG.Coordinates
+                        S.push(new Coords(Const.COORDS_BY_USER, subject[i].usrCoords, board));
+                    }
+                }
             }
 
             // Collect all points into client array C
@@ -815,6 +884,20 @@ define([
                             clip.center.coords.usrCoords[1] + Math.cos(i * rad) * r,
                             clip.center.coords.usrCoords[2] + Math.sin(i * rad) * r
                         ], board));
+                }
+            } else if (Type.isArray(clip)) {
+                len = clip.length;
+                for (i = 0; i < len; i++) {
+                    if (Type.exists(clip[i].coords)) {
+                        // Point type
+                        C.push(new Coords(Const.COORDS_BY_USER, clip[i].coords.usrCoords, board));
+                    } else if (Type.isArray(clip[i])) {
+                        // Coordinate pair
+                        C.push(new Coords(Const.COORDS_BY_USER, clip[i], board));
+                    } else if (Type.exists(clip[i].usrCoords)) {
+                        // JXG.Coordinates
+                        C.push(new Coords(Const.COORDS_BY_USER, clip[i].usrCoords, board));
+                    }
                 }
             }
 
