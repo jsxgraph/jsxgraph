@@ -2979,9 +2979,9 @@ define([
              * In case firstArrow is an object it has the sub-attributes:
              * <pre>
              * {
-             *      type: 1, // possible values are 1, 2, 3
-             *      size: 3,  // size of the arrow head.
-             *               //This value is multiplied with the strokeWidth of the line
+             *      type: 1, // possible values are 1, 2, ..., 6
+             *      size: 3, // size of the arrow head.
+             *               // This value is multiplied with the strokeWidth of the line
              *      highlightSize: 3, // size of the arrow head in case the element is highlighted
              * }
              * </pre>
@@ -3000,6 +3000,13 @@ define([
              *
              * In case firstArrow is an object it has the sub-attributes:
              * <pre>
+             * {
+             *      type: 1, // possible values are 1, 2, ..., 6
+             *      size: 3, // size of the arrow head.
+             *               // This value is multiplied with the strokeWidth of the line
+             *      highlightSize: 3, // size of the arrow head in case the element is highlighted
+             * }
+             * </pre>
              *
              * @example
              *     var p1 = board.create('point', [-5, 2], {size:1});
@@ -3033,15 +3040,7 @@ define([
              *
              *     })();
              *
-             * </script><pre>
-             *
-             * {
-             *      type: 1, // possible values are 1, 2, 3
-             *      size: 3,  // size of the arrow head.
-             *               //This value is multiplied with the strokeWidth of the line
-             *      highlightSize: 3, // size of the arrow head in case the element is highlighted
-             * }
-             * </pre>
+             * </script>
              *
              * @name Line#lastArrow
              * @see Line#firstArrow
@@ -3184,7 +3183,7 @@ define([
              *
              * @see Point#snapToGrid
              * @see Point#snapSizeX
-             * @see Board#defaultAxes
+             * @see JXG.Board#defaultAxes
              * @type Number
              * @name Line#snapSizeY
              * @default 1
@@ -3634,7 +3633,7 @@ define([
              *
              * @see Point#snapToGrid
              * @see Point#snapSizeY
-             * @see Board#defaultAxes
+             * @see JXG.Board#defaultAxes
              * @type Number
              * @default 1
              */
@@ -3650,7 +3649,7 @@ define([
              *
              * @see Point#snapToGrid
              * @see Point#snapSizeX
-             * @see Board#defaultAxes
+             * @see JXG.Board#defaultAxes
              * @type Number
              * @default 1
              */

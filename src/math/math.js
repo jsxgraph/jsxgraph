@@ -738,7 +738,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
 
         /**
          * Greatest common divisor (gcd) of two numbers.
-         * @see http://rosettacode.org/wiki/Greatest_common_divisor#JavaScript
+         * @see <a href="http://rosettacode.org/wiki/Greatest_common_divisor#JavaScript">rosettacode.org</a>
          *
          * @param  {Number} a First number
          * @param  {Number} b Second number

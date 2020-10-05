@@ -1469,7 +1469,7 @@ define([
          * @param {Number} size A positive number describing the size. Usually the half of the width and height of
          * the drawn point.
          * @param {String} type A string describing the point's face. This method only accepts the shortcut version of
-         * each possible face: <tt>x, +, <>, ^, v, >, <
+         * each possible face: <tt>x, +, <>, ^, v, >, < </tt>
          */
         updatePathStringPoint: function (element, size, type) { /* stub */ },
 
@@ -1983,7 +1983,7 @@ define([
          * Convert SVG construction to base64 encoded SVG data URL.
          * Only available on SVGRenderer.
          *
-         * @see JXG.SVGRenderer#dumpToDataURL
+         * @see JXG.SVGRenderer#dumpToDataURI
          */
         dumpToDataURI: function (_ignoreTexts) {},
 
