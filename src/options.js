@@ -320,7 +320,7 @@ define([
             showFullscreen: false,
 
             /**
-             * Attribute(s) to control the fullscreen icon. The attribute "showFullscreen" 
+             * Attribute(s) to control the fullscreen icon. The attribute "showFullscreen"
              * controls if the icon is shown.
              * The following attribute(s) can be set:
              * <ul>
@@ -362,7 +362,7 @@ define([
             },
 
             /**
-             * Show a button which allows to clear all traces of a board. 
+             * Show a button which allows to clear all traces of a board.
              *
              * @name JXG.Board#showClearTraces
              * @type Boolean
@@ -653,7 +653,17 @@ define([
                 },
                 fillColor: '#ffff00',
                 visible: false
-            }
+            },
+
+            /**
+             * Format tick labels that were going to have scientific notation
+             * like 5.00e+6 to look like 5•10⁶.
+             *
+             * @name JXG.Board#beautifulScientificTickLabels
+             * @type Boolean
+             * @default false
+             */
+            beautifulScientificTickLabels: false
             /**#@-*/
         },
 
@@ -861,7 +871,7 @@ define([
              *                 gradientEndOffset: function() { return o2.Value(); },
              *                 hasInnerPoints: true
              *     });
-             * 
+             *
              * </pre><div id="JXG6081ca7f-0d09-4525-87ac-325a02fe2225" class="jxgbox" style="width: 300px; height: 300px;"></div>
              * <script type="text/javascript">
              *     (function() {
@@ -889,11 +899,11 @@ define([
              *                     gradientEndOffset: function() { return o2.Value(); },
              *                     hasInnerPoints: true
              *         });
-             * 
+             *
              *     })();
-             * 
+             *
              * </script><pre>
-             * 
+             *
              *
              * @type String
              * @name JXG.GeometryElement#gradient
