@@ -4165,6 +4165,7 @@ define([
              */
             baseline: {
                 needsRegularUpdate: false,
+                visible: 'inherit',
                 fixed: true,
                 scalable: false,
                 name: '',
@@ -4214,6 +4215,7 @@ define([
              */
             highline: {
                 strokeWidth: 3,
+                visible: 'inherit',
                 fixed: true,
                 name: '',
                 strokeColor: '#000000',
@@ -4227,6 +4229,7 @@ define([
              * @name Slider#label
              */
             label: {
+                visible: 'inherit',
                 strokeColor: '#000000'
             },
 
