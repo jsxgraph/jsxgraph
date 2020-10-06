@@ -908,10 +908,12 @@ define([
             el.arc.visProp.priv = true;
 
             /**
-             * The point defining the radius of the angle element. Alias for {@link Angle.prototype#radiuspoint}.
+             * The point defining the radius of the angle element.
+             * Alias for {@link Sector#radiuspoint}.
              * @type JXG.Point
              * @name point
              * @memberOf Angle.prototype
+             *
              */
             el.point = el.point2 = el.radiuspoint = points[0];
 

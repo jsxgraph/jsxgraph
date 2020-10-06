@@ -1252,8 +1252,9 @@ define([
     JXG.registerElement('segment', JXG.createSegment);
 
     /**
-     * @class This element is used to provide a constructor for arrow, which is just a wrapper for element {@link Line} with {@link JXG.Line#straightFirst}
-     * and {@link JXG.Line#straightLast} properties set to false and {@link JXG.Line#lastArrow} set to true.
+     * @class This element is used to provide a constructor for arrow, which is just a wrapper for element
+     * {@link Line} with {@link Line#straightFirst}
+     * and {@link Line#straightLast} properties set to false and {@link Line#lastArrow} set to true.
      * @pseudo
      * @description
      * @name Arrow
