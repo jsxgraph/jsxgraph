@@ -2578,9 +2578,9 @@ define([
              *
              * @name Image#snapSizeX
              *
-             * @see JXG.Point#snapToGrid
+             * @see Point#snapToGrid
              * @see Image#snapSizeY
-             * @see JXG.Board#defaultAxes
+             * @see Board#defaultAxes
              * @type Number
              * @default 1
              */
@@ -2867,8 +2867,8 @@ define([
             position: 'urt',
 
             /**
-             *  Label offset from label anchor
-             *  The label anchor is determined by JXG.GeometryElement#label.position
+             *  Label offset from label anchor.
+             *  The label anchor is determined by {@link Label#position}
              *
              * @name Label#offset
              * @see Label#position

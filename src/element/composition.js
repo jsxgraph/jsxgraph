@@ -2397,7 +2397,7 @@ define([
      * @class Creates a grid to support the user with element placement.
      * @pseudo
      * @description A grid is a set of vertical and horizontal lines to support the user with element placement. This method
-     * draws such a grid on the given board. It uses options given in {@link JXG.Options#grid}. This method does not
+     * draws such a grid on the given board. This method does not
      * take any parent elements. It is usually instantiated on the board's creation via the attribute <tt>grid</tt> set
      * to true.
      * @parameter None.
