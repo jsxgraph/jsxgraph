@@ -1297,8 +1297,8 @@ define([
     JXG.registerElement('arrow', JXG.createArrow);
 
     /**
-     * @class This element is used to provide a constructor for an axis. It's strictly spoken just a wrapper for element {@link Line} with {@link JXG.Line#straightFirst}
-     * and {@link JXG.Line#straightLast} properties set to true. Additionally {@link JXG.Line#lastArrow} is set to true and default {@link Ticks} will be created.
+     * @class This element is used to provide a constructor for an axis. It's strictly spoken just a wrapper for element {@link Line} with {@link Line#straightFirst}
+     * and {@link Line#straightLast} properties set to true. Additionally {@link Line#lastArrow} is set to true and default {@link Ticks} will be created.
      * @pseudo
      * @description
      * @name Axis
