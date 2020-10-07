@@ -1,0 +1,91 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="../../distrib/jsxgraph.css" />
+        <script src="../../src/loadjsxgraph.js"></script>
+        <script src="https://pyodide-cdn2.iodide.io/v0.15.0/full/pyodide.js"></script>
+    </head>
+    <body>
+        <div id="box" class="jxgbox" style="width: 700px; height: 700px"></div>
+
+        <script id="init" type="script/python">
+            # These scripts don't have to be put into <script> tags, they can
+            # also be defined as strings inside JavaScript.
+            #
+            # Initialize the Python script with imports and constants
+            # This initialization takes quite long because it has to download,
+            # parse and initialize a few packages. It only needs to be run once
+            # so we split the Python script into two parts: init and plot.
+
+            import numpy
+            import math
+            import matplotlib
+            matplotlib.use('Agg')
+            from matplotlib.pyplot import *
+            from matplotlib.contour import *
+            import js
+
+            xs = -5.0
+            xe = 5.0
+            ys = -5.0
+            ye = 5.0
+            x, y = numpy.meshgrid(numpy.linspace(xs, xe, 200), numpy.linspace(ys, ye, 200))
+        </script>
+
+        <script id="plot" type="script/python">
+            # This is the Python script that will be run on every board update
+
+            # Get the coordinates of a JSXGraph point defined in JavaScript
+            # and calculate the square of the euclidean distance to the origin
+            r = js.window.P.X() ** 2 + js.window.P.Y() ** 2
+
+            # Plot a circle
+            z = eval(f"x**2 + y**2 - {r}")
+            C = contour(x, y, z, [0])
+
+            # Extract the plot data
+            data = ""
+            for i in range(0, len(C.collections[0].get_paths())):
+                pa = C.collections[0].get_paths()[i].to_polygons()[0]
+
+                for j in range(0,len(pa)):
+                    data += f"{pa[j][0]},{pa[j][1]};"
+
+                data += ";"
+
+            data
+        </script>
+        <script>
+            const init = document.getElementById('init').innerText;
+            const plot = document.getElementById('plot').innerText;
+
+            const board = JXG.JSXGraph.initBoard('box', {boundingBox: [-5, 5, 5, -5], axis: true});
+
+            // Here we create a point and store it in the window object
+            // so we can read its coordinates within the Python plot script
+            // (see above)
+            window.P = board.create('point', [2, 2]);
+            const graph = board.create('curve', [[0], [0]]);
+
+            languagePluginLoader.then(() => {
+                pyodide.loadPackage(['matplotlib', 'numpy']).then(() => {
+                    pyodide.runPython(init);
+
+                    graph.updateDataArray = function() {
+                        // Run the python script and parse the plot data
+                        // returned by the plot script.
+                        const plotData = pyodide.runPython(plot);
+                        const data = plotData
+                            .replace(/\n/g, '')
+                            .split(';')
+                            .map(e => e.split(',').map(f => parseFloat(f)));
+
+                        // Update the curve with th extracted data.
+                        this.dataX = data.map(e => e[0]);
+                        this.dataY = data.map(e => e[1]);
+                    };
+                    board.update();
+                });
+            });
+        </script>
+    </body>
+</html>

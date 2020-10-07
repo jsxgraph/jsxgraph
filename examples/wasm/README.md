@@ -26,6 +26,13 @@ has the JSXGraph workspace root as a public folder. See below for an example.
 `lib.html` shows how you can pass in a function defined in C++ and plot it with
 the JSXGraph `functiongraph` element.
 
+## Use Python for implicit plots
+
+The `python.html` example uses
+[Pyodide](https://github.com/iodide-project/pyodide) to run Python scripts
+inside the browser. This project comes pre-packaged with a few Python modules
+like [numpy](https://numpy.org/) and [matplotlib](https://matplotlib.org/). We
+use these packages to implicitly plot a circle through a given point.
 
 ## Run HTTP server with the workspace root as a public folder
 
