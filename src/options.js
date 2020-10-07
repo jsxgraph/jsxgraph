@@ -5136,9 +5136,10 @@ define([
     };
 
     /**
-     * Holds all possible properties and the according validators for geometry elements. A validator is either a function
-     * which takes one parameter and returns true, if the value is valid for the property, or it is false if no validator
-     * is required.
+     * Holds all possible properties and the according validators for geometry elements.
+     * A validator is either a function
+     * which takes one parameter and returns true, if the value is valid for the property,
+     * or it is false if no validator is required.
      */
     JXG.Validator = (function () {
         var i,
@@ -5157,6 +5158,9 @@ define([
             },
             validateInteger = function (v) {
                 return (Math.abs(v - Math.round(v)) < Mat.eps);
+            },
+            validateNotNegativeInteger = function (v) {
+                return validateInteger(v) && v >= 0;
             },
             validatePositiveInteger = function (v) {
                 return validateInteger(v) && v > 0;
@@ -5200,6 +5204,7 @@ define([
                 insertTicks: false,
                 //: validateScreenCoords,
                 lastArrow: false,
+                layer: validateNotNegativeInteger,
                 majorHeight: validateInteger,
                 minorHeight: validateInteger,
                 minorTicks: validateNotNegative,
