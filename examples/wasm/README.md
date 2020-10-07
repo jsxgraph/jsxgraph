@@ -52,3 +52,18 @@ To run the cpp examples above go to
 or
 
 <http://localhost:8080/examples/wasm/lib.html>
+
+## Further reading
+
+* [WebAssembly.org](https://webassembly.org), homepage for latest news and
+  upcoming features
+* [emscripten](https://emscripten.org/), a C/C++ compiler for WebAssembly
+* [Rust](https://www.rust-lang.org/what/wasm) is a new programming language
+  with excellent tooling support for WebAssembly
+* [WebAssembly Studio](https://webassembly.studio/): Create and run WebAssembly
+  modules in your browser
+* [Awesome WASM](https://github.com/mbasso/awesome-wasm), a curated list of
+  everything WebAssembly. Compilers, Examples, Tutorials, Documentation, ...
+* More (non-JSXGraph) examples:
+  * <https://github.com/migerh/wasm-filter>
+  * <https://github.com/migerh/rustwasm-gif>
