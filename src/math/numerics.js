@@ -2347,29 +2347,29 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
          */
         D: function (f, obj) {
             if (!Type.exists(obj)) {
-                return function (x, suspendUpdate) {
+                return function (x, suspendedUpdate) {
                     var h = 0.00001,
                         h2 = (h * 2.0);
 
                     // Experiments with Richardsons rule
                     /*
-                    var phi = (f(x + h, suspendUpdate) - f(x - h, suspendUpdate)) / h2;
+                    var phi = (f(x + h, suspendedUpdate) - f(x - h, suspendedUpdate)) / h2;
                     var phi2;
                     h *= 0.5;
                     h2 *= 0.5;
-                    phi2 = (f(x + h, suspendUpdate) - f(x - h, suspendUpdate)) / h2;
+                    phi2 = (f(x + h, suspendedUpdate) - f(x - h, suspendedUpdate)) / h2;
 
                     return phi2 + (phi2 - phi) / 3.0;
                     */
-                    return (f(x + h, suspendUpdate) - f(x - h, suspendUpdate)) / h2;
+                    return (f(x + h, suspendedUpdate) - f(x - h, suspendedUpdate)) / h2;
                 };
             }
 
-            return function (x, suspendUpdate) {
+            return function (x, suspendedUpdate) {
                 var h = 0.00001,
                     h2 = (h * 2.0);
 
-                return (f.apply(obj, [x + h, suspendUpdate]) - f.apply(obj, [x - h, suspendUpdate])) / h2;
+                return (f.apply(obj, [x + h, suspendedUpdate]) - f.apply(obj, [x - h, suspendedUpdate])) / h2;
             };
         },
 

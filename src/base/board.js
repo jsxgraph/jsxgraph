@@ -105,7 +105,7 @@ define([
 
         /**
          * Board is in drag mode, objects aren't highlighted on mouse over and the object referenced in
-         * {JXG.Board#mouse} is updated on mouse movement.
+         * {@link JXG.Board#mouse} is updated on mouse movement.
          * @type Number
          * @constant
          * @see JXG.Board#drag_obj
@@ -287,7 +287,7 @@ define([
 
         /**
          * An array containing all geometric objects on the board in the order of construction.
-         * @type {Array}
+         * @type Array
          */
         this.objectsList = [];
 
@@ -3678,7 +3678,7 @@ define([
             }
 
             try {
-                // // remove all children.
+                // remove all children.
                 for (el in object.childElements) {
                     if (object.childElements.hasOwnProperty(el)) {
                         object.childElements[el].board.removeObject(object.childElements[el]);
