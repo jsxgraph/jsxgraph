@@ -3644,9 +3644,9 @@ define([
          * Removes object from board and renderer.
          * <p>
          * <b>Performance hints:</b> It is recommended to use the object's id.
-         * If many elements are removed, it is best to call board.suspendUpdate()
+         * If many elements are removed, it is best to call <tt>board.suspendUpdate()</tt>
          * before looping through the elements to be removed and call
-         * board.unsuspendUpdate() after the loop. Further, it is advisable to loop
+         * <tt>board.unsuspendUpdate()</tt> after the loop. Further, it is advisable to loop
          * in reverse order, i.e. remove the object in reverse order of their creation time.
          *
          * @param {JXG.GeometryElement|Array} object The object to remove or array of objects to be removed.
