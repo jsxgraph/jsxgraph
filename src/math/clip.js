@@ -253,8 +253,13 @@ define([
                 if (P_crossings[i].length > 0) {
                     last = P_crossings[i].length - 1;
                     P = P_crossings[i][0];
+                    if (Math.abs(P.alpha) < Mat.eps) {
+                        // Degenerate case
+                        console.log("Here", P.type);
+                    } //else {
                     P._prev = P.path[P.pos];
                     P._prev._next = P;
+                    //}
                     for (j = 1; j <= last; j++) {
                         P = P_crossings[i][j];
                         P._prev = P_crossings[i][j - 1];
@@ -408,10 +413,16 @@ define([
             } else {
                 status = 'exit';
             }
+console.log(status, P.usrCoords);
 
             while (!P._end) {
                 P = P._next;
                 if (Type.exists(P.intersect)) {
+                    if (P.type === 'T') {
+                        // Degenerate case
+                        console.log("bounce", P.usrCoords);
+                        continue;
+                    }
                     // console.log("MARKED", status);
                     P.entry_exit = status;
 
