@@ -1314,8 +1314,10 @@ define([
      * @type JXG.Ticks
      * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
      * @param {JXG.Line|JXG.Curve} line The parents consist of the line or curve the ticks are going to be attached to.
-     * @param {Number} distance Number defining the distance between two major ticks or an
-     * array defining static ticks. Alternatively, the distance can be specified with the attribute
+     * @param {Number|Array} distance Number defining the distance between two major ticks or an
+     * array defining static ticks. In case a number is specified, the ticks are <i>equidistant</i>,
+     * in case of an array, a fixed number of static ticks is created at user-supplied positions.
+     * Alternatively, the distance can be specified with the attribute
      * "ticksDistance". For arbitrary lines (and not axes) a "zero coordinate" is determined
      * which defines where the first tick is positioned. This zero coordinate
      * can be altered with the attribute "anchor". Possible values are "left", "middle", "right" or a number.

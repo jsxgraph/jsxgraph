@@ -1156,8 +1156,8 @@ define([
 
     /**
      * @class This element is used to provide a constructor for a segment.
-     * It's strictly spoken just a wrapper for element {@link Line} with {@link JXG.Line#straightFirst}
-     * and {@link JXG.Line#straightLast} properties set to false. If there is a third variable then the
+     * It's strictly spoken just a wrapper for element {@link Line} with {@link Line#straightFirst}
+     * and {@link Line#straightLast} properties set to false. If there is a third variable then the
      * segment has a fixed length (which may be a function, too).
      * @pseudo
      * @description

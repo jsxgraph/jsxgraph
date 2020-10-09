@@ -2250,7 +2250,7 @@ define([
          * @description This is a generic event handler. It exists for every possible attribute that can be set for
          * any element, e.g. if you want to be notified everytime an element's strokecolor is changed, is the event
          * <tt>attribute:strokecolor</tt>.
-         * @name JXG.GeometryElement#attribute:&lt;attribute&gt;
+         * @name JXG.GeometryElement#attribute:key
          * @param val The old value.
          * @param nval The new value
          * @param {Object} el Reference to the element

@@ -888,7 +888,7 @@ define([
      * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
      * @param {JXG.Line,JXG.Circle,JXG.Curve,JXG.Turtle_JXG.Point} o,p The constructed line contains p which lies on the object and is orthogonal
      * to the tangent to the object in the given point.
-     * @param {Glider} p Works like above, however the object is given by {@link Glider#slideObject}.
+     * @param {Glider} p Works like above, however the object is given by {@link JXG.CoordsElement#slideObject}.
      * @example
      * // Create a normal to a circle.
      * var p1 = board.create('point', [2.0, 2.0]);

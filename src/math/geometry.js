@@ -56,7 +56,7 @@ define([
 
     /**
      * Math.Geometry namespace definition. This namespace holds geometrical algorithms,
-     * espcecially intersection algorithms.
+     * especially intersection algorithms.
      * @name JXG.Math.Geometry
      * @namespace
      */
