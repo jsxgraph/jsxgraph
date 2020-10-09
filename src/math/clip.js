@@ -100,6 +100,16 @@ define([
             return (p1[1] - q[1]) * (p2[2] - q[2]) - (p2[1] - q[1]) * (p1[2] - q[2]);
         },
 
+        collinear: function(p1, p2, q1, q2) {
+            if (Math.abs(this.det(p1, p2, q1)) > Mat.eps ||
+                Math.abs(this.det(p1, p2, q2)) > Mat.eps ||
+                Math.abs(this.det(p1, q1, q2)) > Mat.eps ||
+                Math.abs(this.det(p2, q1, q2)) > Mat.eps) {
+                return false;
+            }
+            return true;
+        },
+
         /**
          * Winding number of a point in respect to a polygon path.
          *
@@ -207,7 +217,7 @@ define([
          * @param  {Array} path      Pointer to the path containing the intersection point
          * @param  {String} pathname Name of the path: 'S' or 'C'.
          */
-        Vertex: function(coords, i, alpha, path, pathname) {
+        Vertex: function(coords, i, alpha, path, pathname, type) {
             this.coords = coords;
             this.usrCoords = this.coords.usrCoords;
             this.scrCoords = this.coords.scrCoords;
@@ -218,6 +228,7 @@ define([
             this.path = path;
             this.pathname = pathname;
             this.done = false;
+            this.type = type;
 
             // Set after initialisation
             this.neighbour = null;
@@ -276,6 +287,7 @@ define([
                 S_le = S.length - 1,
                 C_le = C.length - 1,
                 // cnt = 0,
+                isCollinear, type,
                 IS, IC,
                 S_intersect = [],
                 C_intersect = [],
@@ -324,18 +336,42 @@ define([
                                                       C[j].usrCoords, C[j + 1].usrCoords);
 
                     // Found an intersection point
+                    isCollinear = false;
                     if (res[1] >= 0.0 && res[1] <= 1.0 &&
                         res[2] >= 0.0 && res[2] <= 1.0) {
 
                         crds = new Coords(Const.COORDS_BY_USER, res[0], board);
 
-                        IS = new this.Vertex(crds, i, res[1], S, 'S');
-                        IC = new this.Vertex(crds, j, res[2], C, 'C');
+                        type = 'X';
+                        // Degenerate case
+                        if (Math.abs(res[1]) < Mat.eps || Math.abs(res[2]) < Mat.eps) {
+                            console.log('degenerate', i, j);
+                            isCollinear = this.collinear(S[i].usrCoords,
+                                S[i + 1].usrCoords,
+                                C[j].usrCoords,
+                                C[j + 1].usrCoords);
+
+                            console.log('collinear', isCollinear);
+
+                            if (!isCollinear) {
+                                if (Math.abs(res[1]) < Mat.eps && Math.abs(res[2]) >= Mat.eps) {
+                                    console.log("A");
+                                    type = 'T'
+                                } else if (Math.abs(res[1]) >= Mat.eps && Math.abs(res[2]) < Mat.eps) {
+                                    console.log("B");
+                                    type = 'T'
+                                }
+                            }
+                        }
+                        // Non degenerate case
+                        IS = new this.Vertex(crds, i, res[1], S, 'S', type);
+                        IC = new this.Vertex(crds, j, res[2], C, 'C', type);
                         IS.neighbour = IC;
                         IC.neighbour = IS;
 
                         S_crossings[i].push(IS);
                         C_crossings[j].push(IC);
+
                     }
                 }
             }
