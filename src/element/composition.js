@@ -2687,60 +2687,144 @@ define([
             parents[0].visProp.curvetype === 'functiongraph') {
 
             a = board.create('curve', [[], []], attr);
-            // a.updateDataArray = function() {
-            //     var bb = this.board.getBoundingBox(),
-            //         i,
-            //         canvas = {};
+            a.updateDataArray = function() {
+                var bbox = this.board.getBoundingBox(),
+                    points = [],
+                    canvas, arr,
+                    infty, first, last,
+                    len, i,
+                    mi = parents[0].minX(),
+                    ma = parents[0].maxX(),
+                    curve_mi, curve_ma,
+                    enlarge = (bbox[1] - bbox[3]) * 0.5, // enlarge the bbox vertically by this amount
+                    inverse = Type.evaluate(this.visProp.inverse);
 
-            //     // var a = JXG.Math.Clip.difference(curve1, curve2, this.board);
-            //     // this.dataX = a[0];
-            //     // this.dataY = a[1];
-            // };
-
-            a.hasPoint = function () {
-                return false;
-            };
-            a.updateDataArray = function () {
-                var bb = this.board.getBoundingBox(),
-                    expansion = 1.5,
-                    points = parents[0].points,
-                    first, last,
-                    // inverse == true <=> Fill area with y >= f(x)
-                    hline = expansion * (attr.inverse ? bb[1] : bb[3]),
-                    i, le;
+                // inverse == true <=> Fill area with y >= f(x)
+                infty = (inverse) ? -1000000 : 1000000; // 1000000000
 
                 this.dataX = [];
                 this.dataY = [];
-
-                le = points.length;
-                if (le <= 0) {
+                len = parents[0].points.length;
+                if (len == 0) {
                     return;
                 }
 
-                // Find the first and last real point on the curve
-                // and add the vertical projection of these points to the border
-                // of the canvas to the plot.
-                // This new curve is filled.
-                for (i = 0; i < le; i++) {
-                    first = i;
-                    if (points[i].isReal()) { break; }
-                }
-                for (i = le - 1; i >= first; i--) {
-                    last = i;
-                    if (points[i].isReal()) { break; }
-                }
+                last = -1;
 
-                this.dataX.push(points[first].usrCoords[1]);
-                this.dataY.push(hline);
-                for (i = first; i <= last; i++) {
-                    if (points[i].isReal()) {
-                        this.dataX.push(points[i].usrCoords[1]);
-                        this.dataY.push(points[i].usrCoords[2]);
+              while (last < len - 1) {
+                bbox = this.board.getBoundingBox();
+                bbox[1] += enlarge;
+                bbox[3] -= enlarge;
+
+                // Find the first and the last point with real coordinates on the curve
+                for (i = last + 1, first = len; i < len; i++) {
+                    if (parents[0].points[i].isReal()) {
+                        first = i;
+                        break;
                     }
                 }
-                this.dataX.push(points[last].usrCoords[1]);
-                this.dataY.push(hline);
+                //for (i = len - 1, last = -1; i >= 0; i--) {
+                for (i = first + 1, last = len - 1; i < len; i++) {
+                    if (!parents[0].points[i].isReal()) {
+                        last = i - 1;
+                        break;
+                    }
+                }
+        console.log(len, 'first', first, 'last', last);
+
+                // No real points found -> exit
+                // if (first >= len || last < 0) {
+                //     return;
+                // }
+
+                // Copy the curve points
+                points = [];
+                for (i = first; i <= last; i++) {
+                    points.push(parents[0].points[i].usrCoords);
+                }
+
+                // Restrict canvas if the function ends inside of the board
+                bbox[0] = (bbox[0] < mi) ? mi : bbox[0];
+                bbox[2] = (bbox[2] > ma) ? ma : bbox[2];
+                // Found NaNs
+                bbox[0] = (first === 0)      ? bbox[0] : Math.max(bbox[0], points[first - first][1]);
+                bbox[2] = (last === len - 1) ? bbox[2] : Math.min(bbox[2], points[last - first][1]);
+                // First and last relevant x-coordinate of the curve
+                curve_mi = (first === 0)     ? mi + 0.001: points[first - first][1];
+                curve_ma = (last === len - 1)? ma - 0.001: points[last - first][1];
+
+                canvas = [[bbox[0], bbox[1]], // ul
+                     [bbox[0], bbox[3]], // ll
+                     [bbox[2], bbox[3]], // lr
+                     [bbox[2], bbox[1]], // ur
+                     [bbox[0], bbox[1]]] // ul
+
+
+       console.log("box", canvas);
+                points.push(new Coords(Const.COORDS_BY_USER, [1, curve_ma, points[last - first][2]], this.board));
+                points.push(new Coords(Const.COORDS_BY_USER, [1, curve_ma, infty], this.board));
+                points.push(new Coords(Const.COORDS_BY_USER, [1, curve_mi, infty], this.board));
+                points.push(new Coords(Const.COORDS_BY_USER, [1, curve_mi, points[first - first][2]], this.board));
+                points.push(points[first]);
+console.log("Add", [curve_ma, points[last - first][2]], [curve_ma, infty], [curve_mi, infty], [curve_mi, points[first - first][2]]);
+                arr = JXG.Math.Clip.difference(canvas, points, this.board);
+
+                this.dataX = this.dataX.concat(arr[0]);
+                this.dataY = this.dataY.concat(arr[1]);
+                if (true && last < len - 1) {
+                    this.dataX.push(NaN);
+                    this.dataY.push(NaN);
+                }
+                //break;
+              }
+
             };
+
+            // Previous code:
+            a.hasPoint = function () {
+                return false;
+            };
+            // a.updateDataArray = function () {
+            //     var bb = this.board.getBoundingBox(),
+            //         expansion = 1.5,
+            //         points = parents[0].points,
+            //         first, last,
+            //         // inverse == true <=> Fill area with y >= f(x)
+            //         hline = expansion * (attr.inverse ? bb[1] : bb[3]),
+            //         i, le;
+
+            //     this.dataX = [];
+            //     this.dataY = [];
+
+            //     le = points.length;
+            //     if (le <= 0) {
+            //         return;
+            //     }
+
+            //     // Find the first and last real point on the curve
+            //     // and add the vertical projection of these points to the border
+            //     // of the canvas to the plot.
+            //     // This new curve is filled.
+            //     for (i = 0; i < le; i++) {
+            //         first = i;
+            //         if (points[i].isReal()) { break; }
+            //     }
+            //     for (i = le - 1; i >= first; i--) {
+            //         last = i;
+            //         if (points[i].isReal()) { break; }
+            //     }
+
+            //     this.dataX.push(points[first].usrCoords[1]);
+            //     this.dataY.push(hline);
+            //     for (i = first; i <= last; i++) {
+            //         if (points[i].isReal()) {
+            //             this.dataX.push(points[i].usrCoords[1]);
+            //             this.dataY.push(points[i].usrCoords[2]);
+            //         }
+            //     }
+            //     this.dataX.push(points[last].usrCoords[1]);
+            //     this.dataY.push(hline);
+            // };
         } else {
             // Not yet practical?
             f = Type.createFunction(parents[0]);
