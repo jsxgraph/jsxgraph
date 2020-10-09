@@ -1,0 +1,18 @@
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="../../distrib/jsxgraph.css" />
+        <script src="cpp.js"></script>
+        <script src="../../src/loadjsxgraph.js"></script>
+    </head>
+    <body>
+        <div id="box" class="jxgbox" style="width:700px; height:500px;"></div>
+        <script>
+            Module.onRuntimeInitialized = () => {
+                console.log('runtime initialized, running');
+
+                let result = Module.main();
+                console.log('result', result);
+            }
+        </script>
+    </body>
+</html>
