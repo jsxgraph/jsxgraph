@@ -2733,9 +2733,9 @@ define([
         console.log(len, 'first', first, 'last', last);
 
                 // No real points found -> exit
-                // if (first >= len || last < 0) {
-                //     return;
-                // }
+                if (first >= len || last < first) {
+                    return;
+                }
 
                 // Copy the curve points
                 points = [];
@@ -2750,8 +2750,8 @@ define([
                 bbox[0] = (first === 0)      ? bbox[0] : Math.max(bbox[0], points[first - first][1]);
                 bbox[2] = (last === len - 1) ? bbox[2] : Math.min(bbox[2], points[last - first][1]);
                 // First and last relevant x-coordinate of the curve
-                curve_mi = (first === 0)     ? mi + 0.001: points[first - first][1];
-                curve_ma = (last === len - 1)? ma - 0.001: points[last - first][1];
+                curve_mi = (first === 0)     ? mi + 0.00: points[first - first][1];
+                curve_ma = (last === len - 1)? ma - 0.00: points[last - first][1];
 
                 canvas = [[bbox[0], bbox[1]], // ul
                      [bbox[0], bbox[3]], // ll
