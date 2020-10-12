@@ -100,7 +100,7 @@ define([
             return (p1[1] - q[1]) * (p2[2] - q[2]) - (p2[1] - q[1]) * (p1[2] - q[2]);
         },
 
-        collinear: function(p1, p2, q1, q2) {
+        _isCollinear: function(p1, p2, q1, q2) {
             if (Math.abs(this.det(p1, p2, q1)) > Mat.eps ||
                 Math.abs(this.det(p1, p2, q2)) > Mat.eps ||
                 Math.abs(this.det(p1, q1, q2)) > Mat.eps ||
@@ -253,13 +253,14 @@ define([
                 if (P_crossings[i].length > 0) {
                     last = P_crossings[i].length - 1;
                     P = P_crossings[i][0];
+
                     if (Math.abs(P.alpha) < Mat.eps) {
                         // Degenerate case
-                        console.log("Here", P.type);
-                    } //else {
-                    P._prev = P.path[P.pos];
-                    P._prev._next = P;
-                    //}
+                        console.log("TODO handle degenerate case", P.type);
+                    } // {
+                        P._prev = P.path[P.pos];
+                        P._prev._next = P;
+                    // }
                     for (j = 1; j <= last; j++) {
                         P = P_crossings[i][j];
                         P._prev = P_crossings[i][j - 1];
@@ -273,6 +274,25 @@ define([
                 }
             }
             return P_intersect;
+        },
+
+        _isInbetween: function(q, p1, p2) {
+            var alpha,
+                px = p2[1] - p1[1],
+                py = p2[2] - p1[2],
+                qx = q[1]  - p1[1],
+                qy = q[2]  - p1[2];
+
+            if (px === 0 && py === 0 && qx === 0 && qy === 0) {
+                // All three points are equal
+                return true;
+            }
+            if (qx === 0 && px === 0) {
+                alpha = qy / py;
+            } else {
+                alpha = qx / px;
+            }
+            return (alpha >= 0 && alpha < 1);
         },
 
         /**
@@ -305,10 +325,12 @@ define([
 
             // Run through the subject path.
             for (i = 0; i < S_le; i++) {
+// console.log("P", i);
                 S_crossings.push([]);
 
                 // Run through the clip path.
                 for (j = 0; j < C_le; j++) {
+// console.log("\tQ", j);
                     // Test if bounding boxes of the two curve segments overlap
                     // If not, the expensive intersection test can be skipped.
                     ignore = false;
@@ -341,33 +363,45 @@ define([
                                                       C[j].usrCoords, C[j + 1].usrCoords);
 
                     // Found an intersection point
-                    isCollinear = false;
-                    if (res[1] >= 0.0 && res[1] <= 1.0 &&
-                        res[2] >= 0.0 && res[2] <= 1.0) {
+                    // isCollinear = false;
+                    if ((res[1] >= 0.0 && res[1] < 1.0 &&           // "regular" intersection
+                        res[2] >= 0.0 && res[2] < 1.0) ||
+                        (res[1] === Infinity && res[2] === Infinity) // collinear
+                        ) {
 
                         crds = new Coords(Const.COORDS_BY_USER, res[0], board);
+// console.log('segments', i, j);
+// console.log(res[1], res[2], Math.abs(res[1]) < Mat.eps, Math.abs(res[2]) < Mat.eps);
 
                         type = 'X';
-                        // Degenerate case
+                        // Degenerate cases
                         if (Math.abs(res[1]) < Mat.eps || Math.abs(res[2]) < Mat.eps) {
                             console.log('degenerate', i, j);
-                            isCollinear = this.collinear(S[i].usrCoords,
-                                S[i + 1].usrCoords,
-                                C[j].usrCoords,
-                                C[j + 1].usrCoords);
 
-                            console.log('collinear', isCollinear);
-
-                            if (!isCollinear) {
-                                if (Math.abs(res[1]) < Mat.eps && Math.abs(res[2]) >= Mat.eps) {
-                                    console.log("A");
-                                    type = 'T'
-                                } else if (Math.abs(res[1]) >= Mat.eps && Math.abs(res[2]) < Mat.eps) {
-                                    console.log("B");
-                                    type = 'T'
-                                }
+                            if (Math.abs(res[1]) < Mat.eps && Math.abs(res[2]) >= Mat.eps) {
+                                console.log("A");
+                                type = 'T1';
+                            } else if (Math.abs(res[1]) >= Mat.eps && Math.abs(res[2]) < Mat.eps) {
+                                console.log("B");
+                                type = 'T2';
+                            }
+                        } else if (res[1] === Infinity && res[2] === Infinity) {
+console.log("COLLINEAR");
+                            if (this._isInbetween(S[i].usrCoords, C[j].usrCoords, C[j + 1].usrCoords)) {
+                                console.log("C");
+                                type = 'T1';
+                                crds = new Coords(Const.COORDS_BY_USER, S[i].usrCoords, board);
+                                res[1] = 0;
+                            } else if (this._isInbetween(C[j].usrCoords, S[i].usrCoords, S[i + 1].usrCoords)) {
+                                console.log("D");
+                                type = 'T2';
+                                crds = new Coords(Const.COORDS_BY_USER, C[j].usrCoords, board);
+                                res[2] = 0;
                             }
                         }
+
+console.log("intersection", crds.usrCoords);
+
                         // Non degenerate case
                         IS = new this.Vertex(crds, i, res[1], S, 'S', type);
                         IC = new this.Vertex(crds, j, res[2], C, 'C', type);
@@ -392,6 +426,24 @@ define([
             return [S_intersect, C_intersect];
         },
 
+        _getPosition: function(q, p1, p2, p3) {
+            var s1 = this.det(q, p1, p2),
+                s2 = this.det(q, p2, p3),
+                s3 = this.det(p1, p2, p3);
+
+            if (s3 >= 0) {   // Left turn or straight
+                if (s1 > 0 && s2 > 0) {
+                    return 'left';
+                }
+                return 'right';
+            }
+            // Right turn
+            if (s1 < 0 && s2 < 0) {
+                return 'right';
+            }
+            return 'left';
+        },
+
         /**
          * Mark the intersection vertices of path1 as entry points or as exit points
          * in respect to path2.
@@ -406,30 +458,134 @@ define([
          */
         markEntryExit: function(path1, path2) {
             var status,
+                next1, prev1, next2, prev2,
+                side, start,
+                len1 = path1.length,
+                len2 = path2.length,
                 P = path1[0];
 
+console.log("------------------");
+console.log(path1);
+// console.log(path2);
+
+            while (!P._end) {
+                P = P._next;
+                if (Type.exists(P.intersect)) {
+                    if (P.type === 'T1' || P.type === 'T2') {
+                        // Degenerate case
+                        next1 =  path1[(P.pos + 1) % len1].usrCoords;
+                        next2 =  path2[(P.neighbour.pos + 1) % len2].usrCoords;
+                        if (P.type === 'T1') {
+                            if (P.pos === 0) {
+                                prev1 = path1[len1 - 2].usrCoords;
+                            } else {
+                                prev1 = path1[P.pos - 1].usrCoords;
+                            }
+                            prev2 = path2[P.neighbour.pos].usrCoords;
+                        } else {
+                            prev1 = path1[P.pos].usrCoords;
+                            if (P.neighbour.pos === 0) {
+                                prev2 = path2[len2 - 2].usrCoords;
+                            } else {
+                                prev2 = path2[P.neighbour.pos - 1].usrCoords;
+                            }
+                        }
+                        // console.log();
+                        // console.log("bounce", P.usrCoords);
+                        // console.log(prev1, next1);
+                        // console.log(prev2, next2);
+
+                        if (this._isCollinear(P.usrCoords, next1,  P.usrCoords, next2)) {
+                            side = this._getPosition(prev2,   prev1, P.usrCoords, next1);
+                            if (side === 'right') {
+                                P.delayedStatus = ['left', 'on'];
+                            } else if (side === 'left') {
+                                P.delayedStatus = ['right', 'on'];
+                            }
+                        }
+                        if (this._isCollinear(P.usrCoords, next1,  P.usrCoords, prev2)) {
+                            side = this._getPosition(next2,   prev1, P.usrCoords, next1);
+                            if (side === 'right') {
+                                P.delayedStatus = ['left', 'on'];
+                            } else if (side === 'left') {
+                                P.delayedStatus = ['right', 'on'];
+                            }
+                        }
+                        if ((this._isCollinear(P.usrCoords, next1,  P.usrCoords, next2) &&
+                            this._isCollinear(P.usrCoords, prev1,  P.usrCoords, prev2)) ||
+                            (this._isCollinear(P.usrCoords, next1,  P.usrCoords, prev2) &&
+                            this._isCollinear(P.usrCoords, prev1,  P.usrCoords, next2))) {
+                            P.delayedStatus = ['on', 'on'];
+                        }
+                        if (this._isCollinear(P.usrCoords, prev1,  P.usrCoords, prev2)) {
+                            side = this._getPosition(next2,   prev1, P.usrCoords, next1);
+                            if (side === 'right') {
+                                P.delayedStatus = ['on', 'left'];
+                            } else if (side === 'left') {
+                                P.delayedStatus = ['on', 'right'];
+                            }
+                        }
+                        if (this._isCollinear(P.usrCoords, prev1,  P.usrCoords, next2)) {
+                            side = this._getPosition(prev2,   prev1, P.usrCoords, next1);
+                            if (side === 'right') {
+                                P.delayedStatus = ['on', 'left'];
+                            } else if (side === 'left') {
+                                P.delayedStatus = ['on', 'right'];
+                            }
+                        }
+                    }
+                }
+            }
+
+
+            P = path1[0];
             if (this.windingNumber(P.usrCoords, path2) === 0) {
                 status = 'entry';
             } else {
                 status = 'exit';
             }
-console.log(status, P.usrCoords);
+console.log(status, P.type, P.usrCoords);
 
             while (!P._end) {
+                // if (Geometry.distance(P.usrCoords, P._next.usrCoords, 3) === 0.0) {
+                //     P = P._next;
+                // }
                 P = P._next;
                 if (Type.exists(P.intersect)) {
-                    if (P.type === 'T') {
-                        // Degenerate case
-                        console.log("bounce", P.usrCoords);
-                        continue;
-                    }
-                    // console.log("MARKED", status);
-                    P.entry_exit = status;
+                    console.log("status", P.type, P.usrCoords, P.delayedStatus);
+                    if (P.type === 'T1' || P.type === 'T2') {
+                        if (P.delayedStatus[0] !== 'on' && P.delayedStatus[1] === 'on') {
+                            P.entry_exit = 'ignore';
+                            start = P.delayedStatus[0];
+                        }
+                        if (P.delayedStatus[0] === 'on') {
+                            if (P.delayedStatus[1] === 'on') {
+                                P.entry_exit = 'ignore';
+                            } else {
+                                if (P.delayedStatus[1] !== start) {
+                                    P.entry_exit = status;
 
-                    if (status === 'entry') {
-                        status = 'exit';
+                                    if (status === 'entry') {
+                                        status = 'exit';
+                                    } else {
+                                        status = 'entry';
+                                    }
+                                } else {
+                                    P.entry_exit = 'bouncing';
+                                }
+                            }
+                        }
+                        console.log(P.delayedStatus, P.entry_exit);
                     } else {
-                        status = 'entry';
+                        // console.log("MARKED", status);
+                        P.entry_exit = status;
+                        console.log(P.entry_exit);
+
+                        if (status === 'entry') {
+                            status = 'exit';
+                        } else {
+                            status = 'entry';
+                        }
                     }
                 }
             }
@@ -496,7 +652,7 @@ console.log(status, P.usrCoords);
                         } while (!Type.exists(current.intersect) &&
                                 //  !Type.exists(current.first_point_type) &&
                                  cnt < maxCnt);
-                    } else {
+                    } else if (current.entry_exit !== 'ignore' && current.entry_exit !== 'bouncing') {
                         current = current._prev;
                         do {
                             cnt++;
@@ -914,7 +1070,7 @@ console.log(status, P.usrCoords);
                 }
             }
 
-            // Collect all points into client array C
+            // Collect all points into clip array C
             if (clip.elementClass === Const.OBJECT_CLASS_CURVE &&
                 Type.exists(clip.points)) {
                     C = clip.points;

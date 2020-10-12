@@ -1696,6 +1696,7 @@ define([
          * @returns {Array} [Intersection point, t, u] The first entry contains the homogeneous coordinates
          * of the intersection point. The second and third entry gives the position of the intersection between the
          * two defining points. For example, the second entry t is defined by: intersection point = t*p1 + (1-t)*p2.
+         * If the two segments are collinear, [[0,0,0], Infinity, Infinity] is returned.
          **/
         meetSegmentSegment: function (p1, p2, q1, q2) {
             var t, u, diff,
