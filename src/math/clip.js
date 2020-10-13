@@ -264,7 +264,7 @@ define([
                 P_crossings[i].sort(function(a, b) { return (a.data.alpha > b.data.alpha) ? 1 : -1; });
 
                 if (P_crossings[i].length > 0) {
-console.log("Crossings", P_crossings[i])
+// console.log("Crossings", P_crossings[i])
                     last = P_crossings[i].length - 1;
                     P = P_crossings[i][0];
                     Q =  P.data.path[P.pos];
@@ -275,7 +275,7 @@ console.log("Crossings", P_crossings[i])
                     }
 
                     if (P.data.alpha === 0.0 && P.data.type === 'T') {
-console.log("SKIP", P.coords.usrCoords, P.data.type);
+// console.log("SKIP", P.coords.usrCoords, P.data.type, P.neighbour.data.type);
                         Q.intersection = true;
                         Q.data = P.data;
                         Q.neighbour = P.neighbour;
@@ -333,7 +333,7 @@ console.log("SKIP", P.coords.usrCoords, P.data.type);
         _print_array: function(arr) {
             var i;
             for (i = 0; i < arr.length; i++) {
-                console.log(i, arr[i].coords.usrCoords);
+                console.log(i, arr[i].coords.usrCoords,  arr[i].data.type);
             }
         },
 
@@ -411,14 +411,12 @@ console.log("SKIP", P.coords.usrCoords, P.data.type);
 
             // Run through the subject path.
             for (i = 0; i < S_le; i++) {
-// console.log("P", i);
                 S_crossings.push([]);
                 Si = S[i].coords.usrCoords;
                 Si1 = S[(i + 1) % S_le].coords.usrCoords;
 
                 // Run through the clip path.
                 for (j = 0; j < C_le; j++) {
-// console.log("\tQ", j);
                     // Test if bounding boxes of the two curve segments overlap
                     // If not, the expensive intersection test can be skipped.
                     Cj  = C[j].coords.usrCoords;
@@ -435,7 +433,8 @@ console.log("SKIP", P.coords.usrCoords, P.data.type);
                     // isCollinear = false;
                     if ((res[1] >= 0.0 && res[1] < 1.0 &&           // "regular" intersection
                         res[2] >= 0.0 && res[2] < 1.0) ||
-                        (res[1] === Infinity && res[2] === Infinity) // collinear
+                        (res[1] === Infinity &&
+                         res[2] === Infinity && Mat.norm(res[0], 3) < Mat.eps) // collinear
                         ) {
 
                         crds = new Coords(Const.COORDS_BY_USER, res[0], board);
@@ -443,52 +442,21 @@ console.log("SKIP", P.coords.usrCoords, P.data.type);
                         type = 'X';
                         // Degenerate cases
                         if (Math.abs(res[1]) < Mat.eps || Math.abs(res[2]) < Mat.eps) {
-                            // Crossing / bouncing at vertex
-console.log('degenerate', i, j);
-/*
-                            if (Math.abs(res[1]) < Mat.eps && Math.abs(res[2]) >= Mat.eps) {
-                                Pm = S[i]._prev.coords.usrCoords;
-                                Pp = S[i]._next.coords.usrCoords;
-                                Qm = C[j]._prev.coords.usrCoords;
-                                Qp = C[j]._next.coords.usrCoords;
-                                side1 = this._getPosition(Qm,   Pm, Si, Pp);
-                                side2 = this._getPosition(Qp,   Pm, Si, Pp);
-                                if (side1 !== side2) {
-                                    type = 'X';
-                                } else {
-                                    type = 'B';
-                                }
-                                crds = new Coords(Const.COORDS_BY_USER, Si, board);
-console.log("XXXXXXXXXXX")
-                            } else if (Math.abs(res[1]) >= Mat.eps && Math.abs(res[2]) < Mat.eps) {
-                                Pm = C[j]._prev.coords.usrCoords;
-                                Pp = C[j]._next.coords.usrCoords;
-                                Qm = S[i]._prev.coords.usrCoords;
-                                Qp = S[i]._next.coords.usrCoords;
-                                side1 = this._getPosition(Qm,   Pm, Cj, Pp);
-                                side2 = this._getPosition(Qp,   Pm, Cj, Pp);
-                                if (side1 !== side2) {
-                                    type = 'X';
-                                } else {
-                                    type = 'B';
-                                }
-                                crds = new Coords(Const.COORDS_BY_USER, Cj, board);
-
-console.log("YYYYYYYYY")
-                            }
-*/
+                            // Crossing / bouncing at vertex or
+                            // end of delayed crossing / bouncing
                             type  = 'T';
-
-                        } else if (res[1] === Infinity && res[2] === Infinity) {
+                        } else if (res[1] === Infinity &&
+                                   res[2] === Infinity &&
+                                   Mat.norm(res[0], 3) < Mat.eps) {
                             // Collinear segments
-console.log("COLLINEAR--", res);
-console.log(Si, Si1)
-console.log(Cj, Cj1)
+// console.log("COLLINEAR--", res);
+// console.log(Si, Si1)
+// console.log(Cj, Cj1)
                             alpha = this._inbetween(Si, Cj, Cj1)
                             if (alpha >= 0 && alpha < 1) {
                                 type = 'T';
                                 crds = new Coords(Const.COORDS_BY_USER, Si, board);
-console.log("A", crds.usrCoords);
+// console.log("A", crds.usrCoords);
                                 res[1] = 0;
                                 res[2] = alpha;
                             } else {
@@ -496,14 +464,14 @@ console.log("A", crds.usrCoords);
                                 if (alpha >= 0 && alpha < 1) {
                                     type = 'T';
                                     crds = new Coords(Const.COORDS_BY_USER, Cj, board);
-console.log("B", crds.usrCoords);
+// console.log("B", crds.usrCoords);
                                     res[1] = alpha;
                                     res[2] = 0;
                                 }
                             }
                         }
 
-console.log("intersection", crds.usrCoords, i, j, res[1], res[2]);
+//console.log("intersection", crds.usrCoords, i, j, res[1], res[2]);
                         IS = new this.Vertex(crds, i, res[1], S, 'S', type);
                         IC = new this.Vertex(crds, j, res[2], C, 'C', type);
                         IS.neighbour = IC;
@@ -517,17 +485,17 @@ console.log("intersection", crds.usrCoords, i, j, res[1], res[2]);
 
             // For both paths, sort their intersection points
             S_intersect = this.sortIntersections(S_crossings);
-console.log('>>>>>>')
-this._print_array(S_intersect);
-console.log('----------')
+// console.log('>>>>>>')
+// this._print_array(S_intersect);
+// console.log('----------')
             for (i = 0; i < S_intersect.length; i++) {
                 S_intersect[i].data.idx = i;
                 S_intersect[i].neighbour.data.idx = i;
             }
             C_intersect = this.sortIntersections(C_crossings);
 
-this._print_array(C_intersect);
-console.log('<<<<<< Phase 1 done')
+// this._print_array(C_intersect);
+// console.log('<<<<<< Phase 1 done')
             return [S_intersect, C_intersect];
         },
 
@@ -536,20 +504,17 @@ console.log('<<<<<< Phase 1 done')
                 s2 = this.det(q, p2, p3),
                 s3 = this.det(p1, p2, p3);
 
-            if (s3 >= Mat.eps) {   // Left turn
+            if (s3 >= 0) {   // Left turn or straight
                 if (s1 > 0 && s2 > 0) {
                     return 'left';
                 }
                 return 'right';
-            } else if (s3 < 0) {
-                // Right turn
-                if (s1 < 0 && s2 < 0) {
-                    return 'right';
-                }
-                return 'left';
-            } else {
-                return 'straight';
             }
+            // Right turn
+            if (s1 < 0 && s2 < 0) {
+                return 'right';
+            }
+            return 'left';
         },
 
         /**
@@ -574,7 +539,7 @@ console.log('<<<<<< Phase 1 done')
                 wait_for_exit = false,
                 P;
 
-console.log(";;;;;;;;;; Mark entry / exit ;;;;;;;;;;;;;;;;")
+//console.log(";;;;;;;;;; Mark entry / exit ;;;;;;;;;;;;;;;;")
             P = path1[0];
             while (true) {
                 if (P.intersection === true && P.data.type === 'T') {
@@ -608,9 +573,33 @@ console.log(";;;;;;;;;; Mark entry / exit ;;;;;;;;;;;;;;;;")
                                     P.delayedStatus = ['right', 'on'];
                                 }
                             }
+                        } else {
+                            side = this._getPosition(Qm,   Pm, P.coords.usrCoords, Pp);
+                            if (side !== this._getPosition(Qp,   Pm, P.coords.usrCoords, Pp)) {
+// console.log("OTHER1", 'X', P.coords.usrCoords);
+                                P.data.type = 'X';
+                                P.neighbour.data.type = 'X';
+                            } else{
+// console.log("OTHER1", 'B', P.coords.usrCoords);
+                                P.data.type = 'B';
+                                P.neighbour.data.type = 'B';
+                            }
+                        }
+                    } else {
+                        Qm = P.neighbour._prev.coords.usrCoords;
+                        Qp = P.neighbour._next.coords.usrCoords;
+                        side = this._getPosition(Qm,   Pm, P.coords.usrCoords, Pp);
+                        if (side !== this._getPosition(Qp,   Pm, P.coords.usrCoords, Pp)) {
+// console.log("OTHER3", 'X', P.coords.usrCoords);
+                            P.data.type = 'X';
+                            P.neighbour.data.type = 'X';
+                        } else{
+// console.log("OTHER3", 'B', P.coords.usrCoords);
+                            P.data.type = 'B';
+                            P.neighbour.data.type = 'B';
                         }
                     }
-console.log("Test", P.coords.usrCoords, P._next.intersection, P._prev.intersection, Pm);
+//console.log("Test", P.coords.usrCoords, P._next.intersection, P._prev.intersection, Pm);
                     if (P._prev.intersection) {
                         Qm = P.neighbour._prev.coords.usrCoords;
                         Qp = P.neighbour._next.coords.usrCoords;
@@ -630,9 +619,35 @@ console.log("Test", P.coords.usrCoords, P._next.intersection, P._prev.intersecti
                             } else {
                                 P.delayedStatus = ['on', 'right'];
                             }
+                        } else {
+                            side = this._getPosition(Qm,   Pm, P.coords.usrCoords, Pp);
+                            if (side !== this._getPosition(Qp,   Pm, P.coords.usrCoords, Pp)) {
+// console.log("OTHER2", 'X', P.coords.usrCoords);
+                                P.data.type = 'X';
+                                P.neighbour.data.type = 'X';
+                            } else{
+// console.log("OTHER2", 'B', P.coords.usrCoords);
+                                P.data.type = 'B';
+                                P.neighbour.data.type = 'B';
+                            }
+
+                        }
+                    } else {
+                        Qm = P.neighbour._prev.coords.usrCoords;
+                        Qp = P.neighbour._next.coords.usrCoords;
+                        side = this._getPosition(Qm,   Pm, P.coords.usrCoords, Pp);
+                        if (side !== this._getPosition(Qp,   Pm, P.coords.usrCoords, Pp)) {
+// console.log("OTHER4", 'X', P.coords.usrCoords);
+                            P.data.type = 'X';
+                            P.neighbour.data.type = 'X';
+                        } else{
+// console.log("OTHER4", 'B', P.coords.usrCoords);
+                            P.data.type = 'B';
+                            P.neighbour.data.type = 'B';
                         }
                     }
-console.log("P:", P.coords.usrCoords, P.delayedStatus)
+
+//console.log("P:", P.coords.usrCoords, P.delayedStatus)
 
                 }
                 if (P._end) {
@@ -641,12 +656,13 @@ console.log("P:", P.coords.usrCoords, P.delayedStatus)
                 P = P._next;
             }
 
-console.log(";;;;;;;;;; Mark entry / exit bouncing;;;;;;;;;;;;;;;;")
+//console.log(";;;;;;;;;; Mark entry / exit bouncing;;;;;;;;;;;;;;;;")
             P = path1[0];
             cnt = 0;
             while (true) {
                 if (P.intersection === true) {
                     if (P.data.type === 'T') {
+//console.log("XXX", P.coords.usrCoords, P.data.type);
                         if (P.delayedStatus[0] !== 'on' && P.delayedStatus[1] === 'on') {
                             intersection_chain = true;
                             P.data.type = 'B';
@@ -665,20 +681,20 @@ console.log(";;;;;;;;;; Mark entry / exit bouncing;;;;;;;;;;;;;;;;")
                 }
                 if (P._end) {
                     wait_for_exit = true;
-                    console.log("wait for exit", intersection_chain)
+// console.log("wait for exit", intersection_chain)
                 }
                 if (wait_for_exit && !intersection_chain) {
                     break;
                 }
-                if (cnt > 1000) {
-                    console.log("EXIT!!!!")
+                if (cnt > 100000) {
+                    console.log("SAFETY EXIT!!!!")
                     break;
                 }
                 cnt++;
                 P = P._next;
             }
 
-console.log("---------- Degenerate cases done -----")
+//console.log("---------- Degenerate cases done -----")
             P = path1[0];
             if (this.windingNumber(P.coords.usrCoords, path2) === 0) {
                 // Outside
@@ -687,21 +703,21 @@ console.log("---------- Degenerate cases done -----")
                 // Inside
                 status = 'exit';
             }
-console.log("START", P.coords.usrCoords, status);
+//console.log("START", P.coords.usrCoords, status);
 
             P = path1[0];
             while (true) {
                 if (P.intersection === true && P.data.type === 'X') {
                     P.entry_exit = status;
                     status = (status === 'entry') ? 'exit' : 'entry';
-                    console.log(">", P.coords.usrCoords, P.entry_exit, P.data.type);
+//console.log(">", P.coords.usrCoords, P.entry_exit, P.data.type);
                 }
                 if (P._end) {
                     break;
                 }
                 P = P._next;
             }
-console.log(">>>>>>>>>>>>>> Mark entry / exit done >>>>>>>>>>>>>>");
+//console.log(">>>>>>>>>>>>>> Mark entry / exit done >>>>>>>>>>>>>>");
         },
 
         _isCrossing: function(P) {
@@ -730,7 +746,7 @@ console.log(">>>>>>>>>>>>>> Mark entry / exit done >>>>>>>>>>>>>>");
                 pathX = [],
                 pathY = [];
 
-console.log("------ Start Phase 3");
+//console.log("------ Start Phase 3");
             while (S_idx < S_intersect.length && cnt < maxCnt) {
                 current = S_intersect[S_idx];
                 if (current.data.done || !this._isCrossing(current)) {
@@ -738,7 +754,7 @@ console.log("------ Start Phase 3");
                     continue;
                 }
 
-console.log("Start2", current.coords.usrCoords, current.data.type, current.entry_exit, S_idx);
+//console.log("Start2", current.coords.usrCoords, current.data.type, current.entry_exit, S_idx);
                 if (pathX.length > 0) {    // Add a new path
                     pathX.push(NaN);
                     pathY.push(NaN);
@@ -830,10 +846,18 @@ console.log("Start2", current.coords.usrCoords, current.data.type, current.entry
                         pathX.push(C[i].coords.usrCoords[1]);
                         pathY.push(C[i].coords.usrCoords[2]);
                     }
+                    if (C.length > 0) {
+                        pathX.push(C[0].coords.usrCoords[1]);
+                        pathY.push(C[0].coords.usrCoords[2]);
+                    }
                 } else {
                     for (i = 0; i < S.length; ++i) {
                         pathX.push(S[i].coords.usrCoords[1]);
                         pathY.push(S[i].coords.usrCoords[2]);
+                    }
+                    if (S.length > 0) {
+                        pathX.push(S[0].coords.usrCoords[1]);
+                        pathY.push(S[0].coords.usrCoords[2]);
                     }
                 }
                 return true; //[pathX, pathY];
@@ -842,6 +866,10 @@ console.log("Start2", current.coords.usrCoords, current.data.type, current.entry
                     for (i = 0; i < S.length; ++i) {
                         pathX.push(S[i].coords.usrCoords[1]);
                         pathY.push(S[i].coords.usrCoords[2]);
+                    }
+                    if (S.length > 0) {
+                        pathX.push(S[0].coords.usrCoords[1]);
+                        pathY.push(S[0].coords.usrCoords[2]);
                     }
                 }
                 return true; //[pathX, pathY];
@@ -867,14 +895,22 @@ console.log("Start2", current.coords.usrCoords, current.data.type, current.entry
 
             if (clip_type === 'union') {
                 for (i = 0; i < S.length; ++i) {
-                    pathX.push(S[i].usrCoords[1]);
-                    pathY.push(S[i].usrCoords[2]);
+                    pathX.push(S[i].coords.usrCoords[1]);
+                    pathY.push(S[i].coords.usrCoords[2]);
+                }
+                if (S.length > 0) {
+                    pathX.push(S[0].coords.usrCoords[1]);
+                    pathY.push(S[0].coords.usrCoords[2]);
                 }
                 pathX.push(NaN);
                 pathY.push(NaN);
                 for (i = 0; i < C.length; ++i) {
-                    pathX.push(C[i].usrCoords[1]);
-                    pathY.push(C[i].usrCoords[2]);
+                    pathX.push(C[i].coords.usrCoords[1]);
+                    pathY.push(C[i].coords.usrCoords[2]);
+                }
+                if (C.length > 0) {
+                    pathX.push(C[0].coords.usrCoords[1]);
+                    pathY.push(C[0].coords.usrCoords[2]);
                 }
                 return [pathX, pathY];
             }
@@ -887,8 +923,10 @@ console.log("Start2", current.coords.usrCoords, current.data.type, current.entry
                         if (Geometry.signedPolygon(S) * Geometry.signedPolygon(C) > 0) {
                             // Pathes have same orientation
                             // We have to revert one.
-                            pathX.push(S[0].coords.usrCoords[1]);
-                            pathY.push(S[0].coords.usrCoords[2]);
+                            if (S.length > 0) {
+                                pathX.push(S[0].coords.usrCoords[1]);
+                                pathY.push(S[0].coords.usrCoords[2]);
+                            }
                             for (i = S.length - 1; i >= 0; --i) {
                                 pathX.push(S[i].coords.usrCoords[1]);
                                 pathY.push(S[i].coords.usrCoords[2]);
@@ -899,8 +937,10 @@ console.log("Start2", current.coords.usrCoords, current.data.type, current.entry
                                 pathX.push(S[i].coords.usrCoords[1]);
                                 pathY.push(S[i].coords.usrCoords[2]);
                             }
-                            pathX.push(S[0].coords.usrCoords[1]);
-                            pathY.push(S[0].coords.usrCoords[2]);
+                            if (S.length > 0) {
+                                pathX.push(S[0].coords.usrCoords[1]);
+                                pathY.push(S[0].coords.usrCoords[2]);
+                            }
                         }
                         pathX.push(NaN);
                         pathY.push(NaN);
@@ -924,12 +964,26 @@ console.log("Start2", current.coords.usrCoords, current.data.type, current.entry
                 pathX.push(P[i].coords.usrCoords[1]);
                 pathY.push(P[i].coords.usrCoords[2]);
             }
-            if (clip_type === 'difference') {
+            // if (clip_type === 'difference') {
+            if (P.length > 0) {
                 pathX.push(P[0].coords.usrCoords[1]);
                 pathY.push(P[0].coords.usrCoords[2]);
             }
+            //}
 
             return [pathX, pathY];
+        },
+
+        _crossingIntersections: function(intersections) {
+            var i,
+                le = intersections.length,
+                sum = 0;
+            for (i = 0; i  < le; i++) {
+                if (intersections[i].data.type === 'X') {
+                    sum++;
+                }
+            }
+            return sum;
         },
 
         /**
@@ -1199,7 +1253,7 @@ console.log("Start2", current.coords.usrCoords, current.data.type, current.entry
                 }
             }
             len = S.length;
-            if (Geometry.distance(S[0].coords.usrCoords, S[len - 1].coords.usrCoords, 3) < Mat.eps) {
+            if (len > 0 && Geometry.distance(S[0].coords.usrCoords, S[len - 1].coords.usrCoords, 3) < Mat.eps) {
                 S.pop();
             }
 
@@ -1240,7 +1294,7 @@ console.log("Start2", current.coords.usrCoords, current.data.type, current.entry
             }
 
             len = C.length;
-            if (Geometry.distance(C[0].coords.usrCoords, C[len - 1].coords.usrCoords, 3) < Mat.eps) {
+            if (len > 0 && Geometry.distance(C[0].coords.usrCoords, C[len - 1].coords.usrCoords, 3) < Mat.eps) {
                 C.pop();
             }
 
@@ -1271,16 +1325,12 @@ console.log("Start2", current.coords.usrCoords, current.data.type, current.entry
             //     C[C.length - 1].first_point_type = clip_first_point_type;
             // }
 
-            // Handle cases without intersections
-            if (S_intersect.length === 0) {
-                return this.handleEmptyIntersection(S, C, clip_type);
-            }
+// console.log("S");
+// this._print_list(S[0]);
+// console.log("C");
+// this._print_list(C[0]);
+// console.log("S")
 
-console.log("S");
-this._print_list(S[0]);
-console.log("C");
-this._print_list(C[0]);
-console.log("S")
             // Phase 2: mark intersection points as entry or exit points
             this.markEntryExit(S, C);
             // if (S[0].coords.distance(Const.COORDS_BY_USER, C[0].coords) === 0) {
@@ -1289,10 +1339,15 @@ console.log("S")
             //     C[0].usrCoords[1] *= 1 + Math.random() * 0.0001 - 0.00005;
             //     C[0].usrCoords[2] *= 1 + Math.random() * 0.0001 - 0.00005;
             // }
-
-console.log("C")
+//console.log("C")
             this.markEntryExit(C, S);
 //return;
+
+            // Handle cases without intersections
+            if (this._crossingIntersections(S_intersect) === 0) {
+                return this.handleEmptyIntersection(S, C, clip_type);
+            }
+
             // if (false) {
             //     for (i = 0; i < S_intersect.length; i++) {
             //         console.log('S', S_intersect[i].cnt, S_intersect[i].entry_exit, S_intersect[i].usrCoords,
