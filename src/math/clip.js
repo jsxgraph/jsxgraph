@@ -275,7 +275,7 @@ define([
                     }
 
                     if (P.data.alpha === 0.0 && P.data.type === 'T') {
-// console.log("SKIP", P.coords.usrCoords, P.data.type, P.neighbour.data.type);
+//console.log("SKIP", P.coords.usrCoords, P.data.type, P.neighbour.data.type);
                         Q.intersection = true;
                         Q.data = P.data;
                         Q.neighbour = P.neighbour;
@@ -471,7 +471,7 @@ define([
                             }
                         }
 
-//console.log("intersection", crds.usrCoords, i, j, res[1], res[2]);
+console.log("intersection", crds.usrCoords, i, j, res[1], res[2], type);
                         IS = new this.Vertex(crds, i, res[1], S, 'S', type);
                         IC = new this.Vertex(crds, j, res[2], C, 'C', type);
                         IS.neighbour = IC;
@@ -486,15 +486,15 @@ define([
             // For both paths, sort their intersection points
             S_intersect = this.sortIntersections(S_crossings);
 // console.log('>>>>>>')
-// this._print_array(S_intersect);
-// console.log('----------')
+this._print_array(S_intersect);
+console.log('----------')
             for (i = 0; i < S_intersect.length; i++) {
                 S_intersect[i].data.idx = i;
                 S_intersect[i].neighbour.data.idx = i;
             }
             C_intersect = this.sortIntersections(C_crossings);
 
-// this._print_array(C_intersect);
+this._print_array(C_intersect);
 // console.log('<<<<<< Phase 1 done')
             return [S_intersect, C_intersect];
         },
@@ -539,17 +539,20 @@ define([
                 wait_for_exit = false,
                 P;
 
-//console.log(";;;;;;;;;; Mark entry / exit ;;;;;;;;;;;;;;;;")
+console.log(";;;;;;;;;; Mark entry / exit ;;;;;;;;;;;;;;;;")
             P = path1[0];
+            cnt = 0;
             while (true) {
                 if (P.intersection === true && P.data.type === 'T') {
                     // Degenerate case
                     Pp = P._next.coords.usrCoords;
                     Pm = P._prev.coords.usrCoords;
+console.log(P.coords.usrCoords, P._prev.intersection, P._next.intersection)
                     if (P._next.intersection) {
                         Qm = P.neighbour._prev.coords.usrCoords;
                         Qp = P.neighbour._next.coords.usrCoords;
                         if (Geometry.distance(Pp, Qp, 3) < Mat.eps) {
+console.log("A")
                             // P+ linked to Q-
                             if (Geometry.distance(Pm, Qm, 3) < Mat.eps) {
                                 P.delayedStatus = ['on', 'on'];
@@ -562,6 +565,7 @@ define([
                                 }
                             }
                         } else if (Geometry.distance(Pp, Qm, 3) < Mat.eps) {
+console.log("B")
                             // P+ linked to Q-
                             if (Geometry.distance(Pm, Qp, 3) < Mat.eps) {
                                 P.delayedStatus = ['on', 'on'];
@@ -574,33 +578,33 @@ define([
                                 }
                             }
                         } else {
+console.log("C")
+
                             side = this._getPosition(Qm,   Pm, P.coords.usrCoords, Pp);
                             if (side !== this._getPosition(Qp,   Pm, P.coords.usrCoords, Pp)) {
-// console.log("OTHER1", 'X', P.coords.usrCoords);
                                 P.data.type = 'X';
                                 P.neighbour.data.type = 'X';
                             } else{
-// console.log("OTHER1", 'B', P.coords.usrCoords);
                                 P.data.type = 'B';
                                 P.neighbour.data.type = 'B';
                             }
+console.log("OTHER1", P.coords.usrCoords, P.data.type);
                         }
-                    } else {
+                    } /*else {
                         Qm = P.neighbour._prev.coords.usrCoords;
                         Qp = P.neighbour._next.coords.usrCoords;
                         side = this._getPosition(Qm,   Pm, P.coords.usrCoords, Pp);
                         if (side !== this._getPosition(Qp,   Pm, P.coords.usrCoords, Pp)) {
-// console.log("OTHER3", 'X', P.coords.usrCoords);
                             P.data.type = 'X';
                             P.neighbour.data.type = 'X';
                         } else{
-// console.log("OTHER3", 'B', P.coords.usrCoords);
                             P.data.type = 'B';
                             P.neighbour.data.type = 'B';
                         }
-                    }
+console.log("OTHER2", P.coords.usrCoords, P.data.type);
+                    } */
 //console.log("Test", P.coords.usrCoords, P._next.intersection, P._prev.intersection, Pm);
-                    if (P._prev.intersection) {
+                    else if (P._prev.intersection) {
                         Qm = P.neighbour._prev.coords.usrCoords;
                         Qp = P.neighbour._next.coords.usrCoords;
                         if (Geometry.distance(Pm, Qm, 3) < Mat.eps) {
@@ -622,38 +626,36 @@ define([
                         } else {
                             side = this._getPosition(Qm,   Pm, P.coords.usrCoords, Pp);
                             if (side !== this._getPosition(Qp,   Pm, P.coords.usrCoords, Pp)) {
-// console.log("OTHER2", 'X', P.coords.usrCoords);
                                 P.data.type = 'X';
                                 P.neighbour.data.type = 'X';
                             } else{
-// console.log("OTHER2", 'B', P.coords.usrCoords);
                                 P.data.type = 'B';
                                 P.neighbour.data.type = 'B';
                             }
-
+console.log("OTHER3", P.coords.usrCoords, P.data.type);
                         }
                     } else {
                         Qm = P.neighbour._prev.coords.usrCoords;
                         Qp = P.neighbour._next.coords.usrCoords;
                         side = this._getPosition(Qm,   Pm, P.coords.usrCoords, Pp);
                         if (side !== this._getPosition(Qp,   Pm, P.coords.usrCoords, Pp)) {
-// console.log("OTHER4", 'X', P.coords.usrCoords);
                             P.data.type = 'X';
                             P.neighbour.data.type = 'X';
                         } else{
-// console.log("OTHER4", 'B', P.coords.usrCoords);
                             P.data.type = 'B';
                             P.neighbour.data.type = 'B';
                         }
+console.log("OTHER4", P.coords.usrCoords, P.data.type);
                     }
 
-//console.log("P:", P.coords.usrCoords, P.delayedStatus)
+console.log("P:", P.coords.usrCoords, P.data.type, P.delayedStatus)
 
                 }
-                if (P._end) {
+                if (P._end || cnt > 100000) {
                     break;
                 }
                 P = P._next;
+                cnt++;
             }
 
 //console.log(";;;;;;;;;; Mark entry / exit bouncing;;;;;;;;;;;;;;;;")
@@ -662,7 +664,7 @@ define([
             while (true) {
                 if (P.intersection === true) {
                     if (P.data.type === 'T') {
-//console.log("XXX", P.coords.usrCoords, P.data.type);
+console.log("XXX", P.coords.usrCoords, P.data.type);
                         if (P.delayedStatus[0] !== 'on' && P.delayedStatus[1] === 'on') {
                             intersection_chain = true;
                             P.data.type = 'B';
@@ -703,14 +705,14 @@ define([
                 // Inside
                 status = 'exit';
             }
-//console.log("START", P.coords.usrCoords, status);
+console.log("START", P.coords.usrCoords, status);
 
             P = path1[0];
             while (true) {
                 if (P.intersection === true && P.data.type === 'X') {
                     P.entry_exit = status;
                     status = (status === 'entry') ? 'exit' : 'entry';
-//console.log(">", P.coords.usrCoords, P.entry_exit, P.data.type);
+console.log(">", P.coords.usrCoords, P.entry_exit, P.data.type);
                 }
                 if (P._end) {
                     break;
