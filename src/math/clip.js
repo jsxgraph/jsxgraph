@@ -544,19 +544,28 @@ console.log(";;;;;;;;;; Mark entry / exit ;;;;;;;;;;;;;;;;")
             cnt = 0;
             while (true) {
                 if (P.intersection === true && P.data.type === 'T') {
-                    // Degenerate case
-                    Pp = P._next.coords.usrCoords;
-                    Pm = P._prev.coords.usrCoords;
-console.log(P.coords.usrCoords, P._prev.intersection, P._next.intersection)
+                    // Handle the degenerate cases
+                    // Decide if they are (delayed) bouncing or crossing intersections
+                    Pp = P._next.coords.usrCoords;  // P-
+                    Pm = P._prev.coords.usrCoords;  // P+
+
+                    Qm = P.neighbour._prev.coords.usrCoords;  // Q-
+                    Qp = P.neighbour._next.coords.usrCoords;  // Q+
+
+console.log(";;", Pm, P.coords.usrCoords, Pp)
+console.log(";:", Qm, P.neighbour.coords.usrCoords, Qp)
                     if (P._next.intersection) {
-                        Qm = P.neighbour._prev.coords.usrCoords;
-                        Qp = P.neighbour._next.coords.usrCoords;
+                        // P+ is an intersection
+
                         if (Geometry.distance(Pp, Qp, 3) < Mat.eps) {
+                            // P+ is an intersection linked to Q+
 console.log("A")
-                            // P+ linked to Q-
                             if (Geometry.distance(Pm, Qm, 3) < Mat.eps) {
+                                // P- is linked to Q-,
+                                // i.e. the pathes share three consecutive points
                                 P.delayedStatus = ['on', 'on'];
                             } else {
+                                // Otherwise Q- is either left or right from the path (P-, P, P+)
                                 side = this._getPosition(Qm,   Pm, P.coords.usrCoords, Pp);
                                 if (side === 'right') {
                                     P.delayedStatus = ['left', 'on'];
@@ -565,11 +574,14 @@ console.log("A")
                                 }
                             }
                         } else if (Geometry.distance(Pp, Qm, 3) < Mat.eps) {
+                            // P+ is an intersection linked to Q-
 console.log("B")
-                            // P+ linked to Q-
                             if (Geometry.distance(Pm, Qp, 3) < Mat.eps) {
+                                // P- is linked to Q+,
+                                // i.e. the pathes share three consecutive points
                                 P.delayedStatus = ['on', 'on'];
                             } else {
+                                // Otherwise Q+ is either left or right from the path (P-, P, P+)
                                 side = this._getPosition(Qp,   Pm, P.coords.usrCoords, Pp);
                                 if (side === 'right') {
                                     P.delayedStatus = ['left', 'on'];
@@ -577,38 +589,27 @@ console.log("B")
                                     P.delayedStatus = ['right', 'on'];
                                 }
                             }
-                        } else {
+                        } /*else {
+                            // P- and P+ do not share common intersections with the Q path.
+                            // Therefore, P is either bouncing or crossing
 console.log("C")
-
                             side = this._getPosition(Qm,   Pm, P.coords.usrCoords, Pp);
                             if (side !== this._getPosition(Qp,   Pm, P.coords.usrCoords, Pp)) {
                                 P.data.type = 'X';
-                                P.neighbour.data.type = 'X';
+                                // P.neighbour.data.type = 'X';
                             } else{
                                 P.data.type = 'B';
-                                P.neighbour.data.type = 'B';
+                                //P.neighbour.data.type = 'B';
                             }
 console.log("OTHER1", P.coords.usrCoords, P.data.type);
-                        }
-                    } /*else {
-                        Qm = P.neighbour._prev.coords.usrCoords;
-                        Qp = P.neighbour._next.coords.usrCoords;
-                        side = this._getPosition(Qm,   Pm, P.coords.usrCoords, Pp);
-                        if (side !== this._getPosition(Qp,   Pm, P.coords.usrCoords, Pp)) {
-                            P.data.type = 'X';
-                            P.neighbour.data.type = 'X';
-                        } else{
-                            P.data.type = 'B';
-                            P.neighbour.data.type = 'B';
-                        }
-console.log("OTHER2", P.coords.usrCoords, P.data.type);
-                    } */
-//console.log("Test", P.coords.usrCoords, P._next.intersection, P._prev.intersection, Pm);
-                    else if (P._prev.intersection) {
-                        Qm = P.neighbour._prev.coords.usrCoords;
-                        Qp = P.neighbour._next.coords.usrCoords;
+                        }*/
+                    }
+                    if (P._prev.intersection) {
+                        // P+ is not an intersection, but P- is
+
                         if (Geometry.distance(Pm, Qm, 3) < Mat.eps) {
-                            // P- linked to Q-
+                            // P- is a intersection linked to Q-
+                            // Q+ is either left or right from the path (P-, P, P+)
                             side = this._getPosition(Qp,   Pm, P.coords.usrCoords, Pp);
                             if (side === 'right') {
                                 P.delayedStatus = ['on', 'left'];
@@ -616,34 +617,36 @@ console.log("OTHER2", P.coords.usrCoords, P.data.type);
                                 P.delayedStatus = ['on', 'right'];
                             }
                         } else if (Geometry.distance(Pm, Qp, 3) < Mat.eps) {
-                            // P- linked to Q+
+                            // P- is an intersection linked to Q+
+                            // Q- is either left or right from the path (P-, P, P+)
                             side = this._getPosition(Qm,   Pm, P.coords.usrCoords, Pp);
                             if (side === 'right') {
                                 P.delayedStatus = ['on', 'left'];
                             } else {
                                 P.delayedStatus = ['on', 'right'];
                             }
-                        } else {
+                        } /*else {
+                            // P- and P+ do not share common intersections with the Q path.
                             side = this._getPosition(Qm,   Pm, P.coords.usrCoords, Pp);
                             if (side !== this._getPosition(Qp,   Pm, P.coords.usrCoords, Pp)) {
                                 P.data.type = 'X';
-                                P.neighbour.data.type = 'X';
+                                // P.neighbour.data.type = 'X';
                             } else{
                                 P.data.type = 'B';
-                                P.neighbour.data.type = 'B';
+                                // P.neighbour.data.type = 'B';
                             }
 console.log("OTHER3", P.coords.usrCoords, P.data.type);
-                        }
-                    } else {
-                        Qm = P.neighbour._prev.coords.usrCoords;
-                        Qp = P.neighbour._next.coords.usrCoords;
+                        }*/
+                    }
+                    if (!P._prev.intersection && !P._next.intersection) {
+                        // Neither P- nor P+ are intersections
                         side = this._getPosition(Qm,   Pm, P.coords.usrCoords, Pp);
                         if (side !== this._getPosition(Qp,   Pm, P.coords.usrCoords, Pp)) {
                             P.data.type = 'X';
-                            P.neighbour.data.type = 'X';
+                            //P.neighbour.data.type = 'X';
                         } else{
                             P.data.type = 'B';
-                            P.neighbour.data.type = 'B';
+                            //P.neighbour.data.type = 'B';
                         }
 console.log("OTHER4", P.coords.usrCoords, P.data.type);
                     }
@@ -659,12 +662,13 @@ console.log("P:", P.coords.usrCoords, P.data.type, P.delayedStatus)
             }
 
 //console.log(";;;;;;;;;; Mark entry / exit bouncing;;;;;;;;;;;;;;;;")
+
             P = path1[0];
             cnt = 0;
             while (true) {
                 if (P.intersection === true) {
-                    if (P.data.type === 'T') {
 console.log("XXX", P.coords.usrCoords, P.data.type);
+                    if (P.data.type === 'T') {
                         if (P.delayedStatus[0] !== 'on' && P.delayedStatus[1] === 'on') {
                             intersection_chain = true;
                             P.data.type = 'B';
@@ -748,7 +752,7 @@ console.log(">", P.coords.usrCoords, P.entry_exit, P.data.type);
                 pathX = [],
                 pathY = [];
 
-//console.log("------ Start Phase 3");
+console.log("------ Start Phase 3");
             while (S_idx < S_intersect.length && cnt < maxCnt) {
                 current = S_intersect[S_idx];
                 if (current.data.done || !this._isCrossing(current)) {
@@ -756,7 +760,7 @@ console.log(">", P.coords.usrCoords, P.entry_exit, P.data.type);
                     continue;
                 }
 
-//console.log("Start2", current.coords.usrCoords, current.data.type, current.entry_exit, S_idx);
+console.log("Start", current.coords.usrCoords, current.data.type, current.entry_exit, S_idx);
                 if (pathX.length > 0) {    // Add a new path
                     pathX.push(NaN);
                     pathY.push(NaN);
@@ -768,7 +772,7 @@ console.log(">", P.coords.usrCoords, P.entry_exit, P.data.type);
                     // Add the "current" intersection vertex
                     pathX.push(current.coords.usrCoords[1]);
                     pathY.push(current.coords.usrCoords[2]);
-//console.log("Add", current.coords.usrCoords);
+console.log("Add", current.coords.usrCoords);
                     current.data.done = true;
 
                     // console.log(current.pathname, current.cnt, current.entry_exit, current.usrCoords[1].toFixed(3), current.usrCoords[2].toFixed(3));
@@ -782,7 +786,7 @@ console.log(">", P.coords.usrCoords, P.entry_exit, P.data.type);
 
                             pathX.push(current.coords.usrCoords[1]);
                             pathY.push(current.coords.usrCoords[2]);
-//console.log("Add fw", current.coords.usrCoords);
+console.log("Add fw", current.coords.usrCoords);
 
                             if (!this._isCrossing(current)) {  // In case there are two adjacent intersects
                                 current = current._next;
@@ -796,7 +800,7 @@ console.log(">", P.coords.usrCoords, P.entry_exit, P.data.type);
 
                             pathX.push(current.coords.usrCoords[1]);
                             pathY.push(current.coords.usrCoords[2]);
-//console.log("Add bw", current.coords.usrCoords);
+console.log("Add bw", current.coords.usrCoords);
 
                             if (!this._isCrossing(current)) {  // In case there are two adjacent intersects
                                 current = current._prev;
@@ -810,7 +814,7 @@ console.log(">", P.coords.usrCoords, P.entry_exit, P.data.type);
                         return [[0], [0]];
                     }
 
-                    // console.log("Switch", current.pathname, current.cnt, "to", current.neighbour.pathname, current.neighbour.cnt);
+                    console.log("Switch", current.data.pathname, current.cnt, "to", current.neighbour.data.pathname, current.neighbour.cnt);
                     current = current.neighbour;
                     if (current.data.done) {
                         pathX.push(current.coords.usrCoords[1]);
