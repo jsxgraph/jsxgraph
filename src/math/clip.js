@@ -255,7 +255,8 @@ define([
          */
         sortIntersections: function(P_crossings) {
             var i, j, P, last,
-                next,
+                //P_prev = first_node,
+                next_node,
                 P_intersect = [],
                 P_le = P_crossings.length;
 
@@ -264,26 +265,41 @@ define([
 //console.log('crossings', i, P_crossings[i]);
 
                 if (P_crossings[i].length > 0) {
+                    console.log("Crossings", P_crossings[i])
                     last = P_crossings[i].length - 1;
                     P = P_crossings[i][0];
 
-                    next = P.data.path[P.pos]._next;
-                    P._prev = P.data.path[P.pos];
-                    P._prev._next = P;
-                    if (i == P_le - 1) {
-                        P._prev._end = false;
+                    next_node = P.data.path[P.pos]._next;  // Store the next "normal" node
+
+                    if (i === P_le - 1) {
+                        P.data.path[P.pos]._end = false;
                     }
 
+                    // Insert the first intersection point
+                    if (false && P === P.data.path[P.pos]) {
+                        //P_prev = P;
+                    } else {
+                        P._prev = P.data.path[P.pos];
+                        // P_prev = P;
+                    }
+
+                    // Insert the other intersection points, but the last
                     for (j = 1; j <= last; j++) {
                         P = P_crossings[i][j];
                         P._prev = P_crossings[i][j - 1];
                         P._prev._next = P;
+                        // P_prev = P;
                     }
+
+                    // Link last intersection point to the next node
                     P = P_crossings[i][last];
-                    P._next = next;
+                    P._next = next_node;
                     P._next._prev = P;
-                    if (i == P_le - 1) {
+console.log("INSERT", P, P._prev, P._next)
+
+                    if (i === P_le - 1) {
                         P._end = true;
+                        console.log("END", P._end, P.coords.usrCoords, P._prev.coords.usrCoords, P._next.coords.usrCoords);
                     }
 
                     P_intersect = P_intersect.concat(P_crossings[i]);
@@ -319,10 +335,12 @@ define([
         },
 
         _print_list: function(P) {
+            var cnt = 0;
             console.log("\t", P.coords.usrCoords);
-            while (!P._end) {
+            while (!P._end && cnt < 100) {
                 P = P._next;
-                console.log("\t", P.coords.usrCoords);
+                console.log("\t", P.coords.usrCoords, P._end, "-:", P._prev.coords.usrCoords, "+:", P._next.coords.usrCoords);
+                cnt++;
             } ;
         },
 
@@ -357,8 +375,8 @@ define([
          */
         findIntersections: function(S, C, board) {
             var res = [],
-                i, j, k, ignore,
-                min_S, min_C, max_S, max_C, swap, crds,
+                i, j, ignore,
+                crds,
                 S_le = S.length,
                 C_le = C.length,
                 Si, Si1, Cj, Cj1,
@@ -525,23 +543,84 @@ console.log('<<<<<< Phase 1 done')
          */
         markEntryExit: function(path1, path2) {
             var status,
+                Pp, Pm, Qp, Qm,
                 next1, prev1, next2, prev2,
                 side, start,
                 len1 = path1.length,
                 len2 = path2.length,
                 P = path1[0];
 
-// console.log("------------------");
-// console.log("P:");
+console.log("------------------");
+console.log("P:");
 // this._print_array(path1)
-// this._print_list(P);
+this._print_list(P);
+return;
 
-if (false) {
+if (true) {
             while (!P._end) {
                 P = P._next;
                 if (P.intersection === true) {
                     if (P.data.type === 'T1' || P.data.type === 'T2') {
                         // Degenerate case
+
+                        Pp = P._next.coords.usrCoords;
+                        Pm = P._prev.coords.usrCoords;
+                        if (P._next.intersection) {
+                            Qm = P.neighbour._prev.coords.usrCoords;
+                            Qp = P.neighbour._next.coords.usrCoords;
+                            if (Geometry.distance(Pp, Qp, 3) < Mat.eps) {
+                                // P+ linked to Q-
+                                if (Geometry.distance(Pm, Qm, 3) < Mat.eps) {
+                                    P.delayedStatus = ['on', 'on'];
+                                } else {
+                                    side = this._getPosition(Qm,   Pm, P.coords.usrCoords, Pp);
+                                    if (side === 'right') {
+                                        P.delayedStatus = ['left', 'on'];
+                                    } else {
+                                        P.delayedStatus = ['right', 'on'];
+                                    }
+                                }
+                            } else if (Geometry.distance(Pp, Qm, 3) < Mat.eps) {
+                                // P+ linked to Q-
+                                if (Geometry.distance(Pm, Qp, 3) < Mat.eps) {
+                                    P.delayedStatus = ['on', 'on'];
+                                } else {
+                                    side = this._getPosition(Qp,   Pm, P.coords.usrCoords, Pp);
+                                    if (side === 'right') {
+                                        P.delayedStatus = ['left', 'on'];
+                                    } else {
+                                        P.delayedStatus = ['right', 'on'];
+                                    }
+                                }
+                            }
+                        }
+                        console.log("Test", P.coords.usrCoords, P._prev.intersection, Pm);
+                        if (P._prev.intersection) {
+                            Qm = P.neighbour._prev.coords.usrCoords;
+                            Qp = P.neighbour._next.coords.usrCoords;
+                            console.log(Pm, Qm)
+                            if (Geometry.distance(Pm, Qm, 3) < Mat.eps) {
+                                console.log("Pm, Qm")
+                                // P- linked to Q-
+                                side = this._getPosition(Qp,   Pm, P.coords.usrCoords, Pp);
+                                if (side === 'right') {
+                                    P.delayedStatus = ['on', 'left'];
+                                } else {
+                                    P.delayedStatus = ['on', 'right'];
+                                }
+                            } else if (Geometry.distance(Pm, Qp, 3) < Mat.eps) {
+                                console.log("Pm, Qp")
+                                // P- linked to Q+
+                                side = this._getPosition(Qm,   Pm, P.coords.usrCoords, Pp);
+                                if (side === 'right') {
+                                    P.delayedStatus = ['on', 'left'];
+                                } else {
+                                    P.delayedStatus = ['on', 'right'];
+                                }
+                            }
+                        }
+                        console.log("P:", P.coords.usrCoords, P.delayedStatus)
+
                         // next1 = path1[(P.pos + 1) % len1].usrCoords;
                         // next2 = path2[(P.neighbour.pos + 1) % len2].usrCoords;
                         // if (P.type === 'T1') {
@@ -559,29 +638,29 @@ if (false) {
                         //         prev2 = path2[P.neighbour.pos - 1].usrCoords;
                         //     }
                         // }
-                        next1 = path1[(P.pos + 1) % len1];
-                        next2 = path2[(P.neighbour.pos + 1) % len2];
-                        if (P.type === 'T1') {
-                            if (P.pos === 0) {
-                                prev1 = path1[len1 - 2];
-                            } else {
-                                prev1 = path1[P.pos - 1];
-                            }
-                            prev2 = path2[P.neighbour.pos];
-                        } else {
-                            prev1 = path1[P.pos];
-                            if (P.neighbour.pos === 0) {
-                                prev2 = path2[len2 - 2];
-                            } else {
-                                prev2 = path2[P.neighbour.pos - 1];
-                            }
-                        }
+                        // next1 = path1[(P.pos + 1) % len1];
+                        // next2 = path2[(P.neighbour.pos + 1) % len2];
+                        // if (P.type === 'T1') {
+                        //     if (P.pos === 0) {
+                        //         prev1 = path1[len1 - 2];
+                        //     } else {
+                        //         prev1 = path1[P.pos - 1];
+                        //     }
+                        //     prev2 = path2[P.neighbour.pos];
+                        // } else {
+                        //     prev1 = path1[P.pos];
+                        //     if (P.neighbour.pos === 0) {
+                        //         prev2 = path2[len2 - 2];
+                        //     } else {
+                        //         prev2 = path2[P.neighbour.pos - 1];
+                        //     }
+                        // }
                         // console.log();
                         // console.log("bounce", P.usrCoords);
                         // console.log(prev1, next1);
                         // console.log(prev2, next2);
 
-                        console.log(P.coords.usrCoords, next1, P._next, P._next._next);
+                        //console.log(P.coords.usrCoords, next1, P._next, P._next._next);
                         /*
                         if (this._isCollinear([P.usrCoords, next1], [P.usrCoords, next2])) {
                             side = this._getPosition(prev2,   prev1, P.usrCoords, next1);
@@ -1265,7 +1344,7 @@ console.log("Start", current.coords.usrCoords, current.entry_exit, S_idx);
                 C[0].usrCoords[2] *= 1 + Math.random() * 0.0001 - 0.00005;
             }
             this.markEntryExit(C, S);
-
+return;
             // if (false) {
             //     for (i = 0; i < S_intersect.length; i++) {
             //         console.log('S', S_intersect[i].cnt, S_intersect[i].entry_exit, S_intersect[i].usrCoords,
