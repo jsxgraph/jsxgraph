@@ -239,6 +239,14 @@ define([
         },
 
         _addToList: function(list, coords, pos) {
+            var len = list.length;
+            if (len > 0 &&
+                list[len - 1].coords.usrCoords[0] === coords.usrCoords[0] &&
+                list[len - 1].coords.usrCoords[1] === coords.usrCoords[1] &&
+                list[len - 1].coords.usrCoords[2] === coords.usrCoords[2]) {
+                // Skip point
+                return;
+            }
             list.push({
                 pos: pos,
                 intersection: false,
@@ -489,17 +497,17 @@ define([
 
             // For both paths, sort their intersection points
             S_intersect = this.sortIntersections(S_crossings);
-// console.log('>>>>>>')
-//this._print_array(S_intersect);
-//console.log('----------')
+console.log('>>>>>>')
+this._print_array(S_intersect);
+console.log('----------')
             for (i = 0; i < S_intersect.length; i++) {
                 S_intersect[i].data.idx = i;
                 S_intersect[i].neighbour.data.idx = i;
             }
             C_intersect = this.sortIntersections(C_crossings);
 
-//this._print_array(C_intersect);
-// console.log('<<<<<< Phase 1 done')
+this._print_array(C_intersect);
+console.log('<<<<<< Phase 1 done')
             return [S_intersect, C_intersect];
         },
 
@@ -704,7 +712,7 @@ define([
                 }
             // }
 
-//console.log("START", P.coords.usrCoords, status);
+console.log("START", P.coords.usrCoords, status);
             P_start = P;
             // Greiner-Hormann entry/exit algorithm
             cnt = 0;
@@ -712,10 +720,10 @@ define([
                 if (P.intersection === true && P.data.type === 'X') {
                     P.entry_exit = status;
                     status = (status === 'entry') ? 'exit' : 'entry';
-//console.log("> Mark1", P.coords.usrCoords, P.entry_exit, P.data.type);
+console.log("> Mark1", P.coords.usrCoords, P.entry_exit, P.data.type);
                 }
                 if (P.intersection === true && P.data.type !== 'X') {
-//console.log("> Mark2:", P.coords.usrCoords, P.entry_exit, P.data.type);
+console.log("> Mark2:", P.coords.usrCoords, P.entry_exit, P.data.type);
                 }
                 P = P._next;
                 if (P === P_start || cnt > 1000) {
@@ -752,7 +760,7 @@ define([
                 pathX = [],
                 pathY = [];
 
-//console.log("------ Start Phase 3");
+console.log("------ Start Phase 3");
             while (S_idx < S_intersect.length && cnt < maxCnt) {
                 current = S_intersect[S_idx];
                 if (current.data.done || !this._isCrossing(current, false)) {
@@ -760,7 +768,7 @@ define([
                     continue;
                 }
 
-//console.log("Start", current.coords.usrCoords, current.data.type, current.data.revtype, current.entry_exit, S_idx);
+console.log("Start", current.coords.usrCoords, current.data.type, current.data.revtype, current.entry_exit, S_idx);
                 if (pathX.length > 0) {    // Add a new path
                     pathX.push(NaN);
                     pathY.push(NaN);
@@ -772,7 +780,7 @@ define([
                     // Add the "current" intersection vertex
                     pathX.push(current.coords.usrCoords[1]);
                     pathY.push(current.coords.usrCoords[2]);
-//console.log("Add", current.coords.usrCoords);
+//console.log("Add intersection", current.coords.usrCoords);
                     current.data.done = true;
 
 //console.log(current.data.pathname, current.entry_exit, current.coords.usrCoords, current.data.type, current.data.revtype);

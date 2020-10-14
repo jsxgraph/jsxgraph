@@ -2700,7 +2700,7 @@ define([
                     inverse = Type.evaluate(this.visProp.inverse);
 
                 // inverse == true <=> Fill area with y >= f(x)
-                infty = (inverse) ? -1000000 : 1000000; // 1000000000
+                infty = (inverse) ? -10000 : 10000; // 1000000000
 
                 this.dataX = [];
                 this.dataY = [];
@@ -2750,28 +2750,53 @@ define([
                 bbox[0] = (first === 0)      ? bbox[0] : Math.max(bbox[0], points[first - first][1]);
                 bbox[2] = (last === len - 1) ? bbox[2] : Math.min(bbox[2], points[last - first][1]);
                 // First and last relevant x-coordinate of the curve
-                curve_mi = (first === 0)     ? mi + 0.00: points[first - first][1];
-                curve_ma = (last === len - 1)? ma - 0.00: points[last - first][1];
+                curve_mi = (first === 0)     ? mi: points[first - first][1];
+                curve_ma = (last === len - 1)? ma: points[last - first][1];
 
-                canvas = [[bbox[0], bbox[1]], // ul
-                     [bbox[0], bbox[3]], // ll
-                     [bbox[2], bbox[3]], // lr
-                     [bbox[2], bbox[1]], // ur
-                     [bbox[0], bbox[1]]] // ul
+                canvas = [[1, bbox[0], bbox[1]], // ul
+                     [1, bbox[0], bbox[3]], // ll
+                     [1, bbox[2], bbox[3]], // lr
+                     [1, bbox[2], bbox[1]], // ur
+                     [1, bbox[0], bbox[1]]] // ul
 
+console.log("box", canvas);
+                points.push([1, curve_ma-Mat.eps, points[last - first][2]]);
+                points.push([1, curve_ma-Mat.eps, infty]);
+                points.push([1, curve_mi+Mat.eps, infty]);
+                // points.push(points[first - first]);
+                points.unshift([1, curve_mi+Mat.eps, points[first - first][2]]);
+                points.unshift([1, curve_mi+Mat.eps, infty]);
 
-       console.log("box", canvas);
-                points.push(new Coords(Const.COORDS_BY_USER, [1, curve_ma, points[last - first][2]], this.board));
-                points.push(new Coords(Const.COORDS_BY_USER, [1, curve_ma, infty], this.board));
-                points.push(new Coords(Const.COORDS_BY_USER, [1, curve_mi, infty], this.board));
-                points.push(new Coords(Const.COORDS_BY_USER, [1, curve_mi, points[first - first][2]], this.board));
-                points.push(points[first]);
-console.log("Add", [curve_ma, points[last - first][2]], [curve_ma, infty], [curve_mi, infty], [curve_mi, points[first - first][2]]);
+console.log("Add", [curve_ma, points[last - first][2]], "\n",
+    [curve_ma, infty],  "\n",
+    [curve_mi, infty], "\n",
+    [curve_mi, points[first - first][2]]);
+
+for (i = 0; i < 4; i++) {
+    console.log(">", points[i]);
+}
+for (i = points.length - 4; i < points.length; i++) {
+    console.log("<", points[i]);
+}
+
+// for (i = 0; i < points.length; i++) {
+//     this.dataX.push(points[i][1]);
+//     this.dataY.push(points[i][2]);
+// }
+
+/*
+for (i = 0; i < canvas.length; i++) {
+    this.dataX.push(canvas[i][1]);
+    this.dataY.push(canvas[i][2]);
+}
+*/
+
                 arr = JXG.Math.Clip.difference(canvas, points, this.board);
 
                 this.dataX = this.dataX.concat(arr[0]);
                 this.dataY = this.dataY.concat(arr[1]);
-                if (true && last < len - 1) {
+
+                if (false && last < len - 1) {
                     this.dataX.push(NaN);
                     this.dataY.push(NaN);
                 }
