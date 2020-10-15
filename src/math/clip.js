@@ -844,42 +844,42 @@ define([
          * @return {Boolean}        true, if one of the input paths is empty, false otherwise.
          */
         isEmptyCase: function(S, C, clip_type, pathX, pathY) {
-            var i;
+            // var i;
 
             if (clip_type === 'intersection' && (S.length === 0 || C.length === 0)) {
                 return true; //[pathX, pathY];
             } else if (clip_type === 'union' && (S.length === 0 || C.length === 0)) {
-                if (S.length === 0) {
-                    for (i = 0; i < C.length; ++i) {
-                        pathX.push(C[i].coords.usrCoords[1]);
-                        pathY.push(C[i].coords.usrCoords[2]);
-                    }
-                    if (C.length > 0) {
-                        pathX.push(C[0].coords.usrCoords[1]);
-                        pathY.push(C[0].coords.usrCoords[2]);
-                    }
-                } else {
-                    for (i = 0; i < S.length; ++i) {
-                        pathX.push(S[i].coords.usrCoords[1]);
-                        pathY.push(S[i].coords.usrCoords[2]);
-                    }
-                    if (S.length > 0) {
-                        pathX.push(S[0].coords.usrCoords[1]);
-                        pathY.push(S[0].coords.usrCoords[2]);
-                    }
-                }
+                // if (S.length === 0) {
+                //     for (i = 0; i < C.length; ++i) {
+                //         pathX.push(C[i].coords.usrCoords[1]);
+                //         pathY.push(C[i].coords.usrCoords[2]);
+                //     }
+                //     if (C.length > 0) {
+                //         pathX.push(C[0].coords.usrCoords[1]);
+                //         pathY.push(C[0].coords.usrCoords[2]);
+                //     }
+                // } else {
+                //     for (i = 0; i < S.length; ++i) {
+                //         pathX.push(S[i].coords.usrCoords[1]);
+                //         pathY.push(S[i].coords.usrCoords[2]);
+                //     }
+                //     if (S.length > 0) {
+                //         pathX.push(S[0].coords.usrCoords[1]);
+                //         pathY.push(S[0].coords.usrCoords[2]);
+                //     }
+                // }
                 return true; //[pathX, pathY];
             } if (clip_type === 'difference' && (S.length === 0 || C.length === 0)) {
-                if (C.length === 0) {
-                    for (i = 0; i < S.length; ++i) {
-                        pathX.push(S[i].coords.usrCoords[1]);
-                        pathY.push(S[i].coords.usrCoords[2]);
-                    }
-                    if (S.length > 0) {
-                        pathX.push(S[0].coords.usrCoords[1]);
-                        pathY.push(S[0].coords.usrCoords[2]);
-                    }
-                }
+                // if (C.length === 0) {
+                //     for (i = 0; i < S.length; ++i) {
+                //         pathX.push(S[i].coords.usrCoords[1]);
+                //         pathY.push(S[i].coords.usrCoords[2]);
+                //     }
+                //     if (S.length > 0) {
+                //         pathX.push(S[0].coords.usrCoords[1]);
+                //         pathY.push(S[0].coords.usrCoords[2]);
+                //     }
+                // }
                 return true; //[pathX, pathY];
             }
 
