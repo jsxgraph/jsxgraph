@@ -2714,7 +2714,6 @@ define([
                 bbox[3] -= enlarge;
 
                 last = -1;
-
                 while (last < len - 1) {
 
                     // Find the first point with real coordinates on this curve segment
@@ -2771,19 +2770,18 @@ define([
                     }
 
 
-                if (last < len - 1) {
-                    this.dataX.push(NaN);
-                    this.dataY.push(NaN);
-                }
-                //break;
+                    if (last < len - 1) {
+                        this.dataX.push(NaN);
+                        this.dataY.push(NaN);
+                    }
               }
 
             };
 
             // Previous code:
-            // a.hasPoint = function () {
-            //     return false;
-            // };
+            a.hasPoint = function () {
+                return false;
+            };
         } else {
             // Not yet practical?
             f = Type.createFunction(parents[0]);
