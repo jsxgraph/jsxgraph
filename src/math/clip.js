@@ -497,17 +497,17 @@ define([
 
             // For both paths, sort their intersection points
             S_intersect = this.sortIntersections(S_crossings);
-console.log('>>>>>>')
-this._print_array(S_intersect);
-console.log('----------')
+// console.log('>>>>>>')
+// this._print_array(S_intersect);
+// console.log('----------')
             for (i = 0; i < S_intersect.length; i++) {
                 S_intersect[i].data.idx = i;
                 S_intersect[i].neighbour.data.idx = i;
             }
             C_intersect = this.sortIntersections(C_crossings);
 
-this._print_array(C_intersect);
-console.log('<<<<<< Phase 1 done')
+// this._print_array(C_intersect);
+// console.log('<<<<<< Phase 1 done')
             return [S_intersect, C_intersect];
         },
 
@@ -712,7 +712,7 @@ console.log('<<<<<< Phase 1 done')
                 }
             // }
 
-console.log("START", P.coords.usrCoords, status);
+//console.log("START mark", P.coords.usrCoords, status);
             P_start = P;
             // Greiner-Hormann entry/exit algorithm
             cnt = 0;
@@ -720,10 +720,10 @@ console.log("START", P.coords.usrCoords, status);
                 if (P.intersection === true && P.data.type === 'X') {
                     P.entry_exit = status;
                     status = (status === 'entry') ? 'exit' : 'entry';
-console.log("> Mark1", P.coords.usrCoords, P.entry_exit, P.data.type);
+// console.log("> Mark", P.coords.usrCoords, P.entry_exit, P.data.type);
                 }
                 if (P.intersection === true && P.data.type !== 'X') {
-console.log("> Mark2:", P.coords.usrCoords, P.entry_exit, P.data.type);
+// console.log("> Mark:", P.coords.usrCoords, P.entry_exit, P.data.type);
                 }
                 P = P._next;
                 if (P === P_start || cnt > 1000) {
@@ -760,7 +760,7 @@ console.log("> Mark2:", P.coords.usrCoords, P.entry_exit, P.data.type);
                 pathX = [],
                 pathY = [];
 
-console.log("------ Start Phase 3");
+// console.log("------ Start Phase 3");
             while (S_idx < S_intersect.length && cnt < maxCnt) {
                 current = S_intersect[S_idx];
                 if (current.data.done || !this._isCrossing(current, false)) {
@@ -768,7 +768,7 @@ console.log("------ Start Phase 3");
                     continue;
                 }
 
-console.log("Start", current.coords.usrCoords, current.data.type, current.data.revtype, current.entry_exit, S_idx);
+// console.log("Start", current.coords.usrCoords, current.data.type, current.data.revtype, current.entry_exit, S_idx);
                 if (pathX.length > 0) {    // Add a new path
                     pathX.push(NaN);
                     pathY.push(NaN);
@@ -892,6 +892,38 @@ console.log("Start", current.coords.usrCoords, current.data.type, current.data.r
             return false;
         },
 
+        _getCoordsArrays: function(path, doClose) {
+            var pathX = [],
+                pathY = [],
+                i, le = path.length;
+
+            for (i = 0; i < le; i++) {
+                if (path[i].coords) {
+                    pathX.push(path[i].coords.usrCoords[1]);
+                    pathY.push(path[i].coords.usrCoords[2]);
+                } else {
+                    pathX.push(path[i][0]);
+                    pathY.push(path[i][1]);
+                }
+            }
+            if (doClose && le > 0) {
+                if (path[0].coords) {
+                    pathX.push(path[0].coords.usrCoords[1]);
+                    pathY.push(path[0].coords.usrCoords[2]);
+                } else {
+                    pathX.push(path[0][0]);
+                    pathY.push(path[0][1]);
+                }
+            }
+
+            // le = pathX.length;
+            // for (i = 0; i < le; i++) {
+            //     console.log(pathX[i], pathY[i]);
+            // }
+
+            return [pathX, pathY];
+        },
+
         /**
          * Handle cases when there are no intersection points of the two paths. This is the case if the
          * paths are disjoint or one is contained in the other.
@@ -903,100 +935,102 @@ console.log("Start", current.coords.usrCoords, current.data.type, current.data.r
          *      the resulting path.
          */
         handleEmptyIntersection: function(S, C, clip_type) {
-            var i, P,
-                pathX = [],
-                pathY = [];
+            var P, Q,
+                doClose = false,
+                path = [];
 
+            // Handle trivial cases
+            if (S.length === 0) {
+                if (clip_type === 'union') {
+                    // S cup C = C
+                    path = C;
+                } else {
+                    // S cap C = S \ C = {}
+                    path = [];
+                }
+                return this._getCoordsArrays(path, true);
+            }
+            if (C.length === 0) {
+                if (clip_type === 'intersection') {
+                    // S cap C = {}
+                    path = [];
+                } else {
+                    // S cup C = S \ C = S
+                    path = S;
+                }
+                return this._getCoordsArrays(path, true);
+            }
+
+            // From now on, both paths have non-zero length
+            //
+            // Handle union
             if (clip_type === 'union') {
-                for (i = 0; i < S.length; ++i) {
-                    pathX.push(S[i].coords.usrCoords[1]);
-                    pathY.push(S[i].coords.usrCoords[2]);
+                path = path.concat(S);
+                path.push(S[0]);
+                path.push([NaN, NaN]);
+                path = path.concat(C);
+                path.push(C[0]);
+                return this._getCoordsArrays(path, false);
+            }
+
+            // The two paths have no crossing intersections,
+            // but there might be bounicng intersections.
+
+            // First, we find - if possible - on each path a point which is not an intersection point.
+            if (S.length > 0) {
+                P = S[0];
+                while (P.intersection) {
+                    P = P._next;
+                    if (P._end) {
+                        break;
+                    }
                 }
-                if (S.length > 0) {
-                    pathX.push(S[0].coords.usrCoords[1]);
-                    pathY.push(S[0].coords.usrCoords[2]);
+            }
+            if (C.length > 0) {
+                Q = C[0];
+                while (Q.intersection) {
+                    Q = Q._next;
+                    if (Q._end) {
+                        break;
+                    }
                 }
-                pathX.push(NaN);
-                pathY.push(NaN);
-                for (i = 0; i < C.length; ++i) {
-                    pathX.push(C[i].coords.usrCoords[1]);
-                    pathY.push(C[i].coords.usrCoords[2]);
-                }
-                if (C.length > 0) {
-                    pathX.push(C[0].coords.usrCoords[1]);
-                    pathY.push(C[0].coords.usrCoords[2]);
-                }
-                return [pathX, pathY];
             }
 
             // Test if one curve is contained by the other
-            if (this.windingNumber(S[0].coords.usrCoords, C) === 0 &&
-                this.windingNumber(S[0]._next.coords.usrCoords, C) === 0) {
+            if (this.windingNumber(P.coords.usrCoords, C) === 0) {
                 // S is outside of C.
-                // We check two points in case there is a single bouncing intersection node
-                if (this.windingNumber(C[0].coords.usrCoords, S) !== 0 &&
-                    this.windingNumber(C[0]._next.coords.usrCoords, S) !== 0) {
+                if (this.windingNumber(Q.coords.usrCoords, S) !== 0) {
                     // C is inside of S, i.e. C subset of S
-                    // We check two points in case there is a single bouncing intersection node
 
                     if (clip_type === 'difference') {
 
+                        path = path.concat(S);
+                        path.push(S[0]);
                         if (Geometry.signedPolygon(S) * Geometry.signedPolygon(C) > 0) {
-                            // Pathes have same orientation
-                            // We have to revert one.
-                            if (S.length > 0) {
-                                pathX.push(S[0].coords.usrCoords[1]);
-                                pathY.push(S[0].coords.usrCoords[2]);
-                            }
-                            for (i = S.length - 1; i >= 0; --i) {
-                                pathX.push(S[i].coords.usrCoords[1]);
-                                pathY.push(S[i].coords.usrCoords[2]);
-                            }
-                        } else {
-                            // Pathes have different orientation
-                            for (i = 0; i < S.length; ++i) {
-                                pathX.push(S[i].coords.usrCoords[1]);
-                                pathY.push(S[i].coords.usrCoords[2]);
-                            }
-                            if (S.length > 0) {
-                                pathX.push(S[0].coords.usrCoords[1]);
-                                pathY.push(S[0].coords.usrCoords[2]);
-                            }
+                            // Pathes have same orientation, we have to revert one.
+                            path.reverse();
                         }
-                        pathX.push(NaN);
-                        pathY.push(NaN);
+                        path.push([NaN, NaN]);
                     }
-                    P = C;
+                    path = path.concat(C);
+                    path.push(C[0]);
+                    doClose = false;
                 } else {                                           // The curves are disjoint
-                    if (clip_type === 'intersection') {
-                        P = [];
-                    } else if (clip_type === 'difference') {
-                        P = S;
+                    if (clip_type === 'difference') {
+                        path = path.concat(S);
+                        doClose = true;
                     }
-                }
-            } else if (this.windingNumber(S[0].coords.usrCoords, C) !== 0 &&
-                       this.windingNumber(S[0]._next.coords.usrCoords, C) !== 0) {
-                                                                    // S inside of C, i.e. S subset of C
-                if (clip_type === 'intersection') {
-                    P = S;
-                } else if (clip_type === 'difference') {
-                    P = [];
                 }
             } else {
-                P = [];
+                                                                    // S inside of C, i.e. S subset of C
+                if (clip_type === 'intersection') {
+                    path = path.concat(S);
+                    doClose = true
+                }
+                // 'difference': path is empty
             }
-            for (i = 0; i < P.length; ++i) {
-                pathX.push(P[i].coords.usrCoords[1]);
-                pathY.push(P[i].coords.usrCoords[2]);
-            }
-            // if (clip_type === 'difference') {
-            if (P.length > 0) {
-                pathX.push(P[0].coords.usrCoords[1]);
-                pathY.push(P[0].coords.usrCoords[2]);
-            }
-            //}
 
-            return [pathX, pathY];
+            return this._getCoordsArrays(path, doClose);
         },
 
         _countCrossingIntersections: function(intersections) {
