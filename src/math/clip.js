@@ -230,6 +230,7 @@ define([
                 done: false,
                 type: type,
                 revtype: type,
+                link: null,
                 idx: 0
             };
 
@@ -649,6 +650,8 @@ define([
                                 P_start.data.type    = 'B';
                                 P_start.data.revtype = 'X';
                             }
+                            P_start.data.link = P;
+                            P.data.link       = P_start;
                         }
                     }
                     cnt++;
@@ -720,10 +723,16 @@ console.log("START mark", P.coords.usrCoords, status);
                 if (P.intersection === true && P.data.type === 'X') {
                     P.entry_exit = status;
                     status = (status === 'entry') ? 'exit' : 'entry';
-console.log("> Mark", P.coords.usrCoords, P.entry_exit, P.data.type, P.data.revtype);
+                    if (P.data.link !== null && !P.data.link.entry_exit) {
+                        P.data.link.entry_exit = P.entry_exit;
+                    }
+//console.log("> Mark X:", P.coords.usrCoords, P.entry_exit, P.data.type, P.data.revtype);
                 }
                 if (P.intersection === true && P.data.type !== 'X') {
-console.log("> Mark:", P.coords.usrCoords, P.entry_exit, P.data.type, P.data.revtype);
+                    if (!P.entry_exit && P.data.link !== null) {
+                        P.entry_exit = P.data.link.entry_exit;
+                    }
+//console.log("> Mark B:", P.coords.usrCoords, P.entry_exit, P.data.type, P.data.revtype);
                 }
                 P = P._next;
                 if (P === P_start || cnt > 1000) {
@@ -731,6 +740,20 @@ console.log("> Mark:", P.coords.usrCoords, P.entry_exit, P.data.type, P.data.rev
                 }
                 cnt++;
             }
+
+            P_start = P;
+            cnt = 0;
+            while (true) {
+                if (P.intersection === true) {
+                    console.log(">M:", P.coords.usrCoords, P.entry_exit, P.data.type, P.data.revtype);
+                }
+                P = P._next;
+                if (P === P_start || cnt > 1000) {
+                    break;
+                }
+                cnt++;
+            }
+
         },
 
         _isCrossing: function(P, isBackward) {
@@ -760,8 +783,9 @@ console.log("> Mark:", P.coords.usrCoords, P.entry_exit, P.data.type, P.data.rev
                 S_idx = 0,
                 path = [];
 
-                reverse = (clip_type === 'difference') ? true : false;
 console.log("------ Start Phase 3");
+
+            reverse = (clip_type === 'difference') ? true : false;
             while (S_idx < S_intersect.length && cnt < maxCnt) {
                 current = S_intersect[S_idx];
                 if (current.data.done || !this._isCrossing(current, reverse)) {
@@ -785,8 +809,8 @@ console.log("Start", current.coords.usrCoords, current.data.type, current.data.r
 console.log("AT", current.data.pathname, current.entry_exit, current.coords.usrCoords, current.data.type, current.data.revtype);
                     if ((clip_type === 'intersection' && current.entry_exit === 'entry') ||
                         (clip_type === 'union' && current.entry_exit === 'exit') ||
-                        (clip_type === 'difference' && (P === S) === (current.entry_exit === 'exit'))
-                        ) {
+                        (clip_type === 'difference' && (P === S) === (current.entry_exit === 'exit')) ) {
+
                         current = current._next;
                         do {
                             cnt++;
@@ -794,10 +818,10 @@ console.log("AT", current.data.pathname, current.entry_exit, current.coords.usrC
                             path.push(current);
 console.log("Add fw", current.coords.usrCoords);
 
-                            if (!this._isCrossing(current, false)) {  // In case there are two adjacent intersects
+                            if (!this._isCrossing(current, reverse)) {  // In case there are two adjacent intersects
                                 current = current._next;
                             }
-                        } while (!this._isCrossing(current, false) && cnt < maxCnt);
+                        } while (!this._isCrossing(current, reverse) && cnt < maxCnt);
                     } else {
                         current = current._prev;
                         do {
