@@ -757,8 +757,7 @@ define([
                 cnt = 0,
                 maxCnt = 40000,
                 S_idx = 0,
-                pathX = [],
-                pathY = [];
+                path = [];
 
 // console.log("------ Start Phase 3");
             while (S_idx < S_intersect.length && cnt < maxCnt) {
@@ -769,17 +768,15 @@ define([
                 }
 
 // console.log("Start", current.coords.usrCoords, current.data.type, current.data.revtype, current.entry_exit, S_idx);
-                if (pathX.length > 0) {    // Add a new path
-                    pathX.push(NaN);
-                    pathY.push(NaN);
+                if (path.length > 0) {    // Add a new path
+                    path.push([NaN, NaN]);
                 }
 
                 start = current.data.idx;
                 P = S;
                 do {
                     // Add the "current" intersection vertex
-                    pathX.push(current.coords.usrCoords[1]);
-                    pathY.push(current.coords.usrCoords[2]);
+                    path.push(current);
 //console.log("Add intersection", current.coords.usrCoords);
                     current.data.done = true;
 
@@ -792,8 +789,7 @@ define([
                         do {
                             cnt++;
 
-                            pathX.push(current.coords.usrCoords[1]);
-                            pathY.push(current.coords.usrCoords[2]);
+                            path.push(current);
 //console.log("Add fw", current.coords.usrCoords);
 
                             if (!this._isCrossing(current, false)) {  // In case there are two adjacent intersects
@@ -805,8 +801,7 @@ define([
                         do {
                             cnt++;
 
-                            pathX.push(current.coords.usrCoords[1]);
-                            pathY.push(current.coords.usrCoords[2]);
+                            path.push(current);
 //console.log("Add bw", current.coords.usrCoords);
 
                             if (!this._isCrossing(current, true)) {  // In case there are two adjacent intersects
@@ -825,8 +820,7 @@ define([
                     // console.log("Switch", current.data.pathname, current.cnt, "to", current.neighbour.data.pathname, current.neighbour.cnt);
                     current = current.neighbour;
                     if (current.data.done) {
-                        pathX.push(current.coords.usrCoords[1]);
-                        pathY.push(current.coords.usrCoords[2]);
+                        path.push(current);
                         break;
                     }
                     P = current.data.path;
@@ -836,7 +830,7 @@ define([
                 S_idx++;
             }
 
-            return [pathX, pathY];
+            return this._getCoordsArrays(path, false);
         },
 
         /**
