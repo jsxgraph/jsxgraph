@@ -1503,7 +1503,11 @@ define([
                     ret = ' do {\n' + this.compile(node.children[0], js) + '} while (' + this.compile(node.children[1], js) + ');\n';
                     break;
                 case 'op_for':
-                    ret = ' for (' + this.compile(node.children[0], js) + '; ' + this.compile(node.children[1], js) + '; ' + this.compile(node.children[2], js) + ') {\n' + this.compile(node.children[3], js) + '\n}\n';
+                    //ret = ' for (' + this.compile(node.children[0], js) + '; ' + this.compile(node.children[1], js) + '; ' + this.compile(node.children[2], js) + ') {\n' + this.compile(node.children[3], js) + '\n}\n';
+                    ret = ' for (' + this.compile(node.children[0], js) +               // Assignment ends with ";"
+                                    this.compile(node.children[1], js) + '; ' +         // Logical test comes without ";"
+                                    this.compile(node.children[2], js).slice(0, -2) +   // Counting comes with ";" which has to be removed
+                                    ') {\n' + this.compile(node.children[3], js) + '\n}\n';
                     break;
                 case 'op_proplst':
                     if (node.children[0]) {
