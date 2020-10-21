@@ -3546,6 +3546,94 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
             } while (linkedList[i].rt !== null);
 
             return points;
+        },
+
+        wynnEps: function(s_n, n, e) {
+            var HUGE = 1.e+20,
+                TINY = 1.e-20,
+                j,
+                aux1, aux2, diff, estlim;
+
+            e[n] = s_n;
+            //console.log(e);
+            if (n === 0) {
+                estlim = s_n;
+            } else {
+                aux2 = 0.0;
+                for (j = n; j >= 1; j--) {
+                    aux1 = aux2;
+                    aux2 = e[j - 1];
+                    diff = e[j] - aux2;
+                    // if (Math.abs(diff) <= TINY) {
+                    //     e[j - 1] = Math.sign(diff) * HUGE;
+                    //     // console.log('TINY');
+                    // } else {
+                        e[j - 1] = aux1 + 1 / diff;
+                    // }
+                }
+                estlim = e[n % 2];
+            }
+
+            return estlim;
+        },
+
+        aitken: function(s_n, n, a) {
+            var estlim,
+                HUGE = 1.e+20,
+                TINY = 1.e-20,
+                denom, v,
+                lowmax, j, m;
+
+            a[n] = s_n;
+            if (n < 2) {
+                estlim = s_n;
+            } else {
+                lowmax = n / 2;
+                for (j = 1; j <= lowmax; j++) {
+                    m = n - 2 * j;
+                    denom = a[m + 2] - 2 * a[m + 1] + a[m];
+                    // if (Math.abs(denom) < TINY) {
+                    //     a[m] = HUGE;
+                    // } else {
+                        v = a[m] - a[m + 1]
+                        a[m] = a[m] - v * v / denom;
+                    // }
+                }
+                estlim = a[n % 2];
+            }
+            return estlim;
+        },
+
+        brezinski: function(s_n, n, a) {
+            var estlim,
+                HUGE = 1.e+20,
+                TINY = 1.e-20,
+                denom,
+                d0, d1, d2,
+                lowmax, j, m;
+
+            a[n] = s_n;
+            if (n < 3) {
+                estlim = s_n;
+            } else {
+                lowmax = n / 3;
+                m = n;
+                for (j = 1; j <= lowmax; j++) {
+                    m -= 3;
+                    d0 = a[m + 1] - a[m];
+                    d1 = a[m + 2] - a[m + 1];
+                    d2 = a[m + 3] - a[m + 2];
+                    denom = d2 * (d1 - d0) - d0 * (d2 - d1);
+                    // if (Math.abs(denom) < TINY) {
+                    //     a[m] = HUGE;
+                    //     console.log("TINY")
+                    // } else {
+                        a[m] = a[m + 1] - d0 * d1 * (d2 - d1) / denom;
+                    // }
+                }
+                estlim = a[n % 3];
+            }
+            return estlim;
         }
 
     };
