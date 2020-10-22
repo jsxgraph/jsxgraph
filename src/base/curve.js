@@ -1148,8 +1148,10 @@ define([
                  max_it = 30,
                  is_undef = false,
                  t_nan, t_real, t_real2,
-                 vx, vy, vx2, vy2, dx, dy;
-                 // asymptote;
+                 t_good, t_bad,
+                 lim_x, lim_y, lim_type_x, lim_type_y, res,
+                 vx, vy, vx2, vy2, dx, dy,
+                 box, asymptote;
 
              if (depth <= 1) {
                 pnt = new Coords(Const.COORDS_BY_USER, [0, 0], this.board, false);
@@ -1157,56 +1159,101 @@ define([
                 // Bisect a, b and c until the point t_real is inside of the definition interval
                 // and as close as possible at the boundary.
                 // t_real2 is the second closest point.
+    //             do {
+    //                 // There are four cases:
+    //                 //  a  |  c  |  b
+    //                 // ---------------
+    //                 // inf | R   | R
+    //                 // R   | R   | inf
+    //                 // inf | inf | R
+    //                 // R   | inf | inf
+    //                 //
+    //                 if (isNaN(a[1] + a[2]) && !isNaN(c[1] + c[2])) {
+    //                     t_nan = ta;
+    //                     t_real = tc;
+    //                     t_real2 = tb;
+    //                 } else if (isNaN(b[1] + b[2]) && !isNaN(c[1] + c[2])) {
+    //                     t_nan = tb;
+    //                     t_real = tc;
+    //                     t_real2 = ta;
+    //                 } else if (isNaN(c[1] + c[2]) && !isNaN(b[1] + b[2])) {
+    //                     t_nan = tc;
+    //                     t_real = tb;
+    //                     t_real2 = tb + (tb - tc);
+    //                 } else if (isNaN(c[1] + c[2]) && !isNaN(a[1] + a[2])) {
+    //                     t_nan = tc;
+    //                     t_real = ta;
+    //                     t_real2 = ta - (tc - ta);
+    //                 } else {
+    //                     return false;
+    //                 }
+    //                 t = 0.5 * (t_nan + t_real);
+    //                 pnt.setCoordinates(Const.COORDS_BY_USER, [this.X(t, true), this.Y(t, true)], false);
+    //                 p = pnt.usrCoords;
+
+    //                 is_undef = isNaN(p[1] + p[2]);
+    //                 if (is_undef) {
+    //                     t_nan = t;
+    //                 } else {
+    //                     t_real2 = t_real;
+    //                     t_real = t;
+    //                 }
+    // console.log(j, t_real, t_nan - t_real, Mat.eps);
+    //                 ++j;
+    //             } while (j < max_it && is_undef /*(|| Math.abs(t_nan - t_real) > Mat.eps)*/);
+
+
+                // There are four cases:
+                //  a  |  c  |  b
+                // ---------------
+                // inf | R   | R
+                // R   | R   | inf
+                // inf | inf | R
+                // R   | inf | inf
+                //
+                if (isNaN(a[1] + a[2]) && !isNaN(c[1] + c[2])) {
+                    t_bad = ta;
+                    t_good = tc;
+                    t_real2 = tb
+                } else if (isNaN(b[1] + b[2]) && !isNaN(c[1] + c[2])) {
+                    t_bad = tb;
+                    t_good = tc;
+                    t_real2 = ta;
+                } else if (isNaN(c[1] + c[2]) && !isNaN(b[1] + b[2])) {
+                    t_bad = tc
+                    t_good = tb;
+                    t_real2 = tb + (tb - tc);
+                } else if (isNaN(c[1] + c[2]) && !isNaN(a[1] + a[2])) {
+                    t_bad = tc;
+                    t_good = ta;
+                    t_real2 = ta - (tc - ta);
+                } else {
+                    return false;
+                }
                 do {
-                    // There are four cases:
-                    //  a  |  c  |  b
-                    // ---------------
-                    // inf | R   | R
-                    // R   | R   | inf
-                    // inf | inf | R
-                    // R   | inf | inf
-                    //
-                    if (isNaN(a[1] + a[2]) && !isNaN(c[1] + c[2])) {
-                        t_nan = ta;
-                        t_real = tc;
-                        t_real2 = tb;
-                    } else if (isNaN(b[1] + b[2]) && !isNaN(c[1] + c[2])) {
-                        t_nan = tb;
-                        t_real = tc;
-                        t_real2 = ta;
-                    } else if (isNaN(c[1] + c[2]) && !isNaN(b[1] + b[2])) {
-                        t_nan = tc;
-                        t_real = tb;
-                        t_real2 = tb + (tb - tc);
-                    } else if (isNaN(c[1] + c[2]) && !isNaN(a[1] + a[2])) {
-                        t_nan = tc;
-                        t_real = ta;
-                        t_real2 = ta - (tc - ta);
-                    } else {
-                        return false;
-                    }
-                    t = 0.5 * (t_nan + t_real);
+                    t = 0.5 * (t_good + t_bad);
                     pnt.setCoordinates(Const.COORDS_BY_USER, [this.X(t, true), this.Y(t, true)], false);
                     p = pnt.usrCoords;
 
                     is_undef = isNaN(p[1] + p[2]);
                     if (is_undef) {
-                        t_nan = t;
+                        t_bad = t;
                     } else {
-                        t_real2 = t_real;
-                        t_real = t;
+                        t_real2 = t_good;
+                        t_good = t;
                     }
                     ++j;
-                } while (is_undef && j < max_it);
-
-                // If bisection was successful, take this point.
-                // Usefule only for general curves, for function graph
+                } while (j < max_it && Math.abs(t_good - t_bad) > Mat.eps);
+                // If bisection (i.e. j < max_it) was successful, take this point.
+                // Useful only for general curves, for function graph
                 // the code below overwrite p_good from here.
-                if (j < max_it) {
-                    p_good = p.slice();
-                    c = p.slice();
-                    t_real = t;
-                }
+                // if (j < max_it) {
+                //     p_good = p.slice();
+                //     c = p.slice();
+                //     t_real = t;
+                // }
+                t_real = t;
+    // console.log("t", t, t_real, t_real2, j);
 
                 // OK, bisection has been done now.
                 // t_real contains the closest inner point to the border of the interval we could find.
@@ -1214,12 +1261,6 @@ define([
                 // Now we approximate the derivative by computing the slope of the line through these two points
                 // and test if it is "infinite", i.e larger than 400 in absolute values.
                 //
-                vx = this.X(t_real, true) ;
-                vx2 = this.X(t_real2, true) ;
-                dx = (vx - vx2) / (t_real - t_real2);
-                vy = this.Y(t_real, true) ;
-                vy2 = this.Y(t_real2, true) ;
-                dy = (vy - vy2) / (t_real - t_real2);
 
                 // If the derivatives are large enough we draw the asymptote.
                 // box = this.board.getBoundingBox();
@@ -1233,8 +1274,40 @@ define([
                 //     p_good = this._intersectWithBorder(asymptote, box, vx - vx2);
                 // }
 
+                box = this.board.getBoundingBox();
+    // console.log("X");
+                res = Numerics.limit(t_real, 0.2/*t_real2 - t_real*/, this.X, 'wynnEps');
+                lim_x = res[0];
+                lim_type_x = res[1];
+    // console.log("Y");
+                res = Numerics.limit(t_real, 0.2/*t_real2 - t_real*/, this.Y, 'wynnEps');
+                lim_y = res[0];
+                lim_type_y = res[1];
+
+    //console.log("Accelerator", lim_type_x, lim_type_y);
+                if (lim_type_x === 'infinite' || lim_type_y === 'infinite') {
+    // console.log("Asympotote!", lim_x, lim_y);
+
+                    vx = lim_x;
+                    vx2 = this.X(t_real2, true) ;
+                    dx = (vx - vx2) / (t_real - t_real2);
+                    vy = lim_y;
+                    vy2 = this.Y(t_real2, true) ;
+                    dy = (vy - vy2) / (t_real - t_real2);
+
+                    // The asymptote is a line of the form
+                    //  [c, a, b] = [dx * vy - dy * vx, dy, -dx]
+                    //  Now we have to find the intersection with the correct canvas border.
+                    asymptote = [dx * vy - dy * vx, dy, -dx];
+                    p_good = this._intersectWithBorder(asymptote, box, vx - vx2);
+                } else if (lim_type_x === 'finite' && lim_type_y === 'finite') {
+                    p_good = [lim_x, lim_y];
+                }
+
                 if (p_good !== null) {
-                    this._insertPoint(new Coords(Const.COORDS_BY_USER, p_good, this.board, false));
+    console.log("Add", p_good);
+                    this._insertPoint(new Coords(Const.COORDS_BY_USER, p_good, this.board, false), lim_x);
+                    console.log(this.points)
                     return true;
                 }
             }
@@ -1435,6 +1508,41 @@ define([
             return [a, ta];
         },
 
+        _findCusp: function(ta, tb) {
+            var a = [this.X(ta, true), this.Y(ta, true)],
+                b = [this.X(tb, true), this.Y(tb, true)],
+                max_func = function(t) {
+                    var c = [this.X(t, true), this.Y(t, true)];
+                    //return -c[1] * c[1];
+                    return -(Math.sqrt((a[0] - c[0]) * (a[0] - c[0]) + (a[1] - c[1]) * (a[1] - c[1])) +
+                            Math.sqrt((b[0] - c[0]) * (b[0] - c[0]) + (b[1] - c[1]) * (b[1] - c[1])));
+                },
+                t_min, x, y;
+
+            t_min = Numerics.fminbr(max_func, [ta, tb], this);
+            x = Numerics.limit(t_min, (tb - ta) * 2, this.X, 'wynnEps')[0];
+            y = Numerics.limit(t_min, (tb - ta) * 2, this.Y, 'wynnEps')[0];
+//console.log(t_min, t_min-tc, x, y, this.Y(tc, true));
+            return [x, y];
+        },
+
+        _findJump: function(ta, tb, tc) {
+            var a = [this.X(ta, true), this.Y(ta, true)],
+                b = [this.X(tb, true), this.Y(tb, true)],
+                x_l, y_l, x_r, y_r;
+            console.log("jump", tc);
+            // From left
+            x_l = Numerics.limit(ta, 0.5 + (ta - tb) * 2, this.X, 'wynnEps')[0];
+            y_l = Numerics.limit(ta, 0.5 + (ta - tb) * 2, this.Y, 'wynnEps')[0];
+            // From right
+            x_r = Numerics.limit(tb, 0.5 + (tb - ta) * 2, this.X, 'wynnEps')[0];
+            y_r = Numerics.limit(tb, 0.5 + (tb - ta) * 2, this.Y, 'wynnEps')[0];
+
+            console.log("jump", tc, [x_l, y_l], [x_r, y_r]);
+            console.log(a[1], b[1]);
+
+        },
+
         /**
          * Recursive interval bisection algorithm for curve plotting.
          * Used in {@link JXG.Curve.updateParametricCurve}.
@@ -1491,15 +1599,20 @@ define([
             if (isCusp) {
                 mindepth = 0;
                 isSmooth = false;
+                if (depth <= 1) {
+        console.log("CUSP", depth)
+                    //pnt.setCoordinates(Const.COORDS_BY_USER, this._findCusp(ta, tb), false);
+                }
             }
 
             --depth;
 
             if (isJump) {
+console.log("jumpLevel", this.jumpLevel);
+                //this._findJump(ta, tb, tc);
                 this._insertPoint(new Coords(Const.COORDS_BY_SCREEN, [NaN, NaN], this.board, false), tc);
             } else if (depth <= mindepth || isSmooth) {
                 this._insertPoint(pnt, tc);
-                //if (this._borderCase(a, b, c, ta, tb, tc, depth)) {}
             } else {
                 this._plotRecursive(a, ta, c, tc, depth, delta);
                 this._insertPoint(pnt, tc);
@@ -1524,7 +1637,7 @@ define([
                 w2, h2, bbox,
                 ret_arr;
 
-            //console.time("plot");
+            console.time("plot");
             if (this.board.updateQuality === this.board.BOARD_QUALITY_LOW) {
                 depth = Type.evaluate(this.visProp.recursiondepthlow) || 13;
                 delta = 2;
@@ -1588,7 +1701,7 @@ define([
             this.points.push(pb);
 
             this.numberPoints = this.points.length;
-            //console.timeEnd("plot");
+            console.timeEnd("plot");
 
             return this;
         },

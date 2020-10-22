@@ -3634,7 +3634,43 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
                 estlim = a[n % 3];
             }
             return estlim;
+        },
+
+        limit: function(x0, h0, f, method) {
+            var n, v, w,
+                estlim = Infinity,
+                delta,
+                up = 20,
+                r = 1 / 2,
+                E = [],
+                infty = 1.e+10,
+                result = 'finite',
+                h = h0;
+
+            for (n = 0; n < up; n++) {
+                h *= r;
+                v = f(x0 + h, true);
+                w = JXG.Math.Numerics[method](v, n, E);
+                if (isNaN(w)) {
+                    // result = 'NaN';
+                    break;
+                } else if (v !== 0 && Math.abs(w / v) > infty) {
+                    estlim = Math.abs(w) * Math.sign(v);
+                    result = 'infinite';
+                    break;
+                } else {
+                    delta = w - estlim;
+                    if (Math.abs(delta) < 1.e-12) {
+                        break;
+                    }
+                    estlim = w;
+                }
+
+console.log(n, h, v, w, w / v);
+            }
+            return [estlim, result];
         }
+
 
     };
 
