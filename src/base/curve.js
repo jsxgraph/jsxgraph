@@ -1141,24 +1141,23 @@ define([
          * @param {Number} depth Actual recursion depth. The recursion stops if depth is equal to 0.
          * @returns {JXG.Boolean} true if the point is inserted and the recursion should stop, false otherwise.
          */
-         _borderCase: function (a, b, c, ta, tb, tc, depth) {
-             var t, pnt, p,
-                 p_good = null,
-                 j,
-                 max_it = 30,
-                 is_undef = false,
-                 t_nan, t_real, t_real2,
-                 t_good, t_bad,
-                 lim_x, lim_y, lim_type_x, lim_type_y, res,
-                 vx, vy, vx2, vy2, dx, dy,
-                 box, asymptote;
+        _borderCase: function (a, b, c, ta, tb, tc, depth) {
+            var t, pnt, p,
+                p_good = null,
+                j,
+                max_it = 30,
+                is_undef = false,
+                t_nan, t_real, t_real2,
+                t_good, t_bad,
+                lim_x, lim_y, lim_type_x, lim_type_y, res,
+                vx, vy, vx2, vy2, dx, dy,
+                box, asymptote;
 
-             if (depth <= 1) {
-                pnt = new Coords(Const.COORDS_BY_USER, [0, 0], this.board, false);
-                j = 0;
-                // Bisect a, b and c until the point t_real is inside of the definition interval
-                // and as close as possible at the boundary.
-                // t_real2 is the second closest point.
+            pnt = new Coords(Const.COORDS_BY_USER, [0, 0], this.board, false);
+            j = 0;
+            // Bisect a, b and c until the point t_real is inside of the definition interval
+            // and as close as possible at the boundary.
+            // t_real2 is the second closest point.
     //             do {
     //                 // There are four cases:
     //                 //  a  |  c  |  b
@@ -1203,114 +1202,110 @@ define([
     //             } while (j < max_it && is_undef /*(|| Math.abs(t_nan - t_real) > Mat.eps)*/);
 
 
-                // There are four cases:
-                //  a  |  c  |  b
-                // ---------------
-                // inf | R   | R
-                // R   | R   | inf
-                // inf | inf | R
-                // R   | inf | inf
-                //
-                if (isNaN(a[1] + a[2]) && !isNaN(c[1] + c[2])) {
-                    t_bad = ta;
-                    t_good = tc;
-                    t_real2 = tb
-                } else if (isNaN(b[1] + b[2]) && !isNaN(c[1] + c[2])) {
-                    t_bad = tb;
-                    t_good = tc;
-                    t_real2 = ta;
-                } else if (isNaN(c[1] + c[2]) && !isNaN(b[1] + b[2])) {
-                    t_bad = tc
-                    t_good = tb;
-                    t_real2 = tb + (tb - tc);
-                } else if (isNaN(c[1] + c[2]) && !isNaN(a[1] + a[2])) {
-                    t_bad = tc;
-                    t_good = ta;
-                    t_real2 = ta - (tc - ta);
+            // There are four cases:
+            //  a  |  c  |  b
+            // ---------------
+            // inf | R   | R
+            // R   | R   | inf
+            // inf | inf | R
+            // R   | inf | inf
+            //
+            if (isNaN(a[1] + a[2]) && !isNaN(c[1] + c[2])) {
+                t_bad = ta;
+                t_good = tc;
+                t_real2 = tb
+            } else if (isNaN(b[1] + b[2]) && !isNaN(c[1] + c[2])) {
+                t_bad = tb;
+                t_good = tc;
+                t_real2 = ta;
+            } else if (isNaN(c[1] + c[2]) && !isNaN(b[1] + b[2])) {
+                t_bad = tc
+                t_good = tb;
+                t_real2 = tb + (tb - tc);
+            } else if (isNaN(c[1] + c[2]) && !isNaN(a[1] + a[2])) {
+                t_bad = tc;
+                t_good = ta;
+                t_real2 = ta - (tc - ta);
+            } else {
+                return false;
+            }
+            do {
+                t = 0.5 * (t_good + t_bad);
+                pnt.setCoordinates(Const.COORDS_BY_USER, [this.X(t, true), this.Y(t, true)], false);
+                p = pnt.usrCoords;
+                is_undef = isNaN(p[1] + p[2]);
+                if (is_undef) {
+                    t_bad = t;
                 } else {
-                    return false;
+                    t_real2 = t_good;
+                    t_good = t;
                 }
-                do {
-                    t = 0.5 * (t_good + t_bad);
-                    pnt.setCoordinates(Const.COORDS_BY_USER, [this.X(t, true), this.Y(t, true)], false);
-                    p = pnt.usrCoords;
-
-                    is_undef = isNaN(p[1] + p[2]);
-                    if (is_undef) {
-                        t_bad = t;
-                    } else {
-                        t_real2 = t_good;
-                        t_good = t;
-                    }
-                    ++j;
-                } while (j < max_it && Math.abs(t_good - t_bad) > Mat.eps);
-                // If bisection (i.e. j < max_it) was successful, take this point.
-                // Useful only for general curves, for function graph
-                // the code below overwrite p_good from here.
-                // if (j < max_it) {
-                //     p_good = p.slice();
-                //     c = p.slice();
-                //     t_real = t;
-                // }
-                t_real = t;
+                ++j;
+            } while (j < max_it && Math.abs(t_good - t_bad) > Mat.eps);
+            // If bisection (i.e. j < max_it) was successful, take this point.
+            // Useful only for general curves, for function graph
+            // the code below overwrite p_good from here.
+            // if (j < max_it) {
+            //     p_good = p.slice();
+            //     c = p.slice();
+            //     t_real = t;
+            // }
+            t_real = t;
     // console.log("t", t, t_real, t_real2, j);
 
-                // OK, bisection has been done now.
-                // t_real contains the closest inner point to the border of the interval we could find.
-                // t_real2 is the second nearest point to this boundary.
-                // Now we approximate the derivative by computing the slope of the line through these two points
-                // and test if it is "infinite", i.e larger than 400 in absolute values.
-                //
-
-                // If the derivatives are large enough we draw the asymptote.
-                // box = this.board.getBoundingBox();
-                // if (Math.sqrt(dx * dx + dy * dy) > 500.0) {
-                //
-                //     // The asymptote is a line of the form
-                //     //  [c, a, b] = [dx * vy - dy * vx, dy, -dx]
-                //     //  Now we have to find the intersection with the correct canvas border.
-                //     asymptote = [dx * vy - dy * vx, dy, -dx];
-                //
-                //     p_good = this._intersectWithBorder(asymptote, box, vx - vx2);
-                // }
-
-                box = this.board.getBoundingBox();
+            // OK, bisection has been done now.
+            // t_real contains the closest inner point to the border of the interval we could find.
+            // t_real2 is the second nearest point to this boundary.
+            // Now we approximate the derivative by computing the slope of the line through these two points
+            // and test if it is "infinite", i.e larger than 400 in absolute values.
+            //
+            // If the derivatives are large enough we draw the asymptote.
+            // box = this.board.getBoundingBox();
+            // if (Math.sqrt(dx * dx + dy * dy) > 500.0) {
+            //
+            //     // The asymptote is a line of the form
+            //     //  [c, a, b] = [dx * vy - dy * vx, dy, -dx]
+            //     //  Now we have to find the intersection with the correct canvas border.
+            //     asymptote = [dx * vy - dy * vx, dy, -dx];
+            //
+            //     p_good = this._intersectWithBorder(asymptote, box, vx - vx2);
+            // }
+            box = this.board.getBoundingBox();
     // console.log("X");
-                res = Numerics.limit(t_real, 0.2/*t_real2 - t_real*/, this.X, 'wynnEps');
-                lim_x = res[0];
-                lim_type_x = res[1];
+            res = Numerics.limit(t_real, 0.2/*t_real2 - t_real*/, this.X, 'wynnEps');
+            lim_x = res[0];
+            lim_type_x = res[1];
     // console.log("Y");
-                res = Numerics.limit(t_real, 0.2/*t_real2 - t_real*/, this.Y, 'wynnEps');
-                lim_y = res[0];
-                lim_type_y = res[1];
+            res = Numerics.limit(t_real, 0.2/*t_real2 - t_real*/, this.Y, 'wynnEps');
+            lim_y = res[0];
+            lim_type_y = res[1];
 
     //console.log("Accelerator", lim_type_x, lim_type_y);
-                if (lim_type_x === 'infinite' || lim_type_y === 'infinite') {
-    // console.log("Asympotote!", lim_x, lim_y);
+            if (lim_type_x === 'infinite' || lim_type_y === 'infinite') {
+    console.log("Asympotote!", lim_x, lim_y);
 
-                    vx = lim_x;
-                    vx2 = this.X(t_real2, true) ;
-                    dx = (vx - vx2) / (t_real - t_real2);
-                    vy = lim_y;
-                    vy2 = this.Y(t_real2, true) ;
-                    dy = (vy - vy2) / (t_real - t_real2);
-
-                    // The asymptote is a line of the form
-                    //  [c, a, b] = [dx * vy - dy * vx, dy, -dx]
-                    //  Now we have to find the intersection with the correct canvas border.
-                    asymptote = [dx * vy - dy * vx, dy, -dx];
-                    p_good = this._intersectWithBorder(asymptote, box, vx - vx2);
-                } else if (lim_type_x === 'finite' && lim_type_y === 'finite') {
-                    p_good = [lim_x, lim_y];
-                }
-
-                if (p_good !== null) {
-    console.log("Add", p_good);
-                    this._insertPoint(new Coords(Const.COORDS_BY_USER, p_good, this.board, false), lim_x);
-                    console.log(this.points)
-                    return true;
-                }
+                vx = lim_x;
+                vx2 = this.X(t_real2, true) ;
+                dx = (vx - vx2) / (t_real - t_real2);
+                vy = lim_y;
+                vy2 = this.Y(t_real2, true) ;
+                dy = (vy - vy2) / (t_real - t_real2);
+                // The asymptote is a line of the form
+                //  [c, a, b] = [dx * vy - dy * vx, dy, -dx]
+                //  Now we have to find the intersection with the correct canvas border.
+                asymptote = [dx * vy - dy * vx, dy, -dx];
+                p_good = this._intersectWithBorder(asymptote, box, vx - vx2);
+            } else if (lim_type_x === 'finite' && lim_type_y === 'finite') {
+                p_good = [lim_x, lim_y];
             }
+
+            if (p_good !== null) {
+    console.log("Add bc", depth, p_good, ta, tb);
+                this._insertPoint(new Coords(Const.COORDS_BY_USER, p_good, this.board, false), lim_x);
+                console.log(this.points)
+                return true;
+            }
+
             return false;
         },
 
@@ -1564,9 +1559,10 @@ define([
                 jump_threshold = 0.99,
                 pnt = new Coords(Const.COORDS_BY_USER, [0, 0], this.board, false);
 
-            if (this.numberPoints > 65536) {
+            if (this.points.length > 65536) {
                 return;
             }
+//console.log(this.numberPoints, this.points.length);
 
             // Test if the function is undefined in an interval
             if (depth < this.nanLevel && this._isUndefined(a, ta, b, tb)) {
@@ -1581,7 +1577,7 @@ define([
             pnt.setCoordinates(Const.COORDS_BY_USER, [this.X(tc, true), this.Y(tc, true)], false);
             c = pnt.scrCoords;
 
-            if (this._borderCase(a, b, c, ta, tb, tc, depth)) {
+            if (depth < 2 && this._borderCase(a, b, c, ta, tb, tc, depth)) {
                 return this;
             }
 
@@ -1608,14 +1604,16 @@ define([
             --depth;
 
             if (isJump) {
-console.log("jumpLevel", this.jumpLevel);
+console.log("jump", this.jumpLevel, depth, ta, tb);
                 //this._findJump(ta, tb, tc);
                 this._insertPoint(new Coords(Const.COORDS_BY_SCREEN, [NaN, NaN], this.board, false), tc);
             } else if (depth <= mindepth || isSmooth) {
                 this._insertPoint(pnt, tc);
+console.log("Add smooth", depth, ta, tc, tb);
             } else {
                 this._plotRecursive(a, ta, c, tc, depth, delta);
                 this._insertPoint(pnt, tc);
+if (tc === 1) console.log("Add point2", depth, ta, tc, tb);
                 this._plotRecursive(c, tc, b, tb, depth, delta);
             }
 
@@ -1702,6 +1700,8 @@ console.log("jumpLevel", this.jumpLevel);
 
             this.numberPoints = this.points.length;
             console.timeEnd("plot");
+
+console.log("number of points:", this.numberPoints);
 
             return this;
         },

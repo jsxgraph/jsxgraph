@@ -114,6 +114,7 @@ define([
                 r *= Math.sqrt(this.board.unitX * this.board.unitY);
             }
 
+console.log(this.board.options.precision.hasPoint);
             r += parseFloat(Type.evaluate(this.visProp.strokewidth)) * 0.5;
             if (r < this.board.options.precision.hasPoint) {
                 r = this.board.options.precision.hasPoint;

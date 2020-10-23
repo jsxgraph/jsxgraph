@@ -2151,7 +2151,8 @@ define([
          */
         pointerMoveListener: function (evt) {
             var i, j, pos,
-                type = this._getPointerInputDevice(evt);
+                type = 'mouse', // in case of no browser
+                eps;
 
             if (this._getPointerInputDevice(evt) == 'touch' && !this._pointerIsTouchRegistered(evt)) {
                 // Test, if there was a previous down event of this _getPointerId
@@ -2171,6 +2172,10 @@ define([
             }
 
             this.updateQuality = this.BOARD_QUALITY_LOW;
+            // Mouse, touch or pen device
+            type = this._getPointerInputDevice(evt),
+            eps = this.options.precision[type];
+            this.options.precision.hasPoint = eps;
 
             // selection
             if (this.selectingMode) {
@@ -2620,7 +2625,6 @@ define([
             if (this.mode !== this.BOARD_MODE_DRAG) {
                 this.showInfobox(false);
             }
-
 
             this.triggerEventHandlers(['touchmove', 'move'], [evt, this.mode]);
             this.options.precision.hasPoint = this.options.precision.mouse;
