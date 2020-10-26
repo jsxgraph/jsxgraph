@@ -1032,6 +1032,7 @@ define([
                 newReal = !isNaN(pnt.scrCoords[1] + pnt.scrCoords[2]),        // New point is real point
                 cw = this.board.canvasWidth,
                 ch = this.board.canvasHeight,
+                x, y,
                 off = 500;
 
             // Check if point has real coordinates and
@@ -1046,7 +1047,6 @@ define([
              * Prevents two consecutive NaNs or points which are too close
              */
             if (!lastReal && !newReal) {
-console.log("skip", pnt.usrCoords, limes);
                 return;
             }
             if (newReal && lastReal &&
@@ -1063,6 +1063,32 @@ console.log("skip", pnt.usrCoords, limes);
                 return;
             }
 
+            if (Type.exists(limes)) {
+                if (isNaN(pnt.scrCoords[1] + pnt.scrCoords[2])) {
+                    // Ignore jump right from limes
+                    if (((Math.abs(this._lastUsrCrds[1]) === Infinity && this._lastUsrCrds[1] === limes.right_x) ||
+                        Math.abs(this._lastUsrCrds[1] - limes.right_x) < Mat.eps) &&
+                        ((Math.abs(this._lastUsrCrds[2]) === Infinity && this._lastUsrCrds[2] === limes.right_y) ||
+                        Math.abs(this._lastUsrCrds[2] - limes.right_y) < Math.eps)) {
+                        console.log("SKIP:", pnt.usrCoords, this._lastUsrCrds, limes);
+                        return;
+                    }
+                    // Ignore jump left from limes
+                    if (Math.abs(limes.left_x) > 100 * Math.abs(this._lastUsrCrds[1])) {
+                        x = Math.sign(limes.left_x) * Infinity;
+                    } else {
+                        x = limes.left_x;
+                    }
+                    if (Math.abs(limes.left_y) > 100 * Math.abs(this._lastUsrCrds[2])) {
+                        y = Math.sign(limes.left_y) * Infinity;
+                    } else {
+                        y = limes.left_y;
+                    }
+                    pnt.setCoordinates(Const.COORDS_BY_USER, [x, y], false);
+                }
+            }
+
+//console.log("Add", t, depth)
             pnt._t = t;
             this.points.push(pnt);
             this._lastScrCrds = pnt.copy('scrCoords');
@@ -1301,15 +1327,15 @@ console.log("skip", pnt.usrCoords, limes);
             // }
             box = this.board.getBoundingBox();
     // console.log("X");
-            res = Numerics.limit(t_real, 0.2/*t_real2 - t_real*/, this.X, 'wynnEps');
+            res = Numerics.limit(t_real, 0.2 * Math.sign(t_real2 - t_real), this.X, 'wynnEps');
             lim_x = res[0];
             lim_type_x = res[1];
     // console.log("Y");
-            res = Numerics.limit(t_real, 0.2/*t_real2 - t_real*/, this.Y, 'wynnEps');
+            res = Numerics.limit(t_real, 0.2 * Math.sign(t_real2 - t_real), this.Y, 'wynnEps');
             lim_y = res[0];
             lim_type_y = res[1];
 
-console.log("Accelerator", lim_type_x, lim_type_y);
+console.log("Accelerator right", lim_type_x, lim_type_y);
     //         if (lim_type_x === 'infinite' || lim_type_y === 'infinite') {
     // // console.log("Asymptote!", lim_x, lim_y);
     //             vx = lim_x;
@@ -1337,7 +1363,6 @@ console.log("Accelerator", lim_type_x, lim_type_y);
             p_good = [lim_x, lim_y];
 
             if (p_good !== null) {
-    //console.log("Add bc", depth, p_good, t_good, t_bad, t_real);
                 if (t_bad < t_good) {
                     limes.left_x  = NaN;
                     limes.left_y  = NaN;
@@ -1350,8 +1375,8 @@ console.log("Accelerator", lim_type_x, lim_type_y);
                     limes.right_y = NaN;
                 }
 
+console.log("Add bc", depth, t_real, p_good.usrCoords, limes);
                 this._insertPoint(new Coords(Const.COORDS_BY_USER, p_good, this.board, false), lim_x, depth, limes);
-    //console.log(this.points)
                 return true;
             }
 
@@ -1462,7 +1487,6 @@ console.log("Accelerator", lim_type_x, lim_type_y);
          * This method can also be used to find the last visible  point
          * by reversing the input parameters.
          *
-         * @param  {Array}  a  Screen coordinates of the start point of the segment
          * @param  {Array}  ta Curve parameter of a.
          * @param  {Array}  b  Screen coordinates of the end point of the segment (unused)
          * @param  {Array}  tb Curve parameter of b
@@ -1547,9 +1571,8 @@ console.log("Accelerator", lim_type_x, lim_type_y);
                 pnt.setCoordinates(Const.COORDS_BY_USER, [this.X(td, true), this.Y(td, true)], false);
                 return [pnt.scrCoords, td];
             } else {
+                console.log("TODO _findStartPoint");
             }
-
-            return [a, ta];
         },
 
         _findCusp: function(ta, tb) {
@@ -1570,21 +1593,45 @@ console.log("Accelerator", lim_type_x, lim_type_y);
             return [x, y];
         },
 
-        _findJump: function(ta, tb, tc) {
-            var a = [this.X(ta, true), this.Y(ta, true)],
-                b = [this.X(tb, true), this.Y(tb, true)],
-                x_l, y_l, x_r, y_r;
-            console.log("jump", tc);
+        _findJump: function(t) {
+            var //a = [this.X(t, true), this.Y(t, true)],
+                //b = [this.X(t, true), this.Y(t, true)],
+                res,
+                step = 0.2,
+                x_l, y_l,
+                x_r, y_r;
+    console.log("jump", t);
+
             // From left
-            x_l = Numerics.limit(ta, 0.5 + (ta - tb) * 2, this.X, 'wynnEps')[0];
-            y_l = Numerics.limit(ta, 0.5 + (ta - tb) * 2, this.Y, 'wynnEps')[0];
+            res = Numerics.limit(t, -step, this.X, 'wynnEps');
+            x_l = res[0];
+            if (res[1] === 'infinite') {
+                x_l = Math.sign(x_l) * Infinity;
+            }
+            res = Numerics.limit(t, -step, this.Y, 'wynnEps');
+            y_l = res[0];
+            if (res[1] === 'infinite') {
+                y_l = Math.sign(y_l) * Infinity;
+            }
             // From right
-            x_r = Numerics.limit(tb, 0.5 + (tb - ta) * 2, this.X, 'wynnEps')[0];
-            y_r = Numerics.limit(tb, 0.5 + (tb - ta) * 2, this.Y, 'wynnEps')[0];
+            res = Numerics.limit(t, step, this.X, 'wynnEps');
+            x_r = res[0];
+            if (res[1] === 'infinite') {
+                x_r = Math.sign(x_r) * Infinity;
+            }
+            res = Numerics.limit(t, step, this.Y, 'wynnEps');
+            y_r = res[0];
+            if (res[1] === 'infinite') {
+                y_r = Math.sign(y_r) * Infinity;
+            }
 
-            console.log("jump", tc, [x_l, y_l], [x_r, y_r]);
-            console.log(a[1], b[1]);
-
+    console.log("jump", t, "lft:", [x_l, y_l], "right", [x_r, y_r]);
+            return {
+                    left_x: x_l,
+                    left_y: y_l,
+                    right_x: x_r,
+                    right_y: y_r
+                };
         },
 
         /**
@@ -1603,6 +1650,7 @@ console.log("Accelerator", lim_type_x, lim_type_y);
         _plotRecursive: function (a, ta, b, tb, depth, delta) {
             var tc, c,
                 ds, mindepth = 0,
+                limes,
                 isSmooth, isJump, isCusp,
                 cusp_threshold = 0.5,
                 jump_threshold = 0.99,
@@ -1653,9 +1701,10 @@ console.log("Accelerator", lim_type_x, lim_type_y);
             --depth;
 
             if (isJump) {
-                //this._findJump(ta, tb, tc);
+                limes = this._findJump(ta, tb, tc);
+console.log("X");
                 pnt.setCoordinates(Const.COORDS_BY_USER, [NaN, NaN], false);
-                this._insertPoint(pnt, tc, depth);
+                this._insertPoint(pnt, tc, depth, limes);
             } else if (depth <= mindepth || isSmooth) {
                 this._insertPoint(pnt, tc, depth, null);
             } else {
