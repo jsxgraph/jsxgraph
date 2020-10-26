@@ -1027,28 +1027,56 @@ define([
          * @private
          * @param {JXG.Coords} pnt Coords to add to the list of points
          */
-        _insertPoint: function (pnt, t) {
-            var lastReal = !isNaN(this._lastCrds[1] + this._lastCrds[2]),     // The last point was real
+        _insertPoint: function (pnt, t, depth, limes) {
+            var lastReal = !isNaN(this._lastScrCrds[1] + this._lastScrCrds[2]),     // The last point was real
                 newReal = !isNaN(pnt.scrCoords[1] + pnt.scrCoords[2]),        // New point is real point
                 cw = this.board.canvasWidth,
                 ch = this.board.canvasHeight,
                 off = 500;
 
+            // Check if point has real coordinates and
+            // coordinates are not too far away from canvas.
             newReal = newReal &&
                         (pnt.scrCoords[1] > -off && pnt.scrCoords[2] > -off &&
                          pnt.scrCoords[1] < cw + off && pnt.scrCoords[2] < ch + off);
 
+            newReal = newReal || Type.exists(limes);
+// console.log("Insert", t, "\t", depth);
             /*
-             * Prevents two consecutive NaNs or points wich are too close
+             * Prevents two consecutive NaNs or points which are too close
              */
-            if ((!newReal && lastReal) ||
-                    (newReal && (!lastReal ||
-                        Math.abs(pnt.scrCoords[1] - this._lastCrds[1]) > 0.7 ||
-                        Math.abs(pnt.scrCoords[2] - this._lastCrds[2]) > 0.7))) {
-                pnt._t = t;
-                this.points.push(pnt);
-                this._lastCrds = pnt.copy('scrCoords');
+            if (!lastReal && !newReal) {
+console.log("skip", pnt.usrCoords, limes);
+                return;
             }
+            if (newReal && lastReal &&
+                Math.abs(pnt.scrCoords[1] - this._lastScrCrds[1]) < 0.7 &&
+                Math.abs(pnt.scrCoords[2] - this._lastScrCrds[2]) < 0.7) {
+                return;
+            }
+            if ((Math.abs(pnt.usrCoords[1]) === Infinity &&
+                Math.abs(this._lastUsrCrds[1]) === Infinity &&
+                Math.sign(pnt.usrCoords[1]) === Math.sign(this._lastUsrCrds[1])) ||
+                (Math.abs(pnt.usrCoords[2]) === Infinity &&
+                Math.abs(this._lastUsrCrds[2]) === Infinity &&
+                Math.sign(pnt.usrCoords[2]) === Math.sign(this._lastUsrCrds[2]))) {
+                return;
+            }
+
+            pnt._t = t;
+            this.points.push(pnt);
+            this._lastScrCrds = pnt.copy('scrCoords');
+            this._lastUsrCrds = pnt.copy('usrCoords');
+
+            // if ((!newReal && lastReal) ||
+            //         (newReal && (!lastReal ||
+            //             Math.abs(pnt.scrCoords[1] - this._lastCrds[1]) > 0.7 ||
+            //             Math.abs(pnt.scrCoords[2] - this._lastCrds[2]) > 0.7))) {
+            //     pnt._t = t;
+            //     this.points.push(pnt);
+            //     this._lastCrds = pnt.copy('scrCoords');
+            //     this._lastUsrCrds = pnt.copy('usrCoords');
+            // }
         },
 
         /**
@@ -1151,7 +1179,8 @@ define([
                 t_good, t_bad,
                 lim_x, lim_y, lim_type_x, lim_type_y, res,
                 vx, vy, vx2, vy2, dx, dy,
-                box, asymptote;
+                box, asymptote,
+                limes = {};
 
             pnt = new Coords(Const.COORDS_BY_USER, [0, 0], this.board, false);
             j = 0;
@@ -1280,29 +1309,49 @@ define([
             lim_y = res[0];
             lim_type_y = res[1];
 
-    //console.log("Accelerator", lim_type_x, lim_type_y);
-            if (lim_type_x === 'infinite' || lim_type_y === 'infinite') {
-    console.log("Asympotote!", lim_x, lim_y);
+console.log("Accelerator", lim_type_x, lim_type_y);
+    //         if (lim_type_x === 'infinite' || lim_type_y === 'infinite') {
+    // // console.log("Asymptote!", lim_x, lim_y);
+    //             vx = lim_x;
+    //             vx2 = this.X(t_real2, true) ;
+    //             dx = (vx - vx2) / (t_real - t_real2);
+    //             vy = lim_y;
+    //             vy2 = this.Y(t_real2, true) ;
+    //             dy = (vy - vy2) / (t_real - t_real2);
+    //             // The asymptote is a line of the form
+    //             //  [c, a, b] = [dx * vy - dy * vx, dy, -dx]
+    //             //  Now we have to find the intersection with the correct canvas border.
+    //             asymptote = [dx * vy - dy * vx, dy, -dx];
+    //             p_good = this._intersectWithBorder(asymptote, box, vx - vx2);
+    //         } else if (lim_type_x === 'finite' && lim_type_y === 'finite') {
+    //             p_good = [lim_x, lim_y];
+    //         }
 
-                vx = lim_x;
-                vx2 = this.X(t_real2, true) ;
-                dx = (vx - vx2) / (t_real - t_real2);
-                vy = lim_y;
-                vy2 = this.Y(t_real2, true) ;
-                dy = (vy - vy2) / (t_real - t_real2);
-                // The asymptote is a line of the form
-                //  [c, a, b] = [dx * vy - dy * vx, dy, -dx]
-                //  Now we have to find the intersection with the correct canvas border.
-                asymptote = [dx * vy - dy * vx, dy, -dx];
-                p_good = this._intersectWithBorder(asymptote, box, vx - vx2);
-            } else if (lim_type_x === 'finite' && lim_type_y === 'finite') {
-                p_good = [lim_x, lim_y];
+            if (lim_type_x === 'infinite') {
+                lim_x = Math.sign(lim_x) * Infinity;
+            }
+            if (lim_type_y === 'infinite') {
+                lim_y = Math.sign(lim_y) * Infinity;
             }
 
+            p_good = [lim_x, lim_y];
+
             if (p_good !== null) {
-    console.log("Add bc", depth, p_good, ta, tb);
-                this._insertPoint(new Coords(Const.COORDS_BY_USER, p_good, this.board, false), lim_x);
-                console.log(this.points)
+    //console.log("Add bc", depth, p_good, t_good, t_bad, t_real);
+                if (t_bad < t_good) {
+                    limes.left_x  = NaN;
+                    limes.left_y  = NaN;
+                    limes.right_x = lim_x;
+                    limes.right_y = lim_y;
+                } else {
+                    limes.left_x  = lim_x;
+                    limes.left_y  = lim_y;
+                    limes.right_x = NaN;
+                    limes.right_y = NaN;
+                }
+
+                this._insertPoint(new Coords(Const.COORDS_BY_USER, p_good, this.board, false), lim_x, depth, limes);
+    //console.log(this.points)
                 return true;
             }
 
@@ -1593,7 +1642,7 @@ define([
             isCusp = (depth < this.smoothLevel + 2) && (ds[0] < cusp_threshold * (ds[1] + ds[2]));
 
             if (isCusp) {
-                mindepth = 0;
+                // mindepth = 0;
                 isSmooth = false;
                 if (depth <= 1) {
         console.log("CUSP", depth)
@@ -1604,16 +1653,14 @@ define([
             --depth;
 
             if (isJump) {
-console.log("jump", this.jumpLevel, depth, ta, tb);
                 //this._findJump(ta, tb, tc);
-                this._insertPoint(new Coords(Const.COORDS_BY_SCREEN, [NaN, NaN], this.board, false), tc);
+                pnt.setCoordinates(Const.COORDS_BY_USER, [NaN, NaN], false);
+                this._insertPoint(pnt, tc, depth);
             } else if (depth <= mindepth || isSmooth) {
-                this._insertPoint(pnt, tc);
-console.log("Add smooth", depth, ta, tc, tb);
+                this._insertPoint(pnt, tc, depth, null);
             } else {
                 this._plotRecursive(a, ta, c, tc, depth, delta);
-                this._insertPoint(pnt, tc);
-if (tc === 1) console.log("Add point2", depth, ta, tc, tb);
+                this._insertPoint(pnt, tc, depth, null);
                 this._plotRecursive(c, tc, b, tb, depth, delta);
             }
 
@@ -1693,7 +1740,9 @@ if (tc === 1) console.log("Add point2", depth, ta, tc, tb);
             b = pb.copy('scrCoords');
             pa._t = ta;
             this.points.push(pa);
-            this._lastCrds = pa.copy('scrCoords');   // Used in _insertPoint
+            // this._lastCrds = pa.copy('scrCoords');   // Used in _insertPoint
+            this._lastScrCrds = pa.copy('scrCoords');   // Used in _insertPoint
+            this._lastUsrCrds = pa.copy('usrCoords');   // Used in _insertPoint
             this._plotRecursive(a, ta, b, tb, depth, delta);
             pb._t = tb;
             this.points.push(pb);
