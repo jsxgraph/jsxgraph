@@ -1612,22 +1612,26 @@ console.log("Add bc", depth, t_real, p_good.usrCoords, limes);
             if (res[1] === 'infinite') {
                 x_l = Math.sign(x_l) * Infinity;
             }
+console.log("left.....")
             res = Numerics.limit(t, -step, this.Y, 'wynnEps');
             y_l = res[0];
             if (res[1] === 'infinite') {
                 y_l = Math.sign(y_l) * Infinity;
             }
+ console.log(",,,,,,,", res)
             // From right
             res = Numerics.limit(t, step, this.X, 'wynnEps');
             x_r = res[0];
             if (res[1] === 'infinite') {
                 x_r = Math.sign(x_r) * Infinity;
             }
+ console.log("right,,,,,,,")
             res = Numerics.limit(t, step, this.Y, 'wynnEps');
             y_r = res[0];
             if (res[1] === 'infinite') {
                 y_r = Math.sign(y_r) * Infinity;
             }
+ console.log(".....", res)
 
     console.log("jump", t, "lft:", [x_l, y_l], "right", [x_r, y_r]);
             if ((Math.abs(y_l) === Infinity && Math.abs(y_r) === Infinity && y_l) !== y_r ||
@@ -1716,8 +1720,8 @@ console.log("Add bc", depth, t_real, p_good.usrCoords, limes);
             --depth;
 
             if (isJump) {
-console.log("Y")
                 limes = this._findJump(tc);
+console.log("Y result for", tc, limes)
                 pnt.setCoordinates(Const.COORDS_BY_USER, [NaN, NaN], false);
                 this._insertPoint(pnt, tc, depth, limes);
             } else if (depth <= mindepth || isSmooth) {
@@ -1746,6 +1750,7 @@ console.log("Y")
                 w2, h2, bbox,
                 ret_arr;
 
+            console.log("-----------------------------------------------------------");
             console.time("plot");
             if (this.board.updateQuality === this.board.BOARD_QUALITY_LOW) {
                 depth = Type.evaluate(this.visProp.recursiondepthlow) || 13;

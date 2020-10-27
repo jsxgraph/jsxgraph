@@ -3640,7 +3640,7 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
 
         limit: function(x0, h0, f, method) {
             var n, v, w,
-                estlim = Infinity,
+                estlim = 0, //Infinity,
                 delta,
                 up = 20,
                 r = 1 / 2,
@@ -3659,7 +3659,6 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
                     result = 'infinite';
                     break;
                 }
-
                 w = JXG.Math.Numerics[method](v, n - 1, E);
                 if (isNaN(w)) {
                     // result = 'NaN';
