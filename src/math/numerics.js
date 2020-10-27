@@ -3550,12 +3550,13 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
 
         wynnEps: function(s_n, n, e) {
             var HUGE = 1.e+20,
-                TINY = 1.e-20,
+                TINY = 1.e-15,
+                f0 = 1,
+                f,
                 j,
                 aux1, aux2, diff, estlim;
 
             e[n] = s_n;
-            //console.log(e);
             if (n === 0) {
                 estlim = s_n;
             } else {
@@ -3564,12 +3565,13 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
                     aux1 = aux2;
                     aux2 = e[j - 1];
                     diff = e[j] - aux2;
-                    // if (Math.abs(diff) <= TINY) {
-                    //     e[j - 1] = Math.sign(diff) * HUGE;
-                    //     // console.log('TINY');
-                    // } else {
-                        e[j - 1] = aux1 + 1 / diff;
-                    // }
+                    if (Math.abs(diff) <= TINY) {
+                        e[j - 1] = /*Math.sign(diff) * */HUGE;
+                        console.log('TINY', j);
+                    } else {
+                        f = ((n - j + 1) % 2 === 1) ? f0 : 1;
+                        e[j - 1] = aux1 * f + 1 / diff;
+                    }
                 }
                 estlim = e[n % 2];
             }
@@ -3643,14 +3645,22 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
                 up = 20,
                 r = 1 / 2,
                 E = [],
-                infty = 1.e+10,
+                infty = 1.e+4,
                 result = 'finite',
                 h = h0;
 
-            for (n = 0; n < up; n++) {
+            for (n = 1; n <= up; n++) {
                 h *= r;
+                // h = h0 / (n + 20);
                 v = f(x0 + h, true);
-                w = JXG.Math.Numerics[method](v, n, E);
+
+                if (Math.abs(v) > infty) {
+                    estlim = v;
+                    result = 'infinite';
+                    break;
+                }
+
+                w = JXG.Math.Numerics[method](v, n - 1, E);
                 if (isNaN(w)) {
                     // result = 'NaN';
                     break;

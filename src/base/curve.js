@@ -1033,6 +1033,7 @@ define([
                 cw = this.board.canvasWidth,
                 ch = this.board.canvasHeight,
                 x, y,
+                near = 0.7,
                 off = 500;
 
             // Check if point has real coordinates and
@@ -1050,8 +1051,8 @@ define([
                 return;
             }
             if (newReal && lastReal &&
-                Math.abs(pnt.scrCoords[1] - this._lastScrCrds[1]) < 0.7 &&
-                Math.abs(pnt.scrCoords[2] - this._lastScrCrds[2]) < 0.7) {
+                Math.abs(pnt.scrCoords[1] - this._lastScrCrds[1]) < near &&
+                Math.abs(pnt.scrCoords[2] - this._lastScrCrds[2]) < near) {
                 return;
             }
             if ((Math.abs(pnt.usrCoords[1]) === Infinity &&
@@ -1064,7 +1065,9 @@ define([
             }
 
             if (Type.exists(limes)) {
-                if (isNaN(pnt.scrCoords[1] + pnt.scrCoords[2])) {
+                if (isNaN(pnt.scrCoords[1] + pnt.scrCoords[2])
+
+                ) {
                     // Ignore jump right from limes
                     if (((Math.abs(this._lastUsrCrds[1]) === Infinity && this._lastUsrCrds[1] === limes.right_x) ||
                         Math.abs(this._lastUsrCrds[1] - limes.right_x) < Mat.eps) &&
@@ -1597,10 +1600,11 @@ console.log("Add bc", depth, t_real, p_good.usrCoords, limes);
             var //a = [this.X(t, true), this.Y(t, true)],
                 //b = [this.X(t, true), this.Y(t, true)],
                 res,
-                step = 0.2,
+                step = 0.5,
                 x_l, y_l,
                 x_r, y_r;
-    console.log("jump", t);
+
+    console.log("Test jump at", t);
 
             // From left
             res = Numerics.limit(t, -step, this.X, 'wynnEps');
@@ -1626,6 +1630,17 @@ console.log("Add bc", depth, t_real, p_good.usrCoords, limes);
             }
 
     console.log("jump", t, "lft:", [x_l, y_l], "right", [x_r, y_r]);
+            if ((Math.abs(y_l) === Infinity && Math.abs(y_r) === Infinity && y_l) !== y_r ||
+                (Math.abs(y_l) === Infinity && Math.abs(y_r) !== Infinity) ||
+                (Math.abs(y_l) !== Infinity && Math.abs(y_r) === Infinity) ||
+                (Math.abs(y_l - y_r) > Mat.eps) ||
+                (Math.abs(x_l) === Infinity && Math.abs(x_r) === Infinity && x_l) !== x_r ||
+                (Math.abs(x_l) === Infinity && Math.abs(x_r) !== Infinity) ||
+                (Math.abs(x_l) !== Infinity && Math.abs(x_r) === Infinity) ||
+                (Math.abs(x_l - x_r) > Mat.eps)
+            ) {
+                return null;
+            }
             return {
                     left_x: x_l,
                     left_y: y_l,
@@ -1701,8 +1716,8 @@ console.log("Add bc", depth, t_real, p_good.usrCoords, limes);
             --depth;
 
             if (isJump) {
-                limes = this._findJump(ta, tb, tc);
-console.log("X");
+console.log("Y")
+                limes = this._findJump(tc);
                 pnt.setCoordinates(Const.COORDS_BY_USER, [NaN, NaN], false);
                 this._insertPoint(pnt, tc, depth, limes);
             } else if (depth <= mindepth || isSmooth) {
@@ -1743,8 +1758,8 @@ console.log("X");
                 delta = 2;
                 // smoothLevel has to be small for graphs in a huge interval.
                 // this.smoothLevel = 3; //depth - 7; // 9
-                this.smoothLevel = depth - 9; // 9
-                this.jumpLevel = 2;
+                this.smoothLevel = depth - 8; // depth - 9; // 9
+                this.jumpLevel = 3;
             }
             this.nanLevel = depth - 4;
 
