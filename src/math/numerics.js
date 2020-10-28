@@ -3567,10 +3567,39 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
                     diff = e[j] - aux2;
                     if (Math.abs(diff) <= TINY) {
                         e[j - 1] = /*Math.sign(diff) * */HUGE;
-                        console.log('TINY', j);
+// console.log('TINY', j);
                     } else {
                         f = ((n - j + 1) % 2 === 1) ? f0 : 1;
                         e[j - 1] = aux1 * f + 1 / diff;
+                    }
+                }
+                estlim = e[n % 2];
+            }
+
+            return estlim;
+        },
+
+        wynnRho: function(s_n, n, e) {
+            var HUGE = 1.e+20,
+                TINY = 1.e-15,
+                j, f,
+                aux1, aux2, diff, estlim;
+
+            e[n] = s_n;
+            if (n === 0) {
+                estlim = s_n;
+            } else {
+                aux2 = 0.0;
+                for (j = n; j >= 1; j--) {
+                    aux1 = aux2;
+                    aux2 = e[j - 1];
+                    diff = e[j] - aux2;
+                    if (Math.abs(diff) <= TINY) {
+                        e[j - 1] = /*Math.sign(diff) * */HUGE;
+//    console.log('TINY', j);
+                    } else {
+                        f = ((n - j + 1) % 2 === 1) ? n - j + 1  : 1;
+                        e[j - 1] = aux1 + f / diff;
                     }
                 }
                 estlim = e[n % 2];
@@ -3594,12 +3623,12 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
                 for (j = 1; j <= lowmax; j++) {
                     m = n - 2 * j;
                     denom = a[m + 2] - 2 * a[m + 1] + a[m];
-                    // if (Math.abs(denom) < TINY) {
-                    //     a[m] = HUGE;
-                    // } else {
+                    if (Math.abs(denom) < TINY) {
+                         a[m] = HUGE;
+                    } else {
                         v = a[m] - a[m + 1]
-                        a[m] = a[m] - v * v / denom;
-                    // }
+                        a[m] -= v * v / denom;
+                    }
                 }
                 estlim = a[n % 2];
             }
@@ -3626,21 +3655,20 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
                     d1 = a[m + 2] - a[m + 1];
                     d2 = a[m + 3] - a[m + 2];
                     denom = d2 * (d1 - d0) - d0 * (d2 - d1);
-                    // if (Math.abs(denom) < TINY) {
-                    //     a[m] = HUGE;
-                    //     console.log("TINY")
-                    // } else {
+                    if (Math.abs(denom) < TINY) {
+                        a[m] = HUGE;
+                    } else {
                         a[m] = a[m + 1] - d0 * d1 * (d2 - d1) / denom;
-                    // }
+                    }
                 }
                 estlim = a[n % 3];
             }
             return estlim;
         },
 
-        limit: function(x0, h0, f, method) {
+        _limit_iterate: function(x0, h0, f, method, step_type) {
             var n, v, w,
-                estlim = 0, //Infinity,
+                estlim = NaN,
                 delta,
                 up = 20,
                 r = 1 / 2,
@@ -3649,23 +3677,28 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
                 result = 'finite',
                 h = h0;
 
+            step_type = step_type || 0;
+
             for (n = 1; n <= up; n++) {
-                h *= r;
-                // h = h0 / (n + 20);
+                h = (step_type === 0) ?  h0 / (n + 1) : h * r;
                 v = f(x0 + h, true);
 
-                if (Math.abs(v) > infty) {
-                    estlim = v;
-                    result = 'infinite';
-                    break;
-                }
+                // if (Math.abs(v) > infty) {
+                //     estlim = v;
+                //     result = 'infinite';
+                //     break;
+                // }
                 w = JXG.Math.Numerics[method](v, n - 1, E);
+
+//console.log(n, h, v, w, w / v);
                 if (isNaN(w)) {
-                    // result = 'NaN';
+                    result = 'NaN';
+//console.log("nan");
                     break;
                 } else if (v !== 0 && Math.abs(w / v) > infty) {
                     estlim = Math.abs(w) * Math.sign(v);
                     result = 'infinite';
+//console.log("inf", v, w);
                     break;
                 } else {
                     delta = w - estlim;
@@ -3675,11 +3708,27 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
                     estlim = w;
                 }
 
-console.log(n, h, v, w, w / v);
             }
-            return [estlim, result];
-        }
+            return [estlim, result, 1 - (n - 1) / up];
+        },
 
+        limit: function(x0, h0, f) {
+            var algs = ['wynnEps', 'aitken', 'brezinski', 'wynnRho'],
+                le = algs.length,
+                i, t, res;
+
+            for (i = 0; i < le; i++) {
+                for (t = 0; t < 2; t++) {
+//console.log(">", algs[i], t)
+                    res = this._limit_iterate(x0, h0, f, algs[i], t);
+// console.log("<", algs[i], res)
+                    if (res[2] > 0.1) {
+                        return res;
+                    }
+                }
+            }
+            return [f(x0 + Math.sign(h0) * Mat.eps), 'finite', 0];
+        }
 
     };
 
