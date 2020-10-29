@@ -1033,7 +1033,7 @@ define([
                 cw = this.board.canvasWidth,
                 ch = this.board.canvasHeight,
                 x, y, p1, p2,
-                near = 0.7,
+                near = 0.8,
                 off = 500;
 
             // Check if point has real coordinates and
@@ -1114,16 +1114,6 @@ define([
                 this._lastUsrCrds = pnt.copy('usrCoords');
             }
 
-
-            // if ((!newReal && lastReal) ||
-            //         (newReal && (!lastReal ||
-            //             Math.abs(pnt.scrCoords[1] - this._lastCrds[1]) > 0.7 ||
-            //             Math.abs(pnt.scrCoords[2] - this._lastCrds[2]) > 0.7))) {
-            //     pnt._t = t;
-            //     this.points.push(pnt);
-            //     this._lastCrds = pnt.copy('scrCoords');
-            //     this._lastUsrCrds = pnt.copy('usrCoords');
-            // }
         },
 
         /**
@@ -1316,7 +1306,7 @@ define([
                     limes.right_y = NaN;
                 }
 
-console.log("Add bc", depth, t_real, p_good.usrCoords, limes);
+// console.log("Add bc", depth, t_real, p_good.usrCoords, limes);
                 this._insertPoint(new Coords(Const.COORDS_BY_USER, p_good, this.board, false), lim_x, depth, limes);
                 return true;
             }
@@ -1533,18 +1523,17 @@ console.log("Add bc", depth, t_real, p_good.usrCoords, limes);
             x = Numerics.limit(t_min, (tb - ta) * 2, this.X)[0];
             y = Numerics.limit(t_min, (tb - ta) * 2, this.Y)[0];
 //console.log(t_min, t_min-tc, x, y, this.Y(tc, true));
-            return [x, y];
+            return [[x, y], t_min];
         },
 
         _findJump: function(ta, t, tb) {
             var res,
-                step = 0.01,
+                step = 0.1,
                 isJump = false,
                 isBorder = false,
                 x_l, y_l,
-                x_r, y_r;
-
-            var a = [this.X(ta, true), this.Y(ta, true)],
+                x_r, y_r,
+                a = [this.X(ta, true), this.Y(ta, true)],
                 b = [this.X(tb, true), this.Y(tb, true)],
                 max_func = function(t) {
                     var c = [this.X(t, true), this.Y(t, true)];
@@ -1554,8 +1543,10 @@ console.log("Add bc", depth, t_real, p_good.usrCoords, limes);
                 t_min;
 
             t_min = Numerics.fminbr(max_func, [ta, tb], this);
-            console.log("Test jump at", t, t_min);
+//console.log("Test jump at", t, t_min);
             t = t_min;
+
+            //t = 0;
 
             // From left
             res = Numerics.limit(t, -step, this.X);
@@ -1590,7 +1581,7 @@ console.log("Add bc", depth, t_real, p_good.usrCoords, limes);
                 isBorder = true;
             }
 
-console.log("jump", ta, t, tb, "lft:", [x_l, y_l], "right", [x_r, y_r]);
+//console.log("jump", ta, t, tb, "lft:", [x_l, y_l], "right", [x_r, y_r]);
             if ((Math.abs(y_l) === Infinity && Math.abs(y_r) === Infinity && y_l !== y_r) ||
                 (Math.abs(y_l) === Infinity && Math.abs(y_r) !== Infinity) ||
                 (Math.abs(y_l) !== Infinity && Math.abs(y_r) === Infinity) ||
@@ -1629,7 +1620,7 @@ console.log("jump", ta, t, tb, "lft:", [x_l, y_l], "right", [x_r, y_r]);
         _plotRecursive: function (a, ta, b, tb, depth, delta) {
             var tc, c,
                 ds, mindepth = 0,
-                limes,
+                limes, res,
                 isSmooth, isJump, isCusp,
                 cusp_threshold = 0.5,
                 jump_threshold = 0.99,
@@ -1671,9 +1662,11 @@ console.log("jump", ta, t, tb, "lft:", [x_l, y_l], "right", [x_r, y_r]);
             if (isCusp) {
                 // mindepth = 0;
                 isSmooth = false;
-                if (depth <= 1) {
-        console.log("CUSP", depth)
-                    //pnt.setCoordinates(Const.COORDS_BY_USER, this._findCusp(ta, tb), false);
+                if (depth <= 8) {
+// console.log("CUSP", depth)
+                    res = this._findCusp(ta, tb)
+                    pnt.setCoordinates(Const.COORDS_BY_USER, res[0], false);
+                    tc = res[1];
                 }
             }
 
@@ -1718,17 +1711,22 @@ console.log("jump", ta, t, tb, "lft:", [x_l, y_l], "right", [x_r, y_r]);
                 depth = Type.evaluate(this.visProp.recursiondepthlow) || 13;
                 delta = 2;
                 // this.smoothLevel = 5; //depth - 7;
-                this.smoothLevel = depth - 6;
+                this.smoothLevel = depth - 7;
                 this.jumpLevel = 2;
             } else {
                 depth = Type.evaluate(this.visProp.recursiondepthhigh) || 17;
                 delta = 2;
                 // smoothLevel has to be small for graphs in a huge interval.
                 // this.smoothLevel = 3; //depth - 7; // 9
-                this.smoothLevel = depth - 8; // depth - 9; // 9
-                this.jumpLevel = 2;
+                this.smoothLevel = depth - 7; // depth - 9; // 9
+                this.jumpLevel = 3;
             }
+
+            delta = 6;
+            //depth = 17;
+            //this.smoothLevel = 10;
             this.nanLevel = depth - 4;
+            this.jumpLevel = 2;
 
             this.points = [];
 

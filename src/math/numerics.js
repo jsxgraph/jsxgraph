@@ -3721,13 +3721,13 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
                 for (t = 0; t < 2; t++) {
 //console.log(">", algs[i], t)
                     res = this._limit_iterate(x0, h0, f, algs[i], t);
-// console.log("<", algs[i], res)
-                    if (res[2] > 0.1) {
+//console.log("<", algs[i], res)
+                    if (res[2] > 0.6) {
                         return res;
                     }
                 }
             }
-            return [f(x0 + Math.sign(h0) * Mat.eps), 'finite', 0];
+            return [f(x0 + Math.sign(h0) * Math.sqrt(Mat.eps)), 'finitex', 0];
         }
 
     };
