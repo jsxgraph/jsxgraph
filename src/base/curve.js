@@ -1544,29 +1544,40 @@ console.log("Add bc", depth, t_real, p_good.usrCoords, limes);
                 x_l, y_l,
                 x_r, y_r;
 
-console.log("Test jump at", t);
+            var a = [this.X(ta, true), this.Y(ta, true)],
+                b = [this.X(tb, true), this.Y(tb, true)],
+                max_func = function(t) {
+                    var c = [this.X(t, true), this.Y(t, true)];
+                    return -(Math.sqrt((a[0] - c[0]) * (a[0] - c[0]) + (a[1] - c[1]) * (a[1] - c[1])) +
+                        Math.sqrt((b[0] - c[0]) * (b[0] - c[0]) + (b[1] - c[1]) * (b[1] - c[1])));
+                },
+                t_min;
+
+            t_min = Numerics.fminbr(max_func, [ta, tb], this);
+            console.log("Test jump at", t, t_min);
+            t = t_min;
 
             // From left
-            res = Numerics.limit(ta, -step, this.X);
+            res = Numerics.limit(t, -step, this.X);
             x_l = res[0];
             if (res[1] === 'infinite') {
                 x_l = Math.sign(x_l) * Infinity;
             }
 // console.log("left.....")
-            res = Numerics.limit(ta, -step, this.Y);
+            res = Numerics.limit(t, -step, this.Y);
             y_l = res[0];
             if (res[1] === 'infinite') {
                 y_l = Math.sign(y_l) * Infinity;
             }
 // console.log(",,,,,,,", res)
             // From right
-            res = Numerics.limit(tb, step, this.X);
+            res = Numerics.limit(t, step, this.X);
             x_r = res[0];
             if (res[1] === 'infinite') {
                 x_r = Math.sign(x_r) * Infinity;
             }
 // console.log("right,,,,,,,")
-            res = Numerics.limit(tb, step, this.Y);
+            res = Numerics.limit(t, step, this.Y);
             y_r = res[0];
             if (res[1] === 'infinite') {
                 y_r = Math.sign(y_r) * Infinity;
@@ -2076,9 +2087,9 @@ console.log("number of points:", this.numberPoints);
                 }
                 bezier = Numerics.bezier(this.points);
                 up = bezier[3]();
-                minX = Numerics.fminbr(function(t) { return bezier[0](t); }, [0, up]);
+                minX = Numerics.fminbr(function(t) { return  bezier[0](t); }, [0, up]);
                 maxX = Numerics.fminbr(function(t) { return -bezier[0](t); }, [0, up]);
-                minY = Numerics.fminbr(function(t) { return bezier[1](t); }, [0, up]);
+                minY = Numerics.fminbr(function(t) { return  bezier[1](t); }, [0, up]);
                 maxY = Numerics.fminbr(function(t) { return -bezier[1](t); }, [0, up]);
 
                 minX = bezier[0](minX);
