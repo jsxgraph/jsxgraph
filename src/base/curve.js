@@ -1057,24 +1057,26 @@ define([
                 return;
             }
 
-            // Prevent two consecutive points at infinity (same direction)
+            // Prevent two consecutive points at infinity (either direction)
             if ((Math.abs(pnt.usrCoords[1]) === Infinity &&
-                Math.abs(this._lastUsrCrds[1]) === Infinity &&
-                Math.sign(pnt.usrCoords[1]) === Math.sign(this._lastUsrCrds[1])) ||
+                Math.abs(this._lastUsrCrds[1]) === Infinity /*&&
+                Math.sign(pnt.usrCoords[1]) === Math.sign(this._lastUsrCrds[1])*/) ||
                 (Math.abs(pnt.usrCoords[2]) === Infinity &&
-                Math.abs(this._lastUsrCrds[2]) === Infinity &&
-                Math.sign(pnt.usrCoords[2]) === Math.sign(this._lastUsrCrds[2]))) {
+                Math.abs(this._lastUsrCrds[2]) === Infinity /*&&
+                Math.sign(pnt.usrCoords[2]) === Math.sign(this._lastUsrCrds[2])*/)) {
                 return;
             }
 
             if (Type.exists(limes)) {
                 if (isNaN(pnt.scrCoords[1] + pnt.scrCoords[2])) {
                     // Ignore jump point if it follows limes
-                    if (((Math.abs(this._lastUsrCrds[1]) === Infinity && this._lastUsrCrds[1] === limes.right_x) ||
-                        Math.abs(this._lastUsrCrds[1] - limes.right_x) < Mat.eps) &&
-                        ((Math.abs(this._lastUsrCrds[2]) === Infinity && this._lastUsrCrds[2] === limes.right_y) ||
-                        Math.abs(this._lastUsrCrds[2] - limes.right_y) < Math.eps)) {
-                        console.log("SKIP:", pnt.usrCoords, this._lastUsrCrds, limes);
+                    // if (((Math.abs(this._lastUsrCrds[1]) === Infinity && this._lastUsrCrds[1] === limes.right_x) ||
+                    //     Math.abs(this._lastUsrCrds[1] - limes.right_x) < Mat.eps) &&
+                    //     ((Math.abs(this._lastUsrCrds[2]) === Infinity && this._lastUsrCrds[2] === limes.right_y) ||
+                    //     Math.abs(this._lastUsrCrds[2] - limes.right_y) < Math.eps)) {
+                    if ((Math.abs(this._lastUsrCrds[1]) === Infinity && Math.abs(limes.left_x) === Infinity) ||
+                        (Math.abs(this._lastUsrCrds[2]) === Infinity && Math.abs(limes.left_y) === Infinity)) {
+// console.log("SKIP:", pnt.usrCoords, this._lastUsrCrds, limes);
                         return;
                     }
                     //
@@ -1107,6 +1109,7 @@ define([
                 this._lastScrCrds = p2.copy('scrCoords');
                 this._lastUsrCrds = p2.copy('usrCoords');
             } else {
+//console.log("add", t, pnt.usrCoords, depth)
                 // Add regular point
                 pnt._t = t;
                 this.points.push(pnt);
@@ -1217,6 +1220,7 @@ define([
                 lim_x, lim_y, lim_type_x, lim_type_y, res,
                 limes = {};
 
+// console.log("B", ta, a, tb, b, tc, c,depth)
             pnt = new Coords(Const.COORDS_BY_USER, [0, 0], this.board, false);
             j = 0;
             // Bisect a, b and c until the point t_real is inside of the definition interval
@@ -1233,7 +1237,7 @@ define([
             if (isNaN(a[1] + a[2]) && !isNaN(c[1] + c[2])) {
                 t_bad = ta;
                 t_good = tc;
-                t_real2 = tb
+                t_real2 = tb;
             } else if (isNaN(b[1] + b[2]) && !isNaN(c[1] + c[2])) {
                 t_bad = tb;
                 t_good = tc;
@@ -1277,10 +1281,11 @@ define([
             res = Numerics.limit(t_real, 0.2 * Math.sign(t_real2 - t_real), this.X);
             lim_x = res[0];
             lim_type_x = res[1];
-    // console.log("Y");
             res = Numerics.limit(t_real, 0.2 * Math.sign(t_real2 - t_real), this.Y);
             lim_y = res[0];
             lim_type_y = res[1];
+
+//console.log("right", t_real2 - t_real, res);
 
 // console.log("Accelerator right", lim_type_x, lim_type_y);
 
@@ -1306,7 +1311,7 @@ define([
                     limes.right_y = NaN;
                 }
 
-// console.log("Add bc", depth, t_real, p_good.usrCoords, limes);
+//console.log("Add bc", depth, t_real, p_good.usrCoords, limes);
                 this._insertPoint(new Coords(Const.COORDS_BY_USER, p_good, this.board, false), lim_x, depth, limes);
                 return true;
             }
@@ -1517,12 +1522,13 @@ define([
                     return -(Math.sqrt((a[0] - c[0]) * (a[0] - c[0]) + (a[1] - c[1]) * (a[1] - c[1])) +
                             Math.sqrt((b[0] - c[0]) * (b[0] - c[0]) + (b[1] - c[1]) * (b[1] - c[1])));
                 },
+                step = 0.1,
                 t_min, x, y;
 
             t_min = Numerics.fminbr(max_func, [ta, tb], this);
-            x = Numerics.limit(t_min, (tb - ta) * 2, this.X)[0];
-            y = Numerics.limit(t_min, (tb - ta) * 2, this.Y)[0];
-//console.log(t_min, t_min-tc, x, y, this.Y(tc, true));
+            x = Numerics.limit(t_min, step, this.X)[0];
+            y = Numerics.limit(t_min, step, this.Y)[0];
+//console.log("cusp", t_min, x, y);
             return [[x, y], t_min];
         },
 
@@ -1535,10 +1541,16 @@ define([
                 x_r, y_r,
                 a = [this.X(ta, true), this.Y(ta, true)],
                 b = [this.X(tb, true), this.Y(tb, true)],
+                // max_func = function(t) {
+                //     var c = [this.X(t, true), this.Y(t, true)];
+                //     return -(Math.sqrt((a[0] - c[0]) * (a[0] - c[0]) + (a[1] - c[1]) * (a[1] - c[1])) +
+                //         Math.sqrt((b[0] - c[0]) * (b[0] - c[0]) + (b[1] - c[1]) * (b[1] - c[1])));
+                // },
                 max_func = function(t) {
-                    var c = [this.X(t, true), this.Y(t, true)];
-                    return -(Math.sqrt((a[0] - c[0]) * (a[0] - c[0]) + (a[1] - c[1]) * (a[1] - c[1])) +
-                        Math.sqrt((b[0] - c[0]) * (b[0] - c[0]) + (b[1] - c[1]) * (b[1] - c[1])));
+                    var e = Mat.eps * Mat.eps,
+                        c1 = [this.X(t, true), this.Y(t, true)],
+                        c2 = [this.X(t + e, true), this.Y(t + e, true)];
+                    return -Math.abs( (c2[1] - c1[1]) / (c2[0] - c1[0]) );
                 },
                 t_min;
 
@@ -1560,7 +1572,7 @@ define([
             if (res[1] === 'infinite') {
                 y_l = Math.sign(y_l) * Infinity;
             }
-// console.log(",,,,,,,", res)
+//console.log(",,,,,,,", res)
             // From right
             res = Numerics.limit(t, step, this.X);
             x_r = res[0];
@@ -1573,7 +1585,7 @@ define([
             if (res[1] === 'infinite') {
                 y_r = Math.sign(y_r) * Infinity;
             }
-// console.log(".....", res)
+//console.log(".....", res)
 
             if (isNaN(x_l) || isNaN(y_l) || isNaN(x_r) || isNaN(y_r)) {
                 // Saw NaN.
@@ -1645,6 +1657,7 @@ define([
             c = pnt.scrCoords;
 
             if (depth < 2 && this._borderCase(a, b, c, ta, tb, tc, depth)) {
+//console.log(tc, pnt.usrCoords);
                 return this;
             }
 
@@ -1652,30 +1665,35 @@ define([
 
             isSmooth = (depth < this.smoothLevel) && (ds[3] < delta);
 
+            isCusp = (depth < this.smoothLevel + 5) && (ds[0] < cusp_threshold * (ds[1] + ds[2]));
+
             isJump = (depth < this.jumpLevel) &&
                         ((ds[2] > jump_threshold * ds[0]) ||
                          (ds[1] > jump_threshold * ds[0]) ||
-                        ds[0] === Infinity || ds[1] === Infinity || ds[2] === Infinity);
+                          ds[0] === Infinity || ds[1] === Infinity || ds[2] === Infinity);
 
-            isCusp = (depth < this.smoothLevel + 2) && (ds[0] < cusp_threshold * (ds[1] + ds[2]));
+            if (isJump) {
+//console.log("isJump", depth);
+                isCusp = false;
+            }
 
             if (isCusp) {
+//console.log("isCusp", depth);
                 // mindepth = 0;
                 isSmooth = false;
-                if (depth <= 8) {
-// console.log("CUSP", depth)
-                    res = this._findCusp(ta, tb)
+                //if (depth <= 80) {
+                    res = this._findCusp(ta, tb);
                     pnt.setCoordinates(Const.COORDS_BY_USER, res[0], false);
                     tc = res[1];
-                }
+                //}
             }
 
             --depth;
 
             if (isJump) {
                 limes = this._findJump(ta, tc, tb);
-//console.log("Y result for", tc, limes)
                 if (limes.isJump) {
+                    // console.log(depth);
                     pnt.setCoordinates(Const.COORDS_BY_USER, [NaN, NaN], false);
                     this._insertPoint(pnt, tc, depth, limes);
                 }
@@ -1683,7 +1701,7 @@ define([
                 this._insertPoint(pnt, tc, depth, null);
             } else {
                 this._plotRecursive(a, ta, c, tc, depth, delta);
-                this._insertPoint(pnt, tc, depth, null);
+                //this._insertPoint(pnt, tc, depth, null);
                 this._plotRecursive(c, tc, b, tb, depth, delta);
             }
 
@@ -1709,21 +1727,21 @@ define([
             console.time("plot");
             if (this.board.updateQuality === this.board.BOARD_QUALITY_LOW) {
                 depth = Type.evaluate(this.visProp.recursiondepthlow) || 13;
+                depth = Type.evaluate(this.visProp.recursiondepthhigh) || 17;
                 delta = 2;
                 // this.smoothLevel = 5; //depth - 7;
-                this.smoothLevel = depth - 7;
-                this.jumpLevel = 2;
+                this.smoothLevel = depth - 10;
+                this.jumpLevel = 8;
             } else {
                 depth = Type.evaluate(this.visProp.recursiondepthhigh) || 17;
                 delta = 2;
                 // smoothLevel has to be small for graphs in a huge interval.
                 // this.smoothLevel = 3; //depth - 7; // 9
-                this.smoothLevel = depth - 7; // depth - 9; // 9
-                this.jumpLevel = 3;
+                this.smoothLevel = depth - 11; // depth - 9; // 9
+                this.jumpLevel = 8;
             }
 
             delta = 6;
-            //depth = 17;
             //this.smoothLevel = 10;
             this.nanLevel = depth - 4;
             this.jumpLevel = 2;
