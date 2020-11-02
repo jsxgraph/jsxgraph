@@ -1665,12 +1665,22 @@ define([
 
             isSmooth = (depth < this.smoothLevel) && (ds[3] < delta);
 
-            isCusp = (depth < this.smoothLevel + 5) && (ds[0] < cusp_threshold * (ds[1] + ds[2]));
+            isCusp = /*(depth < this.smoothLevel + 5) && */(ds[0] < cusp_threshold * (ds[1] + ds[2]));
 
-            isJump = (depth < this.jumpLevel) &&
+            isJump = /*(depth < this.jumpLevel) &&*/
                         ((ds[2] > jump_threshold * ds[0]) ||
                          (ds[1] > jump_threshold * ds[0]) ||
                           ds[0] === Infinity || ds[1] === Infinity || ds[2] === Infinity);
+
+
+            if (isJump) {
+                console.log("isJump", tc, depth);
+            }
+            if (isCusp) {
+                console.log("isCusp", tc, depth);
+            }
+            isJump = isJump && (depth < this.jumpLevel);
+            isCusp = isCusp && (depth < this.smoothLevel + 5);
 
             if (isJump) {
 //console.log("isJump", depth);
