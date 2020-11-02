@@ -53,9 +53,9 @@
  */
 
 define([
-    'jxg', 'base/constants', 'base/coords', 'base/element', 'math/math', 'math/numerics',
+    'jxg', 'base/constants', 'base/coords', 'base/element', 'math/math', 'math/extrapolate', 'math/numerics',
     'math/geometry', 'parser/geonext', 'utils/type', 'math/qdt'
-], function (JXG, Const, Coords, GeometryElement, Mat, Numerics, Geometry, GeonextParser, Type, QDT) {
+], function (JXG, Const, Coords, GeometryElement, Mat, Extrapolate, Numerics, Geometry, GeonextParser, Type, QDT) {
 
     "use strict";
 
@@ -1278,10 +1278,10 @@ define([
     // console.log("t", t, t_real, t_real2, j);
 
     // console.log("X");
-            res = Numerics.limit(t_real, 0.2 * Math.sign(t_real2 - t_real), this.X);
+            res = Extrapolate.limit(t_real, 0.2 * Math.sign(t_real2 - t_real), this.X);
             lim_x = res[0];
             lim_type_x = res[1];
-            res = Numerics.limit(t_real, 0.2 * Math.sign(t_real2 - t_real), this.Y);
+            res = Extrapolate.limit(t_real, 0.2 * Math.sign(t_real2 - t_real), this.Y);
             lim_y = res[0];
             lim_type_y = res[1];
 
@@ -1526,8 +1526,8 @@ define([
                 t_min, x, y;
 
             t_min = Numerics.fminbr(max_func, [ta, tb], this);
-            x = Numerics.limit(t_min, step, this.X)[0];
-            y = Numerics.limit(t_min, step, this.Y)[0];
+            x = Extrapolate.limit(t_min, step, this.X)[0];
+            y = Extrapolate.limit(t_min, step, this.Y)[0];
 //console.log("cusp", t_min, x, y);
             return [[x, y], t_min];
         },
@@ -1561,26 +1561,26 @@ define([
             //t = 0;
 
             // From left
-            res = Numerics.limit(t, -step, this.X);
+            res = Extrapolate.limit(t, -step, this.X);
             x_l = res[0];
             if (res[1] === 'infinite') {
                 x_l = Math.sign(x_l) * Infinity;
             }
 // console.log("left.....")
-            res = Numerics.limit(t, -step, this.Y);
+            res = Extrapolate.limit(t, -step, this.Y);
             y_l = res[0];
             if (res[1] === 'infinite') {
                 y_l = Math.sign(y_l) * Infinity;
             }
 //console.log(",,,,,,,", res)
             // From right
-            res = Numerics.limit(t, step, this.X);
+            res = Extrapolate.limit(t, step, this.X);
             x_r = res[0];
             if (res[1] === 'infinite') {
                 x_r = Math.sign(x_r) * Infinity;
             }
 // console.log("right,,,,,,,")
-            res = Numerics.limit(t, step, this.Y);
+            res = Extrapolate.limit(t, step, this.Y);
             y_r = res[0];
             if (res[1] === 'infinite') {
                 y_r = Math.sign(y_r) * Infinity;
