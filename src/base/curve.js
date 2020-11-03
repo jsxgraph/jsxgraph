@@ -1594,81 +1594,87 @@ define([
                 isSmooth = false,
                 may_be_special = '',
                 x, y, oc, depth, ds0,
-                stack = [], item;
+                stack = [],
+                stack_length = 0,
+                item;
 
             oc = this.board.origin.scrCoords;
-            stack.push([a, ta, b, tb, d, Infinity]);
+            stack[stack_length++] = [a, ta, b, tb, d, Infinity];
+            while (stack_length > 0) {
+                // item = stack.pop();
+                item = stack[--stack_length];
+                a = item[0];
+                ta = item[1];
+                b = item[2];
+                tb = item[3];
+                depth = item[4];
+                ds0 = item[5];
 
-        while (stack.length > 0) {
-            item = stack.pop();
-            a = item[0];
-            ta = item[1];
-            b = item[2];
-            tb = item[3];
-            depth = item[4];
-            ds0 = item[5];
+                isSmooth = false;
+                may_be_special = '';
+                limes = null;
+                //console.log(stack.length, item)
 
-            isSmooth = false;
-            may_be_special = '';
-            limes = null;
-            //console.log(stack.length, item)
-
-            if (this.points.length > 65536) {
-                return;
-            }
-
-            if (depth < this.nanLevel) {
-                // Test if the function is undefined in the whole interval [ta, tb]
-                if (this._isUndefined(a, ta, b, tb)) {
-                    continue;
+                if (this.points.length > 65536) {
+                    return;
                 }
-                // Test if the graph is far outside the visible are for the interval [ta, tb]
-                if (this._isOutside(a, ta, b, tb)) {
-                    continue;
+
+                if (depth < this.nanLevel) {
+                    // Test if the function is undefined in the whole interval [ta, tb]
+                    if (this._isUndefined(a, ta, b, tb)) {
+                        continue;
+                    }
+                    // Test if the graph is far outside the visible are for the interval [ta, tb]
+                    if (this._isOutside(a, ta, b, tb)) {
+                        continue;
+                    }
                 }
-            }
 
-            tc = (ta  + tb) * 0.5;
+                tc = (ta  + tb) * 0.5;
 
-            // Screen coordinates of point at tc
-            x = this.X(tc, true);
-            y = this.Y(tc, true);
-            c = [1, oc[1] + x * this.board.unitX, oc[2] - y * this.board.unitY];
-            ds = this._triangleDists(a, b, c);           // returns [d_ab, d_ac, d_cb, d_cd]
+                // Screen coordinates of point at tc
+                x = this.X(tc, true);
+                y = this.Y(tc, true);
+                c = [1, oc[1] + x * this.board.unitX, oc[2] - y * this.board.unitY];
+                ds = this._triangleDists(a, b, c);           // returns [d_ab, d_ac, d_cb, d_cd]
 
-            a_nan = isNaN(a[1] + a[2]);
-            b_nan = isNaN(b[1] + b[2]);
+                //if (depth < this.testLevel) {
+                    a_nan = isNaN(a[1] + a[2]);
+                    b_nan = isNaN(b[1] + b[2]);
 
-            if ((a_nan && !b_nan) || (!a_nan && b_nan)) {
-                may_be_special = 'border';
-            } else if (ds[0] > 0.66 * ds0 || ds[0] < this.cusp_threshold * (ds[1] + ds[2]) || ds[1] > 5 * ds[2] || ds[2] > 5 * ds[1]) {
-                may_be_special = 'cusp';
-            } else if ((ds[2] > this.jump_threshold * ds[0]) ||
-                       (ds[1] > this.jump_threshold * ds[0]) ||
-                        ds[0] === Infinity || ds[1] === Infinity || ds[2] === Infinity) {
-                may_be_special = 'jump';
-            }
+                    if ((a_nan && !b_nan) || (!a_nan && b_nan)) {
+                        may_be_special = 'border';
+                    } else if (ds[0] > 0.66 * ds0 ||
+                                ds[0] < this.cusp_threshold * (ds[1] + ds[2]) ||
+                                ds[1] > 5 * ds[2] ||
+                                ds[2] > 5 * ds[1]) {
+                        may_be_special = 'cusp';
+                    } else if ((ds[2] > this.jump_threshold * ds[0]) ||
+                               (ds[1] > this.jump_threshold * ds[0]) ||
+                                ds[0] === Infinity || ds[1] === Infinity || ds[2] === Infinity) {
+                        may_be_special = 'jump';
+                    }
+                //}
+                isSmooth = (may_be_special === '' && depth < this.smoothLevel && ds[3] < this.smooth_threshold);
 
-            isSmooth = (may_be_special === '' && depth < this.smoothLevel && ds[3] < this.smooth_threshold);
+                if (depth < this.testLevel && !isSmooth) {
+                    if (may_be_special === '') {
+                        isSmooth = true;
+                    } else {
+                        limes = this._getLimes(ta, a, tc, c, tb, b, may_be_special, depth);
+                    }
+                }
 
-            if (depth < this.testLevel && !isSmooth) {
-                if (may_be_special === '') {
-                    isSmooth = true;
+                if (limes !== null) {
+                    c = [1, NaN, NaN];
+                    this._insertPoint(c, tc, depth, limes);
+                } else if (depth <= mindepth || isSmooth) {
+                    this._insertPoint(c, tc, depth, null);
                 } else {
-                    limes = this._getLimes(ta, a, tc, c, tb, b, may_be_special, depth);
+                    stack[stack_length++] = [c, tc, b, tb, depth - 1, ds[0]];
+                    stack[stack_length++] = [a, ta, c, tc, depth - 1, ds[0]];
                 }
             }
-
-            if (limes !== null) {
-                c = [1, NaN, NaN];
-                this._insertPoint(c, tc, depth, limes);
-            } else if (depth <= mindepth || isSmooth) {
-                this._insertPoint(c, tc, depth, null);
-            } else {
-                stack.push([c, tc, b, tb, depth - 1, ds[0]]);
-                stack.push([a, ta, c, tc, depth - 1, ds[0]]);
-            }
-        }
 
             return this;
         },
