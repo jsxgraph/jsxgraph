@@ -725,6 +725,31 @@ define([
          **********************************************************/
 
         /**
+         * Returns false if the event has been triggered faster than the maximum frame rate.
+         *
+         * @param {Event} evt Event object given by the browser (unused)
+         * @returns {Boolean} If the event has been triggered faster than the maximum frame rate, false is returned.
+         * @private
+         * @see JXG.Board#pointerMoveListener
+         * @see JXG.Board#touchMoveListener
+         * @see JXG.Board#mouseMoveListener
+         */
+        checkFrameRate: function(evt) {
+            var time = new Date().getTime();
+
+            if ((time - this.touchMoveLast) * this.attr.maxframerate < 1000) {
+                // this.updateQuality = this.BOARD_QUALITY_HIGH;
+                // this.triggerEventHandlers(['touchmove', 'move'], [evt, this.mode]);
+
+                return false;
+            }
+            // console.log(time - this.touchMoveLast, this.attr.maxframerate);
+
+            this.touchMoveLast = time;
+            return true;
+        },
+
+        /**
          * Calculates mouse coordinates relative to the boards container.
          * @returns {Array} Array of coordinates relative the boards container top left corner.
          */
@@ -2161,6 +2186,10 @@ define([
                 return this.BOARD_MODE_NONE;
             }
 
+            if (this.checkFrameRate(evt)) {
+                return false;
+            }
+
             if (this.mode !== this.BOARD_MODE_DRAG) {
                 this.dehighlightAll();
                 this.showInfobox(false);
@@ -2170,12 +2199,6 @@ define([
                 evt.preventDefault();
                 evt.stopPropagation();
             }
-
-            if (true) {
-                var time = new Date();
-                this.touchMoveLast = time.getTime() - 200;
-            }
-
 
             this.updateQuality = this.BOARD_QUALITY_LOW;
             // Mouse, touch or pen device
@@ -2551,6 +2574,10 @@ define([
             var i, pos1, pos2, time,
                 evtTouches = evt[JXG.touchProperty];
 
+            if (this.checkFrameRate(evt)) {
+                return false;
+            }
+
             if (this.mode !== this.BOARD_MODE_NONE) {
                 evt.preventDefault();
                 evt.stopPropagation();
@@ -2857,6 +2884,10 @@ define([
          */
         mouseMoveListener: function (evt) {
             var pos;
+
+            if (this.checkFrameRate(evt)) {
+                return false;
+            }
 
             pos = this.getMousePosition(evt);
 
