@@ -1754,8 +1754,12 @@ define([
             this.points.push(pa);
             this._lastScrCrds = pa.copy('scrCoords');   // Used in _insertPoint
             this._lastUsrCrds = pa.copy('usrCoords');   // Used in _insertPoint
-            //this._plotRecursive(a, ta, b, tb, depth, Infinity);
-            this._plotNonRecursive(a, ta, b, tb, depth);
+
+            if (Math.random() < 0.5) {
+                this._plotRecursive(a, ta, b, tb, depth, Infinity);
+            } else {
+                this._plotNonRecursive(a, ta, b, tb, depth);
+            }
             pb._t = tb;
             this.points.push(pb);
 
