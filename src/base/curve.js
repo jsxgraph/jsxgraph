@@ -1586,6 +1586,100 @@ define([
             return this;
         },
 
+        _plotNonRecursive: function (a, ta, b, tb, d) {
+            var tc, c, ds,
+                mindepth = 0,
+                limes = null,
+                a_nan, b_nan,
+                isSmooth = false,
+                may_be_special = '',
+                x, y, oc, depth, ds0,
+                stack = [], item;
+
+            oc = this.board.origin.scrCoords;
+            stack.push([a, ta, b, tb, d, Infinity]);
+
+        while (stack.length > 0) {
+            item = stack.pop();
+            a = item[0];
+            ta = item[1];
+            b = item[2];
+            tb = item[3];
+            depth = item[4];
+            ds0 = item[5];
+
+            isSmooth = false;
+            may_be_special = '';
+            limes = null;
+            //console.log(stack.length, item)
+
+            if (this.points.length > 65536) {
+                return;
+            }
+
+            if (depth < this.nanLevel) {
+                // Test if the function is undefined in the whole interval [ta, tb]
+                if (this._isUndefined(a, ta, b, tb)) {
+                    continue;
+                }
+                // Test if the graph is far outside the visible are for the interval [ta, tb]
+                if (this._isOutside(a, ta, b, tb)) {
+                    continue;
+                }
+            }
+
+            tc = (ta  + tb) * 0.5;
+
+            // Screen coordinates of point at tc
+            x = this.X(tc, true);
+            y = this.Y(tc, true);
+            c = [1, oc[1] + x * this.board.unitX, oc[2] - y * this.board.unitY];
+//console.log(x, y);
+            ds = this._triangleDists(a, b, c);           // returns [d_ab, d_ac, d_cb, d_cd]
+
+            a_nan = isNaN(a[1] + a[2]);
+            b_nan = isNaN(b[1] + b[2]);
+
+            if ((a_nan && !b_nan) || (!a_nan && b_nan)) {
+                may_be_special = 'border';
+            } else if (ds[0] > 0.66 * ds0 || ds[0] < this.cusp_threshold * (ds[1] + ds[2]) || ds[1] > 5 * ds[2] || ds[2] > 5 * ds[1]) {
+                may_be_special = 'cusp';
+            } else if ((ds[2] > this.jump_threshold * ds[0]) ||
+                       (ds[1] > this.jump_threshold * ds[0]) ||
+                        ds[0] === Infinity || ds[1] === Infinity || ds[2] === Infinity) {
+                may_be_special = 'jump';
+            }
+
+            isSmooth = (may_be_special === '' && depth < this.smoothLevel && ds[3] < this.smooth_threshold);
+
+            if (depth < this.testLevel && !isSmooth) {
+                if (may_be_special === '') {
+                    isSmooth = true;
+                } else {
+                    limes = this._getLimes(ta, a, tc, c, tb, b, may_be_special, depth);
+                }
+            }
+
+            //--depth;
+
+            if (limes !== null) {
+                c = [1, NaN, NaN];
+                this._insertPoint(c, tc, depth, limes);
+//console.log("A")
+            } else if (depth <= mindepth || isSmooth) {
+//console.log("B")
+                this._insertPoint(c, tc, depth, null);
+            } else {
+//console.log("C")
+                stack.push([c, tc, b, tb, depth - 1, ds[0]]);
+                stack.push([a, ta, c, tc, depth - 1, ds[0]]);
+            }
+            //++depth;
+        }
+
+            return this;
+        },
+
         /**
          * Updates the data points of a parametric curve. This version is used if {@link JXG.Curve#doadvancedplot} is <tt>true</tt>.
          * @param {Number} mi Left bound of curve
@@ -1660,7 +1754,8 @@ define([
             this.points.push(pa);
             this._lastScrCrds = pa.copy('scrCoords');   // Used in _insertPoint
             this._lastUsrCrds = pa.copy('usrCoords');   // Used in _insertPoint
-            this._plotRecursive(a, ta, b, tb, depth, Infinity);
+            //this._plotRecursive(a, ta, b, tb, depth, Infinity);
+            this._plotNonRecursive(a, ta, b, tb, depth);
             pb._t = tb;
             this.points.push(pb);
 
