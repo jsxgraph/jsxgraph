@@ -410,7 +410,7 @@ define([
          * touchStart because Android's Webkit browser fires too much of them.
          * @type Number
          */
-        // this.touchMoveLast = 0;
+        this.touchMoveLast = 0;
 
         /**
          * Contains the last time (epoch, msec) since the last getCoordsTopLeftCorner call which was not thrown away.
@@ -2170,6 +2170,12 @@ define([
                 evt.preventDefault();
                 evt.stopPropagation();
             }
+
+            if (true) {
+                var time = new Date();
+                this.touchMoveLast = time.getTime() - 200;
+            }
+
 
             this.updateQuality = this.BOARD_QUALITY_LOW;
             // Mouse, touch or pen device
