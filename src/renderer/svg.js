@@ -393,7 +393,7 @@ define([
         shortenPath: function(node, offFirst, offLast) {
             var le, stroke;
 
-            if (Type.exists(node.getTotalLength)) {
+            if (!(offFirst === 0 && offLast === 0) && Type.exists(node.getTotalLength)) {
                 try {
                     le = node.getTotalLength();
                     stroke = le - offFirst - offLast;
