@@ -770,11 +770,11 @@ define([
 
             if (Type.evaluate(this.visProp.curvetype) !== 'plot' &&
                     Type.evaluate(this.visProp.rdpsmoothing)) {
-                // console.time("rdp");
+                console.time("rdp");
                 this.points = Numerics.RamerDouglasPeucker(this.points, 0.2);
                 this.numberPoints = this.points.length;
-                // console.timeEnd("rdp");
-                // console.log(this.numberPoints);
+                console.timeEnd("rdp");
+                console.log(this.numberPoints);
             }
 
             len = this.numberPoints;
