@@ -1601,8 +1601,8 @@ define([
                 w2, h2, bbox,
                 ret_arr;
 
-            console.log("-----------------------------------------------------------");
-            console.time("plot");
+            // console.log("-----------------------------------------------------------");
+            // console.time("plot");
             if (this.board.updateQuality === this.board.BOARD_QUALITY_LOW) {
                 depth = Type.evaluate(this.visProp.recursiondepthlow) || 14;
             } else {
@@ -1665,9 +1665,9 @@ define([
             this.points.push(pb);
 
             this.numberPoints = this.points.length;
-            console.timeEnd("plot");
+           //  console.timeEnd("plot");
 
-console.log("number of points:", this.numberPoints);
+// console.log("number of points:", this.numberPoints);
 
             return this;
         },
