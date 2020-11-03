@@ -1019,6 +1019,14 @@ define([
             return !(isNaN(x0 + y0) && isNaN(x1 + y1));
         },
 
+        /**
+         * 
+         * @param {*} pnt
+         * @param {*} t 
+         * @param {*} depth 
+         * @param {*} limes
+         * @private
+         */
         _insertLimesPoint: function(pnt, t, depth, limes) {
             var x, y, p1, p2;
 
@@ -1317,7 +1325,7 @@ define([
          * the function is not defined, e.g. log(x) at x = 0.
          *
          * c is inbetween a and b
-         * @private
+         *
          * @param {Array} a Screen coordinates of the left interval bound
          * @param {Array} b Screen coordinates of the right interval bound
          * @param {Array} c Screen coordinates of the bisection point at (ta + tb) / 2
@@ -1326,6 +1334,8 @@ define([
          * @param {Number} tc (ta + tb) / 2 = tc. Parameter which evaluates to b, i.e. [1, X(tc), Y(tc)] = c in screen coordinates
          * @param {Number} depth Actual recursion depth. The recursion stops if depth is equal to 0.
          * @returns {JXG.Boolean} true if the point is inserted and the recursion should stop, false otherwise.
+         *
+         * @private
          */
         _getBorderPos: function(ta, a, tc, c, tb, b) {
             var t, pnt, p,
@@ -1383,6 +1393,11 @@ define([
             return t;
         },
 
+        /**
+         * 
+         * @param {Number} ta
+         * @param {Number} tb
+         */
         _getCuspPos: function(ta, tb) {
             var a = [this.X(ta, true), this.Y(ta, true)],
                 b = [this.X(tb, true), this.Y(tb, true)],
@@ -1395,6 +1410,11 @@ define([
             return Numerics.fminbr(max_func, [ta, tb], this);
         },
 
+        /**
+         *
+         * @param {Number} ta
+         * @param {Number} tb
+         */
         _getJumpPos: function(ta, tb) {
             var max_func = function(t) {
                     var e = Mat.eps * Mat.eps,
@@ -1406,15 +1426,20 @@ define([
             return Numerics.fminbr(max_func, [ta, tb], this);
         },
 
+        /**
+         *
+         * @param {Number} t
+         * @private
+         */
         _getLimits: function(t) {
             var res,
-            step = 0.1,
+                step = 2 / (this.maxX() - this.minX()),
                 x_l, x_r, y_l, y_r;
 
             // From left
             res = Extrapolate.limit(t, -step, this.X);
             x_l = res[0];
-            if (res[1] === 'infinite') {
+            if (res[1] === 'Number') {
                 x_l = Math.sign(x_l) * Infinity;
             }
 
@@ -1423,7 +1448,6 @@ define([
             if (res[1] === 'infinite') {
                 y_l = Math.sign(y_l) * Infinity;
             }
-//console.log(",,,,,,,", res)
 
             // From right
             res = Extrapolate.limit(t, step, this.X);
@@ -1437,7 +1461,6 @@ define([
             if (res[1] === 'infinite') {
                 y_r = Math.sign(y_r) * Infinity;
             }
-//console.log(".....", res)
 
             return {
                     left_x: x_l,
@@ -1447,6 +1470,18 @@ define([
                 };
         },
 
+        /**
+         * 
+         * @param {Number} ta
+         * @param {Array} a
+         * @param {Number} tc
+         * @param {Array} c
+         * @param {Number} tb
+         * @param {Array} b
+         * @param {String} may_be_special
+         * @param {Number} depth
+         * @private
+         */
         _getLimes: function(ta, a, tc, c, tb, b, may_be_special, depth) {
             var t;
 
@@ -1457,7 +1492,6 @@ define([
             } else if (may_be_special === 'jump') {
                 t = this._getJumpPos(ta, tb);
             }
-//console.log(may_be_special, t, depth);
             return this._getLimits(t);
         },
 
@@ -1474,7 +1508,7 @@ define([
          *                 the segment [a,b] is regarded as straight line.
          * @returns {JXG.Curve} Reference to the curve object.
          */
-        _plotRecursive: function (a, ta, b, tb, depth, delta) {
+        _plotRecursive: function (a, ta, b, tb, depth, ds0) {
             var tc, c,
                 ds, mindepth = 0,
                 limes = null,
@@ -1482,13 +1516,13 @@ define([
                 isSmooth = false,
                 cusp_threshold = 0.5,
                 jump_threshold = 0.99,
+                smooth_threshold = 2,
                 may_be_special = '',
                 pnt = new Coords(Const.COORDS_BY_USER, [0, 0], this.board, false);
 
             if (this.points.length > 65536) {
                 return;
             }
-//console.log(this.numberPoints, this.points.length);
 
             if (depth < this.nanLevel) {
                 // Test if the function is undefined in the whole interval [ta, tb]
@@ -1510,9 +1544,8 @@ define([
             b_nan = isNaN(b[1] + b[2]);
 
             if ((a_nan && !b_nan) || (!a_nan && b_nan)) {
-// console.log(ta, tb, a, b, depth);
                 may_be_special = 'border';
-            } else if (ds[0] < cusp_threshold * (ds[1] + ds[2])) {
+            } else if (ds[0] > 0.66 * ds0 || ds[0] < cusp_threshold * (ds[1] + ds[2]) || ds[1] > 5 * ds[2] || ds[2] > 5 * ds[1]) {
                 may_be_special = 'cusp';
             } else if ((ds[2] > jump_threshold * ds[0]) ||
                        (ds[1] > jump_threshold * ds[0]) ||
@@ -1520,7 +1553,7 @@ define([
                 may_be_special = 'jump';
             }
 
-            isSmooth = (depth < this.smoothLevel) && (ds[3] < delta);
+            isSmooth = (may_be_special === '' && depth < this.smoothLevel && ds[3] < smooth_threshold);
 
             if (depth < this.testLevel && !isSmooth) {
                 if (may_be_special === '') {
@@ -1538,9 +1571,9 @@ define([
             } else if (depth <= mindepth || isSmooth) {
                 this._insertPoint(pnt, tc, depth, null);
             } else {
-                this._plotRecursive(a, ta, c, tc, depth, delta);
+                this._plotRecursive(a, ta, c, tc, depth, ds[0]);
                 //this._insertPoint(pnt, tc, depth, null);
-                this._plotRecursive(c, tc, b, tb, depth, delta);
+                this._plotRecursive(c, tc, b, tb, depth, ds[0]);
             }
 
             return this;
@@ -1557,7 +1590,7 @@ define([
                 suspendUpdate = false,
                 pa = new Coords(Const.COORDS_BY_USER, [0, 0], this.board, false),
                 pb = new Coords(Const.COORDS_BY_USER, [0, 0], this.board, false),
-                depth, delta,
+                depth,
                 w2, h2, bbox,
                 ret_arr;
 
@@ -1565,20 +1598,14 @@ define([
             console.time("plot");
             if (this.board.updateQuality === this.board.BOARD_QUALITY_LOW) {
                 depth = Type.evaluate(this.visProp.recursiondepthlow) || 14;
-                depth = Type.evaluate(this.visProp.recursiondepthhigh) -2;
-                delta = 2;
-                // this.smoothLevel = 5; //depth - 7;
-                this.smoothLevel = depth - 8;
             } else {
                 depth = Type.evaluate(this.visProp.recursiondepthhigh) || 17;
-                delta = 2;
-                // smoothLevel has to be small for graphs in a huge interval.
-                // this.smoothLevel = 3; //depth - 7; // 9
-                this.smoothLevel = depth - 8; // depth - 9; // 9
             }
 
+            // smoothLevel has to be small for graphs in a huge interval.
+            this.smoothLevel = 7; //depth - 10;
             this.nanLevel = depth - 4;
-            this.testLevel = 6;
+            this.testLevel = 4;
 
             this.points = [];
 
@@ -1621,10 +1648,9 @@ define([
             b = pb.copy('scrCoords');
             pa._t = ta;
             this.points.push(pa);
-            // this._lastCrds = pa.copy('scrCoords');   // Used in _insertPoint
             this._lastScrCrds = pa.copy('scrCoords');   // Used in _insertPoint
             this._lastUsrCrds = pa.copy('usrCoords');   // Used in _insertPoint
-            this._plotRecursive(a, ta, b, tb, depth, delta);
+            this._plotRecursive(a, ta, b, tb, depth, Infinity);
             pb._t = tb;
             this.points.push(pb);
 
