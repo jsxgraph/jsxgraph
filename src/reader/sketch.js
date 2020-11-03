@@ -1399,8 +1399,13 @@
                         if (JXG.isString(step.args.points[i])) {
                             set_str += '\'' + step.args.points[i] + '\'';
                         } else {
-                            x = step.args.points[i][0].toPrecision(4);
-                            y = step.args.points[i][1].toPrecision(4);
+                            if (step.args.points[i].length === 3) {
+                                x = step.args.points[i][1].toPrecision(4);
+                                y = step.args.points[i][2].toPrecision(4);
+                            } else {
+                                x = step.args.points[i][0].toPrecision(4);
+                                y = step.args.points[i][1].toPrecision(4);
+                            }
                             set_str += '[' + x + ',' + y + ']';
                         }
                         if (i < le - 1) {

@@ -470,7 +470,17 @@ define([
             animationDelay: 35,
 
             /**
-             * Allow user interaction by registering mouse and touch events.
+             * Maximum frame rate of the board, i.e. maximum number of updates per second
+             * triggered by move events.
+             *
+             * @name JXG.Board#maxFrameRate
+             * @type Number
+             * @default 40
+             */
+            maxFrameRate: 40,
+
+            /**
+             * Allow user interaction by registering mouse, pointer and touch events.
              *
              * @name JXG.Board#registerEvents
              * @type Boolean
