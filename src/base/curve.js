@@ -1634,7 +1634,6 @@ define([
             x = this.X(tc, true);
             y = this.Y(tc, true);
             c = [1, oc[1] + x * this.board.unitX, oc[2] - y * this.board.unitY];
-//console.log(x, y);
             ds = this._triangleDists(a, b, c);           // returns [d_ab, d_ac, d_cb, d_cd]
 
             a_nan = isNaN(a[1] + a[2]);
@@ -1660,21 +1659,15 @@ define([
                 }
             }
 
-            //--depth;
-
             if (limes !== null) {
                 c = [1, NaN, NaN];
                 this._insertPoint(c, tc, depth, limes);
-//console.log("A")
             } else if (depth <= mindepth || isSmooth) {
-//console.log("B")
                 this._insertPoint(c, tc, depth, null);
             } else {
-//console.log("C")
                 stack.push([c, tc, b, tb, depth - 1, ds[0]]);
                 stack.push([a, ta, c, tc, depth - 1, ds[0]]);
             }
-            //++depth;
         }
 
             return this;
@@ -1754,12 +1747,8 @@ define([
             this.points.push(pa);
             this._lastScrCrds = pa.copy('scrCoords');   // Used in _insertPoint
             this._lastUsrCrds = pa.copy('usrCoords');   // Used in _insertPoint
-
-            if (Math.random() < 0.5) {
-                this._plotRecursive(a, ta, b, tb, depth, Infinity);
-            } else {
-                this._plotNonRecursive(a, ta, b, tb, depth);
-            }
+            // this._plotRecursive(a, ta, b, tb, depth, Infinity);
+            this._plotNonRecursive(a, ta, b, tb, depth);
             pb._t = tb;
             this.points.push(pb);
 
