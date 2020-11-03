@@ -1031,7 +1031,7 @@ define([
          * @private
          */
         _insertLimesPoint: function(pnt, t, depth, limes) {
-            var x, y, p1, p2;
+            var p0, p1, p2;
 
             // Ignore jump point if it follows limes
             if ((Math.abs(this._lastUsrCrds[1]) === Infinity && Math.abs(limes.left_x) === Infinity) ||
@@ -1055,14 +1055,15 @@ define([
 
             // Add points at a jump. pnt contains [NaN, NaN]
             //console.log("Add", t, pnt.usrCoords, limes, depth)
-            p1 = new Coords(Const.COORDS_BY_USER, [limes.left_x, limes.left_y], this.board);
-            p1._t = t;
-            this.points.push(p1);
+            p0 = new Coords(Const.COORDS_BY_USER, [limes.left_x, limes.left_y], this.board);
+            p0._t = t;
+            this.points.push(p0);
 
             if (!isNaN(limes.left_x) && !isNaN(limes.left_y) && !isNaN(limes.right_x) && !isNaN(limes.right_y) &&
                 (Math.abs(limes.left_x - limes.right_x) > Mat.eps || Math.abs(limes.left_y - limes.right_y) > Mat.eps)) {
-                pnt._t = t;
-                this.points.push(pnt);
+                p1 = new Coords(Const.COORDS_BY_SCREEN, pnt, this.board);
+                p1._t = t;
+                this.points.push(p1);
             }
 
             p2 = new Coords(Const.COORDS_BY_USER, [limes.right_x, limes.right_y], this.board);
@@ -1083,10 +1084,10 @@ define([
          */
         _insertPoint: function (pnt, t, depth, limes) {
             var last_is_real = !isNaN(this._lastScrCrds[1] + this._lastScrCrds[2]),     // The last point was real
-                point_is_real  = !isNaN(pnt.scrCoords[1] + pnt.scrCoords[2]),        // New point is real point
+                point_is_real  = !isNaN(pnt[1] + pnt[2]),                               // New point is real point
                 cw = this.board.canvasWidth,
                 ch = this.board.canvasHeight,
-                x, y, p1, p2,
+                p,
                 near = 0.8,
                 off = 500;
 
@@ -1098,8 +1099,8 @@ define([
             // Check if point has real coordinates and
             // coordinates are not too far away from canvas.
             point_is_real = point_is_real &&
-                        (pnt.scrCoords[1] > -off && pnt.scrCoords[2] > -off &&
-                         pnt.scrCoords[1] < cw + off && pnt.scrCoords[2] < ch + off);
+                        (pnt[1] > -off     && pnt[2] > -off &&
+                         pnt[1] < cw + off && pnt[2] < ch + off);
 
             // Prevent two consecutive NaNs
             if (!last_is_real && !point_is_real) {
@@ -1108,25 +1109,26 @@ define([
 
             // Prevent two consecutive points which are too close
             if (point_is_real && last_is_real &&
-                Math.abs(pnt.scrCoords[1] - this._lastScrCrds[1]) < near &&
-                Math.abs(pnt.scrCoords[2] - this._lastScrCrds[2]) < near) {
+                Math.abs(pnt[1] - this._lastScrCrds[1]) < near &&
+                Math.abs(pnt[2] - this._lastScrCrds[2]) < near) {
                 return;
             }
 
             // Prevent two consecutive points at infinity (either direction)
-            if ((Math.abs(pnt.usrCoords[1]) === Infinity &&
+            if ((Math.abs(pnt[1]) === Infinity &&
                  Math.abs(this._lastUsrCrds[1]) === Infinity) ||
-                (Math.abs(pnt.usrCoords[2]) === Infinity &&
+                (Math.abs(pnt[2]) === Infinity &&
                  Math.abs(this._lastUsrCrds[2]) === Infinity)) {
                 return;
             }
 
             //console.log("add", t, pnt.usrCoords, depth)
             // Add regular point
-            pnt._t = t;
-            this.points.push(pnt);
-            this._lastScrCrds = pnt.copy('scrCoords');
-            this._lastUsrCrds = pnt.copy('usrCoords');
+            p = new Coords(Const.COORDS_BY_SCREEN, pnt, this.board);
+            p._t = t;
+            this.points.push(p);
+            this._lastScrCrds = p.copy('scrCoords');
+            this._lastUsrCrds = p.copy('usrCoords');
         },
 
         /**
@@ -1512,16 +1514,13 @@ define([
          * @returns {JXG.Curve} Reference to the curve object.
          */
         _plotRecursive: function (a, ta, b, tb, depth, ds0) {
-            var tc, c,
-                ds, mindepth = 0,
+            var tc, c, ds,
+                mindepth = 0,
                 limes = null,
                 a_nan, b_nan,
                 isSmooth = false,
-                cusp_threshold = 0.5,
-                jump_threshold = 0.99,
-                smooth_threshold = 2,
                 may_be_special = '',
-                pnt = new Coords(Const.COORDS_BY_USER, [0, 0], this.board, false);
+                x, y, oc;
 
             if (this.points.length > 65536) {
                 return;
@@ -1539,8 +1538,13 @@ define([
             }
 
             tc = (ta  + tb) * 0.5;
-            pnt.setCoordinates(Const.COORDS_BY_USER, [this.X(tc, true), this.Y(tc, true)], false);
-            c = pnt.scrCoords;
+
+            // Screen coordinates of point at tc
+            x = this.X(tc, true);
+            y = this.Y(tc, true);
+            oc = this.board.origin.scrCoords;
+            c = [1, oc[1] + x * this.board.unitX, oc[2] - y * this.board.unitY];
+
             ds = this._triangleDists(a, b, c);           // returns [d_ab, d_ac, d_cb, d_cd]
 
             a_nan = isNaN(a[1] + a[2]);
@@ -1548,15 +1552,15 @@ define([
 
             if ((a_nan && !b_nan) || (!a_nan && b_nan)) {
                 may_be_special = 'border';
-            } else if (ds[0] > 0.66 * ds0 || ds[0] < cusp_threshold * (ds[1] + ds[2]) || ds[1] > 5 * ds[2] || ds[2] > 5 * ds[1]) {
+            } else if (ds[0] > 0.66 * ds0 || ds[0] < this.cusp_threshold * (ds[1] + ds[2]) || ds[1] > 5 * ds[2] || ds[2] > 5 * ds[1]) {
                 may_be_special = 'cusp';
-            } else if ((ds[2] > jump_threshold * ds[0]) ||
-                       (ds[1] > jump_threshold * ds[0]) ||
+            } else if ((ds[2] > this.jump_threshold * ds[0]) ||
+                       (ds[1] > this.jump_threshold * ds[0]) ||
                         ds[0] === Infinity || ds[1] === Infinity || ds[2] === Infinity) {
                 may_be_special = 'jump';
             }
 
-            isSmooth = (may_be_special === '' && depth < this.smoothLevel && ds[3] < smooth_threshold);
+            isSmooth = (may_be_special === '' && depth < this.smoothLevel && ds[3] < this.smooth_threshold);
 
             if (depth < this.testLevel && !isSmooth) {
                 if (may_be_special === '') {
@@ -1569,13 +1573,13 @@ define([
             --depth;
 
             if (limes !== null) {
-                pnt.setCoordinates(Const.COORDS_BY_USER, [NaN, NaN], false);
-                this._insertPoint(pnt, tc, depth, limes);
+                c = [1, NaN, NaN];
+                this._insertPoint(c, tc, depth, limes);
             } else if (depth <= mindepth || isSmooth) {
-                this._insertPoint(pnt, tc, depth, null);
+                this._insertPoint(c, tc, depth, null);
             } else {
                 this._plotRecursive(a, ta, c, tc, depth, ds[0]);
-                //this._insertPoint(pnt, tc, depth, null);
+                //this._insertPoint(c, tc, depth, null);
                 this._plotRecursive(c, tc, b, tb, depth, ds[0]);
             }
 
@@ -1609,6 +1613,9 @@ define([
             this.smoothLevel = 7; //depth - 10;
             this.nanLevel = depth - 4;
             this.testLevel = 4;
+            this.cusp_threshold = 0.5,
+            this.jump_threshold = 0.99,
+            this.smooth_threshold = 2,
 
             this.points = [];
 

@@ -3362,7 +3362,8 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
                     newPts[0] = pts[i];
                     RDP(pts, i, k, eps, newPts);
                     allPts = allPts.concat(newPts);
-                } else {
+                }
+                if (i >= len) {
                     break;
                 }
                 // Push the NaN point
