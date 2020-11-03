@@ -393,7 +393,7 @@ define([
         shortenPath: function(node, offFirst, offLast) {
             var le, stroke;
 
-            if (Type.exists(node.getTotalLength)) {
+            if (!(offFirst === 0 && offLast === 0) && Type.exists(node.getTotalLength)) {
                 try {
                     le = node.getTotalLength();
                     stroke = le - offFirst - offLast;
@@ -635,6 +635,17 @@ define([
             if (Type.exists(shape) && Type.exists(shape.parentNode)) {
                 shape.parentNode.removeChild(shape);
             }
+        },
+
+        // already documented in JXG.AbstractRenderer
+        setLayer: function (el, level) {
+            if (!Type.exists(level)) {
+                level = 0;
+            } else if (level >= Options.layer.numlayers) {
+                level = Options.layer.numlayers - 1;
+            }
+
+            this.layer[level].appendChild(el.rendNode);
         },
 
         // already documented in JXG.AbstractRenderer

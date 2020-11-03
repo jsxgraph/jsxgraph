@@ -496,7 +496,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
             if (this.hasSpare) {
                 this.hasSpare = false;
-                return this.spare * stdDev + this.mean;
+                return this.spare * stdDev + mean;
             }
 
             do {

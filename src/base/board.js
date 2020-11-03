@@ -105,7 +105,7 @@ define([
 
         /**
          * Board is in drag mode, objects aren't highlighted on mouse over and the object referenced in
-         * {JXG.Board#mouse} is updated on mouse movement.
+         * {@link JXG.Board#mouse} is updated on mouse movement.
          * @type Number
          * @constant
          * @see JXG.Board#drag_obj
@@ -287,7 +287,7 @@ define([
 
         /**
          * An array containing all geometric objects on the board in the order of construction.
-         * @type {Array}
+         * @type Array
          */
         this.objectsList = [];
 
@@ -410,7 +410,7 @@ define([
          * touchStart because Android's Webkit browser fires too much of them.
          * @type Number
          */
-        // this.touchMoveLast = 0;
+        this.touchMoveLast = 0;
 
         /**
          * Contains the last time (epoch, msec) since the last getCoordsTopLeftCorner call which was not thrown away.
@@ -725,6 +725,31 @@ define([
          **********************************************************/
 
         /**
+         * Returns false if the event has been triggered faster than the maximum frame rate.
+         *
+         * @param {Event} evt Event object given by the browser (unused)
+         * @returns {Boolean} If the event has been triggered faster than the maximum frame rate, false is returned.
+         * @private
+         * @see JXG.Board#pointerMoveListener
+         * @see JXG.Board#touchMoveListener
+         * @see JXG.Board#mouseMoveListener
+         */
+        checkFrameRate: function(evt) {
+            var time = new Date().getTime();
+
+            if ((time - this.touchMoveLast) * this.attr.maxframerate < 1000) {
+                // this.updateQuality = this.BOARD_QUALITY_HIGH;
+                // this.triggerEventHandlers(['touchmove', 'move'], [evt, this.mode]);
+
+                return false;
+            }
+            // console.log(time - this.touchMoveLast, this.attr.maxframerate);
+
+            this.touchMoveLast = time;
+            return true;
+        },
+
+        /**
          * Calculates mouse coordinates relative to the boards container.
          * @returns {Array} Array of coordinates relative the boards container top left corner.
          */
@@ -956,7 +981,7 @@ define([
                 }
             }
 
-            if (collect.length > 0) {
+            if (this.attr.drag.enabled && collect.length > 0) {
                 this.mode = this.BOARD_MODE_DRAG;
             }
 
@@ -1709,7 +1734,8 @@ define([
             var c,
                 dir1 = [],
                 dir2 = [],
-                angle, mi = 10,
+                angle,
+                mi = 10,
                 isPinch = false,
                 // Save zoomFactors
                 zx = this.attr.zoom.factorx,
@@ -1723,14 +1749,24 @@ define([
             }
             evt.preventDefault();
 
+            dist = Geometry.distance([evt.touches[0].clientX, evt.touches[0].clientY],
+                [evt.touches[1].clientX, evt.touches[1].clientY], 2);
+
+            // Android pinch to zoom
+            // evt.scale was available in iOS touch events (pre iOS 13)
+            // evt.scale is undefined in Android
+            if (evt.scale === undefined) {
+                evt.scale = dist / this.prevDist;
+            }
+
             // Compute the angle of the two finger directions
             dir1 = [evt.touches[0].clientX - this.prevCoords[0][0],
                     evt.touches[0].clientY - this.prevCoords[0][1]];
             dir2 = [evt.touches[1].clientX - this.prevCoords[1][0],
                     evt.touches[1].clientY - this.prevCoords[1][1]];
 
-            if ((Math.abs(dir1[0]) < mi && Math.abs(dir1[1]) < mi) ||
-                (Math.abs(dir2[0]) < mi && Math.abs(dir2[1]) < mi)) {
+            if ((dir1[0] * dir1[0] + dir1[1] * dir1[1] < mi * mi) &&
+                (dir2[0] * dir2[0] + dir2[1] * dir2[1] < mi * mi)) {
                     return false;
             }
 
@@ -1739,15 +1775,6 @@ define([
                 Math.abs(angle) > Math.PI * 0.2 &&
                 Math.abs(angle) < Math.PI * 1.8) {
                 isPinch = true;
-            }
-
-            dist = Geometry.distance([evt.touches[0].clientX, evt.touches[0].clientY],
-                            [evt.touches[1].clientX, evt.touches[1].clientY], 2);
-
-            // Android pinch to zoom
-            if (evt.scale === undefined) {
-                // evt.scale is undefined in Android
-                evt.scale = dist / this.prevDist;
             }
 
             if (this.isPreviousGesture !== 'pan' && !isPinch) {
@@ -2033,7 +2060,7 @@ define([
                 return;     // don't continue as a normal click
             }
 
-            if (object) {
+            if (this.attr.drag.enabled && object) {
                 elements = [ object ];
                 this.mode = this.BOARD_MODE_DRAG;
             } else {
@@ -2149,13 +2176,18 @@ define([
          */
         pointerMoveListener: function (evt) {
             var i, j, pos,
-                type = this._getPointerInputDevice(evt);
+                type = 'mouse', // in case of no browser
+                eps;
 
             if (this._getPointerInputDevice(evt) == 'touch' && !this._pointerIsTouchRegistered(evt)) {
                 // Test, if there was a previous down event of this _getPointerId
                 // (in case it is a touch event).
                 // Otherwise this move event is ignored. This is necessary e.g. for sketchometry.
                 return this.BOARD_MODE_NONE;
+            }
+
+            if (this.checkFrameRate(evt)) {
+                return false;
             }
 
             if (this.mode !== this.BOARD_MODE_DRAG) {
@@ -2169,6 +2201,10 @@ define([
             }
 
             this.updateQuality = this.BOARD_QUALITY_LOW;
+            // Mouse, touch or pen device
+            type = this._getPointerInputDevice(evt),
+            eps = this.options.precision[type];
+            this.options.precision.hasPoint = eps;
 
             // selection
             if (this.selectingMode) {
@@ -2538,6 +2574,10 @@ define([
             var i, pos1, pos2, time,
                 evtTouches = evt[JXG.touchProperty];
 
+            if (this.checkFrameRate(evt)) {
+                return false;
+            }
+
             if (this.mode !== this.BOARD_MODE_NONE) {
                 evt.preventDefault();
                 evt.stopPropagation();
@@ -2618,7 +2658,6 @@ define([
             if (this.mode !== this.BOARD_MODE_DRAG) {
                 this.showInfobox(false);
             }
-
 
             this.triggerEventHandlers(['touchmove', 'move'], [evt, this.mode]);
             this.options.precision.hasPoint = this.options.precision.mouse;
@@ -2845,6 +2884,10 @@ define([
          */
         mouseMoveListener: function (evt) {
             var pos;
+
+            if (this.checkFrameRate(evt)) {
+                return false;
+            }
 
             pos = this.getMousePosition(evt);
 
@@ -3642,9 +3685,9 @@ define([
          * Removes object from board and renderer.
          * <p>
          * <b>Performance hints:</b> It is recommended to use the object's id.
-         * If many elements are removed, it is best to call board.suspendUpdate()
+         * If many elements are removed, it is best to call <tt>board.suspendUpdate()</tt>
          * before looping through the elements to be removed and call
-         * board.unsuspendUpdate() after the loop. Further, it is advisable to loop
+         * <tt>board.unsuspendUpdate()</tt> after the loop. Further, it is advisable to loop
          * in reverse order, i.e. remove the object in reverse order of their creation time.
          *
          * @param {JXG.GeometryElement|Array} object The object to remove or array of objects to be removed.
@@ -3676,7 +3719,7 @@ define([
             }
 
             try {
-                // // remove all children.
+                // remove all children.
                 for (el in object.childElements) {
                     if (object.childElements.hasOwnProperty(el)) {
                         object.childElements[el].board.removeObject(object.childElements[el]);

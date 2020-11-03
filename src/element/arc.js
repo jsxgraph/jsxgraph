@@ -481,7 +481,7 @@ define([
      * var p2 = board.create('point', [1.0, 0.5]);
      * var p3 = board.create('point', [3.5, 1.0]);
      *
-     * var a = board.create('arc', [p1, p2, p3]);
+     * var a = board.create('circumcirclearc', [p1, p2, p3]);
      * </pre><div class="jxgbox" id="JXG87125fd4-823a-41c1-88ef-d1a1369504e3" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
      * (function () {

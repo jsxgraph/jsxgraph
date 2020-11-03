@@ -1350,12 +1350,16 @@ define([
                         if (Type.exists(this.rendNodeTag)) {
                             this.rendNodeCheckbox.checked = !!value;
                         }
-                            break;
+                        break;
                     case 'maxlength':
                         // input. Is not available on initial call.
                         if (Type.exists(this.rendNodeTag)) {
                             this.rendNodeTag.maxlength = !!value;
                         }
+                        break;
+                    case 'layer':
+                        this.board.renderer.setLayer(this, Type.evaluate(value));
+                        this._set(key, value);
                         break;
                     default:
                         if (Type.exists(this.visProp[key]) &&
@@ -2246,7 +2250,7 @@ define([
          * @description This is a generic event handler. It exists for every possible attribute that can be set for
          * any element, e.g. if you want to be notified everytime an element's strokecolor is changed, is the event
          * <tt>attribute:strokecolor</tt>.
-         * @name JXG.GeometryElement#attribute:&lt;attribute&gt;
+         * @name JXG.GeometryElement#attribute:key
          * @param val The old value.
          * @param nval The new value
          * @param {Object} el Reference to the element

@@ -498,8 +498,8 @@ define([
          * at the start / end position of the line.
          *
          * @param  {JXG.Line} el Reference to the line object that gets arrow heads.
-         * @param  {JXG.Coords} c1  Coords of the first point of the line (after {@link JXG.Geometry#calcStraight}).
-         * @param  {JXG.Coords} c2  Coords of the second point of the line (after {@link JXG.Geometry#calcStraight}).
+         * @param  {JXG.Coords} c1  Coords of the first point of the line (after {@link JXG.Math.Geometry#calcStraight}).
+         * @param  {JXG.Coords} c2  Coords of the second point of the line (after {@link JXG.Math.Geometry#calcStraight}).
          * @param  {Object}  a
          * @return {object} Object containing how much the line has to be shortened.
          * Data structure: {c1, c2, d1x, d1y, d2x, d2y, sFirst, sLast}. sFirst and sLast is the length by which
@@ -706,9 +706,16 @@ define([
          * @see JXG.AbstractRenderer#getArrowHeadData
          */
         updatePathWithArrowHeads: function(el, doHighlight) {
-            var hl = doHighlight ? 'highlight' : '',
-                w = Type.evaluate(el.visProp[hl + 'strokewidth']),
+            var ev = el.visProp,
+                hl = doHighlight ? 'highlight' : '',
+                w,
                 arrowData;
+
+            if (doHighlight && ev.highlightstrokewidth) {
+                w = Math.max(Type.evaluate(ev.highlightstrokewidth), Type.evaluate(ev.strokewidth));
+            } else {
+                w = Type.evaluate(ev.strokewidth);
+            }
 
             // Get information if there are arrow heads and how large they are.
             arrowData = this.getArrowHeadData(el, w, hl);
@@ -1462,7 +1469,7 @@ define([
          * @param {Number} size A positive number describing the size. Usually the half of the width and height of
          * the drawn point.
          * @param {String} type A string describing the point's face. This method only accepts the shortcut version of
-         * each possible face: <tt>x, +, <>, ^, v, >, <
+         * each possible face: <tt>x, +, <>, ^, v, >, < </tt>
          */
         updatePathStringPoint: function (element, size, type) { /* stub */ },
 
@@ -1976,7 +1983,7 @@ define([
          * Convert SVG construction to base64 encoded SVG data URL.
          * Only available on SVGRenderer.
          *
-         * @see JXG.SVGRenderer#dumpToDataURL
+         * @see JXG.SVGRenderer#dumpToDataURI
          */
         dumpToDataURI: function (_ignoreTexts) {},
 
@@ -2007,7 +2014,17 @@ define([
          * @see JXG.AbstractRenderer#updatePathEndings
          * @see JXG.AbstractRenderer#updateLineEndings
          */
-        shortenPath: function(node, offFirst, offLast) {}
+        shortenPath: function(node, offFirst, offLast) {},
+
+        /**
+         * Move element into new layer. This is trivial for canvas, but needs more effort in SVG.
+         * Does not work dynamically, i.e. if level is a function.
+         *
+         * @param {JXG.GeometryElement} el Element which is put into different layer
+         * @param {Number} value Layer number
+         * @private
+         */
+        setLayer: function(el, level) {}
 
     });
 

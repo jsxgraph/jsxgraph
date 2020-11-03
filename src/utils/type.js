@@ -39,9 +39,10 @@
  */
 
 /**
- * @fileoverview type.js contains several functions to help deal with javascript's weak types. This file mainly consists
- * of detector functions which verify if a variable is or is not of a specific type and converter functions that convert
- * variables to another type or normalize the type of a variable.
+ * @fileoverview type.js contains several functions to help deal with javascript's weak types.
+ * This file mainly consists of detector functions which verify if a variable is or is not of
+ * a specific type and converter functions that convert variables to another type or normalize
+ * the type of a variable.
  */
 
 define([
@@ -327,15 +328,15 @@ define([
          * @param {Array} parents Array containing parent elements for a new object. This array may contain
          *    <ul>
          *      <li> {@link JXG.Point} objects
-         *      <li> {@link JXG.Element#name} of {@link JXG.Point} objects
-         *      <li> {@link JXG.Element#id} of {@link JXG.Point} objects
+         *      <li> {@link JXG.GeometryElement#name} of {@link JXG.Point} objects
+         *      <li> {@link JXG.GeometryElement#id} of {@link JXG.Point} objects
          *      <li> Coordinates of points given as array of numbers of length two or three, e.g. [2, 3].
          *      <li> Coordinates of points given as array of functions of length two or three. Each function returns one coordinate, e.g.
          *           [function(){ return 2; }, function(){ return 3; }]
          *      <li> Function returning coordinates, e.g. function() { return [2, 3]; }
          *    </ul>
          *  In the last three cases a new point will be created.
-         * @param {String} attrClass Main attribute class of newly created points, see {@link JXG@copyAttributes}
+         * @param {String} attrClass Main attribute class of newly created points, see {@link JXG#copyAttributes}
          * @param {Array} attrArray List of subtype attributes for the newly created points. The list of subtypes is mapped to the list of new points.
          * @returns {Array} List of newly created {@link JXG.Point} elements or false if not all returned elements are points.
          */
@@ -698,6 +699,7 @@ define([
          * returns "0.00" for toFixed(-0.000001, 2) instead of "-0.00" which
          * is returned by JavaScript's toFixed()
          *
+         * @memberOf JXG
          * @param  {Number} num       Number tp be rounded
          * @param  {Number} precision Decimal digits
          * @return {String}           Rounded number is returned as string
@@ -708,6 +710,7 @@ define([
 
         /**
          * Truncate a number <tt>val</tt> automatically.
+         * @memberOf JXG
          * @param val
          * @returns {Number}
          */

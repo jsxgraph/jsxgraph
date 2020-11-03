@@ -616,17 +616,42 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                 return 0;
             }
 
-            // a is an integer
+            // exponent is an integer
             if (Math.floor(exponent) === exponent) {
                 return Math.pow(base, exponent);
             }
 
-            // a is not an integer
+            // exponent is not an integer
             if (base > 0) {
                 return Math.exp(exponent * Math.log(base));
             }
 
             return NaN;
+        },
+
+        /**
+         * Compute base to the power of the rational exponent m / n.
+         * This function first reduces the fraction m/n and then computes
+         * JXG.Math.pow(base, m/n).
+         *
+         * This function is necessary to have the same results for e.g.
+         * (-8)^(1/3) = (-8)^(2/6) = -2
+         * @param {Number} base
+         * @param {Number} m numerator of exponent
+         * @param {Number} n denominator of exponent
+         * @returns {Number} base to the power of exponent.
+         */
+        ratpow: function(base, m, n) {
+            var g;
+            if (m === 0) {
+                return 1;
+            }
+            if (n === 0) {
+                return NaN;
+            }
+
+            g = this.gcd(m, n);
+            return this.nthroot(this.pow(base, m / g), n / g);
         },
 
         /**
@@ -713,7 +738,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
 
         /**
          * Greatest common divisor (gcd) of two numbers.
-         * @see http://rosettacode.org/wiki/Greatest_common_divisor#JavaScript
+         * @see <a href="http://rosettacode.org/wiki/Greatest_common_divisor#JavaScript">rosettacode.org</a>
          *
          * @param  {Number} a First number
          * @param  {Number} b Second number

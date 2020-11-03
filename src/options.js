@@ -320,7 +320,7 @@ define([
             showFullscreen: false,
 
             /**
-             * Attribute(s) to control the fullscreen icon. The attribute "showFullscreen" 
+             * Attribute(s) to control the fullscreen icon. The attribute "showFullscreen"
              * controls if the icon is shown.
              * The following attribute(s) can be set:
              * <ul>
@@ -362,7 +362,7 @@ define([
             },
 
             /**
-             * Show a button which allows to clear all traces of a board. 
+             * Show a button which allows to clear all traces of a board.
              *
              * @name JXG.Board#showClearTraces
              * @type Boolean
@@ -470,7 +470,17 @@ define([
             animationDelay: 35,
 
             /**
-             * Allow user interaction by registering mouse and touch events.
+             * Maximum frame rate of the board, i.e. maximum number of updates per second
+             * triggered by move events.
+             *
+             * @name JXG.Board#maxFrameRate
+             * @type Number
+             * @default 40
+             */
+            maxFrameRate: 40,
+
+            /**
+             * Allow user interaction by registering mouse, pointer and touch events.
              *
              * @name JXG.Board#registerEvents
              * @type Boolean
@@ -565,18 +575,35 @@ define([
              * <pre>
              * pan: {
              *   enabled: true   // Allow panning
-             *   needTwoFingers: true, // panning is done with two fingers on touch devices
+             *   needTwoFingers: false, // panning is done with two fingers on touch devices
              *   needShift: true, // mouse panning needs pressing of the shift key
              * }
              * </pre>
              *
              * @name JXG.Board#pan
              * @type Object
-             * @default
              */
             pan: {
                 needShift: true,
                 needTwoFingers: false,
+                enabled: true
+            },
+
+            /**
+             * Control the possibilities for dragging objects.
+             *
+             * Possible sub-attributes with default values are:
+             * <pre>
+             * drag: {
+             *   enabled: true   // Allow dragging
+             * }
+             * </pre>
+             *
+             * @name JXG.Board#drag
+             * @type Object
+             * @default {enabled: true}
+             */
+            drag: {
                 enabled: true
             },
 
@@ -636,7 +663,17 @@ define([
                 },
                 fillColor: '#ffff00',
                 visible: false
-            }
+            },
+
+            /**
+             * Format tick labels that were going to have scientific notation
+             * like 5.00e+6 to look like 5•10⁶.
+             *
+             * @name JXG.Board#beautifulScientificTickLabels
+             * @type Boolean
+             * @default false
+             */
+            beautifulScientificTickLabels: false
             /**#@-*/
         },
 
@@ -844,7 +881,7 @@ define([
              *                 gradientEndOffset: function() { return o2.Value(); },
              *                 hasInnerPoints: true
              *     });
-             * 
+             *
              * </pre><div id="JXG6081ca7f-0d09-4525-87ac-325a02fe2225" class="jxgbox" style="width: 300px; height: 300px;"></div>
              * <script type="text/javascript">
              *     (function() {
@@ -872,11 +909,11 @@ define([
              *                     gradientEndOffset: function() { return o2.Value(); },
              *                     hasInnerPoints: true
              *         });
-             * 
+             *
              *     })();
-             * 
+             *
              * </script><pre>
-             * 
+             *
              *
              * @type String
              * @name JXG.GeometryElement#gradient
@@ -1333,7 +1370,6 @@ define([
              *
              * @type Boolean
              * @name Ticks#insertTicks
-             * @see Ticks#equidistant
              * @see Ticks#minTicksDistance
              * @default false
              * @example
@@ -1361,6 +1397,14 @@ define([
              * </script><pre>
              */
             insertTicks: false,
+
+            /**
+             * Minimum distance in pixel of equidistant ticks in case insertTicks==true.
+             * @name Ticks#minTicksDistance
+             * @type: Number
+             * @default: 10
+             * @see Ticks#insertTicks
+             */
             minTicksDistance: 10,
 
             /**
@@ -1413,7 +1457,7 @@ define([
 
             /**
              * A string that is appended to every tick, used to represent the scale
-             * factor given in {@link JXG.Ticks#scaleSymbol}.
+             * factor given in {@link Ticks#scaleSymbol}.
              *
              * @type String
              * @default ''
@@ -1444,7 +1488,7 @@ define([
             maxLabelLength: 5,
 
             /**
-             * If a label exceeds {@link JXG.Ticks#maxLabelLength} this determines the precision used to shorten the tick label.
+             * If a label exceeds {@link Ticks#maxLabelLength} this determines the precision used to shorten the tick label.
              *
              * @type Number
              * @name Ticks#precision
@@ -1455,11 +1499,10 @@ define([
 
             /**
              * The default distance between two ticks. Please be aware that this value does not have
-             * to be used if {@link JXG.Ticks#insertTicks} is set to true.
+             * to be used if {@link Ticks#insertTicks} is set to true.
              *
              * @type Number
              * @name Ticks#ticksDistance
-             * @see Ticks#equidistant
              * @see Ticks#insertTicks
              * @default 1
              */
@@ -2551,7 +2594,7 @@ define([
              *
              * @name Image#snapSizeX
              *
-             * @see JXG.Point#snapToGrid
+             * @see Point#snapToGrid
              * @see Image#snapSizeY
              * @see JXG.Board#defaultAxes
              * @type Number
@@ -2567,7 +2610,7 @@ define([
              *
              * @name Image#snapSizeY
              *
-             * @see JXG.Point#snapToGrid
+             * @see Point#snapToGrid
              * @see Image#snapSizeX
              * @see JXG.Board#defaultAxes
              * @type Number
@@ -2840,8 +2883,8 @@ define([
             position: 'urt',
 
             /**
-             *  Label offset from label anchor
-             *  The label anchor is determined by JXG.GeometryElement#label.position
+             *  Label offset from label anchor.
+             *  The label anchor is determined by {@link Label#position}
              *
              * @name Label#offset
              * @see Label#position
@@ -2952,9 +2995,9 @@ define([
              * In case firstArrow is an object it has the sub-attributes:
              * <pre>
              * {
-             *      type: 1, // possible values are 1, 2, 3
-             *      size: 3,  // size of the arrow head.
-             *               //This value is multiplied with the strokeWidth of the line
+             *      type: 1, // possible values are 1, 2, ..., 6
+             *      size: 3, // size of the arrow head.
+             *               // This value is multiplied with the strokeWidth of the line
              *      highlightSize: 3, // size of the arrow head in case the element is highlighted
              * }
              * </pre>
@@ -2973,6 +3016,13 @@ define([
              *
              * In case firstArrow is an object it has the sub-attributes:
              * <pre>
+             * {
+             *      type: 1, // possible values are 1, 2, ..., 6
+             *      size: 3, // size of the arrow head.
+             *               // This value is multiplied with the strokeWidth of the line
+             *      highlightSize: 3, // size of the arrow head in case the element is highlighted
+             * }
+             * </pre>
              *
              * @example
              *     var p1 = board.create('point', [-5, 2], {size:1});
@@ -3006,15 +3056,7 @@ define([
              *
              *     })();
              *
-             * </script><pre>
-             *
-             * {
-             *      type: 1, // possible values are 1, 2, 3
-             *      size: 3,  // size of the arrow head.
-             *               //This value is multiplied with the strokeWidth of the line
-             *      highlightSize: 3, // size of the arrow head in case the element is highlighted
-             * }
-             * </pre>
+             * </script>
              *
              * @name Line#lastArrow
              * @see Line#firstArrow
@@ -3124,7 +3166,7 @@ define([
 
             /**
              * If set to true, the point will snap to a grid defined by
-             * {@link JXG.Point#snapSizeX} and {@link JXG.Point#snapSizeY}.
+             * {@link Point#snapSizeX} and {@link Point#snapSizeY}.
              *
              * @see Point#snapSizeX
              * @see Point#snapSizeY
@@ -3135,7 +3177,7 @@ define([
             snapToGrid: false,
 
             /**
-             * Defines together with {@link JXG.Point#snapSizeY} the grid the point snaps on to.
+             * Defines together with {@link Point#snapSizeY} the grid the point snaps on to.
              * The point will only snap on integer multiples to snapSizeX in x and snapSizeY in y direction.
              * If this value is equal to or less than <tt>0</tt>, it will use the grid displayed by the major ticks
              * of the default ticks of the default x axes of the board.
@@ -3150,14 +3192,14 @@ define([
             snapSizeX: 1,
 
             /**
-             * Defines together with {@link JXG.Point#snapSizeX} the grid the point snaps on to.
+             * Defines together with {@link Point#snapSizeX} the grid the point snaps on to.
              * The point will only snap on integer multiples to snapSizeX in x and snapSizeY in y direction.
              * If this value is equal to or less than <tt>0</tt>, it will use the grid displayed by the major ticks
              * of the default ticks of the default y axes of the board.
              *
              * @see Point#snapToGrid
              * @see Point#snapSizeX
-             * @see Board#defaultAxes
+             * @see JXG.Board#defaultAxes
              * @type Number
              * @name Line#snapSizeY
              * @default 1
@@ -3458,7 +3500,7 @@ define([
              * @name Point#face
              *
              * @type String
-             * @see Point#setStyle
+             * @see JXG.Point#setStyle
              * @default circle
              */
             face: 'o',
@@ -3470,7 +3512,7 @@ define([
              * @name Point#size
              *
              * @see Point#face
-             * @see Point#setStyle
+             * @see JXG.Point#setStyle
              * @see Point#sizeUnit
              * @type Number
              * @default 3
@@ -3518,15 +3560,17 @@ define([
             /**
              * Truncating rule for the digits in the infobox.
              * <ul>
-             * <li>'auto': done automatically by JXG#autoDigits
+             * <li>'auto': done automatically by JXG.autoDigits()
              * <li>'none': no truncation
-             * <li>number: truncate after "number digits" with JXG.toFixed();
+             * <li>number: truncate after "number digits" with JXG.toFixed()
              * </ul>
              *
              * @name Point#infoboxDigits
              *
              * @type String, Number
              * @default 'auto'
+             * @see JXG#autoDigits
+             * @see JXG#toFixed
              */
             infoboxDigits: 'auto',
 
@@ -3590,8 +3634,8 @@ define([
              *
              * @name Point#snapToGrid
              *
-             * @see JXG.Point#snapSizeX
-             * @see JXG.Point#snapSizeY
+             * @see Point#snapSizeX
+             * @see Point#snapSizeY
              * @type Boolean
              * @default false
              */
@@ -3607,7 +3651,7 @@ define([
              *
              * @see Point#snapToGrid
              * @see Point#snapSizeY
-             * @see Board#defaultAxes
+             * @see JXG.Board#defaultAxes
              * @type Number
              * @default 1
              */
@@ -3623,7 +3667,7 @@ define([
              *
              * @see Point#snapToGrid
              * @see Point#snapSizeX
-             * @see Board#defaultAxes
+             * @see JXG.Board#defaultAxes
              * @type Number
              * @default 1
              */
@@ -4138,6 +4182,7 @@ define([
              */
             baseline: {
                 needsRegularUpdate: false,
+                visible: 'inherit',
                 fixed: true,
                 scalable: false,
                 name: '',
@@ -4187,6 +4232,7 @@ define([
              */
             highline: {
                 strokeWidth: 3,
+                visible: 'inherit',
                 fixed: true,
                 name: '',
                 strokeColor: '#000000',
@@ -4200,6 +4246,7 @@ define([
              * @name Slider#label
              */
             label: {
+                visible: 'inherit',
                 strokeColor: '#000000'
             },
 
@@ -4606,9 +4653,9 @@ define([
              * @memberOf Text.prototype
              * @default  'font-family: Arial, Helvetica, Geneva, sans-serif;'
              * @type String
-             * @see JXG.Text#highlightCssDefaultStyle
-             * @see JXG.Text#cssStyle
-             * @see JXG.Text#highlightCssStyle
+             * @see Text#highlightCssDefaultStyle
+             * @see Text#cssStyle
+             * @see Text#highlightCssStyle
              */
             cssDefaultStyle: 'font-family: Arial, Helvetica, Geneva, sans-serif;',
 
@@ -4623,9 +4670,9 @@ define([
              * @memberOf Text.prototype
              * @default  'font-family: Arial, Helvetica, Geneva, sans-serif;'
              * @type String
-             * @see JXG.Text#cssDefaultStyle
-             * @see JXG.Text#cssStyle
-             * @see JXG.Text#highlightCssStyle
+             * @see Text#cssDefaultStyle
+             * @see Text#cssStyle
+             * @see Text#highlightCssStyle
             */
             highlightCssDefaultStyle: 'font-family: Arial, Helvetica, Geneva, sans-serif;',
 
@@ -4640,9 +4687,9 @@ define([
              * @memberOf Text.prototype
              * @default  ''
              * @type String
-             * @see JXG.Text#cssDefaultStyle
-             * @see JXG.Text#highlightCssDefaultStyle
-             * @see JXG.Text#highlightCssStyle
+             * @see Text#cssDefaultStyle
+             * @see Text#highlightCssDefaultStyle
+             * @see Text#highlightCssStyle
             */
             cssStyle: '',
 
@@ -4657,9 +4704,9 @@ define([
              * @memberOf Text.prototype
              * @default  ''
              * @type String
-             * @see JXG.Text#cssDefaultStyle
-             * @see JXG.Text#highlightCssDefaultStyle
-             * @see JXG.Text#cssStyle
+             * @see Text#cssDefaultStyle
+             * @see Text#highlightCssDefaultStyle
+             * @see Text#cssStyle
             */
             highlightCssStyle: '',
 
@@ -4684,7 +4731,7 @@ define([
              * @memberOf Text.prototype
              * @default false
              * @type Boolean
-             * @see JXG.Text#parse
+             * @see Text#parse
              *
              * @example
              *  // Before loading MathJax, it has to be configured something like this:
@@ -5006,7 +5053,7 @@ define([
              * @name snapSizeX
              * @memberOf Text.prototype
              *
-             * @see JXG.Point#snapToGrid
+             * @see Point#snapToGrid
              * @see Text#snapSizeY
              * @see JXG.Board#defaultAxes
              * @type Number
@@ -5023,7 +5070,7 @@ define([
              * @name snapSizeY
              * @memberOf Text.prototype
              *
-             * @see JXG.Point#snapToGrid
+             * @see Point#snapToGrid
              * @see Text#snapSizeX
              * @see JXG.Board#defaultAxes
              * @type Number
@@ -5107,9 +5154,10 @@ define([
     };
 
     /**
-     * Holds all possible properties and the according validators for geometry elements. A validator is either a function
-     * which takes one parameter and returns true, if the value is valid for the property, or it is false if no validator
-     * is required.
+     * Holds all possible properties and the according validators for geometry elements.
+     * A validator is either a function
+     * which takes one parameter and returns true, if the value is valid for the property,
+     * or it is false if no validator is required.
      */
     JXG.Validator = (function () {
         var i,
@@ -5128,6 +5176,9 @@ define([
             },
             validateInteger = function (v) {
                 return (Math.abs(v - Math.round(v)) < Mat.eps);
+            },
+            validateNotNegativeInteger = function (v) {
+                return validateInteger(v) && v >= 0;
             },
             validatePositiveInteger = function (v) {
                 return validateInteger(v) && v > 0;
@@ -5171,6 +5222,7 @@ define([
                 insertTicks: false,
                 //: validateScreenCoords,
                 lastArrow: false,
+                layer: validateNotNegativeInteger,
                 majorHeight: validateInteger,
                 minorHeight: validateInteger,
                 minorTicks: validateNotNegative,
@@ -5185,7 +5237,7 @@ define([
                 showCopyright: false,
                 showInfobox: false,
                 showNavigation: false,
-                size: validateInteger,
+                size: validateNotNegative, //validateInteger,
                 snapSizeX: validatePositive,
                 snapSizeY: validatePositive,
                 snapWidth: Type.isNumber,
@@ -5196,7 +5248,7 @@ define([
                 stretch: false,
                 strokeColor: validateColor,
                 strokeOpacity: Type.isNumber,
-                strokeWidth: validateInteger,
+                strokeWidth: validateNotNegative, //validateInteger,
                 takeFirst: false,
                 takeSizeFromFile: false,
                 to10: false,

@@ -888,7 +888,7 @@ define([
      * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
      * @param {JXG.Line,JXG.Circle,JXG.Curve,JXG.Turtle_JXG.Point} o,p The constructed line contains p which lies on the object and is orthogonal
      * to the tangent to the object in the given point.
-     * @param {Glider} p Works like above, however the object is given by {@link Glider#slideObject}.
+     * @param {Glider} p Works like above, however the object is given by {@link JXG.CoordsElement#slideObject}.
      * @example
      * // Create a normal to a circle.
      * var p1 = board.create('point', [2.0, 2.0]);
@@ -2397,7 +2397,7 @@ define([
      * @class Creates a grid to support the user with element placement.
      * @pseudo
      * @description A grid is a set of vertical and horizontal lines to support the user with element placement. This method
-     * draws such a grid on the given board. It uses options given in {@link JXG.Options#grid}. This method does not
+     * draws such a grid on the given board. This method does not
      * take any parent elements. It is usually instantiated on the board's creation via the attribute <tt>grid</tt> set
      * to true.
      * @parameter None.
@@ -2626,14 +2626,14 @@ define([
             };
             a.updateDataArray = function () {
                 var i1, i2,
-                    // this will be the height of the area. We mustn't rely upon the board height because if we pan the view
+                    // This will be the height of the area. We mustn't rely upon the board height because if we pan the view
                     // such that the line is not visible anymore, the borders of the area will get visible in some cases.
                     h,
                     bb = board.getBoundingBox(),
                     factor = attr.inverse ? -1 : 1,
                     expansion = 1.5,
                     w = expansion * Math.max(bb[2] - bb[0], bb[1] - bb[3]),
-                    // fake a point (for Math.Geometry.perpendicular)
+                    // Fake a point (for Math.Geometry.perpendicular)
                     // contains centroid of the board
                     dp = {
                         coords: {
@@ -2653,7 +2653,7 @@ define([
                 //     slope2 = slope1;
                 // }
 
-                // calculate the area height as
+                // Calculate the area height as
                 //  expansion times the distance of the line to the
                 // point in the middle of the top/bottom border.
                 h = expansion * Math.max(Geometry.perpendicular(parents[0], dp, board)[0].distance(Const.COORDS_BY_USER, dp.coords), w);
@@ -2687,46 +2687,100 @@ define([
             parents[0].visProp.curvetype === 'functiongraph') {
 
             a = board.create('curve', [[], []], attr);
+            a.updateDataArray = function() {
+                var bbox = this.board.getBoundingBox(),
+                    points = [],
+                    infty, first, last,
+                    len, i,
+                    mi = parents[0].minX(),
+                    ma = parents[0].maxX(),
+                    curve_mi, curve_ma,
+                    firstx,
+                    lastx,
+                    enlarge = (bbox[1] - bbox[3]) * 0.3, // enlarge the bbox vertically by this amount
+                    inverse = Type.evaluate(this.visProp.inverse);
 
-            a.hasPoint = function () {
-                return false;
-            };
-            a.updateDataArray = function () {
-                var bb = this.board.getBoundingBox(),
-                    expansion = 1.5,
-                    points = parents[0].points,
-                    first, last,
-                    // inverse == true <=> y >= f(x)
-                    hline = expansion * (attr.inverse ? bb[1] : bb[3]),
-                    i, le;
+                // inverse == true <=> Fill area with y >= f(x)
+                infty = (inverse) ? 1 : 3; // we will use either bbox[1] or bbox[3] below
 
                 this.dataX = [];
                 this.dataY = [];
-
-                le = points.length;
-                if (le <= 0) {
+                len = parents[0].points.length;
+                if (len == 0) {
                     return;
                 }
 
-                for (i = 0; i < le; i++) {
-                    first = i;
-                    if (points[i].isReal()) { break; }
-                }
-                for (i = le - 1; i >= first; i--) {
-                    last = i;
-                    if (points[i].isReal()) { break; }
-                }
+                bbox[1] += enlarge;
+                bbox[3] -= enlarge;
 
-                this.dataX.push(points[first].usrCoords[1]);
-                this.dataY.push(hline);
-                for (i = first; i <= last; i++) {
-                    if (points[i].isReal()) {
-                        this.dataX.push(points[i].usrCoords[1]);
-                        this.dataY.push(points[i].usrCoords[2]);
+                last = -1;
+                while (last < len - 1) {
+
+                    // Find the first point with real coordinates on this curve segment
+                    for (i = last + 1, first = len; i < len; i++) {
+                        if (parents[0].points[i].isReal()) {
+                            first = i;
+                            break;
+                        }
                     }
-                }
-                this.dataX.push(points[last].usrCoords[1]);
-                this.dataY.push(hline);
+                    // No real points found -> exit
+                    if (first >= len) {
+                        break;
+                    }
+
+                    // Find the last point with real coordinates on this curve segment
+                    for (i = first, last = len - 1; i < len - 1; i++) {
+                        if (!parents[0].points[i + 1].isReal()) {
+                            last = i;
+                            break;
+                        }
+                    }
+
+                    firstx = parents[0].points[first].usrCoords[1];
+                    lastx = parents[0].points[last].usrCoords[1];
+
+                    // Restrict the plot interval if the function ends inside of the board
+                    curve_mi = (bbox[0] < mi) ? mi : bbox[0];
+                    curve_ma = (bbox[2] > ma) ? ma : bbox[2];
+
+                    // Found NaNs
+                    curve_mi = (first === 0)      ? curve_mi : Math.max(curve_mi, firstx);
+                    curve_ma = (last === len - 1) ? curve_ma : Math.min(curve_ma, lastx);
+
+                    // First and last relevant x-coordinate of the curve
+                    curve_mi = (first === 0)     ? mi: firstx;
+                    curve_ma = (last === len - 1)? ma: lastx;
+
+
+                    // Copy the curve points
+                    points = [];
+
+                    points.push([1, curve_mi, bbox[infty]]);
+                    points.push([1, curve_mi, parents[0].points[first].usrCoords[2]]);
+                    for (i = first; i <= last; i++) {
+                        points.push(parents[0].points[i].usrCoords);
+                    }
+                    points.push([1, curve_ma, parents[0].points[last].usrCoords[2]]);
+                    points.push([1, curve_ma, bbox[infty]]);
+                    points.push(points[0]);
+
+                    for (i = 0; i < points.length; i++) {
+                        this.dataX.push(points[i][1]);
+                        this.dataY.push(points[i][2]);
+                    }
+
+
+                    if (last < len - 1) {
+                        this.dataX.push(NaN);
+                        this.dataY.push(NaN);
+                    }
+              }
+
+            };
+
+            // Previous code:
+            a.hasPoint = function () {
+                return false;
             };
         } else {
             // Not yet practical?

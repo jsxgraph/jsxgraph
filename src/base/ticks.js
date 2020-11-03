@@ -1008,6 +1008,11 @@ define([
                         labelText.indexOf('e') !== -1) {
                     labelText = value.toPrecision(Type.evaluate(this.visProp.precision)).toString();
                 }
+
+                if (this.board.options.board.beautifulScientificTickLabels) {
+                    labelText = this.beautifyScientificNotationLabel(labelText);
+                }
+
                 if (labelText.indexOf('.') > -1 && labelText.indexOf('e') === -1) {
                     // trim trailing zeros
                     labelText = labelText.replace(/0+$/, '');
@@ -1030,6 +1035,48 @@ define([
                 labelText = labelText.replace(/-/g, '\u2212');
             }
             return labelText;
+        },
+
+        /**
+         * Formats label texts to make labels displayed in scientific notation look beautiful.
+         * For example, label 5.00e+6 will become 5•10⁶, label -1.00e-7 will become into -1•10⁻⁷
+         * @param {String} labelText - The label that we want to convert
+         * @returns {String} If labelText was not in scientific notation, return labelText without modifications.
+         * Otherwise returns beautified labelText with proper superscript notation.
+         */
+        beautifyScientificNotationLabel: function(labelText) {
+            if (labelText.indexOf('e') === -1) {
+                return labelText;
+            }
+
+            // Clean up trailing 0`s, so numbers like 5.00e+6.0 for example become into 5e+6
+            let returnString = parseFloat(labelText.substring(0, labelText.indexOf('e')))
+                + labelText.substring(labelText.indexOf('e'))
+
+            // Replace symbols like -,0,1,2,3,4,5,6,7,8,9 with their superscript version.
+            // Gets rid of + symbol since there is no need for it anymore.
+            returnString = returnString.replace(/e(.*)$/g, function(match,$1){
+                let temp = '\u2022' + '10';
+                // Note: Since board ticks do not support HTTP elements like <sub>, we need to replace
+                // all the numbers with superscript Unicode characters.
+                temp +=  $1
+                    .replace(/-/g, "\u207B")
+                    .replace(/\+/g, '')
+                    .replace(/0/g,'\u2070')
+                    .replace(/1/g,'\u00B9')
+                    .replace(/2/g,'\u00B2')
+                    .replace(/3/g,'\u00B3')
+                    .replace(/4/g,'\u2074')
+                    .replace(/5/g,'\u2075')
+                    .replace(/6/g,'\u2076')
+                    .replace(/7/g,'\u2077')
+                    .replace(/8/g,'\u2078')
+                    .replace(/9/g,'\u2079');
+
+                return temp;
+            });
+
+            return returnString;
         },
 
         /**
@@ -1267,8 +1314,10 @@ define([
      * @type JXG.Ticks
      * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
      * @param {JXG.Line|JXG.Curve} line The parents consist of the line or curve the ticks are going to be attached to.
-     * @param {Number} distance Number defining the distance between two major ticks or an
-     * array defining static ticks. Alternatively, the distance can be specified with the attribute
+     * @param {Number|Array} distance Number defining the distance between two major ticks or an
+     * array defining static ticks. In case a number is specified, the ticks are <i>equidistant</i>,
+     * in case of an array, a fixed number of static ticks is created at user-supplied positions.
+     * Alternatively, the distance can be specified with the attribute
      * "ticksDistance". For arbitrary lines (and not axes) a "zero coordinate" is determined
      * which defines where the first tick is positioned. This zero coordinate
      * can be altered with the attribute "anchor". Possible values are "left", "middle", "right" or a number.

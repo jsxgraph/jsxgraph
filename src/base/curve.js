@@ -53,9 +53,9 @@
  */
 
 define([
-    'jxg', 'base/constants', 'base/coords', 'base/element', 'math/math', 'math/numerics',
+    'jxg', 'base/constants', 'base/coords', 'base/element', 'math/math', 'math/extrapolate', 'math/numerics',
     'math/geometry', 'parser/geonext', 'utils/type', 'math/qdt'
-], function (JXG, Const, Coords, GeometryElement, Mat, Numerics, Geometry, GeonextParser, Type, QDT) {
+], function (JXG, Const, Coords, GeometryElement, Mat, Extrapolate, Numerics, Geometry, GeonextParser, Type, QDT) {
 
     "use strict";
 
@@ -1027,28 +1027,96 @@ define([
          * @private
          * @param {JXG.Coords} pnt Coords to add to the list of points
          */
-        _insertPoint: function (pnt, t) {
-            var lastReal = !isNaN(this._lastCrds[1] + this._lastCrds[2]),     // The last point was real
+        _insertPoint: function (pnt, t, depth, limes) {
+            var lastReal = !isNaN(this._lastScrCrds[1] + this._lastScrCrds[2]),     // The last point was real
                 newReal = !isNaN(pnt.scrCoords[1] + pnt.scrCoords[2]),        // New point is real point
                 cw = this.board.canvasWidth,
                 ch = this.board.canvasHeight,
+                x, y, p1, p2,
+                near = 0.8,
                 off = 500;
 
+            // Check if point has real coordinates and
+            // coordinates are not too far away from canvas.
             newReal = newReal &&
                         (pnt.scrCoords[1] > -off && pnt.scrCoords[2] > -off &&
                          pnt.scrCoords[1] < cw + off && pnt.scrCoords[2] < ch + off);
 
-            /*
-             * Prevents two consecutive NaNs or points wich are too close
-             */
-            if ((!newReal && lastReal) ||
-                    (newReal && (!lastReal ||
-                        Math.abs(pnt.scrCoords[1] - this._lastCrds[1]) > 0.7 ||
-                        Math.abs(pnt.scrCoords[2] - this._lastCrds[2]) > 0.7))) {
+            newReal = newReal || Type.exists(limes);
+// console.log("Insert", t, "\t", depth);
+
+            // Prevent two consecutive NaNs
+            if (!lastReal && !newReal) {
+                return;
+            }
+
+            // Prevent two consecutive points which are too close
+            if (newReal && lastReal &&
+                Math.abs(pnt.scrCoords[1] - this._lastScrCrds[1]) < near &&
+                Math.abs(pnt.scrCoords[2] - this._lastScrCrds[2]) < near) {
+                return;
+            }
+
+            // Prevent two consecutive points at infinity (either direction)
+            if ((Math.abs(pnt.usrCoords[1]) === Infinity &&
+                Math.abs(this._lastUsrCrds[1]) === Infinity /*&&
+                Math.sign(pnt.usrCoords[1]) === Math.sign(this._lastUsrCrds[1])*/) ||
+                (Math.abs(pnt.usrCoords[2]) === Infinity &&
+                Math.abs(this._lastUsrCrds[2]) === Infinity /*&&
+                Math.sign(pnt.usrCoords[2]) === Math.sign(this._lastUsrCrds[2])*/)) {
+                return;
+            }
+
+            if (Type.exists(limes)) {
+                if (isNaN(pnt.scrCoords[1] + pnt.scrCoords[2])) {
+                    // Ignore jump point if it follows limes
+                    // if (((Math.abs(this._lastUsrCrds[1]) === Infinity && this._lastUsrCrds[1] === limes.right_x) ||
+                    //     Math.abs(this._lastUsrCrds[1] - limes.right_x) < Mat.eps) &&
+                    //     ((Math.abs(this._lastUsrCrds[2]) === Infinity && this._lastUsrCrds[2] === limes.right_y) ||
+                    //     Math.abs(this._lastUsrCrds[2] - limes.right_y) < Math.eps)) {
+                    if ((Math.abs(this._lastUsrCrds[1]) === Infinity && Math.abs(limes.left_x) === Infinity) ||
+                        (Math.abs(this._lastUsrCrds[2]) === Infinity && Math.abs(limes.left_y) === Infinity)) {
+// console.log("SKIP:", pnt.usrCoords, this._lastUsrCrds, limes);
+                        return;
+                    }
+                    //
+                    // Ignore jump left from limes
+                    if (Math.abs(limes.left_x) > 100 * Math.abs(this._lastUsrCrds[1])) {
+                        x = Math.sign(limes.left_x) * Infinity;
+                    } else {
+                        x = limes.left_x;
+                    }
+                    if (Math.abs(limes.left_y) > 100 * Math.abs(this._lastUsrCrds[2])) {
+                        y = Math.sign(limes.left_y) * Infinity;
+                    } else {
+                        y = limes.left_y;
+                    }
+                    //pnt.setCoordinates(Const.COORDS_BY_USER, [x, y], false);
+                }
+            }
+
+            if (Type.exists(limes) && limes.isJump) {
+                // Add points at a jump. pnt contains [NaN, NaN]
+//console.log("Add", t, pnt.usrCoords, limes, depth)
+                p1 = new Coords(Const.COORDS_BY_USER, [limes.left_x, limes.left_y], this.board);
+                p1._t = t;
+                this.points.push(p1);
                 pnt._t = t;
                 this.points.push(pnt);
-                this._lastCrds = pnt.copy('scrCoords');
+                p2 = new Coords(Const.COORDS_BY_USER, [limes.right_x, limes.right_y], this.board);
+                p2._t = t;
+                this.points.push(p2);
+                this._lastScrCrds = p2.copy('scrCoords');
+                this._lastUsrCrds = p2.copy('usrCoords');
+            } else {
+//console.log("add", t, pnt.usrCoords, depth)
+                // Add regular point
+                pnt._t = t;
+                this.points.push(pnt);
+                this._lastScrCrds = pnt.copy('scrCoords');
+                this._lastUsrCrds = pnt.copy('usrCoords');
             }
+
         },
 
         /**
@@ -1141,103 +1209,113 @@ define([
          * @param {Number} depth Actual recursion depth. The recursion stops if depth is equal to 0.
          * @returns {JXG.Boolean} true if the point is inserted and the recursion should stop, false otherwise.
          */
-         _borderCase: function (a, b, c, ta, tb, tc, depth) {
-             var t, pnt, p,
-                 p_good = null,
-                 j,
-                 max_it = 30,
-                 is_undef = false,
-                 t_nan, t_real, t_real2,
-                 vx, vy, vx2, vy2, dx, dy;
-                 // asymptote;
+        _borderCase: function (a, b, c, ta, tb, tc, depth) {
+            var t, pnt, p,
+                p_good = null,
+                j,
+                max_it = 30,
+                is_undef = false,
+                t_real, t_real2,
+                t_good, t_bad,
+                lim_x, lim_y, lim_type_x, lim_type_y, res,
+                limes = {};
 
-             if (depth <= 1) {
-                pnt = new Coords(Const.COORDS_BY_USER, [0, 0], this.board, false);
-                j = 0;
-                // Bisect a, b and c until the point t_real is inside of the definition interval
-                // and as close as possible at the boundary.
-                // t_real2 is the second closest point.
-                do {
-                    // There are four cases:
-                    //  a  |  c  |  b
-                    // ---------------
-                    // inf | R   | R
-                    // R   | R   | inf
-                    // inf | inf | R
-                    // R   | inf | inf
-                    //
-                    if (isNaN(a[1] + a[2]) && !isNaN(c[1] + c[2])) {
-                        t_nan = ta;
-                        t_real = tc;
-                        t_real2 = tb;
-                    } else if (isNaN(b[1] + b[2]) && !isNaN(c[1] + c[2])) {
-                        t_nan = tb;
-                        t_real = tc;
-                        t_real2 = ta;
-                    } else if (isNaN(c[1] + c[2]) && !isNaN(b[1] + b[2])) {
-                        t_nan = tc;
-                        t_real = tb;
-                        t_real2 = tb + (tb - tc);
-                    } else if (isNaN(c[1] + c[2]) && !isNaN(a[1] + a[2])) {
-                        t_nan = tc;
-                        t_real = ta;
-                        t_real2 = ta - (tc - ta);
-                    } else {
-                        return false;
-                    }
-                    t = 0.5 * (t_nan + t_real);
-                    pnt.setCoordinates(Const.COORDS_BY_USER, [this.X(t, true), this.Y(t, true)], false);
-                    p = pnt.usrCoords;
-
-                    is_undef = isNaN(p[1] + p[2]);
-                    if (is_undef) {
-                        t_nan = t;
-                    } else {
-                        t_real2 = t_real;
-                        t_real = t;
-                    }
-                    ++j;
-                } while (is_undef && j < max_it);
-
-                // If bisection was successful, take this point.
-                // Usefule only for general curves, for function graph
-                // the code below overwrite p_good from here.
-                if (j < max_it) {
-                    p_good = p.slice();
-                    c = p.slice();
-                    t_real = t;
-                }
-
-                // OK, bisection has been done now.
-                // t_real contains the closest inner point to the border of the interval we could find.
-                // t_real2 is the second nearest point to this boundary.
-                // Now we approximate the derivative by computing the slope of the line through these two points
-                // and test if it is "infinite", i.e larger than 400 in absolute values.
-                //
-                vx = this.X(t_real, true) ;
-                vx2 = this.X(t_real2, true) ;
-                dx = (vx - vx2) / (t_real - t_real2);
-                vy = this.Y(t_real, true) ;
-                vy2 = this.Y(t_real2, true) ;
-                dy = (vy - vy2) / (t_real - t_real2);
-
-                // If the derivatives are large enough we draw the asymptote.
-                // box = this.board.getBoundingBox();
-                // if (Math.sqrt(dx * dx + dy * dy) > 500.0) {
-                //
-                //     // The asymptote is a line of the form
-                //     //  [c, a, b] = [dx * vy - dy * vx, dy, -dx]
-                //     //  Now we have to find the intersection with the correct canvas border.
-                //     asymptote = [dx * vy - dy * vx, dy, -dx];
-                //
-                //     p_good = this._intersectWithBorder(asymptote, box, vx - vx2);
-                // }
-
-                if (p_good !== null) {
-                    this._insertPoint(new Coords(Const.COORDS_BY_USER, p_good, this.board, false));
-                    return true;
-                }
+// console.log("B", ta, a, tb, b, tc, c,depth)
+            pnt = new Coords(Const.COORDS_BY_USER, [0, 0], this.board, false);
+            j = 0;
+            // Bisect a, b and c until the point t_real is inside of the definition interval
+            // and as close as possible at the boundary.
+            // t_real2 is the second closest point.
+            // There are four cases:
+            //  a  |  c  |  b
+            // ---------------
+            // inf | R   | R
+            // R   | R   | inf
+            // inf | inf | R
+            // R   | inf | inf
+            //
+            if (isNaN(a[1] + a[2]) && !isNaN(c[1] + c[2])) {
+                t_bad = ta;
+                t_good = tc;
+                t_real2 = tb;
+            } else if (isNaN(b[1] + b[2]) && !isNaN(c[1] + c[2])) {
+                t_bad = tb;
+                t_good = tc;
+                t_real2 = ta;
+            } else if (isNaN(c[1] + c[2]) && !isNaN(b[1] + b[2])) {
+                t_bad = tc
+                t_good = tb;
+                t_real2 = tb + (tb - tc);
+            } else if (isNaN(c[1] + c[2]) && !isNaN(a[1] + a[2])) {
+                t_bad = tc;
+                t_good = ta;
+                t_real2 = ta - (tc - ta);
+            } else {
+                return false;
             }
+            do {
+                t = 0.5 * (t_good + t_bad);
+                pnt.setCoordinates(Const.COORDS_BY_USER, [this.X(t, true), this.Y(t, true)], false);
+                p = pnt.usrCoords;
+                is_undef = isNaN(p[1] + p[2]);
+                if (is_undef) {
+                    t_bad = t;
+                } else {
+                    t_real2 = t_good;
+                    t_good = t;
+                }
+                ++j;
+            } while (j < max_it && Math.abs(t_good - t_bad) > Mat.eps);
+            // If bisection (i.e. j < max_it) was successful, take this point.
+            // Useful only for general curves, for function graph
+            // the code below overwrite p_good from here.
+            // if (j < max_it) {
+            //     p_good = p.slice();
+            //     c = p.slice();
+            //     t_real = t;
+            // }
+            t_real = t;
+    // console.log("t", t, t_real, t_real2, j);
+
+    // console.log("X");
+            res = Extrapolate.limit(t_real, 0.2 * Math.sign(t_real2 - t_real), this.X);
+            lim_x = res[0];
+            lim_type_x = res[1];
+            res = Extrapolate.limit(t_real, 0.2 * Math.sign(t_real2 - t_real), this.Y);
+            lim_y = res[0];
+            lim_type_y = res[1];
+
+//console.log("right", t_real2 - t_real, res);
+
+// console.log("Accelerator right", lim_type_x, lim_type_y);
+
+            if (lim_type_x === 'infinite') {
+                lim_x = Math.sign(lim_x) * Infinity;
+            }
+            if (lim_type_y === 'infinite') {
+                lim_y = Math.sign(lim_y) * Infinity;
+            }
+
+            p_good = [lim_x, lim_y];
+
+            if (p_good !== null) {
+                if (t_bad < t_good) {
+                    limes.left_x  = NaN;
+                    limes.left_y  = NaN;
+                    limes.right_x = lim_x;
+                    limes.right_y = lim_y;
+                } else {
+                    limes.left_x  = lim_x;
+                    limes.left_y  = lim_y;
+                    limes.right_x = NaN;
+                    limes.right_y = NaN;
+                }
+
+//console.log("Add bc", depth, t_real, p_good.usrCoords, limes);
+                this._insertPoint(new Coords(Const.COORDS_BY_USER, p_good, this.board, false), lim_x, depth, limes);
+                return true;
+            }
+
             return false;
         },
 
@@ -1342,10 +1420,9 @@ define([
          * {@link JXG.Curve._plotRecursive} to the visible area and not waste
          * recursion to areas far outside of the visible area.
          * <p>
-         * This method can also be used to find the last visible  point
+         * This method can also be used to find the last visible point
          * by reversing the input parameters.
          *
-         * @param  {Array}  a  Screen coordinates of the start point of the segment
          * @param  {Array}  ta Curve parameter of a.
          * @param  {Array}  b  Screen coordinates of the end point of the segment (unused)
          * @param  {Array}  tb Curve parameter of b
@@ -1430,9 +1507,113 @@ define([
                 pnt.setCoordinates(Const.COORDS_BY_USER, [this.X(td, true), this.Y(td, true)], false);
                 return [pnt.scrCoords, td];
             } else {
+                console.log("TODO _findStartPoint", this.Y.toString(), tc);
+                pnt.setCoordinates(Const.COORDS_BY_USER, [this.X(ta, true), this.Y(ta, true)], false);
+                return [pnt.scrCoords, ta];
+            }
+        },
+
+        _findCusp: function(ta, tb) {
+            var a = [this.X(ta, true), this.Y(ta, true)],
+                b = [this.X(tb, true), this.Y(tb, true)],
+                max_func = function(t) {
+                    var c = [this.X(t, true), this.Y(t, true)];
+                    //return -c[1] * c[1];
+                    return -(Math.sqrt((a[0] - c[0]) * (a[0] - c[0]) + (a[1] - c[1]) * (a[1] - c[1])) +
+                            Math.sqrt((b[0] - c[0]) * (b[0] - c[0]) + (b[1] - c[1]) * (b[1] - c[1])));
+                },
+                step = 0.1,
+                t_min, x, y;
+
+            t_min = Numerics.fminbr(max_func, [ta, tb], this);
+            x = Extrapolate.limit(t_min, step, this.X)[0];
+            y = Extrapolate.limit(t_min, step, this.Y)[0];
+//console.log("cusp", t_min, x, y);
+            return [[x, y], t_min];
+        },
+
+        _findJump: function(ta, t, tb) {
+            var res,
+                step = 0.1,
+                isJump = false,
+                isBorder = false,
+                x_l, y_l,
+                x_r, y_r,
+                a = [this.X(ta, true), this.Y(ta, true)],
+                b = [this.X(tb, true), this.Y(tb, true)],
+                // max_func = function(t) {
+                //     var c = [this.X(t, true), this.Y(t, true)];
+                //     return -(Math.sqrt((a[0] - c[0]) * (a[0] - c[0]) + (a[1] - c[1]) * (a[1] - c[1])) +
+                //         Math.sqrt((b[0] - c[0]) * (b[0] - c[0]) + (b[1] - c[1]) * (b[1] - c[1])));
+                // },
+                max_func = function(t) {
+                    var e = Mat.eps * Mat.eps,
+                        c1 = [this.X(t, true), this.Y(t, true)],
+                        c2 = [this.X(t + e, true), this.Y(t + e, true)];
+                    return -Math.abs( (c2[1] - c1[1]) / (c2[0] - c1[0]) );
+                },
+                t_min;
+
+            t_min = Numerics.fminbr(max_func, [ta, tb], this);
+//console.log("Test jump at", t, t_min);
+            t = t_min;
+
+            //t = 0;
+
+            // From left
+            res = Extrapolate.limit(t, -step, this.X);
+            x_l = res[0];
+            if (res[1] === 'infinite') {
+                x_l = Math.sign(x_l) * Infinity;
+            }
+// console.log("left.....")
+            res = Extrapolate.limit(t, -step, this.Y);
+            y_l = res[0];
+            if (res[1] === 'infinite') {
+                y_l = Math.sign(y_l) * Infinity;
+            }
+//console.log(",,,,,,,", res)
+            // From right
+            res = Extrapolate.limit(t, step, this.X);
+            x_r = res[0];
+            if (res[1] === 'infinite') {
+                x_r = Math.sign(x_r) * Infinity;
+            }
+// console.log("right,,,,,,,")
+            res = Extrapolate.limit(t, step, this.Y);
+            y_r = res[0];
+            if (res[1] === 'infinite') {
+                y_r = Math.sign(y_r) * Infinity;
+            }
+//console.log(".....", res)
+
+            if (isNaN(x_l) || isNaN(y_l) || isNaN(x_r) || isNaN(y_r)) {
+                // Saw NaN.
+                // It seems to be a border case -> ignore
+                isBorder = true;
             }
 
-            return [a, ta];
+//console.log("jump", ta, t, tb, "lft:", [x_l, y_l], "right", [x_r, y_r]);
+            if ((Math.abs(y_l) === Infinity && Math.abs(y_r) === Infinity && y_l !== y_r) ||
+                (Math.abs(y_l) === Infinity && Math.abs(y_r) !== Infinity) ||
+                (Math.abs(y_l) !== Infinity && Math.abs(y_r) === Infinity) ||
+                (Math.abs(y_l - y_r) > Mat.eps) ||
+                (Math.abs(x_l) === Infinity && Math.abs(x_r) === Infinity && x_l !== x_r) ||
+                (Math.abs(x_l) === Infinity && Math.abs(x_r) !== Infinity) ||
+                (Math.abs(x_l) !== Infinity && Math.abs(x_r) === Infinity) ||
+                (Math.abs(x_l - x_r) > Mat.eps)
+            ) {
+                isJump = true;
+            }
+
+            return {
+                    left_x: x_l,
+                    left_y: y_l,
+                    right_x: x_r,
+                    right_y: y_r,
+                    isJump: isJump,
+                    isBorder: isBorder
+                };
         },
 
         /**
@@ -1451,14 +1632,16 @@ define([
         _plotRecursive: function (a, ta, b, tb, depth, delta) {
             var tc, c,
                 ds, mindepth = 0,
+                limes, res,
                 isSmooth, isJump, isCusp,
                 cusp_threshold = 0.5,
                 jump_threshold = 0.99,
                 pnt = new Coords(Const.COORDS_BY_USER, [0, 0], this.board, false);
 
-            if (this.numberPoints > 65536) {
+            if (this.points.length > 65536) {
                 return;
             }
+//console.log(this.numberPoints, this.points.length);
 
             // Test if the function is undefined in an interval
             if (depth < this.nanLevel && this._isUndefined(a, ta, b, tb)) {
@@ -1473,7 +1656,8 @@ define([
             pnt.setCoordinates(Const.COORDS_BY_USER, [this.X(tc, true), this.Y(tc, true)], false);
             c = pnt.scrCoords;
 
-            if (this._borderCase(a, b, c, ta, tb, tc, depth)) {
+            if (depth < 2 && this._borderCase(a, b, c, ta, tb, tc, depth)) {
+//console.log(tc, pnt.usrCoords);
                 return this;
             }
 
@@ -1481,28 +1665,43 @@ define([
 
             isSmooth = (depth < this.smoothLevel) && (ds[3] < delta);
 
+            isCusp = (depth < this.smoothLevel + 5) && (ds[0] < cusp_threshold * (ds[1] + ds[2]));
+
             isJump = (depth < this.jumpLevel) &&
                         ((ds[2] > jump_threshold * ds[0]) ||
                          (ds[1] > jump_threshold * ds[0]) ||
-                        ds[0] === Infinity || ds[1] === Infinity || ds[2] === Infinity);
+                          ds[0] === Infinity || ds[1] === Infinity || ds[2] === Infinity);
 
-            isCusp = (depth < this.smoothLevel + 2) && (ds[0] < cusp_threshold * (ds[1] + ds[2]));
+            if (isJump) {
+//console.log("isJump", depth);
+                isCusp = false;
+            }
 
             if (isCusp) {
-                mindepth = 0;
+//console.log("isCusp", depth);
+                // mindepth = 0;
                 isSmooth = false;
+                //if (depth <= 80) {
+                    res = this._findCusp(ta, tb);
+                    pnt.setCoordinates(Const.COORDS_BY_USER, res[0], false);
+                    tc = res[1];
+                //}
             }
 
             --depth;
 
             if (isJump) {
-                this._insertPoint(new Coords(Const.COORDS_BY_SCREEN, [NaN, NaN], this.board, false), tc);
+                limes = this._findJump(ta, tc, tb);
+                if (limes.isJump) {
+                    // console.log(depth);
+                    pnt.setCoordinates(Const.COORDS_BY_USER, [NaN, NaN], false);
+                    this._insertPoint(pnt, tc, depth, limes);
+                }
             } else if (depth <= mindepth || isSmooth) {
-                this._insertPoint(pnt, tc);
-                //if (this._borderCase(a, b, c, ta, tb, tc, depth)) {}
+                this._insertPoint(pnt, tc, depth, null);
             } else {
                 this._plotRecursive(a, ta, c, tc, depth, delta);
-                this._insertPoint(pnt, tc);
+                //this._insertPoint(pnt, tc, depth, null);
                 this._plotRecursive(c, tc, b, tb, depth, delta);
             }
 
@@ -1524,22 +1723,28 @@ define([
                 w2, h2, bbox,
                 ret_arr;
 
-            //console.time("plot");
+            console.log("-----------------------------------------------------------");
+            console.time("plot");
             if (this.board.updateQuality === this.board.BOARD_QUALITY_LOW) {
                 depth = Type.evaluate(this.visProp.recursiondepthlow) || 13;
+                depth = Type.evaluate(this.visProp.recursiondepthhigh) || 17;
                 delta = 2;
                 // this.smoothLevel = 5; //depth - 7;
-                this.smoothLevel = depth - 6;
-                this.jumpLevel = 3;
+                this.smoothLevel = depth - 10;
+                this.jumpLevel = 8;
             } else {
                 depth = Type.evaluate(this.visProp.recursiondepthhigh) || 17;
                 delta = 2;
                 // smoothLevel has to be small for graphs in a huge interval.
                 // this.smoothLevel = 3; //depth - 7; // 9
-                this.smoothLevel = depth - 9; // 9
-                this.jumpLevel = 2;
+                this.smoothLevel = depth - 11; // depth - 9; // 9
+                this.jumpLevel = 8;
             }
+
+            delta = 6;
+            //this.smoothLevel = 10;
             this.nanLevel = depth - 4;
+            this.jumpLevel = 2;
 
             this.points = [];
 
@@ -1582,13 +1787,17 @@ define([
             b = pb.copy('scrCoords');
             pa._t = ta;
             this.points.push(pa);
-            this._lastCrds = pa.copy('scrCoords');   // Used in _insertPoint
+            // this._lastCrds = pa.copy('scrCoords');   // Used in _insertPoint
+            this._lastScrCrds = pa.copy('scrCoords');   // Used in _insertPoint
+            this._lastUsrCrds = pa.copy('usrCoords');   // Used in _insertPoint
             this._plotRecursive(a, ta, b, tb, depth, delta);
             pb._t = tb;
             this.points.push(pb);
 
             this.numberPoints = this.points.length;
-            //console.timeEnd("plot");
+            console.timeEnd("plot");
+
+console.log("number of points:", this.numberPoints);
 
             return this;
         },
@@ -1894,9 +2103,9 @@ define([
                 }
                 bezier = Numerics.bezier(this.points);
                 up = bezier[3]();
-                minX = Numerics.fminbr(function(t) { return bezier[0](t); }, [0, up]);
+                minX = Numerics.fminbr(function(t) { return  bezier[0](t); }, [0, up]);
                 maxX = Numerics.fminbr(function(t) { return -bezier[0](t); }, [0, up]);
-                minY = Numerics.fminbr(function(t) { return bezier[1](t); }, [0, up]);
+                minY = Numerics.fminbr(function(t) { return  bezier[1](t); }, [0, up]);
                 maxY = Numerics.fminbr(function(t) { return -bezier[1](t); }, [0, up]);
 
                 minX = bezier[0](minX);
