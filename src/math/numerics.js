@@ -3343,17 +3343,13 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
 
             len = pts.length;
 
-            // Search for the left most point without NaN coordinates
             i = 0;
             while (true) {
+                // Search for the next point without NaN coordinates
                 while (i < len && isNaN(pts[i].scrCoords[1] + pts[i].scrCoords[2])) {
                     i += 1;
                 }
-                // Search for the right most point without NaN coordinates
-                // k = len - 1;
-                // while (k > i && isNaN(pts[k].scrCoords[1] + pts[k].scrCoords[2])) {
-                //     k -= 1;
-                // }
+                // Search for the next position of a NaN point
                 k = i + 1;
                 while (k < len && !isNaN(pts[k].scrCoords[1] + pts[k].scrCoords[2])) {
                     k += 1;
@@ -3361,7 +3357,6 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
                 k--;
 
                 // Only proceed if something is left
-                //if (!(i > k || i >= len)) {
                 if (i < len && k > i) {
                     newPts = [];
                     newPts[0] = pts[i];
@@ -3370,8 +3365,8 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
                 } else {
                     break;
                 }
+                // Push the NaN point
                 if (k < len - 1) {
-                    console.log("push", pts[k+1]._t, pts[k + 1].usrCoords)
                     allPts.push(pts[k + 1]);
                 }
                 i = k + 1;
