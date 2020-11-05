@@ -2453,6 +2453,14 @@ define([
              */
             doAdvancedPlotOld: false,   // v1
 
+            /**
+             * Select the version of the plot algorithm.
+             * The latest version number is equal to 3.
+             *
+             * @name Curve#plotVersion
+             * @type Number
+             * @default 3
+             */
             plotVersion: 3,
 
             /**
