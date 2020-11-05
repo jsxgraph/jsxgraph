@@ -1756,9 +1756,8 @@ define([
             this.points.push(pb);
 
             this.numberPoints = this.points.length;
-           //  console.timeEnd("plot");
-
-// console.log("number of points:", this.numberPoints);
+            // console.timeEnd("plot");
+            // console.log("number of points:", this.numberPoints);
 
             return this;
         },
