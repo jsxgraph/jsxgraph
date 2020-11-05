@@ -3224,7 +3224,7 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
          * @memberof JXG.Math.Numerics
          */
         RamerDouglasPeucker: function (pts, eps) {
-            var newPts = [], i, k, len,
+            var allPts = [], newPts = [], i, k, len,
 
                 /**
                  * findSplit() is a subroutine of {@link JXG.Math.Numerics.RamerDouglasPeucker}.
@@ -3240,6 +3240,7 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
                     var d, k, ci, cj, ck,
                         x0, y0, x1, y1,
                         den, lbda,
+                        huge = 10000,
                         dist = 0,
                         f = i;
 
@@ -3250,16 +3251,16 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
                     ci = pts[i].scrCoords;
                     cj = pts[j].scrCoords;
 
-                    if (isNaN(ci[1] + ci[2])) {
+                    if (isNaN(ci[1]) || isNaN(ci[2])) {
                         return [NaN, i];
                     }
-                    if (isNaN(cj[1] + cj[2])) {
+                    if (isNaN(cj[1]) || isNaN(cj[2])) {
                         return [NaN, j];
                     }
 
                     for (k = i + 1; k < j; k++) {
                         ck = pts[k].scrCoords;
-                        if (isNaN(ck[1] + ck[2])) {
+                        if (isNaN(ck[1]) || isNaN(ck[2])) {
                             return [NaN, k];
                         }
 
@@ -3267,6 +3268,14 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
                         y0 = ck[2] - ci[2];
                         x1 = cj[1] - ci[1];
                         y1 = cj[2] - ci[2];
+                        x0 = x0 === Infinity ? huge : x0;
+                        y0 = y0 === Infinity ? huge : y0;
+                        x1 = x1 === Infinity ? huge : x1;
+                        y1 = y1 === Infinity ? huge : y1;
+                        x0 = x0 === -Infinity ? -huge : x0;
+                        y0 = y0 === -Infinity ? -huge : y0;
+                        x1 = x1 === -Infinity ? -huge : x1;
+                        y1 = y1 === -Infinity ? -huge : y1;
                         den = x1 * x1 + y1 * y1;
 
                         if (den >= Mat.eps) {
@@ -3334,24 +3343,37 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
 
             len = pts.length;
 
-            // Search for the left most point woithout NaN coordinates
             i = 0;
-            while (i < len && isNaN(pts[i].scrCoords[1] + pts[i].scrCoords[2])) {
-                i += 1;
-            }
-            // Search for the right most point woithout NaN coordinates
-            k = len - 1;
-            while (k > i && isNaN(pts[k].scrCoords[1] + pts[k].scrCoords[2])) {
-                k -= 1;
+            while (true) {
+                // Search for the next point without NaN coordinates
+                while (i < len && isNaN(pts[i].scrCoords[1] + pts[i].scrCoords[2])) {
+                    i += 1;
+                }
+                // Search for the next position of a NaN point
+                k = i + 1;
+                while (k < len && !isNaN(pts[k].scrCoords[1] + pts[k].scrCoords[2])) {
+                    k += 1;
+                }
+                k--;
+
+                // Only proceed if something is left
+                if (i < len && k > i) {
+                    newPts = [];
+                    newPts[0] = pts[i];
+                    RDP(pts, i, k, eps, newPts);
+                    allPts = allPts.concat(newPts);
+                }
+                if (i >= len) {
+                    break;
+                }
+                // Push the NaN point
+                if (k < len - 1) {
+                    allPts.push(pts[k + 1]);
+                }
+                i = k + 1;
             }
 
-            // Only proceed if something is left
-            if (!(i > k || i === len)) {
-                newPts[0] = pts[i];
-                RDP(pts, i, k, eps, newPts);
-            }
-
-            return newPts;
+            return allPts;
         },
 
         /**
