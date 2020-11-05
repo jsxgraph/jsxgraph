@@ -2440,7 +2440,7 @@ define([
              * @type Number
              * @default 13
              */
-             recursionDepthLow: 13,
+             recursionDepthLow: 15,
 
             /**
              * If true use the algorithm by Gillam and Hohenwarter, which was default until version 0.98.
@@ -2449,8 +2449,11 @@ define([
              * @see Curve#doAdvancedPlot
              * @type Boolean
              * @default false
+             * @deprecated
              */
-            doAdvancedPlotOld: false,
+            doAdvancedPlotOld: false,   // v1
+
+            plotVersion: 3,
 
             /**
              * Attributes for circle label.

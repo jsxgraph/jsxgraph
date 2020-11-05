@@ -692,6 +692,7 @@ define([
          */
         updateCurve: function () {
             var len, mi, ma, x, y, i,
+                version = this.visProp.plotversion,
                 //t1, t2, l1,
                 suspendUpdate = false;
 
@@ -731,9 +732,13 @@ define([
             // continuous x data
             } else {
                 if (Type.evaluate(this.visProp.doadvancedplot)) {
-                    this.updateParametricCurve(mi, ma);
-                } else if (Type.evaluate(this.visProp.doadvancedplotold)) {
-                    this.updateParametricCurveOld(mi, ma);
+                    if (version === 1 || Type.evaluate(this.visProp.doadvancedplotold)) {
+                        this.updateParametricCurveOld(mi, ma);
+                    } else if (version === 2) {
+                        this.updateParametricCurve_v2(mi, ma);
+                    } else {
+                        this.updateParametricCurve(mi, ma);
+                    }
                 } else {
                     if (this.board.updateQuality === this.board.BOARD_QUALITY_HIGH) {
                         this.numberPoints = Type.evaluate(this.visProp.numberpointshigh);
@@ -817,6 +822,9 @@ define([
             this.isReal = b;
         },
 
+        //----------------------------------------------------------------------
+        // Plot algorithm v0
+        //----------------------------------------------------------------------
         /**
          * Updates the data points of a parametric curve. This version is used if {@link JXG.Curve#doadvancedplot} is <tt>false</tt>.
          * @param {Number} mi Left bound of curve
@@ -838,6 +846,51 @@ define([
             }
             return this;
         },
+
+        //----------------------------------------------------------------------
+        // Plot algorithm v1
+        //----------------------------------------------------------------------
+        /**
+         * Crude and cheap test if the segment defined by the two points <tt>(x0, y0)</tt> and <tt>(x1, y1)</tt> is
+         * outside the viewport of the board. All parameters have to be given in screen coordinates.
+         *
+         * @private
+         * @deprecated
+         * @param {Number} x0
+         * @param {Number} y0
+         * @param {Number} x1
+         * @param {Number} y1
+         * @returns {Boolean} <tt>true</tt> if the given segment is outside the visible area.
+         */
+        isSegmentOutside: function (x0, y0, x1, y1) {
+            return (y0 < 0 && y1 < 0) || (y0 > this.board.canvasHeight && y1 > this.board.canvasHeight) ||
+                (x0 < 0 && x1 < 0) || (x0 > this.board.canvasWidth && x1 > this.board.canvasWidth);
+        },
+
+        /**
+         * Compares the absolute value of <tt>dx</tt> with <tt>MAXX</tt> and the absolute value of <tt>dy</tt>
+         * with <tt>MAXY</tt>.
+         *
+         * @private
+         * @deprecated
+         * @param {Number} dx
+         * @param {Number} dy
+         * @param {Number} MAXX
+         * @param {Number} MAXY
+         * @returns {Boolean} <tt>true</tt>, if <tt>|dx| &lt; MAXX</tt> and <tt>|dy| &lt; MAXY</tt>.
+         */
+        isDistOK: function (dx, dy, MAXX, MAXY) {
+            return (Math.abs(dx) < MAXX && Math.abs(dy) < MAXY) && !isNaN(dx + dy);
+        },
+
+         /**
+         * @private
+         * @deprecated
+         */
+        isSegmentDefined: function (x0, y0, x1, y1) {
+            return !(isNaN(x0 + y0) && isNaN(x1 + y1));
+        },
+
 
         /**
          * Updates the data points of a parametric curve. This version is used if {@link JXG.Curve#doadvancedplot} is <tt>true</tt>.
@@ -984,44 +1037,309 @@ define([
             return this;
         },
 
-        /**
-         * Crude and cheap test if the segment defined by the two points <tt>(x0, y0)</tt> and <tt>(x1, y1)</tt> is
-         * outside the viewport of the board. All parameters have to be given in screen coordinates.
-         *
-         * @private
-         * @param {Number} x0
-         * @param {Number} y0
-         * @param {Number} x1
-         * @param {Number} y1
-         * @returns {Boolean} <tt>true</tt> if the given segment is outside the visible area.
-         */
-        isSegmentOutside: function (x0, y0, x1, y1) {
-            return (y0 < 0 && y1 < 0) || (y0 > this.board.canvasHeight && y1 > this.board.canvasHeight) ||
-                (x0 < 0 && x1 < 0) || (x0 > this.board.canvasWidth && x1 > this.board.canvasWidth);
-        },
+        //----------------------------------------------------------------------
+        // Plot algorithm v2
+        //----------------------------------------------------------------------
 
         /**
-         * Compares the absolute value of <tt>dx</tt> with <tt>MAXX</tt> and the absolute value of <tt>dy</tt>
-         * with <tt>MAXY</tt>.
+         * Add a point to the curve plot. If the new point is too close to the previously inserted point,
+         * it is skipped.
+         * Used in {@link JXG.Curve._plotRecursive}.
          *
          * @private
-         * @param {Number} dx
-         * @param {Number} dy
-         * @param {Number} MAXX
-         * @param {Number} MAXY
-         * @returns {Boolean} <tt>true</tt>, if <tt>|dx| &lt; MAXX</tt> and <tt>|dy| &lt; MAXY</tt>.
+         * @param {JXG.Coords} pnt Coords to add to the list of points
          */
-        isDistOK: function (dx, dy, MAXX, MAXY) {
-            return (Math.abs(dx) < MAXX && Math.abs(dy) < MAXY) && !isNaN(dx + dy);
+        _insertPoint_v2: function (pnt, t) {
+            var lastReal = !isNaN(this._lastCrds[1] + this._lastCrds[2]),     // The last point was real
+                newReal = !isNaN(pnt.scrCoords[1] + pnt.scrCoords[2]),        // New point is real point
+                cw = this.board.canvasWidth,
+                ch = this.board.canvasHeight,
+                off = 500;
+
+            newReal = newReal &&
+                        (pnt.scrCoords[1] > -off && pnt.scrCoords[2] > -off &&
+                         pnt.scrCoords[1] < cw + off && pnt.scrCoords[2] < ch + off);
+
+            /*
+             * Prevents two consecutive NaNs or points wich are too close
+             */
+            if ((!newReal && lastReal) ||
+                    (newReal && (!lastReal ||
+                        Math.abs(pnt.scrCoords[1] - this._lastCrds[1]) > 0.7 ||
+                        Math.abs(pnt.scrCoords[2] - this._lastCrds[2]) > 0.7))) {
+                pnt._t = t;
+                this.points.push(pnt);
+                this._lastCrds = pnt.copy('scrCoords');
+            }
         },
 
-         /**
+        /**
+         * Investigate a function term at the bounds of intervals where
+         * the function is not defined, e.g. log(x) at x = 0.
+         *
+         * c is inbetween a and b
          * @private
+         * @param {Array} a Screen coordinates of the left interval bound
+         * @param {Array} b Screen coordinates of the right interval bound
+         * @param {Array} c Screen coordinates of the bisection point at (ta + tb) / 2
+         * @param {Number} ta Parameter which evaluates to a, i.e. [1, X(ta), Y(ta)] = a in screen coordinates
+         * @param {Number} tb Parameter which evaluates to b, i.e. [1, X(tb), Y(tb)] = b in screen coordinates
+         * @param {Number} tc (ta + tb) / 2 = tc. Parameter which evaluates to b, i.e. [1, X(tc), Y(tc)] = c in screen coordinates
+         * @param {Number} depth Actual recursion depth. The recursion stops if depth is equal to 0.
+         * @returns {JXG.Boolean} true if the point is inserted and the recursion should stop, false otherwise.
          */
-        isSegmentDefined: function (x0, y0, x1, y1) {
-            return !(isNaN(x0 + y0) && isNaN(x1 + y1));
+        _borderCase: function (a, b, c, ta, tb, tc, depth) {
+            var t, pnt, p,
+                p_good = null,
+                j,
+                max_it = 30,
+                is_undef = false,
+                t_nan, t_real, t_real2,
+                vx, vy, vx2, vy2, dx, dy;
+                // asymptote;
+
+            if (depth <= 1) {
+               pnt = new Coords(Const.COORDS_BY_USER, [0, 0], this.board, false);
+               j = 0;
+               // Bisect a, b and c until the point t_real is inside of the definition interval
+               // and as close as possible at the boundary.
+               // t_real2 is the second closest point.
+               do {
+                   // There are four cases:
+                   //  a  |  c  |  b
+                   // ---------------
+                   // inf | R   | R
+                   // R   | R   | inf
+                   // inf | inf | R
+                   // R   | inf | inf
+                   //
+                   if (isNaN(a[1] + a[2]) && !isNaN(c[1] + c[2])) {
+                       t_nan = ta;
+                       t_real = tc;
+                       t_real2 = tb;
+                   } else if (isNaN(b[1] + b[2]) && !isNaN(c[1] + c[2])) {
+                       t_nan = tb;
+                       t_real = tc;
+                       t_real2 = ta;
+                   } else if (isNaN(c[1] + c[2]) && !isNaN(b[1] + b[2])) {
+                       t_nan = tc;
+                       t_real = tb;
+                       t_real2 = tb + (tb - tc);
+                   } else if (isNaN(c[1] + c[2]) && !isNaN(a[1] + a[2])) {
+                       t_nan = tc;
+                       t_real = ta;
+                       t_real2 = ta - (tc - ta);
+                   } else {
+                       return false;
+                   }
+                   t = 0.5 * (t_nan + t_real);
+                   pnt.setCoordinates(Const.COORDS_BY_USER, [this.X(t, true), this.Y(t, true)], false);
+                   p = pnt.usrCoords;
+
+                   is_undef = isNaN(p[1] + p[2]);
+                   if (is_undef) {
+                       t_nan = t;
+                   } else {
+                       t_real2 = t_real;
+                       t_real = t;
+                   }
+                   ++j;
+               } while (is_undef && j < max_it);
+
+               // If bisection was successful, take this point.
+               // Usefule only for general curves, for function graph
+               // the code below overwrite p_good from here.
+               if (j < max_it) {
+                   p_good = p.slice();
+                   c = p.slice();
+                   t_real = t;
+               }
+
+               // OK, bisection has been done now.
+               // t_real contains the closest inner point to the border of the interval we could find.
+               // t_real2 is the second nearest point to this boundary.
+               // Now we approximate the derivative by computing the slope of the line through these two points
+               // and test if it is "infinite", i.e larger than 400 in absolute values.
+               //
+               vx = this.X(t_real, true) ;
+               vx2 = this.X(t_real2, true) ;
+               dx = (vx - vx2) / (t_real - t_real2);
+               vy = this.Y(t_real, true) ;
+               vy2 = this.Y(t_real2, true) ;
+               dy = (vy - vy2) / (t_real - t_real2);
+
+               if (p_good !== null) {
+                   this._insertPoint_v2(new Coords(Const.COORDS_BY_USER, p_good, this.board, false));
+                   return true;
+               }
+           }
+           return false;
+       },
+
+        /**
+         * Recursive interval bisection algorithm for curve plotting.
+         * Used in {@link JXG.Curve.updateParametricCurve}.
+         * @private
+         * @deprecated
+         * @param {Array} a Screen coordinates of the left interval bound
+         * @param {Number} ta Parameter which evaluates to a, i.e. [1, X(ta), Y(ta)] = a in screen coordinates
+         * @param {Array} b Screen coordinates of the right interval bound
+         * @param {Number} tb Parameter which evaluates to b, i.e. [1, X(tb), Y(tb)] = b in screen coordinates
+         * @param {Number} depth Actual recursion depth. The recursion stops if depth is equal to 0.
+         * @param {Number} delta If the distance of the bisection point at (ta + tb) / 2 from the point (a + b) / 2 is less then delta,
+         *                 the segment [a,b] is regarded as straight line.
+         * @returns {JXG.Curve} Reference to the curve object.
+         */
+        _plotRecursive_v2: function (a, ta, b, tb, depth, delta) {
+            var tc, c,
+                ds, mindepth = 0,
+                isSmooth, isJump, isCusp,
+                cusp_threshold = 0.5,
+                jump_threshold = 0.99,
+                pnt = new Coords(Const.COORDS_BY_USER, [0, 0], this.board, false);
+
+            if (this.numberPoints > 65536) {
+                return;
+            }
+
+            // Test if the function is undefined in an interval
+            if (depth < this.nanLevel && this._isUndefined(a, ta, b, tb)) {
+                return this;
+            }
+
+            if (depth < this.nanLevel && this._isOutside(a, ta, b, tb)) {
+                return this;
+            }
+
+            tc = (ta  + tb) * 0.5;
+            pnt.setCoordinates(Const.COORDS_BY_USER, [this.X(tc, true), this.Y(tc, true)], false);
+            c = pnt.scrCoords;
+
+            if (this._borderCase(a, b, c, ta, tb, tc, depth)) {
+                return this;
+            }
+
+            ds = this._triangleDists(a, b, c);           // returns [d_ab, d_ac, d_cb, d_cd]
+
+            isSmooth = (depth < this.smoothLevel) && (ds[3] < delta);
+
+            isJump = (depth < this.jumpLevel) &&
+                        ((ds[2] > jump_threshold * ds[0]) ||
+                         (ds[1] > jump_threshold * ds[0]) ||
+                        ds[0] === Infinity || ds[1] === Infinity || ds[2] === Infinity);
+
+            isCusp = (depth < this.smoothLevel + 2) && (ds[0] < cusp_threshold * (ds[1] + ds[2]));
+
+            if (isCusp) {
+                mindepth = 0;
+                isSmooth = false;
+            }
+
+            --depth;
+
+            if (isJump) {
+                this._insertPoint(new Coords(Const.COORDS_BY_SCREEN, [NaN, NaN], this.board, false), tc);
+            } else if (depth <= mindepth || isSmooth) {
+                this._insertPoint_v2(pnt, tc);
+                //if (this._borderCase(a, b, c, ta, tb, tc, depth)) {}
+            } else {
+                this._plotRecursive_v2(a, ta, c, tc, depth, delta);
+                this._insertPoint_v2(pnt, tc);
+                this._plotRecursive_v2(c, tc, b, tb, depth, delta);
+            }
+
+            return this;
         },
 
+        /**
+         * Updates the data points of a parametric curve. This version is used if {@link JXG.Curve#doadvancedplot} is <tt>true</tt>.
+
+         * @deprecated
+         * @param {Number} mi Left bound of curve
+         * @param {Number} ma Right bound of curve
+         * @returns {JXG.Curve} Reference to the curve object.
+         */
+        updateParametricCurve_v2: function (mi, ma) {
+            var ta, tb, a, b,
+                suspendUpdate = false,
+                pa = new Coords(Const.COORDS_BY_USER, [0, 0], this.board, false),
+                pb = new Coords(Const.COORDS_BY_USER, [0, 0], this.board, false),
+                depth, delta,
+                w2, h2, bbox,
+                ret_arr;
+
+            //console.time("plot");
+            if (this.board.updateQuality === this.board.BOARD_QUALITY_LOW) {
+                depth = Type.evaluate(this.visProp.recursiondepthlow) || 13;
+                delta = 2;
+                // this.smoothLevel = 5; //depth - 7;
+                this.smoothLevel = depth - 6;
+                this.jumpLevel = 3;
+            } else {
+                depth = Type.evaluate(this.visProp.recursiondepthhigh) || 17;
+                delta = 2;
+                // smoothLevel has to be small for graphs in a huge interval.
+                // this.smoothLevel = 3; //depth - 7; // 9
+                this.smoothLevel = depth - 9; // 9
+                this.jumpLevel = 2;
+            }
+            this.nanLevel = depth - 4;
+
+            this.points = [];
+
+            if (this.xterm === 'x') {
+                // For function graphs we can restrict the plot interval
+                // to the visible area +plus margin
+                bbox = this.board.getBoundingBox();
+                w2 = (bbox[2] - bbox[0]) * 0.3;
+                h2 = (bbox[1] - bbox[3]) * 0.3;
+                ta = Math.max(mi, bbox[0] - w2);
+                tb = Math.min(ma, bbox[2] + w2);
+            } else {
+                ta = mi;
+                tb = ma;
+            }
+            pa.setCoordinates(Const.COORDS_BY_USER, [this.X(ta, suspendUpdate), this.Y(ta, suspendUpdate)], false);
+
+            // The first function calls of X() and Y() are done. We can now
+            // switch `suspendUpdate` on. If supported by the functions, this
+            // avoids for the rest of the plotting algorithm, evaluation of any
+            // parent elements.
+            suspendUpdate = true;
+
+            pb.setCoordinates(Const.COORDS_BY_USER, [this.X(tb, suspendUpdate), this.Y(tb, suspendUpdate)], false);
+
+            // Find start and end points of the visible area (plus a certain margin)
+            ret_arr = this._findStartPoint(pa.scrCoords, ta, pb.scrCoords, tb);
+            pa.setCoordinates(Const.COORDS_BY_SCREEN, ret_arr[0], false);
+            ta = ret_arr[1];
+            ret_arr = this._findStartPoint(pb.scrCoords, tb, pa.scrCoords, ta);
+            pb.setCoordinates(Const.COORDS_BY_SCREEN, ret_arr[0], false);
+            tb = ret_arr[1];
+
+            // Save the visible area.
+            // This can be used in Curve.hasPoint().
+            this._visibleArea = [ta, tb];
+
+            // Start recursive plotting algorithm
+            a = pa.copy('scrCoords');
+            b = pb.copy('scrCoords');
+            pa._t = ta;
+            this.points.push(pa);
+            this._lastCrds = pa.copy('scrCoords');   // Used in _insertPoint
+            this._plotRecursive_v2(a, ta, b, tb, depth, delta);
+            pb._t = tb;
+            this.points.push(pb);
+
+            this.numberPoints = this.points.length;
+            //console.timeEnd("plot");
+
+            return this;
+        },
+
+        //----------------------------------------------------------------------
+        // Plot algorithm v3
+        //----------------------------------------------------------------------
         /**
          * 
          * @param {*} pnt
@@ -1513,79 +1831,6 @@ define([
          *                 the segment [a,b] is regarded as straight line.
          * @returns {JXG.Curve} Reference to the curve object.
          */
-        _plotRecursive: function (a, ta, b, tb, depth, ds0) {
-            var tc, c, ds,
-                mindepth = 0,
-                limes = null,
-                a_nan, b_nan,
-                isSmooth = false,
-                may_be_special = '',
-                x, y, oc;
-
-            if (this.points.length > 65536) {
-                return;
-            }
-
-            if (depth < this.nanLevel) {
-                // Test if the function is undefined in the whole interval [ta, tb]
-                if (this._isUndefined(a, ta, b, tb)) {
-                    return this;
-                }
-                // Test if the graph is far outside the visible are for the interval [ta, tb]
-                if (this._isOutside(a, ta, b, tb)) {
-                    return this;
-                }
-            }
-
-            tc = (ta  + tb) * 0.5;
-
-            // Screen coordinates of point at tc
-            x = this.X(tc, true);
-            y = this.Y(tc, true);
-            oc = this.board.origin.scrCoords;
-            c = [1, oc[1] + x * this.board.unitX, oc[2] - y * this.board.unitY];
-
-            ds = this._triangleDists(a, b, c);           // returns [d_ab, d_ac, d_cb, d_cd]
-
-            a_nan = isNaN(a[1] + a[2]);
-            b_nan = isNaN(b[1] + b[2]);
-
-            if ((a_nan && !b_nan) || (!a_nan && b_nan)) {
-                may_be_special = 'border';
-            } else if (ds[0] > 0.66 * ds0 || ds[0] < this.cusp_threshold * (ds[1] + ds[2]) || ds[1] > 5 * ds[2] || ds[2] > 5 * ds[1]) {
-                may_be_special = 'cusp';
-            } else if ((ds[2] > this.jump_threshold * ds[0]) ||
-                       (ds[1] > this.jump_threshold * ds[0]) ||
-                        ds[0] === Infinity || ds[1] === Infinity || ds[2] === Infinity) {
-                may_be_special = 'jump';
-            }
-
-            isSmooth = (may_be_special === '' && depth < this.smoothLevel && ds[3] < this.smooth_threshold);
-
-            if (depth < this.testLevel && !isSmooth) {
-                if (may_be_special === '') {
-                    isSmooth = true;
-                } else {
-                    limes = this._getLimes(ta, a, tc, c, tb, b, may_be_special, depth);
-                }
-            }
-
-            --depth;
-
-            if (limes !== null) {
-                c = [1, NaN, NaN];
-                this._insertPoint(c, tc, depth, limes);
-            } else if (depth <= mindepth || isSmooth) {
-                this._insertPoint(c, tc, depth, null);
-            } else {
-                this._plotRecursive(a, ta, c, tc, depth, ds[0]);
-                //this._insertPoint(c, tc, depth, null);
-                this._plotRecursive(c, tc, b, tb, depth, ds[0]);
-            }
-
-            return this;
-        },
-
         _plotNonRecursive: function (a, ta, b, tb, d) {
             var tc, c, ds,
                 mindepth = 0,
@@ -1750,8 +1995,9 @@ define([
             this.points.push(pa);
             this._lastScrCrds = pa.copy('scrCoords');   // Used in _insertPoint
             this._lastUsrCrds = pa.copy('usrCoords');   // Used in _insertPoint
-            // this._plotRecursive(a, ta, b, tb, depth, Infinity);
+
             this._plotNonRecursive(a, ta, b, tb, depth);
+
             pb._t = tb;
             this.points.push(pb);
 
