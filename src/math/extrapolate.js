@@ -156,7 +156,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
                     if (Math.abs(denom) < TINY) {
                          a[m] = HUGE;
                     } else {
-                        v = a[m] - a[m + 1]
+                        v = a[m] - a[m + 1];
                         a[m] -= v * v / denom;
                     }
                 }

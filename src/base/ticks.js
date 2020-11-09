@@ -1045,18 +1045,20 @@ define([
          * Otherwise returns beautified labelText with proper superscript notation.
          */
         beautifyScientificNotationLabel: function(labelText) {
+            var returnString;
+
             if (labelText.indexOf('e') === -1) {
                 return labelText;
             }
 
-            // Clean up trailing 0`s, so numbers like 5.00e+6.0 for example become into 5e+6
-            let returnString = parseFloat(labelText.substring(0, labelText.indexOf('e')))
-                + labelText.substring(labelText.indexOf('e'))
+            // Clean up trailing 0's, so numbers like 5.00e+6.0 for example become into 5e+6
+            returnString = parseFloat(labelText.substring(0, labelText.indexOf('e'))) +
+                            labelText.substring(labelText.indexOf('e'));
 
             // Replace symbols like -,0,1,2,3,4,5,6,7,8,9 with their superscript version.
             // Gets rid of + symbol since there is no need for it anymore.
             returnString = returnString.replace(/e(.*)$/g, function(match,$1){
-                let temp = '\u2022' + '10';
+                var temp = '\u2022' + '10';
                 // Note: Since board ticks do not support HTTP elements like <sub>, we need to replace
                 // all the numbers with superscript Unicode characters.
                 temp +=  $1

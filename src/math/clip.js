@@ -253,7 +253,7 @@ define([
                 intersection: false,
                 coords: coords,
                 elementClass: Const.OBJECT_CLASS_POINT
-            })
+            });
         },
 
         /**
@@ -366,7 +366,7 @@ define([
                 }
                 P = P._next;
                 cnt++;
-            } ;
+            }
         },
 
         _noOverlap: function(p1, p2, q1, q2) {
@@ -463,7 +463,7 @@ define([
 // console.log("COLLINEAR--", res);
 // console.log(Si, Si1)
 // console.log(Cj, Cj1)
-                            alpha = this._inbetween(Si, Cj, Cj1)
+                            alpha = this._inbetween(Si, Cj, Cj1);
                             if (alpha >= 0 && alpha < 1) {
                                 type = 'T';
                                 crds = new Coords(Const.COORDS_BY_USER, Si, board);
@@ -663,7 +663,7 @@ define([
                     break;
                 }
                 if (cnt > 1000) {
-                    console.log("SAFETY EXIT!!!!")
+                    console.log("SAFETY EXIT!!!!");
                     break;
                 }
                 P = P._next;
@@ -1045,7 +1045,7 @@ console.log("Add bw", current.coords.usrCoords);
                                                                     // S inside of C, i.e. S subset of C
                 if (clip_type === 'intersection') {
                     path = path.concat(S);
-                    doClose = true
+                    doClose = true;
                 }
                 // 'difference': path is empty
             }

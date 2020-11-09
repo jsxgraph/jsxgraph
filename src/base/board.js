@@ -2202,7 +2202,7 @@ define([
 
             this.updateQuality = this.BOARD_QUALITY_LOW;
             // Mouse, touch or pen device
-            type = this._getPointerInputDevice(evt),
+            type = this._getPointerInputDevice(evt);
             eps = this.options.precision[type];
             this.options.precision.hasPoint = eps;
 

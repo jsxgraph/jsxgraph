@@ -1666,7 +1666,7 @@ define([
                 max_it = 30,
                 is_undef = false,
                 t_real2,
-                t_good, t_bad,
+                t_good, t_bad;
 
             pnt = new Coords(Const.COORDS_BY_USER, [0, 0], this.board, false);
             j = 0;
@@ -1690,7 +1690,7 @@ define([
                 t_good = tc;
                 t_real2 = ta;
             } else if (isNaN(c[1] + c[2]) && !isNaN(b[1] + b[2])) {
-                t_bad = tc
+                t_bad = tc;
                 t_good = tb;
                 t_real2 = tb + (tb - tc);
             } else if (isNaN(c[1] + c[2]) && !isNaN(a[1] + a[2])) {
@@ -1948,9 +1948,9 @@ define([
             this.smoothLevel = 7; //depth - 10;
             this.nanLevel = depth - 4;
             this.testLevel = 4;
-            this.cusp_threshold = 0.5,
-            this.jump_threshold = 0.99,
-            this.smooth_threshold = 2,
+            this.cusp_threshold = 0.5;
+            this.jump_threshold = 0.99;
+            this.smooth_threshold = 2;
 
             this.points = [];
 
