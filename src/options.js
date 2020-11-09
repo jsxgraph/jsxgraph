@@ -4657,6 +4657,7 @@ define([
              * before initializing the board
              * <pre>
              *   JXG.Options.text.cssDefaultStyle = '';
+             *   JXG.Options.text.highlightCssDefaultStyle = '';
              * </pre>
              * should be called.
              *
@@ -4673,9 +4674,17 @@ define([
             /**
              * Default CSS properties of the HTML text element in case of highlighting.
              * <p>
-             * The CSS properties which are set here, are haded over to the style property
+             * The CSS properties which are set here, are handed over to the style property
              * of the HTML text element. That means, they have higher property than any
              * CSS class.
+             * @example
+             * If all texts should get its font-family from the default CSS class
+             * before initializing the board
+             * <pre>
+             *   JXG.Options.text.cssDefaultStyle = '';
+             *   JXG.Options.text.highlightCssDefaultStyle = '';
+             * </pre>
+             * should be called.
              *
              * @name highlightCssDefaultStyle
              * @memberOf Text.prototype
@@ -4690,7 +4699,7 @@ define([
             /**
              * CSS properties of the HTML text element.
              * <p>
-             * The CSS properties which are set here, are haded over to the style property
+             * The CSS properties which are set here, are handed over to the style property
              * of the HTML text element. That means, they have higher property than any
              * CSS class.
              *
@@ -4707,7 +4716,7 @@ define([
             /**
              * CSS properties of the HTML text element in case of highlighting.
              * <p>
-             * The CSS properties which are set here, are haded over to the style property
+             * The CSS properties which are set here, are handed over to the style property
              * of the HTML text element. That means, they have higher property than any
              * CSS class.
              *
