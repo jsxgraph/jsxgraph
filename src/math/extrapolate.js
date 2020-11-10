@@ -91,6 +91,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
         levin: function(s_n, n, numer, denom) {
             var term, fact, j,
+                ratio,
                 beta = 1,
                 omega = (beta + n) * s_n;
 
@@ -220,19 +221,18 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
                     result = 'NaN';
 //console.log("nan");
                     break;
-                } else if (v !== 0 && Math.abs(w / v) > infty) {
+                }
+                if (v !== 0 && Math.abs(w / v) > infty) {
                     estlim = Math.abs(w) * Math.sign(v);
                     result = 'infinite';
 //console.log("inf", v, w);
                     break;
-                } else {
-                    delta = w - estlim;
-                    if (Math.abs(delta) < 1.e-12) {
-                        break;
-                    }
-                    estlim = w;
                 }
-
+                delta = w - estlim;
+                if (Math.abs(delta) < 1.e-12) {
+                    break;
+                }
+                estlim = w;
             }
             return [estlim, result, 1 - (n - 1) / up];
         },
