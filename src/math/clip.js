@@ -627,7 +627,7 @@ define([
 
             while (true) {
                 if (P.intersection === true) {
-//console.log("XXX", P.coords.usrCoords, P.data.type);
+console.log("Chain point", P.coords.usrCoords, P.data.type);
                     if (P.data.type === 'T') {
                         if (P.delayedStatus[0] !== 'on' && P.delayedStatus[1] === 'on') {
                             intersection_chain = true;
@@ -758,6 +758,11 @@ console.log("START mark", P.coords.usrCoords, status);
 
         _isCrossing: function(P, isBackward) {
             isBackward = isBackward || false;
+            if (P.intersection) {
+console.log("isCrossing intersection", P.coords.usrCoords, P.data.type, P.data.revtype, isBackward, (isBackward ? P.data.revtype : P.data.type) === 'X');
+} else {
+    console.log("isCrossing", P.coords.usrCoords, isBackward);
+}
             return P.intersection && ((isBackward ? P.data.revtype : P.data.type) === 'X');
         },
 
@@ -785,7 +790,7 @@ console.log("START mark", P.coords.usrCoords, status);
 
 console.log("------ Start Phase 3");
 
-            reverse = (clip_type === 'difference') ? true : false;
+            reverse = (clip_type === 'difference' || clip_type === 'union') ? true : false;
             while (S_idx < S_intersect.length && cnt < maxCnt) {
                 current = S_intersect[S_idx];
                 if (current.data.done || !this._isCrossing(current, reverse)) {
@@ -793,7 +798,7 @@ console.log("------ Start Phase 3");
                     continue;
                 }
 
-console.log("Start", current.coords.usrCoords, current.data.type, current.data.revtype, current.entry_exit, S_idx);
+console.log("Start", current.data.pathname, current.coords.usrCoords, current.data.type, current.data.revtype, current.entry_exit, S_idx);
                 if (path.length > 0) {    // Add a new path
                     path.push([NaN, NaN]);
                 }
@@ -803,7 +808,7 @@ console.log("Start", current.coords.usrCoords, current.data.type, current.data.r
                 do {
                     // Add the "current" intersection vertex
                     path.push(current);
-//console.log("Add intersection", current.coords.usrCoords);
+console.log("Add intersection", current.coords.usrCoords);
                     current.data.done = true;
 
 console.log("AT", current.data.pathname, current.entry_exit, current.coords.usrCoords, current.data.type, current.data.revtype);
@@ -843,7 +848,7 @@ console.log("Add bw", current.coords.usrCoords);
                         return [[0], [0]];
                     }
 
-                    // console.log("Switch", current.data.pathname, current.cnt, "to", current.neighbour.data.pathname, current.neighbour.cnt);
+console.log("Switch", current.coords.usrCoords, current.data.pathname, "to", current.neighbour.data.pathname);
                     current = current.neighbour;
                     if (current.data.done) {
                         path.push(current);
