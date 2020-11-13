@@ -1547,6 +1547,9 @@ define([
          * will interpolate the path
          * using {@link JXG.Math.Numerics.Neville}. Set this flag to false if you don't want to use interpolation.
          * @returns {JXG.CoordsElement} Reference to itself.
+         * @see JXG.CoordsElement#moveAlong
+         * @see JXG.CoordsElement#moveTo
+         * @see JXG.GeometryElement#animate
          */
         moveAlong: function (path, time, options) {
             options = options || {};
@@ -1636,7 +1639,9 @@ define([
          * '<>' for speed increase on start and slow down at the end (default) and '--' for constant speed during
          * the whole animation.
          * @returns {JXG.CoordsElement} Reference to itself.
-         * @see #animate
+         * @see JXG.CoordsElement#moveAlong
+         * @see JXG.CoordsElement#visit
+         * @see JXG.GeometryElement#animate
          */
         moveTo: function (where, time, options) {
             options = options || {};
@@ -1694,7 +1699,9 @@ define([
          * the whole animation.
          * @param {Number} [options.repeat=1] How often this animation should be repeated.
          * @returns {JXG.CoordsElement} Reference to itself.
-         * @see #animate
+         * @see JXG.CoordsElement#moveAlong
+         * @see JXG.CoordsElement#moveTo
+         * @see JXG.GeometryElement#animate
          */
         visit: function (where, time, options) {
             where = new Coords(Const.COORDS_BY_USER, where, this.board);

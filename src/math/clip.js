@@ -763,7 +763,6 @@ define([
                 status = 'exit';
             }
 
-// console.log("START mark", P.coords.usrCoords, status);
             P_start = P;
             // Greiner-Hormann entry/exit algorithm
             cnt = 0;
@@ -774,13 +773,11 @@ define([
                     if (P.data.link !== null && !P.data.link.entry_exit) {
                         P.data.link.entry_exit = P.entry_exit;
                     }
-//console.log("> Mark X:", P.coords.usrCoords, P.entry_exit, P.data.type, P.data.revtype);
                 }
                 if (P.intersection === true && P.data.type !== 'X') {
                     if (!P.entry_exit && P.data.link !== null) {
                         P.entry_exit = P.data.link.entry_exit;
                     }
-//console.log("> Mark B:", P.coords.usrCoords, P.entry_exit, P.data.type, P.data.revtype);
                 }
                 P = P._next;
                 if (P === P_start || cnt > 1000) {
@@ -792,9 +789,6 @@ define([
             P_start = P;
             cnt = 0;
             while (true) {
-                // if (P.intersection === true) {
-                //     console.log(">M:", P.coords.usrCoords, P.entry_exit, P.data.type, P.data.revtype);
-                // }
                 P = P._next;
                 if (P === P_start || cnt > 1000) {
                     break;
@@ -1469,12 +1463,6 @@ define([
 
             this._handleFullyDegenerateCase(S, C, board);
 
-// console.log("S");
-// this._print_list(S[0]);
-// console.log("C");
-// this._print_list(C[0]);
-// console.log("S")
-
             // Phase 2: mark intersection points as entry or exit points
             this.markEntryExit(S, C);
             // if (S[0].coords.distance(Const.COORDS_BY_USER, C[0].coords) === 0) {
@@ -1483,9 +1471,8 @@ define([
             //     C[0].usrCoords[1] *= 1 + Math.random() * 0.0001 - 0.00005;
             //     C[0].usrCoords[2] *= 1 + Math.random() * 0.0001 - 0.00005;
             // }
-//console.log("C")
             this.markEntryExit(C, S);
-//return;
+
             // Handle cases without intersections
             if (this._countCrossingIntersections(S_intersect) === 0) {
                 return this.handleEmptyIntersection(S, C, clip_type);

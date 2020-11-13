@@ -48,6 +48,9 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
      * @namespace
      */
     Mat.Extrapolate = {
+        upper: 15,
+        infty: 1.e+4,
+
         /**
          * Wynn's epsilon algorithm. Ported from the FORTRAN version in
          * Ernst Joachim Weniger, "Nonlinear sequence transformations for the acceleration of convergence
@@ -86,39 +89,6 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             }
 
             return estlim;
-        },
-
-        /**
-         * Levin transformation. See Numerical Recipes, ed. 3.
-         * Not yet ready for use.
-         *
-         * @param {Number} s_n next value of sequence, i.e. n-th element of sequence
-         * @param {Number} n index of s_n in the sequence
-         * @param {Array} numer One-dimensional array containing the extrapolation data for the numerator. Has to be supplied by the calling routine.
-         * @param {Array} denom One-dimensional array containing the extrapolation data for the denominator. Has to be supplied by the calling routine.
-         *
-         * @memberof JXG.Math.Extrapolate
-        */
-        levin: function(s_n, n, numer, denom) {
-            var term, fact, j,
-                ratio,
-                beta = 1,
-                omega = (beta + n) * s_n;
-
-            term = 1.0 / (beta + n);
-
-            denom[n] = term / omega;
-            numer[n] = s_n * denom[n];
-            if (n > 0) {
-                ratio = (beta + n -1) * term;
-                for (j = 1; j <= n; j++) {
-                    fact = (n - j + beta) * term;
-                    numer[n - j] = numer[n - j + 1] - fact * numer[n - j];
-                    denom[n - j] = denom[n - j + 1] - fact * denom[n - j];
-                    term *= ratio;
-                }
-            }
-            return numer[0] / denom[0];
         },
 
         // wynnRho: function(s_n, n, e) {
@@ -252,38 +222,129 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         iteration: function(x0, h0, f, method, step_type) {
             var n, v, w,
                 estlim = NaN,
-                delta,
-                up = 20,
+                diff,
                 r = 0.5,
                 E = [],
-                infty = 1.e+4,
                 result = 'finite',
                 h = h0;
 
             step_type = step_type || 0;
 
-            for (n = 1; n <= up; n++) {
-                h = (step_type === 0) ?  h0 / n : h * r;
+            for (n = 1; n <= this.upper; n++) {
+                h = (step_type === 0) ?  h0 / (n + 1) : h * r;
                 v = f(x0 + h, true);
 
                 w = this[method](v, n - 1, E);
+//console.log(n, x0 + h, v, w);
+                if (isNaN(w)) {
+                    result = 'NaN';
+                    break;
+                }
+                if (v !== 0 && w / v > this.infty) {
+                    estlim = w;
+                    result = 'infinite';
+                    break;
+                }
+                diff = w - estlim;
+                if (Math.abs(diff) < 1.e-7) {
+                    break;
+                }
+                estlim = w;
+            }
+            return [estlim, result, 1 - (n - 1) / this.upper];
+        },
+
+        /**
+         * Levin transformation. See Numerical Recipes, ed. 3.
+         * Not yet ready for use.
+         *
+         * @param {Number} s_n next value of sequence, i.e. n-th element of sequence
+         * @param {Number} n index of s_n in the sequence
+         * @param {Array} numer One-dimensional array containing the extrapolation data for the numerator. Has to be supplied by the calling routine.
+         * @param {Array} denom One-dimensional array containing the extrapolation data for the denominator. Has to be supplied by the calling routine.
+         *
+         * @memberof JXG.Math.Extrapolate
+        */
+        levin: function(s_n, n, omega, beta, numer, denom) {
+            var HUGE = 1.e+20,
+                TINY = 1.e-15,
+                j,
+                fact, ratio, term, estlim;
+
+            term = 1.0 / (beta + n);
+            numer[n] = s_n / omega;
+            denom[n] = 1 / omega;
+            if (n > 0) {
+                numer[n - 1] = numer[n] - numer[n - 1];
+                denom[n - 1] = denom[n] - denom[n - 1];
+                if (n > 1) {
+                    ratio = (beta + n - 1) * term;
+                    for (j = 2; j <= n; j++) {
+                        fact = (beta + n - j) * Math.pow(ratio, j - 2) * term;
+                        numer[n - j] = numer[n - j + 1] - fact * numer[n - j];
+                        denom[n - j] = denom[n - j + 1] - fact * denom[n - j];
+                        term *= ratio;
+                    }
+                }
+            }
+            if (Math.abs(denom[0]) < TINY) {
+                estlim = HUGE;
+            } else {
+                estlim = numer[0] / denom[0];
+            }
+            return estlim;
+        },
+
+        iteration_levin: function(x0, h0, f, step_type) {
+            var n, v, w,
+                estlim = NaN,
+                v_prev,
+                delta, diff, omega,
+                beta = 1,
+                r = 0.5,
+                numer = [],
+                denom = [],
+                result = 'finite',
+                h = h0, transform = 'u';
+
+            step_type = step_type || 0;
+
+            v_prev = f(x0 + h0, true);
+            for (n = 1; n <= this.upper; n++) {
+                h = (step_type === 0) ?  h0 / (n + 1) : h * r;
+                v = f(x0 + h, true);
+                delta = v - v_prev;
+                if (Math.abs(delta) < 1) {
+                    transform = 'u';
+                } else {
+                    transform = 't';
+                }
+                if (transform === 'u') {
+                    omega = (beta + n) * delta; // u transformation
+                } else {
+                    omega = delta;              // t transformation
+                }
+
+                v_prev = v;
+                w = this.levin(v, n - 1, omega, beta, numer, denom);
+                diff = w - estlim;
+// console.log(n, delta, transform, x0 + h, v, w, diff);
 
                 if (isNaN(w)) {
                     result = 'NaN';
                     break;
                 }
-                if (v !== 0 && Math.abs(w / v) > infty) {
-                    estlim = Math.abs(w) * Math.sign(v);
+                if (v !== 0 && w / v > this.infty) {
+                    estlim = w;
                     result = 'infinite';
                     break;
                 }
-                delta = w - estlim;
-                if (Math.abs(delta) < 1.e-12) {
+                if (Math.abs(diff) < 1.e-7) {
                     break;
                 }
                 estlim = w;
             }
-            return [estlim, result, 1 - (n - 1) / up];
+            return [estlim, result, 1 - (n - 1) / this.upper];
         },
 
         /**
@@ -333,19 +394,25 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
          * @memberof JXG.Math.Extrapolate
          */
         limit: function(x0, h0, f) {
-            var algs = ['wynnEps'], //, 'aitken', 'brezinski'],
-                le = algs.length,
-                i, t, res;
+            return this.iteration_levin(x0, h0, f, 0);
 
-            for (i = 0; i < le; i++) {
-                for (t = 0; t < 2; t++) {
-                    res = this.iteration(x0, h0, f, algs[i], t);
-                    if (res[2] > 0.6) {
-                        return res;
-                    }
-                }
-            }
-            return [f(x0 + Math.sign(h0) * Math.sqrt(Mat.eps)), 'direct', 0];
+            // var algs = ['wynnEps', 'levin'], //, 'wynnEps', 'levin', 'aitken', 'brezinski'],
+            //     le = algs.length,
+            //     i, t, res;
+            // for (i = 0; i < le; i++) {
+            //     for (t = 0; t < 1; t++) {
+            //         if (algs[i] === 'levin') {
+            //             res = this.iteration_levin(x0, h0, f, t);
+            //         } else {
+            //             res = this.iteration(x0, h0, f, algs[i], t);
+            //         }
+            //         if (res[2] > 0.6) {
+            //             return res;
+            //         }
+            //         console.log(algs[i], t, res)
+            //     }
+            // }
+            // return [f(x0 + Math.sign(h0) * Math.sqrt(Mat.eps)), 'direct', 0];
         }
     };
 

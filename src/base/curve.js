@@ -1762,7 +1762,7 @@ define([
             // From left
             res = Extrapolate.limit(t, -step, this.X);
             x_l = res[0];
-            if (res[1] === 'Number') {
+            if (res[1] === 'infinite') {
                 x_l = Math.sign(x_l) * Infinity;
             }
 
