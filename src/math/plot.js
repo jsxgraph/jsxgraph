@@ -490,7 +490,7 @@ define(['jxg', 'base/constants', 'base/coords', 'math/math', 'math/extrapolate',
             --depth;
 
             if (isJump) {
-                this._insertPoint(new Coords(Const.COORDS_BY_SCREEN, [NaN, NaN], curve.board, false), tc);
+                this._insertPoint_v2(curve, new Coords(Const.COORDS_BY_SCREEN, [NaN, NaN], curve.board, false), tc);
             } else if (depth <= mindepth || isSmooth) {
                 this._insertPoint_v2(curve, pnt, tc);
                 //if (this._borderCase(a, b, c, ta, tb, tc, depth)) {}
@@ -1267,7 +1267,134 @@ define(['jxg', 'base/constants', 'base/coords', 'math/math', 'math/extrapolate',
             return curve;
         },
 
+        //----------------------------------------------------------------------
+        // Plot algorithm v4
+        //----------------------------------------------------------------------
+
+        _criticalPoints: function(vec, le, mean) {
+            var i, pos = [];
+            for (i = 0; i < le; i++) {
+                if (Math.abs(vec[i]) > 1)  {
+                    pos.push({i: i, v: vec[i]});
+                }
+            }
+            return pos;
+        },
+
+        divided_diffs: function(curve, mi, ma) {
+            var i, level, t, le, h, steps,
+                suspended = false,
+                // x_mean, y_mean, x_cnt, y_cnt,
+                t_values = [],
+                x_values = [],
+                y_values = [],
+                x_diffs = [],
+                y_diffs = [];
+
+            steps = 512;
+            h = (ma - mi) / steps;
+            console.log(mi, ma, "steps:", steps, "h", h);
+
+            for (i = 0, t = mi; i < steps + 1; i++, t += h) {
+                t_values[i] = t;
+                x_values[i] = curve.X(t, suspended);
+                y_values[i] = curve.Y(t, suspended);
+
+                if (i === 0) {
+                    suspended = true;
+                }
+            }
+
+            le = y_values.length - 1;
+            for (level = 1; level < 40; level++) {
+                // x_mean = 0.0;
+                // x_cnt = 0;
+                // y_mean = 0.0;
+                // y_cnt = 0;
+                if (level === 1) {
+                    for (i = 0; i < le; i++) {
+                        x_diffs[i] = x_values[i + 1] - x_values[i];
+                        y_diffs[i] = y_values[i + 1] - y_values[i];
+                        // if (!isNaN(x_diffs[i])) {
+                        //     x_mean += Math.abs(x_diffs[i]);
+                        //     x_cnt++;
+                        // }
+                        // if (!isNaN(y_diffs[i])) {
+                        //     y_mean += Math.abs(y_diffs[i]);
+                        //     y_cnt++;
+                        // }
+                    }
+                } else {
+                    for (i = 0; i < le; i++) {
+                        x_diffs[i] = x_diffs[i + 1] - x_diffs[i];
+                        y_diffs[i] = y_diffs[i + 1] - y_diffs[i];
+                        // if (!isNaN(x_diffs[i])) {
+                        //     x_mean += Math.abs(x_diffs[i]);
+                        //     x_cnt++;
+                        // }
+                        // if (!isNaN(y_diffs[i])) {
+                        //     y_mean += Math.abs(y_diffs[i]);
+                        //     y_cnt++;
+                        // }
+                    }
+                }
+                // x_mean /= x_cnt;
+                // y_mean /= y_cnt;
+                // console.log(y_diffs.toString());
+                console.log(level, this._criticalPoints(y_diffs, le));
+                le--;
+            }
+            console.log(y_diffs);
+
+            return {
+                    t: t_values,
+                    x: x_values,
+                    y: y_values
+                };
+
+        },
+
+        _insertPoint_v4: function (curve, crds, t) {
+            var p;
+
+            // Add regular point
+            p = new Coords(Const.COORDS_BY_USER, crds, curve.board);
+            p._t = t;
+            curve.points.push(p);
+        },
+
+        updateParametricCurve_v4: function (curve, mi, ma) {
+            var i, le,
+                ta, tb, a, b,
+                w2, h2, bbox,
+                ret;
+
+
+            if (curve.xterm === 'x') {
+                // For function graphs we can restrict the plot interval
+                // to the visible area +plus margin
+                bbox = curve.board.getBoundingBox();
+                w2 = (bbox[2] - bbox[0]) * 0.3;
+                h2 = (bbox[1] - bbox[3]) * 0.3;
+                ta = Math.max(mi, bbox[0] - w2);
+                tb = Math.min(ma, bbox[2] + w2);
+            } else {
+                ta = mi;
+                tb = ma;
+            }
+
+            curve.points = [];
+
+            ret = this.divided_diffs(curve, ta, tb);
+            le = ret.x.length;
+            for (i = 0; i < le; i++) {
+                this._insertPoint_v4(curve, [1, ret.x[i], ret.y[i]], ret.t[i]);
+            }
+
+            curve.numberPoints = curve.points.length;
+        }
     };
+
 
     return Mat.Plot;
 });

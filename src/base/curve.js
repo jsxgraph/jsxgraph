@@ -736,6 +736,8 @@ define([
                         Plot.updateParametricCurveOld(this, mi, ma);
                     } else if (version === 2) {
                         Plot.updateParametricCurve_v2(this, mi, ma);
+                    } else if (version === 4) {
+                        Plot.updateParametricCurve_v4(this, mi, ma);
                     } else {
                         Plot.updateParametricCurve(this, mi, ma);
                     }
