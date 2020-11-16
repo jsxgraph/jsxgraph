@@ -1271,14 +1271,34 @@ define(['jxg', 'base/constants', 'base/coords', 'math/math', 'math/extrapolate',
         // Plot algorithm v4
         //----------------------------------------------------------------------
 
-        _criticalPoints: function(vec, le, mean) {
-            var i, pos = [];
+        _criticalPoints: function(vec, le, level) {
+            var i,
+                isGroup   = false,
+                group     = 0,
+                groups    = [],
+                positions = [];
+
             for (i = 0; i < le; i++) {
-                if (Math.abs(vec[i]) > 1)  {
-                    pos.push({i: i, v: vec[i]});
+                if (Math.abs(vec[i]) > 5)  {
+                    positions.push({i: i, v: vec[i], group: group});
+                    if (!isGroup) {
+                        isGroup = true;
+                    }
+                } else {
+                    if (isGroup) {
+                        groups.push(positions.slice(0));
+                        positions = [];
+                        isGroup = false;
+                        group++;
+                    }
                 }
             }
-            return pos;
+            if (isGroup) {
+                groups.push(positions.slice(0));
+                positions = [];
+            }
+
+            return groups;
         },
 
         Component: function() {
@@ -1351,61 +1371,71 @@ define(['jxg', 'base/constants', 'base/coords', 'math/math', 'math/extrapolate',
             return components;
         },
 
-        divided_diffs: function(component, curve, mi, ma) {
+        dividedDiffs: function(component, curve, mi, ma) {
             var i, level, t, le,
-                // x_mean, y_mean, x_cnt, y_cnt,
                 t_values = component.t_values,
                 x_values = component.x_values,
                 y_values = component.y_values,
                 x_diffs = [],
-                y_diffs = [];
+                y_diffs = [],
+                x_slopes = [],
+                y_slopes = [],
+                foundCriticalPoint = 0,
+                pos, ma, j, v,
+                groups,
+                criticalPoints = [];
 
             le = y_values.length - 1;
-            for (level = 1; level < 40; level++) {
-                // x_mean = 0.0;
-                // x_cnt = 0;
-                // y_mean = 0.0;
-                // y_cnt = 0;
-                if (level === 1) {
-                    for (i = 0; i < le; i++) {
-                        x_diffs[i] = x_values[i + 1] - x_values[i];
-                        y_diffs[i] = y_values[i + 1] - y_values[i];
-                        // if (!isNaN(x_diffs[i])) {
-                        //     x_mean += Math.abs(x_diffs[i]);
-                        //     x_cnt++;
-                        // }
-                        // if (!isNaN(y_diffs[i])) {
-                        //     y_mean += Math.abs(y_diffs[i]);
-                        //     y_cnt++;
-                        // }
-                    }
-                } else {
-                    for (i = 0; i < le; i++) {
-                        x_diffs[i] = x_diffs[i + 1] - x_diffs[i];
-                        y_diffs[i] = y_diffs[i + 1] - y_diffs[i];
-                        // if (!isNaN(x_diffs[i])) {
-                        //     x_mean += Math.abs(x_diffs[i]);
-                        //     x_cnt++;
-                        // }
-                        // if (!isNaN(y_diffs[i])) {
-                        //     y_mean += Math.abs(y_diffs[i]);
-                        //     y_cnt++;
-                        // }
+            for (i = 0; i < le; i++) {
+                x_diffs[i] = x_values[i + 1] - x_values[i];
+                y_diffs[i] = y_values[i + 1] - y_values[i];
+                x_slopes[i] = x_diffs[i];
+                y_slopes[i] = y_diffs[i];
+            }
+            le--;
+
+            for (level = 2; level < 40; level++) {
+                for (i = 0; i < le; i++) {
+                    x_diffs[i] = x_diffs[i + 1] - x_diffs[i];
+                    y_diffs[i] = y_diffs[i + 1] - y_diffs[i];
+                }
+                groups = this._criticalPoints(y_diffs, le)
+
+console.log(level, groups);
+                if (groups.length > 0) {
+                    foundCriticalPoint++;
+                    if (foundCriticalPoint > 5) {
+                        break;
                     }
                 }
-                // x_mean /= x_cnt;
-                // y_mean /= y_cnt;
-                // console.log(y_diffs.toString());
-                console.log(level, this._criticalPoints(y_diffs, le));
                 le--;
             }
-            console.log(y_diffs);
 
-            return {
-                    t: t_values,
-                    x: x_values,
-                    y: y_values
-                };
+            // console.log(y_diffs);
+            // Anaylze the group
+            for (i = 0; i < groups.length; i++) {
+                console.log("Group", i, groups[i])
+                ma = -Infinity;
+                for (j = 0; j < groups[i].length; j++) {
+                    v = Math.abs(groups[i][j].v);
+                    if (v > ma) {
+                        ma = v;
+                        pos = j;
+                    }
+                }
+    console.log(ma, pos)
+                pos = Math.floor(groups[i][pos].i + level / 2);
+    console.log(pos, t_values[pos], y_values[pos], y_slopes[pos])
+
+                criticalPoints.push({
+                        idx: pos,
+                        t: t_values[pos],
+                        x: x_values[pos],
+                        y: y_values[pos]
+                    });
+            }
+
+            return criticalPoints;
 
         },
 
@@ -1418,14 +1448,14 @@ define(['jxg', 'base/constants', 'base/coords', 'math/math', 'math/extrapolate',
             curve.points.push(p);
         },
 
-        steps: 512,
+        steps: 256,
 
         updateParametricCurve_v4: function (curve, mi, ma) {
             var i, le,
                 ta, tb, a, b,
                 w2, h2, bbox,
-                components, idx,
-                ret;
+                components, idx, comp,
+                groups;
 
             if (curve.xterm === 'x') {
                 // For function graphs we can restrict the plot interval
@@ -1447,13 +1477,16 @@ define(['jxg', 'base/constants', 'base/coords', 'math/math', 'math/extrapolate',
             console.log(components);
 
             for (idx = 0; idx < components.length; idx++) {
-                ret = this.divided_diffs(components[idx], curve, ta, tb);
-                le = ret.x.length;
+                comp = components[idx];
+                groups = this.dividedDiffs(comp, curve, ta, tb);
+                console.log("Groups", groups);
+
+                le = comp.len;
                 for (i = 0; i < le; i++) {
-                    this._insertPoint_v4(curve, [1, ret.x[i], ret.y[i]], ret.t[i]);
+                    this._insertPoint_v4(curve, [1, comp.x_values[i], comp.y_values[i]], comp.t_values[i]);
                 }
                 if (idx < components.length - 1) {
-                    this._insertPoint_v4(curve, [1, NaN, NaN], components[idx].right_t);
+                    this._insertPoint_v4(curve, [1, NaN, NaN], comp.right_t);
                 }
             }
 
