@@ -1281,29 +1281,84 @@ define(['jxg', 'base/constants', 'base/coords', 'math/math', 'math/extrapolate',
             return pos;
         },
 
-        divided_diffs: function(curve, mi, ma) {
-            var i, level, t, le, h, steps,
-                suspended = false,
-                // x_mean, y_mean, x_cnt, y_cnt,
-                t_values = [],
-                x_values = [],
-                y_values = [],
-                x_diffs = [],
-                y_diffs = [];
+        Component: function() {
+            this.left_isNaN =  false;
+            this.right_isNaN = false;
+            this.left_t = null;
+            this.right_t = null;
+            this.t_values = [];
+            this.x_values = [];
+            this.y_values = [];
+            this.len = 0;
+        },
 
-            steps = 512;
-            h = (ma - mi) / steps;
-            console.log(mi, ma, "steps:", steps, "h", h);
+        findComponents: function(curve, mi, ma) {
+            var i, t, le, h, x, y,
+                components = [],
+                comp,
+                comp_nr = 0,
+                cnt = 0,
+                comp_started = false,
+                suspended = false;
 
-            for (i = 0, t = mi; i < steps + 1; i++, t += h) {
-                t_values[i] = t;
-                x_values[i] = curve.X(t, suspended);
-                y_values[i] = curve.Y(t, suspended);
+            h = (ma - mi) / this.steps;
+            components[comp_nr] = new this.Component();
+            comp = components[comp_nr];
+            for (i = 0, t = mi; i <= this.steps; i++, t += h) {
+                x = curve.X(t, suspended);
+                y = curve.Y(t, suspended);
 
+                if (isNaN(y) || isNaN(y)) {
+                    if (comp_started) {
+                        // Finalize a component
+                        comp.right_isNaN = true;
+                        comp.right_t = t;
+                        comp.len = cnt;
+
+                        // Prepare a new component
+                        comp_started = false;
+                        comp_nr++;
+                        components[comp_nr] =  new this.Component();
+                        comp = components[comp_nr];
+                    } else {
+                        // Wait for the component to have non-NaN entries
+                        comp.left_isNaN = true;
+                        comp.left_t = t;
+                    }
+                } else {
+                    // Now there ia non-NaN entry.
+                    if (!comp_started) {
+                        // Start the component
+                        comp_started = true;
+                        cnt = 0;
+                    }
+                    // Add the value to the component
+                    comp.t_values[cnt] = t;
+                    comp.x_values[cnt] = x;
+                    comp.y_values[cnt] = y;
+                    cnt++;
+                }
                 if (i === 0) {
                     suspended = true;
                 }
             }
+            if (comp_started) {
+                comp.len = cnt;
+            } else {
+                components.pop();
+            }
+
+            return components;
+        },
+
+        divided_diffs: function(component, curve, mi, ma) {
+            var i, level, t, le,
+                // x_mean, y_mean, x_cnt, y_cnt,
+                t_values = component.t_values,
+                x_values = component.x_values,
+                y_values = component.y_values,
+                x_diffs = [],
+                y_diffs = [];
 
             le = y_values.length - 1;
             for (level = 1; level < 40; level++) {
@@ -1363,12 +1418,14 @@ define(['jxg', 'base/constants', 'base/coords', 'math/math', 'math/extrapolate',
             curve.points.push(p);
         },
 
+        steps: 512,
+
         updateParametricCurve_v4: function (curve, mi, ma) {
             var i, le,
                 ta, tb, a, b,
                 w2, h2, bbox,
+                components, idx,
                 ret;
-
 
             if (curve.xterm === 'x') {
                 // For function graphs we can restrict the plot interval
@@ -1385,10 +1442,19 @@ define(['jxg', 'base/constants', 'base/coords', 'math/math', 'math/extrapolate',
 
             curve.points = [];
 
-            ret = this.divided_diffs(curve, ta, tb);
-            le = ret.x.length;
-            for (i = 0; i < le; i++) {
-                this._insertPoint_v4(curve, [1, ret.x[i], ret.y[i]], ret.t[i]);
+            console.log("--------------------");
+            components = this.findComponents(curve, ta, tb);
+            console.log(components);
+
+            for (idx = 0; idx < components.length; idx++) {
+                ret = this.divided_diffs(components[idx], curve, ta, tb);
+                le = ret.x.length;
+                for (i = 0; i < le; i++) {
+                    this._insertPoint_v4(curve, [1, ret.x[i], ret.y[i]], ret.t[i]);
+                }
+                if (idx < components.length - 1) {
+                    this._insertPoint_v4(curve, [1, NaN, NaN], components[idx].right_t);
+                }
             }
 
             curve.numberPoints = curve.points.length;
