@@ -395,6 +395,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
          */
         limit: function(x0, h0, f) {
             return this.iteration_levin(x0, h0, f, 0);
+            //return this.iteration(x0, h0, f, 'wynnEps', 1);
 
             // var algs = ['wynnEps', 'levin'], //, 'wynnEps', 'levin', 'aitken', 'brezinski'],
             //     le = algs.length,

@@ -37,8 +37,8 @@
  utils/type
  */
 
-define(['jxg', 'base/constants', 'base/coords', 'math/math', 'math/extrapolate', 'math/numerics', 'math/geometry', 'utils/type'],
-        function (JXG, Const, Coords, Mat, Extrapolate, Numerics, Geometry, Type) {
+define(['jxg', 'base/constants', 'base/coords', 'math/math', 'math/extrapolate', 'math/numerics', 'math/statistics', 'math/geometry', 'utils/type'],
+        function (JXG, Const, Coords, Mat, Extrapolate, Numerics, Statistics, Geometry, Type) {
 
     "use strict";
 
@@ -1046,7 +1046,8 @@ define(['jxg', 'base/constants', 'base/coords', 'math/math', 'math/extrapolate',
                     left_x: x_l,
                     left_y: y_l,
                     right_x: x_r,
-                    right_y: y_r
+                    right_y: y_r,
+                    t: t
                 };
         },
 
@@ -1272,14 +1273,18 @@ define(['jxg', 'base/constants', 'base/coords', 'math/math', 'math/extrapolate',
         //----------------------------------------------------------------------
 
         _criticalPoints: function(vec, le, level) {
-            var i,
+            var i, med,
                 isGroup   = false,
+                abs_vec,
                 group     = 0,
                 groups    = [],
                 positions = [];
 
+            abs_vec = Statistics.abs(vec);
+            med = Statistics.median(abs_vec);
+            // console.log("Median", med);
             for (i = 0; i < le; i++) {
-                if (Math.abs(vec[i]) > 5)  {
+                if (abs_vec[i] > med * 100)  {
                     positions.push({i: i, v: vec[i], group: group});
                     if (!isGroup) {
                         isGroup = true;
@@ -1312,7 +1317,7 @@ define(['jxg', 'base/constants', 'base/coords', 'math/math', 'math/extrapolate',
             this.len = 0;
         },
 
-        findComponents: function(curve, mi, ma) {
+        findComponents: function(curve, mi, ma, steps) {
             var i, t, le, h, x, y,
                 components = [],
                 comp,
@@ -1321,10 +1326,10 @@ define(['jxg', 'base/constants', 'base/coords', 'math/math', 'math/extrapolate',
                 comp_started = false,
                 suspended = false;
 
-            h = (ma - mi) / this.steps;
+            h = (ma - mi) / steps;
             components[comp_nr] = new this.Component();
             comp = components[comp_nr];
-            for (i = 0, t = mi; i <= this.steps; i++, t += h) {
+            for (i = 0, t = mi; i <= steps; i++, t += h) {
                 x = curve.X(t, suspended);
                 y = curve.Y(t, suspended);
 
@@ -1371,6 +1376,72 @@ define(['jxg', 'base/constants', 'base/coords', 'math/math', 'math/extrapolate',
             return components;
         },
 
+        getPointType: function(curve, pos, t_values, x_values, y_values, x_slopes, y_slopes) {
+            var h, delta,
+                a, b,
+                // d0, d1, dd,
+                h0, ta, tb, tc,
+                result = {
+                    idx: pos,
+                    t: t_values[pos],
+                    x: x_values[pos],
+                    y: y_values[pos]
+                };
+
+            // console.log("Left", pos-2, t_values[pos-2], y_values[pos-2], y_slopes[pos-2])
+            // console.log("Left", pos-1, t_values[pos-1], y_values[pos-1], y_slopes[pos-1])
+            // console.log("Center", pos, t_values[pos], y_values[pos], y_slopes[pos])
+            // console.log("Right", pos+1, t_values[pos+1], y_values[pos+1], y_slopes[pos+1])
+            // console.log("Right", pos+2, t_values[pos+2], y_values[pos+2], y_slopes[pos+2])
+
+            h = t_values[pos] - t_values[pos - 1];
+            if (y_slopes[pos - 2] * y_slopes[pos + 1] > 0.0) {
+                // Same slope on both sides
+                console.log("Same slopes", t_values[pos]);
+
+                // Now, we test if the slope changes direction inbetween.
+                // This is a hint for a jump.
+                if (y_slopes[pos - 2] * y_slopes[pos - 1] < 0) {
+                    console.log("Jump 1");
+                    ta = t_values[pos - 2];
+                    tc = t_values[pos];
+                    tb = t_values[pos + 1];
+                } else if (y_slopes[pos - 1] * y_slopes[pos] < 0) {
+                    console.log("Jump 2");
+                    ta = t_values[pos - 1];
+                    tc = t_values[pos];
+                    tb = t_values[pos + 1];
+
+                    // d0 = y_slopes[pos - 1] - y_slopes[pos - 2];
+                    // d1 = y_slopes[pos] - y_slopes[pos - 1];
+                    // dd = d1 - d0;
+                    // a = dd / (h * h * h);
+                    // b = d1 / (h * h) - a * t_values[pos - 1];
+                    // console.log(b);
+                    // b = d0 / (4 * h * h) - a * t_values[pos - 2];
+                    // console.log(b);
+                    // console.log(-b / a);
+                }
+                result.type = 'jump';
+            } else {
+                console.log("Opposite slopes: cusp", t_values[pos]);
+                // Opposite slopes
+                // This may be a cusp.
+                // Find a better approcimation of the cusp
+                delta = y_slopes[pos] - y_slopes[pos - 1];
+                a = 0.5 * delta / (h * h);
+                b = (y_slopes[pos] - a * (2 * t_values[pos] + h) * h) / h;
+                h0 = -(2 * t_values[pos] * a) / (2 * a + b);
+                // console.log("Minimum at", t_values[pos] + h0);
+                tc = t_values[pos] + h0;
+                result.t = tc;
+                result.x = curve.X(tc, true);
+                result.y = curve.Y(tc, true);
+                result.type = 'cusp';
+            }
+            return result;
+        },
+
         dividedDiffs: function(component, curve, mi, ma) {
             var i, level, t, le,
                 t_values = component.t_values,
@@ -1380,10 +1451,12 @@ define(['jxg', 'base/constants', 'base/coords', 'math/math', 'math/extrapolate',
                 y_diffs = [],
                 x_slopes = [],
                 y_slopes = [],
+                // x_med, y_med,
                 foundCriticalPoint = 0,
                 pos, ma, j, v,
                 groups,
                 criticalPoints = [];
+
 
             le = y_values.length - 1;
             for (i = 0; i < le; i++) {
@@ -1394,27 +1467,29 @@ define(['jxg', 'base/constants', 'base/coords', 'math/math', 'math/extrapolate',
             }
             le--;
 
-            for (level = 2; level < 40; level++) {
+            for (level = 2; level < 20; level++) {
                 for (i = 0; i < le; i++) {
                     x_diffs[i] = x_diffs[i + 1] - x_diffs[i];
                     y_diffs[i] = y_diffs[i + 1] - y_diffs[i];
                 }
-                groups = this._criticalPoints(y_diffs, le)
+                groups = this._criticalPoints(y_diffs, le, level);
 
-console.log(level, groups);
+// console.log(level, groups);
                 if (groups.length > 0) {
                     foundCriticalPoint++;
-                    if (foundCriticalPoint > 5) {
+                    if (foundCriticalPoint > 3) {
                         break;
                     }
                 }
                 le--;
             }
 
-            // console.log(y_diffs);
-            // Anaylze the group
+            // console.log("Last diffs", y_diffs, "level", level);
+
+            // Analyze the group
             for (i = 0; i < groups.length; i++) {
-                console.log("Group", i, groups[i])
+                // console.log("Group", i, groups[i])
+                // Find the maximum difference, i.e. the center of the "problem"
                 ma = -Infinity;
                 for (j = 0; j < groups[i].length; j++) {
                     v = Math.abs(groups[i][j].v);
@@ -1423,16 +1498,8 @@ console.log(level, groups);
                         pos = j;
                     }
                 }
-    console.log(ma, pos)
                 pos = Math.floor(groups[i][pos].i + level / 2);
-    console.log(pos, t_values[pos], y_values[pos], y_slopes[pos])
-
-                criticalPoints.push({
-                        idx: pos,
-                        t: t_values[pos],
-                        x: x_values[pos],
-                        y: y_values[pos]
-                    });
+                criticalPoints.push(this.getPointType(curve, pos, t_values, x_values, y_values, x_slopes, y_slopes));
             }
 
             return criticalPoints;
@@ -1461,21 +1528,74 @@ console.log(level, groups);
             curve.points.push(p);
         },
 
-        steps: 128,
+        steps: 256,
+
+        plot_v4: function(curve, ta, tb, steps) {
+            var i, le, components, idx, comp,
+                groups, g, start, ta1, tb1;
+
+            components = this.findComponents(curve, ta, tb, steps);
+            // console.log(components);
+
+            for (idx = 0; idx < components.length; idx++) {
+                comp = components[idx];
+                groups = this.dividedDiffs(comp, curve, ta, tb);
+                // console.log("Groups", groups);
+
+                start = 0;
+                for (g = 0; g <= groups.length; g++) {
+                    if (g === groups.length) {
+                        le = comp.len;
+                    } else {
+                        le = groups[g].idx - 1;
+                    }
+
+                    // Insert uncritical points until next critical point
+                    for (i = start; i < le; i++) {
+                        this._insertPoint_v4(curve, [1, comp.x_values[i], comp.y_values[i]], comp.t_values[i]);
+                    }
+
+                    // Handle next critical point
+                    if (g < groups.length) {
+                        //console.log("critical point", groups[g]);
+                        ta1 = comp.t_values[groups[g].idx - 1];
+                        tb1 = comp.t_values[groups[g].idx + 1];
+                        ta1 = ta1 + (tb1 - ta1) * 0.1;
+                        tb1 = tb1 - (tb1 - ta1) * 0.1;
+                        console.log((tb1 - ta1) * curve.board.unitX);
+
+                        if ((tb1 - ta1) * curve.board.unitX > 1.5) {
+                            this.plot_v4(curve, ta1, tb1, 16);
+                        } else {
+                            if (groups[g].type === 'cusp') {
+                                this._insertPoint_v4(curve, [1, groups[g].x, groups[g].y], groups[g].t);
+                            } else {
+                                this._insertPoint_v4(curve, [1, NaN, NaN], groups[g].t);
+                            }
+                        }
+
+                        start = groups[g].idx + 1;
+                    }
+                }
+
+                le = comp.len;
+                if (idx < components.length - 1) {
+                    this._insertPoint_v4(curve, [1, NaN, NaN], comp.right_t);
+                }
+            }
+
+
+        },
 
         updateParametricCurve_v4: function (curve, mi, ma) {
-            var i, le,
-                ta, tb, a, b,
-                w2, h2, bbox,
-                components, idx, comp,
-                groups;
+            var ta, tb, w2, bbox;
 
             if (curve.xterm === 'x') {
                 // For function graphs we can restrict the plot interval
                 // to the visible area +plus margin
                 bbox = curve.board.getBoundingBox();
                 w2 = (bbox[2] - bbox[0]) * 0.3;
-                h2 = (bbox[1] - bbox[3]) * 0.3;
+                // h2 = (bbox[1] - bbox[3]) * 0.3;
                 ta = Math.max(mi, bbox[0] - w2);
                 tb = Math.min(ma, bbox[2] + w2);
             } else {
@@ -1486,22 +1606,7 @@ console.log(level, groups);
             curve.points = [];
 
             console.log("--------------------");
-            components = this.findComponents(curve, ta, tb);
-            console.log(components);
-
-            for (idx = 0; idx < components.length; idx++) {
-                comp = components[idx];
-                groups = this.dividedDiffs(comp, curve, ta, tb);
-                console.log("Groups", groups);
-
-                le = comp.len;
-                for (i = 0; i < le; i++) {
-                    this._insertPoint_v4(curve, [1, comp.x_values[i], comp.y_values[i]], comp.t_values[i]);
-                }
-                if (idx < components.length - 1) {
-                    this._insertPoint_v4(curve, [1, NaN, NaN], comp.right_t);
-                }
-            }
+            this.plot_v4(curve, ta, tb, this.steps);
 
             curve.numberPoints = curve.points.length;
         }

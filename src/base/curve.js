@@ -732,6 +732,8 @@ define([
             // continuous x data
             } else {
                 if (Type.evaluate(this.visProp.doadvancedplot)) {
+                    console.time("plot");
+
                     if (version === 1 || Type.evaluate(this.visProp.doadvancedplotold)) {
                         Plot.updateParametricCurveOld(this, mi, ma);
                     } else if (version === 2) {
@@ -741,6 +743,7 @@ define([
                     } else {
                         Plot.updateParametricCurve(this, mi, ma);
                     }
+                    console.timeEnd("plot");
                 } else {
                     if (this.board.updateQuality === this.board.BOARD_QUALITY_HIGH) {
                         this.numberPoints = Type.evaluate(this.visProp.numberpointshigh);
