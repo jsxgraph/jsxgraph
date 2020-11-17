@@ -98,7 +98,7 @@ define([
         if (this.emitter) {
             EventEmitter.eventify(this);
         }
-        this.setCoordinates(method, coordinates, true, true);
+        this.setCoordinates(method, coordinates, false, true);
     };
 
     JXG.extend(JXG.Coords.prototype, /** @lends JXG.Coords.prototype */ {

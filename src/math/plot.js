@@ -1440,15 +1440,28 @@ console.log(level, groups);
         },
 
         _insertPoint_v4: function (curve, crds, t) {
-            var p;
+            var p,
+                prev = null,
+                near = 0.8;
+
+            if (curve.points.length > 0) {
+                prev = curve.points[curve.points.length - 1].scrCoords;
+            }
 
             // Add regular point
             p = new Coords(Const.COORDS_BY_USER, crds, curve.board);
+
+            if (prev !== null &&
+                Math.abs(p.scrCoords[1] - prev[1]) < near &&
+                Math.abs(p.scrCoords[1] - prev[2]) < near) {
+                return;
+                }
+
             p._t = t;
             curve.points.push(p);
         },
 
-        steps: 256,
+        steps: 128,
 
         updateParametricCurve_v4: function (curve, mi, ma) {
             var i, le,
