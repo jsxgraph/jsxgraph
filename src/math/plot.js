@@ -1417,26 +1417,26 @@ define(['jxg', 'base/constants', 'base/coords', 'math/math', 'math/extrapolate',
                 return result;
             }
 
-            console.log("Left", pos2m, t_values[pos2m], y_values[pos2m], y_slopes[pos2m])
-            console.log("Left", pos1m, t_values[pos1m], y_values[pos1m], y_slopes[pos1m])
-            console.log("Center", pos, t_values[pos], y_values[pos], y_slopes[pos])
-            console.log("Right", pos1p, t_values[pos1p], y_values[pos1p], y_slopes[pos1p])
+            // console.log("Left", pos2m, t_values[pos2m], y_values[pos2m], y_slopes[pos2m])
+            // console.log("Left", pos1m, t_values[pos1m], y_values[pos1m], y_slopes[pos1m])
+            // console.log("Center", pos, t_values[pos], y_values[pos], y_slopes[pos])
+            // console.log("Right", pos1p, t_values[pos1p], y_values[pos1p], y_slopes[pos1p])
 
             h = t_values[pos] - t_values[pos1m];
             if (y_slopes[pos2m] * y_slopes[pos1p] > 0.0) {
                 // Same slope on both sides
-                console.log("Same slopes", t_values[pos]);
+                // console.log("Same slopes", t_values[pos]);
 
                 // Now, we test if the slope changes direction inbetween.
                 // This is a hint for a jump.
                 result.type = 'jump';
                 if (y_slopes[pos2m] * y_slopes[pos1m] < 0) {
-                    console.log("Jump 1");
+                    // console.log("Jump 1");
                     ta = t_values[pos2m];
                     tc = t_values[pos];
                     tb = t_values[pos1p];
                 } else if (y_slopes[pos1m] * y_slopes[pos] < 0) {
-                    console.log("Jump 2");
+                    // console.log("Jump 2");
                     ta = t_values[pos1m];
                     tc = t_values[pos];
                     tb = t_values[pos1p];
@@ -1454,11 +1454,11 @@ define(['jxg', 'base/constants', 'base/coords', 'math/math', 'math/extrapolate',
                             Math.abs(y_slopes[pos]) > 10 * Math.abs(y_slopes[pos1p])) {
                     result.type = 'jump';
                 } else {
-                    console.log("cusp");
+                    // console.log("cusp");
                     result.type = 'cusp';
                 }
             } else {
-                console.log("Opposite slopes: cusp", t_values[pos]);
+                // console.log("Opposite slopes: cusp", t_values[pos]);
                 // Opposite slopes
                 // This may be a cusp.
                 if (Math.abs(y_slopes[pos]) > 10 * Math.abs(y_slopes[pos1m]) &&
@@ -1494,40 +1494,60 @@ define(['jxg', 'base/constants', 'base/coords', 'math/math', 'math/extrapolate',
                 y_diffs = [],
                 x_slopes = [],
                 y_slopes = [],
+                x_table = [],
+                y_table = [],
                 // x_med, y_med,
                 foundCriticalPoint = 0,
                 pos, ma, j, v,
                 groups,
                 criticalPoints = [];
 
+            x_table.push([]);
+            y_table.push([]);
+            le = y_values.length;
+            for (i = 0; i < le; i++) {
+                x_table[0][i] = x_values[i];
+                y_table[0][i] = y_values[i];
+            }
 
+            x_table.push([]);
+            y_table.push([]);
             le = y_values.length - 1;
             for (i = 0; i < le; i++) {
                 x_diffs[i] = x_values[i + 1] - x_values[i];
                 y_diffs[i] = y_values[i + 1] - y_values[i];
                 x_slopes[i] = x_diffs[i];
                 y_slopes[i] = y_diffs[i];
+                x_table[1][i] = x_diffs[i];
+                y_table[1][i] = y_diffs[i];
             }
             le--;
 
             up = Math.min(13, y_values.length - 1);
             for (level = 1; level < up; level++) {
+                x_table.push([]);
+                y_table.push([]);
                 for (i = 0; i < le; i++) {
                     x_diffs[i] = x_diffs[i + 1] - x_diffs[i];
                     y_diffs[i] = y_diffs[i + 1] - y_diffs[i];
+                    x_table[level + 1][i] = x_diffs[i];
+                    y_table[level + 1][i] = y_diffs[i];
                 }
+
+                // if (level == 1) {
+                //     console.log("bends level=", level, y_diffs.toString());
+                // }
+
                 // Store point location which may be centered around
                 // critical points.
                 // If the lebvel is suitable, step out of the loop.
                 groups = this._criticalPoints(y_diffs, le, level);
                 if (groups === false) {
                     // Its seems, the degree of the polynomial is equal to level
+console.log("Polynomial of degree", level);
                     groups = [];
                     break;
                 }
-if (level == 1) {
-console.log("bends level=", level, y_diffs.toString());
-}
                 if (groups.length > 0) {
                     foundCriticalPoint++;
                     if (foundCriticalPoint > 1 && level % 2 === 0) {
@@ -1537,11 +1557,11 @@ console.log("bends level=", level, y_diffs.toString());
                 le--;
             }
 
-            console.log("Last diffs", y_diffs, "level", level);
+            // console.log("Last diffs", y_diffs, "level", level);
 
             // Analyze the groups which have been found.
             for (i = 0; i < groups.length; i++) {
-                console.log("Group", i, groups[i])
+                // console.log("Group", i, groups[i])
                 // Identify the maximum difference, i.e. the center of the "problem"
                 ma = -Infinity;
                 for (j = 0; j < groups[i].length; j++) {
@@ -1556,7 +1576,7 @@ console.log("bends level=", level, y_diffs.toString());
                 criticalPoints.push(this.getPointType(curve, pos, t_values, x_values, y_values, x_slopes, y_slopes, le + 1));
             }
 
-            return criticalPoints;
+            return [criticalPoints, x_table, y_table];
 
         },
 
@@ -1587,17 +1607,24 @@ console.log("bends level=", level, y_diffs.toString());
 
         plot_v4: function(curve, ta, tb, steps) {
             var i, le, components, idx, comp,
-                groups, g, start, ta1, tb1;
+                groups, g, start, ta1, tb1,
+                ret, x_table, y_table,
+                x, y, t, t1, t2, j,
+                h  = 0.5 * (tb - ta) / steps,
+                h2 = h * 0.5;
 
 
             components = this.findComponents(curve, ta, tb, steps);
             console.log("::::::::::::::::::::::::")
-            console.log("plot", ta, tb);
-            console.log(components);
+            // console.log("plot", ta, tb);
+            // console.log(components);
 
             for (idx = 0; idx < components.length; idx++) {
                 comp = components[idx];
-                groups = this.differenceMethod(comp, curve);
+                ret = this.differenceMethod(comp, curve);
+                groups = ret[0];
+                x_table = ret[1];
+                y_table = ret[2];
                 // console.log("Groups", groups);
 
                 start = 0;
@@ -1611,11 +1638,32 @@ console.log("bends level=", level, y_diffs.toString());
                     // Insert all uncritical points until next critical point
                     for (i = start; i < le; i++) {
                         this._insertPoint_v4(curve, [1, comp.x_values[i], comp.y_values[i]], comp.t_values[i]);
+                        // x = x_table[0][i] + x_table[1][i] * h2 + x_table[2][i] * h2 * (h2 - h) / 2 + x_table[3][i] * h2 * (h2 - h) / 2 * (h2 - 2*h) / 3;
+                        // y = y_table[0][i] + y_table[1][i] * h2 + y_table[2][i] * h2 * (h2 - h) / 2 + y_table[3][i] * h2 * (h2 - h) / 2 * (h2 - 2*h) / 3;
+                        //this._insertPoint_v4(curve, [1, x, y], comp.t_values[i] + h2);
+                        //console.log(y_table[0][i], y_table[2][i])
+                        if (Math.abs(y_table[2][i]) > 0.1 * Math.abs(y_table[0][i])) {
+                            /*
+                            t = comp.t_values[i];
+                            t1 = Numerics.fminbr(curve.Y, [t, t + h]);
+                            this._insertPoint_v4(curve, [1, t1, curve.Y(t1)], t1);
+                            t2 = Numerics.fminbr(x => (-curve.Y(x)), [t, t + h]);
+                            this._insertPoint_v4(curve, [1, t2, curve.Y(t2)], t2);
+                            */
+                            /*
+                            for (j = 1; j < 10; j++) {
+                                t = comp.t_values[i] + j * h / 5;
+                                x = curve.X(t, true);
+                                y = curve.Y(t, true);
+                                this._insertPoint_v4(curve, [1, x, y], t);
+                            }
+                            */
+                        }
                     }
 
                     // Handle next critical point
                     if (g < groups.length) {
-                        console.log("critical point", groups[g]);
+                        // console.log("critical point", groups[g]);
 
                         // ta1 = comp.t_values[groups[g].idx - 1];
                         // tb1 = comp.t_values[groups[g].idx + 1];
@@ -1669,6 +1717,7 @@ console.log("bends level=", level, y_diffs.toString());
             this.plot_v4(curve, ta, tb, this.steps);
 
             curve.numberPoints = curve.points.length;
+            //console.log(curve.numberPoints);
         }
     };
 
