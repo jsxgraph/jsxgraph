@@ -139,7 +139,6 @@ define(['jxg', 'base/constants', 'base/coords', 'math/math', 'math/extrapolate',
             return !(isNaN(x0 + y0) && isNaN(x1 + y1));
         },
 
-
         /**
          * Updates the data points of a parametric curve. This version is used if {@link JXG.Curve#doadvancedplot} is <tt>true</tt>.
          * Since 0.99 this algorithm is deprecated. It still can be used if {@link JXG.Curve#doadvancedplotold} is <tt>true</tt>.
@@ -1388,11 +1387,11 @@ define(['jxg', 'base/constants', 'base/coords', 'math/math', 'math/extrapolate',
                     y: y_values[pos]
                 };
 
-            // console.log("Left", pos-2, t_values[pos-2], y_values[pos-2], y_slopes[pos-2])
-            // console.log("Left", pos-1, t_values[pos-1], y_values[pos-1], y_slopes[pos-1])
-            // console.log("Center", pos, t_values[pos], y_values[pos], y_slopes[pos])
-            // console.log("Right", pos+1, t_values[pos+1], y_values[pos+1], y_slopes[pos+1])
-            // console.log("Right", pos+2, t_values[pos+2], y_values[pos+2], y_slopes[pos+2])
+            console.log("Left", pos-2, t_values[pos-2], y_values[pos-2], y_slopes[pos-2])
+            console.log("Left", pos-1, t_values[pos-1], y_values[pos-1], y_slopes[pos-1])
+            console.log("Center", pos, t_values[pos], y_values[pos], y_slopes[pos])
+            console.log("Right", pos+1, t_values[pos+1], y_values[pos+1], y_slopes[pos+1])
+            console.log("Right", pos+2, t_values[pos+2], y_values[pos+2], y_slopes[pos+2])
 
             h = t_values[pos] - t_values[pos - 1];
             if (y_slopes[pos - 2] * y_slopes[pos + 1] > 0.0) {
@@ -1488,7 +1487,7 @@ define(['jxg', 'base/constants', 'base/coords', 'math/math', 'math/extrapolate',
 
             // Analyze the group
             for (i = 0; i < groups.length; i++) {
-                // console.log("Group", i, groups[i])
+                console.log("Group", i, groups[i])
                 // Find the maximum difference, i.e. the center of the "problem"
                 ma = -Infinity;
                 for (j = 0; j < groups[i].length; j++) {
@@ -1535,7 +1534,8 @@ define(['jxg', 'base/constants', 'base/coords', 'math/math', 'math/extrapolate',
                 groups, g, start, ta1, tb1;
 
             components = this.findComponents(curve, ta, tb, steps);
-            // console.log(components);
+            console.log("plot", ta, tb);
+            console.log(components);
 
             for (idx = 0; idx < components.length; idx++) {
                 comp = components[idx];
@@ -1557,7 +1557,7 @@ define(['jxg', 'base/constants', 'base/coords', 'math/math', 'math/extrapolate',
 
                     // Handle next critical point
                     if (g < groups.length) {
-                        //console.log("critical point", groups[g]);
+                        console.log("critical point", groups[g]);
                         ta1 = comp.t_values[groups[g].idx - 1];
                         tb1 = comp.t_values[groups[g].idx + 1];
                         ta1 = ta1 + (tb1 - ta1) * 0.1;
