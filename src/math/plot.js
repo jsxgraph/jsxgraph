@@ -1523,7 +1523,7 @@ define(['jxg', 'base/constants', 'base/coords', 'math/math', 'math/extrapolate',
             }
             le--;
 
-            up = Math.min(13, y_values.length - 1);
+            up = Math.min(8, y_values.length - 1);
             for (level = 1; level < up; level++) {
                 x_table.push([]);
                 y_table.push([]);
@@ -1602,7 +1602,7 @@ console.log("Polynomial of degree", level);
             curve.points.push(p);
         },
 
-        steps: 512,
+        steps: 1024,
         criticalThreshold: 100,
 
         plot_v4: function(curve, ta, tb, steps) {
@@ -1650,14 +1650,14 @@ console.log("Polynomial of degree", level);
                             t2 = Numerics.fminbr(x => (-curve.Y(x)), [t, t + h]);
                             this._insertPoint_v4(curve, [1, t2, curve.Y(t2)], t2);
                             */
-                            /*
-                            for (j = 1; j < 10; j++) {
+
+                            for (j = 1; j < 3; j++) {
                                 t = comp.t_values[i] + j * h / 5;
                                 x = curve.X(t, true);
                                 y = curve.Y(t, true);
                                 this._insertPoint_v4(curve, [1, x, y], t);
                             }
-                            */
+
                         }
                     }
 
