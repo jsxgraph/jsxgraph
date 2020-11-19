@@ -1491,6 +1491,14 @@ define(['jxg', 'base/constants', 'base/coords', 'math/math', 'math/extrapolate',
             return result;
         },
 
+        thiele: function(t, recip, t_values, idx, degree) {
+            var i, v = 0.0;
+            for (i = degree; i > 1; i--) {
+                v = (t - t_values[idx + i]) / (recip[i][idx + 1] - recip[i - 2][idx + 1] + v);
+            }
+            return recip[0][idx + 1] + (t - t_values[idx + 1]) / (recip[1][idx + 1] + v);
+        },
+
         differenceMethod: function(component, curve) {
             var i, level, le, up,
                 t_values = component.t_values,
@@ -1502,22 +1510,33 @@ define(['jxg', 'base/constants', 'base/coords', 'math/math', 'math/extrapolate',
                 y_slopes = [],
                 x_table = [],
                 y_table = [],
+                x_recip = [],
+                y_recip = [],
+                h, numerator,
                 // x_med, y_med,
                 foundCriticalPoint = 0,
                 pos, ma, j, v,
                 groups,
                 criticalPoints = [];
 
+            h = t_values[1] - t_values[0];
             x_table.push([]);
             y_table.push([]);
+            x_recip.push([]);
+            y_recip.push([]);
             le = y_values.length;
             for (i = 0; i < le; i++) {
                 x_table[0][i] = x_values[i];
                 y_table[0][i] = y_values[i];
+                x_recip[0][i] = x_values[i];
+                y_recip[0][i] = y_values[i];
             }
 
             x_table.push([]);
             y_table.push([]);
+            x_recip.push([]);
+            y_recip.push([]);
+            numerator = h;
             le = y_values.length - 1;
             for (i = 0; i < le; i++) {
                 x_diffs[i] = x_values[i + 1] - x_values[i];
@@ -1526,6 +1545,8 @@ define(['jxg', 'base/constants', 'base/coords', 'math/math', 'math/extrapolate',
                 y_slopes[i] = y_diffs[i];
                 x_table[1][i] = x_diffs[i];
                 y_table[1][i] = y_diffs[i];
+                x_recip[1][i] = numerator / x_diffs[i];
+                y_recip[1][i] = numerator / y_diffs[i];
             }
             le--;
 
@@ -1533,11 +1554,16 @@ define(['jxg', 'base/constants', 'base/coords', 'math/math', 'math/extrapolate',
             for (level = 1; level < up; level++) {
                 x_table.push([]);
                 y_table.push([]);
+                x_recip.push([]);
+                y_recip.push([]);
+                numerator *= h;
                 for (i = 0; i < le; i++) {
                     x_diffs[i] = x_diffs[i + 1] - x_diffs[i];
                     y_diffs[i] = y_diffs[i + 1] - y_diffs[i];
                     x_table[level + 1][i] = x_diffs[i];
                     y_table[level + 1][i] = y_diffs[i];
+                    x_recip[level + 1][i] = numerator / (x_recip[level][i + 1] - x_recip[level][i]) + x_recip[level - 1][i + 1];
+                    y_recip[level + 1][i] = numerator / (y_recip[level][i + 1] - y_recip[level][i]) + y_recip[level - 1][i + 1];
                 }
 
                 // if (level == 1) {
@@ -1582,7 +1608,7 @@ console.log("Polynomial of degree", level);
                 criticalPoints.push(this.getPointType(curve, pos, t_values, x_values, y_values, x_slopes, y_slopes, le + 1));
             }
 
-            return [criticalPoints, x_table, y_table];
+            return [criticalPoints, x_table, y_table, x_recip, y_recip];
 
         },
 
@@ -1608,7 +1634,7 @@ console.log("Polynomial of degree", level);
             curve.points.push(p);
         },
 
-        steps: 1024,
+        steps: 796,
         criticalThreshold: 100,
 
         plot_v4: function(curve, ta, tb, steps) {
@@ -1618,7 +1644,6 @@ console.log("Polynomial of degree", level);
                 x, y, t, t1, t2, j,
                 h  = (tb - ta) / steps,
                 h2 = h * 0.5;
-
 
             components = this.findComponents(curve, ta, tb, steps);
             console.log("::::::::::::::::::::::::")
@@ -1646,12 +1671,19 @@ console.log("Polynomial of degree", level);
                     // Insert all uncritical points until next critical point
                     for (i = start; i < le; i++) {
                         this._insertPoint_v4(curve, [1, comp.x_values[i], comp.y_values[i]], comp.t_values[i]);
+                        /*
+                        t = comp.t_values[i] + 0.1 * h;
+                        j = Math.min(ret[4].length - 1, 6);
+                        y = this.thiele(t, ret[4], comp.t_values, i, j);
+                        this._insertPoint_v4(curve, [1, comp.x_values[i], y], t);
+                        console.log(ret[4].length, Math.sin(t) - y);
+                        */
                         // x = x_table[0][i] + x_table[1][i] * h2 + x_table[2][i] * h2 * (h2 - h) / 2 + x_table[3][i] * h2 * (h2 - h) / 2 * (h2 - 2*h) / 3;
                         // y = y_table[0][i] + y_table[1][i] * h2 + y_table[2][i] * h2 * (h2 - h) / 2 + y_table[3][i] * h2 * (h2 - h) / 2 * (h2 - 2*h) / 3;
                         // this._insertPoint_v4(curve, [1, x, y], comp.t_values[i] + h2);
                         //console.log(h, h2, comp.t_values[i], x, comp.y_values[i], y)
                         //console.log(y_table[0][i], y_table[2][i], y_table[3][i],  y_table[4][i])
-                        if (y_table.length > 4 && Math.abs(y_table[4][i]) > 0.01 * Math.abs(y_table[0][i])) {
+                        if (true && y_table.length > 4 && Math.abs(y_table[4][i]) > 0.01 * Math.abs(y_table[0][i])) {
                             t = comp.t_values[i];
                             t1 = Numerics.fminbr(curve.Y, [t, t + h]);
                             t2 = Numerics.fminbr(x => (-curve.Y(x)), [t, t + h]);
