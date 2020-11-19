@@ -1635,6 +1635,7 @@ console.log("Polynomial of degree", level);
 
                 start = 0;
                 for (g = 0; g <= groups.length; g++) {
+                    console.log(":::");
                     if (g === groups.length) {
                         le = comp.len;
                     } else {
@@ -1649,8 +1650,8 @@ console.log("Polynomial of degree", level);
                         // y = y_table[0][i] + y_table[1][i] * h2 + y_table[2][i] * h2 * (h2 - h) / 2 + y_table[3][i] * h2 * (h2 - h) / 2 * (h2 - 2*h) / 3;
                         // this._insertPoint_v4(curve, [1, x, y], comp.t_values[i] + h2);
                         //console.log(h, h2, comp.t_values[i], x, comp.y_values[i], y)
-                        //console.log(y_table[0][i], y_table[2][i], y_table[3][i])
-                        if (y_table.length > 3 && Math.abs(y_table[3][i]) > 0.1 * Math.abs(y_table[0][i])) {
+                        //console.log(y_table[0][i], y_table[2][i], y_table[3][i],  y_table[4][i])
+                        if (y_table.length > 4 && Math.abs(y_table[4][i]) > 0.01 * Math.abs(y_table[0][i])) {
                             t = comp.t_values[i];
                             t1 = Numerics.fminbr(curve.Y, [t, t + h]);
                             t2 = Numerics.fminbr(x => (-curve.Y(x)), [t, t + h]);
