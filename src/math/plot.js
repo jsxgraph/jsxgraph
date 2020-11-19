@@ -1461,8 +1461,14 @@ define(['jxg', 'base/constants', 'base/coords', 'math/math', 'math/extrapolate',
                 // console.log("Opposite slopes: cusp", t_values[pos]);
                 // Opposite slopes
                 // This may be a cusp.
-                if (Math.abs(y_slopes[pos]) > 10 * Math.abs(y_slopes[pos1m]) &&
-                    Math.abs(y_slopes[pos]) > 10 * Math.abs(y_slopes[pos1p])) {
+                //console.log(y_slopes[pos1m], y_slopes[pos], y_slopes[pos1p])
+                if (/*Math.abs(y_slopes[pos]) > 10 * Math.abs(y_slopes[pos1m]) &&
+                    Math.abs(y_slopes[pos]) > 10 * Math.abs(y_slopes[pos1p])*/
+                    Math.abs(x_values[pos1p] - x_values[pos]) > 0.01 ||
+                    Math.abs(x_values[pos] - x_values[pos1p]) > 0.01 ||
+                    Math.abs(y_values[pos1p] - y_values[pos]) > 0.01 ||
+                    Math.abs(y_values[pos] - y_values[pos1p]) > 0.01
+                    ) {
                     result.type = 'jump';
                 } else {
                     result.type = 'cusp';
@@ -1610,7 +1616,7 @@ console.log("Polynomial of degree", level);
                 groups, g, start, ta1, tb1,
                 ret, x_table, y_table,
                 x, y, t, t1, t2, j,
-                h  = 0.5 * (tb - ta) / steps,
+                h  = (tb - ta) / steps,
                 h2 = h * 0.5;
 
 
@@ -1635,31 +1641,41 @@ console.log("Polynomial of degree", level);
                         le = groups[g].idx - 1;
                     }
 
+                    var good=0, bad=0;
                     // Insert all uncritical points until next critical point
                     for (i = start; i < le; i++) {
                         this._insertPoint_v4(curve, [1, comp.x_values[i], comp.y_values[i]], comp.t_values[i]);
                         // x = x_table[0][i] + x_table[1][i] * h2 + x_table[2][i] * h2 * (h2 - h) / 2 + x_table[3][i] * h2 * (h2 - h) / 2 * (h2 - 2*h) / 3;
                         // y = y_table[0][i] + y_table[1][i] * h2 + y_table[2][i] * h2 * (h2 - h) / 2 + y_table[3][i] * h2 * (h2 - h) / 2 * (h2 - 2*h) / 3;
-                        //this._insertPoint_v4(curve, [1, x, y], comp.t_values[i] + h2);
-                        //console.log(y_table[0][i], y_table[2][i])
-                        if (Math.abs(y_table[2][i]) > 0.1 * Math.abs(y_table[0][i])) {
-                            /*
+                        // this._insertPoint_v4(curve, [1, x, y], comp.t_values[i] + h2);
+                        //console.log(h, h2, comp.t_values[i], x, comp.y_values[i], y)
+                        //console.log(y_table[0][i], y_table[2][i], y_table[3][i])
+                        if (y_table.length > 3 && Math.abs(y_table[3][i]) > 0.1 * Math.abs(y_table[0][i])) {
                             t = comp.t_values[i];
                             t1 = Numerics.fminbr(curve.Y, [t, t + h]);
-                            this._insertPoint_v4(curve, [1, t1, curve.Y(t1)], t1);
                             t2 = Numerics.fminbr(x => (-curve.Y(x)), [t, t + h]);
-                            this._insertPoint_v4(curve, [1, t2, curve.Y(t2)], t2);
-                            */
-
+                            if (t1 < t2) {
+                                this._insertPoint_v4(curve, [1, t1, curve.Y(t1)], t1);
+                                this._insertPoint_v4(curve, [1, t2, curve.Y(t2)], t2);
+                            } else {
+                                this._insertPoint_v4(curve, [1, t2, curve.Y(t2)], t2);
+                                this._insertPoint_v4(curve, [1, t1, curve.Y(t1)], t1);
+                            }
+                            bad++;
+                            //console.log([t, t+h, comp.t_values[i+1]], curve.Y(t1), curve.Y(t2))
+                            /*
                             for (j = 1; j < 3; j++) {
                                 t = comp.t_values[i] + j * h / 5;
                                 x = curve.X(t, true);
                                 y = curve.Y(t, true);
                                 this._insertPoint_v4(curve, [1, x, y], t);
                             }
-
+                            */
+                        } else {
+                            good++;
                         }
                     }
+                    console.log("GOOD", good, "BAD", bad)
 
                     // Handle next critical point
                     if (g < groups.length) {
@@ -1675,11 +1691,14 @@ console.log("Polynomial of degree", level);
                             console.log("Recurse plot_v4")
                             this.plot_v4(curve, ta1, tb1, 32);
                         } else {
+                            i = groups[g].idx;
+                            this._insertPoint_v4(curve, [1, comp.x_values[i-1], comp.y_values[i-1]], comp.t_values[i-1]);
                             if (groups[g].type === 'cusp' || groups[g].type === 'border') {
                                 this._insertPoint_v4(curve, [1, groups[g].x, groups[g].y], groups[g].t);
                             } else {
                                 this._insertPoint_v4(curve, [1, NaN, NaN], groups[g].t);
                             }
+                            this._insertPoint_v4(curve, [1, comp.x_values[i+1], comp.y_values[i+1]], comp.t_values[i+1]);
                         }
 
                         start = groups[g].idx + 1;
