@@ -1499,7 +1499,7 @@ define(['jxg', 'base/constants', 'base/coords', 'math/math', 'math/extrapolate',
             return recip[0][idx + 1] + (t - t_values[idx + 1]) / (recip[1][idx + 1] + v);
         },
 
-        differenceMethod: function(component, curve) {
+        differenceMethodExperiments: function(component, curve) {
             var i, level, le, up,
                 t_values = component.t_values,
                 x_values = component.x_values,
@@ -1612,6 +1612,86 @@ console.log("Polynomial of degree", level);
 
         },
 
+        differenceMethod: function(component, curve) {
+            var i, level, le, up,
+                t_values = component.t_values,
+                x_values = component.x_values,
+                y_values = component.y_values,
+                x_table = [],
+                y_table = [],
+                foundCriticalPoint = 0,
+                pos, ma, j, v,
+                groups,
+                criticalPoints = [];
+
+            x_table.push([]);
+            y_table.push([]);
+            le = y_values.length;
+            for (i = 0; i < le; i++) {
+                x_table[0][i] = x_values[i];
+                y_table[0][i] = y_values[i];
+            }
+
+            x_table.push([]);
+            y_table.push([]);
+            le = y_values.length - 1;
+            for (i = 0; i < le; i++) {
+                x_table[1][i] = x_values[i + 1] - x_values[i];
+                y_table[1][i] = y_values[i + 1] - y_values[i];
+            }
+            le--;
+
+            up = Math.min(8, y_values.length - 1);
+            for (level = 1; level < up; level++) {
+                x_table.push([]);
+                y_table.push([]);
+                for (i = 0; i < le; i++) {
+                    x_table[level + 1][i] = x_table[level][i + 1] - x_table[level][i];
+                    y_table[level + 1][i] = y_table[level][i + 1] - y_table[level][i];
+                }
+
+                // Store point location which may be centered around
+                // critical points.
+                // If the lebvel is suitable, step out of the loop.
+                groups = this._criticalPoints(y_table[level + 1], le, level);
+                if (groups === false) {
+                    // Its seems, the degree of the polynomial is equal to level
+    console.log("Polynomial of degree", level);
+                    groups = [];
+                    break;
+                }
+                if (groups.length > 0) {
+                    foundCriticalPoint++;
+                    if (foundCriticalPoint > 1 && level % 2 === 0) {
+                        break;
+                    }
+                }
+                le--;
+            }
+
+            // console.log("Last diffs", y_diffs, "level", level);
+
+            // Analyze the groups which have been found.
+            for (i = 0; i < groups.length; i++) {
+                // console.log("Group", i, groups[i])
+                // Identify the maximum difference, i.e. the center of the "problem"
+                ma = -Infinity;
+                for (j = 0; j < groups[i].length; j++) {
+                    v = Math.abs(groups[i][j].v);
+                    if (v > ma) {
+                        ma = v;
+                        pos = j;
+                    }
+                }
+                pos = Math.floor(groups[i][pos].i + level / 2);
+                // Analyze the critical point
+                criticalPoints.push(this.getPointType(curve, pos, t_values, x_values, y_values, x_table[1], y_table[0], le + 1));
+            }
+
+            return [criticalPoints, x_table, y_table];
+
+        },
+
         _insertPoint_v4: function (curve, crds, t) {
             var p,
                 prev = null,
@@ -1634,7 +1714,7 @@ console.log("Polynomial of degree", level);
             curve.points.push(p);
         },
 
-        steps: 796,
+        steps: 768,
         criticalThreshold: 100,
 
         plot_v4: function(curve, ta, tb, steps) {
