@@ -1763,7 +1763,7 @@ console.log("Polynomial of degree", level);
                         // this._insertPoint_v4(curve, [1, x, y], comp.t_values[i] + h2);
                         //console.log(h, h2, comp.t_values[i], x, comp.y_values[i], y)
                         //console.log(y_table[0][i], y_table[2][i], y_table[3][i],  y_table[4][i])
-                        if (true && y_table.length > 4 && Math.abs(y_table[4][i]) > 0.01 * Math.abs(y_table[0][i])) {
+                        if (y_table.length > 4 && Math.abs(y_table[4][i]) > 0.01 * Math.abs(y_table[0][i])) {
                             t = comp.t_values[i];
                             t1 = Numerics.fminbr(curve.Y, [t, t + h]);
                             t2 = Numerics.fminbr(x => (-curve.Y(x)), [t, t + h]);
