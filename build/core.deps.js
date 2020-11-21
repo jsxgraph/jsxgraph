@@ -8,6 +8,7 @@ define([
     'utils/event',
     'utils/expect',
     'math/math',
+    'math/ia',
     'math/extrapolate',
     'math/qdt',
     'math/numerics',
