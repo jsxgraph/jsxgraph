@@ -225,6 +225,44 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return this;
         },
 
+        bounded: function(lo, hi) {
+            return this.set(Mat.IntervalArithmetic.prev(lo), Mat.IntervalArithmetic.next(hi));
+        },
+
+        boundedSingleton: function(v) {
+            return this.bounded(v, v);
+        },
+
+        assign: function(lo, hi) {
+            if (typeof lo !== 'number' || typeof hi !== 'number') {
+                throw TypeError('JXG.Math.Interval#assign: arguments must be numbers');
+            }
+            if (isNaN(lo) || isNaN(hi) || lo > hi) {
+                return this.setEmpty();
+            }
+            return this.set(lo, hi);
+        },
+
+        setEmpty: function() {
+            return this.set(Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY);
+        },
+
+        setWhole: function() {
+            return this.set(Number.NEGATIVE_INFINITY, Number.POSITIVE_INFINITY);
+        },
+
+        open: function(lo, hi){
+            return this.assign(Mat.IntervalArithmetic.next(lo), Mat.IntervalArithmetic.prev(hi));
+        },
+
+        halfOpenLeft: function(lo, hi) {
+            return this.assign(Mat.IntervalArithmetic.next(lo), hi);
+        },
+
+        halfOpenRight: function(lo, hi) {
+            return this.assign(lo, Mat.IntervalArithmetic.prev(hi));
+        },
+
         toArray: function() {
             return [this.lo, this.hi];
         },
@@ -252,44 +290,6 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
         isSingleton: function(i) {
             return i.lo === i.hi;
-        },
-
-        bounded: function(lo, hi) {
-            return this.set(this.prev(lo), this.next(hi));
-        },
-
-        boundedSingleton: function(v) {
-            return this.bounded(v, v);
-        },
-
-        assign: function(lo, hi) {
-            if (typeof lo !== 'number' || typeof hi !== 'number') {
-                throw TypeError('JXG.Math.Interval#assign: arguments must be numbers');
-            }
-            if (isNaN(lo) || isNaN(hi) || lo > hi) {
-                return this.setEmpty();
-            }
-            return this.set(lo, hi);
-        },
-
-        setEmpty: function() {
-            return this.set(Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY);
-        },
-
-        setWhole: function() {
-            return this.set(Number.NEGATIVE_INFINITY, Number.POSITIVE_INFINITY);
-        },
-
-        open: function(lo, hi){
-            return this.assign(this.next(lo), this.prev(hi));
-        },
-
-        halfOpenLeft: function(lo, hi) {
-            return this.assign(this.next(lo), hi);
-        },
-
-        halfOpenRight: function(lo, hi) {
-            return this.assign(lo, this.prev(hi));
         },
 
         /*
