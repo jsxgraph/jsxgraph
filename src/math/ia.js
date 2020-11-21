@@ -307,7 +307,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             var xl, xh, yl, yh, out;
 
             if (this.isEmpty(x) || this.isEmpty(y)) {
-              return this.EMPTY();
+              return this.EMPTY.clone();
             }
             xl = x.lo;
             xh = x.hi;
@@ -395,7 +395,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
         div: function(x, y) {
             if (this.isEmpty(x) || this.isEmpty(y)) {
-                return this.EMPTY();
+                return this.EMPTY.clone();
             }
             if (this.zeroIn(y)) {
                 if (y.lo !== 0) {
@@ -408,7 +408,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
                     if (y.hi !== 0) {
                         return this.divPositive(x, y.hi);
                     } else {
-                        return this.EMPTY();
+                        return this.EMPTY.clone();
                     }
                 }
             }
@@ -504,7 +504,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
             if (this.zeroIn(x)) {
                 // mixed considering zero in both ends
-                return this.WHOLE();
+                return this.WHOLE;
             }
 
             if (x.hi < 0) {
@@ -523,7 +523,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
             if (this.zeroIn(x)) {
                 // mixed considering zero in both ends
-                return this.WHOLE();
+                return this.WHOLE;
             }
 
             if (x.hi < 0) {
@@ -539,7 +539,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             if (x.lo === 0 && x.hi === 0) {
                 return x;
             }
-            return this.WHOLE();
+            return this.WHOLE;
         },
 
         /*
@@ -548,7 +548,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         fmod: function(x, y) {
             var yb, n;
             if (this.isEmpty(x) || this.isEmpty(y)) {
-                return this.EMPTY();
+                return this.EMPTY.clone();
             }
             yb = x.lo < 0 ? y.lo : y.hi;
             n = x.lo / yb;
@@ -563,13 +563,13 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
         multiplicativeInverse: function(x) {
             if (this.isEmpty(x)) {
-                return this.EMPTY();
+                return this.EMPTY.clone();
             }
             if (this.zeroIn(x)) {
                 if (x.lo !== 0) {
                     if (x.hi !== 0) {
                         // [negative, positive]
-                        return this.WHOLE();
+                        return this.WHOLE;
                     } else {
                         // [negative, zero]
                         return new MatInterval(Number.NEGATIVE_INFINITY, this.divHi(1, x.lo));
@@ -580,7 +580,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
                         return new MatInterval(this.divLo(1, x.hi), Number.POSITIVE_INFINITY);
                     } else {
                         // [zero, zero]
-                        return this.EMPTY();
+                        return this.EMPTY.clone();
                     }
                 }
             } else {
@@ -593,11 +593,11 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             var yl, yh;
 
             if (this.isEmpty(x)) {
-                return this.EMPTY();
+                return this.EMPTY.clone();
             }
             if (this.isInterval(power)) {
                 if (!this.isSingleton(power)) {
-                    return this.EMPTY();
+                    return this.EMPTY.clone();
                 }
                 power = power.lo;
             }
@@ -605,10 +605,10 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             if (power === 0) {
                 if (x.lo === 0 && x.hi === 0) {
                     // 0^0
-                    return this.EMPTY();
+                    return this.EMPTY.clone();
                 } else {
                     // x^0
-                    return this.ONE();
+                    return this.ONE.clone();
                 }
             } else if (power < 0) {
                 // compute [1 / x]^-power if power is negative
@@ -646,7 +646,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
                 }
             } else {
               console.warn('power is not an integer, you should use nth-root instead, returning an empty interval')
-              return this.EMPTY();
+              return this.EMPTY.clone();
             }
         },
 
@@ -659,13 +659,13 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
             if (this.isEmpty(x) || n < 0) {
               // compute 1 / x^-power if power is negative
-              return this.EMPTY();
+              return this.EMPTY.clone();
             }
 
             // singleton interval check
             if (this.isInterval(n)) {
                 if (!this.isSingleton(n)) {
-                    return this.EMPTY();
+                    return this.EMPTY.clone();
                 }
                 n = n.lo;
             }
@@ -682,7 +682,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
                 }
 
                 // n is not odd therefore there's no nth root
-                return this.EMPTY();
+                return this.EMPTY.clone();
             } else if (x.lo < 0) {
                 // [negative, positive]
                 yp = this.powHi(x.hi, power);
@@ -704,7 +704,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
          */
         exp: function(x) {
             if (this.isEmpty(x)) {
-                return this.EMPTY();
+                return this.EMPTY.clone();
             }
             return new MatInterval(this.expLo(x.lo), this.expHi(x.hi));
         },
@@ -712,7 +712,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         log: function(x) {
             var l;
             if (this.isEmpty(x)) {
-                return this.EMPTY();
+                return this.EMPTY.clone();
             }
             l = x.lo <= 0 ? Number.NEGATIVE_INFINITY : this.logLo(x.lo);
             return new MatInterval(l, this.logHi(x.hi));
@@ -726,14 +726,14 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         // export const LOG_EXP_2 = log(new MatInterval(2, 2))
         log10: function(x) {
             if (this.isEmpty(x)) {
-                return this.EMPTY();
+                return this.EMPTY.clone();
             }
             return this.div(log(x), this.log(new MatInterval(10, 10)));
         },
 
         log2: function(x) {
             if (this.isEmpty(x)) {
-                return this.EMPTY();
+                return this.EMPTY.clone();
             }
             return this.div(log(x), log(new MatInterval(2, 2)));
         },
@@ -742,7 +742,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             var badX = this.isEmpty(x),
                 badY = this.isEmpty(y);
             if (badX && badY) {
-                return this.EMPTY();
+                return this.EMPTY.clone();
             } else if (badX) {
                 return y.clone();
             } else if (badY) {
@@ -755,14 +755,14 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         intersection: function(x, y) {
             var lo, hi;
             if (this.isEmpty(x) || this.isEmpty(y)) {
-                return this.EMPTY();
+                return this.EMPTY.clone();
             }
             lo = Math.max(x.lo, y.lo);
             hi = Math.min(x.hi, y.hi);
             if (lo <= hi) {
                 return new MatInterval(lo, hi);
             }
-            return this.EMPTY();
+            return this.EMPTY.clone();
         },
 
         union: function(x, y) {
@@ -774,7 +774,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
         difference: function(x, y) {
             if (this.isEmpty(x) || this.isWhole(y)) {
-              return this.EMPTY();
+              return this.EMPTY.clone();
             }
             if (this.intervalsOverlap(x, y)) {
                 if (x.lo < y.lo && y.hi < x.hi) {
@@ -784,7 +784,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
                 // handle corner cases first
                 if ((y.lo <= x.lo && y.hi === Infinity) || (y.hi >= x.hi && y.lo === -Infinity)) {
-                    return this.EMPTY();
+                    return this.EMPTY.clone();
                 }
 
                 // NOTE: empty interval is handled automatically
@@ -812,7 +812,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
         abs: function(x) {
             if (this.isEmpty(x)) {
-                return this.EMPTY();
+                return this.EMPTY.clone();
             }
             if (x.lo >= 0) {
                 return x.clone();
@@ -827,7 +827,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             var badX = this.isEmpty(x),
                 badY = this.isEmpty(y);
             if (badX && badY) {
-                return this.EMPTY();
+                return this.EMPTY.clone();
             } else if (badX) {
                 return y.clone();
             } else if (badY) {
@@ -841,7 +841,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             var badX = this.isEmpty(x),
                 badY = this.isEmpty(y);
             if (badX && badY) {
-                return this.EMPTY();
+                return this.EMPTY.clone();
             } else if (badX) {
                 return y.clone();
             } else if (badY) {
@@ -877,14 +877,14 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
                 lo, hi, rlo, rhi;
 
             if (this.isEmpty(x) || this.onlyInfinity(x)) {
-                return this.EMPTY();
+                return this.EMPTY.clone();
             }
 
             // create a clone of `x` because the clone is going to be modified
             cache = new MatInterval().set(x.lo, x.hi);
             this.handleNegative(cache);
 
-            pi2 = this.PI_TWICE();
+            pi2 = this.PI_TWICE;
             t = this.fmod(cache, pi2);
             if (this.width(t) >= pi2.lo) {
                 return new MatInterval(-1, 1);
@@ -893,7 +893,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             // when t.lo > pi it's the same as
             // -cos(t - pi)
             if (t.lo >= this.piHigh) {
-                cosv = this.cos(this.sub(t, this.PI()));
+                cosv = this.cos(this.sub(t, this.PI));
                 return this.negative(cosv);
             }
 
@@ -902,7 +902,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             rlo = this.cosLo(hi);
             rhi = this.cosHi(lo);
             // it's ensured that t.lo < pi and that t.lo >= 0
-            if (hi <= this.PI_LOW) {
+            if (hi <= this.piLow) {
                 // when t.hi < pi
                 // [cos(t.lo), cos(t.hi)]
                 return new MatInterval(rlo, rhi);
@@ -917,28 +917,28 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
         sin(x) {
             if (this.isEmpty(x) || this.onlyInfinity(x)) {
-                return this.EMPTY();
+                return this.EMPTY.clone();
             }
-            return cos(this.sub(x, this.PI_HALF()));
+            return cos(this.sub(x, this.PI_HALF));
         },
 
         tan(x) {
             var cache, t, pi;
             if (this.isEmpty(x) || onlyInfinity(x)) {
-                return this.EMPTY();
+                return this.EMPTY.clone();
             }
 
             // create a clone of `x` because the clone is going to be modified
             cache = new MatInterval().set(x.lo, x.hi);
             this.handleNegative(cache);
 
-            pi = this.PI();
+            pi = this.PI;
             t = this.fmod(cache, pi);
             if (t.lo >= this.piHalfLow) {
                 t = this.sub(t, pi);
             }
-            if (t.lo <= -this.PI_HALF_LOW || t.hi >= this.PI_HALF_LOW) {
-                return this.WHOLE();
+            if (t.lo <= -this.piHalfLow || t.hi >= this.piHalfLow) {
+                return this.WHOLE.clone();
             }
             return new MatInterval(this.tanLo(t.lo), this.tanHi(t.hi));
         },
@@ -946,7 +946,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         asin(x) {
             var lo, hi;
             if (this.isEmpty(x) || x.hi < -1 || x.lo > 1) {
-                return this.EMPTY();
+                return this.EMPTY.clone();
             }
             lo = x.lo <= -1 ? -this.piHalfHigh : this.asinLo(x.lo);
             hi = x.hi >= 1 ? this.piHalfHigh : this.asinHi(x.hi);
@@ -956,7 +956,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         acos(x) {
             var lo, hi;
             if (this.isEmpty(x) || x.hi < -1 || x.lo > 1) {
-                  return this.EMPTY();
+                  return this.EMPTY.clone();
             }
             lo = x.hi >= 1 ? 0 : this.acosLo(x.hi);
             hi = x.lo <= -1 ? this.piHigh : this.acosHi(x.lo);
@@ -965,21 +965,21 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
         atan(x) {
             if (this.isEmpty(x)) {
-                return this.EMPTY();
+                return this.EMPTY.clone();
             }
             return new MatInterval(this.atanLo(x.lo), this.atanHi(x.hi));
         },
 
         sinh(x) {
             if (this.isEmpty(x)) {
-                return this.EMPTY();
+                return this.EMPTY.clone();
             }
             return new MatInterval(this.sinhLo(x.lo), this.sinhHi(x.hi));
         },
 
         cosh(x) {
             if (this.isEmpty(x)) {
-              return this.EMPTY();
+              return this.EMPTY.clone();
             }
             if (x.hi < 0) {
                 return new MatInterval(this.coshLo(x.hi), this.coshHi(x.lo));
@@ -992,7 +992,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
         tanh(x) {
             if (this.isEmpty(x)) {
-                return this.EMPTY();
+                return this.EMPTY.clone();
             }
             return new MatInterval(this.tanhLo(x.lo), this.tanhHi(x.hi));
         },
@@ -1060,28 +1060,6 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         piHalfHigh: (3373259426.0 + 273689.0 / (1 << 21)) / (1 << 30) * 0.5,
         piTwiceLow: (3373259426.0 + 273688.0 / (1 << 21)) / (1 << 30) * 2,
         piTwiceHigh: (3373259426.0 + 273689.0 / (1 << 21)) / (1 << 30) * 2,
-
-        PI: function() {
-            return new MatInterval(this.piLow, this.piHigh);
-        },
-        PI_HALF: function() {
-            return new MatInterval(this.piHalfLow, this.piHalfHigh);
-        },
-        PI_TWICE: function() {
-            return new MatInterval(this.piTwiceLow, this.piTwiceHigh);
-        },
-        ZERO: function() {
-            return new MatInterval(0);
-        },
-        ONE: function() {
-            return new MatInterval(1);
-        },
-        WHOLE: function() {
-            return new MatInterval().setWhole();
-        },
-        EMPTY: function() {
-            return new MatInterval().setEmpty();
-        },
 
         /*
          * Round
@@ -1248,6 +1226,14 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         }
 
     };
+
+    Mat.IntervalArithmetic.PI       = new MatInterval(Mat.IntervalArithmetic.piLow, Mat.IntervalArithmetic.piHigh);
+    Mat.IntervalArithmetic.PI_HALF  = new MatInterval(Mat.IntervalArithmetic.piHalfLow, Mat.IntervalArithmetic.piHalfHigh);
+    Mat.IntervalArithmetic.PI_TWICE = new MatInterval(Mat.IntervalArithmetic.piTwiceLow, Mat.IntervalArithmetic.piTwiceHigh);
+    Mat.IntervalArithmetic.ZERO     = new MatInterval(0);
+    Mat.IntervalArithmetic.ONE      = new MatInterval(1);
+    Mat.IntervalArithmetic.WHOLE    = new MatInterval().setWhole();
+    Mat.IntervalArithmetic.EMPTY    = new MatInterval().setEmpty();
 
     return Mat.IntervalArithmetic;
 });
