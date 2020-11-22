@@ -41,7 +41,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
     "use strict";
 
-    Mat.DoubleBits = function() {
+    JXG.Math.DoubleBits = function() {
         var hasTypedArrays = false;
 
         if (typeof Float64Array !== "undefined") {
@@ -168,8 +168,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         }
     });
 
-
-    var doubleBits = new Mat.DoubleBits(),
+    var doubleBits = new JXG.Math.DoubleBits(),
 
         /**
          * Object for interval arithmetic
@@ -278,7 +277,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
      * @exports Mat.Interval as JXG.Math.Interval
      * @namespace
      */
-    Mat.IntervalArithmetic =  {
+    JXG.Math.IntervalArithmetic =  {
 
         Interval: function(lo, hi) {
             return new MatInterval(lo, hi);
@@ -1228,15 +1227,15 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
     };
 
-    Mat.IntervalArithmetic.PI       = new MatInterval(Mat.IntervalArithmetic.piLow, Mat.IntervalArithmetic.piHigh);
-    Mat.IntervalArithmetic.PI_HALF  = new MatInterval(Mat.IntervalArithmetic.piHalfLow, Mat.IntervalArithmetic.piHalfHigh);
-    Mat.IntervalArithmetic.PI_TWICE = new MatInterval(Mat.IntervalArithmetic.piTwiceLow, Mat.IntervalArithmetic.piTwiceHigh);
-    Mat.IntervalArithmetic.ZERO     = new MatInterval(0);
-    Mat.IntervalArithmetic.ONE      = new MatInterval(1);
-    Mat.IntervalArithmetic.WHOLE    = new MatInterval().setWhole();
-    Mat.IntervalArithmetic.EMPTY    = new MatInterval().setEmpty();
+    JXG.Math.IntervalArithmetic.PI       = new MatInterval(Mat.IntervalArithmetic.piLow, Mat.IntervalArithmetic.piHigh);
+    JXG.Math.IntervalArithmetic.PI_HALF  = new MatInterval(Mat.IntervalArithmetic.piHalfLow, Mat.IntervalArithmetic.piHalfHigh);
+    JXG.Math.IntervalArithmetic.PI_TWICE = new MatInterval(Mat.IntervalArithmetic.piTwiceLow, Mat.IntervalArithmetic.piTwiceHigh);
+    JXG.Math.IntervalArithmetic.ZERO     = new MatInterval(0);
+    JXG.Math.IntervalArithmetic.ONE      = new MatInterval(1);
+    JXG.Math.IntervalArithmetic.WHOLE    = new MatInterval().setWhole();
+    JXG.Math.IntervalArithmetic.EMPTY    = new MatInterval().setEmpty();
 
-    return Mat.IntervalArithmetic;
+    return JXG.Math.IntervalArithmetic;
 });
 
 
