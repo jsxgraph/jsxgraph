@@ -111,33 +111,33 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             }
         }
 
-        if (!hasTypedArrays) {
-            var buffer = new Buffer(8)
-            doubleBits = function(n) {
-                buffer.writeDoubleLE(n, 0, true);
-                return [buffer.readUInt32LE(0, true), buffer.readUInt32LE(4, true)];
-            };
+        // if (!hasTypedArrays) {
+        //     var buffer = new Buffer(8)
+        //     doubleBits = function(n) {
+        //         buffer.writeDoubleLE(n, 0, true);
+        //         return [buffer.readUInt32LE(0, true), buffer.readUInt32LE(4, true)];
+        //     };
 
-            toDouble = function(lo, hi) {
-                buffer.writeUInt32LE(lo, 0, true);
-                buffer.writeUInt32LE(hi, 4, true);
-                return buffer.readDoubleLE(0, true);
-            };
-            lowUint = function(n) {
-                buffer.writeDoubleLE(n, 0, true);
-                return buffer.readUInt32LE(0, true);
-            };
+        //     toDouble = function(lo, hi) {
+        //         buffer.writeUInt32LE(lo, 0, true);
+        //         buffer.writeUInt32LE(hi, 4, true);
+        //         return buffer.readDoubleLE(0, true);
+        //     };
+        //     lowUint = function(n) {
+        //         buffer.writeDoubleLE(n, 0, true);
+        //         return buffer.readUInt32LE(0, true);
+        //     };
 
-            highUint = function(n) {
-                buffer.writeDoubleLE(n, 0, true);
-                return buffer.readUInt32LE(4, true);
-            };
+        //     highUint = function(n) {
+        //         buffer.writeDoubleLE(n, 0, true);
+        //         return buffer.readUInt32LE(4, true);
+        //     };
 
-            this.doubleBits = doubleBits;
-            this.pack = toDouble;
-            this.lo = lowUint;
-            this.hi = highUint;
-        }
+        //     this.doubleBits = doubleBits;
+        //     this.pack = toDouble;
+        //     this.lo = lowUint;
+        //     this.hi = highUint;
+        // }
     };
 
     JXG.extend(JXG.Math.DoubleBits.prototype, /** @lends JXG.Math.DoubleBits.prototype */ {
@@ -728,14 +728,14 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             if (this.isEmpty(x)) {
                 return this.EMPTY.clone();
             }
-            return this.div(log(x), this.log(new MatInterval(10, 10)));
+            return this.div(this.log(x), this.log(new MatInterval(10, 10)));
         },
 
         log2: function(x) {
             if (this.isEmpty(x)) {
                 return this.EMPTY.clone();
             }
-            return this.div(log(x), log(new MatInterval(2, 2)));
+            return this.div(this.log(x), this.log(new MatInterval(2, 2)));
         },
 
         hull: function(x, y) {
@@ -924,7 +924,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
         tan(x) {
             var cache, t, pi;
-            if (this.isEmpty(x) || onlyInfinity(x)) {
+            if (this.isEmpty(x) || this.onlyInfinity(x)) {
                 return this.EMPTY.clone();
             }
 

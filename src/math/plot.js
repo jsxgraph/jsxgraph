@@ -37,8 +37,8 @@
  utils/type
  */
 
-define(['jxg', 'base/constants', 'base/coords', 'math/math', 'math/extrapolate', 'math/numerics', 'math/statistics', 'math/geometry', 'utils/type'],
-        function (JXG, Const, Coords, Mat, Extrapolate, Numerics, Statistics, Geometry, Type) {
+define(['jxg', 'base/constants', 'base/coords', 'math/math', 'math/extrapolate', 'math/ia', 'math/numerics', 'math/statistics', 'math/geometry', 'utils/type'],
+        function (JXG, Const, Coords, Mat, Extrapolate, IntervalArithmetic, Numerics, Statistics, Geometry, Type) {
 
     "use strict";
 
@@ -1409,7 +1409,7 @@ define(['jxg', 'base/constants', 'base/coords', 'math/math', 'math/extrapolate',
             }
             if (pos2m < 0) {
                 result.type = 'border';
-                result.idx = pos1m,
+                result.idx = pos1m;
                 result.t = t_values[pos1m];
                 result.x = x_values[pos1m];
                 result.y = y_values[pos1m];
@@ -1714,6 +1714,22 @@ console.log("Polynomial of degree", level);
             curve.points.push(p);
         },
 
+        getInterval: function(curve, ta, tb) {
+            return [0,0];
+            var t_int, x_int, y_int;
+
+            console.log('critical point', ta, tb);
+            t_int = IntervalArithmetic.Interval(comp.t_values[i - 1], comp.t_values[i + 1]);
+            this.board.mathLib = IntervalArithmetic;
+            this.board.mathLibJXG = IntervalArithmetic;
+            x_int = curve.X(t_int, true);
+            y_int = curve.Y(t_int, true);
+            this.board.mathLib = Math;
+            this.board.mathLibJXG = JXG.Math;
+            console.log(x_int, y_int);
+            return y_int;
+        },
+
         steps: 768,
         criticalThreshold: 100,
 
@@ -1726,7 +1742,7 @@ console.log("Polynomial of degree", level);
                 h2 = h * 0.5;
 
             components = this.findComponents(curve, ta, tb, steps);
-            console.log("::::::::::::::::::::::::")
+            console.log("::::::::::::::::::::::::");
             // console.log("plot", ta, tb);
             // console.log(components);
 
@@ -1788,7 +1804,7 @@ console.log("Polynomial of degree", level);
                             good++;
                         }
                     }
-                    console.log("GOOD", good, "BAD", bad)
+                    console.log("GOOD", good, "BAD", bad);
 
                     // Handle next critical point
                     if (g < groups.length) {
@@ -1805,7 +1821,10 @@ console.log("Polynomial of degree", level);
                             this.plot_v4(curve, ta1, tb1, 32);
                         } else {
                             i = groups[g].idx;
-                            this._insertPoint_v4(curve, [1, comp.x_values[i-1], comp.y_values[i-1]], comp.t_values[i-1]);
+                            this._insertPoint_v4(curve, [1, comp.x_values[i - 1], comp.y_values[i - 1]], comp.t_values[i - 1]);
+
+                            //var y_int = this.getInterval(curve, comp.t_values[i - 1], comp.t_values[i + 1]);
+
                             if (groups[g].type === 'cusp' || groups[g].type === 'border') {
                                 this._insertPoint_v4(curve, [1, groups[g].x, groups[g].y], groups[g].t);
                             } else {

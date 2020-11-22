@@ -478,7 +478,7 @@ define([
          * @param {Boolean} [withProps=false]
          */
         getvarJS: function (vname, local, withProps) {
-            var s, r = '';
+            var s, r = '', re;
 
             local = Type.def(local, false);
             withProps = Type.def(withProps, false);
@@ -503,12 +503,35 @@ define([
             }
 
             if (this.isBuiltIn(vname)) {
-                // if src does not exist, it is a number. in that case, just return the value.
-                return this.builtIn[vname].src || this.builtIn[vname];
+                // If src does not exist, it is a number. In that case, just return the value.
+                r = this.builtIn[vname].src || this.builtIn[vname];
+
+                // Get the "real" name of the function
+                vname = r.split('.').pop();
+
+                // if (Type.exists(this.board.mathLib)) {
+                //     // Handle builtin case: ln(x) -> Math.log
+                //     re = new RegExp('^Math\.' + vname);
+                //     if (re.exec(r) !== null) {
+                //         return r.replace(re, '$jc$.board.mathLib.' + vname);
+                //     }
+                // }
+                // if (Type.exists(this.board.mathLibJXG)) {
+                //     // Handle builtin case: factorial(x) -> JXG.Math.factorial
+                //     re = new RegExp('^JXG\.Math\.');
+                //     if (re.exec(r) !== null) {
+                //         return r.replace(re, '$jc$.board.mathLibJXG.');
+                //     }
+                //     return r;
+                // }
+                return r;
+
+                // return this.builtIn[vname].src || this.builtIn[vname];
             }
 
             if (this.isMathMethod(vname)) {
-                return 'Math.' + vname;
+                return '$jc$.board.mathLib.' + vname;
+//                return 'Math.' + vname;
             }
 
             // if (!local) {
@@ -2133,6 +2156,7 @@ define([
             builtIn.deg.src = 'JXG.Math.Geometry.trueAngle';
             builtIn.factorial.src = 'JXG.Math.factorial';
             builtIn.trunc.src = 'JXG.trunc';
+            builtIn.log.src = 'JXG.Math.log';
             builtIn.ln.src = 'Math.log';
             builtIn.log10.src = 'JXG.Math.log10';
             builtIn.lg.src = 'JXG.Math.log10';
@@ -2341,7 +2365,7 @@ case 22: case 65: case 93:
  this.$ = $$[$0-1]; 
 break;
 case 25:
- this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_assign', $$[$0-2], $$[$0]); this.$.isMath = false; 
+ this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_assign', $$[$0-2], $$[$0]); this.$.isMath = false;
 break;
 case 27:
  this.$ = AST.createNode(lc(_$[$0-4]), 'node_op', 'op_conditional', $$[$0-4], $$[$0-2], $$[$0]); this.$.isMath = false; 

@@ -539,6 +539,9 @@ define([
          */
         this.selectingBox = [[0, 0], [0, 0]];
 
+        this.mathLib = Math;        // Math or JXG.Math.IntervalArithmetic
+        this.mathLibJXG = JXG.Math; // JXG.Math or JXG.Math.IntervalArithmetic
+
         if (this.attr.registerevents) {
             this.addEventHandlers();
         }
