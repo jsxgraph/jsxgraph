@@ -509,21 +509,21 @@ define([
                 // Get the "real" name of the function
                 vname = r.split('.').pop();
 
-                // if (Type.exists(this.board.mathLib)) {
-                //     // Handle builtin case: ln(x) -> Math.log
-                //     re = new RegExp('^Math\.' + vname);
-                //     if (re.exec(r) !== null) {
-                //         return r.replace(re, '$jc$.board.mathLib.' + vname);
-                //     }
-                // }
-                // if (Type.exists(this.board.mathLibJXG)) {
-                //     // Handle builtin case: factorial(x) -> JXG.Math.factorial
-                //     re = new RegExp('^JXG\.Math\.');
-                //     if (re.exec(r) !== null) {
-                //         return r.replace(re, '$jc$.board.mathLibJXG.');
-                //     }
-                //     return r;
-                // }
+                if (Type.exists(this.board.mathLib)) {
+                    // Handle builtin case: ln(x) -> Math.log
+                    re = new RegExp('^Math\.' + vname);
+                    if (re.exec(r) !== null) {
+                        return r.replace(re, '$jc$.board.mathLib.' + vname);
+                    }
+                }
+                if (Type.exists(this.board.mathLibJXG)) {
+                    // Handle builtin case: factorial(x) -> JXG.Math.factorial
+                    re = new RegExp('^JXG\.Math\.');
+                    if (re.exec(r) !== null) {
+                        return r.replace(re, '$jc$.board.mathLibJXG.');
+                    }
+                    return r;
+                }
                 return r;
 
                 // return this.builtIn[vname].src || this.builtIn[vname];

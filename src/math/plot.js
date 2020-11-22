@@ -37,8 +37,9 @@
  utils/type
  */
 
-define(['jxg', 'base/constants', 'base/coords', 'math/math', 'math/extrapolate', 'math/ia', 'math/numerics', 'math/statistics', 'math/geometry', 'utils/type'],
-        function (JXG, Const, Coords, Mat, Extrapolate, IntervalArithmetic, Numerics, Statistics, Geometry, Type) {
+define(['jxg', 'base/constants', 'base/coords', 'math/math', 'math/extrapolate', 'math/numerics',
+        'math/statistics', 'math/geometry', 'math/ia', 'utils/type'],
+        function (JXG, Const, Coords, Mat, Extrapolate, Numerics, Statistics, Geometry, IntervalArithmetic, Type) {
 
     "use strict";
 

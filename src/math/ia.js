@@ -412,7 +412,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
                     }
                 }
             }
-            return this.divNonZero(x, y)
+            return this.divNonZero(x, y);
         },
 
         positive: function(x) {
@@ -645,7 +645,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
                     return new MatInterval(this.powLo(x.lo, power), this.powHi(x.hi, power));
                 }
             } else {
-              console.warn('power is not an integer, you should use nth-root instead, returning an empty interval')
+              console.warn('power is not an integer, you should use nth-root instead, returning an empty interval');
               return this.EMPTY.clone();
             }
         },
@@ -854,17 +854,18 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         /*
          * Trigonometric
          */
-        onlyInfinity(x) {
+        onlyInfinity: function(x) {
             return !isFinite(x.lo) && x.lo === x.hi;
         },
 
-        handleNegative(interval) {
+        handleNegative: function(interval) {
+            var n;
             if (interval.lo < 0) {
                 if (interval.lo === -Infinity) {
                     interval.lo = 0;
                     interval.hi = Infinity;
                 } else {
-                    const n = Math.ceil(-interval.lo / this.piTwiceLow);
+                    n = Math.ceil(-interval.lo / this.piTwiceLow);
                     interval.lo += this.piTwiceLow * n;
                     interval.hi += this.piTwiceLow * n;
                 }
@@ -872,7 +873,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return interval;
         },
 
-        cos(x) {
+        cos: function(x) {
             var cache, pi2, t, cosv,
                 lo, hi, rlo, rhi;
 
@@ -897,7 +898,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
                 return this.negative(cosv);
             }
 
-            lo = t.lo
+            lo = t.lo;
             hi = t.hi;
             rlo = this.cosLo(hi);
             rhi = this.cosHi(lo);
@@ -915,14 +916,14 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return new MatInterval(-1, 1);
         },
 
-        sin(x) {
+        sin: function(x) {
             if (this.isEmpty(x) || this.onlyInfinity(x)) {
                 return this.EMPTY.clone();
             }
             return cos(this.sub(x, this.PI_HALF));
         },
 
-        tan(x) {
+        tan: function(x) {
             var cache, t, pi;
             if (this.isEmpty(x) || this.onlyInfinity(x)) {
                 return this.EMPTY.clone();
@@ -943,7 +944,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return new MatInterval(this.tanLo(t.lo), this.tanHi(t.hi));
         },
 
-        asin(x) {
+        asin: function(x) {
             var lo, hi;
             if (this.isEmpty(x) || x.hi < -1 || x.lo > 1) {
                 return this.EMPTY.clone();
@@ -953,7 +954,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return new MatInterval(lo, hi);
         },
 
-        acos(x) {
+        acos: function(x) {
             var lo, hi;
             if (this.isEmpty(x) || x.hi < -1 || x.lo > 1) {
                   return this.EMPTY.clone();
@@ -963,21 +964,21 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return new MatInterval(lo, hi);
         },
 
-        atan(x) {
+        atan: function(x) {
             if (this.isEmpty(x)) {
                 return this.EMPTY.clone();
             }
             return new MatInterval(this.atanLo(x.lo), this.atanHi(x.hi));
         },
 
-        sinh(x) {
+        sinh: function(x) {
             if (this.isEmpty(x)) {
                 return this.EMPTY.clone();
             }
             return new MatInterval(this.sinhLo(x.lo), this.sinhHi(x.hi));
         },
 
-        cosh(x) {
+        cosh: function(x) {
             if (this.isEmpty(x)) {
               return this.EMPTY.clone();
             }
@@ -990,7 +991,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             }
         },
 
-        tanh(x) {
+        tanh: function(x) {
             if (this.isEmpty(x)) {
                 return this.EMPTY.clone();
             }
@@ -1130,7 +1131,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         sqrtLo: function(x) { return this.prev(Math.sqrt(x)); },
         sqrtHi: function(x) { return this.next(Math.sqrt(x)); },
 
-        powLo(x, power) {
+        powLo: function(x, power) {
             var y;
             if (power % 1 !== 0) {
                 // power has decimals
@@ -1149,7 +1150,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return y;
         },
 
-        powHi(x, power) {
+        powHi: function(x, power) {
             var y;
             if (power % 1 !== 0) {
                 // power has decimals
