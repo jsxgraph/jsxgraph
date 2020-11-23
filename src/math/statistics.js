@@ -109,10 +109,15 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             var tmp, len;
 
             if (arr.length > 0) {
-                tmp = arr.slice(0);
-                tmp.sort(function (a, b) {
-                    return a - b;
-                });
+                if (ArrayBuffer.isView(arr)) {
+                    tmp = new Float64Array(arr);
+                    tmp.sort();
+                } else {
+                    tmp = arr.slice(0);
+                    tmp.sort(function (a, b) {
+                        return a - b;
+                    });
+                }
                 len = tmp.length;
 
                 if (len % 2 === 1) {
@@ -230,10 +235,11 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
                 for (i = 0; i < len; i++) {
                     res[i] = Math.abs(arr[i]);
                 }
+            } else if (ArrayBuffer.isView(arr)) {
+                res = arr.map(Math.abs);
             } else {
                 res = Math.abs(arr);
             }
-
             return res;
         },
 

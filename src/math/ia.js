@@ -295,15 +295,34 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
          * Arithmetics
          */
         add: function(x, y) {
+            if (Type.isNumber(x)) {
+                x = this.Interval(x);
+            }
+            if (Type.isNumber(y)) {
+                y = this.Interval(y);
+            }
             return new MatInterval(this.addLo(x.lo, y.lo), this.addHi(x.hi, y.hi));
         },
 
         sub: function(x, y) {
+            if (Type.isNumber(x)) {
+                x = this.Interval(x);
+            }
+            if (Type.isNumber(y)) {
+                y = this.Interval(y);
+            }
             return new MatInterval(this.subLo(x.lo, y.hi), this.subHi(x.hi, y.lo));
         },
 
         mul: function(x, y) {
             var xl, xh, yl, yh, out;
+
+            if (Type.isNumber(x)) {
+                x = this.Interval(x);
+            }
+            if (Type.isNumber(y)) {
+                y = this.Interval(y);
+            }
 
             if (this.isEmpty(x) || this.isEmpty(y)) {
               return this.EMPTY.clone();
@@ -393,6 +412,13 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         },
 
         div: function(x, y) {
+            if (Type.isNumber(x)) {
+                x = this.Interval(x);
+            }
+            if (Type.isNumber(y)) {
+                y = this.Interval(y);
+            }
+
             if (this.isEmpty(x) || this.isEmpty(y)) {
                 return this.EMPTY.clone();
             }
@@ -419,6 +445,9 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         },
 
         negative: function(x) {
+            if (Type.isNumber(x)) {
+                return new MatInterval(-x);
+            }
             return new MatInterval(-x.hi, -x.lo);
         },
 
@@ -694,7 +723,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
                 return new MatInterval(0, yp);
             } else {
                 // [positive, positive]
-                return new MatInterval(rmath.powLo(x.lo, power), rmath.powHi(x.hi, power));
+                return new MatInterval(this.powLo(x.lo, power), this.powHi(x.hi, power));
             }
         },
 
@@ -817,7 +846,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
                 return x.clone();
             }
             if (x.hi <= 0) {
-                return arithmetic.negative(x);
+                return this.negative(x);
             }
             return new MatInterval(0, Math.max(-x.lo, x.hi));
         },
@@ -919,7 +948,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             if (this.isEmpty(x) || this.onlyInfinity(x)) {
                 return this.EMPTY.clone();
             }
-            return cos(this.sub(x, this.PI_HALF));
+            return this.cos(this.sub(x, this.PI_HALF));
         },
 
         tan: function(x) {

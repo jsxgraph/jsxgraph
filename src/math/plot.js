@@ -1289,6 +1289,7 @@ define(['jxg', 'base/constants', 'base/coords', 'math/math', 'math/extrapolate',
             } else {
                 med *= this.criticalThreshold;
             }
+
             // console.log("Median", med);
             for (i = 0; i < le; i++) {
                 if (abs_vec[i] > med)  {
@@ -1630,27 +1631,23 @@ console.log("Polynomial of degree", level);
                 groups,
                 criticalPoints = [];
 
-            x_table.push([]);
-            y_table.push([]);
             le = y_values.length;
-            for (i = 0; i < le; i++) {
-                x_table[0][i] = x_values[i];
-                y_table[0][i] = y_values[i];
-            }
+            // x_table.push([]);
+            // y_table.push([]);
+            // for (i = 0; i < le; i++) {
+            //     x_table[0][i] = x_values[i];
+            //     y_table[0][i] = y_values[i];
+            // }
+            x_table.push(new Float64Array(x_values));
+            y_table.push(new Float64Array(y_values));
 
-            x_table.push([]);
-            y_table.push([]);
-            le = y_values.length - 1;
-            for (i = 0; i < le; i++) {
-                x_table[1][i] = x_values[i + 1] - x_values[i];
-                y_table[1][i] = y_values[i + 1] - y_values[i];
-            }
             le--;
-
-            up = Math.min(8, y_values.length - 1);
-            for (level = 1; level < up; level++) {
-                x_table.push([]);
-                y_table.push([]);
+            up = Math.min(8, le);
+            for (level = 0; level < up; level++) {
+                // x_table.push([]);
+                // y_table.push([]);
+                x_table.push(new Float64Array(le));
+                y_table.push(new Float64Array(le));
                 for (i = 0; i < le; i++) {
                     x_table[level + 1][i] = x_table[level][i + 1] - x_table[level][i];
                     y_table[level + 1][i] = y_table[level][i + 1] - y_table[level][i];
@@ -1658,7 +1655,7 @@ console.log("Polynomial of degree", level);
 
                 // Store point location which may be centered around
                 // critical points.
-                // If the lebvel is suitable, step out of the loop.
+                // If the level is suitable, step out of the loop.
                 groups = this._criticalPoints(y_table[level + 1], le, level);
                 if (groups === false) {
                     // Its seems, the degree of the polynomial is equal to level
@@ -1735,7 +1732,7 @@ console.log("Polynomial of degree", level);
             return y_int;
         },
 
-        steps: 768,
+        steps: 512,
         criticalThreshold: 100,
 
         plot_v4: function(curve, ta, tb, steps) {
@@ -1784,7 +1781,7 @@ console.log("Polynomial of degree", level);
                         // this._insertPoint_v4(curve, [1, x, y], comp.t_values[i] + h2);
                         //console.log(h, h2, comp.t_values[i], x, comp.y_values[i], y)
                         //console.log(y_table[0][i], y_table[2][i], y_table[3][i],  y_table[4][i])
-                        if (y_table.length > 4 && Math.abs(y_table[4][i]) > 0.01 * Math.abs(y_table[0][i])) {
+                        if (true && y_table.length > 4 && Math.abs(y_table[4][i]) > 0.01 * Math.abs(y_table[0][i])) {
                             t = comp.t_values[i];
                             t1 = Numerics.fminbr(curve.Y, [t, t + h]);
                             t2 = Numerics.fminbr(x => (-curve.Y(x)), [t, t + h]);
@@ -1842,10 +1839,18 @@ console.log("Polynomial of degree", level);
                                     [1, groups[g].t, (y_table[1][i] > 0) ? y_int.hi : y_int.lo],
                                         groups[g].t);
                             } else if (groups[g].type === 'cusp') {
-                                y_int = this.getInterval(curve, groups[g].t - h2, groups[g].t + h2);
-                                this._insertPoint_v4(curve, [1, groups[g].x, groups[g].y], groups[g].t);
+                                y_int = this.getInterval(curve, groups[g].t - 2 * h, groups[g].t + 2 * h);
+                                this._insertPoint_v4(curve, [1, groups[g].x, (y_table[1][i - 1] > 0) ? y_int.hi : y_int.lo],
+                                        groups[g].t);
                             } else {
-                                this._insertPoint_v4(curve, [1, NaN, NaN], groups[g].t);
+                                y_int = this.getInterval(curve, groups[g].t - h, groups[g].t + h);
+                                this._insertPoint_v4(curve,
+                                    [1, groups[g].t, (y_table[1][i] > 0) ? y_int.lo : y_int.hi],
+                                        groups[g].t);
+                                    this._insertPoint_v4(curve, [1, NaN, NaN], groups[g].t);
+                                    this._insertPoint_v4(curve,
+                                    [1, groups[g].t, (y_table[1][i] > 0) ? y_int.hi : y_int.lo],
+                                        groups[g].t);
                             }
 
                             this._insertPoint_v4(curve, [1, comp.x_values[i+1], comp.y_values[i+1]], comp.t_values[i+1]);
