@@ -575,6 +575,12 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
          */
         fmod: function(x, y) {
             var yb, n;
+            if (Type.isNumber(x)) {
+                x = this.Interval(x);
+            }
+            if (Type.isNumber(y)) {
+                y = this.Interval(y);
+            }
             if (this.isEmpty(x) || this.isEmpty(y)) {
                 return this.EMPTY.clone();
             }
@@ -590,6 +596,9 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         },
 
         multiplicativeInverse: function(x) {
+            if (Type.isNumber(x)) {
+                x = this.Interval(x);
+            }
             if (this.isEmpty(x)) {
                 return this.EMPTY.clone();
             }
@@ -620,6 +629,9 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         pow: function(x, power) {
             var yl, yh;
 
+            if (Type.isNumber(x)) {
+                x = this.Interval(x);
+            }
             if (this.isEmpty(x)) {
                 return this.EMPTY.clone();
             }
@@ -679,12 +691,18 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         },
 
         sqrt: function(x) {
+            if (Type.isNumber(x)) {
+                x = this.Interval(x);
+            }
             return this.nthRoot(x, 2);
         },
 
         nthRoot: function(x, n) {
             var power,yl, yh, yp, yn;
 
+            if (Type.isNumber(x)) {
+                x = this.Interval(x);
+            }
             if (this.isEmpty(x) || n < 0) {
               // compute 1 / x^-power if power is negative
               return this.EMPTY.clone();
@@ -731,6 +749,9 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
          * Misc
          */
         exp: function(x) {
+            if (Type.isNumber(x)) {
+                x = this.Interval(x);
+            }
             if (this.isEmpty(x)) {
                 return this.EMPTY.clone();
             }
@@ -739,6 +760,9 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
         log: function(x) {
             var l;
+            if (Type.isNumber(x)) {
+                x = this.Interval(x);
+            }
             if (this.isEmpty(x)) {
                 return this.EMPTY.clone();
             }
@@ -839,6 +863,9 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         },
 
         abs: function(x) {
+            if (Type.isNumber(x)) {
+                x = this.Interval(x);
+            }
             if (this.isEmpty(x)) {
                 return this.EMPTY.clone();
             }
@@ -1052,6 +1079,12 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         },
 
         lt: function(x, y) {
+            if (Type.isNumber(x)) {
+                x = this.Interval(x);
+            }
+            if (Type.isNumber(y)) {
+                y = this.Interval(y);
+            }
             if (this.isEmpty(x) || this.isEmpty(y)) {
                 return false;
             }
@@ -1059,6 +1092,12 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         },
 
         gt: function(x, y) {
+            if (Type.isNumber(x)) {
+                x = this.Interval(x);
+            }
+            if (Type.isNumber(y)) {
+                y = this.Interval(y);
+            }
             if (this.isEmpty(x) || this.isEmpty(y)) {
                 return false;
             }
@@ -1066,6 +1105,12 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         },
 
         leq: function(x, y) {
+            if (Type.isNumber(x)) {
+                x = this.Interval(x);
+            }
+            if (Type.isNumber(y)) {
+                y = this.Interval(y);
+            }
             if (this.isEmpty(x) || this.isEmpty(y)) {
                 return false;
             }
@@ -1073,6 +1118,12 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         },
 
         geq: function(x, y) {
+            if (Type.isNumber(x)) {
+                x = this.Interval(x);
+            }
+            if (Type.isNumber(y)) {
+                y = this.Interval(y);
+            }
             if (this.isEmpty(x) || this.isEmpty(y)) {
                 return false;
             }

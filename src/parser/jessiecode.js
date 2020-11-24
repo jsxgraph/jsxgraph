@@ -1652,16 +1652,32 @@ define([
                     ret = '(' + this.compile(node.children[0], js) + ' ~= ' + this.compile(node.children[1], js) + ')';
                     break;
                 case 'op_grt':
-                    ret = '(' + this.compile(node.children[0], js) + ' > ' + this.compile(node.children[1], js) + ')';
+                    if (js) {
+                        ret = '$jc$.gt(' + this.compile(node.children[0], js) + ', ' + this.compile(node.children[1], js) + ')';
+                    } else {
+                        ret = '(' + this.compile(node.children[0], js) + ' > ' + this.compile(node.children[1], js) + ')';
+                    }
                     break;
                 case 'op_lot':
-                    ret = '(' + this.compile(node.children[0], js) + ' < ' + this.compile(node.children[1], js) + ')';
+                    if (js) {
+                        ret = '$jc$.lt(' + this.compile(node.children[0], js) + ', ' + this.compile(node.children[1], js) + ')';
+                    } else {
+                        ret = '(' + this.compile(node.children[0], js) + ' < ' + this.compile(node.children[1], js) + ')';
+                    }
                     break;
                 case 'op_gre':
-                    ret = '(' + this.compile(node.children[0], js) + ' >= ' + this.compile(node.children[1], js) + ')';
+                    if (js) {
+                        ret = '$jc$.geq(' + this.compile(node.children[0], js) + ', ' + this.compile(node.children[1], js) + ')';
+                    } else {
+                        ret = '(' + this.compile(node.children[0], js) + ' >= ' + this.compile(node.children[1], js) + ')';
+                    }
                     break;
                 case 'op_loe':
-                    ret = '(' + this.compile(node.children[0], js) + ' <= ' + this.compile(node.children[1], js) + ')';
+                    if (js) {
+                        ret = '$jc$.leq(' + this.compile(node.children[0], js) + ', ' + this.compile(node.children[1], js) + ')';
+                    } else {
+                        ret = '(' + this.compile(node.children[0], js) + ' <= ' + this.compile(node.children[1], js) + ')';
+                    }
                     break;
                 case 'op_or':
                     ret = '(' + this.compile(node.children[0], js) + ' || ' + this.compile(node.children[1], js) + ')';
@@ -2006,6 +2022,31 @@ define([
                 return Interval.pow(a, b);
             }
             return Mat.pow(a, b);
+        },
+
+        lt: function(a, b) {
+            if (Interval.isInterval(a) || Interval.isInterval(b)) {
+                return Interval.lt(a, b);
+            }
+            return a < b;
+        },
+        leq: function(a, b) {
+            if (Interval.isInterval(a) || Interval.isInterval(b)) {
+                return Interval.leq(a, b);
+            }
+            return a <= b;
+        },
+        gt: function(a, b) {
+            if (Interval.isInterval(a) || Interval.isInterval(b)) {
+                return Interval.gt(a, b);
+            }
+            return a > b;
+        },
+        geq: function(a, b) {
+            if (Interval.isInterval(a) || Interval.isInterval(b)) {
+                return Intervalt.geq(a, b);
+            }
+            return a >= b;
         },
 
         DDD: function(f) {
