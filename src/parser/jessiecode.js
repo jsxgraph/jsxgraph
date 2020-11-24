@@ -507,7 +507,9 @@ define([
                 r = this.builtIn[vname].src || this.builtIn[vname];
 
                 // Get the "real" name of the function
-                console.log(r)
+                if (Type.isNumber(r)) {
+                    return r;
+                }
                 vname = r.split('.').pop();
 
                 if (Type.exists(this.board.mathLib)) {

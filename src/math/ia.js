@@ -913,7 +913,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return !isFinite(x.lo) && x.lo === x.hi;
         },
 
-        handleNegative: function(interval) {
+        _handleNegative: function(interval) {
             var n;
             if (interval.lo < 0) {
                 if (interval.lo === -Infinity) {
@@ -938,7 +938,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
             // create a clone of `x` because the clone is going to be modified
             cache = new MatInterval().set(x.lo, x.hi);
-            this.handleNegative(cache);
+            this._handleNegative(cache);
 
             pi2 = this.PI_TWICE;
             t = this.fmod(cache, pi2);
@@ -986,7 +986,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
             // create a clone of `x` because the clone is going to be modified
             cache = new MatInterval().set(x.lo, x.hi);
-            this.handleNegative(cache);
+            this._handleNegative(cache);
 
             pi = this.PI;
             t = this.fmod(cache, pi);
