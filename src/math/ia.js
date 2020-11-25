@@ -1130,7 +1130,6 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return x.lo >= y.hi;
         },
 
-
         /*
          * Constants
          */
