@@ -1730,7 +1730,7 @@ console.log("level", 0, y_table[0]);
                 y_table[level + 1] = y_table[level].map(function(v, idx, arr) { return arr[idx + 1] - v;});
 
 if (level >= 0) {
-    console.log("level", level + 1, y_table[level + 1]);
+    //console.log("level", level + 1, y_table[level + 1]);
 }
                 // Store point location which may be centered around critical points.
                 // If the level is suitable, step out of the loop.
@@ -1845,47 +1845,60 @@ if (level >= 0) {
                         le = groups[g].idx - 1;
                     }
 
-                    var good=0, bad=0;
-                    // Insert all uncritical points until next critical point
-                    for (i = start; i < le; i++) {
-                        this._insertPoint_v4(curve, [1, comp.x_values[i], comp.y_values[i]], comp.t_values[i]);
-                        j = Math.max(0, i - 2);
-                        // try {
-                        // console.log(comp.t_values[i].toFixed(4),
-                        //         y_table[0][i].toFixed(4),
-                        //         y_table[1][i].toFixed(4),
-                        //         y_table[2][i].toFixed(4),
-                        //         y_table[3][i].toFixed(4),
-                        //         y_table[4][i].toFixed(4))
-                        // }catch(err){};
-                        if (i > 2 && i < le - 2 && y_table.length > 3 && Math.abs(y_table[3][i]) > 0.1 * Math.abs(y_table[0][i])) {
-                            t = comp.t_values[i];
-                            /*
-                            t1 = Numerics.fminbr(curve.Y, [t, t + h]);
-                            t2 = Numerics.fminbr(x => (-curve.Y(x)), [t, t + h]);
-                            if (t1 < t2) {
-                                this._insertPoint_v4(curve, [1, t1, curve.Y(t1)], t1);
-                                this._insertPoint_v4(curve, [1, t2, curve.Y(t2)], t2);
-                            } else {
-                                this._insertPoint_v4(curve, [1, t2, curve.Y(t2)], t2);
-                                this._insertPoint_v4(curve, [1, t1, curve.Y(t1)], t1);
-                            }
-                            */
-                            //console.log(i, le)
-                            if (true) {
-                                y_int = this.getInterval(curve, t + h / 4, t + 3*h/4);
-                                if (y_table[2][i] > 0) {
-                                    this._insertPoint_v4(curve, [1, t + h2, y_int.lo], t + h2);
+                    if (false) {
+                        var good=0, bad=0;
+                        // Insert all uncritical points until next critical point
+                        for (i = start; i < le; i++) {
+                            this._insertPoint_v4(curve, [1, comp.x_values[i], comp.y_values[i]], comp.t_values[i]);
+                            j = Math.max(0, i - 2);
+                            // try {
+                            // console.log(comp.t_values[i].toFixed(4),
+                            //         y_table[0][i].toFixed(4),
+                            //         y_table[1][i].toFixed(4),
+                            //         y_table[2][i].toFixed(4),
+                            //         y_table[3][i].toFixed(4),
+                            //         y_table[4][i].toFixed(4))
+                            // }catch(err){};
+                            if (false && i > 2 && i < le - 2 && y_table.length > 3 && Math.abs(y_table[3][i]) > 0.1 * Math.abs(y_table[0][i])) {
+                                t = comp.t_values[i];
+                                /*
+                                t1 = Numerics.fminbr(curve.Y, [t, t + h]);
+                                t2 = Numerics.fminbr(x => (-curve.Y(x)), [t, t + h]);
+                                if (t1 < t2) {
+                                    this._insertPoint_v4(curve, [1, t1, curve.Y(t1)], t1);
+                                    this._insertPoint_v4(curve, [1, t2, curve.Y(t2)], t2);
                                 } else {
-                                    this._insertPoint_v4(curve, [1, t + h2, y_int.hi], t + h2);
+                                    this._insertPoint_v4(curve, [1, t2, curve.Y(t2)], t2);
+                                    this._insertPoint_v4(curve, [1, t1, curve.Y(t1)], t1);
                                 }
+                                */
+                                //console.log(i, le)
+                                if (true) {
+                                    y_int = this.getInterval(curve, t + h / 4, t + 3*h/4);
+                                    if (y_table[2][i] > 0) {
+                                        this._insertPoint_v4(curve, [1, t + h2, y_int.lo], t + h2);
+                                    } else {
+                                        this._insertPoint_v4(curve, [1, t + h2, y_int.hi], t + h2);
+                                    }
+                                }
+                                bad++;
+                            } else {
+                                good++;
                             }
-                            bad++;
-                        } else {
-                            good++;
+                        }
+                        console.log("GOOD", good, "BAD", bad);
+                    }
+
+                    if (true) {
+                        for (i = start; i < le; i++) {
+                            t = comp.t_values[i];
+                            y = comp.y_values[i];
+                            //this._insertPoint_v4(curve, [1, comp.x_values[i], y], t);
+                            y_int = this.getInterval(curve, t, t + h*0.999);
+                            this._insertPoint_v4(curve, [1, comp.x_values[i], y_int.lo], t);
+                            this._insertPoint_v4(curve, [1, comp.x_values[i], y_int.hi], t + h  * 0.5);
                         }
                     }
-                    console.log("GOOD", good, "BAD", bad);
 
                     // Handle next critical point
                     if (g < groups.length) {
