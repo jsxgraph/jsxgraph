@@ -1292,7 +1292,7 @@ define(['jxg', 'base/constants', 'base/coords', 'math/math', 'math/extrapolate',
 
             // console.log("Median", med);
             for (i = 0; i < le; i++) {
-                if (abs_vec[i] > med)  {
+                if (abs_vec[i] > med && abs_vec[i] > 0.01)  {
                     positions.push({i: i, v: vec[i], group: group});
                     if (!isGroup) {
                         isGroup = true;
@@ -1730,7 +1730,7 @@ console.log("level", 0, y_table[0]);
                 y_table[level + 1] = y_table[level].map(function(v, idx, arr) { return arr[idx + 1] - v;});
 
 if (level >= 0) {
-    //console.log("level", level + 1, y_table[level + 1]);
+    console.log("level", level + 1, y_table[level + 1]);
 }
                 // Store point location which may be centered around critical points.
                 // If the level is suitable, step out of the loop.
