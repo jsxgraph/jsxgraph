@@ -120,7 +120,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
                 }
                 len = tmp.length;
 
-                if (len % 2 === 1) {
+                if (len & 1) { // odd
                     return tmp[parseInt(len * 0.5, 10)];
                 }
 
@@ -229,11 +229,15 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             var i, len, res;
 
             if (Type.isArray(arr)) {
-                len = arr.length;
-                res = [];
-
-                for (i = 0; i < len; i++) {
-                    res[i] = Math.abs(arr[i]);
+                if (arr.map) {
+                    res = arr.map(Math.abs);
+                } else {
+                    len = arr.length;
+                    res = [];
+    
+                    for (i = 0; i < len; i++) {
+                        res[i] = Math.abs(arr[i]);
+                    }
                 }
             } else if (ArrayBuffer.isView(arr)) {
                 res = arr.map(Math.abs);

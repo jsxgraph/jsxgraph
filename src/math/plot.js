@@ -1283,8 +1283,8 @@ define(['jxg', 'base/constants', 'base/coords', 'math/math', 'math/extrapolate',
 
             abs_vec = Statistics.abs(vec);
             med = Statistics.median(abs_vec);
-            if (med < 1.0e-12) {
-                med = 1.0e-8;
+            if (med < 1.0e-7) {
+                med = 1.0e-7;
                 very_small = true;
             } else {
                 med *= this.criticalThreshold;
@@ -1299,7 +1299,9 @@ define(['jxg', 'base/constants', 'base/coords', 'math/math', 'math/extrapolate',
                     }
                 } else {
                     if (isGroup) {
-                        groups.push(positions.slice(0));
+                        if (positions.length > 1) {
+                            groups.push(positions.slice(0));
+                        }
                         positions = [];
                         isGroup = false;
                         group++;
@@ -1307,8 +1309,9 @@ define(['jxg', 'base/constants', 'base/coords', 'math/math', 'math/extrapolate',
                 }
             }
             if (isGroup) {
-                groups.push(positions.slice(0));
-                positions = [];
+                if (positions.length > 1) {
+                    groups.push(positions.slice(0));
+                }
             }
 
             if (very_small && groups.length === 0) {
@@ -1710,6 +1713,8 @@ console.log("Polynomial of degree", level);
             x_table.push(new Float64Array(x_values));
             y_table.push(new Float64Array(y_values));
 
+console.log("level", 0, y_table[0]);
+
             le--;
             up = Math.min(12, le);
             for (level = 0; level < up; level++) {
@@ -1717,12 +1722,15 @@ console.log("Polynomial of degree", level);
                 // y_table.push([]);
                 x_table.push(new Float64Array(le));
                 y_table.push(new Float64Array(le));
-                for (i = 0; i < le; i++) {
-                    x_table[level + 1][i] = x_table[level][i + 1] - x_table[level][i];
-                    y_table[level + 1][i] = y_table[level][i + 1] - y_table[level][i];
-                }
-if (level == 2) {
-    console.log(y_table[3]);
+                // for (i = 0; i < le; i++) {
+                //     x_table[level + 1][i] = x_table[level][i + 1] - x_table[level][i];
+                //     y_table[level + 1][i] = y_table[level][i + 1] - y_table[level][i];
+                // }
+                x_table[level + 1] = x_table[level].map(function(v, idx, arr) { return arr[idx + 1] - v;});
+                y_table[level + 1] = y_table[level].map(function(v, idx, arr) { return arr[idx + 1] - v;});
+
+if (level >= 0) {
+    //console.log("level", level + 1, y_table[level + 1]);
 }
                 // Store point location which may be centered around critical points.
                 // If the level is suitable, step out of the loop.
@@ -1745,7 +1753,7 @@ if (level == 2) {
                 le--;
             }
 
-            //console.log("Last diffs", y_table[level + 1], t_values, "level", level + 1);
+            console.log("Last diffs", y_table[Math.min(level + 1, up)], "level", level + 1);
 
             // Analyze the groups which have been found.
             for (i = 0; i < groups.length; i++) {
@@ -1759,6 +1767,11 @@ if (level == 2) {
                 criticalPoints.push(this.getPointType(curve, pos, t_approx, t_values, x_table, y_table, le + 1));
             }
 
+            if (level === up) {
+                console.log("No convergence!");
+            } else {
+                console.log("Convergence level", level);
+            }
             return [criticalPoints, x_table, y_table];
 
         },
@@ -1995,7 +2008,7 @@ if (level == 2) {
             curve.points = [];
 
             console.log("--------------------");
-            this.plot_v4(curve, ta, tb, this.steps);
+            this.plot_v4(curve, ta, ta + (tb - ta) * 1, this.steps);
 
             curve.numberPoints = curve.points.length;
             //console.log(curve.numberPoints);
