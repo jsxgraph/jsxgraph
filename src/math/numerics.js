@@ -1423,7 +1423,7 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
          * Abstract method to find roots of univariate functions, which - for the time being -
          * is an alias for {@link JXG.Math.Numerics.chandrupatla}.
          * @param {function} f We search for a solution of f(x)=0.
-         * @param {Number} x initial guess for the root, i.e. starting value, or start interval enclosing the root.
+         * @param {Number|Array} x initial guess for the root, i.e. starting value, or start interval enclosing the root.
          * @param {Object} context optional object that is treated as "this" in the function body. This is useful if
          * the function is a method of an object and contains a reference to its parent object via "this".
          * @returns {Number} A root of the function f.

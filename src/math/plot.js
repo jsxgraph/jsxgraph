@@ -1832,6 +1832,8 @@ console.log("Polynomial of degree", level);
             var t_int, x_int, y_int;
 
             //console.log('critical point', ta, tb);
+            IntervalArithmetic.disable();
+
             t_int = IntervalArithmetic.Interval(ta, tb);
             curve.board.mathLib = IntervalArithmetic;
             curve.board.mathLibJXG = IntervalArithmetic;
@@ -1897,6 +1899,81 @@ console.log("Polynomial of degree", level);
                 d1: d1
             };
 
+        },
+
+        recurse: function(curve, t1, t2, lo, hi) {
+            var h = t2 - t1,
+                t, y_int;
+
+            if (h <= 1.e-9) {
+                return [t1, curve.Y(t1, true), t2, curve.Y(t2, true)];
+            }
+            h *= 0.5;
+            t = t1 + h;
+            y_int = this.getInterval(curve, t1, t);
+            if (y_int.lo === lo && y_int.hi === hi) {
+                return this.recurse(curve, t1, t, lo, hi);
+            } else {
+                return this.recurse(curve, t, t2, lo, hi);
+            }
+        },
+
+        handleSingularity: function(curve, comp, group, x_table, y_table) {
+            var HUGE = 1.e12,
+                i = group.idx,
+                t_approx = group.t,
+                t, t1, t2, y_int,
+                x1, x2, x3, y1, y2a, y2b, y3, lo, hi,
+                lo2, hi2,
+                h, res;
+
+            console.log("HandleSingularity at t =", t_approx);
+            console.log(comp.t_values[i - 1], comp.y_values[i - 1], comp.t_values[i + 1], comp.y_values[i + 1]);
+
+            console.log(group);
+            t1 = comp.t_values[i - 1];
+            t2 = comp.t_values[i + 1];
+            y_int = this.getInterval(curve, t1, t2);
+            lo = y_int.lo;
+            hi = y_int.hi;
+
+
+            y1 = y_table[0][i - 1];
+            t = group.t;
+            h = (t - comp.t_values[i - 1]) * 0.99;
+            y2a = curve.Y(t - h, true); //group.y;
+
+            x2 = t - h;
+            this._insertPoint_v4(curve, [1, x2, y2a], t - h);
+            x2 = t;
+            if (lo === -Infinity && y2a < y1) {
+                console.log("A");
+                this._insertPoint_v4(curve, [1, x2, lo], t);
+            } else if (hi === Infinity && y2a >= y1) {
+                console.log("B");
+                this._insertPoint_v4(curve, [1, x2, hi], t);
+            }
+
+            if ((lo === -Infinity && hi > -Infinity) ||
+                (hi === Infinity && lo < Infinity) ||
+                (hi - lo) * curve.board.unitY > 4) {
+            console.log("Insert", t);
+                this._insertPoint_v4(curve, [1, NaN, NaN], t);
+            }
+
+            h = (comp.t_values[i + 1] - t) * 0.99;
+            y2b = curve.Y(t + h, true); //group.y;
+            x2 = t + h;
+            y3 = y_table[0][i + 1];
+            if (lo === -Infinity && y3 > y2b) {
+                console.log("C");
+                this._insertPoint_v4(curve, [1, x2, lo], t);
+            } else if (hi === Infinity && y3 <= y2b) {
+                console.log("D");
+                this._insertPoint_v4(curve, [1, x2, hi], t);
+            }
+            this._insertPoint_v4(curve, [1, x2, y2b], t + h);
+            console.log(t, y_int, y1, y2a, y2b, y3);
         },
 
         steps: 1024,
@@ -2002,49 +2079,49 @@ console.log("Polynomial of degree", level);
                                 this._insertPoint_v4(curve,
                                     [1, t2, (y_table[1][i] > 0) ? y_int.hi : y_int.lo], t2);
                             } else {
+                                this.handleSingularity(curve, comp, groups[g], x_table, y_table);
+//                                 console.log(comp.t_values[i-1],comp.y_values[i-1], comp.t_values[i+1],comp.y_values[i+1])
+//                                 console.log(comp.t_values[i-1],"v", y_table[0][i-1],y_table[1][i-1], comp.t_values[i+1],"v", y_table[0][i+1],y_table[1][i+1])
 
-                                console.log(comp.t_values[i-1],comp.y_values[i-1], comp.t_values[i+1],comp.y_values[i+1])
-                                console.log(comp.t_values[i-1],"v", y_table[0][i-1],y_table[1][i-1], comp.t_values[i+1],"v", y_table[0][i+1],y_table[1][i+1])
+//                                 t = groups[g].t;
+//                                 y_int = this.getInterval(curve, comp.t_values[i - 2], comp.t_values[i + 2]);
 
-                                t = groups[g].t;
-                                y_int = this.getInterval(curve, comp.t_values[i - 2], comp.t_values[i + 2]);
+//                                 asymptote = this.checkAsymptote(curve, [comp.t_values[i-2], y_table[0][i-2]], [comp.t_values[i + 2], y_table[0][i + 2]], 4);
+//                                 console.log("CheckAsympt", i, comp.t_values[i-2], comp.t_values[i + 2], h)
+//                                 console.log(asymptote)
+//                                 console.log(y_int);
 
-                                asymptote = this.checkAsymptote(curve, [comp.t_values[i-2], y_table[0][i-2]], [comp.t_values[i + 2], y_table[0][i + 2]], 4);
-                                console.log("CheckAsympt", i, comp.t_values[i-2], comp.t_values[i + 2], h)
-                                console.log(asymptote)
-                                console.log(y_int);
+//                                 t = asymptote.d0[0];
+//                                 x = t;
+//                                 y1 = asymptote.d0[1];
+//                                 this._insertPoint_v4(curve, [1, x, y1], t);
 
-                                t = asymptote.d0[0];
-                                x = t;
-                                y1 = asymptote.d0[1];
-                                this._insertPoint_v4(curve, [1, x, y1], t);
+//                                 y2 = asymptote.d1[1];
 
-                                y2 = asymptote.d1[1];
+//                                 if (Math.sign(y1 - y_table[0][i - 1]) === this.sign(y_int.lo - y_table[0][i - 1])) {
+//                                     y1 = y_int.lo;
+//                                 } else {
+//                                     y1 = y_int.hi;
+//                                 }
 
-                                if (Math.sign(y1 - y_table[0][i - 1]) === this.sign(y_int.lo - y_table[0][i - 1])) {
-                                    y1 = y_int.lo;
-                                } else {
-                                    y1 = y_int.hi;
-                                }
+//                                 if (Math.sign(y_table[0][i + 1] - y2) === Math.sign(y_table[0][i + 1] - y_int.lo)) {
+//                                     y2 = y_int.lo;
+//                                 } else {
+//                                     y2 = y_int.hi;
+//                                 }
+// // console.log(t, y_int, y1, y2);
 
-                                if (Math.sign(y_table[0][i + 1] - y2) === Math.sign(y_table[0][i + 1] - y_int.lo)) {
-                                    y2 = y_int.lo;
-                                } else {
-                                    y2 = y_int.hi;
-                                }
-// console.log(t, y_int, y1, y2);
+//                                 x = t;
+//                                 this._insertPoint_v4(curve, [1, x, y1], t);
+//                                 if (Math.abs(y1 - y2) > 0.001) {
+//                                     this._insertPoint_v4(curve, [1, NaN, NaN], groups[g].t);
+//                                 }
+//                                 this._insertPoint_v4(curve, [1, x, y2], t);
 
-                                x = t;
-                                this._insertPoint_v4(curve, [1, x, y1], t);
-                                if (Math.abs(y1 - y2) > 0.001) {
-                                    this._insertPoint_v4(curve, [1, NaN, NaN], groups[g].t);
-                                }
-                                this._insertPoint_v4(curve, [1, x, y2], t);
-
-                                t = asymptote.d1[0];
-                                x = t;
-                                y2 = asymptote.d1[1];
-                                this._insertPoint_v4(curve, [1, x, y2], t);
+//                                 t = asymptote.d1[0];
+//                                 x = t;
+//                                 y2 = asymptote.d1[1];
+//                                 this._insertPoint_v4(curve, [1, x, y2], t);
 
 
 
