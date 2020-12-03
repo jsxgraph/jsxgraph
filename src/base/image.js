@@ -129,9 +129,16 @@ define([
          * @returns {Boolean} True if (x,y) is over the image, False otherwise.
          */
         hasPoint: function (x, y) {
-            var dx, dy, r,
+            var dx, dy, r, type, prec,
                 c, v, p, dot,
                 len = this.transformations.length;
+
+                if (Type.evaluate(this.visProp.precision.enabled)) {
+                    type = this.board._inputDevice;
+                    prec = Type.evaluate(this.visProp.precision[type]);
+                } else {
+                    prec = this.board.options.precision.hasPoint;
+                }
 
             // Easy case: no transformation
             if (len === 0) {

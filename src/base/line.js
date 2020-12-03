@@ -162,10 +162,16 @@ define([
                 v = [1, x, y],
                 vnew,
                 p1c, p2c, d, pos, i,
-                prec,
+                prec, type,
                 sw = Type.evaluate(this.visProp.strokewidth);
 
-            prec = this.board.options.precision.hasPoint + sw * 0.5;
+            if (Type.evaluate(this.visProp.precision.enabled)) {
+                type = this.board._inputDevice;
+                prec = Type.evaluate(this.visProp.precision[type]);
+            } else {
+                prec = this.board.options.precision.hasPoint;
+            }
+            prec += sw * 0.5;
 
             c[0] = this.stdform[0] -
                 this.stdform[1] * this.board.origin.scrCoords[1] / this.board.unitX +

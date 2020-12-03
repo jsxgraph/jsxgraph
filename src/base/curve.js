@@ -240,13 +240,20 @@ define([
                 points, qdt,
                 steps = Type.evaluate(this.visProp.numberpointslow),
                 d = (this.maxX() - this.minX()) / steps,
-                prec = this.board.options.precision.hasPoint,
+                prec, type,
                 dist = Infinity,
                 ux2, uy2,
                 ev_ct,
                 mi, ma,
                 suspendUpdate = true;
 
+
+            if (Type.evaluate(this.visProp.precision.enabled)) {
+                type = this.board._inputDevice;
+                prec = Type.evaluate(this.visProp.precision[type]);
+            } else {
+                prec = this.board.options.precision.hasPoint;
+            }
             checkPoint = new Coords(Const.COORDS_BY_SCREEN, [x, y], this.board, false);
             x = checkPoint.usrCoords[1];
             y = checkPoint.usrCoords[2];

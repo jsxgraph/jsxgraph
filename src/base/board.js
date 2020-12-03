@@ -516,6 +516,14 @@ define([
          */
         this._drag_offset = [0, 0];
 
+        /**
+         * Stores the input device used in the last down or move event.
+         * @type {String}
+         * @private
+         * @default 'mouse'
+         */
+        this._inputDevice = 'mouse';
+
         this._board_touches = [];
 
         /**
@@ -2002,7 +2010,6 @@ define([
         pointerDownListener: function (evt, object) {
             var i, j, k, pos, elements, sel,
                 type = 'mouse', // in case of no browser
-                eps,
                 found, target, result;
 
             // Temporary fix for Firefox pointer events:
@@ -2041,9 +2048,9 @@ define([
             }
 
             // Mouse, touch or pen device
-            type = this._getPointerInputDevice(evt);
-            eps = this.options.precision[type];
-            this.options.precision.hasPoint = eps;
+            this._inputDevice = this._getPointerInputDevice(evt);
+            type = this._inputDevice;
+            this.options.precision.hasPoint = this.options.precision[type];
 
             // This should be easier than the touch events. Every pointer device gets its own pointerId, e.g. the mouse
             // always has id 1, fingers and pens get unique ids every time a pointerDown event is fired and they will
@@ -2179,8 +2186,7 @@ define([
          */
         pointerMoveListener: function (evt) {
             var i, j, pos,
-                type = 'mouse', // in case of no browser
-                eps;
+                type = 'mouse'; // in case of no browser
 
             if (this._getPointerInputDevice(evt) == 'touch' && !this._pointerIsTouchRegistered(evt)) {
                 // Test, if there was a previous down event of this _getPointerId
@@ -2205,9 +2211,9 @@ define([
 
             this.updateQuality = this.BOARD_QUALITY_LOW;
             // Mouse, touch or pen device
-            type = this._getPointerInputDevice(evt);
-            eps = this.options.precision[type];
-            this.options.precision.hasPoint = eps;
+            this._inputDevice = this._getPointerInputDevice(evt);
+            type = this._inputDevice;
+            this.options.precision.hasPoint = this.options.precision[type];
 
             // selection
             if (this.selectingMode) {
@@ -2382,6 +2388,7 @@ define([
             }
 
             // multitouch
+            this._inputDevice = 'touch';
             this.options.precision.hasPoint = this.options.precision.touch;
 
             // This is the most critical part. first we should run through the existing touches and collect all targettouches that don't belong to our
@@ -2591,6 +2598,7 @@ define([
                 this.showInfobox(false);
             }
 
+            this._inputDevice = 'touch';
             this.options.precision.hasPoint = this.options.precision.touch;
             this.updateQuality = this.BOARD_QUALITY_LOW;
 
@@ -2825,6 +2833,8 @@ define([
                 return;
             }
 
+            this._inputDevice = 'mouse';
+            this.options.precision.hasPoint = this.options.precision.mouse;
             pos = this.getMousePosition(evt);
 
             // selection

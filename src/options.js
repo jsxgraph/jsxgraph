@@ -1265,7 +1265,7 @@ define([
              * @example
              * var li1 = board.create('line', [1, 1, 1], {strokeWidth: 20, dragToTopOfLayer: true});
              * var li2 = board.create('line', [1, -1, 1], {strokeWidth: 20, strokeColor: 'red'});
-             * 
+             *
              * </pre><div id="JXG38449fee-1ab4-44de-b7d1-43caa1f50f86" class="jxgbox" style="width: 300px; height: 300px;"></div>
              * <script type="text/javascript">
              *     (function() {
@@ -1273,16 +1273,41 @@ define([
              *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
              *     var li1 = board.create('line', [1, 1, 1], {strokeWidth: 20, dragToTopOfLayer: true});
              *     var li2 = board.create('line', [1, -1, 1], {strokeWidth: 20, strokeColor: 'red'});
-             * 
+             *
              *     })();
-             * 
+             *
              * </script><pre>
-             * 
+             *
              * @type Boolean
              * @default false
              * @name JXG.GeometryElement#dragToTopOfLayer
              */
             dragToTopOfLayer: false,
+
+            /**
+             * Precision options.
+             *
+             * The default values are
+             * <pre>
+             * JXG.Options.precision: {
+             *   touch: 30,
+             *   touchMax: 100,
+             *   mouse: 4,
+             *   pen: 4,
+             *   epsilon: 0.0001,
+             *   hasPoint: 4
+             * }
+             * </pre>
+             */
+            precision: {
+                enabled: true,
+                touch: 15,
+                mouse: 4,
+                pen: 4,
+                
+                touchMax: 100,
+                epsilon: 0.0001
+            },
 
             /*draft options */
             draft: {
