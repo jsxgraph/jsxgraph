@@ -1285,11 +1285,14 @@ define([
             dragToTopOfLayer: false,
 
             /**
-             * Precision options.
+             * Precision options for elements. If enabled==true
+             * these values have priority over the global precision
+             * values of the board.
              *
              * The default values are
              * <pre>
              * JXG.Options.precision: {
+             *   enabled: false,
              *   touch: 30,
              *   touchMax: 100,
              *   mouse: 4,
@@ -1300,13 +1303,10 @@ define([
              * </pre>
              */
             precision: {
-                enabled: true,
+                enabled: false,
                 touch: 15,
                 mouse: 4,
-                pen: 4,
-                
-                touchMax: 100,
-                epsilon: 0.0001
+                pen: 4
             },
 
             /*draft options */
@@ -1644,7 +1644,7 @@ define([
             touchMax: 100,
             mouse: 4,
             pen: 4,
-            epsilon: 0.0001,
+            epsilon: 0.0001, // Unused
             hasPoint: 4
         },
 
