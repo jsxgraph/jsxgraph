@@ -144,7 +144,7 @@ define([
             if (len === 0) {
                 dx = x - this.coords.scrCoords[1];
                 dy = this.coords.scrCoords[2] - y;
-                r = this.board.options.precision.hasPoint;
+                r = prec;
 
                 return dx >= -r && dx - this.size[0] <= r &&
                     dy >= -r && dy - this.size[1] <= r;

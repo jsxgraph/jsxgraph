@@ -731,7 +731,6 @@ define([
         return p;
     };
 
-
     /**
      * @class A parallel is a line through a given point with the same slope as a given line.
      * @pseudo

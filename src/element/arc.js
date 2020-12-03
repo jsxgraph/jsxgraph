@@ -253,7 +253,7 @@ define([
             var dist, checkPoint,
                 has, angle, alpha, beta,
                 invMat, c,
-                prec,
+                prec, type,
                 r = this.Radius(),
                 ev_s = Type.evaluate(this.visProp.selection);
 
@@ -261,7 +261,13 @@ define([
                 return this.hasPointSector(x, y);
             }
 
-            prec = this.board.options.precision.hasPoint / Math.min(this.board.unitX, this.board.unitY);
+            if (Type.evaluate(this.visProp.precision.enabled)) {
+                type = this.board._inputDevice;
+                prec = Type.evaluate(this.visProp.precision[type]);
+            } else {
+                prec = this.board.options.precision.hasPoint;
+            }
+            prec /= Math.min(this.board.unitX, this.board.unitY);
             checkPoint = new Coords(Const.COORDS_BY_SCREEN, [x, y], this.board);
 
             if (this.transformations.length > 0) {

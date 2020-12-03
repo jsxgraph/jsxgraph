@@ -212,9 +212,15 @@ define([
         hasPoint: function (x, y) {
             var i, t,
                 len = (this.ticks && this.ticks.length) || 0,
-                r = this.board.options.precision.hasPoint +
-                        Type.evaluate(this.visProp.strokewidth) * 0.5;
+                r, type;
 
+            if (Type.evaluate(this.visProp.precision.enabled)) {
+                type = this.board._inputDevice;
+                r = Type.evaluate(this.visProp.precision[type]);
+            } else {
+                r = this.board.options.precision.hasPoint;
+            }
+            r += Type.evaluate(this.visProp.strokewidth) * 0.5;
             if (!Type.evaluate(this.line.visProp.scalable) ||
                 this.line.elementClass === Const.OBJECT_CLASS_CURVE) {
                 return false;

@@ -139,9 +139,14 @@ define([
          * @returns {Boolean}
          */
         hasPoint: function (x, y) {
-            var lft, rt, top, bot, ax, ay,
-                r = this.board.options.precision.hasPoint;
+            var lft, rt, top, bot, ax, ay, type, r;
 
+            if (Type.evaluate(this.visProp.precision.enabled)) {
+                type = this.board._inputDevice;
+                r = Type.evaluate(this.visProp.precision[type]);
+            } else {
+                r = this.board.options.precision.hasPoint;
+            }
             if (this.transformations.length > 0) {
                 //Transform the mouse/touch coordinates
                 // back to the original position of the text.
@@ -792,6 +797,8 @@ define([
             // Set the precision of hasPoint to half the max if label isn't too long
             savePointPrecision = this.board.options.precision.hasPoint;
             this.board.options.precision.hasPoint = Math.max(w, h) * 0.5;
+            // TODO:
+            // Make it compatible with the objects' visProp.precision attribute
 			for (i = 0, le = this.board.objectsList.length; i < le; i++) {
 				obj = this.board.objectsList[i];
 				if (obj.visPropCalc.visible &&

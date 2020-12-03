@@ -107,16 +107,23 @@ define([
          */
         hasPoint: function (x, y) {
             var coordsScr = this.coords.scrCoords, r,
+                prec, type,
                 unit = Type.evaluate(this.visProp.sizeunit);
 
+            if (Type.evaluate(this.visProp.precision.enabled)) {
+                type = this.board._inputDevice;
+                prec = Type.evaluate(this.visProp.precision[type]);
+            } else {
+                prec = this.board.options.precision.hasPoint;
+            }
             r = parseFloat(Type.evaluate(this.visProp.size));
             if (unit === 'user') {
                 r *= Math.sqrt(this.board.unitX * this.board.unitY);
             }
 
             r += parseFloat(Type.evaluate(this.visProp.strokewidth)) * 0.5;
-            if (r < this.board.options.precision.hasPoint) {
-                r = this.board.options.precision.hasPoint;
+            if (r < prec) {
+                r = prec;
             }
 
             return ((Math.abs(coordsScr[1] - x) < r + 2) && (Math.abs(coordsScr[2] - y) < r + 2));
