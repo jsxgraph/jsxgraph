@@ -1260,11 +1260,27 @@ define([
 
             /**
              * If the element is dragged it will be moved on mousedown or touchstart to the
-             * top of its layer. Works only for SVG renderer and for ssimple elements
+             * top of its layer. Works only for SVG renderer and for simple elements
              * consisting of one SVG node.
+             * @example
+             * var li1 = board.create('line', [1, 1, 1], {strokeWidth: 20, dragToTopOfLayer: true});
+             * var li2 = board.create('line', [1, -1, 1], {strokeWidth: 20, strokeColor: 'red'});
+             * 
+             * </pre><div id="JXG38449fee-1ab4-44de-b7d1-43caa1f50f86" class="jxgbox" style="width: 300px; height: 300px;"></div>
+             * <script type="text/javascript">
+             *     (function() {
+             *         var board = JXG.JSXGraph.initBoard('JXG38449fee-1ab4-44de-b7d1-43caa1f50f86',
+             *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+             *     var li1 = board.create('line', [1, 1, 1], {strokeWidth: 20, dragToTopOfLayer: true});
+             *     var li2 = board.create('line', [1, -1, 1], {strokeWidth: 20, strokeColor: 'red'});
+             * 
+             *     })();
+             * 
+             * </script><pre>
+             * 
              * @type Boolean
              * @default false
-             * @name JXG.GeometryElement#scalable
+             * @name JXG.GeometryElement#dragToTopOfLayer
              */
             dragToTopOfLayer: false,
 
