@@ -609,7 +609,7 @@ define([
         },
 
         /**
-         * Returns the elements name, Used in JessieCode.
+         * Returns the elements name. Used in JessieCode.
          * @returns {String}
          */
         getName: function () {
