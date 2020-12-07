@@ -1442,6 +1442,16 @@ define(['jxg', 'base/constants', 'base/coords', 'math/math', 'math/extrapolate',
             pos1m = pos - 1;
             pos1p = pos + 1;
 
+            if (pos < 5) {
+                result.type = 'borderleft';
+                result.idx = 0;
+                result.t = t_values[0];
+                result.x = x_values[0];
+                result.y = y_values[0];
+
+                // console.log('Border left', result.t);
+                return result;
+            }
             if (pos1m < 0) {
                 result.type = 'borderleft';
                 result.idx = pos;
@@ -1449,17 +1459,7 @@ define(['jxg', 'base/constants', 'base/coords', 'math/math', 'math/extrapolate',
                 result.x = x_values[pos1m];
                 result.y = y_values[pos1m];
 
-                console.log('Border left', result.t);
-                return result;
-            }
-            if (pos1p >= len) {
-                result.type = 'borderright';
-                result.idx = full_len - 1;
-                result.t = t_values[full_len - 1];
-                result.x = x_values[full_len - 1];
-                result.y = y_values[full_len - 1];
-
-                console.log('Border right', result.t, full_len - 1);
+                // console.log('Border left', result.t);
                 return result;
             }
             if (pos2m < 0) {
@@ -1469,7 +1469,27 @@ define(['jxg', 'base/constants', 'base/coords', 'math/math', 'math/extrapolate',
                 result.x = x_values[pos1m];
                 result.y = y_values[pos1m];
 
-                console.log('Border left', result.t);
+                // console.log('Border left', result.t);
+                return result;
+            }
+            if (pos > len - 5) {
+                result.type = 'borderright';
+                result.idx = full_len - 1;
+                result.t = t_values[full_len - 1];
+                result.x = x_values[full_len - 1];
+                result.y = y_values[full_len - 1];
+
+                // console.log('Border right', result.t, full_len - 1);
+                return result;
+            }
+            if (pos1p >= len) {
+                result.type = 'borderright';
+                result.idx = full_len - 1;
+                result.t = t_values[full_len - 1];
+                result.x = x_values[full_len - 1];
+                result.y = y_values[full_len - 1];
+
+                // console.log('Border right', result.t, full_len - 1);
                 return result;
             }
 
@@ -1918,6 +1938,31 @@ console.log("Polynomial of degree", level);
             }
         },
 
+        handleBorder: function(curve, comp, group, x_table, y_table) {
+            var i = group.idx,
+                t_approx = group.t,
+                t, t1, t2, y_int,
+                x1, x2, x3, y1, y2a, y2b, y3, lo, hi,
+                lo2, hi2,
+                h, res;
+
+            console.log("HandleBorder at t =", t_approx);
+            console.log(group);
+
+            if (group.type === 'borderleft') {
+                t1 = comp.left_isNaN ? comp.left_t : group.t - h;
+                y_int = this.getInterval(curve, t1, group.t);
+                this._insertPoint_v4(curve,
+                    [1, t1, (y_table[1][i] > 0) ? y_int.lo : y_int.hi], t1);
+            } else if (group.type === 'borderright') {
+                t2 = comp.right_isNaN ? comp.right_t : group.t + h;
+                y_int = this.getInterval(curve, group.t, t2);
+                console.log(group.t, t2, y_int);
+                this._insertPoint_v4(curve,
+                    [1, t2, (y_table[1][i] > 0) ? y_int.hi : y_int.lo], t2);
+            }
+        },
+
         handleSingularity: function(curve, comp, group, x_table, y_table) {
             var HUGE = 1.e12,
                 i = group.idx,
@@ -2067,17 +2112,8 @@ console.log("Polynomial of degree", level);
                             i = groups[g].idx;
                             //this._insertPoint_v4(curve, [1, comp.x_values[i - 1], comp.y_values[i - 1]], comp.t_values[i - 1]);
 
-                            if (groups[g].type === 'borderleft') {
-                                t1 = comp.left_isNaN ? comp.left_t : groups[g].t - h;
-                                y_int = this.getInterval(curve, t1, groups[g].t);
-                                this._insertPoint_v4(curve,
-                                    [1, t1, (y_table[1][i] > 0) ? y_int.lo : y_int.hi], t1);
-                            } else if (groups[g].type === 'borderright' && g === groups.length - 1) {
-                                t2 = comp.right_isNaN ? comp.right_t : groups[g].t + h;
-                                y_int = this.getInterval(curve, groups[g].t, t2);
-                                console.log(groups[g].t, t2, y_int);
-                                this._insertPoint_v4(curve,
-                                    [1, t2, (y_table[1][i] > 0) ? y_int.hi : y_int.lo], t2);
+                            if (groups[g].type === 'borderleft' || groups[g].type === 'borderright' /* && g === groups.length - 1*/) {
+                                this.handleBorder(curve, comp, groups[g], x_table, y_table);
                             } else {
                                 this.handleSingularity(curve, comp, groups[g], x_table, y_table);
 //                                 console.log(comp.t_values[i-1],comp.y_values[i-1], comp.t_values[i+1],comp.y_values[i+1])
