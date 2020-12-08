@@ -162,6 +162,13 @@ define([
         attr.borders = Type.copyAttributes(attr.borders, board.options, 'slopetriangle', 'borders');
         el = board.create('polygon', [tglide, glider, toppoint], attr);
 
+        /**
+         * Returns the value of the slope triangle, that is the slope of the tangent.
+         * @name Value
+         * @memberOf Slopetriangle.prototype
+         * @function
+         * @returns {Number} slope of the tangent.
+         */
         el.Value = priv.Value;
         el.tangent = tangent;
         el._isPrivateTangent = isPrivateTangent;

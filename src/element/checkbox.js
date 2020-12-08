@@ -176,6 +176,14 @@ define([
         t.rendNodeCheckbox.checked = attr.checked;
 
         t._value = attr.checked;
+
+        /**
+         * Returns the value of the checkbox element
+         * @name Value
+         * @memberOf Checkbox.prototype
+         * @function
+         * @returns {String} value of the checkbox.
+         */
         t.Value = function () {
             return this._value;
         };

@@ -146,7 +146,13 @@ define([
             GeometryElement.prototype.remove.call(this);
         };
 
-        /** @ignore */
+        /**
+         * Returns the length of the tape measure.
+         * @name Value
+         * @memberOf Tapemeasure.prototype
+         * @function
+         * @returns {Number} length of tape measure.
+         */
         li.Value = function () {
             return p1.Dist(p2);
         };

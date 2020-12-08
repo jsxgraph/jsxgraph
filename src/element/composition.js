@@ -2250,9 +2250,9 @@ define([
          * Returns the current value of the integral.
          * @memberOf Integral
          * @name Value
+         * @function
          * @returns {Number}
          */
-
         p.Value = function () {
             return Numerics.I([pa_on_axis.X(), pb_on_axis.X()], curve.Y);
         };

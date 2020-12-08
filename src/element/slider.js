@@ -198,6 +198,7 @@ define([
          * Returns the current slider value.
          * @memberOf Slider.prototype
          * @name Value
+         * @function
          * @returns {Number}
          */
         p3.Value = function () {

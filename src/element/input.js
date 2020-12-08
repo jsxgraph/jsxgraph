@@ -160,8 +160,9 @@ define([
             }
             return this;
         };
+
         /**
-         * Get value (content) of the input element
+         * Returns the value (content) of the input element
          * @name Value
          * @memberOf Input.prototype
          * @function
@@ -171,7 +172,7 @@ define([
             return this._value;
         };
         /**
-         * Set value of the input element.
+         * Sets value of the input element.
          * @name set
          * @memberOf Input.prototype
          * @function

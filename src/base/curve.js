@@ -2091,6 +2091,13 @@ define([
         c = board.create('curve', par, attr);
 
         c.sum = 0.0;
+        /**
+         * Returns the value of the Riemann sum, i.e. the sum of the (signed) areas of the rectangles.
+         * @name Value
+         * @memberOf Riemann.prototype
+         * @function
+         * @returns {Number} value of Riemann sum.
+         */
         c.Value = function () {
             return this.sum;
         };

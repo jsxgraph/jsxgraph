@@ -1350,6 +1350,7 @@ define([
         attributes.selection = 'minor';
         el = JXG.createAngle(board, parents, attributes);
 
+        // Documented in createAngle
         el.Value = function () {
             var v = Geometry.rad(this.point2, this.point1, this.point3);
             return (v < Math.PI) ? v : 2.0 * Math.PI - v;
@@ -1398,6 +1399,7 @@ define([
         attributes.selection = 'major';
         el = JXG.createAngle(board, parents, attributes);
 
+        // Documented in createAngle
         el.Value = function () {
             var v = Geometry.rad(this.point2, this.point1, this.point3);
             return (v >= Math.PI) ? v : 2.0 * Math.PI - v;
