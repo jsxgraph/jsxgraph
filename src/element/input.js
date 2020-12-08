@@ -160,8 +160,30 @@ define([
             }
             return this;
         };
+        /**
+         * Get value (content) of the input element
+         * @name Value
+         * @memberOf Input.prototype
+         * @function
+         * @returns {String} content of the input field.
+         */
         t.Value = function () {
             return this._value;
+        };
+        /**
+         * Set value of the input element.
+         * @name set
+         * @memberOf Input.prototype
+         * @function
+         *
+         * @param {String} val
+         * @returns {JXG.GeometryElement} Reference to the element.
+         *
+         */
+        t.set = function (val) {
+            this._value = val;
+            this.rendNodeInput.value = val;
+            return this;
         };
 
         Env.addEvent(t.rendNodeInput, 'input', priv.InputInputEventHandler, t);
