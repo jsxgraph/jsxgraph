@@ -1974,14 +1974,13 @@ console.log("Polynomial of degree", level);
 
             console.log("HandleSingularity at t =", t_approx);
             console.log(comp.t_values[i - 1], comp.y_values[i - 1], comp.t_values[i + 1], comp.y_values[i + 1]);
-
             console.log(group);
-            t1 = comp.t_values[i - 1];
-            t2 = comp.t_values[i + 1];
+
+            t1 = comp.t_values[i - 2];
+            t2 = comp.t_values[i + 2];
             y_int = this.getInterval(curve, t1, t2);
             lo = y_int.lo;
             hi = y_int.hi;
-
 
             y1 = y_table[0][i - 1];
             t = group.t;
@@ -2002,7 +2001,7 @@ console.log("Polynomial of degree", level);
             if ((lo === -Infinity && hi > -Infinity) ||
                 (hi === Infinity && lo < Infinity) ||
                 (hi - lo) * curve.board.unitY > 4) {
-            console.log("Insert", t);
+        console.log("Insert", t);
                 this._insertPoint_v4(curve, [1, NaN, NaN], t);
             }
 
@@ -2019,6 +2018,7 @@ console.log("Polynomial of degree", level);
             }
             this._insertPoint_v4(curve, [1, x2, y2b], t + h);
             console.log(t, y_int, y1, y2a, y2b, y3);
+
         },
 
         steps: 1024,
@@ -2059,7 +2059,11 @@ console.log("Polynomial of degree", level);
                             this._insertPoint_v4(curve, [1, comp.x_values[i], comp.y_values[i]], comp.t_values[i]);
                             j = Math.max(0, i - 2);
 
-                            if (true && i > 2 && i < le - 2 && y_table.length > 3 && Math.abs(y_table[2][i]) > 0.1 * Math.abs(y_table[0][i])) {
+                            // Add more points in critical intervals
+                            if (true &&
+                                i >= start + 3 && i < le - 3 &&      // Do not do this if too close to a critical point
+                                y_table.length > 3 &&
+                                Math.abs(y_table[2][i]) > 0.1 * Math.abs(y_table[0][i])) {
                                 t = comp.t_values[i];
                                 /*
                                 t1 = Numerics.fminbr(curve.Y, [t, t + h]);
