@@ -331,6 +331,9 @@ define([
             } else {
                 alpha = qx / px;
             }
+            if (Math.abs(alpha) < eps) {
+                alpha = 0.0;
+            }
             return alpha;
         },
 
@@ -519,7 +522,7 @@ define([
             S_intersect = this.sortIntersections(S_crossings);
 // console.log('>>>>>>')
 // this._print_array(S_intersect);
-// console.log(S_intersect)
+//console.log(S_intersect)
 // console.log('----------')
             for (i = 0; i < S_intersect.length; i++) {
                 S_intersect[i].data.idx = i;
