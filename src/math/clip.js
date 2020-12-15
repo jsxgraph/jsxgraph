@@ -313,6 +313,7 @@ define([
 
         _inbetween: function(q, p1, p2) {
             var alpha,
+                eps = Mat.eps * Mat.eps,
                 px = p2[1] - p1[1],
                 py = p2[2] - p1[2],
                 qx = q[1]  - p1[1],
@@ -322,7 +323,7 @@ define([
                 // All three points are equal
                 return true;
             }
-            if (qx === 0 && px === 0) {
+            if (Math.abs(qx) < eps && Math.abs(px) < eps) {
                 alpha = qy / py;
             } else {
                 alpha = qx / px;
@@ -390,6 +391,7 @@ define([
          */
         findIntersections: function(S, C, board) {
             var res = [],
+                eps = Mat.eps,
                 i, j,
                 crds,
                 S_le = S.length,
@@ -426,28 +428,38 @@ define([
 
                     // Intersection test
                     res = Geometry.meetSegmentSegment(Si, Si1, Cj, Cj1);
+//console.log(i, j, res[0], res[1], res[2]);
 
                     // Found an intersection point
                     // isCollinear = false;
-                    if ((res[1] >= 0.0 && res[1] < 1.0 &&           // "regular" intersection
-                        res[2] >= 0.0 && res[2] < 1.0) ||
+                    if ((res[1] > -eps && res[1] < 1 &&           // "regular" intersection
+                         res[2] > -eps && res[2] < 1) ||
                         (res[1] === Infinity &&
-                         res[2] === Infinity && Mat.norm(res[0], 3) < Mat.eps) // collinear
+                         res[2] === Infinity && Mat.norm(res[0], 3) < eps) // collinear
                         ) {
 
                         crds = new Coords(Const.COORDS_BY_USER, res[0], board);
-
                         type = 'X';
+//console.log("IS", i, j, crds.usrCoords, res[1], res[2]);
+
                         // Degenerate cases
-                        if (Math.abs(res[1]) < Mat.eps || Math.abs(res[2]) < Mat.eps) {
+                        if (Math.abs(res[1]) < eps || Math.abs(res[2]) < eps) {
                             // Crossing / bouncing at vertex or
                             // end of delayed crossing / bouncing
                             type  = 'T';
+                            if (Math.abs(res[1]) < eps) {
+                                crds = new Coords(Const.COORDS_BY_USER, Si, board);
+                                res[1] = 0;
+                            } else {
+                                crds = new Coords(Const.COORDS_BY_USER, Cj, board);
+                                res[2] = 0;
+                            }
                         } else if (res[1] === Infinity &&
                                    res[2] === Infinity &&
-                                   Mat.norm(res[0], 3) < Mat.eps) {
+                                   Mat.norm(res[0], 3) < eps) {
                             // Collinear segments
                             alpha = this._inbetween(Si, Cj, Cj1);
+// console.log(alpha, Si);
                             if (alpha >= 0 && alpha < 1) {
                                 type = 'T';
                                 crds = new Coords(Const.COORDS_BY_USER, Si, board);
@@ -481,7 +493,7 @@ define([
             // For both paths, sort their intersection points
             S_intersect = this.sortIntersections(S_crossings);
 // console.log('>>>>>>')
-// this._print_array(S_intersect);
+//this._print_array(S_intersect);
 // console.log('----------')
             for (i = 0; i < S_intersect.length; i++) {
                 S_intersect[i].data.idx = i;
@@ -490,7 +502,7 @@ define([
             C_intersect = this.sortIntersections(C_crossings);
 
 // this._print_array(C_intersect);
-// console.log('<<<<<< Phase 1 done')
+//console.log('<<<<<< Phase 1 done')
             return [S_intersect, C_intersect];
         },
 
@@ -519,10 +531,12 @@ define([
             cnt = 0;
             while (true) {
                 if (P.intersection && P.data.type === 'T') {
+//console.log("P:", P.coords.usrCoords, P.data.type)
+
                     // Handle the degenerate cases
                     // Decide if they are (delayed) bouncing or crossing intersections
-                    Pp = P._next.coords.usrCoords;  // P-
-                    Pm = P._prev.coords.usrCoords;  // P+
+                    Pp = P._next.coords.usrCoords;  // P+
+                    Pm = P._prev.coords.usrCoords;  // P-
 
                     Q = P.neighbour;
                     Qm = P.neighbour._prev.coords.usrCoords;  // Q-
@@ -589,7 +603,7 @@ define([
                         }
 // console.log("OTHER4", P.coords.usrCoords, P.data.type);
                     }
-//console.log("P:", P.coords.usrCoords, P.data.type, P.delayedStatus)
+// console.log("P result", P.coords.usrCoords, P.data.type, P.delayedStatus)
 
                     cnt++;
                 }
