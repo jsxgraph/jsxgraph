@@ -230,11 +230,13 @@ define([
         },
 
         _addToList: function(list, coords, pos) {
-            var len = list.length;
+            var len = list.length,
+                eps = Mat.eps * Mat.eps;
+
             if (len > 0 &&
-                list[len - 1].coords.usrCoords[0] === coords.usrCoords[0] &&
-                list[len - 1].coords.usrCoords[1] === coords.usrCoords[1] &&
-                list[len - 1].coords.usrCoords[2] === coords.usrCoords[2]) {
+                Math.abs(list[len - 1].coords.usrCoords[0] - coords.usrCoords[0]) < eps &&
+                Math.abs(list[len - 1].coords.usrCoords[1] - coords.usrCoords[1]) < eps &&
+                Math.abs(list[len - 1].coords.usrCoords[2] - coords.usrCoords[2]) < eps) {
                 // Skip point
                 return;
             }
@@ -267,6 +269,7 @@ define([
             // console.log("Crossings", P_crossings[i])
                     last = P_crossings[i].length - 1;
                     P = P_crossings[i][0];
+//console.log("SORT", P.coords.usrCoords)
                     Q =  P.data.path[P.pos];
                     next_node = Q._next;  // Store the next "normal" node
 
@@ -275,7 +278,7 @@ define([
                     }
 
                     if (P.data.alpha === 0.0 && P.data.type === 'T') {
-            //console.log("SKIP", P.coords.usrCoords, P.data.type, P.neighbour.data.type);
+//            console.log("SKIP", P.coords.usrCoords, P.data.type, P.neighbour.data.type);
                         Q.intersection = true;
                         Q.data = P.data;
                         Q.neighbour = P.neighbour;
@@ -362,6 +365,7 @@ define([
 
         _noOverlap: function(p1, p2, q1, q2) {
             var k,
+                eps = Mat.eps * Mat.eps,
                 minp, maxp, minq, maxq,
                 no_overlap = false;
 
@@ -370,7 +374,7 @@ define([
                 maxp = Math.max(p1[k], p2[k]);
                 minq = Math.min(q1[k], q2[k]);
                 maxq = Math.max(q1[k], q2[k]);
-                if (maxp < minq || minp > maxq) {
+                if (maxp < minq - eps|| minp > maxq + eps) {
                     no_overlap = true;
                     break;
                 }
@@ -428,19 +432,19 @@ define([
 
                     // Intersection test
                     res = Geometry.meetSegmentSegment(Si, Si1, Cj, Cj1);
-//console.log(i, j, res[0], res[1], res[2]);
+//console.log(i, j, ":", res[0][1] / res[0][0], res[0][2] / res[0][0], res[1], res[2]);
 
                     // Found an intersection point
                     // isCollinear = false;
-                    if ((res[1] > -eps && res[1] < 1 &&           // "regular" intersection
-                         res[2] > -eps && res[2] < 1) ||
+                    if ((res[1] > -eps && res[1] < 1 - eps &&           // "regular" intersection
+                         res[2] > -eps && res[2] < 1 - eps) ||
                         (res[1] === Infinity &&
                          res[2] === Infinity && Mat.norm(res[0], 3) < eps) // collinear
                         ) {
 
                         crds = new Coords(Const.COORDS_BY_USER, res[0], board);
                         type = 'X';
-//console.log("IS", i, j, crds.usrCoords, res[1], res[2]);
+// console.log("IS", i, j, crds.usrCoords, res[1], res[2]);
 
                         // Degenerate cases
                         if (Math.abs(res[1]) < eps || Math.abs(res[2]) < eps) {
@@ -448,35 +452,56 @@ define([
                             // end of delayed crossing / bouncing
                             type  = 'T';
                             if (Math.abs(res[1]) < eps) {
-                                crds = new Coords(Const.COORDS_BY_USER, Si, board);
                                 res[1] = 0;
+                            }
+                            if (Math.abs(res[2]) < eps) {
+                                res[2] = 0;
+                            }
+                            if (res[1] === 0) {
+                                crds = new Coords(Const.COORDS_BY_USER, Si, board);
                             } else {
                                 crds = new Coords(Const.COORDS_BY_USER, Cj, board);
-                                res[2] = 0;
                             }
                         } else if (res[1] === Infinity &&
                                    res[2] === Infinity &&
                                    Mat.norm(res[0], 3) < eps) {
+
+                            // In this case there might be two intersection points to be added
                             // Collinear segments
                             alpha = this._inbetween(Si, Cj, Cj1);
-// console.log(alpha, Si);
+// console.log("alpha Si", alpha, Si);
+// console.log(j, Cj)
+// console.log((j + 1) % C_le, Cj1)
                             if (alpha >= 0 && alpha < 1) {
                                 type = 'T';
                                 crds = new Coords(Const.COORDS_BY_USER, Si, board);
                                 res[1] = 0;
                                 res[2] = alpha;
-                            } else {
-                                alpha = this._inbetween(Cj, Si, Si1);
-                                if (alpha >= 0 && alpha < 1) {
+                                IS = new this.Vertex(crds, i, res[1], S, 'S', type);
+                                IC = new this.Vertex(crds, j, res[2], C, 'C', type);
+                                IS.neighbour = IC;
+                                IC.neighbour = IS;
+
+                                S_crossings[i].push(IS);
+                                C_crossings[j].push(IC);
+                            }
+                            alpha = this._inbetween(Cj, Si, Si1);
+// console.log("alpha Cj", alpha, Si);
+                            if (Geometry.distance(Si, Cj, 3) > Mat.eps &&
+                                alpha >= 0 && alpha < 1) {
                                     type = 'T';
                                     crds = new Coords(Const.COORDS_BY_USER, Cj, board);
                                     res[1] = alpha;
                                     res[2] = 0;
-                                } else {
-                                    // Parallel lines, but not overlapping
-                                    continue;
-                                }
+                                    IS = new this.Vertex(crds, i, res[1], S, 'S', type);
+                                    IC = new this.Vertex(crds, j, res[2], C, 'C', type);
+                                    IS.neighbour = IC;
+                                    IC.neighbour = IS;
+
+                                    S_crossings[i].push(IS);
+                                    C_crossings[j].push(IC);
                             }
+                            continue;
                         }
 
                         IS = new this.Vertex(crds, i, res[1], S, 'S', type);
@@ -493,7 +518,8 @@ define([
             // For both paths, sort their intersection points
             S_intersect = this.sortIntersections(S_crossings);
 // console.log('>>>>>>')
-//this._print_array(S_intersect);
+// this._print_array(S_intersect);
+// console.log(S_intersect)
 // console.log('----------')
             for (i = 0; i < S_intersect.length; i++) {
                 S_intersect[i].data.idx = i;
@@ -502,7 +528,8 @@ define([
             C_intersect = this.sortIntersections(C_crossings);
 
 // this._print_array(C_intersect);
-//console.log('<<<<<< Phase 1 done')
+// console.log(C_intersect)
+// console.log('<<<<<< Phase 1 done')
             return [S_intersect, C_intersect];
         },
 
@@ -542,9 +569,10 @@ define([
                     Qm = P.neighbour._prev.coords.usrCoords;  // Q-
                     Qp = P.neighbour._next.coords.usrCoords;  // Q+
 
-// console.log(";;", Pm, P.coords.usrCoords, Pp)
-// console.log(";:", Qm, P.neighbour.coords.usrCoords, Qp)
-
+// console.log("Chain 1:", Pm, P.coords.usrCoords, Pp)
+// console.log("Chain 2:", Qm, P.neighbour.coords.usrCoords, Qp)
+// console.log(P._next.neighbour, Q._prev)
+// console.log(P._next.intersection, P._next.neighbour === Q._prev)
                     if (P._next.intersection && P._next.neighbour === Q._next) {
                         if (P._prev.intersection && P._prev.neighbour === Q._prev) {
                             P.delayedStatus = ['on', 'on'];
@@ -603,7 +631,7 @@ define([
                         }
 // console.log("OTHER4", P.coords.usrCoords, P.data.type);
                     }
-// console.log("P result", P.coords.usrCoords, P.data.type, P.delayedStatus)
+//console.log("P result", P.coords.usrCoords, P.data.type, P.delayedStatus)
 
                     cnt++;
                 }
@@ -1444,7 +1472,7 @@ define([
             }
 
             len = C.length;
-            if (len > 0 && Geometry.distance(C[0].coords.usrCoords, C[len - 1].coords.usrCoords, 3) < Mat.eps) {
+            if (len > 0 && Geometry.distance(C[0].coords.usrCoords, C[len - 1].coords.usrCoords, 3) < Mat.eps * Mat.eps) {
                 C.pop();
             }
 
