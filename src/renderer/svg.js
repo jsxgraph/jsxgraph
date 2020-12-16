@@ -1175,7 +1175,7 @@ define([
          * If "testAttribute" is the empty string, the function
          * is called immediately, otherwise it is called in a timeOut.
          *
-         * This is necessary to realize smooth transitions buit avoid transistions
+         * This is necessary to realize smooth transitions but avoid transitions
          * when first creating the objects.
          *
          * Usually, the string in testAttribute is the visPropOld attribute

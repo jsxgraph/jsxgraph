@@ -1599,12 +1599,14 @@ define([
             includeBoundaries: false,
 
             /**
-             * Possible values. 'line' or 'string'
+             * Set the ticks type.
+             * Possible values are 'linear' or 'polar'.
              *
              * @type String
-             * @default 'line'
+             * @name Ticks#type
+             * @default 'linear'
              */
-            type: 'line'
+            type: 'linear'
 
             // close the meta tag
             /**#@-*/
