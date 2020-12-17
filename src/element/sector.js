@@ -421,10 +421,11 @@ define([
                 has,
                 vp_s = Type.evaluate(this.visProp.selection);
 
-            if (Type.evaluate(this.visProp.precision.enabled)) {
+            if (Type.isObject(Type.evaluate(this.visProp.precision))) {
                 type = this.board._inputDevice;
                 prec = Type.evaluate(this.visProp.precision[type]);
             } else {
+                // 'inherit'
                 prec = this.board.options.precision.hasPoint;
             }
             prec /= Math.min(this.board.unitX, this.board.unitY);

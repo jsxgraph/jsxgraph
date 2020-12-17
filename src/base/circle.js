@@ -212,10 +212,11 @@ define([
                 dx, dy, dist;
 
 
-            if (Type.evaluate(this.visProp.precision.enabled)) {
+            if (Type.isObject(Type.evaluate(this.visProp.precision))) {
                 type = this.board._inputDevice;
                 prec = Type.evaluate(this.visProp.precision[type]);
             } else {
+                // 'inherit'
                 prec = this.board.options.precision.hasPoint;
             }
             dx = mp[1] - p.usrCoords[1];

@@ -1285,29 +1285,25 @@ define([
             dragToTopOfLayer: false,
 
             /**
-             * Precision options for elements. If enabled==true
-             * these values have priority over the global precision
-             * values of the board.
-             *
-             * The default values are
+             * Precision options for JSXGraph elements.
+             * This attributes takes either the value 'inherit' or an object of the form:
              * <pre>
-             * JXG.Options.precision: {
-             *   enabled: false,
-             *   touch: 30,
-             *   touchMax: 100,
-             *   mouse: 4,
-             *   pen: 4,
-             *   epsilon: 0.0001,
-             *   hasPoint: 4
+             * precision: {
+             *      touch: 15,
+             *      mouse: 4,
+             *      pen: 4
              * }
              * </pre>
+             *
+             * In the first case, the global, JSXGraph-wide values of JXGraph.Options.precision
+             * are taken.
+             *
+             * @type {String|Object}
+             * @name JXG.GeometryElement#precision
+             * @see JXG.Options#precision
+             * @default 'inherit'
              */
-            precision: {
-                enabled: false,
-                touch: 15,
-                mouse: 4,
-                pen: 4
-            },
+            precision: 'inherit',
 
             /*draft options */
             draft: {
@@ -1627,7 +1623,10 @@ define([
         },
 
         /**
-         * Precision options.
+         * Precision options, defining how close a pointer device (mouse, finger, pen) has to be
+         * to an object such that the object is highlighted or can be dragged.
+         * These values are board-wide and can be overwritten for individual elements by
+         * changing their precision attribute.
          *
          * The default values are
          * <pre>
@@ -1640,6 +1639,10 @@ define([
          *   hasPoint: 4
          * }
          * </pre>
+         *
+         * @type {Object}
+         * @name JXG.Options#precision
+         * @see JXG.GeometryElement#precision
          */
         precision: {
             touch: 15,

@@ -214,10 +214,11 @@ define([
                 len = (this.ticks && this.ticks.length) || 0,
                 r, type;
 
-            if (Type.evaluate(this.visProp.precision.enabled)) {
+            if (Type.isObject(Type.evaluate(this.visProp.precision))) {
                 type = this.board._inputDevice;
                 r = Type.evaluate(this.visProp.precision[type]);
             } else {
+                // 'inherit'
                 r = this.board.options.precision.hasPoint;
             }
             r += Type.evaluate(this.visProp.strokewidth) * 0.5;

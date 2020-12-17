@@ -141,10 +141,11 @@ define([
         hasPoint: function (x, y) {
             var lft, rt, top, bot, ax, ay, type, r;
 
-            if (Type.evaluate(this.visProp.precision.enabled)) {
+            if (Type.isObject(Type.evaluate(this.visProp.precision))) {
                 type = this.board._inputDevice;
                 r = Type.evaluate(this.visProp.precision[type]);
             } else {
+                // 'inherit'
                 r = this.board.options.precision.hasPoint;
             }
             if (this.transformations.length > 0) {

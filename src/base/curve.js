@@ -248,10 +248,11 @@ define([
                 suspendUpdate = true;
 
 
-            if (Type.evaluate(this.visProp.precision.enabled)) {
+            if (Type.isObject(Type.evaluate(this.visProp.precision))) {
                 type = this.board._inputDevice;
                 prec = Type.evaluate(this.visProp.precision[type]);
             } else {
+                // 'inherit'
                 prec = this.board.options.precision.hasPoint;
             }
             checkPoint = new Coords(Const.COORDS_BY_SCREEN, [x, y], this.board, false);
