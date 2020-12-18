@@ -1,6 +1,9 @@
 JXG.Options = JXG.merge(JXG.Options, {
-    showCopyright: false,
-    showNavigation: false,
+    board: {
+        showCopyright: false,
+        showNavigation: false,
+        showInfobox: true
+    },
 
     navbar: {
         strokeColor: '#bbb',
@@ -23,7 +26,7 @@ JXG.Options = JXG.merge(JXG.Options, {
         highlightFillColor : '#eeeeee',
         strokeColor : 'white',
         highlightStrokeColor : 'white',
-        showInfobox: false
+        showInfobox: 'inherit'
     },
 
     line : {

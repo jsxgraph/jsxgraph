@@ -666,6 +666,19 @@ define([
             },
 
             /**
+             * If true, the infobox is shown on mouse/pen over for all points
+             * which have set their attribute showInfobox to 'inherit'.
+             * If a point has set its attribute showInfobox to false or true,
+             * that value will have priority over this value.
+             *
+             * @name JXG.Board#showInfobox
+             * @see Point#showInfobox
+             * @type Boolean
+             * @default true
+             */
+            showInfobox: true,
+
+            /**
              * Format tick labels that were going to have scientific notation
              * like 5.00e+6 to look like 5•10⁶.
              *
@@ -697,6 +710,9 @@ define([
          * </pre>
          * These settings are overruled by the CSS class 'JXG_navigation'.
          * @deprecated
+         * @type {Object}
+         * @name JXG.Options#navbar
+         *
          */
         navbar: {
             strokeColor: '#333333', //'#aaaaaa',
@@ -1050,7 +1066,6 @@ define([
              * @default 0.5
              */
             gradientFY: 0.5,
-
 
             /**
              * This attribute defines the radius of the start circle of the radial gradient.
@@ -1679,6 +1694,8 @@ define([
          *   trace: 0
          * }
          * </pre>
+         * @type {Object}
+         * @name JXG.Options#layer
          */
         layer: {
             numlayers: 20, // only important in SVG
@@ -3605,14 +3622,16 @@ define([
             zoom: false,             // Change the point size on zoom
 
             /**
-             * If true, the infobox is shown on mouse over, else not.
+             * If true, the infobox is shown on mouse/pen over, if false not.
+             * If the value is 'inherit', the value of
+             * {@link JXG.Board#showInfobox} is taken.
              *
              * @name Point#showInfobox
-             *
-             * @type Boolean
+             * @see JXG.Board#showInfobox
+             * @type {Boolean|String} true | false | 'inherit'
              * @default true
              */
-            showInfobox: true,
+            showInfobox: 'inherit',
 
             /**
              * Truncating rule for the digits in the infobox.
@@ -5203,11 +5222,14 @@ define([
         },
 
         /**
-         * Abbreviations of properties. Setting the shortcut means setting abbreviated properties
+         * Abbreviations of attributes. Setting the shortcut means setting abbreviated properties
          * to the same value.
          * It is used in {@link JXG.GeometryElement#setAttribute} and in
          * the constructor {@link JXG.GeometryElement}.
          * Attention: In Options.js abbreviations are not allowed.
+         * @type {Object}
+         * @name JXG.Options#shortcuts
+         *
          */
         shortcuts: {
             color: ['strokeColor', 'fillColor'],
@@ -5216,7 +5238,6 @@ define([
             highlightOpacity: ['highlightStrokeOpacity', 'highlightFillOpacity'],
             strokeWidth: ['strokeWidth', 'highlightStrokeWidth']
         }
-
     };
 
     /**

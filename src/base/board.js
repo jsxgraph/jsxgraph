@@ -1065,7 +1065,7 @@ define([
             if (Type.exists(drag.coords)) {
                 drag.setPositionDirectly(Const.COORDS_BY_SCREEN, this.drag_position);
             } else {
-                this.showInfobox(false);
+                this.displayInfobox(false);
                                     // Hide infobox in case the user has touched an intersection point
                                     // and drags the underlying line now.
 
@@ -2201,7 +2201,7 @@ define([
 
             if (this.mode !== this.BOARD_MODE_DRAG) {
                 this.dehighlightAll();
-                this.showInfobox(false);
+                this.displayInfobox(false);
             }
 
             if (this.mode !== this.BOARD_MODE_NONE) {
@@ -2276,7 +2276,7 @@ define([
             // Hiding the infobox is commented out, since it prevents showing the infobox
             // on IE 11+ on 'over'
             //if (this.mode !== this.BOARD_MODE_DRAG) {
-                //this.showInfobox(false);
+                //this.displayInfobox(false);
             //}
             this.triggerEventHandlers(['touchmove', 'move', 'pointermove', 'MSPointerMove'], [evt, this.mode]);
             this.updateQuality = this.BOARD_QUALITY_HIGH;
@@ -2293,7 +2293,7 @@ define([
             var i, j, found;
 
             this.triggerEventHandlers(['touchend', 'up', 'pointerup', 'MSPointerUp'], [evt]);
-            this.showInfobox(false);
+            this.displayInfobox(false);
 
             if (evt) {
                 for (i = 0; i < this.touches.length; i++) {
@@ -2595,7 +2595,7 @@ define([
 
             if (this.mode !== this.BOARD_MODE_DRAG) {
                 this.dehighlightAll();
-                this.showInfobox(false);
+                this.displayInfobox(false);
             }
 
             this._inputDevice = 'touch';
@@ -2667,7 +2667,7 @@ define([
             }
 
             if (this.mode !== this.BOARD_MODE_DRAG) {
-                this.showInfobox(false);
+                this.displayInfobox(false);
             }
 
             this.triggerEventHandlers(['touchmove', 'move'], [evt, this.mode]);
@@ -2689,7 +2689,7 @@ define([
                 evtTouches = evt && evt[JXG.touchProperty];
 
             this.triggerEventHandlers(['touchend', 'up'], [evt]);
-            this.showInfobox(false);
+            this.displayInfobox(false);
 
             // selection
             if (this.selectingMode) {
@@ -2908,7 +2908,7 @@ define([
 
             if (this.mode !== this.BOARD_MODE_DRAG) {
                 this.dehighlightAll();
-                this.showInfobox(false);
+                this.displayInfobox(false);
             }
 
             // we have to check for four cases:
@@ -3028,7 +3028,7 @@ define([
 
             this.infobox.dump = false;
 
-            this.showInfobox(false);
+            this.displayInfobox(false);
             return this;
         },
 
@@ -3036,12 +3036,17 @@ define([
          * Updates and displays a little info box to show coordinates of current selected points.
          * @param {JXG.GeometryElement} el A GeometryElement
          * @returns {JXG.Board} Reference to the board
+         * @see JXG.Board#displayInfobox
+         * @see JXG.Board#showInfobox
+         * @see Point#showInfobox
+         *
          */
         updateInfobox: function (el) {
             var x, y, xc, yc,
             vpinfoboxdigits;
 
-            if (!Type.evaluate(el.visProp.showinfobox)) {
+            if ((!Type.evaluate(this.attr.showinfobox) && Type.evaluate(el.visProp.showinfobox) === 'inherit') ||
+                !Type.evaluate(el.visProp.showinfobox)) {
                 return this;
             }
 
@@ -3070,7 +3075,7 @@ define([
                     this.highlightCustomInfobox(el.infoboxText, el);
                 }
 
-                this.showInfobox(true);
+                this.displayInfobox(true);
             }
             return this;
         },
@@ -3082,15 +3087,23 @@ define([
          * In this way, many DOM access can be avoided.
          *
          * @param  {Boolean} val true for visible, false for invisible
-         * @return {JXG.Board} Reference to the board.
+         * @returns {JXG.Board} Reference to the board.
+         * @see JXG.Board#updateInfobox
+         *
          */
-        showInfobox: function(val) {
+        displayInfobox: function(val) {
             if (this.infobox.hiddenByParent == val) {
                 this.infobox.hiddenByParent = !val;
                 this.infobox.prepareUpdate().updateVisibility(val).updateRenderer();
             }
             return this;
         },
+
+        // Alias for displayInfobox to be backwards compatible.
+        // The method showInfobox clashes with the board attribute showInfobox
+        showInfobox: function(val) {
+            return this.displayInfobox(val);
+        }
 
         /**
          * Changes the text of the info box to show the given coordinates.
