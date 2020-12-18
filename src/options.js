@@ -676,17 +676,8 @@ define([
              * @type Boolean
              * @default true
              */
-            showInfobox: true,
+            showInfobox: true
 
-            /**
-             * Format tick labels that were going to have scientific notation
-             * like 5.00e+6 to look like 5•10⁶.
-             *
-             * @name JXG.Board#beautifulScientificTickLabels
-             * @type Boolean
-             * @default false
-             */
-            beautifulScientificTickLabels: false
             /**#@-*/
         },
 
@@ -1380,8 +1371,27 @@ define([
              * @default false
              */
             drawLabels: false,
+
+            /**
+             * Attributes for the ticks labels
+             *
+             * @name Ticks#label
+             * @type {Object}
+             * @default {}
+             *
+             */
             label: {
             },
+
+            /**
+            * Format tick labels that were going to have scientific notation
+            * like 5.00e+6 to look like 5•10⁶.
+            *
+            * @name Ticks#beautifulScientificTickLabels
+            * @type Boolean
+            * @default false
+            */
+            beautifulScientificTickLabels: false,
 
             /**
              * Use the unicode character 0x2212, i.e. the HTML entity &amp;minus; as minus sign.

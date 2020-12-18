@@ -1016,7 +1016,7 @@ define([
                     labelText = value.toPrecision(Type.evaluate(this.visProp.precision)).toString();
                 }
 
-                if (this.board.options.board.beautifulScientificTickLabels) {
+                if (Type.evaluate(this.visProp.beautifulscientificticklabels)) {
                     labelText = this.beautifyScientificNotationLabel(labelText);
                 }
 
@@ -1315,8 +1315,12 @@ define([
 
     /**
      * @class Ticks are used as distance markers on a line or curve.
+     * They are
+     * mainly used for axis elements and slider elements. Ticks may stretch infinitely
+     * or finitely, which can be set with {@link Ticks#majorHeight} and {@link Ticks#minorHeight}.
+     *
      * @pseudo
-     * @description
+     * @description Ticks are markers on straight line elements or curves.
      * @name Ticks
      * @augments JXG.Ticks
      * @constructor

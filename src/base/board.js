@@ -3043,10 +3043,11 @@ define([
          */
         updateInfobox: function (el) {
             var x, y, xc, yc,
-            vpinfoboxdigits;
+            vpinfoboxdigits,
+            vpsi = Type.evaluate(el.visProp.showinfobox);
 
-            if ((!Type.evaluate(this.attr.showinfobox) && Type.evaluate(el.visProp.showinfobox) === 'inherit') ||
-                !Type.evaluate(el.visProp.showinfobox)) {
+            if ((!Type.evaluate(this.attr.showinfobox) &&  vpsi === 'inherit') ||
+                !vpsi) {
                 return this;
             }
 
@@ -3103,7 +3104,7 @@ define([
         // The method showInfobox clashes with the board attribute showInfobox
         showInfobox: function(val) {
             return this.displayInfobox(val);
-        }
+        },
 
         /**
          * Changes the text of the info box to show the given coordinates.
