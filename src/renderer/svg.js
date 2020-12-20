@@ -591,7 +591,15 @@ define([
         updateImageURL: function (el) {
             var url = Type.evaluate(el.url);
 
-            el.rendNode.setAttributeNS(this.xlinkNamespace, 'xlink:href', url);
+            if (el._src !== url) {
+                el.imgIsLoaded = false;
+                el.rendNode.setAttributeNS(this.xlinkNamespace, 'xlink:href', url);
+                el._src = url;
+
+                return true;
+            }
+
+            return false;
         },
 
         // already documented in JXG.AbstractRenderer
