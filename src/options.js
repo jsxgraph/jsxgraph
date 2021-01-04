@@ -1680,6 +1680,7 @@ define([
 
         /**
          * Default ordering of the layers.
+         * The numbering starts from 0 and the highest layer number is numlayers-1.
          *
          * The default values are
          * <pre>
