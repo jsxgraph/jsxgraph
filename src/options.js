@@ -1898,9 +1898,9 @@ define([
              * Attributes for radius point.
              *
              * @type Point
-             * @name Arc#radiuspoint
+             * @name Arc#radiusPoint
              */
-            radiuspoint: {
+            radiusPoint: {
             },
 
             /**
@@ -4052,9 +4052,9 @@ define([
              * Attributes for helper point radiuspoint in case it is provided by coordinates.
              *
              * @type Point
-             * @name Sector#radiuspoint
+             * @name Sector#radiusPoint
              */
-            radiuspoint: {
+            radiusPoint: {
                 visible: false,
                 withLabel: false
             },

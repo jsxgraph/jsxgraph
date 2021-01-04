@@ -1744,7 +1744,7 @@ define([
      *         var a2 = board.create('reflection', [a1, li], {strokeColor: 'red'});
      *
      *         var s1 = board.create('sector', [[-3.5,-3], [-3.5, -2], [-3.5,-4]], {
-     *                           anglepoint: {visible:true}, center: {visible: true}, radiuspoint: {visible: true},
+     *                           anglePoint: {visible:true}, center: {visible: true}, radiusPoint: {visible: true},
      *                           fillColor: 'yellow', strokeColor: 'black'});
      *         var s2 = board.create('reflection', [s1, li], {fillColor: 'yellow', strokeColor: 'black', fillOpacity: 0.5});
      *
@@ -1778,7 +1778,7 @@ define([
      *         var a2 = board.create('reflection', [a1, li], {strokeColor: 'red'});
      *
      *         var s1 = board.create('sector', [[-3.5,-3], [-3.5, -2], [-3.5,-4]], {
-     *                           anglepoint: {visible:true}, center: {visible: true}, radiuspoint: {visible: true},
+     *                           anglePoint: {visible:true}, center: {visible: true}, radiusPoint: {visible: true},
      *                           fillColor: 'yellow', strokeColor: 'black'});
      *         var s2 = board.create('reflection', [s1, li], {fillColor: 'yellow', strokeColor: 'black', fillOpacity: 0.5});
      *
@@ -1914,7 +1914,7 @@ define([
      *         var a2 = board.create('mirrorelement', [a1, mirr], {strokeColor: 'red'});
      *
      *         var s1 = board.create('sector', [[-3.5,-3], [-3.5, -2], [-3.5,-4]], {
-     *                           anglepoint: {visible:true}, center: {visible: true}, radiuspoint: {visible: true},
+     *                           anglePoint: {visible:true}, center: {visible: true}, radiusPoint: {visible: true},
      *                           fillColor: 'yellow', strokeColor: 'black'});
      *         var s2 = board.create('mirrorelement', [s1, mirr], {fillColor: 'yellow', strokeColor: 'black', fillOpacity: 0.5});
      *
@@ -1949,7 +1949,7 @@ define([
      *         var a2 = board.create('mirrorelement', [a1, mirr], {strokeColor: 'red'});
      *
      *         var s1 = board.create('sector', [[-3.5,-3], [-3.5, -2], [-3.5,-4]], {
-     *                           anglepoint: {visible:true}, center: {visible: true}, radiuspoint: {visible: true},
+     *                           anglePoint: {visible:true}, center: {visible: true}, radiusPoint: {visible: true},
      *                           fillColor: 'yellow', strokeColor: 'black'});
      *         var s2 = board.create('mirrorelement', [s1, mirr], {fillColor: 'yellow', strokeColor: 'black', fillOpacity: 0.5});
      *

@@ -126,7 +126,7 @@ define([
      * @example
      * var t = board.create('transform', [2, 1.5], {type: 'scale'});
      * var s1 = board.create('sector', [[-3.5,-3], [-3.5, -2], [-3.5,-4]], {
-     *                 anglepoint: {visible:true}, center: {visible: true}, radiuspoint: {visible: true},
+     *                 anglePoint: {visible:true}, center: {visible: true}, radiusPoint: {visible: true},
      *                 fillColor: 'yellow', strokeColor: 'black'});
      * var s2 = board.create('curve', [s1, t], {fillColor: 'yellow', strokeColor: 'black'});
      *
@@ -137,7 +137,7 @@ define([
      *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
      *     var t = board.create('transform', [2, 1.5], {type: 'scale'});
      *     var s1 = board.create('sector', [[-3.5,-3], [-3.5, -2], [-3.5,-4]], {
-     *                     anglepoint: {visible:true}, center: {visible: true}, radiuspoint: {visible: true},
+     *                     anglePoint: {visible:true}, center: {visible: true}, radiusPoint: {visible: true},
      *                     fillColor: 'yellow', strokeColor: 'black'});
      *     var s2 = board.create('curve', [s1, t], {fillColor: 'yellow', strokeColor: 'black'});
      *
