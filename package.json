@@ -47,18 +47,19 @@
   },
   "devDependencies": {
     "almond": "^0.3.3",
+    "axios": ">=0.21.1",
     "bl": ">=1.2.3",
     "braces": ">=2.3.1",
-    "diff": "^4.0.2",
+    "diff": "^5.0.0",
     "handlebars": "^4.7.6",
-    "intern": "^4.9.0",
+    "intern": ">=4.9.0",
     "js-yaml": "^3.14.0",
     "jsdoc2": "^2.4.0",
     "jshint": "^2.12.0",
     "jslint": "^0.12.1",
     "lodash": ">=4.17.19",
     "minimist": ">=1.2.3",
-    "sinon": "^1.14.0",
+    "sinon": ">=1.14.0",
     "uglify-js": "^3.11.5"
   },
   "engines": {
