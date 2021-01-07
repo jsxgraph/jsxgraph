@@ -1,3 +1,55 @@
+1.2.0
+====
+
+New Features
+------------
+
+* Chandrupatla's root finding algorithm
+* New curve type: metapost
+* New element: metapostspline
+* New board attributes:
+    - title
+    - description
+    - drag
+    - showInfobox
+* New arrow heads
+* Ticks and hatches for curves
+* New math function: ratpow(base, m, n)
+* Interval arithmetics
+* New attribute:`precision` for elements
+
+Improvements
+------------
+
+* Root finding algorithm: bracketing
+* Docs
+* ARIA attributes
+* Enable centripetal cardinal splines
+* Simulate touch event property evt.scale for pointer events
+* Enable setAttribute for attribute `layer`
+* JXG.Math.Clip: allow coordinate arrays as input
+* JXG.Math.Clip: improve stability
+* Scientific notation for ticks labels
+* Allow floating point numbers for attributes `strokeWidth` and `size`
+* Add methods for sequence acceleration (math/extrapolate.js)
+* Experimental new curve plotting algorithm
+* Add docs examples
+
+
+Bug fixes
+---------
+
+* Polygon intersection
+* Axis ticks, arrow heads
+* Projective transformations of curves
+* `alwaysIntersect` attribute for line intersections
+* Inequality element
+* Sliders with visible:false
+* Links in API docs
+* generateGaussian
+* Dashed curves
+* RDP algorithm for curves with singularities
+
 1.1.0
 ====
 
