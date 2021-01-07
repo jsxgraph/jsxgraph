@@ -1,7 +1,7 @@
 /*
  JessieCode Computer algebra algorithms
 
-    Copyright 2011-2020
+    Copyright 2011-2021
         Michael Gerhaeuser,
         Alfred Wassermann
 
