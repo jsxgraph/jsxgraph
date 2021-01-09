@@ -29,7 +29,6 @@
     and <http://opensource.org/licenses/MIT/>.
  */
 
-
 /*global JXG: true, define: true*/
 
 /*jslint nomen: true, plusplus: true*/
@@ -110,8 +109,8 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
             greenyellow: 'adff2f',
             honeydew: 'f0fff0',
             hotpink: 'ff69b4',
-            indianred : 'cd5c5c',
-            indigo : '4b0082',
+            indianred: 'cd5c5c',
+            indigo: '4b0082',
             ivory: 'fffff0',
             khaki: 'f0e68c',
             lavender: 'e6e6fa',
@@ -434,36 +433,36 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
             t = V * (1.0 - (S * (1.0 - f)));
 
             switch (i) {
-            case 0:
-                R = V;
-                G = t;
-                B = p;
-                break;
-            case 1:
-                R = q;
-                G = V;
-                B = p;
-                break;
-            case 2:
-                R = p;
-                G = V;
-                B = t;
-                break;
-            case 3:
-                R = p;
-                G = q;
-                B = V;
-                break;
-            case 4:
-                R = t;
-                G = p;
-                B = V;
-                break;
-            case 5:
-                R = V;
-                G = p;
-                B = q;
-                break;
+                case 0:
+                    R = V;
+                    G = t;
+                    B = p;
+                    break;
+                case 1:
+                    R = q;
+                    G = V;
+                    B = p;
+                    break;
+                case 2:
+                    R = p;
+                    G = V;
+                    B = t;
+                    break;
+                case 3:
+                    R = p;
+                    G = q;
+                    B = V;
+                    break;
+                case 4:
+                    R = t;
+                    G = p;
+                    B = V;
+                    break;
+                case 5:
+                    R = V;
+                    G = p;
+                    B = q;
+                    break;
             }
         }
 
@@ -535,7 +534,6 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
 
         return [h, s, v];
     };
-
 
     /**
      * Converts a color from the RGB color space into the LMS space. Input can be any valid HTML/CSS color definition.
@@ -731,57 +729,57 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
         deficiency = deficiency.toLowerCase();
 
         switch (deficiency) {
-        case "protanopia":
-            a1 = -0.06150039994295001;
-            b1 = 0.08277001656812001;
-            c1 = -0.013200141220000003;
-            a2 = 0.05858939668799999;
-            b2 = -0.07934519995360001;
-            c2 = 0.013289415272000003;
-            inflection = 0.6903216543277437;
+            case "protanopia":
+                a1 = -0.06150039994295001;
+                b1 = 0.08277001656812001;
+                c1 = -0.013200141220000003;
+                a2 = 0.05858939668799999;
+                b2 = -0.07934519995360001;
+                c2 = 0.013289415272000003;
+                inflection = 0.6903216543277437;
 
-            tmp = s / m;
+                tmp = s / m;
 
-            if (tmp < inflection) {
-                l = -(b1 * m + c1 * s) / a1;
-            } else {
-                l = -(b2 * m + c2 * s) / a2;
-            }
-            break;
-        case "tritanopia":
-            a1 = -0.00058973116217;
-            b1 = 0.007690316482;
-            c1 = -0.01011703519052;
-            a2 = 0.025495080838999994;
-            b2 = -0.0422740347;
-            c2 = 0.017005316784;
-            inflection = 0.8349489908460004;
+                if (tmp < inflection) {
+                    l = -(b1 * m + c1 * s) / a1;
+                } else {
+                    l = -(b2 * m + c2 * s) / a2;
+                }
+                break;
+            case "tritanopia":
+                a1 = -0.00058973116217;
+                b1 = 0.007690316482;
+                c1 = -0.01011703519052;
+                a2 = 0.025495080838999994;
+                b2 = -0.0422740347;
+                c2 = 0.017005316784;
+                inflection = 0.8349489908460004;
 
-            tmp = m / l;
+                tmp = m / l;
 
-            if (tmp < inflection) {
-                s = -(a1 * l + b1 * m) / c1;
-            } else {
-                s = -(a2 * l + b2 * m) / c2;
-            }
-            break;
-        default:
-            a1 = -0.06150039994295001;
-            b1 = 0.08277001656812001;
-            c1 = -0.013200141220000003;
-            a2 = 0.05858939668799999;
-            b2 = -0.07934519995360001;
-            c2 = 0.013289415272000003;
-            inflection = 0.5763833686400911;
+                if (tmp < inflection) {
+                    s = -(a1 * l + b1 * m) / c1;
+                } else {
+                    s = -(a2 * l + b2 * m) / c2;
+                }
+                break;
+            default:
+                a1 = -0.06150039994295001;
+                b1 = 0.08277001656812001;
+                c1 = -0.013200141220000003;
+                a2 = 0.05858939668799999;
+                b2 = -0.07934519995360001;
+                c2 = 0.013289415272000003;
+                inflection = 0.5763833686400911;
 
-            tmp = s / l;
+                tmp = s / l;
 
-            if (tmp < inflection) {
-                m = -(a1 * l + c1 * s) / b1;
-            } else {
-                m = -(a2 * l + c2 * s) / b2;
-            }
-            break;
+                if (tmp < inflection) {
+                    m = -(a1 * l + c1 * s) / b1;
+                } else {
+                    m = -(a2 * l + c2 * s) / b2;
+                }
+                break;
         }
 
         rgb = JXG.LMS2rgb(l, m, s);
@@ -800,7 +798,7 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
     };
 
     /**
-     * Determines highlight color to a given color. Done by reducing (or increasing) the opacity,
+     * Determines highlight color to a given color. Done by reducing (or increasing) the opacity.
      * @param {String} color HTML RGBA string containing the HTML color code.
      * @returns {String} Returns a HTML RGBA color string
      */
@@ -820,6 +818,58 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
         }
 
         return colstr;
+    };
+
+    /**
+     * Calculate whether a light or a dark color is needed as a contrast.
+     * Especially useful to determine whether white or black font goes
+     * better with a given background color.
+     * @param {String} hexColor HEX value of color.
+     * @param {String} [darkColor="#000000"] HEX string for a dark color.
+     * @param {String} [lightColor="#ffffff"] HEX string for a light color.
+     * @param {Number} [threshold=8]
+     * @returns {String} Returns darkColor or lightColor.
+     */
+    JXG.contrastDarkOrLight = function (hexColor, darkColor, lightColor, threshold) {
+        var rgb,
+            black = '#000000',
+            rgbBlack,
+            l1, l2,
+            contrastRatio;
+
+        darkColor = darkColor || '#000000';
+        lightColor = lightColor || '#ffffff';
+        threshold = threshold || 7;
+
+        // hexColor RGB
+        rgb = JXG.rgbParser(hexColor);
+
+        // Black RGB
+        rgbBlack = JXG.rgbParser(black);
+
+        // Calc contrast ratio
+        l1 = 0.2126 * Math.pow(rgb[0] / 255, 2.2) +
+            0.7152 * Math.pow(rgb[1] / 255, 2.2) +
+            0.0722 * Math.pow(rgb[2] / 255, 2.2);
+
+        l2 = 0.2126 * Math.pow(rgbBlack[0] / 255, 2.2) +
+            0.7152 * Math.pow(rgbBlack[1] / 255, 2.2) +
+            0.0722 * Math.pow(rgbBlack[2] / 255, 2.2);
+
+        if (l1 > l2) {
+            contrastRatio = Math.floor((l1 + 0.05) / (l2 + 0.05));
+        } else {
+            contrastRatio = Math.floor((l2 + 0.05) / (l1 + 0.05));
+        }
+        contrastRatio = contrastRatio - 1;
+
+        // If contrast is more than threshold, return darkColor
+        if (contrastRatio > threshold) {
+            return darkColor;
+        } else {
+            // if not, return lightColor.
+            return lightColor;
+        }
     };
 
     return JXG;
