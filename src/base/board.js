@@ -1770,6 +1770,9 @@ define([
                 evt.scale = dist / this.prevDist;
             }
 
+            if (!Type.exists(this.prevCoords)) {
+                return false;
+            }
             // Compute the angle of the two finger directions
             dir1 = [evt.touches[0].clientX - this.prevCoords[0][0],
                     evt.touches[0].clientY - this.prevCoords[0][1]];
