@@ -5,6 +5,7 @@
         Carsten Miller,
         Bianca Valentin,
         Alfred Wassermann,
+        Andreas Walter,
         Peter Wilfahrt
 
     This file is part of JSXGraph.
@@ -830,7 +831,7 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
      * @param {Number} [threshold=8]
      * @returns {String} Returns darkColor or lightColor.
      */
-    JXG.contrastDarkOrLight = function (hexColor, darkColor, lightColor, threshold) {
+    JXG.contrast = function (hexColor, darkColor, lightColor, threshold) {
         var rgb,
             black = '#000000',
             rgbBlack,

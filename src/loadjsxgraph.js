@@ -55,7 +55,7 @@ var JXG = {},
     ////                                                                  ////
     ////             Attention! Slows down the loading time!              ////
     //////////////////////////////////////////////////////////////////////////
-    var preventCachingFiles = false;
+    var preventCachingFiles = true;
 
     // check and table are initialized at the end of the iife
     var table,
