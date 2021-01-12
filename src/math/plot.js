@@ -1994,7 +1994,7 @@ console.log(lo, hi);
             t = t_approx;
             h = (t - comp.t_values[i - 1]) * 0.99;
             y2a = curve.Y(t - h, true); //group.y;
-console.log(y2a)
+console.log("y2a", y2a, "y1", y1)
 /*
             x2 = curve.X(t - h, true);
             this._insertPoint_v4(curve, [1, x2, y2a], t - h);
