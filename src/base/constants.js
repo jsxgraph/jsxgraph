@@ -111,6 +111,12 @@ define(['jxg'], function (JXG) {
         OBJECT_TYPE_BUTTON: 29,
         OBJECT_TYPE_TRANSFORMATION: 30,
 
+        // IMPORTANT:
+        // ----------
+        // For being able to differentiate between the (sketchometry specific) SPECIAL_OBJECT_TYPEs and
+        // (core specific) OBJECT_TYPEs, the non-sketchometry types MUST NOT be changed
+        // to values > 100.
+
         // object classes
         OBJECT_CLASS_POINT: 1,
         OBJECT_CLASS_LINE: 2,
