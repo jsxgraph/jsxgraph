@@ -12,6 +12,7 @@ New Features
     - description
     - drag
     - showInfobox
+    - maxFrameRate
 * New arrow heads
 * Ticks and hatches for curves
 * New math function: ratpow(base, m, n)
