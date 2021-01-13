@@ -1303,7 +1303,7 @@ define(['jxg', 'base/constants', 'base/coords', 'math/math', 'math/extrapolate',
                     }
                 } else {
                     if (isGroup) {
-                        if (positions.length > 1) {
+                        if (positions.length > 0) {
                             groups.push(positions.slice(0));
                         }
                         positions = [];
@@ -1814,7 +1814,7 @@ console.log("Polynomial of degree", level);
                 pos = res[0];
                 pos = Math.floor(res[1]);
                 t_approx = res[2];
-                // console.log("Critical points:", groups, res, pos)
+                console.log("Critical points:", groups, res, pos)
 
                 // Analyze the type of the critical point
                 // Result is of type 'borderleft', borderright', 'other'
@@ -1830,7 +1830,7 @@ console.log("Polynomial of degree", level);
 
         },
 
-        _insertPoint_v4: function (curve, crds, t) {
+        _insertPoint_v4: function (curve, crds, t, doLog) {
             var p,
                 prev = null,
                 near = 0.8;
@@ -1844,8 +1844,8 @@ console.log("Polynomial of degree", level);
 
             if (prev !== null &&
                 Math.abs(p.scrCoords[1] - prev[1]) < near &&
-                Math.abs(p.scrCoords[1] - prev[2]) < near) {
-                return;
+                Math.abs(p.scrCoords[2] - prev[2]) < near) {
+                    return;
                 }
 
 //console.log("insert", t)
@@ -1968,80 +1968,109 @@ console.log("Polynomial of degree", level);
             }
         },
 
-        handleSingularity: function(curve, comp, group, x_table, y_table) {
-            var HUGE = 1.e12,
-                i = group.idx,
-                t_approx = group.t,
-                t, t1, t2, y_int,
-                x1, x2, x3, y1, y2a, y2b, y3, lo, hi,
-                lo2, hi2,
-                h, res;
+        _recurse_v4: function(curve, comp, group, x_table, y_table) {
+            var i, t1, t2, ret,
+                components2, comp2, idx, groups2, g,
+                x_table2, y_table2, start, le;
 
-            console.log("HandleSingularity at t =", t_approx);
+            // Look at two points, hopefully left and right from the critical point
+            t1 = comp.t_values[group.idx - 2];
+            t2 = comp.t_values[group.idx + 2];
+
+            components2 = this.findComponents(curve, t1, t2, 64);
+            console.log(components2);
+            for (idx = 0; idx < components2.length; idx++) {
+                console.log("22222222222222222222222222222222222222")
+                comp2 = components2[idx];
+                ret = this.differenceMethod(comp2, curve);
+                groups2 = ret[0];
+                x_table2 = ret[1];
+                y_table2 = ret[2];
+                start = 0;
+                for (g = 0; g <= groups2.length; g++) {
+                    if (g === groups2.length) {
+                        le = comp2.len;
+                    } else {
+                        le = groups2[g].idx - 1;
+                    }
+
+                    // Insert all uncritical points until next critical point
+                    for (i = start; i < le; i++) {
+                        // if (!isNaN(comp2.x_values[i]) && !isNaN(comp2.y_values[i])) {
+                            this._insertPoint_v4(curve, [1, comp2.x_values[i], comp2.y_values[i]], comp2.t_values[i]);
+                        // }
+                    }
+                    // Handle next critical point
+                    if (g < groups2.length) {
+                        this.handleSingularity(curve, comp2, groups2[g], x_table2, y_table2);
+                        start = groups2[g].idx + 1;
+                    }
+                }
+                le = comp2.len;
+                if (idx < components2.length - 1) {
+                    this._insertPoint_v4(curve, [1, NaN, NaN], comp2.right_t);
+                }
+            }
+            return this;
+        },
+
+        handleSingularity: function(curve, comp, group, x_table, y_table) {
+            var i = group.idx,
+                t, t1, t2, y_int,
+                x, lo, hi,
+                d_lft, d_rgt,
+                d_thresh = 4,
+                di1 = 5,
+                di2 = 3;
+
+            t = group.t;
+            console.log("HandleSingularity at t =", t);
             console.log(comp.t_values[i - 1], comp.y_values[i - 1], comp.t_values[i + 1], comp.y_values[i + 1]);
             console.log(group);
 
             // Look at two points, hopefully left and right from the critical point
-            t1 = comp.t_values[i - 2];
-            t2 = comp.t_values[i + 2];
-console.log(t1, t2);
+            t1 = comp.t_values[i - di1];
+            t2 = comp.t_values[i + di1];
+
             y_int = this.getInterval(curve, t1, t2);
             lo = y_int.lo;
             hi = y_int.hi;
-console.log(lo, hi);
 
-            y1 = y_table[0][i - 1];
-            t = t_approx;
-            h = (t - comp.t_values[i - 1]) * 0.99;
-            y2a = curve.Y(t - h, true); //group.y;
-console.log("y2a", y2a, "y1", y1)
-/*
-            x2 = curve.X(t - h, true);
-            this._insertPoint_v4(curve, [1, x2, y2a], t - h);
-*/
+            x = curve.X(t, true);
 
+            console.log(">>>", t1, t2, lo, hi, x);
 
-            x2 = t;
-            if (lo === -Infinity && y2a < y1) {
-                console.log("A");
-                this._insertPoint_v4(curve, [1, x2, lo], t);
-            } else if (hi === Infinity && y2a >= y1) {
-                console.log("B");
-                this._insertPoint_v4(curve, [1, x2, hi], t);
-            }
-/*
-            if ((lo === -Infinity && hi > -Infinity) ||
-                (hi === Infinity && lo < Infinity) ||
-                (hi - lo) * curve.board.unitY > 4) {
-        console.log("Insert", t);
-                this._insertPoint_v4(curve, [1, NaN, NaN], t);
-            }
-*/
-            if ((lo === -Infinity && hi === Infinity) ||
-                (Math.abs(hi) !== Infinity && Math.abs(lo) !== Infinity && (hi - lo) * curve.board.unitY > 4)) {
-                    console.log("Insert NaN at", t);
+            d_lft = (y_table[0][i - di2] - y_table[0][i - di1]) / (comp.t_values[i - di2] - comp.t_values[i - di1]);
+            d_rgt = (y_table[0][i + di2] - y_table[0][i + di1]) / (comp.t_values[i + di2] - comp.t_values[i + di1]);
+
+            console.log(":::", d_lft, d_rgt);
+
+            if (d_lft < -d_thresh) {
+                this._insertPoint_v4(curve, [1, x, lo], t, true);
+                if (d_rgt <= d_thresh) {
                     this._insertPoint_v4(curve, [1, NaN, NaN], t);
+                }
+            } else if (d_lft > d_thresh) {
+                this._insertPoint_v4(curve, [1, x, hi], t);
+                if (d_rgt >= -d_thresh) {
+                    this._insertPoint_v4(curve, [1, NaN, NaN], t);
+                }
+            } else {
+                if (lo === -Infinity) {
+                    this._insertPoint_v4(curve, [1, x, lo], t, true);
+                    this._insertPoint_v4(curve, [1, NaN, NaN], t);
+                }
+                if (hi === Infinity) {
+                    this._insertPoint_v4(curve, [1, NaN, NaN], t);
+                    this._insertPoint_v4(curve, [1, x, hi], t, true);
+                }
+            }
+            if (d_rgt < -d_thresh) {
+                this._insertPoint_v4(curve, [1, x, hi], t);
+            } else if (d_rgt > d_thresh) {
+                this._insertPoint_v4(curve, [1, x, lo], t);
             }
 
-
-
-/*
-            h = (comp.t_values[i + 1] - t) * 0.99;
-            y2b = curve.Y(t + h, true); //group.y;
-            x2 = t + h;
-            y3 = y_table[0][i + 1];
-            if (lo === -Infinity && y3 > y2b) {
-                console.log("C");
-                this._insertPoint_v4(curve, [1, x2, lo], t);
-            } else if (hi === Infinity && y3 <= y2b) {
-                console.log("D");
-                this._insertPoint_v4(curve, [1, x2, hi], t);
-            }
-*/
-/*
-            this._insertPoint_v4(curve, [1, x2, y2b], t + h);
-            console.log(t, y_int, y1, y2a, y2b, y3);
-*/
         },
 
         /**
@@ -2151,7 +2180,7 @@ console.log(":::::::::::::::::::::::: Component", idx);
                             if (groups[g].type === 'borderleft' || groups[g].type === 'borderright' /* && g === groups.length - 1*/) {
                                 this.handleBorder(curve, comp, groups[g], x_table, y_table);
                             } else {
-                                this.handleSingularity(curve, comp, groups[g], x_table, y_table);
+                                this._recurse_v4(curve, comp, groups[g], x_table, y_table);
 //                                 console.log(comp.t_values[i-1],comp.y_values[i-1], comp.t_values[i+1],comp.y_values[i+1])
 //                                 console.log(comp.t_values[i-1],"v", y_table[0][i-1],y_table[1][i-1], comp.t_values[i+1],"v", y_table[0][i+1],y_table[1][i+1])
 
