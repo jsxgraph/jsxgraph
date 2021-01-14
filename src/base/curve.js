@@ -171,7 +171,7 @@ define([
                 return 0;
             }
 
-            leftCoords = new Coords(Const.COORDS_BY_SCREEN, [0, 0], this.board, false);
+            leftCoords = new Coords(Const.COORDS_BY_SCREEN, [-this.board.canvasWidth * .1, 0], this.board, false);
             return leftCoords.usrCoords[1];
         },
 
@@ -186,7 +186,7 @@ define([
             if (Type.evaluate(this.visProp.curvetype) === 'polar') {
                 return 2 * Math.PI;
             }
-            rightCoords = new Coords(Const.COORDS_BY_SCREEN, [this.board.canvasWidth, 0], this.board, false);
+            rightCoords = new Coords(Const.COORDS_BY_SCREEN, [this.board.canvasWidth * 1.1, 0], this.board, false);
 
             return rightCoords.usrCoords[1];
         },

@@ -284,7 +284,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         },
 
         isInterval: function(i) {
-            return typeof i === 'object' && typeof i.lo === 'number' && typeof i.hi === 'number';
+            return i !== null && typeof i === 'object' && typeof i.lo === 'number' && typeof i.hi === 'number';
         },
 
         isSingleton: function(i) {
