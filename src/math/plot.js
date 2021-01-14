@@ -1814,7 +1814,7 @@ console.log("Polynomial of degree", level);
                 pos = res[0];
                 pos = Math.floor(res[1]);
                 t_approx = res[2];
-                console.log("Critical points:", groups, res, pos)
+                // console.log("Critical points:", groups, res, pos)
 
                 // Analyze the type of the critical point
                 // Result is of type 'borderleft', borderright', 'other'
@@ -1944,33 +1944,62 @@ console.log("Polynomial of degree", level);
         },
 
         handleBorder: function(curve, comp, group, x_table, y_table) {
-            var i = group.idx,
+            var idx = group.idx,
                 t_approx = group.t,
-                t, t1, t2, y_int,
-                x1, x2, x3, y1, y2a, y2b, y3,
+                t, t1, t2,
+                y_int,
+                x, y,
                 lo, hi,
+                components2, le,
                 lo2, hi2,
                 h, res;
 
-            console.log("HandleBorder at t =", t_approx);
-            console.log(group);
+            // console.log("HandleBorder at t =", t_approx);
+            // console.log(group);
 
             if (group.type === 'borderleft') {
-                t1 = comp.left_isNaN ? comp.left_t : group.t - h;
-                y_int = this.getInterval(curve, t1, group.t);
-                lo = y_int.lo;
-                hi = y_int.hi;
-                console.log(lo, hi);
-                this._insertPoint_v4(curve,
-                    [1, t1, (y_table[1][i] > 0) ? y_int.lo : y_int.hi], t1);
+                t = comp.left_isNaN ? comp.left_t : group.t - h;
+                y_int = this.getInterval(curve, t, group.t);
+                if (Type.isObject(y_int)) {
+                    lo = y_int.lo;
+                    hi = y_int.hi;
+                    x = curve.X(t, true);
+                    y = (y_table[1][idx] > 0) ? lo : hi;
+                } else {
+                    t1 = comp.left_t;
+                    t2 = comp.t_values[0];
+                    components2 = this.findComponents(curve, t1, t2, 32);
+                    t = components2[0].t_values[0];
+                    x = components2[0].x_values[0];
+                    y = components2[0].y_values[0];
+                }
 
             } else if (group.type === 'borderright') {
-                t2 = comp.right_isNaN ? comp.right_t : group.t + h;
-                y_int = this.getInterval(curve, group.t, t2);
-                console.log(group.t, t2, y_int);
-                this._insertPoint_v4(curve,
-                    [1, t2, (y_table[1][i] > 0) ? y_int.hi : y_int.lo], t2);
+                t = comp.right_isNaN ? comp.right_t : group.t + h;
+                y_int = this.getInterval(curve, group.t, t);
+                if (Type.isObject(y_int)) {
+                    lo = y_int.lo;
+                    hi = y_int.hi;
+                    x = curve.X(t, true);
+                    y = (y_table[1][idx] > 0) ? hi : lo;
+                } else {
+                    le = comp.t_values.length;
+                    t1 = comp.t_values[le - 1];
+                    t2 = comp.right_t;
+                    components2 = this.findComponents(curve, t1, t2, 32);
+
+                    t = components2[0].t_values[0];
+                    x = components2[0].x_values[0];
+                    y = components2[0].y_values[0];
+                    this._insertPoint_v4(curve, [1, x, y], t);
+
+                    le = components2[0].t_values.length;
+                    t = components2[0].t_values[le - 1];
+                    x = components2[0].x_values[le - 1];
+                    y = components2[0].y_values[le - 1];
+                }
             }
+            this._insertPoint_v4(curve, [1, x, y], t);
         },
 
         _recurse_v4: function(curve, comp, group, x_table, y_table) {
@@ -1983,9 +2012,7 @@ console.log("Polynomial of degree", level);
             t2 = comp.t_values[group.idx + 2];
 
             components2 = this.findComponents(curve, t1, t2, 64);
-            console.log(components2);
             for (idx = 0; idx < components2.length; idx++) {
-                console.log("22222222222222222222222222222222222222")
                 comp2 = components2[idx];
                 ret = this.differenceMethod(comp2, curve);
                 groups2 = ret[0];
@@ -2029,9 +2056,9 @@ console.log("Polynomial of degree", level);
                 di2 = 3;
 
             t = group.t;
-            console.log("HandleSingularity at t =", t);
-            console.log(comp.t_values[idx - 1], comp.y_values[idx - 1], comp.t_values[idx + 1], comp.y_values[idx + 1]);
-            console.log(group);
+            // console.log("HandleSingularity at t =", t);
+            // console.log(comp.t_values[idx - 1], comp.y_values[idx - 1], comp.t_values[idx + 1], comp.y_values[idx + 1]);
+            // console.log(group);
 
             // Look at two points, hopefully left and right from the critical point
             t1 = comp.t_values[idx - di1];
@@ -2053,12 +2080,12 @@ console.log("Polynomial of degree", level);
 
             x = curve.X(t, true);
 
-            console.log(">>>", t1, t2, lo, hi, x);
+            // console.log(">>>", t1, t2, lo, hi, x);
 
             d_lft = (y_table[0][idx - di2] - y_table[0][idx - di1]) / (comp.t_values[idx - di2] - comp.t_values[idx - di1]);
             d_rgt = (y_table[0][idx + di2] - y_table[0][idx + di1]) / (comp.t_values[idx + di2] - comp.t_values[idx + di1]);
 
-            console.log(":::", d_lft, d_rgt);
+            // console.log(":::", d_lft, d_rgt);
 
             if (d_lft < -d_thresh) {
                 // Left branch very steep downwards -> add the minimum
@@ -2079,7 +2106,7 @@ console.log("Polynomial of degree", level);
             } else {
                 if (Math.abs(y_table[0][idx - 1] - y_table[0][idx + 1]) * curve.board.unitY >= 2) {
                     // Finite jump
-                    console.log("JUMP")
+                    // console.log("JUMP")
                     this._insertPoint_v4(curve, [1, NaN, NaN], t);
                 } else {
                     if (lo === -Infinity) {
@@ -2118,7 +2145,7 @@ console.log("Polynomial of degree", level);
             var i, le, components, idx, comp,
                 groups, g, start, ta1, tb1,
                 ret, x_table, y_table,
-                x, y, t, t1, t2, j,
+                t, t1, t2, j,
                 x_int, y_int,
                 h  = (tb - ta) / steps,
                 Ypl = function(x) { return curve.Y(x, true); },
@@ -2128,7 +2155,6 @@ console.log("Polynomial of degree", level);
             components = this.findComponents(curve, ta, tb, steps);
 
             for (idx = 0; idx < components.length; idx++) {
-console.log(":::::::::::::::::::::::: Component", idx);
                 comp = components[idx];
                 ret = this.differenceMethod(comp, curve);
                 groups = ret[0];
@@ -2153,7 +2179,7 @@ console.log(":::::::::::::::::::::::: Component", idx);
                             // Add more points in critical intervals
                             if (true &&
                                 i >= start + 3 &&
-                                i < le - 3 &&      // Do not do this if too close to a critical point
+                                i < le - 3 &&               // Do not do this if too close to a critical point
                                 y_table.length > 3 &&
                                 Math.abs(y_table[2][i]) > 0.1 * Math.abs(y_table[0][i])) {
 
@@ -2187,7 +2213,7 @@ console.log(":::::::::::::::::::::::: Component", idx);
 
                     // Handle next critical point
                     if (g < groups.length) {
-                        console.log("critical point / interval", groups[g]);
+                        // console.log("critical point / interval", groups[g]);
 
                         i = groups[g].idx;
                         //this._insertPoint_v4(curve, [1, comp.x_values[i - 1], comp.y_values[i - 1]], comp.t_values[i - 1]);
