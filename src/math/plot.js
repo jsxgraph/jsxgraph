@@ -1947,7 +1947,8 @@ console.log("Polynomial of degree", level);
             var i = group.idx,
                 t_approx = group.t,
                 t, t1, t2, y_int,
-                x1, x2, x3, y1, y2a, y2b, y3, lo, hi,
+                x1, x2, x3, y1, y2a, y2b, y3,
+                lo, hi,
                 lo2, hi2,
                 h, res;
 
@@ -1957,8 +1958,12 @@ console.log("Polynomial of degree", level);
             if (group.type === 'borderleft') {
                 t1 = comp.left_isNaN ? comp.left_t : group.t - h;
                 y_int = this.getInterval(curve, t1, group.t);
+                lo = y_int.lo;
+                hi = y_int.hi;
+                console.log(lo, hi);
                 this._insertPoint_v4(curve,
                     [1, t1, (y_table[1][i] > 0) ? y_int.lo : y_int.hi], t1);
+
             } else if (group.type === 'borderright') {
                 t2 = comp.right_isNaN ? comp.right_t : group.t + h;
                 y_int = this.getInterval(curve, group.t, t2);
@@ -2072,7 +2077,6 @@ console.log("Polynomial of degree", level);
                     this._insertPoint_v4(curve, [1, NaN, NaN], t);
                 }
             } else {
-                console.log("XXXXXXX")
                 if (Math.abs(y_table[0][idx - 1] - y_table[0][idx + 1]) * curve.board.unitY >= 2) {
                     // Finite jump
                     console.log("JUMP")
@@ -2148,29 +2152,29 @@ console.log(":::::::::::::::::::::::: Component", idx);
 
                             // Add more points in critical intervals
                             if (true &&
-                                i >= start + 3 && i < le - 3 &&      // Do not do this if too close to a critical point
+                                i >= start + 3 &&
+                                i < le - 3 &&      // Do not do this if too close to a critical point
                                 y_table.length > 3 &&
                                 Math.abs(y_table[2][i]) > 0.1 * Math.abs(y_table[0][i])) {
+
                                 t = comp.t_values[i];
-                                if (true) {
-                                    h2 = h * 0.25;
-                                    y_int = this.getInterval(curve, t, t + h);
-                                    if (Type.isObject(y_int)) {
-                                        if (y_table[2][i] > 0) {
-                                            this._insertPoint_v4(curve, [1, t + h2, y_int.lo], t + h2);
-                                        } else {
-                                            this._insertPoint_v4(curve, [1, t + h - h2, y_int.hi], t + h - h2);
-                                        }
+                                h2 = h * 0.25;
+                                y_int = this.getInterval(curve, t, t + h);
+                                if (Type.isObject(y_int)) {
+                                    if (y_table[2][i] > 0) {
+                                        this._insertPoint_v4(curve, [1, t + h2, y_int.lo], t + h2);
                                     } else {
-                                        t1 = Numerics.fminbr(Ypl, [t, t + h]);
-                                        t2 = Numerics.fminbr(Ymi, [t, t + h]);
-                                        if (t1 < t2) {
-                                            this._insertPoint_v4(curve, [1, curve.X(t1, true), curve.Y(t1, true)], t1);
-                                            this._insertPoint_v4(curve, [1, curve.X(t2, true), curve.Y(t2, true)], t2);
-                                        } else {
-                                            this._insertPoint_v4(curve, [1, curve.X(t2, true), curve.Y(t2, true)], t2);
-                                            this._insertPoint_v4(curve, [1, curve.X(t1, true), curve.Y(t1, true)], t1);
-                                        }
+                                        this._insertPoint_v4(curve, [1, t + h - h2, y_int.hi], t + h - h2);
+                                    }
+                                } else {
+                                    t1 = Numerics.fminbr(Ypl, [t, t + h]);
+                                    t2 = Numerics.fminbr(Ymi, [t, t + h]);
+                                    if (t1 < t2) {
+                                        this._insertPoint_v4(curve, [1, curve.X(t1, true), curve.Y(t1, true)], t1);
+                                        this._insertPoint_v4(curve, [1, curve.X(t2, true), curve.Y(t2, true)], t2);
+                                    } else {
+                                        this._insertPoint_v4(curve, [1, curve.X(t2, true), curve.Y(t2, true)], t2);
+                                        this._insertPoint_v4(curve, [1, curve.X(t1, true), curve.Y(t1, true)], t1);
                                     }
                                 }
                                 bad++;
