@@ -479,6 +479,21 @@ define([
 //             }
 //         };
 
+
+
+        // This is necessary to show baseline, highline and ticks
+        // when opening the board in case the visible attributes are set
+        // to 'inherit'.
+        p3.prepareUpdate().update();
+        if (!board.isSuspendedUpdate) {
+            p3.updateVisibility().updateRenderer();
+            p3.baseline.updateVisibility().updateRenderer();
+            p3.highline.updateVisibility().updateRenderer();
+            if (withTicks) {
+                p3.ticks.updateVisibility().updateRenderer();
+            }
+        }
+
         return p3;
     };
 

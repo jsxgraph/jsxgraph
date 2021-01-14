@@ -994,13 +994,13 @@ define([
                         for (i = 0; i < len_s; i++) {
                             if (Type.exists(obj[i]) /*&& Type.exists(obj[i].rendNode)*/ &&
                                 Type.evaluate(obj[i].visProp.visible) === 'inherit') {
-                                obj[i].prepareUpdate().updateVisibility(this.visPropCalc.visible).updateRenderer();
+                                obj[i].prepareUpdate().updateVisibility(this.visPropCalc.visible);
                             }
                         }
                     } else {
                         if (Type.exists(obj) /*&& Type.exists(obj.rendNode)*/ &&
                             Type.evaluate(obj.visProp.visible) === 'inherit') {
-                            obj.prepareUpdate().updateVisibility(this.visPropCalc.visible).updateRenderer();
+                            obj.prepareUpdate().updateVisibility(this.visPropCalc.visible);
                         }
                     }
                 }
