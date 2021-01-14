@@ -1991,14 +1991,14 @@ console.log("Polynomial of degree", level);
                     if (g === groups2.length) {
                         le = comp2.len;
                     } else {
-                        le = groups2[g].idx - 1;
+                        le = groups2[g].idx;
                     }
 
                     // Insert all uncritical points until next critical point
                     for (i = start; i < le; i++) {
-                        // if (!isNaN(comp2.x_values[i]) && !isNaN(comp2.y_values[i])) {
+                        if (!isNaN(comp2.x_values[i]) && !isNaN(comp2.y_values[i])) {
                             this._insertPoint_v4(curve, [1, comp2.x_values[i], comp2.y_values[i]], comp2.t_values[i]);
-                        // }
+                        }
                     }
                     // Handle next critical point
                     if (g < groups2.length) {
@@ -2015,59 +2015,84 @@ console.log("Polynomial of degree", level);
         },
 
         handleSingularity: function(curve, comp, group, x_table, y_table) {
-            var i = group.idx,
+            var idx = group.idx,
                 t, t1, t2, y_int,
                 x, lo, hi,
                 d_lft, d_rgt,
-                d_thresh = 4,
+                d_thresh = 100,
                 di1 = 5,
                 di2 = 3;
 
             t = group.t;
             console.log("HandleSingularity at t =", t);
-            console.log(comp.t_values[i - 1], comp.y_values[i - 1], comp.t_values[i + 1], comp.y_values[i + 1]);
+            console.log(comp.t_values[idx - 1], comp.y_values[idx - 1], comp.t_values[idx + 1], comp.y_values[idx + 1]);
             console.log(group);
 
             // Look at two points, hopefully left and right from the critical point
-            t1 = comp.t_values[i - di1];
-            t2 = comp.t_values[i + di1];
+            t1 = comp.t_values[idx - di1];
+            t2 = comp.t_values[idx + di1];
 
             y_int = this.getInterval(curve, t1, t2);
-            lo = y_int.lo;
-            hi = y_int.hi;
+            if (Type.isObject(y_int)) {
+                lo = y_int.lo;
+                hi = y_int.hi;
+            } else {
+                if (y_table[0][idx - 1] < y_table[0][idx + 1]) {
+                    lo = y_table[0][idx - 1];
+                    hi = y_table[0][idx + 1];
+                } else {
+                    lo = y_table[0][idx + 1];
+                    hi = y_table[0][idx - 1];
+                }
+            }
 
             x = curve.X(t, true);
 
             console.log(">>>", t1, t2, lo, hi, x);
 
-            d_lft = (y_table[0][i - di2] - y_table[0][i - di1]) / (comp.t_values[i - di2] - comp.t_values[i - di1]);
-            d_rgt = (y_table[0][i + di2] - y_table[0][i + di1]) / (comp.t_values[i + di2] - comp.t_values[i + di1]);
+            d_lft = (y_table[0][idx - di2] - y_table[0][idx - di1]) / (comp.t_values[idx - di2] - comp.t_values[idx - di1]);
+            d_rgt = (y_table[0][idx + di2] - y_table[0][idx + di1]) / (comp.t_values[idx + di2] - comp.t_values[idx + di1]);
 
             console.log(":::", d_lft, d_rgt);
 
             if (d_lft < -d_thresh) {
+                // Left branch very steep downwards -> add the minimum
                 this._insertPoint_v4(curve, [1, x, lo], t, true);
                 if (d_rgt <= d_thresh) {
+                    // Right branch not very steep upwards -> interrupt the curve
+                    // I.e. exclude the case -infty / -infty
                     this._insertPoint_v4(curve, [1, NaN, NaN], t);
                 }
             } else if (d_lft > d_thresh) {
+                // Left branch very steep upwards -> add the maximum
                 this._insertPoint_v4(curve, [1, x, hi], t);
                 if (d_rgt >= -d_thresh) {
+                    // Right branch not very steep downwards -> interrupt the curve
+                    // I.e. exclude the case infty / infty
                     this._insertPoint_v4(curve, [1, NaN, NaN], t);
                 }
             } else {
-                if (lo === -Infinity) {
-                    this._insertPoint_v4(curve, [1, x, lo], t, true);
+                console.log("XXXXXXX")
+                if (Math.abs(y_table[0][idx - 1] - y_table[0][idx + 1]) * curve.board.unitY >= 2) {
+                    // Finite jump
+                    console.log("JUMP")
                     this._insertPoint_v4(curve, [1, NaN, NaN], t);
-                }
-                if (hi === Infinity) {
-                    this._insertPoint_v4(curve, [1, NaN, NaN], t);
-                    this._insertPoint_v4(curve, [1, x, hi], t, true);
+                } else {
+                    if (lo === -Infinity) {
+                        this._insertPoint_v4(curve, [1, x, lo], t, true);
+                        this._insertPoint_v4(curve, [1, NaN, NaN], t);
+                    }
+                    if (hi === Infinity) {
+                        this._insertPoint_v4(curve, [1, NaN, NaN], t);
+                        this._insertPoint_v4(curve, [1, x, hi], t, true);
+                    }
                 }
             }
             if (d_rgt < -d_thresh) {
+                // Right branch very steep downwards -> add the maximum
                 this._insertPoint_v4(curve, [1, x, hi], t);
             } else if (d_rgt > d_thresh) {
+                // Right branch very steep upwards -> add the minimum
                 this._insertPoint_v4(curve, [1, x, lo], t);
             }
 
@@ -2076,7 +2101,7 @@ console.log("Polynomial of degree", level);
         /**
          * Number of equidistant points where the function is evaluated
          */
-        steps: 1024,
+        steps: 512,
 
         /**
          * If the absolute maximum of the set of differences is larger than
@@ -2090,9 +2115,10 @@ console.log("Polynomial of degree", level);
                 groups, g, start, ta1, tb1,
                 ret, x_table, y_table,
                 x, y, t, t1, t2, j,
-                x_int, y_int, y1, y2, y_close,
-                asymptote,
+                x_int, y_int,
                 h  = (tb - ta) / steps,
+                Ypl = function(x) { return curve.Y(x, true); },
+                Ymi = function(x) { return -curve.Y(x, true); },
                 h2 = h * 0.5;
 
             components = this.findComponents(curve, ta, tb, steps);
@@ -2126,25 +2152,25 @@ console.log(":::::::::::::::::::::::: Component", idx);
                                 y_table.length > 3 &&
                                 Math.abs(y_table[2][i]) > 0.1 * Math.abs(y_table[0][i])) {
                                 t = comp.t_values[i];
-                                /*
-                                t1 = Numerics.fminbr(curve.Y, [t, t + h]);
-                                t2 = Numerics.fminbr(x => (-curve.Y(x)), [t, t + h]);
-                                if (t1 < t2) {
-                                    this._insertPoint_v4(curve, [1, t1, curve.Y(t1)], t1);
-                                    this._insertPoint_v4(curve, [1, t2, curve.Y(t2)], t2);
-                                } else {
-                                    this._insertPoint_v4(curve, [1, t2, curve.Y(t2)], t2);
-                                    this._insertPoint_v4(curve, [1, t1, curve.Y(t1)], t1);
-                                }
-                                */
-                                //console.log(i, le)
                                 if (true) {
                                     h2 = h * 0.25;
                                     y_int = this.getInterval(curve, t, t + h);
-                                    if (y_table[2][i] > 0) {
-                                        this._insertPoint_v4(curve, [1, t + h2, y_int.lo], t + h2);
+                                    if (Type.isObject(y_int)) {
+                                        if (y_table[2][i] > 0) {
+                                            this._insertPoint_v4(curve, [1, t + h2, y_int.lo], t + h2);
+                                        } else {
+                                            this._insertPoint_v4(curve, [1, t + h - h2, y_int.hi], t + h - h2);
+                                        }
                                     } else {
-                                        this._insertPoint_v4(curve, [1, t + h - h2, y_int.hi], t + h - h2);
+                                        t1 = Numerics.fminbr(Ypl, [t, t + h]);
+                                        t2 = Numerics.fminbr(Ymi, [t, t + h]);
+                                        if (t1 < t2) {
+                                            this._insertPoint_v4(curve, [1, curve.X(t1, true), curve.Y(t1, true)], t1);
+                                            this._insertPoint_v4(curve, [1, curve.X(t2, true), curve.Y(t2, true)], t2);
+                                        } else {
+                                            this._insertPoint_v4(curve, [1, curve.X(t2, true), curve.Y(t2, true)], t2);
+                                            this._insertPoint_v4(curve, [1, curve.X(t1, true), curve.Y(t1, true)], t1);
+                                        }
                                     }
                                 }
                                 bad++;
@@ -2155,81 +2181,19 @@ console.log(":::::::::::::::::::::::: Component", idx);
                         console.log("GOOD", good, "BAD", bad);
                     }
 
-                    if (false) {
-                        for (i = start; i < le; i++) {
-                            t = comp.t_values[i];
-                            y = comp.y_values[i];
-                            //this._insertPoint_v4(curve, [1, comp.x_values[i], y], t);
-                            y_int = this.getInterval(curve, t, t + h*0.999);
-                            this._insertPoint_v4(curve, [1, comp.x_values[i], y_int.lo], t);
-                            this._insertPoint_v4(curve, [1, comp.x_values[i], y_int.hi], t + h  * 0.5);
-                        }
-                    }
-
                     // Handle next critical point
                     if (g < groups.length) {
                         console.log("critical point / interval", groups[g]);
 
-                        if (false && (tb1 - ta1) * curve.board.unitX > 1.5) {
-                            console.log("Recurse plot_v4")
-                            this.plot_v4(curve, ta1, tb1, 32);
+                        i = groups[g].idx;
+                        //this._insertPoint_v4(curve, [1, comp.x_values[i - 1], comp.y_values[i - 1]], comp.t_values[i - 1]);
+                        if (groups[g].type === 'borderleft' || groups[g].type === 'borderright' /* && g === groups.length - 1*/) {
+                            this.handleBorder(curve, comp, groups[g], x_table, y_table);
                         } else {
-                            i = groups[g].idx;
-                            //this._insertPoint_v4(curve, [1, comp.x_values[i - 1], comp.y_values[i - 1]], comp.t_values[i - 1]);
-
-                            if (groups[g].type === 'borderleft' || groups[g].type === 'borderright' /* && g === groups.length - 1*/) {
-                                this.handleBorder(curve, comp, groups[g], x_table, y_table);
-                            } else {
-                                this._recurse_v4(curve, comp, groups[g], x_table, y_table);
-//                                 console.log(comp.t_values[i-1],comp.y_values[i-1], comp.t_values[i+1],comp.y_values[i+1])
-//                                 console.log(comp.t_values[i-1],"v", y_table[0][i-1],y_table[1][i-1], comp.t_values[i+1],"v", y_table[0][i+1],y_table[1][i+1])
-
-//                                 t = groups[g].t;
-//                                 y_int = this.getInterval(curve, comp.t_values[i - 2], comp.t_values[i + 2]);
-
-//                                 asymptote = this.checkAsymptote(curve, [comp.t_values[i-2], y_table[0][i-2]], [comp.t_values[i + 2], y_table[0][i + 2]], 4);
-//                                 console.log("CheckAsympt", i, comp.t_values[i-2], comp.t_values[i + 2], h)
-//                                 console.log(asymptote)
-//                                 console.log(y_int);
-
-//                                 t = asymptote.d0[0];
-//                                 x = t;
-//                                 y1 = asymptote.d0[1];
-//                                 this._insertPoint_v4(curve, [1, x, y1], t);
-
-//                                 y2 = asymptote.d1[1];
-
-//                                 if (Math.sign(y1 - y_table[0][i - 1]) === this.sign(y_int.lo - y_table[0][i - 1])) {
-//                                     y1 = y_int.lo;
-//                                 } else {
-//                                     y1 = y_int.hi;
-//                                 }
-
-//                                 if (Math.sign(y_table[0][i + 1] - y2) === Math.sign(y_table[0][i + 1] - y_int.lo)) {
-//                                     y2 = y_int.lo;
-//                                 } else {
-//                                     y2 = y_int.hi;
-//                                 }
-// // console.log(t, y_int, y1, y2);
-
-//                                 x = t;
-//                                 this._insertPoint_v4(curve, [1, x, y1], t);
-//                                 if (Math.abs(y1 - y2) > 0.001) {
-//                                     this._insertPoint_v4(curve, [1, NaN, NaN], groups[g].t);
-//                                 }
-//                                 this._insertPoint_v4(curve, [1, x, y2], t);
-
-//                                 t = asymptote.d1[0];
-//                                 x = t;
-//                                 y2 = asymptote.d1[1];
-//                                 this._insertPoint_v4(curve, [1, x, y2], t);
-
-
-
-                            }
+                            this._recurse_v4(curve, comp, groups[g], x_table, y_table);
+                        }
 
                             // this._insertPoint_v4(curve, [1, comp.x_values[i+1], comp.y_values[i+1]], comp.t_values[i+1]);
-                        }
                         start = groups[g].idx + 1;
                     }
                 }
