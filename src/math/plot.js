@@ -1408,6 +1408,7 @@ define(['jxg', 'base/constants', 'base/coords', 'math/math', 'math/extrapolate',
                             comp.left_isNaN = true;
                         }
                     }
+                    cntNaNs = 0;
                     // Add the value to the component
                     comp.t_values[cnt] = t;
                     comp.x_values[cnt] = x;
@@ -1834,7 +1835,7 @@ console.log("Polynomial of degree", level);
                 t2 = t;
                 t1 = t2 - h;
             } else {
-                console.log("OTHER");
+                console.log("No bordercase!!!");
             }
 
             components2 = this.findComponents(curve, t1, t2, 32);
