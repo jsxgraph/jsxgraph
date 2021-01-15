@@ -1437,17 +1437,17 @@ define([
             tangent.glider = p;
         } else if (c.elementClass === Const.OBJECT_CLASS_CURVE && c.type !== Const.OBJECT_TYPE_CONIC) {
             if (Type.evaluate(c.visProp.curvetype) !== 'plot') {
-                g = c.X;
-                f = c.Y;
                 tangent = board.create('line', [
                     function () {
+                        var g = c.X,
+                            f = c.Y;
                         return -p.X() * Numerics.D(f)(p.position) + p.Y() * Numerics.D(g)(p.position);
                     },
                     function () {
-                        return Numerics.D(f)(p.position);
+                        return Numerics.D(c.Y)(p.position);
                     },
                     function () {
-                        return -Numerics.D(g)(p.position);
+                        return -Numerics.D(c.X)(p.position);
                     }
                 ], attributes);
 

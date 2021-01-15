@@ -691,10 +691,7 @@ define([
         },
 
         /**
-         * Computes for equidistant points on the x-axis the values
-         * of the function.
-         * If the mousemove event triggers this update, we use only few
-         * points. Otherwise, e.g. on mouseup, many points are used.
+         * Computes the curve path
          * @see JXG.Curve#update
          * @returns {JXG.Curve} Reference to the curve object.
          */
