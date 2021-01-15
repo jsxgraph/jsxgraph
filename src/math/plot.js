@@ -1371,6 +1371,7 @@ define(['jxg', 'base/constants', 'base/coords', 'math/math', 'math/extrapolate',
             h = (ma - mi) / steps;
             components[comp_nr] = new this.Component();
             comp = components[comp_nr];
+
             for (i = 0, t = mi; i <= steps; i++, t += h) {
                 x = curve.X(t, suspended);
                 y = curve.Y(t, suspended);
@@ -1392,10 +1393,6 @@ define(['jxg', 'base/constants', 'base/coords', 'math/math', 'math/extrapolate',
                         components[comp_nr] =  new this.Component();
                         comp = components[comp_nr];
                         cntNaNs = 0;
-                    } else {
-                        // Wait for the component to have non-NaN entries
-                        // comp.left_isNaN = true;
-                        // comp.left_t = t;
                     }
                 } else {
                     // Now there is a non-NaN entry.
@@ -1681,7 +1678,9 @@ console.log("Polynomial of degree", level);
                 x_table = [],
                 y_table = [],
                 foundCriticalPoint = 0,
-                pos, res, t_approx,
+                degree_x = -1,
+                degree_y = -1,
+                pos, res, res_x, res_y, t_approx,
                 groups = [],
                 types,
                 criticalPoints = [];
@@ -1695,8 +1694,6 @@ console.log("Polynomial of degree", level);
             // }
             x_table.push(new Float64Array(x_values));
             y_table.push(new Float64Array(y_values));
-
-// console.log("level", 0, y_table[0]);
 
             le--;
             up = Math.min(12, le);
@@ -1716,21 +1713,30 @@ console.log("Polynomial of degree", level);
 
                 // Store point location which may be centered around critical points.
                 // If the level is suitable, step out of the loop.
-                res = this._criticalInterval(y_table[level + 1], le, level);
-                if (res.smooth === true) {
+                res_y = this._criticalInterval(y_table[level + 1], le, level);
+                if (res_y.smooth === true) {
                     // Its seems, the degree of the polynomial is equal to level
                     // If the values in level + 1 are zero, it might be a polynomial of degree level.
                     // Seems to work numerically stable until degree 6.
-    console.log("Polynomial of degree", level);
+                    degree_y = level;
                     groups = [];
+                }
+                res_x = this._criticalInterval(x_table[level + 1], le, level);
+                if (degree_x === -1 && res_x.smooth === true) {
+                    // Its seems, the degree of the polynomial is equal to level
+                    // If the values in level + 1 are zero, it might be a polynomial of degree level.
+                    // Seems to work numerically stable until degree 6.
+                    degree_x = level;
+                }
+                if (degree_y >= 0) {
                     break;
                 }
 
-                if (res.groups.length > 0) {
+                if (res_y.groups.length > 0) {
                     foundCriticalPoint++;
                     if (foundCriticalPoint > 2 && (level + 1) % 2 === 0) {
-                        groups = res.groups;
-                        types = res.types;
+                        groups = res_y.groups;
+                        types = res_y.types;
                         break;
                     }
                 }
@@ -1738,7 +1744,6 @@ console.log("Polynomial of degree", level);
             }
 
             // console.log("Last diffs", y_table[Math.min(level + 1, up)], "level", level + 1);
-
             // Analyze the groups which have been found.
             for (i = 0; i < groups.length; i++) {
                 if (types[i] === 'interval') {
@@ -1746,7 +1751,7 @@ console.log("Polynomial of degree", level);
                 }
                 // console.log("Group", i, groups[i], types[i], level + 1)
                 res = this.getCenterOfCriticalInterval(groups[i], level + 1, t_values);
-                pos = res[0];
+                pos = res_y[0];
                 pos = Math.floor(res[1]);
                 t_approx = res[2];
                 // console.log("Critical points:", groups, res, pos)
@@ -1761,7 +1766,7 @@ console.log("Polynomial of degree", level);
             // } else {
             //     console.log("Convergence level", level);
             // }
-            return [criticalPoints, x_table, y_table];
+            return [criticalPoints, x_table, y_table, degree_x, degree_y];
 
         },
 
@@ -1815,6 +1820,7 @@ console.log("Polynomial of degree", level);
         handleBorder: function(curve, comp, group, x_table, y_table) {
             var idx = group.idx,
                 t, t1, t2,
+                size = 32,
                 y_int,
                 x, y,
                 lo, hi, i,
@@ -1825,7 +1831,6 @@ console.log("Polynomial of degree", level);
             // console.log("Group:", group);
 
             h = comp.t_values[1] - comp.t_values[0];
-
             if (group.type === 'borderleft') {
                 t = comp.left_isNaN ? comp.left_t : group.t - h;
                 t1 = t;
@@ -1838,8 +1843,7 @@ console.log("Polynomial of degree", level);
                 console.log("No bordercase!!!");
             }
 
-            components2 = this.findComponents(curve, t1, t2, 32);
-
+            components2 = this.findComponents(curve, t1, t2, size);
             if (group.type === 'borderleft') {
                 t1 = components2[0].left_t;
                 t2 = components2[0].t_values[0];
@@ -2023,11 +2027,12 @@ console.log("Polynomial of degree", level);
         criticalThreshold: 1000,
 
         plot_v4: function(curve, ta, tb, steps) {
-            var i, le, components, idx, comp,
-                groups, g, start, ta1, tb1,
+            var i, j, le, components, idx, comp,
+                groups, g, start,
                 ret, x_table, y_table,
-                t, t1, t2, j,
+                t, t1, t2,
                 x_int, y_int,
+                degree_x, degree_y,
                 h  = (tb - ta) / steps,
                 Ypl = function(x) { return curve.Y(x, true); },
                 Ymi = function(x) { return -curve.Y(x, true); },
@@ -2040,6 +2045,37 @@ console.log("Polynomial of degree", level);
                 groups = ret[0];
                 x_table = ret[1];
                 y_table = ret[2];
+                degree_x = ret[3];
+                degree_y = ret[4];
+
+                // if (degree_x >= 0) {
+                //     console.log("x polynomial of degree", degree_x);
+                // }
+                // if (degree_y >= 0) {
+                //     console.log("y polynomial of degree", degree_y);
+                // }
+
+                if (groups.length === 0 || groups[0].type !== 'borderleft') {
+                    groups.unshift({
+                        idx: 0,
+                        t: comp.t_values[0],
+                        x: comp.x_values[0],
+                        y: comp.y_values[0],
+                        type: 'borderleft'
+                    });
+                }
+                if (groups[groups.length - 1].type !== 'borderright') {
+                    le = comp.t_values.length;
+                    groups.push({
+                        idx: le - 1,
+                        t: comp.t_values[le - 1],
+                        x: comp.x_values[le - 1],
+                        y: comp.y_values[le - 1],
+                        type: 'borderright'
+                    });
+                }
+
+
                 start = 0;
                 for (g = 0; g <= groups.length; g++) {
                     if (g === groups.length) {
@@ -2055,6 +2091,7 @@ console.log("Polynomial of degree", level);
                         j = Math.max(0, i - 2);
                         // Add more points in critical intervals
                         if (true &&
+                            //degree_y === -1 && // No polynomial
                             i >= start + 3 &&
                             i < le - 3 &&               // Do not do this if too close to a critical point
                             y_table.length > 3 &&
@@ -2091,14 +2128,12 @@ console.log("Polynomial of degree", level);
                         //console.log("critical point / interval", groups[g]);
 
                         i = groups[g].idx;
-                        //this._insertPoint_v4(curve, [1, comp.x_values[i - 1], comp.y_values[i - 1]], comp.t_values[i - 1]);
                         if (groups[g].type === 'borderleft' || groups[g].type === 'borderright') {
                             this.handleBorder(curve, comp, groups[g], x_table, y_table);
                         } else {
                             this._recurse_v4(curve, comp, groups[g], x_table, y_table);
                         }
 
-                            // this._insertPoint_v4(curve, [1, comp.x_values[i+1], comp.y_values[i+1]], comp.t_values[i+1]);
                         start = groups[g].idx + 1 + 1;
                     }
                 }
