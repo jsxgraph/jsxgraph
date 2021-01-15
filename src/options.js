@@ -2535,7 +2535,7 @@ define([
              * @type Number
              * @default 3
              */
-            plotVersion: 2,
+            plotVersion: 4,
 
             /**
              * Attributes for circle label.
