@@ -456,21 +456,20 @@ define([
                     ], this.board);
                 }
                 return this.line.point1.coords;
-            } else {
-                mi = this.line.minX();
-                ma = this.line.maxX();
-                if (ev_a === 'right') {
-                    t = ma;
-                } else if (ev_a === 'middle') {
-                    t = (mi + ma) * 0.5;
-                } else if (Type.isNumber(ev_a)) {
-                    t = mi * (1 - ev_a) + ma * ev_a;
-                    // t = ev_a;
-                } else {
-                    t = mi;
-                }
-                return t;
             }
+            mi = this.line.minX();
+            ma = this.line.maxX();
+            if (ev_a === 'right') {
+                t = ma;
+            } else if (ev_a === 'middle') {
+                t = (mi + ma) * 0.5;
+            } else if (Type.isNumber(ev_a)) {
+                t = mi * (1 - ev_a) + ma * ev_a;
+                // t = ev_a;
+            } else {
+                t = mi;
+            }
+            return t;
         },
 
         /**

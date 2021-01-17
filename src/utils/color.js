@@ -867,10 +867,9 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
         // If contrast is more than threshold, return darkColor
         if (contrastRatio > threshold) {
             return darkColor;
-        } else {
-            // if not, return lightColor.
-            return lightColor;
         }
+        // if not, return lightColor.
+        return lightColor;
     };
 
     return JXG;

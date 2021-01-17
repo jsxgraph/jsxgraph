@@ -346,7 +346,7 @@ define([
 
         _print_list: function(P) {
             var cnt = 0, alpha;
-            while (true && cnt < 100) {
+            while (cnt < 100) {
                 if (P.data) {
                     alpha = P.data.alpha;
                 } else {
@@ -960,7 +960,8 @@ define([
 
             if (clip_type === 'intersection' && (S.length === 0 || C.length === 0)) {
                 return true; //[pathX, pathY];
-            } else if (clip_type === 'union' && (S.length === 0 || C.length === 0)) {
+            }
+            if (clip_type === 'union' && (S.length === 0 || C.length === 0)) {
                 // if (S.length === 0) {
                 //     for (i = 0; i < C.length; ++i) {
                 //         pathX.push(C[i].coords.usrCoords[1]);
@@ -981,7 +982,8 @@ define([
                 //     }
                 // }
                 return true; //[pathX, pathY];
-            } if (clip_type === 'difference' && (S.length === 0 || C.length === 0)) {
+            }
+            if (clip_type === 'difference' && (S.length === 0 || C.length === 0)) {
                 // if (C.length === 0) {
                 //     for (i = 0; i < S.length; ++i) {
                 //         pathX.push(S[i].coords.usrCoords[1]);

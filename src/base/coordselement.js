@@ -834,7 +834,7 @@ define([
                     if (ev_is2p) {
                         ignore = false;
                         for (j = 0; j < len2; j++) {
-                            if (pEl == this.board.select(ev_is2p[j])) {
+                            if (pEl === this.board.select(ev_is2p[j])) {
                                 ignore = true;
                                 break;
                             }
@@ -937,12 +937,10 @@ define([
                         if (!(this.type === Const.OBJECT_TYPE_GLIDER && this.slideObject === el)) {
                             this.makeGlider(el);
                         }
-
                         break;       // bind the point to the first attractor in its list.
-                    } else {
-                        if (el === this.slideObject && d >= ev_sd) {
-                            this.popSlideObject();
-                        }
+                    }
+                    if (el === this.slideObject && d >= ev_sd) {
+                        this.popSlideObject();
                     }
                 }
             }

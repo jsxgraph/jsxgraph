@@ -151,7 +151,7 @@ define([
         // this.document = attributes.document || document;
         if (Type.exists(attributes.document) && attributes.document !== false) {
             this.document = attributes.document;
-        } else if (typeof document !== 'undefined' && Type.isObject(document)) {
+        } else if (document !== undefined && Type.isObject(document)) {
             this.document = document;
         }
 
@@ -1188,7 +1188,7 @@ define([
                 S[1] /= S[0];
                 S[2] /= S[0];
 
-                if (Type.exists(evt.rotation) && evt.type != 'pointermove') {
+                if (Type.exists(evt.rotation) && evt.type !== 'pointermove') {
                     // iOS touch events contain the angle for free
                     alpha = evt.rotation - this.previousRotation;
                     this.previousRotation = evt.rotation;
@@ -1449,7 +1449,7 @@ define([
 
             r = this.attr.pan.enabled &&
                 !this.attr.pan.needtwofingers &&
-                touches.length == 1;
+                touches.length === 1;
 
             if (r) {
                 pos = this.getMousePosition(evt, 0);
@@ -2176,7 +2176,7 @@ define([
          */
         pointerOutListener: function (evt) {
             if (evt.target === this.containerObj ||
-                (this.renderer.type == 'svg' && evt.target === this.renderer.foreignObjLayer)) {
+                (this.renderer.type === 'svg' && evt.target === this.renderer.foreignObjLayer)) {
                 this.pointerUpListener(evt);
             }
             return this.mode === this.BOARD_MODE_NONE;
@@ -2191,7 +2191,7 @@ define([
             var i, j, pos,
                 type = 'mouse'; // in case of no browser
 
-            if (this._getPointerInputDevice(evt) == 'touch' && !this._pointerIsTouchRegistered(evt)) {
+            if (this._getPointerInputDevice(evt) === 'touch' && !this._pointerIsTouchRegistered(evt)) {
                 // Test, if there was a previous down event of this _getPointerId
                 // (in case it is a touch event).
                 // Otherwise this move event is ignored. This is necessary e.g. for sketchometry.
@@ -2262,9 +2262,9 @@ define([
                         }
                     }
                 } else {
-                    if (this._getPointerInputDevice(evt) == 'touch') {
+                    if (this._getPointerInputDevice(evt) === 'touch') {
                         this._pointerAddBoardTouches(evt);
-                        if (this._board_touches.length == 2) {
+                        if (this._board_touches.length === 2) {
                             evt.touches = this._board_touches;
                             this.gestureChangeListener(evt);
                         }
@@ -2557,7 +2557,7 @@ define([
             // Touch events on empty areas of the board are handled here:
             // 1. case: one finger. If allowed, this triggers pan with one finger
             if (this.mode === this.BOARD_MODE_NONE && this.touchOriginMoveStart(evt)) {
-            } else if (evtTouches.length == 2 &&
+            } else if (evtTouches.length === 2 &&
                         (this.mode === this.BOARD_MODE_NONE ||
                          this.mode === this.BOARD_MODE_MOVE_ORIGIN /*||
                          (this.mode === this.BOARD_MODE_DRAG && this.touches.length == 1) */
@@ -2659,7 +2659,7 @@ define([
                             }
                         }
                     } else {
-                        if (evtTouches.length == 2) {
+                        if (evtTouches.length === 2) {
                             this.gestureChangeListener(evt);
                         }
                         // Move event without dragging an element

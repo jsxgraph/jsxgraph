@@ -42,14 +42,14 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
     "use strict";
 
     JXG.Math.DoubleBits = function() {
-        var hasTypedArrays = false;
+        var hasTypedArrays = false,
+            DOUBLE_VIEW = new Float64Array(1),
+            UINT_VIEW   = new Uint32Array(DOUBLE_VIEW.buffer),
+            doubleBitsLE, toDoubleLE, lowUintLE, highUintLE,
+            doubleBitsBE, toDoubleBE, lowUintBE, highUintBE,
+            doubleBits, toDouble, lowUint, highUint;
 
-        if (typeof Float64Array !== "undefined") {
-            var DOUBLE_VIEW = new Float64Array(1),
-                UINT_VIEW   = new Uint32Array(DOUBLE_VIEW.buffer),
-                doubleBitsLE, toDoubleLE, lowUintLE, highUintLE,
-                doubleBitsBE, toDoubleBE, lowUintBE, highUintBE,
-                doubleBits, toDouble, lowUint, highUint;
+        if (Float64Array !== undefined) {
 
             DOUBLE_VIEW[0] = 1.0;
             hasTypedArrays = true;
@@ -177,7 +177,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
          * @namespace
          */
         MatInterval = function (lo, hi) {
-            if (typeof lo !== 'undefined' && typeof hi !== 'undefined') {
+            if (lo !== undefined && hi !== undefined) {
                 // possible cases:
                 // - Interval(1, 2)
                 // - Interval(Interval(1, 1), Interval(2, 2))     // singletons are required
@@ -191,13 +191,13 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
                 }
                 if (Mat.IntervalArithmetic.isInterval(hi)) {
                     if (!Mat.IntervalArithmetic.isSingleton(hi)) {
-                        throw TypeError('JXG.Math.IntervalArithmetic: interval `hi` must be a singleton');
+                        throw new TypeError('JXG.Math.IntervalArithmetic: interval `hi` must be a singleton');
                     }
                     this.hi = hi.hi;
                 } else {
                     this.hi = hi;
                 }
-            } else if (typeof lo !== 'undefined') {
+            } else if (lo !== undefined) {
                 // possible cases:
                 // - Interval([1, 2])
                 // - Interval([Interval(1, 1), Interval(2, 2)])
@@ -206,11 +206,10 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
                 }
                 // - Interval(1)
                 return new MatInterval(lo, lo);
-            } else {
-                // possible cases:
-                // - Interval()
-                this.lo = this.hi = 0;
             }
+            // possible cases:
+            // - Interval()
+            this.lo = this.hi = 0;
         };
 
     JXG.extend(MatInterval.prototype, {
@@ -234,7 +233,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
         assign: function(lo, hi) {
             if (typeof lo !== 'number' || typeof hi !== 'number') {
-                throw TypeError('JXG.Math.Interval#assign: arguments must be numbers');
+                throw new TypeError('JXG.Math.Interval#assign: arguments must be numbers');
             }
             if (isNaN(lo) || isNaN(hi) || lo > hi) {
                 return this.setEmpty();
@@ -426,16 +425,13 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
                 if (y.lo !== 0) {
                     if (y.hi !== 0) {
                         return this.divZero(x);
-                    } else {
-                        return this.divNegative(x, y.lo);
                     }
-                } else {
-                    if (y.hi !== 0) {
-                        return this.divPositive(x, y.hi);
-                    } else {
-                        return this.EMPTY.clone();
-                    }
+                    return this.divNegative(x, y.lo);
                 }
+                if (y.hi !== 0) {
+                    return this.divPositive(x, y.hi);
+                }
+                return this.EMPTY.clone();
             }
             return this.divNonZero(x, y);
         },
@@ -538,10 +534,9 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             if (x.hi < 0) {
                 // negative / v
                 return new MatInterval(Number.NEGATIVE_INFINITY, this.divHi(x.hi, v));
-            } else {
-                // positive / v
-                return new MatInterval(this.divLo(x.lo, v), Number.POSITIVE_INFINITY);
             }
+            // positive / v
+            return new MatInterval(this.divLo(x.lo, v), Number.POSITIVE_INFINITY);
         },
 
         divNegative: function(x, v) {
@@ -557,10 +552,9 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             if (x.hi < 0) {
                 // negative / v
                 return new MatInterval(this.divLo(x.hi, v), Number.POSITIVE_INFINITY);
-            } else {
-                // positive / v
-                return new MatInterval(Number.NEGATIVE_INFINITY, this.divHi(x.lo, v));
             }
+            // positive / v
+            return new MatInterval(Number.NEGATIVE_INFINITY, this.divHi(x.lo, v));
         },
 
         divZero: function(x) {
@@ -607,23 +601,19 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
                     if (x.hi !== 0) {
                         // [negative, positive]
                         return this.WHOLE;
-                    } else {
-                        // [negative, zero]
-                        return new MatInterval(Number.NEGATIVE_INFINITY, this.divHi(1, x.lo));
                     }
-                } else {
-                    if (x.hi !== 0) {
-                        // [zero, positive]
-                        return new MatInterval(this.divLo(1, x.hi), Number.POSITIVE_INFINITY);
-                    } else {
-                        // [zero, zero]
-                        return this.EMPTY.clone();
-                    }
+                    // [negative, zero]
+                    return new MatInterval(Number.NEGATIVE_INFINITY, this.divHi(1, x.lo));
                 }
-            } else {
-                // [positive, positive]
-                return new MatInterval(this.divLo(1, x.hi), this.divHi(1, x.lo));
+                if (x.hi !== 0) {
+                    // [zero, positive]
+                    return new MatInterval(this.divLo(1, x.hi), Number.POSITIVE_INFINITY);
+                }
+                // [zero, zero]
+                return this.EMPTY.clone();
             }
+            // [positive, positive]
+            return new MatInterval(this.divLo(1, x.hi), this.divHi(1, x.lo));
         },
 
         pow: function(x, power) {
@@ -646,11 +636,11 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
                 if (x.lo === 0 && x.hi === 0) {
                     // 0^0
                     return this.EMPTY.clone();
-                } else {
-                    // x^0
-                    return this.ONE.clone();
                 }
-            } else if (power < 0) {
+                // x^0
+                return this.ONE.clone();
+            }
+            if (power < 0) {
                 // compute [1 / x]^-power if power is negative
                 return this.pow(this.multiplicativeInverse(x), -power);
             }
@@ -667,27 +657,24 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
                     if ((power & 1) === 1) {
                         // odd power
                         return new MatInterval(-yh, -yl);
-                    } else {
-                        // even power
-                        return new MatInterval(yl, yh);
                     }
-                } else if (x.lo < 0) {
+                    // even power
+                    return new MatInterval(yl, yh);
+                }
+                if (x.lo < 0) {
                     // [negative, positive]
                     if ((power & 1) === 1) {
                         return new MatInterval(-this.powLo(-x.lo, power), this.powHi(x.hi, power));
-                    } else {
-                        // even power means that any negative number will be zero (min value = 0)
-                        // and the max value will be the max of x.lo^power, x.hi^power
-                        return new MatInterval(0, this.powHi(Math.max(-x.lo, x.hi), power));
                     }
-                } else {
-                    // [positive, positive]
-                    return new MatInterval(this.powLo(x.lo, power), this.powHi(x.hi, power));
+                    // even power means that any negative number will be zero (min value = 0)
+                    // and the max value will be the max of x.lo^power, x.hi^power
+                    return new MatInterval(0, this.powHi(Math.max(-x.lo, x.hi), power));
                 }
-            } else {
-              console.warn('power is not an integer, you should use nth-root instead, returning an empty interval');
-              return this.EMPTY.clone();
+                // [positive, positive]
+                return new MatInterval(this.powLo(x.lo, power), this.powHi(x.hi, power));
             }
+            console.warn('power is not an integer, you should use nth-root instead, returning an empty interval');
+            return this.EMPTY.clone();
         },
 
         sqrt: function(x) {
@@ -729,7 +716,8 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
                 // n is not odd therefore there's no nth root
                 return this.EMPTY.clone();
-            } else if (x.lo < 0) {
+            }
+            if (x.lo < 0) {
                 // [negative, positive]
                 yp = this.powHi(x.hi, power);
                 // if ((isSafeInteger(n) as boolean) && (n & 1) === 1) {
@@ -739,10 +727,9 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
                     return new MatInterval(yn, yp);
                 }
                 return new MatInterval(0, yp);
-            } else {
-                // [positive, positive]
-                return new MatInterval(this.powLo(x.lo, power), this.powHi(x.hi, power));
             }
+            // [positive, positive]
+            return new MatInterval(this.powLo(x.lo, power), this.powHi(x.hi, power));
         },
 
         /*
@@ -795,13 +782,14 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
                 badY = this.isEmpty(y);
             if (badX && badY) {
                 return this.EMPTY.clone();
-            } else if (badX) {
-                return y.clone();
-            } else if (badY) {
-                return x.clone();
-            } else {
-                return new MatInterval(Math.min(x.lo, y.lo), Math.max(x.hi, y.hi));
             }
+            if (badX) {
+                return y.clone();
+            }
+            if (badY) {
+                return x.clone();
+            }
+            return new MatInterval(Math.min(x.lo, y.lo), Math.max(x.hi, y.hi));
         },
 
         intersection: function(x, y) {
@@ -819,7 +807,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
         union: function(x, y) {
             if (!this.intervalsOverlap(x, y)) {
-                throw Error('Interval#unions do not overlap');
+                throw new Error('Interval#unions do not overlap');
             }
             return new MatInterval(Math.min(x.lo, y.lo), Math.max(x.hi, y.hi));
         },
@@ -831,7 +819,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             if (this.intervalsOverlap(x, y)) {
                 if (x.lo < y.lo && y.hi < x.hi) {
                     // difference creates multiple subsets
-                    throw Error('Interval.difference: difference creates multiple intervals');
+                    throw new Error('Interval.difference: difference creates multiple intervals');
                 }
 
                 // handle corner cases first
@@ -883,13 +871,14 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
                 badY = this.isEmpty(y);
             if (badX && badY) {
                 return this.EMPTY.clone();
-            } else if (badX) {
-                return y.clone();
-            } else if (badY) {
-                return x.clone();
-            } else {
-                return new MatInterval(Math.max(x.lo, y.lo), Math.max(x.hi, y.hi));
             }
+            if (badX) {
+                return y.clone();
+            }
+            if (badY) {
+                return x.clone();
+            }
+            return new MatInterval(Math.max(x.lo, y.lo), Math.max(x.hi, y.hi));
         },
 
         min: function(x, y) {
@@ -897,13 +886,14 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
                 badY = this.isEmpty(y);
             if (badX && badY) {
                 return this.EMPTY.clone();
-            } else if (badX) {
-                return y.clone();
-            } else if (badY) {
-                return x.clone();
-            } else {
-                return new MatInterval(Math.min(x.lo, y.lo), Math.min(x.hi, y.hi));
             }
+            if (badX) {
+                return y.clone();
+            }
+            if (badY) {
+                return x.clone();
+            }
+            return new MatInterval(Math.min(x.lo, y.lo), Math.min(x.hi, y.hi));
         },
 
         /*
@@ -962,7 +952,8 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
                 // when t.hi < pi
                 // [cos(t.lo), cos(t.hi)]
                 return new MatInterval(rlo, rhi);
-            } else if (hi <= pi2.lo) {
+            }
+            if (hi <= pi2.lo) {
                 // when t.hi < 2pi
                 // [-1, max(cos(t.lo), cos(t.hi))]
                 return new MatInterval(-1, Math.max(rlo, rhi));
@@ -1039,11 +1030,11 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             }
             if (x.hi < 0) {
                 return new MatInterval(this.coshLo(x.hi), this.coshHi(x.lo));
-            } else if (x.lo >= 0) {
-                return new MatInterval(this.coshLo(x.lo), this.coshHi(x.hi));
-            } else {
-                return new MatInterval(1, this.coshHi(-x.lo > x.hi ? x.lo : x.hi));
             }
+            if (x.lo >= 0) {
+                return new MatInterval(this.coshLo(x.lo), this.coshHi(x.hi));
+            }
+            return new MatInterval(1, this.coshHi(-x.lo > x.hi ? x.lo : x.hi));
         },
 
         tanh: function(x) {
@@ -1280,9 +1271,8 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             if (x === 0) {
                 if (y < 0) {
                     return -this.SMALLEST_DENORM;
-                } else {
-                    return this.SMALLEST_DENORM;
                 }
+                return this.SMALLEST_DENORM;
             }
             hi = doubleBits.hi(x);
             lo = doubleBits.lo(x);

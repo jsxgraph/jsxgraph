@@ -889,11 +889,10 @@ define(['jxg', 'base/constants', 'base/coords', 'math/math', 'math/extrapolate',
             if (isFound) {
                 pnt.setCoordinates(Const.COORDS_BY_USER, [curve.X(td, true), curve.Y(td, true)], false);
                 return [pnt.scrCoords, td];
-            } else {
-                console.log("TODO _findStartPoint", curve.Y.toString(), tc);
-                pnt.setCoordinates(Const.COORDS_BY_USER, [curve.X(ta, true), curve.Y(ta, true)], false);
-                return [pnt.scrCoords, ta];
             }
+            console.log("TODO _findStartPoint", curve.Y.toString(), tc);
+            pnt.setCoordinates(Const.COORDS_BY_USER, [curve.X(ta, true), curve.Y(ta, true)], false);
+            return [pnt.scrCoords, ta];
         },
 
         /**
@@ -1193,7 +1192,8 @@ define(['jxg', 'base/constants', 'base/coords', 'math/math', 'math/extrapolate',
                 pa = new Coords(Const.COORDS_BY_USER, [0, 0], curve.board, false),
                 pb = new Coords(Const.COORDS_BY_USER, [0, 0], curve.board, false),
                 depth,
-                w2, h2, bbox,
+                w2, // h2,
+                bbox,
                 ret_arr;
 
             // console.log("-----------------------------------------------------------");
@@ -1219,7 +1219,7 @@ define(['jxg', 'base/constants', 'base/coords', 'math/math', 'math/extrapolate',
                 // to the visible area +plus margin
                 bbox = curve.board.getBoundingBox();
                 w2 = (bbox[2] - bbox[0]) * 0.3;
-                h2 = (bbox[1] - bbox[3]) * 0.3;
+                //h2 = (bbox[1] - bbox[3]) * 0.3;
                 ta = Math.max(mi, bbox[0] - w2);
                 tb = Math.min(ma, bbox[2] + w2);
             } else {
@@ -1334,7 +1334,7 @@ define(['jxg', 'base/constants', 'base/coords', 'math/math', 'math/extrapolate',
                 sgnChange = 0;
                 sgn = Math.sign(groups[j][0].v);
                 for (i = 1; i < le1; i++) {
-                    if (Math.sign(groups[j][i].v) != sgn) {
+                    if (Math.sign(groups[j][i].v) !== sgn) {
                         sgnChange++;
                         sgn = Math.sign(groups[j][i].v);
                     }
@@ -1428,7 +1428,6 @@ define(['jxg', 'base/constants', 'base/coords', 'math/math', 'math/extrapolate',
         getPointType: function(curve, pos, t_approx, t_values, x_table, y_table, len) {
             var x_values = x_table[0],
                 y_values = y_table[0],
-                pos2m, pos1m, pos1p,
                 full_len = t_values.length,
                 result = {
                     idx: pos,
@@ -1452,28 +1451,6 @@ define(['jxg', 'base/constants', 'base/coords', 'math/math', 'math/extrapolate',
                 // console.log('Border left', result.t);
                 return result;
             }
-            /*
-            if (pos1m < 0) {
-                result.type = 'borderleft';
-                result.idx = pos;
-                result.t = t_values[pos1m];
-                result.x = x_values[pos1m];
-                result.y = y_values[pos1m];
-
-                // console.log('Border left', result.t);
-                return result;
-            }
-            if (pos2m < 0) {
-                result.type = 'borderleft';
-                result.idx = pos1m;
-                result.t = t_values[pos1m];
-                result.x = x_values[pos1m];
-                result.y = y_values[pos1m];
-
-                // console.log('Border left', result.t);
-                return result;
-            }
-            */
             if (pos > len - 6) {
                 result.type = 'borderright';
                 result.idx = full_len - 1;
@@ -1484,18 +1461,6 @@ define(['jxg', 'base/constants', 'base/coords', 'math/math', 'math/extrapolate',
                 // console.log('Border right', result.t, full_len - 1);
                 return result;
             }
-            /*
-            if (pos1p >= len) {
-                result.type = 'borderright';
-                result.idx = full_len - 1;
-                result.t = t_values[full_len - 1];
-                result.x = x_values[full_len - 1];
-                result.y = y_values[full_len - 1];
-
-                // console.log('Border right', result.t, full_len - 1);
-                return result;
-            }
-            */
 
             return result;
         },
@@ -1630,7 +1595,7 @@ console.log("Polynomial of degree", level);
         },
 
         getCenterOfCriticalInterval: function(group, degree, t_values) {
-            var ma, j, pos, v, le,
+            var ma, j, pos, v,
                 num = 0.0,
                 den = 0.0,
                 h = t_values[1] - t_values[0],
@@ -2031,6 +1996,7 @@ console.log("Polynomial of degree", level);
                 groups, g, start,
                 ret, x_table, y_table,
                 t, t1, t2,
+                good, bad,
                 x_int, y_int,
                 degree_x, degree_y,
                 h  = (tb - ta) / steps,
@@ -2084,7 +2050,8 @@ console.log("Polynomial of degree", level);
                         le = groups[g].idx - 1;
                     }
 
-                    var good=0, bad=0;
+                    good = 0;
+                    bad = 0;
                     // Insert all uncritical points until next critical point
                     for (i = start; i < le - 2; i++) {
                         this._insertPoint_v4(curve, [1, comp.x_values[i], comp.y_values[i]], comp.t_values[i]);
@@ -2166,7 +2133,7 @@ console.log("Polynomial of degree", level);
             curve.points = [];
 
             console.log("--------------------");
-            this.plot_v4(curve, ta, ta + (tb - ta) * 1, this.steps);
+            this.plot_v4(curve, ta, tb, this.steps);
 
             curve.numberPoints = curve.points.length;
             //console.log(curve.numberPoints);

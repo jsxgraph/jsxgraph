@@ -171,7 +171,7 @@ define([
                 return 0;
             }
 
-            leftCoords = new Coords(Const.COORDS_BY_SCREEN, [-this.board.canvasWidth * .1, 0], this.board, false);
+            leftCoords = new Coords(Const.COORDS_BY_SCREEN, [-this.board.canvasWidth * 0.1, 0], this.board, false);
             return leftCoords.usrCoords[1];
         },
 
@@ -1416,10 +1416,9 @@ define([
             cu._transformationSource = obj;
 
             return cu;
-        } else {
-            attr = Type.copyAttributes(attributes, board.options, 'curve');
-            return new JXG.Curve(board, ['x'].concat(parents), attr);
         }
+        attr = Type.copyAttributes(attributes, board.options, 'curve');
+        return new JXG.Curve(board, ['x'].concat(parents), attr);
     };
 
     JXG.registerElement('curve', JXG.createCurve);

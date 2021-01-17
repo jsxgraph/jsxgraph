@@ -660,9 +660,8 @@ define([
                 if (Type.isPoint(el)) {
                     if (!el.draggable()) {
                         return this;
-                    } else {
-                        parents.push(el);
                     }
+                    parents.push(el);
                 }
             }
 

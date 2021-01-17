@@ -621,9 +621,8 @@ define([
                         M -= 1;
                     } else if (i === N - 1) {
                         break;
-                    } else {
-                        i += 1;
                     }
+                    i += 1;
                 }
 
                 M += 1;

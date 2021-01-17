@@ -188,7 +188,7 @@ define([
          * @param {function} callback A function that is run when the board is ready.
          */
         parseFileContent: function (url, board, format, async, encoding, callback) {
-            if (Type.isString(url) || typeof FileReader === "undefined") {
+            if (Type.isString(url) || FileReader === undefined) {
                 this.handleRemoteFile(url, board, format, async, encoding, callback);
             } else {
                 this.handleLocalFile(url, board, format, async, encoding, callback);

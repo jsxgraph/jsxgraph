@@ -178,14 +178,11 @@ define([
 
             if (Type.evaluate(this.visProp.dragarea) === 'all') {
                 return x >= lft - r && x < rt + r && y >= top - r  && y <= bot + r;
-            } else {
-                // e.g. 'small'
-                return (y >= top - r && y <= bot + r) &&
-                    ((x >= lft - r  && x <= lft + 2 * r) ||
-                    (x >= rt - 2 * r && x <= rt + r));
-
             }
-
+            // e.g. 'small'
+            return (y >= top - r && y <= bot + r) &&
+                ((x >= lft - r  && x <= lft + 2 * r) ||
+                (x >= rt - 2 * r && x <= rt + r));
         },
 
         /**
@@ -732,14 +729,13 @@ define([
 
             if (Type.evaluate(this.visProp.islabel) || this.board.unitY === 0 || this.board.unitX === 0) {
                 return [0, 0, 0, 0];
-            } else {
-                return [c[1], c[2] + this.size[1] / this.board.unitY, c[1] + this.size[0] / this.board.unitX, c[2]];
             }
+            return [c[1], c[2] + this.size[1] / this.board.unitY, c[1] + this.size[0] / this.board.unitX, c[2]];
         },
 
         getAnchorX: function() {
             var a = Type.evaluate(this.visProp.anchorx);
-            if (a == 'auto') {
+            if (a === 'auto') {
                 switch (this.visProp.position) {
                     case 'top':
                     case 'bot':
@@ -760,7 +756,7 @@ define([
 
         getAnchorY: function() {
             var a = Type.evaluate(this.visProp.anchory);
-            if (a == 'auto') {
+            if (a === 'auto') {
                 switch (this.visProp.position) {
                     case 'top':
                     case 'ulft':
@@ -803,9 +799,9 @@ define([
 			for (i = 0, le = this.board.objectsList.length; i < le; i++) {
 				obj = this.board.objectsList[i];
 				if (obj.visPropCalc.visible &&
-                    obj.elType != 'axis' &&
-                    obj.elType != 'ticks' &&
-                    obj != this.board.infobox &&
+                    obj.elType !== 'axis' &&
+                    obj.elType !== 'ticks' &&
+                    obj !== this.board.infobox &&
                     obj !== this &&
                     obj.hasPoint(x, y)) {
 
