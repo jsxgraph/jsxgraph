@@ -2529,13 +2529,22 @@ define([
 
             /**
              * Select the version of the plot algorithm.
-             * The latest version number is equal to 3.
+             * <ul>
+             * <li> Version 1 is very outdated
+             * <li> Version 2 is the default version in JSXGraph v0.99.*, v1.0, and v1.1, v1.2.0
+             * <li> Version 3 is an internal version that was never published in  a stable version.
+             * <li> Version 4 is available since JSXGraph v1.2.0
+             * </ul>
+             * Version 4 plots correctly logarithms if the function term is supplied as string (i.e. as JessieCode)
+             *
+             * @example
+             *   var c = board.create('functiongraph', ["log(x)"]);
              *
              * @name Curve#plotVersion
              * @type Number
-             * @default 3
+             * @default 2
              */
-            plotVersion: 4,
+            plotVersion: 2,
 
             /**
              * Attributes for circle label.
@@ -5227,7 +5236,8 @@ define([
             arrow: {
                 strokeWidth: 2,
                 withLabel: false,
-                strokeColor: '#ff0000'
+                strokeColor: '#ff0000',
+                lastArrow: true
             }
             /**#@-*/
         },

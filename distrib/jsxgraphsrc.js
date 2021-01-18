@@ -4825,14 +4825,14 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
     "use strict";
 
     JXG.Math.DoubleBits = function() {
-        var hasTypedArrays = false;
+        var hasTypedArrays = false,
+            DOUBLE_VIEW = new Float64Array(1),
+            UINT_VIEW   = new Uint32Array(DOUBLE_VIEW.buffer),
+            doubleBitsLE, toDoubleLE, lowUintLE, highUintLE,
+            doubleBitsBE, toDoubleBE, lowUintBE, highUintBE,
+            doubleBits, toDouble, lowUint, highUint;
 
-        if (typeof Float64Array !== "undefined") {
-            var DOUBLE_VIEW = new Float64Array(1),
-                UINT_VIEW   = new Uint32Array(DOUBLE_VIEW.buffer),
-                doubleBitsLE, toDoubleLE, lowUintLE, highUintLE,
-                doubleBitsBE, toDoubleBE, lowUintBE, highUintBE,
-                doubleBits, toDouble, lowUint, highUint;
+        if (Float64Array !== undefined) {
 
             DOUBLE_VIEW[0] = 1.0;
             hasTypedArrays = true;
@@ -4960,7 +4960,7 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
          * @namespace
          */
         MatInterval = function (lo, hi) {
-            if (typeof lo !== 'undefined' && typeof hi !== 'undefined') {
+            if (lo !== undefined && hi !== undefined) {
                 // possible cases:
                 // - Interval(1, 2)
                 // - Interval(Interval(1, 1), Interval(2, 2))     // singletons are required
@@ -4974,13 +4974,13 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
                 }
                 if (Mat.IntervalArithmetic.isInterval(hi)) {
                     if (!Mat.IntervalArithmetic.isSingleton(hi)) {
-                        throw TypeError('JXG.Math.IntervalArithmetic: interval `hi` must be a singleton');
+                        throw new TypeError('JXG.Math.IntervalArithmetic: interval `hi` must be a singleton');
                     }
                     this.hi = hi.hi;
                 } else {
                     this.hi = hi;
                 }
-            } else if (typeof lo !== 'undefined') {
+            } else if (lo !== undefined) {
                 // possible cases:
                 // - Interval([1, 2])
                 // - Interval([Interval(1, 1), Interval(2, 2)])
@@ -4989,11 +4989,10 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
                 }
                 // - Interval(1)
                 return new MatInterval(lo, lo);
-            } else {
-                // possible cases:
-                // - Interval()
-                this.lo = this.hi = 0;
             }
+            // possible cases:
+            // - Interval()
+            this.lo = this.hi = 0;
         };
 
     JXG.extend(MatInterval.prototype, {
@@ -5017,7 +5016,7 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
         assign: function(lo, hi) {
             if (typeof lo !== 'number' || typeof hi !== 'number') {
-                throw TypeError('JXG.Math.Interval#assign: arguments must be numbers');
+                throw new TypeError('JXG.Math.Interval#assign: arguments must be numbers');
             }
             if (isNaN(lo) || isNaN(hi) || lo > hi) {
                 return this.setEmpty();
@@ -5209,16 +5208,13 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
                 if (y.lo !== 0) {
                     if (y.hi !== 0) {
                         return this.divZero(x);
-                    } else {
-                        return this.divNegative(x, y.lo);
                     }
-                } else {
-                    if (y.hi !== 0) {
-                        return this.divPositive(x, y.hi);
-                    } else {
-                        return this.EMPTY.clone();
-                    }
+                    return this.divNegative(x, y.lo);
                 }
+                if (y.hi !== 0) {
+                    return this.divPositive(x, y.hi);
+                }
+                return this.EMPTY.clone();
             }
             return this.divNonZero(x, y);
         },
@@ -5321,10 +5317,9 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             if (x.hi < 0) {
                 // negative / v
                 return new MatInterval(Number.NEGATIVE_INFINITY, this.divHi(x.hi, v));
-            } else {
-                // positive / v
-                return new MatInterval(this.divLo(x.lo, v), Number.POSITIVE_INFINITY);
             }
+            // positive / v
+            return new MatInterval(this.divLo(x.lo, v), Number.POSITIVE_INFINITY);
         },
 
         divNegative: function(x, v) {
@@ -5340,10 +5335,9 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             if (x.hi < 0) {
                 // negative / v
                 return new MatInterval(this.divLo(x.hi, v), Number.POSITIVE_INFINITY);
-            } else {
-                // positive / v
-                return new MatInterval(Number.NEGATIVE_INFINITY, this.divHi(x.lo, v));
             }
+            // positive / v
+            return new MatInterval(Number.NEGATIVE_INFINITY, this.divHi(x.lo, v));
         },
 
         divZero: function(x) {
@@ -5390,23 +5384,19 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
                     if (x.hi !== 0) {
                         // [negative, positive]
                         return this.WHOLE;
-                    } else {
-                        // [negative, zero]
-                        return new MatInterval(Number.NEGATIVE_INFINITY, this.divHi(1, x.lo));
                     }
-                } else {
-                    if (x.hi !== 0) {
-                        // [zero, positive]
-                        return new MatInterval(this.divLo(1, x.hi), Number.POSITIVE_INFINITY);
-                    } else {
-                        // [zero, zero]
-                        return this.EMPTY.clone();
-                    }
+                    // [negative, zero]
+                    return new MatInterval(Number.NEGATIVE_INFINITY, this.divHi(1, x.lo));
                 }
-            } else {
-                // [positive, positive]
-                return new MatInterval(this.divLo(1, x.hi), this.divHi(1, x.lo));
+                if (x.hi !== 0) {
+                    // [zero, positive]
+                    return new MatInterval(this.divLo(1, x.hi), Number.POSITIVE_INFINITY);
+                }
+                // [zero, zero]
+                return this.EMPTY.clone();
             }
+            // [positive, positive]
+            return new MatInterval(this.divLo(1, x.hi), this.divHi(1, x.lo));
         },
 
         pow: function(x, power) {
@@ -5429,11 +5419,11 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
                 if (x.lo === 0 && x.hi === 0) {
                     // 0^0
                     return this.EMPTY.clone();
-                } else {
-                    // x^0
-                    return this.ONE.clone();
                 }
-            } else if (power < 0) {
+                // x^0
+                return this.ONE.clone();
+            }
+            if (power < 0) {
                 // compute [1 / x]^-power if power is negative
                 return this.pow(this.multiplicativeInverse(x), -power);
             }
@@ -5450,27 +5440,24 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
                     if ((power & 1) === 1) {
                         // odd power
                         return new MatInterval(-yh, -yl);
-                    } else {
-                        // even power
-                        return new MatInterval(yl, yh);
                     }
-                } else if (x.lo < 0) {
+                    // even power
+                    return new MatInterval(yl, yh);
+                }
+                if (x.lo < 0) {
                     // [negative, positive]
                     if ((power & 1) === 1) {
                         return new MatInterval(-this.powLo(-x.lo, power), this.powHi(x.hi, power));
-                    } else {
-                        // even power means that any negative number will be zero (min value = 0)
-                        // and the max value will be the max of x.lo^power, x.hi^power
-                        return new MatInterval(0, this.powHi(Math.max(-x.lo, x.hi), power));
                     }
-                } else {
-                    // [positive, positive]
-                    return new MatInterval(this.powLo(x.lo, power), this.powHi(x.hi, power));
+                    // even power means that any negative number will be zero (min value = 0)
+                    // and the max value will be the max of x.lo^power, x.hi^power
+                    return new MatInterval(0, this.powHi(Math.max(-x.lo, x.hi), power));
                 }
-            } else {
-              console.warn('power is not an integer, you should use nth-root instead, returning an empty interval');
-              return this.EMPTY.clone();
+                // [positive, positive]
+                return new MatInterval(this.powLo(x.lo, power), this.powHi(x.hi, power));
             }
+            console.warn('power is not an integer, you should use nth-root instead, returning an empty interval');
+            return this.EMPTY.clone();
         },
 
         sqrt: function(x) {
@@ -5512,7 +5499,8 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
                 // n is not odd therefore there's no nth root
                 return this.EMPTY.clone();
-            } else if (x.lo < 0) {
+            }
+            if (x.lo < 0) {
                 // [negative, positive]
                 yp = this.powHi(x.hi, power);
                 // if ((isSafeInteger(n) as boolean) && (n & 1) === 1) {
@@ -5522,10 +5510,9 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
                     return new MatInterval(yn, yp);
                 }
                 return new MatInterval(0, yp);
-            } else {
-                // [positive, positive]
-                return new MatInterval(this.powLo(x.lo, power), this.powHi(x.hi, power));
             }
+            // [positive, positive]
+            return new MatInterval(this.powLo(x.lo, power), this.powHi(x.hi, power));
         },
 
         /*
@@ -5578,13 +5565,14 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
                 badY = this.isEmpty(y);
             if (badX && badY) {
                 return this.EMPTY.clone();
-            } else if (badX) {
-                return y.clone();
-            } else if (badY) {
-                return x.clone();
-            } else {
-                return new MatInterval(Math.min(x.lo, y.lo), Math.max(x.hi, y.hi));
             }
+            if (badX) {
+                return y.clone();
+            }
+            if (badY) {
+                return x.clone();
+            }
+            return new MatInterval(Math.min(x.lo, y.lo), Math.max(x.hi, y.hi));
         },
 
         intersection: function(x, y) {
@@ -5602,7 +5590,7 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
         union: function(x, y) {
             if (!this.intervalsOverlap(x, y)) {
-                throw Error('Interval#unions do not overlap');
+                throw new Error('Interval#unions do not overlap');
             }
             return new MatInterval(Math.min(x.lo, y.lo), Math.max(x.hi, y.hi));
         },
@@ -5614,7 +5602,7 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             if (this.intervalsOverlap(x, y)) {
                 if (x.lo < y.lo && y.hi < x.hi) {
                     // difference creates multiple subsets
-                    throw Error('Interval.difference: difference creates multiple intervals');
+                    throw new Error('Interval.difference: difference creates multiple intervals');
                 }
 
                 // handle corner cases first
@@ -5666,13 +5654,14 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
                 badY = this.isEmpty(y);
             if (badX && badY) {
                 return this.EMPTY.clone();
-            } else if (badX) {
-                return y.clone();
-            } else if (badY) {
-                return x.clone();
-            } else {
-                return new MatInterval(Math.max(x.lo, y.lo), Math.max(x.hi, y.hi));
             }
+            if (badX) {
+                return y.clone();
+            }
+            if (badY) {
+                return x.clone();
+            }
+            return new MatInterval(Math.max(x.lo, y.lo), Math.max(x.hi, y.hi));
         },
 
         min: function(x, y) {
@@ -5680,13 +5669,14 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
                 badY = this.isEmpty(y);
             if (badX && badY) {
                 return this.EMPTY.clone();
-            } else if (badX) {
-                return y.clone();
-            } else if (badY) {
-                return x.clone();
-            } else {
-                return new MatInterval(Math.min(x.lo, y.lo), Math.min(x.hi, y.hi));
             }
+            if (badX) {
+                return y.clone();
+            }
+            if (badY) {
+                return x.clone();
+            }
+            return new MatInterval(Math.min(x.lo, y.lo), Math.min(x.hi, y.hi));
         },
 
         /*
@@ -5745,7 +5735,8 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
                 // when t.hi < pi
                 // [cos(t.lo), cos(t.hi)]
                 return new MatInterval(rlo, rhi);
-            } else if (hi <= pi2.lo) {
+            }
+            if (hi <= pi2.lo) {
                 // when t.hi < 2pi
                 // [-1, max(cos(t.lo), cos(t.hi))]
                 return new MatInterval(-1, Math.max(rlo, rhi));
@@ -5822,11 +5813,11 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             }
             if (x.hi < 0) {
                 return new MatInterval(this.coshLo(x.hi), this.coshHi(x.lo));
-            } else if (x.lo >= 0) {
-                return new MatInterval(this.coshLo(x.lo), this.coshHi(x.hi));
-            } else {
-                return new MatInterval(1, this.coshHi(-x.lo > x.hi ? x.lo : x.hi));
             }
+            if (x.lo >= 0) {
+                return new MatInterval(this.coshLo(x.lo), this.coshHi(x.hi));
+            }
+            return new MatInterval(1, this.coshHi(-x.lo > x.hi ? x.lo : x.hi));
         },
 
         tanh: function(x) {
@@ -6063,9 +6054,8 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             if (x === 0) {
                 if (y < 0) {
                     return -this.SMALLEST_DENORM;
-                } else {
-                    return this.SMALLEST_DENORM;
                 }
+                return this.SMALLEST_DENORM;
             }
             hi = doubleBits.hi(x);
             lo = doubleBits.lo(x);
@@ -6141,7 +6131,7 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
  utils/type
  */
 
-define('math/extrapolate',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
+define('math/extrapolate',['math/math'], function (Mat) {
 
     "use strict";
 
@@ -11485,9 +11475,8 @@ define('math/geometry',[
                         M -= 1;
                     } else if (i === N - 1) {
                         break;
-                    } else {
-                        i += 1;
                     }
+                    i += 1;
                 }
 
                 M += 1;
@@ -14373,11 +14362,10 @@ define('math/plot',['jxg', 'base/constants', 'base/coords', 'math/math', 'math/e
             if (isFound) {
                 pnt.setCoordinates(Const.COORDS_BY_USER, [curve.X(td, true), curve.Y(td, true)], false);
                 return [pnt.scrCoords, td];
-            } else {
-                console.log("TODO _findStartPoint", curve.Y.toString(), tc);
-                pnt.setCoordinates(Const.COORDS_BY_USER, [curve.X(ta, true), curve.Y(ta, true)], false);
-                return [pnt.scrCoords, ta];
             }
+            console.log("TODO _findStartPoint", curve.Y.toString(), tc);
+            pnt.setCoordinates(Const.COORDS_BY_USER, [curve.X(ta, true), curve.Y(ta, true)], false);
+            return [pnt.scrCoords, ta];
         },
 
         /**
@@ -14677,7 +14665,8 @@ define('math/plot',['jxg', 'base/constants', 'base/coords', 'math/math', 'math/e
                 pa = new Coords(Const.COORDS_BY_USER, [0, 0], curve.board, false),
                 pb = new Coords(Const.COORDS_BY_USER, [0, 0], curve.board, false),
                 depth,
-                w2, h2, bbox,
+                w2, // h2,
+                bbox,
                 ret_arr;
 
             // console.log("-----------------------------------------------------------");
@@ -14703,7 +14692,7 @@ define('math/plot',['jxg', 'base/constants', 'base/coords', 'math/math', 'math/e
                 // to the visible area +plus margin
                 bbox = curve.board.getBoundingBox();
                 w2 = (bbox[2] - bbox[0]) * 0.3;
-                h2 = (bbox[1] - bbox[3]) * 0.3;
+                //h2 = (bbox[1] - bbox[3]) * 0.3;
                 ta = Math.max(mi, bbox[0] - w2);
                 tb = Math.min(ma, bbox[2] + w2);
             } else {
@@ -14818,7 +14807,7 @@ define('math/plot',['jxg', 'base/constants', 'base/coords', 'math/math', 'math/e
                 sgnChange = 0;
                 sgn = Math.sign(groups[j][0].v);
                 for (i = 1; i < le1; i++) {
-                    if (Math.sign(groups[j][i].v) != sgn) {
+                    if (Math.sign(groups[j][i].v) !== sgn) {
                         sgnChange++;
                         sgn = Math.sign(groups[j][i].v);
                     }
@@ -14912,7 +14901,6 @@ define('math/plot',['jxg', 'base/constants', 'base/coords', 'math/math', 'math/e
         getPointType: function(curve, pos, t_approx, t_values, x_table, y_table, len) {
             var x_values = x_table[0],
                 y_values = y_table[0],
-                pos2m, pos1m, pos1p,
                 full_len = t_values.length,
                 result = {
                     idx: pos,
@@ -14921,10 +14909,6 @@ define('math/plot',['jxg', 'base/constants', 'base/coords', 'math/math', 'math/e
                     y: y_values[pos],
                     type: 'other'
                 };
-
-            pos2m = pos - 2;
-            pos1m = pos - 1;
-            pos1p = pos + 1;
 
             if (pos < 5) {
                 result.type = 'borderleft';
@@ -14936,28 +14920,6 @@ define('math/plot',['jxg', 'base/constants', 'base/coords', 'math/math', 'math/e
                 // console.log('Border left', result.t);
                 return result;
             }
-            /*
-            if (pos1m < 0) {
-                result.type = 'borderleft';
-                result.idx = pos;
-                result.t = t_values[pos1m];
-                result.x = x_values[pos1m];
-                result.y = y_values[pos1m];
-
-                // console.log('Border left', result.t);
-                return result;
-            }
-            if (pos2m < 0) {
-                result.type = 'borderleft';
-                result.idx = pos1m;
-                result.t = t_values[pos1m];
-                result.x = x_values[pos1m];
-                result.y = y_values[pos1m];
-
-                // console.log('Border left', result.t);
-                return result;
-            }
-            */
             if (pos > len - 6) {
                 result.type = 'borderright';
                 result.idx = full_len - 1;
@@ -14968,18 +14930,6 @@ define('math/plot',['jxg', 'base/constants', 'base/coords', 'math/math', 'math/e
                 // console.log('Border right', result.t, full_len - 1);
                 return result;
             }
-            /*
-            if (pos1p >= len) {
-                result.type = 'borderright';
-                result.idx = full_len - 1;
-                result.t = t_values[full_len - 1];
-                result.x = x_values[full_len - 1];
-                result.y = y_values[full_len - 1];
-
-                // console.log('Border right', result.t, full_len - 1);
-                return result;
-            }
-            */
 
             return result;
         },
@@ -15114,7 +15064,7 @@ console.log("Polynomial of degree", level);
         },
 
         getCenterOfCriticalInterval: function(group, degree, t_values) {
-            var ma, j, pos, v, le,
+            var ma, j, pos, v,
                 num = 0.0,
                 den = 0.0,
                 h = t_values[1] - t_values[0],
@@ -15515,6 +15465,7 @@ console.log("Polynomial of degree", level);
                 groups, g, start,
                 ret, x_table, y_table,
                 t, t1, t2,
+                good, bad,
                 x_int, y_int,
                 degree_x, degree_y,
                 h  = (tb - ta) / steps,
@@ -15568,7 +15519,8 @@ console.log("Polynomial of degree", level);
                         le = groups[g].idx - 1;
                     }
 
-                    var good=0, bad=0;
+                    good = 0;
+                    bad = 0;
                     // Insert all uncritical points until next critical point
                     for (i = start; i < le - 2; i++) {
                         this._insertPoint_v4(curve, [1, comp.x_values[i], comp.y_values[i]], comp.t_values[i]);
@@ -15649,8 +15601,8 @@ console.log("Polynomial of degree", level);
 
             curve.points = [];
 
-            console.log("--------------------");
-            this.plot_v4(curve, ta, ta + (tb - ta) * 1, this.steps);
+            //console.log("--------------------");
+            this.plot_v4(curve, ta, tb, this.steps);
 
             curve.numberPoints = curve.points.length;
             //console.log(curve.numberPoints);
@@ -18620,7 +18572,7 @@ define('math/clip',[
 
         _print_list: function(P) {
             var cnt = 0, alpha;
-            while (true && cnt < 100) {
+            while (cnt < 100) {
                 if (P.data) {
                     alpha = P.data.alpha;
                 } else {
@@ -19234,7 +19186,8 @@ define('math/clip',[
 
             if (clip_type === 'intersection' && (S.length === 0 || C.length === 0)) {
                 return true; //[pathX, pathY];
-            } else if (clip_type === 'union' && (S.length === 0 || C.length === 0)) {
+            }
+            if (clip_type === 'union' && (S.length === 0 || C.length === 0)) {
                 // if (S.length === 0) {
                 //     for (i = 0; i < C.length; ++i) {
                 //         pathX.push(C[i].coords.usrCoords[1]);
@@ -19255,7 +19208,8 @@ define('math/clip',[
                 //     }
                 // }
                 return true; //[pathX, pathY];
-            } if (clip_type === 'difference' && (S.length === 0 || C.length === 0)) {
+            }
+            if (clip_type === 'difference' && (S.length === 0 || C.length === 0)) {
                 // if (C.length === 0) {
                 //     for (i = 0; i < S.length; ++i) {
                 //         pathX.push(S[i].coords.usrCoords[1]);
@@ -21526,10 +21480,9 @@ define('utils/color',['jxg', 'utils/type', 'math/math'], function (JXG, Type, Ma
         // If contrast is more than threshold, return darkColor
         if (contrastRatio > threshold) {
             return darkColor;
-        } else {
-            // if not, return lightColor.
-            return lightColor;
         }
+        // if not, return lightColor.
+        return lightColor;
     };
 
     return JXG;
@@ -26764,7 +26717,8 @@ define('options',[
             arrow: {
                 strokeWidth: 2,
                 withLabel: false,
-                strokeColor: '#ff0000'
+                strokeColor: '#ff0000',
+                lastArrow: true
             }
             /**#@-*/
         },
@@ -29295,7 +29249,7 @@ define('reader/file',[
          * @param {function} callback A function that is run when the board is ready.
          */
         parseFileContent: function (url, board, format, async, encoding, callback) {
-            if (Type.isString(url) || typeof FileReader === "undefined") {
+            if (Type.isString(url) || FileReader === undefined) {
                 this.handleRemoteFile(url, board, format, async, encoding, callback);
             } else {
                 this.handleLocalFile(url, board, format, async, encoding, callback);
@@ -30566,9 +30520,8 @@ define('base/element',[
                 if (Type.isPoint(el)) {
                     if (!el.draggable()) {
                         return this;
-                    } else {
-                        parents.push(el);
                     }
+                    parents.push(el);
                 }
             }
 
@@ -33755,7 +33708,7 @@ define('base/coordselement',[
                     if (ev_is2p) {
                         ignore = false;
                         for (j = 0; j < len2; j++) {
-                            if (pEl == this.board.select(ev_is2p[j])) {
+                            if (pEl === this.board.select(ev_is2p[j])) {
                                 ignore = true;
                                 break;
                             }
@@ -33858,12 +33811,10 @@ define('base/coordselement',[
                         if (!(this.type === Const.OBJECT_TYPE_GLIDER && this.slideObject === el)) {
                             this.makeGlider(el);
                         }
-
                         break;       // bind the point to the first attractor in its list.
-                    } else {
-                        if (el === this.slideObject && d >= ev_sd) {
-                            this.popSlideObject();
-                        }
+                    }
+                    if (el === this.slideObject && d >= ev_sd) {
+                        this.popSlideObject();
                     }
                 }
             }
@@ -35004,14 +34955,11 @@ define('base/text',[
 
             if (Type.evaluate(this.visProp.dragarea) === 'all') {
                 return x >= lft - r && x < rt + r && y >= top - r  && y <= bot + r;
-            } else {
-                // e.g. 'small'
-                return (y >= top - r && y <= bot + r) &&
-                    ((x >= lft - r  && x <= lft + 2 * r) ||
-                    (x >= rt - 2 * r && x <= rt + r));
-
             }
-
+            // e.g. 'small'
+            return (y >= top - r && y <= bot + r) &&
+                ((x >= lft - r  && x <= lft + 2 * r) ||
+                (x >= rt - 2 * r && x <= rt + r));
         },
 
         /**
@@ -35558,14 +35506,13 @@ define('base/text',[
 
             if (Type.evaluate(this.visProp.islabel) || this.board.unitY === 0 || this.board.unitX === 0) {
                 return [0, 0, 0, 0];
-            } else {
-                return [c[1], c[2] + this.size[1] / this.board.unitY, c[1] + this.size[0] / this.board.unitX, c[2]];
             }
+            return [c[1], c[2] + this.size[1] / this.board.unitY, c[1] + this.size[0] / this.board.unitX, c[2]];
         },
 
         getAnchorX: function() {
             var a = Type.evaluate(this.visProp.anchorx);
-            if (a == 'auto') {
+            if (a === 'auto') {
                 switch (this.visProp.position) {
                     case 'top':
                     case 'bot':
@@ -35586,7 +35533,7 @@ define('base/text',[
 
         getAnchorY: function() {
             var a = Type.evaluate(this.visProp.anchory);
-            if (a == 'auto') {
+            if (a === 'auto') {
                 switch (this.visProp.position) {
                     case 'top':
                     case 'ulft':
@@ -35629,9 +35576,9 @@ define('base/text',[
 			for (i = 0, le = this.board.objectsList.length; i < le; i++) {
 				obj = this.board.objectsList[i];
 				if (obj.visPropCalc.visible &&
-                    obj.elType != 'axis' &&
-                    obj.elType != 'ticks' &&
-                    obj != this.board.infobox &&
+                    obj.elType !== 'axis' &&
+                    obj.elType !== 'ticks' &&
+                    obj !== this.board.infobox &&
                     obj !== this &&
                     obj.hasPoint(x, y)) {
 
@@ -36511,8 +36458,12 @@ define('parser/jessiecode',[
                 if (Type.isNumber(r)) {
                     return r;
                 }
-                vname = r.split('.').pop();
+                // Search a JSXGraph object in board
+                if (r.match(/board\.select/)) {
+                    return r;
+                }
 
+                vname = r.split('.').pop();
                 if (Type.exists(this.board.mathLib)) {
                     // Handle builtin case: ln(x) -> Math.log
                     re = new RegExp('^Math\.' + vname);
@@ -36566,8 +36517,6 @@ define('parser/jessiecode',[
 
                 return r;
             }
-
-
 
             return '';
         },
@@ -41982,7 +41931,7 @@ define('base/curve',[
                 return 0;
             }
 
-            leftCoords = new Coords(Const.COORDS_BY_SCREEN, [-this.board.canvasWidth * .1, 0], this.board, false);
+            leftCoords = new Coords(Const.COORDS_BY_SCREEN, [-this.board.canvasWidth * 0.1, 0], this.board, false);
             return leftCoords.usrCoords[1];
         },
 
@@ -42548,7 +42497,7 @@ define('base/curve',[
             // continuous x data
             } else {
                 if (Type.evaluate(this.visProp.doadvancedplot)) {
-                    console.time("plot");
+                    // console.time("plot");
 
                     if (version === 1 || Type.evaluate(this.visProp.doadvancedplotold)) {
                         Plot.updateParametricCurveOld(this, mi, ma);
@@ -42559,7 +42508,7 @@ define('base/curve',[
                     } else {
                         Plot.updateParametricCurve(this, mi, ma);
                     }
-                    console.timeEnd("plot");
+                    // console.timeEnd("plot");
                 } else {
                     if (this.board.updateQuality === this.board.BOARD_QUALITY_HIGH) {
                         this.numberPoints = Type.evaluate(this.visProp.numberpointshigh);
@@ -43227,10 +43176,9 @@ define('base/curve',[
             cu._transformationSource = obj;
 
             return cu;
-        } else {
-            attr = Type.copyAttributes(attributes, board.options, 'curve');
-            return new JXG.Curve(board, ['x'].concat(parents), attr);
         }
+        attr = Type.copyAttributes(attributes, board.options, 'curve');
+        return new JXG.Curve(board, ['x'].concat(parents), attr);
     };
 
     JXG.registerElement('curve', JXG.createCurve);
@@ -50611,7 +50559,7 @@ define('base/board',[
         // this.document = attributes.document || document;
         if (Type.exists(attributes.document) && attributes.document !== false) {
             this.document = attributes.document;
-        } else if (typeof document !== 'undefined' && Type.isObject(document)) {
+        } else if (document !== undefined && Type.isObject(document)) {
             this.document = document;
         }
 
@@ -51648,7 +51596,7 @@ define('base/board',[
                 S[1] /= S[0];
                 S[2] /= S[0];
 
-                if (Type.exists(evt.rotation) && evt.type != 'pointermove') {
+                if (Type.exists(evt.rotation) && evt.type !== 'pointermove') {
                     // iOS touch events contain the angle for free
                     alpha = evt.rotation - this.previousRotation;
                     this.previousRotation = evt.rotation;
@@ -51909,7 +51857,7 @@ define('base/board',[
 
             r = this.attr.pan.enabled &&
                 !this.attr.pan.needtwofingers &&
-                touches.length == 1;
+                touches.length === 1;
 
             if (r) {
                 pos = this.getMousePosition(evt, 0);
@@ -52636,7 +52584,7 @@ define('base/board',[
          */
         pointerOutListener: function (evt) {
             if (evt.target === this.containerObj ||
-                (this.renderer.type == 'svg' && evt.target === this.renderer.foreignObjLayer)) {
+                (this.renderer.type === 'svg' && evt.target === this.renderer.foreignObjLayer)) {
                 this.pointerUpListener(evt);
             }
             return this.mode === this.BOARD_MODE_NONE;
@@ -52651,7 +52599,7 @@ define('base/board',[
             var i, j, pos,
                 type = 'mouse'; // in case of no browser
 
-            if (this._getPointerInputDevice(evt) == 'touch' && !this._pointerIsTouchRegistered(evt)) {
+            if (this._getPointerInputDevice(evt) === 'touch' && !this._pointerIsTouchRegistered(evt)) {
                 // Test, if there was a previous down event of this _getPointerId
                 // (in case it is a touch event).
                 // Otherwise this move event is ignored. This is necessary e.g. for sketchometry.
@@ -52722,9 +52670,9 @@ define('base/board',[
                         }
                     }
                 } else {
-                    if (this._getPointerInputDevice(evt) == 'touch') {
+                    if (this._getPointerInputDevice(evt) === 'touch') {
                         this._pointerAddBoardTouches(evt);
-                        if (this._board_touches.length == 2) {
+                        if (this._board_touches.length === 2) {
                             evt.touches = this._board_touches;
                             this.gestureChangeListener(evt);
                         }
@@ -53017,7 +52965,7 @@ define('base/board',[
             // Touch events on empty areas of the board are handled here:
             // 1. case: one finger. If allowed, this triggers pan with one finger
             if (this.mode === this.BOARD_MODE_NONE && this.touchOriginMoveStart(evt)) {
-            } else if (evtTouches.length == 2 &&
+            } else if (evtTouches.length === 2 &&
                         (this.mode === this.BOARD_MODE_NONE ||
                          this.mode === this.BOARD_MODE_MOVE_ORIGIN /*||
                          (this.mode === this.BOARD_MODE_DRAG && this.touches.length == 1) */
@@ -53119,7 +53067,7 @@ define('base/board',[
                             }
                         }
                     } else {
-                        if (evtTouches.length == 2) {
+                        if (evtTouches.length === 2) {
                             this.gestureChangeListener(evt);
                         }
                         // Move event without dragging an element
@@ -65776,21 +65724,20 @@ define('base/ticks',[
                     ], this.board);
                 }
                 return this.line.point1.coords;
-            } else {
-                mi = this.line.minX();
-                ma = this.line.maxX();
-                if (ev_a === 'right') {
-                    t = ma;
-                } else if (ev_a === 'middle') {
-                    t = (mi + ma) * 0.5;
-                } else if (Type.isNumber(ev_a)) {
-                    t = mi * (1 - ev_a) + ma * ev_a;
-                    // t = ev_a;
-                } else {
-                    t = mi;
-                }
-                return t;
             }
+            mi = this.line.minX();
+            ma = this.line.maxX();
+            if (ev_a === 'right') {
+                t = ma;
+            } else if (ev_a === 'middle') {
+                t = (mi + ma) * 0.5;
+            } else if (Type.isNumber(ev_a)) {
+                t = mi * (1 - ev_a) + ma * ev_a;
+                // t = ev_a;
+            } else {
+                t = mi;
+            }
+            return t;
         },
 
         /**

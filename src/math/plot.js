@@ -1437,10 +1437,6 @@ define(['jxg', 'base/constants', 'base/coords', 'math/math', 'math/extrapolate',
                     type: 'other'
                 };
 
-            pos2m = pos - 2;
-            pos1m = pos - 1;
-            pos1p = pos + 1;
-
             if (pos < 5) {
                 result.type = 'borderleft';
                 result.idx = 0;
@@ -2132,7 +2128,7 @@ console.log("Polynomial of degree", level);
 
             curve.points = [];
 
-            console.log("--------------------");
+            //console.log("--------------------");
             this.plot_v4(curve, ta, tb, this.steps);
 
             curve.numberPoints = curve.points.length;

@@ -510,8 +510,12 @@ define([
                 if (Type.isNumber(r)) {
                     return r;
                 }
-                vname = r.split('.').pop();
+                // Search a JSXGraph object in board
+                if (r.match(/board\.select/)) {
+                    return r;
+                }
 
+                vname = r.split('.').pop();
                 if (Type.exists(this.board.mathLib)) {
                     // Handle builtin case: ln(x) -> Math.log
                     re = new RegExp('^Math\.' + vname);
@@ -565,8 +569,6 @@ define([
 
                 return r;
             }
-
-
 
             return '';
         },
