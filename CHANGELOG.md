@@ -4,9 +4,6 @@
 New Features
 ------------
 
-* Chandrupatla's root finding algorithm
-* New curve type: metapost
-* New element: metapostspline
 * New board attributes:
     - title
     - description
@@ -15,36 +12,39 @@ New Features
     - maxFrameRate
 * New arrow heads
 * Ticks and hatches for curves
+* New curve type: metapost
+* New element: metapostspline
 * New math function: ratpow(base, m, n)
+* Chandrupatla's root finding algorithm
 * Interval arithmetics
-* New attribute:`precision` for elements
+* New attribute: `precision` for elements for method `hasPoint`
+* New color function `JXG.contrast`
 
 Improvements
 ------------
 
-* Root finding algorithm: bracketing
-* Docs
+* Experimental new curve plotting algorithm
+* Root finding algorithm: improved bracketing
+* API docs
 * ARIA attributes
-* Enable centripetal cardinal splines
 * Simulate touch event property evt.scale for pointer events
 * Enable setAttribute for attribute `layer`
+* Enable centripetal cardinal splines
 * JXG.Math.Clip: allow coordinate arrays as input
-* JXG.Math.Clip: improve stability
+* JXG.Math.Clip: improve stability and supported cases
 * Scientific notation for ticks labels
 * Allow floating point numbers for attributes `strokeWidth` and `size`
 * Add methods for sequence acceleration (math/extrapolate.js)
-* Experimental new curve plotting algorithm
-* Add docs examples
-
+* New helper functions in JXG.type
 
 Bug fixes
 ---------
 
+* Inequality element
 * Polygon intersection
 * Axis ticks, arrow heads
 * Projective transformations of curves
 * `alwaysIntersect` attribute for line intersections
-* Inequality element
 * Sliders with visible:false
 * Links in API docs
 * generateGaussian
