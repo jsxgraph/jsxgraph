@@ -1526,12 +1526,12 @@ define([
      *
      */
     JXG.createSpline = function (board, parents, attributes) {
-        var el, f;
+        var el, funcs, ret;
 
-        f = function () {
+        funcs = function () {
             var D, x = [], y = [];
 
-            return function (t, suspended) {
+            return [function (t, suspended) {   // Function term
                 var i, j, c;
 
                 if (!suspended) {
@@ -1585,13 +1585,24 @@ define([
                     // changes. Otherwise D is always the same for all points on the spline.
                     D = Numerics.splineDef(x, y);
                 }
+
                 return Numerics.splineEval(t, x, y, D);
-            };
+            },
+            // minX()
+            function() {
+                return x[0];
+            },
+            //maxX()
+            function() {
+                return x[x.length -1];
+            }];
+
         };
 
         attributes = Type.copyAttributes(attributes, board.options, 'curve');
         attributes.curvetype = 'functiongraph';
-        el = new JXG.Curve(board, ['x', 'x', f()], attributes);
+        ret = funcs();
+        el = new JXG.Curve(board, ['x', 'x', ret[0], ret[1], ret[2]], attributes);
         el.setParents(parents);
         el.elType = 'spline';
 
