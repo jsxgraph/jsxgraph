@@ -1978,7 +1978,7 @@ console.log("Polynomial of degree", level);
         /**
          * Number of equidistant points where the function is evaluated
          */
-        steps: 1024,
+        steps: 1021,
 
         /**
          * If the absolute maximum of the set of differences is larger than
