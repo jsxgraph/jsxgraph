@@ -1,3 +1,15 @@
+1.2.1
+====
+
+Bug fixes
+---------
+
+* board attribute `maxFrameRate`
+* Fix regression in interval arithemetics
+* Plot version 4: take prime number as number of steps
+* Fix disappearing glider on natural spline
+
+
 1.2.0
 ====
 
