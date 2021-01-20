@@ -206,10 +206,11 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
                 }
                 // - Interval(1)
                 return new MatInterval(lo, lo);
+            } else { // This else is necessary even if jslint declares it as redundant
+                // possible cases:
+                // - Interval()
+                this.lo = this.hi = 0;
             }
-            // possible cases:
-            // - Interval()
-            this.lo = this.hi = 0;
         };
 
     JXG.extend(MatInterval.prototype, {
