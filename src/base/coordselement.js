@@ -1628,7 +1628,8 @@ define([
         /**
          * Starts an animated point movement towards the given coordinates <tt>where</tt>.
          * The animation is done after <tt>time</tt> milliseconds.
-         * If the second parameter is not given or is equal to 0, setPosition() is called, see #setPosition.
+         * If the second parameter is not given or is equal to 0, setPosition() is called, see #setPosition,
+         * i.e. the coordinates are changed without animation.
          * @param {Array} where Array containing the x and y coordinate of the target location.
          * @param {Number} [time] Number of milliseconds the animation should last.
          * @param {Object} [options] Optional settings for the animation
