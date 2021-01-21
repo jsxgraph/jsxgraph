@@ -754,7 +754,6 @@ define([
 
                 return false;
             }
-            // console.log(time - this.touchMoveLast, this.attr.maxframerate);
 
             this.touchMoveLast = time;
             return true;
@@ -2198,7 +2197,7 @@ define([
                 return this.BOARD_MODE_NONE;
             }
 
-            if (this.checkFrameRate(evt)) {
+            if (!this.checkFrameRate(evt)) {
                 return false;
             }
 
@@ -2587,7 +2586,7 @@ define([
             var i, pos1, pos2, time,
                 evtTouches = evt[JXG.touchProperty];
 
-            if (this.checkFrameRate(evt)) {
+            if (!this.checkFrameRate(evt)) {
                 return false;
             }
 
@@ -2901,7 +2900,7 @@ define([
         mouseMoveListener: function (evt) {
             var pos;
 
-            if (this.checkFrameRate(evt)) {
+            if (!this.checkFrameRate(evt)) {
                 return false;
             }
 

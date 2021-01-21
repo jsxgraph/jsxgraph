@@ -1387,6 +1387,53 @@ define([
             * Format tick labels that were going to have scientific notation
             * like 5.00e+6 to look like 5•10⁶.
             *
+            * @example
+            * var board = JXG.JSXGraph.initBoard("jxgbox", {
+            *     boundingbox: [-500000, 500000, 500000, -500000],
+            *     axis: true,
+            *     defaultAxes: {
+            *         x: {
+            *             scalable: true,
+            *             ticks: {
+            *                 beautifulScientificTickLabels: true
+            *           },
+            *         },
+            *         y: {
+            *             scalable: true,
+            *             ticks: {
+            *                 beautifulScientificTickLabels: true
+            *           },
+            *         }
+            *     },
+            * });
+            *
+            * </pre><div id="JXGc1e46cd1-e025-4002-80aa-b450869fdaa2" class="jxgbox" style="width: 300px; height: 300px;"></div>
+            * <script type="text/javascript">
+            *     (function() {
+            *     var board = JXG.JSXGraph.initBoard('JXGc1e46cd1-e025-4002-80aa-b450869fdaa2', {
+            *         boundingbox: [-500000, 500000, 500000, -500000],
+            *         showcopyright: false, shownavigation: false
+            *         axis: true,
+            *         defaultAxes: {
+            *             x: {
+            *                 scalable: true,
+            *                 ticks: {
+            *                     beautifulScientificTickLabels: true
+            *               },
+            *             },
+            *             y: {
+            *                 scalable: true,
+            *                 ticks: {
+            *                     beautifulScientificTickLabels: true
+            *               },
+            *             }
+            *         },
+            *     });
+            * 
+            *     })();
+            * 
+            * </script><pre>
+            *
             * @name Ticks#beautifulScientificTickLabels
             * @type Boolean
             * @default false
