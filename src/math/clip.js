@@ -113,7 +113,8 @@ define([
          * Volume 20, Issue 3, November 2001, Pages 131-144.
          *
          * @param  {Array} usrCoords Homogenous coordinates of the point
-         * @param  {Array} path      Array of JXG.Coords determining a path, i.e. the vertices of the polygon.
+         * @param  {Array} path      Array of points determining a path, i.e. the vertices of the polygon. The array elements
+         * do not have to be full points, but have to have a subobject "coords".
          * @return {Number}          Winding number of the point. The point is
          *                           regarded outside if the winding number is zero,
          *                           inside otherwise.
