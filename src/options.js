@@ -2601,7 +2601,25 @@ define([
              */
             label: {
                 position: 'lft'
-            }
+            },
+
+            /**
+             * Curve has an arrow head at the start position.
+             *
+             * @name Line#firstArrow for options
+             * @type Boolean / Object
+             * @default false
+             */
+            firstArrow: false,
+
+            /**
+             * Curve has an arrow head at the end position.
+             *
+             * @see Line#lastArrow for options
+             * @type Boolean / Object
+             * @default false
+             */
+            lastArrow: false
 
             /**#@-*/
         },
