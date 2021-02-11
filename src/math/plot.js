@@ -828,7 +828,10 @@ define(['jxg', 'base/constants', 'base/coords', 'math/math', 'math/extrapolate',
                 fnX1, fnX2, fnY1, fnY2,
                 bbox = curve.board.getBoundingBox();
 
-            if (!this._isOutsidePoint(a, curve.board)) {
+            // The code below is too unstable.
+            // E.g. [function(t) { return Math.pow(t, 2) * (t + 5) * Math.pow(t - 5, 2); }, -8, 8]
+            // Therefore, we return here.
+            if (true || !this._isOutsidePoint(a, curve.board)) {
                 return [a, ta];
             }
 
