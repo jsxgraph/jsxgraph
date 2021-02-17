@@ -4950,8 +4950,6 @@ define([
              * {
              *   fontSize: 24, useMathJax: true
              * });
-             * ze: 24, useMathJax: true
-             * });
              *
              * </pre>
              * <script>
@@ -5006,9 +5004,6 @@ define([
              *     {
              *       fontSize: 24, useMathJax: true
              *     });
-             *     ze: 24, useMathJax: true
-             *     });
-             *
              *     })();
              *
              * </script><pre>
