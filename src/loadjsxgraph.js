@@ -141,58 +141,177 @@ var JXG = {},
         return typeof window === 'object' && window.clientInformation && window.clientInformation.appVersion && window.clientInformation.appVersion.indexOf('MSAppHost') > -1;
     };
 
-    JXG.require = function (libraryName) {
-        if (JXG.isMetroApp()) { // avoid inline code manipulation in Windows apps -- isMetroApp can't be used it is not yet available at this point
-            var scriptElement = document.createElement('script');
-            var typeAttribute = document.createAttribute('type');
-            typeAttribute.nodeValue = 'text/javascript';
-            var srcAttribute = document.createAttribute('src');
-            srcAttribute.nodeValue = libraryName;
-            scriptElement.setAttributeNode(typeAttribute);
-            scriptElement.setAttributeNode(srcAttribute);
-            var headElement = document.getElementsByTagName('head')[0];
-            headElement.appendChild(scriptElement);
-        } else {
-            document.write('<script type="text/javascript" src="' + libraryName + '"><\/script>');
-        }
-    };
+    ////////////////////////////////////////////////////////////////////////////////
+    /////////////////////// this exists also in sketchometry ///////////////////////
+    ////////////////////////////////////////////////////////////////////////////////
 
-    JXG.loadJSfiles = function (fileArray, rootFile, preventCaching) {
-        var i, s, scripts, requirePath = '', reg, postfix = '';
+    JXG.Load = (function () {
+        function createHTMLElement(tagName, attr) {
+            var el = document.createElement(tagName), i,
+                a_name, a_value, a_object;
 
-        preventCaching = preventCaching || false;
+            for (i = 0; i < Object.keys(attr).length; i++) {
+                a_name = Object.keys(attr)[i];
+                a_value = attr[a_name];
 
-        if (preventCaching) {
-            postfix = '?v=' + (new Date()).getTime();
-        }
-
-        scripts = document.getElementsByTagName('script');
-        reg = new RegExp(rootFile + '(\\?.*)?$');
-
-        for (i = 0; i < scripts.length; i++) {
-            s = scripts[i];
-            if (s.src && s.src.match(reg)) {
-                requirePath = s.src.replace(reg, '');
-                if (rootFile === 'loadjsxgraph.js') {
-                    // we are in JSXGraph
-                    JXG.requirePath = requirePath;
-                }
-                break;
+                a_object = document.createAttribute(a_name);
+                a_object.nodeValue = a_value;
+                el.setAttributeNode(a_object);
             }
-        }
-        for (i = 0; i < fileArray.length; i++) {
-            (function (include) {
-                JXG.require(requirePath + include + '.js' + postfix);
-            }(fileArray[i]));
-        }
-    };
 
-    JXG.requirePath = '';
+            return el;
+        }
+
+        var allowDocumentWrite = true;
+
+        window.onload = function () {
+            allowDocumentWrite = false;
+        };
+
+        var requirePathLocation = 'href';
+
+        return {
+            requirePath: window.location.href,
+
+            setRequirePathToScriptFile: function (filename) {
+                var scripts, reg, i, s, requirePath = '';
+
+                if (requirePathLocation === filename) {
+                    return;
+                }
+
+                scripts = document.getElementsByTagName('script');
+                reg = new RegExp(filename + '(\\?.*)?$');
+
+                for (i = 0; i < scripts.length; i++) {
+                    s = scripts[i];
+                    if (s.src && s.src.match(reg)) {
+                        requirePath = s.src.replace(reg, '');
+                        JXG.Load.requirePath = requirePath;
+                        requirePathLocation = filename;
+                        break;
+                    }
+                }
+            },
+
+            setRequirePathToHref: function () {
+                JXG.Load.requirePath = window.location.href;
+                requirePathLocation = 'href';
+            },
+
+            JSfiles: function (fileArray, preventCaching, root) {
+                var postfix = '', i, file;
+
+                preventCaching = preventCaching || false;
+                if (preventCaching) {
+                    postfix = '?v=' + (new Date()).getTime();
+                }
+                root = root || JXG.Load.requirePath;
+                if (root.substr(-1) !== '/') {
+                    root += '/';
+                }
+
+                for (i = 0; i < fileArray.length; i++) {
+                    file = fileArray[i];
+
+                    if (file.substr(-2) !== 'js') {
+                        file += '.js';
+                    }
+                    (function (include) {
+                        var src = root + include + postfix,
+                            el, head;
+                        if (JXG.isMetroApp() || !allowDocumentWrite) {
+                            el = createHTMLElement('script', {
+                                type: 'text/javascript',
+                                src: src,
+                            });
+                            head = document.getElementsByTagName('head')[0];
+                            head.appendChild(el);
+                        } else {
+                            // avoid inline code manipulation
+                            document.write('<script type="text/javascript" src="' + src + '"><\/script>');
+                        }
+                    }(file));
+                }
+            },
+
+            CSSfiles: function (fileArray, preventCaching, root) {
+                var postfix = '', i, file;
+
+                preventCaching = preventCaching || false;
+                if (preventCaching) {
+                    postfix = '?v=' + (new Date()).getTime();
+                }
+                root = root || JXG.Load.requirePath;
+                if (root.substr(-1) !== '/') {
+                    root += '/';
+                }
+
+                for (i = 0; i < fileArray.length; i++) {
+                    file = fileArray[i];
+
+                    if (file.substr(-3) !== 'css') {
+                        file += '.css';
+                    }
+                    (function (include) {
+                        var href = root + include + postfix,
+                            el = createHTMLElement('link', {
+                                rel: 'stylesheet',
+                                type: 'text/javascript',
+                                href: href,
+                            }),
+                            head = document.getElementsByTagName('head')[0];
+                        head.appendChild(el);
+                    }(file));
+                }
+            },
+
+            HTMLfileASYNC: function (file, innerHTMLof, doAfter, preventCaching, root) {
+                var postfix = '';
+
+                doAfter = doAfter || function () {};
+                preventCaching = preventCaching || false;
+                if (preventCaching) {
+                    postfix = '?v=' + (new Date()).getTime();
+                }
+                root = root || JXG.Load.requirePath;
+                if (root.substr(-1) !== '/') {
+                    root += '/';
+                }
+
+                if (file.substr(-4) !== 'html') {
+                    file += '.html';
+                }
+                (function (include) {
+                    var url = root + include + postfix;
+
+                    var xhr = new XMLHttpRequest();
+                    xhr.onreadystatechange = function () {
+                        if (xhr.readyState === 4) {
+                            if (xhr.status === 200) {
+                                innerHTMLof.innerHTML = xhr.responseText;
+                                doAfter();
+                            }
+                        }
+                    };
+
+                    xhr.open('POST', url, true);
+                    xhr.send();
+                }(file));
+            },
+        };
+    })();
+
+    ////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////// end //////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////
+
     // Has to be a String for Makefile!
-    JXG.baseFiles = 'jxg,base/constants,utils/type,utils/xml,utils/env,utils/event,utils/expect,math/math,math/ia,math/extrapolate,math/numerics,math/plot,math/metapost,math/statistics,math/symbolic,math/geometry,math/clip,math/poly,math/complex,renderer/abstract,renderer/no,reader/file,parser/geonext,base/board,options,jsxgraph,base/element,base/coordselement,base/coords,base/point,base/line,base/group,base/circle,element/conic,base/polygon,base/curve,element/arc,element/sector,base/composition,element/composition,base/text,base/image,element/slider,element/measure,base/chart,base/transformation,base/turtle,utils/color,base/ticks,utils/zip,utils/base64,utils/uuid,utils/encoding,server/server,element/locus,parser/datasource,parser/ca,parser/jessiecode,utils/dump,renderer/svg,renderer/vml,renderer/canvas,renderer/no,element/comb,element/slopetriangle,math/qdt,element/checkbox,element/input,element/button';
-    JXG.loadJSfiles(JXG.baseFiles.split(','), 'loadjsxgraph.js', preventCachingFiles);
-    JXG.baseFiles = null;
-    JXG.serverBase = JXG.requirePath + 'server/';
+    JXG.Load.baseFiles = 'jxg,base/constants,utils/type,utils/xml,utils/env,utils/event,utils/expect,math/math,math/ia,math/extrapolate,math/numerics,math/plot,math/metapost,math/statistics,math/symbolic,math/geometry,math/clip,math/poly,math/complex,renderer/abstract,renderer/no,reader/file,parser/geonext,base/board,options,jsxgraph,base/element,base/coordselement,base/coords,base/point,base/line,base/group,base/circle,element/conic,base/polygon,base/curve,element/arc,element/sector,base/composition,element/composition,base/text,base/image,element/slider,element/measure,base/chart,base/transformation,base/turtle,utils/color,base/ticks,utils/zip,utils/base64,utils/uuid,utils/encoding,server/server,element/locus,parser/datasource,parser/ca,parser/jessiecode,utils/dump,renderer/svg,renderer/vml,renderer/canvas,renderer/no,element/comb,element/slopetriangle,math/qdt,element/checkbox,element/input,element/button';
+    JXG.Load.setRequirePathToScriptFile('loadjsxgraph.js');
+    JXG.Load.JSfiles(JXG.Load.baseFiles.split(','), preventCachingFiles);
+    JXG.Load.baseFiles = null;
+    JXG.serverBase = JXG.Load.requirePath + 'server/';
 
     // This is a table with functions which check the availability
     // of certain namespaces, functions and classes. With this structure

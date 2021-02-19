@@ -100,8 +100,15 @@ define([], function () {
      * @param {Object} object
      * @param {String} name
      * @param value
+     * @param {Boolean} ignoreRedefine This should be left at its default: false.
      */
-    jxg.defineConstant = function (object, name, value) {
+    jxg.defineConstant = function (object, name, value, ignoreRedefine) {
+        ignoreRedefine = ignoreRedefine || false;
+
+        if(ignoreRedefine && jxg.exists(object[name])) {
+            return;
+        }
+
         Object.defineProperty(object, name, {
             value: value,
             writable: false,
