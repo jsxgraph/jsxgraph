@@ -189,6 +189,7 @@ define([
             attr.drag = Type.copyAttributes(attr, Options, 'board', 'drag');
             attr.selection = Type.copyAttributes(attr, Options, 'board', 'selection');
             attr.navbar = Type.copyAttributes(attr.navbar, Options, 'navbar');
+            attr.screenshot = Type.copyAttributes(attr, Options, 'board', 'screenshot');
 
             return attr;
         },

@@ -291,7 +291,7 @@ define([
              * Attributes to control the screenshot function.
              * The following attributes can be set:
              * <ul>
-             *  <li>scale: scaling factor (default=0)
+             *  <li>scale: scaling factor (default=1.0)
              *  <li>type: format of the screenshot image. Default: png
              *  <li>symbol: Unicode symbol which is shown in the navigation bar. Default: '\u2318'
              *  <li>css: CSS rules to format the div element containing the screen shot image

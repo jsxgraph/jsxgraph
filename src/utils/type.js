@@ -977,6 +977,11 @@ define([
                 this.extend(a, o, null, true);
             }
 
+            if (arguments[2] === 'board') {
+                // For board attributes we are done now.
+                return a;
+            }
+
             // Special treatment of labels
             o = options;
             isAvail = true;
