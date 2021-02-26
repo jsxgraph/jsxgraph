@@ -1861,6 +1861,9 @@ console.log("Polynomial of degree", level);
             }
 
             components2 = this.findComponents(curve, t1, t2, size);
+            if (components2.length === 0) {
+                return;
+            }
             if (group.type === 'borderleft') {
                 t1 = components2[0].left_t;
                 t2 = components2[0].t_values[0];
