@@ -1786,6 +1786,7 @@ console.log("Polynomial of degree", level);
         _insertPoint_v4: function (curve, crds, t, doLog) {
             var p,
                 prev = null,
+                x, y,
                 near = 0.8;
 
             if (curve.points.length > 0) {
@@ -1795,13 +1796,16 @@ console.log("Polynomial of degree", level);
             // Add regular point
             p = new Coords(Const.COORDS_BY_USER, crds, curve.board);
 
-            if (prev !== null &&
-                Math.abs(p.scrCoords[1] - prev[1]) < near &&
-                Math.abs(p.scrCoords[2] - prev[2]) < near) {
+            if (prev !== null) {
+                x = p.scrCoords[1] - prev[1];
+                y = p.scrCoords[2] - prev[2];
+                if (x * x + y * y < near * near) {
+                // Math.abs(p.scrCoords[1] - prev[1]) < near &&
+                // Math.abs(p.scrCoords[2] - prev[2]) < near) {
                     return;
                 }
+            }
 
-//console.log("insert", t)
             p._t = t;
             curve.points.push(p);
         },
@@ -1910,15 +1914,12 @@ console.log("Polynomial of degree", level);
             t1 = comp.t_values[group.idx - 2];
             t2 = comp.t_values[group.idx + 2];
             components2 = this.findComponents(curve, t1, t2, 64);
-            console.log("COMPS", components2.length)
             for (idx = 0; idx < components2.length; idx++) {
                 comp2 = components2[idx];
                 ret = this.differenceMethod(comp2, curve);
                 groups2 = ret[0];
                 x_table2 = ret[1];
                 y_table2 = ret[2];
-                console.log("Groups", groups2)
-                console.log(y_table2)
                 start = 0;
                 for (g = 0; g <= groups2.length; g++) {
                     if (g === groups2.length) {
@@ -1950,11 +1951,12 @@ console.log("Polynomial of degree", level);
         handleSingularity: function(curve, comp, group, x_table, y_table) {
             var idx = group.idx,
                 t, t1, t2, y_int,
-                x, lo, hi,
+                x, y, lo, hi,
                 d_lft, d_rgt,
                 d_thresh = 100,
                 di1 = 5,
-                di2 = 3;
+                di2 = 3,
+                d1, d2;
 
             t = group.t;
             // console.log("HandleSingularity at t =", t);
@@ -1981,19 +1983,19 @@ console.log("Polynomial of degree", level);
 
             x = curve.X(t, true);
 
-            // console.log(">>>", t1, t2, lo, hi, x);
-
             d_lft = (y_table[0][idx - di2] - y_table[0][idx - di1]) / (comp.t_values[idx - di2] - comp.t_values[idx - di1]);
             d_rgt = (y_table[0][idx + di2] - y_table[0][idx + di1]) / (comp.t_values[idx + di2] - comp.t_values[idx + di1]);
 
             //console.log(":::", d_lft, d_rgt);
+
+            //this._insertPoint_v4(curve, [1, NaN, NaN], 0);
 
             if (d_lft < -d_thresh) {
                 // Left branch very steep downwards -> add the minimum
                 this._insertPoint_v4(curve, [1, x, lo], t, true);
                 if (d_rgt <= d_thresh) {
                     // Right branch not very steep upwards -> interrupt the curve
-                    // I.e. exclude the case -infty / -infty
+                    // I.e. it looks like -infty / (finite or infty) and not like -infty / -infty
                     this._insertPoint_v4(curve, [1, NaN, NaN], t);
                 }
             } else if (d_lft > d_thresh) {
@@ -2001,24 +2003,33 @@ console.log("Polynomial of degree", level);
                 this._insertPoint_v4(curve, [1, x, hi], t);
                 if (d_rgt >= -d_thresh) {
                     // Right branch not very steep downwards -> interrupt the curve
-                    // I.e. exclude the case infty / infty
+                    // I.e. it looks like infty / (finite or -infty) and not like infty / infty
                     this._insertPoint_v4(curve, [1, NaN, NaN], t);
                 }
             } else {
-                if (Math.abs(y_table[0][idx - 1] - y_table[0][idx + 1]) * curve.board.unitY >= 2) {
+                x = (x_table[0][idx] - x_table[0][idx - 1]) //* curve.board.unitX;
+                y = (y_table[0][idx] - y_table[0][idx - 1]) //* curve.board.unitY;
+                d1 = Math.sqrt(x * x + y * y);
+                x = (x_table[0][idx + 1] - x_table[0][idx]) //* curve.board.unitX;
+                y = (y_table[0][idx + 1] - y_table[0][idx]) //* curve.board.unitY;
+                d2 = Math.sqrt(x * x + y * y);
+                if (true || (d1 > 2 || d2 > 2)) {
+                    console.log(d1, d2, y_table[0][idx])
                     // Finite jump
-                    console.log("JUMP")
-                    console.log(y_table[0][idx - 1], y_table[0][idx], y_table[0][idx + 1])
-                    console.log(y_table[0][idx - 1]* curve.board.unitY, y_table[0][idx]* curve.board.unitY, y_table[0][idx + 1]* curve.board.unitY)
                     this._insertPoint_v4(curve, [1, NaN, NaN], t);
                 } else {
-                    if (lo === -Infinity) {
-                        this._insertPoint_v4(curve, [1, x, lo], t, true);
-                        this._insertPoint_v4(curve, [1, NaN, NaN], t);
-                    }
-                    if (hi === Infinity) {
-                        this._insertPoint_v4(curve, [1, NaN, NaN], t);
-                        this._insertPoint_v4(curve, [1, x, hi], t, true);
+                    if (lo !== -Infinity && hi !== Infinity) {
+                        // Critical point which can be ignored
+                        this._insertPoint_v4(curve, [1, x_table[0][idx], y_table[0][idx]], comp.t_values[idx]);
+                    } else {
+                        if (lo === -Infinity) {
+                            this._insertPoint_v4(curve, [1, x, lo], t, true);
+                            this._insertPoint_v4(curve, [1, NaN, NaN], t);
+                        }
+                        if (hi === Infinity) {
+                            this._insertPoint_v4(curve, [1, NaN, NaN], t);
+                            this._insertPoint_v4(curve, [1, x, hi], t, true);
+                        }
                     }
                 }
             }
