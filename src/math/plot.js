@@ -322,6 +322,32 @@ define(['jxg', 'base/constants', 'base/coords', 'math/math', 'math/extrapolate',
             }
         },
 
+        /**
+         * Check if there is a single NaN function value at t0.
+         * @param {*} curve
+         * @param {*} t0
+         * @returns {Boolean} true if there is a second NaN point close by, false otherwise
+         */
+        neighborhood_isNaN_v2: function(curve, t0) {
+            var is_undef,
+                pnt = new Coords(Const.COORDS_BY_USER, [0, 0], curve.board, false),
+                t, p;
+
+            t = t0 + Mat.eps;
+            pnt.setCoordinates(Const.COORDS_BY_USER, [curve.X(t, true), curve.Y(t, true)], false);
+            p = pnt.usrCoords;
+            is_undef = isNaN(p[1] + p[2]);
+            if (!is_undef) {
+                t = t0 - Mat.eps;
+                pnt.setCoordinates(Const.COORDS_BY_USER, [curve.X(t, true), curve.Y(t, true)], false);
+                p = pnt.usrCoords;
+                is_undef = isNaN(p[1] + p[2]);
+                if (!is_undef) {
+                    return false;
+                }
+            }
+            return true;
+        },
 
         /**
          * Investigate a function term at the bounds of intervals where
@@ -350,79 +376,92 @@ define(['jxg', 'base/constants', 'base/coords', 'math/math', 'math/extrapolate',
                 // asymptote;
 
             if (depth <= 1) {
-               pnt = new Coords(Const.COORDS_BY_USER, [0, 0], curve.board, false);
-               j = 0;
-               // Bisect a, b and c until the point t_real is inside of the definition interval
-               // and as close as possible at the boundary.
-               // t_real2 is the second closest point.
-               do {
-                   // There are four cases:
-                   //  a  |  c  |  b
-                   // ---------------
-                   // inf | R   | R
-                   // R   | R   | inf
-                   // inf | inf | R
-                   // R   | inf | inf
-                   //
-                   if (isNaN(a[1] + a[2]) && !isNaN(c[1] + c[2])) {
-                       t_nan = ta;
-                       t_real = tc;
-                       t_real2 = tb;
-                   } else if (isNaN(b[1] + b[2]) && !isNaN(c[1] + c[2])) {
-                       t_nan = tb;
-                       t_real = tc;
-                       t_real2 = ta;
-                   } else if (isNaN(c[1] + c[2]) && !isNaN(b[1] + b[2])) {
-                       t_nan = tc;
-                       t_real = tb;
-                       t_real2 = tb + (tb - tc);
-                   } else if (isNaN(c[1] + c[2]) && !isNaN(a[1] + a[2])) {
-                       t_nan = tc;
-                       t_real = ta;
-                       t_real2 = ta - (tc - ta);
-                   } else {
-                       return false;
-                   }
-                   t = 0.5 * (t_nan + t_real);
-                   pnt.setCoordinates(Const.COORDS_BY_USER, [curve.X(t, true), curve.Y(t, true)], false);
-                   p = pnt.usrCoords;
+                pnt = new Coords(Const.COORDS_BY_USER, [0, 0], curve.board, false);
+                // Test if there is a single undefined point.
+                // If yes, we ignore it.
+                if (isNaN(a[1] + a[2]) && !isNaN(c[1] + c[2]) && !this.neighborhood_isNaN_v2(curve, ta)) {
+                    return false;
+                }
+                if (isNaN(b[1] + b[2]) && !isNaN(c[1] + c[2]) && !this.neighborhood_isNaN_v2(curve, tb)) {
+                    return false;
+                }
+                if (isNaN(c[1] + c[2]) && (!isNaN(a[1] + a[2]) || !isNaN(b[1] + b[2])) &&
+                    !this.neighborhood_isNaN_v2(curve, tc)) {
+                    return false;
+                }
 
-                   is_undef = isNaN(p[1] + p[2]);
-                   if (is_undef) {
-                       t_nan = t;
-                   } else {
-                       t_real2 = t_real;
-                       t_real = t;
-                   }
-                   ++j;
-               } while (is_undef && j < max_it);
+                j = 0;
+                // Bisect a, b and c until the point t_real is inside of the definition interval
+                // and as close as possible at the boundary.
+                // t_real2 is the second closest point.
+                do {
+                    // There are four cases:
+                    //  a  |  c  |  b
+                    // ---------------
+                    // inf | R   | R
+                    // R   | R   | inf
+                    // inf | inf | R
+                    // R   | inf | inf
+                    //
+                    if (isNaN(a[1] + a[2]) && !isNaN(c[1] + c[2])) {
+                        t_nan = ta;
+                        t_real = tc;
+                        t_real2 = tb;
+                    } else if (isNaN(b[1] + b[2]) && !isNaN(c[1] + c[2])) {
+                        t_nan = tb;
+                        t_real = tc;
+                        t_real2 = ta;
+                    } else if (isNaN(c[1] + c[2]) && !isNaN(b[1] + b[2])) {
+                        t_nan = tc;
+                        t_real = tb;
+                        t_real2 = tb + (tb - tc);
+                    } else if (isNaN(c[1] + c[2]) && !isNaN(a[1] + a[2])) {
+                        t_nan = tc;
+                        t_real = ta;
+                        t_real2 = ta - (tc - ta);
+                    } else {
+                        return false;
+                    }
+                    t = 0.5 * (t_nan + t_real);
+                    pnt.setCoordinates(Const.COORDS_BY_USER, [curve.X(t, true), curve.Y(t, true)], false);
+                    p = pnt.usrCoords;
 
-               // If bisection was successful, take this point.
-               // Usefule only for general curves, for function graph
-               // the code below overwrite p_good from here.
-               if (j < max_it) {
-                   p_good = p.slice();
-                   c = p.slice();
-                   t_real = t;
-               }
+                    is_undef = isNaN(p[1] + p[2]);
+                    if (is_undef) {
+                        t_nan = t;
+                    } else {
+                        t_real2 = t_real;
+                        t_real = t;
+                    }
+                    ++j;
+                } while (is_undef && j < max_it);
 
-               // OK, bisection has been done now.
-               // t_real contains the closest inner point to the border of the interval we could find.
-               // t_real2 is the second nearest point to this boundary.
-               // Now we approximate the derivative by computing the slope of the line through these two points
-               // and test if it is "infinite", i.e larger than 400 in absolute values.
-               //
-               vx = curve.X(t_real, true) ;
-               vx2 = curve.X(t_real2, true) ;
-               dx = (vx - vx2) / (t_real - t_real2);
-               vy = curve.Y(t_real, true) ;
-               vy2 = curve.Y(t_real2, true) ;
-               dy = (vy - vy2) / (t_real - t_real2);
+                // If bisection was successful, take this point.
+                // Useful only for general curves, for function graph
+                // the code below overwrite p_good from here.
+                if (j < max_it) {
+                    p_good = p.slice();
+                    c = p.slice();
+                    t_real = t;
+                }
 
-               if (p_good !== null) {
-                   this._insertPoint_v2(curve, new Coords(Const.COORDS_BY_USER, p_good, curve.board, false));
-                   return true;
-               }
+                // OK, bisection has been done now.
+                // t_real contains the closest inner point to the border of the interval we could find.
+                // t_real2 is the second nearest point to this boundary.
+                // Now we approximate the derivative by computing the slope of the line through these two points
+                // and test if it is "infinite", i.e larger than 400 in absolute values.
+                //
+                vx = curve.X(t_real, true) ;
+                vx2 = curve.X(t_real2, true) ;
+                dx = (vx - vx2) / (t_real - t_real2);
+                vy = curve.Y(t_real, true) ;
+                vy2 = curve.Y(t_real2, true) ;
+                dy = (vy - vy2) / (t_real - t_real2);
+               
+                if (p_good !== null) {
+                    this._insertPoint_v2(curve, new Coords(Const.COORDS_BY_USER, p_good, curve.board, false));
+                    return true;
+                }
            }
            return false;
        },
@@ -496,7 +535,11 @@ define(['jxg', 'base/constants', 'base/coords', 'math/math', 'math/extrapolate',
                 //if (this._borderCase(a, b, c, ta, tb, tc, depth)) {}
             } else {
                 this._plotRecursive_v2(curve, a, ta, c, tc, depth, delta);
-                this._insertPoint_v2(curve, pnt, tc);
+
+                if (!isNaN(pnt.scrCoords[1] + pnt.scrCoords[2])) {
+                    this._insertPoint_v2(curve, pnt, tc);
+                }
+
                 this._plotRecursive_v2(curve, c, tc, b, tb, depth, delta);
             }
 
@@ -504,7 +547,7 @@ define(['jxg', 'base/constants', 'base/coords', 'math/math', 'math/extrapolate',
         },
 
         /**
-         * Updates the data points of a parametric curve. This version is used if {@link JXG.Curve#doadvancedplot} is <tt>true</tt>.
+         * Updates the data points of a parametric curve. This version is used if {@link JXG.Curve#plotVersion} is <tt>3</tt>.
          *
          * @param {JXG.Curve} curve JSXGraph curve element
          * @param {Number} mi Left bound of curve
@@ -1183,13 +1226,14 @@ define(['jxg', 'base/constants', 'base/coords', 'math/math', 'math/extrapolate',
         },
 
         /**
-         * Updates the data points of a parametric curve. This version is used if {@link JXG.Curve#doadvancedplot} is <tt>true</tt>.
+         * Updates the data points of a parametric curve. This version is used if {@link JXG.Curve#plotVersion} is <tt>3</tt>.
+         * This is an experimental plot version, <b>not recommended</b> to be used.
          * @param {JXG.Curve} curve JSXGraph curve element
          * @param {Number} mi Left bound of curve
          * @param {Number} ma Right bound of curve
          * @returns {JXG.Curve} Reference to the curve object.
          */
-        updateParametricCurve: function (curve, mi, ma) {
+        updateParametricCurve_v3: function (curve, mi, ma) {
             var ta, tb, a, b,
                 suspendUpdate = false,
                 pa = new Coords(Const.COORDS_BY_USER, [0, 0], curve.board, false),
@@ -2113,6 +2157,13 @@ console.log("Polynomial of degree", level);
 
         },
 
+        /**
+         * Updates the data points of a parametric curve, plotVersion 4. This version is used if {@link JXG.Curve#plotVersion} is <tt>4</tt>.
+         * @param {JXG.Curve} curve JSXGraph curve element
+         * @param {Number} mi Left bound of curve
+         * @param {Number} ma Right bound of curve
+         * @returns {JXG.Curve} Reference to the curve object.
+         */
         updateParametricCurve_v4: function (curve, mi, ma) {
             var ta, tb, w2, bbox;
 
@@ -2136,6 +2187,25 @@ console.log("Polynomial of degree", level);
 
             curve.numberPoints = curve.points.length;
             //console.log(curve.numberPoints);
+        },
+
+        //----------------------------------------------------------------------
+        // Plot algorithm alias
+        //----------------------------------------------------------------------
+
+        /**
+         * Updates the data points of a parametric curve, alias for {@link JXG.Curve#updateParametricCurve_v2}.
+         * This is needed for backwards compatibility, if this method has been
+         * used directly in an application.
+         * @param {JXG.Curve} curve JSXGraph curve element
+         * @param {Number} mi Left bound of curve
+         * @param {Number} ma Right bound of curve
+         * @returns {JXG.Curve} Reference to the curve object.
+         *
+         * @see JXG.Curve#updateParametricCurve_v2
+         */
+        updateParametricCurve: function (curve, mi, ma) {
+            return this.updateParametricCurve_v2(curve, mi, ma);
         }
     };
 
