@@ -1324,6 +1324,7 @@ define(['jxg', 'base/constants', 'base/coords', 'math/math', 'math/extrapolate',
                 sgn, sgnChange,
                 isGroup   = false,
                 abs_vec,
+                last = -Infinity,
                 very_small = false,
                 smooth    = false,
                 group     = 0,
@@ -1343,13 +1344,17 @@ define(['jxg', 'base/constants', 'base/coords', 'math/math', 'math/extrapolate',
 
             //console.log("Median", med);
             for (i = 0; i < le; i++) {
+                // Start a group if not yet done and
+                // add position to group
                 if (abs_vec[i] > med /*&& abs_vec[i] > 0.01*/)  {
                     positions.push({i: i, v: vec[i], group: group});
+                    last = i;
                     if (!isGroup) {
                         isGroup = true;
                     }
                 } else {
-                    if (isGroup) {
+                    if (isGroup && i > last + 4) {
+                        // End the group
                         if (positions.length > 0) {
                             groups.push(positions.slice(0));
                         }
@@ -1905,12 +1910,15 @@ console.log("Polynomial of degree", level);
             t1 = comp.t_values[group.idx - 2];
             t2 = comp.t_values[group.idx + 2];
             components2 = this.findComponents(curve, t1, t2, 64);
+            console.log("COMPS", components2.length)
             for (idx = 0; idx < components2.length; idx++) {
                 comp2 = components2[idx];
                 ret = this.differenceMethod(comp2, curve);
                 groups2 = ret[0];
                 x_table2 = ret[1];
                 y_table2 = ret[2];
+                console.log("Groups", groups2)
+                console.log(y_table2)
                 start = 0;
                 for (g = 0; g <= groups2.length; g++) {
                     if (g === groups2.length) {
@@ -1978,7 +1986,7 @@ console.log("Polynomial of degree", level);
             d_lft = (y_table[0][idx - di2] - y_table[0][idx - di1]) / (comp.t_values[idx - di2] - comp.t_values[idx - di1]);
             d_rgt = (y_table[0][idx + di2] - y_table[0][idx + di1]) / (comp.t_values[idx + di2] - comp.t_values[idx + di1]);
 
-            // console.log(":::", d_lft, d_rgt);
+            //console.log(":::", d_lft, d_rgt);
 
             if (d_lft < -d_thresh) {
                 // Left branch very steep downwards -> add the minimum
@@ -1999,7 +2007,9 @@ console.log("Polynomial of degree", level);
             } else {
                 if (Math.abs(y_table[0][idx - 1] - y_table[0][idx + 1]) * curve.board.unitY >= 2) {
                     // Finite jump
-                    // console.log("JUMP")
+                    console.log("JUMP")
+                    console.log(y_table[0][idx - 1], y_table[0][idx], y_table[0][idx + 1])
+                    console.log(y_table[0][idx - 1]* curve.board.unitY, y_table[0][idx]* curve.board.unitY, y_table[0][idx + 1]* curve.board.unitY)
                     this._insertPoint_v4(curve, [1, NaN, NaN], t);
                 } else {
                     if (lo === -Infinity) {
@@ -2025,7 +2035,7 @@ console.log("Polynomial of degree", level);
         /**
          * Number of equidistant points where the function is evaluated
          */
-        steps: 1021,
+        steps: 1021, //2053, // 1021,
 
         /**
          * If the absolute maximum of the set of differences is larger than
@@ -2063,7 +2073,6 @@ console.log("Polynomial of degree", level);
                 // if (degree_y >= 0) {
                 //     console.log("y polynomial of degree", degree_y);
                 // }
-
                 if (groups.length === 0 || groups[0].type !== 'borderleft') {
                     groups.unshift({
                         idx: 0,
