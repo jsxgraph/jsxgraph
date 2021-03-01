@@ -1908,7 +1908,7 @@ console.log("Polynomial of degree", level);
 
         },
 
-        _recurse_v4: function(curve, comp, group, x_table, y_table) {
+        _seconditeration_v4: function(curve, comp, group, x_table, y_table) {
             var i, t1, t2, ret,
                 components2, comp2, idx, groups2, g,
                 x_table2, y_table2, start, le;
@@ -1951,9 +1951,41 @@ console.log("Polynomial of degree", level);
             return this;
         },
 
+        _recurse_v4: function(curve, t1, t2, x1, y1, x2, y2, level) {
+            var tol = 2,
+                t = (t1 + t2) * 0.5,
+                x = curve.X(t, true),
+                y = curve.Y(t, true),
+                dx, dy;
+
+            //console.log("Level", level)
+            if (level == 0) {
+                this._insertPoint_v4(curve, [1, NaN, NaN], t);
+                return;
+            }
+            // console.log("R", t1, t2)
+            dx = (x - x1) * curve.board.unitX;
+            dy = (y - y1) * curve.board.unitY;
+            // console.log("D1", Math.sqrt(dx * dx + dy * dy))
+            if (Math.sqrt(dx * dx + dy * dy) > tol) {
+                this._recurse_v4(curve, t1, t, x1, y1, x, y, level - 1);
+            } else {
+                this._insertPoint_v4(curve, [1, x, y], t);
+            }
+            dx = (x - x2) * curve.board.unitX;
+            dy = (y - y2) * curve.board.unitY;
+            // console.log("D2", Math.sqrt(dx * dx + dy * dy), x-x2, y-y2)
+            if (Math.sqrt(dx * dx + dy * dy) > tol) {
+                this._recurse_v4(curve, t, t2, x, y, x2, y2, level - 1);
+            } else {
+                this._insertPoint_v4(curve, [1, x, y], t);
+            }
+        },
+
         handleSingularity: function(curve, comp, group, x_table, y_table) {
             var idx = group.idx,
                 t, t1, t2, y_int,
+                i1, i2,
                 x, y, lo, hi,
                 d_lft, d_rgt,
                 d_thresh = 100,
@@ -1962,7 +1994,7 @@ console.log("Polynomial of degree", level);
                 d1, d2;
 
             t = group.t;
-            // console.log("HandleSingularity at t =", t);
+            console.log("HandleSingularity at t =", t);
             // console.log(comp.t_values[idx - 1], comp.y_values[idx - 1], comp.t_values[idx + 1], comp.y_values[idx + 1]);
             // console.log(group);
 
@@ -1989,7 +2021,7 @@ console.log("Polynomial of degree", level);
             d_lft = (y_table[0][idx - di2] - y_table[0][idx - di1]) / (comp.t_values[idx - di2] - comp.t_values[idx - di1]);
             d_rgt = (y_table[0][idx + di2] - y_table[0][idx + di1]) / (comp.t_values[idx + di2] - comp.t_values[idx + di1]);
 
-            //console.log(":::", d_lft, d_rgt);
+            console.log(":::", d_lft, d_rgt);
 
             //this._insertPoint_v4(curve, [1, NaN, NaN], 0);
 
@@ -2010,31 +2042,60 @@ console.log("Polynomial of degree", level);
                     this._insertPoint_v4(curve, [1, NaN, NaN], t);
                 }
             } else {
-                x = (x_table[0][idx] - x_table[0][idx - 1]) //* curve.board.unitX;
-                y = (y_table[0][idx] - y_table[0][idx - 1]) //* curve.board.unitY;
-                d1 = Math.sqrt(x * x + y * y);
-                x = (x_table[0][idx + 1] - x_table[0][idx]) //* curve.board.unitX;
-                y = (y_table[0][idx + 1] - y_table[0][idx]) //* curve.board.unitY;
-                d2 = Math.sqrt(x * x + y * y);
-                if (true || (d1 > 2 || d2 > 2)) {
-                    console.log(d1, d2, y_table[0][idx])
-                    // Finite jump
+                if (lo === -Infinity) {
+                    this._insertPoint_v4(curve, [1, x, lo], t, true);
                     this._insertPoint_v4(curve, [1, NaN, NaN], t);
-                } else {
-                    if (lo !== -Infinity && hi !== Infinity) {
-                        // Critical point which can be ignored
-                        this._insertPoint_v4(curve, [1, x_table[0][idx], y_table[0][idx]], comp.t_values[idx]);
-                    } else {
-                        if (lo === -Infinity) {
-                            this._insertPoint_v4(curve, [1, x, lo], t, true);
-                            this._insertPoint_v4(curve, [1, NaN, NaN], t);
-                        }
-                        if (hi === Infinity) {
-                            this._insertPoint_v4(curve, [1, NaN, NaN], t);
-                            this._insertPoint_v4(curve, [1, x, hi], t, true);
-                        }
-                    }
                 }
+                if (hi === Infinity) {
+                    this._insertPoint_v4(curve, [1, NaN, NaN], t);
+                    this._insertPoint_v4(curve, [1, x, hi], t, true);
+                }
+
+                if (group.t < comp.t_values[idx]) {
+                    i1 = idx - 1;
+                    i2 = idx;
+                } else {
+                    i1 = idx;
+                    i2 = idx + 1;
+                }
+                t1 = comp.t_values[i1];
+                t2 = comp.t_values[i2];
+                this._recurse_v4(curve, t1, t2,
+                        x_table[0][i1],
+                        y_table[0][i1],
+                        x_table[0][i2],
+                        y_table[0][i2],
+                        10
+                    )
+
+                // x = (x_table[0][idx] - x_table[0][idx - 1]) * curve.board.unitX;
+                // y = (y_table[0][idx] - y_table[0][idx - 1]) * curve.board.unitY;
+                // d1 = Math.sqrt(x * x + y * y);
+                // x = (x_table[0][idx + 1] - x_table[0][idx]) * curve.board.unitX;
+                // y = (y_table[0][idx + 1] - y_table[0][idx]) * curve.board.unitY;
+                // d2 = Math.sqrt(x * x + y * y);
+
+                // console.log("end", t1, t2, t);
+                // if (true || (d1 > 2 || d2 > 2)) {
+
+// console.log(d1, d2, y_table[0][idx])
+//                     // Finite jump
+//                     this._insertPoint_v4(curve, [1, NaN, NaN], t);
+//                 } else {
+//                     if (lo !== -Infinity && hi !== Infinity) {
+//                         // Critical point which can be ignored
+//                         this._insertPoint_v4(curve, [1, x_table[0][idx], y_table[0][idx]], comp.t_values[idx]);
+//                     } else {
+//                         if (lo === -Infinity) {
+//                             this._insertPoint_v4(curve, [1, x, lo], t, true);
+//                             this._insertPoint_v4(curve, [1, NaN, NaN], t);
+//                         }
+//                         if (hi === Infinity) {
+//                             this._insertPoint_v4(curve, [1, NaN, NaN], t);
+//                             this._insertPoint_v4(curve, [1, x, hi], t, true);
+//                         }
+//                     }
+                // }
             }
             if (d_rgt < -d_thresh) {
                 // Right branch very steep downwards -> add the maximum
@@ -2164,7 +2225,7 @@ console.log("Polynomial of degree", level);
                         if (groups[g].type === 'borderleft' || groups[g].type === 'borderright') {
                             this.handleBorder(curve, comp, groups[g], x_table, y_table);
                         } else {
-                            this._recurse_v4(curve, comp, groups[g], x_table, y_table);
+                            this._seconditeration_v4(curve, comp, groups[g], x_table, y_table);
                         }
 
                         start = groups[g].idx + 1 + 1;
