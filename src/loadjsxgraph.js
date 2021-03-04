@@ -189,7 +189,7 @@ var JXG = {},
 
     JXG.requirePath = '';
     // Has to be a String for Makefile!
-    JXG.baseFiles = 'jxg,base/constants,utils/type,utils/xml,utils/env,utils/event,utils/expect,math/math,math/ia,math/extrapolate,math/numerics,math/plot,math/metapost,math/statistics,math/symbolic,math/geometry,math/clip,math/poly,math/complex,renderer/abstract,renderer/no,reader/file,parser/geonext,base/board,options,jsxgraph,base/element,base/coordselement,base/coords,base/point,base/line,base/group,base/circle,element/conic,base/polygon,base/curve,element/arc,element/sector,base/composition,element/composition,base/text,base/image,element/slider,element/measure,base/chart,base/transformation,base/turtle,utils/color,base/ticks,utils/zip,utils/base64,utils/uuid,utils/encoding,server/server,element/locus,parser/datasource,parser/ca,parser/jessiecode,utils/dump,renderer/svg,renderer/vml,renderer/canvas,renderer/no,element/comb,element/slopetriangle,math/qdt,element/checkbox,element/input,element/button';
+    JXG.baseFiles = 'jxg,base/constants,utils/type,utils/xml,utils/env,utils/event,utils/expect,math/math,math/ia,math/extrapolate,math/numerics,math/nlp,math/plot,math/metapost,math/statistics,math/symbolic,math/geometry,math/clip,math/poly,math/complex,renderer/abstract,renderer/no,reader/file,parser/geonext,base/board,options,jsxgraph,base/element,base/coordselement,base/coords,base/point,base/line,base/group,base/circle,element/conic,base/polygon,base/curve,element/arc,element/sector,base/composition,element/composition,base/text,base/image,element/slider,element/measure,base/chart,base/transformation,base/turtle,utils/color,base/ticks,utils/zip,utils/base64,utils/uuid,utils/encoding,server/server,element/locus,parser/datasource,parser/ca,parser/jessiecode,utils/dump,renderer/svg,renderer/vml,renderer/canvas,renderer/no,element/comb,element/slopetriangle,math/qdt,element/checkbox,element/input,element/button';
     JXG.loadJSfiles(JXG.baseFiles.split(','), 'loadjsxgraph.js', preventCachingFiles);
     JXG.baseFiles = null;
     JXG.serverBase = JXG.requirePath + 'server/';
@@ -244,6 +244,7 @@ var JXG = {},
         'math/extrapolate': makeCheck('Math.Extrapolate'),
         'math/metapost': makeCheck('Math.Metapost'),
         'math/numerics': makeCheck('Math.Numerics'),
+        'math/nlp': makeCheck('Math.Nlp'),
         'math/plot': makeCheck('Math.Plot'),
         'math/poly': makeCheck('Math.Poly'),
         'math/statistics': makeCheck('Math.Statistics'),
