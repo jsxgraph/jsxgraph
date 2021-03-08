@@ -10451,7 +10451,7 @@ define('math/nlp',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) 
             while (i < n) {
                 iox[i + b] = x[i + a];
                 i++;
-            };
+            }
         },
 
         // status Variables
@@ -10527,25 +10527,30 @@ define('math/nlp',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) 
             //     small as possible subject to the constraint functions being nonnegative.
 
             // Local variables
-            var mpp = m + 2;
-            // Internal base-1 X array
-            var iox = this.arr(n + 1);
+            var mpp = m + 2,
+                status,
+                // Internal base-1 X array
+                iox = this.arr(n + 1),
+                that = this,
+                fcalcfc;
+
             iox[0] = 0.0;
             this.arraycopy(x, 0, iox, 1, n);
-            var that = this;
 
             // Internal representation of the objective and constraints calculation method,
             // accounting for that X and CON arrays in the cobylb method are base-1 arrays.
-            var fcalcfc = function(n, m, thisx, con) {  // int n, int m, double[] x, double[] con
-                    var ix = that.arr(n);
+            fcalcfc = function(n, m, thisx, con) {  // int n, int m, double[] x, double[] con
+                    var ix = that.arr(n),
+                        ocon, f;
+
                     that.arraycopy(thisx, 1, ix, 0, n);
-                    var ocon = that.arr(m);
-                    var f = calcfc(n, m, ix, ocon);
+                    ocon = that.arr(m);
+                    f = calcfc(n, m, ix, ocon);
                     that.arraycopy(ocon, 0, con, 1, m);
                     return f;
                 };
 
-            var status = this.cobylb(fcalcfc, n, m, mpp, iox, rhobeg, rhoend, iprint, maxfun);
+            status = this.cobylb(fcalcfc, n, m, mpp, iox, rhobeg, rhoend, iprint, maxfun);
             this.arraycopy(iox, 1, x, 0, n);
 
             return status;
@@ -10631,7 +10636,7 @@ define('math/nlp',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) 
             L_40:
             do {
                 if (nfvals >= maxfun && nfvals > 0) {
-                    status = MaxIterationsReached;
+                    status = this.MaxIterationsReached;
                     break L_40;
                 }
 
@@ -10643,8 +10648,8 @@ define('math/nlp',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) 
                 }
                 //alert(    "   f="+f+"  resmax="+resmax);
 
-                if (nfvals == iprint - 1 || iprint == 3) {
-                    this.PrintIterationResult(nfvals, f, resmax, x, n);
+                if (nfvals === iprint - 1 || iprint === 3) {
+                    this.PrintIterationResult(nfvals, f, resmax, x, n, iprint);
                 }
 
                 con[mp] = f;
@@ -10710,7 +10715,7 @@ define('math/nlp',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) 
                                 if (temp < phimin) {
                                     nbest = j;
                                     phimin = temp;
-                                } else if (temp == phimin && parmu == 0.0 && datmat[mpp][j] < datmat[mpp][nbest]) {
+                                } else if (temp === phimin && parmu === 0.0 && datmat[mpp][j] < datmat[mpp][nbest]) {
                                     nbest = j;
                                 }
                             }
@@ -10728,8 +10733,8 @@ define('math/nlp',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) 
                                     sim[i][nbest] = 0.0;
                                     sim[i][np] += temp;
 
-                                    var tempa = 0.0;
-                                    for (var k = 1; k <= n; ++k)
+                                    tempa = 0.0;
+                                    for (k = 1; k <= n; ++k)
                                     {
                                         sim[i][k] -= temp;
                                         tempa -= simi[k][i];
@@ -10746,12 +10751,12 @@ define('math/nlp',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) 
                                     temp = this.DOT_PRODUCT(
                                             this.PART(this.ROW(simi, i), 1, n),
                                             this.PART(this.COL(sim, j), 1, n)
-                                        ) - (i == j ? 1.0 : 0.0);
+                                        ) - (i === j ? 1.0 : 0.0);
                                     error = Math.max(error, Math.abs(temp));
                                 }
                             }
                             if (error > 0.1) {
-                                status = DivergingRoundingErrors;
+                                status = this.DivergingRoundingErrors;
                                 break L_40;
                             }
 
@@ -10766,7 +10771,7 @@ define('math/nlp',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) 
                                 }
 
                                 for (i = 1; i <= n; ++i) {
-                                    a[i][k] = (k == mp ? -1.0 : 1.0) * this.DOT_PRODUCT(
+                                    a[i][k] = (k === mp ? -1.0 : 1.0) * this.DOT_PRODUCT(
                                         this.PART(w, 1, n), this.PART(this.COL(simi, i), 1, n));
                                 }
                             }
@@ -10802,7 +10807,7 @@ define('math/nlp',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) 
                                         temp = veta[j];
                                     }
                                 }
-                                if (jdrop == 0) {
+                                if (jdrop === 0) {
                                     for (j = 1; j <= n; ++j) {
                                         if (vsig[j] < temp) {
                                             jdrop = j;
@@ -10844,7 +10849,7 @@ define('math/nlp',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) 
                                 }
 
                                 for (j = 1; j <= n; ++j) {
-                                    if (j != jdrop) {
+                                    if (j !== jdrop) {
                                         temp = this.DOT_PRODUCT(
                                             this.PART(this.ROW(simi, j), 1, n),
                                             this.PART(dx, 1, n)
@@ -10879,7 +10884,7 @@ define('math/nlp',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) 
                             con[mp] = 0.0;
                             for (k = 1; k <= mp; ++k) {
                                 total = con[k] - this.DOT_PRODUCT(this.PART(this.COL(a, k), 1, n), this.PART(dx, 1, n));
-                                if (k < mp) resnew = Math.max(resnew, total);
+                                if (k < mp) { resnew = Math.max(resnew, total); }
                             }
 
                             //     Increase PARMU if necessary and branch back if this change alters the
@@ -10894,7 +10899,9 @@ define('math/nlp',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) 
                                 phi = datmat[mp][np] + parmu * datmat[mpp][np];
                                 for (j = 1; j <= n; ++j) {
                                     temp = datmat[mp][j] + parmu * datmat[mpp][j];
-                                    if (temp < phi || (temp == phi && parmu == 0.0 && datmat[mpp][j] < datmat[mpp][np])) continue L_140;
+                                    if (temp < phi || (temp === phi && parmu === 0.0 && datmat[mpp][j] < datmat[mpp][np])) {
+                                        continue L_140;
+                                    }
                                 }
                             }
                             prerem = parmu * prerec - total;
@@ -10954,7 +10961,7 @@ define('math/nlp',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) 
                         }
                         if (l > 0) { jdrop = l; }
 
-                        if (jdrop != 0) {
+                        if (jdrop !== 0) {
                             //     Revise the simplex by updating the elements of SIM, SIMI and DATMAT.
                             temp = 0.0;
                             for (i = 1; i <= n; ++i) {
@@ -10963,7 +10970,7 @@ define('math/nlp',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) 
                             }
                             for (k = 1; k <= n; ++k) { simi[jdrop][k] /= temp; }
                             for (j = 1; j <= n; ++j) {
-                                if (j != jdrop) {
+                                if (j !== jdrop) {
                                     temp = this.DOT_PRODUCT(this.PART(this.ROW(simi, j), 1, n), this.PART(dx, 1, n));
                                     for (k = 1; k <= n; ++k) {
                                         simi[j][k] -= temp * simi[jdrop][k];
@@ -10975,7 +10982,9 @@ define('math/nlp',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) 
                             }
 
                             //     Branch back for further iterations with the current RHO.
-                            if (trured > 0.0 && trured >= 0.1 * prerem) continue L_140;
+                            if (trured > 0.0 && trured >= 0.1 * prerem) {
+                                continue L_140;
+                            }
                         }
                     } while (false);
 
@@ -11008,7 +11017,7 @@ define('math/nlp',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) 
                                 denom = denom <= 0.0 ? temp : Math.min(denom, temp);
                             }
                         }
-                        if (denom == 0.0) {
+                        if (denom === 0.0) {
                             parmu = 0.0;
                         } else if (cmax - cmin < parmu * denom) {
                             parmu = (cmax - cmin) / denom;
@@ -11017,8 +11026,8 @@ define('math/nlp',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) 
                     if (iprint >= 2) {
                         console.log("Reduction in RHO to "+rho+"  and PARMU = "+parmu);
                     }
-                    if (iprint == 2) {
-                        this.PrintIterationResult(nfvals, datmat[mp][np], datmat[mpp][np], COL(sim, np), n);
+                    if (iprint === 2) {
+                        this.PrintIterationResult(nfvals, datmat[mp][np], datmat[mpp][np], this.COL(sim, np), n, iprint);
                     }
                 } while (true);
             } while (true);
@@ -11027,7 +11036,7 @@ define('math/nlp',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) 
                 case this.Normal:
                     if (iprint >= 1) { console.log("%nNormal return from subroutine COBYLA%n"); }
                     if (ifull) {
-                        if (iprint >= 1) { this.PrintIterationResult(nfvals, f, resmax, x, n); }
+                        if (iprint >= 1) { this.PrintIterationResult(nfvals, f, resmax, x, n, iprint); }
                         return status;
                     }
                     break;
@@ -11046,12 +11055,12 @@ define('math/nlp',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) 
             for (k = 1; k <= n; ++k) { x[k] = sim[k][np]; }
             f = datmat[mp][np];
             resmax = datmat[mpp][np];
-            if (iprint >= 1) { PrintIterationResult(nfvals, f, resmax, x, n); }
-            
+            if (iprint >= 1) { this.PrintIterationResult(nfvals, f, resmax, x, n, iprint); }
+
             return status;
         },
 
-        trstlp(n,  m,  a, b, rho,  dx) { //(int n, int m, double[][] a, double[] b, double rho, double[] dx)
+        trstlp: function(n,  m,  a, b, rho,  dx) { //(int n, int m, double[][] a, double[] b, double rho, double[] dx)
             // N.B. Arguments Z, ZDOTA, VMULTC, SDIRN, DXNEW, VMULTD & IACT have been removed.
 
             //     This subroutine calculates an N-component vector DX by applying the
@@ -11093,8 +11102,7 @@ define('math/nlp',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) 
 
             // Local variables
 
-            var temp=0,
-
+            var temp = 0,
                 nactx = 0,
                 resold = 0.0,
 
@@ -11115,11 +11123,11 @@ define('math/nlp',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) 
                 ratio, isave, vsave,
                 total,
                 kp, kk, sp, alpha, beta,
-                tot, sp, spabs, acca, accb,
+                tot, spabs, acca, accb,
                 zdotv, zdvabs, kw,
                 dd, ss, sd,
                 zdotw, zdwabs,
-                kl, sumabs;
+                kl, sumabs, tempa;
 
             for (i = 1; i <= n; ++i) {
                 z[i][i] = 1.0;
@@ -11151,7 +11159,7 @@ define('math/nlp',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) 
             do {
                 L_60:
                 do {
-                    if (!first || (first && resmax == 0.0)) {
+                    if (!first || (first && resmax === 0.0)) {
                         mcon = m + 1;
                         icon = mcon;
                         iact[mcon] = mcon;
@@ -11350,7 +11358,7 @@ define('math/nlp',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) 
                                             this.PART(this.COL(z, nact), 1, n),
                                             this.PART(this.COL(a, kk), 1, n)
                                         );
-                                if (temp == 0.0) { break L_60; }
+                                if (temp === 0.0) { break L_60; }
                                 zdota[nact] = temp;
                                 vmultc[icon] = 0.0;
                                 vmultc[nact] = ratio;
@@ -11524,7 +11532,9 @@ define('math/nlp',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) 
                         //     Otherwise switch to stage two or end the calculation.
                     } while (icon > 0);
 
-                    if (step === stpful) return true;
+                    if (step === stpful) {
+                        return true;
+                    }
 
                 } while (true);
 
@@ -11536,19 +11546,21 @@ define('math/nlp',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) 
             return false;
         },
 
-        PrintIterationResult: function(nfvals, f, resmax,  x,  n) {
+        PrintIterationResult: function(nfvals, f, resmax,  x,  n, iprint) {
             if (iprint > 1) { console.log("NFVALS = "+nfvals+"  F = "+f+"  MAXCV = "+resmax); }
-            if (iprint > 1) { console.log("X = "+PART(x, 1, n)); }
+            if (iprint > 1) { console.log("X = " + this.PART(x, 1, n)); }
         },
 
         ROW: function(src, rowidx) {
-            var col,
-                cols = src[0].length,
-                dest = this.arr(cols);
-            for (col = 0; col < cols; ++col) {
-                dest[col] = src[rowidx][col];
-            }
-            return dest;
+            return src[rowidx].slice();
+            // var col,
+            //     cols = src[0].length,
+            //     dest = this.arr(cols);
+
+            // for (col = 0; col < cols; ++col) {
+            //     dest[col] = src[rowidx][col];
+            // }
+            // return dest;
         },
 
         COL: function(src, colidx) {
@@ -11562,21 +11574,23 @@ define('math/nlp',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) 
         },
 
         PART: function(src, from, to) {
-            var srcidx,
-                dest = this.arr(to - from + 1),
-                destidx = 0;
-            for (srcidx = from; srcidx <= to; ++srcidx, ++destidx) {
-                dest[destidx] = src[srcidx];
-            }
-            return dest;
+            return src.slice(from, to + 1);
+            // var srcidx,
+            //     dest = this.arr(to - from + 1),
+            //     destidx = 0;
+            // for (srcidx = from; srcidx <= to; ++srcidx, ++destidx) {
+            //     dest[destidx] = src[srcidx];
+            // }
+            // return dest;
         },
 
         FORMAT: function(x) {
-            var i, fmt = "";
-            for (i = 0; i < x.length; ++i) {
-                fmt = fmt + ", ", x[i];
-            }
-            return fmt;
+            return x.join(',');
+            // var i, fmt = "";
+            // for (i = 0; i < x.length; ++i) {
+            //     fmt += ", " + x[i];
+            // }
+            // return fmt;
         },
 
         DOT_PRODUCT: function(lhs,  rhs) {

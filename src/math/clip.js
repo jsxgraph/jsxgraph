@@ -1377,16 +1377,16 @@ define([
          *              [bbox[2], bbox[1]], // ur
          *              [bbox[0], bbox[1]]] // ul
          *         triangle = [[-1,1], [1,1], [0,-1], [-1,1]];
-         *     
+         *
          *         var a = JXG.Math.Clip.greinerHormann(canvas, triangle, 'difference', this.board);
          *         this.dataX = a[0];
          *         this.dataY = a[1];
          *     };
-         * 
+         *
          *     })();
-         * 
+         *
          * </script><pre>
-         * 
+         *
          */
         greinerHormann: function(subject, clip, clip_type, board) { //},
                 // subject_first_point_type, clip_first_point_type) {
