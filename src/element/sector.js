@@ -150,7 +150,7 @@ define([
         var el, attr,
             type = 'invalid',
             s, v,
-            attrPoints = ['center', 'radiuspoint', 'anglepoint'],
+            attrPoints = ['center', 'radiusPoint', 'anglePoint'],
             points;
 
         // Three points?
