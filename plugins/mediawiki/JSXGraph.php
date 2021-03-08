@@ -1,6 +1,6 @@
 <?php
 /*
-    Copyright 2008-2020
+    Copyright 2008-2021
         Alfred Wassermann,
         Peter Wilfahrt
 
@@ -63,11 +63,14 @@
  *   box:      default: jxgbox
  *   board:    default: brd
  */
-$jsxgraph_version = '1.00.0';
+$jsxgraph_version = '1.2.1';
 
 // CHANGE this to load local files:
-$outputURI        = '//jsxgraph.uni-bayreuth.de/distrib';
-$outputURICDN     = '//cdnjs.cloudflare.com/ajax/libs/jsxgraph/' . $jsxgraph_version;
+//$outputURI        = '//jsxgraph.org/distrib';
+$outputURI        = '//jsxgraph.uni-bayreuth.de/~alfred/jsxgraph/distrib';
+// $outputURICDN     = '//cdnjs.cloudflare.com/ajax/libs/jsxgraph/' . $jsxgraph_version;
+$outputURICDN     = 'https://cdn.jsdelivr.net/npm/jsxgraph@' . $jsxgraph_version . '/distrib';
+// $outputURI = $outputURICDN;
 
 if(!defined('MEDIAWIKI')) {
   echo("This is an extension to the MediaWiki package and cannot be run standalone.\n");
@@ -129,12 +132,12 @@ function jsxgraphOutput($input, $args, $parser) {
 
   // Load necessary stylesheet und scripts
   if ($markercount==0) {
-    $output .= "<link rel='stylesheet' type='text/css' href='".$outputURI."/jsxgraph.css' />";
-    if (TRUE /* && preg_match("/^132\.180/",getenv("REMOTE_ADDR"))*/ ) {
+    $output .= "<link rel='stylesheet' type='text/css' href='".$outputURICDN."/jsxgraph.css' />";
+    if (preg_match("/^132\.180/",getenv("REMOTE_ADDR"))) {
       // Use the local version when developing
-	    $output .= "<script src='".$outputURI."/jsxgraphcore.js' type='text/javascript'></script>";
-	    $output .= "<script src='".$outputURI."/geonext.min.js' type='text/javascript'></script>";
-	  } else {
+      $output .= "<script src='".$outputURI."/jsxgraphcore.js' type='text/javascript'></script>";
+      $output .= "<script src='".$outputURI."/geonext.min.js' type='text/javascript'></script>";
+    } else {
       $output .= "<script src='".$outputURICDN."/jsxgraphcore.js' type='text/javascript'></script>";
       $output .= "<script src='".$outputURICDN."/geonext.min.js' type='text/javascript'></script>";
     }
