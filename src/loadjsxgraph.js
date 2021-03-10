@@ -57,7 +57,7 @@ var JXG = {},
     //////////////////////////////////////////////////////////////////////////
     var preventCachingFiles = false;
 
-    // check and table are initialized at the end of the iife
+    // check and table are initialized at the end of the life
     var table,
         waitlist = [],
         checkwaitlist = true,
