@@ -99,9 +99,16 @@ define([], function () {
      * Set a constant <tt>name</tt> in <tt>object</tt> to <tt>value</tt>. The value can't be changed after declaration.
      * @param {Object} object
      * @param {String} name
-     * @param value
+     * @param {Number|String|Boolean} value
+     * @param {Boolean} ignoreRedefine This should be left at its default: false.
      */
-    jxg.defineConstant = function (object, name, value) {
+    jxg.defineConstant = function (object, name, value, ignoreRedefine) {
+        ignoreRedefine = ignoreRedefine || false;
+
+        if (ignoreRedefine && jxg.exists(object[name])) {
+            return;
+        }
+
         Object.defineProperty(object, name, {
             value: value,
             writable: false,
