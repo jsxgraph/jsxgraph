@@ -1,6 +1,6 @@
 <?php
 /*
-    Copyright 2008-2020
+    Copyright 2008-2021
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -34,94 +34,106 @@
 Plugin Name: JSXGraph
 Plugin URI: https://jsxgraph.org
 Description: Embedding jsxgraph constructions
-Author: Peter Wilfahrt
-Version: 1.00.0
+Author: Peter Wilfahrt, Alfred Wassermann
+Version: 1.2.1
 Author URI: http://www.webconsul.de/
 */
 
-/* TODO:
- * fix wordpress auto format
-*/
-
 function jsxgraph_head() {
-  // Stylesheet
+  // Include CSS file jsxgraph.css
   $css_url = 'https://jsxgraph.org/distrib/jsxgraph.css';
-  if(file_exists('wp-content/plugins/jsxgraph/jsxgraph.css')) $css_url = get_bloginfo('wpurl') . '/wp-content/plugins/jsxgraph/jsxgraph.css';
-  if(file_exists(get_bloginfo("template_url") . '/jsxgraph.css')) $css_url = get_bloginfo('template_url') . '/jsxgraph.css';
+  if (file_exists('wp-content/plugins/jsxgraph/jsxgraph.css')) {
+    $css_url = get_bloginfo('wpurl') . '/wp-content/plugins/jsxgraph/jsxgraph.css';
+  }
+  if (file_exists(get_bloginfo("template_url") . '/jsxgraph.css')) {
+    $css_url = get_bloginfo('template_url') . '/jsxgraph.css';
+  }
 
-  // jsxgraph core
+  // Include jsxgraphcore.js
   $core_url = "https://jsxgraph.org/distrib/jsxgraphcore.js";
-  if(file_exists("wp-content/plugins/jsxgraph/jsxgraphcore.js")) $core_url = get_bloginfo("wpurl") ."/wp-content/plugins/jsxgraph/jsxgraphcore.js";
+  if (file_exists("wp-content/plugins/jsxgraph/jsxgraphcore.js")) {
+    $core_url = get_bloginfo("wpurl") ."/wp-content/plugins/jsxgraph/jsxgraphcore.js";
+  }
 
-  $gxtreader_url = "https://jsxgraph.org/distrib/GeonextReader.js";
-  if(file_exists("wp-content/plugins/jsxgraph/GeonextReader.js")) $gxtreader_url = get_bloginfo("wpurl") ."/wp-content/plugins/jsxgraph/GeonextReader.js";
+  // Include geonext.min.js
+  $gxtreader_url = "https://jsxgraph.org/distrib/geonext.min.js";
+  if (file_exists("wp-content/plugins/jsxgraph/geonext.min.js")) {
+    $gxtreader_url = get_bloginfo("wpurl") ."/wp-content/plugins/jsxgraph/geonext.min.js";
+  }
 
   // Header-Output
   echo "\n<link rel='stylesheet' type='text/css' href='$css_url' media='screen' />\n";
-  echo "<script type='text/javascript' src='$pt_url'></script>\n";
   echo "<script type='text/javascript' src='$core_url'></script>\n";
   echo "<script type='text/javascript' src='$gxtreader_url'></script>\n";
 }
 
 function jsxgraph_filter($text) {
-  if(is_int(strpos($text, '<jsxgraph'))) {
+    $dom = new DomDocument();
+    @$dom->loadHTML($text);
+    $jsxgraphTags = $dom->getElementsByTagName('jsxgraph');
 
-    // get every construction
-    $count = substr_count($text, '<jsxgraph');
-    for($i = 0; $i < $count; $i++) {
-      $start = strpos($text, '<jsxgraph');
-      $end = (is_int(strpos($text, '</jsxgraph>', $start))) ? strpos($text, '</jsxgraph>', $start)+11 : strpos($text, '/>', $start)+2;
-      $jxg = substr($text, $start+10, $end-$start-21);
+    // if ($jsxgraphTags->length > 0) {
+    //   // Include CSS file jsxgraph.css
+    //   $css_url = 'https://jsxgraph.org/distrib/jsxgraph.css';
+    //   if (file_exists('wp-content/plugins/jsxgraph/jsxgraph.css')) {
+    //     $css_url = get_bloginfo('wpurl') . '/wp-content/plugins/jsxgraph/jsxgraph.css';
+    //   }
+    //   if (file_exists(get_bloginfo("template_url") . '/jsxgraph.css')) {
+    //     $css_url = get_bloginfo('template_url') . '/jsxgraph.css';
+    //   }
+    //   wp_enqueue_style('jsxgraph', $css_url);
 
-      // parse parameters of construction
-      $input = split(">", $jxg); // fix for javascript construction input
-      $input[0] = str_replace("'", '', $input[0]);
-      $input[0] = str_replace('"', '', $input[0]);
-      $input[0] = str_replace(' ', '&', $input[0]);
-      parse_str($input[0], $params);
+    //   // Include jsxgraphcore.js
+    //   $core_url = "https://jsxgraph.org/distrib/jsxgraphcore.js";
+    //   if (file_exists("wp-content/plugins/jsxgraph/jsxgraphcore.js")) {
+    //     $core_url = get_bloginfo("wpurl") . "/wp-content/plugins/jsxgraph/jsxgraphcore.js";
+    //   }
+    //   wp_enqueue_script('jsxgraph', $core_url);
 
-      $outputDivId   = (isset($params['box']))    ? htmlspecialchars(strip_tags($params['box']))    : 'box'.$i;
-      $outputBoardId = (isset($params['board']))  ? htmlspecialchars(strip_tags($params['board']))  : 'board'.$i;
-      $width         = (isset($params['width']))  ? htmlspecialchars(strip_tags($params['width']))  : 500;
-      $height        = (isset($params['height'])) ? htmlspecialchars(strip_tags($params['height'])) : 400;
+    //   // Include geonext.min.js
+    //   $gxtreader_url = "https://jsxgraph.org/distrib/geonext.min.js";
+    //   if (file_exists("wp-content/plugins/jsxgraph/geonext.min.js")) {
+    //     $gxtreader_url = get_bloginfo("wpurl") ."/wp-content/plugins/jsxgraph/geonext.min.js";
+    //   }
+    //   wp_enqueue_script('jsxgraphgeonext', $gxtreader_url);
+    // }
 
-      // output div
-      $output  = "<div id='". $outputDivId ."' class='jxgbox' style='width:". $width ."px; height:". $height ."px;'></div>";
-      $output .= "<script type='text/javascript'>";
+    for ($idx = $jsxgraphTags->length - 1; $idx >= 0; $idx--) {
+      $tag = $jsxgraphTags[$idx];
+      $outputDivId   = $tag->hasAttribute('box')    ? htmlspecialchars(strip_tags($tag->getAttribute('box')))    : 'box'.$idx;
+      $outputBoardId = $tag->hasAttribute('board')  ? htmlspecialchars(strip_tags($tag->getAttribute('board')))  : 'board'.$idx;
+      $width         = $tag->hasAttribute('width')  ? htmlspecialchars(strip_tags($tag->getAttribute('width')))  : 500;
+      $height        = $tag->hasAttribute('height') ? htmlspecialchars(strip_tags($tag->getAttribute('height'))) : 400;
 
-      // construction by filename
-      if(isset($params['filename'])) {
-        $gxtBinary = htmlspecialchars(strip_tags($params['filename']));
-        $gxtFile = Image::newFromName($gxtBinary);
-        if (!($gxtFile->exists() )) {
-          $error_message = "File " . $gxtFile . " not found.";
-        } else {
-          $gxtURL = get_bloginfo('wpurl') . $gxtFile->getURL();
-        }
-        $output .= "  var ". $outputBoardId ." = JXG.JSXGraph.loadBoardFromFile('". $outputDivId ."', '". $gxtURL ."', 'Geonext');";
+      // Add the output div
+      $divEl = $dom->createElement('div');
+      $divEl->setAttribute('id', $outputDivId);
+      $divEl->setAttribute('class', 'jxgbox');
+      $divEl->setAttribute('style', "width:" . $width . "px; height:" . $height . "px;");
+      $tag->parentNode->insertBefore($divEl, $tag);
+
+      if ($tag->hasAttribute('filename')) {
+        // Construction from a GEONExT file
+        $gxtBinary = htmlspecialchars(strip_tags($tag->getAttribute('filename')));
+        $content = "  var ". $outputBoardId . " = JXG.JSXGraph.loadBoardFromFile('". $outputDivId . "', '" . $gxtBinary . "', 'Geonext');";
+
+      } else if ($tag->hasAttribute('filestring')) {
+        // Construction by filestring
+        $filestring = htmlspecialchars(strip_tags($tag->getAttribute('filestring')));
+        $content = "  var ". $outputBoardId . " = JXG.JSXGraph.loadBoardFromString('" . $outputDivId . "', '" . $filestring . "', 'Geonext');";
+
+      } else {
+        // Construction by JavaScript code 
+        $content = $tag->nodeValue;
       }
-      // construction by filestring
-      else if(isset($params['filestring'])) {
-        $tmp = split("filestring=", $text);
-        $tmp[1] = str_replace("'", '"', $tmp[1]);
-        $tmp = split('"', $tmp[1]);
-        $filestring = htmlspecialchars(strip_tags($tmp[1]));
-        $output .= "  var ". $outputBoardId ." = JXG.JSXGraph.loadBoardFromString('". $outputDivId ."', '". $filestring ."', 'Geonext');";
-      }
-      // construction by $input
-      else {
-        for($j=1; $j<=sizeof($input); $j++) {
-          ($j == 1 || $j == sizeof($input)) ? $output .= $input[$j] : $output .= ">". $input[$j];
-		  }
-      }
-      $output .= "</script>";
-      $output = preg_replace("/&#038;/", "&", $output);
 
-      $text = substr_replace($text, $output, $start, $end-$start);
-    }
-  }
+      // Replace the jsxgraph tag by the script tag
+      $scriptEl = $dom->createElement('script', $content);
+      $scriptEl->setAttribute('type', 'text/javascript');
+      $tag->parentNode->replaceChild($scriptEl, $tag);
 
-  return $text;
+   }
+    return $dom->saveHTML();
 }
 
 // Add style and scripts
@@ -129,7 +141,7 @@ add_action('wp_head', 'jsxgraph_head');
 
 // We want to run after other filters; hence, a priority of 99.
 add_filter('the_content', 'jsxgraph_filter', 99);
-// JSXGraph not enabled by default.  30.9.09 A.Wassermann
-// add_filter('comment_text', 'jsxgraph_filter', 99);
+
+// add_action('wp_head', 'wp_enqueue_scripts', 5);
 
 ?>
