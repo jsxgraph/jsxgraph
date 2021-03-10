@@ -19,7 +19,7 @@
 
 define(['jxg'], function (JXG) {
 
-    "use strict";
+    'use strict';
 
     // constants
     var uuidCharsStr = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz',
@@ -31,10 +31,16 @@ define(['jxg'], function (JXG) {
      */
     JXG.Util = JXG.Util || {};
 
-    JXG.Util.genUUID = function () {
+    JXG.Util.genUUID = function (prefix) {
         var r, i,
             uuid = [],
             rnd = 0;
+
+        prefix = prefix || '';
+
+        if (prefix !== '' && prefix.substr(prefix.length - 1) !== '-') {
+            prefix = prefix + '-';
+        }
 
         for (i = 0; i < 36; i++) {
             if (i === 8 || i === 13 || i === 18 || i === 23) {
@@ -52,7 +58,7 @@ define(['jxg'], function (JXG) {
             }
         }
 
-        return uuid.join('');
+        return prefix + uuid.join('');
     };
 
     return JXG.Util;
