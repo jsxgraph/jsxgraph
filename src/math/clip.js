@@ -1102,7 +1102,7 @@ define([
             }
 
             // The two paths have no crossing intersections,
-            // but there might be bounicng intersections.
+            // but there might be bouncing intersections.
 
             // First, we find - if possible - on each path a point which is not an intersection point.
             if (S.length > 0) {
