@@ -448,6 +448,7 @@ define([
 
                         crds = new Coords(Const.COORDS_BY_USER, res[0], board);
                         type = 'X';
+// console.log(Si, Si1, Cj, Cj1)
 // console.log("IS", i, j, crds.usrCoords, res[1], res[2]);
 
                         // Degenerate cases
@@ -523,7 +524,7 @@ define([
             S_intersect = this.sortIntersections(S_crossings);
 // console.log('>>>>>>')
 // this._print_array(S_intersect);
-//console.log(S_intersect)
+// /// console.log(S_intersect)
 // console.log('----------')
             for (i = 0; i < S_intersect.length; i++) {
                 S_intersect[i].data.idx = i;
@@ -532,7 +533,7 @@ define([
             C_intersect = this.sortIntersections(C_crossings);
 
 // this._print_array(C_intersect);
-// console.log(C_intersect)
+// // console.log(C_intersect)
 // console.log('<<<<<< Phase 1 done')
             return [S_intersect, C_intersect];
         },
@@ -801,13 +802,14 @@ define([
                 }
                 P = P._next;
             }
-            if (this.windingNumber(P.coords.usrCoords, path2) === 0) {
+            if (this.windingNumber(P.coords.usrCoords, path2) % 2 === 0) {
                 // Outside
                 status = 'entry';
             } else {
                 // Inside
                 status = 'exit';
             }
+//console.log(P.coords.usrCoords, status)
 
             P_start = P;
             // Greiner-Hormann entry/exit algorithm
@@ -841,6 +843,19 @@ define([
                 }
                 cnt++;
             }
+
+        // P_start = P;
+        // cnt = 0;
+        // while (true) {
+        //     if (P.intersection) {
+        //         console.log(">>", P.coords.usrCoords, P.entry_exit)
+        //     }
+        //     P = P._next;
+        //     if (P === P_start || cnt > 1000) {
+        //         break;
+        //     }
+        //     cnt++;
+        // }
         },
 
         _isCrossing: function(P, isBackward) {
@@ -902,7 +917,9 @@ define([
                         do {
                             cnt++;
 
-                            path.push(current);
+                            if (!isNaN(current.coords.usrCoords[1] && current.coords.usrCoords[2])) {
+                                path.push(current);
+                            }
 // console.log("Add fw", current.coords.usrCoords);
 
                             if (!this._isCrossing(current, reverse)) {  // In case there are two adjacent intersects
@@ -914,7 +931,9 @@ define([
                         do {
                             cnt++;
 
-                            path.push(current);
+                            if (!isNaN(current.coords.usrCoords[1] && current.coords.usrCoords[2])) {
+                                path.push(current);
+                            }
 // console.log("Add bw", current.coords.usrCoords);
 
                             if (!this._isCrossing(current, true)) {  // In case there are two adjacent intersects
@@ -1034,7 +1053,7 @@ define([
         },
 
         /**
-         * Handle cases when there are no intersection points of the two paths. This is the case if the
+             * Handle cases when there are no intersection points of the two paths. This is the case if the
          * paths are disjoint or one is contained in the other.
          * @private
          * @param  {Array} S        First path, array of JXG.Coords
@@ -1412,6 +1431,7 @@ define([
                     this._addToList(S, subject.vertices[i].coords, i);
                 }
             } else if (subject.elementClass === Const.OBJECT_CLASS_CIRCLE) {
+                // steps = 5;
                 r = subject.Radius();
                 rad = 2 * Math.PI / steps;
                 for (i = 0; i <= steps; i++) {
