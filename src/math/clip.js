@@ -955,9 +955,9 @@ console.log('<<<<<< Phase 1 done')
                 do {
                     // Add the "current" intersection vertex
                     path.push(current);
-// console.log("Add intersection", current.coords.usrCoords);
                     current.data.done = true;
 
+console.log("Add intersection", current.coords.usrCoords);
 // console.log("AT", current.data.pathname, current.entry_exit, current.coords.usrCoords, current.data.type, current.data.revtype);
                     if ((clip_type === 'intersection' && current.entry_exit === 'entry') ||
                         (clip_type === 'union' && current.entry_exit === 'exit') ||
@@ -966,13 +966,15 @@ console.log('<<<<<< Phase 1 done')
                         current = current._next;
                         do {
                             cnt++;
-
-                            if (!isNaN(current.coords.usrCoords[1] && current.coords.usrCoords[2])) {
-                                path.push(current);
-                            }
+//                             if (!isNaN(current.coords.usrCoords[1]) && !isNaN(current.coords.usrCoords[2])) {
+//                                 path.push(current);
+//                             }
 // console.log("Add fw", current.coords.usrCoords);
 
                             if (!this._isCrossing(current, reverse)) {  // In case there are two adjacent intersects
+                                if (!isNaN(current.coords.usrCoords[1]) && !isNaN(current.coords.usrCoords[2])) {
+                                    path.push(current);
+                                }
                                 current = current._next;
                             }
                         } while (!this._isCrossing(current, reverse) && cnt < maxCnt);
@@ -980,15 +982,16 @@ console.log('<<<<<< Phase 1 done')
                         current = current._prev;
                         do {
                             cnt++;
-
-                            if (!isNaN(current.coords.usrCoords[1] && current.coords.usrCoords[2])) {
-                                path.push(current);
-                            }
+//                             if (!isNaN(current.coords.usrCoords[1]) && !isNaN(current.coords.usrCoords[2])) {
+//                                 path.push(current);
+//                             }
 // console.log("Add bw", current.coords.usrCoords);
 
                             if (!this._isCrossing(current, true)) {  // In case there are two adjacent intersects
+                                if (!isNaN(current.coords.usrCoords[1]) && !isNaN(current.coords.usrCoords[2])) {
+                                    path.push(current);
+                                }
                                 current = current._prev;
-// console.log("goto", current.coords.usrCoords)
                             }
                         } while (!this._isCrossing(current, true) && cnt < maxCnt);
                     }
@@ -999,10 +1002,12 @@ console.log('<<<<<< Phase 1 done')
                         return [[0], [0]];
                     }
 
-// console.log("Switch", current.coords.usrCoords, current.data.pathname, "to", current.neighbour.data.pathname);
+console.log("Switch", current.coords.usrCoords, current.data.pathname, "to", current.neighbour.data.pathname);
                     current = current.neighbour;
                     if (current.data.done) {
                         path.push(current);
+                        current.data.done = true;
+console.log("Push last", current.coords.usrCoords);
                         break;
                     }
                     P = current.data.path;
@@ -1474,6 +1479,7 @@ console.log('<<<<<< Phase 1 done')
             if (subject.elementClass === Const.OBJECT_CLASS_CURVE && Type.exists(subject.points)) {
                 len = subject.points.length;
                 for (i = 0; i < len; i++) {
+                    console.log(":::", i, subject.points[i].usrCoords)
                     this._addToList(S, subject.points[i], i);
                 }
             } else if (subject.type === Const.OBJECT_TYPE_POLYGON) {
