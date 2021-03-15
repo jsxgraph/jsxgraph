@@ -62,6 +62,11 @@ define([
      * @exports Mat.Clip as JXG.Math.Clip
      * @namespace
      */
+    // Mat.Clip = function () {
+    // };
+
+    // JXG.extend(Mat.Clip.prototype, /** @lends JXG.Curve.prototype */ {
+
     Mat.Clip = {
 
         /**
@@ -472,8 +477,8 @@ define([
 
                         crds = new Coords(Const.COORDS_BY_USER, res[0], board);
                         type = 'X';
-// console.log(Si, Si1, Cj, Cj1)
-// console.log("IS", i, j, crds.usrCoords, res[1], res[2]);
+//  console.log(Si, Si1, Cj, Cj1)
+//  console.log("IS", i, j, crds.usrCoords, res[1], res[2]);
 
                         // Degenerate cases
                         if (Math.abs(res[1]) < eps || Math.abs(res[2]) < eps) {
@@ -546,19 +551,19 @@ define([
 
             // For both paths, sort their intersection points
             S_intersect = this.sortIntersections(S_crossings);
-// console.log('>>>>>>')
-// this._print_array(S_intersect);
+console.log('>>>>>>')
+this._print_array(S_intersect);
 // /// console.log(S_intersect)
-// console.log('----------')
+//console.log('----------')
             for (i = 0; i < S_intersect.length; i++) {
                 S_intersect[i].data.idx = i;
                 S_intersect[i].neighbour.data.idx = i;
             }
             C_intersect = this.sortIntersections(C_crossings);
 
-// this._print_array(C_intersect);
+//this._print_array(C_intersect);
 // // console.log(C_intersect)
-// console.log('<<<<<< Phase 1 done')
+console.log('<<<<<< Phase 1 done')
             return [S_intersect, C_intersect];
         },
 
@@ -799,6 +804,26 @@ define([
             }
         },
 
+        _getStatus: function(P, path) {
+            var status;
+            while (P.intersection) {
+                if (P._end) {
+                    break;
+                }
+                P = P._next;
+            }
+            if (this.windingNumber(P.coords.usrCoords, path) % 2 === 0) {
+                // Outside
+                status = 'entry';
+            } else {
+                // Inside
+                status = 'exit';
+            }
+//console.log("STATUS", P.coords.usrCoords, status)
+
+            return [P, status];
+        },
+
         /**
          * Mark the intersection vertices of path1 as entry points or as exit points
          * in respect to path2.
@@ -812,28 +837,17 @@ define([
          * @param  {Array} path2 Second path
          */
         markEntryExit: function(path1, path2) {
-            var status, P, P_start, cnt;
+            var status, P, P_start, cnt, res;
 
             this._classifyDegenerateIntersections(path1[0]);
             this._handleIntersectionChains(path1[0]);
 
             // Decide if the first point of the path is inside or outside
             // of the other path.
-            P = path1[0];
-            while (P.intersection) {
-                if (P._end) {
-                    break;
-                }
-                P = P._next;
-            }
-            if (this.windingNumber(P.coords.usrCoords, path2) % 2 === 0) {
-                // Outside
-                status = 'entry';
-            } else {
-                // Inside
-                status = 'exit';
-            }
-//console.log(P.coords.usrCoords, status)
+    // console.log("Mark ee", path1[0].coords.usrCoords)
+            res = this._getStatus(path1[0], path2);
+            P = res[0];
+            status = res[1];
 
             P_start = P;
             // Greiner-Hormann entry/exit algorithm
@@ -851,35 +865,47 @@ define([
                         P.entry_exit = P.data.link.entry_exit;
                     }
                 }
+
                 P = P._next;
                 if (P === P_start || cnt > 1000) {
                     break;
                 }
+
+                if (isNaN(P.coords.usrCoords[1]) || isNaN(P.coords.usrCoords[2])) {
+                    // Here is the path is separated. We have to test if the
+                    // next point is inside or outside.
+                    P = P._next;
+                    res = this._getStatus(P, path2);
+                    P = res[0];
+                    status = res[1];
+                }
+
                 cnt++;
             }
+
+            // P_start = P;
+            // cnt = 0;
+            // while (true) {
+            //     P = P._next;
+            //     if (P === P_start || cnt > 1000) {
+            //         break;
+            //     }
+            //     cnt++;
+            // }
 
             P_start = P;
             cnt = 0;
             while (true) {
+                if (P.intersection) {
+    //console.log(">>", P.coords.usrCoords, P.entry_exit)
+                }
                 P = P._next;
                 if (P === P_start || cnt > 1000) {
                     break;
                 }
                 cnt++;
             }
-
-        // P_start = P;
-        // cnt = 0;
-        // while (true) {
-        //     if (P.intersection) {
-        //         console.log(">>", P.coords.usrCoords, P.entry_exit)
-        //     }
-        //     P = P._next;
-        //     if (P === P_start || cnt > 1000) {
-        //         break;
-        //     }
-        //     cnt++;
-        // }
+    //console.log("/////")
         },
 
         _isCrossing: function(P, isBackward) {
@@ -919,7 +945,7 @@ define([
                     continue;
                 }
 
-// console.log("Start", current.data.pathname, current.coords.usrCoords, current.data.type, current.data.revtype, current.entry_exit, S_idx);
+//console.log("\nStart", current.data.pathname, current.coords.usrCoords, current.data.type, current.data.revtype, current.entry_exit, S_idx);
                 if (path.length > 0) {    // Add a new path
                     path.push([NaN, NaN]);
                 }
@@ -962,7 +988,7 @@ define([
 
                             if (!this._isCrossing(current, true)) {  // In case there are two adjacent intersects
                                 current = current._prev;
-//console.log("goto", current.coords.usrCoords)
+// console.log("goto", current.coords.usrCoords)
                             }
                         } while (!this._isCrossing(current, true) && cnt < maxCnt);
                     }
@@ -1455,7 +1481,7 @@ define([
                     this._addToList(S, subject.vertices[i].coords, i);
                 }
             } else if (subject.elementClass === Const.OBJECT_CLASS_CIRCLE) {
-                // steps = 5;
+                steps = 5;
                 r = subject.Radius();
                 rad = 2 * Math.PI / steps;
                 for (i = 0; i <= steps; i++) {
@@ -1496,6 +1522,7 @@ define([
                     this._addToList(C, clip.vertices[i].coords, i);
                 }
             } else if (clip.elementClass === Const.OBJECT_CLASS_CIRCLE) {
+                steps = 5;
                 r = clip.Radius();
                 rad = 2 * Math.PI / steps;
                 for (i = 0; i <= steps; i++) {
@@ -1798,7 +1825,7 @@ define([
         difference: function(path1, path2, board) {
             return this.greinerHormann(path1, path2, 'difference', board);
         }
-    };
+    }; //);
 
     JXG.extend(Mat.Clip, /** @lends JXG.Math.Clip */ {
     });
