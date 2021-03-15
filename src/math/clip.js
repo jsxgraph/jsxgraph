@@ -883,16 +883,6 @@ define([
                 cnt++;
             }
 
-            // P_start = P;
-            // cnt = 0;
-            // while (true) {
-            //     P = P._next;
-            //     if (P === P_start || cnt > 1000) {
-            //         break;
-            //     }
-            //     cnt++;
-            // }
-
             P_start = P;
             cnt = 0;
             while (true) {
@@ -1254,6 +1244,85 @@ define([
         },
 
         /**
+         * Create path from all sorts of input elements to greinerHormann().
+         *
+         * @private
+         * @param {Object} obj Maybe curve, arc, sector, circle, polygon, array of points, array of JXG.Coords,
+         * array of coordinate pairs.
+         * @param  {JXG.Board} board   JSXGraph board object. It is needed to convert between
+         * user coordinates and screen coordinates.
+         * @returns {Array} Array of JXG.Coords elements containing a path.
+         * @see JXG.Math.Clip#greinerHormann
+         */
+        _getPath: function(obj, board) {
+            var i, len, r, rad, angle, alpha,
+                steps,
+                S = [];
+
+            // Collect all points into path array S
+            if (obj.elementClass === Const.OBJECT_CLASS_CURVE &&
+                (obj.type === Const.OBJECT_TYPE_ARC || obj.type === Const.OBJECT_TYPE_SECTOR)) {
+                angle = Geometry.rad(obj.radiuspoint, obj.center, obj.anglepoint);
+                steps = Math.floor(angle * 180 / Math.PI);
+                r = obj.Radius();
+                rad = angle / steps;
+                alpha = Math.atan2(obj.radiuspoint.coords.usrCoords[2] - obj.center.coords.usrCoords[2],
+                    obj.radiuspoint.coords.usrCoords[1] - obj.center.coords.usrCoords[1]);
+
+                if (obj.type === Const.OBJECT_TYPE_SECTOR) {
+                    this._addToList(S, obj.center.coords, 0);
+                }
+                for (i = 0; i <= steps; i++) {
+                    this._addToList(S, new Coords(Const.COORDS_BY_USER, [
+                        obj.center.coords.usrCoords[0],
+                        obj.center.coords.usrCoords[1] + Math.cos(i * rad + alpha) * r,
+                        obj.center.coords.usrCoords[2] + Math.sin(i * rad + alpha) * r
+                    ], board), i + 1);
+                }
+                if (obj.type === Const.OBJECT_TYPE_SECTOR) {
+                    this._addToList(S, obj.center.coords, steps + 2);
+                }
+
+            } else if (obj.elementClass === Const.OBJECT_CLASS_CURVE && Type.exists(obj.points)) {
+                len = obj.numberPoints;
+                for (i = 0; i < len; i++) {
+                    this._addToList(S, obj.points[i], i);
+                }
+            } else if (obj.type === Const.OBJECT_TYPE_POLYGON) {
+                for (i = 0; i < obj.vertices.length; i++) {
+                    this._addToList(S, obj.vertices[i].coords, i);
+                }
+            } else if (obj.elementClass === Const.OBJECT_CLASS_CIRCLE) {
+                steps = 359;
+                r = obj.Radius();
+                rad = 2 * Math.PI / steps;
+                for (i = 0; i <= steps; i++) {
+                    this._addToList(S, new Coords(Const.COORDS_BY_USER, [
+                        obj.center.coords.usrCoords[0],
+                        obj.center.coords.usrCoords[1] + Math.cos(i * rad) * r,
+                        obj.center.coords.usrCoords[2] + Math.sin(i * rad) * r
+                    ], board), i);
+                }
+            } else if (Type.isArray(obj)) {
+                len = obj.length;
+                for (i = 0; i < len; i++) {
+                    if (Type.exists(obj[i].coords)) {
+                        // Point type
+                        this._addToList(S, obj[i].coords, i);
+                    } else if (Type.isArray(obj[i])) {
+                        // Coordinate pair
+                        this._addToList(S, new Coords(Const.COORDS_BY_USER, obj[i], board), i);
+                    } else if (Type.exists(obj[i].usrCoords)) {
+                        // JXG.Coordinates
+                        this._addToList(S, obj[i], i);
+                    }
+                }
+            }
+
+            return S;
+        },
+
+        /**
          * Determine the intersection, union or difference of two closed paths.
          * <p>
          * This is an implementation of the Greiner-Hormann algorithm, see
@@ -1276,7 +1345,11 @@ define([
          * </ul>
          *
          * @param  {JXG.Circle|JXG.Curve|JXG.Polygon} subject   First closed path, usually called 'subject'.
+         * Maybe curve, arc, sector, circle, polygon, array of points, array of JXG.Coords,
+         * array of coordinate pairs.
          * @param  {JXG.Circle|JXG.Curve|JXG.Polygon} clip      Second closed path, usually called 'clip'.
+         * Maybe curve, arc, sector, circle, polygon, array of points, array of JXG.Coords,
+         * array of coordinate pairs.
          * @param  {String} clip_type Determines the type of boolean operation on the two paths.
          *  Possible values are 'intersection', 'union', or 'difference'.
          * @param  {JXG.Board} board   JSXGraph board object. It is needed to convert between
@@ -1489,10 +1562,7 @@ define([
         greinerHormann: function(subject, clip, clip_type, board) { //},
                 // subject_first_point_type, clip_first_point_type) {
 
-            var i, r, rad, len,
-                steps = 359,
-                angle, alpha,
-                S = [],
+            var len, S = [],
                 C = [],
                 S_intersect = [],
                 // C_intersect = [],
@@ -1500,110 +1570,15 @@ define([
                 pathX = [],
                 pathY = [];
 
-            // Collect all points into subject array S
-            if (subject.elementClass === Const.OBJECT_CLASS_CURVE &&
-                (subject.type === Const.OBJECT_TYPE_ARC || subject.type === Const.OBJECT_TYPE_SECTOR)) {
-                angle = Geometry.rad(subject.radiuspoint, subject.center, subject.anglepoint);
-                steps = Math.floor(angle * 180 / Math.PI);
-                r = subject.Radius();
-                rad = angle / steps;
-                alpha = Math.atan2(subject.radiuspoint.coords.usrCoords[2] - subject.center.coords.usrCoords[2],
-                    subject.radiuspoint.coords.usrCoords[1] - subject.center.coords.usrCoords[1]);
-
-                if (subject.type === Const.OBJECT_TYPE_SECTOR) {
-                    this._addToList(S, subject.center.coords, 0);
-                }
-                for (i = 0; i <= steps; i++) {
-                    this._addToList(S, new Coords(Const.COORDS_BY_USER, [
-                        subject.center.coords.usrCoords[0],
-                        subject.center.coords.usrCoords[1] + Math.cos(i * rad + alpha) * r,
-                        subject.center.coords.usrCoords[2] + Math.sin(i * rad + alpha) * r
-                    ], board), i + 1);
-                }
-                if (subject.type === Const.OBJECT_TYPE_SECTOR) {
-                    this._addToList(S, subject.center.coords, steps + 2);
-                }
-
-            } else if (subject.elementClass === Const.OBJECT_CLASS_CURVE && Type.exists(subject.points)) {
-                len = subject.numberPoints;
-                // console.log("Read curve1 points")
-                // console.log(subject.points.length, subject.dataX.length)
-                for (i = 0; i < len; i++) {
-                    // console.log(":::", i, subject.points[i].usrCoords)
-                    this._addToList(S, subject.points[i], i);
-                }
-            } else if (subject.type === Const.OBJECT_TYPE_POLYGON) {
-                for (i = 0; i < subject.vertices.length; i++) {
-                    this._addToList(S, subject.vertices[i].coords, i);
-                }
-            } else if (subject.elementClass === Const.OBJECT_CLASS_CIRCLE) {
-                steps = 359;
-                r = subject.Radius();
-                rad = 2 * Math.PI / steps;
-                for (i = 0; i <= steps; i++) {
-                    this._addToList(S, new Coords(Const.COORDS_BY_USER, [
-                        subject.center.coords.usrCoords[0],
-                        subject.center.coords.usrCoords[1] + Math.cos(i * rad) * r,
-                        subject.center.coords.usrCoords[2] + Math.sin(i * rad) * r
-                    ], board), i);
-                }
-            } else if (Type.isArray(subject)) {
-                len = subject.length;
-                for (i = 0; i < len; i++) {
-                    if (Type.exists(subject[i].coords)) {
-                        // Point type
-                        this._addToList(S, subject[i].coords, i);
-                    } else if (Type.isArray(subject[i])) {
-                        // Coordinate pair
-                        this._addToList(S, new Coords(Const.COORDS_BY_USER, subject[i], board), i);
-                    } else if (Type.exists(subject[i].usrCoords)) {
-                        // JXG.Coordinates
-                        this._addToList(S, subject[i], i);
-                    }
-                }
-            }
-
+            // Collect all subject points into subject array S
+            S = this._getPath(subject, board);
             len = S.length;
             if (len > 0 && Geometry.distance(S[0].coords.usrCoords, S[len - 1].coords.usrCoords, 3) < Mat.eps) {
                 S.pop();
             }
 
             // Collect all points into clip array C
-            if (clip.elementClass === Const.OBJECT_CLASS_CURVE && Type.exists(clip.points)) {
-                len = clip.points.length;
-                for (i = 0; i < len; i++) {
-                    this._addToList(C, clip.points[i], i);
-                }
-            } else if (clip.type === Const.OBJECT_TYPE_POLYGON) {
-                for (i = 0; i < clip.vertices.length; i++) {
-                    this._addToList(C, clip.vertices[i].coords, i);
-                }
-            } else if (clip.elementClass === Const.OBJECT_CLASS_CIRCLE) {
-                steps = 359;
-                r = clip.Radius();
-                rad = 2 * Math.PI / steps;
-                for (i = 0; i <= steps; i++) {
-                    this._addToList(C, new Coords(Const.COORDS_BY_USER, [
-                        clip.center.coords.usrCoords[0],
-                        clip.center.coords.usrCoords[1] + Math.cos(i * rad) * r,
-                        clip.center.coords.usrCoords[2] + Math.sin(i * rad) * r
-                    ], board), i);
-                }
-            } else if (Type.isArray(clip)) {
-                len = clip.length;
-                for (i = 0; i < len; i++) {
-                    if (Type.exists(clip[i].coords)) {
-                        // Point type
-                        this._addToList(C, clip[i].coords, i);
-                    } else if (Type.isArray(clip[i])) {
-                        // Coordinate pair
-                        this._addToList(C, new Coords(Const.COORDS_BY_USER, clip[i], board), i);
-                    } else if (Type.exists(clip[i].usrCoords)) {
-                        // JXG.Coordinates
-                        this._addToList(C, clip[i], i);
-                    }
-                }
-            }
+            C = this._getPath(clip, board);
 
             len = C.length;
             if (len > 0 && Geometry.distance(C[0].coords.usrCoords, C[len - 1].coords.usrCoords, 3) < Mat.eps * Mat.eps) {
@@ -1654,17 +1629,6 @@ define([
                 return this.handleEmptyIntersection(S, C, clip_type);
             }
 
-            // if (false) {
-            //     for (i = 0; i < S_intersect.length; i++) {
-            //         console.log('S', S_intersect[i].cnt, S_intersect[i].entry_exit, S_intersect[i].usrCoords,
-            //                 S_intersect[i].pos, S_intersect[i].alpha);
-            //     }
-            //     console.log();
-            //     for (i = 0; i < C_intersect.length; i++) {
-            //         console.log('C', C_intersect[i].cnt, C_intersect[i].entry_exit, C_intersect[i].usrCoords,
-            //                 C_intersect[i].pos, C_intersect[i].alpha);
-            //     }
-            // }
             // Phase 3: tracing
             return this.tracing(S, S_intersect, clip_type);
 
