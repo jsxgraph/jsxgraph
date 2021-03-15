@@ -551,8 +551,8 @@ define([
 
             // For both paths, sort their intersection points
             S_intersect = this.sortIntersections(S_crossings);
-console.log('>>>>>>')
-this._print_array(S_intersect);
+// console.log('>>>>>>')
+// this._print_array(S_intersect);
 // /// console.log(S_intersect)
 //console.log('----------')
             for (i = 0; i < S_intersect.length; i++) {
@@ -563,7 +563,7 @@ this._print_array(S_intersect);
 
 //this._print_array(C_intersect);
 // // console.log(C_intersect)
-console.log('<<<<<< Phase 1 done')
+// console.log('<<<<<< Phase 1 done')
             return [S_intersect, C_intersect];
         },
 
@@ -908,6 +908,13 @@ console.log('<<<<<< Phase 1 done')
     //console.log("/////")
         },
 
+        /**
+         *
+         * @private
+         * @param {Array} P
+         * @param {Boolean} isBackward
+         * @returns {Boolean} True, if the node is an intersection and is of type 'X'
+         */
         _isCrossing: function(P, isBackward) {
             isBackward = isBackward || false;
             return P.intersection && ((isBackward ? P.data.revtype : P.data.type) === 'X');
@@ -939,6 +946,8 @@ console.log('<<<<<< Phase 1 done')
 
             reverse = (clip_type === 'difference' || clip_type === 'union') ? true : false;
             while (S_idx < S_intersect.length && cnt < maxCnt) {
+                // Take the first intersection node of the subject path
+                // which is not yet included as start point.
                 current = S_intersect[S_idx];
                 if (current.data.done || !this._isCrossing(current, reverse)) {
                     S_idx++;
@@ -950,28 +959,34 @@ console.log('<<<<<< Phase 1 done')
                     path.push([NaN, NaN]);
                 }
 
+                // Start now the tracing with that node of the subject path
                 start = current.data.idx;
                 P = S;
                 do {
-                    // Add the "current" intersection vertex
+                    // Add the "current" intersection vertex.
                     path.push(current);
                     current.data.done = true;
 
-console.log("Add intersection", current.coords.usrCoords);
+// console.log("Add intersection", current.coords.usrCoords);
 // console.log("AT", current.data.pathname, current.entry_exit, current.coords.usrCoords, current.data.type, current.data.revtype);
+                    //
+                    // Decide if we follow the current path forward or backward.
+                    // for example, in case the clipping is of type "intersection"
+                    // and the current intersection node is of type entry, we go forward.
+                    //
                     if ((clip_type === 'intersection' && current.entry_exit === 'entry') ||
                         (clip_type === 'union' && current.entry_exit === 'exit') ||
                         (clip_type === 'difference' && (P === S) === (current.entry_exit === 'exit')) ) {
 
+                        //
+                        // Take the next nodes and add them to the path
+                        // as long as they are not intersection nodes of type 'X'.
+                        //
                         current = current._next;
                         do {
                             cnt++;
-//                             if (!isNaN(current.coords.usrCoords[1]) && !isNaN(current.coords.usrCoords[2])) {
-//                                 path.push(current);
-//                             }
-// console.log("Add fw", current.coords.usrCoords);
 
-                            if (!this._isCrossing(current, reverse)) {  // In case there are two adjacent intersects
+                            if (!this._isCrossing(current, reverse)) {
                                 if (!isNaN(current.coords.usrCoords[1]) && !isNaN(current.coords.usrCoords[2])) {
                                     path.push(current);
                                 }
@@ -979,15 +994,17 @@ console.log("Add intersection", current.coords.usrCoords);
                             }
                         } while (!this._isCrossing(current, reverse) && cnt < maxCnt);
                     } else {
+
+                        //
+                        // Here, we go backward:
+                        // Take the previous nodes and add them to the path
+                        // as long as they are not intersection nodes of type 'X'.
+                        //
                         current = current._prev;
                         do {
                             cnt++;
-//                             if (!isNaN(current.coords.usrCoords[1]) && !isNaN(current.coords.usrCoords[2])) {
-//                                 path.push(current);
-//                             }
-// console.log("Add bw", current.coords.usrCoords);
 
-                            if (!this._isCrossing(current, true)) {  // In case there are two adjacent intersects
+                            if (!this._isCrossing(current, true)) {
                                 if (!isNaN(current.coords.usrCoords[1]) && !isNaN(current.coords.usrCoords[2])) {
                                     path.push(current);
                                 }
@@ -1002,12 +1019,19 @@ console.log("Add intersection", current.coords.usrCoords);
                         return [[0], [0]];
                     }
 
-console.log("Switch", current.coords.usrCoords, current.data.pathname, "to", current.neighbour.data.pathname);
+// console.log("Switch", current.coords.usrCoords, current.data.pathname, "to", current.neighbour.data.pathname);
+                    //
+                    // We stopped the forwar or backward loop, because we've
+                    // arrived at a crossing intersection node, i.e. we have to
+                    // switch to the other path now.
                     current = current.neighbour;
                     if (current.data.done) {
+                        // We arrived at an intersection node which is already
+                        // added to the clipping path.
+                        // We add it agian to close the clipping path and jump out of the
+                        // loop.
                         path.push(current);
-                        current.data.done = true;
-console.log("Push last", current.coords.usrCoords);
+// console.log("Push last", current.coords.usrCoords);
                         break;
                     }
                     P = current.data.path;
@@ -1467,6 +1491,7 @@ console.log("Push last", current.coords.usrCoords);
 
             var i, r, rad, len,
                 steps = 359,
+                angle, alpha,
                 S = [],
                 C = [],
                 S_intersect = [],
@@ -1476,10 +1501,35 @@ console.log("Push last", current.coords.usrCoords);
                 pathY = [];
 
             // Collect all points into subject array S
-            if (subject.elementClass === Const.OBJECT_CLASS_CURVE && Type.exists(subject.points)) {
-                len = subject.points.length;
+            if (subject.elementClass === Const.OBJECT_CLASS_CURVE &&
+                (subject.type === Const.OBJECT_TYPE_ARC || subject.type === Const.OBJECT_TYPE_SECTOR)) {
+                angle = Geometry.rad(subject.radiuspoint, subject.center, subject.anglepoint);
+                steps = Math.floor(angle * 180 / Math.PI);
+                r = subject.Radius();
+                rad = angle / steps;
+                alpha = Math.atan2(subject.radiuspoint.coords.usrCoords[2] - subject.center.coords.usrCoords[2],
+                    subject.radiuspoint.coords.usrCoords[1] - subject.center.coords.usrCoords[1]);
+
+                if (subject.type === Const.OBJECT_TYPE_SECTOR) {
+                    this._addToList(S, subject.center.coords, 0);
+                }
+                for (i = 0; i <= steps; i++) {
+                    this._addToList(S, new Coords(Const.COORDS_BY_USER, [
+                        subject.center.coords.usrCoords[0],
+                        subject.center.coords.usrCoords[1] + Math.cos(i * rad + alpha) * r,
+                        subject.center.coords.usrCoords[2] + Math.sin(i * rad + alpha) * r
+                    ], board), i + 1);
+                }
+                if (subject.type === Const.OBJECT_TYPE_SECTOR) {
+                    this._addToList(S, subject.center.coords, steps + 2);
+                }
+
+            } else if (subject.elementClass === Const.OBJECT_CLASS_CURVE && Type.exists(subject.points)) {
+                len = subject.numberPoints;
+                // console.log("Read curve1 points")
+                // console.log(subject.points.length, subject.dataX.length)
                 for (i = 0; i < len; i++) {
-                    console.log(":::", i, subject.points[i].usrCoords)
+                    // console.log(":::", i, subject.points[i].usrCoords)
                     this._addToList(S, subject.points[i], i);
                 }
             } else if (subject.type === Const.OBJECT_TYPE_POLYGON) {
@@ -1487,7 +1537,7 @@ console.log("Push last", current.coords.usrCoords);
                     this._addToList(S, subject.vertices[i].coords, i);
                 }
             } else if (subject.elementClass === Const.OBJECT_CLASS_CIRCLE) {
-                steps = 5;
+                steps = 359;
                 r = subject.Radius();
                 rad = 2 * Math.PI / steps;
                 for (i = 0; i <= steps; i++) {
@@ -1512,6 +1562,7 @@ console.log("Push last", current.coords.usrCoords);
                     }
                 }
             }
+
             len = S.length;
             if (len > 0 && Geometry.distance(S[0].coords.usrCoords, S[len - 1].coords.usrCoords, 3) < Mat.eps) {
                 S.pop();
@@ -1528,7 +1579,7 @@ console.log("Push last", current.coords.usrCoords);
                     this._addToList(C, clip.vertices[i].coords, i);
                 }
             } else if (clip.elementClass === Const.OBJECT_CLASS_CIRCLE) {
-                steps = 5;
+                steps = 359;
                 r = clip.Radius();
                 rad = 2 * Math.PI / steps;
                 for (i = 0; i <= steps; i++) {
