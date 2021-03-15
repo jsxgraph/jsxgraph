@@ -411,7 +411,9 @@ define([
                 S_intersect = [],
                 C_intersect = [],
                 S_crossings = [],
-                C_crossings = [];
+                C_crossings = [],
+                hasMultCompsS = false,
+                hasMultCompsC = false;
 
             for (j = 0; j < C_le; j++) {
                 C_crossings.push([]);
@@ -421,14 +423,36 @@ define([
             for (i = 0; i < S_le; i++) {
                 S_crossings.push([]);
                 Si = S[i].coords.usrCoords;
+                if (isNaN(Si[1]) || isNaN(Si[2])) {
+                    hasMultCompsS = true;
+                    continue;
+                }
                 Si1 = S[(i + 1) % S_le].coords.usrCoords;
+                if (isNaN(Si1[1]) || isNaN(Si1[2])) {
+                    hasMultCompsS = true;
+                    continue;
+                }
+                if (hasMultCompsS && i === S_le - 1) {
+                    break;
+                }
 
                 // Run through the clip path.
                 for (j = 0; j < C_le; j++) {
                     // Test if bounding boxes of the two curve segments overlap
                     // If not, the expensive intersection test can be skipped.
                     Cj  = C[j].coords.usrCoords;
+                    if (isNaN(Cj[1]) || isNaN(Cj[2])) {
+                        hasMultCompsC = true;
+                        continue;
+                    }
                     Cj1 = C[(j + 1) % C_le].coords.usrCoords;
+                    if (isNaN(Cj1[1]) || isNaN(Cj1[2])) {
+                        hasMultCompsC = true;
+                        continue;
+                    }
+                    if (hasMultCompsC && j === C_le - 1) {
+                        break;
+                    }
 
                     if (this._noOverlap(Si, Si1, Cj, Cj1)) {
                         continue;
