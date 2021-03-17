@@ -957,8 +957,8 @@ define([
                     path.push(current);
                     current.data.done = true;
 
-// console.log("Add intersection", current.coords.usrCoords);
-// console.log("AT", current.data.pathname, current.entry_exit, current.coords.usrCoords, current.data.type, current.data.revtype);
+console.log("Add intersection", current.coords.usrCoords);
+console.log("AT", current.data.pathname, current.entry_exit, current.coords.usrCoords, current.data.type, current.data.revtype);
                     //
                     // Decide if we follow the current path forward or backward.
                     // for example, in case the clipping is of type "intersection"
@@ -978,6 +978,7 @@ define([
 
                             if (!this._isCrossing(current, reverse)) {
                                 if (!isNaN(current.coords.usrCoords[1]) && !isNaN(current.coords.usrCoords[2])) {
+if (current.intersection) console.log("Add fw", current.coords.usrCoords);
                                     path.push(current);
                                 }
                                 current = current._next;
@@ -996,6 +997,7 @@ define([
 
                             if (!this._isCrossing(current, true)) {
                                 if (!isNaN(current.coords.usrCoords[1]) && !isNaN(current.coords.usrCoords[2])) {
+if (current.intersection) console.log("Add fw", current.coords.usrCoords);
                                     path.push(current);
                                 }
                                 current = current._prev;
@@ -1009,7 +1011,7 @@ define([
                         return [[0], [0]];
                     }
 
-// console.log("Switch", current.coords.usrCoords, current.data.pathname, "to", current.neighbour.data.pathname);
+console.log("Switch", current.coords.usrCoords, current.data.pathname, "to", current.neighbour.data.pathname);
                     //
                     // We stopped the forwar or backward loop, because we've
                     // arrived at a crossing intersection node, i.e. we have to
@@ -1021,7 +1023,7 @@ define([
                         // We add it agian to close the clipping path and jump out of the
                         // loop.
                         path.push(current);
-// console.log("Push last", current.coords.usrCoords);
+console.log("Push last", current.coords.usrCoords);
                         break;
                     }
                     P = current.data.path;
