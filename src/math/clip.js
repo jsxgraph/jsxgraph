@@ -404,7 +404,7 @@ define([
          */
         findIntersections: function(S, C, board) {
             var res = [],
-                eps = Mat.eps,
+                eps = Mat.eps * 100,
                 i, j,
                 crds,
                 S_le = S.length,
@@ -465,7 +465,7 @@ define([
 
                     // Intersection test
                     res = Geometry.meetSegmentSegment(Si, Si1, Cj, Cj1);
-//console.log(i, j, ":", res[0][1] / res[0][0], res[0][2] / res[0][0], res[1], res[2]);
+// console.log(i, j, ":", eps, res[0][1] / res[0][0], res[0][2] / res[0][0], res[1], res[2]);
 
                     // Found an intersection point
                     // isCollinear = false;
@@ -477,8 +477,8 @@ define([
 
                         crds = new Coords(Const.COORDS_BY_USER, res[0], board);
                         type = 'X';
-//  console.log(Si, Si1, Cj, Cj1)
-//  console.log("IS", i, j, crds.usrCoords, res[1], res[2]);
+// console.log(Si, Si1, Cj, Cj1)
+// console.log("IS", i, j, crds.usrCoords, res[1], res[2]);
 
                         // Degenerate cases
                         if (Math.abs(res[1]) < eps || Math.abs(res[2]) < eps) {
@@ -554,7 +554,7 @@ define([
 // console.log('>>>>>>')
 // this._print_array(S_intersect);
 // /// console.log(S_intersect)
-//console.log('----------')
+// console.log('----------')
             for (i = 0; i < S_intersect.length; i++) {
                 S_intersect[i].data.idx = i;
                 S_intersect[i].neighbour.data.idx = i;
