@@ -78,14 +78,39 @@ define([
          */
         makeDoublyLinkedList: function(S) {
             var i,
+                // first = null,
                 le = S.length;
 
             if (le > 0) {
                 for (i = 0; i < le; i++) {
                     S[i]._next = S[(i + 1) % le];
                     S[i]._prev = S[(le + i - 1) % le];
+
+                    // if (isNaN(S[i].coords.usrCoords[1]) && isNaN(S[i].coords.usrCoords[2])) {
+                    //     S[i]._next = S[(i + 1) % le];
+                    //     S[i]._prev = S[(le + i - 1) % le];
+                    //     continue;
+                    // }
+
+                    // if (first === null) {
+                    //     first = i;
+                    // }
+                    // if (!(isNaN(S[(i + 1) % le].coords.usrCoords[1]) && isNaN(S[(i + 1) % le].coords.usrCoords[2]))) {
+                    //     S[i]._next = S[(i + 1) % le];
+                    //     S[first]._prev = S[i];
+                    // } else {
+                    //     S[i]._next = S[first];
+                    //     S[i]._end = true;
+                    //     first = null;
+                    // }
+                    // if (!(isNaN(S[(le + i - 1) % le].coords.usrCoords[1]) && isNaN(S[(le + i - 1) % le].coords.usrCoords[2]))) {
+                    //     S[i]._prev = S[(le + i - 1) % le];
+                    // }
                 }
                 S[le - 1]._end = true;
+                // if (!(isNaN(S[le -1].coords.usrCoords[1]) && isNaN(S[le - 1].coords.usrCoords[2]))) {
+                //     S[le - 1]._end = true;
+                // }
             }
 
             return S;
@@ -346,7 +371,14 @@ define([
         _print_array: function(arr) {
             var i;
             for (i = 0; i < arr.length; i++) {
-                console.log(i, arr[i].coords.usrCoords,  arr[i].data.type);
+                //console.log(i, arr[i].coords.usrCoords,  arr[i].data.type);
+                try {
+                    console.log(i, arr[i].coords.usrCoords,
+                                arr[i]._prev.coords.usrCoords,
+                                arr[i]._next.coords.usrCoords);
+                } catch (e) {
+                    console.log(i, arr[i].coords.usrCoords);
+                }
             }
         },
 
@@ -1594,6 +1626,7 @@ console.log("Push last", current.coords.usrCoords);
 
             // Add pointers for doubly linked lists
             this.makeDoublyLinkedList(S);
+//this._print_array(S);
             this.makeDoublyLinkedList(C);
 
             res = this.findIntersections(S, C, board);
