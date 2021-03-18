@@ -873,8 +873,9 @@ define([
      * @param {JXG.Point,array,function_JXG.Point,array,function} point1,point2 Parent elements can be two elements either of type {@link JXG.Point} or array of
      * numbers describing the coordinates of a point. In the latter case the point will be constructed automatically as a fixed invisible point.
      * It is possible to provide a function returning an array or a point, instead of providing an array or a point.
-     * @param {Number,function_Number,function_Number,function} c,a,b A line can also be created providing three numbers. The line is then described by
-     * the set of solutions of the equation <tt>a*x+b*y+c*z = 0</tt>. It is possible to provide three functions returning numbers, too.
+     * @param {Number,function_Number,function_Number,function} a,b,c A line can also be created providing three numbers. The line is then described by
+     * the set of solutions of the equation <tt>a*z+b*x+c*y = 0</tt>. For all finite points, z is normalized to the value 1.
+     * It is possible to provide three functions returning numbers, too.
      * @param {function} f This function must return an array containing three numbers forming the line's homogeneous coordinates.
      * <p>
      * Additionally, a line can be created by providing a line and a transformation (or an array of transformations).
