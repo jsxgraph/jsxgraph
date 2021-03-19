@@ -69,51 +69,59 @@ define([
 
     Mat.Clip = {
 
+        _isSeparator: function(node) {
+            return isNaN(node.coords.usrCoords[1]) && isNaN(node.coords.usrCoords[2]);
+        },
+
         /**
          * Add pointers to an array S such that it is a circular doubly-linked list.
          *
          * @private
          * @param  {Array} S Array
-         * @return {Array} return the array S
+         * @return {Array} return containing the starter indices of each component.
          */
         makeDoublyLinkedList: function(S) {
             var i,
-                // first = null,
+                first = null,
+                components = [],
                 le = S.length;
 
             if (le > 0) {
                 for (i = 0; i < le; i++) {
-                    S[i]._next = S[(i + 1) % le];
-                    S[i]._prev = S[(le + i - 1) % le];
+                    // S[i]._next = S[(i + 1) % le];
+                    // S[i]._prev = S[(le + i - 1) % le];
 
-                    // if (isNaN(S[i].coords.usrCoords[1]) && isNaN(S[i].coords.usrCoords[2])) {
-                    //     S[i]._next = S[(i + 1) % le];
-                    //     S[i]._prev = S[(le + i - 1) % le];
-                    //     continue;
-                    // }
+                    // If S[i] is component separator we proceed with the next node.
+                    if (this._isSeparator(S[i])) {
+                        S[i]._next = S[(i + 1) % le];
+                        S[i]._prev = S[(le + i - 1) % le];
+                        continue;
+                    }
 
-                    // if (first === null) {
-                    //     first = i;
-                    // }
-                    // if (!(isNaN(S[(i + 1) % le].coords.usrCoords[1]) && isNaN(S[(i + 1) % le].coords.usrCoords[2]))) {
-                    //     S[i]._next = S[(i + 1) % le];
-                    //     S[first]._prev = S[i];
-                    // } else {
-                    //     S[i]._next = S[first];
-                    //     S[i]._end = true;
-                    //     first = null;
-                    // }
-                    // if (!(isNaN(S[(le + i - 1) % le].coords.usrCoords[1]) && isNaN(S[(le + i - 1) % le].coords.usrCoords[2]))) {
-                    //     S[i]._prev = S[(le + i - 1) % le];
-                    // }
+                    // Now we know that S[i] is a path component
+                    if (first === null) {
+                        // Start the component if it is not yet started.
+                        first = i;
+                        components.push(first);
+                    }
+                    if (this._isSeparator(S[(i + 1) % le]) || i == le - 1) {
+                        // If the next node is a component separator or if the node is the last node,
+                        // then we close the loop
+                        S[i]._next = S[first];
+                        S[first]._prev = S[i];
+                        S[i]._end = true;
+                        first = null;
+                    } else {
+                        // Here, we are not at the end of component
+                        S[i]._next = S[(i + 1) % le];
+                        S[first]._prev = S[i];
+                    }
+                    if (!this._isSeparator(S[(le + i - 1) % le])) {
+                        S[i]._prev = S[(le + i - 1) % le];
+                    }
                 }
-                S[le - 1]._end = true;
-                // if (!(isNaN(S[le -1].coords.usrCoords[1]) && isNaN(S[le - 1].coords.usrCoords[2]))) {
-                //     S[le - 1]._end = true;
-                // }
             }
-
-            return S;
+            return components;
         },
 
         /**
@@ -459,37 +467,46 @@ define([
             // Run through the subject path.
             for (i = 0; i < S_le; i++) {
                 S_crossings.push([]);
-                Si = S[i].coords.usrCoords;
-                if (isNaN(Si[1]) || isNaN(Si[2])) {
+
+                // Test if S[i] or its successor is a path separator.
+                // If yes, we know that the path consists of multiple components.
+                // We immediately jump to the next segment.
+                if (this._isSeparator(S[i]) || this._isSeparator(S[(i + 1) % S_le])) {
                     hasMultCompsS = true;
                     continue;
                 }
-                Si1 = S[(i + 1) % S_le].coords.usrCoords;
-                if (isNaN(Si1[1]) || isNaN(Si1[2])) {
-                    hasMultCompsS = true;
-                    continue;
-                }
+
+                // If the path consists of multiple components then there is
+                // no path-closing segment between the last node and the first
+                // node. In this case we can leave the loop now.
                 if (hasMultCompsS && i === S_le - 1) {
                     break;
                 }
 
+                Si = S[i].coords.usrCoords;
+                Si1 = S[(i + 1) % S_le].coords.usrCoords;
+
                 // Run through the clip path.
                 for (j = 0; j < C_le; j++) {
-                    // Test if bounding boxes of the two curve segments overlap
-                    // If not, the expensive intersection test can be skipped.
-                    Cj  = C[j].coords.usrCoords;
-                    if (isNaN(Cj[1]) || isNaN(Cj[2])) {
+                    // Test if C[j] or its successor is a path separator.
+                    // If yes, we know that the path consists of multiple components.
+                    // We immediately jump to the next segment.
+                    if (this._isSeparator(C[j]) || this._isSeparator(C[(j + 1) % C_le])) {
                         hasMultCompsC = true;
                         continue;
                     }
-                    Cj1 = C[(j + 1) % C_le].coords.usrCoords;
-                    if (isNaN(Cj1[1]) || isNaN(Cj1[2])) {
-                        hasMultCompsC = true;
-                        continue;
-                    }
+
+                    // If the path consists of multiple components then there is
+                    // no path-closing segment between the last node and the first
+                    // node. In this case we can leave the loop now.
                     if (hasMultCompsC && j === C_le - 1) {
                         break;
                     }
+
+                    // Test if bounding boxes of the two curve segments overlap
+                    // If not, the expensive intersection test can be skipped.
+                    Cj  = C[j].coords.usrCoords;
+                    Cj1 = C[(j + 1) % C_le].coords.usrCoords;
 
                     if (this._noOverlap(Si, Si1, Cj, Cj1)) {
                         continue;
@@ -513,9 +530,7 @@ define([
 // console.log("IS", i, j, crds.usrCoords, res[1], res[2]);
 
                         // Degenerate cases
-                        if (Math.abs(res[1]) < eps || Math.abs(res[2]) < eps) {
-                            // Crossing / bouncing at vertex or
-                            // end of delayed crossing / bouncing
+                        if (Math.abs(res[1]) < eps || Math.abs(res[2]) < eps) {hasMultCompsC
                             type  = 'T';
                             if (Math.abs(res[1]) < eps) {
                                 res[1] = 0;
@@ -528,9 +543,7 @@ define([
                             } else {
                                 crds = new Coords(Const.COORDS_BY_USER, Cj, board);
                             }
-                        } else if (res[1] === Infinity &&
-                                   res[2] === Infinity &&
-                                   Mat.norm(res[0], 3) < eps) {
+                            hasMultCompsC
 
                             // In this case there might be two intersection points to be added
                             // Collinear segments
@@ -593,7 +606,7 @@ define([
             }
             C_intersect = this.sortIntersections(C_crossings);
 
-//this._print_array(C_intersect);
+// this._print_array(C_intersect);
 // // console.log(C_intersect)
 // console.log('<<<<<< Phase 1 done')
             return [S_intersect, C_intersect];
@@ -868,66 +881,50 @@ define([
          * @param  {Array} path1 First path
          * @param  {Array} path2 Second path
          */
-        markEntryExit: function(path1, path2) {
-            var status, P, P_start, cnt, res;
+        markEntryExit: function(path1, path2, starters) {
+            var status, P, cnt, res,
+                i, len, start;
 
-            this._classifyDegenerateIntersections(path1[0]);
-            this._handleIntersectionChains(path1[0]);
+            len = starters.length;
+            for (i = 0; i < len; i++) {
+// console.log(";;;;;;;;;;")
+                start = starters[i];
+                this._classifyDegenerateIntersections(path1[start]);
+                this._handleIntersectionChains(path1[start]);
 
-            // Decide if the first point of the path is inside or outside
-            // of the other path.
-    // console.log("Mark ee", path1[0].coords.usrCoords)
-            res = this._getStatus(path1[0], path2);
-            P = res[0];
-            status = res[1];
+                // Decide if the first point of the component is inside or outside
+                // of the other path.
+                res = this._getStatus(path1[start], path2);
+                P = res[0];
+                status = res[1];
+// console.log("status", P.coords.usrCoords, status);
 
-            P_start = P;
-            // Greiner-Hormann entry/exit algorithm
-            cnt = 0;
-            while (true) {
-                if (P.intersection === true && P.data.type === 'X') {
-                    P.entry_exit = status;
-                    status = (status === 'entry') ? 'exit' : 'entry';
-                    if (P.data.link !== null && !P.data.link.entry_exit) {
-                        P.data.link.entry_exit = P.entry_exit;
+                P._starter = true;
+                // Greiner-Hormann entry/exit algorithm
+                cnt = 0;
+                while (true) {
+                    if (P.intersection === true && P.data.type === 'X') {
+                        P.entry_exit = status;
+                        status = (status === 'entry') ? 'exit' : 'entry';
+                        if (P.data.link !== null && !P.data.link.entry_exit) {
+                            P.data.link.entry_exit = P.entry_exit;
+                        }
                     }
-                }
-                if (P.intersection === true && P.data.type !== 'X') {
-                    if (!P.entry_exit && P.data.link !== null) {
-                        P.entry_exit = P.data.link.entry_exit;
+                    if (P.intersection === true && P.data.type !== 'X') {
+                        if (!P.entry_exit && P.data.link !== null) {
+                            P.entry_exit = P.data.link.entry_exit;
+                        }
                     }
-                }
+// if (P.intersection) { console.log("s>>>", P.coords.usrCoords, P.entry_exit)}
 
-                P = P._next;
-                if (P === P_start || cnt > 1000) {
-                    break;
-                }
-
-                if (isNaN(P.coords.usrCoords[1]) || isNaN(P.coords.usrCoords[2])) {
-                    // Here is the path is separated. We have to test if the
-                    // next point is inside or outside.
                     P = P._next;
-                    res = this._getStatus(P, path2);
-                    P = res[0];
-                    status = res[1];
-                }
+                    if (Type.exists(P._starter) || cnt > 10000) {
+                            break;
+                    }
 
-                cnt++;
-            }
-
-            P_start = P;
-            cnt = 0;
-            while (true) {
-                if (P.intersection) {
-    //console.log(">>", P.coords.usrCoords, P.entry_exit)
+                    cnt++;
                 }
-                P = P._next;
-                if (P === P_start || cnt > 1000) {
-                    break;
-                }
-                cnt++;
             }
-    //console.log("/////")
         },
 
         /**
@@ -976,7 +973,7 @@ define([
                     continue;
                 }
 
-//console.log("\nStart", current.data.pathname, current.coords.usrCoords, current.data.type, current.data.revtype, current.entry_exit, S_idx);
+// console.log("\nStart", current.data.pathname, current.coords.usrCoords, current.data.type, current.data.revtype, current.entry_exit, S_idx);
                 if (path.length > 0) {    // Add a new path
                     path.push([NaN, NaN]);
                 }
@@ -989,8 +986,8 @@ define([
                     path.push(current);
                     current.data.done = true;
 
-console.log("Add intersection", current.coords.usrCoords);
-console.log("AT", current.data.pathname, current.entry_exit, current.coords.usrCoords, current.data.type, current.data.revtype);
+// console.log("Add intersection", current.coords.usrCoords);
+// console.log("AT", current.data.pathname, current.entry_exit, current.coords.usrCoords, current.data.type, current.data.revtype);
                     //
                     // Decide if we follow the current path forward or backward.
                     // for example, in case the clipping is of type "intersection"
@@ -1010,7 +1007,7 @@ console.log("AT", current.data.pathname, current.entry_exit, current.coords.usrC
 
                             if (!this._isCrossing(current, reverse)) {
                                 if (!isNaN(current.coords.usrCoords[1]) && !isNaN(current.coords.usrCoords[2])) {
-if (current.intersection) console.log("Add fw", current.coords.usrCoords);
+// if (true ||current.intersection) console.log("Add fw", current.coords.usrCoords, "NEXT", current._next.coords.usrCoords);
                                     path.push(current);
                                 }
                                 current = current._next;
@@ -1029,7 +1026,7 @@ if (current.intersection) console.log("Add fw", current.coords.usrCoords);
 
                             if (!this._isCrossing(current, true)) {
                                 if (!isNaN(current.coords.usrCoords[1]) && !isNaN(current.coords.usrCoords[2])) {
-if (current.intersection) console.log("Add fw", current.coords.usrCoords);
+// if (true ||current.intersection) console.log("Add fw", current.coords.usrCoords);
                                     path.push(current);
                                 }
                                 current = current._prev;
@@ -1043,7 +1040,7 @@ if (current.intersection) console.log("Add fw", current.coords.usrCoords);
                         return [[0], [0]];
                     }
 
-console.log("Switch", current.coords.usrCoords, current.data.pathname, "to", current.neighbour.data.pathname);
+// console.log("Switch", current.coords.usrCoords, current.data.pathname, "to", current.neighbour.data.pathname);
                     //
                     // We stopped the forwar or backward loop, because we've
                     // arrived at a crossing intersection node, i.e. we have to
@@ -1055,7 +1052,7 @@ console.log("Switch", current.coords.usrCoords, current.data.pathname, "to", cur
                         // We add it agian to close the clipping path and jump out of the
                         // loop.
                         path.push(current);
-console.log("Push last", current.coords.usrCoords);
+// console.log("Push last", current.coords.usrCoords);
                         break;
                     }
                     P = current.data.path;
@@ -1600,6 +1597,8 @@ console.log("Push last", current.coords.usrCoords);
                 C = [],
                 S_intersect = [],
                 // C_intersect = [],
+                S_starters,
+                C_starters,
                 res = [],
                 pathX = [],
                 pathY = [];
@@ -1625,12 +1624,33 @@ console.log("Push last", current.coords.usrCoords);
             }
 
             // Add pointers for doubly linked lists
-            this.makeDoublyLinkedList(S);
-//this._print_array(S);
-            this.makeDoublyLinkedList(C);
+            S_starters = this.makeDoublyLinkedList(S);
+            C_starters = this.makeDoublyLinkedList(C);
+
+            // this._print_array(S);
+            // console.log("Components:", S_starters);
+            // this._print_array(C);
+            // console.log("Components:", C_starters);
 
             res = this.findIntersections(S, C, board);
             S_intersect = res[0];
+
+            // console.log("------- START ------------------")
+            // let cnt = 0;
+            // for (let start of S_starters) {
+            //     console.log("----")
+            //     let P = S[start];
+            //     P._start = true;
+            //     do {
+            //         console.log(">", P.coords.usrCoords, "NEXT", P._next.coords.usrCoords, "NEXT^2", P._next._next.coords.usrCoords)
+            //         P = P._next;
+            //         cnt++;
+            //     } while (!P._start && cnt < 15);
+            //     P._start = null;
+            // }
+            // console.log("------- END ------------------")
+
+
             // C_intersect = res[1];
 
             // For non-closed paths
@@ -1650,14 +1670,14 @@ console.log("Push last", current.coords.usrCoords);
             this._handleFullyDegenerateCase(S, C, board);
 
             // Phase 2: mark intersection points as entry or exit points
-            this.markEntryExit(S, C);
+            this.markEntryExit(S, C, S_starters);
             // if (S[0].coords.distance(Const.COORDS_BY_USER, C[0].coords) === 0) {
             //     // Randomly disturb the first point of the second path
             //     // if both paths start at the same point.
             //     C[0].usrCoords[1] *= 1 + Math.random() * 0.0001 - 0.00005;
             //     C[0].usrCoords[2] *= 1 + Math.random() * 0.0001 - 0.00005;
             // }
-            this.markEntryExit(C, S);
+            this.markEntryExit(C, S, C_starters);
 
             // Handle cases without intersections
             if (this._countCrossingIntersections(S_intersect) === 0) {
