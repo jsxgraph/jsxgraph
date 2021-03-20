@@ -450,12 +450,13 @@ define([
          */
         findIntersections: function(S, C, board) {
             var res = [],
-                eps = Mat.eps * 10,
+                eps = Mat.eps,
                 i, j,
                 crds,
                 S_le = S.length,
                 C_le = C.length,
                 Si, Si1, Cj, Cj1,
+                d1, d2,
                 alpha,
                 type,
                 IS, IC,
@@ -522,27 +523,30 @@ define([
                     res = Geometry.meetSegmentSegment(Si, Si1, Cj, Cj1);
 // console.log(i, j, ":", eps, res[0][1] / res[0][0], res[0][2] / res[0][0], res[1], res[2]);
 
+                    d1 = Geometry.distance(Si, Si1, 3);
+                    d2 = Geometry.distance(Cj, Cj1, 3);
                     // Found an intersection point
                     // isCollinear = false;
-                    if ((res[1] > -eps && res[1] < 1 - eps &&           // "regular" intersection
-                         res[2] > -eps && res[2] < 1 - eps) ||
+                    if ((res[1] * d1 > -eps && res[1] < 1 - eps / d1 &&           // "regular" intersection
+                         res[2] * d2 > -eps && res[2] < 1 - eps / d2) ||
                         (res[1] === Infinity &&
                          res[2] === Infinity && Mat.norm(res[0], 3) < eps) // collinear
                         ) {
 
                             crds = new Coords(Const.COORDS_BY_USER, res[0], board);
                             type = 'X';
-// console.log("IS", i, j, crds.usrCoords, res[1], res[2]);
+// console.log("IS", i, j, crds.usrCoords, res[1], d1, res[1] * d1);
+// console.log(res[2], d2, res[2] * d2);
 
                             // Degenerate cases
-                            if (Math.abs(res[1]) < eps || Math.abs(res[2]) < eps) {
+                            if (Math.abs(res[1]) * d1 < eps || Math.abs(res[2]) * d2 < eps) {
                                 // Crossing / bouncing at vertex or
                                 // end of delayed crossing / bouncing
                                 type  = 'T';
-                                if (Math.abs(res[1]) < eps) {
+                                if (Math.abs(res[1]) < eps * d1) {
                                     res[1] = 0;
                                 }
-                                if (Math.abs(res[2]) < eps) {
+                                if (Math.abs(res[2]) < eps * d2) {
                                     res[2] = 0;
                                 }
                                 if (res[1] === 0) {
@@ -574,8 +578,8 @@ define([
                                     C_crossings[j].push(IC);
                                 }
                                 alpha = this._inbetween(Cj, Si, Si1);
-    // console.log("alpha Cj", alpha, Si);
-                                if (Geometry.distance(Si, Cj, 3) > Mat.eps &&
+    // console.log("alpha Cj", alpha, Si, Geometry.distance(Si, Cj, 3));
+                                if (Geometry.distance(Si, Cj, 3) > eps &&
                                     alpha >= 0 && alpha < 1) {
                                         type = 'T';
                                         crds = new Coords(Const.COORDS_BY_USER, Cj, board);
