@@ -377,13 +377,17 @@ define([
         },
 
         _print_array: function(arr) {
-            var i;
+            var i, end;
             for (i = 0; i < arr.length; i++) {
                 //console.log(i, arr[i].coords.usrCoords,  arr[i].data.type);
                 try {
+                    end = "";
+                    if (arr[i]._end) {
+                        end = " end";
+                    }
                     console.log(i, arr[i].coords.usrCoords,
-                                arr[i]._prev.coords.usrCoords,
-                                arr[i]._next.coords.usrCoords);
+                                "prev", arr[i]._prev.coords.usrCoords,
+                                "next", arr[i]._next.coords.usrCoords + end);
                 } catch (e) {
                     console.log(i, arr[i].coords.usrCoords);
                 }
@@ -444,7 +448,7 @@ define([
          */
         findIntersections: function(S, C, board) {
             var res = [],
-                eps = Mat.eps * 100,
+                eps = Mat.eps,
                 i, j,
                 crds,
                 S_le = S.length,
@@ -524,54 +528,41 @@ define([
                          res[2] === Infinity && Mat.norm(res[0], 3) < eps) // collinear
                         ) {
 
-                        crds = new Coords(Const.COORDS_BY_USER, res[0], board);
-                        type = 'X';
-// console.log(Si, Si1, Cj, Cj1)
+                            crds = new Coords(Const.COORDS_BY_USER, res[0], board);
+                            type = 'X';
 // console.log("IS", i, j, crds.usrCoords, res[1], res[2]);
 
-                        // Degenerate cases
-                        if (Math.abs(res[1]) < eps || Math.abs(res[2]) < eps) {hasMultCompsC
-                            type  = 'T';
-                            if (Math.abs(res[1]) < eps) {
-                                res[1] = 0;
-                            }
-                            if (Math.abs(res[2]) < eps) {
-                                res[2] = 0;
-                            }
-                            if (res[1] === 0) {
-                                crds = new Coords(Const.COORDS_BY_USER, Si, board);
-                            } else {
-                                crds = new Coords(Const.COORDS_BY_USER, Cj, board);
-                            }
-                            hasMultCompsC
-
-                            // In this case there might be two intersection points to be added
-                            // Collinear segments
-                            alpha = this._inbetween(Si, Cj, Cj1);
-// console.log("alpha Si", alpha, Si);
-// console.log(j, Cj)
-// console.log((j + 1) % C_le, Cj1)
-                            if (alpha >= 0 && alpha < 1) {
-                                type = 'T';
-                                crds = new Coords(Const.COORDS_BY_USER, Si, board);
-                                res[1] = 0;
-                                res[2] = alpha;
-                                IS = new this.Vertex(crds, i, res[1], S, 'S', type);
-                                IC = new this.Vertex(crds, j, res[2], C, 'C', type);
-                                IS.neighbour = IC;
-                                IC.neighbour = IS;
-
-                                S_crossings[i].push(IS);
-                                C_crossings[j].push(IC);
-                            }
-                            alpha = this._inbetween(Cj, Si, Si1);
-// console.log("alpha Cj", alpha, Si);
-                            if (Geometry.distance(Si, Cj, 3) > Mat.eps &&
-                                alpha >= 0 && alpha < 1) {
-                                    type = 'T';
-                                    crds = new Coords(Const.COORDS_BY_USER, Cj, board);
-                                    res[1] = alpha;
+                            // Degenerate cases
+                            if (Math.abs(res[1]) < eps || Math.abs(res[2]) < eps) {
+                                // Crossing / bouncing at vertex or
+                                // end of delayed crossing / bouncing
+                                type  = 'T';
+                                if (Math.abs(res[1]) < eps) {
+                                    res[1] = 0;
+                                }
+                                if (Math.abs(res[2]) < eps) {
                                     res[2] = 0;
+                                }
+                                if (res[1] === 0) {
+                                    crds = new Coords(Const.COORDS_BY_USER, Si, board);
+                                } else {
+                                    crds = new Coords(Const.COORDS_BY_USER, Cj, board);
+                                }
+                            } else if (res[1] === Infinity &&
+                                       res[2] === Infinity &&
+                                       Mat.norm(res[0], 3) < eps) {
+
+                                // In this case there might be two intersection points to be added
+                                // Collinear segments
+                                alpha = this._inbetween(Si, Cj, Cj1);
+    // console.log("alpha Si", alpha, Si);
+    // console.log(j, Cj)
+    // console.log((j + 1) % C_le, Cj1)
+                                if (alpha >= 0 && alpha < 1) {
+                                    type = 'T';
+                                    crds = new Coords(Const.COORDS_BY_USER, Si, board);
+                                    res[1] = 0;
+                                    res[2] = alpha;
                                     IS = new this.Vertex(crds, i, res[1], S, 'S', type);
                                     IC = new this.Vertex(crds, j, res[2], C, 'C', type);
                                     IS.neighbour = IC;
@@ -579,9 +570,25 @@ define([
 
                                     S_crossings[i].push(IS);
                                     C_crossings[j].push(IC);
+                                }
+                                alpha = this._inbetween(Cj, Si, Si1);
+    // console.log("alpha Cj", alpha, Si);
+                                if (Geometry.distance(Si, Cj, 3) > Mat.eps &&
+                                    alpha >= 0 && alpha < 1) {
+                                        type = 'T';
+                                        crds = new Coords(Const.COORDS_BY_USER, Cj, board);
+                                        res[1] = alpha;
+                                        res[2] = 0;
+                                        IS = new this.Vertex(crds, i, res[1], S, 'S', type);
+                                        IC = new this.Vertex(crds, j, res[2], C, 'C', type);
+                                        IS.neighbour = IC;
+                                        IC.neighbour = IS;
+
+                                        S_crossings[i].push(IS);
+                                        C_crossings[j].push(IC);
+                                }
+                                continue;
                             }
-                            continue;
-                        }
 
                         IS = new this.Vertex(crds, i, res[1], S, 'S', type);
                         IC = new this.Vertex(crds, j, res[2], C, 'C', type);
@@ -596,9 +603,9 @@ define([
 
             // For both paths, sort their intersection points
             S_intersect = this.sortIntersections(S_crossings);
-// console.log('>>>>>>')
+// console.log('>>>>>> Intersections ')
 // this._print_array(S_intersect);
-// /// console.log(S_intersect)
+// console.log(S_intersect)
 // console.log('----------')
             for (i = 0; i < S_intersect.length; i++) {
                 S_intersect[i].data.idx = i;
@@ -607,7 +614,7 @@ define([
             C_intersect = this.sortIntersections(C_crossings);
 
 // this._print_array(C_intersect);
-// // console.log(C_intersect)
+// console.log(C_intersect)
 // console.log('<<<<<< Phase 1 done')
             return [S_intersect, C_intersect];
         },
@@ -710,7 +717,7 @@ define([
                         }
 // console.log("OTHER4", P.coords.usrCoords, P.data.type);
                     }
-//console.log("P result", P.coords.usrCoords, P.data.type, P.delayedStatus)
+// console.log("P result", P.coords.usrCoords, P.data.type, P.delayedStatus)
 
                     cnt++;
                 }
@@ -1650,7 +1657,6 @@ define([
             // }
             // console.log("------- END ------------------")
 
-
             // C_intersect = res[1];
 
             // For non-closed paths
@@ -1671,6 +1677,7 @@ define([
 
             // Phase 2: mark intersection points as entry or exit points
             this.markEntryExit(S, C, S_starters);
+
             // if (S[0].coords.distance(Const.COORDS_BY_USER, C[0].coords) === 0) {
             //     // Randomly disturb the first point of the second path
             //     // if both paths start at the same point.
