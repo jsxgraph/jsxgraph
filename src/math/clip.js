@@ -4,6 +4,7 @@
         Michael Gerhaeuser,
         Carsten Miller,
         Alfred Wassermann
+console.log("P:", P.coords.usrCoords, P.data.type)
 
     This file is part of JSXGraph.
 
@@ -107,6 +108,7 @@ define([
                     if (this._isSeparator(S[(i + 1) % le]) || i == le - 1) {
                         // If the next node is a component separator or if the node is the last node,
                         // then we close the loop
+
                         S[i]._next = S[first];
                         S[first]._prev = S[i];
                         S[i]._end = true;
@@ -448,7 +450,7 @@ define([
          */
         findIntersections: function(S, C, board) {
             var res = [],
-                eps = Mat.eps,
+                eps = Mat.eps * 100,
                 i, j,
                 crds,
                 S_le = S.length,
@@ -603,9 +605,10 @@ define([
 
             // For both paths, sort their intersection points
             S_intersect = this.sortIntersections(S_crossings);
+
 // console.log('>>>>>> Intersections ')
 // this._print_array(S_intersect);
-// console.log(S_intersect)
+// // console.log(S_intersect)
 // console.log('----------')
             for (i = 0; i < S_intersect.length; i++) {
                 S_intersect[i].data.idx = i;
@@ -644,12 +647,26 @@ define([
             cnt = 0;
             while (true) {
                 if (P.intersection && P.data.type === 'T') {
-//console.log("P:", P.coords.usrCoords, P.data.type)
+// console.log("P:", P.coords.usrCoords, P.data.type)
 
                     // Handle the degenerate cases
                     // Decide if they are (delayed) bouncing or crossing intersections
                     Pp = P._next.coords.usrCoords;  // P+
                     Pm = P._prev.coords.usrCoords;  // P-
+
+                    // If the intersection point is degenerated and
+                    // equal to the start and end of one component,
+                    // then there will be two adjacent points with
+                    // the same coordinate.
+                    // In that case, we proceed to the next node.
+                    if (Geometry.distance(P.coords.usrCoords, Pp, 3) < Mat.eps) {
+                        P._next = P._next._next;
+                        Pp = P._next.coords.usrCoords;
+                    }
+                    if (Geometry.distance(P.coords.usrCoords, Pm, 3) < Mat.eps) {
+                        P._prev = P._prev._prev;
+                        Pm = P._prev.coords.usrCoords;
+                    }
 
                     Q = P.neighbour;
                     Qm = P.neighbour._prev.coords.usrCoords;  // Q-
@@ -704,14 +721,19 @@ define([
                     }
 
                     if ((!P._next.intersection || (P._next.neighbour !== Q._prev && P._next.neighbour !== Q._next)) &&
-                        (!P._prev.intersection || (P._prev.neighbour !== Q._prev && P._prev.neighbour !== Q._next))) {
+                        (!P._prev.intersection || (P._prev.neighbour !== Q._prev && P._prev.neighbour !== Q._next))
+                        ) {
                         // Neither P- nor P+ are intersections
+
+// console.log("&&&&&", isDone, Qm, Pm, P.coords.usrCoords, Pp)
 
                         side = this._getPosition(Qm,   Pm, P.coords.usrCoords, Pp);
                         if (side !== this._getPosition(Qp,  Pm, P.coords.usrCoords, Pp)) {
+// console.log("XXXXXXXXXXXXXXXX")
                             P.data.type    = 'X';
                             P.data.revtype = 'X';
-                        } else{
+                        } else {
+// console.log("BBBBBBBBBBBBBBBBBB")
                             P.data.type    = 'B';
                             P.data.revtype = 'B';
                         }
