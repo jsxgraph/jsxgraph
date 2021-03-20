@@ -543,10 +543,10 @@ define([
                                 // Crossing / bouncing at vertex or
                                 // end of delayed crossing / bouncing
                                 type  = 'T';
-                                if (Math.abs(res[1]) < eps * d1) {
+                                if (Math.abs(res[1]) * d1 < eps) {
                                     res[1] = 0;
                                 }
-                                if (Math.abs(res[2]) < eps * d2) {
+                                if (Math.abs(res[2]) * d2 < eps) {
                                     res[2] = 0;
                                 }
                                 if (res[1] === 0) {
