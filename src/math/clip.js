@@ -450,7 +450,7 @@ define([
          */
         findIntersections: function(S, C, board) {
             var res = [],
-                eps = Mat.eps * 100,
+                eps = Mat.eps * 10,
                 i, j,
                 crds,
                 S_le = S.length,
