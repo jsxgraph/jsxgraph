@@ -1,3 +1,30 @@
+1.2.2
+====
+
+Improvements
+------------
+
+* Clipping: allow clipping of arcs and sectors, as well as rings, i.e. clipping of clipped paths
+* Update WordPress plug-in
+* Update MediaWiki plug-in
+* Improve plotting stability (v2 and v4)
+
+
+Bug fixes
+---------
+
+* Clipping
+* camelCase for radiusPoint and anglePoint attributes
+* Arrow heads on curves
+* API docs
+* JessieCode procedure calls
+
+Experimental
+-----------
+
+* Add cobyla port (non-linear programming)
+
+
 1.2.1
 ====
 
