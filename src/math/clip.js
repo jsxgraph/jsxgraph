@@ -649,9 +649,10 @@ define([
                 cnt;
 
             cnt = 0;
+            P._start = 0;
             while (true) {
+console.log("P:", P.coords.usrCoords, (P.data) ? P.data.type : " ")
                 if (P.intersection && P.data.type === 'T') {
-// console.log("P:", P.coords.usrCoords, P.data.type)
 
                     // Handle the degenerate cases
                     // Decide if they are (delayed) bouncing or crossing intersections
@@ -729,29 +730,37 @@ define([
                         ) {
                         // Neither P- nor P+ are intersections
 
-// console.log("&&&&&", isDone, Qm, Pm, P.coords.usrCoords, Pp)
-
                         side = this._getPosition(Qm,   Pm, P.coords.usrCoords, Pp);
                         if (side !== this._getPosition(Qp,  Pm, P.coords.usrCoords, Pp)) {
-// console.log("XXXXXXXXXXXXXXXX")
                             P.data.type    = 'X';
                             P.data.revtype = 'X';
                         } else {
-// console.log("BBBBBBBBBBBBBBBBBB")
                             P.data.type    = 'B';
                             P.data.revtype = 'B';
                         }
-// console.log("OTHER4", P.coords.usrCoords, P.data.type);
                     }
-// console.log("P result", P.coords.usrCoords, P.data.type, P.delayedStatus)
+console.log(">P:", P.coords.usrCoords, (P.data) ? P.data.type : " ")
 
-                    cnt++;
                 }
-                if (P._end || cnt > 1000) {
+
+                if (Type.exists(P._start)) {
+                    P._start++;
+                }
+                if (P._start > 3 || P._end || cnt > 100) {
+                    if (cnt > 100) {
+                        console.log("_classifyDegenerateIntersections: emergency exit");
+                    }
+                    if (Type.exists(P._start)) {
+                        delete P._start;
+                    }
                     break;
+                }
+                if (P.intersection) {
+                    cnt++;
                 }
                 P = P._next;
             }
+console.log("------------------------")
         },
 
         _handleIntersectionChains: function(P) {
@@ -920,7 +929,7 @@ define([
 
             len = starters.length;
             for (i = 0; i < len; i++) {
-// console.log(";;;;;;;;;;")
+console.log(";;;;;;;;;;")
                 start = starters[i];
                 this._classifyDegenerateIntersections(path1[start]);
                 this._handleIntersectionChains(path1[start]);
@@ -948,7 +957,7 @@ define([
                             P.entry_exit = P.data.link.entry_exit;
                         }
                     }
-// if (P.intersection) { console.log("s>>>", P.coords.usrCoords, P.entry_exit)}
+if (P.intersection) { console.log("s>>>", P.coords.usrCoords, P.entry_exit)}
 
                     P = P._next;
                     if (Type.exists(P._starter) || cnt > 10000) {
