@@ -63,7 +63,7 @@
  *   box:      default: jxgbox
  *   board:    default: brd
  */
-$jsxgraph_version = '1.2.1';
+$jsxgraph_version = '1.2.2';
 
 // CHANGE this to load local files:
 //$outputURI        = '//jsxgraph.org/distrib';
