@@ -520,6 +520,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
 
         /**
          * Calculates the cosine hyperbolicus of x.
+         * @function
          * @param {Number} x The number the cosine hyperbolicus will be calculated of.
          * @returns {Number} Cosine hyperbolicus of the given value.
          */
@@ -529,6 +530,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
 
         /**
          * Sine hyperbolicus of x.
+         * @function
          * @param {Number} x The number the sine hyperbolicus will be calculated of.
          * @returns {Number} Sine hyperbolicus of the given value.
          */
@@ -538,6 +540,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
 
         /**
          * Computes the cotangent of x.
+         * @function
          * @param {Number} x The number the cotangent will be calculated of.
          * @returns {Number} Cotangent of the given value.
          */
@@ -560,7 +563,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          * For n even, for negative valuees of x NaN is returned
          * @param  {Number} x radicand. Must be non-negative, if n even.
          * @param  {Number} n index of the root. must be strictly positive integer.
-         * @return {Number} returns real root or NaN
+         * @returns {Number} returns real root or NaN
          *
          * @example
          * nthroot(16, 4): 2
@@ -595,8 +598,9 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          * Computes cube root of real number
          * Polyfill for Math.cbrt().
          *
+         * @function
          * @param  {Number} x Radicand
-         * @return {Number} Cube root of x.
+         * @returns {Number} Cube root of x.
          */
         cbrt: Math.cbrt || function(x) {
             return this.nthroot(x, 3);
@@ -688,6 +692,8 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
 
         /**
          * The sign() function returns the sign of a number, indicating whether the number is positive, negative or zero.
+         *
+         * @function
          * @param  {Number} x A Number
          * @returns {[type]}  This function has 5 kinds of return values,
          *    1, -1, 0, -0, NaN, which represent "positive number", "negative number", "positive zero", "negative zero"

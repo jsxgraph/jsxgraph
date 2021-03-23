@@ -1013,6 +1013,10 @@ define([
 
         attr = Type.copyAttributes(attributes, board.options, 'polygon');
         obj = board.select(parents[0]);
+        if (obj === null) {
+            // This is necessary if the original polygon is defined in another board.
+            obj = parents[0];
+        }
         if (Type.isObject(obj) && obj.type === Const.OBJECT_TYPE_POLYGON &&
             Type.isTransformationOrArray(parents[1])) {
 
@@ -1038,9 +1042,10 @@ define([
 
         // Put the points to their position
         if (is_transform) {
+            el.prepareUpdate().update().updateVisibility().updateRenderer();
             le = obj.vertices.length - 1;
             for (i = 0; i < le; i++) {
-                points[i].prepareUpdate().update().updateVisibility(Type.evaluate(el.visProp.visible)).updateRenderer();
+                points[i].prepareUpdate().update().updateVisibility().updateRenderer();
             }
         }
 

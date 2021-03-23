@@ -743,10 +743,12 @@ define([
                         Plot.updateParametricCurveOld(this, mi, ma);
                     } else if (version === 2) {
                         Plot.updateParametricCurve_v2(this, mi, ma);
+                    } else if (version === 3) {
+                        Plot.updateParametricCurve_v3(this, mi, ma);
                     } else if (version === 4) {
                         Plot.updateParametricCurve_v4(this, mi, ma);
                     } else {
-                        Plot.updateParametricCurve(this, mi, ma);
+                        Plot.updateParametricCurve_v2(this, mi, ma);
                     }
                     // console.timeEnd("plot");
                 } else {

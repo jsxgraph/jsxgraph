@@ -1692,9 +1692,9 @@ define([
     };
 
     /**
-     * @class This element is used to construct a reflected point.
+     * @class This element is used to construct reflected elements (points, lines, circles, curves, polygons).
      * @pseudo
-     * @description A reflected element (point, line or curve) is given by a given
+     * @description A reflected element (point, polygon, line or curve) is given by a given
      * object of the same type and a line of reflection.
      * It is determined by the reflection of the given element
      * across the given line.
@@ -1835,6 +1835,7 @@ define([
                 // Create a circle element from a circle and a Euclidean transformation
                 attr2 = Type.copyAttributes(attributes, board.options, 'reflection', 'center');
                 r_c = Point.createPoint(board, [org.center, t], attr2);
+                r_c.prepareUpdate().update().updateVisibility(Type.evaluate(r_c.visProp.visible)).updateRenderer();
                 r = Circle.createCircle(board, [r_c, function() {return org.Radius(); }], attr);
             } else {
                 // Create a conic element from a circle and a projective transformation
@@ -1882,9 +1883,9 @@ define([
     };
 
     /**
-     * @class A mirror element will be constructed.
+     * @class A mirror element of a point, line, circle, curve, polygon will be constructed.
      * @pseudo
-     * @description A mirror element is determined by the reflection of a given point across another given point.
+     * @description A mirror element is determined by the reflection of a given point, line, circle, curve, polygon across another given point.
      * @constructor
      * @name Mirrorelement
      * @type JXG.GeometryElement
@@ -2008,6 +2009,7 @@ define([
                 // Create a circle element from a circle and a Euclidean transformation
                 attr2 = Type.copyAttributes(attributes, board.options, 'mirrorelement', 'center');
                 r_c = Point.createPoint(board, [org.center, t], attr2);
+                r_c.prepareUpdate().update().updateVisibility(Type.evaluate(r_c.visProp.visible)).updateRenderer();
                 r = Circle.createCircle(board, [r_c, function() {return org.Radius(); }], attr);
             } else {
                 // Create a conic element from a circle and a projective transformation

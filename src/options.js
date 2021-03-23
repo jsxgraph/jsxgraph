@@ -291,7 +291,7 @@ define([
              * Attributes to control the screenshot function.
              * The following attributes can be set:
              * <ul>
-             *  <li>scale: scaling factor (default=0)
+             *  <li>scale: scaling factor (default=1.0)
              *  <li>type: format of the screenshot image. Default: png
              *  <li>symbol: Unicode symbol which is shown in the navigation bar. Default: '\u2318'
              *  <li>css: CSS rules to format the div element containing the screen shot image
@@ -1963,7 +1963,7 @@ define([
             /**#@-*/
         },
 
-        /* special arc options */
+        /* special arrow options */
         arrow: {
             /**#@+
              * @visprop
@@ -2601,7 +2601,25 @@ define([
              */
             label: {
                 position: 'lft'
-            }
+            },
+
+            /**
+             * Curve has an arrow head at the start position.
+             *
+             * @name Line#firstArrow for options
+             * @type Boolean / Object
+             * @default false
+             */
+            firstArrow: false,
+
+            /**
+             * Curve has an arrow head at the end position.
+             *
+             * @see Line#lastArrow for options
+             * @type Boolean / Object
+             * @default false
+             */
+            lastArrow: false
 
             /**#@-*/
         },
@@ -3136,10 +3154,10 @@ define([
              * In case firstArrow is an object it has the sub-attributes:
              * <pre>
              * {
-             *      type: 1, // possible values are 1, 2, ..., 6
-             *      size: 3, // size of the arrow head.
+             *      type: 1, // possible values are 1, 2, ..., 6. Default value is 1.
+             *      size: 6, // size of the arrow head. Default value is 6.
              *               // This value is multiplied with the strokeWidth of the line
-             *      highlightSize: 3, // size of the arrow head in case the element is highlighted
+             *      highlightSize: 6, // size of the arrow head in case the element is highlighted. Default value
              * }
              * </pre>
              *
@@ -3158,10 +3176,10 @@ define([
              * In case firstArrow is an object it has the sub-attributes:
              * <pre>
              * {
-             *      type: 1, // possible values are 1, 2, ..., 6
-             *      size: 3, // size of the arrow head.
-             *               // This value is multiplied with the strokeWidth of the line
-             *      highlightSize: 3, // size of the arrow head in case the element is highlighted
+             *      type: 1, // possible values are 1, 2, ..., 6. Default value is 1.
+             *      size: 6, // size of the arrow head. Default value is 6.
+             *               // This value is multiplied with the strokeWidth of the line.
+             *      highlightSize: 6, // size of the arrow head in case the element is highlighted. Default value is 6.
              * }
              * </pre>
              *
@@ -4932,8 +4950,6 @@ define([
              * {
              *   fontSize: 24, useMathJax: true
              * });
-             * ze: 24, useMathJax: true
-             * });
              *
              * </pre>
              * <script>
@@ -4988,9 +5004,6 @@ define([
              *     {
              *       fontSize: 24, useMathJax: true
              *     });
-             *     ze: 24, useMathJax: true
-             *     });
-             *
              *     })();
              *
              * </script><pre>

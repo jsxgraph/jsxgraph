@@ -1613,6 +1613,13 @@ define([
                         list.push(this.compile(node.children[1][i], js));
                     }
                     ret = this.compile(node.children[0], js) + '(' + list.join(', ') + (node.children[2] && js ? ', ' + e : '') + ')' + (node.children[2] && !js ? e : '');
+                    if (js) {
+                        // Inserting a newline here allows simulataneously
+                        // - procedural calls like Q.moveTo(...); and
+                        // - function calls in expressions like log(x) + 1;
+                        // Problem: procedural calls will not be ended by a semicolon.
+                        ret += '\n';
+                    }
 
                     // save us a function call when compiled to javascript
                     if (js && node.children[0].value === '$') {

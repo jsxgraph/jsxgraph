@@ -4,6 +4,7 @@
         Michael Gerhaeuser,
         Carsten Miller,
         Alfred Wassermann
+console.log("P:", P.coords.usrCoords, P.data.type)
 
     This file is part of JSXGraph.
 
@@ -62,28 +63,67 @@ define([
      * @exports Mat.Clip as JXG.Math.Clip
      * @namespace
      */
+    // Mat.Clip = function () {
+    // };
+
+    // JXG.extend(Mat.Clip.prototype, /** @lends JXG.Curve.prototype */ {
+
     Mat.Clip = {
+
+        _isSeparator: function(node) {
+            return isNaN(node.coords.usrCoords[1]) && isNaN(node.coords.usrCoords[2]);
+        },
 
         /**
          * Add pointers to an array S such that it is a circular doubly-linked list.
          *
          * @private
          * @param  {Array} S Array
-         * @return {Array} return the array S
+         * @return {Array} return containing the starter indices of each component.
          */
         makeDoublyLinkedList: function(S) {
             var i,
+                first = null,
+                components = [],
                 le = S.length;
 
             if (le > 0) {
                 for (i = 0; i < le; i++) {
-                    S[i]._next = S[(i + 1) % le];
-                    S[i]._prev = S[(le + i - 1) % le];
-                }
-                S[le - 1]._end = true;
-            }
+                    // S[i]._next = S[(i + 1) % le];
+                    // S[i]._prev = S[(le + i - 1) % le];
 
-            return S;
+                    // If S[i] is component separator we proceed with the next node.
+                    if (this._isSeparator(S[i])) {
+                        S[i]._next = S[(i + 1) % le];
+                        S[i]._prev = S[(le + i - 1) % le];
+                        continue;
+                    }
+
+                    // Now we know that S[i] is a path component
+                    if (first === null) {
+                        // Start the component if it is not yet started.
+                        first = i;
+                        components.push(first);
+                    }
+                    if (this._isSeparator(S[(i + 1) % le]) || i == le - 1) {
+                        // If the next node is a component separator or if the node is the last node,
+                        // then we close the loop
+
+                        S[i]._next = S[first];
+                        S[first]._prev = S[i];
+                        S[i]._end = true;
+                        first = null;
+                    } else {
+                        // Here, we are not at the end of component
+                        S[i]._next = S[(i + 1) % le];
+                        S[first]._prev = S[i];
+                    }
+                    if (!this._isSeparator(S[(le + i - 1) % le])) {
+                        S[i]._prev = S[(le + i - 1) % le];
+                    }
+                }
+            }
+            return components;
         },
 
         /**
@@ -113,7 +153,8 @@ define([
          * Volume 20, Issue 3, November 2001, Pages 131-144.
          *
          * @param  {Array} usrCoords Homogenous coordinates of the point
-         * @param  {Array} path      Array of JXG.Coords determining a path, i.e. the vertices of the polygon.
+         * @param  {Array} path      Array of points determining a path, i.e. the vertices of the polygon. The array elements
+         * do not have to be full points, but have to have a subobject "coords".
          * @return {Number}          Winding number of the point. The point is
          *                           regarded outside if the winding number is zero,
          *                           inside otherwise.
@@ -338,9 +379,20 @@ define([
         },
 
         _print_array: function(arr) {
-            var i;
+            var i, end;
             for (i = 0; i < arr.length; i++) {
-                console.log(i, arr[i].coords.usrCoords,  arr[i].data.type);
+                //console.log(i, arr[i].coords.usrCoords,  arr[i].data.type);
+                try {
+                    end = "";
+                    if (arr[i]._end) {
+                        end = " end";
+                    }
+                    console.log(i, arr[i].coords.usrCoords,
+                                "prev", arr[i]._prev.coords.usrCoords,
+                                "next", arr[i]._next.coords.usrCoords + end);
+                } catch (e) {
+                    console.log(i, arr[i].coords.usrCoords);
+                }
             }
         },
 
@@ -404,13 +456,16 @@ define([
                 S_le = S.length,
                 C_le = C.length,
                 Si, Si1, Cj, Cj1,
+                d1, d2,
                 alpha,
                 type,
                 IS, IC,
                 S_intersect = [],
                 C_intersect = [],
                 S_crossings = [],
-                C_crossings = [];
+                C_crossings = [],
+                hasMultCompsS = false,
+                hasMultCompsC = false;
 
             for (j = 0; j < C_le; j++) {
                 C_crossings.push([]);
@@ -419,11 +474,42 @@ define([
             // Run through the subject path.
             for (i = 0; i < S_le; i++) {
                 S_crossings.push([]);
+
+                // Test if S[i] or its successor is a path separator.
+                // If yes, we know that the path consists of multiple components.
+                // We immediately jump to the next segment.
+                if (this._isSeparator(S[i]) || this._isSeparator(S[(i + 1) % S_le])) {
+                    hasMultCompsS = true;
+                    continue;
+                }
+
+                // If the path consists of multiple components then there is
+                // no path-closing segment between the last node and the first
+                // node. In this case we can leave the loop now.
+                if (hasMultCompsS && i === S_le - 1) {
+                    break;
+                }
+
                 Si = S[i].coords.usrCoords;
                 Si1 = S[(i + 1) % S_le].coords.usrCoords;
 
                 // Run through the clip path.
                 for (j = 0; j < C_le; j++) {
+                    // Test if C[j] or its successor is a path separator.
+                    // If yes, we know that the path consists of multiple components.
+                    // We immediately jump to the next segment.
+                    if (this._isSeparator(C[j]) || this._isSeparator(C[(j + 1) % C_le])) {
+                        hasMultCompsC = true;
+                        continue;
+                    }
+
+                    // If the path consists of multiple components then there is
+                    // no path-closing segment between the last node and the first
+                    // node. In this case we can leave the loop now.
+                    if (hasMultCompsC && j === C_le - 1) {
+                        break;
+                    }
+
                     // Test if bounding boxes of the two curve segments overlap
                     // If not, the expensive intersection test can be skipped.
                     Cj  = C[j].coords.usrCoords;
@@ -435,67 +521,54 @@ define([
 
                     // Intersection test
                     res = Geometry.meetSegmentSegment(Si, Si1, Cj, Cj1);
-//console.log(i, j, ":", res[0][1] / res[0][0], res[0][2] / res[0][0], res[1], res[2]);
+// console.log(i, j, ":", eps, res[0][1] / res[0][0], res[0][2] / res[0][0], res[1], res[2]);
 
+                    d1 = Geometry.distance(Si, Si1, 3);
+                    d2 = Geometry.distance(Cj, Cj1, 3);
                     // Found an intersection point
                     // isCollinear = false;
-                    if ((res[1] > -eps && res[1] < 1 - eps &&           // "regular" intersection
-                         res[2] > -eps && res[2] < 1 - eps) ||
+                    if ((res[1] * d1 > -eps && res[1] < 1 - eps / d1 &&           // "regular" intersection
+                         res[2] * d2 > -eps && res[2] < 1 - eps / d2) ||
                         (res[1] === Infinity &&
                          res[2] === Infinity && Mat.norm(res[0], 3) < eps) // collinear
                         ) {
 
-                        crds = new Coords(Const.COORDS_BY_USER, res[0], board);
-                        type = 'X';
-// console.log("IS", i, j, crds.usrCoords, res[1], res[2]);
+                            crds = new Coords(Const.COORDS_BY_USER, res[0], board);
+                            type = 'X';
+// console.log("IS", i, j, crds.usrCoords, res[1], d1, res[1] * d1);
+// console.log(res[2], d2, res[2] * d2);
 
-                        // Degenerate cases
-                        if (Math.abs(res[1]) < eps || Math.abs(res[2]) < eps) {
-                            // Crossing / bouncing at vertex or
-                            // end of delayed crossing / bouncing
-                            type  = 'T';
-                            if (Math.abs(res[1]) < eps) {
-                                res[1] = 0;
-                            }
-                            if (Math.abs(res[2]) < eps) {
-                                res[2] = 0;
-                            }
-                            if (res[1] === 0) {
-                                crds = new Coords(Const.COORDS_BY_USER, Si, board);
-                            } else {
-                                crds = new Coords(Const.COORDS_BY_USER, Cj, board);
-                            }
-                        } else if (res[1] === Infinity &&
-                                   res[2] === Infinity &&
-                                   Mat.norm(res[0], 3) < eps) {
-
-                            // In this case there might be two intersection points to be added
-                            // Collinear segments
-                            alpha = this._inbetween(Si, Cj, Cj1);
-// console.log("alpha Si", alpha, Si);
-// console.log(j, Cj)
-// console.log((j + 1) % C_le, Cj1)
-                            if (alpha >= 0 && alpha < 1) {
-                                type = 'T';
-                                crds = new Coords(Const.COORDS_BY_USER, Si, board);
-                                res[1] = 0;
-                                res[2] = alpha;
-                                IS = new this.Vertex(crds, i, res[1], S, 'S', type);
-                                IC = new this.Vertex(crds, j, res[2], C, 'C', type);
-                                IS.neighbour = IC;
-                                IC.neighbour = IS;
-
-                                S_crossings[i].push(IS);
-                                C_crossings[j].push(IC);
-                            }
-                            alpha = this._inbetween(Cj, Si, Si1);
-// console.log("alpha Cj", alpha, Si);
-                            if (Geometry.distance(Si, Cj, 3) > Mat.eps &&
-                                alpha >= 0 && alpha < 1) {
-                                    type = 'T';
-                                    crds = new Coords(Const.COORDS_BY_USER, Cj, board);
-                                    res[1] = alpha;
+                            // Degenerate cases
+                            if (Math.abs(res[1]) * d1 < eps || Math.abs(res[2]) * d2 < eps) {
+                                // Crossing / bouncing at vertex or
+                                // end of delayed crossing / bouncing
+                                type  = 'T';
+                                if (Math.abs(res[1]) * d1 < eps) {
+                                    res[1] = 0;
+                                }
+                                if (Math.abs(res[2]) * d2 < eps) {
                                     res[2] = 0;
+                                }
+                                if (res[1] === 0) {
+                                    crds = new Coords(Const.COORDS_BY_USER, Si, board);
+                                } else {
+                                    crds = new Coords(Const.COORDS_BY_USER, Cj, board);
+                                }
+                            } else if (res[1] === Infinity &&
+                                       res[2] === Infinity &&
+                                       Mat.norm(res[0], 3) < eps) {
+
+                                // In this case there might be two intersection points to be added
+                                // Collinear segments
+                                alpha = this._inbetween(Si, Cj, Cj1);
+    // console.log("alpha Si", alpha, Si);
+    // console.log(j, Cj)
+    // console.log((j + 1) % C_le, Cj1)
+                                if (alpha >= 0 && alpha < 1) {
+                                    type = 'T';
+                                    crds = new Coords(Const.COORDS_BY_USER, Si, board);
+                                    res[1] = 0;
+                                    res[2] = alpha;
                                     IS = new this.Vertex(crds, i, res[1], S, 'S', type);
                                     IC = new this.Vertex(crds, j, res[2], C, 'C', type);
                                     IS.neighbour = IC;
@@ -503,9 +576,25 @@ define([
 
                                     S_crossings[i].push(IS);
                                     C_crossings[j].push(IC);
+                                }
+                                alpha = this._inbetween(Cj, Si, Si1);
+    // console.log("alpha Cj", alpha, Si, Geometry.distance(Si, Cj, 3));
+                                if (Geometry.distance(Si, Cj, 3) > eps &&
+                                    alpha >= 0 && alpha < 1) {
+                                        type = 'T';
+                                        crds = new Coords(Const.COORDS_BY_USER, Cj, board);
+                                        res[1] = alpha;
+                                        res[2] = 0;
+                                        IS = new this.Vertex(crds, i, res[1], S, 'S', type);
+                                        IC = new this.Vertex(crds, j, res[2], C, 'C', type);
+                                        IS.neighbour = IC;
+                                        IC.neighbour = IS;
+
+                                        S_crossings[i].push(IS);
+                                        C_crossings[j].push(IC);
+                                }
+                                continue;
                             }
-                            continue;
-                        }
 
                         IS = new this.Vertex(crds, i, res[1], S, 'S', type);
                         IC = new this.Vertex(crds, j, res[2], C, 'C', type);
@@ -520,9 +609,10 @@ define([
 
             // For both paths, sort their intersection points
             S_intersect = this.sortIntersections(S_crossings);
-// console.log('>>>>>>')
+
+// console.log('>>>>>> Intersections ')
 // this._print_array(S_intersect);
-//console.log(S_intersect)
+// // console.log(S_intersect)
 // console.log('----------')
             for (i = 0; i < S_intersect.length; i++) {
                 S_intersect[i].data.idx = i;
@@ -559,14 +649,29 @@ define([
                 cnt;
 
             cnt = 0;
+            P._start = 0;
             while (true) {
+// console.log("P:", P.coords.usrCoords, (P.data) ? P.data.type : " ")
                 if (P.intersection && P.data.type === 'T') {
-//console.log("P:", P.coords.usrCoords, P.data.type)
 
                     // Handle the degenerate cases
                     // Decide if they are (delayed) bouncing or crossing intersections
                     Pp = P._next.coords.usrCoords;  // P+
                     Pm = P._prev.coords.usrCoords;  // P-
+
+                    // If the intersection point is degenerated and
+                    // equal to the start and end of one component,
+                    // then there will be two adjacent points with
+                    // the same coordinate.
+                    // In that case, we proceed to the next node.
+                    if (Geometry.distance(P.coords.usrCoords, Pp, 3) < Mat.eps) {
+                        P._next = P._next._next;
+                        Pp = P._next.coords.usrCoords;
+                    }
+                    if (Geometry.distance(P.coords.usrCoords, Pm, 3) < Mat.eps) {
+                        P._prev = P._prev._prev;
+                        Pm = P._prev.coords.usrCoords;
+                    }
 
                     Q = P.neighbour;
                     Qm = P.neighbour._prev.coords.usrCoords;  // Q-
@@ -621,28 +726,41 @@ define([
                     }
 
                     if ((!P._next.intersection || (P._next.neighbour !== Q._prev && P._next.neighbour !== Q._next)) &&
-                        (!P._prev.intersection || (P._prev.neighbour !== Q._prev && P._prev.neighbour !== Q._next))) {
+                        (!P._prev.intersection || (P._prev.neighbour !== Q._prev && P._prev.neighbour !== Q._next))
+                        ) {
                         // Neither P- nor P+ are intersections
 
                         side = this._getPosition(Qm,   Pm, P.coords.usrCoords, Pp);
                         if (side !== this._getPosition(Qp,  Pm, P.coords.usrCoords, Pp)) {
                             P.data.type    = 'X';
                             P.data.revtype = 'X';
-                        } else{
+                        } else {
                             P.data.type    = 'B';
                             P.data.revtype = 'B';
                         }
-// console.log("OTHER4", P.coords.usrCoords, P.data.type);
                     }
-//console.log("P result", P.coords.usrCoords, P.data.type, P.delayedStatus)
+// console.log(">P:", P.coords.usrCoords, (P.data) ? P.data.type : " ")
 
-                    cnt++;
                 }
-                if (P._end || cnt > 1000) {
+
+                if (Type.exists(P._start)) {
+                    P._start++;
+                }
+                if (P._start > 3 || P._end || cnt > 1000) {
+                    if (cnt > 1000) {
+                        console.log("Clipping: _classifyDegenerateIntersections exit");
+                    }
+                    if (Type.exists(P._start)) {
+                        delete P._start;
+                    }
                     break;
+                }
+                if (P.intersection) {
+                    cnt++;
                 }
                 P = P._next;
             }
+// console.log("------------------------")
         },
 
         _handleIntersectionChains: function(P) {
@@ -690,7 +808,7 @@ define([
                     break;
                 }
                 if (cnt > 1000) {
-                    console.log("Intersection chain: SAFETY EXIT!!!!");
+                    console.log("Clipping: Intersection chain - exit");
                     break;
                 }
                 P = P._next;
@@ -773,6 +891,26 @@ define([
             }
         },
 
+        _getStatus: function(P, path) {
+            var status;
+            while (P.intersection) {
+                if (P._end) {
+                    break;
+                }
+                P = P._next;
+            }
+            if (this.windingNumber(P.coords.usrCoords, path) % 2 === 0) {
+                // Outside
+                status = 'entry';
+            } else {
+                // Inside
+                status = 'exit';
+            }
+//console.log("STATUS", P.coords.usrCoords, status)
+
+            return [P, status];
+        },
+
         /**
          * Mark the intersection vertices of path1 as entry points or as exit points
          * in respect to path2.
@@ -785,63 +923,59 @@ define([
          * @param  {Array} path1 First path
          * @param  {Array} path2 Second path
          */
-        markEntryExit: function(path1, path2) {
-            var status, P, P_start, cnt;
+        markEntryExit: function(path1, path2, starters) {
+            var status, P, cnt, res,
+                i, len, start;
 
-            this._classifyDegenerateIntersections(path1[0]);
-            this._handleIntersectionChains(path1[0]);
+            len = starters.length;
+            for (i = 0; i < len; i++) {
+// console.log(";;;;;;;;;;")
+                start = starters[i];
+                this._classifyDegenerateIntersections(path1[start]);
+                this._handleIntersectionChains(path1[start]);
 
-            // Decide if the first point of the path is inside or outside
-            // of the other path.
-            P = path1[0];
-            while (P.intersection) {
-                if (P._end) {
-                    break;
-                }
-                P = P._next;
-            }
-            if (this.windingNumber(P.coords.usrCoords, path2) === 0) {
-                // Outside
-                status = 'entry';
-            } else {
-                // Inside
-                status = 'exit';
-            }
+                // Decide if the first point of the component is inside or outside
+                // of the other path.
+                res = this._getStatus(path1[start], path2);
+                P = res[0];
+                status = res[1];
+// console.log("status", P.coords.usrCoords, status);
 
-            P_start = P;
-            // Greiner-Hormann entry/exit algorithm
-            cnt = 0;
-            while (true) {
-                if (P.intersection === true && P.data.type === 'X') {
-                    P.entry_exit = status;
-                    status = (status === 'entry') ? 'exit' : 'entry';
-                    if (P.data.link !== null && !P.data.link.entry_exit) {
-                        P.data.link.entry_exit = P.entry_exit;
+                P._starter = true;
+                // Greiner-Hormann entry/exit algorithm
+                cnt = 0;
+                while (true) {
+                    if (P.intersection === true && P.data.type === 'X') {
+                        P.entry_exit = status;
+                        status = (status === 'entry') ? 'exit' : 'entry';
+                        if (P.data.link !== null && !P.data.link.entry_exit) {
+                            P.data.link.entry_exit = P.entry_exit;
+                        }
                     }
-                }
-                if (P.intersection === true && P.data.type !== 'X') {
-                    if (!P.entry_exit && P.data.link !== null) {
-                        P.entry_exit = P.data.link.entry_exit;
+                    if (P.intersection === true && P.data.type !== 'X') {
+                        if (!P.entry_exit && P.data.link !== null) {
+                            P.entry_exit = P.data.link.entry_exit;
+                        }
                     }
-                }
-                P = P._next;
-                if (P === P_start || cnt > 1000) {
-                    break;
-                }
-                cnt++;
-            }
+// if (P.intersection) { console.log("s>>>", P.coords.usrCoords, P.entry_exit)}
 
-            P_start = P;
-            cnt = 0;
-            while (true) {
-                P = P._next;
-                if (P === P_start || cnt > 1000) {
-                    break;
+                    P = P._next;
+                    if (Type.exists(P._starter) || cnt > 10000) {
+                            break;
+                    }
+
+                    cnt++;
                 }
-                cnt++;
             }
         },
 
+        /**
+         *
+         * @private
+         * @param {Array} P
+         * @param {Boolean} isBackward
+         * @returns {Boolean} True, if the node is an intersection and is of type 'X'
+         */
         _isCrossing: function(P, isBackward) {
             isBackward = isBackward || false;
             return P.intersection && ((isBackward ? P.data.revtype : P.data.type) === 'X');
@@ -873,52 +1007,71 @@ define([
 
             reverse = (clip_type === 'difference' || clip_type === 'union') ? true : false;
             while (S_idx < S_intersect.length && cnt < maxCnt) {
+                // Take the first intersection node of the subject path
+                // which is not yet included as start point.
                 current = S_intersect[S_idx];
                 if (current.data.done || !this._isCrossing(current, reverse)) {
                     S_idx++;
                     continue;
                 }
 
-// console.log("Start", current.data.pathname, current.coords.usrCoords, current.data.type, current.data.revtype, current.entry_exit, S_idx);
+// console.log("\nStart", current.data.pathname, current.coords.usrCoords, current.data.type, current.data.revtype, current.entry_exit, S_idx);
                 if (path.length > 0) {    // Add a new path
                     path.push([NaN, NaN]);
                 }
 
+                // Start now the tracing with that node of the subject path
                 start = current.data.idx;
                 P = S;
                 do {
-                    // Add the "current" intersection vertex
+                    // Add the "current" intersection vertex.
                     path.push(current);
-// console.log("Add intersection", current.coords.usrCoords);
                     current.data.done = true;
 
+// console.log("Add intersection", current.coords.usrCoords);
 // console.log("AT", current.data.pathname, current.entry_exit, current.coords.usrCoords, current.data.type, current.data.revtype);
+                    //
+                    // Decide if we follow the current path forward or backward.
+                    // for example, in case the clipping is of type "intersection"
+                    // and the current intersection node is of type entry, we go forward.
+                    //
                     if ((clip_type === 'intersection' && current.entry_exit === 'entry') ||
                         (clip_type === 'union' && current.entry_exit === 'exit') ||
                         (clip_type === 'difference' && (P === S) === (current.entry_exit === 'exit')) ) {
 
+                        //
+                        // Take the next nodes and add them to the path
+                        // as long as they are not intersection nodes of type 'X'.
+                        //
                         current = current._next;
                         do {
                             cnt++;
 
-                            path.push(current);
-// console.log("Add fw", current.coords.usrCoords);
-
-                            if (!this._isCrossing(current, reverse)) {  // In case there are two adjacent intersects
+                            if (!this._isCrossing(current, reverse)) {
+                                if (!isNaN(current.coords.usrCoords[1]) && !isNaN(current.coords.usrCoords[2])) {
+// if (true ||current.intersection) console.log("Add fw", current.coords.usrCoords, "NEXT", current._next.coords.usrCoords);
+                                    path.push(current);
+                                }
                                 current = current._next;
                             }
                         } while (!this._isCrossing(current, reverse) && cnt < maxCnt);
                     } else {
+
+                        //
+                        // Here, we go backward:
+                        // Take the previous nodes and add them to the path
+                        // as long as they are not intersection nodes of type 'X'.
+                        //
                         current = current._prev;
                         do {
                             cnt++;
 
-                            path.push(current);
-// console.log("Add bw", current.coords.usrCoords);
-
-                            if (!this._isCrossing(current, true)) {  // In case there are two adjacent intersects
+                            if (!this._isCrossing(current, true)) {
+                                if (!isNaN(current.coords.usrCoords[1]) && !isNaN(current.coords.usrCoords[2])) {
+// if (true ||current.intersection) console.log("Add fw", current.coords.usrCoords);
+                                    path.push(current);
+                                }
                                 current = current._prev;
-//console.log("goto", current.coords.usrCoords)
                             }
                         } while (!this._isCrossing(current, true) && cnt < maxCnt);
                     }
@@ -930,9 +1083,18 @@ define([
                     }
 
 // console.log("Switch", current.coords.usrCoords, current.data.pathname, "to", current.neighbour.data.pathname);
+                    //
+                    // We stopped the forwar or backward loop, because we've
+                    // arrived at a crossing intersection node, i.e. we have to
+                    // switch to the other path now.
                     current = current.neighbour;
                     if (current.data.done) {
+                        // We arrived at an intersection node which is already
+                        // added to the clipping path.
+                        // We add it agian to close the clipping path and jump out of the
+                        // loop.
                         path.push(current);
+// console.log("Push last", current.coords.usrCoords);
                         break;
                     }
                     P = current.data.path;
@@ -1033,7 +1195,7 @@ define([
         },
 
         /**
-         * Handle cases when there are no intersection points of the two paths. This is the case if the
+             * Handle cases when there are no intersection points of the two paths. This is the case if the
          * paths are disjoint or one is contained in the other.
          * @private
          * @param  {Array} S        First path, array of JXG.Coords
@@ -1082,7 +1244,7 @@ define([
             }
 
             // The two paths have no crossing intersections,
-            // but there might be bounicng intersections.
+            // but there might be bouncing intersections.
 
             // First, we find - if possible - on each path a point which is not an intersection point.
             if (S.length > 0) {
@@ -1155,6 +1317,85 @@ define([
         },
 
         /**
+         * Create path from all sorts of input elements to greinerHormann().
+         *
+         * @private
+         * @param {Object} obj Maybe curve, arc, sector, circle, polygon, array of points, array of JXG.Coords,
+         * array of coordinate pairs.
+         * @param  {JXG.Board} board   JSXGraph board object. It is needed to convert between
+         * user coordinates and screen coordinates.
+         * @returns {Array} Array of JXG.Coords elements containing a path.
+         * @see JXG.Math.Clip#greinerHormann
+         */
+        _getPath: function(obj, board) {
+            var i, len, r, rad, angle, alpha,
+                steps,
+                S = [];
+
+            // Collect all points into path array S
+            if (obj.elementClass === Const.OBJECT_CLASS_CURVE &&
+                (obj.type === Const.OBJECT_TYPE_ARC || obj.type === Const.OBJECT_TYPE_SECTOR)) {
+                angle = Geometry.rad(obj.radiuspoint, obj.center, obj.anglepoint);
+                steps = Math.floor(angle * 180 / Math.PI);
+                r = obj.Radius();
+                rad = angle / steps;
+                alpha = Math.atan2(obj.radiuspoint.coords.usrCoords[2] - obj.center.coords.usrCoords[2],
+                    obj.radiuspoint.coords.usrCoords[1] - obj.center.coords.usrCoords[1]);
+
+                if (obj.type === Const.OBJECT_TYPE_SECTOR) {
+                    this._addToList(S, obj.center.coords, 0);
+                }
+                for (i = 0; i <= steps; i++) {
+                    this._addToList(S, new Coords(Const.COORDS_BY_USER, [
+                        obj.center.coords.usrCoords[0],
+                        obj.center.coords.usrCoords[1] + Math.cos(i * rad + alpha) * r,
+                        obj.center.coords.usrCoords[2] + Math.sin(i * rad + alpha) * r
+                    ], board), i + 1);
+                }
+                if (obj.type === Const.OBJECT_TYPE_SECTOR) {
+                    this._addToList(S, obj.center.coords, steps + 2);
+                }
+
+            } else if (obj.elementClass === Const.OBJECT_CLASS_CURVE && Type.exists(obj.points)) {
+                len = obj.numberPoints;
+                for (i = 0; i < len; i++) {
+                    this._addToList(S, obj.points[i], i);
+                }
+            } else if (obj.type === Const.OBJECT_TYPE_POLYGON) {
+                for (i = 0; i < obj.vertices.length; i++) {
+                    this._addToList(S, obj.vertices[i].coords, i);
+                }
+            } else if (obj.elementClass === Const.OBJECT_CLASS_CIRCLE) {
+                steps = 359;
+                r = obj.Radius();
+                rad = 2 * Math.PI / steps;
+                for (i = 0; i <= steps; i++) {
+                    this._addToList(S, new Coords(Const.COORDS_BY_USER, [
+                        obj.center.coords.usrCoords[0],
+                        obj.center.coords.usrCoords[1] + Math.cos(i * rad) * r,
+                        obj.center.coords.usrCoords[2] + Math.sin(i * rad) * r
+                    ], board), i);
+                }
+            } else if (Type.isArray(obj)) {
+                len = obj.length;
+                for (i = 0; i < len; i++) {
+                    if (Type.exists(obj[i].coords)) {
+                        // Point type
+                        this._addToList(S, obj[i].coords, i);
+                    } else if (Type.isArray(obj[i])) {
+                        // Coordinate pair
+                        this._addToList(S, new Coords(Const.COORDS_BY_USER, obj[i], board), i);
+                    } else if (Type.exists(obj[i].usrCoords)) {
+                        // JXG.Coordinates
+                        this._addToList(S, obj[i], i);
+                    }
+                }
+            }
+
+            return S;
+        },
+
+        /**
          * Determine the intersection, union or difference of two closed paths.
          * <p>
          * This is an implementation of the Greiner-Hormann algorithm, see
@@ -1177,7 +1418,11 @@ define([
          * </ul>
          *
          * @param  {JXG.Circle|JXG.Curve|JXG.Polygon} subject   First closed path, usually called 'subject'.
+         * Maybe curve, arc, sector, circle, polygon, array of points, array of JXG.Coords,
+         * array of coordinate pairs.
          * @param  {JXG.Circle|JXG.Curve|JXG.Polygon} clip      Second closed path, usually called 'clip'.
+         * Maybe curve, arc, sector, circle, polygon, array of points, array of JXG.Coords,
+         * array of coordinate pairs.
          * @param  {String} clip_type Determines the type of boolean operation on the two paths.
          *  Possible values are 'intersection', 'union', or 'difference'.
          * @param  {JXG.Board} board   JSXGraph board object. It is needed to convert between
@@ -1376,105 +1621,39 @@ define([
          *              [bbox[2], bbox[1]], // ur
          *              [bbox[0], bbox[1]]] // ul
          *         triangle = [[-1,1], [1,1], [0,-1], [-1,1]];
-         *     
+         *
          *         var a = JXG.Math.Clip.greinerHormann(canvas, triangle, 'difference', this.board);
          *         this.dataX = a[0];
          *         this.dataY = a[1];
          *     };
-         * 
+         *
          *     })();
-         * 
+         *
          * </script><pre>
-         * 
+         *
          */
         greinerHormann: function(subject, clip, clip_type, board) { //},
                 // subject_first_point_type, clip_first_point_type) {
 
-            var i, r, rad, len,
-                steps = 359,
-                S = [],
+            var len, S = [],
                 C = [],
                 S_intersect = [],
                 // C_intersect = [],
+                S_starters,
+                C_starters,
                 res = [],
                 pathX = [],
                 pathY = [];
 
-            // Collect all points into subject array S
-            if (subject.elementClass === Const.OBJECT_CLASS_CURVE && Type.exists(subject.points)) {
-                len = subject.points.length;
-                for (i = 0; i < len; i++) {
-                    this._addToList(S, subject.points[i], i);
-                }
-            } else if (subject.type === Const.OBJECT_TYPE_POLYGON) {
-                for (i = 0; i < subject.vertices.length; i++) {
-                    this._addToList(S, subject.vertices[i].coords, i);
-                }
-            } else if (subject.elementClass === Const.OBJECT_CLASS_CIRCLE) {
-                r = subject.Radius();
-                rad = 2 * Math.PI / steps;
-                for (i = 0; i <= steps; i++) {
-                    this._addToList(S, new Coords(Const.COORDS_BY_USER, [
-                        subject.center.coords.usrCoords[0],
-                        subject.center.coords.usrCoords[1] + Math.cos(i * rad) * r,
-                        subject.center.coords.usrCoords[2] + Math.sin(i * rad) * r
-                    ], board), i);
-                }
-            } else if (Type.isArray(subject)) {
-                len = subject.length;
-                for (i = 0; i < len; i++) {
-                    if (Type.exists(subject[i].coords)) {
-                        // Point type
-                        this._addToList(S, subject[i].coords, i);
-                    } else if (Type.isArray(subject[i])) {
-                        // Coordinate pair
-                        this._addToList(S, new Coords(Const.COORDS_BY_USER, subject[i], board), i);
-                    } else if (Type.exists(subject[i].usrCoords)) {
-                        // JXG.Coordinates
-                        this._addToList(S, subject[i], i);
-                    }
-                }
-            }
+            // Collect all subject points into subject array S
+            S = this._getPath(subject, board);
             len = S.length;
             if (len > 0 && Geometry.distance(S[0].coords.usrCoords, S[len - 1].coords.usrCoords, 3) < Mat.eps) {
                 S.pop();
             }
 
             // Collect all points into clip array C
-            if (clip.elementClass === Const.OBJECT_CLASS_CURVE && Type.exists(clip.points)) {
-                len = clip.points.length;
-                for (i = 0; i < len; i++) {
-                    this._addToList(C, clip.points[i], i);
-                }
-            } else if (clip.type === Const.OBJECT_TYPE_POLYGON) {
-                for (i = 0; i < clip.vertices.length; i++) {
-                    this._addToList(C, clip.vertices[i].coords, i);
-                }
-            } else if (clip.elementClass === Const.OBJECT_CLASS_CIRCLE) {
-                r = clip.Radius();
-                rad = 2 * Math.PI / steps;
-                for (i = 0; i <= steps; i++) {
-                    this._addToList(C, new Coords(Const.COORDS_BY_USER, [
-                        clip.center.coords.usrCoords[0],
-                        clip.center.coords.usrCoords[1] + Math.cos(i * rad) * r,
-                        clip.center.coords.usrCoords[2] + Math.sin(i * rad) * r
-                    ], board), i);
-                }
-            } else if (Type.isArray(clip)) {
-                len = clip.length;
-                for (i = 0; i < len; i++) {
-                    if (Type.exists(clip[i].coords)) {
-                        // Point type
-                        this._addToList(C, clip[i].coords, i);
-                    } else if (Type.isArray(clip[i])) {
-                        // Coordinate pair
-                        this._addToList(C, new Coords(Const.COORDS_BY_USER, clip[i], board), i);
-                    } else if (Type.exists(clip[i].usrCoords)) {
-                        // JXG.Coordinates
-                        this._addToList(C, clip[i], i);
-                    }
-                }
-            }
+            C = this._getPath(clip, board);
 
             len = C.length;
             if (len > 0 && Geometry.distance(C[0].coords.usrCoords, C[len - 1].coords.usrCoords, 3) < Mat.eps * Mat.eps) {
@@ -1487,11 +1666,32 @@ define([
             }
 
             // Add pointers for doubly linked lists
-            this.makeDoublyLinkedList(S);
-            this.makeDoublyLinkedList(C);
+            S_starters = this.makeDoublyLinkedList(S);
+            C_starters = this.makeDoublyLinkedList(C);
+
+            // this._print_array(S);
+            // console.log("Components:", S_starters);
+            // this._print_array(C);
+            // console.log("Components:", C_starters);
 
             res = this.findIntersections(S, C, board);
             S_intersect = res[0];
+
+            // console.log("------- START ------------------")
+            // let cnt = 0;
+            // for (let start of S_starters) {
+            //     console.log("----")
+            //     let P = S[start];
+            //     P._start = true;
+            //     do {
+            //         console.log(">", P.coords.usrCoords, "NEXT", P._next.coords.usrCoords, "NEXT^2", P._next._next.coords.usrCoords)
+            //         P = P._next;
+            //         cnt++;
+            //     } while (!P._start && cnt < 15);
+            //     P._start = null;
+            // }
+            // console.log("------- END ------------------")
+
             // C_intersect = res[1];
 
             // For non-closed paths
@@ -1511,31 +1711,21 @@ define([
             this._handleFullyDegenerateCase(S, C, board);
 
             // Phase 2: mark intersection points as entry or exit points
-            this.markEntryExit(S, C);
+            this.markEntryExit(S, C, S_starters);
+
             // if (S[0].coords.distance(Const.COORDS_BY_USER, C[0].coords) === 0) {
             //     // Randomly disturb the first point of the second path
             //     // if both paths start at the same point.
             //     C[0].usrCoords[1] *= 1 + Math.random() * 0.0001 - 0.00005;
             //     C[0].usrCoords[2] *= 1 + Math.random() * 0.0001 - 0.00005;
             // }
-            this.markEntryExit(C, S);
+            this.markEntryExit(C, S, C_starters);
 
             // Handle cases without intersections
             if (this._countCrossingIntersections(S_intersect) === 0) {
                 return this.handleEmptyIntersection(S, C, clip_type);
             }
 
-            // if (false) {
-            //     for (i = 0; i < S_intersect.length; i++) {
-            //         console.log('S', S_intersect[i].cnt, S_intersect[i].entry_exit, S_intersect[i].usrCoords,
-            //                 S_intersect[i].pos, S_intersect[i].alpha);
-            //     }
-            //     console.log();
-            //     for (i = 0; i < C_intersect.length; i++) {
-            //         console.log('C', C_intersect[i].cnt, C_intersect[i].entry_exit, C_intersect[i].usrCoords,
-            //                 C_intersect[i].pos, C_intersect[i].alpha);
-            //     }
-            // }
             // Phase 3: tracing
             return this.tracing(S, S_intersect, clip_type);
 
@@ -1753,7 +1943,7 @@ define([
         difference: function(path1, path2, board) {
             return this.greinerHormann(path1, path2, 'difference', board);
         }
-    };
+    }; //);
 
     JXG.extend(Mat.Clip, /** @lends JXG.Math.Clip */ {
     });

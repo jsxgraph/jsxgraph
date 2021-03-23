@@ -113,7 +113,7 @@ define([
     JXG.createArc = function (board, parents, attributes) {
         var el, attr, points;
 
-        points = Type.providePoints(board, parents, attributes, 'arc', ['center', 'radiuspoint', 'anglepoint']);
+        points = Type.providePoints(board, parents, attributes, 'arc', ['center', 'radiusPoint', 'anglePoint']);
         if (points === false || points.length < 3) {
             throw new Error("JSXGraph: Can't create Arc with parent types '" +
                 (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" +

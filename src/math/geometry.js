@@ -2027,7 +2027,7 @@ define([
 
         /**
          * Generate the defining points of a 3rd degree bezier curve that approximates
-         * a circle sector defined by three arrays A, B,C, each of length three.
+         * a circle sector defined by three coordinate points A, B, C, each defined by an array of length three.
          * The coordinate arrays are given in homogeneous coordinates.
          * @param {Array} A First point
          * @param {Array} B Second point (intersection point)

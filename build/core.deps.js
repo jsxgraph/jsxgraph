@@ -12,6 +12,7 @@ define([
     'math/extrapolate',
     'math/qdt',
     'math/numerics',
+    'math/nlp',
     'math/plot',
     'math/metapost',
     'math/statistics',

@@ -322,6 +322,32 @@ define(['jxg', 'base/constants', 'base/coords', 'math/math', 'math/extrapolate',
             }
         },
 
+        /**
+         * Check if there is a single NaN function value at t0.
+         * @param {*} curve
+         * @param {*} t0
+         * @returns {Boolean} true if there is a second NaN point close by, false otherwise
+         */
+        neighborhood_isNaN_v2: function(curve, t0) {
+            var is_undef,
+                pnt = new Coords(Const.COORDS_BY_USER, [0, 0], curve.board, false),
+                t, p;
+
+            t = t0 + Mat.eps;
+            pnt.setCoordinates(Const.COORDS_BY_USER, [curve.X(t, true), curve.Y(t, true)], false);
+            p = pnt.usrCoords;
+            is_undef = isNaN(p[1] + p[2]);
+            if (!is_undef) {
+                t = t0 - Mat.eps;
+                pnt.setCoordinates(Const.COORDS_BY_USER, [curve.X(t, true), curve.Y(t, true)], false);
+                p = pnt.usrCoords;
+                is_undef = isNaN(p[1] + p[2]);
+                if (!is_undef) {
+                    return false;
+                }
+            }
+            return true;
+        },
 
         /**
          * Investigate a function term at the bounds of intervals where
@@ -350,79 +376,92 @@ define(['jxg', 'base/constants', 'base/coords', 'math/math', 'math/extrapolate',
                 // asymptote;
 
             if (depth <= 1) {
-               pnt = new Coords(Const.COORDS_BY_USER, [0, 0], curve.board, false);
-               j = 0;
-               // Bisect a, b and c until the point t_real is inside of the definition interval
-               // and as close as possible at the boundary.
-               // t_real2 is the second closest point.
-               do {
-                   // There are four cases:
-                   //  a  |  c  |  b
-                   // ---------------
-                   // inf | R   | R
-                   // R   | R   | inf
-                   // inf | inf | R
-                   // R   | inf | inf
-                   //
-                   if (isNaN(a[1] + a[2]) && !isNaN(c[1] + c[2])) {
-                       t_nan = ta;
-                       t_real = tc;
-                       t_real2 = tb;
-                   } else if (isNaN(b[1] + b[2]) && !isNaN(c[1] + c[2])) {
-                       t_nan = tb;
-                       t_real = tc;
-                       t_real2 = ta;
-                   } else if (isNaN(c[1] + c[2]) && !isNaN(b[1] + b[2])) {
-                       t_nan = tc;
-                       t_real = tb;
-                       t_real2 = tb + (tb - tc);
-                   } else if (isNaN(c[1] + c[2]) && !isNaN(a[1] + a[2])) {
-                       t_nan = tc;
-                       t_real = ta;
-                       t_real2 = ta - (tc - ta);
-                   } else {
-                       return false;
-                   }
-                   t = 0.5 * (t_nan + t_real);
-                   pnt.setCoordinates(Const.COORDS_BY_USER, [curve.X(t, true), curve.Y(t, true)], false);
-                   p = pnt.usrCoords;
+                pnt = new Coords(Const.COORDS_BY_USER, [0, 0], curve.board, false);
+                // Test if there is a single undefined point.
+                // If yes, we ignore it.
+                if (isNaN(a[1] + a[2]) && !isNaN(c[1] + c[2]) && !this.neighborhood_isNaN_v2(curve, ta)) {
+                    return false;
+                }
+                if (isNaN(b[1] + b[2]) && !isNaN(c[1] + c[2]) && !this.neighborhood_isNaN_v2(curve, tb)) {
+                    return false;
+                }
+                if (isNaN(c[1] + c[2]) && (!isNaN(a[1] + a[2]) || !isNaN(b[1] + b[2])) &&
+                    !this.neighborhood_isNaN_v2(curve, tc)) {
+                    return false;
+                }
 
-                   is_undef = isNaN(p[1] + p[2]);
-                   if (is_undef) {
-                       t_nan = t;
-                   } else {
-                       t_real2 = t_real;
-                       t_real = t;
-                   }
-                   ++j;
-               } while (is_undef && j < max_it);
+                j = 0;
+                // Bisect a, b and c until the point t_real is inside of the definition interval
+                // and as close as possible at the boundary.
+                // t_real2 is the second closest point.
+                do {
+                    // There are four cases:
+                    //  a  |  c  |  b
+                    // ---------------
+                    // inf | R   | R
+                    // R   | R   | inf
+                    // inf | inf | R
+                    // R   | inf | inf
+                    //
+                    if (isNaN(a[1] + a[2]) && !isNaN(c[1] + c[2])) {
+                        t_nan = ta;
+                        t_real = tc;
+                        t_real2 = tb;
+                    } else if (isNaN(b[1] + b[2]) && !isNaN(c[1] + c[2])) {
+                        t_nan = tb;
+                        t_real = tc;
+                        t_real2 = ta;
+                    } else if (isNaN(c[1] + c[2]) && !isNaN(b[1] + b[2])) {
+                        t_nan = tc;
+                        t_real = tb;
+                        t_real2 = tb + (tb - tc);
+                    } else if (isNaN(c[1] + c[2]) && !isNaN(a[1] + a[2])) {
+                        t_nan = tc;
+                        t_real = ta;
+                        t_real2 = ta - (tc - ta);
+                    } else {
+                        return false;
+                    }
+                    t = 0.5 * (t_nan + t_real);
+                    pnt.setCoordinates(Const.COORDS_BY_USER, [curve.X(t, true), curve.Y(t, true)], false);
+                    p = pnt.usrCoords;
 
-               // If bisection was successful, take this point.
-               // Usefule only for general curves, for function graph
-               // the code below overwrite p_good from here.
-               if (j < max_it) {
-                   p_good = p.slice();
-                   c = p.slice();
-                   t_real = t;
-               }
+                    is_undef = isNaN(p[1] + p[2]);
+                    if (is_undef) {
+                        t_nan = t;
+                    } else {
+                        t_real2 = t_real;
+                        t_real = t;
+                    }
+                    ++j;
+                } while (is_undef && j < max_it);
 
-               // OK, bisection has been done now.
-               // t_real contains the closest inner point to the border of the interval we could find.
-               // t_real2 is the second nearest point to this boundary.
-               // Now we approximate the derivative by computing the slope of the line through these two points
-               // and test if it is "infinite", i.e larger than 400 in absolute values.
-               //
-               vx = curve.X(t_real, true) ;
-               vx2 = curve.X(t_real2, true) ;
-               dx = (vx - vx2) / (t_real - t_real2);
-               vy = curve.Y(t_real, true) ;
-               vy2 = curve.Y(t_real2, true) ;
-               dy = (vy - vy2) / (t_real - t_real2);
+                // If bisection was successful, take this point.
+                // Useful only for general curves, for function graph
+                // the code below overwrite p_good from here.
+                if (j < max_it) {
+                    p_good = p.slice();
+                    c = p.slice();
+                    t_real = t;
+                }
 
-               if (p_good !== null) {
-                   this._insertPoint_v2(curve, new Coords(Const.COORDS_BY_USER, p_good, curve.board, false));
-                   return true;
-               }
+                // OK, bisection has been done now.
+                // t_real contains the closest inner point to the border of the interval we could find.
+                // t_real2 is the second nearest point to this boundary.
+                // Now we approximate the derivative by computing the slope of the line through these two points
+                // and test if it is "infinite", i.e larger than 400 in absolute values.
+                //
+                vx = curve.X(t_real, true) ;
+                vx2 = curve.X(t_real2, true) ;
+                dx = (vx - vx2) / (t_real - t_real2);
+                vy = curve.Y(t_real, true) ;
+                vy2 = curve.Y(t_real2, true) ;
+                dy = (vy - vy2) / (t_real - t_real2);
+               
+                if (p_good !== null) {
+                    this._insertPoint_v2(curve, new Coords(Const.COORDS_BY_USER, p_good, curve.board, false));
+                    return true;
+                }
            }
            return false;
        },
@@ -496,7 +535,11 @@ define(['jxg', 'base/constants', 'base/coords', 'math/math', 'math/extrapolate',
                 //if (this._borderCase(a, b, c, ta, tb, tc, depth)) {}
             } else {
                 this._plotRecursive_v2(curve, a, ta, c, tc, depth, delta);
-                this._insertPoint_v2(curve, pnt, tc);
+
+                if (!isNaN(pnt.scrCoords[1] + pnt.scrCoords[2])) {
+                    this._insertPoint_v2(curve, pnt, tc);
+                }
+
                 this._plotRecursive_v2(curve, c, tc, b, tb, depth, delta);
             }
 
@@ -504,7 +547,7 @@ define(['jxg', 'base/constants', 'base/coords', 'math/math', 'math/extrapolate',
         },
 
         /**
-         * Updates the data points of a parametric curve. This version is used if {@link JXG.Curve#doadvancedplot} is <tt>true</tt>.
+         * Updates the data points of a parametric curve. This version is used if {@link JXG.Curve#plotVersion} is <tt>3</tt>.
          *
          * @param {JXG.Curve} curve JSXGraph curve element
          * @param {Number} mi Left bound of curve
@@ -828,7 +871,10 @@ define(['jxg', 'base/constants', 'base/coords', 'math/math', 'math/extrapolate',
                 fnX1, fnX2, fnY1, fnY2,
                 bbox = curve.board.getBoundingBox();
 
-            if (!this._isOutsidePoint(a, curve.board)) {
+            // The code below is too unstable.
+            // E.g. [function(t) { return Math.pow(t, 2) * (t + 5) * Math.pow(t - 5, 2); }, -8, 8]
+            // Therefore, we return here.
+            if (true || !this._isOutsidePoint(a, curve.board)) {
                 return [a, ta];
             }
 
@@ -1180,13 +1226,14 @@ define(['jxg', 'base/constants', 'base/coords', 'math/math', 'math/extrapolate',
         },
 
         /**
-         * Updates the data points of a parametric curve. This version is used if {@link JXG.Curve#doadvancedplot} is <tt>true</tt>.
+         * Updates the data points of a parametric curve. This version is used if {@link JXG.Curve#plotVersion} is <tt>3</tt>.
+         * This is an experimental plot version, <b>not recommended</b> to be used.
          * @param {JXG.Curve} curve JSXGraph curve element
          * @param {Number} mi Left bound of curve
          * @param {Number} ma Right bound of curve
          * @returns {JXG.Curve} Reference to the curve object.
          */
-        updateParametricCurve: function (curve, mi, ma) {
+        updateParametricCurve_v3: function (curve, mi, ma) {
             var ta, tb, a, b,
                 suspendUpdate = false,
                 pa = new Coords(Const.COORDS_BY_USER, [0, 0], curve.board, false),
@@ -1277,6 +1324,7 @@ define(['jxg', 'base/constants', 'base/coords', 'math/math', 'math/extrapolate',
                 sgn, sgnChange,
                 isGroup   = false,
                 abs_vec,
+                last = -Infinity,
                 very_small = false,
                 smooth    = false,
                 group     = 0,
@@ -1296,13 +1344,17 @@ define(['jxg', 'base/constants', 'base/coords', 'math/math', 'math/extrapolate',
 
             //console.log("Median", med);
             for (i = 0; i < le; i++) {
+                // Start a group if not yet done and
+                // add position to group
                 if (abs_vec[i] > med /*&& abs_vec[i] > 0.01*/)  {
                     positions.push({i: i, v: vec[i], group: group});
+                    last = i;
                     if (!isGroup) {
                         isGroup = true;
                     }
                 } else {
-                    if (isGroup) {
+                    if (isGroup && i > last + 4) {
+                        // End the group
                         if (positions.length > 0) {
                             groups.push(positions.slice(0));
                         }
@@ -1734,6 +1786,7 @@ console.log("Polynomial of degree", level);
         _insertPoint_v4: function (curve, crds, t, doLog) {
             var p,
                 prev = null,
+                x, y,
                 near = 0.8;
 
             if (curve.points.length > 0) {
@@ -1743,13 +1796,16 @@ console.log("Polynomial of degree", level);
             // Add regular point
             p = new Coords(Const.COORDS_BY_USER, crds, curve.board);
 
-            if (prev !== null &&
-                Math.abs(p.scrCoords[1] - prev[1]) < near &&
-                Math.abs(p.scrCoords[2] - prev[2]) < near) {
+            if (prev !== null) {
+                x = p.scrCoords[1] - prev[1];
+                y = p.scrCoords[2] - prev[2];
+                if (x * x + y * y < near * near) {
+                // Math.abs(p.scrCoords[1] - prev[1]) < near &&
+                // Math.abs(p.scrCoords[2] - prev[2]) < near) {
                     return;
                 }
+            }
 
-//console.log("insert", t)
             p._t = t;
             curve.points.push(p);
         },
@@ -1805,6 +1861,9 @@ console.log("Polynomial of degree", level);
             }
 
             components2 = this.findComponents(curve, t1, t2, size);
+            if (components2.length === 0) {
+                return;
+            }
             if (group.type === 'borderleft') {
                 t1 = components2[0].left_t;
                 t2 = components2[0].t_values[0];
@@ -1849,7 +1908,7 @@ console.log("Polynomial of degree", level);
 
         },
 
-        _recurse_v4: function(curve, comp, group, x_table, y_table) {
+        _seconditeration_v4: function(curve, comp, group, x_table, y_table) {
             var i, t1, t2, ret,
                 components2, comp2, idx, groups2, g,
                 x_table2, y_table2, start, le;
@@ -1892,17 +1951,50 @@ console.log("Polynomial of degree", level);
             return this;
         },
 
+        _recurse_v4: function(curve, t1, t2, x1, y1, x2, y2, level) {
+            var tol = 2,
+                t = (t1 + t2) * 0.5,
+                x = curve.X(t, true),
+                y = curve.Y(t, true),
+                dx, dy;
+
+            //console.log("Level", level)
+            if (level == 0) {
+                this._insertPoint_v4(curve, [1, NaN, NaN], t);
+                return;
+            }
+            // console.log("R", t1, t2)
+            dx = (x - x1) * curve.board.unitX;
+            dy = (y - y1) * curve.board.unitY;
+            // console.log("D1", Math.sqrt(dx * dx + dy * dy))
+            if (Math.sqrt(dx * dx + dy * dy) > tol) {
+                this._recurse_v4(curve, t1, t, x1, y1, x, y, level - 1);
+            } else {
+                this._insertPoint_v4(curve, [1, x, y], t);
+            }
+            dx = (x - x2) * curve.board.unitX;
+            dy = (y - y2) * curve.board.unitY;
+            // console.log("D2", Math.sqrt(dx * dx + dy * dy), x-x2, y-y2)
+            if (Math.sqrt(dx * dx + dy * dy) > tol) {
+                this._recurse_v4(curve, t, t2, x, y, x2, y2, level - 1);
+            } else {
+                this._insertPoint_v4(curve, [1, x, y], t);
+            }
+        },
+
         handleSingularity: function(curve, comp, group, x_table, y_table) {
             var idx = group.idx,
                 t, t1, t2, y_int,
-                x, lo, hi,
+                i1, i2,
+                x, y, lo, hi,
                 d_lft, d_rgt,
                 d_thresh = 100,
                 di1 = 5,
-                di2 = 3;
+                di2 = 3,
+                d1, d2;
 
             t = group.t;
-            // console.log("HandleSingularity at t =", t);
+            console.log("HandleSingularity at t =", t);
             // console.log(comp.t_values[idx - 1], comp.y_values[idx - 1], comp.t_values[idx + 1], comp.y_values[idx + 1]);
             // console.log(group);
 
@@ -1926,19 +2018,19 @@ console.log("Polynomial of degree", level);
 
             x = curve.X(t, true);
 
-            // console.log(">>>", t1, t2, lo, hi, x);
-
             d_lft = (y_table[0][idx - di2] - y_table[0][idx - di1]) / (comp.t_values[idx - di2] - comp.t_values[idx - di1]);
             d_rgt = (y_table[0][idx + di2] - y_table[0][idx + di1]) / (comp.t_values[idx + di2] - comp.t_values[idx + di1]);
 
-            // console.log(":::", d_lft, d_rgt);
+            console.log(":::", d_lft, d_rgt);
+
+            //this._insertPoint_v4(curve, [1, NaN, NaN], 0);
 
             if (d_lft < -d_thresh) {
                 // Left branch very steep downwards -> add the minimum
                 this._insertPoint_v4(curve, [1, x, lo], t, true);
                 if (d_rgt <= d_thresh) {
                     // Right branch not very steep upwards -> interrupt the curve
-                    // I.e. exclude the case -infty / -infty
+                    // I.e. it looks like -infty / (finite or infty) and not like -infty / -infty
                     this._insertPoint_v4(curve, [1, NaN, NaN], t);
                 }
             } else if (d_lft > d_thresh) {
@@ -1946,24 +2038,64 @@ console.log("Polynomial of degree", level);
                 this._insertPoint_v4(curve, [1, x, hi], t);
                 if (d_rgt >= -d_thresh) {
                     // Right branch not very steep downwards -> interrupt the curve
-                    // I.e. exclude the case infty / infty
+                    // I.e. it looks like infty / (finite or -infty) and not like infty / infty
                     this._insertPoint_v4(curve, [1, NaN, NaN], t);
                 }
             } else {
-                if (Math.abs(y_table[0][idx - 1] - y_table[0][idx + 1]) * curve.board.unitY >= 2) {
-                    // Finite jump
-                    // console.log("JUMP")
+                if (lo === -Infinity) {
+                    this._insertPoint_v4(curve, [1, x, lo], t, true);
                     this._insertPoint_v4(curve, [1, NaN, NaN], t);
-                } else {
-                    if (lo === -Infinity) {
-                        this._insertPoint_v4(curve, [1, x, lo], t, true);
-                        this._insertPoint_v4(curve, [1, NaN, NaN], t);
-                    }
-                    if (hi === Infinity) {
-                        this._insertPoint_v4(curve, [1, NaN, NaN], t);
-                        this._insertPoint_v4(curve, [1, x, hi], t, true);
-                    }
                 }
+                if (hi === Infinity) {
+                    this._insertPoint_v4(curve, [1, NaN, NaN], t);
+                    this._insertPoint_v4(curve, [1, x, hi], t, true);
+                }
+
+                if (group.t < comp.t_values[idx]) {
+                    i1 = idx - 1;
+                    i2 = idx;
+                } else {
+                    i1 = idx;
+                    i2 = idx + 1;
+                }
+                t1 = comp.t_values[i1];
+                t2 = comp.t_values[i2];
+                this._recurse_v4(curve, t1, t2,
+                        x_table[0][i1],
+                        y_table[0][i1],
+                        x_table[0][i2],
+                        y_table[0][i2],
+                        10
+                    )
+
+                // x = (x_table[0][idx] - x_table[0][idx - 1]) * curve.board.unitX;
+                // y = (y_table[0][idx] - y_table[0][idx - 1]) * curve.board.unitY;
+                // d1 = Math.sqrt(x * x + y * y);
+                // x = (x_table[0][idx + 1] - x_table[0][idx]) * curve.board.unitX;
+                // y = (y_table[0][idx + 1] - y_table[0][idx]) * curve.board.unitY;
+                // d2 = Math.sqrt(x * x + y * y);
+
+                // console.log("end", t1, t2, t);
+                // if (true || (d1 > 2 || d2 > 2)) {
+
+// console.log(d1, d2, y_table[0][idx])
+//                     // Finite jump
+//                     this._insertPoint_v4(curve, [1, NaN, NaN], t);
+//                 } else {
+//                     if (lo !== -Infinity && hi !== Infinity) {
+//                         // Critical point which can be ignored
+//                         this._insertPoint_v4(curve, [1, x_table[0][idx], y_table[0][idx]], comp.t_values[idx]);
+//                     } else {
+//                         if (lo === -Infinity) {
+//                             this._insertPoint_v4(curve, [1, x, lo], t, true);
+//                             this._insertPoint_v4(curve, [1, NaN, NaN], t);
+//                         }
+//                         if (hi === Infinity) {
+//                             this._insertPoint_v4(curve, [1, NaN, NaN], t);
+//                             this._insertPoint_v4(curve, [1, x, hi], t, true);
+//                         }
+//                     }
+                // }
             }
             if (d_rgt < -d_thresh) {
                 // Right branch very steep downwards -> add the maximum
@@ -1978,7 +2110,7 @@ console.log("Polynomial of degree", level);
         /**
          * Number of equidistant points where the function is evaluated
          */
-        steps: 1021,
+        steps: 1021, //2053, // 1021,
 
         /**
          * If the absolute maximum of the set of differences is larger than
@@ -2016,7 +2148,6 @@ console.log("Polynomial of degree", level);
                 // if (degree_y >= 0) {
                 //     console.log("y polynomial of degree", degree_y);
                 // }
-
                 if (groups.length === 0 || groups[0].type !== 'borderleft') {
                     groups.unshift({
                         idx: 0,
@@ -2094,7 +2225,7 @@ console.log("Polynomial of degree", level);
                         if (groups[g].type === 'borderleft' || groups[g].type === 'borderright') {
                             this.handleBorder(curve, comp, groups[g], x_table, y_table);
                         } else {
-                            this._recurse_v4(curve, comp, groups[g], x_table, y_table);
+                            this._seconditeration_v4(curve, comp, groups[g], x_table, y_table);
                         }
 
                         start = groups[g].idx + 1 + 1;
@@ -2110,6 +2241,13 @@ console.log("Polynomial of degree", level);
 
         },
 
+        /**
+         * Updates the data points of a parametric curve, plotVersion 4. This version is used if {@link JXG.Curve#plotVersion} is <tt>4</tt>.
+         * @param {JXG.Curve} curve JSXGraph curve element
+         * @param {Number} mi Left bound of curve
+         * @param {Number} ma Right bound of curve
+         * @returns {JXG.Curve} Reference to the curve object.
+         */
         updateParametricCurve_v4: function (curve, mi, ma) {
             var ta, tb, w2, bbox;
 
@@ -2133,6 +2271,25 @@ console.log("Polynomial of degree", level);
 
             curve.numberPoints = curve.points.length;
             //console.log(curve.numberPoints);
+        },
+
+        //----------------------------------------------------------------------
+        // Plot algorithm alias
+        //----------------------------------------------------------------------
+
+        /**
+         * Updates the data points of a parametric curve, alias for {@link JXG.Curve#updateParametricCurve_v2}.
+         * This is needed for backwards compatibility, if this method has been
+         * used directly in an application.
+         * @param {JXG.Curve} curve JSXGraph curve element
+         * @param {Number} mi Left bound of curve
+         * @param {Number} ma Right bound of curve
+         * @returns {JXG.Curve} Reference to the curve object.
+         *
+         * @see JXG.Curve#updateParametricCurve_v2
+         */
+        updateParametricCurve: function (curve, mi, ma) {
+            return this.updateParametricCurve_v2(curve, mi, ma);
         }
     };
 
