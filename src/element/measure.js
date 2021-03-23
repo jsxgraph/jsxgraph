@@ -67,7 +67,7 @@ define([
      * @param {Array_Array} start,end, The two arrays give the initial position where the tape measure
      * is drawn on the board.
      * @example
-     * // Create atape measure
+     * // Create a tape measure
      * var p1 = board.create('point', [0,0]);
      * var p2 = board.create('point', [1,1]);
      * var p3 = board.create('point', [3,1]);
