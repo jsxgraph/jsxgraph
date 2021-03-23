@@ -651,7 +651,7 @@ define([
             cnt = 0;
             P._start = 0;
             while (true) {
-console.log("P:", P.coords.usrCoords, (P.data) ? P.data.type : " ")
+// console.log("P:", P.coords.usrCoords, (P.data) ? P.data.type : " ")
                 if (P.intersection && P.data.type === 'T') {
 
                     // Handle the degenerate cases
@@ -739,16 +739,16 @@ console.log("P:", P.coords.usrCoords, (P.data) ? P.data.type : " ")
                             P.data.revtype = 'B';
                         }
                     }
-console.log(">P:", P.coords.usrCoords, (P.data) ? P.data.type : " ")
+// console.log(">P:", P.coords.usrCoords, (P.data) ? P.data.type : " ")
 
                 }
 
                 if (Type.exists(P._start)) {
                     P._start++;
                 }
-                if (P._start > 3 || P._end || cnt > 100) {
-                    if (cnt > 100) {
-                        console.log("_classifyDegenerateIntersections: emergency exit");
+                if (P._start > 3 || P._end || cnt > 1000) {
+                    if (cnt > 1000) {
+                        console.log("Clipping: _classifyDegenerateIntersections exit");
                     }
                     if (Type.exists(P._start)) {
                         delete P._start;
@@ -760,7 +760,7 @@ console.log(">P:", P.coords.usrCoords, (P.data) ? P.data.type : " ")
                 }
                 P = P._next;
             }
-console.log("------------------------")
+// console.log("------------------------")
         },
 
         _handleIntersectionChains: function(P) {
@@ -808,7 +808,7 @@ console.log("------------------------")
                     break;
                 }
                 if (cnt > 1000) {
-                    console.log("Intersection chain: SAFETY EXIT!!!!");
+                    console.log("Clipping: Intersection chain - exit");
                     break;
                 }
                 P = P._next;
@@ -929,7 +929,7 @@ console.log("------------------------")
 
             len = starters.length;
             for (i = 0; i < len; i++) {
-console.log(";;;;;;;;;;")
+// console.log(";;;;;;;;;;")
                 start = starters[i];
                 this._classifyDegenerateIntersections(path1[start]);
                 this._handleIntersectionChains(path1[start]);
@@ -957,7 +957,7 @@ console.log(";;;;;;;;;;")
                             P.entry_exit = P.data.link.entry_exit;
                         }
                     }
-if (P.intersection) { console.log("s>>>", P.coords.usrCoords, P.entry_exit)}
+// if (P.intersection) { console.log("s>>>", P.coords.usrCoords, P.entry_exit)}
 
                     P = P._next;
                     if (Type.exists(P._starter) || cnt > 10000) {
