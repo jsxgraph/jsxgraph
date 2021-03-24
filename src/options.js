@@ -3750,7 +3750,7 @@ define([
 
             /**
              * Unit for attractorDistance and snatchDistance, used for magnetized points and for snapToPoints.
-             * Possible values are 'screen' and 'user.
+             * Possible values are 'screen' and 'user'.
              *
              * @name Point#attractorUnit
              *
