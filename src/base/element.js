@@ -900,45 +900,42 @@ define([
         },
 
         /**
-         * Hide the element. It will still exist but not visible on the board.
+         * Hide the element. It will still exist but not be visible on the board.
+         * Alias for "element.setAttribute({visible: false});"
          * @return {JXG.GeometryElement} Reference to the element
-         * @deprecated
-         * @private
          */
-        hideElement: function () {
-            JXG.deprecated('Element.hideElement()', 'Element.setDisplayRendNode()');
+        hide: function () {
+            this.setAttribute({visible: false});
+            return this;
+        },
 
-            // TODO: Does override value of  this.visProp.visible
-            this.visPropCalc.visible = this.visProp.visible = false;
-            this.board.renderer.display(this, false);
-
-            if (Type.exists(this.label) && this.hasLabel) {
-                this.label.hiddenByParent = true;
-                if (this.label.visPropCalc.visible) {
-                    this.label.hideElement();
-                }
-            }
+        /**
+         * Hide the element. It will still exist but not be visible on the board.
+         * Alias for {@link JXG.GeometryElement#hide}
+         * @returns {JXG.GeometryElement} Reference to the element
+         */
+        hideElement: function() {
+            this.hide();
             return this;
         },
 
         /**
          * Make the element visible.
+         * Alias for "element.setAttribute({visible: true});"
          * @return {JXG.GeometryElement} Reference to the element
-         * @deprecated
-         * @private
          */
-        showElement: function () {
-            JXG.deprecated('Element.showElement()', 'Element.setDisplayRendNode()');
+        show: function () {
+            this.setAttribute({visible: true});
+            return this;
+        },
 
-            this.visPropCalc.visible = this.visProp.visible = true;
-            this.board.renderer.display(this, true);
-
-            if (Type.exists(this.label) && this.hasLabel && this.label.hiddenByParent) {
-                this.label.hiddenByParent = false;
-                if (!this.label.visPropCalc.visible) {
-                    this.label.showElement().updateRenderer();
-                }
-            }
+        /**
+         * Make the element visible.
+         * Alias for {@link JXG.GeometryElement#show}
+         * @returns {JXG.GeometryElement} Reference to the element
+         */
+        showElement: function() {
+            this.show();
             return this;
         },
 
