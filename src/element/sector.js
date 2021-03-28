@@ -158,7 +158,7 @@ define([
                 parents[1].elementClass === Const.OBJECT_CLASS_LINE &&
                 (Type.isArray(parents[2]) || Type.isNumber(parents[2])) &&
                 (Type.isArray(parents[3]) || Type.isNumber(parents[3])) &&
-                (Type.isNumber(parents[4]) || Type.isFunction(parents[4]))) {
+                (Type.isNumber(parents[4]) || Type.isFunction(parents[4]) || Type.isString(parents[4]))) {
 
             type = '2lines';
         } else {
@@ -177,9 +177,34 @@ define([
         el.type = Const.OBJECT_TYPE_SECTOR;
         el.elType = 'sector';
 
+        /**
+         * Set a radius if the attribute `radius` has value 'auto'.
+         * Sets a radius between 20 and 50 points, depending on the distance
+         * between the center and the radius point.
+         * This function is used in {@link Angle}.
+         *
+         * @returns {Number} returns a radius value in user coordinates.
+         */
+         el.autoRadius = function() {
+            var r1 = 20  / el.board.unitX,  // 20px
+                r2 = Infinity,
+                r3 = 50  / el.board.unitX;  // 50px
+
+            if (Type.isPoint(el.center)) {
+                // This does not work for 2-lines sectors / angles
+                r2 = el.center.Dist(el.point2) * 0.3333;
+            }
+
+            return Math.max(r1, Math.min(r2, r3));
+        };
+
         if (type === '2lines') {
             el.Radius = function () {
-                return Type.evaluate(parents[4]);
+                var r = Type.evaluate(parents[4]);
+                if (r === 'auto') {
+                    return this.autoRadius();
+                }
+                return r;
             };
 
             el.line1 = board.select(parents[0]);
@@ -280,7 +305,7 @@ define([
                 setRadius: 'setRadius'
             });
 
-            el.prepareUpdate().update();
+        //    el.prepareUpdate().update();
 
         // end '2lines'
 
@@ -549,9 +574,13 @@ define([
          * Used in {@link GeometryElement#setAttribute}.
          * @param {Number, Function} value New radius.
          */
-        el.setRadius = function (value) {
+        el.setRadius = function (val) {
             el.Radius = function () {
-                return Type.evaluate(value);
+                var r = Type.evaluate(val);
+                if (r === 'auto') {
+                    return this.autoRadius();
+                }
+                return r;
             };
         };
 
@@ -932,8 +961,13 @@ define([
              */
             el.pointsquare = el.point3 = el.anglepoint = points[2];
 
+            // Set the angle radius, also @see @link Sector#autoRadius
             el.Radius = function () {
-                return Type.evaluate(radius);
+                var r = Type.evaluate(radius);
+                if (r === 'auto') {
+                    return el.autoRadius();
+                }
+                return r;
             };
 
             el.updateDataArraySector = function () {

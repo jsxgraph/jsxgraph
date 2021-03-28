@@ -1796,13 +1796,16 @@ define([
 
             /**
              * Radius of the sector, displaying the angle.
+             * The radius can be given as number (in user coordinates)
+             * or as string 'auto'. In the latter case, the angle
+             * is set to an value between 20 and 50 px.
              *
-             * @type Number
+             * @type {Number|String}
              * @name Angle#radius
-             * @default 0.5
+             * @default 'auto'
              * @visprop
              */
-            radius: 0.5,
+            radius: 'auto',
 
             /**
              * Display type of the angle field. Possible values are
