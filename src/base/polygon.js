@@ -67,7 +67,7 @@ define([
     JXG.Polygon = function (board, vertices, attributes) {
         this.constructor(board, attributes, Const.OBJECT_TYPE_POLYGON, Const.OBJECT_CLASS_AREA);
 
-        var i, l, len, j,
+        var i, l, len, j, p,
             attr_line = Type.copyAttributes(attributes, board.options, 'polygon', 'borders');
 
         this.withLines = attributes.withlines;
@@ -114,15 +114,24 @@ define([
                 l.parentPolygon = this;
             }
         }
+
         this.inherits.push(this.vertices, this.borders);
 
         // Register polygon at board
         // This needs to be done BEFORE the points get this polygon added in their descendants list
         this.id = this.board.setId(this, 'Py');
 
-        // Add polygon as child to defining points
+        // Add dependencies:
+        // - Add polygon as child to an existing point
+        // - Add newly created points (supplied as coordinate arrays) as children to the polygon
         for (i = 0; i < this.vertices.length - 1; i++) {
-            this.board.select(this.vertices[i]).addChild(this);
+            p = this.board.select(this.vertices[i]);
+            if (Type.exists(p._is_new)) {
+                this.addChild(p);
+                delete p._is_new;
+            } else {
+                p.addChild(this);
+            }
         }
 
         this.board.renderer.drawPolygon(this);
@@ -1032,7 +1041,7 @@ define([
         } else {
             points = Type.providePoints(board, parents, attributes, 'polygon', ['vertices']);
             if (points === false) {
-                throw new Error("JSXGraph: Can't create polygon with parent types other than 'point' and 'coordinate arrays' or a function returning an array of coordinates. Alternatively, a polygon and a transformation can be supplied");
+                throw new Error("JSXGraph: Can't create polygon / polygonalchain with parent types other than 'point' and 'coordinate arrays' or a function returning an array of coordinates. Alternatively, a polygon and a transformation can be supplied");
             }
         }
 
@@ -1152,7 +1161,7 @@ define([
                 p[i] = board.create('point', [p[i - 2], rot], attr);
                 p[i].type = Const.OBJECT_TYPE_CAS;
 
-                // The next two lines of code are needed to make regular polgonmes draggable
+                // The next two lines of code are needed to make regular polygones draggable
                 // The new helper points are set to be draggable.
                 p[i].isDraggable = true;
                 p[i].visProp.fixed = false;
