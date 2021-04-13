@@ -3022,6 +3022,13 @@ define([
             var  attr = Type.copyAttributes({}, this.options, 'infobox');
 
             attr.id = this.id + '_infobox';
+            /**
+             * Infobox close to points in which the points' coordinates are displayed.
+             * This is simply a JXG.Text element. Access through board.infobox.
+             * Uses CSS class .JXGinfobox.
+             * @type {JXG.Text}
+             *
+             */
             this.infobox = this.create('text', [0, 0, '0,0'], attr);
 
             this.infobox.distanceX = -20;
