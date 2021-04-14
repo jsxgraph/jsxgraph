@@ -953,7 +953,7 @@ define([
      *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
      *             var ex5p1 = board.create('point', [0,0]);
      *             var ex5p2 = board.create('point', [2,2]);
-     *             var ex5l1 = board.create('line', [p1,p2], {straightFirst:false, straightLast:false});
+     *             var ex5l1 = board.create('line', [ex5p1,ex5p2], {straightFirst:false, straightLast:false});
      *     })();
      *
      * </script><pre>
