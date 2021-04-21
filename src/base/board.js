@@ -3181,9 +3181,11 @@ define([
         /**
          * Returns the input parameters in an array. This method looks pointless and it really is, but it had a purpose
          * once.
+         * @private
          * @param {Number} x X coordinate in screen coordinates
          * @param {Number} y Y coordinate in screen coordinates
-         * @returns {Array} Coordinates of the mouse in screen coordinates.
+         * @returns {Array} Coordinates [x, y] of the mouse in screen coordinates.
+         * @see JXG.Board#getUsrCoordsOfMouse
          */
         getScrCoordsOfMouse: function (x, y) {
             return [x, y];
@@ -3192,7 +3194,9 @@ define([
         /**
          * This method calculates the user coords of the current mouse coordinates.
          * @param {Event} evt Event object containing the mouse coordinates.
-         * @returns {Array} Coordinates of the mouse in screen coordinates.
+         * @returns {Array} Coordinates [x, y] of the mouse in user coordinates.
+         * @see JXG.Board#getScrCoordsOfMouse
+         * @see JXG.Board#getAllUnderMouse
          */
         getUsrCoordsOfMouse: function (evt) {
             var cPos = this.getCoordsTopLeftCorner(),
@@ -3208,6 +3212,8 @@ define([
          * Collects all elements under current mouse position plus current user coordinates of mouse cursor.
          * @param {Event} evt Event object containing the mouse coordinates.
          * @returns {Array} Array of elements at the current mouse position plus current user coordinates of mouse.
+         * @see JXG.Board#getUsrCoordsOfMouse
+         * @see JXG.Board#getAllObjectsUnderMouse
          */
         getAllUnderMouse: function (evt) {
             var elList = this.getAllObjectsUnderMouse(evt);
@@ -3220,6 +3226,7 @@ define([
          * Collects all elements under current mouse position.
          * @param {Event} evt Event object containing the mouse coordinates.
          * @returns {Array} Array of elements at the current mouse position.
+         * @see JXG.Board#getAllUnderMouse
          */
         getAllObjectsUnderMouse: function (evt) {
             var cPos = this.getCoordsTopLeftCorner(),
