@@ -3195,6 +3195,34 @@ define([
          * This method calculates the user coords of the current mouse coordinates.
          * @param {Event} evt Event object containing the mouse coordinates.
          * @returns {Array} Coordinates [x, y] of the mouse in user coordinates.
+         * @example
+         * board.on('up', function (evt) {
+         *         var a = board.getUsrCoordsOfMouse(evt),
+         *             x = a[0],
+         *             y = a[1],
+         *             somePoint = board.create('point', [x,y], {name:'SomePoint',size:4});
+         *             // Shorter version:
+         *             //somePoint = board.create('point', a, {name:'SomePoint',size:4});
+         *         });
+         * 
+         * </pre><div id="JXG48d5066b-16ba-4920-b8ea-a4f8eff6b746" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG48d5066b-16ba-4920-b8ea-a4f8eff6b746',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *     board.on('up', function (evt) {
+         *             var a = board.getUsrCoordsOfMouse(evt),
+         *                 x = a[0],
+         *                 y = a[1],
+         *                 somePoint = board.create('point', [x,y], {name:'SomePoint',size:4});
+         *                 // Shorter version:
+         *                 //somePoint = board.create('point', a, {name:'SomePoint',size:4});
+         *             });
+         * 
+         *     })();
+         * 
+         * </script><pre>
+         * 
          * @see JXG.Board#getScrCoordsOfMouse
          * @see JXG.Board#getAllUnderMouse
          */
