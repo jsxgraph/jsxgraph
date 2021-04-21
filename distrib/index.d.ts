@@ -4,9 +4,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable max-len */
 /* eslint-disable @typescript-eslint/prefer-namespace-keyword */
+// Type definitions for JSXGraph 1.2.3
+// Project: https://jsxgraph.org
+// Definitions by: David Holmes https://github.com/geometryzen
+// Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
 //
 // Copyright 2015-2021 David Holmes, https://github.com/geometryzen
-// JSXGraph 1.2.2
+// JSXGraph 1.2.3
 //
 
 /**
