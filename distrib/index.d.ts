@@ -367,7 +367,16 @@ declare module JXG {
         getName(): string;
 
         /**
+         * Hide the element. It will still exist but not be visible on the board.
+         * Alias for "element.setAttribute({visible: false});"
+         * @return Reference to the element
+         */
+        hide(): void;
+        
+        /**
          * Hides the element. It will still exist but not be visible on the board.
+         * Alias for JXG.GeometryElement#hide
+         * @returns Reference to the element
          */
         hideElement(): void;
 
@@ -440,8 +449,16 @@ declare module JXG {
         setPositionDirectly(method: number, coords: number[], oldcoords?: number[]): this;
 
         /**
-         * Makes the element visible.
-         * @deprecated
+         * Make the element visible.
+         * Alias for "element.setAttribute({visible: true});"
+         * @return Reference to the element
+         */
+        show(): void;
+
+        /**
+         * Make the element visible.
+         * Alias for JXG.GeometryElement#show
+         * @returns Reference to the element
          */
         showElement(): void;
 
