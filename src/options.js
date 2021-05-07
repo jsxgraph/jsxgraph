@@ -1412,7 +1412,7 @@ define([
             *     (function() {
             *     var board = JXG.JSXGraph.initBoard('JXGc1e46cd1-e025-4002-80aa-b450869fdaa2', {
             *         boundingbox: [-500000, 500000, 500000, -500000],
-            *         showcopyright: false, shownavigation: false
+            *         showcopyright: false, shownavigation: false,
             *         axis: true,
             *         defaultAxes: {
             *             x: {
