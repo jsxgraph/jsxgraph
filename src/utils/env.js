@@ -911,6 +911,18 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
             // Do the shifting and scaling via CSS pseudo rules
             this.scaleJSXGraphDiv('#' + wrap_id, '#' + jsxgraph_id, scale, vshift);
 
+            // Store the scaling data.
+            // It is used in AbstractRenderer.updateText to restore the scaling matrix
+            // which is removed by MathJax.
+            // Further, the CSS margin has to be removed when in fullscreen mode,
+            // and must be restored later.
+            elem_inner._cssFullscreenStore = {
+                isFullscreen: false,
+                margin: elem_inner.style.margin,
+                scale: scale,
+                vshift: vshift
+            };
+
             // Trigger the fullscreen mode
             elem.requestFullscreen = elem.requestFullscreen ||
                 elem.webkitRequestFullscreen ||

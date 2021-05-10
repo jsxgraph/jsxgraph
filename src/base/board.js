@@ -5399,7 +5399,9 @@ define([
                 wrapper.appendChild(el);
             }
 
+            // Start fullscreen mode
             Env.toFullscreen(wrap_id, id);
+
             return this;
         },
 
@@ -5411,17 +5413,17 @@ define([
          * @param  {Object} evt fullscreen event object
          */
         fullscreenListener: function(evt) {
-            var id = this.container,
-                el = document.getElementById(id);
+            var el = this.containerObj;
 
             // If full screen mode is started we have to remove CSS margin around the JSXGraph div.
             // Otherwise, the positioning of the fullscreen div will be false.
             // When leaving the fullscreen mode, the margin is put back in.
-            if (Type.exists(this._cssFullscreenStore)) {
-                el.style.margin = this._cssFullscreenStore;
-                delete this._cssFullscreenStore;
+
+            if (Type.exists(this._cssFullscreenStore) && this._cssFullscreenStore.isFullscreen) {
+                el._cssFullscreenStore.isFullscreen = false;
+                el.style.margin = this._cssFullscreenStore.margin;
             } else {
-                this._cssFullscreenStore = el.style.margin;
+                el._cssFullscreenStore.isFullscreen = true;
                 el.style.margin = '';
             }
 
