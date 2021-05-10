@@ -3204,7 +3204,7 @@ define([
          *             // Shorter version:
          *             //somePoint = board.create('point', a, {name:'SomePoint',size:4});
          *         });
-         * 
+         *
          * </pre><div id="JXG48d5066b-16ba-4920-b8ea-a4f8eff6b746" class="jxgbox" style="width: 300px; height: 300px;"></div>
          * <script type="text/javascript">
          *     (function() {
@@ -5411,6 +5411,20 @@ define([
          * @param  {Object} evt fullscreen event object
          */
         fullscreenListener: function(evt) {
+            var id = this.container,
+                el = document.getElementById(id);
+
+            // If full screen mode is started we have to remove CSS margin around the JSXGraph div.
+            // Otherwise, the positioning of the fullscreen div will be false.
+            // When leaving the fullscreen mode, the margin is put back in.
+            if (Type.exists(this._cssFullscreenStore)) {
+                el.style.margin = this._cssFullscreenStore;
+                delete this._cssFullscreenStore;
+            } else {
+                this._cssFullscreenStore = el.style.margin;
+                el.style.margin = '';
+            }
+
             this.updateCSSTransforms();
         },
 
