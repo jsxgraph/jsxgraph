@@ -4829,7 +4829,7 @@ define([
         },
 
         /**
-         * Update CSS transformations of sclaing type. It is used to correct the mouse position
+         * Update CSS transformations of type scaling. It is used to correct the mouse position
          * in {@link JXG.Board.getMousePosition}.
          * The inverse transformation matrix is updated on each mouseDown and touchStart event.
          *
