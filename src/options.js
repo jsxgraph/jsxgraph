@@ -2444,7 +2444,7 @@ define([
             },
 
             /**
-             * Attributes for parabola line incase the line is given by two
+             * Attributes for parabola line in case the line is given by two
              * points or coordinate pairs.
              *
              * @type Line
