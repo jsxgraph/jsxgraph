@@ -1103,7 +1103,15 @@ define([
                             } catch (e) {
                                 JXG.debug('MathJax (not yet) loaded');
                             }
-                        } else if (Type.evaluate(el.visProp.useasciimathml)) {
+                        } else if (Type.evaluate(el.visProp.usekatex)) {
+                            try {
+                                katex.render(content, el.rendNode, {
+                                    throwOnError: false
+                                });
+                            } catch (e) {
+                                JXG.debug('KaTeX (not yet) loaded');
+                            }
+                    } else if (Type.evaluate(el.visProp.useasciimathml)) {
                             // This is not a constructor.
                             // See http://www1.chapman.edu/~jipsen/mathml/asciimath.html for more information
                             // about AsciiMathML and the project's source code.

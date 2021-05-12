@@ -5121,6 +5121,8 @@ define([
              */
             useMathJax: false,
 
+            useKatex: false,
+
             /**
              * Determines the rendering method of the text. Possible values
              * include <tt>'html'</tt> and <tt>'internal</tt>.

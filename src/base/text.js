@@ -194,13 +194,14 @@ define([
         _setUpdateText: function (text) {
             var updateText, resolvedText,
                 ev_p = Type.evaluate(this.visProp.parse),
-                ev_um = Type.evaluate(this.visProp.usemathjax);
+                ev_um = Type.evaluate(this.visProp.usemathjax),
+                ev_uk = Type.evaluate(this.visProp.usekatex);
 
             this.orgText = text;
             if (Type.isFunction(text)) {
                 this.updateText = function () {
                     resolvedText = text().toString();
-                    if (ev_p && !ev_um) {
+                    if (ev_p && !ev_um && !ev_uk) {
                         this.plaintext = this.replaceSub(this.replaceSup(this.convertGeonext2CSS(resolvedText)));
                     } else {
                         this.plaintext = resolvedText;
@@ -217,7 +218,7 @@ define([
                     if (Type.evaluate(this.visProp.useasciimathml)) {
                         // Convert via ASCIIMathML
                         this.content = "'`" + text + "`'";
-                    } else if (ev_um) {
+                    } else if (ev_um || ev_uk) {
                         this.content = "'" + text + "'";
                     } else {
                         // Converts GEONExT syntax into JavaScript string
