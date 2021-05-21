@@ -865,8 +865,8 @@ define([
             // console.log(this.id, conflicts, w, h);
             // r = Geometry.distance([0, 0], offset, 2);
 
-            r = 14;
-            max_r = 2 * r;
+            r = 8;
+            max_r = 28;
             delta_r = 0.2 * r;
 
             start_angle = Math.atan2(dy, dx);
