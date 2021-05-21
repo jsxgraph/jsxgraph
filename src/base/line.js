@@ -121,7 +121,7 @@ define([
 
         this.elType = 'line';
 
-        /* Add arrow as child to defining points */
+        /* Add line as child to defining points */
         this.point1.addChild(this);
         this.point2.addChild(this);
 

@@ -321,7 +321,8 @@ define([
         },
 
         /**
-         *  Test if the parents array contains existing points. If instead parents contains coordinate arrays or function returning coordinate arrays
+         *  Test if the parents array contains existing points. If instead parents contains coordinate arrays or
+         *  function returning coordinate arrays
          *  free points with these coordinates are created.
          *
          * @param {JXG.Board} board Board object
@@ -364,10 +365,12 @@ define([
                 }
                 if (this.isArray(parents[i]) && parents[i].length > 1) {
                     points.push(board.create('point', parents[i], attr));
+                    points[points.length - 1]._is_new = true;
                 } else if (this.isFunction(parents[i])) {
                     val = parents[i]();
                     if (this.isArray(val) && (val.length > 1)) {
                         points.push(board.create('point', [parents[i]], attr));
+                        points[points.length - 1]._is_new = true;
                     }
                 } else {
                     points.push(board.select(parents[i]));

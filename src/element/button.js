@@ -110,7 +110,62 @@ define([
      *  ], {});
      *
      * </script><pre>
-     * [x, y, label, handler]
+     *
+     * @example
+     * // A toggle button
+     * var butt = board.create('button', [-2, -2, 'Off', function() {
+     *   var txt;
+     *   butt.value = !butt.value;
+     *   if (butt.value) {
+     *   	txt = 'On';
+     *   } else {
+     *   	txt = 'Off';
+     *   }
+     * 	butt.rendNodeButton.innerHTML = txt;
+     * }]);
+     * 
+     * // Set initial value for the button
+     * if (!JXG.exists(butt.value)) {
+     * 	butt.value = false;
+     * }
+     * 
+     * var p = board.create('point', [2, -2], {
+     * 	visible: () => butt.value
+     * });
+     * 
+     * 
+     * 
+     * </pre><div id="JXGa1eaab8f-c73b-4660-96ce-4ca17bcac4d6" class="jxgbox" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     *     (function() {
+     *         var board = JXG.JSXGraph.initBoard('JXGa1eaab8f-c73b-4660-96ce-4ca17bcac4d6',
+     *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+     *     var butt = board.create('button', [-2, -2, 'Off', function() {
+     *       var txt;
+     *       butt.value = !butt.value;
+     *       if (butt.value) {
+     *       	txt = 'On';
+     *       } else {
+     *       	txt = 'Off';
+     *       }
+     *     	butt.rendNodeButton.innerHTML = txt;
+     *     }]);
+     *     
+     *     // Set initial value for the button
+     *     if (!JXG.exists(butt.value)) {
+     *     	butt.value = false;
+     *     }
+     *     
+     *     var p = board.create('point', [2, -2], {
+     *     	visible: () => butt.value
+     *     });
+     *     
+     *     
+     * 
+     *     })();
+     * 
+     * </script><pre>
+     * 
      */
     JXG.createButton = function (board, parents, attributes) {
         var t, par,

@@ -5,5 +5,6 @@
 !src/*/*
 # Allow all JavaScript files from the distrib folder
 !distrib/*.js
+!distrib/*.ts
 !distrib/*.css
 !distrib/*/*.js

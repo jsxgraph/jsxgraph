@@ -2066,7 +2066,7 @@ console.log("Polynomial of degree", level);
                         x_table[0][i2],
                         y_table[0][i2],
                         10
-                    )
+                    );
 
                 // x = (x_table[0][idx] - x_table[0][idx - 1]) * curve.board.unitX;
                 // y = (y_table[0][idx] - y_table[0][idx - 1]) * curve.board.unitY;

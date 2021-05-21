@@ -1,6 +1,9 @@
-JXG.Options = JXG.deepCopy(JXG.Options, {
-    showCopyright: false,
-    showNavigation: false,
+JXG.Options = JXG.merge(JXG.Options, {
+    board: {
+        showCopyright: false,
+        showNavigation: false,
+        showInfobox: true
+    },
 
     navbar: {
         strokeColor: '#bbb',
@@ -23,7 +26,7 @@ JXG.Options = JXG.deepCopy(JXG.Options, {
         highlightFillColor : '#eeeeee',
         strokeColor : 'white',
         highlightStrokeColor : 'white',
-        showInfobox: false
+        showInfobox: 'inherit'
     },
 
     line : {
@@ -35,7 +38,6 @@ JXG.Options = JXG.deepCopy(JXG.Options, {
             drawZero : false,
             insertTicks : false,
             minTicksDistance : 50,
-            maxTicksDistance : 300,
             minorHeight : 4,
             majorHeight : 10,
             minorTicks : 4,
@@ -154,5 +156,7 @@ JXG.Options = JXG.deepCopy(JXG.Options, {
 
     chart: {
         fillOpacity: 0.6
-    }
+    },
+
+    trunclen: 2
 });
