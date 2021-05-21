@@ -993,6 +993,7 @@ define([
         updateText: function (el) {
             var content = el.plaintext, v, c,
                 parentNode,
+                scale, vshift, id, wrap_id,
                 ax, ay;
 
             if (el.visPropCalc.visible) {
@@ -1078,7 +1079,7 @@ define([
                         el.htmlStr = content;
 
                         if (Type.evaluate(el.visProp.usemathjax)) {
-                            // typesetting directly might not work because mathjax was not loaded completely
+                            // Typesetting directly might not work because mathjax was not loaded completely
                             // see http://www.mathjax.org/docs/1.1/typeset.html
                             try {
                                 if (MathJax.typeset) {
@@ -1088,10 +1089,29 @@ define([
                                     // Version 2
                                     MathJax.Hub.Queue(['Typeset', MathJax.Hub, el.rendNode]);
                                 }
+
+                                // Restore the transformation necessary for fullscreen mode
+                                // MathJax removes it when handling dynamic content
+                                id = el.board.container;
+                                wrap_id = 'fullscreenwrap_' + id;
+                                if (document.getElementById(wrap_id)) {
+                                    scale = el.board.containerObj._cssFullscreenStore.scale;
+                                    vshift = el.board.containerObj._cssFullscreenStore.vshift;
+                                    Env.scaleJSXGraphDiv('#' + wrap_id, '#' + id, scale, vshift);
+                                }
+
                             } catch (e) {
                                 JXG.debug('MathJax (not yet) loaded');
                             }
-                        } else if (Type.evaluate(el.visProp.useasciimathml)) {
+                        } else if (Type.evaluate(el.visProp.usekatex)) {
+                            try {
+                                katex.render(content, el.rendNode, {
+                                    throwOnError: false
+                                });
+                            } catch (e) {
+                                JXG.debug('KaTeX (not yet) loaded');
+                            }
+                    } else if (Type.evaluate(el.visProp.useasciimathml)) {
                             // This is not a constructor.
                             // See http://www1.chapman.edu/~jipsen/mathml/asciimath.html for more information
                             // about AsciiMathML and the project's source code.

@@ -1412,7 +1412,7 @@ define([
             *     (function() {
             *     var board = JXG.JSXGraph.initBoard('JXGc1e46cd1-e025-4002-80aa-b450869fdaa2', {
             *         boundingbox: [-500000, 500000, 500000, -500000],
-            *         showcopyright: false, shownavigation: false
+            *         showcopyright: false, shownavigation: false,
             *         axis: true,
             *         defaultAxes: {
             *             x: {
@@ -2444,7 +2444,7 @@ define([
             },
 
             /**
-             * Attributes for parabola line incase the line is given by two
+             * Attributes for parabola line in case the line is given by two
              * points or coordinate pairs.
              *
              * @type Line
@@ -5120,6 +5120,8 @@ define([
              *
              */
             useMathJax: false,
+
+            useKatex: false,
 
             /**
              * Determines the rendering method of the text. Possible values

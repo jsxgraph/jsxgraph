@@ -78,9 +78,10 @@ release: core-min docs
 	$(CP) $(BUILDBIN)/jsxgraphcore.js $(TMP)/jsxgraphsrc.js
 	$(CP) $(OUTPUT)/docs.zip $(TMP)/docs.zip
 	$(CP) $(OUTPUT)/jsxgraph.css $(TMP)/jsxgraph.css
+	$(CP) $(OUTPUT)/index.d.ts $(TMP)/index.d.ts
 	$(CP) -r src/themes $(TMP)/themes
 	$(CP) README.md LICENSE.MIT LICENSE.LGPL $(TMP)/
-	$(CD) $(TMP) && $(ZIP) $(ZIPFLAGS) jsxgraph.zip jsxgraph* themes/ docs.zip README.md LICENSE.*
+	$(CD) $(TMP) && $(ZIP) $(ZIPFLAGS) jsxgraph.zip jsxgraph* themes/ index.d.ts docs.zip README.md LICENSE.*
 	$(CP) $(TMP)/jsxgraph.zip $(OUTPUT)/jsxgraph.zip
 
 	$(RM) $(RMFLAGS) tmp

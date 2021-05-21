@@ -141,6 +141,41 @@ define([
      *
      * </script><pre>
      *
+     * @example
+     * // Set colors
+     * var sl = board.create('slider', [[-3, 1], [1, 1], [-10, 1, 10]], {
+     * 
+     *   baseline: { strokeColor: 'blue'},
+     *   highline: { strokeColor: 'red'},
+     *   fillColor: 'yellow',
+     *   label: {fontSize: 24, strokeColor: 'orange'},
+     *   name: 'xyz', // Not shown, if suffixLabel is set
+     *   suffixLabel: 'x = ',
+     *   postLabel: ' u'
+     * 
+     * });
+     * 
+     * </pre><div id="JXGd96c9e2c-2c25-4131-b6cf-9dbb80819401" class="jxgbox" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     *     (function() {
+     *         var board = JXG.JSXGraph.initBoard('JXGd96c9e2c-2c25-4131-b6cf-9dbb80819401',
+     *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+     *     var sl = board.create('slider', [[-3, 1], [1, 1], [-10, 1, 10]], {
+     *     
+     *       baseline: { strokeColor: 'blue'},
+     *       highline: { strokeColor: 'red'},
+     *       fillColor: 'yellow',
+     *       label: {fontSize: 24, strokeColor: 'orange'},
+     *       name: 'xyz', // Not shown, if suffixLabel is set
+     *       suffixLabel: 'x = ',
+     *       postLabel: ' u'
+     *     
+     *     });
+     * 
+     *     })();
+     * 
+     * </script><pre>
+     * 
  */
     JXG.createSlider = function (board, parents, attributes) {
         var pos0, pos1, smin, start, smax, sdiff,

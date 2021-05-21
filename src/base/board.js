@@ -3022,6 +3022,13 @@ define([
             var  attr = Type.copyAttributes({}, this.options, 'infobox');
 
             attr.id = this.id + '_infobox';
+            /**
+             * Infobox close to points in which the points' coordinates are displayed.
+             * This is simply a JXG.Text element. Access through board.infobox.
+             * Uses CSS class .JXGinfobox.
+             * @type {JXG.Text}
+             *
+             */
             this.infobox = this.create('text', [0, 0, '0,0'], attr);
 
             this.infobox.distanceX = -20;
@@ -3174,9 +3181,11 @@ define([
         /**
          * Returns the input parameters in an array. This method looks pointless and it really is, but it had a purpose
          * once.
+         * @private
          * @param {Number} x X coordinate in screen coordinates
          * @param {Number} y Y coordinate in screen coordinates
-         * @returns {Array} Coordinates of the mouse in screen coordinates.
+         * @returns {Array} Coordinates [x, y] of the mouse in screen coordinates.
+         * @see JXG.Board#getUsrCoordsOfMouse
          */
         getScrCoordsOfMouse: function (x, y) {
             return [x, y];
@@ -3185,7 +3194,37 @@ define([
         /**
          * This method calculates the user coords of the current mouse coordinates.
          * @param {Event} evt Event object containing the mouse coordinates.
-         * @returns {Array} Coordinates of the mouse in screen coordinates.
+         * @returns {Array} Coordinates [x, y] of the mouse in user coordinates.
+         * @example
+         * board.on('up', function (evt) {
+         *         var a = board.getUsrCoordsOfMouse(evt),
+         *             x = a[0],
+         *             y = a[1],
+         *             somePoint = board.create('point', [x,y], {name:'SomePoint',size:4});
+         *             // Shorter version:
+         *             //somePoint = board.create('point', a, {name:'SomePoint',size:4});
+         *         });
+         *
+         * </pre><div id="JXG48d5066b-16ba-4920-b8ea-a4f8eff6b746" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG48d5066b-16ba-4920-b8ea-a4f8eff6b746',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *     board.on('up', function (evt) {
+         *             var a = board.getUsrCoordsOfMouse(evt),
+         *                 x = a[0],
+         *                 y = a[1],
+         *                 somePoint = board.create('point', [x,y], {name:'SomePoint',size:4});
+         *                 // Shorter version:
+         *                 //somePoint = board.create('point', a, {name:'SomePoint',size:4});
+         *             });
+         * 
+         *     })();
+         * 
+         * </script><pre>
+         * 
+         * @see JXG.Board#getScrCoordsOfMouse
+         * @see JXG.Board#getAllUnderMouse
          */
         getUsrCoordsOfMouse: function (evt) {
             var cPos = this.getCoordsTopLeftCorner(),
@@ -3201,6 +3240,8 @@ define([
          * Collects all elements under current mouse position plus current user coordinates of mouse cursor.
          * @param {Event} evt Event object containing the mouse coordinates.
          * @returns {Array} Array of elements at the current mouse position plus current user coordinates of mouse.
+         * @see JXG.Board#getUsrCoordsOfMouse
+         * @see JXG.Board#getAllObjectsUnderMouse
          */
         getAllUnderMouse: function (evt) {
             var elList = this.getAllObjectsUnderMouse(evt);
@@ -3213,6 +3254,7 @@ define([
          * Collects all elements under current mouse position.
          * @param {Event} evt Event object containing the mouse coordinates.
          * @returns {Array} Array of elements at the current mouse position.
+         * @see JXG.Board#getAllUnderMouse
          */
         getAllObjectsUnderMouse: function (evt) {
             var cPos = this.getCoordsTopLeftCorner(),
@@ -4023,6 +4065,10 @@ define([
 
             for (el = 0; el < this.objectsList.length; el++) {
                 pEl = this.objectsList[el];
+                if (this.needsFullUpdate && pEl.elementClass == Const.OBJECT_CLASS_TEXT) {
+                    pEl.updateSize();
+                }
+
                 // For updates of an element we distinguish if the dragged element is updated or
                 // other elements are updated.
                 // The difference lies in the treatment of gliders.
@@ -4787,7 +4833,7 @@ define([
         },
 
         /**
-         * Update CSS transformations of sclaing type. It is used to correct the mouse position
+         * Update CSS transformations of type scaling. It is used to correct the mouse position
          * in {@link JXG.Board.getMousePosition}.
          * The inverse transformation matrix is updated on each mouseDown and touchStart event.
          *
@@ -5357,7 +5403,9 @@ define([
                 wrapper.appendChild(el);
             }
 
+            // Start fullscreen mode
             Env.toFullscreen(wrap_id, id);
+
             return this;
         },
 
@@ -5369,6 +5417,20 @@ define([
          * @param  {Object} evt fullscreen event object
          */
         fullscreenListener: function(evt) {
+            var el = this.containerObj;
+
+            // If full screen mode is started we have to remove CSS margin around the JSXGraph div.
+            // Otherwise, the positioning of the fullscreen div will be false.
+            // When leaving the fullscreen mode, the margin is put back in.
+
+            if (Type.exists(this._cssFullscreenStore) && this._cssFullscreenStore.isFullscreen) {
+                el._cssFullscreenStore.isFullscreen = false;
+                el.style.margin = this._cssFullscreenStore.margin;
+            } else {
+                el._cssFullscreenStore.isFullscreen = true;
+                el.style.margin = '';
+            }
+
             this.updateCSSTransforms();
         },
 

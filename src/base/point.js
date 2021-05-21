@@ -460,10 +460,11 @@ define([
 
 
     /**
-     * @class This element is used to provide a constructor for an intersection point.
+     * @class An intersection point is a point which lives on two JSXGraph elements, i.e. it is one point of the the set
+     * consisting of the intersection points of the two elements. The following element types can be (mutually) intersected: line, circle,
+     * curve, polygon, polygonal chain.
+     *
      * @pseudo
-     * @description An intersection point is a point which lives on two Lines or Circles or one Line and one Circle at the same time, i.e.
-     * an intersection point of the two elements.
      * @name Intersection
      * @augments JXG.Point
      * @constructor
