@@ -865,7 +865,7 @@ define([
             // console.log(this.id, conflicts, w, h);
             // r = Geometry.distance([0, 0], offset, 2);
 
-            r = 8;
+            r = 12;
             max_r = 28;
             delta_r = 0.2 * r;
 
