@@ -6,7 +6,7 @@ Improvements
 
 - `el.hideElement()`, `el.showElement()` not deprecated anymore. Same as `el.setAttribute({visible:false/true})`
 - Better auto positiong of labels
-- `board.fullUpdate()` updates size info of text elements. This is helpful for JSXgraph constructions which are initialised in a hidden parent element. When the board becomes visible, a call of board.fullUpdate() is sufficient to correct the position of the text elements. This can be triggered in an event listener (by the developer). See <https://github.com/jsxgraph/jsxgraph/issues/348>.
+- `board.fullUpdate()` updates size info of text elements. This is helpful for JSXGraph constructions which are initialised in a hidden parent element. When the board becomes visible, a call of board.fullUpdate() is sufficient to correct the position of the text elements. This can be triggered in an event listener (by the developer). See <https://github.com/jsxgraph/jsxgraph/issues/348>.
 
 Bug fixes
 ---------
@@ -19,6 +19,7 @@ Bug fixes
 New features
 -----------
 
+- KaTex support (`useKatex:true`)
 - Add Typescript definition file `index.d.ts` (not yet complete). Thanks to David Holmes!!!
 - `el.hide()`, `el.show()`, alias for `el.hideElement()`, `el.showElement()`.
 - Experimental: new polygon points will be deleted if polygon is deleted. In the future, this might be done in other cases, too.
@@ -29,7 +30,6 @@ New features
 Improvements
 ------------
 
-* KaTex support
 * Clipping: allow clipping of arcs and sectors, as well as rings, i.e. clipping of clipped paths
 * Update WordPress plug-in
 * Update MediaWiki plug-in
