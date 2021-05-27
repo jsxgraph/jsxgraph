@@ -793,6 +793,119 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
             return 0;
         },
 
+        /* ********************  Comparisons and logical operators ************** */
+
+        /**
+         * Logical test: a < b?
+         *
+         * @param {Number} a
+         * @param {Number} b
+         * @returns {Boolean}
+         */
+        lt: function(a, b) {
+            return a < b;
+        },
+
+        /**
+         * Logical test: a <= b?
+         *
+         * @param {Number} a
+         * @param {Number} b
+         * @returns {Boolean}
+         */
+        leq: function(a, b) {
+            return a <= b;
+        },
+
+        /**
+         * Logical test: a > b?
+         *
+         * @param {Number} a
+         * @param {Number} b
+         * @returns {Boolean}
+         */
+        gt: function(a, b) {
+            return a > b;
+        },
+
+        /**
+         * Logical test: a >= b?
+         *
+         * @param {Number} a
+         * @param {Number} b
+         * @returns {Boolean}
+         */
+        geq: function(a, b) {
+            return a >= b;
+        },
+
+        /**
+         * Logical test: a === b?
+         *
+         * @param {Number} a
+         * @param {Number} b
+         * @returns {Boolean}
+         */
+        eq: function(a, b) {
+            return a === b;
+        },
+
+        /**
+         * Logical test: a !== b?
+         *
+         * @param {Number} a
+         * @param {Number} b
+         * @returns {Boolean}
+         */
+        neq: function(a, b) {
+            return a !== b;
+        },
+
+        /**
+         * Logical operator: a && b?
+         *
+         * @param {Boolean} a
+         * @param {Boolean} b
+         * @returns {Boolean}
+         */
+        and: function(a, b) {
+            return a && b;
+        },
+
+        /**
+         * Logical operator: !a?
+         *
+         * @param {Boolean} a
+         * @returns {Boolean}
+         */
+        not: function(a) {
+            return !a;
+        },
+
+        /**
+         * Logical operator: a || b?
+         *
+         * @param {Boolean} a
+         * @param {Boolean} b
+         * @returns {Boolean}
+         */
+        or: function(a, b) {
+            return a || b;
+        },
+
+        /**
+         * Logical operator: either a or b?
+         *
+         * @param {Boolean} a
+         * @param {Boolean} b
+         * @returns {Boolean}
+         */
+        xor: function(a, b) {
+            return (a || b) && !(a && b);
+        },
+
+        /* *************************** Normalize *************************** */
+
         /**
          * Normalize the standard form [c, b0, b1, a, k, r, q0, q1].
          * @private
