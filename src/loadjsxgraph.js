@@ -4,8 +4,8 @@
         Michael Gerhaeuser,
         Carsten Miller,
         Bianca Valentin,
-        Alfred Wassermann,
         Andreas Walter,
+        Alfred Wassermann,
         Peter Wilfahrt
 
     This file is part of JSXGraph.
@@ -55,7 +55,7 @@ var JXG = {},
     ////                                                                  ////
     ////             Attention! Slows down the loading time!              ////
     //////////////////////////////////////////////////////////////////////////
-    var preventCachingFiles = false;
+    var preventCachingFiles = true;
 
     // check and table are initialized at the end of the life
     var table,
