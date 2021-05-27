@@ -1382,31 +1382,31 @@ define([
                     v = this.getvar(node.children[0]);
                     ret = this.del(v);
                     break;
-                case 'op_equ':
+                case 'op_eq':
                     // == is intentional
                     /*jslint eqeq:true*/
-                    ret = this.execute(node.children[0]) == this.execute(node.children[1]);
+                    ret = this.execute(node.children[0]) === this.execute(node.children[1]);
                     /*jslint eqeq:false*/
                     break;
                 case 'op_neq':
                     // != is intentional
                     /*jslint eqeq:true*/
-                    ret = this.execute(node.children[0]) != this.execute(node.children[1]);
+                    ret = this.execute(node.children[0]) !== this.execute(node.children[1]);
                     /*jslint eqeq:true*/
                     break;
                 case 'op_approx':
                     ret = Math.abs(this.execute(node.children[0]) - this.execute(node.children[1])) < Mat.eps;
                     break;
-                case 'op_grt':
+                case 'op_gt':
                     ret = this.execute(node.children[0]) > this.execute(node.children[1]);
                     break;
-                case 'op_lot':
+                case 'op_lt':
                     ret = this.execute(node.children[0]) < this.execute(node.children[1]);
                     break;
-                case 'op_gre':
+                case 'op_geq':
                     ret = this.execute(node.children[0]) >= this.execute(node.children[1]);
                     break;
-                case 'op_loe':
+                case 'op_leq':
                     ret = this.execute(node.children[0]) <= this.execute(node.children[1]);
                     break;
                 case 'op_or':
@@ -1653,37 +1653,37 @@ define([
 
                     ret += this.compile(node.children[0], js) + ')';
                     break;
-                case 'op_equ':
-                    ret = '(' + this.compile(node.children[0], js) + ' == ' + this.compile(node.children[1], js) + ')';
+                case 'op_eq':
+                    ret = '(' + this.compile(node.children[0], js) + ' === ' + this.compile(node.children[1], js) + ')';
                     break;
                 case 'op_neq':
-                    ret = '(' + this.compile(node.children[0], js) + ' != ' + this.compile(node.children[1], js) + ')';
+                    ret = '(' + this.compile(node.children[0], js) + ' !== ' + this.compile(node.children[1], js) + ')';
                     break;
                 case 'op_approx':
                     ret = '(' + this.compile(node.children[0], js) + ' ~= ' + this.compile(node.children[1], js) + ')';
                     break;
-                case 'op_grt':
+                case 'op_gt':
                     if (js) {
                         ret = '$jc$.gt(' + this.compile(node.children[0], js) + ', ' + this.compile(node.children[1], js) + ')';
                     } else {
                         ret = '(' + this.compile(node.children[0], js) + ' > ' + this.compile(node.children[1], js) + ')';
                     }
                     break;
-                case 'op_lot':
+                case 'op_lt':
                     if (js) {
                         ret = '$jc$.lt(' + this.compile(node.children[0], js) + ', ' + this.compile(node.children[1], js) + ')';
                     } else {
                         ret = '(' + this.compile(node.children[0], js) + ' < ' + this.compile(node.children[1], js) + ')';
                     }
                     break;
-                case 'op_gre':
+                case 'op_geq':
                     if (js) {
                         ret = '$jc$.geq(' + this.compile(node.children[0], js) + ', ' + this.compile(node.children[1], js) + ')';
                     } else {
                         ret = '(' + this.compile(node.children[0], js) + ' >= ' + this.compile(node.children[1], js) + ')';
                     }
                     break;
-                case 'op_loe':
+                case 'op_leq':
                     if (js) {
                         ret = '$jc$.leq(' + this.compile(node.children[0], js) + ', ' + this.compile(node.children[1], js) + ')';
                     } else {
@@ -2445,7 +2445,7 @@ case 31:
  this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_and', $$[$0-2], $$[$0]); this.$.isMath = false; 
 break;
 case 33:
- this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_equ', $$[$0-2], $$[$0]); this.$.isMath = false; 
+ this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_eq', $$[$0-2], $$[$0]); this.$.isMath = false; 
 break;
 case 34:
  this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_neq', $$[$0-2], $$[$0]); this.$.isMath = false; 
@@ -2454,16 +2454,16 @@ case 35:
  this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_approx', $$[$0-2], $$[$0]); this.$.isMath = false; 
 break;
 case 37:
- this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_lot', $$[$0-2], $$[$0]); this.$.isMath = false; 
+ this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_lt', $$[$0-2], $$[$0]); this.$.isMath = false; 
 break;
 case 38:
- this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_grt', $$[$0-2], $$[$0]); this.$.isMath = false; 
+ this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_gt', $$[$0-2], $$[$0]); this.$.isMath = false; 
 break;
 case 39:
- this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_loe', $$[$0-2], $$[$0]); this.$.isMath = false; 
+ this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_leq', $$[$0-2], $$[$0]); this.$.isMath = false; 
 break;
 case 40:
- this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_gre', $$[$0-2], $$[$0]); this.$.isMath = false; 
+ this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_geq', $$[$0-2], $$[$0]); this.$.isMath = false; 
 break;
 case 42:
  this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_add', $$[$0-2], $$[$0]); this.$.isMath = true; 
