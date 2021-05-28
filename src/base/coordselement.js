@@ -507,7 +507,7 @@ define([
         updateGliderFromParent: function () {
             var p1c, p2c, r, lbda, c,
                 slide = this.slideObject,
-                slides = [], 
+                slides = [],
                 res, i,
                 isTransformed,
                 baseangle, alpha, angle, beta,
@@ -568,6 +568,7 @@ define([
                     ];
                 } else {
                     lbda = this.position;
+                    console.log(lbda)
                     c = [
                         p1c[0] + lbda * (p2c[0] - p1c[0]),
                         p1c[1] + lbda * (p2c[1] - p1c[1]),
@@ -1146,6 +1147,7 @@ define([
                 } else {
                     this.slideObject = this.slideObjects[this.slideObjects.length - 1];
                 }
+                console.log(this.slideObjects, this.position);
             }
         },
 
