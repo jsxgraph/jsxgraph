@@ -122,7 +122,7 @@ define([
             apply: 'apply',
             applyOnce: 'applyOnce',
             bindTo: 'bindTo',
-            bind: 'bind',
+            bind: 'bindTo',
             melt: 'melt'
         };
     };

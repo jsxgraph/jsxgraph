@@ -929,7 +929,7 @@ define([
                         projCoords = new Coords(Const.COORDS_BY_USER,
                             Geometry.projectCoordsToPolygon(this.coords.usrCoords, el),
                             this.board);
-                        console.log(projCoords.usrCoords, this.coords.usrCoords)
+                        // console.log(projCoords.usrCoords, this.coords.usrCoords)
                     }
 
                     if (ev_au === 'screen') {

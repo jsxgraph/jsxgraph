@@ -1285,7 +1285,7 @@ define([
             d = Geometry.distance(vec, B, 3);
             vec = [vec[0], B[1] + (vec[1] - B[1]) * (r + dx) / d,  B[2] + (vec[2] - B[2]) * (r + dx) / d];
 
-            l_vp.position = Geometry.calcLabelQuadrant(Geometry.rad([1,0],[0,0],vec));
+            l_vp.position = Geometry.calcLabelQuadrant(Geometry.rad([1,0], [0,0], vec));
 
             return new Coords(Const.COORDS_BY_USER, vec, this.board);
         };
