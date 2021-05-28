@@ -1068,8 +1068,7 @@ define([
                             el1.point1.coords.usrCoords,
                             el1.point2.coords.usrCoords,
                             el2.point1.coords.usrCoords,
-                            el2.point2.coords.usrCoords,
-                            el1.board
+                            el2.point2.coords.usrCoords
                         );
 
                         if ((!first1 && res[1] < 0) || (!last1 && res[1] > 1) ||
