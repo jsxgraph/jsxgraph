@@ -925,6 +925,11 @@ define([
                         projCoords = Geometry.projectPointToCurve(this, el, this.board);
                     } else if (el.type === Const.OBJECT_TYPE_TURTLE) {
                         projCoords = Geometry.projectPointToTurtle(this, el, this.board);
+                    } else if (el.type === Const.OBJECT_TYPE_POLYGON) {
+                        projCoords = new Coords(Const.COORDS_BY_USER,
+                            Geometry.projectCoordsToPolygon(this.coords.usrCoords, el),
+                            this.board);
+                        console.log(projCoords.usrCoords, this.coords.usrCoords)
                     }
 
                     if (ev_au === 'screen') {
@@ -1069,7 +1074,7 @@ define([
                 dist;
 
             if (slideobj.type === Const.OBJECT_TYPE_POLYGON){
-                // Search for the closest side of the polygon.
+                // Search for the closest edge of the polygon.
                 min = Number.MAX_VALUE;
                 for (i = 0; i < slideobj.borders.length; i++){
                     dist = JXG.Math.Geometry.distPointLine(this.coords.usrCoords, slideobj.borders[i].stdform);

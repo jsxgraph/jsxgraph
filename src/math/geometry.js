@@ -2422,19 +2422,28 @@ define([
                 len = pol.vertices.length,
                 d_best = Infinity,
                 d,
-                projection,
+                projection, proj,
                 bestprojection;
 
-            for (i = 0; i < len; i++) {
+            for (i = 0; i < len - 1; i++) {
                 projection = JXG.Math.Geometry.projectCoordsToSegment(
                     p,
                     pol.vertices[i].coords.usrCoords,
-                    pol.vertices[(i + 1) % len].coords.usrCoords
+                    pol.vertices[i + 1].coords.usrCoords
                 );
 
-                d = JXG.Math.Geometry.distance(projection[0], p, 3);
-                if (0 <= projection[1] && projection[1] <= 1 && d < d_best) {
-                    bestprojection = projection[0].slice(0);
+                if (0 <= projection[1] && projection[1] <= 1) {
+                    d = JXG.Math.Geometry.distance(projection[0], p, 3);
+                    proj = projection[0];
+                } else if (projection[1] < 0) {
+                    d = JXG.Math.Geometry.distance(pol.vertices[i].coords.usrCoords, p, 3);
+                    proj = pol.vertices[i].coords.usrCoords;
+                } else {
+                    d = JXG.Math.Geometry.distance(pol.vertices[i + 1].coords.usrCoords, p, 3);
+                    proj = pol.vertices[i + 1].coords.usrCoords;
+                }
+                if (d < d_best) {
+                    bestprojection = proj.slice(0);
                     d_best = d;
                 }
             }
