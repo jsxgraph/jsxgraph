@@ -382,7 +382,7 @@ define([
             } else if (el.elementClass === Const.OBJECT_CLASS_CIRCLE) {
                 return Math.abs(this.Dist(el.center) - el.Radius()) < tol;
             } else if (el.elementClass === Const.OBJECT_CLASS_CURVE) {
-                crds = Geometry.projectPointToCurve(this, el, this.board);
+                crds = Geometry.projectPointToCurve(this, el, this.board)[0];
                 return Geometry.distance(this.coords.usrCoords, crds.usrCoords, 3) < tol;
             } else if (el.type === Const.OBJECT_TYPE_POLYGON) {
                 arr = Geometry.projectCoordsToPolygon(this.coords.usrCoords, el);

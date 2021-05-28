@@ -2257,7 +2257,8 @@ define([
          * @param {JXG.Curve} curve Curve on that the point is projected.
          * @param {JXG.Board} [board=point.board] Reference to a board.
          * @see #projectCoordsToCurve
-         * @returns {JXG.Coords} The coordinates of the projection of the given point on the given graph.
+         * @returns {Array} [JXG.Coords, position] The coordinates of the projection of the given
+         * point on the given graph and the relative position on the curve (real number).
          */
         projectPointToCurve: function (point, curve, board) {
             if (!Type.exists(board)) {
@@ -2269,9 +2270,9 @@ define([
                 t = point.position || 0.0,
                 result = this.projectCoordsToCurve(x, y, t, curve, board);
 
-            point.position = result[1];
+            // point.position = result[1];
 
-            return result[0];
+            return result;
         },
 
         /**
@@ -2284,7 +2285,7 @@ define([
          * @param {JXG.Curve} curve Curve on that the point is projected.
          * @param {JXG.Board} [board=curve.board] Reference to a board.
          * @see #projectPointToCurve
-         * @returns {JXG.Coords} Array containing the coordinates of the projection of the given point on the given graph and
+         * @returns {JXG.Coords} Array containing the coordinates of the projection of the given point on the given curve and
          * the position on the curve.
          */
         projectCoordsToCurve: function (x, y, t, curve, board) {
@@ -2456,10 +2457,12 @@ define([
          * @param {JXG.Point} point Point to project.
          * @param {JXG.Turtle} turtle on that the point is projected.
          * @param {JXG.Board} [board=point.board] Reference to a board.
-         * @returns {JXG.Coords} The coordinates of the projection of the given point on the given turtle.
+         * @returns {Array} [JXG.Coords, position] Array containing the coordinates of the projection of the given point on the turtle and
+         * the position on the turtle.
          */
         projectPointToTurtle: function (point, turtle, board) {
             var newCoords, t, x, y, i, dist, el, minEl,
+                res, newPos,
                 np = 0,
                 npmin = 0,
                 mindist = Number.POSITIVE_INFINITY,
@@ -2474,13 +2477,15 @@ define([
                 el = turtle.objects[i];
 
                 if (el.elementClass === Const.OBJECT_CLASS_CURVE) {
-                    newCoords = this.projectPointToCurve(point, el);
+                    res = this.projectPointToCurve(point, el);
+                    newCoords = res[0];
+                    newPos = res[1];
                     dist = this.distance(newCoords.usrCoords, point.coords.usrCoords);
 
                     if (dist < mindist) {
                         x = newCoords.usrCoords[1];
                         y = newCoords.usrCoords[2];
-                        t = point.position;
+                        t = newPos;
                         mindist = dist;
                         minEl = el;
                         npmin = np;
@@ -2490,9 +2495,9 @@ define([
             }
 
             newCoords = new Coords(Const.COORDS_BY_USER, [x, y], board);
-            point.position = t + npmin;
-
-            return minEl.updateTransform(newCoords);
+            // point.position = t + npmin;
+            // return minEl.updateTransform(newCoords);
+            return [minEl.updateTransform(newCoords), t + npmin];
         },
 
         /**
