@@ -1054,7 +1054,6 @@ define([
                 // curve - line (this includes intersections between conic sections and lines)
                 // with the exception that the curve is of arc type
                 /** @ignore */
-                console.log("X")
                 func = function () {
                     return that.meetCurveLine(el1, el2, i, el1.board, alwaysintersect);
                 };
