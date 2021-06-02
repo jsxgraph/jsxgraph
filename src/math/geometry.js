@@ -1023,26 +1023,38 @@ define([
          *   <li>i==0: use the positive square root,</li>
          *   <li>i==1: use the negative square root.</li></ul>
          * See further {@link JXG.Point#createIntersectionPoint}.
-         * @param {Boolean} alwaysintersect. Flag that determines if segements and arc can have an outer intersection point
+         * @param {Boolean} alwaysintersect. Flag that determines if segments and arc can have an outer intersection point
          * on their defining line or circle.
          * @returns {Function} Function returning a {@link JXG.Coords} object that determines
          * the intersection point.
          */
         intersectionFunction: function (board, el1, el2, i, j, alwaysintersect) {
-            var func, that = this;
+            var func, that = this,
+                el1_isArcType = false,
+                el2_isArcType = false;
+
+            el1_isArcType = (el1.elementClass === Const.OBJECT_CLASS_CURVE &&
+                (el1.type === Const.OBJECT_TYPE_ARC || el1.type === Const.OBJECT_TYPE_SECTOR)
+                ) ? true : false;
+            el2_isArcType = (el2.elementClass === Const.OBJECT_CLASS_CURVE &&
+                (el2.type === Const.OBJECT_TYPE_ARC || el2.type === Const.OBJECT_TYPE_SECTOR)
+                ) ? true : false;
 
             if (el1.elementClass === Const.OBJECT_CLASS_CURVE &&
-                    el2.elementClass === Const.OBJECT_CLASS_CURVE) {
+                el2.elementClass === Const.OBJECT_CLASS_CURVE && !(el1_isArcType && el2_isArcType) ) {
                 // curve - curve
+                // with the exception that both elements are arc types
                 /** @ignore */
                 func = function () {
                     return that.meetCurveCurve(el1, el2, i, j, el1.board);
                 };
 
-            } else if ((el1.elementClass === Const.OBJECT_CLASS_CURVE && el2.elementClass === Const.OBJECT_CLASS_LINE) ||
-                    (el2.elementClass === Const.OBJECT_CLASS_CURVE && el1.elementClass === Const.OBJECT_CLASS_LINE)) {
-                // curve - line (this includes intersections between conic sections and lines
+            } else if ((el1.elementClass === Const.OBJECT_CLASS_CURVE && !el1_isArcType && el2.elementClass === Const.OBJECT_CLASS_LINE) ||
+                    (el2.elementClass === Const.OBJECT_CLASS_CURVE && !el2_isArcType && el1.elementClass === Const.OBJECT_CLASS_LINE)) {
+                // curve - line (this includes intersections between conic sections and lines)
+                // with the exception that the curve is of arc type
                 /** @ignore */
+                console.log("X")
                 func = function () {
                     return that.meetCurveLine(el1, el2, i, el1.board, alwaysintersect);
                 };
@@ -1059,7 +1071,7 @@ define([
 
                     /**
                      * If one of the lines is a segment or ray and
-                     * the the intersection point should disappear if outside
+                     * the intersection point should disappear if outside
                      * of the segment or ray we call
                      * meetSegmentSegment
                      */
@@ -1085,14 +1097,41 @@ define([
                     return that.meet(el1.stdform, el2.stdform, i, el1.board);
                 };
             } else {
-                // All other combinations of circles and lines
+                // All other combinations of circles and lines,
+                // Arc types are treated as circles.
                 /** @ignore */
                 func = function () {
-                    return that.meet(el1.stdform, el2.stdform, i, el1.board);
+                    var res = that.meet(el1.stdform, el2.stdform, i, el1.board);
+
+                    if (!alwaysinterset && el1_isArcType) {
+                        res = that.coordsOnArc(el1, res);
+                        if (res.usrCoords[0] !== 0 && el2_isArcType) {
+                            res = that.coordsOnArc(el2, res);
+                        }
+                    }
+                    return res;
                 };
             }
 
             return func;
+        },
+
+        coordsOnArc: function(arc, coords) {
+            var angle = this.rad(arc.radiuspoint, arc.center, coords.usrCoords.slice(1)),
+                alpha = 0.0,
+                beta = this.rad(arc.radiuspoint, arc.center, arc.anglepoint),
+                ev_s= Type.evaluate(arc.visProp.selection);
+
+            if ((ev_s === 'minor' && beta > Math.PI) ||
+                (ev_s === 'major' && beta < Math.PI)) {
+                alpha = beta;
+                beta = 2 * Math.PI;
+            }
+            if (angle < alpha || angle > beta) {
+                return (new Coords(JXG.COORDS_BY_USER, [0, NaN, NaN], arc.board));
+            } else {
+                return coords;
+            }
         },
 
         /**
