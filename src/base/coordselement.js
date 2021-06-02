@@ -933,12 +933,18 @@ define([
                     }
 
                     if (d < ev_ad) {
-                        if (!(this.type === Const.OBJECT_TYPE_GLIDER && this.slideObject === el)) {
+                        if (!(this.type === Const.OBJECT_TYPE_GLIDER &&
+                              (el === this.slideObject || this.slideObject && this.onPolygon && this.slideObject.parentPolygon === el)
+                             )
+                           ) {
                             this.makeGlider(el);
                         }
                         break;       // bind the point to the first attractor in its list.
                     }
-                    if (el === this.slideObject && d >= ev_sd) {
+                    // console.log("HERE",  d, ev_sd, el.id, this.slideObject.id, this.slideObject.parentPolygon === el)
+                    if (d >= ev_sd &&
+                        (el === this.slideObject || this.slideObject && this.onPolygon && this.slideObject.parentPolygon === el)
+                       ) {
                         this.popSlideObject();
                     }
                 }
@@ -1122,8 +1128,8 @@ define([
                 // It may not be sufficient to remove the point from
                 // the list of childElement. For complex dependencies
                 // one may have to go to the list of ancestor and descendants.  A.W.
-                // yes indeed, see #51 on github bugtracker
-                //delete this.slideObject.childElements[this.id];
+                // Yes indeed, see #51 on github bugtracker
+                //  delete this.slideObject.childElements[this.id];
                 this.slideObject.removeChild(this);
 
                 if (this.slideObjects.length === 0) {
