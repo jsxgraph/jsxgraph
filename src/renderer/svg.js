@@ -630,6 +630,7 @@ define([
         createPrim: function (type, id) {
             var node = this.container.ownerDocument.createElementNS(this.svgNamespace, type);
             node.setAttributeNS(null, 'id', this.container.id + '_' + id);
+            node.setAttribute('tabindex', "0");
             node.style.position = 'absolute';
             if (type === 'path') {
                 node.setAttributeNS(null, 'stroke-linecap', 'round');
