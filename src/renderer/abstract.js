@@ -229,6 +229,10 @@ define([
                     if (!not.gradient) {
                         this.setShadow(el);
                     }
+
+                    if (!not.tabindex) {
+                        this.setTabindex(el);
+                    }
                 } else {
                     this.setDraft(el);
                 }
@@ -857,7 +861,6 @@ define([
                     (radius * el.board.unitY));
             }
         },
-
 
         /* **************************
          *   Polygon related stuff
@@ -1540,6 +1543,17 @@ define([
          */
         setPropertyPrim: function (node, key, val) { /* stub */ },
 
+        setTabindex: function(element) {
+            var val;
+            if (Type.exists(element.rendNode)) {
+                val = Type.evaluate(element.visProp.tabindex);
+                if (val !== element.visPropOld.tabindex) {
+                    element.rendNode.setAttribute('tabindex', val);
+                    element.visPropOld.tabindex = val;
+                }
+            }
+        },
+
         /**
          * Shows or hides an element on the canvas; Only a stub, requires implementation in the derived renderer.
          * @param {JXG.GeometryElement} element Reference to the object that has to appear.
@@ -1841,6 +1855,7 @@ define([
                     if (button.classList !== undefined) { // classList not available in IE 9
                         button.classList.add('JXG_navigation_button');
                     }
+                    button.setAttribute('tabindex', 0);
 
                     // Highlighting is now done with CSS
                     // Env.addEvent(button, 'mouseover', function () {

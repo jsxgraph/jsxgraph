@@ -1331,7 +1331,11 @@ define([
              * @private
              * By default, an element is not a label. Do not change this.
              */
-            isLabel: false
+            isLabel: false,
+
+
+            tabindex: 0
+
             // close the meta tag
             /**#@-*/
         },
@@ -2069,6 +2073,8 @@ define([
                 needsRegularUpdate: false,
                 visible: false
             },
+
+            tabindex: -1,
 
             /**
              * Attributes for the axis label.

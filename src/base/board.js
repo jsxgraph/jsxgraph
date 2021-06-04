@@ -1520,6 +1520,19 @@ define([
             }
 
             this.addFullscreenEventHandlers();
+            this.addKeyboardEventHandlers();
+        },
+
+        /**
+         * Remove all event handlers from the board object
+         */
+         removeEventHandlers: function () {
+            this.removeMouseEventHandlers();
+            this.removeTouchEventHandlers();
+            this.removePointerEventHandlers();
+
+            this.removeFullscreenEventHandlers();
+            this.removeKeyboardEventHandlers();
         },
 
         /**
@@ -1597,10 +1610,33 @@ define([
                 events = ['fullscreenchange', 'mozfullscreenchange', 'webkitfullscreenchange', 'msfullscreenchange'],
                 le = events.length;
 
-            for (i = 0; i < le; i++) {
-                Env.addEvent(this.document, events[i], this.fullscreenListener, this);
+            if (!this.hasFullsceenEventHandlers && Env.isBrowser) {
+                for (i = 0; i < le; i++) {
+                    Env.addEvent(this.document, events[i], this.fullscreenListener, this);
+                }
+                this.hasFullsceenEventHandlers = true;
             }
-            this.hasFullsceenEventHandlers = true;
+        },
+
+        addKeyboardEventHandlers: function() {
+            if (!this.hasKeyboardHandlers && Env.isBrowser) {
+                Env.addEvent(this.containerObj, 'keydown', this.keyDownListener, this);
+                Env.addEvent(this.containerObj, 'focusin', this.keyFocusInListener, this);
+                Env.addEvent(this.containerObj, 'focusout', this.keyFocusOutListener, this);
+                this.hasKeyboardHandlers = true;
+            }
+        },
+
+        /**
+         * Remove all registered touch event handlers.
+         */
+        removeKeyboardEventHandlers: function () {
+            if (this.hasKeyboardHandlers && Env.isBrowser) {
+                Env.removeEvent(this.containerObj, 'keydown', this.keyDownListener, this);
+                Env.removeEvent(this.containerObj, 'focusin', this.keyFocusInListener, this);
+                Env.removeEvent(this.containerObj, 'focusout', this.keyFocusOutListener, this);
+                this.hasKeyboardHandlers = false;
+            }
         },
 
         /**
@@ -1614,8 +1650,9 @@ define([
 
             if (this.hasFullsceenEventHandlers && Env.isBrowser) {
                 for (i = 0; i < le; i++) {
-                        Env.removeEvent(this.document, events[i], this.fullscreenListener, this);
+                    Env.removeEvent(this.document, events[i], this.fullscreenListener, this);
                 }
+                this.hasFullsceenEventHandlers = false;
             }
         },
 
@@ -1684,18 +1721,6 @@ define([
 
                 this.hasTouchHandlers = false;
             }
-        },
-
-        /**
-         * Remove all event handlers from the board object
-         */
-        removeEventHandlers: function () {
-            this.removeMouseEventHandlers();
-            this.removeTouchEventHandlers();
-            this.removePointerEventHandlers();
-
-            this.removeFullscreenEventHandlers();
-
         },
 
         /**
@@ -3005,6 +3030,66 @@ define([
 
             evt.preventDefault();
             return false;
+        },
+
+        keyDownListener: function (evt) {
+            var id_node = evt.target.id,
+                id, el,
+                dx = 10 / this.unitX,
+                dy = 10 / this.unitY,
+                move;
+
+            if (id_node === '') {
+                return false;
+            }
+
+            id = id_node.replace(this.containerObj.id + '_', '');
+            el = this.select(id);
+            // console.log(el, id, this);
+
+            if (Type.exists(el.coords)) {
+                move = 'setPositionByTransform';
+            } else {
+                move = 'setPosition';
+            }
+            // console.log(move);
+
+            if (evt.keyCode === 38) {           // up
+                el[move](JXG.COORDS_BY_USER, [0, dy]);
+            } else if (evt.keyCode === 40) {    // down
+                el[move](JXG.COORDS_BY_USER, [0, -dy]);
+            } else if (evt.keyCode === 37) {    // left
+                el[move](JXG.COORDS_BY_USER, [-dx, 0]);
+            } else if (evt.keyCode === 39) {    // right
+                el[move](JXG.COORDS_BY_USER, [dx, 0]);
+            // } else if (evt.keyCode === 9) {     // tab
+            }
+            //console.log(evt.target.id);
+
+            this.update();
+
+            return true;
+        },
+
+        keyFocusInListener: function (evt) {
+            var id_node = evt.target.id,
+                id, el;
+
+            id = id_node.replace(this.containerObj.id + '_', '');
+            el = this.select(id);
+            if (Type.exists(el.highlight)) {
+                el.highlight(true);
+
+            }
+        },
+
+        keyFocusOutListener: function (evt) {
+            // var id_node = evt.target.id,
+            //     id, el;
+
+            // id = id_node.replace(this.containerObj.id + '_', '');
+            // el = this.select(id);
+            this.dehighlightAll();
         },
 
         /**********************************************************

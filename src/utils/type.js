@@ -1110,6 +1110,7 @@ define([
                 strokecolor: '',
                 strokeopacity: '',
                 strokewidth: '',
+                tabindex: -100000,
                 transitionduration: 0,
                 top: -100000,
                 visible: null

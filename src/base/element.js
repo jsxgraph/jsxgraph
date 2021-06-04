@@ -1357,6 +1357,12 @@ define([
                         this.board.renderer.setLayer(this, Type.evaluate(value));
                         this._set(key, value);
                         break;
+                    case 'tabindex':
+                        if (Type.exists(this.rendNode)) {
+                            this.rendNode.setAttribute('tabindex', value);
+                            this._set(key, value);
+                        }
+                        break;
                     default:
                         if (Type.exists(this.visProp[key]) &&
                             (!JXG.Validator[key] ||
