@@ -607,6 +607,13 @@ define([
                 enabled: true
             },
 
+            keyboard: {
+                enabled: true,
+                dx: 10,
+                dy: 10,
+                zoomShift: true
+            },
+
             /**
              * Control the possibilities for a selection rectangle.
              * Starting a selection event triggers the "startselecting" event.

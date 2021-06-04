@@ -3035,11 +3035,11 @@ define([
         keyDownListener: function (evt) {
             var id_node = evt.target.id,
                 id, el,
-                dx = 10 / this.unitX,
-                dy = 10 / this.unitY,
-                move;
+                dx = Type.evaluate(this.attr.keyboard.dx) / this.unitX,
+                dy = Type.evaluate(this.attr.keyboard.dy) / this.unitY,
+                move, dir;
 
-            if (id_node === '') {
+            if (!this.attr.keyboard.enabled || id_node === '') {
                 return false;
             }
 
@@ -3052,17 +3052,38 @@ define([
             } else {
                 move = 'setPosition';
             }
-            // console.log(move);
+            console.log(evt);
 
-            if (evt.keyCode === 38) {           // up
-                el[move](JXG.COORDS_BY_USER, [0, dy]);
-            } else if (evt.keyCode === 40) {    // down
-                el[move](JXG.COORDS_BY_USER, [0, -dy]);
-            } else if (evt.keyCode === 37) {    // left
-                el[move](JXG.COORDS_BY_USER, [-dx, 0]);
-            } else if (evt.keyCode === 39) {    // right
-                el[move](JXG.COORDS_BY_USER, [dx, 0]);
-            // } else if (evt.keyCode === 9) {     // tab
+            if (Type.evaluate(this.attr.keyboard.zoomshift) && evt.shiftKey) {
+                if (evt.keyCode === 38) {           // up
+                    this.clickUpArrow();
+                } else if (evt.keyCode === 40) {    // down
+                    this.clickDownArrow();
+                } else if (evt.keyCode === 37) {    // left
+                    this.clickLeftArrow();
+                } else if (evt.keyCode === 39) {    // right
+                    this.clickRightArrow();
+                }
+            } else {
+                if (evt.keyCode === 38) {           // up
+                    dir = [0, dy];
+                } else if (evt.keyCode === 40) {    // down
+                    dir = [0, -dy];
+                } else if (evt.keyCode === 37) {    // left
+                    dir = [-dx, 0];
+                } else if (evt.keyCode === 39) {    // right
+                    dir = [dx, 0];
+                // } else if (evt.keyCode === 9) {  // tab
+                } else if (evt.keyCode === 171) {   // +
+                    this.zoomIn();
+                } else if (evt.keyCode === 173) {   // -
+                    this.zoomOut();
+                } else if (evt.keyCode === 79) {    // o
+                    this.zoom100();
+                }
+                if (dir) {
+                    el[move](JXG.COORDS_BY_USER, dir);
+                }
             }
             //console.log(evt.target.id);
 
@@ -3075,6 +3096,10 @@ define([
             var id_node = evt.target.id,
                 id, el;
 
+            if (!this.attr.keyboard.enabled || id_node === '') {
+                return false;
+            }
+
             id = id_node.replace(this.containerObj.id + '_', '');
             el = this.select(id);
             if (Type.exists(el.highlight)) {
@@ -3084,6 +3109,9 @@ define([
         },
 
         keyFocusOutListener: function (evt) {
+            if (!this.attr.keyboard.enabled) {
+                return false;
+            }
             // var id_node = evt.target.id,
             //     id, el;
 
@@ -4337,7 +4365,8 @@ define([
          * @returns {JXG.Board} Reference to the board
          */
         update: function (drag) {
-            var i, len, b, insert;
+            var i, len, b, insert,
+                storeActiveEl;
 
             if (this.inUpdate || this.isSuspendedUpdate) {
                 return this;
@@ -4345,12 +4374,15 @@ define([
             this.inUpdate = true;
 
             if (this.attr.minimizereflow === 'all' && this.containerObj && this.renderer.type !== 'vml') {
+                storeActiveEl = document.activeElement;
                 insert = this.renderer.removeToInsertLater(this.containerObj);
             }
 
             if (this.attr.minimizereflow === 'svg' && this.renderer.type === 'svg') {
+                storeActiveEl = document.activeElement;
                 insert = this.renderer.removeToInsertLater(this.renderer.svgRoot);
             }
+
             this.prepareUpdate().updateElements(drag).updateConditions();
             this.renderer.suspendRedraw(this);
             this.updateRenderer();
@@ -4359,6 +4391,7 @@ define([
 
             if (insert) {
                 insert();
+                storeActiveEl.focus();
             }
 
             // To resolve dependencies between boards

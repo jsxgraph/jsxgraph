@@ -1855,7 +1855,7 @@ define([
                     if (button.classList !== undefined) { // classList not available in IE 9
                         button.classList.add('JXG_navigation_button');
                     }
-                    button.setAttribute('tabindex', 0);
+                    // button.setAttribute('tabindex', 0);
 
                     // Highlighting is now done with CSS
                     // Env.addEvent(button, 'mouseover', function () {

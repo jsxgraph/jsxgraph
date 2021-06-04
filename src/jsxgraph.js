@@ -187,6 +187,7 @@ define([
             attr.zoom = Type.copyAttributes(attr, Options, 'board', 'zoom');
             attr.pan = Type.copyAttributes(attr, Options, 'board', 'pan');
             attr.drag = Type.copyAttributes(attr, Options, 'board', 'drag');
+            attr.keyboard = Type.copyAttributes(attr, Options, 'board', 'keyboard');
             attr.selection = Type.copyAttributes(attr, Options, 'board', 'selection');
             attr.navbar = Type.copyAttributes(attr.navbar, Options, 'navbar');
             attr.screenshot = Type.copyAttributes(attr, Options, 'board', 'screenshot');
@@ -287,6 +288,8 @@ define([
          * @param {Boolean} [attributes.showNavigation=false] Show the navigation buttons in the bottom right corner.
          * @param {Object} [attributes.zoom] Allow the user to zoom with the mouse wheel or the two-fingers-zoom gesture.
          * @param {Object} [attributes.pan] Allow the user to pan with shift+drag mouse or two-fingers-pan gesture.
+         * @param {Object} [attributes.drag] Allow the user to drag objects with a pointer device.
+         * @param {Object} [attributes.keyboard] Allow the user to drag objects with arrow keys on keyboard.
          * @param {Boolean} [attributes.axis=false] If set to true, show the axis. Can also be set to an object that is given to both axes as an attribute object.
          * @param {Boolean|Object} [attributes.grid] If set to true, shows the grid. Can also be set to an object that is given to the grid as its attribute object.
          * @param {Boolean} [attributes.registerEvents=true] Register mouse / touch events.
