@@ -4381,7 +4381,7 @@ define([
             this.inUpdate = true;
 
             if (this.attr.minimizereflow === 'all' && this.containerObj && this.renderer.type !== 'vml') {
-                storeActiveEl = document.activeElement;
+                storeActiveEl = document.activeElement; // Store focus element
                 insert = this.renderer.removeToInsertLater(this.containerObj);
             }
 
@@ -4398,7 +4398,7 @@ define([
 
             if (insert) {
                 insert();
-                storeActiveEl.focus();
+                storeActiveEl.focus();     // Restore focus element
             }
 
             // To resolve dependencies between boards
