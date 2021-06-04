@@ -3081,11 +3081,11 @@ define([
                     dir = [dx, 0];
                 // } else if (evt.keyCode === 9) {  // tab
 
-                } else if (doZoom && evt.keyCode === 171) {   // +
+                } else if (doZoom && evt.key === '+') {   // +
                     this.zoomIn();
-                } else if (doZoom && evt.keyCode === 173) {   // -
+                } else if (doZoom && evt.key === '-') {   // -
                     this.zoomOut();
-                } else if (doZoom && evt.keyCode === 79) {    // o
+                } else if (doZoom && evt.key === 'o') {    // o
                     this.zoom100();
                 }
                 if (dir && Type.exists(el[move])) {
