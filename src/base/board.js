@@ -3037,6 +3037,7 @@ define([
                 id, el,
                 dx = Type.evaluate(this.attr.keyboard.dx) / this.unitX,
                 dy = Type.evaluate(this.attr.keyboard.dy) / this.unitY,
+                doZoom = false,
                 move, dir;
 
             if (!this.attr.keyboard.enabled || id_node === '') {
@@ -3052,9 +3053,14 @@ define([
             } else {
                 move = 'setPosition';
             }
-            console.log(evt);
+            // console.log(evt);
 
-            if (Type.evaluate(this.attr.keyboard.zoomshift) && evt.shiftKey) {
+            if (Type.evaluate(this.attr.keyboard.zoomshift) || Type.evaluate(this.attr.keyboard.zoomctrl)) {
+                doZoom = true;
+            }
+
+            if ((Type.evaluate(this.attr.keyboard.zoomshift) && evt.shiftKey) ||
+                (Type.evaluate(this.attr.keyboard.zoomctrl) && evt.ctrlKey)) {
                 if (evt.keyCode === 38) {           // up
                     this.clickUpArrow();
                 } else if (evt.keyCode === 40) {    // down
@@ -3074,14 +3080,15 @@ define([
                 } else if (evt.keyCode === 39) {    // right
                     dir = [dx, 0];
                 // } else if (evt.keyCode === 9) {  // tab
-                } else if (evt.keyCode === 171) {   // +
+
+                } else if (doZoom && evt.keyCode === 171) {   // +
                     this.zoomIn();
-                } else if (evt.keyCode === 173) {   // -
+                } else if (doZoom && evt.keyCode === 173) {   // -
                     this.zoomOut();
-                } else if (evt.keyCode === 79) {    // o
+                } else if (doZoom && evt.keyCode === 79) {    // o
                     this.zoom100();
                 }
-                if (dir) {
+                if (dir && Type.exists(el[move])) {
                     el[move](JXG.COORDS_BY_USER, dir);
                 }
             }
