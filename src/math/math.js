@@ -793,24 +793,44 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
             return 0;
         },
 
+        /**
+         * @param  {Number} x
+         * @returns {Number}
+         */
         erf: function(x) {
-            return this.Erf.erf(x);
+            return this.ProbFuncs.erf(x);
         },
 
-        erfc: function(x) {
-            return this.Erf.erfc(x);
+        /**
+         * @param  {Number} x
+         * @returns {Number}
+         */
+         erfc: function(x) {
+            return this.ProbFuncs.erfc(x);
         },
 
-        ndtr: function(x) {
-            return this.Erf.ndtr(x);
+        /**
+         * @param  {Number} x
+         * @returns {Number}
+         */
+         ndtr: function(x) {
+            return this.ProbFuncs.ndtr(x);
         },
 
-        ndtri: function(x) {
-            return this.Erf.ndtri(x);
+        /**
+         * @param  {Number} x
+         * @returns {Number}
+         */
+         ndtri: function(x) {
+            return this.ProbFuncs.ndtri(x);
         },
 
-        erfinv: function(x) {
-            return this.Erf.erfinv(x);
+        /**
+         * @param  {Number} x
+         * @returns {Number}
+         */
+         erfinv: function(x) {
+            return this.ProbFuncs.erfinv(x);
         },
 
         /* ********************  Comparisons and logical operators ************** */

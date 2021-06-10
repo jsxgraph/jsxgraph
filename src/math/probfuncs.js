@@ -42,7 +42,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
     "use strict";
 
     /**
-     * Functions for error function,
+     * Probability functions, e.g. error function,
      * see: https://en.wikipedia.org/wiki/Error_function
      * Ported from
      * by https://github.com/jeremybarnes/cephes/blob/master/cprob/ndtr.c,
@@ -50,11 +50,11 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
      * Cephes Math Library Release 2.9:  November, 2000
      * Copyright 1984, 1987, 1988, 1992, 2000 by Stephen L. Moshier
      *
-     * @name JXG.Math.Erf
-     * @exports Mat.Erf as JXG.Math.Erf
+     * @name JXG.Math.ProbFuncs
+     * @exports Mat.ProbFuncs as JXG.Math.ProbFuncs
      * @namespace
      */
-    Mat.Erf = {
+    Mat.ProbFuncs = {
         MAXNUM: 1.701411834604692317316873e38,  // 2**127
         SQRTH:  7.07106781186547524401E-1,      // sqrt(2)/2
         SQRT2:  1.41421356237309504880,         // sqrt(2)
@@ -681,5 +681,5 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         }
     };
 
-    return Mat.Erf;
+    return Mat.ProbFuncs;
 });
