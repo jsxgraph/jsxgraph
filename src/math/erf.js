@@ -656,8 +656,8 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return x;
         },
 
-        erfinv: function(y) {
-            return this.ndtri((y + 1) * 0.5) * this.SQRTH;
+        erfinv: function(x) {
+            return this.ndtri((x + 1) * 0.5) * this.SQRTH;
         }
     };
 
