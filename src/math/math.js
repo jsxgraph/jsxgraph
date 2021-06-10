@@ -793,6 +793,26 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
             return 0;
         },
 
+        erf: function(x) {
+            return this.Erf.erf(x);
+        },
+
+        erfc: function(x) {
+            return this.Erf.erfc(x);
+        },
+
+        ndtr: function(x) {
+            return this.Erf.ndtr(x);
+        },
+
+        ndtri: function(x) {
+            return this.Erf.ndtri(x);
+        },
+
+        erfinv: function(x) {
+            return this.Erf.erfinv(x);
+        },
+
         /* ********************  Comparisons and logical operators ************** */
 
         /**

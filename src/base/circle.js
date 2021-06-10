@@ -512,7 +512,8 @@ define([
         getLabelAnchor: function () {
             var x, y,
                 r = this.Radius(),
-                c = this.center.coords.usrCoords;
+                c = this.center.coords.usrCoords,
+                SQRTH = 7.07106781186547524401E-1;      // sqrt(2)/2
 
             switch (Type.evaluate(this.visProp.label.position)) {
             case 'lft':
@@ -520,20 +521,20 @@ define([
                 y = c[2];
                 break;
             case 'llft':
-                x = c[1] - Math.sqrt(0.5) * r;
-                y = c[2] - Math.sqrt(0.5) * r;
+                x = c[1] - SQRTH * r;
+                y = c[2] - SQRTH * r;
                 break;
             case 'rt':
                 x = c[1] + r;
                 y = c[2];
                 break;
             case 'lrt':
-                x = c[1] + Math.sqrt(0.5) * r;
-                y = c[2] - Math.sqrt(0.5) * r;
+                x = c[1] + SQRTH * r;
+                y = c[2] - SQRTH * r;
                 break;
             case 'urt':
-                x = c[1] + Math.sqrt(0.5) * r;
-                y = c[2] + Math.sqrt(0.5) * r;
+                x = c[1] + SQRTH * r;
+                y = c[2] + SQRTH * r;
                 break;
             case 'top':
                 x = c[1];
@@ -545,8 +546,8 @@ define([
                 break;
             default:
                 // includes case 'ulft'
-                x = c[1] - Math.sqrt(0.5) * r;
-                y = c[2] + Math.sqrt(0.5) * r;
+                x = c[1] - SQRTH * r;
+                y = c[2] + SQRTH * r;
                 break;
             }
 
