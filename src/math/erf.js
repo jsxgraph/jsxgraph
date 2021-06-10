@@ -120,11 +120,10 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         // UTHRESH: 37.519379347,
         M: 128.0,
         MINV: 0.0078125,
-        /*							expx2.c
+
+        /**
          *
          *	Exponential of squared argument
-         *
-         *
          *
          * SYNOPSIS:
          *
@@ -150,6 +149,10 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
          * arithmetic    domain     # trials      peak         rms
          *   IEEE      -26.6, 26.6    10^7       3.9e-16     8.9e-17
          *
+         * @private
+         * @param  {Number} x
+         * @param  {Number} sign (int)
+         * @returns {Number}
          */
         expx2: function(x, sign) {
             // double x;
@@ -185,12 +188,9 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return(u);
         },
 
-        /*							polevl.c
-         *							p1evl.c
+        /**
          *
          *	Evaluate polynomial
-         *
-         *
          *
          * SYNOPSIS:
          *
@@ -198,8 +198,6 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
          * double x, y, coef[N+1], polevl[];
          *
          * y = polevl( x, coef, N );
-         *
-         *
          *
          * DESCRIPTION:
          *
@@ -227,6 +225,11 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
          * equipment features, the user may wish to rewrite the
          * program in microcode or assembly language.
          *
+         * @private
+         * @param  {Number} x
+         * @param  {Number} coef
+         * @param  {Number} N
+         * @returns {Number}
          */
         polevl: function(x, coef, N) {
             var ans, i;
@@ -243,11 +246,16 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
         },
 
-         /*							p1evl()	*/
-         /*                                          N
-          * Evaluate polynomial when coefficient of x  is 1.0.
-          * Otherwise same as polevl.
-          */
+        /**
+         * Evaluate polynomial when coefficient of x is 1.0.
+         * Otherwise same as polevl.
+         *
+         * @private
+         * @param  {Number} x
+         * @param  {Number} coef
+         * @param  {Number} N
+         * @returns {Number}
+         */
         p1evl: function(x, coef, N) {
             var ans, i;
 
@@ -267,8 +275,6 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
          *	Normal distribution function
          *
          * SYNOPSIS:
-         *
-         * double x, y, ndtr();
          *
          * y = ndtr( x );
          *
@@ -304,8 +310,10 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
          *   message         condition         value returned
          * erfc underflow    x > 37.519379347       0.0
          *
+         * @param  {Number} a
+         * @returns {Number}
          */
-         ndtr: function(a) {
+        ndtr: function(a) {
             // a: double, return double
             var x, y, z;
 
@@ -326,6 +334,11 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return y;
         },
 
+        /**
+         * @private
+         * @param  {Number} a
+         * @returns {Number}
+         */
         _underflow: function(a) {
             console.log('erfc', 'UNDERFLOW');
             if (a < 0) {
@@ -335,11 +348,9 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             }
         },
 
-        /**							erfc.c
+        /**
          *
          *	Complementary error function
-         *
-         *
          *
          * SYNOPSIS:
          *
@@ -382,9 +393,10 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
          *   message         condition              value returned
          * erfc underflow    x > 9.231948545 (DEC)       0.0
          *
-         *
+         * @param  {Number} a
+         * @returns {Number}
          */
-         erfc: function(a) {
+        erfc: function(a) {
             var p, q, x, y, z;
 
             if (a < 0.0) {
@@ -424,11 +436,16 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return y;
         },
 
-        /* Exponentially scaled erfc function
-            exp(x^2) erfc(x)
-            valid for x > 1.
-            Use with ndtr and expx2.  */
-
+        /**
+         * Exponentially scaled erfc function
+         *   exp(x^2) erfc(x)
+         *   valid for x > 1.
+         *   Use with ndtr and expx2.
+         *
+         * @private
+         * @param {Number} x
+         * @returns {Number}
+         */
         erfce: function(x) {
             var p, q;
 
@@ -442,10 +459,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return p / q;
         },
 
-        /**
-         * erf.c         Cephes Math Library Release 2.9:  November, 2000
-         * Copyright 1984, 1987, 1988, 1992, 2000 by Stephen L. Moshier
-         *
+        /**
          *	Error function
          *
          * SYNOPSIS:
@@ -483,8 +497,10 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
          *    DEC       0,1         14000       4.7e-17     1.5e-17
          *    IEEE      0,1         30000       3.7e-16     1.0e-16
          *
+         * @param  {Number} x
+         * @returns {Number}
          */
-         erf: function(x) {
+        erf: function(x) {
             var y, z;
 
             if (Math.abs(x) > 1.0) {
@@ -495,52 +511,6 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return y;
         },
 
-        /*							ndtri.c
-         *
-         *	Inverse of Normal distribution function
-         *
-         *
-         *
-         * SYNOPSIS:
-         *
-         * double x, y, ndtri();
-         *
-         * x = ndtri( y );
-         *
-         *
-         *
-         * DESCRIPTION:
-         *
-         * Returns the argument, x, for which the area under the
-         * Gaussian probability density function (integrated from
-         * minus infinity to x) is equal to y.
-         *
-         *
-         * For small arguments 0 < y < exp(-2), the program computes
-         * z = sqrt( -2.0 * log(y) );  then the approximation is
-         * x = z - log(z)/z  - (1/z) P(1/z) / Q(1/z).
-         * There are two rational functions P/Q, one for 0 < y < exp(-32)
-         * and the other for y up to exp(-2).  For larger arguments,
-         * w = y - 0.5, and  x/sqrt(2pi) = w + w**3 R(w**2)/S(w**2)).
-         *
-         *
-         * ACCURACY:
-         *
-         *                      Relative error:
-         * arithmetic   domain        # trials      peak         rms
-         *    DEC      0.125, 1         5500       9.5e-17     2.1e-17
-         *    DEC      6e-39, 0.135     3500       5.7e-17     1.3e-17
-         *    IEEE     0.125, 1        20000       7.2e-16     1.3e-16
-         *    IEEE     3e-308, 0.135   50000       4.6e-16     9.8e-17
-         *
-         *
-         * ERROR MESSAGES:
-         *
-         *   message         condition    value returned
-         * ndtri domain       x <= 0        -MAXNUM
-         * ndtri domain       x >= 1         MAXNUM
-         *
-         */
         s2pi: 2.50662827463100050242E0, // sqrt(2pi)
 
         // approximation for 0 <= |y - 0.5| <= 3/8 */
@@ -613,6 +583,50 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             6.79019408009981274425E-9
         ],
 
+        /**
+         *
+         *	Inverse of Normal distribution function
+         *
+         * SYNOPSIS:
+         *
+         * double x, y, ndtri();
+         *
+         * x = ndtri( y );
+         *
+         * DESCRIPTION:
+         *
+         * Returns the argument, x, for which the area under the
+         * Gaussian probability density function (integrated from
+         * minus infinity to x) is equal to y.
+         *
+         *
+         * For small arguments 0 < y < exp(-2), the program computes
+         * z = sqrt( -2.0 * log(y) );  then the approximation is
+         * x = z - log(z)/z  - (1/z) P(1/z) / Q(1/z).
+         * There are two rational functions P/Q, one for 0 < y < exp(-32)
+         * and the other for y up to exp(-2).  For larger arguments,
+         * w = y - 0.5, and  x/sqrt(2pi) = w + w**3 R(w**2)/S(w**2)).
+         *
+         *
+         * ACCURACY:
+         *
+         *                      Relative error:
+         * arithmetic   domain        # trials      peak         rms
+         *    DEC      0.125, 1         5500       9.5e-17     2.1e-17
+         *    DEC      6e-39, 0.135     3500       5.7e-17     1.3e-17
+         *    IEEE     0.125, 1        20000       7.2e-16     1.3e-16
+         *    IEEE     3e-308, 0.135   50000       4.6e-16     9.8e-17
+         *
+         *
+         * ERROR MESSAGES:
+         *
+         *   message         condition    value returned
+         * ndtri domain       x <= 0        -MAXNUM
+         * ndtri domain       x >= 1         MAXNUM
+         *
+         * @param  {Number} y0
+         * @returns {Number}
+         */
         ndtri: function(y0) {
             var x, y, z, y2, x0, x1, code;
 
@@ -656,6 +670,12 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return x;
         },
 
+        /**
+         * Inverse of error function erf.
+         * 
+         * @param  {Number} x
+         * @returns {Number}
+         */
         erfinv: function(x) {
             return this.ndtri((x + 1) * 0.5) * this.SQRTH;
         }
