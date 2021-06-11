@@ -180,7 +180,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             }
 
             if ( u + u1 > this.MAXLOG) {
-                return Number.INFINITY;
+                return Infinity;
             }
 
             // u is exact, u1 is small.
@@ -450,11 +450,11 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             var p, q;
 
             if (x < 8.0) {
-                p = this.polevl(x, P, 8);
-                q = this.p1evl(x, Q, 8);
+                p = this.polevl(x, this.P, 8);
+                q = this.p1evl(x, this.Q, 8);
             } else {
-                p = this.polevl( x, R, 5 );
-                q = this.p1evl( x, S, 6 );
+                p = this.polevl( x, this.R, 5 );
+                q = this.p1evl( x, this.S, 6 );
             }
             return p / q;
         },
@@ -627,12 +627,12 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             var x, y, z, y2, x0, x1, code;
 
             if (y0 <= 0.0) {
-                console.log("ndtri", "DOMAIN ");
-                return -this.MAXNUM;
+                //console.log("ndtri", "DOMAIN ");
+                return -Infinity; // -this.MAXNUM;
             }
             if (y0 >= 1.0) {
-                console.log("ndtri", "DOMAIN");
-                return this.MAXNUM;
+                // console.log("ndtri", "DOMAIN");
+                return Infinity; // this.MAXNUM;
             }
 
             code = 1;

@@ -544,7 +544,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          * @param {Number} x
          * @returns {Number}
          */
-        acosh = Math.acosh || function(x) {
+        acosh: Math.acosh || function(x) {
             return Math.log(x + Math.sqrt(x * x - 1));
         },
 
@@ -553,7 +553,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          * @param {Number} x
          * @returns {Number}
          */
-        asinh = Math.asinh || function(x) {
+        asinh: Math.asinh || function(x) {
             if (x === -Infinity) {
                 return x;
             } else {
