@@ -535,7 +535,10 @@ define([
     // JessieScript/JessieCode startup: Search for script tags of type text/jessiescript and interprete them.
     if (Env.isBrowser && typeof window === 'object' && typeof document === 'object') {
         Env.addEvent(window, 'load', function () {
-            var type, i, j, div, id, board, width, height, bbox, axis, grid, code,
+            var type, i, j, div,
+                id, board, width, height, bbox, axis, grid,
+                code,
+                src, request, postpone = false,
                 scripts = document.getElementsByTagName('script'),
                 init = function (code, type, bbox) {
                     var board = JXG.JSXGraph.initBoard(id, {boundingbox: bbox, keepaspectratio: true, grid: grid, axis: axis, showReload: true});
@@ -572,6 +575,7 @@ define([
                     height = scripts[i].getAttribute('height', false) || '500px';
                     bbox = scripts[i].getAttribute('boundingbox', false) || '-5, 5, 5, -5';
                     id = scripts[i].getAttribute('container', false);
+                    src = scripts[i].getAttribute('src', false);
 
                     bbox = bbox.split(',');
                     if (bbox.length !== 4) {
@@ -602,13 +606,40 @@ define([
                         div = document.getElementById(id);
                     }
 
+                    code = '';
+
+                    if (Type.exists(src)) {
+                        postpone = true;
+                        request = new XMLHttpRequest();
+                        request.open("GET", src);
+                        request.overrideMimeType("text/plain; charset=x-user-defined");
+                        request.addEventListener("load", function() {
+                            if (this.status < 400) {
+                                code = this.responseText + '\n' + code;
+                                board = init(code, type, bbox);
+                                board.reload = makeReload(board, code, type, bbox);
+                            } else {
+                                console.log("Failed to load file", src, this.responseText);
+                            }
+                        });
+                        request.addEventListener("error", function(e) {
+                            console.log("Failed to load file", src, ":", e);
+                        });
+                        request.send();
+                    } else {
+                        postpone = false;
+                    }
+
                     if (document.getElementById(id)) {
                         code = scripts[i].innerHTML;
                         code = code.replace(/<!\[CDATA\[/g, '').replace(/\]\]>/g, '');
                         scripts[i].innerHTML = code;
 
-                        board = init(code, type, bbox);
-                        board.reload = makeReload(board, code, type, bbox);
+                        if (!postpone) {
+                            // Do no wait for data from "src" attribute
+                            board = init(code, type, bbox);
+                            board.reload = makeReload(board, code, type, bbox);
+                        }
                     } else {
                         JXG.debug('JSXGraph: Apparently the div injection failed. Can\'t create a board, sorry.');
                     }
