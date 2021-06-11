@@ -178,7 +178,7 @@ define([
             // bind cbp callback method to JXG.Server to get access to JXG.Server fields from within cpb
             this.cb = JXG.bind(this.cbp, this);
 
-            // we're using our own XMLHttpRequest object in here because of a/sync and POST
+            // We are using our own XMLHttpRequest object in here because of a/sync and POST
             if (window.XMLHttpRequest) {
                 AJAX = new XMLHttpRequest();
                 AJAX.overrideMimeType('text/plain; charset=iso-8859-1');
