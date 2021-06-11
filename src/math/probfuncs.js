@@ -185,7 +185,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
             // u is exact, u1 is small.
             u = Math.exp(u) * Math.exp(u1);
-            return(u);
+            return u;
         },
 
         /**
@@ -235,13 +235,14 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             var ans, i;
 
             if (Type.exists(coef.reduce)) {
-                return coef.reduce((r, c) => r * x + c, 0);
+                return coef.reduce(function(acc, c) {
+                    return acc * x + c;
+                }, 0);
             }
-
+            // Polyfill
             for (i = 0, ans = 0; i <= N; i++) {
                 ans = ans * x + coef[i];
             }
-
             return ans;
 
         },
@@ -260,13 +261,14 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             var ans, i;
 
             if (Type.exists(coef.reduce)) {
-                return coef.reduce((r, c) => r * x + c, 1);
+                return coef.reduce(function(acc, c) {
+                    return acc * x + c;
+                }, 1);
             }
-
+            // Polyfill
             for (i = 0, ans = 1; i < N; i++) {
                 ans = ans * x + coef[i];
             }
-
             return ans;
         },
 
@@ -343,9 +345,8 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             console.log('erfc', 'UNDERFLOW');
             if (a < 0) {
                 return 2.0;
-            } else {
-                return 0.0;
             }
+            return 0.0;
         },
 
         /**
@@ -429,7 +430,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
                 y = 2.0 - y;
             }
 
-            if (y == 0.0) {
+            if (y === 0.0) {
                 return this._underflow(a);
             }
 
@@ -657,10 +658,10 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             if (x < 8.0) {           // y > exp(-32) = 1.2664165549e-14
                 x1 = z * this.polevl(z, this.P1, 8 ) / this.p1evl(z, this.Q1, 8);
             } else {
-                x1 = z * this.polevl(z, P2, 8) / this.p1evl(z, Q2, 8);
+                x1 = z * this.polevl(z, this.P2, 8) / this.p1evl(z, this.Q2, 8);
             }
             x = x0 - x1;
-            if (code != 0) {
+            if (code !== 0) {
                 x = -x;
             }
             return x;
