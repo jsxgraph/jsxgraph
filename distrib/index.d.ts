@@ -4456,6 +4456,18 @@ declare module JXG {
          */
         eps: number;
         /**
+         * Hyperbolic arc-cosine of a number.
+         *
+         * param x
+         */
+        acosh(x: number): number;
+        /**
+         * Hyperbolic arcsine of a number.
+         *
+         * param x
+         */
+         asinh(x: number): number;
+         /**
          * Computes the binomial coefficient n over k.
          * param n
          * param k
@@ -4467,6 +4479,24 @@ declare module JXG {
          */
         cosh(x: number): number;
         /**
+         * Error function
+         *
+         * param x
+         */
+        erf(x: number): number;
+        /**
+         * Complementary error function
+         *
+         * param x
+         */
+        erfc(x: number): number;
+        /**
+         * Inverse error function
+         *
+         * param x
+         */
+         erfi(x: number): number;
+         /**
          * Compute the factorial of a positive integer. If a non-integer value is given, the fraction will be ignored.
          * @param n
          * @returns n! = n * (n-1) * ... * 2 * 1
@@ -4492,6 +4522,18 @@ declare module JXG {
          */
         matVecMult(mat: number[][], vec: number[]): number[];
         /**
+         * Normal distribution function
+         *
+         * param x
+         */
+        ndtr(x: number): number;
+        /**
+         * Inverse of normal distribution function
+         *
+         * param x
+         */
+        ndtri(x: number): number;
+        /**
          * Computes base to the power of exponent.
          * @param base
          * @param exponent
@@ -4503,6 +4545,13 @@ declare module JXG {
          * returns The transpose of M.
          */
         transpose(M: number[][]): number[][];
+        /**
+         * Sine hyperbolicus of x.
+         * param x The number the sine hyperbolicus will be calculated of.
+         * returns Sine hyperbolicus of the given value.
+         */
+        sinh(x: number): number {
+
         /**
          * This namespace contains algorithms for Boolean operations on paths, i.e. intersection, union and difference of paths.
          * Base is the Greiner-Hormann algorithm.
