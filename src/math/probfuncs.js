@@ -482,12 +482,8 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
          *                          -
          *                           0
          *
-         * The magnitude of x is limited to 9.231948545 for DEC
-         * arithmetic; 1 or -1 is returned outside this range.
-         *
          * For 0 <= |x| < 1, erf(x) = x * P4(x**2)/Q5(x**2); otherwise
          * erf(x) = 1 - erfc(x).
-         *
          *
          *
          * ACCURACY:
@@ -676,7 +672,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
          * @param  {Number} x
          * @returns {Number}
          */
-        erfinv: function(x) {
+        erfi: function(x) {
             return this.ndtri((x + 1) * 0.5) * this.SQRTH;
         }
     };

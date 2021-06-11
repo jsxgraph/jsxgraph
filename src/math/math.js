@@ -539,6 +539,29 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
         },
 
         /**
+         * Hyperbolic arc-cosine of a number.
+         *
+         * @param {Number} x
+         * @returns {Number}
+         */
+        acosh = Math.acosh || function(x) {
+            return Math.log(x + Math.sqrt(x * x - 1));
+        },
+
+        /**
+         * Hyperbolic arcsine of a number
+         * @param {Number} x
+         * @returns {Number}
+         */
+        asinh = Math.asinh || function(x) {
+            if (x === -Infinity) {
+                return x;
+            } else {
+                return Math.log(x + Math.sqrt(x * x + 1));
+            }
+        },
+
+        /**
          * Computes the cotangent of x.
          * @function
          * @param {Number} x The number the cotangent will be calculated of.
@@ -794,6 +817,9 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
         },
 
         /**
+         *  Error function, see {@link https://en.wikipedia.org/wiki/Error_function}.
+         *
+         * @see JXG.Math.PropFunc.erf
          * @param  {Number} x
          * @returns {Number}
          */
@@ -802,6 +828,10 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
         },
 
         /**
+         * Complementary error function, i.e. 1 - erf(x).
+         *
+         * @see JXG.Math.erf
+         * @see JXG.Math.PropFunc.erfc
          * @param  {Number} x
          * @returns {Number}
          */
@@ -810,6 +840,21 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
         },
 
         /**
+         * Inverse of error function
+         *
+         * @see JXG.Math.erf
+         * @see JXG.Math.PropFunc.erfi
+         * @param  {Number} x
+         * @returns {Number}
+         */
+         erfi: function(x) {
+            return this.ProbFuncs.erfi(x);
+        },
+
+        /**
+         * Normal distribution function
+         *
+         * @see JXG.Math.PropFunc.ndtr
          * @param  {Number} x
          * @returns {Number}
          */
@@ -818,19 +863,15 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
         },
 
         /**
+         * Inverse of normal distribution function
+         *
+         * @see JXG.Math.ndtr
+         * @see JXG.Math.PropFunc.ndtri
          * @param  {Number} x
          * @returns {Number}
          */
          ndtri: function(x) {
             return this.ProbFuncs.ndtri(x);
-        },
-
-        /**
-         * @param  {Number} x
-         * @returns {Number}
-         */
-         erfinv: function(x) {
-            return this.ProbFuncs.erfinv(x);
         },
 
         /* ********************  Comparisons and logical operators ************** */
