@@ -3089,6 +3089,7 @@ define([
                     this.zoom100();
                 }
                 if (dir && Type.exists(el[move])) {
+                    console.log(move)
                     el[move](JXG.COORDS_BY_USER, dir);
                 }
             }

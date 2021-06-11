@@ -1427,7 +1427,7 @@ define([
         },
 
         /**
-         * Add transformations to this point.
+         * Add transformations to this element.
          * @param {JXG.GeometryElement} el
          * @param {JXG.Transformation|Array} transform Either one {@link JXG.Transformation}
          * or an array of {@link JXG.Transformation}s.

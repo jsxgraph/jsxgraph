@@ -159,11 +159,11 @@ define([
                 return this;
             }
 
-            // case of bindTo
             if (this === this.baseElement) {
+                // case of bindTo
                 c = this.transformations[0].apply(this.baseElement, 'self');
-            // case of board.create('point',[baseElement,transform]);
             } else {
+                // case of board.create('point',[baseElement,transform]);
                 c = this.transformations[0].apply(this.baseElement);
             }
 

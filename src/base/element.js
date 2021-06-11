@@ -681,6 +681,11 @@ define([
             len = parents.length;
             if (len > 0) {
                 t.applyOnce(parents);
+                for (i = 0; i < len; i++) {
+                    if (Type.exists(parents[i].initialCoords)) {
+                        parents[i].initialCoords.setCoordinates(Const.COORDS_BY_USER, parents[i].coords.usrCoords);
+                    }
+                }
             } else {
                 if (this.transformations.length > 0 &&
                         this.transformations[this.transformations.length - 1].isNumericMatrix) {
