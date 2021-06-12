@@ -3051,12 +3051,12 @@ define([
                 actPos = el.coords.usrCoords.slice(1);
             }
 
-            if (Type.evaluate(this.attr.keyboard.zoomshift) || Type.evaluate(this.attr.keyboard.zoomctrl)) {
+            if (Type.evaluate(this.attr.keyboard.panshift) || Type.evaluate(this.attr.keyboard.panctrl)) {
                 doZoom = true;
             }
 
-            if ((Type.evaluate(this.attr.keyboard.zoomshift) && evt.shiftKey) ||
-                (Type.evaluate(this.attr.keyboard.zoomctrl) && evt.ctrlKey)) {
+            if ((Type.evaluate(this.attr.keyboard.panshift) && evt.shiftKey) ||
+                (Type.evaluate(this.attr.keyboard.panctrl) && evt.ctrlKey)) {
                 if (evt.keyCode === 38) {           // up
                     this.clickUpArrow();
                 } else if (evt.keyCode === 40) {    // down

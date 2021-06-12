@@ -611,8 +611,8 @@ define([
                 enabled: true,
                 dx: 10,
                 dy: 10,
-                zoomShift: true,
-                zoomCtrl: false
+                panShift: true,
+                panCtrl: false
             },
 
             /**
