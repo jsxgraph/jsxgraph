@@ -3038,7 +3038,7 @@ define([
                 dx = Type.evaluate(this.attr.keyboard.dx) / this.unitX,
                 dy = Type.evaluate(this.attr.keyboard.dy) / this.unitY,
                 doZoom = false,
-                move, dir;
+                dir, actPos;
 
             if (!this.attr.keyboard.enabled || id_node === '') {
                 return false;
@@ -3046,14 +3046,10 @@ define([
 
             id = id_node.replace(this.containerObj.id + '_', '');
             el = this.select(id);
-            // console.log(el, id, this);
 
             if (Type.exists(el.coords)) {
-                move = 'setPositionByTransform';
-            } else {
-                move = 'setPosition';
+                actPos = el.coords.usrCoords.slice(1);
             }
-            // console.log(evt);
 
             if (Type.evaluate(this.attr.keyboard.zoomshift) || Type.evaluate(this.attr.keyboard.zoomctrl)) {
                 doZoom = true;
@@ -3088,12 +3084,16 @@ define([
                 } else if (doZoom && evt.key === 'o') {    // o
                     this.zoom100();
                 }
-                if (dir && Type.exists(el[move])) {
-                    console.log(move)
-                    el[move](JXG.COORDS_BY_USER, dir);
+                if (dir) {
+                    if (Type.exists(el.coords)) {
+                        dir[0] += actPos[0];
+                        dir[1] += actPos[1];
+                    }
+                    // For coordsElement setPosition has to call setPositionDirectly.
+                    // Otherwise the position is set by a translation.
+                    el.setPosition(JXG.COORDS_BY_USER, dir);
                 }
             }
-            //console.log(evt.target.id);
 
             this.update();
 

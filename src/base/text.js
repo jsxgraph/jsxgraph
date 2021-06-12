@@ -337,9 +337,7 @@ define([
                     //         that.needsUpdate = true;
                     //         that.updateRenderer();
                     //     }, 0);
-                    //     console.log("HERE");
                     // } else {
-                    //     console.log("tHERE");
                     //     this.size = s;
                     // }
                 } else {

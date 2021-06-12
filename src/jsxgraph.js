@@ -619,11 +619,11 @@ define([
                                 board = init(code, type, bbox);
                                 board.reload = makeReload(board, code, type, bbox);
                             } else {
-                                console.log("Failed to load file", src, this.responseText);
+                                throw new Error("\nJSXGraph: failed to load file", src, ":", this.responseText);
                             }
                         });
                         request.addEventListener("error", function(e) {
-                            console.log("Failed to load file", src, ":", e);
+                            throw new Error("\nJSXGraph: failed to load file", src, ":", e);
                         });
                         request.send();
                     } else {

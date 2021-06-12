@@ -460,7 +460,7 @@ define(['math/math', 'utils/type'], function (Mat, Type) {
             t += ' ';
         }
         t += '(' + node.item + ',' + node.N + ')';
-        console.log(t);
+        // console.log(t);
     };
 
     Mat.BST.prototype.showR = function (x, hgt) {
