@@ -1049,8 +1049,10 @@ define([
                     return that.meetCurveCurve(el1, el2, i, j, el1.board);
                 };
 
-            } else if ((el1.elementClass === Const.OBJECT_CLASS_CURVE && !el1_isArcType && el2.elementClass === Const.OBJECT_CLASS_LINE) ||
-                    (el2.elementClass === Const.OBJECT_CLASS_CURVE && !el2_isArcType && el1.elementClass === Const.OBJECT_CLASS_LINE)) {
+            } else if ((el1.elementClass === Const.OBJECT_CLASS_CURVE &&
+                        !el1_isArcType && el2.elementClass === Const.OBJECT_CLASS_LINE) ||
+                       (el2.elementClass === Const.OBJECT_CLASS_CURVE &&
+                        !el2_isArcType && el1.elementClass === Const.OBJECT_CLASS_LINE)) {
                 // curve - line (this includes intersections between conic sections and lines)
                 // with the exception that the curve is of arc type
                 /** @ignore */
@@ -1102,7 +1104,7 @@ define([
                 func = function () {
                     var res = that.meet(el1.stdform, el2.stdform, i, el1.board);
 
-                    if (!alwaysinterset && el1_isArcType) {
+                    if (!alwaysintersect && el1_isArcType) {
                         res = that.coordsOnArc(el1, res);
                         if (res.usrCoords[0] !== 0 && el2_isArcType) {
                             res = that.coordsOnArc(el2, res);

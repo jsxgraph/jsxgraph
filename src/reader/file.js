@@ -114,7 +114,7 @@ define([
                         } else {
                             // This is for all browsers except ancient IEs.
                             text = req.responseText;
-                            console.log(text);
+                            // console.log(text);
                         }
                         this.parseString(text, board, format, callback);
                     }
@@ -221,6 +221,8 @@ define([
             if (Type.exists(Reader)) {
                 read = new Reader(board, str);
                 read.read();
+            } else if (format === 'jessiecode') {
+
             } else {
                 throw new Error('JSXGraph: There is no reader available for \'' + format + '\'.');
             }

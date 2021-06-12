@@ -923,7 +923,6 @@ define([
                         projCoords = new Coords(Const.COORDS_BY_USER,
                             Geometry.projectCoordsToPolygon(this.coords.usrCoords, el),
                             this.board);
-                        // console.log(projCoords.usrCoords, this.coords.usrCoords)
                     }
 
                     if (ev_au === 'screen') {
@@ -941,7 +940,6 @@ define([
                         }
                         break;       // bind the point to the first attractor in its list.
                     }
-                    // console.log("HERE",  d, ev_sd, el.id, this.slideObject.id, this.slideObject.parentPolygon === el)
                     if (d >= ev_sd &&
                         (el === this.slideObject || this.slideObject && this.onPolygon && this.slideObject.parentPolygon === el)
                        ) {
