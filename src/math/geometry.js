@@ -1102,12 +1102,16 @@ define([
                 // Arc types are treated as circles.
                 /** @ignore */
                 func = function () {
-                    var res = that.meet(el1.stdform, el2.stdform, i, el1.board);
+                    var res = that.meet(el1.stdform, el2.stdform, i, el1.board),
+                        has = true;
 
                     if (!alwaysintersect && el1_isArcType) {
-                        res = that.coordsOnArc(el1, res);
-                        if (res.usrCoords[0] !== 0 && el2_isArcType) {
-                            res = that.coordsOnArc(el2, res);
+                        has = that.coordsOnArc(el1, res);
+                        if (has && el2_isArcType) {
+                            has = that.coordsOnArc(el2, res);
+                        }
+                        if (!has) {
+                            res = (new Coords(JXG.COORDS_BY_USER, [0, NaN, NaN], el1.board));
                         }
                     }
                     return res;
@@ -1117,11 +1121,21 @@ define([
             return func;
         },
 
+        /**
+         * Returns true if the coordinates are on the arc element,
+         * false otherwise. Usually, coords is an intersection
+         * on the circle line. Now it is decided if coords are on the
+         * circle restricted to the arc line.
+         * @param  {Arc} arc arc or sector element
+         * @param  {JXG.Coords} coords Coords object of an intersection
+         * @returns {Boolean}
+         * @private
+         */
         coordsOnArc: function(arc, coords) {
             var angle = this.rad(arc.radiuspoint, arc.center, coords.usrCoords.slice(1)),
                 alpha = 0.0,
                 beta = this.rad(arc.radiuspoint, arc.center, arc.anglepoint),
-                ev_s= Type.evaluate(arc.visProp.selection);
+                ev_s = Type.evaluate(arc.visProp.selection);
 
             if ((ev_s === 'minor' && beta > Math.PI) ||
                 (ev_s === 'major' && beta < Math.PI)) {
@@ -1129,9 +1143,9 @@ define([
                 beta = 2 * Math.PI;
             }
             if (angle < alpha || angle > beta) {
-                return (new Coords(JXG.COORDS_BY_USER, [0, NaN, NaN], arc.board));
+                return false;
             } else {
-                return coords;
+                return true;
             }
         },
 
