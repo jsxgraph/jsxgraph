@@ -2345,7 +2345,7 @@ define([
             var newCoords, newCoordsObj, i, j,
                 mindist, dist, lbda, v, coords, d,
                 p1, p2, res,
-                minfunc, tnew, fnew, fold, delta, steps,
+                minfunc, t_new, f_new, f_old, delta, steps,
                 minX, maxX,
                 infty = Number.POSITIVE_INFINITY;
 
@@ -2414,34 +2414,35 @@ define([
                 minfunc = function (t) {
                     var dx, dy;
                     if (t < curve.minX() || t > curve.maxX()) {
-                        return NaN;
+                        return Infinity;
                     }
                     dx = x - curve.X(t);
                     dy = y - curve.Y(t);
                     return dx * dx + dy * dy;
                 };
 
-                fold = minfunc(t);
+                f_old = minfunc(t);
                 steps = 50;
-                delta = (curve.maxX() - curve.minX()) / steps;
-                tnew = curve.minX();
+                minX = curve.minX();
+                maxX = curve.maxX();
+
+                delta = (maxX - minX) / steps;
+                t_new = minX;
 
                 for (i = 0; i < steps; i++) {
-                    fnew = minfunc(tnew);
+                    f_new = minfunc(t_new);
 
-                    if (fnew < fold || isNaN(fold)) {
-                        t = tnew;
-                        fold = fnew;
+                    if (f_new < f_old || f_old === Infinity) {
+                        t = t_new;
+                        f_old = f_new;
                     }
 
-                    tnew += delta;
+                    t_new += delta;
                 }
 
                 //t = Numerics.root(Numerics.D(minfunc), t);
-                t = Numerics.fminbr(minfunc, [t - delta, t + delta]);
+                t = Numerics.fminbr(minfunc, [Math.max(t - delta, minX), Math.min(t + delta, maxX)]);
 
-                minX = curve.minX();
-                maxX = curve.maxX();
                 // Distinction between closed and open curves is not necessary.
                 // If closed, the cyclic projection shift will work anyhow
                 // if (Math.abs(curve.X(minX) - curve.X(maxX)) < Mat.eps &&
