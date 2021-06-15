@@ -3084,7 +3084,15 @@ define([
                 } else if (doZoom && evt.key === 'o') {    // o
                     this.zoom100();
                 }
-                if (dir) {
+                if (dir && el.isDraggable &&
+                        el.visPropCalc.visible &&
+                        ((this.geonextCompatibilityMode &&
+                            (Type.isPoint(el) ||
+                            el.elementClass === Const.OBJECT_CLASS_TEXT)
+                        ) || !this.geonextCompatibilityMode) &&
+                        !Type.evaluate(el.visProp.fixed)
+                    ) {
+
                     if (Type.exists(el.coords)) {
                         dir[0] += actPos[0];
                         dir[1] += actPos[1];
