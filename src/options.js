@@ -490,7 +490,10 @@ define([
 
             /**
              * Change redraw strategy in SVG rendering engine.
-             *
+             * <p>
+             * This optimization seems to be <b>obsolete</b> in newer browsers (from 2021 on, at least)
+             * and even slow down the constructions. Therefore, the default is set to 'none' since v1.2.4.
+             * <p>
              * If set to 'svg', before every redrawing of the JSXGraph construction
              * the SVG sub-tree of the DOM tree is taken out of the DOM.
              *
@@ -501,11 +504,12 @@ define([
              * Using 'svg' or 'all' speeds up the update process considerably. The risk
              * is that if there is an exception, only a white div or window is left.
              *
+             *
              * @name JXG.Board#minimizeReflow
              * @type String
-             * @default 'svg'
+             * @default 'none'
              */
-            minimizeReflow: 'svg',
+            minimizeReflow: 'none',
 
             /**
              * A number that will be added to the absolute position of the board used in mouse coordinate
