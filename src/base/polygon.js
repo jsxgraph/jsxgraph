@@ -175,9 +175,8 @@ define([
             if (Type.evaluate(this.visProp.hasinnerpoints)) {
                 // All points of the polygon trigger hasPoint: inner and boundary points
                 len = this.vertices.length;
-                // Jordan's method, see https://en.wikipedia.org/wiki/Point_in_polygon
-                // See https://wrf.ecse.rpi.edu/Research/Short_Notes/pnpoly.html
-                // for a reference of Jordan method
+                // W. Randolf Franklin's pnpoly method,
+                // see https://wrf.ecse.rpi.edu/Research/Short_Notes/pnpoly.html
                 for (i = 0, j = len - 2; i < len - 1; j = i++) {
                     if (((this.vertices[i].coords.scrCoords[2] > y) !== (this.vertices[j].coords.scrCoords[2] > y)) &&
                             (x < (this.vertices[j].coords.scrCoords[1] - this.vertices[i].coords.scrCoords[1]) * (y - this.vertices[i].coords.scrCoords[2]) /
