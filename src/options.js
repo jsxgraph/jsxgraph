@@ -4594,9 +4594,9 @@ define([
              * Attributes for the top point.
              *
              * @type Point
-             * @name Slopetriangle#topPoint
+             * @name Slopetriangle#toppoint
              */
-            topPoint: {
+            toppoint: {
                 visible: false,
                 withLabel: false,
                 name: ''
