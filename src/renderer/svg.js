@@ -634,6 +634,7 @@ define([
             if (type === 'path') {
                 node.setAttributeNS(null, 'stroke-linecap', 'round');
                 node.setAttributeNS(null, 'stroke-linejoin', 'round');
+                node.setAttributeNS(null, 'fill-rule', 'evenodd');
             }
             return node;
         },
