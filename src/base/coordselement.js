@@ -457,9 +457,9 @@ define([
                                 cu = Mat.matVecMult(invMat, cu);
                             }
                             cp = (new Coords(Const.COORDS_BY_USER, cu, this.board)).usrCoords;
-                            c = Geometry.projectCoordsToCurve(cp[1], cp[2], 
-                                        this.position || 0, 
-                                        slides[slides.length - 1], 
+                            c = Geometry.projectCoordsToCurve(cp[1], cp[2],
+                                        this.position || 0,
+                                        slides[slides.length - 1],
                                         this.board);
                             // projectPointCurve() already would apply the transformation.
                             // Since we are projecting on the original curve, we have to do
