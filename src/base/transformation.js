@@ -52,7 +52,8 @@ define([
 
     /**
      * A transformation consists of a 3x3 matrix, i.e. it is a projective transformation.
-     * @class Creates a new transformation object. Do not use this constructor to create a transformation. Use {@link JXG.Board#create} with
+     * @class Creates a new transformation object. Do not use this constructor to create a transformation.
+     * Use {@link JXG.Board#create} with
      * type {@link Transformation} instead.
      * @constructor
      * @param {JXG.Board} board The board the new circle is drawn on.
@@ -154,7 +155,6 @@ define([
          *                determining a line through points (p_x, p_y) and (q_x, q_y).
          * @param {Array} angle,x,y|angle,[x,y] In case of 'rotate' the parameters are an angle or angle function,
          *                returning the angle in Radians and - optionally - a coordinate pair or a point defining the
-         *                returning the angle in Radians and - optionally - a coordinate pair defining the
          *                rotation center. If the rotation center is not given, the transformation rotates around (0,0).
          * @param {Array} shear_x,shear_y Shear vector (number or function) in case of 'shear'.
          * @param {Array} a,b,c,d,e,f,g,h,i Nine matrix entries (numbers or functions) for a generic
@@ -331,6 +331,7 @@ define([
         /**
          * Transform a GeometryElement:
          * First, the transformation matrix is updated, then do the matrix-vector-multiplication.
+         * @private
          * @param {JXG.GeometryElement} p element which is transformed
          * @param {String} 'self' Apply the transformation to the initialCoords instead of the coords if this is set.
          * @returns {Array}
