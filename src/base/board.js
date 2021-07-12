@@ -3349,7 +3349,7 @@ define([
          *             });
          * 
          *     })();
-         * 
+         *
          * </script><pre>
          * 
          * @see JXG.Board#getScrCoordsOfMouse
