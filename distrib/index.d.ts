@@ -192,7 +192,7 @@ declare module JXG {
     export function getCSSTrasform(cPos: number[], obj: Element): number[];
     export function getCSSTransformMatrix(obj: unknown): number[];
     export function getDimensions(elementId: string, doc: Document): { width: number; height: number };
-    export function getOffset(obj: Element): [left: number, top: offset];
+    export function getOffset(obj: Element): [left: number, top: number];
     export function getPosition(e?: unknown, index?: number, doc?: Document): [x: number, y: number];
     export function getProp(el: Element, css: string): number;
     export function hex2rgb(hex: string): string;
@@ -746,7 +746,7 @@ declare module JXG {
         /**
          * ???
          */
-        style?: number;
+        style?: number | string;
 
         /**
          * If true the element will be traced, i.e. on every movement the element will be copied
@@ -1445,7 +1445,7 @@ declare module JXG {
         setRotationCenter(object: Point | 'centroid' | [number, number] | (() => [number, number])): this;
         /**
          * Sets the rotation points of the group. Dragging at one of these points results into a rotation of the whole group around the rotation center of the group {@see JXG.Group#setRotationCenter}.
-         * @param objects 
+         * @param objects
          */
         setRotationPoints(objects: Point[]): this;
         /**
@@ -1472,7 +1472,7 @@ declare module JXG {
          * Sends an update to all group members. This method is called from the points' coords object event listeners and not by the board.
          * @param drag 
          */
-        update(drag: unknown): this;
+        update(drag: GeometryElement): this;
         setAttribute(attributes: GroupAttributes): this;
     }
     export interface GroupAttributes extends GeometryElementAttributes {
@@ -4612,15 +4612,15 @@ declare module JXG {
      * The JXG.Math.Numerics namespace holds numerical algorithms, constants, and variables.
      */
     export interface Numerics {
-        static maxIterationsMinimize: number;
-        static maxIterationsRoot: number;
+        maxIterationsMinimize: number;
+        maxIterationsRoot: number;
         /**
          * Integral of function f over interval.
          * @param interval The integration interval, e.g. [0, 3].
          * @param f A function which takes one argument and returns a number.
          * @returns The value of the integral of f over integral.
          */
-        static I(interval: [number, number], f: (t: number) => number): number;
+        I(interval: [number, number], f: (t: number) => number): number;
         backwardSolve(R: number[][], b: number[], canModify?: boolean): number[];
         bezier(points: Point[]): [x: (t: number) => number[], y: (t: number) => number[]];
         bspline(points: Point[], order: number): [x: (t: number) => number, y: (t: number) => number, zeroValue: number, N: () => number];
