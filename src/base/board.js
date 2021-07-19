@@ -541,6 +541,14 @@ define([
         this.isSelecting = false;
 
         /**
+         * A flag which tells us if the user is scrolling the viewport
+         * @type {Boolean}
+         * @private
+         * @default false
+         */
+         this._isScrolling = false;
+
+        /**
          * A bounding box for the selection
          * @type {Array}
          * @default [ [0,0], [0,0] ]
@@ -1521,18 +1529,28 @@ define([
 
             this.addFullscreenEventHandlers();
             this.addKeyboardEventHandlers();
+
+            if (Env.isBrowser) {
+                Env.addEvent(window, 'resize', this.resizeListener, this);
+                Env.addEvent(window, 'scroll', this.scrollListener, this);
+            }
         },
 
         /**
          * Remove all event handlers from the board object
          */
-         removeEventHandlers: function () {
+        removeEventHandlers: function () {
             this.removeMouseEventHandlers();
             this.removeTouchEventHandlers();
             this.removePointerEventHandlers();
 
             this.removeFullscreenEventHandlers();
             this.removeKeyboardEventHandlers();
+            if (Env.isBrowser) {
+                Env.removeEvent(window, 'resize', this.resizeListener, this);
+                Env.removeEvent(window, 'scroll', this.scrollListener, this);
+            }
+
         },
 
         /**
@@ -3134,6 +3152,27 @@ define([
             // id = id_node.replace(this.containerObj.id + '_', '');
             // el = this.select(id);
             this.dehighlightAll();
+        },
+
+        resizeListener: function(evt) {
+            var theWidth, theHeight;
+
+            if (!this._isScrolling) {
+                theWidth  = this.containerObj.getBoundingClientRect().width;
+                theHeight = this.containerObj.getBoundingClientRect().height;
+                this.resizeContainer(theWidth, theHeight, true);
+            }
+        },
+
+        scrollListener: function(evt) {
+            var that = this;
+
+            if (!this._isScrolling) {
+                this._isScrolling = true;
+                window.setTimeout(function() {
+                    that._isScrolling = false;
+                }, 66);
+            }
         },
 
         /**********************************************************
