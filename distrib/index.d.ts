@@ -749,6 +749,11 @@ declare module JXG {
         style?: number | string;
 
         /**
+         * Type, used for transformations
+         */
+        type?: string;
+
+        /**
          * If true the element will be traced, i.e. on every movement the element will be copied
          * to the background. Use {@link JXG.GeometryElement#clearTrace} to delete the trace elements.
          */
@@ -1437,7 +1442,7 @@ declare module JXG {
          * Sets ids of elements to the array this.parents. This is a copy of Element.setParents First, this.parents is cleared. See Group#addParents.
          * @param parents 
          */
-        setParents(parents: (string | GeometryElement)[]): this;
+        // setParents(parents: (string | GeometryElement)[]): this; // TODO
         /**
          * Sets the center of rotation for the group. This is either a point or the centroid of the group.
          * @param object 
@@ -1472,7 +1477,7 @@ declare module JXG {
          * Sends an update to all group members. This method is called from the points' coords object event listeners and not by the board.
          * @param drag 
          */
-        update(drag: GeometryElement): this;
+        // update(drag: GeometryElement): this; // TODO
         setAttribute(attributes: GroupAttributes): this;
     }
     export interface GroupAttributes extends GeometryElementAttributes {
@@ -2078,7 +2083,7 @@ declare module JXG {
          * Returns the current slider value.
          */
         Value(): number;
-        setAttribute(attributes: SliderAttributes): this;
+        // setAttribute(attributes: SliderAttributes): this;   // TODO
     }
 
     export interface SliderAttributes extends GeometryElementAttributes {
@@ -2088,7 +2093,7 @@ declare module JXG {
         lastArrow?: boolean | ArrowSpecification;
         label?: LabelOptions;
         moveOnUp?: boolean;
-        precision?: number;
+        // precision?: number;  // TODO
         point1?: PointAttributes;
         point2?: PointAttributes;
         postLabel?: string | StringFunction | number | NumberFunction | null;
@@ -2111,7 +2116,7 @@ declare module JXG {
         lastArrow?: boolean | ArrowSpecification;
         label?: LabelOptions;
         moveOnUp?: boolean;
-        precision?: number;
+        // precision?: number;
         point1?: PointOptions;
         point2?: PointOptions;
         postLabel?: string | StringFunction | number | NumberFunction | null;
@@ -2499,7 +2504,7 @@ declare module JXG {
      */
     export class Ticks extends GeometryElement {
         constructor(line: Line, ticks: number | unknown[], attributes: TicksAttributes);
-        setAttribute(attributes: TicksAttributes): this;
+        // setAttribute(attributes: TicksAttributes): this;  // TODO
     }
     /**
      *
@@ -2573,7 +2578,7 @@ declare module JXG {
         /**
          *
          */
-        precision?: number;
+        // precision?: number;    // TODO
         /**
          *
          */
@@ -2621,7 +2626,7 @@ declare module JXG {
         minorTicks?: number;
         minTicksDistance?: number;
         needsRegularUpdate?: boolean;
-        precision?: number;
+        // precision?: number;  // TODO
         scale?: number;
         scaleSymbol?: string;
         strokeColor?: string;
@@ -2651,7 +2656,7 @@ declare module JXG {
         withTicks?: boolean;
     }
     export interface TapemeasureOptions extends LineOptions {
-        precision?: number;
+        // precision?: number; // TODO
     }
 
     export interface Tracecurve extends Curve { }
