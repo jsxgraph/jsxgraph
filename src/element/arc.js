@@ -160,9 +160,25 @@ define([
         el.point3 = el.anglepoint;
 
         // Add arc as child to defining points
-        el.center.addChild(el);
-        el.radiuspoint.addChild(el);
-        el.anglepoint.addChild(el);
+        // or vice versa if the points are provided as coordinates
+        if (Type.exists(el.center._is_new)) {
+            el.addChild(el.center);
+            delete el.center._is_new;
+        } else {
+            el.center.addChild(el);
+        }
+        if (Type.exists(el.radiuspoint._is_new)) {
+            el.addChild(el.radiuspoint);
+            delete el.radiuspoint._is_new;
+        } else {
+            el.radiuspoint.addChild(el);
+        }
+        if (Type.exists(el.anglepoint._is_new)) {
+            el.addChild(el.anglepoint);
+            delete el.anglepoint._is_new;
+        } else {
+            el.anglepoint.addChild(el);
+        }
 
         // should be documented in options
         el.useDirection = attr.usedirection;

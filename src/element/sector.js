@@ -147,7 +147,7 @@ define([
      *
      */
     JXG.createSector = function (board, parents, attributes) {
-        var el, attr,
+        var el, attr, i,
             type = 'invalid',
             s, v,
             attrPoints = ['center', 'radiusPoint', 'anglePoint'],
@@ -311,9 +311,14 @@ define([
             el.point3 = points[2];
 
             /* Add arc as child to defining points */
-            el.point1.addChild(el);
-            el.point2.addChild(el);
-            el.point3.addChild(el);
+            for (i = 0; i < 3; i++) {
+                if (Type.exists(points[i]._is_new)) {
+                    el.addChild(points[i]);
+                    delete points[i]._is_new;
+                } else {
+                    points[i].addChild(el);
+                }
+            }
 
             // useDirection is necessary for circumCircleSectors
             el.useDirection = attributes.usedirection;
