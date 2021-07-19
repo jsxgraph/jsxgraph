@@ -226,11 +226,10 @@ define([
          * Sends an update to all group members.
          * This method is called from the points' coords object event listeners
          * and not by the board.
-         * @param{JXG.GeometryElement} drag Element that caused the update.
          * @returns {JXG.Group} returns this group
          */
-        update: function (drag) {
-            var el, actionCenter, desc, s, sx, sy, alpha, t, center, obj = null;
+        update: function () {
+            var drag, el, actionCenter, desc, s, sx, sy, alpha, t, center, obj = null;
 
             if (!this.needsUpdate) {
                 return this;

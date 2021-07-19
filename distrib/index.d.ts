@@ -70,7 +70,8 @@ declare module JXG {
         /**
          * Invokes setParents for every stored element with a setParents method and hands over the given arguments. See JXG.GeometryElement#setParents for further description, valid parameters and return values.
          */
-        setParents(): void;
+        setParents(parents: (string | GeometryElement)[]): this;
+        // setParents(): void;
         /**
          * Invokes update for every stored element with a update method and hands over the given arguments. See JXG.GeometryElement#update for further description, valid parameters and return values.
          */
@@ -427,7 +428,8 @@ declare module JXG {
          * @param parents Array of elements or ids of elements. Alternatively, one can give a list of objects as parameters.
          * @returns Reference to the element.
          */
-        setParents(parents: number[]): this;
+        setParents(parents: (string | GeometryElement)[]): this;
+        // setParents(parents: number[]): this;
 
         /**
          * Translates the object by (x, y).
@@ -1442,7 +1444,7 @@ declare module JXG {
          * Sets ids of elements to the array this.parents. This is a copy of Element.setParents First, this.parents is cleared. See Group#addParents.
          * @param parents 
          */
-        // setParents(parents: (string | GeometryElement)[]): this; // TODO
+        setParents(parents: (string | GeometryElement)[]): this;
         /**
          * Sets the center of rotation for the group. This is either a point or the centroid of the group.
          * @param object 
@@ -1475,9 +1477,8 @@ declare module JXG {
         ungroup(): this;
         /**
          * Sends an update to all group members. This method is called from the points' coords object event listeners and not by the board.
-         * @param drag 
          */
-        // update(drag: GeometryElement): this; // TODO
+        update(): this;
         setAttribute(attributes: GroupAttributes): this;
     }
     export interface GroupAttributes extends GeometryElementAttributes {
@@ -2083,7 +2084,7 @@ declare module JXG {
          * Returns the current slider value.
          */
         Value(): number;
-        // setAttribute(attributes: SliderAttributes): this;   // TODO
+        setAttribute(attributes: SliderAttributes): this;
     }
 
     export interface SliderAttributes extends GeometryElementAttributes {
@@ -2093,7 +2094,7 @@ declare module JXG {
         lastArrow?: boolean | ArrowSpecification;
         label?: LabelOptions;
         moveOnUp?: boolean;
-        // precision?: number;  // TODO
+        precision?: number;
         point1?: PointAttributes;
         point2?: PointAttributes;
         postLabel?: string | StringFunction | number | NumberFunction | null;
@@ -2504,7 +2505,7 @@ declare module JXG {
      */
     export class Ticks extends GeometryElement {
         constructor(line: Line, ticks: number | unknown[], attributes: TicksAttributes);
-        // setAttribute(attributes: TicksAttributes): this;  // TODO
+        setAttribute(attributes: TicksAttributes): this;
     }
     /**
      *
@@ -2578,7 +2579,7 @@ declare module JXG {
         /**
          *
          */
-        // precision?: number;    // TODO
+        precision?: number;
         /**
          *
          */
@@ -2626,7 +2627,7 @@ declare module JXG {
         minorTicks?: number;
         minTicksDistance?: number;
         needsRegularUpdate?: boolean;
-        // precision?: number;  // TODO
+        precision?: number;
         scale?: number;
         scaleSymbol?: string;
         strokeColor?: string;
@@ -2656,7 +2657,7 @@ declare module JXG {
         withTicks?: boolean;
     }
     export interface TapemeasureOptions extends LineOptions {
-        // precision?: number; // TODO
+        precision?: number;
     }
 
     export interface Tracecurve extends Curve { }
