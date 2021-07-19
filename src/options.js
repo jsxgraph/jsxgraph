@@ -2322,6 +2322,19 @@ define([
             },
 
             /**
+             * Attributes for center point.
+             *
+             * @type Point
+             * @name Circle#center
+             */
+            point2: {
+                visible: true,
+                withLabel: false,
+                fixed: false,
+                name: ''
+            },
+
+            /**
              * Attributes for circle label.
              *
              * @type Label

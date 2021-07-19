@@ -121,9 +121,10 @@ define([
         // This needs to be done BEFORE the points get this polygon added in their descendants list
         this.id = this.board.setId(this, 'Py');
 
-        // Add dependencies:
-        // - Add polygon as child to an existing point
-        // - Add newly created points (supplied as coordinate arrays) as children to the polygon
+        // Add dependencies: Either
+        // - add polygon as child to an existing point
+        // or
+        // - add  points (supplied as coordinate arrays by the user and created by Type.providePoints) as children to the polygon
         for (i = 0; i < this.vertices.length - 1; i++) {
             p = this.board.select(this.vertices[i]);
             if (Type.exists(p._is_new)) {
