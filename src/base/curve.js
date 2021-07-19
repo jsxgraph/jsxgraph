@@ -1776,8 +1776,14 @@ define([
         le = points.length;
         el.setParents(points);
         for (i = 0; i < le; i++) {
-            if (Type.isPoint(points[i])) {
-                points[i].addChild(el);
+            p = points[i];
+            if (Type.isPoint(p)) {
+                if (Type.exists(p._is_new)) {
+                    el.addChild(p);
+                    delete p._is_new;
+                } else {
+                    p.addChild(el);
+                }
             }
         }
         el.elType = 'cardinalspline';
