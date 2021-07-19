@@ -140,7 +140,12 @@ define([
             }
         ], attr);
 
-        p.addChild(t);
+        if (Type.exists(p._is_new)) {
+            t.addChild(p);
+            delete p._is_new;
+        } else {
+            p.addChild(t);
+        }
         l.addChild(t);
 
         t.elType = 'orthogonalprojection';
@@ -272,6 +277,14 @@ define([
         pd.elType = 'perpendicular';
         pd.setParents([l.id, p.id]);
 
+        if (Type.exists(p._is_new)) {
+            pd.addChild(p);
+            delete p._is_new;
+        } else {
+            p.addChild(pd);
+        }
+        l.addChild(pd);
+
         return pd;
     };
 
@@ -327,7 +340,12 @@ define([
             }
         ], attributes);
 
-        p.addChild(t);
+        if (Type.exists(p._is_new)) {
+            t.addChild(p);
+            delete p._is_new;
+        } else {
+            p.addChild(t);
+        }
         l.addChild(t);
 
         t.elType = 'perpendicularpoint';
@@ -463,6 +481,14 @@ define([
          */
         pd.point = t;
 
+        if (Type.exists(p._is_new)) {
+            pd.addChild(p);
+            delete p._is_new;
+        } else {
+            p.addChild(pd);
+        }
+        l.addChild(pd);
+
         pd.elType = 'perpendicularsegment';
         pd.setParents([p.id, l.id]);
         pd.subs = {
@@ -541,8 +567,21 @@ define([
 
                 return y * 0.5;
             }], attr);
-        a.addChild(t);
-        b.addChild(t);
+        if (Type.exists(a._is_new)) {
+            t.addChild(a);
+            delete a._is_new;
+        } else {
+            a.addChild(t);
+        }
+        if (Type.exists(b._is_new)) {
+            t.addChild(b);
+            delete b._is_new;
+        } else {
+            b.addChild(t);
+        }
+
+
+
 
         t.elType = 'midpoint';
         t.setParents([a.id, b.id]);
@@ -663,9 +702,24 @@ define([
         ], attributes);
 
         // required for algorithms requiring dependencies between elements
-        a.addChild(p);
-        b.addChild(p);
-        c.addChild(p);
+        if (Type.exists(a._is_new)) {
+            p.addChild(a);
+            delete a._is_new;
+        } else {
+            a.addChild(p);
+        }
+        if (Type.exists(b._is_new)) {
+            p.addChild(b);
+            delete b._is_new;
+        } else {
+            b.addChild(p);
+        }
+        if (Type.exists(c._is_new)) {
+            p.addChild(c);
+            delete c._is_new;
+        } else {
+            c.addChild(p);
+        }
 
         p.elType = 'parallelpoint';
         p.setParents([a.id, b.id, c.id]);
@@ -812,6 +866,12 @@ define([
         pl.setParents([parents[0].id, parents[1].id]);
         if (parents.length === 3) {
             pl.addParents(parents[2].id);
+        }
+        if (Type.exists(p._is_new)) {
+            pl.addChild(p);
+            delete p._is_new;
+        } else {
+            p.addChild(pl);
         }
 
         /**
@@ -1116,6 +1176,14 @@ define([
         l.elType = 'normal';
         l.setParents(parents);
 
+        if (Type.exists(p._is_new)) {
+            l.addChild(p);
+            delete p._is_new;
+        } else {
+            p.addChild(l);
+        }
+        c.addChild(l);
+
         return l;
     };
 
@@ -1165,7 +1233,12 @@ define([
 
             for (i = 0; i < 3; i++) {
                 // required for algorithm requiring dependencies between elements
-                parents[i].addChild(p);
+                if (Type.exists(parents[i]._is_new)) {
+                    p.addChild(parents[i]);
+                    delete parents[i]._is_new;
+                } else {
+                    parents[i].addChild(p);
+                }
             }
 
             if (!Type.exists(attributes.layer)) {
@@ -1452,7 +1525,12 @@ define([
             ], attributes);
 
             for (i = 0; i < 3; i++) {
-                parents[i].addChild(p);
+                if (Type.exists(parents[i]._is_new)) {
+                    p.addChild(parents[i]);
+                    delete parents[i]._is_new;
+                } else {
+                    parents[i].addChild(p);
+                }
             }
 
             p.elType = 'circumcenter';
@@ -1518,7 +1596,7 @@ define([
      * </script><pre>
      */
     JXG.createIncenter = function (board, parents, attributes) {
-        var p, A, B, C;
+        var p, A, B, C, i;
 
         parents = Type.providePoints(board, parents, attributes, 'point');
         if (parents.length >= 3 && Type.isPoint(parents[0]) && Type.isPoint(parents[1]) && Type.isPoint(parents[2])) {
@@ -1535,6 +1613,15 @@ define([
 
                 return new Coords(Const.COORDS_BY_USER, [(a * A.X() + b * B.X() + c * C.X()) / (a + b + c), (a * A.Y() + b * B.Y() + c * C.Y()) / (a + b + c)], board);
             }], attributes);
+
+            for (i = 0; i < 3; i++) {
+                if (Type.exists(parents[i]._is_new)) {
+                    p.addChild(parents[i]);
+                    delete parents[i]._is_new;
+                } else {
+                    parents[i].addChild(p);
+                }
+            }
 
             p.elType = 'incenter';
             p.setParents(parents);
@@ -1573,7 +1660,7 @@ define([
      * </script><pre>
      */
     JXG.createCircumcircle = function (board, parents, attributes) {
-        var p, c, attr;
+        var p, c, attr, i;
 
         parents = Type.providePoints(board, parents, attributes, 'point');
         if (parents === false) {
@@ -1600,6 +1687,15 @@ define([
                 center: p
             };
             c.inherits.push(c);
+            for (i = 0; i < 3; i++) {
+                if (Type.exists(parents[i]._is_new)) {
+                    c.addChild(parents[i]);
+                    delete parents[i]._is_new;
+                } else {
+                    parents[i].addChild(c);
+                }
+            }
+
         } catch (e) {
             throw new Error("JSXGraph: Can't create circumcircle with parent types '" +
                 (typeof parents[0]) + "', '" + (typeof parents[1]) + "' and '" + (typeof parents[2]) + "'." +
@@ -1666,6 +1762,14 @@ define([
 
             c.elType = 'incircle';
             c.setParents(parents);
+            for (i = 0; i < 3; i++) {
+                if (Type.exists(parents[i]._is_new)) {
+                    c.addChild(parents[i]);
+                    delete parents[i]._is_new;
+                } else {
+                    parents[i].addChild(c);
+                }
+            }
 
             /**
              * The center of the incircle
@@ -1845,8 +1949,14 @@ define([
             throw new Error("JSXGraph: Can't create reflected element with parent types '" +
                 (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." + errStr);
         }
-        //org.addChild(r);
+        if (Type.exists(org._is_new)) {
+            r.addChild(org);
+            delete org._is_new;
+        } else {
+            // org.addChild(r);
+        }
         l.addChild(r);
+
         r.elType = 'reflection';
         r.addParents(l);
         r.prepareUpdate().update(); //.updateVisibility(Type.evaluate(r.visProp.visible)).updateRenderer();
@@ -2020,8 +2130,14 @@ define([
                 (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." + errStr);
         }
 
-        //org.addChild(r);
+        if (Type.exists(org._is_new)) {
+            r.addChild(org);
+            delete org._is_new;
+        } else {
+            // org.addChild(r);
+        }
         m.addChild(r);
+
         r.elType = 'mirrorelement';
         r.addParents(m);
         r.prepareUpdate().update();
