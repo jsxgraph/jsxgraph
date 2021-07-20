@@ -545,8 +545,18 @@ define([
          * @type {Boolean}
          * @private
          * @default false
+         * @see JXG.Board#scrollListener
          */
-         this._isScrolling = false;
+        this._isScrolling = false;
+
+        /**
+         * A flag which tells us if a resize is in process
+         * @type {Boolean}
+         * @private
+         * @default false
+         * @see JXG.Board#resizeListener
+         */
+        this._isResizing = false;
 
         /**
          * A bounding box for the selection
@@ -3154,19 +3164,30 @@ define([
             this.dehighlightAll();
         },
 
-        resizeListener: function(evt) {
-            var theWidth, theHeight;
+        resizeListener: function() {
+            var that = this;
 
-            if (!this._isScrolling) {
-                theWidth  = this.containerObj.getBoundingClientRect().width;
-                theHeight = this.containerObj.getBoundingClientRect().height;
-                this.resizeContainer(theWidth, theHeight, true);
+            if (!Env.isBrowser || !this.attr.resize || !this.attr.resize.enabled) {
+                return;
+            }
+            if (!this._isScrolling && !this._isResizing) {
+                this._isResizing = true;
+                window.setTimeout(function() {
+                    var theWidth, theHeight;
+                    theWidth  = that.containerObj.getBoundingClientRect().width;
+                    theHeight = that.containerObj.getBoundingClientRect().height;
+                    that.resizeContainer(theWidth, theHeight, true);
+                    that._isResizing = false;
+                }, this.attr.resize.throttle);
             }
         },
 
         scrollListener: function(evt) {
             var that = this;
 
+            if (!Env.isBrowser) {
+                return;
+            }
             if (!this._isScrolling) {
                 this._isScrolling = true;
                 window.setTimeout(function() {

@@ -191,6 +191,7 @@ define([
             attr.selection = Type.copyAttributes(attr, Options, 'board', 'selection');
             attr.navbar = Type.copyAttributes(attr.navbar, Options, 'navbar');
             attr.screenshot = Type.copyAttributes(attr, Options, 'board', 'screenshot');
+            attr.resize = Type.copyAttributes(attr, Options, 'board', 'resize');
 
             return attr;
         },

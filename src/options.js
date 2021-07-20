@@ -619,6 +619,11 @@ define([
                 panCtrl: false
             },
 
+            resize: {
+                enabled: true,
+                throttle: 10
+            },
+
             /**
              * Control the possibilities for a selection rectangle.
              * Starting a selection event triggers the "startselecting" event.
