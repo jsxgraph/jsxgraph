@@ -466,9 +466,50 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         /**
          * The Theil-Sen estimator can be used to determine a more robust linear regression of a set of sample
          * points than least squares regression in {@link JXG.Math.Numerics.regressionPolynomial}.
+         *
+         * If the function should be applied to an array a of points, a the coords array can be generated with
+         * JavaScript array.map:
+         *
+         * <pre>
+         * JXG.Math.Statistics.TheilSenRegression(a.map(el => el.coords));
+         * </pre>
+         *
          * @param {Array} coords Array of {@link JXG.Coords}.
-         * @returns {Array} The stdform of the regression line.
+         * @returns {Array} A stdform array of the regression line.
          * @memberof JXG.Math.Statistics
+         *
+         * @example
+         * var board = JXG.JSXGraph.initBoard('jxgbox', { boundingbox: [-6,6,6,-6], axis : true });
+         * var a=[];
+         * a[0]=board.create('point', [0,0]);
+         * a[1]=board.create('point', [3,0]);
+         * a[2]=board.create('point', [0,3]);
+         *
+         * board.create('line', [
+         *     () => JXG.Math.Statistics.TheilSenRegression(a.map(el => el.coords))
+         *   ],
+         *   {strokeWidth:1, strokeColor:'black'});
+         * 
+         * </pre><div id="JXG0a28be85-91c5-44d3-aae6-114e81217cf0" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG0a28be85-91c5-44d3-aae6-114e81217cf0',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *     var board = JXG.JSXGraph.initBoard('jxgbox', { boundingbox: [-6,6,6,-6], axis : true });
+         *     var a=[];
+         *     a[0]=board.create('point', [0,0]);
+         *     a[1]=board.create('point', [3,0]);
+         *     a[2]=board.create('point', [0,3]);
+         *     
+         *     board.create('line', [
+         *         () => JXG.Math.Statistics.TheilSenRegression(a.map(el => el.coords))
+         *       ],
+         *       {strokeWidth:1, strokeColor:'black'});
+         * 
+         *     })();
+         * 
+         * </script><pre>
+         * 
          */
         TheilSenRegression: function (coords) {
             var i, j,
