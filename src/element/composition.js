@@ -856,23 +856,21 @@ define([
         pp.isDraggable = true;
 
         attr = Type.copyAttributes(attributes, board.options, 'parallel');
+        // line creator also calls addChild
         pl = board.create('line', [p, pp], attr);
 
         pl.elType = 'parallel';
         pl.subs = {
             point: pp
         };
+
         pl.inherits.push(pp);
         pl.setParents([parents[0].id, parents[1].id]);
         if (parents.length === 3) {
             pl.addParents(parents[2].id);
         }
-        if (Type.exists(p._is_new)) {
-            pl.addChild(p);
-            delete p._is_new;
-        } else {
-            p.addChild(pl);
-        }
+
+        // p.addChild(pl);
 
         /**
          * Helper point used to create the parallel line. This point lies on the line at infinity, hence it's not visible,
