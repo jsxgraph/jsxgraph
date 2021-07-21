@@ -55044,6 +55044,7 @@ define('base/board',[
             if (Env.isBrowser) {
                 Env.addEvent(window, 'resize', this.resizeListener, this);
                 Env.addEvent(window, 'scroll', this.scrollListener, this);
+                this.startIntersectionObserver();
             }
         },
 
@@ -56695,6 +56696,29 @@ define('base/board',[
                     that._isScrolling = false;
                 }, 66);
             }
+        },
+
+        startIntersectionObserver: function() {
+            var that = this,
+                options = {
+                    root: null,
+                    rootMargin: '0px',
+                    threshold: 0.8
+                },
+                observer;
+
+            try {
+                observer = new IntersectionObserver(function(entries) {
+                    // If bounding box is not yet initialized, do it now.
+                    if (isNaN(that.getBoundingBox()[0])) {
+                        that.setBoundingBox(that.attr.boundingbox);
+                        that.resizeListener();
+                    }
+                }, options);
+                observer.observe(that.containerObj);
+            } catch (err) {
+                console.log('Info: IntersectionObserver not available in this browser');
+            };
         },
 
         /**********************************************************
