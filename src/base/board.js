@@ -1541,9 +1541,13 @@ define([
             this.addKeyboardEventHandlers();
 
             if (Env.isBrowser) {
-                Env.addEvent(window, 'resize', this.resizeListener, this);
-                Env.addEvent(window, 'scroll', this.scrollListener, this);
-                this.startIntersectionObserver();
+                try {
+                    this.startResizeObserver();
+                } catch (err) {
+                    Env.addEvent(window, 'resize', this.resizeListener, this);
+                    Env.addEvent(window, 'scroll', this.scrollListener, this);
+                    this.startIntersectionObserver();
+                }
             }
         },
 
@@ -1558,10 +1562,14 @@ define([
             this.removeFullscreenEventHandlers();
             this.removeKeyboardEventHandlers();
             if (Env.isBrowser) {
-                Env.removeEvent(window, 'resize', this.resizeListener, this);
-                Env.removeEvent(window, 'scroll', this.scrollListener, this);
+                if (Type.exists(this.resizeObserver)) {
+                    this.stopResizeObserver();
+                } else {
+                    Env.removeEvent(window, 'resize', this.resizeListener, this);
+                    Env.removeEvent(window, 'scroll', this.scrollListener, this);
+                    this.stopIntersectionObserver();
             }
-
+            }
         },
 
         /**
@@ -3165,6 +3173,61 @@ define([
             this.dehighlightAll();
         },
 
+        updateContainerDims: function() {
+            var theWidth, theHeight;
+
+            theWidth  = this.containerObj.getBoundingClientRect().width;
+            theHeight = this.containerObj.getBoundingClientRect().height;
+            if (theWidth === 0 || theHeight === 0) {
+                // The div is invisible - do nothing
+                return;
+            }
+
+            // If bounding box is not yet initialized, do it now.
+            if (isNaN(this.getBoundingBox()[0])) {
+                this.setBoundingBox(this.attr.boundingbox);
+            }
+
+            // We do nothing if in case the dimension did not change since being visible
+            // the last time. Note that if the div had display:none in the mean time,
+            // we did not store this._prevTheWidth/Height.
+            if (Type.exists(this._prevTheWidth) && Type.exists(this._prevTheHeight) &&
+                this._prevTheWidth === theWidth && this._prevTheHeight === theHeight) {
+                    return;
+            }
+            // theWidth and theHeight are the outer dimensions and therefore
+            // might be too large. This does no harm, because the result is only that the
+            // SVGRoot might be larger than the visible div and there
+            // is overflow:hidden.
+            this.resizeContainer(theWidth, theHeight, true);
+            this._prevTheWidth  = theWidth;
+            this._prevTheHeight = theHeight;
+        },
+
+        startResizeObserver: function() {
+            var that = this;
+
+            if (!Env.isBrowser || !this.attr.resize || !this.attr.resize.enabled) {
+                return;
+            }
+
+            this.resizeObserver = new ResizeObserver(function(entries) {
+                that.updateContainerDims();
+            });
+            this.resizeObserver.observe(this.containerObj);
+        },
+
+        stopResizeObserver: function() {
+            if (!Env.isBrowser || !this.attr.resize || !this.attr.resize.enabled) {
+                return;
+            }
+
+            if (Type.exists(this.resizeObserver)) {
+                this.resizeObserver.unobserve(this.containerObj);
+            }
+        },
+
+        // Fallback solutions if there is no resizeObserver
         resizeListener: function() {
             var that = this;
 
@@ -3174,10 +3237,7 @@ define([
             if (!this._isScrolling && !this._isResizing) {
                 this._isResizing = true;
                 window.setTimeout(function() {
-                    var theWidth, theHeight;
-                    theWidth  = that.containerObj.getBoundingClientRect().width;
-                    theHeight = that.containerObj.getBoundingClientRect().height;
-                    that.resizeContainer(theWidth, theHeight, true);
+                    that.updateContainerDims();
                     that._isResizing = false;
                 }, this.attr.resize.throttle);
             }
@@ -3203,21 +3263,26 @@ define([
                     root: null,
                     rootMargin: '0px',
                     threshold: 0.8
-                },
-                observer;
+                };
 
             try {
-                observer = new IntersectionObserver(function(entries) {
+                this.intersectionObserver = new IntersectionObserver(function(entries) {
                     // If bounding box is not yet initialized, do it now.
                     if (isNaN(that.getBoundingBox()[0])) {
                         that.setBoundingBox(that.attr.boundingbox);
-                        that.resizeListener();
+                        that.updateContainerDims();
                     }
                 }, options);
-                observer.observe(that.containerObj);
+                this.intersectionObserver.observe(that.containerObj);
             } catch (err) {
                 console.log('Info: IntersectionObserver not available in this browser');
-            };
+            }
+        },
+
+        stopIntersectionObserver: function() {
+            if (Type.exists(this.intersectionObserver)) {
+                this.intersectionObserver.unobserve(this.containerObj);
+            }
         },
 
         /**********************************************************
@@ -4167,7 +4232,6 @@ define([
                 this.containerObj.style.width = (this.canvasWidth) + 'px';
                 this.containerObj.style.height = (this.canvasHeight) + 'px';
             }
-
             this.renderer.resize(this.canvasWidth, this.canvasHeight);
 
             if (!dontSetBoundingBox) {
