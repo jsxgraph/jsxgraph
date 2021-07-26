@@ -520,7 +520,7 @@ define([
                 context.lineTo(scr[1] + s05, scr[2] - sqrt32);
                 context.lineTo(scr[1] + s05, scr[2] + sqrt32);
                 context.closePath();
-                this.fill(el);
+                this._fill(el);
                 this._stroke(el);
                 break;
             case 'triangleright':
