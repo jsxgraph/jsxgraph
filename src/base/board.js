@@ -1542,12 +1542,18 @@ define([
 
             if (Env.isBrowser) {
                 try {
+                    // resizeObserver: triggered if size of the JSXGraph div changes.
                     this.startResizeObserver();
                 } catch (err) {
+                    // resize event: triggered if size of window changes
                     Env.addEvent(window, 'resize', this.resizeListener, this);
-                    Env.addEvent(window, 'scroll', this.scrollListener, this);
+                    // intersectionObserver: triggered if JSXGraph becomes visible.
                     this.startIntersectionObserver();
                 }
+                // Scroll event: needs to be captured since on mobile devices
+                // sometimes a header bar is displayed / hidden, which triggers a
+                // resize event.
+                Env.addEvent(window, 'scroll', this.scrollListener, this);
             }
         },
 
@@ -1566,9 +1572,9 @@ define([
                     this.stopResizeObserver();
                 } else {
                     Env.removeEvent(window, 'resize', this.resizeListener, this);
-                    Env.removeEvent(window, 'scroll', this.scrollListener, this);
                     this.stopIntersectionObserver();
-            }
+                }
+                Env.removeEvent(window, 'scroll', this.scrollListener, this);
             }
         },
 
@@ -3173,6 +3179,19 @@ define([
             this.dehighlightAll();
         },
 
+        /**
+         * Update the width and height of the JSXGraph container div element.
+         * Read actual values with getBoundingClientRect(),
+         * and call board.resizeContainer() with this values.
+         * <p>
+         * If neccessary, also call setBoundingBox().
+         *
+         * @see JXG.Board#startResizeObserver
+         * @see JXG.Board#resizeListener
+         * @see JXG.Board#resizeContainer
+         * @see JXG.Board#setBoundingBox
+         *
+         */
         updateContainerDims: function() {
             var theWidth, theHeight;
 
@@ -3204,6 +3223,21 @@ define([
             this._prevTheHeight = theHeight;
         },
 
+        /**
+         * Start observer which reacts to size changes of the JSXGraph
+         * container div element. Calls updateContainerDims().
+         * If not available, an event listener for the window-resize event is started.
+         * On mobile devices also scrolling might trigger resizes.
+         * However, resize events triggered by scrolling events should be ignored.
+         * Therefore, also a scrollListener is started.
+         * Resize can be controlled with the board attribute resize.
+         *
+         * @see JXG.Board#updateContainerDims
+         * @see JXG.Board#resizeListener
+         * @see JXG.Board#scrollListener
+         * @see JXG.Board#resize
+         *
+         */
         startResizeObserver: function() {
             var that = this;
 
@@ -3212,11 +3246,22 @@ define([
             }
 
             this.resizeObserver = new ResizeObserver(function(entries) {
-                that.updateContainerDims();
+                if (!that._isScrolling && !that._isResizing) {
+                    that._isResizing = true;
+                    window.setTimeout(function() {
+                        that.updateContainerDims();
+                        that._isResizing = false;
+                    }, that.attr.resize.throttle);
+                }
             });
             this.resizeObserver.observe(this.containerObj);
         },
 
+        /**
+         * Stops the resize observer.
+         * @see JXG.Board#startResizeObserver
+         *
+         */
         stopResizeObserver: function() {
             if (!Env.isBrowser || !this.attr.resize || !this.attr.resize.enabled) {
                 return;
@@ -3227,7 +3272,17 @@ define([
             }
         },
 
-        // Fallback solutions if there is no resizeObserver
+        /**
+         * Fallback solutions if there is no resizeObserver available in the browser.
+         * Reacts to resize events of the window (only). Otherwise similar to
+         * startResizeObserver(). To handle changes of the visibility
+         * of the JSXGraph container element, additionally an intersection observer is used.
+         * which watches changes in the visibility of the JSXGraph container element.
+         * This is necessary e.g. for register tabs or dia shows.
+         *
+         * @see JXG.Board#startResizeObserver
+         * @see JXG.Board#startIntersectionObserver
+         */
         resizeListener: function() {
             var that = this;
 
@@ -3243,6 +3298,14 @@ define([
             }
         },
 
+        /**
+         * Listener to watch for scroll events. Sets board._isScrolling = true
+         * @param  {Event} evt The browser's event object
+         *
+         * @see JXG.Board#startResizeObserver
+         * @see JXG.Board#resizeListener
+         *
+         */
         scrollListener: function(evt) {
             var that = this;
 
@@ -3257,6 +3320,13 @@ define([
             }
         },
 
+        /**
+         * Watch for changes of the visibility of the JSXGraph container element.
+         *
+         * @see JXG.Board#startResizeObserver
+         * @see JXG.Board#resizeListener
+         *
+         */
         startIntersectionObserver: function() {
             var that = this,
                 options = {
@@ -3279,6 +3349,12 @@ define([
             }
         },
 
+        /**
+         * Stop the intersection observer
+         *
+         * @see JXG.Board#startIntersectionObserver
+         *
+         */
         stopIntersectionObserver: function() {
             if (Type.exists(this.intersectionObserver)) {
                 this.intersectionObserver.unobserve(this.containerObj);

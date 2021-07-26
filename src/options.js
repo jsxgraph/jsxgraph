@@ -619,6 +619,43 @@ define([
                 panCtrl: false
             },
 
+            /**
+             * Control if JSXGraph reacts to resizing of the JSXGraph container element
+             * by the user / browser.
+             * The attribute "throttle" determines the minimal time in msec between to
+             * resize calls.
+             *
+             * @see JXG.Board#startResizeObserver
+             * @see JXG.Board#resizeListener
+             *
+             * @name JXG.Board#resize
+             * @type Object
+             * @default {enabled: true, throttle: 10}
+             *
+             * @example
+             *     var board = JXG.JSXGraph.initBoard('jxgbox', {
+             *         boundingbox: [-5,5,5,-5],
+             *         keepAspectRatio: true,
+             *         axis: true,
+             *         resize: {enabled: true, throttle: 200}
+             *     });
+             *
+             * </pre><div id="JXGb55d4608-5d71-4bc3-b332-18c15fbda8c3" class="jxgbox" style="width: 300px; height: 300px;"></div>
+             * <script type="text/javascript">
+             *     (function() {
+             *         var board = JXG.JSXGraph.initBoard('JXGb55d4608-5d71-4bc3-b332-18c15fbda8c3', {
+             *             boundingbox: [-5,5,5,-5],
+             *             keepAspectRatio: true,
+             *             axis: true,
+             *             resize: {enabled: true, throttle: 200}
+             *         });
+             * 
+             *     })();
+             * 
+             * </script><pre>
+             * 
+             *
+             */
             resize: {
                 enabled: true,
                 throttle: 10
