@@ -1731,7 +1731,7 @@ define([
      * </script><pre>
      */
     JXG.createIncircle = function (board, parents, attributes) {
-        var p, c, attr;
+        var i, p, c, attr;
 
         parents = Type.providePoints(board, parents, attributes, 'point');
         if (parents === false) {
@@ -2821,7 +2821,7 @@ define([
                 this.dataX = [];
                 this.dataY = [];
                 len = parents[0].points.length;
-                if (len == 0) {
+                if (len === 0) {
                     return;
                 }
 

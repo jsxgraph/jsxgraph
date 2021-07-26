@@ -1144,9 +1144,8 @@ define([
             }
             if (angle < alpha || angle > beta) {
                 return false;
-            } else {
-                return true;
             }
+            return true;
         },
 
         /**
