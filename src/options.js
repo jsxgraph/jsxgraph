@@ -611,6 +611,58 @@ define([
                 enabled: true
             },
 
+            /**
+             * Control using the keyboard to change the construction.
+             * <ul>
+             * <li> enabled: true / false
+             * <li> dx: horizontal shift amount per key press
+             * <li> dy: vertical shift amount per key press
+             * <li> panShift: zoom if shift key is pressed
+             * <li> panCtrl: zoom if ctrl key is pressed
+             * </ul>
+             *
+             * @example
+             * var board = JXG.JSXGraph.initBoard("jxgbox", {boundingbox: [-5,5,5,-5],
+             *     axis: true,
+             *     showCopyright:true,
+             *     showNavigation:true,
+             *     keyboard: {
+             *         enabled: true,
+             *         dy: 30,
+             *         panShift: true,
+             *         panCtrl: false
+             *     }
+             * });
+             *
+             * </pre><div id="JXGb1d3aab6-ced2-4fe9-8fa5-b0accc8c7266" class="jxgbox" style="width: 300px; height: 300px;"></div>
+             * <script type="text/javascript">
+             *     (function() {
+             *         var board = JXG.JSXGraph.initBoard('JXGb1d3aab6-ced2-4fe9-8fa5-b0accc8c7266',
+             *             {boundingbox: [-5,5,5,-5],
+             *         axis: true,
+             *         showCopyright:true,
+             *         showNavigation:true,
+             *         keyboard: {
+             *             enabled: true,
+             *             dy: 30,
+             *             panShift: true,
+             *             panCtrl: false
+             *         }
+             *     });
+             * 
+             *     })();
+             * 
+             * </script><pre>
+             * 
+             *
+             * @see JXG.Board#keyDownListener
+             * @see JXG.Board#keyFocusInListener
+             * @see JXG.Board#keyFocusOutListener
+             *
+             * @name JXG.Board#keyboard
+             * @type Object
+             * @default {enabled: true, dx: 10, dy:10, panShift: true, panCtrl: false}
+             */
             keyboard: {
                 enabled: true,
                 dx: 10,

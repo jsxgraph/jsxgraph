@@ -3074,7 +3074,20 @@ define([
             evt.preventDefault();
             return false;
         },
-
+        /**
+         * Allow moving of JSXGraph elements with arrow keys
+         * and zooming of the construction with + / -.
+         * Panning of the construction is done with arrow keys
+         * if the pan key (shift or ctrl) is pressed.
+         * The selection of the element is done with the tab key.
+         *
+         * @param  {Event} evt The browser's event object
+         *
+         * @see JXG.Board#keyboard
+         * @see JXG.Board#keyFocusInListener
+         * @see JXG.Board#keyFocusOutListener
+         *
+         */
         keyDownListener: function (evt) {
             var id_node = evt.target.id,
                 id, el,
@@ -3087,6 +3100,7 @@ define([
                 return false;
             }
 
+            // Get the JSXGraph id from the id of the SVG node.
             id = id_node.replace(this.containerObj.id + '_', '');
             el = this.select(id);
 
@@ -3151,6 +3165,16 @@ define([
             return true;
         },
 
+        /**
+         * Event listener for SVG elements getting focus.
+         * This is needed for highlighting when using keyboard control.
+         *
+         * @see JXG.Board#keyFocusOutListener
+         * @see JXG.Board#keyDownListener
+         * @see JXG.Board#keyboard
+         *
+         * @param  {Event} evt The browser's event object
+         */
         keyFocusInListener: function (evt) {
             var id_node = evt.target.id,
                 id, el;
@@ -3163,11 +3187,20 @@ define([
             el = this.select(id);
             if (Type.exists(el.highlight)) {
                 el.highlight(true);
-
             }
         },
 
-        keyFocusOutListener: function (evt) {
+        /**
+         * Event listener for SVG elements losing focus.
+         * This is needed for dehighlighting when using keyboard control.
+         *
+         * @see JXG.Board#keyFocusInListener
+         * @see JXG.Board#keyDownListener
+         * @see JXG.Board#keyboard
+         *
+         * @param  {Event} evt The browser's event object
+         */
+         keyFocusOutListener: function (evt) {
             if (!this.attr.keyboard.enabled) {
                 return false;
             }
@@ -3184,7 +3217,7 @@ define([
          * Read actual values with getBoundingClientRect(),
          * and call board.resizeContainer() with this values.
          * <p>
-         * If neccessary, also call setBoundingBox().
+         * If necessary, also call setBoundingBox().
          *
          * @see JXG.Board#startResizeObserver
          * @see JXG.Board#resizeListener
