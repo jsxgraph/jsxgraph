@@ -1584,7 +1584,6 @@ define([
         addPointerEventHandlers: function () {
             if (!this.hasPointerHandlers && Env.isBrowser) {
                 var moveTarget = this.attr.movetarget || this.containerObj;
-console.log(moveTarget)
 
                 if (window.navigator.msPointerEnabled) {  // IE10-
                     Env.addEvent(this.containerObj, 'MSPointerDown', this.pointerDownListener, this);

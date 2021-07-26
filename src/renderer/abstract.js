@@ -1013,11 +1013,14 @@ define([
                         ax = el.getAnchorX();
 
                         if (ax === 'right') {
-                            v = Math.floor(el.board.canvasWidth - c);
+                            // v = Math.floor(el.board.canvasWidth - c);
+                            v = el.board.canvasWidth - c;
                         } else if (ax === 'middle') {
-                            v = Math.floor(c - 0.5 * el.size[0]);
+                            // v = Math.floor(c - 0.5 * el.size[0]);
+                            v = c - 0.5 * el.size[0];
                         } else { // 'left'
-                            v = Math.floor(c);
+                            // v = Math.floor(c);
+                            v = c;
                         }
 
                         // This may be useful for foreignObj.
@@ -1042,11 +1045,14 @@ define([
                         ay = el.getAnchorY();
 
                         if (ay === 'bottom') {
-                            v = Math.floor(el.board.canvasHeight - c);
+                            // v = Math.floor(el.board.canvasHeight - c);
+                            v = el.board.canvasHeight - c;
                         } else if (ay === 'middle') {
-                            v = Math.floor(c - 0.5 * el.size[1]);
+                            // v = Math.floor(c - 0.5 * el.size[1]);
+                            v = c - 0.5 * el.size[1];
                         } else { // top
-                            v = Math.floor(c);
+                            // v = Math.floor(c);
+                            v = c;
                         }
 
                         // This may be useful for foreignObj.
