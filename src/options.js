@@ -714,6 +714,52 @@ define([
             },
 
             /**
+             * Element which listens to move events of the pointing device.
+             * This allows to drag elements of a JSXGraph construction outside of the board.
+             * Especially, on mobile devices this enhances the user experience.
+             * However, it is recommended to allow dragging outside of the JSXGraph board only
+             * in certain constructions where users may not "loose" points outside of the board.
+             * Then points may become unreachable.
+             * <p>
+             * A situation where dragging outside of the board is uncritical is for example if
+             * only sliders are used to interact with the construction.
+             * <p>
+             * Possible values for this attributes are:
+             * <ul>
+             * <li> an element specified by document.getElementById('some id');
+             * <li> null: to use the JSXgraph container div element
+             * <li> document
+             * </ul>
+             *
+             * @name JXG.Board#moveTarget
+             * @type HTML node or document
+             * @default null
+             *
+             * @example
+             *     var board = JXG.JSXGraph.initBoard('jxgbox', {
+             *         boundingbox: [-5,5,5,-5],
+             *         axis: true,
+             *         moveTarget: document
+             *     });
+             *
+             * </pre><div id="JXG973457e5-c63f-4516-8570-743f2cc560e1" class="jxgbox" style="width: 300px; height: 300px;"></div>
+             * <script type="text/javascript">
+             *     (function() {
+             *         var board = JXG.JSXGraph.initBoard('JXG973457e5-c63f-4516-8570-743f2cc560e1',
+             *             {boundingbox: [-5,5,5,-5],
+             *             axis: true,
+             *             moveTarget: document
+             *         });
+             * 
+             *     })();
+             * 
+             * </script><pre>
+             * 
+             *
+             */
+            moveTarget: null,
+
+            /**
              * Control the possibilities for a selection rectangle.
              * Starting a selection event triggers the "startselecting" event.
              * When the mouse pointer is released, the "stopselecting" event is fired.

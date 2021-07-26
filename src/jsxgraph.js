@@ -193,6 +193,10 @@ define([
             attr.screenshot = Type.copyAttributes(attr, Options, 'board', 'screenshot');
             attr.resize = Type.copyAttributes(attr, Options, 'board', 'resize');
 
+            // Treat moveTarget separately, because deepCopy will not work here.
+            // Reason: moveTarget will be an HTML node and it is prevented that Type.deepCopy will copy it.
+            attr.movetarget = attributes.moveTarget || attributes.movetarget || Options.board.moveTarget;
+
             return attr;
         },
 

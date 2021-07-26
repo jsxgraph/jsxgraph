@@ -1583,13 +1583,15 @@ define([
          */
         addPointerEventHandlers: function () {
             if (!this.hasPointerHandlers && Env.isBrowser) {
+                var moveTarget = this.attr.movetarget || this.containerObj;
+console.log(moveTarget)
+
                 if (window.navigator.msPointerEnabled) {  // IE10-
                     Env.addEvent(this.containerObj, 'MSPointerDown', this.pointerDownListener, this);
-                    Env.addEvent(this.containerObj, 'MSPointerMove', this.pointerMoveListener, this);
+                    Env.addEvent(moveTarget, 'MSPointerMove', this.pointerMoveListener, this);
                 } else {
                     Env.addEvent(this.containerObj, 'pointerdown', this.pointerDownListener, this);
-                    Env.addEvent(this.containerObj, 'pointermove', this.pointerMoveListener, this);
-                    // Env.addEvent(this.containerObj, 'pointerout', this.pointerOutListener, this);
+                    Env.addEvent(moveTarget, 'pointermove', this.pointerMoveListener, this);
                 }
                 Env.addEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
                 Env.addEvent(this.containerObj, 'DOMMouseScroll', this.mouseWheelListener, this);
@@ -1609,8 +1611,10 @@ define([
          */
         addMouseEventHandlers: function () {
             if (!this.hasMouseHandlers && Env.isBrowser) {
+                var moveTarget = this.attr.movetarget || this.containerObj;
+
                 Env.addEvent(this.containerObj, 'mousedown', this.mouseDownListener, this);
-                Env.addEvent(this.containerObj, 'mousemove', this.mouseMoveListener, this);
+                Env.addEvent(moveTarget, 'mousemove', this.mouseMoveListener, this);
 
                 Env.addEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
                 Env.addEvent(this.containerObj, 'DOMMouseScroll', this.mouseWheelListener, this);
@@ -1628,8 +1632,10 @@ define([
          */
         addTouchEventHandlers: function (appleGestures) {
             if (!this.hasTouchHandlers && Env.isBrowser) {
+                var moveTarget = this.attr.movetarget || this.containerObj;
+
                 Env.addEvent(this.containerObj, 'touchstart', this.touchStartListener, this);
-                Env.addEvent(this.containerObj, 'touchmove', this.touchMoveListener, this);
+                Env.addEvent(moveTarget, 'touchmove', this.touchMoveListener, this);
 
                 /*
                 if (!Type.exists(appleGestures) || appleGestures) {
@@ -1704,12 +1710,14 @@ define([
          */
         removePointerEventHandlers: function () {
             if (this.hasPointerHandlers && Env.isBrowser) {
+                var moveTarget = this.attr.movetarget || this.containerObj;
+
                 if (window.navigator.msPointerEnabled) {  // IE10-
                     Env.removeEvent(this.containerObj, 'MSPointerDown', this.pointerDownListener, this);
-                    Env.removeEvent(this.containerObj, 'MSPointerMove', this.pointerMoveListener, this);
+                    Env.removeEvent(moveTarget, 'MSPointerMove', this.pointerMoveListener, this);
                 } else {
                     Env.removeEvent(this.containerObj, 'pointerdown', this.pointerDownListener, this);
-                    Env.removeEvent(this.containerObj, 'pointermove', this.pointerMoveListener, this);
+                    Env.removeEvent(moveTarget, 'pointermove', this.pointerMoveListener, this);
                     // Env.removeEvent(this.containerObj, 'pointerout', this.pointerOutListener, this);
                 }
 
@@ -1734,8 +1742,10 @@ define([
          */
         removeMouseEventHandlers: function () {
             if (this.hasMouseHandlers && Env.isBrowser) {
+                var moveTarget = this.attr.movetarget || this.containerObj;
+
                 Env.removeEvent(this.containerObj, 'mousedown', this.mouseDownListener, this);
-                Env.removeEvent(this.containerObj, 'mousemove', this.mouseMoveListener, this);
+                Env.removeEvent(moveTarget, 'mousemove', this.mouseMoveListener, this);
 
                 if (this.hasMouseUp) {
                     Env.removeEvent(this.document, 'mouseup', this.mouseUpListener, this);
@@ -1754,8 +1764,10 @@ define([
          */
         removeTouchEventHandlers: function () {
             if (this.hasTouchHandlers && Env.isBrowser) {
+                var moveTarget = this.attr.movetarget || this.containerObj;
+
                 Env.removeEvent(this.containerObj, 'touchstart', this.touchStartListener, this);
-                Env.removeEvent(this.containerObj, 'touchmove', this.touchMoveListener, this);
+                Env.removeEvent(moveTarget, 'touchmove', this.touchMoveListener, this);
 
                 if (this.hasTouchEnd) {
                     Env.removeEvent(this.document, 'touchend', this.touchEndListener, this);
