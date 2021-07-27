@@ -479,7 +479,7 @@ define([
                     } else if (typeLast === 4 || typeLast === 5 || typeLast === 6) {
                         off = strokewidth * size / 1.5;
                         minlen += strokewidth * size;
-                    } else if (typeFirst === 7) {
+                    } else if (typeLast === 7) {
                         off = 0;
                         size = 10;
                         minlen += strokewidth;
@@ -506,7 +506,7 @@ define([
         },
 
         /**
-         * Shorten the line length such that the arrow head touches
+         * Shorten the length of a line element such that the arrow head touches
          * the start or end point and such that the arrow head ends exactly
          * at the start / end position of the line.
          *
@@ -526,7 +526,7 @@ define([
             /*
                Handle arrow heads.
 
-               The default arrow head is an isosceles triangle with base length 10 units and height 10 units.
+               The default arrow head (type==1) is an isosceles triangle with base length 10 units and height 10 units.
                These 10 units are scaled to strokeWidth * arrowSize pixels pixels.
             */
             if (a.evFirst || a.evLast) {
@@ -616,7 +616,6 @@ define([
          * @see JXG.Line
          * @see JXG.AbstractRenderer#updateLine
          * @see JXG.AbstractRenderer#getPositionArrowHead
-         * @see JXG.AbstractRenderer#getArrowHeadData
          *
          */
         updateLineEndings: function(el, arrowData) {
@@ -630,44 +629,29 @@ define([
             Geometry.calcStraight(el, c1, c2, margin);
 
             this.handleTouchpoints(el, c1, c2, arrowData);
-
-            // Shorten path without el.rendNode.getTotalLength
-            // if (!Type.exists(el.rendNode.getTotalLength)) {
-                this.getPositionArrowHead(el, c1, c2, arrowData);
-            //     useTotalLength = false;
-            // }
+            this.getPositionArrowHead(el, c1, c2, arrowData);
 
             this.updateLinePrim(el.rendNode,
                 c1.scrCoords[1], c1.scrCoords[2],
                 c2.scrCoords[1], c2.scrCoords[2], el.board);
-
-            // Shorten path with el.rendNode.getTotalLength
-            // This does not work sufficiently good in webkit.
-            // See also _createArrowHead for arrow head position
-            // if (useTotalLength) {
-            //     this.shortenPath(el.rendNode, arrowData.offFirst, arrowData.offLast);
-            // }
 
             return this;
         },
 
         /**
          *
-         * Calls the renderer method to draw the curve and
-         * corrects the curve length if there are arrow heads, such that
-         * the arrow ends exactly at the intended position.
+         * Calls the renderer method to draw a curve.
          *
          * @param {JXG.GeometryElement} el Reference to a line object, that has to be drawn.
-         * @param {Object} arrowData Data concerning possible arrow heads
          * @returns {JXG.AbstractRenderer} Reference to the renderer
          *
          * @private
          * @see Curve
          * @see JXG.Curve
          * @see JXG.AbstractRenderer#updateCurve
-         * @see JXG.AbstractRenderer#getArrowHeadData
+         *
          */
-        updatePathEndings: function(el, arrowData) {
+        updatePath: function(el) {
             if (Type.evaluate(el.visProp.handdrawing)) {
                 this.updatePathPrim(el.rendNode, this.updatePathStringBezierPrim(el), el.board);
             } else {
@@ -740,7 +724,7 @@ define([
             if (el.elementClass === Const.OBJECT_CLASS_LINE) {
                 this.updateLineEndings(el, arrowData);
             } else if (el.elementClass === Const.OBJECT_CLASS_CURVE) {
-                this.updatePathEndings(el, arrowData);
+                this.updatePath(el, arrowData);
             }
             this.setArrowSize(el, arrowData);
         },
@@ -2054,18 +2038,18 @@ define([
          */
         screenshot: function (board) {},
 
-        /**
-         * Shorten SVG path at the beginning and at the end to avoid visible overlap of
-         * the line and its arrow heads. This method uses the SVG method getTotalLength.
-         *
-         * @param {Node} node Reference to a SVG node representing a line or curve.
-         * @param {Number} offFirst Shorten path at the beginning by this number of pixels
-         * @param {Number} offLast Shorten path at the end by this number of pixels
-         *
-         * @see JXG.AbstractRenderer#updatePathEndings
-         * @see JXG.AbstractRenderer#updateLineEndings
-         */
-        shortenPath: function(node, offFirst, offLast) {},
+        // /**
+        //  * Shorten SVG path at the beginning and at the end to avoid visible overlap of
+        //  * the line and its arrow heads. This method uses the SVG method getTotalLength.
+        //  *
+        //  * @param {Node} node Reference to a SVG node representing a line or curve.
+        //  * @param {Number} offFirst Shorten path at the beginning by this number of pixels
+        //  * @param {Number} offLast Shorten path at the end by this number of pixels
+        //  *
+        //  * @see JXG.AbstractRenderer#updatePathEndings
+        //  * @see JXG.AbstractRenderer#updateLineEndings
+        //  */
+        // shortenPath: function(node, offFirst, offLast) {},
 
         /**
          * Move element into new layer. This is trivial for canvas, but needs more effort in SVG.

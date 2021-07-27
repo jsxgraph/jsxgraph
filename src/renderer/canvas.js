@@ -119,6 +119,9 @@ define([
                 context = this.context;
 
             if (len > 0) {
+                if (doFill) {
+                    context.lineWidth = 0;
+                }
                 context.beginPath();
                 context.moveTo(shape[0][0], shape[0][1]);
                 if (degree == 1) {
@@ -134,8 +137,9 @@ define([
                     context.lineTo(shape[0][0], shape[0][1]);
                     context.closePath();
                     context.fill();
+                } else {
+                    context.stroke();
                 }
-                context.stroke();
             }
         },
 
@@ -879,7 +883,7 @@ define([
                 if (this._setColor(el, 'stroke', 'fill')) {
                     this._setColor(el, 'stroke');
                     if (ev_fa) {
-                        if (type_fa == 7) {
+                        if (type_fa === 7) {
                             doFill = false;
                         } else {
                             doFill = true;
@@ -887,7 +891,7 @@ define([
                         this._drawPolygon(this._translateShape(this._rotateShape(arrowTail, ang1), x1, y1), degree_fa, doFill);
                     }
                     if (ev_la) {
-                        if (type_fa == 7) {
+                        if (type_la === 7) {
                             doFill = false;
                         } else {
                             doFill = true;
@@ -919,6 +923,8 @@ define([
                 margin = -4;
             }
             Geometry.calcStraight(el, c1, c2, margin);
+            this.handleTouchpoints(el, c1, c2, arrowData);
+
             c1_org = new Coords(Const.COORDS_BY_USER, c1.usrCoords, el.board);
             c2_org = new Coords(Const.COORDS_BY_USER, c2.usrCoords, el.board);
 
@@ -933,6 +939,7 @@ define([
                 (arrowData.evLast/* && obj.sLast > 0*/)) {
 
                 this.drawArrows(el, c1_org, c2_org, hl);
+                // this.drawArrows(el, c1, c2, hl);
             }
         },
 

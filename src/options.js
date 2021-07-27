@@ -2776,6 +2776,7 @@ define([
 
             /**
              * Curve has an arrow head at the start position.
+             * Possible are only arrow heads of type 7.
              *
              * @name Line#firstArrow for options
              * @type Boolean / Object
@@ -2785,6 +2786,7 @@ define([
 
             /**
              * Curve has an arrow head at the end position.
+             * Possible are only arrow heads of type 7.
              *
              * @see Line#lastArrow for options
              * @type Boolean / Object
