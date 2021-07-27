@@ -221,6 +221,7 @@ define([
             }
             node2 = this.createPrim('marker', id);
 
+
             node2.setAttributeNS(null, 'stroke', Type.evaluate(el.visProp.strokecolor));
             node2.setAttributeNS(null, 'stroke-opacity', Type.evaluate(el.visProp.strokeopacity));
             node2.setAttributeNS(null, 'fill', Type.evaluate(el.visProp.strokecolor));
@@ -279,6 +280,10 @@ define([
                     // insetRatio:0.9 tipAngle:35 wingCurve:5 tailCurve:0
                     h = 2.84;
                     node3.setAttributeNS(null, 'd', 'M 0.00,2.84 C 3.39,3.59 6.79,4.35 10.00,5.68 C 9.67,4.73 9.33,3.78 9.00,2.84 C 9.33,1.89 9.67,0.95 10.00,0.00 C 6.79,1.33 3.39,2.09 0.00,2.84');
+                } else if (type === 7) {
+                    // insetRatio:0.9 tipAngle:60 wingCurve:30 tailCurve:0
+                    h = 5.20;
+                    node3.setAttributeNS(null, 'd', 'M 0.00,5.20 C 4.04,5.20 7.99,6.92 10.00,10.39 M 10.00,0.00 C 7.99,3.47 4.04,5.20 0.00,5.20');
                 } else {
                     // type == 1 or > 6
                     node3.setAttributeNS(null, 'd', 'M 10,0 L 0,5 L 10,10 z');
@@ -290,6 +295,8 @@ define([
                         v = 3.3;
                     } else if (type === 4 || type === 5 || type === 6) {
                         v = 6.66;
+                    } else if (type === 7) {
+                        v = 0.0;
                     } else {
                         v = 10.0;
                     }
@@ -318,6 +325,10 @@ define([
                     // insetRatio:0.9 tipAngle:35 wingCurve:5 tailCurve:0
                     h = 2.84;
                     node3.setAttributeNS(null, 'd', 'M 10.00,2.84 C 6.61,3.59 3.21,4.35 0.00,5.68 C 0.33,4.73 0.67,3.78 1.00,2.84 C 0.67,1.89 0.33,0.95 0.00,0.00 C 3.21,1.33 6.61,2.09 10.00,2.84');
+                } else if (type === 7) {
+                    // insetRatio:0.9 tipAngle:60 wingCurve:30 tailCurve:0
+                    h = 5.20;
+                    node3.setAttributeNS(null, 'd', 'M 10.00,5.20 C 5.96,5.20 2.01,6.92 0.00,10.39 M 0.00,0.00 C 2.01,3.47 5.96,5.20 10.00,5.20');
                 } else {
                     // type == 1 or > 6
                     node3.setAttributeNS(null, 'd', 'M 0,0 L 10,5 L 0,10 z');
@@ -329,10 +340,16 @@ define([
                         v = 0.02;
                     } else if (type === 4 || type === 5 || type === 6) {
                         v = 3.33;
+                    } else if (type === 7) {
+                        v = 10.0;
                     } else {
                         v = 0.05;
                     }
                 }
+            }
+            if (type === 7) {
+                node2.setAttributeNS(null, 'fill', 'none');
+                node2.setAttributeNS(null, 'stroke-width', 1);  // this is the stroke-width of the arrow head.
             }
             node2.setAttributeNS(null, 'refY', h);
             node2.setAttributeNS(null, 'refX', v);
@@ -348,15 +365,23 @@ define([
          * @param {Number} opacity
          * @param {JXG.GeometryElement} el The element the arrows are to be attached to
          */
-        _setArrowColor: function (node, color, opacity, el) {
+        _setArrowColor: function (node, color, opacity, el, type) {
             if (node) {
                 if (Type.isString(color)) {
-                    this._setAttribute(function () {
-                        node.setAttributeNS(null, 'stroke', color);
-                        node.setAttributeNS(null, 'fill', color);
-                        node.setAttributeNS(null, 'stroke-opacity', opacity);
-                        node.setAttributeNS(null, 'fill-opacity', opacity);
-                    }, el.visPropOld.fillcolor);
+                    if (type !== 7) {
+                        this._setAttribute(function () {
+                            node.setAttributeNS(null, 'stroke', color);
+                            node.setAttributeNS(null, 'fill', color);
+                            node.setAttributeNS(null, 'stroke-opacity', opacity);
+                            node.setAttributeNS(null, 'fill-opacity', opacity);
+                        }, el.visPropOld.fillcolor);
+                    } else {
+                        this._setAttribute(function () {
+                            node.setAttributeNS(null, 'fill', 'none');
+                            node.setAttributeNS(null, 'stroke', color);
+                            node.setAttributeNS(null, 'stroke-opacity', opacity);
+                        }, el.visPropOld.fillcolor);
+                    }
                 }
 
                 if (this.isIE) {
@@ -390,18 +415,17 @@ define([
         },
 
         // already documented in JXG.AbstractRenderer
-        shortenPath: function(node, offFirst, offLast) {
-            var le, stroke;
-
-            if (!(offFirst === 0 && offLast === 0) && Type.exists(node.getTotalLength)) {
-                try {
-                    le = node.getTotalLength();
-                    stroke = le - offFirst - offLast;
-                    node.style.strokeDasharray = stroke + ' ' + offFirst + ' ' + stroke + ' ' + offLast;
-                    node.style.strokeDashoffset = stroke;
-                } catch (err) {}
-            }
-        },
+        // shortenPath: function(node, offFirst, offLast) {
+        //     var le, stroke;
+        //     if (!(offFirst === 0 && offLast === 0) && Type.exists(node.getTotalLength)) {
+        //         try {
+        //             le = node.getTotalLength();
+        //             stroke = le - offFirst - offLast;
+        //             node.style.strokeDasharray = stroke + ' ' + offFirst + ' ' + stroke + ' ' + offLast;
+        //             node.style.strokeDashoffset = stroke;
+        //         } catch (err) {}
+        //     }
+        // },
 
         /* ******************************** *
          *  This renderer does not need to
@@ -1269,7 +1293,7 @@ define([
         setObjectStrokeColor: function (el, color, opacity) {
             var rgba = Type.evaluate(color), c, rgbo,
                 o = Type.evaluate(opacity), oo,
-                node;
+                node, type;
 
             o = (o > 0) ? o : 0;
 
@@ -1312,11 +1336,18 @@ define([
                 if (el.elementClass === Const.OBJECT_CLASS_CURVE ||
                     el.elementClass === Const.OBJECT_CLASS_LINE) {
                     if (Type.evaluate(el.visProp.firstarrow)) {
-                        this._setArrowColor(el.rendNodeTriangleStart, c, oo, el);
+                        if (Type.exists(el.visProp.firstarrow.type)) {
+                            type = Type.evaluate(el.visProp.firstarrow.type);
+                        }
+
+                        this._setArrowColor(el.rendNodeTriangleStart, c, oo, el, type);
                     }
 
                     if (Type.evaluate(el.visProp.lastarrow)) {
-                        this._setArrowColor(el.rendNodeTriangleEnd, c, oo, el);
+                        if (Type.exists(el.visProp.lastarrow.type)) {
+                            type = Type.evaluate(el.visProp.lastarrow.type);
+                        }
+                        this._setArrowColor(el.rendNodeTriangleEnd, c, oo, el, type);
                     }
                 }
             }

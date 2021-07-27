@@ -439,6 +439,7 @@ define([
                     if (hl !== '' && Type.exists(ev_fa[hl + 'size'])) {
                         size = Type.evaluate(ev_fa[hl + 'size']);
                     }
+
                     off = strokewidth * size;
                     if (typeFirst === 2) {
                         off *= 0.5;
@@ -449,6 +450,10 @@ define([
                     } else if (typeFirst === 4 || typeFirst === 5 || typeFirst === 6) {
                         off = strokewidth * size / 1.5;
                         minlen += strokewidth * size;
+                    } else if (typeFirst === 7) {
+                        off = 0;
+                        size = 10;
+                        minlen += strokewidth;
                     } else {
                         minlen += strokewidth * size;
                     }
@@ -474,6 +479,10 @@ define([
                     } else if (typeLast === 4 || typeLast === 5 || typeLast === 6) {
                         off = strokewidth * size / 1.5;
                         minlen += strokewidth * size;
+                    } else if (typeFirst === 7) {
+                        off = 0;
+                        size = 10;
+                        minlen += strokewidth;
                     } else {
                         minlen += strokewidth * size;
                     }
@@ -665,7 +674,7 @@ define([
                 this.updatePathPrim(el.rendNode, this.updatePathStringPrim(el), el.board);
             }
 
-            this.shortenPath(el.rendNode, arrowData.offFirst, arrowData.offLast);
+            // this.shortenPath(el.rendNode, arrowData.offFirst, arrowData.offLast);
 
             return this;
         },
@@ -818,6 +827,7 @@ define([
          */
         updateCurve: function (el) {
             this.updatePathWithArrowHeads(el);
+            this.setLineCap(el);
             this._updateVisual(el);
         },
 

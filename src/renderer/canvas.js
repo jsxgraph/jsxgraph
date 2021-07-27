@@ -114,7 +114,7 @@ define([
          * @see JXG.AbstractRenderer#drawArrows
          * @private
          */
-        _drawFilledPolygon: function (shape, degree) {
+        _drawPolygon: function (shape, degree, doFill) {
             var i, len = shape.length,
                 context = this.context;
 
@@ -130,9 +130,11 @@ define([
                         context.bezierCurveTo(shape[i][0], shape[i][1], shape[i + 1][0], shape[i + 1][1], shape[i + 2][0], shape[i + 2][1]);
                     }
                 }
-                context.lineTo(shape[0][0], shape[0][1]);
-                context.closePath();
-                context.fill();
+                if (doFill) {
+                    context.lineTo(shape[0][0], shape[0][1]);
+                    context.closePath();
+                    context.fill();
+                }
                 context.stroke();
             }
         },
@@ -561,8 +563,10 @@ define([
                  context = this.context,
                  size = 6,
                  type = 1,
+                 type_fa, type_la,
                  degree_fa = 1,
                  degree_la = 1,
+                 doFill,
                  i, len,
                  d1x, d1y, d2x, d2y, last,
                  ang1, ang2,
@@ -616,6 +620,7 @@ define([
 
                     if (Type.exists(ev_fa.type)) {
                         type = Type.evaluate(ev_fa.type);
+                        type_fa = type;
                     }
                     if (type === 2) {
                         arrowTail = [
@@ -706,6 +711,25 @@ define([
                             arrowTail[i][0] += 10 * w;
                             arrowTail[i][1] -= 2.84 * w;
                         }
+                    } else if (type === 7) {
+                        w = w0;
+                        degree_fa = 3;
+                        arrowTail = [
+                            [0.00,10.39],
+                            [2.01,6.92],
+                            [5.96,5.20],
+                            [10.00,5.20],
+                            [5.96,5.20],
+                            [2.01,3.47],
+                            [0.00,0.00]
+                        ];
+                        len = arrowTail.length;
+                        for (i = 0; i < len; i++) {
+                            arrowTail[i][0] *= -w;
+                            arrowTail[i][1] *= w;
+                            arrowTail[i][0] += 10 * w;
+                            arrowTail[i][1] -= 5.20 * w;
+                        }
                     } else {
                         arrowTail = [
                              [ w,   -w * 0.5],
@@ -727,6 +751,7 @@ define([
 
                     if (Type.exists(ev_la.type)) {
                         type = Type.evaluate(ev_la.type);
+                        type_la = type;
                     }
                     if (type === 2) {
                         arrowHead = [
@@ -821,6 +846,26 @@ define([
 
                         }
 
+                    } else if (type === 7) {
+                        w = w0;
+                        degree_la = 3;
+                        arrowHead = [
+                            [0.00,10.39],
+                            [2.01,6.92],
+                            [5.96,5.20],
+                            [10.00,5.20],
+                            [5.96,5.20],
+                            [2.01,3.47],
+                            [0.00,0.00]
+                        ];
+                        len = arrowHead.length;
+                        for (i = 0; i < len; i++) {
+                            arrowHead[i][0] *= w;
+                            arrowHead[i][1] *= w;
+                            arrowHead[i][0] -= 10 * w;
+                            arrowHead[i][1] -= 5.20 * w;
+
+                        }
                     } else {
                         arrowHead = [
                              [ -w, -w * 0.5],
@@ -834,10 +879,20 @@ define([
                 if (this._setColor(el, 'stroke', 'fill')) {
                     this._setColor(el, 'stroke');
                     if (ev_fa) {
-                        this._drawFilledPolygon(this._translateShape(this._rotateShape(arrowTail, ang1), x1, y1), degree_fa);
+                        if (type_fa == 7) {
+                            doFill = false;
+                        } else {
+                            doFill = true;
+                        }
+                        this._drawPolygon(this._translateShape(this._rotateShape(arrowTail, ang1), x1, y1), degree_fa, doFill);
                     }
                     if (ev_la) {
-                        this._drawFilledPolygon(this._translateShape(this._rotateShape(arrowHead, ang2), x2, y2), degree_la);
+                        if (type_fa == 7) {
+                            doFill = false;
+                        } else {
+                            doFill = true;
+                        }
+                        this._drawPolygon(this._translateShape(this._rotateShape(arrowHead, ang2), x2, y2), degree_la, doFill);
                     }
                 }
                 context.restore();
