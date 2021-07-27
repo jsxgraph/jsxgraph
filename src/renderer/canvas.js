@@ -559,7 +559,7 @@ define([
          * @param {String} hl String which carries information if the element is highlighted. Used for getting the correct attribute.
          * @private
          */
-        drawArrows: function (el, scr1, scr2, hl) {
+        drawArrows: function (el, scr1, scr2, hl, a) {
              var x1, y1, x2, y2,
                  w0, w,
                  arrowHead,
@@ -574,8 +574,8 @@ define([
                  i, len,
                  d1x, d1y, d2x, d2y, last,
                  ang1, ang2,
-                 ev_fa = Type.evaluate(el.visProp.firstarrow),
-                 ev_la = Type.evaluate(el.visProp.lastarrow);
+                 ev_fa = a.evFirst,
+                 ev_la = a.evLast;
 
             if (Type.evaluate(el.visProp.strokecolor) !== 'none' &&
                      (ev_fa || ev_la)) {
@@ -613,19 +613,13 @@ define([
                 w0 = Type.evaluate(el.visProp[hl + 'strokewidth']);
 
                 if (ev_fa) {
-                    size = 6;
-                    if (Type.exists(ev_fa.size)) {
-                        size = Type.evaluate(ev_fa.size);
-                    }
-                    if (hl !== '' && Type.exists(ev_fa[hl + 'size'])) {
-                        size = Type.evaluate(ev_fa[hl + 'size']);
-                    }
+                    size = a.sizeFirst;
+
                     w = w0 * size;
 
-                    if (Type.exists(ev_fa.type)) {
-                        type = Type.evaluate(ev_fa.type);
-                        type_fa = type;
-                    }
+                    type = a.typeFirst;
+                    type_fa = type;
+
                     if (type === 2) {
                         arrowTail = [
                                  [ w,      -w * 0.5],
@@ -744,19 +738,11 @@ define([
                 }
 
                 if (ev_la) {
-                    size = 6;
-                    if (Type.exists(ev_la.size)) {
-                        size = Type.evaluate(ev_la.size);
-                    }
-                    if (hl !== '' && Type.exists(ev_la[hl + 'size'])) {
-                        size = Type.evaluate(ev_la[hl + 'size']);
-                    }
+                    size = a.sizeLast;
                     w = w0 * size;
 
-                    if (Type.exists(ev_la.type)) {
-                        type = Type.evaluate(ev_la.type);
-                        type_la = type;
-                    }
+                    type = a.typeLast;
+                    type_la = type;
                     if (type === 2) {
                         arrowHead = [
                              [ -w, -w * 0.5],
@@ -938,8 +924,7 @@ define([
             if ((arrowData.evFirst/* && obj.sFirst > 0*/) ||
                 (arrowData.evLast/* && obj.sLast > 0*/)) {
 
-                this.drawArrows(el, c1_org, c2_org, hl);
-                // this.drawArrows(el, c1, c2, hl);
+                this.drawArrows(el, c1_org, c2_org, hl, arrowData);
             }
         },
 
@@ -997,7 +982,7 @@ define([
 
         // documented in AbstractRenderer
         drawCurve: function (el) {
-            var hl;
+            var hl, w, arrowData;
 
             if (Type.evaluate(el.visProp.handdrawing)) {
                 this.updatePathStringBezierPrim(el);
@@ -1006,7 +991,12 @@ define([
             }
             if (el.numberPoints > 1) {
                 hl = this._getHighlighted(el);
-                this.drawArrows(el, null, null, hl);
+                w = Type.evaluate(el.visProp[hl + 'strokewidth']);
+                arrowData = this.getArrowHeadData(el, w, hl);
+                if ((arrowData.evFirst/* && obj.sFirst > 0*/) ||
+                    (arrowData.evLast/* && obj.sLast > 0*/)) {
+                    this.drawArrows(el, null, null, hl, arrowData);
+                }
             }
         },
 

@@ -208,19 +208,16 @@ define([
          * @param {String} [idAppendix=''] A string that is added to the node's id.
          * @returns {Node} Reference to the node added to the DOM.
          */
-        _createArrowHead: function (el, idAppendix) {
+        _createArrowHead: function (el, idAppendix, type) {
             var node2, node3,
                 id = el.id + 'Triangle',
-                type = null,
-                v, h,
-                ev_fa = Type.evaluate(el.visProp.firstarrow),
-                ev_la = Type.evaluate(el.visProp.lastarrow);
+                //type = null,
+                v, h;
 
             if (Type.exists(idAppendix)) {
                 id += idAppendix;
             }
             node2 = this.createPrim('marker', id);
-
 
             node2.setAttributeNS(null, 'stroke', Type.evaluate(el.visProp.strokecolor));
             node2.setAttributeNS(null, 'stroke-opacity', Type.evaluate(el.visProp.strokeopacity));
@@ -259,9 +256,10 @@ define([
             h = 5;
             if (idAppendix === 'End') {
                 // First arrow
-                if (JXG.exists(ev_fa.type)) {
-                    type = Type.evaluate(ev_fa.type);
-                }
+                //type = a.typeFirst;
+                // if (JXG.exists(ev_fa.type)) {
+                //     type = Type.evaluate(ev_fa.type);
+                // }
 
                 v = 0;
                 if (type === 2) {
@@ -303,9 +301,10 @@ define([
                 }
             } else {
                 // Last arrow
-                if (JXG.exists(ev_la.type)) {
-                    type = Type.evaluate(ev_la.type);
-                }
+                // if (JXG.exists(ev_la.type)) {
+                //     type = Type.evaluate(ev_la.type);
+                // }
+                //type = a.typeLast;
 
                 v = 10.0;
                 if (type === 2) {
@@ -413,19 +412,6 @@ define([
                 }
             }
         },
-
-        // already documented in JXG.AbstractRenderer
-        // shortenPath: function(node, offFirst, offLast) {
-        //     var le, stroke;
-        //     if (!(offFirst === 0 && offLast === 0) && Type.exists(node.getTotalLength)) {
-        //         try {
-        //             le = node.getTotalLength();
-        //             stroke = le - offFirst - offLast;
-        //             node.style.strokeDasharray = stroke + ' ' + offFirst + ' ' + stroke + ' ' + offLast;
-        //             node.style.strokeDashoffset = stroke;
-        //         } catch (err) {}
-        //     }
-        // },
 
         /* ******************************** *
          *  This renderer does not need to
@@ -682,10 +668,10 @@ define([
         },
 
         // already documented in JXG.AbstractRenderer
-        makeArrows: function (el) {
+        makeArrows: function (el, a) {
             var node2,
-                ev_fa = Type.evaluate(el.visProp.firstarrow),
-                ev_la = Type.evaluate(el.visProp.lastarrow);
+                ev_fa = a.evFirst,
+                ev_la = a.evLast;
 
             // Test if the arrow heads already exist
             if (el.visPropOld.firstarrow === ev_fa &&
@@ -700,7 +686,7 @@ define([
             if (ev_fa) {
                 node2 = el.rendNodeTriangleStart;
                 if (!Type.exists(node2)) {
-                    node2 = this._createArrowHead(el, 'End');
+                    node2 = this._createArrowHead(el, 'End', a.typeFirst);
                     this.defs.appendChild(node2);
                     el.rendNodeTriangleStart = node2;
                     el.rendNode.setAttributeNS(null, 'marker-start', 'url(#' + this.container.id + '_' + el.id + 'TriangleEnd)');
@@ -716,7 +702,7 @@ define([
             if (ev_la) {
                 node2 = el.rendNodeTriangleEnd;
                 if (!Type.exists(node2)) {
-                    node2 = this._createArrowHead(el, 'Start');
+                    node2 = this._createArrowHead(el, 'Start', a.typeLast);
                     this.defs.appendChild(node2);
                     el.rendNodeTriangleEnd = node2;
                     el.rendNode.setAttributeNS(null, 'marker-end', 'url(#' + this.container.id + '_' + el.id + 'TriangleStart)');
@@ -1293,7 +1279,7 @@ define([
         setObjectStrokeColor: function (el, color, opacity) {
             var rgba = Type.evaluate(color), c, rgbo,
                 o = Type.evaluate(opacity), oo,
-                node, type;
+                node;
 
             o = (o > 0) ? o : 0;
 
@@ -1336,18 +1322,11 @@ define([
                 if (el.elementClass === Const.OBJECT_CLASS_CURVE ||
                     el.elementClass === Const.OBJECT_CLASS_LINE) {
                     if (Type.evaluate(el.visProp.firstarrow)) {
-                        if (Type.exists(el.visProp.firstarrow.type)) {
-                            type = Type.evaluate(el.visProp.firstarrow.type);
-                        }
-
-                        this._setArrowColor(el.rendNodeTriangleStart, c, oo, el, type);
+                        this._setArrowColor(el.rendNodeTriangleStart, c, oo, el, el.visPropCalc.typeFirst);
                     }
 
                     if (Type.evaluate(el.visProp.lastarrow)) {
-                        if (Type.exists(el.visProp.lastarrow.type)) {
-                            type = Type.evaluate(el.visProp.lastarrow.type);
-                        }
-                        this._setArrowColor(el.rendNodeTriangleEnd, c, oo, el, type);
+                        this._setArrowColor(el.rendNodeTriangleEnd, c, oo, el, el.visPropCalc.typeLast);
                     }
                 }
             }

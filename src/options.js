@@ -2775,19 +2775,21 @@ define([
             },
 
             /**
-             * Curve has an arrow head at the start position.
-             * Possible are only arrow heads of type 7.
+             * Configure arrow head at the start position for curve.
+             * Recommended arrow head type is 7.
              *
-             * @name Line#firstArrow for options
+             * @name Curve#firstArrow
              * @type Boolean / Object
              * @default false
+             * @see Line#firstArrow for options
              */
             firstArrow: false,
 
             /**
-             * Curve has an arrow head at the end position.
-             * Possible are only arrow heads of type 7.
+             * Configure arrow head at the end position for curve.
+             * Recommended arrow head type is 7.
              *
+             * @name Curve#lastArrow
              * @see Line#lastArrow for options
              * @type Boolean / Object
              * @default false
@@ -3321,18 +3323,20 @@ define([
              */
 
             /**
-             * Line has an arrow head at the position of its first point or the corresponding
+             * Configure the arrow head at the position of its first point or the corresponding
              * intersection with the canvas border
              *
              * In case firstArrow is an object it has the sub-attributes:
              * <pre>
              * {
-             *      type: 1, // possible values are 1, 2, ..., 6. Default value is 1.
+             *      type: 1, // possible values are 1, 2, ..., 7. Default value is 1.
              *      size: 6, // size of the arrow head. Default value is 6.
              *               // This value is multiplied with the strokeWidth of the line
+             *               // Exception: for type=7 size is ignored
              *      highlightSize: 6, // size of the arrow head in case the element is highlighted. Default value
              * }
              * </pre>
+             * type=7 is the default for curves if firstArrow: true
              *
              * @name Line#firstArrow
              * @see Line#lastArrow
@@ -3343,18 +3347,20 @@ define([
             firstArrow: false,
 
             /**
-             * Line has an arrow head at the position of its second point or the corresponding
+             * Configute the arrow head at the position of its second point or the corresponding
              * intersection with the canvas border.
              *
-             * In case firstArrow is an object it has the sub-attributes:
+             * In case lastArrow is an object it has the sub-attributes:
              * <pre>
              * {
-             *      type: 1, // possible values are 1, 2, ..., 6. Default value is 1.
+             *      type: 1, // possible values are 1, 2, ..., 7. Default value is 1.
              *      size: 6, // size of the arrow head. Default value is 6.
              *               // This value is multiplied with the strokeWidth of the line.
+             *               // Exception: for type=7 size is ignored
              *      highlightSize: 6, // size of the arrow head in case the element is highlighted. Default value is 6.
              * }
              * </pre>
+             * type=7 is the default for curves if lastArrow: true
              *
              * @example
              *     var p1 = board.create('point', [-5, 2], {size:1});
