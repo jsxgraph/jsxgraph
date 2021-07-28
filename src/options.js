@@ -4909,8 +4909,36 @@ define([
              * @memberOf Text.prototype
              * @default 12
              * @type Number
+             * @see Text#fontUnit
              */
             fontSize: 12,
+
+            /**
+             * CSS unit for the font size of a text element. Usually, this will be the default value 'px' but
+             * for responsive application, also 'vw', 'vh', vmax', 'vmin' or 'rem' might be useful.
+             *
+             * @name fontUnit
+             * @memberOf Text.prototype
+             * @default 'px'
+             * @type String
+             * @see Text#fontSize
+             *
+             * @example
+             * var txt = board.create('text', [2, 2, "hello"], {fontSize: 8, fontUnit: 'vmin'});
+             *
+             * </pre><div id="JXG2da7e972-ac62-416b-a94b-32559c9ec9f9" class="jxgbox" style="width: 300px; height: 300px;"></div>
+             * <script type="text/javascript">
+             *     (function() {
+             *         var board = JXG.JSXGraph.initBoard('JXG2da7e972-ac62-416b-a94b-32559c9ec9f9',
+             *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+             *     var txt = board.create('text', [2, 2, "hello"], {fontSize: 8, fontUnit: 'vmin'});
+             * 
+             *     })();
+             * 
+             * </script><pre>
+             * 
+             */
+            fontUnit: 'px',
 
             /**
              * Used to round texts given by a number.

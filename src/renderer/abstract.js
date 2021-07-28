@@ -1202,6 +1202,7 @@ define([
                 display = Env.isBrowser ? ev.display : 'internal',
                 nodeList = ['rendNode', 'rendNodeTag', 'rendNodeLabel'],
                 lenN = nodeList.length,
+                fontUnit = Type.evaluate(ev.fontunit),
                 cssList, prop, style, cssString,
                 styleList = ['cssdefaultstyle', 'cssstyle'],
                 lenS = styleList.length;
@@ -1254,7 +1255,7 @@ define([
                     try {
                         for (node = 0; node < lenN; node++) {
                             if (Type.exists(el[nodeList[node]])) {
-                                el[nodeList[node]].style.fontSize = fs + 'px';
+                                el[nodeList[node]].style.fontSize = fs + fontUnit;
                             }
                         }
                     } catch (e) {

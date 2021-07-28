@@ -1073,6 +1073,7 @@ define([
         // already documented in JXG.AbstractRenderer
         drawInternalText: function (el) {
             var ev_fs = Type.evaluate(el.visProp.fontsize),
+                fontUnit = Type.evaluate(el.visProp.fontunit),
                 ev_ax = el.getAnchorX(),
                 ev_ay = el.getAnchorY(),
                 context = this.context;
@@ -1080,7 +1081,7 @@ define([
             context.save();
             if (this._setColor(el, 'stroke', 'fill') &&
                     !isNaN(el.coords.scrCoords[1] + el.coords.scrCoords[2])) {
-                context.font = (ev_fs > 0 ? ev_fs : 0) + 'px Arial';
+                context.font = (ev_fs > 0 ? ev_fs : 0) + fontUnit + ' Arial';
 
                 this.transformImage(el, el.transformations);
                 if (ev_ax === 'left') {
