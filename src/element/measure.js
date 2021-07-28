@@ -50,8 +50,8 @@
  */
 
 define([
-    'jxg', 'utils/type', 'base/element', 'base/point', 'base/line', 'base/ticks'
-], function (JXG, Type, GeometryElement, Point, Line, Ticks) {
+    'jxg', 'utils/type', 'base/element'
+], function (JXG, Type, GeometryElement) {
 
     "use strict";
 

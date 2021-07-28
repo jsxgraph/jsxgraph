@@ -31,7 +31,7 @@
 
 
 /*global JXG: true, define: true*/
-/*jslint nomen: true, plusplus: true*/
+/*jslint nomen: true, plusplus: true, unparam: true*/
 
 /* depends:
  jxg
@@ -46,8 +46,8 @@
  */
 
 define([
-    'jxg', 'base/constants', 'base/coords', 'math/math', 'math/statistics', 'options', 'parser/geonext', 'utils/event', 'utils/color', 'utils/type'
-], function (JXG, Const, Coords, Mat, Statistics, Options, GeonextParser, EventEmitter, Color, Type) {
+    'jxg', 'base/constants', 'base/coords', 'math/math', 'math/statistics', 'options', 'utils/event', 'utils/color', 'utils/type'
+], function (JXG, Const, Coords, Mat, Statistics, Options, EventEmitter, Color, Type) {
 
     "use strict";
 

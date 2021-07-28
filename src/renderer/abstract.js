@@ -37,7 +37,7 @@
     plusplus: Only allowed in for-loops
     newcap:   AsciiMathMl exposes non-constructor functions beginning with upper case letters
 */
-/*jslint nomen: true, plusplus: true, newcap:true*/
+/*jslint nomen: true, plusplus: true, newcap: true, unparam: true*/
 
 /* depends:
  jxg
@@ -738,7 +738,7 @@ define([
          * @param {Object} a
          */
         handleTouchpoints: function(el, c1, c2, a) {
-            var s1, s2, s, d,
+            var s1, s2, d,
                 d1x, d1y, d2x, d2y;
 
             if (a.evFirst || a.evLast) {
@@ -746,7 +746,6 @@ define([
 
                 s1 = Type.evaluate(el.point1.visProp.size) + Type.evaluate(el.point1.visProp.strokewidth);
                 s2 = Type.evaluate(el.point2.visProp.size) + Type.evaluate(el.point2.visProp.strokewidth);
-                s = s1 + s2;
 
                 // Handle touchlastpoint /touchfirstpoint
                 if (a.evFirst && Type.evaluate(el.visProp.touchfirstpoint)) {
@@ -1735,8 +1734,7 @@ define([
          * @see JXG.AbstractRenderer#updateTextStyle
          */
         highlight: function (el) {
-            var i, ev = el.visProp,
-                sw, obj;
+            var i, ev = el.visProp, sw;
 
             this.setObjectTransition(el);
             if (!ev.draft) {
@@ -1783,8 +1781,7 @@ define([
          * @see JXG.AbstractRenderer#updateTextStyle
          */
         noHighlight: function (el) {
-            var i, ev = el.visProp,
-                obj, sw;
+            var i, ev = el.visProp, sw;
 
             this.setObjectTransition(el);
             if (!Type.evaluate(el.visProp.draft)) {

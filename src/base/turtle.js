@@ -52,8 +52,8 @@
  */
 
 define([
-    'jxg', 'base/constants', 'base/element', 'utils/type', 'base/curve', 'base/point', 'base/line', 'base/transformation'
-], function (JXG, Const, GeometryElement, Type, Curve, Point, Line, Transform) {
+    'jxg', 'base/constants', 'base/element', 'utils/type'
+], function (JXG, Const, GeometryElement, Type) {
 
     "use strict";
 

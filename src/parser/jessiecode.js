@@ -1385,13 +1385,13 @@ define([
                 case 'op_eq':
                     // == is intentional
                     /*jslint eqeq:true*/
-                    ret = this.execute(node.children[0]) === this.execute(node.children[1]);
+                    ret = this.execute(node.children[0]) == this.execute(node.children[1]);
                     /*jslint eqeq:false*/
                     break;
                 case 'op_neq':
                     // != is intentional
                     /*jslint eqeq:true*/
-                    ret = this.execute(node.children[0]) !== this.execute(node.children[1]);
+                    ret = this.execute(node.children[0]) != this.execute(node.children[1]);
                     /*jslint eqeq:true*/
                     break;
                 case 'op_approx':

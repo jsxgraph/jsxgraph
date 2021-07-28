@@ -1417,7 +1417,7 @@ define([
      * </script><pre>
      */
     JXG.createTangent = function (board, parents, attributes) {
-        var p, c, g, f, j, el, tangent;
+        var p, c, j, el, tangent;
 
         // One argument: glider on line, circle or curve
         if (parents.length === 1) {

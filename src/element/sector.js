@@ -48,9 +48,8 @@
  */
 
 define([
-    'jxg', 'math/geometry', 'math/math', 'math/statistics', 'base/coords', 'base/constants', 'utils/type', 'base/point', 'base/curve',
-    'base/transformation', 'element/composition'
-], function (JXG, Geometry, Mat, Statistics, Coords, Const, Type, Point, Curve, Transform, Compositions) {
+    'jxg', 'math/geometry', 'math/math', 'math/statistics', 'base/coords', 'base/constants', 'utils/type'
+], function (JXG, Geometry, Mat, Statistics, Coords, Const, Type) {
 
     "use strict";
 

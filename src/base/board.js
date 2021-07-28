@@ -786,7 +786,7 @@ define([
                 docElement = this.document.documentElement || this.document.body.parentNode,
                 docBody = this.document.body,
                 container = this.containerObj,
-                viewport, content,
+                // viewport, content,
                 zoom, o;
 
             /**
@@ -2003,9 +2003,7 @@ define([
          * pointer-Events
          */
         _pointerIsTouchRegistered: function(evt) {
-            var i,
-                len = this._board_touches.length,
-                found = false;
+            var i, len = this._board_touches.length;
 
             for (i = 0; i < len; i++) {
                 if (this._board_touches[i].pointerId === evt.pointerId) {
@@ -2091,7 +2089,7 @@ define([
         pointerDownListener: function (evt, object) {
             var i, j, k, pos, elements, sel,
                 type = 'mouse', // in case of no browser
-                found, target, result;
+                found, target;
 
             // Temporary fix for Firefox pointer events:
             // When using two fingers, the first touch down event is fired again.
@@ -2447,7 +2445,7 @@ define([
          * @returns {Boolean} ...
          */
         touchStartListener: function (evt) {
-            var i, pos, elements, j, k, time,
+            var i, pos, elements, j, k,
                 eps = this.options.precision.touch,
                 obj, found, targets,
                 evtTouches = evt[JXG.touchProperty],
@@ -3500,7 +3498,7 @@ define([
          *
          */
         displayInfobox: function(val) {
-            if (this.infobox.hiddenByParent == val) {
+            if (this.infobox.hiddenByParent === val) {
                 this.infobox.hiddenByParent = !val;
                 this.infobox.prepareUpdate().updateVisibility(val).updateRenderer();
             }

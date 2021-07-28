@@ -52,9 +52,8 @@
  */
 
 define([
-    'jxg', 'options', 'math/math', 'math/geometry', 'math/numerics', 'math/statistics', 'base/coords', 'base/constants', 'base/element',
-    'parser/geonext', 'utils/type', 'base/transformation'
-], function (JXG, Options, Mat, Geometry, Numerics, Statistics, Coords, Const, GeometryElement, GeonextParser, Type, Transform) {
+    'jxg', 'math/math', 'math/geometry', 'math/numerics', 'math/statistics', 'base/coords', 'base/constants', 'utils/type',
+], function (JXG, Mat, Geometry, Numerics, Statistics, Coords, Const, Type) {
 
     "use strict";
 

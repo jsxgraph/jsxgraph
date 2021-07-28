@@ -124,7 +124,7 @@ define([
                 }
                 context.beginPath();
                 context.moveTo(shape[0][0], shape[0][1]);
-                if (degree == 1) {
+                if (degree === 1) {
                     for (i = 1; i < len; i++) {
                         context.lineTo(shape[i][0], shape[i][1]);
                     }
@@ -526,7 +526,7 @@ define([
                 context.lineTo(scr[1] + s05, scr[2] - sqrt32);
                 context.lineTo(scr[1] + s05, scr[2] + sqrt32);
                 context.closePath();
-                this.fill(el);
+                this._fill(el);
                 this._stroke(el);
                 break;
             case 'triangleright':
@@ -1447,12 +1447,13 @@ define([
 
         // documented in AbstractRenderer
         setGradient: function (el) {
-            var col, op;
+            var // col,
+                op;
 
             op = Type.evaluate(el.visProp.fillopacity);
             op = (op > 0) ? op : 0;
 
-            col = Type.evaluate(el.visProp.fillcolor);
+            // col = Type.evaluate(el.visProp.fillcolor);
         },
 
         // documented in AbstractRenderer
