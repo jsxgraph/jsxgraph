@@ -3285,7 +3285,7 @@ define([
             }
 
             this.resizeObserver = new ResizeObserver(function(entries) {
-                if (!that._isScrolling && !that._isResizing) {
+                if (!that._isResizing) {
                     that._isResizing = true;
                     window.setTimeout(function() {
                         that.updateContainerDims();
