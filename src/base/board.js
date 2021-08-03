@@ -1520,9 +1520,6 @@ define([
                 this.addMouseEventHandlers();
                 this.addTouchEventHandlers();
             }
-            //if (Env.isBrowser) {
-            //Env.addEvent(window, 'resize', this.update, this);
-            //}
 
             // This one produces errors on IE
             //Env.addEvent(this.containerObj, 'contextmenu', function (e) { e.preventDefault(); return false;}, this);
