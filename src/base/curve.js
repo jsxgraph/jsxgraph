@@ -2396,14 +2396,75 @@ define([
 
     JXG.registerElement('derivative', JXG.createDerivative);
 
+    JXG.createCurveIntersection = function (board, parents, attributes) {
+        var c;
+
+        if (parents.length !== 2) {
+            throw new Error("JSXGraph: Can't create curve intersection with given parent'" +
+                "\nPossible parent types: [array, array|function]");
+        }
+
+        c = board.create('curve', [[], []], attributes);
+        c.updateDataArray = function() {
+             var a = JXG.Math.Clip.intersection(parents[0], parents[1], this.board);
+             this.dataX = a[0];
+             this.dataY = a[1];
+        };
+        return c;
+    };
+
+    JXG.createCurveUnion = function (board, parents, attributes) {
+        var c;
+
+        if (parents.length !== 2) {
+            throw new Error("JSXGraph: Can't create curve union with given parent'" +
+                "\nPossible parent types: [array, array|function]");
+        }
+
+        c = board.create('curve', [[], []], attributes);
+        c.updateDataArray = function() {
+             var a = JXG.Math.Clip.union(parents[0], parents[1], this.board);
+             this.dataX = a[0];
+             this.dataY = a[1];
+        };
+        return c;
+    };
+
+    JXG.createCurveDifference = function (board, parents, attributes) {
+        var c;
+
+        if (parents.length !== 2) {
+            throw new Error("JSXGraph: Can't create curve difference with given parent'" +
+                "\nPossible parent types: [array, array|function]");
+        }
+
+        c = board.create('curve', [[], []], attributes);
+        c.updateDataArray = function() {
+             var a = JXG.Math.Clip.difference(parents[0], parents[1], this.board);
+             this.dataX = a[0];
+             this.dataY = a[1];
+        };
+        return c;
+    };
+
+    JXG.registerElement('curvedifference', JXG.createCurveDifference);
+    JXG.registerElement('curveintersection', JXG.createCurveIntersection);
+    JXG.registerElement('curveunion', JXG.createCurveUnion);
+
     return {
         Curve: JXG.Curve,
+        createCardinalSpline: JXG.createCardinalSpline,
         createCurve: JXG.createCurve,
+        createCurveDifference: JXG.createCurveDifference,
+        createCurveIntersection: JXG.createCurveIntersection,
+        createCurveUnion: JXG.createCurveUnion,
+        createDerivative: JXG.createDerivative,
         createFunctiongraph: JXG.createFunctiongraph,
-        createPlot: JXG.createPlot,
+        createMetapostSpline: JXG.createMetapostSpline,
+        createPlot: JXG.createFunctiongraph,
         createSpline: JXG.createSpline,
         createRiemannsum: JXG.createRiemannsum,
-        createTracecurve: JXG.createTracecurve,
-        createStepfunction: JXG.createStepfunction
+        createStepfunction: JXG.createStepfunction,
+        createTracecurve: JXG.createTracecurve
     };
 });
