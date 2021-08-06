@@ -3443,6 +3443,27 @@ declare module JXG {
         create(elementType: 'curve', parents: unknown[], attributes?: CurveAttributes): Curve;
         /**
          * 
+         * @param elementType 'curvedifference'
+         * @param parents 
+         * @param attributes 
+         */
+        create(elementType: 'curvedifference', parents: unknown[], attributes?: CurveAttributes): Curve;
+        /**
+         * 
+         * @param elementType 'curveintersection'
+         * @param parents 
+         * @param attributes 
+         */
+        create(elementType: 'curveintersection', parents: unknown[], attributes?: CurveAttributes): Curve;
+        /**
+         * 
+         * @param elementType 'curveunion'
+         * @param parents 
+         * @param attributes 
+         */
+        create(elementType: 'curveunion', parents: unknown[], attributes?: CurveAttributes): Curve;
+        /**
+         * 
          * @param elementType 'ellipse'
          * @param parents 
          * @param attributes 
@@ -4457,6 +4478,13 @@ declare module JXG {
      */
     export interface Math {
         /**
+         * Functional version of binary operator && 
+         * param a.
+         * param b.
+         * returns Boolean value of a && b.
+         */
+        and(a: boolean, b: boolean): boolean;
+        /**
          * eps defines the closeness to zero.
          * If the absolute value of a given number is smaller than eps, it is considered to be equal to zero.
          */
@@ -4472,7 +4500,7 @@ declare module JXG {
          *
          * param x
          */
-         asinh(x: number): number;
+        asinh(x: number): number;
          /**
          * Computes the binomial coefficient n over k.
          * param n
@@ -4484,6 +4512,13 @@ declare module JXG {
          * param x
          */
         cosh(x: number): number;
+        /**
+         * Functional version of binary operator === 
+         * param a.
+         * param b.
+         * returns Boolean value of a === b.
+         */
+        eq(a: number, b: number): boolean;
         /**
          * Error function
          *
@@ -4502,16 +4537,44 @@ declare module JXG {
          * param x
          */
          erfi(x: number): number;
-         /**
+        /**
          * Compute the factorial of a positive integer. If a non-integer value is given, the fraction will be ignored.
          * @param n
          * @returns n! = n * (n-1) * ... * 2 * 1
          */
         factorial(n: number): number;
         /**
+         * Functional version of binary operator >= 
+         * param a.
+         * param b.
+         * returns Boolean value of a >= b.
+         */
+        geq(a: number, b: number): boolean;
+        /**
+         * Functional version of binary operator > 
+         * param a.
+         * param b.
+         * returns Boolean value of a > b.
+         */
+        gt(a: number, b: number): boolean;
+        /**
          * Compute the inverse of an nxn matrix with Gauss elimination.
          */
         inverse(Ain: number[][]): number[][];
+        /**
+         * Functional version of binary operator <= 
+         * param a.
+         * param b.
+         * returns Boolean value of a <= b.
+         */
+        leq(a: number, b: number): boolean;
+        /**
+         * Functional version of binary operator < 
+         * param a.
+         * param b.
+         * returns Boolean value of a < b.
+         */
+        lt(a: number, b: number): boolean;
         /**
          * Computes the product of the two matrices mat1*mat2.
          * param mat1 Two dimensional array of numbers.
@@ -4540,11 +4603,38 @@ declare module JXG {
          */
         ndtri(x: number): number;
         /**
+         * Functional version of binary operator !== 
+         * param a.
+         * param b.
+         * returns Boolean value of a !== b.
+         */
+        neq(a: number, b: number): boolean;
+        /**
+         * Functional version of unary operator ! 
+         * param a.
+         * param b.
+         * returns Boolean value of !a.
+         */
+        not(a: number): boolean;
+        /**
          * Computes base to the power of exponent.
          * @param base
          * @param exponent
          */
         pow(base: number, exponent: number): number;
+        /**
+         * Functional version of binary operator || 
+         * param a.
+         * param b.
+         * returns Boolean value of a || b.
+         */
+        or(a: boolean, b: boolean): boolean;
+        /**
+         * Sine hyperbolicus of x.
+         * param x The number the sine hyperbolicus will be calculated of.
+         * returns Sine hyperbolicus of the given value.
+         */
+        sinh(x: number): number;
         /**
          * Transposes a matrix given as a two dimensional array.
          * param M The matrix to be transposed.
@@ -4552,16 +4642,75 @@ declare module JXG {
          */
         transpose(M: number[][]): number[][];
         /**
-         * Sine hyperbolicus of x.
-         * param x The number the sine hyperbolicus will be calculated of.
-         * returns Sine hyperbolicus of the given value.
+         * Functional version of a binary operator xor 
+         * param a.
+         * param b.
+         * returns Boolean value of a xor b.
          */
-        sinh(x: number): number {
+        xor(a: boolean, b: boolean): boolean;
 
+/* -------------------------------------------------- */
         /**
-         * This namespace contains algorithms for Boolean operations on paths, i.e. intersection, union and difference of paths.
-         * Base is the Greiner-Hormann algorithm.
+         * Inner product of two vectors a and b. n is the length of the vectors.
+         * param a 
+         * param b
+         * param n optional
+         * returns Inner product of a and b.
          */
+        innerProduct(a: number[], a: number[], n number): number;
+        /**
+         * Cross product of two vectors a and b, both of length three.
+         * param a 
+         * param b
+         * returns Cross product of a and b.
+         */
+        crossProduct(a: number[], a: number[]): number;
+        /**
+         * Euclidean norm of vector a of length n.
+         * param a 
+         * param n
+         * returns Euclidean norm of a.
+         */
+        norm(a: number[], n number): number;
+        /**
+         * Euclidean norm of vector a of length n.
+         * param a 
+         * param n
+         * returns Euclidean norm of a.
+         */
+        norm(a: number[], n number): number;
+        /**
+         * Computes the cotangent of x.
+         * param x
+         */
+        cot(x: number): number;
+        /**
+         * Computes the inverse of cotangent of x.
+         * param x
+         */
+        acot(x: number): number;
+        /**
+         * Compute n-th real root of a real number. n must be strictly positive integer.
+         * If n is odd, the real n-th root exists and is negative.
+         * For n even, for negative valuees of x NaN is returned.
+         * param a
+         * param n
+         */
+        nthroot(a: number, n: number): number;
+        /**
+         * Computes cube root of real number.
+         * param a
+         */
+        cbrt(a: number): number;
+        /**
+         * Compute base to the power of the rational exponent m / n.
+         * This function first reduces the fraction m/n and then computes JXG.Math.pow(base, m/n).
+         * param a
+         */
+        ratpow: function(base: number, m: number, n: number): number;
+
+/* -------------------------------------------------- */
+
         Clip: Clip;
         Geometry: Geometry;
         /**

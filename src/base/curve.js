@@ -2007,7 +2007,6 @@ define([
 
     JXG.registerElement('metapostspline', JXG.createMetapostSpline);
 
-
     /**
      * @class This element is used to provide a constructor for Riemann sums, which is realized as a special curve.
      * The returned element has the method Value() which returns the sum of the areas of the bars.
@@ -2396,6 +2395,19 @@ define([
 
     JXG.registerElement('derivative', JXG.createDerivative);
 
+    /**
+     * @class Intersection of two closed path elements. The elements may be of type curve, circle, polygon, inequality.
+     * If one element is a curve, it has to be closed.
+     * The resulting element is of type curve.
+     * @pseudo
+     * @description
+     * @name CurveIntersection
+     * @param {JXG.Curve|JXG.Polygon|JXG.Circle} curve1 First element which is intersected
+     * @param {JXG.Curve|JXG.Polygon|JXG.Circle} curve2 Second element which is intersected
+     * @augments JXG.Curve
+     * @constructor
+     * @type JXG.Curve
+     */
     JXG.createCurveIntersection = function (board, parents, attributes) {
         var c;
 
@@ -2413,7 +2425,20 @@ define([
         return c;
     };
 
-    JXG.createCurveUnion = function (board, parents, attributes) {
+    /**
+     * @class Union of two closed path elements. The elements may be of type curve, circle, polygon, inequality.
+     * If one element is a curve, it has to be closed.
+     * The resulting element is of type curve.
+     * @pseudo
+     * @description
+     * @name CurveUnion
+     * @param {JXG.Curve|JXG.Polygon|JXG.Circle} curve1 First element defining the union
+     * @param {JXG.Curve|JXG.Polygon|JXG.Circle} curve2 Second element defining the union
+     * @augments JXG.Curve
+     * @constructor
+     * @type JXG.Curve
+     */
+     JXG.createCurveUnion = function (board, parents, attributes) {
         var c;
 
         if (parents.length !== 2) {
@@ -2430,7 +2455,20 @@ define([
         return c;
     };
 
-    JXG.createCurveDifference = function (board, parents, attributes) {
+    /**
+     * @class Difference of two closed path elements. The elements may be of type curve, circle, polygon, inequality.
+     * If one element is a curve, it has to be closed.
+     * The resulting element is of type curve.
+     * @pseudo
+     * @description
+     * @name CurveDifference
+     * @param {JXG.Curve|JXG.Polygon|JXG.Circle} curve1 First element from which the second element is "subtracted"
+     * @param {JXG.Curve|JXG.Polygon|JXG.Circle} curve2 Second element which is subtracted from the first element
+     * @augments JXG.Curve
+     * @constructor
+     * @type JXG.Curve
+     */
+     JXG.createCurveDifference = function (board, parents, attributes) {
         var c;
 
         if (parents.length !== 2) {
