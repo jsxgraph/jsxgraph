@@ -1,3 +1,43 @@
+1.3.0
+====
+
+New features
+-----------
+
+- Responsiveness: updates bounding box on resize and when changing from display:none.
+- New board attribute `moveTarget` allows to continue dragging outside of the board
+- New attribute `fontUnit` for texts
+- New arrow head type 7
+- New JSXGraph objects curvedifference, curveintersection, curveunion 
+- Keyboard control of JSXGraph
+- Support attribute `src` in JessieCode tags
+- New math functions erf, erfc, erfi, ndtr, ndtri, acosh, asinh
+- New math functions (comparisons as functions): lt, gt, leq, geq, eq, neq, and, or, not, xor
+- New method: point.isOn(element)
+
+
+Improvements
+------------
+
+- Arrows on curves: default arrow type 7
+- Pixel position of texts is no longer rounded
+- API docs
+- Remove internal helper points if parent object is deleted
+- update index.d.ts
+- new default: minimizeReflow:'none'
+- new method `coordsOnArc`
+- intersection with arc behaves like intersection with circle
+
+
+Bug fixes
+---------
+
+- slopeTriangle: attribute `topPoint`
+- snapping of glider to curve
+- magnetized points on polygons
+- JessieCode parser
+
+
 1.2.3
 ====
 
