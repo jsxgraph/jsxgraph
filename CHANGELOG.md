@@ -15,7 +15,6 @@ New features
 - New math functions (comparisons as functions): lt, gt, leq, geq, eq, neq, and, or, not, xor
 - New method: point.isOn(element)
 
-
 Improvements
 ------------
 
@@ -36,7 +35,7 @@ Bug fixes
 - snapping of glider to curve
 - magnetized points on polygons
 - JessieCode parser
-
+- Clipping: shapes with holes
 
 1.2.3
 ====
