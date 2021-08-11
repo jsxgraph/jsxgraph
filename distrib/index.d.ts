@@ -4536,13 +4536,21 @@ declare module JXG {
          *
          * param x
          */
-         erfi(x: number): number;
+        erfi(x: number): number;
         /**
          * Compute the factorial of a positive integer. If a non-integer value is given, the fraction will be ignored.
          * @param n
          * @returns n! = n * (n-1) * ... * 2 * 1
          */
         factorial(n: number): number;
+        /**
+         * Greatest common divisor (gcd) of two numbers.
+         *
+         * param a.
+         * param b.
+         * returns gcd(a, b) if a and b are numbers, NaN else.
+         */
+        gcd(a: number, b: number): number;
         /**
          * Functional version of binary operator >= 
          * param a.
@@ -4562,6 +4570,14 @@ declare module JXG {
          */
         inverse(Ain: number[][]): number[][];
         /**
+         * Least common multiple (lcm) of two numbers.
+         *
+         * param a.
+         * param b.
+         * returns lcm(a, b) if a and b are numbers, NaN else.
+         */
+        lcm(a: number, b: number): number;
+        /**
          * Functional version of binary operator <= 
          * param a.
          * param b.
@@ -4569,7 +4585,19 @@ declare module JXG {
          */
         leq(a: number, b: number): boolean;
         /**
-         * Functional version of binary operator < 
+         * Logarithm to base 10.
+         * param a.
+         * returns logarithm of a to base 10.
+         */
+        log10(a: number): number;
+        /**
+         * Logarithm to base 2.
+         * param a.
+         * returns logarithm of a to base 2.
+         */
+        log2(a: number): number;
+        /**
+         * Functional version of binary operator <
          * param a.
          * param b.
          * returns Boolean value of a < b.
@@ -4590,6 +4618,14 @@ declare module JXG {
          * returns Array of numbers containing the result.
          */
         matVecMult(mat: number[][], vec: number[]): number[];
+        /**
+         * The Javascript implementation of the % operator returns the symmetric modulo.
+         * mod and "%" are both identical if a >= 0 and m >= 0 but the results differ if a or m < 0.
+         * param a.
+         * param m.
+         * returns mathematical modulo a mod m.
+         */
+        mod(a: number, m: number): number;
         /**
          * Normal distribution function
          *
@@ -4617,24 +4653,39 @@ declare module JXG {
          */
         not(a: number): boolean;
         /**
-         * Computes base to the power of exponent.
-         * @param base
-         * @param exponent
-         */
-        pow(base: number, exponent: number): number;
-        /**
-         * Functional version of binary operator || 
+         * Functional version of binary operator ||
          * param a.
          * param b.
          * returns Boolean value of a || b.
          */
         or(a: boolean, b: boolean): boolean;
         /**
+         * Computes base to the power of exponent.
+         * @param base
+         * @param exponent
+         */
+        pow(base: number, exponent: number): number;
+        /**
+         * Determine the relative difference between two numbers.
+         * param a.
+         * param b.
+         * returns Relative difference between a and b: |a-b| / max(|a|, |b|).
+         */
+        relDif(a: number, b: number): number;
+        /**
          * Sine hyperbolicus of x.
          * param x The number the sine hyperbolicus will be calculated of.
          * returns Sine hyperbolicus of the given value.
          */
         sinh(x: number): number;
+        /**
+         * A square & multiply algorithm to compute base to the power of exponent.
+         *
+         * param base.
+         * param exponent.
+         * returns base to the power of exponent.
+         */
+        squampow(base: number, exponent: number): number;
         /**
          * Transposes a matrix given as a two dimensional array.
          * param M The matrix to be transposed.
@@ -4665,13 +4716,6 @@ declare module JXG {
          * returns Cross product of a and b.
          */
         crossProduct(a: number[], a: number[]): number;
-        /**
-         * Euclidean norm of vector a of length n.
-         * param a 
-         * param n
-         * returns Euclidean norm of a.
-         */
-        norm(a: number[], n number): number;
         /**
          * Euclidean norm of vector a of length n.
          * param a 

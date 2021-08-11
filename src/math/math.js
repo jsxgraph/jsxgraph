@@ -109,7 +109,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
 
         /**
          * The JavaScript implementation of the % operator returns the symmetric modulo.
-         * They are both identical if a >= 0 and m >= 0 but the results differ if a or m < 0.
+         * mod and "%" are both identical if a >= 0 and m >= 0 but the results differ if a or m < 0.
          * @param {Number} a
          * @param {Number} m
          * @returns {Number} Mathematical modulo <tt>a mod m</tt>
@@ -772,7 +772,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          * @param  {Number} b Second number
          * @returns {Number}   gcd(a, b) if a and b are numbers, NaN else.
          */
-        gcd: function (a,b) {
+        gcd: function (a, b) {
             a = Math.abs(a);
             b = Math.abs(b);
 
@@ -800,7 +800,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          * @param  {Number} b Second number
          * @returns {Number}   lcm(a, b) if a and b are numbers, NaN else.
          */
-        lcm: function (a,b) {
+        lcm: function (a, b) {
             var ret;
 
             if (!(Type.isNumber(a) && Type.isNumber(b))) {
