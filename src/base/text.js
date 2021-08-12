@@ -50,8 +50,8 @@
 
 define([
     'jxg', 'base/constants', 'base/element', 'parser/geonext',
-    'utils/env', 'utils/type', 'math/math', 'math/geometry', 'base/coordselement'
-], function (JXG, Const, GeometryElement, GeonextParser, Env, Type, Mat, Geometry, CoordsElement) {
+    'utils/env', 'utils/type', 'math/math', 'base/coordselement'
+], function (JXG, Const, GeometryElement, GeonextParser, Env, Type, Mat, CoordsElement) {
 
     "use strict";
 
@@ -194,13 +194,14 @@ define([
         _setUpdateText: function (text) {
             var updateText, resolvedText,
                 ev_p = Type.evaluate(this.visProp.parse),
-                ev_um = Type.evaluate(this.visProp.usemathjax);
+                ev_um = Type.evaluate(this.visProp.usemathjax),
+                ev_uk = Type.evaluate(this.visProp.usekatex);
 
             this.orgText = text;
             if (Type.isFunction(text)) {
                 this.updateText = function () {
                     resolvedText = text().toString();
-                    if (ev_p && !ev_um) {
+                    if (ev_p && !ev_um && !ev_uk) {
                         this.plaintext = this.replaceSub(this.replaceSup(this.convertGeonext2CSS(resolvedText)));
                     } else {
                         this.plaintext = resolvedText;
@@ -217,7 +218,7 @@ define([
                     if (Type.evaluate(this.visProp.useasciimathml)) {
                         // Convert via ASCIIMathML
                         this.content = "'`" + text + "`'";
-                    } else if (ev_um) {
+                    } else if (ev_um || ev_uk) {
                         this.content = "'" + text + "'";
                     } else {
                         // Converts GEONExT syntax into JavaScript string
@@ -336,9 +337,7 @@ define([
                     //         that.needsUpdate = true;
                     //         that.updateRenderer();
                     //     }, 0);
-                    //     console.log("HERE");
                     // } else {
-                    //     console.log("tHERE");
                     //     this.size = s;
                     // }
                 } else {
@@ -793,7 +792,8 @@ define([
 
             // Set the precision of hasPoint to half the max if label isn't too long
             savePointPrecision = this.board.options.precision.hasPoint;
-            this.board.options.precision.hasPoint = Math.max(w, h) * 0.5;
+            // this.board.options.precision.hasPoint = Math.max(w, h) * 0.5;
+            this.board.options.precision.hasPoint = (w + h) * 0.25;
             // TODO:
             // Make it compatible with the objects' visProp.precision attribute
 			for (i = 0, le = this.board.objectsList.length; i < le; i++) {
@@ -826,14 +826,21 @@ define([
                 w = this.size[0],
                 h = this.size[1],
                 start_angle, angle,
-                min_conflicts = Infinity,
-                min_angle,
+                optimum = {
+                    conflicts: Infinity,
+                    angle: 0,
+                    r: 0
+                },
+                max_r, delta_r,
                 conflicts, offset, r,
                 num_positions = 12,
                 step = 2 * Math.PI / num_positions,
                 j, dx, dy, co, si;
 
-            if (this === this.board.infobox || !Type.evaluate(this.visProp.islabel) || !this.element) {
+            if (this === this.board.infobox ||
+                !this.visPropCalc.visible ||
+                !Type.evaluate(this.visProp.islabel) ||
+                !this.element) {
                 return this;
             }
 
@@ -853,50 +860,44 @@ define([
             if (conflicts === 0) {
                 return this;
             }
+            // console.log(this.id, conflicts, w, h);
+            // r = Geometry.distance([0, 0], offset, 2);
 
-            r = Geometry.distance([0, 0], [dx, dy], 2);
+            r = 12;
+            max_r = 28;
+            delta_r = 0.2 * r;
 
             start_angle = Math.atan2(dy, dx);
-            min_angle = start_angle;
-            min_conflicts = conflicts;
 
-            for (j = 1, angle = start_angle + step; j < num_positions; j++) {
-                co = Math.cos(angle);
-                si = Math.sin(angle);
+            optimum.conflicts = conflicts;
+            optimum.angle     = start_angle;
+            optimum.r         = r;
 
-                x = cx + r * co;
-                // if (co < -0.2) {
-                //     x -= w * 0.5;
-                // } else if (co > 0.2) {
-                //     x += w * 0.5;
-                // }
+            while (optimum.conflicts > 0 && r < max_r) {
+                for (j = 1, angle = start_angle + step; j < num_positions && optimum.conflicts > 0; j++) {
+                    co = Math.cos(angle);
+                    si = Math.sin(angle);
 
-                y = cy - r * si;
-                // if (si > -0.2 && si < 0.0) {
-                //     y += h * 0.5;
-                // } else if (si >= 0.0 && si < 0.2) {
-                //     y -= h * 0.5;
-                // }
-                // if (si < -0.2) {
-                //     y += h * 0.5;
-                // } else if (si > 0.2) {
-                //     y -= h * 0.5;
-                // }
-
-                conflicts = this.getNumberofConflicts(x, y, w, h);
-                if (conflicts < min_conflicts) {
-                    min_conflicts = conflicts;
-                    min_angle = angle;
+                    x = cx + r * co;
+                    y = cy - r * si;
+                
+                    conflicts = this.getNumberofConflicts(x, y, w, h);
+                    if (conflicts < optimum.conflicts) {
+                        optimum.conflicts = conflicts;
+                        optimum.angle     = angle;
+                        optimum.r         = r;
+                    }
+                    if (optimum.conflicts === 0) {
+                        break;
+                    }
+                    angle += step;
                 }
-                if (min_conflicts === 0) {
-                    break;
-                }
-                angle += step;
+                r += delta_r;
             }
-
-            r = Geometry.distance([0, 0], offset, 2);
-            co = Math.cos(min_angle);
-            si = Math.sin(min_angle);
+            // console.log(this.id, "after", optimum)
+            r = optimum.r;
+            co = Math.cos(optimum.angle);
+            si = Math.sin(optimum.angle);
             this.visProp.offset = [r * co, r * si];
 
             if (co < -0.2) {
@@ -906,13 +907,6 @@ define([
             } else {
                 this.visProp.anchorx = 'middle';
             }
-            // if (si < -0.2) {
-            //     this.visProp.anchory = 'top';
-            // } else if (si > 0.2) {
-            //     this.visProp.anchory = 'bottom';
-            // } else {
-            //     this.visProp.anchory = 'middle';
-            // }
 
             return this;
         }

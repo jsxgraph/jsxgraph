@@ -1,3 +1,69 @@
+1.3.0
+====
+
+New features
+-----------
+
+- Responsiveness:
+  - JSXGraph updates bounding box on resize events triggered by resizeObserver, also e.g. when changing from display:none.
+  - New board attribute `moveTarget` allows to continue dragging outside of the board
+  - New attribute `fontUnit` for texts
+- Accessibility: keyboard control of JSXGraph boards
+- New JSXGraph objects `curvedifference`, `curveintersection`, `curveunion`
+- New arrow head type 7
+- JessieCode: JessieCode tags support attribute `src`.
+- New math functions erf, erfc, erfi, ndtr, ndtri, acosh, asinh
+- New math functions (comparisons and logical operators as functions): lt, gt, leq, geq, eq, neq, and, or, not, xor
+- New method: point.isOn(element)
+
+Improvements
+------------
+
+- Arrows on curves: default arrow type 7
+- Smoother animations of texts: pixel position of texts is no longer rounded
+- Remove internal helper points if parent object is deleted (somewhat experimental)
+- new default: minimizeReflow:'none'
+- new method `coordsOnArc`
+- intersection with arc behaves like intersection with circle
+- TypeScript: improve and update `index.d.ts`
+- API docs
+
+
+Bug fixes
+---------
+
+- slopeTriangle: attribute `topPoint`
+- snapping of glider to curve
+- magnetized points on polygons
+- JessieCode parser
+- Clipping: shapes with holes
+
+1.2.3
+====
+
+Improvements
+------------
+
+- `el.hideElement()`, `el.showElement()` not deprecated anymore. Same as `el.setAttribute({visible:false/true})`
+- Better auto positiong of labels
+- `board.fullUpdate()` updates size info of text elements. This is helpful for JSXGraph constructions which are initialised in a hidden parent element. When the board becomes visible, a call of board.fullUpdate() is sufficient to correct the position of the text elements. This can be triggered in an event listener (by the developer). See <https://github.com/jsxgraph/jsxgraph/issues/348>.
+
+Bug fixes
+---------
+
+- Fix bugs in API doc
+- MathJax texts in fullscreen mode
+- Plot of conic sections of type parabola
+
+
+New features
+-----------
+
+- KaTex support (`useKatex:true`)
+- Add Typescript definition file `index.d.ts` (not yet complete). Thanks to David Holmes!!!
+- `el.hide()`, `el.show()`, alias for `el.hideElement()`, `el.showElement()`.
+- Experimental: new polygon points will be deleted if polygon is deleted. In the future, this might be done in other cases, too.
+
 1.2.2
 ====
 

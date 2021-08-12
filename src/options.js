@@ -490,7 +490,10 @@ define([
 
             /**
              * Change redraw strategy in SVG rendering engine.
-             *
+             * <p>
+             * This optimization seems to be <b>obsolete</b> in newer browsers (from 2021 on, at least)
+             * and even slow down the constructions. Therefore, the default is set to 'none' since v1.2.4.
+             * <p>
              * If set to 'svg', before every redrawing of the JSXGraph construction
              * the SVG sub-tree of the DOM tree is taken out of the DOM.
              *
@@ -501,11 +504,12 @@ define([
              * Using 'svg' or 'all' speeds up the update process considerably. The risk
              * is that if there is an exception, only a white div or window is left.
              *
+             *
              * @name JXG.Board#minimizeReflow
              * @type String
-             * @default 'svg'
+             * @default 'none'
              */
-            minimizeReflow: 'svg',
+            minimizeReflow: 'none',
 
             /**
              * A number that will be added to the absolute position of the board used in mouse coordinate
@@ -606,6 +610,154 @@ define([
             drag: {
                 enabled: true
             },
+
+            /**
+             * Control using the keyboard to change the construction.
+             * <ul>
+             * <li> enabled: true / false
+             * <li> dx: horizontal shift amount per key press
+             * <li> dy: vertical shift amount per key press
+             * <li> panShift: zoom if shift key is pressed
+             * <li> panCtrl: zoom if ctrl key is pressed
+             * </ul>
+             *
+             * @example
+             * var board = JXG.JSXGraph.initBoard("jxgbox", {boundingbox: [-5,5,5,-5],
+             *     axis: true,
+             *     showCopyright:true,
+             *     showNavigation:true,
+             *     keyboard: {
+             *         enabled: true,
+             *         dy: 30,
+             *         panShift: true,
+             *         panCtrl: false
+             *     }
+             * });
+             *
+             * </pre><div id="JXGb1d3aab6-ced2-4fe9-8fa5-b0accc8c7266" class="jxgbox" style="width: 300px; height: 300px;"></div>
+             * <script type="text/javascript">
+             *     (function() {
+             *         var board = JXG.JSXGraph.initBoard('JXGb1d3aab6-ced2-4fe9-8fa5-b0accc8c7266',
+             *             {boundingbox: [-5,5,5,-5],
+             *         axis: true,
+             *         showCopyright:true,
+             *         showNavigation:true,
+             *         keyboard: {
+             *             enabled: true,
+             *             dy: 30,
+             *             panShift: true,
+             *             panCtrl: false
+             *         }
+             *     });
+             * 
+             *     })();
+             * 
+             * </script><pre>
+             * 
+             *
+             * @see JXG.Board#keyDownListener
+             * @see JXG.Board#keyFocusInListener
+             * @see JXG.Board#keyFocusOutListener
+             *
+             * @name JXG.Board#keyboard
+             * @type Object
+             * @default {enabled: true, dx: 10, dy:10, panShift: true, panCtrl: false}
+             */
+            keyboard: {
+                enabled: true,
+                dx: 10,
+                dy: 10,
+                panShift: true,
+                panCtrl: false
+            },
+
+            /**
+             * Control if JSXGraph reacts to resizing of the JSXGraph container element
+             * by the user / browser.
+             * The attribute "throttle" determines the minimal time in msec between to
+             * resize calls.
+             *
+             * @see JXG.Board#startResizeObserver
+             * @see JXG.Board#resizeListener
+             *
+             * @name JXG.Board#resize
+             * @type Object
+             * @default {enabled: true, throttle: 10}
+             *
+             * @example
+             *     var board = JXG.JSXGraph.initBoard('jxgbox', {
+             *         boundingbox: [-5,5,5,-5],
+             *         keepAspectRatio: true,
+             *         axis: true,
+             *         resize: {enabled: true, throttle: 200}
+             *     });
+             *
+             * </pre><div id="JXGb55d4608-5d71-4bc3-b332-18c15fbda8c3" class="jxgbox" style="width: 300px; height: 300px;"></div>
+             * <script type="text/javascript">
+             *     (function() {
+             *         var board = JXG.JSXGraph.initBoard('JXGb55d4608-5d71-4bc3-b332-18c15fbda8c3', {
+             *             boundingbox: [-5,5,5,-5],
+             *             keepAspectRatio: true,
+             *             axis: true,
+             *             resize: {enabled: true, throttle: 200}
+             *         });
+             * 
+             *     })();
+             * 
+             * </script><pre>
+             * 
+             *
+             */
+            resize: {
+                enabled: true,
+                throttle: 10
+            },
+
+            /**
+             * Element which listens to move events of the pointing device.
+             * This allows to drag elements of a JSXGraph construction outside of the board.
+             * Especially, on mobile devices this enhances the user experience.
+             * However, it is recommended to allow dragging outside of the JSXGraph board only
+             * in certain constructions where users may not "loose" points outside of the board.
+             * Then points may become unreachable.
+             * <p>
+             * A situation where dragging outside of the board is uncritical is for example if
+             * only sliders are used to interact with the construction.
+             * <p>
+             * Possible values for this attributes are:
+             * <ul>
+             * <li> an element specified by document.getElementById('some id');
+             * <li> null: to use the JSXgraph container div element
+             * <li> document
+             * </ul>
+             *
+             * @name JXG.Board#moveTarget
+             * @type HTML node or document
+             * @default null
+             *
+             * @example
+             *     var board = JXG.JSXGraph.initBoard('jxgbox', {
+             *         boundingbox: [-5,5,5,-5],
+             *         axis: true,
+             *         moveTarget: document
+             *     });
+             *
+             * </pre><div id="JXG973457e5-c63f-4516-8570-743f2cc560e1" class="jxgbox" style="width: 300px; height: 300px;"></div>
+             * <script type="text/javascript">
+             *     (function() {
+             *         var board = JXG.JSXGraph.initBoard('JXG973457e5-c63f-4516-8570-743f2cc560e1',
+             *             {boundingbox: [-5,5,5,-5],
+             *             axis: true,
+             *             moveTarget: document
+             *         });
+             * 
+             *     })();
+             * 
+             * </script><pre>
+             * 
+             *
+             */
+            moveTarget: null,
 
             /**
              * Control the possibilities for a selection rectangle.
@@ -1331,7 +1483,11 @@ define([
              * @private
              * By default, an element is not a label. Do not change this.
              */
-            isLabel: false
+            isLabel: false,
+
+
+            tabindex: 0
+
             // close the meta tag
             /**#@-*/
         },
@@ -1412,7 +1568,7 @@ define([
             *     (function() {
             *     var board = JXG.JSXGraph.initBoard('JXGc1e46cd1-e025-4002-80aa-b450869fdaa2', {
             *         boundingbox: [-500000, 500000, 500000, -500000],
-            *         showcopyright: false, shownavigation: false
+            *         showcopyright: false, shownavigation: false,
             *         axis: true,
             *         defaultAxes: {
             *             x: {
@@ -2073,6 +2229,8 @@ define([
                 visible: false
             },
 
+            tabindex: -1,
+
             /**
              * Attributes for the axis label.
              *
@@ -2307,6 +2465,19 @@ define([
             },
 
             /**
+             * Attributes for center point.
+             *
+             * @type Point
+             * @name Circle#center
+             */
+            point2: {
+                visible: true,
+                withLabel: false,
+                fixed: false,
+                name: ''
+            },
+
+            /**
              * Attributes for circle label.
              *
              * @type Label
@@ -2447,7 +2618,7 @@ define([
             },
 
             /**
-             * Attributes for parabola line incase the line is given by two
+             * Attributes for parabola line in case the line is given by two
              * points or coordinate pairs.
              *
              * @type Line
@@ -2607,17 +2778,21 @@ define([
             },
 
             /**
-             * Curve has an arrow head at the start position.
+             * Configure arrow head at the start position for curve.
+             * Recommended arrow head type is 7.
              *
-             * @name Line#firstArrow for options
+             * @name Curve#firstArrow
              * @type Boolean / Object
              * @default false
+             * @see Line#firstArrow for options
              */
             firstArrow: false,
 
             /**
-             * Curve has an arrow head at the end position.
+             * Configure arrow head at the end position for curve.
+             * Recommended arrow head type is 7.
              *
+             * @name Curve#lastArrow
              * @see Line#lastArrow for options
              * @type Boolean / Object
              * @default false
@@ -3151,18 +3326,20 @@ define([
              */
 
             /**
-             * Line has an arrow head at the position of its first point or the corresponding
+             * Configure the arrow head at the position of its first point or the corresponding
              * intersection with the canvas border
              *
              * In case firstArrow is an object it has the sub-attributes:
              * <pre>
              * {
-             *      type: 1, // possible values are 1, 2, ..., 6. Default value is 1.
+             *      type: 1, // possible values are 1, 2, ..., 7. Default value is 1.
              *      size: 6, // size of the arrow head. Default value is 6.
              *               // This value is multiplied with the strokeWidth of the line
+             *               // Exception: for type=7 size is ignored
              *      highlightSize: 6, // size of the arrow head in case the element is highlighted. Default value
              * }
              * </pre>
+             * type=7 is the default for curves if firstArrow: true
              *
              * @name Line#firstArrow
              * @see Line#lastArrow
@@ -3173,18 +3350,20 @@ define([
             firstArrow: false,
 
             /**
-             * Line has an arrow head at the position of its second point or the corresponding
+             * Configute the arrow head at the position of its second point or the corresponding
              * intersection with the canvas border.
              *
-             * In case firstArrow is an object it has the sub-attributes:
+             * In case lastArrow is an object it has the sub-attributes:
              * <pre>
              * {
-             *      type: 1, // possible values are 1, 2, ..., 6. Default value is 1.
+             *      type: 1, // possible values are 1, 2, ..., 7. Default value is 1.
              *      size: 6, // size of the arrow head. Default value is 6.
              *               // This value is multiplied with the strokeWidth of the line.
+             *               // Exception: for type=7 size is ignored
              *      highlightSize: 6, // size of the arrow head in case the element is highlighted. Default value is 6.
              * }
              * </pre>
+             * type=7 is the default for curves if lastArrow: true
              *
              * @example
              *     var p1 = board.create('point', [-5, 2], {size:1});
@@ -3753,7 +3932,7 @@ define([
 
             /**
              * Unit for attractorDistance and snatchDistance, used for magnetized points and for snapToPoints.
-             * Possible values are 'screen' and 'user.
+             * Possible values are 'screen' and 'user'.
              *
              * @name Point#attractorUnit
              *
@@ -4579,9 +4758,9 @@ define([
              * Attributes for the top point.
              *
              * @type Point
-             * @name Slopetriangle#topPoint
+             * @name Slopetriangle#toppoint
              */
-            topPoint: {
+            toppoint: {
                 visible: false,
                 withLabel: false,
                 name: ''
@@ -4733,8 +4912,36 @@ define([
              * @memberOf Text.prototype
              * @default 12
              * @type Number
+             * @see Text#fontUnit
              */
             fontSize: 12,
+
+            /**
+             * CSS unit for the font size of a text element. Usually, this will be the default value 'px' but
+             * for responsive application, also 'vw', 'vh', vmax', 'vmin' or 'rem' might be useful.
+             *
+             * @name fontUnit
+             * @memberOf Text.prototype
+             * @default 'px'
+             * @type String
+             * @see Text#fontSize
+             *
+             * @example
+             * var txt = board.create('text', [2, 2, "hello"], {fontSize: 8, fontUnit: 'vmin'});
+             *
+             * </pre><div id="JXG2da7e972-ac62-416b-a94b-32559c9ec9f9" class="jxgbox" style="width: 300px; height: 300px;"></div>
+             * <script type="text/javascript">
+             *     (function() {
+             *         var board = JXG.JSXGraph.initBoard('JXG2da7e972-ac62-416b-a94b-32559c9ec9f9',
+             *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+             *     var txt = board.create('text', [2, 2, "hello"], {fontSize: 8, fontUnit: 'vmin'});
+             * 
+             *     })();
+             * 
+             * </script><pre>
+             * 
+             */
+            fontUnit: 'px',
 
             /**
              * Used to round texts given by a number.
@@ -5123,6 +5330,8 @@ define([
              *
              */
             useMathJax: false,
+
+            useKatex: false,
 
             /**
              * Determines the rendering method of the text. Possible values

@@ -15,7 +15,7 @@ Scripts available:
 ## General configuration
 
 By default server scripts are stored in the server subdirectory of the JavaScript
-files. If yout want the scripts in another place you'll have to adjust
+files. If you want the scripts in another place you'll have to adjust
         JXG.serverBase
 either directly in JSX source (loadjsxgraph[InOneFile].js) or by setting it in a
 javascript in your page after loading jsxgraph.

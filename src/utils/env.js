@@ -4,8 +4,8 @@
         Michael Gerhaeuser,
         Carsten Miller,
         Bianca Valentin,
-        Alfred Wassermann,
         Andreas Walter,
+        Alfred Wassermann,
         Peter Wilfahrt
 
     This file is part of JSXGraph.
@@ -805,7 +805,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
         scaleJSXGraphDiv: function (wrap_id, inner_id, scale, vshift) {
             var len = document.styleSheets.length, style,
 
-                pseudo_keys = [':-webkit-full-screen', ':-moz-full-screen', ':fullscreen', ':-ms-fullscreen'],
+                pseudo_keys = [':fullscreen', ':-webkit-full-screen', ':-moz-full-screen',':-ms-fullscreen'],
                 len_pseudo = pseudo_keys.length, i,
                 // CSS rules to center the inner div horizontally and vertically.
                 rule_inner = '{margin:0 auto;transform:matrix(' + scale + ',0,0,' + scale + ',0,' + vshift + ');}',
@@ -885,10 +885,11 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
 
                 // height seems to be independent from zoom level on all browsers
                 height = parseInt(elem_inner.style.height, 10),
+                width = parseInt(elem_inner.style.width, 10),
 
                 // Determine the maximum scale factor.
-                r_w = window.screen.width / parseInt(elem_inner.style.width, 10),
-                r_h = window.screen.height / parseInt(elem_inner.style.height, 10),
+                r_w = window.screen.width / width,
+                r_h = window.screen.height / height,
 
                 // Determine the vertical shift to place the div in the center of the screen
                 vshift = (window.screen.height - height) * 0.5;
@@ -899,9 +900,9 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
             // Adapt vshift and scale for landscape on tablets
             if (window.matchMedia && window.matchMedia('(orientation:landscape)').matches &&
                 window.screen.width < window.screen.height) {
-                // Landscape on iOS: it returns 'landscape', but still width<height.
-                r_w = window.screen.height / parseInt(elem_inner.style.width, 10);
-                r_h = window.screen.width / parseInt(elem_inner.style.height, 10);
+                // Landscape on iOS: it returns 'landscape', but still width < height.
+                r_w = window.screen.height / width;
+                r_h = window.screen.width / height;
                 scale = Math.min(r_w, r_h);
                 vshift = (window.screen.width - height) * 0.5;
             }
@@ -910,11 +911,24 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
             // Do the shifting and scaling via CSS pseudo rules
             this.scaleJSXGraphDiv('#' + wrap_id, '#' + jsxgraph_id, scale, vshift);
 
+            // Store the scaling data.
+            // It is used in AbstractRenderer.updateText to restore the scaling matrix
+            // which is removed by MathJax.
+            // Further, the CSS margin has to be removed when in fullscreen mode,
+            // and must be restored later.
+            elem_inner._cssFullscreenStore = {
+                isFullscreen: false,
+                margin: elem_inner.style.margin,
+                scale: scale,
+                vshift: vshift
+            };
+
             // Trigger the fullscreen mode
             elem.requestFullscreen = elem.requestFullscreen ||
                 elem.webkitRequestFullscreen ||
                 elem.mozRequestFullScreen ||
                 elem.msRequestFullscreen;
+
             if (elem.requestFullscreen) {
                 elem.requestFullscreen();
             }

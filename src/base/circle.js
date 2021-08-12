@@ -169,7 +169,12 @@ define([
         this.elType = 'circle';
         this.createLabel();
 
-        this.center.addChild(this);
+        if (Type.exists(this.center._is_new)) {
+            this.addChild(this.center);
+            delete this.center._is_new;
+        } else {
+            this.center.addChild(this);
+        }
 
         if (method === 'pointRadius') {
             this.notifyParents(par2);
@@ -178,7 +183,12 @@ define([
         } else if (method === 'pointCircle') {
             this.circle.addChild(this);
         } else if (method === 'twoPoints') {
-            this.point2.addChild(this);
+            if (Type.exists(this.point2._is_new)) {
+                this.addChild(this.point2);
+                delete this.point2._is_new;
+            } else {
+                this.point2.addChild(this);
+            }
         }
 
         this.methodMap = Type.deepCopy(this.methodMap, {
@@ -512,7 +522,8 @@ define([
         getLabelAnchor: function () {
             var x, y,
                 r = this.Radius(),
-                c = this.center.coords.usrCoords;
+                c = this.center.coords.usrCoords,
+                SQRTH = 7.07106781186547524401E-1;      // sqrt(2)/2
 
             switch (Type.evaluate(this.visProp.label.position)) {
             case 'lft':
@@ -520,20 +531,20 @@ define([
                 y = c[2];
                 break;
             case 'llft':
-                x = c[1] - Math.sqrt(0.5) * r;
-                y = c[2] - Math.sqrt(0.5) * r;
+                x = c[1] - SQRTH * r;
+                y = c[2] - SQRTH * r;
                 break;
             case 'rt':
                 x = c[1] + r;
                 y = c[2];
                 break;
             case 'lrt':
-                x = c[1] + Math.sqrt(0.5) * r;
-                y = c[2] - Math.sqrt(0.5) * r;
+                x = c[1] + SQRTH * r;
+                y = c[2] - SQRTH * r;
                 break;
             case 'urt':
-                x = c[1] + Math.sqrt(0.5) * r;
-                y = c[2] + Math.sqrt(0.5) * r;
+                x = c[1] + SQRTH * r;
+                y = c[2] + SQRTH * r;
                 break;
             case 'top':
                 x = c[1];
@@ -545,8 +556,8 @@ define([
                 break;
             default:
                 // includes case 'ulft'
-                x = c[1] - Math.sqrt(0.5) * r;
-                y = c[2] + Math.sqrt(0.5) * r;
+                x = c[1] - SQRTH * r;
+                y = c[2] + SQRTH * r;
                 break;
             }
 
@@ -805,7 +816,8 @@ define([
      */
     JXG.createCircle = function (board, parents, attributes) {
         var el, p, i, attr, obj,
-            isDraggable = true;
+            isDraggable = true,
+            point_style = ['center', 'point2'];
 
         p = [];
         obj = board.select(parents[0]);
@@ -827,7 +839,7 @@ define([
         // Circle defined by points
         for (i = 0; i < parents.length; i++) {
             if (Type.isPointType(board, parents[i])) {
-                p = p.concat(Type.providePoints(board, [parents[i]], attributes, 'circle', ['center']));
+                p = p.concat(Type.providePoints(board, [parents[i]], attributes, 'circle', [point_style[i]]));
                 if (p[p.length - 1] === false) {
                     throw new Error('JSXGraph: Can\'t create circle from this type. Please provide a point type.');
                 }

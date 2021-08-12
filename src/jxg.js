@@ -4,8 +4,8 @@
         Michael Gerhaeuser,
         Carsten Miller,
         Bianca Valentin,
-        Alfred Wassermann,
         Andreas Walter,
+        Alfred Wassermann,
         Peter Wilfahrt
 
     This file is part of JSXGraph and JSXCompressor.
@@ -160,7 +160,7 @@ define([], function () {
 
         /**
          * Associative array that keeps track of all constructable elements registered
-         * via {@link JXG.JSXGraph.registerElement}.
+         * via {@link JXG.registerElement}.
          * @type Object
          */
         elements: {},

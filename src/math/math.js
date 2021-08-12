@@ -109,7 +109,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
 
         /**
          * The JavaScript implementation of the % operator returns the symmetric modulo.
-         * They are both identical if a >= 0 and m >= 0 but the results differ if a or m < 0.
+         * mod and "%" are both identical if a >= 0 and m >= 0 but the results differ if a or m < 0.
          * @param {Number} a
          * @param {Number} m
          * @returns {Number} Mathematical modulo <tt>a mod m</tt>
@@ -539,6 +539,28 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
         },
 
         /**
+         * Hyperbolic arc-cosine of a number.
+         *
+         * @param {Number} x
+         * @returns {Number}
+         */
+        acosh: Math.acosh || function(x) {
+            return Math.log(x + Math.sqrt(x * x - 1));
+        },
+
+        /**
+         * Hyperbolic arcsine of a number
+         * @param {Number} x
+         * @returns {Number}
+         */
+        asinh: Math.asinh || function(x) {
+            if (x === -Infinity) {
+                return x;
+            }
+            return Math.log(x + Math.sqrt(x * x + 1));
+        },
+
+        /**
          * Computes the cotangent of x.
          * @function
          * @param {Number} x The number the cotangent will be calculated of.
@@ -750,7 +772,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          * @param  {Number} b Second number
          * @returns {Number}   gcd(a, b) if a and b are numbers, NaN else.
          */
-        gcd: function (a,b) {
+        gcd: function (a, b) {
             a = Math.abs(a);
             b = Math.abs(b);
 
@@ -778,7 +800,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          * @param  {Number} b Second number
          * @returns {Number}   lcm(a, b) if a and b are numbers, NaN else.
          */
-        lcm: function (a,b) {
+        lcm: function (a, b) {
             var ret;
 
             if (!(Type.isNumber(a) && Type.isNumber(b))) {
@@ -792,6 +814,177 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
 
             return 0;
         },
+
+        /**
+         *  Error function, see {@link https://en.wikipedia.org/wiki/Error_function}.
+         *
+         * @see JXG.Math.PropFunc.erf
+         * @param  {Number} x
+         * @returns {Number}
+         */
+        erf: function(x) {
+            return this.ProbFuncs.erf(x);
+        },
+
+        /**
+         * Complementary error function, i.e. 1 - erf(x).
+         *
+         * @see JXG.Math.erf
+         * @see JXG.Math.PropFunc.erfc
+         * @param  {Number} x
+         * @returns {Number}
+         */
+         erfc: function(x) {
+            return this.ProbFuncs.erfc(x);
+        },
+
+        /**
+         * Inverse of error function
+         *
+         * @see JXG.Math.erf
+         * @see JXG.Math.PropFunc.erfi
+         * @param  {Number} x
+         * @returns {Number}
+         */
+         erfi: function(x) {
+            return this.ProbFuncs.erfi(x);
+        },
+
+        /**
+         * Normal distribution function
+         *
+         * @see JXG.Math.PropFunc.ndtr
+         * @param  {Number} x
+         * @returns {Number}
+         */
+         ndtr: function(x) {
+            return this.ProbFuncs.ndtr(x);
+        },
+
+        /**
+         * Inverse of normal distribution function
+         *
+         * @see JXG.Math.ndtr
+         * @see JXG.Math.PropFunc.ndtri
+         * @param  {Number} x
+         * @returns {Number}
+         */
+         ndtri: function(x) {
+            return this.ProbFuncs.ndtri(x);
+        },
+
+        /* ********************  Comparisons and logical operators ************** */
+
+        /**
+         * Logical test: a < b?
+         *
+         * @param {Number} a
+         * @param {Number} b
+         * @returns {Boolean}
+         */
+        lt: function(a, b) {
+            return a < b;
+        },
+
+        /**
+         * Logical test: a <= b?
+         *
+         * @param {Number} a
+         * @param {Number} b
+         * @returns {Boolean}
+         */
+        leq: function(a, b) {
+            return a <= b;
+        },
+
+        /**
+         * Logical test: a > b?
+         *
+         * @param {Number} a
+         * @param {Number} b
+         * @returns {Boolean}
+         */
+        gt: function(a, b) {
+            return a > b;
+        },
+
+        /**
+         * Logical test: a >= b?
+         *
+         * @param {Number} a
+         * @param {Number} b
+         * @returns {Boolean}
+         */
+        geq: function(a, b) {
+            return a >= b;
+        },
+
+        /**
+         * Logical test: a === b?
+         *
+         * @param {Number} a
+         * @param {Number} b
+         * @returns {Boolean}
+         */
+        eq: function(a, b) {
+            return a === b;
+        },
+
+        /**
+         * Logical test: a !== b?
+         *
+         * @param {Number} a
+         * @param {Number} b
+         * @returns {Boolean}
+         */
+        neq: function(a, b) {
+            return a !== b;
+        },
+
+        /**
+         * Logical operator: a && b?
+         *
+         * @param {Boolean} a
+         * @param {Boolean} b
+         * @returns {Boolean}
+         */
+        and: function(a, b) {
+            return a && b;
+        },
+
+        /**
+         * Logical operator: !a?
+         *
+         * @param {Boolean} a
+         * @returns {Boolean}
+         */
+        not: function(a) {
+            return !a;
+        },
+
+        /**
+         * Logical operator: a || b?
+         *
+         * @param {Boolean} a
+         * @param {Boolean} b
+         * @returns {Boolean}
+         */
+        or: function(a, b) {
+            return a || b;
+        },
+
+        /**
+         * Logical operator: either a or b?
+         *
+         * @param {Boolean} a
+         * @param {Boolean} b
+         * @returns {Boolean}
+         */
+        xor: function(a, b) {
+            return (a || b) && !(a && b);
+        },
+
+        /* *************************** Normalize *************************** */
 
         /**
          * Normalize the standard form [c, b0, b1, a, k, r, q0, q1].

@@ -160,9 +160,25 @@ define([
         el.point3 = el.anglepoint;
 
         // Add arc as child to defining points
-        el.center.addChild(el);
-        el.radiuspoint.addChild(el);
-        el.anglepoint.addChild(el);
+        // or vice versa if the points are provided as coordinates
+        if (Type.exists(el.center._is_new)) {
+            el.addChild(el.center);
+            delete el.center._is_new;
+        } else {
+            el.center.addChild(el);
+        }
+        if (Type.exists(el.radiuspoint._is_new)) {
+            el.addChild(el.radiuspoint);
+            delete el.radiuspoint._is_new;
+        } else {
+            el.radiuspoint.addChild(el);
+        }
+        if (Type.exists(el.anglepoint._is_new)) {
+            el.addChild(el.anglepoint);
+            delete el.anglepoint._is_new;
+        } else {
+            el.anglepoint.addChild(el);
+        }
 
         // should be documented in options
         el.useDirection = attr.usedirection;
@@ -251,11 +267,10 @@ define([
         // documented in geometry element
         el.hasPoint = function (x, y) {
             var dist, checkPoint,
-                has, angle, alpha, beta,
+                has,
                 invMat, c,
                 prec, type,
-                r = this.Radius(),
-                ev_s = Type.evaluate(this.visProp.selection);
+                r = this.Radius();
 
             if (Type.evaluate(this.visProp.hasinnerpoints)) {
                 return this.hasPointSector(x, y);
@@ -288,20 +303,8 @@ define([
              * Now, we have to check, if the user has hit the arc path.
              */
             if (has) {
-                angle = Geometry.rad(this.radiuspoint, this.center, checkPoint.usrCoords.slice(1));
-                alpha = 0.0;
-                beta = Geometry.rad(this.radiuspoint, this.center, this.anglepoint);
-
-                if ((ev_s === 'minor' && beta > Math.PI) ||
-                        (ev_s === 'major' && beta < Math.PI)) {
-                    alpha = beta;
-                    beta = 2 * Math.PI;
-                }
-                if (angle < alpha || angle > beta) {
-                    has = false;
-                }
+                has = Geometry.coordsOnArc(this, checkPoint);
             }
-
             return has;
         };
 
@@ -315,28 +318,14 @@ define([
          * @returns {Boolean} True if (x,y) is within the sector defined by the arc, False otherwise.
          */
         el.hasPointSector = function (x, y) {
-            var angle, alpha, beta,
-                checkPoint = new Coords(Const.COORDS_BY_SCREEN, [x, y], this.board),
+            var checkPoint = new Coords(Const.COORDS_BY_SCREEN, [x, y], this.board),
                 r = this.Radius(),
                 dist = this.center.coords.distance(Const.COORDS_BY_USER, checkPoint),
-                has = (dist < r),
-                ev_s = Type.evaluate(this.visProp.selection);
+                has = (dist < r);
 
             if (has) {
-                angle = Geometry.rad(this.radiuspoint, this.center, checkPoint.usrCoords.slice(1));
-                alpha = 0;
-                beta = Geometry.rad(this.radiuspoint, this.center, this.anglepoint);
-
-                if ((ev_s === 'minor' && beta > Math.PI) ||
-                        (ev_s === 'major' && beta < Math.PI)) {
-                    alpha = beta;
-                    beta = 2 * Math.PI;
-                }
-                if (angle < alpha || angle > beta) {
-                    has = false;
-                }
+                has = Geometry.coordsOnArc(this, checkPoint);
             }
-
             return has;
         };
 

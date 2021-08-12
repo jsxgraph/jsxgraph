@@ -105,7 +105,7 @@ define([
                         first = i;
                         components.push(first);
                     }
-                    if (this._isSeparator(S[(i + 1) % le]) || i == le - 1) {
+                    if (this._isSeparator(S[(i + 1) % le]) || i === le - 1) {
                         // If the next node is a component separator or if the node is the last node,
                         // then we close the loop
 
@@ -1195,7 +1195,7 @@ define([
         },
 
         /**
-             * Handle cases when there are no intersection points of the two paths. This is the case if the
+         * Handle cases when there are no intersection points of the two paths. This is the case if the
          * paths are disjoint or one is contained in the other.
          * @private
          * @param  {Array} S        First path, array of JXG.Coords
@@ -1728,7 +1728,6 @@ define([
 
             // Phase 3: tracing
             return this.tracing(S, S_intersect, clip_type);
-
         },
 
         /**

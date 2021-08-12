@@ -197,6 +197,7 @@ define([
         setParents: function(parents) {
             this.parents = [];
             this.addParents(parents);
+            return this;
         },
 
         /**
@@ -225,11 +226,10 @@ define([
          * Sends an update to all group members.
          * This method is called from the points' coords object event listeners
          * and not by the board.
-         * @param{JXG.GeometryElement} drag Element that caused the update.
          * @returns {JXG.Group} returns this group
          */
-        update: function (drag) {
-            var el, actionCenter, desc, s, sx, sy, alpha, t, center, obj = null;
+        update: function () {
+            var drag, el, actionCenter, desc, s, sx, sy, alpha, t, center, obj = null;
 
             if (!this.needsUpdate) {
                 return this;
@@ -288,9 +288,8 @@ define([
                              center[0] * (1 -  sx), sx, 0,
                              center[1] * (1 -  sy), 0, sy], {type: 'generic'});
                     t.update();  // This initializes t.matrix, which is needed if the action element is the first group element.
-                } else {
-                    return this;
                 }
+                return this;
             }
 
             this._update_apply_transformation(drag, t);

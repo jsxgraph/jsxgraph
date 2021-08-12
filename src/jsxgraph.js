@@ -187,9 +187,15 @@ define([
             attr.zoom = Type.copyAttributes(attr, Options, 'board', 'zoom');
             attr.pan = Type.copyAttributes(attr, Options, 'board', 'pan');
             attr.drag = Type.copyAttributes(attr, Options, 'board', 'drag');
+            attr.keyboard = Type.copyAttributes(attr, Options, 'board', 'keyboard');
             attr.selection = Type.copyAttributes(attr, Options, 'board', 'selection');
             attr.navbar = Type.copyAttributes(attr.navbar, Options, 'navbar');
             attr.screenshot = Type.copyAttributes(attr, Options, 'board', 'screenshot');
+            attr.resize = Type.copyAttributes(attr, Options, 'board', 'resize');
+
+            // Treat moveTarget separately, because deepCopy will not work here.
+            // Reason: moveTarget will be an HTML node and it is prevented that Type.deepCopy will copy it.
+            attr.movetarget = attributes.moveTarget || attributes.movetarget || Options.board.moveTarget;
 
             return attr;
         },
@@ -287,6 +293,8 @@ define([
          * @param {Boolean} [attributes.showNavigation=false] Show the navigation buttons in the bottom right corner.
          * @param {Object} [attributes.zoom] Allow the user to zoom with the mouse wheel or the two-fingers-zoom gesture.
          * @param {Object} [attributes.pan] Allow the user to pan with shift+drag mouse or two-fingers-pan gesture.
+         * @param {Object} [attributes.drag] Allow the user to drag objects with a pointer device.
+         * @param {Object} [attributes.keyboard] Allow the user to drag objects with arrow keys on keyboard.
          * @param {Boolean} [attributes.axis=false] If set to true, show the axis. Can also be set to an object that is given to both axes as an attribute object.
          * @param {Boolean|Object} [attributes.grid] If set to true, shows the grid. Can also be set to an object that is given to the grid as its attribute object.
          * @param {Boolean} [attributes.registerEvents=true] Register mouse / touch events.
@@ -532,7 +540,10 @@ define([
     // JessieScript/JessieCode startup: Search for script tags of type text/jessiescript and interprete them.
     if (Env.isBrowser && typeof window === 'object' && typeof document === 'object') {
         Env.addEvent(window, 'load', function () {
-            var type, i, j, div, id, board, width, height, bbox, axis, grid, code,
+            var type, i, j, div,
+                id, board, width, height, bbox, axis, grid,
+                code,
+                src, request, postpone = false,
                 scripts = document.getElementsByTagName('script'),
                 init = function (code, type, bbox) {
                     var board = JXG.JSXGraph.initBoard(id, {boundingbox: bbox, keepaspectratio: true, grid: grid, axis: axis, showReload: true});
@@ -569,6 +580,7 @@ define([
                     height = scripts[i].getAttribute('height', false) || '500px';
                     bbox = scripts[i].getAttribute('boundingbox', false) || '-5, 5, 5, -5';
                     id = scripts[i].getAttribute('container', false);
+                    src = scripts[i].getAttribute('src', false);
 
                     bbox = bbox.split(',');
                     if (bbox.length !== 4) {
@@ -599,13 +611,40 @@ define([
                         div = document.getElementById(id);
                     }
 
+                    code = '';
+
+                    if (Type.exists(src)) {
+                        postpone = true;
+                        request = new XMLHttpRequest();
+                        request.open("GET", src);
+                        request.overrideMimeType("text/plain; charset=x-user-defined");
+                        request.addEventListener("load", function() {
+                            if (this.status < 400) {
+                                code = this.responseText + '\n' + code;
+                                board = init(code, type, bbox);
+                                board.reload = makeReload(board, code, type, bbox);
+                            } else {
+                                throw new Error("\nJSXGraph: failed to load file", src, ":", this.responseText);
+                            }
+                        });
+                        request.addEventListener("error", function(e) {
+                            throw new Error("\nJSXGraph: failed to load file", src, ":", e);
+                        });
+                        request.send();
+                    } else {
+                        postpone = false;
+                    }
+
                     if (document.getElementById(id)) {
                         code = scripts[i].innerHTML;
                         code = code.replace(/<!\[CDATA\[/g, '').replace(/\]\]>/g, '');
                         scripts[i].innerHTML = code;
 
-                        board = init(code, type, bbox);
-                        board.reload = makeReload(board, code, type, bbox);
+                        if (!postpone) {
+                            // Do no wait for data from "src" attribute
+                            board = init(code, type, bbox);
+                            board.reload = makeReload(board, code, type, bbox);
+                        }
                     } else {
                         JXG.debug('JSXGraph: Apparently the div injection failed. Can\'t create a board, sorry.');
                     }

@@ -31,7 +31,7 @@
 
 
 /*global JXG: true, define: true*/
-/*jslint nomen: true, plusplus: true*/
+/*jslint nomen: true, plusplus: true, unparam: true*/
 
 /* depends:
  jxg
@@ -46,8 +46,8 @@
  */
 
 define([
-    'jxg', 'base/constants', 'base/coords', 'math/math', 'math/statistics', 'options', 'parser/geonext', 'utils/event', 'utils/color', 'utils/type'
-], function (JXG, Const, Coords, Mat, Statistics, Options, GeonextParser, EventEmitter, Color, Type) {
+    'jxg', 'base/constants', 'base/coords', 'math/math', 'math/statistics', 'options', 'utils/event', 'utils/color', 'utils/type'
+], function (JXG, Const, Coords, Mat, Statistics, Options, EventEmitter, Color, Type) {
 
     "use strict";
 
@@ -900,45 +900,42 @@ define([
         },
 
         /**
-         * Hide the element. It will still exist but not visible on the board.
+         * Hide the element. It will still exist but not be visible on the board.
+         * Alias for "element.setAttribute({visible: false});"
          * @return {JXG.GeometryElement} Reference to the element
-         * @deprecated
-         * @private
          */
-        hideElement: function () {
-            JXG.deprecated('Element.hideElement()', 'Element.setDisplayRendNode()');
+        hide: function () {
+            this.setAttribute({visible: false});
+            return this;
+        },
 
-            // TODO: Does override value of  this.visProp.visible
-            this.visPropCalc.visible = this.visProp.visible = false;
-            this.board.renderer.display(this, false);
-
-            if (Type.exists(this.label) && this.hasLabel) {
-                this.label.hiddenByParent = true;
-                if (this.label.visPropCalc.visible) {
-                    this.label.hideElement();
-                }
-            }
+        /**
+         * Hide the element. It will still exist but not be visible on the board.
+         * Alias for {@link JXG.GeometryElement#hide}
+         * @returns {JXG.GeometryElement} Reference to the element
+         */
+        hideElement: function() {
+            this.hide();
             return this;
         },
 
         /**
          * Make the element visible.
+         * Alias for "element.setAttribute({visible: true});"
          * @return {JXG.GeometryElement} Reference to the element
-         * @deprecated
-         * @private
          */
-        showElement: function () {
-            JXG.deprecated('Element.showElement()', 'Element.setDisplayRendNode()');
+        show: function () {
+            this.setAttribute({visible: true});
+            return this;
+        },
 
-            this.visPropCalc.visible = this.visProp.visible = true;
-            this.board.renderer.display(this, true);
-
-            if (Type.exists(this.label) && this.hasLabel && this.label.hiddenByParent) {
-                this.label.hiddenByParent = false;
-                if (!this.label.visPropCalc.visible) {
-                    this.label.showElement().updateRenderer();
-                }
-            }
+        /**
+         * Make the element visible.
+         * Alias for {@link JXG.GeometryElement#show}
+         * @returns {JXG.GeometryElement} Reference to the element
+         */
+        showElement: function() {
+            this.show();
             return this;
         },
 
@@ -1359,6 +1356,12 @@ define([
                     case 'layer':
                         this.board.renderer.setLayer(this, Type.evaluate(value));
                         this._set(key, value);
+                        break;
+                    case 'tabindex':
+                        if (Type.exists(this.rendNode)) {
+                            this.rendNode.setAttribute('tabindex', value);
+                            this._set(key, value);
+                        }
                         break;
                     default:
                         if (Type.exists(this.visProp[key]) &&

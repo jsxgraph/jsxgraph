@@ -4,8 +4,8 @@
         Michael Gerhaeuser,
         Carsten Miller,
         Bianca Valentin,
-        Alfred Wassermann,
         Andreas Walter,
+        Alfred Wassermann,
         Peter Wilfahrt
 
     This file is part of JSXGraph.
@@ -43,7 +43,7 @@ define(['jxg'], function (JXG) {
     var major = 1,
         minor = 3,
         patch = 0,
-        add = 'dev', //'dev_a'
+        add = '', //'dev'
         version = major + '.' + minor + '.' + patch + (add ? '-' + add : ''),
         constants;
 

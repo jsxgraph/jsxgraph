@@ -52,9 +52,8 @@
  */
 
 define([
-    'jxg', 'options', 'math/math', 'math/geometry', 'math/numerics', 'math/statistics', 'base/coords', 'base/constants', 'base/element',
-    'parser/geonext', 'utils/type', 'base/transformation'
-], function (JXG, Options, Mat, Geometry, Numerics, Statistics, Coords, Const, GeometryElement, GeonextParser, Type, Transform) {
+    'jxg', 'math/math', 'math/geometry', 'math/numerics', 'math/statistics', 'base/coords', 'base/constants', 'utils/type',
+], function (JXG, Mat, Geometry, Numerics, Statistics, Coords, Const, Type) {
 
     "use strict";
 
@@ -251,8 +250,6 @@ define([
                 if (Type.evaluate(this.visProp.isgeonext)) {
                     delta = 1.0;
                 }
-                //this.coords.setCoordinates(Const.COORDS_BY_USER,
-                //    Geometry.projectPointToCircle(this, slide, this.board).usrCoords, false);
                 newCoords = Geometry.projectPointToCircle(this, slide, this.board);
                 newPos = Geometry.rad([slide.center.X() + 1.0, slide.center.Y()], slide.center, this) / delta;
             } else if (slide.elementClass === Const.OBJECT_CLASS_LINE) {
@@ -392,11 +389,10 @@ define([
                 }
             } else if (slide.type === Const.OBJECT_TYPE_TURTLE) {
                 // In case, the point is a constrained glider.
-                // side-effect: this.position is overwritten
                 this.updateConstraint();
-                //this.coords.setCoordinates(Const.COORDS_BY_USER, Geometry.projectPointToTurtle(this, slide, this.board).usrCoords, false);
-                newCoords = Geometry.projectPointToTurtle(this, slide, this.board);
-                newPos = this.position;     // save position for the overwriting below
+                res = Geometry.projectPointToTurtle(this, slide, this.board);
+                newCoords = res[0];
+                newPos = res[1];     // save position for the overwriting below
             } else if (slide.elementClass === Const.OBJECT_CLASS_CURVE) {
                 if ((slide.type === Const.OBJECT_TYPE_ARC ||
                      slide.type === Const.OBJECT_TYPE_SECTOR)) {
@@ -460,9 +456,9 @@ define([
                                 cu = Mat.matVecMult(invMat, cu);
                             }
                             cp = (new Coords(Const.COORDS_BY_USER, cu, this.board)).usrCoords;
-                            c = Geometry.projectCoordsToCurve(cp[1], cp[2], 
-                                        this.position || 0, 
-                                        slides[slides.length - 1], 
+                            c = Geometry.projectCoordsToCurve(cp[1], cp[2],
+                                        this.position || 0,
+                                        slides[slides.length - 1],
                                         this.board);
                             // projectPointCurve() already would apply the transformation.
                             // Since we are projecting on the original curve, we have to do
@@ -483,10 +479,9 @@ define([
                         newCoords = c[0];
                         newPos = c[1];
                     } else {
-                        // side-effect: this.position is overwritten
-                        // this.coords.setCoordinates(Const.COORDS_BY_USER, Geometry.projectPointToCurve(this, slide, this.board).usrCoords, false);
-                        newCoords = Geometry.projectPointToCurve(this, slide, this.board);
-                        newPos = this.position; // save position for the overwriting below
+                        res = Geometry.projectPointToCurve(this, slide, this.board);
+                        newCoords = res[0];
+                        newPos = res[1]; // save position for the overwriting below
                     }
                 }
             } else if (Type.isPoint(slide)) {
@@ -507,7 +502,7 @@ define([
         updateGliderFromParent: function () {
             var p1c, p2c, r, lbda, c,
                 slide = this.slideObject,
-                slides = [], 
+                slides = [],
                 res, i,
                 isTransformed,
                 baseangle, alpha, angle, beta,
@@ -577,9 +572,8 @@ define([
             } else if (slide.type === Const.OBJECT_TYPE_TURTLE) {
                 this.coords.setCoordinates(Const.COORDS_BY_USER, [slide.Z(this.position), slide.X(this.position), slide.Y(this.position)]);
                 // In case, the point is a constrained glider.
-                // side-effect: this.position is overwritten:
                 this.updateConstraint();
-                c  = Geometry.projectPointToTurtle(this, slide, this.board).usrCoords;
+                c  = Geometry.projectPointToTurtle(this, slide, this.board)[0].usrCoords;
             } else if (slide.elementClass === Const.OBJECT_CLASS_CURVE) {
                 // Handle the case if the curve comes from a transformation of a continous curve.
                 isTransformed = false;
@@ -596,7 +590,7 @@ define([
                 }
                 if (isTransformed) {
                     this.coords.setCoordinates(Const.COORDS_BY_USER, [
-                        slides[slides.length - 1].Z(this.position), 
+                        slides[slides.length - 1].Z(this.position),
                         slides[slides.length - 1].X(this.position), 
                         slides[slides.length - 1].Y(this.position)]);
                 } else {
@@ -646,21 +640,20 @@ define([
                     ];
                 } else {
                     // In case, the point is a constrained glider.
-                    // side-effect: this.position is overwritten
                     this.updateConstraint();
 
                     if (isTransformed) {
-                        c = Geometry.projectPointToCurve(this, slides[slides.length - 1], this.board).usrCoords;
+                        c = Geometry.projectPointToCurve(this, slides[slides.length - 1], this.board)[0].usrCoords;
                         // projectPointCurve() already would do the transformation.
                         // But since we are projecting on the original curve, we have to do
                         // the transformation "by hand".
                         for (i = slides.length - 2; i >= 0; i--) {
-                            c = (new Coords(Const.COORDS_BY_USER, 
+                            c = (new Coords(Const.COORDS_BY_USER,
                                 Mat.matVecMult(slides[i].transformMat, c), this.board)).usrCoords;
                         }
 
                     } else {
-                        c = Geometry.projectPointToCurve(this, slide, this.board).usrCoords;
+                        c = Geometry.projectPointToCurve(this, slide, this.board)[0].usrCoords;
                     }
                 }
 
@@ -922,9 +915,13 @@ define([
                     } else if (el.elementClass === Const.OBJECT_CLASS_CIRCLE) {
                         projCoords = Geometry.projectPointToCircle(this, el, this.board);
                     } else if (el.elementClass === Const.OBJECT_CLASS_CURVE) {
-                        projCoords = Geometry.projectPointToCurve(this, el, this.board);
+                        projCoords = Geometry.projectPointToCurve(this, el, this.board)[0];
                     } else if (el.type === Const.OBJECT_TYPE_TURTLE) {
-                        projCoords = Geometry.projectPointToTurtle(this, el, this.board);
+                        projCoords = Geometry.projectPointToTurtle(this, el, this.board)[0];
+                    } else if (el.type === Const.OBJECT_TYPE_POLYGON) {
+                        projCoords = new Coords(Const.COORDS_BY_USER,
+                            Geometry.projectCoordsToPolygon(this.coords.usrCoords, el),
+                            this.board);
                     }
 
                     if (ev_au === 'screen') {
@@ -934,12 +931,17 @@ define([
                     }
 
                     if (d < ev_ad) {
-                        if (!(this.type === Const.OBJECT_TYPE_GLIDER && this.slideObject === el)) {
+                        if (!(this.type === Const.OBJECT_TYPE_GLIDER &&
+                              (el === this.slideObject || this.slideObject && this.onPolygon && this.slideObject.parentPolygon === el)
+                             )
+                           ) {
                             this.makeGlider(el);
                         }
                         break;       // bind the point to the first attractor in its list.
                     }
-                    if (el === this.slideObject && d >= ev_sd) {
+                    if (d >= ev_sd &&
+                        (el === this.slideObject || this.slideObject && this.onPolygon && this.slideObject.parentPolygon === el)
+                       ) {
                         this.popSlideObject();
                     }
                 }
@@ -1069,7 +1071,7 @@ define([
                 dist;
 
             if (slideobj.type === Const.OBJECT_TYPE_POLYGON){
-                // Search for the closest side of the polygon.
+                // Search for the closest edge of the polygon.
                 min = Number.MAX_VALUE;
                 for (i = 0; i < slideobj.borders.length; i++){
                     dist = JXG.Math.Geometry.distPointLine(this.coords.usrCoords, slideobj.borders[i].stdform);
@@ -1123,8 +1125,8 @@ define([
                 // It may not be sufficient to remove the point from
                 // the list of childElement. For complex dependencies
                 // one may have to go to the list of ancestor and descendants.  A.W.
-                // yes indeed, see #51 on github bugtracker
-                //delete this.slideObject.childElements[this.id];
+                // Yes indeed, see #51 on github bugtracker
+                //  delete this.slideObject.childElements[this.id];
                 this.slideObject.removeChild(this);
 
                 if (this.slideObjects.length === 0) {
@@ -1422,7 +1424,7 @@ define([
         },
 
         /**
-         * Add transformations to this point.
+         * Add transformations to this element.
          * @param {JXG.GeometryElement} el
          * @param {JXG.Transformation|Array} transform Either one {@link JXG.Transformation}
          * or an array of {@link JXG.Transformation}s.
@@ -1760,7 +1762,9 @@ define([
          */
         _anim: function (direction, stepCount) {
             var dX, dY, alpha, startPoint, newX, radius,
-                sp1c, sp2c, d;
+                sp1c, sp2c,
+                res,
+                d;
 
             this.intervalCount += 1;
             if (this.intervalCount > stepCount) {
@@ -1793,7 +1797,9 @@ define([
                 }
 
                 this.coords.setCoordinates(Const.COORDS_BY_SCREEN, [newX, 0]);
-                this.coords = Geometry.projectPointToCurve(this, this.slideObject, this.board);
+                res = Geometry.projectPointToCurve(this, this.slideObject, this.board);
+                this.coords = res[0];
+                this.position = res[1];
             } else if (this.slideObject.elementClass === Const.OBJECT_CLASS_CIRCLE) {
                 alpha = 2 * Math.PI;
                 if (direction < 0) {

@@ -1776,8 +1776,14 @@ define([
         le = points.length;
         el.setParents(points);
         for (i = 0; i < le; i++) {
-            if (Type.isPoint(points[i])) {
-                points[i].addChild(el);
+            p = points[i];
+            if (Type.isPoint(p)) {
+                if (Type.exists(p._is_new)) {
+                    el.addChild(p);
+                    delete p._is_new;
+                } else {
+                    p.addChild(el);
+                }
             }
         }
         el.elType = 'cardinalspline';
@@ -2000,7 +2006,6 @@ define([
     };
 
     JXG.registerElement('metapostspline', JXG.createMetapostSpline);
-
 
     /**
      * @class This element is used to provide a constructor for Riemann sums, which is realized as a special curve.
@@ -2390,14 +2395,177 @@ define([
 
     JXG.registerElement('derivative', JXG.createDerivative);
 
+    /**
+     * @class Intersection of two closed path elements. The elements may be of type curve, circle, polygon, inequality.
+     * If one element is a curve, it has to be closed.
+     * The resulting element is of type curve.
+     * @pseudo
+     * @description
+     * @name CurveIntersection
+     * @param {JXG.Curve|JXG.Polygon|JXG.Circle} curve1 First element which is intersected
+     * @param {JXG.Curve|JXG.Polygon|JXG.Circle} curve2 Second element which is intersected
+     * @augments JXG.Curve
+     * @constructor
+     * @type JXG.Curve
+     *
+     * @example
+     * var f = board.create('functiongraph', ['cos(x)']);
+     * var ineq = board.create('inequality', [f], {inverse: true, fillOpacity: 0.1});
+     * var circ = board.create('circle', [[0,0], 4]);
+     * var clip = board.create('curveintersection', [ineq, circ], {fillColor: 'yellow', fillOpacity: 0.6});
+     *
+     * </pre><div id="JXGe2948257-8835-4276-9164-8acccb48e8d4" class="jxgbox" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     *     (function() {
+     *         var board = JXG.JSXGraph.initBoard('JXGe2948257-8835-4276-9164-8acccb48e8d4',
+     *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+     *     var f = board.create('functiongraph', ['cos(x)']);
+     *     var ineq = board.create('inequality', [f], {inverse: true, fillOpacity: 0.1});
+     *     var circ = board.create('circle', [[0,0], 4]);
+     *     var clip = board.create('curveintersection', [ineq, circ], {fillColor: 'yellow', fillOpacity: 0.6});
+     *
+     *     })();
+     *
+     * </script><pre>
+     *
+     */
+    JXG.createCurveIntersection = function (board, parents, attributes) {
+        var c;
+
+        if (parents.length !== 2) {
+            throw new Error("JSXGraph: Can't create curve intersection with given parent'" +
+                "\nPossible parent types: [array, array|function]");
+        }
+
+        c = board.create('curve', [[], []], attributes);
+        c.updateDataArray = function() {
+             var a = JXG.Math.Clip.intersection(parents[0], parents[1], this.board);
+             this.dataX = a[0];
+             this.dataY = a[1];
+        };
+        return c;
+    };
+
+    /**
+     * @class Union of two closed path elements. The elements may be of type curve, circle, polygon, inequality.
+     * If one element is a curve, it has to be closed.
+     * The resulting element is of type curve.
+     * @pseudo
+     * @description
+     * @name CurveUnion
+     * @param {JXG.Curve|JXG.Polygon|JXG.Circle} curve1 First element defining the union
+     * @param {JXG.Curve|JXG.Polygon|JXG.Circle} curve2 Second element defining the union
+     * @augments JXG.Curve
+     * @constructor
+     * @type JXG.Curve
+     *
+     * @example
+     * var f = board.create('functiongraph', ['cos(x)']);
+     * var ineq = board.create('inequality', [f], {inverse: true, fillOpacity: 0.1});
+     * var circ = board.create('circle', [[0,0], 4]);
+     * var clip = board.create('curveunion', [ineq, circ], {fillColor: 'yellow', fillOpacity: 0.6});
+     *
+     * </pre><div id="JXGe2948257-8835-4276-9164-8acccb48e8d4" class="jxgbox" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     *     (function() {
+     *         var board = JXG.JSXGraph.initBoard('JXGe2948257-8835-4276-9164-8acccb48e8d4',
+     *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+     *     var f = board.create('functiongraph', ['cos(x)']);
+     *     var ineq = board.create('inequality', [f], {inverse: true, fillOpacity: 0.1});
+     *     var circ = board.create('circle', [[0,0], 4]);
+     *     var clip = board.create('curveunion', [ineq, circ], {fillColor: 'yellow', fillOpacity: 0.6});
+     *
+     *     })();
+     *
+     * </script><pre>
+     *
+     */
+     JXG.createCurveUnion = function (board, parents, attributes) {
+        var c;
+
+        if (parents.length !== 2) {
+            throw new Error("JSXGraph: Can't create curve union with given parent'" +
+                "\nPossible parent types: [array, array|function]");
+        }
+
+        c = board.create('curve', [[], []], attributes);
+        c.updateDataArray = function() {
+             var a = JXG.Math.Clip.union(parents[0], parents[1], this.board);
+             this.dataX = a[0];
+             this.dataY = a[1];
+        };
+        return c;
+    };
+
+    /**
+     * @class Difference of two closed path elements. The elements may be of type curve, circle, polygon, inequality.
+     * If one element is a curve, it has to be closed.
+     * The resulting element is of type curve.
+     * @pseudo
+     * @description
+     * @name CurveDifference
+     * @param {JXG.Curve|JXG.Polygon|JXG.Circle} curve1 First element from which the second element is "subtracted"
+     * @param {JXG.Curve|JXG.Polygon|JXG.Circle} curve2 Second element which is subtracted from the first element
+     * @augments JXG.Curve
+     * @constructor
+     * @type JXG.Curve
+     *
+     * @example
+     * var f = board.create('functiongraph', ['cos(x)']);
+     * var ineq = board.create('inequality', [f], {inverse: true, fillOpacity: 0.1});
+     * var circ = board.create('circle', [[0,0], 4]);
+     * var clip = board.create('curvedifference', [ineq, circ], {fillColor: 'yellow', fillOpacity: 0.6});
+     *
+     * </pre><div id="JXGe2948257-8835-4276-9164-8acccb48e8d4" class="jxgbox" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     *     (function() {
+     *         var board = JXG.JSXGraph.initBoard('JXGe2948257-8835-4276-9164-8acccb48e8d4',
+     *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+     *     var f = board.create('functiongraph', ['cos(x)']);
+     *     var ineq = board.create('inequality', [f], {inverse: true, fillOpacity: 0.1});
+     *     var circ = board.create('circle', [[0,0], 4]);
+     *     var clip = board.create('curvedifference', [ineq, circ], {fillColor: 'yellow', fillOpacity: 0.6});
+     *
+     *     })();
+     *
+     * </script><pre>
+     *
+     */
+     JXG.createCurveDifference = function (board, parents, attributes) {
+        var c;
+
+        if (parents.length !== 2) {
+            throw new Error("JSXGraph: Can't create curve difference with given parent'" +
+                "\nPossible parent types: [array, array|function]");
+        }
+
+        c = board.create('curve', [[], []], attributes);
+        c.updateDataArray = function() {
+             var a = JXG.Math.Clip.difference(parents[0], parents[1], this.board);
+             this.dataX = a[0];
+             this.dataY = a[1];
+        };
+        return c;
+    };
+
+    JXG.registerElement('curvedifference', JXG.createCurveDifference);
+    JXG.registerElement('curveintersection', JXG.createCurveIntersection);
+    JXG.registerElement('curveunion', JXG.createCurveUnion);
+
     return {
         Curve: JXG.Curve,
+        createCardinalSpline: JXG.createCardinalSpline,
         createCurve: JXG.createCurve,
+        createCurveDifference: JXG.createCurveDifference,
+        createCurveIntersection: JXG.createCurveIntersection,
+        createCurveUnion: JXG.createCurveUnion,
+        createDerivative: JXG.createDerivative,
         createFunctiongraph: JXG.createFunctiongraph,
-        createPlot: JXG.createPlot,
+        createMetapostSpline: JXG.createMetapostSpline,
+        createPlot: JXG.createFunctiongraph,
         createSpline: JXG.createSpline,
         createRiemannsum: JXG.createRiemannsum,
-        createTracecurve: JXG.createTracecurve,
-        createStepfunction: JXG.createStepfunction
+        createStepfunction: JXG.createStepfunction,
+        createTracecurve: JXG.createTracecurve
     };
 });

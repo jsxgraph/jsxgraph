@@ -541,6 +541,24 @@ define([
         this.isSelecting = false;
 
         /**
+         * A flag which tells us if the user is scrolling the viewport
+         * @type {Boolean}
+         * @private
+         * @default false
+         * @see JXG.Board#scrollListener
+         */
+        this._isScrolling = false;
+
+        /**
+         * A flag which tells us if a resize is in process
+         * @type {Boolean}
+         * @private
+         * @default false
+         * @see JXG.Board#resizeListener
+         */
+        this._isResizing = false;
+
+        /**
          * A bounding box for the selection
          * @type {Array}
          * @default [ [0,0], [0,0] ]
@@ -768,7 +786,7 @@ define([
                 docElement = this.document.documentElement || this.document.body.parentNode,
                 docBody = this.document.body,
                 container = this.containerObj,
-                viewport, content,
+                // viewport, content,
                 zoom, o;
 
             /**
@@ -1502,9 +1520,6 @@ define([
                 this.addMouseEventHandlers();
                 this.addTouchEventHandlers();
             }
-            //if (Env.isBrowser) {
-            //Env.addEvent(window, 'resize', this.update, this);
-            //}
 
             // This one produces errors on IE
             //Env.addEvent(this.containerObj, 'contextmenu', function (e) { e.preventDefault(); return false;}, this);
@@ -1520,6 +1535,44 @@ define([
             }
 
             this.addFullscreenEventHandlers();
+            this.addKeyboardEventHandlers();
+
+            if (Env.isBrowser) {
+                try {
+                    // resizeObserver: triggered if size of the JSXGraph div changes.
+                    this.startResizeObserver();
+                } catch (err) {
+                    // resize event: triggered if size of window changes
+                    Env.addEvent(window, 'resize', this.resizeListener, this);
+                    // intersectionObserver: triggered if JSXGraph becomes visible.
+                    this.startIntersectionObserver();
+                }
+                // Scroll event: needs to be captured since on mobile devices
+                // sometimes a header bar is displayed / hidden, which triggers a
+                // resize event.
+                Env.addEvent(window, 'scroll', this.scrollListener, this);
+            }
+        },
+
+        /**
+         * Remove all event handlers from the board object
+         */
+        removeEventHandlers: function () {
+            this.removeMouseEventHandlers();
+            this.removeTouchEventHandlers();
+            this.removePointerEventHandlers();
+
+            this.removeFullscreenEventHandlers();
+            this.removeKeyboardEventHandlers();
+            if (Env.isBrowser) {
+                if (Type.exists(this.resizeObserver)) {
+                    this.stopResizeObserver();
+                } else {
+                    Env.removeEvent(window, 'resize', this.resizeListener, this);
+                    this.stopIntersectionObserver();
+                }
+                Env.removeEvent(window, 'scroll', this.scrollListener, this);
+            }
         },
 
         /**
@@ -1527,13 +1580,14 @@ define([
          */
         addPointerEventHandlers: function () {
             if (!this.hasPointerHandlers && Env.isBrowser) {
+                var moveTarget = this.attr.movetarget || this.containerObj;
+
                 if (window.navigator.msPointerEnabled) {  // IE10-
                     Env.addEvent(this.containerObj, 'MSPointerDown', this.pointerDownListener, this);
-                    Env.addEvent(this.containerObj, 'MSPointerMove', this.pointerMoveListener, this);
+                    Env.addEvent(moveTarget, 'MSPointerMove', this.pointerMoveListener, this);
                 } else {
                     Env.addEvent(this.containerObj, 'pointerdown', this.pointerDownListener, this);
-                    Env.addEvent(this.containerObj, 'pointermove', this.pointerMoveListener, this);
-                    // Env.addEvent(this.containerObj, 'pointerout', this.pointerOutListener, this);
+                    Env.addEvent(moveTarget, 'pointermove', this.pointerMoveListener, this);
                 }
                 Env.addEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
                 Env.addEvent(this.containerObj, 'DOMMouseScroll', this.mouseWheelListener, this);
@@ -1553,8 +1607,10 @@ define([
          */
         addMouseEventHandlers: function () {
             if (!this.hasMouseHandlers && Env.isBrowser) {
+                var moveTarget = this.attr.movetarget || this.containerObj;
+
                 Env.addEvent(this.containerObj, 'mousedown', this.mouseDownListener, this);
-                Env.addEvent(this.containerObj, 'mousemove', this.mouseMoveListener, this);
+                Env.addEvent(moveTarget, 'mousemove', this.mouseMoveListener, this);
 
                 Env.addEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
                 Env.addEvent(this.containerObj, 'DOMMouseScroll', this.mouseWheelListener, this);
@@ -1572,8 +1628,10 @@ define([
          */
         addTouchEventHandlers: function (appleGestures) {
             if (!this.hasTouchHandlers && Env.isBrowser) {
+                var moveTarget = this.attr.movetarget || this.containerObj;
+
                 Env.addEvent(this.containerObj, 'touchstart', this.touchStartListener, this);
-                Env.addEvent(this.containerObj, 'touchmove', this.touchMoveListener, this);
+                Env.addEvent(moveTarget, 'touchmove', this.touchMoveListener, this);
 
                 /*
                 if (!Type.exists(appleGestures) || appleGestures) {
@@ -1597,10 +1655,33 @@ define([
                 events = ['fullscreenchange', 'mozfullscreenchange', 'webkitfullscreenchange', 'msfullscreenchange'],
                 le = events.length;
 
-            for (i = 0; i < le; i++) {
-                Env.addEvent(this.document, events[i], this.fullscreenListener, this);
+            if (!this.hasFullsceenEventHandlers && Env.isBrowser) {
+                for (i = 0; i < le; i++) {
+                    Env.addEvent(this.document, events[i], this.fullscreenListener, this);
+                }
+                this.hasFullsceenEventHandlers = true;
             }
-            this.hasFullsceenEventHandlers = true;
+        },
+
+        addKeyboardEventHandlers: function() {
+            if (!this.hasKeyboardHandlers && Env.isBrowser) {
+                Env.addEvent(this.containerObj, 'keydown', this.keyDownListener, this);
+                Env.addEvent(this.containerObj, 'focusin', this.keyFocusInListener, this);
+                Env.addEvent(this.containerObj, 'focusout', this.keyFocusOutListener, this);
+                this.hasKeyboardHandlers = true;
+            }
+        },
+
+        /**
+         * Remove all registered touch event handlers.
+         */
+        removeKeyboardEventHandlers: function () {
+            if (this.hasKeyboardHandlers && Env.isBrowser) {
+                Env.removeEvent(this.containerObj, 'keydown', this.keyDownListener, this);
+                Env.removeEvent(this.containerObj, 'focusin', this.keyFocusInListener, this);
+                Env.removeEvent(this.containerObj, 'focusout', this.keyFocusOutListener, this);
+                this.hasKeyboardHandlers = false;
+            }
         },
 
         /**
@@ -1614,8 +1695,9 @@ define([
 
             if (this.hasFullsceenEventHandlers && Env.isBrowser) {
                 for (i = 0; i < le; i++) {
-                        Env.removeEvent(this.document, events[i], this.fullscreenListener, this);
+                    Env.removeEvent(this.document, events[i], this.fullscreenListener, this);
                 }
+                this.hasFullsceenEventHandlers = false;
             }
         },
 
@@ -1624,12 +1706,14 @@ define([
          */
         removePointerEventHandlers: function () {
             if (this.hasPointerHandlers && Env.isBrowser) {
+                var moveTarget = this.attr.movetarget || this.containerObj;
+
                 if (window.navigator.msPointerEnabled) {  // IE10-
                     Env.removeEvent(this.containerObj, 'MSPointerDown', this.pointerDownListener, this);
-                    Env.removeEvent(this.containerObj, 'MSPointerMove', this.pointerMoveListener, this);
+                    Env.removeEvent(moveTarget, 'MSPointerMove', this.pointerMoveListener, this);
                 } else {
                     Env.removeEvent(this.containerObj, 'pointerdown', this.pointerDownListener, this);
-                    Env.removeEvent(this.containerObj, 'pointermove', this.pointerMoveListener, this);
+                    Env.removeEvent(moveTarget, 'pointermove', this.pointerMoveListener, this);
                     // Env.removeEvent(this.containerObj, 'pointerout', this.pointerOutListener, this);
                 }
 
@@ -1654,8 +1738,10 @@ define([
          */
         removeMouseEventHandlers: function () {
             if (this.hasMouseHandlers && Env.isBrowser) {
+                var moveTarget = this.attr.movetarget || this.containerObj;
+
                 Env.removeEvent(this.containerObj, 'mousedown', this.mouseDownListener, this);
-                Env.removeEvent(this.containerObj, 'mousemove', this.mouseMoveListener, this);
+                Env.removeEvent(moveTarget, 'mousemove', this.mouseMoveListener, this);
 
                 if (this.hasMouseUp) {
                     Env.removeEvent(this.document, 'mouseup', this.mouseUpListener, this);
@@ -1674,8 +1760,10 @@ define([
          */
         removeTouchEventHandlers: function () {
             if (this.hasTouchHandlers && Env.isBrowser) {
+                var moveTarget = this.attr.movetarget || this.containerObj;
+
                 Env.removeEvent(this.containerObj, 'touchstart', this.touchStartListener, this);
-                Env.removeEvent(this.containerObj, 'touchmove', this.touchMoveListener, this);
+                Env.removeEvent(moveTarget, 'touchmove', this.touchMoveListener, this);
 
                 if (this.hasTouchEnd) {
                     Env.removeEvent(this.document, 'touchend', this.touchEndListener, this);
@@ -1684,18 +1772,6 @@ define([
 
                 this.hasTouchHandlers = false;
             }
-        },
-
-        /**
-         * Remove all event handlers from the board object
-         */
-        removeEventHandlers: function () {
-            this.removeMouseEventHandlers();
-            this.removeTouchEventHandlers();
-            this.removePointerEventHandlers();
-
-            this.removeFullscreenEventHandlers();
-
         },
 
         /**
@@ -1924,9 +2000,7 @@ define([
          * pointer-Events
          */
         _pointerIsTouchRegistered: function(evt) {
-            var i,
-                len = this._board_touches.length,
-                found = false;
+            var i, len = this._board_touches.length;
 
             for (i = 0; i < len; i++) {
                 if (this._board_touches[i].pointerId === evt.pointerId) {
@@ -2012,7 +2086,7 @@ define([
         pointerDownListener: function (evt, object) {
             var i, j, k, pos, elements, sel,
                 type = 'mouse', // in case of no browser
-                found, target, result;
+                found, target;
 
             // Temporary fix for Firefox pointer events:
             // When using two fingers, the first touch down event is fired again.
@@ -2368,7 +2442,7 @@ define([
          * @returns {Boolean} ...
          */
         touchStartListener: function (evt) {
-            var i, pos, elements, j, k, time,
+            var i, pos, elements, j, k,
                 eps = this.options.precision.touch,
                 obj, found, targets,
                 evtTouches = evt[JXG.touchProperty],
@@ -3006,6 +3080,325 @@ define([
             evt.preventDefault();
             return false;
         },
+        /**
+         * Allow moving of JSXGraph elements with arrow keys
+         * and zooming of the construction with + / -.
+         * Panning of the construction is done with arrow keys
+         * if the pan key (shift or ctrl) is pressed.
+         * The selection of the element is done with the tab key.
+         *
+         * @param  {Event} evt The browser's event object
+         *
+         * @see JXG.Board#keyboard
+         * @see JXG.Board#keyFocusInListener
+         * @see JXG.Board#keyFocusOutListener
+         *
+         */
+        keyDownListener: function (evt) {
+            var id_node = evt.target.id,
+                id, el,
+                dx = Type.evaluate(this.attr.keyboard.dx) / this.unitX,
+                dy = Type.evaluate(this.attr.keyboard.dy) / this.unitY,
+                doZoom = false,
+                dir, actPos;
+
+            if (!this.attr.keyboard.enabled || id_node === '') {
+                return false;
+            }
+
+            // Get the JSXGraph id from the id of the SVG node.
+            id = id_node.replace(this.containerObj.id + '_', '');
+            el = this.select(id);
+
+            if (Type.exists(el.coords)) {
+                actPos = el.coords.usrCoords.slice(1);
+            }
+
+            if (Type.evaluate(this.attr.keyboard.panshift) || Type.evaluate(this.attr.keyboard.panctrl)) {
+                doZoom = true;
+            }
+
+            if ((Type.evaluate(this.attr.keyboard.panshift) && evt.shiftKey) ||
+                (Type.evaluate(this.attr.keyboard.panctrl) && evt.ctrlKey)) {
+                if (evt.keyCode === 38) {           // up
+                    this.clickUpArrow();
+                } else if (evt.keyCode === 40) {    // down
+                    this.clickDownArrow();
+                } else if (evt.keyCode === 37) {    // left
+                    this.clickLeftArrow();
+                } else if (evt.keyCode === 39) {    // right
+                    this.clickRightArrow();
+                }
+            } else {
+                if (evt.keyCode === 38) {           // up
+                    dir = [0, dy];
+                } else if (evt.keyCode === 40) {    // down
+                    dir = [0, -dy];
+                } else if (evt.keyCode === 37) {    // left
+                    dir = [-dx, 0];
+                } else if (evt.keyCode === 39) {    // right
+                    dir = [dx, 0];
+                // } else if (evt.keyCode === 9) {  // tab
+
+                } else if (doZoom && evt.key === '+') {   // +
+                    this.zoomIn();
+                } else if (doZoom && evt.key === '-') {   // -
+                    this.zoomOut();
+                } else if (doZoom && evt.key === 'o') {    // o
+                    this.zoom100();
+                }
+                if (dir && el.isDraggable &&
+                        el.visPropCalc.visible &&
+                        ((this.geonextCompatibilityMode &&
+                            (Type.isPoint(el) ||
+                            el.elementClass === Const.OBJECT_CLASS_TEXT)
+                        ) || !this.geonextCompatibilityMode) &&
+                        !Type.evaluate(el.visProp.fixed)
+                    ) {
+
+                    if (Type.exists(el.coords)) {
+                        dir[0] += actPos[0];
+                        dir[1] += actPos[1];
+                    }
+                    // For coordsElement setPosition has to call setPositionDirectly.
+                    // Otherwise the position is set by a translation.
+                    el.setPosition(JXG.COORDS_BY_USER, dir);
+                }
+            }
+
+            this.update();
+
+            return true;
+        },
+
+        /**
+         * Event listener for SVG elements getting focus.
+         * This is needed for highlighting when using keyboard control.
+         *
+         * @see JXG.Board#keyFocusOutListener
+         * @see JXG.Board#keyDownListener
+         * @see JXG.Board#keyboard
+         *
+         * @param  {Event} evt The browser's event object
+         */
+        keyFocusInListener: function (evt) {
+            var id_node = evt.target.id,
+                id, el;
+
+            if (!this.attr.keyboard.enabled || id_node === '') {
+                return false;
+            }
+
+            id = id_node.replace(this.containerObj.id + '_', '');
+            el = this.select(id);
+            if (Type.exists(el.highlight)) {
+                el.highlight(true);
+            }
+        },
+
+        /**
+         * Event listener for SVG elements losing focus.
+         * This is needed for dehighlighting when using keyboard control.
+         *
+         * @see JXG.Board#keyFocusInListener
+         * @see JXG.Board#keyDownListener
+         * @see JXG.Board#keyboard
+         *
+         * @param  {Event} evt The browser's event object
+         */
+         keyFocusOutListener: function (evt) {
+            if (!this.attr.keyboard.enabled) {
+                return false;
+            }
+            // var id_node = evt.target.id,
+            //     id, el;
+
+            // id = id_node.replace(this.containerObj.id + '_', '');
+            // el = this.select(id);
+            this.dehighlightAll();
+        },
+
+        /**
+         * Update the width and height of the JSXGraph container div element.
+         * Read actual values with getBoundingClientRect(),
+         * and call board.resizeContainer() with this values.
+         * <p>
+         * If necessary, also call setBoundingBox().
+         *
+         * @see JXG.Board#startResizeObserver
+         * @see JXG.Board#resizeListener
+         * @see JXG.Board#resizeContainer
+         * @see JXG.Board#setBoundingBox
+         *
+         */
+        updateContainerDims: function() {
+            var theWidth, theHeight;
+
+            theWidth  = this.containerObj.getBoundingClientRect().width;
+            theHeight = this.containerObj.getBoundingClientRect().height;
+            if (theWidth === 0 || theHeight === 0) {
+                // The div is invisible - do nothing
+                return;
+            }
+
+            // If bounding box is not yet initialized, do it now.
+            if (isNaN(this.getBoundingBox()[0])) {
+                this.setBoundingBox(this.attr.boundingbox);
+            }
+
+            // We do nothing if in case the dimension did not change since being visible
+            // the last time. Note that if the div had display:none in the mean time,
+            // we did not store this._prevTheWidth/Height.
+            if (Type.exists(this._prevTheWidth) && Type.exists(this._prevTheHeight) &&
+                this._prevTheWidth === theWidth && this._prevTheHeight === theHeight) {
+                    return;
+            }
+            // theWidth and theHeight are the outer dimensions and therefore
+            // might be too large. This does no harm, because the result is only that the
+            // SVGRoot might be larger than the visible div and there
+            // is overflow:hidden.
+            this.resizeContainer(theWidth, theHeight, true);
+            this._prevTheWidth  = theWidth;
+            this._prevTheHeight = theHeight;
+        },
+
+        /**
+         * Start observer which reacts to size changes of the JSXGraph
+         * container div element. Calls updateContainerDims().
+         * If not available, an event listener for the window-resize event is started.
+         * On mobile devices also scrolling might trigger resizes.
+         * However, resize events triggered by scrolling events should be ignored.
+         * Therefore, also a scrollListener is started.
+         * Resize can be controlled with the board attribute resize.
+         *
+         * @see JXG.Board#updateContainerDims
+         * @see JXG.Board#resizeListener
+         * @see JXG.Board#scrollListener
+         * @see JXG.Board#resize
+         *
+         */
+        startResizeObserver: function() {
+            var that = this;
+
+            if (!Env.isBrowser || !this.attr.resize || !this.attr.resize.enabled) {
+                return;
+            }
+
+            this.resizeObserver = new ResizeObserver(function(entries) {
+                if (!that._isResizing) {
+                    that._isResizing = true;
+                    window.setTimeout(function() {
+                        that.updateContainerDims();
+                        that._isResizing = false;
+                    }, that.attr.resize.throttle);
+                }
+            });
+            this.resizeObserver.observe(this.containerObj);
+        },
+
+        /**
+         * Stops the resize observer.
+         * @see JXG.Board#startResizeObserver
+         *
+         */
+        stopResizeObserver: function() {
+            if (!Env.isBrowser || !this.attr.resize || !this.attr.resize.enabled) {
+                return;
+            }
+
+            if (Type.exists(this.resizeObserver)) {
+                this.resizeObserver.unobserve(this.containerObj);
+            }
+        },
+
+        /**
+         * Fallback solutions if there is no resizeObserver available in the browser.
+         * Reacts to resize events of the window (only). Otherwise similar to
+         * startResizeObserver(). To handle changes of the visibility
+         * of the JSXGraph container element, additionally an intersection observer is used.
+         * which watches changes in the visibility of the JSXGraph container element.
+         * This is necessary e.g. for register tabs or dia shows.
+         *
+         * @see JXG.Board#startResizeObserver
+         * @see JXG.Board#startIntersectionObserver
+         */
+        resizeListener: function() {
+            var that = this;
+
+            if (!Env.isBrowser || !this.attr.resize || !this.attr.resize.enabled) {
+                return;
+            }
+            if (!this._isScrolling && !this._isResizing) {
+                this._isResizing = true;
+                window.setTimeout(function() {
+                    that.updateContainerDims();
+                    that._isResizing = false;
+                }, this.attr.resize.throttle);
+            }
+        },
+
+        /**
+         * Listener to watch for scroll events. Sets board._isScrolling = true
+         * @param  {Event} evt The browser's event object
+         *
+         * @see JXG.Board#startResizeObserver
+         * @see JXG.Board#resizeListener
+         *
+         */
+        scrollListener: function(evt) {
+            var that = this;
+
+            if (!Env.isBrowser) {
+                return;
+            }
+            if (!this._isScrolling) {
+                this._isScrolling = true;
+                window.setTimeout(function() {
+                    that._isScrolling = false;
+                }, 66);
+            }
+        },
+
+        /**
+         * Watch for changes of the visibility of the JSXGraph container element.
+         *
+         * @see JXG.Board#startResizeObserver
+         * @see JXG.Board#resizeListener
+         *
+         */
+        startIntersectionObserver: function() {
+            var that = this,
+                options = {
+                    root: null,
+                    rootMargin: '0px',
+                    threshold: 0.8
+                };
+
+            try {
+                this.intersectionObserver = new IntersectionObserver(function(entries) {
+                    // If bounding box is not yet initialized, do it now.
+                    if (isNaN(that.getBoundingBox()[0])) {
+                        that.setBoundingBox(that.attr.boundingbox);
+                        that.updateContainerDims();
+                    }
+                }, options);
+                this.intersectionObserver.observe(that.containerObj);
+            } catch (err) {
+                console.log('Info: IntersectionObserver not available in this browser');
+            }
+        },
+
+        /**
+         * Stop the intersection observer
+         *
+         * @see JXG.Board#startIntersectionObserver
+         *
+         */
+        stopIntersectionObserver: function() {
+            if (Type.exists(this.intersectionObserver)) {
+                this.intersectionObserver.unobserve(this.containerObj);
+            }
+        },
 
         /**********************************************************
          *
@@ -3022,6 +3415,13 @@ define([
             var  attr = Type.copyAttributes({}, this.options, 'infobox');
 
             attr.id = this.id + '_infobox';
+            /**
+             * Infobox close to points in which the points' coordinates are displayed.
+             * This is simply a JXG.Text element. Access through board.infobox.
+             * Uses CSS class .JXGinfobox.
+             * @type {JXG.Text}
+             *
+             */
             this.infobox = this.create('text', [0, 0, '0,0'], attr);
 
             this.infobox.distanceX = -20;
@@ -3095,7 +3495,7 @@ define([
          *
          */
         displayInfobox: function(val) {
-            if (this.infobox.hiddenByParent == val) {
+            if (this.infobox.hiddenByParent === val) {
                 this.infobox.hiddenByParent = !val;
                 this.infobox.prepareUpdate().updateVisibility(val).updateRenderer();
             }
@@ -3174,9 +3574,11 @@ define([
         /**
          * Returns the input parameters in an array. This method looks pointless and it really is, but it had a purpose
          * once.
+         * @private
          * @param {Number} x X coordinate in screen coordinates
          * @param {Number} y Y coordinate in screen coordinates
-         * @returns {Array} Coordinates of the mouse in screen coordinates.
+         * @returns {Array} Coordinates [x, y] of the mouse in screen coordinates.
+         * @see JXG.Board#getUsrCoordsOfMouse
          */
         getScrCoordsOfMouse: function (x, y) {
             return [x, y];
@@ -3185,7 +3587,37 @@ define([
         /**
          * This method calculates the user coords of the current mouse coordinates.
          * @param {Event} evt Event object containing the mouse coordinates.
-         * @returns {Array} Coordinates of the mouse in screen coordinates.
+         * @returns {Array} Coordinates [x, y] of the mouse in user coordinates.
+         * @example
+         * board.on('up', function (evt) {
+         *         var a = board.getUsrCoordsOfMouse(evt),
+         *             x = a[0],
+         *             y = a[1],
+         *             somePoint = board.create('point', [x,y], {name:'SomePoint',size:4});
+         *             // Shorter version:
+         *             //somePoint = board.create('point', a, {name:'SomePoint',size:4});
+         *         });
+         *
+         * </pre><div id="JXG48d5066b-16ba-4920-b8ea-a4f8eff6b746" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG48d5066b-16ba-4920-b8ea-a4f8eff6b746',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *     board.on('up', function (evt) {
+         *             var a = board.getUsrCoordsOfMouse(evt),
+         *                 x = a[0],
+         *                 y = a[1],
+         *                 somePoint = board.create('point', [x,y], {name:'SomePoint',size:4});
+         *                 // Shorter version:
+         *                 //somePoint = board.create('point', a, {name:'SomePoint',size:4});
+         *             });
+         * 
+         *     })();
+         *
+         * </script><pre>
+         * 
+         * @see JXG.Board#getScrCoordsOfMouse
+         * @see JXG.Board#getAllUnderMouse
          */
         getUsrCoordsOfMouse: function (evt) {
             var cPos = this.getCoordsTopLeftCorner(),
@@ -3201,6 +3633,8 @@ define([
          * Collects all elements under current mouse position plus current user coordinates of mouse cursor.
          * @param {Event} evt Event object containing the mouse coordinates.
          * @returns {Array} Array of elements at the current mouse position plus current user coordinates of mouse.
+         * @see JXG.Board#getUsrCoordsOfMouse
+         * @see JXG.Board#getAllObjectsUnderMouse
          */
         getAllUnderMouse: function (evt) {
             var elList = this.getAllObjectsUnderMouse(evt);
@@ -3213,6 +3647,7 @@ define([
          * Collects all elements under current mouse position.
          * @param {Event} evt Event object containing the mouse coordinates.
          * @returns {Array} Array of elements at the current mouse position.
+         * @see JXG.Board#getAllUnderMouse
          */
         getAllObjectsUnderMouse: function (evt) {
             var cPos = this.getCoordsTopLeftCorner(),
@@ -3912,7 +4347,6 @@ define([
                 this.containerObj.style.width = (this.canvasWidth) + 'px';
                 this.containerObj.style.height = (this.canvasHeight) + 'px';
             }
-
             this.renderer.resize(this.canvasWidth, this.canvasHeight);
 
             if (!dontSetBoundingBox) {
@@ -4023,6 +4457,10 @@ define([
 
             for (el = 0; el < this.objectsList.length; el++) {
                 pEl = this.objectsList[el];
+                if (this.needsFullUpdate && pEl.elementClass == Const.OBJECT_CLASS_TEXT) {
+                    pEl.updateSize();
+                }
+
                 // For updates of an element we distinguish if the dragged element is updated or
                 // other elements are updated.
                 // The difference lies in the treatment of gliders.
@@ -4206,7 +4644,8 @@ define([
          * @returns {JXG.Board} Reference to the board
          */
         update: function (drag) {
-            var i, len, b, insert;
+            var i, len, b, insert,
+                storeActiveEl;
 
             if (this.inUpdate || this.isSuspendedUpdate) {
                 return this;
@@ -4214,12 +4653,15 @@ define([
             this.inUpdate = true;
 
             if (this.attr.minimizereflow === 'all' && this.containerObj && this.renderer.type !== 'vml') {
+                storeActiveEl = document.activeElement; // Store focus element
                 insert = this.renderer.removeToInsertLater(this.containerObj);
             }
 
             if (this.attr.minimizereflow === 'svg' && this.renderer.type === 'svg') {
+                storeActiveEl = document.activeElement;
                 insert = this.renderer.removeToInsertLater(this.renderer.svgRoot);
             }
+
             this.prepareUpdate().updateElements(drag).updateConditions();
             this.renderer.suspendRedraw(this);
             this.updateRenderer();
@@ -4228,6 +4670,7 @@ define([
 
             if (insert) {
                 insert();
+                storeActiveEl.focus();     // Restore focus element
             }
 
             // To resolve dependencies between boards
@@ -4787,7 +5230,7 @@ define([
         },
 
         /**
-         * Update CSS transformations of sclaing type. It is used to correct the mouse position
+         * Update CSS transformations of type scaling. It is used to correct the mouse position
          * in {@link JXG.Board.getMousePosition}.
          * The inverse transformation matrix is updated on each mouseDown and touchStart event.
          *
@@ -5357,7 +5800,9 @@ define([
                 wrapper.appendChild(el);
             }
 
+            // Start fullscreen mode
             Env.toFullscreen(wrap_id, id);
+
             return this;
         },
 
@@ -5369,6 +5814,20 @@ define([
          * @param  {Object} evt fullscreen event object
          */
         fullscreenListener: function(evt) {
+            var el = this.containerObj;
+
+            // If full screen mode is started we have to remove CSS margin around the JSXGraph div.
+            // Otherwise, the positioning of the fullscreen div will be false.
+            // When leaving the fullscreen mode, the margin is put back in.
+
+            if (Type.exists(this._cssFullscreenStore) && this._cssFullscreenStore.isFullscreen) {
+                el._cssFullscreenStore.isFullscreen = false;
+                el.style.margin = this._cssFullscreenStore.margin;
+            } else {
+                el._cssFullscreenStore.isFullscreen = true;
+                el.style.margin = '';
+            }
+
             this.updateCSSTransforms();
         },
 

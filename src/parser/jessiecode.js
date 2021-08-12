@@ -1382,7 +1382,7 @@ define([
                     v = this.getvar(node.children[0]);
                     ret = this.del(v);
                     break;
-                case 'op_equ':
+                case 'op_eq':
                     // == is intentional
                     /*jslint eqeq:true*/
                     ret = this.execute(node.children[0]) == this.execute(node.children[1]);
@@ -1397,16 +1397,16 @@ define([
                 case 'op_approx':
                     ret = Math.abs(this.execute(node.children[0]) - this.execute(node.children[1])) < Mat.eps;
                     break;
-                case 'op_grt':
+                case 'op_gt':
                     ret = this.execute(node.children[0]) > this.execute(node.children[1]);
                     break;
-                case 'op_lot':
+                case 'op_lt':
                     ret = this.execute(node.children[0]) < this.execute(node.children[1]);
                     break;
-                case 'op_gre':
+                case 'op_geq':
                     ret = this.execute(node.children[0]) >= this.execute(node.children[1]);
                     break;
-                case 'op_loe':
+                case 'op_leq':
                     ret = this.execute(node.children[0]) <= this.execute(node.children[1]);
                     break;
                 case 'op_or':
@@ -1653,37 +1653,37 @@ define([
 
                     ret += this.compile(node.children[0], js) + ')';
                     break;
-                case 'op_equ':
-                    ret = '(' + this.compile(node.children[0], js) + ' == ' + this.compile(node.children[1], js) + ')';
+                case 'op_eq':
+                    ret = '(' + this.compile(node.children[0], js) + ' === ' + this.compile(node.children[1], js) + ')';
                     break;
                 case 'op_neq':
-                    ret = '(' + this.compile(node.children[0], js) + ' != ' + this.compile(node.children[1], js) + ')';
+                    ret = '(' + this.compile(node.children[0], js) + ' !== ' + this.compile(node.children[1], js) + ')';
                     break;
                 case 'op_approx':
                     ret = '(' + this.compile(node.children[0], js) + ' ~= ' + this.compile(node.children[1], js) + ')';
                     break;
-                case 'op_grt':
+                case 'op_gt':
                     if (js) {
                         ret = '$jc$.gt(' + this.compile(node.children[0], js) + ', ' + this.compile(node.children[1], js) + ')';
                     } else {
                         ret = '(' + this.compile(node.children[0], js) + ' > ' + this.compile(node.children[1], js) + ')';
                     }
                     break;
-                case 'op_lot':
+                case 'op_lt':
                     if (js) {
                         ret = '$jc$.lt(' + this.compile(node.children[0], js) + ', ' + this.compile(node.children[1], js) + ')';
                     } else {
                         ret = '(' + this.compile(node.children[0], js) + ' < ' + this.compile(node.children[1], js) + ')';
                     }
                     break;
-                case 'op_gre':
+                case 'op_geq':
                     if (js) {
                         ret = '$jc$.geq(' + this.compile(node.children[0], js) + ', ' + this.compile(node.children[1], js) + ')';
                     } else {
                         ret = '(' + this.compile(node.children[0], js) + ' >= ' + this.compile(node.children[1], js) + ')';
                     }
                     break;
-                case 'op_loe':
+                case 'op_leq':
                     if (js) {
                         ret = '$jc$.leq(' + this.compile(node.children[0], js) + ', ' + this.compile(node.children[1], js) + ')';
                     } else {
@@ -2168,42 +2168,50 @@ define([
                 builtIn = {
                     PI: Math.PI,
                     EULER: Math.E,
+                    D: that.DDD,
                     X: that.X,
                     Y: that.Y,
                     V: that.V,
                     L: that.L,
-                    dist: that.dist,
-                    rad: Geometry.rad,
-                    deg: Geometry.trueAngle,
-                    factorial: Mat.factorial,
-                    trunc: Type.trunc,
-                    log: Mat.log,
-                    ln: Math.log,
-                    log10: Mat.log10,
-                    lg: Mat.log10,
-                    log2: Mat.log2,
-                    lb: Mat.log2,
-                    ld: Mat.log2,
-                    cosh: Mat.cosh,
-                    sinh: Mat.sinh,
-                    cot: Mat.cot,
-                    acot: Mat.acot,
 
-                    nthroot: Mat.nthroot,
-                    cbrt: Mat.cbrt,
-                    pow: Mat.pow,
-                    ratpow: Mat.ratpow,
-                    gcd: Mat.gcd,
-                    lcm: Mat.lcm,
+                    acosh: Mat.acosh,
+                    acot: Mat.acot,
+                    asinh: Mat.asinh,
                     binomial: Mat.binomial,
+                    cbrt: Mat.cbrt,
+                    cosh: Mat.cosh,
+                    cot: Mat.cot,
+                    deg: Geometry.trueAngle,
+                    dist: that.dist,
+                    erf: Mat.erf,
+                    erfc: Mat.erfc,
+                    erfi: Mat.erfi,
+                    factorial: Mat.factorial,
+                    gcd: Mat.gcd,
+                    lb: Mat.log2,
+                    lcm: Mat.lcm,
+                    ld: Mat.log2,
+                    lg: Mat.log10,
+                    ln: Math.log,
+                    log: Mat.log,
+                    log10: Mat.log10,
+                    log2: Mat.log2,
+                    ndtr: Mat.ndtr,
+                    ndtri: Mat.ndtri,
+                    nthroot: Mat.nthroot,
+                    pow: Mat.pow,
+                    rad: Geometry.rad,
+                    ratpow: Mat.ratpow,
+                    trunc: Type.trunc,
+                    sinh: Mat.sinh,
+
                     IfThen: that.ifthen,
                     'import': that.importModule,
                     'use': that.use,
                     'remove': that.del,
                     '$': that.getElementById,
                     '$board': that.board,
-                    '$log': that.log,
-                    D: that.DDD
+                    '$log': that.log
                 };
 
             // special scopes for factorial, deg, and rad
@@ -2219,29 +2227,38 @@ define([
             builtIn.Y.src = '$jc$.Y';
             builtIn.V.src = '$jc$.V';
             builtIn.L.src = '$jc$.L';
-            builtIn.dist.src = '$jc$.dist';
-            builtIn.rad.src = 'JXG.Math.Geometry.rad';
-            builtIn.deg.src = 'JXG.Math.Geometry.trueAngle';
-            builtIn.factorial.src = 'JXG.Math.factorial';
-            builtIn.trunc.src = 'JXG.trunc';
-            builtIn.log.src = 'JXG.Math.log';
-            builtIn.ln.src = 'Math.log';
-            builtIn.log10.src = 'JXG.Math.log10';
-            builtIn.lg.src = 'JXG.Math.log10';
-            builtIn.log2.src = 'JXG.Math.log2';
-            builtIn.lb.src = 'JXG.Math.log2';
-            builtIn.ld.src = 'JXG.Math.log2';
-            builtIn.cosh.src = 'JXG.Math.cosh';
-            builtIn.sinh.src = 'JXG.Math.sinh';
-            builtIn.cot.src = 'JXG.Math.cot';
+
+            builtIn.acosh.src = 'JXG.Math.acosh';
             builtIn.acot.src = 'JXG.Math.acot';
-            builtIn.nthroot.src = 'JXG.Math.nthroot';
-            builtIn.cbrt.src = 'JXG.Math.cbrt';
-            builtIn.pow.src = 'JXG.Math.pow';
-            builtIn.ratpow.src = 'JXG.Math.ratpow';
-            builtIn.gcd.src = 'JXG.Math.gcd';
-            builtIn.lcm.src = 'JXG.Math.lcm';
+            builtIn.asinh.src = 'JXG.Math.asinh';
             builtIn.binomial.src = 'JXG.Math.binomial';
+            builtIn.cbrt.src = 'JXG.Math.cbrt';
+            builtIn.cot.src = 'JXG.Math.cot';
+            builtIn.cosh.src = 'JXG.Math.cosh';
+            builtIn.deg.src = 'JXG.Math.Geometry.trueAngle';
+            builtIn.erf.src = 'JXG.Math.erf';
+            builtIn.erfc.src = 'JXG.Math.erfc';
+            builtIn.erfi.src = 'JXG.Math.erfi';
+            builtIn.dist.src = '$jc$.dist';
+            builtIn.factorial.src = 'JXG.Math.factorial';
+            builtIn.gcd.src = 'JXG.Math.gcd';
+            builtIn.lb.src = 'JXG.Math.log2';
+            builtIn.lcm.src = 'JXG.Math.lcm';
+            builtIn.ld.src = 'JXG.Math.log2';
+            builtIn.lg.src = 'JXG.Math.log10';
+            builtIn.ln.src = 'Math.log';
+            builtIn.log.src = 'JXG.Math.log';
+            builtIn.log10.src = 'JXG.Math.log10';
+            builtIn.log2.src = 'JXG.Math.log2';
+            builtIn.ndtr.src = 'JXG.Math.ndtr';
+            builtIn.ndtri.src = 'JXG.Math.ndtri';
+            builtIn.nthroot.src = 'JXG.Math.nthroot';
+            builtIn.pow.src = 'JXG.Math.pow';
+            builtIn.rad.src = 'JXG.Math.Geometry.rad';
+            builtIn.ratpow.src = 'JXG.Math.ratpow';
+            builtIn.trunc.src = 'JXG.trunc';
+            builtIn.sinh.src = 'JXG.Math.sinh';
+
             builtIn['import'].src = '$jc$.importModule';
             builtIn.use.src = '$jc$.use';
             builtIn.remove.src = '$jc$.del';
@@ -2445,7 +2462,7 @@ case 31:
  this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_and', $$[$0-2], $$[$0]); this.$.isMath = false; 
 break;
 case 33:
- this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_equ', $$[$0-2], $$[$0]); this.$.isMath = false; 
+ this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_eq', $$[$0-2], $$[$0]); this.$.isMath = false; 
 break;
 case 34:
  this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_neq', $$[$0-2], $$[$0]); this.$.isMath = false; 
@@ -2454,16 +2471,16 @@ case 35:
  this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_approx', $$[$0-2], $$[$0]); this.$.isMath = false; 
 break;
 case 37:
- this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_lot', $$[$0-2], $$[$0]); this.$.isMath = false; 
+ this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_lt', $$[$0-2], $$[$0]); this.$.isMath = false; 
 break;
 case 38:
- this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_grt', $$[$0-2], $$[$0]); this.$.isMath = false; 
+ this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_gt', $$[$0-2], $$[$0]); this.$.isMath = false; 
 break;
 case 39:
- this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_loe', $$[$0-2], $$[$0]); this.$.isMath = false; 
+ this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_leq', $$[$0-2], $$[$0]); this.$.isMath = false; 
 break;
 case 40:
- this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_gre', $$[$0-2], $$[$0]); this.$.isMath = false; 
+ this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_geq', $$[$0-2], $$[$0]); this.$.isMath = false; 
 break;
 case 42:
  this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_add', $$[$0-2], $$[$0]); this.$.isMath = true; 

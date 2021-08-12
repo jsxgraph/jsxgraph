@@ -55,9 +55,9 @@
  */
 
 define([
-    'jxg', 'options', 'math/math', 'math/geometry', 'math/numerics', 'base/coords', 'base/constants', 'base/element',
-    'parser/geonext', 'utils/type', 'base/transformation', 'base/coordselement'
-], function (JXG, Options, Mat, Geometry, Numerics, Coords, Const, GeometryElement, GeonextParser, Type, Transform, CoordsElement) {
+    'jxg', 'options', 'math/math', 'math/geometry', 'base/constants', 'base/element',
+    'utils/type', 'base/coordselement'
+], function (JXG, Options, Mat, Geometry, Const, GeometryElement, Type, CoordsElement) {
 
     "use strict";
 
@@ -159,11 +159,11 @@ define([
                 return this;
             }
 
-            // case of bindTo
             if (this === this.baseElement) {
+                // case of bindTo
                 c = this.transformations[0].apply(this.baseElement, 'self');
-            // case of board.create('point',[baseElement,transform]);
             } else {
+                // case of board.create('point',[baseElement,transform]);
                 c = this.transformations[0].apply(this.baseElement);
             }
 
@@ -295,6 +295,105 @@ define([
         size: function (s) {
             JXG.deprecated('Point.size()', 'Point.setAttribute()');
             this.setAttribute({size: s});
+        },
+
+        /**
+         * Test if the point is on (is incident with) element "el".
+         *
+         * @param {JXG.GeometryElement} el
+         * @param {Number} tol
+         * @returns {Boolean}
+         *
+         * @example
+         * var circ = board.create('circle', [[-2, -2], 1]);
+         * var seg = board.create('segment', [[-1, -3], [0,0]]);
+         * var line = board.create('line', [[1, 3], [2, -2]]);
+         * var po = board.create('point', [-1, 0], {color: 'blue'});
+         * var curve = board.create('functiongraph', ['sin(x)'], {strokeColor: 'blue'});
+         * var pol = board.create('polygon', [[2,2], [4,2], [4,3]], {strokeColor: 'blue'});
+         *
+         * var point = board.create('point', [-1, 1], {
+         *               attractors: [line, seg, circ, po, curve, pol],
+         *               attractorDistance: 0.2
+         *             });
+         *
+         * var txt = board.create('text', [-4, 3, function() {
+         *              return 'point on line: ' + point.isOn(line) + '<br>' +
+         *                 'point on seg: ' + point.isOn(seg) + '<br>' +
+         *                 'point on circ = ' + point.isOn(circ) + '<br>' +
+         *                 'point on point = ' + point.isOn(po) + '<br>' +
+         *                 'point on curve = ' + point.isOn(curve) + '<br>' +
+         *                 'point on polygon = ' + point.isOn(pol) + '<br>';
+         * }]);
+         * 
+         * </pre><div id="JXG6c7d7404-758a-44eb-802c-e9644b9fab71" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG6c7d7404-758a-44eb-802c-e9644b9fab71',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *     var circ = board.create('circle', [[-2, -2], 1]);
+         *     var seg = board.create('segment', [[-1, -3], [0,0]]);
+         *     var line = board.create('line', [[1, 3], [2, -2]]);
+         *     var po = board.create('point', [-1, 0], {color: 'blue'});
+         *     var curve = board.create('functiongraph', ['sin(x)'], {strokeColor: 'blue'});
+         *     var pol = board.create('polygon', [[2,2], [4,2], [4,3]], {strokeColor: 'blue'});
+         *     
+         *     var point = board.create('point', [-1, 1], {
+         *     			  attractors: [line, seg, circ, po, curve, pol],
+         *                   attractorDistance: 0.2
+         *                 });
+         *     
+         *     var txt = board.create('text', [-4, 3, function() {
+         *     		return 'point on line: ' + point.isOn(line) + '<br>' +
+         *                     'point on seg: ' + point.isOn(seg) + '<br>' +
+         *                     'point on circ = ' + point.isOn(circ) + '<br>' +
+         *                     'point on point = ' + point.isOn(po) + '<br>' +
+         *                     'point on curve = ' + point.isOn(curve) + '<br>' +
+         *                     'point on polygon = ' + point.isOn(pol) + '<br>';
+         *     }]);
+         * 
+         *     })();
+         * 
+         * </script><pre>
+         * 
+         */
+        isOn: function(el, tol) {
+            var arr, crds;
+
+            tol = tol || Mat.eps;
+
+            if (Type.isPoint(el)) {
+                return this.Dist(el) < tol;
+            } else if (el.elementClass === Const.OBJECT_CLASS_LINE) {
+                if (el.elType === 'segment' && !Type.evaluate(this.visProp.alwaysintersect)) {
+                    arr = JXG.Math.Geometry.projectCoordsToSegment(
+            			        this.coords.usrCoords,
+                                el.point1.coords.usrCoords,
+                                el.point2.coords.usrCoords);
+                    if (arr[1] >= 0 && arr[1] <= 1 &&
+                        Geometry.distPointLine(this.coords.usrCoords, el.stdform) < tol) {
+       				    return true;
+                    } else {
+            		    return false;
+                    }
+                } else {
+                    return Geometry.distPointLine(this.coords.usrCoords, el.stdform) < tol;
+                }
+            } else if (el.elementClass === Const.OBJECT_CLASS_CIRCLE) {
+                return Math.abs(this.Dist(el.center) - el.Radius()) < tol;
+            } else if (el.elementClass === Const.OBJECT_CLASS_CURVE) {
+                crds = Geometry.projectPointToCurve(this, el, this.board)[0];
+                return Geometry.distance(this.coords.usrCoords, crds.usrCoords, 3) < tol;
+            } else if (el.type === Const.OBJECT_TYPE_POLYGON) {
+                arr = Geometry.projectCoordsToPolygon(this.coords.usrCoords, el);
+                return Geometry.distance(this.coords.usrCoords, arr, 3) < tol;
+            } else if (el.type === Const.OBJECT_TYPE_TURTLE) {
+                crds = Geometry.projectPointToTurtle(this, el, this.board);
+                return Geometry.distance(this.coords.usrCoords, crds.usrCoords, 3) < tol;
+            }
+
+            // TODO: Arc, Sector
+            return false;
         },
 
         // already documented in GeometryElement
@@ -434,11 +533,11 @@ define([
      * </pre><div class="jxgbox" id="JXG4de7f181-631a-44b1-a12f-bc4d133709e8" style="width: 200px; height: 200px;"></div>
      * <script type="text/javascript">
      *   var gpex3_board = JXG.JSXGraph.initBoard('JXG4de7f181-631a-44b1-a12f-bc4d133709e8', {boundingbox: [-1, 10, 10, -1], axis: true, showcopyright: false, shownavigation: false});
-     *   var gpex3_p1 = gpex2_board.create('point', [2.0, 2.0]);
-     *   var gpex3_c1 = gpex2_board.create('circle', [gpex2_p1, 2.0]);
-     *   var gpex3_p2 = gpex2_board.create('glider', [gpex2_c1]);
-     *   board.create('button', [1, 7, 'start animation',function(){gpex3_p2.startAnimation(1,4)}]);
-     *   board.create('button', [1, 5, 'stop animation',function(){gpex3_p2.stopAnimation()}]);
+     *   var gpex3_p1 = gpex3_board.create('point', [2.0, 2.0]);
+     *   var gpex3_c1 = gpex3_board.create('circle', [gpex3_p1, 2.0]);
+     *   var gpex3_p2 = gpex3_board.create('glider', [gpex3_c1]);
+     *   gpex3_board.create('button', [1, 7, 'start animation',function(){gpex3_p2.startAnimation(1,4)}]);
+     *   gpex3_board.create('button', [1, 5, 'stop animation',function(){gpex3_p2.stopAnimation()}]);
      * </script><pre>
      */
     JXG.createGlider = function (board, parents, attributes) {
@@ -460,10 +559,11 @@ define([
 
 
     /**
-     * @class This element is used to provide a constructor for an intersection point.
+     * @class An intersection point is a point which lives on two JSXGraph elements, i.e. it is one point of the the set
+     * consisting of the intersection points of the two elements. The following element types can be (mutually) intersected: line, circle,
+     * curve, polygon, polygonal chain.
+     *
      * @pseudo
-     * @description An intersection point is a point which lives on two Lines or Circles or one Line and one Circle at the same time, i.e.
-     * an intersection point of the two elements.
      * @name Intersection
      * @augments JXG.Point
      * @constructor

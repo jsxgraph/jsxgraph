@@ -1,13 +1,12 @@
 /*
- Copyright 2008-2021
- Matthias Ehmann,
- Michael Gerhaeuser,
- Carsten Miller,
- Bianca Valentin,
- Heiko Vogel,
- Alfred Wassermann,
- Andreas Walter,
- Peter Wilfahrt
+Copyright 2008-2021
+        Matthias Ehmann,
+        Michael Gerhaeuser,
+        Carsten Miller,
+        Bianca Valentin,
+        Andreas Walter,
+        Alfred Wassermann,
+        Peter Wilfahrt
 
  This file is part of JSXGraph.
 
