@@ -1007,12 +1007,22 @@ define([
 
             /**
             * Set an angle to a prescribed value given in radians. This is only possible if the third point of the angle, i.e.
-            * the anglepoint is a free point.
+            * the anglepoint is a free point.  Removing the constraint again is done by calling "angle.free()".
+            *
+            * Changing the angle requires to call the method "free()" inbetween:
+            *
+            * <pre>
+            * angle.setAngle(Math.PI / 6);
+            * // ...
+            * angle.free().setAngle(Math.PI / 4);
+            * </pre>
+            *
             * @name setAngle
             * @function
             * @param {Number|Function} val Number or Function which returns the size of the angle in Radians
             * @returns {Object} Pointer to the angle element..
             * @memberOf Angle.prototype
+            * @see Angle#free
             *
             * @example
             * var p1, p2, p3, c, a, s;
@@ -1098,7 +1108,7 @@ define([
             *
             */
             el.setAngle = function (val) {
-                var t,
+                var t, t2,
                     p = this.anglepoint,
                     q = this.radiuspoint;
 
@@ -1113,11 +1123,12 @@ define([
 
             /**
             * Frees an angle from a prescribed value. This is only relevant if the angle size has been set by
-            * setAngle() previously. The anglepoint is set to a free point.
+            * "setAngle()" previously. The anglepoint is set to a free point.
             * @name free
             * @function
             * @returns {Object} Pointer to the angle element..
             * @memberOf Angle.prototype
+            * @see Angle#setAngle
             */
             el.free = function () {
                 var p = this.anglepoint;
