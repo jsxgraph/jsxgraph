@@ -755,7 +755,7 @@ define([
      * @constructor
      * @type Sector
      * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
-     * First possiblity of input parameters are:
+     * First possibility of input parameters are:
      * @param {JXG.Point_JXG.Point_JXG.Point} p1,p2,p1 An angle is always drawn counterclockwise from <tt>p1</tt> to
      * <tt>p3</tt> around <tt>p2</tt>.
      *
