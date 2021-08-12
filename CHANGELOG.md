@@ -12,6 +12,7 @@ New features
 - New JSXGraph objects `curvedifference`, `curveintersection`, `curveunion`
 - New arrow head type 7
 - JessieCode: JessieCode tags support attribute `src`.
+- Angle: new attribute value `radius:'auto'`
 - New math functions erf, erfc, erfi, ndtr, ndtri, acosh, asinh
 - New math functions (comparisons and logical operators as functions): lt, gt, leq, geq, eq, neq, and, or, not, xor
 - New method: point.isOn(element)
