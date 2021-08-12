@@ -2407,6 +2407,27 @@ define([
      * @augments JXG.Curve
      * @constructor
      * @type JXG.Curve
+     *
+     * @example
+     * var f = board.create('functiongraph', ['cos(x)']);
+     * var ineq = board.create('inequality', [f], {inverse: true, fillOpacity: 0.1});
+     * var circ = board.create('circle', [[0,0], 4]);
+     * var clip = board.create('curveintersection', [ineq, circ], {fillColor: 'yellow', fillOpacity: 0.6});
+     *
+     * </pre><div id="JXGe2948257-8835-4276-9164-8acccb48e8d4" class="jxgbox" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     *     (function() {
+     *         var board = JXG.JSXGraph.initBoard('JXGe2948257-8835-4276-9164-8acccb48e8d4',
+     *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+     *     var f = board.create('functiongraph', ['cos(x)']);
+     *     var ineq = board.create('inequality', [f], {inverse: true, fillOpacity: 0.1});
+     *     var circ = board.create('circle', [[0,0], 4]);
+     *     var clip = board.create('curveintersection', [ineq, circ], {fillColor: 'yellow', fillOpacity: 0.6});
+     *
+     *     })();
+     *
+     * </script><pre>
+     *
      */
     JXG.createCurveIntersection = function (board, parents, attributes) {
         var c;
@@ -2437,6 +2458,27 @@ define([
      * @augments JXG.Curve
      * @constructor
      * @type JXG.Curve
+     *
+     * @example
+     * var f = board.create('functiongraph', ['cos(x)']);
+     * var ineq = board.create('inequality', [f], {inverse: true, fillOpacity: 0.1});
+     * var circ = board.create('circle', [[0,0], 4]);
+     * var clip = board.create('curveunion', [ineq, circ], {fillColor: 'yellow', fillOpacity: 0.6});
+     *
+     * </pre><div id="JXGe2948257-8835-4276-9164-8acccb48e8d4" class="jxgbox" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     *     (function() {
+     *         var board = JXG.JSXGraph.initBoard('JXGe2948257-8835-4276-9164-8acccb48e8d4',
+     *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+     *     var f = board.create('functiongraph', ['cos(x)']);
+     *     var ineq = board.create('inequality', [f], {inverse: true, fillOpacity: 0.1});
+     *     var circ = board.create('circle', [[0,0], 4]);
+     *     var clip = board.create('curveunion', [ineq, circ], {fillColor: 'yellow', fillOpacity: 0.6});
+     *
+     *     })();
+     *
+     * </script><pre>
+     *
      */
      JXG.createCurveUnion = function (board, parents, attributes) {
         var c;
@@ -2467,6 +2509,27 @@ define([
      * @augments JXG.Curve
      * @constructor
      * @type JXG.Curve
+     *
+     * @example
+     * var f = board.create('functiongraph', ['cos(x)']);
+     * var ineq = board.create('inequality', [f], {inverse: true, fillOpacity: 0.1});
+     * var circ = board.create('circle', [[0,0], 4]);
+     * var clip = board.create('curvedifference', [ineq, circ], {fillColor: 'yellow', fillOpacity: 0.6});
+     *
+     * </pre><div id="JXGe2948257-8835-4276-9164-8acccb48e8d4" class="jxgbox" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     *     (function() {
+     *         var board = JXG.JSXGraph.initBoard('JXGe2948257-8835-4276-9164-8acccb48e8d4',
+     *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+     *     var f = board.create('functiongraph', ['cos(x)']);
+     *     var ineq = board.create('inequality', [f], {inverse: true, fillOpacity: 0.1});
+     *     var circ = board.create('circle', [[0,0], 4]);
+     *     var clip = board.create('curvedifference', [ineq, circ], {fillColor: 'yellow', fillOpacity: 0.6});
+     *
+     *     })();
+     *
+     * </script><pre>
+     *
      */
      JXG.createCurveDifference = function (board, parents, attributes) {
         var c;
