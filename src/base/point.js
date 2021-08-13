@@ -156,7 +156,7 @@ define([
          * @returns {JXG.CoordsElement} Reference to this object.
          */
         updateTransform: function (fromParent) {
-            var c, i;
+            var c, i, invMat;
 
             if (this.transformations.length === 0 || this.baseElement === null) {
                 return this;
@@ -173,9 +173,9 @@ define([
                     // The element has been dragged, now we transform the baseElement
                     if (this.draggable() && this.baseElement.draggable()) {
                         this.transformations[0].update();
-                        var invMat = Mat.inverse(this.transformations[0].matrix);
-                        var cu = Mat.matVecMult(invMat, this.coords.usrCoords);
-                        this.baseElement.coords.setCoordinates(Const.COORDS_BY_USER, cu);
+                        invMat = Mat.inverse(this.transformations[0].matrix);
+                        c = Mat.matVecMult(invMat, this.coords.usrCoords);
+                        this.baseElement.coords.setCoordinates(Const.COORDS_BY_USER, c);
                     }
                 } else {
                     c = this.transformations[0].apply(this.baseElement);
