@@ -23,10 +23,10 @@ Improvements
 - Arrows on curves: default arrow type 7
 - Smoother animations of texts: pixel position of texts is no longer rounded
 - Remove internal helper points if parent object is deleted (somewhat experimental)
-- new default: minimizeReflow:'none'
-- new method `coordsOnArc`
+- New default: minimizeReflow:'none'
+- New method `coordsOnArc`
 - In fixed angles (set with `setAngle`) all three points now be dragged.
-- Tntersection with arc behaves like intersection with circle
+- Intersection with arc behaves like intersection with circle
 - TypeScript: improve and update `index.d.ts`
 - API docs
 
@@ -35,8 +35,8 @@ Bug fixes
 ---------
 
 - slopeTriangle: attribute `topPoint`
-- snapping of glider to curve
-- magnetized points on polygons
+- Snapping of glider to curve
+- Magnetized points on polygons
 - JessieCode parser
 - Clipping: shapes with holes
 
