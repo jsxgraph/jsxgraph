@@ -150,9 +150,12 @@ define([
         /**
          * Applies the transformations of the element to {@link JXG.Point#baseElement}.
          * Point transformations are relative to a base element.
+         * @param {Boolean} fromParent True if the drag comes from a child element. This is the case if a line
+         *    through two points is dragged. Otherwise, the element is the drag element and we apply the
+         *    the inverse transformation to the baseElement if is different from the element.
          * @returns {JXG.CoordsElement} Reference to this object.
          */
-        updateTransform: function () {
+        updateTransform: function (fromParent) {
             var c, i;
 
             if (this.transformations.length === 0 || this.baseElement === null) {
@@ -160,14 +163,25 @@ define([
             }
 
             if (this === this.baseElement) {
-                // case of bindTo
+                // Case of bindTo
                 c = this.transformations[0].apply(this.baseElement, 'self');
+                this.coords.setCoordinates(Const.COORDS_BY_USER, c);
             } else {
-                // case of board.create('point',[baseElement,transform]);
-                c = this.transformations[0].apply(this.baseElement);
-            }
+                // Case of board.create('point',[baseElement, transform]);
 
-            this.coords.setCoordinates(Const.COORDS_BY_USER, c);
+                if (!fromParent) {
+                    // The element has been dragged, now we transform the baseElement
+                    if (this.draggable() && this.baseElement.draggable()) {
+                        this.transformations[0].update();
+                        var invMat = Mat.inverse(this.transformations[0].matrix);
+                        var cu = Mat.matVecMult(invMat, this.coords.usrCoords);
+                        this.baseElement.coords.setCoordinates(Const.COORDS_BY_USER, cu);
+                    }
+                } else {
+                    c = this.transformations[0].apply(this.baseElement);
+                    this.coords.setCoordinates(Const.COORDS_BY_USER, c);
+                }
+            }
 
             for (i = 1; i < this.transformations.length; i++) {
                 this.coords.setCoordinates(Const.COORDS_BY_USER, this.transformations[i].apply(this));

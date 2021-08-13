@@ -1006,10 +1006,12 @@ define([
             };
 
             /**
-            * Set an angle to a prescribed value given in radians. This is only possible if the third point of the angle, i.e.
-            * the anglepoint is a free point.  Removing the constraint again is done by calling "angle.free()".
+            * Set an angle to a prescribed value given in radians.
+            * This is only possible if the third point of the angle, i.e.
+            * the anglepoint is a free point.
+            * Removing the constraint again is done by calling "angle.free()".
             *
-            * Changing the angle requires to call the method "free()" inbetween:
+            * Changing the angle requires to call the method "free()":
             *
             * <pre>
             * angle.setAngle(Math.PI / 6);
@@ -1115,7 +1117,7 @@ define([
                 if (p.draggable()) {
                     t = this.board.create('transform', [val, this.center], {type: 'rotate'});
                     p.addTransform(q, t);
-                    p.isDraggable = false;
+                    // p.isDraggable = false;
                     p.setParents(q);
                 }
                 return this;

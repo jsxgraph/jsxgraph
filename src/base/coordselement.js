@@ -214,7 +214,7 @@ define([
             if (!Type.evaluate(this.visProp.frozen)) {
                 this.updateConstraint();
             }
-            this.updateTransform();
+            this.updateTransform(fromParent);
 
             return this;
         },
@@ -1407,9 +1407,10 @@ define([
         /**
          * Applies the transformations of the element.
          * This method applies to text and images. Point transformations are handled differently.
+         * @param {Boolean} fromParent True if the drag comes from a child element. Unused.
          * @returns {JXG.CoordsElement} Reference to itself.
          */
-        updateTransform: function () {
+        updateTransform: function (fromParent) {
             var i;
 
             if (this.transformations.length === 0) {

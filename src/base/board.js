@@ -2153,7 +2153,7 @@ define([
                 elements = this.initMoveObject(pos[0], pos[1], evt, type);
             }
 
-            // if no draggable object can be found, get out here immediately
+            // If no draggable object can be found, get out here immediately
             if (elements.length > 0) {
                 // check touches structure
                 target = elements[elements.length - 1];
@@ -2200,7 +2200,7 @@ define([
 
                 this.saveStartPos(target, this.touches[j].targets[k]);
 
-                // prevent accidental text selection
+                // Prevent accidental text selection
                 // this could get us new trouble: input fields, links and drop down boxes placed as text
                 // on the board don't work anymore.
                 if (evt && evt.preventDefault) {
