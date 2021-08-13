@@ -38,8 +38,8 @@
  */
 
 define([
-    'jxg', 'options', 'utils/type', 'base/constants', 'base/line', 'base/polygon', 'base/point'
-], function (JXG, Options, Type, Const, Line, Polygon, Point) {
+    'jxg', 'utils/type', 'base/point'
+], function (JXG, Type, Point) {
 
     "use strict";
 
@@ -127,7 +127,7 @@ define([
      *
      */
     JXG.createComb = function(board, parents, attributes) {
-        var p1, p2, c, attr, attr2, parent_types;
+        var p1, p2, c, attr, parent_types;
             //ds, angle, width, p;
 
         if (parents.length === 2) {

@@ -46,8 +46,8 @@
  */
 
 define([
-    'jxg', 'base/constants', 'base/coords', 'math/statistics', 'math/geometry', 'utils/type', 'base/element', 'base/line', 'base/transformation'
-], function (JXG, Const, Coords, Statistics, Geometry, Type, GeometryElement, Line, Transform) {
+    'jxg', 'base/constants', 'base/coords', 'math/statistics', 'math/geometry', 'utils/type', 'base/element'
+], function (JXG, Const, Coords, Statistics, Geometry, Type, GeometryElement) {
 
     "use strict";
 
@@ -121,9 +121,10 @@ define([
         // This needs to be done BEFORE the points get this polygon added in their descendants list
         this.id = this.board.setId(this, 'Py');
 
-        // Add dependencies:
-        // - Add polygon as child to an existing point
-        // - Add newly created points (supplied as coordinate arrays) as children to the polygon
+        // Add dependencies: either
+        // - add polygon as child to an existing point
+        // or
+        // - add  points (supplied as coordinate arrays by the user and created by Type.providePoints) as children to the polygon
         for (i = 0; i < this.vertices.length - 1; i++) {
             p = this.board.select(this.vertices[i]);
             if (Type.exists(p._is_new)) {
@@ -175,8 +176,8 @@ define([
             if (Type.evaluate(this.visProp.hasinnerpoints)) {
                 // All points of the polygon trigger hasPoint: inner and boundary points
                 len = this.vertices.length;
-                // See http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
-                // for a reference of Jordan method
+                // W. Randolf Franklin's pnpoly method,
+                // see https://wrf.ecse.rpi.edu/Research/Short_Notes/pnpoly.html
                 for (i = 0, j = len - 2; i < len - 1; j = i++) {
                     if (((this.vertices[i].coords.scrCoords[2] > y) !== (this.vertices[j].coords.scrCoords[2] > y)) &&
                             (x < (this.vertices[j].coords.scrCoords[1] - this.vertices[i].coords.scrCoords[1]) * (y - this.vertices[i].coords.scrCoords[2]) /

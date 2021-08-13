@@ -307,7 +307,7 @@ var JXG = {},
     ////////////////////////////////////////////////////////////////////////////////
 
     // Has to be a String for Makefile!
-    JXG.Load.baseFiles = 'jxg,base/constants,utils/type,utils/xml,utils/env,utils/event,utils/expect,math/math,math/ia,math/extrapolate,math/numerics,math/nlp,math/plot,math/metapost,math/statistics,math/symbolic,math/geometry,math/clip,math/poly,math/complex,renderer/abstract,renderer/no,reader/file,parser/geonext,base/board,options,jsxgraph,base/element,base/coordselement,base/coords,base/point,base/line,base/group,base/circle,element/conic,base/polygon,base/curve,element/arc,element/sector,base/composition,element/composition,base/text,base/image,element/slider,element/measure,base/chart,base/transformation,base/turtle,utils/color,base/ticks,utils/zip,utils/base64,utils/uuid,utils/encoding,server/server,element/locus,parser/datasource,parser/ca,parser/jessiecode,utils/dump,renderer/svg,renderer/vml,renderer/canvas,renderer/no,element/comb,element/slopetriangle,math/qdt,element/checkbox,element/input,element/button';
+    JXG.Load.baseFiles = 'jxg,base/constants,utils/type,utils/xml,utils/env,utils/event,utils/expect,math/probfuncs,math/math,math/ia,math/extrapolate,math/numerics,math/nlp,math/plot,math/metapost,math/statistics,math/symbolic,math/geometry,math/clip,math/poly,math/complex,renderer/abstract,renderer/no,reader/file,parser/geonext,base/board,options,jsxgraph,base/element,base/coordselement,base/coords,base/point,base/line,base/group,base/circle,element/conic,base/polygon,base/curve,element/arc,element/sector,base/composition,element/composition,base/text,base/image,element/slider,element/measure,base/chart,base/transformation,base/turtle,utils/color,base/ticks,utils/zip,utils/base64,utils/uuid,utils/encoding,server/server,element/locus,parser/datasource,parser/ca,parser/jessiecode,utils/dump,renderer/svg,renderer/vml,renderer/canvas,renderer/no,element/comb,element/slopetriangle,math/qdt,element/checkbox,element/input,element/button';
     JXG.Load.setRequirePathToScriptFile('loadjsxgraph.js');
     JXG.Load.JSfiles(JXG.Load.baseFiles.split(','), preventCachingFiles);
     JXG.Load.baseFiles = null;
@@ -359,6 +359,7 @@ var JXG = {},
         'math/complex': makeCheck('Complex'),
         'math/geometry': makeCheck('Math.Geometry'),
         'math/math': makeCheck('Math'),
+        'math/probfuncs': makeCheck('Math.ProbFuncs'),
         'math/ia': makeCheck('Math.IntervalArithmetic'),
         'math/extrapolate': makeCheck('Math.Extrapolate'),
         'math/metapost': makeCheck('Math.Metapost'),

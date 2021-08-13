@@ -8,6 +8,7 @@ define([
     'utils/event',
     'utils/expect',
     'math/math',
+    'math/probfuncs',
     'math/ia',
     'math/extrapolate',
     'math/qdt',

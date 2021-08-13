@@ -160,7 +160,7 @@ define([], function () {
 
         /**
          * Associative array that keeps track of all constructable elements registered
-         * via {@link JXG.JSXGraph.registerElement}.
+         * via {@link JXG.registerElement}.
          * @type Object
          */
         elements: {},

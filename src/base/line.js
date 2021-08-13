@@ -122,8 +122,18 @@ define([
         this.elType = 'line';
 
         /* Add line as child to defining points */
-        this.point1.addChild(this);
-        this.point2.addChild(this);
+        if (this.point1._is_new) {
+            this.addChild(this.point1);
+            delete this.point1._is_new;
+        } else {
+            this.point1.addChild(this);
+        }
+        if (this.point2._is_new) {
+            this.addChild(this.point2);
+            delete this.point2._is_new;
+        } else {
+            this.point2.addChild(this);
+        }
 
         this.inherits.push(this.point1, this.point2);
 
@@ -1407,7 +1417,7 @@ define([
      * </script><pre>
      */
     JXG.createTangent = function (board, parents, attributes) {
-        var p, c, g, f, j, el, tangent;
+        var p, c, j, el, tangent;
 
         // One argument: glider on line, circle or curve
         if (parents.length === 1) {

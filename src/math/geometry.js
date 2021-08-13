@@ -1023,25 +1023,38 @@ define([
          *   <li>i==0: use the positive square root,</li>
          *   <li>i==1: use the negative square root.</li></ul>
          * See further {@link JXG.Point#createIntersectionPoint}.
-         * @param {Boolean} alwaysintersect. Flag that determines if segements and arc can have an outer intersection point
+         * @param {Boolean} alwaysintersect. Flag that determines if segments and arc can have an outer intersection point
          * on their defining line or circle.
          * @returns {Function} Function returning a {@link JXG.Coords} object that determines
          * the intersection point.
          */
         intersectionFunction: function (board, el1, el2, i, j, alwaysintersect) {
-            var func, that = this;
+            var func, that = this,
+                el1_isArcType = false,
+                el2_isArcType = false;
+
+            el1_isArcType = (el1.elementClass === Const.OBJECT_CLASS_CURVE &&
+                (el1.type === Const.OBJECT_TYPE_ARC || el1.type === Const.OBJECT_TYPE_SECTOR)
+                ) ? true : false;
+            el2_isArcType = (el2.elementClass === Const.OBJECT_CLASS_CURVE &&
+                (el2.type === Const.OBJECT_TYPE_ARC || el2.type === Const.OBJECT_TYPE_SECTOR)
+                ) ? true : false;
 
             if (el1.elementClass === Const.OBJECT_CLASS_CURVE &&
-                    el2.elementClass === Const.OBJECT_CLASS_CURVE) {
+                el2.elementClass === Const.OBJECT_CLASS_CURVE && !(el1_isArcType && el2_isArcType) ) {
                 // curve - curve
+                // with the exception that both elements are arc types
                 /** @ignore */
                 func = function () {
                     return that.meetCurveCurve(el1, el2, i, j, el1.board);
                 };
 
-            } else if ((el1.elementClass === Const.OBJECT_CLASS_CURVE && el2.elementClass === Const.OBJECT_CLASS_LINE) ||
-                    (el2.elementClass === Const.OBJECT_CLASS_CURVE && el1.elementClass === Const.OBJECT_CLASS_LINE)) {
-                // curve - line (this includes intersections between conic sections and lines
+            } else if ((el1.elementClass === Const.OBJECT_CLASS_CURVE &&
+                        !el1_isArcType && el2.elementClass === Const.OBJECT_CLASS_LINE) ||
+                       (el2.elementClass === Const.OBJECT_CLASS_CURVE &&
+                        !el2_isArcType && el1.elementClass === Const.OBJECT_CLASS_LINE)) {
+                // curve - line (this includes intersections between conic sections and lines)
+                // with the exception that the curve is of arc type
                 /** @ignore */
                 func = function () {
                     return that.meetCurveLine(el1, el2, i, el1.board, alwaysintersect);
@@ -1059,7 +1072,7 @@ define([
 
                     /**
                      * If one of the lines is a segment or ray and
-                     * the the intersection point should disappear if outside
+                     * the intersection point should disappear if outside
                      * of the segment or ray we call
                      * meetSegmentSegment
                      */
@@ -1068,8 +1081,7 @@ define([
                             el1.point1.coords.usrCoords,
                             el1.point2.coords.usrCoords,
                             el2.point1.coords.usrCoords,
-                            el2.point2.coords.usrCoords,
-                            el1.board
+                            el2.point2.coords.usrCoords
                         );
 
                         if ((!first1 && res[1] < 0) || (!last1 && res[1] > 1) ||
@@ -1086,14 +1098,54 @@ define([
                     return that.meet(el1.stdform, el2.stdform, i, el1.board);
                 };
             } else {
-                // All other combinations of circles and lines
+                // All other combinations of circles and lines,
+                // Arc types are treated as circles.
                 /** @ignore */
                 func = function () {
-                    return that.meet(el1.stdform, el2.stdform, i, el1.board);
+                    var res = that.meet(el1.stdform, el2.stdform, i, el1.board),
+                        has = true;
+
+                    if (!alwaysintersect && el1_isArcType) {
+                        has = that.coordsOnArc(el1, res);
+                        if (has && el2_isArcType) {
+                            has = that.coordsOnArc(el2, res);
+                        }
+                        if (!has) {
+                            res = (new Coords(JXG.COORDS_BY_USER, [0, NaN, NaN], el1.board));
+                        }
+                    }
+                    return res;
                 };
             }
 
             return func;
+        },
+
+        /**
+         * Returns true if the coordinates are on the arc element,
+         * false otherwise. Usually, coords is an intersection
+         * on the circle line. Now it is decided if coords are on the
+         * circle restricted to the arc line.
+         * @param  {Arc} arc arc or sector element
+         * @param  {JXG.Coords} coords Coords object of an intersection
+         * @returns {Boolean}
+         * @private
+         */
+        coordsOnArc: function(arc, coords) {
+            var angle = this.rad(arc.radiuspoint, arc.center, coords.usrCoords.slice(1)),
+                alpha = 0.0,
+                beta = this.rad(arc.radiuspoint, arc.center, arc.anglepoint),
+                ev_s = Type.evaluate(arc.visProp.selection);
+
+            if ((ev_s === 'minor' && beta > Math.PI) ||
+                (ev_s === 'major' && beta < Math.PI)) {
+                alpha = beta;
+                beta = 2 * Math.PI;
+            }
+            if (angle < alpha || angle > beta) {
+                return false;
+            }
+            return true;
         },
 
         /**
@@ -2257,7 +2309,8 @@ define([
          * @param {JXG.Curve} curve Curve on that the point is projected.
          * @param {JXG.Board} [board=point.board] Reference to a board.
          * @see #projectCoordsToCurve
-         * @returns {JXG.Coords} The coordinates of the projection of the given point on the given graph.
+         * @returns {Array} [JXG.Coords, position] The coordinates of the projection of the given
+         * point on the given graph and the relative position on the curve (real number).
          */
         projectPointToCurve: function (point, curve, board) {
             if (!Type.exists(board)) {
@@ -2269,9 +2322,9 @@ define([
                 t = point.position || 0.0,
                 result = this.projectCoordsToCurve(x, y, t, curve, board);
 
-            point.position = result[1];
+            // point.position = result[1];
 
-            return result[0];
+            return result;
         },
 
         /**
@@ -2284,14 +2337,14 @@ define([
          * @param {JXG.Curve} curve Curve on that the point is projected.
          * @param {JXG.Board} [board=curve.board] Reference to a board.
          * @see #projectPointToCurve
-         * @returns {JXG.Coords} Array containing the coordinates of the projection of the given point on the given graph and
+         * @returns {JXG.Coords} Array containing the coordinates of the projection of the given point on the given curve and
          * the position on the curve.
          */
         projectCoordsToCurve: function (x, y, t, curve, board) {
             var newCoords, newCoordsObj, i, j,
                 mindist, dist, lbda, v, coords, d,
                 p1, p2, res,
-                minfunc, tnew, fnew, fold, delta, steps,
+                minfunc, t_new, f_new, f_old, delta, steps,
                 minX, maxX,
                 infty = Number.POSITIVE_INFINITY;
 
@@ -2360,34 +2413,35 @@ define([
                 minfunc = function (t) {
                     var dx, dy;
                     if (t < curve.minX() || t > curve.maxX()) {
-                        return NaN;
+                        return Infinity;
                     }
                     dx = x - curve.X(t);
                     dy = y - curve.Y(t);
                     return dx * dx + dy * dy;
                 };
 
-                fold = minfunc(t);
+                f_old = minfunc(t);
                 steps = 50;
-                delta = (curve.maxX() - curve.minX()) / steps;
-                tnew = curve.minX();
+                minX = curve.minX();
+                maxX = curve.maxX();
+
+                delta = (maxX - minX) / steps;
+                t_new = minX;
 
                 for (i = 0; i < steps; i++) {
-                    fnew = minfunc(tnew);
+                    f_new = minfunc(t_new);
 
-                    if (fnew < fold || isNaN(fold)) {
-                        t = tnew;
-                        fold = fnew;
+                    if (f_new < f_old || f_old === Infinity) {
+                        t = t_new;
+                        f_old = f_new;
                     }
 
-                    tnew += delta;
+                    t_new += delta;
                 }
 
                 //t = Numerics.root(Numerics.D(minfunc), t);
-                t = Numerics.fminbr(minfunc, [t - delta, t + delta]);
+                t = Numerics.fminbr(minfunc, [Math.max(t - delta, minX), Math.min(t + delta, maxX)]);
 
-                minX = curve.minX();
-                maxX = curve.maxX();
                 // Distinction between closed and open curves is not necessary.
                 // If closed, the cyclic projection shift will work anyhow
                 // if (Math.abs(curve.X(minX) - curve.X(maxX)) < Mat.eps &&
@@ -2422,19 +2476,28 @@ define([
                 len = pol.vertices.length,
                 d_best = Infinity,
                 d,
-                projection,
+                projection, proj,
                 bestprojection;
 
-            for (i = 0; i < len; i++) {
+            for (i = 0; i < len - 1; i++) {
                 projection = JXG.Math.Geometry.projectCoordsToSegment(
                     p,
                     pol.vertices[i].coords.usrCoords,
-                    pol.vertices[(i + 1) % len].coords.usrCoords
+                    pol.vertices[i + 1].coords.usrCoords
                 );
 
-                d = JXG.Math.Geometry.distance(projection[0], p, 3);
-                if (0 <= projection[1] && projection[1] <= 1 && d < d_best) {
-                    bestprojection = projection[0].slice(0);
+                if (0 <= projection[1] && projection[1] <= 1) {
+                    d = JXG.Math.Geometry.distance(projection[0], p, 3);
+                    proj = projection[0];
+                } else if (projection[1] < 0) {
+                    d = JXG.Math.Geometry.distance(pol.vertices[i].coords.usrCoords, p, 3);
+                    proj = pol.vertices[i].coords.usrCoords;
+                } else {
+                    d = JXG.Math.Geometry.distance(pol.vertices[i + 1].coords.usrCoords, p, 3);
+                    proj = pol.vertices[i + 1].coords.usrCoords;
+                }
+                if (d < d_best) {
+                    bestprojection = proj.slice(0);
                     d_best = d;
                 }
             }
@@ -2447,10 +2510,12 @@ define([
          * @param {JXG.Point} point Point to project.
          * @param {JXG.Turtle} turtle on that the point is projected.
          * @param {JXG.Board} [board=point.board] Reference to a board.
-         * @returns {JXG.Coords} The coordinates of the projection of the given point on the given turtle.
+         * @returns {Array} [JXG.Coords, position] Array containing the coordinates of the projection of the given point on the turtle and
+         * the position on the turtle.
          */
         projectPointToTurtle: function (point, turtle, board) {
             var newCoords, t, x, y, i, dist, el, minEl,
+                res, newPos,
                 np = 0,
                 npmin = 0,
                 mindist = Number.POSITIVE_INFINITY,
@@ -2465,13 +2530,15 @@ define([
                 el = turtle.objects[i];
 
                 if (el.elementClass === Const.OBJECT_CLASS_CURVE) {
-                    newCoords = this.projectPointToCurve(point, el);
+                    res = this.projectPointToCurve(point, el);
+                    newCoords = res[0];
+                    newPos = res[1];
                     dist = this.distance(newCoords.usrCoords, point.coords.usrCoords);
 
                     if (dist < mindist) {
                         x = newCoords.usrCoords[1];
                         y = newCoords.usrCoords[2];
-                        t = point.position;
+                        t = newPos;
                         mindist = dist;
                         minEl = el;
                         npmin = np;
@@ -2481,9 +2548,9 @@ define([
             }
 
             newCoords = new Coords(Const.COORDS_BY_USER, [x, y], board);
-            point.position = t + npmin;
-
-            return minEl.updateTransform(newCoords);
+            // point.position = t + npmin;
+            // return minEl.updateTransform(newCoords);
+            return [minEl.updateTransform(newCoords), t + npmin];
         },
 
         /**

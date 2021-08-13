@@ -105,7 +105,7 @@ define([
                         first = i;
                         components.push(first);
                     }
-                    if (this._isSeparator(S[(i + 1) % le]) || i == le - 1) {
+                    if (this._isSeparator(S[(i + 1) % le]) || i === le - 1) {
                         // If the next node is a component separator or if the node is the last node,
                         // then we close the loop
 

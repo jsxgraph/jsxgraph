@@ -55,9 +55,8 @@
  */
 
 define([
-    'jxg', 'math/math', 'base/constants', 'base/coords', 'utils/type', 'base/point', 'base/group',
-    'base/element', 'base/line', 'base/ticks', 'base/text'
-], function (JXG, Mat, Const, Coords, Type, Point, Group, GeometryElement, Line, Ticks, Text) {
+    'jxg', 'math/math', 'base/constants', 'base/coords', 'utils/type', 'base/point'
+], function (JXG, Mat, Const, Coords, Type, Point) {
 
     "use strict";
 
@@ -212,7 +211,7 @@ define([
         sdiff = smax - smin;
 
         sw = Type.evaluate(snapWidth);
-        s = (sw == -1) ? start : Math.round(start / sw) * sw;
+        s = (sw === -1) ? start : Math.round(start / sw) * sw;
         startx = pos0[0] + (pos1[0] - pos0[0]) * (s - smin) / (smax - smin);
         starty = pos0[1] + (pos1[1] - pos0[1]) * (s - smin) / (smax - smin);
 

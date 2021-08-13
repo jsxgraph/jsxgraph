@@ -74,7 +74,7 @@
  */
 
 /*global JXG: true, define: true*/
-/*jslint nomen: true, plusplus: true*/
+/*jslint nomen: true, plusplus: true, continue: true*/
 
 /* depends:
  jxg
@@ -82,7 +82,7 @@
  utils/type
  */
 
-define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
+define(['jxg'], function (JXG) {
 
     "use strict";
 

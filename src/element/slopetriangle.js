@@ -42,8 +42,8 @@
  */
 
 define([
-    'jxg', 'options', 'utils/type', 'base/constants', 'base/line', 'base/polygon', 'base/point', 'base/element'
-], function (JXG, Options, Type, Const, Line, Polygon, Point, GeometryElement) {
+    'jxg', 'utils/type', 'base/constants', 'base/polygon'
+], function (JXG, Type, Const, Polygon) {
 
     "use strict";
 

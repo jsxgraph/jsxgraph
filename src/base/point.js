@@ -55,9 +55,9 @@
  */
 
 define([
-    'jxg', 'options', 'math/math', 'math/geometry', 'math/numerics', 'base/coords', 'base/constants', 'base/element',
-    'parser/geonext', 'utils/type', 'base/transformation', 'base/coordselement'
-], function (JXG, Options, Mat, Geometry, Numerics, Coords, Const, GeometryElement, GeonextParser, Type, Transform, CoordsElement) {
+    'jxg', 'options', 'math/math', 'math/geometry', 'base/constants', 'base/element',
+    'utils/type', 'base/coordselement'
+], function (JXG, Options, Mat, Geometry, Const, GeometryElement, Type, CoordsElement) {
 
     "use strict";
 
@@ -150,24 +150,38 @@ define([
         /**
          * Applies the transformations of the element to {@link JXG.Point#baseElement}.
          * Point transformations are relative to a base element.
+         * @param {Boolean} fromParent True if the drag comes from a child element. This is the case if a line
+         *    through two points is dragged. Otherwise, the element is the drag element and we apply the
+         *    the inverse transformation to the baseElement if is different from the element.
          * @returns {JXG.CoordsElement} Reference to this object.
          */
-        updateTransform: function () {
-            var c, i;
+        updateTransform: function (fromParent) {
+            var c, i, invMat;
 
             if (this.transformations.length === 0 || this.baseElement === null) {
                 return this;
             }
 
-            // case of bindTo
             if (this === this.baseElement) {
+                // Case of bindTo
                 c = this.transformations[0].apply(this.baseElement, 'self');
-            // case of board.create('point',[baseElement,transform]);
+                this.coords.setCoordinates(Const.COORDS_BY_USER, c);
             } else {
-                c = this.transformations[0].apply(this.baseElement);
-            }
+                // Case of board.create('point',[baseElement, transform]);
 
-            this.coords.setCoordinates(Const.COORDS_BY_USER, c);
+                if (!fromParent) {
+                    // The element has been dragged, now we transform the baseElement
+                    if (this.draggable() && this.baseElement.draggable()) {
+                        this.transformations[0].update();
+                        invMat = Mat.inverse(this.transformations[0].matrix);
+                        c = Mat.matVecMult(invMat, this.coords.usrCoords);
+                        this.baseElement.coords.setCoordinates(Const.COORDS_BY_USER, c);
+                    }
+                } else {
+                    c = this.transformations[0].apply(this.baseElement);
+                    this.coords.setCoordinates(Const.COORDS_BY_USER, c);
+                }
+            }
 
             for (i = 1; i < this.transformations.length; i++) {
                 this.coords.setCoordinates(Const.COORDS_BY_USER, this.transformations[i].apply(this));
@@ -295,6 +309,105 @@ define([
         size: function (s) {
             JXG.deprecated('Point.size()', 'Point.setAttribute()');
             this.setAttribute({size: s});
+        },
+
+        /**
+         * Test if the point is on (is incident with) element "el".
+         *
+         * @param {JXG.GeometryElement} el
+         * @param {Number} tol
+         * @returns {Boolean}
+         *
+         * @example
+         * var circ = board.create('circle', [[-2, -2], 1]);
+         * var seg = board.create('segment', [[-1, -3], [0,0]]);
+         * var line = board.create('line', [[1, 3], [2, -2]]);
+         * var po = board.create('point', [-1, 0], {color: 'blue'});
+         * var curve = board.create('functiongraph', ['sin(x)'], {strokeColor: 'blue'});
+         * var pol = board.create('polygon', [[2,2], [4,2], [4,3]], {strokeColor: 'blue'});
+         *
+         * var point = board.create('point', [-1, 1], {
+         *               attractors: [line, seg, circ, po, curve, pol],
+         *               attractorDistance: 0.2
+         *             });
+         *
+         * var txt = board.create('text', [-4, 3, function() {
+         *              return 'point on line: ' + point.isOn(line) + '<br>' +
+         *                 'point on seg: ' + point.isOn(seg) + '<br>' +
+         *                 'point on circ = ' + point.isOn(circ) + '<br>' +
+         *                 'point on point = ' + point.isOn(po) + '<br>' +
+         *                 'point on curve = ' + point.isOn(curve) + '<br>' +
+         *                 'point on polygon = ' + point.isOn(pol) + '<br>';
+         * }]);
+         * 
+         * </pre><div id="JXG6c7d7404-758a-44eb-802c-e9644b9fab71" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG6c7d7404-758a-44eb-802c-e9644b9fab71',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *     var circ = board.create('circle', [[-2, -2], 1]);
+         *     var seg = board.create('segment', [[-1, -3], [0,0]]);
+         *     var line = board.create('line', [[1, 3], [2, -2]]);
+         *     var po = board.create('point', [-1, 0], {color: 'blue'});
+         *     var curve = board.create('functiongraph', ['sin(x)'], {strokeColor: 'blue'});
+         *     var pol = board.create('polygon', [[2,2], [4,2], [4,3]], {strokeColor: 'blue'});
+         *     
+         *     var point = board.create('point', [-1, 1], {
+         *     			  attractors: [line, seg, circ, po, curve, pol],
+         *                   attractorDistance: 0.2
+         *                 });
+         *     
+         *     var txt = board.create('text', [-4, 3, function() {
+         *     		return 'point on line: ' + point.isOn(line) + '<br>' +
+         *                     'point on seg: ' + point.isOn(seg) + '<br>' +
+         *                     'point on circ = ' + point.isOn(circ) + '<br>' +
+         *                     'point on point = ' + point.isOn(po) + '<br>' +
+         *                     'point on curve = ' + point.isOn(curve) + '<br>' +
+         *                     'point on polygon = ' + point.isOn(pol) + '<br>';
+         *     }]);
+         * 
+         *     })();
+         * 
+         * </script><pre>
+         * 
+         */
+        isOn: function(el, tol) {
+            var arr, crds;
+
+            tol = tol || Mat.eps;
+
+            if (Type.isPoint(el)) {
+                return this.Dist(el) < tol;
+            } else if (el.elementClass === Const.OBJECT_CLASS_LINE) {
+                if (el.elType === 'segment' && !Type.evaluate(this.visProp.alwaysintersect)) {
+                    arr = JXG.Math.Geometry.projectCoordsToSegment(
+            			        this.coords.usrCoords,
+                                el.point1.coords.usrCoords,
+                                el.point2.coords.usrCoords);
+                    if (arr[1] >= 0 && arr[1] <= 1 &&
+                        Geometry.distPointLine(this.coords.usrCoords, el.stdform) < tol) {
+       				    return true;
+                    } else {
+            		    return false;
+                    }
+                } else {
+                    return Geometry.distPointLine(this.coords.usrCoords, el.stdform) < tol;
+                }
+            } else if (el.elementClass === Const.OBJECT_CLASS_CIRCLE) {
+                return Math.abs(this.Dist(el.center) - el.Radius()) < tol;
+            } else if (el.elementClass === Const.OBJECT_CLASS_CURVE) {
+                crds = Geometry.projectPointToCurve(this, el, this.board)[0];
+                return Geometry.distance(this.coords.usrCoords, crds.usrCoords, 3) < tol;
+            } else if (el.type === Const.OBJECT_TYPE_POLYGON) {
+                arr = Geometry.projectCoordsToPolygon(this.coords.usrCoords, el);
+                return Geometry.distance(this.coords.usrCoords, arr, 3) < tol;
+            } else if (el.type === Const.OBJECT_TYPE_TURTLE) {
+                crds = Geometry.projectPointToTurtle(this, el, this.board);
+                return Geometry.distance(this.coords.usrCoords, crds.usrCoords, 3) < tol;
+            }
+
+            // TODO: Arc, Sector
+            return false;
         },
 
         // already documented in GeometryElement

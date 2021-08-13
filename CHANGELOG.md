@@ -1,3 +1,45 @@
+1.3.0
+====
+
+New features
+-----------
+
+- Responsiveness:
+  - JSXGraph updates bounding box on resize events triggered by resizeObserver, also e.g. when changing from display:none.
+  - New board attribute `moveTarget` allows to continue dragging outside of the board
+  - New attribute `fontUnit` for texts
+- Accessibility: keyboard control of JSXGraph boards
+- New JSXGraph objects `curvedifference`, `curveintersection`, `curveunion`
+- New arrow head type 7
+- JessieCode: JessieCode tags support attribute `src`.
+- Angle: new attribute value `radius:'auto'`
+- New math functions erf, erfc, erfi, ndtr, ndtri, acosh, asinh
+- New math functions (comparisons and logical operators as functions): lt, gt, leq, geq, eq, neq, and, or, not, xor
+- New method: point.isOn(element)
+
+Improvements
+------------
+
+- Arrows on curves: default arrow type 7
+- Smoother animations of texts: pixel position of texts is no longer rounded
+- Remove internal helper points if parent object is deleted (somewhat experimental)
+- New default: minimizeReflow:'none'
+- New method `coordsOnArc`
+- In fixed angles (set with `setAngle`) all three points now be dragged.
+- Intersection with arc behaves like intersection with circle
+- TypeScript: improve and update `index.d.ts`
+- API docs
+
+
+Bug fixes
+---------
+
+- slopeTriangle: attribute `topPoint`
+- Snapping of glider to curve
+- Magnetized points on polygons
+- JessieCode parser
+- Clipping: shapes with holes
+
 1.2.3
 ====
 

@@ -48,9 +48,8 @@
  */
 
 define([
-    'jxg', 'math/geometry', 'math/math', 'math/statistics', 'base/coords', 'base/constants', 'utils/type', 'base/point', 'base/curve',
-    'base/transformation', 'element/composition'
-], function (JXG, Geometry, Mat, Statistics, Coords, Const, Type, Point, Curve, Transform, Compositions) {
+    'jxg', 'math/geometry', 'math/math', 'math/statistics', 'base/coords', 'base/constants', 'utils/type'
+], function (JXG, Geometry, Mat, Statistics, Coords, Const, Type) {
 
     "use strict";
 
@@ -147,7 +146,7 @@ define([
      *
      */
     JXG.createSector = function (board, parents, attributes) {
-        var el, attr,
+        var el, attr, i,
             type = 'invalid',
             s, v,
             attrPoints = ['center', 'radiusPoint', 'anglePoint'],
@@ -158,7 +157,7 @@ define([
                 parents[1].elementClass === Const.OBJECT_CLASS_LINE &&
                 (Type.isArray(parents[2]) || Type.isNumber(parents[2])) &&
                 (Type.isArray(parents[3]) || Type.isNumber(parents[3])) &&
-                (Type.isNumber(parents[4]) || Type.isFunction(parents[4]))) {
+                (Type.isNumber(parents[4]) || Type.isFunction(parents[4]) || Type.isString(parents[4]))) {
 
             type = '2lines';
         } else {
@@ -177,9 +176,34 @@ define([
         el.type = Const.OBJECT_TYPE_SECTOR;
         el.elType = 'sector';
 
+        /**
+         * Set a radius if the attribute `radius` has value 'auto'.
+         * Sets a radius between 20 and 50 points, depending on the distance
+         * between the center and the radius point.
+         * This function is used in {@link Angle}.
+         *
+         * @returns {Number} returns a radius value in user coordinates.
+         */
+         el.autoRadius = function() {
+            var r1 = 20  / el.board.unitX,  // 20px
+                r2 = Infinity,
+                r3 = 50  / el.board.unitX;  // 50px
+
+            if (Type.isPoint(el.center)) {
+                // This does not work for 2-lines sectors / angles
+                r2 = el.center.Dist(el.point2) * 0.3333;
+            }
+
+            return Math.max(r1, Math.min(r2, r3));
+        };
+
         if (type === '2lines') {
             el.Radius = function () {
-                return Type.evaluate(parents[4]);
+                var r = Type.evaluate(parents[4]);
+                if (r === 'auto') {
+                    return this.autoRadius();
+                }
+                return r;
             };
 
             el.line1 = board.select(parents[0]);
@@ -280,7 +304,7 @@ define([
                 setRadius: 'setRadius'
             });
 
-            el.prepareUpdate().update();
+        //    el.prepareUpdate().update();
 
         // end '2lines'
 
@@ -311,9 +335,14 @@ define([
             el.point3 = points[2];
 
             /* Add arc as child to defining points */
-            el.point1.addChild(el);
-            el.point2.addChild(el);
-            el.point3.addChild(el);
+            for (i = 0; i < 3; i++) {
+                if (Type.exists(points[i]._is_new)) {
+                    el.addChild(points[i]);
+                    delete points[i]._is_new;
+                } else {
+                    points[i].addChild(el);
+                }
+            }
 
             // useDirection is necessary for circumCircleSectors
             el.useDirection = attributes.usedirection;
@@ -549,9 +578,13 @@ define([
          * Used in {@link GeometryElement#setAttribute}.
          * @param {Number, Function} value New radius.
          */
-        el.setRadius = function (value) {
+        el.setRadius = function (val) {
             el.Radius = function () {
-                return Type.evaluate(value);
+                var r = Type.evaluate(val);
+                if (r === 'auto') {
+                    return this.autoRadius();
+                }
+                return r;
             };
         };
 
@@ -751,7 +784,7 @@ define([
      * @constructor
      * @type Sector
      * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
-     * First possiblity of input parameters are:
+     * First possibility of input parameters are:
      * @param {JXG.Point_JXG.Point_JXG.Point} p1,p2,p1 An angle is always drawn counterclockwise from <tt>p1</tt> to
      * <tt>p3</tt> around <tt>p2</tt>.
      *
@@ -932,8 +965,13 @@ define([
              */
             el.pointsquare = el.point3 = el.anglepoint = points[2];
 
+            // Set the angle radius, also @see @link Sector#autoRadius
             el.Radius = function () {
-                return Type.evaluate(radius);
+                var r = Type.evaluate(radius);
+                if (r === 'auto') {
+                    return el.autoRadius();
+                }
+                return r;
             };
 
             el.updateDataArraySector = function () {
@@ -968,13 +1006,25 @@ define([
             };
 
             /**
-            * Set an angle to a prescribed value given in radians. This is only possible if the third point of the angle, i.e.
+            * Set an angle to a prescribed value given in radians.
+            * This is only possible if the third point of the angle, i.e.
             * the anglepoint is a free point.
+            * Removing the constraint again is done by calling "angle.free()".
+            *
+            * Changing the angle requires to call the method "free()":
+            *
+            * <pre>
+            * angle.setAngle(Math.PI / 6);
+            * // ...
+            * angle.free().setAngle(Math.PI / 4);
+            * </pre>
+            *
             * @name setAngle
             * @function
             * @param {Number|Function} val Number or Function which returns the size of the angle in Radians
             * @returns {Object} Pointer to the angle element..
             * @memberOf Angle.prototype
+            * @see Angle#free
             *
             * @example
             * var p1, p2, p3, c, a, s;
@@ -1060,14 +1110,14 @@ define([
             *
             */
             el.setAngle = function (val) {
-                var t,
+                var t, t2,
                     p = this.anglepoint,
                     q = this.radiuspoint;
 
                 if (p.draggable()) {
                     t = this.board.create('transform', [val, this.center], {type: 'rotate'});
                     p.addTransform(q, t);
-                    p.isDraggable = false;
+                    // p.isDraggable = false;
                     p.setParents(q);
                 }
                 return this;
@@ -1075,11 +1125,12 @@ define([
 
             /**
             * Frees an angle from a prescribed value. This is only relevant if the angle size has been set by
-            * setAngle() previously. The anglepoint is set to a free point.
+            * "setAngle()" previously. The anglepoint is set to a free point.
             * @name free
             * @function
             * @returns {Object} Pointer to the angle element..
             * @memberOf Angle.prototype
+            * @see Angle#setAngle
             */
             el.free = function () {
                 var p = this.anglepoint;
@@ -1285,7 +1336,7 @@ define([
             d = Geometry.distance(vec, B, 3);
             vec = [vec[0], B[1] + (vec[1] - B[1]) * (r + dx) / d,  B[2] + (vec[2] - B[2]) * (r + dx) / d];
 
-            l_vp.position = Geometry.calcLabelQuadrant(Geometry.rad([1,0],[0,0],vec));
+            l_vp.position = Geometry.calcLabelQuadrant(Geometry.rad([1,0], [0,0], vec));
 
             return new Coords(Const.COORDS_BY_USER, vec, this.board);
         };
