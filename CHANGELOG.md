@@ -25,7 +25,8 @@ Improvements
 - Remove internal helper points if parent object is deleted (somewhat experimental)
 - new default: minimizeReflow:'none'
 - new method `coordsOnArc`
-- intersection with arc behaves like intersection with circle
+- In fixed angles (set with `setAngle`) all three points now be dragged.
+- Tntersection with arc behaves like intersection with circle
 - TypeScript: improve and update `index.d.ts`
 - API docs
 
