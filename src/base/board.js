@@ -3243,7 +3243,7 @@ define([
 
             // If bounding box is not yet initialized, do it now.
             if (isNaN(this.getBoundingBox()[0])) {
-                this.setBoundingBox(this.attr.boundingbox);
+                this.setBoundingBox(this.attr.boundingbox, this.keepaspectratio);
             }
 
             // We do nothing if in case the dimension did not change since being visible
@@ -3948,7 +3948,7 @@ define([
                 tr = (bb[1] - y) / (bb[1] - bb[3]);
             }
 
-            this.setBoundingBox([bb[0] + dX * lr, bb[1] - dY * tr, bb[2] - dX * (1 - lr), bb[3] + dY * (1 - tr)], false);
+            this.setBoundingBox([bb[0] + dX * lr, bb[1] - dY * tr, bb[2] - dX * (1 - lr), bb[3] + dY * (1 - tr)], this.keepaspectratio);
             this.zoomX *= zX;
             this.zoomY *= zY;
             return this.applyZoom();
@@ -3981,7 +3981,7 @@ define([
                 tr = (bb[1] - y) / (bb[1] - bb[3]);
             }
 
-            this.setBoundingBox([bb[0] + dX * lr, bb[1] - dY * tr, bb[2] - dX * (1 - lr), bb[3] + dY * (1 - tr)], false);
+            this.setBoundingBox([bb[0] + dX * lr, bb[1] - dY * tr, bb[2] - dX * (1 - lr), bb[3] + dY * (1 - tr)], this.keepaspectratio);
             this.zoomX /= zX;
             this.zoomY /= zY;
 
@@ -3997,7 +3997,7 @@ define([
                 dX = (bb[2] - bb[0]) * (1.0 - this.zoomX) * 0.5,
                 dY = (bb[1] - bb[3]) * (1.0 - this.zoomY) * 0.5;
 
-            this.setBoundingBox([bb[0] + dX, bb[1] - dY, bb[2] - dX, bb[3] + dY], false);
+            this.setBoundingBox([bb[0] + dX, bb[1] - dY, bb[2] - dX, bb[3] + dY], this.keepaspectratio);
             this.zoomX = 1.0;
             this.zoomY = 1.0;
             return this.applyZoom();
@@ -4039,7 +4039,7 @@ define([
             this.zoomX = 1.0;
             this.zoomY = 1.0;
 
-            this.setBoundingBox([minX - borderX, maxY + borderY, maxX + borderX, minY - borderY], true);
+            this.setBoundingBox([minX - borderX, maxY + borderY, maxX + borderX, minY - borderY], this.keepaspectratio);
 
             return this.applyZoom();
         },
@@ -4079,7 +4079,7 @@ define([
                 dx = 1.5 * (newBBox[2] - newBBox[0]) * 0.5;
                 dy = 1.5 * (newBBox[1] - newBBox[3]) * 0.5;
                 d = Math.max(dx, dy);
-                this.setBoundingBox([cx - d, cy + d, cx + d, cy - d], true);
+                this.setBoundingBox([cx - d, cy + d, cx + d, cy - d], this.keepaspectratio);
             }
 
             return this;
@@ -4335,13 +4335,33 @@ define([
          * @returns {JXG.Board} Reference to the board
          */
         resizeContainer: function (canvasWidth, canvasHeight, dontset, dontSetBoundingBox) {
-            var box;
+            var box_act, box, w, h, cx, cy,
+                shift_x = 0,
+                shift_y = 0;
 
-            if (!dontSetBoundingBox) {
-                box = this.getBoundingBox();
-            }
             this.canvasWidth = parseInt(canvasWidth, 10);
             this.canvasHeight = parseInt(canvasHeight, 10);
+
+            if (!dontSetBoundingBox) {
+                box_act = this.getBoundingBox();    // This is the actual bounding box.
+                box     = this.attr.boundingbox;    // This is the intended bounding box.
+                // The shift values compensate the follow-up
+                // correction in setBoundingBox in case this.keepaspectratio==true
+                // Otherwise, shift_x and shift_y will be zero.
+                shift_x = box_act[0] - box[0];
+                shift_y = box_act[1] - box[1];
+
+                cx = (box[2] + box[0]) * 0.5 + shift_x;
+                cy = (box[3] + box[1]) * 0.5 + shift_y;
+                cx /=  this.zoomX;
+                cy /=  this.zoomY;
+
+                w = (box[2] - box[0]) * 0.5 / this.zoomX;
+                h = (box[1] - box[3]) * 0.5 / this.zoomY;
+
+                box = [cx - w, cy + h, cx + w, cy - h];
+            }
+
 
             if (!dontset) {
                 this.containerObj.style.width = (this.canvasWidth) + 'px';
@@ -4853,7 +4873,7 @@ define([
                 return this;
             }
 
-            this.plainBB = bbox;
+            // this.plainBB = bbox;
 
             this.canvasWidth = parseInt(dim.width, 10);
             this.canvasHeight = parseInt(dim.height, 10);
