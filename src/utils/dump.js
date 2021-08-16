@@ -188,7 +188,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
             methods.push({
                 obj: boardVarName,
                 method: 'setBoundingBox',
-                params: [board.getBoundingBox(), true]
+                params: [board.getBoundingBox(), board.keepaspectratio]
             });
 
             return methods;

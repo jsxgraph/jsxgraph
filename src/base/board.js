@@ -3378,7 +3378,7 @@ define([
                 this.intersectionObserver = new IntersectionObserver(function(entries) {
                     // If bounding box is not yet initialized, do it now.
                     if (isNaN(that.getBoundingBox()[0])) {
-                        that.setBoundingBox(that.attr.boundingbox);
+                        that.setBoundingBox(that.attr.boundingbox, that.keepaspectratio);
                         that.updateContainerDims();
                     }
                 }, options);
@@ -4118,7 +4118,7 @@ define([
 
                 this.zoomX = 1.0;
                 this.zoomY = 1.0;
-                this.setBoundingBox(newBBox, true);
+                this.setBoundingBox(newBBox, this.keepaspectratio);
             }
 
             return this;

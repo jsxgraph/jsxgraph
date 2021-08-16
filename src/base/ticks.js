@@ -286,7 +286,7 @@ define([
                 dx = oldc.usrCoords[1] / c.usrCoords[1];
                 bb[0] *= dx;
                 bb[2] *= dx;
-                this.board.setBoundingBox(bb, false);
+                this.board.setBoundingBox(bb, this.board.keepaspectratio);
             // vertical line
             } else if (Math.abs(this.line.stdform[2]) < Mat.eps &&
                        Math.abs(c.usrCoords[2] * oldc.usrCoords[2]) > Mat.eps) {
@@ -294,7 +294,7 @@ define([
                 dy = oldc.usrCoords[2] / c.usrCoords[2];
                 bb[3] *= dy;
                 bb[1] *= dy;
-                this.board.setBoundingBox(bb, false);
+                this.board.setBoundingBox(bb, this.board.keepaspectratio);
             }
 
             return this;
