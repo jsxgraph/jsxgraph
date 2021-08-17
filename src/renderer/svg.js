@@ -1413,9 +1413,10 @@ define([
 
         // documented in AbstractRenderer
         resize: function (w, h) {
-            this.svgRoot.style.width = parseFloat(w) + 'px';
+            this.svgRoot.style.width  = parseFloat(w) + 'px';
             this.svgRoot.style.height = parseFloat(h) + 'px';
-            this.svgRoot.setAttribute("width", parseFloat(w));
+
+            this.svgRoot.setAttribute("width",  parseFloat(w));
             this.svgRoot.setAttribute("height", parseFloat(h));
         },
 
