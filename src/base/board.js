@@ -5839,12 +5839,14 @@ define([
             // If full screen mode is started we have to remove CSS margin around the JSXGraph div.
             // Otherwise, the positioning of the fullscreen div will be false.
             // When leaving the fullscreen mode, the margin is put back in.
-
-            if (Type.exists(this._cssFullscreenStore) && this._cssFullscreenStore.isFullscreen) {
+            if (Type.exists(el._cssFullscreenStore) && el._cssFullscreenStore.isFullscreen) {
                 el._cssFullscreenStore.isFullscreen = false;
-                el.style.margin = this._cssFullscreenStore.margin;
+                el.style.margin = el._cssFullscreenStore.margin;
             } else {
-                el._cssFullscreenStore.isFullscreen = true;
+                el._cssFullscreenStore = {
+                    isFullscreen: true,
+                    margin: el.style.margin
+                };
                 el.style.margin = '';
             }
 

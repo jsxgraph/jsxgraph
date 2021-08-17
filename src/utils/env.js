@@ -882,17 +882,21 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
         toFullscreen: function (wrap_id, jsxgraph_id, scale) {
             var elem = document.getElementById(wrap_id),
                 elem_inner = document.getElementById(jsxgraph_id),
+                height, width, r_w, r_h, vshift;
 
-                // height seems to be independent from zoom level on all browsers
-                height = parseInt(elem_inner.style.height, 10),
-                width = parseInt(elem_inner.style.width, 10),
+            // height seems to be independent from zoom level on all browsers
+            // height = parseInt(elem_inner.style.height, 10),
+            // width = parseInt(elem_inner.style.width, 10),
+            width = elem_inner.getBoundingClientRect().width;
+            height = elem_inner.getBoundingClientRect().height;
+            console.log(width, height)
 
-                // Determine the maximum scale factor.
-                r_w = window.screen.width / width,
-                r_h = window.screen.height / height,
+            // Determine the maximum scale factor.
+            r_w = window.screen.width / width;
+            r_h = window.screen.height / height;
 
-                // Determine the vertical shift to place the div in the center of the screen
-                vshift = (window.screen.height - height) * 0.5;
+            // Determine the vertical shift to place the div in the center of the screen
+            vshift = (window.screen.height - height) * 0.5;
 
             // Scaling factor: if not supplied, it's taken as large as possible
             scale = scale || Math.min(r_w, r_h);
