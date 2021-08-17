@@ -3232,11 +3232,11 @@ define([
          *
          */
         updateContainerDims: function() {
-            var theWidth, theHeight;
+            var w, h;
 
-            theWidth  = this.containerObj.getBoundingClientRect().width;
-            theHeight = this.containerObj.getBoundingClientRect().height;
-            if (theWidth === 0 || theHeight === 0) {
+            w = this.containerObj.getBoundingClientRect().width;
+            h = this.containerObj.getBoundingClientRect().height;
+            if (w === 0 || h === 0) {
                 // The div is invisible - do nothing
                 return;
             }
@@ -3248,18 +3248,19 @@ define([
 
             // We do nothing if in case the dimension did not change since being visible
             // the last time. Note that if the div had display:none in the mean time,
-            // we did not store this._prevTheWidth/Height.
-            if (Type.exists(this._prevTheWidth) && Type.exists(this._prevTheHeight) &&
-                this._prevTheWidth === theWidth && this._prevTheHeight === theHeight) {
+            // we did not store this._prevDim.
+            if (Type.exists(this._prevDim) &&
+                this._prevDim.w === w && this._prevDim.h === h) {
                     return;
             }
-            // theWidth and theHeight are the outer dimensions and therefore
-            // might be too large. This does no harm, because the result is only that the
-            // SVGRoot might be larger than the visible div and there
-            // is overflow:hidden.
-            this.resizeContainer(theWidth, theHeight, true);
-            this._prevTheWidth  = theWidth;
-            this._prevTheHeight = theHeight;
+            // w and h are the outer dimensions and therefore
+            // might be too large. This does no harm, because the only consequence is that the
+            // SVGRoot might be larger than the visible div. However, we use overflow:hidden.
+            this.resizeContainer(w, h, true);
+            this._prevDim = {
+                w: w,
+                h: h
+            }
         },
 
         /**
