@@ -168,20 +168,19 @@ define([
                 this.coords.setCoordinates(Const.COORDS_BY_USER, c);
             } else {
                 // Case of board.create('point',[baseElement, transform]);
-
                 if (!fromParent) {
-                    // The element has been dragged, now we transform the baseElement
+                    // The element has been dragged or it is the initial update,
+                    // now we transform the baseElement
                     if (this.draggable() && this.baseElement.draggable()) {
                         this.transformations[0].update();
                         invMat = Mat.inverse(this.transformations[0].matrix);
                         c = Mat.matVecMult(invMat, this.coords.usrCoords);
                         this.baseElement.coords.setCoordinates(Const.COORDS_BY_USER, c);
                     }
-                } else {
-                    c = this.transformations[0].apply(this.baseElement);
-                    this.coords.setCoordinates(Const.COORDS_BY_USER, c);
                 }
+                c = this.transformations[0].apply(this.baseElement);
             }
+            this.coords.setCoordinates(Const.COORDS_BY_USER, c);
 
             for (i = 1; i < this.transformations.length; i++) {
                 this.coords.setCoordinates(Const.COORDS_BY_USER, this.transformations[i].apply(this));
