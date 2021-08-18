@@ -3232,12 +3232,23 @@ define([
          *
          */
         updateContainerDims: function() {
-            var w, h;
+            var w, h,
+                bb, css;
 
-            w = this.containerObj.getBoundingClientRect().width;
-            h = this.containerObj.getBoundingClientRect().height;
-            if (w === 0 || h === 0) {
-                // The div is invisible - do nothing
+            // Get size of the board's container div
+            bb = this.containerObj.getBoundingClientRect();
+            w = bb.width;
+            h = bb.height;
+
+            // Subtract the border size
+            if (window && window.getComputedStyle) {
+                css = window.getComputedStyle(this.containerObj, null);
+                w -= parseFloat(css.getPropertyValue('border-left-width')) + parseFloat(css.getPropertyValue('border-right-width'));
+                h -= parseFloat(css.getPropertyValue('border-top-width'))  + parseFloat(css.getPropertyValue('border-bottom-width'));
+            }
+
+            // If div is invisible - do nothing
+            if (w <= 0 || h <= 0) {
                 return;
             }
 
@@ -3246,16 +3257,15 @@ define([
                 this.setBoundingBox(this.attr.boundingbox, this.keepaspectratio);
             }
 
-            // We do nothing if in case the dimension did not change since being visible
+            // Do nothing if the dimension did not change since being visible
             // the last time. Note that if the div had display:none in the mean time,
             // we did not store this._prevDim.
             if (Type.exists(this._prevDim) &&
                 this._prevDim.w === w && this._prevDim.h === h) {
                     return;
             }
-            // w and h are the outer dimensions and therefore
-            // might be too large. This does no harm, because the only consequence is that the
-            // SVGRoot might be larger than the visible div. However, we use overflow:hidden.
+
+            // Set the size of the SVG or canvas element
             this.resizeContainer(w, h, true);
             this._prevDim = {
                 w: w,
@@ -4340,8 +4350,8 @@ define([
                 shift_x = 0,
                 shift_y = 0;
 
-            this.canvasWidth = parseInt(canvasWidth, 10);
-            this.canvasHeight = parseInt(canvasHeight, 10);
+            this.canvasWidth = parseFloat(canvasWidth);
+            this.canvasHeight = parseFloat(canvasHeight);
 
             if (!dontSetBoundingBox) {
                 box_act = this.getBoundingBox();    // This is the actual bounding box.

@@ -103,6 +103,7 @@ define([
 
         this.svgRoot = this.container.ownerDocument.createElementNS(this.svgNamespace, "svg");
         this.svgRoot.style.overflow = 'hidden';
+        this.svgRoot.style.display = 'block';
 
         this.resize(dim.width, dim.height);
 
@@ -1413,11 +1414,13 @@ define([
 
         // documented in AbstractRenderer
         resize: function (w, h) {
-            this.svgRoot.style.width  = parseFloat(w) + 'px';
-            this.svgRoot.style.height = parseFloat(h) + 'px';
+            // this.svgRoot.style.width  = parseFloat(w) + 'px';
+            // this.svgRoot.style.height = parseFloat(h) + 'px';
 
-            this.svgRoot.setAttribute("width",  parseFloat(w));
-            this.svgRoot.setAttribute("height", parseFloat(h));
+            this.svgRoot.setAttribute('width',  parseFloat(w));
+            this.svgRoot.setAttribute('height', parseFloat(h));
+            // this.svgRoot.setAttribute('width',  '100%');
+            // this.svgRoot.setAttribute('height', '100%');
         },
 
         // documented in JXG.AbstractRenderer
