@@ -886,10 +886,9 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
 
             // height seems to be independent from zoom level on all browsers
             // height = parseInt(elem_inner.style.height, 10),
-            // width = parseInt(elem_inner.style.width, 10),
-            width = elem_inner.getBoundingClientRect().width;
+            // width  = parseInt(elem_inner.style.width, 10),
+            width  = elem_inner.getBoundingClientRect().width;
             height = elem_inner.getBoundingClientRect().height;
-            console.log(width, height)
 
             // Determine the maximum scale factor.
             r_w = window.screen.width / width;
