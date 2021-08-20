@@ -365,11 +365,11 @@ define([
          *                     'point on curve = ' + point.isOn(curve) + '<br>' +
          *                     'point on polygon = ' + point.isOn(pol) + '<br>';
          *     }]);
-         * 
+         *
          *     })();
-         * 
+         *
          * </script><pre>
-         * 
+         *
          */
         isOn: function(el, tol) {
             var arr, crds;
