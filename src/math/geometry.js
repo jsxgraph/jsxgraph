@@ -496,6 +496,28 @@ define([
         },
 
         /**
+         * Affine ratio of three collinear points a, b, c: (c - a) / (b - a).
+         * If r > 1 or r < 0 then c is outside of the segment ab.
+         *
+         * @param {JXG.Coords} a
+         * @param {JXG.Coords} b
+         * @param {JXG.Coords} c
+         * @returns {Number} affine ratio (c - a) / (b - a)
+         */
+        affineRatio: function(a, b, c) {
+            var r = 0.0,
+                dx =  b.usrCoords[1] - a.usrCoords[1];
+
+            if (Math.abs(dx) > Mat.eps) {
+                r = (c.usrCoords[1] - a.usrCoords[1]) / dx;
+            } else {
+                r = (c.usrCoords[2] - a.usrCoords[2]) /
+                    (b.usrCoords[2] - a.usrCoords[2]);
+            }
+            return r;
+        },
+
+        /**
          * Sort vertices counter clockwise starting with the first point.
          *
          * @param {Array} p An array containing {@link JXG.Point}, {@link JXG.Coords}, and/or arrays.
@@ -1101,17 +1123,41 @@ define([
                 // All other combinations of circles and lines,
                 // Arc types are treated as circles.
                 /** @ignore */
+
                 func = function () {
                     var res = that.meet(el1.stdform, el2.stdform, i, el1.board),
-                        has = true;
+                        has = true, first, last, r, dx;
 
-                    if (!alwaysintersect && el1_isArcType) {
+                    if (alwaysintersect) {
+                        return res;
+                    }
+                    if (el1.elementClass === Const.OBJECT_CLASS_LINE) {
+                        first = Type.evaluate(el1.visProp.straightfirst),
+                        last  = Type.evaluate(el1.visProp.straightlast);
+                        if (!first || !last) {
+                            r = that.affineRatio(el1.point1.coords, el1.point2.coords, res);
+                            if ( (!last && r > 1 + Mat.eps) || (!first && r < 0 - Mat.eps) ) {
+                                return (new Coords(JXG.COORDS_BY_USER, [0, NaN, NaN], el1.board));
+                            }
+                        }
+                    }
+                    if (el2.elementClass === Const.OBJECT_CLASS_LINE) {
+                        first = Type.evaluate(el2.visProp.straightfirst),
+                        last  = Type.evaluate(el2.visProp.straightlast);
+                        if (!first || !last) {
+                            r = that.affineRatio(el2.point1.coords, el2.point2.coords, res);
+                            if ( (!last && r > 1 + Mat.eps) || (!first && r < 0 - Mat.eps) ) {
+                                return (new Coords(JXG.COORDS_BY_USER, [0, NaN, NaN], el1.board));
+                            }
+                        }
+                    }
+                    if (el1_isArcType) {
                         has = that.coordsOnArc(el1, res);
                         if (has && el2_isArcType) {
                             has = that.coordsOnArc(el2, res);
                         }
                         if (!has) {
-                            res = (new Coords(JXG.COORDS_BY_USER, [0, NaN, NaN], el1.board));
+                            return (new Coords(JXG.COORDS_BY_USER, [0, NaN, NaN], el1.board));
                         }
                     }
                     return res;
