@@ -575,7 +575,7 @@ define([
                 this.updateConstraint();
                 c  = Geometry.projectPointToTurtle(this, slide, this.board)[0].usrCoords;
             } else if (slide.elementClass === Const.OBJECT_CLASS_CURVE) {
-                // Handle the case if the curve comes from a transformation of a continous curve.
+                // Handle the case if the curve comes from a transformation of a continuous curve.
                 isTransformed = false;
                 res = slide.getTransformationSource();
                 if (res[0]) {
@@ -591,12 +591,12 @@ define([
                 if (isTransformed) {
                     this.coords.setCoordinates(Const.COORDS_BY_USER, [
                         slides[slides.length - 1].Z(this.position),
-                        slides[slides.length - 1].X(this.position), 
+                        slides[slides.length - 1].X(this.position),
                         slides[slides.length - 1].Y(this.position)]);
                 } else {
                     this.coords.setCoordinates(Const.COORDS_BY_USER, [
-                        slide.Z(this.position), 
-                        slide.X(this.position), 
+                        slide.Z(this.position),
+                        slide.X(this.position),
                         slide.Y(this.position)]);
                 }
 
