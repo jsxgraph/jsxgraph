@@ -1785,32 +1785,34 @@ define([
         },
 
         /**
-         * Intersection of two segments.
-         * @param {Array} p1 First point of segment 1 using homogeneous coordinates [z,x,y]
-         * @param {Array} p2 Second point of segment 1 using homogeneous coordinates [z,x,y]
-         * @param {Array} q1 First point of segment 2 using homogeneous coordinates [z,x,y]
-         * @param {Array} q2 Second point of segment 2 using homogeneous coordinates [z,x,y]
+         * (Virtual) Intersection of two segments.
+         * @param {Array} p1 First point of segment 1 using normalized homogeneous coordinates [1,x,y]
+         * @param {Array} p2 Second point or direction of segment 1 using normalized homogeneous coordinates [1,x,y] or point at infinity [0,x,y], respectively
+         * @param {Array} q1 First point of segment 2 using normalized homogeneous coordinates [1,x,y]
+         * @param {Array} q2 Second point or direction of segment 2 using normalized homogeneous coordinates [1,x,y] or point at infinity [0,x,y], respectively
          * @returns {Array} [Intersection point, t, u] The first entry contains the homogeneous coordinates
-         * of the intersection point. The second and third entry gives the position of the intersection between the
-         * two defining points. For example, the second entry t is defined by: intersection point = t*p1 + (1-t)*p2.
+         * of the intersection point. The second and third entry give the position of the intersection with respect 
+         * to the definiting parameters. For example, the second entry t is defined by: intersection point = p1 + t * deltaP, where
+         * deltaP = (p2 - p1) when both parameters are coordinates, and deltaP = p2 if p2 is a point at infinity.
          * If the two segments are collinear, [[0,0,0], Infinity, Infinity] is returned.
          **/
         meetSegmentSegment: function (p1, p2, q1, q2) {
-            var t, u, diff,
+            var t, u, cx,
                 li1 = Mat.crossProduct(p1, p2),
                 li2 = Mat.crossProduct(q1, q2),
                 c = Mat.crossProduct(li1, li2),
-                denom = c[0];
 
-            if (Math.abs(denom) < Mat.eps) {
+            if (Math.abs(c[0]) < Mat.eps) {
                 return [c, Infinity, Infinity];
             }
 
-            diff = [q1[1] - p1[1], q1[2] - p1[2]];
-
-            // Because of speed issues, evalute the determinants directly
-            t = (diff[0] * (q2[2] - q1[2]) - diff[1] * (q2[1] - q1[1])) / denom;
-            u = (diff[0] * (p2[2] - p1[2]) - diff[1] * (p2[1] - p1[1])) / denom;
+            // The intersection point is already computed in c. To find t and u, it suffices to solve 
+            // for t in either x or y direction only. W.l.o.g. the x direction is chosen to compute both.
+            cx = c[1] / c[0];
+            // Note that the z-coordinate of p2 is used to determine whether it should be interpreted
+            // as a segment coordinate or a direction.
+            t = (cx - p1[1]) / (p2[1] - p2[0] * p1[1]);
+            u = (cx - q1[1]) / (q2[1] - q2[0] * q1[1]);
 
             return [c, t, u];
         },
