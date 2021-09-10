@@ -1800,7 +1800,7 @@ define([
             var t, u, cx,
                 li1 = Mat.crossProduct(p1, p2),
                 li2 = Mat.crossProduct(q1, q2),
-                c = Mat.crossProduct(li1, li2),
+                c = Mat.crossProduct(li1, li2);
 
             if (Math.abs(c[0]) < Mat.eps) {
                 return [c, Infinity, Infinity];
