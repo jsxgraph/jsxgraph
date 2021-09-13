@@ -1722,9 +1722,10 @@ define([
 
                 if (this.hasPointerUp) {
                     if (window.navigator.msPointerEnabled) {  // IE10-
-                        Env.removeEvent(this.document, 'MSPointerUp', this.pointerUpListener, this);
+                        Env.removeEvent(this.document, 'MSPointerUp',   this.pointerUpListener, this);
                     } else {
-                        Env.removeEvent(this.document, 'pointerup', this.pointerUpListener, this);
+                        Env.removeEvent(this.document, 'pointerup',     this.pointerUpListener, this);
+                        Env.removeEvent(this.document, 'pointercancel', this.pointerUpListener, this);
                     }
                     this.hasPointerUp = false;
                 }
@@ -2085,7 +2086,7 @@ define([
          */
         pointerDownListener: function (evt, object) {
             var i, j, k, pos, elements, sel,
-                type = 'mouse', // in case of no browser
+                type = 'mouse', // Used in case of no browser
                 found, target;
 
             // Temporary fix for Firefox pointer events:
@@ -2096,9 +2097,11 @@ define([
 
             if (!this.hasPointerUp) {
                 if (window.navigator.msPointerEnabled) {  // IE10-
-                    Env.addEvent(this.document, 'MSPointerUp', this.pointerUpListener, this);
+                    Env.addEvent(this.document, 'MSPointerUp',   this.pointerUpListener, this);
                 } else {
-                    Env.addEvent(this.document, 'pointerup', this.pointerUpListener, this);
+                    Env.addEvent(this.document, 'pointerup',     this.pointerUpListener, this);
+                    // 'pointercancel' is fired e.g. if the finger leaves the browser and drags down the system menu on Android
+                    Env.addEvent(this.document, 'pointercancel', this.pointerUpListener, this);
                 }
                 this.hasPointerUp = true;
             }
@@ -2240,20 +2243,20 @@ define([
             return false;
         },
 
-        /**
-         * Called if pointer leaves an HTML tag. Is called by the inner-most tag.
-         * That means, if a JSXGraph text, i.e. an HTML div, is placed close
-         * to the border of the board, this pointerout event will be ignored.
-         * @param  {Event} evt
-         * @return {Boolean}
-         */
-        pointerOutListener: function (evt) {
-            if (evt.target === this.containerObj ||
-                (this.renderer.type === 'svg' && evt.target === this.renderer.foreignObjLayer)) {
-                this.pointerUpListener(evt);
-            }
-            return this.mode === this.BOARD_MODE_NONE;
-        },
+        // /**
+        //  * Called if pointer leaves an HTML tag. It is called by the inner-most tag.
+        //  * That means, if a JSXGraph text, i.e. an HTML div, is placed close
+        //  * to the border of the board, this pointerout event will be ignored.
+        //  * @param  {Event} evt
+        //  * @return {Boolean}
+        //  */
+        // pointerOutListener: function (evt) {
+        //     if (evt.target === this.containerObj ||
+        //         (this.renderer.type === 'svg' && evt.target === this.renderer.foreignObjLayer)) {
+        //         this.pointerUpListener(evt);
+        //     }
+        //     return this.mode === this.BOARD_MODE_NONE;
+        // },
 
         /**
          * Called periodically by the browser while the user moves a pointing device across the screen.
@@ -2414,9 +2417,10 @@ define([
             if (this._board_touches.length === 0) {
                 if (this.hasPointerUp) {
                     if (window.navigator.msPointerEnabled) {  // IE10-
-                        Env.removeEvent(this.document, 'MSPointerUp', this.pointerUpListener, this);
+                        Env.removeEvent(this.document, 'MSPointerUp',   this.pointerUpListener, this);
                     } else {
-                        Env.removeEvent(this.document, 'pointerup', this.pointerUpListener, this);
+                        Env.removeEvent(this.document, 'pointerup',     this.pointerUpListener, this);
+                        Env.removeEvent(this.document, 'pointercancel', this.pointerUpListener, this);
                     }
                     this.hasPointerUp = false;
                 }
