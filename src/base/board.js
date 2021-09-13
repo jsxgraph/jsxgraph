@@ -3299,8 +3299,13 @@ define([
                 if (!that._isResizing) {
                     that._isResizing = true;
                     window.setTimeout(function() {
-                        that.updateContainerDims();
-                        that._isResizing = false;
+                        try {
+                            that.updateContainerDims();
+                        } catch (err) {
+                            that.stopResizeObserver();
+                        } finally {
+                            that._isResizing = false;
+                        }
                     }, that.attr.resize.throttle);
                 }
             });
