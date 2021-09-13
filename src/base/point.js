@@ -371,7 +371,8 @@ define([
          * 
          */
         isOn: function(el, tol) {
-            var arr, crds;
+            var arr, crds,
+                len, i, j, x, y, c;
 
             tol = tol || Mat.eps;
 
@@ -398,6 +399,24 @@ define([
                 crds = Geometry.projectPointToCurve(this, el, this.board)[0];
                 return Geometry.distance(this.coords.usrCoords, crds.usrCoords, 3) < tol;
             } else if (el.type === Const.OBJECT_TYPE_POLYGON) {
+                if (Type.evaluate(el.visProp.hasinnerpoints)) {
+                    len = el.vertices.length;
+                    x = this.coords.usrCoords[1];
+                    y = this.coords.usrCoords[2];
+                    c = false;
+                    // W. Randolf Franklin's pnpoly method.
+                    // See https://wrf.ecse.rpi.edu/Research/Short_Notes/pnpoly.html
+                    for (i = 0, j = len - 2; i < len - 1; j = i++) {
+                        if (((el.vertices[i].coords.usrCoords[2] > y) !== (el.vertices[j].coords.usrCoords[2] > y)) &&
+                                (x < (el.vertices[j].coords.usrCoords[1] - el.vertices[i].coords.usrCoords[1]) * (y - el.vertices[i].coords.usrCoords[2]) /
+                                (el.vertices[j].coords.usrCoords[2] - el.vertices[i].coords.usrCoords[2]) + el.vertices[i].coords.usrCoords[1])) {
+                            c = !c;
+                        }
+                    }
+                    if (c) {
+                        return true;
+                    }
+                }
                 arr = Geometry.projectCoordsToPolygon(this.coords.usrCoords, el);
                 return Geometry.distance(this.coords.usrCoords, arr, 3) < tol;
             } else if (el.type === Const.OBJECT_TYPE_TURTLE) {
