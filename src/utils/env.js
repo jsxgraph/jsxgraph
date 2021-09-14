@@ -788,6 +788,15 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
             window.setTimeout(timerFun, 1);
         },
 
+        /**
+         * Calculate the scale factor and vertical shift for the JSXGraph div
+         * in full screen mode.
+         *
+         * @param {Object} obj Reference to a DOM node.
+         * @returns Object {scale: number, vshift: number}
+         * @see JXG.Board#fullscreenListener
+         * @private
+         */
         _getScaleFactors: function(node) {
             var width  = node.getBoundingClientRect().width,
                 height = node.getBoundingClientRect().height,
@@ -829,6 +838,8 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          *
          * @private
          * @see JXG#toFullscreen
+         * @see JXG.Board#fullscreenListener
+         * 
          */
         scaleJSXGraphDiv: function (wrap_id, inner_id, scale, vshift) {
             var len = document.styleSheets.length, style,
