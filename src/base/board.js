@@ -5841,7 +5841,7 @@ define([
             }
 
             // Start fullscreen mode
-            Env.toFullscreen(wrap_id, id);
+            Env.toFullscreen(wrap_id);
 
             return this;
         },
@@ -5851,23 +5851,42 @@ define([
          * which are applied to the JSXGraph canvas have to be reread.
          * Otherwise the position of upper left corner is wrongly interpreted.
          *
-         * @param  {Object} evt fullscreen event object
+         * @param  {Object} evt fullscreen event object (unused)
          */
         fullscreenListener: function(evt) {
-            var el = this.containerObj;
+            var el = this.containerObj, res;
 
             // If full screen mode is started we have to remove CSS margin around the JSXGraph div.
             // Otherwise, the positioning of the fullscreen div will be false.
             // When leaving the fullscreen mode, the margin is put back in.
-            if (Type.exists(el._cssFullscreenStore) && el._cssFullscreenStore.isFullscreen) {
-                el._cssFullscreenStore.isFullscreen = false;
-                el.style.margin = el._cssFullscreenStore.margin;
-            } else {
+
+            if (document.fullscreenElement) {
+                // Entered fullscreen mode
+
+                el.style.margin = '';
+
+                // Do the shifting and scaling via CSS pseudo rules
+                // We do this after fullscreen mode has been established to get the correct size
+                // of the JSXGraph div
+                res = Env._getScaleFactors(el);
+                Env.scaleJSXGraphDiv('#' + document.fullscreenElement.id, '#' + this.container, res.scale, res.vshift);
+
+                // Store the scaling data.
+                // It is used in AbstractRenderer.updateText to restore the scaling matrix
+                // which is removed by MathJax.
+                // Further, the CSS margin has to be removed when in fullscreen mode,
+                // and must be restored later.
                 el._cssFullscreenStore = {
                     isFullscreen: true,
-                    margin: el.style.margin
+                    margin: el.style.margin,
+                    scale:  res.scale,
+                    vshift: res.vshift
                 };
-                el.style.margin = '';
+            } else if (Type.exists(el._cssFullscreenStore)) {
+                // Left fullscreen mode
+
+                el._cssFullscreenStore.isFullscreen = false;
+                el.style.margin = el._cssFullscreenStore.margin;
             }
 
             this.updateCSSTransforms();
