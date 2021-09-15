@@ -2115,7 +2115,7 @@ define([
                 return false;
             }
 
-            if (evt.isPrimary) {
+            if (!object && evt.isPrimary) {
                 // First finger down. To be on the safe side this._board_touches is cleared.
                 this._pointerClearTouches();
             }            
