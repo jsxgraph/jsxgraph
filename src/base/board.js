@@ -2058,6 +2058,11 @@ define([
          * @private
          */
         _pointerClearTouches: function() {
+            if (this._board_touches.length > 0) {
+                this.dehighlightAll();
+                this.updateQuality = this.BOARD_QUALITY_HIGH;
+                this.mode = this.BOARD_MODE_NONE;
+            }
             this._board_touches = [];
         },
 
