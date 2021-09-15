@@ -1460,20 +1460,20 @@ define([
          * @param  {Object} evt Event from touchStartListener
          * @return {Boolean}   returns if the origin is moved.
          */
-        touchOriginMoveStart: function (evt) {
+        touchStartMoveOriginOneFinger: function (evt) {
             var touches = evt[JXG.touchProperty],
-                r, pos;
+                conditions, pos;
 
-            r = this.attr.pan.enabled &&
+            conditions = this.attr.pan.enabled &&
                 !this.attr.pan.needtwofingers &&
                 touches.length === 1;
 
-            if (r) {
+            if (conditions) {
                 pos = this.getMousePosition(evt, 0);
                 this.initMoveOrigin(pos[0], pos[1]);
             }
 
-            return r;
+            return conditions;
         },
 
         /**
@@ -1714,7 +1714,6 @@ define([
                 } else {
                     Env.removeEvent(this.containerObj, 'pointerdown', this.pointerDownListener, this);
                     Env.removeEvent(moveTarget, 'pointermove', this.pointerMoveListener, this);
-                    // Env.removeEvent(this.containerObj, 'pointerout', this.pointerOutListener, this);
                 }
 
                 Env.removeEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
@@ -1977,30 +1976,19 @@ define([
             return false;
         },
 
+        /*
+         * Pointer events
+         */
+
         /**
-         * Fix for Firefox browser: When using a second finger, the
-         * touch event for the first finger is sent again.
          *
-         * @param  {[type]} evt Event object
+         * Check if pointer event is already registered in this._board_touches.
+         *
+         * @param  {Object} evt Event object
          * @return {Boolean} true if down event has already been sent.
          * @private
          */
-        _isPointerEventAlreadyThere: function (evt) {
-            var i;
-
-            for (i = 0; i < this._board_touches.length; i++) {
-                if (this._board_touches[i].pointerId === evt.pointerId) {
-                    return true;
-                }
-            }
-
-            return false;
-        },
-
-        /**
-         * pointer-Events
-         */
-        _pointerIsTouchRegistered: function(evt) {
+         _isPointerRegistered: function(evt) {
             var i, len = this._board_touches.length;
 
             for (i = 0; i < len; i++) {
@@ -2011,6 +1999,15 @@ define([
             return false;
         },
 
+        /**
+         *
+         * Registers a pointer event in this._board_touches.
+         * Allows to follow the path of that finger on the screen.
+         *
+         * @param {Object} evt Event object
+         * @returns {JXG.Board} Reference to the board
+         * @private
+         */
         _pointerAddBoardTouches: function (evt) {
             var i, found;
 
@@ -2034,6 +2031,14 @@ define([
             return this;
         },
 
+        /**
+         * Deregisters a pointer event in this._board_touches.
+         * The finger has been lifted from the screen.
+         *
+         * @param {Object}} evt Event object
+         * @returns {JXG.Board} Reference to the board
+         * @private
+         */
         _pointerRemoveBoardTouches: function (evt) {
             var i;
             for (i = 0; i < this._board_touches.length; i++) {
@@ -2044,6 +2049,16 @@ define([
             }
 
             return this;
+        },
+
+        /**
+         * Remove all registered fingers from this._board_touches.
+         * This might be necessary if too many fingers have been registered.
+         * @returns {JXG.Board} Reference to the board
+         * @private
+         */
+        _pointerClearTouches: function() {
+            this._board_touches = [];
         },
 
         /**
@@ -2063,7 +2078,7 @@ define([
          */
         _getPointerInputDevice: function(evt) {
             if (Env.isBrowser) {
-                if (evt.pointerType === 'touch' || // New
+                if (evt.pointerType === 'touch' ||        // New
                     (window.navigator.msMaxTouchPoints && // Old
                         window.navigator.msMaxTouchPoints > 1)) {
                     return 'touch';
@@ -2089,18 +2104,23 @@ define([
                 type = 'mouse', // Used in case of no browser
                 found, target;
 
-            // Temporary fix for Firefox pointer events:
-            // When using two fingers, the first touch down event is fired again.
-            if (!object && this._isPointerEventAlreadyThere(evt)) {
+            // Fix for Firefox browser: When using a second finger, the
+            // touch event for the first finger is sent again.
+            if (!object && this._isPointerRegistered(evt)) {
                 return false;
             }
+
+            if (evt.isPrimary) {
+                // First finger down. To be on the safe side this._board_touches is cleared.
+                this._pointerClearTouches();
+            }            
 
             if (!this.hasPointerUp) {
                 if (window.navigator.msPointerEnabled) {  // IE10-
                     Env.addEvent(this.document, 'MSPointerUp',   this.pointerUpListener, this);
                 } else {
-                    Env.addEvent(this.document, 'pointerup',     this.pointerUpListener, this);
                     // 'pointercancel' is fired e.g. if the finger leaves the browser and drags down the system menu on Android
+                    Env.addEvent(this.document, 'pointerup',     this.pointerUpListener, this);
                     Env.addEvent(this.document, 'pointercancel', this.pointerUpListener, this);
                 }
                 this.hasPointerUp = true;
@@ -2226,11 +2246,15 @@ define([
                 this._pointerAddBoardTouches(evt);
                 evt.touches = this._board_touches;
 
-                // See touchStartListener
-                if (this.mode === this.BOARD_MODE_NONE && this.touchOriginMoveStart(evt)) {
-                } else if ((this.mode === this.BOARD_MODE_NONE ||
-                            this.mode === this.BOARD_MODE_MOVE_ORIGIN) &&
-                           evt.touches.length == 2) {
+                // Touch events on empty areas of the board are handled here, see also touchStartListener
+                // 1. case: one finger. If allowed, this triggers pan with one finger
+                if (evt.touches.length == 1 && this.mode === this.BOARD_MODE_NONE && this.touchStartMoveOriginOneFinger(evt)) {
+                } else if (evt.touches.length == 2 &&
+                            (this.mode === this.BOARD_MODE_NONE || this.mode === this.BOARD_MODE_MOVE_ORIGIN)
+                        ) {
+                    // 2. case: two fingers: pinch to zoom or pan with two fingers needed.
+                    // This happens when the second finger hits the device. First, the
+                    // "one finger pan mode" has to be cancelled.
                     if (this.mode === this.BOARD_MODE_MOVE_ORIGIN) {
                         this.originMoveEnd();
                     }
@@ -2267,7 +2291,7 @@ define([
             var i, j, pos,
                 type = 'mouse'; // in case of no browser
 
-            if (this._getPointerInputDevice(evt) === 'touch' && !this._pointerIsTouchRegistered(evt)) {
+            if (this._getPointerInputDevice(evt) === 'touch' && !this._isPointerRegistered(evt)) {
                 // Test, if there was a previous down event of this _getPointerId
                 // (in case it is a touch event).
                 // Otherwise this move event is ignored. This is necessary e.g. for sketchometry.
@@ -2413,7 +2437,6 @@ define([
 
             this._pointerRemoveBoardTouches(evt);
 
-            // if (this.touches.length === 0) {
             if (this._board_touches.length === 0) {
                 if (this.hasPointerUp) {
                     if (window.navigator.msPointerEnabled) {  // IE10-
@@ -2633,12 +2656,10 @@ define([
 
             // Touch events on empty areas of the board are handled here:
             // 1. case: one finger. If allowed, this triggers pan with one finger
-            if (this.mode === this.BOARD_MODE_NONE && this.touchOriginMoveStart(evt)) {
+            if (evtTouches.length === 1 && this.mode === this.BOARD_MODE_NONE && this.touchStartMoveOriginOneFinger(evt)) {
             } else if (evtTouches.length === 2 &&
-                        (this.mode === this.BOARD_MODE_NONE ||
-                         this.mode === this.BOARD_MODE_MOVE_ORIGIN /*||
-                         (this.mode === this.BOARD_MODE_DRAG && this.touches.length == 1) */
-                        )) {
+                        (this.mode === this.BOARD_MODE_NONE || this.mode === this.BOARD_MODE_MOVE_ORIGIN)
+                    ) {
                 // 2. case: two fingers: pinch to zoom or pan with two fingers needed.
                 // This happens when the second finger hits the device. First, the
                 // "one finger pan mode" has to be cancelled.
