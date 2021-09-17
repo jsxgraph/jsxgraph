@@ -2375,7 +2375,7 @@ define([
                     }
                 } else {
                     if (this._getPointerInputDevice(evt) === 'touch') {
-                        this._pointerAddTouches(evt);
+                        // this._pointerAddTouches(evt);
                         if (this._board_touches.length === 2) {
                             evt.touches = this._board_touches;
                             this.gestureChangeListener(evt);
