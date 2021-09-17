@@ -120,6 +120,14 @@ define([
         this.BOARD_MODE_MOVE_ORIGIN = 0x0002;
 
         /**
+         * Update is made with high quality, e.g. graphs are evaluated at much more points.
+         * @type Number
+         * @constant
+         * @see JXG.Board#updateQuality
+         */
+        this.BOARD_MODE_ZOOM = 0x0011;
+
+        /**
          * Update is made with low quality, e.g. graphs are evaluated at a lesser amount of points.
          * @type Number
          * @constant
@@ -134,14 +142,6 @@ define([
          * @see JXG.Board#updateQuality
          */
         this.BOARD_QUALITY_HIGH = 0x2;
-
-        /**
-         * Update is made with high quality, e.g. graphs are evaluated at much more points.
-         * @type Number
-         * @constant
-         * @see JXG.Board#updateQuality
-         */
-        this.BOARD_MODE_ZOOM = 0x0011;
 
         /**
          * Pointer to the document element containing the board.
@@ -2118,7 +2118,7 @@ define([
             if (!object && evt.isPrimary) {
                 // First finger down. To be on the safe side this._board_touches is cleared.
                 this._pointerClearTouches();
-            }            
+            }
 
             if (!this.hasPointerUp) {
                 if (window.navigator.msPointerEnabled) {  // IE10-
@@ -2265,6 +2265,8 @@ define([
                     }
 
                     this.gestureStartListener(evt);
+                } else if (evt.touches.length > 2) {
+                    this.mode = this.BOARD_MODE_NONE;
                 }
             }
 
@@ -2372,6 +2374,8 @@ define([
                         if (this._board_touches.length === 2) {
                             evt.touches = this._board_touches;
                             this.gestureChangeListener(evt);
+                        } else if (this._board_touches.length > 2) {
+                            this.mode = this.BOARD_MODE_NONE;
                         }
                     }
 
