@@ -40,6 +40,9 @@
     "type": "git",
     "url": "https://github.com/jsxgraph/jsxgraph.git"
   },
+  "publishConfig": {
+    "registry":"https://npm.pkg.github.com"
+  },
   "dependencies": {
     "requirejs": "^2.3.6"
   },
