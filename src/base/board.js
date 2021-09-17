@@ -2158,8 +2158,8 @@ define([
             type = this._inputDevice;
             this.options.precision.hasPoint = this.options.precision[type];
 
-            // This should be easier than the touch events. Every pointer device gets its own pointerId, e.g. the mouse
-            // always has id 1, fingers and pens get unique ids every time a pointerDown event is fired and they will
+            // This should be easier than the touch events. Every pointer device has its own pointerId, e.g. the mouse
+            // always has id 1 or 0, fingers and pens get unique ids every time a pointerDown event is fired and they will
             // keep this id until a pointerUp event is fired. What we have to do here is:
             //  1. collect all elements under the current pointer
             //  2. run through the touches control structure
@@ -2245,7 +2245,10 @@ define([
                 evt.stopPropagation();
             }
 
-            if (Env.isBrowser && this._getPointerInputDevice(evt) !== 'touch') {
+            if (!Env.isBrowser) {
+                return false;
+            }
+            if (this._getPointerInputDevice(evt) !== 'touch') {
                 if (this.mode === this.BOARD_MODE_NONE) {
                     this.mouseOriginMoveStart(evt);
                 }
@@ -2255,7 +2258,9 @@ define([
 
                 // Touch events on empty areas of the board are handled here, see also touchStartListener
                 // 1. case: one finger. If allowed, this triggers pan with one finger
-                if (evt.touches.length == 1 && this.mode === this.BOARD_MODE_NONE && this.touchStartMoveOriginOneFinger(evt)) {
+                if (evt.touches.length == 1 &&
+                    this.mode === this.BOARD_MODE_NONE &&
+                    this.touchStartMoveOriginOneFinger(evt)) {
                 } else if (evt.touches.length == 2 &&
                             (this.mode === this.BOARD_MODE_NONE || this.mode === this.BOARD_MODE_MOVE_ORIGIN)
                         ) {
