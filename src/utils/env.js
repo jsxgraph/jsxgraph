@@ -809,7 +809,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                 vshift = (window.screen.height - height) * 0.5,
 
                 // Scaling factor: if not supplied, it's taken as large as possible
-                scale = scale || Math.min(r_w, r_h);
+                scale = Math.min(r_w, r_h);
 
             // Adapt vshift and scale for landscape on tablets
             if (window.matchMedia && window.matchMedia('(orientation:landscape)').matches &&
