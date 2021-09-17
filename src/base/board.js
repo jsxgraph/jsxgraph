@@ -2003,12 +2003,13 @@ define([
          *
          * Registers a pointer event in this._board_touches.
          * Allows to follow the path of that finger on the screen.
+         * Only two simultaneous touches are supported.
          *
          * @param {Object} evt Event object
          * @returns {JXG.Board} Reference to the board
          * @private
          */
-        _pointerAddBoardTouches: function (evt) {
+        _pointerAddTouches: function (evt) {
             var i, found;
 
             for (i = 0, found = false; i < this._board_touches.length; i++) {
@@ -2020,7 +2021,8 @@ define([
                 }
             }
 
-            if (!found) {
+            // Restrict the number of simultaneous touches to 2
+            if (!found && this._board_touches.length < 2) {
                 this._board_touches.push({
                     pointerId: evt.pointerId,
                     clientX: evt.clientX,
@@ -2039,7 +2041,7 @@ define([
          * @returns {JXG.Board} Reference to the board
          * @private
          */
-        _pointerRemoveBoardTouches: function (evt) {
+        _pointerRemoveTouches: function (evt) {
             var i;
             for (i = 0; i < this._board_touches.length; i++) {
                 if (this._board_touches[i].pointerId === evt.pointerId) {
@@ -2060,9 +2062,9 @@ define([
         _pointerClearTouches: function() {
             if (this._board_touches.length > 0) {
                 this.dehighlightAll();
-                this.updateQuality = this.BOARD_QUALITY_HIGH;
-                this.mode = this.BOARD_MODE_NONE;
             }
+            this.updateQuality = this.BOARD_QUALITY_HIGH;
+            this.mode = this.BOARD_MODE_NONE;
             this._board_touches = [];
         },
 
@@ -2248,7 +2250,7 @@ define([
                     this.mouseOriginMoveStart(evt);
                 }
             } else {
-                this._pointerAddBoardTouches(evt);
+                this._pointerAddTouches(evt);
                 evt.touches = this._board_touches;
 
                 // Touch events on empty areas of the board are handled here, see also touchStartListener
@@ -2265,8 +2267,6 @@ define([
                     }
 
                     this.gestureStartListener(evt);
-                } else if (evt.touches.length > 2) {
-                    this.mode = this.BOARD_MODE_NONE;
                 }
             }
 
@@ -2370,12 +2370,10 @@ define([
                     }
                 } else {
                     if (this._getPointerInputDevice(evt) === 'touch') {
-                        this._pointerAddBoardTouches(evt);
+                        this._pointerAddTouches(evt);
                         if (this._board_touches.length === 2) {
                             evt.touches = this._board_touches;
                             this.gestureChangeListener(evt);
-                        } else if (this._board_touches.length > 2) {
-                            this.mode = this.BOARD_MODE_NONE;
                         }
                     }
 
@@ -2444,7 +2442,7 @@ define([
                 }
             }
 
-            this._pointerRemoveBoardTouches(evt);
+            this._pointerRemoveTouches(evt);
 
             if (this._board_touches.length === 0) {
                 if (this.hasPointerUp) {
