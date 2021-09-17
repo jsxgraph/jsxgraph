@@ -1126,13 +1126,14 @@ define([
 
                 func = function () {
                     var res = that.meet(el1.stdform, el2.stdform, i, el1.board),
-                        has = true, first, last, r, dx;
+                        has = true,
+                        first, last, r, dx;
 
                     if (alwaysintersect) {
                         return res;
                     }
                     if (el1.elementClass === Const.OBJECT_CLASS_LINE) {
-                        first = Type.evaluate(el1.visProp.straightfirst),
+                        first = Type.evaluate(el1.visProp.straightfirst);
                         last  = Type.evaluate(el1.visProp.straightlast);
                         if (!first || !last) {
                             r = that.affineRatio(el1.point1.coords, el1.point2.coords, res);
@@ -1142,7 +1143,7 @@ define([
                         }
                     }
                     if (el2.elementClass === Const.OBJECT_CLASS_LINE) {
-                        first = Type.evaluate(el2.visProp.straightfirst),
+                        first = Type.evaluate(el2.visProp.straightfirst);
                         last  = Type.evaluate(el2.visProp.straightlast);
                         if (!first || !last) {
                             r = that.affineRatio(el2.point1.coords, el2.point2.coords, res);

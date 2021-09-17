@@ -3304,7 +3304,7 @@ define([
             this._prevDim = {
                 w: w,
                 h: h
-            }
+            };
         },
 
         /**
