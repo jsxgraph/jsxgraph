@@ -5825,6 +5825,10 @@ define([
          * The wrapping div has the CSS class 'jxgbox_wrap_private' which is
          * defined in the file 'jsxgraph.css'
          *
+         * @param {String} id (Optional) id of the div element which is brought to fullscreen.
+         * If not provided, this defaults to the JSXGraph div. However, it may be necessary for the aspect ratio trick
+         * which using padding-bottom/top and an out div element. Then, the id of the outer div has to be supplied.
+         *
          * @return {JXG.Board} Reference to the board
          *
          * @example
@@ -5851,23 +5855,28 @@ define([
          * <pre>
          *
          */
-        toFullscreen: function() {
-            var id = this.container,
-                wrap_id = 'fullscreenwrap_' + id,
-                wrapper = document.createElement('div'),
-                el;
+        toFullscreen: function(id) {
+            var wrap_id, wrap_node, inner_node;
+
+            id = id || this.container;
+
+            this._fullscreen_inner_id = id;
+            // inner_node = this.containerObj;
+            inner_node = document.getElementById(id);
+
+            wrap_id = 'fullscreenwrap_' + id;
+            wrap_node = document.createElement('div');
 
             // If necessary, wrap a div around the JSXGraph div.
             if (!this.document.getElementById(wrap_id)) {
-                wrapper.classList.add('JXG_wrap_private');
-                wrapper.setAttribute('id', wrap_id);
-                el = this.containerObj;
-                el.parentNode.insertBefore(wrapper, el);
-                wrapper.appendChild(el);
+                wrap_node.classList.add('JXG_wrap_private');
+                wrap_node.setAttribute('id', wrap_id);
+                inner_node.parentNode.insertBefore(wrap_node, inner_node);
+                wrap_node.appendChild(inner_node);
             }
 
             // Start fullscreen mode
-            Env.toFullscreen(wrap_id);
+            Env.toFullscreen(wrap_id, id);
 
             return this;
         },
@@ -5880,39 +5889,51 @@ define([
          * @param  {Object} evt fullscreen event object (unused)
          */
         fullscreenListener: function(evt) {
-            var el = this.containerObj, res;
+            var res, inner_id, inner_node;
 
+            inner_id = this._fullscreen_inner_id;
+            if (!Type.exists(inner_id)) {
+                return;
+            }
+
+            inner_node = document.getElementById(inner_id);
             // If full screen mode is started we have to remove CSS margin around the JSXGraph div.
             // Otherwise, the positioning of the fullscreen div will be false.
             // When leaving the fullscreen mode, the margin is put back in.
-
             if (document.fullscreenElement) {
                 // Entered fullscreen mode
 
-                el.style.margin = '';
+                inner_node.style.margin = '';
 
                 // Do the shifting and scaling via CSS pseudo rules
                 // We do this after fullscreen mode has been established to get the correct size
                 // of the JSXGraph div
-                res = Env._getScaleFactors(el);
-                Env.scaleJSXGraphDiv('#' + document.fullscreenElement.id, '#' + this.container, res.scale, res.vshift);
+                res = Env._getScaleFactors(inner_node);
+                Env.scaleJSXGraphDiv(document.fullscreenElement.id, inner_id, res.scale, res.vshift);
 
                 // Store the scaling data.
                 // It is used in AbstractRenderer.updateText to restore the scaling matrix
                 // which is removed by MathJax.
                 // Further, the CSS margin has to be removed when in fullscreen mode,
                 // and must be restored later.
-                el._cssFullscreenStore = {
+                inner_node._cssFullscreenStore = {
+                    id: document.fullscreenElement.id,
                     isFullscreen: true,
-                    margin: el.style.margin,
+                    margin: inner_node.style.margin,
                     scale:  res.scale,
                     vshift: res.vshift
                 };
-            } else if (Type.exists(el._cssFullscreenStore)) {
+            } else if (Type.exists(inner_node._cssFullscreenStore)) {
                 // Left fullscreen mode
 
-                el._cssFullscreenStore.isFullscreen = false;
-                el.style.margin = el._cssFullscreenStore.margin;
+                // Remove the CSS rules added in Env.scaleJSXGraphDiv
+                try {
+                    document.styleSheets[document.styleSheets.length - 1].deleteRule(0);
+                } catch (err) {
+                    console.log('JSXGraph: Could not remove CSS rules for full screen mode');
+                }
+                inner_node._cssFullscreenStore.isFullscreen = false;
+                inner_node.style.margin = inner_node._cssFullscreenStore.margin;
             }
 
             this.updateCSSTransforms();

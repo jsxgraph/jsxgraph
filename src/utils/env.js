@@ -830,16 +830,16 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          * inside of a parent DOM
          * element which is set to fullscreen.
          * This is realized with a CSS transformation.
-         *
+         *          *
          * @param  {String} wrap_id  id of the parent DOM element which is in fullscreen mode
-         * @param  {String} inner_id id of the DOM element which is scaled and shifted-
+         * @param  {String} inner_id id of the DOM element which is scaled and shifted
          * @param  {Number} scale    Scaling factor
          * @param  {Number} vshift   Vertical shift (in pixel)
          *
          * @private
          * @see JXG#toFullscreen
          * @see JXG.Board#fullscreenListener
-         * 
+         *
          */
         scaleJSXGraphDiv: function (wrap_id, inner_id, scale, vshift) {
             var len = document.styleSheets.length, style,
@@ -852,7 +852,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
 
                 // A previously installed CSS rule to center the JSXGraph div has to
                 // be searched and removed again.
-                regex = new RegExp('.*' + wrap_id + ':.*full.*screen.*' + inner_id + '.*auto;.*transform:.*matrix');
+                regex = new RegExp('.*#' + wrap_id + ':.*full.*screen.*#' + inner_id + '.*auto;.*transform:.*matrix');
 
             if (len === 0) {
                 // In case there is not a single CSS rule defined.
@@ -875,7 +875,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
             // Install a CSS rule to center the JSXGraph div at the first position of the list.
             for (i = 0; i < len_pseudo; i++) {
                 try {
-                    document.styleSheets[len - 1].insertRule(wrap_id + pseudo_keys[i] + ' ' + inner_id + rule_inner, 0);
+                    document.styleSheets[len - 1].insertRule('#' + wrap_id + pseudo_keys[i] + ' #' + inner_id + rule_inner, 0);
                     break;
                 } catch (err) {
                     console.log('JXG.scaleJSXGraphDiv: Could not add CSS rule "' + pseudo_keys[i] + '".');
@@ -916,16 +916,16 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          *
          */
         toFullscreen: function (wrap_id) {
-            var elem = document.getElementById(wrap_id);
+            var node = document.getElementById(wrap_id);
 
             // Trigger the fullscreen mode
-            elem.requestFullscreen = elem.requestFullscreen ||
-                elem.webkitRequestFullscreen ||
-                elem.mozRequestFullScreen ||
-                elem.msRequestFullscreen;
+            node.requestFullscreen = node.requestFullscreen ||
+                node.webkitRequestFullscreen ||
+                node.mozRequestFullScreen ||
+                node.msRequestFullscreen;
 
-            if (elem.requestFullscreen) {
-                elem.requestFullscreen();
+            if (node.requestFullscreen) {
+                node.requestFullscreen();
             }
         }
     });
