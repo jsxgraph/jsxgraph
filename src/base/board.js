@@ -2346,16 +2346,16 @@ define([
                                 if (this.touches[i].targets.length === 1) {
 
                                     // Touch by one finger: this is possible for all elements that can be dragged
-                                    this.touches[i].targets[j].X = evt.pageX;
-                                    this.touches[i].targets[j].Y = evt.pageY;
+                                    this.touches[i].targets[j].X = evt.clientX;
+                                    this.touches[i].targets[j].Y = evt.clientY;
                                     pos = this.getMousePosition(evt);
                                     this.moveObject(pos[0], pos[1], this.touches[i], evt, type);
 
                                 } else if (this.touches[i].targets.length === 2) {
 
                                     // Touch by two fingers: e.g. moving lines
-                                    this.touches[i].targets[j].X = evt.pageX;
-                                    this.touches[i].targets[j].Y = evt.pageY;
+                                    this.touches[i].targets[j].X = evt.clientX;
+                                    this.touches[i].targets[j].Y = evt.clientY;
 
                                     this.twoFingerMove(
                                         this.getMousePosition({
