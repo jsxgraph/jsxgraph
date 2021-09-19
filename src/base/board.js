@@ -2001,7 +2001,8 @@ define([
 
         /**
          *
-         * Registers a pointer event in this._board_touches.
+         * Store the position of a pointer event.
+         * If not yet done, registers a pointer event in this._board_touches.
          * Allows to follow the path of that finger on the screen.
          * Only two simultaneous touches are supported.
          *
@@ -2009,7 +2010,7 @@ define([
          * @returns {JXG.Board} Reference to the board
          * @private
          */
-        _pointerAddTouches: function (evt) {
+         _pointerStorePosition: function (evt) {
             var i, found;
 
             for (i = 0, found = false; i < this._board_touches.length; i++) {
@@ -2253,7 +2254,7 @@ define([
                     this.mouseOriginMoveStart(evt);
                 }
             } else {
-                this._pointerAddTouches(evt);
+                this._pointerStorePosition(evt);
                 evt.touches = this._board_touches;
 
                 // Touch events on empty areas of the board are handled here, see also touchStartListener
@@ -2344,7 +2345,7 @@ define([
                             if (this.touches[i].targets[j].num === evt.pointerId) {
                                 if (this.touches[i].targets.length === 1) {
 
-                                    // Touch by one finger:  this is possible for all elements that can be dragged
+                                    // Touch by one finger: this is possible for all elements that can be dragged
                                     this.touches[i].targets[j].X = evt.pageX;
                                     this.touches[i].targets[j].Y = evt.pageY;
                                     pos = this.getMousePosition(evt);
@@ -2375,7 +2376,8 @@ define([
                     }
                 } else {
                     if (this._getPointerInputDevice(evt) === 'touch') {
-                        // this._pointerAddTouches(evt);
+                        this._pointerStorePosition(evt);
+
                         if (this._board_touches.length === 2) {
                             evt.touches = this._board_touches;
                             this.gestureChangeListener(evt);
@@ -2448,7 +2450,6 @@ define([
             }
 
             this._pointerRemoveTouches(evt);
-
             if (this._board_touches.length === 0) {
                 if (this.hasPointerUp) {
                     if (window.navigator.msPointerEnabled) {  // IE10-
@@ -2468,6 +2469,7 @@ define([
                 this.update();
             }
 
+            // this._board_touches = [];
             return true;
         },
 
