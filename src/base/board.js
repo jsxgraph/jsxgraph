@@ -2067,6 +2067,7 @@ define([
             this.updateQuality = this.BOARD_QUALITY_HIGH;
             this.mode = this.BOARD_MODE_NONE;
             this._board_touches = [];
+            this.touches = [];
         },
 
         /**
@@ -2449,8 +2450,8 @@ define([
                 }
             }
 
-            this._pointerRemoveTouches(evt);
-            if (this._board_touches.length === 0) {
+            // this._pointerRemoveTouches(evt);
+            // if (this._board_touches.length === 0) {
                 if (this.hasPointerUp) {
                     if (window.navigator.msPointerEnabled) {  // IE10-
                         Env.removeEvent(this.document, 'MSPointerUp',   this.pointerUpListener, this);
@@ -2461,15 +2462,16 @@ define([
                     this.hasPointerUp = false;
                 }
 
-                this.dehighlightAll();
-                this.updateQuality = this.BOARD_QUALITY_HIGH;
-                this.mode = this.BOARD_MODE_NONE;
+                // this.dehighlightAll();
+                // this.updateQuality = this.BOARD_QUALITY_HIGH;
+                // this.mode = this.BOARD_MODE_NONE;
 
                 this.originMoveEnd();
                 this.update();
-            }
+            // }
 
             // this._board_touches = [];
+            this._pointerClearTouches();
             return true;
         },
 
