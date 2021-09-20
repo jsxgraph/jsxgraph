@@ -1,3 +1,17 @@
+1.3.2
+====
+
+Improvements
+------------
+
+- Fullscreen mode is now also possible with an out div
+
+Bug fixes
+---------
+
+- Fixed regression regarding full screen mode
+- Fixed board freeze when certain devices are hit with the palm
+
 1.3.1
 ====
 
