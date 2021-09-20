@@ -2469,8 +2469,7 @@ define([
                 this.originMoveEnd();
                 this.update();
             // }
-
-            // this._board_touches = [];
+            // After one finger leaves the screen the gesture is stopped.
             this._pointerClearTouches();
             return true;
         },
