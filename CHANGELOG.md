@@ -4,7 +4,8 @@
 Improvements
 ------------
 
-- Fullscreen mode is now also possible with an out div
+- Fullscreen mode is now also possible with an out div, see
+<https://jsxgraph.org/docs/symbols/JXG.Board.html#toFullscreen>
 
 Bug fixes
 ---------

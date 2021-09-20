@@ -841,7 +841,7 @@ define('base/constants',['jxg'], function (JXG) {
 
     var major = 1,
         minor = 3,
-        patch = 0,
+        patch = 2,
         add = '', //'dev'
         version = major + '.' + minor + '.' + patch + (add ? '-' + add : ''),
         constants;
@@ -3113,29 +3113,70 @@ define('utils/env',['jxg', 'utils/type'], function (JXG, Type) {
         },
 
         /**
+         * Calculate the scale factor and vertical shift for the JSXGraph div
+         * in full screen mode.
+         *
+         * @param {Object} obj Reference to a DOM node.
+         * @returns Object {scale: number, vshift: number}
+         * @see JXG.Board#fullscreenListener
+         * @private
+         */
+        _getScaleFactors: function(node) {
+            var width  = node.getBoundingClientRect().width,
+                height = node.getBoundingClientRect().height,
+
+                // Determine the maximum scale factor.
+                r_w = window.screen.width / width,
+                r_h = window.screen.height / height,
+
+                // Determine the vertical shift to place the div in the center of the screen
+                vshift = (window.screen.height - height) * 0.5,
+
+                // Scaling factor: if not supplied, it's taken as large as possible
+                scale = Math.min(r_w, r_h);
+
+            // Adapt vshift and scale for landscape on tablets
+            if (window.matchMedia && window.matchMedia('(orientation:landscape)').matches &&
+                window.screen.width < window.screen.height) {
+                // Landscape on iOS: it returns 'landscape', but still width < height.
+                r_w = window.screen.height / width;
+                r_h = window.screen.width / height;
+                scale = Math.min(r_w, r_h);
+                vshift = (window.screen.width - height) * 0.5;
+            }
+            scale *= 0.85;
+
+            return {scale: scale, vshift: vshift};
+        },
+
+        /**
          * Scale and vertically shift a DOM element (usually a JSXGraph div)
          * inside of a parent DOM
          * element which is set to fullscreen.
          * This is realized with a CSS transformation.
-         *
+         *          *
          * @param  {String} wrap_id  id of the parent DOM element which is in fullscreen mode
-         * @param  {String} inner_id id of the DOM element which is scaled and shifted-
+         * @param  {String} inner_id id of the DOM element which is scaled and shifted
          * @param  {Number} scale    Scaling factor
          * @param  {Number} vshift   Vertical shift (in pixel)
          *
          * @private
          * @see JXG#toFullscreen
+         * @see JXG.Board#fullscreenListener
+         *
          */
         scaleJSXGraphDiv: function (wrap_id, inner_id, scale, vshift) {
             var len = document.styleSheets.length, style,
 
                 pseudo_keys = [':fullscreen', ':-webkit-full-screen', ':-moz-full-screen',':-ms-fullscreen'],
                 len_pseudo = pseudo_keys.length, i,
+
                 // CSS rules to center the inner div horizontally and vertically.
                 rule_inner = '{margin:0 auto;transform:matrix(' + scale + ',0,0,' + scale + ',0,' + vshift + ');}',
+
                 // A previously installed CSS rule to center the JSXGraph div has to
                 // be searched and removed again.
-                regex = new RegExp('.*' + wrap_id + ':.*full.*screen.*' + inner_id + '.*auto;.*transform:.*matrix');
+                regex = new RegExp('.*#' + wrap_id + ':.*full.*screen.*#' + inner_id + '.*auto;.*transform:.*matrix');
 
             if (len === 0) {
                 // In case there is not a single CSS rule defined.
@@ -3155,11 +3196,10 @@ define('utils/env',['jxg', 'utils/type'], function (JXG, Type) {
                 document.styleSheets[len - 1].deleteRule(0);
             }
 
-            // Install a CSS rule to center the JSXGraph div at the first position
-            // of the list.
+            // Install a CSS rule to center the JSXGraph div at the first position of the list.
             for (i = 0; i < len_pseudo; i++) {
                 try {
-                    document.styleSheets[len - 1].insertRule(wrap_id + pseudo_keys[i] + ' ' + inner_id + rule_inner, 0);
+                    document.styleSheets[len - 1].insertRule('#' + wrap_id + pseudo_keys[i] + ' #' + inner_id + rule_inner, 0);
                     break;
                 } catch (err) {
                     console.log('JXG.scaleJSXGraphDiv: Could not add CSS rule "' + pseudo_keys[i] + '".');
@@ -3169,31 +3209,27 @@ define('utils/env',['jxg', 'utils/type'], function (JXG, Type) {
         },
 
         /**
-         * Set the DOM element with id='wrap_id' containing the the JSXGraph div
-         * element into fullscreen mode.
-         * By default, the JSXGraph element is scaled as large as possible while
+         * Set the DOM element with id='wrap_id' containing the JSXGraph div
+         * element in fullscreen mode.
+         * The JSXGraph element is scaled as large as possible while
          * retaining its proportions.
          *
          * @param  {String} wrap_id     id of DOM element containing the JSXGraph
          * div element.
-         *
-         * @param  {String} jsxgraph_id ID of the JSXGraph div element.
-         * @parame {Number} scale scale factor for the JSXGraph div. If null,
-         * the scaling factor is chosen as large as possible.
          *
          * @example
          *
          * &lt;div id="outer" class="JXG_wrap_private"&gt;
          *      &lt;div id='jxgbox' class='jxgbox' style='width:300px; height:300px;'&gt;&lt;/div&gt;
          * &lt;/div&gt;
-         * &lt;button onClick="JXG.toFullscreen('outer', 'jxgbox')"&gt;Fullscreen&lt;/button&gt;
+         * &lt;button onClick="JXG.toFullscreen('outer')"&gt;Fullscreen&lt;/button&gt;
          * &lt;script&gt;
          *     var board = JXG.JSXGraph.initBoard('jxgbox', {axis:true, boundingbox:[-8, 8, 8,-8]});
          *     var p = board.create('point', [0, 1]);
          * &lt;/script&gt;
          *
          * </pre><div id="JXGf9b973ea4_outer" class="JXG_wrap_private"><div id="JXGd9b973ea4-fd43-11e8-ab14-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div></div>
-         * <button onClick="JXG.toFullscreen('JXGf9b973ea4_outer', 'JXGd9b973ea4-fd43-11e8-ab14-901b0e1b8723')">Fullscreen</button>
+         * <button onClick="JXG.toFullscreen('JXGf9b973ea4_outer')">Fullscreen</button>
          * <script type="text/javascript">
          *     (function() {
          *         var board = JXG.JSXGraph.initBoard('JXGd9b973ea4-fd43-11e8-ab14-901b0e1b8723',
@@ -3203,58 +3239,17 @@ define('utils/env',['jxg', 'utils/type'], function (JXG, Type) {
          * </script><pre>
          *
          */
-        toFullscreen: function (wrap_id, jsxgraph_id, scale) {
-            var elem = document.getElementById(wrap_id),
-                elem_inner = document.getElementById(jsxgraph_id),
-
-                // height seems to be independent from zoom level on all browsers
-                height = parseInt(elem_inner.style.height, 10),
-                width = parseInt(elem_inner.style.width, 10),
-
-                // Determine the maximum scale factor.
-                r_w = window.screen.width / width,
-                r_h = window.screen.height / height,
-
-                // Determine the vertical shift to place the div in the center of the screen
-                vshift = (window.screen.height - height) * 0.5;
-
-            // Scaling factor: if not supplied, it's taken as large as possible
-            scale = scale || Math.min(r_w, r_h);
-
-            // Adapt vshift and scale for landscape on tablets
-            if (window.matchMedia && window.matchMedia('(orientation:landscape)').matches &&
-                window.screen.width < window.screen.height) {
-                // Landscape on iOS: it returns 'landscape', but still width < height.
-                r_w = window.screen.height / width;
-                r_h = window.screen.width / height;
-                scale = Math.min(r_w, r_h);
-                vshift = (window.screen.width - height) * 0.5;
-            }
-            scale *= 0.85;
-
-            // Do the shifting and scaling via CSS pseudo rules
-            this.scaleJSXGraphDiv('#' + wrap_id, '#' + jsxgraph_id, scale, vshift);
-
-            // Store the scaling data.
-            // It is used in AbstractRenderer.updateText to restore the scaling matrix
-            // which is removed by MathJax.
-            // Further, the CSS margin has to be removed when in fullscreen mode,
-            // and must be restored later.
-            elem_inner._cssFullscreenStore = {
-                isFullscreen: false,
-                margin: elem_inner.style.margin,
-                scale: scale,
-                vshift: vshift
-            };
+        toFullscreen: function (wrap_id) {
+            var node = document.getElementById(wrap_id);
 
             // Trigger the fullscreen mode
-            elem.requestFullscreen = elem.requestFullscreen ||
-                elem.webkitRequestFullscreen ||
-                elem.mozRequestFullScreen ||
-                elem.msRequestFullscreen;
+            node.requestFullscreen = node.requestFullscreen ||
+                node.webkitRequestFullscreen ||
+                node.mozRequestFullScreen ||
+                node.msRequestFullscreen;
 
-            if (elem.requestFullscreen) {
-                elem.requestFullscreen();
+            if (node.requestFullscreen) {
+                node.requestFullscreen();
             }
         }
     });
@@ -13575,6 +13570,28 @@ define('math/geometry',[
         },
 
         /**
+         * Affine ratio of three collinear points a, b, c: (c - a) / (b - a).
+         * If r > 1 or r < 0 then c is outside of the segment ab.
+         *
+         * @param {JXG.Coords} a
+         * @param {JXG.Coords} b
+         * @param {JXG.Coords} c
+         * @returns {Number} affine ratio (c - a) / (b - a)
+         */
+        affineRatio: function(a, b, c) {
+            var r = 0.0,
+                dx =  b.usrCoords[1] - a.usrCoords[1];
+
+            if (Math.abs(dx) > Mat.eps) {
+                r = (c.usrCoords[1] - a.usrCoords[1]) / dx;
+            } else {
+                r = (c.usrCoords[2] - a.usrCoords[2]) /
+                    (b.usrCoords[2] - a.usrCoords[2]);
+            }
+            return r;
+        },
+
+        /**
          * Sort vertices counter clockwise starting with the first point.
          *
          * @param {Array} p An array containing {@link JXG.Point}, {@link JXG.Coords}, and/or arrays.
@@ -14180,17 +14197,42 @@ define('math/geometry',[
                 // All other combinations of circles and lines,
                 // Arc types are treated as circles.
                 /** @ignore */
+
                 func = function () {
                     var res = that.meet(el1.stdform, el2.stdform, i, el1.board),
-                        has = true;
+                        has = true,
+                        first, last, r, dx;
 
-                    if (!alwaysintersect && el1_isArcType) {
+                    if (alwaysintersect) {
+                        return res;
+                    }
+                    if (el1.elementClass === Const.OBJECT_CLASS_LINE) {
+                        first = Type.evaluate(el1.visProp.straightfirst);
+                        last  = Type.evaluate(el1.visProp.straightlast);
+                        if (!first || !last) {
+                            r = that.affineRatio(el1.point1.coords, el1.point2.coords, res);
+                            if ( (!last && r > 1 + Mat.eps) || (!first && r < 0 - Mat.eps) ) {
+                                return (new Coords(JXG.COORDS_BY_USER, [0, NaN, NaN], el1.board));
+                            }
+                        }
+                    }
+                    if (el2.elementClass === Const.OBJECT_CLASS_LINE) {
+                        first = Type.evaluate(el2.visProp.straightfirst);
+                        last  = Type.evaluate(el2.visProp.straightlast);
+                        if (!first || !last) {
+                            r = that.affineRatio(el2.point1.coords, el2.point2.coords, res);
+                            if ( (!last && r > 1 + Mat.eps) || (!first && r < 0 - Mat.eps) ) {
+                                return (new Coords(JXG.COORDS_BY_USER, [0, NaN, NaN], el1.board));
+                            }
+                        }
+                    }
+                    if (el1_isArcType) {
                         has = that.coordsOnArc(el1, res);
                         if (has && el2_isArcType) {
                             has = that.coordsOnArc(el2, res);
                         }
                         if (!has) {
-                            res = (new Coords(JXG.COORDS_BY_USER, [0, NaN, NaN], el1.board));
+                            return (new Coords(JXG.COORDS_BY_USER, [0, NaN, NaN], el1.board));
                         }
                     }
                     return res;
@@ -14818,32 +14860,34 @@ define('math/geometry',[
         },
 
         /**
-         * Intersection of two segments.
-         * @param {Array} p1 First point of segment 1 using homogeneous coordinates [z,x,y]
-         * @param {Array} p2 Second point of segment 1 using homogeneous coordinates [z,x,y]
-         * @param {Array} q1 First point of segment 2 using homogeneous coordinates [z,x,y]
-         * @param {Array} q2 Second point of segment 2 using homogeneous coordinates [z,x,y]
+         * (Virtual) Intersection of two segments.
+         * @param {Array} p1 First point of segment 1 using normalized homogeneous coordinates [1,x,y]
+         * @param {Array} p2 Second point or direction of segment 1 using normalized homogeneous coordinates [1,x,y] or point at infinity [0,x,y], respectively
+         * @param {Array} q1 First point of segment 2 using normalized homogeneous coordinates [1,x,y]
+         * @param {Array} q2 Second point or direction of segment 2 using normalized homogeneous coordinates [1,x,y] or point at infinity [0,x,y], respectively
          * @returns {Array} [Intersection point, t, u] The first entry contains the homogeneous coordinates
-         * of the intersection point. The second and third entry gives the position of the intersection between the
-         * two defining points. For example, the second entry t is defined by: intersection point = t*p1 + (1-t)*p2.
+         * of the intersection point. The second and third entry give the position of the intersection with respect 
+         * to the definiting parameters. For example, the second entry t is defined by: intersection point = p1 + t * deltaP, where
+         * deltaP = (p2 - p1) when both parameters are coordinates, and deltaP = p2 if p2 is a point at infinity.
          * If the two segments are collinear, [[0,0,0], Infinity, Infinity] is returned.
          **/
         meetSegmentSegment: function (p1, p2, q1, q2) {
-            var t, u, diff,
+            var t, u, cx,
                 li1 = Mat.crossProduct(p1, p2),
                 li2 = Mat.crossProduct(q1, q2),
-                c = Mat.crossProduct(li1, li2),
-                denom = c[0];
+                c = Mat.crossProduct(li1, li2);
 
-            if (Math.abs(denom) < Mat.eps) {
+            if (Math.abs(c[0]) < Mat.eps) {
                 return [c, Infinity, Infinity];
             }
 
-            diff = [q1[1] - p1[1], q1[2] - p1[2]];
-
-            // Because of speed issues, evalute the determinants directly
-            t = (diff[0] * (q2[2] - q1[2]) - diff[1] * (q2[1] - q1[1])) / denom;
-            u = (diff[0] * (p2[2] - p1[2]) - diff[1] * (p2[1] - p1[1])) / denom;
+            // The intersection point is already computed in c. To find t and u, it suffices to solve 
+            // for t in either x or y direction only. W.l.o.g. the x direction is chosen to compute both.
+            cx = c[1] / c[0];
+            // Note that the z-coordinate of p2 is used to determine whether it should be interpreted
+            // as a segment coordinate or a direction.
+            t = (cx - p1[1]) / (p2[1] - p2[0] * p1[1]);
+            u = (cx - q1[1]) / (q2[1] - q2[0] * q1[1]);
 
             return [c, t, u];
         },
@@ -24452,7 +24496,9 @@ define('options',[
              * controls if the icon is shown.
              * The following attribute(s) can be set:
              * <ul>
-             *  <li>symbol: Unicode symbol which is shown in the navigation bar. Default: '\u25a1'
+             *  <li>symbol (String): Unicode symbol which is shown in the navigation bar. Default: '\u25a1'
+             *  <li>id (String): Id of the HTML element which is brought to full screen or null if the JSXgraph div is taken.
+             * It may be an outer div element, e.g. if the old aspect ratio trick is used. Default: null, i.e. use the JSXGraph div.
              * </ul>
              *
              * @example
@@ -24486,7 +24532,8 @@ define('options',[
              * @type {Object}
              */
             fullscreen: {
-                symbol: '\u26f6' //'\u25a1'
+                symbol: '\u26f6', // '\u25a1'
+                id: null
             },
 
             /**
@@ -26080,13 +26127,16 @@ define('options',[
 
             /**
              * Radius of the sector, displaying the angle.
+             * The radius can be given as number (in user coordinates)
+             * or as string 'auto'. In the latter case, the angle
+             * is set to an value between 20 and 50 px.
              *
-             * @type Number
+             * @type {Number|String}
              * @name Angle#radius
-             * @default 0.5
+             * @default 'auto'
              * @visprop
              */
-            radius: 0.5,
+            radius: 'auto',
 
             /**
              * Display type of the angle field. Possible values are
@@ -31867,7 +31917,7 @@ define('renderer/abstract',[
 
                 if (board.attr.showfullscreen) {
                     createButton(board.attr.fullscreen.symbol, function () {
-                        board.toFullscreen();
+                        board.toFullscreen(board.attr.fullscreen.id);
                     });
                 }
 
@@ -35308,7 +35358,7 @@ define('base/coordselement',[
             if (!Type.evaluate(this.visProp.frozen)) {
                 this.updateConstraint();
             }
-            this.updateTransform();
+            this.updateTransform(fromParent);
 
             return this;
         },
@@ -35669,7 +35719,7 @@ define('base/coordselement',[
                 this.updateConstraint();
                 c  = Geometry.projectPointToTurtle(this, slide, this.board)[0].usrCoords;
             } else if (slide.elementClass === Const.OBJECT_CLASS_CURVE) {
-                // Handle the case if the curve comes from a transformation of a continous curve.
+                // Handle the case if the curve comes from a transformation of a continuous curve.
                 isTransformed = false;
                 res = slide.getTransformationSource();
                 if (res[0]) {
@@ -35685,12 +35735,12 @@ define('base/coordselement',[
                 if (isTransformed) {
                     this.coords.setCoordinates(Const.COORDS_BY_USER, [
                         slides[slides.length - 1].Z(this.position),
-                        slides[slides.length - 1].X(this.position), 
+                        slides[slides.length - 1].X(this.position),
                         slides[slides.length - 1].Y(this.position)]);
                 } else {
                     this.coords.setCoordinates(Const.COORDS_BY_USER, [
-                        slide.Z(this.position), 
-                        slide.X(this.position), 
+                        slide.Z(this.position),
+                        slide.X(this.position),
                         slide.Y(this.position)]);
                 }
 
@@ -36501,9 +36551,10 @@ define('base/coordselement',[
         /**
          * Applies the transformations of the element.
          * This method applies to text and images. Point transformations are handled differently.
+         * @param {Boolean} fromParent True if the drag comes from a child element. Unused.
          * @returns {JXG.CoordsElement} Reference to itself.
          */
-        updateTransform: function () {
+        updateTransform: function (fromParent) {
             var i;
 
             if (this.transformations.length === 0) {
@@ -42322,23 +42373,36 @@ define('base/point',[
         /**
          * Applies the transformations of the element to {@link JXG.Point#baseElement}.
          * Point transformations are relative to a base element.
+         * @param {Boolean} fromParent True if the drag comes from a child element. This is the case if a line
+         *    through two points is dragged. Otherwise, the element is the drag element and we apply the
+         *    the inverse transformation to the baseElement if is different from the element.
          * @returns {JXG.CoordsElement} Reference to this object.
          */
-        updateTransform: function () {
-            var c, i;
+        updateTransform: function (fromParent) {
+            var c, i, invMat;
 
             if (this.transformations.length === 0 || this.baseElement === null) {
                 return this;
             }
 
             if (this === this.baseElement) {
-                // case of bindTo
+                // Case of bindTo
                 c = this.transformations[0].apply(this.baseElement, 'self');
+                this.coords.setCoordinates(Const.COORDS_BY_USER, c);
             } else {
-                // case of board.create('point',[baseElement,transform]);
+                // Case of board.create('point',[baseElement, transform]);
+                if (!fromParent) {
+                    // The element has been dragged or it is the initial update,
+                    // now we transform the baseElement
+                    if (this.draggable() && this.baseElement.draggable()) {
+                        this.transformations[0].update();
+                        invMat = Mat.inverse(this.transformations[0].matrix);
+                        c = Mat.matVecMult(invMat, this.coords.usrCoords);
+                        this.baseElement.coords.setCoordinates(Const.COORDS_BY_USER, c);
+                    }
+                }
                 c = this.transformations[0].apply(this.baseElement);
             }
-
             this.coords.setCoordinates(Const.COORDS_BY_USER, c);
 
             for (i = 1; i < this.transformations.length; i++) {
@@ -42530,7 +42594,8 @@ define('base/point',[
          * 
          */
         isOn: function(el, tol) {
-            var arr, crds;
+            var arr, crds,
+                len, i, j, x, y, c;
 
             tol = tol || Mat.eps;
 
@@ -42557,6 +42622,24 @@ define('base/point',[
                 crds = Geometry.projectPointToCurve(this, el, this.board)[0];
                 return Geometry.distance(this.coords.usrCoords, crds.usrCoords, 3) < tol;
             } else if (el.type === Const.OBJECT_TYPE_POLYGON) {
+                if (Type.evaluate(el.visProp.hasinnerpoints)) {
+                    len = el.vertices.length;
+                    x = this.coords.usrCoords[1];
+                    y = this.coords.usrCoords[2];
+                    c = false;
+                    // W. Randolf Franklin's pnpoly method.
+                    // See https://wrf.ecse.rpi.edu/Research/Short_Notes/pnpoly.html
+                    for (i = 0, j = len - 2; i < len - 1; j = i++) {
+                        if (((el.vertices[i].coords.usrCoords[2] > y) !== (el.vertices[j].coords.usrCoords[2] > y)) &&
+                                (x < (el.vertices[j].coords.usrCoords[1] - el.vertices[i].coords.usrCoords[1]) * (y - el.vertices[i].coords.usrCoords[2]) /
+                                (el.vertices[j].coords.usrCoords[2] - el.vertices[i].coords.usrCoords[2]) + el.vertices[i].coords.usrCoords[1])) {
+                            c = !c;
+                        }
+                    }
+                    if (c) {
+                        return true;
+                    }
+                }
                 arr = Geometry.projectCoordsToPolygon(this.coords.usrCoords, el);
                 return Geometry.distance(this.coords.usrCoords, arr, 3) < tol;
             } else if (el.type === Const.OBJECT_TYPE_TURTLE) {
@@ -44511,14 +44594,36 @@ define('base/line',[
                 // this is required for the geogebra reader to display a slope
                 tangent.glider = p;
             } else {  // curveType 'plot'
-                // equation of the line segment: 0 = y*(x1-x2) + x*(y2-y1) + y1*x2-x1*y2
+                // In case of bezierDegree == 1:
+                // Find two points p1, p2 enclosing the glider.
+                // Then the equation of the line segment is: 0 = y*(x1-x2) + x*(y2-y1) + y1*x2-x1*y2,
+                // which is the cross product of p1 and p2.
+                //
+                // In case of bezieDegree === 3:
+                // The slope dy / dx of the tangent is determined. Then the
+                // tangent is computed as cross product between
+                // the glider p and [1, p.X() + dx, p.Y() + dy]
+                //
                 tangent = board.create('line', [
                     function () {
                         var i = Math.floor(p.position),
-                            p1, p2;
+                            p1, p2, t, A, B, C, D, dx, dy, d;
 
-                        if (i === c.numberPoints - 1) {
-                            i--;
+                        if (c.bezierDegree === 1) {
+                            if (i === c.numberPoints - 1) {
+                                i--;
+                            }
+                        } else if (c.bezierDegree === 3) {
+                            // i is start of the Bezier segment
+                            // t is the position in the Bezier segment
+                            i = Math.floor(p.position * (c.numberPoints - 1) / 3) * 3;
+                            t = (p.position * (c.numberPoints - 1) - i) / 3;
+                            if (i >= c.numberPoints - 1) {
+                                i = c.numberPoints - 4;
+                                t = 1;
+                            }
+                        } else {
+                            return 0;
                         }
 
                         if (i < 0) {
@@ -44527,17 +44632,43 @@ define('base/line',[
 
                         // The curve points are transformed (if there is a transformation)
                         // c.X(i) is not transformed.
-                        p1 = c.points[i].usrCoords;
-                        p2 = c.points[i + 1].usrCoords;
-                        return p1[2] * p2[1] - p1[1] * p2[2];
-                        //return c.Y(i) * c.X(i + 1) - c.X(i) * c.Y(i + 1);
+                        if (c.bezierDegree === 1) {
+                            p1 = c.points[i].usrCoords;
+                            p2 = c.points[i + 1].usrCoords;
+                        } else {
+                            A = c.points[i].usrCoords;
+                            B = c.points[i + 1].usrCoords;
+                            C = c.points[i + 2].usrCoords;
+                            D = c.points[i + 3].usrCoords;
+                            dx = (1 - t) * (1 - t) * (B[1] - A[1]) + 2 * (1 - t) * t * (C[1] - B[1]) + t * t * (D[1]- C[1]);
+                            dy = (1 - t) * (1 - t) * (B[2] - A[2]) + 2 * (1 - t) * t * (C[2] - B[2]) + t * t * (D[2]- C[2]);
+                            d = Math.sqrt(dx * dx + dy * dy);
+                            dx /= d;
+                            dy /= d;
+                            p1 = p.coords.usrCoords;
+                            p2 = [1, p1[1] + dx, p1[2] + dy];
+                      }
+                      return p1[2] * p2[1] - p1[1] * p2[2];
                     },
                     function () {
                         var i = Math.floor(p.position),
-                            p1, p2;
+                            p1, p2, t, A, B, C, D, dx, dy, d;
 
-                        if (i === c.numberPoints - 1) {
-                            i--;
+                        if (c.bezierDegree === 1) {
+                            if (i === c.numberPoints - 1) {
+                                i--;
+                            }
+                        } else if (c.bezierDegree === 3) {
+                            // i is start of the Bezier segment
+                            // t is the position in the Bezier segment
+                            i = Math.floor(p.position * (c.numberPoints - 1) / 3) * 3;
+                            t = (p.position * (c.numberPoints - 1) - i) / 3;
+                            if (i >= c.numberPoints - 1) {
+                                i = c.numberPoints - 4;
+                                t = 1;
+                            }
+                        } else {
+                            return 0;
                         }
 
                         if (i < 0) {
@@ -44546,17 +44677,43 @@ define('base/line',[
 
                         // The curve points are transformed (if there is a transformation)
                         // c.X(i) is not transformed.
-                        p1 = c.points[i].usrCoords;
-                        p2 = c.points[i + 1].usrCoords;
+                        if (c.bezierDegree === 1) {
+                            p1 = c.points[i].usrCoords;
+                            p2 = c.points[i + 1].usrCoords;
+                        } else {
+                            A = c.points[i].usrCoords;
+                            B = c.points[i + 1].usrCoords;
+                            C = c.points[i + 2].usrCoords;
+                            D = c.points[i + 3].usrCoords;
+                            dx = (1 - t) * (1 - t) * (B[1] - A[1]) + 2 * (1 - t) * t * (C[1] - B[1]) + t * t * (D[1]- C[1]);
+                            dy = (1 - t) * (1 - t) * (B[2] - A[2]) + 2 * (1 - t) * t * (C[2] - B[2]) + t * t * (D[2]- C[2]);
+                            d = Math.sqrt(dx * dx + dy * dy);
+                            dx /= d;
+                            dy /= d;
+                            p1 = p.coords.usrCoords;
+                            p2 = [1, p1[1] + dx, p1[2] + dy];
+                        }
                         return p2[2] - p1[2];
-                        // return c.Y(i + 1) - c.Y(i);
                     },
                     function () {
                         var i = Math.floor(p.position),
-                            p1, p2;
+                            p1, p2, t, A, B, C, D, dx, dy, d;
 
-                        if (i === c.numberPoints - 1) {
-                            i--;
+                        if (c.bezierDegree === 1) {
+                            if (i === c.numberPoints - 1) {
+                                i--;
+                            }
+                        } else if (c.bezierDegree === 3) {
+                            // i is start of the Bezier segment
+                            // t is the position in the Bezier segment
+                            i = Math.floor(p.position * (c.numberPoints - 1) / 3) * 3;
+                            t = (p.position * (c.numberPoints - 1) - i) / 3;
+                            if (i >= c.numberPoints - 1) {
+                                i = c.numberPoints - 4;
+                                t = 1;
+                            }
+                        } else {
+                            return 0;
                         }
 
                         if (i < 0) {
@@ -44565,10 +44722,23 @@ define('base/line',[
 
                         // The curve points are transformed (if there is a transformation)
                         // c.X(i) is not transformed.
-                        p1 = c.points[i].usrCoords;
-                        p2 = c.points[i + 1].usrCoords;
+                        if (c.bezierDegree === 1) {
+                            p1 = c.points[i].usrCoords;
+                            p2 = c.points[i + 1].usrCoords;
+                        } else {
+                            A = c.points[i].usrCoords;
+                            B = c.points[i + 1].usrCoords;
+                            C = c.points[i + 2].usrCoords;
+                            D = c.points[i + 3].usrCoords;
+                            dx = (1 - t) * (1 - t) * (B[1] - A[1]) + 2 * (1 - t) * t * (C[1] - B[1]) + t * t * (D[1]- C[1]);
+                            dy = (1 - t) * (1 - t) * (B[2] - A[2]) + 2 * (1 - t) * t * (C[2] - B[2]) + t * t * (D[2]- C[2]);
+                            d = Math.sqrt(dx * dx + dy * dy);
+                            dx /= d;
+                            dy /= d;
+                            p1 = p.coords.usrCoords;
+                            p2 = [1, p1[1] + dx, p1[2] + dy];
+                        }
                         return p1[1] - p2[1];
-                        // return c.X(i) - c.X(i + 1);
                     }], attributes);
 
                 p.addChild(tangent);
@@ -49791,8 +49961,8 @@ define('base/polygon',[
             if (Type.evaluate(this.visProp.hasinnerpoints)) {
                 // All points of the polygon trigger hasPoint: inner and boundary points
                 len = this.vertices.length;
-                // W. Randolf Franklin's pnpoly method,
-                // see https://wrf.ecse.rpi.edu/Research/Short_Notes/pnpoly.html
+                // W. Randolf Franklin's pnpoly method.
+                // See https://wrf.ecse.rpi.edu/Research/Short_Notes/pnpoly.html
                 for (i = 0, j = len - 2; i < len - 1; j = i++) {
                     if (((this.vertices[i].coords.scrCoords[2] > y) !== (this.vertices[j].coords.scrCoords[2] > y)) &&
                             (x < (this.vertices[j].coords.scrCoords[1] - this.vertices[i].coords.scrCoords[1]) * (y - this.vertices[i].coords.scrCoords[2]) /
@@ -51918,44 +52088,131 @@ define('element/composition',[
                 l = board.create('line', [
                     function () {
                         var i = Math.floor(p.position),
-                            lbda = p.position - i;
+                            lbda = p.position - i,
+                            p1, p2, t, A, B, C, D, dx, dy, d;
 
-                        if (i === c.numberPoints - 1) {
-                            i -= 1;
-                            lbda = 1;
+                        if (c.bezierdegree === 1) {
+                            if (i === c.numberPoints - 1) {
+                                i -= 1;
+                                lbda = 1;
+                            }
+                        } else if (c.bezierDegree === 3) {
+                            // i is start of the Bezier segment
+                            // t is the position in the Bezier segment
+                            i = Math.floor(p.position * (c.numberPoints - 1) / 3) * 3;
+                            t = (p.position * (c.numberPoints - 1) - i) / 3;
+                            if (i >= c.numberPoints - 1) {
+                                i = c.numberPoints - 4;
+                                t = 1;
+                            }
+                        } else {
+                            return 0;
                         }
 
                         if (i < 0) {
                             return 1;
                         }
 
-                        return (c.Y(i) + lbda * (c.Y(i + 1) - c.Y(i))) * (c.Y(i) - c.Y(i + 1)) - (c.X(i) + lbda * (c.X(i + 1) - c.X(i))) * (c.X(i + 1) - c.X(i));
+                        if (c.bezierDegree === 1) {
+                            return (c.Y(i) + lbda * (c.Y(i + 1) - c.Y(i))) * (c.Y(i) - c.Y(i + 1)) - (c.X(i) + lbda * (c.X(i + 1) - c.X(i))) * (c.X(i + 1) - c.X(i));
+                        } else {
+                            A = c.points[i].usrCoords;
+                            B = c.points[i + 1].usrCoords;
+                            C = c.points[i + 2].usrCoords;
+                            D = c.points[i + 3].usrCoords;
+                            dx = (1 - t) * (1 - t) * (B[1] - A[1]) + 2 * (1 - t) * t * (C[1] - B[1]) + t * t * (D[1]- C[1]);
+                            dy = (1 - t) * (1 - t) * (B[2] - A[2]) + 2 * (1 - t) * t * (C[2] - B[2]) + t * t * (D[2]- C[2]);
+                            d = Math.sqrt(dx * dx + dy * dy);
+                            dx /= d;
+                            dy /= d;
+                            p1 = p.coords.usrCoords;
+                            p2 = [1, p1[1] - dy, p1[2] + dx];
+                            return p1[2] * p2[1] - p1[1] * p2[2];
+                        }
                     },
                     function () {
-                        var i = Math.floor(p.position);
+                        var i = Math.floor(p.position),
+                            p1, p2, t, A, B, C, D, dx, dy, d;
 
-                        if (i === c.numberPoints - 1) {
-                            i -= 1;
+                        if (c.bezierdegree === 1) {
+                            if (i === c.numberPoints - 1) {
+                                i -= 1;
+                            }
+                        } else if (c.bezierDegree === 3) {
+                            // i is start of the Bezier segment
+                            // t is the position in the Bezier segment
+                            i = Math.floor(p.position * (c.numberPoints - 1) / 3) * 3;
+                            t = (p.position * (c.numberPoints - 1) - i) / 3;
+                            if (i >= c.numberPoints - 1) {
+                                i = c.numberPoints - 4;
+                                t = 1;
+                            }
+                        } else {
+                            return 0;
+                        }
+
+                        if (i < 0) {
+                            return 0;
+                        }
+                        if (c.bezierDegree === 1) {
+                            return c.X(i + 1) - c.X(i);
+                        } else {
+                            A = c.points[i].usrCoords;
+                            B = c.points[i + 1].usrCoords;
+                            C = c.points[i + 2].usrCoords;
+                            D = c.points[i + 3].usrCoords;
+                            dx = (1 - t) * (1 - t) * (B[1] - A[1]) + 2 * (1 - t) * t * (C[1] - B[1]) + t * t * (D[1]- C[1]);
+                            dy = (1 - t) * (1 - t) * (B[2] - A[2]) + 2 * (1 - t) * t * (C[2] - B[2]) + t * t * (D[2]- C[2]);
+                            d = Math.sqrt(dx * dx + dy * dy);
+                            dx /= d;
+                            dy /= d;
+                            p1 = p.coords.usrCoords;
+                            p2 = [1, p1[1] - dy, p1[2] + dx];
+                            return p2[2] - p1[2];
+                        }
+
+                    },
+                    function () {
+                        var i = Math.floor(p.position),
+                            p1, p2, t, A, B, C, D, dx, dy, d;
+
+                        if (c.bezierdegree === 1) {
+                            if (i === c.numberPoints - 1) {
+                                i -= 1;
+                            }
+                        } else if (c.bezierDegree === 3) {
+                            // i is start of the Bezier segment
+                            // t is the position in the Bezier segment
+                            i = Math.floor(p.position * (c.numberPoints - 1) / 3) * 3;
+                            t = (p.position * (c.numberPoints - 1) - i) / 3;
+                            if (i >= c.numberPoints - 1) {
+                                i = c.numberPoints - 4;
+                                t = 1;
+                            }
+                        } else {
+                            return 0;
                         }
 
                         if (i < 0) {
                             return 0;
                         }
 
-                        return c.X(i + 1) - c.X(i);
-                    },
-                    function () {
-                        var i = Math.floor(p.position);
-
-                        if (i === c.numberPoints - 1) {
-                            i -= 1;
+                        if (c.bezierDegree === 1) {
+                            return c.Y(i + 1) - c.Y(i);
+                        } else {
+                            A = c.points[i].usrCoords;
+                            B = c.points[i + 1].usrCoords;
+                            C = c.points[i + 2].usrCoords;
+                            D = c.points[i + 3].usrCoords;
+                            dx = (1 - t) * (1 - t) * (B[1] - A[1]) + 2 * (1 - t) * t * (C[1] - B[1]) + t * t * (D[1]- C[1]);
+                            dy = (1 - t) * (1 - t) * (B[2] - A[2]) + 2 * (1 - t) * t * (C[2] - B[2]) + t * t * (D[2]- C[2]);
+                            d = Math.sqrt(dx * dx + dy * dy);
+                            dx /= d;
+                            dy /= d;
+                            p1 = p.coords.usrCoords;
+                            p2 = [1, p1[1] - dy, p1[2] + dx];
+                            return p1[1] - p2[1];
                         }
-
-                        if (i < 0) {
-                            return 0;
-                        }
-
-                        return c.Y(i + 1) - c.Y(i);
                     }
                 ], attr);
             }
@@ -53960,6 +54217,14 @@ define('base/board',[
         this.BOARD_MODE_MOVE_ORIGIN = 0x0002;
 
         /**
+         * Update is made with high quality, e.g. graphs are evaluated at much more points.
+         * @type Number
+         * @constant
+         * @see JXG.Board#updateQuality
+         */
+        this.BOARD_MODE_ZOOM = 0x0011;
+
+        /**
          * Update is made with low quality, e.g. graphs are evaluated at a lesser amount of points.
          * @type Number
          * @constant
@@ -53974,14 +54239,6 @@ define('base/board',[
          * @see JXG.Board#updateQuality
          */
         this.BOARD_QUALITY_HIGH = 0x2;
-
-        /**
-         * Update is made with high quality, e.g. graphs are evaluated at much more points.
-         * @type Number
-         * @constant
-         * @see JXG.Board#updateQuality
-         */
-        this.BOARD_MODE_ZOOM = 0x0011;
 
         /**
          * Pointer to the document element containing the board.
@@ -55300,20 +55557,20 @@ define('base/board',[
          * @param  {Object} evt Event from touchStartListener
          * @return {Boolean}   returns if the origin is moved.
          */
-        touchOriginMoveStart: function (evt) {
+        touchStartMoveOriginOneFinger: function (evt) {
             var touches = evt[JXG.touchProperty],
-                r, pos;
+                conditions, pos;
 
-            r = this.attr.pan.enabled &&
+            conditions = this.attr.pan.enabled &&
                 !this.attr.pan.needtwofingers &&
                 touches.length === 1;
 
-            if (r) {
+            if (conditions) {
                 pos = this.getMousePosition(evt, 0);
                 this.initMoveOrigin(pos[0], pos[1]);
             }
 
-            return r;
+            return conditions;
         },
 
         /**
@@ -55554,7 +55811,6 @@ define('base/board',[
                 } else {
                     Env.removeEvent(this.containerObj, 'pointerdown', this.pointerDownListener, this);
                     Env.removeEvent(moveTarget, 'pointermove', this.pointerMoveListener, this);
-                    // Env.removeEvent(this.containerObj, 'pointerout', this.pointerOutListener, this);
                 }
 
                 Env.removeEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
@@ -55562,9 +55818,10 @@ define('base/board',[
 
                 if (this.hasPointerUp) {
                     if (window.navigator.msPointerEnabled) {  // IE10-
-                        Env.removeEvent(this.document, 'MSPointerUp', this.pointerUpListener, this);
+                        Env.removeEvent(this.document, 'MSPointerUp',   this.pointerUpListener, this);
                     } else {
-                        Env.removeEvent(this.document, 'pointerup', this.pointerUpListener, this);
+                        Env.removeEvent(this.document, 'pointerup',     this.pointerUpListener, this);
+                        Env.removeEvent(this.document, 'pointercancel', this.pointerUpListener, this);
                     }
                     this.hasPointerUp = false;
                 }
@@ -55816,30 +56073,19 @@ define('base/board',[
             return false;
         },
 
+        /*
+         * Pointer events
+         */
+
         /**
-         * Fix for Firefox browser: When using a second finger, the
-         * touch event for the first finger is sent again.
          *
-         * @param  {[type]} evt Event object
+         * Check if pointer event is already registered in this._board_touches.
+         *
+         * @param  {Object} evt Event object
          * @return {Boolean} true if down event has already been sent.
          * @private
          */
-        _isPointerEventAlreadyThere: function (evt) {
-            var i;
-
-            for (i = 0; i < this._board_touches.length; i++) {
-                if (this._board_touches[i].pointerId === evt.pointerId) {
-                    return true;
-                }
-            }
-
-            return false;
-        },
-
-        /**
-         * pointer-Events
-         */
-        _pointerIsTouchRegistered: function(evt) {
+         _isPointerRegistered: function(evt) {
             var i, len = this._board_touches.length;
 
             for (i = 0; i < len; i++) {
@@ -55850,7 +56096,18 @@ define('base/board',[
             return false;
         },
 
-        _pointerAddBoardTouches: function (evt) {
+        /**
+         *
+         * Store the position of a pointer event.
+         * If not yet done, registers a pointer event in this._board_touches.
+         * Allows to follow the path of that finger on the screen.
+         * Only two simultaneous touches are supported.
+         *
+         * @param {Object} evt Event object
+         * @returns {JXG.Board} Reference to the board
+         * @private
+         */
+         _pointerStorePosition: function (evt) {
             var i, found;
 
             for (i = 0, found = false; i < this._board_touches.length; i++) {
@@ -55862,7 +56119,8 @@ define('base/board',[
                 }
             }
 
-            if (!found) {
+            // Restrict the number of simultaneous touches to 2
+            if (!found && this._board_touches.length < 2) {
                 this._board_touches.push({
                     pointerId: evt.pointerId,
                     clientX: evt.clientX,
@@ -55873,7 +56131,15 @@ define('base/board',[
             return this;
         },
 
-        _pointerRemoveBoardTouches: function (evt) {
+        /**
+         * Deregisters a pointer event in this._board_touches.
+         * The finger has been lifted from the screen.
+         *
+         * @param {Object}} evt Event object
+         * @returns {JXG.Board} Reference to the board
+         * @private
+         */
+        _pointerRemoveTouches: function (evt) {
             var i;
             for (i = 0; i < this._board_touches.length; i++) {
                 if (this._board_touches[i].pointerId === evt.pointerId) {
@@ -55883,6 +56149,22 @@ define('base/board',[
             }
 
             return this;
+        },
+
+        /**
+         * Remove all registered fingers from this._board_touches.
+         * This might be necessary if too many fingers have been registered.
+         * @returns {JXG.Board} Reference to the board
+         * @private
+         */
+        _pointerClearTouches: function() {
+            if (this._board_touches.length > 0) {
+                this.dehighlightAll();
+            }
+            this.updateQuality = this.BOARD_QUALITY_HIGH;
+            this.mode = this.BOARD_MODE_NONE;
+            this._board_touches = [];
+            this.touches = [];
         },
 
         /**
@@ -55902,7 +56184,7 @@ define('base/board',[
          */
         _getPointerInputDevice: function(evt) {
             if (Env.isBrowser) {
-                if (evt.pointerType === 'touch' || // New
+                if (evt.pointerType === 'touch' ||        // New
                     (window.navigator.msMaxTouchPoints && // Old
                         window.navigator.msMaxTouchPoints > 1)) {
                     return 'touch';
@@ -55925,20 +56207,27 @@ define('base/board',[
          */
         pointerDownListener: function (evt, object) {
             var i, j, k, pos, elements, sel,
-                type = 'mouse', // in case of no browser
+                type = 'mouse', // Used in case of no browser
                 found, target;
 
-            // Temporary fix for Firefox pointer events:
-            // When using two fingers, the first touch down event is fired again.
-            if (!object && this._isPointerEventAlreadyThere(evt)) {
+            // Fix for Firefox browser: When using a second finger, the
+            // touch event for the first finger is sent again.
+            if (!object && this._isPointerRegistered(evt)) {
                 return false;
+            }
+
+            if (!object && evt.isPrimary) {
+                // First finger down. To be on the safe side this._board_touches is cleared.
+                this._pointerClearTouches();
             }
 
             if (!this.hasPointerUp) {
                 if (window.navigator.msPointerEnabled) {  // IE10-
-                    Env.addEvent(this.document, 'MSPointerUp', this.pointerUpListener, this);
+                    Env.addEvent(this.document, 'MSPointerUp',   this.pointerUpListener, this);
                 } else {
-                    Env.addEvent(this.document, 'pointerup', this.pointerUpListener, this);
+                    // 'pointercancel' is fired e.g. if the finger leaves the browser and drags down the system menu on Android
+                    Env.addEvent(this.document, 'pointerup',     this.pointerUpListener, this);
+                    Env.addEvent(this.document, 'pointercancel', this.pointerUpListener, this);
                 }
                 this.hasPointerUp = true;
             }
@@ -55968,8 +56257,8 @@ define('base/board',[
             type = this._inputDevice;
             this.options.precision.hasPoint = this.options.precision[type];
 
-            // This should be easier than the touch events. Every pointer device gets its own pointerId, e.g. the mouse
-            // always has id 1, fingers and pens get unique ids every time a pointerDown event is fired and they will
+            // This should be easier than the touch events. Every pointer device has its own pointerId, e.g. the mouse
+            // always has id 1 or 0, fingers and pens get unique ids every time a pointerDown event is fired and they will
             // keep this id until a pointerUp event is fired. What we have to do here is:
             //  1. collect all elements under the current pointer
             //  2. run through the touches control structure
@@ -55993,7 +56282,7 @@ define('base/board',[
                 elements = this.initMoveObject(pos[0], pos[1], evt, type);
             }
 
-            // if no draggable object can be found, get out here immediately
+            // If no draggable object can be found, get out here immediately
             if (elements.length > 0) {
                 // check touches structure
                 target = elements[elements.length - 1];
@@ -56040,7 +56329,7 @@ define('base/board',[
 
                 this.saveStartPos(target, this.touches[j].targets[k]);
 
-                // prevent accidental text selection
+                // Prevent accidental text selection
                 // this could get us new trouble: input fields, links and drop down boxes placed as text
                 // on the board don't work anymore.
                 if (evt && evt.preventDefault) {
@@ -56055,19 +56344,28 @@ define('base/board',[
                 evt.stopPropagation();
             }
 
-            if (Env.isBrowser && this._getPointerInputDevice(evt) !== 'touch') {
+            if (!Env.isBrowser) {
+                return false;
+            }
+            if (this._getPointerInputDevice(evt) !== 'touch') {
                 if (this.mode === this.BOARD_MODE_NONE) {
                     this.mouseOriginMoveStart(evt);
                 }
             } else {
-                this._pointerAddBoardTouches(evt);
+                this._pointerStorePosition(evt);
                 evt.touches = this._board_touches;
 
-                // See touchStartListener
-                if (this.mode === this.BOARD_MODE_NONE && this.touchOriginMoveStart(evt)) {
-                } else if ((this.mode === this.BOARD_MODE_NONE ||
-                            this.mode === this.BOARD_MODE_MOVE_ORIGIN) &&
-                           evt.touches.length == 2) {
+                // Touch events on empty areas of the board are handled here, see also touchStartListener
+                // 1. case: one finger. If allowed, this triggers pan with one finger
+                if (evt.touches.length == 1 &&
+                    this.mode === this.BOARD_MODE_NONE &&
+                    this.touchStartMoveOriginOneFinger(evt)) {
+                } else if (evt.touches.length == 2 &&
+                            (this.mode === this.BOARD_MODE_NONE || this.mode === this.BOARD_MODE_MOVE_ORIGIN)
+                        ) {
+                    // 2. case: two fingers: pinch to zoom or pan with two fingers needed.
+                    // This happens when the second finger hits the device. First, the
+                    // "one finger pan mode" has to be cancelled.
                     if (this.mode === this.BOARD_MODE_MOVE_ORIGIN) {
                         this.originMoveEnd();
                     }
@@ -56080,20 +56378,20 @@ define('base/board',[
             return false;
         },
 
-        /**
-         * Called if pointer leaves an HTML tag. Is called by the inner-most tag.
-         * That means, if a JSXGraph text, i.e. an HTML div, is placed close
-         * to the border of the board, this pointerout event will be ignored.
-         * @param  {Event} evt
-         * @return {Boolean}
-         */
-        pointerOutListener: function (evt) {
-            if (evt.target === this.containerObj ||
-                (this.renderer.type === 'svg' && evt.target === this.renderer.foreignObjLayer)) {
-                this.pointerUpListener(evt);
-            }
-            return this.mode === this.BOARD_MODE_NONE;
-        },
+        // /**
+        //  * Called if pointer leaves an HTML tag. It is called by the inner-most tag.
+        //  * That means, if a JSXGraph text, i.e. an HTML div, is placed close
+        //  * to the border of the board, this pointerout event will be ignored.
+        //  * @param  {Event} evt
+        //  * @return {Boolean}
+        //  */
+        // pointerOutListener: function (evt) {
+        //     if (evt.target === this.containerObj ||
+        //         (this.renderer.type === 'svg' && evt.target === this.renderer.foreignObjLayer)) {
+        //         this.pointerUpListener(evt);
+        //     }
+        //     return this.mode === this.BOARD_MODE_NONE;
+        // },
 
         /**
          * Called periodically by the browser while the user moves a pointing device across the screen.
@@ -56104,7 +56402,7 @@ define('base/board',[
             var i, j, pos,
                 type = 'mouse'; // in case of no browser
 
-            if (this._getPointerInputDevice(evt) === 'touch' && !this._pointerIsTouchRegistered(evt)) {
+            if (this._getPointerInputDevice(evt) === 'touch' && !this._isPointerRegistered(evt)) {
                 // Test, if there was a previous down event of this _getPointerId
                 // (in case it is a touch event).
                 // Otherwise this move event is ignored. This is necessary e.g. for sketchometry.
@@ -56145,17 +56443,17 @@ define('base/board',[
                             if (this.touches[i].targets[j].num === evt.pointerId) {
                                 if (this.touches[i].targets.length === 1) {
 
-                                    // Touch by one finger:  this is possible for all elements that can be dragged
-                                    this.touches[i].targets[j].X = evt.pageX;
-                                    this.touches[i].targets[j].Y = evt.pageY;
+                                    // Touch by one finger: this is possible for all elements that can be dragged
+                                    this.touches[i].targets[j].X = evt.clientX;
+                                    this.touches[i].targets[j].Y = evt.clientY;
                                     pos = this.getMousePosition(evt);
                                     this.moveObject(pos[0], pos[1], this.touches[i], evt, type);
 
                                 } else if (this.touches[i].targets.length === 2) {
 
                                     // Touch by two fingers: e.g. moving lines
-                                    this.touches[i].targets[j].X = evt.pageX;
-                                    this.touches[i].targets[j].Y = evt.pageY;
+                                    this.touches[i].targets[j].X = evt.clientX;
+                                    this.touches[i].targets[j].Y = evt.clientY;
 
                                     this.twoFingerMove(
                                         this.getMousePosition({
@@ -56176,7 +56474,8 @@ define('base/board',[
                     }
                 } else {
                     if (this._getPointerInputDevice(evt) === 'touch') {
-                        this._pointerAddBoardTouches(evt);
+                        this._pointerStorePosition(evt);
+
                         if (this._board_touches.length === 2) {
                             evt.touches = this._board_touches;
                             this.gestureChangeListener(evt);
@@ -56248,27 +56547,27 @@ define('base/board',[
                 }
             }
 
-            this._pointerRemoveBoardTouches(evt);
-
-            // if (this.touches.length === 0) {
-            if (this._board_touches.length === 0) {
+            // this._pointerRemoveTouches(evt);
+            // if (this._board_touches.length === 0) {
                 if (this.hasPointerUp) {
                     if (window.navigator.msPointerEnabled) {  // IE10-
-                        Env.removeEvent(this.document, 'MSPointerUp', this.pointerUpListener, this);
+                        Env.removeEvent(this.document, 'MSPointerUp',   this.pointerUpListener, this);
                     } else {
-                        Env.removeEvent(this.document, 'pointerup', this.pointerUpListener, this);
+                        Env.removeEvent(this.document, 'pointerup',     this.pointerUpListener, this);
+                        Env.removeEvent(this.document, 'pointercancel', this.pointerUpListener, this);
                     }
                     this.hasPointerUp = false;
                 }
 
-                this.dehighlightAll();
-                this.updateQuality = this.BOARD_QUALITY_HIGH;
-                this.mode = this.BOARD_MODE_NONE;
+                // this.dehighlightAll();
+                // this.updateQuality = this.BOARD_QUALITY_HIGH;
+                // this.mode = this.BOARD_MODE_NONE;
 
                 this.originMoveEnd();
                 this.update();
-            }
-
+            // }
+            // After one finger leaves the screen the gesture is stopped.
+            this._pointerClearTouches();
             return true;
         },
 
@@ -56469,12 +56768,10 @@ define('base/board',[
 
             // Touch events on empty areas of the board are handled here:
             // 1. case: one finger. If allowed, this triggers pan with one finger
-            if (this.mode === this.BOARD_MODE_NONE && this.touchOriginMoveStart(evt)) {
+            if (evtTouches.length === 1 && this.mode === this.BOARD_MODE_NONE && this.touchStartMoveOriginOneFinger(evt)) {
             } else if (evtTouches.length === 2 &&
-                        (this.mode === this.BOARD_MODE_NONE ||
-                         this.mode === this.BOARD_MODE_MOVE_ORIGIN /*||
-                         (this.mode === this.BOARD_MODE_DRAG && this.touches.length == 1) */
-                        )) {
+                        (this.mode === this.BOARD_MODE_NONE || this.mode === this.BOARD_MODE_MOVE_ORIGIN)
+                    ) {
                 // 2. case: two fingers: pinch to zoom or pan with two fingers needed.
                 // This happens when the second finger hits the device. First, the
                 // "one finger pan mode" has to be cancelled.
@@ -57072,34 +57369,45 @@ define('base/board',[
          *
          */
         updateContainerDims: function() {
-            var theWidth, theHeight;
+            var w, h,
+                bb, css;
 
-            theWidth  = this.containerObj.getBoundingClientRect().width;
-            theHeight = this.containerObj.getBoundingClientRect().height;
-            if (theWidth === 0 || theHeight === 0) {
-                // The div is invisible - do nothing
+            // Get size of the board's container div
+            bb = this.containerObj.getBoundingClientRect();
+            w = bb.width;
+            h = bb.height;
+
+            // Subtract the border size
+            if (window && window.getComputedStyle) {
+                css = window.getComputedStyle(this.containerObj, null);
+                w -= parseFloat(css.getPropertyValue('border-left-width')) + parseFloat(css.getPropertyValue('border-right-width'));
+                h -= parseFloat(css.getPropertyValue('border-top-width'))  + parseFloat(css.getPropertyValue('border-bottom-width'));
+            }
+
+            // If div is invisible - do nothing
+            if (w <= 0 || h <= 0) {
                 return;
             }
 
             // If bounding box is not yet initialized, do it now.
             if (isNaN(this.getBoundingBox()[0])) {
-                this.setBoundingBox(this.attr.boundingbox);
+                this.setBoundingBox(this.attr.boundingbox, this.keepaspectratio);
             }
 
-            // We do nothing if in case the dimension did not change since being visible
+            // Do nothing if the dimension did not change since being visible
             // the last time. Note that if the div had display:none in the mean time,
-            // we did not store this._prevTheWidth/Height.
-            if (Type.exists(this._prevTheWidth) && Type.exists(this._prevTheHeight) &&
-                this._prevTheWidth === theWidth && this._prevTheHeight === theHeight) {
+            // we did not store this._prevDim.
+            if (Type.exists(this._prevDim) &&
+                this._prevDim.w === w && this._prevDim.h === h) {
                     return;
             }
-            // theWidth and theHeight are the outer dimensions and therefore
-            // might be too large. This does no harm, because the result is only that the
-            // SVGRoot might be larger than the visible div and there
-            // is overflow:hidden.
-            this.resizeContainer(theWidth, theHeight, true);
-            this._prevTheWidth  = theWidth;
-            this._prevTheHeight = theHeight;
+
+            // Set the size of the SVG or canvas element
+            this.resizeContainer(w, h, true);
+            this._prevDim = {
+                w: w,
+                h: h
+            };
         },
 
         /**
@@ -57128,8 +57436,13 @@ define('base/board',[
                 if (!that._isResizing) {
                     that._isResizing = true;
                     window.setTimeout(function() {
-                        that.updateContainerDims();
-                        that._isResizing = false;
+                        try {
+                            that.updateContainerDims();
+                        } catch (err) {
+                            that.stopResizeObserver();
+                        } finally {
+                            that._isResizing = false;
+                        }
                     }, that.attr.resize.throttle);
                 }
             });
@@ -57218,7 +57531,7 @@ define('base/board',[
                 this.intersectionObserver = new IntersectionObserver(function(entries) {
                     // If bounding box is not yet initialized, do it now.
                     if (isNaN(that.getBoundingBox()[0])) {
-                        that.setBoundingBox(that.attr.boundingbox);
+                        that.setBoundingBox(that.attr.boundingbox, that.keepaspectratio);
                         that.updateContainerDims();
                     }
                 }, options);
@@ -57788,7 +58101,7 @@ define('base/board',[
                 tr = (bb[1] - y) / (bb[1] - bb[3]);
             }
 
-            this.setBoundingBox([bb[0] + dX * lr, bb[1] - dY * tr, bb[2] - dX * (1 - lr), bb[3] + dY * (1 - tr)], false);
+            this.setBoundingBox([bb[0] + dX * lr, bb[1] - dY * tr, bb[2] - dX * (1 - lr), bb[3] + dY * (1 - tr)], this.keepaspectratio);
             this.zoomX *= zX;
             this.zoomY *= zY;
             return this.applyZoom();
@@ -57821,7 +58134,7 @@ define('base/board',[
                 tr = (bb[1] - y) / (bb[1] - bb[3]);
             }
 
-            this.setBoundingBox([bb[0] + dX * lr, bb[1] - dY * tr, bb[2] - dX * (1 - lr), bb[3] + dY * (1 - tr)], false);
+            this.setBoundingBox([bb[0] + dX * lr, bb[1] - dY * tr, bb[2] - dX * (1 - lr), bb[3] + dY * (1 - tr)], this.keepaspectratio);
             this.zoomX /= zX;
             this.zoomY /= zY;
 
@@ -57837,7 +58150,7 @@ define('base/board',[
                 dX = (bb[2] - bb[0]) * (1.0 - this.zoomX) * 0.5,
                 dY = (bb[1] - bb[3]) * (1.0 - this.zoomY) * 0.5;
 
-            this.setBoundingBox([bb[0] + dX, bb[1] - dY, bb[2] - dX, bb[3] + dY], false);
+            this.setBoundingBox([bb[0] + dX, bb[1] - dY, bb[2] - dX, bb[3] + dY], this.keepaspectratio);
             this.zoomX = 1.0;
             this.zoomY = 1.0;
             return this.applyZoom();
@@ -57879,7 +58192,7 @@ define('base/board',[
             this.zoomX = 1.0;
             this.zoomY = 1.0;
 
-            this.setBoundingBox([minX - borderX, maxY + borderY, maxX + borderX, minY - borderY], true);
+            this.setBoundingBox([minX - borderX, maxY + borderY, maxX + borderX, minY - borderY], this.keepaspectratio);
 
             return this.applyZoom();
         },
@@ -57919,7 +58232,7 @@ define('base/board',[
                 dx = 1.5 * (newBBox[2] - newBBox[0]) * 0.5;
                 dy = 1.5 * (newBBox[1] - newBBox[3]) * 0.5;
                 d = Math.max(dx, dy);
-                this.setBoundingBox([cx - d, cy + d, cx + d, cy - d], true);
+                this.setBoundingBox([cx - d, cy + d, cx + d, cy - d], this.keepaspectratio);
             }
 
             return this;
@@ -57958,7 +58271,7 @@ define('base/board',[
 
                 this.zoomX = 1.0;
                 this.zoomY = 1.0;
-                this.setBoundingBox(newBBox, true);
+                this.setBoundingBox(newBBox, this.keepaspectratio);
             }
 
             return this;
@@ -58175,13 +58488,33 @@ define('base/board',[
          * @returns {JXG.Board} Reference to the board
          */
         resizeContainer: function (canvasWidth, canvasHeight, dontset, dontSetBoundingBox) {
-            var box;
+            var box_act, box, w, h, cx, cy,
+                shift_x = 0,
+                shift_y = 0;
+
+            this.canvasWidth = parseFloat(canvasWidth);
+            this.canvasHeight = parseFloat(canvasHeight);
 
             if (!dontSetBoundingBox) {
-                box = this.getBoundingBox();
+                box_act = this.getBoundingBox();    // This is the actual bounding box.
+                box     = this.attr.boundingbox;    // This is the intended bounding box.
+                // The shift values compensate the follow-up
+                // correction in setBoundingBox in case this.keepaspectratio==true
+                // Otherwise, shift_x and shift_y will be zero.
+                shift_x = box_act[0] - box[0];
+                shift_y = box_act[1] - box[1];
+
+                cx = (box[2] + box[0]) * 0.5 + shift_x;
+                cy = (box[3] + box[1]) * 0.5 + shift_y;
+                cx /=  this.zoomX;
+                cy /=  this.zoomY;
+
+                w = (box[2] - box[0]) * 0.5 / this.zoomX;
+                h = (box[1] - box[3]) * 0.5 / this.zoomY;
+
+                box = [cx - w, cy + h, cx + w, cy - h];
             }
-            this.canvasWidth = parseInt(canvasWidth, 10);
-            this.canvasHeight = parseInt(canvasHeight, 10);
+
 
             if (!dontset) {
                 this.containerObj.style.width = (this.canvasWidth) + 'px';
@@ -58693,7 +59026,7 @@ define('base/board',[
                 return this;
             }
 
-            this.plainBB = bbox;
+            // this.plainBB = bbox;
 
             this.canvasWidth = parseInt(dim.width, 10);
             this.canvasHeight = parseInt(dim.height, 10);
@@ -59599,6 +59932,10 @@ define('base/board',[
          * The wrapping div has the CSS class 'jxgbox_wrap_private' which is
          * defined in the file 'jsxgraph.css'
          *
+         * @param {String} id (Optional) id of the div element which is brought to fullscreen.
+         * If not provided, this defaults to the JSXGraph div. However, it may be necessary for the aspect ratio trick
+         * which using padding-bottom/top and an out div element. Then, the id of the outer div has to be supplied.
+         *
          * @return {JXG.Board} Reference to the board
          *
          * @example
@@ -59619,25 +59956,62 @@ define('base/board',[
          *         var p = board.create('point', [0, 1]);
          *         board_d5bab8b6 = board;
          *     })();
-         * <button onClick="board_d5bab8b6.toFullscreen()">Fullscreen</button>
-         *
          * </script>
+         * <button onClick="board_d5bab8b6.toFullscreen()">Fullscreen</button>
          * <pre>
          *
+         * @example
+         * &lt;div id='outer' style='max-width: 500px; margin: 0 auto;'&gt;
+         * &lt;div id='jxgbox' class='jxgbox' style='height: 0; padding-bottom: 100%'&gt;&lt;/div&gt;
+         * &lt;/div&gt;
+         * &lt;button onClick="board.toFullscreen('outer')"&gt;Fullscreen&lt;/button&gt;
+         *
+         * &lt;script language="Javascript" type='text/javascript'&gt;
+         * var board = JXG.JSXGraph.initBoard('jxgbox', {
+         *     axis:true,
+         *     boundingbox:[-5,5,5,-5],
+         *     fullscreen: { id: 'outer' },
+         *     showFullscreen: true
+         * });
+         * var p = board.create('point', [-2, 3], {});
+         * &lt;/script&gt;
+         *
+         * </pre><div id="JXG7103f6b_outer" style='max-width: 500px; margin: 0 auto;'>
+         * <div id="JXG7103f6be-6993-4ff8-8133-c78e50a8afac" class="jxgbox" style="height: 0; padding-bottom: 100%;"></div>
+         * </div>
+         * <button onClick="board_JXG7103f6be.toFullscreen('JXG7103f6b_outer')">Fullscreen</button>
+         * <script type="text/javascript">
+         *     var board_JXG7103f6be;
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG7103f6be-6993-4ff8-8133-c78e50a8afac',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, fullscreen: { id: 'JXG7103f6b_outer' }, showFullscreen: true,
+         *              showcopyright: false, shownavigation: false});
+         *     var p = board.create('point', [-2, 3], {});
+         *     board_JXG7103f6be = board;
+         *     })();
+         *
+         * </script><pre>
+         *
+         *
          */
-        toFullscreen: function() {
-            var id = this.container,
-                wrap_id = 'fullscreenwrap_' + id,
-                wrapper = document.createElement('div'),
-                el;
+        toFullscreen: function(id) {
+            var wrap_id, wrap_node, inner_node;
+
+            id = id || this.container;
+
+            this._fullscreen_inner_id = id;
+            // inner_node = this.containerObj;
+            inner_node = document.getElementById(id);
+
+            wrap_id = 'fullscreenwrap_' + id;
+            wrap_node = document.createElement('div');
 
             // If necessary, wrap a div around the JSXGraph div.
             if (!this.document.getElementById(wrap_id)) {
-                wrapper.classList.add('JXG_wrap_private');
-                wrapper.setAttribute('id', wrap_id);
-                el = this.containerObj;
-                el.parentNode.insertBefore(wrapper, el);
-                wrapper.appendChild(el);
+                wrap_node.classList.add('JXG_wrap_private');
+                wrap_node.setAttribute('id', wrap_id);
+                inner_node.parentNode.insertBefore(wrap_node, inner_node);
+                wrap_node.appendChild(inner_node);
             }
 
             // Start fullscreen mode
@@ -59651,21 +60025,54 @@ define('base/board',[
          * which are applied to the JSXGraph canvas have to be reread.
          * Otherwise the position of upper left corner is wrongly interpreted.
          *
-         * @param  {Object} evt fullscreen event object
+         * @param  {Object} evt fullscreen event object (unused)
          */
         fullscreenListener: function(evt) {
-            var el = this.containerObj;
+            var res, inner_id, inner_node;
 
+            inner_id = this._fullscreen_inner_id;
+            if (!Type.exists(inner_id)) {
+                return;
+            }
+
+            inner_node = document.getElementById(inner_id);
             // If full screen mode is started we have to remove CSS margin around the JSXGraph div.
             // Otherwise, the positioning of the fullscreen div will be false.
             // When leaving the fullscreen mode, the margin is put back in.
+            if (document.fullscreenElement) {
+                // Entered fullscreen mode
 
-            if (Type.exists(this._cssFullscreenStore) && this._cssFullscreenStore.isFullscreen) {
-                el._cssFullscreenStore.isFullscreen = false;
-                el.style.margin = this._cssFullscreenStore.margin;
-            } else {
-                el._cssFullscreenStore.isFullscreen = true;
-                el.style.margin = '';
+                inner_node.style.margin = '';
+
+                // Do the shifting and scaling via CSS pseudo rules
+                // We do this after fullscreen mode has been established to get the correct size
+                // of the JSXGraph div
+                res = Env._getScaleFactors(inner_node);
+                Env.scaleJSXGraphDiv(document.fullscreenElement.id, inner_id, res.scale, res.vshift);
+
+                // Store the scaling data.
+                // It is used in AbstractRenderer.updateText to restore the scaling matrix
+                // which is removed by MathJax.
+                // Further, the CSS margin has to be removed when in fullscreen mode,
+                // and must be restored later.
+                inner_node._cssFullscreenStore = {
+                    id: document.fullscreenElement.id,
+                    isFullscreen: true,
+                    margin: inner_node.style.margin,
+                    scale:  res.scale,
+                    vshift: res.vshift
+                };
+            } else if (Type.exists(inner_node._cssFullscreenStore)) {
+                // Left fullscreen mode
+
+                // Remove the CSS rules added in Env.scaleJSXGraphDiv
+                try {
+                    document.styleSheets[document.styleSheets.length - 1].deleteRule(0);
+                } catch (err) {
+                    console.log('JSXGraph: Could not remove CSS rules for full screen mode');
+                }
+                inner_node._cssFullscreenStore.isFullscreen = false;
+                inner_node.style.margin = inner_node._cssFullscreenStore.margin;
             }
 
             this.updateCSSTransforms();
@@ -59984,6 +60391,7 @@ define('renderer/svg',[
 
         this.svgRoot = this.container.ownerDocument.createElementNS(this.svgNamespace, "svg");
         this.svgRoot.style.overflow = 'hidden';
+        this.svgRoot.style.display = 'block';
 
         this.resize(dim.width, dim.height);
 
@@ -61294,10 +61702,13 @@ define('renderer/svg',[
 
         // documented in AbstractRenderer
         resize: function (w, h) {
-            this.svgRoot.style.width = parseFloat(w) + 'px';
-            this.svgRoot.style.height = parseFloat(h) + 'px';
-            this.svgRoot.setAttribute("width", parseFloat(w));
-            this.svgRoot.setAttribute("height", parseFloat(h));
+            // this.svgRoot.style.width  = parseFloat(w) + 'px';
+            // this.svgRoot.style.height = parseFloat(h) + 'px';
+
+            this.svgRoot.setAttribute('width',  parseFloat(w));
+            this.svgRoot.setAttribute('height', parseFloat(h));
+            // this.svgRoot.setAttribute('width',  '100%');
+            // this.svgRoot.setAttribute('height', '100%');
         },
 
         // documented in JXG.AbstractRenderer
@@ -62883,6 +63294,8 @@ define('renderer/canvas',[
                 'px"><', '/canvas>'].join('');
             this.canvasRoot = this.container.ownerDocument.getElementById(this.canvasId);
             this.context =  this.canvasRoot.getContext('2d');
+            this.canvasRoot.style.display = 'block';
+
         } else if (Env.isNode()) {
             this.canvasId = (typeof module === 'object' ? module.require('canvas') : require('canvas'));
             this.canvasRoot = new this.canvasId(500, 500);
@@ -65193,6 +65606,7 @@ define('jsxgraph',[
             attr.navbar = Type.copyAttributes(attr.navbar, Options, 'navbar');
             attr.screenshot = Type.copyAttributes(attr, Options, 'board', 'screenshot');
             attr.resize = Type.copyAttributes(attr, Options, 'board', 'resize');
+            attr.fullscreen = Type.copyAttributes(attr, Options, 'board', 'fullscreen');
 
             // Treat moveTarget separately, because deepCopy will not work here.
             // Reason: moveTarget will be an HTML node and it is prevented that Type.deepCopy will copy it.
@@ -65947,8 +66361,9 @@ define('base/group',[
                              center[0] * (1 -  sx), sx, 0,
                              center[1] * (1 -  sy), 0, sy], {type: 'generic'});
                     t.update();  // This initializes t.matrix, which is needed if the action element is the first group element.
+                } else {
+                    return this;
                 }
-                return this;
             }
 
             this._update_apply_transformation(drag, t);
@@ -67384,7 +67799,7 @@ define('element/sector',[
                 parents[1].elementClass === Const.OBJECT_CLASS_LINE &&
                 (Type.isArray(parents[2]) || Type.isNumber(parents[2])) &&
                 (Type.isArray(parents[3]) || Type.isNumber(parents[3])) &&
-                (Type.isNumber(parents[4]) || Type.isFunction(parents[4]))) {
+                (Type.isNumber(parents[4]) || Type.isFunction(parents[4]) || Type.isString(parents[4]))) {
 
             type = '2lines';
         } else {
@@ -67403,9 +67818,34 @@ define('element/sector',[
         el.type = Const.OBJECT_TYPE_SECTOR;
         el.elType = 'sector';
 
+        /**
+         * Set a radius if the attribute `radius` has value 'auto'.
+         * Sets a radius between 20 and 50 points, depending on the distance
+         * between the center and the radius point.
+         * This function is used in {@link Angle}.
+         *
+         * @returns {Number} returns a radius value in user coordinates.
+         */
+         el.autoRadius = function() {
+            var r1 = 20  / el.board.unitX,  // 20px
+                r2 = Infinity,
+                r3 = 50  / el.board.unitX;  // 50px
+
+            if (Type.isPoint(el.center)) {
+                // This does not work for 2-lines sectors / angles
+                r2 = el.center.Dist(el.point2) * 0.3333;
+            }
+
+            return Math.max(r1, Math.min(r2, r3));
+        };
+
         if (type === '2lines') {
             el.Radius = function () {
-                return Type.evaluate(parents[4]);
+                var r = Type.evaluate(parents[4]);
+                if (r === 'auto') {
+                    return this.autoRadius();
+                }
+                return r;
             };
 
             el.line1 = board.select(parents[0]);
@@ -67506,7 +67946,7 @@ define('element/sector',[
                 setRadius: 'setRadius'
             });
 
-            el.prepareUpdate().update();
+        //    el.prepareUpdate().update();
 
         // end '2lines'
 
@@ -67780,9 +68220,13 @@ define('element/sector',[
          * Used in {@link GeometryElement#setAttribute}.
          * @param {Number, Function} value New radius.
          */
-        el.setRadius = function (value) {
+        el.setRadius = function (val) {
             el.Radius = function () {
-                return Type.evaluate(value);
+                var r = Type.evaluate(val);
+                if (r === 'auto') {
+                    return this.autoRadius();
+                }
+                return r;
             };
         };
 
@@ -67982,7 +68426,7 @@ define('element/sector',[
      * @constructor
      * @type Sector
      * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
-     * First possiblity of input parameters are:
+     * First possibility of input parameters are:
      * @param {JXG.Point_JXG.Point_JXG.Point} p1,p2,p1 An angle is always drawn counterclockwise from <tt>p1</tt> to
      * <tt>p3</tt> around <tt>p2</tt>.
      *
@@ -68163,8 +68607,13 @@ define('element/sector',[
              */
             el.pointsquare = el.point3 = el.anglepoint = points[2];
 
+            // Set the angle radius, also @see @link Sector#autoRadius
             el.Radius = function () {
-                return Type.evaluate(radius);
+                var r = Type.evaluate(radius);
+                if (r === 'auto') {
+                    return el.autoRadius();
+                }
+                return r;
             };
 
             el.updateDataArraySector = function () {
@@ -68199,13 +68648,25 @@ define('element/sector',[
             };
 
             /**
-            * Set an angle to a prescribed value given in radians. This is only possible if the third point of the angle, i.e.
+            * Set an angle to a prescribed value given in radians.
+            * This is only possible if the third point of the angle, i.e.
             * the anglepoint is a free point.
+            * Removing the constraint again is done by calling "angle.free()".
+            *
+            * Changing the angle requires to call the method "free()":
+            *
+            * <pre>
+            * angle.setAngle(Math.PI / 6);
+            * // ...
+            * angle.free().setAngle(Math.PI / 4);
+            * </pre>
+            *
             * @name setAngle
             * @function
             * @param {Number|Function} val Number or Function which returns the size of the angle in Radians
             * @returns {Object} Pointer to the angle element..
             * @memberOf Angle.prototype
+            * @see Angle#free
             *
             * @example
             * var p1, p2, p3, c, a, s;
@@ -68291,14 +68752,14 @@ define('element/sector',[
             *
             */
             el.setAngle = function (val) {
-                var t,
+                var t, t2,
                     p = this.anglepoint,
                     q = this.radiuspoint;
 
                 if (p.draggable()) {
                     t = this.board.create('transform', [val, this.center], {type: 'rotate'});
                     p.addTransform(q, t);
-                    p.isDraggable = false;
+                    // p.isDraggable = false;
                     p.setParents(q);
                 }
                 return this;
@@ -68306,11 +68767,12 @@ define('element/sector',[
 
             /**
             * Frees an angle from a prescribed value. This is only relevant if the angle size has been set by
-            * setAngle() previously. The anglepoint is set to a free point.
+            * "setAngle()" previously. The anglepoint is set to a free point.
             * @name free
             * @function
             * @returns {Object} Pointer to the angle element..
             * @memberOf Angle.prototype
+            * @see Angle#setAngle
             */
             el.free = function () {
                 var p = this.anglepoint;
@@ -72718,7 +73180,7 @@ define('base/ticks',[
                 dx = oldc.usrCoords[1] / c.usrCoords[1];
                 bb[0] *= dx;
                 bb[2] *= dx;
-                this.board.setBoundingBox(bb, false);
+                this.board.setBoundingBox(bb, this.board.keepaspectratio);
             // vertical line
             } else if (Math.abs(this.line.stdform[2]) < Mat.eps &&
                        Math.abs(c.usrCoords[2] * oldc.usrCoords[2]) > Mat.eps) {
@@ -72726,7 +73188,7 @@ define('base/ticks',[
                 dy = oldc.usrCoords[2] / c.usrCoords[2];
                 bb[3] *= dy;
                 bb[1] *= dy;
-                this.board.setBoundingBox(bb, false);
+                this.board.setBoundingBox(bb, this.board.keepaspectratio);
             }
 
             return this;
@@ -75474,7 +75936,7 @@ define('utils/dump',['jxg', 'utils/type'], function (JXG, Type) {
             methods.push({
                 obj: boardVarName,
                 method: 'setBoundingBox',
-                params: [board.getBoundingBox(), true]
+                params: [board.getBoundingBox(), board.keepaspectratio]
             });
 
             return methods;

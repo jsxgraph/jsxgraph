@@ -5859,10 +5859,42 @@ define([
          *         var p = board.create('point', [0, 1]);
          *         board_d5bab8b6 = board;
          *     })();
-         * <button onClick="board_d5bab8b6.toFullscreen()">Fullscreen</button>
-         *
          * </script>
+         * <button onClick="board_d5bab8b6.toFullscreen()">Fullscreen</button>
          * <pre>
+         *
+         * @example
+         * &lt;div id='outer' style='max-width: 500px; margin: 0 auto;'&gt;
+         * &lt;div id='jxgbox' class='jxgbox' style='height: 0; padding-bottom: 100%'&gt;&lt;/div&gt;
+         * &lt;/div&gt;
+         * &lt;button onClick="board.toFullscreen('outer')"&gt;Fullscreen&lt;/button&gt;
+         *
+         * &lt;script language="Javascript" type='text/javascript'&gt;
+         * var board = JXG.JSXGraph.initBoard('jxgbox', {
+         *     axis:true,
+         *     boundingbox:[-5,5,5,-5],
+         *     fullscreen: { id: 'outer' },
+         *     showFullscreen: true
+         * });
+         * var p = board.create('point', [-2, 3], {});
+         * &lt;/script&gt;
+         *
+         * </pre><div id="JXG7103f6b_outer" style='max-width: 500px; margin: 0 auto;'>
+         * <div id="JXG7103f6be-6993-4ff8-8133-c78e50a8afac" class="jxgbox" style="height: 0; padding-bottom: 100%;"></div>
+         * </div>
+         * <button onClick="board_JXG7103f6be.toFullscreen('JXG7103f6b_outer')">Fullscreen</button>
+         * <script type="text/javascript">
+         *     var board_JXG7103f6be;
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG7103f6be-6993-4ff8-8133-c78e50a8afac',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, fullscreen: { id: 'JXG7103f6b_outer' }, showFullscreen: true,
+         *              showcopyright: false, shownavigation: false});
+         *     var p = board.create('point', [-2, 3], {});
+         *     board_JXG7103f6be = board;
+         *     })();
+         *
+         * </script><pre>
+         *
          *
          */
         toFullscreen: function(id) {
