@@ -1040,44 +1040,131 @@ define([
                 l = board.create('line', [
                     function () {
                         var i = Math.floor(p.position),
-                            lbda = p.position - i;
+                            lbda = p.position - i,
+                            p1, p2, t, A, B, C, D, dx, dy, d;
 
-                        if (i === c.numberPoints - 1) {
-                            i -= 1;
-                            lbda = 1;
+                        if (c.bezierdegree === 1) {
+                            if (i === c.numberPoints - 1) {
+                                i -= 1;
+                                lbda = 1;
+                            }
+                        } else if (c.bezierDegree === 3) {
+                            // i is start of the Bezier segment
+                            // t is the position in the Bezier segment
+                            i = Math.floor(p.position * (c.numberPoints - 1) / 3) * 3;
+                            t = (p.position * (c.numberPoints - 1) - i) / 3;
+                            if (i >= c.numberPoints - 1) {
+                                i = c.numberPoints - 4;
+                                t = 1;
+                            }
+                        } else {
+                            return 0;
                         }
 
                         if (i < 0) {
                             return 1;
                         }
 
-                        return (c.Y(i) + lbda * (c.Y(i + 1) - c.Y(i))) * (c.Y(i) - c.Y(i + 1)) - (c.X(i) + lbda * (c.X(i + 1) - c.X(i))) * (c.X(i + 1) - c.X(i));
+                        if (c.bezierDegree === 1) {
+                            return (c.Y(i) + lbda * (c.Y(i + 1) - c.Y(i))) * (c.Y(i) - c.Y(i + 1)) - (c.X(i) + lbda * (c.X(i + 1) - c.X(i))) * (c.X(i + 1) - c.X(i));
+                        } else {
+                            A = c.points[i].usrCoords;
+                            B = c.points[i + 1].usrCoords;
+                            C = c.points[i + 2].usrCoords;
+                            D = c.points[i + 3].usrCoords;
+                            dx = (1 - t) * (1 - t) * (B[1] - A[1]) + 2 * (1 - t) * t * (C[1] - B[1]) + t * t * (D[1]- C[1]);
+                            dy = (1 - t) * (1 - t) * (B[2] - A[2]) + 2 * (1 - t) * t * (C[2] - B[2]) + t * t * (D[2]- C[2]);
+                            d = Math.sqrt(dx * dx + dy * dy);
+                            dx /= d;
+                            dy /= d;
+                            p1 = p.coords.usrCoords;
+                            p2 = [1, p1[1] - dy, p1[2] + dx];
+                            return p1[2] * p2[1] - p1[1] * p2[2];
+                        }
                     },
                     function () {
-                        var i = Math.floor(p.position);
+                        var i = Math.floor(p.position),
+                            p1, p2, t, A, B, C, D, dx, dy, d;
 
-                        if (i === c.numberPoints - 1) {
-                            i -= 1;
+                        if (c.bezierdegree === 1) {
+                            if (i === c.numberPoints - 1) {
+                                i -= 1;
+                            }
+                        } else if (c.bezierDegree === 3) {
+                            // i is start of the Bezier segment
+                            // t is the position in the Bezier segment
+                            i = Math.floor(p.position * (c.numberPoints - 1) / 3) * 3;
+                            t = (p.position * (c.numberPoints - 1) - i) / 3;
+                            if (i >= c.numberPoints - 1) {
+                                i = c.numberPoints - 4;
+                                t = 1;
+                            }
+                        } else {
+                            return 0;
+                        }
+
+                        if (i < 0) {
+                            return 0;
+                        }
+                        if (c.bezierDegree === 1) {
+                            return c.X(i + 1) - c.X(i);
+                        } else {
+                            A = c.points[i].usrCoords;
+                            B = c.points[i + 1].usrCoords;
+                            C = c.points[i + 2].usrCoords;
+                            D = c.points[i + 3].usrCoords;
+                            dx = (1 - t) * (1 - t) * (B[1] - A[1]) + 2 * (1 - t) * t * (C[1] - B[1]) + t * t * (D[1]- C[1]);
+                            dy = (1 - t) * (1 - t) * (B[2] - A[2]) + 2 * (1 - t) * t * (C[2] - B[2]) + t * t * (D[2]- C[2]);
+                            d = Math.sqrt(dx * dx + dy * dy);
+                            dx /= d;
+                            dy /= d;
+                            p1 = p.coords.usrCoords;
+                            p2 = [1, p1[1] - dy, p1[2] + dx];
+                            return p2[2] - p1[2];
+                        }
+
+                    },
+                    function () {
+                        var i = Math.floor(p.position),
+                            p1, p2, t, A, B, C, D, dx, dy, d;
+
+                        if (c.bezierdegree === 1) {
+                            if (i === c.numberPoints - 1) {
+                                i -= 1;
+                            }
+                        } else if (c.bezierDegree === 3) {
+                            // i is start of the Bezier segment
+                            // t is the position in the Bezier segment
+                            i = Math.floor(p.position * (c.numberPoints - 1) / 3) * 3;
+                            t = (p.position * (c.numberPoints - 1) - i) / 3;
+                            if (i >= c.numberPoints - 1) {
+                                i = c.numberPoints - 4;
+                                t = 1;
+                            }
+                        } else {
+                            return 0;
                         }
 
                         if (i < 0) {
                             return 0;
                         }
 
-                        return c.X(i + 1) - c.X(i);
-                    },
-                    function () {
-                        var i = Math.floor(p.position);
-
-                        if (i === c.numberPoints - 1) {
-                            i -= 1;
+                        if (c.bezierDegree === 1) {
+                            return c.Y(i + 1) - c.Y(i);
+                        } else {
+                            A = c.points[i].usrCoords;
+                            B = c.points[i + 1].usrCoords;
+                            C = c.points[i + 2].usrCoords;
+                            D = c.points[i + 3].usrCoords;
+                            dx = (1 - t) * (1 - t) * (B[1] - A[1]) + 2 * (1 - t) * t * (C[1] - B[1]) + t * t * (D[1]- C[1]);
+                            dy = (1 - t) * (1 - t) * (B[2] - A[2]) + 2 * (1 - t) * t * (C[2] - B[2]) + t * t * (D[2]- C[2]);
+                            d = Math.sqrt(dx * dx + dy * dy);
+                            dx /= d;
+                            dy /= d;
+                            p1 = p.coords.usrCoords;
+                            p2 = [1, p1[1] - dy, p1[2] + dx];
+                            return p1[1] - p2[1];
                         }
-
-                        if (i < 0) {
-                            return 0;
-                        }
-
-                        return c.Y(i + 1) - c.Y(i);
                     }
                 ], attr);
             }

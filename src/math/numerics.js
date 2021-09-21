@@ -42,7 +42,7 @@
  * algorithms for solving linear equations etc.
  */
 
-define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
+define(['jxg', 'utils/type', 'utils/env', 'math/math'], function (JXG, Type, Env, Mat) {
 
     "use strict";
 
@@ -1848,6 +1848,76 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
             };
 
             return fct;
+        },
+
+        /**
+         * Determine the Lagrange polynomial through an array of points and
+         * return the term of the polynomial as string.
+         *
+         * @param {Array} points Array of JXG.Points
+         * @param {Number} digits Number of decimal digits of the coefficients
+         * @param {String} param Name of the parameter. Default: 'x'.
+         * @returns {String} containing the Lagrange polynomial through
+         *    the supplied points.
+         * @memberof JXG.Math.Numerics
+         */
+        lagrangePolynomialString: function(points, digits, param) {
+            return function() {
+                var len = points.length,
+                    zeroes = [],
+                    coeffs = [],
+                    coeffs_sum = [],
+                    isLeading = true,
+                    n, t,
+                    i, j, c, p;
+
+                param = param || 'x';
+
+                n = len - 1;  // (Max) degree of the polynomial
+                for (j = 0; j < len; j++) {
+                    coeffs_sum[j] = 0;
+                }
+
+                for (i = 0; i < len; i++) {
+                    c = points[i].Y();
+                    p = points[i].X();
+                    zeroes = [];
+                    for (j = 0; j < len; j++) {
+                        if (j !== i) {
+                            c /= p - points[j].X();
+                            zeroes.push(points[j].X());
+                        }
+                    }
+                    coeffs = [1].concat(Mat.Vieta(zeroes));
+                    for (j = 0; j < coeffs.length; j++) {
+                        coeffs_sum[j] += (j%2===1?(-1):1) * coeffs[j] * c;
+                    }
+                }
+
+                t = '';
+                for (j = 0; j < coeffs_sum.length; j++) {
+                    c = coeffs_sum[j];
+                    if (Math.abs(c) < Mat.eps) {
+                        continue;
+                    }
+                    if (JXG.exists(digits)) {
+                        c = Env._round10(c, -digits);
+                    }
+                    if (isLeading) {
+                        t += (c > 0) ? (c) : ('-' + (-c));
+                        isLeading = false;
+                    } else {
+                        t += (c > 0) ? (' + ' + c) : (' - ' + (-c));
+                    }
+
+                    if (n - j > 1) {
+                        t += ' * ' + param + '^' + (n - j);
+                    } else if (n - j === 1) {
+                        t += ' * ' + param;
+                    }
+                }
+                return t; // board.jc.manipulate('f = map(x) -> ' + t + ';');
+            };
         },
 
         /**

@@ -324,7 +324,9 @@ define([
              * controls if the icon is shown.
              * The following attribute(s) can be set:
              * <ul>
-             *  <li>symbol: Unicode symbol which is shown in the navigation bar. Default: '\u25a1'
+             *  <li>symbol (String): Unicode symbol which is shown in the navigation bar. Default: '\u25a1'
+             *  <li>id (String): Id of the HTML element which is brought to full screen or null if the JSXgraph div is taken.
+             * It may be an outer div element, e.g. if the old aspect ratio trick is used. Default: null, i.e. use the JSXGraph div.
              * </ul>
              *
              * @example
@@ -358,7 +360,8 @@ define([
              * @type {Object}
              */
             fullscreen: {
-                symbol: '\u26f6' //'\u25a1'
+                symbol: '\u26f6', // '\u25a1'
+                id: null
             },
 
             /**

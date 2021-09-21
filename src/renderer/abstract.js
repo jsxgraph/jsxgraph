@@ -1923,7 +1923,7 @@ define([
 
                 if (board.attr.showfullscreen) {
                     createButton(board.attr.fullscreen.symbol, function () {
-                        board.toFullscreen();
+                        board.toFullscreen(board.attr.fullscreen.id);
                     });
                 }
 

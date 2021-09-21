@@ -120,6 +120,14 @@ define([
         this.BOARD_MODE_MOVE_ORIGIN = 0x0002;
 
         /**
+         * Update is made with high quality, e.g. graphs are evaluated at much more points.
+         * @type Number
+         * @constant
+         * @see JXG.Board#updateQuality
+         */
+        this.BOARD_MODE_ZOOM = 0x0011;
+
+        /**
          * Update is made with low quality, e.g. graphs are evaluated at a lesser amount of points.
          * @type Number
          * @constant
@@ -134,14 +142,6 @@ define([
          * @see JXG.Board#updateQuality
          */
         this.BOARD_QUALITY_HIGH = 0x2;
-
-        /**
-         * Update is made with high quality, e.g. graphs are evaluated at much more points.
-         * @type Number
-         * @constant
-         * @see JXG.Board#updateQuality
-         */
-        this.BOARD_MODE_ZOOM = 0x0011;
 
         /**
          * Pointer to the document element containing the board.
@@ -1460,20 +1460,20 @@ define([
          * @param  {Object} evt Event from touchStartListener
          * @return {Boolean}   returns if the origin is moved.
          */
-        touchOriginMoveStart: function (evt) {
+        touchStartMoveOriginOneFinger: function (evt) {
             var touches = evt[JXG.touchProperty],
-                r, pos;
+                conditions, pos;
 
-            r = this.attr.pan.enabled &&
+            conditions = this.attr.pan.enabled &&
                 !this.attr.pan.needtwofingers &&
                 touches.length === 1;
 
-            if (r) {
+            if (conditions) {
                 pos = this.getMousePosition(evt, 0);
                 this.initMoveOrigin(pos[0], pos[1]);
             }
 
-            return r;
+            return conditions;
         },
 
         /**
@@ -1714,7 +1714,6 @@ define([
                 } else {
                     Env.removeEvent(this.containerObj, 'pointerdown', this.pointerDownListener, this);
                     Env.removeEvent(moveTarget, 'pointermove', this.pointerMoveListener, this);
-                    // Env.removeEvent(this.containerObj, 'pointerout', this.pointerOutListener, this);
                 }
 
                 Env.removeEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
@@ -1722,9 +1721,10 @@ define([
 
                 if (this.hasPointerUp) {
                     if (window.navigator.msPointerEnabled) {  // IE10-
-                        Env.removeEvent(this.document, 'MSPointerUp', this.pointerUpListener, this);
+                        Env.removeEvent(this.document, 'MSPointerUp',   this.pointerUpListener, this);
                     } else {
-                        Env.removeEvent(this.document, 'pointerup', this.pointerUpListener, this);
+                        Env.removeEvent(this.document, 'pointerup',     this.pointerUpListener, this);
+                        Env.removeEvent(this.document, 'pointercancel', this.pointerUpListener, this);
                     }
                     this.hasPointerUp = false;
                 }
@@ -1976,30 +1976,19 @@ define([
             return false;
         },
 
+        /*
+         * Pointer events
+         */
+
         /**
-         * Fix for Firefox browser: When using a second finger, the
-         * touch event for the first finger is sent again.
          *
-         * @param  {[type]} evt Event object
+         * Check if pointer event is already registered in this._board_touches.
+         *
+         * @param  {Object} evt Event object
          * @return {Boolean} true if down event has already been sent.
          * @private
          */
-        _isPointerEventAlreadyThere: function (evt) {
-            var i;
-
-            for (i = 0; i < this._board_touches.length; i++) {
-                if (this._board_touches[i].pointerId === evt.pointerId) {
-                    return true;
-                }
-            }
-
-            return false;
-        },
-
-        /**
-         * pointer-Events
-         */
-        _pointerIsTouchRegistered: function(evt) {
+         _isPointerRegistered: function(evt) {
             var i, len = this._board_touches.length;
 
             for (i = 0; i < len; i++) {
@@ -2010,7 +1999,18 @@ define([
             return false;
         },
 
-        _pointerAddBoardTouches: function (evt) {
+        /**
+         *
+         * Store the position of a pointer event.
+         * If not yet done, registers a pointer event in this._board_touches.
+         * Allows to follow the path of that finger on the screen.
+         * Only two simultaneous touches are supported.
+         *
+         * @param {Object} evt Event object
+         * @returns {JXG.Board} Reference to the board
+         * @private
+         */
+         _pointerStorePosition: function (evt) {
             var i, found;
 
             for (i = 0, found = false; i < this._board_touches.length; i++) {
@@ -2022,7 +2022,8 @@ define([
                 }
             }
 
-            if (!found) {
+            // Restrict the number of simultaneous touches to 2
+            if (!found && this._board_touches.length < 2) {
                 this._board_touches.push({
                     pointerId: evt.pointerId,
                     clientX: evt.clientX,
@@ -2033,7 +2034,15 @@ define([
             return this;
         },
 
-        _pointerRemoveBoardTouches: function (evt) {
+        /**
+         * Deregisters a pointer event in this._board_touches.
+         * The finger has been lifted from the screen.
+         *
+         * @param {Object}} evt Event object
+         * @returns {JXG.Board} Reference to the board
+         * @private
+         */
+        _pointerRemoveTouches: function (evt) {
             var i;
             for (i = 0; i < this._board_touches.length; i++) {
                 if (this._board_touches[i].pointerId === evt.pointerId) {
@@ -2043,6 +2052,22 @@ define([
             }
 
             return this;
+        },
+
+        /**
+         * Remove all registered fingers from this._board_touches.
+         * This might be necessary if too many fingers have been registered.
+         * @returns {JXG.Board} Reference to the board
+         * @private
+         */
+        _pointerClearTouches: function() {
+            if (this._board_touches.length > 0) {
+                this.dehighlightAll();
+            }
+            this.updateQuality = this.BOARD_QUALITY_HIGH;
+            this.mode = this.BOARD_MODE_NONE;
+            this._board_touches = [];
+            this.touches = [];
         },
 
         /**
@@ -2062,7 +2087,7 @@ define([
          */
         _getPointerInputDevice: function(evt) {
             if (Env.isBrowser) {
-                if (evt.pointerType === 'touch' || // New
+                if (evt.pointerType === 'touch' ||        // New
                     (window.navigator.msMaxTouchPoints && // Old
                         window.navigator.msMaxTouchPoints > 1)) {
                     return 'touch';
@@ -2085,20 +2110,27 @@ define([
          */
         pointerDownListener: function (evt, object) {
             var i, j, k, pos, elements, sel,
-                type = 'mouse', // in case of no browser
+                type = 'mouse', // Used in case of no browser
                 found, target;
 
-            // Temporary fix for Firefox pointer events:
-            // When using two fingers, the first touch down event is fired again.
-            if (!object && this._isPointerEventAlreadyThere(evt)) {
+            // Fix for Firefox browser: When using a second finger, the
+            // touch event for the first finger is sent again.
+            if (!object && this._isPointerRegistered(evt)) {
                 return false;
+            }
+
+            if (!object && evt.isPrimary) {
+                // First finger down. To be on the safe side this._board_touches is cleared.
+                this._pointerClearTouches();
             }
 
             if (!this.hasPointerUp) {
                 if (window.navigator.msPointerEnabled) {  // IE10-
-                    Env.addEvent(this.document, 'MSPointerUp', this.pointerUpListener, this);
+                    Env.addEvent(this.document, 'MSPointerUp',   this.pointerUpListener, this);
                 } else {
-                    Env.addEvent(this.document, 'pointerup', this.pointerUpListener, this);
+                    // 'pointercancel' is fired e.g. if the finger leaves the browser and drags down the system menu on Android
+                    Env.addEvent(this.document, 'pointerup',     this.pointerUpListener, this);
+                    Env.addEvent(this.document, 'pointercancel', this.pointerUpListener, this);
                 }
                 this.hasPointerUp = true;
             }
@@ -2128,8 +2160,8 @@ define([
             type = this._inputDevice;
             this.options.precision.hasPoint = this.options.precision[type];
 
-            // This should be easier than the touch events. Every pointer device gets its own pointerId, e.g. the mouse
-            // always has id 1, fingers and pens get unique ids every time a pointerDown event is fired and they will
+            // This should be easier than the touch events. Every pointer device has its own pointerId, e.g. the mouse
+            // always has id 1 or 0, fingers and pens get unique ids every time a pointerDown event is fired and they will
             // keep this id until a pointerUp event is fired. What we have to do here is:
             //  1. collect all elements under the current pointer
             //  2. run through the touches control structure
@@ -2215,19 +2247,28 @@ define([
                 evt.stopPropagation();
             }
 
-            if (Env.isBrowser && this._getPointerInputDevice(evt) !== 'touch') {
+            if (!Env.isBrowser) {
+                return false;
+            }
+            if (this._getPointerInputDevice(evt) !== 'touch') {
                 if (this.mode === this.BOARD_MODE_NONE) {
                     this.mouseOriginMoveStart(evt);
                 }
             } else {
-                this._pointerAddBoardTouches(evt);
+                this._pointerStorePosition(evt);
                 evt.touches = this._board_touches;
 
-                // See touchStartListener
-                if (this.mode === this.BOARD_MODE_NONE && this.touchOriginMoveStart(evt)) {
-                } else if ((this.mode === this.BOARD_MODE_NONE ||
-                            this.mode === this.BOARD_MODE_MOVE_ORIGIN) &&
-                           evt.touches.length == 2) {
+                // Touch events on empty areas of the board are handled here, see also touchStartListener
+                // 1. case: one finger. If allowed, this triggers pan with one finger
+                if (evt.touches.length == 1 &&
+                    this.mode === this.BOARD_MODE_NONE &&
+                    this.touchStartMoveOriginOneFinger(evt)) {
+                } else if (evt.touches.length == 2 &&
+                            (this.mode === this.BOARD_MODE_NONE || this.mode === this.BOARD_MODE_MOVE_ORIGIN)
+                        ) {
+                    // 2. case: two fingers: pinch to zoom or pan with two fingers needed.
+                    // This happens when the second finger hits the device. First, the
+                    // "one finger pan mode" has to be cancelled.
                     if (this.mode === this.BOARD_MODE_MOVE_ORIGIN) {
                         this.originMoveEnd();
                     }
@@ -2240,20 +2281,20 @@ define([
             return false;
         },
 
-        /**
-         * Called if pointer leaves an HTML tag. Is called by the inner-most tag.
-         * That means, if a JSXGraph text, i.e. an HTML div, is placed close
-         * to the border of the board, this pointerout event will be ignored.
-         * @param  {Event} evt
-         * @return {Boolean}
-         */
-        pointerOutListener: function (evt) {
-            if (evt.target === this.containerObj ||
-                (this.renderer.type === 'svg' && evt.target === this.renderer.foreignObjLayer)) {
-                this.pointerUpListener(evt);
-            }
-            return this.mode === this.BOARD_MODE_NONE;
-        },
+        // /**
+        //  * Called if pointer leaves an HTML tag. It is called by the inner-most tag.
+        //  * That means, if a JSXGraph text, i.e. an HTML div, is placed close
+        //  * to the border of the board, this pointerout event will be ignored.
+        //  * @param  {Event} evt
+        //  * @return {Boolean}
+        //  */
+        // pointerOutListener: function (evt) {
+        //     if (evt.target === this.containerObj ||
+        //         (this.renderer.type === 'svg' && evt.target === this.renderer.foreignObjLayer)) {
+        //         this.pointerUpListener(evt);
+        //     }
+        //     return this.mode === this.BOARD_MODE_NONE;
+        // },
 
         /**
          * Called periodically by the browser while the user moves a pointing device across the screen.
@@ -2264,7 +2305,7 @@ define([
             var i, j, pos,
                 type = 'mouse'; // in case of no browser
 
-            if (this._getPointerInputDevice(evt) === 'touch' && !this._pointerIsTouchRegistered(evt)) {
+            if (this._getPointerInputDevice(evt) === 'touch' && !this._isPointerRegistered(evt)) {
                 // Test, if there was a previous down event of this _getPointerId
                 // (in case it is a touch event).
                 // Otherwise this move event is ignored. This is necessary e.g. for sketchometry.
@@ -2305,17 +2346,17 @@ define([
                             if (this.touches[i].targets[j].num === evt.pointerId) {
                                 if (this.touches[i].targets.length === 1) {
 
-                                    // Touch by one finger:  this is possible for all elements that can be dragged
-                                    this.touches[i].targets[j].X = evt.pageX;
-                                    this.touches[i].targets[j].Y = evt.pageY;
+                                    // Touch by one finger: this is possible for all elements that can be dragged
+                                    this.touches[i].targets[j].X = evt.clientX;
+                                    this.touches[i].targets[j].Y = evt.clientY;
                                     pos = this.getMousePosition(evt);
                                     this.moveObject(pos[0], pos[1], this.touches[i], evt, type);
 
                                 } else if (this.touches[i].targets.length === 2) {
 
                                     // Touch by two fingers: e.g. moving lines
-                                    this.touches[i].targets[j].X = evt.pageX;
-                                    this.touches[i].targets[j].Y = evt.pageY;
+                                    this.touches[i].targets[j].X = evt.clientX;
+                                    this.touches[i].targets[j].Y = evt.clientY;
 
                                     this.twoFingerMove(
                                         this.getMousePosition({
@@ -2336,7 +2377,8 @@ define([
                     }
                 } else {
                     if (this._getPointerInputDevice(evt) === 'touch') {
-                        this._pointerAddBoardTouches(evt);
+                        this._pointerStorePosition(evt);
+
                         if (this._board_touches.length === 2) {
                             evt.touches = this._board_touches;
                             this.gestureChangeListener(evt);
@@ -2408,27 +2450,27 @@ define([
                 }
             }
 
-            this._pointerRemoveBoardTouches(evt);
-
-            // if (this.touches.length === 0) {
-            if (this._board_touches.length === 0) {
+            // this._pointerRemoveTouches(evt);
+            // if (this._board_touches.length === 0) {
                 if (this.hasPointerUp) {
                     if (window.navigator.msPointerEnabled) {  // IE10-
-                        Env.removeEvent(this.document, 'MSPointerUp', this.pointerUpListener, this);
+                        Env.removeEvent(this.document, 'MSPointerUp',   this.pointerUpListener, this);
                     } else {
-                        Env.removeEvent(this.document, 'pointerup', this.pointerUpListener, this);
+                        Env.removeEvent(this.document, 'pointerup',     this.pointerUpListener, this);
+                        Env.removeEvent(this.document, 'pointercancel', this.pointerUpListener, this);
                     }
                     this.hasPointerUp = false;
                 }
 
-                this.dehighlightAll();
-                this.updateQuality = this.BOARD_QUALITY_HIGH;
-                this.mode = this.BOARD_MODE_NONE;
+                // this.dehighlightAll();
+                // this.updateQuality = this.BOARD_QUALITY_HIGH;
+                // this.mode = this.BOARD_MODE_NONE;
 
                 this.originMoveEnd();
                 this.update();
-            }
-
+            // }
+            // After one finger leaves the screen the gesture is stopped.
+            this._pointerClearTouches();
             return true;
         },
 
@@ -2629,12 +2671,10 @@ define([
 
             // Touch events on empty areas of the board are handled here:
             // 1. case: one finger. If allowed, this triggers pan with one finger
-            if (this.mode === this.BOARD_MODE_NONE && this.touchOriginMoveStart(evt)) {
+            if (evtTouches.length === 1 && this.mode === this.BOARD_MODE_NONE && this.touchStartMoveOriginOneFinger(evt)) {
             } else if (evtTouches.length === 2 &&
-                        (this.mode === this.BOARD_MODE_NONE ||
-                         this.mode === this.BOARD_MODE_MOVE_ORIGIN /*||
-                         (this.mode === this.BOARD_MODE_DRAG && this.touches.length == 1) */
-                        )) {
+                        (this.mode === this.BOARD_MODE_NONE || this.mode === this.BOARD_MODE_MOVE_ORIGIN)
+                    ) {
                 // 2. case: two fingers: pinch to zoom or pan with two fingers needed.
                 // This happens when the second finger hits the device. First, the
                 // "one finger pan mode" has to be cancelled.
@@ -3232,12 +3272,23 @@ define([
          *
          */
         updateContainerDims: function() {
-            var theWidth, theHeight;
+            var w, h,
+                bb, css;
 
-            theWidth  = this.containerObj.getBoundingClientRect().width;
-            theHeight = this.containerObj.getBoundingClientRect().height;
-            if (theWidth === 0 || theHeight === 0) {
-                // The div is invisible - do nothing
+            // Get size of the board's container div
+            bb = this.containerObj.getBoundingClientRect();
+            w = bb.width;
+            h = bb.height;
+
+            // Subtract the border size
+            if (window && window.getComputedStyle) {
+                css = window.getComputedStyle(this.containerObj, null);
+                w -= parseFloat(css.getPropertyValue('border-left-width')) + parseFloat(css.getPropertyValue('border-right-width'));
+                h -= parseFloat(css.getPropertyValue('border-top-width'))  + parseFloat(css.getPropertyValue('border-bottom-width'));
+            }
+
+            // If div is invisible - do nothing
+            if (w <= 0 || h <= 0) {
                 return;
             }
 
@@ -3246,20 +3297,20 @@ define([
                 this.setBoundingBox(this.attr.boundingbox, this.keepaspectratio);
             }
 
-            // We do nothing if in case the dimension did not change since being visible
+            // Do nothing if the dimension did not change since being visible
             // the last time. Note that if the div had display:none in the mean time,
-            // we did not store this._prevTheWidth/Height.
-            if (Type.exists(this._prevTheWidth) && Type.exists(this._prevTheHeight) &&
-                this._prevTheWidth === theWidth && this._prevTheHeight === theHeight) {
+            // we did not store this._prevDim.
+            if (Type.exists(this._prevDim) &&
+                this._prevDim.w === w && this._prevDim.h === h) {
                     return;
             }
-            // theWidth and theHeight are the outer dimensions and therefore
-            // might be too large. This does no harm, because the result is only that the
-            // SVGRoot might be larger than the visible div and there
-            // is overflow:hidden.
-            this.resizeContainer(theWidth, theHeight, true);
-            this._prevTheWidth  = theWidth;
-            this._prevTheHeight = theHeight;
+
+            // Set the size of the SVG or canvas element
+            this.resizeContainer(w, h, true);
+            this._prevDim = {
+                w: w,
+                h: h
+            };
         },
 
         /**
@@ -3288,8 +3339,13 @@ define([
                 if (!that._isResizing) {
                     that._isResizing = true;
                     window.setTimeout(function() {
-                        that.updateContainerDims();
-                        that._isResizing = false;
+                        try {
+                            that.updateContainerDims();
+                        } catch (err) {
+                            that.stopResizeObserver();
+                        } finally {
+                            that._isResizing = false;
+                        }
                     }, that.attr.resize.throttle);
                 }
             });
@@ -4339,8 +4395,8 @@ define([
                 shift_x = 0,
                 shift_y = 0;
 
-            this.canvasWidth = parseInt(canvasWidth, 10);
-            this.canvasHeight = parseInt(canvasHeight, 10);
+            this.canvasWidth = parseFloat(canvasWidth);
+            this.canvasHeight = parseFloat(canvasHeight);
 
             if (!dontSetBoundingBox) {
                 box_act = this.getBoundingBox();    // This is the actual bounding box.
@@ -5779,6 +5835,10 @@ define([
          * The wrapping div has the CSS class 'jxgbox_wrap_private' which is
          * defined in the file 'jsxgraph.css'
          *
+         * @param {String} id (Optional) id of the div element which is brought to fullscreen.
+         * If not provided, this defaults to the JSXGraph div. However, it may be necessary for the aspect ratio trick
+         * which using padding-bottom/top and an out div element. Then, the id of the outer div has to be supplied.
+         *
          * @return {JXG.Board} Reference to the board
          *
          * @example
@@ -5799,25 +5859,62 @@ define([
          *         var p = board.create('point', [0, 1]);
          *         board_d5bab8b6 = board;
          *     })();
-         * <button onClick="board_d5bab8b6.toFullscreen()">Fullscreen</button>
-         *
          * </script>
+         * <button onClick="board_d5bab8b6.toFullscreen()">Fullscreen</button>
          * <pre>
          *
+         * @example
+         * &lt;div id='outer' style='max-width: 500px; margin: 0 auto;'&gt;
+         * &lt;div id='jxgbox' class='jxgbox' style='height: 0; padding-bottom: 100%'&gt;&lt;/div&gt;
+         * &lt;/div&gt;
+         * &lt;button onClick="board.toFullscreen('outer')"&gt;Fullscreen&lt;/button&gt;
+         *
+         * &lt;script language="Javascript" type='text/javascript'&gt;
+         * var board = JXG.JSXGraph.initBoard('jxgbox', {
+         *     axis:true,
+         *     boundingbox:[-5,5,5,-5],
+         *     fullscreen: { id: 'outer' },
+         *     showFullscreen: true
+         * });
+         * var p = board.create('point', [-2, 3], {});
+         * &lt;/script&gt;
+         *
+         * </pre><div id="JXG7103f6b_outer" style='max-width: 500px; margin: 0 auto;'>
+         * <div id="JXG7103f6be-6993-4ff8-8133-c78e50a8afac" class="jxgbox" style="height: 0; padding-bottom: 100%;"></div>
+         * </div>
+         * <button onClick="board_JXG7103f6be.toFullscreen('JXG7103f6b_outer')">Fullscreen</button>
+         * <script type="text/javascript">
+         *     var board_JXG7103f6be;
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG7103f6be-6993-4ff8-8133-c78e50a8afac',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, fullscreen: { id: 'JXG7103f6b_outer' }, showFullscreen: true,
+         *              showcopyright: false, shownavigation: false});
+         *     var p = board.create('point', [-2, 3], {});
+         *     board_JXG7103f6be = board;
+         *     })();
+         *
+         * </script><pre>
+         *
+         *
          */
-        toFullscreen: function() {
-            var id = this.container,
-                wrap_id = 'fullscreenwrap_' + id,
-                wrapper = document.createElement('div'),
-                el;
+        toFullscreen: function(id) {
+            var wrap_id, wrap_node, inner_node;
+
+            id = id || this.container;
+
+            this._fullscreen_inner_id = id;
+            // inner_node = this.containerObj;
+            inner_node = document.getElementById(id);
+
+            wrap_id = 'fullscreenwrap_' + id;
+            wrap_node = document.createElement('div');
 
             // If necessary, wrap a div around the JSXGraph div.
             if (!this.document.getElementById(wrap_id)) {
-                wrapper.classList.add('JXG_wrap_private');
-                wrapper.setAttribute('id', wrap_id);
-                el = this.containerObj;
-                el.parentNode.insertBefore(wrapper, el);
-                wrapper.appendChild(el);
+                wrap_node.classList.add('JXG_wrap_private');
+                wrap_node.setAttribute('id', wrap_id);
+                inner_node.parentNode.insertBefore(wrap_node, inner_node);
+                wrap_node.appendChild(inner_node);
             }
 
             // Start fullscreen mode
@@ -5831,21 +5928,54 @@ define([
          * which are applied to the JSXGraph canvas have to be reread.
          * Otherwise the position of upper left corner is wrongly interpreted.
          *
-         * @param  {Object} evt fullscreen event object
+         * @param  {Object} evt fullscreen event object (unused)
          */
         fullscreenListener: function(evt) {
-            var el = this.containerObj;
+            var res, inner_id, inner_node;
 
+            inner_id = this._fullscreen_inner_id;
+            if (!Type.exists(inner_id)) {
+                return;
+            }
+
+            inner_node = document.getElementById(inner_id);
             // If full screen mode is started we have to remove CSS margin around the JSXGraph div.
             // Otherwise, the positioning of the fullscreen div will be false.
             // When leaving the fullscreen mode, the margin is put back in.
+            if (document.fullscreenElement) {
+                // Entered fullscreen mode
 
-            if (Type.exists(this._cssFullscreenStore) && this._cssFullscreenStore.isFullscreen) {
-                el._cssFullscreenStore.isFullscreen = false;
-                el.style.margin = this._cssFullscreenStore.margin;
-            } else {
-                el._cssFullscreenStore.isFullscreen = true;
-                el.style.margin = '';
+                inner_node.style.margin = '';
+
+                // Do the shifting and scaling via CSS pseudo rules
+                // We do this after fullscreen mode has been established to get the correct size
+                // of the JSXGraph div
+                res = Env._getScaleFactors(inner_node);
+                Env.scaleJSXGraphDiv(document.fullscreenElement.id, inner_id, res.scale, res.vshift);
+
+                // Store the scaling data.
+                // It is used in AbstractRenderer.updateText to restore the scaling matrix
+                // which is removed by MathJax.
+                // Further, the CSS margin has to be removed when in fullscreen mode,
+                // and must be restored later.
+                inner_node._cssFullscreenStore = {
+                    id: document.fullscreenElement.id,
+                    isFullscreen: true,
+                    margin: inner_node.style.margin,
+                    scale:  res.scale,
+                    vshift: res.vshift
+                };
+            } else if (Type.exists(inner_node._cssFullscreenStore)) {
+                // Left fullscreen mode
+
+                // Remove the CSS rules added in Env.scaleJSXGraphDiv
+                try {
+                    document.styleSheets[document.styleSheets.length - 1].deleteRule(0);
+                } catch (err) {
+                    console.log('JSXGraph: Could not remove CSS rules for full screen mode');
+                }
+                inner_node._cssFullscreenStore.isFullscreen = false;
+                inner_node.style.margin = inner_node._cssFullscreenStore.margin;
             }
 
             this.updateCSSTransforms();

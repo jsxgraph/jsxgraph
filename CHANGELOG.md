@@ -1,3 +1,42 @@
+1.3.2
+====
+
+Improvements
+------------
+
+- Fullscreen mode is now also possible with an out div, see
+<https://jsxgraph.org/docs/symbols/JXG.Board.html#toFullscreen>
+
+Bug fixes
+---------
+
+- Fixed regression regarding full screen mode
+- Fixed board freeze when certain devices are hit with the palm
+
+1.3.1
+====
+
+New features
+-----------
+
+- New method: JXG.Math.Geometry.affineRatio
+
+Improvements
+------------
+
+- Responsiveness: more stable reaction to size changes
+- Improved fullscreen mode in cases where the JSXGraph div does not have fixed width or height
+- `isOn` method covers also polygons with `hasInnerPoints:true`
+- API doc
+
+Bug fixes
+---------
+
+- Fixed: computation of intersection between parallel and (half-)bounded line
+- Fixed: Intersection points between circle and line with straights off
+- Fixed: handling of many (uncontrolled) simultaneous pointer events
+- Fixed regression: points defined as transformations of other points
+
 1.3.0
 ====
 

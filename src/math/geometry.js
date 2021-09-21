@@ -496,6 +496,28 @@ define([
         },
 
         /**
+         * Affine ratio of three collinear points a, b, c: (c - a) / (b - a).
+         * If r > 1 or r < 0 then c is outside of the segment ab.
+         *
+         * @param {JXG.Coords} a
+         * @param {JXG.Coords} b
+         * @param {JXG.Coords} c
+         * @returns {Number} affine ratio (c - a) / (b - a)
+         */
+        affineRatio: function(a, b, c) {
+            var r = 0.0,
+                dx =  b.usrCoords[1] - a.usrCoords[1];
+
+            if (Math.abs(dx) > Mat.eps) {
+                r = (c.usrCoords[1] - a.usrCoords[1]) / dx;
+            } else {
+                r = (c.usrCoords[2] - a.usrCoords[2]) /
+                    (b.usrCoords[2] - a.usrCoords[2]);
+            }
+            return r;
+        },
+
+        /**
          * Sort vertices counter clockwise starting with the first point.
          *
          * @param {Array} p An array containing {@link JXG.Point}, {@link JXG.Coords}, and/or arrays.
@@ -1101,17 +1123,42 @@ define([
                 // All other combinations of circles and lines,
                 // Arc types are treated as circles.
                 /** @ignore */
+
                 func = function () {
                     var res = that.meet(el1.stdform, el2.stdform, i, el1.board),
-                        has = true;
+                        has = true,
+                        first, last, r, dx;
 
-                    if (!alwaysintersect && el1_isArcType) {
+                    if (alwaysintersect) {
+                        return res;
+                    }
+                    if (el1.elementClass === Const.OBJECT_CLASS_LINE) {
+                        first = Type.evaluate(el1.visProp.straightfirst);
+                        last  = Type.evaluate(el1.visProp.straightlast);
+                        if (!first || !last) {
+                            r = that.affineRatio(el1.point1.coords, el1.point2.coords, res);
+                            if ( (!last && r > 1 + Mat.eps) || (!first && r < 0 - Mat.eps) ) {
+                                return (new Coords(JXG.COORDS_BY_USER, [0, NaN, NaN], el1.board));
+                            }
+                        }
+                    }
+                    if (el2.elementClass === Const.OBJECT_CLASS_LINE) {
+                        first = Type.evaluate(el2.visProp.straightfirst);
+                        last  = Type.evaluate(el2.visProp.straightlast);
+                        if (!first || !last) {
+                            r = that.affineRatio(el2.point1.coords, el2.point2.coords, res);
+                            if ( (!last && r > 1 + Mat.eps) || (!first && r < 0 - Mat.eps) ) {
+                                return (new Coords(JXG.COORDS_BY_USER, [0, NaN, NaN], el1.board));
+                            }
+                        }
+                    }
+                    if (el1_isArcType) {
                         has = that.coordsOnArc(el1, res);
                         if (has && el2_isArcType) {
                             has = that.coordsOnArc(el2, res);
                         }
                         if (!has) {
-                            res = (new Coords(JXG.COORDS_BY_USER, [0, NaN, NaN], el1.board));
+                            return (new Coords(JXG.COORDS_BY_USER, [0, NaN, NaN], el1.board));
                         }
                     }
                     return res;
@@ -1739,32 +1786,34 @@ define([
         },
 
         /**
-         * Intersection of two segments.
-         * @param {Array} p1 First point of segment 1 using homogeneous coordinates [z,x,y]
-         * @param {Array} p2 Second point of segment 1 using homogeneous coordinates [z,x,y]
-         * @param {Array} q1 First point of segment 2 using homogeneous coordinates [z,x,y]
-         * @param {Array} q2 Second point of segment 2 using homogeneous coordinates [z,x,y]
+         * (Virtual) Intersection of two segments.
+         * @param {Array} p1 First point of segment 1 using normalized homogeneous coordinates [1,x,y]
+         * @param {Array} p2 Second point or direction of segment 1 using normalized homogeneous coordinates [1,x,y] or point at infinity [0,x,y], respectively
+         * @param {Array} q1 First point of segment 2 using normalized homogeneous coordinates [1,x,y]
+         * @param {Array} q2 Second point or direction of segment 2 using normalized homogeneous coordinates [1,x,y] or point at infinity [0,x,y], respectively
          * @returns {Array} [Intersection point, t, u] The first entry contains the homogeneous coordinates
-         * of the intersection point. The second and third entry gives the position of the intersection between the
-         * two defining points. For example, the second entry t is defined by: intersection point = t*p1 + (1-t)*p2.
+         * of the intersection point. The second and third entry give the position of the intersection with respect 
+         * to the definiting parameters. For example, the second entry t is defined by: intersection point = p1 + t * deltaP, where
+         * deltaP = (p2 - p1) when both parameters are coordinates, and deltaP = p2 if p2 is a point at infinity.
          * If the two segments are collinear, [[0,0,0], Infinity, Infinity] is returned.
          **/
         meetSegmentSegment: function (p1, p2, q1, q2) {
-            var t, u, diff,
+            var t, u, cx,
                 li1 = Mat.crossProduct(p1, p2),
                 li2 = Mat.crossProduct(q1, q2),
-                c = Mat.crossProduct(li1, li2),
-                denom = c[0];
+                c = Mat.crossProduct(li1, li2);
 
-            if (Math.abs(denom) < Mat.eps) {
+            if (Math.abs(c[0]) < Mat.eps) {
                 return [c, Infinity, Infinity];
             }
 
-            diff = [q1[1] - p1[1], q1[2] - p1[2]];
-
-            // Because of speed issues, evalute the determinants directly
-            t = (diff[0] * (q2[2] - q1[2]) - diff[1] * (q2[1] - q1[1])) / denom;
-            u = (diff[0] * (p2[2] - p1[2]) - diff[1] * (p2[1] - p1[1])) / denom;
+            // The intersection point is already computed in c. To find t and u, it suffices to solve 
+            // for t in either x or y direction only. W.l.o.g. the x direction is chosen to compute both.
+            cx = c[1] / c[0];
+            // Note that the z-coordinate of p2 is used to determine whether it should be interpreted
+            // as a segment coordinate or a direction.
+            t = (cx - p1[1]) / (p2[1] - p2[0] * p1[1]);
+            u = (cx - q1[1]) / (q2[1] - q2[0] * q1[1]);
 
             return [c, t, u];
         },

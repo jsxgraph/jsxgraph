@@ -192,6 +192,7 @@ define([
             attr.navbar = Type.copyAttributes(attr.navbar, Options, 'navbar');
             attr.screenshot = Type.copyAttributes(attr, Options, 'board', 'screenshot');
             attr.resize = Type.copyAttributes(attr, Options, 'board', 'resize');
+            attr.fullscreen = Type.copyAttributes(attr, Options, 'board', 'fullscreen');
 
             // Treat moveTarget separately, because deepCopy will not work here.
             // Reason: moveTarget will be an HTML node and it is prevented that Type.deepCopy will copy it.
