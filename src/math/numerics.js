@@ -1857,11 +1857,12 @@ define(['jxg', 'utils/type', 'utils/env', 'math/math'], function (JXG, Type, Env
          * @param {Array} points Array of JXG.Points
          * @param {Number} digits Number of decimal digits of the coefficients
          * @param {String} param Name of the parameter. Default: 'x'.
+         * @param {String} dot Multiplication symbol. Default: ' * '.
          * @returns {String} containing the Lagrange polynomial through
          *    the supplied points.
          * @memberof JXG.Math.Numerics
          */
-        lagrangePolynomialString: function(points, digits, param) {
+        lagrangePolynomialString: function(points, digits, param, dot) {
             return function() {
                 var len = points.length,
                     zeroes = [],
@@ -1872,6 +1873,9 @@ define(['jxg', 'utils/type', 'utils/env', 'math/math'], function (JXG, Type, Env
                     i, j, c, p;
 
                 param = param || 'x';
+                if (dot === undefined) {
+                    dot = ' * ';
+                }
 
                 n = len - 1;  // (Max) degree of the polynomial
                 for (j = 0; j < len; j++) {
@@ -1911,9 +1915,9 @@ define(['jxg', 'utils/type', 'utils/env', 'math/math'], function (JXG, Type, Env
                     }
 
                     if (n - j > 1) {
-                        t += ' * ' + param + '^' + (n - j);
+                        t += dot + param + '^' + (n - j);
                     } else if (n - j === 1) {
-                        t += ' * ' + param;
+                        t += dot + param;
                     }
                 }
                 return t; // board.jc.manipulate('f = map(x) -> ' + t + ';');
