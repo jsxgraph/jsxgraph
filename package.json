@@ -48,6 +48,7 @@
   },
   "devDependencies": {
     "almond": "^0.3.3",
+    "ansi-regex": ">=6.0.1",
     "axios": ">=0.21.2",
     "bl": "^5.0.0",
     "braces": ">=2.3.1",
