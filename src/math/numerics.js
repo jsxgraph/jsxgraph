@@ -1861,6 +1861,39 @@ define(['jxg', 'utils/type', 'utils/env', 'math/math'], function (JXG, Type, Env
          * @returns {String} containing the Lagrange polynomial through
          *    the supplied points.
          * @memberof JXG.Math.Numerics
+         *
+         * @example
+         * var points = [];
+         * points[0] = board.create('point', [-1,2], {size:4});
+         * points[1] = board.create('point', [0, 0], {size:4});
+         * points[2] = board.create('point', [2, 1], {size:4});
+         *
+         * var f = JXG.Math.Numerics.lagrangePolynomial(points);
+         * var graph = board.create('functiongraph', [f,-10, 10], {strokeWidth:3});
+         *
+         * var f_txt = JXG.Math.Numerics.lagrangePolynomialString(points, 2, 't', ' * ');
+         * var txt = board.create('text', [-3, -4, f_txt], {fontSize: 16});
+         *
+         * </pre><div id="JXGd45e9e96-7526-486d-aa43-e1178d5f2baa" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXGd45e9e96-7526-486d-aa43-e1178d5f2baa',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *     var points = [];
+         *     points[0] = board.create('point', [-1,2], {size:4});
+         *     points[1] = board.create('point', [0, 0], {size:4});
+         *     points[2] = board.create('point', [2, 1], {size:4});
+         *
+         *     var f = JXG.Math.Numerics.lagrangePolynomial(points);
+         *     var graph = board.create('functiongraph', [f,-10, 10], {strokeWidth:3});
+         *
+         *     var f_txt = JXG.Math.Numerics.lagrangePolynomialString(points, 2, 't', ' * ');
+         *     var txt = board.create('text', [-3, -4, f_txt], {fontSize: 16});
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
          */
         lagrangePolynomialString: function(points, digits, param, dot) {
             return function() {
