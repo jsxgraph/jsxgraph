@@ -291,7 +291,7 @@ define([
          * @returns {JXG.GeometryElement} A reference to the element
          *
          * @example
-         * var im = board.create('image', ['http://jsxgraph.uni-bayreuth.de/distrib/images/uccellino.jpg',
+         * var im = board.create('image', ['https://jsxgraph.org/distrib/images/uccellino.jpg',
          *                                [-3,-2], [3,3]]);
          * im.setSize(4, 4);
          * board.update();
@@ -301,7 +301,7 @@ define([
          *     (function() {
          *         var board = JXG.JSXGraph.initBoard('JXG8411e60c-f009-11e5-b1bf-901b0e1b8723',
          *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
-         *     var im = board.create('image', ['http://jsxgraph.uni-bayreuth.de/distrib/images/uccellino.jpg', [-3,-2],    [3,3]]);
+         *     var im = board.create('image', ['https://jsxgraph.org/distrib/images/uccellino.jpg', [-3,-2],    [3,3]]);
          *     //im.setSize(4, 4);
          *     //board.update();
          *
@@ -311,7 +311,7 @@ define([
          *
          * @example
          * var p0 = board.create('point', [-3, -2]),
-         *     im = board.create('image', ['http://jsxgraph.uni-bayreuth.de/distrib/images/uccellino.jpg',
+         *     im = board.create('image', ['https://jsxgraph.org/distrib/images/uccellino.jpg',
          *                     [function(){ return p0.X(); }, function(){ return p0.Y(); }],
          *                     [3,3]]),
          *     p1 = board.create('point', [1, 2]);
@@ -325,7 +325,7 @@ define([
          *         var board = JXG.JSXGraph.initBoard('JXG4ce706c0-f00a-11e5-b1bf-901b0e1b8723',
          *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
          *     var p0 = board.create('point', [-3, -2]),
-         *         im = board.create('image', ['http://jsxgraph.uni-bayreuth.de/distrib/images/uccellino.jpg',
+         *         im = board.create('image', ['https://jsxgraph.org/distrib/images/uccellino.jpg',
          *                         [function(){ return p0.X(); }, function(){ return p0.Y(); }],
          *                         [3,3]]),
          *         p1 = board.create('point', [1, 2]);
@@ -382,12 +382,12 @@ define([
      * <p>
      * The array size defines the image's width and height in user coordinates.
      * @example
-     * var im = board.create('image', ['http://jsxgraph.uni-bayreuth.de/jsxgraph/distrib/images/uccellino.jpg', [-3,-2], [3,3]]);
+     * var im = board.create('image', ['https://jsxgraph.org/jsxgraph/distrib/images/uccellino.jpg', [-3,-2], [3,3]]);
      *
      * </pre><div class="jxgbox" id="JXG9850cda0-7ea0-4750-981c-68bacf9cca57" style="width: 400px; height: 400px;"></div>
      * <script type="text/javascript">
      *   var image_board = JXG.JSXGraph.initBoard('JXG9850cda0-7ea0-4750-981c-68bacf9cca57', {boundingbox: [-4, 4, 4, -4], axis: true, showcopyright: false, shownavigation: false});
-     *   var image_im = image_board.create('image', ['http://jsxgraph.uni-bayreuth.de/distrib/images/uccellino.jpg', [-3,-2],[3,3]]);
+     *   var image_im = image_board.create('image', ['https://jsxgraph.org/distrib/images/uccellino.jpg', [-3,-2],[3,3]]);
      * </script><pre>
      */
     JXG.createImage = function (board, parents, attributes) {

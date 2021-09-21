@@ -1565,7 +1565,7 @@ define([
             // initiated by the user, e.g. through custom DOM events. We can't just pick one because this would break user
             // defined highlighting in many ways:
             //  * if overriding the highlight() methods the user had to handle the highlightedObjects stuff, otherwise he'd break
-            //    everything (e.g. the pie chart example http://jsxgraph.uni-bayreuth.de/wiki/index.php/Pie_chart (not exactly
+            //    everything (e.g. the pie chart example https://jsxgraph.org/wiki/index.php/Pie_chart (not exactly
             //    user defined but for this type of chart the highlight method was overridden and not adjusted to the changes in here)
             //    where it just kept highlighting until the radius of the pie was far beyond infinity...
             //  * user defined highlighting would get pointless, everytime the user highlights something using .highlight(), it would get
