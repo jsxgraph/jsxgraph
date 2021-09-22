@@ -1298,6 +1298,19 @@ define([
             this.setObjectStrokeColor(el, strokeColor, strokeOpacity);
         },
 
+        drawForeignObject: function (el) {
+            console.log("Start drawForeignObject");
+
+            el.rendNode = this.appendChildPrim(this.createPrim('foreignObject', el.id),
+                                    Type.evaluate(el.visProp.layer));
+            this.appendNodesToElement(el, 'foreignObject');
+            this.updateForeignObject(el);
+
+            console.log("End drawForeignObject");
+        },
+
+        updateForeignObject: function(element) { /* stub */ },
+
         /* **************************
          *    Image related stuff
          * **************************/

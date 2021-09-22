@@ -1137,6 +1137,8 @@ define([
                         this.elType = 'text';
                     } else if (this.type === Const.OBJECT_TYPE_IMAGE) {
                         this.elType = 'image';
+                    } else if (this.type === Const.OBJECT_TYPE_FOREIGNOBJECT) {
+                        this.elType = 'foreignobject';
                     }
 
                     this.slideObject = null;
