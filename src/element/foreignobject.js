@@ -108,7 +108,6 @@
          * @returns {Boolean} True if (x,y) is over the image, False otherwise.
          */
          hasPoint: function (x, y) {
-            /*
             var dx, dy, r, type, prec,
                 c, v, p, dot,
                 len = this.transformations.length;
@@ -128,7 +127,7 @@
                 r = prec;
 
                 return dx >= -r && dx - this.size[0] <= r &&
-                    dy >= -r && dy - this.size[1] <= r;
+                       dy >= -r && dy - this.size[1] <= r;
             }
 
             // Image is transformed
@@ -149,7 +148,6 @@
                     return true;
                 }
             }
-            */
             return false;
         },
 
