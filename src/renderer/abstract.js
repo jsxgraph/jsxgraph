@@ -1299,18 +1299,21 @@ define([
         },
 
         drawForeignObject: function (el) {
-            console.log("Start drawForeignObject");
-
             el.rendNode = this.appendChildPrim(this.createPrim('foreignObject', el.id),
                                     Type.evaluate(el.visProp.layer));
             this.appendNodesToElement(el, 'foreignObject');
             this.updateForeignObject(el);
-
-            console.log("End drawForeignObject");
         },
 
-        updateForeignObject: function(element) { /* stub */ },
+        updateForeignObject: function(el) {
+            this.updateRectPrim(el.rendNode, el.coords.scrCoords[1],
+                el.coords.scrCoords[2] - el.size[1], el.size[0], el.size[1]);
 
+            el.rendNode.innerHTML = el.content;
+            this._updateVisual(el, {stroke: true, dash: true}, true);
+
+            /* stub */
+        },
         /* **************************
          *    Image related stuff
          * **************************/

@@ -163,11 +163,9 @@
             if (!this.needsUpdate) {
                 return this;
             }
-
             this.updateCoords(fromParent);
             this.updateSize();
-            this.updateSpan();
-
+            // this.updateSpan();
             return this;
         },
 

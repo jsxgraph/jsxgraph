@@ -2805,6 +2805,18 @@ define([
             /**#@-*/
         },
 
+        /* special foreignObject options */
+        foreignobject: {
+
+            /**#@+
+             * @visprop
+             */
+            attractors: [],
+            visible: true
+
+            /**#@-*/
+        },
+
         glider: {
             /**#@+
              * @visprop
