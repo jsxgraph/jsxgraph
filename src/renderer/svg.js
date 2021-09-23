@@ -175,6 +175,7 @@ define([
 
         if (this.supportsForeignObject) {
             this.foreignObjLayer = this.container.ownerDocument.createElementNS(this.svgNamespace, 'foreignObject');
+            this.foreignObjLayer.setAttribute("display", "none");
             this.foreignObjLayer.setAttribute("x", 0);
             this.foreignObjLayer.setAttribute("y", 0);
             this.foreignObjLayer.setAttribute("width", "100%");
@@ -1569,7 +1570,7 @@ define([
          * The SVG code of the construction is base64 encoded. The return string starts
          * with "data:image/svg+xml;base64,...".
          *
-         * @param {Boolean} ignoreTexts If true, the foreignObject tag is taken out from the SVG root.
+         * @param {Boolean} ignoreTexts If true, the foreignObject tag is set to display=none.
          * This is necessary for older versions of Safari. Default: false
          * @returns {String}  data URI string
          */
@@ -1587,19 +1588,15 @@ define([
             // input values are not copied. This can be verified by looking at an innerHTML output
             // of an input element. Therefore, we do it "by hand".
             if (this.container.hasChildNodes() && Type.exists(this.foreignObjLayer)) {
+                if (!ignoreTexts) {
+                    this.foreignObjLayer.setAttribute('display', 'inline');
+                }
                 while (svgRoot.nextSibling) {
 
                     // Copy all value attributes
                     values = values.concat(this._getValuesOfDOMElements(svgRoot.nextSibling));
 
                     this.foreignObjLayer.appendChild(svgRoot.nextSibling);
-                }
-                if (ignoreTexts === true) {
-                    // Take out foreignObjLayer, so that it will not be visible
-                    // in the dump.
-                    doc = this.container.ownerDocument;
-                    virtualNode = doc.createElement('div');
-                    virtualNode.appendChild(this.foreignObjLayer);
                 }
             }
 
@@ -1635,14 +1632,11 @@ define([
             // Move all HTML tags back from
             // the foreignObject element to the container
             if (Type.exists(this.foreignObjLayer) && this.foreignObjLayer.hasChildNodes()) {
-                if (ignoreTexts === true) {
-                    // Put foreignObjLayer back into the SVG
-                    svgRoot.appendChild(this.foreignObjLayer);
-                }
                 // Restore all HTML elements
                 while (this.foreignObjLayer.firstChild) {
                     this.container.appendChild(this.foreignObjLayer.firstChild);
                 }
+                this.foreignObjLayer.setAttribute("display", "none");
             }
 
             return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
