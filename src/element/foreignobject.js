@@ -130,7 +130,7 @@
                        dy >= -r && dy - this.size[1] <= r;
             }
 
-            // Image is transformed
+            // foreignObject is transformed
             c = new Coords(Const.COORDS_BY_SCREEN, [x, y], this.board);
             // v is the vector from anchor point to the drag point
             c = c.usrCoords;
