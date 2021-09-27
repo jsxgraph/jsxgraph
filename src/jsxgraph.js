@@ -602,15 +602,11 @@ define([
                         id = 'jessiescript_autgen_jxg_' + i;
                         div = document.createElement('div');
                         div.setAttribute('id', id);
-                        txt = '';
-                        if (width !== '') {
-                            txt += 'width:' + width + ';';
-                        }
-                        if (height !== '') {
-                            txt += 'height:' + height + ';';
-                        }
-                        txt += 'max-width:' + maxWidth + ';';
-                        txt += 'aspect-ratio:' + aspectRatio + ';';
+
+                        txt = (width !== '') ? ('width:' + width + ';') : '';
+                        txt += (height !== '') ? ('height:' + height + ';') : '';
+                        txt += (maxWidth !== '') ? ('max-width:' + maxWidth + ';') : '';
+                        txt += (aspectRatio !== '') ? ('aspect-ratio:' + aspectRatio + ';') : '';
 
                         div.setAttribute('style', txt);
                         div.setAttribute('class', 'jxgbox ' + cssClasses);
