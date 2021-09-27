@@ -2812,6 +2812,7 @@ define([
              * @visprop
              */
             attractors: [],
+            fixed: true,
             visible: true
 
             /**#@-*/
