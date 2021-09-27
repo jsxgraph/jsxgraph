@@ -65,7 +65,7 @@ define([
     'element/checkbox',
     'element/input',
     'element/button',
-    'element/foreignobject'
+    'base/foreignobject'
 ], function (JXG) {
     "use strict";
 
