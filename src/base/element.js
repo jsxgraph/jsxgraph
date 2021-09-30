@@ -1977,12 +1977,15 @@ define([
          * @returns {JXG.GeometryElement} Reference to this element
          */
         handleSnapToGrid: function (force, fromParent) {
-            var x, y, ticks,
+            var x, y, ticks, rx, ry, rcoords,
                 //i, len, g, el, p,
                 boardBB,
                 needsSnapToGrid = false,
                 sX = Type.evaluate(this.visProp.snapsizex),
-                sY = Type.evaluate(this.visProp.snapsizey);
+                sY = Type.evaluate(this.visProp.snapsizey),
+                attractToGrid = Type.evaluate(this.visProp.attracttogrid),
+                ev_au = Type.evaluate(this.visProp.attractorunit),
+                ev_ad = Type.evaluate(this.visProp.attractordistance);
 
             if (!Type.exists(this.coords)) {
                 return this;
@@ -2007,25 +2010,29 @@ define([
                 // if no valid snap sizes are available, don't change the coords.
                 if (sX > 0 && sY > 0) {
                     boardBB = this.board.getBoundingBox();
-                    x = Math.round(x / sX) * sX;
-                    y = Math.round(y / sY) * sY;
+                    rx = Math.round(x / sX) * sX;
+                    ry = Math.round(y / sY) * sY;
+                    rcoords = new JXG.Coords(Const.COORDS_BY_USER, [rx,ry], this.board);
+                    if(!attractToGrid || rcoords.distance(ev_au == 'screen' ? Const.COORDS_BY_SCREEN : Const.COORDS_BY_USER, this.coords)<ev_ad) {
+                        x = rx;
+                        y = ry;
+                        // checking whether x and y are still within boundingBox,
+                        // if not, adjust them to remain within the board
+                        if (!fromParent) {
+                            if (x < boardBB[0]) {
+                                x += sX;
+                            } else if (x > boardBB[2]) {
+                                x -= sX;
+                            }
 
-                    // checking whether x and y are still within boundingBox,
-                    // if not, adjust them to remain within the board
-                    if (!fromParent) {
-                        if (x < boardBB[0]) {
-                            x += sX;
-                        } else if (x > boardBB[2]) {
-                            x -= sX;
+                            if (y < boardBB[3]) {
+                                y += sY;
+                            } else if (y > boardBB[1]) {
+                                y -= sY;
+                            }
                         }
-
-                        if (y < boardBB[3]) {
-                            y += sY;
-                        } else if (y > boardBB[1]) {
-                            y -= sY;
-                        }
+                        this.coords.setCoordinates(Const.COORDS_BY_USER, [x, y]);
                     }
-                    this.coords.setCoordinates(Const.COORDS_BY_USER, [x, y]);
                 }
             }
             return this;

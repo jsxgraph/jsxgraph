@@ -3988,6 +3988,19 @@ define([
             snapToGrid: false,
 
             /**
+             * If set to true, the point will only snap to the grid when within {@link Point#attractorDistance} of a grid point.
+             *
+             * @name Point#attractToGrid
+             *
+             * @see Point#attractorDistance
+             * @see Point#attractorUnit
+             * @see Point#snapToGrid
+             * @type Boolean
+             * @default false
+             */
+            attractToGrid: false,
+
+            /**
              * Defines together with {@link Point#snapSizeY} the grid the point snaps on to.
              * The point will only snap on integer multiples to snapSizeX in x and snapSizeY in y direction.
              * If this value is equal to or less than <tt>0</tt>, it will use the grid displayed by the major ticks
