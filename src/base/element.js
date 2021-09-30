@@ -1969,7 +1969,7 @@ define([
         /**
          * Move an element to its nearest grid point.
          * The function uses the coords object of the element as
-         * its actual position. If there is no coords object, nothing is done.
+         * its actual position. If there is no coords object or if the object is fixed, nothing is done.
          * @param {Boolean} force force snapping independent from what the snaptogrid attribute says
          * @param {Boolean} fromParent True if the drag comes from a child element. This is the case if a line
          *    through two points is dragged. In this case we do not try to force the points to stay inside of
@@ -1984,7 +1984,7 @@ define([
                 sX = Type.evaluate(this.visProp.snapsizex),
                 sY = Type.evaluate(this.visProp.snapsizey);
 
-            if (!Type.exists(this.coords)) {
+            if (!Type.exists(this.coords) || Type.evaluate(this.visProp.fixed)) {
                 return this;
             }
 
@@ -2004,14 +2004,15 @@ define([
                     sY = ticks.ticksDelta * (Type.evaluate(ticks.visProp.minorticks) + 1);
                 }
 
-                // if no valid snap sizes are available, don't change the coords.
+                // If no valid snap sizes are available, don't change the coords.
                 if (sX > 0 && sY > 0) {
                     boardBB = this.board.getBoundingBox();
                     x = Math.round(x / sX) * sX;
                     y = Math.round(y / sY) * sY;
 
-                    // checking whether x and y are still within boundingBox,
-                    // if not, adjust them to remain within the board
+                    // Checking whether x and y are still within boundingBox.
+                    // If not, adjust them to remain within the board.
+                    // Otherwise a point may become invisible.
                     if (!fromParent) {
                         if (x < boardBB[0]) {
                             x += sX;

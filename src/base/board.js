@@ -3120,6 +3120,7 @@ define([
             evt.preventDefault();
             return false;
         },
+
         /**
          * Allow moving of JSXGraph elements with arrow keys
          * and zooming of the construction with + / -.
@@ -3254,7 +3255,7 @@ define([
          *
          * @param  {Event} evt The browser's event object
          */
-         keyFocusOutListener: function (evt) {
+        keyFocusOutListener: function (evt) {
             if (!this.attr.keyboard.enabled) {
                 return false;
             }

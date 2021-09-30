@@ -787,7 +787,7 @@ define([
         /**
          * Alias for {@link JXG.Element#handleSnapToGrid}
          * @param {Boolean} force force snapping independent from what the snaptogrid attribute says
-         * @returns {JXG.Point} Reference to this element
+         * @returns {JXG.CoordsElement} Reference to this element
          */
         snapToGrid: function (force) {
             return this.handleSnapToGrid(force);
