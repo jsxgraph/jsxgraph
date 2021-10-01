@@ -3120,6 +3120,7 @@ define([
             evt.preventDefault();
             return false;
         },
+
         /**
          * Allow moving of JSXGraph elements with arrow keys
          * and zooming of the construction with + / -.
@@ -3203,6 +3204,10 @@ define([
                     // For coordsElement setPosition has to call setPositionDirectly.
                     // Otherwise the position is set by a translation.
                     el.setPosition(JXG.COORDS_BY_USER, dir);
+                    if (Type.exists(el.coords)) {
+                        this.updateInfobox(el);
+                    }
+                    this.triggerEventHandlers(['hit'], [evt, el]);
                 }
             }
 
@@ -3234,6 +3239,10 @@ define([
             if (Type.exists(el.highlight)) {
                 el.highlight(true);
             }
+            if (Type.exists(el.coords)) {
+                this.updateInfobox(el);
+            }
+            this.triggerEventHandlers(['hit'], [evt, el]);
         },
 
         /**
@@ -3246,7 +3255,7 @@ define([
          *
          * @param  {Event} evt The browser's event object
          */
-         keyFocusOutListener: function (evt) {
+        keyFocusOutListener: function (evt) {
             if (!this.attr.keyboard.enabled) {
                 return false;
             }
@@ -3256,6 +3265,7 @@ define([
             // id = id_node.replace(this.containerObj.id + '_', '');
             // el = this.select(id);
             this.dehighlightAll();
+            this.displayInfobox(false);
         },
 
         /**
