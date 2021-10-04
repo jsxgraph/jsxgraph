@@ -28160,6 +28160,19 @@ define('options',[
             snapToGrid: false,
 
             /**
+             * If set to true, the point will only snap to the grid when within {@link Point#attractorDistance} of a grid point.
+             *
+             * @name Point#attractToGrid
+             *
+             * @see Point#attractorDistance
+             * @see Point#attractorUnit
+             * @see Point#snapToGrid
+             * @type Boolean
+             * @default false
+             */
+            attractToGrid: false,
+
+            /**
              * Defines together with {@link Point#snapSizeY} the grid the point snaps on to.
              * The point will only snap on integer multiples to snapSizeX in x and snapSizeY in y direction.
              * If this value is equal to or less than <tt>0</tt>, it will use the grid displayed by the major ticks
@@ -29506,6 +29519,56 @@ define('options',[
              */
             useMathJax: false,
 
+            /**
+             *
+             * @name useKatex
+             * @memberOf Text.prototype
+             * @default false
+             * @type Boolean
+             *
+             * For this katex.min.js and katex.min.css have to be included
+             *
+             * @example
+             * JXG.Options.text.useKatex = true;
+             *
+             * const board = JXG.JSXGraph.initBoard('jxgbox', {
+             *     boundingbox: [-2, 5, 8, -5], axis:true
+             * });
+             *
+             * var a = board.create('slider',[[-0.7,1.5],[5,1.5],[0,0.5,1]], {
+             *     suffixlabel:'t_1=',
+             *     unitLabel: ' \\text{ ms}',
+             *     snapWidth:0.01});
+             *
+             * func = board.create('functiongraph',[function(x){return (a.Value()*x*x)}], {strokeColor: "red"});
+             * text1 = board.create('text', [5, 1, function(){
+             *             return 'a(t)= { 1 \\over ' + a.Value().toFixed(3) + '}';
+             *         }], {fontSize: 15, fixed:true, strokeColor:'red', anchorY: 'top'});
+             * 
+             * </pre>
+             * <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex.css/dist/katex.min.css">
+             * <script src="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.js"></script>
+             * <div id="JXG497f065c-cfc1-44c3-ba21-5fa581668869" class="jxgbox" style="width: 300px; height: 300px;"></div>
+             * <script type="text/javascript">
+             *     (function() {
+             *         var board = JXG.JSXGraph.initBoard('JXG497f065c-cfc1-44c3-ba21-5fa581668869',
+             *             {boundingbox: [-2, 5, 8, -5], axis: true, showcopyright: false, shownavigation: false});
+             *     board.options.useKatex = true;
+             *     var a = board.create('slider',[[-0.7,1.5],[5,1.5],[0,0.5,1]], {
+             *         suffixlabel:'t_1=',
+             *         unitLabel: ' \\text{ ms}',
+             *         snapWidth:0.01});
+             *     
+             *     func = board.create('functiongraph',[function(x){return (a.Value()*x*x)}], {strokeColor: "red"});
+             *     text1 = board.create('text', [5, 1, function(){
+             *                 return 'a(t)= { 1 \\over ' + a.Value().toFixed(3) + '}';
+             *             }], {fontSize: 15, fixed:true, strokeColor:'red', anchorY: 'top'});
+             * 
+             *     })();
+             * 
+             * </script><pre>
+             * </pre>
+             */
             useKatex: false,
 
             /**
@@ -34437,7 +34500,7 @@ define('base/element',[
             // initiated by the user, e.g. through custom DOM events. We can't just pick one because this would break user
             // defined highlighting in many ways:
             //  * if overriding the highlight() methods the user had to handle the highlightedObjects stuff, otherwise he'd break
-            //    everything (e.g. the pie chart example http://jsxgraph.uni-bayreuth.de/wiki/index.php/Pie_chart (not exactly
+            //    everything (e.g. the pie chart example https://jsxgraph.org/wiki/index.php/Pie_chart (not exactly
             //    user defined but for this type of chart the highlight method was overridden and not adjusted to the changes in here)
             //    where it just kept highlighting until the radius of the pie was far beyond infinity...
             //  * user defined highlighting would get pointless, everytime the user highlights something using .highlight(), it would get
@@ -34841,7 +34904,7 @@ define('base/element',[
         /**
          * Move an element to its nearest grid point.
          * The function uses the coords object of the element as
-         * its actual position. If there is no coords object, nothing is done.
+         * its actual position. If there is no coords object or if the object is fixed, nothing is done.
          * @param {Boolean} force force snapping independent from what the snaptogrid attribute says
          * @param {Boolean} fromParent True if the drag comes from a child element. This is the case if a line
          *    through two points is dragged. In this case we do not try to force the points to stay inside of
@@ -34849,14 +34912,17 @@ define('base/element',[
          * @returns {JXG.GeometryElement} Reference to this element
          */
         handleSnapToGrid: function (force, fromParent) {
-            var x, y, ticks,
+            var x, y, ticks, rx, ry, rcoords,
                 //i, len, g, el, p,
                 boardBB,
                 needsSnapToGrid = false,
                 sX = Type.evaluate(this.visProp.snapsizex),
-                sY = Type.evaluate(this.visProp.snapsizey);
+                sY = Type.evaluate(this.visProp.snapsizey),
+                attractToGrid = Type.evaluate(this.visProp.attracttogrid),
+                ev_au = Type.evaluate(this.visProp.attractorunit),
+                ev_ad = Type.evaluate(this.visProp.attractordistance);
 
-            if (!Type.exists(this.coords)) {
+            if (!Type.exists(this.coords) || Type.evaluate(this.visProp.fixed)) {
                 return this;
             }
 
@@ -34876,28 +34942,33 @@ define('base/element',[
                     sY = ticks.ticksDelta * (Type.evaluate(ticks.visProp.minorticks) + 1);
                 }
 
-                // if no valid snap sizes are available, don't change the coords.
+                // If no valid snap sizes are available, don't change the coords.
                 if (sX > 0 && sY > 0) {
                     boardBB = this.board.getBoundingBox();
-                    x = Math.round(x / sX) * sX;
-                    y = Math.round(y / sY) * sY;
+                    rx = Math.round(x / sX) * sX;
+                    ry = Math.round(y / sY) * sY;
+                    rcoords = new JXG.Coords(Const.COORDS_BY_USER, [rx, ry], this.board);
+                    if (!attractToGrid || rcoords.distance(ev_au == 'screen' ? Const.COORDS_BY_SCREEN : Const.COORDS_BY_USER, this.coords) < ev_ad) {
+                        x = rx;
+                        y = ry;
+                        // Checking whether x and y are still within boundingBox.
+                        // If not, adjust them to remain within the board.
+                        // Otherwise a point may become invisible.
+                        if (!fromParent) {
+                            if (x < boardBB[0]) {
+                                x += sX;
+                            } else if (x > boardBB[2]) {
+                                x -= sX;
+                            }
 
-                    // checking whether x and y are still within boundingBox,
-                    // if not, adjust them to remain within the board
-                    if (!fromParent) {
-                        if (x < boardBB[0]) {
-                            x += sX;
-                        } else if (x > boardBB[2]) {
-                            x -= sX;
+                            if (y < boardBB[3]) {
+                                y += sY;
+                            } else if (y > boardBB[1]) {
+                                y -= sY;
+                            }
                         }
-
-                        if (y < boardBB[3]) {
-                            y += sY;
-                        } else if (y > boardBB[1]) {
-                            y -= sY;
-                        }
+                        this.coords.setCoordinates(Const.COORDS_BY_USER, [x, y]);
                     }
-                    this.coords.setCoordinates(Const.COORDS_BY_USER, [x, y]);
                 }
             }
             return this;
@@ -35931,7 +36002,7 @@ define('base/coordselement',[
         /**
          * Alias for {@link JXG.Element#handleSnapToGrid}
          * @param {Boolean} force force snapping independent from what the snaptogrid attribute says
-         * @returns {JXG.Point} Reference to this element
+         * @returns {JXG.CoordsElement} Reference to this element
          */
         snapToGrid: function (force) {
             return this.handleSnapToGrid(force);
@@ -42617,6 +42688,9 @@ define('base/point',[
                     return Geometry.distPointLine(this.coords.usrCoords, el.stdform) < tol;
                 }
             } else if (el.elementClass === Const.OBJECT_CLASS_CIRCLE) {
+                if (Type.evaluate(el.visProp.hasinnerpoints)) {
+                    return this.Dist(el.center) < el.Radius() + tol;
+                }
                 return Math.abs(this.Dist(el.center) - el.Radius()) < tol;
             } else if (el.elementClass === Const.OBJECT_CLASS_CURVE) {
                 crds = Geometry.projectPointToCurve(this, el, this.board)[0];
@@ -57217,6 +57291,7 @@ define('base/board',[
             evt.preventDefault();
             return false;
         },
+
         /**
          * Allow moving of JSXGraph elements with arrow keys
          * and zooming of the construction with + / -.
@@ -57300,6 +57375,10 @@ define('base/board',[
                     // For coordsElement setPosition has to call setPositionDirectly.
                     // Otherwise the position is set by a translation.
                     el.setPosition(JXG.COORDS_BY_USER, dir);
+                    if (Type.exists(el.coords)) {
+                        this.updateInfobox(el);
+                    }
+                    this.triggerEventHandlers(['hit'], [evt, el]);
                 }
             }
 
@@ -57331,6 +57410,10 @@ define('base/board',[
             if (Type.exists(el.highlight)) {
                 el.highlight(true);
             }
+            if (Type.exists(el.coords)) {
+                this.updateInfobox(el);
+            }
+            this.triggerEventHandlers(['hit'], [evt, el]);
         },
 
         /**
@@ -57343,7 +57426,7 @@ define('base/board',[
          *
          * @param  {Event} evt The browser's event object
          */
-         keyFocusOutListener: function (evt) {
+        keyFocusOutListener: function (evt) {
             if (!this.attr.keyboard.enabled) {
                 return false;
             }
@@ -57353,6 +57436,7 @@ define('base/board',[
             // id = id_node.replace(this.containerObj.id + '_', '');
             // el = this.select(id);
             this.dehighlightAll();
+            this.displayInfobox(false);
         },
 
         /**
@@ -69588,7 +69672,7 @@ define('base/image',[
          * @returns {JXG.GeometryElement} A reference to the element
          *
          * @example
-         * var im = board.create('image', ['http://jsxgraph.uni-bayreuth.de/distrib/images/uccellino.jpg',
+         * var im = board.create('image', ['https://jsxgraph.org/distrib/images/uccellino.jpg',
          *                                [-3,-2], [3,3]]);
          * im.setSize(4, 4);
          * board.update();
@@ -69598,7 +69682,7 @@ define('base/image',[
          *     (function() {
          *         var board = JXG.JSXGraph.initBoard('JXG8411e60c-f009-11e5-b1bf-901b0e1b8723',
          *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
-         *     var im = board.create('image', ['http://jsxgraph.uni-bayreuth.de/distrib/images/uccellino.jpg', [-3,-2],    [3,3]]);
+         *     var im = board.create('image', ['https://jsxgraph.org/distrib/images/uccellino.jpg', [-3,-2],    [3,3]]);
          *     //im.setSize(4, 4);
          *     //board.update();
          *
@@ -69608,7 +69692,7 @@ define('base/image',[
          *
          * @example
          * var p0 = board.create('point', [-3, -2]),
-         *     im = board.create('image', ['http://jsxgraph.uni-bayreuth.de/distrib/images/uccellino.jpg',
+         *     im = board.create('image', ['https://jsxgraph.org/distrib/images/uccellino.jpg',
          *                     [function(){ return p0.X(); }, function(){ return p0.Y(); }],
          *                     [3,3]]),
          *     p1 = board.create('point', [1, 2]);
@@ -69622,7 +69706,7 @@ define('base/image',[
          *         var board = JXG.JSXGraph.initBoard('JXG4ce706c0-f00a-11e5-b1bf-901b0e1b8723',
          *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
          *     var p0 = board.create('point', [-3, -2]),
-         *         im = board.create('image', ['http://jsxgraph.uni-bayreuth.de/distrib/images/uccellino.jpg',
+         *         im = board.create('image', ['https://jsxgraph.org/distrib/images/uccellino.jpg',
          *                         [function(){ return p0.X(); }, function(){ return p0.Y(); }],
          *                         [3,3]]),
          *         p1 = board.create('point', [1, 2]);
@@ -69679,12 +69763,12 @@ define('base/image',[
      * <p>
      * The array size defines the image's width and height in user coordinates.
      * @example
-     * var im = board.create('image', ['http://jsxgraph.uni-bayreuth.de/jsxgraph/distrib/images/uccellino.jpg', [-3,-2], [3,3]]);
+     * var im = board.create('image', ['https://jsxgraph.org/jsxgraph/distrib/images/uccellino.jpg', [-3,-2], [3,3]]);
      *
      * </pre><div class="jxgbox" id="JXG9850cda0-7ea0-4750-981c-68bacf9cca57" style="width: 400px; height: 400px;"></div>
      * <script type="text/javascript">
      *   var image_board = JXG.JSXGraph.initBoard('JXG9850cda0-7ea0-4750-981c-68bacf9cca57', {boundingbox: [-4, 4, 4, -4], axis: true, showcopyright: false, shownavigation: false});
-     *   var image_im = image_board.create('image', ['http://jsxgraph.uni-bayreuth.de/distrib/images/uccellino.jpg', [-3,-2],[3,3]]);
+     *   var image_im = image_board.create('image', ['https://jsxgraph.org/distrib/images/uccellino.jpg', [-3,-2],[3,3]]);
      * </script><pre>
      */
     JXG.createImage = function (board, parents, attributes) {

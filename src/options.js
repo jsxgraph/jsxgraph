@@ -5237,7 +5237,7 @@ define([
              *
              * @example
              * // Load MathJax:
-             * // <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+             * // &lt;script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"&lt;&lt;/script&gt;
              *
              * // function and its derivative
              * var f1 = function(x) { return x * x * x; },
@@ -5344,9 +5344,99 @@ define([
              *
              * </script><pre>
              *
+             * @example
+             * var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-1, 10, 11, -2], axis: true});
+             * board.options.text.useMathjax = true;
+             *
+             * a = board.create('slider',[[-0.7,1.5],[5,1.5],[0,0.5,1]], {
+             *     suffixlabel:'\\(t_1=\\)',
+             *     unitLabel: ' \\(\\text{ ms}\\)',
+             *     snapWidth:0.01}),
+             *
+             * func = board.create('functiongraph',[function(x){return (a.Value()*x*x)}], {strokeColor: "red"});
+             * text1 = board.create('text', [5, 1, function(){
+             *             return '\\(a(t)= { 1 \\over ' + a.Value().toFixed(3) + '}\\)';
+             *         }], {fontSize: 15, fixed:true, strokeColor:'red', anchorY: 'top', parse: false});
+             * 
+             * </pre><div id="JXGf8bd01db-fb6a-4a5c-9e7f-8823f7aa5ac6" class="jxgbox" style="width: 300px; height: 300px;"></div>
+             * <script type="text/javascript">
+             *     (function() {
+             *         var board = JXG.JSXGraph.initBoard('JXGf8bd01db-fb6a-4a5c-9e7f-8823f7aa5ac6',
+             *             {boundingbox: [-1, 10, 11, -2], axis: true, showcopyright: false, shownavigation: false});
+             *     board.options.text.useMathjax = true;
+             *
+             *     a = board.create('slider',[[-0.7,1.5],[5,1.5],[0,0.5,1]], {
+             *         suffixlabel:'\\(t_1=\\)',
+             *         unitLabel: ' \\(\\text{ ms}\\)',
+             *         snapWidth:0.01}),
+             *     
+             *     func = board.create('functiongraph',[function(x){return (a.Value()*x*x)}], {strokeColor: "red"});
+             *     text1 = board.create('text', [5, 1, function(){
+             *                 return '\\(a(t)= { 1 \\over ' + a.Value().toFixed(3) + '}\\)';
+             *             }], {fontSize: 15, fixed:true, strokeColor:'red', anchorY: 'top', parse: false});
+             * 
+             *     })();
+             *
+             * </script><pre>
+             *
              */
             useMathJax: false,
 
+            /**
+             *
+             * If true, KaTeX will be used to render the input string.
+             * For this feature, katex.min.js and katex.min.css have to be included.
+             * <p>
+             * The example below does not work, because there is a conflict with
+             * the MathJax library which is used below.
+             * </p>
+             *
+             * @name useKatex
+             * @memberOf Text.prototype
+             * @default false
+             * @type Boolean
+             *
+             *
+             * @example
+             * JXG.Options.text.useKatex = true;
+             *
+             * const board = JXG.JSXGraph.initBoard('jxgbox', {
+             *     boundingbox: [-2, 5, 8, -5], axis:true
+             * });
+             *
+             * var a = board.create('slider',[[-0.7,1.5],[5,1.5],[0,0.5,1]], {
+             *     suffixlabel:'t_1=',
+             *     unitLabel: ' \\text{ ms}',
+             *     snapWidth:0.01});
+             *
+             * func = board.create('functiongraph',[function(x){return (a.Value()*x*x)}], {strokeColor: "red"});
+             * text1 = board.create('text', [5, 1, function(){
+             *             return 'a(t)= { 1 \\over ' + a.Value().toFixed(3) + '}';
+             *         }], {fontSize: 15, fixed:true, strokeColor:'red', anchorY: 'top'});
+             * 
+             * </pre>
+             * <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.13.10/dist/katex.min.css" integrity="sha384-0cCFrwW/0bAk1Z/6IMgIyNU3kfTcNirlObr4WjrUU7+hZeD6ravdYJ3kPWSeC31M" crossorigin="anonymous">
+             * <script src="https://cdn.jsdelivr.net/npm/katex@0.13.10/dist/katex.min.js" integrity="sha384-dtFDxK2tSkECx/6302Z4VN2ZRqt6Gis+b1IwCjJPrn0kMYFQT9rbtyQWg5NFWAF7" crossorigin="anonymous"></script>
+             * <div id="JXG497f065c-cfc1-44c3-ba21-5fa581668869" class="jxgbox" style="width: 300px; height: 300px;"></div>
+             * <script type="text/javascript">
+             *     (function() {
+             *         var board = JXG.JSXGraph.initBoard('JXG497f065c-cfc1-44c3-ba21-5fa581668869',
+             *             {boundingbox: [-2, 5, 8, -5], axis: true, showcopyright: false, shownavigation: false});
+             *     board.options.useKatex = true;
+             *     var a = board.create('slider',[[-0.7,1.5],[5,1.5],[0,0.5,1]], {
+             *         suffixlabel:'t_1=',
+             *         unitLabel: ' \\text{ ms}',
+             *         snapWidth:0.01});
+             *     
+             *     func = board.create('functiongraph',[function(x){return (a.Value()*x*x)}], {strokeColor: "red"});
+             *     text1 = board.create('text', [5, 1, function(){
+             *                 return 'a(t)= { 1 \\over ' + a.Value().toFixed(3) + '}';
+             *             }], {fontSize: 15, fixed:true, strokeColor:'red', anchorY: 'top'});
+             * 
+             *     })();
+             *
+             * </script><pre>
+             */
             useKatex: false,
 
             /**
