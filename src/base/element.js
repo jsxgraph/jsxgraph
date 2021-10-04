@@ -1991,7 +1991,7 @@ define([
                 return this;
             }
 
-            needsSnapToGrid = Type.evaluate(this.visProp.snaptogrid) || force === true;
+            needsSnapToGrid = Type.evaluate(this.visProp.snaptogrid) || attractToGrid || force === true;
 
             if (needsSnapToGrid) {
                 x = this.coords.usrCoords[1];
