@@ -394,6 +394,9 @@ define([
                     return Geometry.distPointLine(this.coords.usrCoords, el.stdform) < tol;
                 }
             } else if (el.elementClass === Const.OBJECT_CLASS_CIRCLE) {
+                if (Type.evaluate(el.visProp.hasinnerpoints)) {
+                    return this.Dist(el.center) < el.Radius() + tol;
+                }
                 return Math.abs(this.Dist(el.center) - el.Radius()) < tol;
             } else if (el.elementClass === Const.OBJECT_CLASS_CURVE) {
                 crds = Geometry.projectPointToCurve(this, el, this.board)[0];
