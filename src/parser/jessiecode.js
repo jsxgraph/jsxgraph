@@ -315,7 +315,7 @@ define([
                             if (Type.exists(attributes)) {
                                 attr = attributes;
                             } else {
-                                attr = {name: (that.lhs[that.scope] !== 0 ? that.lhs[that.scope] : '')};
+                                attr = {name: (that.lhs[that.scope.id] !== 0 ? that.lhs[that.scope.id] : '')};
                             }
                             return that.board.create(vname, parameters, attr);
                         };
@@ -1163,7 +1163,7 @@ define([
                     break;
                 case 'op_assign':
                     v = this.getLHS(node.children[0]);
-                    this.lhs[this.scope.id] = v[1];
+                    this.lhs[this.scope.id] = v.what;
 
                     if (v.o.type && v.o.elementClass && v.o.methodMap && v.what === 'label') {
                         this._error('Left-hand side of assignment is read-only.');
