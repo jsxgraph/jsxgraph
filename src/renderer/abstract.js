@@ -1298,22 +1298,6 @@ define([
             this.setObjectStrokeColor(el, strokeColor, strokeOpacity);
         },
 
-        drawForeignObject: function (el) {
-            el.rendNode = this.appendChildPrim(this.createPrim('foreignObject', el.id),
-                                    Type.evaluate(el.visProp.layer));
-            this.appendNodesToElement(el, 'foreignObject');
-            this.updateForeignObject(el);
-        },
-
-        updateForeignObject: function(el) {
-            this.updateRectPrim(el.rendNode, el.coords.scrCoords[1],
-                el.coords.scrCoords[2] - el.size[1], el.size[0], el.size[1]);
-
-            el.rendNode.innerHTML = el.content;
-            this._updateVisual(el, {stroke: true, dash: true}, true);
-
-            /* stub */
-        },
         /* **************************
          *    Image related stuff
          * **************************/
@@ -1434,6 +1418,9 @@ define([
             el.rendNode.className = Type.evaluate(doHighlight ? el.visProp.highlightcssclass : el.visProp.cssclass);
         },
 
+        drawForeignObject: function (el) { /* stub */ },
+
+        updateForeignObject: function(el) { /* stub */ },
 
         /* **************************
          * Render primitive objects

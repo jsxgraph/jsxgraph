@@ -107,7 +107,7 @@
          * @param {Number} y Coordinate in y direction, screen coordinates.
          * @returns {Boolean} True if (x,y) is over the image, False otherwise.
          */
-         hasPoint: function (x, y) {
+        hasPoint: function (x, y) {
             var dx, dy, r, type, prec,
                 c, v, p, dot,
                 len = this.transformations.length;

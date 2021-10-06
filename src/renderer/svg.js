@@ -170,7 +170,7 @@ define([
             this.svgRoot.appendChild(this.layer[i]);
         }
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         this.supportsForeignObject = document.implementation.hasFeature("http://w3.org/TR/SVG11/feature#Extensibility", "1.1");
 
         if (this.supportsForeignObject) {
@@ -392,7 +392,7 @@ define([
 
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         _setArrowWidth: function (node, width, parentNode, size) {
             var s, d;
 
@@ -479,7 +479,7 @@ define([
          *    Text related stuff
          * **************************/
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         displayCopyright: function (str, fontsize) {
             var node = this.createPrim('text', 'licenseText'),
                 t;
@@ -491,7 +491,7 @@ define([
             this.appendChildPrim(node, 0);
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         drawInternalText: function (el) {
             var node = this.createPrim('text', el.id);
 
@@ -507,7 +507,7 @@ define([
             return node;
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         updateInternalText: function (el) {
             var content = el.plaintext, v,
                 ev_ax = el.getAnchorX(),
@@ -573,7 +573,7 @@ define([
          *    Image related stuff
          * **************************/
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         drawImage: function (el) {
             var node = this.createPrim('image', el.id);
 
@@ -584,7 +584,7 @@ define([
             this.updateImage(el);
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         transformImage: function (el, t) {
             var s, m,
                 node = el.rendNode,
@@ -599,7 +599,7 @@ define([
             }
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         updateImageURL: function (el) {
             var url = Type.evaluate(el.url);
 
@@ -614,18 +614,35 @@ define([
             return false;
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         updateImageStyle: function (el, doHighlight) {
             var css = Type.evaluate(doHighlight ? el.visProp.highlightcssclass : el.visProp.cssclass);
 
             el.rendNode.setAttributeNS(null, 'class', css);
         },
 
+        // Already documented in JXG.AbstractRenderer
+        drawForeignObject: function (el) {
+            el.rendNode = this.appendChildPrim(this.createPrim('foreignObject', el.id),
+                                    Type.evaluate(el.visProp.layer));
+            this.appendNodesToElement(el, 'foreignObject');
+            this.updateForeignObject(el);
+        },
+
+        // Already documented in JXG.AbstractRenderer
+        updateForeignObject: function(el) {
+            this.updateRectPrim(el.rendNode, el.coords.scrCoords[1],
+                el.coords.scrCoords[2] - el.size[1], el.size[0], el.size[1]);
+
+            el.rendNode.innerHTML = el.content;
+            this._updateVisual(el, {stroke: true, dash: true}, true);
+        },
+
         /* **************************
          * Render primitive objects
          * **************************/
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         appendChildPrim: function (node, level) {
             if (!Type.exists(level)) { // trace nodes have level not set
                 level = 0;
@@ -638,7 +655,7 @@ define([
             return node;
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         createPrim: function (type, id) {
             var node = this.container.ownerDocument.createElementNS(this.svgNamespace, type);
             node.setAttributeNS(null, 'id', this.container.id + '_' + id);
@@ -651,14 +668,14 @@ define([
             return node;
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         remove: function (shape) {
             if (Type.exists(shape) && Type.exists(shape.parentNode)) {
                 shape.parentNode.removeChild(shape);
             }
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         setLayer: function (el, level) {
             if (!Type.exists(level)) {
                 level = 0;
@@ -669,7 +686,7 @@ define([
             this.layer[level].appendChild(el.rendNode);
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         makeArrows: function (el, a) {
             var node2,
                 ev_fa = a.evFirst,
@@ -721,7 +738,7 @@ define([
             el.visPropOld.lastarrow = ev_la;
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         updateEllipsePrim: function (node, x, y, rx, ry) {
             var huge = 1000000;
 
@@ -739,7 +756,7 @@ define([
             node.setAttributeNS(null, 'ry', Math.abs(ry));
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         updateLinePrim: function (node, p1x, p1y, p2x, p2y) {
             var huge = 1000000;
 
@@ -759,7 +776,7 @@ define([
             }
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         updatePathPrim: function (node, pointString) {
             if (pointString === '') {
                 pointString = 'M 0 0';
@@ -767,7 +784,7 @@ define([
             node.setAttributeNS(null, 'd', pointString);
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         updatePathStringPoint: function (el, size, type) {
             var s = '',
                 scr = el.coords.scrCoords,
@@ -813,7 +830,7 @@ define([
             return s;
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         updatePathStringPrim: function (el) {
             var i, scr, len,
                 symbm = ' M ',
@@ -869,7 +886,7 @@ define([
             return pStr;
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         updatePathStringBezierPrim: function (el) {
             var i, j, k, scr, lx, ly, len,
                 symbm = ' M ',
@@ -924,7 +941,7 @@ define([
             return pStr;
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         updatePolygonPrim: function (node, el) {
             var i,
                 pStr = '',
@@ -954,7 +971,7 @@ define([
             }
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         updateRectPrim: function (node, x, y, w, h) {
             node.setAttributeNS(null, 'x', x);
             node.setAttributeNS(null, 'y', y);
@@ -1641,7 +1658,6 @@ define([
 
             return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
         },
-
 
         /**
          * Convert the SVG construction into an HTML canvas image.

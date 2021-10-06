@@ -1104,7 +1104,7 @@ define([
             return this;
         },
 
-        // already documented in GeometryElement
+        // Already documented in GeometryElement
         bounds: function () {
             var minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity,
                 l = this.points.length, i,

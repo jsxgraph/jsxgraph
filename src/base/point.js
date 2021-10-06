@@ -428,7 +428,7 @@ define([
             return false;
         },
 
-        // already documented in GeometryElement
+        // Already documented in GeometryElement
         cloneToBackground: function () {
             var copy = {};
 

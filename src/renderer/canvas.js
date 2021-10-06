@@ -1059,7 +1059,7 @@ define([
          *    Text related stuff
          * **************************/
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         displayCopyright: function (str, fontSize) {
             var context = this.context;
 
@@ -1072,7 +1072,7 @@ define([
             context.restore();
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         drawInternalText: function (el) {
             var ev_fs = Type.evaluate(el.visProp.fontsize),
                 fontUnit = Type.evaluate(el.visProp.fontunit),
@@ -1106,7 +1106,7 @@ define([
             return null;
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         updateInternalText: function (el) {
             this.drawInternalText(el);
         },
@@ -1152,7 +1152,7 @@ define([
          *    Image related stuff
          * **************************/
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         drawImage: function (el) {
             el.rendNode = new Image();
             // Store the file name of the image.
@@ -1164,7 +1164,7 @@ define([
             this.updateImage(el);
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         updateImage: function (el) {
             var context = this.context,
                 o = Type.evaluate(el.visProp.fillopacity),
@@ -1195,7 +1195,7 @@ define([
             }
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         transformImage: function (el, t) {
             var m, len = t.length,
                 ctx = this.context;
@@ -1208,7 +1208,7 @@ define([
             }
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         updateImageURL: function (el) {
             var url;
 
@@ -1312,7 +1312,7 @@ define([
             this._stroke(el);
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         updatePathStringBezierPrim: function (el) {
             var i, j, k, scr, lx, ly, len,
                 symbm = 'M',
@@ -1418,7 +1418,7 @@ define([
 
         // **************************  Set Attributes *************************
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         display: function(el, val) {
              if (el && el.rendNode) {
                  el.visPropOld.visible = val;
