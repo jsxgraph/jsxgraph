@@ -625,13 +625,19 @@ define([
         drawForeignObject: function (el) {
             el.rendNode = this.appendChildPrim(this.createPrim('foreignObject', el.id),
                                     Type.evaluate(el.visProp.layer));
-            el.rendNode.style.overflow = 'visible';
+
             this.appendNodesToElement(el, 'foreignObject');
             this.updateForeignObject(el);
         },
 
         // Already documented in JXG.AbstractRenderer
         updateForeignObject: function(el) {
+            if (el._useUserSize) {
+                el.rendNode.style.overflow = 'hidden';
+            } else {
+                el.rendNode.style.overflow = 'visible';
+            }
+
             this.updateRectPrim(el.rendNode, el.coords.scrCoords[1],
                 el.coords.scrCoords[2] - el.size[1], el.size[0], el.size[1]);
 
