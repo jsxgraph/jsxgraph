@@ -52,21 +52,22 @@
 
     "use strict";
 
-    JXG.ForeignObject = function (board, coords, attributes, content, size) {
+    JXG.ForeignObject = function (board, coords, attributes, content /*, size*/) {
         this.constructor(board, attributes, Const.OBJECT_TYPE_FOREIGNOBJECT, Const.OBJECT_CLASS_OTHER);
         this.element = this.board.select(attributes.anchor);
         this.coordsConstructor(coords);
 
-        this.W = Type.createFunction(size[0], this.board, '');
-        this.H = Type.createFunction(size[1], this.board, '');
+        // this.W = Type.createFunction(size[0], this.board, '');
+        // this.H = Type.createFunction(size[1], this.board, '');
 
-        this.usrSize = [this.W(), this.H()];
+        // this.usrSize = [this.W(), this.H()];
+        this.size = [1, 1];
 
         /**
          * Array of length two containing [width, height] of the foreignObject in pixel.
          * @type {array}
          */
-        this.size = [Math.abs(this.usrSize[0] * board.unitX), Math.abs(this.usrSize[1] * board.unitY)];
+        // this.size = [Math.abs(this.usrSize[0] * board.unitX), Math.abs(this.usrSize[1] * board.unitY)];
 
         /**
          * 'href' of the foreignObject.
@@ -78,11 +79,11 @@
 
         // span contains the anchor point and the two vectors
         // spanning the foreignObject rectangle.
-        this.span = [
-            this.coords.usrCoords.slice(0),
-            [this.coords.usrCoords[0], this.W(), 0],
-            [this.coords.usrCoords[0], 0, this.H()]
-        ];
+        // this.span = [
+        //     this.coords.usrCoords.slice(0),
+        //     [this.coords.usrCoords[0], this.W(), 0],
+        //     [this.coords.usrCoords[0], 0, this.H()]
+        // ];
 
         //this.parent = board.select(attributes.anchor);
         this.id = this.board.setId(this, 'Im');
@@ -181,8 +182,12 @@
          * @private
          */
         updateSize: function () {
-            this.usrSize = [this.W(), this.H()];
-            this.size = [Math.abs(this.usrSize[0] * this.board.unitX), Math.abs(this.usrSize[1] * this.board.unitY)];
+            var bb;
+            // this.usrSize = [this.W(), this.H()];
+            // this.size = [Math.abs(this.usrSize[0] * this.board.unitX), Math.abs(this.usrSize[1] * this.board.unitY)];
+
+            bb = this.rendNode.childNodes[0].getBoundingClientRect();
+            this.size = [bb.width, bb.height];
 
             return this;
         },
@@ -257,82 +262,82 @@
             return p;
         },
 
-        /**
-         * Set the width and height of the image. After setting a new size,
-         * board.update() or image.fullUpdate()
-         * has to be called to make the change visible.
-         * @param  {number, function, string} width  Number, function or string
-         *                            that determines the new width of the image
-         * @param  {number, function, string} height Number, function or string
-         *                            that determines the new height of the image
-         * @returns {JXG.GeometryElement} A reference to the element
-         *
-         * @example
-         * var im = board.create('image', ['http://jsxgraph.uni-bayreuth.de/distrib/images/uccellino.jpg',
-         *                                [-3,-2], [3,3]]);
-         * im.setSize(4, 4);
-         * board.update();
-         *
-         * </pre><div id="JXG8411e60c-f009-11e5-b1bf-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
-         * <script type="text/javascript">
-         *     (function() {
-         *         var board = JXG.JSXGraph.initBoard('JXG8411e60c-f009-11e5-b1bf-901b0e1b8723',
-         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
-         *     var im = board.create('image', ['http://jsxgraph.uni-bayreuth.de/distrib/images/uccellino.jpg', [-3,-2],    [3,3]]);
-         *     //im.setSize(4, 4);
-         *     //board.update();
-         *
-         *     })();
-         *
-         * </script><pre>
-         *
-         * @example
-         * var p0 = board.create('point', [-3, -2]),
-         *     im = board.create('image', ['http://jsxgraph.uni-bayreuth.de/distrib/images/uccellino.jpg',
-         *                     [function(){ return p0.X(); }, function(){ return p0.Y(); }],
-         *                     [3,3]]),
-         *     p1 = board.create('point', [1, 2]);
-         *
-         * im.setSize(function(){ return p1.X() - p0.X(); }, function(){ return p1.Y() - p0.Y(); });
-         * board.update();
-         *
-         * </pre><div id="JXG4ce706c0-f00a-11e5-b1bf-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
-         * <script type="text/javascript">
-         *     (function() {
-         *         var board = JXG.JSXGraph.initBoard('JXG4ce706c0-f00a-11e5-b1bf-901b0e1b8723',
-         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
-         *     var p0 = board.create('point', [-3, -2]),
-         *         im = board.create('image', ['http://jsxgraph.uni-bayreuth.de/distrib/images/uccellino.jpg',
-         *                         [function(){ return p0.X(); }, function(){ return p0.Y(); }],
-         *                         [3,3]]),
-         *         p1 = board.create('point', [1, 2]);
-         *
-         *     im.setSize(function(){ return p1.X() - p0.X(); }, function(){ return p1.Y() - p0.Y(); });
-         *     board.update();
-         *
-         *     })();
-         *
-         * </script><pre>
-         *
-         */
-        setSize: function(width, height) {
-            this.W = Type.createFunction(width, this.board, '');
-            this.H = Type.createFunction(height, this.board, '');
+        // /**
+        //  * Set the width and height of the image. After setting a new size,
+        //  * board.update() or image.fullUpdate()
+        //  * has to be called to make the change visible.
+        //  * @param  {number, function, string} width  Number, function or string
+        //  *                            that determines the new width of the image
+        //  * @param  {number, function, string} height Number, function or string
+        //  *                            that determines the new height of the image
+        //  * @returns {JXG.GeometryElement} A reference to the element
+        //  *
+        //  * @example
+        //  * var im = board.create('image', ['http://jsxgraph.uni-bayreuth.de/distrib/images/uccellino.jpg',
+        //  *                                [-3,-2], [3,3]]);
+        //  * im.setSize(4, 4);
+        //  * board.update();
+        //  *
+        //  * </pre><div id="JXG8411e60c-f009-11e5-b1bf-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
+        //  * <script type="text/javascript">
+        //  *     (function() {
+        //  *         var board = JXG.JSXGraph.initBoard('JXG8411e60c-f009-11e5-b1bf-901b0e1b8723',
+        //  *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+        //  *     var im = board.create('image', ['http://jsxgraph.uni-bayreuth.de/distrib/images/uccellino.jpg', [-3,-2],    [3,3]]);
+        //  *     //im.setSize(4, 4);
+        //  *     //board.update();
+        //  *
+        //  *     })();
+        //  *
+        //  * </script><pre>
+        //  *
+        //  * @example
+        //  * var p0 = board.create('point', [-3, -2]),
+        //  *     im = board.create('image', ['http://jsxgraph.uni-bayreuth.de/distrib/images/uccellino.jpg',
+        //  *                     [function(){ return p0.X(); }, function(){ return p0.Y(); }],
+        //  *                     [3,3]]),
+        //  *     p1 = board.create('point', [1, 2]);
+        //  *
+        //  * im.setSize(function(){ return p1.X() - p0.X(); }, function(){ return p1.Y() - p0.Y(); });
+        //  * board.update();
+        //  *
+        //  * </pre><div id="JXG4ce706c0-f00a-11e5-b1bf-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
+        //  * <script type="text/javascript">
+        //  *     (function() {
+        //  *         var board = JXG.JSXGraph.initBoard('JXG4ce706c0-f00a-11e5-b1bf-901b0e1b8723',
+        //  *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+        //  *     var p0 = board.create('point', [-3, -2]),
+        //  *         im = board.create('image', ['http://jsxgraph.uni-bayreuth.de/distrib/images/uccellino.jpg',
+        //  *                         [function(){ return p0.X(); }, function(){ return p0.Y(); }],
+        //  *                         [3,3]]),
+        //  *         p1 = board.create('point', [1, 2]);
+        //  *
+        //  *     im.setSize(function(){ return p1.X() - p0.X(); }, function(){ return p1.Y() - p0.Y(); });
+        //  *     board.update();
+        //  *
+        //  *     })();
+        //  *
+        //  * </script><pre>
+        //  *
+        //  */
+        // setSize: function(width, height) {
+        //     this.W = Type.createFunction(width, this.board, '');
+        //     this.H = Type.createFunction(height, this.board, '');
 
-            return this;
-        },
+        //     return this;
+        // },
 
-        /**
-         * Returns the width of the foreignObject in user coordinates.
-         * @returns {number} width of the image in user coordinates
-         */
-        W: function() {},  // Needed for docs, defined in constructor
+        // /**
+        //  * Returns the width of the foreignObject in user coordinates.
+        //  * @returns {number} width of the image in user coordinates
+        //  */
+        // W: function() {},  // Needed for docs, defined in constructor
 
-        /**
-         * Returns the height of the foreignObject in user coordinates.
-         * @returns {number} height of the image in user coordinates
-         */
-        H: function() {}  // Needed for docs, defined in constructor
+        // /**
+        //  * Returns the height of the foreignObject in user coordinates.
+        //  * @returns {number} height of the image in user coordinates
+        //  */
+        // H: function() {}  // Needed for docs, defined in constructor
     });
 
     /**
@@ -363,11 +368,11 @@
     JXG.createForeignObject = function (board, parents, attributes) {
         var attr, fo,
             content = parents[0],
-            coords = parents[1],
-            size = parents[2];
+            coords = parents[1];
+            // size = parents[2];
 
         attr = Type.copyAttributes(attributes, board.options, 'foreignobject');
-        fo = CoordsElement.create(JXG.ForeignObject, board, coords, attr, content, size);
+        fo = CoordsElement.create(JXG.ForeignObject, board, coords, attr, content/*, size*/);
         if (!fo) {
             throw new Error("JSXGraph: Can't create foreignObject with parent types '" +
                     (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +

@@ -625,6 +625,7 @@ define([
         drawForeignObject: function (el) {
             el.rendNode = this.appendChildPrim(this.createPrim('foreignObject', el.id),
                                     Type.evaluate(el.visProp.layer));
+            el.rendNode.style.overflow = 'visible';
             this.appendNodesToElement(el, 'foreignObject');
             this.updateForeignObject(el);
         },
