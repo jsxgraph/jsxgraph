@@ -315,7 +315,10 @@ define([
                             if (Type.exists(attributes)) {
                                 attr = attributes;
                             } else {
-                                attr = {name: (that.lhs[that.scope] !== 0 ? that.lhs[that.scope] : '')};
+                                attr = {};
+                            }
+                            if (attr.name === undefined && attr.id === undefined) {
+                                attr.name = (that.lhs[that.scope.id] !== 0 ? that.lhs[that.scope.id] : '');
                             }
                             return that.board.create(vname, parameters, attr);
                         };
@@ -1163,7 +1166,7 @@ define([
                     break;
                 case 'op_assign':
                     v = this.getLHS(node.children[0]);
-                    this.lhs[this.scope.id] = v[1];
+                    this.lhs[this.scope.id] = v.what;
 
                     if (v.o.type && v.o.elementClass && v.o.methodMap && v.what === 'label') {
                         this._error('Left-hand side of assignment is read-only.');
@@ -1773,7 +1776,7 @@ define([
             }
 
             if (node.needsBrackets) {
-                ret = '{\n' + ret + '}\n';
+                ret = '{\n' + ret + '\n}\n';
             }
 
             return ret;
@@ -2549,10 +2552,10 @@ case 78:
  this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_array', $$[$0-1]); 
 break;
 case 79:
- this.$ = AST.createNode(lc(_$[$0-1]), 'node_op', 'op_emptyobject', {}); 
+ this.$ = AST.createNode(lc(_$[$0-1]), 'node_op', 'op_emptyobject', {}); this.$.needsBrackets = true; 
 break;
 case 80:
- this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_proplst_val', $$[$0-1]); 
+ this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_proplst_val', $$[$0-1]); this.$.needsBrackets = true; 
 break;
 case 82:
  this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_proplst', $$[$0-2], $$[$0]); 
