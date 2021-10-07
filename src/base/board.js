@@ -65,10 +65,10 @@
 define([
     'jxg', 'base/constants', 'base/coords', 'options', 'math/numerics', 'math/math', 'math/geometry', 'math/complex',
     'math/statistics',
-    'parser/jessiecode', 'parser/geonext', 'utils/color', 'utils/type', 'utils/event', 'utils/env', 'base/transformation',
-    'base/point', 'base/line', 'base/text', 'element/composition', 'base/composition'
-], function (JXG, Const, Coords, Options, Numerics, Mat, Geometry, Complex, Statistics, JessieCode, GeonextParser, Color, Type,
-                EventEmitter, Env, Transform, Point, Line, Text, Composition, EComposition) {
+    'parser/jessiecode', 'utils/color', 'utils/type', 'utils/event', 'utils/env',
+    'base/composition'
+], function (JXG, Const, Coords, Options, Numerics, Mat, Geometry, Complex, Statistics, JessieCode, Color, Type,
+                EventEmitter, Env, Composition) {
 
     'use strict';
 
@@ -4055,17 +4055,29 @@ define([
         },
 
         /**
-         * Resets zoom factor to 100%.
+         * Reset the zoom level to the original zoom level from initBoard();
+         * Additionally, if the board as been initialized with a boundingBox (which is the default),
+         * restore the viewport to the original viewport during initialization. Otherwise,
+         * (i.e. if the board as been initialized with unitX/Y and originX/Y
+         * just set the zoom level to 100%.
+         *
          * @returns {JXG.Board} Reference to the board
          */
         zoom100: function () {
-            var bb = this.getBoundingBox(),
+            var bb, dX, dY;
+
+            if (Type.exists(this.attr.boundingbox)) {
+                this.setBoundingBox(this.attr.boundingbox, this.keepaspectratio);
+                this.zoomX = Type.exists(this.attr.zoomx) ? this.attr.zoomx : 1.0;
+                this.zoomY = Type.exists(this.attr.zoomy) ? this.attr.zoomy : 1.0;
+            } else {
+                var bb = this.getBoundingBox(),
                 dX = (bb[2] - bb[0]) * (1.0 - this.zoomX) * 0.5,
                 dY = (bb[1] - bb[3]) * (1.0 - this.zoomY) * 0.5;
-
-            this.setBoundingBox([bb[0] + dX, bb[1] - dY, bb[2] - dX, bb[3] + dY], this.keepaspectratio);
-            this.zoomX = 1.0;
-            this.zoomY = 1.0;
+                this.setBoundingBox([bb[0] + dX, bb[1] - dY, bb[2] - dX, bb[3] + dY], this.keepaspectratio);
+                this.zoomX = 1.0;
+                this.zoomY = 1.0;
+            }
             return this.applyZoom();
         },
 
@@ -5286,7 +5298,7 @@ define([
                 for (i = 0; i < l; i++) {
                     olist[flist[i].id] = flist[i];
                 }
-                s = new EComposition(olist);
+                s = new Composition(olist);
             // it's an element which has been deleted (and still hangs around, e.g. in an attractor list
             } else if (Type.isObject(s) && Type.exists(s.id) && !Type.exists(this.objects[s.id])) {
                 s = null;
