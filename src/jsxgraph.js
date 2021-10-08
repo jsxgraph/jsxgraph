@@ -619,6 +619,7 @@ define([
                         request = new XMLHttpRequest();
                         request.open("GET", src);
                         request.overrideMimeType("text/plain; charset=x-user-defined");
+                        /* jshint ignore:start */
                         request.addEventListener("load", function() {
                             if (this.status < 400) {
                                 code = this.responseText + '\n' + code;
@@ -631,6 +632,7 @@ define([
                         request.addEventListener("error", function(e) {
                             throw new Error("\nJSXGraph: failed to load file", src, ":", e);
                         });
+                        /* jshint ignore:end */
                         request.send();
                     } else {
                         postpone = false;

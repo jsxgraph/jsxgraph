@@ -2397,7 +2397,7 @@ define('utils/env',['jxg', 'utils/type'], function (JXG, Type) {
          * @returns {Boolean}
          */
         isPointerEvent: function (evt) {
-            return JXG.exists(evt['pointerId']);
+            return JXG.exists(evt.pointerId);
         },
 
         /**
@@ -2455,12 +2455,15 @@ define('utils/env',['jxg', 'utils/type'], function (JXG, Type) {
          * @default false
          */
         supportsES6: function () {
+            var testMap;
+            /* jshint ignore:start */
             try {
-                new Function('(a = 0) => a');
+                testMap = (a = 0) => a;
                 return true;
             } catch (err) {
                 return false;
             }
+            /* jshint ignore:end */
         },
 
         /**
@@ -45947,8 +45950,8 @@ define('base/board',[
                 this.zoomX = Type.exists(this.attr.zoomx) ? this.attr.zoomx : 1.0;
                 this.zoomY = Type.exists(this.attr.zoomy) ? this.attr.zoomy : 1.0;
             } else {
-                var bb = this.getBoundingBox(),
-                dX = (bb[2] - bb[0]) * (1.0 - this.zoomX) * 0.5,
+                bb = this.getBoundingBox();
+                dX = (bb[2] - bb[0]) * (1.0 - this.zoomX) * 0.5;
                 dY = (bb[1] - bb[3]) * (1.0 - this.zoomY) * 0.5;
                 this.setBoundingBox([bb[0] + dX, bb[1] - dY, bb[2] - dX, bb[3] + dY], this.keepaspectratio);
                 this.zoomX = 1.0;
@@ -53834,6 +53837,7 @@ define('jsxgraph',[
                         request = new XMLHttpRequest();
                         request.open("GET", src);
                         request.overrideMimeType("text/plain; charset=x-user-defined");
+                        /* jshint ignore:start */
                         request.addEventListener("load", function() {
                             if (this.status < 400) {
                                 code = this.responseText + '\n' + code;
@@ -53846,6 +53850,7 @@ define('jsxgraph',[
                         request.addEventListener("error", function(e) {
                             throw new Error("\nJSXGraph: failed to load file", src, ":", e);
                         });
+                        /* jshint ignore:end */
                         request.send();
                     } else {
                         postpone = false;
@@ -62548,6 +62553,7 @@ define('base/curve',[
                 if (Type.isPoint(q[i])) {
                     points.push(q[i]);
                 } else {
+                    /* jshint ignore:start */
                     points.push(
                         (function(ii) { return {
                             X: function() { return q[ii][0]; },
@@ -62560,6 +62566,7 @@ define('base/curve',[
                             };
                         })(i)
                     );
+                    /* jshint ignore:end */
                 }
             }
         }
@@ -62761,6 +62768,7 @@ define('base/curve',[
                 if (Type.isPoint(q[i])) {
                     points.push(q[i]);
                 } else {
+                    /* jshint ignore:start */
                     points.push(
                         (function(ii) { return {
                             X: function() { return q[ii][0]; },
@@ -62768,6 +62776,7 @@ define('base/curve',[
                             };
                         })(i)
                     );
+                    /* jshint ignore:end */
                 }
             }
         }

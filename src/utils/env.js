@@ -73,7 +73,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          * @returns {Boolean}
          */
         isPointerEvent: function (evt) {
-            return JXG.exists(evt['pointerId']);
+            return JXG.exists(evt.pointerId);
         },
 
         /**
@@ -131,12 +131,15 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          * @default false
          */
         supportsES6: function () {
+            var testMap;
+            /* jshint ignore:start */
             try {
-                new Function('(a = 0) => a');
+                testMap = (a = 0) => a;
                 return true;
             } catch (err) {
                 return false;
             }
+            /* jshint ignore:end */
         },
 
         /**

@@ -1751,6 +1751,7 @@ define([
                 if (Type.isPoint(q[i])) {
                     points.push(q[i]);
                 } else {
+                    /* jshint ignore:start */
                     points.push(
                         (function(ii) { return {
                             X: function() { return q[ii][0]; },
@@ -1763,6 +1764,7 @@ define([
                             };
                         })(i)
                     );
+                    /* jshint ignore:end */
                 }
             }
         }
@@ -1964,6 +1966,7 @@ define([
                 if (Type.isPoint(q[i])) {
                     points.push(q[i]);
                 } else {
+                    /* jshint ignore:start */
                     points.push(
                         (function(ii) { return {
                             X: function() { return q[ii][0]; },
@@ -1971,6 +1974,7 @@ define([
                             };
                         })(i)
                     );
+                    /* jshint ignore:end */
                 }
             }
         }
