@@ -8,7 +8,7 @@ node_js:
 stages:
     - core
     - core-min
-    - docs
+    #- docs
 jobs:
   include:
     - stage: core
