@@ -11,4 +11,4 @@ jobs:
   include:
     - stage: core
       if: branch = master
-      script: make core
+      script: make hint core
