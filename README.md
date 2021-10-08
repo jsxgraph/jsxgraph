@@ -77,7 +77,7 @@ dependencies required to build JSXGraph using npm in the JSXGraph root directory
 This will create a new subdirectory ```node_modules``` in the JSXGraph root directory which holds
 all tools and libraries required to build ```jsxgraphcore.js```. 
 
-3) To build JSXGraph run `$ make core` which will output an unminified version of ```jsxgraphcore.js``` in ```build/bin```. To build a minified version run `$ make core-min`. This will produce the files `jsxgraphsrc.js` (not minified) and `jsxgraphcore.js` (minified) in directory `distrib`.
+3) To build JSXGraph run `$ make core` which will output an unminified version ```jsxgraphsrc.js```  and the minified version ```jsxgraphcore.js``` in ```distrib```.
 
 
 License
