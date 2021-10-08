@@ -7,15 +7,8 @@ node_js:
     - "stable"
 stages:
     - core
-    - core-min
-    #- docs
 jobs:
   include:
     - stage: core
       if: branch = master
       script: make core
-    - stage: core-min
-      if: branch = master
-      script: make core-min
-    - stage: docs
-      script: make docs

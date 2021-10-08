@@ -4,7 +4,6 @@
 REQUIREJS=./node_modules/.bin/r.js
 UGLIFYJS=./node_modules/.bin/uglifyjs
 JSDOC2=node ./node_modules/.bin/jsdoc2
-#JSDOC2=nodejs ./node_modules/.bin/jsdoc
 
 LINT=./node_modules/.bin/jslint
 HINT=./node_modules/.bin/jshint
@@ -30,14 +29,12 @@ BUILDREADERS=$(BUILDBIN)/readers
 JSDOC2PLG=doc/jsdoc-tk/plugins
 JSDOC2PTCH=doc/jsdoc-tk/patches
 JSDOC2TPL=doc/jsdoc-tk/template
-#JSDOC2TPL=./node_modules/ink-docstrap/template
 JSDOC2TPLSTAT=$(JSDOC2TPL)/static
 
 # flags
 MKDIRFLAGS=-p
 RMFLAGS=-rf
 JSDOC2FLAGS=-v -p -t=$(JSDOC2TPL) -d=$(TMP)/docs
-#JSDOC2FLAGS=--verbose -p --template $(JSDOC2TPL) --destination $(TMP)/docs
 
 ZIPFLAGS=-r
 JSTESTPORT=4224
@@ -62,14 +59,20 @@ all: core core-min readers docs
 
 core:
 	$(MKDIR) $(MKDIRFLAGS) $(BUILDBIN)
+	# Build uncompressed file jsxgraphcore.js and copy it to jsxgraphsrc.js
 	$(REQUIREJS) -o $(BUILD)/core.build.json
+	$(CP) $(BUILDBIN)/jsxgraphcore.js $(OUTPUT)/jsxgraphsrc.js
+
+	# Build compressed file jsxgraphcore-min.js and copy it to jsxgraphcore.js
+	$(REQUIREJS) -o $(BUILD)/core.build.json optimize=uglify2 out=$(BUILDBIN)/jsxgraphcore-min.js;
+	{ $(CAT) COPYRIGHT; $(CAT) $(BUILDBIN)/jsxgraphcore-min.js; } > $(BUILDBIN)/jsxgraphcore.min.js
+	$(CP) $(BUILDBIN)/jsxgraphcore.min.js $(OUTPUT)/jsxgraphcore.js
 
 core-min:
 	$(MKDIR) $(MKDIRFLAGS) $(BUILDBIN)
 	$(REQUIREJS) -o $(BUILD)/core.build.json optimize=uglify2 out=$(BUILDBIN)/jsxgraphcore-min.js;
 	{ $(CAT) COPYRIGHT; $(CAT) $(BUILDBIN)/jsxgraphcore-min.js; } > $(BUILDBIN)/jsxgraphcore.min.js
 	$(CP) $(BUILDBIN)/jsxgraphcore.min.js $(OUTPUT)/jsxgraphcore.js
-	$(CP) $(BUILDBIN)/jsxgraphcore.js $(OUTPUT)/jsxgraphsrc.js
 
 release: core-min docs
 	$(MKDIR) $(MKDIRFLAGS) $(TMP)
