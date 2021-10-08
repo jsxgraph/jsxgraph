@@ -2,7 +2,6 @@
 branches:
   only:
   - master
-  - docs
   
 language: node_js
 node_js:
