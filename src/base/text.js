@@ -589,7 +589,7 @@ define([
          * @param{Boolean} [avoidGeonext2JS] Optional flag if geonext2JS should be called. For backwards compatibility
          * this has to be set explicitely to true.
          * @private
-         * @see JXG.GeonextParser.geonext2JS.
+         * @see JXG.GeonextParser.geonext2JS
          */
         generateTerm: function (contentStr, expand, avoidGeonext2JS) {
             var res, term, i, j,
