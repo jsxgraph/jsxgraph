@@ -69,7 +69,8 @@ define([
      * numbers describing the coordinates of a point. In the latter case the point will be constructed automatically as a fixed invisible point.
      * @param {JXG.Point,array_JXG.Point,array_number,function} point1,point2,number Parent elements can be two elements either of type {@link JXG.Point} or array of
      * numbers describing the coordinates of a point. The third parameter is a number/function which defines the length of the major axis
-     * Optional parameters four and five are numbers which define the curve length (e.g. start/end). Default values are -pi and pi.
+     * @param {Number} start (Optional) parameter of the curve start, default: 0.
+     * @param {Number} end (Optional) parameter for the curve end, default: 2&pi;.
      * @example
      * // Create an Ellipse by three points
      * var A = board.create('point', [-1,4]);
@@ -78,12 +79,45 @@ define([
      * var el = board.create('ellipse',[A,B,C]);
      * </pre><div class="jxgbox" id="JXGa4d7fb6f-8708-4e45-87f2-2379ae2bd2c0" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
+     *   (function() {
      *   var glex1_board = JXG.JSXGraph.initBoard('JXGa4d7fb6f-8708-4e45-87f2-2379ae2bd2c0', {boundingbox:[-6,6,6,-6], keepaspectratio:true, showcopyright: false, shownavigation: false});
      *   var A = glex1_board.create('point', [-1,4]);
      *   var B = glex1_board.create('point', [-1,-4]);
      *   var C = glex1_board.create('point', [1,1]);
      *   var el = glex1_board.create('ellipse',[A,B,C]);
+     * })();
      * </script><pre>
+     *
+     * @example
+     * // Create an elliptical arc
+     * var p1 = board.create('point', [-1, 2]);
+     * var p2 = board.create('point', [ 1, 2]);
+     * var p3 = board.create('point', [0, 3]);
+     * 
+     * var ell = board.create('ellipse', [
+     *   p1, p2, p3, 0, Math.PI], {
+     *   lastArrow: {type: 7}
+     * });
+     * 
+     * </pre><div id="JXG950f7c07-27a4-4c67-9505-c73c22ce9345" class="jxgbox" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     *     (function() {
+     *         var board = JXG.JSXGraph.initBoard('JXG950f7c07-27a4-4c67-9505-c73c22ce9345',
+     *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+     *     var p1 = board.create('point', [-1, 2]);
+     *     var p2 = board.create('point', [ 1, 2]);
+     *     var p3 = board.create('point', [0, 3]);
+     *     
+     *     var ell = board.create('ellipse', [
+     *       p1, p2, p3, 0, Math.PI], {
+     *       lastArrow: {type: 7}
+     *     });
+     * 
+     *     })();
+     * 
+     * </script><pre>
+     * 
+*
      */
     JXG.createEllipse = function (board, parents, attributes) {
         var polarForm, curve, M, C, majorAxis, i,
@@ -287,7 +321,8 @@ define([
      * numbers describing the coordinates of a point. In the latter case the point will be constructed automatically as a fixed invisible point.
      * @param {JXG.Point,array_JXG.Point,array_number,function} point1,point2,number Parent elements can be two elements either of type {@link JXG.Point} or array of
      * numbers describing the coordinates of a point. The third parameter is a number/function which defines the length of the major axis
-     * Optional parameters four and five are numbers which define the curve length (e.g. start/end). Default values are -pi and pi.
+     * @param {Number} start (Optional) parameter of the curve start, default: -&pi;.
+     * @param {Number} end (Optional) parameter for the curve end, default: &pi;.
      * @example
      * // Create an Hyperbola by three points
      * var A = board.create('point', [-1,4]);
@@ -296,11 +331,13 @@ define([
      * var el = board.create('hyperbola',[A,B,C]);
      * </pre><div class="jxgbox" id="JXGcf99049d-a3fe-407f-b936-27d76550f8c4" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
+     *   (function(){
      *   var glex1_board = JXG.JSXGraph.initBoard('JXGcf99049d-a3fe-407f-b936-27d76550f8c4', {boundingbox:[-6,6,6,-6], keepaspectratio:true, showcopyright: false, shownavigation: false});
      *   var A = glex1_board.create('point', [-1,4]);
      *   var B = glex1_board.create('point', [-1,-4]);
      *   var C = glex1_board.create('point', [1,1]);
      *   var el = glex1_board.create('hyperbola',[A,B,C]);
+     * })();
      * </script><pre>
      */
     JXG.createHyperbola = function (board, parents, attributes) {
@@ -482,12 +519,14 @@ define([
      * var el = board.create('parabola',[C,l]);
      * </pre><div class="jxgbox" id="JXG524d1aae-217d-44d4-ac58-a19c7ab1de36" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
+     * (function() {
      *   var glex1_board = JXG.JSXGraph.initBoard('JXG524d1aae-217d-44d4-ac58-a19c7ab1de36', {boundingbox:[-6,6,6,-6], keepaspectratio:true, showcopyright: false, shownavigation: false});
      *   var A = glex1_board.create('point', [-1,4]);
      *   var B = glex1_board.create('point', [-1,-4]);
      *   var l = glex1_board.create('line', [A,B]);
      *   var C = glex1_board.create('point', [1,1]);
      *   var el = glex1_board.create('parabola',[C,l]);
+     * })();
      * </script><pre>
      *
      * @example
@@ -684,6 +723,7 @@ define([
      *  var conic = board.create('conic',[A,B,C,D,E]);
      * </pre><div class="jxgbox" id="JXG2d79bd6a-db9b-423c-9cba-2497f0b06320" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
+     * (function(){
      *   var glex1_board = JXG.JSXGraph.initBoard('JXG2d79bd6a-db9b-423c-9cba-2497f0b06320', {boundingbox:[-6,6,6,-6], keepaspectratio:true, showcopyright: false, shownavigation: false});
      *   var A = glex1_board.create('point', [1,5]);
      *   var B = glex1_board.create('point', [1,2]);
@@ -691,6 +731,7 @@ define([
      *   var D = glex1_board.create('point', [0,0]);
      *   var E = glex1_board.create('point', [-1,5]);
      *   var conic = glex1_board.create('conic',[A,B,C,D,E]);
+     * })();
      * </script><pre>
      *
      * @example
