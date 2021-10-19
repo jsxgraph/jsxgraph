@@ -3171,6 +3171,15 @@ define([
                     this.clickRightArrow();
                 }
             } else {
+                // Handle snapToGrid
+                if (Type.exists(el.visProp) &&
+                    Type.exists(el.visProp.snapsizex) &&
+                    Type.evaluate(el.visProp.snaptogrid)) {
+
+                    dx = Math.max(Type.evaluate(el.visProp.snapsizex), dx);
+                    dy = Math.max(Type.evaluate(el.visProp.snapsizey), dy);
+                }
+
                 if (evt.keyCode === 38) {           // up
                     dir = [0, dy];
                 } else if (evt.keyCode === 40) {    // down
