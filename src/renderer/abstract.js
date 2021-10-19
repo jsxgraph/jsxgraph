@@ -1091,10 +1091,18 @@ define([
                     // Set the content
                     if (el.htmlStr !== content) {
                         try {
-                            el.rendNode.innerHTML = content;
+                            if (el.type === Type.OBJECT_TYPE_BUTTON) {
+                                el.rendNodeButton.innerHTML = content;
+                            } else if (el.type === Type.OBJECT_TYPE_CHECKBOX ||
+                                el.type === Type.OBJECT_TYPE_INPUT) {
+                                el.rendNodeLabel.innerHTML = content;
+                            } else {
+                                el.rendNode.innerHTML = content;
+                            }
                         } catch (e) {
-                            // Setting innerHTML sometimes fails in IE8. A workaround is to
-                            // take the node off the DOM, assign innerHTML, then append back.
+                            // Setting innerHTML sometimes fails in IE8.
+                            // A workaround is to take the node off the DOM, assign innerHTML,
+                            // then append back.
                             // Works for text elements as they are absolutely positioned.
                             parentNode = el.rendNode.parentNode;
                             el.rendNode.parentNode.removeChild(el.rendNode);
