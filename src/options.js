@@ -2474,7 +2474,7 @@ define([
              * @name Circle#center
              */
             point2: {
-                visible: true,
+                visible: false,
                 withLabel: false,
                 fixed: false,
                 name: ''
