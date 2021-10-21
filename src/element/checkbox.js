@@ -137,6 +137,36 @@ define([
      * }, checkbox);
      * })();
      * </script><pre>
+     *
+     * @example
+     *         var i1 = board.create('input', [-3, 4, 'sin(x)', 'f(x)='], {cssStyle: 'width:4em', maxlength: 2});
+     *         var c1 = board.create('checkbox', [-3, 2, 'label 1'], {});
+     *         var b1 = board.create('button', [-3, -1, 'Change texts', function () {
+     *                 i1.setText('g(x)');
+     *                 i1.set('cos(x)');
+     *                 c1.setText('label 2');
+     *                 b1.setText('Texts are changed');
+     *             }],
+     *             {cssStyle: 'width:400px'});
+     *
+     * </pre><div id="JXG11cac8gg-2354-47e7-9da4-eb298e53de05" class="jxgbox" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     *     (function() {
+     *         var board = JXG.JSXGraph.initBoard('JXG11cac8gg-2354-47e7-9da4-eb298e53de05',
+     *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+     *             var i1 = board.create('input', [-3, 4, 'sin(x)', 'f(x)='], {cssStyle: 'width:4em', maxlength: 2});
+     *             var c1 = board.create('checkbox', [-3, 2, 'label 1'], {});
+     *             var b1 = board.create('button', [-3, -1, 'Change texts', function () {
+     *                     i1.setText('g(x)');
+     *                     i1.set('cos(x)');
+     *                     c1.setText('label 2');
+     *                     b1.setText('Texts are changed');
+     *                 }],
+     *                 {cssStyle: 'width:400px'});
+     *
+     *     })();
+     *
+     * </script><pre>
      */
     JXG.createCheckbox = function (board, parents, attributes) {
         var t, par,
