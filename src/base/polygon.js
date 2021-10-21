@@ -163,6 +163,48 @@ define([
     JXG.Polygon.prototype = new GeometryElement();
 
     JXG.extend(JXG.Polygon.prototype, /** @lends JXG.Polygon.prototype */ {
+
+        /**
+         * W. Randolf Franklin's pnpoly method.
+         * See {@link https://wrf.ecse.rpi.edu/Research/Short_Notes/pnpoly.html}.
+         * Decides if a point (x,y) is inside of the polygon.
+         *
+         * @param {Number} x_in x-coordinate (screen or user coordinates)
+         * @param {Number} y_in y-coordinate (screen or user coordinates)
+         * @param {Number} coord_type (Optional) the type of coordinates used here.
+         *   Possible values are <b>JXG.COORDS_BY_USER</b> and <b>JXG.COORDS_BY_SCREEN</b>.
+         *   Default value is JXG.COORDS_BY_SCREEN
+         *
+         * @returns {Boolean} if (x,y) is inside of the polygon.
+         */
+        pnpoly: function(x_in, y_in, coord_type) {
+            var i, j, len,
+                x, y, crds,
+                v = this.vertices,
+                isIn = false;
+
+            if (coord_type === Const.COORDS_BY_USER) {
+                crds = new Coords(Const.COORDS_BY_USER, [x, y], this);
+                x = crds.scrCoords[1];
+                y = crds.scrCoords[2];
+            } else {
+                x = x_in;
+                y = y_in;
+            }
+
+            len = this.vertices.length;
+            for (i = 0, j = len - 2; i < len - 1; j = i++) {
+                if (((v[i].coords.scrCoords[2] > y) !== (v[j].coords.scrCoords[2] > y)) &&
+                    (x < (v[j].coords.scrCoords[1] - v[i].coords.scrCoords[1]) *
+                    (y - v[i].coords.scrCoords[2]) / (v[j].coords.scrCoords[2] - v[i].coords.scrCoords[2]) + v[i].coords.scrCoords[1])
+                   ) {
+                    isIn = !isIn;
+                }
+            }
+
+            return isIn;
+        },
+
         /**
          * Checks whether (x,y) is near the polygon.
          * @param {Number} x Coordinate in x direction, screen coordinates.
@@ -170,22 +212,11 @@ define([
          * @returns {Boolean} Returns true, if (x,y) is inside or at the boundary the polygon, otherwise false.
          */
         hasPoint: function (x, y) {
-
-            var i, j, len, c = false;
+            var i, len;
 
             if (Type.evaluate(this.visProp.hasinnerpoints)) {
                 // All points of the polygon trigger hasPoint: inner and boundary points
-                len = this.vertices.length;
-                // W. Randolf Franklin's pnpoly method.
-                // See https://wrf.ecse.rpi.edu/Research/Short_Notes/pnpoly.html
-                for (i = 0, j = len - 2; i < len - 1; j = i++) {
-                    if (((this.vertices[i].coords.scrCoords[2] > y) !== (this.vertices[j].coords.scrCoords[2] > y)) &&
-                            (x < (this.vertices[j].coords.scrCoords[1] - this.vertices[i].coords.scrCoords[1]) * (y - this.vertices[i].coords.scrCoords[2]) /
-                            (this.vertices[j].coords.scrCoords[2] - this.vertices[i].coords.scrCoords[2]) + this.vertices[i].coords.scrCoords[1])) {
-                        c = !c;
-                    }
-                }
-                if (c) {
+                if (this.pnpoly(x, y)) {
                     return true;
                 }
             }
@@ -197,12 +228,11 @@ define([
             len = this.borders.length;
             for (i = 0; i < len; i++) {
                 if (this.borders[i].hasPoint(x, y)) {
-                    c = true;
-                    break;
+                    return true;
                 }
             }
 
-            return c;
+            return false;
         },
 
         /**
