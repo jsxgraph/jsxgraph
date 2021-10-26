@@ -1189,8 +1189,8 @@ define([
                     rotEl  = o.targets[1];
                 }
 console.log("N", np1c.scrCoords[1],  np2c.scrCoords[1]);
-console.log("O", o.targets[0].Xprev, o.targets[1].Xprev)                
-console.log("X", o.targets[0].X,     o.targets[1].X)                
+console.log("O", o.targets[0].Xprev, o.targets[1].Xprev);
+console.log("X", o.targets[0].X,     o.targets[1].X);
 
                 c = (new Coords(Const.COORDS_BY_SCREEN, [center.Xprev, center.Yprev], this)).usrCoords;
                 // Previous fingers' position
@@ -1198,7 +1198,7 @@ console.log("X", o.targets[0].X,     o.targets[1].X)
                 // Actual fingers' position
                 np = (new Coords(Const.COORDS_BY_SCREEN, [rotEl.X, rotEl.Y], this)).usrCoords;
                 
-console.log(c, op, np)                
+console.log(c, op, np);
                 // console.log(center.X, center.Y, rotEl.Xprev, rotEl.Yprev, rotEl.X, rotEl.Y
 
                 // console.log("center", c)
