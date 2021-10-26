@@ -1145,6 +1145,8 @@ define([
             if (drag.elementClass === Const.OBJECT_CLASS_LINE ||
                     drag.type === Const.OBJECT_TYPE_POLYGON) {
                 this.twoFingerTouchObject(np1c, np2c, o, drag, evt);
+                // console.log(o.targets[0].Xprev.toFixed(0), o.targets[0].X.toFixed(0), o.targets[0].Yprev.toFixed(0), o.targets[0].Y.toFixed(0),
+                //             o.targets[1].Xprev.toFixed(0), o.targets[1].X.toFixed(0), o.targets[1].Yprev.toFixed(0), o.targets[1].Y.toFixed(0))
             } else if (drag.elementClass === Const.OBJECT_CLASS_CIRCLE) {
                 this.twoFingerTouchCircle(np1c, np2c, o, drag);
             }
@@ -1165,6 +1167,127 @@ define([
          * @param {object} drag The object that is dragged:
          * @param {Object} evt The event object that lead to this movement.
          */
+         twoFingerTouchObjectExp: function (np1c, np2c, o, drag, evt) {
+            var np, np2, op, op2,
+                nmid, omid, nd, od,
+                d, alpha,
+                S, t1, t2, t3, t4, t5,
+                ar, i, len,
+                center, rotEl, c,
+                pi180 = 0.017453292519943295; // Math.PI / 180.0
+
+            if (Type.exists(o.targets[0]) &&
+                    Type.exists(o.targets[1]) &&
+                    !isNaN(o.targets[0].Xprev + o.targets[0].Yprev + o.targets[1].Xprev + o.targets[1].Yprev)) {
+
+                //console.log(evt.pointerId, o.targets[0], o.targets[1])
+                if (evt.pointerId === o.targets[0].num) {
+                    center = o.targets[1];
+                    rotEl  = o.targets[0];
+                } else {
+                    center = o.targets[0];
+                    rotEl  = o.targets[1];
+                }
+console.log("N", np1c.scrCoords[1],  np2c.scrCoords[1]);
+console.log("O", o.targets[0].Xprev, o.targets[1].Xprev)                
+console.log("X", o.targets[0].X,     o.targets[1].X)                
+
+                c = (new Coords(Const.COORDS_BY_SCREEN, [center.Xprev, center.Yprev], this)).usrCoords;
+                // Previous fingers' position
+                op = (new Coords(Const.COORDS_BY_SCREEN, [rotEl.Xprev, rotEl.Yprev], this)).usrCoords;
+                // Actual fingers' position
+                np = (new Coords(Const.COORDS_BY_SCREEN, [rotEl.X, rotEl.Y], this)).usrCoords;
+                
+console.log(c, op, np)                
+                // console.log(center.X, center.Y, rotEl.Xprev, rotEl.Yprev, rotEl.X, rotEl.Y
+
+                // console.log("center", c)
+
+                // Old and new directions
+                od = Mat.crossProduct(c, op);
+                nd = Mat.crossProduct(c, np);
+
+                // Intersection between the two directions
+                S = Mat.crossProduct(od, nd);
+
+                // If parallel translate, otherwise rotate
+                if (Math.abs(S[0]) < Mat.eps) {
+                    console.log("parallel");
+                    return;
+                }
+
+                // Normalize the coordinates
+                S[1] /= S[0];
+                S[2] /= S[0];
+                S[0] /= S[0];
+
+// console.log(S);
+
+                if (Type.exists(evt.rotation) && evt.type !== 'pointermove') {
+                    // iOS touch events contain the angle for free
+                    alpha = evt.rotation - this.previousRotation;
+                    this.previousRotation = evt.rotation;
+                    alpha *= -pi180;
+                } else {
+                    // For pointer events, the rotation angle has to be calculated.
+                    alpha = Geometry.rad(op.slice(1), c.slice(1), np.slice(1));
+                    console.log(alpha);
+                }
+
+                c = [1,0,0];
+                t1 = this.create('transform', [alpha, [c[1], c[2]]], {type: 'rotate'});
+                t1.update();
+
+                // Old midpoint of fingers after first transformation:
+                // omid = Mat.matVecMult(t1.matrix, omid);
+                // omid[1] /= omid[0];
+                // omid[2] /= omid[0];
+
+                // // Shift to the new mid point
+                // t2 = this.create('transform', [nmid[1] - omid[1], nmid[2] - omid[2]], {type: 'translate'});
+                // t2.update();
+
+                // t1.melt(t2);
+                if (false && Type.evaluate(drag.visProp.scalable)) {
+                    // Scale
+                    if (Type.exists(evt.scale)) {
+                        d = evt.scale / this.previousScale;
+                        this.previousScale = evt.scale;
+                    } else {
+                        d = Geometry.distance(np1, np2) / Geometry.distance(op1, op2);
+                    }
+
+                    t3 = this.create('transform', [-nmid[1], -nmid[2]], {type: 'translate'});
+                    t4 = this.create('transform', [d, d], {type: 'scale'});
+                    t5 = this.create('transform', [nmid[1], nmid[2]], {type: 'translate'});
+                    t1.melt(t3).melt(t4).melt(t5);
+                }
+
+                if (drag.elementClass === Const.OBJECT_CLASS_LINE) {
+                    ar = [];
+                    if (drag.point1.draggable()) {
+                        ar.push(drag.point1);
+                    }
+                    if (drag.point2.draggable()) {
+                        ar.push(drag.point2);
+                    }
+                    t1.applyOnce(ar);
+                } else if (drag.type === Const.OBJECT_TYPE_POLYGON) {
+                    ar = [];
+                    len = drag.vertices.length - 1;
+                    for (i = 0; i < len; ++i) {
+                        if (drag.vertices[i].draggable()) {
+                            ar.push(drag.vertices[i]);
+                        }
+                    }
+                    t1.applyOnce(ar);
+                }
+
+                this.update();
+                drag.highlight(true);
+            }
+        },
+
         twoFingerTouchObject: function (np1c, np2c, o, drag, evt) {
             var np1, np2, op1, op2,
                 nmid, omid, nd, od,
