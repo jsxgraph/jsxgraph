@@ -1450,7 +1450,7 @@ define([
              * This attributes takes either the value 'inherit' or an object of the form:
              * <pre>
              * precision: {
-             *      touch: 15,
+             *      touch: 30,
              *      mouse: 4,
              *      pen: 4
              * }
@@ -1876,7 +1876,7 @@ define([
          * @see JXG.GeometryElement#precision
          */
         precision: {
-            touch: 15,
+            touch: 30,
             touchMax: 100,
             mouse: 4,
             pen: 4,

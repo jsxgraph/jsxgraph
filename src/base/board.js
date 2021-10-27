@@ -2276,7 +2276,7 @@ define([
          * @returns {Boolean}
          */
         pointerMoveListener: function (evt) {
-            var i, j, pos,
+            var i, j, pos, touchTargets,
                 type = 'mouse'; // in case of no browser
 
             if (this._getPointerInputDevice(evt) === 'touch' && !this._isPointerRegistered(evt)) {
@@ -2315,23 +2315,24 @@ define([
                 if (this.mode === this.BOARD_MODE_DRAG) {
                     // Run through all jsxgraph elements which are touched by at least one finger.
                     for (i = 0; i < this.touches.length; i++) {
+                        touchTargets = this.touches[i].targets;
                         // Run through all touch events which have been started on this jsxgraph element.
-                        for (j = 0; j < this.touches[i].targets.length; j++) {
-                            if (this.touches[i].targets[j].num === evt.pointerId) {
+                        for (j = 0; j < touchTargets.length; j++) {
+                            if (touchTargets[j].num === evt.pointerId) {
                                 
                                 pos = this.getMousePosition(evt);
-                                this.touches[i].targets[j].X = pos[0];
-                                this.touches[i].targets[j].Y = pos[1];
+                                touchTargets[j].X = pos[0];
+                                touchTargets[j].Y = pos[1];
 
-                                if (this.touches[i].targets.length === 1) {
+                                if (touchTargets.length === 1) {
                                     // Touch by one finger: this is possible for all elements that can be dragged
                                     this.moveObject(pos[0], pos[1], this.touches[i], evt, type);
-                                } else if (this.touches[i].targets.length === 2) {
+                                } else if (touchTargets.length === 2) {
                                     // Touch by two fingers: e.g. moving lines
                                     this.twoFingerMove(this.touches[i], evt.pointerId, evt);
 
-                                    this.touches[i].targets[j].Xprev = pos[0];
-                                    this.touches[i].targets[j].Yprev = pos[1];
+                                    touchTargets[j].Xprev = pos[0];
+                                    touchTargets[j].Yprev = pos[1];
                                 }
 
                                 // There is only one pointer in the evt object, so there's no point in looking further
@@ -2372,21 +2373,20 @@ define([
          * @returns {Boolean}
          */
         pointerUpListener: function (evt) {
-            var i, j, found;
+            var i, j, found, touchTargets;
 
             this.triggerEventHandlers(['touchend', 'up', 'pointerup', 'MSPointerUp'], [evt]);
             this.displayInfobox(false);
 
             if (evt) {
                 for (i = 0; i < this.touches.length; i++) {
-                    for (j = 0; j < this.touches[i].targets.length; j++) {
-                        if (this.touches[i].targets[j].num === evt.pointerId) {
-                            this.touches[i].targets.splice(j, 1);
-
-                            if (this.touches[i].targets.length === 0) {
+                    touchTargets = this.touches[i].targets;
+                    for (j = 0; j < touchTargets.length; j++) {
+                        if (touchTargets[j].num === evt.pointerId) {
+                            touchTargets.splice(j, 1);
+                            if (touchTargets.length === 0) {
                                 this.touches.splice(i, 1);
                             }
-
                             break;
                         }
                     }
@@ -2452,7 +2452,7 @@ define([
                 eps = this.options.precision.touch,
                 obj, found, targets,
                 evtTouches = evt[JXG.touchProperty],
-                target;
+                target, touchTargets;
 
             if (!this.hasTouchEnd) {
                 Env.addEvent(this.document, 'touchend', this.touchEndListener, this);
@@ -2500,19 +2500,19 @@ define([
             }
 
             for (i = 0; i < this.touches.length; i++) {
-                for (j = 0; j < this.touches[i].targets.length; j++) {
-                    this.touches[i].targets[j].num = -1;
+                touchTargets = this.touches[i].targets;
+                for (j = 0; j < touchTargets.length; j++) {
+                    touchTargets[j].num = -1;
                     eps = this.options.precision.touch;
 
                     do {
                         for (k = 0; k < evtTouches.length; k++) {
                             // find the new targettouches
-                            if (Math.abs(Math.pow(evtTouches[k].screenX - this.touches[i].targets[j].X, 2) +
-                                    Math.pow(evtTouches[k].screenY - this.touches[i].targets[j].Y, 2)) < eps * eps) {
-                                this.touches[i].targets[j].num = k;
-
-                                this.touches[i].targets[j].X = evtTouches[k].screenX;
-                                this.touches[i].targets[j].Y = evtTouches[k].screenY;
+                            if (Math.abs(Math.pow(evtTouches[k].screenX - touchTargets[j].X, 2) +
+                                    Math.pow(evtTouches[k].screenY - touchTargets[j].Y, 2)) < eps * eps) {
+                                touchTargets[j].num = k;
+                                touchTargets[j].X = evtTouches[k].screenX;
+                                touchTargets[j].Y = evtTouches[k].screenY;
                                 evtTouches[k].jxg_isused = true;
                                 break;
                             }
@@ -2520,13 +2520,13 @@ define([
 
                         eps *= 2;
 
-                    } while (this.touches[i].targets[j].num === -1 &&
+                    } while (touchTargets[j].num === -1 &&
                              eps < this.options.precision.touchMax);
 
-                    if (this.touches[i].targets[j].num === -1) {
+                    if (touchTargets[j].num === -1) {
                         JXG.debug('i couldn\'t find a targettouches for target no ' + j + ' on ' + this.touches[i].obj.name + ' (' + this.touches[i].obj.id + '). Removed the target.');
                         JXG.debug('eps = ' + eps + ', touchMax = ' + Options.precision.touchMax);
-                        this.touches[i].targets.splice(i, 1);
+                        touchTargets.splice(i, 1);
                     }
 
                 }
@@ -2765,7 +2765,8 @@ define([
             var i, j, k,
                 eps = this.options.precision.touch,
                 tmpTouches = [], found, foundNumber,
-                evtTouches = evt && evt[JXG.touchProperty];
+                evtTouches = evt && evt[JXG.touchProperty],
+                touchTargets;
 
             this.triggerEventHandlers(['touchend', 'up'], [evt]);
             this.displayInfobox(false);
@@ -2801,15 +2802,16 @@ define([
                     // could all targets of the current this.touches.obj be assigned to targettouches?
                     found = false;
                     foundNumber = 0;
+                    touchTargets = tmpTouches[i].targets;
 
-                    for (j = 0; j < tmpTouches[i].targets.length; j++) {
-                        tmpTouches[i].targets[j].found = false;
+                    for (j = 0; j < touchTargets.length; j++) {
+                        touchTargets[j].found = false;
                         for (k = 0; k < evtTouches.length; k++) {
-                            if (Math.abs(Math.pow(evtTouches[k].screenX - tmpTouches[i].targets[j].X, 2) + Math.pow(evtTouches[k].screenY - tmpTouches[i].targets[j].Y, 2)) < eps * eps) {
-                                tmpTouches[i].targets[j].found = true;
-                                tmpTouches[i].targets[j].num = k;
-                                tmpTouches[i].targets[j].X = evtTouches[k].screenX;
-                                tmpTouches[i].targets[j].Y = evtTouches[k].screenY;
+                            if (Math.abs(Math.pow(evtTouches[k].screenX - touchTargets[j].X, 2) + Math.pow(evtTouches[k].screenY - touchTargets[j].Y, 2)) < eps * eps) {
+                                touchTargets[j].found = true;
+                                touchTargets[j].num = k;
+                                touchTargets[j].X = evtTouches[k].screenX;
+                                touchTargets[j].Y = evtTouches[k].screenY;
                                 foundNumber += 1;
                                 break;
                             }
@@ -2817,9 +2819,9 @@ define([
                     }
 
                     if (Type.isPoint(tmpTouches[i].obj)) {
-                        found = (tmpTouches[i].targets[0] && tmpTouches[i].targets[0].found);
+                        found = (touchTargets[0] && touchTargets[0].found);
                     } else if (tmpTouches[i].obj.elementClass === Const.OBJECT_CLASS_LINE) {
-                        found = (tmpTouches[i].targets[0] && tmpTouches[i].targets[0].found) || (tmpTouches[i].targets[1] && tmpTouches[i].targets[1].found);
+                        found = (touchTargets[0] && touchTargets[0].found) || (touchTargets[1] && touchTargets[1].found);
                     } else if (tmpTouches[i].obj.elementClass === Const.OBJECT_CLASS_CIRCLE) {
                         found = foundNumber === 1 || foundNumber === 3;
                     }
@@ -2831,17 +2833,17 @@ define([
                             targets: []
                         });
 
-                        for (j = 0; j < tmpTouches[i].targets.length; j++) {
-                            if (tmpTouches[i].targets[j].found) {
+                        for (j = 0; j < touchTargets.length; j++) {
+                            if (touchTargets[j].found) {
                                 this.touches[this.touches.length - 1].targets.push({
-                                    num: tmpTouches[i].targets[j].num,
-                                    X: tmpTouches[i].targets[j].screenX,
-                                    Y: tmpTouches[i].targets[j].screenY,
+                                    num: touchTargets[j].num,
+                                    X: touchTargets[j].screenX,
+                                    Y: touchTargets[j].screenY,
                                     Xprev: NaN,
                                     Yprev: NaN,
-                                    Xstart: tmpTouches[i].targets[j].Xstart,
-                                    Ystart: tmpTouches[i].targets[j].Ystart,
-                                    Zstart: tmpTouches[i].targets[j].Zstart
+                                    Xstart: touchTargets[j].Xstart,
+                                    Ystart: touchTargets[j].Ystart,
+                                    Zstart: touchTargets[j].Zstart
                                 });
                             }
                         }
