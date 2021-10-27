@@ -1140,9 +1140,8 @@ define([
          * @param {Object} o The touch object that is dragged: {JXG.Board#touches}.
          * @param {Object} evt The event object that lead to this movement.
          */
-        // twoFingerMove: function (p1, p2, o, evt) {
-        twoFingerMove: function (o, evt) {
-                var np1c, np2c, drag;
+        twoFingerMove: function (o, id, evt) {
+            var drag;
 
             if (Type.exists(o) && Type.exists(o.obj)) {
                 drag = o.obj;
@@ -1152,38 +1151,33 @@ define([
 
             if (drag.elementClass === Const.OBJECT_CLASS_LINE ||
                 drag.type === Const.OBJECT_TYPE_POLYGON) {
-                this.twoFingerTouchObject(o, drag, evt);
+                this.twoFingerTouchObject(o, drag, id);
             } else if (drag.elementClass === Const.OBJECT_CLASS_CIRCLE) {
-                this.twoFingerTouchCircle(o, drag, evt);
+                this.twoFingerTouchCircle(o, drag, id);
             }
 
-            drag.triggerEventHandlers(['touchdrag', 'drag'], [evt]);
-
-            o.targets[0].Xprev = o.targets[0].X;
-            o.targets[0].Yprev = o.targets[0].Y;
-            o.targets[1].Xprev = o.targets[1].X;
-            o.targets[1].Yprev = o.targets[1].Y;
+            if (evt) {
+                drag.triggerEventHandlers(['touchdrag', 'drag'], [evt]);
+            }
         },
 
         /**
          * Moves, rotates and scales a line or polygon with two fingers.
          * @param {object} o The touch object that is dragged: {JXG.Board#touches}.
          * @param {object} drag The object that is dragged:
-         * @param {Object} evt The event object that lead to this movement.
+         * @param {Number} id pointerId of the event. In case of old touch event this is emulated.
          */
-        twoFingerTouchObject: function (o, drag, evt) {
+        twoFingerTouchObject: function (o, drag, id) {
             var np, op, nd, od,
                 d, alpha,
                 S, t1, t3, t4, t5,
                 ar, i, len,
-                fixEl, moveEl, fix,
-                pi180 = 0.017453292519943295; // Math.PI / 180.0
+                fixEl, moveEl, fix;
 
             if (Type.exists(o.targets[0]) && Type.exists(o.targets[1]) &&
                 !isNaN(o.targets[0].Xprev + o.targets[0].Yprev + o.targets[1].Xprev + o.targets[1].Yprev)) {
 
-                //console.log(evt.pointerId, o.targets[0], o.targets[1])
-                if (evt.pointerId === o.targets[0].num) {
+                if (id === o.targets[0].num) {
                     fixEl = o.targets[1];
                     moveEl  = o.targets[0];
                 } else {
@@ -1209,27 +1203,14 @@ define([
                     return;
                 }
 
-                if (Type.exists(evt.rotation) && evt.type !== 'pointermove') {
-                    // iOS touch events contain the angle for free
-                    alpha = evt.rotation - this.previousRotation;
-                    this.previousRotation = evt.rotation;
-                    alpha *= -pi180;
-                } else {
-                    // For pointer events, the rotation angle has to be calculated.
-                    alpha = Geometry.rad(op.slice(1), fix.slice(1), np.slice(1));
-                }
+                alpha = Geometry.rad(op.slice(1), fix.slice(1), np.slice(1));
 
                 t1 = this.create('transform', [alpha, [fix[1], fix[2]]], {type: 'rotate'});
                 t1.update();
 
                 if (Type.evaluate(drag.visProp.scalable)) {
                     // Scale
-                    if (Type.exists(evt.scale)) {
-                        d = evt.scale / this.previousScale;
-                        this.previousScale = evt.scale;
-                    } else {
-                        d = Geometry.distance(np, fix) / Geometry.distance(op, fix);
-                    }
+                    d = Geometry.distance(np, fix) / Geometry.distance(op, fix);
 
                     t3 = this.create('transform', [-fix[1], -fix[2]], {type: 'translate'});
                     t4 = this.create('transform', [d, d], {type: 'scale'});
@@ -1262,115 +1243,13 @@ define([
             }
         },
 
-        twoFingerTouchObjectOld: function (np1c, np2c, o, drag, evt) {
-            var np1, np2, op1, op2,
-                nmid, omid, nd, od,
-                d, alpha,
-                S, t1, t2, t3, t4, t5,
-                ar, i, len,
-                pi180 = 0.017453292519943295; // Math.PI / 180.0
-
-            if (Type.exists(o.targets[0]) &&
-                    Type.exists(o.targets[1]) &&
-                    !isNaN(o.targets[0].Xprev + o.targets[0].Yprev + o.targets[1].Xprev + o.targets[1].Yprev)) {
-
-                // Actual fingers' position
-                np1 = np1c.usrCoords;
-                np2 = np2c.usrCoords;
-
-                // Previous fingers' position
-                op1 = (new Coords(Const.COORDS_BY_SCREEN, [o.targets[0].Xprev, o.targets[0].Yprev], this)).usrCoords;
-                op2 = (new Coords(Const.COORDS_BY_SCREEN, [o.targets[1].Xprev, o.targets[1].Yprev], this)).usrCoords;
-
-                // Affine mid points of the old and new positions
-                omid = [1, (op1[1] + op2[1]) * 0.5, (op1[2] + op2[2]) * 0.5];
-                nmid = [1, (np1[1] + np2[1]) * 0.5, (np1[2] + np2[2]) * 0.5];
-
-                // Old and new directions
-                od = Mat.crossProduct(op1, op2);
-                nd = Mat.crossProduct(np1, np2);
-
-                // Intersection between the two directions
-                S = Mat.crossProduct(od, nd);
-
-                // If parallel translate, otherwise rotate
-                if (Math.abs(S[0]) < Mat.eps) {
-                    return;
-                }
-
-                // Normalize the coordinates
-                S[1] /= S[0];
-                S[2] /= S[0];
-
-                if (Type.exists(evt.rotation) && evt.type !== 'pointermove') {
-                    // iOS touch events contain the angle for free
-                    alpha = evt.rotation - this.previousRotation;
-                    this.previousRotation = evt.rotation;
-                    alpha *= -pi180;
-                } else {
-                    // For pointer events, the rotation angle has to be calculated.
-                    alpha = Geometry.rad(omid.slice(1), S.slice(1), nmid.slice(1));
-                }
-
-                t1 = this.create('transform', [alpha, S[1], S[2]], {type: 'rotate'});
-
-                // Old midpoint of fingers after first transformation:
-                t1.update();
-                omid = Mat.matVecMult(t1.matrix, omid);
-                omid[1] /= omid[0];
-                omid[2] /= omid[0];
-
-                // Shift to the new mid point
-                t2 = this.create('transform', [nmid[1] - omid[1], nmid[2] - omid[2]], {type: 'translate'});
-                t2.update();
-
-                t1.melt(t2);
-                if (Type.evaluate(drag.visProp.scalable)) {
-                    // Scale
-                    if (Type.exists(evt.scale)) {
-                        d = evt.scale / this.previousScale;
-                        this.previousScale = evt.scale;
-                    } else {
-                        d = Geometry.distance(np1, np2) / Geometry.distance(op1, op2);
-                    }
-
-                    t3 = this.create('transform', [-nmid[1], -nmid[2]], {type: 'translate'});
-                    t4 = this.create('transform', [d, d], {type: 'scale'});
-                    t5 = this.create('transform', [nmid[1], nmid[2]], {type: 'translate'});
-                    t1.melt(t3).melt(t4).melt(t5);
-                }
-
-                if (drag.elementClass === Const.OBJECT_CLASS_LINE) {
-                    ar = [];
-                    if (drag.point1.draggable()) {
-                        ar.push(drag.point1);
-                    }
-                    if (drag.point2.draggable()) {
-                        ar.push(drag.point2);
-                    }
-                    t1.applyOnce(ar);
-                } else if (drag.type === Const.OBJECT_TYPE_POLYGON) {
-                    ar = [];
-                    len = drag.vertices.length - 1;
-                    for (i = 0; i < len; ++i) {
-                        if (drag.vertices[i].draggable()) {
-                            ar.push(drag.vertices[i]);
-                        }
-                    }
-                    t1.applyOnce(ar);
-                }
-
-                this.update();
-                drag.highlight(true);
-            }
-        },
-
         /*
          * Moves, rotates and scales a circle with two fingers.
          * @param {object} o The touch object that is dragged: {JXG.Board#touches}.
          * @param {object} drag The object that is dragged:
+         * @param {Number} id pointerId of the event. In case of old touch event this is emulated.
          */
-        twoFingerTouchCircle: function (o, drag, evt) {
+        twoFingerTouchCircle: function (o, drag, id) {
             var fixEl, moveEl, np, op, fix,
                 d, alpha, t1, t2, t3, t4;
 
@@ -1381,7 +1260,7 @@ define([
             if (Type.exists(o.targets[0]) && Type.exists(o.targets[1]) &&
                 !isNaN(o.targets[0].Xprev + o.targets[0].Yprev + o.targets[1].Xprev + o.targets[1].Yprev)) {
 
-                if (evt.pointerId === o.targets[0].num) {
+                if (id === o.targets[0].num) {
                     fixEl  = o.targets[1];
                     moveEl = o.targets[0];
                 } else {
@@ -2445,34 +2324,17 @@ define([
                                 this.touches[i].targets[j].Y = pos[1];
 
                                 if (this.touches[i].targets.length === 1) {
-                                    // pos = this.getMousePosition(evt);
-
                                     // Touch by one finger: this is possible for all elements that can be dragged
                                     this.moveObject(pos[0], pos[1], this.touches[i], evt, type);
-
                                 } else if (this.touches[i].targets.length === 2) {
-
-                                    // this.touches[i].targets[j].X = evt.clientX;
-                                    // this.touches[i].targets[j].Y = evt.clientY;
-
                                     // Touch by two fingers: e.g. moving lines
-                                    // this.twoFingerMove(
-                                    //     this.getMousePosition({
-                                    //         clientX: this.touches[i].targets[0].X,
-                                    //         clientY: this.touches[i].targets[0].Y
-                                    //     }),
-                                    //     this.getMousePosition({
-                                    //         clientX: this.touches[i].targets[1].X,
-                                    //         clientY: this.touches[i].targets[1].Y
-                                    //     }),
-                                    //     this.touches[i], evt);
+                                    this.twoFingerMove(this.touches[i], evt.pointerId, evt);
 
-                                    this.twoFingerMove(
-                                        this.touches[i], evt
-                                    );
+                                    this.touches[i].targets[j].Xprev = pos[0];
+                                    this.touches[i].targets[j].Yprev = pos[1];
                                 }
 
-                                // there is only one pointer in the evt object, there's no point in looking further
+                                // There is only one pointer in the evt object, so there's no point in looking further
                                 break;
                             }
                         }
@@ -2690,20 +2552,22 @@ define([
                     elements = this.initMoveObject(pos[0], pos[1], evt, 'touch');
                     if (elements.length !== 0) {
                         obj = elements[elements.length - 1];
+                        target = {num: i,
+                            X: evtTouches[i].screenX,
+                            Y: evtTouches[i].screenY,
+                            Xprev: NaN,
+                            Yprev: NaN,
+                            Xstart: [],
+                            Ystart: [],
+                            Zstart: [] 
+                        };
 
                         if (Type.isPoint(obj) ||
                                 obj.elementClass === Const.OBJECT_CLASS_TEXT ||
                                 obj.type === Const.OBJECT_TYPE_TICKS ||
                                 obj.type === Const.OBJECT_TYPE_IMAGE) {
-                            // it's a point, so it's single touch, so we just push it to our touches
-                            targets = [{num: i,
-                                        X: evtTouches[i].screenX,
-                                        Y: evtTouches[i].screenY,
-                                        Xprev: NaN,
-                                        Yprev: NaN,
-                                        Xstart: [],
-                                        Ystart: [],
-                                        Zstart: [] }];
+                            // It's a point, so it's single touch, so we just push it to our touches
+                            targets = [target_obj];
 
                             // For the UNDO/REDO of object moves
                             this.saveStartPos(obj, targets[0]);
@@ -2723,15 +2587,6 @@ define([
                                     found = true;
                                     // only add it, if we don't have two targets in there already
                                     if (this.touches[j].targets.length === 1) {
-                                        target = {num: i,
-                                                  X: evtTouches[i].screenX,
-                                                  Y: evtTouches[i].screenY,
-                                                  Xprev: NaN,
-                                                  Yprev: NaN,
-                                                  Xstart: [],
-                                                  Ystart: [],
-                                                  Zstart: [] };
-
                                         // For the UNDO/REDO of object moves
                                         this.saveStartPos(obj, target);
                                         this.touches[j].targets.push(target);
@@ -2745,14 +2600,7 @@ define([
                             // IF there is a second touch targetting this line, we will find it later on, and then add it to
                             // the touches control object.
                             if (!found) {
-                                targets = [{num: i,
-                                            X: evtTouches[i].screenX,
-                                            Y: evtTouches[i].screenY,
-                                            Xprev: NaN,
-                                            Yprev: NaN,
-                                            Xstart: [],
-                                            Ystart: [],
-                                            Zstart: [] }];
+                                targets = [target];
 
                                 // For the UNDO/REDO of object moves
                                 this.saveStartPos(obj, targets[0]);
@@ -2799,7 +2647,8 @@ define([
          * @returns {Boolean}
          */
         touchMoveListener: function (evt) {
-            var i, pos1, pos2, time,
+            var i, pos1, pos2, 
+                time, touchTargets,
                 evtTouches = evt[JXG.touchProperty];
 
             if (!this.checkFrameRate(evt)) {
@@ -2836,40 +2685,52 @@ define([
                         // Runs over through all elements which are touched
                         // by at least one finger.
                         for (i = 0; i < this.touches.length; i++) {
-                            if (this.touches[i].targets.length === 1) {
+                            touchTargets = this.touches[i].targets;
+                            if (touchTargets.length === 1) {
+
+
                                 // Touch by one finger:  this is possible for all elements that can be dragged
-                                if (evtTouches[this.touches[i].targets[0].num]) {
-                                    pos1 = this.getMousePosition(evt, this.touches[i].targets[0].num);
+                                if (evtTouches[touchTargets[0].num]) {
+                                    pos1 = this.getMousePosition(evt, touchTargets[0].num);
                                     if (pos1[0] < 0 || pos1[0] > this.canvasWidth ||
                                         pos1[1] < 0 || pos1[1] > this.canvasHeight) {
                                         return;
                                     }
-                                    this.touches[i].targets[0].X = evtTouches[this.touches[i].targets[0].num].screenX;
-                                    this.touches[i].targets[0].Y = evtTouches[this.touches[i].targets[0].num].screenY;
+                                    touchTargets[0].X = pos1[0];
+                                    touchTargets[0].Y = pos1[1];
                                     this.moveObject(pos1[0], pos1[1], this.touches[i], evt, 'touch');
                                 }
 
-                            } else if (this.touches[i].targets.length === 2 &&
-                                        this.touches[i].targets[0].num > -1 &&
-                                        this.touches[i].targets[1].num > -1) {
+                            } else if (touchTargets.length === 2 &&
+                                touchTargets[0].num > -1 &&
+                                touchTargets[1].num > -1) {
+
                                 // Touch by two fingers: moving lines, ...
-                                if (evtTouches[this.touches[i].targets[0].num] &&
-                                    evtTouches[this.touches[i].targets[1].num]) {
+                                if (evtTouches[touchTargets[0].num] &&
+                                    evtTouches[touchTargets[1].num]) {
 
                                     // Get coordinates of the two touches
-                                    pos1 = this.getMousePosition(evt, this.touches[i].targets[0].num);
-                                    pos2 = this.getMousePosition(evt, this.touches[i].targets[1].num);
+                                    pos1 = this.getMousePosition(evt, touchTargets[0].num);
+                                    pos2 = this.getMousePosition(evt, touchTargets[1].num);
                                     if (pos1[0] < 0 || pos1[0] > this.canvasWidth ||
                                         pos1[1] < 0 || pos1[1] > this.canvasHeight ||
                                         pos2[0] < 0 || pos2[0] > this.canvasWidth ||
                                         pos2[1] < 0 || pos2[1] > this.canvasHeight) {
                                         return;
                                     }
-                                    this.touches[i].targets[0].X = evtTouches[this.touches[i].targets[0].num].screenX;
-                                    this.touches[i].targets[0].Y = evtTouches[this.touches[i].targets[0].num].screenY;
-                                    this.touches[i].targets[1].X = evtTouches[this.touches[i].targets[1].num].screenX;
-                                    this.touches[i].targets[1].Y = evtTouches[this.touches[i].targets[1].num].screenY;
-                                    this.twoFingerMove(pos1, pos2, this.touches[i], evt);
+
+                                    touchTargets[0].X = pos1[0];
+                                    touchTargets[0].Y = pos1[1];
+                                    touchTargets[1].X = pos2[0];
+                                    touchTargets[1].Y = pos2[1];
+
+                                    this.twoFingerMove(this.touches[i], touchTargets[0].num, evt);
+                                    this.twoFingerMove(this.touches[i], touchTargets[1].num);
+
+                                    touchTargets[0].Xprev = pos1[0];
+                                    touchTargets[0].Yprev = pos1[1];
+                                    touchTargets[1].Xprev = pos2[0];
+                                    touchTargets[1].Yprev = pos2[1];
                                 }
                             }
                         }
