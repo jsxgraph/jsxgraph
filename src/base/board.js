@@ -1151,9 +1151,9 @@ define([
 
             if (drag.elementClass === Const.OBJECT_CLASS_LINE ||
                 drag.type === Const.OBJECT_TYPE_POLYGON) {
-                this.twoFingerTouchObject(o, drag, id);
+                this.twoFingerTouchObject(o.targets, drag, id);
             } else if (drag.elementClass === Const.OBJECT_CLASS_CIRCLE) {
-                this.twoFingerTouchCircle(o, drag, id);
+                this.twoFingerTouchCircle(o.targets, drag, id);
             }
 
             if (evt) {
@@ -1163,26 +1163,26 @@ define([
 
         /**
          * Moves, rotates and scales a line or polygon with two fingers.
-         * @param {object} o The touch object that is dragged: {JXG.Board#touches}.
+         * @param {Array} tar Array conatining touch event objects: {JXG.Board#touches.targets}.
          * @param {object} drag The object that is dragged:
          * @param {Number} id pointerId of the event. In case of old touch event this is emulated.
          */
-        twoFingerTouchObject: function (o, drag, id) {
+        twoFingerTouchObject: function (tar, drag, id) {
             var np, op, nd, od,
                 d, alpha,
                 S, t1, t3, t4, t5,
                 ar, i, len,
                 fixEl, moveEl, fix;
 
-            if (Type.exists(o.targets[0]) && Type.exists(o.targets[1]) &&
-                !isNaN(o.targets[0].Xprev + o.targets[0].Yprev + o.targets[1].Xprev + o.targets[1].Yprev)) {
+            if (Type.exists(tar[0]) && Type.exists(tar[1]) &&
+                !isNaN(tar[0].Xprev + tar[0].Yprev + tar[1].Xprev + tar[1].Yprev)) {
 
-                if (id === o.targets[0].num) {
-                    fixEl = o.targets[1];
-                    moveEl  = o.targets[0];
+                if (id === tar[0].num) {
+                    fixEl  = tar[1];
+                    moveEl = tar[0];
                 } else {
-                    fixEl = o.targets[0];
-                    moveEl  = o.targets[1];
+                    fixEl  = tar[0];
+                    moveEl = tar[1];
                 }
 
                 fix = (new Coords(Const.COORDS_BY_SCREEN, [fixEl.Xprev, fixEl.Yprev], this)).usrCoords;
@@ -1245,11 +1245,11 @@ define([
 
         /*
          * Moves, rotates and scales a circle with two fingers.
-         * @param {object} o The touch object that is dragged: {JXG.Board#touches}.
+         * @param {Array} tar Array conatining touch event objects: {JXG.Board#touches.targets}.
          * @param {object} drag The object that is dragged:
          * @param {Number} id pointerId of the event. In case of old touch event this is emulated.
          */
-        twoFingerTouchCircle: function (o, drag, id) {
+        twoFingerTouchCircle: function (tar, drag, id) {
             var fixEl, moveEl, np, op, fix,
                 d, alpha, t1, t2, t3, t4;
 
@@ -1257,15 +1257,15 @@ define([
                 return;
             }
 
-            if (Type.exists(o.targets[0]) && Type.exists(o.targets[1]) &&
-                !isNaN(o.targets[0].Xprev + o.targets[0].Yprev + o.targets[1].Xprev + o.targets[1].Yprev)) {
+            if (Type.exists(tar[0]) && Type.exists(tar[1]) &&
+                !isNaN(tar[0].Xprev + tar[0].Yprev + tar[1].Xprev + tar[1].Yprev)) {
 
-                if (id === o.targets[0].num) {
-                    fixEl  = o.targets[1];
-                    moveEl = o.targets[0];
+                if (id === tar[0].num) {
+                    fixEl  = tar[1];
+                    moveEl = tar[0];
                 } else {
-                    fixEl = o.targets[0];
-                    moveEl  = o.targets[1];
+                    fixEl  = tar[0];
+                    moveEl = tar[1];
                 }
 
                 fix = (new Coords(Const.COORDS_BY_SCREEN, [fixEl.Xprev, fixEl.Yprev], this)).usrCoords;
