@@ -302,7 +302,7 @@ define([
                     t += d;
                 }
             } else if (ev_ct === 'plot' ||
-                        ev_ct === 'functiongraph') {
+                ev_ct === 'functiongraph') {
 
                 if (!Type.exists(start) || start < 0) {
                     start = 0;
@@ -311,7 +311,7 @@ define([
                 if (Type.exists(this.qdt) &&
                     Type.evaluate(this.visProp.useqdt) &&
                     this.bezierDegree !== 3
-                    ) {
+                ) {
                     qdt = this.qdt.query(new Coords(Const.COORDS_BY_USER, [x, y], this.board));
                     points = qdt.points;
                     len = points.length;
@@ -734,7 +734,7 @@ define([
                     // this.updateTransform(this.points[i]);
                     suspendUpdate = true;
                 }
-            // continuous x data
+                // continuous x data
             } else {
                 if (Type.evaluate(this.visProp.doadvancedplot)) {
                     // console.time("plot");
@@ -786,7 +786,7 @@ define([
             }
 
             if (Type.evaluate(this.visProp.curvetype) !== 'plot' &&
-                    Type.evaluate(this.visProp.rdpsmoothing)) {
+                Type.evaluate(this.visProp.rdpsmoothing)) {
                 // console.time("rdp");
                 this.points = Numerics.RamerDouglasPeucker(this.points, 0.2);
                 this.numberPoints = this.points.length;
@@ -1009,7 +1009,7 @@ define([
                 obj;
 
             // Read dependencies found by the JessieCode parser
-            obj = {'xterm': 1, 'yterm': 1};
+            obj = { 'xterm': 1, 'yterm': 1 };
             for (fstr in obj) {
                 if (obj.hasOwnProperty(fstr) && this.hasOwnProperty(fstr) && this[fstr].origin) {
                     isJessieCode = true;
@@ -1035,38 +1035,38 @@ define([
                 by = 0.95 * this.board.canvasHeight;
 
             switch (Type.evaluate(this.visProp.label.position)) {
-            case 'ulft':
-                x = ax;
-                y = ay;
-                break;
-            case 'llft':
-                x = ax;
-                y = by;
-                break;
-            case 'rt':
-                x = bx;
-                y = 0.5 * by;
-                break;
-            case 'lrt':
-                x = bx;
-                y = by;
-                break;
-            case 'urt':
-                x = bx;
-                y = ay;
-                break;
-            case 'top':
-                x = 0.5 * bx;
-                y = ay;
-                break;
-            case 'bot':
-                x = 0.5 * bx;
-                y = by;
-                break;
-            default:
-                // includes case 'lft'
-                x = ax;
-                y = 0.5 * by;
+                case 'ulft':
+                    x = ax;
+                    y = ay;
+                    break;
+                case 'llft':
+                    x = ax;
+                    y = by;
+                    break;
+                case 'rt':
+                    x = bx;
+                    y = 0.5 * by;
+                    break;
+                case 'lrt':
+                    x = bx;
+                    y = by;
+                    break;
+                case 'urt':
+                    x = bx;
+                    y = ay;
+                    break;
+                case 'top':
+                    x = 0.5 * bx;
+                    y = ay;
+                    break;
+                case 'bot':
+                    x = 0.5 * bx;
+                    y = by;
+                    break;
+                default:
+                    // includes case 'lft'
+                    x = ax;
+                    y = 0.5 * by;
             }
 
             c = new Coords(Const.COORDS_BY_SCREEN, [x, y], this.board, false);
@@ -1113,15 +1113,15 @@ define([
             if (this.bezierDegree === 3) {
                 // Add methods X(), Y()
                 for (i = 0; i < l; i++) {
-                    this.points[i].X = Type.bind(function() { return this.usrCoords[1]; }, this.points[i]);
-                    this.points[i].Y = Type.bind(function() { return this.usrCoords[2]; }, this.points[i]);
+                    this.points[i].X = Type.bind(function () { return this.usrCoords[1]; }, this.points[i]);
+                    this.points[i].Y = Type.bind(function () { return this.usrCoords[2]; }, this.points[i]);
                 }
                 bezier = Numerics.bezier(this.points);
                 up = bezier[3]();
-                minX = Numerics.fminbr(function(t) { return  bezier[0](t); }, [0, up]);
-                maxX = Numerics.fminbr(function(t) { return -bezier[0](t); }, [0, up]);
-                minY = Numerics.fminbr(function(t) { return  bezier[1](t); }, [0, up]);
-                maxY = Numerics.fminbr(function(t) { return -bezier[1](t); }, [0, up]);
+                minX = Numerics.fminbr(function (t) { return bezier[0](t); }, [0, up]);
+                maxX = Numerics.fminbr(function (t) { return -bezier[0](t); }, [0, up]);
+                minY = Numerics.fminbr(function (t) { return bezier[1](t); }, [0, up]);
+                maxY = Numerics.fminbr(function (t) { return -bezier[1](t); }, [0, up]);
 
                 minX = bezier[0](minX);
                 maxX = bezier[0](maxX);
@@ -1169,18 +1169,18 @@ define([
          * @param {Array} where Array containing the x and y coordinate of the target location.
          * @returns {JXG.Curve} Reference to itself.
          */
-        moveTo: function(where) {
+        moveTo: function (where) {
             // TODO add animation
             var delta = [], p;
             if (this.points.length > 0 && !Type.evaluate(this.visProp.fixed)) {
                 p = this.points[0];
                 if (where.length === 3) {
                     delta = [where[0] - p.usrCoords[0],
-                            where[1] - p.usrCoords[1],
-                            where[2] - p.usrCoords[2]];
+                    where[1] - p.usrCoords[1],
+                    where[2] - p.usrCoords[2]];
                 } else {
                     delta = [where[0] - p.usrCoords[1],
-                            where[1] - p.usrCoords[2]];
+                    where[1] - p.usrCoords[2]];
                 }
                 this.setPosition(Const.COORDS_BY_USER, delta);
             }
@@ -1198,14 +1198,14 @@ define([
          * @returns {Array} [Boolean, curve]: Array contining 'true' if curve is result of a transformation,
          *   and the source curve of the transformation.
          */
-        getTransformationSource: function() {
+        getTransformationSource: function () {
             var isTransformed, curve_org;
             if (Type.exists(this._transformationSource)) {
                 curve_org = this._transformationSource;
                 if (curve_org.elementClass === Const.OBJECT_CLASS_CURVE //&&
                     //Type.evaluate(curve_org.visProp.curvetype) !== 'plot'
-                    ) {
-                        isTransformed = true;
+                ) {
+                    isTransformed = true;
                 }
             }
             return [isTransformed, curve_org];
@@ -1380,10 +1380,10 @@ define([
         obj = board.select(parents[0], true);
         if (Type.isObject(obj) &&
             (obj.type === Const.OBJECT_TYPE_CURVE ||
-             obj.type === Const.OBJECT_TYPE_ANGLE ||
-             obj.type === Const.OBJECT_TYPE_ARC   ||
-             obj.type === Const.OBJECT_TYPE_CONIC ||
-             obj.type === Const.OBJECT_TYPE_SECTOR) &&
+                obj.type === Const.OBJECT_TYPE_ANGLE ||
+                obj.type === Const.OBJECT_TYPE_ARC ||
+                obj.type === Const.OBJECT_TYPE_CONIC ||
+                obj.type === Const.OBJECT_TYPE_SECTOR) &&
             Type.isTransformationOrArray(parents[1])) {
 
             if (obj.type === Const.OBJECT_TYPE_SECTOR) {
@@ -1401,17 +1401,17 @@ define([
             attr = Type.copyAttributes(attr, board.options, 'curve');
 
             cu = new JXG.Curve(board, ['x', [], []], attr);
-            cu.updateDataArray = function() {
-                    var i, le = obj.numberPoints;
-                    this.bezierDegree = obj.bezierDegree;
-                    this.dataX = [];
-                    this.dataY = [];
-                    for (i = 0; i < le; i++) {
-                        this.dataX.push(obj.points[i].usrCoords[1]);
-                        this.dataY.push(obj.points[i].usrCoords[2]);
-                    }
-                    return this;
-                };
+            cu.updateDataArray = function () {
+                var i, le = obj.numberPoints;
+                this.bezierDegree = obj.bezierDegree;
+                this.dataX = [];
+                this.dataY = [];
+                for (i = 0; i < le; i++) {
+                    this.dataX.push(obj.points[i].usrCoords[1]);
+                    this.dataY.push(obj.points[i].usrCoords[2]);
+                }
+                return this;
+            };
             cu.addTransform(parents[1]);
             obj.addChild(cu);
             cu.setParents([obj]);
@@ -1560,7 +1560,7 @@ define([
                             if (Type.isPoint(parents[i])) {
                                 x.push(parents[i].X());
                                 y.push(parents[i].Y());
-                            // given as [[x1,y1], [x2, y2], ...]
+                                // given as [[x1,y1], [x2, y2], ...]
                             } else if (Type.isArray(parents[i]) && parents[i].length === 2) {
                                 for (j = 0; j < parents.length; j++) {
                                     if (Type.isFunction(parents[j][0])) {
@@ -1591,12 +1591,12 @@ define([
                 return Numerics.splineEval(t, x, y, D);
             },
             // minX()
-            function() {
+            function () {
                 return x[0];
             },
             //maxX()
-            function() {
-                return x[x.length -1];
+            function () {
+                return x[x.length - 1];
             }];
 
         };
@@ -1675,7 +1675,7 @@ define([
      * </script><pre>
      */
     JXG.createCardinalSpline = function (board, parents, attributes) {
-        var el,
+        var el, getPointLike,
             points, tau, type,
             p, q, i, le,
             splineArr,
@@ -1723,7 +1723,7 @@ define([
                     q.push(board.select(p[i]));
                 } else if (Type.isPoint(p[i])) {
                     q.push(p[i]);
-                // given as [[x0,y0], [x1, y2], ...]
+                    // given as [[x0,y0], [x1, y2], ...]
                 } else if (Type.isArray(p[i]) && p[i].length === 2) {
                     q[i] = [];
                     if (Type.isFunction(p[i][0])) {
@@ -1747,24 +1747,24 @@ define([
             points = Type.providePoints(board, q, attributes, 'cardinalspline', ['points']);
         } else {
             points = [];
+
+            getPointLike = function (ii) {
+                return {
+                    X: function () { return q[ii][0]; },
+                    Y: function () { return q[ii][1]; },
+                    Dist: function (p) {
+                        var dx = this.X() - p.X(),
+                            dy = this.Y() - p.Y();
+                        return Math.sqrt(dx * dx + dy * dy);
+                    }
+                };
+            };
+
             for (i = 0; i < q.length; i++) {
                 if (Type.isPoint(q[i])) {
                     points.push(q[i]);
                 } else {
-                    /* jshint ignore:start */
-                    points.push(
-                        (function(ii) { return {
-                            X: function() { return q[ii][0]; },
-                            Y: function() { return q[ii][1]; },
-                            Dist: function(p) {
-                                    var dx = this.X() - p.X(),
-                                        dy = this.Y() - p.Y();
-                                    return Math.sqrt(dx * dx + dy * dy);
-                                }
-                            };
-                        })(i)
-                    );
-                    /* jshint ignore:end */
+                    points.push(getPointLike(i));
                 }
             }
         }
@@ -1938,7 +1938,7 @@ define([
                     q.push(board.select(p[i]));
                 } else if (Type.isPoint(p[i])) {
                     q.push(p[i]);
-                // given as [[x0,y0], [x1, y2], ...]
+                    // given as [[x0,y0], [x1, y2], ...]
                 } else if (Type.isArray(p[i]) && p[i].length === 2) {
                     q[i] = [];
                     if (Type.isFunction(p[i][0])) {
@@ -1968,9 +1968,10 @@ define([
                 } else {
                     /* jshint ignore:start */
                     points.push(
-                        (function(ii) { return {
-                            X: function() { return q[ii][0]; },
-                            Y: function() { return q[ii][1]; }
+                        (function (ii) {
+                            return {
+                                X: function () { return q[ii][0]; },
+                                Y: function () { return q[ii][1]; }
                             };
                         })(i)
                     );
@@ -2387,10 +2388,10 @@ define([
         dy = Numerics.D(curve.Y);
 
         c = board.create('curve', [
-                function(t) { return curve.X(t); },
-                function(t) { return dy(t) / dx(t); },
-                curve.minX(), curve.maxX()
-            ], attr);
+            function (t) { return curve.X(t); },
+            function (t) { return dy(t) / dx(t); },
+            curve.minX(), curve.maxX()
+        ], attr);
 
         c.setParents(curve);
 
@@ -2442,10 +2443,10 @@ define([
         }
 
         c = board.create('curve', [[], []], attributes);
-        c.updateDataArray = function() {
-             var a = JXG.Math.Clip.intersection(parents[0], parents[1], this.board);
-             this.dataX = a[0];
-             this.dataY = a[1];
+        c.updateDataArray = function () {
+            var a = JXG.Math.Clip.intersection(parents[0], parents[1], this.board);
+            this.dataX = a[0];
+            this.dataY = a[1];
         };
         return c;
     };
@@ -2484,7 +2485,7 @@ define([
      * </script><pre>
      *
      */
-     JXG.createCurveUnion = function (board, parents, attributes) {
+    JXG.createCurveUnion = function (board, parents, attributes) {
         var c;
 
         if (parents.length !== 2) {
@@ -2493,10 +2494,10 @@ define([
         }
 
         c = board.create('curve', [[], []], attributes);
-        c.updateDataArray = function() {
-             var a = JXG.Math.Clip.union(parents[0], parents[1], this.board);
-             this.dataX = a[0];
-             this.dataY = a[1];
+        c.updateDataArray = function () {
+            var a = JXG.Math.Clip.union(parents[0], parents[1], this.board);
+            this.dataX = a[0];
+            this.dataY = a[1];
         };
         return c;
     };
@@ -2535,7 +2536,7 @@ define([
      * </script><pre>
      *
      */
-     JXG.createCurveDifference = function (board, parents, attributes) {
+    JXG.createCurveDifference = function (board, parents, attributes) {
         var c;
 
         if (parents.length !== 2) {
@@ -2544,10 +2545,10 @@ define([
         }
 
         c = board.create('curve', [[], []], attributes);
-        c.updateDataArray = function() {
-             var a = JXG.Math.Clip.difference(parents[0], parents[1], this.board);
-             this.dataX = a[0];
-             this.dataY = a[1];
+        c.updateDataArray = function () {
+            var a = JXG.Math.Clip.difference(parents[0], parents[1], this.board);
+            this.dataX = a[0];
+            this.dataY = a[1];
         };
         return c;
     };
