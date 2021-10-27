@@ -1150,13 +1150,8 @@ define([
                 return;
             }
 
-            // New finger position
-            np1c = new Coords(Const.COORDS_BY_SCREEN, this.getScrCoordsOfMouse(p1[0], p1[1]), this);
-            np2c = new Coords(Const.COORDS_BY_SCREEN, this.getScrCoordsOfMouse(p2[0], p2[1]), this);
-
             if (drag.elementClass === Const.OBJECT_CLASS_LINE ||
-                    drag.type === Const.OBJECT_TYPE_POLYGON) {
-                // this.twoFingerTouchObject(np1c, np2c, o, drag, evt);
+                drag.type === Const.OBJECT_TYPE_POLYGON) {
                 this.twoFingerTouchObject(o, drag, evt);
             } else if (drag.elementClass === Const.OBJECT_CLASS_CIRCLE) {
                 this.twoFingerTouchCircle(o, drag, evt);
@@ -1181,31 +1176,30 @@ define([
                 d, alpha,
                 S, t1, t3, t4, t5,
                 ar, i, len,
-                center, rotEl, c,
+                fixEl, moveEl, fix,
                 pi180 = 0.017453292519943295; // Math.PI / 180.0
 
-            if (Type.exists(o.targets[0]) &&
-                    Type.exists(o.targets[1]) &&
-                    !isNaN(o.targets[0].Xprev + o.targets[0].Yprev + o.targets[1].Xprev + o.targets[1].Yprev)) {
+            if (Type.exists(o.targets[0]) && Type.exists(o.targets[1]) &&
+                !isNaN(o.targets[0].Xprev + o.targets[0].Yprev + o.targets[1].Xprev + o.targets[1].Yprev)) {
 
                 //console.log(evt.pointerId, o.targets[0], o.targets[1])
                 if (evt.pointerId === o.targets[0].num) {
-                    center = o.targets[1];
-                    rotEl  = o.targets[0];
+                    fixEl = o.targets[1];
+                    moveEl  = o.targets[0];
                 } else {
-                    center = o.targets[0];
-                    rotEl  = o.targets[1];
+                    fixEl = o.targets[0];
+                    moveEl  = o.targets[1];
                 }
 
-                c = (new Coords(Const.COORDS_BY_SCREEN, [center.Xprev, center.Yprev], this)).usrCoords;
+                fix = (new Coords(Const.COORDS_BY_SCREEN, [fixEl.Xprev, fixEl.Yprev], this)).usrCoords;
                 // Previous finger position
-                op = (new Coords(Const.COORDS_BY_SCREEN, [rotEl.Xprev, rotEl.Yprev], this)).usrCoords;
+                op = (new Coords(Const.COORDS_BY_SCREEN, [moveEl.Xprev, moveEl.Yprev], this)).usrCoords;
                 // New finger position
-                np = (new Coords(Const.COORDS_BY_SCREEN, [rotEl.X, rotEl.Y], this)).usrCoords;
+                np = (new Coords(Const.COORDS_BY_SCREEN, [moveEl.X, moveEl.Y], this)).usrCoords;
                 
                 // Old and new directions
-                od = Mat.crossProduct(c, op);
-                nd = Mat.crossProduct(c, np);
+                od = Mat.crossProduct(fix, op);
+                nd = Mat.crossProduct(fix, np);
 
                 // Intersection between the two directions
                 S = Mat.crossProduct(od, nd);
@@ -1222,10 +1216,10 @@ define([
                     alpha *= -pi180;
                 } else {
                     // For pointer events, the rotation angle has to be calculated.
-                    alpha = Geometry.rad(op.slice(1), c.slice(1), np.slice(1));
+                    alpha = Geometry.rad(op.slice(1), fix.slice(1), np.slice(1));
                 }
 
-                t1 = this.create('transform', [alpha, [c[1], c[2]]], {type: 'rotate'});
+                t1 = this.create('transform', [alpha, [fix[1], fix[2]]], {type: 'rotate'});
                 t1.update();
 
                 if (Type.evaluate(drag.visProp.scalable)) {
@@ -1234,12 +1228,12 @@ define([
                         d = evt.scale / this.previousScale;
                         this.previousScale = evt.scale;
                     } else {
-                        d = Geometry.distance(np, c) / Geometry.distance(op, c);
+                        d = Geometry.distance(np, fix) / Geometry.distance(op, fix);
                     }
 
-                    t3 = this.create('transform', [-c[1], -c[2]], {type: 'translate'});
+                    t3 = this.create('transform', [-fix[1], -fix[2]], {type: 'translate'});
                     t4 = this.create('transform', [d, d], {type: 'scale'});
-                    t5 = this.create('transform', [c[1], c[2]], {type: 'translate'});
+                    t5 = this.create('transform', [fix[1], fix[2]], {type: 'translate'});
                     t1.melt(t3).melt(t4).melt(t5);
                 }
 
@@ -1377,7 +1371,7 @@ define([
          * @param {object} drag The object that is dragged:
          */
         twoFingerTouchCircle: function (o, drag, evt) {
-            var center, moveEl, np, op, c,
+            var fixEl, moveEl, np, op, fix,
                 d, alpha, t1, t2, t3, t4;
 
             if (drag.method === 'pointCircle' || drag.method === 'pointLine') {
@@ -1388,31 +1382,31 @@ define([
                 !isNaN(o.targets[0].Xprev + o.targets[0].Yprev + o.targets[1].Xprev + o.targets[1].Yprev)) {
 
                 if (evt.pointerId === o.targets[0].num) {
-                    center = o.targets[1];
-                    moveEl  = o.targets[0];
+                    fixEl  = o.targets[1];
+                    moveEl = o.targets[0];
                 } else {
-                    center = o.targets[0];
+                    fixEl = o.targets[0];
                     moveEl  = o.targets[1];
                 }
 
-                c = (new Coords(Const.COORDS_BY_SCREEN, [center.Xprev, center.Yprev], this)).usrCoords;
+                fix = (new Coords(Const.COORDS_BY_SCREEN, [fixEl.Xprev, fixEl.Yprev], this)).usrCoords;
                 // Previous finger position
                 op = (new Coords(Const.COORDS_BY_SCREEN, [moveEl.Xprev, moveEl.Yprev], this)).usrCoords;
                 // New finger position
                 np = (new Coords(Const.COORDS_BY_SCREEN, [moveEl.X, moveEl.Y], this)).usrCoords;
                 
-                alpha = Geometry.rad(op.slice(1), c.slice(1), np.slice(1));
+                alpha = Geometry.rad(op.slice(1), fix.slice(1), np.slice(1));
 
                 // Rotate and scale by the movement of the second finger
-                t1 = this.create('transform', [-c[1], -c[2]], {type: 'translate'});
+                t1 = this.create('transform', [-fix[1], -fix[2]], {type: 'translate'});
                 t2 = this.create('transform', [alpha], {type: 'rotate'});
                 t1.melt(t2);
                 if (Type.evaluate(drag.visProp.scalable)) {
-                    d = Geometry.distance(c, np) / Geometry.distance(c, op);
+                    d = Geometry.distance(fix, np) / Geometry.distance(fix, op);
                     t3 = this.create('transform', [d, d], {type: 'scale'});
                     t1.melt(t3);
                 }
-                t4 = this.create('transform', [c[1], c[2]], {type: 'translate'});
+                t4 = this.create('transform', [fix[1], fix[2]], {type: 'translate'});
                 t1.melt(t4);
 
                 if (drag.center.draggable()) {
