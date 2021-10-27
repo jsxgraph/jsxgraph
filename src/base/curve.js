@@ -1894,7 +1894,7 @@ define([
      *
      */
     JXG.createMetapostSpline = function (board, parents, attributes) {
-        var el,
+        var el, getPointLike,
             points, controls,
             p, q, i, le,
             errStr = "\nPossible parent types: [points:array, controls:object";
@@ -1962,20 +1962,18 @@ define([
             points = Type.providePoints(board, q, attributes, 'metapostspline', ['points']);
         } else {
             points = [];
+            getPointLike = function (ii) {
+                return {
+                    X: function () { return q[ii][0]; },
+                    Y: function () { return q[ii][1]; }
+                };
+            };
+
             for (i = 0; i < q.length; i++) {
                 if (Type.isPoint(q[i])) {
                     points.push(q[i]);
                 } else {
-                    /* jshint ignore:start */
-                    points.push(
-                        (function (ii) {
-                            return {
-                                X: function () { return q[ii][0]; },
-                                Y: function () { return q[ii][1]; }
-                            };
-                        })(i)
-                    );
-                    /* jshint ignore:end */
+                    points.push(getPointLike);
                 }
             }
         }
