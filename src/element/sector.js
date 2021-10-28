@@ -299,8 +299,8 @@ define([
             };
 
             el.methodMap = JXG.deepCopy(el.methodMap, {
-                radius: 'getRadius',
-                getRadius: 'getRadius',
+                radius: 'Radius',
+                getRadius: 'Radius',
                 setRadius: 'setRadius'
             });
 
@@ -364,8 +364,8 @@ define([
                 center: 'center',
                 radiuspoint: 'radiuspoint',
                 anglepoint: 'anglepoint',
-                radius: 'getRadius',
-                getRadius: 'getRadius',
+                radius: 'Radius',
+                getRadius: 'Radius',
                 setRadius: 'setRadius'
             });
 

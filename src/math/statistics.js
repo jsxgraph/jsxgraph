@@ -131,6 +131,57 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         },
 
         /**
+         * The P-th percentile ( 0 < P ≤ 100 ) of a list of N ordered values (sorted from least to greatest) 
+         * is the smallest value in the list such that no more than P percent of the data is strictly less 
+         * than the value and at least P percent of the data is less than or equal to that value. See {@link https://en.wikipedia.org/wiki/Percentile}.
+         * 
+         * Here, the <i>linear interpolation between closest ranks</i> method is used.
+         * @param {Array} arr The set of values, need not be ordered.
+         * @param {Number|Array} percentile One or several percentiles
+         * @returns {Number|Array} Depending if a number or an array is the input for percentile, a number or an array containing the percentils
+         * is returned.
+         */
+        percentile: function(arr, percentile) {
+            var tmp, len, i, p, res = [], per;
+
+            if (arr.length > 0) {
+                if (ArrayBuffer.isView(arr)) {
+                    tmp = new Float64Array(arr);
+                    tmp.sort();
+                } else {
+                    tmp = arr.slice(0);
+                    tmp.sort(function (a, b) {
+                        return a - b;
+                    });
+                }
+                len = tmp.length;
+
+                if (Type.isArray(percentile)) {
+                    p = percentile;
+                } else {
+                    p = [percentile];
+                }
+
+                for (i = 0; i < p.length; i++) {
+                    per = len * p[i] * 0.01;
+                    if (parseInt(per, 10) === per) {
+                        res.push( (tmp[per - 1] + tmp[per]) * 0.5 );
+                    } else {
+                        res.push( tmp[parseInt(per, 10)] );
+                    }
+                }
+
+                if (Type.isArray(percentile)) {
+                    return res;
+                } else {
+                    return res[0];
+                }
+            }
+
+            return 0.0;
+        },
+
+        /**
          * Bias-corrected sample variance. A variance is a measure of how far a
          * set of numbers are spread out from each other.
          * @param {Array} arr

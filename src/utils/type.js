@@ -1155,7 +1155,7 @@ define([
          * @returns {String}
          */
         unescapeHTML: function (str) {
-            // this regex is NOT insecure. We are replacing everything found with ''
+            // This regex is NOT insecure. We are replacing everything found with ''
             /*jslint regexp:true*/
             return str.replace(/<\/?[^>]+>/gi, '').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>');
         },
