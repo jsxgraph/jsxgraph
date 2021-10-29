@@ -1,4 +1,5 @@
 trunk
+.htaccess
 .c9revisions
 build/bin/*
 src/require.js
