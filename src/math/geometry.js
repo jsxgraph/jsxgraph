@@ -1443,7 +1443,7 @@ define([
             if (Type.exists(method) && method === 'newton') {
                 co = Numerics.generalizedNewton(c1, c2, nr, t2ini);
             } else {
-                if (c1.bezierDegree === 3 && c2.bezierDegree === 3) {
+                if (c1.bezierDegree === 3 || c2.bezierDegree === 3) {
                     co = this.meetBezierCurveRedBlueSegments(c1, c2, nr);
                 } else {
                     co = this.meetCurveRedBlueSegments(c1, c2, nr);
@@ -2053,40 +2053,59 @@ define([
          * @returns {Array} The homogeneous coordinates of the nr-th intersection point.
          */
         meetBezierCurveRedBlueSegments: function (red, blue, nr) {
-            var p, i, j,
+            var p, i, j, k, po,
                 redArr, blueArr,
-                bbr, bbb,
-                lenBlue = blue.numberPoints, //points.length,
-                lenRed = red.numberPoints, // points.length,
+                bbr, bbb, intersections,
+                lenBlue = blue.numberPoints,
+                lenRed = red.numberPoints,
                 L = [];
 
-            if (lenBlue < 4 || lenRed < 4) {
+            if (lenBlue < blue.bezierDegree + 1 || lenRed < red.bezierDegree + 1) {
                 return [0, NaN, NaN];
             }
+            lenBlue -= blue.bezierDegree;
+            lenRed  -= red.bezierDegree;
 
-            for (i = 0; i < lenRed - 3; i += 3) {
+            for (i = 0; i < lenRed; i += red.bezierDegree) {
                 p = red.points;
                 redArr = [
                     p[i].usrCoords.slice(1),
-                    p[i + 1].usrCoords.slice(1),
-                    p[i + 2].usrCoords.slice(1),
-                    p[i + 3].usrCoords.slice(1)
+                    p[i + 1].usrCoords.slice(1)
                 ];
+                if (red.bezierDegree === 3) {
+                    redArr[2] = p[i + 2].usrCoords.slice(1);
+                    redArr[3] = p[i + 3].usrCoords.slice(1);
+                }
 
                 bbr = this._bezierBbox(redArr);
 
-                for (j = 0; j < lenBlue - 3; j += 3) {
+                for (j = 0; j < lenBlue; j += blue.bezierDegree) {
                     p = blue.points;
                     blueArr = [
                         p[j].usrCoords.slice(1),
-                        p[j + 1].usrCoords.slice(1),
-                        p[j + 2].usrCoords.slice(1),
-                        p[j + 3].usrCoords.slice(1),
+                        p[j + 1].usrCoords.slice(1)
                     ];
+                    if (blue.bezierDegree === 3) {
+                        blueArr[2] = p[j + 2].usrCoords.slice(1);
+                        blueArr[3] = p[j + 3].usrCoords.slice(1);
+                    }
 
                     bbb = this._bezierBbox(blueArr);
                     if (this._bezierOverlap(bbr, bbb)) {
-                        L = L.concat(this.meetBeziersegmentBeziersegment(redArr, blueArr));
+                        intersections = this.meetBeziersegmentBeziersegment(redArr, blueArr);
+                        if (intersections.length === 0) {
+                            continue;
+                        }
+                        for (k = 0; k < intersections.length; k++) {
+                            po = intersections[k];
+                            if (po[1] < -Mat.eps ||
+                                po[1] > 1 + Mat.eps ||
+                                po[2] < -Mat.eps ||
+                                po[2] > 1 + Mat.eps) {
+                                continue;
+                            }
+                            L.push(po);
+                        }
                         if (L.length > nr) {
                             return L[nr][0];
                         }
