@@ -2067,10 +2067,10 @@ define([
             for (i = 0; i < lenRed - 3; i += 3) {
                 p = red.points;
                 redArr = [
-                    [p[i].usrCoords[1], p[i].usrCoords[2]],
-                    [p[i + 1].usrCoords[1], p[i + 1].usrCoords[2]],
-                    [p[i + 2].usrCoords[1], p[i + 2].usrCoords[2]],
-                    [p[i + 3].usrCoords[1], p[i + 3].usrCoords[2]]
+                    p[i].usrCoords.slice(1),
+                    p[i + 1].usrCoords.slice(1),
+                    p[i + 2].usrCoords.slice(1),
+                    p[i + 3].usrCoords.slice(1)
                 ];
 
                 bbr = this._bezierBbox(redArr);
@@ -2078,10 +2078,10 @@ define([
                 for (j = 0; j < lenBlue - 3; j += 3) {
                     p = blue.points;
                     blueArr = [
-                        [p[j].usrCoords[1], p[j].usrCoords[2]],
-                        [p[j + 1].usrCoords[1], p[j + 1].usrCoords[2]],
-                        [p[j + 2].usrCoords[1], p[j + 2].usrCoords[2]],
-                        [p[j + 3].usrCoords[1], p[j + 3].usrCoords[2]]
+                        p[j].usrCoords.slice(1),
+                        p[j + 1].usrCoords.slice(1),
+                        p[j + 2].usrCoords.slice(1),
+                        p[j + 3].usrCoords.slice(1),
                     ];
 
                     bbb = this._bezierBbox(blueArr);
