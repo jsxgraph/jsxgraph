@@ -141,6 +141,8 @@ define([
          */
         this.circle = null;
 
+        this.points = [];
+
         if (method === 'twoPoints') {
             this.point2 = board.select(par2);
             this.radius = this.Radius();
@@ -344,6 +346,8 @@ define([
          * Uses the boards renderer to update the circle.
          */
         update: function () {
+            var x, y, z, r, c, i;
+
             if (this.needsUpdate) {
                 if (Type.evaluate(this.visProp.trace)) {
                     this.cloneToBackground(true);
@@ -359,6 +363,24 @@ define([
 
                 this.updateStdform();
                 this.updateQuadraticform();
+
+                // Approximate the circle by 4 Bezier segments
+                // This will be used for intersections of type curve / circle.
+                // See https://spencermortensen.com/articles/bezier-circle/
+                z = this.center.coords.usrCoords[0];
+                x = this.center.coords.usrCoords[1] / z;
+                y = this.center.coords.usrCoords[2] / z;
+                z /= z;
+                r = this.Radius();
+                c = 0.551915024494;
+
+                this.numberPoints = 13;
+                this.dataX = [x + r, x + r, x + r * c, x, x - r * c, x - r, x - r, x - r, x - r * c, x, x + r * c, x + r, x + r];
+                this.dataY = [y, y + r * c, y + r, y + r, y + r, y + r * c, y, y - r * c, y - r, y - r, y - r, y - r * c, y];
+                this.bezierDegree = 3;
+                for (i = 0; i < this.numberPoints; i++) {
+                    this.points[i] = new Coords(Const.COORDS_BY_USER, [this.dataX[i], this.dataY[i]], this.board);
+                }
             }
 
             return this;

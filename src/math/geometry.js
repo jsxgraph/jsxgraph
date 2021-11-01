@@ -1062,8 +1062,10 @@ define([
                 (el2.type === Const.OBJECT_TYPE_ARC || el2.type === Const.OBJECT_TYPE_SECTOR)
                 ) ? true : false;
 
-            if (el1.elementClass === Const.OBJECT_CLASS_CURVE &&
-                el2.elementClass === Const.OBJECT_CLASS_CURVE && !(el1_isArcType && el2_isArcType) ) {
+            if ((el1.elementClass === Const.OBJECT_CLASS_CURVE || el2.elementClass === Const.OBJECT_CLASS_CURVE) &&
+                (el1.elementClass === Const.OBJECT_CLASS_CURVE || el1.elementClass === Const.OBJECT_CLASS_CIRCLE) &&
+                (el2.elementClass === Const.OBJECT_CLASS_CURVE || el2.elementClass === Const.OBJECT_CLASS_CIRCLE) /*&&
+                !(el1_isArcType && el2_isArcType)*/ ) {
                 // curve - curve
                 // with the exception that both elements are arc types
                 /** @ignore */
@@ -1072,9 +1074,11 @@ define([
                 };
 
             } else if ((el1.elementClass === Const.OBJECT_CLASS_CURVE &&
-                        !el1_isArcType && el2.elementClass === Const.OBJECT_CLASS_LINE) ||
+                        !el1_isArcType &&
+                        el2.elementClass === Const.OBJECT_CLASS_LINE) ||
                        (el2.elementClass === Const.OBJECT_CLASS_CURVE &&
-                        !el2_isArcType && el1.elementClass === Const.OBJECT_CLASS_LINE)) {
+                        !el2_isArcType &&
+                        el1.elementClass === Const.OBJECT_CLASS_LINE)) {
                 // curve - line (this includes intersections between conic sections and lines)
                 // with the exception that the curve is of arc type
                 /** @ignore */
@@ -1123,7 +1127,6 @@ define([
                 // All other combinations of circles and lines,
                 // Arc types are treated as circles.
                 /** @ignore */
-
                 func = function () {
                     var res = that.meet(el1.stdform, el2.stdform, i, el1.board),
                         has = true,
@@ -1484,11 +1487,7 @@ define([
                 li = el1;
             }
 
-            // if (Type.evaluate(cu.visProp.curvetype) === 'plot') {
-                v = this.meetCurveLineDiscrete(cu, li, nr, board, !alwaysIntersect);
-            // } else {
-            //     v = this.meetCurveLineContinuous(cu, li, nr, board);
-            // }
+            v = this.meetCurveLineDiscrete(cu, li, nr, board, !alwaysIntersect);
 
             return v;
         },
@@ -1567,80 +1566,6 @@ define([
             return (new Coords(Const.COORDS_BY_USER, [z, cu.X(t), cu.Y(t)], board));
         },
 
-        /**
-         * Intersection of line and curve, continuous case.
-         * Segments are treated as lines. Finding the nr-the intersection point
-         * works for nr=0,1 only.
-         *
-         * @private
-         * @deprecated
-         * @param {JXG.Curve} cu Curve
-         * @param {JXG.Line} li Line
-         * @param {Number} nr Will return the nr-th intersection point.
-         * @param {JXG.Board} board
-         *
-         * BUG: does not respect cu.minX() and cu.maxX()
-         */
-        meetCurveLineContinuousOld: function (cu, li, nr, board) {
-            var t, t2, i, func, z,
-                tnew, steps, delta, tstart, tend, cux, cuy,
-                eps = Mat.eps * 10;
-
-            JXG.deprecated('Geometry.meetCurveLineContinuousOld()', 'Geometry.meetCurveLineContinuous()');
-            func = function (t) {
-                var v = li.stdform[0] + li.stdform[1] * cu.X(t) + li.stdform[2] * cu.Y(t);
-                return v * v;
-            };
-
-            // Find some intersection point
-            if (this.meetCurveLineContinuous.t1memo) {
-                tstart = this.meetCurveLineContinuous.t1memo;
-                t = Numerics.root(func, tstart);
-            } else {
-                tstart = cu.minX();
-                tend = cu.maxX();
-                t = Numerics.root(func, [tstart, tend]);
-            }
-
-            this.meetCurveLineContinuous.t1memo = t;
-            cux = cu.X(t);
-            cuy = cu.Y(t);
-
-            // Find second intersection point
-            if (nr === 1) {
-                if (this.meetCurveLineContinuous.t2memo) {
-                    tstart = this.meetCurveLineContinuous.t2memo;
-                }
-                t2 = Numerics.root(func, tstart);
-
-                if (!(Math.abs(t2 - t) > 0.1 && Math.abs(cux - cu.X(t2)) > 0.1 && Math.abs(cuy - cu.Y(t2)) > 0.1)) {
-                    steps = 20;
-                    delta = (cu.maxX() - cu.minX()) / steps;
-                    tnew = cu.minX();
-
-                    for (i = 0; i < steps; i++) {
-                        t2 = Numerics.root(func, [tnew, tnew + delta]);
-
-                        if (Math.abs(func(t2)) <= eps && Math.abs(t2 - t) > 0.1 && Math.abs(cux - cu.X(t2)) > 0.1 && Math.abs(cuy - cu.Y(t2)) > 0.1) {
-                            break;
-                        }
-
-                        tnew += delta;
-                    }
-                }
-                t = t2;
-                this.meetCurveLineContinuous.t2memo = t;
-            }
-
-            // Is the point on the line?
-            if (Math.abs(func(t)) > eps) {
-                z = NaN;
-            } else {
-                z = 1.0;
-            }
-
-            return (new Coords(Const.COORDS_BY_USER, [z, cu.X(t), cu.Y(t)], board));
-        },
 
         /**
          * Intersection of line and curve, discrete case.
@@ -2056,6 +1981,8 @@ define([
             var p, i, j, k, po,
                 redArr, blueArr,
                 bbr, bbb, intersections,
+                startRed = 0,
+                startBlue = 0,
                 lenBlue = blue.numberPoints,
                 lenRed = red.numberPoints,
                 L = [];
@@ -2066,7 +1993,17 @@ define([
             lenBlue -= blue.bezierDegree;
             lenRed  -= red.bezierDegree;
 
-            for (i = 0; i < lenRed; i += red.bezierDegree) {
+            // For sectors, we ignore the "legs"
+            if (red.type === Const.OBJECT_TYPE_SECTOR) {
+                startRed = 3;
+                lenRed  -= 3;
+            }
+            if (blue.type === Const.OBJECT_TYPE_SECTOR) {
+                startBlue = 3;
+                lenBlue  -= 3;
+            }
+
+            for (i = startRed; i < lenRed; i += red.bezierDegree) {
                 p = red.points;
                 redArr = [
                     p[i].usrCoords.slice(1),
@@ -2079,7 +2016,7 @@ define([
 
                 bbr = this._bezierBbox(redArr);
 
-                for (j = 0; j < lenBlue; j += blue.bezierDegree) {
+                for (j = startBlue; j < lenBlue; j += blue.bezierDegree) {
                     p = blue.points;
                     blueArr = [
                         p[j].usrCoords.slice(1),
