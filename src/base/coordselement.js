@@ -95,6 +95,17 @@ define([
         this.position = null;
 
         /**
+         * True if there the method this.updateConstraint() has been set. It is
+         * probably different from the prototype function() {return this;}.
+         * Used in updateCoords fo glider elements.
+         *
+         * @see JXG.CoordsElement#updateCoords
+         * @type Boolean
+         * @private
+         */
+        this.isConstrained = false;
+
+        /**
          * Determines whether the element slides on a polygon if point is a glider.
          * @type Boolean
          * @default false
@@ -128,14 +139,6 @@ define([
          * @type {Boolean}
          */
         this.needsUpdateFromParent = true;
-
-        /**
-         * Dummy function for unconstrained points or gliders.
-         * @private
-         */
-        this.updateConstraint = function () {
-            return this;
-        };
 
         /**
          * Stores the groups of this element in an array of Group.
@@ -183,16 +186,30 @@ define([
 
     JXG.extend(JXG.CoordsElement.prototype, /** @lends JXG.CoordsElement.prototype */ {
         /**
+         * Dummy function for unconstrained points or gliders.
+         * @private
+         */
+        updateConstraint: function () {
+            return this;
+        },
+
+        /**
          * Updates the coordinates of the element.
          * @private
          */
         updateCoords: function (fromParent) {
+            var i;
+
             if (!this.needsUpdate) {
                 return this;
             }
 
             if (!Type.exists(fromParent)) {
                 fromParent = false;
+            }
+
+            if (!Type.evaluate(this.visProp.frozen)) {
+                this.updateConstraint();
             }
 
             /*
@@ -204,6 +221,10 @@ define([
              * the defining elements of the line or circle have been changed.
              */
             if (this.type === Const.OBJECT_TYPE_GLIDER) {
+                if (this.isConstrained) {
+                    fromParent = false;
+                }
+
                 if (fromParent) {
                     this.updateGliderFromParent();
                 } else {
@@ -211,9 +232,6 @@ define([
                 }
             }
 
-            if (!Type.evaluate(this.visProp.frozen)) {
-                this.updateConstraint();
-            }
             this.updateTransform(fromParent);
 
             return this;
@@ -1159,9 +1177,11 @@ define([
                 // remove all transformations
                 this.transformations.length = 0;
 
-                this.updateConstraint = function () {
-                    return this;
-                };
+                delete this.updateConstraint;
+                this.isConstrained = false;
+                // this.updateConstraint = function () {
+                //     return this;
+                // };
 
                 if (!this.isDraggable) {
                     this.isDraggable = true;
@@ -1301,6 +1321,7 @@ define([
                     } else {
                         this.coords = c;
                     }
+                    return this;
                 };
             // Euclidean coordinates
             } else if (terms.length === 2) {
@@ -1311,6 +1332,7 @@ define([
 
                 this.updateConstraint = function () {
                     this.coords.setCoordinates(Const.COORDS_BY_USER, [this.XEval(), this.YEval()]);
+                    return this;
                 };
             // Homogeneous coordinates
             } else {
@@ -1322,8 +1344,10 @@ define([
 
                 this.updateConstraint = function () {
                     this.coords.setCoordinates(Const.COORDS_BY_USER, [this.ZEval(), this.XEval(), this.YEval()]);
+                    return this;
                 };
             }
+            this.isConstrained = true;
 
             /**
             * We have to do an update. Otherwise, elements relying on this point will receive NaN.
@@ -1399,6 +1423,7 @@ define([
             this.updateConstraint = function () {
                 this.coords.setCoordinates(Const.COORDS_BY_USER, [this.ZEval(), this.XEval(), this.YEval()]);
             };
+            this.isConstrained = true;
 
             this.updateConstraint();
             //this.coords = new Coords(Const.COORDS_BY_SCREEN, [0, 0], this.board);
