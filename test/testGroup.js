@@ -29,7 +29,7 @@
     and <http://opensource.org/licenses/MIT/>.
  */
 
-describe("Test JXG.Group", function() {
+describe("Test JXG.Group", function () {
     var board, A, B, C;
 
     document.getElementsByTagName('body')[0].innerHTML = '<div id="jxgbox" style="width: 100px; height: 100px;"></div>';
@@ -45,7 +45,7 @@ describe("Test JXG.Group", function() {
     B = board.create('point', [1, 1]);
     C = board.create('point', [1, 1]);
 
-    it("Create group", function() {
+    it("Create group", function () {
         var g = board.create('group', [A, B, C]);
         expect(g).toBeInstanceOf(JXG.Group);
     });
