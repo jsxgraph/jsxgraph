@@ -29,138 +29,112 @@
     and <http://opensource.org/licenses/MIT/>.
  */
 
+describe("Test JXg.Composition", function() {
+    var board;
 
-/*
- *  Js-Test-Driver Test Suite for JXG.Composition
- */
+    document.getElementsByTagName('body')[0].innerHTML = '<div id="jxgbox" style="width: 100px; height: 100px;"></div>';
+    board = JXG.JSXGraph.initBoard('jxgbox', {
+        renderer: 'svg',
+        axis: false,
+        grid: false,
+        boundingbox: [-5, 5, 5, -5],
+        showCopyright: false,
+        showNavigation: false
+    });
 
-TestCase("Composition", {
-
-    setUp: function () {
-        this.element = {
-            id: 'elid',
-            setAttribute: sinon.stub(),
-            prepareUpdate: sinon.stub(),
-            update: sinon.stub(),
-            updateRenderer: sinon.stub(),
-            highlight: sinon.stub(),
-            noHighlight: sinon.stub(),
-            on: sinon.stub()
-        };
-    },
-
-    tearDown: function () {
-    },
-
-    testConstructor: function () {
-        expectAsserts(5);
-
-        var c = new JXG.Composition({
-                element: this.element
-            }),
+    it("constructor", function() {
+        var p = board.create('point', [0, 0], {id: 'elId'}),
+            c = new JXG.Composition({
+                    element: p
+                }),
             d = new JXG.Composition();
 
-        assertObject('construct empty composition', c);
-        assertObject('construct empty composition', c.element);
-        assertEquals('composition invoke update', 'elid', c.element.id);
-        assertObject('construct empty composition', d);
-        assertNotUndefined('construct empty composition part 2', d.elements);
-    },
+        expect(c).toBeInstanceOf(Object);
+        expect(c.element).toBeInstanceOf(Object);
+        expect(c.element.id).toEqual('elId');
+        expect(d).toBeInstanceOf(Object);
+        expect(d.elements).not.toBeNull();
+    });
 
-    testAdd: function () {
-        expectAsserts(6);
+    it("Add", function() {
+        var p = board.create('point', [0, 0], {id: 'elId'}),
+            c = new JXG.Composition({});
+        expect(c.add('el', p)).toBeTrue();
+        expect(c.el).toBeInstanceOf(JXG.Point);
+        expect(c.el).toEqual(c.elements.elId);
+        expect(c.add('update', null)).toBeFalse();
 
-        var c = new JXG.Composition({});
+        // Composition do not overwrite existing properties
+        expect(c.update).toBeInstanceOf(Function);
+    });
 
-        assertTrue(c.add('el', this.element));
+    it("Remove", function() {
+        var p = board.create('point', [0, 0], {id: 'elId'}),
+            c = new JXG.Composition({element: p});
 
-        assertObject('composition add check type', c.el);
-        assertEquals('composition add check type', c.elements.elid, c.el);
-        assertEquals('composition add check id', 'elid', c.el.id);
+        expect(c.remove('element')).toBeTrue();
+        expect(c.element).toBeUndefined();
+        expect(c.remove('update')).toBeFalse();
+        expect(c.update).toBeInstanceOf(Function);
+    });
 
-        assertFalse(c.add('update', null));
-
-        assertFunction('composition do not overwrite existing properties', c.update);
-    },
-
-    testRemove: function () {
-        expectAsserts(4);
-
-        var c = new JXG.Composition({
-            element: this.element
-        });
-
-        assertTrue(c.remove('element'));
-        assertUndefined('composition remove check deletion', c.element);
-
-        assertFalse(c.remove('update'));
-        assertFunction('composition do not remove methods', c.update);
-    },
-
-    testUpdate: function () {
-        expectAsserts(1);
-
-        var c = new JXG.Composition({
-            element: this.element
-        });
-
+    it("Update", function() {
+        var p = board.create('point', [0, 0], {id: 'elId'}),
+            c = new JXG.Composition({element: p});
+        c.element.update = function() {
+            this.calledOnce = true;
+        }
         c.update();
-        assertTrue(c.element.update.calledOnce);
-    },
+        expect(c.element.calledOnce).toBeTrue();
+    });
 
-    testSetAttribute: function () {
-        expectAsserts(1);
-
-        var c = new JXG.Composition({
-            element: this.element
-        });
-
+    it("setAttribute", function() {
+        var p = board.create('point', [0, 0], {id: 'elId'}),
+            c = new JXG.Composition({element: p});
+        c.element.setAttribute = function() {
+            this.calledOnce = true;
+        }
         c.setAttribute();
-        assertTrue(c.element.setAttribute.calledOnce);
-    },
+        expect(c.element.calledOnce).toBeTrue();
+    });
 
-    testHighlight: function () {
-        expectAsserts(1);
-
-        var c = new JXG.Composition({
-            element: this.element
-        });
-
+    it("highlight", function() {
+        var p = board.create('point', [0, 0], {id: 'elId'}),
+            c = new JXG.Composition({element: p});
+        c.element.highlight = function() {
+            this.calledOnce = true;
+        }
         c.highlight();
-        assertTrue(c.element.highlight.calledOnce);
-    },
+        expect(c.element.calledOnce).toBeTrue();
+    });
 
-    testPrepareUpdate: function () {
-        expectAsserts(1);
-
-        var c = new JXG.Composition({
-            element: this.element
-        });
-
-        c.prepareUpdate();
-        assertTrue(c.element.prepareUpdate.calledOnce);
-    },
-
-    testUpdateRenderer: function () {
-        expectAsserts(1);
-
-        var c = new JXG.Composition({
-            element: this.element
-        });
-
-        c.updateRenderer();
-        assertTrue(c.element.updateRenderer.calledOnce);
-    },
-
-    testNoHighlight: function () {
-        expectAsserts(1);
-
-        var c = new JXG.Composition({
-            element: this.element
-        });
-
+    it("nohighlight", function() {
+        var p = board.create('point', [0, 0], {id: 'elId'}),
+            c = new JXG.Composition({element: p});
+        c.element.noHighlight = function() {
+            this.calledOnce = true;
+        }
         c.noHighlight();
-        assertTrue(c.element.noHighlight.calledOnce);
-    }
+        expect(c.element.calledOnce).toBeTrue();
+    });
 
+    it("prepareUpdate", function() {
+        var p = board.create('point', [0, 0], {id: 'elId'}),
+            c = new JXG.Composition({element: p});
+        c.element.prepareUpdate = function() {
+            this.calledOnce = true;
+        }
+        c.prepareUpdate();
+        expect(c.element.calledOnce).toBeTrue();
+    });
+
+    it("updateRenderer", function() {
+        var p = board.create('point', [0, 0], {id: 'elId'}),
+            c = new JXG.Composition({element: p});
+        c.element.updateRenderer = function() {
+            this.calledOnce = true;
+        }
+        c.updateRenderer();
+        expect(c.element.calledOnce).toBeTrue();
+    });
 });

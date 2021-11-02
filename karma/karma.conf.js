@@ -16,13 +16,14 @@ module.exports = function(config) {
     // list of files / patterns to load in the browser
     files: [
       'distrib/jsxgraphcore.js',
-      'test/testMath.js',
-      'test/testMathNumerics.js',
-      'test/testMathPoly.js',
-      'test/testSlider.js',
-      'test/testDump.js',
-      'test/testJXG.js'
-      // {pattern: 'compiled/index.html', watched: false},
+    //   'test/testMath.js',
+    //   'test/testMathNumerics.js',
+    //   'test/testMathPoly.js',
+    //   'test/testSlider.js',
+    //   'test/testDump.js',
+    //   'test/testJXG.js',
+    //   'test/testText.js'
+      {pattern: 'test/test*.js', watched: true},
     ],
 
 
