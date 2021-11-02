@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2015
+    Copyright 2008-2021
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -27,52 +27,34 @@
     and <http://opensource.org/licenses/MIT/>.
  */
 
+describe("Test JXG.Dump", function () {
+    var board;
 
-/*
- *  Js-Test-Driver Test Suite for the slider element
- *  http://code.google.com/p/js-test-driver
- */
+    document.getElementsByTagName('body')[0].innerHTML = '<div id="jxgbox" style="width: 100px; height: 100px;"></div>';
+    board = JXG.JSXGraph.initBoard('jxgbox', {
+        renderer: 'no',
+        axis: false,
+        grid: false,
+        boundingbox: [-5, 5, 5, -5],
+        showCopyright: false,
+        showNavigation: false
+    });
 
-TestCase("Dump", {
-    board: null,
-
-    setUp: function () {
-        try {
-            document.getElementsByTagName('body')[0].innerHTML = '<div id="jxgbox" style="width: 100px; height: 100px;"></div>';
-            this.board = JXG.JSXGraph.initBoard('jxgbox', {axis: false, grid: false, boundingbox: [-5, 5, 5, -5], showCopyright: false, showNavigation: false});
-        } catch (e) {
-            console.log(e, e.stack);
-        }
-    },
-
-    tearDown: function () {
-        try {
-            JXG.JSXGraph.freeBoard(this.board);
-            this.board = null;
-            document.getElementsByTagName('body')[0].innerHTML = '';
-        } catch (e) {
-            console.log(e, e.stack);
-        }
-    },
-
-    testDumps: function () {
-        expectAsserts(5);
+    it("toJessie", function () {
         var s, p, txt;
 
-        p = this.board.create('point', [2, 1]);
-        s = this.board.create('line', [2, 1, 2]);
-        s = this.board.create('text', [3, 2, 'test']);
-        s = this.board.create('circle', [p, 5]);
-        s = this.board.create('circle', [[1, 1], 5]);
-        txt = JXG.Dump.toJessie(this.board);
-        //console.log(txt);
-        
-        assertTrue('toJessie point', txt.indexOf("point(2, 1) <<") > -1);
-        assertTrue('toJessie line', txt.indexOf("line('jxgBoard1P3', 'jxgBoard1P4') <<") > -1);
-        assertTrue('toJessie text', txt.indexOf("text(1, 3, 2, 'test') <<") > -1);
-        assertTrue('toJessie circle', txt.indexOf("circle('jxgBoard1P1') <<") > -1);
-        assertTrue('toJessie circle', txt.indexOf("circle('jxgBoard1P8') <<") > -1);
-    }
+        p = board.create('point', [2, 1]);
+        s = board.create('line', [2, 1, 2]);
+        s = board.create('text', [3, 2, 'test']);
+        s = board.create('circle', [p, 5]);
+        s = board.create('circle', [[1, 1], 5]);
+        txt = JXG.Dump.toJessie(board);
+
+        expect(txt.indexOf('point(2, 1) <<')).toBeGreaterThan(-1);
+        expect(txt.match(/line\("jxgBoard\d+P3", "jxgBoard\d+P4"\) <</).length).toBeGreaterThan(0);
+        expect(txt.indexOf('text(1, 3, 2, \"test\") <<')).not.toBeNull();
+        expect(txt.match(/circle\("jxgBoard\d+P1", 5\) <</).length).not.toBeNull();
+        expect(txt.match(/circle\("jxgBoard\d+P8", 5\) <</)).not.toBeNull();
+    });
 
 });
-

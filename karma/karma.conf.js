@@ -19,7 +19,8 @@ module.exports = function(config) {
       'test/testMath.js',
       'test/testMathNumerics.js',
       'test/testMathPoly.js',
-      'test/testSlider.js'
+      'test/testSlider.js',
+      'test/testDump.js'
       // {pattern: 'compiled/index.html', watched: false},
     ],
 
