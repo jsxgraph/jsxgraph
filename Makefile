@@ -8,6 +8,7 @@ JSDOC2=node ./node_modules/.bin/jsdoc2
 LINT=./node_modules/.bin/jslint
 HINT=./node_modules/.bin/jshint
 #JSTESTDRIVER=java -jar ./node_modules/jstestdriver/lib/jstestdriver.jar
+KARMA=node_modules/karma/bin/karma
 INTERN=./node_modules/.bin/intern-client
 
 # general tools
@@ -163,8 +164,8 @@ lint:
 #test-server:
 #	$(JSTESTDRIVER) --port $(JSTESTPORT)
 
-#test: core
-#	$(JSTESTDRIVER) $(JSTESTSERVER) $(JSTESTFLAGS) --basePath ./ --config test/jsTestDriver.conf
+test: core
+	$(KARMA) start karma/karma.conf.js
 
-tests:
-	$(INTERN) config=tests/intern
+# tests:
+# 	$(INTERN) config=tests/intern

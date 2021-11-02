@@ -2181,7 +2181,7 @@ define('utils/type',[
          * @returns {String}
          */
         unescapeHTML: function (str) {
-            // this regex is NOT insecure. We are replacing everything found with ''
+            // This regex is NOT insecure. We are replacing everything found with ''
             /*jslint regexp:true*/
             return str.replace(/<\/?[^>]+>/gi, '').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>');
         },
@@ -12639,6 +12639,57 @@ define('math/statistics',['jxg', 'math/math', 'utils/type'], function (JXG, Mat,
         },
 
         /**
+         * The P-th percentile ( 0 < P ≤ 100 ) of a list of N ordered values (sorted from least to greatest) 
+         * is the smallest value in the list such that no more than P percent of the data is strictly less 
+         * than the value and at least P percent of the data is less than or equal to that value. See {@link https://en.wikipedia.org/wiki/Percentile}.
+         * 
+         * Here, the <i>linear interpolation between closest ranks</i> method is used.
+         * @param {Array} arr The set of values, need not be ordered.
+         * @param {Number|Array} percentile One or several percentiles
+         * @returns {Number|Array} Depending if a number or an array is the input for percentile, a number or an array containing the percentils
+         * is returned.
+         */
+        percentile: function(arr, percentile) {
+            var tmp, len, i, p, res = [], per;
+
+            if (arr.length > 0) {
+                if (ArrayBuffer.isView(arr)) {
+                    tmp = new Float64Array(arr);
+                    tmp.sort();
+                } else {
+                    tmp = arr.slice(0);
+                    tmp.sort(function (a, b) {
+                        return a - b;
+                    });
+                }
+                len = tmp.length;
+
+                if (Type.isArray(percentile)) {
+                    p = percentile;
+                } else {
+                    p = [percentile];
+                }
+
+                for (i = 0; i < p.length; i++) {
+                    per = len * p[i] * 0.01;
+                    if (parseInt(per, 10) === per) {
+                        res.push( (tmp[per - 1] + tmp[per]) * 0.5 );
+                    } else {
+                        res.push( tmp[parseInt(per, 10)] );
+                    }
+                }
+
+                if (Type.isArray(percentile)) {
+                    return res;
+                } else {
+                    return res[0];
+                }
+            }
+
+            return 0.0;
+        },
+
+        /**
          * Bias-corrected sample variance. A variance is a measure of how far a
          * set of numbers are spread out from each other.
          * @param {Array} arr
@@ -14139,8 +14190,10 @@ define('math/geometry',[
                 (el2.type === Const.OBJECT_TYPE_ARC || el2.type === Const.OBJECT_TYPE_SECTOR)
                 ) ? true : false;
 
-            if (el1.elementClass === Const.OBJECT_CLASS_CURVE &&
-                el2.elementClass === Const.OBJECT_CLASS_CURVE && !(el1_isArcType && el2_isArcType) ) {
+            if ((el1.elementClass === Const.OBJECT_CLASS_CURVE || el2.elementClass === Const.OBJECT_CLASS_CURVE) &&
+                (el1.elementClass === Const.OBJECT_CLASS_CURVE || el1.elementClass === Const.OBJECT_CLASS_CIRCLE) &&
+                (el2.elementClass === Const.OBJECT_CLASS_CURVE || el2.elementClass === Const.OBJECT_CLASS_CIRCLE) /*&&
+                !(el1_isArcType && el2_isArcType)*/ ) {
                 // curve - curve
                 // with the exception that both elements are arc types
                 /** @ignore */
@@ -14149,9 +14202,11 @@ define('math/geometry',[
                 };
 
             } else if ((el1.elementClass === Const.OBJECT_CLASS_CURVE &&
-                        !el1_isArcType && el2.elementClass === Const.OBJECT_CLASS_LINE) ||
+                        !el1_isArcType &&
+                        el2.elementClass === Const.OBJECT_CLASS_LINE) ||
                        (el2.elementClass === Const.OBJECT_CLASS_CURVE &&
-                        !el2_isArcType && el1.elementClass === Const.OBJECT_CLASS_LINE)) {
+                        !el2_isArcType &&
+                        el1.elementClass === Const.OBJECT_CLASS_LINE)) {
                 // curve - line (this includes intersections between conic sections and lines)
                 // with the exception that the curve is of arc type
                 /** @ignore */
@@ -14200,7 +14255,6 @@ define('math/geometry',[
                 // All other combinations of circles and lines,
                 // Arc types are treated as circles.
                 /** @ignore */
-
                 func = function () {
                     var res = that.meet(el1.stdform, el2.stdform, i, el1.board),
                         has = true,
@@ -14520,7 +14574,7 @@ define('math/geometry',[
             if (Type.exists(method) && method === 'newton') {
                 co = Numerics.generalizedNewton(c1, c2, nr, t2ini);
             } else {
-                if (c1.bezierDegree === 3 && c2.bezierDegree === 3) {
+                if (c1.bezierDegree === 3 || c2.bezierDegree === 3) {
                     co = this.meetBezierCurveRedBlueSegments(c1, c2, nr);
                 } else {
                     co = this.meetCurveRedBlueSegments(c1, c2, nr);
@@ -14561,11 +14615,7 @@ define('math/geometry',[
                 li = el1;
             }
 
-            // if (Type.evaluate(cu.visProp.curvetype) === 'plot') {
-                v = this.meetCurveLineDiscrete(cu, li, nr, board, !alwaysIntersect);
-            // } else {
-            //     v = this.meetCurveLineContinuous(cu, li, nr, board);
-            // }
+            v = this.meetCurveLineDiscrete(cu, li, nr, board, !alwaysIntersect);
 
             return v;
         },
@@ -14644,80 +14694,6 @@ define('math/geometry',[
             return (new Coords(Const.COORDS_BY_USER, [z, cu.X(t), cu.Y(t)], board));
         },
 
-        /**
-         * Intersection of line and curve, continuous case.
-         * Segments are treated as lines. Finding the nr-the intersection point
-         * works for nr=0,1 only.
-         *
-         * @private
-         * @deprecated
-         * @param {JXG.Curve} cu Curve
-         * @param {JXG.Line} li Line
-         * @param {Number} nr Will return the nr-th intersection point.
-         * @param {JXG.Board} board
-         *
-         * BUG: does not respect cu.minX() and cu.maxX()
-         */
-        meetCurveLineContinuousOld: function (cu, li, nr, board) {
-            var t, t2, i, func, z,
-                tnew, steps, delta, tstart, tend, cux, cuy,
-                eps = Mat.eps * 10;
-
-            JXG.deprecated('Geometry.meetCurveLineContinuousOld()', 'Geometry.meetCurveLineContinuous()');
-            func = function (t) {
-                var v = li.stdform[0] + li.stdform[1] * cu.X(t) + li.stdform[2] * cu.Y(t);
-                return v * v;
-            };
-
-            // Find some intersection point
-            if (this.meetCurveLineContinuous.t1memo) {
-                tstart = this.meetCurveLineContinuous.t1memo;
-                t = Numerics.root(func, tstart);
-            } else {
-                tstart = cu.minX();
-                tend = cu.maxX();
-                t = Numerics.root(func, [tstart, tend]);
-            }
-
-            this.meetCurveLineContinuous.t1memo = t;
-            cux = cu.X(t);
-            cuy = cu.Y(t);
-
-            // Find second intersection point
-            if (nr === 1) {
-                if (this.meetCurveLineContinuous.t2memo) {
-                    tstart = this.meetCurveLineContinuous.t2memo;
-                }
-                t2 = Numerics.root(func, tstart);
-
-                if (!(Math.abs(t2 - t) > 0.1 && Math.abs(cux - cu.X(t2)) > 0.1 && Math.abs(cuy - cu.Y(t2)) > 0.1)) {
-                    steps = 20;
-                    delta = (cu.maxX() - cu.minX()) / steps;
-                    tnew = cu.minX();
-
-                    for (i = 0; i < steps; i++) {
-                        t2 = Numerics.root(func, [tnew, tnew + delta]);
-
-                        if (Math.abs(func(t2)) <= eps && Math.abs(t2 - t) > 0.1 && Math.abs(cux - cu.X(t2)) > 0.1 && Math.abs(cuy - cu.Y(t2)) > 0.1) {
-                            break;
-                        }
-
-                        tnew += delta;
-                    }
-                }
-                t = t2;
-                this.meetCurveLineContinuous.t2memo = t;
-            }
-
-            // Is the point on the line?
-            if (Math.abs(func(t)) > eps) {
-                z = NaN;
-            } else {
-                z = 1.0;
-            }
-
-            return (new Coords(Const.COORDS_BY_USER, [z, cu.X(t), cu.Y(t)], board));
-        },
 
         /**
          * Intersection of line and curve, discrete case.
@@ -15130,40 +15106,71 @@ define('math/geometry',[
          * @returns {Array} The homogeneous coordinates of the nr-th intersection point.
          */
         meetBezierCurveRedBlueSegments: function (red, blue, nr) {
-            var p, i, j,
+            var p, i, j, k, po,
                 redArr, blueArr,
-                bbr, bbb,
-                lenBlue = blue.numberPoints, //points.length,
-                lenRed = red.numberPoints, // points.length,
+                bbr, bbb, intersections,
+                startRed = 0,
+                startBlue = 0,
+                lenBlue = blue.numberPoints,
+                lenRed = red.numberPoints,
                 L = [];
 
-            if (lenBlue < 4 || lenRed < 4) {
+            if (lenBlue < blue.bezierDegree + 1 || lenRed < red.bezierDegree + 1) {
                 return [0, NaN, NaN];
             }
+            lenBlue -= blue.bezierDegree;
+            lenRed  -= red.bezierDegree;
 
-            for (i = 0; i < lenRed - 3; i += 3) {
+            // For sectors, we ignore the "legs"
+            if (red.type === Const.OBJECT_TYPE_SECTOR) {
+                startRed = 3;
+                lenRed  -= 3;
+            }
+            if (blue.type === Const.OBJECT_TYPE_SECTOR) {
+                startBlue = 3;
+                lenBlue  -= 3;
+            }
+
+            for (i = startRed; i < lenRed; i += red.bezierDegree) {
                 p = red.points;
                 redArr = [
-                    [p[i].usrCoords[1], p[i].usrCoords[2]],
-                    [p[i + 1].usrCoords[1], p[i + 1].usrCoords[2]],
-                    [p[i + 2].usrCoords[1], p[i + 2].usrCoords[2]],
-                    [p[i + 3].usrCoords[1], p[i + 3].usrCoords[2]]
+                    p[i].usrCoords.slice(1),
+                    p[i + 1].usrCoords.slice(1)
                 ];
+                if (red.bezierDegree === 3) {
+                    redArr[2] = p[i + 2].usrCoords.slice(1);
+                    redArr[3] = p[i + 3].usrCoords.slice(1);
+                }
 
                 bbr = this._bezierBbox(redArr);
 
-                for (j = 0; j < lenBlue - 3; j += 3) {
+                for (j = startBlue; j < lenBlue; j += blue.bezierDegree) {
                     p = blue.points;
                     blueArr = [
-                        [p[j].usrCoords[1], p[j].usrCoords[2]],
-                        [p[j + 1].usrCoords[1], p[j + 1].usrCoords[2]],
-                        [p[j + 2].usrCoords[1], p[j + 2].usrCoords[2]],
-                        [p[j + 3].usrCoords[1], p[j + 3].usrCoords[2]]
+                        p[j].usrCoords.slice(1),
+                        p[j + 1].usrCoords.slice(1)
                     ];
+                    if (blue.bezierDegree === 3) {
+                        blueArr[2] = p[j + 2].usrCoords.slice(1);
+                        blueArr[3] = p[j + 3].usrCoords.slice(1);
+                    }
 
                     bbb = this._bezierBbox(blueArr);
                     if (this._bezierOverlap(bbr, bbb)) {
-                        L = L.concat(this.meetBeziersegmentBeziersegment(redArr, blueArr));
+                        intersections = this.meetBeziersegmentBeziersegment(redArr, blueArr);
+                        if (intersections.length === 0) {
+                            continue;
+                        }
+                        for (k = 0; k < intersections.length; k++) {
+                            po = intersections[k];
+                            if (po[1] < -Mat.eps ||
+                                po[1] > 1 + Mat.eps ||
+                                po[2] < -Mat.eps ||
+                                po[2] > 1 + Mat.eps) {
+                                continue;
+                            }
+                            L.push(po);
+                        }
                         if (L.length > nr) {
                             return L[nr][0];
                         }
@@ -25625,7 +25632,7 @@ define('options',[
              * This attributes takes either the value 'inherit' or an object of the form:
              * <pre>
              * precision: {
-             *      touch: 15,
+             *      touch: 30,
              *      mouse: 4,
              *      pen: 4
              * }
@@ -26051,7 +26058,7 @@ define('options',[
          * @see JXG.GeometryElement#precision
          */
         precision: {
-            touch: 15,
+            touch: 30,
             touchMax: 100,
             mouse: 4,
             pen: 4,
@@ -26649,7 +26656,7 @@ define('options',[
              * @name Circle#center
              */
             point2: {
-                visible: true,
+                visible: false,
                 withLabel: false,
                 fixed: false,
                 name: ''
@@ -31191,10 +31198,18 @@ define('renderer/abstract',[
                     // Set the content
                     if (el.htmlStr !== content) {
                         try {
-                            el.rendNode.innerHTML = content;
+                            if (el.type === Type.OBJECT_TYPE_BUTTON) {
+                                el.rendNodeButton.innerHTML = content;
+                            } else if (el.type === Type.OBJECT_TYPE_CHECKBOX ||
+                                el.type === Type.OBJECT_TYPE_INPUT) {
+                                el.rendNodeLabel.innerHTML = content;
+                            } else {
+                                el.rendNode.innerHTML = content;
+                            }
                         } catch (e) {
-                            // Setting innerHTML sometimes fails in IE8. A workaround is to
-                            // take the node off the DOM, assign innerHTML, then append back.
+                            // Setting innerHTML sometimes fails in IE8.
+                            // A workaround is to take the node off the DOM, assign innerHTML,
+                            // then append back.
                             // Works for text elements as they are absolutely positioned.
                             parentNode = el.rendNode.parentNode;
                             el.rendNode.parentNode.removeChild(el.rendNode);
@@ -34956,7 +34971,6 @@ define('base/element',[
          */
         handleSnapToGrid: function (force, fromParent) {
             var x, y, ticks, rx, ry, rcoords,
-                //i, len, g, el, p,
                 boardBB,
                 needsSnapToGrid = false,
                 sX = Type.evaluate(this.visProp.snapsizex),
@@ -35353,6 +35367,17 @@ define('base/coordselement',[
         this.position = null;
 
         /**
+         * True if there the method this.updateConstraint() has been set. It is
+         * probably different from the prototype function() {return this;}.
+         * Used in updateCoords fo glider elements.
+         *
+         * @see JXG.CoordsElement#updateCoords
+         * @type Boolean
+         * @private
+         */
+        this.isConstrained = false;
+
+        /**
          * Determines whether the element slides on a polygon if point is a glider.
          * @type Boolean
          * @default false
@@ -35386,14 +35411,6 @@ define('base/coordselement',[
          * @type {Boolean}
          */
         this.needsUpdateFromParent = true;
-
-        /**
-         * Dummy function for unconstrained points or gliders.
-         * @private
-         */
-        this.updateConstraint = function () {
-            return this;
-        };
 
         /**
          * Stores the groups of this element in an array of Group.
@@ -35441,16 +35458,30 @@ define('base/coordselement',[
 
     JXG.extend(JXG.CoordsElement.prototype, /** @lends JXG.CoordsElement.prototype */ {
         /**
+         * Dummy function for unconstrained points or gliders.
+         * @private
+         */
+        updateConstraint: function () {
+            return this;
+        },
+
+        /**
          * Updates the coordinates of the element.
          * @private
          */
         updateCoords: function (fromParent) {
+            var i;
+
             if (!this.needsUpdate) {
                 return this;
             }
 
             if (!Type.exists(fromParent)) {
                 fromParent = false;
+            }
+
+            if (!Type.evaluate(this.visProp.frozen)) {
+                this.updateConstraint();
             }
 
             /*
@@ -35462,6 +35493,10 @@ define('base/coordselement',[
              * the defining elements of the line or circle have been changed.
              */
             if (this.type === Const.OBJECT_TYPE_GLIDER) {
+                if (this.isConstrained) {
+                    fromParent = false;
+                }
+
                 if (fromParent) {
                     this.updateGliderFromParent();
                 } else {
@@ -35469,9 +35504,6 @@ define('base/coordselement',[
                 }
             }
 
-            if (!Type.evaluate(this.visProp.frozen)) {
-                this.updateConstraint();
-            }
             this.updateTransform(fromParent);
 
             return this;
@@ -36417,9 +36449,11 @@ define('base/coordselement',[
                 // remove all transformations
                 this.transformations.length = 0;
 
-                this.updateConstraint = function () {
-                    return this;
-                };
+                delete this.updateConstraint;
+                this.isConstrained = false;
+                // this.updateConstraint = function () {
+                //     return this;
+                // };
 
                 if (!this.isDraggable) {
                     this.isDraggable = true;
@@ -36559,6 +36593,7 @@ define('base/coordselement',[
                     } else {
                         this.coords = c;
                     }
+                    return this;
                 };
             // Euclidean coordinates
             } else if (terms.length === 2) {
@@ -36569,6 +36604,7 @@ define('base/coordselement',[
 
                 this.updateConstraint = function () {
                     this.coords.setCoordinates(Const.COORDS_BY_USER, [this.XEval(), this.YEval()]);
+                    return this;
                 };
             // Homogeneous coordinates
             } else {
@@ -36580,8 +36616,10 @@ define('base/coordselement',[
 
                 this.updateConstraint = function () {
                     this.coords.setCoordinates(Const.COORDS_BY_USER, [this.ZEval(), this.XEval(), this.YEval()]);
+                    return this;
                 };
             }
+            this.isConstrained = true;
 
             /**
             * We have to do an update. Otherwise, elements relying on this point will receive NaN.
@@ -36657,6 +36695,7 @@ define('base/coordselement',[
             this.updateConstraint = function () {
                 this.coords.setCoordinates(Const.COORDS_BY_USER, [this.ZEval(), this.XEval(), this.YEval()]);
             };
+            this.isConstrained = true;
 
             this.updateConstraint();
             //this.coords = new Coords(Const.COORDS_BY_SCREEN, [0, 0], this.board);
@@ -42292,6 +42331,13 @@ define('base/board',[
         this.touchMoveLast = 0;
 
         /**
+         * Contains the pointerId of the last touchMove event which was not thrown away or since
+         * touchStart because Android's Webkit browser fires too much of them.
+         * @type Number
+         */
+         this.touchMoveLastId = Infinity;
+
+        /**
          * Contains the last time (epoch, msec) since the last getCoordsTopLeftCorner call which was not thrown away.
          * @type Number
          */
@@ -42643,17 +42689,20 @@ define('base/board',[
          * @see JXG.Board#mouseMoveListener
          */
         checkFrameRate: function(evt) {
-            var time = new Date().getTime();
+            var handleEvt = false,
+                time = new Date().getTime();
 
-            if ((time - this.touchMoveLast) * this.attr.maxframerate < 1000) {
-                // this.updateQuality = this.BOARD_QUALITY_HIGH;
-                // this.triggerEventHandlers(['touchmove', 'move'], [evt, this.mode]);
-
-                return false;
+            if (Type.exists(evt.pointerId) && this.touchMoveLastId !== evt.pointerId) {
+                handleEvt = true;
+                this.touchMoveLastId = evt.pointerId;
             }
-
-            this.touchMoveLast = time;
-            return true;
+            if (!handleEvt && (time - this.touchMoveLast) * this.attr.maxframerate >= 1000) {
+                handleEvt = true;
+            }
+            if (handleEvt) {
+                this.touchMoveLast = time;
+            }
+            return handleEvt;
         },
 
         /**
@@ -42782,7 +42831,7 @@ define('base/board',[
                 absPos,
                 v;
 
-            // position of mouse cursor relative to containers position of container
+            // Position of cursor using clientX/Y
             absPos = Env.getPosition(e, i, this.document);
 
             /**
@@ -42791,6 +42840,7 @@ define('base/board',[
             if (!Type.exists(this.cssTransMat)) {
                 this.updateCSSTransforms();
             }
+            // Position relative to the top left corner
             v = [1, absPos[0] - cPos[0], absPos[1] - cPos[1]];
             v = Mat.matVecMult(this.cssTransMat, v);
             v[1] /= v[0];
@@ -43008,8 +43058,8 @@ define('base/board',[
          * @param {Object} o The touch object that is dragged: {JXG.Board#touches}.
          * @param {Object} evt The event object that lead to this movement.
          */
-        twoFingerMove: function (p1, p2, o, evt) {
-            var np1c, np2c, drag;
+        twoFingerMove: function (o, id, evt) {
+            var drag;
 
             if (Type.exists(o) && Type.exists(o.obj)) {
                 drag = o.obj;
@@ -43017,60 +43067,51 @@ define('base/board',[
                 return;
             }
 
-            // New finger position
-            np1c = new Coords(Const.COORDS_BY_SCREEN, this.getScrCoordsOfMouse(p1[0], p1[1]), this);
-            np2c = new Coords(Const.COORDS_BY_SCREEN, this.getScrCoordsOfMouse(p2[0], p2[1]), this);
-
             if (drag.elementClass === Const.OBJECT_CLASS_LINE ||
-                    drag.type === Const.OBJECT_TYPE_POLYGON) {
-                this.twoFingerTouchObject(np1c, np2c, o, drag, evt);
+                drag.type === Const.OBJECT_TYPE_POLYGON) {
+                this.twoFingerTouchObject(o.targets, drag, id);
             } else if (drag.elementClass === Const.OBJECT_CLASS_CIRCLE) {
-                this.twoFingerTouchCircle(np1c, np2c, o, drag);
+                this.twoFingerTouchCircle(o.targets, drag, id);
             }
 
-            drag.triggerEventHandlers(['touchdrag', 'drag'], [evt]);
-
-            o.targets[0].Xprev = np1c.scrCoords[1];
-            o.targets[0].Yprev = np1c.scrCoords[2];
-            o.targets[1].Xprev = np2c.scrCoords[1];
-            o.targets[1].Yprev = np2c.scrCoords[2];
+            if (evt) {
+                drag.triggerEventHandlers(['touchdrag', 'drag'], [evt]);
+            }
         },
 
         /**
          * Moves, rotates and scales a line or polygon with two fingers.
-         * @param {JXG.Coords} np1c x,y coordinates of first touch
-         * @param {JXG.Coords} np2c x,y coordinates of second touch
-         * @param {object} o The touch object that is dragged: {JXG.Board#touches}.
+         * @param {Array} tar Array conatining touch event objects: {JXG.Board#touches.targets}.
          * @param {object} drag The object that is dragged:
-         * @param {Object} evt The event object that lead to this movement.
+         * @param {Number} id pointerId of the event. In case of old touch event this is emulated.
          */
-        twoFingerTouchObject: function (np1c, np2c, o, drag, evt) {
-            var np1, np2, op1, op2,
-                nmid, omid, nd, od,
+        twoFingerTouchObject: function (tar, drag, id) {
+            var np, op, nd, od,
                 d, alpha,
-                S, t1, t2, t3, t4, t5,
+                S, t1, t3, t4, t5,
                 ar, i, len,
-                pi180 = 0.017453292519943295; // Math.PI / 180.0
+                fixEl, moveEl, fix;
 
-            if (Type.exists(o.targets[0]) &&
-                    Type.exists(o.targets[1]) &&
-                    !isNaN(o.targets[0].Xprev + o.targets[0].Yprev + o.targets[1].Xprev + o.targets[1].Yprev)) {
+            if (Type.exists(tar[0]) && Type.exists(tar[1]) &&
+                !isNaN(tar[0].Xprev + tar[0].Yprev + tar[1].Xprev + tar[1].Yprev)) {
 
-                // Actual fingers' position
-                np1 = np1c.usrCoords;
-                np2 = np2c.usrCoords;
+                if (id === tar[0].num) {
+                    fixEl  = tar[1];
+                    moveEl = tar[0];
+                } else {
+                    fixEl  = tar[0];
+                    moveEl = tar[1];
+                }
 
-                // Previous fingers' position
-                op1 = (new Coords(Const.COORDS_BY_SCREEN, [o.targets[0].Xprev, o.targets[0].Yprev], this)).usrCoords;
-                op2 = (new Coords(Const.COORDS_BY_SCREEN, [o.targets[1].Xprev, o.targets[1].Yprev], this)).usrCoords;
-
-                // Affine mid points of the old and new positions
-                omid = [1, (op1[1] + op2[1]) * 0.5, (op1[2] + op2[2]) * 0.5];
-                nmid = [1, (np1[1] + np2[1]) * 0.5, (np1[2] + np2[2]) * 0.5];
-
+                fix = (new Coords(Const.COORDS_BY_SCREEN, [fixEl.Xprev, fixEl.Yprev], this)).usrCoords;
+                // Previous finger position
+                op = (new Coords(Const.COORDS_BY_SCREEN, [moveEl.Xprev, moveEl.Yprev], this)).usrCoords;
+                // New finger position
+                np = (new Coords(Const.COORDS_BY_SCREEN, [moveEl.X, moveEl.Y], this)).usrCoords;
+                
                 // Old and new directions
-                od = Mat.crossProduct(op1, op2);
-                nd = Mat.crossProduct(np1, np2);
+                od = Mat.crossProduct(fix, op);
+                nd = Mat.crossProduct(fix, np);
 
                 // Intersection between the two directions
                 S = Mat.crossProduct(od, nd);
@@ -43080,45 +43121,18 @@ define('base/board',[
                     return;
                 }
 
-                // Normalize the coordinates
-                S[1] /= S[0];
-                S[2] /= S[0];
+                alpha = Geometry.rad(op.slice(1), fix.slice(1), np.slice(1));
 
-                if (Type.exists(evt.rotation) && evt.type !== 'pointermove') {
-                    // iOS touch events contain the angle for free
-                    alpha = evt.rotation - this.previousRotation;
-                    this.previousRotation = evt.rotation;
-                    alpha *= -pi180;
-                } else {
-                    // For pointer events, the rotation angle has to be calculated.
-                    alpha = Geometry.rad(omid.slice(1), S.slice(1), nmid.slice(1));
-                }
-
-                t1 = this.create('transform', [alpha, S[1], S[2]], {type: 'rotate'});
-
-                // Old midpoint of fingers after first transformation:
+                t1 = this.create('transform', [alpha, [fix[1], fix[2]]], {type: 'rotate'});
                 t1.update();
-                omid = Mat.matVecMult(t1.matrix, omid);
-                omid[1] /= omid[0];
-                omid[2] /= omid[0];
 
-                // Shift to the new mid point
-                t2 = this.create('transform', [nmid[1] - omid[1], nmid[2] - omid[2]], {type: 'translate'});
-                t2.update();
-
-                t1.melt(t2);
                 if (Type.evaluate(drag.visProp.scalable)) {
                     // Scale
-                    if (Type.exists(evt.scale)) {
-                        d = evt.scale / this.previousScale;
-                        this.previousScale = evt.scale;
-                    } else {
-                        d = Geometry.distance(np1, np2) / Geometry.distance(op1, op2);
-                    }
+                    d = Geometry.distance(np, fix) / Geometry.distance(op, fix);
 
-                    t3 = this.create('transform', [-nmid[1], -nmid[2]], {type: 'translate'});
+                    t3 = this.create('transform', [-fix[1], -fix[2]], {type: 'translate'});
                     t4 = this.create('transform', [d, d], {type: 'scale'});
-                    t5 = this.create('transform', [nmid[1], nmid[2]], {type: 'translate'});
+                    t5 = this.create('transform', [fix[1], fix[2]], {type: 'translate'});
                     t1.melt(t3).melt(t4).melt(t5);
                 }
 
@@ -43149,46 +43163,48 @@ define('base/board',[
 
         /*
          * Moves, rotates and scales a circle with two fingers.
-         * @param {JXG.Coords} np1c x,y coordinates of first touch
-         * @param {JXG.Coords} np2c x,y coordinates of second touch
-         * @param {object} o The touch object that is dragged: {JXG.Board#touches}.
+         * @param {Array} tar Array conatining touch event objects: {JXG.Board#touches.targets}.
          * @param {object} drag The object that is dragged:
+         * @param {Number} id pointerId of the event. In case of old touch event this is emulated.
          */
-        twoFingerTouchCircle: function (np1c, np2c, o, drag) {
-            var np1, np2, op1, op2,
-                d, alpha, t1, t2, t3, t4, t5;
+        twoFingerTouchCircle: function (tar, drag, id) {
+            var fixEl, moveEl, np, op, fix,
+                d, alpha, t1, t2, t3, t4;
 
-            if (drag.method === 'pointCircle' ||
-                    drag.method === 'pointLine') {
+            if (drag.method === 'pointCircle' || drag.method === 'pointLine') {
                 return;
             }
 
-            if (Type.exists(o.targets[0]) &&
-                    Type.exists(o.targets[1]) &&
-                    !isNaN(o.targets[0].Xprev + o.targets[0].Yprev + o.targets[1].Xprev + o.targets[1].Yprev)) {
+            if (Type.exists(tar[0]) && Type.exists(tar[1]) &&
+                !isNaN(tar[0].Xprev + tar[0].Yprev + tar[1].Xprev + tar[1].Yprev)) {
 
-                np1 = np1c.usrCoords;
-                np2 = np2c.usrCoords;
+                if (id === tar[0].num) {
+                    fixEl  = tar[1];
+                    moveEl = tar[0];
+                } else {
+                    fixEl  = tar[0];
+                    moveEl = tar[1];
+                }
+
+                fix = (new Coords(Const.COORDS_BY_SCREEN, [fixEl.Xprev, fixEl.Yprev], this)).usrCoords;
                 // Previous finger position
-                op1 = (new Coords(Const.COORDS_BY_SCREEN, [o.targets[0].Xprev, o.targets[0].Yprev], this)).usrCoords;
-                op2 = (new Coords(Const.COORDS_BY_SCREEN, [o.targets[1].Xprev, o.targets[1].Yprev], this)).usrCoords;
-
-                // Shift by the movement of the first finger
-                t1 = this.create('transform', [np1[1] - op1[1], np1[2] - op1[2]], {type: 'translate'});
-                alpha = Geometry.rad(op2.slice(1), np1.slice(1), np2.slice(1));
+                op = (new Coords(Const.COORDS_BY_SCREEN, [moveEl.Xprev, moveEl.Yprev], this)).usrCoords;
+                // New finger position
+                np = (new Coords(Const.COORDS_BY_SCREEN, [moveEl.X, moveEl.Y], this)).usrCoords;
+                
+                alpha = Geometry.rad(op.slice(1), fix.slice(1), np.slice(1));
 
                 // Rotate and scale by the movement of the second finger
-                t2 = this.create('transform', [-np1[1], -np1[2]], {type: 'translate'});
-                t3 = this.create('transform', [alpha], {type: 'rotate'});
-                t1.melt(t2).melt(t3);
-
+                t1 = this.create('transform', [-fix[1], -fix[2]], {type: 'translate'});
+                t2 = this.create('transform', [alpha], {type: 'rotate'});
+                t1.melt(t2);
                 if (Type.evaluate(drag.visProp.scalable)) {
-                    d = Geometry.distance(np1, np2) / Geometry.distance(op1, op2);
-                    t4 = this.create('transform', [d, d], {type: 'scale'});
-                    t1.melt(t4);
+                    d = Geometry.distance(fix, np) / Geometry.distance(fix, op);
+                    t3 = this.create('transform', [d, d], {type: 'scale'});
+                    t1.melt(t3);
                 }
-                t5 = this.create('transform', [np1[1], np1[2]], {type: 'translate'});
-                t1.melt(t5);
+                t4 = this.create('transform', [fix[1], fix[2]], {type: 'translate'});
+                t1.melt(t4);
 
                 if (drag.center.draggable()) {
                     t1.applyOnce([drag.center]);
@@ -43989,6 +44005,7 @@ define('base/board',[
          */
         pointerDownListener: function (evt, object) {
             var i, j, k, pos, elements, sel,
+                target_obj,
                 type = 'mouse', // Used in case of no browser
                 found, target;
 
@@ -44039,14 +44056,14 @@ define('base/board',[
             type = this._inputDevice;
             this.options.precision.hasPoint = this.options.precision[type];
 
-            // This should be easier than the touch events. Every pointer device has its own pointerId, e.g. the mouse
+            // Handling of multi touch with pointer events should be easier than the touch events. 
+            // Every pointer device has its own pointerId, e.g. the mouse
             // always has id 1 or 0, fingers and pens get unique ids every time a pointerDown event is fired and they will
             // keep this id until a pointerUp event is fired. What we have to do here is:
             //  1. collect all elements under the current pointer
             //  2. run through the touches control structure
             //    a. look for the object collected in step 1.
             //    b. if an object is found, check the number of pointers. If appropriate, add the pointer.
-
             pos = this.getMousePosition(evt);
 
             // selection
@@ -44064,45 +44081,41 @@ define('base/board',[
                 elements = this.initMoveObject(pos[0], pos[1], evt, type);
             }
 
+            target_obj = {
+                num: evt.pointerId,
+                X: pos[0],
+                Y: pos[1],
+                Xprev: NaN,
+                Yprev: NaN,
+                Xstart: [],
+                Ystart: [],
+                Zstart: []
+            };
+
             // If no draggable object can be found, get out here immediately
             if (elements.length > 0) {
                 // check touches structure
                 target = elements[elements.length - 1];
                 found = false;
+
+                // Reminder: this.touches is the list of elements which 
+                // currently "possess" a pointer (mouse, pen, finger)
                 for (i = 0; i < this.touches.length; i++) {
-                    // the target is already in our touches array, try to add the pointer to the existing touch
+                    // An element receives a further touch, i.e.
+                    // the target is already in our touches array, add the pointer to the existing touch
                     if (this.touches[i].obj === target) {
                         j = i;
-                        k = this.touches[i].targets.push({
-                            num: evt.pointerId,
-                            X: pos[0],
-                            Y: pos[1],
-                            Xprev: NaN,
-                            Yprev: NaN,
-                            Xstart: [],
-                            Ystart: [],
-                            Zstart: []
-                        }) - 1;
-
+                        k = this.touches[i].targets.push(target_obj) - 1;
                         found = true;
                         break;
                     }
                 }
-
                 if (!found) {
+                    // An new element hae been touched.
                     k = 0;
                     j = this.touches.push({
                         obj: target,
-                        targets: [{
-                            num: evt.pointerId,
-                            X: pos[0],
-                            Y: pos[1],
-                            Xprev: NaN,
-                            Yprev: NaN,
-                            Xstart: [],
-                            Ystart: [],
-                            Zstart: []
-                        }]
+                        targets: [target_obj]
                     }) - 1;
                 }
 
@@ -44181,7 +44194,7 @@ define('base/board',[
          * @returns {Boolean}
          */
         pointerMoveListener: function (evt) {
-            var i, j, pos,
+            var i, j, pos, touchTargets,
                 type = 'mouse'; // in case of no browser
 
             if (this._getPointerInputDevice(evt) === 'touch' && !this._isPointerRegistered(evt)) {
@@ -44218,38 +44231,29 @@ define('base/board',[
                 this.triggerEventHandlers(['touchmoveselecting', 'moveselecting', 'pointermoveselecting'], [evt, this.mode]);
             } else if (!this.mouseOriginMove(evt)) {
                 if (this.mode === this.BOARD_MODE_DRAG) {
-                    // Runs through all jsxgraph elements which are touched by at least one finger.
+                    // Run through all jsxgraph elements which are touched by at least one finger.
                     for (i = 0; i < this.touches.length; i++) {
+                        touchTargets = this.touches[i].targets;
                         // Run through all touch events which have been started on this jsxgraph element.
-                        for (j = 0; j < this.touches[i].targets.length; j++) {
-                            if (this.touches[i].targets[j].num === evt.pointerId) {
-                                if (this.touches[i].targets.length === 1) {
+                        for (j = 0; j < touchTargets.length; j++) {
+                            if (touchTargets[j].num === evt.pointerId) {
+                                
+                                pos = this.getMousePosition(evt);
+                                touchTargets[j].X = pos[0];
+                                touchTargets[j].Y = pos[1];
 
+                                if (touchTargets.length === 1) {
                                     // Touch by one finger: this is possible for all elements that can be dragged
-                                    this.touches[i].targets[j].X = evt.clientX;
-                                    this.touches[i].targets[j].Y = evt.clientY;
-                                    pos = this.getMousePosition(evt);
                                     this.moveObject(pos[0], pos[1], this.touches[i], evt, type);
-
-                                } else if (this.touches[i].targets.length === 2) {
-
+                                } else if (touchTargets.length === 2) {
                                     // Touch by two fingers: e.g. moving lines
-                                    this.touches[i].targets[j].X = evt.clientX;
-                                    this.touches[i].targets[j].Y = evt.clientY;
+                                    this.twoFingerMove(this.touches[i], evt.pointerId, evt);
 
-                                    this.twoFingerMove(
-                                        this.getMousePosition({
-                                            clientX: this.touches[i].targets[0].X,
-                                            clientY: this.touches[i].targets[0].Y
-                                        }),
-                                        this.getMousePosition({
-                                            clientX: this.touches[i].targets[1].X,
-                                            clientY: this.touches[i].targets[1].Y
-                                        }),
-                                        this.touches[i], evt);
+                                    touchTargets[j].Xprev = pos[0];
+                                    touchTargets[j].Yprev = pos[1];
                                 }
 
-                                // there is only one pointer in the evt object, there's no point in looking further
+                                // There is only one pointer in the evt object, so there's no point in looking further
                                 break;
                             }
                         }
@@ -44287,21 +44291,20 @@ define('base/board',[
          * @returns {Boolean}
          */
         pointerUpListener: function (evt) {
-            var i, j, found;
+            var i, j, found, touchTargets;
 
             this.triggerEventHandlers(['touchend', 'up', 'pointerup', 'MSPointerUp'], [evt]);
             this.displayInfobox(false);
 
             if (evt) {
                 for (i = 0; i < this.touches.length; i++) {
-                    for (j = 0; j < this.touches[i].targets.length; j++) {
-                        if (this.touches[i].targets[j].num === evt.pointerId) {
-                            this.touches[i].targets.splice(j, 1);
-
-                            if (this.touches[i].targets.length === 0) {
+                    touchTargets = this.touches[i].targets;
+                    for (j = 0; j < touchTargets.length; j++) {
+                        if (touchTargets[j].num === evt.pointerId) {
+                            touchTargets.splice(j, 1);
+                            if (touchTargets.length === 0) {
                                 this.touches.splice(i, 1);
                             }
-
                             break;
                         }
                     }
@@ -44367,7 +44370,7 @@ define('base/board',[
                 eps = this.options.precision.touch,
                 obj, found, targets,
                 evtTouches = evt[JXG.touchProperty],
-                target;
+                target, touchTargets;
 
             if (!this.hasTouchEnd) {
                 Env.addEvent(this.document, 'touchend', this.touchEndListener, this);
@@ -44415,19 +44418,19 @@ define('base/board',[
             }
 
             for (i = 0; i < this.touches.length; i++) {
-                for (j = 0; j < this.touches[i].targets.length; j++) {
-                    this.touches[i].targets[j].num = -1;
+                touchTargets = this.touches[i].targets;
+                for (j = 0; j < touchTargets.length; j++) {
+                    touchTargets[j].num = -1;
                     eps = this.options.precision.touch;
 
                     do {
                         for (k = 0; k < evtTouches.length; k++) {
                             // find the new targettouches
-                            if (Math.abs(Math.pow(evtTouches[k].screenX - this.touches[i].targets[j].X, 2) +
-                                    Math.pow(evtTouches[k].screenY - this.touches[i].targets[j].Y, 2)) < eps * eps) {
-                                this.touches[i].targets[j].num = k;
-
-                                this.touches[i].targets[j].X = evtTouches[k].screenX;
-                                this.touches[i].targets[j].Y = evtTouches[k].screenY;
+                            if (Math.abs(Math.pow(evtTouches[k].screenX - touchTargets[j].X, 2) +
+                                    Math.pow(evtTouches[k].screenY - touchTargets[j].Y, 2)) < eps * eps) {
+                                touchTargets[j].num = k;
+                                touchTargets[j].X = evtTouches[k].screenX;
+                                touchTargets[j].Y = evtTouches[k].screenY;
                                 evtTouches[k].jxg_isused = true;
                                 break;
                             }
@@ -44435,13 +44438,13 @@ define('base/board',[
 
                         eps *= 2;
 
-                    } while (this.touches[i].targets[j].num === -1 &&
+                    } while (touchTargets[j].num === -1 &&
                              eps < this.options.precision.touchMax);
 
-                    if (this.touches[i].targets[j].num === -1) {
+                    if (touchTargets[j].num === -1) {
                         JXG.debug('i couldn\'t find a targettouches for target no ' + j + ' on ' + this.touches[i].obj.name + ' (' + this.touches[i].obj.id + '). Removed the target.');
                         JXG.debug('eps = ' + eps + ', touchMax = ' + Options.precision.touchMax);
-                        this.touches[i].targets.splice(i, 1);
+                        touchTargets.splice(i, 1);
                     }
 
                 }
@@ -44467,20 +44470,22 @@ define('base/board',[
                     elements = this.initMoveObject(pos[0], pos[1], evt, 'touch');
                     if (elements.length !== 0) {
                         obj = elements[elements.length - 1];
+                        target = {num: i,
+                            X: evtTouches[i].screenX,
+                            Y: evtTouches[i].screenY,
+                            Xprev: NaN,
+                            Yprev: NaN,
+                            Xstart: [],
+                            Ystart: [],
+                            Zstart: [] 
+                        };
 
                         if (Type.isPoint(obj) ||
                                 obj.elementClass === Const.OBJECT_CLASS_TEXT ||
                                 obj.type === Const.OBJECT_TYPE_TICKS ||
                                 obj.type === Const.OBJECT_TYPE_IMAGE) {
-                            // it's a point, so it's single touch, so we just push it to our touches
-                            targets = [{num: i,
-                                        X: evtTouches[i].screenX,
-                                        Y: evtTouches[i].screenY,
-                                        Xprev: NaN,
-                                        Yprev: NaN,
-                                        Xstart: [],
-                                        Ystart: [],
-                                        Zstart: [] }];
+                            // It's a point, so it's single touch, so we just push it to our touches
+                            targets = [target_obj];
 
                             // For the UNDO/REDO of object moves
                             this.saveStartPos(obj, targets[0]);
@@ -44500,15 +44505,6 @@ define('base/board',[
                                     found = true;
                                     // only add it, if we don't have two targets in there already
                                     if (this.touches[j].targets.length === 1) {
-                                        target = {num: i,
-                                                  X: evtTouches[i].screenX,
-                                                  Y: evtTouches[i].screenY,
-                                                  Xprev: NaN,
-                                                  Yprev: NaN,
-                                                  Xstart: [],
-                                                  Ystart: [],
-                                                  Zstart: [] };
-
                                         // For the UNDO/REDO of object moves
                                         this.saveStartPos(obj, target);
                                         this.touches[j].targets.push(target);
@@ -44522,14 +44518,7 @@ define('base/board',[
                             // IF there is a second touch targetting this line, we will find it later on, and then add it to
                             // the touches control object.
                             if (!found) {
-                                targets = [{num: i,
-                                            X: evtTouches[i].screenX,
-                                            Y: evtTouches[i].screenY,
-                                            Xprev: NaN,
-                                            Yprev: NaN,
-                                            Xstart: [],
-                                            Ystart: [],
-                                            Zstart: [] }];
+                                targets = [target];
 
                                 // For the UNDO/REDO of object moves
                                 this.saveStartPos(obj, targets[0]);
@@ -44576,7 +44565,8 @@ define('base/board',[
          * @returns {Boolean}
          */
         touchMoveListener: function (evt) {
-            var i, pos1, pos2, time,
+            var i, pos1, pos2, 
+                time, touchTargets,
                 evtTouches = evt[JXG.touchProperty];
 
             if (!this.checkFrameRate(evt)) {
@@ -44613,40 +44603,52 @@ define('base/board',[
                         // Runs over through all elements which are touched
                         // by at least one finger.
                         for (i = 0; i < this.touches.length; i++) {
-                            if (this.touches[i].targets.length === 1) {
+                            touchTargets = this.touches[i].targets;
+                            if (touchTargets.length === 1) {
+
+
                                 // Touch by one finger:  this is possible for all elements that can be dragged
-                                if (evtTouches[this.touches[i].targets[0].num]) {
-                                    pos1 = this.getMousePosition(evt, this.touches[i].targets[0].num);
+                                if (evtTouches[touchTargets[0].num]) {
+                                    pos1 = this.getMousePosition(evt, touchTargets[0].num);
                                     if (pos1[0] < 0 || pos1[0] > this.canvasWidth ||
                                         pos1[1] < 0 || pos1[1] > this.canvasHeight) {
                                         return;
                                     }
-                                    this.touches[i].targets[0].X = evtTouches[this.touches[i].targets[0].num].screenX;
-                                    this.touches[i].targets[0].Y = evtTouches[this.touches[i].targets[0].num].screenY;
+                                    touchTargets[0].X = pos1[0];
+                                    touchTargets[0].Y = pos1[1];
                                     this.moveObject(pos1[0], pos1[1], this.touches[i], evt, 'touch');
                                 }
 
-                            } else if (this.touches[i].targets.length === 2 &&
-                                        this.touches[i].targets[0].num > -1 &&
-                                        this.touches[i].targets[1].num > -1) {
+                            } else if (touchTargets.length === 2 &&
+                                touchTargets[0].num > -1 &&
+                                touchTargets[1].num > -1) {
+
                                 // Touch by two fingers: moving lines, ...
-                                if (evtTouches[this.touches[i].targets[0].num] &&
-                                    evtTouches[this.touches[i].targets[1].num]) {
+                                if (evtTouches[touchTargets[0].num] &&
+                                    evtTouches[touchTargets[1].num]) {
 
                                     // Get coordinates of the two touches
-                                    pos1 = this.getMousePosition(evt, this.touches[i].targets[0].num);
-                                    pos2 = this.getMousePosition(evt, this.touches[i].targets[1].num);
+                                    pos1 = this.getMousePosition(evt, touchTargets[0].num);
+                                    pos2 = this.getMousePosition(evt, touchTargets[1].num);
                                     if (pos1[0] < 0 || pos1[0] > this.canvasWidth ||
                                         pos1[1] < 0 || pos1[1] > this.canvasHeight ||
                                         pos2[0] < 0 || pos2[0] > this.canvasWidth ||
                                         pos2[1] < 0 || pos2[1] > this.canvasHeight) {
                                         return;
                                     }
-                                    this.touches[i].targets[0].X = evtTouches[this.touches[i].targets[0].num].screenX;
-                                    this.touches[i].targets[0].Y = evtTouches[this.touches[i].targets[0].num].screenY;
-                                    this.touches[i].targets[1].X = evtTouches[this.touches[i].targets[1].num].screenX;
-                                    this.touches[i].targets[1].Y = evtTouches[this.touches[i].targets[1].num].screenY;
-                                    this.twoFingerMove(pos1, pos2, this.touches[i], evt);
+
+                                    touchTargets[0].X = pos1[0];
+                                    touchTargets[0].Y = pos1[1];
+                                    touchTargets[1].X = pos2[0];
+                                    touchTargets[1].Y = pos2[1];
+
+                                    this.twoFingerMove(this.touches[i], touchTargets[0].num, evt);
+                                    this.twoFingerMove(this.touches[i], touchTargets[1].num);
+
+                                    touchTargets[0].Xprev = pos1[0];
+                                    touchTargets[0].Yprev = pos1[1];
+                                    touchTargets[1].Xprev = pos2[0];
+                                    touchTargets[1].Yprev = pos2[1];
                                 }
                             }
                         }
@@ -44681,7 +44683,8 @@ define('base/board',[
             var i, j, k,
                 eps = this.options.precision.touch,
                 tmpTouches = [], found, foundNumber,
-                evtTouches = evt && evt[JXG.touchProperty];
+                evtTouches = evt && evt[JXG.touchProperty],
+                touchTargets;
 
             this.triggerEventHandlers(['touchend', 'up'], [evt]);
             this.displayInfobox(false);
@@ -44717,15 +44720,16 @@ define('base/board',[
                     // could all targets of the current this.touches.obj be assigned to targettouches?
                     found = false;
                     foundNumber = 0;
+                    touchTargets = tmpTouches[i].targets;
 
-                    for (j = 0; j < tmpTouches[i].targets.length; j++) {
-                        tmpTouches[i].targets[j].found = false;
+                    for (j = 0; j < touchTargets.length; j++) {
+                        touchTargets[j].found = false;
                         for (k = 0; k < evtTouches.length; k++) {
-                            if (Math.abs(Math.pow(evtTouches[k].screenX - tmpTouches[i].targets[j].X, 2) + Math.pow(evtTouches[k].screenY - tmpTouches[i].targets[j].Y, 2)) < eps * eps) {
-                                tmpTouches[i].targets[j].found = true;
-                                tmpTouches[i].targets[j].num = k;
-                                tmpTouches[i].targets[j].X = evtTouches[k].screenX;
-                                tmpTouches[i].targets[j].Y = evtTouches[k].screenY;
+                            if (Math.abs(Math.pow(evtTouches[k].screenX - touchTargets[j].X, 2) + Math.pow(evtTouches[k].screenY - touchTargets[j].Y, 2)) < eps * eps) {
+                                touchTargets[j].found = true;
+                                touchTargets[j].num = k;
+                                touchTargets[j].X = evtTouches[k].screenX;
+                                touchTargets[j].Y = evtTouches[k].screenY;
                                 foundNumber += 1;
                                 break;
                             }
@@ -44733,9 +44737,9 @@ define('base/board',[
                     }
 
                     if (Type.isPoint(tmpTouches[i].obj)) {
-                        found = (tmpTouches[i].targets[0] && tmpTouches[i].targets[0].found);
+                        found = (touchTargets[0] && touchTargets[0].found);
                     } else if (tmpTouches[i].obj.elementClass === Const.OBJECT_CLASS_LINE) {
-                        found = (tmpTouches[i].targets[0] && tmpTouches[i].targets[0].found) || (tmpTouches[i].targets[1] && tmpTouches[i].targets[1].found);
+                        found = (touchTargets[0] && touchTargets[0].found) || (touchTargets[1] && touchTargets[1].found);
                     } else if (tmpTouches[i].obj.elementClass === Const.OBJECT_CLASS_CIRCLE) {
                         found = foundNumber === 1 || foundNumber === 3;
                     }
@@ -44747,17 +44751,17 @@ define('base/board',[
                             targets: []
                         });
 
-                        for (j = 0; j < tmpTouches[i].targets.length; j++) {
-                            if (tmpTouches[i].targets[j].found) {
+                        for (j = 0; j < touchTargets.length; j++) {
+                            if (touchTargets[j].found) {
                                 this.touches[this.touches.length - 1].targets.push({
-                                    num: tmpTouches[i].targets[j].num,
-                                    X: tmpTouches[i].targets[j].screenX,
-                                    Y: tmpTouches[i].targets[j].screenY,
+                                    num: touchTargets[j].num,
+                                    X: touchTargets[j].screenX,
+                                    Y: touchTargets[j].screenY,
                                     Xprev: NaN,
                                     Yprev: NaN,
-                                    Xstart: tmpTouches[i].targets[j].Xstart,
-                                    Ystart: tmpTouches[i].targets[j].Ystart,
-                                    Zstart: tmpTouches[i].targets[j].Zstart
+                                    Xstart: touchTargets[j].Xstart,
+                                    Ystart: touchTargets[j].Ystart,
+                                    Zstart: touchTargets[j].Zstart
                                 });
                             }
                         }
@@ -45050,6 +45054,15 @@ define('base/board',[
                     this.clickRightArrow();
                 }
             } else {
+                // Handle snapToGrid
+                if (Type.exists(el.visProp) &&
+                    Type.exists(el.visProp.snapsizex) &&
+                    Type.evaluate(el.visProp.snaptogrid)) {
+
+                    dx = Math.max(Type.evaluate(el.visProp.snapsizex), dx);
+                    dy = Math.max(Type.evaluate(el.visProp.snapsizey), dy);
+                }
+
                 if (evt.keyCode === 38) {           // up
                     dir = [0, dy];
                 } else if (evt.keyCode === 40) {    // down
@@ -54250,8 +54263,7 @@ define('base/point',[
          * 
          */
         isOn: function(el, tol) {
-            var arr, crds,
-                len, i, j, x, y, c;
+            var arr, crds;
 
             tol = tol || Mat.eps;
 
@@ -54282,22 +54294,9 @@ define('base/point',[
                 return Geometry.distance(this.coords.usrCoords, crds.usrCoords, 3) < tol;
             } else if (el.type === Const.OBJECT_TYPE_POLYGON) {
                 if (Type.evaluate(el.visProp.hasinnerpoints)) {
-                    len = el.vertices.length;
-                    x = this.coords.usrCoords[1];
-                    y = this.coords.usrCoords[2];
-                    c = false;
-                    // W. Randolf Franklin's pnpoly method.
-                    // See https://wrf.ecse.rpi.edu/Research/Short_Notes/pnpoly.html
-                    for (i = 0, j = len - 2; i < len - 1; j = i++) {
-                        if (((el.vertices[i].coords.usrCoords[2] > y) !== (el.vertices[j].coords.usrCoords[2] > y)) &&
-                                (x < (el.vertices[j].coords.usrCoords[1] - el.vertices[i].coords.usrCoords[1]) * (y - el.vertices[i].coords.usrCoords[2]) /
-                                (el.vertices[j].coords.usrCoords[2] - el.vertices[i].coords.usrCoords[2]) + el.vertices[i].coords.usrCoords[1])) {
-                            c = !c;
-                        }
-                    }
-                    if (c) {
-                        return true;
-                    }
+                    // if (el.pnpoly(this.coords.usrCoords[1], this.coords.usrCoords[2], JXG.COORDS_BY_USER)) {
+                    return true;
+                    // }
                 }
                 arr = Geometry.projectCoordsToPolygon(this.coords.usrCoords, el);
                 return Geometry.distance(this.coords.usrCoords, arr, 3) < tol;
@@ -57718,7 +57717,8 @@ define('element/conic',[
      * numbers describing the coordinates of a point. In the latter case the point will be constructed automatically as a fixed invisible point.
      * @param {JXG.Point,array_JXG.Point,array_number,function} point1,point2,number Parent elements can be two elements either of type {@link JXG.Point} or array of
      * numbers describing the coordinates of a point. The third parameter is a number/function which defines the length of the major axis
-     * Optional parameters four and five are numbers which define the curve length (e.g. start/end). Default values are -pi and pi.
+     * @param {Number} start (Optional) parameter of the curve start, default: 0.
+     * @param {Number} end (Optional) parameter for the curve end, default: 2&pi;.
      * @example
      * // Create an Ellipse by three points
      * var A = board.create('point', [-1,4]);
@@ -57727,12 +57727,45 @@ define('element/conic',[
      * var el = board.create('ellipse',[A,B,C]);
      * </pre><div class="jxgbox" id="JXGa4d7fb6f-8708-4e45-87f2-2379ae2bd2c0" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
+     *   (function() {
      *   var glex1_board = JXG.JSXGraph.initBoard('JXGa4d7fb6f-8708-4e45-87f2-2379ae2bd2c0', {boundingbox:[-6,6,6,-6], keepaspectratio:true, showcopyright: false, shownavigation: false});
      *   var A = glex1_board.create('point', [-1,4]);
      *   var B = glex1_board.create('point', [-1,-4]);
      *   var C = glex1_board.create('point', [1,1]);
      *   var el = glex1_board.create('ellipse',[A,B,C]);
+     * })();
      * </script><pre>
+     *
+     * @example
+     * // Create an elliptical arc
+     * var p1 = board.create('point', [-1, 2]);
+     * var p2 = board.create('point', [ 1, 2]);
+     * var p3 = board.create('point', [0, 3]);
+     * 
+     * var ell = board.create('ellipse', [
+     *   p1, p2, p3, 0, Math.PI], {
+     *   lastArrow: {type: 7}
+     * });
+     * 
+     * </pre><div id="JXG950f7c07-27a4-4c67-9505-c73c22ce9345" class="jxgbox" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     *     (function() {
+     *         var board = JXG.JSXGraph.initBoard('JXG950f7c07-27a4-4c67-9505-c73c22ce9345',
+     *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+     *     var p1 = board.create('point', [-1, 2]);
+     *     var p2 = board.create('point', [ 1, 2]);
+     *     var p3 = board.create('point', [0, 3]);
+     *     
+     *     var ell = board.create('ellipse', [
+     *       p1, p2, p3, 0, Math.PI], {
+     *       lastArrow: {type: 7}
+     *     });
+     * 
+     *     })();
+     * 
+     * </script><pre>
+     * 
+*
      */
     JXG.createEllipse = function (board, parents, attributes) {
         var polarForm, curve, M, C, majorAxis, i,
@@ -57936,7 +57969,8 @@ define('element/conic',[
      * numbers describing the coordinates of a point. In the latter case the point will be constructed automatically as a fixed invisible point.
      * @param {JXG.Point,array_JXG.Point,array_number,function} point1,point2,number Parent elements can be two elements either of type {@link JXG.Point} or array of
      * numbers describing the coordinates of a point. The third parameter is a number/function which defines the length of the major axis
-     * Optional parameters four and five are numbers which define the curve length (e.g. start/end). Default values are -pi and pi.
+     * @param {Number} start (Optional) parameter of the curve start, default: -&pi;.
+     * @param {Number} end (Optional) parameter for the curve end, default: &pi;.
      * @example
      * // Create an Hyperbola by three points
      * var A = board.create('point', [-1,4]);
@@ -57945,11 +57979,13 @@ define('element/conic',[
      * var el = board.create('hyperbola',[A,B,C]);
      * </pre><div class="jxgbox" id="JXGcf99049d-a3fe-407f-b936-27d76550f8c4" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
+     *   (function(){
      *   var glex1_board = JXG.JSXGraph.initBoard('JXGcf99049d-a3fe-407f-b936-27d76550f8c4', {boundingbox:[-6,6,6,-6], keepaspectratio:true, showcopyright: false, shownavigation: false});
      *   var A = glex1_board.create('point', [-1,4]);
      *   var B = glex1_board.create('point', [-1,-4]);
      *   var C = glex1_board.create('point', [1,1]);
      *   var el = glex1_board.create('hyperbola',[A,B,C]);
+     * })();
      * </script><pre>
      */
     JXG.createHyperbola = function (board, parents, attributes) {
@@ -58131,12 +58167,14 @@ define('element/conic',[
      * var el = board.create('parabola',[C,l]);
      * </pre><div class="jxgbox" id="JXG524d1aae-217d-44d4-ac58-a19c7ab1de36" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
+     * (function() {
      *   var glex1_board = JXG.JSXGraph.initBoard('JXG524d1aae-217d-44d4-ac58-a19c7ab1de36', {boundingbox:[-6,6,6,-6], keepaspectratio:true, showcopyright: false, shownavigation: false});
      *   var A = glex1_board.create('point', [-1,4]);
      *   var B = glex1_board.create('point', [-1,-4]);
      *   var l = glex1_board.create('line', [A,B]);
      *   var C = glex1_board.create('point', [1,1]);
      *   var el = glex1_board.create('parabola',[C,l]);
+     * })();
      * </script><pre>
      *
      * @example
@@ -58333,6 +58371,7 @@ define('element/conic',[
      *  var conic = board.create('conic',[A,B,C,D,E]);
      * </pre><div class="jxgbox" id="JXG2d79bd6a-db9b-423c-9cba-2497f0b06320" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
+     * (function(){
      *   var glex1_board = JXG.JSXGraph.initBoard('JXG2d79bd6a-db9b-423c-9cba-2497f0b06320', {boundingbox:[-6,6,6,-6], keepaspectratio:true, showcopyright: false, shownavigation: false});
      *   var A = glex1_board.create('point', [1,5]);
      *   var B = glex1_board.create('point', [1,2]);
@@ -58340,6 +58379,7 @@ define('element/conic',[
      *   var D = glex1_board.create('point', [0,0]);
      *   var E = glex1_board.create('point', [-1,5]);
      *   var conic = glex1_board.create('conic',[A,B,C,D,E]);
+     * })();
      * </script><pre>
      *
      * @example
@@ -58771,6 +58811,8 @@ define('base/circle',[
          */
         this.circle = null;
 
+        this.points = [];
+
         if (method === 'twoPoints') {
             this.point2 = board.select(par2);
             this.radius = this.Radius();
@@ -58974,6 +59016,8 @@ define('base/circle',[
          * Uses the boards renderer to update the circle.
          */
         update: function () {
+            var x, y, z, r, c, i;
+
             if (this.needsUpdate) {
                 if (Type.evaluate(this.visProp.trace)) {
                     this.cloneToBackground(true);
@@ -58989,6 +59033,24 @@ define('base/circle',[
 
                 this.updateStdform();
                 this.updateQuadraticform();
+
+                // Approximate the circle by 4 Bezier segments
+                // This will be used for intersections of type curve / circle.
+                // See https://spencermortensen.com/articles/bezier-circle/
+                z = this.center.coords.usrCoords[0];
+                x = this.center.coords.usrCoords[1] / z;
+                y = this.center.coords.usrCoords[2] / z;
+                z /= z;
+                r = this.Radius();
+                c = 0.551915024494;
+
+                this.numberPoints = 13;
+                this.dataX = [x + r, x + r, x + r * c, x, x - r * c, x - r, x - r, x - r, x - r * c, x, x + r * c, x + r, x + r];
+                this.dataY = [y, y + r * c, y + r, y + r, y + r, y + r * c, y, y - r * c, y - r, y - r, y - r, y - r * c, y];
+                this.bezierDegree = 3;
+                for (i = 0; i < this.numberPoints; i++) {
+                    this.points[i] = new Coords(Const.COORDS_BY_USER, [this.dataX[i], this.dataY[i]], this.board);
+                }
             }
 
             return this;
@@ -59702,6 +59764,48 @@ define('base/polygon',[
     JXG.Polygon.prototype = new GeometryElement();
 
     JXG.extend(JXG.Polygon.prototype, /** @lends JXG.Polygon.prototype */ {
+
+        /**
+         * W. Randolf Franklin's pnpoly method.
+         * See {@link https://wrf.ecse.rpi.edu/Research/Short_Notes/pnpoly.html}.
+         * Decides if a point (x,y) is inside of the polygon.
+         *
+         * @param {Number} x_in x-coordinate (screen or user coordinates)
+         * @param {Number} y_in y-coordinate (screen or user coordinates)
+         * @param {Number} coord_type (Optional) the type of coordinates used here.
+         *   Possible values are <b>JXG.COORDS_BY_USER</b> and <b>JXG.COORDS_BY_SCREEN</b>.
+         *   Default value is JXG.COORDS_BY_SCREEN
+         *
+         * @returns {Boolean} if (x,y) is inside of the polygon.
+         */
+        pnpoly: function(x_in, y_in, coord_type) {
+            var i, j, len,
+                x, y, crds,
+                v = this.vertices,
+                isIn = false;
+
+            if (coord_type === Const.COORDS_BY_USER) {
+                crds = new Coords(Const.COORDS_BY_USER, [x, y], this);
+                x = crds.scrCoords[1];
+                y = crds.scrCoords[2];
+            } else {
+                x = x_in;
+                y = y_in;
+            }
+
+            len = this.vertices.length;
+            for (i = 0, j = len - 2; i < len - 1; j = i++) {
+                if (((v[i].coords.scrCoords[2] > y) !== (v[j].coords.scrCoords[2] > y)) &&
+                    (x < (v[j].coords.scrCoords[1] - v[i].coords.scrCoords[1]) *
+                    (y - v[i].coords.scrCoords[2]) / (v[j].coords.scrCoords[2] - v[i].coords.scrCoords[2]) + v[i].coords.scrCoords[1])
+                   ) {
+                    isIn = !isIn;
+                }
+            }
+
+            return isIn;
+        },
+
         /**
          * Checks whether (x,y) is near the polygon.
          * @param {Number} x Coordinate in x direction, screen coordinates.
@@ -59709,22 +59813,11 @@ define('base/polygon',[
          * @returns {Boolean} Returns true, if (x,y) is inside or at the boundary the polygon, otherwise false.
          */
         hasPoint: function (x, y) {
-
-            var i, j, len, c = false;
+            var i, len;
 
             if (Type.evaluate(this.visProp.hasinnerpoints)) {
                 // All points of the polygon trigger hasPoint: inner and boundary points
-                len = this.vertices.length;
-                // W. Randolf Franklin's pnpoly method.
-                // See https://wrf.ecse.rpi.edu/Research/Short_Notes/pnpoly.html
-                for (i = 0, j = len - 2; i < len - 1; j = i++) {
-                    if (((this.vertices[i].coords.scrCoords[2] > y) !== (this.vertices[j].coords.scrCoords[2] > y)) &&
-                            (x < (this.vertices[j].coords.scrCoords[1] - this.vertices[i].coords.scrCoords[1]) * (y - this.vertices[i].coords.scrCoords[2]) /
-                            (this.vertices[j].coords.scrCoords[2] - this.vertices[i].coords.scrCoords[2]) + this.vertices[i].coords.scrCoords[1])) {
-                        c = !c;
-                    }
-                }
-                if (c) {
+                if (this.pnpoly(x, y)) {
                     return true;
                 }
             }
@@ -59736,12 +59829,11 @@ define('base/polygon',[
             len = this.borders.length;
             for (i = 0; i < len; i++) {
                 if (this.borders[i].hasPoint(x, y)) {
-                    c = true;
-                    break;
+                    return true;
                 }
             }
 
-            return c;
+            return false;
         },
 
         /**
@@ -61104,7 +61196,7 @@ define('base/curve',[
                     t += d;
                 }
             } else if (ev_ct === 'plot' ||
-                        ev_ct === 'functiongraph') {
+                ev_ct === 'functiongraph') {
 
                 if (!Type.exists(start) || start < 0) {
                     start = 0;
@@ -61113,7 +61205,7 @@ define('base/curve',[
                 if (Type.exists(this.qdt) &&
                     Type.evaluate(this.visProp.useqdt) &&
                     this.bezierDegree !== 3
-                    ) {
+                ) {
                     qdt = this.qdt.query(new Coords(Const.COORDS_BY_USER, [x, y], this.board));
                     points = qdt.points;
                     len = points.length;
@@ -61536,7 +61628,7 @@ define('base/curve',[
                     // this.updateTransform(this.points[i]);
                     suspendUpdate = true;
                 }
-            // continuous x data
+                // continuous x data
             } else {
                 if (Type.evaluate(this.visProp.doadvancedplot)) {
                     // console.time("plot");
@@ -61588,7 +61680,7 @@ define('base/curve',[
             }
 
             if (Type.evaluate(this.visProp.curvetype) !== 'plot' &&
-                    Type.evaluate(this.visProp.rdpsmoothing)) {
+                Type.evaluate(this.visProp.rdpsmoothing)) {
                 // console.time("rdp");
                 this.points = Numerics.RamerDouglasPeucker(this.points, 0.2);
                 this.numberPoints = this.points.length;
@@ -61811,7 +61903,7 @@ define('base/curve',[
                 obj;
 
             // Read dependencies found by the JessieCode parser
-            obj = {'xterm': 1, 'yterm': 1};
+            obj = { 'xterm': 1, 'yterm': 1 };
             for (fstr in obj) {
                 if (obj.hasOwnProperty(fstr) && this.hasOwnProperty(fstr) && this[fstr].origin) {
                     isJessieCode = true;
@@ -61837,38 +61929,38 @@ define('base/curve',[
                 by = 0.95 * this.board.canvasHeight;
 
             switch (Type.evaluate(this.visProp.label.position)) {
-            case 'ulft':
-                x = ax;
-                y = ay;
-                break;
-            case 'llft':
-                x = ax;
-                y = by;
-                break;
-            case 'rt':
-                x = bx;
-                y = 0.5 * by;
-                break;
-            case 'lrt':
-                x = bx;
-                y = by;
-                break;
-            case 'urt':
-                x = bx;
-                y = ay;
-                break;
-            case 'top':
-                x = 0.5 * bx;
-                y = ay;
-                break;
-            case 'bot':
-                x = 0.5 * bx;
-                y = by;
-                break;
-            default:
-                // includes case 'lft'
-                x = ax;
-                y = 0.5 * by;
+                case 'ulft':
+                    x = ax;
+                    y = ay;
+                    break;
+                case 'llft':
+                    x = ax;
+                    y = by;
+                    break;
+                case 'rt':
+                    x = bx;
+                    y = 0.5 * by;
+                    break;
+                case 'lrt':
+                    x = bx;
+                    y = by;
+                    break;
+                case 'urt':
+                    x = bx;
+                    y = ay;
+                    break;
+                case 'top':
+                    x = 0.5 * bx;
+                    y = ay;
+                    break;
+                case 'bot':
+                    x = 0.5 * bx;
+                    y = by;
+                    break;
+                default:
+                    // includes case 'lft'
+                    x = ax;
+                    y = 0.5 * by;
             }
 
             c = new Coords(Const.COORDS_BY_SCREEN, [x, y], this.board, false);
@@ -61915,15 +62007,15 @@ define('base/curve',[
             if (this.bezierDegree === 3) {
                 // Add methods X(), Y()
                 for (i = 0; i < l; i++) {
-                    this.points[i].X = Type.bind(function() { return this.usrCoords[1]; }, this.points[i]);
-                    this.points[i].Y = Type.bind(function() { return this.usrCoords[2]; }, this.points[i]);
+                    this.points[i].X = Type.bind(function () { return this.usrCoords[1]; }, this.points[i]);
+                    this.points[i].Y = Type.bind(function () { return this.usrCoords[2]; }, this.points[i]);
                 }
                 bezier = Numerics.bezier(this.points);
                 up = bezier[3]();
-                minX = Numerics.fminbr(function(t) { return  bezier[0](t); }, [0, up]);
-                maxX = Numerics.fminbr(function(t) { return -bezier[0](t); }, [0, up]);
-                minY = Numerics.fminbr(function(t) { return  bezier[1](t); }, [0, up]);
-                maxY = Numerics.fminbr(function(t) { return -bezier[1](t); }, [0, up]);
+                minX = Numerics.fminbr(function (t) { return bezier[0](t); }, [0, up]);
+                maxX = Numerics.fminbr(function (t) { return -bezier[0](t); }, [0, up]);
+                minY = Numerics.fminbr(function (t) { return bezier[1](t); }, [0, up]);
+                maxY = Numerics.fminbr(function (t) { return -bezier[1](t); }, [0, up]);
 
                 minX = bezier[0](minX);
                 maxX = bezier[0](maxX);
@@ -61971,18 +62063,18 @@ define('base/curve',[
          * @param {Array} where Array containing the x and y coordinate of the target location.
          * @returns {JXG.Curve} Reference to itself.
          */
-        moveTo: function(where) {
+        moveTo: function (where) {
             // TODO add animation
             var delta = [], p;
             if (this.points.length > 0 && !Type.evaluate(this.visProp.fixed)) {
                 p = this.points[0];
                 if (where.length === 3) {
                     delta = [where[0] - p.usrCoords[0],
-                            where[1] - p.usrCoords[1],
-                            where[2] - p.usrCoords[2]];
+                    where[1] - p.usrCoords[1],
+                    where[2] - p.usrCoords[2]];
                 } else {
                     delta = [where[0] - p.usrCoords[1],
-                            where[1] - p.usrCoords[2]];
+                    where[1] - p.usrCoords[2]];
                 }
                 this.setPosition(Const.COORDS_BY_USER, delta);
             }
@@ -62000,14 +62092,14 @@ define('base/curve',[
          * @returns {Array} [Boolean, curve]: Array contining 'true' if curve is result of a transformation,
          *   and the source curve of the transformation.
          */
-        getTransformationSource: function() {
+        getTransformationSource: function () {
             var isTransformed, curve_org;
             if (Type.exists(this._transformationSource)) {
                 curve_org = this._transformationSource;
                 if (curve_org.elementClass === Const.OBJECT_CLASS_CURVE //&&
                     //Type.evaluate(curve_org.visProp.curvetype) !== 'plot'
-                    ) {
-                        isTransformed = true;
+                ) {
+                    isTransformed = true;
                 }
             }
             return [isTransformed, curve_org];
@@ -62182,10 +62274,10 @@ define('base/curve',[
         obj = board.select(parents[0], true);
         if (Type.isObject(obj) &&
             (obj.type === Const.OBJECT_TYPE_CURVE ||
-             obj.type === Const.OBJECT_TYPE_ANGLE ||
-             obj.type === Const.OBJECT_TYPE_ARC   ||
-             obj.type === Const.OBJECT_TYPE_CONIC ||
-             obj.type === Const.OBJECT_TYPE_SECTOR) &&
+                obj.type === Const.OBJECT_TYPE_ANGLE ||
+                obj.type === Const.OBJECT_TYPE_ARC ||
+                obj.type === Const.OBJECT_TYPE_CONIC ||
+                obj.type === Const.OBJECT_TYPE_SECTOR) &&
             Type.isTransformationOrArray(parents[1])) {
 
             if (obj.type === Const.OBJECT_TYPE_SECTOR) {
@@ -62203,17 +62295,17 @@ define('base/curve',[
             attr = Type.copyAttributes(attr, board.options, 'curve');
 
             cu = new JXG.Curve(board, ['x', [], []], attr);
-            cu.updateDataArray = function() {
-                    var i, le = obj.numberPoints;
-                    this.bezierDegree = obj.bezierDegree;
-                    this.dataX = [];
-                    this.dataY = [];
-                    for (i = 0; i < le; i++) {
-                        this.dataX.push(obj.points[i].usrCoords[1]);
-                        this.dataY.push(obj.points[i].usrCoords[2]);
-                    }
-                    return this;
-                };
+            cu.updateDataArray = function () {
+                var i, le = obj.numberPoints;
+                this.bezierDegree = obj.bezierDegree;
+                this.dataX = [];
+                this.dataY = [];
+                for (i = 0; i < le; i++) {
+                    this.dataX.push(obj.points[i].usrCoords[1]);
+                    this.dataY.push(obj.points[i].usrCoords[2]);
+                }
+                return this;
+            };
             cu.addTransform(parents[1]);
             obj.addChild(cu);
             cu.setParents([obj]);
@@ -62362,7 +62454,7 @@ define('base/curve',[
                             if (Type.isPoint(parents[i])) {
                                 x.push(parents[i].X());
                                 y.push(parents[i].Y());
-                            // given as [[x1,y1], [x2, y2], ...]
+                                // given as [[x1,y1], [x2, y2], ...]
                             } else if (Type.isArray(parents[i]) && parents[i].length === 2) {
                                 for (j = 0; j < parents.length; j++) {
                                     if (Type.isFunction(parents[j][0])) {
@@ -62393,12 +62485,12 @@ define('base/curve',[
                 return Numerics.splineEval(t, x, y, D);
             },
             // minX()
-            function() {
+            function () {
                 return x[0];
             },
             //maxX()
-            function() {
-                return x[x.length -1];
+            function () {
+                return x[x.length - 1];
             }];
 
         };
@@ -62477,7 +62569,7 @@ define('base/curve',[
      * </script><pre>
      */
     JXG.createCardinalSpline = function (board, parents, attributes) {
-        var el,
+        var el, getPointLike,
             points, tau, type,
             p, q, i, le,
             splineArr,
@@ -62525,7 +62617,7 @@ define('base/curve',[
                     q.push(board.select(p[i]));
                 } else if (Type.isPoint(p[i])) {
                     q.push(p[i]);
-                // given as [[x0,y0], [x1, y2], ...]
+                    // given as [[x0,y0], [x1, y2], ...]
                 } else if (Type.isArray(p[i]) && p[i].length === 2) {
                     q[i] = [];
                     if (Type.isFunction(p[i][0])) {
@@ -62549,24 +62641,24 @@ define('base/curve',[
             points = Type.providePoints(board, q, attributes, 'cardinalspline', ['points']);
         } else {
             points = [];
+
+            getPointLike = function (ii) {
+                return {
+                    X: function () { return q[ii][0]; },
+                    Y: function () { return q[ii][1]; },
+                    Dist: function (p) {
+                        var dx = this.X() - p.X(),
+                            dy = this.Y() - p.Y();
+                        return Math.sqrt(dx * dx + dy * dy);
+                    }
+                };
+            };
+
             for (i = 0; i < q.length; i++) {
                 if (Type.isPoint(q[i])) {
                     points.push(q[i]);
                 } else {
-                    /* jshint ignore:start */
-                    points.push(
-                        (function(ii) { return {
-                            X: function() { return q[ii][0]; },
-                            Y: function() { return q[ii][1]; },
-                            Dist: function(p) {
-                                    var dx = this.X() - p.X(),
-                                        dy = this.Y() - p.Y();
-                                    return Math.sqrt(dx * dx + dy * dy);
-                                }
-                            };
-                        })(i)
-                    );
-                    /* jshint ignore:end */
+                    points.push(getPointLike(i));
                 }
             }
         }
@@ -62696,7 +62788,7 @@ define('base/curve',[
      *
      */
     JXG.createMetapostSpline = function (board, parents, attributes) {
-        var el,
+        var el, getPointLike,
             points, controls,
             p, q, i, le,
             errStr = "\nPossible parent types: [points:array, controls:object";
@@ -62740,7 +62832,7 @@ define('base/curve',[
                     q.push(board.select(p[i]));
                 } else if (Type.isPoint(p[i])) {
                     q.push(p[i]);
-                // given as [[x0,y0], [x1, y2], ...]
+                    // given as [[x0,y0], [x1, y2], ...]
                 } else if (Type.isArray(p[i]) && p[i].length === 2) {
                     q[i] = [];
                     if (Type.isFunction(p[i][0])) {
@@ -62764,19 +62856,18 @@ define('base/curve',[
             points = Type.providePoints(board, q, attributes, 'metapostspline', ['points']);
         } else {
             points = [];
+            getPointLike = function (ii) {
+                return {
+                    X: function () { return q[ii][0]; },
+                    Y: function () { return q[ii][1]; }
+                };
+            };
+
             for (i = 0; i < q.length; i++) {
                 if (Type.isPoint(q[i])) {
                     points.push(q[i]);
                 } else {
-                    /* jshint ignore:start */
-                    points.push(
-                        (function(ii) { return {
-                            X: function() { return q[ii][0]; },
-                            Y: function() { return q[ii][1]; }
-                            };
-                        })(i)
-                    );
-                    /* jshint ignore:end */
+                    points.push(getPointLike);
                 }
             }
         }
@@ -63189,10 +63280,10 @@ define('base/curve',[
         dy = Numerics.D(curve.Y);
 
         c = board.create('curve', [
-                function(t) { return curve.X(t); },
-                function(t) { return dy(t) / dx(t); },
-                curve.minX(), curve.maxX()
-            ], attr);
+            function (t) { return curve.X(t); },
+            function (t) { return dy(t) / dx(t); },
+            curve.minX(), curve.maxX()
+        ], attr);
 
         c.setParents(curve);
 
@@ -63244,10 +63335,10 @@ define('base/curve',[
         }
 
         c = board.create('curve', [[], []], attributes);
-        c.updateDataArray = function() {
-             var a = JXG.Math.Clip.intersection(parents[0], parents[1], this.board);
-             this.dataX = a[0];
-             this.dataY = a[1];
+        c.updateDataArray = function () {
+            var a = JXG.Math.Clip.intersection(parents[0], parents[1], this.board);
+            this.dataX = a[0];
+            this.dataY = a[1];
         };
         return c;
     };
@@ -63286,7 +63377,7 @@ define('base/curve',[
      * </script><pre>
      *
      */
-     JXG.createCurveUnion = function (board, parents, attributes) {
+    JXG.createCurveUnion = function (board, parents, attributes) {
         var c;
 
         if (parents.length !== 2) {
@@ -63295,10 +63386,10 @@ define('base/curve',[
         }
 
         c = board.create('curve', [[], []], attributes);
-        c.updateDataArray = function() {
-             var a = JXG.Math.Clip.union(parents[0], parents[1], this.board);
-             this.dataX = a[0];
-             this.dataY = a[1];
+        c.updateDataArray = function () {
+            var a = JXG.Math.Clip.union(parents[0], parents[1], this.board);
+            this.dataX = a[0];
+            this.dataY = a[1];
         };
         return c;
     };
@@ -63337,7 +63428,7 @@ define('base/curve',[
      * </script><pre>
      *
      */
-     JXG.createCurveDifference = function (board, parents, attributes) {
+    JXG.createCurveDifference = function (board, parents, attributes) {
         var c;
 
         if (parents.length !== 2) {
@@ -63346,10 +63437,10 @@ define('base/curve',[
         }
 
         c = board.create('curve', [[], []], attributes);
-        c.updateDataArray = function() {
-             var a = JXG.Math.Clip.difference(parents[0], parents[1], this.board);
-             this.dataX = a[0];
-             this.dataY = a[1];
+        c.updateDataArray = function () {
+            var a = JXG.Math.Clip.difference(parents[0], parents[1], this.board);
+            this.dataX = a[0];
+            this.dataY = a[1];
         };
         return c;
     };
@@ -64294,8 +64385,8 @@ define('element/sector',[
             };
 
             el.methodMap = JXG.deepCopy(el.methodMap, {
-                radius: 'getRadius',
-                getRadius: 'getRadius',
+                radius: 'Radius',
+                getRadius: 'Radius',
                 setRadius: 'setRadius'
             });
 
@@ -64359,8 +64450,8 @@ define('element/sector',[
                 center: 'center',
                 radiuspoint: 'radiuspoint',
                 anglepoint: 'anglepoint',
-                radius: 'getRadius',
-                getRadius: 'getRadius',
+                radius: 'Radius',
+                getRadius: 'Radius',
                 setRadius: 'setRadius'
             });
 
@@ -76896,6 +76987,36 @@ define('element/checkbox',[
      * }, checkbox);
      * })();
      * </script><pre>
+     *
+     * @example
+     *         var i1 = board.create('input', [-3, 4, 'sin(x)', 'f(x)='], {cssStyle: 'width:4em', maxlength: 2});
+     *         var c1 = board.create('checkbox', [-3, 2, 'label 1'], {});
+     *         var b1 = board.create('button', [-3, -1, 'Change texts', function () {
+     *                 i1.setText('g(x)');
+     *                 i1.set('cos(x)');
+     *                 c1.setText('label 2');
+     *                 b1.setText('Texts are changed');
+     *             }],
+     *             {cssStyle: 'width:400px'});
+     *
+     * </pre><div id="JXG11cac8gg-2354-47e7-9da4-eb298e53de05" class="jxgbox" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     *     (function() {
+     *         var board = JXG.JSXGraph.initBoard('JXG11cac8gg-2354-47e7-9da4-eb298e53de05',
+     *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+     *             var i1 = board.create('input', [-3, 4, 'sin(x)', 'f(x)='], {cssStyle: 'width:4em', maxlength: 2});
+     *             var c1 = board.create('checkbox', [-3, 2, 'label 1'], {});
+     *             var b1 = board.create('button', [-3, -1, 'Change texts', function () {
+     *                     i1.setText('g(x)');
+     *                     i1.set('cos(x)');
+     *                     c1.setText('label 2');
+     *                     b1.setText('Texts are changed');
+     *                 }],
+     *                 {cssStyle: 'width:400px'});
+     *
+     *     })();
+     *
+     * </script><pre>
      */
     JXG.createCheckbox = function (board, parents, attributes) {
         var t, par,
@@ -77140,6 +77261,7 @@ define('element/input',[
         t.Value = function () {
             return this._value;
         };
+
         /**
          * Sets value of the input element.
          * @name set
@@ -77148,6 +77270,36 @@ define('element/input',[
          *
          * @param {String} val
          * @returns {JXG.GeometryElement} Reference to the element.
+         *
+         * @example
+         *         var i1 = board.create('input', [-3, 4, 'sin(x)', 'f(x)='], {cssStyle: 'width:4em', maxlength: 2});
+         *         var c1 = board.create('checkbox', [-3, 2, 'label 1'], {});
+         *         var b1 = board.create('button', [-3, -1, 'Change texts', function () {
+         *                 i1.setText('g(x)');
+         *                 i1.set('cos(x)');
+         *                 c1.setText('label 2');
+         *                 b1.setText('Texts are changed');
+         *             }],
+         *             {cssStyle: 'width:400px'});
+         *
+         * </pre><div id="JXG11cac8ff-2354-47e7-9da4-eb298e53de05" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG11cac8ff-2354-47e7-9da4-eb298e53de05',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *             var i1 = board.create('input', [-3, 4, 'sin(x)', 'f(x)='], {cssStyle: 'width:4em', maxlength: 2});
+         *             var c1 = board.create('checkbox', [-3, 2, 'label 1'], {});
+         *             var b1 = board.create('button', [-3, -1, 'Change texts', function () {
+         *                     i1.setText('g(x)');
+         *                     i1.set('cos(x)');
+         *                     c1.setText('label 2');
+         *                     b1.setText('Texts are changed');
+         *                 }],
+         *                 {cssStyle: 'width:400px'});
+         *
+         *     })();
+         *
+         * </script><pre>
          *
          */
         t.set = function (val) {
@@ -77337,7 +77489,35 @@ define('element/button',[
      *     	visible: () => butt.value
      *     });
      *
+     *     })();
      *
+     * </script><pre>
+     *
+     * @example
+     *         var i1 = board.create('input', [-3, 4, 'sin(x)', 'f(x)='], {cssStyle: 'width:4em', maxlength: 2});
+     *         var c1 = board.create('checkbox', [-3, 2, 'label 1'], {});
+     *         var b1 = board.create('button', [-3, -1, 'Change texts', function () {
+     *                 i1.setText('g(x)');
+     *                 i1.set('cos(x)');
+     *                 c1.setText('label 2');
+     *                 b1.setText('Texts are changed');
+     *             }],
+     *             {cssStyle: 'width:400px'});
+     *
+     * </pre><div id="JXG11cac8ff-2354-47e7-9da4-eb928e53de05" class="jxgbox" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     *     (function() {
+     *         var board = JXG.JSXGraph.initBoard('JXG11cac8ff-2354-47e7-9da4-eb928e53de05',
+     *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+     *             var i1 = board.create('input', [-3, 4, 'sin(x)', 'f(x)='], {cssStyle: 'width:4em', maxlength: 2});
+     *             var c1 = board.create('checkbox', [-3, 2, 'label 1'], {});
+     *             var b1 = board.create('button', [-3, -1, 'Change texts', function () {
+     *                     i1.setText('g(x)');
+     *                     i1.set('cos(x)');
+     *                     c1.setText('label 2');
+     *                     b1.setText('Texts are changed');
+     *                 }],
+     *                 {cssStyle: 'width:400px'});
      *
      *     })();
      *
@@ -77383,7 +77563,6 @@ define('element/button',[
         }
 
         Env.addEvent(t.rendNodeButton, 'click', priv.ButtonClickEventHandler, t);
-
         Env.addEvent(t.rendNodeButton, 'mousedown', function (evt) { if (Type.exists(evt.stopPropagation)) { evt.stopPropagation(); } }, t);
         Env.addEvent(t.rendNodeButton, 'touchstart', function (evt) { if (Type.exists(evt.stopPropagation)) { evt.stopPropagation(); } }, t);
         Env.addEvent(t.rendNodeButton, 'pointerdown', function (evt) { if (Type.exists(evt.stopPropagation)) { evt.stopPropagation(); } }, t);
