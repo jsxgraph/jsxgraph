@@ -1845,14 +1845,42 @@ define(['jxg', 'utils/type', 'utils/env', 'math/math'], function (JXG, Type, Env
                 };
 
             /**
-             * Get a function which outputs the Lagrange polynomial as string.
+             * Get the term of the Lagrange polynomial as string.
              * Calls {@link JXG.Math.Numerics#lagrangePolynomialTerm}.
              *
-             * @param {Number} digits Number ofdigits of the coefficients
+             * @param {Number} digits Number of digits of the coefficients
              * @param {String} param Variable name
              * @param {String} dot Dot symbol
-             * @returns {Function} which aoutpts the term of Lagrange polynomial as string.
+             * @returns {String} containing the term of Lagrange polynomial as string.
              * @see JXG.Math.Numerics#lagrangePolynomialTerm
+             * @example
+             * var points = [];
+             * points[0] = board.create('point', [-1,2], {size:4});
+             * points[1] = board.create('point', [0, 0], {size:4});
+             * points[2] = board.create('point', [2, 1], {size:4});
+             *
+             * var f = JXG.Math.Numerics.lagrangePolynomial(points);
+             * var graph = board.create('functiongraph', [f,-10, 10], {strokeWidth:3});
+             * var txt = board.create('text', [-3, -4,  () => f.getTerm(2, 't', ' * ')], {fontSize: 16});
+             *
+             * </pre><div id="JXG73fdaf12-e257-4374-b488-ae063e4eeccf" class="jxgbox" style="width: 300px; height: 300px;"></div>
+             * <script type="text/javascript">
+             *     (function() {
+             *         var board = JXG.JSXGraph.initBoard('JXG73fdaf12-e257-4374-b488-ae063e4eeccf',
+             *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+             *     var points = [];
+             *     points[0] = board.create('point', [-1,2], {size:4});
+             *     points[1] = board.create('point', [0, 0], {size:4});
+             *     points[2] = board.create('point', [2, 1], {size:4});
+             *
+             *     var f = JXG.Math.Numerics.lagrangePolynomial(points);
+             *     var graph = board.create('functiongraph', [f,-10, 10], {strokeWidth:3});
+             *     var txt = board.create('text', [-3, -4,  () => f.getTerm(2, 't', ' * ')], {fontSize: 16});
+             *
+             *     })();
+             *
+             * </script><pre>
+             *
              */
             fct.getTerm = function(digits, param, dot) {
                 return that.lagrangePolynomialTerm(p, digits, param, dot)();
