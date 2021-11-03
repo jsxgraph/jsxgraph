@@ -1800,6 +1800,7 @@ define(['jxg', 'utils/type', 'utils/env', 'math/math'], function (JXG, Type, Env
          */
         lagrangePolynomial: function (p) {
             var w = [],
+                that = this,
                 /** @ignore */
                 fct = function (x, suspendedUpdate) {
                     var i, // j,
@@ -1843,12 +1844,23 @@ define(['jxg', 'utils/type', 'utils/env', 'math/math'], function (JXG, Type, Env
                     return num / denom;
                 };
 
-            fct.getTerm = function () {
-                return '';
+            /**
+             * Get a function which outputs the Lagrange polynomial as string.
+             * Calls {@link JXG.Math.Numerics#lagrangePolynomialTerm}.
+             *
+             * @param {Number} digits Number ofdigits of the coefficients
+             * @param {String} param Variable name
+             * @param {String} dot Dot symbol
+             * @returns {Function} which aoutpts the term of Lagrange polynomial as string.
+             * @see JXG.Math.Numerics#lagrangePolynomialTerm
+             */
+            fct.getTerm = function(digits, param, dot) {
+                return that.lagrangePolynomialTerm(p, digits, param, dot)();
             };
 
             return fct;
         },
+        // fct.getTerm = that.lagrangePolynomialTerm(p, 2, 'x');
 
         /**
          * Determine the Lagrange polynomial through an array of points and
@@ -1871,7 +1883,7 @@ define(['jxg', 'utils/type', 'utils/env', 'math/math'], function (JXG, Type, Env
          * var f = JXG.Math.Numerics.lagrangePolynomial(points);
          * var graph = board.create('functiongraph', [f,-10, 10], {strokeWidth:3});
          *
-         * var f_txt = JXG.Math.Numerics.lagrangePolynomialString(points, 2, 't', ' * ');
+         * var f_txt = JXG.Math.Numerics.lagrangePolynomialTerm(points, 2, 't', ' * ');
          * var txt = board.create('text', [-3, -4, f_txt], {fontSize: 16});
          *
          * </pre><div id="JXGd45e9e96-7526-486d-aa43-e1178d5f2baa" class="jxgbox" style="width: 300px; height: 300px;"></div>
@@ -1887,7 +1899,7 @@ define(['jxg', 'utils/type', 'utils/env', 'math/math'], function (JXG, Type, Env
          *     var f = JXG.Math.Numerics.lagrangePolynomial(points);
          *     var graph = board.create('functiongraph', [f,-10, 10], {strokeWidth:3});
          *
-         *     var f_txt = JXG.Math.Numerics.lagrangePolynomialString(points, 2, 't', ' * ');
+         *     var f_txt = JXG.Math.Numerics.lagrangePolynomialTerm(points, 2, 't', ' * ');
          *     var txt = board.create('text', [-3, -4, f_txt], {fontSize: 16});
          *
          *     })();
@@ -1895,7 +1907,7 @@ define(['jxg', 'utils/type', 'utils/env', 'math/math'], function (JXG, Type, Env
          * </script><pre>
          *
          */
-        lagrangePolynomialString: function(points, digits, param, dot) {
+        lagrangePolynomialTerm: function(points, digits, param, dot) {
             return function() {
                 var len = points.length,
                     zeroes = [],
