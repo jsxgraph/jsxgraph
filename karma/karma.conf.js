@@ -15,7 +15,7 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
-      'distrib/jsxgraphcore.js',
+      'distrib/jsxgraphsrc.js',
     //   'test/testMath.js',
     //   'test/testMathNumerics.js',
     //   'test/testMathPoly.js',
