@@ -7,9 +7,8 @@ JSDOC2=node ./node_modules/.bin/jsdoc2
 
 LINT=./node_modules/.bin/jslint
 HINT=./node_modules/.bin/jshint
-#JSTESTDRIVER=java -jar ./node_modules/jstestdriver/lib/jstestdriver.jar
 KARMA=node_modules/karma/bin/karma
-INTERN=./node_modules/.bin/intern-client
+# INTERN=./node_modules/.bin/intern-client
 
 # general tools
 CP=cp
