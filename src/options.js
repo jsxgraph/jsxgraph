@@ -2300,6 +2300,42 @@ define([
             /**#@-*/
         },
 
+        /* special options for boxplot curves */
+        boxplot: {
+            /**#@+
+             * @visprop
+             */
+
+            /**
+             *  Direction of the box plot: 'vertical' or 'horizontal'
+             *
+             * @type String
+             * @name Boxplot#dir
+             * @default: 'vertical'
+             */
+            dir: 'vertical',
+
+            /**
+             * Relative width of the maximum and minimum quantile
+             *
+             * @type Number
+             * @name Boxplot#smallWidth
+             * default: 0.5
+             */
+            smallWidth: 0.5,
+
+            strokeWidth: 2,
+            strokeColor: 'blue',
+            fillColor: 'blue',
+            fillOpacity: 0.2,
+            highlightStrokeWidth: 2,
+            highlightStrokeColor: 'blue',
+            highlightFillColor: 'blue',
+            highlightFillOpacity: 0.1
+
+            /**#@-*/
+        },
+
         /* special button options */
         button: {
             /**#@+

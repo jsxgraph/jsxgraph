@@ -338,7 +338,7 @@ define([
          *                 'point on curve = ' + point.isOn(curve) + '<br>' +
          *                 'point on polygon = ' + point.isOn(pol) + '<br>';
          * }]);
-         * 
+         *
          * </pre><div id="JXG6c7d7404-758a-44eb-802c-e9644b9fab71" class="jxgbox" style="width: 300px; height: 300px;"></div>
          * <script type="text/javascript">
          *     (function() {
@@ -350,12 +350,12 @@ define([
          *     var po = board.create('point', [-1, 0], {color: 'blue'});
          *     var curve = board.create('functiongraph', ['sin(x)'], {strokeColor: 'blue'});
          *     var pol = board.create('polygon', [[2,2], [4,2], [4,3]], {strokeColor: 'blue'});
-         *     
+         *
          *     var point = board.create('point', [-1, 1], {
          *     			  attractors: [line, seg, circ, po, curve, pol],
          *                   attractorDistance: 0.2
          *                 });
-         *     
+         *
          *     var txt = board.create('text', [-4, 3, function() {
          *     		return 'point on line: ' + point.isOn(line) + '<br>' +
          *                     'point on seg: ' + point.isOn(seg) + '<br>' +
@@ -364,11 +364,11 @@ define([
          *                     'point on curve = ' + point.isOn(curve) + '<br>' +
          *                     'point on polygon = ' + point.isOn(pol) + '<br>';
          *     }]);
-         * 
+         *
          *     })();
-         * 
+         *
          * </script><pre>
-         * 
+         *
          */
         isOn: function(el, tol) {
             var arr, crds;

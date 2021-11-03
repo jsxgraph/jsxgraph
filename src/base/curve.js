@@ -2555,6 +2555,169 @@ define([
     JXG.registerElement('curveintersection', JXG.createCurveIntersection);
     JXG.registerElement('curveunion', JXG.createCurveUnion);
 
+    /**
+     * @class Box plot curve. The direction of the box plot can be either vertical or horizontal which
+     * is controlled by the attribute "dir".
+     * @pseudo
+     * @description
+     * @name BoxPlot
+     * @param {Array} quantiles Array conatining at least five quantiles. The elements can be of type number, function or string.
+     * @param {Number|Function} axis Axis position of the box plot
+     * @param {Number|Function} width Width of the rectangle part of the box plot. The width of the first and 4th quantile
+     * is relative to this width and can becontrolled by the attribute "smallWidth".
+     * @augments JXG.Curve
+     * @constructor
+     * @type JXG.Curve
+     *
+     * @example
+     * var Q = [ -1, 2, 3, 3.5, 5 ];
+     *
+     * var b = board.create('boxplot', [Q, 2, 4], {strokeWidth: 3});
+     *
+     * </pre><div id="JXG13eb23a1-a641-41a2-be11-8e03e400a947" class="jxgbox" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     *     (function() {
+     *         var board = JXG.JSXGraph.initBoard('JXG13eb23a1-a641-41a2-be11-8e03e400a947',
+     *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+     *     var Q = [ -1, 2, 3, 3.5, 5 ];
+     *     var b = board.create('boxplot', [Q, 2, 4], {strokeWidth: 3});
+     *
+     *     })();
+     *
+     * </script><pre>
+     *
+     * @example
+     * var Q = [ -1, 2, 3, 3.5, 5 ];
+     * var b = board.create('boxplot', [Q, 3, 4], {dir: 'horizontal', smallWidth: 0.25, color:'red'});
+     *
+     * </pre><div id="JXG0deb9cb2-84bc-470d-a6db-8be9a5694813" class="jxgbox" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     *     (function() {
+     *         var board = JXG.JSXGraph.initBoard('JXG0deb9cb2-84bc-470d-a6db-8be9a5694813',
+     *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+     *     var Q = [ -1, 2, 3, 3.5, 5 ];
+     *     var b = board.create('boxplot', [Q, 3, 4], {dir: 'horizontal', smallWidth: 0.25, color:'red'});
+     *
+     *     })();
+     *
+     * </script><pre>
+     *
+     * @example
+     * var data = [57, 57, 57, 58, 63, 66, 66, 67, 67, 68, 69, 70, 70, 70, 70, 72, 73, 75, 75, 76, 76, 78, 79, 81];
+     * var Q = [];
+     *
+     * Q[0] = JXG.Math.Statistics.min(data);
+     * Q = Q.concat(JXG.Math.Statistics.percentile(data, [25, 50, 75]));
+     * Q[4] = JXG.Math.Statistics.max(data);
+     *
+     * var b = board.create('boxplot', [Q, 0, 3]);
+     *
+     * </pre><div id="JXGef079e76-ae99-41e4-af29-1d07d83bf85a" class="jxgbox" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     *     (function() {
+     *         var board = JXG.JSXGraph.initBoard('JXGef079e76-ae99-41e4-af29-1d07d83bf85a',
+     *             {boundingbox: [-5,90,5,30], axis: true, showcopyright: false, shownavigation: false});
+     *     var data = [57, 57, 57, 58, 63, 66, 66, 67, 67, 68, 69, 70, 70, 70, 70, 72, 73, 75, 75, 76, 76, 78, 79, 81];
+     *     var Q = [];
+     *
+     *     Q[0] = JXG.Math.Statistics.min(data);
+     *     Q = Q.concat(JXG.Math.Statistics.percentile(data, [25, 50, 75]));
+     *     Q[4] = JXG.Math.Statistics.max(data);
+     *
+     *     var b = board.create('boxplot', [Q, 0, 3]);
+     *
+     *     })();
+     *
+     * </script><pre>
+     *
+     * @example
+     * var mi = board.create('glider', [0, -1, board.defaultAxes.y], {attachToGrid:true, snapY: 5});
+     * var ma = board.create('glider', [0, 5, board.defaultAxes.y], {});
+     * var Q = [function() { return mi.Y(); }, 2, 3, 3.5, function() { return ma.Y(); }];
+     *
+     * var b = board.create('boxplot', [Q, 0, 2]);
+     *
+     * </pre><div id="JXG3b3225da-52f0-42fe-8396-be9016bf289b" class="jxgbox" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     *     (function() {
+     *         var board = JXG.JSXGraph.initBoard('JXG3b3225da-52f0-42fe-8396-be9016bf289b',
+     *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+     *     var mi = board.create('glider', [0, -1, board.defaultAxes.y], {attachToGrid:true, snapY: 5});
+     *     var ma = board.create('glider', [0, 5, board.defaultAxes.y], {});
+     *     var Q = [function() { return mi.Y(); }, 2, 3, 3.5, function() { return ma.Y(); }];
+     *
+     *     var b = board.create('boxplot', [Q, 0, 2]);
+     *
+     *     })();
+     *
+     * </script><pre>
+     *
+     */
+    JXG.createBoxPlot = function (board, parents, attributes) {
+        var box, i, len, w2,
+            attr = Type.copyAttributes(attributes, board.options, 'boxplot');
+
+        if (parents.length !== 3) {
+            throw new Error("JSXGraph: Can't create box plot with given parent'" +
+                "\nPossible parent types: [array, number|function, number|function] containing quantiles, axis, width");
+        }
+        if (parents[0].length < 5) {
+            throw new Error("JSXGraph: Can't create box plot with given parent[0]'" +
+                "\nparent[0] has to conatin at least 5 quantiles.");
+        }
+        box = board.create('curve', [[],[]], attr);
+
+        len = parents[0].length; // Quantiles
+        box.Q = [];
+        for (i = 0; i < len; i++) {
+            box.Q[i] = Type.createFunction(parents[0][i], board, null, true);
+        }
+        box.x = Type.createFunction(parents[1], board, null, true);
+        box.w = Type.createFunction(parents[2], board, null, true);
+
+        box.updateDataArray = function() {
+            var v1, v2, l1, l2, r1, r2, w2, dir, x;
+
+            w2  = Type.evaluate(this.visProp.smallwidth);
+            dir = Type.evaluate(this.visProp.dir);
+            x = this.x();
+            l1 = x - this.w() * 0.5;
+            l2 = x - this.w() * 0.5 * w2;
+            r1 = x + this.w() * 0.5;
+            r2 = x + this.w() * 0.5 * w2;
+            v1 = [x, l2, r2, x, x, l1, l1, r1, r1, x, NaN, l1, r1, NaN, x, x, l2, r2, x];
+            v2 = [this.Q[0](),
+                    this.Q[0](),
+                    this.Q[0](),
+                    this.Q[0](),
+                    this.Q[1](),
+                    this.Q[1](),
+                    this.Q[3](),
+                    this.Q[3](),
+                    this.Q[1](),
+                    this.Q[1](),
+                    NaN,
+                    this.Q[2](),
+                    this.Q[2](),
+                    NaN,
+                    this.Q[3](),
+                    this.Q[4](),
+                    this.Q[4](),
+                    this.Q[4](),
+                    this.Q[4]()];
+            if (dir === 'vertical') {
+                this.dataX = v1;
+                this.dataY = v2;
+            } else {
+                this.dataX = v2;
+                this.dataY = v1;
+            }
+        };
+        return box;
+    };
+
+    JXG.registerElement('boxplot', JXG.createBoxPlot);
+
     return {
         Curve: JXG.Curve,
         createCardinalSpline: JXG.createCardinalSpline,
