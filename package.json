@@ -50,6 +50,7 @@
     "karma": "^6.3.7",
     "karma-chrome-launcher": "^3.1.0",
     "karma-jasmine": "^4.0.1",
+    "karma-requirejs": "^1.1.0",
     "requirejs": "^2.3.6",
     "uglify-js": "^3.14.3"
   },
