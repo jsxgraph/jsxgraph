@@ -29,7 +29,7 @@
     and <http://opensource.org/licenses/MIT/>.
  */
 
-describe("Test JXg.Composition", function() {
+describe("Test JXG.Composition", function() {
     var board;
 
     document.getElementsByTagName('body')[0].innerHTML = '<div id="jxgbox" style="width: 100px; height: 100px;"></div>';
@@ -79,62 +79,68 @@ describe("Test JXg.Composition", function() {
     });
 
     it("Update", function() {
+        var spy = jasmine.createSpy("call update");
+
         var p = board.create('point', [0, 0], {id: 'elId'}),
             c = new JXG.Composition({element: p});
-        c.element.update = function() {
-            this.calledOnce = true;
-        }
+
+        c.element.update = spy;
         c.update();
-        expect(c.element.calledOnce).toBeTrue();
+        expect(c.element.update).toHaveBeenCalled();
     });
 
     it("setAttribute", function() {
+        var spy = jasmine.createSpy("call setAttribute");
+
         var p = board.create('point', [0, 0], {id: 'elId'}),
             c = new JXG.Composition({element: p});
-        c.element.setAttribute = function() {
-            this.calledOnce = true;
-        }
+        c.element.setAttribute = spy;
         c.setAttribute();
-        expect(c.element.calledOnce).toBeTrue();
+        
+        expect(c.element.setAttribute).toHaveBeenCalled();
     });
 
     it("highlight", function() {
+        var spy = jasmine.createSpy("call highlight");
+
         var p = board.create('point', [0, 0], {id: 'elId'}),
             c = new JXG.Composition({element: p});
-        c.element.highlight = function() {
-            this.calledOnce = true;
-        }
+        c.element.highlight = spy;
         c.highlight();
-        expect(c.element.calledOnce).toBeTrue();
+
+        expect(c.element.highlight).toHaveBeenCalled();
     });
 
     it("nohighlight", function() {
+        var spy = jasmine.createSpy("call noHighlight");
+
         var p = board.create('point', [0, 0], {id: 'elId'}),
             c = new JXG.Composition({element: p});
-        c.element.noHighlight = function() {
-            this.calledOnce = true;
-        }
+        c.element.noHighlight = spy;
         c.noHighlight();
-        expect(c.element.calledOnce).toBeTrue();
+
+        expect(c.element.noHighlight).toHaveBeenCalled();
     });
 
     it("prepareUpdate", function() {
+        var spy = jasmine.createSpy("call prepareUpdate");
+
         var p = board.create('point', [0, 0], {id: 'elId'}),
             c = new JXG.Composition({element: p});
-        c.element.prepareUpdate = function() {
-            this.calledOnce = true;
-        }
+        c.element.prepareUpdate = spy;
         c.prepareUpdate();
-        expect(c.element.calledOnce).toBeTrue();
+
+        expect(c.element.prepareUpdate).toHaveBeenCalled();
     });
 
     it("updateRenderer", function() {
+        var spy = jasmine.createSpy("call updateRenderer");
+
         var p = board.create('point', [0, 0], {id: 'elId'}),
             c = new JXG.Composition({element: p});
-        c.element.updateRenderer = function() {
-            this.calledOnce = true;
-        }
+        c.element.updateRenderer = spy;
         c.updateRenderer();
-        expect(c.element.calledOnce).toBeTrue();
+
+        expect(c.element.updateRenderer).toHaveBeenCalled();
     });
 });
