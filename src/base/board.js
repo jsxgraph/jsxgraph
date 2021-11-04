@@ -3102,7 +3102,9 @@ define([
          */
         keyDownListener: function (evt) {
             var id_node = evt.target.id,
-                id, el,
+                id, el, res,
+                sX = 0,
+                sY = 0,
                 dx = Type.evaluate(this.attr.keyboard.dx) / this.unitX,
                 dy = Type.evaluate(this.attr.keyboard.dy) / this.unitY,
                 doZoom = false,
@@ -3141,8 +3143,11 @@ define([
                     Type.exists(el.visProp.snapsizex) &&
                     Type.evaluate(el.visProp.snaptogrid)) {
 
-                    dx = Math.max(Type.evaluate(el.visProp.snapsizex), dx);
-                    dy = Math.max(Type.evaluate(el.visProp.snapsizey), dy);
+                    res = el.getSnapSizes();
+                    sX = res[0];
+                    sY = res[1];
+                    dx = Math.max(sX, dx);
+                    dy = Math.max(sY, dy);
                 }
 
                 if (evt.keyCode === 38) {           // up

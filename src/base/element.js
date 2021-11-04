@@ -1967,6 +1967,33 @@ define([
         },
 
         /**
+         * Determine values of snapSizeX and snapSizeY. If the attributes
+         * snapSizex and snapSizeY are greater than zero, these values are taken.
+         * Otherwise, determine the distance between major ticks of the
+         * default axes.
+         * @returns {Array} containing the snap sizes for x and y direction.
+         * @private
+         */
+        getSnapSizes: function() {
+            var sX, sY, ticks;
+
+            sX = Type.evaluate(this.visProp.snapsizex);
+            sY = Type.evaluate(this.visProp.snapsizey);
+
+            if (sX <= 0 && this.board.defaultAxes && this.board.defaultAxes.x.defaultTicks) {
+                ticks = this.board.defaultAxes.x.defaultTicks;
+                sX = ticks.ticksDelta * (Type.evaluate(ticks.visProp.minorticks) + 1);
+            }
+
+            if (sY <= 0 && this.board.defaultAxes && this.board.defaultAxes.y.defaultTicks) {
+                ticks = this.board.defaultAxes.y.defaultTicks;
+                sY = ticks.ticksDelta * (Type.evaluate(ticks.visProp.minorticks) + 1);
+            }
+
+            return [sX, sY];
+        },
+
+        /**
          * Move an element to its nearest grid point.
          * The function uses the coords object of the element as
          * its actual position. If there is no coords object or if the object is fixed, nothing is done.
@@ -1977,11 +2004,9 @@ define([
          * @returns {JXG.GeometryElement} Reference to this element
          */
         handleSnapToGrid: function (force, fromParent) {
-            var x, y, ticks, rx, ry, rcoords,
-                boardBB,
+            var x, y, rx, ry, rcoords,
+                boardBB, res, sX, sY,
                 needsSnapToGrid = false,
-                sX = Type.evaluate(this.visProp.snapsizex),
-                sY = Type.evaluate(this.visProp.snapsizey),
                 attractToGrid = Type.evaluate(this.visProp.attracttogrid),
                 ev_au = Type.evaluate(this.visProp.attractorunit),
                 ev_ad = Type.evaluate(this.visProp.attractordistance);
@@ -1995,16 +2020,9 @@ define([
             if (needsSnapToGrid) {
                 x = this.coords.usrCoords[1];
                 y = this.coords.usrCoords[2];
-
-                if (sX <= 0 && this.board.defaultAxes && this.board.defaultAxes.x.defaultTicks) {
-                    ticks = this.board.defaultAxes.x.defaultTicks;
-                    sX = ticks.ticksDelta * (Type.evaluate(ticks.visProp.minorticks) + 1);
-                }
-
-                if (sY <= 0 && this.board.defaultAxes && this.board.defaultAxes.y.defaultTicks) {
-                    ticks = this.board.defaultAxes.y.defaultTicks;
-                    sY = ticks.ticksDelta * (Type.evaluate(ticks.visProp.minorticks) + 1);
-                }
+                res = this.getSnapSizes();
+                sX = res[0];
+                sY = res[1];
 
                 // If no valid snap sizes are available, don't change the coords.
                 if (sX > 0 && sY > 0) {

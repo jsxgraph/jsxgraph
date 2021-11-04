@@ -1,10 +1,11 @@
-describe("Test board events", function() {
-    var board, target;
+describe("Test board events", function () {
+    var board, target,
+        pointerId = 0;
 
     // 1 user unit = 100px
     document.getElementsByTagName('body')[0].innerHTML = '<div id="jxgbox" style="width: 500px; height: 500px;"></div>';
     target = document.getElementById('jxgbox');
-    
+
     board = JXG.JSXGraph.initBoard('jxgbox', {
         renderer: 'svg',
         axis: false,
@@ -14,11 +15,11 @@ describe("Test board events", function() {
         showNavigation: false
     });
 
-    it("Test custom event", function() {
+    it("Test custom event", function () {
         var spy, event;
         spy = jasmine.createSpy("xyzevent");
 
-        document.addEventListener('xyzevent', function() {
+        document.addEventListener('xyzevent', function () {
             spy();
         });
         event = new CustomEvent('xyzevent', {
@@ -31,19 +32,20 @@ describe("Test board events", function() {
         expect(spy).toHaveBeenCalled();
     });
 
-    it("Test board position", function() {
+    it("Test board position", function () {
         var board_pos = board.getCoordsTopLeftCorner();
         expect(board_pos).toEqual([0, 0]);
     });
 
-    it("Test pointer handlers", function() {
+    it("Test pointer handlers", function () {
         expect(JXG.supportsPointerEvents()).toBeTrue();
         expect(board.hasPointerHandlers).toBeTrue();
     });
 
-    it("Test dragging by pointer handlers", function() {
-        var p, evt, 
-            pointerId = 1;
+    it("Test dragging by pointer handlers", function () {
+        var p, evt;
+
+        pointerId++;
 
         p = board.create('point', [0, 0]);
 
@@ -65,11 +67,11 @@ describe("Test board events", function() {
         expect([p.X(), p.Y()]).toEqual([2, 0]);
     });
 
-    it("Test snapToGrid", function() {
-        var p, evt,
-            pointerId = 2;
+    it("Test snapToGrid", function () {
+        var p, evt;
 
-        p = board.create('point', [0, 0], {snapToGrid: true});
+        pointerId++;
+        p = board.create('point', [0, 0], { snapToGrid: true });
 
         evt = new PointerEvent('pointerdown', {
             pointerId: pointerId,
@@ -85,10 +87,32 @@ describe("Test board events", function() {
         });
         board.pointerMoveListener(evt);
         board.pointerUpListener(evt);
-        
+
+        // console.log("B", [p.X(), p.Y()]);
+        expect([p.X(), p.Y()]).toEqual([1, 2]);
+    });
+
+    it("Test keyboard events", function () {
+        /*
+        evt = new KeyboardEvent('pointerdown', {
+            pointerId: pointerId,
+            clientX: 1,
+            clientY: 499
+        });
+        board.pointerDownListener(evt);
+
+        evt = new PointerEvent('pointermove', {
+            pointerId: pointerId,
+            clientX: 131,
+            clientY: 280
+        });
+        board.pointerMoveListener(evt);
+        board.pointerUpListener(evt);
+
         console.log("B", [p.X(), p.Y()]);
 
         expect([p.X(), p.Y()]).toEqual([1, 2]);
+        */
     });
 
 });
