@@ -65,7 +65,7 @@ describe("Test board events", function() {
         expect([p.X(), p.Y()]).toEqual([2, 0]);
     });
 
-    it("Test snap to grid", function() {
+    it("Test snapToGrid", function() {
         var p, evt,
             pointerId = 2;
 
@@ -81,14 +81,14 @@ describe("Test board events", function() {
         evt = new PointerEvent('pointermove', {
             pointerId: pointerId,
             clientX: 131,
-            clientY: 499
+            clientY: 280
         });
         board.pointerMoveListener(evt);
         board.pointerUpListener(evt);
         
-        console.log([p.X(), p.Y()]);
+        console.log("B", [p.X(), p.Y()]);
 
-        expect([p.X(), p.Y()]).toEqual([1, 0]);
+        expect([p.X(), p.Y()]).toEqual([1, 2]);
     });
 
 });
