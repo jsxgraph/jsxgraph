@@ -1010,7 +1010,8 @@ define([
          * @see JXG.AbstractRenderer#updateTextStyle
          */
         updateText: function (el) {
-            var content = el.plaintext, v, c,
+            var content = el.plaintext,
+                v, c,
                 parentNode,
                 scale, vshift, id, wrap_id,
                 ax, ay;
