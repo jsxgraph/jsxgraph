@@ -64,5 +64,20 @@ describe("Test text handling", function() {
         expect(el.size).toEqual([19, 14]);
     });
 
+    it("setText", function() {
+        var txt = 'test <span>SPAN</span>',
+            txt2 = "hello <button onClick=\"alert(1)\">Click</button>",
+            el = board.create('text', [0, 10, txt]),
+            el2;
+
+        // JSXGraph texts allo arbitrary HTML
+        expect(el.plaintext).toEqual(txt);
+
+        // JessieCode texts are sanitized
+        el2 = board.jc.parse("t = text(1, 1, '" + txt2 + "');");
+        expect(el2.plaintext).toEqual("hello &lt;button onClick='alert(1)'&gt;Click&lt;/button&gt;");
+
+    });
+
 });
 

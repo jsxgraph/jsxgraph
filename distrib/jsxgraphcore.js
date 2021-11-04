@@ -28267,13 +28267,18 @@ define('options',[
             snapToGrid: false,
 
             /**
-             * If set to true, the point will only snap to the grid when within {@link Point#attractorDistance} of a grid point.
+             * If set to true, the point will only snap to grid points
+             * when within {@link Point#attractorDistance} of a grid point.
+             * The grid points are determined by snapSizeX and snapSizeY
+             * in the same way as with snapToGrid.
              *
              * @name Point#attractToGrid
              *
              * @see Point#attractorDistance
              * @see Point#attractorUnit
              * @see Point#snapToGrid
+             * @see Point#snapSizeX
+             * @see Point#snapSizeY
              * @type Boolean
              * @default false
              */
@@ -31214,7 +31219,8 @@ define('renderer/abstract',[
          * @see JXG.AbstractRenderer#updateTextStyle
          */
         updateText: function (el) {
-            var content = el.plaintext, v, c,
+            var content = el.plaintext,
+                v, c,
                 parentNode,
                 scale, vshift, id, wrap_id,
                 ax, ay;
@@ -37382,12 +37388,12 @@ define('base/text',[
     "use strict";
 
     var priv = {
-            HTMLSliderInputEventHandler: function () {
-                this._val = parseFloat(this.rendNodeRange.value);
-                this.rendNodeOut.value = this.rendNodeRange.value;
-                this.board.update();
-            }
-        };
+        HTMLSliderInputEventHandler: function () {
+            this._val = parseFloat(this.rendNodeRange.value);
+            this.rendNodeOut.value = this.rendNodeRange.value;
+            this.board.update();
+        }
+    };
 
     /**
      * Construct and handle texts.
@@ -37430,12 +37436,14 @@ define('base/text',[
         this.size = [1.0, 1.0];
         this.id = this.board.setId(this, 'T');
 
-        // Set text before drawing
-        this._setUpdateText(content);
-        this.updateText();
-
         this.board.renderer.drawText(this);
         this.board.finalizeAdding(this);
+
+        // Set text before drawing
+        // this._createFctUpdateText(content);
+        // this.updateText();
+
+        this.setText(content);
 
         if (Type.isString(this.content)) {
             this.notifyParents(this.content);
@@ -37503,12 +37511,12 @@ define('base/text',[
             top = bot - this.size[1];
 
             if (Type.evaluate(this.visProp.dragarea) === 'all') {
-                return x >= lft - r && x < rt + r && y >= top - r  && y <= bot + r;
+                return x >= lft - r && x < rt + r && y >= top - r && y <= bot + r;
             }
             // e.g. 'small'
             return (y >= top - r && y <= bot + r) &&
-                ((x >= lft - r  && x <= lft + 2 * r) ||
-                (x >= rt - 2 * r && x <= rt + r));
+                ((x >= lft - r && x <= lft + 2 * r) ||
+                    (x >= rt - 2 * r && x <= rt + r));
         },
 
         /**
@@ -37517,7 +37525,7 @@ define('base/text',[
          * @param {String|Function|Number} text
          * @private
          */
-        _setUpdateText: function (text) {
+        _createFctUpdateText: function (text) {
             var updateText, resolvedText,
                 ev_p = Type.evaluate(this.visProp.parse),
                 ev_um = Type.evaluate(this.visProp.usemathjax),
@@ -37568,7 +37576,7 @@ define('base/text',[
          * @private
          */
         _setText: function (text) {
-            this._setUpdateText(text);
+            this._createFctUpdateText(text);
 
             // First evaluation of the string.
             // We need this for display='internal' and Canvas
@@ -37596,7 +37604,6 @@ define('base/text',[
             var s;
 
             this.visProp.castext = text;
-
             if (Type.isFunction(text)) {
                 s = function () {
                     return Type.sanitizeHTML(text());
@@ -37672,13 +37679,13 @@ define('base/text',[
             } else if (ev_d === 'internal') {
                 if (this.board.renderer.type === 'svg') {
                     that = this;
-                    window.setTimeout(function(){
+                    window.setTimeout(function () {
                         try {
                             tmp = node.getBBox();
                             that.size = [tmp.width, tmp.height];
                             that.needsUpdate = true;
                             that.updateRenderer();
-                        } catch (e) {}
+                        } catch (e) { }
                     }, 0);
                 } else if (this.board.renderer.type === 'canvas') {
                     this.size = this.crudeSizeEstimate();
@@ -37702,7 +37709,7 @@ define('base/text',[
          * @param {String} string
          * @returns {String}
          */
-        utf8_decode : function (string) {
+        utf8_decode: function (string) {
             return string.replace(/&#x(\w+);/g, function (m, p1) {
                 return String.fromCharCode(parseInt(p1, 16));
             });
@@ -37900,7 +37907,7 @@ define('base/text',[
          * @param{String} expr Math term
          * @returns {string} expanded String
          */
-        expandShortMath: function(expr) {
+        expandShortMath: function (expr) {
             var re = /([\)0-9\.])\s*([\(a-zA-Z_])/g;
             return expr.replace(re, '$1*$2');
         },
@@ -38058,7 +38065,7 @@ define('base/text',[
             return [c[1], c[2] + this.size[1] / this.board.unitY, c[1] + this.size[0] / this.board.unitX, c[2]];
         },
 
-        getAnchorX: function() {
+        getAnchorX: function () {
             var a = Type.evaluate(this.visProp.anchorx);
             if (a === 'auto') {
                 switch (this.visProp.position) {
@@ -38079,7 +38086,7 @@ define('base/text',[
             return a;
         },
 
-        getAnchorY: function() {
+        getAnchorY: function () {
             var a = Type.evaluate(this.visProp.anchory);
             if (a === 'auto') {
                 switch (this.visProp.position) {
@@ -38111,9 +38118,9 @@ define('base/text',[
          * @param  {Number} h width of the box in pixel
          * @return {Number}   Number of overlapping elements
          */
-        getNumberofConflicts: function(x, y, w, h) {
+        getNumberofConflicts: function (x, y, w, h) {
             var count = 0,
-			    i, obj, le,
+                i, obj, le,
                 savePointPrecision;
 
             // Set the precision of hasPoint to half the max if label isn't too long
@@ -38122,21 +38129,21 @@ define('base/text',[
             this.board.options.precision.hasPoint = (w + h) * 0.25;
             // TODO:
             // Make it compatible with the objects' visProp.precision attribute
-			for (i = 0, le = this.board.objectsList.length; i < le; i++) {
-				obj = this.board.objectsList[i];
-				if (obj.visPropCalc.visible &&
+            for (i = 0, le = this.board.objectsList.length; i < le; i++) {
+                obj = this.board.objectsList[i];
+                if (obj.visPropCalc.visible &&
                     obj.elType !== 'axis' &&
                     obj.elType !== 'ticks' &&
                     obj !== this.board.infobox &&
                     obj !== this &&
                     obj.hasPoint(x, y)) {
 
-					count++;
-				}
-			}
+                    count++;
+                }
+            }
             this.board.options.precision.hasPoint = savePointPrecision;
 
-			return count;
+            return count;
         },
 
         /**
@@ -38146,7 +38153,7 @@ define('base/text',[
          *
          * @returns {JXG.Text} Reference to the text object.
          */
-        setAutoPosition: function() {
+        setAutoPosition: function () {
             var x, y, cx, cy,
                 anchorCoords, anchorX, anchorY,
                 w = this.size[0],
@@ -38196,8 +38203,8 @@ define('base/text',[
             start_angle = Math.atan2(dy, dx);
 
             optimum.conflicts = conflicts;
-            optimum.angle     = start_angle;
-            optimum.r         = r;
+            optimum.angle = start_angle;
+            optimum.r = r;
 
             while (optimum.conflicts > 0 && r < max_r) {
                 for (j = 1, angle = start_angle + step; j < num_positions && optimum.conflicts > 0; j++) {
@@ -38206,12 +38213,12 @@ define('base/text',[
 
                     x = cx + r * co;
                     y = cy - r * si;
-                
+
                     conflicts = this.getNumberofConflicts(x, y, w, h);
                     if (conflicts < optimum.conflicts) {
                         optimum.conflicts = conflicts;
-                        optimum.angle     = angle;
-                        optimum.r         = r;
+                        optimum.angle = angle;
+                        optimum.r = r;
                     }
                     if (optimum.conflicts === 0) {
                         break;
@@ -38318,8 +38325,8 @@ define('base/text',[
 
         if (!t) {
             throw new Error("JSXGraph: Can't create text with parent types '" +
-                    (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
-                    "\nPossible parent types: [x,y], [z,x,y], [element,transformation]");
+                (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
+                "\nPossible parent types: [x,y], [z,x,y], [element,transformation]");
         }
 
         if (attr.rotate !== 0 && attr.display === 'internal') { // This is the default value, i.e. no rotation
@@ -38391,7 +38398,7 @@ define('base/text',[
             t.rendNodeForm.id = t.rendNode.id + '_form';
             t.rendNodeRange.id = t.rendNode.id + '_range';
             t.rendNodeOut.id = t.rendNode.id + '_out';
-	} catch (e) {
+        } catch (e) {
             JXG.debug(e);
         }
 
