@@ -4025,13 +4025,18 @@ define([
             snapToGrid: false,
 
             /**
-             * If set to true, the point will only snap to the grid when within {@link Point#attractorDistance} of a grid point.
+             * If set to true, the point will only snap to grid points
+             * when within {@link Point#attractorDistance} of a grid point.
+             * The grid points are determined by snapSizeX and snapSizeY
+             * in the same way as with snapToGrid.
              *
              * @name Point#attractToGrid
              *
              * @see Point#attractorDistance
              * @see Point#attractorUnit
              * @see Point#snapToGrid
+             * @see Point#snapSizeX
+             * @see Point#snapSizeY
              * @type Boolean
              * @default false
              */
