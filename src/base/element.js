@@ -2030,7 +2030,10 @@ define([
                     rx = Math.round(x / sX) * sX;
                     ry = Math.round(y / sY) * sY;
                     rcoords = new JXG.Coords(Const.COORDS_BY_USER, [rx, ry], this.board);
-                    if (!attractToGrid || rcoords.distance(ev_au == 'screen' ? Const.COORDS_BY_SCREEN : Const.COORDS_BY_USER, this.coords) < ev_ad) {
+                    if (!attractToGrid ||
+                        rcoords.distance(
+                            ev_au == 'screen' ? Const.COORDS_BY_SCREEN : Const.COORDS_BY_USER, this.coords
+                            ) < ev_ad) {
                         x = rx;
                         y = ry;
                         // Checking whether x and y are still within boundingBox.

@@ -3105,6 +3105,8 @@ define([
                 id, el, res,
                 sX = 0,
                 sY = 0,
+                // dx, dy are provided in screen units and
+                // are converted to user coordinates
                 dx = Type.evaluate(this.attr.keyboard.dx) / this.unitX,
                 dy = Type.evaluate(this.attr.keyboard.dy) / this.unitY,
                 doZoom = false,
@@ -3138,16 +3140,38 @@ define([
                     this.clickRightArrow();
                 }
             } else {
-                // Handle snapToGrid
-                if (Type.exists(el.visProp) &&
-                    Type.exists(el.visProp.snapsizex) &&
-                    Type.evaluate(el.visProp.snaptogrid)) {
+                // Adapt dx, dy to snapToGrid and attractToGrid
+                // snapToGrid has priority.
+                if (Type.exists(el.visProp)) {
+                    if (Type.exists(el.visProp.snaptogrid) &&
+                        el.visProp.snaptogrid &&
+                        Type.evaluate(el.visProp.snapsizex) &&
+                        Type.evaluate(el.visProp.snapsizey)) {
 
-                    res = el.getSnapSizes();
-                    sX = res[0];
-                    sY = res[1];
-                    dx = Math.max(sX, dx);
-                    dy = Math.max(sY, dy);
+                        // Adapt dx, dy such that snapToGrid is possible
+                        res = el.getSnapSizes();
+                        sX = res[0];
+                        sY = res[1];
+                        dx = Math.max(sX, dx);
+                        dy = Math.max(sY, dy);
+
+                    } else if (Type.exists(el.visProp.attracttogrid) &&
+                        el.visProp.attracttogrid &&
+                        Type.evaluate(el.visProp.attractordistance) &&
+                        Type.evaluate(el.visProp.attractorunit)) {
+
+                        // Adapt dx, dy such that attractToGrid is possible
+                        sX = 1.1 * Type.evaluate(el.visProp.attractordistance);
+                        sY = sX;
+
+                        if (Type.evaluate(el.visProp.attractorunit) == 'screen') {
+                            sX /= this.unitX;
+                            sY /= this.unitX;
+                        }
+                        dx = Math.max(sX, dx);
+                        dy = Math.max(sY, dy);
+                    }
+
                 }
 
                 if (evt.keyCode === 38) {           // up

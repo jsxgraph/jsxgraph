@@ -27206,7 +27206,8 @@ define('options',[
 
             /**
              * Defines together with {@link Image#snapSizeY} the grid the image snaps on to.
-             * The image will only snap on integer multiples to snapSizeX in x and snapSizeY in y direction.
+             * The image will only snap on user coordinates which are
+             * integer multiples to snapSizeX in x and snapSizeY in y direction.
              * If this value is equal to or less than <tt>0</tt>, it will use the grid displayed by the major ticks
              * of the default ticks of the default x axes of the board.
              *
@@ -35056,6 +35057,33 @@ define('base/element',[
         },
 
         /**
+         * Determine values of snapSizeX and snapSizeY. If the attributes
+         * snapSizex and snapSizeY are greater than zero, these values are taken.
+         * Otherwise, determine the distance between major ticks of the
+         * default axes.
+         * @returns {Array} containing the snap sizes for x and y direction.
+         * @private
+         */
+        getSnapSizes: function() {
+            var sX, sY, ticks;
+
+            sX = Type.evaluate(this.visProp.snapsizex);
+            sY = Type.evaluate(this.visProp.snapsizey);
+
+            if (sX <= 0 && this.board.defaultAxes && this.board.defaultAxes.x.defaultTicks) {
+                ticks = this.board.defaultAxes.x.defaultTicks;
+                sX = ticks.ticksDelta * (Type.evaluate(ticks.visProp.minorticks) + 1);
+            }
+
+            if (sY <= 0 && this.board.defaultAxes && this.board.defaultAxes.y.defaultTicks) {
+                ticks = this.board.defaultAxes.y.defaultTicks;
+                sY = ticks.ticksDelta * (Type.evaluate(ticks.visProp.minorticks) + 1);
+            }
+
+            return [sX, sY];
+        },
+
+        /**
          * Move an element to its nearest grid point.
          * The function uses the coords object of the element as
          * its actual position. If there is no coords object or if the object is fixed, nothing is done.
@@ -35066,11 +35094,9 @@ define('base/element',[
          * @returns {JXG.GeometryElement} Reference to this element
          */
         handleSnapToGrid: function (force, fromParent) {
-            var x, y, ticks, rx, ry, rcoords,
-                boardBB,
+            var x, y, rx, ry, rcoords,
+                boardBB, res, sX, sY,
                 needsSnapToGrid = false,
-                sX = Type.evaluate(this.visProp.snapsizex),
-                sY = Type.evaluate(this.visProp.snapsizey),
                 attractToGrid = Type.evaluate(this.visProp.attracttogrid),
                 ev_au = Type.evaluate(this.visProp.attractorunit),
                 ev_ad = Type.evaluate(this.visProp.attractordistance);
@@ -35084,16 +35110,9 @@ define('base/element',[
             if (needsSnapToGrid) {
                 x = this.coords.usrCoords[1];
                 y = this.coords.usrCoords[2];
-
-                if (sX <= 0 && this.board.defaultAxes && this.board.defaultAxes.x.defaultTicks) {
-                    ticks = this.board.defaultAxes.x.defaultTicks;
-                    sX = ticks.ticksDelta * (Type.evaluate(ticks.visProp.minorticks) + 1);
-                }
-
-                if (sY <= 0 && this.board.defaultAxes && this.board.defaultAxes.y.defaultTicks) {
-                    ticks = this.board.defaultAxes.y.defaultTicks;
-                    sY = ticks.ticksDelta * (Type.evaluate(ticks.visProp.minorticks) + 1);
-                }
+                res = this.getSnapSizes();
+                sX = res[0];
+                sY = res[1];
 
                 // If no valid snap sizes are available, don't change the coords.
                 if (sX > 0 && sY > 0) {
@@ -35101,7 +35120,10 @@ define('base/element',[
                     rx = Math.round(x / sX) * sX;
                     ry = Math.round(y / sY) * sY;
                     rcoords = new JXG.Coords(Const.COORDS_BY_USER, [rx, ry], this.board);
-                    if (!attractToGrid || rcoords.distance(ev_au == 'screen' ? Const.COORDS_BY_SCREEN : Const.COORDS_BY_USER, this.coords) < ev_ad) {
+                    if (!attractToGrid ||
+                        rcoords.distance(
+                            ev_au == 'screen' ? Const.COORDS_BY_SCREEN : Const.COORDS_BY_USER, this.coords
+                            ) < ev_ad) {
                         x = rx;
                         y = ry;
                         // Checking whether x and y are still within boundingBox.
@@ -45116,7 +45138,11 @@ define('base/board',[
          */
         keyDownListener: function (evt) {
             var id_node = evt.target.id,
-                id, el,
+                id, el, res,
+                sX = 0,
+                sY = 0,
+                // dx, dy are provided in screen units and
+                // are converted to user coordinates
                 dx = Type.evaluate(this.attr.keyboard.dx) / this.unitX,
                 dy = Type.evaluate(this.attr.keyboard.dy) / this.unitY,
                 doZoom = false,
@@ -45150,13 +45176,38 @@ define('base/board',[
                     this.clickRightArrow();
                 }
             } else {
-                // Handle snapToGrid
-                if (Type.exists(el.visProp) &&
-                    Type.exists(el.visProp.snapsizex) &&
-                    Type.evaluate(el.visProp.snaptogrid)) {
+                // Adapt dx, dy to snapToGrid and attractToGrid
+                // snapToGrid has priority.
+                if (Type.exists(el.visProp)) {
+                    if (Type.exists(el.visProp.snaptogrid) &&
+                        el.visProp.snaptogrid &&
+                        Type.evaluate(el.visProp.snapsizex) &&
+                        Type.evaluate(el.visProp.snapsizey)) {
 
-                    dx = Math.max(Type.evaluate(el.visProp.snapsizex), dx);
-                    dy = Math.max(Type.evaluate(el.visProp.snapsizey), dy);
+                        // Adapt dx, dy such that snapToGrid is possible
+                        res = el.getSnapSizes();
+                        sX = res[0];
+                        sY = res[1];
+                        dx = Math.max(sX, dx);
+                        dy = Math.max(sY, dy);
+
+                    } else if (Type.exists(el.visProp.attracttogrid) &&
+                        el.visProp.attracttogrid &&
+                        Type.evaluate(el.visProp.attractordistance) &&
+                        Type.evaluate(el.visProp.attractorunit)) {
+
+                        // Adapt dx, dy such that attractToGrid is possible
+                        sX = 1.1 * Type.evaluate(el.visProp.attractordistance);
+                        sY = sX;
+
+                        if (Type.evaluate(el.visProp.attractorunit) == 'screen') {
+                            sX /= this.unitX;
+                            sY /= this.unitX;
+                        }
+                        dx = Math.max(sX, dx);
+                        dy = Math.max(sY, dy);
+                    }
+
                 }
 
                 if (evt.keyCode === 38) {           // up
@@ -45173,7 +45224,7 @@ define('base/board',[
                     this.zoomIn();
                 } else if (doZoom && evt.key === '-') {   // -
                     this.zoomOut();
-                } else if (doZoom && evt.key === 'o') {    // o
+                } else if (doZoom && evt.key === 'o') {   // o
                     this.zoom100();
                 }
                 if (dir && el.isDraggable &&
@@ -63621,8 +63672,8 @@ define('base/curve',[
      * </script><pre>
      *
      * @example
-     * var mi = board.create('glider', [0, -1, board.defaultAxes.y], {attachToGrid:true, snapY: 5});
-     * var ma = board.create('glider', [0, 5, board.defaultAxes.y], {});
+     * var mi = board.create('glider', [0, -1, board.defaultAxes.y]);
+     * var ma = board.create('glider', [0, 5, board.defaultAxes.y]);
      * var Q = [function() { return mi.Y(); }, 2, 3, 3.5, function() { return ma.Y(); }];
      *
      * var b = board.create('boxplot', [Q, 0, 2]);
@@ -63632,8 +63683,8 @@ define('base/curve',[
      *     (function() {
      *         var board = JXG.JSXGraph.initBoard('JXG3b3225da-52f0-42fe-8396-be9016bf289b',
      *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
-     *     var mi = board.create('glider', [0, -1, board.defaultAxes.y], {attachToGrid:true, snapY: 5});
-     *     var ma = board.create('glider', [0, 5, board.defaultAxes.y], {});
+     *     var mi = board.create('glider', [0, -1, board.defaultAxes.y]);
+     *     var ma = board.create('glider', [0, 5, board.defaultAxes.y]);
      *     var Q = [function() { return mi.Y(); }, 2, 3, 3.5, function() { return ma.Y(); }];
      *
      *     var b = board.create('boxplot', [Q, 0, 2]);

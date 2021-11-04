@@ -129,4 +129,38 @@ describe("Test board events", function () {
         expect(p.Y()).toBeCloseTo(1, 15);
     });
 
+    it("Test keyboard / snapToGrid", function () {
+        var p, evt;
+
+        expect(board.hasKeyboardHandlers).toBeTrue();
+
+        p = board.create('point', [0, 0], { id: 'p1' });
+        evt = {
+            target: {
+                id: p.rendNode.id
+            },
+            keyCode: 38,
+            key: ''
+        };
+
+        board.keyDownListener(evt);
+        board.keyDownListener(evt);
+        expect(p.Y()).toBeCloseTo(0.4, 15);
+
+        p.setAttribute({ snapToGrid: true, snapSizeX: 1, snapSizeX: 1 });
+        board.keyDownListener(evt);
+        expect(p.Y()).toBeCloseTo(1, 15);
+
+        p.setAttribute({ snapToGrid: false,
+            attractToGrid: true,
+            attractorDistance: 0.27,
+            attractorunit: 'user' });
+        board.keyDownListener(evt);
+        board.keyDownListener(evt);
+        board.keyDownListener(evt);
+
+        expect(p.Y()).toBeCloseTo(2, 15);
+
+    });
+
 });

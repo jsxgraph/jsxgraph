@@ -2964,7 +2964,8 @@ define([
 
             /**
              * Defines together with {@link Image#snapSizeY} the grid the image snaps on to.
-             * The image will only snap on integer multiples to snapSizeX in x and snapSizeY in y direction.
+             * The image will only snap on user coordinates which are
+             * integer multiples to snapSizeX in x and snapSizeY in y direction.
              * If this value is equal to or less than <tt>0</tt>, it will use the grid displayed by the major ticks
              * of the default ticks of the default x axes of the board.
              *
