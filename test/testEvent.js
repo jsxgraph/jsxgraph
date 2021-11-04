@@ -11,6 +11,13 @@ describe("Test board events", function () {
         axis: false,
         grid: false,
         boundingbox: [0, 5, 5, 0],
+        keyboard: {
+            enabled: true,
+            dy: 20,
+            dx: 20,
+            panShift: true,
+            panCtrl: false
+        },
         showCopyright: false,
         showNavigation: false
     });
@@ -88,31 +95,38 @@ describe("Test board events", function () {
         board.pointerMoveListener(evt);
         board.pointerUpListener(evt);
 
-        // console.log("B", [p.X(), p.Y()]);
         expect([p.X(), p.Y()]).toEqual([1, 2]);
     });
 
+    // if (evt.keyCode === 38) {           // up
+    // } else if (evt.keyCode === 40) {    // down
+    // } else if (evt.keyCode === 37) {    // left
+    // } else if (evt.keyCode === 39) {    // right
+    // // } else if (evt.keyCode === 9) {  // tab
+    // } else if (doZoom && evt.key === '+') {   // +
+    // } else if (doZoom && evt.key === '-') {   // -
+    // } else if (doZoom && evt.key === 'o') {    // o
+    // }
     it("Test keyboard events", function () {
-        /*
-        evt = new KeyboardEvent('pointerdown', {
-            pointerId: pointerId,
-            clientX: 1,
-            clientY: 499
-        });
-        board.pointerDownListener(evt);
+        var p, evt;
 
-        evt = new PointerEvent('pointermove', {
-            pointerId: pointerId,
-            clientX: 131,
-            clientY: 280
-        });
-        board.pointerMoveListener(evt);
-        board.pointerUpListener(evt);
+        expect(board.hasKeyboardHandlers).toBeTrue();
 
-        console.log("B", [p.X(), p.Y()]);
+        p = board.create('point', [0, 0], { id: 'p1' });
+        evt = {
+            target: {
+                id: p.rendNode.id
+            },
+            keyCode: 38,
+            key: ''
+        };
+        board.keyDownListener(evt);
+        board.keyDownListener(evt);
+        expect(p.Y()).toBeCloseTo(0.4, 15);
 
-        expect([p.X(), p.Y()]).toEqual([1, 2]);
-        */
+        p.setAttribute({ snapToGrid: true });
+        board.keyDownListener(evt);
+        expect(p.Y()).toBeCloseTo(1, 15);
     });
 
 });

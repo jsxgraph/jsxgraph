@@ -2631,8 +2631,8 @@ define([
      * </script><pre>
      *
      * @example
-     * var mi = board.create('glider', [0, -1, board.defaultAxes.y], {attachToGrid:true, snapY: 5});
-     * var ma = board.create('glider', [0, 5, board.defaultAxes.y], {});
+     * var mi = board.create('glider', [0, -1, board.defaultAxes.y]);
+     * var ma = board.create('glider', [0, 5, board.defaultAxes.y]);
      * var Q = [function() { return mi.Y(); }, 2, 3, 3.5, function() { return ma.Y(); }];
      *
      * var b = board.create('boxplot', [Q, 0, 2]);
@@ -2642,8 +2642,8 @@ define([
      *     (function() {
      *         var board = JXG.JSXGraph.initBoard('JXG3b3225da-52f0-42fe-8396-be9016bf289b',
      *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
-     *     var mi = board.create('glider', [0, -1, board.defaultAxes.y], {attachToGrid:true, snapY: 5});
-     *     var ma = board.create('glider', [0, 5, board.defaultAxes.y], {});
+     *     var mi = board.create('glider', [0, -1, board.defaultAxes.y]);
+     *     var ma = board.create('glider', [0, 5, board.defaultAxes.y]);
      *     var Q = [function() { return mi.Y(); }, 2, 3, 3.5, function() { return ma.Y(); }];
      *
      *     var b = board.create('boxplot', [Q, 0, 2]);

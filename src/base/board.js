@@ -3164,7 +3164,7 @@ define([
                     this.zoomIn();
                 } else if (doZoom && evt.key === '-') {   // -
                     this.zoomOut();
-                } else if (doZoom && evt.key === 'o') {    // o
+                } else if (doZoom && evt.key === 'o') {   // o
                     this.zoom100();
                 }
                 if (dir && el.isDraggable &&
