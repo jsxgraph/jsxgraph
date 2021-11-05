@@ -4012,8 +4012,12 @@ define([
             snatchDistance: 0.0,
 
             /**
-             * If set to true, the point will snap to a grid defined by
-             * {@link Point#snapSizeX} and {@link Point#snapSizeY}.
+             * If set to true, the point will snap to a grid of integer multiples of 
+             * {@link Point#snapSizeX} and {@link Point#snapSizeY} (in user coordinates).
+             * <p>
+             * The coordinates of the grid points are either integer multiples of snapSizeX and snapSizeY
+             * (given in user coordinates, not pixels) or are the intersection points
+             * of the major ticks of the boards default axes in case that snapSizeX, snapSizeY are negative.
              *
              * @name Point#snapToGrid
              *
@@ -4025,10 +4029,12 @@ define([
             snapToGrid: false,
 
             /**
-             * If set to true, the point will only snap to grid points
-             * when within {@link Point#attractorDistance} of a grid point.
-             * The grid points are determined by snapSizeX and snapSizeY
-             * in the same way as with snapToGrid.
+             * If set to true, the point will only snap to (possibly invisibly) grid points
+             * when within {@link Point#attractorDistance} of such a grid point.
+             * <p>
+             * The coordinates of the grid points are either integer multiples of snapSizeX and snapSizeY
+             * (given in user coordinates, not pixels) or are the intersection points
+             * of the major ticks of the boards default axes in case that snapSizeX, snapSizeY are negative.
              *
              * @name Point#attractToGrid
              *
@@ -4043,7 +4049,8 @@ define([
             attractToGrid: false,
 
             /**
-             * Defines together with {@link Point#snapSizeY} the grid the point snaps on to.
+             * Defines together with {@link Point#snapSizeY} the grid the point snaps on to. 
+             * It is given in user coordinates, not in pixels.
              * The point will only snap on integer multiples to snapSizeX in x and snapSizeY in y direction.
              * If this value is equal to or less than <tt>0</tt>, it will use the grid displayed by the major ticks
              * of the default ticks of the default x axes of the board.
@@ -4060,6 +4067,7 @@ define([
 
             /**
              * Defines together with {@link Point#snapSizeX} the grid the point snaps on to.
+             * It is given in user coordinates, not in pixels.
              * The point will only snap on integer multiples to snapSizeX in x and snapSizeY in y direction.
              * If this value is equal to or less than <tt>0</tt>, it will use the grid displayed by the major ticks
              * of the default ticks of the default y axes of the board.
