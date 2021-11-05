@@ -4061,7 +4061,7 @@ define([
          * Reset the zoom level to the original zoom level from initBoard();
          * Additionally, if the board as been initialized with a boundingBox (which is the default),
          * restore the viewport to the original viewport during initialization. Otherwise,
-         * (i.e. if the board as been initialized with unitX/Y and originX/Y
+         * (i.e. if the board as been initialized with unitX/Y and originX/Y),
          * just set the zoom level to 100%.
          *
          * @returns {JXG.Board} Reference to the board
@@ -4074,6 +4074,7 @@ define([
                 this.zoomX = Type.exists(this.attr.zoomx) ? this.attr.zoomx : 1.0;
                 this.zoomY = Type.exists(this.attr.zoomy) ? this.attr.zoomy : 1.0;
             } else {
+                // Board has been set up with unitX/Y and originX/Y
                 bb = this.getBoundingBox();
                 dX = (bb[2] - bb[0]) * (1.0 - this.zoomX) * 0.5;
                 dY = (bb[1] - bb[3]) * (1.0 - this.zoomY) * 0.5;
