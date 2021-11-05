@@ -27,7 +27,7 @@
     and <http://opensource.org/licenses/MIT/>.
  */
 describe("Test intersection functions", function() {
-    var board, A, B, C;
+    var board;
 
     document.getElementsByTagName('body')[0].innerHTML = '<div id="jxgbox" style="width: 100px; height: 100px;"></div>';
     board = JXG.JSXGraph.initBoard('jxgbox', {

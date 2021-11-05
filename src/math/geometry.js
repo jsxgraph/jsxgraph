@@ -499,20 +499,30 @@ define([
          * Affine ratio of three collinear points a, b, c: (c - a) / (b - a).
          * If r > 1 or r < 0 then c is outside of the segment ab.
          *
-         * @param {JXG.Coords} a
-         * @param {JXG.Coords} b
-         * @param {JXG.Coords} c
+         * @param {Array|JXG.Coords} a
+         * @param {Array|JXG.Coords} b
+         * @param {Array|JXG.Coords} c
          * @returns {Number} affine ratio (c - a) / (b - a)
          */
         affineRatio: function(a, b, c) {
-            var r = 0.0,
-                dx =  b.usrCoords[1] - a.usrCoords[1];
+            var r = 0.0, dx;
+
+            if (Type.exists(a.usrCoords)) {
+                a = a.usrCoords;
+            }
+            if (Type.exists(b.usrCoords)) {
+                b = b.usrCoords;
+            }
+            if (Type.exists(c.usrCoords)) {
+                c = c.usrCoords;
+            }
+
+            dx =  b[1] - a[1];
 
             if (Math.abs(dx) > Mat.eps) {
-                r = (c.usrCoords[1] - a.usrCoords[1]) / dx;
+                r = (c[1] - a[1]) / dx;
             } else {
-                r = (c.usrCoords[2] - a.usrCoords[2]) /
-                    (b.usrCoords[2] - a.usrCoords[2]);
+                r = (c[2] - a[2]) / (b[2] - a[2]);
             }
             return r;
         },
@@ -1073,12 +1083,17 @@ define([
                     return that.meetCurveCurve(el1, el2, i, j, el1.board);
                 };
 
-            } else if ((el1.elementClass === Const.OBJECT_CLASS_CURVE &&
+            } else if ((
+                        el1.elementClass === Const.OBJECT_CLASS_CURVE && 
                         !el1_isArcType &&
-                        el2.elementClass === Const.OBJECT_CLASS_LINE) ||
-                       (el2.elementClass === Const.OBJECT_CLASS_CURVE &&
+                        el2.elementClass === Const.OBJECT_CLASS_LINE
+                       ) ||
+                       (
+                        el2.elementClass === Const.OBJECT_CLASS_CURVE &&
                         !el2_isArcType &&
-                        el1.elementClass === Const.OBJECT_CLASS_LINE)) {
+                        el1.elementClass === Const.OBJECT_CLASS_LINE
+                       )
+                    ) {
                 // curve - line (this includes intersections between conic sections and lines)
                 // with the exception that the curve is of arc type
                 /** @ignore */
@@ -1086,7 +1101,7 @@ define([
                     return that.meetCurveLine(el1, el2, i, el1.board, alwaysintersect);
                 };
 
-            } else if (el1.elementClass === Const.OBJECT_CLASS_LINE && el2.elementClass === Const.OBJECT_CLASS_LINE) {
+            } else if (el1.elementClass === Const.OBJECT_CLASS_LINE && el2.elementClass === Const.OBJECT_CLASS_LINE, el2.elementClass === Const.OBJECT_CLASS_LINE) {
                 // line - line, lines may also be segments.
                 /** @ignore */
                 func = function () {
@@ -1354,7 +1369,6 @@ define([
 
                 return new Coords(Const.COORDS_BY_USER, [NaN, NaN], board);
             }
-
             c = circ[0];
             b = circ.slice(1, 3);
             a = circ[3];
@@ -1602,7 +1616,7 @@ define([
             }
 
             p2 = cu.points[0].usrCoords;
-            for (i = 1; i < len; i++) {
+            for (i = 1; i < len; i += cu.bezierDegree) {
                 p1 = p2.slice(0);
                 p2 = cu.points[i].usrCoords;
                 d = this.distance(p1, p2);
@@ -1619,8 +1633,6 @@ define([
                             lip1.slice(1),
                             lip2.slice(1)
                         ], testSegment);
-
-                        i += 2;
                     } else {
                         res = [this.meetSegmentSegment(p1, p2, lip1, lip2)];
                     }
@@ -1632,7 +1644,7 @@ define([
                                 /**
                                 * If the intersection point is not part of the segment,
                                 * this intersection point is set to non-existent.
-                                * This prevents jumping of the intersection points.
+                                * This prevents jumping behavior of the intersection points.
                                 * But it may be discussed if it is the desired behavior.
                                 */
                                 if (testSegment &&
@@ -1723,7 +1735,7 @@ define([
          * If the two segments are collinear, [[0,0,0], Infinity, Infinity] is returned.
          **/
         meetSegmentSegment: function (p1, p2, q1, q2) {
-            var t, u, cx,
+            var t, u, i, d,
                 li1 = Mat.crossProduct(p1, p2),
                 li2 = Mat.crossProduct(q1, q2),
                 c = Mat.crossProduct(li1, li2);
@@ -1732,13 +1744,25 @@ define([
                 return [c, Infinity, Infinity];
             }
 
-            // The intersection point is already computed in c. To find t and u, it suffices to solve 
-            // for t in either x or y direction only. W.l.o.g. the x direction is chosen to compute both.
-            cx = c[1] / c[0];
-            // Note that the z-coordinate of p2 is used to determine whether it should be interpreted
+            // Normalize the intersection coordinates
+            c[1] /= c[0];
+            c[2] /= c[0];
+            c[0] /= c[0];
+
+            // Now compute in principle: 
+            //    t = dist(c - p1) / dist(p2 - p1) and 
+            //    u = dist(c - q1) / dist(q2 - q1)
+            // However: the points q1, q2, p1, p2 might be ideal points - or in general - the
+            // coordinates might be not normalized.
+            // Note that the z-coordinates of p2 and q2 are used to determine whether it should be interpreted
             // as a segment coordinate or a direction.
-            t = (cx - p1[1]) / (p2[1] - p2[0] * p1[1]);
-            u = (cx - q1[1]) / (q2[1] - q2[0] * q1[1]);
+            i = (Math.abs(p2[1] - p2[0] * p1[1]) < Mat.eps) ? 2 : 1;
+            d = p1[i] / p1[0];
+            t = (c[i] - d) / ( (p2[0] !== 0) ? (p2[i] / p2[0] - d) : p2[i] );
+
+            i = (Math.abs(q2[1] - q2[0] * q1[1]) < Mat.eps) ? 2 : 1;
+            d = q1[i] / q1[0];
+            u = (c[i] - d) / ( (q2[0] !== 0) ? (q2[i] / q2[0] - d) : q2[i] );
 
             return [c, t, u];
         },
