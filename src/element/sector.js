@@ -1116,33 +1116,19 @@ define([
 
                 if (p.draggable()) {
                     t1 = this.board.create('transform', [val, this.center], {type: 'rotate'});
+                    p.addTransform(q, t1);
+                    // Immediately apply the transformation.
+                    // This prevents that jumping elements can be watched.
+                    t1.update();
+                    p.moveTo(Mat.matVecMult(t1.matrix, q.coords.usrCoords));
+
                     if (Type.isFunction(val)) {
                         val2 = function() { return Math.PI * 2 - val(); };
                     } else {
                         val2 = function() { return Math.PI * 2 - val; };
                     }
                     t2 = this.board.create('transform', [val2, this.center], {type: 'rotate'});
-
-                    // p.addTransform(q, t);
-                    // // p.isDraggable = false;
-                    // p.on('drag', function() {
-                    //     console.log('drag')
-                    // });
-                    q.on('drag', function() {
-                        t1.update();
-                        p.moveTo(Mat.matVecMult(t1.matrix, q.coords.usrCoords));
-                    });
-                    t1.update();
-                    p.moveTo(Mat.matVecMult(t1.matrix, q.coords.usrCoords));
-
-                    p.on('drag', function() {
-                        t2.update();
-                        q.moveTo(Mat.matVecMult(t2.matrix, p.coords.usrCoords));
-                    });
-
-                    this.center.on('drag', function() {
-                        t1.update();
-                        p.moveTo(Mat.matVecMult(t1.matrix, q.coords.usrCoords));
+                    p.coords.on('update', function() {
                         t2.update();
                         q.moveTo(Mat.matVecMult(t2.matrix, p.coords.usrCoords));
                     });
@@ -1163,11 +1149,15 @@ define([
             */
             el.free = function () {
                 var p = this.anglepoint;
+                    
                 if (p.transformations.length > 0) {
                     p.transformations.pop();
                     p.isDraggable = true;
                     p.parents = [];
+
+                    p.coords.off('update');
                 }
+
                 return this;
             };
 
