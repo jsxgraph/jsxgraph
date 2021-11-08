@@ -4421,29 +4421,30 @@ define([
                 shift_x = 0,
                 shift_y = 0;
 
+            if (!dontSetBoundingBox) {
+                box_act = this.getBoundingBox();    // This is the actual bounding box.
+            }
+
             this.canvasWidth = parseFloat(canvasWidth);
             this.canvasHeight = parseFloat(canvasHeight);
 
             if (!dontSetBoundingBox) {
-                box_act = this.getBoundingBox();    // This is the actual bounding box.
                 box     = this.attr.boundingbox;    // This is the intended bounding box.
-                // The shift values compensate the follow-up
-                // correction in setBoundingBox in case this.keepaspectratio==true
+                
+                // The shift values compensate the follow-up correction
+                // in setBoundingBox in case of "this.keepaspectratio==true"
                 // Otherwise, shift_x and shift_y will be zero.
-                shift_x = box_act[0] - box[0];
-                shift_y = box_act[1] - box[1];
+                shift_x = box_act[0] - box[0] / this.zoomX;
+                shift_y = box_act[1] - box[1] / this.zoomY;
 
                 cx = (box[2] + box[0]) * 0.5 + shift_x;
                 cy = (box[3] + box[1]) * 0.5 + shift_y;
-                cx /=  this.zoomX;
-                cy /=  this.zoomY;
 
                 w = (box[2] - box[0]) * 0.5 / this.zoomX;
                 h = (box[1] - box[3]) * 0.5 / this.zoomY;
 
                 box = [cx - w, cy + h, cx + w, cy - h];
             }
-
 
             if (!dontset) {
                 this.containerObj.style.width = (this.canvasWidth) + 'px';
@@ -4954,8 +4955,6 @@ define([
                 bbox[3] < this.maxboundingbox[3]) {
                 return this;
             }
-
-            // this.plainBB = bbox;
 
             this.canvasWidth = parseInt(dim.width, 10);
             this.canvasHeight = parseInt(dim.height, 10);
