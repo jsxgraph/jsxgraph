@@ -134,7 +134,8 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
             var testMap;
             /* jshint ignore:start */
             try {
-                testMap = (a = 0) => a;
+                // This would kill the old uglifyjs: testMap = (a = 0) => a;
+                new Function('(a = 0) => a');
                 return true;
             } catch (err) {
                 return false;
