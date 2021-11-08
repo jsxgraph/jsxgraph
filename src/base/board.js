@@ -4566,7 +4566,7 @@ define([
 
                 // For updates of an element we distinguish if the dragged element is updated or
                 // other elements are updated.
-                // The difference lies in the treatment of gliders.
+                // The difference lies in the treatment of gliders and points based on transformations.
                 pEl.update(!Type.exists(drag) || pEl.id !== drag.id)
                    .updateVisibility();
             }

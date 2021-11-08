@@ -1185,6 +1185,7 @@ define([
             if (pointsExist) {
                 p[i].addTransform(p[i - 2], rot);
                 p[i].fullUpdate();
+                p[i].isDraggable = false;
             } else {
                 if (Type.isArray(attr.ids) && attr.ids.length >= n - 2) {
                     attr.id = attr.ids[i - 2];
