@@ -1110,14 +1110,43 @@ define([
             *
             */
             el.setAngle = function (val) {
-                var t, t2,
+                var t1, t2, val2,
                     p = this.anglepoint,
                     q = this.radiuspoint;
 
                 if (p.draggable()) {
-                    t = this.board.create('transform', [val, this.center], {type: 'rotate'});
-                    p.addTransform(q, t);
-                    // p.isDraggable = false;
+                    t1 = this.board.create('transform', [val, this.center], {type: 'rotate'});
+                    if (Type.isFunction(val)) {
+                        val2 = function() { return Math.PI * 2 - val(); };
+                    } else {
+                        val2 = function() { return Math.PI * 2 - val; };
+                    }
+                    t2 = this.board.create('transform', [val2, this.center], {type: 'rotate'});
+
+                    // p.addTransform(q, t);
+                    // // p.isDraggable = false;
+                    // p.on('drag', function() {
+                    //     console.log('drag')
+                    // });
+                    q.on('drag', function() {
+                        t1.update();
+                        p.moveTo(Mat.matVecMult(t1.matrix, q.coords.usrCoords));
+                    });
+                    t1.update();
+                    p.moveTo(Mat.matVecMult(t1.matrix, q.coords.usrCoords));
+
+                    p.on('drag', function() {
+                        t2.update();
+                        q.moveTo(Mat.matVecMult(t2.matrix, p.coords.usrCoords));
+                    });
+
+                    this.center.on('drag', function() {
+                        t1.update();
+                        p.moveTo(Mat.matVecMult(t1.matrix, q.coords.usrCoords));
+                        t2.update();
+                        q.moveTo(Mat.matVecMult(t2.matrix, p.coords.usrCoords));
+                    });
+
                     p.setParents(q);
                 }
                 return this;
