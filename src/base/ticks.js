@@ -670,11 +670,16 @@ define([
                 tickPosition = ticksDelta;
             }
             while (tickPosition <= bounds.upper + eps2) {
-                // Only draw ticks when we are within bounds, ignore case where  tickPosition < lower < upper
+                // Only draw ticks when we are within bounds, ignore case where tickPosition < lower < upper
                 if (tickPosition >= bounds.lower - eps2) {
                     this.processTickPosition(coordsZero, tickPosition, ticksDelta, deltas);
                 }
                 tickPosition += ticksDelta;
+
+                // Emergency out
+                if ((bounds.upper - tickPosition) > ticksDelta * 10000) {
+                    break;
+                }
             }
 
             // Position ticks from zero (not inclusive) to the negative side while not reaching the lower boundary
@@ -688,6 +693,11 @@ define([
                     this.processTickPosition(coordsZero, tickPosition, ticksDelta, deltas);
                 }
                 tickPosition -= ticksDelta;
+
+                // Emergency out
+                if ((tickPosition - bounds.lower) > ticksDelta * 10000) {
+                    break;
+                }
             }
         },
 
