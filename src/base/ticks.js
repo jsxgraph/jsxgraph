@@ -684,9 +684,6 @@ define([
 
             // Position ticks from zero (not inclusive) to the negative side while not reaching the lower boundary
             tickPosition = -ticksDelta;
-
-            // console.log(tickPosition, ticksDelta, bounds.lower);
-
             while (tickPosition >= bounds.lower - eps2) {
                 // Only draw ticks when we are within bounds, ignore case where lower < upper < tickPosition
                 if (tickPosition <= bounds.upper + eps2) {
