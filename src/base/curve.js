@@ -2564,7 +2564,7 @@ define([
      * @param {Array} quantiles Array conatining at least five quantiles. The elements can be of type number, function or string.
      * @param {Number|Function} axis Axis position of the box plot
      * @param {Number|Function} width Width of the rectangle part of the box plot. The width of the first and 4th quantile
-     * is relative to this width and can becontrolled by the attribute "smallWidth".
+     * is relative to this width and can be controlled by the attribute "smallWidth".
      * @augments JXG.Curve
      * @constructor
      * @type JXG.Curve
