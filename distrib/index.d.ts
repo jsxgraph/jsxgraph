@@ -3816,7 +3816,7 @@ declare module JXG {
         /**
         *
         */
-        setBoundingBox(bbox: [number, number, number, number], keepaspectratio?: boolean): this;
+        setBoundingBox(bbox: [number, number, number, number], keepaspectratio?: boolean, setZoom?: string): this;
         setId(object: unknown, type: number): string;
         /**
          *

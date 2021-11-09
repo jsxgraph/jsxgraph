@@ -3307,7 +3307,7 @@ define([
 
             // If bounding box is not yet initialized, do it now.
             if (isNaN(this.getBoundingBox()[0])) {
-                this.setBoundingBox(this.attr.boundingbox, this.keepaspectratio);
+                this.setBoundingBox(this.attr.boundingbox, this.keepaspectratio, 'keep');
             }
 
             // Do nothing if the dimension did not change since being visible
@@ -4016,9 +4016,7 @@ define([
                 tr = (bb[1] - y) / (bb[1] - bb[3]);
             }
 
-            this.setBoundingBox([bb[0] + dX * lr, bb[1] - dY * tr, bb[2] - dX * (1 - lr), bb[3] + dY * (1 - tr)], this.keepaspectratio);
-            this.zoomX *= zX;
-            this.zoomY *= zY;
+            this.setBoundingBox([bb[0] + dX * lr, bb[1] - dY * tr, bb[2] - dX * (1 - lr), bb[3] + dY * (1 - tr)], this.keepaspectratio, 'update');
             return this.applyZoom();
         },
 
@@ -4049,9 +4047,7 @@ define([
                 tr = (bb[1] - y) / (bb[1] - bb[3]);
             }
 
-            this.setBoundingBox([bb[0] + dX * lr, bb[1] - dY * tr, bb[2] - dX * (1 - lr), bb[3] + dY * (1 - tr)], this.keepaspectratio);
-            this.zoomX /= zX;
-            this.zoomY /= zY;
+            this.setBoundingBox([bb[0] + dX * lr, bb[1] - dY * tr, bb[2] - dX * (1 - lr), bb[3] + dY * (1 - tr)], this.keepaspectratio, 'update');
 
             return this.applyZoom();
         },
@@ -4069,17 +4065,13 @@ define([
             var bb, dX, dY;
 
             if (Type.exists(this.attr.boundingbox)) {
-                this.setBoundingBox(this.attr.boundingbox, this.keepaspectratio);
-                this.zoomX = Type.exists(this.attr.zoomx) ? this.attr.zoomx : 1.0;
-                this.zoomY = Type.exists(this.attr.zoomy) ? this.attr.zoomy : 1.0;
+                this.setBoundingBox(this.attr.boundingbox, this.keepaspectratio, 'reset');
             } else {
                 // Board has been set up with unitX/Y and originX/Y
                 bb = this.getBoundingBox();
                 dX = (bb[2] - bb[0]) * (1.0 - this.zoomX) * 0.5;
                 dY = (bb[1] - bb[3]) * (1.0 - this.zoomY) * 0.5;
-                this.setBoundingBox([bb[0] + dX, bb[1] - dY, bb[2] - dX, bb[3] + dY], this.keepaspectratio);
-                this.zoomX = 1.0;
-                this.zoomY = 1.0;
+                this.setBoundingBox([bb[0] + dX, bb[1] - dY, bb[2] - dX, bb[3] + dY], this.keepaspectratio, 'reset');
             }
             return this.applyZoom();
         },
@@ -4117,10 +4109,7 @@ define([
             borderX = border / this.unitX;
             borderY = border / this.unitY;
 
-            this.zoomX = 1.0;
-            this.zoomY = 1.0;
-
-            this.setBoundingBox([minX - borderX, maxY + borderY, maxX + borderX, minY - borderY], this.keepaspectratio);
+            this.setBoundingBox([minX - borderX, maxY + borderY, maxX + borderX, minY - borderY], this.keepaspectratio, 'update');
 
             return this.applyZoom();
         },
@@ -4153,53 +4142,12 @@ define([
             }
 
             if (Type.isArray(newBBox)) {
-                this.zoomX = 1.0;
-                this.zoomY = 1.0;
                 cx = 0.5 * (newBBox[0] + newBBox[2]);
                 cy = 0.5 * (newBBox[1] + newBBox[3]);
                 dx = 1.5 * (newBBox[2] - newBBox[0]) * 0.5;
                 dy = 1.5 * (newBBox[1] - newBBox[3]) * 0.5;
                 d = Math.max(dx, dy);
-                this.setBoundingBox([cx - d, cy + d, cx + d, cy - d], this.keepaspectratio);
-            }
-
-            return this;
-        },
-
-        zoomElementsOld: function (elements) {
-            var i, j, e, box,
-                newBBox = [0, 0, 0, 0],
-                dir = [1, -1, -1, 1];
-
-            if (!Type.isArray(elements) || elements.length === 0) {
-                return this;
-            }
-
-            for (i = 0; i < elements.length; i++) {
-                e = this.select(elements[i]);
-
-                box = e.bounds();
-                if (Type.isArray(box)) {
-                    if (Type.isArray(newBBox)) {
-                        for (j = 0; j < 4; j++) {
-                            if (dir[j] * box[j] < dir[j] * newBBox[j]) {
-                                newBBox[j] = box[j];
-                            }
-                        }
-                    } else {
-                        newBBox = box;
-                    }
-                }
-            }
-
-            if (Type.isArray(newBBox)) {
-                for (j = 0; j < 4; j++) {
-                    newBBox[j] -= dir[j];
-                }
-
-                this.zoomX = 1.0;
-                this.zoomY = 1.0;
-                this.setBoundingBox(newBBox, this.keepaspectratio);
+                this.setBoundingBox([cx - d, cy + d, cx + d, cy - d], this.keepaspectratio, 'update');
             }
 
             return this;
@@ -4452,7 +4400,7 @@ define([
             this.renderer.resize(this.canvasWidth, this.canvasHeight);
 
             if (!dontSetBoundingBox) {
-                this.setBoundingBox(box, this.keepaspectratio);
+                this.setBoundingBox(box, this.keepaspectratio, 'keep');
             }
 
             return this;
@@ -4939,10 +4887,13 @@ define([
          * @param {Array} bbox New bounding box [x1,y1,x2,y2]
          * @param {Boolean} [keepaspectratio=false] If set to true, the aspect ratio will be 1:1, but
          * the resulting viewport may be larger.
+         * @param {String} [setZoom='reset'] Reset, keep or update the zoom level of the board. 'reset'
+         * sets {@link JXG.Board#zoomX} and {@link JXG.Board#zoomY} to the start values (or 1.0).
+         * 'update' adapts these values accoring to the new bounding box and 'keep' does nothing.
          * @returns {JXG.Board} Reference to the board
          */
-        setBoundingBox: function (bbox, keepaspectratio) {
-            var h, w,
+        setBoundingBox: function (bbox, keepaspectratio, setZoom) {
+            var h, w, ux, uy,
                 dim = Env.getDimensions(this.container, this.document);
 
             if (!Type.isArray(bbox)) {
@@ -4954,6 +4905,13 @@ define([
                 bbox[3] < this.maxboundingbox[3]) {
                 return this;
             }
+
+            if (!Type.exists(setZoom)) {
+                setZoom = 'reset';
+            }
+
+            ux = this.unitX;
+            uy = this.unitY;
 
             this.canvasWidth = parseInt(dim.width, 10);
             this.canvasHeight = parseInt(dim.height, 10);
@@ -4974,8 +4932,16 @@ define([
                 this.unitY = h / (bbox[1] - bbox[3]);
                 this.keepaspectratio = false;
             }
-
+            
             this.moveOrigin(-this.unitX * bbox[0], this.unitY * bbox[1]);
+
+            if (setZoom === 'update') {
+                this.zoomX *= this.unitX / ux;
+                this.zoomY *= this.unitY / uy;
+            } else if (setZoom === 'reset') {
+                this.zoomX = Type.exists(this.attr.zoomx) ? this.attr.zoomx : 1.0;
+                this.zoomY = Type.exists(this.attr.zoomy) ? this.attr.zoomy : 1.0;
+            }
 
             return this;
         },
