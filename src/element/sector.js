@@ -1123,9 +1123,15 @@ define([
                     p.moveTo(Mat.matVecMult(t1.matrix, q.coords.usrCoords));
 
                     if (Type.isFunction(val)) {
+                        /**
+                         * @ignore
+                         */
                         val2 = function() { return Math.PI * 2 - val(); };
                     } else {
-                        val2 = function() { return Math.PI * 2 - val; };
+                        /**
+                         * @ignore
+                         */
+                         val2 = function() { return Math.PI * 2 - val; };
                     }
                     t2 = this.board.create('transform', [val2, this.center], {type: 'rotate'});
                     p.coords.on('update', function() {

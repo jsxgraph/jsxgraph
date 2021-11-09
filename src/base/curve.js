@@ -1748,6 +1748,9 @@ define([
         } else {
             points = [];
 
+            /**
+             * @ignore
+             */
             getPointLike = function (ii) {
                 return {
                     X: function () { return q[ii][0]; },
@@ -1962,6 +1965,10 @@ define([
             points = Type.providePoints(board, q, attributes, 'metapostspline', ['points']);
         } else {
             points = [];
+
+            /**
+             * @ignore
+             */
             getPointLike = function (ii) {
                 return {
                     X: function () { return q[ii][0]; },
@@ -2560,7 +2567,7 @@ define([
      * is controlled by the attribute "dir".
      * @pseudo
      * @description
-     * @name BoxPlot
+     * @name Boxplot
      * @param {Array} quantiles Array conatining at least five quantiles. The elements can be of type number, function or string.
      * @param {Number|Function} axis Axis position of the box plot
      * @param {Number|Function} width Width of the rectangle part of the box plot. The width of the first and 4th quantile

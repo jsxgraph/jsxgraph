@@ -174,11 +174,16 @@ define([
         /**
          * A reference to this boards renderer.
          * @type JXG.AbstractRenderer
+         * @name JXG.Board#renderer
+         * @private
+         * @ignore
          */
         this.renderer = renderer;
 
         /**
          * Grids keeps track of all grids attached to this board.
+         * @type Array
+         * @private
          */
         this.grids = [];
 
@@ -204,6 +209,7 @@ define([
          * usrCoords and scrCoords. usrCoords always equals [1, 0, 0] and scrCoords
          * stores the boards origin in homogeneous screen coordinates.
          * @type Object
+         * @private
          */
         this.origin = {};
         this.origin.usrCoords = [1, 0, 0];
@@ -212,44 +218,56 @@ define([
         /**
          * Zoom factor in X direction. It only stores the zoom factor to be able
          * to get back to 100% in zoom100().
+         * @name JXG.Board.zoomX
          * @type Number
+         * @private
+         * @ignore
          */
         this.zoomX = zoomX;
 
         /**
          * Zoom factor in Y direction. It only stores the zoom factor to be able
          * to get back to 100% in zoom100().
+         * @name JXG.Board.zoomY
          * @type Number
+         * @private
+         * @ignore
          */
         this.zoomY = zoomY;
 
         /**
          * The number of pixels which represent one unit in user-coordinates in x direction.
          * @type Number
+         * @private
          */
         this.unitX = unitX * this.zoomX;
 
         /**
          * The number of pixels which represent one unit in user-coordinates in y direction.
          * @type Number
+         * @private
          */
         this.unitY = unitY * this.zoomY;
 
         /**
          * Keep aspect ratio if bounding box is set and the width/height ratio differs from the
          * width/height ratio of the canvas.
+         * @type Boolean
+         * @private
          */
         this.keepaspectratio = false;
 
         /**
          * Canvas width.
          * @type Number
+         * @private
          */
         this.canvasWidth = canvasWidth;
 
         /**
          * Canvas Height
          * @type Number
+         * @private
          */
         this.canvasHeight = canvasHeight;
 
@@ -379,15 +397,15 @@ define([
 
         /**
          * References to the object that is dragged with the mouse on the board.
-         * @type {@link JXG.GeometryElement}.
-         * @see {JXG.Board#touches}
+         * @type JXG.GeometryElement
+         * @see JXG.Board#touches
          */
         this.mouse = {};
 
         /**
          * Keeps track on touched elements, like {@link JXG.Board#mouse} does for mouse events.
          * @type Array
-         * @see {JXG.Board#mouse}
+         * @see JXG.Board#mouse
          */
         this.touches = [];
 
@@ -489,7 +507,7 @@ define([
 
         /**
          * A flag which stores if the board registered pointer events.
-         * @type {Boolean}
+         * @type Boolean
          * @default false
          */
         this.hasPointerHandlers = false;
@@ -510,14 +528,14 @@ define([
 
         /**
          * A flag which tells us if the board has a pointerUp event registered at the moment.
-         * @type {Boolean}
+         * @type Boolean
          * @default false
          */
         this.hasPointerUp = false;
 
         /**
          * Offset for large coords elements like images
-         * @type {Array}
+         * @type Array
          * @private
          * @default [0, 0]
          */
@@ -525,7 +543,7 @@ define([
 
         /**
          * Stores the input device used in the last down or move event.
-         * @type {String}
+         * @type String
          * @private
          * @default 'mouse'
          */
@@ -533,28 +551,28 @@ define([
 
         /**
          * Keeps a list of pointer devices which are currently touching the screen.
-         * @type {Array}
+         * @type Array
          * @private
          */
         this._board_touches = [];
 
         /**
          * A flag which tells us if the board is in the selecting mode
-         * @type {Boolean}
+         * @type Boolean
          * @default false
          */
         this.selectingMode = false;
 
         /**
          * A flag which tells us if the user is selecting
-         * @type {Boolean}
+         * @type Boolean
          * @default false
          */
         this.isSelecting = false;
 
         /**
          * A flag which tells us if the user is scrolling the viewport
-         * @type {Boolean}
+         * @type Boolean
          * @private
          * @default false
          * @see JXG.Board#scrollListener
@@ -563,7 +581,7 @@ define([
 
         /**
          * A flag which tells us if a resize is in process
-         * @type {Boolean}
+         * @type Boolean
          * @private
          * @default false
          * @see JXG.Board#resizeListener
@@ -572,7 +590,7 @@ define([
 
         /**
          * A bounding box for the selection
-         * @type {Array}
+         * @type Array
          * @default [ [0,0], [0,0] ]
          */
         this.selectingBox = [[0, 0], [0, 0]];
@@ -2938,6 +2956,7 @@ define([
                 this.mode = this.BOARD_MODE_NONE;
                 result = true;
             } else {
+                /** @ignore */
                 this.mouse = {
                     obj: null,
                     targets: [{
@@ -3062,6 +3081,7 @@ define([
             }
 
             // release dragged mouse object
+            /** @ignore */
             this.mouse = null;
         },
 
@@ -3492,7 +3512,7 @@ define([
              * Infobox close to points in which the points' coordinates are displayed.
              * This is simply a JXG.Text element. Access through board.infobox.
              * Uses CSS class .JXGinfobox.
-             * @type {JXG.Text}
+             * @type JXG.Text
              *
              */
             this.infobox = this.create('text', [0, 0, '0,0'], attr);

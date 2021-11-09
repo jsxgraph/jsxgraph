@@ -213,7 +213,7 @@ define([
              * axis:true in {@link JXG.JSXGraph#initBoard}.
              *
              * @name JXG.Board#defaultAxes
-             * @type {Object}
+             * @type Object
              * @default {x: {name:'x'}, y: {name: 'y'}}
              *
              */
@@ -299,7 +299,7 @@ define([
              * </ul>
              *
              * @name JXG.Board#screenshot
-             * @type {Object}
+             * @type Object
              */
             screenshot: {
                 scale: 1.0,
@@ -357,7 +357,7 @@ define([
              *
              * @name JXG.Board#fullscreen
              * @see JXG.Board#showFullscreen
-             * @type {Object}
+             * @type Object
              */
             fullscreen: {
                 symbol: '\u26f6', // '\u25a1'
@@ -2320,7 +2320,7 @@ define([
              *
              * @type Number
              * @name Boxplot#smallWidth
-             * default: 0.5
+             * @default: 0.5
              */
             smallWidth: 0.5,
 
