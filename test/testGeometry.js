@@ -32,7 +32,7 @@ describe("Test geometry functions", function() {
                     [1, -1, -1], [1, -1, 1], 
                     [1, 1, 2], [1, -1, 2]
                 );
-        console.log(res);
+
         expect(res).toEqual([[1, -1, 2], 1.5, 1]);
 
         res = JXG.Math.Geometry.meetSegmentSegment(

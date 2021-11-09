@@ -2458,7 +2458,8 @@ define('utils/env',['jxg', 'utils/type'], function (JXG, Type) {
             var testMap;
             /* jshint ignore:start */
             try {
-                testMap = (a = 0) => a;
+                // This would kill the old uglifyjs: testMap = (a = 0) => a;
+                new Function('(a = 0) => a');
                 return true;
             } catch (err) {
                 return false;
@@ -14744,9 +14745,7 @@ define('math/geometry',[
             }
 
             p2 = cu.points[0].usrCoords;
-            console.log("------")
             for (i = 1; i < len; i += cu.bezierDegree) {
-                console.log("...")
                 p1 = p2.slice(0);
                 p2 = cu.points[i].usrCoords;
                 d = this.distance(p1, p2);
@@ -14769,7 +14768,6 @@ define('math/geometry',[
 
                     for (j = 0; j < res.length; j++) {
                         p = res[j];
-                        console.log(p);
                         if (0 <= p[1] && p[1] <= 1) {
                             if (cnt === nr) {
                                 /**
@@ -46079,7 +46077,7 @@ define('base/board',[
          * Reset the zoom level to the original zoom level from initBoard();
          * Additionally, if the board as been initialized with a boundingBox (which is the default),
          * restore the viewport to the original viewport during initialization. Otherwise,
-         * (i.e. if the board as been initialized with unitX/Y and originX/Y
+         * (i.e. if the board as been initialized with unitX/Y and originX/Y),
          * just set the zoom level to 100%.
          *
          * @returns {JXG.Board} Reference to the board
@@ -46092,6 +46090,7 @@ define('base/board',[
                 this.zoomX = Type.exists(this.attr.zoomx) ? this.attr.zoomx : 1.0;
                 this.zoomY = Type.exists(this.attr.zoomy) ? this.attr.zoomy : 1.0;
             } else {
+                // Board has been set up with unitX/Y and originX/Y
                 bb = this.getBoundingBox();
                 dX = (bb[2] - bb[0]) * (1.0 - this.zoomX) * 0.5;
                 dY = (bb[1] - bb[3]) * (1.0 - this.zoomY) * 0.5;
@@ -46438,29 +46437,30 @@ define('base/board',[
                 shift_x = 0,
                 shift_y = 0;
 
+            if (!dontSetBoundingBox) {
+                box_act = this.getBoundingBox();    // This is the actual bounding box.
+            }
+
             this.canvasWidth = parseFloat(canvasWidth);
             this.canvasHeight = parseFloat(canvasHeight);
 
             if (!dontSetBoundingBox) {
-                box_act = this.getBoundingBox();    // This is the actual bounding box.
                 box     = this.attr.boundingbox;    // This is the intended bounding box.
-                // The shift values compensate the follow-up
-                // correction in setBoundingBox in case this.keepaspectratio==true
+                
+                // The shift values compensate the follow-up correction
+                // in setBoundingBox in case of "this.keepaspectratio==true"
                 // Otherwise, shift_x and shift_y will be zero.
-                shift_x = box_act[0] - box[0];
-                shift_y = box_act[1] - box[1];
+                shift_x = box_act[0] - box[0] / this.zoomX;
+                shift_y = box_act[1] - box[1] / this.zoomY;
 
                 cx = (box[2] + box[0]) * 0.5 + shift_x;
                 cy = (box[3] + box[1]) * 0.5 + shift_y;
-                cx /=  this.zoomX;
-                cy /=  this.zoomY;
 
                 w = (box[2] - box[0]) * 0.5 / this.zoomX;
                 h = (box[1] - box[3]) * 0.5 / this.zoomY;
 
                 box = [cx - w, cy + h, cx + w, cy - h];
             }
-
 
             if (!dontset) {
                 this.containerObj.style.width = (this.canvasWidth) + 'px';
@@ -46582,7 +46582,7 @@ define('base/board',[
 
                 // For updates of an element we distinguish if the dragged element is updated or
                 // other elements are updated.
-                // The difference lies in the treatment of gliders.
+                // The difference lies in the treatment of gliders and points based on transformations.
                 pEl.update(!Type.exists(drag) || pEl.id !== drag.id)
                    .updateVisibility();
             }
@@ -46971,8 +46971,6 @@ define('base/board',[
                 bbox[3] < this.maxboundingbox[3]) {
                 return this;
             }
-
-            // this.plainBB = bbox;
 
             this.canvasWidth = parseInt(dim.width, 10);
             this.canvasHeight = parseInt(dim.height, 10);
@@ -54189,16 +54187,16 @@ define('base/point',[
                 this.coords.setCoordinates(Const.COORDS_BY_USER, c);
             } else {
                 // Case of board.create('point',[baseElement, transform]);
-                if (!fromParent) {
-                    // The element has been dragged or it is the initial update,
-                    // now we transform the baseElement
-                    if (this.draggable() && this.baseElement.draggable()) {
-                        this.transformations[0].update();
-                        invMat = Mat.inverse(this.transformations[0].matrix);
-                        c = Mat.matVecMult(invMat, this.coords.usrCoords);
-                        this.baseElement.coords.setCoordinates(Const.COORDS_BY_USER, c);
-                    }
-                }
+                // if (!fromParent) {
+                //     // The element has been dragged or it is the initial update,
+                //     // now we transform the baseElement
+                //     if (this.draggable() && this.baseElement.draggable()) {
+                //         this.transformations[0].update();
+                //         invMat = Mat.inverse(this.transformations[0].matrix);
+                //         c = Mat.matVecMult(invMat, this.coords.usrCoords);
+                //         this.baseElement.coords.setCoordinates(Const.COORDS_BY_USER, c);
+                //     }
+                // }
                 c = this.transformations[0].apply(this.baseElement);
             }
             this.coords.setCoordinates(Const.COORDS_BY_USER, c);
@@ -65488,14 +65486,29 @@ define('element/sector',[
             *
             */
             el.setAngle = function (val) {
-                var t, t2,
+                var t1, t2, val2,
                     p = this.anglepoint,
                     q = this.radiuspoint;
 
                 if (p.draggable()) {
-                    t = this.board.create('transform', [val, this.center], {type: 'rotate'});
-                    p.addTransform(q, t);
-                    // p.isDraggable = false;
+                    t1 = this.board.create('transform', [val, this.center], {type: 'rotate'});
+                    p.addTransform(q, t1);
+                    // Immediately apply the transformation.
+                    // This prevents that jumping elements can be watched.
+                    t1.update();
+                    p.moveTo(Mat.matVecMult(t1.matrix, q.coords.usrCoords));
+
+                    if (Type.isFunction(val)) {
+                        val2 = function() { return Math.PI * 2 - val(); };
+                    } else {
+                        val2 = function() { return Math.PI * 2 - val; };
+                    }
+                    t2 = this.board.create('transform', [val2, this.center], {type: 'rotate'});
+                    p.coords.on('update', function() {
+                        t2.update();
+                        q.moveTo(Mat.matVecMult(t2.matrix, p.coords.usrCoords));
+                    });
+
                     p.setParents(q);
                 }
                 return this;
@@ -65512,11 +65525,15 @@ define('element/sector',[
             */
             el.free = function () {
                 var p = this.anglepoint;
+                    
                 if (p.transformations.length > 0) {
                     p.transformations.pop();
                     p.isDraggable = true;
                     p.parents = [];
+
+                    p.coords.off('update');
                 }
+
                 return this;
             };
 
@@ -74095,11 +74112,16 @@ define('base/ticks',[
                 tickPosition = ticksDelta;
             }
             while (tickPosition <= bounds.upper + eps2) {
-                // Only draw ticks when we are within bounds, ignore case where  tickPosition < lower < upper
+                // Only draw ticks when we are within bounds, ignore case where tickPosition < lower < upper
                 if (tickPosition >= bounds.lower - eps2) {
                     this.processTickPosition(coordsZero, tickPosition, ticksDelta, deltas);
                 }
                 tickPosition += ticksDelta;
+
+                // Emergency out
+                if ((bounds.upper - tickPosition) > ticksDelta * 10000) {
+                    break;
+                }
             }
 
             // Position ticks from zero (not inclusive) to the negative side while not reaching the lower boundary
@@ -74110,6 +74132,11 @@ define('base/ticks',[
                     this.processTickPosition(coordsZero, tickPosition, ticksDelta, deltas);
                 }
                 tickPosition -= ticksDelta;
+
+                // Emergency out
+                if ((tickPosition - bounds.lower) > ticksDelta * 10000) {
+                    break;
+                }
             }
         },
 
