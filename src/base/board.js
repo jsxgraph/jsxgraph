@@ -3447,13 +3447,12 @@ define([
                 this.intersectionObserver = new IntersectionObserver(function(entries) {
                     // If bounding box is not yet initialized, do it now.
                     if (isNaN(that.getBoundingBox()[0])) {
-                        that.setBoundingBox(that.attr.boundingbox, that.keepaspectratio);
                         that.updateContainerDims();
                     }
                 }, options);
                 this.intersectionObserver.observe(that.containerObj);
             } catch (err) {
-                console.log('Info: IntersectionObserver not available in this browser');
+                console.log('JSXGraph: IntersectionObserver not available in this browser.');
             }
         },
 
