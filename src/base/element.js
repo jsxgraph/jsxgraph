@@ -1625,6 +1625,8 @@ define([
          * Dimensions of the smallest rectangle enclosing the element.
          * @returns {Array} The coordinates of the enclosing rectangle in a format
          * like the bounding box in {@link JXG.Board#setBoundingBox}.
+         * 
+         * @returns {Array} similar to {@link JXG.Board#setBoundingBox}.
          */
         bounds: function () {
             return [0, 0, 0, 0];

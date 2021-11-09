@@ -209,15 +209,6 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
 
             this.addMarkers(board, 'dumped', false);
 
-            // This has been moved to toJavaScript and toJessie
-            /*
-            methods.push({
-                obj: '$board',
-                method: 'setBoundingBox',
-                params: [board.getBoundingBox(), true]
-            });
-            */
-
             for (e = 0; e < len; e++) {
                 obj = board.objectsList[e];
                 element = {};
