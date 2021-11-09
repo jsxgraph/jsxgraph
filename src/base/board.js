@@ -531,6 +531,11 @@ define([
          */
         this._inputDevice = 'mouse';
 
+        /**
+         * Keeps a list of pointer devices which are currently touching the screen.
+         * @type {Array}
+         * @private
+         */
         this._board_touches = [];
 
         /**
@@ -1959,7 +1964,7 @@ define([
 
         /**
          *
-         * Check if pointer event is already registered in this._board_touches.
+         * Check if pointer event is already registered in {@link JXG.Board#_board_touches}.
          *
          * @param  {Object} evt Event object
          * @return {Boolean} true if down event has already been sent.
@@ -1979,7 +1984,7 @@ define([
         /**
          *
          * Store the position of a pointer event.
-         * If not yet done, registers a pointer event in this._board_touches.
+         * If not yet done, registers a pointer event in {@link JXG.Board#_board_touches}.
          * Allows to follow the path of that finger on the screen.
          * Only two simultaneous touches are supported.
          *
@@ -2012,10 +2017,10 @@ define([
         },
 
         /**
-         * Deregisters a pointer event in this._board_touches.
-         * The finger has been lifted from the screen.
+         * Deregisters a pointer event in {@link JXG.Board#_board_touches}.
+         * It happens if a finger has been lifted from the screen.
          *
-         * @param {Object}} evt Event object
+         * @param {Object} evt Event object
          * @returns {JXG.Board} Reference to the board
          * @private
          */
@@ -2032,7 +2037,7 @@ define([
         },
 
         /**
-         * Remove all registered fingers from this._board_touches.
+         * Remove all registered fingers from {@link JXG.Board#_board_touches}.
          * This might be necessary if too many fingers have been registered.
          * @returns {JXG.Board} Reference to the board
          * @private
