@@ -198,6 +198,7 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
             yellow: 'ffff00',
             yellowgreen: '9acd32'
         },
+
         // array of color definition objects
         colorDefs = [{
             re: /^\s*rgba\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*([\d\.]{1,3})\s*\)\s*$/,
@@ -240,6 +241,35 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
                 ];
             }
         }];
+
+    /** 
+     * Bang Wong color palette, 
+     * optimized for various type 
+     * of color blindness.
+     * It contains values for
+     * <ul>
+     * <li> 'black'
+     * <li> 'lightgreen'
+     * <li> 'blue'
+     * <li> 'green'
+     * <li> 'yellow'
+     * <li> 'darkblue'
+     * <li> 'red'
+     * <li> 'purple'
+     * </ul>
+     * 
+     * See {@link https://www.nature.com/articles/nmeth.1618}
+     */
+    JXG.cPWong = {
+        black: '#000000',
+        lightgreen: '#E69F00',
+        blue: '#56B4E9',
+        green: '#009E73',
+        yellow: '#F0E442',
+        darkblue: '#0072B2',
+        red: '#D55E00',
+        purple: '#CC79A7'
+    };
 
     /**
      * Converts a valid HTML/CSS color string into a rgb value array. This is the base

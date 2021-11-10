@@ -907,7 +907,7 @@ define([
              * @see JXG.GeometryElement#highlightStrokeOpacity
              * @default {@link JXG.Options.elements.color#highlightStrokeColor}
              */
-            highlightStrokeColor: '#C3D9FF',
+            highlightStrokeColor: '#c3d9ff',
 
             /**
              * The fill color of this geometry element.
@@ -918,7 +918,7 @@ define([
              * @see JXG.GeometryElement#highlightFillOpacity
              * @default {@link JXG.Options.elements.color#fillColor}
              */
-            fillColor: 'red',
+            fillColor: '#ff0000',
 
             /**
              * The fill color of the given geometry element when the mouse is pointed over it.
@@ -1809,7 +1809,7 @@ define([
 
             strokeOpacity: 1,
             strokeWidth: 1,
-            strokeColor: 'black',
+            strokeColor: '#000000',
             highlightStrokeColor: '#888888',
             fillColor: 'none',
             highlightFillColor: 'none',
@@ -1849,7 +1849,7 @@ define([
             anchor: 'middle',
             face: '|',
             strokeWidth: 2,
-            strokeColor: 'blue',
+            strokeColor: '#0000ff',
             ticksDistance: 0.2
         },
 
@@ -2002,9 +2002,9 @@ define([
              */
             orthoSensitivity: 1.0,
 
-            fillColor: '#FF7F00',
-            highlightFillColor: '#FF7F00',
-            strokeColor: '#FF7F00',
+            fillColor: '#ff7f00',
+            highlightFillColor: '#ff7f00',
+            strokeColor: '#ff7f00',
             fillOpacity: 0.3,
             highlightFillOpacity: 0.3,
 
@@ -2029,7 +2029,7 @@ define([
             dot: {
                 visible: false,
                 strokeColor: 'none',
-                fillColor: 'black',
+                fillColor: '#000000',
                 size: 2,
                 face: 'o',
                 withLabel: false,
@@ -2039,7 +2039,7 @@ define([
             label: {
                 position: 'top',
                 offset: [0, 0],
-                strokeColor: '#0000FF'
+                strokeColor: '#0000ff'
             },
 
             /**
@@ -2092,7 +2092,7 @@ define([
             fillColor: 'none',
             highlightFillColor: 'none',
             strokeColor: '#0000ff',
-            highlightStrokeColor: '#C3D9FF',
+            highlightStrokeColor: '#c3d9ff',
             useDirection: false,
 
             /**
@@ -2284,7 +2284,7 @@ define([
              * @name Bisectorlines#line1
              */
             line1: {               //
-                strokeColor: 'black'
+                strokeColor: '#000000'
             },
 
             /**
@@ -2294,7 +2294,7 @@ define([
              * @name Bisectorlines#line2
              */
             line2: {               //
-                strokeColor: 'black'
+                strokeColor: '#000000'
             }
 
             /**#@-*/
@@ -2325,12 +2325,12 @@ define([
             smallWidth: 0.5,
 
             strokeWidth: 2,
-            strokeColor: 'blue',
-            fillColor: 'blue',
+            strokeColor: '#0000ff',
+            fillColor: '#0000ff',
             fillOpacity: 0.2,
             highlightStrokeWidth: 2,
-            highlightStrokeColor: 'blue',
-            highlightFillColor: 'blue',
+            highlightStrokeColor: '#0000ff',
+            highlightFillColor: '#0000ff',
             highlightFillOpacity: 0.1
 
             /**#@-*/
@@ -2422,7 +2422,7 @@ define([
              */
 
             chartStyle: 'line',
-            colors: ['#B02B2C', '#3F4C6B', '#C79810', '#D15600', '#FFFF88', '#C3D9FF', '#4096EE', '#008C00'],
+            colors: ['#B02B2C', '#3F4C6B', '#C79810', '#D15600', '#FFFF88', '#c3d9ff', '#4096EE', '#008C00'],
             highlightcolors: null,
             fillcolor: null,
             highlightonsector: false,
@@ -2488,7 +2488,7 @@ define([
             fillColor: 'none',
             highlightFillColor: 'none',
             strokeColor: '#0000ff',
-            highlightStrokeColor: '#C3D9FF',
+            highlightStrokeColor: '#c3d9ff',
 
             /**
              * Attributes for center point.
@@ -2537,7 +2537,7 @@ define([
             fillColor: 'none',
             highlightFillColor: 'none',
             strokeColor: '#0000ff',
-            highlightStrokeColor: '#C3D9FF',
+            highlightStrokeColor: '#c3d9ff',
 
             /**
              * Attributes for center point.
@@ -2562,7 +2562,7 @@ define([
             fillColor: 'none',
             highlightFillColor: 'none',
             strokeColor: '#0000ff',
-            highlightStrokeColor: '#C3D9FF',
+            highlightStrokeColor: '#c3d9ff',
 
             /**
              * Attributes for center point.
@@ -2586,12 +2586,12 @@ define([
              */
 
             useDirection: true,
-            fillColor: '#00FF00',
-            highlightFillColor: '#00FF00',
+            fillColor: '#00ff00',
+            highlightFillColor: '#00ff00',
             fillOpacity: 0.3,
             highlightFillOpacity: 0.3,
             strokeColor: '#0000ff',
-            highlightStrokeColor: '#C3D9FF',
+            highlightStrokeColor: '#c3d9ff',
 
             /**
              * Attributes for center point.
@@ -2617,7 +2617,7 @@ define([
             fillColor: 'none',
             highlightFillColor: 'none',
             strokeColor: '#0000ff',
-            highlightStrokeColor: '#C3D9FF',
+            highlightStrokeColor: '#c3d9ff',
 
             /**
              * Attributes for foci points.
@@ -2861,8 +2861,8 @@ define([
             hasGrid: false,
             gridX: 1,
             gridY: 1,
-            //strokeColor: '#C0C0C0',
-            strokeColor: '#C0C0C0',
+            //strokeColor: '#c0c0c0',
+            strokeColor: '#c0c0c0',
             strokeOpacity: 0.5,
             strokeWidth: 1,
             dash: 0,    // dashed grids slow down the iPad considerably
@@ -2905,7 +2905,7 @@ define([
 
             frozen: true,
             isLabel: false,
-            strokeColor: 'black',
+            strokeColor: '#000000',
             display: 'html',
             anchorX: 'left',
             anchorY: 'middle',
@@ -3018,7 +3018,7 @@ define([
             fillColor: 'none',
             highlightFillColor: 'none',
             strokeColor: '#0000ff',
-            highlightStrokeColor: '#C3D9FF',
+            highlightStrokeColor: '#c3d9ff',
 
             /**
              * Attributes of circle center.
@@ -3040,7 +3040,7 @@ define([
              * @visprop
              */
 
-            fillColor: 'red',
+            fillColor: '#ff0000',
             fillOpacity: 0.2,
             strokeColor: 'none',
 
@@ -3092,9 +3092,9 @@ define([
             fixed: true,
             strokeWidth: 0,
             strokeOpacity: 0,
-            fillColor: 'red',
+            fillColor: '#ff0000',
             fillOpacity: 0.4,
-            highlightFillColor: 'red',
+            highlightFillColor: '#ff0000',
             highlightFillOpacity: 0.2,
 
             /**
@@ -3107,7 +3107,7 @@ define([
             curveLeft: {    // Start point
                 visible: true,
                 withLabel: false,
-                color: 'red',
+                color: '#ff0000',
                 fillOpacity: 0.8,
                 layer: 9
             },
@@ -3136,7 +3136,7 @@ define([
             curveRight: {      // End point
                 visible: true,
                 withLabel: false,
-                color: 'red',
+                color: '#ff0000',
                 fillOpacity: 0.8,
                 layer: 9
             },
@@ -3228,10 +3228,10 @@ define([
              */
 
             visible: 'inherit',
-            strokeColor: 'black',
+            strokeColor: '#000000',
             strokeOpacity: 1,
             highlightStrokeOpacity: 0.666666,
-            highlightStrokeColor: 'black',
+            highlightStrokeColor: '#000000',
 
             fixed: true,
 
@@ -3341,9 +3341,9 @@ define([
              * (Circular) array of label colors.
              * @name: Legend#colors
              * @type Array
-             * @default "['#B02B2C', '#3F4C6B', '#C79810', '#D15600', '#FFFF88', '#C3D9FF', '#4096EE', '#008C00']"
+             * @default "['#B02B2C', '#3F4C6B', '#C79810', '#D15600', '#FFFF88', '#c3d9ff', '#4096EE', '#008C00']"
              */
-            colors: ['#B02B2C', '#3F4C6B', '#C79810', '#D15600', '#FFFF88', '#C3D9FF', '#4096EE', '#008C00'],
+            colors: ['#B02B2C', '#3F4C6B', '#C79810', '#D15600', '#FFFF88', '#c3d9ff', '#4096EE', '#008C00'],
 
             /**
              * Height (in px) of one legend entry
@@ -3913,10 +3913,10 @@ define([
             sizeUnit: 'screen',
 
             fillColor: '#ff0000',
-            highlightFillColor: '#EEEEEE',
+            highlightFillColor: '#eeeeee',
             strokeWidth: 2,
             strokeColor: '#ff0000',
-            highlightStrokeColor: '#C3D9FF',
+            highlightStrokeColor: '#c3d9ff',
 
             /**
              * If true, the point size changes on zoom events.
@@ -4122,8 +4122,8 @@ define([
              */
             hasInnerPoints: false,
 
-            fillColor: '#00FF00',
-            highlightFillColor: '#00FF00',
+            fillColor: '#00ff00',
+            highlightFillColor: '#00ff00',
             fillOpacity: 0.3,
             highlightFillOpacity: 0.3,
 
@@ -4266,8 +4266,8 @@ define([
              * @default false
              */
             hasInnerPoints: false,
-            fillColor: '#00FF00',
-            highlightFillColor: '#00FF00',
+            fillColor: '#00ff00',
+            highlightFillColor: '#00ff00',
             fillOpacity: 0.3,
             highlightFillOpacity: 0.3,
 
@@ -4343,8 +4343,8 @@ define([
              * @visprop
              */
 
-            fillColor: '#00FF00',
-            highlightFillColor: '#00FF00',
+            fillColor: '#00ff00',
+            highlightFillColor: '#00ff00',
             fillOpacity: 0.3,
             highlightFillOpacity: 0.3,
             highlightOnSector: false,
@@ -4758,9 +4758,9 @@ define([
              * @visprop
              */
 
-            fillColor: 'red',
+            fillColor: '#ff0000',
             fillOpacity: 0.4,
-            highlightFillColor: 'red',
+            highlightFillColor: '#ff0000',
             highlightFillOpacity: 0.3,
 
             borders: {
@@ -5053,8 +5053,8 @@ define([
              */
             isLabel: false,
 
-            strokeColor: 'black',
-            highlightStrokeColor: 'black',
+            strokeColor: '#000000',
+            highlightStrokeColor: '#000000',
             highlightStrokeOpacity: 0.666666,
 
             /**
