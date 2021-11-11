@@ -45,7 +45,8 @@
  * Stoyan Stefanov <sstoo@gmail.com> (see http://www.phpied.com/rgb-color-parser-in-javascript/)
  */
 
-define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
+define(['jxg', 'utils/type', 'math/math'], 
+    function (JXG, Type, Mat) {
 
     "use strict";
 
@@ -241,35 +242,6 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
                 ];
             }
         }];
-
-    /** 
-     * Bang Wong color palette, 
-     * optimized for various type 
-     * of color blindness.
-     * It contains values for
-     * <ul>
-     * <li> 'black'
-     * <li> 'lightgreen'
-     * <li> 'blue'
-     * <li> 'green'
-     * <li> 'yellow'
-     * <li> 'darkblue'
-     * <li> 'red'
-     * <li> 'purple'
-     * </ul>
-     * 
-     * See {@link https://www.nature.com/articles/nmeth.1618}
-     */
-    JXG.cPWong = {
-        black: '#000000',
-        lightgreen: '#E69F00',
-        blue: '#56B4E9',
-        green: '#009E73',
-        yellow: '#F0E442',
-        darkblue: '#0072B2',
-        red: '#D55E00',
-        purple: '#CC79A7'
-    };
 
     /**
      * Converts a valid HTML/CSS color string into a rgb value array. This is the base
@@ -901,6 +873,46 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
         // if not, return lightColor.
         return lightColor;
     };
+
+
+    JXG.extend(JXG, /** @lends JXG */ {
+        /** 
+         * Bang Wong color palette, 
+         * optimized for various type 
+         * of color blindness.
+         * It contains values for
+         * <ul>
+         * <li> 'black'
+         * <li> 'orange'
+         * <li> 'skyblue'
+         * <li> 'bluishgreen'
+         * <li> 'yellow'
+         * <li> 'darkblue'
+         * <li> 'vermillion'
+         * <li> 'reddishpurple'
+         * </ul>
+         * 
+         * See {@link https://www.nature.com/articles/nmeth.1618}
+         */
+        paletteWong: {
+            black: '#000000',
+            orange: '#E69F00',
+            skyblue: '#56B4E9',
+            bluishgreen: '#009E73',
+            yellow: '#F0E442',
+            darkblue: '#0072B2',
+            vermillion: '#D55E00',
+            reddishpurple: '#CC79A7',
+
+            blue: '#0072B2',
+            red: '#D55E00',   // vermillion
+            green: '#009E73', // bluishgreen
+            purple: '#CC79A7' // reddishpurple
+        },
+
+    });
+
+    JXG.palette = JXG.paletteWong;
 
     return JXG;
 });

@@ -895,7 +895,7 @@ define([
              * @see JXG.GeometryElement#highlightStrokeOpacity
              * @default {@link JXG.Options.elements.color#strokeColor}
              */
-            strokeColor: '#0000ff',
+            strokeColor: Color.palette.blue,
 
             /**
              * The stroke color of the given geometry element when the user moves the mouse over it.
@@ -918,7 +918,7 @@ define([
              * @see JXG.GeometryElement#highlightFillOpacity
              * @default {@link JXG.Options.elements.color#fillColor}
              */
-            fillColor: '#ff0000',
+            fillColor: Color.palette.red,
 
             /**
              * The fill color of the given geometry element when the mouse is pointed over it.
@@ -1849,7 +1849,7 @@ define([
             anchor: 'middle',
             face: '|',
             strokeWidth: 2,
-            strokeColor: '#0000ff',
+            strokeColor: Color.palette.blue,
             ticksDistance: 0.2
         },
 
@@ -2039,7 +2039,7 @@ define([
             label: {
                 position: 'top',
                 offset: [0, 0],
-                strokeColor: '#0000ff'
+                strokeColor: Color.palette.blue
             },
 
             /**
@@ -2091,7 +2091,7 @@ define([
             lastArrow: false,
             fillColor: 'none',
             highlightFillColor: 'none',
-            strokeColor: '#0000ff',
+            strokeColor: Color.palette.blue,
             highlightStrokeColor: '#c3d9ff',
             useDirection: false,
 
@@ -2325,12 +2325,12 @@ define([
             smallWidth: 0.5,
 
             strokeWidth: 2,
-            strokeColor: '#0000ff',
-            fillColor: '#0000ff',
+            strokeColor: Color.palette.blue,
+            fillColor: Color.palette.blue,
             fillOpacity: 0.2,
             highlightStrokeWidth: 2,
-            highlightStrokeColor: '#0000ff',
-            highlightFillColor: '#0000ff',
+            highlightStrokeColor: Color.palette.blue,
+            highlightFillColor: Color.palette.blue,
             highlightFillOpacity: 0.1
 
             /**#@-*/
@@ -2487,7 +2487,7 @@ define([
 
             fillColor: 'none',
             highlightFillColor: 'none',
-            strokeColor: '#0000ff',
+            strokeColor: Color.palette.blue,
             highlightStrokeColor: '#c3d9ff',
 
             /**
@@ -2536,7 +2536,7 @@ define([
 
             fillColor: 'none',
             highlightFillColor: 'none',
-            strokeColor: '#0000ff',
+            strokeColor: Color.palette.blue,
             highlightStrokeColor: '#c3d9ff',
 
             /**
@@ -2561,7 +2561,7 @@ define([
 
             fillColor: 'none',
             highlightFillColor: 'none',
-            strokeColor: '#0000ff',
+            strokeColor: Color.palette.blue,
             highlightStrokeColor: '#c3d9ff',
 
             /**
@@ -2586,11 +2586,11 @@ define([
              */
 
             useDirection: true,
-            fillColor: '#00ff00',
-            highlightFillColor: '#00ff00',
+            fillColor: Color.palette.yellow,
+            highlightFillColor: Color.palette.yellow,
             fillOpacity: 0.3,
             highlightFillOpacity: 0.3,
-            strokeColor: '#0000ff',
+            strokeColor: Color.palette.blue,
             highlightStrokeColor: '#c3d9ff',
 
             /**
@@ -2616,7 +2616,7 @@ define([
 
             fillColor: 'none',
             highlightFillColor: 'none',
-            strokeColor: '#0000ff',
+            strokeColor: Color.palette.blue,
             highlightStrokeColor: '#c3d9ff',
 
             /**
@@ -2673,7 +2673,7 @@ define([
         /* special curve options */
         curve: {
             strokeWidth: 1,
-            strokeColor: '#0000ff',
+            strokeColor: Color.palette.blue,
             fillColor: 'none',
             fixed: true,
 
@@ -3017,7 +3017,7 @@ define([
 
             fillColor: 'none',
             highlightFillColor: 'none',
-            strokeColor: '#0000ff',
+            strokeColor: Color.palette.blue,
             highlightStrokeColor: '#c3d9ff',
 
             /**
@@ -3040,7 +3040,7 @@ define([
              * @visprop
              */
 
-            fillColor: '#ff0000',
+            fillColor: Color.palette.red,
             fillOpacity: 0.2,
             strokeColor: 'none',
 
@@ -3092,9 +3092,9 @@ define([
             fixed: true,
             strokeWidth: 0,
             strokeOpacity: 0,
-            fillColor: '#ff0000',
-            fillOpacity: 0.4,
-            highlightFillColor: '#ff0000',
+            fillColor: Color.palette.red,
+            fillOpacity: 0.3,
+            highlightFillColor: Color.palette.red,
             highlightFillOpacity: 0.2,
 
             /**
@@ -3107,7 +3107,7 @@ define([
             curveLeft: {    // Start point
                 visible: true,
                 withLabel: false,
-                color: '#ff0000',
+                color: Color.palette.red,
                 fillOpacity: 0.8,
                 layer: 9
             },
@@ -3136,7 +3136,7 @@ define([
             curveRight: {      // End point
                 visible: true,
                 withLabel: false,
-                color: '#ff0000',
+                color: Color.palette.red,
                 fillOpacity: 0.8,
                 layer: 9
             },
@@ -3483,7 +3483,7 @@ define([
 
             fillColor: 'none',               // Important for VML on IE
             highlightFillColor: 'none',  // Important for VML on IE
-            strokeColor: '#0000ff',
+            strokeColor: Color.palette.blue,
             highlightStrokeColor: '#888888',
             withTicks: false,
 
@@ -3912,11 +3912,22 @@ define([
              */
             sizeUnit: 'screen',
 
-            fillColor: '#ff0000',
-            highlightFillColor: '#eeeeee',
             strokeWidth: 2,
-            strokeColor: '#ff0000',
-            highlightStrokeColor: '#c3d9ff',
+
+            fillColor: Color.palette.red,
+            strokeColor: Color.palette.red,
+            highlightFillColor: Color.palette.purple,
+            highlightStrokeColor: Color.palette.purple,
+            // strokeOpacity: 1.0,
+            // fillOpacity: 1.0,
+            // highlightFillOpacity: 0.5,
+            // highlightStrokeOpacity: 0.5,
+
+            // fillColor: '#ff0000',
+            // highlightFillColor: '#eeeeee',
+            // strokeWidth: 2,
+            // strokeColor: '#ff0000',
+            // highlightStrokeColor: '#c3d9ff',
 
             /**
              * If true, the point size changes on zoom events.
@@ -4122,10 +4133,12 @@ define([
              */
             hasInnerPoints: false,
 
-            fillColor: '#00ff00',
-            highlightFillColor: '#00ff00',
+            fillColor: Color.palette.yellow,
+            highlightFillColor: Color.palette.yellow,
+            // fillColor: '#00ff00',
+            // highlightFillColor: '#00ff00',
             fillOpacity: 0.3,
-            highlightFillOpacity: 0.3,
+            highlightFillOpacity: 0.2,
 
             /**
              * Is the polygon bordered by lines?
@@ -4164,8 +4177,8 @@ define([
                 layer: 9,
                 withLabel: false,
                 name: '',
-                strokeColor: '#ff0000',
-                fillColor: '#ff0000',
+                strokeColor: Color.palette.red,
+                fillColor: Color.palette.red,
                 fixed: false,
                 visible: 'inherit'
             },
@@ -4266,10 +4279,10 @@ define([
              * @default false
              */
             hasInnerPoints: false,
-            fillColor: '#00ff00',
-            highlightFillColor: '#00ff00',
+            fillColor: Color.palette.yellow,
+            highlightFillColor: Color.palette.yellow,
             fillOpacity: 0.3,
-            highlightFillOpacity: 0.3,
+            highlightFillOpacity: 0.2,
 
             /**
              * Is the polygon bordered by lines?
@@ -4306,8 +4319,8 @@ define([
             vertices: {
                 layer: 9,
                 withLabel: true,
-                strokeColor: '#ff0000',
-                fillColor: '#ff0000',
+                strokeColor: Color.palette.red,
+                fillColor: Color.palette.red,
                 fixed: false
             },
 
@@ -4332,7 +4345,7 @@ define([
 
             withLabel: false,
             fillOpacity: 0.3,
-            fillColor: '#ffff00'
+            fillColor: Color.palette.yellow
 
             /**#@-*/
         },
@@ -4343,8 +4356,11 @@ define([
              * @visprop
              */
 
-            fillColor: '#00ff00',
-            highlightFillColor: '#00ff00',
+            fillColor: Color.palette.yellow,
+            highlightFillColor: Color.palette.yellow,
+            // fillColor: '#00ff00',
+            // highlightFillColor: '#00ff00',
+
             fillOpacity: 0.3,
             highlightFillOpacity: 0.3,
             highlightOnSector: false,
@@ -4758,9 +4774,9 @@ define([
              * @visprop
              */
 
-            fillColor: '#ff0000',
+            fillColor: Color.palette.red,
             fillOpacity: 0.4,
-            highlightFillColor: '#ff0000',
+            highlightFillColor: Color.palette.red,
             highlightFillOpacity: 0.3,
 
             borders: {
@@ -5664,7 +5680,7 @@ define([
             arrow: {
                 strokeWidth: 2,
                 withLabel: false,
-                strokeColor: '#ff0000',
+                strokeColor: Color.palette.red,
                 lastArrow: true
             }
             /**#@-*/
