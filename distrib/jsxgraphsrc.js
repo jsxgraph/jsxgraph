@@ -851,7 +851,7 @@ define('base/constants',['jxg'], function (JXG) {
          * Constant: the currently used JSXGraph version.
          *
          * @name JXG.version
-         * @type {String}
+         * @type String
          */
         version: version,
 
@@ -860,21 +860,21 @@ define('base/constants',['jxg'], function (JXG) {
          * showCopyright is not set to false on board creation).
          *
          * @name JXG.licenseText
-         * @type {String}
+         * @type String
          */
         licenseText: 'JSXGraph v' + version + ' Copyright (C) see https://jsxgraph.org',
 
         /**
          *  Constant: user coordinates relative to the coordinates system defined by the bounding box.
          *  @name JXG.COORDS_BY_USER
-         *  @type {Number}
+         *  @type Number
          */
         COORDS_BY_USER: 0x0001,
 
         /**
          *  Constant: screen coordinates in pixel relative to the upper left corner of the div element.
          *  @name JXG.COORDS_BY_SCREEN
-         *  @type {Number}
+         *  @type Number
          */
         COORDS_BY_SCREEN: 0x0002,
 
@@ -2375,7 +2375,7 @@ define('utils/env',['jxg', 'utils/type'], function (JXG, Type) {
     JXG.extendConstants(JXG, /** @lends JXG */{
         /**
          * Determines the property that stores the relevant information in the event object.
-         * @type {String}
+         * @type String
          * @default 'touches'
          */
         touchProperty: 'touches',
@@ -4690,7 +4690,7 @@ define('base/coords',[
         /**
          * If true, this coordinates object will emit update events every time
          * the coordinates are set.
-         * @type {boolean}
+         * @type boolean
          * @default true
          */
         this.emitter = !Type.exists(emitter) || emitter;
@@ -7480,14 +7480,14 @@ define('math/qdt',['math/math', 'utils/type'], function (Mat, Type) {
             /**
              * The maximum number of points stored in a quad tree node
              * before it is subdivided.
-             * @type {Number}
+             * @type Number
              * @default 10
              */
             this.capacity = 10;
 
             /**
              * Point storage.
-             * @type {Array}
+             * @type Array
              */
             this.points = [];
 
@@ -23375,7 +23375,8 @@ define('math/complex',['jxg', 'utils/type'], function (JXG, Type) {
  * Stoyan Stefanov <sstoo@gmail.com> (see http://www.phpied.com/rgb-color-parser-in-javascript/)
  */
 
-define('utils/color',['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
+define('utils/color',['jxg', 'utils/type', 'math/math'], 
+    function (JXG, Type, Mat) {
 
     "use strict";
 
@@ -23528,6 +23529,7 @@ define('utils/color',['jxg', 'utils/type', 'math/math'], function (JXG, Type, Ma
             yellow: 'ffff00',
             yellowgreen: '9acd32'
         },
+
         // array of color definition objects
         colorDefs = [{
             re: /^\s*rgba\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*([\d\.]{1,3})\s*\)\s*$/,
@@ -24202,6 +24204,47 @@ define('utils/color',['jxg', 'utils/type', 'math/math'], function (JXG, Type, Ma
         return lightColor;
     };
 
+
+    JXG.extend(JXG, /** @lends JXG */ {
+        /** 
+         * Bang Wong color palette, 
+         * optimized for various type 
+         * of color blindness.
+         * It contains values for
+         * <ul>
+         * <li> 'black'
+         * <li> 'orange'
+         * <li> 'skyblue'
+         * <li> 'bluishgreen'
+         * <li> 'yellow'
+         * <li> 'darkblue'
+         * <li> 'vermillion'
+         * <li> 'reddishpurple'
+         * </ul>
+         * 
+         * See {@link https://www.nature.com/articles/nmeth.1618} and
+         * {@link https://davidmathlogic.com/colorblind/#%23000000-%23E69F00-%2356B4E9-%23009E73-%23F0E442-%230072B2-%23D55E00-%23CC79A7}
+         */
+        paletteWong: {
+            black: '#000000',
+            orange: '#E69F00',
+            skyblue: '#56B4E9',
+            bluishgreen: '#009E73',
+            yellow: '#F0E442',
+            darkblue: '#0072B2',
+            vermillion: '#D55E00',
+            reddishpurple: '#CC79A7',
+
+            blue: '#0072B2',
+            red: '#D55E00',   // vermillion
+            green: '#009E73', // bluishgreen
+            purple: '#CC79A7' // reddishpurple
+        },
+
+    });
+
+    JXG.palette = JXG.paletteWong;
+
     return JXG;
 });
 
@@ -24420,7 +24463,7 @@ define('options',[
              * axis:true in {@link JXG.JSXGraph#initBoard}.
              *
              * @name JXG.Board#defaultAxes
-             * @type {Object}
+             * @type Object
              * @default {x: {name:'x'}, y: {name: 'y'}}
              *
              */
@@ -24506,7 +24549,7 @@ define('options',[
              * </ul>
              *
              * @name JXG.Board#screenshot
-             * @type {Object}
+             * @type Object
              */
             screenshot: {
                 scale: 1.0,
@@ -24564,7 +24607,7 @@ define('options',[
              *
              * @name JXG.Board#fullscreen
              * @see JXG.Board#showFullscreen
-             * @type {Object}
+             * @type Object
              */
             fullscreen: {
                 symbol: '\u26f6', // '\u25a1'
@@ -25063,7 +25106,7 @@ define('options',[
          * </pre>
          * These settings are overruled by the CSS class 'JXG_navigation'.
          * @deprecated
-         * @type {Object}
+         * @type Object
          * @name JXG.Options#navbar
          *
          */
@@ -25102,7 +25145,7 @@ define('options',[
              * @see JXG.GeometryElement#highlightStrokeOpacity
              * @default {@link JXG.Options.elements.color#strokeColor}
              */
-            strokeColor: '#0000ff',
+            strokeColor: Color.palette.blue,
 
             /**
              * The stroke color of the given geometry element when the user moves the mouse over it.
@@ -25114,7 +25157,7 @@ define('options',[
              * @see JXG.GeometryElement#highlightStrokeOpacity
              * @default {@link JXG.Options.elements.color#highlightStrokeColor}
              */
-            highlightStrokeColor: '#C3D9FF',
+            highlightStrokeColor: '#c3d9ff',
 
             /**
              * The fill color of this geometry element.
@@ -25125,7 +25168,7 @@ define('options',[
              * @see JXG.GeometryElement#highlightFillOpacity
              * @default {@link JXG.Options.elements.color#fillColor}
              */
-            fillColor: 'red',
+            fillColor: Color.palette.red,
 
             /**
              * The fill color of the given geometry element when the mouse is pointed over it.
@@ -25742,7 +25785,7 @@ define('options',[
              * Attributes for the ticks labels
              *
              * @name Ticks#label
-             * @type {Object}
+             * @type Object
              * @default {}
              *
              */
@@ -25987,7 +26030,7 @@ define('options',[
              * Tick face for ticks of finite length.  By default (face: '|') this is a straight line.
              * Possible other values are '<' and '>'. These faces are used in
              * {@link JXG.Hatch} for hatch marking parallel lines.
-             * @type {String}
+             * @type String
              * @name{Ticks#face}
              * @see hatch
              * @default '|'
@@ -26016,7 +26059,7 @@ define('options',[
 
             strokeOpacity: 1,
             strokeWidth: 1,
-            strokeColor: 'black',
+            strokeColor: '#000000',
             highlightStrokeColor: '#888888',
             fillColor: 'none',
             highlightFillColor: 'none',
@@ -26056,7 +26099,7 @@ define('options',[
             anchor: 'middle',
             face: '|',
             strokeWidth: 2,
-            strokeColor: 'blue',
+            strokeColor: Color.palette.blue,
             ticksDistance: 0.2
         },
 
@@ -26078,7 +26121,7 @@ define('options',[
          * }
          * </pre>
          *
-         * @type {Object}
+         * @type Object
          * @name JXG.Options#precision
          * @see JXG.GeometryElement#precision
          */
@@ -26118,7 +26161,7 @@ define('options',[
          *   trace: 0
          * }
          * </pre>
-         * @type {Object}
+         * @type Object
          * @name JXG.Options#layer
          */
         layer: {
@@ -26209,9 +26252,9 @@ define('options',[
              */
             orthoSensitivity: 1.0,
 
-            fillColor: '#FF7F00',
-            highlightFillColor: '#FF7F00',
-            strokeColor: '#FF7F00',
+            fillColor: '#ff7f00',
+            highlightFillColor: '#ff7f00',
+            strokeColor: '#ff7f00',
             fillOpacity: 0.3,
             highlightFillOpacity: 0.3,
 
@@ -26236,7 +26279,7 @@ define('options',[
             dot: {
                 visible: false,
                 strokeColor: 'none',
-                fillColor: 'black',
+                fillColor: '#000000',
                 size: 2,
                 face: 'o',
                 withLabel: false,
@@ -26246,7 +26289,7 @@ define('options',[
             label: {
                 position: 'top',
                 offset: [0, 0],
-                strokeColor: '#0000FF'
+                strokeColor: Color.palette.blue
             },
 
             /**
@@ -26298,8 +26341,8 @@ define('options',[
             lastArrow: false,
             fillColor: 'none',
             highlightFillColor: 'none',
-            strokeColor: '#0000ff',
-            highlightStrokeColor: '#C3D9FF',
+            strokeColor: Color.palette.blue,
+            highlightStrokeColor: '#c3d9ff',
             useDirection: false,
 
             /**
@@ -26491,7 +26534,7 @@ define('options',[
              * @name Bisectorlines#line1
              */
             line1: {               //
-                strokeColor: 'black'
+                strokeColor: '#000000'
             },
 
             /**
@@ -26501,7 +26544,7 @@ define('options',[
              * @name Bisectorlines#line2
              */
             line2: {               //
-                strokeColor: 'black'
+                strokeColor: '#000000'
             }
 
             /**#@-*/
@@ -26527,17 +26570,17 @@ define('options',[
              *
              * @type Number
              * @name Boxplot#smallWidth
-             * default: 0.5
+             * @default: 0.5
              */
             smallWidth: 0.5,
 
             strokeWidth: 2,
-            strokeColor: 'blue',
-            fillColor: 'blue',
+            strokeColor: Color.palette.blue,
+            fillColor: Color.palette.blue,
             fillOpacity: 0.2,
             highlightStrokeWidth: 2,
-            highlightStrokeColor: 'blue',
-            highlightFillColor: 'blue',
+            highlightStrokeColor: Color.palette.blue,
+            highlightFillColor: Color.palette.blue,
             highlightFillOpacity: 0.1
 
             /**#@-*/
@@ -26594,7 +26637,7 @@ define('options',[
              *
              * @name isArrayOfCoordinates
              * @memberOf Cardinalspline.prototype
-             * @type {Boolean}
+             * @type Boolean
              * @default false
              */
             isArrayOfCoordinates: false,
@@ -26629,7 +26672,7 @@ define('options',[
              */
 
             chartStyle: 'line',
-            colors: ['#B02B2C', '#3F4C6B', '#C79810', '#D15600', '#FFFF88', '#C3D9FF', '#4096EE', '#008C00'],
+            colors: ['#B02B2C', '#3F4C6B', '#C79810', '#D15600', '#FFFF88', '#c3d9ff', '#4096EE', '#008C00'],
             highlightcolors: null,
             fillcolor: null,
             highlightonsector: false,
@@ -26694,8 +26737,8 @@ define('options',[
 
             fillColor: 'none',
             highlightFillColor: 'none',
-            strokeColor: '#0000ff',
-            highlightStrokeColor: '#C3D9FF',
+            strokeColor: Color.palette.blue,
+            highlightStrokeColor: '#c3d9ff',
 
             /**
              * Attributes for center point.
@@ -26743,8 +26786,8 @@ define('options',[
 
             fillColor: 'none',
             highlightFillColor: 'none',
-            strokeColor: '#0000ff',
-            highlightStrokeColor: '#C3D9FF',
+            strokeColor: Color.palette.blue,
+            highlightStrokeColor: '#c3d9ff',
 
             /**
              * Attributes for center point.
@@ -26768,8 +26811,8 @@ define('options',[
 
             fillColor: 'none',
             highlightFillColor: 'none',
-            strokeColor: '#0000ff',
-            highlightStrokeColor: '#C3D9FF',
+            strokeColor: Color.palette.blue,
+            highlightStrokeColor: '#c3d9ff',
 
             /**
              * Attributes for center point.
@@ -26793,12 +26836,12 @@ define('options',[
              */
 
             useDirection: true,
-            fillColor: '#00FF00',
-            highlightFillColor: '#00FF00',
+            fillColor: Color.palette.yellow,
+            highlightFillColor: Color.palette.yellow,
             fillOpacity: 0.3,
             highlightFillOpacity: 0.3,
-            strokeColor: '#0000ff',
-            highlightStrokeColor: '#C3D9FF',
+            strokeColor: Color.palette.blue,
+            highlightStrokeColor: '#c3d9ff',
 
             /**
              * Attributes for center point.
@@ -26823,8 +26866,8 @@ define('options',[
 
             fillColor: 'none',
             highlightFillColor: 'none',
-            strokeColor: '#0000ff',
-            highlightStrokeColor: '#C3D9FF',
+            strokeColor: Color.palette.blue,
+            highlightStrokeColor: '#c3d9ff',
 
             /**
              * Attributes for foci points.
@@ -26880,7 +26923,7 @@ define('options',[
         /* special curve options */
         curve: {
             strokeWidth: 1,
-            strokeColor: '#0000ff',
+            strokeColor: Color.palette.blue,
             fillColor: 'none',
             fixed: true,
 
@@ -27068,8 +27111,8 @@ define('options',[
             hasGrid: false,
             gridX: 1,
             gridY: 1,
-            //strokeColor: '#C0C0C0',
-            strokeColor: '#C0C0C0',
+            //strokeColor: '#c0c0c0',
+            strokeColor: '#c0c0c0',
             strokeOpacity: 0.5,
             strokeWidth: 1,
             dash: 0,    // dashed grids slow down the iPad considerably
@@ -27112,7 +27155,7 @@ define('options',[
 
             frozen: true,
             isLabel: false,
-            strokeColor: 'black',
+            strokeColor: '#000000',
             display: 'html',
             anchorX: 'left',
             anchorY: 'middle',
@@ -27224,8 +27267,8 @@ define('options',[
 
             fillColor: 'none',
             highlightFillColor: 'none',
-            strokeColor: '#0000ff',
-            highlightStrokeColor: '#C3D9FF',
+            strokeColor: Color.palette.blue,
+            highlightStrokeColor: '#c3d9ff',
 
             /**
              * Attributes of circle center.
@@ -27247,7 +27290,7 @@ define('options',[
              * @visprop
              */
 
-            fillColor: 'red',
+            fillColor: Color.palette.red,
             fillOpacity: 0.2,
             strokeColor: 'none',
 
@@ -27299,9 +27342,9 @@ define('options',[
             fixed: true,
             strokeWidth: 0,
             strokeOpacity: 0,
-            fillColor: 'red',
-            fillOpacity: 0.4,
-            highlightFillColor: 'red',
+            fillColor: Color.palette.red,
+            fillOpacity: 0.3,
+            highlightFillColor: Color.palette.red,
             highlightFillOpacity: 0.2,
 
             /**
@@ -27314,7 +27357,7 @@ define('options',[
             curveLeft: {    // Start point
                 visible: true,
                 withLabel: false,
-                color: 'red',
+                color: Color.palette.red,
                 fillOpacity: 0.8,
                 layer: 9
             },
@@ -27343,7 +27386,7 @@ define('options',[
             curveRight: {      // End point
                 visible: true,
                 withLabel: false,
-                color: 'red',
+                color: Color.palette.red,
                 fillOpacity: 0.8,
                 layer: 9
             },
@@ -27435,10 +27478,10 @@ define('options',[
              */
 
             visible: 'inherit',
-            strokeColor: 'black',
+            strokeColor: '#000000',
             strokeOpacity: 1,
             highlightStrokeOpacity: 0.666666,
-            highlightStrokeColor: 'black',
+            highlightStrokeColor: '#000000',
 
             fixed: true,
 
@@ -27486,7 +27529,7 @@ define('options',[
              *
              * @name Label#autoPosition
              * @see Label#offset
-             * @type {Boolean}
+             * @type Boolean
              * @default false
              *
              * @example
@@ -27548,9 +27591,9 @@ define('options',[
              * (Circular) array of label colors.
              * @name: Legend#colors
              * @type Array
-             * @default "['#B02B2C', '#3F4C6B', '#C79810', '#D15600', '#FFFF88', '#C3D9FF', '#4096EE', '#008C00']"
+             * @default "['#B02B2C', '#3F4C6B', '#C79810', '#D15600', '#FFFF88', '#c3d9ff', '#4096EE', '#008C00']"
              */
-            colors: ['#B02B2C', '#3F4C6B', '#C79810', '#D15600', '#FFFF88', '#C3D9FF', '#4096EE', '#008C00'],
+            colors: ['#B02B2C', '#3F4C6B', '#C79810', '#D15600', '#FFFF88', '#c3d9ff', '#4096EE', '#008C00'],
 
             /**
              * Height (in px) of one legend entry
@@ -27690,7 +27733,7 @@ define('options',[
 
             fillColor: 'none',               // Important for VML on IE
             highlightFillColor: 'none',  // Important for VML on IE
-            strokeColor: '#0000ff',
+            strokeColor: Color.palette.blue,
             highlightStrokeColor: '#888888',
             withTicks: false,
 
@@ -27826,7 +27869,7 @@ define('options',[
              * Not available for VML renderer.
              * [lineCap description]
              * @name Line#lineCap
-             * @type {String}
+             * @type String
              * @default 'butt'
              */
             lineCap: 'butt'
@@ -27878,7 +27921,7 @@ define('options',[
              *
              * @name isArrayOfCoordinates
              * @memberOf Metapostspline.prototype
-             * @type {Boolean}
+             * @type Boolean
              * @default false
              */
             isArrayOfCoordinates: false,
@@ -28119,11 +28162,22 @@ define('options',[
              */
             sizeUnit: 'screen',
 
-            fillColor: '#ff0000',
-            highlightFillColor: '#EEEEEE',
             strokeWidth: 2,
-            strokeColor: '#ff0000',
-            highlightStrokeColor: '#C3D9FF',
+
+            fillColor: Color.palette.red,
+            strokeColor: Color.palette.red,
+            highlightFillColor: Color.palette.purple,
+            highlightStrokeColor: Color.palette.purple,
+            // strokeOpacity: 1.0,
+            // fillOpacity: 1.0,
+            // highlightFillOpacity: 0.5,
+            // highlightStrokeOpacity: 0.5,
+
+            // fillColor: '#ff0000',
+            // highlightFillColor: '#eeeeee',
+            // strokeWidth: 2,
+            // strokeColor: '#ff0000',
+            // highlightStrokeColor: '#c3d9ff',
 
             /**
              * If true, the point size changes on zoom events.
@@ -28329,10 +28383,12 @@ define('options',[
              */
             hasInnerPoints: false,
 
-            fillColor: '#00FF00',
-            highlightFillColor: '#00FF00',
+            fillColor: Color.palette.yellow,
+            highlightFillColor: Color.palette.yellow,
+            // fillColor: '#00ff00',
+            // highlightFillColor: '#00ff00',
             fillOpacity: 0.3,
-            highlightFillOpacity: 0.3,
+            highlightFillOpacity: 0.2,
 
             /**
              * Is the polygon bordered by lines?
@@ -28371,8 +28427,8 @@ define('options',[
                 layer: 9,
                 withLabel: false,
                 name: '',
-                strokeColor: '#ff0000',
-                fillColor: '#ff0000',
+                strokeColor: Color.palette.red,
+                fillColor: Color.palette.red,
                 fixed: false,
                 visible: 'inherit'
             },
@@ -28473,10 +28529,10 @@ define('options',[
              * @default false
              */
             hasInnerPoints: false,
-            fillColor: '#00FF00',
-            highlightFillColor: '#00FF00',
+            fillColor: Color.palette.yellow,
+            highlightFillColor: Color.palette.yellow,
             fillOpacity: 0.3,
-            highlightFillOpacity: 0.3,
+            highlightFillOpacity: 0.2,
 
             /**
              * Is the polygon bordered by lines?
@@ -28513,8 +28569,8 @@ define('options',[
             vertices: {
                 layer: 9,
                 withLabel: true,
-                strokeColor: '#ff0000',
-                fillColor: '#ff0000',
+                strokeColor: Color.palette.red,
+                fillColor: Color.palette.red,
                 fixed: false
             },
 
@@ -28539,7 +28595,7 @@ define('options',[
 
             withLabel: false,
             fillOpacity: 0.3,
-            fillColor: '#ffff00'
+            fillColor: Color.palette.yellow
 
             /**#@-*/
         },
@@ -28550,8 +28606,11 @@ define('options',[
              * @visprop
              */
 
-            fillColor: '#00FF00',
-            highlightFillColor: '#00FF00',
+            fillColor: Color.palette.yellow,
+            highlightFillColor: Color.palette.yellow,
+            // fillColor: '#00ff00',
+            // highlightFillColor: '#00ff00',
+
             fillOpacity: 0.3,
             highlightFillOpacity: 0.3,
             highlightOnSector: false,
@@ -28708,7 +28767,7 @@ define('options',[
             /**
              * If not null, this replaces the part "name = " in the slider label.
              * Possible types: string, number or function.
-             * @type {String}
+             * @type String
              * @name suffixLabel
              * @memberOf Slider.prototype
              * @default null
@@ -28720,7 +28779,7 @@ define('options',[
             /**
              * If not null, this is appended to the value in the slider label.
              * Possible types: string, number or function.
-             * @type {String}
+             * @type String
              * @name unitLabel
              * @memberOf Slider.prototype
              * @default null
@@ -28732,7 +28791,7 @@ define('options',[
             /**
              * If not null, this is appended to the value and to unitLabel in the slider label.
              * Possible types: string, number or function.
-             * @type {String}
+             * @type String
              * @name postLabel
              * @memberOf Slider.prototype
              * @default null
@@ -28965,9 +29024,9 @@ define('options',[
              * @visprop
              */
 
-            fillColor: 'red',
+            fillColor: Color.palette.red,
             fillOpacity: 0.4,
-            highlightFillColor: 'red',
+            highlightFillColor: Color.palette.red,
             highlightFillOpacity: 0.3,
 
             borders: {
@@ -29260,8 +29319,8 @@ define('options',[
              */
             isLabel: false,
 
-            strokeColor: 'black',
-            highlightStrokeColor: 'black',
+            strokeColor: '#000000',
+            highlightStrokeColor: '#000000',
             highlightStrokeOpacity: 0.666666,
 
             /**
@@ -29871,7 +29930,7 @@ define('options',[
             arrow: {
                 strokeWidth: 2,
                 withLabel: false,
-                strokeColor: '#ff0000',
+                strokeColor: Color.palette.red,
                 lastArrow: true
             }
             /**#@-*/
@@ -29883,7 +29942,7 @@ define('options',[
          * It is used in {@link JXG.GeometryElement#setAttribute} and in
          * the constructor {@link JXG.GeometryElement}.
          * Attention: In Options.js abbreviations are not allowed.
-         * @type {Object}
+         * @type Object
          * @name JXG.Options#shortcuts
          *
          */
@@ -33300,7 +33359,7 @@ define('base/element',[
 
         /**
          * The position of this element inside the {@link JXG.Board#objectsList}.
-         * @type {Number}
+         * @type Number
          * @default -1
          * @private
          */
@@ -34694,6 +34753,8 @@ define('base/element',[
          * Dimensions of the smallest rectangle enclosing the element.
          * @returns {Array} The coordinates of the enclosing rectangle in a format
          * like the bounding box in {@link JXG.Board#setBoundingBox}.
+         * 
+         * @returns {Array} similar to {@link JXG.Board#setBoundingBox}.
          */
         bounds: function () {
             return [0, 0, 0, 0];
@@ -35505,7 +35566,7 @@ define('base/coordselement',[
          * To prevent double updates, {@link JXG.CoordsElement#needsUpdateFromParent}
          * is set to false in updateGlider() and reset to true in the following call to
          * {@link JXG.CoordsElement#updateGliderFromParent}
-         * @type {Boolean}
+         * @type Boolean
          */
         this.needsUpdateFromParent = true;
 
@@ -37404,7 +37465,7 @@ define('base/text',[
          * Width and height of the the text element in pixel.
          *
          * @private
-         * @type {Array}
+         * @type Array
          */
         this.size = [1.0, 1.0];
         this.id = this.board.setId(this, 'T');
@@ -42190,11 +42251,16 @@ define('base/board',[
         /**
          * A reference to this boards renderer.
          * @type JXG.AbstractRenderer
+         * @name JXG.Board#renderer
+         * @private
+         * @ignore
          */
         this.renderer = renderer;
 
         /**
          * Grids keeps track of all grids attached to this board.
+         * @type Array
+         * @private
          */
         this.grids = [];
 
@@ -42220,6 +42286,7 @@ define('base/board',[
          * usrCoords and scrCoords. usrCoords always equals [1, 0, 0] and scrCoords
          * stores the boards origin in homogeneous screen coordinates.
          * @type Object
+         * @private
          */
         this.origin = {};
         this.origin.usrCoords = [1, 0, 0];
@@ -42228,44 +42295,56 @@ define('base/board',[
         /**
          * Zoom factor in X direction. It only stores the zoom factor to be able
          * to get back to 100% in zoom100().
+         * @name JXG.Board.zoomX
          * @type Number
+         * @private
+         * @ignore
          */
         this.zoomX = zoomX;
 
         /**
          * Zoom factor in Y direction. It only stores the zoom factor to be able
          * to get back to 100% in zoom100().
+         * @name JXG.Board.zoomY
          * @type Number
+         * @private
+         * @ignore
          */
         this.zoomY = zoomY;
 
         /**
          * The number of pixels which represent one unit in user-coordinates in x direction.
          * @type Number
+         * @private
          */
         this.unitX = unitX * this.zoomX;
 
         /**
          * The number of pixels which represent one unit in user-coordinates in y direction.
          * @type Number
+         * @private
          */
         this.unitY = unitY * this.zoomY;
 
         /**
          * Keep aspect ratio if bounding box is set and the width/height ratio differs from the
          * width/height ratio of the canvas.
+         * @type Boolean
+         * @private
          */
         this.keepaspectratio = false;
 
         /**
          * Canvas width.
          * @type Number
+         * @private
          */
         this.canvasWidth = canvasWidth;
 
         /**
          * Canvas Height
          * @type Number
+         * @private
          */
         this.canvasHeight = canvasHeight;
 
@@ -42395,15 +42474,15 @@ define('base/board',[
 
         /**
          * References to the object that is dragged with the mouse on the board.
-         * @type {@link JXG.GeometryElement}.
-         * @see {JXG.Board#touches}
+         * @type JXG.GeometryElement
+         * @see JXG.Board#touches
          */
         this.mouse = {};
 
         /**
          * Keeps track on touched elements, like {@link JXG.Board#mouse} does for mouse events.
          * @type Array
-         * @see {JXG.Board#mouse}
+         * @see JXG.Board#mouse
          */
         this.touches = [];
 
@@ -42505,7 +42584,7 @@ define('base/board',[
 
         /**
          * A flag which stores if the board registered pointer events.
-         * @type {Boolean}
+         * @type Boolean
          * @default false
          */
         this.hasPointerHandlers = false;
@@ -42526,14 +42605,14 @@ define('base/board',[
 
         /**
          * A flag which tells us if the board has a pointerUp event registered at the moment.
-         * @type {Boolean}
+         * @type Boolean
          * @default false
          */
         this.hasPointerUp = false;
 
         /**
          * Offset for large coords elements like images
-         * @type {Array}
+         * @type Array
          * @private
          * @default [0, 0]
          */
@@ -42541,31 +42620,36 @@ define('base/board',[
 
         /**
          * Stores the input device used in the last down or move event.
-         * @type {String}
+         * @type String
          * @private
          * @default 'mouse'
          */
         this._inputDevice = 'mouse';
 
+        /**
+         * Keeps a list of pointer devices which are currently touching the screen.
+         * @type Array
+         * @private
+         */
         this._board_touches = [];
 
         /**
          * A flag which tells us if the board is in the selecting mode
-         * @type {Boolean}
+         * @type Boolean
          * @default false
          */
         this.selectingMode = false;
 
         /**
          * A flag which tells us if the user is selecting
-         * @type {Boolean}
+         * @type Boolean
          * @default false
          */
         this.isSelecting = false;
 
         /**
          * A flag which tells us if the user is scrolling the viewport
-         * @type {Boolean}
+         * @type Boolean
          * @private
          * @default false
          * @see JXG.Board#scrollListener
@@ -42574,7 +42658,7 @@ define('base/board',[
 
         /**
          * A flag which tells us if a resize is in process
-         * @type {Boolean}
+         * @type Boolean
          * @private
          * @default false
          * @see JXG.Board#resizeListener
@@ -42583,7 +42667,7 @@ define('base/board',[
 
         /**
          * A bounding box for the selection
-         * @type {Array}
+         * @type Array
          * @default [ [0,0], [0,0] ]
          */
         this.selectingBox = [[0, 0], [0, 0]];
@@ -43975,7 +44059,7 @@ define('base/board',[
 
         /**
          *
-         * Check if pointer event is already registered in this._board_touches.
+         * Check if pointer event is already registered in {@link JXG.Board#_board_touches}.
          *
          * @param  {Object} evt Event object
          * @return {Boolean} true if down event has already been sent.
@@ -43995,7 +44079,7 @@ define('base/board',[
         /**
          *
          * Store the position of a pointer event.
-         * If not yet done, registers a pointer event in this._board_touches.
+         * If not yet done, registers a pointer event in {@link JXG.Board#_board_touches}.
          * Allows to follow the path of that finger on the screen.
          * Only two simultaneous touches are supported.
          *
@@ -44028,10 +44112,10 @@ define('base/board',[
         },
 
         /**
-         * Deregisters a pointer event in this._board_touches.
-         * The finger has been lifted from the screen.
+         * Deregisters a pointer event in {@link JXG.Board#_board_touches}.
+         * It happens if a finger has been lifted from the screen.
          *
-         * @param {Object}} evt Event object
+         * @param {Object} evt Event object
          * @returns {JXG.Board} Reference to the board
          * @private
          */
@@ -44048,7 +44132,7 @@ define('base/board',[
         },
 
         /**
-         * Remove all registered fingers from this._board_touches.
+         * Remove all registered fingers from {@link JXG.Board#_board_touches}.
          * This might be necessary if too many fingers have been registered.
          * @returns {JXG.Board} Reference to the board
          * @private
@@ -44949,6 +45033,7 @@ define('base/board',[
                 this.mode = this.BOARD_MODE_NONE;
                 result = true;
             } else {
+                /** @ignore */
                 this.mouse = {
                     obj: null,
                     targets: [{
@@ -45073,6 +45158,7 @@ define('base/board',[
             }
 
             // release dragged mouse object
+            /** @ignore */
             this.mouse = null;
         },
 
@@ -45323,7 +45409,7 @@ define('base/board',[
 
             // If bounding box is not yet initialized, do it now.
             if (isNaN(this.getBoundingBox()[0])) {
-                this.setBoundingBox(this.attr.boundingbox, this.keepaspectratio);
+                this.setBoundingBox(this.attr.boundingbox, this.keepaspectratio, 'keep');
             }
 
             // Do nothing if the dimension did not change since being visible
@@ -45463,13 +45549,12 @@ define('base/board',[
                 this.intersectionObserver = new IntersectionObserver(function(entries) {
                     // If bounding box is not yet initialized, do it now.
                     if (isNaN(that.getBoundingBox()[0])) {
-                        that.setBoundingBox(that.attr.boundingbox, that.keepaspectratio);
                         that.updateContainerDims();
                     }
                 }, options);
                 this.intersectionObserver.observe(that.containerObj);
             } catch (err) {
-                console.log('Info: IntersectionObserver not available in this browser');
+                console.log('JSXGraph: IntersectionObserver not available in this browser.');
             }
         },
 
@@ -45504,7 +45589,7 @@ define('base/board',[
              * Infobox close to points in which the points' coordinates are displayed.
              * This is simply a JXG.Text element. Access through board.infobox.
              * Uses CSS class .JXGinfobox.
-             * @type {JXG.Text}
+             * @type JXG.Text
              *
              */
             this.infobox = this.create('text', [0, 0, '0,0'], attr);
@@ -46033,9 +46118,7 @@ define('base/board',[
                 tr = (bb[1] - y) / (bb[1] - bb[3]);
             }
 
-            this.setBoundingBox([bb[0] + dX * lr, bb[1] - dY * tr, bb[2] - dX * (1 - lr), bb[3] + dY * (1 - tr)], this.keepaspectratio);
-            this.zoomX *= zX;
-            this.zoomY *= zY;
+            this.setBoundingBox([bb[0] + dX * lr, bb[1] - dY * tr, bb[2] - dX * (1 - lr), bb[3] + dY * (1 - tr)], this.keepaspectratio, 'update');
             return this.applyZoom();
         },
 
@@ -46066,9 +46149,7 @@ define('base/board',[
                 tr = (bb[1] - y) / (bb[1] - bb[3]);
             }
 
-            this.setBoundingBox([bb[0] + dX * lr, bb[1] - dY * tr, bb[2] - dX * (1 - lr), bb[3] + dY * (1 - tr)], this.keepaspectratio);
-            this.zoomX /= zX;
-            this.zoomY /= zY;
+            this.setBoundingBox([bb[0] + dX * lr, bb[1] - dY * tr, bb[2] - dX * (1 - lr), bb[3] + dY * (1 - tr)], this.keepaspectratio, 'update');
 
             return this.applyZoom();
         },
@@ -46086,17 +46167,13 @@ define('base/board',[
             var bb, dX, dY;
 
             if (Type.exists(this.attr.boundingbox)) {
-                this.setBoundingBox(this.attr.boundingbox, this.keepaspectratio);
-                this.zoomX = Type.exists(this.attr.zoomx) ? this.attr.zoomx : 1.0;
-                this.zoomY = Type.exists(this.attr.zoomy) ? this.attr.zoomy : 1.0;
+                this.setBoundingBox(this.attr.boundingbox, this.keepaspectratio, 'reset');
             } else {
                 // Board has been set up with unitX/Y and originX/Y
                 bb = this.getBoundingBox();
                 dX = (bb[2] - bb[0]) * (1.0 - this.zoomX) * 0.5;
                 dY = (bb[1] - bb[3]) * (1.0 - this.zoomY) * 0.5;
-                this.setBoundingBox([bb[0] + dX, bb[1] - dY, bb[2] - dX, bb[3] + dY], this.keepaspectratio);
-                this.zoomX = 1.0;
-                this.zoomY = 1.0;
+                this.setBoundingBox([bb[0] + dX, bb[1] - dY, bb[2] - dX, bb[3] + dY], this.keepaspectratio, 'reset');
             }
             return this.applyZoom();
         },
@@ -46134,10 +46211,7 @@ define('base/board',[
             borderX = border / this.unitX;
             borderY = border / this.unitY;
 
-            this.zoomX = 1.0;
-            this.zoomY = 1.0;
-
-            this.setBoundingBox([minX - borderX, maxY + borderY, maxX + borderX, minY - borderY], this.keepaspectratio);
+            this.setBoundingBox([minX - borderX, maxY + borderY, maxX + borderX, minY - borderY], this.keepaspectratio, 'update');
 
             return this.applyZoom();
         },
@@ -46170,53 +46244,12 @@ define('base/board',[
             }
 
             if (Type.isArray(newBBox)) {
-                this.zoomX = 1.0;
-                this.zoomY = 1.0;
                 cx = 0.5 * (newBBox[0] + newBBox[2]);
                 cy = 0.5 * (newBBox[1] + newBBox[3]);
                 dx = 1.5 * (newBBox[2] - newBBox[0]) * 0.5;
                 dy = 1.5 * (newBBox[1] - newBBox[3]) * 0.5;
                 d = Math.max(dx, dy);
-                this.setBoundingBox([cx - d, cy + d, cx + d, cy - d], this.keepaspectratio);
-            }
-
-            return this;
-        },
-
-        zoomElementsOld: function (elements) {
-            var i, j, e, box,
-                newBBox = [0, 0, 0, 0],
-                dir = [1, -1, -1, 1];
-
-            if (!Type.isArray(elements) || elements.length === 0) {
-                return this;
-            }
-
-            for (i = 0; i < elements.length; i++) {
-                e = this.select(elements[i]);
-
-                box = e.bounds();
-                if (Type.isArray(box)) {
-                    if (Type.isArray(newBBox)) {
-                        for (j = 0; j < 4; j++) {
-                            if (dir[j] * box[j] < dir[j] * newBBox[j]) {
-                                newBBox[j] = box[j];
-                            }
-                        }
-                    } else {
-                        newBBox = box;
-                    }
-                }
-            }
-
-            if (Type.isArray(newBBox)) {
-                for (j = 0; j < 4; j++) {
-                    newBBox[j] -= dir[j];
-                }
-
-                this.zoomX = 1.0;
-                this.zoomY = 1.0;
-                this.setBoundingBox(newBBox, this.keepaspectratio);
+                this.setBoundingBox([cx - d, cy + d, cx + d, cy - d], this.keepaspectratio, 'update');
             }
 
             return this;
@@ -46469,7 +46502,7 @@ define('base/board',[
             this.renderer.resize(this.canvasWidth, this.canvasHeight);
 
             if (!dontSetBoundingBox) {
-                this.setBoundingBox(box, this.keepaspectratio);
+                this.setBoundingBox(box, this.keepaspectratio, 'keep');
             }
 
             return this;
@@ -46956,10 +46989,13 @@ define('base/board',[
          * @param {Array} bbox New bounding box [x1,y1,x2,y2]
          * @param {Boolean} [keepaspectratio=false] If set to true, the aspect ratio will be 1:1, but
          * the resulting viewport may be larger.
+         * @param {String} [setZoom='reset'] Reset, keep or update the zoom level of the board. 'reset'
+         * sets {@link JXG.Board#zoomX} and {@link JXG.Board#zoomY} to the start values (or 1.0).
+         * 'update' adapts these values accoring to the new bounding box and 'keep' does nothing.
          * @returns {JXG.Board} Reference to the board
          */
-        setBoundingBox: function (bbox, keepaspectratio) {
-            var h, w,
+        setBoundingBox: function (bbox, keepaspectratio, setZoom) {
+            var h, w, ux, uy,
                 dim = Env.getDimensions(this.container, this.document);
 
             if (!Type.isArray(bbox)) {
@@ -46971,6 +47007,13 @@ define('base/board',[
                 bbox[3] < this.maxboundingbox[3]) {
                 return this;
             }
+
+            if (!Type.exists(setZoom)) {
+                setZoom = 'reset';
+            }
+
+            ux = this.unitX;
+            uy = this.unitY;
 
             this.canvasWidth = parseInt(dim.width, 10);
             this.canvasHeight = parseInt(dim.height, 10);
@@ -46991,8 +47034,16 @@ define('base/board',[
                 this.unitY = h / (bbox[1] - bbox[3]);
                 this.keepaspectratio = false;
             }
-
+            
             this.moveOrigin(-this.unitX * bbox[0], this.unitY * bbox[1]);
+
+            if (setZoom === 'update') {
+                this.zoomX *= this.unitX / ux;
+                this.zoomY *= this.unitY / uy;
+            } else if (setZoom === 'reset') {
+                this.zoomX = Type.exists(this.attr.zoomx) ? this.attr.zoomx : 1.0;
+                this.zoomY = Type.exists(this.attr.zoomy) ? this.attr.zoomy : 1.0;
+            }
 
             return this;
         },
@@ -47664,7 +47715,7 @@ define('base/board',[
          * @name JXG.Board#move
          * @param {Event} e The browser's event object.
          * @param {Number} mode The mode the board currently is in
-         * @see {JXG.Board#mode}
+         * @see JXG.Board#mode
          */
         __evt__move: function (e, mode) { },
 
@@ -47674,7 +47725,7 @@ define('base/board',[
          * @name JXG.Board#mousemove
          * @param {Event} e The browser's event object.
          * @param {Number} mode The mode the board currently is in
-         * @see {JXG.Board#mode}
+         * @see JXG.Board#mode
          */
         __evt__mousemove: function (e, mode) { },
 
@@ -47684,7 +47735,7 @@ define('base/board',[
          * @name JXG.Board#penmove
          * @param {Event} e The browser's event object.
          * @param {Number} mode The mode the board currently is in
-         * @see {JXG.Board#mode}
+         * @see JXG.Board#mode
          */
         __evt__penmove: function (e, mode) { },
 
@@ -47695,7 +47746,7 @@ define('base/board',[
          * @name JXG.Board#pointermove
          * @param {Event} e The browser's event object.
          * @param {Number} mode The mode the board currently is in
-         * @see {JXG.Board#mode}
+         * @see JXG.Board#mode
          */
         __evt__pointermove: function (e, mode) { },
 
@@ -47705,7 +47756,7 @@ define('base/board',[
          * @name JXG.Board#touchmove
          * @param {Event} e The browser's event object.
          * @param {Number} mode The mode the board currently is in
-         * @see {JXG.Board#mode}
+         * @see JXG.Board#mode
          */
         __evt__touchmove: function (e, mode) { },
 
@@ -56916,7 +56967,7 @@ define('base/group',[
          * It has to be kept updated in this class "by hand"-
          *
          * @private
-         * @type {Object}
+         * @type Object
          * @see JXG.Group#_updateCoordsCache
          */
         this.coords = {};
@@ -61108,7 +61159,7 @@ define('base/curve',[
          * Array holding the x-coordinates of a data plot.
          * This array can be updated during run time by overwriting
          * the method {@link JXG.Curve#updateDataArray}.
-         * @type {array}
+         * @type array
          */
         this.dataX = null;
 
@@ -61116,7 +61167,7 @@ define('base/curve',[
          * Array holding the y-coordinates of a data plot.
          * This array can be updated during run time by overwriting
          * the method {@link JXG.Curve#updateDataArray}.
-         * @type {array}
+         * @type array
          */
         this.dataY = null;
 
@@ -61132,7 +61183,7 @@ define('base/curve',[
         /**
          * Stores a quad tree if it is required. The quad tree is generated in the curve
          * updates and can be used to speed up the hasPoint method.
-         * @type {JXG.Math.Quadtree}
+         * @type JXG.Math.Quadtree
          */
         this.qdt = null;
 
@@ -62769,6 +62820,9 @@ define('base/curve',[
         } else {
             points = [];
 
+            /**
+             * @ignore
+             */
             getPointLike = function (ii) {
                 return {
                     X: function () { return q[ii][0]; },
@@ -62983,6 +63037,10 @@ define('base/curve',[
             points = Type.providePoints(board, q, attributes, 'metapostspline', ['points']);
         } else {
             points = [];
+
+            /**
+             * @ignore
+             */
             getPointLike = function (ii) {
                 return {
                     X: function () { return q[ii][0]; },
@@ -63581,11 +63639,11 @@ define('base/curve',[
      * is controlled by the attribute "dir".
      * @pseudo
      * @description
-     * @name BoxPlot
+     * @name Boxplot
      * @param {Array} quantiles Array conatining at least five quantiles. The elements can be of type number, function or string.
      * @param {Number|Function} axis Axis position of the box plot
      * @param {Number|Function} width Width of the rectangle part of the box plot. The width of the first and 4th quantile
-     * is relative to this width and can becontrolled by the attribute "smallWidth".
+     * is relative to this width and can be controlled by the attribute "smallWidth".
      * @augments JXG.Curve
      * @constructor
      * @type JXG.Curve
@@ -65499,9 +65557,15 @@ define('element/sector',[
                     p.moveTo(Mat.matVecMult(t1.matrix, q.coords.usrCoords));
 
                     if (Type.isFunction(val)) {
+                        /**
+                         * @ignore
+                         */
                         val2 = function() { return Math.PI * 2 - val(); };
                     } else {
-                        val2 = function() { return Math.PI * 2 - val; };
+                        /**
+                         * @ignore
+                         */
+                         val2 = function() { return Math.PI * 2 - val; };
                     }
                     t2 = this.board.create('transform', [val2, this.center], {type: 'rotate'});
                     p.coords.on('update', function() {
@@ -69930,13 +69994,13 @@ define('base/image',[
 
         /**
          * Array of length two containing [width, height] of the image in pixel.
-         * @type {array}
+         * @type array
          */
         this.size = [Math.abs(this.usrSize[0] * board.unitX), Math.abs(this.usrSize[1] * board.unitY)];
 
         /**
          * 'href' of the image. This might be an URL, but also a data-uri is allowed.
-         * @type {string}
+         * @type string
          */
         this.url = url;
 
@@ -73575,13 +73639,13 @@ define('base/ticks',[
 
         /**
          * Stores the ticks coordinates
-         * @type {Array}
+         * @type Array
          */
         this.ticks = [];
 
         /**
          * Distance between two major ticks in user coordinates
-         * @type {Number}
+         * @type Number
          */
         this.ticksDelta = 1;
 
@@ -73595,13 +73659,13 @@ define('base/ticks',[
 
         /**
          * A list of labels which have to be displayed in updateRenderer.
-         * @type {Array}
+         * @type Array
          */
         this.labelData = [];
 
         /**
          * To ensure the uniqueness of label ids this counter is used.
-         * @type {number}
+         * @type number
          */
         this.labelCounter = 0;
 
@@ -73721,22 +73785,23 @@ define('base/ticks',[
                 return this;
             }
 
-            // horizontal line
             if (Math.abs(this.line.stdform[1]) < Mat.eps &&
                 Math.abs(c.usrCoords[1] * oldc.usrCoords[1]) > Mat.eps) {
 
+                // Horizontal line
                 dx = oldc.usrCoords[1] / c.usrCoords[1];
                 bb[0] *= dx;
                 bb[2] *= dx;
-                this.board.setBoundingBox(bb, this.board.keepaspectratio);
-            // vertical line
+                this.board.setBoundingBox(bb, this.board.keepaspectratio, 'update');
+
             } else if (Math.abs(this.line.stdform[2]) < Mat.eps &&
                        Math.abs(c.usrCoords[2] * oldc.usrCoords[2]) > Mat.eps) {
 
+                // Vertical line
                 dy = oldc.usrCoords[2] / c.usrCoords[2];
                 bb[3] *= dy;
                 bb[1] *= dy;
-                this.board.setBoundingBox(bb, this.board.keepaspectratio);
+                this.board.setBoundingBox(bb, this.board.keepaspectratio, 'update');
             }
 
             return this;
@@ -76514,15 +76579,6 @@ define('utils/dump',['jxg', 'utils/type'], function (JXG, Type) {
                 len = board.objectsList.length;
 
             this.addMarkers(board, 'dumped', false);
-
-            // This has been moved to toJavaScript and toJessie
-            /*
-            methods.push({
-                obj: '$board',
-                method: 'setBoundingBox',
-                params: [board.getBoundingBox(), true]
-            });
-            */
 
             for (e = 0; e < len; e++) {
                 obj = board.objectsList[e];
