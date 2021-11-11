@@ -112,9 +112,13 @@ describe("Test JXG util functions", function () {
     });
 
     it("exists", function () {
-        var o, b = '1';
+        var o, 
+            b = '1',
+            x = {a: 1};
         expect(JXG.exists(b)).toBeTrue();
         expect(JXG.exists(o)).toBeFalse();
+        expect(JXG.exists(x.a)).toBeTrue();
+        expect(JXG.exists(x.b)).toBeFalse();
     });
 
     it("str2Bool", function () {

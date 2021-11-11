@@ -130,8 +130,19 @@ define(['jxg'], function (JXG) {
         GENTYPE_ABC: 1, // unused
         GENTYPE_AXIS: 2,
         GENTYPE_MID: 3,
-        /** @deprecated, now use {@link JXG.GENTYPE_REFLECTION_ON_LINE} */  GENTYPE_REFLECTION: 4,
-        /** @deprecated, now use {@link JXG.GENTYPE_REFLECTION_ON_POINT} */ GENTYPE_MIRRORELEMENT: 5,
+
+        /** 
+         * @ignore
+         * @deprecated, now use {@link JXG.GENTYPE_REFLECTION_ON_LINE} 
+         * 
+         */  
+        GENTYPE_REFLECTION: 4,
+        /** 
+         * @ignore 
+         * @deprecated, now use {@link JXG.GENTYPE_REFLECTION_ON_POINT} 
+         */ 
+        GENTYPE_MIRRORELEMENT: 5,
+
         GENTYPE_REFLECTION_ON_LINE: 4,
         GENTYPE_REFLECTION_ON_POINT: 5,
         GENTYPE_TANGENT: 6,
@@ -144,7 +155,11 @@ define(['jxg'], function (JXG) {
         GENTYPE_GLIDER: 13,
         GENTYPE_INTERSECTION: 14,
         GENTYPE_CIRCLE: 15,
-        /** @deprecated NOT USED ANY MORE SINCE SKETCHOMETRY 2.0 (only for old constructions needed) */ GENTYPE_CIRCLE2POINTS: 16,
+        /** 
+         * @ignore @deprecated NOT USED ANY MORE SINCE SKETCHOMETRY 2.0 (only for old constructions needed) 
+         */ 
+        GENTYPE_CIRCLE2POINTS: 16,
+
         GENTYPE_LINE: 17,
         GENTYPE_TRIANGLE: 18,
         GENTYPE_QUADRILATERAL: 19,
@@ -176,7 +191,12 @@ define(['jxg'], function (JXG) {
         GENTYPE_ABLATION: 45,
         GENTYPE_MIGRATE: 46,
         GENTYPE_VECTORCOPY: 47,
-        GENTYPE_POLYGONCOPY: 48,
+        GENTYPE_POLYGONCOPY: 48,    /**
+        * Constants
+        * @name Constants
+        * @namespace
+        */
+   
         //        GENTYPE_TRANSFORM: 48, // unused
         // 49 ... 50 // unused ...
 

@@ -176,7 +176,10 @@ define([
         Type.merge(attr, Type.copyAttributes(attributes, board.options, 'comb', 'curve'));
         c = board.create('curve', [[0], [0]], attr);
 
-        c.updateDataArray = function() {
+        /**
+         * @ignore
+         */
+         c.updateDataArray = function() {
             var s = 0,
                 max_s = p1.Dist(p2),
                 cs, sn, dx, dy,

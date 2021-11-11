@@ -53,6 +53,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          * Determines the property that stores the relevant information in the event object.
          * @type String
          * @default 'touches'
+         * @private
          */
         touchProperty: 'touches',
     });

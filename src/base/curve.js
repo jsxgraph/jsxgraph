@@ -2127,6 +2127,9 @@ define([
             return this.sum;
         };
 
+        /**
+         * @ignore
+         */
         c.updateDataArray = function () {
             var u = Numerics.riemann(f, n(), type(), this.minX(), this.maxX());
             this.dataX = u[0];
@@ -2193,7 +2196,10 @@ define([
         attr.curvetype = 'plot';
         c = board.create('curve', [[0], [0]], attr);
 
-        c.updateDataArray = function () {
+        /**
+         * @ignore
+         */
+         c.updateDataArray = function () {
             var i, step, t, el, pEl, x, y, from, savetrace,
                 le = attr.numberpoints,
                 savePos = glider.position,
@@ -2317,7 +2323,10 @@ define([
 
         attr = Type.copyAttributes(attributes, board.options, 'stepfunction');
         c = board.create('curve', parents, attr);
-        c.updateDataArray = function () {
+        /**
+         * @ignore
+         */
+         c.updateDataArray = function () {
             var i, j = 0,
                 len = this.xterm.length;
 
@@ -2448,7 +2457,10 @@ define([
         }
 
         c = board.create('curve', [[], []], attributes);
-        c.updateDataArray = function () {
+        /**
+         * @ignore
+         */
+         c.updateDataArray = function () {
             var a = JXG.Math.Clip.intersection(parents[0], parents[1], this.board);
             this.dataX = a[0];
             this.dataY = a[1];
@@ -2499,7 +2511,10 @@ define([
         }
 
         c = board.create('curve', [[], []], attributes);
-        c.updateDataArray = function () {
+        /**
+         * @ignore
+         */
+         c.updateDataArray = function () {
             var a = JXG.Math.Clip.union(parents[0], parents[1], this.board);
             this.dataX = a[0];
             this.dataY = a[1];
@@ -2550,7 +2565,10 @@ define([
         }
 
         c = board.create('curve', [[], []], attributes);
-        c.updateDataArray = function () {
+        /**
+         * @ignore
+         */
+         c.updateDataArray = function () {
             var a = JXG.Math.Clip.difference(parents[0], parents[1], this.board);
             this.dataX = a[0];
             this.dataY = a[1];

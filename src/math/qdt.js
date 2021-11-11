@@ -42,58 +42,53 @@ define(['math/math', 'utils/type'], function (Mat, Type) {
 
     "use strict";
 
-    var
+    /**
+     * @name JXG.Math.Quadtree
+     * 
+     * Instantiate a new quad tree.
+     * @param {Array} bbox Bounding box of the new quad (sub)tree.
+     * @constructor
+     */
+    Mat.Quadtree = function (bbox) {
         /**
-         * Instantiate a new quad tree.
-         * @param {Array} bbox Bounding box of the new quad (sub)tree.
-         * @constructor
+         * The maximum number of points stored in a quad tree node
+         * before it is subdivided.
+         * @type Number
+         * @default 10
          */
-        Quadtree = function (bbox) {
-            /**
-             * The maximum number of points stored in a quad tree node
-             * before it is subdivided.
-             * @type Number
-             * @default 10
-             */
-            this.capacity = 10;
+        this.capacity = 10;
+        /**
+         * Point storage.
+         * @type Array
+         */
+        this.points = [];
+        this.xlb = bbox[0];
+        this.xub = bbox[2];
+        this.ylb = bbox[3];
+        this.yub = bbox[1];
+        /**
+         * In a subdivided quad tree this represents the top left subtree.
+         * @type JXG.Math.Quadtree
+         */
+        this.northWest = null;
+        /**
+         * In a subdivided quad tree this represents the top right subtree.
+         * @type JXG.Math.Quadtree
+         */
+        this.northEast = null;
+        /**
+         * In a subdivided quad tree this represents the bottom right subtree.
+         * @type JXG.Math.Quadtree
+         */
+        this.southEast = null;
+        /**
+         * In a subdivided quad tree this represents the bottom left subtree.
+         * @type JXG.Math.Quadtree
+         */
+        this.southWest = null;
+    };
 
-            /**
-             * Point storage.
-             * @type Array
-             */
-            this.points = [];
-
-            this.xlb = bbox[0];
-            this.xub = bbox[2];
-            this.ylb = bbox[3];
-            this.yub = bbox[1];
-
-            /**
-             * In a subdivided quad tree this represents the top left subtree.
-             * @type {JXG.Quadtree}
-             */
-            this.northWest = null;
-
-            /**
-             * In a subdivided quad tree this represents the top right subtree.
-             * @type {JXG.Quadtree}
-             */
-            this.northEast = null;
-
-            /**
-             * In a subdivided quad tree this represents the bottom right subtree.
-             * @type {JXG.Quadtree}
-             */
-            this.southEast = null;
-
-            /**
-             * In a subdivided quad tree this represents the bottom left subtree.
-             * @type {JXG.Quadtree}
-             */
-            this.southWest = null;
-        };
-
-    Type.extend(Quadtree.prototype, /** @lends JXG.Quadtree.prototype */ {
+    Type.extend(Mat.Quadtree.prototype, /** @lends JXG.Math.Quadtree.prototype */ {
         /**
          * Checks if the given coordinates are inside the quad tree.
          * @param {Number} x
@@ -164,6 +159,7 @@ define(['math/math', 'utils/type'], function (Mat, Type) {
 
         /**
          * Internal _query method that lacks adjustment of the parameter.
+         * @name JXG.Math.Quadtree#_query
          * @param {Number} x
          * @param {Number} y
          * @returns {Boolean|JXG.Quadtree} The quad tree if the point is found, false
@@ -205,6 +201,7 @@ define(['math/math', 'utils/type'], function (Mat, Type) {
 
         /**
          * Retrieve the smallest quad tree that contains the given point.
+         * @name JXG.Math.Quadtree#_query
          * @param {JXG.Coords|Number} xp
          * @param {Number} y
          * @returns {Boolean|JXG.Quadtree} The quad tree if the point is found, false
@@ -227,7 +224,5 @@ define(['math/math', 'utils/type'], function (Mat, Type) {
         }
     });
 
-    Mat.Quadtree = Quadtree;
-
-    return Quadtree;
+    return Mat.Quadtree;
 });

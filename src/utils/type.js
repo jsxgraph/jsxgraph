@@ -196,18 +196,27 @@ define([
          * @param {Boolean} [checkEmptyString=false] If set to true, it is also checked whether v is not equal to ''.
          * @returns {Boolean} True, if v is neither undefined nor null.
          */
-        exists: (function (undef) {
-            return function (v, checkEmptyString) {
-                var result = !(v === undef || v === null);
+        exists: function (v, checkEmptyString) {
+            var result = !(v == undefined || v === null);
+            checkEmptyString = checkEmptyString || false;
+            
+            if (checkEmptyString) {
+                return result && v !== '';
+            }
+            return result;
+        },
+        // exists: (function (undef) {
+        //     return function (v, checkEmptyString) {
+        //         var result = !(v === undef || v === null);
 
-                checkEmptyString = checkEmptyString || false;
+        //         checkEmptyString = checkEmptyString || false;
                 
-                if (checkEmptyString) {
-                    return result && v !== '';
-                }
-                return result;
-            };
-        }()),
+        //         if (checkEmptyString) {
+        //             return result && v !== '';
+        //         }
+        //         return result;
+        //     };
+        // }()),
 
         /**
          * Checks if v is an empty object or empty.

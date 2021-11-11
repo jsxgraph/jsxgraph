@@ -112,7 +112,7 @@ define([
         c.setParents([p.id]);
 
         /**
-         * should be documented in JXG.Curve
+         * Should be documented in JXG.Curve
          * @ignore
          */
         c.updateDataArray = function () {

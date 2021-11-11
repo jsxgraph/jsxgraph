@@ -153,7 +153,13 @@ define([
 
         t.update();
 
-        t.generatePolynomial = function () {
+        /**
+         * Used to generate a polynomial for the orthogonal projection
+         * @name Orthogonalprojection#generatePolynomial
+         * @returns {Array} An array containing the generated polynomial.
+         * @private
+         */
+         t.generatePolynomial = function () {
             /*
              *  Perpendicular takes point P and line L and creates point T and line M:
              *
@@ -353,7 +359,13 @@ define([
 
         t.update();
 
-        t.generatePolynomial = function () {
+        /**
+         * Used to generate a polynomial for the perpendicular point
+         * @name PerpendicularPoint#generatePolynomial
+         * @returns {Array} An array containing the generated polynomial.
+         * @private
+         */
+         t.generatePolynomial = function () {
             /*
              *  Perpendicular takes point P and line L and creates point T and line M:
              *
@@ -588,7 +600,13 @@ define([
 
         t.prepareUpdate().update();
 
-        t.generatePolynomial = function () {
+        /**
+         * Used to generate a polynomial for the midpoint.
+         * @name Midpoint#generatePolynomial
+         * @returns {Array} An array containing the generated polynomial.
+         * @private
+         */
+         t.generatePolynomial = function () {
             /*
              *  Midpoint takes two point A and B or line L (with points P and Q) and creates point T:
              *
@@ -2627,7 +2645,10 @@ define([
         c.elType = 'grid';
         c.type = Const.OBJECT_TYPE_GRID;
 
-        c.updateDataArray = function () {
+        /**
+         * @ignore
+         */
+         c.updateDataArray = function () {
             var start, end, i, topLeft, bottomRight,
                 gridX = Type.evaluate(this.visProp.gridx),
                 gridY = Type.evaluate(this.visProp.gridy);

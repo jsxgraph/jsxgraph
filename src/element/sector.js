@@ -198,7 +198,10 @@ define([
         };
 
         if (type === '2lines') {
-            el.Radius = function () {
+            /**
+             * @ignore 
+             */
+             el.Radius = function () {
                 var r = Type.evaluate(parents[4]);
                 if (r === 'auto') {
                     return this.autoRadius();
@@ -579,7 +582,10 @@ define([
          * @param {Number, Function} value New radius.
          */
         el.setRadius = function (val) {
-            el.Radius = function () {
+            /**
+             * @ignore 
+             */
+             el.Radius = function () {
                 var r = Type.evaluate(val);
                 if (r === 'auto') {
                     return this.autoRadius();
@@ -965,8 +971,11 @@ define([
              */
             el.pointsquare = el.point3 = el.anglepoint = points[2];
 
-            // Set the angle radius, also @see @link Sector#autoRadius
+            /**
+             * @ignore 
+             */
             el.Radius = function () {
+                // Set the angle radius, also @see @link Sector#autoRadius
                 var r = Type.evaluate(radius);
                 if (r === 'auto') {
                     return el.autoRadius();
