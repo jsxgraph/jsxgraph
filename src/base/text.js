@@ -99,7 +99,7 @@ define([
          * Width and height of the the text element in pixel.
          *
          * @private
-         * @type {Array}
+         * @type Array
          */
         this.size = [1.0, 1.0];
         this.id = this.board.setId(this, 'T');

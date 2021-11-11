@@ -5638,7 +5638,7 @@ define([
          * @name JXG.Board#move
          * @param {Event} e The browser's event object.
          * @param {Number} mode The mode the board currently is in
-         * @see {JXG.Board#mode}
+         * @see JXG.Board#mode
          */
         __evt__move: function (e, mode) { },
 
@@ -5648,7 +5648,7 @@ define([
          * @name JXG.Board#mousemove
          * @param {Event} e The browser's event object.
          * @param {Number} mode The mode the board currently is in
-         * @see {JXG.Board#mode}
+         * @see JXG.Board#mode
          */
         __evt__mousemove: function (e, mode) { },
 
@@ -5658,7 +5658,7 @@ define([
          * @name JXG.Board#penmove
          * @param {Event} e The browser's event object.
          * @param {Number} mode The mode the board currently is in
-         * @see {JXG.Board#mode}
+         * @see JXG.Board#mode
          */
         __evt__penmove: function (e, mode) { },
 
@@ -5669,7 +5669,7 @@ define([
          * @name JXG.Board#pointermove
          * @param {Event} e The browser's event object.
          * @param {Number} mode The mode the board currently is in
-         * @see {JXG.Board#mode}
+         * @see JXG.Board#mode
          */
         __evt__pointermove: function (e, mode) { },
 
@@ -5679,7 +5679,7 @@ define([
          * @name JXG.Board#touchmove
          * @param {Event} e The browser's event object.
          * @param {Number} mode The mode the board currently is in
-         * @see {JXG.Board#mode}
+         * @see JXG.Board#mode
          */
         __evt__touchmove: function (e, mode) { },
 

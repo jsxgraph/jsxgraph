@@ -51,7 +51,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
     JXG.extendConstants(JXG, /** @lends JXG */{
         /**
          * Determines the property that stores the relevant information in the event object.
-         * @type {String}
+         * @type String
          * @default 'touches'
          */
         touchProperty: 'touches',

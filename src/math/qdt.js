@@ -52,14 +52,14 @@ define(['math/math', 'utils/type'], function (Mat, Type) {
             /**
              * The maximum number of points stored in a quad tree node
              * before it is subdivided.
-             * @type {Number}
+             * @type Number
              * @default 10
              */
             this.capacity = 10;
 
             /**
              * Point storage.
-             * @type {Array}
+             * @type Array
              */
             this.points = [];
 

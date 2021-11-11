@@ -90,7 +90,7 @@ define([
         /**
          * If true, this coordinates object will emit update events every time
          * the coordinates are set.
-         * @type {boolean}
+         * @type boolean
          * @default true
          */
         this.emitter = !Type.exists(emitter) || emitter;

@@ -93,7 +93,7 @@ define([
          * It has to be kept updated in this class "by hand"-
          *
          * @private
-         * @type {Object}
+         * @type Object
          * @see JXG.Group#_updateCoordsCache
          */
         this.coords = {};

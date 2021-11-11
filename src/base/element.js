@@ -231,7 +231,7 @@ define([
 
         /**
          * The position of this element inside the {@link JXG.Board#objectsList}.
-         * @type {Number}
+         * @type Number
          * @default -1
          * @private
          */

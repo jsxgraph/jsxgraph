@@ -892,7 +892,8 @@ define(['jxg', 'utils/type', 'math/math'],
          * <li> 'reddishpurple'
          * </ul>
          * 
-         * See {@link https://www.nature.com/articles/nmeth.1618}
+         * See {@link https://www.nature.com/articles/nmeth.1618} and
+         * {@link https://davidmathlogic.com/colorblind/#%23000000-%23E69F00-%2356B4E9-%23009E73-%23F0E442-%230072B2-%23D55E00-%23CC79A7}
          */
         paletteWong: {
             black: '#000000',

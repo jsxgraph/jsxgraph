@@ -856,7 +856,7 @@ define([
          * </pre>
          * These settings are overruled by the CSS class 'JXG_navigation'.
          * @deprecated
-         * @type {Object}
+         * @type Object
          * @name JXG.Options#navbar
          *
          */
@@ -1535,7 +1535,7 @@ define([
              * Attributes for the ticks labels
              *
              * @name Ticks#label
-             * @type {Object}
+             * @type Object
              * @default {}
              *
              */
@@ -1780,7 +1780,7 @@ define([
              * Tick face for ticks of finite length.  By default (face: '|') this is a straight line.
              * Possible other values are '<' and '>'. These faces are used in
              * {@link JXG.Hatch} for hatch marking parallel lines.
-             * @type {String}
+             * @type String
              * @name{Ticks#face}
              * @see hatch
              * @default '|'
@@ -1871,7 +1871,7 @@ define([
          * }
          * </pre>
          *
-         * @type {Object}
+         * @type Object
          * @name JXG.Options#precision
          * @see JXG.GeometryElement#precision
          */
@@ -1911,7 +1911,7 @@ define([
          *   trace: 0
          * }
          * </pre>
-         * @type {Object}
+         * @type Object
          * @name JXG.Options#layer
          */
         layer: {
@@ -2387,7 +2387,7 @@ define([
              *
              * @name isArrayOfCoordinates
              * @memberOf Cardinalspline.prototype
-             * @type {Boolean}
+             * @type Boolean
              * @default false
              */
             isArrayOfCoordinates: false,
@@ -3279,7 +3279,7 @@ define([
              *
              * @name Label#autoPosition
              * @see Label#offset
-             * @type {Boolean}
+             * @type Boolean
              * @default false
              *
              * @example
@@ -3619,7 +3619,7 @@ define([
              * Not available for VML renderer.
              * [lineCap description]
              * @name Line#lineCap
-             * @type {String}
+             * @type String
              * @default 'butt'
              */
             lineCap: 'butt'
@@ -3671,7 +3671,7 @@ define([
              *
              * @name isArrayOfCoordinates
              * @memberOf Metapostspline.prototype
-             * @type {Boolean}
+             * @type Boolean
              * @default false
              */
             isArrayOfCoordinates: false,
@@ -4517,7 +4517,7 @@ define([
             /**
              * If not null, this replaces the part "name = " in the slider label.
              * Possible types: string, number or function.
-             * @type {String}
+             * @type String
              * @name suffixLabel
              * @memberOf Slider.prototype
              * @default null
@@ -4529,7 +4529,7 @@ define([
             /**
              * If not null, this is appended to the value in the slider label.
              * Possible types: string, number or function.
-             * @type {String}
+             * @type String
              * @name unitLabel
              * @memberOf Slider.prototype
              * @default null
@@ -4541,7 +4541,7 @@ define([
             /**
              * If not null, this is appended to the value and to unitLabel in the slider label.
              * Possible types: string, number or function.
-             * @type {String}
+             * @type String
              * @name postLabel
              * @memberOf Slider.prototype
              * @default null
@@ -5692,7 +5692,7 @@ define([
          * It is used in {@link JXG.GeometryElement#setAttribute} and in
          * the constructor {@link JXG.GeometryElement}.
          * Attention: In Options.js abbreviations are not allowed.
-         * @type {Object}
+         * @type Object
          * @name JXG.Options#shortcuts
          *
          */

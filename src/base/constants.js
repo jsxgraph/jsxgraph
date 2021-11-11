@@ -52,7 +52,7 @@ define(['jxg'], function (JXG) {
          * Constant: the currently used JSXGraph version.
          *
          * @name JXG.version
-         * @type {String}
+         * @type String
          */
         version: version,
 
@@ -61,21 +61,21 @@ define(['jxg'], function (JXG) {
          * showCopyright is not set to false on board creation).
          *
          * @name JXG.licenseText
-         * @type {String}
+         * @type String
          */
         licenseText: 'JSXGraph v' + version + ' Copyright (C) see https://jsxgraph.org',
 
         /**
          *  Constant: user coordinates relative to the coordinates system defined by the bounding box.
          *  @name JXG.COORDS_BY_USER
-         *  @type {Number}
+         *  @type Number
          */
         COORDS_BY_USER: 0x0001,
 
         /**
          *  Constant: screen coordinates in pixel relative to the upper left corner of the div element.
          *  @name JXG.COORDS_BY_SCREEN
-         *  @type {Number}
+         *  @type Number
          */
         COORDS_BY_SCREEN: 0x0002,
 

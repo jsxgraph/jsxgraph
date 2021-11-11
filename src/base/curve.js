@@ -87,7 +87,7 @@ define([
          * Array holding the x-coordinates of a data plot.
          * This array can be updated during run time by overwriting
          * the method {@link JXG.Curve#updateDataArray}.
-         * @type {array}
+         * @type array
          */
         this.dataX = null;
 
@@ -95,7 +95,7 @@ define([
          * Array holding the y-coordinates of a data plot.
          * This array can be updated during run time by overwriting
          * the method {@link JXG.Curve#updateDataArray}.
-         * @type {array}
+         * @type array
          */
         this.dataY = null;
 
@@ -111,7 +111,7 @@ define([
         /**
          * Stores a quad tree if it is required. The quad tree is generated in the curve
          * updates and can be used to speed up the hasPoint method.
-         * @type {JXG.Math.Quadtree}
+         * @type JXG.Math.Quadtree
          */
         this.qdt = null;
 

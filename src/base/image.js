@@ -85,13 +85,13 @@ define([
 
         /**
          * Array of length two containing [width, height] of the image in pixel.
-         * @type {array}
+         * @type array
          */
         this.size = [Math.abs(this.usrSize[0] * board.unitX), Math.abs(this.usrSize[1] * board.unitY)];
 
         /**
          * 'href' of the image. This might be an URL, but also a data-uri is allowed.
-         * @type {string}
+         * @type string
          */
         this.url = url;
 

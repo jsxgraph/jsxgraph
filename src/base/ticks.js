@@ -133,13 +133,13 @@ define([
 
         /**
          * Stores the ticks coordinates
-         * @type {Array}
+         * @type Array
          */
         this.ticks = [];
 
         /**
          * Distance between two major ticks in user coordinates
-         * @type {Number}
+         * @type Number
          */
         this.ticksDelta = 1;
 
@@ -153,13 +153,13 @@ define([
 
         /**
          * A list of labels which have to be displayed in updateRenderer.
-         * @type {Array}
+         * @type Array
          */
         this.labelData = [];
 
         /**
          * To ensure the uniqueness of label ids this counter is used.
-         * @type {number}
+         * @type number
          */
         this.labelCounter = 0;
 

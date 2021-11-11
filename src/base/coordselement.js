@@ -136,7 +136,7 @@ define([
          * To prevent double updates, {@link JXG.CoordsElement#needsUpdateFromParent}
          * is set to false in updateGlider() and reset to true in the following call to
          * {@link JXG.CoordsElement#updateGliderFromParent}
-         * @type {Boolean}
+         * @type Boolean
          */
         this.needsUpdateFromParent = true;
 
