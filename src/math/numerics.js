@@ -1878,7 +1878,7 @@ define(['jxg', 'utils/type', 'utils/env', 'math/math'], function (JXG, Type, Env
              * Get the term of the Lagrange polynomial as string.
              * Calls {@link JXG.Math.Numerics#lagrangePolynomialTerm}.
              *
-             * @name JXG.Math.Numerics.lagrangePolynomial#getTerm
+             * @name JXG.Math.Numerics#lagrangePolynomial.getTerm
              * @param {Number} digits Number of digits of the coefficients
              * @param {String} param Variable name
              * @param {String} dot Dot symbol
