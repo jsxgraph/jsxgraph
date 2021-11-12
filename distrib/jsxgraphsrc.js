@@ -499,6 +499,7 @@ define('jxg',[], function () {
 
     /**
      * JXG is the top object of JSXGraph and defines the namespace
+     * @exports jxg as JXG
      */
     var jxg = {};
 
@@ -841,8 +842,8 @@ define('base/constants',['jxg'], function (JXG) {
 
     var major = 1,
         minor = 3,
-        patch = 2,
-        add = '', //'dev'
+        patch = 3,
+        add = 'dev', //'dev'
         version = major + '.' + minor + '.' + patch + (add ? '-' + add : ''),
         constants;
 
@@ -909,6 +910,7 @@ define('base/constants',['jxg'], function (JXG) {
         OBJECT_TYPE_INPUT: 28,
         OBJECT_TYPE_BUTTON: 29,
         OBJECT_TYPE_TRANSFORMATION: 30,
+        OBJECT_TYPE_FOREIGNOBJECT: 31,
 
         // IMPORTANT:
         // ----------
@@ -929,8 +931,19 @@ define('base/constants',['jxg'], function (JXG) {
         GENTYPE_ABC: 1, // unused
         GENTYPE_AXIS: 2,
         GENTYPE_MID: 3,
-        /** @deprecated, now use {@link JXG.GENTYPE_REFLECTION_ON_LINE} */  GENTYPE_REFLECTION: 4,
-        /** @deprecated, now use {@link JXG.GENTYPE_REFLECTION_ON_POINT} */ GENTYPE_MIRRORELEMENT: 5,
+
+        /** 
+         * @ignore
+         * @deprecated, now use {@link JXG.GENTYPE_REFLECTION_ON_LINE} 
+         * 
+         */  
+        GENTYPE_REFLECTION: 4,
+        /** 
+         * @ignore 
+         * @deprecated, now use {@link JXG.GENTYPE_REFLECTION_ON_POINT} 
+         */ 
+        GENTYPE_MIRRORELEMENT: 5,
+
         GENTYPE_REFLECTION_ON_LINE: 4,
         GENTYPE_REFLECTION_ON_POINT: 5,
         GENTYPE_TANGENT: 6,
@@ -943,7 +956,11 @@ define('base/constants',['jxg'], function (JXG) {
         GENTYPE_GLIDER: 13,
         GENTYPE_INTERSECTION: 14,
         GENTYPE_CIRCLE: 15,
-        /** @deprecated NOT USED ANY MORE SINCE SKETCHOMETRY 2.0 (only for old constructions needed) */ GENTYPE_CIRCLE2POINTS: 16,
+        /** 
+         * @ignore @deprecated NOT USED ANY MORE SINCE SKETCHOMETRY 2.0 (only for old constructions needed) 
+         */ 
+        GENTYPE_CIRCLE2POINTS: 16,
+
         GENTYPE_LINE: 17,
         GENTYPE_TRIANGLE: 18,
         GENTYPE_QUADRILATERAL: 19,
@@ -975,7 +992,12 @@ define('base/constants',['jxg'], function (JXG) {
         GENTYPE_ABLATION: 45,
         GENTYPE_MIGRATE: 46,
         GENTYPE_VECTORCOPY: 47,
-        GENTYPE_POLYGONCOPY: 48,
+        GENTYPE_POLYGONCOPY: 48,    /**
+        * Constants
+        * @name Constants
+        * @namespace
+        */
+   
         //        GENTYPE_TRANSFORM: 48, // unused
         // 49 ... 50 // unused ...
 
@@ -1222,18 +1244,27 @@ define('utils/type',[
          * @param {Boolean} [checkEmptyString=false] If set to true, it is also checked whether v is not equal to ''.
          * @returns {Boolean} True, if v is neither undefined nor null.
          */
-        exists: (function (undef) {
-            return function (v, checkEmptyString) {
-                var result = !(v === undef || v === null);
+        exists: function (v, checkEmptyString) {
+            var result = !(v == undefined || v === null);
+            checkEmptyString = checkEmptyString || false;
+            
+            if (checkEmptyString) {
+                return result && v !== '';
+            }
+            return result;
+        },
+        // exists: (function (undef) {
+        //     return function (v, checkEmptyString) {
+        //         var result = !(v === undef || v === null);
 
-                checkEmptyString = checkEmptyString || false;
+        //         checkEmptyString = checkEmptyString || false;
                 
-                if (checkEmptyString) {
-                    return result && v !== '';
-                }
-                return result;
-            };
-        }()),
+        //         if (checkEmptyString) {
+        //             return result && v !== '';
+        //         }
+        //         return result;
+        //     };
+        // }()),
 
         /**
          * Checks if v is an empty object or empty.
@@ -2377,6 +2408,7 @@ define('utils/env',['jxg', 'utils/type'], function (JXG, Type) {
          * Determines the property that stores the relevant information in the event object.
          * @type String
          * @default 'touches'
+         * @private
          */
         touchProperty: 'touches',
     });
@@ -4592,6 +4624,35 @@ define('math/math',['jxg', 'utils/type'], function (JXG, Type) {
             }
 
             return v;
+        },
+
+        /**
+         * Theorem of Vieta: Given a set of simple zeroes x_0, ..., x_n
+         * of a polynomial f, compute the coefficients s_k, (k=0,...,n-1)
+         * of the polynomial of the form. See {@link https://de.wikipedia.org/wiki/Elementarsymmetrisches_Polynom}.
+         * <p>
+         *  f(x) = (x-x_0)*...*(x-x_n) =
+         *  x^n + sum_{k=1}^{n} (-1)^(k) s_{k-1} x^(n-k)
+         * </p>
+         * @param {Array} x Simple zeroes of the polynomial.
+         * @returns {Array} Coefficients of the polynomial.
+         *
+         */
+        Vieta: function(x) {
+            var n = x.length,
+                s = [],
+                m, k, y;
+
+            s = x.slice();
+            for (m = 1; m < n; ++m) {
+                y = s[m];
+                s[m] *= s[m - 1];
+                for (k = m - 1; k >= 1; --k) {
+                    s[k] += s[k - 1] * y;
+                }
+                s[0] += y;
+            }
+            return s;
         }
     };
 
@@ -5865,10 +5926,13 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
     var doubleBits = new JXG.Math.DoubleBits(),
 
         /**
-         * Object for interval arithmetic
+         * Interval for interval arithmetics. Consists of the properties
+         * <ul>
+         *  <li>lo
+         *  <li>hi
+         * </ul>
          * @name JXG.Math.Interval
-         * @exports MatInterval as JXG.Math.Interval
-         * @namespace
+         * @type Object
          */
         MatInterval = function (lo, hi) {
             if (lo !== undefined && hi !== undefined) {
@@ -5966,9 +6030,8 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
     });
 
     /**
-     * Object for interval arithmetic
-     * @name JXG.Math.Interval
-     * @exports Mat.Interval as JXG.Math.Interval
+     * Object for interval arithmetics.
+     * @name JXG.Math.IntervalArithmetic
      * @namespace
      */
     JXG.Math.IntervalArithmetic =  {
@@ -5988,6 +6051,14 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         /*
          * Arithmetics
          */
+
+        /**
+         * Addition
+         * 
+         * @param {JXG.Math.Interval|Number} x 
+         * @param {JXG.Math.Interval|Number} y 
+         * @returns JXG.Math.Interval
+         */
         add: function(x, y) {
             if (Type.isNumber(x)) {
                 x = this.Interval(x);
@@ -5998,7 +6069,14 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return new MatInterval(this.addLo(x.lo, y.lo), this.addHi(x.hi, y.hi));
         },
 
-        sub: function(x, y) {
+        /**
+         * Subtraction
+         * 
+         * @param {JXG.Math.Interval|Number} x 
+         * @param {JXG.Math.Interval|Number} y 
+         * @returns JXG.Math.Interval
+         */
+         sub: function(x, y) {
             if (Type.isNumber(x)) {
                 x = this.Interval(x);
             }
@@ -6008,7 +6086,14 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return new MatInterval(this.subLo(x.lo, y.hi), this.subHi(x.hi, y.lo));
         },
 
-        mul: function(x, y) {
+        /**
+         * Multiplication
+         * 
+         * @param {JXG.Math.Interval|Number} x 
+         * @param {JXG.Math.Interval|Number} y 
+         * @returns JXG.Math.Interval
+         */
+         mul: function(x, y) {
             var xl, xh, yl, yh, out;
 
             if (Type.isNumber(x)) {
@@ -6105,7 +6190,14 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return out;
         },
 
-        div: function(x, y) {
+        /**
+         * Division
+         * 
+         * @param {JXG.Math.Interval|Number} x 
+         * @param {JXG.Math.Interval|Number} y 
+         * @returns JXG.Math.Interval
+         */
+         div: function(x, y) {
             if (Type.isNumber(x)) {
                 x = this.Interval(x);
             }
@@ -6131,11 +6223,23 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return this.divNonZero(x, y);
         },
 
-        positive: function(x) {
+        /**
+         * Return +x (i.e. identity)
+         * 
+         * @param {JXG.Math.Interval} x 
+         * @returns JXG.Math.Interval
+         */
+         positive: function(x) {
             return new MatInterval(x.lo, x.hi);
         },
 
-        negative: function(x) {
+        /**
+         * Return -x
+         * 
+         * @param {JXG.Math.Interval} x 
+         * @returns JXG.Math.Interval
+         */
+         negative: function(x) {
             if (Type.isNumber(x)) {
                 return new MatInterval(-x);
             }
@@ -6145,33 +6249,67 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         /*
          * Utils
          */
+
+        /**
+         * Test if interval is empty set.
+         * @param {JXG.Math.Interval} i 
+         * @returns Boolean
+         */        
         isEmpty: function(i) {
             return i.lo > i.hi;
         },
 
+        /**
+         * Test if interval is (-Infinity, Infinity).
+         * @param {JXG.Math.Interval} i 
+         * @returns Boolean
+         */        
         isWhole: function(i){
             return i.lo === -Infinity && i.hi === Infinity;
         },
 
-        zeroIn: function(i) {
+        /**
+         * Test if interval contains 0.
+         * @param {JXG.Math.Interval} i 
+         * @returns Boolean
+         */        
+         zeroIn: function(i) {
             return this.hasValue(i, 0);
         },
 
-        hasValue: function(i, value) {
+        /**
+         * Test if interval contains a specific value.
+         * @param {JXG.Math.Interval} i 
+         * @param {Number} value
+         * @returns Boolean
+         */        
+         hasValue: function(i, value) {
             if (this.isEmpty(i)) {
                 return false;
             }
             return i.lo <= value && value <= i.hi;
         },
 
-        hasInterval: function(x, y) {
+        /**
+         * Test if interval x contains interval y.
+         * @param {JXG.Math.Interval} x
+         * @param {JXG.Math.Interval} y
+         * @returns Boolean
+         */        
+         hasInterval: function(x, y) {
             if (this.isEmpty(x)) {
                 return true;
             }
             return !this.isEmpty(y) && y.lo <= x.lo && x.hi <= y.hi;
         },
 
-        intervalsOverlap: function(x, y) {
+        /**
+         * Test if intervals x and y have non-zero intersection.
+         * @param {JXG.Math.Interval} x
+         * @param {JXG.Math.Interval} y
+         * @returns Boolean
+         */        
+         intervalsOverlap: function(x, y) {
             if (this.isEmpty(x) || this.isEmpty(y)) {
                 return false;
             }
@@ -6180,6 +6318,12 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
         /*
          * Division
+         */
+        /**
+         * @private
+         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} y 
+         * @returns JXG.Math.Interval
          */
         divNonZero: function(x, y) {
             var xl = x.lo,
@@ -6216,7 +6360,13 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return out;
         },
 
-        divPositive: function(x, v) {
+        /**
+         * @private
+         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} y 
+         * @returns JXG.Math.Interval
+         */
+         divPositive: function(x, v) {
             if (x.lo === 0 && x.hi === 0) {
                 return x;
             }
@@ -6234,7 +6384,13 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return new MatInterval(this.divLo(x.lo, v), Number.POSITIVE_INFINITY);
         },
 
-        divNegative: function(x, v) {
+        /**
+         * @private
+         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} y 
+         * @returns JXG.Math.Interval
+         */
+         divNegative: function(x, v) {
             if (x.lo === 0 && x.hi === 0) {
                 return x;
             }
@@ -6252,7 +6408,12 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return new MatInterval(Number.NEGATIVE_INFINITY, this.divHi(x.lo, v));
         },
 
-        divZero: function(x) {
+        /**
+         * @private
+         * @param {JXG.Math.Interval} x 
+         * @returns JXG.Math.Interval
+         */
+         divZero: function(x) {
             if (x.lo === 0 && x.hi === 0) {
                 return x;
             }
@@ -6261,6 +6422,12 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
         /*
          * Algebra
+         */
+        /**
+         * x mod y:  x - n * y
+         * @param {JXG.Math.Interval|Number} x 
+         * @param {JXG.Math.Interval|Number} y 
+         * @returns JXG.Math.Interval
          */
         fmod: function(x, y) {
             var yb, n;
@@ -6284,6 +6451,11 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return this.sub(x, this.mul(y, new MatInterval(n)));
         },
 
+        /**
+         * 1 / x
+         * @param {JXG.Math.Interval|Number} x 
+         * @returns JXG.Math.Interval
+         */
         multiplicativeInverse: function(x) {
             if (Type.isNumber(x)) {
                 x = this.Interval(x);
@@ -6311,6 +6483,12 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return new MatInterval(this.divLo(1, x.hi), this.divHi(1, x.lo));
         },
 
+        /**
+         * x<sup>power</sup>
+         * @param {JXG.Math.Interval|Number} x 
+         * @param {JXG.Math.Interval|Number} power
+         * @returns JXG.Math.Interval
+         */
         pow: function(x, power) {
             var yl, yh;
 
@@ -6372,13 +6550,24 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return this.EMPTY.clone();
         },
 
-        sqrt: function(x) {
+        /**
+         * sqrt(x)
+         * @param {JXG.Math.Interval|Number} x 
+         * @returns JXG.Math.Interval
+         */
+         sqrt: function(x) {
             if (Type.isNumber(x)) {
                 x = this.Interval(x);
             }
             return this.nthRoot(x, 2);
         },
 
+        /**
+         * x<sup>1/n</sup>
+         * @param {JXG.Math.Interval|Number} x 
+         * @param {Number} n
+         * @returns JXG.Math.Interval
+         */
         nthRoot: function(x, n) {
             var power,yl, yh, yp, yn;
 
@@ -6430,6 +6619,11 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         /*
          * Misc
          */
+        /**
+         * 
+         * @param {JXG.Math.Interval|Number} x 
+         * @returns JXG.Math.Interval
+         */
         exp: function(x) {
             if (Type.isNumber(x)) {
                 x = this.Interval(x);
@@ -6440,6 +6634,11 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return new MatInterval(this.expLo(x.lo), this.expHi(x.hi));
         },
 
+        /**
+         * Natural log
+         * @param {JXG.Math.Interval|Number} x 
+         * @returns JXG.Math.Interval
+         */
         log: function(x) {
             var l;
             if (Type.isNumber(x)) {
@@ -6452,12 +6651,22 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return new MatInterval(l, this.logHi(x.hi));
         },
 
+        /**
+         * Natural log, alias for {@link JXG.Math.IntervalArithmetic#log}.
+         * @param {JXG.Math.Interval|Number} x 
+         * @returns JXG.Math.Interval
+         */
         ln: function(x) {
             return this.log(x);
         },
 
         // export const LOG_EXP_10 = this.log(new MatInterval(10, 10))
         // export const LOG_EXP_2 = log(new MatInterval(2, 2))
+        /**
+         * Logarithm to base 10.
+         * @param {JXG.Math.Interval|Number} x 
+         * @returns JXG.Math.Interval
+         */
         log10: function(x) {
             if (this.isEmpty(x)) {
                 return this.EMPTY.clone();
@@ -6465,6 +6674,11 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return this.div(this.log(x), this.log(new MatInterval(10, 10)));
         },
 
+        /**
+         * Logarithm to base 2.
+         * @param {JXG.Math.Interval|Number} x 
+         * @returns JXG.Math.Interval
+         */
         log2: function(x) {
             if (this.isEmpty(x)) {
                 return this.EMPTY.clone();
@@ -6472,6 +6686,12 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return this.div(this.log(x), this.log(new MatInterval(2, 2)));
         },
 
+        /**
+         * Hull of intervals x and y
+         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} y
+         * @returns JXG.Math.Interval
+         */
         hull: function(x, y) {
             var badX = this.isEmpty(x),
                 badY = this.isEmpty(y);
@@ -6487,6 +6707,12 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return new MatInterval(Math.min(x.lo, y.lo), Math.max(x.hi, y.hi));
         },
 
+        /**
+         * Intersection of intervals x and y
+         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} y
+         * @returns JXG.Math.Interval
+         */
         intersection: function(x, y) {
             var lo, hi;
             if (this.isEmpty(x) || this.isEmpty(y)) {
@@ -6500,6 +6726,12 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return this.EMPTY.clone();
         },
 
+        /**
+         * Union of overlapping intervals x and y
+         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} y
+         * @returns JXG.Math.Interval
+         */
         union: function(x, y) {
             if (!this.intervalsOverlap(x, y)) {
                 throw new Error('Interval#unions do not overlap');
@@ -6507,6 +6739,12 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return new MatInterval(Math.min(x.lo, y.lo), Math.max(x.hi, y.hi));
         },
 
+        /**
+         * Difference of overlapping intervals x and y
+         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} y
+         * @returns JXG.Math.Interval
+         */
         difference: function(x, y) {
             if (this.isEmpty(x) || this.isWhole(y)) {
               return this.EMPTY.clone();
@@ -6538,6 +6776,10 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return x.clone();
         },
 
+        /**
+         * @param {JXG.Math.Interval} x 
+         * @returns JXG.Math.Interval
+         */
         width: function(x) {
             if (this.isEmpty(x)) {
               return 0;
@@ -6545,6 +6787,10 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return this.subHi(x.hi, x.lo);
         },
 
+        /**
+         * @param {JXG.Math.Interval} x 
+         * @returns JXG.Math.Interval
+         */
         abs: function(x) {
             if (Type.isNumber(x)) {
                 x = this.Interval(x);
@@ -6561,6 +6807,11 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return new MatInterval(0, Math.max(-x.lo, x.hi));
         },
 
+        /**
+         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} y
+         * @returns JXG.Math.Interval
+         */
         max: function(x, y) {
             var badX = this.isEmpty(x),
                 badY = this.isEmpty(y);
@@ -6576,6 +6827,11 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return new MatInterval(Math.max(x.lo, y.lo), Math.max(x.hi, y.hi));
         },
 
+        /**
+         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} y
+         * @returns JXG.Math.Interval
+         */
         min: function(x, y) {
             var badX = this.isEmpty(x),
                 badY = this.isEmpty(y);
@@ -6613,6 +6869,10 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return interval;
         },
 
+        /**
+         * @param {JXG.Math.Interval} x 
+         * @returns JXG.Math.Interval
+         */
         cos: function(x) {
             var cache, pi2, t, cosv,
                 lo, hi, rlo, rhi;
@@ -6657,6 +6917,10 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return new MatInterval(-1, 1);
         },
 
+        /**
+         * @param {JXG.Math.Interval} x 
+         * @returns JXG.Math.Interval
+         */
         sin: function(x) {
             if (this.isEmpty(x) || this.onlyInfinity(x)) {
                 return this.EMPTY.clone();
@@ -6664,6 +6928,10 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return this.cos(this.sub(x, this.PI_HALF));
         },
 
+        /**
+         * @param {JXG.Math.Interval} x 
+         * @returns JXG.Math.Interval
+         */
         tan: function(x) {
             var cache, t, pi;
             if (this.isEmpty(x) || this.onlyInfinity(x)) {
@@ -6685,6 +6953,10 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return new MatInterval(this.tanLo(t.lo), this.tanHi(t.hi));
         },
 
+        /**
+         * @param {JXG.Math.Interval} x 
+         * @returns JXG.Math.Interval
+         */
         asin: function(x) {
             var lo, hi;
             if (this.isEmpty(x) || x.hi < -1 || x.lo > 1) {
@@ -6695,6 +6967,10 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return new MatInterval(lo, hi);
         },
 
+        /**
+         * @param {JXG.Math.Interval} x 
+         * @returns JXG.Math.Interval
+         */
         acos: function(x) {
             var lo, hi;
             if (this.isEmpty(x) || x.hi < -1 || x.lo > 1) {
@@ -6705,6 +6981,10 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return new MatInterval(lo, hi);
         },
 
+        /**
+         * @param {JXG.Math.Interval} x 
+         * @returns JXG.Math.Interval
+         */
         atan: function(x) {
             if (this.isEmpty(x)) {
                 return this.EMPTY.clone();
@@ -6712,6 +6992,10 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return new MatInterval(this.atanLo(x.lo), this.atanHi(x.hi));
         },
 
+        /**
+         * @param {JXG.Math.Interval} x 
+         * @returns JXG.Math.Interval
+         */
         sinh: function(x) {
             if (this.isEmpty(x)) {
                 return this.EMPTY.clone();
@@ -6719,6 +7003,10 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return new MatInterval(this.sinhLo(x.lo), this.sinhHi(x.hi));
         },
 
+        /**
+         * @param {JXG.Math.Interval} x 
+         * @returns JXG.Math.Interval
+         */
         cosh: function(x) {
             if (this.isEmpty(x)) {
               return this.EMPTY.clone();
@@ -6732,6 +7020,10 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return new MatInterval(1, this.coshHi(-x.lo > x.hi ? x.lo : x.hi));
         },
 
+        /**
+         * @param {JXG.Math.Interval} x 
+         * @returns JXG.Math.Interval
+         */
         tanh: function(x) {
             if (this.isEmpty(x)) {
                 return this.EMPTY.clone();
@@ -6743,6 +7035,11 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
          * Relational
          */
 
+        /**
+         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} y
+         * @returns Boolean
+         */
         equal: function(x, y) {
             if (this.isEmpty(x)) {
                 return this.isEmpty(y);
@@ -6757,6 +7054,11 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         //     assertEps(x[1], y[1])
         // },
 
+        /**
+         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} y
+         * @returns Boolean
+         */
         notEqual: function(x, y) {
             if (this.isEmpty(x)) {
                 return !this.isEmpty(y);
@@ -6764,6 +7066,11 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return this.isEmpty(y) || x.hi < y.lo || x.lo > y.hi;
         },
 
+        /**
+         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} y
+         * @returns Boolean
+         */
         lt: function(x, y) {
             if (Type.isNumber(x)) {
                 x = this.Interval(x);
@@ -6777,6 +7084,11 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return x.hi < y.lo;
         },
 
+        /**
+         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} y
+         * @returns Boolean
+         */
         gt: function(x, y) {
             if (Type.isNumber(x)) {
                 x = this.Interval(x);
@@ -6790,6 +7102,11 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return x.lo > y.hi;
         },
 
+        /**
+         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} y
+         * @returns Boolean
+         */
         leq: function(x, y) {
             if (Type.isNumber(x)) {
                 x = this.Interval(x);
@@ -6803,6 +7120,11 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return x.hi <= y.lo;
         },
 
+        /**
+         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} y
+         * @returns Boolean
+         */
         geq: function(x, y) {
             if (Type.isNumber(x)) {
                 x = this.Interval(x);
@@ -6933,11 +7255,19 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return y;
         },
 
+        /**
+         * @ignore
+         * @private
+         */
         disable: function() {
             this.next = this.prev = this.identity;
         },
 
-        enable: function() {
+        /**
+         * @ignore
+         * @private
+         */
+         enable: function() {
             this.prev = function(v) {
                 return this._prev(v);
             };
@@ -7470,58 +7800,64 @@ define('math/qdt',['math/math', 'utils/type'], function (Mat, Type) {
 
     "use strict";
 
-    var
+    /**
+     * Instantiate a new quad tree.
+     * 
+     * @name JXG.Math.Quadtree
+     * @exports Mat.Quadtree as JXG.Math.Quadtree
+     * @param {Array} bbox Bounding box of the new quad (sub)tree.
+     * @constructor
+     */
+    Mat.Quadtree = function (bbox) {
         /**
-         * Instantiate a new quad tree.
-         * @param {Array} bbox Bounding box of the new quad (sub)tree.
-         * @constructor
+         * The maximum number of points stored in a quad tree node
+         * before it is subdivided.
+         * @type Number
+         * @default 10
          */
-        Quadtree = function (bbox) {
-            /**
-             * The maximum number of points stored in a quad tree node
-             * before it is subdivided.
-             * @type Number
-             * @default 10
-             */
-            this.capacity = 10;
+        this.capacity = 10;
 
-            /**
-             * Point storage.
-             * @type Array
-             */
-            this.points = [];
+        /**
+         * Point storage.
+         * @name JXG.Math.Quadtree#points
+         * @type Array
+         */
+        this.points = [];
+        this.xlb = bbox[0];
+        this.xub = bbox[2];
+        this.ylb = bbox[3];
+        this.yub = bbox[1];
 
-            this.xlb = bbox[0];
-            this.xub = bbox[2];
-            this.ylb = bbox[3];
-            this.yub = bbox[1];
+        /**
+         * In a subdivided quad tree this represents the top left subtree.
+         * @name JXG.Math.Quadtree#northWest
+         * @type JXG.Math.Quadtree
+         */
+        this.northWest = null;
 
-            /**
-             * In a subdivided quad tree this represents the top left subtree.
-             * @type {JXG.Quadtree}
-             */
-            this.northWest = null;
+        /**
+         * In a subdivided quad tree this represents the top right subtree.
+         * @name JXG.Math.Quadtree#northEast
+         * @type JXG.Math.Quadtree
+         */
+        this.northEast = null;
 
-            /**
-             * In a subdivided quad tree this represents the top right subtree.
-             * @type {JXG.Quadtree}
-             */
-            this.northEast = null;
+        /**
+         * In a subdivided quad tree this represents the bottom right subtree.
+         * @name JXG.Math.Quadtree#southEast
+         * @type JXG.Math.Quadtree
+         */
+        this.southEast = null;
+        
+        /**
+         * In a subdivided quad tree this represents the bottom left subtree.
+         * @name JXG.Math.Quadtree#southWest
+         * @type JXG.Math.Quadtree
+         */
+        this.southWest = null;
+    };
 
-            /**
-             * In a subdivided quad tree this represents the bottom right subtree.
-             * @type {JXG.Quadtree}
-             */
-            this.southEast = null;
-
-            /**
-             * In a subdivided quad tree this represents the bottom left subtree.
-             * @type {JXG.Quadtree}
-             */
-            this.southWest = null;
-        };
-
-    Type.extend(Quadtree.prototype, /** @lends JXG.Quadtree.prototype */ {
+    Type.extend(Mat.Quadtree.prototype, /** @lends JXG.Math.Quadtree.prototype */ {
         /**
          * Checks if the given coordinates are inside the quad tree.
          * @param {Number} x
@@ -7592,6 +7928,7 @@ define('math/qdt',['math/math', 'utils/type'], function (Mat, Type) {
 
         /**
          * Internal _query method that lacks adjustment of the parameter.
+         * @name JXG.Math.Quadtree#_query
          * @param {Number} x
          * @param {Number} y
          * @returns {Boolean|JXG.Quadtree} The quad tree if the point is found, false
@@ -7633,6 +7970,7 @@ define('math/qdt',['math/math', 'utils/type'], function (Mat, Type) {
 
         /**
          * Retrieve the smallest quad tree that contains the given point.
+         * @name JXG.Math.Quadtree#_query
          * @param {JXG.Coords|Number} xp
          * @param {Number} y
          * @returns {Boolean|JXG.Quadtree} The quad tree if the point is found, false
@@ -7655,9 +7993,7 @@ define('math/qdt',['math/math', 'utils/type'], function (Mat, Type) {
         }
     });
 
-    Mat.Quadtree = Quadtree;
-
-    return Quadtree;
+    return Mat.Quadtree;
 });
 
 /*
@@ -7704,7 +8040,7 @@ define('math/qdt',['math/math', 'utils/type'], function (Mat, Type) {
  * algorithms for solving linear equations etc.
  */
 
-define('math/numerics',['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
+define('math/numerics',['jxg', 'utils/type', 'utils/env', 'math/math'], function (JXG, Type, Env, Mat) {
 
     "use strict";
 
@@ -9462,6 +9798,7 @@ define('math/numerics',['jxg', 'utils/type', 'math/math'], function (JXG, Type, 
          */
         lagrangePolynomial: function (p) {
             var w = [],
+                that = this,
                 /** @ignore */
                 fct = function (x, suspendedUpdate) {
                     var i, // j,
@@ -9505,11 +9842,157 @@ define('math/numerics',['jxg', 'utils/type', 'math/math'], function (JXG, Type, 
                     return num / denom;
                 };
 
-            fct.getTerm = function () {
-                return '';
+            /**
+             * Get the term of the Lagrange polynomial as string.
+             * Calls {@link JXG.Math.Numerics#lagrangePolynomialTerm}.
+             *
+             * @param {Number} digits Number of digits of the coefficients
+             * @param {String} param Variable name
+             * @param {String} dot Dot symbol
+             * @returns {String} containing the term of Lagrange polynomial as string.
+             * @see JXG.Math.Numerics#lagrangePolynomialTerm
+             * @example
+             * var points = [];
+             * points[0] = board.create('point', [-1,2], {size:4});
+             * points[1] = board.create('point', [0, 0], {size:4});
+             * points[2] = board.create('point', [2, 1], {size:4});
+             *
+             * var f = JXG.Math.Numerics.lagrangePolynomial(points);
+             * var graph = board.create('functiongraph', [f,-10, 10], {strokeWidth:3});
+             * var txt = board.create('text', [-3, -4,  () => f.getTerm(2, 't', ' * ')], {fontSize: 16});
+             *
+             * </pre><div id="JXG73fdaf12-e257-4374-b488-ae063e4eeccf" class="jxgbox" style="width: 300px; height: 300px;"></div>
+             * <script type="text/javascript">
+             *     (function() {
+             *         var board = JXG.JSXGraph.initBoard('JXG73fdaf12-e257-4374-b488-ae063e4eeccf',
+             *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+             *     var points = [];
+             *     points[0] = board.create('point', [-1,2], {size:4});
+             *     points[1] = board.create('point', [0, 0], {size:4});
+             *     points[2] = board.create('point', [2, 1], {size:4});
+             *
+             *     var f = JXG.Math.Numerics.lagrangePolynomial(points);
+             *     var graph = board.create('functiongraph', [f,-10, 10], {strokeWidth:3});
+             *     var txt = board.create('text', [-3, -4,  () => f.getTerm(2, 't', ' * ')], {fontSize: 16});
+             *
+             *     })();
+             *
+             * </script><pre>
+             *
+             */
+            fct.getTerm = function(digits, param, dot) {
+                return that.lagrangePolynomialTerm(p, digits, param, dot)();
             };
 
             return fct;
+        },
+        // fct.getTerm = that.lagrangePolynomialTerm(p, 2, 'x');
+
+        /**
+         * Determine the Lagrange polynomial through an array of points and
+         * return the term of the polynomial as string.
+         *
+         * @param {Array} points Array of JXG.Points
+         * @param {Number} digits Number of decimal digits of the coefficients
+         * @param {String} param Name of the parameter. Default: 'x'.
+         * @param {String} dot Multiplication symbol. Default: ' * '.
+         * @returns {String} containing the Lagrange polynomial through
+         *    the supplied points.
+         * @memberof JXG.Math.Numerics
+         *
+         * @example
+         * var points = [];
+         * points[0] = board.create('point', [-1,2], {size:4});
+         * points[1] = board.create('point', [0, 0], {size:4});
+         * points[2] = board.create('point', [2, 1], {size:4});
+         *
+         * var f = JXG.Math.Numerics.lagrangePolynomial(points);
+         * var graph = board.create('functiongraph', [f,-10, 10], {strokeWidth:3});
+         *
+         * var f_txt = JXG.Math.Numerics.lagrangePolynomialTerm(points, 2, 't', ' * ');
+         * var txt = board.create('text', [-3, -4, f_txt], {fontSize: 16});
+         *
+         * </pre><div id="JXGd45e9e96-7526-486d-aa43-e1178d5f2baa" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXGd45e9e96-7526-486d-aa43-e1178d5f2baa',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *     var points = [];
+         *     points[0] = board.create('point', [-1,2], {size:4});
+         *     points[1] = board.create('point', [0, 0], {size:4});
+         *     points[2] = board.create('point', [2, 1], {size:4});
+         *
+         *     var f = JXG.Math.Numerics.lagrangePolynomial(points);
+         *     var graph = board.create('functiongraph', [f,-10, 10], {strokeWidth:3});
+         *
+         *     var f_txt = JXG.Math.Numerics.lagrangePolynomialTerm(points, 2, 't', ' * ');
+         *     var txt = board.create('text', [-3, -4, f_txt], {fontSize: 16});
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
+         */
+        lagrangePolynomialTerm: function(points, digits, param, dot) {
+            return function() {
+                var len = points.length,
+                    zeroes = [],
+                    coeffs = [],
+                    coeffs_sum = [],
+                    isLeading = true,
+                    n, t,
+                    i, j, c, p;
+
+                param = param || 'x';
+                if (dot === undefined) {
+                    dot = ' * ';
+                }
+
+                n = len - 1;  // (Max) degree of the polynomial
+                for (j = 0; j < len; j++) {
+                    coeffs_sum[j] = 0;
+                }
+
+                for (i = 0; i < len; i++) {
+                    c = points[i].Y();
+                    p = points[i].X();
+                    zeroes = [];
+                    for (j = 0; j < len; j++) {
+                        if (j !== i) {
+                            c /= p - points[j].X();
+                            zeroes.push(points[j].X());
+                        }
+                    }
+                    coeffs = [1].concat(Mat.Vieta(zeroes));
+                    for (j = 0; j < coeffs.length; j++) {
+                        coeffs_sum[j] += (j%2===1?(-1):1) * coeffs[j] * c;
+                    }
+                }
+
+                t = '';
+                for (j = 0; j < coeffs_sum.length; j++) {
+                    c = coeffs_sum[j];
+                    if (Math.abs(c) < Mat.eps) {
+                        continue;
+                    }
+                    if (JXG.exists(digits)) {
+                        c = Env._round10(c, -digits);
+                    }
+                    if (isLeading) {
+                        t += (c > 0) ? (c) : ('-' + (-c));
+                        isLeading = false;
+                    } else {
+                        t += (c > 0) ? (' + ' + c) : (' - ' + (-c));
+                    }
+
+                    if (n - j > 1) {
+                        t += dot + param + '^' + (n - j);
+                    } else if (n - j === 1) {
+                        t += dot + param;
+                    }
+                }
+                return t; // board.jc.manipulate('f = map(x) -> ' + t + ';');
+            };
         },
 
         /**
@@ -11324,6 +11807,12 @@ define('math/nlp',['jxg'], function (JXG) {
 
     "use strict";
 
+    /**
+     * The JXG.Math.Nlp namespace holds numerical algorithms for non-linear optimization.
+     * @name JXG.Math.Nlp
+     * @namespace
+     * 
+     */
     JXG.Math.Nlp =  {
 
         arr: function(n) {
@@ -11362,6 +11851,7 @@ define('math/nlp',['jxg'], function (JXG) {
         /**
          * Minimizes the objective function F with respect to a set of inequality constraints CON,
          * and returns the optimal variable array. F and CON may be non-linear, and should preferably be smooth.
+         * Calls {@link JXG.Math.Nlp#cobylb}.
          *
          * @param calcfc Interface implementation for calculating objective function and constraints.
          * @param n Number of variables.
@@ -11373,10 +11863,10 @@ define('math/nlp',['jxg'], function (JXG) {
          * @param iprint Print level, 0 <= iprint <= 3, where 0 provides no output and
          * 3 provides full output to the console.
          * @param maxfun Maximum number of function evaluations before terminating.
-         * @return Exit status of the COBYLA2 optimization.
+         * @returns {Number} Exit status of the COBYLA2 optimization.
          */
-	    // CobylaExitStatus FindMinimum(final Calcfc calcfc, int n, int m, double[] x, double rhobeg, double rhoend, int iprint, int maxfun)
         FindMinimum: function(calcfc, n,  m, x, rhobeg, rhoend,  iprint,  maxfun) {
+    	    // CobylaExitStatus FindMinimum(final Calcfc calcfc, int n, int m, double[] x, double rhobeg, double rhoend, int iprint, int maxfun)
             //     This subroutine minimizes an objective function F(X) subject to M
             //     inequality constraints on X, where X is a vector of variables that has
             //     N components.  The algorithm employs linear approximations to the
@@ -11458,6 +11948,19 @@ define('math/nlp',['jxg'], function (JXG) {
 
         //    private static CobylaExitStatus cobylb(Calcfc calcfc, int n, int m, int mpp, double[] x,
         //      double rhobeg, double rhoend, int iprint, int maxfun)
+        /**
+         * JavaScript implementation of the non-linear optimization method COBYLA.
+         * @param {Function} calcfc 
+         * @param {Number} n 
+         * @param {Number} m 
+         * @param {Number} mpp 
+         * @param {Number} x 
+         * @param {Number} rhobeg 
+         * @param {Number} rhoend 
+         * @param {Number} iprint 
+         * @param {Number} maxfun 
+         * @returns {Number} Exit status of the COBYLA2 optimization
+         */
         cobylb: function (calcfc, n,  m,  mpp,  x, rhobeg,  rhoend,  iprint,  maxfun) {
     		// calcf ist funktion die aufgerufen wird wie calcfc(n, m, ix, ocon)
             // N.B. Arguments CON, SIM, SIMI, DATMAT, A, VSIG, VETA, SIGBAR, DX, W & IACT
@@ -14230,7 +14733,7 @@ define('math/geometry',[
                     return that.meetCurveLine(el1, el2, i, el1.board, alwaysintersect);
                 };
 
-            } else if (el1.elementClass === Const.OBJECT_CLASS_LINE && el2.elementClass === Const.OBJECT_CLASS_LINE, el2.elementClass === Const.OBJECT_CLASS_LINE) {
+            } else if (el1.elementClass === Const.OBJECT_CLASS_LINE && el2.elementClass === Const.OBJECT_CLASS_LINE) {
                 // line - line, lines may also be segments.
                 /** @ignore */
                 func = function () {
@@ -27091,6 +27594,19 @@ define('options',[
             /**#@-*/
         },
 
+        /* special foreignObject options */
+        foreignobject: {
+
+            /**#@+
+             * @visprop
+             */
+            attractors: [],
+            fixed: true,
+            visible: true
+
+            /**#@-*/
+        },
+
         glider: {
             /**#@+
              * @visprop
@@ -31668,6 +32184,9 @@ define('renderer/abstract',[
             el.rendNode.className = Type.evaluate(doHighlight ? el.visProp.highlightcssclass : el.visProp.cssclass);
         },
 
+        drawForeignObject: function (el) { /* stub */ },
+
+        updateForeignObject: function(el) { /* stub */ },
 
         /* **************************
          * Render primitive objects
@@ -36585,6 +37104,8 @@ define('base/coordselement',[
                         this.elType = 'text';
                     } else if (this.type === Const.OBJECT_TYPE_IMAGE) {
                         this.elType = 'image';
+                    } else if (this.type === Const.OBJECT_TYPE_FOREIGNOBJECT) {
+                        this.elType = 'foreignobject';
                     }
 
                     this.slideObject = null;
@@ -37956,7 +38477,7 @@ define('base/text',[
          * @param{Boolean} [avoidGeonext2JS] Optional flag if geonext2JS should be called. For backwards compatibility
          * this has to be set explicitely to true.
          * @private
-         * @see JXG.GeonextParser.geonext2JS.
+         * @see JXG.GeonextParser.geonext2JS
          */
         generateTerm: function (contentStr, expand, avoidGeonext2JS) {
             var res, term, i, j,
@@ -48334,7 +48855,7 @@ define('renderer/svg',[
 
     /**
      * Uses SVG to implement the rendering methods defined in {@link JXG.AbstractRenderer}.
-     * @class JXG.AbstractRenderer
+     * @class JXG.SVGRenderer
      * @augments JXG.AbstractRenderer
      * @param {Node} container Reference to a DOM node containing the board.
      * @param {Object} dim The dimensions of the board
@@ -48453,11 +48974,12 @@ define('renderer/svg',[
             this.svgRoot.appendChild(this.layer[i]);
         }
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         this.supportsForeignObject = document.implementation.hasFeature("http://w3.org/TR/SVG11/feature#Extensibility", "1.1");
 
         if (this.supportsForeignObject) {
             this.foreignObjLayer = this.container.ownerDocument.createElementNS(this.svgNamespace, 'foreignObject');
+            this.foreignObjLayer.setAttribute("display", "none");
             this.foreignObjLayer.setAttribute("x", 0);
             this.foreignObjLayer.setAttribute("y", 0);
             this.foreignObjLayer.setAttribute("width", "100%");
@@ -48674,7 +49196,7 @@ define('renderer/svg',[
 
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         _setArrowWidth: function (node, width, parentNode, size) {
             var s, d;
 
@@ -48761,7 +49283,7 @@ define('renderer/svg',[
          *    Text related stuff
          * **************************/
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         displayCopyright: function (str, fontsize) {
             var node = this.createPrim('text', 'licenseText'),
                 t;
@@ -48773,7 +49295,7 @@ define('renderer/svg',[
             this.appendChildPrim(node, 0);
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         drawInternalText: function (el) {
             var node = this.createPrim('text', el.id);
 
@@ -48789,7 +49311,7 @@ define('renderer/svg',[
             return node;
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         updateInternalText: function (el) {
             var content = el.plaintext, v,
                 ev_ax = el.getAnchorX(),
@@ -48855,7 +49377,7 @@ define('renderer/svg',[
          *    Image related stuff
          * **************************/
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         drawImage: function (el) {
             var node = this.createPrim('image', el.id);
 
@@ -48866,7 +49388,7 @@ define('renderer/svg',[
             this.updateImage(el);
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         transformImage: function (el, t) {
             var s, m,
                 node = el.rendNode,
@@ -48881,7 +49403,7 @@ define('renderer/svg',[
             }
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         updateImageURL: function (el) {
             var url = Type.evaluate(el.url);
 
@@ -48896,18 +49418,42 @@ define('renderer/svg',[
             return false;
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         updateImageStyle: function (el, doHighlight) {
             var css = Type.evaluate(doHighlight ? el.visProp.highlightcssclass : el.visProp.cssclass);
 
             el.rendNode.setAttributeNS(null, 'class', css);
         },
 
+        // Already documented in JXG.AbstractRenderer
+        drawForeignObject: function (el) {
+            el.rendNode = this.appendChildPrim(this.createPrim('foreignObject', el.id),
+                                    Type.evaluate(el.visProp.layer));
+
+            this.appendNodesToElement(el, 'foreignObject');
+            this.updateForeignObject(el);
+        },
+
+        // Already documented in JXG.AbstractRenderer
+        updateForeignObject: function(el) {
+            if (el._useUserSize) {
+                el.rendNode.style.overflow = 'hidden';
+            } else {
+                el.rendNode.style.overflow = 'visible';
+            }
+
+            this.updateRectPrim(el.rendNode, el.coords.scrCoords[1],
+                el.coords.scrCoords[2] - el.size[1], el.size[0], el.size[1]);
+
+            el.rendNode.innerHTML = el.content;
+            this._updateVisual(el, {stroke: true, dash: true}, true);
+        },
+
         /* **************************
          * Render primitive objects
          * **************************/
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         appendChildPrim: function (node, level) {
             if (!Type.exists(level)) { // trace nodes have level not set
                 level = 0;
@@ -48920,7 +49466,7 @@ define('renderer/svg',[
             return node;
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         createPrim: function (type, id) {
             var node = this.container.ownerDocument.createElementNS(this.svgNamespace, type);
             node.setAttributeNS(null, 'id', this.container.id + '_' + id);
@@ -48933,14 +49479,14 @@ define('renderer/svg',[
             return node;
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         remove: function (shape) {
             if (Type.exists(shape) && Type.exists(shape.parentNode)) {
                 shape.parentNode.removeChild(shape);
             }
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         setLayer: function (el, level) {
             if (!Type.exists(level)) {
                 level = 0;
@@ -48951,7 +49497,7 @@ define('renderer/svg',[
             this.layer[level].appendChild(el.rendNode);
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         makeArrows: function (el, a) {
             var node2,
                 ev_fa = a.evFirst,
@@ -49003,7 +49549,7 @@ define('renderer/svg',[
             el.visPropOld.lastarrow = ev_la;
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         updateEllipsePrim: function (node, x, y, rx, ry) {
             var huge = 1000000;
 
@@ -49021,7 +49567,7 @@ define('renderer/svg',[
             node.setAttributeNS(null, 'ry', Math.abs(ry));
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         updateLinePrim: function (node, p1x, p1y, p2x, p2y) {
             var huge = 1000000;
 
@@ -49041,7 +49587,7 @@ define('renderer/svg',[
             }
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         updatePathPrim: function (node, pointString) {
             if (pointString === '') {
                 pointString = 'M 0 0';
@@ -49049,7 +49595,7 @@ define('renderer/svg',[
             node.setAttributeNS(null, 'd', pointString);
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         updatePathStringPoint: function (el, size, type) {
             var s = '',
                 scr = el.coords.scrCoords,
@@ -49095,7 +49641,7 @@ define('renderer/svg',[
             return s;
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         updatePathStringPrim: function (el) {
             var i, scr, len,
                 symbm = ' M ',
@@ -49151,7 +49697,7 @@ define('renderer/svg',[
             return pStr;
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         updatePathStringBezierPrim: function (el) {
             var i, j, k, scr, lx, ly, len,
                 symbm = ' M ',
@@ -49206,7 +49752,7 @@ define('renderer/svg',[
             return pStr;
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         updatePolygonPrim: function (node, el) {
             var i,
                 pStr = '',
@@ -49236,7 +49782,7 @@ define('renderer/svg',[
             }
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         updateRectPrim: function (node, x, y, w, h) {
             node.setAttributeNS(null, 'x', x);
             node.setAttributeNS(null, 'y', y);
@@ -49852,7 +50398,7 @@ define('renderer/svg',[
          * The SVG code of the construction is base64 encoded. The return string starts
          * with "data:image/svg+xml;base64,...".
          *
-         * @param {Boolean} ignoreTexts If true, the foreignObject tag is taken out from the SVG root.
+         * @param {Boolean} ignoreTexts If true, the foreignObject tag is set to display=none.
          * This is necessary for older versions of Safari. Default: false
          * @returns {String}  data URI string
          */
@@ -49870,19 +50416,15 @@ define('renderer/svg',[
             // input values are not copied. This can be verified by looking at an innerHTML output
             // of an input element. Therefore, we do it "by hand".
             if (this.container.hasChildNodes() && Type.exists(this.foreignObjLayer)) {
+                if (!ignoreTexts) {
+                    this.foreignObjLayer.setAttribute('display', 'inline');
+                }
                 while (svgRoot.nextSibling) {
 
                     // Copy all value attributes
                     values = values.concat(this._getValuesOfDOMElements(svgRoot.nextSibling));
 
                     this.foreignObjLayer.appendChild(svgRoot.nextSibling);
-                }
-                if (ignoreTexts === true) {
-                    // Take out foreignObjLayer, so that it will not be visible
-                    // in the dump.
-                    doc = this.container.ownerDocument;
-                    virtualNode = doc.createElement('div');
-                    virtualNode.appendChild(this.foreignObjLayer);
                 }
             }
 
@@ -49918,19 +50460,15 @@ define('renderer/svg',[
             // Move all HTML tags back from
             // the foreignObject element to the container
             if (Type.exists(this.foreignObjLayer) && this.foreignObjLayer.hasChildNodes()) {
-                if (ignoreTexts === true) {
-                    // Put foreignObjLayer back into the SVG
-                    svgRoot.appendChild(this.foreignObjLayer);
-                }
                 // Restore all HTML elements
                 while (this.foreignObjLayer.firstChild) {
                     this.container.appendChild(this.foreignObjLayer.firstChild);
                 }
+                this.foreignObjLayer.setAttribute("display", "none");
             }
 
             return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
         },
-
 
         /**
          * Convert the SVG construction into an HTML canvas image.
@@ -50208,10 +50746,14 @@ define('renderer/vml',[
 
     /**
      * Uses VML to implement the rendering methods defined in {@link JXG.AbstractRenderer}.
-     * @class JXG.AbstractRenderer
+     * VML was used in very old Internet Explorer versions upto IE 8.
+     * 
+     * 
+     * @class JXG.VMLRenderer
      * @augments JXG.AbstractRenderer
      * @param {Node} container Reference to a DOM node containing the board.
      * @see JXG.AbstractRenderer
+     * @deprecated
      */
     JXG.VMLRenderer = function (container) {
         this.type = 'vml';
@@ -50256,7 +50798,7 @@ define('renderer/vml',[
 
     JXG.VMLRenderer.prototype = new AbstractRenderer();
 
-    JXG.extend(JXG.VMLRenderer.prototype, /** @lends JXG.VMLRenderer */ {
+    JXG.extend(JXG.VMLRenderer.prototype, /** @lends JXG.VMLRenderer.prototype */ {
 
         /**
          * Sets attribute <tt>key</tt> of node <tt>node</tt> to <tt>value</tt>.
@@ -50322,7 +50864,7 @@ define('renderer/vml',[
          *    Text related stuff
          * **************************/
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         displayCopyright: function (str, fontsize) {
             var node, t;
 
@@ -50460,7 +51002,7 @@ define('renderer/vml',[
          *    Image related stuff
          * **************************/
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         drawImage: function (el) {
             // IE 8: Bilder ueber data URIs werden bis 32kB unterstuetzt.
             var node;
@@ -50482,7 +51024,7 @@ define('renderer/vml',[
             this.updateImage(el);
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         transformImage: function (el, t) {
             var m, s, maxX, maxY, minX, minY, i, nt,
                 node = el.rendNode,
@@ -50532,7 +51074,7 @@ define('renderer/vml',[
             }
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         updateImageURL: function (el) {
             var url = Type.evaluate(el.url);
 
@@ -50543,7 +51085,7 @@ define('renderer/vml',[
          * Render primitive objects
          * **************************/
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         appendChildPrim: function (node, level) {
             // For trace nodes
             if (!Type.exists(level)) {
@@ -50556,7 +51098,7 @@ define('renderer/vml',[
             return node;
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         appendNodesToElement: function (el, type) {
             if (type === 'shape' || type === 'path' || type === 'polygon') {
                 el.rendNodePath = this.getElementById(el.id + '_path');
@@ -50567,7 +51109,7 @@ define('renderer/vml',[
             el.rendNode = this.getElementById(el.id);
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         createPrim: function (type, id) {
             var node, pathNode,
                 fillNode = this.createNode('fill'),
@@ -50606,14 +51148,14 @@ define('renderer/vml',[
             return node;
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         remove: function (node) {
             if (Type.exists(node)) {
                 node.removeNode(true);
             }
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         makeArrows: function (el) {
             var nodeStroke,
                 ev_fa = Type.evaluate(el.visProp.firstarrow),
@@ -50649,7 +51191,7 @@ define('renderer/vml',[
             el.visPropOld.lastarrow = ev_la;
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         updateEllipsePrim: function (node, x, y, rx, ry) {
             node.style.left = Math.floor(x - rx) + 'px';
             node.style.top =  Math.floor(y - ry) + 'px';
@@ -50657,7 +51199,7 @@ define('renderer/vml',[
             node.style.height = Math.floor(Math.abs(ry) * 2) + 'px';
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         updateLinePrim: function (node, p1x, p1y, p2x, p2y, board) {
             var s, r = this.resolution;
 
@@ -50667,7 +51209,7 @@ define('renderer/vml',[
             }
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         updatePathPrim: function (node, pointString, board) {
             var x = board.canvasWidth,
                 y = board.canvasHeight;
@@ -50680,7 +51222,7 @@ define('renderer/vml',[
             this._setAttr(node, 'path', pointString.join(""));
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         updatePathStringPoint: function (el, size, type) {
             var s = [],
                 mround = Math.round,
@@ -50745,7 +51287,7 @@ define('renderer/vml',[
             return s;
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         updatePathStringPrim: function (el) {
             var i, scr,
                 pStr = [],
@@ -50816,7 +51358,7 @@ define('renderer/vml',[
             return pStr;
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         updatePathStringBezierPrim: function (el) {
             var i, j, k, scr, lx, ly,
                 pStr = [],
@@ -50880,7 +51422,7 @@ define('renderer/vml',[
             return pStr;
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         updatePolygonPrim: function (node, el) {
             var i,
                 len = el.vertices.length,
@@ -50918,7 +51460,7 @@ define('renderer/vml',[
             this.updatePathPrim(node, pStr, el.board);
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         updateRectPrim: function (node, x, y, w, h) {
             node.style.left = Math.floor(x) + 'px';
             node.style.top = Math.floor(y) + 'px';
@@ -50936,7 +51478,7 @@ define('renderer/vml',[
          *  Set Attributes
          * **************************/
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         setPropertyPrim: function (node, key, val) {
             var keyVml = '',
                 v;
@@ -50959,7 +51501,7 @@ define('renderer/vml',[
             }
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         display: function(el, val) {
             if (el && el.rendNode) {
                 el.visPropOld.visible = val;
@@ -50971,7 +51513,7 @@ define('renderer/vml',[
             }
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         show: function (el) {
             JXG.deprecated('Board.renderer.show()', 'Board.renderer.display()');
 
@@ -50980,7 +51522,7 @@ define('renderer/vml',[
             }
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         hide: function (el) {
             JXG.deprecated('Board.renderer.hide()', 'Board.renderer.display()');
 
@@ -50989,7 +51531,7 @@ define('renderer/vml',[
             }
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         setDashStyle: function (el, visProp) {
             var node;
             if (visProp.dash >= 0) {
@@ -50998,7 +51540,7 @@ define('renderer/vml',[
             }
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         setGradient: function (el) {
             var nodeFill = el.rendNodeFill,
                 ev_g = Type.evaluate(el.visProp.gradient);
@@ -51020,7 +51562,7 @@ define('renderer/vml',[
             }
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         setObjectFillColor: function (el, color, opacity) {
             var rgba = Type.evaluate(color), c, rgbo,
                 o = Type.evaluate(opacity), oo,
@@ -51075,7 +51617,7 @@ define('renderer/vml',[
             el.visPropOld.fillopacity = o;
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         setObjectStrokeColor: function (el, color, opacity) {
             var rgba = Type.evaluate(color), c, rgbo, t,
                 o = Type.evaluate(opacity), oo,
@@ -51135,7 +51677,7 @@ define('renderer/vml',[
             el.visPropOld.strokeopacity = o;
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         setObjectStrokeWidth: function (el, width) {
             var w = Type.evaluate(width),
                 node;
@@ -51159,7 +51701,7 @@ define('renderer/vml',[
 
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         setShadow: function (el) {
             var nodeShadow = el.rendNodeShadow,
                 ev_s = Type.evaluate(el.visProp.shadow);
@@ -51184,12 +51726,12 @@ define('renderer/vml',[
          * renderer control
          * **************************/
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         suspendRedraw: function () {
             this.container.style.display = 'none';
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         unsuspendRedraw: function () {
             this.container.style.display = '';
         }
@@ -51256,7 +51798,8 @@ define('renderer/canvas',[
 
     /**
      * Uses HTML Canvas to implement the rendering methods defined in {@link JXG.AbstractRenderer}.
-     * @class JXG.AbstractRenderer
+     * 
+     * @class JXG.CanvasRenderer
      * @augments JXG.AbstractRenderer
      * @param {Node} container Reference to a DOM node containing the board.
      * @param {Object} dim The dimensions of the board
@@ -52259,7 +52802,7 @@ define('renderer/canvas',[
          *    Text related stuff
          * **************************/
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         displayCopyright: function (str, fontSize) {
             var context = this.context;
 
@@ -52272,7 +52815,7 @@ define('renderer/canvas',[
             context.restore();
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         drawInternalText: function (el) {
             var ev_fs = Type.evaluate(el.visProp.fontsize),
                 fontUnit = Type.evaluate(el.visProp.fontunit),
@@ -52306,7 +52849,7 @@ define('renderer/canvas',[
             return null;
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         updateInternalText: function (el) {
             this.drawInternalText(el);
         },
@@ -52352,7 +52895,7 @@ define('renderer/canvas',[
          *    Image related stuff
          * **************************/
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         drawImage: function (el) {
             el.rendNode = new Image();
             // Store the file name of the image.
@@ -52364,7 +52907,7 @@ define('renderer/canvas',[
             this.updateImage(el);
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         updateImage: function (el) {
             var context = this.context,
                 o = Type.evaluate(el.visProp.fillopacity),
@@ -52395,7 +52938,7 @@ define('renderer/canvas',[
             }
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         transformImage: function (el, t) {
             var m, len = t.length,
                 ctx = this.context;
@@ -52408,7 +52951,7 @@ define('renderer/canvas',[
             }
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         updateImageURL: function (el) {
             var url;
 
@@ -52512,7 +53055,7 @@ define('renderer/canvas',[
             this._stroke(el);
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         updatePathStringBezierPrim: function (el) {
             var i, j, k, scr, lx, ly, len,
                 symbm = 'M',
@@ -52618,7 +53161,7 @@ define('renderer/canvas',[
 
         // **************************  Set Attributes *************************
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         display: function(el, val) {
              if (el && el.rendNode) {
                  el.visPropOld.visible = val;
@@ -52798,8 +53341,11 @@ define('renderer/no',['jxg', 'renderer/abstract'], function (JXG, AbstractRender
 
     /**
      * This renderer draws nothing. It is intended to be used in environments where none of our rendering engines
-     * are available, e.g. WebWorkers.
-     * @class JXG.AbstractRenderer
+     * are available, e.g. WebWorkers. All methods are empty.
+     * 
+     * @class JXG.NoRenderer
+     * @augments JXG.AbstractRenderer
+     * @see JXG.AbstractRenderer
      */
     JXG.NoRenderer = function () {
         /**
@@ -52821,7 +53367,7 @@ define('renderer/no',['jxg', 'renderer/abstract'], function (JXG, AbstractRender
         this.type = 'no';
     };
 
-    JXG.extend(JXG.NoRenderer.prototype, /** @lends JXG.AbstractRenderer.prototype */ {
+    JXG.extend(JXG.NoRenderer.prototype, /** @lends JXG.NoRenderer.prototype */ {
         /* ******************************** *
          *    Point drawing and updating    *
          * ******************************** */
@@ -53402,6 +53948,9 @@ define('renderer/no',['jxg', 'renderer/abstract'], function (JXG, AbstractRender
 
     });
 
+    /**
+     * @ignore
+     */
     JXG.NoRenderer.prototype = new AbstractRenderer();
 
     return JXG.NoRenderer;
@@ -53951,8 +54500,9 @@ define('jsxgraph',[
     if (Env.isBrowser && typeof window === 'object' && typeof document === 'object') {
         Env.addEvent(window, 'load', function () {
             var type, i, j, div,
-                id, board, width, height, bbox, axis, grid,
-                code,
+                id, board, txt,
+                width, height, maxWidth, aspectRatio, cssClasses,
+                bbox, axis, grid, code,
                 src, request, postpone = false,
                 scripts = document.getElementsByTagName('script'),
                 init = function (code, type, bbox) {
@@ -53986,8 +54536,11 @@ define('jsxgraph',[
                 if (Type.exists(type) &&
                     (type.toLowerCase() === 'text/jessiescript' || type.toLowerCase() === 'jessiescript' ||
                      type.toLowerCase() === 'text/jessiecode' || type.toLowerCase() === 'jessiecode')) {
-                    width = scripts[i].getAttribute('width', false) || '500px';
-                    height = scripts[i].getAttribute('height', false) || '500px';
+                    cssClasses = scripts[i].getAttribute('class', false) || '';
+                    width = scripts[i].getAttribute('width', false) || '';
+                    height = scripts[i].getAttribute('height', false) || '';
+                    maxWidth = scripts[i].getAttribute('maxwidth', false) || '100%';
+                    aspectRatio = scripts[i].getAttribute('aspectratio', false) || '1/1';
                     bbox = scripts[i].getAttribute('boundingbox', false) || '-5, 5, 5, -5';
                     id = scripts[i].getAttribute('container', false);
                     src = scripts[i].getAttribute('src', false);
@@ -54007,8 +54560,14 @@ define('jsxgraph',[
                         id = 'jessiescript_autgen_jxg_' + i;
                         div = document.createElement('div');
                         div.setAttribute('id', id);
-                        div.setAttribute('style', 'width:' + width + '; height:' + height + '; float:left');
-                        div.setAttribute('class', 'jxgbox');
+
+                        txt = (width !== '') ? ('width:' + width + ';') : '';
+                        txt += (height !== '') ? ('height:' + height + ';') : '';
+                        txt += (maxWidth !== '') ? ('max-width:' + maxWidth + ';') : '';
+                        txt += (aspectRatio !== '') ? ('aspect-ratio:' + aspectRatio + ';') : '';
+
+                        div.setAttribute('style', txt);
+                        div.setAttribute('class', 'jxgbox ' + cssClasses);
                         try {
                             document.body.insertBefore(div, scripts[i]);
                         } catch (e) {
@@ -54487,7 +55046,7 @@ define('base/point',[
             return false;
         },
 
-        // already documented in GeometryElement
+        // Already documented in GeometryElement
         cloneToBackground: function () {
             var copy = {};
 
@@ -60270,7 +60829,7 @@ define('base/polygon',[
             return box;
         },
 
-        // already documented in GeometryElement
+        // Already documented in GeometryElement
         bounds: function () {
             return this.boundingBox();
         },
@@ -62176,7 +62735,7 @@ define('base/curve',[
             return this;
         },
 
-        // already documented in GeometryElement
+        // Already documented in GeometryElement
         bounds: function () {
             var minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity,
                 l = this.points.length, i,
@@ -63199,6 +63758,9 @@ define('base/curve',[
             return this.sum;
         };
 
+        /**
+         * @ignore
+         */
         c.updateDataArray = function () {
             var u = Numerics.riemann(f, n(), type(), this.minX(), this.maxX());
             this.dataX = u[0];
@@ -63265,7 +63827,10 @@ define('base/curve',[
         attr.curvetype = 'plot';
         c = board.create('curve', [[0], [0]], attr);
 
-        c.updateDataArray = function () {
+        /**
+         * @ignore
+         */
+         c.updateDataArray = function () {
             var i, step, t, el, pEl, x, y, from, savetrace,
                 le = attr.numberpoints,
                 savePos = glider.position,
@@ -63389,7 +63954,10 @@ define('base/curve',[
 
         attr = Type.copyAttributes(attributes, board.options, 'stepfunction');
         c = board.create('curve', parents, attr);
-        c.updateDataArray = function () {
+        /**
+         * @ignore
+         */
+         c.updateDataArray = function () {
             var i, j = 0,
                 len = this.xterm.length;
 
@@ -63520,7 +64088,10 @@ define('base/curve',[
         }
 
         c = board.create('curve', [[], []], attributes);
-        c.updateDataArray = function () {
+        /**
+         * @ignore
+         */
+         c.updateDataArray = function () {
             var a = JXG.Math.Clip.intersection(parents[0], parents[1], this.board);
             this.dataX = a[0];
             this.dataY = a[1];
@@ -63571,7 +64142,10 @@ define('base/curve',[
         }
 
         c = board.create('curve', [[], []], attributes);
-        c.updateDataArray = function () {
+        /**
+         * @ignore
+         */
+         c.updateDataArray = function () {
             var a = JXG.Math.Clip.union(parents[0], parents[1], this.board);
             this.dataX = a[0];
             this.dataY = a[1];
@@ -63622,7 +64196,10 @@ define('base/curve',[
         }
 
         c = board.create('curve', [[], []], attributes);
-        c.updateDataArray = function () {
+        /**
+         * @ignore
+         */
+         c.updateDataArray = function () {
             var a = JXG.Math.Clip.difference(parents[0], parents[1], this.board);
             this.dataX = a[0];
             this.dataY = a[1];
@@ -64632,7 +65209,10 @@ define('element/sector',[
         };
 
         if (type === '2lines') {
-            el.Radius = function () {
+            /**
+             * @ignore 
+             */
+             el.Radius = function () {
                 var r = Type.evaluate(parents[4]);
                 if (r === 'auto') {
                     return this.autoRadius();
@@ -65013,7 +65593,10 @@ define('element/sector',[
          * @param {Number, Function} value New radius.
          */
         el.setRadius = function (val) {
-            el.Radius = function () {
+            /**
+             * @ignore 
+             */
+             el.Radius = function () {
                 var r = Type.evaluate(val);
                 if (r === 'auto') {
                     return this.autoRadius();
@@ -65399,8 +65982,11 @@ define('element/sector',[
              */
             el.pointsquare = el.point3 = el.anglepoint = points[2];
 
-            // Set the angle radius, also @see @link Sector#autoRadius
+            /**
+             * @ignore 
+             */
             el.Radius = function () {
+                // Set the angle radius, also @see @link Sector#autoRadius
                 var r = Type.evaluate(radius);
                 if (r === 'auto') {
                     return el.autoRadius();
@@ -66832,7 +67418,13 @@ define('element/composition',[
 
         t.update();
 
-        t.generatePolynomial = function () {
+        /**
+         * Used to generate a polynomial for the orthogonal projection
+         * @name Orthogonalprojection#generatePolynomial
+         * @returns {Array} An array containing the generated polynomial.
+         * @private
+         */
+         t.generatePolynomial = function () {
             /*
              *  Perpendicular takes point P and line L and creates point T and line M:
              *
@@ -67032,7 +67624,13 @@ define('element/composition',[
 
         t.update();
 
-        t.generatePolynomial = function () {
+        /**
+         * Used to generate a polynomial for the perpendicular point
+         * @name PerpendicularPoint#generatePolynomial
+         * @returns {Array} An array containing the generated polynomial.
+         * @private
+         */
+         t.generatePolynomial = function () {
             /*
              *  Perpendicular takes point P and line L and creates point T and line M:
              *
@@ -67267,7 +67865,13 @@ define('element/composition',[
 
         t.prepareUpdate().update();
 
-        t.generatePolynomial = function () {
+        /**
+         * Used to generate a polynomial for the midpoint.
+         * @name Midpoint#generatePolynomial
+         * @returns {Array} An array containing the generated polynomial.
+         * @private
+         */
+         t.generatePolynomial = function () {
             /*
              *  Midpoint takes two point A and B or line L (with points P and Q) and creates point T:
              *
@@ -69306,7 +69910,10 @@ define('element/composition',[
         c.elType = 'grid';
         c.type = Const.OBJECT_TYPE_GRID;
 
-        c.updateDataArray = function () {
+        /**
+         * @ignore
+         */
+         c.updateDataArray = function () {
             var start, end, i, topLeft, bottomRight,
                 gridX = Type.evaluate(this.visProp.gridx),
                 gridY = Type.evaluate(this.visProp.gridy);
@@ -69840,7 +70447,7 @@ define('element/locus',[
         c.setParents([p.id]);
 
         /**
-         * should be documented in JXG.Curve
+         * Should be documented in JXG.Curve
          * @ignore
          */
         c.updateDataArray = function () {
@@ -69948,7 +70555,6 @@ define('element/locus',[
  base/coords
  base/element
  math/math
- math/statistics
  utils/type
  */
 
@@ -70178,7 +70784,7 @@ define('base/image',[
             return this;
         },
 
-        // documented in element.js
+        // Documented in element.js
         getParents: function () {
             var p = [this.url, [this.Z(), this.X(), this.Y()], this.usrSize];
 
@@ -76933,7 +77539,10 @@ define('element/comb',[
         Type.merge(attr, Type.copyAttributes(attributes, board.options, 'comb', 'curve'));
         c = board.create('curve', [[0], [0]], attr);
 
-        c.updateDataArray = function() {
+        /**
+         * @ignore
+         */
+         c.updateDataArray = function() {
             var s = 0,
                 max_s = p1.Dist(p2),
                 cs, sn, dx, dy,
@@ -77952,6 +78561,414 @@ define('element/button',[
     };
 });
 
+/*
+    Copyright 2008-2021
+        Matthias Ehmann,
+        Michael Gerhaeuser,
+        Carsten Miller,
+        Bianca Valentin,
+        Alfred Wassermann,
+        Peter Wilfahrt
+
+    This file is part of JSXGraph.
+
+    JSXGraph is free software dual licensed under the GNU LGPL or MIT License.
+
+    You can redistribute it and/or modify it under the terms of the
+
+      * GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version
+      OR
+      * MIT License: https://github.com/jsxgraph/jsxgraph/blob/master/LICENSE.MIT
+
+    JSXGraph is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License and
+    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
+    and <http://opensource.org/licenses/MIT/>.
+ */
+
+
+/*global JXG: true, define: true, window: true*/
+/*jslint nomen: true, plusplus: true*/
+
+/* depends:
+ jxg
+ base/constants
+ base/coords
+ base/element
+ math/math
+ utils/type
+ */
+
+/**
+ * @fileoverview In this file the ForeignObject element is defined.
+ */
+
+ define('base/foreignobject',[
+    'jxg', 'base/constants', 'base/coords', 'base/element', 'math/math', 'utils/type', 'base/coordselement'
+], function (JXG, Const, Coords, GeometryElement, Mat, Type, CoordsElement) {
+
+    "use strict";
+
+    JXG.ForeignObject = function (board, coords, attributes, content, size) {
+        this.constructor(board, attributes, Const.OBJECT_TYPE_FOREIGNOBJECT, Const.OBJECT_CLASS_OTHER);
+        this.element = this.board.select(attributes.anchor);
+        this.coordsConstructor(coords);
+
+        this._useUserSize = false;
+        this.size = [1, 1];
+        if (Type.exists(size) && size.length > 0) {
+            this._useUserSize = true;
+
+            this.W = Type.createFunction(size[0], this.board, '');
+            this.H = Type.createFunction(size[1], this.board, '');
+            this.usrSize = [this.W(), this.H()];
+        }
+
+        /**
+         * Array of length two containing [width, height] of the foreignObject in pixel.
+         * @type {array}
+         */
+        // this.size = [Math.abs(this.usrSize[0] * board.unitX), Math.abs(this.usrSize[1] * board.unitY)];
+
+        /**
+         * 'href' of the foreignObject.
+         * @type {string}
+         */
+        this.content = content;
+
+        this.elType = 'foreignobject';
+
+        // span contains the anchor point and the two vectors
+        // spanning the foreignObject rectangle.
+        // this.span = [
+        //     this.coords.usrCoords.slice(0),
+        //     [this.coords.usrCoords[0], this.W(), 0],
+        //     [this.coords.usrCoords[0], 0, this.H()]
+        // ];
+
+        //this.parent = board.select(attributes.anchor);
+
+        this.id = this.board.setId(this, 'Im');
+
+        this.board.renderer.drawForeignObject(this);
+        this.board.finalizeAdding(this);
+
+        this.methodMap = JXG.deepCopy(this.methodMap, {
+            addTransformation: 'addTransform',
+            trans: 'addTransform'
+        });
+    };
+
+    JXG.ForeignObject.prototype = new GeometryElement();
+    Type.copyPrototypeMethods(JXG.ForeignObject, CoordsElement, 'coordsConstructor');
+
+    JXG.extend(JXG.ForeignObject.prototype, /** @lends JXG.ForeignObject.prototype */ {
+
+        /**
+         * Checks whether (x,y) is over or near the image;
+         * @param {Number} x Coordinate in x direction, screen coordinates.
+         * @param {Number} y Coordinate in y direction, screen coordinates.
+         * @returns {Boolean} True if (x,y) is over the image, False otherwise.
+         */
+        hasPoint: function (x, y) {
+            var dx, dy, r, type, prec,
+                c, v, p, dot,
+                len = this.transformations.length;
+
+                if (Type.isObject(Type.evaluate(this.visProp.precision))) {
+                    type = this.board._inputDevice;
+                    prec = Type.evaluate(this.visProp.precision[type]);
+                } else {
+                    // 'inherit'
+                    prec = this.board.options.precision.hasPoint;
+                }
+
+            // Easy case: no transformation
+            if (len === 0) {
+                dx = x - this.coords.scrCoords[1];
+                dy = this.coords.scrCoords[2] - y;
+                r = prec;
+
+                return dx >= -r && dx - this.size[0] <= r &&
+                       dy >= -r && dy - this.size[1] <= r;
+            }
+
+            // foreignObject is transformed
+            c = new Coords(Const.COORDS_BY_SCREEN, [x, y], this.board);
+            // v is the vector from anchor point to the drag point
+            c = c.usrCoords;
+            v = [c[0] - this.span[0][0],
+                c[1] - this.span[0][1],
+                c[2] - this.span[0][2]];
+            dot = Mat.innerProduct;   // shortcut
+
+            // Project the drag point to the sides.
+            p = dot(v, this.span[1]);
+            if (0 <= p && p <= dot(this.span[1], this.span[1])) {
+                p = dot(v, this.span[2]);
+
+                if (0 <= p && p <= dot(this.span[2], this.span[2])) {
+                    return true;
+                }
+            }
+            return false;
+        },
+
+        /**
+         * Recalculate the coordinates of lower left corner and the width and height.
+         *
+         * @returns {JXG.GeometryElement} A reference to the element
+         * @private
+         */
+        update: function (fromParent) {
+            if (!this.needsUpdate) {
+                return this;
+            }
+            this.updateCoords(fromParent);
+            this.updateSize();
+            // this.updateSpan();
+            return this;
+        },
+
+        /**
+         * Send an update request to the renderer.
+         * @private
+         */
+        updateRenderer: function () {
+            return this.updateRendererGeneric('updateForeignObject');
+        },
+
+        /**
+         * Updates the internal arrays containing size of the foreignObject.
+         * @returns {JXG.GeometryElement} A reference to the element
+         * @private
+         */
+        updateSize: function () {
+            var bb = [0, 0];
+
+            if (this._useUserSize) {
+                this.usrSize = [this.W(), this.H()];
+                this.size = [Math.abs(this.usrSize[0] * this.board.unitX),
+                             Math.abs(this.usrSize[1] * this.board.unitY)];
+            } else {
+                if (this.rendNode.hasChildNodes()) {
+                    bb = this.rendNode.childNodes[0].getBoundingClientRect();
+                    this.size = [bb.width, bb.height];
+                }
+            }
+
+            return this;
+        },
+
+        /**
+         * Update the anchor point of the foreignObject, i.e. the lower left corner
+         * and the two vectors which span the rectangle.
+         * @returns {JXG.GeometryElement} A reference to the element
+         * @private
+         *
+         */
+        updateSpan: function () {
+            var i, j, len = this.transformations.length, v = [];
+
+            if (len === 0) {
+                this.span = [[this.Z(), this.X(), this.Y()],
+                    [this.Z(), this.W(), 0],
+                    [this.Z(), 0, this.H()]];
+            } else {
+                // v contains the three defining corners of the rectangle/image
+                v[0] = [this.Z(), this.X(), this.Y()];
+                v[1] = [this.Z(), this.X() + this.W(), this.Y()];
+                v[2] = [this.Z(), this.X(), this.Y() + this.H()];
+
+                // Transform the three corners
+                for (i = 0; i < len; i++) {
+                    for (j = 0; j < 3; j++) {
+                        v[j] = Mat.matVecMult(this.transformations[i].matrix, v[j]);
+                    }
+                }
+                // Normalize the vectors
+                for (j = 0; j < 3; j++) {
+                    v[j][1] /= v[j][0];
+                    v[j][2] /= v[j][0];
+                    v[j][0] /= v[j][0];
+                }
+                // Compute the two vectors spanning the rectangle
+                // by subtracting the anchor point.
+                for (j = 1; j < 3; j++) {
+                    v[j][0] -= v[0][0];
+                    v[j][1] -= v[0][1];
+                    v[j][2] -= v[0][2];
+                }
+                this.span = v;
+            }
+
+            return this;
+        },
+
+        addTransform: function (transform) {
+            var i;
+
+            if (Type.isArray(transform)) {
+                for (i = 0; i < transform.length; i++) {
+                    this.transformations.push(transform[i]);
+                }
+            } else {
+                this.transformations.push(transform);
+            }
+
+            return this;
+        },
+
+        // Documented in element.js
+        getParents: function () {
+            var p = [this.url, [this.Z(), this.X(), this.Y()], this.usrSize];
+
+            if (this.parents.length !== 0) {
+                p = this.parents;
+            }
+
+            return p;
+        },
+
+        /**
+         * Set the width and height of the image. After setting a new size,
+         * board.update() or image.fullUpdate()
+         * has to be called to make the change visible.
+         * @param  {number, function, string} width  Number, function or string
+         *                            that determines the new width of the image
+         * @param  {number, function, string} height Number, function or string
+         *                            that determines the new height of the image
+         * @returns {JXG.GeometryElement} A reference to the element
+         *
+         * @example
+         * var im = board.create('image', ['http://jsxgraph.uni-bayreuth.de/distrib/images/uccellino.jpg',
+         *                                [-3,-2], [3,3]]);
+         * im.setSize(4, 4);
+         * board.update();
+         *
+         * </pre><div id="JXG8411e60c-f009-11e5-b1bf-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG8411e60c-f009-11e5-b1bf-901b0e1b8723',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *     var im = board.create('image', ['http://jsxgraph.uni-bayreuth.de/distrib/images/uccellino.jpg', [-3,-2],    [3,3]]);
+         *     //im.setSize(4, 4);
+         *     //board.update();
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
+         * @example
+         * var p0 = board.create('point', [-3, -2]),
+         *     im = board.create('image', ['http://jsxgraph.uni-bayreuth.de/distrib/images/uccellino.jpg',
+         *                     [function(){ return p0.X(); }, function(){ return p0.Y(); }],
+         *                     [3,3]]),
+         *     p1 = board.create('point', [1, 2]);
+         *
+         * im.setSize(function(){ return p1.X() - p0.X(); }, function(){ return p1.Y() - p0.Y(); });
+         * board.update();
+         *
+         * </pre><div id="JXG4ce706c0-f00a-11e5-b1bf-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG4ce706c0-f00a-11e5-b1bf-901b0e1b8723',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *     var p0 = board.create('point', [-3, -2]),
+         *         im = board.create('image', ['http://jsxgraph.uni-bayreuth.de/distrib/images/uccellino.jpg',
+         *                         [function(){ return p0.X(); }, function(){ return p0.Y(); }],
+         *                         [3,3]]),
+         *         p1 = board.create('point', [1, 2]);
+         *
+         *     im.setSize(function(){ return p1.X() - p0.X(); }, function(){ return p1.Y() - p0.Y(); });
+         *     board.update();
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
+         */
+        setSize: function(width, height) {
+            this.W = Type.createFunction(width, this.board, '');
+            this.H = Type.createFunction(height, this.board, '');
+            this._useUserSize = true;
+
+            return this;
+        },
+
+        /**
+         * Returns the width of the foreignObject in user coordinates.
+         * @returns {number} width of the image in user coordinates
+         */
+        W: function() {},  // Needed for docs, defined in constructor
+
+        /**
+         * Returns the height of the foreignObject in user coordinates.
+         * @returns {number} height of the image in user coordinates
+         */
+        H: function() {}  // Needed for docs, defined in constructor
+    });
+
+    /**
+     * @class This element is used to provide a constructor for arbitrary content in
+     * an SVG foreignObject container.
+     * <p>
+     *
+     * @pseudo
+     * @description
+     * @name ForeignObject
+     * @augments ForeignObject
+     * @constructor
+     * @type JXG.ForeignObject
+     *
+     * @param {number,function_number,function_String_String} x,y,label Parent elements for checkbox elements.
+     *                     <p>
+     *                     x and y are the coordinates of the lower left corner of the text box.
+     *                      The position of the text is fixed,
+     *                     x and y are numbers. The position is variable if x or y are functions.
+     *                     <p>
+     *                     The label of the input element may be given as string.
+     *                     <p>
+     *                     The value of the checkbox can be controlled with the attribute <tt>checked</tt>
+     *                     <p>The HTML node can be accessed with <tt>element.rendNodeCheckbox</tt>
+     *
+     *
+     */
+    JXG.createForeignObject = function (board, parents, attributes) {
+        var attr, fo,
+            content = parents[0],
+            coords = parents[1],
+            size = [];
+
+        if (parents.length >= 2) {
+            size = parents[2];
+        }
+
+        attr = Type.copyAttributes(attributes, board.options, 'foreignobject');
+        fo = CoordsElement.create(JXG.ForeignObject, board, coords, attr, content, size);
+        if (!fo) {
+            throw new Error("JSXGraph: Can't create foreignObject with parent types '" +
+                    (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
+                    "\nPossible parent types: [x,y], [z,x,y], [element,transformation]");
+        }
+
+        return fo;
+    };
+
+    JXG.registerElement('foreignobject', JXG.createForeignObject);
+
+    return {
+        ForeignObject: JXG.ForeignObject,
+        createForeignobject: JXG.createForeignObject
+    };
+});
+
 /*global define: true*/
 define('../build/core.deps.js',[
     'jxg',
@@ -78023,7 +79040,8 @@ define('../build/core.deps.js',[
     'element/slopetriangle',
     'element/checkbox',
     'element/input',
-    'element/button'
+    'element/button',
+    'base/foreignobject'
 ], function (JXG, Env) {
     "use strict";
 

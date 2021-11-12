@@ -1101,7 +1101,7 @@ define([
                     return that.meetCurveLine(el1, el2, i, el1.board, alwaysintersect);
                 };
 
-            } else if (el1.elementClass === Const.OBJECT_CLASS_LINE && el2.elementClass === Const.OBJECT_CLASS_LINE, el2.elementClass === Const.OBJECT_CLASS_LINE) {
+            } else if (el1.elementClass === Const.OBJECT_CLASS_LINE && el2.elementClass === Const.OBJECT_CLASS_LINE) {
                 // line - line, lines may also be segments.
                 /** @ignore */
                 func = function () {

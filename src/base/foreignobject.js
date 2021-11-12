@@ -190,7 +190,6 @@
             var bb = [0, 0];
 
             if (this._useUserSize) {
-                console.log(this.W(), this.H())
                 this.usrSize = [this.W(), this.H()];
                 this.size = [Math.abs(this.usrSize[0] * this.board.unitX),
                              Math.abs(this.usrSize[1] * this.board.unitY)];
