@@ -1767,6 +1767,8 @@ define(['jxg', 'utils/type', 'utils/env', 'math/math'], function (JXG, Type, Env
          * Returns the Lagrange polynomials, see
          * Jean-Paul Berrut, Lloyd N. Trefethen: Barycentric Lagrange Interpolation,
          * SIAM Review, Vol 46, No 3, (2004) 501-517.
+         * <p>
+         * It possesses the method getTerm() which returns the string containing the function term of the polynomial.
          * @param {Array} p Array of JXG.Points
          * @returns {function} A function of one parameter which returns the value of the polynomial, whose graph runs through the given points.
          * @memberof JXG.Math.Numerics
@@ -1792,6 +1794,34 @@ define(['jxg', 'utils/type', 'utils/env', 'math/math'], function (JXG, Type, Env
          *     p[3] = board.create('point', [3,-1], {size:4});
          *     var f = JXG.Math.Numerics.lagrangePolynomial(p);
          *     var graph = board.create('functiongraph', [f,-10, 10], {strokeWidth:3});
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
+         * @example
+         * var points = [];
+         * points[0] = board.create('point', [-1,2], {size:4});
+         * points[1] = board.create('point', [0, 0], {size:4});
+         * points[2] = board.create('point', [2, 1], {size:4});
+         *
+         * var f = JXG.Math.Numerics.lagrangePolynomial(points);
+         * var graph = board.create('functiongraph', [f,-10, 10], {strokeWidth:3});
+         * var txt = board.create('text', [-3, -4,  () => f.getTerm(2, 't', ' * ')], {fontSize: 16});
+         *
+         * </pre><div id="JXG73fdaf12-e257-4374-b488-ae063e4eecbb" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG73fdaf12-e257-4374-b488-ae063e4eecbb',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *     var points = [];
+         *     points[0] = board.create('point', [-1,2], {size:4});
+         *     points[1] = board.create('point', [0, 0], {size:4});
+         *     points[2] = board.create('point', [2, 1], {size:4});
+         *
+         *     var f = JXG.Math.Numerics.lagrangePolynomial(points);
+         *     var graph = board.create('functiongraph', [f,-10, 10], {strokeWidth:3});
+         *     var txt = board.create('text', [-3, -4,  () => f.getTerm(2, 't', ' * ')], {fontSize: 16});
          *
          *     })();
          *
@@ -1848,6 +1878,7 @@ define(['jxg', 'utils/type', 'utils/env', 'math/math'], function (JXG, Type, Env
              * Get the term of the Lagrange polynomial as string.
              * Calls {@link JXG.Math.Numerics#lagrangePolynomialTerm}.
              *
+             * @name JXG.Math.Numerics.lagrangePolynomial#getTerm
              * @param {Number} digits Number of digits of the coefficients
              * @param {String} param Variable name
              * @param {String} dot Dot symbol
