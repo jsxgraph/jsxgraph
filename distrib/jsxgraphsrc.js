@@ -841,8 +841,8 @@ define('base/constants',['jxg'], function (JXG) {
     'use strict';
 
     var major = 1,
-        minor = 3,
-        patch = 3,
+        minor = 4,
+        patch = 0,
         add = 'dev', //'dev'
         version = major + '.' + minor + '.' + patch + (add ? '-' + add : ''),
         constants;
@@ -9765,6 +9765,8 @@ define('math/numerics',['jxg', 'utils/type', 'utils/env', 'math/math'], function
          * Returns the Lagrange polynomials, see
          * Jean-Paul Berrut, Lloyd N. Trefethen: Barycentric Lagrange Interpolation,
          * SIAM Review, Vol 46, No 3, (2004) 501-517.
+         * <p>
+         * It possesses the method getTerm() which returns the string containing the function term of the polynomial.
          * @param {Array} p Array of JXG.Points
          * @returns {function} A function of one parameter which returns the value of the polynomial, whose graph runs through the given points.
          * @memberof JXG.Math.Numerics
@@ -9790,6 +9792,34 @@ define('math/numerics',['jxg', 'utils/type', 'utils/env', 'math/math'], function
          *     p[3] = board.create('point', [3,-1], {size:4});
          *     var f = JXG.Math.Numerics.lagrangePolynomial(p);
          *     var graph = board.create('functiongraph', [f,-10, 10], {strokeWidth:3});
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
+         * @example
+         * var points = [];
+         * points[0] = board.create('point', [-1,2], {size:4});
+         * points[1] = board.create('point', [0, 0], {size:4});
+         * points[2] = board.create('point', [2, 1], {size:4});
+         *
+         * var f = JXG.Math.Numerics.lagrangePolynomial(points);
+         * var graph = board.create('functiongraph', [f,-10, 10], {strokeWidth:3});
+         * var txt = board.create('text', [-3, -4,  () => f.getTerm(2, 't', ' * ')], {fontSize: 16});
+         *
+         * </pre><div id="JXG73fdaf12-e257-4374-b488-ae063e4eecbb" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG73fdaf12-e257-4374-b488-ae063e4eecbb',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *     var points = [];
+         *     points[0] = board.create('point', [-1,2], {size:4});
+         *     points[1] = board.create('point', [0, 0], {size:4});
+         *     points[2] = board.create('point', [2, 1], {size:4});
+         *
+         *     var f = JXG.Math.Numerics.lagrangePolynomial(points);
+         *     var graph = board.create('functiongraph', [f,-10, 10], {strokeWidth:3});
+         *     var txt = board.create('text', [-3, -4,  () => f.getTerm(2, 't', ' * ')], {fontSize: 16});
          *
          *     })();
          *
@@ -9846,6 +9876,7 @@ define('math/numerics',['jxg', 'utils/type', 'utils/env', 'math/math'], function
              * Get the term of the Lagrange polynomial as string.
              * Calls {@link JXG.Math.Numerics#lagrangePolynomialTerm}.
              *
+             * @name JXG.Math.Numerics#lagrangePolynomial.getTerm
              * @param {Number} digits Number of digits of the coefficients
              * @param {String} param Variable name
              * @param {String} dot Dot symbol
@@ -70570,8 +70601,6 @@ define('base/image',[
 
     /**
      * Construct and handle images
-     * The coordinates can be relative to the coordinates of an element
-     * given in {@link JXG.Options#text.anchor}.
      *
      * The image can be supplied as an URL or an base64 encoded inline image
      * like "data:image/png;base64, /9j/4AAQSkZJRgA..." or a function returning
@@ -70581,8 +70610,8 @@ define('base/image',[
      * type {@link Image} instead.
      * @augments JXG.GeometryElement
      * @augments JXG.CoordsElement
-     * @param {string|JXG.Board} board The board the new text is drawn on.
-     * @param {Array} coordinates An array with the user coordinates of the text.
+     * @param {string|JXG.Board} board The board the new image is drawn on.
+     * @param {Array} coordinates An array with the user coordinates of the image.
      * @param {Object} attributes An object containing visual and - optionally - a name and an id.
      * @param {string|function} url An URL string or a function returning an URL string.
      * @param  {Array} size Array containing width and height of the image in user coordinates.
@@ -78615,12 +78644,31 @@ define('element/button',[
 
     "use strict";
 
-    JXG.ForeignObject = function (board, coords, attributes, content, size) {
+    /**
+     * Construct and handle SVG foreignObjects.
+     *
+     * @class Creates a new foreignObject object. Do not use this constructor to create a foreignObject. Use {@link JXG.Board#create} with
+     * type {@link foreignobject} instead.
+     * @augments JXG.GeometryElement
+     * @augments JXG.CoordsElement
+     * @param {string|JXG.Board} board The board the new foreignObject is drawn on.
+     * @param {Array} coordinates An array with the user coordinates of the foreignObject.
+     * @param {Object} attributes An object containing visual and - optionally - a name and an id.
+     * @param {string|function} url An URL string or a function returning an URL string.
+     * @param  {Array} size Array containing width and height of the foreignObject in user coordinates.
+     *
+     */
+     JXG.ForeignObject = function (board, coords, attributes, content, size) {
         this.constructor(board, attributes, Const.OBJECT_TYPE_FOREIGNOBJECT, Const.OBJECT_CLASS_OTHER);
         this.element = this.board.select(attributes.anchor);
         this.coordsConstructor(coords);
 
         this._useUserSize = false;
+
+        /**
+         * Array of length two containing [width, height] of the foreignObject in pixel.
+         * @type Array
+         */
         this.size = [1, 1];
         if (Type.exists(size) && size.length > 0) {
             this._useUserSize = true;
@@ -78630,10 +78678,6 @@ define('element/button',[
             this.usrSize = [this.W(), this.H()];
         }
 
-        /**
-         * Array of length two containing [width, height] of the foreignObject in pixel.
-         * @type {array}
-         */
         // this.size = [Math.abs(this.usrSize[0] * board.unitX), Math.abs(this.usrSize[1] * board.unitY)];
 
         /**
@@ -78651,7 +78695,6 @@ define('element/button',[
         //     [this.coords.usrCoords[0], this.W(), 0],
         //     [this.coords.usrCoords[0], 0, this.H()]
         // ];
-
         //this.parent = board.select(attributes.anchor);
 
         this.id = this.board.setId(this, 'Im');
@@ -78723,7 +78766,7 @@ define('element/button',[
         /**
          * Recalculate the coordinates of lower left corner and the width and height.
          *
-         * @returns {JXG.GeometryElement} A reference to the element
+         * @returns {JXG.ForeignObject} A reference to the element
          * @private
          */
         update: function (fromParent) {
@@ -78746,7 +78789,7 @@ define('element/button',[
 
         /**
          * Updates the internal arrays containing size of the foreignObject.
-         * @returns {JXG.GeometryElement} A reference to the element
+         * @returns {JXG.ForeignObject} A reference to the element
          * @private
          */
         updateSize: function () {
@@ -78769,7 +78812,7 @@ define('element/button',[
         /**
          * Update the anchor point of the foreignObject, i.e. the lower left corner
          * and the two vectors which span the rectangle.
-         * @returns {JXG.GeometryElement} A reference to the element
+         * @returns {JXG.ForeignObject} A reference to the element
          * @private
          *
          */
@@ -78837,61 +78880,14 @@ define('element/button',[
         },
 
         /**
-         * Set the width and height of the image. After setting a new size,
-         * board.update() or image.fullUpdate()
+         * Set the width and height of the foreignObject. After setting a new size,
+         * board.update() or foreignobject.fullUpdate()
          * has to be called to make the change visible.
          * @param  {number, function, string} width  Number, function or string
-         *                            that determines the new width of the image
+         *                            that determines the new width of the foreignObject
          * @param  {number, function, string} height Number, function or string
-         *                            that determines the new height of the image
-         * @returns {JXG.GeometryElement} A reference to the element
-         *
-         * @example
-         * var im = board.create('image', ['http://jsxgraph.uni-bayreuth.de/distrib/images/uccellino.jpg',
-         *                                [-3,-2], [3,3]]);
-         * im.setSize(4, 4);
-         * board.update();
-         *
-         * </pre><div id="JXG8411e60c-f009-11e5-b1bf-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
-         * <script type="text/javascript">
-         *     (function() {
-         *         var board = JXG.JSXGraph.initBoard('JXG8411e60c-f009-11e5-b1bf-901b0e1b8723',
-         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
-         *     var im = board.create('image', ['http://jsxgraph.uni-bayreuth.de/distrib/images/uccellino.jpg', [-3,-2],    [3,3]]);
-         *     //im.setSize(4, 4);
-         *     //board.update();
-         *
-         *     })();
-         *
-         * </script><pre>
-         *
-         * @example
-         * var p0 = board.create('point', [-3, -2]),
-         *     im = board.create('image', ['http://jsxgraph.uni-bayreuth.de/distrib/images/uccellino.jpg',
-         *                     [function(){ return p0.X(); }, function(){ return p0.Y(); }],
-         *                     [3,3]]),
-         *     p1 = board.create('point', [1, 2]);
-         *
-         * im.setSize(function(){ return p1.X() - p0.X(); }, function(){ return p1.Y() - p0.Y(); });
-         * board.update();
-         *
-         * </pre><div id="JXG4ce706c0-f00a-11e5-b1bf-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
-         * <script type="text/javascript">
-         *     (function() {
-         *         var board = JXG.JSXGraph.initBoard('JXG4ce706c0-f00a-11e5-b1bf-901b0e1b8723',
-         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
-         *     var p0 = board.create('point', [-3, -2]),
-         *         im = board.create('image', ['http://jsxgraph.uni-bayreuth.de/distrib/images/uccellino.jpg',
-         *                         [function(){ return p0.X(); }, function(){ return p0.Y(); }],
-         *                         [3,3]]),
-         *         p1 = board.create('point', [1, 2]);
-         *
-         *     im.setSize(function(){ return p1.X() - p0.X(); }, function(){ return p1.Y() - p0.Y(); });
-         *     board.update();
-         *
-         *     })();
-         *
-         * </script><pre>
+         *                            that determines the new height of the foreignObject
+         * @returns {JXG.ForeignObject} A reference to the element
          *
          */
         setSize: function(width, height) {
@@ -78923,11 +78919,11 @@ define('element/button',[
      * @pseudo
      * @description
      * @name ForeignObject
-     * @augments ForeignObject
+     * @augments JXG.ForeignObject
      * @constructor
      * @type JXG.ForeignObject
      *
-     * @param {number,function_number,function_String_String} x,y,label Parent elements for checkbox elements.
+     * @param {number,function_number,function_String_String} x,y,label Parent elements for ??? elements.
      *                     <p>
      *                     x and y are the coordinates of the lower left corner of the text box.
      *                      The position of the text is fixed,
