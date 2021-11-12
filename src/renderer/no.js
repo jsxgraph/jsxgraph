@@ -52,8 +52,11 @@ define(['jxg', 'renderer/abstract'], function (JXG, AbstractRenderer) {
 
     /**
      * This renderer draws nothing. It is intended to be used in environments where none of our rendering engines
-     * are available, e.g. WebWorkers.
-     * @class JXG.AbstractRenderer
+     * are available, e.g. WebWorkers. All methods are empty.
+     * 
+     * @class JXG.NoRenderer
+     * @augments JXG.AbstractRenderer
+     * @see JXG.AbstractRenderer
      */
     JXG.NoRenderer = function () {
         /**
@@ -75,7 +78,7 @@ define(['jxg', 'renderer/abstract'], function (JXG, AbstractRenderer) {
         this.type = 'no';
     };
 
-    JXG.extend(JXG.NoRenderer.prototype, /** @lends JXG.AbstractRenderer.prototype */ {
+    JXG.extend(JXG.NoRenderer.prototype, /** @lends JXG.NoRenderer.prototype */ {
         /* ******************************** *
          *    Point drawing and updating    *
          * ******************************** */
@@ -656,6 +659,9 @@ define(['jxg', 'renderer/abstract'], function (JXG, AbstractRenderer) {
 
     });
 
+    /**
+     * @ignore
+     */
     JXG.NoRenderer.prototype = new AbstractRenderer();
 
     return JXG.NoRenderer;

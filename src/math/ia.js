@@ -171,10 +171,13 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
     var doubleBits = new JXG.Math.DoubleBits(),
 
         /**
-         * Object for interval arithmetic
+         * Interval for interval arithmetics. Consists of the properties
+         * <ul>
+         *  <li>lo
+         *  <li>hi
+         * </ul>
          * @name JXG.Math.Interval
-         * @exports MatInterval as JXG.Math.Interval
-         * @namespace
+         * @type Object
          */
         MatInterval = function (lo, hi) {
             if (lo !== undefined && hi !== undefined) {
@@ -272,9 +275,8 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
     });
 
     /**
-     * Object for interval arithmetic
-     * @name JXG.Math.Interval
-     * @exports Mat.Interval as JXG.Math.Interval
+     * Object for interval arithmetics.
+     * @name JXG.Math.IntervalArithmetic
      * @namespace
      */
     JXG.Math.IntervalArithmetic =  {
@@ -294,6 +296,14 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         /*
          * Arithmetics
          */
+
+        /**
+         * Addition
+         * 
+         * @param {JXG.Math.Interval|Number} x 
+         * @param {JXG.Math.Interval|Number} y 
+         * @returns JXG.Math.Interval
+         */
         add: function(x, y) {
             if (Type.isNumber(x)) {
                 x = this.Interval(x);
@@ -304,7 +314,14 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return new MatInterval(this.addLo(x.lo, y.lo), this.addHi(x.hi, y.hi));
         },
 
-        sub: function(x, y) {
+        /**
+         * Subtraction
+         * 
+         * @param {JXG.Math.Interval|Number} x 
+         * @param {JXG.Math.Interval|Number} y 
+         * @returns JXG.Math.Interval
+         */
+         sub: function(x, y) {
             if (Type.isNumber(x)) {
                 x = this.Interval(x);
             }
@@ -314,7 +331,14 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return new MatInterval(this.subLo(x.lo, y.hi), this.subHi(x.hi, y.lo));
         },
 
-        mul: function(x, y) {
+        /**
+         * Multiplication
+         * 
+         * @param {JXG.Math.Interval|Number} x 
+         * @param {JXG.Math.Interval|Number} y 
+         * @returns JXG.Math.Interval
+         */
+         mul: function(x, y) {
             var xl, xh, yl, yh, out;
 
             if (Type.isNumber(x)) {
@@ -411,7 +435,14 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return out;
         },
 
-        div: function(x, y) {
+        /**
+         * Division
+         * 
+         * @param {JXG.Math.Interval|Number} x 
+         * @param {JXG.Math.Interval|Number} y 
+         * @returns JXG.Math.Interval
+         */
+         div: function(x, y) {
             if (Type.isNumber(x)) {
                 x = this.Interval(x);
             }
@@ -437,11 +468,23 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return this.divNonZero(x, y);
         },
 
-        positive: function(x) {
+        /**
+         * Return +x (i.e. identity)
+         * 
+         * @param {JXG.Math.Interval} x 
+         * @returns JXG.Math.Interval
+         */
+         positive: function(x) {
             return new MatInterval(x.lo, x.hi);
         },
 
-        negative: function(x) {
+        /**
+         * Return -x
+         * 
+         * @param {JXG.Math.Interval} x 
+         * @returns JXG.Math.Interval
+         */
+         negative: function(x) {
             if (Type.isNumber(x)) {
                 return new MatInterval(-x);
             }
@@ -451,33 +494,67 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         /*
          * Utils
          */
+
+        /**
+         * Test if interval is empty set.
+         * @param {JXG.Math.Interval} i 
+         * @returns Boolean
+         */        
         isEmpty: function(i) {
             return i.lo > i.hi;
         },
 
+        /**
+         * Test if interval is (-Infinity, Infinity).
+         * @param {JXG.Math.Interval} i 
+         * @returns Boolean
+         */        
         isWhole: function(i){
             return i.lo === -Infinity && i.hi === Infinity;
         },
 
-        zeroIn: function(i) {
+        /**
+         * Test if interval contains 0.
+         * @param {JXG.Math.Interval} i 
+         * @returns Boolean
+         */        
+         zeroIn: function(i) {
             return this.hasValue(i, 0);
         },
 
-        hasValue: function(i, value) {
+        /**
+         * Test if interval contains a specific value.
+         * @param {JXG.Math.Interval} i 
+         * @param {Number} value
+         * @returns Boolean
+         */        
+         hasValue: function(i, value) {
             if (this.isEmpty(i)) {
                 return false;
             }
             return i.lo <= value && value <= i.hi;
         },
 
-        hasInterval: function(x, y) {
+        /**
+         * Test if interval x contains interval y.
+         * @param {JXG.Math.Interval} x
+         * @param {JXG.Math.Interval} y
+         * @returns Boolean
+         */        
+         hasInterval: function(x, y) {
             if (this.isEmpty(x)) {
                 return true;
             }
             return !this.isEmpty(y) && y.lo <= x.lo && x.hi <= y.hi;
         },
 
-        intervalsOverlap: function(x, y) {
+        /**
+         * Test if intervals x and y have non-zero intersection.
+         * @param {JXG.Math.Interval} x
+         * @param {JXG.Math.Interval} y
+         * @returns Boolean
+         */        
+         intervalsOverlap: function(x, y) {
             if (this.isEmpty(x) || this.isEmpty(y)) {
                 return false;
             }
@@ -486,6 +563,12 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
         /*
          * Division
+         */
+        /**
+         * @private
+         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} y 
+         * @returns JXG.Math.Interval
          */
         divNonZero: function(x, y) {
             var xl = x.lo,
@@ -522,7 +605,13 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return out;
         },
 
-        divPositive: function(x, v) {
+        /**
+         * @private
+         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} y 
+         * @returns JXG.Math.Interval
+         */
+         divPositive: function(x, v) {
             if (x.lo === 0 && x.hi === 0) {
                 return x;
             }
@@ -540,7 +629,13 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return new MatInterval(this.divLo(x.lo, v), Number.POSITIVE_INFINITY);
         },
 
-        divNegative: function(x, v) {
+        /**
+         * @private
+         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} y 
+         * @returns JXG.Math.Interval
+         */
+         divNegative: function(x, v) {
             if (x.lo === 0 && x.hi === 0) {
                 return x;
             }
@@ -558,7 +653,12 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return new MatInterval(Number.NEGATIVE_INFINITY, this.divHi(x.lo, v));
         },
 
-        divZero: function(x) {
+        /**
+         * @private
+         * @param {JXG.Math.Interval} x 
+         * @returns JXG.Math.Interval
+         */
+         divZero: function(x) {
             if (x.lo === 0 && x.hi === 0) {
                 return x;
             }
@@ -567,6 +667,12 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
         /*
          * Algebra
+         */
+        /**
+         * x mod y:  x - n * y
+         * @param {JXG.Math.Interval|Number} x 
+         * @param {JXG.Math.Interval|Number} y 
+         * @returns JXG.Math.Interval
          */
         fmod: function(x, y) {
             var yb, n;
@@ -590,6 +696,11 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return this.sub(x, this.mul(y, new MatInterval(n)));
         },
 
+        /**
+         * 1 / x
+         * @param {JXG.Math.Interval|Number} x 
+         * @returns JXG.Math.Interval
+         */
         multiplicativeInverse: function(x) {
             if (Type.isNumber(x)) {
                 x = this.Interval(x);
@@ -617,6 +728,12 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return new MatInterval(this.divLo(1, x.hi), this.divHi(1, x.lo));
         },
 
+        /**
+         * x<sup>power</sup>
+         * @param {JXG.Math.Interval|Number} x 
+         * @param {JXG.Math.Interval|Number} power
+         * @returns JXG.Math.Interval
+         */
         pow: function(x, power) {
             var yl, yh;
 
@@ -678,13 +795,24 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return this.EMPTY.clone();
         },
 
-        sqrt: function(x) {
+        /**
+         * sqrt(x)
+         * @param {JXG.Math.Interval|Number} x 
+         * @returns JXG.Math.Interval
+         */
+         sqrt: function(x) {
             if (Type.isNumber(x)) {
                 x = this.Interval(x);
             }
             return this.nthRoot(x, 2);
         },
 
+        /**
+         * x<sup>1/n</sup>
+         * @param {JXG.Math.Interval|Number} x 
+         * @param {Number} n
+         * @returns JXG.Math.Interval
+         */
         nthRoot: function(x, n) {
             var power,yl, yh, yp, yn;
 
@@ -736,6 +864,11 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         /*
          * Misc
          */
+        /**
+         * 
+         * @param {JXG.Math.Interval|Number} x 
+         * @returns JXG.Math.Interval
+         */
         exp: function(x) {
             if (Type.isNumber(x)) {
                 x = this.Interval(x);
@@ -746,6 +879,11 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return new MatInterval(this.expLo(x.lo), this.expHi(x.hi));
         },
 
+        /**
+         * Natural log
+         * @param {JXG.Math.Interval|Number} x 
+         * @returns JXG.Math.Interval
+         */
         log: function(x) {
             var l;
             if (Type.isNumber(x)) {
@@ -758,12 +896,22 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return new MatInterval(l, this.logHi(x.hi));
         },
 
+        /**
+         * Natural log, alias for {@link JXG.Math.IntervalArithmetic#log}.
+         * @param {JXG.Math.Interval|Number} x 
+         * @returns JXG.Math.Interval
+         */
         ln: function(x) {
             return this.log(x);
         },
 
         // export const LOG_EXP_10 = this.log(new MatInterval(10, 10))
         // export const LOG_EXP_2 = log(new MatInterval(2, 2))
+        /**
+         * Logarithm to base 10.
+         * @param {JXG.Math.Interval|Number} x 
+         * @returns JXG.Math.Interval
+         */
         log10: function(x) {
             if (this.isEmpty(x)) {
                 return this.EMPTY.clone();
@@ -771,6 +919,11 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return this.div(this.log(x), this.log(new MatInterval(10, 10)));
         },
 
+        /**
+         * Logarithm to base 2.
+         * @param {JXG.Math.Interval|Number} x 
+         * @returns JXG.Math.Interval
+         */
         log2: function(x) {
             if (this.isEmpty(x)) {
                 return this.EMPTY.clone();
@@ -778,6 +931,12 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return this.div(this.log(x), this.log(new MatInterval(2, 2)));
         },
 
+        /**
+         * Hull of intervals x and y
+         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} y
+         * @returns JXG.Math.Interval
+         */
         hull: function(x, y) {
             var badX = this.isEmpty(x),
                 badY = this.isEmpty(y);
@@ -793,6 +952,12 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return new MatInterval(Math.min(x.lo, y.lo), Math.max(x.hi, y.hi));
         },
 
+        /**
+         * Intersection of intervals x and y
+         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} y
+         * @returns JXG.Math.Interval
+         */
         intersection: function(x, y) {
             var lo, hi;
             if (this.isEmpty(x) || this.isEmpty(y)) {
@@ -806,6 +971,12 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return this.EMPTY.clone();
         },
 
+        /**
+         * Union of overlapping intervals x and y
+         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} y
+         * @returns JXG.Math.Interval
+         */
         union: function(x, y) {
             if (!this.intervalsOverlap(x, y)) {
                 throw new Error('Interval#unions do not overlap');
@@ -813,6 +984,12 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return new MatInterval(Math.min(x.lo, y.lo), Math.max(x.hi, y.hi));
         },
 
+        /**
+         * Difference of overlapping intervals x and y
+         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} y
+         * @returns JXG.Math.Interval
+         */
         difference: function(x, y) {
             if (this.isEmpty(x) || this.isWhole(y)) {
               return this.EMPTY.clone();
@@ -844,6 +1021,10 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return x.clone();
         },
 
+        /**
+         * @param {JXG.Math.Interval} x 
+         * @returns JXG.Math.Interval
+         */
         width: function(x) {
             if (this.isEmpty(x)) {
               return 0;
@@ -851,6 +1032,10 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return this.subHi(x.hi, x.lo);
         },
 
+        /**
+         * @param {JXG.Math.Interval} x 
+         * @returns JXG.Math.Interval
+         */
         abs: function(x) {
             if (Type.isNumber(x)) {
                 x = this.Interval(x);
@@ -867,6 +1052,11 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return new MatInterval(0, Math.max(-x.lo, x.hi));
         },
 
+        /**
+         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} y
+         * @returns JXG.Math.Interval
+         */
         max: function(x, y) {
             var badX = this.isEmpty(x),
                 badY = this.isEmpty(y);
@@ -882,6 +1072,11 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return new MatInterval(Math.max(x.lo, y.lo), Math.max(x.hi, y.hi));
         },
 
+        /**
+         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} y
+         * @returns JXG.Math.Interval
+         */
         min: function(x, y) {
             var badX = this.isEmpty(x),
                 badY = this.isEmpty(y);
@@ -919,6 +1114,10 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return interval;
         },
 
+        /**
+         * @param {JXG.Math.Interval} x 
+         * @returns JXG.Math.Interval
+         */
         cos: function(x) {
             var cache, pi2, t, cosv,
                 lo, hi, rlo, rhi;
@@ -963,6 +1162,10 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return new MatInterval(-1, 1);
         },
 
+        /**
+         * @param {JXG.Math.Interval} x 
+         * @returns JXG.Math.Interval
+         */
         sin: function(x) {
             if (this.isEmpty(x) || this.onlyInfinity(x)) {
                 return this.EMPTY.clone();
@@ -970,6 +1173,10 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return this.cos(this.sub(x, this.PI_HALF));
         },
 
+        /**
+         * @param {JXG.Math.Interval} x 
+         * @returns JXG.Math.Interval
+         */
         tan: function(x) {
             var cache, t, pi;
             if (this.isEmpty(x) || this.onlyInfinity(x)) {
@@ -991,6 +1198,10 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return new MatInterval(this.tanLo(t.lo), this.tanHi(t.hi));
         },
 
+        /**
+         * @param {JXG.Math.Interval} x 
+         * @returns JXG.Math.Interval
+         */
         asin: function(x) {
             var lo, hi;
             if (this.isEmpty(x) || x.hi < -1 || x.lo > 1) {
@@ -1001,6 +1212,10 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return new MatInterval(lo, hi);
         },
 
+        /**
+         * @param {JXG.Math.Interval} x 
+         * @returns JXG.Math.Interval
+         */
         acos: function(x) {
             var lo, hi;
             if (this.isEmpty(x) || x.hi < -1 || x.lo > 1) {
@@ -1011,6 +1226,10 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return new MatInterval(lo, hi);
         },
 
+        /**
+         * @param {JXG.Math.Interval} x 
+         * @returns JXG.Math.Interval
+         */
         atan: function(x) {
             if (this.isEmpty(x)) {
                 return this.EMPTY.clone();
@@ -1018,6 +1237,10 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return new MatInterval(this.atanLo(x.lo), this.atanHi(x.hi));
         },
 
+        /**
+         * @param {JXG.Math.Interval} x 
+         * @returns JXG.Math.Interval
+         */
         sinh: function(x) {
             if (this.isEmpty(x)) {
                 return this.EMPTY.clone();
@@ -1025,6 +1248,10 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return new MatInterval(this.sinhLo(x.lo), this.sinhHi(x.hi));
         },
 
+        /**
+         * @param {JXG.Math.Interval} x 
+         * @returns JXG.Math.Interval
+         */
         cosh: function(x) {
             if (this.isEmpty(x)) {
               return this.EMPTY.clone();
@@ -1038,6 +1265,10 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return new MatInterval(1, this.coshHi(-x.lo > x.hi ? x.lo : x.hi));
         },
 
+        /**
+         * @param {JXG.Math.Interval} x 
+         * @returns JXG.Math.Interval
+         */
         tanh: function(x) {
             if (this.isEmpty(x)) {
                 return this.EMPTY.clone();
@@ -1049,6 +1280,11 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
          * Relational
          */
 
+        /**
+         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} y
+         * @returns Boolean
+         */
         equal: function(x, y) {
             if (this.isEmpty(x)) {
                 return this.isEmpty(y);
@@ -1063,6 +1299,11 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         //     assertEps(x[1], y[1])
         // },
 
+        /**
+         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} y
+         * @returns Boolean
+         */
         notEqual: function(x, y) {
             if (this.isEmpty(x)) {
                 return !this.isEmpty(y);
@@ -1070,6 +1311,11 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return this.isEmpty(y) || x.hi < y.lo || x.lo > y.hi;
         },
 
+        /**
+         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} y
+         * @returns Boolean
+         */
         lt: function(x, y) {
             if (Type.isNumber(x)) {
                 x = this.Interval(x);
@@ -1083,6 +1329,11 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return x.hi < y.lo;
         },
 
+        /**
+         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} y
+         * @returns Boolean
+         */
         gt: function(x, y) {
             if (Type.isNumber(x)) {
                 x = this.Interval(x);
@@ -1096,6 +1347,11 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return x.lo > y.hi;
         },
 
+        /**
+         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} y
+         * @returns Boolean
+         */
         leq: function(x, y) {
             if (Type.isNumber(x)) {
                 x = this.Interval(x);
@@ -1109,6 +1365,11 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return x.hi <= y.lo;
         },
 
+        /**
+         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} y
+         * @returns Boolean
+         */
         geq: function(x, y) {
             if (Type.isNumber(x)) {
                 x = this.Interval(x);
@@ -1239,11 +1500,19 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
             return y;
         },
 
+        /**
+         * @ignore
+         * @private
+         */
         disable: function() {
             this.next = this.prev = this.identity;
         },
 
-        enable: function() {
+        /**
+         * @ignore
+         * @private
+         */
+         enable: function() {
             this.prev = function(v) {
                 return this._prev(v);
             };

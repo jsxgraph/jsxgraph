@@ -56,7 +56,8 @@ define([
 
     /**
      * Uses HTML Canvas to implement the rendering methods defined in {@link JXG.AbstractRenderer}.
-     * @class JXG.AbstractRenderer
+     * 
+     * @class JXG.CanvasRenderer
      * @augments JXG.AbstractRenderer
      * @param {Node} container Reference to a DOM node containing the board.
      * @param {Object} dim The dimensions of the board

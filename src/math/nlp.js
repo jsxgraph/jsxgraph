@@ -86,6 +86,12 @@ define(['jxg'], function (JXG) {
 
     "use strict";
 
+    /**
+     * The JXG.Math.Nlp namespace holds numerical algorithms for non-linear optimization.
+     * @name JXG.Math.Nlp
+     * @namespace
+     * 
+     */
     JXG.Math.Nlp =  {
 
         arr: function(n) {
@@ -124,6 +130,7 @@ define(['jxg'], function (JXG) {
         /**
          * Minimizes the objective function F with respect to a set of inequality constraints CON,
          * and returns the optimal variable array. F and CON may be non-linear, and should preferably be smooth.
+         * Calls {@link JXG.Math.Nlp#cobylb}.
          *
          * @param calcfc Interface implementation for calculating objective function and constraints.
          * @param n Number of variables.
@@ -135,10 +142,10 @@ define(['jxg'], function (JXG) {
          * @param iprint Print level, 0 <= iprint <= 3, where 0 provides no output and
          * 3 provides full output to the console.
          * @param maxfun Maximum number of function evaluations before terminating.
-         * @return Exit status of the COBYLA2 optimization.
+         * @returns {Number} Exit status of the COBYLA2 optimization.
          */
-	    // CobylaExitStatus FindMinimum(final Calcfc calcfc, int n, int m, double[] x, double rhobeg, double rhoend, int iprint, int maxfun)
         FindMinimum: function(calcfc, n,  m, x, rhobeg, rhoend,  iprint,  maxfun) {
+    	    // CobylaExitStatus FindMinimum(final Calcfc calcfc, int n, int m, double[] x, double rhobeg, double rhoend, int iprint, int maxfun)
             //     This subroutine minimizes an objective function F(X) subject to M
             //     inequality constraints on X, where X is a vector of variables that has
             //     N components.  The algorithm employs linear approximations to the
@@ -220,6 +227,19 @@ define(['jxg'], function (JXG) {
 
         //    private static CobylaExitStatus cobylb(Calcfc calcfc, int n, int m, int mpp, double[] x,
         //      double rhobeg, double rhoend, int iprint, int maxfun)
+        /**
+         * JavaScript implementation of the non-linear optimization method COBYLA.
+         * @param {Function} calcfc 
+         * @param {Number} n 
+         * @param {Number} m 
+         * @param {Number} mpp 
+         * @param {Number} x 
+         * @param {Number} rhobeg 
+         * @param {Number} rhoend 
+         * @param {Number} iprint 
+         * @param {Number} maxfun 
+         * @returns {Number} Exit status of the COBYLA2 optimization
+         */
         cobylb: function (calcfc, n,  m,  mpp,  x, rhobeg,  rhoend,  iprint,  maxfun) {
     		// calcf ist funktion die aufgerufen wird wie calcfc(n, m, ix, ocon)
             // N.B. Arguments CON, SIM, SIMI, DATMAT, A, VSIG, VETA, SIGBAR, DX, W & IACT

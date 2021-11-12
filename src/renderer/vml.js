@@ -51,10 +51,14 @@ define([
 
     /**
      * Uses VML to implement the rendering methods defined in {@link JXG.AbstractRenderer}.
-     * @class JXG.AbstractRenderer
+     * VML was used in very old Internet Explorer versions upto IE 8.
+     * 
+     * 
+     * @class JXG.VMLRenderer
      * @augments JXG.AbstractRenderer
      * @param {Node} container Reference to a DOM node containing the board.
      * @see JXG.AbstractRenderer
+     * @deprecated
      */
     JXG.VMLRenderer = function (container) {
         this.type = 'vml';
@@ -99,7 +103,7 @@ define([
 
     JXG.VMLRenderer.prototype = new AbstractRenderer();
 
-    JXG.extend(JXG.VMLRenderer.prototype, /** @lends JXG.VMLRenderer */ {
+    JXG.extend(JXG.VMLRenderer.prototype, /** @lends JXG.VMLRenderer.prototype */ {
 
         /**
          * Sets attribute <tt>key</tt> of node <tt>node</tt> to <tt>value</tt>.

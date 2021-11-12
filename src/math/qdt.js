@@ -43,9 +43,10 @@ define(['math/math', 'utils/type'], function (Mat, Type) {
     "use strict";
 
     /**
-     * @name JXG.Math.Quadtree
-     * 
      * Instantiate a new quad tree.
+     * 
+     * @name JXG.Math.Quadtree
+     * @exports Mat.Quadtree as JXG.Math.Quadtree
      * @param {Array} bbox Bounding box of the new quad (sub)tree.
      * @constructor
      */
@@ -57,8 +58,10 @@ define(['math/math', 'utils/type'], function (Mat, Type) {
          * @default 10
          */
         this.capacity = 10;
+
         /**
          * Point storage.
+         * @name JXG.Math.Quadtree#points
          * @type Array
          */
         this.points = [];
@@ -66,23 +69,31 @@ define(['math/math', 'utils/type'], function (Mat, Type) {
         this.xub = bbox[2];
         this.ylb = bbox[3];
         this.yub = bbox[1];
+
         /**
          * In a subdivided quad tree this represents the top left subtree.
+         * @name JXG.Math.Quadtree#northWest
          * @type JXG.Math.Quadtree
          */
         this.northWest = null;
+
         /**
          * In a subdivided quad tree this represents the top right subtree.
+         * @name JXG.Math.Quadtree#northEast
          * @type JXG.Math.Quadtree
          */
         this.northEast = null;
+
         /**
          * In a subdivided quad tree this represents the bottom right subtree.
+         * @name JXG.Math.Quadtree#southEast
          * @type JXG.Math.Quadtree
          */
         this.southEast = null;
+        
         /**
          * In a subdivided quad tree this represents the bottom left subtree.
+         * @name JXG.Math.Quadtree#southWest
          * @type JXG.Math.Quadtree
          */
         this.southWest = null;

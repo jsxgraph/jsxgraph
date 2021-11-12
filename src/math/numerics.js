@@ -1843,6 +1843,11 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
                     return num / denom;
                 };
 
+            /**
+             * 
+             * @name JXG.Math.Numerics.lagrangePolynomial#getTerm
+             * @returns String
+             */
             fct.getTerm = function () {
                 return '';
             };

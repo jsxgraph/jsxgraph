@@ -53,6 +53,7 @@ define([], function () {
 
     /**
      * JXG is the top object of JSXGraph and defines the namespace
+     * @exports jxg as JXG
      */
     var jxg = {};
 

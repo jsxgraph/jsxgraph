@@ -51,7 +51,7 @@ define([
 
     /**
      * Uses SVG to implement the rendering methods defined in {@link JXG.AbstractRenderer}.
-     * @class JXG.AbstractRenderer
+     * @class JXG.SVGRenderer
      * @augments JXG.AbstractRenderer
      * @param {Node} container Reference to a DOM node containing the board.
      * @param {Object} dim The dimensions of the board
