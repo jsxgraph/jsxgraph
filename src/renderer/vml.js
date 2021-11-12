@@ -169,7 +169,7 @@ define([
          *    Text related stuff
          * **************************/
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         displayCopyright: function (str, fontsize) {
             var node, t;
 
@@ -307,7 +307,7 @@ define([
          *    Image related stuff
          * **************************/
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         drawImage: function (el) {
             // IE 8: Bilder ueber data URIs werden bis 32kB unterstuetzt.
             var node;
@@ -329,7 +329,7 @@ define([
             this.updateImage(el);
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         transformImage: function (el, t) {
             var m, s, maxX, maxY, minX, minY, i, nt,
                 node = el.rendNode,
@@ -379,7 +379,7 @@ define([
             }
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         updateImageURL: function (el) {
             var url = Type.evaluate(el.url);
 
@@ -390,7 +390,7 @@ define([
          * Render primitive objects
          * **************************/
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         appendChildPrim: function (node, level) {
             // For trace nodes
             if (!Type.exists(level)) {
@@ -403,7 +403,7 @@ define([
             return node;
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         appendNodesToElement: function (el, type) {
             if (type === 'shape' || type === 'path' || type === 'polygon') {
                 el.rendNodePath = this.getElementById(el.id + '_path');
@@ -414,7 +414,7 @@ define([
             el.rendNode = this.getElementById(el.id);
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         createPrim: function (type, id) {
             var node, pathNode,
                 fillNode = this.createNode('fill'),
@@ -453,14 +453,14 @@ define([
             return node;
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         remove: function (node) {
             if (Type.exists(node)) {
                 node.removeNode(true);
             }
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         makeArrows: function (el) {
             var nodeStroke,
                 ev_fa = Type.evaluate(el.visProp.firstarrow),
@@ -496,7 +496,7 @@ define([
             el.visPropOld.lastarrow = ev_la;
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         updateEllipsePrim: function (node, x, y, rx, ry) {
             node.style.left = Math.floor(x - rx) + 'px';
             node.style.top =  Math.floor(y - ry) + 'px';
@@ -504,7 +504,7 @@ define([
             node.style.height = Math.floor(Math.abs(ry) * 2) + 'px';
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         updateLinePrim: function (node, p1x, p1y, p2x, p2y, board) {
             var s, r = this.resolution;
 
@@ -514,7 +514,7 @@ define([
             }
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         updatePathPrim: function (node, pointString, board) {
             var x = board.canvasWidth,
                 y = board.canvasHeight;
@@ -527,7 +527,7 @@ define([
             this._setAttr(node, 'path', pointString.join(""));
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         updatePathStringPoint: function (el, size, type) {
             var s = [],
                 mround = Math.round,
@@ -592,7 +592,7 @@ define([
             return s;
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         updatePathStringPrim: function (el) {
             var i, scr,
                 pStr = [],
@@ -663,7 +663,7 @@ define([
             return pStr;
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         updatePathStringBezierPrim: function (el) {
             var i, j, k, scr, lx, ly,
                 pStr = [],
@@ -727,7 +727,7 @@ define([
             return pStr;
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         updatePolygonPrim: function (node, el) {
             var i,
                 len = el.vertices.length,
@@ -765,7 +765,7 @@ define([
             this.updatePathPrim(node, pStr, el.board);
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         updateRectPrim: function (node, x, y, w, h) {
             node.style.left = Math.floor(x) + 'px';
             node.style.top = Math.floor(y) + 'px';
@@ -783,7 +783,7 @@ define([
          *  Set Attributes
          * **************************/
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         setPropertyPrim: function (node, key, val) {
             var keyVml = '',
                 v;
@@ -806,7 +806,7 @@ define([
             }
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         display: function(el, val) {
             if (el && el.rendNode) {
                 el.visPropOld.visible = val;
@@ -818,7 +818,7 @@ define([
             }
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         show: function (el) {
             JXG.deprecated('Board.renderer.show()', 'Board.renderer.display()');
 
@@ -827,7 +827,7 @@ define([
             }
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         hide: function (el) {
             JXG.deprecated('Board.renderer.hide()', 'Board.renderer.display()');
 
@@ -836,7 +836,7 @@ define([
             }
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         setDashStyle: function (el, visProp) {
             var node;
             if (visProp.dash >= 0) {
@@ -845,7 +845,7 @@ define([
             }
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         setGradient: function (el) {
             var nodeFill = el.rendNodeFill,
                 ev_g = Type.evaluate(el.visProp.gradient);
@@ -867,7 +867,7 @@ define([
             }
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         setObjectFillColor: function (el, color, opacity) {
             var rgba = Type.evaluate(color), c, rgbo,
                 o = Type.evaluate(opacity), oo,
@@ -922,7 +922,7 @@ define([
             el.visPropOld.fillopacity = o;
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         setObjectStrokeColor: function (el, color, opacity) {
             var rgba = Type.evaluate(color), c, rgbo, t,
                 o = Type.evaluate(opacity), oo,
@@ -982,7 +982,7 @@ define([
             el.visPropOld.strokeopacity = o;
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         setObjectStrokeWidth: function (el, width) {
             var w = Type.evaluate(width),
                 node;
@@ -1006,7 +1006,7 @@ define([
 
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         setShadow: function (el) {
             var nodeShadow = el.rendNodeShadow,
                 ev_s = Type.evaluate(el.visProp.shadow);
@@ -1031,12 +1031,12 @@ define([
          * renderer control
          * **************************/
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         suspendRedraw: function () {
             this.container.style.display = 'none';
         },
 
-        // already documented in JXG.AbstractRenderer
+        // Already documented in JXG.AbstractRenderer
         unsuspendRedraw: function () {
             this.container.style.display = '';
         }

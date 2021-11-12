@@ -1427,6 +1427,9 @@ define([
             el.rendNode.className = Type.evaluate(doHighlight ? el.visProp.highlightcssclass : el.visProp.cssclass);
         },
 
+        drawForeignObject: function (el) { /* stub */ },
+
+        updateForeignObject: function(el) { /* stub */ },
 
         /* **************************
          * Render primitive objects

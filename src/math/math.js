@@ -1053,6 +1053,35 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
             }
 
             return v;
+        },
+
+        /**
+         * Theorem of Vieta: Given a set of simple zeroes x_0, ..., x_n
+         * of a polynomial f, compute the coefficients s_k, (k=0,...,n-1)
+         * of the polynomial of the form. See {@link https://de.wikipedia.org/wiki/Elementarsymmetrisches_Polynom}.
+         * <p>
+         *  f(x) = (x-x_0)*...*(x-x_n) =
+         *  x^n + sum_{k=1}^{n} (-1)^(k) s_{k-1} x^(n-k)
+         * </p>
+         * @param {Array} x Simple zeroes of the polynomial.
+         * @returns {Array} Coefficients of the polynomial.
+         *
+         */
+        Vieta: function(x) {
+            var n = x.length,
+                s = [],
+                m, k, y;
+
+            s = x.slice();
+            for (m = 1; m < n; ++m) {
+                y = s[m];
+                s[m] *= s[m - 1];
+                for (k = m - 1; k >= 1; --k) {
+                    s[k] += s[k - 1] * y;
+                }
+                s[0] += y;
+            }
+            return s;
         }
     };
 

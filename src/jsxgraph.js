@@ -542,8 +542,9 @@ define([
     if (Env.isBrowser && typeof window === 'object' && typeof document === 'object') {
         Env.addEvent(window, 'load', function () {
             var type, i, j, div,
-                id, board, width, height, bbox, axis, grid,
-                code,
+                id, board, txt,
+                width, height, maxWidth, aspectRatio, cssClasses,
+                bbox, axis, grid, code,
                 src, request, postpone = false,
                 scripts = document.getElementsByTagName('script'),
                 init = function (code, type, bbox) {
@@ -577,8 +578,11 @@ define([
                 if (Type.exists(type) &&
                     (type.toLowerCase() === 'text/jessiescript' || type.toLowerCase() === 'jessiescript' ||
                      type.toLowerCase() === 'text/jessiecode' || type.toLowerCase() === 'jessiecode')) {
-                    width = scripts[i].getAttribute('width', false) || '500px';
-                    height = scripts[i].getAttribute('height', false) || '500px';
+                    cssClasses = scripts[i].getAttribute('class', false) || '';
+                    width = scripts[i].getAttribute('width', false) || '';
+                    height = scripts[i].getAttribute('height', false) || '';
+                    maxWidth = scripts[i].getAttribute('maxwidth', false) || '100%';
+                    aspectRatio = scripts[i].getAttribute('aspectratio', false) || '1/1';
                     bbox = scripts[i].getAttribute('boundingbox', false) || '-5, 5, 5, -5';
                     id = scripts[i].getAttribute('container', false);
                     src = scripts[i].getAttribute('src', false);
@@ -598,8 +602,14 @@ define([
                         id = 'jessiescript_autgen_jxg_' + i;
                         div = document.createElement('div');
                         div.setAttribute('id', id);
-                        div.setAttribute('style', 'width:' + width + '; height:' + height + '; float:left');
-                        div.setAttribute('class', 'jxgbox');
+
+                        txt = (width !== '') ? ('width:' + width + ';') : '';
+                        txt += (height !== '') ? ('height:' + height + ';') : '';
+                        txt += (maxWidth !== '') ? ('max-width:' + maxWidth + ';') : '';
+                        txt += (aspectRatio !== '') ? ('aspect-ratio:' + aspectRatio + ';') : '';
+
+                        div.setAttribute('style', txt);
+                        div.setAttribute('class', 'jxgbox ' + cssClasses);
                         try {
                             document.body.insertBefore(div, scripts[i]);
                         } catch (e) {

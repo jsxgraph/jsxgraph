@@ -491,7 +491,7 @@ define([
             return box;
         },
 
-        // already documented in GeometryElement
+        // Already documented in GeometryElement
         bounds: function () {
             return this.boundingBox();
         },

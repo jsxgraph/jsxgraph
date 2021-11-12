@@ -1125,6 +1125,10 @@ Copyright 2008-2021
                     break;
 
                 case JXG.GENTYPE_TEXT:
+                    if (step.args.str.substr(0, 1) !== '\'' && step.args.str.substr(0, 1) !== '"' && step.args.str.substr(0, 8) !== 'function') {
+                        step.args.str = '\'' + step.args.str + '\'';
+                    }
+
                     set_str = assign + 'text(' + pn(step.args.x) + ', ' + pn(step.args.y) + ', ' + step.args.str + ') <<';
                     set_str += attrid + 'name: \'\'';
                     if (typeof step.args.anchor != 'undefined') {

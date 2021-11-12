@@ -42,7 +42,7 @@
  * algorithms for solving linear equations etc.
  */
 
-define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
+define(['jxg', 'utils/type', 'utils/env', 'math/math'], function (JXG, Type, Env, Mat) {
 
     "use strict";
 
@@ -1800,6 +1800,7 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
          */
         lagrangePolynomial: function (p) {
             var w = [],
+                that = this,
                 /** @ignore */
                 fct = function (x, suspendedUpdate) {
                     var i, // j,
@@ -1844,15 +1845,156 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
                 };
 
             /**
-             * 
-             * @name JXG.Math.Numerics.lagrangePolynomial#getTerm
-             * @returns String
+             * Get the term of the Lagrange polynomial as string.
+             * Calls {@link JXG.Math.Numerics#lagrangePolynomialTerm}.
+             *
+             * @param {Number} digits Number of digits of the coefficients
+             * @param {String} param Variable name
+             * @param {String} dot Dot symbol
+             * @returns {String} containing the term of Lagrange polynomial as string.
+             * @see JXG.Math.Numerics#lagrangePolynomialTerm
+             * @example
+             * var points = [];
+             * points[0] = board.create('point', [-1,2], {size:4});
+             * points[1] = board.create('point', [0, 0], {size:4});
+             * points[2] = board.create('point', [2, 1], {size:4});
+             *
+             * var f = JXG.Math.Numerics.lagrangePolynomial(points);
+             * var graph = board.create('functiongraph', [f,-10, 10], {strokeWidth:3});
+             * var txt = board.create('text', [-3, -4,  () => f.getTerm(2, 't', ' * ')], {fontSize: 16});
+             *
+             * </pre><div id="JXG73fdaf12-e257-4374-b488-ae063e4eeccf" class="jxgbox" style="width: 300px; height: 300px;"></div>
+             * <script type="text/javascript">
+             *     (function() {
+             *         var board = JXG.JSXGraph.initBoard('JXG73fdaf12-e257-4374-b488-ae063e4eeccf',
+             *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+             *     var points = [];
+             *     points[0] = board.create('point', [-1,2], {size:4});
+             *     points[1] = board.create('point', [0, 0], {size:4});
+             *     points[2] = board.create('point', [2, 1], {size:4});
+             *
+             *     var f = JXG.Math.Numerics.lagrangePolynomial(points);
+             *     var graph = board.create('functiongraph', [f,-10, 10], {strokeWidth:3});
+             *     var txt = board.create('text', [-3, -4,  () => f.getTerm(2, 't', ' * ')], {fontSize: 16});
+             *
+             *     })();
+             *
+             * </script><pre>
+             *
              */
-            fct.getTerm = function () {
-                return '';
+            fct.getTerm = function(digits, param, dot) {
+                return that.lagrangePolynomialTerm(p, digits, param, dot)();
             };
 
             return fct;
+        },
+        // fct.getTerm = that.lagrangePolynomialTerm(p, 2, 'x');
+
+        /**
+         * Determine the Lagrange polynomial through an array of points and
+         * return the term of the polynomial as string.
+         *
+         * @param {Array} points Array of JXG.Points
+         * @param {Number} digits Number of decimal digits of the coefficients
+         * @param {String} param Name of the parameter. Default: 'x'.
+         * @param {String} dot Multiplication symbol. Default: ' * '.
+         * @returns {String} containing the Lagrange polynomial through
+         *    the supplied points.
+         * @memberof JXG.Math.Numerics
+         *
+         * @example
+         * var points = [];
+         * points[0] = board.create('point', [-1,2], {size:4});
+         * points[1] = board.create('point', [0, 0], {size:4});
+         * points[2] = board.create('point', [2, 1], {size:4});
+         *
+         * var f = JXG.Math.Numerics.lagrangePolynomial(points);
+         * var graph = board.create('functiongraph', [f,-10, 10], {strokeWidth:3});
+         *
+         * var f_txt = JXG.Math.Numerics.lagrangePolynomialTerm(points, 2, 't', ' * ');
+         * var txt = board.create('text', [-3, -4, f_txt], {fontSize: 16});
+         *
+         * </pre><div id="JXGd45e9e96-7526-486d-aa43-e1178d5f2baa" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXGd45e9e96-7526-486d-aa43-e1178d5f2baa',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *     var points = [];
+         *     points[0] = board.create('point', [-1,2], {size:4});
+         *     points[1] = board.create('point', [0, 0], {size:4});
+         *     points[2] = board.create('point', [2, 1], {size:4});
+         *
+         *     var f = JXG.Math.Numerics.lagrangePolynomial(points);
+         *     var graph = board.create('functiongraph', [f,-10, 10], {strokeWidth:3});
+         *
+         *     var f_txt = JXG.Math.Numerics.lagrangePolynomialTerm(points, 2, 't', ' * ');
+         *     var txt = board.create('text', [-3, -4, f_txt], {fontSize: 16});
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
+         */
+        lagrangePolynomialTerm: function(points, digits, param, dot) {
+            return function() {
+                var len = points.length,
+                    zeroes = [],
+                    coeffs = [],
+                    coeffs_sum = [],
+                    isLeading = true,
+                    n, t,
+                    i, j, c, p;
+
+                param = param || 'x';
+                if (dot === undefined) {
+                    dot = ' * ';
+                }
+
+                n = len - 1;  // (Max) degree of the polynomial
+                for (j = 0; j < len; j++) {
+                    coeffs_sum[j] = 0;
+                }
+
+                for (i = 0; i < len; i++) {
+                    c = points[i].Y();
+                    p = points[i].X();
+                    zeroes = [];
+                    for (j = 0; j < len; j++) {
+                        if (j !== i) {
+                            c /= p - points[j].X();
+                            zeroes.push(points[j].X());
+                        }
+                    }
+                    coeffs = [1].concat(Mat.Vieta(zeroes));
+                    for (j = 0; j < coeffs.length; j++) {
+                        coeffs_sum[j] += (j%2===1?(-1):1) * coeffs[j] * c;
+                    }
+                }
+
+                t = '';
+                for (j = 0; j < coeffs_sum.length; j++) {
+                    c = coeffs_sum[j];
+                    if (Math.abs(c) < Mat.eps) {
+                        continue;
+                    }
+                    if (JXG.exists(digits)) {
+                        c = Env._round10(c, -digits);
+                    }
+                    if (isLeading) {
+                        t += (c > 0) ? (c) : ('-' + (-c));
+                        isLeading = false;
+                    } else {
+                        t += (c > 0) ? (' + ' + c) : (' - ' + (-c));
+                    }
+
+                    if (n - j > 1) {
+                        t += dot + param + '^' + (n - j);
+                    } else if (n - j === 1) {
+                        t += dot + param;
+                    }
+                }
+                return t; // board.jc.manipulate('f = map(x) -> ' + t + ';');
+            };
         },
 
         /**
