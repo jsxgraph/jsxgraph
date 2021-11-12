@@ -39151,7 +39151,7 @@ define('parser/jessiecode',[
 
         /**
          * The global scope.
-         * @type {Object}
+         * @type Object
          */
         this.scope = {
             id: 0,
@@ -39164,7 +39164,7 @@ define('parser/jessiecode',[
 
         /**
          * Keeps track of all possible scopes every required.
-         * @type {Array}
+         * @type Array
          */
         this.scopes = [];
         this.scopes.push(this.scope);
@@ -39221,7 +39221,7 @@ define('parser/jessiecode',[
 
         /**
          * Store $log messages in case there's no console.
-         * @type {Array}
+         * @type Array
          */
         this.$log = [];
 
@@ -39907,7 +39907,7 @@ define('parser/jessiecode',[
          * @param {String} code             JessieCode code to be parsed
          * @param {Boolean} [geonext=false] Geonext compatibility mode.
          * @param {Boolean} dontstore       If false, the code string is stored in this.code.
-         * @return {Object}                 Parse JessieCode code and execute it..
+         * @return {Object}                 Parse JessieCode code and execute it.
          */
         parse: function (code, geonext, dontstore) {
             return this._genericParse(code, 'parse', geonext, dontstore);

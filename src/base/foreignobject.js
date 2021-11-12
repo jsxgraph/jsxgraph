@@ -52,12 +52,31 @@
 
     "use strict";
 
-    JXG.ForeignObject = function (board, coords, attributes, content, size) {
+    /**
+     * Construct and handle SVG foreignObjects.
+     *
+     * @class Creates a new foreignObject object. Do not use this constructor to create a foreignObject. Use {@link JXG.Board#create} with
+     * type {@link foreignobject} instead.
+     * @augments JXG.GeometryElement
+     * @augments JXG.CoordsElement
+     * @param {string|JXG.Board} board The board the new foreignObject is drawn on.
+     * @param {Array} coordinates An array with the user coordinates of the foreignObject.
+     * @param {Object} attributes An object containing visual and - optionally - a name and an id.
+     * @param {string|function} url An URL string or a function returning an URL string.
+     * @param  {Array} size Array containing width and height of the foreignObject in user coordinates.
+     *
+     */
+     JXG.ForeignObject = function (board, coords, attributes, content, size) {
         this.constructor(board, attributes, Const.OBJECT_TYPE_FOREIGNOBJECT, Const.OBJECT_CLASS_OTHER);
         this.element = this.board.select(attributes.anchor);
         this.coordsConstructor(coords);
 
         this._useUserSize = false;
+
+        /**
+         * Array of length two containing [width, height] of the foreignObject in pixel.
+         * @type Array
+         */
         this.size = [1, 1];
         if (Type.exists(size) && size.length > 0) {
             this._useUserSize = true;
@@ -67,10 +86,6 @@
             this.usrSize = [this.W(), this.H()];
         }
 
-        /**
-         * Array of length two containing [width, height] of the foreignObject in pixel.
-         * @type {array}
-         */
         // this.size = [Math.abs(this.usrSize[0] * board.unitX), Math.abs(this.usrSize[1] * board.unitY)];
 
         /**
@@ -88,7 +103,6 @@
         //     [this.coords.usrCoords[0], this.W(), 0],
         //     [this.coords.usrCoords[0], 0, this.H()]
         // ];
-
         //this.parent = board.select(attributes.anchor);
 
         this.id = this.board.setId(this, 'Im');
@@ -160,7 +174,7 @@
         /**
          * Recalculate the coordinates of lower left corner and the width and height.
          *
-         * @returns {JXG.GeometryElement} A reference to the element
+         * @returns {JXG.ForeignObject} A reference to the element
          * @private
          */
         update: function (fromParent) {
@@ -183,7 +197,7 @@
 
         /**
          * Updates the internal arrays containing size of the foreignObject.
-         * @returns {JXG.GeometryElement} A reference to the element
+         * @returns {JXG.ForeignObject} A reference to the element
          * @private
          */
         updateSize: function () {
@@ -206,7 +220,7 @@
         /**
          * Update the anchor point of the foreignObject, i.e. the lower left corner
          * and the two vectors which span the rectangle.
-         * @returns {JXG.GeometryElement} A reference to the element
+         * @returns {JXG.ForeignObject} A reference to the element
          * @private
          *
          */
@@ -274,61 +288,14 @@
         },
 
         /**
-         * Set the width and height of the image. After setting a new size,
-         * board.update() or image.fullUpdate()
+         * Set the width and height of the foreignObject. After setting a new size,
+         * board.update() or foreignobject.fullUpdate()
          * has to be called to make the change visible.
          * @param  {number, function, string} width  Number, function or string
-         *                            that determines the new width of the image
+         *                            that determines the new width of the foreignObject
          * @param  {number, function, string} height Number, function or string
-         *                            that determines the new height of the image
-         * @returns {JXG.GeometryElement} A reference to the element
-         *
-         * @example
-         * var im = board.create('image', ['http://jsxgraph.uni-bayreuth.de/distrib/images/uccellino.jpg',
-         *                                [-3,-2], [3,3]]);
-         * im.setSize(4, 4);
-         * board.update();
-         *
-         * </pre><div id="JXG8411e60c-f009-11e5-b1bf-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
-         * <script type="text/javascript">
-         *     (function() {
-         *         var board = JXG.JSXGraph.initBoard('JXG8411e60c-f009-11e5-b1bf-901b0e1b8723',
-         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
-         *     var im = board.create('image', ['http://jsxgraph.uni-bayreuth.de/distrib/images/uccellino.jpg', [-3,-2],    [3,3]]);
-         *     //im.setSize(4, 4);
-         *     //board.update();
-         *
-         *     })();
-         *
-         * </script><pre>
-         *
-         * @example
-         * var p0 = board.create('point', [-3, -2]),
-         *     im = board.create('image', ['http://jsxgraph.uni-bayreuth.de/distrib/images/uccellino.jpg',
-         *                     [function(){ return p0.X(); }, function(){ return p0.Y(); }],
-         *                     [3,3]]),
-         *     p1 = board.create('point', [1, 2]);
-         *
-         * im.setSize(function(){ return p1.X() - p0.X(); }, function(){ return p1.Y() - p0.Y(); });
-         * board.update();
-         *
-         * </pre><div id="JXG4ce706c0-f00a-11e5-b1bf-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
-         * <script type="text/javascript">
-         *     (function() {
-         *         var board = JXG.JSXGraph.initBoard('JXG4ce706c0-f00a-11e5-b1bf-901b0e1b8723',
-         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
-         *     var p0 = board.create('point', [-3, -2]),
-         *         im = board.create('image', ['http://jsxgraph.uni-bayreuth.de/distrib/images/uccellino.jpg',
-         *                         [function(){ return p0.X(); }, function(){ return p0.Y(); }],
-         *                         [3,3]]),
-         *         p1 = board.create('point', [1, 2]);
-         *
-         *     im.setSize(function(){ return p1.X() - p0.X(); }, function(){ return p1.Y() - p0.Y(); });
-         *     board.update();
-         *
-         *     })();
-         *
-         * </script><pre>
+         *                            that determines the new height of the foreignObject
+         * @returns {JXG.ForeignObject} A reference to the element
          *
          */
         setSize: function(width, height) {
@@ -360,11 +327,11 @@
      * @pseudo
      * @description
      * @name ForeignObject
-     * @augments ForeignObject
+     * @augments JXG.ForeignObject
      * @constructor
      * @type JXG.ForeignObject
      *
-     * @param {number,function_number,function_String_String} x,y,label Parent elements for checkbox elements.
+     * @param {number,function_number,function_String_String} x,y,label Parent elements for ??? elements.
      *                     <p>
      *                     x and y are the coordinates of the lower left corner of the text box.
      *                      The position of the text is fixed,

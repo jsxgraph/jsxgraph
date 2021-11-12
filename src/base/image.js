@@ -54,8 +54,6 @@ define([
 
     /**
      * Construct and handle images
-     * The coordinates can be relative to the coordinates of an element
-     * given in {@link JXG.Options#text.anchor}.
      *
      * The image can be supplied as an URL or an base64 encoded inline image
      * like "data:image/png;base64, /9j/4AAQSkZJRgA..." or a function returning
@@ -65,8 +63,8 @@ define([
      * type {@link Image} instead.
      * @augments JXG.GeometryElement
      * @augments JXG.CoordsElement
-     * @param {string|JXG.Board} board The board the new text is drawn on.
-     * @param {Array} coordinates An array with the user coordinates of the text.
+     * @param {string|JXG.Board} board The board the new image is drawn on.
+     * @param {Array} coordinates An array with the user coordinates of the image.
      * @param {Object} attributes An object containing visual and - optionally - a name and an id.
      * @param {string|function} url An URL string or a function returning an URL string.
      * @param  {Array} size Array containing width and height of the image in user coordinates.
