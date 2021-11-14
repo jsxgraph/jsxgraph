@@ -671,6 +671,7 @@ define([
                 node.setAttributeNS(null, 'stroke-linecap', 'round');
                 node.setAttributeNS(null, 'stroke-linejoin', 'round');
                 node.setAttributeNS(null, 'fill-rule', 'evenodd');
+                node.setAttributeNS(null, 'pointer-events', 'visibleStroke');
             }
             return node;
         },
