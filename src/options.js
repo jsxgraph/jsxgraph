@@ -2500,6 +2500,12 @@ define([
                 visible: false,
                 withLabel: false,
                 fixed: false,
+
+                fillColor: Color.palette.red,
+                strokeColor: Color.palette.red,
+                highlightFillColor:'#eeeeee',
+                highlightStrokeColor: Color.palette.red,
+    
                 name: ''
             },
 
@@ -2549,6 +2555,10 @@ define([
                 visible: false,
                 fixed: false,
                 withLabel: false,
+                fillColor: Color.palette.red,
+                strokeColor: Color.palette.red,
+                highlightFillColor:'#eeeeee',
+                highlightStrokeColor: Color.palette.red,
                 name: ''
             }
             /**#@-*/
@@ -3043,6 +3053,10 @@ define([
                 visible: false,
                 fixed: false,
                 withLabel: false,
+                fillColor: Color.palette.red,
+                strokeColor: Color.palette.red,
+                highlightFillColor:'#eeeeee',
+                highlightStrokeColor: Color.palette.red,
                 name: ''
             }
             /**#@-*/
@@ -3497,7 +3511,7 @@ define([
             fillColor: 'none',               // Important for VML on IE
             highlightFillColor: 'none',  // Important for VML on IE
             strokeColor: Color.palette.blue,
-            highlightStrokeColor: '#888888',
+            highlightStrokeColor: '#c3d9ff',
             withTicks: false,
 
             /**
@@ -3929,8 +3943,8 @@ define([
 
             fillColor: Color.palette.red,
             strokeColor: Color.palette.red,
-            highlightFillColor: Color.palette.purple,
-            highlightStrokeColor: Color.palette.purple,
+            highlightFillColor:'#c3d9ff',
+            highlightStrokeColor: '#c3d9ff',
             // strokeOpacity: 1.0,
             // fillOpacity: 1.0,
             // highlightFillOpacity: 0.5,
@@ -4475,6 +4489,10 @@ define([
                 visible: false,
                 withLabel: false,
                 fixed: false,
+                fillColor: Color.palette.red,
+                strokeColor: Color.palette.red,
+                highlightFillColor:'#eeeeee',
+                highlightStrokeColor: Color.palette.red,
                 name: ''
             }
 

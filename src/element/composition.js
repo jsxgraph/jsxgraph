@@ -2294,7 +2294,7 @@ define([
      * within the interval <tt>i</tt>.
      * @example
      * var c1 = board.create('functiongraph', [function (t) { return t*t*t; }]);
-     * var i1 = board.create('integral', [[-1.0, 4.0], c1]);
+     * var i1 = board.create('integral', [[-2.0, 2.0], c1]);
      * </pre><div class="jxgbox" id="JXGd45d7188-6624-4d6e-bebb-1efa2a305c8a" style="width: 400px; height: 400px;"></div>
      * <script type="text/javascript">
      *   var intex1_board = JXG.JSXGraph.initBoard('JXGd45d7188-6624-4d6e-bebb-1efa2a305c8a', {boundingbox: [-5, 5, 5, -5], axis: true, showcopyright: false, shownavigation: false});
