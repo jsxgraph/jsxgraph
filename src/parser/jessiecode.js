@@ -1833,6 +1833,19 @@ define([
         },
 
         /**
+         * This is used as the global area() function.
+         * @param {JXG.Circle|JXG.Polygon} obj
+         * @returns {Number}
+         */
+        area: function (obj) {
+            if (!Type.exists(obj) || !Type.exists(obj.Area)) {
+                this._error('Error: Can\'t calculate area.');
+            }
+
+            return obj.Area();
+        },
+
+        /**
          * + operator implementation
          * @param {Number|Array|JXG.Point} a
          * @param {Number|Array|JXG.Point} b
@@ -2193,6 +2206,7 @@ define([
                     cot: Mat.cot,
                     deg: Geometry.trueAngle,
                     dist: that.dist,
+                    area: that.area,
                     erf: Mat.erf,
                     erfc: Mat.erfc,
                     erfi: Mat.erfi,
@@ -2252,6 +2266,7 @@ define([
             builtIn.erfc.src = 'JXG.Math.erfc';
             builtIn.erfi.src = 'JXG.Math.erfi';
             builtIn.dist.src = '$jc$.dist';
+            builtIn.area.src = '$jc$.area';
             builtIn.factorial.src = 'JXG.Math.factorial';
             builtIn.gcd.src = 'JXG.Math.gcd';
             builtIn.lb.src = 'JXG.Math.log2';
