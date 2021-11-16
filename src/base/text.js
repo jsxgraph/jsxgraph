@@ -29,7 +29,6 @@
     and <http://opensource.org/licenses/MIT/>.
  */
 
-
 /*global JXG: true, define: true, window: true*/
 /*jslint nomen: true, plusplus: true*/
 
@@ -135,7 +134,7 @@ define([
          * at the left side or at the right side of the text.
          * Sensitivity is set in this.board.options.precision.hasPoint.
          * If dragarea is set to 'all' (default), tests if the the screen
-        * coordinates (x,y) are in within the text boundary.
+         * coordinates (x,y) are in within the text boundary.
          * @param {Number} x
          * @param {Number} y
          * @returns {Boolean}
@@ -204,7 +203,7 @@ define([
                 this.updateText = function () {
                     resolvedText = text().toString();
                     if (ev_p && !ev_um && !ev_uk) {
-                        this.plaintext = this.replaceSub(this.replaceSup(this.convertGeonext2CSS(resolvedText)));
+                        this.plaintext = this.replaceSub(this.replaceSup(this.convertGeonextAndSketchometry2CSS(resolvedText)));
                     } else {
                         this.plaintext = resolvedText;
                     }
@@ -353,7 +352,8 @@ define([
                             that.size = [tmp.width, tmp.height];
                             that.needsUpdate = true;
                             that.updateRenderer();
-                        } catch (e) { }
+                        } catch (e) {
+                        }
                     }, 0);
                 } else if (this.board.renderer.type === 'canvas') {
                     this.size = this.crudeSizeEstimate();
@@ -650,7 +650,7 @@ define([
             }
 
             plaintext += ' + "' + this.replaceSub(this.replaceSup(contentStr)) + '"';
-            plaintext = this.convertGeonext2CSS(plaintext);
+            plaintext = this.convertGeonextAndSketchometry2CSS(plaintext);
 
             // This should replace &amp;pi; by &pi;
             plaintext = plaintext.replace(/&amp;/g, '&');
@@ -661,22 +661,73 @@ define([
 
         /**
          * Converts the GEONExT tags <overline> and <arrow> to
-         * HTML span tags with proper CSS formating.
+         * HTML span tags with proper CSS formatting.
          * @private
-         * @see JXG.Text.generateTerm @see JXG.Text._setText
+         * @see JXG.Text.generateTerm
+         * @see JXG.Text._setText
          */
         convertGeonext2CSS: function (s) {
             if (Type.isString(s)) {
-                s = s.replace(/<overline>/g, '<span style=text-decoration:overline>');
-                s = s.replace(/&lt;overline&gt;/g, '<span style=text-decoration:overline>');
-                s = s.replace(/<\/overline>/g, '</span>');
-                s = s.replace(/&lt;\/overline&gt;/g, '</span>');
-                s = s.replace(/<arrow>/g, '<span style=text-decoration:overline>');
-                s = s.replace(/&lt;arrow&gt;/g, '<span style=text-decoration:overline>');
-                s = s.replace(/<\/arrow>/g, '</span>');
-                s = s.replace(/&lt;\/arrow&gt;/g, '</span>');
+                s = s.replace(
+                    /(<|&lt;)overline(>|&gt;)/g,
+                    '<span style=\\"text-decoration:overline;\\">'
+                );
+                s = s.replace(
+                    /(<|&lt;)\/overline(>|&gt;)/g,
+                    '</span>'
+                );
+                s = s.replace(
+                    /(<|&lt;)arrow(>|&gt;)/g,
+                    '<span style=\\"text-decoration:overline;\\">'
+                );
+                s = s.replace(
+                    /(<|&lt;)\/arrow(>|&gt;)/g,
+                    '</span>'
+                );
             }
 
+            return s;
+        },
+
+        /**
+         * Converts the sketchometry tag <sketchofont> to
+         * HTML span tags with proper CSS formatting.
+         * @private
+         * @see JXG.Text.generateTerm
+         * @see JXG.Text._setText
+         */
+        convertSketchometry2CSS: function (s) {
+            if (Type.isString(s)) {
+                s = s.replace(
+                    /(<|&lt;)sketchofont(>|&gt;)/g,
+                    '<span style=\\"font-family:sketchometry-light;font-weight:500;\\">'
+                );
+                s = s.replace(
+                    /(<|&lt;)\/sketchofont(>|&gt;)/g,
+                    '</span>'
+                );
+                s = s.replace(
+                    /(<|&lt;)sketchometry-light(>|&gt;)/g,
+                    '<span style=\\"font-family:sketchometry-light;font-weight:500;\\">'
+                );
+                s = s.replace(
+                    /(<|&lt;)\/sketchometry-light(>|&gt;)/g,
+                    '</span>'
+                );
+            }
+
+            return s;
+        },
+
+        /**
+         * Alias for convertGeonext2CSS and convertSketchometry2CSS
+         * @private
+         * @see JXG.Text.convertGeonext2CSS
+         * @see JXG.Text.convertSketchometry2CSS
+         */
+        convertGeonextAndSketchometry2CSS: function (s){
+            s = this.convertGeonext2CSS(s);
+            s = this.convertSketchometry2CSS(s);
             return s;
         },
 

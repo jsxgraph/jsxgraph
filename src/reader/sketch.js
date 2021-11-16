@@ -45,14 +45,14 @@ Copyright 2008-2021
  utils/type
  */
 
-(function () {
+(function() {
 
     'use strict';
 
     // this is a small workaround to adapt the SketchReader to our new file API
     // we don't have to change anything in sketchometry.
-    JXG.SketchReader = function (board, str) {
-        this.read = function () {
+    JXG.SketchReader = function(board, str) {
+        this.read = function() {
             var i, t, arr, unzipped, meta, constr;
 
             unzipped = new JXG.Util.Unzip(JXG.Util.Base64.decodeAsArray(str)).unzip();
@@ -101,11 +101,11 @@ Copyright 2008-2021
 
     // No prototype here
     JXG.extend(JXG.SketchReader, /** @lends JXG.SketchReader */ {
-        generateJCodeMeta: function () {
+        generateJCodeMeta: function() {
             return ['', '', '', ''];
         },
 
-        id: function () {
+        id: function() {
             return JXG.Util.genUUID();
         },
 
@@ -129,7 +129,7 @@ Copyright 2008-2021
          * @param {Array} step_log The complete step log
          * @returns {Array} JessieCode to set and reset the step.
          */
-        generateJCode: function (step, board, step_log) {
+        generateJCode: function(step, board, step_log) {
             var i, j, k, sub_id, str, str1, str2, objects, pid1, pid2, pid3,
                 xstart, ystart, el, arr, step2, options, assign, attrid,
                 le, x, y,
@@ -144,7 +144,7 @@ Copyright 2008-2021
 
                 // print number -- helper to prepare numbers
                 // for printing, e.g. trim them with toFixed()
-                pn = function (v) {
+                pn = function(v) {
                     if (options.toFixed > 0) {
                         v = parseFloat(v);
                         return JXG.toFixed(v, options.toFixed);
@@ -153,7 +153,7 @@ Copyright 2008-2021
                     return v;
                 },
 
-                getObject = function (v) {
+                getObject = function(v) {
                     var o;
 
                     if (options.useSymbols) {
@@ -1134,8 +1134,8 @@ Copyright 2008-2021
                     if (typeof step.args.anchor != 'undefined') {
                         set_str += ', anchor: ' + step.args.anchor;
                     }
-                    set_str += '>>; ' + step.dest_id + '.setText(' + step.args.str;
-                    set_str += '); ';
+                    set_str += '>>; ';
+                    // set_str += step.dest_id + '.setText(' + step.args.str + '); ';
                     reset_str = 'remove(' + step.dest_id + '); ';
                     break;
 
@@ -1318,7 +1318,11 @@ Copyright 2008-2021
                     set_str += 'dot: <<priv:true, id: \'' + step.dest_sub_ids[0] + '\', name: \'\'>>, ';
                     set_str += attrid + ' fillOpacity: ' + JXG.Options.opacityLevel;
                     if (JXG.exists(step.args) && JXG.exists(step.args.radius))
-                        set_str += ', radius: ' + step.args.radius;
+                        if (JXG.isNumber(step.args.radius)) {
+                            set_str += ', radius: ' + step.args.radius;
+                        } else {
+                            set_str += ', radius: \'' + step.args.radius + '\'';
+                        }
                     set_str += '>>; ';
                     reset_str = 'remove(' + step.dest_id + '); ';
                     reset_str += 'remove(' + step.dest_sub_ids[0] + '); ';
@@ -1718,7 +1722,7 @@ Copyright 2008-2021
             return [set_str, ctx_set_str, reset_str, ctx_reset_str];
         },
 
-        replaceStepDestIds: function (step, id_map) {
+        replaceStepDestIds: function(step, id_map) {
             var i, j, copy_ids = [];
 
             for (i = 0; i < id_map.length; i++) {
