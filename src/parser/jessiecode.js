@@ -56,7 +56,7 @@ define([
 
     // IE 6-8 compatibility
     if (!Object.create) {
-        Object.create = function(o, properties) {
+        Object.create = function (o, properties) {
             if (typeof o !== 'object' && typeof o !== 'function') throw new TypeError('Object prototype may only be an Object: ' + o);
             else if (o === null) throw new Error("This browser's implementation of Object.create is a shim and doesn't support 'null' as the first argument.");
 
@@ -71,13 +71,13 @@ define([
     }
 
     var priv = {
-            modules: {
-                'math': Mat,
-                'math/geometry': Geometry,
-                'math/statistics': Statistics,
-                'math/numerics': Mat.Numerics
-            }
-        };
+        modules: {
+            'math': Mat,
+            'math/geometry': Geometry,
+            'math/statistics': Statistics,
+            'math/numerics': Mat.Numerics
+        }
+    };
 
     /**
      * A JessieCode object provides an interface to the parser and stores all variables and objects used within a JessieCode script.
@@ -248,11 +248,11 @@ define([
          */
         pushScope: function (args) {
             var scope = {
-                    args: args,
-                    locals: {},
-                    context: null,
-                    previous: this.scope
-                };
+                args: args,
+                locals: {},
+                context: null,
+                previous: this.scope
+            };
 
             this.scope.hasChild = true;
             this.scope = scope;
@@ -306,7 +306,7 @@ define([
                 // _ccache is global, i.e. it is the same for ALL JessieCode instances.
                 // That's why we need the board id here
                 if (typeof _ccache[this.board.id + vname] === 'function') {
-                    f =  _ccache[this.board.id + vname];
+                    f = _ccache[this.board.id + vname];
                 } else {
                     f = (function (that) {
                         return function (parameters, attributes) {
@@ -598,11 +598,11 @@ define([
             }
 
             return 'function (' + p + ') {\n' +
-                    'var $oldscope$ = $jc$.scope;\n' +
-                    '$jc$.scope = $jc$.scopes[' + this.scope.id + '];\n' +
-                    'var r = (function () ' + bo + this.compile(node.children[1], true) + bc + ')();\n' +
-                    '$jc$.scope = $oldscope$;\n' +
-                    'return r;\n' +
+                'var $oldscope$ = $jc$.scope;\n' +
+                '$jc$.scope = $jc$.scopes[' + this.scope.id + '];\n' +
+                'var r = (function () ' + bo + this.compile(node.children[1], true) + bc + ')();\n' +
+                '$jc$.scope = $oldscope$;\n' +
+                'return r;\n' +
                 '}';
         },
 
@@ -780,7 +780,7 @@ define([
          * @param {Boolean} dontstore If false, the code string is stored in this.code.
          * @return {Object}           Returns result of computation as directed in cmd.
          */
-        _genericParse:  function (code, cmd, geonext, dontstore) {
+        _genericParse: function (code, cmd, geonext, dontstore) {
             var i, setTextBackup, ast, result,
                 ccode = code.replace(/\r\n/g, '\n').split('\n'),
                 cleaned = [];
@@ -1154,316 +1154,316 @@ define([
             this.col = node.col;
 
             switch (node.type) {
-            case 'node_op':
-                switch (node.value) {
-                case 'op_none':
-                    if (node.children[0]) {
-                        this.execute(node.children[0]);
-                    }
-                    if (node.children[1]) {
-                        ret = this.execute(node.children[1]);
-                    }
-                    break;
-                case 'op_assign':
-                    v = this.getLHS(node.children[0]);
-                    this.lhs[this.scope.id] = v.what;
-
-                    if (v.o.type && v.o.elementClass && v.o.methodMap && v.what === 'label') {
-                        this._error('Left-hand side of assignment is read-only.');
-                    }
-
-                    ret = this.execute(node.children[1]);
-                    if (v.o !== this.scope.locals || (Type.isArray(v.o) && typeof v.what === 'number')) {
-                        // it is either an array component being set or a property of an object.
-                        this.setProp(v.o, v.what, ret);
-                    } else {
-                        // this is just a local variable inside JessieCode
-                        this.letvar(v.what, ret);
-                    }
-                    this.lhs[this.scope.id] = 0;
-                    break;
-                case 'op_if':
-                    if (this.execute(node.children[0])) {
-                        ret = this.execute(node.children[1]);
-                    }
-                    break;
-                case 'op_conditional':
-                    // fall through
-                case 'op_if_else':
-                    if (this.execute(node.children[0])) {
-                        ret = this.execute(node.children[1]);
-                    } else {
-                        ret = this.execute(node.children[2]);
-                    }
-                    break;
-                case 'op_while':
-                    while (this.execute(node.children[0])) {
-                        this.execute(node.children[1]);
-                    }
-                    break;
-                case 'op_do':
-                    do {
-                        this.execute(node.children[0]);
-                    } while (this.execute(node.children[1]));
-                    break;
-                case 'op_for':
-                    for (this.execute(node.children[0]); this.execute(node.children[1]); this.execute(node.children[2])) {
-                        this.execute(node.children[3]);
-                    }
-                    break;
-                case 'op_proplst':
-                    if (node.children[0]) {
-                        this.execute(node.children[0]);
-                    }
-                    if (node.children[1]) {
-                        this.execute(node.children[1]);
-                    }
-                    break;
-                case 'op_emptyobject':
-                    ret = {};
-                    break;
-                case 'op_proplst_val':
-                    this.propstack.push({});
-                    this.propscope++;
-
-                    this.execute(node.children[0]);
-                    ret = this.propstack[this.propscope];
-
-                    this.propstack.pop();
-                    this.propscope--;
-                    break;
-                case 'op_prop':
-                    // child 0: Identifier
-                    // child 1: Value
-                    this.propstack[this.propscope][node.children[0]] = this.execute(node.children[1]);
-                    break;
-                case 'op_array':
-                    ret = [];
-                    l = node.children[0].length;
-
-                    for (i = 0; i < l; i++) {
-                        ret.push(this.execute(node.children[0][i]));
-                    }
-
-                    break;
-                case 'op_extvalue':
-                    ret = this.execute(node.children[0]);
-                    i = this.execute(node.children[1]);
-
-                    if (typeof i === 'number' && Math.abs(Math.round(i) - i) < Mat.eps) {
-                        ret = ret[i];
-                    } else {
-                        ret = undef;
-                    }
-                    break;
-                case 'op_return':
-                    if (this.scope === 0) {
-                        this._error('Unexpected return.');
-                    } else {
-                        return this.execute(node.children[0]);
-                    }
-                    break;
-                case 'op_map':
-                    if (!node.children[1].isMath && node.children[1].type !== 'node_var') {
-                        this._error('execute: In a map only function calls and mathematical expressions are allowed.');
-                    }
-
-                    /** @ignore */
-                    fun = this.defineFunction(node);
-                    fun.isMap = true;
-
-                    ret = fun;
-                    break;
-                case 'op_function':
-                    // parse the parameter list
-                    // after this, the parameters are in pstack
-
-                    /** @ignore */
-                    fun = this.defineFunction(node);
-                    fun.isMap = false;
-
-                    ret = fun;
-                    break;
-                case 'op_execfun':
-                    // node.children:
-                    //   [0]: Name of the function
-                    //   [1]: Parameter list as a parse subtree
-                    //   [2]: Properties, only used in case of a create function
-                    this.dpstack.push([]);
-                    this.pscope++;
-
-                    // parameter parsing is done below
-                    list = node.children[1];
-
-                    // parse the properties only if given
-                    if (Type.exists(node.children[2])) {
-                        if (node.children[3]) {
-                            ilist = node.children[2];
-                            attr = {};
-
-                            for (i = 0; i < ilist.length; i++) {
-                                attr = Type.deepCopy(attr, this.execute(ilist[i]), true);
+                case 'node_op':
+                    switch (node.value) {
+                        case 'op_none':
+                            if (node.children[0]) {
+                                this.execute(node.children[0]);
                             }
-                        } else {
-                            attr = this.execute(node.children[2]);
-                        }
-                    }
+                            if (node.children[1]) {
+                                ret = this.execute(node.children[1]);
+                            }
+                            break;
+                        case 'op_assign':
+                            v = this.getLHS(node.children[0]);
+                            this.lhs[this.scope.id] = v.what;
 
-                    // look up the variables name in the variable table
-                    fun = this.execute(node.children[0]);
-
-                    // determine the scope the function wants to run in
-                    if (fun && fun.sc) {
-                        sc = fun.sc;
-                    } else {
-                        sc = this;
-                    }
-
-                    if (!fun.creator && Type.exists(node.children[2])) {
-                        this._error('Unexpected value. Only element creators are allowed to have a value after the function call.');
-                    }
-
-                    // interpret ALL the parameters
-                    for (i = 0; i < list.length; i++) {
-                        parents[i] = this.execute(list[i]);
-                        //parents[i] = Type.evalSlider(this.execute(list[i]));
-                        this.dpstack[this.pscope].push({
-                            line: node.children[1][i].line,
-                            // SketchBin currently works only if the last column of the
-                            // parent position is taken. This is due to how I patched JS/CC
-                            // to count the lines and columns. So, ecol will do for now
-                            col: node.children[1][i].ecol
-                        });
-                    }
-
-                    // check for the function in the variable table
-                    if (typeof fun === 'function' && !fun.creator) {
-                        ret = fun.apply(sc, parents);
-                    } else if (typeof fun === 'function' && !!fun.creator) {
-                        e = this.line;
-
-                        // creator methods are the only ones that take properties, hence this special case
-                        try {
-                            ret = fun(parents, attr);
-                            ret.jcLineStart = e;
-                            ret.jcLineEnd = node.eline;
-
-                            for (i = e; i <= node.line; i++) {
-                                this.lineToElement[i] = ret;
+                            if (v.o.type && v.o.elementClass && v.o.methodMap && v.what === 'label') {
+                                this._error('Left-hand side of assignment is read-only.');
                             }
 
-                            ret.debugParents = this.dpstack[this.pscope];
-                        } catch (ex) {
-                            this._error(ex.toString());
-                        }
-                    } else {
-                        this._error('Function \'' + fun + '\' is undefined.');
+                            ret = this.execute(node.children[1]);
+                            if (v.o !== this.scope.locals || (Type.isArray(v.o) && typeof v.what === 'number')) {
+                                // it is either an array component being set or a property of an object.
+                                this.setProp(v.o, v.what, ret);
+                            } else {
+                                // this is just a local variable inside JessieCode
+                                this.letvar(v.what, ret);
+                            }
+                            this.lhs[this.scope.id] = 0;
+                            break;
+                        case 'op_if':
+                            if (this.execute(node.children[0])) {
+                                ret = this.execute(node.children[1]);
+                            }
+                            break;
+                        case 'op_conditional':
+                        // fall through
+                        case 'op_if_else':
+                            if (this.execute(node.children[0])) {
+                                ret = this.execute(node.children[1]);
+                            } else {
+                                ret = this.execute(node.children[2]);
+                            }
+                            break;
+                        case 'op_while':
+                            while (this.execute(node.children[0])) {
+                                this.execute(node.children[1]);
+                            }
+                            break;
+                        case 'op_do':
+                            do {
+                                this.execute(node.children[0]);
+                            } while (this.execute(node.children[1]));
+                            break;
+                        case 'op_for':
+                            for (this.execute(node.children[0]); this.execute(node.children[1]); this.execute(node.children[2])) {
+                                this.execute(node.children[3]);
+                            }
+                            break;
+                        case 'op_proplst':
+                            if (node.children[0]) {
+                                this.execute(node.children[0]);
+                            }
+                            if (node.children[1]) {
+                                this.execute(node.children[1]);
+                            }
+                            break;
+                        case 'op_emptyobject':
+                            ret = {};
+                            break;
+                        case 'op_proplst_val':
+                            this.propstack.push({});
+                            this.propscope++;
+
+                            this.execute(node.children[0]);
+                            ret = this.propstack[this.propscope];
+
+                            this.propstack.pop();
+                            this.propscope--;
+                            break;
+                        case 'op_prop':
+                            // child 0: Identifier
+                            // child 1: Value
+                            this.propstack[this.propscope][node.children[0]] = this.execute(node.children[1]);
+                            break;
+                        case 'op_array':
+                            ret = [];
+                            l = node.children[0].length;
+
+                            for (i = 0; i < l; i++) {
+                                ret.push(this.execute(node.children[0][i]));
+                            }
+
+                            break;
+                        case 'op_extvalue':
+                            ret = this.execute(node.children[0]);
+                            i = this.execute(node.children[1]);
+
+                            if (typeof i === 'number' && Math.abs(Math.round(i) - i) < Mat.eps) {
+                                ret = ret[i];
+                            } else {
+                                ret = undef;
+                            }
+                            break;
+                        case 'op_return':
+                            if (this.scope === 0) {
+                                this._error('Unexpected return.');
+                            } else {
+                                return this.execute(node.children[0]);
+                            }
+                            break;
+                        case 'op_map':
+                            if (!node.children[1].isMath && node.children[1].type !== 'node_var') {
+                                this._error('execute: In a map only function calls and mathematical expressions are allowed.');
+                            }
+
+                            /** @ignore */
+                            fun = this.defineFunction(node);
+                            fun.isMap = true;
+
+                            ret = fun;
+                            break;
+                        case 'op_function':
+                            // parse the parameter list
+                            // after this, the parameters are in pstack
+
+                            /** @ignore */
+                            fun = this.defineFunction(node);
+                            fun.isMap = false;
+
+                            ret = fun;
+                            break;
+                        case 'op_execfun':
+                            // node.children:
+                            //   [0]: Name of the function
+                            //   [1]: Parameter list as a parse subtree
+                            //   [2]: Properties, only used in case of a create function
+                            this.dpstack.push([]);
+                            this.pscope++;
+
+                            // parameter parsing is done below
+                            list = node.children[1];
+
+                            // parse the properties only if given
+                            if (Type.exists(node.children[2])) {
+                                if (node.children[3]) {
+                                    ilist = node.children[2];
+                                    attr = {};
+
+                                    for (i = 0; i < ilist.length; i++) {
+                                        attr = Type.deepCopy(attr, this.execute(ilist[i]), true);
+                                    }
+                                } else {
+                                    attr = this.execute(node.children[2]);
+                                }
+                            }
+
+                            // look up the variables name in the variable table
+                            fun = this.execute(node.children[0]);
+
+                            // determine the scope the function wants to run in
+                            if (fun && fun.sc) {
+                                sc = fun.sc;
+                            } else {
+                                sc = this;
+                            }
+
+                            if (!fun.creator && Type.exists(node.children[2])) {
+                                this._error('Unexpected value. Only element creators are allowed to have a value after the function call.');
+                            }
+
+                            // interpret ALL the parameters
+                            for (i = 0; i < list.length; i++) {
+                                parents[i] = this.execute(list[i]);
+                                //parents[i] = Type.evalSlider(this.execute(list[i]));
+                                this.dpstack[this.pscope].push({
+                                    line: node.children[1][i].line,
+                                    // SketchBin currently works only if the last column of the
+                                    // parent position is taken. This is due to how I patched JS/CC
+                                    // to count the lines and columns. So, ecol will do for now
+                                    col: node.children[1][i].ecol
+                                });
+                            }
+
+                            // check for the function in the variable table
+                            if (typeof fun === 'function' && !fun.creator) {
+                                ret = fun.apply(sc, parents);
+                            } else if (typeof fun === 'function' && !!fun.creator) {
+                                e = this.line;
+
+                                // creator methods are the only ones that take properties, hence this special case
+                                try {
+                                    ret = fun(parents, attr);
+                                    ret.jcLineStart = e;
+                                    ret.jcLineEnd = node.eline;
+
+                                    for (i = e; i <= node.line; i++) {
+                                        this.lineToElement[i] = ret;
+                                    }
+
+                                    ret.debugParents = this.dpstack[this.pscope];
+                                } catch (ex) {
+                                    this._error(ex.toString());
+                                }
+                            } else {
+                                this._error('Function \'' + fun + '\' is undefined.');
+                            }
+
+                            // clear parameter stack
+                            this.dpstack.pop();
+                            this.pscope--;
+                            break;
+                        case 'op_property':
+                            e = this.execute(node.children[0]);
+                            v = node.children[1];
+
+                            ret = this.resolveProperty(e, v, false);
+
+                            // set the scope, in case this is a method the user wants to call
+                            if (Type.exists(ret)) {
+                                ret.sc = e;
+                            }
+
+                            break;
+                        case 'op_use':
+                            this._warn('Use of the \'use\' operator is deprecated.');
+                            this.use(node.children[0].toString());
+                            break;
+                        case 'op_delete':
+                            this._warn('Use of the \'delete\' operator is deprecated. Please use the remove() function.');
+                            v = this.getvar(node.children[0]);
+                            ret = this.del(v);
+                            break;
+                        case 'op_eq':
+                            // == is intentional
+                            /*jslint eqeq:true*/
+                            ret = this.execute(node.children[0]) == this.execute(node.children[1]);
+                            /*jslint eqeq:false*/
+                            break;
+                        case 'op_neq':
+                            // != is intentional
+                            /*jslint eqeq:true*/
+                            ret = this.execute(node.children[0]) != this.execute(node.children[1]);
+                            /*jslint eqeq:true*/
+                            break;
+                        case 'op_approx':
+                            ret = Math.abs(this.execute(node.children[0]) - this.execute(node.children[1])) < Mat.eps;
+                            break;
+                        case 'op_gt':
+                            ret = this.execute(node.children[0]) > this.execute(node.children[1]);
+                            break;
+                        case 'op_lt':
+                            ret = this.execute(node.children[0]) < this.execute(node.children[1]);
+                            break;
+                        case 'op_geq':
+                            ret = this.execute(node.children[0]) >= this.execute(node.children[1]);
+                            break;
+                        case 'op_leq':
+                            ret = this.execute(node.children[0]) <= this.execute(node.children[1]);
+                            break;
+                        case 'op_or':
+                            ret = this.execute(node.children[0]) || this.execute(node.children[1]);
+                            break;
+                        case 'op_and':
+                            ret = this.execute(node.children[0]) && this.execute(node.children[1]);
+                            break;
+                        case 'op_not':
+                            ret = !this.execute(node.children[0]);
+                            break;
+                        case 'op_add':
+                            ret = this.add(this.execute(node.children[0]), this.execute(node.children[1]));
+                            break;
+                        case 'op_sub':
+                            ret = this.sub(this.execute(node.children[0]), this.execute(node.children[1]));
+                            break;
+                        case 'op_div':
+                            ret = this.div(this.execute(node.children[0]), this.execute(node.children[1]));
+                            break;
+                        case 'op_mod':
+                            // use mathematical modulo, JavaScript implements the symmetric modulo.
+                            ret = this.mod(this.execute(node.children[0]), this.execute(node.children[1]), true);
+                            break;
+                        case 'op_mul':
+                            ret = this.mul(this.execute(node.children[0]), this.execute(node.children[1]));
+                            break;
+                        case 'op_exp':
+                            ret = this.pow(this.execute(node.children[0]), this.execute(node.children[1]));
+                            break;
+                        case 'op_neg':
+                            ret = this.neg(this.execute(node.children[0]));
+                            break;
                     }
+                    break;
 
-                    // clear parameter stack
-                    this.dpstack.pop();
-                    this.pscope--;
+                case 'node_var':
+                    ret = this.getvar(node.value);
                     break;
-                case 'op_property':
-                    e = this.execute(node.children[0]);
-                    v = node.children[1];
 
-                    ret = this.resolveProperty(e, v, false);
+                case 'node_const':
+                    ret = Number(node.value);
+                    break;
 
-                    // set the scope, in case this is a method the user wants to call
-                    if (Type.exists(ret)) {
-                        ret.sc = e;
-                    }
+                case 'node_const_bool':
+                    ret = node.value;
+                    break;
 
+                case 'node_str':
+                    //ret = node.value.replace(/\\'/, "'").replace(/\\"/, '"').replace(/\\\\/, '\\');
+                    /*jslint regexp:true*/
+                    ret = node.value.replace(/\\(.)/, '$1');
+                    /*jslint regexp:false*/
                     break;
-                case 'op_use':
-                    this._warn('Use of the \'use\' operator is deprecated.');
-                    this.use(node.children[0].toString());
-                    break;
-                case 'op_delete':
-                    this._warn('Use of the \'delete\' operator is deprecated. Please use the remove() function.');
-                    v = this.getvar(node.children[0]);
-                    ret = this.del(v);
-                    break;
-                case 'op_eq':
-                    // == is intentional
-                    /*jslint eqeq:true*/
-                    ret = this.execute(node.children[0]) == this.execute(node.children[1]);
-                    /*jslint eqeq:false*/
-                    break;
-                case 'op_neq':
-                    // != is intentional
-                    /*jslint eqeq:true*/
-                    ret = this.execute(node.children[0]) != this.execute(node.children[1]);
-                    /*jslint eqeq:true*/
-                    break;
-                case 'op_approx':
-                    ret = Math.abs(this.execute(node.children[0]) - this.execute(node.children[1])) < Mat.eps;
-                    break;
-                case 'op_gt':
-                    ret = this.execute(node.children[0]) > this.execute(node.children[1]);
-                    break;
-                case 'op_lt':
-                    ret = this.execute(node.children[0]) < this.execute(node.children[1]);
-                    break;
-                case 'op_geq':
-                    ret = this.execute(node.children[0]) >= this.execute(node.children[1]);
-                    break;
-                case 'op_leq':
-                    ret = this.execute(node.children[0]) <= this.execute(node.children[1]);
-                    break;
-                case 'op_or':
-                    ret = this.execute(node.children[0]) || this.execute(node.children[1]);
-                    break;
-                case 'op_and':
-                    ret = this.execute(node.children[0]) && this.execute(node.children[1]);
-                    break;
-                case 'op_not':
-                    ret = !this.execute(node.children[0]);
-                    break;
-                case 'op_add':
-                    ret = this.add(this.execute(node.children[0]), this.execute(node.children[1]));
-                    break;
-                case 'op_sub':
-                    ret = this.sub(this.execute(node.children[0]), this.execute(node.children[1]));
-                    break;
-                case 'op_div':
-                    ret = this.div(this.execute(node.children[0]), this.execute(node.children[1]));
-                    break;
-                case 'op_mod':
-                    // use mathematical modulo, JavaScript implements the symmetric modulo.
-                    ret = this.mod(this.execute(node.children[0]), this.execute(node.children[1]), true);
-                    break;
-                case 'op_mul':
-                    ret = this.mul(this.execute(node.children[0]), this.execute(node.children[1]));
-                    break;
-                case 'op_exp':
-                    ret = this.pow(this.execute(node.children[0]),  this.execute(node.children[1]));
-                    break;
-                case 'op_neg':
-                    ret = this.neg(this.execute(node.children[0]));
-                    break;
-                }
-                break;
-
-            case 'node_var':
-                ret = this.getvar(node.value);
-                break;
-
-            case 'node_const':
-                ret = Number(node.value);
-                break;
-
-            case 'node_const_bool':
-                ret = node.value;
-                break;
-
-            case 'node_str':
-                //ret = node.value.replace(/\\'/, "'").replace(/\\"/, '"').replace(/\\\\/, '\\');
-                /*jslint regexp:true*/
-                ret = node.value.replace(/\\(.)/, '$1');
-                /*jslint regexp:false*/
-                break;
             }
 
             return ret;
@@ -1489,290 +1489,290 @@ define([
             }
 
             switch (node.type) {
-            case 'node_op':
-                switch (node.value) {
-                case 'op_none':
-                    if (node.children[0]) {
-                        ret = this.compile(node.children[0], js);
-                    }
-                    if (node.children[1]) {
-                        ret += this.compile(node.children[1], js);
-                    }
-                    break;
-                case 'op_assign':
-                    //e = this.compile(node.children[0], js);
-                    if (js) {
-                        e = this.getLHSCompiler(node.children[0], js);
-                        if (Type.isArray(e)) {
-                            ret = '$jc$.setProp(' + e[0] + ', ' + e[1] + ', ' + this.compile(node.children[1], js) + ');\n';
-                        } else {
-                            if (this.isLocalVariable(e) !== this.scope) {
-                                this.scope.locals[e] = true;
+                case 'node_op':
+                    switch (node.value) {
+                        case 'op_none':
+                            if (node.children[0]) {
+                                ret = this.compile(node.children[0], js);
                             }
-                            ret = '$jc$.scopes[' + this.scope.id + '].locals[\'' + e + '\'] = ' + this.compile(node.children[1], js) + ';\n';
-                        }
-                    } else {
-                        e = this.compile(node.children[0]);
-                        ret = e + ' = ' + this.compile(node.children[1], js) + ';\n';
-                    }
-                    break;
-                case 'op_if':
-                    ret = ' if (' + this.compile(node.children[0], js) + ') ' + this.compile(node.children[1], js);
-                    break;
-                case 'op_if_else':
-                    ret = ' if (' + this.compile(node.children[0], js) + ')' + this.compile(node.children[1], js);
-                    ret += ' else ' + this.compile(node.children[2], js);
-                    break;
-                case 'op_conditional':
-                    ret = '((' + this.compile(node.children[0], js) + ')?(' + this.compile(node.children[1], js);
-                    ret += '):(' + this.compile(node.children[2], js) + '))';
-                    break;
-                case 'op_while':
-                    ret = ' while (' + this.compile(node.children[0], js) + ') {\n' + this.compile(node.children[1], js) + '}\n';
-                    break;
-                case 'op_do':
-                    ret = ' do {\n' + this.compile(node.children[0], js) + '} while (' + this.compile(node.children[1], js) + ');\n';
-                    break;
-                case 'op_for':
-                    //ret = ' for (' + this.compile(node.children[0], js) + '; ' + this.compile(node.children[1], js) + '; ' + this.compile(node.children[2], js) + ') {\n' + this.compile(node.children[3], js) + '\n}\n';
-                    ret = ' for (' + this.compile(node.children[0], js) +               // Assignment ends with ";"
-                                    this.compile(node.children[1], js) + '; ' +         // Logical test comes without ";"
-                                    this.compile(node.children[2], js).slice(0, -2) +   // Counting comes with ";" which has to be removed
-                                    ') {\n' + this.compile(node.children[3], js) + '\n}\n';
-                    break;
-                case 'op_proplst':
-                    if (node.children[0]) {
-                        ret = this.compile(node.children[0], js) + ', ';
-                    }
+                            if (node.children[1]) {
+                                ret += this.compile(node.children[1], js);
+                            }
+                            break;
+                        case 'op_assign':
+                            //e = this.compile(node.children[0], js);
+                            if (js) {
+                                e = this.getLHSCompiler(node.children[0], js);
+                                if (Type.isArray(e)) {
+                                    ret = '$jc$.setProp(' + e[0] + ', ' + e[1] + ', ' + this.compile(node.children[1], js) + ');\n';
+                                } else {
+                                    if (this.isLocalVariable(e) !== this.scope) {
+                                        this.scope.locals[e] = true;
+                                    }
+                                    ret = '$jc$.scopes[' + this.scope.id + '].locals[\'' + e + '\'] = ' + this.compile(node.children[1], js) + ';\n';
+                                }
+                            } else {
+                                e = this.compile(node.children[0]);
+                                ret = e + ' = ' + this.compile(node.children[1], js) + ';\n';
+                            }
+                            break;
+                        case 'op_if':
+                            ret = ' if (' + this.compile(node.children[0], js) + ') ' + this.compile(node.children[1], js);
+                            break;
+                        case 'op_if_else':
+                            ret = ' if (' + this.compile(node.children[0], js) + ')' + this.compile(node.children[1], js);
+                            ret += ' else ' + this.compile(node.children[2], js);
+                            break;
+                        case 'op_conditional':
+                            ret = '((' + this.compile(node.children[0], js) + ')?(' + this.compile(node.children[1], js);
+                            ret += '):(' + this.compile(node.children[2], js) + '))';
+                            break;
+                        case 'op_while':
+                            ret = ' while (' + this.compile(node.children[0], js) + ') {\n' + this.compile(node.children[1], js) + '}\n';
+                            break;
+                        case 'op_do':
+                            ret = ' do {\n' + this.compile(node.children[0], js) + '} while (' + this.compile(node.children[1], js) + ');\n';
+                            break;
+                        case 'op_for':
+                            //ret = ' for (' + this.compile(node.children[0], js) + '; ' + this.compile(node.children[1], js) + '; ' + this.compile(node.children[2], js) + ') {\n' + this.compile(node.children[3], js) + '\n}\n';
+                            ret = ' for (' + this.compile(node.children[0], js) +               // Assignment ends with ";"
+                                this.compile(node.children[1], js) + '; ' +         // Logical test comes without ";"
+                                this.compile(node.children[2], js).slice(0, -2) +   // Counting comes with ";" which has to be removed
+                                ') {\n' + this.compile(node.children[3], js) + '\n}\n';
+                            break;
+                        case 'op_proplst':
+                            if (node.children[0]) {
+                                ret = this.compile(node.children[0], js) + ', ';
+                            }
 
-                    ret += this.compile(node.children[1], js);
-                    break;
-                case 'op_prop':
-                    // child 0: Identifier
-                    // child 1: Value
-                    ret = node.children[0] + ': ' + this.compile(node.children[1], js);
-                    break;
-                case 'op_emptyobject':
-                    ret = js ? '{}' : '<< >>';
-                    break;
-                case 'op_proplst_val':
-                    ret = this.compile(node.children[0], js);
-                    break;
-                case 'op_array':
-                    list = [];
-                    for (i = 0; i < node.children[0].length; i++) {
-                        list.push(this.compile(node.children[0][i], js));
-                    }
-                    ret = '[' + list.join(', ') + ']';
-                    break;
-                case 'op_extvalue':
-                    ret = this.compile(node.children[0], js) + '[' + this.compile(node.children[1], js) + ']';
-                    break;
-                case 'op_return':
-                    ret = ' return ' + this.compile(node.children[0], js) + ';\n';
-                    break;
-                case 'op_map':
-                    if (!node.children[1].isMath && node.children[1].type !== 'node_var') {
-                        this._error('compile: In a map only function calls and mathematical expressions are allowed.');
-                    }
+                            ret += this.compile(node.children[1], js);
+                            break;
+                        case 'op_prop':
+                            // child 0: Identifier
+                            // child 1: Value
+                            ret = node.children[0] + ': ' + this.compile(node.children[1], js);
+                            break;
+                        case 'op_emptyobject':
+                            ret = js ? '{}' : '<< >>';
+                            break;
+                        case 'op_proplst_val':
+                            ret = this.compile(node.children[0], js);
+                            break;
+                        case 'op_array':
+                            list = [];
+                            for (i = 0; i < node.children[0].length; i++) {
+                                list.push(this.compile(node.children[0][i], js));
+                            }
+                            ret = '[' + list.join(', ') + ']';
+                            break;
+                        case 'op_extvalue':
+                            ret = this.compile(node.children[0], js) + '[' + this.compile(node.children[1], js) + ']';
+                            break;
+                        case 'op_return':
+                            ret = ' return ' + this.compile(node.children[0], js) + ';\n';
+                            break;
+                        case 'op_map':
+                            if (!node.children[1].isMath && node.children[1].type !== 'node_var') {
+                                this._error('compile: In a map only function calls and mathematical expressions are allowed.');
+                            }
 
-                    list = node.children[0];
-                    if (js) {
-                        ret = ' $jc$.makeMap(function (' + list.join(', ') + ') { return ' + this.compile(node.children[1], js) + '; })';
-                    } else {
-                        ret = 'map (' + list.join(', ') + ') -> ' + this.compile(node.children[1], js);
-                    }
+                            list = node.children[0];
+                            if (js) {
+                                ret = ' $jc$.makeMap(function (' + list.join(', ') + ') { return ' + this.compile(node.children[1], js) + '; })';
+                            } else {
+                                ret = 'map (' + list.join(', ') + ') -> ' + this.compile(node.children[1], js);
+                            }
 
-                    break;
-                case 'op_function':
-                    list = node.children[0];
-                    scope = this.pushScope(list);
-                    if (js) {
-                        ret = this.functionCodeJS(node);
-                    } else {
-                        ret = ' function (' + list.join(', ') + ') ' + this.compile(node.children[1], js);
-                    }
-                    this.popScope();
-                    break;
-                case 'op_execfunmath':
-                    console.log('TODO');
-                    ret = '-1';
-                    break;
-                case 'op_execfun':
-                    // parse the properties only if given
-                    if (node.children[2]) {
-                        list = [];
-                        for (i = 0; i < node.children[2].length; i++) {
-                            list.push(this.compile(node.children[2][i], js));
-                        }
+                            break;
+                        case 'op_function':
+                            list = node.children[0];
+                            scope = this.pushScope(list);
+                            if (js) {
+                                ret = this.functionCodeJS(node);
+                            } else {
+                                ret = ' function (' + list.join(', ') + ') ' + this.compile(node.children[1], js);
+                            }
+                            this.popScope();
+                            break;
+                        case 'op_execfunmath':
+                            console.log('TODO');
+                            ret = '-1';
+                            break;
+                        case 'op_execfun':
+                            // parse the properties only if given
+                            if (node.children[2]) {
+                                list = [];
+                                for (i = 0; i < node.children[2].length; i++) {
+                                    list.push(this.compile(node.children[2][i], js));
+                                }
 
-                        if (js) {
-                            e = '$jc$.mergeAttributes(' + list.join(', ') + ')';
-                        }
-                    }
-                    node.children[0].withProps = !!node.children[2];
-                    list = [];
-                    for (i = 0; i < node.children[1].length; i++) {
-                        list.push(this.compile(node.children[1][i], js));
-                    }
-                    ret = this.compile(node.children[0], js) + '(' + list.join(', ') + (node.children[2] && js ? ', ' + e : '') + ')' + (node.children[2] && !js ? e : '');
-                    if (js) {
-                        // Inserting a newline here allows simulataneously
-                        // - procedural calls like Q.moveTo(...); and
-                        // - function calls in expressions like log(x) + 1;
-                        // Problem: procedural calls will not be ended by a semicolon.
-                        ret += '\n';
-                    }
+                                if (js) {
+                                    e = '$jc$.mergeAttributes(' + list.join(', ') + ')';
+                                }
+                            }
+                            node.children[0].withProps = !!node.children[2];
+                            list = [];
+                            for (i = 0; i < node.children[1].length; i++) {
+                                list.push(this.compile(node.children[1][i], js));
+                            }
+                            ret = this.compile(node.children[0], js) + '(' + list.join(', ') + (node.children[2] && js ? ', ' + e : '') + ')' + (node.children[2] && !js ? e : '');
+                            if (js) {
+                                // Inserting a newline here allows simulataneously
+                                // - procedural calls like Q.moveTo(...); and
+                                // - function calls in expressions like log(x) + 1;
+                                // Problem: procedural calls will not be ended by a semicolon.
+                                ret += '\n';
+                            }
 
-                    // save us a function call when compiled to javascript
-                    if (js && node.children[0].value === '$') {
-                        ret = '$jc$.board.objects[' + this.compile(node.children[1][0], js) + ']';
-                    }
-                    break;
-                case 'op_property':
-                    if (js && node.children[1] !== 'X' && node.children[1] !== 'Y') {
-                        ret = '$jc$.resolveProperty(' + this.compile(node.children[0], js) + ', \'' + node.children[1] + '\', true)';
-                    } else {
-                        ret = this.compile(node.children[0], js) + '.' + node.children[1];
-                    }
-                    break;
-                case 'op_use':
-                    this._warn('Use of the \'use\' operator is deprecated.');
-                    if (js) {
-                        ret = '$jc$.use(\'';
-                    } else {
-                        ret = 'use(\'';
-                    }
+                            // save us a function call when compiled to javascript
+                            if (js && node.children[0].value === '$') {
+                                ret = '$jc$.board.objects[' + this.compile(node.children[1][0], js) + ']';
+                            }
+                            break;
+                        case 'op_property':
+                            if (js && node.children[1] !== 'X' && node.children[1] !== 'Y') {
+                                ret = '$jc$.resolveProperty(' + this.compile(node.children[0], js) + ', \'' + node.children[1] + '\', true)';
+                            } else {
+                                ret = this.compile(node.children[0], js) + '.' + node.children[1];
+                            }
+                            break;
+                        case 'op_use':
+                            this._warn('Use of the \'use\' operator is deprecated.');
+                            if (js) {
+                                ret = '$jc$.use(\'';
+                            } else {
+                                ret = 'use(\'';
+                            }
 
-                    ret += node.children[0].toString() + '\');';
-                    break;
-                case 'op_delete':
-                    this._warn('Use of the \'delete\' operator is deprecated. Please use the remove() function.');
-                    if (js) {
-                        ret = '$jc$.del(';
-                    } else {
-                        ret = 'remove(';
-                    }
+                            ret += node.children[0].toString() + '\');';
+                            break;
+                        case 'op_delete':
+                            this._warn('Use of the \'delete\' operator is deprecated. Please use the remove() function.');
+                            if (js) {
+                                ret = '$jc$.del(';
+                            } else {
+                                ret = 'remove(';
+                            }
 
-                    ret += this.compile(node.children[0], js) + ')';
-                    break;
-                case 'op_eq':
-                    ret = '(' + this.compile(node.children[0], js) + ' === ' + this.compile(node.children[1], js) + ')';
-                    break;
-                case 'op_neq':
-                    ret = '(' + this.compile(node.children[0], js) + ' !== ' + this.compile(node.children[1], js) + ')';
-                    break;
-                case 'op_approx':
-                    ret = '(' + this.compile(node.children[0], js) + ' ~= ' + this.compile(node.children[1], js) + ')';
-                    break;
-                case 'op_gt':
-                    if (js) {
-                        ret = '$jc$.gt(' + this.compile(node.children[0], js) + ', ' + this.compile(node.children[1], js) + ')';
-                    } else {
-                        ret = '(' + this.compile(node.children[0], js) + ' > ' + this.compile(node.children[1], js) + ')';
+                            ret += this.compile(node.children[0], js) + ')';
+                            break;
+                        case 'op_eq':
+                            ret = '(' + this.compile(node.children[0], js) + ' === ' + this.compile(node.children[1], js) + ')';
+                            break;
+                        case 'op_neq':
+                            ret = '(' + this.compile(node.children[0], js) + ' !== ' + this.compile(node.children[1], js) + ')';
+                            break;
+                        case 'op_approx':
+                            ret = '(' + this.compile(node.children[0], js) + ' ~= ' + this.compile(node.children[1], js) + ')';
+                            break;
+                        case 'op_gt':
+                            if (js) {
+                                ret = '$jc$.gt(' + this.compile(node.children[0], js) + ', ' + this.compile(node.children[1], js) + ')';
+                            } else {
+                                ret = '(' + this.compile(node.children[0], js) + ' > ' + this.compile(node.children[1], js) + ')';
+                            }
+                            break;
+                        case 'op_lt':
+                            if (js) {
+                                ret = '$jc$.lt(' + this.compile(node.children[0], js) + ', ' + this.compile(node.children[1], js) + ')';
+                            } else {
+                                ret = '(' + this.compile(node.children[0], js) + ' < ' + this.compile(node.children[1], js) + ')';
+                            }
+                            break;
+                        case 'op_geq':
+                            if (js) {
+                                ret = '$jc$.geq(' + this.compile(node.children[0], js) + ', ' + this.compile(node.children[1], js) + ')';
+                            } else {
+                                ret = '(' + this.compile(node.children[0], js) + ' >= ' + this.compile(node.children[1], js) + ')';
+                            }
+                            break;
+                        case 'op_leq':
+                            if (js) {
+                                ret = '$jc$.leq(' + this.compile(node.children[0], js) + ', ' + this.compile(node.children[1], js) + ')';
+                            } else {
+                                ret = '(' + this.compile(node.children[0], js) + ' <= ' + this.compile(node.children[1], js) + ')';
+                            }
+                            break;
+                        case 'op_or':
+                            ret = '(' + this.compile(node.children[0], js) + ' || ' + this.compile(node.children[1], js) + ')';
+                            break;
+                        case 'op_and':
+                            ret = '(' + this.compile(node.children[0], js) + ' && ' + this.compile(node.children[1], js) + ')';
+                            break;
+                        case 'op_not':
+                            ret = '!(' + this.compile(node.children[0], js) + ')';
+                            break;
+                        case 'op_add':
+                            if (js) {
+                                ret = '$jc$.add(' + this.compile(node.children[0], js) + ', ' + this.compile(node.children[1], js) + ')';
+                            } else {
+                                ret = '(' + this.compile(node.children[0], js) + ' + ' + this.compile(node.children[1], js) + ')';
+                            }
+                            break;
+                        case 'op_sub':
+                            if (js) {
+                                ret = '$jc$.sub(' + this.compile(node.children[0], js) + ', ' + this.compile(node.children[1], js) + ')';
+                            } else {
+                                ret = '(' + this.compile(node.children[0], js) + ' - ' + this.compile(node.children[1], js) + ')';
+                            }
+                            break;
+                        case 'op_div':
+                            if (js) {
+                                ret = '$jc$.div(' + this.compile(node.children[0], js) + ', ' + this.compile(node.children[1], js) + ')';
+                            } else {
+                                ret = '(' + this.compile(node.children[0], js) + ' / ' + this.compile(node.children[1], js) + ')';
+                            }
+                            break;
+                        case 'op_mod':
+                            if (js) {
+                                ret = '$jc$.mod(' + this.compile(node.children[0], js) + ', ' + this.compile(node.children[1], js) + ', true)';
+                            } else {
+                                ret = '(' + this.compile(node.children[0], js) + ' % ' + this.compile(node.children[1], js) + ')';
+                            }
+                            break;
+                        case 'op_mul':
+                            if (js) {
+                                ret = '$jc$.mul(' + this.compile(node.children[0], js) + ', ' + this.compile(node.children[1], js) + ')';
+                            } else {
+                                ret = '(' + this.compile(node.children[0], js) + ' * ' + this.compile(node.children[1], js) + ')';
+                            }
+                            break;
+                        case 'op_exp':
+                            if (js) {
+                                ret = '$jc$.pow(' + this.compile(node.children[0], js) + ', ' + this.compile(node.children[1], js) + ')';
+                            } else {
+                                ret = '(' + this.compile(node.children[0], js) + '^' + this.compile(node.children[1], js) + ')';
+                            }
+                            break;
+                        case 'op_neg':
+                            if (js) {
+                                ret = '$jc$.neg(' + this.compile(node.children[0], js) + ')';
+                            } else {
+                                ret = '(-' + this.compile(node.children[0], js) + ')';
+                            }
+                            break;
                     }
                     break;
-                case 'op_lt':
-                    if (js) {
-                        ret = '$jc$.lt(' + this.compile(node.children[0], js) + ', ' + this.compile(node.children[1], js) + ')';
-                    } else {
-                        ret = '(' + this.compile(node.children[0], js) + ' < ' + this.compile(node.children[1], js) + ')';
-                    }
-                    break;
-                case 'op_geq':
-                    if (js) {
-                        ret = '$jc$.geq(' + this.compile(node.children[0], js) + ', ' + this.compile(node.children[1], js) + ')';
-                    } else {
-                        ret = '(' + this.compile(node.children[0], js) + ' >= ' + this.compile(node.children[1], js) + ')';
-                    }
-                    break;
-                case 'op_leq':
-                    if (js) {
-                        ret = '$jc$.leq(' + this.compile(node.children[0], js) + ', ' + this.compile(node.children[1], js) + ')';
-                    } else {
-                        ret = '(' + this.compile(node.children[0], js) + ' <= ' + this.compile(node.children[1], js) + ')';
-                    }
-                    break;
-                case 'op_or':
-                    ret = '(' + this.compile(node.children[0], js) + ' || ' + this.compile(node.children[1], js) + ')';
-                    break;
-                case 'op_and':
-                    ret = '(' + this.compile(node.children[0], js) + ' && ' + this.compile(node.children[1], js) + ')';
-                    break;
-                case 'op_not':
-                    ret = '!(' + this.compile(node.children[0], js) + ')';
-                    break;
-                case 'op_add':
-                    if (js) {
-                        ret = '$jc$.add(' + this.compile(node.children[0], js) + ', ' + this.compile(node.children[1], js) + ')';
-                    } else {
-                        ret = '(' + this.compile(node.children[0], js) + ' + ' + this.compile(node.children[1], js) + ')';
-                    }
-                    break;
-                case 'op_sub':
-                    if (js) {
-                        ret = '$jc$.sub(' + this.compile(node.children[0], js) + ', ' + this.compile(node.children[1], js) + ')';
-                    } else {
-                        ret = '(' + this.compile(node.children[0], js) + ' - ' + this.compile(node.children[1], js) + ')';
-                    }
-                    break;
-                case 'op_div':
-                    if (js) {
-                        ret = '$jc$.div(' + this.compile(node.children[0], js) + ', ' + this.compile(node.children[1], js) + ')';
-                    } else {
-                        ret = '(' + this.compile(node.children[0], js) + ' / ' + this.compile(node.children[1], js) + ')';
-                    }
-                    break;
-                case 'op_mod':
-                    if (js) {
-                        ret = '$jc$.mod(' + this.compile(node.children[0], js) + ', ' + this.compile(node.children[1], js) + ', true)';
-                    } else {
-                        ret = '(' + this.compile(node.children[0], js) + ' % ' + this.compile(node.children[1], js) + ')';
-                    }
-                    break;
-                case 'op_mul':
-                    if (js) {
-                        ret = '$jc$.mul(' + this.compile(node.children[0], js) + ', ' + this.compile(node.children[1], js) + ')';
-                    } else {
-                        ret = '(' + this.compile(node.children[0], js) + ' * ' + this.compile(node.children[1], js) + ')';
-                    }
-                    break;
-                case 'op_exp':
-                    if (js) {
-                        ret = '$jc$.pow(' + this.compile(node.children[0], js) + ', ' + this.compile(node.children[1], js) + ')';
-                    } else {
-                        ret = '(' + this.compile(node.children[0], js) + '^' + this.compile(node.children[1], js) + ')';
-                    }
-                    break;
-                case 'op_neg':
-                    if (js) {
-                        ret = '$jc$.neg(' + this.compile(node.children[0], js) + ')';
-                    } else {
-                        ret = '(-' + this.compile(node.children[0], js) + ')';
-                    }
-                    break;
-                }
-                break;
 
-            case 'node_var':
-                if (js) {
-                    ret = this.getvarJS(node.value, false, node.withProps);
-                } else {
+                case 'node_var':
+                    if (js) {
+                        ret = this.getvarJS(node.value, false, node.withProps);
+                    } else {
+                        ret = node.value;
+                    }
+                    break;
+
+                case 'node_const':
                     ret = node.value;
-                }
-                break;
+                    break;
 
-            case 'node_const':
-                ret = node.value;
-                break;
+                case 'node_const_bool':
+                    ret = node.value;
+                    break;
 
-            case 'node_const_bool':
-                ret = node.value;
-                break;
-
-            case 'node_str':
-                ret = '\'' + node.value + '\'';
-                break;
+                case 'node_str':
+                    ret = '\'' + node.value + '\'';
+                    break;
             }
 
             if (node.needsBrackets) {
@@ -1780,6 +1780,26 @@ define([
             }
 
             return ret;
+        },
+
+        /**
+         * This is used as the global getName() function.
+         * @param {JXG.GeometryElement} obj
+         * @returns {String}
+         */
+        getName: function (obj) {
+            var name;
+
+            if (Type.exists(obj) && Type.exists(obj.getName)) {
+                name = obj.getName();
+                if (!Type.exists(name) || name === '') {
+                    name = obj.id;
+                }
+            } else {
+                name = obj.id;
+            }
+
+            return name;
         },
 
         /**
@@ -2064,25 +2084,25 @@ define([
             return Mat.pow(a, b);
         },
 
-        lt: function(a, b) {
+        lt: function (a, b) {
             if (Interval.isInterval(a) || Interval.isInterval(b)) {
                 return Interval.lt(a, b);
             }
             return a < b;
         },
-        leq: function(a, b) {
+        leq: function (a, b) {
             if (Interval.isInterval(a) || Interval.isInterval(b)) {
                 return Interval.leq(a, b);
             }
             return a <= b;
         },
-        gt: function(a, b) {
+        gt: function (a, b) {
             if (Interval.isInterval(a) || Interval.isInterval(b)) {
                 return Interval.gt(a, b);
             }
             return a > b;
         },
-        geq: function(a, b) {
+        geq: function (a, b) {
             if (Interval.isInterval(a) || Interval.isInterval(b)) {
                 return Intervalt.geq(a, b);
             }
@@ -2096,7 +2116,7 @@ define([
             return Math.round(Math.random() * (max - min) / step) * step + min;
         },
 
-        DDD: function(f) {
+        DDD: function (f) {
             console.log('Dummy derivative function. This should never appear!');
         },
 
@@ -2252,6 +2272,7 @@ define([
                     'use': that.use,
                     'remove': that.del,
                     '$': that.getElementById,
+                    getName: that.getName,
                     '$board': that.board,
                     '$log': that.log
                 };
@@ -2313,6 +2334,7 @@ define([
             builtIn.IfThen.src = '$jc$.ifthen';
             // usually unused, see node_op > op_execfun
             builtIn.$.src = '(function (n) { return $jc$.board.select(n); })';
+            builtIn.getName.src = '$jc$.getName';
             if (builtIn.$board) {
                 builtIn.$board.src = '$jc$.board';
             }
@@ -2367,8 +2389,8 @@ define([
 
     });
 
-/* parser generated by jison 0.4.18 */
-/*
+    /* parser generated by jison 0.4.18 */
+    /*
   Returns a Parser object of the following structure:
 
   Parser: {
@@ -2440,857 +2462,2940 @@ define([
     recoverable: (boolean: TRUE when the parser has a error recovery rule available for this particular error)
   }
 */
-var parser = (function(){
-var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[2,14],$V1=[1,13],$V2=[1,37],$V3=[1,14],$V4=[1,15],$V5=[1,21],$V6=[1,16],$V7=[1,17],$V8=[1,33],$V9=[1,18],$Va=[1,19],$Vb=[1,12],$Vc=[1,59],$Vd=[1,60],$Ve=[1,58],$Vf=[1,46],$Vg=[1,48],$Vh=[1,49],$Vi=[1,50],$Vj=[1,51],$Vk=[1,52],$Vl=[1,53],$Vm=[1,54],$Vn=[1,45],$Vo=[1,38],$Vp=[1,39],$Vq=[5,7,8,14,15,16,17,19,20,21,23,26,27,50,51,58,65,74,75,76,77,78,79,80,82,91,93],$Vr=[5,7,8,12,14,15,16,17,19,20,21,23,26,27,50,51,58,65,74,75,76,77,78,79,80,82,91,93],$Vs=[8,10,16,32,34,35,37,39,41,42,43,45,46,47,48,50,51,53,54,55,57,64,65,66,83,86],$Vt=[2,48],$Vu=[1,72],$Vv=[10,16,32,34,35,37,39,41,42,43,45,46,47,48,50,51,53,54,55,57,66,83,86],$Vw=[1,78],$Vx=[8,10,16,32,34,35,37,41,42,43,45,46,47,48,50,51,53,54,55,57,64,65,66,83,86],$Vy=[1,82],$Vz=[8,10,16,32,34,35,37,39,45,46,47,48,50,51,53,54,55,57,64,65,66,83,86],$VA=[1,83],$VB=[1,84],$VC=[1,85],$VD=[8,10,16,32,34,35,37,39,41,42,43,50,51,53,54,55,57,64,65,66,83,86],$VE=[1,89],$VF=[1,90],$VG=[1,91],$VH=[1,92],$VI=[1,97],$VJ=[8,10,16,32,34,35,37,39,41,42,43,45,46,47,48,53,54,55,57,64,65,66,83,86],$VK=[1,103],$VL=[1,104],$VM=[8,10,16,32,34,35,37,39,41,42,43,45,46,47,48,50,51,57,64,65,66,83,86],$VN=[1,105],$VO=[1,106],$VP=[1,107],$VQ=[1,126],$VR=[1,139],$VS=[83,86],$VT=[1,149],$VU=[10,66,86],$VV=[8,10,16,20,32,34,35,37,39,41,42,43,45,46,47,48,50,51,53,54,55,57,64,65,66,82,83,86],$VW=[1,166],$VX=[10,86];
-var parser = {trace: function trace () { },
-yy: {},
-symbols_: {"error":2,"Program":3,"StatementList":4,"EOF":5,"IfStatement":6,"IF":7,"(":8,"Expression":9,")":10,"Statement":11,"ELSE":12,"LoopStatement":13,"WHILE":14,"FOR":15,";":16,"DO":17,"UnaryStatement":18,"USE":19,"IDENTIFIER":20,"DELETE":21,"ReturnStatement":22,"RETURN":23,"EmptyStatement":24,"StatementBlock":25,"{":26,"}":27,"ExpressionStatement":28,"AssignmentExpression":29,"ConditionalExpression":30,"LeftHandSideExpression":31,"=":32,"LogicalORExpression":33,"?":34,":":35,"LogicalANDExpression":36,"||":37,"EqualityExpression":38,"&&":39,"RelationalExpression":40,"==":41,"!=":42,"~=":43,"AdditiveExpression":44,"<":45,">":46,"<=":47,">=":48,"MultiplicativeExpression":49,"+":50,"-":51,"UnaryExpression":52,"*":53,"/":54,"%":55,"ExponentExpression":56,"^":57,"!":58,"MemberExpression":59,"CallExpression":60,"PrimaryExpression":61,"FunctionExpression":62,"MapExpression":63,".":64,"[":65,"]":66,"BasicLiteral":67,"ObjectLiteral":68,"ArrayLiteral":69,"NullLiteral":70,"BooleanLiteral":71,"StringLiteral":72,"NumberLiteral":73,"NULL":74,"TRUE":75,"FALSE":76,"STRING":77,"NUMBER":78,"NAN":79,"INFINITY":80,"ElementList":81,"<<":82,">>":83,"PropertyList":84,"Property":85,",":86,"PropertyName":87,"Arguments":88,"AttributeList":89,"Attribute":90,"FUNCTION":91,"ParameterDefinitionList":92,"MAP":93,"->":94,"$accept":0,"$end":1},
-terminals_: {2:"error",5:"EOF",7:"IF",8:"(",10:")",12:"ELSE",14:"WHILE",15:"FOR",16:";",17:"DO",19:"USE",20:"IDENTIFIER",21:"DELETE",23:"RETURN",26:"{",27:"}",32:"=",34:"?",35:":",37:"||",39:"&&",41:"==",42:"!=",43:"~=",45:"<",46:">",47:"<=",48:">=",50:"+",51:"-",53:"*",54:"/",55:"%",57:"^",58:"!",64:".",65:"[",66:"]",74:"NULL",75:"TRUE",76:"FALSE",77:"STRING",78:"NUMBER",79:"NAN",80:"INFINITY",82:"<<",83:">>",86:",",91:"FUNCTION",93:"MAP",94:"->"},
-productions_: [0,[3,2],[6,5],[6,7],[13,5],[13,9],[13,7],[18,2],[18,2],[22,2],[22,3],[24,1],[25,3],[4,2],[4,0],[11,1],[11,1],[11,1],[11,1],[11,1],[11,1],[11,1],[28,2],[9,1],[29,1],[29,3],[30,1],[30,5],[33,1],[33,3],[36,1],[36,3],[38,1],[38,3],[38,3],[38,3],[40,1],[40,3],[40,3],[40,3],[40,3],[44,1],[44,3],[44,3],[49,1],[49,3],[49,3],[49,3],[56,1],[56,3],[52,1],[52,2],[52,2],[52,2],[31,1],[31,1],[59,1],[59,1],[59,1],[59,3],[59,4],[61,1],[61,1],[61,1],[61,1],[61,3],[67,1],[67,1],[67,1],[67,1],[70,1],[71,1],[71,1],[72,1],[73,1],[73,1],[73,1],[69,2],[69,3],[68,2],[68,3],[84,1],[84,3],[85,3],[87,1],[87,1],[87,1],[60,2],[60,3],[60,2],[60,4],[60,3],[88,2],[88,3],[89,1],[89,3],[90,1],[90,1],[81,1],[81,3],[62,4],[62,5],[63,6],[92,1],[92,3]],
-performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
-/* this == yyval */
+    var parser = (function () {
+        var o = function (k, v, o, l) {
+                for (o = o || {}, l = k.length; l--; o[k[l]] = v) ;
+                return o
+            }, $V0 = [2, 14], $V1 = [1, 13], $V2 = [1, 37], $V3 = [1, 14], $V4 = [1, 15], $V5 = [1, 21], $V6 = [1, 16], $V7 = [1, 17], $V8 = [1, 33], $V9 = [1, 18], $Va = [1, 19], $Vb = [1, 12], $Vc = [1, 59], $Vd = [1, 60], $Ve = [1, 58], $Vf = [1, 46],
+            $Vg = [1, 48], $Vh = [1, 49], $Vi = [1, 50], $Vj = [1, 51], $Vk = [1, 52], $Vl = [1, 53], $Vm = [1, 54], $Vn = [1, 45], $Vo = [1, 38], $Vp = [1, 39],
+            $Vq = [5, 7, 8, 14, 15, 16, 17, 19, 20, 21, 23, 26, 27, 50, 51, 58, 65, 74, 75, 76, 77, 78, 79, 80, 82, 91, 93], $Vr = [5, 7, 8, 12, 14, 15, 16, 17, 19, 20, 21, 23, 26, 27, 50, 51, 58, 65, 74, 75, 76, 77, 78, 79, 80, 82, 91, 93],
+            $Vs = [8, 10, 16, 32, 34, 35, 37, 39, 41, 42, 43, 45, 46, 47, 48, 50, 51, 53, 54, 55, 57, 64, 65, 66, 83, 86], $Vt = [2, 48], $Vu = [1, 72],
+            $Vv = [10, 16, 32, 34, 35, 37, 39, 41, 42, 43, 45, 46, 47, 48, 50, 51, 53, 54, 55, 57, 66, 83, 86], $Vw = [1, 78], $Vx = [8, 10, 16, 32, 34, 35, 37, 41, 42, 43, 45, 46, 47, 48, 50, 51, 53, 54, 55, 57, 64, 65, 66, 83, 86], $Vy = [1, 82],
+            $Vz = [8, 10, 16, 32, 34, 35, 37, 39, 45, 46, 47, 48, 50, 51, 53, 54, 55, 57, 64, 65, 66, 83, 86], $VA = [1, 83], $VB = [1, 84], $VC = [1, 85], $VD = [8, 10, 16, 32, 34, 35, 37, 39, 41, 42, 43, 50, 51, 53, 54, 55, 57, 64, 65, 66, 83, 86],
+            $VE = [1, 89], $VF = [1, 90], $VG = [1, 91], $VH = [1, 92], $VI = [1, 97], $VJ = [8, 10, 16, 32, 34, 35, 37, 39, 41, 42, 43, 45, 46, 47, 48, 53, 54, 55, 57, 64, 65, 66, 83, 86], $VK = [1, 103], $VL = [1, 104],
+            $VM = [8, 10, 16, 32, 34, 35, 37, 39, 41, 42, 43, 45, 46, 47, 48, 50, 51, 57, 64, 65, 66, 83, 86], $VN = [1, 105], $VO = [1, 106], $VP = [1, 107], $VQ = [1, 126], $VR = [1, 139], $VS = [83, 86], $VT = [1, 149], $VU = [10, 66, 86],
+            $VV = [8, 10, 16, 20, 32, 34, 35, 37, 39, 41, 42, 43, 45, 46, 47, 48, 50, 51, 53, 54, 55, 57, 64, 65, 66, 82, 83, 86], $VW = [1, 166], $VX = [10, 86];
+        var parser = {
+            trace: function trace() { },
+            yy: {},
+            symbols_: {
+                "error": 2,
+                "Program": 3,
+                "StatementList": 4,
+                "EOF": 5,
+                "IfStatement": 6,
+                "IF": 7,
+                "(": 8,
+                "Expression": 9,
+                ")": 10,
+                "Statement": 11,
+                "ELSE": 12,
+                "LoopStatement": 13,
+                "WHILE": 14,
+                "FOR": 15,
+                ";": 16,
+                "DO": 17,
+                "UnaryStatement": 18,
+                "USE": 19,
+                "IDENTIFIER": 20,
+                "DELETE": 21,
+                "ReturnStatement": 22,
+                "RETURN": 23,
+                "EmptyStatement": 24,
+                "StatementBlock": 25,
+                "{": 26,
+                "}": 27,
+                "ExpressionStatement": 28,
+                "AssignmentExpression": 29,
+                "ConditionalExpression": 30,
+                "LeftHandSideExpression": 31,
+                "=": 32,
+                "LogicalORExpression": 33,
+                "?": 34,
+                ":": 35,
+                "LogicalANDExpression": 36,
+                "||": 37,
+                "EqualityExpression": 38,
+                "&&": 39,
+                "RelationalExpression": 40,
+                "==": 41,
+                "!=": 42,
+                "~=": 43,
+                "AdditiveExpression": 44,
+                "<": 45,
+                ">": 46,
+                "<=": 47,
+                ">=": 48,
+                "MultiplicativeExpression": 49,
+                "+": 50,
+                "-": 51,
+                "UnaryExpression": 52,
+                "*": 53,
+                "/": 54,
+                "%": 55,
+                "ExponentExpression": 56,
+                "^": 57,
+                "!": 58,
+                "MemberExpression": 59,
+                "CallExpression": 60,
+                "PrimaryExpression": 61,
+                "FunctionExpression": 62,
+                "MapExpression": 63,
+                ".": 64,
+                "[": 65,
+                "]": 66,
+                "BasicLiteral": 67,
+                "ObjectLiteral": 68,
+                "ArrayLiteral": 69,
+                "NullLiteral": 70,
+                "BooleanLiteral": 71,
+                "StringLiteral": 72,
+                "NumberLiteral": 73,
+                "NULL": 74,
+                "TRUE": 75,
+                "FALSE": 76,
+                "STRING": 77,
+                "NUMBER": 78,
+                "NAN": 79,
+                "INFINITY": 80,
+                "ElementList": 81,
+                "<<": 82,
+                ">>": 83,
+                "PropertyList": 84,
+                "Property": 85,
+                ",": 86,
+                "PropertyName": 87,
+                "Arguments": 88,
+                "AttributeList": 89,
+                "Attribute": 90,
+                "FUNCTION": 91,
+                "ParameterDefinitionList": 92,
+                "MAP": 93,
+                "->": 94,
+                "$accept": 0,
+                "$end": 1
+            },
+            terminals_: {
+                2: "error",
+                5: "EOF",
+                7: "IF",
+                8: "(",
+                10: ")",
+                12: "ELSE",
+                14: "WHILE",
+                15: "FOR",
+                16: ";",
+                17: "DO",
+                19: "USE",
+                20: "IDENTIFIER",
+                21: "DELETE",
+                23: "RETURN",
+                26: "{",
+                27: "}",
+                32: "=",
+                34: "?",
+                35: ":",
+                37: "||",
+                39: "&&",
+                41: "==",
+                42: "!=",
+                43: "~=",
+                45: "<",
+                46: ">",
+                47: "<=",
+                48: ">=",
+                50: "+",
+                51: "-",
+                53: "*",
+                54: "/",
+                55: "%",
+                57: "^",
+                58: "!",
+                64: ".",
+                65: "[",
+                66: "]",
+                74: "NULL",
+                75: "TRUE",
+                76: "FALSE",
+                77: "STRING",
+                78: "NUMBER",
+                79: "NAN",
+                80: "INFINITY",
+                82: "<<",
+                83: ">>",
+                86: ",",
+                91: "FUNCTION",
+                93: "MAP",
+                94: "->"
+            },
+            productions_: [0, [3, 2], [6, 5], [6, 7], [13, 5], [13, 9], [13, 7], [18, 2], [18, 2], [22, 2], [22, 3], [24, 1], [25, 3], [4, 2], [4, 0], [11, 1], [11, 1], [11, 1], [11, 1], [11, 1], [11, 1], [11, 1], [28, 2], [9, 1], [29, 1], [29, 3], [30, 1], [30, 5], [33, 1], [33, 3], [36, 1], [36, 3], [38, 1], [38, 3], [38, 3], [38, 3], [40, 1], [40, 3], [40, 3], [40, 3], [40, 3], [44, 1], [44, 3], [44, 3], [49, 1], [49, 3], [49, 3], [49, 3], [56, 1], [56, 3], [52, 1], [52, 2], [52, 2], [52, 2], [31, 1], [31, 1], [59, 1], [59, 1], [59, 1], [59, 3], [59, 4], [61, 1], [61, 1], [61, 1], [61, 1], [61, 3], [67, 1], [67, 1], [67, 1], [67, 1], [70, 1], [71, 1], [71, 1], [72, 1], [73, 1], [73, 1], [73, 1], [69, 2], [69, 3], [68, 2], [68, 3], [84, 1], [84, 3], [85, 3], [87, 1], [87, 1], [87, 1], [60, 2], [60, 3], [60, 2], [60, 4], [60, 3], [88, 2], [88, 3], [89, 1], [89, 3], [90, 1], [90, 1], [81, 1], [81, 3], [62, 4], [62, 5], [63, 6], [92, 1], [92, 3]],
+            performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
+                /* this == yyval */
 
-var $0 = $$.length - 1;
-switch (yystate) {
-case 1:
- return $$[$0-1];
-break;
-case 2:
- this.$ = AST.createNode(lc(_$[$0-4]), 'node_op', 'op_if', $$[$0-2], $$[$0]);
-break;
-case 3:
- this.$ = AST.createNode(lc(_$[$0-6]), 'node_op', 'op_if_else', $$[$0-4], $$[$0-2], $$[$0]);
-break;
-case 4:
- this.$ = AST.createNode(lc(_$[$0-4]), 'node_op', 'op_while', $$[$0-2], $$[$0]);
-break;
-case 5:
- this.$ = AST.createNode(lc(_$[$0-8]), 'node_op', 'op_for', $$[$0-6], $$[$0-4], $$[$0-2], $$[$0]);
-break;
-case 6:
- this.$ = AST.createNode(lc(_$[$0-6]), 'node_op', 'op_do', $$[$0-5], $$[$0-2]);
-break;
-case 7:
- this.$ = AST.createNode(lc(_$[$0-1]), 'node_op', 'op_use', $$[$0]);
-break;
-case 8:
- this.$ = AST.createNode(lc(_$[$0-1]), 'node_op', 'op_delete', $$[$0]);
-break;
-case 9:
- this.$ = AST.createNode(lc(_$[$0-1]), 'node_op', 'op_return', undefined);
-break;
-case 10:
- this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_return', $$[$0-1]);
-break;
-case 11: case 14:
- this.$ = AST.createNode(lc(_$[$0]), 'node_op', 'op_none');
-break;
-case 12:
- this.$ = $$[$0-1]; this.$.needsBrackets = true;
-break;
-case 13:
- this.$ = AST.createNode(lc(_$[$0-1]), 'node_op', 'op_none', $$[$0-1], $$[$0]);
-break;
-case 15: case 16: case 17: case 18: case 19: case 20: case 21: case 23: case 24: case 26: case 28: case 30: case 32: case 36: case 41: case 44: case 48: case 50: case 52: case 54: case 55: case 56: case 58: case 62: case 81: case 84: case 85: case 86:
- this.$ = $$[$0];
-break;
-case 22: case 65: case 93:
- this.$ = $$[$0-1];
-break;
-case 25:
- this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_assign', $$[$0-2], $$[$0]); this.$.isMath = false;
-break;
-case 27:
- this.$ = AST.createNode(lc(_$[$0-4]), 'node_op', 'op_conditional', $$[$0-4], $$[$0-2], $$[$0]); this.$.isMath = false;
-break;
-case 29:
- this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_or', $$[$0-2], $$[$0]); this.$.isMath = false;
-break;
-case 31:
- this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_and', $$[$0-2], $$[$0]); this.$.isMath = false;
-break;
-case 33:
- this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_eq', $$[$0-2], $$[$0]); this.$.isMath = false;
-break;
-case 34:
- this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_neq', $$[$0-2], $$[$0]); this.$.isMath = false;
-break;
-case 35:
- this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_approx', $$[$0-2], $$[$0]); this.$.isMath = false;
-break;
-case 37:
- this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_lt', $$[$0-2], $$[$0]); this.$.isMath = false;
-break;
-case 38:
- this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_gt', $$[$0-2], $$[$0]); this.$.isMath = false;
-break;
-case 39:
- this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_leq', $$[$0-2], $$[$0]); this.$.isMath = false;
-break;
-case 40:
- this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_geq', $$[$0-2], $$[$0]); this.$.isMath = false;
-break;
-case 42:
- this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_add', $$[$0-2], $$[$0]); this.$.isMath = true;
-break;
-case 43:
- this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_sub', $$[$0-2], $$[$0]); this.$.isMath = true;
-break;
-case 45:
- this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_mul', $$[$0-2], $$[$0]); this.$.isMath = true;
-break;
-case 46:
- this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_div', $$[$0-2], $$[$0]); this.$.isMath = true;
-break;
-case 47:
- this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_mod', $$[$0-2], $$[$0]); this.$.isMath = true;
-break;
-case 49:
- this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_exp', $$[$0-2], $$[$0]); this.$.isMath = true;
-break;
-case 51:
- this.$ = AST.createNode(lc(_$[$0-1]), 'node_op', 'op_not', $$[$0]); this.$.isMath = false;
-break;
-case 53:
- this.$ = AST.createNode(lc(_$[$0-1]), 'node_op', 'op_neg', $$[$0]); this.$.isMath = true;
-break;
-case 57: case 63: case 64: case 66: case 67: case 68: case 97:
- this.$ = $$[$0]; this.$.isMath = false;
-break;
-case 59: case 91:
- this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_property', $$[$0-2], $$[$0]); this.$.isMath = true;
-break;
-case 60: case 90:
- this.$ = AST.createNode(lc(_$[$0-3]), 'node_op', 'op_extvalue', $$[$0-3], $$[$0-1]); this.$.isMath = true;
-break;
-case 61:
- this.$ = AST.createNode(lc(_$[$0]), 'node_var', $$[$0]);
-break;
-case 69:
- this.$ = $$[$0]; this.$.isMath = true;
-break;
-case 70:
- this.$ = AST.createNode(lc(_$[$0]), 'node_const', null);
-break;
-case 71:
- this.$ = AST.createNode(lc(_$[$0]), 'node_const_bool', true);
-break;
-case 72:
- this.$ = AST.createNode(lc(_$[$0]), 'node_const_bool', false);
-break;
-case 73:
- this.$ = AST.createNode(lc(_$[$0]), 'node_str', $$[$0].substring(1, $$[$0].length - 1));
-break;
-case 74:
- this.$ = AST.createNode(lc(_$[$0]), 'node_const', parseFloat($$[$0]));
-break;
-case 75:
- this.$ = AST.createNode(lc(_$[$0]), 'node_const', NaN);
-break;
-case 76:
- this.$ = AST.createNode(lc(_$[$0]), 'node_const', Infinity);
-break;
-case 77:
- this.$ = AST.createNode(lc(_$[$0-1]), 'node_op', 'op_array', []);
-break;
-case 78:
- this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_array', $$[$0-1]);
-break;
-case 79:
- this.$ = AST.createNode(lc(_$[$0-1]), 'node_op', 'op_emptyobject', {}); this.$.needsBrackets = true;
-break;
-case 80:
- this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_proplst_val', $$[$0-1]); this.$.needsBrackets = true;
-break;
-case 82:
- this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_proplst', $$[$0-2], $$[$0]);
-break;
-case 83:
- this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_prop', $$[$0-2], $$[$0]);
-break;
-case 87: case 89:
- this.$ = AST.createNode(lc(_$[$0-1]), 'node_op', 'op_execfun', $$[$0-1], $$[$0]); this.$.isMath = true;
-break;
-case 88:
- this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_execfun', $$[$0-2], $$[$0-1], $$[$0], true); this.$.isMath = false;
-break;
-case 92:
- this.$ = [];
-break;
-case 94: case 98: case 103:
- this.$ = [$$[$0]];
-break;
-case 95: case 99: case 104:
- this.$ = $$[$0-2].concat($$[$0]);
-break;
-case 96:
- this.$ = AST.createNode(lc(_$[$0]), 'node_var', $$[$0]); this.$.isMath = true;
-break;
-case 100:
- this.$ = AST.createNode(lc(_$[$0-3]), 'node_op', 'op_function', [], $$[$0]); this.$.isMath = false;
-break;
-case 101:
- this.$ = AST.createNode(lc(_$[$0-4]), 'node_op', 'op_function', $$[$0-2], $$[$0]); this.$.isMath = false;
-break;
-case 102:
- this.$ = AST.createNode(lc(_$[$0-5]), 'node_op', 'op_map', $$[$0-3], $$[$0]);
-break;
-}
-},
-table: [o([5,7,8,14,15,16,17,19,20,21,23,26,50,51,58,65,74,75,76,77,78,79,80,82,91,93],$V0,{3:1,4:2}),{1:[3]},{5:[1,3],6:6,7:$V1,8:$V2,9:20,11:4,13:7,14:$V3,15:$V4,16:$V5,17:$V6,18:8,19:$V7,20:$V8,21:$V9,22:9,23:$Va,24:11,25:5,26:$Vb,28:10,29:22,30:23,31:24,33:25,36:28,38:32,40:40,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{1:[2,1]},o($Vq,[2,13]),o($Vr,[2,15]),o($Vr,[2,16]),o($Vr,[2,17]),o($Vr,[2,18]),o($Vr,[2,19]),o($Vr,[2,20]),o($Vr,[2,21]),o([7,8,14,15,16,17,19,20,21,23,26,27,50,51,58,65,74,75,76,77,78,79,80,82,91,93],$V0,{4:61}),{8:[1,62]},{8:[1,63]},{8:[1,64]},{6:6,7:$V1,8:$V2,9:20,11:65,13:7,14:$V3,15:$V4,16:$V5,17:$V6,18:8,19:$V7,20:$V8,21:$V9,22:9,23:$Va,24:11,25:5,26:$Vb,28:10,29:22,30:23,31:24,33:25,36:28,38:32,40:40,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{20:[1,66]},{20:[1,67]},{8:$V2,9:69,16:[1,68],20:$V8,29:22,30:23,31:24,33:25,36:28,38:32,40:40,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{16:[1,70]},o($Vr,[2,11]),o($Vs,[2,23]),o($Vs,[2,24]),o([8,10,16,34,35,37,39,41,42,43,45,46,47,48,50,51,53,54,55,64,65,66,83,86],$Vt,{32:[1,71],57:$Vu}),o([8,10,16,32,35,39,41,42,43,45,46,47,48,50,51,53,54,55,57,64,65,66,83,86],[2,26],{34:[1,73],37:[1,74]}),o($Vv,[2,54],{88:77,8:$Vw,64:[1,75],65:[1,76]}),o($Vv,[2,55],{88:79,8:$Vw,64:[1,81],65:[1,80]}),o($Vx,[2,28],{39:$Vy}),o($Vs,[2,56]),o($Vs,[2,57]),o($Vs,[2,58]),o($Vz,[2,30],{41:$VA,42:$VB,43:$VC}),o($Vs,[2,61]),o($Vs,[2,62]),o($Vs,[2,63]),o($Vs,[2,64]),{8:$V2,9:86,20:$V8,29:22,30:23,31:24,33:25,36:28,38:32,40:40,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{8:[1,87]},{8:[1,88]},o($VD,[2,32],{45:$VE,46:$VF,47:$VG,48:$VH}),o($Vs,[2,66]),o($Vs,[2,67]),o($Vs,[2,68]),o($Vs,[2,69]),{20:$VI,72:98,73:99,77:$Vj,78:$Vk,79:$Vl,80:$Vm,83:[1,93],84:94,85:95,87:96},{8:$V2,20:$V8,29:102,30:23,31:24,33:25,36:28,38:32,40:40,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,66:[1,100],67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,81:101,82:$Vn,91:$Vo,93:$Vp},o($VJ,[2,36],{50:$VK,51:$VL}),o($Vs,[2,70]),o($Vs,[2,71]),o($Vs,[2,72]),o($Vs,[2,73]),o($Vs,[2,74]),o($Vs,[2,75]),o($Vs,[2,76]),o($VM,[2,41],{53:$VN,54:$VO,55:$VP}),o($Vs,[2,44]),o($Vs,[2,50]),{8:$V2,20:$V8,31:109,50:$Vc,51:$Vd,52:108,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{8:$V2,20:$V8,31:109,50:$Vc,51:$Vd,52:110,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{8:$V2,20:$V8,31:109,50:$Vc,51:$Vd,52:111,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{6:6,7:$V1,8:$V2,9:20,11:4,13:7,14:$V3,15:$V4,16:$V5,17:$V6,18:8,19:$V7,20:$V8,21:$V9,22:9,23:$Va,24:11,25:5,26:$Vb,27:[1,112],28:10,29:22,30:23,31:24,33:25,36:28,38:32,40:40,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{8:$V2,9:113,20:$V8,29:22,30:23,31:24,33:25,36:28,38:32,40:40,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{8:$V2,9:114,20:$V8,29:22,30:23,31:24,33:25,36:28,38:32,40:40,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{8:$V2,9:115,20:$V8,29:22,30:23,31:24,33:25,36:28,38:32,40:40,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{14:[1,116]},o($Vr,[2,7]),o($Vr,[2,8]),o($Vr,[2,9]),{16:[1,117]},o($Vr,[2,22]),{8:$V2,20:$V8,29:118,30:23,31:24,33:25,36:28,38:32,40:40,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{8:$V2,20:$V8,31:109,50:$Vc,51:$Vd,52:119,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{8:$V2,20:$V8,29:120,30:23,31:24,33:25,36:28,38:32,40:40,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{8:$V2,20:$V8,31:109,36:121,38:32,40:40,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{20:[1,122]},{8:$V2,9:123,20:$V8,29:22,30:23,31:24,33:25,36:28,38:32,40:40,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},o($Vs,[2,87],{89:124,90:125,68:127,20:$VQ,82:$Vn}),{8:$V2,10:[1,128],20:$V8,29:102,30:23,31:24,33:25,36:28,38:32,40:40,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,81:129,82:$Vn,91:$Vo,93:$Vp},o($Vs,[2,89]),{8:$V2,9:130,20:$V8,29:22,30:23,31:24,33:25,36:28,38:32,40:40,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{20:[1,131]},{8:$V2,20:$V8,31:109,38:132,40:40,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{8:$V2,20:$V8,31:109,40:133,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{8:$V2,20:$V8,31:109,40:134,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{8:$V2,20:$V8,31:109,40:135,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{10:[1,136]},{10:[1,137],20:$VR,92:138},{20:$VR,92:140},{8:$V2,20:$V8,31:109,44:141,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{8:$V2,20:$V8,31:109,44:142,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{8:$V2,20:$V8,31:109,44:143,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{8:$V2,20:$V8,31:109,44:144,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},o($Vs,[2,79]),{83:[1,145],86:[1,146]},o($VS,[2,81]),{35:[1,147]},{35:[2,84]},{35:[2,85]},{35:[2,86]},o($Vs,[2,77]),{66:[1,148],86:$VT},o($VU,[2,98]),{8:$V2,20:$V8,31:109,49:150,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{8:$V2,20:$V8,31:109,49:151,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{8:$V2,20:$V8,31:109,50:$Vc,51:$Vd,52:152,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{8:$V2,20:$V8,31:109,50:$Vc,51:$Vd,52:153,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{8:$V2,20:$V8,31:109,50:$Vc,51:$Vd,52:154,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},o($Vs,[2,51]),o([8,10,16,32,34,35,37,39,41,42,43,45,46,47,48,50,51,53,54,55,64,65,66,83,86],$Vt,{57:$Vu}),o($Vs,[2,52]),o($Vs,[2,53]),o([5,7,8,10,12,14,15,16,17,19,20,21,23,26,27,32,34,35,37,39,41,42,43,45,46,47,48,50,51,53,54,55,57,58,64,65,66,74,75,76,77,78,79,80,82,83,86,91,93],[2,12]),{10:[1,155]},{10:[1,156]},{16:[1,157]},{8:[1,158]},o($Vr,[2,10]),o($Vs,[2,25]),o($Vs,[2,49]),{35:[1,159]},o($Vx,[2,29],{39:$Vy}),o($Vs,[2,59]),{66:[1,160]},o([8,10,16,32,34,35,37,39,41,42,43,45,46,47,48,50,51,53,54,55,57,64,65,66,83],[2,88],{86:[1,161]}),o($Vs,[2,94]),o($Vs,[2,96]),o($Vs,[2,97]),o($VV,[2,92]),{10:[1,162],86:$VT},{66:[1,163]},o($Vs,[2,91]),o($Vz,[2,31],{41:$VA,42:$VB,43:$VC}),o($VD,[2,33],{45:$VE,46:$VF,47:$VG,48:$VH}),o($VD,[2,34],{45:$VE,46:$VF,47:$VG,48:$VH}),o($VD,[2,35],{45:$VE,46:$VF,47:$VG,48:$VH}),o($Vs,[2,65]),{25:164,26:$Vb},{10:[1,165],86:$VW},o($VX,[2,103]),{10:[1,167],86:$VW},o($VJ,[2,37],{50:$VK,51:$VL}),o($VJ,[2,38],{50:$VK,51:$VL}),o($VJ,[2,39],{50:$VK,51:$VL}),o($VJ,[2,40],{50:$VK,51:$VL}),o($Vs,[2,80]),{20:$VI,72:98,73:99,77:$Vj,78:$Vk,79:$Vl,80:$Vm,85:168,87:96},{8:$V2,20:$V8,29:169,30:23,31:24,33:25,36:28,38:32,40:40,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},o($Vs,[2,78]),{8:$V2,20:$V8,29:170,30:23,31:24,33:25,36:28,38:32,40:40,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},o($VM,[2,42],{53:$VN,54:$VO,55:$VP}),o($VM,[2,43],{53:$VN,54:$VO,55:$VP}),o($Vs,[2,45]),o($Vs,[2,46]),o($Vs,[2,47]),{6:6,7:$V1,8:$V2,9:20,11:171,13:7,14:$V3,15:$V4,16:$V5,17:$V6,18:8,19:$V7,20:$V8,21:$V9,22:9,23:$Va,24:11,25:5,26:$Vb,28:10,29:22,30:23,31:24,33:25,36:28,38:32,40:40,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{6:6,7:$V1,8:$V2,9:20,11:172,13:7,14:$V3,15:$V4,16:$V5,17:$V6,18:8,19:$V7,20:$V8,21:$V9,22:9,23:$Va,24:11,25:5,26:$Vb,28:10,29:22,30:23,31:24,33:25,36:28,38:32,40:40,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{8:$V2,9:173,20:$V8,29:22,30:23,31:24,33:25,36:28,38:32,40:40,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{8:$V2,9:174,20:$V8,29:22,30:23,31:24,33:25,36:28,38:32,40:40,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{8:$V2,20:$V8,29:175,30:23,31:24,33:25,36:28,38:32,40:40,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},o($Vs,[2,60]),{20:$VQ,68:127,82:$Vn,90:176},o($VV,[2,93]),o($Vs,[2,90]),o($Vs,[2,100]),{25:177,26:$Vb},{20:[1,178]},{94:[1,179]},o($VS,[2,82]),o($VS,[2,83]),o($VU,[2,99]),o($Vq,[2,2],{12:[1,180]}),o($Vr,[2,4]),{16:[1,181]},{10:[1,182]},o($Vs,[2,27]),o($Vs,[2,95]),o($Vs,[2,101]),o($VX,[2,104]),{8:$V2,9:183,20:$V8,29:22,30:23,31:24,33:25,36:28,38:32,40:40,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{6:6,7:$V1,8:$V2,9:20,11:184,13:7,14:$V3,15:$V4,16:$V5,17:$V6,18:8,19:$V7,20:$V8,21:$V9,22:9,23:$Va,24:11,25:5,26:$Vb,28:10,29:22,30:23,31:24,33:25,36:28,38:32,40:40,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{8:$V2,9:185,20:$V8,29:22,30:23,31:24,33:25,36:28,38:32,40:40,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{16:[1,186]},o($Vs,[2,102]),o($Vr,[2,3]),{10:[1,187]},o($Vr,[2,6]),{6:6,7:$V1,8:$V2,9:20,11:188,13:7,14:$V3,15:$V4,16:$V5,17:$V6,18:8,19:$V7,20:$V8,21:$V9,22:9,23:$Va,24:11,25:5,26:$Vb,28:10,29:22,30:23,31:24,33:25,36:28,38:32,40:40,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},o($Vr,[2,5])],
-defaultActions: {3:[2,1],97:[2,84],98:[2,85],99:[2,86]},
-parseError: function parseError (str, hash) {
-    if (hash.recoverable) {
-        this.trace(str);
-    } else {
-        var error = new Error(str);
-        error.hash = hash;
-        throw error;
-    }
-},
-parse: function parse(input) {
-    var self = this, stack = [0], tstack = [], vstack = [null], lstack = [], table = this.table, yytext = '', yylineno = 0, yyleng = 0, recovering = 0, TERROR = 2, EOF = 1;
-    var args = lstack.slice.call(arguments, 1);
-    var lexer = Object.create(this.lexer);
-    var sharedState = { yy: {} };
-    for (var k in this.yy) {
-        if (Object.prototype.hasOwnProperty.call(this.yy, k)) {
-            sharedState.yy[k] = this.yy[k];
-        }
-    }
-    lexer.setInput(input, sharedState.yy);
-    sharedState.yy.lexer = lexer;
-    sharedState.yy.parser = this;
-    if (typeof lexer.yylloc == 'undefined') {
-        lexer.yylloc = {};
-    }
-    var yyloc = lexer.yylloc;
-    lstack.push(yyloc);
-    var ranges = lexer.options && lexer.options.ranges;
-    if (typeof sharedState.yy.parseError === 'function') {
-        this.parseError = sharedState.yy.parseError;
-    } else {
-        this.parseError = Object.getPrototypeOf(this).parseError;
-    }
-    function popStack(n) {
-        stack.length = stack.length - 2 * n;
-        vstack.length = vstack.length - n;
-        lstack.length = lstack.length - n;
-    }
-    _token_stack:
-        var lex = function () {
-            var token;
-            token = lexer.lex() || EOF;
-            if (typeof token !== 'number') {
-                token = self.symbols_[token] || token;
-            }
-            return token;
-        };
-    var symbol, preErrorSymbol, state, action, a, r, yyval = {}, p, len, newState, expected;
-    while (true) {
-        state = stack[stack.length - 1];
-        if (this.defaultActions[state]) {
-            action = this.defaultActions[state];
-        } else {
-            if (symbol === null || typeof symbol == 'undefined') {
-                symbol = lex();
-            }
-            action = table[state] && table[state][symbol];
-        }
-                    if (typeof action === 'undefined' || !action.length || !action[0]) {
-                var errStr = '';
-                expected = [];
-                for (p in table[state]) {
-                    if (this.terminals_[p] && p > TERROR) {
-                        expected.push('\'' + this.terminals_[p] + '\'');
+                var $0 = $$.length - 1;
+                switch (yystate) {
+                    case 1:
+                        return $$[$0 - 1];
+                        break;
+                    case 2:
+                        this.$ = AST.createNode(lc(_$[$0 - 4]), 'node_op', 'op_if', $$[$0 - 2], $$[$0]);
+                        break;
+                    case 3:
+                        this.$ = AST.createNode(lc(_$[$0 - 6]), 'node_op', 'op_if_else', $$[$0 - 4], $$[$0 - 2], $$[$0]);
+                        break;
+                    case 4:
+                        this.$ = AST.createNode(lc(_$[$0 - 4]), 'node_op', 'op_while', $$[$0 - 2], $$[$0]);
+                        break;
+                    case 5:
+                        this.$ = AST.createNode(lc(_$[$0 - 8]), 'node_op', 'op_for', $$[$0 - 6], $$[$0 - 4], $$[$0 - 2], $$[$0]);
+                        break;
+                    case 6:
+                        this.$ = AST.createNode(lc(_$[$0 - 6]), 'node_op', 'op_do', $$[$0 - 5], $$[$0 - 2]);
+                        break;
+                    case 7:
+                        this.$ = AST.createNode(lc(_$[$0 - 1]), 'node_op', 'op_use', $$[$0]);
+                        break;
+                    case 8:
+                        this.$ = AST.createNode(lc(_$[$0 - 1]), 'node_op', 'op_delete', $$[$0]);
+                        break;
+                    case 9:
+                        this.$ = AST.createNode(lc(_$[$0 - 1]), 'node_op', 'op_return', undefined);
+                        break;
+                    case 10:
+                        this.$ = AST.createNode(lc(_$[$0 - 2]), 'node_op', 'op_return', $$[$0 - 1]);
+                        break;
+                    case 11:
+                    case 14:
+                        this.$ = AST.createNode(lc(_$[$0]), 'node_op', 'op_none');
+                        break;
+                    case 12:
+                        this.$ = $$[$0 - 1];
+                        this.$.needsBrackets = true;
+                        break;
+                    case 13:
+                        this.$ = AST.createNode(lc(_$[$0 - 1]), 'node_op', 'op_none', $$[$0 - 1], $$[$0]);
+                        break;
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 21:
+                    case 23:
+                    case 24:
+                    case 26:
+                    case 28:
+                    case 30:
+                    case 32:
+                    case 36:
+                    case 41:
+                    case 44:
+                    case 48:
+                    case 50:
+                    case 52:
+                    case 54:
+                    case 55:
+                    case 56:
+                    case 58:
+                    case 62:
+                    case 81:
+                    case 84:
+                    case 85:
+                    case 86:
+                        this.$ = $$[$0];
+                        break;
+                    case 22:
+                    case 65:
+                    case 93:
+                        this.$ = $$[$0 - 1];
+                        break;
+                    case 25:
+                        this.$ = AST.createNode(lc(_$[$0 - 2]), 'node_op', 'op_assign', $$[$0 - 2], $$[$0]);
+                        this.$.isMath = false;
+                        break;
+                    case 27:
+                        this.$ = AST.createNode(lc(_$[$0 - 4]), 'node_op', 'op_conditional', $$[$0 - 4], $$[$0 - 2], $$[$0]);
+                        this.$.isMath = false;
+                        break;
+                    case 29:
+                        this.$ = AST.createNode(lc(_$[$0 - 2]), 'node_op', 'op_or', $$[$0 - 2], $$[$0]);
+                        this.$.isMath = false;
+                        break;
+                    case 31:
+                        this.$ = AST.createNode(lc(_$[$0 - 2]), 'node_op', 'op_and', $$[$0 - 2], $$[$0]);
+                        this.$.isMath = false;
+                        break;
+                    case 33:
+                        this.$ = AST.createNode(lc(_$[$0 - 2]), 'node_op', 'op_eq', $$[$0 - 2], $$[$0]);
+                        this.$.isMath = false;
+                        break;
+                    case 34:
+                        this.$ = AST.createNode(lc(_$[$0 - 2]), 'node_op', 'op_neq', $$[$0 - 2], $$[$0]);
+                        this.$.isMath = false;
+                        break;
+                    case 35:
+                        this.$ = AST.createNode(lc(_$[$0 - 2]), 'node_op', 'op_approx', $$[$0 - 2], $$[$0]);
+                        this.$.isMath = false;
+                        break;
+                    case 37:
+                        this.$ = AST.createNode(lc(_$[$0 - 2]), 'node_op', 'op_lt', $$[$0 - 2], $$[$0]);
+                        this.$.isMath = false;
+                        break;
+                    case 38:
+                        this.$ = AST.createNode(lc(_$[$0 - 2]), 'node_op', 'op_gt', $$[$0 - 2], $$[$0]);
+                        this.$.isMath = false;
+                        break;
+                    case 39:
+                        this.$ = AST.createNode(lc(_$[$0 - 2]), 'node_op', 'op_leq', $$[$0 - 2], $$[$0]);
+                        this.$.isMath = false;
+                        break;
+                    case 40:
+                        this.$ = AST.createNode(lc(_$[$0 - 2]), 'node_op', 'op_geq', $$[$0 - 2], $$[$0]);
+                        this.$.isMath = false;
+                        break;
+                    case 42:
+                        this.$ = AST.createNode(lc(_$[$0 - 2]), 'node_op', 'op_add', $$[$0 - 2], $$[$0]);
+                        this.$.isMath = true;
+                        break;
+                    case 43:
+                        this.$ = AST.createNode(lc(_$[$0 - 2]), 'node_op', 'op_sub', $$[$0 - 2], $$[$0]);
+                        this.$.isMath = true;
+                        break;
+                    case 45:
+                        this.$ = AST.createNode(lc(_$[$0 - 2]), 'node_op', 'op_mul', $$[$0 - 2], $$[$0]);
+                        this.$.isMath = true;
+                        break;
+                    case 46:
+                        this.$ = AST.createNode(lc(_$[$0 - 2]), 'node_op', 'op_div', $$[$0 - 2], $$[$0]);
+                        this.$.isMath = true;
+                        break;
+                    case 47:
+                        this.$ = AST.createNode(lc(_$[$0 - 2]), 'node_op', 'op_mod', $$[$0 - 2], $$[$0]);
+                        this.$.isMath = true;
+                        break;
+                    case 49:
+                        this.$ = AST.createNode(lc(_$[$0 - 2]), 'node_op', 'op_exp', $$[$0 - 2], $$[$0]);
+                        this.$.isMath = true;
+                        break;
+                    case 51:
+                        this.$ = AST.createNode(lc(_$[$0 - 1]), 'node_op', 'op_not', $$[$0]);
+                        this.$.isMath = false;
+                        break;
+                    case 53:
+                        this.$ = AST.createNode(lc(_$[$0 - 1]), 'node_op', 'op_neg', $$[$0]);
+                        this.$.isMath = true;
+                        break;
+                    case 57:
+                    case 63:
+                    case 64:
+                    case 66:
+                    case 67:
+                    case 68:
+                    case 97:
+                        this.$ = $$[$0];
+                        this.$.isMath = false;
+                        break;
+                    case 59:
+                    case 91:
+                        this.$ = AST.createNode(lc(_$[$0 - 2]), 'node_op', 'op_property', $$[$0 - 2], $$[$0]);
+                        this.$.isMath = true;
+                        break;
+                    case 60:
+                    case 90:
+                        this.$ = AST.createNode(lc(_$[$0 - 3]), 'node_op', 'op_extvalue', $$[$0 - 3], $$[$0 - 1]);
+                        this.$.isMath = true;
+                        break;
+                    case 61:
+                        this.$ = AST.createNode(lc(_$[$0]), 'node_var', $$[$0]);
+                        break;
+                    case 69:
+                        this.$ = $$[$0];
+                        this.$.isMath = true;
+                        break;
+                    case 70:
+                        this.$ = AST.createNode(lc(_$[$0]), 'node_const', null);
+                        break;
+                    case 71:
+                        this.$ = AST.createNode(lc(_$[$0]), 'node_const_bool', true);
+                        break;
+                    case 72:
+                        this.$ = AST.createNode(lc(_$[$0]), 'node_const_bool', false);
+                        break;
+                    case 73:
+                        this.$ = AST.createNode(lc(_$[$0]), 'node_str', $$[$0].substring(1, $$[$0].length - 1));
+                        break;
+                    case 74:
+                        this.$ = AST.createNode(lc(_$[$0]), 'node_const', parseFloat($$[$0]));
+                        break;
+                    case 75:
+                        this.$ = AST.createNode(lc(_$[$0]), 'node_const', NaN);
+                        break;
+                    case 76:
+                        this.$ = AST.createNode(lc(_$[$0]), 'node_const', Infinity);
+                        break;
+                    case 77:
+                        this.$ = AST.createNode(lc(_$[$0 - 1]), 'node_op', 'op_array', []);
+                        break;
+                    case 78:
+                        this.$ = AST.createNode(lc(_$[$0 - 2]), 'node_op', 'op_array', $$[$0 - 1]);
+                        break;
+                    case 79:
+                        this.$ = AST.createNode(lc(_$[$0 - 1]), 'node_op', 'op_emptyobject', {});
+                        this.$.needsBrackets = true;
+                        break;
+                    case 80:
+                        this.$ = AST.createNode(lc(_$[$0 - 2]), 'node_op', 'op_proplst_val', $$[$0 - 1]);
+                        this.$.needsBrackets = true;
+                        break;
+                    case 82:
+                        this.$ = AST.createNode(lc(_$[$0 - 2]), 'node_op', 'op_proplst', $$[$0 - 2], $$[$0]);
+                        break;
+                    case 83:
+                        this.$ = AST.createNode(lc(_$[$0 - 2]), 'node_op', 'op_prop', $$[$0 - 2], $$[$0]);
+                        break;
+                    case 87:
+                    case 89:
+                        this.$ = AST.createNode(lc(_$[$0 - 1]), 'node_op', 'op_execfun', $$[$0 - 1], $$[$0]);
+                        this.$.isMath = true;
+                        break;
+                    case 88:
+                        this.$ = AST.createNode(lc(_$[$0 - 2]), 'node_op', 'op_execfun', $$[$0 - 2], $$[$0 - 1], $$[$0], true);
+                        this.$.isMath = false;
+                        break;
+                    case 92:
+                        this.$ = [];
+                        break;
+                    case 94:
+                    case 98:
+                    case 103:
+                        this.$ = [$$[$0]];
+                        break;
+                    case 95:
+                    case 99:
+                    case 104:
+                        this.$ = $$[$0 - 2].concat($$[$0]);
+                        break;
+                    case 96:
+                        this.$ = AST.createNode(lc(_$[$0]), 'node_var', $$[$0]);
+                        this.$.isMath = true;
+                        break;
+                    case 100:
+                        this.$ = AST.createNode(lc(_$[$0 - 3]), 'node_op', 'op_function', [], $$[$0]);
+                        this.$.isMath = false;
+                        break;
+                    case 101:
+                        this.$ = AST.createNode(lc(_$[$0 - 4]), 'node_op', 'op_function', $$[$0 - 2], $$[$0]);
+                        this.$.isMath = false;
+                        break;
+                    case 102:
+                        this.$ = AST.createNode(lc(_$[$0 - 5]), 'node_op', 'op_map', $$[$0 - 3], $$[$0]);
+                        break;
+                }
+            },
+            table: [o([5, 7, 8, 14, 15, 16, 17, 19, 20, 21, 23, 26, 50, 51, 58, 65, 74, 75, 76, 77, 78, 79, 80, 82, 91, 93], $V0, {3: 1, 4: 2}), {1: [3]}, {
+                5: [1, 3],
+                6: 6,
+                7: $V1,
+                8: $V2,
+                9: 20,
+                11: 4,
+                13: 7,
+                14: $V3,
+                15: $V4,
+                16: $V5,
+                17: $V6,
+                18: 8,
+                19: $V7,
+                20: $V8,
+                21: $V9,
+                22: 9,
+                23: $Va,
+                24: 11,
+                25: 5,
+                26: $Vb,
+                28: 10,
+                29: 22,
+                30: 23,
+                31: 24,
+                33: 25,
+                36: 28,
+                38: 32,
+                40: 40,
+                44: 47,
+                49: 55,
+                50: $Vc,
+                51: $Vd,
+                52: 56,
+                56: 57,
+                58: $Ve,
+                59: 26,
+                60: 27,
+                61: 29,
+                62: 30,
+                63: 31,
+                65: $Vf,
+                67: 34,
+                68: 35,
+                69: 36,
+                70: 41,
+                71: 42,
+                72: 43,
+                73: 44,
+                74: $Vg,
+                75: $Vh,
+                76: $Vi,
+                77: $Vj,
+                78: $Vk,
+                79: $Vl,
+                80: $Vm,
+                82: $Vn,
+                91: $Vo,
+                93: $Vp
+            }, {1: [2, 1]}, o($Vq, [2, 13]), o($Vr, [2, 15]), o($Vr, [2, 16]), o($Vr, [2, 17]), o($Vr, [2, 18]), o($Vr, [2, 19]), o($Vr, [2, 20]), o($Vr, [2, 21]), o([7, 8, 14, 15, 16, 17, 19, 20, 21, 23, 26, 27, 50, 51, 58, 65, 74, 75, 76, 77, 78, 79, 80, 82, 91, 93], $V0, {4: 61}), {8: [1, 62]}, {8: [1, 63]}, {8: [1, 64]}, {
+                6: 6,
+                7: $V1,
+                8: $V2,
+                9: 20,
+                11: 65,
+                13: 7,
+                14: $V3,
+                15: $V4,
+                16: $V5,
+                17: $V6,
+                18: 8,
+                19: $V7,
+                20: $V8,
+                21: $V9,
+                22: 9,
+                23: $Va,
+                24: 11,
+                25: 5,
+                26: $Vb,
+                28: 10,
+                29: 22,
+                30: 23,
+                31: 24,
+                33: 25,
+                36: 28,
+                38: 32,
+                40: 40,
+                44: 47,
+                49: 55,
+                50: $Vc,
+                51: $Vd,
+                52: 56,
+                56: 57,
+                58: $Ve,
+                59: 26,
+                60: 27,
+                61: 29,
+                62: 30,
+                63: 31,
+                65: $Vf,
+                67: 34,
+                68: 35,
+                69: 36,
+                70: 41,
+                71: 42,
+                72: 43,
+                73: 44,
+                74: $Vg,
+                75: $Vh,
+                76: $Vi,
+                77: $Vj,
+                78: $Vk,
+                79: $Vl,
+                80: $Vm,
+                82: $Vn,
+                91: $Vo,
+                93: $Vp
+            }, {20: [1, 66]}, {20: [1, 67]}, {
+                8: $V2,
+                9: 69,
+                16: [1, 68],
+                20: $V8,
+                29: 22,
+                30: 23,
+                31: 24,
+                33: 25,
+                36: 28,
+                38: 32,
+                40: 40,
+                44: 47,
+                49: 55,
+                50: $Vc,
+                51: $Vd,
+                52: 56,
+                56: 57,
+                58: $Ve,
+                59: 26,
+                60: 27,
+                61: 29,
+                62: 30,
+                63: 31,
+                65: $Vf,
+                67: 34,
+                68: 35,
+                69: 36,
+                70: 41,
+                71: 42,
+                72: 43,
+                73: 44,
+                74: $Vg,
+                75: $Vh,
+                76: $Vi,
+                77: $Vj,
+                78: $Vk,
+                79: $Vl,
+                80: $Vm,
+                82: $Vn,
+                91: $Vo,
+                93: $Vp
+            }, {16: [1, 70]}, o($Vr, [2, 11]), o($Vs, [2, 23]), o($Vs, [2, 24]), o([8, 10, 16, 34, 35, 37, 39, 41, 42, 43, 45, 46, 47, 48, 50, 51, 53, 54, 55, 64, 65, 66, 83, 86], $Vt, {
+                32: [1, 71],
+                57: $Vu
+            }), o([8, 10, 16, 32, 35, 39, 41, 42, 43, 45, 46, 47, 48, 50, 51, 53, 54, 55, 57, 64, 65, 66, 83, 86], [2, 26], {34: [1, 73], 37: [1, 74]}), o($Vv, [2, 54], {88: 77, 8: $Vw, 64: [1, 75], 65: [1, 76]}), o($Vv, [2, 55], {
+                88: 79,
+                8: $Vw,
+                64: [1, 81],
+                65: [1, 80]
+            }), o($Vx, [2, 28], {39: $Vy}), o($Vs, [2, 56]), o($Vs, [2, 57]), o($Vs, [2, 58]), o($Vz, [2, 30], {41: $VA, 42: $VB, 43: $VC}), o($Vs, [2, 61]), o($Vs, [2, 62]), o($Vs, [2, 63]), o($Vs, [2, 64]), {
+                8: $V2,
+                9: 86,
+                20: $V8,
+                29: 22,
+                30: 23,
+                31: 24,
+                33: 25,
+                36: 28,
+                38: 32,
+                40: 40,
+                44: 47,
+                49: 55,
+                50: $Vc,
+                51: $Vd,
+                52: 56,
+                56: 57,
+                58: $Ve,
+                59: 26,
+                60: 27,
+                61: 29,
+                62: 30,
+                63: 31,
+                65: $Vf,
+                67: 34,
+                68: 35,
+                69: 36,
+                70: 41,
+                71: 42,
+                72: 43,
+                73: 44,
+                74: $Vg,
+                75: $Vh,
+                76: $Vi,
+                77: $Vj,
+                78: $Vk,
+                79: $Vl,
+                80: $Vm,
+                82: $Vn,
+                91: $Vo,
+                93: $Vp
+            }, {8: [1, 87]}, {8: [1, 88]}, o($VD, [2, 32], {45: $VE, 46: $VF, 47: $VG, 48: $VH}), o($Vs, [2, 66]), o($Vs, [2, 67]), o($Vs, [2, 68]), o($Vs, [2, 69]), {
+                20: $VI,
+                72: 98,
+                73: 99,
+                77: $Vj,
+                78: $Vk,
+                79: $Vl,
+                80: $Vm,
+                83: [1, 93],
+                84: 94,
+                85: 95,
+                87: 96
+            }, {
+                8: $V2,
+                20: $V8,
+                29: 102,
+                30: 23,
+                31: 24,
+                33: 25,
+                36: 28,
+                38: 32,
+                40: 40,
+                44: 47,
+                49: 55,
+                50: $Vc,
+                51: $Vd,
+                52: 56,
+                56: 57,
+                58: $Ve,
+                59: 26,
+                60: 27,
+                61: 29,
+                62: 30,
+                63: 31,
+                65: $Vf,
+                66: [1, 100],
+                67: 34,
+                68: 35,
+                69: 36,
+                70: 41,
+                71: 42,
+                72: 43,
+                73: 44,
+                74: $Vg,
+                75: $Vh,
+                76: $Vi,
+                77: $Vj,
+                78: $Vk,
+                79: $Vl,
+                80: $Vm,
+                81: 101,
+                82: $Vn,
+                91: $Vo,
+                93: $Vp
+            }, o($VJ, [2, 36], {50: $VK, 51: $VL}), o($Vs, [2, 70]), o($Vs, [2, 71]), o($Vs, [2, 72]), o($Vs, [2, 73]), o($Vs, [2, 74]), o($Vs, [2, 75]), o($Vs, [2, 76]), o($VM, [2, 41], {
+                53: $VN,
+                54: $VO,
+                55: $VP
+            }), o($Vs, [2, 44]), o($Vs, [2, 50]), {
+                8: $V2,
+                20: $V8,
+                31: 109,
+                50: $Vc,
+                51: $Vd,
+                52: 108,
+                56: 57,
+                58: $Ve,
+                59: 26,
+                60: 27,
+                61: 29,
+                62: 30,
+                63: 31,
+                65: $Vf,
+                67: 34,
+                68: 35,
+                69: 36,
+                70: 41,
+                71: 42,
+                72: 43,
+                73: 44,
+                74: $Vg,
+                75: $Vh,
+                76: $Vi,
+                77: $Vj,
+                78: $Vk,
+                79: $Vl,
+                80: $Vm,
+                82: $Vn,
+                91: $Vo,
+                93: $Vp
+            }, {
+                8: $V2,
+                20: $V8,
+                31: 109,
+                50: $Vc,
+                51: $Vd,
+                52: 110,
+                56: 57,
+                58: $Ve,
+                59: 26,
+                60: 27,
+                61: 29,
+                62: 30,
+                63: 31,
+                65: $Vf,
+                67: 34,
+                68: 35,
+                69: 36,
+                70: 41,
+                71: 42,
+                72: 43,
+                73: 44,
+                74: $Vg,
+                75: $Vh,
+                76: $Vi,
+                77: $Vj,
+                78: $Vk,
+                79: $Vl,
+                80: $Vm,
+                82: $Vn,
+                91: $Vo,
+                93: $Vp
+            }, {
+                8: $V2,
+                20: $V8,
+                31: 109,
+                50: $Vc,
+                51: $Vd,
+                52: 111,
+                56: 57,
+                58: $Ve,
+                59: 26,
+                60: 27,
+                61: 29,
+                62: 30,
+                63: 31,
+                65: $Vf,
+                67: 34,
+                68: 35,
+                69: 36,
+                70: 41,
+                71: 42,
+                72: 43,
+                73: 44,
+                74: $Vg,
+                75: $Vh,
+                76: $Vi,
+                77: $Vj,
+                78: $Vk,
+                79: $Vl,
+                80: $Vm,
+                82: $Vn,
+                91: $Vo,
+                93: $Vp
+            }, {
+                6: 6,
+                7: $V1,
+                8: $V2,
+                9: 20,
+                11: 4,
+                13: 7,
+                14: $V3,
+                15: $V4,
+                16: $V5,
+                17: $V6,
+                18: 8,
+                19: $V7,
+                20: $V8,
+                21: $V9,
+                22: 9,
+                23: $Va,
+                24: 11,
+                25: 5,
+                26: $Vb,
+                27: [1, 112],
+                28: 10,
+                29: 22,
+                30: 23,
+                31: 24,
+                33: 25,
+                36: 28,
+                38: 32,
+                40: 40,
+                44: 47,
+                49: 55,
+                50: $Vc,
+                51: $Vd,
+                52: 56,
+                56: 57,
+                58: $Ve,
+                59: 26,
+                60: 27,
+                61: 29,
+                62: 30,
+                63: 31,
+                65: $Vf,
+                67: 34,
+                68: 35,
+                69: 36,
+                70: 41,
+                71: 42,
+                72: 43,
+                73: 44,
+                74: $Vg,
+                75: $Vh,
+                76: $Vi,
+                77: $Vj,
+                78: $Vk,
+                79: $Vl,
+                80: $Vm,
+                82: $Vn,
+                91: $Vo,
+                93: $Vp
+            }, {
+                8: $V2,
+                9: 113,
+                20: $V8,
+                29: 22,
+                30: 23,
+                31: 24,
+                33: 25,
+                36: 28,
+                38: 32,
+                40: 40,
+                44: 47,
+                49: 55,
+                50: $Vc,
+                51: $Vd,
+                52: 56,
+                56: 57,
+                58: $Ve,
+                59: 26,
+                60: 27,
+                61: 29,
+                62: 30,
+                63: 31,
+                65: $Vf,
+                67: 34,
+                68: 35,
+                69: 36,
+                70: 41,
+                71: 42,
+                72: 43,
+                73: 44,
+                74: $Vg,
+                75: $Vh,
+                76: $Vi,
+                77: $Vj,
+                78: $Vk,
+                79: $Vl,
+                80: $Vm,
+                82: $Vn,
+                91: $Vo,
+                93: $Vp
+            }, {
+                8: $V2,
+                9: 114,
+                20: $V8,
+                29: 22,
+                30: 23,
+                31: 24,
+                33: 25,
+                36: 28,
+                38: 32,
+                40: 40,
+                44: 47,
+                49: 55,
+                50: $Vc,
+                51: $Vd,
+                52: 56,
+                56: 57,
+                58: $Ve,
+                59: 26,
+                60: 27,
+                61: 29,
+                62: 30,
+                63: 31,
+                65: $Vf,
+                67: 34,
+                68: 35,
+                69: 36,
+                70: 41,
+                71: 42,
+                72: 43,
+                73: 44,
+                74: $Vg,
+                75: $Vh,
+                76: $Vi,
+                77: $Vj,
+                78: $Vk,
+                79: $Vl,
+                80: $Vm,
+                82: $Vn,
+                91: $Vo,
+                93: $Vp
+            }, {
+                8: $V2,
+                9: 115,
+                20: $V8,
+                29: 22,
+                30: 23,
+                31: 24,
+                33: 25,
+                36: 28,
+                38: 32,
+                40: 40,
+                44: 47,
+                49: 55,
+                50: $Vc,
+                51: $Vd,
+                52: 56,
+                56: 57,
+                58: $Ve,
+                59: 26,
+                60: 27,
+                61: 29,
+                62: 30,
+                63: 31,
+                65: $Vf,
+                67: 34,
+                68: 35,
+                69: 36,
+                70: 41,
+                71: 42,
+                72: 43,
+                73: 44,
+                74: $Vg,
+                75: $Vh,
+                76: $Vi,
+                77: $Vj,
+                78: $Vk,
+                79: $Vl,
+                80: $Vm,
+                82: $Vn,
+                91: $Vo,
+                93: $Vp
+            }, {14: [1, 116]}, o($Vr, [2, 7]), o($Vr, [2, 8]), o($Vr, [2, 9]), {16: [1, 117]}, o($Vr, [2, 22]), {
+                8: $V2,
+                20: $V8,
+                29: 118,
+                30: 23,
+                31: 24,
+                33: 25,
+                36: 28,
+                38: 32,
+                40: 40,
+                44: 47,
+                49: 55,
+                50: $Vc,
+                51: $Vd,
+                52: 56,
+                56: 57,
+                58: $Ve,
+                59: 26,
+                60: 27,
+                61: 29,
+                62: 30,
+                63: 31,
+                65: $Vf,
+                67: 34,
+                68: 35,
+                69: 36,
+                70: 41,
+                71: 42,
+                72: 43,
+                73: 44,
+                74: $Vg,
+                75: $Vh,
+                76: $Vi,
+                77: $Vj,
+                78: $Vk,
+                79: $Vl,
+                80: $Vm,
+                82: $Vn,
+                91: $Vo,
+                93: $Vp
+            }, {
+                8: $V2,
+                20: $V8,
+                31: 109,
+                50: $Vc,
+                51: $Vd,
+                52: 119,
+                56: 57,
+                58: $Ve,
+                59: 26,
+                60: 27,
+                61: 29,
+                62: 30,
+                63: 31,
+                65: $Vf,
+                67: 34,
+                68: 35,
+                69: 36,
+                70: 41,
+                71: 42,
+                72: 43,
+                73: 44,
+                74: $Vg,
+                75: $Vh,
+                76: $Vi,
+                77: $Vj,
+                78: $Vk,
+                79: $Vl,
+                80: $Vm,
+                82: $Vn,
+                91: $Vo,
+                93: $Vp
+            }, {
+                8: $V2,
+                20: $V8,
+                29: 120,
+                30: 23,
+                31: 24,
+                33: 25,
+                36: 28,
+                38: 32,
+                40: 40,
+                44: 47,
+                49: 55,
+                50: $Vc,
+                51: $Vd,
+                52: 56,
+                56: 57,
+                58: $Ve,
+                59: 26,
+                60: 27,
+                61: 29,
+                62: 30,
+                63: 31,
+                65: $Vf,
+                67: 34,
+                68: 35,
+                69: 36,
+                70: 41,
+                71: 42,
+                72: 43,
+                73: 44,
+                74: $Vg,
+                75: $Vh,
+                76: $Vi,
+                77: $Vj,
+                78: $Vk,
+                79: $Vl,
+                80: $Vm,
+                82: $Vn,
+                91: $Vo,
+                93: $Vp
+            }, {
+                8: $V2,
+                20: $V8,
+                31: 109,
+                36: 121,
+                38: 32,
+                40: 40,
+                44: 47,
+                49: 55,
+                50: $Vc,
+                51: $Vd,
+                52: 56,
+                56: 57,
+                58: $Ve,
+                59: 26,
+                60: 27,
+                61: 29,
+                62: 30,
+                63: 31,
+                65: $Vf,
+                67: 34,
+                68: 35,
+                69: 36,
+                70: 41,
+                71: 42,
+                72: 43,
+                73: 44,
+                74: $Vg,
+                75: $Vh,
+                76: $Vi,
+                77: $Vj,
+                78: $Vk,
+                79: $Vl,
+                80: $Vm,
+                82: $Vn,
+                91: $Vo,
+                93: $Vp
+            }, {20: [1, 122]}, {
+                8: $V2,
+                9: 123,
+                20: $V8,
+                29: 22,
+                30: 23,
+                31: 24,
+                33: 25,
+                36: 28,
+                38: 32,
+                40: 40,
+                44: 47,
+                49: 55,
+                50: $Vc,
+                51: $Vd,
+                52: 56,
+                56: 57,
+                58: $Ve,
+                59: 26,
+                60: 27,
+                61: 29,
+                62: 30,
+                63: 31,
+                65: $Vf,
+                67: 34,
+                68: 35,
+                69: 36,
+                70: 41,
+                71: 42,
+                72: 43,
+                73: 44,
+                74: $Vg,
+                75: $Vh,
+                76: $Vi,
+                77: $Vj,
+                78: $Vk,
+                79: $Vl,
+                80: $Vm,
+                82: $Vn,
+                91: $Vo,
+                93: $Vp
+            }, o($Vs, [2, 87], {89: 124, 90: 125, 68: 127, 20: $VQ, 82: $Vn}), {
+                8: $V2,
+                10: [1, 128],
+                20: $V8,
+                29: 102,
+                30: 23,
+                31: 24,
+                33: 25,
+                36: 28,
+                38: 32,
+                40: 40,
+                44: 47,
+                49: 55,
+                50: $Vc,
+                51: $Vd,
+                52: 56,
+                56: 57,
+                58: $Ve,
+                59: 26,
+                60: 27,
+                61: 29,
+                62: 30,
+                63: 31,
+                65: $Vf,
+                67: 34,
+                68: 35,
+                69: 36,
+                70: 41,
+                71: 42,
+                72: 43,
+                73: 44,
+                74: $Vg,
+                75: $Vh,
+                76: $Vi,
+                77: $Vj,
+                78: $Vk,
+                79: $Vl,
+                80: $Vm,
+                81: 129,
+                82: $Vn,
+                91: $Vo,
+                93: $Vp
+            }, o($Vs, [2, 89]), {
+                8: $V2,
+                9: 130,
+                20: $V8,
+                29: 22,
+                30: 23,
+                31: 24,
+                33: 25,
+                36: 28,
+                38: 32,
+                40: 40,
+                44: 47,
+                49: 55,
+                50: $Vc,
+                51: $Vd,
+                52: 56,
+                56: 57,
+                58: $Ve,
+                59: 26,
+                60: 27,
+                61: 29,
+                62: 30,
+                63: 31,
+                65: $Vf,
+                67: 34,
+                68: 35,
+                69: 36,
+                70: 41,
+                71: 42,
+                72: 43,
+                73: 44,
+                74: $Vg,
+                75: $Vh,
+                76: $Vi,
+                77: $Vj,
+                78: $Vk,
+                79: $Vl,
+                80: $Vm,
+                82: $Vn,
+                91: $Vo,
+                93: $Vp
+            }, {20: [1, 131]}, {
+                8: $V2,
+                20: $V8,
+                31: 109,
+                38: 132,
+                40: 40,
+                44: 47,
+                49: 55,
+                50: $Vc,
+                51: $Vd,
+                52: 56,
+                56: 57,
+                58: $Ve,
+                59: 26,
+                60: 27,
+                61: 29,
+                62: 30,
+                63: 31,
+                65: $Vf,
+                67: 34,
+                68: 35,
+                69: 36,
+                70: 41,
+                71: 42,
+                72: 43,
+                73: 44,
+                74: $Vg,
+                75: $Vh,
+                76: $Vi,
+                77: $Vj,
+                78: $Vk,
+                79: $Vl,
+                80: $Vm,
+                82: $Vn,
+                91: $Vo,
+                93: $Vp
+            }, {
+                8: $V2,
+                20: $V8,
+                31: 109,
+                40: 133,
+                44: 47,
+                49: 55,
+                50: $Vc,
+                51: $Vd,
+                52: 56,
+                56: 57,
+                58: $Ve,
+                59: 26,
+                60: 27,
+                61: 29,
+                62: 30,
+                63: 31,
+                65: $Vf,
+                67: 34,
+                68: 35,
+                69: 36,
+                70: 41,
+                71: 42,
+                72: 43,
+                73: 44,
+                74: $Vg,
+                75: $Vh,
+                76: $Vi,
+                77: $Vj,
+                78: $Vk,
+                79: $Vl,
+                80: $Vm,
+                82: $Vn,
+                91: $Vo,
+                93: $Vp
+            }, {
+                8: $V2,
+                20: $V8,
+                31: 109,
+                40: 134,
+                44: 47,
+                49: 55,
+                50: $Vc,
+                51: $Vd,
+                52: 56,
+                56: 57,
+                58: $Ve,
+                59: 26,
+                60: 27,
+                61: 29,
+                62: 30,
+                63: 31,
+                65: $Vf,
+                67: 34,
+                68: 35,
+                69: 36,
+                70: 41,
+                71: 42,
+                72: 43,
+                73: 44,
+                74: $Vg,
+                75: $Vh,
+                76: $Vi,
+                77: $Vj,
+                78: $Vk,
+                79: $Vl,
+                80: $Vm,
+                82: $Vn,
+                91: $Vo,
+                93: $Vp
+            }, {
+                8: $V2,
+                20: $V8,
+                31: 109,
+                40: 135,
+                44: 47,
+                49: 55,
+                50: $Vc,
+                51: $Vd,
+                52: 56,
+                56: 57,
+                58: $Ve,
+                59: 26,
+                60: 27,
+                61: 29,
+                62: 30,
+                63: 31,
+                65: $Vf,
+                67: 34,
+                68: 35,
+                69: 36,
+                70: 41,
+                71: 42,
+                72: 43,
+                73: 44,
+                74: $Vg,
+                75: $Vh,
+                76: $Vi,
+                77: $Vj,
+                78: $Vk,
+                79: $Vl,
+                80: $Vm,
+                82: $Vn,
+                91: $Vo,
+                93: $Vp
+            }, {10: [1, 136]}, {10: [1, 137], 20: $VR, 92: 138}, {20: $VR, 92: 140}, {
+                8: $V2,
+                20: $V8,
+                31: 109,
+                44: 141,
+                49: 55,
+                50: $Vc,
+                51: $Vd,
+                52: 56,
+                56: 57,
+                58: $Ve,
+                59: 26,
+                60: 27,
+                61: 29,
+                62: 30,
+                63: 31,
+                65: $Vf,
+                67: 34,
+                68: 35,
+                69: 36,
+                70: 41,
+                71: 42,
+                72: 43,
+                73: 44,
+                74: $Vg,
+                75: $Vh,
+                76: $Vi,
+                77: $Vj,
+                78: $Vk,
+                79: $Vl,
+                80: $Vm,
+                82: $Vn,
+                91: $Vo,
+                93: $Vp
+            }, {
+                8: $V2,
+                20: $V8,
+                31: 109,
+                44: 142,
+                49: 55,
+                50: $Vc,
+                51: $Vd,
+                52: 56,
+                56: 57,
+                58: $Ve,
+                59: 26,
+                60: 27,
+                61: 29,
+                62: 30,
+                63: 31,
+                65: $Vf,
+                67: 34,
+                68: 35,
+                69: 36,
+                70: 41,
+                71: 42,
+                72: 43,
+                73: 44,
+                74: $Vg,
+                75: $Vh,
+                76: $Vi,
+                77: $Vj,
+                78: $Vk,
+                79: $Vl,
+                80: $Vm,
+                82: $Vn,
+                91: $Vo,
+                93: $Vp
+            }, {
+                8: $V2,
+                20: $V8,
+                31: 109,
+                44: 143,
+                49: 55,
+                50: $Vc,
+                51: $Vd,
+                52: 56,
+                56: 57,
+                58: $Ve,
+                59: 26,
+                60: 27,
+                61: 29,
+                62: 30,
+                63: 31,
+                65: $Vf,
+                67: 34,
+                68: 35,
+                69: 36,
+                70: 41,
+                71: 42,
+                72: 43,
+                73: 44,
+                74: $Vg,
+                75: $Vh,
+                76: $Vi,
+                77: $Vj,
+                78: $Vk,
+                79: $Vl,
+                80: $Vm,
+                82: $Vn,
+                91: $Vo,
+                93: $Vp
+            }, {
+                8: $V2,
+                20: $V8,
+                31: 109,
+                44: 144,
+                49: 55,
+                50: $Vc,
+                51: $Vd,
+                52: 56,
+                56: 57,
+                58: $Ve,
+                59: 26,
+                60: 27,
+                61: 29,
+                62: 30,
+                63: 31,
+                65: $Vf,
+                67: 34,
+                68: 35,
+                69: 36,
+                70: 41,
+                71: 42,
+                72: 43,
+                73: 44,
+                74: $Vg,
+                75: $Vh,
+                76: $Vi,
+                77: $Vj,
+                78: $Vk,
+                79: $Vl,
+                80: $Vm,
+                82: $Vn,
+                91: $Vo,
+                93: $Vp
+            }, o($Vs, [2, 79]), {83: [1, 145], 86: [1, 146]}, o($VS, [2, 81]), {35: [1, 147]}, {35: [2, 84]}, {35: [2, 85]}, {35: [2, 86]}, o($Vs, [2, 77]), {66: [1, 148], 86: $VT}, o($VU, [2, 98]), {
+                8: $V2,
+                20: $V8,
+                31: 109,
+                49: 150,
+                50: $Vc,
+                51: $Vd,
+                52: 56,
+                56: 57,
+                58: $Ve,
+                59: 26,
+                60: 27,
+                61: 29,
+                62: 30,
+                63: 31,
+                65: $Vf,
+                67: 34,
+                68: 35,
+                69: 36,
+                70: 41,
+                71: 42,
+                72: 43,
+                73: 44,
+                74: $Vg,
+                75: $Vh,
+                76: $Vi,
+                77: $Vj,
+                78: $Vk,
+                79: $Vl,
+                80: $Vm,
+                82: $Vn,
+                91: $Vo,
+                93: $Vp
+            }, {
+                8: $V2,
+                20: $V8,
+                31: 109,
+                49: 151,
+                50: $Vc,
+                51: $Vd,
+                52: 56,
+                56: 57,
+                58: $Ve,
+                59: 26,
+                60: 27,
+                61: 29,
+                62: 30,
+                63: 31,
+                65: $Vf,
+                67: 34,
+                68: 35,
+                69: 36,
+                70: 41,
+                71: 42,
+                72: 43,
+                73: 44,
+                74: $Vg,
+                75: $Vh,
+                76: $Vi,
+                77: $Vj,
+                78: $Vk,
+                79: $Vl,
+                80: $Vm,
+                82: $Vn,
+                91: $Vo,
+                93: $Vp
+            }, {
+                8: $V2,
+                20: $V8,
+                31: 109,
+                50: $Vc,
+                51: $Vd,
+                52: 152,
+                56: 57,
+                58: $Ve,
+                59: 26,
+                60: 27,
+                61: 29,
+                62: 30,
+                63: 31,
+                65: $Vf,
+                67: 34,
+                68: 35,
+                69: 36,
+                70: 41,
+                71: 42,
+                72: 43,
+                73: 44,
+                74: $Vg,
+                75: $Vh,
+                76: $Vi,
+                77: $Vj,
+                78: $Vk,
+                79: $Vl,
+                80: $Vm,
+                82: $Vn,
+                91: $Vo,
+                93: $Vp
+            }, {
+                8: $V2,
+                20: $V8,
+                31: 109,
+                50: $Vc,
+                51: $Vd,
+                52: 153,
+                56: 57,
+                58: $Ve,
+                59: 26,
+                60: 27,
+                61: 29,
+                62: 30,
+                63: 31,
+                65: $Vf,
+                67: 34,
+                68: 35,
+                69: 36,
+                70: 41,
+                71: 42,
+                72: 43,
+                73: 44,
+                74: $Vg,
+                75: $Vh,
+                76: $Vi,
+                77: $Vj,
+                78: $Vk,
+                79: $Vl,
+                80: $Vm,
+                82: $Vn,
+                91: $Vo,
+                93: $Vp
+            }, {
+                8: $V2,
+                20: $V8,
+                31: 109,
+                50: $Vc,
+                51: $Vd,
+                52: 154,
+                56: 57,
+                58: $Ve,
+                59: 26,
+                60: 27,
+                61: 29,
+                62: 30,
+                63: 31,
+                65: $Vf,
+                67: 34,
+                68: 35,
+                69: 36,
+                70: 41,
+                71: 42,
+                72: 43,
+                73: 44,
+                74: $Vg,
+                75: $Vh,
+                76: $Vi,
+                77: $Vj,
+                78: $Vk,
+                79: $Vl,
+                80: $Vm,
+                82: $Vn,
+                91: $Vo,
+                93: $Vp
+            }, o($Vs, [2, 51]), o([8, 10, 16, 32, 34, 35, 37, 39, 41, 42, 43, 45, 46, 47, 48, 50, 51, 53, 54, 55, 64, 65, 66, 83, 86], $Vt, {57: $Vu}), o($Vs, [2, 52]), o($Vs, [2, 53]), o([5, 7, 8, 10, 12, 14, 15, 16, 17, 19, 20, 21, 23, 26, 27, 32, 34, 35, 37, 39, 41, 42, 43, 45, 46, 47, 48, 50, 51, 53, 54, 55, 57, 58, 64, 65, 66, 74, 75, 76, 77, 78, 79, 80, 82, 83, 86, 91, 93], [2, 12]), {10: [1, 155]}, {10: [1, 156]}, {16: [1, 157]}, {8: [1, 158]}, o($Vr, [2, 10]), o($Vs, [2, 25]), o($Vs, [2, 49]), {35: [1, 159]}, o($Vx, [2, 29], {39: $Vy}), o($Vs, [2, 59]), {66: [1, 160]}, o([8, 10, 16, 32, 34, 35, 37, 39, 41, 42, 43, 45, 46, 47, 48, 50, 51, 53, 54, 55, 57, 64, 65, 66, 83], [2, 88], {86: [1, 161]}), o($Vs, [2, 94]), o($Vs, [2, 96]), o($Vs, [2, 97]), o($VV, [2, 92]), {
+                10: [1, 162],
+                86: $VT
+            }, {66: [1, 163]}, o($Vs, [2, 91]), o($Vz, [2, 31], {41: $VA, 42: $VB, 43: $VC}), o($VD, [2, 33], {45: $VE, 46: $VF, 47: $VG, 48: $VH}), o($VD, [2, 34], {45: $VE, 46: $VF, 47: $VG, 48: $VH}), o($VD, [2, 35], {
+                45: $VE,
+                46: $VF,
+                47: $VG,
+                48: $VH
+            }), o($Vs, [2, 65]), {25: 164, 26: $Vb}, {10: [1, 165], 86: $VW}, o($VX, [2, 103]), {10: [1, 167], 86: $VW}, o($VJ, [2, 37], {50: $VK, 51: $VL}), o($VJ, [2, 38], {50: $VK, 51: $VL}), o($VJ, [2, 39], {
+                50: $VK,
+                51: $VL
+            }), o($VJ, [2, 40], {50: $VK, 51: $VL}), o($Vs, [2, 80]), {20: $VI, 72: 98, 73: 99, 77: $Vj, 78: $Vk, 79: $Vl, 80: $Vm, 85: 168, 87: 96}, {
+                8: $V2,
+                20: $V8,
+                29: 169,
+                30: 23,
+                31: 24,
+                33: 25,
+                36: 28,
+                38: 32,
+                40: 40,
+                44: 47,
+                49: 55,
+                50: $Vc,
+                51: $Vd,
+                52: 56,
+                56: 57,
+                58: $Ve,
+                59: 26,
+                60: 27,
+                61: 29,
+                62: 30,
+                63: 31,
+                65: $Vf,
+                67: 34,
+                68: 35,
+                69: 36,
+                70: 41,
+                71: 42,
+                72: 43,
+                73: 44,
+                74: $Vg,
+                75: $Vh,
+                76: $Vi,
+                77: $Vj,
+                78: $Vk,
+                79: $Vl,
+                80: $Vm,
+                82: $Vn,
+                91: $Vo,
+                93: $Vp
+            }, o($Vs, [2, 78]), {
+                8: $V2,
+                20: $V8,
+                29: 170,
+                30: 23,
+                31: 24,
+                33: 25,
+                36: 28,
+                38: 32,
+                40: 40,
+                44: 47,
+                49: 55,
+                50: $Vc,
+                51: $Vd,
+                52: 56,
+                56: 57,
+                58: $Ve,
+                59: 26,
+                60: 27,
+                61: 29,
+                62: 30,
+                63: 31,
+                65: $Vf,
+                67: 34,
+                68: 35,
+                69: 36,
+                70: 41,
+                71: 42,
+                72: 43,
+                73: 44,
+                74: $Vg,
+                75: $Vh,
+                76: $Vi,
+                77: $Vj,
+                78: $Vk,
+                79: $Vl,
+                80: $Vm,
+                82: $Vn,
+                91: $Vo,
+                93: $Vp
+            }, o($VM, [2, 42], {53: $VN, 54: $VO, 55: $VP}), o($VM, [2, 43], {53: $VN, 54: $VO, 55: $VP}), o($Vs, [2, 45]), o($Vs, [2, 46]), o($Vs, [2, 47]), {
+                6: 6,
+                7: $V1,
+                8: $V2,
+                9: 20,
+                11: 171,
+                13: 7,
+                14: $V3,
+                15: $V4,
+                16: $V5,
+                17: $V6,
+                18: 8,
+                19: $V7,
+                20: $V8,
+                21: $V9,
+                22: 9,
+                23: $Va,
+                24: 11,
+                25: 5,
+                26: $Vb,
+                28: 10,
+                29: 22,
+                30: 23,
+                31: 24,
+                33: 25,
+                36: 28,
+                38: 32,
+                40: 40,
+                44: 47,
+                49: 55,
+                50: $Vc,
+                51: $Vd,
+                52: 56,
+                56: 57,
+                58: $Ve,
+                59: 26,
+                60: 27,
+                61: 29,
+                62: 30,
+                63: 31,
+                65: $Vf,
+                67: 34,
+                68: 35,
+                69: 36,
+                70: 41,
+                71: 42,
+                72: 43,
+                73: 44,
+                74: $Vg,
+                75: $Vh,
+                76: $Vi,
+                77: $Vj,
+                78: $Vk,
+                79: $Vl,
+                80: $Vm,
+                82: $Vn,
+                91: $Vo,
+                93: $Vp
+            }, {
+                6: 6,
+                7: $V1,
+                8: $V2,
+                9: 20,
+                11: 172,
+                13: 7,
+                14: $V3,
+                15: $V4,
+                16: $V5,
+                17: $V6,
+                18: 8,
+                19: $V7,
+                20: $V8,
+                21: $V9,
+                22: 9,
+                23: $Va,
+                24: 11,
+                25: 5,
+                26: $Vb,
+                28: 10,
+                29: 22,
+                30: 23,
+                31: 24,
+                33: 25,
+                36: 28,
+                38: 32,
+                40: 40,
+                44: 47,
+                49: 55,
+                50: $Vc,
+                51: $Vd,
+                52: 56,
+                56: 57,
+                58: $Ve,
+                59: 26,
+                60: 27,
+                61: 29,
+                62: 30,
+                63: 31,
+                65: $Vf,
+                67: 34,
+                68: 35,
+                69: 36,
+                70: 41,
+                71: 42,
+                72: 43,
+                73: 44,
+                74: $Vg,
+                75: $Vh,
+                76: $Vi,
+                77: $Vj,
+                78: $Vk,
+                79: $Vl,
+                80: $Vm,
+                82: $Vn,
+                91: $Vo,
+                93: $Vp
+            }, {
+                8: $V2,
+                9: 173,
+                20: $V8,
+                29: 22,
+                30: 23,
+                31: 24,
+                33: 25,
+                36: 28,
+                38: 32,
+                40: 40,
+                44: 47,
+                49: 55,
+                50: $Vc,
+                51: $Vd,
+                52: 56,
+                56: 57,
+                58: $Ve,
+                59: 26,
+                60: 27,
+                61: 29,
+                62: 30,
+                63: 31,
+                65: $Vf,
+                67: 34,
+                68: 35,
+                69: 36,
+                70: 41,
+                71: 42,
+                72: 43,
+                73: 44,
+                74: $Vg,
+                75: $Vh,
+                76: $Vi,
+                77: $Vj,
+                78: $Vk,
+                79: $Vl,
+                80: $Vm,
+                82: $Vn,
+                91: $Vo,
+                93: $Vp
+            }, {
+                8: $V2,
+                9: 174,
+                20: $V8,
+                29: 22,
+                30: 23,
+                31: 24,
+                33: 25,
+                36: 28,
+                38: 32,
+                40: 40,
+                44: 47,
+                49: 55,
+                50: $Vc,
+                51: $Vd,
+                52: 56,
+                56: 57,
+                58: $Ve,
+                59: 26,
+                60: 27,
+                61: 29,
+                62: 30,
+                63: 31,
+                65: $Vf,
+                67: 34,
+                68: 35,
+                69: 36,
+                70: 41,
+                71: 42,
+                72: 43,
+                73: 44,
+                74: $Vg,
+                75: $Vh,
+                76: $Vi,
+                77: $Vj,
+                78: $Vk,
+                79: $Vl,
+                80: $Vm,
+                82: $Vn,
+                91: $Vo,
+                93: $Vp
+            }, {
+                8: $V2,
+                20: $V8,
+                29: 175,
+                30: 23,
+                31: 24,
+                33: 25,
+                36: 28,
+                38: 32,
+                40: 40,
+                44: 47,
+                49: 55,
+                50: $Vc,
+                51: $Vd,
+                52: 56,
+                56: 57,
+                58: $Ve,
+                59: 26,
+                60: 27,
+                61: 29,
+                62: 30,
+                63: 31,
+                65: $Vf,
+                67: 34,
+                68: 35,
+                69: 36,
+                70: 41,
+                71: 42,
+                72: 43,
+                73: 44,
+                74: $Vg,
+                75: $Vh,
+                76: $Vi,
+                77: $Vj,
+                78: $Vk,
+                79: $Vl,
+                80: $Vm,
+                82: $Vn,
+                91: $Vo,
+                93: $Vp
+            }, o($Vs, [2, 60]), {20: $VQ, 68: 127, 82: $Vn, 90: 176}, o($VV, [2, 93]), o($Vs, [2, 90]), o($Vs, [2, 100]), {
+                25: 177,
+                26: $Vb
+            }, {20: [1, 178]}, {94: [1, 179]}, o($VS, [2, 82]), o($VS, [2, 83]), o($VU, [2, 99]), o($Vq, [2, 2], {12: [1, 180]}), o($Vr, [2, 4]), {16: [1, 181]}, {10: [1, 182]}, o($Vs, [2, 27]), o($Vs, [2, 95]), o($Vs, [2, 101]), o($VX, [2, 104]), {
+                8: $V2,
+                9: 183,
+                20: $V8,
+                29: 22,
+                30: 23,
+                31: 24,
+                33: 25,
+                36: 28,
+                38: 32,
+                40: 40,
+                44: 47,
+                49: 55,
+                50: $Vc,
+                51: $Vd,
+                52: 56,
+                56: 57,
+                58: $Ve,
+                59: 26,
+                60: 27,
+                61: 29,
+                62: 30,
+                63: 31,
+                65: $Vf,
+                67: 34,
+                68: 35,
+                69: 36,
+                70: 41,
+                71: 42,
+                72: 43,
+                73: 44,
+                74: $Vg,
+                75: $Vh,
+                76: $Vi,
+                77: $Vj,
+                78: $Vk,
+                79: $Vl,
+                80: $Vm,
+                82: $Vn,
+                91: $Vo,
+                93: $Vp
+            }, {
+                6: 6,
+                7: $V1,
+                8: $V2,
+                9: 20,
+                11: 184,
+                13: 7,
+                14: $V3,
+                15: $V4,
+                16: $V5,
+                17: $V6,
+                18: 8,
+                19: $V7,
+                20: $V8,
+                21: $V9,
+                22: 9,
+                23: $Va,
+                24: 11,
+                25: 5,
+                26: $Vb,
+                28: 10,
+                29: 22,
+                30: 23,
+                31: 24,
+                33: 25,
+                36: 28,
+                38: 32,
+                40: 40,
+                44: 47,
+                49: 55,
+                50: $Vc,
+                51: $Vd,
+                52: 56,
+                56: 57,
+                58: $Ve,
+                59: 26,
+                60: 27,
+                61: 29,
+                62: 30,
+                63: 31,
+                65: $Vf,
+                67: 34,
+                68: 35,
+                69: 36,
+                70: 41,
+                71: 42,
+                72: 43,
+                73: 44,
+                74: $Vg,
+                75: $Vh,
+                76: $Vi,
+                77: $Vj,
+                78: $Vk,
+                79: $Vl,
+                80: $Vm,
+                82: $Vn,
+                91: $Vo,
+                93: $Vp
+            }, {
+                8: $V2,
+                9: 185,
+                20: $V8,
+                29: 22,
+                30: 23,
+                31: 24,
+                33: 25,
+                36: 28,
+                38: 32,
+                40: 40,
+                44: 47,
+                49: 55,
+                50: $Vc,
+                51: $Vd,
+                52: 56,
+                56: 57,
+                58: $Ve,
+                59: 26,
+                60: 27,
+                61: 29,
+                62: 30,
+                63: 31,
+                65: $Vf,
+                67: 34,
+                68: 35,
+                69: 36,
+                70: 41,
+                71: 42,
+                72: 43,
+                73: 44,
+                74: $Vg,
+                75: $Vh,
+                76: $Vi,
+                77: $Vj,
+                78: $Vk,
+                79: $Vl,
+                80: $Vm,
+                82: $Vn,
+                91: $Vo,
+                93: $Vp
+            }, {16: [1, 186]}, o($Vs, [2, 102]), o($Vr, [2, 3]), {10: [1, 187]}, o($Vr, [2, 6]), {
+                6: 6,
+                7: $V1,
+                8: $V2,
+                9: 20,
+                11: 188,
+                13: 7,
+                14: $V3,
+                15: $V4,
+                16: $V5,
+                17: $V6,
+                18: 8,
+                19: $V7,
+                20: $V8,
+                21: $V9,
+                22: 9,
+                23: $Va,
+                24: 11,
+                25: 5,
+                26: $Vb,
+                28: 10,
+                29: 22,
+                30: 23,
+                31: 24,
+                33: 25,
+                36: 28,
+                38: 32,
+                40: 40,
+                44: 47,
+                49: 55,
+                50: $Vc,
+                51: $Vd,
+                52: 56,
+                56: 57,
+                58: $Ve,
+                59: 26,
+                60: 27,
+                61: 29,
+                62: 30,
+                63: 31,
+                65: $Vf,
+                67: 34,
+                68: 35,
+                69: 36,
+                70: 41,
+                71: 42,
+                72: 43,
+                73: 44,
+                74: $Vg,
+                75: $Vh,
+                76: $Vi,
+                77: $Vj,
+                78: $Vk,
+                79: $Vl,
+                80: $Vm,
+                82: $Vn,
+                91: $Vo,
+                93: $Vp
+            }, o($Vr, [2, 5])],
+            defaultActions: {3: [2, 1], 97: [2, 84], 98: [2, 85], 99: [2, 86]},
+            parseError: function parseError(str, hash) {
+                if (hash.recoverable) {
+                    this.trace(str);
+                } else {
+                    var error = new Error(str);
+                    error.hash = hash;
+                    throw error;
+                }
+            },
+            parse: function parse(input) {
+                var self = this, stack = [0], tstack = [], vstack = [null], lstack = [], table = this.table, yytext = '', yylineno = 0, yyleng = 0, recovering = 0, TERROR = 2, EOF = 1;
+                var args = lstack.slice.call(arguments, 1);
+                var lexer = Object.create(this.lexer);
+                var sharedState = {yy: {}};
+                for (var k in this.yy) {
+                    if (Object.prototype.hasOwnProperty.call(this.yy, k)) {
+                        sharedState.yy[k] = this.yy[k];
                     }
                 }
-                if (lexer.showPosition) {
-                    errStr = 'Parse error on line ' + (yylineno + 1) + ':\n' + lexer.showPosition() + '\nExpecting ' + expected.join(', ') + ', got \'' + (this.terminals_[symbol] || symbol) + '\'';
+                lexer.setInput(input, sharedState.yy);
+                sharedState.yy.lexer = lexer;
+                sharedState.yy.parser = this;
+                if (typeof lexer.yylloc == 'undefined') {
+                    lexer.yylloc = {};
+                }
+                var yyloc = lexer.yylloc;
+                lstack.push(yyloc);
+                var ranges = lexer.options && lexer.options.ranges;
+                if (typeof sharedState.yy.parseError === 'function') {
+                    this.parseError = sharedState.yy.parseError;
                 } else {
-                    errStr = 'Parse error on line ' + (yylineno + 1) + ': Unexpected ' + (symbol == EOF ? 'end of input' : '\'' + (this.terminals_[symbol] || symbol) + '\'');
+                    this.parseError = Object.getPrototypeOf(this).parseError;
                 }
-                this.parseError(errStr, {
-                    text: lexer.match,
-                    token: this.terminals_[symbol] || symbol,
-                    line: lexer.yylineno,
-                    loc: yyloc,
-                    expected: expected
-                });
-            }
-        if (action[0] instanceof Array && action.length > 1) {
-            throw new Error('Parse Error: multiple actions possible at state: ' + state + ', token: ' + symbol);
-        }
-        switch (action[0]) {
-        case 1:
-            stack.push(symbol);
-            vstack.push(lexer.yytext);
-            lstack.push(lexer.yylloc);
-            stack.push(action[1]);
-            symbol = null;
-            if (!preErrorSymbol) {
-                yyleng = lexer.yyleng;
-                yytext = lexer.yytext;
-                yylineno = lexer.yylineno;
-                yyloc = lexer.yylloc;
-                if (recovering > 0) {
-                    recovering--;
+
+                function popStack(n) {
+                    stack.length = stack.length - 2 * n;
+                    vstack.length = vstack.length - n;
+                    lstack.length = lstack.length - n;
                 }
-            } else {
-                symbol = preErrorSymbol;
-                preErrorSymbol = null;
+
+                _token_stack:
+                    var lex = function () {
+                        var token;
+                        token = lexer.lex() || EOF;
+                        if (typeof token !== 'number') {
+                            token = self.symbols_[token] || token;
+                        }
+                        return token;
+                    };
+                var symbol, preErrorSymbol, state, action, a, r, yyval = {}, p, len, newState, expected;
+                while (true) {
+                    state = stack[stack.length - 1];
+                    if (this.defaultActions[state]) {
+                        action = this.defaultActions[state];
+                    } else {
+                        if (symbol === null || typeof symbol == 'undefined') {
+                            symbol = lex();
+                        }
+                        action = table[state] && table[state][symbol];
+                    }
+                    if (typeof action === 'undefined' || !action.length || !action[0]) {
+                        var errStr = '';
+                        expected = [];
+                        for (p in table[state]) {
+                            if (this.terminals_[p] && p > TERROR) {
+                                expected.push('\'' + this.terminals_[p] + '\'');
+                            }
+                        }
+                        if (lexer.showPosition) {
+                            errStr = 'Parse error on line ' + (yylineno + 1) + ':\n' + lexer.showPosition() + '\nExpecting ' + expected.join(', ') + ', got \'' + (this.terminals_[symbol] || symbol) + '\'';
+                        } else {
+                            errStr = 'Parse error on line ' + (yylineno + 1) + ': Unexpected ' + (symbol == EOF ? 'end of input' : '\'' + (this.terminals_[symbol] || symbol) + '\'');
+                        }
+                        this.parseError(errStr, {
+                            text: lexer.match,
+                            token: this.terminals_[symbol] || symbol,
+                            line: lexer.yylineno,
+                            loc: yyloc,
+                            expected: expected
+                        });
+                    }
+                    if (action[0] instanceof Array && action.length > 1) {
+                        throw new Error('Parse Error: multiple actions possible at state: ' + state + ', token: ' + symbol);
+                    }
+                    switch (action[0]) {
+                        case 1:
+                            stack.push(symbol);
+                            vstack.push(lexer.yytext);
+                            lstack.push(lexer.yylloc);
+                            stack.push(action[1]);
+                            symbol = null;
+                            if (!preErrorSymbol) {
+                                yyleng = lexer.yyleng;
+                                yytext = lexer.yytext;
+                                yylineno = lexer.yylineno;
+                                yyloc = lexer.yylloc;
+                                if (recovering > 0) {
+                                    recovering--;
+                                }
+                            } else {
+                                symbol = preErrorSymbol;
+                                preErrorSymbol = null;
+                            }
+                            break;
+                        case 2:
+                            len = this.productions_[action[1]][1];
+                            yyval.$ = vstack[vstack.length - len];
+                            yyval._$ = {
+                                first_line: lstack[lstack.length - (len || 1)].first_line,
+                                last_line: lstack[lstack.length - 1].last_line,
+                                first_column: lstack[lstack.length - (len || 1)].first_column,
+                                last_column: lstack[lstack.length - 1].last_column
+                            };
+                            if (ranges) {
+                                yyval._$.range = [
+                                    lstack[lstack.length - (len || 1)].range[0],
+                                    lstack[lstack.length - 1].range[1]
+                                ];
+                            }
+                            r = this.performAction.apply(yyval, [
+                                yytext,
+                                yyleng,
+                                yylineno,
+                                sharedState.yy,
+                                action[1],
+                                vstack,
+                                lstack
+                            ].concat(args));
+                            if (typeof r !== 'undefined') {
+                                return r;
+                            }
+                            if (len) {
+                                stack = stack.slice(0, -1 * len * 2);
+                                vstack = vstack.slice(0, -1 * len);
+                                lstack = lstack.slice(0, -1 * len);
+                            }
+                            stack.push(this.productions_[action[1]][0]);
+                            vstack.push(yyval.$);
+                            lstack.push(yyval._$);
+                            newState = table[stack[stack.length - 2]][stack[stack.length - 1]];
+                            stack.push(newState);
+                            break;
+                        case 3:
+                            return true;
+                    }
+                }
+                return true;
             }
-            break;
-        case 2:
-            len = this.productions_[action[1]][1];
-            yyval.$ = vstack[vstack.length - len];
-            yyval._$ = {
-                first_line: lstack[lstack.length - (len || 1)].first_line,
-                last_line: lstack[lstack.length - 1].last_line,
-                first_column: lstack[lstack.length - (len || 1)].first_column,
-                last_column: lstack[lstack.length - 1].last_column
-            };
-            if (ranges) {
-                yyval._$.range = [
-                    lstack[lstack.length - (len || 1)].range[0],
-                    lstack[lstack.length - 1].range[1]
-                ];
+        };
+
+        var AST = {
+            node: function (type, value, children) {
+                return {
+                    type: type,
+                    value: value,
+                    children: children
+                };
+            },
+
+            createNode: function (pos, type, value, children) {
+                var i,
+                    n = this.node(type, value, []);
+
+                for (i = 3; i < arguments.length; i++) {
+                    n.children.push(arguments[i]);
+                }
+
+                n.line = pos[0];
+                n.col = pos[1];
+                n.eline = pos[2];
+                n.ecol = pos[3];
+
+                return n;
             }
-            r = this.performAction.apply(yyval, [
-                yytext,
-                yyleng,
-                yylineno,
-                sharedState.yy,
-                action[1],
-                vstack,
-                lstack
-            ].concat(args));
-            if (typeof r !== 'undefined') {
-                return r;
-            }
-            if (len) {
-                stack = stack.slice(0, -1 * len * 2);
-                vstack = vstack.slice(0, -1 * len);
-                lstack = lstack.slice(0, -1 * len);
-            }
-            stack.push(this.productions_[action[1]][0]);
-            vstack.push(yyval.$);
-            lstack.push(yyval._$);
-            newState = table[stack[stack.length - 2]][stack[stack.length - 1]];
-            stack.push(newState);
-            break;
-        case 3:
-            return true;
-        }
-    }
-    return true;
-}};
+        };
 
+        var lc = function (lc1) {
+            return [lc1.first_line, lc1.first_column, lc1.last_line, lc1.last_column];
+        };
 
-    var AST = {
-        node: function (type, value, children) {
-            return {
-                type: type,
-                value: value,
-                children: children
-            };
-        },
+        /* generated by jison-lex 0.3.4 */
+        var lexer = (function () {
+            var lexer = ({
 
-        createNode: function (pos, type, value, children) {
-            var i,
-                n = this.node(type, value, []);
+                EOF: 1,
 
-            for (i = 3; i < arguments.length; i++) {
-                n.children.push(arguments[i]);
-            }
-
-            n.line = pos[0];
-            n.col = pos[1];
-            n.eline = pos[2];
-            n.ecol = pos[3];
-
-            return n;
-        }
-    };
-
-    var lc = function (lc1) {
-        return [lc1.first_line, lc1.first_column, lc1.last_line, lc1.last_column];
-    };
-
-/* generated by jison-lex 0.3.4 */
-var lexer = (function(){
-var lexer = ({
-
-EOF:1,
-
-parseError:function parseError(str, hash) {
-        if (this.yy.parser) {
-            this.yy.parser.parseError(str, hash);
-        } else {
-            throw new Error(str);
-        }
-    },
+                parseError: function parseError(str, hash) {
+                    if (this.yy.parser) {
+                        this.yy.parser.parseError(str, hash);
+                    } else {
+                        throw new Error(str);
+                    }
+                },
 
 // resets the lexer, sets new input
-setInput:function (input, yy) {
-        this.yy = yy || this.yy || {};
-        this._input = input;
-        this._more = this._backtrack = this.done = false;
-        this.yylineno = this.yyleng = 0;
-        this.yytext = this.matched = this.match = '';
-        this.conditionStack = ['INITIAL'];
-        this.yylloc = {
-            first_line: 1,
-            first_column: 0,
-            last_line: 1,
-            last_column: 0
-        };
-        if (this.options.ranges) {
-            this.yylloc.range = [0,0];
-        }
-        this.offset = 0;
-        return this;
-    },
+                setInput: function (input, yy) {
+                    this.yy = yy || this.yy || {};
+                    this._input = input;
+                    this._more = this._backtrack = this.done = false;
+                    this.yylineno = this.yyleng = 0;
+                    this.yytext = this.matched = this.match = '';
+                    this.conditionStack = ['INITIAL'];
+                    this.yylloc = {
+                        first_line: 1,
+                        first_column: 0,
+                        last_line: 1,
+                        last_column: 0
+                    };
+                    if (this.options.ranges) {
+                        this.yylloc.range = [0, 0];
+                    }
+                    this.offset = 0;
+                    return this;
+                },
 
 // consumes and returns one char from the input
-input:function () {
-        var ch = this._input[0];
-        this.yytext += ch;
-        this.yyleng++;
-        this.offset++;
-        this.match += ch;
-        this.matched += ch;
-        var lines = ch.match(/(?:\r\n?|\n).*/g);
-        if (lines) {
-            this.yylineno++;
-            this.yylloc.last_line++;
-        } else {
-            this.yylloc.last_column++;
-        }
-        if (this.options.ranges) {
-            this.yylloc.range[1]++;
-        }
+                input: function () {
+                    var ch = this._input[0];
+                    this.yytext += ch;
+                    this.yyleng++;
+                    this.offset++;
+                    this.match += ch;
+                    this.matched += ch;
+                    var lines = ch.match(/(?:\r\n?|\n).*/g);
+                    if (lines) {
+                        this.yylineno++;
+                        this.yylloc.last_line++;
+                    } else {
+                        this.yylloc.last_column++;
+                    }
+                    if (this.options.ranges) {
+                        this.yylloc.range[1]++;
+                    }
 
-        this._input = this._input.slice(1);
-        return ch;
-    },
+                    this._input = this._input.slice(1);
+                    return ch;
+                },
 
 // unshifts one char (or a string) into the input
-unput:function (ch) {
-        var len = ch.length;
-        var lines = ch.split(/(?:\r\n?|\n)/g);
+                unput: function (ch) {
+                    var len = ch.length;
+                    var lines = ch.split(/(?:\r\n?|\n)/g);
 
-        this._input = ch + this._input;
-        this.yytext = this.yytext.substr(0, this.yytext.length - len);
-        //this.yyleng -= len;
-        this.offset -= len;
-        var oldLines = this.match.split(/(?:\r\n?|\n)/g);
-        this.match = this.match.substr(0, this.match.length - 1);
-        this.matched = this.matched.substr(0, this.matched.length - 1);
+                    this._input = ch + this._input;
+                    this.yytext = this.yytext.substr(0, this.yytext.length - len);
+                    //this.yyleng -= len;
+                    this.offset -= len;
+                    var oldLines = this.match.split(/(?:\r\n?|\n)/g);
+                    this.match = this.match.substr(0, this.match.length - 1);
+                    this.matched = this.matched.substr(0, this.matched.length - 1);
 
-        if (lines.length - 1) {
-            this.yylineno -= lines.length - 1;
-        }
-        var r = this.yylloc.range;
+                    if (lines.length - 1) {
+                        this.yylineno -= lines.length - 1;
+                    }
+                    var r = this.yylloc.range;
 
-        this.yylloc = {
-            first_line: this.yylloc.first_line,
-            last_line: this.yylineno + 1,
-            first_column: this.yylloc.first_column,
-            last_column: lines ?
-                (lines.length === oldLines.length ? this.yylloc.first_column : 0)
-                 + oldLines[oldLines.length - lines.length].length - lines[0].length :
-              this.yylloc.first_column - len
-        };
+                    this.yylloc = {
+                        first_line: this.yylloc.first_line,
+                        last_line: this.yylineno + 1,
+                        first_column: this.yylloc.first_column,
+                        last_column: lines ?
+                            (lines.length === oldLines.length ? this.yylloc.first_column : 0)
+                            + oldLines[oldLines.length - lines.length].length - lines[0].length :
+                            this.yylloc.first_column - len
+                    };
 
-        if (this.options.ranges) {
-            this.yylloc.range = [r[0], r[0] + this.yyleng - len];
-        }
-        this.yyleng = this.yytext.length;
-        return this;
-    },
+                    if (this.options.ranges) {
+                        this.yylloc.range = [r[0], r[0] + this.yyleng - len];
+                    }
+                    this.yyleng = this.yytext.length;
+                    return this;
+                },
 
 // When called from action, caches matched text and appends it on next action
-more:function () {
-        this._more = true;
-        return this;
-    },
+                more: function () {
+                    this._more = true;
+                    return this;
+                },
 
 // When called from action, signals the lexer that this rule fails to match the input, so the next matching rule (regex) should be tested instead.
-reject:function () {
-        if (this.options.backtrack_lexer) {
-            this._backtrack = true;
-        } else {
-            return this.parseError('Lexical error on line ' + (this.yylineno + 1) + '. You can only invoke reject() in the lexer when the lexer is of the backtracking persuasion (options.backtrack_lexer = true).\n' + this.showPosition(), {
-                text: "",
-                token: null,
-                line: this.yylineno
-            });
+                reject: function () {
+                    if (this.options.backtrack_lexer) {
+                        this._backtrack = true;
+                    } else {
+                        return this.parseError('Lexical error on line ' + (this.yylineno + 1) + '. You can only invoke reject() in the lexer when the lexer is of the backtracking persuasion (options.backtrack_lexer = true).\n' + this.showPosition(), {
+                            text: "",
+                            token: null,
+                            line: this.yylineno
+                        });
 
-        }
-        return this;
-    },
+                    }
+                    return this;
+                },
 
 // retain first n characters of the match
-less:function (n) {
-        this.unput(this.match.slice(n));
-    },
+                less: function (n) {
+                    this.unput(this.match.slice(n));
+                },
 
 // displays already matched input, i.e. for error messages
-pastInput:function () {
-        var past = this.matched.substr(0, this.matched.length - this.match.length);
-        return (past.length > 20 ? '...':'') + past.substr(-20).replace(/\n/g, "");
-    },
+                pastInput: function () {
+                    var past = this.matched.substr(0, this.matched.length - this.match.length);
+                    return (past.length > 20 ? '...' : '') + past.substr(-20).replace(/\n/g, "");
+                },
 
 // displays upcoming input, i.e. for error messages
-upcomingInput:function () {
-        var next = this.match;
-        if (next.length < 20) {
-            next += this._input.substr(0, 20-next.length);
-        }
-        return (next.substr(0,20) + (next.length > 20 ? '...' : '')).replace(/\n/g, "");
-    },
+                upcomingInput: function () {
+                    var next = this.match;
+                    if (next.length < 20) {
+                        next += this._input.substr(0, 20 - next.length);
+                    }
+                    return (next.substr(0, 20) + (next.length > 20 ? '...' : '')).replace(/\n/g, "");
+                },
 
 // displays the character position where the lexing error occurred, i.e. for error messages
-showPosition:function () {
-        var pre = this.pastInput();
-        var c = new Array(pre.length + 1).join("-");
-        return pre + this.upcomingInput() + "\n" + c + "^";
-    },
+                showPosition: function () {
+                    var pre = this.pastInput();
+                    var c = new Array(pre.length + 1).join("-");
+                    return pre + this.upcomingInput() + "\n" + c + "^";
+                },
 
 // test the lexed token: return FALSE when not a match, otherwise return token
-test_match:function(match, indexed_rule) {
-        var token,
-            lines,
-            backup;
+                test_match: function (match, indexed_rule) {
+                    var token,
+                        lines,
+                        backup;
 
-        if (this.options.backtrack_lexer) {
-            // save context
-            backup = {
-                yylineno: this.yylineno,
-                yylloc: {
-                    first_line: this.yylloc.first_line,
-                    last_line: this.last_line,
-                    first_column: this.yylloc.first_column,
-                    last_column: this.yylloc.last_column
-                },
-                yytext: this.yytext,
-                match: this.match,
-                matches: this.matches,
-                matched: this.matched,
-                yyleng: this.yyleng,
-                offset: this.offset,
-                _more: this._more,
-                _input: this._input,
-                yy: this.yy,
-                conditionStack: this.conditionStack.slice(0),
-                done: this.done
-            };
-            if (this.options.ranges) {
-                backup.yylloc.range = this.yylloc.range.slice(0);
-            }
-        }
+                    if (this.options.backtrack_lexer) {
+                        // save context
+                        backup = {
+                            yylineno: this.yylineno,
+                            yylloc: {
+                                first_line: this.yylloc.first_line,
+                                last_line: this.last_line,
+                                first_column: this.yylloc.first_column,
+                                last_column: this.yylloc.last_column
+                            },
+                            yytext: this.yytext,
+                            match: this.match,
+                            matches: this.matches,
+                            matched: this.matched,
+                            yyleng: this.yyleng,
+                            offset: this.offset,
+                            _more: this._more,
+                            _input: this._input,
+                            yy: this.yy,
+                            conditionStack: this.conditionStack.slice(0),
+                            done: this.done
+                        };
+                        if (this.options.ranges) {
+                            backup.yylloc.range = this.yylloc.range.slice(0);
+                        }
+                    }
 
-        lines = match[0].match(/(?:\r\n?|\n).*/g);
-        if (lines) {
-            this.yylineno += lines.length;
-        }
-        this.yylloc = {
-            first_line: this.yylloc.last_line,
-            last_line: this.yylineno + 1,
-            first_column: this.yylloc.last_column,
-            last_column: lines ?
-                         lines[lines.length - 1].length - lines[lines.length - 1].match(/\r?\n?/)[0].length :
-                         this.yylloc.last_column + match[0].length
-        };
-        this.yytext += match[0];
-        this.match += match[0];
-        this.matches = match;
-        this.yyleng = this.yytext.length;
-        if (this.options.ranges) {
-            this.yylloc.range = [this.offset, this.offset += this.yyleng];
-        }
-        this._more = false;
-        this._backtrack = false;
-        this._input = this._input.slice(match[0].length);
-        this.matched += match[0];
-        token = this.performAction.call(this, this.yy, this, indexed_rule, this.conditionStack[this.conditionStack.length - 1]);
-        if (this.done && this._input) {
-            this.done = false;
-        }
-        if (token) {
-            return token;
-        } else if (this._backtrack) {
-            // recover context
-            for (var k in backup) {
-                this[k] = backup[k];
-            }
-            return false; // rule action called reject() implying the next rule should be tested instead.
-        }
-        return false;
-    },
-
-// return next match in input
-next:function () {
-        if (this.done) {
-            return this.EOF;
-        }
-        if (!this._input) {
-            this.done = true;
-        }
-
-        var token,
-            match,
-            tempMatch,
-            index;
-        if (!this._more) {
-            this.yytext = '';
-            this.match = '';
-        }
-        var rules = this._currentRules();
-        for (var i = 0; i < rules.length; i++) {
-            tempMatch = this._input.match(this.rules[rules[i]]);
-            if (tempMatch && (!match || tempMatch[0].length > match[0].length)) {
-                match = tempMatch;
-                index = i;
-                if (this.options.backtrack_lexer) {
-                    token = this.test_match(tempMatch, rules[i]);
-                    if (token !== false) {
+                    lines = match[0].match(/(?:\r\n?|\n).*/g);
+                    if (lines) {
+                        this.yylineno += lines.length;
+                    }
+                    this.yylloc = {
+                        first_line: this.yylloc.last_line,
+                        last_line: this.yylineno + 1,
+                        first_column: this.yylloc.last_column,
+                        last_column: lines ?
+                            lines[lines.length - 1].length - lines[lines.length - 1].match(/\r?\n?/)[0].length :
+                            this.yylloc.last_column + match[0].length
+                    };
+                    this.yytext += match[0];
+                    this.match += match[0];
+                    this.matches = match;
+                    this.yyleng = this.yytext.length;
+                    if (this.options.ranges) {
+                        this.yylloc.range = [this.offset, this.offset += this.yyleng];
+                    }
+                    this._more = false;
+                    this._backtrack = false;
+                    this._input = this._input.slice(match[0].length);
+                    this.matched += match[0];
+                    token = this.performAction.call(this, this.yy, this, indexed_rule, this.conditionStack[this.conditionStack.length - 1]);
+                    if (this.done && this._input) {
+                        this.done = false;
+                    }
+                    if (token) {
                         return token;
                     } else if (this._backtrack) {
-                        match = false;
-                        continue; // rule action called reject() implying a rule MISmatch.
-                    } else {
+                        // recover context
+                        for (var k in backup) {
+                            this[k] = backup[k];
+                        }
+                        return false; // rule action called reject() implying the next rule should be tested instead.
+                    }
+                    return false;
+                },
+
+// return next match in input
+                next: function () {
+                    if (this.done) {
+                        return this.EOF;
+                    }
+                    if (!this._input) {
+                        this.done = true;
+                    }
+
+                    var token,
+                        match,
+                        tempMatch,
+                        index;
+                    if (!this._more) {
+                        this.yytext = '';
+                        this.match = '';
+                    }
+                    var rules = this._currentRules();
+                    for (var i = 0; i < rules.length; i++) {
+                        tempMatch = this._input.match(this.rules[rules[i]]);
+                        if (tempMatch && (!match || tempMatch[0].length > match[0].length)) {
+                            match = tempMatch;
+                            index = i;
+                            if (this.options.backtrack_lexer) {
+                                token = this.test_match(tempMatch, rules[i]);
+                                if (token !== false) {
+                                    return token;
+                                } else if (this._backtrack) {
+                                    match = false;
+                                    continue; // rule action called reject() implying a rule MISmatch.
+                                } else {
+                                    // else: this is a lexer rule which consumes input without producing a token (e.g. whitespace)
+                                    return false;
+                                }
+                            } else if (!this.options.flex) {
+                                break;
+                            }
+                        }
+                    }
+                    if (match) {
+                        token = this.test_match(match, rules[index]);
+                        if (token !== false) {
+                            return token;
+                        }
                         // else: this is a lexer rule which consumes input without producing a token (e.g. whitespace)
                         return false;
                     }
-                } else if (!this.options.flex) {
-                    break;
-                }
-            }
-        }
-        if (match) {
-            token = this.test_match(match, rules[index]);
-            if (token !== false) {
-                return token;
-            }
-            // else: this is a lexer rule which consumes input without producing a token (e.g. whitespace)
-            return false;
-        }
-        if (this._input === "") {
-            return this.EOF;
-        } else {
-            return this.parseError('Lexical error on line ' + (this.yylineno + 1) + '. Unrecognized text.\n' + this.showPosition(), {
-                text: "",
-                token: null,
-                line: this.yylineno
-            });
-        }
-    },
+                    if (this._input === "") {
+                        return this.EOF;
+                    } else {
+                        return this.parseError('Lexical error on line ' + (this.yylineno + 1) + '. Unrecognized text.\n' + this.showPosition(), {
+                            text: "",
+                            token: null,
+                            line: this.yylineno
+                        });
+                    }
+                },
 
 // return next match that has a token
-lex:function lex () {
-        var r = this.next();
-        if (r) {
-            return r;
-        } else {
-            return this.lex();
-        }
-    },
+                lex: function lex() {
+                    var r = this.next();
+                    if (r) {
+                        return r;
+                    } else {
+                        return this.lex();
+                    }
+                },
 
 // activates a new lexer condition state (pushes the new lexer condition state onto the condition stack)
-begin:function begin (condition) {
-        this.conditionStack.push(condition);
-    },
+                begin: function begin(condition) {
+                    this.conditionStack.push(condition);
+                },
 
 // pop the previously active lexer condition state off the condition stack
-popState:function popState () {
-        var n = this.conditionStack.length - 1;
-        if (n > 0) {
-            return this.conditionStack.pop();
-        } else {
-            return this.conditionStack[0];
-        }
-    },
+                popState: function popState() {
+                    var n = this.conditionStack.length - 1;
+                    if (n > 0) {
+                        return this.conditionStack.pop();
+                    } else {
+                        return this.conditionStack[0];
+                    }
+                },
 
 // produce the lexer rule set which is active for the currently active lexer condition state
-_currentRules:function _currentRules () {
-        if (this.conditionStack.length && this.conditionStack[this.conditionStack.length - 1]) {
-            return this.conditions[this.conditionStack[this.conditionStack.length - 1]].rules;
-        } else {
-            return this.conditions["INITIAL"].rules;
-        }
-    },
+                _currentRules: function _currentRules() {
+                    if (this.conditionStack.length && this.conditionStack[this.conditionStack.length - 1]) {
+                        return this.conditions[this.conditionStack[this.conditionStack.length - 1]].rules;
+                    } else {
+                        return this.conditions["INITIAL"].rules;
+                    }
+                },
 
 // return the currently active lexer condition state; when an index argument is provided it produces the N-th previous condition state, if available
-topState:function topState (n) {
-        n = this.conditionStack.length - 1 - Math.abs(n || 0);
-        if (n >= 0) {
-            return this.conditionStack[n];
-        } else {
-            return "INITIAL";
-        }
-    },
+                topState: function topState(n) {
+                    n = this.conditionStack.length - 1 - Math.abs(n || 0);
+                    if (n >= 0) {
+                        return this.conditionStack[n];
+                    } else {
+                        return "INITIAL";
+                    }
+                },
 
 // alias for begin(condition)
-pushState:function pushState (condition) {
-        this.begin(condition);
-    },
+                pushState: function pushState(condition) {
+                    this.begin(condition);
+                },
 
 // return the number of states currently on the stack
-stateStackSize:function stateStackSize() {
-        return this.conditionStack.length;
-    },
-options: {},
-performAction: function anonymous(yy,yy_,$avoiding_name_collisions,YY_START) {
-var YYSTATE=YY_START;
-switch($avoiding_name_collisions) {
-case 0:/* ignore */
-break;
-case 1:return 78
-break;
-case 2:return 78
-break;
-case 3: return 77;
-break;
-case 4: return 77;
-break;
-case 5:/* ignore comment */
-break;
-case 6:/* ignore multiline comment */
-break;
-case 7:return 7
-break;
-case 8:return 12
-break;
-case 9:return 14
-break;
-case 10:return 17
-break;
-case 11:return 15
-break;
-case 12:return 91
-break;
-case 13:return 93
-break;
-case 14:return 19
-break;
-case 15:return 23
-break;
-case 16:return 21
-break;
-case 17:return 75
-break;
-case 18:return 76
-break;
-case 19:return 74
-break;
-case 20:return 80
-break;
-case 21:return 94
-break;
-case 22:return 82
-break;
-case 23:return 83
-break;
-case 24:return 26
-break;
-case 25:return 27
-break;
-case 26:return 16
-break;
-case 27:return '#'
-break;
-case 28:return 34
-break;
-case 29:return 35
-break;
-case 30:return 79
-break;
-case 31:return 64
-break;
-case 32:return 65
-break;
-case 33:return 66
-break;
-case 34:return 8
-break;
-case 35:return 10
-break;
-case 36:return 58
-break;
-case 37:return 57
-break;
-case 38:return 53
-break;
-case 39:return 54
-break;
-case 40:return 55
-break;
-case 41:return 50
-break;
-case 42:return 51
-break;
-case 43:return 47
-break;
-case 44:return 45
-break;
-case 45:return 48
-break;
-case 46:return 46
-break;
-case 47:return 41
-break;
-case 48:return 43
-break;
-case 49:return 42
-break;
-case 50:return 39
-break;
-case 51:return 37
-break;
-case 52:return 32
-break;
-case 53:return 86
-break;
-case 54:return 5
-break;
-case 55:return 20
-break;
-case 56:return 'INVALID'
-break;
-}
-},
-rules: [/^(?:\s+)/,/^(?:[0-9]+\.[0-9]*|[0-9]*\.[0-9]+\b)/,/^(?:[0-9]+)/,/^(?:"(\\["]|[^"])*")/,/^(?:'(\\[']|[^'])*')/,/^(?:\/\/.*)/,/^(?:\/\*(.|\n|\r)*?\*\/)/,/^(?:if\b)/,/^(?:else\b)/,/^(?:while\b)/,/^(?:do\b)/,/^(?:for\b)/,/^(?:function\b)/,/^(?:map\b)/,/^(?:use\b)/,/^(?:return\b)/,/^(?:delete\b)/,/^(?:true\b)/,/^(?:false\b)/,/^(?:null\b)/,/^(?:Infinity\b)/,/^(?:->)/,/^(?:<<)/,/^(?:>>)/,/^(?:\{)/,/^(?:\})/,/^(?:;)/,/^(?:#)/,/^(?:\?)/,/^(?::)/,/^(?:NaN\b)/,/^(?:\.)/,/^(?:\[)/,/^(?:\])/,/^(?:\()/,/^(?:\))/,/^(?:!)/,/^(?:\^)/,/^(?:\*)/,/^(?:\/)/,/^(?:%)/,/^(?:\+)/,/^(?:-)/,/^(?:<=)/,/^(?:<)/,/^(?:>=)/,/^(?:>)/,/^(?:==)/,/^(?:~=)/,/^(?:!=)/,/^(?:&&)/,/^(?:\|\|)/,/^(?:=)/,/^(?:,)/,/^(?:$)/,/^(?:[A-Za-z_\$][A-Za-z0-9_]*)/,/^(?:.)/],
-conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56],"inclusive":true}}
-});
-return lexer;
-})();
-parser.lexer = lexer;
-function Parser () {
-  this.yy = {};
-}
-Parser.prototype = parser;parser.Parser = Parser;
-return new Parser;
-})();
+                stateStackSize: function stateStackSize() {
+                    return this.conditionStack.length;
+                },
+                options: {},
+                performAction: function anonymous(yy, yy_, $avoiding_name_collisions, YY_START) {
+                    var YYSTATE = YY_START;
+                    switch ($avoiding_name_collisions) {
+                        case 0:/* ignore */
+                            break;
+                        case 1:
+                            return 78
+                            break;
+                        case 2:
+                            return 78
+                            break;
+                        case 3:
+                            return 77;
+                            break;
+                        case 4:
+                            return 77;
+                            break;
+                        case 5:/* ignore comment */
+                            break;
+                        case 6:/* ignore multiline comment */
+                            break;
+                        case 7:
+                            return 7
+                            break;
+                        case 8:
+                            return 12
+                            break;
+                        case 9:
+                            return 14
+                            break;
+                        case 10:
+                            return 17
+                            break;
+                        case 11:
+                            return 15
+                            break;
+                        case 12:
+                            return 91
+                            break;
+                        case 13:
+                            return 93
+                            break;
+                        case 14:
+                            return 19
+                            break;
+                        case 15:
+                            return 23
+                            break;
+                        case 16:
+                            return 21
+                            break;
+                        case 17:
+                            return 75
+                            break;
+                        case 18:
+                            return 76
+                            break;
+                        case 19:
+                            return 74
+                            break;
+                        case 20:
+                            return 80
+                            break;
+                        case 21:
+                            return 94
+                            break;
+                        case 22:
+                            return 82
+                            break;
+                        case 23:
+                            return 83
+                            break;
+                        case 24:
+                            return 26
+                            break;
+                        case 25:
+                            return 27
+                            break;
+                        case 26:
+                            return 16
+                            break;
+                        case 27:
+                            return '#'
+                            break;
+                        case 28:
+                            return 34
+                            break;
+                        case 29:
+                            return 35
+                            break;
+                        case 30:
+                            return 79
+                            break;
+                        case 31:
+                            return 64
+                            break;
+                        case 32:
+                            return 65
+                            break;
+                        case 33:
+                            return 66
+                            break;
+                        case 34:
+                            return 8
+                            break;
+                        case 35:
+                            return 10
+                            break;
+                        case 36:
+                            return 58
+                            break;
+                        case 37:
+                            return 57
+                            break;
+                        case 38:
+                            return 53
+                            break;
+                        case 39:
+                            return 54
+                            break;
+                        case 40:
+                            return 55
+                            break;
+                        case 41:
+                            return 50
+                            break;
+                        case 42:
+                            return 51
+                            break;
+                        case 43:
+                            return 47
+                            break;
+                        case 44:
+                            return 45
+                            break;
+                        case 45:
+                            return 48
+                            break;
+                        case 46:
+                            return 46
+                            break;
+                        case 47:
+                            return 41
+                            break;
+                        case 48:
+                            return 43
+                            break;
+                        case 49:
+                            return 42
+                            break;
+                        case 50:
+                            return 39
+                            break;
+                        case 51:
+                            return 37
+                            break;
+                        case 52:
+                            return 32
+                            break;
+                        case 53:
+                            return 86
+                            break;
+                        case 54:
+                            return 5
+                            break;
+                        case 55:
+                            return 20
+                            break;
+                        case 56:
+                            return 'INVALID'
+                            break;
+                    }
+                },
+                rules: [/^(?:\s+)/, /^(?:[0-9]+\.[0-9]*|[0-9]*\.[0-9]+\b)/, /^(?:[0-9]+)/, /^(?:"(\\["]|[^"])*")/, /^(?:'(\\[']|[^'])*')/, /^(?:\/\/.*)/, /^(?:\/\*(.|\n|\r)*?\*\/)/, /^(?:if\b)/, /^(?:else\b)/, /^(?:while\b)/, /^(?:do\b)/, /^(?:for\b)/, /^(?:function\b)/, /^(?:map\b)/, /^(?:use\b)/, /^(?:return\b)/, /^(?:delete\b)/, /^(?:true\b)/, /^(?:false\b)/, /^(?:null\b)/, /^(?:Infinity\b)/, /^(?:->)/, /^(?:<<)/, /^(?:>>)/, /^(?:\{)/, /^(?:\})/, /^(?:;)/, /^(?:#)/, /^(?:\?)/, /^(?::)/, /^(?:NaN\b)/, /^(?:\.)/, /^(?:\[)/, /^(?:\])/, /^(?:\()/, /^(?:\))/, /^(?:!)/, /^(?:\^)/, /^(?:\*)/, /^(?:\/)/, /^(?:%)/, /^(?:\+)/, /^(?:-)/, /^(?:<=)/, /^(?:<)/, /^(?:>=)/, /^(?:>)/, /^(?:==)/, /^(?:~=)/, /^(?:!=)/, /^(?:&&)/, /^(?:\|\|)/, /^(?:=)/, /^(?:,)/, /^(?:$)/, /^(?:[A-Za-z_\$][A-Za-z0-9_]*)/, /^(?:.)/],
+                conditions: {
+                    "INITIAL": {
+                        "rules": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56],
+                        "inclusive": true
+                    }
+                }
+            });
+            return lexer;
+        })();
+        parser.lexer = lexer;
 
+        function Parser() {
+            this.yy = {};
+        }
 
-if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
-exports.parser = parser;
-exports.Parser = parser.Parser;
-exports.parse = function () { return parser.parse.apply(parser, arguments); };
-exports.main = function commonjsMain (args) {
-    if (!args[1]) {
-        console.log('Usage: '+args[0]+' FILE');
-        process.exit(1);
+        Parser.prototype = parser;
+        parser.Parser = Parser;
+        return new Parser;
+    })();
+
+    if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
+        exports.parser = parser;
+        exports.Parser = parser.Parser;
+        exports.parse = function () { return parser.parse.apply(parser, arguments); };
+        exports.main = function commonjsMain(args) {
+            if (!args[1]) {
+                console.log('Usage: ' + args[0] + ' FILE');
+                process.exit(1);
+            }
+            var source = require('fs').readFileSync(require('path').normalize(args[1]), "utf8");
+            return exports.parser.parse(source);
+        };
+        if (typeof module !== 'undefined' && require.main === module) {
+            exports.main(process.argv.slice(1));
+        }
     }
-    var source = require('fs').readFileSync(require('path').normalize(args[1]), "utf8");
-    return exports.parser.parse(source);
-};
-if (typeof module !== 'undefined' && require.main === module) {
-  exports.main(process.argv.slice(1));
-}
-}
     // Work around an issue with browsers that don't support Object.getPrototypeOf()
     parser.yy.parseError = parser.parseError;
 
