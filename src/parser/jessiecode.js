@@ -1819,6 +1819,19 @@ define([
         },
 
         /**
+         * This is used as the global area() function.
+         * @param {JXG.Circle|JXG.Polygon} obj
+         * @returns {Number}
+         */
+        area: function (obj) {
+            if (!Type.exists(obj) || !Type.exists(obj.Area)) {
+                this._error('Error: Can\'t calculate area.');
+            }
+
+            return obj.Area();
+        },
+
+        /**
          * This is used as the global dist() function.
          * @param {JXG.Point} p1
          * @param {JXG.Point} p2
@@ -1830,19 +1843,6 @@ define([
             }
 
             return p1.Dist(p2);
-        },
-
-        /**
-         * This is used as the global area() function.
-         * @param {JXG.Circle|JXG.Polygon} obj
-         * @returns {Number}
-         */
-        area: function (obj) {
-            if (!Type.exists(obj) || !Type.exists(obj.Area)) {
-                this._error('Error: Can\'t calculate area.');
-            }
-
-            return obj.Area();
         },
 
         /**
@@ -2205,8 +2205,9 @@ define([
                     cosh: Mat.cosh,
                     cot: Mat.cot,
                     deg: Geometry.trueAngle,
-                    dist: that.dist,
+                    A: that.area,
                     area: that.area,
+                    dist: that.dist,
                     erf: Mat.erf,
                     erfc: Mat.erfc,
                     erfi: Mat.erfi,
@@ -2265,8 +2266,9 @@ define([
             builtIn.erf.src = 'JXG.Math.erf';
             builtIn.erfc.src = 'JXG.Math.erfc';
             builtIn.erfi.src = 'JXG.Math.erfi';
-            builtIn.dist.src = '$jc$.dist';
+            builtIn.A.src = '$jc$.area';
             builtIn.area.src = '$jc$.area';
+            builtIn.dist.src = '$jc$.dist';
             builtIn.factorial.src = 'JXG.Math.factorial';
             builtIn.gcd.src = 'JXG.Math.gcd';
             builtIn.lb.src = 'JXG.Math.log2';
