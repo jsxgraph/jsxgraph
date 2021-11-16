@@ -1136,7 +1136,7 @@ Copyright 2008-2021
                     }
                     set_str += '>>; ';
 
-                    console.log(set_str);
+                    // console.log(set_str);
 
                     // set_str += step.dest_id + '.setText(' + step.args.str + '); ';
                     reset_str = 'remove(' + step.dest_id + '); ';
