@@ -671,7 +671,6 @@ define([
                 node.setAttributeNS(null, 'stroke-linecap', 'round');
                 node.setAttributeNS(null, 'stroke-linejoin', 'round');
                 node.setAttributeNS(null, 'fill-rule', 'evenodd');
-                node.setAttributeNS(null, 'pointer-events', 'visibleStroke');
             }
             return node;
         },
@@ -1288,6 +1287,11 @@ define([
                     if (c === 'none') {  // This is done only for non-images
                         // because images have no fill color.
                         oo = 0;
+                        // This is necessary if there is a foreignObject below.
+                        node.setAttributeNS(null, 'pointer-events', 'visibleStroke');
+                    } else {
+                        // This is the default
+                        node.setAttributeNS(null, 'pointer-events', 'visiblePainted');
                     }
                     this._setAttribute(function () {
                         node.setAttributeNS(null, 'fill-opacity', oo);
