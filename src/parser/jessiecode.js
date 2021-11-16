@@ -1785,17 +1785,18 @@ define([
         /**
          * This is used as the global getName() function.
          * @param {JXG.GeometryElement} obj
+         * @param {Boolean} useId
          * @returns {String}
          */
-        getName: function (obj) {
-            var name;
+        getName: function (obj,useId) {
+            var name = '';
 
             if (Type.exists(obj) && Type.exists(obj.getName)) {
                 name = obj.getName();
-                if (!Type.exists(name) || name === '') {
+                if ((!Type.exists(name) || name === '') && !!useId) {
                     name = obj.id;
                 }
-            } else {
+            } else if (!!useId) {
                 name = obj.id;
             }
 
