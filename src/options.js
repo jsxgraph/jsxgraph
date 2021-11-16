@@ -2002,9 +2002,13 @@ define([
              */
             orthoSensitivity: 1.0,
 
-            fillColor: '#ff7f00',
-            highlightFillColor: '#ff7f00',
-            strokeColor: '#ff7f00',
+            fillColor: Color.palette.orange,
+            highlightFillColor: Color.palette.orange,
+            strokeColor: Color.palette.orange,
+            // fillColor: '#ff7f00',
+            // highlightFillColor: '#ff7f00',
+            // strokeColor: '#ff7f00',
+
             fillOpacity: 0.3,
             highlightFillOpacity: 0.3,
 
@@ -2503,8 +2507,8 @@ define([
 
                 fillColor: Color.palette.red,
                 strokeColor: Color.palette.red,
-                highlightFillColor:'#eeeeee',
-                highlightStrokeColor: Color.palette.red,
+                highlightFillColor: '#c3d9ff',
+                highlightStrokeColor: '#c3d9ff',
     
                 name: ''
             },
@@ -2557,8 +2561,8 @@ define([
                 withLabel: false,
                 fillColor: Color.palette.red,
                 strokeColor: Color.palette.red,
-                highlightFillColor:'#eeeeee',
-                highlightStrokeColor: Color.palette.red,
+                highlightFillColor: '#c3d9ff',
+                highlightStrokeColor: '#c3d9ff',
                 name: ''
             }
             /**#@-*/
@@ -3055,8 +3059,8 @@ define([
                 withLabel: false,
                 fillColor: Color.palette.red,
                 strokeColor: Color.palette.red,
-                highlightFillColor:'#eeeeee',
-                highlightStrokeColor: Color.palette.red,
+                highlightFillColor: '#c3d9ff',
+                highlightStrokeColor: '#c3d9ff',
                 name: ''
             }
             /**#@-*/

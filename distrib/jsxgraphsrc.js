@@ -37965,7 +37965,6 @@ define('base/coordselement',[
     and <http://opensource.org/licenses/MIT/>.
  */
 
-
 /*global JXG: true, define: true, window: true*/
 /*jslint nomen: true, plusplus: true*/
 
@@ -38071,7 +38070,7 @@ define('base/text',[
          * at the left side or at the right side of the text.
          * Sensitivity is set in this.board.options.precision.hasPoint.
          * If dragarea is set to 'all' (default), tests if the the screen
-        * coordinates (x,y) are in within the text boundary.
+         * coordinates (x,y) are in within the text boundary.
          * @param {Number} x
          * @param {Number} y
          * @returns {Boolean}
@@ -38140,7 +38139,7 @@ define('base/text',[
                 this.updateText = function () {
                     resolvedText = text().toString();
                     if (ev_p && !ev_um && !ev_uk) {
-                        this.plaintext = this.replaceSub(this.replaceSup(this.convertGeonext2CSS(resolvedText)));
+                        this.plaintext = this.replaceSub(this.replaceSup(this.convertGeonextAndSketchometry2CSS(resolvedText)));
                     } else {
                         this.plaintext = resolvedText;
                     }
@@ -38289,7 +38288,8 @@ define('base/text',[
                             that.size = [tmp.width, tmp.height];
                             that.needsUpdate = true;
                             that.updateRenderer();
-                        } catch (e) { }
+                        } catch (e) {
+                        }
                     }, 0);
                 } else if (this.board.renderer.type === 'canvas') {
                     this.size = this.crudeSizeEstimate();
@@ -38586,7 +38586,7 @@ define('base/text',[
             }
 
             plaintext += ' + "' + this.replaceSub(this.replaceSup(contentStr)) + '"';
-            plaintext = this.convertGeonext2CSS(plaintext);
+            plaintext = this.convertGeonextAndSketchometry2CSS(plaintext);
 
             // This should replace &amp;pi; by &pi;
             plaintext = plaintext.replace(/&amp;/g, '&');
@@ -38597,22 +38597,73 @@ define('base/text',[
 
         /**
          * Converts the GEONExT tags <overline> and <arrow> to
-         * HTML span tags with proper CSS formating.
+         * HTML span tags with proper CSS formatting.
          * @private
-         * @see JXG.Text.generateTerm @see JXG.Text._setText
+         * @see JXG.Text.generateTerm
+         * @see JXG.Text._setText
          */
         convertGeonext2CSS: function (s) {
             if (Type.isString(s)) {
-                s = s.replace(/<overline>/g, '<span style=text-decoration:overline>');
-                s = s.replace(/&lt;overline&gt;/g, '<span style=text-decoration:overline>');
-                s = s.replace(/<\/overline>/g, '</span>');
-                s = s.replace(/&lt;\/overline&gt;/g, '</span>');
-                s = s.replace(/<arrow>/g, '<span style=text-decoration:overline>');
-                s = s.replace(/&lt;arrow&gt;/g, '<span style=text-decoration:overline>');
-                s = s.replace(/<\/arrow>/g, '</span>');
-                s = s.replace(/&lt;\/arrow&gt;/g, '</span>');
+                s = s.replace(
+                    /(<|&lt;)overline(>|&gt;)/g,
+                    '<span style=text-decoration:overline;>'
+                );
+                s = s.replace(
+                    /(<|&lt;)\/overline(>|&gt;)/g,
+                    '</span>'
+                );
+                s = s.replace(
+                    /(<|&lt;)arrow(>|&gt;)/g,
+                    '<span style=text-decoration:overline;>'
+                );
+                s = s.replace(
+                    /(<|&lt;)\/arrow(>|&gt;)/g,
+                    '</span>'
+                );
             }
 
+            return s;
+        },
+
+        /**
+         * Converts the sketchometry tag <sketchofont> to
+         * HTML span tags with proper CSS formatting.
+         * @private
+         * @see JXG.Text.generateTerm
+         * @see JXG.Text._setText
+         */
+        convertSketchometry2CSS: function (s) {
+            if (Type.isString(s)) {
+                s = s.replace(
+                    /(<|&lt;)sketchofont(>|&gt;)/g,
+                    '<span style=font-family:sketchometry-light;font-weight:500;>'
+                );
+                s = s.replace(
+                    /(<|&lt;)\/sketchofont(>|&gt;)/g,
+                    '</span>'
+                );
+                s = s.replace(
+                    /(<|&lt;)sketchometry-light(>|&gt;)/g,
+                    '<span style=font-family:sketchometry-light;font-weight:500;>'
+                );
+                s = s.replace(
+                    /(<|&lt;)\/sketchometry-light(>|&gt;)/g,
+                    '</span>'
+                );
+            }
+
+            return s;
+        },
+
+        /**
+         * Alias for convertGeonext2CSS and convertSketchometry2CSS
+         * @private
+         * @see JXG.Text.convertGeonext2CSS
+         * @see JXG.Text.convertSketchometry2CSS
+         */
+        convertGeonextAndSketchometry2CSS: function (s){
+            s = this.convertGeonext2CSS(s);
+            s = this.convertSketchometry2CSS(s);
             return s;
         },
 
@@ -78949,7 +79000,7 @@ define('element/button',[
      *
      * @param {String} content HTML content of the foreignObject. May also be &lt;video&gt; or &lt;iframe&gt;
      * @param {Array} position Position of the foreignObject given by [x, y] in user coordinates. Same as for images.
-     * @param {Array} [size] Size of the foreignObject in user coordinates. If not given, size is specified by the HTML attributes
+     * @param {Array} [size] (Optional) argument size of the foreignObject in user coordinates. If not given, size is specified by the HTML attributes
      * or CSS properties of the content.
      *
      * @see Image
@@ -78957,12 +79008,12 @@ define('element/button',[
      * @example
      * var p = board.create('point', [1, 7], {size: 16});
      * var fo = board.create('foreignobject', [
-     *     '<video width="300" height="200" src="https://eucbeniki.sio.si/vega2/278/Video_metanje_oge_.mp4" type="html5video" controls>',
+     *     '&lt;video width="300" height="200" src="https://eucbeniki.sio.si/vega2/278/Video_metanje_oge_.mp4" type="html5video" controls&gt;',
      *     [0, -3], [9, 6]],
      *     {layer: 8, fixed: true}
      *  );
-     * 
-     * </pre><div id="JXG0c122f2c-3671-4a28-80a9-f4c523eeda89" class="jxgbox" style="width: 300px; height: 300px;"></div>
+     *
+     * </pre><div id="JXG0c122f2c-3671-4a28-80a9-f4c523eeda89" class="jxgbox" style="width: 500px; height: 500px;"></div>
      * <script type="text/javascript">
      *     (function() {
      *         var board = JXG.JSXGraph.initBoard('JXG0c122f2c-3671-4a28-80a9-f4c523eeda89',
@@ -78980,13 +79031,13 @@ define('element/button',[
      *
      * @example
      * var p = board.create('point', [1, 7], {size: 16});
-     * var fo = board.create('foreignobject', [
-     *     '<div style="background-color:blue; color: yellow; padding:20px; width:200px; height:50px; ">Hello</div>',
+     * var fo = board.create('fo', [
+     *     '&lt;div style="background-color:blue; color: yellow; padding:20px; width:200px; height:50px; "&gt;Hello&lt;/div&gt;',
      *     [-7, -6]],
      *     {layer: 1, fixed: false}
      *  );
      *
-     * </pre><div id="JXG1759c868-1a4a-4767-802c-91f84902e3ec" class="jxgbox" style="width: 300px; height: 300px;"></div>
+     * </pre><div id="JXG1759c868-1a4a-4767-802c-91f84902e3ec" class="jxgbox" style="width: 500px; height: 500px;"></div>
      * <script type="text/javascript">
      *     (function() {
      *         var board = JXG.JSXGraph.initBoard('JXG1759c868-1a4a-4767-802c-91f84902e3ec',
@@ -79010,7 +79061,7 @@ define('element/button',[
      * points.push( board.create('point', [2, 3.5],  {fixed:false,color: 'yellow', size: 6,name:'6 pm'}) );
      *
      * var fo = board.create('fo', [
-     *     '<video width="100%" height="100%" src="https://benedu.net/moodle/aaimg/ajx_img/astro/tr/1vd.mp4" type="html5video" controls>',
+     *     '&lt;video width="100%" height="100%" src="https://benedu.net/moodle/aaimg/ajx_img/astro/tr/1vd.mp4" type="html5video" controls&gt;',
      *     [-6, -4], [12, 8]],
      *     {layer: 0, fixed: true}
      *  );
@@ -79018,7 +79069,7 @@ define('element/button',[
      * var f = JXG.Math.Numerics.lagrangePolynomial(points);
      * var graph = board.create('functiongraph', [f, -10, 10], {fixed:true,strokeWidth:3, layer: 8});
      *
-     * </pre><div id="JXGc3fc5520-13aa-4f66-abaa-42e9dc3fbf3f" class="jxgbox" style="width: 300px; height: 300px;"></div>
+     * </pre><div id="JXGc3fc5520-13aa-4f66-abaa-42e9dc3fbf3f" class="jxgbox" style="width: 500px; height: 500px;"></div>
      * <script type="text/javascript">
      *     (function() {
      *         var board = JXG.JSXGraph.initBoard('JXGc3fc5520-13aa-4f66-abaa-42e9dc3fbf3f',
