@@ -27284,6 +27284,12 @@ define('options',[
                 visible: false,
                 withLabel: false,
                 fixed: false,
+
+                fillColor: Color.palette.red,
+                strokeColor: Color.palette.red,
+                highlightFillColor:'#eeeeee',
+                highlightStrokeColor: Color.palette.red,
+    
                 name: ''
             },
 
@@ -27333,6 +27339,10 @@ define('options',[
                 visible: false,
                 fixed: false,
                 withLabel: false,
+                fillColor: Color.palette.red,
+                strokeColor: Color.palette.red,
+                highlightFillColor:'#eeeeee',
+                highlightStrokeColor: Color.palette.red,
                 name: ''
             }
             /**#@-*/
@@ -27827,6 +27837,10 @@ define('options',[
                 visible: false,
                 fixed: false,
                 withLabel: false,
+                fillColor: Color.palette.red,
+                strokeColor: Color.palette.red,
+                highlightFillColor:'#eeeeee',
+                highlightStrokeColor: Color.palette.red,
                 name: ''
             }
             /**#@-*/
@@ -28281,7 +28295,7 @@ define('options',[
             fillColor: 'none',               // Important for VML on IE
             highlightFillColor: 'none',  // Important for VML on IE
             strokeColor: Color.palette.blue,
-            highlightStrokeColor: '#888888',
+            highlightStrokeColor: '#c3d9ff',
             withTicks: false,
 
             /**
@@ -28713,8 +28727,8 @@ define('options',[
 
             fillColor: Color.palette.red,
             strokeColor: Color.palette.red,
-            highlightFillColor: Color.palette.purple,
-            highlightStrokeColor: Color.palette.purple,
+            highlightFillColor:'#c3d9ff',
+            highlightStrokeColor: '#c3d9ff',
             // strokeOpacity: 1.0,
             // fillOpacity: 1.0,
             // highlightFillOpacity: 0.5,
@@ -29259,6 +29273,10 @@ define('options',[
                 visible: false,
                 withLabel: false,
                 fixed: false,
+                fillColor: Color.palette.red,
+                strokeColor: Color.palette.red,
+                highlightFillColor:'#eeeeee',
+                highlightStrokeColor: Color.palette.red,
                 name: ''
             }
 
@@ -50122,6 +50140,11 @@ define('renderer/svg',[
                     if (c === 'none') {  // This is done only for non-images
                         // because images have no fill color.
                         oo = 0;
+                        // This is necessary if there is a foreignObject below.
+                        node.setAttributeNS(null, 'pointer-events', 'visibleStroke');
+                    } else {
+                        // This is the default
+                        node.setAttributeNS(null, 'pointer-events', 'visiblePainted');
                     }
                     this._setAttribute(function () {
                         node.setAttributeNS(null, 'fill-opacity', oo);
@@ -69590,7 +69613,7 @@ define('element/composition',[
      * within the interval <tt>i</tt>.
      * @example
      * var c1 = board.create('functiongraph', [function (t) { return t*t*t; }]);
-     * var i1 = board.create('integral', [[-1.0, 4.0], c1]);
+     * var i1 = board.create('integral', [[-2.0, 2.0], c1]);
      * </pre><div class="jxgbox" id="JXGd45d7188-6624-4d6e-bebb-1efa2a305c8a" style="width: 400px; height: 400px;"></div>
      * <script type="text/javascript">
      *   var intex1_board = JXG.JSXGraph.initBoard('JXGd45d7188-6624-4d6e-bebb-1efa2a305c8a', {boundingbox: [-5, 5, 5, -5], axis: true, showcopyright: false, shownavigation: false});
@@ -78915,6 +78938,7 @@ define('element/button',[
      * @class This element is used to provide a constructor for arbitrary content in
      * an SVG foreignObject container.
      * <p>
+     * Instead of board.create('foreignobject') the shortcut board.create('fo') may be used.
      *
      * @pseudo
      * @description
@@ -78923,17 +78947,100 @@ define('element/button',[
      * @constructor
      * @type JXG.ForeignObject
      *
-     * @param {number,function_number,function_String_String} x,y,label Parent elements for ??? elements.
-     *                     <p>
-     *                     x and y are the coordinates of the lower left corner of the text box.
-     *                      The position of the text is fixed,
-     *                     x and y are numbers. The position is variable if x or y are functions.
-     *                     <p>
-     *                     The label of the input element may be given as string.
-     *                     <p>
-     *                     The value of the checkbox can be controlled with the attribute <tt>checked</tt>
-     *                     <p>The HTML node can be accessed with <tt>element.rendNodeCheckbox</tt>
+     * @param {String} content HTML content of the foreignObject. May also be &lt;video&gt; or &lt;iframe&gt;
+     * @param {Array} position Position of the foreignObject given by [x, y] in user coordinates. Same as for images.
+     * @param {Array} [size] Size of the foreignObject in user coordinates. If not given, size is specified by the HTML attributes
+     * or CSS properties of the content.
      *
+     * @see Image
+     *
+     * @example
+     * var p = board.create('point', [1, 7], {size: 16});
+     * var fo = board.create('foreignobject', [
+     *     '<video width="300" height="200" src="https://eucbeniki.sio.si/vega2/278/Video_metanje_oge_.mp4" type="html5video" controls>',
+     *     [0, -3], [9, 6]],
+     *     {layer: 8, fixed: true}
+     *  );
+     * 
+     * </pre><div id="JXG0c122f2c-3671-4a28-80a9-f4c523eeda89" class="jxgbox" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     *     (function() {
+     *         var board = JXG.JSXGraph.initBoard('JXG0c122f2c-3671-4a28-80a9-f4c523eeda89',
+     *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+     *     var p = board.create('point', [1, 7], {size: 16});
+     *     var fo = board.create('foreignobject', [
+     *         '<video width="300" height="200" src="https://eucbeniki.sio.si/vega2/278/Video_metanje_oge_.mp4" type="html5video" controls>',
+     *         [0, -3], [9, 6]],
+     *         {layer: 8, fixed: true}
+     *      );
+     *
+     *     })();
+     *
+     * </script><pre>
+     *
+     * @example
+     * var p = board.create('point', [1, 7], {size: 16});
+     * var fo = board.create('foreignobject', [
+     *     '<div style="background-color:blue; color: yellow; padding:20px; width:200px; height:50px; ">Hello</div>',
+     *     [-7, -6]],
+     *     {layer: 1, fixed: false}
+     *  );
+     *
+     * </pre><div id="JXG1759c868-1a4a-4767-802c-91f84902e3ec" class="jxgbox" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     *     (function() {
+     *         var board = JXG.JSXGraph.initBoard('JXG1759c868-1a4a-4767-802c-91f84902e3ec',
+     *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+     *     var p = board.create('point', [1, 7], {size: 16});
+     *     var fo = board.create('foreignobject', [
+     *         '<div style="background-color:blue; color: yellow; padding:20px; width:200px; height:50px; ">Hello</div>',
+     *         [-7, -6]],
+     *         {layer: 1, fixed: false}
+     *      );
+     *
+     *     })();
+     *
+     * </script><pre>
+     *
+     * @example
+     * board.renderer.container.style.backgroundColor = 'lightblue';
+     * var points = [];
+     * points.push( board.create('point', [-2, 3.5], {fixed:false,color: 'yellow', size: 6,name:'6 am'}) );
+     * points.push( board.create('point', [0, 3.5],  {fixed:false,color: 'yellow', size: 6,name:'12 pm'}) );
+     * points.push( board.create('point', [2, 3.5],  {fixed:false,color: 'yellow', size: 6,name:'6 pm'}) );
+     *
+     * var fo = board.create('fo', [
+     *     '<video width="100%" height="100%" src="https://benedu.net/moodle/aaimg/ajx_img/astro/tr/1vd.mp4" type="html5video" controls>',
+     *     [-6, -4], [12, 8]],
+     *     {layer: 0, fixed: true}
+     *  );
+     *
+     * var f = JXG.Math.Numerics.lagrangePolynomial(points);
+     * var graph = board.create('functiongraph', [f, -10, 10], {fixed:true,strokeWidth:3, layer: 8});
+     *
+     * </pre><div id="JXGc3fc5520-13aa-4f66-abaa-42e9dc3fbf3f" class="jxgbox" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     *     (function() {
+     *         var board = JXG.JSXGraph.initBoard('JXGc3fc5520-13aa-4f66-abaa-42e9dc3fbf3f',
+     *             {boundingbox: [-6,4,6,-4], axis: true, showcopyright: false, shownavigation: false});
+     *     board.renderer.container.style.backgroundColor = 'lightblue';
+     *     var points = [];
+     *     points.push( board.create('point', [-2, 3.5], {fixed:false,color: 'yellow', size: 6,name:'6 am'}) );
+     *     points.push( board.create('point', [0, 3.5],  {fixed:false,color: 'yellow', size: 6,name:'12 pm'}) );
+     *     points.push( board.create('point', [2, 3.5],  {fixed:false,color: 'yellow', size: 6,name:'6 pm'}) );
+     *
+     *     var fo = board.create('fo', [
+     *         '<video width="100%" height="100%" src="https://benedu.net/moodle/aaimg/ajx_img/astro/tr/1vd.mp4" type="html5video" controls>',
+     *         [-6, -4], [12, 8]],
+     *         {layer: 0, fixed: true}
+     *      );
+     *
+     *     var f = JXG.Math.Numerics.lagrangePolynomial(points);
+     *     var graph = board.create('functiongraph', [f, -10, 10], {fixed:true,strokeWidth:3, layer: 8});
+     *
+     *     })();
+     *
+     * </script><pre>
      *
      */
     JXG.createForeignObject = function (board, parents, attributes) {
@@ -78951,13 +79058,14 @@ define('element/button',[
         if (!fo) {
             throw new Error("JSXGraph: Can't create foreignObject with parent types '" +
                     (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
-                    "\nPossible parent types: [x,y], [z,x,y], [element,transformation]");
+                    "\nPossible parent types: [string, [x, y], [w, h]], [string, [x, y]], [element,transformation]");
         }
 
         return fo;
     };
 
     JXG.registerElement('foreignobject', JXG.createForeignObject);
+    JXG.registerElement('fo', JXG.createForeignObject);
 
     return {
         ForeignObject: JXG.ForeignObject,
