@@ -1846,6 +1846,19 @@ define([
         },
 
         /**
+         * This is used as the global radius() function.
+         * @param {JXG.Circle|Sector} obj
+         * @returns {Number}
+         */
+        radius: function (obj) {
+            if (!Type.exists(obj) || !Type.exists(obj.Radius)) {
+                this._error('Error: Can\'t calculate radius.');
+            }
+
+            return obj.Radius();
+        },
+
+        /**
          * + operator implementation
          * @param {Number|Array|JXG.Point} a
          * @param {Number|Array|JXG.Point} b
@@ -2208,6 +2221,8 @@ define([
                     A: that.area,
                     area: that.area,
                     dist: that.dist,
+                    R: that.radius,
+                    radius: that.radius,
                     erf: Mat.erf,
                     erfc: Mat.erfc,
                     erfi: Mat.erfi,
@@ -2269,6 +2284,8 @@ define([
             builtIn.A.src = '$jc$.area';
             builtIn.area.src = '$jc$.area';
             builtIn.dist.src = '$jc$.dist';
+            builtIn.R.src = '$jc$.radius';
+            builtIn.radius.src = '$jc$.radius';
             builtIn.factorial.src = 'JXG.Math.factorial';
             builtIn.gcd.src = 'JXG.Math.gcd';
             builtIn.lb.src = 'JXG.Math.log2';
