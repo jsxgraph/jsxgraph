@@ -843,7 +843,7 @@ define('base/constants',['jxg'], function (JXG) {
     var major = 1,
         minor = 4,
         patch = 0,
-        add = 'dev', //'dev'
+        add = '', //'dev'
         version = major + '.' + minor + '.' + patch + (add ? '-' + add : ''),
         constants;
 
@@ -24741,15 +24741,15 @@ define('utils/color',['jxg', 'utils/type', 'math/math'],
     /**
      * Use the color scheme of JSXGraph up to version 1.3.2.
      * This method has to be called before JXG.JSXGraph.initBoard();
-     * 
+     *
      * @see JXG.palette
      * @see JXG.paletteWong
-     * 
+     *
      * @example
-     * 
+     *
      * JXG.setClassicColors();
      * var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-5, 5, 5,-5]});
-     * 
+     *
      */
     JXG.setClassicColors = function() {
         JXG.Options.elements.strokeColor = 'blue';
@@ -24800,9 +24800,9 @@ define('utils/color',['jxg', 'utils/type', 'math/math'],
     };
 
     JXG.extend(JXG, /** @lends JXG */ {
-        /** 
-         * Bang Wong color palette, 
-         * optimized for various type 
+        /**
+         * Bang Wong color palette,
+         * optimized for various type
          * of color blindness.
          * It contains values for
          * <ul>
@@ -24815,9 +24815,9 @@ define('utils/color',['jxg', 'utils/type', 'math/math'],
          * <li> 'vermillion'
          * <li> 'reddishpurple'
          * </ul>
-         * 
+         *
          * As substitutes for standard colors, it contains the following aliases:
-         * 
+         *
          * <ul>
          * <li> black (= #000000)
          * <li> blue (= darkblue)
@@ -24826,11 +24826,11 @@ define('utils/color',['jxg', 'utils/type', 'math/math'],
          * <li> red (= vermillion)
          * <li> white (= #ffffff)
          * </ul>
-         * 
-         * See <a href="https://www.nature.com/articles/nmeth.1618">Bang Wong: "Points of view: Color blindness"</a>  
+         *
+         * See <a href="https://www.nature.com/articles/nmeth.1618">Bang Wong: "Points of view: Color blindness"</a>
          * and
          * <a href="https://davidmathlogic.com/colorblind/">https://davidmathlogic.com/colorblind/</a>.
-         * 
+         *
          * @name JXG.paletteWong
          * @type Object
          * @see JXG.palette
@@ -60729,8 +60729,9 @@ define('base/polygon',[
     JXG.extend(JXG.Polygon.prototype, /** @lends JXG.Polygon.prototype */ {
 
         /**
-         * W. Randolf Franklin's pnpoly method.
          * Decides if a point (x,y) is inside of the polygon.
+         * Implements W. Randolf Franklin's pnpoly method.
+         *
          * See <a href="https://wrf.ecse.rpi.edu/Research/Short_Notes/pnpoly.html">https://wrf.ecse.rpi.edu/Research/Short_Notes/pnpoly.html</a>.
          *
          * @param {Number} x_in x-coordinate (screen or user coordinates)
@@ -60744,14 +60745,15 @@ define('base/polygon',[
          * var pol = board.create('polygon', [[-1,2], [2,2], [-1,4]]);
          * var p = board.create('point', [4, 3]);
          * var txt = board.create('text', [-1, 0.5, function() {
-         * 		return 'Point A is inside of the polygon = ' + pol.pnpoly(p.X(), p.Y(), JXG.COORDS_BY_USER);
+         *   return 'Point A is inside of the polygon = ' +
+         *     pol.pnpoly(p.X(), p.Y(), JXG.COORDS_BY_USER);
          * }]);
          *
          * </pre><div id="JXG7f96aec7-4e3d-4ffc-a3f5-d3f967b6691c" class="jxgbox" style="width: 300px; height: 300px;"></div>
          * <script type="text/javascript">
          *     (function() {
          *         var board = JXG.JSXGraph.initBoard('JXG7f96aec7-4e3d-4ffc-a3f5-d3f967b6691c',
-         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *             {boundingbox: [-2, 5, 5,-2], axis: true, showcopyright: false, shownavigation: false});
          *     var pol = board.create('polygon', [[-1,2], [2,2], [-1,4]]);
          *     var p = board.create('point', [4, 3]);
          *     var txt = board.create('text', [-1, 0.5, function() {
@@ -61085,6 +61087,8 @@ define('base/polygon',[
         /**
          * This method removes the SVG or VML nodes of the lines and the filled area from the renderer, to remove
          * the object completely you should use {@link JXG.Board#removeObject}.
+         *
+         * @private
          */
         remove: function () {
             var i;
@@ -61099,6 +61103,7 @@ define('base/polygon',[
         /**
          * Finds the index to a given point reference.
          * @param {JXG.Point} p Reference to an element of type {@link JXG.Point}
+         * @returns {Number} Index of the point or -1.
          */
         findPoint: function (p) {
             var i;
