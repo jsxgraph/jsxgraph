@@ -1,3 +1,48 @@
+1.4.0
+====
+
+New features
+-----------
+
+- New element `boxplot`
+- New element `foreignobject`, shortcut `fo`
+- New point attribute `attractToGrid`
+- New method `Polygon.pnpoly()`
+- New method `JXG.Math.statistics.percentile`
+- New method `JXG.Math.Numerics.lagrangePolynomialTerm()`, also available as `JXG.Math.Numerics.lagrangePolynomial.geTerm()`
+- Curve / circle intersection
+- New color scheme, optimised for color blindness, see `JXG.palette`. Old color scheme can be restored by calling `JXG.setClassicColors()`.
+
+Improvements
+------------
+
+- Keyboard interaction
+- isOn method for elements with `hasInnerPoints` attribute
+- Much smoother two finger handling for pointer events
+- Intersection of curves having different Bezier degrees
+- API docs: many bug fixes and new examples
+- Jessiecode tag
+
+Bug fixes
+---------
+
+- `zoom100()` restores the original bounding box
+- `Button.setText()`
+- Regression on glider.position
+- ResizeContainer conflicted with zoom level
+- Regular polygon
+- `setAngle()`
+- JessieCode
+
+Ecosystem
+------------
+
+- Testing with Travis is enabled again
+- Revoke unit tests using Karma and Jasmine
+- Update Makefile and package.json, less dependencies from npmjs. `make core-min` is now included in `make core`.
+
+Many thanks go to Christian Lawson-Perfect for his contributions.
+
 1.3.2
 ====
 
