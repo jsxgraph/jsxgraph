@@ -22,6 +22,7 @@ Improvements
 - Intersection of curves having different Bezier degrees
 - API docs: many bug fixes and new examples
 - Jessiecode tag
+- Security: sanitize HTML in texts in case of JessieCode
 
 Bug fixes
 ---------
