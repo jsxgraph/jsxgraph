@@ -4087,11 +4087,26 @@ define([
              * @see Point#snapSizeY
              * @type Boolean
              * @default false
+             *
+             * @example
+             * board.create('point', [3, 3], { attractToGrid: true, attractorDistance: 10, attractorunit: 'screen' });
+             *
+             * </pre><div id="JXG397ab787-cd40-449c-a7e7-a3f7bab1d4f6" class="jxgbox" style="width: 300px; height: 300px;"></div>
+             * <script type="text/javascript">
+             *     (function() {
+             *         var board = JXG.JSXGraph.initBoard('JXG397ab787-cd40-449c-a7e7-a3f7bab1d4f6',
+             *             {boundingbox: [-1, 4, 7,-4], axis: true, showcopyright: false, shownavigation: false});
+             *     board.create('point', [3, 3], { attractToGrid: true, attractorDistance: 10, attractorunit: 'screen' });
+             *
+             *     })();
+             *
+             * </script><pre>
+             *
              */
             attractToGrid: false,
 
             /**
-             * Defines together with {@link Point#snapSizeY} the grid the point snaps on to. 
+             * Defines together with {@link Point#snapSizeY} the grid the point snaps on to.
              * It is given in user coordinates, not in pixels.
              * The point will only snap on integer multiples to snapSizeX in x and snapSizeY in y direction.
              * If this value is equal to or less than <tt>0</tt>, it will use the grid displayed by the major ticks
