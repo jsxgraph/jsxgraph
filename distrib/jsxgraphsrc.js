@@ -79241,6 +79241,10 @@ define('element/button',[
      *
      * </script><pre>
      *
+     * Video "24-hour time-lapse in Cascais, Portugal. Produced by Nuno Miguel Duarte" adapted from
+     * <a href="https://www.pbslearningmedia.org/resource/buac18-k2-sci-ess-sunposition/changing-position-of-the-sun-in-the-sky/">https://www.pbslearningmedia.org/resource/buac18-k2-sci-ess-sunposition/changing-position-of-the-sun-in-the-sky/</a>,
+     * ©2016 Nuno Miguel Duarte.
+     *
      */
     JXG.createForeignObject = function (board, parents, attributes) {
         var attr, fo,
