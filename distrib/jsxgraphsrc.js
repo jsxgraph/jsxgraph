@@ -79138,7 +79138,13 @@ define('element/button',[
      * an SVG foreignObject container.
      * <p>
      * Instead of board.create('foreignobject') the shortcut board.create('fo') may be used.
-     *
+     * 
+     * <p style="background-color:#dddddd; padding:10px"><b>NOTE:</b> In Safari up to version 15, a foreignObject does not obey the layer structure
+     * if it contains &lt;video&gt; or &lt;iframe&gt; tags, as well as elements which are 
+     * positioned with <tt>position:absolute|relative|fixed</tt>. In this  case, the foreignobject will be 
+     * "above" the JSXGraph construction.
+     * </p>
+     * 
      * @pseudo
      * @description
      * @name ForeignObject
