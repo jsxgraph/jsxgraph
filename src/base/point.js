@@ -402,9 +402,9 @@ define([
                 return Geometry.distance(this.coords.usrCoords, crds.usrCoords, 3) < tol;
             } else if (el.type === Const.OBJECT_TYPE_POLYGON) {
                 if (Type.evaluate(el.visProp.hasinnerpoints)) {
-                    // if (el.pnpoly(this.coords.usrCoords[1], this.coords.usrCoords[2], JXG.COORDS_BY_USER)) {
-                    return true;
-                    // }
+                    if (el.pnpoly(this.coords.usrCoords[1], this.coords.usrCoords[2], JXG.COORDS_BY_USER)) {
+                        return true;
+                    }
                 }
                 arr = Geometry.projectCoordsToPolygon(this.coords.usrCoords, el);
                 return Geometry.distance(this.coords.usrCoords, arr, 3) < tol;

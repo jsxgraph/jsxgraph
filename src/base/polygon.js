@@ -165,9 +165,10 @@ define([
     JXG.extend(JXG.Polygon.prototype, /** @lends JXG.Polygon.prototype */ {
 
         /**
-         * W. Randolf Franklin's pnpoly method.
-         * See {@link https://wrf.ecse.rpi.edu/Research/Short_Notes/pnpoly.html}.
          * Decides if a point (x,y) is inside of the polygon.
+         * Implements W. Randolf Franklin's pnpoly method.
+         *
+         * See <a href="https://wrf.ecse.rpi.edu/Research/Short_Notes/pnpoly.html">https://wrf.ecse.rpi.edu/Research/Short_Notes/pnpoly.html</a>.
          *
          * @param {Number} x_in x-coordinate (screen or user coordinates)
          * @param {Number} y_in y-coordinate (screen or user coordinates)
@@ -176,6 +177,29 @@ define([
          *   Default value is JXG.COORDS_BY_SCREEN
          *
          * @returns {Boolean} if (x,y) is inside of the polygon.
+         * @example
+         * var pol = board.create('polygon', [[-1,2], [2,2], [-1,4]]);
+         * var p = board.create('point', [4, 3]);
+         * var txt = board.create('text', [-1, 0.5, function() {
+         *   return 'Point A is inside of the polygon = ' +
+         *     pol.pnpoly(p.X(), p.Y(), JXG.COORDS_BY_USER);
+         * }]);
+         *
+         * </pre><div id="JXG7f96aec7-4e3d-4ffc-a3f5-d3f967b6691c" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG7f96aec7-4e3d-4ffc-a3f5-d3f967b6691c',
+         *             {boundingbox: [-2, 5, 5,-2], axis: true, showcopyright: false, shownavigation: false});
+         *     var pol = board.create('polygon', [[-1,2], [2,2], [-1,4]]);
+         *     var p = board.create('point', [4, 3]);
+         *     var txt = board.create('text', [-1, 0.5, function() {
+         *     		return 'Point A is inside of the polygon = ' + pol.pnpoly(p.X(), p.Y(), JXG.COORDS_BY_USER);
+         *     }]);
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
          */
         pnpoly: function(x_in, y_in, coord_type) {
             var i, j, len,
@@ -184,7 +208,7 @@ define([
                 isIn = false;
 
             if (coord_type === Const.COORDS_BY_USER) {
-                crds = new Coords(Const.COORDS_BY_USER, [x, y], this);
+                crds = new Coords(Const.COORDS_BY_USER, [x_in, y_in], this.board);
                 x = crds.scrCoords[1];
                 y = crds.scrCoords[2];
             } else {
@@ -499,6 +523,8 @@ define([
         /**
          * This method removes the SVG or VML nodes of the lines and the filled area from the renderer, to remove
          * the object completely you should use {@link JXG.Board#removeObject}.
+         *
+         * @private
          */
         remove: function () {
             var i;
@@ -513,6 +539,7 @@ define([
         /**
          * Finds the index to a given point reference.
          * @param {JXG.Point} p Reference to an element of type {@link JXG.Point}
+         * @returns {Number} Index of the point or -1.
          */
         findPoint: function (p) {
             var i;

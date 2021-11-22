@@ -877,15 +877,15 @@ define(['jxg', 'utils/type', 'math/math'],
     /**
      * Use the color scheme of JSXGraph up to version 1.3.2.
      * This method has to be called before JXG.JSXGraph.initBoard();
-     * 
+     *
      * @see JXG.palette
      * @see JXG.paletteWong
-     * 
+     *
      * @example
-     * 
+     *
      * JXG.setClassicColors();
      * var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-5, 5, 5,-5]});
-     * 
+     *
      */
     JXG.setClassicColors = function() {
         JXG.Options.elements.strokeColor = 'blue';
@@ -936,9 +936,9 @@ define(['jxg', 'utils/type', 'math/math'],
     };
 
     JXG.extend(JXG, /** @lends JXG */ {
-        /** 
-         * Bang Wong color palette, 
-         * optimized for various type 
+        /**
+         * Bang Wong color palette,
+         * optimized for various type
          * of color blindness.
          * It contains values for
          * <ul>
@@ -951,9 +951,9 @@ define(['jxg', 'utils/type', 'math/math'],
          * <li> 'vermillion'
          * <li> 'reddishpurple'
          * </ul>
-         * 
+         *
          * As substitutes for standard colors, it contains the following aliases:
-         * 
+         *
          * <ul>
          * <li> black (= #000000)
          * <li> blue (= darkblue)
@@ -962,11 +962,11 @@ define(['jxg', 'utils/type', 'math/math'],
          * <li> red (= vermillion)
          * <li> white (= #ffffff)
          * </ul>
-         * 
-         * See <a href="https://www.nature.com/articles/nmeth.1618">Bang Wong: "Points of view: Color blindness"</a>  
+         *
+         * See <a href="https://www.nature.com/articles/nmeth.1618">Bang Wong: "Points of view: Color blindness"</a>
          * and
          * <a href="https://davidmathlogic.com/colorblind/">https://davidmathlogic.com/colorblind/</a>.
-         * 
+         *
          * @name JXG.paletteWong
          * @type Object
          * @see JXG.palette

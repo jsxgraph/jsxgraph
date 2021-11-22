@@ -843,7 +843,7 @@ define('base/constants',['jxg'], function (JXG) {
     var major = 1,
         minor = 4,
         patch = 0,
-        add = 'dev', //'dev'
+        add = '', //'dev'
         version = major + '.' + minor + '.' + patch + (add ? '-' + add : ''),
         constants;
 
@@ -24738,11 +24738,71 @@ define('utils/color',['jxg', 'utils/type', 'math/math'],
         return lightColor;
     };
 
+    /**
+     * Use the color scheme of JSXGraph up to version 1.3.2.
+     * This method has to be called before JXG.JSXGraph.initBoard();
+     *
+     * @see JXG.palette
+     * @see JXG.paletteWong
+     *
+     * @example
+     *
+     * JXG.setClassicColors();
+     * var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-5, 5, 5,-5]});
+     *
+     */
+    JXG.setClassicColors = function() {
+        JXG.Options.elements.strokeColor = 'blue';
+        JXG.Options.elements.fillColor = 'red';
+        JXG.Options.hatch.strokeColor = 'blue';
+        JXG.Options.angle.fillColor = '#ff7f00';
+        JXG.Options.angle.highlightFillColor = '#ff7f00';
+        JXG.Options.angle.strokeColor = '#ff7f00';
+        JXG.Options.angle.label.strokeColor = 'blue';
+        JXG.Options.arc.strokeColor = 'blue';
+        JXG.Options.circle.center.fillColor = 'red';
+        JXG.Options.circle.center.strokeColor = 'blue';
+        JXG.Options.circumcircle.strokeColor = 'blue';
+        JXG.Options.circumcircle.center.fillColor = 'red';
+        JXG.Options.circumcircle.center.strokeColor = 'blue';
+        JXG.Options.circumcirclearc.strokeColor = 'blue';
+        JXG.Options.circumcirclesector.strokeColor = 'blue';
+        JXG.Options.circumcirclesector.fillColor = 'green';
+        JXG.Options.circumcirclesector.highlightFillColor = 'green';
+        JXG.Options.conic.strokeColor = 'blue';
+        JXG.Options.curve.strokeColor = 'blue';
+        JXG.Options.incircle.strokeColor = 'blue';
+        JXG.Options.incircle.center.fillColor = 'red';
+        JXG.Options.incircle.center.strokeColor = 'blue';
+        JXG.Options.inequality.fillColor = 'red';
+        JXG.Options.integral.fillColor = 'red';
+        JXG.Options.integral.curveLeft.color = 'red';
+        JXG.Options.integral.curveRight.color = 'red';
+        JXG.Options.line.strokeColor = 'blue';
+        JXG.Options.point.fillColor = 'red';
+        JXG.Options.point.strokeColor = 'red';
+        JXG.Options.polygon.fillColor = 'green';
+        JXG.Options.polygon.highlightFillColor = 'green';
+        JXG.Options.polygon.vertices.strokeColor = 'red';
+        JXG.Options.polygon.vertices.fillColor = 'red';
+        JXG.Options.regularpolygon.fillColor = 'green';
+        JXG.Options.regularpolygon.highlightFillColor = 'green';
+        JXG.Options.regularpolygon.vertices.strokeColor = 'red';
+        JXG.Options.regularpolygon.vertices.fillColor = 'red';
+        JXG.Options.riemannsum.fillColor = 'yellow';
+        JXG.Options.sector.fillColor = 'green';
+        JXG.Options.sector.highlightFillColor = 'green';
+        JXG.Options.semicircle.center.fillColor = 'red';
+        JXG.Options.semicircle.center.strokeColor = 'blue';
+        JXG.Options.slopetriangle.fillColor = 'red';
+        JXG.Options.slopetriangle.highlightFillColor = 'red';
+        JXG.Options.turtle.arrow.strokeColor = 'blue';
+    };
 
     JXG.extend(JXG, /** @lends JXG */ {
-        /** 
-         * Bang Wong color palette, 
-         * optimized for various type 
+        /**
+         * Bang Wong color palette,
+         * optimized for various type
          * of color blindness.
          * It contains values for
          * <ul>
@@ -24755,9 +24815,27 @@ define('utils/color',['jxg', 'utils/type', 'math/math'],
          * <li> 'vermillion'
          * <li> 'reddishpurple'
          * </ul>
-         * 
-         * See {@link https://www.nature.com/articles/nmeth.1618} and
-         * {@link https://davidmathlogic.com/colorblind/#%23000000-%23E69F00-%2356B4E9-%23009E73-%23F0E442-%230072B2-%23D55E00-%23CC79A7}
+         *
+         * As substitutes for standard colors, it contains the following aliases:
+         *
+         * <ul>
+         * <li> black (= #000000)
+         * <li> blue (= darkblue)
+         * <li> green (= bluishgreen)
+         * <li> purple (= reddishpurple)
+         * <li> red (= vermillion)
+         * <li> white (= #ffffff)
+         * </ul>
+         *
+         * See <a href="https://www.nature.com/articles/nmeth.1618">Bang Wong: "Points of view: Color blindness"</a>
+         * and
+         * <a href="https://davidmathlogic.com/colorblind/">https://davidmathlogic.com/colorblind/</a>.
+         *
+         * @name JXG.paletteWong
+         * @type Object
+         * @see JXG.palette
+         * @example
+         * var p = board.create('line', [[-1, 1], [2, -3]], {strokeColor: JXG.paletteWong.yellow});
          */
         paletteWong: {
             black: '#000000',
@@ -24772,11 +24850,35 @@ define('utils/color',['jxg', 'utils/type', 'math/math'],
             blue: '#0072B2',
             red: '#D55E00',   // vermillion
             green: '#009E73', // bluishgreen
-            purple: '#CC79A7' // reddishpurple
+            purple: '#CC79A7', // reddishpurple
+            white: '#ffffff'
         },
 
     });
 
+    /**
+     * Default color palette.
+     * Contains at least color values for
+     * <ul>
+     * <li> black
+     * <li> blue
+     * <li> green
+     * <li> purple
+     * <li> red
+     * <li> white
+     * <li> yellow
+     * </ul>
+     * 
+     * @name JXG.palette
+     * @type Object
+     * @default JXG.paletteWong
+     * @see JXG.paletteWong
+     * 
+     * @example
+     * 
+     * var p = board.create('line', [[-1, 1], [2, -3]], {strokeColor: JXG.palette.yellow});
+     * 
+     */
     JXG.palette = JXG.paletteWong;
 
     return JXG;
@@ -26786,9 +26888,13 @@ define('options',[
              */
             orthoSensitivity: 1.0,
 
-            fillColor: '#ff7f00',
-            highlightFillColor: '#ff7f00',
-            strokeColor: '#ff7f00',
+            fillColor: Color.palette.orange,
+            highlightFillColor: Color.palette.orange,
+            strokeColor: Color.palette.orange,
+            // fillColor: '#ff7f00',
+            // highlightFillColor: '#ff7f00',
+            // strokeColor: '#ff7f00',
+
             fillOpacity: 0.3,
             highlightFillOpacity: 0.3,
 
@@ -27287,8 +27393,8 @@ define('options',[
 
                 fillColor: Color.palette.red,
                 strokeColor: Color.palette.red,
-                highlightFillColor:'#eeeeee',
-                highlightStrokeColor: Color.palette.red,
+                highlightFillColor: '#c3d9ff',
+                highlightStrokeColor: '#c3d9ff',
     
                 name: ''
             },
@@ -27341,8 +27447,8 @@ define('options',[
                 withLabel: false,
                 fillColor: Color.palette.red,
                 strokeColor: Color.palette.red,
-                highlightFillColor:'#eeeeee',
-                highlightStrokeColor: Color.palette.red,
+                highlightFillColor: '#c3d9ff',
+                highlightStrokeColor: '#c3d9ff',
                 name: ''
             }
             /**#@-*/
@@ -27839,8 +27945,8 @@ define('options',[
                 withLabel: false,
                 fillColor: Color.palette.red,
                 strokeColor: Color.palette.red,
-                highlightFillColor:'#eeeeee',
-                highlightStrokeColor: Color.palette.red,
+                highlightFillColor: '#c3d9ff',
+                highlightStrokeColor: '#c3d9ff',
                 name: ''
             }
             /**#@-*/
@@ -28867,11 +28973,26 @@ define('options',[
              * @see Point#snapSizeY
              * @type Boolean
              * @default false
+             *
+             * @example
+             * board.create('point', [3, 3], { attractToGrid: true, attractorDistance: 10, attractorunit: 'screen' });
+             *
+             * </pre><div id="JXG397ab787-cd40-449c-a7e7-a3f7bab1d4f6" class="jxgbox" style="width: 300px; height: 300px;"></div>
+             * <script type="text/javascript">
+             *     (function() {
+             *         var board = JXG.JSXGraph.initBoard('JXG397ab787-cd40-449c-a7e7-a3f7bab1d4f6',
+             *             {boundingbox: [-1, 4, 7,-4], axis: true, showcopyright: false, shownavigation: false});
+             *     board.create('point', [3, 3], { attractToGrid: true, attractorDistance: 10, attractorunit: 'screen' });
+             *
+             *     })();
+             *
+             * </script><pre>
+             *
              */
             attractToGrid: false,
 
             /**
-             * Defines together with {@link Point#snapSizeY} the grid the point snaps on to. 
+             * Defines together with {@link Point#snapSizeY} the grid the point snaps on to.
              * It is given in user coordinates, not in pixels.
              * The point will only snap on integer multiples to snapSizeX in x and snapSizeY in y direction.
              * If this value is equal to or less than <tt>0</tt>, it will use the grid displayed by the major ticks
@@ -39251,7 +39372,7 @@ define('parser/jessiecode',[
 
         /**
          * The global scope.
-         * @type Object
+         * @type {Object}
          */
         this.scope = {
             id: 0,
@@ -39264,7 +39385,7 @@ define('parser/jessiecode',[
 
         /**
          * Keeps track of all possible scopes every required.
-         * @type Array
+         * @type {Array}
          */
         this.scopes = [];
         this.scopes.push(this.scope);
@@ -39321,7 +39442,7 @@ define('parser/jessiecode',[
 
         /**
          * Store $log messages in case there's no console.
-         * @type Array
+         * @type {Array}
          */
         this.$log = [];
 
@@ -55136,9 +55257,9 @@ define('base/point',[
                 return Geometry.distance(this.coords.usrCoords, crds.usrCoords, 3) < tol;
             } else if (el.type === Const.OBJECT_TYPE_POLYGON) {
                 if (Type.evaluate(el.visProp.hasinnerpoints)) {
-                    // if (el.pnpoly(this.coords.usrCoords[1], this.coords.usrCoords[2], JXG.COORDS_BY_USER)) {
-                    return true;
-                    // }
+                    if (el.pnpoly(this.coords.usrCoords[1], this.coords.usrCoords[2], JXG.COORDS_BY_USER)) {
+                        return true;
+                    }
                 }
                 arr = Geometry.projectCoordsToPolygon(this.coords.usrCoords, el);
                 return Geometry.distance(this.coords.usrCoords, arr, 3) < tol;
@@ -60608,9 +60729,10 @@ define('base/polygon',[
     JXG.extend(JXG.Polygon.prototype, /** @lends JXG.Polygon.prototype */ {
 
         /**
-         * W. Randolf Franklin's pnpoly method.
-         * See {@link https://wrf.ecse.rpi.edu/Research/Short_Notes/pnpoly.html}.
          * Decides if a point (x,y) is inside of the polygon.
+         * Implements W. Randolf Franklin's pnpoly method.
+         *
+         * See <a href="https://wrf.ecse.rpi.edu/Research/Short_Notes/pnpoly.html">https://wrf.ecse.rpi.edu/Research/Short_Notes/pnpoly.html</a>.
          *
          * @param {Number} x_in x-coordinate (screen or user coordinates)
          * @param {Number} y_in y-coordinate (screen or user coordinates)
@@ -60619,6 +60741,29 @@ define('base/polygon',[
          *   Default value is JXG.COORDS_BY_SCREEN
          *
          * @returns {Boolean} if (x,y) is inside of the polygon.
+         * @example
+         * var pol = board.create('polygon', [[-1,2], [2,2], [-1,4]]);
+         * var p = board.create('point', [4, 3]);
+         * var txt = board.create('text', [-1, 0.5, function() {
+         *   return 'Point A is inside of the polygon = ' +
+         *     pol.pnpoly(p.X(), p.Y(), JXG.COORDS_BY_USER);
+         * }]);
+         *
+         * </pre><div id="JXG7f96aec7-4e3d-4ffc-a3f5-d3f967b6691c" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG7f96aec7-4e3d-4ffc-a3f5-d3f967b6691c',
+         *             {boundingbox: [-2, 5, 5,-2], axis: true, showcopyright: false, shownavigation: false});
+         *     var pol = board.create('polygon', [[-1,2], [2,2], [-1,4]]);
+         *     var p = board.create('point', [4, 3]);
+         *     var txt = board.create('text', [-1, 0.5, function() {
+         *     		return 'Point A is inside of the polygon = ' + pol.pnpoly(p.X(), p.Y(), JXG.COORDS_BY_USER);
+         *     }]);
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
          */
         pnpoly: function(x_in, y_in, coord_type) {
             var i, j, len,
@@ -60627,7 +60772,7 @@ define('base/polygon',[
                 isIn = false;
 
             if (coord_type === Const.COORDS_BY_USER) {
-                crds = new Coords(Const.COORDS_BY_USER, [x, y], this);
+                crds = new Coords(Const.COORDS_BY_USER, [x_in, y_in], this.board);
                 x = crds.scrCoords[1];
                 y = crds.scrCoords[2];
             } else {
@@ -60942,6 +61087,8 @@ define('base/polygon',[
         /**
          * This method removes the SVG or VML nodes of the lines and the filled area from the renderer, to remove
          * the object completely you should use {@link JXG.Board#removeObject}.
+         *
+         * @private
          */
         remove: function () {
             var i;
@@ -60956,6 +61103,7 @@ define('base/polygon',[
         /**
          * Finds the index to a given point reference.
          * @param {JXG.Point} p Reference to an element of type {@link JXG.Point}
+         * @returns {Number} Index of the point or -1.
          */
         findPoint: function (p) {
             var i;
@@ -79092,6 +79240,10 @@ define('element/button',[
      *     })();
      *
      * </script><pre>
+     *
+     * Video "24-hour time-lapse in Cascais, Portugal. Produced by Nuno Miguel Duarte" adapted from
+     * <a href="https://www.pbslearningmedia.org/resource/buac18-k2-sci-ess-sunposition/changing-position-of-the-sun-in-the-sky/">https://www.pbslearningmedia.org/resource/buac18-k2-sci-ess-sunposition/changing-position-of-the-sun-in-the-sky/</a>,
+     * ©2016 Nuno Miguel Duarte.
      *
      */
     JXG.createForeignObject = function (board, parents, attributes) {

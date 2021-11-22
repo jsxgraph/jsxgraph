@@ -55,7 +55,7 @@ MOODLEGIT=https://github.com/jsxgraph/moodle-filter_jsxgraph.git
 MOODLEDIR=../moodle-filter_jsxgraph
 
 # rules
-all: core core-min readers docs
+all: core readers docs
 
 core:
 	$(MKDIR) $(MKDIRFLAGS) $(BUILDBIN)
@@ -68,13 +68,13 @@ core:
 	{ $(CAT) COPYRIGHT; $(CAT) $(BUILDBIN)/jsxgraphcore-min.js; } > $(BUILDBIN)/jsxgraphcore.min.js
 	$(CP) $(BUILDBIN)/jsxgraphcore.min.js $(OUTPUT)/jsxgraphcore.js
 
-core-min:
-	$(MKDIR) $(MKDIRFLAGS) $(BUILDBIN)
-	$(REQUIREJS) -o $(BUILD)/core.build.json optimize=uglify2 out=$(BUILDBIN)/jsxgraphcore-min.js;
-	{ $(CAT) COPYRIGHT; $(CAT) $(BUILDBIN)/jsxgraphcore-min.js; } > $(BUILDBIN)/jsxgraphcore.min.js
-	$(CP) $(BUILDBIN)/jsxgraphcore.min.js $(OUTPUT)/jsxgraphcore.js
+# core-min:
+# 	$(MKDIR) $(MKDIRFLAGS) $(BUILDBIN)
+# 	$(REQUIREJS) -o $(BUILD)/core.build.json optimize=uglify2 out=$(BUILDBIN)/jsxgraphcore-min.js;
+# 	{ $(CAT) COPYRIGHT; $(CAT) $(BUILDBIN)/jsxgraphcore-min.js; } > $(BUILDBIN)/jsxgraphcore.min.js
+# 	$(CP) $(BUILDBIN)/jsxgraphcore.min.js $(OUTPUT)/jsxgraphcore.js
 
-release: core-min docs
+release: core docs
 	$(MKDIR) $(MKDIRFLAGS) $(TMP)
 	$(MKDIR) $(MKDIRFLAGS) $(OUTPUT)
 	$(CP) $(BUILDBIN)/jsxgraphcore.min.js $(TMP)/jsxgraphcore.js
@@ -89,7 +89,7 @@ release: core-min docs
 
 	$(RM) $(RMFLAGS) tmp
 
-docs: #core core-min
+docs: core
 	# set up tmp dir
 	$(MKDIR) $(MKDIRFLAGS) $(TMP)
 	$(MKDIR) $(MKDIRFLAGS) $(OUTPUT)
@@ -117,7 +117,7 @@ docs: #core core-min
 	# Test
 	$(CD) $(OUTPUT) && $(UNZIP) -o docs.zip
 
-moodle: core core-min $(READERSOUT)
+moodle: core $(READERSOUT)
 	$(MKDIR) $(MKDIRFLAGS) $(TMP)
 	$(MKDIR) $(MKDIRFLAGS) $(TMP)/jsxgraph
 	if [ ! -d $(MOODLEDIR) ]; then \
