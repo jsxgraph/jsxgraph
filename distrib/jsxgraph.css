@@ -39,10 +39,10 @@
     border-width: 1px;
     border-color: #356aa0;
     border-radius: 10px;
-margin: 0px;
+    margin: 0;
     -webkit-border-radius: 10px;
     -ms-touch-action: none;
-    /* touch-action: none; */ /* Set with JavaScript */
+    /* "touch-action: none;" is set with JavaScript. */
 }
 
 .jxgbox svg text {
@@ -55,23 +55,20 @@ margin: 0px;
 
 .JXGtext {
     font-family: Courier, monospace;
-    /**
+    /*
      * The default font family is now set in
      * JXG.Options.text.cssdefaultstyle = 'font-family: Arial, Helvetica, Geneva, sans-serif;'
      */
 
-    /* font-family: Arial, Helvetica, Geneva, sans-serif; */
     /* "background-color: transparent;" may produce artefacts in IE. Solution: setting a color explicitly. */
-
     background-color: transparent;
-    /*background-color: rgba(255, 255, 255, 0.6);*/ /* From 1.2.4 */
     padding: 0;
     margin: 0;
 }
 
 .JXGinfobox {
     border-style: none;
-    border-width: 0px;
+    border-width: 0;
     border-color: black;
 }
 
@@ -79,7 +76,6 @@ margin: 0px;
 .JXGimage {
     /* opacity: 1.0; */
 }
-
 .JXGimageHighlight {
     /* opacity: 0.6; */
 }
@@ -99,17 +95,12 @@ margin: 0px;
     cursor: pointer;
 }
 
-.JXG_navigation:hover {
-
-}
-
 .JXG_navigation_button {
     color: #666;
 }
 
 .JXG_navigation_button:hover {
     border-radius: 2px;
-    background-color: #c0c0c0;
     background: rgba(184, 184, 184, 0.5);
 }
 
