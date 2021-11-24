@@ -89,14 +89,13 @@ define([
                 'px" height="', dim.height,
                 'px"><', '/canvas>'].join('');
             this.canvasRoot = this.container.ownerDocument.getElementById(this.canvasId);
-            this.context =  this.canvasRoot.getContext('2d');
             this.canvasRoot.style.display = 'block';
 
         } else if (Env.isNode()) {
             this.canvasId = (typeof module === 'object' ? module.require('canvas') : require('canvas'));
             this.canvasRoot = new this.canvasId(500, 500);
-            this.context = this.canvasRoot.getContext('2d');
         }
+        this.context = this.canvasRoot.getContext('2d');
 
         this.dashArray = [[2, 2], [5, 5], [10, 10], [20, 20], [20, 10, 10, 10], [20, 5, 10, 5]];
     };
