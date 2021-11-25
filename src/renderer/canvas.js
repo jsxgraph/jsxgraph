@@ -92,8 +92,12 @@ define([
             this.canvasRoot.style.display = 'block';
 
         } else if (Env.isNode()) {
-            this.canvasId = (typeof module === 'object' ? module.require('canvas') : require('canvas'));
-            this.canvasRoot = new this.canvasId(500, 500);
+            try {
+                this.canvasId = (typeof module === 'object' ? module.require('canvas') : require('canvas'));
+                this.canvasRoot = new this.canvasId(500, 500);
+            } catch (err) {
+                console.log("Warning: 'canvas' not found. You might need to call 'npm install canvas'");
+            }
         }
         this.context = this.canvasRoot.getContext('2d');
 
