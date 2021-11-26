@@ -92,7 +92,7 @@ define([
 
         /**
          * The global scope.
-         * @type {Object}
+         * @type Object
          */
         this.scope = {
             id: 0,
@@ -105,7 +105,7 @@ define([
 
         /**
          * Keeps track of all possible scopes every required.
-         * @type {Array}
+         * @type Array
          */
         this.scopes = [];
         this.scopes.push(this.scope);
@@ -162,7 +162,7 @@ define([
 
         /**
          * Store $log messages in case there's no console.
-         * @type {Array}
+         * @type Array
          */
         this.$log = [];
 
@@ -924,6 +924,12 @@ define([
                 }
             }
 
+            if (Type.isArray(node)) {
+                for (i = 0; i < node.length; i++) {
+                    node[i] = this.replaceIDs(node[i]);
+                }
+            }
+
             if (node.children) {
                 // assignments are first evaluated on the right hand side
                 for (i = node.children.length; i > 0; i--) {
@@ -958,6 +964,12 @@ define([
                     this.letvar(v, true);
                 } else if (!Type.exists(this.getvar(v, true)) && Type.exists(this.board.elementsByName[v])) {
                     node = this.createReplacementNode(node);
+                }
+            }
+
+            if (Type.isArray(node)) {
+                for (i = 0; i < node.length; i++) {
+                    node[i] = this.replaceNames(node[i]);
                 }
             }
 
