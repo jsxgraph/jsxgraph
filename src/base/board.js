@@ -4389,9 +4389,9 @@ define([
          * @returns {JXG.Board} Reference to the board
          */
         resizeContainer: function (canvasWidth, canvasHeight, dontset, dontSetBoundingBox) {
-            var box_act, box, w, h, cx, cy,
-                shift_x = 0,
-                shift_y = 0;
+            var box_act, box, w, h, cx, cy;
+                // shift_x = 0,
+                // shift_y = 0;
 
             if (!dontSetBoundingBox) {
                 box_act = this.getBoundingBox();    // This is the actual bounding box.
@@ -4406,11 +4406,12 @@ define([
                 // The shift values compensate the follow-up correction
                 // in setBoundingBox in case of "this.keepaspectratio==true"
                 // Otherwise, shift_x and shift_y will be zero.
-                shift_x = box_act[0] - box[0] / this.zoomX;
-                shift_y = box_act[1] - box[1] / this.zoomY;
+                // Obsolet since setBoundingBox centers in case of "this.keepaspectratio==true".
+                // shift_x = box_act[0] - box[0] / this.zoomX;
+                // shift_y = box_act[1] - box[1] / this.zoomY;
 
-                cx = (box[2] + box[0]) * 0.5 + shift_x;
-                cy = (box[3] + box[1]) * 0.5 + shift_y;
+                cx = (box[2] + box[0]) * 0.5; // + shift_x;
+                cy = (box[3] + box[1]) * 0.5; // + shift_y;
 
                 w = (box[2] - box[0]) * 0.5 / this.zoomX;
                 h = (box[1] - box[3]) * 0.5 / this.zoomY;
@@ -4919,11 +4920,14 @@ define([
          */
         setBoundingBox: function (bbox, keepaspectratio, setZoom) {
             var h, w, ux, uy,
+                offX = 0,
+                offY = 0,
                 dim = Env.getDimensions(this.container, this.document);
 
             if (!Type.isArray(bbox)) {
                 return this;
             }
+
             if (bbox[0] < this.maxboundingbox[0] ||
                 bbox[1] > this.maxboundingbox[1] ||
                 bbox[2] > this.maxboundingbox[2] ||
@@ -4942,14 +4946,17 @@ define([
             this.canvasHeight = parseInt(dim.height, 10);
             w = this.canvasWidth;
             h = this.canvasHeight;
-
             if (keepaspectratio) {
                 this.unitX = w / (bbox[2] - bbox[0]);
                 this.unitY = h / (bbox[1] - bbox[3]);
                 if (Math.abs(this.unitX) < Math.abs(this.unitY)) {
                     this.unitY = Math.abs(this.unitX) * this.unitY / Math.abs(this.unitY);
+                    // Add the additional units in equal portions above and below
+                    offY = (h / this.unitY - (bbox[1] - bbox[3])) * 0.5;
                 } else {
                     this.unitX = Math.abs(this.unitY) * this.unitX / Math.abs(this.unitX);
+                    // Add the additional units in equal portions left and right
+                    offX = (w / this.unitX - (bbox[2] - bbox[0])) * 0.5;
                 }
                 this.keepaspectratio = true;
             } else {
@@ -4958,7 +4965,7 @@ define([
                 this.keepaspectratio = false;
             }
             
-            this.moveOrigin(-this.unitX * bbox[0], this.unitY * bbox[1]);
+            this.moveOrigin(-this.unitX * (bbox[0] - offX), this.unitY * (bbox[1] + offY));
 
             if (setZoom === 'update') {
                 this.zoomX *= this.unitX / ux;
