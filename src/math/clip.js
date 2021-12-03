@@ -521,7 +521,8 @@ define([
 
                     // Intersection test
                     res = Geometry.meetSegmentSegment(Si, Si1, Cj, Cj1);
-// console.log(i, j, ":", eps, res[0][1] / res[0][0], res[0][2] / res[0][0], res[1], res[2]);
+console.log(Si, Si1, Cj, Cj1)
+console.log(i, j, ":", eps, res[0][1] / res[0][0], res[0][2] / res[0][0], res[1], res[2]);
 
                     d1 = Geometry.distance(Si, Si1, 3);
                     d2 = Geometry.distance(Cj, Cj1, 3);
@@ -535,7 +536,7 @@ define([
 
                             crds = new Coords(Const.COORDS_BY_USER, res[0], board);
                             type = 'X';
-// console.log("IS", i, j, crds.usrCoords, res[1], d1, res[1] * d1);
+console.log("IS", i, j, crds.usrCoords, res[1], d1, res[1] * d1);
 // console.log(res[2], d2, res[2] * d2);
 
                             // Degenerate cases
@@ -561,9 +562,9 @@ define([
                                 // In this case there might be two intersection points to be added
                                 // Collinear segments
                                 alpha = this._inbetween(Si, Cj, Cj1);
-    // console.log("alpha Si", alpha, Si);
-    // console.log(j, Cj)
-    // console.log((j + 1) % C_le, Cj1)
+console.log("alpha Si", alpha, Si);
+console.log(j, Cj)
+console.log((j + 1) % C_le, Cj1)
                                 if (alpha >= 0 && alpha < 1) {
                                     type = 'T';
                                     crds = new Coords(Const.COORDS_BY_USER, Si, board);
@@ -578,7 +579,7 @@ define([
                                     C_crossings[j].push(IC);
                                 }
                                 alpha = this._inbetween(Cj, Si, Si1);
-    // console.log("alpha Cj", alpha, Si, Geometry.distance(Si, Cj, 3));
+    console.log("alpha Cj", alpha, Si, Geometry.distance(Si, Cj, 3));
                                 if (Geometry.distance(Si, Cj, 3) > eps &&
                                     alpha >= 0 && alpha < 1) {
                                         type = 'T';
@@ -595,6 +596,7 @@ define([
                                 }
                                 continue;
                             }
+console.log("IS", i, j, crds.usrCoords, type);
 
                         IS = new this.Vertex(crds, i, res[1], S, 'S', type);
                         IC = new this.Vertex(crds, j, res[2], C, 'C', type);
@@ -610,19 +612,19 @@ define([
             // For both paths, sort their intersection points
             S_intersect = this.sortIntersections(S_crossings);
 
-// console.log('>>>>>> Intersections ')
-// this._print_array(S_intersect);
-// // console.log(S_intersect)
-// console.log('----------')
+console.log('>>>>>> Intersections ')
+this._print_array(S_intersect);
+// console.log(S_intersect)
+console.log('----------')
             for (i = 0; i < S_intersect.length; i++) {
                 S_intersect[i].data.idx = i;
                 S_intersect[i].neighbour.data.idx = i;
             }
             C_intersect = this.sortIntersections(C_crossings);
 
-// this._print_array(C_intersect);
-// console.log(C_intersect)
-// console.log('<<<<<< Phase 1 done')
+this._print_array(C_intersect);
+console.log(C_intersect)
+console.log('<<<<<< Phase 1 done')
             return [S_intersect, C_intersect];
         },
 
@@ -772,7 +774,7 @@ define([
 
             while (true) {
                 if (P.intersection === true) {
-    //console.log("Chain point", P.coords.usrCoords, P.data.type);
+console.log("Chain point", P.coords.usrCoords, P.data.type);
                     if (P.data.type === 'T') {
                         if (P.delayedStatus[0] !== 'on' && P.delayedStatus[1] === 'on') {
                             intersection_chain = true;
@@ -808,7 +810,7 @@ define([
                     break;
                 }
                 if (cnt > 1000) {
-                    console.log("Clipping: Intersection chain - exit");
+                    console.log("Warning: clipping: intersection chain - reached maximum numbers of iterations");
                     break;
                 }
                 P = P._next;
@@ -906,7 +908,7 @@ define([
                 // Inside
                 status = 'exit';
             }
-//console.log("STATUS", P.coords.usrCoords, status)
+// console.log("STATUS", P.coords.usrCoords, status)
 
             return [P, status];
         },
@@ -929,7 +931,7 @@ define([
 
             len = starters.length;
             for (i = 0; i < len; i++) {
-// console.log(";;;;;;;;;;")
+console.log(";;;;;;;;;;")
                 start = starters[i];
                 this._classifyDegenerateIntersections(path1[start]);
                 this._handleIntersectionChains(path1[start]);
@@ -1091,7 +1093,7 @@ define([
                     if (current.data.done) {
                         // We arrived at an intersection node which is already
                         // added to the clipping path.
-                        // We add it agian to close the clipping path and jump out of the
+                        // We add it again to close the clipping path and jump out of the
                         // loop.
                         path.push(current);
 // console.log("Push last", current.coords.usrCoords);
