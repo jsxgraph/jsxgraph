@@ -420,7 +420,7 @@ define([
 
         _noOverlap: function(p1, p2, q1, q2) {
             var k,
-                eps = Mat.eps * Mat.eps,
+                eps = Mat.eps,
                 minp, maxp, minq, maxq,
                 no_overlap = false;
 
@@ -429,7 +429,7 @@ define([
                 maxp = Math.max(p1[k], p2[k]);
                 minq = Math.min(q1[k], q2[k]);
                 maxq = Math.max(q1[k], q2[k]);
-                if (maxp < minq - eps|| minp > maxq + eps) {
+                if (maxp < minq - eps || minp > maxq + eps) {
                     no_overlap = true;
                     break;
                 }
@@ -492,7 +492,6 @@ define([
 
                 Si = S[i].coords.usrCoords;
                 Si1 = S[(i + 1) % S_le].coords.usrCoords;
-
                 // Run through the clip path.
                 for (j = 0; j < C_le; j++) {
                     // Test if C[j] or its successor is a path separator.
@@ -521,11 +520,10 @@ define([
 
                     // Intersection test
                     res = Geometry.meetSegmentSegment(Si, Si1, Cj, Cj1);
-console.log(Si, Si1, Cj, Cj1)
-console.log(i, j, ":", eps, res[0][1] / res[0][0], res[0][2] / res[0][0], res[1], res[2]);
 
                     d1 = Geometry.distance(Si, Si1, 3);
                     d2 = Geometry.distance(Cj, Cj1, 3);
+
                     // Found an intersection point
                     // isCollinear = false;
                     if ((res[1] * d1 > -eps && res[1] < 1 - eps / d1 &&           // "regular" intersection
@@ -536,8 +534,6 @@ console.log(i, j, ":", eps, res[0][1] / res[0][0], res[0][2] / res[0][0], res[1]
 
                             crds = new Coords(Const.COORDS_BY_USER, res[0], board);
                             type = 'X';
-console.log("IS", i, j, crds.usrCoords, res[1], d1, res[1] * d1);
-// console.log(res[2], d2, res[2] * d2);
 
                             // Degenerate cases
                             if (Math.abs(res[1]) * d1 < eps || Math.abs(res[2]) * d2 < eps) {
@@ -562,9 +558,9 @@ console.log("IS", i, j, crds.usrCoords, res[1], d1, res[1] * d1);
                                 // In this case there might be two intersection points to be added
                                 // Collinear segments
                                 alpha = this._inbetween(Si, Cj, Cj1);
-console.log("alpha Si", alpha, Si);
-console.log(j, Cj)
-console.log((j + 1) % C_le, Cj1)
+// console.log("alpha Si", alpha, Si);
+// console.log(j, Cj)
+// console.log((j + 1) % C_le, Cj1)
                                 if (alpha >= 0 && alpha < 1) {
                                     type = 'T';
                                     crds = new Coords(Const.COORDS_BY_USER, Si, board);
@@ -579,7 +575,7 @@ console.log((j + 1) % C_le, Cj1)
                                     C_crossings[j].push(IC);
                                 }
                                 alpha = this._inbetween(Cj, Si, Si1);
-    console.log("alpha Cj", alpha, Si, Geometry.distance(Si, Cj, 3));
+// console.log("alpha Cj", alpha, Si, Geometry.distance(Si, Cj, 3));
                                 if (Geometry.distance(Si, Cj, 3) > eps &&
                                     alpha >= 0 && alpha < 1) {
                                         type = 'T';
@@ -596,7 +592,7 @@ console.log((j + 1) % C_le, Cj1)
                                 }
                                 continue;
                             }
-console.log("IS", i, j, crds.usrCoords, type);
+// console.log("IS", i, j, crds.usrCoords, type);
 
                         IS = new this.Vertex(crds, i, res[1], S, 'S', type);
                         IC = new this.Vertex(crds, j, res[2], C, 'C', type);
@@ -612,19 +608,19 @@ console.log("IS", i, j, crds.usrCoords, type);
             // For both paths, sort their intersection points
             S_intersect = this.sortIntersections(S_crossings);
 
-console.log('>>>>>> Intersections ')
-this._print_array(S_intersect);
-// console.log(S_intersect)
-console.log('----------')
+// console.log('>>>>>> Intersections ')
+// this._print_array(S_intersect);
+// // console.log(S_intersect)
+// console.log('----------')
             for (i = 0; i < S_intersect.length; i++) {
                 S_intersect[i].data.idx = i;
                 S_intersect[i].neighbour.data.idx = i;
             }
             C_intersect = this.sortIntersections(C_crossings);
 
-this._print_array(C_intersect);
-console.log(C_intersect)
-console.log('<<<<<< Phase 1 done')
+// this._print_array(C_intersect);
+// console.log(C_intersect)
+// console.log('<<<<<< Phase 1 done')
             return [S_intersect, C_intersect];
         },
 
@@ -1003,9 +999,12 @@ console.log(";;;;;;;;;;")
                 reverse,
                 maxCnt = 10000,
                 S_idx = 0,
-                path = [];
+                path = [],
+                DEBUG = true;
 
-// console.log("------ Start Phase 3");
+            if (DEBUG) {
+                console.log("------ Start Phase 3");
+            }
 
             reverse = (clip_type === 'difference' || clip_type === 'union') ? true : false;
             while (S_idx < S_intersect.length && cnt < maxCnt) {
@@ -1017,7 +1016,9 @@ console.log(";;;;;;;;;;")
                     continue;
                 }
 
-// console.log("\nStart", current.data.pathname, current.coords.usrCoords, current.data.type, current.data.revtype, current.entry_exit, S_idx);
+                if (DEBUG) {
+                    console.log("\nStart", current.data.pathname, current.coords.usrCoords, current.data.type, current.data.revtype, current.entry_exit, S_idx);
+                }
                 if (path.length > 0) {    // Add a new path
                     path.push([NaN, NaN]);
                 }
@@ -1029,9 +1030,11 @@ console.log(";;;;;;;;;;")
                     // Add the "current" intersection vertex.
                     path.push(current);
                     current.data.done = true;
-
-// console.log("Add intersection", current.coords.usrCoords);
-// console.log("AT", current.data.pathname, current.entry_exit, current.coords.usrCoords, current.data.type, current.data.revtype);
+                    if (DEBUG) {
+                        console.log("Add intersection point", current.coords.usrCoords,
+                            "at", current.data.pathname, current.entry_exit,
+                            current.coords.usrCoords, current.data.type, current.data.revtype);
+                    }
                     //
                     // Decide if we follow the current path forward or backward.
                     // for example, in case the clipping is of type "intersection"
@@ -1051,7 +1054,10 @@ console.log(";;;;;;;;;;")
 
                             if (!this._isCrossing(current, reverse)) {
                                 if (!isNaN(current.coords.usrCoords[1]) && !isNaN(current.coords.usrCoords[2])) {
-// if (true ||current.intersection) console.log("Add fw", current.coords.usrCoords, "NEXT", current._next.coords.usrCoords);
+
+                                    if (DEBUG && current.intersection) {
+                                        console.log("Add fw", current.coords.usrCoords, "successor:", current._next.coords.usrCoords);
+                                    }
                                     path.push(current);
                                 }
                                 current = current._next;
@@ -1070,7 +1076,10 @@ console.log(";;;;;;;;;;")
 
                             if (!this._isCrossing(current, true)) {
                                 if (!isNaN(current.coords.usrCoords[1]) && !isNaN(current.coords.usrCoords[2])) {
-// if (true ||current.intersection) console.log("Add fw", current.coords.usrCoords);
+
+                                    if (DEBUG && current.intersection) {
+                                        console.log("Add bw", current.coords.usrCoords);
+                                    }
                                     path.push(current);
                                 }
                                 current = current._prev;
@@ -1080,11 +1089,13 @@ console.log(";;;;;;;;;;")
                     current.data.done = true;
 
                     if (!current.neighbour) {
-                        console.log("BREAK!!!!!!!!!!!!!!!!!", cnt);
+                        console.log("Tracing: emergency break!!!!!!!!!!!!!!!!!", cnt);
                         return [[0], [0]];
                     }
 
-// console.log("Switch", current.coords.usrCoords, current.data.pathname, "to", current.neighbour.data.pathname);
+                    if (DEBUG) {
+                        console.log("Switch", current.coords.usrCoords, current.data.pathname, "to", current.neighbour.data.pathname);
+                    }
                     //
                     // We stopped the forwar or backward loop, because we've
                     // arrived at a crossing intersection node, i.e. we have to
@@ -1096,7 +1107,9 @@ console.log(";;;;;;;;;;")
                         // We add it again to close the clipping path and jump out of the
                         // loop.
                         path.push(current);
-// console.log("Push last", current.coords.usrCoords);
+                        if (DEBUG) {
+                            console.log("Push last", current.coords.usrCoords);
+                        }
                         break;
                     }
                     P = current.data.path;
