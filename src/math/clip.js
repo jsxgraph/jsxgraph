@@ -465,7 +465,8 @@ define([
                 S_crossings = [],
                 C_crossings = [],
                 hasMultCompsS = false,
-                hasMultCompsC = false;
+                hasMultCompsC = false,
+                DEBUG = true;
 
             for (j = 0; j < C_le; j++) {
                 C_crossings.push([]);
@@ -525,74 +526,93 @@ define([
                     d2 = Geometry.distance(Cj, Cj1, 3);
 
                     // Found an intersection point
-                    // isCollinear = false;
-                    if ((res[1] * d1 > -eps && res[1] < 1 - eps / d1 &&           // "regular" intersection
-                         res[2] * d2 > -eps && res[2] < 1 - eps / d2) ||
-                        (res[1] === Infinity &&
-                         res[2] === Infinity && Mat.norm(res[0], 3) < eps) // collinear
+                    if ( // "Regular" intersection
+                        (res[1] * d1 > -eps && res[1] < 1 - eps / d1 && res[2] * d2 > -eps && res[2] < 1 - eps / d2) 
+                        ||
+                        // Collinear segments
+                        (res[1] === Infinity && res[2] === Infinity && Mat.norm(res[0], 3) < eps)
                         ) {
 
-                            crds = new Coords(Const.COORDS_BY_USER, res[0], board);
-                            type = 'X';
+                        crds = new Coords(Const.COORDS_BY_USER, res[0], board);
+                        type = 'X';
 
-                            // Degenerate cases
-                            if (Math.abs(res[1]) * d1 < eps || Math.abs(res[2]) * d2 < eps) {
-                                // Crossing / bouncing at vertex or
-                                // end of delayed crossing / bouncing
-                                type  = 'T';
-                                if (Math.abs(res[1]) * d1 < eps) {
-                                    res[1] = 0;
-                                }
-                                if (Math.abs(res[2]) * d2 < eps) {
-                                    res[2] = 0;
-                                }
-                                if (res[1] === 0) {
-                                    crds = new Coords(Const.COORDS_BY_USER, Si, board);
-                                } else {
-                                    crds = new Coords(Const.COORDS_BY_USER, Cj, board);
-                                }
-                            } else if (res[1] === Infinity &&
-                                       res[2] === Infinity &&
-                                       Mat.norm(res[0], 3) < eps) {
-
-                                // In this case there might be two intersection points to be added
-                                // Collinear segments
-                                alpha = this._inbetween(Si, Cj, Cj1);
-// console.log("alpha Si", alpha, Si);
-// console.log(j, Cj)
-// console.log((j + 1) % C_le, Cj1)
-                                if (alpha >= 0 && alpha < 1) {
-                                    type = 'T';
-                                    crds = new Coords(Const.COORDS_BY_USER, Si, board);
-                                    res[1] = 0;
-                                    res[2] = alpha;
-                                    IS = new this.Vertex(crds, i, res[1], S, 'S', type);
-                                    IC = new this.Vertex(crds, j, res[2], C, 'C', type);
-                                    IS.neighbour = IC;
-                                    IC.neighbour = IS;
-
-                                    S_crossings[i].push(IS);
-                                    C_crossings[j].push(IC);
-                                }
-                                alpha = this._inbetween(Cj, Si, Si1);
-// console.log("alpha Cj", alpha, Si, Geometry.distance(Si, Cj, 3));
-                                if (Geometry.distance(Si, Cj, 3) > eps &&
-                                    alpha >= 0 && alpha < 1) {
-                                        type = 'T';
-                                        crds = new Coords(Const.COORDS_BY_USER, Cj, board);
-                                        res[1] = alpha;
-                                        res[2] = 0;
-                                        IS = new this.Vertex(crds, i, res[1], S, 'S', type);
-                                        IC = new this.Vertex(crds, j, res[2], C, 'C', type);
-                                        IS.neighbour = IC;
-                                        IC.neighbour = IS;
-
-                                        S_crossings[i].push(IS);
-                                        C_crossings[j].push(IC);
-                                }
-                                continue;
+                        // Handle degenerated cases
+                        if (Math.abs(res[1]) * d1 < eps || Math.abs(res[2]) * d2 < eps) {
+                            // Crossing / bouncing at vertex or
+                            // end of delayed crossing / bouncing
+                            type  = 'T';
+                            if (Math.abs(res[1]) * d1 < eps) {
+                                res[1] = 0;
                             }
-// console.log("IS", i, j, crds.usrCoords, type);
+                            if (Math.abs(res[2]) * d2 < eps) {
+                                res[2] = 0;
+                            }
+                            if (res[1] === 0) {
+                                crds = new Coords(Const.COORDS_BY_USER, Si, board);
+                            } else {
+                                crds = new Coords(Const.COORDS_BY_USER, Cj, board);
+                            }
+                            
+                            if (res[1] === 0 && res[2] === 0) {
+                                type = 'V';
+                            }
+                            if (DEBUG) {
+                                console.log("Degenerate case I", res[1], res[2], crds.usrCoords, "type", type);
+                            }
+                        } else if (res[1] === Infinity &&
+                                   res[2] === Infinity &&
+                                   Mat.norm(res[0], 3) < eps) {
+
+                            // Collinear segments
+                            // Here, there might be two intersection points to be added
+
+                            alpha = this._inbetween(Si, Cj, Cj1);
+                            if (DEBUG) {
+                                // console.log("alpha Si", alpha, Si);
+                                // console.log(j, Cj)
+                                // console.log((j + 1) % C_le, Cj1)
+                            }
+                            if (alpha >= 0 && alpha < 1) {
+                                type = 'T';
+                                crds = new Coords(Const.COORDS_BY_USER, Si, board);
+                                res[1] = 0;
+                                res[2] = alpha;
+                                IS = new this.Vertex(crds, i, res[1], S, 'S', type);
+                                IC = new this.Vertex(crds, j, res[2], C, 'C', type);
+                                IS.neighbour = IC;
+                                IC.neighbour = IS;
+                                S_crossings[i].push(IS);
+                                C_crossings[j].push(IC);
+                                if (DEBUG) {
+                                    console.log("Degenerate case II", res[1], res[2], crds.usrCoords, "type T");
+                                }
+                            }
+                            alpha = this._inbetween(Cj, Si, Si1);
+                            if (DEBUG) {
+                                // console.log("alpha Cj", alpha, Si, Geometry.distance(Si, Cj, 3));
+                            }
+                            if (Geometry.distance(Si, Cj, 3) > eps &&
+                                alpha >= 0 && alpha < 1) {
+                                    
+                                type = 'T';
+                                crds = new Coords(Const.COORDS_BY_USER, Cj, board);
+                                res[1] = alpha;
+                                res[2] = 0;
+                                IS = new this.Vertex(crds, i, res[1], S, 'S', type);
+                                IC = new this.Vertex(crds, j, res[2], C, 'C', type);
+                                IS.neighbour = IC;
+                                IC.neighbour = IS;
+                                S_crossings[i].push(IS);
+                                C_crossings[j].push(IC);
+                                if (DEBUG) {
+                                    console.log("Degenerate case III", res[1], res[2], crds.usrCoords, "type T");
+                                }
+                            }   
+                            continue;
+                        }
+                        if (DEBUG) {
+                            // console.log("IS", i, j, crds.usrCoords, type);
+                        }
 
                         IS = new this.Vertex(crds, i, res[1], S, 'S', type);
                         IC = new this.Vertex(crds, j, res[2], C, 'C', type);
@@ -608,19 +628,23 @@ define([
             // For both paths, sort their intersection points
             S_intersect = this.sortIntersections(S_crossings);
 
-// console.log('>>>>>> Intersections ')
-// this._print_array(S_intersect);
-// // console.log(S_intersect)
-// console.log('----------')
+            if (DEBUG) {
+                console.log('>>>>>> Intersections ');
+                this._print_array(S_intersect);
+                // console.log(S_intersect);
+                console.log('----------');
+            }
             for (i = 0; i < S_intersect.length; i++) {
                 S_intersect[i].data.idx = i;
                 S_intersect[i].neighbour.data.idx = i;
             }
             C_intersect = this.sortIntersections(C_crossings);
 
-// this._print_array(C_intersect);
-// console.log(C_intersect)
-// console.log('<<<<<< Phase 1 done')
+            if (DEBUG) {
+                this._print_array(C_intersect);
+                // console.log(C_intersect);
+                console.log('<<<<<< Phase 1 done');
+            }
             return [S_intersect, C_intersect];
         },
 
