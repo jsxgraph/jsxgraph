@@ -387,7 +387,7 @@ define([
                     if (arr[i]._end) {
                         end = " end";
                     }
-                    console.log(i, arr[i].coords.usrCoords,
+                    console.log(i, arr[i].coords.usrCoords, arr[i].data.type,
                                 "prev", arr[i]._prev.coords.usrCoords,
                                 "next", arr[i]._next.coords.usrCoords + end);
                 } catch (e) {
@@ -466,7 +466,7 @@ define([
                 C_crossings = [],
                 hasMultCompsS = false,
                 hasMultCompsC = false,
-                DEBUG = true;
+                DEBUG = false;
 
             for (j = 0; j < C_le; j++) {
                 C_crossings.push([]);
@@ -552,10 +552,10 @@ define([
                             } else {
                                 crds = new Coords(Const.COORDS_BY_USER, Cj, board);
                             }
-                            
-                            if (res[1] === 0 && res[2] === 0) {
-                                type = 'V';
-                            }
+
+                            // if (res[1] === 0 && res[2] === 0) {
+                            //     type = 'V';
+                            // }
                             if (DEBUG) {
                                 console.log("Degenerate case I", res[1], res[2], crds.usrCoords, "type", type);
                             }
@@ -593,7 +593,7 @@ define([
                             }
                             if (Geometry.distance(Si, Cj, 3) > eps &&
                                 alpha >= 0 && alpha < 1) {
-                                    
+
                                 type = 'T';
                                 crds = new Coords(Const.COORDS_BY_USER, Cj, board);
                                 res[1] = alpha;
@@ -607,7 +607,7 @@ define([
                                 if (DEBUG) {
                                     console.log("Degenerate case III", res[1], res[2], crds.usrCoords, "type T");
                                 }
-                            }   
+                            }
                             continue;
                         }
                         if (DEBUG) {
@@ -668,12 +668,15 @@ define([
 
         _classifyDegenerateIntersections: function(P) {
             var Pp, Pm, Qp, Qm, Q, side,
-                cnt;
+                cnt,
+                DEBUG = false;
 
             cnt = 0;
             P._start = 0;
             while (true) {
-// console.log("P:", P.coords.usrCoords, (P.data) ? P.data.type : " ")
+                if (DEBUG) {
+                    console.log("P:", P.coords.usrCoords, (P.data) ? P.data.type : " ");
+                }
                 if (P.intersection && P.data.type === 'T') {
 
                     // Handle the degenerate cases
@@ -699,10 +702,13 @@ define([
                     Qm = P.neighbour._prev.coords.usrCoords;  // Q-
                     Qp = P.neighbour._next.coords.usrCoords;  // Q+
 
-// console.log("Chain 1:", Pm, P.coords.usrCoords, Pp)
-// console.log("Chain 2:", Qm, P.neighbour.coords.usrCoords, Qp)
-// console.log(P._next.neighbour, Q._prev)
-// console.log(P._next.intersection, P._next.neighbour === Q._prev)
+                    if (DEBUG) {
+                        console.log("P chain:", Pm, P.coords.usrCoords, Pp)
+                        console.log("Q chain:", Qm, P.neighbour.coords.usrCoords, Qp)
+                        console.log("P._next.intersection:", P._next.intersection,
+                            "P._next.neighbour === Q._prev?", P._next.neighbour === Q._prev)
+                        console.log("P._next.neighbour:", P._next.neighbour, "Q_prev:", Q._prev)
+                    }
                     if (P._next.intersection && P._next.neighbour === Q._next) {
                         if (P._prev.intersection && P._prev.neighbour === Q._prev) {
                             P.delayedStatus = ['on', 'on'];
@@ -761,7 +767,9 @@ define([
                             P.data.revtype = 'B';
                         }
                     }
-// console.log(">P:", P.coords.usrCoords, (P.data) ? P.data.type : " ")
+                    if (DEBUG) {
+                        console.log(">P:", P.coords.usrCoords, "delayedStatus:", P.delayedStatus,(P.data) ? P.data : " ")
+                    }
 
                 }
 
@@ -782,7 +790,9 @@ define([
                 }
                 P = P._next;
             }
-// console.log("------------------------")
+            if (DEBUG) {
+                console.log("------------------------");
+            }
         },
 
         _handleIntersectionChains: function(P) {
@@ -790,11 +800,17 @@ define([
                 start_status = 'Null',
                 P_start,
                 intersection_chain = false,
-                wait_for_exit = false;
+                wait_for_exit = false,
+                DEBUG = true;
 
+            if (DEBUG) {
+                console.log("\n-------------- Handle intersection chain", P.data.pathname);
+            }
             while (true) {
                 if (P.intersection === true) {
-console.log("Chain point", P.coords.usrCoords, P.data.type);
+                    if (DEBUG) {
+                        console.log("Chain point", P.coords.usrCoords, P.data.type);
+                    }
                     if (P.data.type === 'T') {
                         if (P.delayedStatus[0] !== 'on' && P.delayedStatus[1] === 'on') {
                             intersection_chain = true;
@@ -947,21 +963,29 @@ console.log("Chain point", P.coords.usrCoords, P.data.type);
          */
         markEntryExit: function(path1, path2, starters) {
             var status, P, cnt, res,
-                i, len, start;
+                i, len, start,
+                DEBUG = true;
 
             len = starters.length;
             for (i = 0; i < len; i++) {
-console.log(";;;;;;;;;;")
+                if (DEBUG) {
+                    console.log(";;;;;;;;;;")
+                }
                 start = starters[i];
                 this._classifyDegenerateIntersections(path1[start]);
                 this._handleIntersectionChains(path1[start]);
+                if (DEBUG) {
+                    console.log("---- back to markEntryExit");
+                }
 
                 // Decide if the first point of the component is inside or outside
                 // of the other path.
                 res = this._getStatus(path1[start], path2);
                 P = res[0];
                 status = res[1];
-// console.log("status", P.coords.usrCoords, status);
+                if (DEBUG) {
+                    console.log("status", P.coords.usrCoords, status);
+                }
 
                 P._starter = true;
                 // Greiner-Hormann entry/exit algorithm
@@ -979,7 +1003,14 @@ console.log(";;;;;;;;;;")
                             P.entry_exit = P.data.link.entry_exit;
                         }
                     }
-// if (P.intersection) { console.log("s>>>", P.coords.usrCoords, P.entry_exit)}
+
+                    if (P.intersection === true && P.data.type !== 'T') {
+                        // P.entry_exit = 'entry';
+                    }
+
+                    if (DEBUG && P.intersection) {
+                        console.log("s>>>", P.coords.usrCoords, P.entry_exit);
+                    }
 
                     P = P._next;
                     if (Type.exists(P._starter) || cnt > 10000) {
@@ -1027,7 +1058,7 @@ console.log(";;;;;;;;;;")
                 DEBUG = true;
 
             if (DEBUG) {
-                console.log("------ Start Phase 3");
+                console.log("\n------ Start Phase 3");
             }
 
             reverse = (clip_type === 'difference' || clip_type === 'union') ? true : false;
@@ -1056,8 +1087,8 @@ console.log(";;;;;;;;;;")
                     current.data.done = true;
                     if (DEBUG) {
                         console.log("Add intersection point", current.coords.usrCoords,
-                            "at", current.data.pathname, current.entry_exit,
-                            current.coords.usrCoords, current.data.type, current.data.revtype);
+                            "on", current.data.pathname, current.entry_exit,
+                            current.data.type, current.data.revtype);
                     }
                     //
                     // Decide if we follow the current path forward or backward.
@@ -1067,6 +1098,10 @@ console.log(";;;;;;;;;;")
                     if ((clip_type === 'intersection' && current.entry_exit === 'entry') ||
                         (clip_type === 'union' && current.entry_exit === 'exit') ||
                         (clip_type === 'difference' && (P === S) === (current.entry_exit === 'exit')) ) {
+
+                        if (DEBUG) {
+                            console.log("Go forward on", current.data.pathname, current.entry_exit);
+                        }
 
                         //
                         // Take the next nodes and add them to the path
@@ -1088,7 +1123,9 @@ console.log(";;;;;;;;;;")
                             }
                         } while (!this._isCrossing(current, reverse) && cnt < maxCnt);
                     } else {
-
+                        if (DEBUG) {
+                            console.log("Go backward on", current.data.pathname);
+                        }
                         //
                         // Here, we go backward:
                         // Take the previous nodes and add them to the path
@@ -1117,13 +1154,14 @@ console.log(";;;;;;;;;;")
                         return [[0], [0]];
                     }
 
-                    if (DEBUG) {
-                        console.log("Switch", current.coords.usrCoords, current.data.pathname, "to", current.neighbour.data.pathname);
-                    }
                     //
-                    // We stopped the forwar or backward loop, because we've
+                    // We stopped the forward or backward loop, because we've
                     // arrived at a crossing intersection node, i.e. we have to
                     // switch to the other path now.
+                    if (DEBUG) {
+                        console.log("Switch from", current.coords.usrCoords, current.data.pathname, "to",
+                        current.neighbour.coords.usrCoords, "on", current.neighbour.data.pathname);
+                    }
                     current = current.neighbour;
                     if (current.data.done) {
                         // We arrived at an intersection node which is already
@@ -1682,7 +1720,8 @@ console.log(";;;;;;;;;;")
                 C_starters,
                 res = [],
                 pathX = [],
-                pathY = [];
+                pathY = [],
+                DEBUG = false;
 
             // Collect all subject points into subject array S
             S = this._getPath(subject, board);
@@ -1708,50 +1747,20 @@ console.log(";;;;;;;;;;")
             S_starters = this.makeDoublyLinkedList(S);
             C_starters = this.makeDoublyLinkedList(C);
 
-            // this._print_array(S);
-            // console.log("Components:", S_starters);
-            // this._print_array(C);
-            // console.log("Components:", C_starters);
+            if (DEBUG) {
+                this._print_array(S);
+                console.log("Components:", S_starters);
+                this._print_array(C);
+                console.log("Components:", C_starters);
+            }
 
             res = this.findIntersections(S, C, board);
             S_intersect = res[0];
-
-            // console.log("------- START ------------------")
-            // let cnt = 0;
-            // for (let start of S_starters) {
-            //     console.log("----")
-            //     let P = S[start];
-            //     P._start = true;
-            //     do {
-            //         console.log(">", P.coords.usrCoords, "NEXT", P._next.coords.usrCoords, "NEXT^2", P._next._next.coords.usrCoords)
-            //         P = P._next;
-            //         cnt++;
-            //     } while (!P._start && cnt < 15);
-            //     P._start = null;
-            // }
-            // console.log("------- END ------------------")
-
-            // C_intersect = res[1];
-
-            // For non-closed paths
-            // if (true && typeof subject_first_point_type === 'string') {
-            //     S[0].neighbour = C[C.length - 1];
-            //     S[0].first_point_type = subject_first_point_type;
-            //     S[S.length - 1].neighbour = C[0];
-            //     S[S.length - 1].first_point_type = subject_first_point_type;
-            // }
-            // if (true && typeof clip_first_point_type === 'string') {
-            //     C[0].neighbour = S[S.length - 1];
-            //     C[0].first_point_type = clip_first_point_type;
-            //     C[C.length - 1].neighbour = S[0];
-            //     C[C.length - 1].first_point_type = clip_first_point_type;
-            // }
 
             this._handleFullyDegenerateCase(S, C, board);
 
             // Phase 2: mark intersection points as entry or exit points
             this.markEntryExit(S, C, S_starters);
-
             // if (S[0].coords.distance(Const.COORDS_BY_USER, C[0].coords) === 0) {
             //     // Randomly disturb the first point of the second path
             //     // if both paths start at the same point.
