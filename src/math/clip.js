@@ -260,8 +260,6 @@ define([
                 pathname: pathname,
                 done: false,
                 type: type,
-                revtype: type,
-                link: null,
                 idx: 0
             };
 
@@ -307,10 +305,11 @@ define([
                 P_crossings[i].sort(function(a, b) { return (a.data.alpha > b.data.alpha) ? 1 : -1; });
 
                 if (P_crossings[i].length > 0) {
-            // console.log("Crossings", P_crossings[i])
+                    // console.log("Crossings", P_crossings[i])
                     last = P_crossings[i].length - 1;
                     P = P_crossings[i][0];
-//console.log("SORT", P.coords.usrCoords)
+
+                    //console.log("SORT", P.coords.usrCoords)
                     Q =  P.data.path[P.pos];
                     next_node = Q._next;  // Store the next "normal" node
 
@@ -319,7 +318,7 @@ define([
                     }
 
                     if (P.data.alpha === 0.0 && P.data.type === 'T') {
-//            console.log("SKIP", P.coords.usrCoords, P.data.type, P.neighbour.data.type);
+                        // console.log("SKIP", P.coords.usrCoords, P.data.type, P.neighbour.data.type);
                         Q.intersection = true;
                         Q.data = P.data;
                         Q.neighbour = P.neighbour;
@@ -346,7 +345,7 @@ define([
 
                     if (i === P_le - 1) {
                         P._end = true;
-            //console.log("END", P._end, P.coords.usrCoords, P._prev.coords.usrCoords, P._next.coords.usrCoords);
+                        //console.log("END", P._end, P.coords.usrCoords, P._prev.coords.usrCoords, P._next.coords.usrCoords);
                     }
 
                     P_intersect = P_intersect.concat(P_crossings[i]);
@@ -387,7 +386,7 @@ define([
                     if (arr[i]._end) {
                         end = " end";
                     }
-                    console.log(i, arr[i].coords.usrCoords, arr[i].data.type,
+                    console.log(i, arr[i].coords.usrCoords, arr[i].data.type, "\t",
                                 "prev", arr[i]._prev.coords.usrCoords,
                                 "next", arr[i]._next.coords.usrCoords + end);
                 } catch (e) {
@@ -420,7 +419,7 @@ define([
 
         _noOverlap: function(p1, p2, q1, q2) {
             var k,
-                eps = Mat.eps,
+                eps = Math.sqrt(Mat.eps),
                 minp, maxp, minq, maxq,
                 no_overlap = false;
 
@@ -553,15 +552,13 @@ define([
                                 crds = new Coords(Const.COORDS_BY_USER, Cj, board);
                             }
 
-                            // if (res[1] === 0 && res[2] === 0) {
-                            //     type = 'V';
-                            // }
                             if (DEBUG) {
                                 console.log("Degenerate case I", res[1], res[2], crds.usrCoords, "type", type);
                             }
                         } else if (res[1] === Infinity &&
                                    res[2] === Infinity &&
-                                   Mat.norm(res[0], 3) < eps) {
+                                   Mat.norm(res[0], 3) < eps) {                // console.log(C_intersect);
+
 
                             // Collinear segments
                             // Here, there might be two intersection points to be added
@@ -611,7 +608,7 @@ define([
                             continue;
                         }
                         if (DEBUG) {
-                            // console.log("IS", i, j, crds.usrCoords, type);
+                            console.log("IS", i, j, crds.usrCoords, type);
                         }
 
                         IS = new this.Vertex(crds, i, res[1], S, 'S', type);
@@ -630,8 +627,8 @@ define([
 
             if (DEBUG) {
                 console.log('>>>>>> Intersections ');
+                console.log("S_intersect");
                 this._print_array(S_intersect);
-                // console.log(S_intersect);
                 console.log('----------');
             }
             for (i = 0; i < S_intersect.length; i++) {
@@ -641,6 +638,7 @@ define([
             C_intersect = this.sortIntersections(C_crossings);
 
             if (DEBUG) {
+                console.log("C_intersect");
                 this._print_array(C_intersect);
                 // console.log(C_intersect);
                 console.log('<<<<<< Phase 1 done');
@@ -663,24 +661,41 @@ define([
                 s2 = this.det(q, p2, p3),
                 s3 = this.det(p1, p2, p3);
 
-            if (s3 >= 0) {   // Left turn or straight
+            // Straight
+            if (s3 == 0) {
+                if (s1 > 0) {
+                    return 'left';
+                }
+                if (s1 < 0) {
+                    return 'right';
+                }
+                return 'straight';
+            }
+            // Left turn
+            if (s3 > 0) {
                 if (s1 > 0 && s2 > 0) {
                     return 'left';
                 }
-                return 'right';
+                if (s1 < 0 || s2 < 0) {
+                    return 'right';
+                }
+                return 'straight';
             }
             // Right turn
+            if (s1 > 0 || s2 > 0) {
+                return 'left';
+            }
             if (s1 < 0 && s2 < 0) {
                 return 'right';
             }
-            return 'left';
+            return 'straight';
         },
 
         /**
-         * Determine the delayed status of degenerated intersection points. 
+         * Determine the delayed status of degenerated intersection points.
          * It is of the form
          *   ['on|left|right', 'on|left|right']
-         * 
+         *
          * @param {JXG.Math.Clip.Vertex} P Start of path
          * @private
          * @see JXG.Math.Clip#markEntryExit
@@ -689,18 +704,18 @@ define([
         _classifyDegenerateIntersections: function(P) {
             var Pp, Pm, Qp, Qm, Q, side,
                 cnt,
-                DEBUG = false;
+                DEBUG = true;
 
             if (DEBUG) {
-                console.log("\n-------------- _classifyDegenerateIntersections()", P.data.pathname);
+                console.log("\n-------------- _classifyDegenerateIntersections()", (Type.exists(P.data))?P.data.pathname:' ');
             }
             cnt = 0;
             P._start = 0;
             while (true) {
                 if (DEBUG) {
-                    console.log("P:", P.coords.usrCoords, (P.data) ? P.data.type : " ");
+                    console.log("Pass through P:", P.coords.usrCoords, (P.data) ? P.data.type : " ");
                 }
-                if (P.intersection && P.data.type === 'T') {
+                if (P.intersection && (P.data.type === 'T' || P.data.type === 'B')) {
 
                     // Handle the degenerate cases
                     // Decide if they are (delayed) bouncing or crossing intersections
@@ -712,25 +727,32 @@ define([
                     // then there will be two adjacent points with
                     // the same coordinate.
                     // In that case, we proceed to the next node.
+
                     if (Geometry.distance(P.coords.usrCoords, Pp, 3) < Mat.eps) {
-                        P._next = P._next._next;
-                        Pp = P._next.coords.usrCoords;
+                        Pp = P._next._next.coords.usrCoords;
                     }
                     if (Geometry.distance(P.coords.usrCoords, Pm, 3) < Mat.eps) {
-                        P._prev = P._prev._prev;
-                        Pm = P._prev.coords.usrCoords;
+                        Pm = P._prev._prev.coords.usrCoords;
                     }
 
                     Q = P.neighbour;
                     Qm = P.neighbour._prev.coords.usrCoords;  // Q-
                     Qp = P.neighbour._next.coords.usrCoords;  // Q+
+                    if (Geometry.distance(Q.coords.usrCoords, Qp, 3) < Mat.eps) {
+                        Qp = Q._next._next.coords.usrCoords;
+                    }
+                    if (Geometry.distance(Q.coords.usrCoords, Qm, 3) < Mat.eps) {
+                        Qm = Q._prev._prev.coords.usrCoords;
+                    }
 
                     if (DEBUG) {
                         console.log("P chain:", Pm, P.coords.usrCoords, Pp)
                         console.log("Q chain:", Qm, P.neighbour.coords.usrCoords, Qp)
-                        console.log("P._next.intersection:", P._next.intersection,
-                            "P._next.neighbour === Q._prev?", P._next.neighbour === Q._prev)
-                        console.log("P._next.neighbour:", P._next.neighbour, "Q_prev:", Q._prev)
+                        // console.log("P._next.intersection:", P._next.intersection,
+                        //     "P._next.neighbour === Q._prev?", P._next.neighbour === Q._prev)
+                        // console.log("P._next.neighbour:", P._next.neighbour, "Q_prev:", Q._prev)
+                        console.log("Qm", this._getPosition(Qm,  Pm, P.coords.usrCoords, Pp));
+                        console.log("Qp", this._getPosition(Qp,  Pm, P.coords.usrCoords, Pp));
                     }
                     if (P._next.intersection && P._next.neighbour === Q._next) {
                         if (P._prev.intersection && P._prev.neighbour === Q._prev) {
@@ -760,6 +782,7 @@ define([
                         if (!(P._next.intersection && P._next.neighbour === Q._next)) {
                             side = this._getPosition(Qp,  Pm, P.coords.usrCoords, Pp);
                             if (side === 'right') {
+                                console.log("A")
                                 P.delayedStatus = ['on', 'left'];
                             } else {
                                 P.delayedStatus = ['on', 'right'];
@@ -769,6 +792,7 @@ define([
                         if (!(P._next.intersection && P._next.neighbour === Q._prev)) {
                             side = this._getPosition(Qm,  Pm, P.coords.usrCoords, Pp);
                             if (side === 'right') {
+                                console.log("B")
                                 P.delayedStatus = ['on', 'left'];
                             } else {
                                 P.delayedStatus = ['on', 'right'];
@@ -782,16 +806,18 @@ define([
                         // Neither P- nor P+ are intersections
 
                         side = this._getPosition(Qm,   Pm, P.coords.usrCoords, Pp);
+                        if (DEBUG) {
+                            console.log("New crossing/bouncing:", P.coords.usrCoords);
+                            console.log(side, this._getPosition(Qp,  Pm, P.coords.usrCoords, Pp));
+                        }
                         if (side !== this._getPosition(Qp,  Pm, P.coords.usrCoords, Pp)) {
                             P.data.type    = 'X';
-                            P.data.revtype = 'X';
                         } else {
                             P.data.type    = 'B';
-                            P.data.revtype = 'B';
                         }
                     }
                     if (DEBUG) {
-                        console.log(">P:", P.coords.usrCoords, "delayedStatus:", P.delayedStatus,(P.data) ? P.data : " ")
+                        console.log(">>>> P:", P.coords.usrCoords, "delayedStatus:", P.delayedStatus,(P.data) ? P.data : " ", "\n---");
                     }
 
                 }
@@ -827,9 +853,9 @@ define([
          * At this point the degenerated intersections have been classified.
          * Now we decide if the intersection chains of the given path
          * ultimatively cross the other path or bounce.
-         * 
+         *
          * @param {JXG.Math.Clip.Vertex} P Start of path
-         * 
+         *
          * @see JXG.Math.Clip#markEntryExit
          * @see JXG.Math.Clip#_classifyDegenerateIntersections
          * @private
@@ -843,7 +869,8 @@ define([
                 DEBUG = true;
 
             if (DEBUG) {
-                console.log("\n-------------- _handleIntersectionChains()", P.data.pathname);
+                console.log("\n-------------- _handleIntersectionChains()",
+                    (Type.exists(P.data))?P.data.pathname:' ');
             }
             while (true) {
                 if (P.intersection === true) {
@@ -865,8 +892,6 @@ define([
                                     P.delayedStatus[0] === 'on' && P.delayedStatus[1] === 'on') {
                             // Interior of intersection chain
                             P.data.type    = 'B';
-                            P.data.revtype = 'B';
-
                         } else if (intersection_chain &&
                                     P.delayedStatus[0] === 'on' && P.delayedStatus[1] !== 'on') {
                             // Last point of intersection chain
@@ -874,27 +899,19 @@ define([
 
                             if (start_status === P.delayedStatus[1]) {
                                 // Intersection chain is delayed bouncing
-                                P_start.data.type    = 'DB'; // 'B';
-                                P_start.data.revtype = 'B';
-
-                                P.data.type          = 'DB'; // 'B';
-                                P.data.revtype       = 'B';
+                                P_start.data.type    = 'DB';
+                                P.data.type          = 'DB';
                                 if (DEBUG) {
                                     console.log("Chain: delayed bouncing", P_start.coords.usrCoords, '...', P.coords.usrCoords);
                                 }
                             } else {
                                 // Intersection chain is delayed crossing
-                                P_start.data.type    = 'DX'; // 'B';
-                                P_start.data.revtype = 'X';
-
-                                P.data.type          = 'DX'; // 'X';
-                                P.data.revtype       = 'B';
+                                P_start.data.type    = 'DX';
+                                P.data.type          = 'DX';
                                 if (DEBUG) {
                                     console.log("Chain: delayed crossing", P_start.coords.usrCoords, '...', P.coords.usrCoords);
                                 }
                             }
-                            P_start.data.link = P;
-                            P.data.link       = P_start;
                         }
                     }
                     cnt++;
@@ -1030,7 +1047,9 @@ define([
             for (i = 0; i < len; i++) {
                 start = starters[i];
                 if (DEBUG) {
-                    console.log("\n;;;;;;;;;; Labelling phase", path1[start].data.pathname, path1[start].coords.usrCoords);
+                    console.log("\n;;;;;;;;;; Labelling phase",
+                        (Type.exists(path1[start].data))?path1[start].data.pathname:' ',
+                        path1[start].coords.usrCoords);
                 }
                 this._classifyDegenerateIntersections(path1[start]);
                 this._handleIntersectionChains(path1[start]);
@@ -1056,9 +1075,6 @@ define([
                         if (P.data.type === 'X' || P.data.type === 'DB') {
                             P.entry_exit = status;
                             status = (status === 'entry') ? 'exit' : 'entry';
-                            // if (P.data.link !== null && !P.data.link.entry_exit) {
-                            //     P.data.link.entry_exit = P.entry_exit;
-                            // }
                             if (DEBUG) {
                                 console.log("mark:", P.coords.usrCoords, P.data.type, P.entry_exit);
                             }
@@ -1075,14 +1091,6 @@ define([
                                 }
 
                                 status = (status === 'entry') ? 'exit' : 'entry';
-                                // if (P.data.link !== null && !P.data.link.entry_exit) {
-                                //     P.data.link.entry_exit = P.entry_exit;
-                                //     P.data.link.data.type = P.data.type;
-                                // }
-                                // if (chain_start.data.link !== null && !chain_start.data.link.entry_exit) {
-                                //     chain_start.data.link.entry_exit = chain_start.entry_exit;
-                                //     chain_start.data.link.data.type = chain_start.data.type;
-                                // }
                                 if (DEBUG) {
                                     console.log("mark:", chain_start.coords.usrCoords, chain_start.data.type, chain_start.entry_exit);
                                     console.log("mark:", P.coords.usrCoords, P.data.type, P.entry_exit);
@@ -1093,68 +1101,7 @@ define([
                                 chain_start = P;
                             }
                         }
-    
-                    } 
 
-                    P = P._next;
-                    if (Type.exists(P._starter) || cnt > 10000) {
-                            break;
-                    }
-
-                    cnt++;
-                }
-            }
-        },
-
-        markEntryExitOrg: function(path1, path2, starters) {
-            var status, P, cnt, res,
-                i, len, start,
-                DEBUG = true;
-
-            len = starters.length;
-            for (i = 0; i < len; i++) {
-                start = starters[i];
-                if (DEBUG) {
-                    console.log("\n;;;;;;;;;; Labelling phase", path1[start].data.pathname, path1[start].coords.usrCoords);
-                }
-                this._classifyDegenerateIntersections(path1[start]);
-                this._handleIntersectionChains(path1[start]);
-                if (DEBUG) {
-                    console.log("---- back to markEntryExit");
-                }
-
-                // Decide if the first point of the component is inside or outside
-                // of the other path.
-                res = this._getStatus(path1[start], path2);
-                P = res[0];
-                status = res[1];
-                if (DEBUG) {
-                    console.log("status", P.coords.usrCoords, status);
-                }
-
-                P._starter = true;
-                // Greiner-Hormann entry/exit algorithm
-                cnt = 0;
-                while (true) {
-                    if (P.intersection === true && P.data.type === 'X') {
-                        P.entry_exit = status;
-                        status = (status === 'entry') ? 'exit' : 'entry';
-                        if (P.data.link !== null && !P.data.link.entry_exit) {
-                            P.data.link.entry_exit = P.entry_exit;
-                        }
-                    }
-                    if (P.intersection === true && P.data.type !== 'X') {
-                        if (!P.entry_exit && P.data.link !== null) {
-                            P.entry_exit = P.data.link.entry_exit;
-                        }
-                    }
-
-                    if (P.intersection === true && P.data.type !== 'T') {
-                        // P.entry_exit = 'entry';
-                    }
-
-                    if (DEBUG && P.intersection) {
-                        console.log("s>>>", P.coords.usrCoords, P.entry_exit);
                     }
 
                     P = P._next;
@@ -1175,20 +1122,37 @@ define([
          * @returns {Boolean} True, if the node is an intersection and is of type 'X'
          */
         _stayOnPath: function(P, status) {
-            return (!P.intersection) || (status === P.entry_exit);
+            var stay = true;
+
+            if (P.intersection && P.data.type !== 'B') {
+                stay = (status === P.entry_exit);
+            }
+            // if (P.intersection) {
+            //     console.log("stay on path:", (stay)?'YES':'NO', status, P.entry_exit);
+            // }
+            return stay;
+
             // isBackward = isBackward || false;
             // return P.intersection && ((isBackward ? P.data.revtype : P.data.type) === 'X');
         },
 
-        _addIntersectionVertex: function(path, vertex, DEBUG) {
-            path.push(vertex);
-            vertex.data.done = true;
-            if (DEBUG) {
-                console.log("Add intersection point", vertex.coords.usrCoords,
-                    "on", vertex.data.pathname, vertex.entry_exit,
-                    vertex.data.type);
+        _addVertex: function(path, vertex, DEBUG) {
+            if (!isNaN(vertex.coords.usrCoords[1]) && !isNaN(vertex.coords.usrCoords[2])) {
+                path.push(vertex);
             }
-            return vertex.entry_exit;
+            if (vertex.intersection) {
+                vertex.data.done = true;
+
+                if (DEBUG) {
+                    console.log("Add intersection point", vertex.coords.usrCoords,
+                        "on", vertex.data.pathname, vertex.entry_exit,
+                        vertex.data.type);
+                }
+            // } else {
+            //     if (DEBUG) {
+            //         console.log("Add point", vertex.coords.usrCoords);
+            //     }
+            }
         },
 
         /**
@@ -1208,18 +1172,17 @@ define([
         tracing: function(S, S_intersect, clip_type) {
             var P, current, start,
                 cnt = 0,
-                reverse,
                 status,
                 maxCnt = 10000,
                 S_idx = 0,
                 path = [],
-                DEBUG = true;
+                DEBUG = false;
 
             if (DEBUG) {
                 console.log("\n------ Start Phase 3");
             }
 
-            reverse = (clip_type === 'difference' || clip_type === 'union') ? true : false;
+            // reverse = (clip_type === 'difference' || clip_type === 'union') ? true : false;
             while (S_idx < S_intersect.length && cnt < maxCnt) {
                 // Take the first intersection node of the subject path
                 // which is not yet included as start point.
@@ -1230,7 +1193,7 @@ define([
                 }
 
                 if (DEBUG) {
-                    console.log("\nStart", current.data.pathname, current.coords.usrCoords, current.data.type, /*current.data.revtype, */current.entry_exit, S_idx);
+                    console.log("\nStart", current.data.pathname, current.coords.usrCoords, current.data.type, current.entry_exit, S_idx);
                 }
                 if (path.length > 0) {    // Add a new path
                     path.push([NaN, NaN]);
@@ -1240,7 +1203,8 @@ define([
                 start = current.data.idx;
                 P = S;
 
-                status = this._addIntersectionVertex(path, current, DEBUG);
+                this._addVertex(path, current, DEBUG);
+                status = current.entry_exit;
                 do {
 
                     //
@@ -1263,25 +1227,10 @@ define([
                         do {
                             cnt++;
                             current = current._next;
-                            if (DEBUG && current.intersection) {
-                                console.log("Add fw", current.coords.usrCoords, "successor:", current._next.coords.usrCoords);
-                            }
-                            path.push(current);
-                            if (current.intersection) {
-                                current.data.done = true;
-                            }
-
-                            // if (!this._isCrossing(current, reverse)) {
-                            //     if (!isNaN(current.coords.usrCoords[1]) && !isNaN(current.coords.usrCoords[2])) {
-
-                            //         if (DEBUG && current.intersection) {
-                            //             console.log("Add fw", current.coords.usrCoords, "successor:", current._next.coords.usrCoords);
-                            //         }
-                            //         path.push(current);
-                            //     }
-                            //     current = current._next;
+                            // if (DEBUG && current.intersection) {
+                            //     console.log("Add fw", current.coords.usrCoords, "successor:", current._next.coords.usrCoords);
                             // }
-                        // } while (!this._isCrossing(current, reverse) && cnt < maxCnt);
+                            this._addVertex(path, current, DEBUG);
                         } while (this._stayOnPath(current, status) && cnt < maxCnt);
                     } else {
                         if (DEBUG) {
@@ -1295,41 +1244,12 @@ define([
                         do {
                             cnt++;
                             current = current._prev;
-                            if (DEBUG && current.intersection) {
-                                console.log("Add bw", current.coords.usrCoords);
-                            }
-                            path.push(current);
-                            if (current.intersection) {
-                                current.data.done = true;
-                            }
-
-                            // if (!this._isCrossing(current, true)) {
-                            //     if (!isNaN(current.coords.usrCoords[1]) && !isNaN(current.coords.usrCoords[2])) {
-
-                            //     }
-                            //     current = current._prev;
+                            // if (DEBUG && current.intersection) {
+                            //     console.log("Add bw", current.coords.usrCoords);
                             // }
-                        // } while (!this._isCrossing(current, true) && cnt < maxCnt);
+                            this._addVertex(path, current, DEBUG);
                         } while (this._stayOnPath(current, status) && cnt < maxCnt);
-
-
-                        // current = current._prev;
-                        // do {
-                        //     cnt++;
-
-                        //     if (!this._isCrossing(current, true)) {
-                        //         if (!isNaN(current.coords.usrCoords[1]) && !isNaN(current.coords.usrCoords[2])) {
-
-                        //             if (DEBUG && current.intersection) {
-                        //                 console.log("Add bw", current.coords.usrCoords);
-                        //             }
-                        //             path.push(current);
-                        //         }
-                        //         current = current._prev;
-                        //     }
-                        // } while (!this._isCrossing(current, true) && cnt < maxCnt);
                     }
-                    //current.data.done = true;
 
                     if (!current.neighbour) {
                         console.log("Tracing: emergency break!!!!!!!!!!!!!!!!!", cnt);
@@ -1345,19 +1265,20 @@ define([
                         current.neighbour.coords.usrCoords, "on", current.neighbour.data.pathname);
                     }
                     current = current.neighbour;
+                    current.data.done = true;
                     status = current.entry_exit;
 
-                    if (current.data.done) {
-                        // We arrived at an intersection node which is already
-                        // added to the clipping path.
-                        // We add it again to close the clipping path and jump out of the
-                        // loop.
-                        path.push(current);
-                        if (DEBUG) {
-                            console.log("Push last", current.coords.usrCoords);
-                        }
-                        break;
-                    }
+                    // if (current.data.done) {
+                    //     // We arrived at an intersection node which is already
+                    //     // added to the clipping path.
+                    //     // We add it again to close the clipping path and jump out of the
+                    //     // loop.
+                    //     path.push(current);
+                    //     if (DEBUG) {
+                    //         console.log("Push last", current.coords.usrCoords);
+                    //     }
+                    //     break;
+                    // }
                     P = current.data.path;
 
                     // Polygon closed:
@@ -1369,141 +1290,6 @@ define([
             return this._getCoordsArrays(path, false);
         },
 
-        tracingORG: function(S, S_intersect, clip_type) {
-            var P, current, start,
-                cnt = 0,
-                reverse,
-                maxCnt = 10000,
-                S_idx = 0,
-                path = [],
-                DEBUG = true;
-
-            if (DEBUG) {
-                console.log("\n------ Start Phase 3");
-            }
-
-            reverse = (clip_type === 'difference' || clip_type === 'union') ? true : false;
-            while (S_idx < S_intersect.length && cnt < maxCnt) {
-                // Take the first intersection node of the subject path
-                // which is not yet included as start point.
-                current = S_intersect[S_idx];
-                if (current.data.done || !this._isCrossing(current, reverse)) {
-                    S_idx++;
-                    continue;
-                }
-
-                if (DEBUG) {
-                    console.log("\nStart", current.data.pathname, current.coords.usrCoords, current.data.type, /*current.data.revtype, */current.entry_exit, S_idx);
-                }
-                if (path.length > 0) {    // Add a new path
-                    path.push([NaN, NaN]);
-                }
-
-                // Start now the tracing with that node of the subject path
-                start = current.data.idx;
-                P = S;
-                do {
-                    // Add the "current" intersection vertex.
-                    path.push(current);
-                    current.data.done = true;
-                    if (DEBUG) {
-                        console.log("Add intersection point", current.coords.usrCoords,
-                            "on", current.data.pathname, current.entry_exit,
-                            current.data.type, current.data.revtype);
-                    }
-                    //
-                    // Decide if we follow the current path forward or backward.
-                    // for example, in case the clipping is of type "intersection"
-                    // and the current intersection node is of type entry, we go forward.
-                    //
-                    if ((clip_type === 'intersection' && current.entry_exit === 'entry') ||
-                        (clip_type === 'union' && current.entry_exit === 'exit') ||
-                        (clip_type === 'difference' && (P === S) === (current.entry_exit === 'exit')) ) {
-
-                        if (DEBUG) {
-                            console.log("Go forward on", current.data.pathname, current.entry_exit);
-                        }
-
-                        //
-                        // Take the next nodes and add them to the path
-                        // as long as they are not intersection nodes of type 'X'.
-                        //
-                        current = current._next;
-                        do {
-                            cnt++;
-
-                            if (!this._isCrossing(current, reverse)) {
-                                if (!isNaN(current.coords.usrCoords[1]) && !isNaN(current.coords.usrCoords[2])) {
-
-                                    if (DEBUG && current.intersection) {
-                                        console.log("Add fw", current.coords.usrCoords, "successor:", current._next.coords.usrCoords);
-                                    }
-                                    path.push(current);
-                                }
-                                current = current._next;
-                            }
-                        } while (!this._isCrossing(current, reverse) && cnt < maxCnt);
-                    } else {
-                        if (DEBUG) {
-                            console.log("Go backward on", current.data.pathname);
-                        }
-                        //
-                        // Here, we go backward:
-                        // Take the previous nodes and add them to the path
-                        // as long as they are not intersection nodes of type 'X'.
-                        //
-                        current = current._prev;
-                        do {
-                            cnt++;
-
-                            if (!this._isCrossing(current, true)) {
-                                if (!isNaN(current.coords.usrCoords[1]) && !isNaN(current.coords.usrCoords[2])) {
-
-                                    if (DEBUG && current.intersection) {
-                                        console.log("Add bw", current.coords.usrCoords);
-                                    }
-                                    path.push(current);
-                                }
-                                current = current._prev;
-                            }
-                        } while (!this._isCrossing(current, true) && cnt < maxCnt);
-                    }
-                    current.data.done = true;
-
-                    if (!current.neighbour) {
-                        console.log("Tracing: emergency break!!!!!!!!!!!!!!!!!", cnt);
-                        return [[0], [0]];
-                    }
-
-                    //
-                    // We stopped the forward or backward loop, because we've
-                    // arrived at a crossing intersection node, i.e. we have to
-                    // switch to the other path now.
-                    if (DEBUG) {
-                        console.log("Switch from", current.coords.usrCoords, current.data.pathname, "to",
-                        current.neighbour.coords.usrCoords, "on", current.neighbour.data.pathname);
-                    }
-                    current = current.neighbour;
-                    if (current.data.done) {
-                        // We arrived at an intersection node which is already
-                        // added to the clipping path.
-                        // We add it again to close the clipping path and jump out of the
-                        // loop.
-                        path.push(current);
-                        if (DEBUG) {
-                            console.log("Push last", current.coords.usrCoords);
-                        }
-                        break;
-                    }
-                    P = current.data.path;
-
-                } while (!(current.data.pathname === 'S' && current.data.idx === start) && cnt < maxCnt);
-
-                S_idx++;
-            }
-
-            return this._getCoordsArrays(path, false);
-        },
         /**
          * Handle path clipping if one of the two paths is empty.
          * @private
@@ -2081,6 +1867,7 @@ define([
 
             // Phase 2: mark intersection points as entry or exit points
             this.markEntryExit(S, C, S_starters);
+
             // if (S[0].coords.distance(Const.COORDS_BY_USER, C[0].coords) === 0) {
             //     // Randomly disturb the first point of the second path
             //     // if both paths start at the same point.
