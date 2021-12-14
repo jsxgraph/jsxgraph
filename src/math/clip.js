@@ -526,8 +526,7 @@ define([
 
                     // Found an intersection point
                     if ( // "Regular" intersection
-                        (res[1] * d1 > -eps && res[1] < 1 - eps / d1 && res[2] * d2 > -eps && res[2] < 1 - eps / d2) 
-                        ||
+                        (res[1] * d1 > -eps && res[1] < 1 - eps / d1 && res[2] * d2 > -eps && res[2] < 1 - eps / d2) ||
                         // Collinear segments
                         (res[1] === Infinity && res[2] === Infinity && Mat.norm(res[0], 3) < eps)
                         ) {
@@ -749,8 +748,8 @@ define([
                     }
 
                     if (DEBUG) {
-                        console.log("P chain:", Pm, P.coords.usrCoords, Pp)
-                        console.log("Q chain:", Qm, P.neighbour.coords.usrCoords, Qp)
+                        console.log("P chain:", Pm, P.coords.usrCoords, Pp);
+                        console.log("Q chain:", Qm, P.neighbour.coords.usrCoords, Qp);
                         console.log("Pm", this._getPosition(Pm,  Qm, Q.coords.usrCoords, Qp));
                         console.log("Pp", this._getPosition(Pp,  Qm, Q.coords.usrCoords, Qp));
                     }
@@ -761,8 +760,8 @@ define([
                     s4 = this.det(P.coords.usrCoords, Pp, Qm);
 
                     if (s1 === 0 && s2 === 0 && s3 === 0 && s4 === 0) {
-                        P.coords.usrCoords[1] *= 1 + (Math.random() - 0.5) * Mat.eps;
-                        P.coords.usrCoords[2] *= 1 + (Math.random() - 0.5) * Mat.eps;
+                        P.coords.usrCoords[1] *= 1 + 10 * (Math.random() - 0.5) * Mat.eps;
+                        P.coords.usrCoords[2] *= 1 + 10 * (Math.random() - 0.5) * Mat.eps;
                         Q.coords.usrCoords[1] = P.coords.usrCoords[1];
                         Q.coords.usrCoords[2] = P.coords.usrCoords[2];
                         s1 = this.det(P.coords.usrCoords, Pm, Qm);
@@ -1358,8 +1357,9 @@ define([
                     // if (DEBUG) {
                     //     console.log("End of loop:", "start=", start, "idx=", current.data.idx);
                     // }
-                } while (!(/*current.data.pathname === 'S' &&*/ current.data.idx === start) && cnt < maxCnt);
-                if (cnt >= maxCnt) {
+                // } while (!(current.data.pathname === 'S' && current.data.idx === start) && cnt < maxCnt);
+                } while (current.data.idx !== start && cnt < maxCnt);
+            if (cnt >= maxCnt) {
                     console.log("Tracing: stopping an infinite loop!", cnt);
                 }
 
