@@ -21992,7 +21992,7 @@ define('math/clip',[
          */
         _classifyDegenerateIntersections: function(P) {
             var Pp, Pm, Qp, Qm, Q, side,
-                cnt, tmp,
+                cnt, cnt2, tmp,
                 oppositeDir,
                 s1, s2, s3, s4, x, y,
                 DEBUG = false;
@@ -22048,8 +22048,8 @@ define('math/clip',[
                     s4 = this.det(P.coords.usrCoords, Pp, Qm);
 
                     if (s1 === 0 && s2 === 0 && s3 === 0 && s4 === 0) {
-                        P.coords.usrCoords[1] *= 1 + 10 * (Math.random() - 0.5) * Mat.eps;
-                        P.coords.usrCoords[2] *= 1 + 10 * (Math.random() - 0.5) * Mat.eps;
+                        P.coords.usrCoords[1] *= 1 + Math.random() * Mat.eps;
+                        P.coords.usrCoords[2] *= 1 + Math.random() * Mat.eps;
                         Q.coords.usrCoords[1] = P.coords.usrCoords[1];
                         Q.coords.usrCoords[2] = P.coords.usrCoords[2];
                         s1 = this.det(P.coords.usrCoords, Pm, Qm);
@@ -22058,6 +22058,8 @@ define('math/clip',[
                         s4 = this.det(P.coords.usrCoords, Pp, Qm);
                         if (DEBUG) {
                             console.log("Random shift", P.coords.usrCoords);
+                            console.log(s1, s2, s3, s4, s2 === 0);
+                            console.log(this._getPosition(Pm,  Qm, Q.coords.usrCoords, Qp), this._getPosition(Pp,  Qm, Q.coords.usrCoords, Qp))
                         }
                     }
                     oppositeDir = false;
