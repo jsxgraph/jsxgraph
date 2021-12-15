@@ -425,7 +425,7 @@ define([
          * @param {Boolean} [local=false] Only look up the internal symbol table and don't look for
          * the <tt>vname</tt> in Math or the element list.
          */
-        getvar: function (vname, local) {
+         getvar: function (vname, local, isFunctionName) {
             var s;
 
             local = Type.def(local, false);
@@ -435,17 +435,30 @@ define([
                 return s.locals[vname];
             }
 
+            if (isFunctionName) {
+                // isFunctionName==true is the case if in [execute(), op_execfun:] a
+                // function call is handled.
+                // This is a patch to allow variable names to coincide with function names.
+                // It conflicts with supplying functions as parameters of other functions
+                // which does not work anyhow.
+                if (this.isBuiltIn(vname)) {
+                    return this.builtIn[vname];
+                }
+
+                if (this.isMathMethod(vname)) {
+                    return Math[vname];
+                }
+            }
+            // Handle the - so far - two constants by hard coding them.
+            if (vname === 'EULER' || vname === 'PI') {
+                if (this.isBuiltIn(vname)) {
+                    return this.builtIn[vname];
+                }
+            }
+
             // check for an element with this name
             if (this.isCreator(vname)) {
                 return this.creator(vname);
-            }
-
-            if (this.isBuiltIn(vname)) {
-                return this.builtIn[vname];
-            }
-
-            if (this.isMathMethod(vname)) {
-                return Math[vname];
             }
 
             if (!local) {
@@ -454,6 +467,8 @@ define([
                     return s;
                 }
             }
+            // }
+
         },
 
         /**
@@ -910,14 +925,14 @@ define([
             var i, v;
 
             if (node.replaced) {
-                // these children exist, if node.replaced is set.
+                // These children exist, if node.replaced is set.
                 v = this.board.objects[node.children[1][0].value];
 
                 if (Type.exists(v) && v.name !== "") {
                     node.type = 'node_var';
                     node.value = v.name;
 
-                    // maybe it's not necessary, but just to be sure that everything is cleaned up we better delete all
+                    // Maybe it's not necessary, but just to be sure that everything is cleaned up we better delete all
                     // children and the replaced flag
                     node.children.length = 0;
                     delete node.replaced;
@@ -954,8 +969,8 @@ define([
 
             v = node.value;
 
-            // we are interested only in nodes of type node_var and node_op > op_lhs.
-            // currently, we are not checking if the id is a local variable. in this case, we're stuck anyway.
+            // We are interested only in nodes of type node_var and node_op > op_lhs.
+            // Currently, we are not checking if the id is a local variable. in this case, we're stuck anyway.
 
             if (node.type === 'node_op' && v === 'op_lhs' && node.children.length === 1) {
                 this.isLHS = true;
@@ -974,7 +989,7 @@ define([
             }
 
             if (node.children) {
-                // assignments are first evaluated on the right hand side
+                // Assignments are first evaluated on the right hand side
                 for (i = node.children.length; i > 0; i--) {
                     if (Type.exists(node.children[i - 1])) {
                         node.children[i - 1] = this.replaceNames(node.children[i - 1]);
@@ -1034,7 +1049,7 @@ define([
                 }
             }
 
-            // the $()-function-calls are special because their parameter is given as a string, not as a node_var.
+            // The $()-function-calls are special because their parameter is given as a string, not as a node_var.
             if (node.type === 'node_op' && node.value === 'op_execfun' &&
                 node.children.length > 1 && node.children[0].value === '$' &&
                 node.children[1].length > 0) {
@@ -1322,7 +1337,9 @@ define([
                     }
 
                     // look up the variables name in the variable table
+                    node.children[0]._isFunctionName = true;
                     fun = this.execute(node.children[0]);
+                    delete node.children[0]._isFunctionName;
 
                     // determine the scope the function wants to run in
                     if (fun && fun.sc) {
@@ -1459,7 +1476,8 @@ define([
                 break;
 
             case 'node_var':
-                ret = this.getvar(node.value);
+                // node._isFunctionName is set in execute: at op_execfun.
+                ret = this.getvar(node.value, false, node._isFunctionName);
                 break;
 
             case 'node_const':
