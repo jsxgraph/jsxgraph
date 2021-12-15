@@ -680,5 +680,51 @@ describe("Test JXG.Math.Clip", function () {
         check_points(clip_path, correct);
     });
 
+
+    it("difference 10 (empty path)", function () {
+        var clip_type = 'difference',
+            correct = [[-3, 3], [3, 3], [0, 0], [-3, 3]],
+
+            curve1 = board.create('curve', [
+                [-3, 3, 0, -3],
+                [3, 3, 0, 3]
+            ]),
+            clip_path = board.create('curve', [[], []]);
+
+        clip_path.updateDataArray = function () {
+            var a = JXG.Math.Clip.greinerHormann(curve1, [], clip_type, this.board);
+            this.dataX = a[0];
+            this.dataY = a[1];
+        };
+        board.update();
+
+        check_points(clip_path, correct);
+    });
+
+    it("difference 11", function () {
+        var clip_type = 'difference',
+            correct = [[-4, 4], [4, 4], [0, -1], [-4, 4], [NaN, NaN], [-1, 1], [1, 1], [0, 3], [-1, 1]],
+
+            curve1 = board.create('curve', [
+                [-4, 4, 0, -4],
+                [4, 4, -1, 4]
+            ]),
+    
+            curve2 = board.create('curve', [
+                [-1, 1, 0, -1],
+                [1, 1, 3, 1]
+            ]),
+            clip_path = board.create('curve', [[], []]);
+
+        clip_path.updateDataArray = function () {
+            var a = JXG.Math.Clip.greinerHormann(curve1, curve2, clip_type, this.board);
+            this.dataX = a[0];
+            this.dataY = a[1];
+        };
+        board.update();
+
+        check_points(clip_path, correct);
+    });
+
 });
 
