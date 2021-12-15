@@ -639,7 +639,6 @@ define([
             if (DEBUG) {
                 console.log("C_intersect");
                 this._print_array(C_intersect);
-                // console.log(C_intersect);
                 console.log('<<<<<< Phase 1 done');
             }
             return [S_intersect, C_intersect];
@@ -660,34 +659,18 @@ define([
                 s2 = this.det(q, p2, p3),
                 s3 = this.det(p1, p2, p3);
 
-            // // Straight
-            // if (s3 == 0) {
-            //     if (s1 > 0) {
-            //         return 'left';
-            //     }
-            //     if (s1 < 0) {
-            //         return 'right';
-            //     }
-            //     return 'straight';
-            // }
             // Left turn
             if (s3 >= 0) {
                 if (s1 >= 0 && s2 >= 0) {
                     return 'left';
                 }
-                // if (s1 < 0 || s2 < 0) {
-                    return 'right';
-                // }
-                // return 'straight';
+                return 'right';
             }
             // Right turn
             if (s1 >= 0 || s2 >= 0) {
                 return 'left';
             }
-            // if (s1 < 0 && s2 < 0) {
-                return 'right';
-            // }
-            // return 'straight';
+            return 'right';
         },
 
         /**
@@ -704,9 +687,9 @@ define([
          */
         _classifyDegenerateIntersections: function(P) {
             var Pp, Pm, Qp, Qm, Q, side,
-                cnt, cnt2, tmp,
+                cnt, tmp,
                 oppositeDir,
-                s1, s2, s3, s4, x, y,
+                s1, s2, s3, s4,
                 DEBUG = false;
 
             if (DEBUG) {
@@ -771,7 +754,8 @@ define([
                         if (DEBUG) {
                             console.log("Random shift", P.coords.usrCoords);
                             console.log(s1, s2, s3, s4, s2 === 0);
-                            console.log(this._getPosition(Pm,  Qm, Q.coords.usrCoords, Qp), this._getPosition(Pp,  Qm, Q.coords.usrCoords, Qp))
+                            console.log(this._getPosition(Pm,  Qm, Q.coords.usrCoords, Qp), 
+                                this._getPosition(Pp,  Qm, Q.coords.usrCoords, Qp));
                         }
                     }
                     oppositeDir = false;
@@ -1196,6 +1180,17 @@ define([
             return stay;
         },
 
+        /**
+         * Add a point to the clipping path and returns if the algorithms
+         * arrived at an intersection point which has already been visited.
+         * In this case, true is returned.
+         * 
+         * @param {Array} path Resulting path
+         * @param {JXG.Math.Clip.Vertex} vertex Point to be added
+         * @param {Boolean} DEBUG debug output to console.log
+         * @returns {Boolean} true: point has been visited before, false otherwise
+         * @private
+         */
         _addVertex: function(path, vertex, DEBUG) {
             if (!isNaN(vertex.coords.usrCoords[1]) && !isNaN(vertex.coords.usrCoords[2])) {
                 path.push(vertex);
@@ -1361,7 +1356,8 @@ define([
                     // }
                 // } while (!(current.data.pathname === 'S' && current.data.idx === start) && cnt < maxCnt);
                 } while (current.data.idx !== start && cnt < maxCnt);
-            if (cnt >= maxCnt) {
+
+                if (cnt >= maxCnt) {
                     console.log("Tracing: stopping an infinite loop!", cnt);
                 }
 
@@ -1379,8 +1375,6 @@ define([
          * @return {Boolean}        true, if one of the input paths is empty, false otherwise.
          */
         isEmptyCase: function(S, C, clip_type) {
-            // var i;
-
             if (clip_type === 'intersection' && (S.length === 0 || C.length === 0)) {
                 return true;
             }
@@ -1417,11 +1411,6 @@ define([
                     pathY.push(path[0][1]);
                 }
             }
-
-            // le = pathX.length;
-            // for (i = 0; i < le; i++) {
-            //     console.log(pathX[i], pathY[i]);
-            // }
 
             return [pathX, pathY];
         },
@@ -1463,22 +1452,11 @@ define([
                 return this._getCoordsArrays(path, true);
             }
 
-            // From now on, both paths have non-zero length
-            //
-            // Handle union
-            // if (clip_type === 'union') {
-            //     path = path.concat(S);
-            //     path.push(S[0]);
-            //     path.push([NaN, NaN]);
-            //     path = path.concat(C);
-            //     path.push(C[0]);
-            //     return this._getCoordsArrays(path, false);
-            // }
-
+            // From now on, both paths have non-zero length.
             // The two paths have no crossing intersections,
             // but there might be bouncing intersections.
 
-            // First, we find - if possible - on each path a point which is not an intersection point.
+            // First, we find -- if possible -- on each path a point which is not an intersection point.
             if (S.length > 0) {
                 P = S[0];
                 while (P.intersection) {
@@ -1550,6 +1528,12 @@ define([
             return this._getCoordsArrays(path, doClose);
         },
 
+        /**
+         * Count intersection points of type 'X'.
+         * @param {JXG.Mat.Clip.Vertex} intersections 
+         * @returns Number
+         * @private
+         */
         _countCrossingIntersections: function(intersections) {
             var i,
                 le = intersections.length,
@@ -1564,7 +1548,8 @@ define([
         },
 
         /**
-         * Create path from all sorts of input elements to greinerHormann().
+         * Create path from all sorts of input elements and convert it 
+         * to a suitable input path for greinerHormann().
          *
          * @private
          * @param {Object} obj Maybe curve, arc, sector, circle, polygon, array of points, array of JXG.Coords,
