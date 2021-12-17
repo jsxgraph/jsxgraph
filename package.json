@@ -43,6 +43,7 @@
   },
   "devDependencies": {
     "almond": "^0.3.3",
+    "eslint": "^8.4.1",
     "jasmine-core": "^3.10.1",
     "jsdoc2": "^2.4.0",
     "jshint": "^2.13.1",
@@ -52,7 +53,7 @@
     "karma-jasmine": "^4.0.1",
     "karma-requirejs": "^1.1.0",
     "requirejs": "^2.3.6",
-    "uglify-js": "^3.14.3"
+    "terser": "^5.10.0"
   },
   "engines": {
     "node": ">=0.6.0"

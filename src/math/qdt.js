@@ -10,20 +10,20 @@
     This file is part of JSXGraph.
 
     JSXGraph is free software dual licensed under the GNU LGPL or MIT License.
-    
+
     You can redistribute it and/or modify it under the terms of the
-    
+
       * GNU Lesser General Public License as published by
         the Free Software Foundation, either version 3 of the License, or
         (at your option) any later version
       OR
       * MIT License: https://github.com/jsxgraph/jsxgraph/blob/master/LICENSE.MIT
-    
+
     JSXGraph is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Lesser General Public License for more details.
-    
+
     You should have received a copy of the GNU Lesser General Public License and
     the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
     and <http://opensource.org/licenses/MIT/>.
@@ -44,7 +44,7 @@ define(['math/math', 'utils/type'], function (Mat, Type) {
 
     /**
      * Instantiate a new quad tree.
-     * 
+     *
      * @name JXG.Math.Quadtree
      * @exports Mat.Quadtree as JXG.Math.Quadtree
      * @param {Array} bbox Bounding box of the new quad (sub)tree.
@@ -90,7 +90,7 @@ define(['math/math', 'utils/type'], function (Mat, Type) {
          * @type JXG.Math.Quadtree
          */
         this.southEast = null;
-        
+
         /**
          * In a subdivided quad tree this represents the bottom left subtree.
          * @name JXG.Math.Quadtree#southWest

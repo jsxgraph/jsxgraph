@@ -132,16 +132,16 @@ define(['jxg'], function (JXG) {
         GENTYPE_AXIS: 2,
         GENTYPE_MID: 3,
 
-        /** 
+        /**
          * @ignore
-         * @deprecated, now use {@link JXG.GENTYPE_REFLECTION_ON_LINE} 
-         * 
-         */  
+         * @deprecated, now use {@link JXG.GENTYPE_REFLECTION_ON_LINE}
+         *
+         */
         GENTYPE_REFLECTION: 4,
-        /** 
-         * @ignore 
-         * @deprecated, now use {@link JXG.GENTYPE_REFLECTION_ON_POINT} 
-         */ 
+        /**
+         * @ignore
+         * @deprecated, now use {@link JXG.GENTYPE_REFLECTION_ON_POINT}
+         */
         GENTYPE_MIRRORELEMENT: 5,
 
         GENTYPE_REFLECTION_ON_LINE: 4,
@@ -156,9 +156,9 @@ define(['jxg'], function (JXG) {
         GENTYPE_GLIDER: 13,
         GENTYPE_INTERSECTION: 14,
         GENTYPE_CIRCLE: 15,
-        /** 
-         * @ignore @deprecated NOT USED ANY MORE SINCE SKETCHOMETRY 2.0 (only for old constructions needed) 
-         */ 
+        /**
+         * @ignore @deprecated NOT USED ANY MORE SINCE SKETCHOMETRY 2.0 (only for old constructions needed)
+         */
         GENTYPE_CIRCLE2POINTS: 16,
 
         GENTYPE_LINE: 17,
@@ -197,7 +197,7 @@ define(['jxg'], function (JXG) {
         * @name Constants
         * @namespace
         */
-   
+
         //        GENTYPE_TRANSFORM: 48, // unused
         // 49 ... 50 // unused ...
 

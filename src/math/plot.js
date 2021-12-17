@@ -457,7 +457,7 @@ define(['jxg', 'base/constants', 'base/coords', 'math/math', 'math/extrapolate',
                 vy = curve.Y(t_real, true) ;
                 vy2 = curve.Y(t_real2, true) ;
                 dy = (vy - vy2) / (t_real - t_real2);
-               
+
                 if (p_good !== null) {
                     this._insertPoint_v2(curve, new Coords(Const.COORDS_BY_USER, p_good, curve.board, false));
                     return true;
@@ -1016,7 +1016,7 @@ define(['jxg', 'base/constants', 'base/coords', 'math/math', 'math/extrapolate',
         },
 
         /**
-         * 
+         *
          * @param {JXG.Curve} curve JSXGraph curve element
          * @param {Number} ta
          * @param {Number} tb
@@ -1959,7 +1959,7 @@ console.log("Polynomial of degree", level);
                 dx, dy;
 
             //console.log("Level", level)
-            if (level == 0) {
+            if (level === 0) {
                 this._insertPoint_v4(curve, [1, NaN, NaN], t);
                 return;
             }

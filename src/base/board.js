@@ -1213,7 +1213,7 @@ define([
                 op = (new Coords(Const.COORDS_BY_SCREEN, [moveEl.Xprev, moveEl.Yprev], this)).usrCoords;
                 // New finger position
                 np = (new Coords(Const.COORDS_BY_SCREEN, [moveEl.X, moveEl.Y], this)).usrCoords;
-                
+
                 // Old and new directions
                 od = Mat.crossProduct(fix, op);
                 nd = Mat.crossProduct(fix, np);
@@ -1296,7 +1296,7 @@ define([
                 op = (new Coords(Const.COORDS_BY_SCREEN, [moveEl.Xprev, moveEl.Yprev], this)).usrCoords;
                 // New finger position
                 np = (new Coords(Const.COORDS_BY_SCREEN, [moveEl.X, moveEl.Y], this)).usrCoords;
-                
+
                 alpha = Geometry.rad(op.slice(1), fix.slice(1), np.slice(1));
 
                 // Rotate and scale by the movement of the second finger
@@ -2161,7 +2161,7 @@ define([
             type = this._inputDevice;
             this.options.precision.hasPoint = this.options.precision[type];
 
-            // Handling of multi touch with pointer events should be easier than the touch events. 
+            // Handling of multi touch with pointer events should be easier than the touch events.
             // Every pointer device has its own pointerId, e.g. the mouse
             // always has id 1 or 0, fingers and pens get unique ids every time a pointerDown event is fired and they will
             // keep this id until a pointerUp event is fired. What we have to do here is:
@@ -2203,7 +2203,7 @@ define([
                 target = elements[elements.length - 1];
                 found = false;
 
-                // Reminder: this.touches is the list of elements which 
+                // Reminder: this.touches is the list of elements which
                 // currently "possess" a pointer (mouse, pen, finger)
                 for (i = 0; i < this.touches.length; i++) {
                     // An element receives a further touch, i.e.
@@ -2342,7 +2342,7 @@ define([
                         // Run through all touch events which have been started on this jsxgraph element.
                         for (j = 0; j < touchTargets.length; j++) {
                             if (touchTargets[j].num === evt.pointerId) {
-                                
+
                                 pos = this.getMousePosition(evt);
                                 touchTargets[j].X = pos[0];
                                 touchTargets[j].Y = pos[1];
@@ -2582,7 +2582,7 @@ define([
                             Yprev: NaN,
                             Xstart: [],
                             Ystart: [],
-                            Zstart: [] 
+                            Zstart: []
                         };
 
                         if (Type.isPoint(obj) ||
@@ -2670,7 +2670,7 @@ define([
          * @returns {Boolean}
          */
         touchMoveListener: function (evt) {
-            var i, pos1, pos2, 
+            var i, pos1, pos2,
                 time, touchTargets,
                 evtTouches = evt[JXG.touchProperty];
 
@@ -3189,7 +3189,7 @@ define([
                         sX = 1.1 * Type.evaluate(el.visProp.attractordistance);
                         sY = sX;
 
-                        if (Type.evaluate(el.visProp.attractorunit) == 'screen') {
+                        if (Type.evaluate(el.visProp.attractorunit) === 'screen') {
                             sX /= this.unitX;
                             sY /= this.unitX;
                         }
@@ -3704,11 +3704,11 @@ define([
          *                 // Shorter version:
          *                 //somePoint = board.create('point', a, {name:'SomePoint',size:4});
          *             });
-         * 
+         *
          *     })();
          *
          * </script><pre>
-         * 
+         *
          * @see JXG.Board#getScrCoordsOfMouse
          * @see JXG.Board#getAllUnderMouse
          */
@@ -4404,7 +4404,7 @@ define([
 
             // if (!dontSetBoundingBox) {
             //     box     = this.attr.boundingbox;    // This is the intended bounding box.
-                
+
             //     // The shift values compensate the follow-up correction
             //     // in setBoundingBox in case of "this.keepaspectratio==true"
             //     // Otherwise, shift_x and shift_y will be zero.
@@ -4535,7 +4535,7 @@ define([
 
             for (el = 0; el < this.objectsList.length; el++) {
                 pEl = this.objectsList[el];
-                if (this.needsFullUpdate && pEl.elementClass == Const.OBJECT_CLASS_TEXT) {
+                if (this.needsFullUpdate && pEl.elementClass === Const.OBJECT_CLASS_TEXT) {
                     pEl.updateSize();
                 }
 
@@ -4966,7 +4966,7 @@ define([
                 this.unitY = h / (bbox[1] - bbox[3]);
                 this.keepaspectratio = false;
             }
-            
+
             this.moveOrigin(-this.unitX * (bbox[0] - offX), this.unitY * (bbox[1] + offY));
 
             if (setZoom === 'update') {

@@ -45,7 +45,7 @@
  * Stoyan Stefanov <sstoo@gmail.com> (see http://www.phpied.com/rgb-color-parser-in-javascript/)
  */
 
-define(['jxg', 'utils/type', 'math/math'], 
+define(['jxg', 'utils/type', 'math/math'],
     function (JXG, Type, Mat) {
 
     "use strict";
@@ -1004,16 +1004,16 @@ define(['jxg', 'utils/type', 'math/math'],
      * <li> white
      * <li> yellow
      * </ul>
-     * 
+     *
      * @name JXG.palette
      * @type Object
      * @default JXG.paletteWong
      * @see JXG.paletteWong
-     * 
+     *
      * @example
-     * 
+     *
      * var p = board.create('line', [[-1, 1], [2, -3]], {strokeColor: JXG.palette.yellow});
-     * 
+     *
      */
     JXG.palette = JXG.paletteWong;
 

@@ -1084,7 +1084,7 @@ define([
                 };
 
             } else if ((
-                        el1.elementClass === Const.OBJECT_CLASS_CURVE && 
+                        el1.elementClass === Const.OBJECT_CLASS_CURVE &&
                         !el1_isArcType &&
                         el2.elementClass === Const.OBJECT_CLASS_LINE
                        ) ||
@@ -1729,7 +1729,7 @@ define([
          * @param {Array} q1 First point of segment 2 using normalized homogeneous coordinates [1,x,y]
          * @param {Array} q2 Second point or direction of segment 2 using normalized homogeneous coordinates [1,x,y] or point at infinity [0,x,y], respectively
          * @returns {Array} [Intersection point, t, u] The first entry contains the homogeneous coordinates
-         * of the intersection point. The second and third entry give the position of the intersection with respect 
+         * of the intersection point. The second and third entry give the position of the intersection with respect
          * to the definiting parameters. For example, the second entry t is defined by: intersection point = p1 + t * deltaP, where
          * deltaP = (p2 - p1) when both parameters are coordinates, and deltaP = p2 if p2 is a point at infinity.
          * If the two segments are collinear, [[0,0,0], Infinity, Infinity] is returned.
@@ -1749,8 +1749,8 @@ define([
             c[2] /= c[0];
             c[0] /= c[0];
 
-            // Now compute in principle: 
-            //    t = dist(c - p1) / dist(p2 - p1) and 
+            // Now compute in principle:
+            //    t = dist(c - p1) / dist(p2 - p1) and
             //    u = dist(c - q1) / dist(q2 - q1)
             // However: the points q1, q2, p1, p2 might be ideal points - or in general - the
             // coordinates might be not normalized.

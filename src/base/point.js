@@ -352,12 +352,12 @@ define([
          *     var pol = board.create('polygon', [[2,2], [4,2], [4,3]], {strokeColor: 'blue'});
          *
          *     var point = board.create('point', [-1, 1], {
-         *     			  attractors: [line, seg, circ, po, curve, pol],
+         *                   attractors: [line, seg, circ, po, curve, pol],
          *                   attractorDistance: 0.2
          *                 });
          *
          *     var txt = board.create('text', [-4, 3, function() {
-         *     		return 'point on line: ' + point.isOn(line) + '<br>' +
+         *             return 'point on line: ' + point.isOn(line) + '<br>' +
          *                     'point on seg: ' + point.isOn(seg) + '<br>' +
          *                     'point on circ = ' + point.isOn(circ) + '<br>' +
          *                     'point on point = ' + point.isOn(po) + '<br>' +
@@ -380,14 +380,14 @@ define([
             } else if (el.elementClass === Const.OBJECT_CLASS_LINE) {
                 if (el.elType === 'segment' && !Type.evaluate(this.visProp.alwaysintersect)) {
                     arr = JXG.Math.Geometry.projectCoordsToSegment(
-            			        this.coords.usrCoords,
+                                this.coords.usrCoords,
                                 el.point1.coords.usrCoords,
                                 el.point2.coords.usrCoords);
                     if (arr[1] >= 0 && arr[1] <= 1 &&
                         Geometry.distPointLine(this.coords.usrCoords, el.stdform) < tol) {
-       				    return true;
+                           return true;
                     } else {
-            		    return false;
+                        return false;
                     }
                 } else {
                     return Geometry.distPointLine(this.coords.usrCoords, el.stdform) < tol;

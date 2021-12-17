@@ -39905,32 +39905,44 @@ define('parser/jessiecode',[
         },
 
         /**
-         * Looks up the value of the given variable.
+         * Looks up the value of the given variable. We use a simple type inspection.
+         *
          * @param {String} vname Name of the variable
          * @param {Boolean} [local=false] Only look up the internal symbol table and don't look for
          * the <tt>vname</tt> in Math or the element list.
+         * @param {Boolean} [isFunctionName=false] Lookup function of tpye builtIn, Math.*, creator.
+         *
+         * @see JXG.JessieCode#resolveType
          */
-        getvar: function (vname, local) {
+         getvar: function (vname, local, isFunctionName) {
             var s;
 
             local = Type.def(local, false);
 
+            // Local scope has always precedence
             s = this.isLocalVariable(vname);
             if (s !== null) {
                 return s.locals[vname];
             }
 
-            // check for an element with this name
-            if (this.isCreator(vname)) {
-                return this.creator(vname);
-            }
-
-            if (this.isBuiltIn(vname)) {
+            // Handle the - so far only - two constants by hard coding them.
+            if (vname === 'EULER' || vname === 'PI') {
                 return this.builtIn[vname];
             }
 
-            if (this.isMathMethod(vname)) {
-                return Math[vname];
+            if (!!isFunctionName) {
+                if (this.isBuiltIn(vname)) {
+                    return this.builtIn[vname];
+                }
+
+                if (this.isMathMethod(vname)) {
+                    return Math[vname];
+                }
+
+                // check for an element with this name
+                if (this.isCreator(vname)) {
+                    return this.creator(vname);
+                }
             }
 
             if (!local) {
@@ -40093,12 +40105,13 @@ define('parser/jessiecode',[
 
         /**
          * Converts a node type <tt>node_op</tt> and value <tt>op_map</tt> or <tt>op_function</tt> into a executable
-         * function.
+         * function. Does a simple type inspection.
          * @param {Object} node
          * @returns {function}
+         * @see JXG.JessieCode#resolveType
          */
-        defineFunction: function (node) {
-            var fun, i,
+         defineFunction: function (node) {
+            var fun, i, that = this,
                 list = node.children[0],
                 scope = this.pushScope(list);
 
@@ -40125,6 +40138,11 @@ define('parser/jessiecode',[
                         /*jslint evil:true*/
                         fun = eval(str);
                         /*jslint evil:false*/
+
+                        scope.argtypes = [];
+                        for (i = 0; i < list.length; i++) {
+                            scope.argtypes.push(that.resolveType(list[i], node));
+                        }
 
                         return fun;
                     } catch (e) {
@@ -40395,14 +40413,14 @@ define('parser/jessiecode',[
             var i, v;
 
             if (node.replaced) {
-                // these children exist, if node.replaced is set.
+                // These children exist, if node.replaced is set.
                 v = this.board.objects[node.children[1][0].value];
 
                 if (Type.exists(v) && v.name !== "") {
                     node.type = 'node_var';
                     node.value = v.name;
 
-                    // maybe it's not necessary, but just to be sure that everything is cleaned up we better delete all
+                    // Maybe it's not necessary, but just to be sure that everything is cleaned up we better delete all
                     // children and the replaced flag
                     node.children.length = 0;
                     delete node.replaced;
@@ -40439,8 +40457,8 @@ define('parser/jessiecode',[
 
             v = node.value;
 
-            // we are interested only in nodes of type node_var and node_op > op_lhs.
-            // currently, we are not checking if the id is a local variable. in this case, we're stuck anyway.
+            // We are interested only in nodes of type node_var and node_op > op_lhs.
+            // Currently, we are not checking if the id is a local variable. in this case, we're stuck anyway.
 
             if (node.type === 'node_op' && v === 'op_lhs' && node.children.length === 1) {
                 this.isLHS = true;
@@ -40459,7 +40477,7 @@ define('parser/jessiecode',[
             }
 
             if (node.children) {
-                // assignments are first evaluated on the right hand side
+                // Assignments are first evaluated on the right hand side
                 for (i = node.children.length; i > 0; i--) {
                     if (Type.exists(node.children[i - 1])) {
                         node.children[i - 1] = this.replaceNames(node.children[i - 1]);
@@ -40519,7 +40537,7 @@ define('parser/jessiecode',[
                 }
             }
 
-            // the $()-function-calls are special because their parameter is given as a string, not as a node_var.
+            // The $()-function-calls are special because their parameter is given as a string, not as a node_var.
             if (node.type === 'node_op' && node.value === 'op_execfun' &&
                 node.children.length > 1 && node.children[0].value === '$' &&
                 node.children[1].length > 0) {
@@ -40574,6 +40592,80 @@ define('parser/jessiecode',[
             }
 
             return e[v];
+        },
+
+        /**
+         * Type inspection: check if the string vname appears as function name in the
+         * AST node. Used in "op_execfun". This allows the JessieCode exmples below. 
+         *
+         * @private
+         * @param {String} vname 
+         * @param {Object} node
+         * @returns 'any' or 'function'
+         * @see JXG.JessieCode#execute
+         * @see JXG.JessieCode#getvar
+         * 
+         * @example
+         *  var p = board.create('point', [2, 0], {name: 'X'});
+         *  var txt = 'X(X)';
+         *  console.log(board.jc.parse(txt));
+         * 
+         * @example
+         *  var p = board.create('point', [2, 0], {name: 'X'});
+         *  var txt = 'f = function(el, X) { return X(el); }; f(X, X);';
+         *  console.log(board.jc.parse(txt));
+         * 
+         * @example
+         *  var p = board.create('point', [2, 0], {name: 'point'});
+         *  var txt = 'B = point(1,3); X(point);';
+         *  console.log(board.jc.parse(txt));
+         * 
+         * @example
+         *  var p = board.create('point', [2, 0], {name: 'A'});
+         *  var q = board.create('point', [-2, 0], {name: 'X'});
+         *  var txt = 'getCoord=function(p, f){ return f(p); }; getCoord(A, X);';
+         *  console.log(board.jc.parse(txt));
+         */
+         resolveType: function(vname, node) {
+            var i, t,
+                type = 'any'; // Possible values: 'function', 'any'
+
+            if (Type.isArray(node)) {
+                // node contains the parameters of a function call or function declaration
+                for (i = 0; i < node.length; i++) {
+                    t = this.resolveType(vname, node[i]);
+                    if (t !== 'any') {
+                        type = t;
+                        return type;
+                    }
+                }
+            }
+
+            if (node.type === 'node_op' && node.value === 'op_execfun' &&
+                node.children[0].type === 'node_var' && node.children[0].value === vname) {
+                return 'function';
+            }
+
+            if (node.type === 'node_op') {
+                for (i = 0; i < node.children.length; i++) {
+                    if (node.children[0].type === 'node_var' && node.children[0].value === vname &&
+                        (node.value === 'op_add' || node.value === 'op_sub' || node.value === 'op_mul' ||
+                            node.value === 'op_div' || node.value === 'op_mod' || node.value === 'op_exp' ||
+                            node.value === 'op_neg')) {
+                        return 'any';
+                    }
+                }
+
+                for (i = 0; i < node.children.length; i++) {
+                    t = this.resolveType(vname, node.children[i]);
+                    if (t !== 'any') {
+                        type = t;
+                        return type;
+                    }
+                }
+            }
+
+            return 'any';
         },
 
         /**
@@ -40807,7 +40899,9 @@ define('parser/jessiecode',[
                     }
 
                     // look up the variables name in the variable table
+                    node.children[0]._isFunctionName = true;
                     fun = this.execute(node.children[0]);
+                    delete node.children[0]._isFunctionName;
 
                     // determine the scope the function wants to run in
                     if (fun && fun.sc) {
@@ -40822,7 +40916,14 @@ define('parser/jessiecode',[
 
                     // interpret ALL the parameters
                     for (i = 0; i < list.length; i++) {
-                        parents[i] = this.execute(list[i]);
+                        if (Type.exists(fun.scope) && Type.exists(fun.scope.argtypes) &&fun.scope.argtypes[i] === 'function') {
+                            // Type inspection
+                            list[i]._isFunctionName = true;
+                            parents[i] = this.execute(list[i]);
+                            delete list[i]._isFunctionName;
+                        } else {
+                            parents[i] = this.execute(list[i]);
+                        }
                         //parents[i] = Type.evalSlider(this.execute(list[i]));
                         this.dpstack[this.pscope].push({
                             line: node.children[1][i].line,
@@ -40944,7 +41045,8 @@ define('parser/jessiecode',[
                 break;
 
             case 'node_var':
-                ret = this.getvar(node.value);
+                // node._isFunctionName is set in execute: at op_execfun.
+                ret = this.getvar(node.value, false, node._isFunctionName);
                 break;
 
             case 'node_const':
@@ -41092,7 +41194,7 @@ define('parser/jessiecode',[
                     this.popScope();
                     break;
                 case 'op_execfunmath':
-                    console.log('TODO');
+                    console.log('op_execfunmath: TODO');
                     ret = '-1';
                     break;
                 case 'op_execfun':

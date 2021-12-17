@@ -27,6 +27,7 @@
 
  /*global JXG: true, define: true, window: true, console: true, self: true, document: true, parser: true*/
  /*jslint nomen: true, plusplus: true*/
+ /*eslint eqeqeq: "off"*/
 
  /* depends:
   jxg

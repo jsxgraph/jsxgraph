@@ -1,16 +1,16 @@
 .PHONY: tests test test-server
 
-# build tools
+# Build tools
 REQUIREJS=./node_modules/.bin/r.js
-UGLIFYJS=./node_modules/.bin/uglifyjs
-JSDOC2=node ./node_modules/.bin/jsdoc2
+MINIFYER=./node_modules/terser/bin/terser
 
+# Code quality
 LINT=./node_modules/.bin/jslint
+ESLINT=./node_modules/eslint/bin/eslint.js
 HINT=./node_modules/.bin/jshint
 KARMA=node_modules/karma/bin/karma
-# INTERN=./node_modules/.bin/intern-client
 
-# general tools
+# System tools
 CP=cp
 CAT=cat
 MKDIR=mkdir
@@ -19,42 +19,38 @@ CD=cd
 ZIP=zip
 UNZIP=unzip
 
-# directories
+# Directories
 OUTPUT=distrib
 THIRDPARTY=3rdparty
 BUILD=build
 TMP=tmp
 BUILDBIN=$(BUILD)/bin
 BUILDREADERS=$(BUILDBIN)/readers
+
+# API docs
+JSDOC2=node ./node_modules/.bin/jsdoc2
 JSDOC2PLG=doc/jsdoc-tk/plugins
 JSDOC2PTCH=doc/jsdoc-tk/patches
 JSDOC2TPL=doc/jsdoc-tk/template
 JSDOC2TPLSTAT=$(JSDOC2TPL)/static
-
-# flags
-MKDIRFLAGS=-p
-RMFLAGS=-rf
 JSDOC2FLAGS=-v -p -t=$(JSDOC2TPL) -d=$(TMP)/docs
 
+# Flags
+MKDIRFLAGS=-p
+RMFLAGS=-rf
 ZIPFLAGS=-r
-JSTESTPORT=4224
-JSTESTSERVER=localhost:4224
-JSTESTFLAGS=--reset --captureConsole --tests all
 
-# filelists - required for docs, linters, and to build the readers
+# Filelists - required for docs, linters, and to build the readers
 FILELIST=$(shell cat src/loadjsxgraph.js | grep "baseFiles\s*=\s*'\(\w*,\)\+" | awk -F \' '{ print $$2 }' | sed 's/,/.js src\//g')
 
 # Lintlist - jessiecode.js is developed externally (github:jsxgraph/jessiecode) and won't be linted in here
 LINTLIST=$(shell echo $(FILELIST) | sed 's/src\/parser\/jessiecode\.js//')
 LINTFLAGS=--bitwise true --white true --continue true
+ESLINTFLAGS=
 
 READERSOUT=build/bin/readers/geonext.min.js build/bin/readers/geogebra.min.js build/bin/readers/intergeo.min.js build/bin/readers/sketch.min.js
 
-#moodle
-MOODLEGIT=https://github.com/jsxgraph/moodle-filter_jsxgraph.git
-MOODLEDIR=../moodle-filter_jsxgraph
-
-# rules
+# Rules
 all: core readers docs
 
 core:
@@ -64,15 +60,9 @@ core:
 	$(CP) $(BUILDBIN)/jsxgraphcore.js $(OUTPUT)/jsxgraphsrc.js
 
 	# Build compressed file jsxgraphcore-min.js and copy it to jsxgraphcore.js
-	$(REQUIREJS) -o $(BUILD)/core.build.json optimize=uglify2 out=$(BUILDBIN)/jsxgraphcore-min.js;
+	$(MINIFYER) $(BUILDBIN)/jsxgraphcore.js -c -m -o $(BUILDBIN)/jsxgraphcore-min.js
 	{ $(CAT) COPYRIGHT; $(CAT) $(BUILDBIN)/jsxgraphcore-min.js; } > $(BUILDBIN)/jsxgraphcore.min.js
 	$(CP) $(BUILDBIN)/jsxgraphcore.min.js $(OUTPUT)/jsxgraphcore.js
-
-# core-min:
-# 	$(MKDIR) $(MKDIRFLAGS) $(BUILDBIN)
-# 	$(REQUIREJS) -o $(BUILD)/core.build.json optimize=uglify2 out=$(BUILDBIN)/jsxgraphcore-min.js;
-# 	{ $(CAT) COPYRIGHT; $(CAT) $(BUILDBIN)/jsxgraphcore-min.js; } > $(BUILDBIN)/jsxgraphcore.min.js
-# 	$(CP) $(BUILDBIN)/jsxgraphcore.min.js $(OUTPUT)/jsxgraphcore.js
 
 release: core docs
 	$(MKDIR) $(MKDIRFLAGS) $(TMP)
@@ -90,25 +80,25 @@ release: core docs
 	$(RM) $(RMFLAGS) tmp
 
 docs: core
-	# set up tmp dir
+	# Set up tmp dir
 	$(MKDIR) $(MKDIRFLAGS) $(TMP)
 	$(MKDIR) $(MKDIRFLAGS) $(OUTPUT)
 
-	# update template related files
+	# Update template related files
 	$(CP) $(THIRDPARTY)/jquery.min.js $(JSDOC2TPLSTAT)/jquery.min.js
 	$(CP) $(BUILDBIN)/jsxgraphcore.min.js $(JSDOC2TPLSTAT)/jsxgraphcore.js
 	$(CP) $(OUTPUT)/jsxgraph.css $(JSDOC2TPLSTAT)/jsxgraph.css
 
-	# patch run.js
+	# Patch run.js
 	$(CP) $(JSDOC2PTCH)/*.js ./node_modules/jsdoc2/app
 
-	# update the plugin
+	# Update the plugin
 	$(CP) $(JSDOC2PLG)/*.js ./node_modules/jsdoc2/app/plugins/
 
-	# run node-jsdoc2
+	# Run node-jsdoc2
 	$(JSDOC2) $(JSDOC2FLAGS) src/loadjsxgraph.js src/$(FILELIST).js
 
-	# zip -r tmp/docs.zip tmp/docs/
+	# Compress the result: zip -r tmp/docs.zip tmp/docs/
 	$(CD) $(TMP) && $(ZIP) $(ZIPFLAGS) docs.zip docs/
 	$(CP) $(TMP)/docs.zip $(OUTPUT)/docs.zip
 
@@ -117,32 +107,13 @@ docs: core
 	# Test
 	$(CD) $(OUTPUT) && $(UNZIP) -o docs.zip
 
-moodle: core $(READERSOUT)
-	$(MKDIR) $(MKDIRFLAGS) $(TMP)
-	$(MKDIR) $(MKDIRFLAGS) $(TMP)/jsxgraph
-	if [ ! -d $(MOODLEDIR) ]; then \
-		git clone $(MOODLEGIT) $(MOODLEDIR); \
-	fi
-	git -C $(MOODLEDIR) pull;
-
-	$(CP) -r $(MOODLEDIR)/[!.]* $(TMP)/jsxgraph/
-	$(RM) $(RMFLAGS) $(TMP)/jsxgraph/screenshots $(TMP)/jsxgraph/libs/*_submodule
-
-	$(CP) $(BUILDBIN)/jsxgraphcore.min.js $(TMP)/jsxgraph/jsxgraphcore.js
-	$(CP) $(OUTPUT)/jsxgraph.css $(TMP)/jsxgraph/jsxgraph.css
-
-	$(CD) $(TMP) && $(ZIP) $(ZIPFLAGS) moodle-filter_jsxgraph.zip jsxgraph/
-	$(CP) $(TMP)/moodle-filter_jsxgraph.zip $(OUTPUT)/moodle-filter_jsxgraph.zip
-
-	$(RM) $(RMFLAGS) $(TMP)
-
 readers: $(READERSOUT)
 	$(MKDIR) $(MKDIRFLAGS) $(OUTPUT)
 	$(CP) $(BUILDREADERS)/* $(OUTPUT)
 
 build/bin/readers/%.min.js: src/reader/%.js
 	$(MKDIR) $(MKDIRFLAGS) $(BUILDREADERS)
-	{ $(CAT) COPYRIGHT; $(UGLIFYJS) $^; } > $@
+	{ $(CAT) COPYRIGHT; $(MINIFYER) $^ -c -m ; } > $@
 
 compressor: core
 	$(REQUIREJS) -o build/compressor.build.json
@@ -160,11 +131,8 @@ hint:
 lint:
 	$(LINT) $(LINTFLAGS) src/$(LINTLIST).js
 
-#test-server:
-#	$(JSTESTDRIVER) --port $(JSTESTPORT)
+eslint:
+	$(ESLINT) $(ESLINTFLAGS) src/$(LINTLIST).js
 
 test: core
 	$(KARMA) start karma/karma.conf.js
-
-# tests:
-# 	$(INTERN) config=tests/intern

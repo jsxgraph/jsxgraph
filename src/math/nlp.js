@@ -145,7 +145,7 @@ define(['jxg'], function (JXG) {
          * @returns {Number} Exit status of the COBYLA2 optimization.
          */
         FindMinimum: function(calcfc, n,  m, x, rhobeg, rhoend,  iprint,  maxfun) {
-    	    // CobylaExitStatus FindMinimum(final Calcfc calcfc, int n, int m, double[] x, double rhobeg, double rhoend, int iprint, int maxfun)
+            // CobylaExitStatus FindMinimum(final Calcfc calcfc, int n, int m, double[] x, double rhobeg, double rhoend, int iprint, int maxfun)
             //     This subroutine minimizes an objective function F(X) subject to M
             //     inequality constraints on X, where X is a vector of variables that has
             //     N components.  The algorithm employs linear approximations to the
@@ -241,7 +241,7 @@ define(['jxg'], function (JXG) {
          * @returns {Number} Exit status of the COBYLA2 optimization
          */
         cobylb: function (calcfc, n,  m,  mpp,  x, rhobeg,  rhoend,  iprint,  maxfun) {
-    		// calcf ist funktion die aufgerufen wird wie calcfc(n, m, ix, ocon)
+            // calcf ist funktion die aufgerufen wird wie calcfc(n, m, ix, ocon)
             // N.B. Arguments CON, SIM, SIMI, DATMAT, A, VSIG, VETA, SIGBAR, DX, W & IACT
             //      have been removed.
 
@@ -314,7 +314,7 @@ define(['jxg'], function (JXG) {
             //     Make the next call of the user-supplied subroutine CALCFC. These
             //     instructions are also used for calling CALCFC during the iterations of
             //     the algorithm.
-		    //alert("Iteration "+nfvals+" x="+x);
+            //alert("Iteration "+nfvals+" x="+x);
             L_40:
             do {
                 if (nfvals >= maxfun && nfvals > 0) {

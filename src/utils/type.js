@@ -199,7 +199,7 @@ define([
         exists: function (v, checkEmptyString) {
             var result = !(v == undefined || v === null);
             checkEmptyString = checkEmptyString || false;
-            
+
             if (checkEmptyString) {
                 return result && v !== '';
             }
@@ -210,7 +210,7 @@ define([
         //         var result = !(v === undef || v === null);
 
         //         checkEmptyString = checkEmptyString || false;
-                
+
         //         if (checkEmptyString) {
         //             return result && v !== '';
         //         }

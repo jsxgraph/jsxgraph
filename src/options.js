@@ -652,11 +652,11 @@ define([
              *             panCtrl: false
              *         }
              *     });
-             * 
+             *
              *     })();
-             * 
+             *
              * </script><pre>
-             * 
+             *
              *
              * @see JXG.Board#keyDownListener
              * @see JXG.Board#keyFocusInListener
@@ -704,11 +704,11 @@ define([
              *             axis: true,
              *             resize: {enabled: true, throttle: 200}
              *         });
-             * 
+             *
              *     })();
-             * 
+             *
              * </script><pre>
-             * 
+             *
              *
              */
             resize: {
@@ -753,11 +753,11 @@ define([
              *             axis: true,
              *             moveTarget: document
              *         });
-             * 
+             *
              *     })();
-             * 
+             *
              * </script><pre>
-             * 
+             *
              *
              */
             moveTarget: null,
@@ -1588,9 +1588,9 @@ define([
             *             }
             *         },
             *     });
-            * 
+            *
             *     })();
-            * 
+            *
             * </script><pre>
             *
             * @name Ticks#beautifulScientificTickLabels
@@ -2509,7 +2509,7 @@ define([
                 strokeColor: Color.palette.red,
                 highlightFillColor: '#c3d9ff',
                 highlightStrokeColor: '#c3d9ff',
-    
+
                 name: ''
             },
 
@@ -4054,7 +4054,7 @@ define([
             snatchDistance: 0.0,
 
             /**
-             * If set to true, the point will snap to a grid of integer multiples of 
+             * If set to true, the point will snap to a grid of integer multiples of
              * {@link Point#snapSizeX} and {@link Point#snapSizeY} (in user coordinates).
              * <p>
              * The coordinates of the grid points are either integer multiples of snapSizeX and snapSizeY
@@ -5067,11 +5067,11 @@ define([
              *         var board = JXG.JSXGraph.initBoard('JXG2da7e972-ac62-416b-a94b-32559c9ec9f9',
              *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
              *     var txt = board.create('text', [2, 2, "hello"], {fontSize: 8, fontUnit: 'vmin'});
-             * 
+             *
              *     })();
-             * 
+             *
              * </script><pre>
-             * 
+             *
              */
             fontUnit: 'px',
 
@@ -5473,7 +5473,7 @@ define([
              * text1 = board.create('text', [5, 1, function(){
              *             return '\\(a(t)= { 1 \\over ' + a.Value().toFixed(3) + '}\\)';
              *         }], {fontSize: 15, fixed:true, strokeColor:'red', anchorY: 'top', parse: false});
-             * 
+             *
              * </pre><div id="JXGf8bd01db-fb6a-4a5c-9e7f-8823f7aa5ac6" class="jxgbox" style="width: 300px; height: 300px;"></div>
              * <script type="text/javascript">
              *     (function() {
@@ -5485,12 +5485,12 @@ define([
              *         suffixlabel:'\\(t_1=\\)',
              *         unitLabel: ' \\(\\text{ ms}\\)',
              *         snapWidth:0.01}),
-             *     
+             *
              *     func = board.create('functiongraph',[function(x){return (a.Value()*x*x)}], {strokeColor: "red"});
              *     text1 = board.create('text', [5, 1, function(){
              *                 return '\\(a(t)= { 1 \\over ' + a.Value().toFixed(3) + '}\\)';
              *             }], {fontSize: 15, fixed:true, strokeColor:'red', anchorY: 'top', parse: false});
-             * 
+             *
              *     })();
              *
              * </script><pre>
@@ -5529,7 +5529,7 @@ define([
              * text1 = board.create('text', [5, 1, function(){
              *             return 'a(t)= { 1 \\over ' + a.Value().toFixed(3) + '}';
              *         }], {fontSize: 15, fixed:true, strokeColor:'red', anchorY: 'top'});
-             * 
+             *
              * </pre>
              * <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.13.10/dist/katex.min.css" integrity="sha384-0cCFrwW/0bAk1Z/6IMgIyNU3kfTcNirlObr4WjrUU7+hZeD6ravdYJ3kPWSeC31M" crossorigin="anonymous">
              * <script src="https://cdn.jsdelivr.net/npm/katex@0.13.10/dist/katex.min.js" integrity="sha384-dtFDxK2tSkECx/6302Z4VN2ZRqt6Gis+b1IwCjJPrn0kMYFQT9rbtyQWg5NFWAF7" crossorigin="anonymous"></script>
@@ -5543,12 +5543,12 @@ define([
              *         suffixlabel:'t_1=',
              *         unitLabel: ' \\text{ ms}',
              *         snapWidth:0.01});
-             *     
+             *
              *     func = board.create('functiongraph',[function(x){return (a.Value()*x*x)}], {strokeColor: "red"});
              *     text1 = board.create('text', [5, 1, function(){
              *                 return 'a(t)= { 1 \\over ' + a.Value().toFixed(3) + '}';
              *             }], {fontSize: 15, fixed:true, strokeColor:'red', anchorY: 'top'});
-             * 
+             *
              *     })();
              *
              * </script><pre>

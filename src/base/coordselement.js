@@ -260,7 +260,7 @@ define([
                 ev_sw,
                 slide = this.slideObject,
                 res, cu,
-                slides = [], 
+                slides = [],
                 isTransformed;
 
             this.needsUpdateFromParent = false;
@@ -1098,8 +1098,8 @@ define([
                         slide = slideobj.borders[i];
                     }
                 }
-            	slideobj = this.board.select(slide);
-            	onPolygon = true;
+                slideobj = this.board.select(slide);
+                onPolygon = true;
             }
 
             /* Gliders on Ticks are forbidden */

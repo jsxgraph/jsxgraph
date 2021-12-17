@@ -30,6 +30,7 @@
 
 /*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
+/*eslint no-loss-of-precision: off */
 
 /* depends:
  jxg

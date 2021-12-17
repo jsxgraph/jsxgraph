@@ -199,7 +199,7 @@ define([
 
         if (type === '2lines') {
             /**
-             * @ignore 
+             * @ignore
              */
              el.Radius = function () {
                 var r = Type.evaluate(parents[4]);
@@ -583,7 +583,7 @@ define([
          */
         el.setRadius = function (val) {
             /**
-             * @ignore 
+             * @ignore
              */
              el.Radius = function () {
                 var r = Type.evaluate(val);
@@ -972,7 +972,7 @@ define([
             el.pointsquare = el.point3 = el.anglepoint = points[2];
 
             /**
-             * @ignore 
+             * @ignore
              */
             el.Radius = function () {
                 // Set the angle radius, also @see @link Sector#autoRadius
@@ -1164,7 +1164,7 @@ define([
             */
             el.free = function () {
                 var p = this.anglepoint;
-                    
+
                 if (p.transformations.length > 0) {
                     p.transformations.pop();
                     p.isDraggable = true;

@@ -1650,8 +1650,8 @@ define([
             // }
 
             // In IE we have to remove the namespace again.
-            if ((svg.match(/xmlns=\"http:\/\/www.w3.org\/2000\/svg\"/g) || []).length > 1) {
-                svg = svg.replace(/xmlns=\"http:\/\/www.w3.org\/2000\/svg\"/g, '');
+            if ((svg.match(/xmlns="http:\/\/www.w3.org\/2000\/svg"/g) || []).length > 1) {
+                svg = svg.replace(/xmlns="http:\/\/www.w3.org\/2000\/svg"/g, '');
             }
 
             // Safari fails if the svg string contains a "&nbsp;"

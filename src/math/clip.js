@@ -679,7 +679,7 @@ define([
          *   ['on|left|right', 'on|left|right']
          * <p>
          * If all four determinants are zero, we add random noise to the point.
-         * 
+         *
          * @param {JXG.Math.Clip.Vertex} P Start of path
          * @private
          * @see JXG.Math.Clip#markEntryExit
@@ -754,7 +754,7 @@ define([
                         if (DEBUG) {
                             console.log("Random shift", P.coords.usrCoords);
                             console.log(s1, s2, s3, s4, s2 === 0);
-                            console.log(this._getPosition(Pm,  Qm, Q.coords.usrCoords, Qp), 
+                            console.log(this._getPosition(Pm,  Qm, Q.coords.usrCoords, Qp),
                                 this._getPosition(Pp,  Qm, Q.coords.usrCoords, Qp));
                         }
                     }
@@ -836,7 +836,7 @@ define([
                     // Jump out if either
                     // - we reached the end
                     // - there are more than 1000 intersection points
-                    // - P._tours > 3: We went already 4 times through this path. 
+                    // - P._tours > 3: We went already 4 times through this path.
                     if (cnt > 1000) {
                         console.log("Clipping: _classifyDegenerateIntersections exit");
                     }
@@ -919,7 +919,7 @@ define([
                                 if (DEBUG) {
                                     console.log("Chain: delayed crossing", P_start.coords.usrCoords, '...', P.coords.usrCoords);
                                 }
-                            } 
+                            }
                         }
                     }
                     cnt++;
@@ -1041,12 +1041,12 @@ define([
          * Greiner, Günther; Kai Hormann (1998). "Efficient clipping of arbitrary polygons".
          * ACM Transactions on Graphics. 17 (2): 71–83
          * <p>
-         * The algorithm handles also "delayed crossings" from 
+         * The algorithm handles also "delayed crossings" from
          * Erich, L. Foster, and Kai Hormann, Kai, and Romeo Traaian Popa (2019),
          * "Clipping simple polygons with degenerate intersections", Computers & Graphics:X, 2.
          * and - as an additional improvement -
          * handles self intersections of delayed crossings (A.W. 2021).
-         * 
+         *
          * @private
          * @param  {Array} path1 First path
          * @param  {Array} path2 Second path
@@ -1095,7 +1095,7 @@ define([
                             // While we are in an intersection chain, i.e. a delayed crossing,
                             // we stumble on a crossing intersection.
                             // Probably, the other path is self intersecting.
-                            // We end the intersection chain here and 
+                            // We end the intersection chain here and
                             // mark this event by setting intersection_chain = 2.
                             chain_start.entry_exit = status;
                             if (status === 'exit') {
@@ -1122,7 +1122,7 @@ define([
                                 if (DEBUG) {
                                     console.log("Start intersection chain:", P.coords.usrCoords, P.data.type, status);
                                 }
-    
+
                             } else if (intersection_chain === 1) {
                                 // Active intersection chain (intersection_chain===1)!
                                 // End of delayed crossing chain reached
@@ -1142,7 +1142,7 @@ define([
                                 chain_start = null;
                                 intersection_chain = 0;
 
-                            } else if (intersection_chain == 2) {
+                            } else if (intersection_chain === 2) {
                                 // The delayed crossing had been interrupted by a crossing intersection.
                                 // Now we treat the end of the delayed crossing as regular crossing.
                                 P.entry_exit = status;
@@ -1184,7 +1184,7 @@ define([
          * Add a point to the clipping path and returns if the algorithms
          * arrived at an intersection point which has already been visited.
          * In this case, true is returned.
-         * 
+         *
          * @param {Array} path Resulting path
          * @param {JXG.Math.Clip.Vertex} vertex Point to be added
          * @param {Boolean} DEBUG debug output to console.log
@@ -1530,7 +1530,7 @@ define([
 
         /**
          * Count intersection points of type 'X'.
-         * @param {JXG.Mat.Clip.Vertex} intersections 
+         * @param {JXG.Mat.Clip.Vertex} intersections
          * @returns Number
          * @private
          */
@@ -1548,7 +1548,7 @@ define([
         },
 
         /**
-         * Create path from all sorts of input elements and convert it 
+         * Create path from all sorts of input elements and convert it
          * to a suitable input path for greinerHormann().
          *
          * @private
@@ -1831,12 +1831,12 @@ define([
          *          [bbox[2], bbox[1]], // ur
          *          [bbox[0], bbox[1]]] // ul
          *     triangle = [[-1,1], [1,1], [0,-1], [-1,1]];
-         * 
+         *
          *     var a = JXG.Math.Clip.greinerHormann(canvas, triangle, 'difference', this.board);
          *     this.dataX = a[0];
          *     this.dataY = a[1];
          * };
-         * 
+         *
          * </pre><div id="JXGe94da07a-2a01-4498-ad62-f71a327f8e25" class="jxgbox" style="width: 300px; height: 300px;"></div>
          * <script type="text/javascript">
          *     (function() {
