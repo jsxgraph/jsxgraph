@@ -932,16 +932,16 @@ define('base/constants',['jxg'], function (JXG) {
         GENTYPE_AXIS: 2,
         GENTYPE_MID: 3,
 
-        /** 
+        /**
          * @ignore
-         * @deprecated, now use {@link JXG.GENTYPE_REFLECTION_ON_LINE} 
-         * 
-         */  
+         * @deprecated, now use {@link JXG.GENTYPE_REFLECTION_ON_LINE}
+         *
+         */
         GENTYPE_REFLECTION: 4,
-        /** 
-         * @ignore 
-         * @deprecated, now use {@link JXG.GENTYPE_REFLECTION_ON_POINT} 
-         */ 
+        /**
+         * @ignore
+         * @deprecated, now use {@link JXG.GENTYPE_REFLECTION_ON_POINT}
+         */
         GENTYPE_MIRRORELEMENT: 5,
 
         GENTYPE_REFLECTION_ON_LINE: 4,
@@ -956,9 +956,9 @@ define('base/constants',['jxg'], function (JXG) {
         GENTYPE_GLIDER: 13,
         GENTYPE_INTERSECTION: 14,
         GENTYPE_CIRCLE: 15,
-        /** 
-         * @ignore @deprecated NOT USED ANY MORE SINCE SKETCHOMETRY 2.0 (only for old constructions needed) 
-         */ 
+        /**
+         * @ignore @deprecated NOT USED ANY MORE SINCE SKETCHOMETRY 2.0 (only for old constructions needed)
+         */
         GENTYPE_CIRCLE2POINTS: 16,
 
         GENTYPE_LINE: 17,
@@ -997,7 +997,7 @@ define('base/constants',['jxg'], function (JXG) {
         * @name Constants
         * @namespace
         */
-   
+
         //        GENTYPE_TRANSFORM: 48, // unused
         // 49 ... 50 // unused ...
 
@@ -1247,7 +1247,7 @@ define('utils/type',[
         exists: function (v, checkEmptyString) {
             var result = !(v == undefined || v === null);
             checkEmptyString = checkEmptyString || false;
-            
+
             if (checkEmptyString) {
                 return result && v !== '';
             }
@@ -1258,7 +1258,7 @@ define('utils/type',[
         //         var result = !(v === undef || v === null);
 
         //         checkEmptyString = checkEmptyString || false;
-                
+
         //         if (checkEmptyString) {
         //             return result && v !== '';
         //         }
@@ -5102,6 +5102,7 @@ define('utils/expect',[
 
 /*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
+/*eslint no-loss-of-precision: off */
 
 /* depends:
  jxg
@@ -6054,9 +6055,9 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
         /**
          * Addition
-         * 
-         * @param {JXG.Math.Interval|Number} x 
-         * @param {JXG.Math.Interval|Number} y 
+         *
+         * @param {JXG.Math.Interval|Number} x
+         * @param {JXG.Math.Interval|Number} y
          * @returns JXG.Math.Interval
          */
         add: function(x, y) {
@@ -6071,9 +6072,9 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
         /**
          * Subtraction
-         * 
-         * @param {JXG.Math.Interval|Number} x 
-         * @param {JXG.Math.Interval|Number} y 
+         *
+         * @param {JXG.Math.Interval|Number} x
+         * @param {JXG.Math.Interval|Number} y
          * @returns JXG.Math.Interval
          */
          sub: function(x, y) {
@@ -6088,9 +6089,9 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
         /**
          * Multiplication
-         * 
-         * @param {JXG.Math.Interval|Number} x 
-         * @param {JXG.Math.Interval|Number} y 
+         *
+         * @param {JXG.Math.Interval|Number} x
+         * @param {JXG.Math.Interval|Number} y
          * @returns JXG.Math.Interval
          */
          mul: function(x, y) {
@@ -6192,9 +6193,9 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
         /**
          * Division
-         * 
-         * @param {JXG.Math.Interval|Number} x 
-         * @param {JXG.Math.Interval|Number} y 
+         *
+         * @param {JXG.Math.Interval|Number} x
+         * @param {JXG.Math.Interval|Number} y
          * @returns JXG.Math.Interval
          */
          div: function(x, y) {
@@ -6225,8 +6226,8 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
         /**
          * Return +x (i.e. identity)
-         * 
-         * @param {JXG.Math.Interval} x 
+         *
+         * @param {JXG.Math.Interval} x
          * @returns JXG.Math.Interval
          */
          positive: function(x) {
@@ -6235,8 +6236,8 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
         /**
          * Return -x
-         * 
-         * @param {JXG.Math.Interval} x 
+         *
+         * @param {JXG.Math.Interval} x
          * @returns JXG.Math.Interval
          */
          negative: function(x) {
@@ -6252,37 +6253,37 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
         /**
          * Test if interval is empty set.
-         * @param {JXG.Math.Interval} i 
+         * @param {JXG.Math.Interval} i
          * @returns Boolean
-         */        
+         */
         isEmpty: function(i) {
             return i.lo > i.hi;
         },
 
         /**
          * Test if interval is (-Infinity, Infinity).
-         * @param {JXG.Math.Interval} i 
+         * @param {JXG.Math.Interval} i
          * @returns Boolean
-         */        
+         */
         isWhole: function(i){
             return i.lo === -Infinity && i.hi === Infinity;
         },
 
         /**
          * Test if interval contains 0.
-         * @param {JXG.Math.Interval} i 
+         * @param {JXG.Math.Interval} i
          * @returns Boolean
-         */        
+         */
          zeroIn: function(i) {
             return this.hasValue(i, 0);
         },
 
         /**
          * Test if interval contains a specific value.
-         * @param {JXG.Math.Interval} i 
+         * @param {JXG.Math.Interval} i
          * @param {Number} value
          * @returns Boolean
-         */        
+         */
          hasValue: function(i, value) {
             if (this.isEmpty(i)) {
                 return false;
@@ -6295,7 +6296,7 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
          * @param {JXG.Math.Interval} x
          * @param {JXG.Math.Interval} y
          * @returns Boolean
-         */        
+         */
          hasInterval: function(x, y) {
             if (this.isEmpty(x)) {
                 return true;
@@ -6308,7 +6309,7 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
          * @param {JXG.Math.Interval} x
          * @param {JXG.Math.Interval} y
          * @returns Boolean
-         */        
+         */
          intervalsOverlap: function(x, y) {
             if (this.isEmpty(x) || this.isEmpty(y)) {
                 return false;
@@ -6321,8 +6322,8 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
          */
         /**
          * @private
-         * @param {JXG.Math.Interval} x 
-         * @param {JXG.Math.Interval} y 
+         * @param {JXG.Math.Interval} x
+         * @param {JXG.Math.Interval} y
          * @returns JXG.Math.Interval
          */
         divNonZero: function(x, y) {
@@ -6362,8 +6363,8 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
         /**
          * @private
-         * @param {JXG.Math.Interval} x 
-         * @param {JXG.Math.Interval} y 
+         * @param {JXG.Math.Interval} x
+         * @param {JXG.Math.Interval} y
          * @returns JXG.Math.Interval
          */
          divPositive: function(x, v) {
@@ -6386,8 +6387,8 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
         /**
          * @private
-         * @param {JXG.Math.Interval} x 
-         * @param {JXG.Math.Interval} y 
+         * @param {JXG.Math.Interval} x
+         * @param {JXG.Math.Interval} y
          * @returns JXG.Math.Interval
          */
          divNegative: function(x, v) {
@@ -6410,7 +6411,7 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
         /**
          * @private
-         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} x
          * @returns JXG.Math.Interval
          */
          divZero: function(x) {
@@ -6425,8 +6426,8 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
          */
         /**
          * x mod y:  x - n * y
-         * @param {JXG.Math.Interval|Number} x 
-         * @param {JXG.Math.Interval|Number} y 
+         * @param {JXG.Math.Interval|Number} x
+         * @param {JXG.Math.Interval|Number} y
          * @returns JXG.Math.Interval
          */
         fmod: function(x, y) {
@@ -6453,7 +6454,7 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
         /**
          * 1 / x
-         * @param {JXG.Math.Interval|Number} x 
+         * @param {JXG.Math.Interval|Number} x
          * @returns JXG.Math.Interval
          */
         multiplicativeInverse: function(x) {
@@ -6485,7 +6486,7 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
         /**
          * x<sup>power</sup>
-         * @param {JXG.Math.Interval|Number} x 
+         * @param {JXG.Math.Interval|Number} x
          * @param {JXG.Math.Interval|Number} power
          * @returns JXG.Math.Interval
          */
@@ -6552,7 +6553,7 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
         /**
          * sqrt(x)
-         * @param {JXG.Math.Interval|Number} x 
+         * @param {JXG.Math.Interval|Number} x
          * @returns JXG.Math.Interval
          */
          sqrt: function(x) {
@@ -6564,7 +6565,7 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
         /**
          * x<sup>1/n</sup>
-         * @param {JXG.Math.Interval|Number} x 
+         * @param {JXG.Math.Interval|Number} x
          * @param {Number} n
          * @returns JXG.Math.Interval
          */
@@ -6620,8 +6621,8 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
          * Misc
          */
         /**
-         * 
-         * @param {JXG.Math.Interval|Number} x 
+         *
+         * @param {JXG.Math.Interval|Number} x
          * @returns JXG.Math.Interval
          */
         exp: function(x) {
@@ -6636,7 +6637,7 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
         /**
          * Natural log
-         * @param {JXG.Math.Interval|Number} x 
+         * @param {JXG.Math.Interval|Number} x
          * @returns JXG.Math.Interval
          */
         log: function(x) {
@@ -6653,7 +6654,7 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
         /**
          * Natural log, alias for {@link JXG.Math.IntervalArithmetic#log}.
-         * @param {JXG.Math.Interval|Number} x 
+         * @param {JXG.Math.Interval|Number} x
          * @returns JXG.Math.Interval
          */
         ln: function(x) {
@@ -6664,7 +6665,7 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         // export const LOG_EXP_2 = log(new MatInterval(2, 2))
         /**
          * Logarithm to base 10.
-         * @param {JXG.Math.Interval|Number} x 
+         * @param {JXG.Math.Interval|Number} x
          * @returns JXG.Math.Interval
          */
         log10: function(x) {
@@ -6676,7 +6677,7 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
         /**
          * Logarithm to base 2.
-         * @param {JXG.Math.Interval|Number} x 
+         * @param {JXG.Math.Interval|Number} x
          * @returns JXG.Math.Interval
          */
         log2: function(x) {
@@ -6688,7 +6689,7 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
         /**
          * Hull of intervals x and y
-         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} x
          * @param {JXG.Math.Interval} y
          * @returns JXG.Math.Interval
          */
@@ -6709,7 +6710,7 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
         /**
          * Intersection of intervals x and y
-         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} x
          * @param {JXG.Math.Interval} y
          * @returns JXG.Math.Interval
          */
@@ -6728,7 +6729,7 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
         /**
          * Union of overlapping intervals x and y
-         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} x
          * @param {JXG.Math.Interval} y
          * @returns JXG.Math.Interval
          */
@@ -6741,7 +6742,7 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
         /**
          * Difference of overlapping intervals x and y
-         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} x
          * @param {JXG.Math.Interval} y
          * @returns JXG.Math.Interval
          */
@@ -6777,7 +6778,7 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         },
 
         /**
-         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} x
          * @returns JXG.Math.Interval
          */
         width: function(x) {
@@ -6788,7 +6789,7 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         },
 
         /**
-         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} x
          * @returns JXG.Math.Interval
          */
         abs: function(x) {
@@ -6808,7 +6809,7 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         },
 
         /**
-         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} x
          * @param {JXG.Math.Interval} y
          * @returns JXG.Math.Interval
          */
@@ -6828,7 +6829,7 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         },
 
         /**
-         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} x
          * @param {JXG.Math.Interval} y
          * @returns JXG.Math.Interval
          */
@@ -6870,7 +6871,7 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         },
 
         /**
-         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} x
          * @returns JXG.Math.Interval
          */
         cos: function(x) {
@@ -6918,7 +6919,7 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         },
 
         /**
-         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} x
          * @returns JXG.Math.Interval
          */
         sin: function(x) {
@@ -6929,7 +6930,7 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         },
 
         /**
-         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} x
          * @returns JXG.Math.Interval
          */
         tan: function(x) {
@@ -6954,7 +6955,7 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         },
 
         /**
-         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} x
          * @returns JXG.Math.Interval
          */
         asin: function(x) {
@@ -6968,7 +6969,7 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         },
 
         /**
-         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} x
          * @returns JXG.Math.Interval
          */
         acos: function(x) {
@@ -6982,7 +6983,7 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         },
 
         /**
-         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} x
          * @returns JXG.Math.Interval
          */
         atan: function(x) {
@@ -6993,7 +6994,7 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         },
 
         /**
-         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} x
          * @returns JXG.Math.Interval
          */
         sinh: function(x) {
@@ -7004,7 +7005,7 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         },
 
         /**
-         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} x
          * @returns JXG.Math.Interval
          */
         cosh: function(x) {
@@ -7021,7 +7022,7 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         },
 
         /**
-         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} x
          * @returns JXG.Math.Interval
          */
         tanh: function(x) {
@@ -7036,7 +7037,7 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
          */
 
         /**
-         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} x
          * @param {JXG.Math.Interval} y
          * @returns Boolean
          */
@@ -7055,7 +7056,7 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         // },
 
         /**
-         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} x
          * @param {JXG.Math.Interval} y
          * @returns Boolean
          */
@@ -7067,7 +7068,7 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         },
 
         /**
-         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} x
          * @param {JXG.Math.Interval} y
          * @returns Boolean
          */
@@ -7085,7 +7086,7 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         },
 
         /**
-         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} x
          * @param {JXG.Math.Interval} y
          * @returns Boolean
          */
@@ -7103,7 +7104,7 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         },
 
         /**
-         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} x
          * @param {JXG.Math.Interval} y
          * @returns Boolean
          */
@@ -7121,7 +7122,7 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         },
 
         /**
-         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} x
          * @param {JXG.Math.Interval} y
          * @returns Boolean
          */
@@ -7768,20 +7769,20 @@ define('math/extrapolate',['math/math'], function (Mat) {
     This file is part of JSXGraph.
 
     JSXGraph is free software dual licensed under the GNU LGPL or MIT License.
-    
+
     You can redistribute it and/or modify it under the terms of the
-    
+
       * GNU Lesser General Public License as published by
         the Free Software Foundation, either version 3 of the License, or
         (at your option) any later version
       OR
       * MIT License: https://github.com/jsxgraph/jsxgraph/blob/master/LICENSE.MIT
-    
+
     JSXGraph is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Lesser General Public License for more details.
-    
+
     You should have received a copy of the GNU Lesser General Public License and
     the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
     and <http://opensource.org/licenses/MIT/>.
@@ -7802,7 +7803,7 @@ define('math/qdt',['math/math', 'utils/type'], function (Mat, Type) {
 
     /**
      * Instantiate a new quad tree.
-     * 
+     *
      * @name JXG.Math.Quadtree
      * @exports Mat.Quadtree as JXG.Math.Quadtree
      * @param {Array} bbox Bounding box of the new quad (sub)tree.
@@ -7848,7 +7849,7 @@ define('math/qdt',['math/math', 'utils/type'], function (Mat, Type) {
          * @type JXG.Math.Quadtree
          */
         this.southEast = null;
-        
+
         /**
          * In a subdivided quad tree this represents the bottom left subtree.
          * @name JXG.Math.Quadtree#southWest
@@ -8029,6 +8030,7 @@ define('math/qdt',['math/math', 'utils/type'], function (Mat, Type) {
 
 /*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
+/*eslint no-loss-of-precision: off */
 
 /* depends:
  utils/type
@@ -11897,7 +11899,7 @@ define('math/nlp',['jxg'], function (JXG) {
          * @returns {Number} Exit status of the COBYLA2 optimization.
          */
         FindMinimum: function(calcfc, n,  m, x, rhobeg, rhoend,  iprint,  maxfun) {
-    	    // CobylaExitStatus FindMinimum(final Calcfc calcfc, int n, int m, double[] x, double rhobeg, double rhoend, int iprint, int maxfun)
+            // CobylaExitStatus FindMinimum(final Calcfc calcfc, int n, int m, double[] x, double rhobeg, double rhoend, int iprint, int maxfun)
             //     This subroutine minimizes an objective function F(X) subject to M
             //     inequality constraints on X, where X is a vector of variables that has
             //     N components.  The algorithm employs linear approximations to the
@@ -11993,7 +11995,7 @@ define('math/nlp',['jxg'], function (JXG) {
          * @returns {Number} Exit status of the COBYLA2 optimization
          */
         cobylb: function (calcfc, n,  m,  mpp,  x, rhobeg,  rhoend,  iprint,  maxfun) {
-    		// calcf ist funktion die aufgerufen wird wie calcfc(n, m, ix, ocon)
+            // calcf ist funktion die aufgerufen wird wie calcfc(n, m, ix, ocon)
             // N.B. Arguments CON, SIM, SIMI, DATMAT, A, VSIG, VETA, SIGBAR, DX, W & IACT
             //      have been removed.
 
@@ -12066,7 +12068,7 @@ define('math/nlp',['jxg'], function (JXG) {
             //     Make the next call of the user-supplied subroutine CALCFC. These
             //     instructions are also used for calling CALCFC during the iterations of
             //     the algorithm.
-		    //alert("Iteration "+nfvals+" x="+x);
+            //alert("Iteration "+nfvals+" x="+x);
             L_40:
             do {
                 if (nfvals >= maxfun && nfvals > 0) {
@@ -14747,7 +14749,7 @@ define('math/geometry',[
                 };
 
             } else if ((
-                        el1.elementClass === Const.OBJECT_CLASS_CURVE && 
+                        el1.elementClass === Const.OBJECT_CLASS_CURVE &&
                         !el1_isArcType &&
                         el2.elementClass === Const.OBJECT_CLASS_LINE
                        ) ||
@@ -15392,7 +15394,7 @@ define('math/geometry',[
          * @param {Array} q1 First point of segment 2 using normalized homogeneous coordinates [1,x,y]
          * @param {Array} q2 Second point or direction of segment 2 using normalized homogeneous coordinates [1,x,y] or point at infinity [0,x,y], respectively
          * @returns {Array} [Intersection point, t, u] The first entry contains the homogeneous coordinates
-         * of the intersection point. The second and third entry give the position of the intersection with respect 
+         * of the intersection point. The second and third entry give the position of the intersection with respect
          * to the definiting parameters. For example, the second entry t is defined by: intersection point = p1 + t * deltaP, where
          * deltaP = (p2 - p1) when both parameters are coordinates, and deltaP = p2 if p2 is a point at infinity.
          * If the two segments are collinear, [[0,0,0], Infinity, Infinity] is returned.
@@ -15412,8 +15414,8 @@ define('math/geometry',[
             c[2] /= c[0];
             c[0] /= c[0];
 
-            // Now compute in principle: 
-            //    t = dist(c - p1) / dist(p2 - p1) and 
+            // Now compute in principle:
+            //    t = dist(c - p1) / dist(p2 - p1) and
             //    u = dist(c - q1) / dist(q2 - q1)
             // However: the points q1, q2, p1, p2 might be ideal points - or in general - the
             // coordinates might be not normalized.
@@ -16835,7 +16837,7 @@ define('math/plot',['jxg', 'base/constants', 'base/coords', 'math/math', 'math/e
                 vy = curve.Y(t_real, true) ;
                 vy2 = curve.Y(t_real2, true) ;
                 dy = (vy - vy2) / (t_real - t_real2);
-               
+
                 if (p_good !== null) {
                     this._insertPoint_v2(curve, new Coords(Const.COORDS_BY_USER, p_good, curve.board, false));
                     return true;
@@ -17394,7 +17396,7 @@ define('math/plot',['jxg', 'base/constants', 'base/coords', 'math/math', 'math/e
         },
 
         /**
-         * 
+         *
          * @param {JXG.Curve} curve JSXGraph curve element
          * @param {Number} ta
          * @param {Number} tb
@@ -18337,7 +18339,7 @@ console.log("Polynomial of degree", level);
                 dx, dy;
 
             //console.log("Level", level)
-            if (level == 0) {
+            if (level === 0) {
                 this._insertPoint_v4(curve, [1, NaN, NaN], t);
                 return;
             }
@@ -21967,7 +21969,7 @@ define('math/clip',[
          *   ['on|left|right', 'on|left|right']
          * <p>
          * If all four determinants are zero, we add random noise to the point.
-         * 
+         *
          * @param {JXG.Math.Clip.Vertex} P Start of path
          * @private
          * @see JXG.Math.Clip#markEntryExit
@@ -22042,7 +22044,7 @@ define('math/clip',[
                         if (DEBUG) {
                             console.log("Random shift", P.coords.usrCoords);
                             console.log(s1, s2, s3, s4, s2 === 0);
-                            console.log(this._getPosition(Pm,  Qm, Q.coords.usrCoords, Qp), 
+                            console.log(this._getPosition(Pm,  Qm, Q.coords.usrCoords, Qp),
                                 this._getPosition(Pp,  Qm, Q.coords.usrCoords, Qp));
                         }
                     }
@@ -22124,7 +22126,7 @@ define('math/clip',[
                     // Jump out if either
                     // - we reached the end
                     // - there are more than 1000 intersection points
-                    // - P._tours > 3: We went already 4 times through this path. 
+                    // - P._tours > 3: We went already 4 times through this path.
                     if (cnt > 1000) {
                         console.log("Clipping: _classifyDegenerateIntersections exit");
                     }
@@ -22207,7 +22209,7 @@ define('math/clip',[
                                 if (DEBUG) {
                                     console.log("Chain: delayed crossing", P_start.coords.usrCoords, '...', P.coords.usrCoords);
                                 }
-                            } 
+                            }
                         }
                     }
                     cnt++;
@@ -22329,12 +22331,12 @@ define('math/clip',[
          * Greiner, Günther; Kai Hormann (1998). "Efficient clipping of arbitrary polygons".
          * ACM Transactions on Graphics. 17 (2): 71–83
          * <p>
-         * The algorithm handles also "delayed crossings" from 
+         * The algorithm handles also "delayed crossings" from
          * Erich, L. Foster, and Kai Hormann, Kai, and Romeo Traaian Popa (2019),
          * "Clipping simple polygons with degenerate intersections", Computers & Graphics:X, 2.
          * and - as an additional improvement -
          * handles self intersections of delayed crossings (A.W. 2021).
-         * 
+         *
          * @private
          * @param  {Array} path1 First path
          * @param  {Array} path2 Second path
@@ -22383,7 +22385,7 @@ define('math/clip',[
                             // While we are in an intersection chain, i.e. a delayed crossing,
                             // we stumble on a crossing intersection.
                             // Probably, the other path is self intersecting.
-                            // We end the intersection chain here and 
+                            // We end the intersection chain here and
                             // mark this event by setting intersection_chain = 2.
                             chain_start.entry_exit = status;
                             if (status === 'exit') {
@@ -22410,7 +22412,7 @@ define('math/clip',[
                                 if (DEBUG) {
                                     console.log("Start intersection chain:", P.coords.usrCoords, P.data.type, status);
                                 }
-    
+
                             } else if (intersection_chain === 1) {
                                 // Active intersection chain (intersection_chain===1)!
                                 // End of delayed crossing chain reached
@@ -22430,7 +22432,7 @@ define('math/clip',[
                                 chain_start = null;
                                 intersection_chain = 0;
 
-                            } else if (intersection_chain == 2) {
+                            } else if (intersection_chain === 2) {
                                 // The delayed crossing had been interrupted by a crossing intersection.
                                 // Now we treat the end of the delayed crossing as regular crossing.
                                 P.entry_exit = status;
@@ -22472,7 +22474,7 @@ define('math/clip',[
          * Add a point to the clipping path and returns if the algorithms
          * arrived at an intersection point which has already been visited.
          * In this case, true is returned.
-         * 
+         *
          * @param {Array} path Resulting path
          * @param {JXG.Math.Clip.Vertex} vertex Point to be added
          * @param {Boolean} DEBUG debug output to console.log
@@ -22818,7 +22820,7 @@ define('math/clip',[
 
         /**
          * Count intersection points of type 'X'.
-         * @param {JXG.Mat.Clip.Vertex} intersections 
+         * @param {JXG.Mat.Clip.Vertex} intersections
          * @returns Number
          * @private
          */
@@ -22836,7 +22838,7 @@ define('math/clip',[
         },
 
         /**
-         * Create path from all sorts of input elements and convert it 
+         * Create path from all sorts of input elements and convert it
          * to a suitable input path for greinerHormann().
          *
          * @private
@@ -23119,12 +23121,12 @@ define('math/clip',[
          *          [bbox[2], bbox[1]], // ur
          *          [bbox[0], bbox[1]]] // ul
          *     triangle = [[-1,1], [1,1], [0,-1], [-1,1]];
-         * 
+         *
          *     var a = JXG.Math.Clip.greinerHormann(canvas, triangle, 'difference', this.board);
          *     this.dataX = a[0];
          *     this.dataY = a[1];
          * };
-         * 
+         *
          * </pre><div id="JXGe94da07a-2a01-4498-ad62-f71a327f8e25" class="jxgbox" style="width: 300px; height: 300px;"></div>
          * <script type="text/javascript">
          *     (function() {
@@ -24114,7 +24116,7 @@ define('math/complex',['jxg', 'utils/type'], function (JXG, Type) {
  * Stoyan Stefanov <sstoo@gmail.com> (see http://www.phpied.com/rgb-color-parser-in-javascript/)
  */
 
-define('utils/color',['jxg', 'utils/type', 'math/math'], 
+define('utils/color',['jxg', 'utils/type', 'math/math'],
     function (JXG, Type, Mat) {
 
     "use strict";
@@ -25073,16 +25075,16 @@ define('utils/color',['jxg', 'utils/type', 'math/math'],
      * <li> white
      * <li> yellow
      * </ul>
-     * 
+     *
      * @name JXG.palette
      * @type Object
      * @default JXG.paletteWong
      * @see JXG.paletteWong
-     * 
+     *
      * @example
-     * 
+     *
      * var p = board.create('line', [[-1, 1], [2, -3]], {strokeColor: JXG.palette.yellow});
-     * 
+     *
      */
     JXG.palette = JXG.paletteWong;
 
@@ -25743,11 +25745,11 @@ define('options',[
              *             panCtrl: false
              *         }
              *     });
-             * 
+             *
              *     })();
-             * 
+             *
              * </script><pre>
-             * 
+             *
              *
              * @see JXG.Board#keyDownListener
              * @see JXG.Board#keyFocusInListener
@@ -25795,11 +25797,11 @@ define('options',[
              *             axis: true,
              *             resize: {enabled: true, throttle: 200}
              *         });
-             * 
+             *
              *     })();
-             * 
+             *
              * </script><pre>
-             * 
+             *
              *
              */
             resize: {
@@ -25844,11 +25846,11 @@ define('options',[
              *             axis: true,
              *             moveTarget: document
              *         });
-             * 
+             *
              *     })();
-             * 
+             *
              * </script><pre>
-             * 
+             *
              *
              */
             moveTarget: null,
@@ -26679,9 +26681,9 @@ define('options',[
             *             }
             *         },
             *     });
-            * 
+            *
             *     })();
-            * 
+            *
             * </script><pre>
             *
             * @name Ticks#beautifulScientificTickLabels
@@ -27600,7 +27602,7 @@ define('options',[
                 strokeColor: Color.palette.red,
                 highlightFillColor: '#c3d9ff',
                 highlightStrokeColor: '#c3d9ff',
-    
+
                 name: ''
             },
 
@@ -29145,7 +29147,7 @@ define('options',[
             snatchDistance: 0.0,
 
             /**
-             * If set to true, the point will snap to a grid of integer multiples of 
+             * If set to true, the point will snap to a grid of integer multiples of
              * {@link Point#snapSizeX} and {@link Point#snapSizeY} (in user coordinates).
              * <p>
              * The coordinates of the grid points are either integer multiples of snapSizeX and snapSizeY
@@ -30158,11 +30160,11 @@ define('options',[
              *         var board = JXG.JSXGraph.initBoard('JXG2da7e972-ac62-416b-a94b-32559c9ec9f9',
              *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
              *     var txt = board.create('text', [2, 2, "hello"], {fontSize: 8, fontUnit: 'vmin'});
-             * 
+             *
              *     })();
-             * 
+             *
              * </script><pre>
-             * 
+             *
              */
             fontUnit: 'px',
 
@@ -30564,7 +30566,7 @@ define('options',[
              * text1 = board.create('text', [5, 1, function(){
              *             return '\\(a(t)= { 1 \\over ' + a.Value().toFixed(3) + '}\\)';
              *         }], {fontSize: 15, fixed:true, strokeColor:'red', anchorY: 'top', parse: false});
-             * 
+             *
              * </pre><div id="JXGf8bd01db-fb6a-4a5c-9e7f-8823f7aa5ac6" class="jxgbox" style="width: 300px; height: 300px;"></div>
              * <script type="text/javascript">
              *     (function() {
@@ -30576,12 +30578,12 @@ define('options',[
              *         suffixlabel:'\\(t_1=\\)',
              *         unitLabel: ' \\(\\text{ ms}\\)',
              *         snapWidth:0.01}),
-             *     
+             *
              *     func = board.create('functiongraph',[function(x){return (a.Value()*x*x)}], {strokeColor: "red"});
              *     text1 = board.create('text', [5, 1, function(){
              *                 return '\\(a(t)= { 1 \\over ' + a.Value().toFixed(3) + '}\\)';
              *             }], {fontSize: 15, fixed:true, strokeColor:'red', anchorY: 'top', parse: false});
-             * 
+             *
              *     })();
              *
              * </script><pre>
@@ -30620,7 +30622,7 @@ define('options',[
              * text1 = board.create('text', [5, 1, function(){
              *             return 'a(t)= { 1 \\over ' + a.Value().toFixed(3) + '}';
              *         }], {fontSize: 15, fixed:true, strokeColor:'red', anchorY: 'top'});
-             * 
+             *
              * </pre>
              * <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.13.10/dist/katex.min.css" integrity="sha384-0cCFrwW/0bAk1Z/6IMgIyNU3kfTcNirlObr4WjrUU7+hZeD6ravdYJ3kPWSeC31M" crossorigin="anonymous">
              * <script src="https://cdn.jsdelivr.net/npm/katex@0.13.10/dist/katex.min.js" integrity="sha384-dtFDxK2tSkECx/6302Z4VN2ZRqt6Gis+b1IwCjJPrn0kMYFQT9rbtyQWg5NFWAF7" crossorigin="anonymous"></script>
@@ -30634,12 +30636,12 @@ define('options',[
              *         suffixlabel:'t_1=',
              *         unitLabel: ' \\text{ ms}',
              *         snapWidth:0.01});
-             *     
+             *
              *     func = board.create('functiongraph',[function(x){return (a.Value()*x*x)}], {strokeColor: "red"});
              *     text1 = board.create('text', [5, 1, function(){
              *                 return 'a(t)= { 1 \\over ' + a.Value().toFixed(3) + '}';
              *             }], {fontSize: 15, fixed:true, strokeColor:'red', anchorY: 'top'});
-             * 
+             *
              *     })();
              *
              * </script><pre>
@@ -31170,6 +31172,7 @@ define('options',[
     newcap:   AsciiMathMl exposes non-constructor functions beginning with upper case letters
 */
 /*jslint nomen: true, plusplus: true, newcap: true, unparam: true*/
+/*eslint no-unused-vars: "off"*/
 
 /* depends:
  jxg
@@ -36056,7 +36059,7 @@ define('base/element',[
                     rcoords = new JXG.Coords(Const.COORDS_BY_USER, [rx, ry], this.board);
                     if (!attractToGrid ||
                         rcoords.distance(
-                            ev_au == 'screen' ? Const.COORDS_BY_SCREEN : Const.COORDS_BY_USER, this.coords
+                            ev_au === 'screen' ? Const.COORDS_BY_SCREEN : Const.COORDS_BY_USER, this.coords
                             ) < ev_ad) {
                         x = rx;
                         y = ry;
@@ -36584,7 +36587,7 @@ define('base/coordselement',[
                 ev_sw,
                 slide = this.slideObject,
                 res, cu,
-                slides = [], 
+                slides = [],
                 isTransformed;
 
             this.needsUpdateFromParent = false;
@@ -37422,8 +37425,8 @@ define('base/coordselement',[
                         slide = slideobj.borders[i];
                     }
                 }
-            	slideobj = this.board.select(slide);
-            	onPolygon = true;
+                slideobj = this.board.select(slide);
+                onPolygon = true;
             }
 
             /* Gliders on Ticks are forbidden */
@@ -44351,7 +44354,7 @@ define('base/board',[
                 op = (new Coords(Const.COORDS_BY_SCREEN, [moveEl.Xprev, moveEl.Yprev], this)).usrCoords;
                 // New finger position
                 np = (new Coords(Const.COORDS_BY_SCREEN, [moveEl.X, moveEl.Y], this)).usrCoords;
-                
+
                 // Old and new directions
                 od = Mat.crossProduct(fix, op);
                 nd = Mat.crossProduct(fix, np);
@@ -44434,7 +44437,7 @@ define('base/board',[
                 op = (new Coords(Const.COORDS_BY_SCREEN, [moveEl.Xprev, moveEl.Yprev], this)).usrCoords;
                 // New finger position
                 np = (new Coords(Const.COORDS_BY_SCREEN, [moveEl.X, moveEl.Y], this)).usrCoords;
-                
+
                 alpha = Geometry.rad(op.slice(1), fix.slice(1), np.slice(1));
 
                 // Rotate and scale by the movement of the second finger
@@ -45299,7 +45302,7 @@ define('base/board',[
             type = this._inputDevice;
             this.options.precision.hasPoint = this.options.precision[type];
 
-            // Handling of multi touch with pointer events should be easier than the touch events. 
+            // Handling of multi touch with pointer events should be easier than the touch events.
             // Every pointer device has its own pointerId, e.g. the mouse
             // always has id 1 or 0, fingers and pens get unique ids every time a pointerDown event is fired and they will
             // keep this id until a pointerUp event is fired. What we have to do here is:
@@ -45341,7 +45344,7 @@ define('base/board',[
                 target = elements[elements.length - 1];
                 found = false;
 
-                // Reminder: this.touches is the list of elements which 
+                // Reminder: this.touches is the list of elements which
                 // currently "possess" a pointer (mouse, pen, finger)
                 for (i = 0; i < this.touches.length; i++) {
                     // An element receives a further touch, i.e.
@@ -45395,10 +45398,11 @@ define('base/board',[
 
                 // Touch events on empty areas of the board are handled here, see also touchStartListener
                 // 1. case: one finger. If allowed, this triggers pan with one finger
-                if (evt.touches.length == 1 &&
+                if (evt.touches.length === 1 &&
                     this.mode === this.BOARD_MODE_NONE &&
                     this.touchStartMoveOriginOneFinger(evt)) {
-                } else if (evt.touches.length == 2 &&
+                        // Empty by purpose
+                } else if (evt.touches.length === 2 &&
                             (this.mode === this.BOARD_MODE_NONE || this.mode === this.BOARD_MODE_MOVE_ORIGIN)
                         ) {
                     // 2. case: two fingers: pinch to zoom or pan with two fingers needed.
@@ -45480,7 +45484,7 @@ define('base/board',[
                         // Run through all touch events which have been started on this jsxgraph element.
                         for (j = 0; j < touchTargets.length; j++) {
                             if (touchTargets[j].num === evt.pointerId) {
-                                
+
                                 pos = this.getMousePosition(evt);
                                 touchTargets[j].X = pos[0];
                                 touchTargets[j].Y = pos[1];
@@ -45720,7 +45724,7 @@ define('base/board',[
                             Yprev: NaN,
                             Xstart: [],
                             Ystart: [],
-                            Zstart: [] 
+                            Zstart: []
                         };
 
                         if (Type.isPoint(obj) ||
@@ -45808,7 +45812,7 @@ define('base/board',[
          * @returns {Boolean}
          */
         touchMoveListener: function (evt) {
-            var i, pos1, pos2, 
+            var i, pos1, pos2,
                 time, touchTargets,
                 evtTouches = evt[JXG.touchProperty];
 
@@ -46327,7 +46331,7 @@ define('base/board',[
                         sX = 1.1 * Type.evaluate(el.visProp.attractordistance);
                         sY = sX;
 
-                        if (Type.evaluate(el.visProp.attractorunit) == 'screen') {
+                        if (Type.evaluate(el.visProp.attractorunit) === 'screen') {
                             sX /= this.unitX;
                             sY /= this.unitX;
                         }
@@ -46842,11 +46846,11 @@ define('base/board',[
          *                 // Shorter version:
          *                 //somePoint = board.create('point', a, {name:'SomePoint',size:4});
          *             });
-         * 
+         *
          *     })();
          *
          * </script><pre>
-         * 
+         *
          * @see JXG.Board#getScrCoordsOfMouse
          * @see JXG.Board#getAllUnderMouse
          */
@@ -47542,7 +47546,7 @@ define('base/board',[
 
             // if (!dontSetBoundingBox) {
             //     box     = this.attr.boundingbox;    // This is the intended bounding box.
-                
+
             //     // The shift values compensate the follow-up correction
             //     // in setBoundingBox in case of "this.keepaspectratio==true"
             //     // Otherwise, shift_x and shift_y will be zero.
@@ -47673,7 +47677,7 @@ define('base/board',[
 
             for (el = 0; el < this.objectsList.length; el++) {
                 pEl = this.objectsList[el];
-                if (this.needsFullUpdate && pEl.elementClass == Const.OBJECT_CLASS_TEXT) {
+                if (this.needsFullUpdate && pEl.elementClass === Const.OBJECT_CLASS_TEXT) {
                     pEl.updateSize();
                 }
 
@@ -48104,7 +48108,7 @@ define('base/board',[
                 this.unitY = h / (bbox[1] - bbox[3]);
                 this.keepaspectratio = false;
             }
-            
+
             this.moveOrigin(-this.unitX * (bbox[0] - offX), this.unitY * (bbox[1] + offY));
 
             if (setZoom === 'update') {
@@ -51003,8 +51007,8 @@ define('renderer/svg',[
             // }
 
             // In IE we have to remove the namespace again.
-            if ((svg.match(/xmlns=\"http:\/\/www.w3.org\/2000\/svg\"/g) || []).length > 1) {
-                svg = svg.replace(/xmlns=\"http:\/\/www.w3.org\/2000\/svg\"/g, '');
+            if ((svg.match(/xmlns="http:\/\/www.w3.org\/2000\/svg"/g) || []).length > 1) {
+                svg = svg.replace(/xmlns="http:\/\/www.w3.org\/2000\/svg"/g, '');
             }
 
             // Safari fails if the svg string contains a "&nbsp;"
@@ -53879,6 +53883,7 @@ define('renderer/canvas',[
 
 /*global JXG: true, define: true, AMprocessNode: true, MathJax: true, document: true */
 /*jslint nomen: true, plusplus: true, newcap:true, unparam: true*/
+/*eslint no-unused-vars: "off"*/
 
 /* depends:
  jxg
@@ -55545,12 +55550,12 @@ define('base/point',[
          *     var pol = board.create('polygon', [[2,2], [4,2], [4,3]], {strokeColor: 'blue'});
          *
          *     var point = board.create('point', [-1, 1], {
-         *     			  attractors: [line, seg, circ, po, curve, pol],
+         *                   attractors: [line, seg, circ, po, curve, pol],
          *                   attractorDistance: 0.2
          *                 });
          *
          *     var txt = board.create('text', [-4, 3, function() {
-         *     		return 'point on line: ' + point.isOn(line) + '<br>' +
+         *             return 'point on line: ' + point.isOn(line) + '<br>' +
          *                     'point on seg: ' + point.isOn(seg) + '<br>' +
          *                     'point on circ = ' + point.isOn(circ) + '<br>' +
          *                     'point on point = ' + point.isOn(po) + '<br>' +
@@ -55573,14 +55578,14 @@ define('base/point',[
             } else if (el.elementClass === Const.OBJECT_CLASS_LINE) {
                 if (el.elType === 'segment' && !Type.evaluate(this.visProp.alwaysintersect)) {
                     arr = JXG.Math.Geometry.projectCoordsToSegment(
-            			        this.coords.usrCoords,
+                                this.coords.usrCoords,
                                 el.point1.coords.usrCoords,
                                 el.point2.coords.usrCoords);
                     if (arr[1] >= 0 && arr[1] <= 1 &&
                         Geometry.distPointLine(this.coords.usrCoords, el.stdform) < tol) {
-       				    return true;
+                           return true;
                     } else {
-            		    return false;
+                        return false;
                     }
                 } else {
                     return Geometry.distPointLine(this.coords.usrCoords, el.stdform) < tol;
@@ -59523,7 +59528,7 @@ define('element/conic',[
         }
 
         // Create line if given as array of two points.
-        if (Type.isArray(l) && l.length == 2) {
+        if (Type.isArray(l) && l.length === 2) {
             attr_line = Type.copyAttributes(attributes, board.options, 'conic', 'line');
             l = board.create('line', l, attr_line);
         }
@@ -65801,7 +65806,7 @@ define('element/sector',[
 
         if (type === '2lines') {
             /**
-             * @ignore 
+             * @ignore
              */
              el.Radius = function () {
                 var r = Type.evaluate(parents[4]);
@@ -66185,7 +66190,7 @@ define('element/sector',[
          */
         el.setRadius = function (val) {
             /**
-             * @ignore 
+             * @ignore
              */
              el.Radius = function () {
                 var r = Type.evaluate(val);
@@ -66574,7 +66579,7 @@ define('element/sector',[
             el.pointsquare = el.point3 = el.anglepoint = points[2];
 
             /**
-             * @ignore 
+             * @ignore
              */
             el.Radius = function () {
                 // Set the angle radius, also @see @link Sector#autoRadius
@@ -66766,7 +66771,7 @@ define('element/sector',[
             */
             el.free = function () {
                 var p = this.anglepoint;
-                    
+
                 if (p.transformations.length > 0) {
                     p.transformations.pop();
                     p.isDraggable = true;
@@ -76238,6 +76243,7 @@ define('base/ticks',[
 
  /*global JXG: true, define: true, window: true, console: true, self: true, document: true, parser: true*/
  /*jslint nomen: true, plusplus: true*/
+ /*eslint eqeqeq: "off"*/
 
  /* depends:
   jxg
