@@ -420,10 +420,14 @@ define([
         },
 
         /**
-         * Looks up the value of the given variable.
+         * Looks up the value of the given variable. We use a simple type inspection.
+         *
          * @param {String} vname Name of the variable
          * @param {Boolean} [local=false] Only look up the internal symbol table and don't look for
          * the <tt>vname</tt> in Math or the element list.
+         * @param {Boolean} [isFunctionName=false] Lookup function of tpye builtIn, Math.*, creator.
+         *
+         * @see JXG.JessieCode#resolveType
          */
          getvar: function (vname, local, isFunctionName) {
             var s;
@@ -621,7 +625,7 @@ define([
          * @returns {function}
          * @see JXG.JessieCode#resolveType
          */
-        defineFunction: function (node) {
+         defineFunction: function (node) {
             var fun, i, that = this,
                 list = node.children[0],
                 scope = this.pushScope(list);
@@ -654,7 +658,7 @@ define([
                         for (i = 0; i < list.length; i++) {
                             scope.argtypes.push(that.resolveType(list[i], node));
                         }
-        
+
                         return fun;
                     } catch (e) {
                         $jc$._warn('error compiling function\n\n' + str + '\n\n' + e.toString());
@@ -1107,16 +1111,37 @@ define([
 
         /**
          * Type inspection: check if the string vname appears as function name in the
-         * AST node. Used in "op_execfun".
-         * 
+         * AST node. Used in "op_execfun". This allows the JessieCode exmples below. 
+         *
          * @private
          * @param {String} vname 
-         * @param {Object} node 
+         * @param {Object} node
          * @returns 'any' or 'function'
          * @see JXG.JessieCode#execute
          * @see JXG.JessieCode#getvar
+         * 
+         * @example
+         *  var p = board.create('point', [2, 0], {name: 'X'});
+         *  var txt = 'X(X)';
+         *  console.log(board.jc.parse(txt));
+         * 
+         * @example
+         *  var p = board.create('point', [2, 0], {name: 'X'});
+         *  var txt = 'f = function(el, X) { return X(el); }; f(X, X);';
+         *  console.log(board.jc.parse(txt));
+         * 
+         * @example
+         *  var p = board.create('point', [2, 0], {name: 'point'});
+         *  var txt = 'B = point(1,3); X(point);';
+         *  console.log(board.jc.parse(txt));
+         * 
+         * @example
+         *  var p = board.create('point', [2, 0], {name: 'A'});
+         *  var q = board.create('point', [-2, 0], {name: 'X'});
+         *  var txt = 'getCoord=function(p, f){ return f(p); }; getCoord(A, X);';
+         *  console.log(board.jc.parse(txt));
          */
-        resolveType: function(vname, node) {
+         resolveType: function(vname, node) {
             var i, t,
                 type = 'any'; // Possible values: 'function', 'any'
 
@@ -1140,7 +1165,7 @@ define([
                 for (i = 0; i < node.children.length; i++) {
                     if (node.children[0].type === 'node_var' && node.children[0].value === vname &&
                         (node.value === 'op_add' || node.value === 'op_sub' || node.value === 'op_mul' ||
-                            node.value === 'op_div' || node.value === 'op_mod' || node.value === 'op_exp' || 
+                            node.value === 'op_div' || node.value === 'op_mod' || node.value === 'op_exp' ||
                             node.value === 'op_neg')) {
                         return 'any';
                     }
@@ -1414,9 +1439,7 @@ define([
                         } else {
                             parents[i] = this.execute(list[i]);
                         }
-                        
                         //parents[i] = Type.evalSlider(this.execute(list[i]));
-
                         this.dpstack[this.pscope].push({
                             line: node.children[1][i].line,
                             // SketchBin currently works only if the last column of the
