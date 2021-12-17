@@ -430,17 +430,18 @@ define([
 
             local = Type.def(local, false);
 
+            // Local scope has always precedence
             s = this.isLocalVariable(vname);
             if (s !== null) {
                 return s.locals[vname];
             }
 
-            if (isFunctionName) {
-                // isFunctionName==true is the case if in [execute(), op_execfun:] a
-                // function call is handled.
-                // This is a patch to allow variable names to coincide with function names.
-                // It conflicts with supplying functions as parameters of other functions
-                // which does not work anyhow.
+            // Handle the - so far only - two constants by hard coding them.
+            if (vname === 'EULER' || vname === 'PI') {
+                return this.builtIn[vname];
+            }
+
+            if (!!isFunctionName) {
                 if (this.isBuiltIn(vname)) {
                     return this.builtIn[vname];
                 }
@@ -448,17 +449,11 @@ define([
                 if (this.isMathMethod(vname)) {
                     return Math[vname];
                 }
-            }
-            // Handle the - so far - two constants by hard coding them.
-            if (vname === 'EULER' || vname === 'PI') {
-                if (this.isBuiltIn(vname)) {
-                    return this.builtIn[vname];
-                }
-            }
 
-            // check for an element with this name
-            if (this.isCreator(vname)) {
-                return this.creator(vname);
+                // check for an element with this name
+                if (this.isCreator(vname)) {
+                    return this.creator(vname);
+                }
             }
 
             if (!local) {
@@ -467,8 +462,6 @@ define([
                     return s;
                 }
             }
-            // }
-
         },
 
         /**
@@ -623,12 +616,13 @@ define([
 
         /**
          * Converts a node type <tt>node_op</tt> and value <tt>op_map</tt> or <tt>op_function</tt> into a executable
-         * function.
+         * function. Does a simple type inspection.
          * @param {Object} node
          * @returns {function}
+         * @see JXG.JessieCode#resolveType
          */
         defineFunction: function (node) {
-            var fun, i,
+            var fun, i, that = this,
                 list = node.children[0],
                 scope = this.pushScope(list);
 
@@ -656,6 +650,11 @@ define([
                         fun = eval(str);
                         /*jslint evil:false*/
 
+                        scope.argtypes = [];
+                        for (i = 0; i < list.length; i++) {
+                            scope.argtypes.push(that.resolveType(list[i], node));
+                        }
+        
                         return fun;
                     } catch (e) {
                         $jc$._warn('error compiling function\n\n' + str + '\n\n' + e.toString());
@@ -1107,6 +1106,59 @@ define([
         },
 
         /**
+         * Type inspection: check if the string vname appears as function name in the
+         * AST node. Used in "op_execfun".
+         * 
+         * @private
+         * @param {String} vname 
+         * @param {Object} node 
+         * @returns 'any' or 'function'
+         * @see JXG.JessieCode#execute
+         * @see JXG.JessieCode#getvar
+         */
+        resolveType: function(vname, node) {
+            var i, t,
+                type = 'any'; // Possible values: 'function', 'any'
+
+            if (Type.isArray(node)) {
+                // node contains the parameters of a function call or function declaration
+                for (i = 0; i < node.length; i++) {
+                    t = this.resolveType(vname, node[i]);
+                    if (t !== 'any') {
+                        type = t;
+                        return type;
+                    }
+                }
+            }
+
+            if (node.type === 'node_op' && node.value === 'op_execfun' &&
+                node.children[0].type === 'node_var' && node.children[0].value === vname) {
+                return 'function';
+            }
+
+            if (node.type === 'node_op') {
+                for (i = 0; i < node.children.length; i++) {
+                    if (node.children[0].type === 'node_var' && node.children[0].value === vname &&
+                        (node.value === 'op_add' || node.value === 'op_sub' || node.value === 'op_mul' ||
+                            node.value === 'op_div' || node.value === 'op_mod' || node.value === 'op_exp' || 
+                            node.value === 'op_neg')) {
+                        return 'any';
+                    }
+                }
+
+                for (i = 0; i < node.children.length; i++) {
+                    t = this.resolveType(vname, node.children[i]);
+                    if (t !== 'any') {
+                        type = t;
+                        return type;
+                    }
+                }
+            }
+
+            return 'any';
+        },
+
+        /**
          * Resolves the lefthand side of an assignment operation
          * @param node
          * @returns {Object} An object with two properties. <strong>o</strong> which contains the object, and
@@ -1354,8 +1406,17 @@ define([
 
                     // interpret ALL the parameters
                     for (i = 0; i < list.length; i++) {
-                        parents[i] = this.execute(list[i]);
+                        if (Type.exists(fun.scope) && Type.exists(fun.scope.argtypes) &&fun.scope.argtypes[i] === 'function') {
+                            // Type inspection
+                            list[i]._isFunctionName = true;
+                            parents[i] = this.execute(list[i]);
+                            delete list[i]._isFunctionName;
+                        } else {
+                            parents[i] = this.execute(list[i]);
+                        }
+                        
                         //parents[i] = Type.evalSlider(this.execute(list[i]));
+
                         this.dpstack[this.pscope].push({
                             line: node.children[1][i].line,
                             // SketchBin currently works only if the last column of the
@@ -1625,7 +1686,7 @@ define([
                     this.popScope();
                     break;
                 case 'op_execfunmath':
-                    console.log('TODO');
+                    console.log('op_execfunmath: TODO');
                     ret = '-1';
                     break;
                 case 'op_execfun':
