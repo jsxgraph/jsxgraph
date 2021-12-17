@@ -2591,7 +2591,7 @@ define([
                                 obj.type === Const.OBJECT_TYPE_TICKS ||
                                 obj.type === Const.OBJECT_TYPE_IMAGE) {
                             // It's a point, so it's single touch, so we just push it to our touches
-                            targets = [target_obj];
+                            targets = [obj];
 
                             // For the UNDO/REDO of object moves
                             this.saveStartPos(obj, targets[0]);

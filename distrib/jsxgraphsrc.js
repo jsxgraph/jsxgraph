@@ -577,9 +577,9 @@ define('jxg',[], function () {
         onlyOwn = onlyOwn || false;
         toUpper = toUpper || false;
 
-        // the purpose of this for...in loop is indeed to use hasOwnProperty only if the caller explicitly wishes so.
+        // The purpose of this for...in loop is indeed to use hasOwnProperty only if the caller explicitly wishes so.
         for (e in constants) {
-            if (!onlyOwn || (onlyOwn && extension.hasOwnProperty(e))) {
+            if (!onlyOwn || (onlyOwn && constants.hasOwnProperty(e))) {
                 if (toUpper) {
                     e2 = e.toUpperCase();
                 } else {
@@ -45732,7 +45732,7 @@ define('base/board',[
                                 obj.type === Const.OBJECT_TYPE_TICKS ||
                                 obj.type === Const.OBJECT_TYPE_IMAGE) {
                             // It's a point, so it's single touch, so we just push it to our touches
-                            targets = [target_obj];
+                            targets = [obj];
 
                             // For the UNDO/REDO of object moves
                             this.saveStartPos(obj, targets[0]);
