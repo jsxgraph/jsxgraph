@@ -15,7 +15,7 @@ module.exports = {
         "no-unused-vars": ["warn"],
         "no-redeclare": ["error", { "builtinGlobals": false }],
         "no-prototype-builtins": "off",
-        "no-empty": ["warn"]
+        "no-empty": "off"
     },
     "globals": {
         "JXG": "readonly"

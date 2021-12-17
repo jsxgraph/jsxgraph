@@ -2034,7 +2034,7 @@ define([
                     rcoords = new JXG.Coords(Const.COORDS_BY_USER, [rx, ry], this.board);
                     if (!attractToGrid ||
                         rcoords.distance(
-                            ev_au == 'screen' ? Const.COORDS_BY_SCREEN : Const.COORDS_BY_USER, this.coords
+                            ev_au === 'screen' ? Const.COORDS_BY_SCREEN : Const.COORDS_BY_USER, this.coords
                             ) < ev_ad) {
                         x = rx;
                         y = ry;

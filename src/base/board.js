@@ -2257,10 +2257,11 @@ define([
 
                 // Touch events on empty areas of the board are handled here, see also touchStartListener
                 // 1. case: one finger. If allowed, this triggers pan with one finger
-                if (evt.touches.length == 1 &&
+                if (evt.touches.length === 1 &&
                     this.mode === this.BOARD_MODE_NONE &&
                     this.touchStartMoveOriginOneFinger(evt)) {
-                } else if (evt.touches.length == 2 &&
+                        // Empty by purpose
+                } else if (evt.touches.length === 2 &&
                             (this.mode === this.BOARD_MODE_NONE || this.mode === this.BOARD_MODE_MOVE_ORIGIN)
                         ) {
                     // 2. case: two fingers: pinch to zoom or pan with two fingers needed.
