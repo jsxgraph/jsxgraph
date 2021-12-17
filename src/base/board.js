@@ -2672,7 +2672,7 @@ define([
          */
         touchMoveListener: function (evt) {
             var i, pos1, pos2,
-                time, touchTargets,
+                touchTargets,
                 evtTouches = evt[JXG.touchProperty];
 
             if (!this.checkFrameRate(evt)) {
