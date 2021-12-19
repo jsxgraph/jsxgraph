@@ -1,7 +1,7 @@
 /*
  JessieCode Computer algebra algorithms
 
-    Copyright 2011-2021
+    Copyright 2011-2019
         Michael Gerhaeuser,
         Alfred Wassermann
 
@@ -398,8 +398,11 @@
                  break;
 
              default:
-                 newNode = this.createNode('node_const', 0.0);
-                 this._error('Derivative of "' + fun + '" not yet implemented');
+                newNode = this.createNode('node_const', 0.0);
+                console.log('Derivative of "' + fun + '" not yet implemented');
+                throw new Error('Error(' + this.line + '): ');
+                //  this._error('Derivative of "' + fun + '" not yet implemented');
+
              }
 
              return newNode;
@@ -426,14 +429,17 @@
                  case 'op_execfun':
                      // f'(g(x))g'(x)
                      if (node.children[0].value == 'pow') {
-                         newNode = this.deriveElementary(node, varname);
+                        newNode = this.deriveElementary(node, varname);
                      } else {
-                         newNode = this.createNode('node_op', 'op_mul',
-                                     this.deriveElementary(node, varname),
-                                     // Warning: single variable mode
-                                     this.derivative(node.children[1][0], varname)
-                                 );
-
+                        if (node.children[1].length === 0) {
+                            newNode = this.createNode('node_const', 0.0);
+                        } else {
+                            newNode = this.createNode('node_op', 'op_mul',
+                                this.deriveElementary(node, varname),
+                                // Warning: single variable mode
+                                this.derivative(node.children[1][0], varname)
+                            );
+                        }
                      }
                      break;
 
