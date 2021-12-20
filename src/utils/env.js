@@ -842,7 +842,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          * @param  {Number} vshift   Vertical shift (in pixel)
          *
          * @private
-         * @see JXG#toFullscreen
+         * @see JXG.Board#toFullscreen
          * @see JXG.Board#fullscreenListener
          *
          */
