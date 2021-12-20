@@ -802,8 +802,8 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          * @see JXG.Board#fullscreenListener
          * @private
          */
-        _getScaleFactors: function(node) {
-            var width  = node.getBoundingClientRect().width,
+        _getScaleFactors: function (node) {
+            var width = node.getBoundingClientRect().width,
                 height = node.getBoundingClientRect().height,
 
                 // Determine the maximum scale factor.
@@ -816,7 +816,6 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                 // Scaling factor: if not supplied, it's taken as large as possible
                 scale = Math.min(r_w, r_h);
 
-console.log(height, width, window.screen.width, window.screen.height);
             // Adapt vshift and scale for landscape on tablets
             if (window.matchMedia && window.matchMedia('(orientation:landscape)').matches &&
                 window.screen.width < window.screen.height) {
@@ -828,7 +827,7 @@ console.log(height, width, window.screen.width, window.screen.height);
             }
             scale *= 0.85;
 
-            return {scale: scale, vshift: vshift};
+            return { scale: scale, vshift: vshift, width: width };
         },
 
         /**
@@ -850,7 +849,7 @@ console.log(height, width, window.screen.width, window.screen.height);
         scaleJSXGraphDiv: function (wrap_id, inner_id, scale, vshift) {
             var len = document.styleSheets.length, style,
 
-                pseudo_keys = [':fullscreen', ':-webkit-full-screen', ':-moz-full-screen',':-ms-fullscreen'],
+                pseudo_keys = [':fullscreen', ':-webkit-full-screen', ':-moz-full-screen', ':-ms-fullscreen'],
                 len_pseudo = pseudo_keys.length, i,
 
                 // CSS rules to center the inner div horizontally and vertically.
@@ -887,51 +886,6 @@ console.log(height, width, window.screen.width, window.screen.height);
                     console.log('JXG.scaleJSXGraphDiv: Could not add CSS rule "' + pseudo_keys[i] + '".');
                     console.log('One possible reason could be that the id of the JSXGraph container does not start with a letter.');
                 }
-            }
-        },
-
-        /**
-         * Set the DOM element with id='wrap_id' containing the JSXGraph div
-         * element in fullscreen mode.
-         * The JSXGraph element is scaled as large as possible while
-         * retaining its proportions.
-         *
-         * @param  {String} wrap_id     id of DOM element containing the JSXGraph
-         * div element.
-         *
-         * @example
-         *
-         * &lt;div id="outer" class="JXG_wrap_private"&gt;
-         *      &lt;div id='jxgbox' class='jxgbox' style='width:300px; height:300px;'&gt;&lt;/div&gt;
-         * &lt;/div&gt;
-         * &lt;button onClick="JXG.toFullscreen('outer')"&gt;Fullscreen&lt;/button&gt;
-         * &lt;script&gt;
-         *     var board = JXG.JSXGraph.initBoard('jxgbox', {axis:true, boundingbox:[-8, 8, 8,-8]});
-         *     var p = board.create('point', [0, 1]);
-         * &lt;/script&gt;
-         *
-         * </pre><div id="JXGf9b973ea4_outer" class="JXG_wrap_private"><div id="JXGd9b973ea4-fd43-11e8-ab14-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div></div>
-         * <button onClick="JXG.toFullscreen('JXGf9b973ea4_outer')">Fullscreen</button>
-         * <script type="text/javascript">
-         *     (function() {
-         *         var board = JXG.JSXGraph.initBoard('JXGd9b973ea4-fd43-11e8-ab14-901b0e1b8723',
-         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
-         *         var p = board.create('point', [0, 1]);
-         *     })();
-         * </script><pre>
-         *
-         */
-        toFullscreen: function (wrap_id) {
-            var node = document.getElementById(wrap_id);
-
-            // Trigger the fullscreen mode
-            node.requestFullscreen = node.requestFullscreen ||
-                node.webkitRequestFullscreen ||
-                node.mozRequestFullScreen ||
-                node.msRequestFullscreen;
-
-            if (node.requestFullscreen) {
-                node.requestFullscreen();
             }
         }
     });

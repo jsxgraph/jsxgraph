@@ -5922,28 +5922,37 @@ define([
          *
          *
          */
-        toFullscreen: function(id) {
+        toFullscreen: function (id) {
             var wrap_id, wrap_node, inner_node;
 
             id = id || this.container;
-
             this._fullscreen_inner_id = id;
-            // inner_node = this.containerObj;
             inner_node = document.getElementById(id);
-
             wrap_id = 'fullscreenwrap_' + id;
-            wrap_node = document.createElement('div');
 
-            // If necessary, wrap a div around the JSXGraph div.
-            if (!this.document.getElementById(wrap_id)) {
+            // Wrap a div around the JSXGraph div.
+            if (this.document.getElementById(wrap_id)) {
+                wrap_node = this.document.getElementById(wrap_id);
+            } else {
+                wrap_node = document.createElement('div');
                 wrap_node.classList.add('JXG_wrap_private');
                 wrap_node.setAttribute('id', wrap_id);
                 inner_node.parentNode.insertBefore(wrap_node, inner_node);
                 wrap_node.appendChild(inner_node);
             }
 
-            // Start fullscreen mode
-            Env.toFullscreen(wrap_id, id);
+            // Get the real width and height of the JSXGraph div
+            // and determine the scaling and vertical shift amount
+            this._fullscreen_res = Env._getScaleFactors(inner_node);
+
+            // Trigger fullscreen mode
+            wrap_node.requestFullscreen = wrap_node.requestFullscreen ||
+                wrap_node.webkitRequestFullscreen ||
+                wrap_node.mozRequestFullScreen ||
+                wrap_node.msRequestFullscreen;
+            if (wrap_node.requestFullscreen) {
+                wrap_node.requestFullscreen();
+            }
 
             return this;
         },
@@ -5955,7 +5964,7 @@ define([
          *
          * @param  {Object} evt fullscreen event object (unused)
          */
-        fullscreenListener: function(evt) {
+        fullscreenListener: function (evt) {
             var res, inner_id, inner_node;
 
             inner_id = this._fullscreen_inner_id;
@@ -5968,15 +5977,10 @@ define([
             // Otherwise, the positioning of the fullscreen div will be false.
             // When leaving the fullscreen mode, the margin is put back in.
             if (document.fullscreenElement) {
-                // Entered fullscreen mode
+                // Just entered fullscreen mode
 
-                inner_node.style.margin = '';
-
-                // Do the shifting and scaling via CSS pseudo rules
-                // We do this after fullscreen mode has been established to get the correct size
-                // of the JSXGraph div
-                res = Env._getScaleFactors(inner_node);
-                Env.scaleJSXGraphDiv(document.fullscreenElement.id, inner_id, res.scale, res.vshift);
+                // Get the data computed in toFullscreen
+                res = this._fullscreen_res;
 
                 // Store the scaling data.
                 // It is used in AbstractRenderer.updateText to restore the scaling matrix
@@ -5987,11 +5991,21 @@ define([
                     id: document.fullscreenElement.id,
                     isFullscreen: true,
                     margin: inner_node.style.margin,
-                    scale:  res.scale,
+                    width: inner_node.style.width,
+                    scale: res.scale,
                     vshift: res.vshift
                 };
+
+                inner_node.style.margin = '';
+                inner_node.style.width = res.width + 'px';
+
+                // Do the shifting and scaling via CSS pseudo rules
+                // We do this after fullscreen mode has been established to get the correct size
+                // of the JSXGraph div.
+                Env.scaleJSXGraphDiv(document.fullscreenElement.id, inner_id, res.scale, res.vshift);
+
             } else if (Type.exists(inner_node._cssFullscreenStore)) {
-                // Left fullscreen mode
+                // Just left the fullscreen mode
 
                 // Remove the CSS rules added in Env.scaleJSXGraphDiv
                 try {
@@ -6001,6 +6015,7 @@ define([
                 }
                 inner_node._cssFullscreenStore.isFullscreen = false;
                 inner_node.style.margin = inner_node._cssFullscreenStore.margin;
+                inner_node.style.width = inner_node._cssFullscreenStore.width;
             }
 
             this.updateCSSTransforms();
