@@ -3261,80 +3261,82 @@ case 20:return 80
 break;
 case 21:return 94
 break;
-case 22:return 82
+case 22:return 94
 break;
-case 23:return 83
+case 23:return 82
 break;
-case 24:return 26
+case 24:return 83
 break;
-case 25:return 27
+case 25:return 26
 break;
-case 26:return 16
+case 26:return 27
 break;
-case 27:return '#'
+case 27:return 16
 break;
-case 28:return 34
+case 28:return '#'
 break;
-case 29:return 35
+case 29:return 34
 break;
-case 30:return 79
+case 30:return 35
 break;
-case 31:return 64
+case 31:return 79
 break;
-case 32:return 65
+case 32:return 64
 break;
-case 33:return 66
+case 33:return 65
 break;
-case 34:return 8
+case 34:return 66
 break;
-case 35:return 10
+case 35:return 8
 break;
-case 36:return 58
+case 36:return 10
 break;
-case 37:return 57
+case 37:return 58
 break;
-case 38:return 53
+case 38:return 57
 break;
-case 39:return 54
+case 39:return 53
 break;
-case 40:return 55
+case 40:return 54
 break;
-case 41:return 50
+case 41:return 55
 break;
-case 42:return 51
+case 42:return 50
 break;
-case 43:return 47
+case 43:return 51
 break;
-case 44:return 45
+case 44:return 47
 break;
-case 45:return 48
+case 45:return 45
 break;
-case 46:return 46
+case 46:return 48
 break;
-case 47:return 41
+case 47:return 46
 break;
-case 48:return 43
+case 48:return 41
 break;
-case 49:return 42
+case 49:return 43
 break;
-case 50:return 39
+case 50:return 42
 break;
-case 51:return 37
+case 51:return 39
 break;
-case 52:return 32
+case 52:return 37
 break;
-case 53:return 86
+case 53:return 32
 break;
-case 54:return 5
+case 54:return 86
 break;
-case 55:return 20
+case 55:return 5
 break;
-case 56:return 'INVALID'
+case 56:return 20
+break;
+case 57:return 'INVALID'
 break;
 }
 },
-rules: [/^(?:\s+)/,/^(?:[0-9]+\.[0-9]*|[0-9]*\.[0-9]+\b)/,/^(?:[0-9]+)/,/^(?:"(\\["]|[^"])*")/,/^(?:'(\\[']|[^'])*')/,/^(?:\/\/.*)/,/^(?:\/\*(.|\n|\r)*?\*\/)/,/^(?:if\b)/,/^(?:else\b)/,/^(?:while\b)/,/^(?:do\b)/,/^(?:for\b)/,/^(?:function\b)/,/^(?:map\b)/,/^(?:use\b)/,/^(?:return\b)/,/^(?:delete\b)/,/^(?:true\b)/,/^(?:false\b)/,/^(?:null\b)/,/^(?:Infinity\b)/,/^(?:->)/,/^(?:<<)/,/^(?:>>)/,/^(?:\{)/,/^(?:\})/,/^(?:;)/,/^(?:#)/,/^(?:\?)/,/^(?::)/,/^(?:NaN\b)/,/^(?:\.)/,/^(?:\[)/,/^(?:\])/,/^(?:\()/,/^(?:\))/,/^(?:!)/,/^(?:\^)/,/^(?:\*)/,/^(?:\/)/,/^(?:%)/,/^(?:\+)/,/^(?:-)/,/^(?:<=)/,/^(?:<)/,/^(?:>=)/,/^(?:>)/,/^(?:==)/,/^(?:~=)/,/^(?:!=)/,/^(?:&&)/,/^(?:\|\|)/,/^(?:=)/,/^(?:,)/,/^(?:$)/,/^(?:[A-Za-z_\$][A-Za-z0-9_]*)/,/^(?:.)/],
-conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56],"inclusive":true}}
+rules: [/^(?:\s+)/,/^(?:[0-9]+\.[0-9]*|[0-9]*\.[0-9]+\b)/,/^(?:[0-9]+)/,/^(?:"(\\["]|[^"])*")/,/^(?:'(\\[']|[^'])*')/,/^(?:\/\/.*)/,/^(?:\/\*(.|\n|\r)*?\*\/)/,/^(?:if\b)/,/^(?:else\b)/,/^(?:while\b)/,/^(?:do\b)/,/^(?:for\b)/,/^(?:function\b)/,/^(?:map\b)/,/^(?:use\b)/,/^(?:return\b)/,/^(?:delete\b)/,/^(?:true\b)/,/^(?:false\b)/,/^(?:null\b)/,/^(?:Infinity\b)/,/^(?:->)/,/^(?:=>)/,/^(?:<<)/,/^(?:>>)/,/^(?:\{)/,/^(?:\})/,/^(?:;)/,/^(?:#)/,/^(?:\?)/,/^(?::)/,/^(?:NaN\b)/,/^(?:\.)/,/^(?:\[)/,/^(?:\])/,/^(?:\()/,/^(?:\))/,/^(?:!)/,/^(?:\^)/,/^(?:\*)/,/^(?:\/)/,/^(?:%)/,/^(?:\+)/,/^(?:-)/,/^(?:<=)/,/^(?:<)/,/^(?:>=)/,/^(?:>)/,/^(?:==)/,/^(?:~=)/,/^(?:!=)/,/^(?:&&)/,/^(?:\|\|)/,/^(?:=)/,/^(?:,)/,/^(?:$)/,/^(?:[A-Za-z_\$][A-Za-z0-9_]*)/,/^(?:.)/],
+conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57],"inclusive":true}}
 });
 return lexer;
 })();
