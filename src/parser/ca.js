@@ -409,7 +409,7 @@
          },
 
          derivative: function(node, varname) {
-             var i, len, newNode;
+             var newNode;
 
              switch (node.type) {
              case 'node_op':
@@ -1268,8 +1268,7 @@
 
          simplifyElementary: function(node) {
              var fun = node.children[0].value,
-                 arg = node.children[1],
-                 newNode;
+                 arg = node.children[1];
 
              // Catch errors of the form sin()
              if (arg.length == 0) {
