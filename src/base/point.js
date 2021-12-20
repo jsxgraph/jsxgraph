@@ -156,7 +156,7 @@ define([
          * @returns {JXG.CoordsElement} Reference to this object.
          */
         updateTransform: function (fromParent) {
-            var c, i, invMat;
+            var c, i;
 
             if (this.transformations.length === 0 || this.baseElement === null) {
                 return this;
@@ -167,17 +167,6 @@ define([
                 c = this.transformations[0].apply(this.baseElement, 'self');
                 this.coords.setCoordinates(Const.COORDS_BY_USER, c);
             } else {
-                // Case of board.create('point',[baseElement, transform]);
-                // if (!fromParent) {
-                //     // The element has been dragged or it is the initial update,
-                //     // now we transform the baseElement
-                //     if (this.draggable() && this.baseElement.draggable()) {
-                //         this.transformations[0].update();
-                //         invMat = Mat.inverse(this.transformations[0].matrix);
-                //         c = Mat.matVecMult(invMat, this.coords.usrCoords);
-                //         this.baseElement.coords.setCoordinates(Const.COORDS_BY_USER, c);
-                //     }
-                // }
                 c = this.transformations[0].apply(this.baseElement);
             }
             this.coords.setCoordinates(Const.COORDS_BY_USER, c);

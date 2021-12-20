@@ -202,7 +202,7 @@ define(['jxg', 'utils/type', 'math/math'],
 
         // array of color definition objects
         colorDefs = [{
-            re: /^\s*rgba\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*([\d\.]{1,3})\s*\)\s*$/,
+            re: /^\s*rgba\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*([\d.]{1,3})\s*\)\s*$/,
             example: ['rgba(123, 234, 45, 0.5)', 'rgba(255,234,245,1.0)'],
             process: function (bits) {
                 return [

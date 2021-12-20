@@ -545,7 +545,7 @@ define([
      *
      */
     JXG.createParabola = function (board, parents, attributes) {
-        var polarForm, curve, M, i,
+        var polarForm, curve, M,
             // focus
             F1 = parents[0],
             // directrix

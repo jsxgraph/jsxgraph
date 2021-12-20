@@ -308,7 +308,7 @@ define([
          * @return {[type]} [description]
          */
         updateSize: function () {
-            var tmp, s, that, node,
+            var tmp, that, node,
                 ev_d = Type.evaluate(this.visProp.display);
 
             if (!Env.isBrowser || this.board.renderer.type === 'no') {
@@ -576,7 +576,7 @@ define([
          * @returns {string} expanded String
          */
         expandShortMath: function (expr) {
-            var re = /([\)0-9\.])\s*([\(a-zA-Z_])/g;
+            var re = /([)0-9.])\s*([(a-zA-Z_])/g;
             return expr.replace(re, '$1*$2');
         },
 
@@ -746,7 +746,7 @@ define([
             content = content.replace(/&lt;\/value&gt;/g, '</value>');
 
             do {
-                search = /<value>([\w\s\*\/\^\-\+\(\)\[\],<>=!]+)<\/value>/;
+                search = /<value>([\w\s*/^\-+()[\],<>=!]+)<\/value>/;
                 res = search.exec(content);
 
                 if (res !== null) {
@@ -874,7 +874,8 @@ define([
          */
         setAutoPosition: function () {
             var x, y, cx, cy,
-                anchorCoords, anchorX, anchorY,
+                anchorCoords,
+                // anchorX, anchorY,
                 w = this.size[0],
                 h = this.size[1],
                 start_angle, angle,
@@ -896,8 +897,8 @@ define([
                 return this;
             }
 
-            anchorX = Type.evaluate(this.visProp.anchorx);
-            anchorY = Type.evaluate(this.visProp.anchory);
+            // anchorX = Type.evaluate(this.visProp.anchorx);
+            // anchorY = Type.evaluate(this.visProp.anchory);
             offset = Type.evaluate(this.visProp.offset);
             anchorCoords = this.element.getLabelAnchor();
             cx = anchorCoords.scrCoords[1];

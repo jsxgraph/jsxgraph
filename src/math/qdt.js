@@ -155,10 +155,10 @@ define(['math/math', 'utils/type'], function (Mat, Type) {
                 mx = this.xlb + (this.xub - this.xlb) / 2,
                 my = this.ylb + (this.yub - this.ylb) / 2;
 
-            this.northWest = new Quadtree([this.xlb, this.yub, mx, my]);
-            this.northEast = new Quadtree([mx, this.yub, this.xub, my]);
-            this.southEast = new Quadtree([this.xlb, my, mx, this.ylb]);
-            this.southWest = new Quadtree([mx, my, this.xub, this.ylb]);
+            this.northWest = new Mat.Quadtree([this.xlb, this.yub, mx, my]);
+            this.northEast = new Mat.Quadtree([mx, this.yub, this.xub, my]);
+            this.southEast = new Mat.Quadtree([this.xlb, my, mx, this.ylb]);
+            this.southWest = new Mat.Quadtree([mx, my, this.xub, this.ylb]);
 
             for (i = 0; i < l; i += 1) {
                 this.northWest.insert(this.points[i]);

@@ -253,7 +253,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          * @returns {Boolean}
          */
         isWebkitApple: function () {
-            return this.isApple() && (navigator.userAgent.search(/Mobile\/[0-9A-Za-z\.]*Safari/) > -1);
+            return this.isApple() && (navigator.userAgent.search(/Mobile\/[0-9A-Za-z.]*Safari/) > -1);
         },
 
         /**
