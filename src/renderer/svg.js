@@ -1579,7 +1579,6 @@ define([
                     canvas.height = images[i].getAttribute("height");
                     try {
                         ctx.drawImage(images[i], 0, 0, canvas.width, canvas.height);
-                        //ctx.drawImage(document.getElementById('testimg2'), 0, 0, canvas.width, canvas.height);
 
                         // If the image is not png, the format must be specified here
                         ur = canvas.toDataURL();
@@ -1587,7 +1586,6 @@ define([
                     } catch (err) {
                         console.log("CORS problem! Image can not be used", err);
                     }
-                    //};
                 }
                 //canvas.remove();
             }
@@ -1696,15 +1694,11 @@ define([
          * 	setTimeout(function() { console.log('done'); }, 400);
          */
         dumpToCanvas: function (canvasId, w, h, ignoreTexts) {
-            var //svgRoot = this.svgRoot,
-                svg, tmpImg, cv, ctx;
-                // wOrg, hOrg;
-
-            // wOrg = svgRoot.getAttribute('width');
-            // hOrg = svgRoot.getAttribute('height');
+            var svg, tmpImg, cv, ctx;
 
             // Prepare the canvas element
             cv = document.getElementById(canvasId);
+
             // Clear the canvas
             cv.width = cv.width;
             ctx = cv.getContext("2d");
@@ -1793,8 +1787,8 @@ define([
                 return this;
             }
 
-            w = bas.scale * parseFloat(this.container.style.width);
-            h = bas.scale * parseFloat(this.container.style.height);
+            w = bas.scale * this.container.getBoundingClientRect().width;
+            h = bas.scale * this.container.getBoundingClientRect().height;
 
             if (imgId === undefined || imgId === '') {
                 newImg = true;
