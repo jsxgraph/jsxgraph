@@ -3831,7 +3831,7 @@ define([
         addConditions: function (str) {
             var term, m, left, right, name, el, property,
                 functions = [],
-                plaintext = 'var el, x, y, c, rgbo;\n',
+                // plaintext = 'var el, x, y, c, rgbo;\n',
                 i = str.indexOf('<data>'),
                 j = str.indexOf('<' + '/data>'),
 
@@ -3915,7 +3915,7 @@ define([
                 if (!Type.exists(this.elementsByName[name])) {
                     JXG.debug("debug conditions: |" + name + "| undefined");
                 } else {
-                    plaintext += "el = this.objects[\"" + el.id + "\"];\n";
+                    // plaintext += "el = this.objects[\"" + el.id + "\"];\n";
 
                     switch (property) {
                     case 'x':
@@ -4390,7 +4390,8 @@ define([
          * @returns {JXG.Board} Reference to the board
          */
         resizeContainer: function (canvasWidth, canvasHeight, dontset, dontSetBoundingBox) {
-            var box, w, h, cx, cy;
+            var box;
+                // w, h, cx, cy;
                 // box_act,
                 // shift_x = 0,
                 // shift_y = 0;
@@ -5859,6 +5860,8 @@ define([
          * <p>
          * The wrapping div has the CSS class 'jxgbox_wrap_private' which is
          * defined in the file 'jsxgraph.css'
+         * <p>
+         * This feature is not available on iPhones (as of December 2021).
          *
          * @param {String} id (Optional) id of the div element which is brought to fullscreen.
          * If not provided, this defaults to the JSXGraph div. However, it may be necessary for the aspect ratio trick
@@ -5950,6 +5953,7 @@ define([
                 wrap_node.webkitRequestFullscreen ||
                 wrap_node.mozRequestFullScreen ||
                 wrap_node.msRequestFullscreen;
+
             if (wrap_node.requestFullscreen) {
                 wrap_node.requestFullscreen();
             }
@@ -5972,6 +5976,11 @@ define([
                 return;
             }
 
+            document.fullscreenElement = document.fullscreenElement ||
+                    document.webkitFullscreenElement ||
+                    document.mozFullscreenElement ||
+                    document.msFullscreenElement;
+
             inner_node = document.getElementById(inner_id);
             // If full screen mode is started we have to remove CSS margin around the JSXGraph div.
             // Otherwise, the positioning of the fullscreen div will be false.
@@ -5979,7 +5988,7 @@ define([
             if (document.fullscreenElement) {
                 // Just entered fullscreen mode
 
-                // Get the data computed in toFullscreen
+                // Get the data computed in board.toFullscreen()
                 res = this._fullscreen_res;
 
                 // Store the scaling data.
@@ -6004,6 +6013,10 @@ define([
                 // of the JSXGraph div.
                 Env.scaleJSXGraphDiv(document.fullscreenElement.id, inner_id, res.scale, res.vshift);
 
+                // Clear document.fullscreenElement, because Safari doesn't to it and
+                // when leaving full screen mode it is still set.
+                document.fullscreenElement = null;
+
             } else if (Type.exists(inner_node._cssFullscreenStore)) {
                 // Just left the fullscreen mode
 
@@ -6013,9 +6026,11 @@ define([
                 } catch (err) {
                     console.log('JSXGraph: Could not remove CSS rules for full screen mode');
                 }
+
                 inner_node._cssFullscreenStore.isFullscreen = false;
                 inner_node.style.margin = inner_node._cssFullscreenStore.margin;
                 inner_node.style.width = inner_node._cssFullscreenStore.width;
+
             }
 
             this.updateCSSTransforms();

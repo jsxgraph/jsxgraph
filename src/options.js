@@ -360,7 +360,7 @@ define([
              * @type Object
              */
             fullscreen: {
-                symbol: '\u26f6', // '\u25a1'
+                symbol: '\u25a1', // '\u26f6' (not supported by MacOS), // '\u25a1'
                 id: null
             },
 
