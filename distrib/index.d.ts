@@ -90,6 +90,10 @@ declare module JXG {
          *
          */
         usrCoords: number[];
+        /**
+         *
+         */
+        scrCoords: [number, x: number, y: number];
     }
     /**
      * A JessieCode object provides an interface to the parser and stores all variables and objects used within a JessieCode script.
@@ -199,10 +203,10 @@ declare module JXG {
     export function hex2rgb(hex: string): string;
     /**
      * Converts HSV color to RGB color. Based on C Code in "Computer Graphics -- Principles and Practice," Foley et al, 1996, p. 593. See also http://www.efg2.com/Lab/Graphics/Colors/HSV.htm
-     * param H value between 0 and 360
-     * param S value between 0.0 (shade of gray) to 1.0 (pure color)
-     * param V value between 0.0 (black) to 1.0 (white)
-     * return RGB color string
+     * @param H value between 0 and 360
+     * @param S value between 0.0 (shade of gray) to 1.0 (pure color)
+     * @param V value between 0.0 (black) to 1.0 (white)
+     * @returns RGB color string
      */
     export function hsv2rgb(H: number, S: number, V: number): string;
     export function isAndroid(): boolean;
@@ -313,9 +317,12 @@ declare module JXG {
 
         quadraticform: unknown[];
 
-        rendNode: unknown;
+        rendNode: HTMLElement;
 
-        stdform: unknown[];
+        /**
+         * The homogeneous coordinates of the line ([C,A,B] where A*x+B*y+C*z=0).
+         */
+        stdform: [C: number, A: number, B: number];
 
         subs: unknown;
 
@@ -370,10 +377,10 @@ declare module JXG {
         /**
          * Hide the element. It will still exist but not be visible on the board.
          * Alias for "element.setAttribute({visible: false});"
-         * @return Reference to the element
+         * @returns Reference to the element
          */
         hide(): void;
-        
+
         /**
          * Hides the element. It will still exist but not be visible on the board.
          * Alias for JXG.GeometryElement#hide
@@ -384,15 +391,15 @@ declare module JXG {
         /**
          * Register a new event handler.
          * For a list of possible events see documentation of the elements and objects implementing the EventEmitter interface.
-         * param event
-         * param handler
-         * param context The context the handler will be called in, default is the element itself.
+         * @param event
+         * @param handler
+         * @param context The context the handler will be called in, default is the element itself.
          */
         on(event: string, handler: (e: Event) => void, context?: unknown): void;
 
         /**
          * Sets an arbitrary number of attributes.
-         * param attributes An object with attributes.
+         * @param attributes An object with attributes.
          */
         setAttribute(attributes: GeometryElementAttributes): this;
 
@@ -411,13 +418,13 @@ declare module JXG {
 
         /**
          * Updates the element's label text, strips all html.
-         * param text The element label text.
+         * @param text The element label text.
          */
         setLabelText(text: string): string;
 
         /**
          * Updates the element's label text and the element's attribute "name", strips all html.
-         * param name The element name.
+         * @param name The element name.
          */
         setName(name: string): string;
 
@@ -453,7 +460,7 @@ declare module JXG {
         /**
          * Make the element visible.
          * Alias for "element.setAttribute({visible: true});"
-         * @return Reference to the element
+         * @returns Reference to the element
          */
         show(): void;
 
@@ -863,9 +870,6 @@ declare module JXG {
          * Starts an animated point movement towards the given coordinates where.
          * The animation is done after time milliseconds.
          * If the second parameter is not given or is equal to 0, setPosition() is called, see #setPosition.
-         * param where Array containing the x and y coordinate of the target location.
-         * param time Number of milliseconds the animation should last.
-         * param options
          * @param where Array containing the x and y coordinate of the target location.
          * @param time Number of milliseconds the animation should last.
          * @param options Optional settings for the animation.
@@ -1105,8 +1109,15 @@ declare module JXG {
          */
         midpoint: Point;
         /**
-         *
+         * Checks whether (x,y) is near the segment.
+         * @param x: Coordinate in x direction, screen coordinates.
+         * @param y: Coordinate in y direction, screen coordinates.
+         * @param start: Optional start index for search on data plots.
          */
+        hasPoint(x: number, y: number, start?: number): boolean;
+        /**
+        *
+        */
         Radius(): number;
     }
 
@@ -1135,7 +1146,9 @@ declare module JXG {
     export interface CircleOptions {
         center?: PointAttributes;
         fillColor?: string;
+        fixed?: boolean;
         hasInnerPoints?: boolean;
+        highlight?: boolean;
         highlightFillColor?: string;
         highlightStrokeColor?: string;
         label?: LabelOptions;
@@ -1260,11 +1273,11 @@ declare module JXG {
         generateTerm(varname: unknown, xterm: unknown, yterm: unknown, mi: unknown, ma: unknown): any;
         /**
          * Checks whether (x,y) is near the curve.
-         * x: Coordinate in x direction, screen coordinates.
-         * y: Coordinate in y direction, screen coordinates.
-         * start: Optional start index for search on data plots.
+         * @param x: Coordinate in x direction, screen coordinates.
+         * @param y: Coordinate in y direction, screen coordinates.
+         * @param start: Optional start index for search on data plots.
          */
-        hasPoint(x: number, y: number, start: number): boolean;
+        hasPoint(x: number, y: number, start?: number): boolean;
         /**
          * Gives the default value of the right bound for the curve.
          * May be overwritten in generateTerm.
@@ -1515,6 +1528,7 @@ declare module JXG {
     }
 
     export interface InfoboxOptions extends TextOptions {
+        layer?: number;
         needsRegularUpdate?: boolean;
         transitionDuration?: number;
     }
@@ -1533,6 +1547,7 @@ declare module JXG {
         display?: 'internal';
         fixed?: boolean;
         fontSize?: number;
+        highlight?: boolean;
         highlightStrokeColor?: string;
         highlightStrokeOpacity?: number;
         layer?: number;
@@ -1548,6 +1563,7 @@ declare module JXG {
         position?: 'lft' | 'rt' | 'top' | 'bot' | 'ulft' | 'urt' | 'llft' | 'lrt';
         strokeColor?: string;
         strokeOpacity?: number;
+        useMathJax?: boolean;
         visible?: 'inherit' | boolean;
     }
 
@@ -1686,7 +1702,7 @@ declare module JXG {
         /**
          * Set an angle to a prescribed value given in radians.
          * This is only possible if the third point of the angle, i.e. the anglepoint is a free point.
-         * param val Number or Function which returns the size of the angle in Radians.
+         * @param val Number or Function which returns the size of the angle in Radians.
          */
         setAngle(val: number | NumberFunction): Angle;
 
@@ -1774,6 +1790,9 @@ declare module JXG {
         Y(): number;
         Dist(point: Point): number;
         setAttribute(attributes: PointAttributes): this;
+        ref: [x: number, y: number] | (() => [x: number, y: number]);
+        scale: [x: number, y: number] | (() => [x: number, y: number]);
+        dp: [x: number, y: number] | (() => [x: number, y: number]);
     }
 
     type FaceType =
@@ -1907,7 +1926,26 @@ declare module JXG {
     }
 
     export interface PointOptions {
-
+        /**
+         *
+         */
+        fixed: boolean;
+        /**
+         *
+         */
+        highlight?: boolean;
+        /**
+         *
+         */
+        snapSizeX: number;
+        /**
+         *
+         */
+        snapSizeY: number;
+        /**
+         *
+         */
+        snapToGrid: boolean;
     }
 
     export interface Perpendicular extends Segment {
@@ -1987,7 +2025,7 @@ declare module JXG {
         /**
          * Attributes for the polygon border lines.
          */
-        borders?: LineOptions;
+        borders: LineOptions;
         /**
          * If true, moving the mouse over inner points triggers hasPoint.
          */
@@ -2250,6 +2288,10 @@ declare module JXG {
          */
         firstArrow?: boolean | { type?: number; highlightSize?: number; size?: number };
         /**
+         *
+         */
+        fixed?: boolean;
+        /**
          * Determines whether the line has an arrow at the second defining point.
          */
         lastArrow?: boolean | { type?: number; highlightSize?: number; size?: number };
@@ -2382,7 +2424,7 @@ declare module JXG {
         setAttribute(attributes: ArrowAttributes): this;
     }
     export interface ArrowAttributes extends GeometryElementAttributes {
-        firstArrow?: boolean;
+        firstArrow?: boolean | ArrowSpecification;
         lastArrow?: boolean | ArrowSpecification
     }
     export interface ArrowOptions extends GeometryElementOptions {
@@ -2449,6 +2491,11 @@ declare module JXG {
     }
     export interface MidpointAttributes extends PointAttributes { }
 
+    export interface MinorArc extends Arc {
+        setAttribute(attributes: MinorArcAttributes): this;
+    }
+    export interface MinorArcAttributes extends ArcAttributes { }
+
     /**
      * A mirror element is determined by the reflection of a given point across another given point.
      */
@@ -2491,6 +2538,14 @@ declare module JXG {
      *
      */
     export interface Segment extends Line {
+        /**
+         * Checks whether (x,y) is near the segment.
+         * @param x: Coordinate in x direction, screen coordinates.
+         * @param y: Coordinate in y direction, screen coordinates.
+         * @param start: Optional start index for search on data plots.
+         */
+        hasPoint(x: number, y: number, start?: number): boolean;
+
         setAttribute(attributes: SegmentAttributes): this;
     }
     export interface SegmentAttributes extends LineAttributes { }
@@ -2894,6 +2949,7 @@ declare module JXG {
         | 'chart'
         | 'checkbox'
         | 'circle'
+        | 'comb'
         | 'conic'
         | 'curve'
         | 'ellipse'
@@ -2907,12 +2963,14 @@ declare module JXG {
         | 'input'
         | 'integral'
         | 'line'
+        | 'minorArc'
         | 'plot'
         | 'point'
         | 'polygon'
         | 'reflection'
         | 'riemannsum'
         | 'segment'
+        | 'semicircle'
         | 'slider'
         | 'slopetriangle'
         | 'stepfunction'
@@ -3429,17 +3487,24 @@ declare module JXG {
         create(elementType: 'circumcirclesector', parents: unknown[], attributes?: CircumcircleSectorAttributes): CircumcircleSector;
         /**
          * 
+         * @param elementType 'comb'
+         * @param parents 
+         * @param attributes 
+         */
+        create(elementType: 'comb', parents: unknown[], attributes?: CombAttributes): Comb;
+        /**
+         * 
          * @param elementType 'conic'
          * @param parents 
          * @param attributes 
          */
         create(elementType: 'conic', parents: unknown[], attributes?: ConicAttributes): Conic;
         /**
-         * 
-         * @param elementType 'curve'
-         * @param parents 
-         * @param attributes 
-         */
+        * 
+        * @param elementType 'curve'
+        * @param parents 
+        * @param attributes 
+        */
         create(elementType: 'curve', parents: unknown[], attributes?: CurveAttributes): Curve;
         /**
          * 
@@ -3562,10 +3627,17 @@ declare module JXG {
         create(elementType: 'midpoint', parents: unknown[], attributes?: MidpointAttributes): Midpoint;
         /**
          * 
-         * @param elementType 'mirrorelement'
+         * @param elementType 'minorArc'
          * @param parents 
          * @param attributes 
          */
+        create(elementType: 'minorArc', parents: unknown[], attributes?: MinorArcAttributes): MinorArc;
+        /**
+        * 
+        * @param elementType 'mirrorelement'
+        * @param parents 
+        * @param attributes 
+        */
         create(elementType: 'mirrorelement', parents: unknown[], attributes?: MirrorelementAttributes): Mirrorelement;
         /**
          * 
@@ -3638,11 +3710,18 @@ declare module JXG {
          */
         create(elementType: 'sector', parents: unknown[], attributes?: SectorAttributes): Sector;
         /**
-        * 
-        * @param elementType 'segment'
-        * @param parents 
-        * @param attributes 
-        */
+         * 
+         * @param elementType 'semicircle'
+         * @param parents 
+         * @param attributes 
+         */
+        create(elementType: 'semicircle', parents: unknown[], attributes?: SemicircleAttributes): Semicircle;
+        /**
+         * 
+         * @param elementType 'segment'
+         * @param parents 
+         * @param attributes 
+         */
         create(elementType: 'segment', parents: unknown[], attributes?: SegmentAttributes): Segment;
         /**
          * 
@@ -3774,10 +3853,10 @@ declare module JXG {
          * For a list of possible events see documentation of the elements and objects
          * implementing the EventEmitter interface.
          * @method on
-         * param event {string}
-         * param handler {()=>void}
-         * param context [{}] The context the handler will be called in, default is the element itself.
-         * return Reference to the object.
+         * @param event {string}
+         * @param handler {()=>void}
+         * @param context [{}] The context the handler will be called in, default is the element itself.
+         * @returns Reference to the object.
          */
         on(event: string, handler: (evt: PointerEvent) => void, context?: {}): {};
         pointerDownListener(event: unknown, object: unknown): boolean;
@@ -3848,7 +3927,7 @@ declare module JXG {
         unsuspendUpdate(): this;
         /**
          * Runs through most elements and calls their update() method and update the conditions.
-         * param drag Element that caused the update.
+         * @param drag Element that caused the update.
          * return Reference to the board
          */
         update(drag?: GeometryElement): this;
@@ -4327,6 +4406,7 @@ declare module JXG {
         display?: 'html' | 'internal';
         dragArea?: 'all' | 'small';
         fontSize?: number;
+        highlight?: boolean;
         highlightCssClass?: string;
         highlightCssDefaultStyle?: string;
         highlightCssStyle?: string;
@@ -4369,91 +4449,95 @@ declare module JXG {
 
     export interface JXGOptions {
         // TODO: These should all be XyzOptions, even if XyzOptions extends XyzAttributes (or converse).
-        angle?: AngleOptions;
-        arc?: ArcAttributes;
-        arrow?: ArrowAttributes;
-        axis?: AxisAttributes;
-        bisector?: BisectorAttributes;
-        bisectorlines?: {
+        angle: AngleOptions;
+        arc: ArcAttributes;
+        arrow: ArrowAttributes;
+        axis: AxisAttributes;
+        bisector: BisectorAttributes;
+        bisectorlines: {
             line1?: BisectorAttributes;
             line2?: BisectorAttributes;
         }
-        board?: Partial<BoardAttributes>;
-        button?: ButtonAttributes;
-        cardinalspline?: CardinalsplineAttributes;
-        chart?: ChartAttributes;
-        checkbox?: CheckboxAttributes;
-        circle?: CircleOptions;
-        circumcircle?: CircumcircleOptions;
-        circumcirclearc?: CircumcircleArcOptions;
-        circumcirclesector?: CircumcircleSectorOptions;
-        comb?: CombOptions;
-        conic?: ConicOptions;
-        curve?: CurveOptions;
-        elements?: GeometryElementAttributes;
-        glider?: GliderOptions;
-        grid?: GridOptions;
-        group?: GroupOptions;
-        jc?: {
+        board: Partial<BoardAttributes>;
+        button: ButtonAttributes;
+        cardinalspline: CardinalsplineAttributes;
+        chart: ChartAttributes;
+        checkbox: CheckboxAttributes;
+        circle: CircleOptions;
+        circumcircle: CircumcircleOptions;
+        circumcirclearc: CircumcircleArcOptions;
+        circumcirclesector: CircumcircleSectorOptions;
+        comb: CombOptions;
+        conic: ConicOptions;
+        curve: CurveOptions;
+        elements: GeometryElementAttributes;
+        glider: GliderOptions;
+        grid: GridOptions;
+        group: GroupOptions;
+        jc: {
             enabled?: boolean;
             compile?: boolean;
         };
-        hatch?: HatchAttributes;
-        htmlslider?: SliderOptions;
-        image?: ImageOptions;
-        incircle?: IncircleOptions;
-        inequality?: InequalityOptions;
-        infobox?: InfoboxOptions;
-        integral?: IntegralOptions;
-        input?: InputOptions;
-        intersection?: IntersectionOptions;
-        label?: LabelOptions;
+        hatch: HatchAttributes;
+        htmlslider: SliderOptions;
+        image: ImageOptions;
+        incircle: IncircleOptions;
+        inequality: InequalityOptions;
+        infobox: InfoboxOptions;
+        integral: IntegralOptions;
+        input: InputOptions;
+        intersection: IntersectionOptions;
+        label: LabelOptions;
         /**
          * Default ordering of the layers.
          */
-        layer?: LayerOptions;
-        legend?: LegendOptions;
-        line?: LineOptions;
-        locus?: LocusOptions;
-        metapostspline?: CardinalsplineOptions;
-        mirrorelement?: MirrorelementOptions;
+        layer: LayerOptions;
+        legend: LegendOptions;
+        line: LineOptions;
+        locus: LocusOptions;
+        metapostspline: CardinalsplineOptions;
+        mirrorelement: MirrorelementOptions;
         /**
          * Options that are used by the navigation bar.
          */
-        navbar?: NavbarOptions;
-        normal?: NormalOptions;
-        orthogonalprojection?: OrthogonalprojectionOptions;
-        parallel?: ParallelOptions;
-        perpendicular?: PerpendicularOptions;
-        perpendicularsegment?: PerpendicularSegmentOptions;
-        point?: PointOptions;
-        polygon?: PolygonOptions;
-        polygonalchain?: PolygonalChainOptions;
+        navbar: NavbarOptions;
+        normal: NormalOptions;
+        orthogonalprojection: OrthogonalprojectionOptions;
+        parallel: ParallelOptions;
+        perpendicular: PerpendicularOptions;
+        perpendicularsegment: PerpendicularSegmentOptions;
+        /**
+         * 
+         */
+        point: PointOptions;
+        polygon: PolygonOptions;
+        polygonalchain: PolygonalChainOptions;
         /**
          * Precision options.
          */
-        precision?: PrecisionOptions;
-        prescribedangle?: PrescribedAngleOptions;
-        reflection?: ReflectionOptions;
-        regularpolygon?: RegularPolygonOptions;
-        riemannsum?: RiemannsumOptions;
-        sector?: SectorOptions;
-        segment?: SegmentOptions;
-        semicircle?: SemicircleOptions;
-        slider?: SliderOptions;
+        precision: PrecisionOptions;
+        prescribedangle: PrescribedAngleOptions;
+        reflection: ReflectionOptions;
+        regularpolygon: RegularPolygonOptions;
+        riemannsum: RiemannsumOptions;
+        sector: SectorOptions;
+        segment: SegmentOptions;
+        semicircle: SemicircleOptions;
+        slider: SliderOptions;
         /**
          * Abbreviations of properties.
          */
-        shortcuts?: {};
-        slopetriangle?: SlopetriangleOptions;
-        stepfunction?: StepfunctionOptions;
+        shortcuts: {};
+        slopetriangle: SlopetriangleOptions;
+        stepfunction: StepfunctionOptions;
         takeSizeFromFile?: boolean;
-        tapemeasure?: TapemeasureOptions;
-        ticks?: TicksOptions;
-        text?: TextOptions;
-        tracecurve?: TracecurveOptions;
-        turtle?: TurtleOptions;
+        tapemeasure: TapemeasureOptions;
+        ticks: TicksOptions;
+        text: TextOptions;
+        tracecurve: TracecurveOptions;
+        turtle: TurtleOptions;
     }
+
     /**
      *
      */
@@ -4479,9 +4563,9 @@ declare module JXG {
     export interface Math {
         /**
          * Functional version of binary operator && 
-         * param a.
-         * param b.
-         * returns Boolean value of a && b.
+         * @param a.
+         * @param b.
+         * @returns Boolean value of a && b.
          */
         and(a: boolean, b: boolean): boolean;
         /**
@@ -4492,49 +4576,49 @@ declare module JXG {
         /**
          * Hyperbolic arc-cosine of a number.
          *
-         * param x
+         * @param x
          */
         acosh(x: number): number;
         /**
          * Hyperbolic arcsine of a number.
          *
-         * param x
+         * @param x
          */
         asinh(x: number): number;
-         /**
-         * Computes the binomial coefficient n over k.
-         * param n
-         * param k
-         */
+        /**
+        * Computes the binomial coefficient n over k.
+        * @param n
+        * @param k
+        */
         binomial(n: number, k: number): number;
         /**
          * Computes the hyperbolic cosine of x.
-         * param x
+         * @param x
          */
         cosh(x: number): number;
         /**
          * Functional version of binary operator === 
-         * param a.
-         * param b.
-         * returns Boolean value of a === b.
+         * @param a.
+         * @param b.
+         * @returns Boolean value of a === b.
          */
         eq(a: number, b: number): boolean;
         /**
          * Error function
          *
-         * param x
+         * @param x
          */
         erf(x: number): number;
         /**
          * Complementary error function
          *
-         * param x
+         * @param x
          */
         erfc(x: number): number;
         /**
          * Inverse error function
          *
-         * param x
+         * @param x
          */
         erfi(x: number): number;
         /**
@@ -4546,23 +4630,23 @@ declare module JXG {
         /**
          * Greatest common divisor (gcd) of two numbers.
          *
-         * param a.
-         * param b.
-         * returns gcd(a, b) if a and b are numbers, NaN else.
+         * @param a.
+         * @param b.
+         * @returns gcd(a, b) if a and b are numbers, NaN else.
          */
         gcd(a: number, b: number): number;
         /**
          * Functional version of binary operator >= 
-         * param a.
-         * param b.
-         * returns Boolean value of a >= b.
+         * @param a.
+         * @param b.
+         * @returns Boolean value of a >= b.
          */
         geq(a: number, b: number): boolean;
         /**
          * Functional version of binary operator > 
-         * param a.
-         * param b.
-         * returns Boolean value of a > b.
+         * @param a.
+         * @param b.
+         * @returns Boolean value of a > b.
          */
         gt(a: number, b: number): boolean;
         /**
@@ -4572,91 +4656,91 @@ declare module JXG {
         /**
          * Least common multiple (lcm) of two numbers.
          *
-         * param a.
-         * param b.
-         * returns lcm(a, b) if a and b are numbers, NaN else.
+         * @param a.
+         * @param b.
+         * @returns lcm(a, b) if a and b are numbers, NaN else.
          */
         lcm(a: number, b: number): number;
         /**
          * Functional version of binary operator <= 
-         * param a.
-         * param b.
-         * returns Boolean value of a <= b.
+         * @param a.
+         * @param b.
+         * @returns Boolean value of a <= b.
          */
         leq(a: number, b: number): boolean;
         /**
          * Logarithm to base 10.
-         * param a.
-         * returns logarithm of a to base 10.
+         * @param a.
+         * @returns logarithm of a to base 10.
          */
         log10(a: number): number;
         /**
          * Logarithm to base 2.
-         * param a.
-         * returns logarithm of a to base 2.
+         * @param a.
+         * @returns logarithm of a to base 2.
          */
         log2(a: number): number;
         /**
          * Functional version of binary operator <
-         * param a.
-         * param b.
-         * returns Boolean value of a < b.
+         * @param a.
+         * @param b.
+         * @returns Boolean value of a < b.
          */
         lt(a: number, b: number): boolean;
         /**
          * Computes the product of the two matrices mat1*mat2.
-         * param mat1 Two dimensional array of numbers.
-         * param mat2 Two dimensional array of numbers.
-         * returns Two dimensional Array of numbers containing result.
+         * @param mat1 Two dimensional array of numbers.
+         * @param mat2 Two dimensional array of numbers.
+         * @returns Two dimensional Array of numbers containing result.
          */
         matMatMult(mat1: number[][], mat2: number[][]): number[][];
         /**
          * Multiplies a vector vec to a matrix mat: mat * vec. The matrix is interpreted by this function as an array of rows.
          * Please note: This function does not check if the dimensions match.
-         * param mat Two dimensional array of numbers. The inner arrays describe the columns, the outer ones the matrix' rows.
-         * param vec Array of numbers.
-         * returns Array of numbers containing the result.
+         * @param mat Two dimensional array of numbers. The inner arrays describe the columns, the outer ones the matrix' rows.
+         * @param vec Array of numbers.
+         * @returns Array of numbers containing the result.
          */
         matVecMult(mat: number[][], vec: number[]): number[];
         /**
          * The Javascript implementation of the % operator returns the symmetric modulo.
          * mod and "%" are both identical if a >= 0 and m >= 0 but the results differ if a or m < 0.
-         * param a.
-         * param m.
-         * returns mathematical modulo a mod m.
+         * @param a.
+         * @param m.
+         * @returns mathematical modulo a mod m.
          */
         mod(a: number, m: number): number;
         /**
          * Normal distribution function
          *
-         * param x
+         * @param x
          */
         ndtr(x: number): number;
         /**
          * Inverse of normal distribution function
          *
-         * param x
+         * @param x
          */
         ndtri(x: number): number;
         /**
          * Functional version of binary operator !== 
-         * param a.
-         * param b.
-         * returns Boolean value of a !== b.
+         * @param a.
+         * @param b.
+         * @returns Boolean value of a !== b.
          */
         neq(a: number, b: number): boolean;
         /**
          * Functional version of unary operator ! 
-         * param a.
-         * param b.
-         * returns Boolean value of !a.
+         * @param a.
+         * @param b.
+         * @returns Boolean value of !a.
          */
         not(a: number): boolean;
         /**
          * Functional version of binary operator ||
-         * param a.
-         * param b.
-         * returns Boolean value of a || b.
+         * @param a.
+         * @param b.
+         * @returns Boolean value of a || b.
          */
         or(a: boolean, b: boolean): boolean;
         /**
@@ -4667,93 +4751,93 @@ declare module JXG {
         pow(base: number, exponent: number): number;
         /**
          * Determine the relative difference between two numbers.
-         * param a.
-         * param b.
-         * returns Relative difference between a and b: |a-b| / max(|a|, |b|).
+         * @param a.
+         * @param b.
+         * @returns Relative difference between a and b: |a-b| / max(|a|, |b|).
          */
         relDif(a: number, b: number): number;
         /**
          * Sine hyperbolicus of x.
-         * param x The number the sine hyperbolicus will be calculated of.
-         * returns Sine hyperbolicus of the given value.
+         * @param x The number the sine hyperbolicus will be calculated of.
+         * @returns Sine hyperbolicus of the given value.
          */
         sinh(x: number): number;
         /**
          * A square & multiply algorithm to compute base to the power of exponent.
          *
-         * param base.
-         * param exponent.
-         * returns base to the power of exponent.
+         * @param base.
+         * @param exponent.
+         * @returns base to the power of exponent.
          */
         squampow(base: number, exponent: number): number;
         /**
          * Transposes a matrix given as a two dimensional array.
-         * param M The matrix to be transposed.
-         * returns The transpose of M.
+         * @param M The matrix to be transposed.
+         * @returns The transpose of M.
          */
         transpose(M: number[][]): number[][];
         /**
          * Functional version of a binary operator xor 
-         * param a.
-         * param b.
-         * returns Boolean value of a xor b.
+         * @param a.
+         * @param b.
+         * @returns Boolean value of a xor b.
          */
         xor(a: boolean, b: boolean): boolean;
 
-/* -------------------------------------------------- */
+        /* -------------------------------------------------- */
         /**
          * Inner product of two vectors a and b. n is the length of the vectors.
-         * param a 
-         * param b
-         * param n optional
-         * returns Inner product of a and b.
+         * @param a 
+         * @param b
+         * @param n optional
+         * @returns Inner product of a and b.
          */
-        innerProduct(a: number[], a: number[], n number): number;
+        innerProduct(a: number[], a: number[], n: number): number;
         /**
          * Cross product of two vectors a and b, both of length three.
-         * param a 
-         * param b
-         * returns Cross product of a and b.
+         * @param a 
+         * @param b
+         * @returns Cross product of a and b.
          */
         crossProduct(a: number[], a: number[]): number;
         /**
          * Euclidean norm of vector a of length n.
-         * param a 
-         * param n
-         * returns Euclidean norm of a.
+         * @param a 
+         * @param n
+         * @returns Euclidean norm of a.
          */
-        norm(a: number[], n number): number;
+        norm(a: number[], n: number): number;
         /**
          * Computes the cotangent of x.
-         * param x
+         * @param x
          */
         cot(x: number): number;
         /**
          * Computes the inverse of cotangent of x.
-         * param x
+         * @param x
          */
         acot(x: number): number;
         /**
          * Compute n-th real root of a real number. n must be strictly positive integer.
          * If n is odd, the real n-th root exists and is negative.
          * For n even, for negative valuees of x NaN is returned.
-         * param a
-         * param n
+         * @param a
+         * @param n
          */
         nthroot(a: number, n: number): number;
         /**
          * Computes cube root of real number.
-         * param a
+         * @param a
          */
         cbrt(a: number): number;
         /**
          * Compute base to the power of the rational exponent m / n.
          * This function first reduces the fraction m/n and then computes JXG.Math.pow(base, m/n).
-         * param a
+         * @param a
          */
-        ratpow: function(base: number, m: number, n: number): number;
+        ratpow(base: number, m: number, n: number): number;
 
-/* -------------------------------------------------- */
+        /* -------------------------------------------------- */
 
         Clip: Clip;
         Geometry: Geometry;
@@ -4843,6 +4927,14 @@ declare module JXG {
          */
         angle(A: Point | number[], B: Point | number[], C: Point | number[]): number;
         /**
+         * Calculates the distance of a point to a line.
+         * The point and line are given by homogeneous coordinates.
+         * For lines this can be line.stdform.
+         * @param point Homogeneous coordinates of a point.
+         * @param line Homogeneous coordinates of a point.
+         */
+        distPointLine(point: [C: number, A: number, B: number], line: [C: number, A: number, B: number]): number;
+        /**
          * Calculates the internal angle defined by the three points A, B, C if you're going from A to C around B counterclockwise.
          */
         rad(A: Point | number[], B: Point | number[], C: Point | number[]): number;
@@ -4880,9 +4972,9 @@ declare module JXG {
         /**
          * Solves a system of linear equations given by A and b using the Gauss-Jordan-elimination.
          * The algorithm runs in-place. I.e. the entries of A and b are changed.
-         * param A Square matrix represented by an array of rows, containing the coefficients of the linear equation system.
-         * param b A vector containing the linear equation system's right hand side.
-         * returns A vector that solves the linear equation system.
+         * @param A Square matrix represented by an array of rows, containing the coefficients of the linear equation system.
+         * @param b A vector containing the linear equation system's right hand side.
+         * @returns A vector that solves the linear equation system.
          */
         Gauss(A: number[][], b: number[]): number[];
 
@@ -4919,11 +5011,11 @@ declare module JXG {
         /**
          * Solve initial value problems numerically using Runge-Kutta-methods.
          * See http://en.wikipedia.org/wiki/Runge-Kutta_methods for more information on the algorithm.
-         * param butcher
-         * param x0
-         * param I
-         * param N
-         * param f
+         * @param butcher
+         * @param x0
+         * @param I
+         * @param N
+         * @param f
          * return An array of vectors describing the solution of the o.d.e. on the given interval I.
          */
         rungeKutta(butcher: unknown, x0: number[], I: number[], N: number, f: unknown): number[][];
