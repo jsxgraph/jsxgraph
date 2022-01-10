@@ -18,6 +18,10 @@
  */
 declare module JXG {
     /**
+     * 
+     */
+    export type CoordType = 1 | 2
+    /**
      * User coordinates relative to the coordinates system defined by the bounding box.
      */
     export const COORDS_BY_USER: 0x0001;
@@ -93,7 +97,7 @@ declare module JXG {
          * @param board A reference to a board.
          * @param emitter If true, this coordinates object will emit update events every time the coordinates are set. Default is true.
          */
-        constructor(method: number, coordinates: [number, number, number], board: Board, emitter?: boolean);
+        constructor(method: CoordType, coordinates: [number, number, number], board: Board, emitter?: boolean);
         /**
          * Stores the board the object is used on.
          */
@@ -111,14 +115,35 @@ declare module JXG {
          */
         usrCoords: [number, number, number];
         /**
+         * Copy array, either scrCoords or usrCoords. Uses slice() in case of standard arrays and set() in case of typed arrays.
+         * @param obj Either 'scrCoords' for COORDS_BY_SCREEN coordinates or 'usrCoords' for COORDS_BY_USER coordinates.
+         * @param offset The index to begin the copying from. Defaults to 0 if not given.
+         */
+        copy(obj: 'scrCoords' | 'usrCoords', offset?: number): number[];
+        copy(obj: 'scrCoords' | 'usrCoords'): [number, number, number];
+        copy(obj: 'scrCoords' | 'usrCoords', offset: 0): [number, number, number];
+        copy(obj: 'scrCoords' | 'usrCoords', offset: 1): [number, number];
+        copy(obj: 'scrCoords' | 'usrCoords', offset: 2): [number];
+        /**
          * Calculate distance of one point to another.
          * @param method The type of coordinates used here. Possible values are JXG.COORDS_BY_USER and JXG.COORDS_BY_SCREEN.
          * @param coordinates The Coords object to which the distance is calculated.
          * @returns The distance. 
          */
-        distance(method: number, coordinates: Coords): number;
-        setCoordinates(method: number, coordinates: [number, number, number], doRound?: boolean, noevent?: boolean): this;
-        copy(obj: 'srcCoords' | 'usrCoords', offset: number): [number, number, number];
+        distance(method: CoordType, coordinates: Coords): number;
+        /**
+         * Set coordinates by either user coordinates or screen coordinates and recalculate the other one.
+         * @param method The type of coordinates used here. Possible values are COORDS_BY_USER and COORDS_BY_SCREEN.
+         * @param coordinates An array of affine coordinates the Coords object is set to.
+         * @param doRound flag If true or null round the coordinates in usr2screen. This is used in smooth curve plotting. Internet Explorer needs rounded coordinates. If doRound==false we have to round in updatePathString.
+         * @param noevent
+         * @returns A reference to this coords object.
+         */
+        setCoordinates(method: CoordType, coordinates: [number, number, number], doRound?: boolean, noevent?: boolean): this;
+        /**
+         * Test if one of the usrCoords is NaN or the coordinates are infinite.
+         * @returns true if the coordinates are finite, false otherwise.
+         */
         isReal(): boolean;
     }
 

@@ -234,11 +234,11 @@ define([
         },
 
         /**
-        * Copy array, either srcCoords or usrCoords
+        * Copy array, either scrCoords or usrCoords
         * Uses slice() in case of standard arrays and set() in case of
         * typed arrays.
         * @private
-        * @param {String} obj Either 'srcCoords' or 'usrCoords'
+        * @param {String} obj Either 'scrCoords' or 'usrCoords'
         * @param {Number} offset Offset, defaults to 0 if not given
         * @returns {Array} Returns copy of the coords array either as standard array or as
         *   typed array.
