@@ -18,13 +18,13 @@
  */
 declare module JXG {
     /**
-     *
+     * User coordinates relative to the coordinates system defined by the bounding box.
      */
-    export const COORDS_BY_SCREEN: number;
+    export const COORDS_BY_USER: 0x0001;
     /**
-     *
+     * Screen coordinates in pixel relative to the upper left corner of the div element.
      */
-    export const COORDS_BY_USER: number;
+    export const COORDS_BY_SCREEN: 0x0002;
     /**
      * A composition is a simple container that manages none or more GeometryElements.
      */
@@ -81,20 +81,47 @@ declare module JXG {
          */
         updateRenderer(): void
     }
+
     /**
-     *
+     * This is the Coordinates class. All members a coordinate has to provide are defined here.
      */
     export class Coords {
-        constructor(size: number, coords: number[], board: Board);
         /**
-         *
+         * Constructs a new Coordinates object.
+         * @param method The type of coordinates given by the user. Accepted values are COORDS_BY_SCREEN and COORDS_BY_USER.
+         * @param coordinates An array of affine coordinates. 
+         * @param board A reference to a board.
+         * @param emitter If true, this coordinates object will emit update events every time the coordinates are set. Default is true.
          */
-        usrCoords: number[];
+        constructor(method: number, coordinates: [number, number, number], board: Board, emitter?: boolean);
         /**
-         *
+         * Stores the board the object is used on.
+         */
+        board: Board;
+        /**
+         * If true, this coordinates object will emit update events every time the coordinates are set.
+         */
+        emitter: boolean;
+        /**
+         * Stores coordinates for screen view as homogeneous coordinates.
          */
         scrCoords: [number, x: number, y: number];
+        /**
+         * Stores coordinates for user view as homogeneous coordinates.
+         */
+        usrCoords: [number, number, number];
+        /**
+         * Calculate distance of one point to another.
+         * @param method The type of coordinates used here. Possible values are JXG.COORDS_BY_USER and JXG.COORDS_BY_SCREEN.
+         * @param coordinates The Coords object to which the distance is calculated.
+         * @returns The distance. 
+         */
+        distance(method: number, coordinates: Coords): number;
+        setCoordinates(method: number, coordinates: [number, number, number], doRound?: boolean, noevent?: boolean): this;
+        copy(obj: 'srcCoords' | 'usrCoords', offset: number): [number, number, number];
+        isReal(): boolean;
     }
+
     /**
      * A JessieCode object provides an interface to the parser and stores all variables and objects used within a JessieCode script.
      * The optional argument code is interpreted after initializing.
@@ -303,6 +330,12 @@ declare module JXG {
         id: string;
 
         /**
+         * The label subelement (if it is defined).
+         * @see hasLabel
+         */
+        label?: Text;
+
+        /**
          * Not necessarily unique name for the element.
          */
         name: string;
@@ -452,10 +485,9 @@ declare module JXG {
          * Moves an element by the difference of two coordinates.
          * @param method The type of coordinates used here. Possible values are JXG.COORDS_BY_USER and JXG.COORDS_BY_SCREEN.
          * @param coords coordinates in screen/user units
-         * @param oldcoords previous coordinates in screen/user units
          * @returns Reference to the element.
          */
-        setPositionDirectly(method: number, coords: number[], oldcoords?: number[]): this;
+        setPositionDirectly(method: number, coords: number[]): this;
 
         /**
          * Make the element visible.
@@ -1789,6 +1821,12 @@ declare module JXG {
         X(): number;
         Y(): number;
         Dist(point: Point): number;
+        /**
+         * Test if the point is on (is incident with) the element.
+         * @param element The geometry element being used as a reference point.
+         * @param tolerance The optional tolerance value. Defaults to Math.eps
+         */
+        isOn(element: GeometryElement, tolerance?: number): boolean;
         setAttribute(attributes: PointAttributes): this;
         ref: [x: number, y: number] | (() => [x: number, y: number]);
         scale: [x: number, y: number] | (() => [x: number, y: number]);
@@ -1990,7 +2028,14 @@ declare module JXG {
         remove(): void;
         removePoints(p: Point): this;
         setAttribute(attributes: PolygonAttributes): this;
-        setPositionDirectly(method: number, coords: unknown[], oldcoords: unknown[]): this;
+        /**
+         * Moves an element by the difference of two coordinates.
+         * @param method The type of coordinates used here. Possible values are JXG.COORDS_BY_USER and JXG.COORDS_BY_SCREEN.
+         * @param coords coordinates in screen/user units
+         * @param oldcoords
+         * @returns Reference to this Polygon.
+         */
+        setPositionDirectly(method: number, coords: unknown[], oldcoords?: unknown[]): this;
         showElement(borderless?: boolean): void;
         updateRenderer(): void;
     }
