@@ -109,7 +109,7 @@ declare module JXG {
         /**
          * Stores coordinates for screen view as homogeneous coordinates.
          */
-        scrCoords: [number, x: number, y: number];
+        scrCoords: [z: number, x: number, y: number];
         /**
          * Stores coordinates for user view as homogeneous coordinates.
          */
@@ -748,7 +748,16 @@ declare module JXG {
         layer?: number;
 
         /**
-         * ???
+         * Precision options for JSXGraph elements.
+         * This attributes takes either the value 'inherit' or an object of the form:
+         * <pre>
+         * precision: {
+         *      touch: 30,
+         *      mouse: 4,
+         *      pen: 4
+         * }
+         * </pre>
+         *
          */
         precision?: PrecisionOptions;
 
@@ -2202,7 +2211,7 @@ declare module JXG {
         lastArrow?: boolean | ArrowSpecification;
         label?: LabelOptions;
         moveOnUp?: boolean;
-        precision?: number;
+        // precision?: number;
         point1?: PointAttributes;
         point2?: PointAttributes;
         postLabel?: string | StringFunction | number | NumberFunction | null;
@@ -2704,7 +2713,7 @@ declare module JXG {
         /**
          *
          */
-        precision?: number;
+        // precision?: number;
         /**
          *
          */
@@ -2752,7 +2761,7 @@ declare module JXG {
         minorTicks?: number;
         minTicksDistance?: number;
         needsRegularUpdate?: boolean;
-        precision?: number;
+        // precision?: number;
         scale?: number;
         scaleSymbol?: string;
         strokeColor?: string;
@@ -2782,7 +2791,7 @@ declare module JXG {
         withTicks?: boolean;
     }
     export interface TapemeasureOptions extends LineOptions {
-        precision?: number;
+        // precision?: number;
     }
 
     export interface Tracecurve extends Curve { }
@@ -4862,14 +4871,14 @@ declare module JXG {
          * @param n optional
          * @returns Inner product of a and b.
          */
-        innerProduct(a: number[], a: number[], n: number): number;
+        innerProduct(a: number[], b: number[], n: number): number;
         /**
          * Cross product of two vectors a and b, both of length three.
          * @param a
          * @param b
          * @returns Cross product of a and b.
          */
-        crossProduct(a: number[], a: number[]): number;
+        crossProduct(a: number[], b: number[]): number;
         /**
          * Euclidean norm of vector a of length n.
          * @param a
