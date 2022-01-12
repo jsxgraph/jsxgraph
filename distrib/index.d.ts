@@ -3293,8 +3293,13 @@ declare module JXG {
          */
         highlightedObjects: { [name: string]: unknown };
         /**
-         * During the update process this is set to false to prevent an endless loop.
+         * Information box close to points in which the coordinates of the point are displayed.
+         * Uses CSS class .JXGinfobox.
          */
+        infobox: Text
+        /**
+        * During the update process this is set to false to prevent an endless loop.
+        */
         inUpdate: boolean;
         /**
          * A flag which tells us if the user is selecting.
