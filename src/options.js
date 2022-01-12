@@ -546,13 +546,13 @@ define([
              *   factorY: 1.25,  // vertical zoom factor (multiplied to {@link JXG.Board#zoomY})
              *   wheel: true,     // allow zooming by mouse wheel or
              *   				   // by pinch-to-toom gesture on touch devices
-             *   needShift: true, // mouse wheel zooming needs pressing of the shift key
-             *   min: 0.001        // minimal values of {@link JXG.Board#zoomX} and {@link JXG.Board#zoomY}, limits zoomOut
-             *   max: 1000.0       // maximal values of {@link JXG.Board#zoomX} and {@link JXG.Board#zoomY}, limits zoomIn
+             *   needShift: true,   // mouse wheel zooming needs pressing of the shift key
+             *   min: 0.001,        // minimal values of {@link JXG.Board#zoomX} and {@link JXG.Board#zoomY}, limits zoomOut
+             *   max: 1000.0,       // maximal values of {@link JXG.Board#zoomX} and {@link JXG.Board#zoomY}, limits zoomIn
              *
-             *   pinchHorizontal: true // Allow pinch-to-zoom to zoom only horizontal axis
-             *   pinchVertical: true   // Allow pinch-to-zoom to zoom only vertical axis
-             *   pinchSensitivity: 7   // Sensitivity (in degrees) for recognizing horizontal or vertical pinch-to-zoom gestures.
+             *   pinchHorizontal: true, // Allow pinch-to-zoom to zoom only horizontal axis
+             *   pinchVertical: true,   // Allow pinch-to-zoom to zoom only vertical axis
+             *   pinchSensitivity: 7    // Sensitivity (in degrees) for recognizing horizontal or vertical pinch-to-zoom gestures.
              * }
              * </pre>
              *

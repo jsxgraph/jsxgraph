@@ -4,13 +4,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable max-len */
 /* eslint-disable @typescript-eslint/prefer-namespace-keyword */
-// Type definitions for JSXGraph 1.2.3
+//
+// Type definitions for JSXGraph 1.4.x
 // Project: https://jsxgraph.org
 // Definitions by: David Holmes https://github.com/geometryzen
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
 //
-// Copyright 2015-2021 David Holmes, https://github.com/geometryzen
-// JSXGraph 1.2.3
+// Copyright 2015-2022 David Holmes, https://github.com/geometryzen
 //
 
 /**
@@ -4048,14 +4048,41 @@ declare module JXG {
     }
 
     export interface ZoomOptions {
+        /**
+         * Horizontal zoom factor (multiplied to Board.zoomX).
+         */
         factorX?: number;
+        /**
+         * Vertical zoom factor (multiplied to Board.zoomY).
+         */
         factorY?: number;
+        /**
+         * Allow zooming by mouse wheel or by pinch-to-zoom gesture on touch devices.
+         */
         wheel?: boolean;
+        /**
+         * Mouse wheel zooming needs pressing of the Shift key.
+         */
         needShift?: boolean;
+        /**
+         * Minimal values of Board.zoomX and Board.zoomY. Limits zoomOut.
+         */
         min?: number;
+        /**
+         * Maximal values of Board.zoomX and Board.zoomY. Limits zoomIn.
+         */
         max?: number;
+        /**
+         * Allow pinch-to-zoom to zoom only horizontal axis.
+         */
         pinchHorizontal?: boolean;
+        /**
+         * Allow pinch-to-zoom to zoom only vertical axis.
+         */
         pinchVertical?: boolean;
+        /**
+         * Sensitivity (in degrees) for recognizing horizontal or vertical pinch-to-zoom gestures.
+         */
         pinchSensitivity?: number;
     }
 
@@ -4344,7 +4371,7 @@ declare module JXG {
         title: string;
 
         /**
-         *
+         * Control the possibilities for zoom interaction.
          */
         zoom: boolean | ZoomOptions;
 
