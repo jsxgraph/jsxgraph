@@ -304,7 +304,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                 }
                 return 'null';
             case 'string':
-                return '\'' + obj.replace(/(["'])/g, '\\$1') + '\'';
+                return '\'' + obj.replace(/\\/g,'\\\\').replace(/(["'])/g, '\\$1') + '\'';
             case 'number':
             case 'boolean':
                 return obj.toString();
