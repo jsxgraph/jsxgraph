@@ -1565,7 +1565,11 @@ define([
                 break;
 
             case 'node_const':
-                ret = Number(node.value);
+                if(node.value === null) {
+                    ret = null;
+                } else {
+                    ret = Number(node.value);
+                }
                 break;
 
             case 'node_const_bool':
@@ -1897,6 +1901,27 @@ define([
         },
 
         /**
+         * This is used as the global getName() function.
+         * @param {JXG.GeometryElement} obj
+         * @param {Boolean} useId
+         * @returns {String}
+         */
+        getName: function (obj,useId) {
+            var name = '';
+
+            if (Type.exists(obj) && Type.exists(obj.getName)) {
+                name = obj.getName();
+                if ((!Type.exists(name) || name === '') && !!useId) {
+                    name = obj.id;
+                }
+            } else if (!!useId) {
+                name = obj.id;
+            }
+
+            return name;
+        },
+
+        /**
          * This is used as the global X() function.
          * @param {JXG.Point|JXG.Text} e
          * @returns {Number}
@@ -1933,6 +1958,19 @@ define([
         },
 
         /**
+         * This is used as the global area() function.
+         * @param {JXG.Circle|JXG.Polygon} obj
+         * @returns {Number}
+         */
+        area: function (obj) {
+            if (!Type.exists(obj) || !Type.exists(obj.Area)) {
+                this._error('Error: Can\'t calculate area.');
+            }
+
+            return obj.Area();
+        },
+
+        /**
          * This is used as the global dist() function.
          * @param {JXG.Point} p1
          * @param {JXG.Point} p2
@@ -1944,6 +1982,19 @@ define([
             }
 
             return p1.Dist(p2);
+        },
+
+        /**
+         * This is used as the global radius() function.
+         * @param {JXG.Circle|Sector} obj
+         * @returns {Number}
+         */
+        radius: function (obj) {
+            if (!Type.exists(obj) || !Type.exists(obj.Radius)) {
+                this._error('Error: Can\'t calculate radius.');
+            }
+
+            return obj.Radius();
         },
 
         /**
@@ -2152,32 +2203,39 @@ define([
             return Mat.pow(a, b);
         },
 
-        lt: function(a, b) {
+        lt: function (a, b) {
             if (Interval.isInterval(a) || Interval.isInterval(b)) {
                 return Interval.lt(a, b);
             }
             return a < b;
         },
-        leq: function(a, b) {
+        leq: function (a, b) {
             if (Interval.isInterval(a) || Interval.isInterval(b)) {
                 return Interval.leq(a, b);
             }
             return a <= b;
         },
-        gt: function(a, b) {
+        gt: function (a, b) {
             if (Interval.isInterval(a) || Interval.isInterval(b)) {
                 return Interval.gt(a, b);
             }
             return a > b;
         },
-        geq: function(a, b) {
+        geq: function (a, b) {
             if (Interval.isInterval(a) || Interval.isInterval(b)) {
                 return Intervalt.geq(a, b);
             }
             return a >= b;
         },
 
-        DDD: function(f) {
+        randint: function (min, max, step) {
+            if (!Type.exists(step)) {
+                step = 1;
+            }
+            return Math.round(Math.random() * (max - min) / step) * step + min;
+        },
+
+        DDD: function (f) {
             console.log('Dummy derivative function. This should never appear!');
         },
 
@@ -2299,7 +2357,11 @@ define([
                     cosh: Mat.cosh,
                     cot: Mat.cot,
                     deg: Geometry.trueAngle,
+                    A: that.area,
+                    area: that.area,
                     dist: that.dist,
+                    R: that.radius,
+                    radius: that.radius,
                     erf: Mat.erf,
                     erfc: Mat.erfc,
                     erfi: Mat.erfi,
@@ -2322,11 +2384,15 @@ define([
                     trunc: Type.trunc,
                     sinh: Mat.sinh,
 
+                    randint: that.randint,
+
                     IfThen: that.ifthen,
                     'import': that.importModule,
                     'use': that.use,
                     'remove': that.del,
                     '$': that.getElementById,
+                    getName: that.getName,
+                    name: that.getName,
                     '$board': that.board,
                     '$log': that.log
                 };
@@ -2356,7 +2422,11 @@ define([
             builtIn.erf.src = 'JXG.Math.erf';
             builtIn.erfc.src = 'JXG.Math.erfc';
             builtIn.erfi.src = 'JXG.Math.erfi';
+            builtIn.A.src = '$jc$.area';
+            builtIn.area.src = '$jc$.area';
             builtIn.dist.src = '$jc$.dist';
+            builtIn.R.src = '$jc$.radius';
+            builtIn.radius.src = '$jc$.radius';
             builtIn.factorial.src = 'JXG.Math.factorial';
             builtIn.gcd.src = 'JXG.Math.gcd';
             builtIn.lb.src = 'JXG.Math.log2';
@@ -2376,12 +2446,16 @@ define([
             builtIn.trunc.src = 'JXG.trunc';
             builtIn.sinh.src = 'JXG.Math.sinh';
 
+            builtIn.randint.src = '$jc$.randint';
+
             builtIn['import'].src = '$jc$.importModule';
             builtIn.use.src = '$jc$.use';
             builtIn.remove.src = '$jc$.del';
             builtIn.IfThen.src = '$jc$.ifthen';
             // usually unused, see node_op > op_execfun
             builtIn.$.src = '(function (n) { return $jc$.board.select(n); })';
+            builtIn.getName.src = '$jc$.getName';
+            builtIn.name.src = '$jc$.getName';
             if (builtIn.$board) {
                 builtIn.$board.src = '$jc$.board';
             }
