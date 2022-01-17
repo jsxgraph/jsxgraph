@@ -143,7 +143,7 @@ define([
      * @example
      * // Set colors
      * var sl = board.create('slider', [[-3, 1], [1, 1], [-10, 1, 10]], {
-     * 
+     *
      *   baseline: { strokeColor: 'blue'},
      *   highline: { strokeColor: 'red'},
      *   fillColor: 'yellow',
@@ -151,16 +151,16 @@ define([
      *   name: 'xyz', // Not shown, if suffixLabel is set
      *   suffixLabel: 'x = ',
      *   postLabel: ' u'
-     * 
+     *
      * });
-     * 
+     *
      * </pre><div id="JXGd96c9e2c-2c25-4131-b6cf-9dbb80819401" class="jxgbox" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
      *     (function() {
      *         var board = JXG.JSXGraph.initBoard('JXGd96c9e2c-2c25-4131-b6cf-9dbb80819401',
      *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
      *     var sl = board.create('slider', [[-3, 1], [1, 1], [-10, 1, 10]], {
-     *     
+     *
      *       baseline: { strokeColor: 'blue'},
      *       highline: { strokeColor: 'red'},
      *       fillColor: 'yellow',
@@ -168,24 +168,23 @@ define([
      *       name: 'xyz', // Not shown, if suffixLabel is set
      *       suffixLabel: 'x = ',
      *       postLabel: ' u'
-     *     
+     *
      *     });
-     * 
+     *
      *     })();
-     * 
+     *
      * </script><pre>
-     * 
+     *
  */
     JXG.createSlider = function (board, parents, attributes) {
         var pos0, pos1, smin, start, smax, sdiff,
             p1, p2, l1, ticks, ti, startx, starty, p3, l2, t,
-            withText, withTicks, snapWidth, sw, s, attr, precision;
+            withText, withTicks, snapWidth, sw, s, attr, digits;
 
         attr = Type.copyAttributes(attributes, board.options, 'slider');
         withTicks = attr.withticks;
         withText = attr.withlabel;
         snapWidth = attr.snapwidth;
-        precision = attr.precision;
 
         // start point
         attr = Type.copyAttributes(attributes, board.options, 'slider', 'point1');
@@ -324,9 +323,15 @@ define([
                 },
                 function () {
                     var n,
+                        d = Type.evaluate(p3.visProp.digits),
                         sl = Type.evaluate(p3.visProp.suffixlabel),
                         ul = Type.evaluate(p3.visProp.unitlabel),
                         pl = Type.evaluate(p3.visProp.postlabel);
+
+                    if (d === 2 && Type.evaluate(p3.visProp.precision) !== 2) {
+                        // Backwards compatibility
+                        d = Type.evaluate(p3.visProp.precision);
+                    }
 
                     if (sl !== null) {
                         n = sl;
@@ -336,7 +341,7 @@ define([
                         n = '';
                     }
 
-                    n += Type.toFixed(p3.Value(), precision);
+                    n += Type.toFixed(p3.Value(), d);
 
                     if (ul !== null) {
                         n += ul;

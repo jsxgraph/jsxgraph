@@ -197,7 +197,9 @@ define([
          * @returns {Boolean} True, if v is neither undefined nor null.
          */
         exists: function (v, checkEmptyString) {
+            /* eslint-disable eqeqeq */
             var result = !(v == undefined || v === null);
+            /* eslint-enable eqeqeq */
             checkEmptyString = checkEmptyString || false;
 
             if (checkEmptyString) {

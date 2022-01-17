@@ -1757,13 +1757,27 @@ define([
 
             /**
              * If a label exceeds {@link Ticks#maxLabelLength} this determines the precision used to shorten the tick label.
+             * Replaced by the digits attribute.
              *
              * @type Number
              * @name Ticks#precision
              * @see Ticks#maxLabelLength
+             * @see Ticks#digits
+             * @deprecated
              * @default 3
              */
             precision: 3,
+
+            /**
+             * If a label exceeds {@link Ticks#maxLabelLength} this determines the number of digits used to shorten the tick label.
+             *
+             * @type Number
+             * @name Ticks#digits
+             * @see Ticks#maxLabelLength
+             * @deprecated
+             * @default 3
+             */
+            digits: 3,
 
             /**
              * The default distance between two ticks. Please be aware that this value does not have
@@ -4536,12 +4550,26 @@ define([
 
             /**
              * The precision of the slider value displayed in the optional text.
+             * Replaced by the attribute "digits".
+             *
              * @memberOf Slider.prototype
              * @name precision
              * @type Number
+             * @deprecated
+             * @see Slider#digits
              * @default 2
              */
             precision: 2,
+
+            /**
+             * The number of digits of the slider value displayed in the optional text.
+             *
+             * @memberOf Slider.prototype
+             * @name digits
+             * @type Number
+             * @default 2
+             */
+            digits: 2,
 
             firstArrow: false,
             lastArrow: false,
@@ -4678,7 +4706,7 @@ define([
 
                 // Label drawing
                 drawLabels: false,
-                precision: 2,
+                digits: 2,
                 includeBoundaries: 1,
                 drawZero: true,
                 label: {
@@ -4949,12 +4977,25 @@ define([
 
             /**
              * The precision of the tape measure value displayed in the optional text.
+             * Replaced by the attribute digits
+             *
+             * @memberOf Tapemeasure.prototype
+             * @name precision
+             * @type Number
+             * @deprecated
+             * @see Tapemeasure#digits
+             * @default 2
+             */
+            precision: 2,
+
+            /**
+             * The precision of the tape measure value displayed in the optional text.
              * @memberOf Tapemeasure.prototype
              * @name precision
              * @type Number
              * @default 2
              */
-            precision: 2,
+            digits: 2,
 
             /**
              * Attributes for first helper point defining the tape measure position.

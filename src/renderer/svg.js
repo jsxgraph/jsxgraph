@@ -1700,7 +1700,10 @@ define([
             cv = document.getElementById(canvasId);
 
             // Clear the canvas
+            /* eslint-disable no-self-assign */
             cv.width = cv.width;
+            /* eslint-enable no-self-assign */
+
             ctx = cv.getContext("2d");
             if (w !== undefined && h !== undefined) {
                 cv.style.width = parseFloat(w) + 'px';

@@ -25598,13 +25598,13 @@ define('options',[
              *   factorY: 1.25,  // vertical zoom factor (multiplied to {@link JXG.Board#zoomY})
              *   wheel: true,     // allow zooming by mouse wheel or
              *   				   // by pinch-to-toom gesture on touch devices
-             *   needShift: true, // mouse wheel zooming needs pressing of the shift key
-             *   min: 0.001        // minimal values of {@link JXG.Board#zoomX} and {@link JXG.Board#zoomY}, limits zoomOut
-             *   max: 1000.0       // maximal values of {@link JXG.Board#zoomX} and {@link JXG.Board#zoomY}, limits zoomIn
+             *   needShift: true,   // mouse wheel zooming needs pressing of the shift key
+             *   min: 0.001,        // minimal values of {@link JXG.Board#zoomX} and {@link JXG.Board#zoomY}, limits zoomOut
+             *   max: 1000.0,       // maximal values of {@link JXG.Board#zoomX} and {@link JXG.Board#zoomY}, limits zoomIn
              *
-             *   pinchHorizontal: true // Allow pinch-to-zoom to zoom only horizontal axis
-             *   pinchVertical: true   // Allow pinch-to-zoom to zoom only vertical axis
-             *   pinchSensitivity: 7   // Sensitivity (in degrees) for recognizing horizontal or vertical pinch-to-zoom gestures.
+             *   pinchHorizontal: true, // Allow pinch-to-zoom to zoom only horizontal axis
+             *   pinchVertical: true,   // Allow pinch-to-zoom to zoom only vertical axis
+             *   pinchSensitivity: 7    // Sensitivity (in degrees) for recognizing horizontal or vertical pinch-to-zoom gestures.
              * }
              * </pre>
              *
@@ -26809,13 +26809,27 @@ define('options',[
 
             /**
              * If a label exceeds {@link Ticks#maxLabelLength} this determines the precision used to shorten the tick label.
+             * Replaced by the digits attribute.
              *
              * @type Number
              * @name Ticks#precision
              * @see Ticks#maxLabelLength
+             * @see Ticks#digits
+             * @deprecated
              * @default 3
              */
             precision: 3,
+
+            /**
+             * If a label exceeds {@link Ticks#maxLabelLength} this determines the number of digits used to shorten the tick label.
+             *
+             * @type Number
+             * @name Ticks#digits
+             * @see Ticks#maxLabelLength
+             * @deprecated
+             * @default 3
+             */
+            digits: 3,
 
             /**
              * The default distance between two ticks. Please be aware that this value does not have
@@ -29588,12 +29602,26 @@ define('options',[
 
             /**
              * The precision of the slider value displayed in the optional text.
+             * Replaced by the attribute "digits".
+             *
              * @memberOf Slider.prototype
              * @name precision
              * @type Number
+             * @deprecated
+             * @see Slider#digits
              * @default 2
              */
             precision: 2,
+
+            /**
+             * The number of digits of the slider value displayed in the optional text.
+             *
+             * @memberOf Slider.prototype
+             * @name digits
+             * @type Number
+             * @default 2
+             */
+            digits: 2,
 
             firstArrow: false,
             lastArrow: false,
@@ -29730,7 +29758,7 @@ define('options',[
 
                 // Label drawing
                 drawLabels: false,
-                precision: 2,
+                digits: 2,
                 includeBoundaries: 1,
                 drawZero: true,
                 label: {
@@ -30001,12 +30029,25 @@ define('options',[
 
             /**
              * The precision of the tape measure value displayed in the optional text.
+             * Replaced by the attribute digits
+             *
+             * @memberOf Tapemeasure.prototype
+             * @name precision
+             * @type Number
+             * @deprecated
+             * @see Tapemeasure#digits
+             * @default 2
+             */
+            precision: 2,
+
+            /**
+             * The precision of the tape measure value displayed in the optional text.
              * @memberOf Tapemeasure.prototype
              * @name precision
              * @type Number
              * @default 2
              */
-            precision: 2,
+            digits: 2,
 
             /**
              * Attributes for first helper point defining the tape measure position.
@@ -41013,7 +41054,11 @@ define('parser/jessiecode',[
                 break;
 
             case 'node_const':
-                ret = Number(node.value);
+                if(node.value === null) {
+                    ret = null;
+                } else {
+                    ret = Number(node.value);
+                }
                 break;
 
             case 'node_const_bool':
@@ -41345,6 +41390,27 @@ define('parser/jessiecode',[
         },
 
         /**
+         * This is used as the global getName() function.
+         * @param {JXG.GeometryElement} obj
+         * @param {Boolean} useId
+         * @returns {String}
+         */
+        getName: function (obj,useId) {
+            var name = '';
+
+            if (Type.exists(obj) && Type.exists(obj.getName)) {
+                name = obj.getName();
+                if ((!Type.exists(name) || name === '') && !!useId) {
+                    name = obj.id;
+                }
+            } else if (!!useId) {
+                name = obj.id;
+            }
+
+            return name;
+        },
+
+        /**
          * This is used as the global X() function.
          * @param {JXG.Point|JXG.Text} e
          * @returns {Number}
@@ -41381,6 +41447,19 @@ define('parser/jessiecode',[
         },
 
         /**
+         * This is used as the global area() function.
+         * @param {JXG.Circle|JXG.Polygon} obj
+         * @returns {Number}
+         */
+        area: function (obj) {
+            if (!Type.exists(obj) || !Type.exists(obj.Area)) {
+                this._error('Error: Can\'t calculate area.');
+            }
+
+            return obj.Area();
+        },
+
+        /**
          * This is used as the global dist() function.
          * @param {JXG.Point} p1
          * @param {JXG.Point} p2
@@ -41392,6 +41471,19 @@ define('parser/jessiecode',[
             }
 
             return p1.Dist(p2);
+        },
+
+        /**
+         * This is used as the global radius() function.
+         * @param {JXG.Circle|Sector} obj
+         * @returns {Number}
+         */
+        radius: function (obj) {
+            if (!Type.exists(obj) || !Type.exists(obj.Radius)) {
+                this._error('Error: Can\'t calculate radius.');
+            }
+
+            return obj.Radius();
         },
 
         /**
@@ -41600,32 +41692,39 @@ define('parser/jessiecode',[
             return Mat.pow(a, b);
         },
 
-        lt: function(a, b) {
+        lt: function (a, b) {
             if (Interval.isInterval(a) || Interval.isInterval(b)) {
                 return Interval.lt(a, b);
             }
             return a < b;
         },
-        leq: function(a, b) {
+        leq: function (a, b) {
             if (Interval.isInterval(a) || Interval.isInterval(b)) {
                 return Interval.leq(a, b);
             }
             return a <= b;
         },
-        gt: function(a, b) {
+        gt: function (a, b) {
             if (Interval.isInterval(a) || Interval.isInterval(b)) {
                 return Interval.gt(a, b);
             }
             return a > b;
         },
-        geq: function(a, b) {
+        geq: function (a, b) {
             if (Interval.isInterval(a) || Interval.isInterval(b)) {
                 return Intervalt.geq(a, b);
             }
             return a >= b;
         },
 
-        DDD: function(f) {
+        randint: function (min, max, step) {
+            if (!Type.exists(step)) {
+                step = 1;
+            }
+            return Math.round(Math.random() * (max - min) / step) * step + min;
+        },
+
+        DDD: function (f) {
             console.log('Dummy derivative function. This should never appear!');
         },
 
@@ -41747,7 +41846,11 @@ define('parser/jessiecode',[
                     cosh: Mat.cosh,
                     cot: Mat.cot,
                     deg: Geometry.trueAngle,
+                    A: that.area,
+                    area: that.area,
                     dist: that.dist,
+                    R: that.radius,
+                    radius: that.radius,
                     erf: Mat.erf,
                     erfc: Mat.erfc,
                     erfi: Mat.erfi,
@@ -41770,11 +41873,15 @@ define('parser/jessiecode',[
                     trunc: Type.trunc,
                     sinh: Mat.sinh,
 
+                    randint: that.randint,
+
                     IfThen: that.ifthen,
                     'import': that.importModule,
                     'use': that.use,
                     'remove': that.del,
                     '$': that.getElementById,
+                    getName: that.getName,
+                    name: that.getName,
                     '$board': that.board,
                     '$log': that.log
                 };
@@ -41804,7 +41911,11 @@ define('parser/jessiecode',[
             builtIn.erf.src = 'JXG.Math.erf';
             builtIn.erfc.src = 'JXG.Math.erfc';
             builtIn.erfi.src = 'JXG.Math.erfi';
+            builtIn.A.src = '$jc$.area';
+            builtIn.area.src = '$jc$.area';
             builtIn.dist.src = '$jc$.dist';
+            builtIn.R.src = '$jc$.radius';
+            builtIn.radius.src = '$jc$.radius';
             builtIn.factorial.src = 'JXG.Math.factorial';
             builtIn.gcd.src = 'JXG.Math.gcd';
             builtIn.lb.src = 'JXG.Math.log2';
@@ -41824,12 +41935,16 @@ define('parser/jessiecode',[
             builtIn.trunc.src = 'JXG.trunc';
             builtIn.sinh.src = 'JXG.Math.sinh';
 
+            builtIn.randint.src = '$jc$.randint';
+
             builtIn['import'].src = '$jc$.importModule';
             builtIn.use.src = '$jc$.use';
             builtIn.remove.src = '$jc$.del';
             builtIn.IfThen.src = '$jc$.ifthen';
             // usually unused, see node_op > op_execfun
             builtIn.$.src = '(function (n) { return $jc$.board.select(n); })';
+            builtIn.getName.src = '$jc$.getName';
+            builtIn.name.src = '$jc$.getName';
             if (builtIn.$board) {
                 builtIn.$board.src = '$jc$.board';
             }
@@ -71651,7 +71766,7 @@ define('element/slider',[
      * @example
      * // Set colors
      * var sl = board.create('slider', [[-3, 1], [1, 1], [-10, 1, 10]], {
-     * 
+     *
      *   baseline: { strokeColor: 'blue'},
      *   highline: { strokeColor: 'red'},
      *   fillColor: 'yellow',
@@ -71659,16 +71774,16 @@ define('element/slider',[
      *   name: 'xyz', // Not shown, if suffixLabel is set
      *   suffixLabel: 'x = ',
      *   postLabel: ' u'
-     * 
+     *
      * });
-     * 
+     *
      * </pre><div id="JXGd96c9e2c-2c25-4131-b6cf-9dbb80819401" class="jxgbox" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
      *     (function() {
      *         var board = JXG.JSXGraph.initBoard('JXGd96c9e2c-2c25-4131-b6cf-9dbb80819401',
      *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
      *     var sl = board.create('slider', [[-3, 1], [1, 1], [-10, 1, 10]], {
-     *     
+     *
      *       baseline: { strokeColor: 'blue'},
      *       highline: { strokeColor: 'red'},
      *       fillColor: 'yellow',
@@ -71676,24 +71791,23 @@ define('element/slider',[
      *       name: 'xyz', // Not shown, if suffixLabel is set
      *       suffixLabel: 'x = ',
      *       postLabel: ' u'
-     *     
+     *
      *     });
-     * 
+     *
      *     })();
-     * 
+     *
      * </script><pre>
-     * 
+     *
  */
     JXG.createSlider = function (board, parents, attributes) {
         var pos0, pos1, smin, start, smax, sdiff,
             p1, p2, l1, ticks, ti, startx, starty, p3, l2, t,
-            withText, withTicks, snapWidth, sw, s, attr, precision;
+            withText, withTicks, snapWidth, sw, s, attr, digits;
 
         attr = Type.copyAttributes(attributes, board.options, 'slider');
         withTicks = attr.withticks;
         withText = attr.withlabel;
         snapWidth = attr.snapwidth;
-        precision = attr.precision;
 
         // start point
         attr = Type.copyAttributes(attributes, board.options, 'slider', 'point1');
@@ -71832,9 +71946,15 @@ define('element/slider',[
                 },
                 function () {
                     var n,
+                        d = Type.evaluate(p3.visProp.digits),
                         sl = Type.evaluate(p3.visProp.suffixlabel),
                         ul = Type.evaluate(p3.visProp.unitlabel),
                         pl = Type.evaluate(p3.visProp.postlabel);
+
+                    if (d === 2 && Type.evaluate(p3.visProp.precision) !== 2) {
+                        // Backwards compatibility
+                        d = Type.evaluate(p3.visProp.precision);
+                    }
 
                     if (sl !== null) {
                         n = sl;
@@ -71844,7 +71964,7 @@ define('element/slider',[
                         n = '';
                     }
 
-                    n += Type.toFixed(p3.Value(), precision);
+                    n += Type.toFixed(p3.Value(), d);
 
                     if (ul !== null) {
                         n += ul;
@@ -72133,7 +72253,7 @@ define('element/measure',[
      */
     JXG.createTapemeasure = function (board, parents, attributes) {
         var pos0, pos1,
-            attr, withTicks, withText, precision,
+            attr, withTicks, withText, digits,
             li, p1, p2, n, ti;
 
         pos0 = parents[0];
@@ -72154,7 +72274,12 @@ define('element/measure',[
         attr = Type.copyAttributes(attributes, board.options, 'tapemeasure');
         withTicks = attr.withticks;
         withText = attr.withlabel;
-        precision = attr.precision;
+        digits = attr.digits;
+
+        if (digits === 2 && attr.precision !== 2) {
+            // Backward compatibility
+            digits = attr.precision;
+        }
 
         // Below, we will replace the label by the measurement function.
         if (withText) {
@@ -72170,7 +72295,7 @@ define('element/measure',[
                 n = '';
             }
             li.label.setText(function () {
-                return n + Type.toFixed(p1.Dist(p2), precision);
+                return n + Type.toFixed(p1.Dist(p2), digits);
             });
         }
 
@@ -75701,13 +75826,20 @@ define('base/ticks',[
          */
         formatLabelText: function(value) {
             var labelText = value.toString(),
+                digits,
                 ev_s = Type.evaluate(this.visProp.scalesymbol);
 
             // if value is Number
             if (Type.isNumber(value)) {
                 if (labelText.length > Type.evaluate(this.visProp.maxlabellength) ||
                         labelText.indexOf('e') !== -1) {
-                    labelText = value.toPrecision(Type.evaluate(this.visProp.precision)).toString();
+
+                    digits = Type.evaluate(this.visProp.digits);
+                    if (Type.evaluate(this.visProp.precision) !== 3 && digits === 3) {
+                        // Use the deprecated attribute "precision"
+                        digits = Type.evaluate(this.visProp.precision);
+                    }
+                    labelText = value.toPrecision(digits).toString();
                 }
 
                 if (Type.evaluate(this.visProp.beautifulscientificticklabels)) {
@@ -77859,7 +77991,7 @@ define('utils/dump',['jxg', 'utils/type'], function (JXG, Type) {
                 }
                 return 'null';
             case 'string':
-                return '\'' + obj.replace(/(["'])/g, '\\$1') + '\'';
+                return '\'' + obj.replace(/\\/g,'\\\\').replace(/(["'])/g, '\\$1') + '\'';
             case 'number':
             case 'boolean':
                 return obj.toString();

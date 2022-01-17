@@ -1140,9 +1140,11 @@ define([
                             }
                         } else if (Type.evaluate(el.visProp.usekatex)) {
                             try {
+                                /* eslint-disable no-undef */
                                 katex.render(content, el.rendNode, {
                                     throwOnError: false
                                 });
+                                /* eslint-enable no-undef */
                             } catch (e) {
                                 JXG.debug('KaTeX (not yet) loaded');
                             }

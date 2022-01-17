@@ -1017,13 +1017,20 @@ define([
          */
         formatLabelText: function(value) {
             var labelText = value.toString(),
+                digits,
                 ev_s = Type.evaluate(this.visProp.scalesymbol);
 
             // if value is Number
             if (Type.isNumber(value)) {
                 if (labelText.length > Type.evaluate(this.visProp.maxlabellength) ||
                         labelText.indexOf('e') !== -1) {
-                    labelText = value.toPrecision(Type.evaluate(this.visProp.precision)).toString();
+
+                    digits = Type.evaluate(this.visProp.digits);
+                    if (Type.evaluate(this.visProp.precision) !== 3 && digits === 3) {
+                        // Use the deprecated attribute "precision"
+                        digits = Type.evaluate(this.visProp.precision);
+                    }
+                    labelText = value.toPrecision(digits).toString();
                 }
 
                 if (Type.evaluate(this.visProp.beautifulscientificticklabels)) {
