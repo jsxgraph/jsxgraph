@@ -714,12 +714,12 @@ define([
          * is returned by JavaScript's toFixed()
          *
          * @memberOf JXG
-         * @param  {Number} num       Number tp be rounded
-         * @param  {Number} precision Decimal digits
-         * @return {String}           Rounded number is returned as string
+         * @param  {Number} num    Number tp be rounded
+         * @param  {Number} digits Decimal digits
+         * @return {String}        Rounded number is returned as string
          */
-        toFixed: function (num, precision) {
-            return this._round10(num, -precision).toFixed(precision);
+        toFixed: function (num, digits) {
+            return this._round10(num, -digits).toFixed(digits);
         },
 
         /**

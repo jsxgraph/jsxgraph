@@ -312,7 +312,7 @@ declare module JXG {
     export function supportsVML();
     export function swap<T>(arr: T[], i: number, j: number): T[];
     export function timedChunk(items: unknown[], process: Function, context: unknown, callback: Function): void;
-    export function toFixed(num: number, precision: number): string;
+    export function toFixed(num: number, digits: number): string;
     export function toFullscreen(wrap_id: string, jsxgraph_id: string, scale?: unknown): void;
     export function toJSON(obj: unknown, noquote?: boolean): string;
     export function trim(str: string): string;
@@ -2211,7 +2211,7 @@ declare module JXG {
         lastArrow?: boolean | ArrowSpecification;
         label?: LabelOptions;
         moveOnUp?: boolean;
-        // precision?: number;
+        digits?: number;
         point1?: PointAttributes;
         point2?: PointAttributes;
         postLabel?: string | StringFunction | number | NumberFunction | null;
@@ -2234,7 +2234,7 @@ declare module JXG {
         lastArrow?: boolean | ArrowSpecification;
         label?: LabelOptions;
         moveOnUp?: boolean;
-        // precision?: number;
+        digits?: number;
         point1?: PointOptions;
         point2?: PointOptions;
         postLabel?: string | StringFunction | number | NumberFunction | null;
@@ -2713,7 +2713,7 @@ declare module JXG {
         /**
          *
          */
-        // precision?: number;
+        digits?: number;
         /**
          *
          */
@@ -2761,7 +2761,7 @@ declare module JXG {
         minorTicks?: number;
         minTicksDistance?: number;
         needsRegularUpdate?: boolean;
-        // precision?: number;
+        digits?: number;
         scale?: number;
         scaleSymbol?: string;
         strokeColor?: string;
@@ -2785,13 +2785,13 @@ declare module JXG {
         label?: LabelOptions;
         point1?: PointAttributes;
         point2?: PointAttributes;
-        precision?: PrecisionOptions;
+        digits?: number;
         ticks?: TicksAttributes;
         withLabel?: boolean;
         withTicks?: boolean;
     }
     export interface TapemeasureOptions extends LineOptions {
-        // precision?: number;
+        digits?: number;
     }
 
     export interface Tracecurve extends Curve { }
