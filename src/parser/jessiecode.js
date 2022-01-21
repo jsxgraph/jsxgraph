@@ -440,8 +440,8 @@ define([
                 return s.locals[vname];
             }
 
-            // Handle the - so far only - two constants by hard coding them.
-            if (vname === 'EULER' || vname === 'PI') {
+            // Handle the - so far only - few constants by hard coding them.
+            if (vname === '$board' || vname === 'EULER' || vname === 'PI') {
                 return this.builtIn[vname];
             }
 
@@ -1111,30 +1111,30 @@ define([
 
         /**
          * Type inspection: check if the string vname appears as function name in the
-         * AST node. Used in "op_execfun". This allows the JessieCode exmples below. 
+         * AST node. Used in "op_execfun". This allows the JessieCode exmples below.
          *
          * @private
-         * @param {String} vname 
+         * @param {String} vname
          * @param {Object} node
          * @returns 'any' or 'function'
          * @see JXG.JessieCode#execute
          * @see JXG.JessieCode#getvar
-         * 
+         *
          * @example
          *  var p = board.create('point', [2, 0], {name: 'X'});
          *  var txt = 'X(X)';
          *  console.log(board.jc.parse(txt));
-         * 
+         *
          * @example
          *  var p = board.create('point', [2, 0], {name: 'X'});
          *  var txt = 'f = function(el, X) { return X(el); }; f(X, X);';
          *  console.log(board.jc.parse(txt));
-         * 
+         *
          * @example
          *  var p = board.create('point', [2, 0], {name: 'point'});
          *  var txt = 'B = point(1,3); X(point);';
          *  console.log(board.jc.parse(txt));
-         * 
+         *
          * @example
          *  var p = board.create('point', [2, 0], {name: 'A'});
          *  var q = board.create('point', [-2, 0], {name: 'X'});
