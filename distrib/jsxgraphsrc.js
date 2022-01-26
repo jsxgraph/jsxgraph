@@ -445,7 +445,7 @@ var requirejs, require, define;
 define("../node_modules/almond/almond", function(){});
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -799,7 +799,7 @@ define('jxg',[], function () {
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -843,7 +843,7 @@ define('base/constants',['jxg'], function (JXG) {
     var major = 1,
         minor = 4,
         patch = 1,
-        add = 'dev', //'dev'
+        add = '', //'dev'
         version = major + '.' + minor + '.' + patch + (add ? '-' + add : ''),
         constants;
 
@@ -1047,7 +1047,7 @@ define('base/constants',['jxg'], function (JXG) {
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -1245,7 +1245,9 @@ define('utils/type',[
          * @returns {Boolean} True, if v is neither undefined nor null.
          */
         exists: function (v, checkEmptyString) {
+            /* eslint-disable eqeqeq */
             var result = !(v == undefined || v === null);
+            /* eslint-enable eqeqeq */
             checkEmptyString = checkEmptyString || false;
 
             if (checkEmptyString) {
@@ -1760,12 +1762,12 @@ define('utils/type',[
          * is returned by JavaScript's toFixed()
          *
          * @memberOf JXG
-         * @param  {Number} num       Number tp be rounded
-         * @param  {Number} precision Decimal digits
-         * @return {String}           Rounded number is returned as string
+         * @param  {Number} num    Number tp be rounded
+         * @param  {Number} digits Decimal digits
+         * @return {String}        Rounded number is returned as string
          */
-        toFixed: function (num, precision) {
-            return this._round10(num, -precision).toFixed(precision);
+        toFixed: function (num, digits) {
+            return this._round10(num, -digits).toFixed(digits);
         },
 
         /**
@@ -2354,7 +2356,7 @@ define('utils/type',[
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -3253,7 +3255,7 @@ define('utils/env',['jxg', 'utils/type'], function (JXG, Type) {
 });
 
 /*
- Copyright 2008-2021
+ Copyright 2008-2022
  Matthias Ehmann,
  Michael Gerhaeuser,
  Carsten Miller,
@@ -3357,7 +3359,7 @@ define('utils/xml',['jxg', 'utils/type'], function (JXG, Type) {
     return JXG.XML;
 });
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -3529,7 +3531,7 @@ define('utils/event',['jxg', 'utils/type'], function (JXG, Type) {
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -4619,7 +4621,7 @@ define('math/math',['jxg', 'utils/type'], function (JXG, Type) {
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -4898,7 +4900,7 @@ define('base/coords',[
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -5030,7 +5032,7 @@ define('utils/expect',[
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Carsten Miller,
         Andreas Walter,
@@ -5714,7 +5716,7 @@ define('math/probfuncs',['math/math', 'utils/type'], function (Mat, Type) {
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -7295,7 +7297,7 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -7717,7 +7719,7 @@ define('math/extrapolate',['math/math'], function (Mat) {
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -7957,7 +7959,7 @@ define('math/qdt',['math/math', 'utils/type'], function (Mat, Type) {
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -11712,7 +11714,7 @@ define('math/numerics',['jxg', 'utils/type', 'utils/env', 'math/math'], function
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Carsten Miller,
         Reinhard Oldenburg,
@@ -13003,7 +13005,7 @@ define('math/nlp',['jxg'], function (JXG) {
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -13623,7 +13625,7 @@ define('math/statistics',['jxg', 'math/math', 'utils/type'], function (JXG, Mat,
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -16338,7 +16340,7 @@ define('math/geometry',[
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -18637,7 +18639,7 @@ console.log("Polynomial of degree", level);
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -19310,7 +19312,7 @@ define('math/metapost',['utils/type', 'math/math'], function (Type, Mat) {
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -20413,7 +20415,7 @@ define('utils/encoding',['jxg'], function (JXG) {
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -20624,7 +20626,7 @@ define('utils/base64',['jxg', 'utils/encoding'], function (JXG, Encoding) {
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -20866,7 +20868,7 @@ define('server/server',[
     return JXG.Server;
 });
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -21248,7 +21250,7 @@ define('math/symbolic',[
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -23405,7 +23407,7 @@ define('math/clip',[
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -23718,7 +23720,7 @@ define('math/poly',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type)
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -24029,7 +24031,7 @@ define('math/complex',['jxg', 'utils/type'], function (JXG, Type) {
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -25051,7 +25053,7 @@ define('utils/color',['jxg', 'utils/type', 'math/math'],
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -31133,7 +31135,7 @@ define('options',[
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -32274,9 +32276,11 @@ define('renderer/abstract',[
                             }
                         } else if (Type.evaluate(el.visProp.usekatex)) {
                             try {
+                                /* eslint-disable no-undef */
                                 katex.render(content, el.rendNode, {
                                     throwOnError: false
                                 });
+                                /* eslint-enable no-undef */
                             } catch (e) {
                                 JXG.debug('KaTeX (not yet) loaded');
                             }
@@ -33223,7 +33227,7 @@ define('renderer/abstract',[
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -33511,7 +33515,7 @@ End Function\n\
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -34024,7 +34028,7 @@ define('parser/geonext',[
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -35952,10 +35956,9 @@ define('base/element',[
          */
         removeAllTicks: function () {
             var t;
-
             if (Type.exists(this.ticks)) {
-                for (t = this.ticks.length; t > 0; t--) {
-                    this.removeTicks(this.ticks[t - 1]);
+                for (t = this.ticks.length - 1; t >= 0; t--) {
+                    this.removeTicks(this.ticks[t]);
                 }
                 this.ticks = [];
                 this.board.update();
@@ -35974,19 +35977,19 @@ define('base/element',[
             }
 
             if (Type.exists(this.ticks)) {
-                for (t = this.ticks.length; t > 0; t--) {
-                    if (this.ticks[t - 1] === tick) {
-                        this.board.removeObject(this.ticks[t - 1]);
+                for (t = this.ticks.length - 1; t >= 0; t--) {
+                    if (this.ticks[t] === tick) {
+                        this.board.removeObject(this.ticks[t]);
 
-                        if (this.ticks[t - 1].ticks) {
-                            for (j = 0; j < this.ticks[t - 1].ticks.length; j++) {
-                                if (Type.exists(this.ticks[t - 1].labels[j])) {
-                                    this.board.removeObject(this.ticks[t - 1].labels[j]);
+                        if (this.ticks[t].ticks) {
+                            for (j = 0; j < this.ticks[t].ticks.length; j++) {
+                                if (Type.exists(this.ticks[t].labels[j])) {
+                                    this.board.removeObject(this.ticks[t].labels[j]);
                                 }
                             }
                         }
 
-                        delete this.ticks[t - 1];
+                        delete this.ticks[t];
                         break;
                     }
                 }
@@ -36326,7 +36329,7 @@ define('base/element',[
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -38264,7 +38267,7 @@ define('base/coordselement',[
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -39929,8 +39932,8 @@ define('parser/jessiecode',[
                 return s.locals[vname];
             }
 
-            // Handle the - so far only - two constants by hard coding them.
-            if (vname === 'EULER' || vname === 'PI') {
+            // Handle the - so far only - few constants by hard coding them.
+            if (vname === '$board' || vname === 'EULER' || vname === 'PI') {
                 return this.builtIn[vname];
             }
 
@@ -40600,30 +40603,30 @@ define('parser/jessiecode',[
 
         /**
          * Type inspection: check if the string vname appears as function name in the
-         * AST node. Used in "op_execfun". This allows the JessieCode exmples below. 
+         * AST node. Used in "op_execfun". This allows the JessieCode exmples below.
          *
          * @private
-         * @param {String} vname 
+         * @param {String} vname
          * @param {Object} node
          * @returns 'any' or 'function'
          * @see JXG.JessieCode#execute
          * @see JXG.JessieCode#getvar
-         * 
+         *
          * @example
          *  var p = board.create('point', [2, 0], {name: 'X'});
          *  var txt = 'X(X)';
          *  console.log(board.jc.parse(txt));
-         * 
+         *
          * @example
          *  var p = board.create('point', [2, 0], {name: 'X'});
          *  var txt = 'f = function(el, X) { return X(el); }; f(X, X);';
          *  console.log(board.jc.parse(txt));
-         * 
+         *
          * @example
          *  var p = board.create('point', [2, 0], {name: 'point'});
          *  var txt = 'B = point(1,3); X(point);';
          *  console.log(board.jc.parse(txt));
-         * 
+         *
          * @example
          *  var p = board.create('point', [2, 0], {name: 'A'});
          *  var q = board.create('point', [-2, 0], {name: 'X'});
@@ -42935,7 +42938,7 @@ if (typeof module !== 'undefined' && require.main === module) {
 });
 
 /*
- Copyright 2008-2021
+ Copyright 2008-2022
  Matthias Ehmann,
  Michael Gerhaeuser,
  Carsten Miller,
@@ -43220,7 +43223,7 @@ define('base/composition',['jxg', 'utils/type'], function (JXG, Type) {
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -49466,7 +49469,7 @@ define('base/board',[
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -51167,7 +51170,10 @@ define('renderer/svg',[
             cv = document.getElementById(canvasId);
 
             // Clear the canvas
+            /* eslint-disable no-self-assign */
             cv.width = cv.width;
+            /* eslint-enable no-self-assign */
+
             ctx = cv.getContext("2d");
             if (w !== undefined && h !== undefined) {
                 cv.style.width = parseFloat(w) + 'px';
@@ -51356,7 +51362,7 @@ define('renderer/svg',[
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -52403,7 +52409,7 @@ define('renderer/vml',[
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -53954,7 +53960,7 @@ define('renderer/canvas',[
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -54624,7 +54630,7 @@ define('renderer/no',['jxg', 'renderer/abstract'], function (JXG, AbstractRender
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -55301,7 +55307,7 @@ define('jsxgraph',[
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -56184,7 +56190,7 @@ define('base/point',[
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -58094,7 +58100,7 @@ define('base/line',[
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -59046,7 +59052,7 @@ define('base/group',[
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -60068,7 +60074,7 @@ define('element/conic',[
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -60999,7 +61005,7 @@ define('base/circle',[
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -62319,7 +62325,7 @@ define('base/polygon',[
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -65082,7 +65088,7 @@ define('base/curve',[
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -65699,7 +65705,7 @@ define('element/arc',[
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -67207,7 +67213,7 @@ define('element/sector',[
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -67953,7 +67959,7 @@ define('base/transformation',[
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -71023,7 +71029,7 @@ define('element/composition',[
 });
 
 /*
- Copyright 2008-2021
+ Copyright 2008-2022
  Matthias Ehmann,
  Michael Gerhaeuser,
  Carsten Miller,
@@ -71204,7 +71210,7 @@ define('element/locus',[
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -71622,7 +71628,7 @@ define('base/image',[
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -72167,7 +72173,7 @@ define('element/slider',[
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -72370,7 +72376,7 @@ define('element/measure',[
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -72613,7 +72619,7 @@ define('parser/datasource',['jxg', 'utils/type'], function (JXG, Type) {
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -73989,7 +73995,7 @@ define('base/chart',[
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -74808,7 +74814,7 @@ define('base/turtle',[
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -77686,7 +77692,7 @@ define('parser/ca',[
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -78006,7 +78012,7 @@ define('utils/dump',['jxg', 'utils/type'], function (JXG, Type) {
          * @returns {String} JessieCode
          */
         toJessie: function (board) {
-            var i, elements,
+            var i, elements, id,
                 dump = this.dump(board),
                 script = [];
 
@@ -78018,8 +78024,15 @@ define('utils/dump',['jxg', 'utils/type'], function (JXG, Type) {
                 if (elements[i].attributes.name.length > 0) {
                     script.push('// ' + elements[i].attributes.name);
                 }
-
                 script.push('s' + i + ' = ' + elements[i].type + '(' + elements[i].parents.join(', ') + ') ' + this.toJCAN(elements[i].attributes).replace(/\n/, '\\n') + ';');
+
+                if (elements[i].type === 'axis') {
+                    // Handle the case that remove[All]Ticks had been called.
+                    id = elements[i].attributes.id;
+                    if (board.objects[id].defaultTicks === null) {
+                        script.push('s' + i + '.removeAllTicks();');
+                    }
+                }
                 script.push('');
             }
 
@@ -78042,7 +78055,7 @@ define('utils/dump',['jxg', 'utils/type'], function (JXG, Type) {
          * @returns {String} JavaScript
          */
         toJavaScript: function (board) {
-            var i, elements,
+            var i, elements, id,
                 dump = this.dump(board),
                 script = [];
 
@@ -78052,6 +78065,14 @@ define('utils/dump',['jxg', 'utils/type'], function (JXG, Type) {
 
             for (i = 0; i < elements.length; i++) {
                 script.push('board.create("' + elements[i].type + '", [' + elements[i].parents.join(', ') + '], ' + Type.toJSON(elements[i].attributes) + ');');
+
+                if (elements[i].type === 'axis') {
+                    // Handle the case that remove[All]Ticks had been called.
+                    id = elements[i].attributes.id;
+                    if (board.objects[id].defaultTicks === null) {
+                        script.push('board.objects["' + id + '"].removeTicks(board.objects["' + id + '"].defaultTicks);');
+                    }
+                }
             }
 
             for (i = 0; i < dump.methods.length; i++) {
@@ -78072,7 +78093,7 @@ define('utils/dump',['jxg', 'utils/type'], function (JXG, Type) {
 });
 
 /*
-    Copyright 2018-2021
+    Copyright 2018-2022
         Alfred Wassermann,
         Tigran Saluev
 
@@ -78314,7 +78335,7 @@ define('element/comb',[
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -78543,7 +78564,7 @@ define('element/slopetriangle',[
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -78783,7 +78804,7 @@ define('element/checkbox',[
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -79022,7 +79043,7 @@ define('element/input',[
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -79272,7 +79293,7 @@ define('element/button',[
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
