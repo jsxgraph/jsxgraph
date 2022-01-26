@@ -4,8 +4,11 @@
 New features
 -----------
 
-- Prepare upcoming API change: the number of digits in a text element is now set generally with
-the attribute `digits`. The old attribute `precision` is marked as deprecated.
+- API change: the number of digits in a text element is now set generally with
+the attribute `digits`. The attribute "precision" is used to decide if
+a pointer device is close enough to a JSXGraph element to be considered as touching the element.
+The old attributes `precision` for the number of digits are still working 
+but marked as deprecated.
 
 Improvements
 ------------
