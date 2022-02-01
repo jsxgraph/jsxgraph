@@ -87,6 +87,7 @@ define([
         this.board.renderer.drawPoint(this);
         this.board.finalizeAdding(this);
 
+        this.createGradient();
         this.createLabel();
 
     };
