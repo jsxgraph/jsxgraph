@@ -224,7 +224,7 @@ define([
 
         /**
          * Inherits contains the subelements, which may have an attribute
-         * (in partuclar the attribute "visible") having value 'inherit'.
+         * (in particular the attribute "visible") having value 'inherit'.
          * @type Object
          */
         this.inherits = [];

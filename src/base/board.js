@@ -4840,6 +4840,7 @@ define([
             for (i = 0; i < parents.length; i++) {
                 if (Type.isString(parents[i]) &&
                     !(elementType === 'text' && i === 2) &&
+                    !(elementType === 'solidofrevolution3d' && i === 2) &&
                     !((elementType === 'input' || elementType === 'checkbox' || elementType === 'button') &&
                       (i === 2 || i === 3)) &&
                     !(elementType === 'curve' && i > 0) // Allow curve plots with jessiecode
