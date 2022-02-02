@@ -233,13 +233,48 @@ declare module JXG {
     export function createEvalFunction<T>(board: Board, param: T[], n: number): (k: number) => T;
     export function createFunction(term: string | number | Function, board: Board, variableName: string, evalGeonext?: boolean): Function;
     export function createHTMLSlider(board: Board, parents: unknown[], attributes: SliderAttributes): Slider;
-    export function debug(...unknown): void;
-    export function debugInt(...unknown): void;
-    export function debugLine(...unknown): void;
-    export function debugWST(...unknown): void;
+    /**
+     * Add something to the debug log.
+     * If available a JavaScript debug console is used.
+     * Otherwise we're looking for a HTML div with id "debug".
+     * If this doesn't exist, too, the output is omitted.
+     * @param args An arbitrary number of parameters.
+     */
+    export function debug(...args: any[]): void;
+    /**
+     * Add something to the debug log.
+     * If available a JavaScript debug console is used.
+     * Otherwise we're looking for a HTML div with id "debug".
+     * If this doesn't exist, too, the output is omitted.
+     * @param args An arbitrary number of parameters.
+     */
+    export function debugInt(...args: any[]): void;
+    /**
+     * Add something to the debug log.
+     * If available a JavaScript debug console is used.
+     * Otherwise we're looking for a HTML div with id "debug".
+     * If this doesn't exist, too, the output is omitted.
+     * This method adds a line of the stack trace (if available).
+     * @param args An arbitrary number of parameters.
+     */
+    export function debugLine(...args: any[]): void;
+    /**
+     * Add something to the debug log.
+     * If available a JavaScript debug console is used.
+     * Otherwise we're looking for a HTML div with id "debug".
+     * If this doesn't exist, too, the output is omitted.
+     * This method adds a stack trace (if available).
+     * @param args An arbitrary number of parameters.
+     */
+    export function debugWST(...args: any[]): void;
     export function deepCopy<U, V>(obj1: U, obj2: V, toLower?: boolean): U | V;
     export function def<T>(v: T | undefined | null, d: T): T;
-    export function deprecated(what: string, replacement): void;
+    /**
+     * This method issues a warning to the developer that the given function is deprecated and, if available, offers an alternative to the deprecated function.
+     * @param what Describes the function that is deprecated.
+     * @param replacement The replacement that should be used instead.
+     */
+    export function deprecated(what: string, replacement?: string): void;
     export function eliminateDuplicates(a: (number | string)[]): (number | string)[];
     export function escapeHTML(str: string): string;
     export function evalSlider(s: unknown): number;
@@ -308,8 +343,14 @@ declare module JXG {
     export function str2Bool(s: string): boolean;
     export function supportsCanvas(): boolean;
     export function supportsPointerEvents(): boolean;
-    export function supportsSVG();
-    export function supportsVML();
+    /**
+     * Detect browser support for SVG.
+     */
+    export function supportsSVG(): boolean;
+    /**
+     * Detect browser support for VML.
+     */
+    export function supportsVML(): boolean;
     export function swap<T>(arr: T[], i: number, j: number): T[];
     export function timedChunk(items: unknown[], process: Function, context: unknown, callback: Function): void;
     export function toFixed(num: number, digits: number): string;
