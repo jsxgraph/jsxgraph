@@ -1376,10 +1376,10 @@ Copyright 2008-2022
 
                     set_str = assign + step.args.plot_type + '(' + step.args.func;
 
-                    if (isNaN(step.args.a) || step.args.a === null || step.args.a === undefined)
-                        step.args.a = '-infinity';
-                    if (isNaN(step.args.b) || step.args.b === null || step.args.b === undefined)
-                        step.args.b = 'infinity';
+                    if (isNaN(step.args.a) || step.args.a === null || step.args.a === undefined|| step.args.a ==='-infinity')
+                        step.args.a = '';
+                    if (isNaN(step.args.b) || step.args.b === null || step.args.b === undefined|| step.args.b ==='infinity')
+                        step.args.b = '';
 
                     if (step.args.a != step.args.b)
                         set_str += ', ' + step.args.a + ', ' + step.args.b;
