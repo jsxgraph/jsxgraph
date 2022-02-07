@@ -97,7 +97,7 @@ declare module JXG {
      * @param board A reference to a board.
      * @param emitter If true, this coordinates object will emit update events every time the coordinates are set. Default is true.
      */
-    constructor(method: CoordType, coordinates: [number, number, number], board: Board, emitter?: boolean);
+    constructor(method: CoordType, coordinates: [z: number, x: number, y: number] | [x: number, y: number], board: Board, emitter?: boolean);
     /**
      * Stores the board the object is used on.
      */
@@ -109,7 +109,7 @@ declare module JXG {
     /**
      * Stores coordinates for screen view as homogeneous coordinates.
      */
-    scrCoords: [z: number, x: number, y: number];
+    scrCoords: [z: number | null, x: number, y: number];
     /**
      * Stores coordinates for user view as homogeneous coordinates.
      */
@@ -183,14 +183,20 @@ declare module JXG {
      */
     parse(code: string, geonext?: boolean, dontstore?: boolean): unknown;
     /**
+     * Parses a JessieCode snippet, e.g. "3+4", and wraps it into a function, if desired.
      *
+     * @param code A small snippet of JessieCode. Must not be an assignment.
+     * @param funwrap If true, the code is wrapped in a function.
+     * @param varname Name of the parameter(s)
+     * @param geonext Geonext compatibility mode. Default: false.
      */
     snippet(code: string, funwrap: boolean, varname: string, geonext?: boolean): unknown;
+    snippet(code: string, funwrap: true, varname: string, geonext?: boolean): (...args: number[]) => number;
     /**
-     * operator implementation.
-     * @param a
-     * @param b
-     */
+    * operator implementation.
+    * @param a
+    * @param b
+    */
     sub(a: number | number[] | Point, b: number | number[] | Point): number | number[];
     /**
      * Implementation of the use() builtin function.
