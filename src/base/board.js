@@ -1664,7 +1664,7 @@ define([
         },
 
         addKeyboardEventHandlers: function() {
-            if (!this.hasKeyboardHandlers && Env.isBrowser) {
+            if (this.attr.keyboard.enabled && !this.hasKeyboardHandlers && Env.isBrowser) {
                 Env.addEvent(this.containerObj, 'keydown', this.keyDownListener, this);
                 Env.addEvent(this.containerObj, 'focusin', this.keyFocusInListener, this);
                 Env.addEvent(this.containerObj, 'focusout', this.keyFocusOutListener, this);
