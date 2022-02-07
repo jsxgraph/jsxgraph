@@ -1584,7 +1584,7 @@ define([
 
         setTabindex: function(element) {
             var val;
-            if (Type.exists(element.rendNode)) {
+            if (element.board.attr.keyboard.enabled && Type.exists(element.rendNode)) {
                 val = Type.evaluate(element.visProp.tabindex);
                 if (val !== element.visPropOld.tabindex) {
                     element.rendNode.setAttribute('tabindex', val);
