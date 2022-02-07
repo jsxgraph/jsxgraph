@@ -193,10 +193,10 @@ declare module JXG {
     snippet(code: string, funwrap: boolean, varname: string, geonext?: boolean): unknown;
     snippet(code: string, funwrap: true, varname: string, geonext?: boolean): (...args: number[]) => number;
     /**
-    * operator implementation.
-    * @param a
-    * @param b
-    */
+     * operator implementation.
+     * @param a
+     * @param b
+     */
     sub(a: number | number[] | Point, b: number | number[] | Point): number | number[];
     /**
      * Implementation of the use() builtin function.
