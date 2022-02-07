@@ -1030,7 +1030,9 @@ define([
                         // Use the deprecated attribute "precision"
                         digits = Type.evaluate(this.visProp.precision);
                     }
-                    labelText = value.toPrecision(digits).toString();
+
+                    // labelText = value.toPrecision(digits).toString();
+                    labelText = value.toExponential(digits).toString();
                 }
 
                 if (Type.evaluate(this.visProp.beautifulscientificticklabels)) {
