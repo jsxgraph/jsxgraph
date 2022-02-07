@@ -4688,6 +4688,7 @@ define([
                 visible: 'inherit',
                 fixed: true,
                 scalable: false,
+                tabindex: -1,
                 name: '',
                 strokeWidth: 1,
                 strokeColor: '#000000',
@@ -4737,6 +4738,7 @@ define([
                 strokeWidth: 3,
                 visible: 'inherit',
                 fixed: true,
+                tabindex: -1,
                 name: '',
                 strokeColor: '#000000',
                 highlightStrokeColor: '#888888'
