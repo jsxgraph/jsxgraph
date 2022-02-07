@@ -1488,7 +1488,20 @@ define([
              */
             isLabel: false,
 
-
+            /**
+             * Controls if an element can get the focus with the tab key.
+             * See <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/tabindex">descriptiona at MDN</a>.
+             * The additional value null completely disables focus of an element.
+             * The value will be ignored if keyboard control of the board is not enabled or
+             * the element is fixed or not visible.
+             *
+             * @name JXG.GeometryElement#tabindex
+             * @type Number
+             * @default 0
+             * @see JXG.Board#keyboard
+             * @see JXG.GeometryElement#fixed
+             * @see JXG.GeometryElement#visible
+             */
             tabindex: 0
 
             // close the meta tag
@@ -4688,7 +4701,7 @@ define([
                 visible: 'inherit',
                 fixed: true,
                 scalable: false,
-                tabindex: -1,
+                tabindex: null,
                 name: '',
                 strokeWidth: 1,
                 strokeColor: '#000000',
@@ -4738,7 +4751,7 @@ define([
                 strokeWidth: 3,
                 visible: 'inherit',
                 fixed: true,
-                tabindex: -1,
+                tabindex: null,
                 name: '',
                 strokeColor: '#000000',
                 highlightStrokeColor: '#888888'
