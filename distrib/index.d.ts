@@ -113,7 +113,7 @@ declare module JXG {
     /**
      * Stores coordinates for user view as homogeneous coordinates.
      */
-    usrCoords: [number, number, number];
+    usrCoords: [z: number, x: number, y: number];
     /**
      * Copy array, either scrCoords or usrCoords. Uses slice() in case of standard arrays and set() in case of typed arrays.
      * @param obj Either 'scrCoords' for COORDS_BY_SCREEN coordinates or 'usrCoords' for COORDS_BY_USER coordinates.
@@ -2321,11 +2321,8 @@ declare module JXG {
      */
     postLabel?: string | StringFunction | number | NumberFunction | null;
     /**
-     * The precision of the slider value displayed in the optional text.
-     * Replaced by the attribute "digits".
-     * Default Value: 2
+     * 
      */
-    precision?: number;
     showInfobox?: boolean;
     /**
      * Size of slider point.
