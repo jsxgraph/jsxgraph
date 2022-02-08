@@ -3136,6 +3136,7 @@ define([
                 dx = Type.evaluate(this.attr.keyboard.dx) / this.unitX,
                 dy = Type.evaluate(this.attr.keyboard.dy) / this.unitY,
                 doZoom = false,
+                done = true,
                 dir, actPos;
 
             if (!this.attr.keyboard.enabled || id_node === '') {
@@ -3164,6 +3165,8 @@ define([
                     this.clickLeftArrow();
                 } else if (evt.keyCode === 39) {    // right
                     this.clickRightArrow();
+                } else {
+                    done = false;
                 }
             } else {
                 // Adapt dx, dy to snapToGrid and attractToGrid
@@ -3216,7 +3219,10 @@ define([
                     this.zoomOut();
                 } else if (doZoom && evt.key === 'o') {   // o
                     this.zoom100();
+                } else {
+                    done = false;
                 }
+
                 if (dir && el.isDraggable &&
                         el.visPropCalc.visible &&
                         ((this.geonextCompatibilityMode &&
@@ -3242,6 +3248,9 @@ define([
 
             this.update();
 
+            if (done) {
+                evt.preventDefault();
+            }
             return true;
         },
 
