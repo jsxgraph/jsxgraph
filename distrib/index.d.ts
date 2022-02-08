@@ -4103,7 +4103,7 @@ declare module JXG {
      * @param saveMethod If true, the algorithm runs through all elements and tests if the element to be deleted is a child element. If yes, it will be removed from the list of child elements. If false (default), the element is removed from the lists of child elements of all its ancestors. This should be much faster.
      * @returns Reference to the board.
      */
-    removeObject(object: (string | GeometryElement) | (string | GeometryElement)[], saveMethod: boolean): this;
+    removeObject(object: (string | GeometryElement) | (string | GeometryElement)[], saveMethod?: boolean): this;
     removePointerEventHandlers(): unknown;
     removeTouchEventHandlers(): unknown;
 
