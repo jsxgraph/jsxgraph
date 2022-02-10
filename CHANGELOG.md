@@ -1,3 +1,22 @@
+1.4.2
+====
+
+Improvements
+------------
+
+- Gradient fill color for points
+- Many improvenments to index.d.ts
+- Improved keyboard control
+- Some preparations for 3D support
+- Reduce thick focus box on webkit browsers
+
+Bug fixes
+---------
+
+- Fix touch events for iOS < 13
+- Bug fix: beautifulScientificTickLabels for numbers with negative exponents
+
+
 1.4.1
 ====
 
