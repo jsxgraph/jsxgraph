@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -80,8 +80,12 @@
     /* opacity: 0.6; */
 }
 
-/* CSS rules for the navigation bar */
+.jxgbox :focus {
+    outline-width: 0.5px;
+    outline-style: dotted;
+}
 
+/* CSS rules for the navigation bar */
 .JXG_navigation {
     position: absolute;
     right: 5px;
