@@ -6,7 +6,7 @@
  } else {
  root.returnExports = factory();
  }
-}(this, function () {
+}(typeof self !== 'undefined' ? self : this, function () {
 /**
  * @license almond 0.3.3 Copyright jQuery Foundation and other contributors.
  * Released under MIT license, http://github.com/requirejs/almond/LICENSE
@@ -842,8 +842,8 @@ define('base/constants',['jxg'], function (JXG) {
 
     var major = 1,
         minor = 4,
-        patch = 2,
-        add = '', //'dev'
+        patch = 3,
+        add = 'dev', //'dev'
         version = major + '.' + minor + '.' + patch + (add ? '-' + add : ''),
         constants;
 
