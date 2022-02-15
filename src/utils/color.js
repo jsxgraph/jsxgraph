@@ -988,8 +988,7 @@ define(['jxg', 'utils/type', 'math/math'],
             green: '#009E73', // bluishgreen
             purple: '#CC79A7', // reddishpurple
             white: '#ffffff'
-        },
-
+        }
     });
 
     /**

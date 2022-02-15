@@ -42,7 +42,7 @@ define(['jxg'], function (JXG) {
 
     var major = 1,
         minor = 4,
-        patch = 2,
+        patch = 3,
         add = 'dev', //'dev'
         version = major + '.' + minor + '.' + patch + (add ? '-' + add : ''),
         constants;
@@ -111,6 +111,7 @@ define(['jxg'], function (JXG) {
         OBJECT_TYPE_BUTTON: 29,
         OBJECT_TYPE_TRANSFORMATION: 30,
         OBJECT_TYPE_FOREIGNOBJECT: 31,
+        OBJECT_TYPE_VIEW3D: 32,
 
         // IMPORTANT:
         // ----------

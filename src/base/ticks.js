@@ -1016,12 +1016,13 @@ define([
          * @private
          */
         formatLabelText: function(value) {
-            var labelText = value.toString(),
+            var labelText,
                 digits,
                 ev_s = Type.evaluate(this.visProp.scalesymbol);
 
             // if value is Number
             if (Type.isNumber(value)) {
+                labelText = (Math.round(value * 1.e13) / 1.e13).toString();
                 if (labelText.length > Type.evaluate(this.visProp.maxlabellength) ||
                         labelText.indexOf('e') !== -1) {
 
@@ -1030,7 +1031,9 @@ define([
                         // Use the deprecated attribute "precision"
                         digits = Type.evaluate(this.visProp.precision);
                     }
-                    labelText = value.toPrecision(digits).toString();
+
+                    //labelText = value.toPrecision(digits).toString();
+                    labelText = value.toExponential(digits).toString();
                 }
 
                 if (Type.evaluate(this.visProp.beautifulscientificticklabels)) {
@@ -1043,6 +1046,8 @@ define([
                     // trim trailing .
                     labelText = labelText.replace(/\.$/, '');
                 }
+            } else {
+                labelText = value.toString();
             }
 
             if (ev_s.length > 0) {

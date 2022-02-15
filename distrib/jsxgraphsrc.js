@@ -6,7 +6,7 @@
  } else {
  root.returnExports = factory();
  }
-}(this, function () {
+}(typeof self !== 'undefined' ? self : this, function () {
 /**
  * @license almond 0.3.3 Copyright jQuery Foundation and other contributors.
  * Released under MIT license, http://github.com/requirejs/almond/LICENSE
@@ -842,8 +842,8 @@ define('base/constants',['jxg'], function (JXG) {
 
     var major = 1,
         minor = 4,
-        patch = 1,
-        add = '', //'dev'
+        patch = 3,
+        add = 'dev', //'dev'
         version = major + '.' + minor + '.' + patch + (add ? '-' + add : ''),
         constants;
 
@@ -911,6 +911,7 @@ define('base/constants',['jxg'], function (JXG) {
         OBJECT_TYPE_BUTTON: 29,
         OBJECT_TYPE_TRANSFORMATION: 30,
         OBJECT_TYPE_FOREIGNOBJECT: 31,
+        OBJECT_TYPE_VIEW3D: 32,
 
         // IMPORTANT:
         // ----------
@@ -25020,8 +25021,7 @@ define('utils/color',['jxg', 'utils/type', 'math/math'],
             green: '#009E73', // bluishgreen
             purple: '#CC79A7', // reddishpurple
             white: '#ffffff'
-        },
-
+        }
     });
 
     /**
@@ -26542,7 +26542,20 @@ define('options',[
              */
             isLabel: false,
 
-
+            /**
+             * Controls if an element can get the focus with the tab key.
+             * See <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/tabindex">descriptiona at MDN</a>.
+             * The additional value null completely disables focus of an element.
+             * The value will be ignored if keyboard control of the board is not enabled or
+             * the element is fixed or not visible.
+             *
+             * @name JXG.GeometryElement#tabindex
+             * @type Number
+             * @default 0
+             * @see JXG.Board#keyboard
+             * @see JXG.GeometryElement#fixed
+             * @see JXG.GeometryElement#visible
+             */
             tabindex: 0
 
             // close the meta tag
@@ -29742,6 +29755,7 @@ define('options',[
                 visible: 'inherit',
                 fixed: true,
                 scalable: false,
+                tabindex: null,
                 name: '',
                 strokeWidth: 1,
                 strokeColor: '#000000',
@@ -29791,6 +29805,7 @@ define('options',[
                 strokeWidth: 3,
                 visible: 'inherit',
                 fixed: true,
+                tabindex: null,
                 name: '',
                 strokeColor: '#000000',
                 highlightStrokeColor: '#888888'
@@ -32720,8 +32735,11 @@ define('renderer/abstract',[
 
         setTabindex: function(element) {
             var val;
-            if (Type.exists(element.rendNode)) {
+            if (element.board.attr.keyboard.enabled && Type.exists(element.rendNode)) {
                 val = Type.evaluate(element.visProp.tabindex);
+                if (!element.visPropCalc.visible || Type.evaluate(element.visProp.fixed)) {
+                    val = null;
+                }
                 if (val !== element.visPropOld.tabindex) {
                     element.rendNode.setAttribute('tabindex', val);
                     element.visPropOld.tabindex = val;
@@ -34253,7 +34271,7 @@ define('base/element',[
 
         /**
          * Inherits contains the subelements, which may have an attribute
-         * (in partuclar the attribute "visible") having value 'inherit'.
+         * (in particular the attribute "visible") having value 'inherit'.
          * @type Object
          */
         this.inherits = [];
@@ -39665,6 +39683,12 @@ define('parser/jessiecode',[
         this.builtIn = this.defineBuiltIn();
 
         /**
+         * List of all possible operands in JessieCode (except of JSXGraph objects).
+         * @type Object
+         */
+        this.operands = this.getPossibleOperands();
+
+        /**
          * The board which currently is used to create and look up elements.
          * @type JXG.Board
          */
@@ -41954,6 +41978,103 @@ define('parser/jessiecode',[
             builtIn.$log.src = '$jc$.log';
 
             return builtIn;
+        },
+
+        /**
+         * Returns information about the possible functions and constants.
+         * @returns {Object}
+         */
+        getPossibleOperands: function () {
+            var FORBIDDEN = ['E'],
+                jessiecode = this.defineBuiltIn(),
+                math = Math,
+                jc, ma, merge,
+                i, j, p, len, e,
+                funcs, funcsJC, consts, operands,
+                sort, pack;
+
+            sort = function (a, b) {
+                return a.toLowerCase().localeCompare(b.toLowerCase());
+            };
+
+            pack = function (name, origin) {
+                var that = null;
+
+                if (origin === 'jc') that = jessiecode[name];
+                else if (origin === 'Math') that = math[name];
+                else return;
+
+                if (FORBIDDEN.includes(name)) {
+                    return;
+                } else if (JXG.isFunction(that)) {
+                    return {
+                        name: name,
+                        type: 'function',
+                        numParams: that.length,
+                        origin: origin,
+                    };
+                } else if (JXG.isNumber(that)) {
+                    return {
+                        name: name,
+                        type: 'constant',
+                        value: that,
+                        origin: origin,
+                    };
+                } else if (that !== undefined) {
+                    console.error('undefined type', that);
+                }
+            };
+
+            jc = Object.getOwnPropertyNames(jessiecode).sort(sort);
+            ma = Object.getOwnPropertyNames(math).sort(sort);
+            merge = [];
+            i = 0;
+            j = 0;
+
+            while (i < jc.length || j < ma.length) {
+                if (jc[i] === ma[j]) {
+                    p = pack(ma[j], 'Math');
+                    if (JXG.exists(p)) merge.push(p);
+                    i++;
+                    j++;
+                } else if (!JXG.exists(ma[j]) || jc[i].toLowerCase().localeCompare(ma[j].toLowerCase()) < 0) {
+                    p = pack(jc[i], 'jc');
+                    if (JXG.exists(p)) merge.push(p);
+                    i++;
+                } else {
+                    p = pack(ma[j], 'Math');
+                    if (JXG.exists(p)) merge.push(p);
+                    j++;
+                }
+            }
+
+            funcs = [];
+            funcsJC = [];
+            consts = [];
+            operands = {};
+            len = merge.length;
+            for (i = 0; i < len; i++) {
+                e = merge[i];
+                switch (e.type) {
+                    case 'function':
+                        funcs.push(e.name);
+                        if (e.origin === 'jc')
+                            funcsJC.push(e.name);
+                        break;
+                    case 'constant':
+                        consts.push(e.name);
+                        break;
+                }
+                operands[e.name] = e;
+            }
+
+            return {
+                all: operands,
+                list: merge,
+                functions: funcs,
+                functions_jessiecode: funcsJC,
+                constants: consts,
+            };
         },
 
         /**
@@ -44888,7 +45009,7 @@ define('base/board',[
         },
 
         addKeyboardEventHandlers: function() {
-            if (!this.hasKeyboardHandlers && Env.isBrowser) {
+            if (this.attr.keyboard.enabled && !this.hasKeyboardHandlers && Env.isBrowser) {
                 Env.addEvent(this.containerObj, 'keydown', this.keyDownListener, this);
                 Env.addEvent(this.containerObj, 'focusin', this.keyFocusInListener, this);
                 Env.addEvent(this.containerObj, 'focusout', this.keyFocusOutListener, this);
@@ -45815,7 +45936,7 @@ define('base/board',[
                                 obj.type === Const.OBJECT_TYPE_TICKS ||
                                 obj.type === Const.OBJECT_TYPE_IMAGE) {
                             // It's a point, so it's single touch, so we just push it to our touches
-                            targets = [obj];
+                            targets = [target];
 
                             // For the UNDO/REDO of object moves
                             this.saveStartPos(obj, targets[0]);
@@ -46360,6 +46481,7 @@ define('base/board',[
                 dx = Type.evaluate(this.attr.keyboard.dx) / this.unitX,
                 dy = Type.evaluate(this.attr.keyboard.dy) / this.unitY,
                 doZoom = false,
+                done = true,
                 dir, actPos;
 
             if (!this.attr.keyboard.enabled || id_node === '') {
@@ -46388,6 +46510,8 @@ define('base/board',[
                     this.clickLeftArrow();
                 } else if (evt.keyCode === 39) {    // right
                     this.clickRightArrow();
+                } else {
+                    done = false;
                 }
             } else {
                 // Adapt dx, dy to snapToGrid and attractToGrid
@@ -46440,7 +46564,10 @@ define('base/board',[
                     this.zoomOut();
                 } else if (doZoom && evt.key === 'o') {   // o
                     this.zoom100();
+                } else {
+                    done = false;
                 }
+
                 if (dir && el.isDraggable &&
                         el.visPropCalc.visible &&
                         ((this.geonextCompatibilityMode &&
@@ -46466,6 +46593,9 @@ define('base/board',[
 
             this.update();
 
+            if (done) {
+                evt.preventDefault();
+            }
             return true;
         },
 
@@ -48064,6 +48194,7 @@ define('base/board',[
             for (i = 0; i < parents.length; i++) {
                 if (Type.isString(parents[i]) &&
                     !(elementType === 'text' && i === 2) &&
+                    !(elementType === 'solidofrevolution3d' && i === 2) &&
                     !((elementType === 'input' || elementType === 'checkbox' || elementType === 'button') &&
                       (i === 2 || i === 3)) &&
                     !(elementType === 'curve' && i > 0) // Allow curve plots with jessiecode
@@ -55395,6 +55526,7 @@ define('base/point',[
         this.board.renderer.drawPoint(this);
         this.board.finalizeAdding(this);
 
+        this.createGradient();
         this.createLabel();
 
     };
@@ -75831,12 +75963,13 @@ define('base/ticks',[
          * @private
          */
         formatLabelText: function(value) {
-            var labelText = value.toString(),
+            var labelText,
                 digits,
                 ev_s = Type.evaluate(this.visProp.scalesymbol);
 
             // if value is Number
             if (Type.isNumber(value)) {
+                labelText = (Math.round(value * 1.e13) / 1.e13).toString();
                 if (labelText.length > Type.evaluate(this.visProp.maxlabellength) ||
                         labelText.indexOf('e') !== -1) {
 
@@ -75845,7 +75978,9 @@ define('base/ticks',[
                         // Use the deprecated attribute "precision"
                         digits = Type.evaluate(this.visProp.precision);
                     }
-                    labelText = value.toPrecision(digits).toString();
+
+                    //labelText = value.toPrecision(digits).toString();
+                    labelText = value.toExponential(digits).toString();
                 }
 
                 if (Type.evaluate(this.visProp.beautifulscientificticklabels)) {
@@ -75858,6 +75993,8 @@ define('base/ticks',[
                     // trim trailing .
                     labelText = labelText.replace(/\.$/, '');
                 }
+            } else {
+                labelText = value.toString();
             }
 
             if (ev_s.length > 0) {

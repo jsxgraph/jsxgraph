@@ -1664,7 +1664,7 @@ define([
         },
 
         addKeyboardEventHandlers: function() {
-            if (!this.hasKeyboardHandlers && Env.isBrowser) {
+            if (this.attr.keyboard.enabled && !this.hasKeyboardHandlers && Env.isBrowser) {
                 Env.addEvent(this.containerObj, 'keydown', this.keyDownListener, this);
                 Env.addEvent(this.containerObj, 'focusin', this.keyFocusInListener, this);
                 Env.addEvent(this.containerObj, 'focusout', this.keyFocusOutListener, this);
@@ -2591,7 +2591,7 @@ define([
                                 obj.type === Const.OBJECT_TYPE_TICKS ||
                                 obj.type === Const.OBJECT_TYPE_IMAGE) {
                             // It's a point, so it's single touch, so we just push it to our touches
-                            targets = [obj];
+                            targets = [target];
 
                             // For the UNDO/REDO of object moves
                             this.saveStartPos(obj, targets[0]);
@@ -3136,6 +3136,7 @@ define([
                 dx = Type.evaluate(this.attr.keyboard.dx) / this.unitX,
                 dy = Type.evaluate(this.attr.keyboard.dy) / this.unitY,
                 doZoom = false,
+                done = true,
                 dir, actPos;
 
             if (!this.attr.keyboard.enabled || id_node === '') {
@@ -3164,6 +3165,8 @@ define([
                     this.clickLeftArrow();
                 } else if (evt.keyCode === 39) {    // right
                     this.clickRightArrow();
+                } else {
+                    done = false;
                 }
             } else {
                 // Adapt dx, dy to snapToGrid and attractToGrid
@@ -3216,7 +3219,10 @@ define([
                     this.zoomOut();
                 } else if (doZoom && evt.key === 'o') {   // o
                     this.zoom100();
+                } else {
+                    done = false;
                 }
+
                 if (dir && el.isDraggable &&
                         el.visPropCalc.visible &&
                         ((this.geonextCompatibilityMode &&
@@ -3242,6 +3248,9 @@ define([
 
             this.update();
 
+            if (done) {
+                evt.preventDefault();
+            }
             return true;
         },
 
