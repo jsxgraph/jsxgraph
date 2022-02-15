@@ -886,7 +886,7 @@ Copyright 2008-2022
                             str1[i] = pn(step.args.p1[i]);
                         }
 
-                        set_str = 'point(' + str1.join(', ') + ') <<id: \'' + pid1 + '\', name: \'\', visible: false, ';
+                        set_str = 'point(' + str1.join(', ') + ') <<id: \'' + pid1 + '\', name: \'\', visible: false, isinfinit: true, ';
                         set_str += 'snaptogrid: false, snaptopoints: false, priv: true>>; ';
                         reset_str = 'remove(' + pid1 + '); ';
                     } else {
@@ -901,7 +901,7 @@ Copyright 2008-2022
                             str1[i] = pn(step.args.p2[i]);
                         }
 
-                        set_str += 'point(' + str1.join(', ') + ') <<id: \'' + pid2 + '\', name: \'\', visible: false, ';
+                        set_str += 'point(' + str1.join(', ') + ') <<id: \'' + pid2 + '\', name: \'\', visible: false, isinfinit: true, ';
                         set_str += 'snaptogrid: false, snaptopoints: false, priv: true>>; ';
                         reset_str = 'remove(' + pid2 + '); ' + reset_str;
                     } else {
