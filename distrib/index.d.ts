@@ -14,9 +14,9 @@
 //
 
 /**
- * JXG namespace.
+ * JSXGraph in the namespace JXG.
  */
-declare module JXG {
+declare namespace JXG {
   /**
    *
    */
@@ -5265,4 +5265,11 @@ declare module JXG {
      */
     rungeKutta(butcher: unknown, x0: number[], I: number[], N: number, f: unknown): number[][];
   }
+}
+
+/**
+ * JSXGraph in the module "jsxgraph".
+ */
+declare module "jsxgraph" {
+  export = JXG;
 }
