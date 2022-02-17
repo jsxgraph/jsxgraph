@@ -2321,7 +2321,7 @@ declare namespace JXG {
      */
     postLabel?: string | StringFunction | number | NumberFunction | null;
     /**
-     * 
+     *
      */
     showInfobox?: boolean;
     /**
@@ -2468,54 +2468,127 @@ declare namespace JXG {
     L(): number;
     setAttribute(attributes: LineAttributes): this;
   }
+  /**
+   *
+   */
   export interface LineAttributes extends GeometryElementAttributes {
     /**
      * Determines whether the line has an arrow at the first defining point.
+     *
+     * type=7 is the default for curves if firstArrow: true
+     *
+     * Default Value: false
      */
-    firstArrow?: boolean | { type?: number; highlightSize?: number; size?: number };
+    firstArrow?: boolean | { type?: 1 | 2 | 3 | 4 | 5 | 6 | 7; highlightSize?: number; size?: number };
+    /**
+     * Attributes for the line label.
+     */
+    label?: LabelOptions;
     /**
      * Determines whether the line has an arrow at the second defining point.
-     */
-    lastArrow?: boolean | { type?: number; highlightSize?: number; size?: number };
-    /**
      *
+     * type=7 is the default for curves if lastArrow: true
+     *
+     * Default Value: false
+     */
+    lastArrow?: boolean | { type?: 1 | 2 | 3 | 4 | 5 | 6 | 7; highlightSize?: number; size?: number };
+    /**
+     * Line endings (linecap) of a straight line.
+     *
+     * Not available for VML renderer.
+     *
+     * Default Value: 'butt'
+     */
+    lineCap?: 'butt' | 'round' | 'square';
+    /**
+     * Attributes for first defining point of the line.
      */
     point1?: PointAttributes;
     /**
-     *
+     * Attributes for second defining point of the line.
      */
     point2?: PointAttributes;
     /**
+     * Defines together with Point#snapSizeY the grid the point snaps on to.
+     * The point will only snap on integer multiples to snapSizeX in x and snapSizeY in y direction.
+     * If this value is equal to or less than 0, it will use the grid displayed by the major ticks of the default ticks of the default x axes of the board.
+     *
+     * Default Value: 1
+     */
+    snapSizeX?: number;
+    /**
+     * Defines together with Point#snapSizeX the grid the point snaps on to.
+     * The point will only snap on integer multiples to snapSizeX in x and snapSizeY in y direction.
+     * If this value is equal to or less than 0, it will use the grid displayed by the major ticks of the default ticks of the default y axes of the board.
+     *
+     * Default Value: 1
+     */
+    snapSizeY?: number;
+    /**
+     * If set to true, the point will snap to a grid defined by Point#snapSizeX and Point#snapSizeY.
+     *
+     * Default Value: false
+     */
+    snapToGrid?: boolean;
+    /**
      * Determines whether the line is drawn beyond the first defining point.
+     *
+     * If true, line stretches infinitely in direction of its first point. Otherwise it ends at point1.
+     *
+     * Default Value: true
      */
     straightFirst?: boolean;
     /**
      * Determines whether the line is drawn beyond the second defining point.
+     *
+     * If true, line stretches infinitely in direction of its second point. Otherwise it ends at point2.
+     *
+     * Default Value: true
      */
     straightLast?: boolean;
+    /**
+     * Attributes for ticks of the line.
+     */
+    ticks?: TicksOptions;
+    /**
+     * If set to true and Line#firstArrow is set to true, the arrow head will just touch the circle line of the start point of the line.
+     *
+     * Default Value: false
+     */
+    touchFirstPoint?: boolean;
+    /**
+     * If set to true and Line#lastArrow is set to true, the arrow head will just touch the circle line of the start point of the line.
+     *
+     * Default Value: false
+     */
+    touchLastPoint?: boolean;
   }
 
   export interface LineOptions extends GeometryElementAttributes {
     /**
      * Determines whether the line has an arrow at the first defining point.
      */
-    firstArrow?: boolean | { type?: number; highlightSize?: number; size?: number };
+    firstArrow?: boolean | { type?: 1 | 2 | 3 | 4 | 5 | 6 | 7; highlightSize?: number; size?: number };
     /**
      *
      */
     fixed?: boolean;
     /**
-     * Determines whether the line has an arrow at the second defining point.
-     */
-    lastArrow?: boolean | { type?: number; highlightSize?: number; size?: number };
-    /**
      *
      */
     label?: LabelOptions;
     /**
-     *
+     * Determines whether the line has an arrow at the second defining point.
      */
-    lineCap?: 'butt';
+    lastArrow?: boolean | { type?: 1 | 2 | 3 | 4 | 5 | 6 | 7; highlightSize?: number; size?: number };
+    /**
+     * Line endings (linecap) of a straight line.
+     *
+     * Not available for VML renderer.
+     *
+     * Default Value: 'butt'
+     */
+    lineCap?: 'butt' | 'round' | 'square';
     /**
      *
      */
@@ -2936,18 +3009,70 @@ declare namespace JXG {
     numberPoints?: number;
   }
 
+  export type TransformationType = 'generic' | 'reflect' | 'rotate' | 'scale' | 'shear' | 'translate'
+
+  /**
+   * A transformation consists of a 3x3 matrix, i.e. it is a projective transformation.
+   */
   export class Transformation extends GeometryElement {
-    constructor(board: Board, type: 'translate' | 'scale' | 'reflect' | 'rotate' | 'shear' | 'generic', params: unknown);
-    apply(p: GeometryElement): unknown[];
+    /**
+     * @param board The board the new circle is drawn on.
+     * @param type Can be 'translate', 'scale', 'reflect', 'rotate', 'shear', 'generic'
+     * @param params The parameters depend on the transformation type.
+     */
+    constructor(board: Board, type: TransformationType, params: unknown);
+    /**
+     * Transform a GeometryElement: First, the transformation matrix is updated, then do the matrix-vector-multiplication.
+     * @param p element which is transformed
+     */
+    private apply(p: GeometryElement): unknown[];
+    /**
+     * Applies a transformation once to a GeometryElement or an array of elements.
+     * If it is a free point, then it can be dragged around later and will overwrite the transformed coordinates.
+     * @param p
+     */
     applyOnce(p: GeometryElement | GeometryElement[]): void;
-    bindTo(element: GeometryElement | Point[]): void;
+    /**
+     * Binds a transformation to a GeometryElement or an array of elements.
+     * In every update of the GeometryElement(s), the transformation is executed.
+     * That means, in order to immediately apply the transformation, a call of board.update() has to follow.
+     * @param p JXG.Object or array of JXG.Object to which the transformation is bound to.
+     */
+    bindTo(p: GeometryElement | Point[]): void;
+    /**
+     * Combine two transformations to one transformation.
+     * This only works if both of transformation matrices consist solely of numbers, and do not contain functions.
+     * Multiplies the transformation with a transformation t from the left. i.e. (this) = (t) join (this)
+     * @param t Transformation which is the left multiplicand
+     * @returns the transformation object.
+     */
     melt(t: Transformation): Transformation;
-    setAttribute(attributes: TransformationAttributes): this;
-    setMatrix(board: Board, type: 'translate' | 'scale' | 'reflect' | 'rotate' | 'shear' | 'generic', params: unknown[], x: unknown, y: unknown, scale_x: unknown, scale_y: unknown): void;
+    /**
+     * Empty method. Unused.
+     * @param term Key-value pairs of the attributes.
+     */
+    setAttribute(term: TransformationAttributes): this;
+    /**
+     * Set the transformation matrix for different types of standard transforms.
+     * @param board
+     * @param type Transformation type, possible values are 'translate', 'scale', 'reflect', 'rotate', 'shear', 'generic'.
+     * @param params Parameters for the various transformation types.
+     * @param x Shift vector (number or function) in case of 'translate'.
+     * @param y Shift vector (number or function) in case of 'translate'.
+     * @param scale_x Scale vector (number or function) in case of 'scale'.
+     * @param scale_y Scale vector (number or function) in case of 'scale'.
+     */
+    setMatrix(board: Board, type: TransformationType, params: unknown[], x: NumberOrFunction, y: NumberOrFunction, scale_x: NumberOrFunction, scale_y: NumberOrFunction): void;
+    /**
+     * Updates the numerical data for the transformation, i.e. the entry of the subobject matrix.
+     */
     update(): this;
   }
+  /**
+   *
+   */
   export interface TransformationAttributes {
-    type: 'generic' | 'rotate' | 'scale' | 'translate';
+    type: TransformationType;
   }
 
   /**
