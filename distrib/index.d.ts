@@ -36,7 +36,7 @@ declare namespace JXG {
     /**
      * @param elements A list of elements with a descriptive name for the element as the key and a reference to the element as the value of every list entry. The name is used to access the element later on.
      */
-    constructor(elements: { [what: string]: GeometryElement | Composition });
+    constructor(elements: { [what: string]: GeometryElement | Composition | GeometryElement[] });
     /**
      * Adds an element to the composition container.
 
@@ -235,6 +235,12 @@ declare namespace JXG {
   export function cloneAndCopy<S extends object, T extends object>(obj: S, obj2: T): S | T;
   export function cmpArrays(a1: unknown[], a2: unknown[]): boolean;
   export function coordsArrayToMatrix(coords: unknown[], split: boolean): unknown[];
+  /**
+   * Generates an attributes object that is filled with default values from the Options object and overwritten by the user specified attributes.
+   * @param attributes user specified attributes
+   * @param options defaults options
+   * @param s variable number of strings, e.g. 'slider', subtype 'point1'.
+   */
   export function copyAttributes<T>(attributes: T, options: JXGSettings, ...s: string[]): T;
   export function createEvalFunction<T>(board: Board, param: T[], n: number): (k: number) => T;
   export function createFunction(term: string | number | Function, board: Board, variableName: string, evalGeonext?: boolean): Function;
@@ -285,6 +291,22 @@ declare namespace JXG {
   export function escapeHTML(str: string): string;
   export function evalSlider(s: unknown): number;
   export function evaluate(val: unknown): unknown;
+  /**
+   * Checks if a given variable is neither undefined nor null. You should not use this together with global variables!
+   * @param v A variable of any type.
+   * @param checkEmptyString If set to true, it is also checked whether v is not equal to ''. Default: false.
+   * @returns True, if v is neither undefined nor null.
+   */
+  export function exists(v: unknown, checkEmptyString?: boolean): boolean;
+  /**
+   * Copy all properties of the extension object to object.
+   * @param obj
+   * @param extension
+   * @param onlyOwn Only consider properties that belong to extension itself, not any inherited properties. Default: false.
+   * @param toLower If true the keys are convert to lower case. This is needed for visProp, see JXG#copyAttributes. Default: false.
+   */
+  export function extend(obj: object, extension: object, onlyOwn?: boolean, toLower?: boolean): void;
+  export function extendConstants(obj: object, constants: object, onlyOwn?: boolean, toUpper?: boolean): void;
   export function filterElements<T>(list: T[], filter: object | Function): T[];
   export function getBoardByContainerId(s: string): Board | null;
   export function getCSSTrasform(cPos: number[], obj: Element): number[];
@@ -330,7 +352,12 @@ declare namespace JXG {
   export function merge<U, V>(obj1: U, obj2: V): U | V;
   export function normalizePointFace(s: string): 'x' | 'o' | '[]' | '+' | '<>' | '^' | 'v' | '<' | '>';
   export function providePoints(board: Board, parents: unknown[], attrClass: string, attrArray: unknown[]): JXG.Point[] | false;
-  export function registerElement(element: string, creator: Function): void;
+  /**
+   * This registers a new construction element to JSXGraph for the construction via the JXG.Board.create interface.
+   * @param element The elements name. This is case-insensitive, existing elements with the same name will be overwritten.
+   * @param creator The factory function that creates the GeometryElement.
+   */
+  export function registerElement(element: string, creator: ((board: Board, parents: unknown[], attributes: Record<string, unknown>) => GeometryElement)): void;
   export function registerReader(reader: Function, ext: unknown[]): void;
   export function removeAllEvents(obj: unknown, type: string, owner: unknown): void;
   export function removeElementFromArray<T>(ar: T[], el: T): T;
@@ -412,16 +439,34 @@ declare namespace JXG {
      */
     name: string;
 
+    /**
+     * Controls if updates are necessary.
+     */
     needsUpdate: boolean;
 
+    /**
+     * Stores all Intersection Objects which in this moment are not real and so hide this element.
+     */
     notExistingParents: unknown;
 
+    /**
+     * Counts the number of objects drawn as part of the trace of the element.
+     */
     numTraces: number;
 
-    parents: unknown;
+    /**
+     * Ids of elements on which this element depends directly are stored here.
+     */
+    parents: string[];
 
+    /**
+     * Quadratic form representation of circles (and conics)
+     */
     quadraticform: unknown[];
 
+    /**
+     * Stores the SVG (or VML) rendering node for the element.
+     */
     rendNode: HTMLElement;
 
     /**
@@ -429,18 +474,41 @@ declare namespace JXG {
      */
     stdform: [C: number, A: number, B: number];
 
+    /**
+     * Subs contains the subelements, created during the create method.
+     */
     subs: unknown;
 
+    /**
+     * Stores variables for symbolic computations.
+     */
     symbolic: unknown;
 
+    /**
+     * Keeps track of all objects drawn as part of the trace of the element.
+     */
     traces: unknown;
 
+    /**
+     * Stores the transformations which are applied during update in an array
+     */
     transformations: unknown[];
 
+    /**
+     * Type of the element.
+     */
     type: number;
 
+    /**
+     * An associative array containing all visual properties.
+     */
     visProp: { [name: string]: unknown };
 
+    /**
+     * An associative array containing visual properties which are calculated from the attribute values (i.e. visProp) and from other constraints.
+     * An example: if an intersection point does not have real coordinates, visPropCalc.visible is set to false.
+     * Additionally, the user can control visibility with the attribute "visible", even by supplying a functions as value.
+     */
     visPropCalc: { [name: string]: unknown };
 
     /**
@@ -3740,6 +3808,13 @@ declare namespace JXG {
     clickLeftArrow(): this;
     clickRightArrow(): this;
     clickUpArrow(): this;
+    /**
+     * Creates a new geometric element of type elementType.
+     * @param elementType Type of the element to be constructed given as a string e.g. 'point' or 'circle'.
+     * @param parents
+     * @param attributes
+     */
+    create<T extends GeometryElement>(elementType: string, parents: unknown[], attributes?: Record<String, unknown>): T;
     /**
      *
      * @param elementType 'angle'
