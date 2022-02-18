@@ -577,13 +577,23 @@ declare namespace JXG {
     hideElement(): void;
 
     /**
+     * Unregister an event handler.
+     * For a list of possible events see documentation of the elements and objects implementing the EventEmitter interface.
+     * @param event
+     * @param handler
+     * @returns Reference to the object.
+     */
+    off(event: string, handler: (e: Event) => void): this;
+
+    /**
      * Register a new event handler.
      * For a list of possible events see documentation of the elements and objects implementing the EventEmitter interface.
      * @param event
      * @param handler
      * @param context The context the handler will be called in, default is the element itself.
+     * @returns Reference to the object.
      */
-    on(event: string, handler: (e: Event) => void, context?: unknown): void;
+    on(event: string, handler: (e: Event) => void, context?: unknown): this;
 
     /**
      * Sets an arbitrary number of attributes.
