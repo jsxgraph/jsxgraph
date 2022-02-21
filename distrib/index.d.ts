@@ -17,18 +17,28 @@
  * JSXGraph in the namespace JXG.
  */
 declare namespace JXG {
+
+  /**
+   * Store a reference to every board in this central list.
+   * This will at some point replace JXG.JSXGraph.boards.
+   */
+  export const boards: unknown;
+
   /**
    *
    */
   export type CoordType = 1 | 2
-  /**
-   * User coordinates relative to the coordinates system defined by the bounding box.
-   */
-  export const COORDS_BY_USER: 0x0001;
+
   /**
    * Screen coordinates in pixel relative to the upper left corner of the div element.
    */
   export const COORDS_BY_SCREEN: 0x0002;
+
+  /**
+   * User coordinates relative to the coordinates system defined by the bounding box.
+   */
+  export const COORDS_BY_USER: 0x0001;
+
   /**
    * A composition is a simple container that manages none or more GeometryElements.
    */
@@ -146,6 +156,11 @@ declare namespace JXG {
      */
     isReal(): boolean;
   }
+
+  /**
+   * Associative array that keeps track of all constructable elements registered via JXG.registerElement.
+   */
+  export const elements: { [elementType: string]: unknown };
 
   /**
    * A JessieCode object provides an interface to the parser and stores all variables and objects used within a JessieCode script.
@@ -357,7 +372,7 @@ declare namespace JXG {
    * @param element The elements name. This is case-insensitive, existing elements with the same name will be overwritten.
    * @param creator The factory function that creates the GeometryElement.
    */
-  export function registerElement(element: string, creator: ((board: Board, parents: unknown[], attributes: Record<string, unknown>) => GeometryElement)): void;
+  export function registerElement(element: string, creator: ((board: Board, parents: unknown[], attributes: Record<string, unknown>) => GeometryElement | Composition | Array<GeometryElement>)): void;
   export function registerReader(reader: Function, ext: unknown[]): void;
   export function removeAllEvents(obj: unknown, type: string, owner: unknown): void;
   export function removeElementFromArray<T>(ar: T[], el: T): T;
@@ -562,13 +577,23 @@ declare namespace JXG {
     hideElement(): void;
 
     /**
+     * Unregister an event handler.
+     * For a list of possible events see documentation of the elements and objects implementing the EventEmitter interface.
+     * @param event
+     * @param handler
+     * @returns Reference to the object.
+     */
+    off(event: string, handler: (e: Event) => void): this;
+
+    /**
      * Register a new event handler.
      * For a list of possible events see documentation of the elements and objects implementing the EventEmitter interface.
      * @param event
      * @param handler
      * @param context The context the handler will be called in, default is the element itself.
+     * @returns Reference to the object.
      */
-    on(event: string, handler: (e: Event) => void, context?: unknown): void;
+    on(event: string, handler: (e: Event) => void, context?: unknown): this;
 
     /**
      * Sets an arbitrary number of attributes.
@@ -3814,7 +3839,7 @@ declare namespace JXG {
      * @param parents
      * @param attributes
      */
-    create<T extends GeometryElement>(elementType: string, parents: unknown[], attributes?: Record<String, unknown>): T;
+    create<T extends GeometryElement | Composition | Array<GeometryElement>>(elementType: string, parents: unknown[], attributes?: Record<String, unknown>): T;
     /**
      *
      * @param elementType 'angle'
