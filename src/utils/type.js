@@ -1283,7 +1283,7 @@ define([
                 return html_sanitize(str, function () { return undefined; }, function (id) { return id; });
             }
 
-            if (str) {
+            if (str && typeof str === 'string') {
                 str = str.replace(/</g, '&lt;').replace(/>/g, '&gt;');
             }
 
