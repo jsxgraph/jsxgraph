@@ -46,7 +46,7 @@ declare namespace JXG {
     /**
      * @param elements A list of elements with a descriptive name for the element as the key and a reference to the element as the value of every list entry. The name is used to access the element later on.
      */
-    constructor(elements: { [what: string]: GeometryElement | Composition | GeometryElement[] });
+    constructor(elements: { [what: string]: GeometryElement | Composition });
     /**
      * Adds an element to the composition container.
 
@@ -3839,7 +3839,7 @@ declare namespace JXG {
      * @param parents
      * @param attributes
      */
-    create<T extends GeometryElement | Composition | Array<GeometryElement>>(elementType: string, parents: unknown[], attributes?: Record<String, unknown>): T;
+    create<T extends GeometryElement | Composition | Array<GeometryElement>>(elementType: string, parents: unknown[], attributes?: Record<string, unknown>): T;
     /**
      *
      * @param elementType 'angle'
