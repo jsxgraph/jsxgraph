@@ -1833,7 +1833,7 @@ define([
                 if (direction < 0) {
                     alpha *= this.intervalCount / stepCount;
                 } else {
-                    alpha *= (stepCount - this.intervalCount);
+                    alpha *= (stepCount - this.intervalCount) / stepCount;
                 }
                 radius = this.slideObject.Radius();
 
