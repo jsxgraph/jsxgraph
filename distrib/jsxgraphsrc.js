@@ -6,7 +6,7 @@
  } else {
  root.returnExports = factory();
  }
-}(this, function () {
+}(typeof self !== 'undefined' ? self : this, function () {
 /**
  * @license almond 0.3.3 Copyright jQuery Foundation and other contributors.
  * Released under MIT license, http://github.com/requirejs/almond/LICENSE
@@ -445,7 +445,7 @@ var requirejs, require, define;
 define("../node_modules/almond/almond", function(){});
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -577,9 +577,9 @@ define('jxg',[], function () {
         onlyOwn = onlyOwn || false;
         toUpper = toUpper || false;
 
-        // the purpose of this for...in loop is indeed to use hasOwnProperty only if the caller explicitly wishes so.
+        // The purpose of this for...in loop is indeed to use hasOwnProperty only if the caller explicitly wishes so.
         for (e in constants) {
-            if (!onlyOwn || (onlyOwn && extension.hasOwnProperty(e))) {
+            if (!onlyOwn || (onlyOwn && constants.hasOwnProperty(e))) {
                 if (toUpper) {
                     e2 = e.toUpperCase();
                 } else {
@@ -799,7 +799,7 @@ define('jxg',[], function () {
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -842,8 +842,8 @@ define('base/constants',['jxg'], function (JXG) {
 
     var major = 1,
         minor = 4,
-        patch = 0,
-        add = '', //'dev'
+        patch = 3,
+        add = 'dev', //'dev'
         version = major + '.' + minor + '.' + patch + (add ? '-' + add : ''),
         constants;
 
@@ -911,6 +911,7 @@ define('base/constants',['jxg'], function (JXG) {
         OBJECT_TYPE_BUTTON: 29,
         OBJECT_TYPE_TRANSFORMATION: 30,
         OBJECT_TYPE_FOREIGNOBJECT: 31,
+        OBJECT_TYPE_VIEW3D: 32,
 
         // IMPORTANT:
         // ----------
@@ -932,16 +933,16 @@ define('base/constants',['jxg'], function (JXG) {
         GENTYPE_AXIS: 2,
         GENTYPE_MID: 3,
 
-        /** 
+        /**
          * @ignore
-         * @deprecated, now use {@link JXG.GENTYPE_REFLECTION_ON_LINE} 
-         * 
-         */  
+         * @deprecated, now use {@link JXG.GENTYPE_REFLECTION_ON_LINE}
+         *
+         */
         GENTYPE_REFLECTION: 4,
-        /** 
-         * @ignore 
-         * @deprecated, now use {@link JXG.GENTYPE_REFLECTION_ON_POINT} 
-         */ 
+        /**
+         * @ignore
+         * @deprecated, now use {@link JXG.GENTYPE_REFLECTION_ON_POINT}
+         */
         GENTYPE_MIRRORELEMENT: 5,
 
         GENTYPE_REFLECTION_ON_LINE: 4,
@@ -956,9 +957,9 @@ define('base/constants',['jxg'], function (JXG) {
         GENTYPE_GLIDER: 13,
         GENTYPE_INTERSECTION: 14,
         GENTYPE_CIRCLE: 15,
-        /** 
-         * @ignore @deprecated NOT USED ANY MORE SINCE SKETCHOMETRY 2.0 (only for old constructions needed) 
-         */ 
+        /**
+         * @ignore @deprecated NOT USED ANY MORE SINCE SKETCHOMETRY 2.0 (only for old constructions needed)
+         */
         GENTYPE_CIRCLE2POINTS: 16,
 
         GENTYPE_LINE: 17,
@@ -997,7 +998,7 @@ define('base/constants',['jxg'], function (JXG) {
         * @name Constants
         * @namespace
         */
-   
+
         //        GENTYPE_TRANSFORM: 48, // unused
         // 49 ... 50 // unused ...
 
@@ -1047,7 +1048,7 @@ define('base/constants',['jxg'], function (JXG) {
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -1245,9 +1246,11 @@ define('utils/type',[
          * @returns {Boolean} True, if v is neither undefined nor null.
          */
         exists: function (v, checkEmptyString) {
+            /* eslint-disable eqeqeq */
             var result = !(v == undefined || v === null);
+            /* eslint-enable eqeqeq */
             checkEmptyString = checkEmptyString || false;
-            
+
             if (checkEmptyString) {
                 return result && v !== '';
             }
@@ -1258,7 +1261,7 @@ define('utils/type',[
         //         var result = !(v === undef || v === null);
 
         //         checkEmptyString = checkEmptyString || false;
-                
+
         //         if (checkEmptyString) {
         //             return result && v !== '';
         //         }
@@ -1760,12 +1763,12 @@ define('utils/type',[
          * is returned by JavaScript's toFixed()
          *
          * @memberOf JXG
-         * @param  {Number} num       Number tp be rounded
-         * @param  {Number} precision Decimal digits
-         * @return {String}           Rounded number is returned as string
+         * @param  {Number} num    Number tp be rounded
+         * @param  {Number} digits Decimal digits
+         * @return {String}        Rounded number is returned as string
          */
-        toFixed: function (num, precision) {
-            return this._round10(num, -precision).toFixed(precision);
+        toFixed: function (num, digits) {
+            return this._round10(num, -digits).toFixed(digits);
         },
 
         /**
@@ -2354,7 +2357,7 @@ define('utils/type',[
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -2608,7 +2611,7 @@ define('utils/env',['jxg', 'utils/type'], function (JXG, Type) {
          * @returns {Boolean}
          */
         isWebkitApple: function () {
-            return this.isApple() && (navigator.userAgent.search(/Mobile\/[0-9A-Za-z\.]*Safari/) > -1);
+            return this.isApple() && (navigator.userAgent.search(/Mobile\/[0-9A-Za-z.]*Safari/) > -1);
         },
 
         /**
@@ -3157,8 +3160,8 @@ define('utils/env',['jxg', 'utils/type'], function (JXG, Type) {
          * @see JXG.Board#fullscreenListener
          * @private
          */
-        _getScaleFactors: function(node) {
-            var width  = node.getBoundingClientRect().width,
+        _getScaleFactors: function (node) {
+            var width = node.getBoundingClientRect().width,
                 height = node.getBoundingClientRect().height,
 
                 // Determine the maximum scale factor.
@@ -3182,7 +3185,7 @@ define('utils/env',['jxg', 'utils/type'], function (JXG, Type) {
             }
             scale *= 0.85;
 
-            return {scale: scale, vshift: vshift};
+            return { scale: scale, vshift: vshift, width: width };
         },
 
         /**
@@ -3197,14 +3200,14 @@ define('utils/env',['jxg', 'utils/type'], function (JXG, Type) {
          * @param  {Number} vshift   Vertical shift (in pixel)
          *
          * @private
-         * @see JXG#toFullscreen
+         * @see JXG.Board#toFullscreen
          * @see JXG.Board#fullscreenListener
          *
          */
         scaleJSXGraphDiv: function (wrap_id, inner_id, scale, vshift) {
             var len = document.styleSheets.length, style,
 
-                pseudo_keys = [':fullscreen', ':-webkit-full-screen', ':-moz-full-screen',':-ms-fullscreen'],
+                pseudo_keys = [':fullscreen', ':-webkit-full-screen', ':-moz-full-screen', ':-ms-fullscreen'],
                 len_pseudo = pseudo_keys.length, i,
 
                 // CSS rules to center the inner div horizontally and vertically.
@@ -3215,7 +3218,7 @@ define('utils/env',['jxg', 'utils/type'], function (JXG, Type) {
                 regex = new RegExp('.*#' + wrap_id + ':.*full.*screen.*#' + inner_id + '.*auto;.*transform:.*matrix');
 
             if (len === 0) {
-                // In case there is not a single CSS rule defined.
+                // In case there is not a single CSS rule defined at all.
                 style = document.createElement('style');
                 // WebKit hack :(
                 style.appendChild(document.createTextNode(''));
@@ -3238,54 +3241,13 @@ define('utils/env',['jxg', 'utils/type'], function (JXG, Type) {
                     document.styleSheets[len - 1].insertRule('#' + wrap_id + pseudo_keys[i] + ' #' + inner_id + rule_inner, 0);
                     break;
                 } catch (err) {
-                    console.log('JXG.scaleJSXGraphDiv: Could not add CSS rule "' + pseudo_keys[i] + '".');
-                    console.log('One possible reason could be that the id of the JSXGraph container does not start with a letter.');
+                    // console.log('JXG.scaleJSXGraphDiv: Could not add CSS rule "' + pseudo_keys[i] + '".');
+                    // console.log('One possible reason could be that the id of the JSXGraph container does not start with a letter.');
                 }
             }
-        },
-
-        /**
-         * Set the DOM element with id='wrap_id' containing the JSXGraph div
-         * element in fullscreen mode.
-         * The JSXGraph element is scaled as large as possible while
-         * retaining its proportions.
-         *
-         * @param  {String} wrap_id     id of DOM element containing the JSXGraph
-         * div element.
-         *
-         * @example
-         *
-         * &lt;div id="outer" class="JXG_wrap_private"&gt;
-         *      &lt;div id='jxgbox' class='jxgbox' style='width:300px; height:300px;'&gt;&lt;/div&gt;
-         * &lt;/div&gt;
-         * &lt;button onClick="JXG.toFullscreen('outer')"&gt;Fullscreen&lt;/button&gt;
-         * &lt;script&gt;
-         *     var board = JXG.JSXGraph.initBoard('jxgbox', {axis:true, boundingbox:[-8, 8, 8,-8]});
-         *     var p = board.create('point', [0, 1]);
-         * &lt;/script&gt;
-         *
-         * </pre><div id="JXGf9b973ea4_outer" class="JXG_wrap_private"><div id="JXGd9b973ea4-fd43-11e8-ab14-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div></div>
-         * <button onClick="JXG.toFullscreen('JXGf9b973ea4_outer')">Fullscreen</button>
-         * <script type="text/javascript">
-         *     (function() {
-         *         var board = JXG.JSXGraph.initBoard('JXGd9b973ea4-fd43-11e8-ab14-901b0e1b8723',
-         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
-         *         var p = board.create('point', [0, 1]);
-         *     })();
-         * </script><pre>
-         *
-         */
-        toFullscreen: function (wrap_id) {
-            var node = document.getElementById(wrap_id);
-
-            // Trigger the fullscreen mode
-            node.requestFullscreen = node.requestFullscreen ||
-                node.webkitRequestFullscreen ||
-                node.mozRequestFullScreen ||
-                node.msRequestFullscreen;
-
-            if (node.requestFullscreen) {
-                node.requestFullscreen();
+            if (i === len_pseudo) {
+                console.log('JXG.scaleJSXGraphDiv: Could not add any CSS rule.');
+                console.log('One possible reason could be that the id of the JSXGraph container does not start with a letter.');
             }
         }
     });
@@ -3294,7 +3256,7 @@ define('utils/env',['jxg', 'utils/type'], function (JXG, Type) {
 });
 
 /*
- Copyright 2008-2021
+ Copyright 2008-2022
  Matthias Ehmann,
  Michael Gerhaeuser,
  Carsten Miller,
@@ -3398,7 +3360,7 @@ define('utils/xml',['jxg', 'utils/type'], function (JXG, Type) {
     return JXG.XML;
 });
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -3570,7 +3532,7 @@ define('utils/event',['jxg', 'utils/type'], function (JXG, Type) {
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -4660,7 +4622,7 @@ define('math/math',['jxg', 'utils/type'], function (JXG, Type) {
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -4895,11 +4857,11 @@ define('base/coords',[
         },
 
         /**
-        * Copy array, either srcCoords or usrCoords
+        * Copy array, either scrCoords or usrCoords
         * Uses slice() in case of standard arrays and set() in case of
         * typed arrays.
         * @private
-        * @param {String} obj Either 'srcCoords' or 'usrCoords'
+        * @param {String} obj Either 'scrCoords' or 'usrCoords'
         * @param {Number} offset Offset, defaults to 0 if not given
         * @returns {Array} Returns copy of the coords array either as standard array or as
         *   typed array.
@@ -4939,7 +4901,7 @@ define('base/coords',[
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -5071,7 +5033,7 @@ define('utils/expect',[
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Carsten Miller,
         Andreas Walter,
@@ -5102,6 +5064,7 @@ define('utils/expect',[
 
 /*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
+/*eslint no-loss-of-precision: off */
 
 /* depends:
  jxg
@@ -5754,7 +5717,7 @@ define('math/probfuncs',['math/math', 'utils/type'], function (Mat, Type) {
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -6054,9 +6017,9 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
         /**
          * Addition
-         * 
-         * @param {JXG.Math.Interval|Number} x 
-         * @param {JXG.Math.Interval|Number} y 
+         *
+         * @param {JXG.Math.Interval|Number} x
+         * @param {JXG.Math.Interval|Number} y
          * @returns JXG.Math.Interval
          */
         add: function(x, y) {
@@ -6071,9 +6034,9 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
         /**
          * Subtraction
-         * 
-         * @param {JXG.Math.Interval|Number} x 
-         * @param {JXG.Math.Interval|Number} y 
+         *
+         * @param {JXG.Math.Interval|Number} x
+         * @param {JXG.Math.Interval|Number} y
          * @returns JXG.Math.Interval
          */
          sub: function(x, y) {
@@ -6088,9 +6051,9 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
         /**
          * Multiplication
-         * 
-         * @param {JXG.Math.Interval|Number} x 
-         * @param {JXG.Math.Interval|Number} y 
+         *
+         * @param {JXG.Math.Interval|Number} x
+         * @param {JXG.Math.Interval|Number} y
          * @returns JXG.Math.Interval
          */
          mul: function(x, y) {
@@ -6192,9 +6155,9 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
         /**
          * Division
-         * 
-         * @param {JXG.Math.Interval|Number} x 
-         * @param {JXG.Math.Interval|Number} y 
+         *
+         * @param {JXG.Math.Interval|Number} x
+         * @param {JXG.Math.Interval|Number} y
          * @returns JXG.Math.Interval
          */
          div: function(x, y) {
@@ -6225,8 +6188,8 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
         /**
          * Return +x (i.e. identity)
-         * 
-         * @param {JXG.Math.Interval} x 
+         *
+         * @param {JXG.Math.Interval} x
          * @returns JXG.Math.Interval
          */
          positive: function(x) {
@@ -6235,8 +6198,8 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
         /**
          * Return -x
-         * 
-         * @param {JXG.Math.Interval} x 
+         *
+         * @param {JXG.Math.Interval} x
          * @returns JXG.Math.Interval
          */
          negative: function(x) {
@@ -6252,37 +6215,37 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
         /**
          * Test if interval is empty set.
-         * @param {JXG.Math.Interval} i 
+         * @param {JXG.Math.Interval} i
          * @returns Boolean
-         */        
+         */
         isEmpty: function(i) {
             return i.lo > i.hi;
         },
 
         /**
          * Test if interval is (-Infinity, Infinity).
-         * @param {JXG.Math.Interval} i 
+         * @param {JXG.Math.Interval} i
          * @returns Boolean
-         */        
+         */
         isWhole: function(i){
             return i.lo === -Infinity && i.hi === Infinity;
         },
 
         /**
          * Test if interval contains 0.
-         * @param {JXG.Math.Interval} i 
+         * @param {JXG.Math.Interval} i
          * @returns Boolean
-         */        
+         */
          zeroIn: function(i) {
             return this.hasValue(i, 0);
         },
 
         /**
          * Test if interval contains a specific value.
-         * @param {JXG.Math.Interval} i 
+         * @param {JXG.Math.Interval} i
          * @param {Number} value
          * @returns Boolean
-         */        
+         */
          hasValue: function(i, value) {
             if (this.isEmpty(i)) {
                 return false;
@@ -6295,7 +6258,7 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
          * @param {JXG.Math.Interval} x
          * @param {JXG.Math.Interval} y
          * @returns Boolean
-         */        
+         */
          hasInterval: function(x, y) {
             if (this.isEmpty(x)) {
                 return true;
@@ -6308,7 +6271,7 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
          * @param {JXG.Math.Interval} x
          * @param {JXG.Math.Interval} y
          * @returns Boolean
-         */        
+         */
          intervalsOverlap: function(x, y) {
             if (this.isEmpty(x) || this.isEmpty(y)) {
                 return false;
@@ -6321,8 +6284,8 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
          */
         /**
          * @private
-         * @param {JXG.Math.Interval} x 
-         * @param {JXG.Math.Interval} y 
+         * @param {JXG.Math.Interval} x
+         * @param {JXG.Math.Interval} y
          * @returns JXG.Math.Interval
          */
         divNonZero: function(x, y) {
@@ -6362,8 +6325,8 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
         /**
          * @private
-         * @param {JXG.Math.Interval} x 
-         * @param {JXG.Math.Interval} y 
+         * @param {JXG.Math.Interval} x
+         * @param {JXG.Math.Interval} y
          * @returns JXG.Math.Interval
          */
          divPositive: function(x, v) {
@@ -6386,8 +6349,8 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
         /**
          * @private
-         * @param {JXG.Math.Interval} x 
-         * @param {JXG.Math.Interval} y 
+         * @param {JXG.Math.Interval} x
+         * @param {JXG.Math.Interval} y
          * @returns JXG.Math.Interval
          */
          divNegative: function(x, v) {
@@ -6410,7 +6373,7 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
         /**
          * @private
-         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} x
          * @returns JXG.Math.Interval
          */
          divZero: function(x) {
@@ -6425,8 +6388,8 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
          */
         /**
          * x mod y:  x - n * y
-         * @param {JXG.Math.Interval|Number} x 
-         * @param {JXG.Math.Interval|Number} y 
+         * @param {JXG.Math.Interval|Number} x
+         * @param {JXG.Math.Interval|Number} y
          * @returns JXG.Math.Interval
          */
         fmod: function(x, y) {
@@ -6453,7 +6416,7 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
         /**
          * 1 / x
-         * @param {JXG.Math.Interval|Number} x 
+         * @param {JXG.Math.Interval|Number} x
          * @returns JXG.Math.Interval
          */
         multiplicativeInverse: function(x) {
@@ -6485,7 +6448,7 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
         /**
          * x<sup>power</sup>
-         * @param {JXG.Math.Interval|Number} x 
+         * @param {JXG.Math.Interval|Number} x
          * @param {JXG.Math.Interval|Number} power
          * @returns JXG.Math.Interval
          */
@@ -6552,7 +6515,7 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
         /**
          * sqrt(x)
-         * @param {JXG.Math.Interval|Number} x 
+         * @param {JXG.Math.Interval|Number} x
          * @returns JXG.Math.Interval
          */
          sqrt: function(x) {
@@ -6564,7 +6527,7 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
         /**
          * x<sup>1/n</sup>
-         * @param {JXG.Math.Interval|Number} x 
+         * @param {JXG.Math.Interval|Number} x
          * @param {Number} n
          * @returns JXG.Math.Interval
          */
@@ -6620,8 +6583,8 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
          * Misc
          */
         /**
-         * 
-         * @param {JXG.Math.Interval|Number} x 
+         *
+         * @param {JXG.Math.Interval|Number} x
          * @returns JXG.Math.Interval
          */
         exp: function(x) {
@@ -6636,7 +6599,7 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
         /**
          * Natural log
-         * @param {JXG.Math.Interval|Number} x 
+         * @param {JXG.Math.Interval|Number} x
          * @returns JXG.Math.Interval
          */
         log: function(x) {
@@ -6653,7 +6616,7 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
         /**
          * Natural log, alias for {@link JXG.Math.IntervalArithmetic#log}.
-         * @param {JXG.Math.Interval|Number} x 
+         * @param {JXG.Math.Interval|Number} x
          * @returns JXG.Math.Interval
          */
         ln: function(x) {
@@ -6664,7 +6627,7 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         // export const LOG_EXP_2 = log(new MatInterval(2, 2))
         /**
          * Logarithm to base 10.
-         * @param {JXG.Math.Interval|Number} x 
+         * @param {JXG.Math.Interval|Number} x
          * @returns JXG.Math.Interval
          */
         log10: function(x) {
@@ -6676,7 +6639,7 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
         /**
          * Logarithm to base 2.
-         * @param {JXG.Math.Interval|Number} x 
+         * @param {JXG.Math.Interval|Number} x
          * @returns JXG.Math.Interval
          */
         log2: function(x) {
@@ -6688,7 +6651,7 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
         /**
          * Hull of intervals x and y
-         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} x
          * @param {JXG.Math.Interval} y
          * @returns JXG.Math.Interval
          */
@@ -6709,7 +6672,7 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
         /**
          * Intersection of intervals x and y
-         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} x
          * @param {JXG.Math.Interval} y
          * @returns JXG.Math.Interval
          */
@@ -6728,7 +6691,7 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
         /**
          * Union of overlapping intervals x and y
-         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} x
          * @param {JXG.Math.Interval} y
          * @returns JXG.Math.Interval
          */
@@ -6741,7 +6704,7 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
         /**
          * Difference of overlapping intervals x and y
-         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} x
          * @param {JXG.Math.Interval} y
          * @returns JXG.Math.Interval
          */
@@ -6777,7 +6740,7 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         },
 
         /**
-         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} x
          * @returns JXG.Math.Interval
          */
         width: function(x) {
@@ -6788,7 +6751,7 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         },
 
         /**
-         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} x
          * @returns JXG.Math.Interval
          */
         abs: function(x) {
@@ -6808,7 +6771,7 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         },
 
         /**
-         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} x
          * @param {JXG.Math.Interval} y
          * @returns JXG.Math.Interval
          */
@@ -6828,7 +6791,7 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         },
 
         /**
-         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} x
          * @param {JXG.Math.Interval} y
          * @returns JXG.Math.Interval
          */
@@ -6870,7 +6833,7 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         },
 
         /**
-         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} x
          * @returns JXG.Math.Interval
          */
         cos: function(x) {
@@ -6918,7 +6881,7 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         },
 
         /**
-         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} x
          * @returns JXG.Math.Interval
          */
         sin: function(x) {
@@ -6929,7 +6892,7 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         },
 
         /**
-         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} x
          * @returns JXG.Math.Interval
          */
         tan: function(x) {
@@ -6954,7 +6917,7 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         },
 
         /**
-         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} x
          * @returns JXG.Math.Interval
          */
         asin: function(x) {
@@ -6968,7 +6931,7 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         },
 
         /**
-         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} x
          * @returns JXG.Math.Interval
          */
         acos: function(x) {
@@ -6982,7 +6945,7 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         },
 
         /**
-         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} x
          * @returns JXG.Math.Interval
          */
         atan: function(x) {
@@ -6993,7 +6956,7 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         },
 
         /**
-         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} x
          * @returns JXG.Math.Interval
          */
         sinh: function(x) {
@@ -7004,7 +6967,7 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         },
 
         /**
-         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} x
          * @returns JXG.Math.Interval
          */
         cosh: function(x) {
@@ -7021,7 +6984,7 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         },
 
         /**
-         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} x
          * @returns JXG.Math.Interval
          */
         tanh: function(x) {
@@ -7036,7 +6999,7 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
          */
 
         /**
-         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} x
          * @param {JXG.Math.Interval} y
          * @returns Boolean
          */
@@ -7055,7 +7018,7 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         // },
 
         /**
-         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} x
          * @param {JXG.Math.Interval} y
          * @returns Boolean
          */
@@ -7067,7 +7030,7 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         },
 
         /**
-         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} x
          * @param {JXG.Math.Interval} y
          * @returns Boolean
          */
@@ -7085,7 +7048,7 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         },
 
         /**
-         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} x
          * @param {JXG.Math.Interval} y
          * @returns Boolean
          */
@@ -7103,7 +7066,7 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         },
 
         /**
-         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} x
          * @param {JXG.Math.Interval} y
          * @returns Boolean
          */
@@ -7121,7 +7084,7 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         },
 
         /**
-         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} x
          * @param {JXG.Math.Interval} y
          * @returns Boolean
          */
@@ -7335,7 +7298,7 @@ define('math/ia',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -7757,7 +7720,7 @@ define('math/extrapolate',['math/math'], function (Mat) {
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -7768,20 +7731,20 @@ define('math/extrapolate',['math/math'], function (Mat) {
     This file is part of JSXGraph.
 
     JSXGraph is free software dual licensed under the GNU LGPL or MIT License.
-    
+
     You can redistribute it and/or modify it under the terms of the
-    
+
       * GNU Lesser General Public License as published by
         the Free Software Foundation, either version 3 of the License, or
         (at your option) any later version
       OR
       * MIT License: https://github.com/jsxgraph/jsxgraph/blob/master/LICENSE.MIT
-    
+
     JSXGraph is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Lesser General Public License for more details.
-    
+
     You should have received a copy of the GNU Lesser General Public License and
     the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
     and <http://opensource.org/licenses/MIT/>.
@@ -7802,7 +7765,7 @@ define('math/qdt',['math/math', 'utils/type'], function (Mat, Type) {
 
     /**
      * Instantiate a new quad tree.
-     * 
+     *
      * @name JXG.Math.Quadtree
      * @exports Mat.Quadtree as JXG.Math.Quadtree
      * @param {Array} bbox Bounding box of the new quad (sub)tree.
@@ -7848,7 +7811,7 @@ define('math/qdt',['math/math', 'utils/type'], function (Mat, Type) {
          * @type JXG.Math.Quadtree
          */
         this.southEast = null;
-        
+
         /**
          * In a subdivided quad tree this represents the bottom left subtree.
          * @name JXG.Math.Quadtree#southWest
@@ -7913,10 +7876,10 @@ define('math/qdt',['math/math', 'utils/type'], function (Mat, Type) {
                 mx = this.xlb + (this.xub - this.xlb) / 2,
                 my = this.ylb + (this.yub - this.ylb) / 2;
 
-            this.northWest = new Quadtree([this.xlb, this.yub, mx, my]);
-            this.northEast = new Quadtree([mx, this.yub, this.xub, my]);
-            this.southEast = new Quadtree([this.xlb, my, mx, this.ylb]);
-            this.southWest = new Quadtree([mx, my, this.xub, this.ylb]);
+            this.northWest = new Mat.Quadtree([this.xlb, this.yub, mx, my]);
+            this.northEast = new Mat.Quadtree([mx, this.yub, this.xub, my]);
+            this.southEast = new Mat.Quadtree([this.xlb, my, mx, this.ylb]);
+            this.southWest = new Mat.Quadtree([mx, my, this.xub, this.ylb]);
 
             for (i = 0; i < l; i += 1) {
                 this.northWest.insert(this.points[i]);
@@ -7997,7 +7960,7 @@ define('math/qdt',['math/math', 'utils/type'], function (Mat, Type) {
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -8029,6 +7992,7 @@ define('math/qdt',['math/math', 'utils/type'], function (Mat, Type) {
 
 /*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
+/*eslint no-loss-of-precision: off */
 
 /* depends:
  utils/type
@@ -11751,7 +11715,7 @@ define('math/numerics',['jxg', 'utils/type', 'utils/env', 'math/math'], function
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Carsten Miller,
         Reinhard Oldenburg,
@@ -11897,7 +11861,7 @@ define('math/nlp',['jxg'], function (JXG) {
          * @returns {Number} Exit status of the COBYLA2 optimization.
          */
         FindMinimum: function(calcfc, n,  m, x, rhobeg, rhoend,  iprint,  maxfun) {
-    	    // CobylaExitStatus FindMinimum(final Calcfc calcfc, int n, int m, double[] x, double rhobeg, double rhoend, int iprint, int maxfun)
+            // CobylaExitStatus FindMinimum(final Calcfc calcfc, int n, int m, double[] x, double rhobeg, double rhoend, int iprint, int maxfun)
             //     This subroutine minimizes an objective function F(X) subject to M
             //     inequality constraints on X, where X is a vector of variables that has
             //     N components.  The algorithm employs linear approximations to the
@@ -11993,7 +11957,7 @@ define('math/nlp',['jxg'], function (JXG) {
          * @returns {Number} Exit status of the COBYLA2 optimization
          */
         cobylb: function (calcfc, n,  m,  mpp,  x, rhobeg,  rhoend,  iprint,  maxfun) {
-    		// calcf ist funktion die aufgerufen wird wie calcfc(n, m, ix, ocon)
+            // calcf ist funktion die aufgerufen wird wie calcfc(n, m, ix, ocon)
             // N.B. Arguments CON, SIM, SIMI, DATMAT, A, VSIG, VETA, SIGBAR, DX, W & IACT
             //      have been removed.
 
@@ -12066,7 +12030,7 @@ define('math/nlp',['jxg'], function (JXG) {
             //     Make the next call of the user-supplied subroutine CALCFC. These
             //     instructions are also used for calling CALCFC during the iterations of
             //     the algorithm.
-		    //alert("Iteration "+nfvals+" x="+x);
+            //alert("Iteration "+nfvals+" x="+x);
             L_40:
             do {
                 if (nfvals >= maxfun && nfvals > 0) {
@@ -13042,7 +13006,7 @@ define('math/nlp',['jxg'], function (JXG) {
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -13174,10 +13138,10 @@ define('math/statistics',['jxg', 'math/math', 'utils/type'], function (JXG, Mat,
         },
 
         /**
-         * The P-th percentile ( 0 < P ≤ 100 ) of a list of N ordered values (sorted from least to greatest) 
-         * is the smallest value in the list such that no more than P percent of the data is strictly less 
+         * The P-th percentile ( 0 < P ≤ 100 ) of a list of N ordered values (sorted from least to greatest)
+         * is the smallest value in the list such that no more than P percent of the data is strictly less
          * than the value and at least P percent of the data is less than or equal to that value. See {@link https://en.wikipedia.org/wiki/Percentile}.
-         * 
+         *
          * Here, the <i>linear interpolation between closest ranks</i> method is used.
          * @param {Array} arr The set of values, need not be ordered.
          * @param {Number|Array} percentile One or several percentiles
@@ -13328,7 +13292,7 @@ define('math/statistics',['jxg', 'math/math', 'utils/type'], function (JXG, Mat,
                 } else {
                     len = arr.length;
                     res = [];
-    
+
                     for (i = 0; i < len; i++) {
                         res[i] = Math.abs(arr[i]);
                     }
@@ -13583,7 +13547,7 @@ define('math/statistics',['jxg', 'math/math', 'utils/type'], function (JXG, Mat,
          *     () => JXG.Math.Statistics.TheilSenRegression(a.map(el => el.coords))
          *   ],
          *   {strokeWidth:1, strokeColor:'black'});
-         * 
+         *
          * </pre><div id="JXG0a28be85-91c5-44d3-aae6-114e81217cf0" class="jxgbox" style="width: 300px; height: 300px;"></div>
          * <script type="text/javascript">
          *     (function() {
@@ -13594,16 +13558,16 @@ define('math/statistics',['jxg', 'math/math', 'utils/type'], function (JXG, Mat,
          *     a[0]=board.create('point', [0,0]);
          *     a[1]=board.create('point', [3,0]);
          *     a[2]=board.create('point', [0,3]);
-         *     
+         *
          *     board.create('line', [
          *         () => JXG.Math.Statistics.TheilSenRegression(a.map(el => el.coords))
          *       ],
          *       {strokeWidth:1, strokeColor:'black'});
-         * 
+         *
          *     })();
-         * 
+         *
          * </script><pre>
-         * 
+         *
          */
         TheilSenRegression: function (coords) {
             var i, j,
@@ -13662,7 +13626,7 @@ define('math/statistics',['jxg', 'math/math', 'utils/type'], function (JXG, Mat,
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -14747,7 +14711,7 @@ define('math/geometry',[
                 };
 
             } else if ((
-                        el1.elementClass === Const.OBJECT_CLASS_CURVE && 
+                        el1.elementClass === Const.OBJECT_CLASS_CURVE &&
                         !el1_isArcType &&
                         el2.elementClass === Const.OBJECT_CLASS_LINE
                        ) ||
@@ -15392,7 +15356,7 @@ define('math/geometry',[
          * @param {Array} q1 First point of segment 2 using normalized homogeneous coordinates [1,x,y]
          * @param {Array} q2 Second point or direction of segment 2 using normalized homogeneous coordinates [1,x,y] or point at infinity [0,x,y], respectively
          * @returns {Array} [Intersection point, t, u] The first entry contains the homogeneous coordinates
-         * of the intersection point. The second and third entry give the position of the intersection with respect 
+         * of the intersection point. The second and third entry give the position of the intersection with respect
          * to the definiting parameters. For example, the second entry t is defined by: intersection point = p1 + t * deltaP, where
          * deltaP = (p2 - p1) when both parameters are coordinates, and deltaP = p2 if p2 is a point at infinity.
          * If the two segments are collinear, [[0,0,0], Infinity, Infinity] is returned.
@@ -15412,8 +15376,8 @@ define('math/geometry',[
             c[2] /= c[0];
             c[0] /= c[0];
 
-            // Now compute in principle: 
-            //    t = dist(c - p1) / dist(p2 - p1) and 
+            // Now compute in principle:
+            //    t = dist(c - p1) / dist(p2 - p1) and
             //    u = dist(c - q1) / dist(q2 - q1)
             // However: the points q1, q2, p1, p2 might be ideal points - or in general - the
             // coordinates might be not normalized.
@@ -16377,7 +16341,7 @@ define('math/geometry',[
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -16835,7 +16799,7 @@ define('math/plot',['jxg', 'base/constants', 'base/coords', 'math/math', 'math/e
                 vy = curve.Y(t_real, true) ;
                 vy2 = curve.Y(t_real2, true) ;
                 dy = (vy - vy2) / (t_real - t_real2);
-               
+
                 if (p_good !== null) {
                     this._insertPoint_v2(curve, new Coords(Const.COORDS_BY_USER, p_good, curve.board, false));
                     return true;
@@ -17394,7 +17358,7 @@ define('math/plot',['jxg', 'base/constants', 'base/coords', 'math/math', 'math/e
         },
 
         /**
-         * 
+         *
          * @param {JXG.Curve} curve JSXGraph curve element
          * @param {Number} ta
          * @param {Number} tb
@@ -18337,7 +18301,7 @@ console.log("Polynomial of degree", level);
                 dx, dy;
 
             //console.log("Level", level)
-            if (level == 0) {
+            if (level === 0) {
                 this._insertPoint_v4(curve, [1, NaN, NaN], t);
                 return;
             }
@@ -18676,7 +18640,7 @@ console.log("Polynomial of degree", level);
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -19349,7 +19313,7 @@ define('math/metapost',['utils/type', 'math/math'], function (Type, Mat) {
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -20452,7 +20416,7 @@ define('utils/encoding',['jxg'], function (JXG) {
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -20587,7 +20551,7 @@ define('utils/base64',['jxg', 'utils/encoding'], function (JXG, Encoding) {
 
             // deactivate regexp linting. Our regex is secure, because we replace everything with ''
             /*jslint regexp:true*/
-            encInput = input.replace(/[^A-Za-z0-9\+\/=]/g, '');
+            encInput = input.replace(/[^A-Za-z0-9+/=]/g, '');
             /*jslint regexp:false*/
 
             len = encInput.length;
@@ -20663,7 +20627,7 @@ define('utils/base64',['jxg', 'utils/encoding'], function (JXG, Encoding) {
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -20905,7 +20869,7 @@ define('server/server',[
     return JXG.Server;
 });
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -21287,7 +21251,7 @@ define('math/symbolic',[
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -21548,8 +21512,6 @@ define('math/clip',[
                 pathname: pathname,
                 done: false,
                 type: type,
-                revtype: type,
-                link: null,
                 idx: 0
             };
 
@@ -21595,10 +21557,11 @@ define('math/clip',[
                 P_crossings[i].sort(function(a, b) { return (a.data.alpha > b.data.alpha) ? 1 : -1; });
 
                 if (P_crossings[i].length > 0) {
-            // console.log("Crossings", P_crossings[i])
+                    // console.log("Crossings", P_crossings[i])
                     last = P_crossings[i].length - 1;
                     P = P_crossings[i][0];
-//console.log("SORT", P.coords.usrCoords)
+
+                    //console.log("SORT", P.coords.usrCoords)
                     Q =  P.data.path[P.pos];
                     next_node = Q._next;  // Store the next "normal" node
 
@@ -21607,7 +21570,7 @@ define('math/clip',[
                     }
 
                     if (P.data.alpha === 0.0 && P.data.type === 'T') {
-//            console.log("SKIP", P.coords.usrCoords, P.data.type, P.neighbour.data.type);
+                        // console.log("SKIP", P.coords.usrCoords, P.data.type, P.neighbour.data.type);
                         Q.intersection = true;
                         Q.data = P.data;
                         Q.neighbour = P.neighbour;
@@ -21634,7 +21597,7 @@ define('math/clip',[
 
                     if (i === P_le - 1) {
                         P._end = true;
-            //console.log("END", P._end, P.coords.usrCoords, P._prev.coords.usrCoords, P._next.coords.usrCoords);
+                        //console.log("END", P._end, P.coords.usrCoords, P._prev.coords.usrCoords, P._next.coords.usrCoords);
                     }
 
                     P_intersect = P_intersect.concat(P_crossings[i]);
@@ -21675,7 +21638,7 @@ define('math/clip',[
                     if (arr[i]._end) {
                         end = " end";
                     }
-                    console.log(i, arr[i].coords.usrCoords,
+                    console.log(i, arr[i].coords.usrCoords, arr[i].data.type, "\t",
                                 "prev", arr[i]._prev.coords.usrCoords,
                                 "next", arr[i]._next.coords.usrCoords + end);
                 } catch (e) {
@@ -21708,7 +21671,7 @@ define('math/clip',[
 
         _noOverlap: function(p1, p2, q1, q2) {
             var k,
-                eps = Mat.eps * Mat.eps,
+                eps = Math.sqrt(Mat.eps),
                 minp, maxp, minq, maxq,
                 no_overlap = false;
 
@@ -21717,7 +21680,7 @@ define('math/clip',[
                 maxp = Math.max(p1[k], p2[k]);
                 minq = Math.min(q1[k], q2[k]);
                 maxq = Math.max(q1[k], q2[k]);
-                if (maxp < minq - eps|| minp > maxq + eps) {
+                if (maxp < minq - eps || minp > maxq + eps) {
                     no_overlap = true;
                     break;
                 }
@@ -21753,7 +21716,8 @@ define('math/clip',[
                 S_crossings = [],
                 C_crossings = [],
                 hasMultCompsS = false,
-                hasMultCompsC = false;
+                hasMultCompsC = false,
+                DEBUG = false;
 
             for (j = 0; j < C_le; j++) {
                 C_crossings.push([]);
@@ -21780,7 +21744,6 @@ define('math/clip',[
 
                 Si = S[i].coords.usrCoords;
                 Si1 = S[(i + 1) % S_le].coords.usrCoords;
-
                 // Run through the clip path.
                 for (j = 0; j < C_le; j++) {
                     // Test if C[j] or its successor is a path separator.
@@ -21809,80 +21772,95 @@ define('math/clip',[
 
                     // Intersection test
                     res = Geometry.meetSegmentSegment(Si, Si1, Cj, Cj1);
-// console.log(i, j, ":", eps, res[0][1] / res[0][0], res[0][2] / res[0][0], res[1], res[2]);
 
                     d1 = Geometry.distance(Si, Si1, 3);
                     d2 = Geometry.distance(Cj, Cj1, 3);
+
                     // Found an intersection point
-                    // isCollinear = false;
-                    if ((res[1] * d1 > -eps && res[1] < 1 - eps / d1 &&           // "regular" intersection
-                         res[2] * d2 > -eps && res[2] < 1 - eps / d2) ||
-                        (res[1] === Infinity &&
-                         res[2] === Infinity && Mat.norm(res[0], 3) < eps) // collinear
+                    if ( // "Regular" intersection
+                        (res[1] * d1 > -eps && res[1] < 1 - eps / d1 && res[2] * d2 > -eps && res[2] < 1 - eps / d2) ||
+                        // Collinear segments
+                        (res[1] === Infinity && res[2] === Infinity && Mat.norm(res[0], 3) < eps)
                         ) {
 
-                            crds = new Coords(Const.COORDS_BY_USER, res[0], board);
-                            type = 'X';
-// console.log("IS", i, j, crds.usrCoords, res[1], d1, res[1] * d1);
-// console.log(res[2], d2, res[2] * d2);
+                        crds = new Coords(Const.COORDS_BY_USER, res[0], board);
+                        type = 'X';
 
-                            // Degenerate cases
-                            if (Math.abs(res[1]) * d1 < eps || Math.abs(res[2]) * d2 < eps) {
-                                // Crossing / bouncing at vertex or
-                                // end of delayed crossing / bouncing
-                                type  = 'T';
-                                if (Math.abs(res[1]) * d1 < eps) {
-                                    res[1] = 0;
-                                }
-                                if (Math.abs(res[2]) * d2 < eps) {
-                                    res[2] = 0;
-                                }
-                                if (res[1] === 0) {
-                                    crds = new Coords(Const.COORDS_BY_USER, Si, board);
-                                } else {
-                                    crds = new Coords(Const.COORDS_BY_USER, Cj, board);
-                                }
-                            } else if (res[1] === Infinity &&
-                                       res[2] === Infinity &&
-                                       Mat.norm(res[0], 3) < eps) {
-
-                                // In this case there might be two intersection points to be added
-                                // Collinear segments
-                                alpha = this._inbetween(Si, Cj, Cj1);
-    // console.log("alpha Si", alpha, Si);
-    // console.log(j, Cj)
-    // console.log((j + 1) % C_le, Cj1)
-                                if (alpha >= 0 && alpha < 1) {
-                                    type = 'T';
-                                    crds = new Coords(Const.COORDS_BY_USER, Si, board);
-                                    res[1] = 0;
-                                    res[2] = alpha;
-                                    IS = new this.Vertex(crds, i, res[1], S, 'S', type);
-                                    IC = new this.Vertex(crds, j, res[2], C, 'C', type);
-                                    IS.neighbour = IC;
-                                    IC.neighbour = IS;
-
-                                    S_crossings[i].push(IS);
-                                    C_crossings[j].push(IC);
-                                }
-                                alpha = this._inbetween(Cj, Si, Si1);
-    // console.log("alpha Cj", alpha, Si, Geometry.distance(Si, Cj, 3));
-                                if (Geometry.distance(Si, Cj, 3) > eps &&
-                                    alpha >= 0 && alpha < 1) {
-                                        type = 'T';
-                                        crds = new Coords(Const.COORDS_BY_USER, Cj, board);
-                                        res[1] = alpha;
-                                        res[2] = 0;
-                                        IS = new this.Vertex(crds, i, res[1], S, 'S', type);
-                                        IC = new this.Vertex(crds, j, res[2], C, 'C', type);
-                                        IS.neighbour = IC;
-                                        IC.neighbour = IS;
-
-                                        S_crossings[i].push(IS);
-                                        C_crossings[j].push(IC);
-                                }
-                                continue;
+                        // Handle degenerated cases
+                        if (Math.abs(res[1]) * d1 < eps || Math.abs(res[2]) * d2 < eps) {
+                            // Crossing / bouncing at vertex or
+                            // end of delayed crossing / bouncing
+                            type  = 'T';
+                            if (Math.abs(res[1]) * d1 < eps) {
+                                res[1] = 0;
                             }
+                            if (Math.abs(res[2]) * d2 < eps) {
+                                res[2] = 0;
+                            }
+                            if (res[1] === 0) {
+                                crds = new Coords(Const.COORDS_BY_USER, Si, board);
+                            } else {
+                                crds = new Coords(Const.COORDS_BY_USER, Cj, board);
+                            }
+
+                            if (DEBUG) {
+                                console.log("Degenerate case I", res[1], res[2], crds.usrCoords, "type", type);
+                            }
+                        } else if (res[1] === Infinity &&
+                                   res[2] === Infinity &&
+                                   Mat.norm(res[0], 3) < eps) {                // console.log(C_intersect);
+
+
+                            // Collinear segments
+                            // Here, there might be two intersection points to be added
+
+                            alpha = this._inbetween(Si, Cj, Cj1);
+                            if (DEBUG) {
+                                // console.log("alpha Si", alpha, Si);
+                                // console.log(j, Cj)
+                                // console.log((j + 1) % C_le, Cj1)
+                            }
+                            if (alpha >= 0 && alpha < 1) {
+                                type = 'T';
+                                crds = new Coords(Const.COORDS_BY_USER, Si, board);
+                                res[1] = 0;
+                                res[2] = alpha;
+                                IS = new this.Vertex(crds, i, res[1], S, 'S', type);
+                                IC = new this.Vertex(crds, j, res[2], C, 'C', type);
+                                IS.neighbour = IC;
+                                IC.neighbour = IS;
+                                S_crossings[i].push(IS);
+                                C_crossings[j].push(IC);
+                                if (DEBUG) {
+                                    console.log("Degenerate case II", res[1], res[2], crds.usrCoords, "type T");
+                                }
+                            }
+                            alpha = this._inbetween(Cj, Si, Si1);
+                            if (DEBUG) {
+                                // console.log("alpha Cj", alpha, Si, Geometry.distance(Si, Cj, 3));
+                            }
+                            if (Geometry.distance(Si, Cj, 3) > eps &&
+                                alpha >= 0 && alpha < 1) {
+
+                                type = 'T';
+                                crds = new Coords(Const.COORDS_BY_USER, Cj, board);
+                                res[1] = alpha;
+                                res[2] = 0;
+                                IS = new this.Vertex(crds, i, res[1], S, 'S', type);
+                                IC = new this.Vertex(crds, j, res[2], C, 'C', type);
+                                IS.neighbour = IC;
+                                IC.neighbour = IS;
+                                S_crossings[i].push(IS);
+                                C_crossings[j].push(IC);
+                                if (DEBUG) {
+                                    console.log("Degenerate case III", res[1], res[2], crds.usrCoords, "type T");
+                                }
+                            }
+                            continue;
+                        }
+                        if (DEBUG) {
+                            console.log("IS", i, j, crds.usrCoords, type);
+                        }
 
                         IS = new this.Vertex(crds, i, res[1], S, 'S', type);
                         IC = new this.Vertex(crds, j, res[2], C, 'C', type);
@@ -21898,49 +21876,84 @@ define('math/clip',[
             // For both paths, sort their intersection points
             S_intersect = this.sortIntersections(S_crossings);
 
-// console.log('>>>>>> Intersections ')
-// this._print_array(S_intersect);
-// // console.log(S_intersect)
-// console.log('----------')
+            if (DEBUG) {
+                console.log('>>>>>> Intersections ');
+                console.log("S_intersect");
+                this._print_array(S_intersect);
+                console.log('----------');
+            }
             for (i = 0; i < S_intersect.length; i++) {
                 S_intersect[i].data.idx = i;
                 S_intersect[i].neighbour.data.idx = i;
             }
             C_intersect = this.sortIntersections(C_crossings);
 
-// this._print_array(C_intersect);
-// console.log(C_intersect)
-// console.log('<<<<<< Phase 1 done')
+            if (DEBUG) {
+                console.log("C_intersect");
+                this._print_array(C_intersect);
+                console.log('<<<<<< Phase 1 done');
+            }
             return [S_intersect, C_intersect];
         },
 
+        /**
+         * It is testedd if the point q lies to the left or right
+         * of the poylgonal chain [p1, p2, p3].
+         * @param {Array} q User coords array
+         * @param {Array} p1 User coords array
+         * @param {Array} p2 User coords array
+         * @param {Array} p3 User coords array
+         * @returns string 'left' or 'right'
+         * @private
+         */
         _getPosition: function(q, p1, p2, p3) {
             var s1 = this.det(q, p1, p2),
                 s2 = this.det(q, p2, p3),
                 s3 = this.det(p1, p2, p3);
 
-            if (s3 >= 0) {   // Left turn or straight
-                if (s1 > 0 && s2 > 0) {
+            // Left turn
+            if (s3 >= 0) {
+                if (s1 >= 0 && s2 >= 0) {
                     return 'left';
                 }
                 return 'right';
             }
             // Right turn
-            if (s1 < 0 && s2 < 0) {
-                return 'right';
+            if (s1 >= 0 || s2 >= 0) {
+                return 'left';
             }
-            return 'left';
+            return 'right';
         },
 
+        /**
+         * Determine the delayed status of degenerated intersection points.
+         * It is of the form
+         *   ['on|left|right', 'on|left|right']
+         * <p>
+         * If all four determinants are zero, we add random noise to the point.
+         *
+         * @param {JXG.Math.Clip.Vertex} P Start of path
+         * @private
+         * @see JXG.Math.Clip#markEntryExit
+         * @see JXG.Math.Clip#_handleIntersectionChains
+         */
         _classifyDegenerateIntersections: function(P) {
             var Pp, Pm, Qp, Qm, Q, side,
-                cnt;
+                cnt, tmp,
+                oppositeDir,
+                s1, s2, s3, s4,
+                DEBUG = false;
 
+            if (DEBUG) {
+                console.log("\n-------------- _classifyDegenerateIntersections()", (Type.exists(P.data))?P.data.pathname:' ');
+            }
             cnt = 0;
-            P._start = 0;
+            P._tours = 0;
             while (true) {
-// console.log("P:", P.coords.usrCoords, (P.data) ? P.data.type : " ")
-                if (P.intersection && P.data.type === 'T') {
+                if (DEBUG) {
+                    console.log("Inspect P:", P.coords.usrCoords, (P.data) ? P.data.type : " ");
+                }
+                if (P.intersection && (P.data.type === 'T')) {
 
                     // Handle the degenerate cases
                     // Decide if they are (delayed) bouncing or crossing intersections
@@ -21953,93 +21966,134 @@ define('math/clip',[
                     // the same coordinate.
                     // In that case, we proceed to the next node.
                     if (Geometry.distance(P.coords.usrCoords, Pp, 3) < Mat.eps) {
-                        P._next = P._next._next;
-                        Pp = P._next.coords.usrCoords;
+                        Pp = P._next._next.coords.usrCoords;
                     }
                     if (Geometry.distance(P.coords.usrCoords, Pm, 3) < Mat.eps) {
-                        P._prev = P._prev._prev;
-                        Pm = P._prev.coords.usrCoords;
+                        Pm = P._prev._prev.coords.usrCoords;
                     }
 
                     Q = P.neighbour;
-                    Qm = P.neighbour._prev.coords.usrCoords;  // Q-
-                    Qp = P.neighbour._next.coords.usrCoords;  // Q+
+                    Qm = Q._prev.coords.usrCoords;  // Q-
+                    Qp = Q._next.coords.usrCoords;  // Q+
+                    if (Geometry.distance(Q.coords.usrCoords, Qp, 3) < Mat.eps) {
+                        Qp = Q._next._next.coords.usrCoords;
+                    }
+                    if (Geometry.distance(Q.coords.usrCoords, Qm, 3) < Mat.eps) {
+                        Qm = Q._prev._prev.coords.usrCoords;
+                    }
 
-// console.log("Chain 1:", Pm, P.coords.usrCoords, Pp)
-// console.log("Chain 2:", Qm, P.neighbour.coords.usrCoords, Qp)
-// console.log(P._next.neighbour, Q._prev)
-// console.log(P._next.intersection, P._next.neighbour === Q._prev)
-                    if (P._next.intersection && P._next.neighbour === Q._next) {
-                        if (P._prev.intersection && P._prev.neighbour === Q._prev) {
-                            P.delayedStatus = ['on', 'on'];
-                        } else {
-                            side = this._getPosition(Qm,  Pm, P.coords.usrCoords, Pp);
-                            if (side === 'right') {
-                                P.delayedStatus = ['left', 'on'];
-                            } else {
-                                P.delayedStatus = ['right', 'on'];
-                            }
+                    if (DEBUG) {
+                        console.log("P chain:", Pm, P.coords.usrCoords, Pp);
+                        console.log("Q chain:", Qm, P.neighbour.coords.usrCoords, Qp);
+                        console.log("Pm", this._getPosition(Pm,  Qm, Q.coords.usrCoords, Qp));
+                        console.log("Pp", this._getPosition(Pp,  Qm, Q.coords.usrCoords, Qp));
+                    }
+
+                    s1 = this.det(P.coords.usrCoords, Pm, Qm);
+                    s2 = this.det(P.coords.usrCoords, Pp, Qp);
+                    s3 = this.det(P.coords.usrCoords, Pm, Qp);
+                    s4 = this.det(P.coords.usrCoords, Pp, Qm);
+
+                    if (s1 === 0 && s2 === 0 && s3 === 0 && s4 === 0) {
+                        P.coords.usrCoords[1] *= 1 + Math.random() * Mat.eps;
+                        P.coords.usrCoords[2] *= 1 + Math.random() * Mat.eps;
+                        Q.coords.usrCoords[1] = P.coords.usrCoords[1];
+                        Q.coords.usrCoords[2] = P.coords.usrCoords[2];
+                        s1 = this.det(P.coords.usrCoords, Pm, Qm);
+                        s2 = this.det(P.coords.usrCoords, Pp, Qp);
+                        s3 = this.det(P.coords.usrCoords, Pm, Qp);
+                        s4 = this.det(P.coords.usrCoords, Pp, Qm);
+                        if (DEBUG) {
+                            console.log("Random shift", P.coords.usrCoords);
+                            console.log(s1, s2, s3, s4, s2 === 0);
+                            console.log(this._getPosition(Pm,  Qm, Q.coords.usrCoords, Qp),
+                                this._getPosition(Pp,  Qm, Q.coords.usrCoords, Qp));
                         }
-                    } else if (P._next.intersection && P._next.neighbour === Q._prev) {
-                        if (P._prev.intersection && P._prev.neighbour === Q._next) {
-                            P.delayedStatus = ['on', 'on'];
-                        } else {
-                            side = this._getPosition(Qp,  Pm, P.coords.usrCoords, Pp);
-                            if (side === 'right') {
-                                P.delayedStatus = ['left', 'on'];
+                    }
+                    oppositeDir = false;
+                    if (s1 === 0) {
+                        // Q-, Q=P, P- on straight line
+                        if (Geometry.affineRatio(P.coords.usrCoords, Pm, Qm) < 0) {
+                            oppositeDir = true;
+                        }
+                    } else if (s2 === 0) {
+                        if (Geometry.affineRatio(P.coords.usrCoords, Pp, Qp) < 0) {
+                            oppositeDir = true;
+                        }
+                    } else if (s3 === 0) {
+                        if (Geometry.affineRatio(P.coords.usrCoords, Pm, Qp) > 0) {
+                            oppositeDir = true;
+                        }
+                    } else if (s4 === 0) {
+                        if (Geometry.affineRatio(P.coords.usrCoords, Pp, Qm) > 0) {
+                            oppositeDir = true;
+                        }
+                    }
+                    if (oppositeDir) {
+                        // Swap Qm and Qp
+                        // Then Qm Q Qp has the same direction as Pm P Pp
+                        tmp = Qm; Qm = Qp; Qp = tmp;
+                        tmp = s1; s1 = s3; s3 = tmp;
+                        tmp = s2; s2 = s4; s4 = tmp;
+                    }
+
+                    if (DEBUG) {
+                        console.log(s1, s2, s3, s4, oppositeDir);
+                    }
+
+                    if (!Type.exists(P.delayedStatus)) {
+                        P.delayedStatus = [];
+                    }
+
+                    if (s1 === 0 && s2 === 0) {
+                        // Line [P-,P] equals [Q-,Q] and line [P,P+] equals [Q,Q+]
+                        // Interior of delayed crossing / bouncing
+                        P.delayedStatus = ['on', 'on'];
+
+                    } else if (s1 === 0) {
+                        // P- on line [Q-,Q], P+ not on line [Q,Q+]
+                        // Begin / end of delayed crossing / bouncing
+                        side = this._getPosition(Pp,  Qm, Q.coords.usrCoords, Qp);
+                        P.delayedStatus = ['on', side];
+
+                    } else if (s2 === 0) {
+                        // P+ on line [Q,Q+], P- not on line [Q-,Q]
+                        // Begin / end of delayed crossing / bouncing
+                        side = this._getPosition(Pm,  Qm, Q.coords.usrCoords, Qp);
+                        P.delayedStatus = [side, 'on'];
+
+                    } else {
+                        // Neither P+ on line [Q,Q+], nor P- on line [Q-,Q]
+                        // No delayed crossing / bouncing
+                        if (P.delayedStatus.length === 0) {
+                            if (this._getPosition(Pm,  Qm, Q.coords.usrCoords, Qp) !== this._getPosition(Pp,  Qm, Q.coords.usrCoords, Qp)) {
+                                P.data.type = 'X';
                             } else {
-                                P.delayedStatus = ['right', 'on'];
+                                P.data.type = 'B';
                             }
                         }
                     }
 
-                    if (P._prev.intersection && P._prev.neighbour === Q._prev) {
-                        if (!(P._next.intersection && P._next.neighbour === Q._next)) {
-                            side = this._getPosition(Qp,  Pm, P.coords.usrCoords, Pp);
-                            if (side === 'right') {
-                                P.delayedStatus = ['on', 'left'];
-                            } else {
-                                P.delayedStatus = ['on', 'right'];
-                            }
-                        }
-                    } else if (P._prev.intersection && P._prev.neighbour === Q._next) {
-                        if (!(P._next.intersection && P._next.neighbour === Q._prev)) {
-                            side = this._getPosition(Qm,  Pm, P.coords.usrCoords, Pp);
-                            if (side === 'right') {
-                                P.delayedStatus = ['on', 'left'];
-                            } else {
-                                P.delayedStatus = ['on', 'right'];
-                            }
-                        }
+                    if (DEBUG) {
+                        console.log(">>>> P:", P.coords.usrCoords, "delayedStatus:", P.delayedStatus.toString(), (P.data) ? P.data.type : " ", "\n---");
                     }
-
-                    if ((!P._next.intersection || (P._next.neighbour !== Q._prev && P._next.neighbour !== Q._next)) &&
-                        (!P._prev.intersection || (P._prev.neighbour !== Q._prev && P._prev.neighbour !== Q._next))
-                        ) {
-                        // Neither P- nor P+ are intersections
-
-                        side = this._getPosition(Qm,   Pm, P.coords.usrCoords, Pp);
-                        if (side !== this._getPosition(Qp,  Pm, P.coords.usrCoords, Pp)) {
-                            P.data.type    = 'X';
-                            P.data.revtype = 'X';
-                        } else {
-                            P.data.type    = 'B';
-                            P.data.revtype = 'B';
-                        }
-                    }
-// console.log(">P:", P.coords.usrCoords, (P.data) ? P.data.type : " ")
 
                 }
 
-                if (Type.exists(P._start)) {
-                    P._start++;
+                if (Type.exists(P._tours)) {
+                    P._tours++;
                 }
-                if (P._start > 3 || P._end || cnt > 1000) {
+
+                if (P._tours > 3 || P._end || cnt > 1000) {
+                    // Jump out if either
+                    // - we reached the end
+                    // - there are more than 1000 intersection points
+                    // - P._tours > 3: We went already 4 times through this path.
                     if (cnt > 1000) {
                         console.log("Clipping: _classifyDegenerateIntersections exit");
                     }
-                    if (Type.exists(P._start)) {
-                        delete P._start;
+                    if (Type.exists(P._tours)) {
+                        delete P._tours;
                     }
                     break;
                 }
@@ -22048,43 +22102,76 @@ define('math/clip',[
                 }
                 P = P._next;
             }
-// console.log("------------------------")
+            if (DEBUG) {
+                console.log("------------------------");
+            }
         },
 
+        /**
+         * At this point the degenerated intersections have been classified.
+         * Now we decide if the intersection chains of the given path
+         * ultimatively cross the other path or bounce.
+         *
+         * @param {JXG.Math.Clip.Vertex} P Start of path
+         *
+         * @see JXG.Math.Clip#markEntryExit
+         * @see JXG.Math.Clip#_classifyDegenerateIntersections
+         * @private
+         */
         _handleIntersectionChains: function(P) {
             var cnt = 0,
                 start_status = 'Null',
                 P_start,
                 intersection_chain = false,
-                wait_for_exit = false;
+                wait_for_exit = false,
+                DEBUG = false;
 
+            if (DEBUG) {
+                console.log("\n-------------- _handleIntersectionChains()",
+                    (Type.exists(P.data))?P.data.pathname:' ');
+            }
             while (true) {
                 if (P.intersection === true) {
-    //console.log("Chain point", P.coords.usrCoords, P.data.type);
+                    if (DEBUG) {
+                        if (P.data.type === 'T') {
+                            console.log("Degenerate point", P.coords.usrCoords, P.data.type, (P.data.type === 'T')?P.delayedStatus:' ');
+                        } else {
+                            console.log("Intersection point", P.coords.usrCoords, P.data.type);
+                        }
+                    }
                     if (P.data.type === 'T') {
                         if (P.delayedStatus[0] !== 'on' && P.delayedStatus[1] === 'on') {
+                            // First point of intersection chain
                             intersection_chain = true;
                             P_start = P;
                             start_status = P.delayedStatus[0];
-                        } else if (P.delayedStatus[0] === 'on' && P.delayedStatus[1] === 'on') {
+
+                        } else if (intersection_chain &&
+                                    P.delayedStatus[0] === 'on' && P.delayedStatus[1] === 'on') {
+                            // Interior of intersection chain
                             P.data.type    = 'B';
-                            P.data.revtype = 'B';
-                        } else if (P.delayedStatus[0] === 'on' && P.delayedStatus[1] !== 'on' &&
-                                    intersection_chain) {
+                            if (DEBUG) {
+                                console.log("Interior", P.coords.usrCoords);
+                            }
+                        } else if (intersection_chain &&
+                                    P.delayedStatus[0] === 'on' && P.delayedStatus[1] !== 'on') {
+                            // Last point of intersection chain
                             intersection_chain = false;
                             if (start_status === P.delayedStatus[1]) {
-                                P.data.type          = 'B';
-                                P.data.revtype       = 'B';
-                                P_start.data.type    = 'B';
-                                P_start.data.revtype = 'B';
+                                // Intersection chain is delayed bouncing
+                                P_start.data.type    = 'DB';
+                                P.data.type          = 'DB';
+                                if (DEBUG) {
+                                    console.log("Chain: delayed bouncing", P_start.coords.usrCoords, '...', P.coords.usrCoords);
+                                }
                             } else {
-                                P.data.type          = 'X';
-                                P.data.revtype       = 'B';
-                                P_start.data.type    = 'B';
-                                P_start.data.revtype = 'X';
+                                // Intersection chain is delayed crossing
+                                P_start.data.type    = 'DX';
+                                P.data.type          = 'DX';
+                                if (DEBUG) {
+                                    console.log("Chain: delayed crossing", P_start.coords.usrCoords, '...', P.coords.usrCoords);
+                                }
                             }
-                            P_start.data.link = P;
-                            P.data.link       = P_start;
                         }
                     }
                     cnt++;
@@ -22096,7 +22183,7 @@ define('math/clip',[
                     break;
                 }
                 if (cnt > 1000) {
-                    console.log("Clipping: Intersection chain - exit");
+                    console.log("Warning: _handleIntersectionChains: intersection chain reached maximum numbers of iterations");
                     break;
                 }
                 P = P._next;
@@ -22194,7 +22281,6 @@ define('math/clip',[
                 // Inside
                 status = 'exit';
             }
-//console.log("STATUS", P.coords.usrCoords, status)
 
             return [P, status];
         },
@@ -22202,10 +22288,16 @@ define('math/clip',[
         /**
          * Mark the intersection vertices of path1 as entry points or as exit points
          * in respect to path2.
-         *
+         * <p>
          * This is the simple algorithm as in
          * Greiner, Günther; Kai Hormann (1998). "Efficient clipping of arbitrary polygons".
          * ACM Transactions on Graphics. 17 (2): 71–83
+         * <p>
+         * The algorithm handles also "delayed crossings" from
+         * Erich, L. Foster, and Kai Hormann, Kai, and Romeo Traaian Popa (2019),
+         * "Clipping simple polygons with degenerate intersections", Computers & Graphics:X, 2.
+         * and - as an additional improvement -
+         * handles self intersections of delayed crossings (A.W. 2021).
          *
          * @private
          * @param  {Array} path1 First path
@@ -22213,39 +22305,106 @@ define('math/clip',[
          */
         markEntryExit: function(path1, path2, starters) {
             var status, P, cnt, res,
-                i, len, start;
+                i, len, start,
+                chain_start = null,
+                intersection_chain = 0,
+                DEBUG = false;
 
             len = starters.length;
             for (i = 0; i < len; i++) {
-// console.log(";;;;;;;;;;")
                 start = starters[i];
+                if (DEBUG) {
+                    console.log("\n;;;;;;;;;; Labelling phase",
+                        (Type.exists(path1[start].data))?path1[start].data.pathname:' ',
+                        path1[start].coords.usrCoords);
+                }
                 this._classifyDegenerateIntersections(path1[start]);
                 this._handleIntersectionChains(path1[start]);
+                if (DEBUG) {
+                    console.log("\n---- back to markEntryExit");
+                }
 
                 // Decide if the first point of the component is inside or outside
                 // of the other path.
                 res = this._getStatus(path1[start], path2);
                 P = res[0];
                 status = res[1];
-// console.log("status", P.coords.usrCoords, status);
+                if (DEBUG) {
+                    console.log("Start node:", P.coords.usrCoords, status);
+                }
 
                 P._starter = true;
+
                 // Greiner-Hormann entry/exit algorithm
+                // with additional handling of delayed crossing / bouncing
                 cnt = 0;
+                chain_start = null;
+                intersection_chain = 0;
+
                 while (true) {
-                    if (P.intersection === true && P.data.type === 'X') {
-                        P.entry_exit = status;
-                        status = (status === 'entry') ? 'exit' : 'entry';
-                        if (P.data.link !== null && !P.data.link.entry_exit) {
-                            P.data.link.entry_exit = P.entry_exit;
+                    if (P.intersection === true) {
+                        if (P.data.type === 'X' && intersection_chain === 1) {
+                            // While we are in an intersection chain, i.e. a delayed crossing,
+                            // we stumble on a crossing intersection.
+                            // Probably, the other path is self intersecting.
+                            // We end the intersection chain here and
+                            // mark this event by setting intersection_chain = 2.
+                            chain_start.entry_exit = status;
+                            if (status === 'exit') {
+                                chain_start.data.type = 'X';
+                            }
+                            intersection_chain = 2;
+                        }
+
+                        if (P.data.type === 'X' || P.data.type === 'DB') {
+                            P.entry_exit = status;
+                            status = (status === 'entry') ? 'exit' : 'entry';
+                            if (DEBUG) {
+                                console.log("mark:", P.coords.usrCoords, P.data.type, P.entry_exit);
+                            }
+                        }
+
+                        if (P.data.type === 'DX') {
+                            if (intersection_chain === 0) {
+                                // Start of intersection chain.
+                                // No active intersection chain yet,
+                                // i.e. we did not pass a the first node of a delayed crossing.
+                                chain_start = P;
+                                intersection_chain = 1;
+                                if (DEBUG) {
+                                    console.log("Start intersection chain:", P.coords.usrCoords, P.data.type, status);
+                                }
+
+                            } else if (intersection_chain === 1) {
+                                // Active intersection chain (intersection_chain===1)!
+                                // End of delayed crossing chain reached
+                                P.entry_exit = status;
+                                chain_start.entry_exit = status;
+                                if (status === 'exit') {
+                                    chain_start.data.type = 'X';
+                                } else {
+                                    P.data.type = 'X';
+                                }
+                                status = (status === 'entry') ? 'exit' : 'entry';
+
+                                if (DEBUG) {
+                                    console.log("mark':", chain_start.coords.usrCoords, chain_start.data.type, chain_start.entry_exit);
+                                    console.log("mark:", P.coords.usrCoords, P.data.type, P.entry_exit);
+                                }
+                                chain_start = null;
+                                intersection_chain = 0;
+
+                            } else if (intersection_chain === 2) {
+                                // The delayed crossing had been interrupted by a crossing intersection.
+                                // Now we treat the end of the delayed crossing as regular crossing.
+                                P.entry_exit = status;
+                                P.data.type = 'X';
+                                status = (status === 'entry') ? 'exit' : 'entry';
+                                chain_start = null;
+                                intersection_chain = 0;
+                            }
                         }
                     }
-                    if (P.intersection === true && P.data.type !== 'X') {
-                        if (!P.entry_exit && P.data.link !== null) {
-                            P.entry_exit = P.data.link.entry_exit;
-                        }
-                    }
-// if (P.intersection) { console.log("s>>>", P.coords.usrCoords, P.entry_exit)}
 
                     P = P._next;
                     if (Type.exists(P._starter) || cnt > 10000) {
@@ -22264,9 +22423,48 @@ define('math/clip',[
          * @param {Boolean} isBackward
          * @returns {Boolean} True, if the node is an intersection and is of type 'X'
          */
-        _isCrossing: function(P, isBackward) {
-            isBackward = isBackward || false;
-            return P.intersection && ((isBackward ? P.data.revtype : P.data.type) === 'X');
+        _stayOnPath: function(P, status) {
+            var stay = true;
+
+            if (P.intersection && P.data.type !== 'B') {
+                stay = (status === P.entry_exit);
+            }
+            return stay;
+        },
+
+        /**
+         * Add a point to the clipping path and returns if the algorithms
+         * arrived at an intersection point which has already been visited.
+         * In this case, true is returned.
+         *
+         * @param {Array} path Resulting path
+         * @param {JXG.Math.Clip.Vertex} vertex Point to be added
+         * @param {Boolean} DEBUG debug output to console.log
+         * @returns {Boolean} true: point has been visited before, false otherwise
+         * @private
+         */
+        _addVertex: function(path, vertex, DEBUG) {
+            if (!isNaN(vertex.coords.usrCoords[1]) && !isNaN(vertex.coords.usrCoords[2])) {
+                path.push(vertex);
+            }
+            if (vertex.intersection && vertex.data.done) {
+                if (DEBUG) {
+                    console.log("Add last intersection point", vertex.coords.usrCoords,
+                        "on", vertex.data.pathname, vertex.entry_exit,
+                        vertex.data.type);
+                }
+                return true;
+            }
+            if (vertex.intersection) {
+                vertex.data.done = true;
+
+                if (DEBUG) {
+                    console.log("Add intersection point", vertex.coords.usrCoords,
+                        "on", vertex.data.pathname, vertex.entry_exit,
+                        vertex.data.type);
+                }
+            }
+            return false;
         },
 
         /**
@@ -22286,24 +22484,30 @@ define('math/clip',[
         tracing: function(S, S_intersect, clip_type) {
             var P, current, start,
                 cnt = 0,
-                reverse,
+                status,
                 maxCnt = 10000,
                 S_idx = 0,
-                path = [];
+                path = [],
+                done = false,
+                DEBUG = false;
 
-// console.log("------ Start Phase 3");
+            if (DEBUG) {
+                console.log("\n------ Start Phase 3");
+            }
 
-            reverse = (clip_type === 'difference' || clip_type === 'union') ? true : false;
+            // reverse = (clip_type === 'difference' || clip_type === 'union') ? true : false;
             while (S_idx < S_intersect.length && cnt < maxCnt) {
                 // Take the first intersection node of the subject path
                 // which is not yet included as start point.
                 current = S_intersect[S_idx];
-                if (current.data.done || !this._isCrossing(current, reverse)) {
+                if (current.data.done || current.data.type !== 'X' /*|| !this._isCrossing(current, reverse)*/) {
                     S_idx++;
                     continue;
                 }
 
-// console.log("\nStart", current.data.pathname, current.coords.usrCoords, current.data.type, current.data.revtype, current.entry_exit, S_idx);
+                if (DEBUG) {
+                    console.log("\nStart", current.data.pathname, current.coords.usrCoords, current.data.type, current.entry_exit, S_idx);
+                }
                 if (path.length > 0) {    // Add a new path
                     path.push([NaN, NaN]);
                 }
@@ -22311,13 +22515,13 @@ define('math/clip',[
                 // Start now the tracing with that node of the subject path
                 start = current.data.idx;
                 P = S;
-                do {
-                    // Add the "current" intersection vertex.
-                    path.push(current);
-                    current.data.done = true;
 
-// console.log("Add intersection", current.coords.usrCoords);
-// console.log("AT", current.data.pathname, current.entry_exit, current.coords.usrCoords, current.data.type, current.data.revtype);
+                done = this._addVertex(path, current, DEBUG);
+                status = current.entry_exit;
+                do {
+                    if (done) {
+                        break;
+                    }
                     //
                     // Decide if we follow the current path forward or backward.
                     // for example, in case the clipping is of type "intersection"
@@ -22327,71 +22531,90 @@ define('math/clip',[
                         (clip_type === 'union' && current.entry_exit === 'exit') ||
                         (clip_type === 'difference' && (P === S) === (current.entry_exit === 'exit')) ) {
 
+                        if (DEBUG) {
+                            console.log("Go forward on", current.data.pathname, current.entry_exit);
+                        }
+
                         //
                         // Take the next nodes and add them to the path
                         // as long as they are not intersection nodes of type 'X'.
                         //
-                        current = current._next;
                         do {
-                            cnt++;
-
-                            if (!this._isCrossing(current, reverse)) {
-                                if (!isNaN(current.coords.usrCoords[1]) && !isNaN(current.coords.usrCoords[2])) {
-// if (true ||current.intersection) console.log("Add fw", current.coords.usrCoords, "NEXT", current._next.coords.usrCoords);
-                                    path.push(current);
-                                }
-                                current = current._next;
+                            current = current._next;
+                            done = this._addVertex(path, current, DEBUG);
+                            if (done) {
+                                break;
                             }
-                        } while (!this._isCrossing(current, reverse) && cnt < maxCnt);
+                        } while (this._stayOnPath(current, status));
+                        cnt++;
                     } else {
-
+                        if (DEBUG) {
+                            console.log("Go backward on", current.data.pathname);
+                        }
                         //
                         // Here, we go backward:
                         // Take the previous nodes and add them to the path
                         // as long as they are not intersection nodes of type 'X'.
                         //
-                        current = current._prev;
                         do {
-                            cnt++;
-
-                            if (!this._isCrossing(current, true)) {
-                                if (!isNaN(current.coords.usrCoords[1]) && !isNaN(current.coords.usrCoords[2])) {
-// if (true ||current.intersection) console.log("Add fw", current.coords.usrCoords);
-                                    path.push(current);
-                                }
-                                current = current._prev;
+                            current = current._prev;
+                            done = this._addVertex(path, current, DEBUG);
+                            if (done) {
+                                break;
                             }
-                        } while (!this._isCrossing(current, true) && cnt < maxCnt);
-                    }
-                    current.data.done = true;
-
-                    if (!current.neighbour) {
-                        console.log("BREAK!!!!!!!!!!!!!!!!!", cnt);
-                        return [[0], [0]];
+                        } while (this._stayOnPath(current, status));
+                        cnt++;
                     }
 
-// console.log("Switch", current.coords.usrCoords, current.data.pathname, "to", current.neighbour.data.pathname);
-                    //
-                    // We stopped the forwar or backward loop, because we've
-                    // arrived at a crossing intersection node, i.e. we have to
-                    // switch to the other path now.
-                    current = current.neighbour;
-                    if (current.data.done) {
-                        // We arrived at an intersection node which is already
-                        // added to the clipping path.
-                        // We add it agian to close the clipping path and jump out of the
-                        // loop.
-                        path.push(current);
-// console.log("Push last", current.coords.usrCoords);
+                    if (done) {
                         break;
                     }
+
+                    if (!current.neighbour) {
+                        console.log("Tracing: emergency break - no neighbour!!!!!!!!!!!!!!!!!", cnt);
+                        return [[0], [0]];
+                    }
+                    //
+                    // We stopped the forward or backward loop, because we've
+                    // arrived at a crossing intersection node, i.e. we have to
+                    // switch to the other path now.
+                    if (DEBUG) {
+                        console.log("Switch from", current.coords.usrCoords, current.data.pathname, "to",
+                        current.neighbour.coords.usrCoords, "on", current.neighbour.data.pathname);
+                    }
+                    current = current.neighbour;
+                    if (current.data.done) {
+                        break;
+                    }
+                    current.data.done = true;
+                    status = current.entry_exit;
+
+                    // if (current.data.done) {
+                    //     // We arrived at an intersection node which is already
+                    //     // added to the clipping path.
+                    //     // We add it again to close the clipping path and jump out of the
+                    //     // loop.
+                    //     path.push(current);
+                    //     if (DEBUG) {
+                    //         console.log("Push last", current.coords.usrCoords);
+                    //     }
+                    //     break;
+                    // }
                     P = current.data.path;
 
-                } while (!(current.data.pathname === 'S' && current.data.idx === start) && cnt < maxCnt);
+                    // Polygon closed:
+                    // if (DEBUG) {
+                    //     console.log("End of loop:", "start=", start, "idx=", current.data.idx);
+                    // }
+                // } while (!(current.data.pathname === 'S' && current.data.idx === start) && cnt < maxCnt);
+                } while (current.data.idx !== start && cnt < maxCnt);
+
+                if (cnt >= maxCnt) {
+                    console.log("Tracing: stopping an infinite loop!", cnt);
+                }
 
                 S_idx++;
             }
-
             return this._getCoordsArrays(path, false);
         },
 
@@ -22401,50 +22624,17 @@ define('math/clip',[
          * @param  {Array} S        First path, array of JXG.Coords
          * @param  {Array} C        Second path, array of JXG.Coords
          * @param  {String} clip_type Type of Boolean operation: 'intersection', 'union', 'differrence'.
-         * @param  {Array} pathX     Array of x-coordinates of the resulting path
-         * @param  {Array} pathY    Array of y-coordinates of the resulting path
          * @return {Boolean}        true, if one of the input paths is empty, false otherwise.
          */
-        isEmptyCase: function(S, C, clip_type, pathX, pathY) {
-            // var i;
-
+        isEmptyCase: function(S, C, clip_type) {
             if (clip_type === 'intersection' && (S.length === 0 || C.length === 0)) {
-                return true; //[pathX, pathY];
+                return true;
             }
-            if (clip_type === 'union' && (S.length === 0 || C.length === 0)) {
-                // if (S.length === 0) {
-                //     for (i = 0; i < C.length; ++i) {
-                //         pathX.push(C[i].coords.usrCoords[1]);
-                //         pathY.push(C[i].coords.usrCoords[2]);
-                //     }
-                //     if (C.length > 0) {
-                //         pathX.push(C[0].coords.usrCoords[1]);
-                //         pathY.push(C[0].coords.usrCoords[2]);
-                //     }
-                // } else {
-                //     for (i = 0; i < S.length; ++i) {
-                //         pathX.push(S[i].coords.usrCoords[1]);
-                //         pathY.push(S[i].coords.usrCoords[2]);
-                //     }
-                //     if (S.length > 0) {
-                //         pathX.push(S[0].coords.usrCoords[1]);
-                //         pathY.push(S[0].coords.usrCoords[2]);
-                //     }
-                // }
-                return true; //[pathX, pathY];
+            if (clip_type === 'union' && (S.length === 0 && C.length === 0)) {
+                return true;
             }
-            if (clip_type === 'difference' && (S.length === 0 || C.length === 0)) {
-                // if (C.length === 0) {
-                //     for (i = 0; i < S.length; ++i) {
-                //         pathX.push(S[i].coords.usrCoords[1]);
-                //         pathY.push(S[i].coords.usrCoords[2]);
-                //     }
-                //     if (S.length > 0) {
-                //         pathX.push(S[0].coords.usrCoords[1]);
-                //         pathY.push(S[0].coords.usrCoords[2]);
-                //     }
-                // }
-                return true; //[pathX, pathY];
+            if (clip_type === 'difference' && S.length === 0) {
+                return true;
             }
 
             return false;
@@ -22473,11 +22663,6 @@ define('math/clip',[
                     pathY.push(path[0][1]);
                 }
             }
-
-            // le = pathX.length;
-            // for (i = 0; i < le; i++) {
-            //     console.log(pathX[i], pathY[i]);
-            // }
 
             return [pathX, pathY];
         },
@@ -22519,22 +22704,11 @@ define('math/clip',[
                 return this._getCoordsArrays(path, true);
             }
 
-            // From now on, both paths have non-zero length
-            //
-            // Handle union
-            if (clip_type === 'union') {
-                path = path.concat(S);
-                path.push(S[0]);
-                path.push([NaN, NaN]);
-                path = path.concat(C);
-                path.push(C[0]);
-                return this._getCoordsArrays(path, false);
-            }
-
+            // From now on, both paths have non-zero length.
             // The two paths have no crossing intersections,
             // but there might be bouncing intersections.
 
-            // First, we find - if possible - on each path a point which is not an intersection point.
+            // First, we find -- if possible -- on each path a point which is not an intersection point.
             if (S.length > 0) {
                 P = S[0];
                 while (P.intersection) {
@@ -22556,12 +22730,15 @@ define('math/clip',[
 
             // Test if one curve is contained by the other
             if (this.windingNumber(P.coords.usrCoords, C) === 0) {
-                // S is outside of C.
+                // P is outside of C:
+                // Either S is disjoint from C or C is inside of S
                 if (this.windingNumber(Q.coords.usrCoords, S) !== 0) {
                     // C is inside of S, i.e. C subset of S
 
-                    if (clip_type === 'difference') {
-
+                    if (clip_type === 'union') {
+                        path = path.concat(S);
+                        path.push(S[0]);
+                    } else if (clip_type === 'difference') {
                         path = path.concat(S);
                         path.push(S[0]);
                         if (Geometry.signedPolygon(S) * Geometry.signedPolygon(C) > 0) {
@@ -22570,13 +22747,21 @@ define('math/clip',[
                         }
                         path.push([NaN, NaN]);
                     }
-                    path = path.concat(C);
-                    path.push(C[0]);
-                    doClose = false;
+                    if (clip_type === 'difference' || clip_type === 'intersection') {
+                        path = path.concat(C);
+                        path.push(C[0]);
+                        doClose = false;
+                    }
                 } else {                                           // The curves are disjoint
                     if (clip_type === 'difference') {
                         path = path.concat(S);
                         doClose = true;
+                    } else if (clip_type === 'union') {
+                        path = path.concat(S);
+                        path.push(S[0]);
+                        path.push([NaN, NaN]);
+                        path = path.concat(C);
+                        path.push(C[0]);
                     }
                 }
             } else {
@@ -22584,13 +22769,23 @@ define('math/clip',[
                 if (clip_type === 'intersection') {
                     path = path.concat(S);
                     doClose = true;
+                } else if (clip_type === 'union') {
+                    path = path.concat(C);
+                    path.push(C[0]);
                 }
+
                 // 'difference': path is empty
             }
 
             return this._getCoordsArrays(path, doClose);
         },
 
+        /**
+         * Count intersection points of type 'X'.
+         * @param {JXG.Mat.Clip.Vertex} intersections
+         * @returns Number
+         * @private
+         */
         _countCrossingIntersections: function(intersections) {
             var i,
                 le = intersections.length,
@@ -22605,7 +22800,8 @@ define('math/clip',[
         },
 
         /**
-         * Create path from all sorts of input elements to greinerHormann().
+         * Create path from all sorts of input elements and convert it
+         * to a suitable input path for greinerHormann().
          *
          * @private
          * @param {Object} obj Maybe curve, arc, sector, circle, polygon, array of points, array of JXG.Coords,
@@ -22887,12 +23083,12 @@ define('math/clip',[
          *          [bbox[2], bbox[1]], // ur
          *          [bbox[0], bbox[1]]] // ul
          *     triangle = [[-1,1], [1,1], [0,-1], [-1,1]];
-         * 
+         *
          *     var a = JXG.Math.Clip.greinerHormann(canvas, triangle, 'difference', this.board);
          *     this.dataX = a[0];
          *     this.dataY = a[1];
          * };
-         * 
+         *
          * </pre><div id="JXGe94da07a-2a01-4498-ad62-f71a327f8e25" class="jxgbox" style="width: 300px; height: 300px;"></div>
          * <script type="text/javascript">
          *     (function() {
@@ -22930,9 +23126,11 @@ define('math/clip',[
                 S_starters,
                 C_starters,
                 res = [],
-                pathX = [],
-                pathY = [];
+                DEBUG = false;
 
+            if (DEBUG) {
+                console.log("\n------------ GREINER-HORMANN --------------");
+            }
             // Collect all subject points into subject array S
             S = this._getPath(subject, board);
             len = S.length;
@@ -22949,52 +23147,23 @@ define('math/clip',[
             }
 
             // Handle cases where at least one of the paths is empty
-            if (this.isEmptyCase(S, C, clip_type, pathX, pathY)) {
-                return [pathX, pathY];
+            if (this.isEmptyCase(S, C, clip_type)) {
+                return [[], []];
             }
 
             // Add pointers for doubly linked lists
             S_starters = this.makeDoublyLinkedList(S);
             C_starters = this.makeDoublyLinkedList(C);
 
-            // this._print_array(S);
-            // console.log("Components:", S_starters);
-            // this._print_array(C);
-            // console.log("Components:", C_starters);
+            if (DEBUG) {
+                this._print_array(S);
+                console.log("Components:", S_starters);
+                this._print_array(C);
+                console.log("Components:", C_starters);
+            }
 
             res = this.findIntersections(S, C, board);
             S_intersect = res[0];
-
-            // console.log("------- START ------------------")
-            // let cnt = 0;
-            // for (let start of S_starters) {
-            //     console.log("----")
-            //     let P = S[start];
-            //     P._start = true;
-            //     do {
-            //         console.log(">", P.coords.usrCoords, "NEXT", P._next.coords.usrCoords, "NEXT^2", P._next._next.coords.usrCoords)
-            //         P = P._next;
-            //         cnt++;
-            //     } while (!P._start && cnt < 15);
-            //     P._start = null;
-            // }
-            // console.log("------- END ------------------")
-
-            // C_intersect = res[1];
-
-            // For non-closed paths
-            // if (true && typeof subject_first_point_type === 'string') {
-            //     S[0].neighbour = C[C.length - 1];
-            //     S[0].first_point_type = subject_first_point_type;
-            //     S[S.length - 1].neighbour = C[0];
-            //     S[S.length - 1].first_point_type = subject_first_point_type;
-            // }
-            // if (true && typeof clip_first_point_type === 'string') {
-            //     C[0].neighbour = S[S.length - 1];
-            //     C[0].first_point_type = clip_first_point_type;
-            //     C[C.length - 1].neighbour = S[0];
-            //     C[C.length - 1].first_point_type = clip_first_point_type;
-            // }
 
             this._handleFullyDegenerateCase(S, C, board);
 
@@ -23239,7 +23408,7 @@ define('math/clip',[
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -23552,7 +23721,7 @@ define('math/poly',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type)
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -23863,7 +24032,7 @@ define('math/complex',['jxg', 'utils/type'], function (JXG, Type) {
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -23909,7 +24078,7 @@ define('math/complex',['jxg', 'utils/type'], function (JXG, Type) {
  * Stoyan Stefanov <sstoo@gmail.com> (see http://www.phpied.com/rgb-color-parser-in-javascript/)
  */
 
-define('utils/color',['jxg', 'utils/type', 'math/math'], 
+define('utils/color',['jxg', 'utils/type', 'math/math'],
     function (JXG, Type, Mat) {
 
     "use strict";
@@ -24066,7 +24235,7 @@ define('utils/color',['jxg', 'utils/type', 'math/math'],
 
         // array of color definition objects
         colorDefs = [{
-            re: /^\s*rgba\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*([\d\.]{1,3})\s*\)\s*$/,
+            re: /^\s*rgba\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*([\d.]{1,3})\s*\)\s*$/,
             example: ['rgba(123, 234, 45, 0.5)', 'rgba(255,234,245,1.0)'],
             process: function (bits) {
                 return [
@@ -24852,8 +25021,7 @@ define('utils/color',['jxg', 'utils/type', 'math/math'],
             green: '#009E73', // bluishgreen
             purple: '#CC79A7', // reddishpurple
             white: '#ffffff'
-        },
-
+        }
     });
 
     /**
@@ -24868,16 +25036,16 @@ define('utils/color',['jxg', 'utils/type', 'math/math'],
      * <li> white
      * <li> yellow
      * </ul>
-     * 
+     *
      * @name JXG.palette
      * @type Object
      * @default JXG.paletteWong
      * @see JXG.paletteWong
-     * 
+     *
      * @example
-     * 
+     *
      * var p = board.create('line', [[-1, 1], [2, -3]], {strokeColor: JXG.palette.yellow});
-     * 
+     *
      */
     JXG.palette = JXG.paletteWong;
 
@@ -24885,7 +25053,7 @@ define('utils/color',['jxg', 'utils/type', 'math/math'],
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -25246,7 +25414,7 @@ define('options',[
              * @type Object
              */
             fullscreen: {
-                symbol: '\u26f6', // '\u25a1'
+                symbol: '\u25a1', // '\u26f6' (not supported by MacOS), // '\u25a1'
                 id: null
             },
 
@@ -25432,13 +25600,13 @@ define('options',[
              *   factorY: 1.25,  // vertical zoom factor (multiplied to {@link JXG.Board#zoomY})
              *   wheel: true,     // allow zooming by mouse wheel or
              *   				   // by pinch-to-toom gesture on touch devices
-             *   needShift: true, // mouse wheel zooming needs pressing of the shift key
-             *   min: 0.001        // minimal values of {@link JXG.Board#zoomX} and {@link JXG.Board#zoomY}, limits zoomOut
-             *   max: 1000.0       // maximal values of {@link JXG.Board#zoomX} and {@link JXG.Board#zoomY}, limits zoomIn
+             *   needShift: true,   // mouse wheel zooming needs pressing of the shift key
+             *   min: 0.001,        // minimal values of {@link JXG.Board#zoomX} and {@link JXG.Board#zoomY}, limits zoomOut
+             *   max: 1000.0,       // maximal values of {@link JXG.Board#zoomX} and {@link JXG.Board#zoomY}, limits zoomIn
              *
-             *   pinchHorizontal: true // Allow pinch-to-zoom to zoom only horizontal axis
-             *   pinchVertical: true   // Allow pinch-to-zoom to zoom only vertical axis
-             *   pinchSensitivity: 7   // Sensitivity (in degrees) for recognizing horizontal or vertical pinch-to-zoom gestures.
+             *   pinchHorizontal: true, // Allow pinch-to-zoom to zoom only horizontal axis
+             *   pinchVertical: true,   // Allow pinch-to-zoom to zoom only vertical axis
+             *   pinchSensitivity: 7    // Sensitivity (in degrees) for recognizing horizontal or vertical pinch-to-zoom gestures.
              * }
              * </pre>
              *
@@ -25538,11 +25706,11 @@ define('options',[
              *             panCtrl: false
              *         }
              *     });
-             * 
+             *
              *     })();
-             * 
+             *
              * </script><pre>
-             * 
+             *
              *
              * @see JXG.Board#keyDownListener
              * @see JXG.Board#keyFocusInListener
@@ -25590,11 +25758,11 @@ define('options',[
              *             axis: true,
              *             resize: {enabled: true, throttle: 200}
              *         });
-             * 
+             *
              *     })();
-             * 
+             *
              * </script><pre>
-             * 
+             *
              *
              */
             resize: {
@@ -25639,11 +25807,11 @@ define('options',[
              *             axis: true,
              *             moveTarget: document
              *         });
-             * 
+             *
              *     })();
-             * 
+             *
              * </script><pre>
-             * 
+             *
              *
              */
             moveTarget: null,
@@ -26374,7 +26542,20 @@ define('options',[
              */
             isLabel: false,
 
-
+            /**
+             * Controls if an element can get the focus with the tab key.
+             * See <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/tabindex">descriptiona at MDN</a>.
+             * The additional value null completely disables focus of an element.
+             * The value will be ignored if keyboard control of the board is not enabled or
+             * the element is fixed or not visible.
+             *
+             * @name JXG.GeometryElement#tabindex
+             * @type Number
+             * @default 0
+             * @see JXG.Board#keyboard
+             * @see JXG.GeometryElement#fixed
+             * @see JXG.GeometryElement#visible
+             */
             tabindex: 0
 
             // close the meta tag
@@ -26474,9 +26655,9 @@ define('options',[
             *             }
             *         },
             *     });
-            * 
+            *
             *     })();
-            * 
+            *
             * </script><pre>
             *
             * @name Ticks#beautifulScientificTickLabels
@@ -26643,13 +26824,27 @@ define('options',[
 
             /**
              * If a label exceeds {@link Ticks#maxLabelLength} this determines the precision used to shorten the tick label.
+             * Replaced by the digits attribute.
              *
              * @type Number
              * @name Ticks#precision
              * @see Ticks#maxLabelLength
+             * @see Ticks#digits
+             * @deprecated
              * @default 3
              */
             precision: 3,
+
+            /**
+             * If a label exceeds {@link Ticks#maxLabelLength} this determines the number of digits used to shorten the tick label.
+             *
+             * @type Number
+             * @name Ticks#digits
+             * @see Ticks#maxLabelLength
+             * @deprecated
+             * @default 3
+             */
+            digits: 3,
 
             /**
              * The default distance between two ticks. Please be aware that this value does not have
@@ -27395,7 +27590,7 @@ define('options',[
                 strokeColor: Color.palette.red,
                 highlightFillColor: '#c3d9ff',
                 highlightStrokeColor: '#c3d9ff',
-    
+
                 name: ''
             },
 
@@ -28940,7 +29135,7 @@ define('options',[
             snatchDistance: 0.0,
 
             /**
-             * If set to true, the point will snap to a grid of integer multiples of 
+             * If set to true, the point will snap to a grid of integer multiples of
              * {@link Point#snapSizeX} and {@link Point#snapSizeY} (in user coordinates).
              * <p>
              * The coordinates of the grid points are either integer multiples of snapSizeX and snapSizeY
@@ -29422,12 +29617,26 @@ define('options',[
 
             /**
              * The precision of the slider value displayed in the optional text.
+             * Replaced by the attribute "digits".
+             *
              * @memberOf Slider.prototype
              * @name precision
              * @type Number
+             * @deprecated
+             * @see Slider#digits
              * @default 2
              */
             precision: 2,
+
+            /**
+             * The number of digits of the slider value displayed in the optional text.
+             *
+             * @memberOf Slider.prototype
+             * @name digits
+             * @type Number
+             * @default 2
+             */
+            digits: 2,
 
             firstArrow: false,
             lastArrow: false,
@@ -29546,6 +29755,7 @@ define('options',[
                 visible: 'inherit',
                 fixed: true,
                 scalable: false,
+                tabindex: null,
                 name: '',
                 strokeWidth: 1,
                 strokeColor: '#000000',
@@ -29564,7 +29774,7 @@ define('options',[
 
                 // Label drawing
                 drawLabels: false,
-                precision: 2,
+                digits: 2,
                 includeBoundaries: 1,
                 drawZero: true,
                 label: {
@@ -29595,6 +29805,7 @@ define('options',[
                 strokeWidth: 3,
                 visible: 'inherit',
                 fixed: true,
+                tabindex: null,
                 name: '',
                 strokeColor: '#000000',
                 highlightStrokeColor: '#888888'
@@ -29835,12 +30046,25 @@ define('options',[
 
             /**
              * The precision of the tape measure value displayed in the optional text.
+             * Replaced by the attribute digits
+             *
+             * @memberOf Tapemeasure.prototype
+             * @name precision
+             * @type Number
+             * @deprecated
+             * @see Tapemeasure#digits
+             * @default 2
+             */
+            precision: 2,
+
+            /**
+             * The precision of the tape measure value displayed in the optional text.
              * @memberOf Tapemeasure.prototype
              * @name precision
              * @type Number
              * @default 2
              */
-            precision: 2,
+            digits: 2,
 
             /**
              * Attributes for first helper point defining the tape measure position.
@@ -29953,11 +30177,11 @@ define('options',[
              *         var board = JXG.JSXGraph.initBoard('JXG2da7e972-ac62-416b-a94b-32559c9ec9f9',
              *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
              *     var txt = board.create('text', [2, 2, "hello"], {fontSize: 8, fontUnit: 'vmin'});
-             * 
+             *
              *     })();
-             * 
+             *
              * </script><pre>
-             * 
+             *
              */
             fontUnit: 'px',
 
@@ -30359,7 +30583,7 @@ define('options',[
              * text1 = board.create('text', [5, 1, function(){
              *             return '\\(a(t)= { 1 \\over ' + a.Value().toFixed(3) + '}\\)';
              *         }], {fontSize: 15, fixed:true, strokeColor:'red', anchorY: 'top', parse: false});
-             * 
+             *
              * </pre><div id="JXGf8bd01db-fb6a-4a5c-9e7f-8823f7aa5ac6" class="jxgbox" style="width: 300px; height: 300px;"></div>
              * <script type="text/javascript">
              *     (function() {
@@ -30371,12 +30595,12 @@ define('options',[
              *         suffixlabel:'\\(t_1=\\)',
              *         unitLabel: ' \\(\\text{ ms}\\)',
              *         snapWidth:0.01}),
-             *     
+             *
              *     func = board.create('functiongraph',[function(x){return (a.Value()*x*x)}], {strokeColor: "red"});
              *     text1 = board.create('text', [5, 1, function(){
              *                 return '\\(a(t)= { 1 \\over ' + a.Value().toFixed(3) + '}\\)';
              *             }], {fontSize: 15, fixed:true, strokeColor:'red', anchorY: 'top', parse: false});
-             * 
+             *
              *     })();
              *
              * </script><pre>
@@ -30415,7 +30639,7 @@ define('options',[
              * text1 = board.create('text', [5, 1, function(){
              *             return 'a(t)= { 1 \\over ' + a.Value().toFixed(3) + '}';
              *         }], {fontSize: 15, fixed:true, strokeColor:'red', anchorY: 'top'});
-             * 
+             *
              * </pre>
              * <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.13.10/dist/katex.min.css" integrity="sha384-0cCFrwW/0bAk1Z/6IMgIyNU3kfTcNirlObr4WjrUU7+hZeD6ravdYJ3kPWSeC31M" crossorigin="anonymous">
              * <script src="https://cdn.jsdelivr.net/npm/katex@0.13.10/dist/katex.min.js" integrity="sha384-dtFDxK2tSkECx/6302Z4VN2ZRqt6Gis+b1IwCjJPrn0kMYFQT9rbtyQWg5NFWAF7" crossorigin="anonymous"></script>
@@ -30429,12 +30653,12 @@ define('options',[
              *         suffixlabel:'t_1=',
              *         unitLabel: ' \\text{ ms}',
              *         snapWidth:0.01});
-             *     
+             *
              *     func = board.create('functiongraph',[function(x){return (a.Value()*x*x)}], {strokeColor: "red"});
              *     text1 = board.create('text', [5, 1, function(){
              *                 return 'a(t)= { 1 \\over ' + a.Value().toFixed(3) + '}';
              *             }], {fontSize: 15, fixed:true, strokeColor:'red', anchorY: 'top'});
-             * 
+             *
              *     })();
              *
              * </script><pre>
@@ -30926,7 +31150,7 @@ define('options',[
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -30965,6 +31189,7 @@ define('options',[
     newcap:   AsciiMathMl exposes non-constructor functions beginning with upper case letters
 */
 /*jslint nomen: true, plusplus: true, newcap: true, unparam: true*/
+/*eslint no-unused-vars: "off"*/
 
 /* depends:
  jxg
@@ -32066,9 +32291,11 @@ define('renderer/abstract',[
                             }
                         } else if (Type.evaluate(el.visProp.usekatex)) {
                             try {
+                                /* eslint-disable no-undef */
                                 katex.render(content, el.rendNode, {
                                     throwOnError: false
                                 });
+                                /* eslint-enable no-undef */
                             } catch (e) {
                                 JXG.debug('KaTeX (not yet) loaded');
                             }
@@ -32508,8 +32735,11 @@ define('renderer/abstract',[
 
         setTabindex: function(element) {
             var val;
-            if (Type.exists(element.rendNode)) {
+            if (element.board.attr.keyboard.enabled && Type.exists(element.rendNode)) {
                 val = Type.evaluate(element.visProp.tabindex);
+                if (!element.visPropCalc.visible || Type.evaluate(element.visProp.fixed)) {
+                    val = null;
+                }
                 if (val !== element.visPropOld.tabindex) {
                     element.rendNode.setAttribute('tabindex', val);
                     element.visPropOld.tabindex = val;
@@ -33015,7 +33245,7 @@ define('renderer/abstract',[
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -33303,7 +33533,7 @@ End Function\n\
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -33409,12 +33639,12 @@ define('parser/geonext',[
                         // Search for F or p.M before (...)^
                         pre = left.substring(0, pos + 1);
                         p = pos;
-                        while (p >= 0 && pre.substr(p, 1).match(/([\w\.]+)/)) {
+                        while (p >= 0 && pre.substr(p, 1).match(/([\w.]+)/)) {
                             leftop = RegExp.$1 + leftop;
                             p -= 1;
                         }
                         leftop += left.substring(pos + 1, left.length);
-                        leftop = leftop.replace(/([\(\)\+\*\%\^\-\/\]\[])/g, '\\$1');
+                        leftop = leftop.replace(/([()+*%^\-/\][])/g, '\\$1');
                     } else {
                         throw new Error("JSXGraph: Missing '(' in expression");
                     }
@@ -33426,7 +33656,7 @@ define('parser/geonext',[
                 // To the right of the ^ operator there also may be a function or method call
                 // or a term in parenthesis. Alos, ere we search for the closing
                 // parenthesis.
-                if (right.match(/^([\w\.]*\()/)) {
+                if (right.match(/^([\w.]*\()/)) {
                     count = 1;
                     pos = RegExp.$1.length;
 
@@ -33443,7 +33673,7 @@ define('parser/geonext',[
 
                     if (count === 0) {
                         rightop = right.substring(0, pos);
-                        rightop = rightop.replace(/([\(\)\+\*\%\^\-\/\[\]])/g, '\\$1');
+                        rightop = rightop.replace(/([()+*%^\-/[\]])/g, '\\$1');
                     } else {
                         throw new Error("JSXGraph: Missing ')' in expression");
                     }
@@ -33684,7 +33914,7 @@ define('parser/geonext',[
             expr = /(Dist)\(([\w_]+),([\w_]+)\)/g;
             term = term.replace(expr, 'dist($(\'$2\'), $(\'$3\'))');
 
-            expr = /(Deg)\(([\w_]+),([ \w\[\w_]+),([\w_]+)\)/g;
+            expr = /(Deg)\(([\w_]+),([ \w[\w_]+),([\w_]+)\)/g;
             term = term.replace(expr, 'deg($(\'$2\'),$(\'$3\'),$(\'$4\'))');
 
             // Search for Rad('gi23','gi24','gi25')
@@ -33816,7 +34046,7 @@ define('parser/geonext',[
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -34041,7 +34271,7 @@ define('base/element',[
 
         /**
          * Inherits contains the subelements, which may have an attribute
-         * (in partuclar the attribute "visible") having value 'inherit'.
+         * (in particular the attribute "visible") having value 'inherit'.
          * @type Object
          */
         this.inherits = [];
@@ -35744,10 +35974,9 @@ define('base/element',[
          */
         removeAllTicks: function () {
             var t;
-
             if (Type.exists(this.ticks)) {
-                for (t = this.ticks.length; t > 0; t--) {
-                    this.removeTicks(this.ticks[t - 1]);
+                for (t = this.ticks.length - 1; t >= 0; t--) {
+                    this.removeTicks(this.ticks[t]);
                 }
                 this.ticks = [];
                 this.board.update();
@@ -35766,19 +35995,19 @@ define('base/element',[
             }
 
             if (Type.exists(this.ticks)) {
-                for (t = this.ticks.length; t > 0; t--) {
-                    if (this.ticks[t - 1] === tick) {
-                        this.board.removeObject(this.ticks[t - 1]);
+                for (t = this.ticks.length - 1; t >= 0; t--) {
+                    if (this.ticks[t] === tick) {
+                        this.board.removeObject(this.ticks[t]);
 
-                        if (this.ticks[t - 1].ticks) {
-                            for (j = 0; j < this.ticks[t - 1].ticks.length; j++) {
-                                if (Type.exists(this.ticks[t - 1].labels[j])) {
-                                    this.board.removeObject(this.ticks[t - 1].labels[j]);
+                        if (this.ticks[t].ticks) {
+                            for (j = 0; j < this.ticks[t].ticks.length; j++) {
+                                if (Type.exists(this.ticks[t].labels[j])) {
+                                    this.board.removeObject(this.ticks[t].labels[j]);
                                 }
                             }
                         }
 
-                        delete this.ticks[t - 1];
+                        delete this.ticks[t];
                         break;
                     }
                 }
@@ -35851,7 +36080,7 @@ define('base/element',[
                     rcoords = new JXG.Coords(Const.COORDS_BY_USER, [rx, ry], this.board);
                     if (!attractToGrid ||
                         rcoords.distance(
-                            ev_au == 'screen' ? Const.COORDS_BY_SCREEN : Const.COORDS_BY_USER, this.coords
+                            ev_au === 'screen' ? Const.COORDS_BY_SCREEN : Const.COORDS_BY_USER, this.coords
                             ) < ev_ad) {
                         x = rx;
                         y = ry;
@@ -36118,7 +36347,7 @@ define('base/element',[
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -36379,7 +36608,7 @@ define('base/coordselement',[
                 ev_sw,
                 slide = this.slideObject,
                 res, cu,
-                slides = [], 
+                slides = [],
                 isTransformed;
 
             this.needsUpdateFromParent = false;
@@ -37217,8 +37446,8 @@ define('base/coordselement',[
                         slide = slideobj.borders[i];
                     }
                 }
-            	slideobj = this.board.select(slide);
-            	onPolygon = true;
+                slideobj = this.board.select(slide);
+                onPolygon = true;
             }
 
             /* Gliders on Ticks are forbidden */
@@ -38056,7 +38285,7 @@ define('base/coordselement',[
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -38365,7 +38594,7 @@ define('base/text',[
          * @return {[type]} [description]
          */
         updateSize: function () {
-            var tmp, s, that, node,
+            var tmp, that, node,
                 ev_d = Type.evaluate(this.visProp.display);
 
             if (!Env.isBrowser || this.board.renderer.type === 'no') {
@@ -38633,7 +38862,7 @@ define('base/text',[
          * @returns {string} expanded String
          */
         expandShortMath: function (expr) {
-            var re = /([\)0-9\.])\s*([\(a-zA-Z_])/g;
+            var re = /([)0-9.])\s*([(a-zA-Z_])/g;
             return expr.replace(re, '$1*$2');
         },
 
@@ -38803,7 +39032,7 @@ define('base/text',[
             content = content.replace(/&lt;\/value&gt;/g, '</value>');
 
             do {
-                search = /<value>([\w\s\*\/\^\-\+\(\)\[\],<>=!]+)<\/value>/;
+                search = /<value>([\w\s*/^\-+()[\],<>=!]+)<\/value>/;
                 res = search.exec(content);
 
                 if (res !== null) {
@@ -38931,7 +39160,8 @@ define('base/text',[
          */
         setAutoPosition: function () {
             var x, y, cx, cy,
-                anchorCoords, anchorX, anchorY,
+                anchorCoords,
+                // anchorX, anchorY,
                 w = this.size[0],
                 h = this.size[1],
                 start_angle, angle,
@@ -38953,8 +39183,8 @@ define('base/text',[
                 return this;
             }
 
-            anchorX = Type.evaluate(this.visProp.anchorx);
-            anchorY = Type.evaluate(this.visProp.anchory);
+            // anchorX = Type.evaluate(this.visProp.anchorx);
+            // anchorY = Type.evaluate(this.visProp.anchory);
             offset = Type.evaluate(this.visProp.offset);
             anchorCoords = this.element.getLabelAnchor();
             cx = anchorCoords.scrCoords[1];
@@ -39372,7 +39602,7 @@ define('parser/jessiecode',[
 
         /**
          * The global scope.
-         * @type {Object}
+         * @type Object
          */
         this.scope = {
             id: 0,
@@ -39385,7 +39615,7 @@ define('parser/jessiecode',[
 
         /**
          * Keeps track of all possible scopes every required.
-         * @type {Array}
+         * @type Array
          */
         this.scopes = [];
         this.scopes.push(this.scope);
@@ -39442,7 +39672,7 @@ define('parser/jessiecode',[
 
         /**
          * Store $log messages in case there's no console.
-         * @type {Array}
+         * @type Array
          */
         this.$log = [];
 
@@ -39451,6 +39681,12 @@ define('parser/jessiecode',[
          * @type Object
          */
         this.builtIn = this.defineBuiltIn();
+
+        /**
+         * List of all possible operands in JessieCode (except of JSXGraph objects).
+         * @type Object
+         */
+        this.operands = this.getPossibleOperands();
 
         /**
          * The board which currently is used to create and look up elements.
@@ -39700,32 +39936,44 @@ define('parser/jessiecode',[
         },
 
         /**
-         * Looks up the value of the given variable.
+         * Looks up the value of the given variable. We use a simple type inspection.
+         *
          * @param {String} vname Name of the variable
          * @param {Boolean} [local=false] Only look up the internal symbol table and don't look for
          * the <tt>vname</tt> in Math or the element list.
+         * @param {Boolean} [isFunctionName=false] Lookup function of tpye builtIn, Math.*, creator.
+         *
+         * @see JXG.JessieCode#resolveType
          */
-        getvar: function (vname, local) {
+         getvar: function (vname, local, isFunctionName) {
             var s;
 
             local = Type.def(local, false);
 
+            // Local scope has always precedence
             s = this.isLocalVariable(vname);
             if (s !== null) {
                 return s.locals[vname];
             }
 
-            // check for an element with this name
-            if (this.isCreator(vname)) {
-                return this.creator(vname);
-            }
-
-            if (this.isBuiltIn(vname)) {
+            // Handle the - so far only - few constants by hard coding them.
+            if (vname === '$board' || vname === 'EULER' || vname === 'PI') {
                 return this.builtIn[vname];
             }
 
-            if (this.isMathMethod(vname)) {
-                return Math[vname];
+            if (!!isFunctionName) {
+                if (this.isBuiltIn(vname)) {
+                    return this.builtIn[vname];
+                }
+
+                if (this.isMathMethod(vname)) {
+                    return Math[vname];
+                }
+
+                // check for an element with this name
+                if (this.isCreator(vname)) {
+                    return this.creator(vname);
+                }
             }
 
             if (!local) {
@@ -39888,12 +40136,13 @@ define('parser/jessiecode',[
 
         /**
          * Converts a node type <tt>node_op</tt> and value <tt>op_map</tt> or <tt>op_function</tt> into a executable
-         * function.
+         * function. Does a simple type inspection.
          * @param {Object} node
          * @returns {function}
+         * @see JXG.JessieCode#resolveType
          */
-        defineFunction: function (node) {
-            var fun, i,
+         defineFunction: function (node) {
+            var fun, i, that = this,
                 list = node.children[0],
                 scope = this.pushScope(list);
 
@@ -39920,6 +40169,11 @@ define('parser/jessiecode',[
                         /*jslint evil:true*/
                         fun = eval(str);
                         /*jslint evil:false*/
+
+                        scope.argtypes = [];
+                        for (i = 0; i < list.length; i++) {
+                            scope.argtypes.push(that.resolveType(list[i], node));
+                        }
 
                         return fun;
                     } catch (e) {
@@ -40190,17 +40444,23 @@ define('parser/jessiecode',[
             var i, v;
 
             if (node.replaced) {
-                // these children exist, if node.replaced is set.
+                // These children exist, if node.replaced is set.
                 v = this.board.objects[node.children[1][0].value];
 
                 if (Type.exists(v) && v.name !== "") {
                     node.type = 'node_var';
                     node.value = v.name;
 
-                    // maybe it's not necessary, but just to be sure that everything is cleaned up we better delete all
+                    // Maybe it's not necessary, but just to be sure that everything is cleaned up we better delete all
                     // children and the replaced flag
                     node.children.length = 0;
                     delete node.replaced;
+                }
+            }
+
+            if (Type.isArray(node)) {
+                for (i = 0; i < node.length; i++) {
+                    node[i] = this.replaceIDs(node[i]);
                 }
             }
 
@@ -40228,8 +40488,8 @@ define('parser/jessiecode',[
 
             v = node.value;
 
-            // we are interested only in nodes of type node_var and node_op > op_lhs.
-            // currently, we are not checking if the id is a local variable. in this case, we're stuck anyway.
+            // We are interested only in nodes of type node_var and node_op > op_lhs.
+            // Currently, we are not checking if the id is a local variable. in this case, we're stuck anyway.
 
             if (node.type === 'node_op' && v === 'op_lhs' && node.children.length === 1) {
                 this.isLHS = true;
@@ -40241,8 +40501,14 @@ define('parser/jessiecode',[
                 }
             }
 
+            if (Type.isArray(node)) {
+                for (i = 0; i < node.length; i++) {
+                    node[i] = this.replaceNames(node[i]);
+                }
+            }
+
             if (node.children) {
-                // assignments are first evaluated on the right hand side
+                // Assignments are first evaluated on the right hand side
                 for (i = node.children.length; i > 0; i--) {
                     if (Type.exists(node.children[i - 1])) {
                         node.children[i - 1] = this.replaceNames(node.children[i - 1]);
@@ -40302,7 +40568,7 @@ define('parser/jessiecode',[
                 }
             }
 
-            // the $()-function-calls are special because their parameter is given as a string, not as a node_var.
+            // The $()-function-calls are special because their parameter is given as a string, not as a node_var.
             if (node.type === 'node_op' && node.value === 'op_execfun' &&
                 node.children.length > 1 && node.children[0].value === '$' &&
                 node.children[1].length > 0) {
@@ -40357,6 +40623,80 @@ define('parser/jessiecode',[
             }
 
             return e[v];
+        },
+
+        /**
+         * Type inspection: check if the string vname appears as function name in the
+         * AST node. Used in "op_execfun". This allows the JessieCode exmples below.
+         *
+         * @private
+         * @param {String} vname
+         * @param {Object} node
+         * @returns 'any' or 'function'
+         * @see JXG.JessieCode#execute
+         * @see JXG.JessieCode#getvar
+         *
+         * @example
+         *  var p = board.create('point', [2, 0], {name: 'X'});
+         *  var txt = 'X(X)';
+         *  console.log(board.jc.parse(txt));
+         *
+         * @example
+         *  var p = board.create('point', [2, 0], {name: 'X'});
+         *  var txt = 'f = function(el, X) { return X(el); }; f(X, X);';
+         *  console.log(board.jc.parse(txt));
+         *
+         * @example
+         *  var p = board.create('point', [2, 0], {name: 'point'});
+         *  var txt = 'B = point(1,3); X(point);';
+         *  console.log(board.jc.parse(txt));
+         *
+         * @example
+         *  var p = board.create('point', [2, 0], {name: 'A'});
+         *  var q = board.create('point', [-2, 0], {name: 'X'});
+         *  var txt = 'getCoord=function(p, f){ return f(p); }; getCoord(A, X);';
+         *  console.log(board.jc.parse(txt));
+         */
+         resolveType: function(vname, node) {
+            var i, t,
+                type = 'any'; // Possible values: 'function', 'any'
+
+            if (Type.isArray(node)) {
+                // node contains the parameters of a function call or function declaration
+                for (i = 0; i < node.length; i++) {
+                    t = this.resolveType(vname, node[i]);
+                    if (t !== 'any') {
+                        type = t;
+                        return type;
+                    }
+                }
+            }
+
+            if (node.type === 'node_op' && node.value === 'op_execfun' &&
+                node.children[0].type === 'node_var' && node.children[0].value === vname) {
+                return 'function';
+            }
+
+            if (node.type === 'node_op') {
+                for (i = 0; i < node.children.length; i++) {
+                    if (node.children[0].type === 'node_var' && node.children[0].value === vname &&
+                        (node.value === 'op_add' || node.value === 'op_sub' || node.value === 'op_mul' ||
+                            node.value === 'op_div' || node.value === 'op_mod' || node.value === 'op_exp' ||
+                            node.value === 'op_neg')) {
+                        return 'any';
+                    }
+                }
+
+                for (i = 0; i < node.children.length; i++) {
+                    t = this.resolveType(vname, node.children[i]);
+                    if (t !== 'any') {
+                        type = t;
+                        return type;
+                    }
+                }
+            }
+
+            return 'any';
         },
 
         /**
@@ -40590,7 +40930,9 @@ define('parser/jessiecode',[
                     }
 
                     // look up the variables name in the variable table
+                    node.children[0]._isFunctionName = true;
                     fun = this.execute(node.children[0]);
+                    delete node.children[0]._isFunctionName;
 
                     // determine the scope the function wants to run in
                     if (fun && fun.sc) {
@@ -40605,7 +40947,14 @@ define('parser/jessiecode',[
 
                     // interpret ALL the parameters
                     for (i = 0; i < list.length; i++) {
-                        parents[i] = this.execute(list[i]);
+                        if (Type.exists(fun.scope) && Type.exists(fun.scope.argtypes) &&fun.scope.argtypes[i] === 'function') {
+                            // Type inspection
+                            list[i]._isFunctionName = true;
+                            parents[i] = this.execute(list[i]);
+                            delete list[i]._isFunctionName;
+                        } else {
+                            parents[i] = this.execute(list[i]);
+                        }
                         //parents[i] = Type.evalSlider(this.execute(list[i]));
                         this.dpstack[this.pscope].push({
                             line: node.children[1][i].line,
@@ -40727,11 +41076,16 @@ define('parser/jessiecode',[
                 break;
 
             case 'node_var':
-                ret = this.getvar(node.value);
+                // node._isFunctionName is set in execute: at op_execfun.
+                ret = this.getvar(node.value, false, node._isFunctionName);
                 break;
 
             case 'node_const':
-                ret = Number(node.value);
+                if(node.value === null) {
+                    ret = null;
+                } else {
+                    ret = Number(node.value);
+                }
                 break;
 
             case 'node_const_bool':
@@ -40875,7 +41229,7 @@ define('parser/jessiecode',[
                     this.popScope();
                     break;
                 case 'op_execfunmath':
-                    console.log('TODO');
+                    console.log('op_execfunmath: TODO');
                     ret = '-1';
                     break;
                 case 'op_execfun':
@@ -41063,6 +41417,27 @@ define('parser/jessiecode',[
         },
 
         /**
+         * This is used as the global getName() function.
+         * @param {JXG.GeometryElement} obj
+         * @param {Boolean} useId
+         * @returns {String}
+         */
+        getName: function (obj,useId) {
+            var name = '';
+
+            if (Type.exists(obj) && Type.exists(obj.getName)) {
+                name = obj.getName();
+                if ((!Type.exists(name) || name === '') && !!useId) {
+                    name = obj.id;
+                }
+            } else if (!!useId) {
+                name = obj.id;
+            }
+
+            return name;
+        },
+
+        /**
          * This is used as the global X() function.
          * @param {JXG.Point|JXG.Text} e
          * @returns {Number}
@@ -41099,6 +41474,19 @@ define('parser/jessiecode',[
         },
 
         /**
+         * This is used as the global area() function.
+         * @param {JXG.Circle|JXG.Polygon} obj
+         * @returns {Number}
+         */
+        area: function (obj) {
+            if (!Type.exists(obj) || !Type.exists(obj.Area)) {
+                this._error('Error: Can\'t calculate area.');
+            }
+
+            return obj.Area();
+        },
+
+        /**
          * This is used as the global dist() function.
          * @param {JXG.Point} p1
          * @param {JXG.Point} p2
@@ -41110,6 +41498,19 @@ define('parser/jessiecode',[
             }
 
             return p1.Dist(p2);
+        },
+
+        /**
+         * This is used as the global radius() function.
+         * @param {JXG.Circle|Sector} obj
+         * @returns {Number}
+         */
+        radius: function (obj) {
+            if (!Type.exists(obj) || !Type.exists(obj.Radius)) {
+                this._error('Error: Can\'t calculate radius.');
+            }
+
+            return obj.Radius();
         },
 
         /**
@@ -41318,32 +41719,39 @@ define('parser/jessiecode',[
             return Mat.pow(a, b);
         },
 
-        lt: function(a, b) {
+        lt: function (a, b) {
             if (Interval.isInterval(a) || Interval.isInterval(b)) {
                 return Interval.lt(a, b);
             }
             return a < b;
         },
-        leq: function(a, b) {
+        leq: function (a, b) {
             if (Interval.isInterval(a) || Interval.isInterval(b)) {
                 return Interval.leq(a, b);
             }
             return a <= b;
         },
-        gt: function(a, b) {
+        gt: function (a, b) {
             if (Interval.isInterval(a) || Interval.isInterval(b)) {
                 return Interval.gt(a, b);
             }
             return a > b;
         },
-        geq: function(a, b) {
+        geq: function (a, b) {
             if (Interval.isInterval(a) || Interval.isInterval(b)) {
                 return Intervalt.geq(a, b);
             }
             return a >= b;
         },
 
-        DDD: function(f) {
+        randint: function (min, max, step) {
+            if (!Type.exists(step)) {
+                step = 1;
+            }
+            return Math.round(Math.random() * (max - min) / step) * step + min;
+        },
+
+        DDD: function (f) {
             console.log('Dummy derivative function. This should never appear!');
         },
 
@@ -41465,7 +41873,11 @@ define('parser/jessiecode',[
                     cosh: Mat.cosh,
                     cot: Mat.cot,
                     deg: Geometry.trueAngle,
+                    A: that.area,
+                    area: that.area,
                     dist: that.dist,
+                    R: that.radius,
+                    radius: that.radius,
                     erf: Mat.erf,
                     erfc: Mat.erfc,
                     erfi: Mat.erfi,
@@ -41488,11 +41900,15 @@ define('parser/jessiecode',[
                     trunc: Type.trunc,
                     sinh: Mat.sinh,
 
+                    randint: that.randint,
+
                     IfThen: that.ifthen,
                     'import': that.importModule,
                     'use': that.use,
                     'remove': that.del,
                     '$': that.getElementById,
+                    getName: that.getName,
+                    name: that.getName,
                     '$board': that.board,
                     '$log': that.log
                 };
@@ -41522,7 +41938,11 @@ define('parser/jessiecode',[
             builtIn.erf.src = 'JXG.Math.erf';
             builtIn.erfc.src = 'JXG.Math.erfc';
             builtIn.erfi.src = 'JXG.Math.erfi';
+            builtIn.A.src = '$jc$.area';
+            builtIn.area.src = '$jc$.area';
             builtIn.dist.src = '$jc$.dist';
+            builtIn.R.src = '$jc$.radius';
+            builtIn.radius.src = '$jc$.radius';
             builtIn.factorial.src = 'JXG.Math.factorial';
             builtIn.gcd.src = 'JXG.Math.gcd';
             builtIn.lb.src = 'JXG.Math.log2';
@@ -41542,18 +41962,119 @@ define('parser/jessiecode',[
             builtIn.trunc.src = 'JXG.trunc';
             builtIn.sinh.src = 'JXG.Math.sinh';
 
+            builtIn.randint.src = '$jc$.randint';
+
             builtIn['import'].src = '$jc$.importModule';
             builtIn.use.src = '$jc$.use';
             builtIn.remove.src = '$jc$.del';
             builtIn.IfThen.src = '$jc$.ifthen';
             // usually unused, see node_op > op_execfun
             builtIn.$.src = '(function (n) { return $jc$.board.select(n); })';
+            builtIn.getName.src = '$jc$.getName';
+            builtIn.name.src = '$jc$.getName';
             if (builtIn.$board) {
                 builtIn.$board.src = '$jc$.board';
             }
             builtIn.$log.src = '$jc$.log';
 
             return builtIn;
+        },
+
+        /**
+         * Returns information about the possible functions and constants.
+         * @returns {Object}
+         */
+        getPossibleOperands: function () {
+            var FORBIDDEN = ['E'],
+                jessiecode = this.defineBuiltIn(),
+                math = Math,
+                jc, ma, merge,
+                i, j, p, len, e,
+                funcs, funcsJC, consts, operands,
+                sort, pack;
+
+            sort = function (a, b) {
+                return a.toLowerCase().localeCompare(b.toLowerCase());
+            };
+
+            pack = function (name, origin) {
+                var that = null;
+
+                if (origin === 'jc') that = jessiecode[name];
+                else if (origin === 'Math') that = math[name];
+                else return;
+
+                if (FORBIDDEN.includes(name)) {
+                    return;
+                } else if (JXG.isFunction(that)) {
+                    return {
+                        name: name,
+                        type: 'function',
+                        numParams: that.length,
+                        origin: origin,
+                    };
+                } else if (JXG.isNumber(that)) {
+                    return {
+                        name: name,
+                        type: 'constant',
+                        value: that,
+                        origin: origin,
+                    };
+                } else if (that !== undefined) {
+                    console.error('undefined type', that);
+                }
+            };
+
+            jc = Object.getOwnPropertyNames(jessiecode).sort(sort);
+            ma = Object.getOwnPropertyNames(math).sort(sort);
+            merge = [];
+            i = 0;
+            j = 0;
+
+            while (i < jc.length || j < ma.length) {
+                if (jc[i] === ma[j]) {
+                    p = pack(ma[j], 'Math');
+                    if (JXG.exists(p)) merge.push(p);
+                    i++;
+                    j++;
+                } else if (!JXG.exists(ma[j]) || jc[i].toLowerCase().localeCompare(ma[j].toLowerCase()) < 0) {
+                    p = pack(jc[i], 'jc');
+                    if (JXG.exists(p)) merge.push(p);
+                    i++;
+                } else {
+                    p = pack(ma[j], 'Math');
+                    if (JXG.exists(p)) merge.push(p);
+                    j++;
+                }
+            }
+
+            funcs = [];
+            funcsJC = [];
+            consts = [];
+            operands = {};
+            len = merge.length;
+            for (i = 0; i < len; i++) {
+                e = merge[i];
+                switch (e.type) {
+                    case 'function':
+                        funcs.push(e.name);
+                        if (e.origin === 'jc')
+                            funcsJC.push(e.name);
+                        break;
+                    case 'constant':
+                        consts.push(e.name);
+                        break;
+                }
+                operands[e.name] = e;
+            }
+
+            return {
+                all: operands,
+                list: merge,
+                functions: funcs,
+                functions_jessiecode: funcsJC,
+                constants: consts,
+            };
         },
 
         /**
@@ -41676,12 +42197,12 @@ define('parser/jessiecode',[
   }
 */
 var parser = (function(){
-var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[2,14],$V1=[1,13],$V2=[1,37],$V3=[1,14],$V4=[1,15],$V5=[1,21],$V6=[1,16],$V7=[1,17],$V8=[1,33],$V9=[1,18],$Va=[1,19],$Vb=[1,12],$Vc=[1,59],$Vd=[1,60],$Ve=[1,58],$Vf=[1,46],$Vg=[1,48],$Vh=[1,49],$Vi=[1,50],$Vj=[1,51],$Vk=[1,52],$Vl=[1,53],$Vm=[1,54],$Vn=[1,45],$Vo=[1,38],$Vp=[1,39],$Vq=[5,7,8,14,15,16,17,19,20,21,23,26,27,50,51,58,65,74,75,76,77,78,79,80,82,91,93],$Vr=[5,7,8,12,14,15,16,17,19,20,21,23,26,27,50,51,58,65,74,75,76,77,78,79,80,82,91,93],$Vs=[8,10,16,32,34,35,37,39,41,42,43,45,46,47,48,50,51,53,54,55,57,64,65,66,83,86],$Vt=[2,48],$Vu=[1,72],$Vv=[10,16,32,34,35,37,39,41,42,43,45,46,47,48,50,51,53,54,55,57,66,83,86],$Vw=[1,78],$Vx=[8,10,16,32,34,35,37,41,42,43,45,46,47,48,50,51,53,54,55,57,64,65,66,83,86],$Vy=[1,82],$Vz=[8,10,16,32,34,35,37,39,45,46,47,48,50,51,53,54,55,57,64,65,66,83,86],$VA=[1,83],$VB=[1,84],$VC=[1,85],$VD=[8,10,16,32,34,35,37,39,41,42,43,50,51,53,54,55,57,64,65,66,83,86],$VE=[1,89],$VF=[1,90],$VG=[1,91],$VH=[1,92],$VI=[1,97],$VJ=[8,10,16,32,34,35,37,39,41,42,43,45,46,47,48,53,54,55,57,64,65,66,83,86],$VK=[1,103],$VL=[1,104],$VM=[8,10,16,32,34,35,37,39,41,42,43,45,46,47,48,50,51,57,64,65,66,83,86],$VN=[1,105],$VO=[1,106],$VP=[1,107],$VQ=[1,126],$VR=[1,139],$VS=[83,86],$VT=[1,149],$VU=[10,66,86],$VV=[8,10,16,20,32,34,35,37,39,41,42,43,45,46,47,48,50,51,53,54,55,57,64,65,66,82,83,86],$VW=[1,166],$VX=[10,86];
+var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[2,14],$V1=[1,13],$V2=[1,37],$V3=[1,14],$V4=[1,15],$V5=[1,21],$V6=[1,16],$V7=[1,17],$V8=[1,33],$V9=[1,18],$Va=[1,19],$Vb=[1,12],$Vc=[1,59],$Vd=[1,60],$Ve=[1,58],$Vf=[1,46],$Vg=[1,48],$Vh=[1,49],$Vi=[1,50],$Vj=[1,51],$Vk=[1,52],$Vl=[1,53],$Vm=[1,54],$Vn=[1,45],$Vo=[1,38],$Vp=[1,39],$Vq=[5,7,8,14,15,16,17,19,20,21,23,26,27,50,51,58,65,74,75,76,77,78,79,80,82,91,93],$Vr=[5,7,8,12,14,15,16,17,19,20,21,23,26,27,50,51,58,65,74,75,76,77,78,79,80,82,91,93],$Vs=[8,10,16,32,34,35,37,39,41,42,43,45,46,47,48,50,51,53,54,55,57,64,65,66,83,86],$Vt=[2,48],$Vu=[1,72],$Vv=[10,16,32,34,35,37,39,41,42,43,45,46,47,48,50,51,53,54,55,57,66,83,86],$Vw=[1,78],$Vx=[8,10,16,32,34,35,37,41,42,43,45,46,47,48,50,51,53,54,55,57,64,65,66,83,86],$Vy=[1,82],$Vz=[8,10,16,32,34,35,37,39,45,46,47,48,50,51,53,54,55,57,64,65,66,83,86],$VA=[1,83],$VB=[1,84],$VC=[1,85],$VD=[8,10,16,32,34,35,37,39,41,42,43,50,51,53,54,55,57,64,65,66,83,86],$VE=[1,89],$VF=[1,90],$VG=[1,91],$VH=[1,92],$VI=[1,97],$VJ=[8,10,16,32,34,35,37,39,41,42,43,45,46,47,48,53,54,55,57,64,65,66,83,86],$VK=[1,103],$VL=[1,104],$VM=[8,10,16,32,34,35,37,39,41,42,43,45,46,47,48,50,51,57,64,65,66,83,86],$VN=[1,105],$VO=[1,106],$VP=[1,107],$VQ=[1,126],$VR=[1,139],$VS=[83,86],$VT=[1,150],$VU=[10,66,86],$VV=[8,10,16,20,32,34,35,37,39,41,42,43,45,46,47,48,50,51,53,54,55,57,64,65,66,82,83,86],$VW=[1,167],$VX=[10,86];
 var parser = {trace: function trace () { },
 yy: {},
 symbols_: {"error":2,"Program":3,"StatementList":4,"EOF":5,"IfStatement":6,"IF":7,"(":8,"Expression":9,")":10,"Statement":11,"ELSE":12,"LoopStatement":13,"WHILE":14,"FOR":15,";":16,"DO":17,"UnaryStatement":18,"USE":19,"IDENTIFIER":20,"DELETE":21,"ReturnStatement":22,"RETURN":23,"EmptyStatement":24,"StatementBlock":25,"{":26,"}":27,"ExpressionStatement":28,"AssignmentExpression":29,"ConditionalExpression":30,"LeftHandSideExpression":31,"=":32,"LogicalORExpression":33,"?":34,":":35,"LogicalANDExpression":36,"||":37,"EqualityExpression":38,"&&":39,"RelationalExpression":40,"==":41,"!=":42,"~=":43,"AdditiveExpression":44,"<":45,">":46,"<=":47,">=":48,"MultiplicativeExpression":49,"+":50,"-":51,"UnaryExpression":52,"*":53,"/":54,"%":55,"ExponentExpression":56,"^":57,"!":58,"MemberExpression":59,"CallExpression":60,"PrimaryExpression":61,"FunctionExpression":62,"MapExpression":63,".":64,"[":65,"]":66,"BasicLiteral":67,"ObjectLiteral":68,"ArrayLiteral":69,"NullLiteral":70,"BooleanLiteral":71,"StringLiteral":72,"NumberLiteral":73,"NULL":74,"TRUE":75,"FALSE":76,"STRING":77,"NUMBER":78,"NAN":79,"INFINITY":80,"ElementList":81,"<<":82,">>":83,"PropertyList":84,"Property":85,",":86,"PropertyName":87,"Arguments":88,"AttributeList":89,"Attribute":90,"FUNCTION":91,"ParameterDefinitionList":92,"MAP":93,"->":94,"$accept":0,"$end":1},
 terminals_: {2:"error",5:"EOF",7:"IF",8:"(",10:")",12:"ELSE",14:"WHILE",15:"FOR",16:";",17:"DO",19:"USE",20:"IDENTIFIER",21:"DELETE",23:"RETURN",26:"{",27:"}",32:"=",34:"?",35:":",37:"||",39:"&&",41:"==",42:"!=",43:"~=",45:"<",46:">",47:"<=",48:">=",50:"+",51:"-",53:"*",54:"/",55:"%",57:"^",58:"!",64:".",65:"[",66:"]",74:"NULL",75:"TRUE",76:"FALSE",77:"STRING",78:"NUMBER",79:"NAN",80:"INFINITY",82:"<<",83:">>",86:",",91:"FUNCTION",93:"MAP",94:"->"},
-productions_: [0,[3,2],[6,5],[6,7],[13,5],[13,9],[13,7],[18,2],[18,2],[22,2],[22,3],[24,1],[25,3],[4,2],[4,0],[11,1],[11,1],[11,1],[11,1],[11,1],[11,1],[11,1],[28,2],[9,1],[29,1],[29,3],[30,1],[30,5],[33,1],[33,3],[36,1],[36,3],[38,1],[38,3],[38,3],[38,3],[40,1],[40,3],[40,3],[40,3],[40,3],[44,1],[44,3],[44,3],[49,1],[49,3],[49,3],[49,3],[56,1],[56,3],[52,1],[52,2],[52,2],[52,2],[31,1],[31,1],[59,1],[59,1],[59,1],[59,3],[59,4],[61,1],[61,1],[61,1],[61,1],[61,3],[67,1],[67,1],[67,1],[67,1],[70,1],[71,1],[71,1],[72,1],[73,1],[73,1],[73,1],[69,2],[69,3],[68,2],[68,3],[84,1],[84,3],[85,3],[87,1],[87,1],[87,1],[60,2],[60,3],[60,2],[60,4],[60,3],[88,2],[88,3],[89,1],[89,3],[90,1],[90,1],[81,1],[81,3],[62,4],[62,5],[63,6],[92,1],[92,3]],
+productions_: [0,[3,2],[6,5],[6,7],[13,5],[13,9],[13,7],[18,2],[18,2],[22,2],[22,3],[24,1],[25,3],[4,2],[4,0],[11,1],[11,1],[11,1],[11,1],[11,1],[11,1],[11,1],[28,2],[9,1],[29,1],[29,3],[30,1],[30,5],[33,1],[33,3],[36,1],[36,3],[38,1],[38,3],[38,3],[38,3],[40,1],[40,3],[40,3],[40,3],[40,3],[44,1],[44,3],[44,3],[49,1],[49,3],[49,3],[49,3],[56,1],[56,3],[52,1],[52,2],[52,2],[52,2],[31,1],[31,1],[59,1],[59,1],[59,1],[59,3],[59,4],[61,1],[61,1],[61,1],[61,1],[61,3],[67,1],[67,1],[67,1],[67,1],[70,1],[71,1],[71,1],[72,1],[73,1],[73,1],[73,1],[69,2],[69,3],[68,2],[68,3],[84,1],[84,3],[85,3],[87,1],[87,1],[87,1],[60,2],[60,3],[60,2],[60,4],[60,3],[88,2],[88,3],[89,1],[89,3],[90,1],[90,1],[81,1],[81,3],[62,4],[62,5],[63,5],[63,6],[92,1],[92,3]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
 /* this == yyval */
 
@@ -41852,10 +42373,10 @@ break;
 case 92:
  this.$ = []; 
 break;
-case 94: case 98: case 103:
+case 94: case 98: case 104:
  this.$ = [$$[$0]]; 
 break;
-case 95: case 99: case 104:
+case 95: case 99: case 105:
  this.$ = $$[$0-2].concat($$[$0]); 
 break;
 case 96:
@@ -41868,11 +42389,14 @@ case 101:
  this.$ = AST.createNode(lc(_$[$0-4]), 'node_op', 'op_function', $$[$0-2], $$[$0]); this.$.isMath = false; 
 break;
 case 102:
+ this.$ = AST.createNode(lc(_$[$0-4]), 'node_op', 'op_map', [], $$[$0]); 
+break;
+case 103:
  this.$ = AST.createNode(lc(_$[$0-5]), 'node_op', 'op_map', $$[$0-3], $$[$0]); 
 break;
 }
 },
-table: [o([5,7,8,14,15,16,17,19,20,21,23,26,50,51,58,65,74,75,76,77,78,79,80,82,91,93],$V0,{3:1,4:2}),{1:[3]},{5:[1,3],6:6,7:$V1,8:$V2,9:20,11:4,13:7,14:$V3,15:$V4,16:$V5,17:$V6,18:8,19:$V7,20:$V8,21:$V9,22:9,23:$Va,24:11,25:5,26:$Vb,28:10,29:22,30:23,31:24,33:25,36:28,38:32,40:40,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{1:[2,1]},o($Vq,[2,13]),o($Vr,[2,15]),o($Vr,[2,16]),o($Vr,[2,17]),o($Vr,[2,18]),o($Vr,[2,19]),o($Vr,[2,20]),o($Vr,[2,21]),o([7,8,14,15,16,17,19,20,21,23,26,27,50,51,58,65,74,75,76,77,78,79,80,82,91,93],$V0,{4:61}),{8:[1,62]},{8:[1,63]},{8:[1,64]},{6:6,7:$V1,8:$V2,9:20,11:65,13:7,14:$V3,15:$V4,16:$V5,17:$V6,18:8,19:$V7,20:$V8,21:$V9,22:9,23:$Va,24:11,25:5,26:$Vb,28:10,29:22,30:23,31:24,33:25,36:28,38:32,40:40,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{20:[1,66]},{20:[1,67]},{8:$V2,9:69,16:[1,68],20:$V8,29:22,30:23,31:24,33:25,36:28,38:32,40:40,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{16:[1,70]},o($Vr,[2,11]),o($Vs,[2,23]),o($Vs,[2,24]),o([8,10,16,34,35,37,39,41,42,43,45,46,47,48,50,51,53,54,55,64,65,66,83,86],$Vt,{32:[1,71],57:$Vu}),o([8,10,16,32,35,39,41,42,43,45,46,47,48,50,51,53,54,55,57,64,65,66,83,86],[2,26],{34:[1,73],37:[1,74]}),o($Vv,[2,54],{88:77,8:$Vw,64:[1,75],65:[1,76]}),o($Vv,[2,55],{88:79,8:$Vw,64:[1,81],65:[1,80]}),o($Vx,[2,28],{39:$Vy}),o($Vs,[2,56]),o($Vs,[2,57]),o($Vs,[2,58]),o($Vz,[2,30],{41:$VA,42:$VB,43:$VC}),o($Vs,[2,61]),o($Vs,[2,62]),o($Vs,[2,63]),o($Vs,[2,64]),{8:$V2,9:86,20:$V8,29:22,30:23,31:24,33:25,36:28,38:32,40:40,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{8:[1,87]},{8:[1,88]},o($VD,[2,32],{45:$VE,46:$VF,47:$VG,48:$VH}),o($Vs,[2,66]),o($Vs,[2,67]),o($Vs,[2,68]),o($Vs,[2,69]),{20:$VI,72:98,73:99,77:$Vj,78:$Vk,79:$Vl,80:$Vm,83:[1,93],84:94,85:95,87:96},{8:$V2,20:$V8,29:102,30:23,31:24,33:25,36:28,38:32,40:40,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,66:[1,100],67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,81:101,82:$Vn,91:$Vo,93:$Vp},o($VJ,[2,36],{50:$VK,51:$VL}),o($Vs,[2,70]),o($Vs,[2,71]),o($Vs,[2,72]),o($Vs,[2,73]),o($Vs,[2,74]),o($Vs,[2,75]),o($Vs,[2,76]),o($VM,[2,41],{53:$VN,54:$VO,55:$VP}),o($Vs,[2,44]),o($Vs,[2,50]),{8:$V2,20:$V8,31:109,50:$Vc,51:$Vd,52:108,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{8:$V2,20:$V8,31:109,50:$Vc,51:$Vd,52:110,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{8:$V2,20:$V8,31:109,50:$Vc,51:$Vd,52:111,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{6:6,7:$V1,8:$V2,9:20,11:4,13:7,14:$V3,15:$V4,16:$V5,17:$V6,18:8,19:$V7,20:$V8,21:$V9,22:9,23:$Va,24:11,25:5,26:$Vb,27:[1,112],28:10,29:22,30:23,31:24,33:25,36:28,38:32,40:40,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{8:$V2,9:113,20:$V8,29:22,30:23,31:24,33:25,36:28,38:32,40:40,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{8:$V2,9:114,20:$V8,29:22,30:23,31:24,33:25,36:28,38:32,40:40,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{8:$V2,9:115,20:$V8,29:22,30:23,31:24,33:25,36:28,38:32,40:40,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{14:[1,116]},o($Vr,[2,7]),o($Vr,[2,8]),o($Vr,[2,9]),{16:[1,117]},o($Vr,[2,22]),{8:$V2,20:$V8,29:118,30:23,31:24,33:25,36:28,38:32,40:40,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{8:$V2,20:$V8,31:109,50:$Vc,51:$Vd,52:119,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{8:$V2,20:$V8,29:120,30:23,31:24,33:25,36:28,38:32,40:40,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{8:$V2,20:$V8,31:109,36:121,38:32,40:40,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{20:[1,122]},{8:$V2,9:123,20:$V8,29:22,30:23,31:24,33:25,36:28,38:32,40:40,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},o($Vs,[2,87],{89:124,90:125,68:127,20:$VQ,82:$Vn}),{8:$V2,10:[1,128],20:$V8,29:102,30:23,31:24,33:25,36:28,38:32,40:40,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,81:129,82:$Vn,91:$Vo,93:$Vp},o($Vs,[2,89]),{8:$V2,9:130,20:$V8,29:22,30:23,31:24,33:25,36:28,38:32,40:40,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{20:[1,131]},{8:$V2,20:$V8,31:109,38:132,40:40,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{8:$V2,20:$V8,31:109,40:133,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{8:$V2,20:$V8,31:109,40:134,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{8:$V2,20:$V8,31:109,40:135,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{10:[1,136]},{10:[1,137],20:$VR,92:138},{20:$VR,92:140},{8:$V2,20:$V8,31:109,44:141,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{8:$V2,20:$V8,31:109,44:142,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{8:$V2,20:$V8,31:109,44:143,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{8:$V2,20:$V8,31:109,44:144,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},o($Vs,[2,79]),{83:[1,145],86:[1,146]},o($VS,[2,81]),{35:[1,147]},{35:[2,84]},{35:[2,85]},{35:[2,86]},o($Vs,[2,77]),{66:[1,148],86:$VT},o($VU,[2,98]),{8:$V2,20:$V8,31:109,49:150,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{8:$V2,20:$V8,31:109,49:151,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{8:$V2,20:$V8,31:109,50:$Vc,51:$Vd,52:152,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{8:$V2,20:$V8,31:109,50:$Vc,51:$Vd,52:153,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{8:$V2,20:$V8,31:109,50:$Vc,51:$Vd,52:154,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},o($Vs,[2,51]),o([8,10,16,32,34,35,37,39,41,42,43,45,46,47,48,50,51,53,54,55,64,65,66,83,86],$Vt,{57:$Vu}),o($Vs,[2,52]),o($Vs,[2,53]),o([5,7,8,10,12,14,15,16,17,19,20,21,23,26,27,32,34,35,37,39,41,42,43,45,46,47,48,50,51,53,54,55,57,58,64,65,66,74,75,76,77,78,79,80,82,83,86,91,93],[2,12]),{10:[1,155]},{10:[1,156]},{16:[1,157]},{8:[1,158]},o($Vr,[2,10]),o($Vs,[2,25]),o($Vs,[2,49]),{35:[1,159]},o($Vx,[2,29],{39:$Vy}),o($Vs,[2,59]),{66:[1,160]},o([8,10,16,32,34,35,37,39,41,42,43,45,46,47,48,50,51,53,54,55,57,64,65,66,83],[2,88],{86:[1,161]}),o($Vs,[2,94]),o($Vs,[2,96]),o($Vs,[2,97]),o($VV,[2,92]),{10:[1,162],86:$VT},{66:[1,163]},o($Vs,[2,91]),o($Vz,[2,31],{41:$VA,42:$VB,43:$VC}),o($VD,[2,33],{45:$VE,46:$VF,47:$VG,48:$VH}),o($VD,[2,34],{45:$VE,46:$VF,47:$VG,48:$VH}),o($VD,[2,35],{45:$VE,46:$VF,47:$VG,48:$VH}),o($Vs,[2,65]),{25:164,26:$Vb},{10:[1,165],86:$VW},o($VX,[2,103]),{10:[1,167],86:$VW},o($VJ,[2,37],{50:$VK,51:$VL}),o($VJ,[2,38],{50:$VK,51:$VL}),o($VJ,[2,39],{50:$VK,51:$VL}),o($VJ,[2,40],{50:$VK,51:$VL}),o($Vs,[2,80]),{20:$VI,72:98,73:99,77:$Vj,78:$Vk,79:$Vl,80:$Vm,85:168,87:96},{8:$V2,20:$V8,29:169,30:23,31:24,33:25,36:28,38:32,40:40,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},o($Vs,[2,78]),{8:$V2,20:$V8,29:170,30:23,31:24,33:25,36:28,38:32,40:40,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},o($VM,[2,42],{53:$VN,54:$VO,55:$VP}),o($VM,[2,43],{53:$VN,54:$VO,55:$VP}),o($Vs,[2,45]),o($Vs,[2,46]),o($Vs,[2,47]),{6:6,7:$V1,8:$V2,9:20,11:171,13:7,14:$V3,15:$V4,16:$V5,17:$V6,18:8,19:$V7,20:$V8,21:$V9,22:9,23:$Va,24:11,25:5,26:$Vb,28:10,29:22,30:23,31:24,33:25,36:28,38:32,40:40,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{6:6,7:$V1,8:$V2,9:20,11:172,13:7,14:$V3,15:$V4,16:$V5,17:$V6,18:8,19:$V7,20:$V8,21:$V9,22:9,23:$Va,24:11,25:5,26:$Vb,28:10,29:22,30:23,31:24,33:25,36:28,38:32,40:40,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{8:$V2,9:173,20:$V8,29:22,30:23,31:24,33:25,36:28,38:32,40:40,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{8:$V2,9:174,20:$V8,29:22,30:23,31:24,33:25,36:28,38:32,40:40,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{8:$V2,20:$V8,29:175,30:23,31:24,33:25,36:28,38:32,40:40,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},o($Vs,[2,60]),{20:$VQ,68:127,82:$Vn,90:176},o($VV,[2,93]),o($Vs,[2,90]),o($Vs,[2,100]),{25:177,26:$Vb},{20:[1,178]},{94:[1,179]},o($VS,[2,82]),o($VS,[2,83]),o($VU,[2,99]),o($Vq,[2,2],{12:[1,180]}),o($Vr,[2,4]),{16:[1,181]},{10:[1,182]},o($Vs,[2,27]),o($Vs,[2,95]),o($Vs,[2,101]),o($VX,[2,104]),{8:$V2,9:183,20:$V8,29:22,30:23,31:24,33:25,36:28,38:32,40:40,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{6:6,7:$V1,8:$V2,9:20,11:184,13:7,14:$V3,15:$V4,16:$V5,17:$V6,18:8,19:$V7,20:$V8,21:$V9,22:9,23:$Va,24:11,25:5,26:$Vb,28:10,29:22,30:23,31:24,33:25,36:28,38:32,40:40,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{8:$V2,9:185,20:$V8,29:22,30:23,31:24,33:25,36:28,38:32,40:40,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{16:[1,186]},o($Vs,[2,102]),o($Vr,[2,3]),{10:[1,187]},o($Vr,[2,6]),{6:6,7:$V1,8:$V2,9:20,11:188,13:7,14:$V3,15:$V4,16:$V5,17:$V6,18:8,19:$V7,20:$V8,21:$V9,22:9,23:$Va,24:11,25:5,26:$Vb,28:10,29:22,30:23,31:24,33:25,36:28,38:32,40:40,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},o($Vr,[2,5])],
+table: [o([5,7,8,14,15,16,17,19,20,21,23,26,50,51,58,65,74,75,76,77,78,79,80,82,91,93],$V0,{3:1,4:2}),{1:[3]},{5:[1,3],6:6,7:$V1,8:$V2,9:20,11:4,13:7,14:$V3,15:$V4,16:$V5,17:$V6,18:8,19:$V7,20:$V8,21:$V9,22:9,23:$Va,24:11,25:5,26:$Vb,28:10,29:22,30:23,31:24,33:25,36:28,38:32,40:40,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{1:[2,1]},o($Vq,[2,13]),o($Vr,[2,15]),o($Vr,[2,16]),o($Vr,[2,17]),o($Vr,[2,18]),o($Vr,[2,19]),o($Vr,[2,20]),o($Vr,[2,21]),o([7,8,14,15,16,17,19,20,21,23,26,27,50,51,58,65,74,75,76,77,78,79,80,82,91,93],$V0,{4:61}),{8:[1,62]},{8:[1,63]},{8:[1,64]},{6:6,7:$V1,8:$V2,9:20,11:65,13:7,14:$V3,15:$V4,16:$V5,17:$V6,18:8,19:$V7,20:$V8,21:$V9,22:9,23:$Va,24:11,25:5,26:$Vb,28:10,29:22,30:23,31:24,33:25,36:28,38:32,40:40,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{20:[1,66]},{20:[1,67]},{8:$V2,9:69,16:[1,68],20:$V8,29:22,30:23,31:24,33:25,36:28,38:32,40:40,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{16:[1,70]},o($Vr,[2,11]),o($Vs,[2,23]),o($Vs,[2,24]),o([8,10,16,34,35,37,39,41,42,43,45,46,47,48,50,51,53,54,55,64,65,66,83,86],$Vt,{32:[1,71],57:$Vu}),o([8,10,16,32,35,39,41,42,43,45,46,47,48,50,51,53,54,55,57,64,65,66,83,86],[2,26],{34:[1,73],37:[1,74]}),o($Vv,[2,54],{88:77,8:$Vw,64:[1,75],65:[1,76]}),o($Vv,[2,55],{88:79,8:$Vw,64:[1,81],65:[1,80]}),o($Vx,[2,28],{39:$Vy}),o($Vs,[2,56]),o($Vs,[2,57]),o($Vs,[2,58]),o($Vz,[2,30],{41:$VA,42:$VB,43:$VC}),o($Vs,[2,61]),o($Vs,[2,62]),o($Vs,[2,63]),o($Vs,[2,64]),{8:$V2,9:86,20:$V8,29:22,30:23,31:24,33:25,36:28,38:32,40:40,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{8:[1,87]},{8:[1,88]},o($VD,[2,32],{45:$VE,46:$VF,47:$VG,48:$VH}),o($Vs,[2,66]),o($Vs,[2,67]),o($Vs,[2,68]),o($Vs,[2,69]),{20:$VI,72:98,73:99,77:$Vj,78:$Vk,79:$Vl,80:$Vm,83:[1,93],84:94,85:95,87:96},{8:$V2,20:$V8,29:102,30:23,31:24,33:25,36:28,38:32,40:40,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,66:[1,100],67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,81:101,82:$Vn,91:$Vo,93:$Vp},o($VJ,[2,36],{50:$VK,51:$VL}),o($Vs,[2,70]),o($Vs,[2,71]),o($Vs,[2,72]),o($Vs,[2,73]),o($Vs,[2,74]),o($Vs,[2,75]),o($Vs,[2,76]),o($VM,[2,41],{53:$VN,54:$VO,55:$VP}),o($Vs,[2,44]),o($Vs,[2,50]),{8:$V2,20:$V8,31:109,50:$Vc,51:$Vd,52:108,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{8:$V2,20:$V8,31:109,50:$Vc,51:$Vd,52:110,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{8:$V2,20:$V8,31:109,50:$Vc,51:$Vd,52:111,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{6:6,7:$V1,8:$V2,9:20,11:4,13:7,14:$V3,15:$V4,16:$V5,17:$V6,18:8,19:$V7,20:$V8,21:$V9,22:9,23:$Va,24:11,25:5,26:$Vb,27:[1,112],28:10,29:22,30:23,31:24,33:25,36:28,38:32,40:40,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{8:$V2,9:113,20:$V8,29:22,30:23,31:24,33:25,36:28,38:32,40:40,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{8:$V2,9:114,20:$V8,29:22,30:23,31:24,33:25,36:28,38:32,40:40,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{8:$V2,9:115,20:$V8,29:22,30:23,31:24,33:25,36:28,38:32,40:40,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{14:[1,116]},o($Vr,[2,7]),o($Vr,[2,8]),o($Vr,[2,9]),{16:[1,117]},o($Vr,[2,22]),{8:$V2,20:$V8,29:118,30:23,31:24,33:25,36:28,38:32,40:40,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{8:$V2,20:$V8,31:109,50:$Vc,51:$Vd,52:119,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{8:$V2,20:$V8,29:120,30:23,31:24,33:25,36:28,38:32,40:40,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{8:$V2,20:$V8,31:109,36:121,38:32,40:40,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{20:[1,122]},{8:$V2,9:123,20:$V8,29:22,30:23,31:24,33:25,36:28,38:32,40:40,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},o($Vs,[2,87],{89:124,90:125,68:127,20:$VQ,82:$Vn}),{8:$V2,10:[1,128],20:$V8,29:102,30:23,31:24,33:25,36:28,38:32,40:40,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,81:129,82:$Vn,91:$Vo,93:$Vp},o($Vs,[2,89]),{8:$V2,9:130,20:$V8,29:22,30:23,31:24,33:25,36:28,38:32,40:40,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{20:[1,131]},{8:$V2,20:$V8,31:109,38:132,40:40,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{8:$V2,20:$V8,31:109,40:133,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{8:$V2,20:$V8,31:109,40:134,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{8:$V2,20:$V8,31:109,40:135,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{10:[1,136]},{10:[1,137],20:$VR,92:138},{10:[1,140],20:$VR,92:141},{8:$V2,20:$V8,31:109,44:142,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{8:$V2,20:$V8,31:109,44:143,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{8:$V2,20:$V8,31:109,44:144,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{8:$V2,20:$V8,31:109,44:145,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},o($Vs,[2,79]),{83:[1,146],86:[1,147]},o($VS,[2,81]),{35:[1,148]},{35:[2,84]},{35:[2,85]},{35:[2,86]},o($Vs,[2,77]),{66:[1,149],86:$VT},o($VU,[2,98]),{8:$V2,20:$V8,31:109,49:151,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{8:$V2,20:$V8,31:109,49:152,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{8:$V2,20:$V8,31:109,50:$Vc,51:$Vd,52:153,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{8:$V2,20:$V8,31:109,50:$Vc,51:$Vd,52:154,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{8:$V2,20:$V8,31:109,50:$Vc,51:$Vd,52:155,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},o($Vs,[2,51]),o([8,10,16,32,34,35,37,39,41,42,43,45,46,47,48,50,51,53,54,55,64,65,66,83,86],$Vt,{57:$Vu}),o($Vs,[2,52]),o($Vs,[2,53]),o([5,7,8,10,12,14,15,16,17,19,20,21,23,26,27,32,34,35,37,39,41,42,43,45,46,47,48,50,51,53,54,55,57,58,64,65,66,74,75,76,77,78,79,80,82,83,86,91,93],[2,12]),{10:[1,156]},{10:[1,157]},{16:[1,158]},{8:[1,159]},o($Vr,[2,10]),o($Vs,[2,25]),o($Vs,[2,49]),{35:[1,160]},o($Vx,[2,29],{39:$Vy}),o($Vs,[2,59]),{66:[1,161]},o([8,10,16,32,34,35,37,39,41,42,43,45,46,47,48,50,51,53,54,55,57,64,65,66,83],[2,88],{86:[1,162]}),o($Vs,[2,94]),o($Vs,[2,96]),o($Vs,[2,97]),o($VV,[2,92]),{10:[1,163],86:$VT},{66:[1,164]},o($Vs,[2,91]),o($Vz,[2,31],{41:$VA,42:$VB,43:$VC}),o($VD,[2,33],{45:$VE,46:$VF,47:$VG,48:$VH}),o($VD,[2,34],{45:$VE,46:$VF,47:$VG,48:$VH}),o($VD,[2,35],{45:$VE,46:$VF,47:$VG,48:$VH}),o($Vs,[2,65]),{25:165,26:$Vb},{10:[1,166],86:$VW},o($VX,[2,104]),{94:[1,168]},{10:[1,169],86:$VW},o($VJ,[2,37],{50:$VK,51:$VL}),o($VJ,[2,38],{50:$VK,51:$VL}),o($VJ,[2,39],{50:$VK,51:$VL}),o($VJ,[2,40],{50:$VK,51:$VL}),o($Vs,[2,80]),{20:$VI,72:98,73:99,77:$Vj,78:$Vk,79:$Vl,80:$Vm,85:170,87:96},{8:$V2,20:$V8,29:171,30:23,31:24,33:25,36:28,38:32,40:40,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},o($Vs,[2,78]),{8:$V2,20:$V8,29:172,30:23,31:24,33:25,36:28,38:32,40:40,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},o($VM,[2,42],{53:$VN,54:$VO,55:$VP}),o($VM,[2,43],{53:$VN,54:$VO,55:$VP}),o($Vs,[2,45]),o($Vs,[2,46]),o($Vs,[2,47]),{6:6,7:$V1,8:$V2,9:20,11:173,13:7,14:$V3,15:$V4,16:$V5,17:$V6,18:8,19:$V7,20:$V8,21:$V9,22:9,23:$Va,24:11,25:5,26:$Vb,28:10,29:22,30:23,31:24,33:25,36:28,38:32,40:40,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{6:6,7:$V1,8:$V2,9:20,11:174,13:7,14:$V3,15:$V4,16:$V5,17:$V6,18:8,19:$V7,20:$V8,21:$V9,22:9,23:$Va,24:11,25:5,26:$Vb,28:10,29:22,30:23,31:24,33:25,36:28,38:32,40:40,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{8:$V2,9:175,20:$V8,29:22,30:23,31:24,33:25,36:28,38:32,40:40,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{8:$V2,9:176,20:$V8,29:22,30:23,31:24,33:25,36:28,38:32,40:40,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{8:$V2,20:$V8,29:177,30:23,31:24,33:25,36:28,38:32,40:40,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},o($Vs,[2,60]),{20:$VQ,68:127,82:$Vn,90:178},o($VV,[2,93]),o($Vs,[2,90]),o($Vs,[2,100]),{25:179,26:$Vb},{20:[1,180]},{8:$V2,9:181,20:$V8,29:22,30:23,31:24,33:25,36:28,38:32,40:40,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{94:[1,182]},o($VS,[2,82]),o($VS,[2,83]),o($VU,[2,99]),o($Vq,[2,2],{12:[1,183]}),o($Vr,[2,4]),{16:[1,184]},{10:[1,185]},o($Vs,[2,27]),o($Vs,[2,95]),o($Vs,[2,101]),o($VX,[2,105]),o($Vs,[2,102]),{8:$V2,9:186,20:$V8,29:22,30:23,31:24,33:25,36:28,38:32,40:40,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{6:6,7:$V1,8:$V2,9:20,11:187,13:7,14:$V3,15:$V4,16:$V5,17:$V6,18:8,19:$V7,20:$V8,21:$V9,22:9,23:$Va,24:11,25:5,26:$Vb,28:10,29:22,30:23,31:24,33:25,36:28,38:32,40:40,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{8:$V2,9:188,20:$V8,29:22,30:23,31:24,33:25,36:28,38:32,40:40,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},{16:[1,189]},o($Vs,[2,103]),o($Vr,[2,3]),{10:[1,190]},o($Vr,[2,6]),{6:6,7:$V1,8:$V2,9:20,11:191,13:7,14:$V3,15:$V4,16:$V5,17:$V6,18:8,19:$V7,20:$V8,21:$V9,22:9,23:$Va,24:11,25:5,26:$Vb,28:10,29:22,30:23,31:24,33:25,36:28,38:32,40:40,44:47,49:55,50:$Vc,51:$Vd,52:56,56:57,58:$Ve,59:26,60:27,61:29,62:30,63:31,65:$Vf,67:34,68:35,69:36,70:41,71:42,72:43,73:44,74:$Vg,75:$Vh,76:$Vi,77:$Vj,78:$Vk,79:$Vl,80:$Vm,82:$Vn,91:$Vo,93:$Vp},o($Vr,[2,5])],
 defaultActions: {3:[2,1],97:[2,84],98:[2,85],99:[2,86]},
 parseError: function parseError (str, hash) {
     if (hash.recoverable) {
@@ -42424,80 +42948,82 @@ case 20:return 80
 break;
 case 21:return 94
 break;
-case 22:return 82
+case 22:return 94
 break;
-case 23:return 83
+case 23:return 82
 break;
-case 24:return 26
+case 24:return 83
 break;
-case 25:return 27
+case 25:return 26
 break;
-case 26:return 16
+case 26:return 27
 break;
-case 27:return '#'
+case 27:return 16
 break;
-case 28:return 34
+case 28:return '#'
 break;
-case 29:return 35
+case 29:return 34
 break;
-case 30:return 79
+case 30:return 35
 break;
-case 31:return 64
+case 31:return 79
 break;
-case 32:return 65
+case 32:return 64
 break;
-case 33:return 66
+case 33:return 65
 break;
-case 34:return 8
+case 34:return 66
 break;
-case 35:return 10
+case 35:return 8
 break;
-case 36:return 58
+case 36:return 10
 break;
-case 37:return 57
+case 37:return 58
 break;
-case 38:return 53
+case 38:return 57
 break;
-case 39:return 54
+case 39:return 53
 break;
-case 40:return 55
+case 40:return 54
 break;
-case 41:return 50
+case 41:return 55
 break;
-case 42:return 51
+case 42:return 50
 break;
-case 43:return 47
+case 43:return 51
 break;
-case 44:return 45
+case 44:return 47
 break;
-case 45:return 48
+case 45:return 45
 break;
-case 46:return 46
+case 46:return 48
 break;
-case 47:return 41
+case 47:return 46
 break;
-case 48:return 43
+case 48:return 41
 break;
-case 49:return 42
+case 49:return 43
 break;
-case 50:return 39
+case 50:return 42
 break;
-case 51:return 37
+case 51:return 39
 break;
-case 52:return 32
+case 52:return 37
 break;
-case 53:return 86
+case 53:return 32
 break;
-case 54:return 5
+case 54:return 86
 break;
-case 55:return 20
+case 55:return 5
 break;
-case 56:return 'INVALID'
+case 56:return 20
+break;
+case 57:return 'INVALID'
 break;
 }
 },
-rules: [/^(?:\s+)/,/^(?:[0-9]+\.[0-9]*|[0-9]*\.[0-9]+\b)/,/^(?:[0-9]+)/,/^(?:"(\\["]|[^"])*")/,/^(?:'(\\[']|[^'])*')/,/^(?:\/\/.*)/,/^(?:\/\*(.|\n|\r)*?\*\/)/,/^(?:if\b)/,/^(?:else\b)/,/^(?:while\b)/,/^(?:do\b)/,/^(?:for\b)/,/^(?:function\b)/,/^(?:map\b)/,/^(?:use\b)/,/^(?:return\b)/,/^(?:delete\b)/,/^(?:true\b)/,/^(?:false\b)/,/^(?:null\b)/,/^(?:Infinity\b)/,/^(?:->)/,/^(?:<<)/,/^(?:>>)/,/^(?:\{)/,/^(?:\})/,/^(?:;)/,/^(?:#)/,/^(?:\?)/,/^(?::)/,/^(?:NaN\b)/,/^(?:\.)/,/^(?:\[)/,/^(?:\])/,/^(?:\()/,/^(?:\))/,/^(?:!)/,/^(?:\^)/,/^(?:\*)/,/^(?:\/)/,/^(?:%)/,/^(?:\+)/,/^(?:-)/,/^(?:<=)/,/^(?:<)/,/^(?:>=)/,/^(?:>)/,/^(?:==)/,/^(?:~=)/,/^(?:!=)/,/^(?:&&)/,/^(?:\|\|)/,/^(?:=)/,/^(?:,)/,/^(?:$)/,/^(?:[A-Za-z_\$][A-Za-z0-9_]*)/,/^(?:.)/],
-conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56],"inclusive":true}}
+rules: [/^(?:\s+)/,/^(?:[0-9]+\.[0-9]*|[0-9]*\.[0-9]+\b)/,/^(?:[0-9]+)/,/^(?:"(\\["]|[^"])*")/,/^(?:'(\\[']|[^'])*')/,/^(?:\/\/.*)/,/^(?:\/\*(.|\n|\r)*?\*\/)/,/^(?:if\b)/,/^(?:else\b)/,/^(?:while\b)/,/^(?:do\b)/,/^(?:for\b)/,/^(?:function\b)/,/^(?:map\b)/,/^(?:use\b)/,/^(?:return\b)/,/^(?:delete\b)/,/^(?:true\b)/,/^(?:false\b)/,/^(?:null\b)/,/^(?:Infinity\b)/,/^(?:->)/,/^(?:=>)/,/^(?:<<)/,/^(?:>>)/,/^(?:\{)/,/^(?:\})/,/^(?:;)/,/^(?:#)/,/^(?:\?)/,/^(?::)/,/^(?:NaN\b)/,/^(?:\.)/,/^(?:\[)/,/^(?:\])/,/^(?:\()/,/^(?:\))/,/^(?:!)/,/^(?:\^)/,/^(?:\*)/,/^(?:\/)/,/^(?:%)/,/^(?:\+)/,/^(?:-)/,/^(?:<=)/,/^(?:<)/,/^(?:>=)/,/^(?:>)/,/^(?:==)/,/^(?:~=)/,/^(?:!=)/,/^(?:&&)/,/^(?:\|\|)/,/^(?:=)/,/^(?:,)/,/^(?:$)/,/^(?:[A-Za-z_\$][A-Za-z0-9_]*)/,/^(?:.)/],
+conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57],"inclusive":true}}
 });
 return lexer;
 })();
@@ -42533,7 +43059,7 @@ if (typeof module !== 'undefined' && require.main === module) {
 });
 
 /*
- Copyright 2008-2021
+ Copyright 2008-2022
  Matthias Ehmann,
  Michael Gerhaeuser,
  Carsten Miller,
@@ -42818,7 +43344,7 @@ define('base/composition',['jxg', 'utils/type'], function (JXG, Type) {
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -44032,7 +44558,7 @@ define('base/board',[
                 op = (new Coords(Const.COORDS_BY_SCREEN, [moveEl.Xprev, moveEl.Yprev], this)).usrCoords;
                 // New finger position
                 np = (new Coords(Const.COORDS_BY_SCREEN, [moveEl.X, moveEl.Y], this)).usrCoords;
-                
+
                 // Old and new directions
                 od = Mat.crossProduct(fix, op);
                 nd = Mat.crossProduct(fix, np);
@@ -44115,7 +44641,7 @@ define('base/board',[
                 op = (new Coords(Const.COORDS_BY_SCREEN, [moveEl.Xprev, moveEl.Yprev], this)).usrCoords;
                 // New finger position
                 np = (new Coords(Const.COORDS_BY_SCREEN, [moveEl.X, moveEl.Y], this)).usrCoords;
-                
+
                 alpha = Geometry.rad(op.slice(1), fix.slice(1), np.slice(1));
 
                 // Rotate and scale by the movement of the second finger
@@ -44483,7 +45009,7 @@ define('base/board',[
         },
 
         addKeyboardEventHandlers: function() {
-            if (!this.hasKeyboardHandlers && Env.isBrowser) {
+            if (this.attr.keyboard.enabled && !this.hasKeyboardHandlers && Env.isBrowser) {
                 Env.addEvent(this.containerObj, 'keydown', this.keyDownListener, this);
                 Env.addEvent(this.containerObj, 'focusin', this.keyFocusInListener, this);
                 Env.addEvent(this.containerObj, 'focusout', this.keyFocusOutListener, this);
@@ -44980,7 +45506,7 @@ define('base/board',[
             type = this._inputDevice;
             this.options.precision.hasPoint = this.options.precision[type];
 
-            // Handling of multi touch with pointer events should be easier than the touch events. 
+            // Handling of multi touch with pointer events should be easier than the touch events.
             // Every pointer device has its own pointerId, e.g. the mouse
             // always has id 1 or 0, fingers and pens get unique ids every time a pointerDown event is fired and they will
             // keep this id until a pointerUp event is fired. What we have to do here is:
@@ -45022,7 +45548,7 @@ define('base/board',[
                 target = elements[elements.length - 1];
                 found = false;
 
-                // Reminder: this.touches is the list of elements which 
+                // Reminder: this.touches is the list of elements which
                 // currently "possess" a pointer (mouse, pen, finger)
                 for (i = 0; i < this.touches.length; i++) {
                     // An element receives a further touch, i.e.
@@ -45076,10 +45602,11 @@ define('base/board',[
 
                 // Touch events on empty areas of the board are handled here, see also touchStartListener
                 // 1. case: one finger. If allowed, this triggers pan with one finger
-                if (evt.touches.length == 1 &&
+                if (evt.touches.length === 1 &&
                     this.mode === this.BOARD_MODE_NONE &&
                     this.touchStartMoveOriginOneFinger(evt)) {
-                } else if (evt.touches.length == 2 &&
+                        // Empty by purpose
+                } else if (evt.touches.length === 2 &&
                             (this.mode === this.BOARD_MODE_NONE || this.mode === this.BOARD_MODE_MOVE_ORIGIN)
                         ) {
                     // 2. case: two fingers: pinch to zoom or pan with two fingers needed.
@@ -45161,7 +45688,7 @@ define('base/board',[
                         // Run through all touch events which have been started on this jsxgraph element.
                         for (j = 0; j < touchTargets.length; j++) {
                             if (touchTargets[j].num === evt.pointerId) {
-                                
+
                                 pos = this.getMousePosition(evt);
                                 touchTargets[j].X = pos[0];
                                 touchTargets[j].Y = pos[1];
@@ -45401,7 +45928,7 @@ define('base/board',[
                             Yprev: NaN,
                             Xstart: [],
                             Ystart: [],
-                            Zstart: [] 
+                            Zstart: []
                         };
 
                         if (Type.isPoint(obj) ||
@@ -45409,7 +45936,7 @@ define('base/board',[
                                 obj.type === Const.OBJECT_TYPE_TICKS ||
                                 obj.type === Const.OBJECT_TYPE_IMAGE) {
                             // It's a point, so it's single touch, so we just push it to our touches
-                            targets = [target_obj];
+                            targets = [target];
 
                             // For the UNDO/REDO of object moves
                             this.saveStartPos(obj, targets[0]);
@@ -45489,8 +46016,8 @@ define('base/board',[
          * @returns {Boolean}
          */
         touchMoveListener: function (evt) {
-            var i, pos1, pos2, 
-                time, touchTargets,
+            var i, pos1, pos2,
+                touchTargets,
                 evtTouches = evt[JXG.touchProperty];
 
             if (!this.checkFrameRate(evt)) {
@@ -45954,6 +46481,7 @@ define('base/board',[
                 dx = Type.evaluate(this.attr.keyboard.dx) / this.unitX,
                 dy = Type.evaluate(this.attr.keyboard.dy) / this.unitY,
                 doZoom = false,
+                done = true,
                 dir, actPos;
 
             if (!this.attr.keyboard.enabled || id_node === '') {
@@ -45982,6 +46510,8 @@ define('base/board',[
                     this.clickLeftArrow();
                 } else if (evt.keyCode === 39) {    // right
                     this.clickRightArrow();
+                } else {
+                    done = false;
                 }
             } else {
                 // Adapt dx, dy to snapToGrid and attractToGrid
@@ -46008,7 +46538,7 @@ define('base/board',[
                         sX = 1.1 * Type.evaluate(el.visProp.attractordistance);
                         sY = sX;
 
-                        if (Type.evaluate(el.visProp.attractorunit) == 'screen') {
+                        if (Type.evaluate(el.visProp.attractorunit) === 'screen') {
                             sX /= this.unitX;
                             sY /= this.unitX;
                         }
@@ -46034,7 +46564,10 @@ define('base/board',[
                     this.zoomOut();
                 } else if (doZoom && evt.key === 'o') {   // o
                     this.zoom100();
+                } else {
+                    done = false;
                 }
+
                 if (dir && el.isDraggable &&
                         el.visPropCalc.visible &&
                         ((this.geonextCompatibilityMode &&
@@ -46060,6 +46593,9 @@ define('base/board',[
 
             this.update();
 
+            if (done) {
+                evt.preventDefault();
+            }
             return true;
         },
 
@@ -46523,11 +47059,11 @@ define('base/board',[
          *                 // Shorter version:
          *                 //somePoint = board.create('point', a, {name:'SomePoint',size:4});
          *             });
-         * 
+         *
          *     })();
          *
          * </script><pre>
-         * 
+         *
          * @see JXG.Board#getScrCoordsOfMouse
          * @see JXG.Board#getAllUnderMouse
          */
@@ -46649,7 +47185,7 @@ define('base/board',[
         addConditions: function (str) {
             var term, m, left, right, name, el, property,
                 functions = [],
-                plaintext = 'var el, x, y, c, rgbo;\n',
+                // plaintext = 'var el, x, y, c, rgbo;\n',
                 i = str.indexOf('<data>'),
                 j = str.indexOf('<' + '/data>'),
 
@@ -46733,7 +47269,7 @@ define('base/board',[
                 if (!Type.exists(this.elementsByName[name])) {
                     JXG.debug("debug conditions: |" + name + "| undefined");
                 } else {
-                    plaintext += "el = this.objects[\"" + el.id + "\"];\n";
+                    // plaintext += "el = this.objects[\"" + el.id + "\"];\n";
 
                     switch (property) {
                     case 'x':
@@ -47208,34 +47744,38 @@ define('base/board',[
          * @returns {JXG.Board} Reference to the board
          */
         resizeContainer: function (canvasWidth, canvasHeight, dontset, dontSetBoundingBox) {
-            var box_act, box, w, h, cx, cy,
-                shift_x = 0,
-                shift_y = 0;
+            var box;
+                // w, h, cx, cy;
+                // box_act,
+                // shift_x = 0,
+                // shift_y = 0;
 
             if (!dontSetBoundingBox) {
-                box_act = this.getBoundingBox();    // This is the actual bounding box.
+                // box_act = this.getBoundingBox();    // This is the actual bounding box.
+                box = this.getBoundingBox();    // This is the actual bounding box.
             }
 
             this.canvasWidth = parseFloat(canvasWidth);
             this.canvasHeight = parseFloat(canvasHeight);
 
-            if (!dontSetBoundingBox) {
-                box     = this.attr.boundingbox;    // This is the intended bounding box.
-                
-                // The shift values compensate the follow-up correction
-                // in setBoundingBox in case of "this.keepaspectratio==true"
-                // Otherwise, shift_x and shift_y will be zero.
-                shift_x = box_act[0] - box[0] / this.zoomX;
-                shift_y = box_act[1] - box[1] / this.zoomY;
+            // if (!dontSetBoundingBox) {
+            //     box     = this.attr.boundingbox;    // This is the intended bounding box.
 
-                cx = (box[2] + box[0]) * 0.5 + shift_x;
-                cy = (box[3] + box[1]) * 0.5 + shift_y;
+            //     // The shift values compensate the follow-up correction
+            //     // in setBoundingBox in case of "this.keepaspectratio==true"
+            //     // Otherwise, shift_x and shift_y will be zero.
+            //     // Obsolet since setBoundingBox centers in case of "this.keepaspectratio==true".
+            //     // shift_x = box_act[0] - box[0] / this.zoomX;
+            //     // shift_y = box_act[1] - box[1] / this.zoomY;
 
-                w = (box[2] - box[0]) * 0.5 / this.zoomX;
-                h = (box[1] - box[3]) * 0.5 / this.zoomY;
+            //     cx = (box[2] + box[0]) * 0.5; // + shift_x;
+            //     cy = (box[3] + box[1]) * 0.5; // + shift_y;
 
-                box = [cx - w, cy + h, cx + w, cy - h];
-            }
+            //     w = (box[2] - box[0]) * 0.5 / this.zoomX;
+            //     h = (box[1] - box[3]) * 0.5 / this.zoomY;
+
+            //     box = [cx - w, cy + h, cx + w, cy - h];
+            // }
 
             if (!dontset) {
                 this.containerObj.style.width = (this.canvasWidth) + 'px';
@@ -47351,7 +47891,7 @@ define('base/board',[
 
             for (el = 0; el < this.objectsList.length; el++) {
                 pEl = this.objectsList[el];
-                if (this.needsFullUpdate && pEl.elementClass == Const.OBJECT_CLASS_TEXT) {
+                if (this.needsFullUpdate && pEl.elementClass === Const.OBJECT_CLASS_TEXT) {
                     pEl.updateSize();
                 }
 
@@ -47654,6 +48194,7 @@ define('base/board',[
             for (i = 0; i < parents.length; i++) {
                 if (Type.isString(parents[i]) &&
                     !(elementType === 'text' && i === 2) &&
+                    !(elementType === 'solidofrevolution3d' && i === 2) &&
                     !((elementType === 'input' || elementType === 'checkbox' || elementType === 'button') &&
                       (i === 2 || i === 3)) &&
                     !(elementType === 'curve' && i > 0) // Allow curve plots with jessiecode
@@ -47738,11 +48279,14 @@ define('base/board',[
          */
         setBoundingBox: function (bbox, keepaspectratio, setZoom) {
             var h, w, ux, uy,
+                offX = 0,
+                offY = 0,
                 dim = Env.getDimensions(this.container, this.document);
 
             if (!Type.isArray(bbox)) {
                 return this;
             }
+
             if (bbox[0] < this.maxboundingbox[0] ||
                 bbox[1] > this.maxboundingbox[1] ||
                 bbox[2] > this.maxboundingbox[2] ||
@@ -47761,14 +48305,17 @@ define('base/board',[
             this.canvasHeight = parseInt(dim.height, 10);
             w = this.canvasWidth;
             h = this.canvasHeight;
-
             if (keepaspectratio) {
                 this.unitX = w / (bbox[2] - bbox[0]);
                 this.unitY = h / (bbox[1] - bbox[3]);
                 if (Math.abs(this.unitX) < Math.abs(this.unitY)) {
                     this.unitY = Math.abs(this.unitX) * this.unitY / Math.abs(this.unitY);
+                    // Add the additional units in equal portions above and below
+                    offY = (h / this.unitY - (bbox[1] - bbox[3])) * 0.5;
                 } else {
                     this.unitX = Math.abs(this.unitY) * this.unitX / Math.abs(this.unitX);
+                    // Add the additional units in equal portions left and right
+                    offX = (w / this.unitX - (bbox[2] - bbox[0])) * 0.5;
                 }
                 this.keepaspectratio = true;
             } else {
@@ -47776,8 +48323,8 @@ define('base/board',[
                 this.unitY = h / (bbox[1] - bbox[3]);
                 this.keepaspectratio = false;
             }
-            
-            this.moveOrigin(-this.unitX * bbox[0], this.unitY * bbox[1]);
+
+            this.moveOrigin(-this.unitX * (bbox[0] - offX), this.unitY * (bbox[1] + offY));
 
             if (setZoom === 'update') {
                 this.zoomX *= this.unitX / ux;
@@ -48668,6 +49215,8 @@ define('base/board',[
          * <p>
          * The wrapping div has the CSS class 'jxgbox_wrap_private' which is
          * defined in the file 'jsxgraph.css'
+         * <p>
+         * This feature is not available on iPhones (as of December 2021).
          *
          * @param {String} id (Optional) id of the div element which is brought to fullscreen.
          * If not provided, this defaults to the JSXGraph div. However, it may be necessary for the aspect ratio trick
@@ -48731,28 +49280,38 @@ define('base/board',[
          *
          *
          */
-        toFullscreen: function(id) {
+        toFullscreen: function (id) {
             var wrap_id, wrap_node, inner_node;
 
             id = id || this.container;
-
             this._fullscreen_inner_id = id;
-            // inner_node = this.containerObj;
             inner_node = document.getElementById(id);
-
             wrap_id = 'fullscreenwrap_' + id;
-            wrap_node = document.createElement('div');
 
-            // If necessary, wrap a div around the JSXGraph div.
-            if (!this.document.getElementById(wrap_id)) {
+            // Wrap a div around the JSXGraph div.
+            if (this.document.getElementById(wrap_id)) {
+                wrap_node = this.document.getElementById(wrap_id);
+            } else {
+                wrap_node = document.createElement('div');
                 wrap_node.classList.add('JXG_wrap_private');
                 wrap_node.setAttribute('id', wrap_id);
                 inner_node.parentNode.insertBefore(wrap_node, inner_node);
                 wrap_node.appendChild(inner_node);
             }
 
-            // Start fullscreen mode
-            Env.toFullscreen(wrap_id, id);
+            // Get the real width and height of the JSXGraph div
+            // and determine the scaling and vertical shift amount
+            this._fullscreen_res = Env._getScaleFactors(inner_node);
+
+            // Trigger fullscreen mode
+            wrap_node.requestFullscreen = wrap_node.requestFullscreen ||
+                wrap_node.webkitRequestFullscreen ||
+                wrap_node.mozRequestFullScreen ||
+                wrap_node.msRequestFullscreen;
+
+            if (wrap_node.requestFullscreen) {
+                wrap_node.requestFullscreen();
+            }
 
             return this;
         },
@@ -48764,7 +49323,7 @@ define('base/board',[
          *
          * @param  {Object} evt fullscreen event object (unused)
          */
-        fullscreenListener: function(evt) {
+        fullscreenListener: function (evt) {
             var res, inner_id, inner_node;
 
             inner_id = this._fullscreen_inner_id;
@@ -48772,20 +49331,20 @@ define('base/board',[
                 return;
             }
 
+            document.fullscreenElement = document.fullscreenElement ||
+                    document.webkitFullscreenElement ||
+                    document.mozFullscreenElement ||
+                    document.msFullscreenElement;
+
             inner_node = document.getElementById(inner_id);
             // If full screen mode is started we have to remove CSS margin around the JSXGraph div.
             // Otherwise, the positioning of the fullscreen div will be false.
             // When leaving the fullscreen mode, the margin is put back in.
             if (document.fullscreenElement) {
-                // Entered fullscreen mode
+                // Just entered fullscreen mode
 
-                inner_node.style.margin = '';
-
-                // Do the shifting and scaling via CSS pseudo rules
-                // We do this after fullscreen mode has been established to get the correct size
-                // of the JSXGraph div
-                res = Env._getScaleFactors(inner_node);
-                Env.scaleJSXGraphDiv(document.fullscreenElement.id, inner_id, res.scale, res.vshift);
+                // Get the data computed in board.toFullscreen()
+                res = this._fullscreen_res;
 
                 // Store the scaling data.
                 // It is used in AbstractRenderer.updateText to restore the scaling matrix
@@ -48796,11 +49355,25 @@ define('base/board',[
                     id: document.fullscreenElement.id,
                     isFullscreen: true,
                     margin: inner_node.style.margin,
-                    scale:  res.scale,
+                    width: inner_node.style.width,
+                    scale: res.scale,
                     vshift: res.vshift
                 };
+
+                inner_node.style.margin = '';
+                inner_node.style.width = res.width + 'px';
+
+                // Do the shifting and scaling via CSS pseudo rules
+                // We do this after fullscreen mode has been established to get the correct size
+                // of the JSXGraph div.
+                Env.scaleJSXGraphDiv(document.fullscreenElement.id, inner_id, res.scale, res.vshift);
+
+                // Clear document.fullscreenElement, because Safari doesn't to it and
+                // when leaving full screen mode it is still set.
+                document.fullscreenElement = null;
+
             } else if (Type.exists(inner_node._cssFullscreenStore)) {
-                // Left fullscreen mode
+                // Just left the fullscreen mode
 
                 // Remove the CSS rules added in Env.scaleJSXGraphDiv
                 try {
@@ -48808,8 +49381,11 @@ define('base/board',[
                 } catch (err) {
                     console.log('JSXGraph: Could not remove CSS rules for full screen mode');
                 }
+
                 inner_node._cssFullscreenStore.isFullscreen = false;
                 inner_node.style.margin = inner_node._cssFullscreenStore.margin;
+                inner_node.style.width = inner_node._cssFullscreenStore.width;
+
             }
 
             this.updateCSSTransforms();
@@ -49024,7 +49600,7 @@ define('base/board',[
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -50604,7 +51180,6 @@ define('renderer/svg',[
                     canvas.height = images[i].getAttribute("height");
                     try {
                         ctx.drawImage(images[i], 0, 0, canvas.width, canvas.height);
-                        //ctx.drawImage(document.getElementById('testimg2'), 0, 0, canvas.width, canvas.height);
 
                         // If the image is not png, the format must be specified here
                         ur = canvas.toDataURL();
@@ -50612,7 +51187,6 @@ define('renderer/svg',[
                     } catch (err) {
                         console.log("CORS problem! Image can not be used", err);
                     }
-                    //};
                 }
                 //canvas.remove();
             }
@@ -50675,8 +51249,8 @@ define('renderer/svg',[
             // }
 
             // In IE we have to remove the namespace again.
-            if ((svg.match(/xmlns=\"http:\/\/www.w3.org\/2000\/svg\"/g) || []).length > 1) {
-                svg = svg.replace(/xmlns=\"http:\/\/www.w3.org\/2000\/svg\"/g, '');
+            if ((svg.match(/xmlns="http:\/\/www.w3.org\/2000\/svg"/g) || []).length > 1) {
+                svg = svg.replace(/xmlns="http:\/\/www.w3.org\/2000\/svg"/g, '');
             }
 
             // Safari fails if the svg string contains a "&nbsp;"
@@ -50721,17 +51295,16 @@ define('renderer/svg',[
          * 	setTimeout(function() { console.log('done'); }, 400);
          */
         dumpToCanvas: function (canvasId, w, h, ignoreTexts) {
-            var //svgRoot = this.svgRoot,
-                svg, tmpImg, cv, ctx;
-                // wOrg, hOrg;
-
-            // wOrg = svgRoot.getAttribute('width');
-            // hOrg = svgRoot.getAttribute('height');
+            var svg, tmpImg, cv, ctx;
 
             // Prepare the canvas element
             cv = document.getElementById(canvasId);
+
             // Clear the canvas
+            /* eslint-disable no-self-assign */
             cv.width = cv.width;
+            /* eslint-enable no-self-assign */
+
             ctx = cv.getContext("2d");
             if (w !== undefined && h !== undefined) {
                 cv.style.width = parseFloat(w) + 'px';
@@ -50818,8 +51391,8 @@ define('renderer/svg',[
                 return this;
             }
 
-            w = bas.scale * parseFloat(this.container.style.width);
-            h = bas.scale * parseFloat(this.container.style.height);
+            w = bas.scale * this.container.getBoundingClientRect().width;
+            h = bas.scale * this.container.getBoundingClientRect().height;
 
             if (imgId === undefined || imgId === '') {
                 newImg = true;
@@ -50920,7 +51493,7 @@ define('renderer/svg',[
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -51967,7 +52540,7 @@ define('renderer/vml',[
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -52057,13 +52630,17 @@ define('renderer/canvas',[
                 'px" height="', dim.height,
                 'px"><', '/canvas>'].join('');
             this.canvasRoot = this.container.ownerDocument.getElementById(this.canvasId);
-            this.context =  this.canvasRoot.getContext('2d');
             this.canvasRoot.style.display = 'block';
+            this.context = this.canvasRoot.getContext('2d');
 
         } else if (Env.isNode()) {
-            this.canvasId = (typeof module === 'object' ? module.require('canvas') : require('canvas'));
-            this.canvasRoot = new this.canvasId(500, 500);
-            this.context = this.canvasRoot.getContext('2d');
+            try {
+                this.canvasId = (typeof module === 'object' ? module.require('canvas') : require('canvas'));
+                this.canvasRoot = new this.canvasId(500, 500);
+                this.context = this.canvasRoot.getContext('2d');
+            } catch (err) {
+                console.log("Warning: 'canvas' not found. You might need to call 'npm install canvas'");
+            }
         }
 
         this.dashArray = [[2, 2], [5, 5], [10, 10], [20, 20], [20, 10, 10, 10], [20, 5, 10, 5]];
@@ -53514,7 +54091,7 @@ define('renderer/canvas',[
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -53547,6 +54124,7 @@ define('renderer/canvas',[
 
 /*global JXG: true, define: true, AMprocessNode: true, MathJax: true, document: true */
 /*jslint nomen: true, plusplus: true, newcap:true, unparam: true*/
+/*eslint no-unused-vars: "off"*/
 
 /* depends:
  jxg
@@ -54183,7 +54761,7 @@ define('renderer/no',['jxg', 'renderer/abstract'], function (JXG, AbstractRender
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -54488,6 +55066,8 @@ define('jsxgraph',[
         initBoard: function (box, attributes) {
             var originX, originY, unitX, unitY,
                 renderer,
+                offX = 0,
+                offY = 0,
                 w, h, dimensions,
                 bbox, attr, axattr, axattr_x, axattr_y,
                 board;
@@ -54523,15 +55103,19 @@ define('jsxgraph',[
 
                     if (Math.abs(unitX) < Math.abs(unitY)) {
                         unitY = Math.abs(unitX) * unitY / Math.abs(unitY);
+                        // Add the additional units in equal portions above and below
+                        offY = (h / unitY - (bbox[1] - bbox[3])) * 0.5;
                     } else {
                         unitX = Math.abs(unitY) * unitX / Math.abs(unitX);
+                        // Add the additional units in equal portions left and right
+                        offX = (w / unitX - (bbox[2] - bbox[0])) * 0.5;
                     }
                 } else {
                     unitX = w / (bbox[2] - bbox[0]);
                     unitY = h / (bbox[1] - bbox[3]);
                 }
-                originX = -unitX * bbox[0];
-                originY = unitY * bbox[1];
+                originX = -unitX * (bbox[0] - offX);
+                originY = unitY * (bbox[1] + offY);
             }
 
             renderer = this.initRenderer(box, dimensions, attr.document, attr.renderer);
@@ -54854,7 +55438,7 @@ define('jsxgraph',[
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -54942,6 +55526,7 @@ define('base/point',[
         this.board.renderer.drawPoint(this);
         this.board.finalizeAdding(this);
 
+        this.createGradient();
         this.createLabel();
 
     };
@@ -55011,7 +55596,7 @@ define('base/point',[
          * @returns {JXG.CoordsElement} Reference to this object.
          */
         updateTransform: function (fromParent) {
-            var c, i, invMat;
+            var c, i;
 
             if (this.transformations.length === 0 || this.baseElement === null) {
                 return this;
@@ -55022,17 +55607,6 @@ define('base/point',[
                 c = this.transformations[0].apply(this.baseElement, 'self');
                 this.coords.setCoordinates(Const.COORDS_BY_USER, c);
             } else {
-                // Case of board.create('point',[baseElement, transform]);
-                // if (!fromParent) {
-                //     // The element has been dragged or it is the initial update,
-                //     // now we transform the baseElement
-                //     if (this.draggable() && this.baseElement.draggable()) {
-                //         this.transformations[0].update();
-                //         invMat = Mat.inverse(this.transformations[0].matrix);
-                //         c = Mat.matVecMult(invMat, this.coords.usrCoords);
-                //         this.baseElement.coords.setCoordinates(Const.COORDS_BY_USER, c);
-                //     }
-                // }
                 c = this.transformations[0].apply(this.baseElement);
             }
             this.coords.setCoordinates(Const.COORDS_BY_USER, c);
@@ -55207,12 +55781,12 @@ define('base/point',[
          *     var pol = board.create('polygon', [[2,2], [4,2], [4,3]], {strokeColor: 'blue'});
          *
          *     var point = board.create('point', [-1, 1], {
-         *     			  attractors: [line, seg, circ, po, curve, pol],
+         *                   attractors: [line, seg, circ, po, curve, pol],
          *                   attractorDistance: 0.2
          *                 });
          *
          *     var txt = board.create('text', [-4, 3, function() {
-         *     		return 'point on line: ' + point.isOn(line) + '<br>' +
+         *             return 'point on line: ' + point.isOn(line) + '<br>' +
          *                     'point on seg: ' + point.isOn(seg) + '<br>' +
          *                     'point on circ = ' + point.isOn(circ) + '<br>' +
          *                     'point on point = ' + point.isOn(po) + '<br>' +
@@ -55235,14 +55809,14 @@ define('base/point',[
             } else if (el.elementClass === Const.OBJECT_CLASS_LINE) {
                 if (el.elType === 'segment' && !Type.evaluate(this.visProp.alwaysintersect)) {
                     arr = JXG.Math.Geometry.projectCoordsToSegment(
-            			        this.coords.usrCoords,
+                                this.coords.usrCoords,
                                 el.point1.coords.usrCoords,
                                 el.point2.coords.usrCoords);
                     if (arr[1] >= 0 && arr[1] <= 1 &&
                         Geometry.distPointLine(this.coords.usrCoords, el.stdform) < tol) {
-       				    return true;
+                           return true;
                     } else {
-            		    return false;
+                        return false;
                     }
                 } else {
                     return Geometry.distPointLine(this.coords.usrCoords, el.stdform) < tol;
@@ -55748,7 +56322,7 @@ define('base/point',[
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -57658,7 +58232,7 @@ define('base/line',[
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -58610,7 +59184,7 @@ define('base/group',[
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -59156,7 +59730,7 @@ define('element/conic',[
      *
      */
     JXG.createParabola = function (board, parents, attributes) {
-        var polarForm, curve, M, i,
+        var polarForm, curve, M,
             // focus
             F1 = parents[0],
             // directrix
@@ -59185,7 +59759,7 @@ define('element/conic',[
         }
 
         // Create line if given as array of two points.
-        if (Type.isArray(l) && l.length == 2) {
+        if (Type.isArray(l) && l.length === 2) {
             attr_line = Type.copyAttributes(attributes, board.options, 'conic', 'line');
             l = board.create('line', l, attr_line);
         }
@@ -59632,7 +60206,7 @@ define('element/conic',[
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -60563,7 +61137,7 @@ define('base/circle',[
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -61883,7 +62457,7 @@ define('base/polygon',[
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -64646,7 +65220,7 @@ define('base/curve',[
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -65263,7 +65837,7 @@ define('element/arc',[
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -65463,7 +66037,7 @@ define('element/sector',[
 
         if (type === '2lines') {
             /**
-             * @ignore 
+             * @ignore
              */
              el.Radius = function () {
                 var r = Type.evaluate(parents[4]);
@@ -65847,7 +66421,7 @@ define('element/sector',[
          */
         el.setRadius = function (val) {
             /**
-             * @ignore 
+             * @ignore
              */
              el.Radius = function () {
                 var r = Type.evaluate(val);
@@ -66236,7 +66810,7 @@ define('element/sector',[
             el.pointsquare = el.point3 = el.anglepoint = points[2];
 
             /**
-             * @ignore 
+             * @ignore
              */
             el.Radius = function () {
                 // Set the angle radius, also @see @link Sector#autoRadius
@@ -66428,7 +67002,7 @@ define('element/sector',[
             */
             el.free = function () {
                 var p = this.anglepoint;
-                    
+
                 if (p.transformations.length > 0) {
                     p.transformations.pop();
                     p.isDraggable = true;
@@ -66771,7 +67345,7 @@ define('element/sector',[
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -67517,7 +68091,7 @@ define('base/transformation',[
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -70587,7 +71161,7 @@ define('element/composition',[
 });
 
 /*
- Copyright 2008-2021
+ Copyright 2008-2022
  Matthias Ehmann,
  Michael Gerhaeuser,
  Carsten Miller,
@@ -70768,7 +71342,7 @@ define('element/locus',[
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -71186,7 +71760,7 @@ define('base/image',[
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -71330,7 +71904,7 @@ define('element/slider',[
      * @example
      * // Set colors
      * var sl = board.create('slider', [[-3, 1], [1, 1], [-10, 1, 10]], {
-     * 
+     *
      *   baseline: { strokeColor: 'blue'},
      *   highline: { strokeColor: 'red'},
      *   fillColor: 'yellow',
@@ -71338,16 +71912,16 @@ define('element/slider',[
      *   name: 'xyz', // Not shown, if suffixLabel is set
      *   suffixLabel: 'x = ',
      *   postLabel: ' u'
-     * 
+     *
      * });
-     * 
+     *
      * </pre><div id="JXGd96c9e2c-2c25-4131-b6cf-9dbb80819401" class="jxgbox" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
      *     (function() {
      *         var board = JXG.JSXGraph.initBoard('JXGd96c9e2c-2c25-4131-b6cf-9dbb80819401',
      *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
      *     var sl = board.create('slider', [[-3, 1], [1, 1], [-10, 1, 10]], {
-     *     
+     *
      *       baseline: { strokeColor: 'blue'},
      *       highline: { strokeColor: 'red'},
      *       fillColor: 'yellow',
@@ -71355,24 +71929,23 @@ define('element/slider',[
      *       name: 'xyz', // Not shown, if suffixLabel is set
      *       suffixLabel: 'x = ',
      *       postLabel: ' u'
-     *     
+     *
      *     });
-     * 
+     *
      *     })();
-     * 
+     *
      * </script><pre>
-     * 
+     *
  */
     JXG.createSlider = function (board, parents, attributes) {
         var pos0, pos1, smin, start, smax, sdiff,
             p1, p2, l1, ticks, ti, startx, starty, p3, l2, t,
-            withText, withTicks, snapWidth, sw, s, attr, precision;
+            withText, withTicks, snapWidth, sw, s, attr, digits;
 
         attr = Type.copyAttributes(attributes, board.options, 'slider');
         withTicks = attr.withticks;
         withText = attr.withlabel;
         snapWidth = attr.snapwidth;
-        precision = attr.precision;
 
         // start point
         attr = Type.copyAttributes(attributes, board.options, 'slider', 'point1');
@@ -71511,9 +72084,15 @@ define('element/slider',[
                 },
                 function () {
                     var n,
+                        d = Type.evaluate(p3.visProp.digits),
                         sl = Type.evaluate(p3.visProp.suffixlabel),
                         ul = Type.evaluate(p3.visProp.unitlabel),
                         pl = Type.evaluate(p3.visProp.postlabel);
+
+                    if (d === 2 && Type.evaluate(p3.visProp.precision) !== 2) {
+                        // Backwards compatibility
+                        d = Type.evaluate(p3.visProp.precision);
+                    }
 
                     if (sl !== null) {
                         n = sl;
@@ -71523,7 +72102,7 @@ define('element/slider',[
                         n = '';
                     }
 
-                    n += Type.toFixed(p3.Value(), precision);
+                    n += Type.toFixed(p3.Value(), d);
 
                     if (ul !== null) {
                         n += ul;
@@ -71726,7 +72305,7 @@ define('element/slider',[
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -71812,7 +72391,7 @@ define('element/measure',[
      */
     JXG.createTapemeasure = function (board, parents, attributes) {
         var pos0, pos1,
-            attr, withTicks, withText, precision,
+            attr, withTicks, withText, digits,
             li, p1, p2, n, ti;
 
         pos0 = parents[0];
@@ -71833,7 +72412,12 @@ define('element/measure',[
         attr = Type.copyAttributes(attributes, board.options, 'tapemeasure');
         withTicks = attr.withticks;
         withText = attr.withlabel;
-        precision = attr.precision;
+        digits = attr.digits;
+
+        if (digits === 2 && attr.precision !== 2) {
+            // Backward compatibility
+            digits = attr.precision;
+        }
 
         // Below, we will replace the label by the measurement function.
         if (withText) {
@@ -71849,7 +72433,7 @@ define('element/measure',[
                 n = '';
             }
             li.label.setText(function () {
-                return n + Type.toFixed(p1.Dist(p2), precision);
+                return n + Type.toFixed(p1.Dist(p2), digits);
             });
         }
 
@@ -71924,7 +72508,7 @@ define('element/measure',[
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -72167,7 +72751,7 @@ define('parser/datasource',['jxg', 'utils/type'], function (JXG, Type) {
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -73543,7 +74127,7 @@ define('base/chart',[
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -74362,7 +74946,7 @@ define('base/turtle',[
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -75379,14 +75963,24 @@ define('base/ticks',[
          * @private
          */
         formatLabelText: function(value) {
-            var labelText = value.toString(),
+            var labelText,
+                digits,
                 ev_s = Type.evaluate(this.visProp.scalesymbol);
 
             // if value is Number
             if (Type.isNumber(value)) {
+                labelText = (Math.round(value * 1.e13) / 1.e13).toString();
                 if (labelText.length > Type.evaluate(this.visProp.maxlabellength) ||
                         labelText.indexOf('e') !== -1) {
-                    labelText = value.toPrecision(Type.evaluate(this.visProp.precision)).toString();
+
+                    digits = Type.evaluate(this.visProp.digits);
+                    if (Type.evaluate(this.visProp.precision) !== 3 && digits === 3) {
+                        // Use the deprecated attribute "precision"
+                        digits = Type.evaluate(this.visProp.precision);
+                    }
+
+                    //labelText = value.toPrecision(digits).toString();
+                    labelText = value.toExponential(digits).toString();
                 }
 
                 if (Type.evaluate(this.visProp.beautifulscientificticklabels)) {
@@ -75399,6 +75993,8 @@ define('base/ticks',[
                     // trim trailing .
                     labelText = labelText.replace(/\.$/, '');
                 }
+            } else {
+                labelText = value.toString();
             }
 
             if (ev_s.length > 0) {
@@ -75874,7 +76470,7 @@ define('base/ticks',[
 /*
  JessieCode Computer algebra algorithms
 
-    Copyright 2011-2021
+    Copyright 2011-2019
         Michael Gerhaeuser,
         Alfred Wassermann
 
@@ -75898,1336 +76494,1342 @@ define('base/ticks',[
     and <http://opensource.org/licenses/MIT/>.
  */
 
- /*global JXG: true, define: true, window: true, console: true, self: true, document: true, parser: true*/
- /*jslint nomen: true, plusplus: true*/
+/*global JXG: true, define: true, window: true, console: true, self: true, document: true, parser: true*/
+/*jslint nomen: true, plusplus: true*/
+/*eslint eqeqeq: "off"*/
 
- /* depends:
-  jxg
-  parser/geonext
-  base/constants
-  base/text
-  math/math
-  math/geometry
-  math/statistics
-  utils/type
-  utils/uuid
-  */
+/* depends:
+ jxg
+ parser/geonext
+ base/constants
+ base/text
+ math/math
+ math/geometry
+ math/statistics
+ utils/type
+ utils/uuid
+ */
 
- /**
-  * @fileoverview Here, the computer algebra algorithms are implemented.
-  */
+/**
+ * @fileoverview Here, the computer algebra algorithms are implemented.
+ */
 
- define('parser/ca',[
-     'jxg', 'base/constants', 'base/text', 'math/math', 'math/geometry', 'math/statistics', 'utils/type', 'utils/env'
- ], function (JXG, Const, Text, Mat, Geometry, Statistics, Type, Env) {
+define('parser/ca',[
+    'jxg', 'base/constants', 'base/text', 'math/math', 'math/geometry', 'math/statistics', 'utils/type', 'utils/env'
+], function (JXG, Const, Text, Mat, Geometry, Statistics, Type, Env) {
 
-     "use strict";
+    "use strict";
 
-     /**
-      * A JessieCode object provides an interface to the parser and stores all variables and objects used within a JessieCode script.
-      * The optional argument <tt>code</tt> is interpreted after initializing. To evaluate more code after initializing a JessieCode instance
-      * please use {@link JXG.JessieCode#parse}. For code snippets like single expressions use {@link JXG.JessieCode#snippet}.
-      * @constructor
-      * @param {String} [code] Code to parse.
-      * @param {Boolean} [geonext=false] Geonext compatibility mode.
-      */
-     JXG.CA = function (node, createNode, parser) {
-         this.node = node;
-         this.createNode = createNode;
-         this.parser = parser;
-     };
+    /**
+     * A JessieCode object provides an interface to the parser and stores all variables and objects used within a JessieCode script.
+     * The optional argument <tt>code</tt> is interpreted after initializing. To evaluate more code after initializing a JessieCode instance
+     * please use {@link JXG.JessieCode#parse}. For code snippets like single expressions use {@link JXG.JessieCode#snippet}.
+     * @constructor
+     * @param {String} [code] Code to parse.
+     * @param {Boolean} [geonext=false] Geonext compatibility mode.
+     */
+    JXG.CA = function (node, createNode, parser) {
+        this.node = node;
+        this.createNode = createNode;
+        this.parser = parser;
+    };
 
-     JXG.extend(JXG.CA.prototype, /** @lends JXG.CA.prototype */ {
-         findMapNode: function(mapname, node) {
-             var i, len, ret;
+    JXG.extend(JXG.CA.prototype, /** @lends JXG.CA.prototype */ {
+        findMapNode: function (mapname, node) {
+            var i, len, ret;
 
-             //console.log("FINDMAP", node);
-             if (node.value === 'op_assign' && node.children[0].value === mapname) {
-                 return node.children[1];
-             } else if (node.children) {
-                 len = node.children.length;
-                 for (i = 0; i < len; ++i) {
-                     ret = this.findMapNode(mapname, node.children[i]);
-                     if (ret !== null) {
-                         return ret;
-                     }
-                 }
-             }
-             return null;
-         },
+            //console.log("FINDMAP", node);
+            if (node.value === 'op_assign' && node.children[0].value === mapname) {
+                return node.children[1];
+            } else if (node.children) {
+                len = node.children.length;
+                for (i = 0; i < len; ++i) {
+                    ret = this.findMapNode(mapname, node.children[i]);
+                    if (ret !== null) {
+                        return ret;
+                    }
+                }
+            }
+            return null;
+        },
 
-         /**
-          * Declare all subnodes as math nodes,
-          * i.e recursively set node.isMath = true;
-          */
-         setMath: function(node) {
-             var i, len;
+        /**
+         * Declare all subnodes as math nodes,
+         * i.e recursively set node.isMath = true;
+         */
+        setMath: function (node) {
+            var i, len;
 
-             if ((node.type == 'node_op' && (
-                 node.value == 'op_add' || node.value == 'op_sub' ||
-                 node.value == 'op_mul' || node.value == 'op_div' ||
-                 node.value == 'op_neg' || node.value == 'op_execfun' ||
-                 node.value == 'op_exp')) ||
-                 node.type == 'node_var' || node.type == 'node_const') {
+            if ((node.type == 'node_op' && (
+                node.value == 'op_add' || node.value == 'op_sub' ||
+                node.value == 'op_mul' || node.value == 'op_div' ||
+                node.value == 'op_neg' || node.value == 'op_execfun' ||
+                node.value == 'op_exp')) ||
+                node.type == 'node_var' || node.type == 'node_const') {
 
-                 node.isMath = true;
-             }
-             if (node.children) {
-                 len = node.children.length;
-                 for (i = 0; i < len; ++i) {
-                     this.setMath(node.children[i]);
-                 }
-             }
-         },
+                node.isMath = true;
+            }
+            if (node.children) {
+                len = node.children.length;
+                for (i = 0; i < len; ++i) {
+                    this.setMath(node.children[i]);
+                }
+            }
+        },
 
-         deriveElementary: function(node, varname) {
-             var fun = node.children[0].value,
-                 arg = node.children[1],
-                 newNode;
+        deriveElementary: function (node, varname) {
+            var fun = node.children[0].value,
+                arg = node.children[1],
+                newNode;
 
 
-             switch (fun) {
-             case 'abs':
-                 // x / sqrt(x * x)
-                 newNode = this.createNode('node_op', 'op_div',
-                         arg[0],
-                         this.createNode('node_op', 'op_execfun',
-                             this.createNode('node_var', 'sqrt'),
-                             [this.createNode('node_op', 'op_mul',
-                                 Type.deepCopy(arg[0]),
-                                 Type.deepCopy(arg[0])
-                             )]
-                         )
-                     );
-                 break;
+            switch (fun) {
+                case 'abs':
+                    // x / sqrt(x * x)
+                    newNode = this.createNode('node_op', 'op_div',
+                        arg[0],
+                        this.createNode('node_op', 'op_execfun',
+                            this.createNode('node_var', 'sqrt'),
+                            [this.createNode('node_op', 'op_mul',
+                                Type.deepCopy(arg[0]),
+                                Type.deepCopy(arg[0])
+                            )]
+                        )
+                    );
+                    break;
 
-             case 'sqrt':
-                 newNode = this.createNode('node_op', 'op_div',
-                         this.createNode('node_const', 1.0),
-                         this.createNode('node_op', 'op_mul',
-                             this.createNode('node_const', 2.0),
-                             this.createNode(node.type, node.value,
-                                 Type.deepCopy(node.children[0]),
-                                 Type.deepCopy(node.children[1])
-                             )
-                         )
-                     );
-                 break;
-
-             case 'sin':
-                 newNode = this.createNode('node_op', 'op_execfun',
-                         this.createNode('node_var', 'cos'),
-                         Type.deepCopy(arg)
-                     );
-                 break;
-
-             case 'cos':
-                 newNode = this.createNode('node_op', 'op_neg',
-                             this.createNode('node_op', 'op_execfun',
-                                 this.createNode('node_var', 'sin'),
-                                 Type.deepCopy(arg)
-                             )
-                         );
-                 break;
-
-             case 'tan':
-                 newNode = this.createNode('node_op', 'op_div',
-                             this.createNode('node_const', 1.0),
-                             this.createNode('node_op', 'op_exp',
-                                 this.createNode('node_op', 'op_execfun',
-                                     this.createNode('node_var', 'cos'),
-                                     Type.deepCopy(arg)
-                                 ),
-                                 this.createNode('node_const', 2)
-                             )
-                         );
-                 break;
-
-             case 'cot':
-                 newNode = this.createNode('node_op', 'op_neg',
-                            this.createNode('node_op', 'op_div',
-                             this.createNode('node_const', 1.0),
-                             this.createNode('node_op', 'op_exp',
-                                 this.createNode('node_op', 'op_execfun',
-                                     this.createNode('node_var', 'sin'),
-                                     Type.deepCopy(arg)
-                                 ),
-                                 this.createNode('node_const', 2)
-                             )
+                case 'sqrt':
+                    newNode = this.createNode('node_op', 'op_div',
+                        this.createNode('node_const', 1.0),
+                        this.createNode('node_op', 'op_mul',
+                            this.createNode('node_const', 2.0),
+                            this.createNode(node.type, node.value,
+                                Type.deepCopy(node.children[0]),
+                                Type.deepCopy(node.children[1])
                             )
-                         );
-                 break;
+                        )
+                    );
+                    break;
 
-             case 'exp':
-                 newNode = this.createNode(node.type, node.value,
-                             Type.deepCopy(node.children[0]),
-                             Type.deepCopy(node.children[1])
-                         );
-                 break;
+                case 'sin':
+                    newNode = this.createNode('node_op', 'op_execfun',
+                        this.createNode('node_var', 'cos'),
+                        Type.deepCopy(arg)
+                    );
+                    break;
 
-             case 'pow':
-                 // (f^g)' = f^g*(f'g/f + g' log(f))
-                 newNode = this.createNode('node_op', 'op_mul',
-                         this.createNode('node_op', 'op_execfun',
-                             Type.deepCopy(node.children[0]),
-                             Type.deepCopy(node.children[1])
-                         ),
-                         this.createNode('node_op', 'op_add',
-                             this.createNode('node_op', 'op_mul',
-                                 this.derivative(node.children[1][0], varname),
-                                 this.createNode('node_op', 'op_div',
-                                     Type.deepCopy(node.children[1][1]),
-                                     Type.deepCopy(node.children[1][0])
-                                 )
-                             ),
-                             this.createNode('node_op', 'op_mul',
-                                 this.derivative(node.children[1][1], varname),
-                                 this.createNode('node_op', 'op_execfun',
-                                     this.createNode('node_var', 'log'),
-                                     [Type.deepCopy(node.children[1][0])]
-                                 )
-                             )
-                         )
-                     );
-                 break;
+                case 'cos':
+                    newNode = this.createNode('node_op', 'op_neg',
+                        this.createNode('node_op', 'op_execfun',
+                            this.createNode('node_var', 'sin'),
+                            Type.deepCopy(arg)
+                        )
+                    );
+                    break;
 
-             case 'log':
-             case 'ln':
-                 newNode = this.createNode('node_op', 'op_div',
-                             this.createNode('node_const', 1.0),
-                             // Attention: single variable mode
-                             Type.deepCopy(arg[0])
-                         );
-                 break;
+                case 'tan':
+                    newNode = this.createNode('node_op', 'op_div',
+                        this.createNode('node_const', 1.0),
+                        this.createNode('node_op', 'op_exp',
+                            this.createNode('node_op', 'op_execfun',
+                                this.createNode('node_var', 'cos'),
+                                Type.deepCopy(arg)
+                            ),
+                            this.createNode('node_const', 2)
+                        )
+                    );
+                    break;
 
-             case 'log2':
-             case 'lb':
-             case 'ld':
-                 newNode = this.createNode('node_op', 'op_mul',
-                             this.createNode('node_op', 'op_div',
-                                 this.createNode('node_const', 1.0),
-                                 // Attention: single variable mode
-                                 Type.deepCopy(arg[0])
-                             ),
-                             this.createNode('node_const', 1.4426950408889634)  // 1/log(2)
-                         );
-                 break;
-
-             case 'log10':
-             case 'lg':
-                 newNode = this.createNode('node_op', 'op_mul',
-                             this.createNode('node_op', 'op_div',
-                                 this.createNode('node_const', 1.0),
-                                 // Attention: single variable mode
-                                 Type.deepCopy(arg[0])
-                             ),
-                             this.createNode('node_const', 0.43429448190325176)  // 1/log(10)
-                         );
-                 break;
-
-             case 'asin':
-                 newNode = this.createNode('node_op', 'op_div',
-                             this.createNode('node_const', 1.0),
-                             this.createNode('node_op', 'op_execfun',
-                                 this.createNode('node_var', 'sqrt'),
-                                 [
-                                     this.createNode('node_op', 'op_sub',
-                                         this.createNode('node_const', 1.0),
-                                         this.createNode('node_op', 'op_mul',
-                                             Type.deepCopy(arg[0]),
-                                             Type.deepCopy(arg[0])
-                                         )
-                                     )
-                                 ]
-                             )
-                         );
-                 break;
-
-             case 'acos':
-                 newNode = this.createNode('node_op', 'op_neg',
-                         this.createNode('node_op', 'op_div',
-                             this.createNode('node_const', 1.0),
-                             this.createNode('node_op', 'op_execfun',
-                                 this.createNode('node_var', 'sqrt'),
-                                 [
-                                     this.createNode('node_op', 'op_sub',
-                                         this.createNode('node_const', 1.0),
-                                         this.createNode('node_op', 'op_mul',
-                                             Type.deepCopy(arg[0]),
-                                             Type.deepCopy(arg[0])
-                                         )
-                                     )
-                                 ]
-                             )
-                         )
-                     );
-                 break;
-
-             //case 'atan2':
-
-             case 'atan':
-                 newNode = this.createNode('node_op', 'op_div',
-                             this.createNode('node_const', 1.0),
-                             this.createNode('node_op', 'op_add',
-                                 this.createNode('node_const', 1.0),
-                                 this.createNode('node_op', 'op_mul',
-                                     Type.deepCopy(arg[0]),
-                                     Type.deepCopy(arg[0])
-                                 )
-                             )
-                         );
-                 break;
-
-             case 'acot':
-                 newNode = this.createNode('node_op', 'op_neg',
-                            this.createNode('node_op', 'op_div',
-                             this.createNode('node_const', 1.0),
-                             this.createNode('node_op', 'op_add',
-                                 this.createNode('node_const', 1.0),
-                                 this.createNode('node_op', 'op_mul',
-                                     Type.deepCopy(arg[0]),
-                                     Type.deepCopy(arg[0])
-                                 )
-                             )
+                case 'cot':
+                    newNode = this.createNode('node_op', 'op_neg',
+                        this.createNode('node_op', 'op_div',
+                            this.createNode('node_const', 1.0),
+                            this.createNode('node_op', 'op_exp',
+                                this.createNode('node_op', 'op_execfun',
+                                    this.createNode('node_var', 'sin'),
+                                    Type.deepCopy(arg)
+                                ),
+                                this.createNode('node_const', 2)
                             )
-                         );
-                 break;
-
-             case 'sinh':
-                 newNode = this.createNode('node_op', 'op_execfun',
-                             this.createNode('node_var', 'cosh'),
-                             [Type.deepCopy(arg[0])]
-                         );
-                 break;
-
-             case 'cosh':
-                 newNode = this.createNode('node_op', 'op_execfun',
-                             this.createNode('node_var', 'sinh'),
-                             [Type.deepCopy(arg[0])]
-                         );
-                 break;
-
-             case 'tanh':
-                 newNode = this.createNode('node_op', 'op_sub',
-                             this.createNode('node_const', 1.0),
-                             this.createNode('node_op', 'op_exp',
-                                 this.createNode('node_op', 'op_execfun',
-                                     this.createNode('node_var', 'tanh'),
-                                     [Type.deepCopy(arg[0])]
-                                 ),
-                                 this.createNode('node_const', 2.0)
-                             )
-                         );
-                 break;
-
-             case 'asinh':
-                 newNode = this.createNode('node_op', 'op_div',
-                             this.createNode('node_const', 1.0),
-                             this.createNode('node_op', 'op_execfun',
-                                 this.createNode('node_var', 'sqrt'),
-                                 [
-                                     this.createNode('node_op', 'op_add',
-                                         this.createNode('node_op', 'op_mul',
-                                             Type.deepCopy(arg[0]),
-                                             Type.deepCopy(arg[0])
-                                         ),
-                                         this.createNode('node_const', 1.0)
-                                     )
-                                 ]
-                             )
-                         );
-                 break;
-
-             case 'acosh':
-                 newNode = this.createNode('node_op', 'op_div',
-                             this.createNode('node_const', 1.0),
-                             this.createNode('node_op', 'op_execfun',
-                                 this.createNode('node_var', 'sqrt'),
-                                 [
-                                     this.createNode('node_op', 'op_sub',
-                                         this.createNode('node_op', 'op_mul',
-                                             Type.deepCopy(arg[0]),
-                                             Type.deepCopy(arg[0])
-                                         ),
-                                         this.createNode('node_const', 1.0)
-                                     )
-                                 ]
-                             )
-                         );
-                 break;
-
-             case 'atanh':
-                 newNode = this.createNode('node_op', 'op_div',
-                             this.createNode('node_const', 1.0),
-                             this.createNode('node_op', 'op_sub',
-                                 this.createNode('node_const', 1.0),
-                                 this.createNode('node_op', 'op_mul',
-                                     Type.deepCopy(arg[0]),
-                                     Type.deepCopy(arg[0])
-                                 )
-                             )
-                         );
-                 break;
-
-             default:
-                 newNode = this.createNode('node_const', 0.0);
-                 this._error('Derivative of "' + fun + '" not yet implemented');
-             }
-
-             return newNode;
-         },
-
-         derivative: function(node, varname) {
-             var i, len, newNode;
-
-             switch (node.type) {
-             case 'node_op':
-                 switch (node.value) {
-                 /*
-                 case 'op_map':
-                     if (true) {
-                         newNode = this.createNode('node_op', 'op_map',
-                                 Type.deepCopy(node.children[0]),
-                                 this.derivative(node.children[1], varname)
-                             );
-                     } else {
-                         newNode = this.derivative(node.children[1], varname);
-                     }
-                     break;
-                 */
-                 case 'op_execfun':
-                     // f'(g(x))g'(x)
-                     if (node.children[0].value == 'pow') {
-                         newNode = this.deriveElementary(node, varname);
-                     } else {
-                         newNode = this.createNode('node_op', 'op_mul',
-                                     this.deriveElementary(node, varname),
-                                     // Warning: single variable mode
-                                     this.derivative(node.children[1][0], varname)
-                                 );
-
-                     }
-                     break;
-
-                 case 'op_div':
-                     // (f'g − g'f )/(g*g)
-                     newNode = this.createNode('node_op', 'op_div',
-                                 this.createNode('node_op', 'op_sub',
-                                     this.createNode('node_op', 'op_mul',
-                                         this.derivative(node.children[0], varname),
-                                         Type.deepCopy(node.children[1])
-                                     ),
-                                     this.createNode('node_op', 'op_mul',
-                                         Type.deepCopy(node.children[0]),
-                                         this.derivative(node.children[1], varname)
-                                     )
-                                 ),
-                                 this.createNode('node_op', 'op_mul',
-                                     Type.deepCopy(node.children[1]),
-                                     Type.deepCopy(node.children[1])
-                                 )
-                             );
-                     break;
-
-                 case 'op_mul':
-                     // fg' + f'g
-                     newNode = this.createNode('node_op', 'op_add',
-                                 this.createNode('node_op', 'op_mul',
-                                     Type.deepCopy(node.children[0]),
-                                     this.derivative(node.children[1], varname)),
-                                 this.createNode('node_op', 'op_mul',
-                                     this.derivative(node.children[0], varname),
-                                     Type.deepCopy(node.children[1]))
-                             );
-                     break;
-
-                 case 'op_neg':
-                     newNode = this.createNode('node_op', 'op_neg',
-                                 this.derivative(node.children[0], varname)
-                             );
-                     break;
-
-                 case 'op_add':
-                 case 'op_sub':
-                     newNode = this.createNode('node_op', node.value,
-                                 this.derivative(node.children[0], varname),
-                                 this.derivative(node.children[1], varname)
-                             );
-                     break;
-
-                 case 'op_exp':
-                     // (f^g)' = f^g*(f'g/f + g' log(f))
-                     newNode = this.createNode('node_op', 'op_mul',
-                                 Type.deepCopy(node),
-                                 this.createNode('node_op', 'op_add',
-                                     this.createNode('node_op', 'op_mul',
-                                         this.derivative(node.children[0], varname),
-                                         this.createNode('node_op', 'op_div',
-                                             Type.deepCopy(node.children[1]),
-                                             Type.deepCopy(node.children[0])
-                                         )
-                                     ),
-                                     this.createNode('node_op', 'op_mul',
-                                         this.derivative(node.children[1], varname),
-                                         this.createNode('node_op', 'op_execfun',
-                                             this.createNode('node_var', 'log'),
-                                             [Type.deepCopy(node.children[0])]
-                                         )
-                                     )
-                                 )
-                             );
-                     break;
-                 }
-                 break;
-
-             case 'node_var':
-                 //console.log('node_var', node);
-                 if (node.value === varname) {
-                     newNode = this.createNode('node_const', 1.0);
-                 } else {
-                     newNode = this.createNode('node_const', 0.0);
-                 }
-                 break;
-
-             case 'node_const':
-                 newNode = this.createNode('node_const', 0.0);
-                 break;
-
-             case 'node_const_bool':
-                 break;
-
-             case 'node_str':
-                 break;
-
-             }
-
-             return newNode;
-         },
-
-         /**
-          * f = map (x) -> x*sin(x);
-          * Usages:
-          * h = D(f, x);
-          * h = map (x) -> D(f, x);
-          *
-          */
-         expandDerivatives: function(node, parent, ast) {
-             var len, i, j, mapNode, codeNode, ret, node2, newNode,
-                 mapName, varname, vArray, order;
-
-             ret = 0;
-             if (!node) {
-                 return ret;
-             }
-
-             this.line = node.line;
-             this.col = node.col;
-
-             // First we have to go down in the tree.
-             // This ensures that in cases like D(D(f,x),x) the inner D is expanded first.
-             len = node.children.length;
-             for (i = 0; i < len; ++i) {
-                 if (node.children[i] && node.children[i].type) {
-                     node.children[i] = this.expandDerivatives(node.children[i], node, ast);
-                 } else if (Type.isArray(node.children[i])) {
-                     for (j = 0; j < node.children[i].length; ++j) {
-                         if (node.children[i][j] && node.children[i][j].type) {
-                             node.children[i][j] = this.expandDerivatives(node.children[i][j], node, ast);
-                         }
-                     }
-                 }
-             }
-
-             switch (node.type) {
-             case 'node_op':
-                 switch (node.value) {
-                 case 'op_execfun':
-                     if (node.children[0] && node.children[0].value === 'D') {
-                         if (node.children[1][0].type == 'node_var') {
-                             /*
-                              * Derive map, that is compute D(f,x)
-                              * where e.g. f = map (x) -> x^2
-                              *
-                              * First step: find node where the map is defined
-                              */
-                             mapName = node.children[1][0].value;
-                             mapNode = this.findMapNode(mapName, ast);
-                             vArray = mapNode.children[0];
-
-                             // Variable name for differentiation
-                             if (node.children[1].length >= 2) {
-                                 varname = node.children[1][1].value;
-                             } else {
-                                 varname = mapNode.children[0][0]; // Usually it's 'x'
-                             }
-                             codeNode = mapNode.children[1];
-                         } else {
-                             /*
-                              * Derive expression, e.g.
-                              *     D(2*x, x)
-                              */
-                             codeNode = node.children[1][0];
-                             vArray = ['x'];
-
-                             // Variable name for differentiation and order
-                             if (node.children[1].length >= 2) {
-                                 varname = node.children[1][1].value;
-                             } else {
-                                 varname = 'x';
-                             }
-                         }
-
-                         // Differentiation order
-                         if (node.children[1].length >= 3) {
-                             order = node.children[1][2].value;
-                         } else {
-                             order = 1;
-                         }
-
-                         // Create node which contains the derivative
-                         newNode = codeNode;
-                         //newNode = this.removeTrivialNodes(newNode);
-                         if (order >= 1) {
-                             while (order >= 1) {
-                                 newNode = this.derivative(newNode, varname);
-                                 newNode = this.removeTrivialNodes(newNode);
-                                 order--;
-                             }
-                         }
-
-                         // Replace the node containing e.g. D(f,x) by the derivative.
-                         if (parent.type == 'node_op' && parent.value == 'op_assign') {
-                             // If D is an assignment it has to be replaced by a map
-                             // h = D(f, x)
-                             node2 = this.createNode('node_op', 'op_map',
-                                     vArray,
-                                     newNode
-                                 );
-                         } else {
-                             node2 = newNode;
-                         }
-
-                         this.setMath(node2);
-                         node.type = node2.type;
-                         node.value = node2.value;
-                         node.children[0] = node2.children[0];
-                         node.children[1] = node2.children[1];
-                     }
-                 }
-                 break;
-
-             case 'node_var':
-             case 'node_const':
-             case 'node_const_bool':
-             case 'node_str':
-                 break;
-             }
-
-             return node;
-         },
-
-         removeTrivialNodes: function(node) {
-             var i, len, n0, n1, swap;
-
-             // In case of 'op_execfun' the children[1] node is an array.
-             if (Type.isArray(node)) {
-                 len = node.length;
-                 for (i = 0; i < len; ++i) {
-                     node[i] = this.removeTrivialNodes(node[i]);
-                 }
-             }
-             if (node.type != 'node_op' || !node.children) {
-                 return node;
-             }
-
-             len = node.children.length;
-             for (i = 0; i < len; ++i) {
-                 this.mayNotBeSimplified = false;
-                 do {
-                     node.children[i] = this.removeTrivialNodes(node.children[i]);
-                 } while (this.mayNotBeSimplified);
-
-             }
-
-             switch (node.value) {
-             // Allow maps of the form
-             //  map (x) -> x;
-             case 'op_map':
-                 n0 = node.children[0];
-                 n1 = node.children[1];
-                 if (n1.type == 'node_var') {
-                     for (i = 0; i < n0.length; ++i) {
-                         // Allow maps of the form map(x) -> x
-                         if (n0[i] == n1.value) {
-                             n1.isMath = true;
-                             break;
-                         }
-                     }
-                 }
-                 break;
-
-             // a + 0 -> a
-             // 0 + a -> a
-             case 'op_add':
-                 n0 = node.children[0];
-                 n1 = node.children[1];
-                 if (n0.type == 'node_const' && n0.value === 0.0) {
-                     return n1;
-                 }
-                 if (n1.type == 'node_const' && n1.value === 0.0) {
-                     return n0;
-                 }
-
-                 // const + const -> const
-                 if (n0.type == 'node_const' && n1.type == 'node_const') {
-                     n0.value += n1.value;
-                     return n0;
-                 }
-                 break;
-
-             // 1 * a = a
-             // a * 1 = a
-             // a * 0 = 0
-             // 0 * a = 0
-             // - * - = +
-             // Order children
-             case 'op_mul':
-                 n0 = node.children[0];
-                 n1 = node.children[1];
-                 if (n0.type == 'node_const' && n0.value == 1.0) {
-                     return n1;
-                 }
-                 if (n1.type == 'node_const' && n1.value == 1.0) {
-                     return n0;
-                 }
-                 if (n0.type == 'node_const' && n0.value === 0.0) {
-                     return n0;
-                 }
-                 if (n1.type == 'node_const' && n1.value === 0.0) {
-                     return n1;
-                 }
-                 if (n1.type == 'node_const' && n1.value === 0.0) {
-                     return n1;
-                 }
-
-                 // (-a) * (-b) -> a*b
-                 if (n0.type == 'node_op' && n0.value == 'op_neg' &&
-                     n1.type == 'node_op' && n1.value == 'op_neg' ) {
-                     node.children = [n0.children[0], n1.children[0]];
-                     this.mayNotBeSimplified = true;
-                     return node;
-                 }
-                 // (-a) * b -> -(a*b)
-                 if (n0.value == 'op_neg' && n1.value != 'op_neg' ) {
-                     node.type = 'node_op';
-                     node.value = 'op_neg';
-                     node.children = [this.createNode('node_op', 'op_mul', n0.children[0], n1)];
-                     this.mayNotBeSimplified = true;
-                     return node;
-                 }
-                 // a * (-b) -> -(a*b)
-                 if (n0.value != 'op_neg' && n1.value == 'op_neg' ) {
-                     node.type = 'node_op';
-                     node.value = 'op_neg';
-                     node.children = [this.createNode('node_op', 'op_mul', n0, n1.children[0])];
-                     this.mayNotBeSimplified = true;
-                     return node;
-                 }
-                 // (1 / a) * b -> a / b
-                 if (n0.value == 'op_div' &&
-                     n0.children[0].type == 'node_const' && n0.children[0].value == 1.0) {
-                     node.type = 'node_op';
-                     node.value = 'op_div';
-                     node.children = [n1, n0.children[1]];
-                     this.mayNotBeSimplified = true;
-                     return node;
-                 }
-                 // a * (1 / b) -> a / b
-                 if (n1.value == 'op_div' &&
-                     n1.children[0].type == 'node_const' && n1.children[0].value == 1.0) {
-                     node.type = 'node_op';
-                     node.value = 'op_div';
-                     node.children = [n0, n1.children[1]];
-                     this.mayNotBeSimplified = true;
-                     return node;
-                 }
-
-                 // Order children
-                 // a * const -> const * a
-                 if (n0.type != 'node_const' && n1.type == 'node_const') {
-                     node.children = [n1, n0];
-                     this.mayNotBeSimplified = true;
-                     return node;
-                 }
-                 // a + (-const) -> -const * a
-                 if (n0.type != 'node_const' && n1.type == 'node_op' &&
-                     n1.value == 'op_neg' && n1.children[0].type == 'node_const') {
-                     node.children = [n1, n0];
-                     this.mayNotBeSimplified = true;
-                     return node;
-                 }
-
-                 // a * var -> var * a
-                 // a * fun -> fun * a
-                 if (n0.type == 'node_op' && n0.value != 'op_execfun' &&
-                     (n1.type == 'node_var' || (n1.type == 'node_op' && n1.value == 'op_execfun'))) {
-                     node.children = [n1, n0];
-                     this.mayNotBeSimplified = true;
-                     return node;
-                 }
-
-                 // a + (-var) -> -var * a
-                 if (n0.type != 'node_op' && n1.type == 'node_op' &&
-                     n1.value == 'op_neg' && n1.children[0].type == 'node_var') {
-                     node.children = [n1, n0];
-                     this.mayNotBeSimplified = true;
-                     return node;
-                 }
-                 // a * (const * b) -> const * (a*b)
-                 // a * (const / b) -> const * (a/b)
-                 if (n0.type != 'node_const' && n1.type == 'node_op' &&
-                     (n1.value == 'op_mul' || n1.value == 'op_div') &&
-                     n1.children[0].type == 'node_const') {
-                     swap = n1.children[0];
-                     n1.children[0] = n0;
-                     node.children = [swap, n1];
-                     this.mayNotBeSimplified = true;
-                     return node;
-                 }
-
-                 // (const * a) * b -> const * (a * b)
-                 if (n1.type != 'node_const' && n0.type == 'node_op' &&
-                     n0.value == 'op_mul' &&
-                     n0.children[0].type == 'node_const') {
-                     node.children = [
-                         n0.children[0],
-                         this.createNode('node_op', 'op_mul', n0.children[1], n1)
-                     ];
-                     this.mayNotBeSimplified = true;
-                     return node;
-                 }
-
-                 // const * const -> const
-                 if (n0.type == 'node_const' && n1.type == 'node_const') {
-                     n0.value *= n1.value;
-                     return n0;
-                 }
-
-                 // const * (const * a) -> const * a
-                 // const * (const / a) -> const / a
-                 if (n0.type == 'node_const' && n1.type == 'node_op' &&
-                     (n1.value == 'op_mul' || n1.value == 'op_div') &&
-                     n1.children[0].type == 'node_const') {
-                     n1.children[0].value *= n0.value;
-                     return n1;
-                 }
-
-                 // a * a-> a^2
-                 n0.hash = this.parser.compile(n0);
-                 n1.hash = this.parser.compile(n1);
-                 if (n0.hash === n1.hash) {
-                     node.value = 'op_exp';
-                     node.children[1] = this.createNode('node_const', 2.0);
-                     return node;
-                 }
-
-                 if (n0.type == 'node_const' && n1.type == 'node_op' &&
-                     (n1.value == 'op_mul' || n1.value == 'op_div') &&
-                     n1.children[0].type == 'node_const') {
-                     n1.children[0].value *= n0.value;
-                     return n1;
-                 }
-
-                 // a * a^b -> a^(b+1)
-                 if (n1.type == 'node_op' && n1.value == 'op_exp') {
-                     if (!n0.hash) {
-                         n0.hash = this.parser.compile(n0);
-                     }
-                     if (!n1.children[0].hash) {
-                         n1.children[0].hash = this.parser.compile(n1.children[0]);
-                     }
-                     if (n0.hash === n1.children[0].hash) {
-                         n1.children[1] = this.createNode('node_op', 'op_add',
-                             n1.children[1],
-                             this.createNode('node_const', 1.0)
-                         );
-                         this.mayNotBeSimplified = true;
-                         return n1;
-                     }
-                 }
-
-                 // a^b * a^c -> a^(b+c)
-                 if (n0.type == 'node_op' && n0.value == 'op_exp' &&
-                     n1.type == 'node_op' && n1.value == 'op_exp') {
-                     n0.children[0].hash = this.parser.compile(n0.children[0]);
-                     n1.children[0].hash = this.parser.compile(n1.children[0]);
-                     if (n0.children[0].hash === n1.children[0].hash) {
-                         n0.children[1] = this.createNode('node_op', 'op_add',
-                             n0.children[1],
-                             n1.children[1]
-                         );
-                         this.mayNotBeSimplified = true;
-                         return n0;
-                     }
-                 }
-
-                 break;
-
-             // 0 - a -> -a
-             // a - 0 -> a
-             // a - a -> 0
-             case 'op_sub':
-                n0 = node.children[0];
-                n1 = node.children[1];
-                if (n0.type == 'node_const' && n0.value === 0.0) {
-                     node.value = 'op_neg';
-                     node.children[0] = n1;
-                     return node;
-                 }
-                 if (n1.type == 'node_const' && n1.value === 0.0) {
-                     return n0;
-                 }
-                 if (n0.type == 'node_const' && n1.type == 'node_const' &&
-                     n0.value == n1.value) {
-                     return this.createNode('node_const', 0.0);
-                 }
-                 if (n0.type == 'node_var' && n1.type == 'node_var' &&
-                     n0.value == n1.value) {
-                     return this.createNode('node_const', 0.0);
-                 }
-
-                 // const - const -> const
-                 if (n0.type == 'node_const' && n1.type == 'node_const') {
-                     n0.value -= n1.value;
-                     return n0;
-                 }
-
-                 // const * a - const * a -> const * a
-                 if (n0.type == 'node_op' && n0.value == 'op_mul' &&
-                     n1.type == 'node_op' && n1.value == 'op_mul') {
-
-                    n0.children[1].hash = this.parser.compile(n0.children[1]);
-                    n1.children[1].hash = this.parser.compile(n1.children[1]);
-                    if (n0.children[1].hash === n1.children[1].hash) {
-
-                        node.value = 'op_mul';
-                        node.children = [
-                            this.createNode('node_op', 'op_sub',
-                                n0.children[0],
-                                n1.children[0]),
-                            n0.children[1]
-                            ];
-                        this.mayNotBeSimplified = true;
-                        return node;
-                    }
-                 }
-                 // const * a - a -> (const - 1) * a
-                 if (n0.type == 'node_op' && n0.value == 'op_mul') {
-
-                    n0.children[1].hash = this.parser.compile(n0.children[1]);
-                    n1.hash = this.parser.compile(n1);
-                    if (n0.children[1].hash === n1.hash) {
-
-                        node.value = 'op_mul';
-                        node.children = [
-                            this.createNode('node_op', 'op_sub',
-                                n0.children[0],
-                                this.createNode('node_const', 1.0)),
-                            n1
-                            ];
-                        this.mayNotBeSimplified = true;
-                        return node;
-                    }
-                 }
-                 // a - const*a -> (const - 1) * a
-                 if (n1.type == 'node_op' && n1.value == 'op_mul') {
-
-                    n1.children[1].hash = this.parser.compile(n1.children[1]);
-                    n0.hash = this.parser.compile(n0);
-                    if (n1.children[1].hash === n0.hash) {
-
-                        node.value = 'op_mul';
-                        node.children = [
-                            this.createNode('node_op', 'op_sub',
-                                this.createNode('node_const', 1.0),
-                                n1.children[0]),
-                            n0
-                            ];
-                        this.mayNotBeSimplified = true;
-                        return node;
-                    }
-                 }
-
-                 break;
-
-             // -0 -> 0
-             // -(-b) = b
-             case 'op_neg':
-                 n0 = node.children[0];
-                 if (n0.type == 'node_const' && n0.value === 0.0) {
-                     return n0;
-                 }
-                 if (n0.type == 'node_op' && n0.value == 'op_neg') {
-                     return n0.children[0];
-                 }
-                 break;
-
-             // a / a -> 1, a != 0
-             // 0 / a -> 0, a != 0
-             // a / 0 -> Infinity, a != 0
-             // 0 / 0 -> NaN, a == 0
-             case 'op_div':
-                 n0 = node.children[0];
-                 n1 = node.children[1];
-                 if (n0.type == 'node_const' && n1.type == 'node_const' &&
-                     n0.value == n1.value && n0.value !== 0) {
-                     n0.value = 1.0;
-                     return n0;
-                 }
-                 if (n0.type == 'node_const' && n0.value === 0 &&
-                     n1.type == 'node_const' && n1.value !== 0) {
-                     n0.value = 0.0;
-                     return n0;
-                 }
-
-                 // Risky: 0 / (something != 0) -> 0.0
-                 if (n0.type == 'node_const' && n0.value === 0 &&
-                     (n1.type == 'node_op' || n1.type == 'node_var')) {
-                     node.type = 'node_const';
-                     node.value = 0.0;
-                     return node;
-                 }
-
-                 if (n0.type == 'node_var' && n1.type == 'node_var' &&
-                     n0.value == n1.value) {
-                     return this.createNode('node_const', 1.0);
-                 }
-                 if (n0.type == 'node_const' && n0.value !== 0 &&
-                     n1.type == 'node_const' && n1.value === 0) {
-                     if (n0.value > 0.0) {
-                         n0.value = Infinity;
-                     } else {
-                         n0.value = -Infinity; // Do we ever need this?
-                     }
-                     return n0;
-                 }
-
-                 // (-a) / (-b) -> a/b
-                 if (n0.type == 'node_op' && n0.value == 'op_neg' &&
-                     n1.type == 'node_op' && n1.value == 'op_neg' ) {
-                     node.children = [n0.children[0], n1.children[0]];
-                     this.mayNotBeSimplified = true;
-                     return node;
-                 }
-                 // (-a) / b -> -(a/b)
-                 if (n0.value == 'op_neg' && n1.value != 'op_neg' ) {
-                     node.type = 'node_op';
-                     node.value = 'op_neg';
-                     node.children = [this.createNode('node_op', 'op_div', n0.children[0], n1)];
-                     this.mayNotBeSimplified = true;
-                     return node;
-                 }
-                 // a / (-b) -> -(a/b)
-                 if (n0.value != 'op_neg' && n1.value == 'op_neg' ) {
-                     node.type = 'node_op';
-                     node.value = 'op_neg';
-                     node.children = [this.createNode('node_op', 'op_div', n0, n1.children[0])];
-                     this.mayNotBeSimplified = true;
-                     return node;
-                 }
-
-                 // a^b / a -> a^(b-1)
-                 if (n0.type == 'node_op' && n0.value == 'op_exp') {
-                     if (!n1.hash) {
-                         n1.hash = this.parser.compile(n1);
-                     }
-                     if (!n0.children[0].hash) {
-                         n0.children[0].hash = this.parser.compile(n0.children[0]);
-                     }
-                     if (n1.hash === n0.children[0].hash) {
-                         n0.children[1] = this.createNode('node_op', 'op_sub',
-                             n0.children[1],
-                             this.createNode('node_const', 1.0)
-                         );
-                         this.mayNotBeSimplified = true;
-                         return n0;
-                     }
-                 }
-
-                 // (const * a) / b -> const * (a / b)
-                 if (n1.type != 'node_const' && n0.type == 'node_op' &&
-                     n0.value == 'op_mul' &&
-                     n0.children[0].type == 'node_const') {
-                     node.value = 'op_mul';
-                     node.children = [
-                         n0.children[0],
-                         this.createNode('node_op', 'op_div', n0.children[1], n1)
-                     ];
-                     this.mayNotBeSimplified = true;
-                     return node;
-                 }
-
-                 // a^b / a^c -> a^(b-c)
-                 if (n0.type == 'node_op' && n0.value == 'op_exp' &&
-                     n1.type == 'node_op' && n1.value == 'op_exp') {
-                     n0.children[0].hash = this.parser.compile(n0.children[0]);
-                     n1.children[0].hash = this.parser.compile(n1.children[0]);
-                     if (n0.children[0].hash === n1.children[0].hash) {
-                         n0.children[1] = this.createNode('node_op', 'op_sub',
-                             n0.children[1],
-                             n1.children[1]
-                         );
-                         this.mayNotBeSimplified = true;
-                         return n0;
-                     }
-                 }
-
-
-                 break;
-
-             // a^0 = 1
-             // a^1 -> a
-             // 1^a -> 1
-             // 0^a -> 0: a const != 0
-             case 'op_exp':
-                 n0 = node.children[0];
-                 n1 = node.children[1];
-                 if (n1.type == 'node_const' && n1.value === 0.0) {
-                     n1.value = 1.0;
-                     return n1;
-                 }
-                 if (n1.type == 'node_const' && n1.value == 1.0) {
-                     return n0;
-                 }
-                 if (n0.type == 'node_const' && n0.value == 1.0) {
-                     return n0;
-                 }
-                 if (n0.type == 'node_const' && n0.value === 0.0 &&
-                     n1.type == 'node_const' && n1.value !== 0.0) {
-                     return n0;
-                 }
-
-                 // (a^b)^c -> a^(b*c)
-                 if (n0.type == 'node_op' && n0.value == 'op_exp') {
-                     node.children = [
-                         n0.children[0],
-                         this.createNode('node_op', 'op_mul',
-                            n0.children[1],
-                            n1)
-                     ];
-                     return node;
-                 }
-                 break;
-             }
-
-             switch (node.value) {
-             // const_1 + const_2 -> (const_1 + const_2)
-             // a + a -> 2*a
-             // a + (-b) = a - b
-             case 'op_add':
-                 n0 = node.children[0];
-                 n1 = node.children[1];
-                 if (n0.type == 'node_const' && n1.type == 'node_const' &&
-                     n0.value == n1.value) {
-                     n0.value += n1.value;
-                     return n0;
-                 }
-
-                 if (n0.type == 'node_var' && n1.type == 'node_var' &&
-                     n0.value == n1.value) {
-                     node.children[0] = this.createNode('node_const', 2.0);
-                     node.value = 'op_mul';
-                     return node;
-                 }
-
-                 if (n0.type == 'node_op' && n0.value == 'op_neg') {
-                     node.value = 'op_sub';
-                     node.children[0] = n1;
-                     node.children[1] = n0.children[0];
-                     this.mayNotBeSimplified = true;
-                     return node;
-                 }
-
-                 if (n1.type == 'node_op' && n1.value == 'op_neg') {
-                     node.value = 'op_sub';
-                     node.children[1] = n1.children[0];
-                     this.mayNotBeSimplified = true;
-                     return node;
-                 }
-
-                 // const * a + const * a -> const * a
-                 if (n0.type == 'node_op' && n0.value == 'op_mul' &&
-                     n1.type == 'node_op' && n1.value == 'op_mul') {
-
-                    n0.children[1].hash = this.parser.compile(n0.children[1]);
-                    n1.children[1].hash = this.parser.compile(n1.children[1]);
-                    if (n0.children[1].hash === n1.children[1].hash) {
-
-                        node.value = 'op_mul';
-                        node.children = [
-                            this.createNode('node_op', 'op_add',
-                                n0.children[0],
-                                n1.children[0]),
-                            n0.children[1]
-                            ];
-                        this.mayNotBeSimplified = true;
-                        return node;
-                    }
-                 }
-                 // const * a + a -> (const + 1) * a
-                 if (n0.type == 'node_op' && n0.value == 'op_mul') {
-
-                    n0.children[1].hash = this.parser.compile(n0.children[1]);
-                    n1.hash = this.parser.compile(n1);
-                    if (n0.children[1].hash === n1.hash) {
-
-                        node.value = 'op_mul';
-                        node.children = [
-                            this.createNode('node_op', 'op_add',
-                                n0.children[0],
-                                this.createNode('node_const', 1.0)),
-                            n1
-                            ];
-                        this.mayNotBeSimplified = true;
-                        return node;
-                    }
-                 }
-                 // a + const*a -> (const + 1) * a
-                 if (n1.type == 'node_op' && n1.value == 'op_mul') {
-
-                    n1.children[1].hash = this.parser.compile(n1.children[1]);
-                    n0.hash = this.parser.compile(n0);
-                    if (n1.children[1].hash === n0.hash) {
-
-                        node.value = 'op_mul';
-                        node.children = [
+                        )
+                    );
+                    break;
+
+                case 'exp':
+                    newNode = this.createNode(node.type, node.value,
+                        Type.deepCopy(node.children[0]),
+                        Type.deepCopy(node.children[1])
+                    );
+                    break;
+
+                case 'pow':
+                    // (f^g)' = f^g*(f'g/f + g' log(f))
+                    newNode = this.createNode('node_op', 'op_mul',
+                        this.createNode('node_op', 'op_execfun',
+                            Type.deepCopy(node.children[0]),
+                            Type.deepCopy(node.children[1])
+                        ),
+                        this.createNode('node_op', 'op_add',
+                            this.createNode('node_op', 'op_mul',
+                                this.derivative(node.children[1][0], varname),
+                                this.createNode('node_op', 'op_div',
+                                    Type.deepCopy(node.children[1][1]),
+                                    Type.deepCopy(node.children[1][0])
+                                )
+                            ),
+                            this.createNode('node_op', 'op_mul',
+                                this.derivative(node.children[1][1], varname),
+                                this.createNode('node_op', 'op_execfun',
+                                    this.createNode('node_var', 'log'),
+                                    [Type.deepCopy(node.children[1][0])]
+                                )
+                            )
+                        )
+                    );
+                    break;
+
+                case 'log':
+                case 'ln':
+                    newNode = this.createNode('node_op', 'op_div',
+                        this.createNode('node_const', 1.0),
+                        // Attention: single variable mode
+                        Type.deepCopy(arg[0])
+                    );
+                    break;
+
+                case 'log2':
+                case 'lb':
+                case 'ld':
+                    newNode = this.createNode('node_op', 'op_mul',
+                        this.createNode('node_op', 'op_div',
+                            this.createNode('node_const', 1.0),
+                            // Attention: single variable mode
+                            Type.deepCopy(arg[0])
+                        ),
+                        this.createNode('node_const', 1.4426950408889634)  // 1/log(2)
+                    );
+                    break;
+
+                case 'log10':
+                case 'lg':
+                    newNode = this.createNode('node_op', 'op_mul',
+                        this.createNode('node_op', 'op_div',
+                            this.createNode('node_const', 1.0),
+                            // Attention: single variable mode
+                            Type.deepCopy(arg[0])
+                        ),
+                        this.createNode('node_const', 0.43429448190325176)  // 1/log(10)
+                    );
+                    break;
+
+                case 'asin':
+                    newNode = this.createNode('node_op', 'op_div',
+                        this.createNode('node_const', 1.0),
+                        this.createNode('node_op', 'op_execfun',
+                            this.createNode('node_var', 'sqrt'),
+                            [
+                                this.createNode('node_op', 'op_sub',
+                                    this.createNode('node_const', 1.0),
+                                    this.createNode('node_op', 'op_mul',
+                                        Type.deepCopy(arg[0]),
+                                        Type.deepCopy(arg[0])
+                                    )
+                                )
+                            ]
+                        )
+                    );
+                    break;
+
+                case 'acos':
+                    newNode = this.createNode('node_op', 'op_neg',
+                        this.createNode('node_op', 'op_div',
+                            this.createNode('node_const', 1.0),
+                            this.createNode('node_op', 'op_execfun',
+                                this.createNode('node_var', 'sqrt'),
+                                [
+                                    this.createNode('node_op', 'op_sub',
+                                        this.createNode('node_const', 1.0),
+                                        this.createNode('node_op', 'op_mul',
+                                            Type.deepCopy(arg[0]),
+                                            Type.deepCopy(arg[0])
+                                        )
+                                    )
+                                ]
+                            )
+                        )
+                    );
+                    break;
+
+                //case 'atan2':
+
+                case 'atan':
+                    newNode = this.createNode('node_op', 'op_div',
+                        this.createNode('node_const', 1.0),
+                        this.createNode('node_op', 'op_add',
+                            this.createNode('node_const', 1.0),
+                            this.createNode('node_op', 'op_mul',
+                                Type.deepCopy(arg[0]),
+                                Type.deepCopy(arg[0])
+                            )
+                        )
+                    );
+                    break;
+
+                case 'acot':
+                    newNode = this.createNode('node_op', 'op_neg',
+                        this.createNode('node_op', 'op_div',
+                            this.createNode('node_const', 1.0),
                             this.createNode('node_op', 'op_add',
                                 this.createNode('node_const', 1.0),
-                                n1.children[0]),
-                            n0
-                            ];
+                                this.createNode('node_op', 'op_mul',
+                                    Type.deepCopy(arg[0]),
+                                    Type.deepCopy(arg[0])
+                                )
+                            )
+                        )
+                    );
+                    break;
+
+                case 'sinh':
+                    newNode = this.createNode('node_op', 'op_execfun',
+                        this.createNode('node_var', 'cosh'),
+                        [Type.deepCopy(arg[0])]
+                    );
+                    break;
+
+                case 'cosh':
+                    newNode = this.createNode('node_op', 'op_execfun',
+                        this.createNode('node_var', 'sinh'),
+                        [Type.deepCopy(arg[0])]
+                    );
+                    break;
+
+                case 'tanh':
+                    newNode = this.createNode('node_op', 'op_sub',
+                        this.createNode('node_const', 1.0),
+                        this.createNode('node_op', 'op_exp',
+                            this.createNode('node_op', 'op_execfun',
+                                this.createNode('node_var', 'tanh'),
+                                [Type.deepCopy(arg[0])]
+                            ),
+                            this.createNode('node_const', 2.0)
+                        )
+                    );
+                    break;
+
+                case 'asinh':
+                    newNode = this.createNode('node_op', 'op_div',
+                        this.createNode('node_const', 1.0),
+                        this.createNode('node_op', 'op_execfun',
+                            this.createNode('node_var', 'sqrt'),
+                            [
+                                this.createNode('node_op', 'op_add',
+                                    this.createNode('node_op', 'op_mul',
+                                        Type.deepCopy(arg[0]),
+                                        Type.deepCopy(arg[0])
+                                    ),
+                                    this.createNode('node_const', 1.0)
+                                )
+                            ]
+                        )
+                    );
+                    break;
+
+                case 'acosh':
+                    newNode = this.createNode('node_op', 'op_div',
+                        this.createNode('node_const', 1.0),
+                        this.createNode('node_op', 'op_execfun',
+                            this.createNode('node_var', 'sqrt'),
+                            [
+                                this.createNode('node_op', 'op_sub',
+                                    this.createNode('node_op', 'op_mul',
+                                        Type.deepCopy(arg[0]),
+                                        Type.deepCopy(arg[0])
+                                    ),
+                                    this.createNode('node_const', 1.0)
+                                )
+                            ]
+                        )
+                    );
+                    break;
+
+                case 'atanh':
+                    newNode = this.createNode('node_op', 'op_div',
+                        this.createNode('node_const', 1.0),
+                        this.createNode('node_op', 'op_sub',
+                            this.createNode('node_const', 1.0),
+                            this.createNode('node_op', 'op_mul',
+                                Type.deepCopy(arg[0]),
+                                Type.deepCopy(arg[0])
+                            )
+                        )
+                    );
+                    break;
+
+                default:
+                    newNode = this.createNode('node_const', 0.0);
+                    console.log('Derivative of "' + fun + '" not yet implemented');
+                    throw new Error('Error(' + this.line + '): ');
+                //  this._error('Derivative of "' + fun + '" not yet implemented');
+
+            }
+
+            return newNode;
+        },
+
+        derivative: function (node, varname) {
+            var newNode;
+
+            switch (node.type) {
+                case 'node_op':
+                    switch (node.value) {
+                        /*
+                        case 'op_map':
+                            if (true) {
+                                newNode = this.createNode('node_op', 'op_map',
+                                        Type.deepCopy(node.children[0]),
+                                        this.derivative(node.children[1], varname)
+                                    );
+                            } else {
+                                newNode = this.derivative(node.children[1], varname);
+                            }
+                            break;
+                        */
+                        case 'op_execfun':
+                            // f'(g(x))g'(x)
+                            if (node.children[0].value == 'pow') {
+                                newNode = this.deriveElementary(node, varname);
+                            } else {
+                                if (node.children[1].length === 0) {
+                                    newNode = this.createNode('node_const', 0.0);
+                                } else {
+                                    newNode = this.createNode('node_op', 'op_mul',
+                                        this.deriveElementary(node, varname),
+                                        // Warning: single variable mode
+                                        this.derivative(node.children[1][0], varname)
+                                    );
+                                }
+                            }
+                            break;
+
+                        case 'op_div':
+                            // (f'g − g'f )/(g*g)
+                            newNode = this.createNode('node_op', 'op_div',
+                                this.createNode('node_op', 'op_sub',
+                                    this.createNode('node_op', 'op_mul',
+                                        this.derivative(node.children[0], varname),
+                                        Type.deepCopy(node.children[1])
+                                    ),
+                                    this.createNode('node_op', 'op_mul',
+                                        Type.deepCopy(node.children[0]),
+                                        this.derivative(node.children[1], varname)
+                                    )
+                                ),
+                                this.createNode('node_op', 'op_mul',
+                                    Type.deepCopy(node.children[1]),
+                                    Type.deepCopy(node.children[1])
+                                )
+                            );
+                            break;
+
+                        case 'op_mul':
+                            // fg' + f'g
+                            newNode = this.createNode('node_op', 'op_add',
+                                this.createNode('node_op', 'op_mul',
+                                    Type.deepCopy(node.children[0]),
+                                    this.derivative(node.children[1], varname)),
+                                this.createNode('node_op', 'op_mul',
+                                    this.derivative(node.children[0], varname),
+                                    Type.deepCopy(node.children[1]))
+                            );
+                            break;
+
+                        case 'op_neg':
+                            newNode = this.createNode('node_op', 'op_neg',
+                                this.derivative(node.children[0], varname)
+                            );
+                            break;
+
+                        case 'op_add':
+                        case 'op_sub':
+                            newNode = this.createNode('node_op', node.value,
+                                this.derivative(node.children[0], varname),
+                                this.derivative(node.children[1], varname)
+                            );
+                            break;
+
+                        case 'op_exp':
+                            // (f^g)' = f^g*(f'g/f + g' log(f))
+                            newNode = this.createNode('node_op', 'op_mul',
+                                Type.deepCopy(node),
+                                this.createNode('node_op', 'op_add',
+                                    this.createNode('node_op', 'op_mul',
+                                        this.derivative(node.children[0], varname),
+                                        this.createNode('node_op', 'op_div',
+                                            Type.deepCopy(node.children[1]),
+                                            Type.deepCopy(node.children[0])
+                                        )
+                                    ),
+                                    this.createNode('node_op', 'op_mul',
+                                        this.derivative(node.children[1], varname),
+                                        this.createNode('node_op', 'op_execfun',
+                                            this.createNode('node_var', 'log'),
+                                            [Type.deepCopy(node.children[0])]
+                                        )
+                                    )
+                                )
+                            );
+                            break;
+                    }
+                    break;
+
+                case 'node_var':
+                    //console.log('node_var', node);
+                    if (node.value === varname) {
+                        newNode = this.createNode('node_const', 1.0);
+                    } else {
+                        newNode = this.createNode('node_const', 0.0);
+                    }
+                    break;
+
+                case 'node_const':
+                    newNode = this.createNode('node_const', 0.0);
+                    break;
+
+                case 'node_const_bool':
+                    break;
+
+                case 'node_str':
+                    break;
+
+            }
+
+            return newNode;
+        },
+
+        /**
+         * f = map (x) -> x*sin(x);
+         * Usages:
+         * h = D(f, x);
+         * h = map (x) -> D(f, x);
+         *
+         */
+        expandDerivatives: function (node, parent, ast) {
+            var len, i, j, mapNode, codeNode, ret, node2, newNode,
+                mapName, varname, vArray, order;
+
+            ret = 0;
+            if (!node) {
+                return ret;
+            }
+
+            this.line = node.line;
+            this.col = node.col;
+
+            // First we have to go down in the tree.
+            // This ensures that in cases like D(D(f,x),x) the inner D is expanded first.
+            len = node.children.length;
+            for (i = 0; i < len; ++i) {
+                if (node.children[i] && node.children[i].type) {
+                    node.children[i] = this.expandDerivatives(node.children[i], node, ast);
+                } else if (Type.isArray(node.children[i])) {
+                    for (j = 0; j < node.children[i].length; ++j) {
+                        if (node.children[i][j] && node.children[i][j].type) {
+                            node.children[i][j] = this.expandDerivatives(node.children[i][j], node, ast);
+                        }
+                    }
+                }
+            }
+
+            switch (node.type) {
+                case 'node_op':
+                    switch (node.value) {
+                        case 'op_execfun':
+                            if (node.children[0] && node.children[0].value === 'D') {
+                                if (node.children[1][0].type == 'node_var') {
+                                    /*
+                                     * Derive map, that is compute D(f,x)
+                                     * where e.g. f = map (x) -> x^2
+                                     *
+                                     * First step: find node where the map is defined
+                                     */
+                                    mapName = node.children[1][0].value;
+                                    mapNode = this.findMapNode(mapName, ast);
+                                    vArray = mapNode.children[0];
+
+                                    // Variable name for differentiation
+                                    if (node.children[1].length >= 2) {
+                                        varname = node.children[1][1].value;
+                                    } else {
+                                        varname = mapNode.children[0][0]; // Usually it's 'x'
+                                    }
+                                    codeNode = mapNode.children[1];
+                                } else {
+                                    /*
+                                     * Derive expression, e.g.
+                                     *     D(2*x, x)
+                                     */
+                                    codeNode = node.children[1][0];
+                                    vArray = ['x'];
+
+                                    // Variable name for differentiation and order
+                                    if (node.children[1].length >= 2) {
+                                        varname = node.children[1][1].value;
+                                    } else {
+                                        varname = 'x';
+                                    }
+                                }
+
+                                // Differentiation order
+                                if (node.children[1].length >= 3) {
+                                    order = node.children[1][2].value;
+                                } else {
+                                    order = 1;
+                                }
+
+                                // Create node which contains the derivative
+                                newNode = codeNode;
+                                //newNode = this.removeTrivialNodes(newNode);
+                                if (order >= 1) {
+                                    while (order >= 1) {
+                                        newNode = this.derivative(newNode, varname);
+                                        newNode = this.removeTrivialNodes(newNode);
+                                        order--;
+                                    }
+                                }
+
+                                // Replace the node containing e.g. D(f,x) by the derivative.
+                                if (parent.type == 'node_op' && parent.value == 'op_assign') {
+                                    // If D is an assignment it has to be replaced by a map
+                                    // h = D(f, x)
+                                    node2 = this.createNode('node_op', 'op_map',
+                                        vArray,
+                                        newNode
+                                    );
+                                } else {
+                                    node2 = newNode;
+                                }
+
+                                this.setMath(node2);
+                                node.type = node2.type;
+                                node.value = node2.value;
+                                node.children[0] = node2.children[0];
+                                node.children[1] = node2.children[1];
+                            }
+                    }
+                    break;
+
+                case 'node_var':
+                case 'node_const':
+                case 'node_const_bool':
+                case 'node_str':
+                    break;
+            }
+
+            return node;
+        },
+
+        removeTrivialNodes: function (node) {
+            var i, len, n0, n1, swap;
+
+            // In case of 'op_execfun' the children[1] node is an array.
+            if (Type.isArray(node)) {
+                len = node.length;
+                for (i = 0; i < len; ++i) {
+                    node[i] = this.removeTrivialNodes(node[i]);
+                }
+            }
+            if (node.type != 'node_op' || !node.children) {
+                return node;
+            }
+
+            len = node.children.length;
+            for (i = 0; i < len; ++i) {
+                this.mayNotBeSimplified = false;
+                do {
+                    node.children[i] = this.removeTrivialNodes(node.children[i]);
+                } while (this.mayNotBeSimplified);
+
+            }
+
+            switch (node.value) {
+                // Allow maps of the form
+                //  map (x) -> x;
+                case 'op_map':
+                    n0 = node.children[0];
+                    n1 = node.children[1];
+                    if (n1.type == 'node_var') {
+                        for (i = 0; i < n0.length; ++i) {
+                            // Allow maps of the form map(x) -> x
+                            if (n0[i] == n1.value) {
+                                n1.isMath = true;
+                                break;
+                            }
+                        }
+                    }
+                    break;
+
+                // a + 0 -> a
+                // 0 + a -> a
+                case 'op_add':
+                    n0 = node.children[0];
+                    n1 = node.children[1];
+                    if (n0.type == 'node_const' && n0.value === 0.0) {
+                        return n1;
+                    }
+                    if (n1.type == 'node_const' && n1.value === 0.0) {
+                        return n0;
+                    }
+
+                    // const + const -> const
+                    if (n0.type == 'node_const' && n1.type == 'node_const') {
+                        n0.value += n1.value;
+                        return n0;
+                    }
+                    break;
+
+                // 1 * a = a
+                // a * 1 = a
+                // a * 0 = 0
+                // 0 * a = 0
+                // - * - = +
+                // Order children
+                case 'op_mul':
+                    n0 = node.children[0];
+                    n1 = node.children[1];
+                    if (n0.type == 'node_const' && n0.value == 1.0) {
+                        return n1;
+                    }
+                    if (n1.type == 'node_const' && n1.value == 1.0) {
+                        return n0;
+                    }
+                    if (n0.type == 'node_const' && n0.value === 0.0) {
+                        return n0;
+                    }
+                    if (n1.type == 'node_const' && n1.value === 0.0) {
+                        return n1;
+                    }
+                    if (n1.type == 'node_const' && n1.value === 0.0) {
+                        return n1;
+                    }
+
+                    // (-a) * (-b) -> a*b
+                    if (n0.type == 'node_op' && n0.value == 'op_neg' &&
+                        n1.type == 'node_op' && n1.value == 'op_neg') {
+                        node.children = [n0.children[0], n1.children[0]];
                         this.mayNotBeSimplified = true;
                         return node;
                     }
-                 }
+                    // (-a) * b -> -(a*b)
+                    if (n0.value == 'op_neg' && n1.value != 'op_neg') {
+                        node.type = 'node_op';
+                        node.value = 'op_neg';
+                        node.children = [this.createNode('node_op', 'op_mul', n0.children[0], n1)];
+                        this.mayNotBeSimplified = true;
+                        return node;
+                    }
+                    // a * (-b) -> -(a*b)
+                    if (n0.value != 'op_neg' && n1.value == 'op_neg') {
+                        node.type = 'node_op';
+                        node.value = 'op_neg';
+                        node.children = [this.createNode('node_op', 'op_mul', n0, n1.children[0])];
+                        this.mayNotBeSimplified = true;
+                        return node;
+                    }
+                    // (1 / a) * b -> a / b
+                    if (n0.value == 'op_div' &&
+                        n0.children[0].type == 'node_const' && n0.children[0].value == 1.0) {
+                        node.type = 'node_op';
+                        node.value = 'op_div';
+                        node.children = [n1, n0.children[1]];
+                        this.mayNotBeSimplified = true;
+                        return node;
+                    }
+                    // a * (1 / b) -> a / b
+                    if (n1.value == 'op_div' &&
+                        n1.children[0].type == 'node_const' && n1.children[0].value == 1.0) {
+                        node.type = 'node_op';
+                        node.value = 'op_div';
+                        node.children = [n0, n1.children[1]];
+                        this.mayNotBeSimplified = true;
+                        return node;
+                    }
 
-                 break;
+                    // Order children
+                    // a * const -> const * a
+                    if (n0.type != 'node_const' && n1.type == 'node_const') {
+                        node.children = [n1, n0];
+                        this.mayNotBeSimplified = true;
+                        return node;
+                    }
+                    // a + (-const) -> -const * a
+                    if (n0.type != 'node_const' && n1.type == 'node_op' &&
+                        n1.value == 'op_neg' && n1.children[0].type == 'node_const') {
+                        node.children = [n1, n0];
+                        this.mayNotBeSimplified = true;
+                        return node;
+                    }
 
-             // a - (-b) = a + b
-             case 'op_sub':
-                 n0 = node.children[0];
-                 n1 = node.children[1];
-                 if (n1.type == 'node_op' && n1.value == 'op_neg') {
-                     node.value = 'op_add';
-                     node.children[1] = n1.children[0];
-                     this.mayNotBeSimplified = true;
-                     return node;
-                 }
-                 break;
+                    // a * var -> var * a
+                    // a * fun -> fun * a
+                    if (n0.type == 'node_op' && n0.value != 'op_execfun' &&
+                        (n1.type == 'node_var' || (n1.type == 'node_op' && n1.value == 'op_execfun'))) {
+                        node.children = [n1, n0];
+                        this.mayNotBeSimplified = true;
+                        return node;
+                    }
 
-             case 'op_execfun':
-                 return this.simplifyElementary(node);
-             }
+                    // a + (-var) -> -var * a
+                    if (n0.type != 'node_op' && n1.type == 'node_op' &&
+                        n1.value == 'op_neg' && n1.children[0].type == 'node_var') {
+                        node.children = [n1, n0];
+                        this.mayNotBeSimplified = true;
+                        return node;
+                    }
+                    // a * (const * b) -> const * (a*b)
+                    // a * (const / b) -> const * (a/b)
+                    if (n0.type != 'node_const' && n1.type == 'node_op' &&
+                        (n1.value == 'op_mul' || n1.value == 'op_div') &&
+                        n1.children[0].type == 'node_const') {
+                        swap = n1.children[0];
+                        n1.children[0] = n0;
+                        node.children = [swap, n1];
+                        this.mayNotBeSimplified = true;
+                        return node;
+                    }
 
-             return node;
-         },
+                    // (const * a) * b -> const * (a * b)
+                    if (n1.type != 'node_const' && n0.type == 'node_op' &&
+                        n0.value == 'op_mul' &&
+                        n0.children[0].type == 'node_const') {
+                        node.children = [
+                            n0.children[0],
+                            this.createNode('node_op', 'op_mul', n0.children[1], n1)
+                        ];
+                        this.mayNotBeSimplified = true;
+                        return node;
+                    }
 
-         simplifyElementary: function(node) {
-             var fun = node.children[0].value,
-                 arg = node.children[1],
-                 newNode;
+                    // const * const -> const
+                    if (n0.type == 'node_const' && n1.type == 'node_const') {
+                        n0.value *= n1.value;
+                        return n0;
+                    }
 
-             // Catch errors of the form sin()
-             if (arg.length == 0) {
-                 return node;
-             }
+                    // const * (const * a) -> const * a
+                    // const * (const / a) -> const / a
+                    if (n0.type == 'node_const' && n1.type == 'node_op' &&
+                        (n1.value == 'op_mul' || n1.value == 'op_div') &&
+                        n1.children[0].type == 'node_const') {
+                        n1.children[0].value *= n0.value;
+                        return n1;
+                    }
 
-             switch (fun) {
-             // sin(0) -> 0
-             // sin(PI) -> 0
-             // sin (int * PI) -> 0
-             // sin (PI * int) -> 0
-             // Same for tan()
-             case 'sin':
-             case 'tan':
-                 if (arg[0].type == 'node_const' && arg[0].value === 0) {
-                     node.type = 'node_const';
-                     node.value = 0.0;
-                     return node;
-                 }
-                 if (arg[0].type == 'node_var' && arg[0].value == 'PI') {
-                     node.type = 'node_const';
-                     node.value = 0.0;
-                     return node;
-                 }
-                 if (arg[0].type == 'node_op' && arg[0].value == 'op_mul' &&
-                     arg[0].children[0].type == 'node_const' && arg[0].children[0].value % 1 === 0 &&
-                      arg[0].children[1].type == 'node_var' && arg[0].children[1].value == 'PI') {
-                     node.type = 'node_const';
-                     node.value = 0.0;
-                     return node;
-                 }
-                 break;
+                    // a * a-> a^2
+                    n0.hash = this.parser.compile(n0);
+                    n1.hash = this.parser.compile(n1);
+                    if (n0.hash === n1.hash) {
+                        node.value = 'op_exp';
+                        node.children[1] = this.createNode('node_const', 2.0);
+                        return node;
+                    }
 
-             // cos(0) -> 1.0
-             // cos(PI) -> -1.0
-             // cos(int * PI) -> +/- 1.0
-             // cos(PI * int) -> +/- 1.0
-             case 'cos':
-                 if (arg[0].type == 'node_const' && arg[0].value === 0) {
-                     node.type = 'node_const';
-                     node.value = 1.0;
-                     return node;
-                 }
-                 if (arg[0].type == 'node_var' && arg[0].value == 'PI') {
-                     node.type = 'node_op';
-                     node.value = 'op_neg';
-                     node.children = [this.createNode('node_const', 1.0)];
-                     return node;
-                 }
-                 /*
-                 if (arg[0].type == 'node_op' && arg[0].value == 'op_mul' &&
-                     ((arg[0].children[0].type == 'node_const' && arg[0].children[0].value % 1 === 0 &&
-                      arg[0].children[1].type == 'node_var' && arg[0].children[1].value == 'PI') ||
-                      (arg[0].children[1].type == 'node_const' && arg[0].children[1].value % 1 === 0 &&
-                       arg[0].children[0].type == 'node_var' && arg[0].children[0].value == 'PI'))) {
-                     node.type = 'node_const';
-                     node.value = 1.0;
-                     return node;
-                 }
-                 */
-                 break;
+                    if (n0.type == 'node_const' && n1.type == 'node_op' &&
+                        (n1.value == 'op_mul' || n1.value == 'op_div') &&
+                        n1.children[0].type == 'node_const') {
+                        n1.children[0].value *= n0.value;
+                        return n1;
+                    }
 
-             // exp(0) -> 1
-             case 'exp':
-                 if (arg[0].type == 'node_const' && arg[0].value === 0) {
-                     node.type = 'node_const';
-                     node.value = 1.0;
-                     return node;
-                 }
-                 break;
+                    // a * a^b -> a^(b+1)
+                    if (n1.type == 'node_op' && n1.value == 'op_exp') {
+                        if (!n0.hash) {
+                            n0.hash = this.parser.compile(n0);
+                        }
+                        if (!n1.children[0].hash) {
+                            n1.children[0].hash = this.parser.compile(n1.children[0]);
+                        }
+                        if (n0.hash === n1.children[0].hash) {
+                            n1.children[1] = this.createNode('node_op', 'op_add',
+                                n1.children[1],
+                                this.createNode('node_const', 1.0)
+                            );
+                            this.mayNotBeSimplified = true;
+                            return n1;
+                        }
+                    }
 
-             // pow(a, 0) -> 1
-             case 'pow':
-                 if (arg[1].type == 'node_const' && arg[1].value === 0) {
-                     node.type = 'node_const';
-                     node.value = 1.0;
-                     return node;
-                 }
-                 break;
+                    // a^b * a^c -> a^(b+c)
+                    if (n0.type == 'node_op' && n0.value == 'op_exp' &&
+                        n1.type == 'node_op' && n1.value == 'op_exp') {
+                        n0.children[0].hash = this.parser.compile(n0.children[0]);
+                        n1.children[0].hash = this.parser.compile(n1.children[0]);
+                        if (n0.children[0].hash === n1.children[0].hash) {
+                            n0.children[1] = this.createNode('node_op', 'op_add',
+                                n0.children[1],
+                                n1.children[1]
+                            );
+                            this.mayNotBeSimplified = true;
+                            return n0;
+                        }
+                    }
 
-             }
+                    break;
 
-             return node;
-         }
+                // 0 - a -> -a
+                // a - 0 -> a
+                // a - a -> 0
+                case 'op_sub':
+                    n0 = node.children[0];
+                    n1 = node.children[1];
+                    if (n0.type == 'node_const' && n0.value === 0.0) {
+                        node.value = 'op_neg';
+                        node.children[0] = n1;
+                        return node;
+                    }
+                    if (n1.type == 'node_const' && n1.value === 0.0) {
+                        return n0;
+                    }
+                    if (n0.type == 'node_const' && n1.type == 'node_const' &&
+                        n0.value == n1.value) {
+                        return this.createNode('node_const', 0.0);
+                    }
+                    if (n0.type == 'node_var' && n1.type == 'node_var' &&
+                        n0.value == n1.value) {
+                        return this.createNode('node_const', 0.0);
+                    }
 
-     });
+                    // const - const -> const
+                    if (n0.type == 'node_const' && n1.type == 'node_const') {
+                        n0.value -= n1.value;
+                        return n0;
+                    }
 
-     return JXG.CA;
- });
+                    // const * a - const * a -> const * a
+                    if (n0.type == 'node_op' && n0.value == 'op_mul' &&
+                        n1.type == 'node_op' && n1.value == 'op_mul') {
+
+                        n0.children[1].hash = this.parser.compile(n0.children[1]);
+                        n1.children[1].hash = this.parser.compile(n1.children[1]);
+                        if (n0.children[1].hash === n1.children[1].hash) {
+
+                            node.value = 'op_mul';
+                            node.children = [
+                                this.createNode('node_op', 'op_sub',
+                                    n0.children[0],
+                                    n1.children[0]),
+                                n0.children[1]
+                            ];
+                            this.mayNotBeSimplified = true;
+                            return node;
+                        }
+                    }
+                    // const * a - a -> (const - 1) * a
+                    if (n0.type == 'node_op' && n0.value == 'op_mul') {
+
+                        n0.children[1].hash = this.parser.compile(n0.children[1]);
+                        n1.hash = this.parser.compile(n1);
+                        if (n0.children[1].hash === n1.hash) {
+
+                            node.value = 'op_mul';
+                            node.children = [
+                                this.createNode('node_op', 'op_sub',
+                                    n0.children[0],
+                                    this.createNode('node_const', 1.0)),
+                                n1
+                            ];
+                            this.mayNotBeSimplified = true;
+                            return node;
+                        }
+                    }
+                    // a - const*a -> (const - 1) * a
+                    if (n1.type == 'node_op' && n1.value == 'op_mul') {
+
+                        n1.children[1].hash = this.parser.compile(n1.children[1]);
+                        n0.hash = this.parser.compile(n0);
+                        if (n1.children[1].hash === n0.hash) {
+
+                            node.value = 'op_mul';
+                            node.children = [
+                                this.createNode('node_op', 'op_sub',
+                                    this.createNode('node_const', 1.0),
+                                    n1.children[0]),
+                                n0
+                            ];
+                            this.mayNotBeSimplified = true;
+                            return node;
+                        }
+                    }
+
+                    break;
+
+                // -0 -> 0
+                // -(-b) = b
+                case 'op_neg':
+                    n0 = node.children[0];
+                    if (n0.type == 'node_const' && n0.value === 0.0) {
+                        return n0;
+                    }
+                    if (n0.type == 'node_op' && n0.value == 'op_neg') {
+                        return n0.children[0];
+                    }
+                    break;
+
+                // a / a -> 1, a != 0
+                // 0 / a -> 0, a != 0
+                // a / 0 -> Infinity, a != 0
+                // 0 / 0 -> NaN, a == 0
+                case 'op_div':
+                    n0 = node.children[0];
+                    n1 = node.children[1];
+                    if (n0.type == 'node_const' && n1.type == 'node_const' &&
+                        n0.value == n1.value && n0.value !== 0) {
+                        n0.value = 1.0;
+                        return n0;
+                    }
+                    if (n0.type == 'node_const' && n0.value === 0 &&
+                        n1.type == 'node_const' && n1.value !== 0) {
+                        n0.value = 0.0;
+                        return n0;
+                    }
+
+                    // Risky: 0 / (something != 0) -> 0.0
+                    if (n0.type == 'node_const' && n0.value === 0 &&
+                        (n1.type == 'node_op' || n1.type == 'node_var')) {
+                        node.type = 'node_const';
+                        node.value = 0.0;
+                        return node;
+                    }
+
+                    if (n0.type == 'node_var' && n1.type == 'node_var' &&
+                        n0.value == n1.value) {
+                        return this.createNode('node_const', 1.0);
+                    }
+                    if (n0.type == 'node_const' && n0.value !== 0 &&
+                        n1.type == 'node_const' && n1.value === 0) {
+                        if (n0.value > 0.0) {
+                            n0.value = Infinity;
+                        } else {
+                            n0.value = -Infinity; // Do we ever need this?
+                        }
+                        return n0;
+                    }
+
+                    // (-a) / (-b) -> a/b
+                    if (n0.type == 'node_op' && n0.value == 'op_neg' &&
+                        n1.type == 'node_op' && n1.value == 'op_neg') {
+                        node.children = [n0.children[0], n1.children[0]];
+                        this.mayNotBeSimplified = true;
+                        return node;
+                    }
+                    // (-a) / b -> -(a/b)
+                    if (n0.value == 'op_neg' && n1.value != 'op_neg') {
+                        node.type = 'node_op';
+                        node.value = 'op_neg';
+                        node.children = [this.createNode('node_op', 'op_div', n0.children[0], n1)];
+                        this.mayNotBeSimplified = true;
+                        return node;
+                    }
+                    // a / (-b) -> -(a/b)
+                    if (n0.value != 'op_neg' && n1.value == 'op_neg') {
+                        node.type = 'node_op';
+                        node.value = 'op_neg';
+                        node.children = [this.createNode('node_op', 'op_div', n0, n1.children[0])];
+                        this.mayNotBeSimplified = true;
+                        return node;
+                    }
+
+                    // a^b / a -> a^(b-1)
+                    if (n0.type == 'node_op' && n0.value == 'op_exp') {
+                        if (!n1.hash) {
+                            n1.hash = this.parser.compile(n1);
+                        }
+                        if (!n0.children[0].hash) {
+                            n0.children[0].hash = this.parser.compile(n0.children[0]);
+                        }
+                        if (n1.hash === n0.children[0].hash) {
+                            n0.children[1] = this.createNode('node_op', 'op_sub',
+                                n0.children[1],
+                                this.createNode('node_const', 1.0)
+                            );
+                            this.mayNotBeSimplified = true;
+                            return n0;
+                        }
+                    }
+
+                    // (const * a) / b -> const * (a / b)
+                    if (n1.type != 'node_const' && n0.type == 'node_op' &&
+                        n0.value == 'op_mul' &&
+                        n0.children[0].type == 'node_const') {
+                        node.value = 'op_mul';
+                        node.children = [
+                            n0.children[0],
+                            this.createNode('node_op', 'op_div', n0.children[1], n1)
+                        ];
+                        this.mayNotBeSimplified = true;
+                        return node;
+                    }
+
+                    // a^b / a^c -> a^(b-c)
+                    if (n0.type == 'node_op' && n0.value == 'op_exp' &&
+                        n1.type == 'node_op' && n1.value == 'op_exp') {
+                        n0.children[0].hash = this.parser.compile(n0.children[0]);
+                        n1.children[0].hash = this.parser.compile(n1.children[0]);
+                        if (n0.children[0].hash === n1.children[0].hash) {
+                            n0.children[1] = this.createNode('node_op', 'op_sub',
+                                n0.children[1],
+                                n1.children[1]
+                            );
+                            this.mayNotBeSimplified = true;
+                            return n0;
+                        }
+                    }
+
+
+                    break;
+
+                // a^0 = 1
+                // a^1 -> a
+                // 1^a -> 1
+                // 0^a -> 0: a const != 0
+                case 'op_exp':
+                    n0 = node.children[0];
+                    n1 = node.children[1];
+                    if (n1.type == 'node_const' && n1.value === 0.0) {
+                        n1.value = 1.0;
+                        return n1;
+                    }
+                    if (n1.type == 'node_const' && n1.value == 1.0) {
+                        return n0;
+                    }
+                    if (n0.type == 'node_const' && n0.value == 1.0) {
+                        return n0;
+                    }
+                    if (n0.type == 'node_const' && n0.value === 0.0 &&
+                        n1.type == 'node_const' && n1.value !== 0.0) {
+                        return n0;
+                    }
+
+                    // (a^b)^c -> a^(b*c)
+                    if (n0.type == 'node_op' && n0.value == 'op_exp') {
+                        node.children = [
+                            n0.children[0],
+                            this.createNode('node_op', 'op_mul',
+                                n0.children[1],
+                                n1)
+                        ];
+                        return node;
+                    }
+                    break;
+            }
+
+            switch (node.value) {
+                // const_1 + const_2 -> (const_1 + const_2)
+                // a + a -> 2*a
+                // a + (-b) = a - b
+                case 'op_add':
+                    n0 = node.children[0];
+                    n1 = node.children[1];
+                    if (n0.type == 'node_const' && n1.type == 'node_const' &&
+                        n0.value == n1.value) {
+                        n0.value += n1.value;
+                        return n0;
+                    }
+
+                    if (n0.type == 'node_var' && n1.type == 'node_var' &&
+                        n0.value == n1.value) {
+                        node.children[0] = this.createNode('node_const', 2.0);
+                        node.value = 'op_mul';
+                        return node;
+                    }
+
+                    if (n0.type == 'node_op' && n0.value == 'op_neg') {
+                        node.value = 'op_sub';
+                        node.children[0] = n1;
+                        node.children[1] = n0.children[0];
+                        this.mayNotBeSimplified = true;
+                        return node;
+                    }
+
+                    if (n1.type == 'node_op' && n1.value == 'op_neg') {
+                        node.value = 'op_sub';
+                        node.children[1] = n1.children[0];
+                        this.mayNotBeSimplified = true;
+                        return node;
+                    }
+
+                    // const * a + const * a -> const * a
+                    if (n0.type == 'node_op' && n0.value == 'op_mul' &&
+                        n1.type == 'node_op' && n1.value == 'op_mul') {
+
+                        n0.children[1].hash = this.parser.compile(n0.children[1]);
+                        n1.children[1].hash = this.parser.compile(n1.children[1]);
+                        if (n0.children[1].hash === n1.children[1].hash) {
+
+                            node.value = 'op_mul';
+                            node.children = [
+                                this.createNode('node_op', 'op_add',
+                                    n0.children[0],
+                                    n1.children[0]),
+                                n0.children[1]
+                            ];
+                            this.mayNotBeSimplified = true;
+                            return node;
+                        }
+                    }
+                    // const * a + a -> (const + 1) * a
+                    if (n0.type == 'node_op' && n0.value == 'op_mul') {
+
+                        n0.children[1].hash = this.parser.compile(n0.children[1]);
+                        n1.hash = this.parser.compile(n1);
+                        if (n0.children[1].hash === n1.hash) {
+
+                            node.value = 'op_mul';
+                            node.children = [
+                                this.createNode('node_op', 'op_add',
+                                    n0.children[0],
+                                    this.createNode('node_const', 1.0)),
+                                n1
+                            ];
+                            this.mayNotBeSimplified = true;
+                            return node;
+                        }
+                    }
+                    // a + const*a -> (const + 1) * a
+                    if (n1.type == 'node_op' && n1.value == 'op_mul') {
+
+                        n1.children[1].hash = this.parser.compile(n1.children[1]);
+                        n0.hash = this.parser.compile(n0);
+                        if (n1.children[1].hash === n0.hash) {
+
+                            node.value = 'op_mul';
+                            node.children = [
+                                this.createNode('node_op', 'op_add',
+                                    this.createNode('node_const', 1.0),
+                                    n1.children[0]),
+                                n0
+                            ];
+                            this.mayNotBeSimplified = true;
+                            return node;
+                        }
+                    }
+
+                    break;
+
+                // a - (-b) = a + b
+                case 'op_sub':
+                    n0 = node.children[0];
+                    n1 = node.children[1];
+                    if (n1.type == 'node_op' && n1.value == 'op_neg') {
+                        node.value = 'op_add';
+                        node.children[1] = n1.children[0];
+                        this.mayNotBeSimplified = true;
+                        return node;
+                    }
+                    break;
+
+                case 'op_execfun':
+                    return this.simplifyElementary(node);
+            }
+
+            return node;
+        },
+
+        simplifyElementary: function (node) {
+            var fun = node.children[0].value,
+                arg = node.children[1];
+
+            // Catch errors of the form sin()
+            if (arg.length == 0) {
+                return node;
+            }
+
+            switch (fun) {
+                // sin(0) -> 0
+                // sin(PI) -> 0
+                // sin (int * PI) -> 0
+                // sin (PI * int) -> 0
+                // Same for tan()
+                case 'sin':
+                case 'tan':
+                    if (arg[0].type == 'node_const' && arg[0].value === 0) {
+                        node.type = 'node_const';
+                        node.value = 0.0;
+                        return node;
+                    }
+                    if (arg[0].type == 'node_var' && arg[0].value == 'PI') {
+                        node.type = 'node_const';
+                        node.value = 0.0;
+                        return node;
+                    }
+                    if (arg[0].type == 'node_op' && arg[0].value == 'op_mul' &&
+                        arg[0].children[0].type == 'node_const' && arg[0].children[0].value % 1 === 0 &&
+                        arg[0].children[1].type == 'node_var' && arg[0].children[1].value == 'PI') {
+                        node.type = 'node_const';
+                        node.value = 0.0;
+                        return node;
+                    }
+                    break;
+
+                // cos(0) -> 1.0
+                // cos(PI) -> -1.0
+                // cos(int * PI) -> +/- 1.0
+                // cos(PI * int) -> +/- 1.0
+                case 'cos':
+                    if (arg[0].type == 'node_const' && arg[0].value === 0) {
+                        node.type = 'node_const';
+                        node.value = 1.0;
+                        return node;
+                    }
+                    if (arg[0].type == 'node_var' && arg[0].value == 'PI') {
+                        node.type = 'node_op';
+                        node.value = 'op_neg';
+                        node.children = [this.createNode('node_const', 1.0)];
+                        return node;
+                    }
+                    /*
+                    if (arg[0].type == 'node_op' && arg[0].value == 'op_mul' &&
+                        ((arg[0].children[0].type == 'node_const' && arg[0].children[0].value % 1 === 0 &&
+                         arg[0].children[1].type == 'node_var' && arg[0].children[1].value == 'PI') ||
+                         (arg[0].children[1].type == 'node_const' && arg[0].children[1].value % 1 === 0 &&
+                          arg[0].children[0].type == 'node_var' && arg[0].children[0].value == 'PI'))) {
+                        node.type = 'node_const';
+                        node.value = 1.0;
+                        return node;
+                    }
+                    */
+                    break;
+
+                // exp(0) -> 1
+                case 'exp':
+                    if (arg[0].type == 'node_const' && arg[0].value === 0) {
+                        node.type = 'node_const';
+                        node.value = 1.0;
+                        return node;
+                    }
+                    break;
+
+                // pow(a, 0) -> 1
+                case 'pow':
+                    if (arg[1].type == 'node_const' && arg[1].value === 0) {
+                        node.type = 'node_const';
+                        node.value = 1.0;
+                        return node;
+                    }
+                    break;
+
+            }
+
+            return node;
+        }
+
+    });
+
+    return JXG.CA;
+});
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -77532,7 +78134,7 @@ define('utils/dump',['jxg', 'utils/type'], function (JXG, Type) {
                 }
                 return 'null';
             case 'string':
-                return '\'' + obj.replace(/(["'])/g, '\\$1') + '\'';
+                return '\'' + obj.replace(/\\/g,'\\\\').replace(/(["'])/g, '\\$1') + '\'';
             case 'number':
             case 'boolean':
                 return obj.toString();
@@ -77547,7 +78149,7 @@ define('utils/dump',['jxg', 'utils/type'], function (JXG, Type) {
          * @returns {String} JessieCode
          */
         toJessie: function (board) {
-            var i, elements,
+            var i, elements, id,
                 dump = this.dump(board),
                 script = [];
 
@@ -77559,8 +78161,15 @@ define('utils/dump',['jxg', 'utils/type'], function (JXG, Type) {
                 if (elements[i].attributes.name.length > 0) {
                     script.push('// ' + elements[i].attributes.name);
                 }
-
                 script.push('s' + i + ' = ' + elements[i].type + '(' + elements[i].parents.join(', ') + ') ' + this.toJCAN(elements[i].attributes).replace(/\n/, '\\n') + ';');
+
+                if (elements[i].type === 'axis') {
+                    // Handle the case that remove[All]Ticks had been called.
+                    id = elements[i].attributes.id;
+                    if (board.objects[id].defaultTicks === null) {
+                        script.push('s' + i + '.removeAllTicks();');
+                    }
+                }
                 script.push('');
             }
 
@@ -77583,7 +78192,7 @@ define('utils/dump',['jxg', 'utils/type'], function (JXG, Type) {
          * @returns {String} JavaScript
          */
         toJavaScript: function (board) {
-            var i, elements,
+            var i, elements, id,
                 dump = this.dump(board),
                 script = [];
 
@@ -77593,6 +78202,14 @@ define('utils/dump',['jxg', 'utils/type'], function (JXG, Type) {
 
             for (i = 0; i < elements.length; i++) {
                 script.push('board.create("' + elements[i].type + '", [' + elements[i].parents.join(', ') + '], ' + Type.toJSON(elements[i].attributes) + ');');
+
+                if (elements[i].type === 'axis') {
+                    // Handle the case that remove[All]Ticks had been called.
+                    id = elements[i].attributes.id;
+                    if (board.objects[id].defaultTicks === null) {
+                        script.push('board.objects["' + id + '"].removeTicks(board.objects["' + id + '"].defaultTicks);');
+                    }
+                }
             }
 
             for (i = 0; i < dump.methods.length; i++) {
@@ -77613,7 +78230,7 @@ define('utils/dump',['jxg', 'utils/type'], function (JXG, Type) {
 });
 
 /*
-    Copyright 2018-2021
+    Copyright 2018-2022
         Alfred Wassermann,
         Tigran Saluev
 
@@ -77855,7 +78472,7 @@ define('element/comb',[
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -78084,7 +78701,7 @@ define('element/slopetriangle',[
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -78324,7 +78941,7 @@ define('element/checkbox',[
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -78563,7 +79180,7 @@ define('element/input',[
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -78813,7 +79430,7 @@ define('element/button',[
 });
 
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,

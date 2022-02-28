@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Carsten Miller,
         Andreas Walter,
@@ -30,6 +30,7 @@
 
 /*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
+/*eslint no-loss-of-precision: off */
 
 /* depends:
  jxg

@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -197,9 +197,11 @@ define([
          * @returns {Boolean} True, if v is neither undefined nor null.
          */
         exists: function (v, checkEmptyString) {
+            /* eslint-disable eqeqeq */
             var result = !(v == undefined || v === null);
+            /* eslint-enable eqeqeq */
             checkEmptyString = checkEmptyString || false;
-            
+
             if (checkEmptyString) {
                 return result && v !== '';
             }
@@ -210,7 +212,7 @@ define([
         //         var result = !(v === undef || v === null);
 
         //         checkEmptyString = checkEmptyString || false;
-                
+
         //         if (checkEmptyString) {
         //             return result && v !== '';
         //         }
@@ -712,12 +714,12 @@ define([
          * is returned by JavaScript's toFixed()
          *
          * @memberOf JXG
-         * @param  {Number} num       Number tp be rounded
-         * @param  {Number} precision Decimal digits
-         * @return {String}           Rounded number is returned as string
+         * @param  {Number} num    Number tp be rounded
+         * @param  {Number} digits Decimal digits
+         * @return {String}        Rounded number is returned as string
          */
-        toFixed: function (num, precision) {
-            return this._round10(num, -precision).toFixed(precision);
+        toFixed: function (num, digits) {
+            return this._round10(num, -digits).toFixed(digits);
         },
 
         /**
@@ -1281,7 +1283,7 @@ define([
                 return html_sanitize(str, function () { return undefined; }, function (id) { return id; });
             }
 
-            if (str) {
+            if (str && typeof str === 'string') {
                 str = str.replace(/</g, '&lt;').replace(/>/g, '&gt;');
             }
 

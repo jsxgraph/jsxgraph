@@ -1,5 +1,5 @@
 /*
-Copyright 2008-2021
+Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -886,7 +886,7 @@ Copyright 2008-2021
                             str1[i] = pn(step.args.p1[i]);
                         }
 
-                        set_str = 'point(' + str1.join(', ') + ') <<id: \'' + pid1 + '\', name: \'\', visible: false, ';
+                        set_str = 'point(' + str1.join(', ') + ') <<id: \'' + pid1 + '\', name: \'\', visible: false, isinfinit: true, ';
                         set_str += 'snaptogrid: false, snaptopoints: false, priv: true>>; ';
                         reset_str = 'remove(' + pid1 + '); ';
                     } else {
@@ -901,7 +901,7 @@ Copyright 2008-2021
                             str1[i] = pn(step.args.p2[i]);
                         }
 
-                        set_str += 'point(' + str1.join(', ') + ') <<id: \'' + pid2 + '\', name: \'\', visible: false, ';
+                        set_str += 'point(' + str1.join(', ') + ') <<id: \'' + pid2 + '\', name: \'\', visible: false, isinfinit: true, ';
                         set_str += 'snaptogrid: false, snaptopoints: false, priv: true>>; ';
                         reset_str = 'remove(' + pid2 + '); ' + reset_str;
                     } else {
@@ -1376,10 +1376,10 @@ Copyright 2008-2021
 
                     set_str = assign + step.args.plot_type + '(' + step.args.func;
 
-                    if (isNaN(step.args.a) || step.args.a === null || step.args.a === undefined)
-                        step.args.a = '-infinity';
-                    if (isNaN(step.args.b) || step.args.b === null || step.args.b === undefined)
-                        step.args.b = 'infinity';
+                    if (isNaN(step.args.a) || step.args.a === null || step.args.a === undefined|| step.args.a ==='-infinity')
+                        step.args.a = '';
+                    if (isNaN(step.args.b) || step.args.b === null || step.args.b === undefined|| step.args.b ==='infinity')
+                        step.args.b = '';
 
                     if (step.args.a != step.args.b)
                         set_str += ', ' + step.args.a + ', ' + step.args.b;

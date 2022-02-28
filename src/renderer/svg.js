@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -1579,7 +1579,6 @@ define([
                     canvas.height = images[i].getAttribute("height");
                     try {
                         ctx.drawImage(images[i], 0, 0, canvas.width, canvas.height);
-                        //ctx.drawImage(document.getElementById('testimg2'), 0, 0, canvas.width, canvas.height);
 
                         // If the image is not png, the format must be specified here
                         ur = canvas.toDataURL();
@@ -1587,7 +1586,6 @@ define([
                     } catch (err) {
                         console.log("CORS problem! Image can not be used", err);
                     }
-                    //};
                 }
                 //canvas.remove();
             }
@@ -1650,8 +1648,8 @@ define([
             // }
 
             // In IE we have to remove the namespace again.
-            if ((svg.match(/xmlns=\"http:\/\/www.w3.org\/2000\/svg\"/g) || []).length > 1) {
-                svg = svg.replace(/xmlns=\"http:\/\/www.w3.org\/2000\/svg\"/g, '');
+            if ((svg.match(/xmlns="http:\/\/www.w3.org\/2000\/svg"/g) || []).length > 1) {
+                svg = svg.replace(/xmlns="http:\/\/www.w3.org\/2000\/svg"/g, '');
             }
 
             // Safari fails if the svg string contains a "&nbsp;"
@@ -1696,17 +1694,16 @@ define([
          * 	setTimeout(function() { console.log('done'); }, 400);
          */
         dumpToCanvas: function (canvasId, w, h, ignoreTexts) {
-            var //svgRoot = this.svgRoot,
-                svg, tmpImg, cv, ctx;
-                // wOrg, hOrg;
-
-            // wOrg = svgRoot.getAttribute('width');
-            // hOrg = svgRoot.getAttribute('height');
+            var svg, tmpImg, cv, ctx;
 
             // Prepare the canvas element
             cv = document.getElementById(canvasId);
+
             // Clear the canvas
+            /* eslint-disable no-self-assign */
             cv.width = cv.width;
+            /* eslint-enable no-self-assign */
+
             ctx = cv.getContext("2d");
             if (w !== undefined && h !== undefined) {
                 cv.style.width = parseFloat(w) + 'px';
@@ -1793,8 +1790,8 @@ define([
                 return this;
             }
 
-            w = bas.scale * parseFloat(this.container.style.width);
-            h = bas.scale * parseFloat(this.container.style.height);
+            w = bas.scale * this.container.getBoundingClientRect().width;
+            h = bas.scale * this.container.getBoundingClientRect().height;
 
             if (imgId === undefined || imgId === '') {
                 newImg = true;

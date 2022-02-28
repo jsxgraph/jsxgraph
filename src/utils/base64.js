@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -134,7 +134,7 @@ define(['jxg', 'utils/encoding'], function (JXG, Encoding) {
 
             // deactivate regexp linting. Our regex is secure, because we replace everything with ''
             /*jslint regexp:true*/
-            encInput = input.replace(/[^A-Za-z0-9\+\/=]/g, '');
+            encInput = input.replace(/[^A-Za-z0-9+/=]/g, '');
             /*jslint regexp:false*/
 
             len = encInput.length;

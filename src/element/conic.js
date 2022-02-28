@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -545,7 +545,7 @@ define([
      *
      */
     JXG.createParabola = function (board, parents, attributes) {
-        var polarForm, curve, M, i,
+        var polarForm, curve, M,
             // focus
             F1 = parents[0],
             // directrix
@@ -574,7 +574,7 @@ define([
         }
 
         // Create line if given as array of two points.
-        if (Type.isArray(l) && l.length == 2) {
+        if (Type.isArray(l) && l.length === 2) {
             attr_line = Type.copyAttributes(attributes, board.options, 'conic', 'line');
             l = board.create('line', l, attr_line);
         }

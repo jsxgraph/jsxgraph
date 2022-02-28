@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -131,10 +131,10 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         },
 
         /**
-         * The P-th percentile ( 0 < P ≤ 100 ) of a list of N ordered values (sorted from least to greatest) 
-         * is the smallest value in the list such that no more than P percent of the data is strictly less 
+         * The P-th percentile ( 0 < P ≤ 100 ) of a list of N ordered values (sorted from least to greatest)
+         * is the smallest value in the list such that no more than P percent of the data is strictly less
          * than the value and at least P percent of the data is less than or equal to that value. See {@link https://en.wikipedia.org/wiki/Percentile}.
-         * 
+         *
          * Here, the <i>linear interpolation between closest ranks</i> method is used.
          * @param {Array} arr The set of values, need not be ordered.
          * @param {Number|Array} percentile One or several percentiles
@@ -285,7 +285,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
                 } else {
                     len = arr.length;
                     res = [];
-    
+
                     for (i = 0; i < len; i++) {
                         res[i] = Math.abs(arr[i]);
                     }
@@ -540,7 +540,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
          *     () => JXG.Math.Statistics.TheilSenRegression(a.map(el => el.coords))
          *   ],
          *   {strokeWidth:1, strokeColor:'black'});
-         * 
+         *
          * </pre><div id="JXG0a28be85-91c5-44d3-aae6-114e81217cf0" class="jxgbox" style="width: 300px; height: 300px;"></div>
          * <script type="text/javascript">
          *     (function() {
@@ -551,16 +551,16 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
          *     a[0]=board.create('point', [0,0]);
          *     a[1]=board.create('point', [3,0]);
          *     a[2]=board.create('point', [0,3]);
-         *     
+         *
          *     board.create('line', [
          *         () => JXG.Math.Statistics.TheilSenRegression(a.map(el => el.coords))
          *       ],
          *       {strokeWidth:1, strokeColor:'black'});
-         * 
+         *
          *     })();
-         * 
+         *
          * </script><pre>
-         * 
+         *
          */
         TheilSenRegression: function (coords) {
             var i, j,

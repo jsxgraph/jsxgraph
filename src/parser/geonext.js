@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -105,12 +105,12 @@ define([
                         // Search for F or p.M before (...)^
                         pre = left.substring(0, pos + 1);
                         p = pos;
-                        while (p >= 0 && pre.substr(p, 1).match(/([\w\.]+)/)) {
+                        while (p >= 0 && pre.substr(p, 1).match(/([\w.]+)/)) {
                             leftop = RegExp.$1 + leftop;
                             p -= 1;
                         }
                         leftop += left.substring(pos + 1, left.length);
-                        leftop = leftop.replace(/([\(\)\+\*\%\^\-\/\]\[])/g, '\\$1');
+                        leftop = leftop.replace(/([()+*%^\-/\][])/g, '\\$1');
                     } else {
                         throw new Error("JSXGraph: Missing '(' in expression");
                     }
@@ -122,7 +122,7 @@ define([
                 // To the right of the ^ operator there also may be a function or method call
                 // or a term in parenthesis. Alos, ere we search for the closing
                 // parenthesis.
-                if (right.match(/^([\w\.]*\()/)) {
+                if (right.match(/^([\w.]*\()/)) {
                     count = 1;
                     pos = RegExp.$1.length;
 
@@ -139,7 +139,7 @@ define([
 
                     if (count === 0) {
                         rightop = right.substring(0, pos);
-                        rightop = rightop.replace(/([\(\)\+\*\%\^\-\/\[\]])/g, '\\$1');
+                        rightop = rightop.replace(/([()+*%^\-/[\]])/g, '\\$1');
                     } else {
                         throw new Error("JSXGraph: Missing ')' in expression");
                     }
@@ -380,7 +380,7 @@ define([
             expr = /(Dist)\(([\w_]+),([\w_]+)\)/g;
             term = term.replace(expr, 'dist($(\'$2\'), $(\'$3\'))');
 
-            expr = /(Deg)\(([\w_]+),([ \w\[\w_]+),([\w_]+)\)/g;
+            expr = /(Deg)\(([\w_]+),([ \w[\w_]+),([\w_]+)\)/g;
             term = term.replace(expr, 'deg($(\'$2\'),$(\'$3\'),$(\'$4\'))');
 
             // Search for Rad('gi23','gi24','gi25')

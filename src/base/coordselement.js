@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -260,7 +260,7 @@ define([
                 ev_sw,
                 slide = this.slideObject,
                 res, cu,
-                slides = [], 
+                slides = [],
                 isTransformed;
 
             this.needsUpdateFromParent = false;
@@ -1098,8 +1098,8 @@ define([
                         slide = slideobj.borders[i];
                     }
                 }
-            	slideobj = this.board.select(slide);
-            	onPolygon = true;
+                slideobj = this.board.select(slide);
+                onPolygon = true;
             }
 
             /* Gliders on Ticks are forbidden */
@@ -1833,7 +1833,7 @@ define([
                 if (direction < 0) {
                     alpha *= this.intervalCount / stepCount;
                 } else {
-                    alpha *= (stepCount - this.intervalCount);
+                    alpha *= (stepCount - this.intervalCount) / stepCount;
                 }
                 radius = this.slideObject.Radius();
 

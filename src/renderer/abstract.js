@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -38,6 +38,7 @@
     newcap:   AsciiMathMl exposes non-constructor functions beginning with upper case letters
 */
 /*jslint nomen: true, plusplus: true, newcap: true, unparam: true*/
+/*eslint no-unused-vars: "off"*/
 
 /* depends:
  jxg
@@ -1139,9 +1140,11 @@ define([
                             }
                         } else if (Type.evaluate(el.visProp.usekatex)) {
                             try {
+                                /* eslint-disable no-undef */
                                 katex.render(content, el.rendNode, {
                                     throwOnError: false
                                 });
+                                /* eslint-enable no-undef */
                             } catch (e) {
                                 JXG.debug('KaTeX (not yet) loaded');
                             }
@@ -1581,8 +1584,11 @@ define([
 
         setTabindex: function(element) {
             var val;
-            if (Type.exists(element.rendNode)) {
+            if (element.board.attr.keyboard.enabled && Type.exists(element.rendNode)) {
                 val = Type.evaluate(element.visProp.tabindex);
+                if (!element.visPropCalc.visible || Type.evaluate(element.visProp.fixed)) {
+                    val = null;
+                }
                 if (val !== element.visPropOld.tabindex) {
                     element.rendNode.setAttribute('tabindex', val);
                     element.visPropOld.tabindex = val;

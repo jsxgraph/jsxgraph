@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -89,13 +89,17 @@ define([
                 'px" height="', dim.height,
                 'px"><', '/canvas>'].join('');
             this.canvasRoot = this.container.ownerDocument.getElementById(this.canvasId);
-            this.context =  this.canvasRoot.getContext('2d');
             this.canvasRoot.style.display = 'block';
+            this.context = this.canvasRoot.getContext('2d');
 
         } else if (Env.isNode()) {
-            this.canvasId = (typeof module === 'object' ? module.require('canvas') : require('canvas'));
-            this.canvasRoot = new this.canvasId(500, 500);
-            this.context = this.canvasRoot.getContext('2d');
+            try {
+                this.canvasId = (typeof module === 'object' ? module.require('canvas') : require('canvas'));
+                this.canvasRoot = new this.canvasId(500, 500);
+                this.context = this.canvasRoot.getContext('2d');
+            } catch (err) {
+                console.log("Warning: 'canvas' not found. You might need to call 'npm install canvas'");
+            }
         }
 
         this.dashArray = [[2, 2], [5, 5], [10, 10], [20, 20], [20, 10, 10, 10], [20, 5, 10, 5]];

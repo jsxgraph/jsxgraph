@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -45,7 +45,7 @@
  * Stoyan Stefanov <sstoo@gmail.com> (see http://www.phpied.com/rgb-color-parser-in-javascript/)
  */
 
-define(['jxg', 'utils/type', 'math/math'], 
+define(['jxg', 'utils/type', 'math/math'],
     function (JXG, Type, Mat) {
 
     "use strict";
@@ -202,7 +202,7 @@ define(['jxg', 'utils/type', 'math/math'],
 
         // array of color definition objects
         colorDefs = [{
-            re: /^\s*rgba\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*([\d\.]{1,3})\s*\)\s*$/,
+            re: /^\s*rgba\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*([\d.]{1,3})\s*\)\s*$/,
             example: ['rgba(123, 234, 45, 0.5)', 'rgba(255,234,245,1.0)'],
             process: function (bits) {
                 return [
@@ -988,8 +988,7 @@ define(['jxg', 'utils/type', 'math/math'],
             green: '#009E73', // bluishgreen
             purple: '#CC79A7', // reddishpurple
             white: '#ffffff'
-        },
-
+        }
     });
 
     /**
@@ -1004,16 +1003,16 @@ define(['jxg', 'utils/type', 'math/math'],
      * <li> white
      * <li> yellow
      * </ul>
-     * 
+     *
      * @name JXG.palette
      * @type Object
      * @default JXG.paletteWong
      * @see JXG.paletteWong
-     * 
+     *
      * @example
-     * 
+     *
      * var p = board.create('line', [[-1, 1], [2, -3]], {strokeColor: JXG.palette.yellow});
-     * 
+     *
      */
     JXG.palette = JXG.paletteWong;
 

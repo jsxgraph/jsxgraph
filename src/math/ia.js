@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -299,9 +299,9 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
         /**
          * Addition
-         * 
-         * @param {JXG.Math.Interval|Number} x 
-         * @param {JXG.Math.Interval|Number} y 
+         *
+         * @param {JXG.Math.Interval|Number} x
+         * @param {JXG.Math.Interval|Number} y
          * @returns JXG.Math.Interval
          */
         add: function(x, y) {
@@ -316,9 +316,9 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
         /**
          * Subtraction
-         * 
-         * @param {JXG.Math.Interval|Number} x 
-         * @param {JXG.Math.Interval|Number} y 
+         *
+         * @param {JXG.Math.Interval|Number} x
+         * @param {JXG.Math.Interval|Number} y
          * @returns JXG.Math.Interval
          */
          sub: function(x, y) {
@@ -333,9 +333,9 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
         /**
          * Multiplication
-         * 
-         * @param {JXG.Math.Interval|Number} x 
-         * @param {JXG.Math.Interval|Number} y 
+         *
+         * @param {JXG.Math.Interval|Number} x
+         * @param {JXG.Math.Interval|Number} y
          * @returns JXG.Math.Interval
          */
          mul: function(x, y) {
@@ -437,9 +437,9 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
         /**
          * Division
-         * 
-         * @param {JXG.Math.Interval|Number} x 
-         * @param {JXG.Math.Interval|Number} y 
+         *
+         * @param {JXG.Math.Interval|Number} x
+         * @param {JXG.Math.Interval|Number} y
          * @returns JXG.Math.Interval
          */
          div: function(x, y) {
@@ -470,8 +470,8 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
         /**
          * Return +x (i.e. identity)
-         * 
-         * @param {JXG.Math.Interval} x 
+         *
+         * @param {JXG.Math.Interval} x
          * @returns JXG.Math.Interval
          */
          positive: function(x) {
@@ -480,8 +480,8 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
         /**
          * Return -x
-         * 
-         * @param {JXG.Math.Interval} x 
+         *
+         * @param {JXG.Math.Interval} x
          * @returns JXG.Math.Interval
          */
          negative: function(x) {
@@ -497,37 +497,37 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
         /**
          * Test if interval is empty set.
-         * @param {JXG.Math.Interval} i 
+         * @param {JXG.Math.Interval} i
          * @returns Boolean
-         */        
+         */
         isEmpty: function(i) {
             return i.lo > i.hi;
         },
 
         /**
          * Test if interval is (-Infinity, Infinity).
-         * @param {JXG.Math.Interval} i 
+         * @param {JXG.Math.Interval} i
          * @returns Boolean
-         */        
+         */
         isWhole: function(i){
             return i.lo === -Infinity && i.hi === Infinity;
         },
 
         /**
          * Test if interval contains 0.
-         * @param {JXG.Math.Interval} i 
+         * @param {JXG.Math.Interval} i
          * @returns Boolean
-         */        
+         */
          zeroIn: function(i) {
             return this.hasValue(i, 0);
         },
 
         /**
          * Test if interval contains a specific value.
-         * @param {JXG.Math.Interval} i 
+         * @param {JXG.Math.Interval} i
          * @param {Number} value
          * @returns Boolean
-         */        
+         */
          hasValue: function(i, value) {
             if (this.isEmpty(i)) {
                 return false;
@@ -540,7 +540,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
          * @param {JXG.Math.Interval} x
          * @param {JXG.Math.Interval} y
          * @returns Boolean
-         */        
+         */
          hasInterval: function(x, y) {
             if (this.isEmpty(x)) {
                 return true;
@@ -553,7 +553,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
          * @param {JXG.Math.Interval} x
          * @param {JXG.Math.Interval} y
          * @returns Boolean
-         */        
+         */
          intervalsOverlap: function(x, y) {
             if (this.isEmpty(x) || this.isEmpty(y)) {
                 return false;
@@ -566,8 +566,8 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
          */
         /**
          * @private
-         * @param {JXG.Math.Interval} x 
-         * @param {JXG.Math.Interval} y 
+         * @param {JXG.Math.Interval} x
+         * @param {JXG.Math.Interval} y
          * @returns JXG.Math.Interval
          */
         divNonZero: function(x, y) {
@@ -607,8 +607,8 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
         /**
          * @private
-         * @param {JXG.Math.Interval} x 
-         * @param {JXG.Math.Interval} y 
+         * @param {JXG.Math.Interval} x
+         * @param {JXG.Math.Interval} y
          * @returns JXG.Math.Interval
          */
          divPositive: function(x, v) {
@@ -631,8 +631,8 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
         /**
          * @private
-         * @param {JXG.Math.Interval} x 
-         * @param {JXG.Math.Interval} y 
+         * @param {JXG.Math.Interval} x
+         * @param {JXG.Math.Interval} y
          * @returns JXG.Math.Interval
          */
          divNegative: function(x, v) {
@@ -655,7 +655,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
         /**
          * @private
-         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} x
          * @returns JXG.Math.Interval
          */
          divZero: function(x) {
@@ -670,8 +670,8 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
          */
         /**
          * x mod y:  x - n * y
-         * @param {JXG.Math.Interval|Number} x 
-         * @param {JXG.Math.Interval|Number} y 
+         * @param {JXG.Math.Interval|Number} x
+         * @param {JXG.Math.Interval|Number} y
          * @returns JXG.Math.Interval
          */
         fmod: function(x, y) {
@@ -698,7 +698,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
         /**
          * 1 / x
-         * @param {JXG.Math.Interval|Number} x 
+         * @param {JXG.Math.Interval|Number} x
          * @returns JXG.Math.Interval
          */
         multiplicativeInverse: function(x) {
@@ -730,7 +730,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
         /**
          * x<sup>power</sup>
-         * @param {JXG.Math.Interval|Number} x 
+         * @param {JXG.Math.Interval|Number} x
          * @param {JXG.Math.Interval|Number} power
          * @returns JXG.Math.Interval
          */
@@ -797,7 +797,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
         /**
          * sqrt(x)
-         * @param {JXG.Math.Interval|Number} x 
+         * @param {JXG.Math.Interval|Number} x
          * @returns JXG.Math.Interval
          */
          sqrt: function(x) {
@@ -809,7 +809,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
         /**
          * x<sup>1/n</sup>
-         * @param {JXG.Math.Interval|Number} x 
+         * @param {JXG.Math.Interval|Number} x
          * @param {Number} n
          * @returns JXG.Math.Interval
          */
@@ -865,8 +865,8 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
          * Misc
          */
         /**
-         * 
-         * @param {JXG.Math.Interval|Number} x 
+         *
+         * @param {JXG.Math.Interval|Number} x
          * @returns JXG.Math.Interval
          */
         exp: function(x) {
@@ -881,7 +881,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
         /**
          * Natural log
-         * @param {JXG.Math.Interval|Number} x 
+         * @param {JXG.Math.Interval|Number} x
          * @returns JXG.Math.Interval
          */
         log: function(x) {
@@ -898,7 +898,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
         /**
          * Natural log, alias for {@link JXG.Math.IntervalArithmetic#log}.
-         * @param {JXG.Math.Interval|Number} x 
+         * @param {JXG.Math.Interval|Number} x
          * @returns JXG.Math.Interval
          */
         ln: function(x) {
@@ -909,7 +909,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         // export const LOG_EXP_2 = log(new MatInterval(2, 2))
         /**
          * Logarithm to base 10.
-         * @param {JXG.Math.Interval|Number} x 
+         * @param {JXG.Math.Interval|Number} x
          * @returns JXG.Math.Interval
          */
         log10: function(x) {
@@ -921,7 +921,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
         /**
          * Logarithm to base 2.
-         * @param {JXG.Math.Interval|Number} x 
+         * @param {JXG.Math.Interval|Number} x
          * @returns JXG.Math.Interval
          */
         log2: function(x) {
@@ -933,7 +933,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
         /**
          * Hull of intervals x and y
-         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} x
          * @param {JXG.Math.Interval} y
          * @returns JXG.Math.Interval
          */
@@ -954,7 +954,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
         /**
          * Intersection of intervals x and y
-         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} x
          * @param {JXG.Math.Interval} y
          * @returns JXG.Math.Interval
          */
@@ -973,7 +973,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
         /**
          * Union of overlapping intervals x and y
-         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} x
          * @param {JXG.Math.Interval} y
          * @returns JXG.Math.Interval
          */
@@ -986,7 +986,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
         /**
          * Difference of overlapping intervals x and y
-         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} x
          * @param {JXG.Math.Interval} y
          * @returns JXG.Math.Interval
          */
@@ -1022,7 +1022,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         },
 
         /**
-         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} x
          * @returns JXG.Math.Interval
          */
         width: function(x) {
@@ -1033,7 +1033,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         },
 
         /**
-         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} x
          * @returns JXG.Math.Interval
          */
         abs: function(x) {
@@ -1053,7 +1053,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         },
 
         /**
-         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} x
          * @param {JXG.Math.Interval} y
          * @returns JXG.Math.Interval
          */
@@ -1073,7 +1073,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         },
 
         /**
-         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} x
          * @param {JXG.Math.Interval} y
          * @returns JXG.Math.Interval
          */
@@ -1115,7 +1115,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         },
 
         /**
-         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} x
          * @returns JXG.Math.Interval
          */
         cos: function(x) {
@@ -1163,7 +1163,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         },
 
         /**
-         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} x
          * @returns JXG.Math.Interval
          */
         sin: function(x) {
@@ -1174,7 +1174,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         },
 
         /**
-         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} x
          * @returns JXG.Math.Interval
          */
         tan: function(x) {
@@ -1199,7 +1199,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         },
 
         /**
-         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} x
          * @returns JXG.Math.Interval
          */
         asin: function(x) {
@@ -1213,7 +1213,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         },
 
         /**
-         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} x
          * @returns JXG.Math.Interval
          */
         acos: function(x) {
@@ -1227,7 +1227,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         },
 
         /**
-         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} x
          * @returns JXG.Math.Interval
          */
         atan: function(x) {
@@ -1238,7 +1238,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         },
 
         /**
-         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} x
          * @returns JXG.Math.Interval
          */
         sinh: function(x) {
@@ -1249,7 +1249,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         },
 
         /**
-         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} x
          * @returns JXG.Math.Interval
          */
         cosh: function(x) {
@@ -1266,7 +1266,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         },
 
         /**
-         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} x
          * @returns JXG.Math.Interval
          */
         tanh: function(x) {
@@ -1281,7 +1281,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
          */
 
         /**
-         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} x
          * @param {JXG.Math.Interval} y
          * @returns Boolean
          */
@@ -1300,7 +1300,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         // },
 
         /**
-         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} x
          * @param {JXG.Math.Interval} y
          * @returns Boolean
          */
@@ -1312,7 +1312,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         },
 
         /**
-         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} x
          * @param {JXG.Math.Interval} y
          * @returns Boolean
          */
@@ -1330,7 +1330,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         },
 
         /**
-         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} x
          * @param {JXG.Math.Interval} y
          * @returns Boolean
          */
@@ -1348,7 +1348,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         },
 
         /**
-         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} x
          * @param {JXG.Math.Interval} y
          * @returns Boolean
          */
@@ -1366,7 +1366,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         },
 
         /**
-         * @param {JXG.Math.Interval} x 
+         * @param {JXG.Math.Interval} x
          * @param {JXG.Math.Interval} y
          * @returns Boolean
          */

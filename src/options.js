@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -360,7 +360,7 @@ define([
              * @type Object
              */
             fullscreen: {
-                symbol: '\u26f6', // '\u25a1'
+                symbol: '\u25a1', // '\u26f6' (not supported by MacOS), // '\u25a1'
                 id: null
             },
 
@@ -546,13 +546,13 @@ define([
              *   factorY: 1.25,  // vertical zoom factor (multiplied to {@link JXG.Board#zoomY})
              *   wheel: true,     // allow zooming by mouse wheel or
              *   				   // by pinch-to-toom gesture on touch devices
-             *   needShift: true, // mouse wheel zooming needs pressing of the shift key
-             *   min: 0.001        // minimal values of {@link JXG.Board#zoomX} and {@link JXG.Board#zoomY}, limits zoomOut
-             *   max: 1000.0       // maximal values of {@link JXG.Board#zoomX} and {@link JXG.Board#zoomY}, limits zoomIn
+             *   needShift: true,   // mouse wheel zooming needs pressing of the shift key
+             *   min: 0.001,        // minimal values of {@link JXG.Board#zoomX} and {@link JXG.Board#zoomY}, limits zoomOut
+             *   max: 1000.0,       // maximal values of {@link JXG.Board#zoomX} and {@link JXG.Board#zoomY}, limits zoomIn
              *
-             *   pinchHorizontal: true // Allow pinch-to-zoom to zoom only horizontal axis
-             *   pinchVertical: true   // Allow pinch-to-zoom to zoom only vertical axis
-             *   pinchSensitivity: 7   // Sensitivity (in degrees) for recognizing horizontal or vertical pinch-to-zoom gestures.
+             *   pinchHorizontal: true, // Allow pinch-to-zoom to zoom only horizontal axis
+             *   pinchVertical: true,   // Allow pinch-to-zoom to zoom only vertical axis
+             *   pinchSensitivity: 7    // Sensitivity (in degrees) for recognizing horizontal or vertical pinch-to-zoom gestures.
              * }
              * </pre>
              *
@@ -652,11 +652,11 @@ define([
              *             panCtrl: false
              *         }
              *     });
-             * 
+             *
              *     })();
-             * 
+             *
              * </script><pre>
-             * 
+             *
              *
              * @see JXG.Board#keyDownListener
              * @see JXG.Board#keyFocusInListener
@@ -704,11 +704,11 @@ define([
              *             axis: true,
              *             resize: {enabled: true, throttle: 200}
              *         });
-             * 
+             *
              *     })();
-             * 
+             *
              * </script><pre>
-             * 
+             *
              *
              */
             resize: {
@@ -753,11 +753,11 @@ define([
              *             axis: true,
              *             moveTarget: document
              *         });
-             * 
+             *
              *     })();
-             * 
+             *
              * </script><pre>
-             * 
+             *
              *
              */
             moveTarget: null,
@@ -1488,7 +1488,20 @@ define([
              */
             isLabel: false,
 
-
+            /**
+             * Controls if an element can get the focus with the tab key.
+             * See <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/tabindex">descriptiona at MDN</a>.
+             * The additional value null completely disables focus of an element.
+             * The value will be ignored if keyboard control of the board is not enabled or
+             * the element is fixed or not visible.
+             *
+             * @name JXG.GeometryElement#tabindex
+             * @type Number
+             * @default 0
+             * @see JXG.Board#keyboard
+             * @see JXG.GeometryElement#fixed
+             * @see JXG.GeometryElement#visible
+             */
             tabindex: 0
 
             // close the meta tag
@@ -1588,9 +1601,9 @@ define([
             *             }
             *         },
             *     });
-            * 
+            *
             *     })();
-            * 
+            *
             * </script><pre>
             *
             * @name Ticks#beautifulScientificTickLabels
@@ -1757,13 +1770,27 @@ define([
 
             /**
              * If a label exceeds {@link Ticks#maxLabelLength} this determines the precision used to shorten the tick label.
+             * Replaced by the digits attribute.
              *
              * @type Number
              * @name Ticks#precision
              * @see Ticks#maxLabelLength
+             * @see Ticks#digits
+             * @deprecated
              * @default 3
              */
             precision: 3,
+
+            /**
+             * If a label exceeds {@link Ticks#maxLabelLength} this determines the number of digits used to shorten the tick label.
+             *
+             * @type Number
+             * @name Ticks#digits
+             * @see Ticks#maxLabelLength
+             * @deprecated
+             * @default 3
+             */
+            digits: 3,
 
             /**
              * The default distance between two ticks. Please be aware that this value does not have
@@ -2509,7 +2536,7 @@ define([
                 strokeColor: Color.palette.red,
                 highlightFillColor: '#c3d9ff',
                 highlightStrokeColor: '#c3d9ff',
-    
+
                 name: ''
             },
 
@@ -4054,7 +4081,7 @@ define([
             snatchDistance: 0.0,
 
             /**
-             * If set to true, the point will snap to a grid of integer multiples of 
+             * If set to true, the point will snap to a grid of integer multiples of
              * {@link Point#snapSizeX} and {@link Point#snapSizeY} (in user coordinates).
              * <p>
              * The coordinates of the grid points are either integer multiples of snapSizeX and snapSizeY
@@ -4536,12 +4563,26 @@ define([
 
             /**
              * The precision of the slider value displayed in the optional text.
+             * Replaced by the attribute "digits".
+             *
              * @memberOf Slider.prototype
              * @name precision
              * @type Number
+             * @deprecated
+             * @see Slider#digits
              * @default 2
              */
             precision: 2,
+
+            /**
+             * The number of digits of the slider value displayed in the optional text.
+             *
+             * @memberOf Slider.prototype
+             * @name digits
+             * @type Number
+             * @default 2
+             */
+            digits: 2,
 
             firstArrow: false,
             lastArrow: false,
@@ -4660,6 +4701,7 @@ define([
                 visible: 'inherit',
                 fixed: true,
                 scalable: false,
+                tabindex: null,
                 name: '',
                 strokeWidth: 1,
                 strokeColor: '#000000',
@@ -4678,7 +4720,7 @@ define([
 
                 // Label drawing
                 drawLabels: false,
-                precision: 2,
+                digits: 2,
                 includeBoundaries: 1,
                 drawZero: true,
                 label: {
@@ -4709,6 +4751,7 @@ define([
                 strokeWidth: 3,
                 visible: 'inherit',
                 fixed: true,
+                tabindex: null,
                 name: '',
                 strokeColor: '#000000',
                 highlightStrokeColor: '#888888'
@@ -4949,12 +4992,25 @@ define([
 
             /**
              * The precision of the tape measure value displayed in the optional text.
+             * Replaced by the attribute digits
+             *
+             * @memberOf Tapemeasure.prototype
+             * @name precision
+             * @type Number
+             * @deprecated
+             * @see Tapemeasure#digits
+             * @default 2
+             */
+            precision: 2,
+
+            /**
+             * The precision of the tape measure value displayed in the optional text.
              * @memberOf Tapemeasure.prototype
              * @name precision
              * @type Number
              * @default 2
              */
-            precision: 2,
+            digits: 2,
 
             /**
              * Attributes for first helper point defining the tape measure position.
@@ -5067,11 +5123,11 @@ define([
              *         var board = JXG.JSXGraph.initBoard('JXG2da7e972-ac62-416b-a94b-32559c9ec9f9',
              *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
              *     var txt = board.create('text', [2, 2, "hello"], {fontSize: 8, fontUnit: 'vmin'});
-             * 
+             *
              *     })();
-             * 
+             *
              * </script><pre>
-             * 
+             *
              */
             fontUnit: 'px',
 
@@ -5473,7 +5529,7 @@ define([
              * text1 = board.create('text', [5, 1, function(){
              *             return '\\(a(t)= { 1 \\over ' + a.Value().toFixed(3) + '}\\)';
              *         }], {fontSize: 15, fixed:true, strokeColor:'red', anchorY: 'top', parse: false});
-             * 
+             *
              * </pre><div id="JXGf8bd01db-fb6a-4a5c-9e7f-8823f7aa5ac6" class="jxgbox" style="width: 300px; height: 300px;"></div>
              * <script type="text/javascript">
              *     (function() {
@@ -5485,12 +5541,12 @@ define([
              *         suffixlabel:'\\(t_1=\\)',
              *         unitLabel: ' \\(\\text{ ms}\\)',
              *         snapWidth:0.01}),
-             *     
+             *
              *     func = board.create('functiongraph',[function(x){return (a.Value()*x*x)}], {strokeColor: "red"});
              *     text1 = board.create('text', [5, 1, function(){
              *                 return '\\(a(t)= { 1 \\over ' + a.Value().toFixed(3) + '}\\)';
              *             }], {fontSize: 15, fixed:true, strokeColor:'red', anchorY: 'top', parse: false});
-             * 
+             *
              *     })();
              *
              * </script><pre>
@@ -5529,7 +5585,7 @@ define([
              * text1 = board.create('text', [5, 1, function(){
              *             return 'a(t)= { 1 \\over ' + a.Value().toFixed(3) + '}';
              *         }], {fontSize: 15, fixed:true, strokeColor:'red', anchorY: 'top'});
-             * 
+             *
              * </pre>
              * <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.13.10/dist/katex.min.css" integrity="sha384-0cCFrwW/0bAk1Z/6IMgIyNU3kfTcNirlObr4WjrUU7+hZeD6ravdYJ3kPWSeC31M" crossorigin="anonymous">
              * <script src="https://cdn.jsdelivr.net/npm/katex@0.13.10/dist/katex.min.js" integrity="sha384-dtFDxK2tSkECx/6302Z4VN2ZRqt6Gis+b1IwCjJPrn0kMYFQT9rbtyQWg5NFWAF7" crossorigin="anonymous"></script>
@@ -5543,12 +5599,12 @@ define([
              *         suffixlabel:'t_1=',
              *         unitLabel: ' \\text{ ms}',
              *         snapWidth:0.01});
-             *     
+             *
              *     func = board.create('functiongraph',[function(x){return (a.Value()*x*x)}], {strokeColor: "red"});
              *     text1 = board.create('text', [5, 1, function(){
              *                 return 'a(t)= { 1 \\over ' + a.Value().toFixed(3) + '}';
              *             }], {fontSize: 15, fixed:true, strokeColor:'red', anchorY: 'top'});
-             * 
+             *
              *     })();
              *
              * </script><pre>

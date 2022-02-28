@@ -1,3 +1,65 @@
+1.4.2
+====
+
+Improvements
+------------
+
+- Gradient fill color for points
+- Many improvenments to index.d.ts
+- Improved keyboard control
+- Some preparations for 3D support
+- Reduce thick focus box on webkit browsers
+
+Bug fixes
+---------
+
+- Fix touch events for iOS < 13
+- Bug fix: beautifulScientificTickLabels for numbers with negative exponents
+
+
+1.4.1
+====
+
+New features
+-----------
+
+- API change: the number of digits in a text element is now set generally with
+the attribute `digits`. The attribute "precision" is used to decide if
+a pointer device is close enough to a JSXGraph element to be considered as touching the element.
+The old attributes `precision` for the number of digits are still working 
+but marked as deprecated.
+
+Improvements
+------------
+
+- Update JessieCode parser
+- View point with keepaspectratio:true is now centered
+- JessieCode: points can now have names like X, Y, L. Previously, there was a conflict with
+function names with the same name
+- JessieCode: allow map functions without parameters
+- Refactor ca.js
+- API docs
+- index.d.ts
+
+Bug fixes
+---------
+
+- Clipping: various bug fixes
+- Fullscreen mode
+- SVG screen shots
+- Default axis ticks in JXG.Dump.toJessie and JXG.Dump.toJavaScript.
+- Fix problems with board.resizeContainer()
+
+Ecosystem
+------------
+
+- npm package does not rely on the npm package canvas anymore
+- Add unit tests for JXG.Math.Clip
+- Use eslint for linting
+- Use terser for minifying
+
+Many thanks go to David Holmes for his contributions.
+
 1.4.0
 ====
 

@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -1213,7 +1213,7 @@ define([
                 op = (new Coords(Const.COORDS_BY_SCREEN, [moveEl.Xprev, moveEl.Yprev], this)).usrCoords;
                 // New finger position
                 np = (new Coords(Const.COORDS_BY_SCREEN, [moveEl.X, moveEl.Y], this)).usrCoords;
-                
+
                 // Old and new directions
                 od = Mat.crossProduct(fix, op);
                 nd = Mat.crossProduct(fix, np);
@@ -1296,7 +1296,7 @@ define([
                 op = (new Coords(Const.COORDS_BY_SCREEN, [moveEl.Xprev, moveEl.Yprev], this)).usrCoords;
                 // New finger position
                 np = (new Coords(Const.COORDS_BY_SCREEN, [moveEl.X, moveEl.Y], this)).usrCoords;
-                
+
                 alpha = Geometry.rad(op.slice(1), fix.slice(1), np.slice(1));
 
                 // Rotate and scale by the movement of the second finger
@@ -1664,7 +1664,7 @@ define([
         },
 
         addKeyboardEventHandlers: function() {
-            if (!this.hasKeyboardHandlers && Env.isBrowser) {
+            if (this.attr.keyboard.enabled && !this.hasKeyboardHandlers && Env.isBrowser) {
                 Env.addEvent(this.containerObj, 'keydown', this.keyDownListener, this);
                 Env.addEvent(this.containerObj, 'focusin', this.keyFocusInListener, this);
                 Env.addEvent(this.containerObj, 'focusout', this.keyFocusOutListener, this);
@@ -2161,7 +2161,7 @@ define([
             type = this._inputDevice;
             this.options.precision.hasPoint = this.options.precision[type];
 
-            // Handling of multi touch with pointer events should be easier than the touch events. 
+            // Handling of multi touch with pointer events should be easier than the touch events.
             // Every pointer device has its own pointerId, e.g. the mouse
             // always has id 1 or 0, fingers and pens get unique ids every time a pointerDown event is fired and they will
             // keep this id until a pointerUp event is fired. What we have to do here is:
@@ -2203,7 +2203,7 @@ define([
                 target = elements[elements.length - 1];
                 found = false;
 
-                // Reminder: this.touches is the list of elements which 
+                // Reminder: this.touches is the list of elements which
                 // currently "possess" a pointer (mouse, pen, finger)
                 for (i = 0; i < this.touches.length; i++) {
                     // An element receives a further touch, i.e.
@@ -2257,10 +2257,11 @@ define([
 
                 // Touch events on empty areas of the board are handled here, see also touchStartListener
                 // 1. case: one finger. If allowed, this triggers pan with one finger
-                if (evt.touches.length == 1 &&
+                if (evt.touches.length === 1 &&
                     this.mode === this.BOARD_MODE_NONE &&
                     this.touchStartMoveOriginOneFinger(evt)) {
-                } else if (evt.touches.length == 2 &&
+                        // Empty by purpose
+                } else if (evt.touches.length === 2 &&
                             (this.mode === this.BOARD_MODE_NONE || this.mode === this.BOARD_MODE_MOVE_ORIGIN)
                         ) {
                     // 2. case: two fingers: pinch to zoom or pan with two fingers needed.
@@ -2342,7 +2343,7 @@ define([
                         // Run through all touch events which have been started on this jsxgraph element.
                         for (j = 0; j < touchTargets.length; j++) {
                             if (touchTargets[j].num === evt.pointerId) {
-                                
+
                                 pos = this.getMousePosition(evt);
                                 touchTargets[j].X = pos[0];
                                 touchTargets[j].Y = pos[1];
@@ -2582,7 +2583,7 @@ define([
                             Yprev: NaN,
                             Xstart: [],
                             Ystart: [],
-                            Zstart: [] 
+                            Zstart: []
                         };
 
                         if (Type.isPoint(obj) ||
@@ -2590,7 +2591,7 @@ define([
                                 obj.type === Const.OBJECT_TYPE_TICKS ||
                                 obj.type === Const.OBJECT_TYPE_IMAGE) {
                             // It's a point, so it's single touch, so we just push it to our touches
-                            targets = [target_obj];
+                            targets = [target];
 
                             // For the UNDO/REDO of object moves
                             this.saveStartPos(obj, targets[0]);
@@ -2670,8 +2671,8 @@ define([
          * @returns {Boolean}
          */
         touchMoveListener: function (evt) {
-            var i, pos1, pos2, 
-                time, touchTargets,
+            var i, pos1, pos2,
+                touchTargets,
                 evtTouches = evt[JXG.touchProperty];
 
             if (!this.checkFrameRate(evt)) {
@@ -3135,6 +3136,7 @@ define([
                 dx = Type.evaluate(this.attr.keyboard.dx) / this.unitX,
                 dy = Type.evaluate(this.attr.keyboard.dy) / this.unitY,
                 doZoom = false,
+                done = true,
                 dir, actPos;
 
             if (!this.attr.keyboard.enabled || id_node === '') {
@@ -3163,6 +3165,8 @@ define([
                     this.clickLeftArrow();
                 } else if (evt.keyCode === 39) {    // right
                     this.clickRightArrow();
+                } else {
+                    done = false;
                 }
             } else {
                 // Adapt dx, dy to snapToGrid and attractToGrid
@@ -3189,7 +3193,7 @@ define([
                         sX = 1.1 * Type.evaluate(el.visProp.attractordistance);
                         sY = sX;
 
-                        if (Type.evaluate(el.visProp.attractorunit) == 'screen') {
+                        if (Type.evaluate(el.visProp.attractorunit) === 'screen') {
                             sX /= this.unitX;
                             sY /= this.unitX;
                         }
@@ -3215,7 +3219,10 @@ define([
                     this.zoomOut();
                 } else if (doZoom && evt.key === 'o') {   // o
                     this.zoom100();
+                } else {
+                    done = false;
                 }
+
                 if (dir && el.isDraggable &&
                         el.visPropCalc.visible &&
                         ((this.geonextCompatibilityMode &&
@@ -3241,6 +3248,9 @@ define([
 
             this.update();
 
+            if (done) {
+                evt.preventDefault();
+            }
             return true;
         },
 
@@ -3704,11 +3714,11 @@ define([
          *                 // Shorter version:
          *                 //somePoint = board.create('point', a, {name:'SomePoint',size:4});
          *             });
-         * 
+         *
          *     })();
          *
          * </script><pre>
-         * 
+         *
          * @see JXG.Board#getScrCoordsOfMouse
          * @see JXG.Board#getAllUnderMouse
          */
@@ -3830,7 +3840,7 @@ define([
         addConditions: function (str) {
             var term, m, left, right, name, el, property,
                 functions = [],
-                plaintext = 'var el, x, y, c, rgbo;\n',
+                // plaintext = 'var el, x, y, c, rgbo;\n',
                 i = str.indexOf('<data>'),
                 j = str.indexOf('<' + '/data>'),
 
@@ -3914,7 +3924,7 @@ define([
                 if (!Type.exists(this.elementsByName[name])) {
                     JXG.debug("debug conditions: |" + name + "| undefined");
                 } else {
-                    plaintext += "el = this.objects[\"" + el.id + "\"];\n";
+                    // plaintext += "el = this.objects[\"" + el.id + "\"];\n";
 
                     switch (property) {
                     case 'x':
@@ -4389,34 +4399,38 @@ define([
          * @returns {JXG.Board} Reference to the board
          */
         resizeContainer: function (canvasWidth, canvasHeight, dontset, dontSetBoundingBox) {
-            var box_act, box, w, h, cx, cy,
-                shift_x = 0,
-                shift_y = 0;
+            var box;
+                // w, h, cx, cy;
+                // box_act,
+                // shift_x = 0,
+                // shift_y = 0;
 
             if (!dontSetBoundingBox) {
-                box_act = this.getBoundingBox();    // This is the actual bounding box.
+                // box_act = this.getBoundingBox();    // This is the actual bounding box.
+                box = this.getBoundingBox();    // This is the actual bounding box.
             }
 
             this.canvasWidth = parseFloat(canvasWidth);
             this.canvasHeight = parseFloat(canvasHeight);
 
-            if (!dontSetBoundingBox) {
-                box     = this.attr.boundingbox;    // This is the intended bounding box.
-                
-                // The shift values compensate the follow-up correction
-                // in setBoundingBox in case of "this.keepaspectratio==true"
-                // Otherwise, shift_x and shift_y will be zero.
-                shift_x = box_act[0] - box[0] / this.zoomX;
-                shift_y = box_act[1] - box[1] / this.zoomY;
+            // if (!dontSetBoundingBox) {
+            //     box     = this.attr.boundingbox;    // This is the intended bounding box.
 
-                cx = (box[2] + box[0]) * 0.5 + shift_x;
-                cy = (box[3] + box[1]) * 0.5 + shift_y;
+            //     // The shift values compensate the follow-up correction
+            //     // in setBoundingBox in case of "this.keepaspectratio==true"
+            //     // Otherwise, shift_x and shift_y will be zero.
+            //     // Obsolet since setBoundingBox centers in case of "this.keepaspectratio==true".
+            //     // shift_x = box_act[0] - box[0] / this.zoomX;
+            //     // shift_y = box_act[1] - box[1] / this.zoomY;
 
-                w = (box[2] - box[0]) * 0.5 / this.zoomX;
-                h = (box[1] - box[3]) * 0.5 / this.zoomY;
+            //     cx = (box[2] + box[0]) * 0.5; // + shift_x;
+            //     cy = (box[3] + box[1]) * 0.5; // + shift_y;
 
-                box = [cx - w, cy + h, cx + w, cy - h];
-            }
+            //     w = (box[2] - box[0]) * 0.5 / this.zoomX;
+            //     h = (box[1] - box[3]) * 0.5 / this.zoomY;
+
+            //     box = [cx - w, cy + h, cx + w, cy - h];
+            // }
 
             if (!dontset) {
                 this.containerObj.style.width = (this.canvasWidth) + 'px';
@@ -4532,7 +4546,7 @@ define([
 
             for (el = 0; el < this.objectsList.length; el++) {
                 pEl = this.objectsList[el];
-                if (this.needsFullUpdate && pEl.elementClass == Const.OBJECT_CLASS_TEXT) {
+                if (this.needsFullUpdate && pEl.elementClass === Const.OBJECT_CLASS_TEXT) {
                     pEl.updateSize();
                 }
 
@@ -4835,6 +4849,7 @@ define([
             for (i = 0; i < parents.length; i++) {
                 if (Type.isString(parents[i]) &&
                     !(elementType === 'text' && i === 2) &&
+                    !(elementType === 'solidofrevolution3d' && i === 2) &&
                     !((elementType === 'input' || elementType === 'checkbox' || elementType === 'button') &&
                       (i === 2 || i === 3)) &&
                     !(elementType === 'curve' && i > 0) // Allow curve plots with jessiecode
@@ -4919,11 +4934,14 @@ define([
          */
         setBoundingBox: function (bbox, keepaspectratio, setZoom) {
             var h, w, ux, uy,
+                offX = 0,
+                offY = 0,
                 dim = Env.getDimensions(this.container, this.document);
 
             if (!Type.isArray(bbox)) {
                 return this;
             }
+
             if (bbox[0] < this.maxboundingbox[0] ||
                 bbox[1] > this.maxboundingbox[1] ||
                 bbox[2] > this.maxboundingbox[2] ||
@@ -4942,14 +4960,17 @@ define([
             this.canvasHeight = parseInt(dim.height, 10);
             w = this.canvasWidth;
             h = this.canvasHeight;
-
             if (keepaspectratio) {
                 this.unitX = w / (bbox[2] - bbox[0]);
                 this.unitY = h / (bbox[1] - bbox[3]);
                 if (Math.abs(this.unitX) < Math.abs(this.unitY)) {
                     this.unitY = Math.abs(this.unitX) * this.unitY / Math.abs(this.unitY);
+                    // Add the additional units in equal portions above and below
+                    offY = (h / this.unitY - (bbox[1] - bbox[3])) * 0.5;
                 } else {
                     this.unitX = Math.abs(this.unitY) * this.unitX / Math.abs(this.unitX);
+                    // Add the additional units in equal portions left and right
+                    offX = (w / this.unitX - (bbox[2] - bbox[0])) * 0.5;
                 }
                 this.keepaspectratio = true;
             } else {
@@ -4957,8 +4978,8 @@ define([
                 this.unitY = h / (bbox[1] - bbox[3]);
                 this.keepaspectratio = false;
             }
-            
-            this.moveOrigin(-this.unitX * bbox[0], this.unitY * bbox[1]);
+
+            this.moveOrigin(-this.unitX * (bbox[0] - offX), this.unitY * (bbox[1] + offY));
 
             if (setZoom === 'update') {
                 this.zoomX *= this.unitX / ux;
@@ -5849,6 +5870,8 @@ define([
          * <p>
          * The wrapping div has the CSS class 'jxgbox_wrap_private' which is
          * defined in the file 'jsxgraph.css'
+         * <p>
+         * This feature is not available on iPhones (as of December 2021).
          *
          * @param {String} id (Optional) id of the div element which is brought to fullscreen.
          * If not provided, this defaults to the JSXGraph div. However, it may be necessary for the aspect ratio trick
@@ -5912,28 +5935,38 @@ define([
          *
          *
          */
-        toFullscreen: function(id) {
+        toFullscreen: function (id) {
             var wrap_id, wrap_node, inner_node;
 
             id = id || this.container;
-
             this._fullscreen_inner_id = id;
-            // inner_node = this.containerObj;
             inner_node = document.getElementById(id);
-
             wrap_id = 'fullscreenwrap_' + id;
-            wrap_node = document.createElement('div');
 
-            // If necessary, wrap a div around the JSXGraph div.
-            if (!this.document.getElementById(wrap_id)) {
+            // Wrap a div around the JSXGraph div.
+            if (this.document.getElementById(wrap_id)) {
+                wrap_node = this.document.getElementById(wrap_id);
+            } else {
+                wrap_node = document.createElement('div');
                 wrap_node.classList.add('JXG_wrap_private');
                 wrap_node.setAttribute('id', wrap_id);
                 inner_node.parentNode.insertBefore(wrap_node, inner_node);
                 wrap_node.appendChild(inner_node);
             }
 
-            // Start fullscreen mode
-            Env.toFullscreen(wrap_id, id);
+            // Get the real width and height of the JSXGraph div
+            // and determine the scaling and vertical shift amount
+            this._fullscreen_res = Env._getScaleFactors(inner_node);
+
+            // Trigger fullscreen mode
+            wrap_node.requestFullscreen = wrap_node.requestFullscreen ||
+                wrap_node.webkitRequestFullscreen ||
+                wrap_node.mozRequestFullScreen ||
+                wrap_node.msRequestFullscreen;
+
+            if (wrap_node.requestFullscreen) {
+                wrap_node.requestFullscreen();
+            }
 
             return this;
         },
@@ -5945,7 +5978,7 @@ define([
          *
          * @param  {Object} evt fullscreen event object (unused)
          */
-        fullscreenListener: function(evt) {
+        fullscreenListener: function (evt) {
             var res, inner_id, inner_node;
 
             inner_id = this._fullscreen_inner_id;
@@ -5953,20 +5986,20 @@ define([
                 return;
             }
 
+            document.fullscreenElement = document.fullscreenElement ||
+                    document.webkitFullscreenElement ||
+                    document.mozFullscreenElement ||
+                    document.msFullscreenElement;
+
             inner_node = document.getElementById(inner_id);
             // If full screen mode is started we have to remove CSS margin around the JSXGraph div.
             // Otherwise, the positioning of the fullscreen div will be false.
             // When leaving the fullscreen mode, the margin is put back in.
             if (document.fullscreenElement) {
-                // Entered fullscreen mode
+                // Just entered fullscreen mode
 
-                inner_node.style.margin = '';
-
-                // Do the shifting and scaling via CSS pseudo rules
-                // We do this after fullscreen mode has been established to get the correct size
-                // of the JSXGraph div
-                res = Env._getScaleFactors(inner_node);
-                Env.scaleJSXGraphDiv(document.fullscreenElement.id, inner_id, res.scale, res.vshift);
+                // Get the data computed in board.toFullscreen()
+                res = this._fullscreen_res;
 
                 // Store the scaling data.
                 // It is used in AbstractRenderer.updateText to restore the scaling matrix
@@ -5977,11 +6010,25 @@ define([
                     id: document.fullscreenElement.id,
                     isFullscreen: true,
                     margin: inner_node.style.margin,
-                    scale:  res.scale,
+                    width: inner_node.style.width,
+                    scale: res.scale,
                     vshift: res.vshift
                 };
+
+                inner_node.style.margin = '';
+                inner_node.style.width = res.width + 'px';
+
+                // Do the shifting and scaling via CSS pseudo rules
+                // We do this after fullscreen mode has been established to get the correct size
+                // of the JSXGraph div.
+                Env.scaleJSXGraphDiv(document.fullscreenElement.id, inner_id, res.scale, res.vshift);
+
+                // Clear document.fullscreenElement, because Safari doesn't to it and
+                // when leaving full screen mode it is still set.
+                document.fullscreenElement = null;
+
             } else if (Type.exists(inner_node._cssFullscreenStore)) {
-                // Left fullscreen mode
+                // Just left the fullscreen mode
 
                 // Remove the CSS rules added in Env.scaleJSXGraphDiv
                 try {
@@ -5989,8 +6036,11 @@ define([
                 } catch (err) {
                     console.log('JSXGraph: Could not remove CSS rules for full screen mode');
                 }
+
                 inner_node._cssFullscreenStore.isFullscreen = false;
                 inner_node.style.margin = inner_node._cssFullscreenStore.margin;
+                inner_node.style.width = inner_node._cssFullscreenStore.width;
+
             }
 
             this.updateCSSTransforms();

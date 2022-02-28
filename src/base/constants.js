@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -42,8 +42,8 @@ define(['jxg'], function (JXG) {
 
     var major = 1,
         minor = 4,
-        patch = 0,
-        add = '', //'dev'
+        patch = 3,
+        add = 'dev', //'dev'
         version = major + '.' + minor + '.' + patch + (add ? '-' + add : ''),
         constants;
 
@@ -111,6 +111,7 @@ define(['jxg'], function (JXG) {
         OBJECT_TYPE_BUTTON: 29,
         OBJECT_TYPE_TRANSFORMATION: 30,
         OBJECT_TYPE_FOREIGNOBJECT: 31,
+        OBJECT_TYPE_VIEW3D: 32,
 
         // IMPORTANT:
         // ----------
@@ -132,16 +133,16 @@ define(['jxg'], function (JXG) {
         GENTYPE_AXIS: 2,
         GENTYPE_MID: 3,
 
-        /** 
+        /**
          * @ignore
-         * @deprecated, now use {@link JXG.GENTYPE_REFLECTION_ON_LINE} 
-         * 
-         */  
+         * @deprecated, now use {@link JXG.GENTYPE_REFLECTION_ON_LINE}
+         *
+         */
         GENTYPE_REFLECTION: 4,
-        /** 
-         * @ignore 
-         * @deprecated, now use {@link JXG.GENTYPE_REFLECTION_ON_POINT} 
-         */ 
+        /**
+         * @ignore
+         * @deprecated, now use {@link JXG.GENTYPE_REFLECTION_ON_POINT}
+         */
         GENTYPE_MIRRORELEMENT: 5,
 
         GENTYPE_REFLECTION_ON_LINE: 4,
@@ -156,9 +157,9 @@ define(['jxg'], function (JXG) {
         GENTYPE_GLIDER: 13,
         GENTYPE_INTERSECTION: 14,
         GENTYPE_CIRCLE: 15,
-        /** 
-         * @ignore @deprecated NOT USED ANY MORE SINCE SKETCHOMETRY 2.0 (only for old constructions needed) 
-         */ 
+        /**
+         * @ignore @deprecated NOT USED ANY MORE SINCE SKETCHOMETRY 2.0 (only for old constructions needed)
+         */
         GENTYPE_CIRCLE2POINTS: 16,
 
         GENTYPE_LINE: 17,
@@ -197,7 +198,7 @@ define(['jxg'], function (JXG) {
         * @name Constants
         * @namespace
         */
-   
+
         //        GENTYPE_TRANSFORM: 48, // unused
         // 49 ... 50 // unused ...
 

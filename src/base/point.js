@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -87,6 +87,7 @@ define([
         this.board.renderer.drawPoint(this);
         this.board.finalizeAdding(this);
 
+        this.createGradient();
         this.createLabel();
 
     };
@@ -156,7 +157,7 @@ define([
          * @returns {JXG.CoordsElement} Reference to this object.
          */
         updateTransform: function (fromParent) {
-            var c, i, invMat;
+            var c, i;
 
             if (this.transformations.length === 0 || this.baseElement === null) {
                 return this;
@@ -167,17 +168,6 @@ define([
                 c = this.transformations[0].apply(this.baseElement, 'self');
                 this.coords.setCoordinates(Const.COORDS_BY_USER, c);
             } else {
-                // Case of board.create('point',[baseElement, transform]);
-                // if (!fromParent) {
-                //     // The element has been dragged or it is the initial update,
-                //     // now we transform the baseElement
-                //     if (this.draggable() && this.baseElement.draggable()) {
-                //         this.transformations[0].update();
-                //         invMat = Mat.inverse(this.transformations[0].matrix);
-                //         c = Mat.matVecMult(invMat, this.coords.usrCoords);
-                //         this.baseElement.coords.setCoordinates(Const.COORDS_BY_USER, c);
-                //     }
-                // }
                 c = this.transformations[0].apply(this.baseElement);
             }
             this.coords.setCoordinates(Const.COORDS_BY_USER, c);
@@ -352,12 +342,12 @@ define([
          *     var pol = board.create('polygon', [[2,2], [4,2], [4,3]], {strokeColor: 'blue'});
          *
          *     var point = board.create('point', [-1, 1], {
-         *     			  attractors: [line, seg, circ, po, curve, pol],
+         *                   attractors: [line, seg, circ, po, curve, pol],
          *                   attractorDistance: 0.2
          *                 });
          *
          *     var txt = board.create('text', [-4, 3, function() {
-         *     		return 'point on line: ' + point.isOn(line) + '<br>' +
+         *             return 'point on line: ' + point.isOn(line) + '<br>' +
          *                     'point on seg: ' + point.isOn(seg) + '<br>' +
          *                     'point on circ = ' + point.isOn(circ) + '<br>' +
          *                     'point on point = ' + point.isOn(po) + '<br>' +
@@ -380,14 +370,14 @@ define([
             } else if (el.elementClass === Const.OBJECT_CLASS_LINE) {
                 if (el.elType === 'segment' && !Type.evaluate(this.visProp.alwaysintersect)) {
                     arr = JXG.Math.Geometry.projectCoordsToSegment(
-            			        this.coords.usrCoords,
+                                this.coords.usrCoords,
                                 el.point1.coords.usrCoords,
                                 el.point2.coords.usrCoords);
                     if (arr[1] >= 0 && arr[1] <= 1 &&
                         Geometry.distPointLine(this.coords.usrCoords, el.stdform) < tol) {
-       				    return true;
+                           return true;
                     } else {
-            		    return false;
+                        return false;
                     }
                 } else {
                     return Geometry.distPointLine(this.coords.usrCoords, el.stdform) < tol;

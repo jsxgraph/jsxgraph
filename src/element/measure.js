@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -85,7 +85,7 @@ define([
      */
     JXG.createTapemeasure = function (board, parents, attributes) {
         var pos0, pos1,
-            attr, withTicks, withText, precision,
+            attr, withTicks, withText, digits,
             li, p1, p2, n, ti;
 
         pos0 = parents[0];
@@ -106,7 +106,12 @@ define([
         attr = Type.copyAttributes(attributes, board.options, 'tapemeasure');
         withTicks = attr.withticks;
         withText = attr.withlabel;
-        precision = attr.precision;
+        digits = attr.digits;
+
+        if (digits === 2 && attr.precision !== 2) {
+            // Backward compatibility
+            digits = attr.precision;
+        }
 
         // Below, we will replace the label by the measurement function.
         if (withText) {
@@ -122,7 +127,7 @@ define([
                 n = '';
             }
             li.label.setText(function () {
-                return n + Type.toFixed(p1.Dist(p2), precision);
+                return n + Type.toFixed(p1.Dist(p2), digits);
             });
         }
 

@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -304,6 +304,8 @@ define([
         initBoard: function (box, attributes) {
             var originX, originY, unitX, unitY,
                 renderer,
+                offX = 0,
+                offY = 0,
                 w, h, dimensions,
                 bbox, attr, axattr, axattr_x, axattr_y,
                 board;
@@ -339,15 +341,19 @@ define([
 
                     if (Math.abs(unitX) < Math.abs(unitY)) {
                         unitY = Math.abs(unitX) * unitY / Math.abs(unitY);
+                        // Add the additional units in equal portions above and below
+                        offY = (h / unitY - (bbox[1] - bbox[3])) * 0.5;
                     } else {
                         unitX = Math.abs(unitY) * unitX / Math.abs(unitX);
+                        // Add the additional units in equal portions left and right
+                        offX = (w / unitX - (bbox[2] - bbox[0])) * 0.5;
                     }
                 } else {
                     unitX = w / (bbox[2] - bbox[0]);
                     unitY = h / (bbox[1] - bbox[3]);
                 }
-                originX = -unitX * bbox[0];
-                originY = unitY * bbox[1];
+                originX = -unitX * (bbox[0] - offX);
+                originY = unitY * (bbox[1] + offY);
             }
 
             renderer = this.initRenderer(box, dimensions, attr.document, attr.renderer);

@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2021
+    Copyright 2008-2022
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -224,7 +224,7 @@ define([
 
         /**
          * Inherits contains the subelements, which may have an attribute
-         * (in partuclar the attribute "visible") having value 'inherit'.
+         * (in particular the attribute "visible") having value 'inherit'.
          * @type Object
          */
         this.inherits = [];
@@ -1927,10 +1927,9 @@ define([
          */
         removeAllTicks: function () {
             var t;
-
             if (Type.exists(this.ticks)) {
-                for (t = this.ticks.length; t > 0; t--) {
-                    this.removeTicks(this.ticks[t - 1]);
+                for (t = this.ticks.length - 1; t >= 0; t--) {
+                    this.removeTicks(this.ticks[t]);
                 }
                 this.ticks = [];
                 this.board.update();
@@ -1949,19 +1948,19 @@ define([
             }
 
             if (Type.exists(this.ticks)) {
-                for (t = this.ticks.length; t > 0; t--) {
-                    if (this.ticks[t - 1] === tick) {
-                        this.board.removeObject(this.ticks[t - 1]);
+                for (t = this.ticks.length - 1; t >= 0; t--) {
+                    if (this.ticks[t] === tick) {
+                        this.board.removeObject(this.ticks[t]);
 
-                        if (this.ticks[t - 1].ticks) {
-                            for (j = 0; j < this.ticks[t - 1].ticks.length; j++) {
-                                if (Type.exists(this.ticks[t - 1].labels[j])) {
-                                    this.board.removeObject(this.ticks[t - 1].labels[j]);
+                        if (this.ticks[t].ticks) {
+                            for (j = 0; j < this.ticks[t].ticks.length; j++) {
+                                if (Type.exists(this.ticks[t].labels[j])) {
+                                    this.board.removeObject(this.ticks[t].labels[j]);
                                 }
                             }
                         }
 
-                        delete this.ticks[t - 1];
+                        delete this.ticks[t];
                         break;
                     }
                 }
@@ -2034,7 +2033,7 @@ define([
                     rcoords = new JXG.Coords(Const.COORDS_BY_USER, [rx, ry], this.board);
                     if (!attractToGrid ||
                         rcoords.distance(
-                            ev_au == 'screen' ? Const.COORDS_BY_SCREEN : Const.COORDS_BY_USER, this.coords
+                            ev_au === 'screen' ? Const.COORDS_BY_SCREEN : Const.COORDS_BY_USER, this.coords
                             ) < ev_ad) {
                         x = rx;
                         y = ry;
