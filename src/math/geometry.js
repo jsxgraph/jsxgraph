@@ -2707,7 +2707,86 @@ define([
                 };
 
             return [makeFct('X', 'cos'), makeFct('Y', 'sin'), 0, pi2];
-        }
+        },
+
+
+        meet3Planes: function (n1, d1, n2, d2, n3, d3) {
+            var p = [0, 0, 0],
+                n31, n12, n23, denom,
+                i;
+
+            n31 = Mat.crossProduct(n3, n1);
+            n12 = Mat.crossProduct(n1, n2);
+            n23 = Mat.crossProduct(n2, n3);
+            denom = Mat.innerProduct(n1, n23, 3);
+            for (i = 0; i < 3; i++) {
+                p[i] = (d1 * n23[i] + d2 * n31[i] + d3 * n12[i]) / denom;
+            }
+            return p;
+        },
+
+
+        meetPlanePlane: function (v11, v12, v21, v22) {
+            var i, no1, no2,
+                v = [0, 0, 0],
+                w = [0, 0, 0];
+
+            for (i = 0; i < 3; i++) {
+                v[i] = Type.evaluate(v11[i]);
+                w[i] = Type.evaluate(v12[i]);
+            }
+            no1 = Mat.crossProduct(v, w);
+
+            for (i = 0; i < 3; i++) {
+                v[i] = Type.evaluate(v21[i]);
+                w[i] = Type.evaluate(v22[i]);
+            }
+            no2 = Mat.crossProduct(v, w);
+
+            return Mat.crossProduct(no1, no2);
+        },
+
+        project3DTo3DPlane: function (point, normal, foot) {
+            // TODO: homogeneous 3D coordinates
+            var sol = [0, 0, 0],
+                le, d1, d2, lbda;
+
+            foot = foot || [0, 0, 0];
+
+            le = Mat.norm(normal);
+            d1 = Mat.innerProduct(point, normal, 3);
+            d2 = Mat.innerProduct(foot, normal, 3);
+            // (point - lbda * normal / le) * normal / le == foot * normal / le
+            // => (point * normal - foot * normal) ==  lbda * le
+            lbda = (d1 - d2) / le;
+            sol = Mat.axpy(-lbda, normal, point);
+
+            return sol;
+        },
+
+        getPlaneBounds: function (v1, v2, q, s, e) {
+            var s1, s2, e1, e2, mat, rhs, sol;
+
+            if (v1[2] + v2[0] !== 0) {
+                mat = [
+                    [v1[0], v2[0]],
+                    [v1[1], v2[1]]
+                ];
+                rhs = [s - q[0], s - q[1]];
+
+                sol = Numerics.Gauss(mat, rhs);
+                s1 = sol[0];
+                s2 = sol[1];
+
+                rhs = [e - q[0], e - q[1]];
+                sol = Numerics.Gauss(mat, rhs);
+                e1 = sol[0];
+                e2 = sol[1];
+                return [s1, e1, s2, e2];
+            }
+            return null;
+        },
+
     });
 
     return Mat.Geometry;

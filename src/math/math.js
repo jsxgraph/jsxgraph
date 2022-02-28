@@ -466,6 +466,15 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
             return Math.sqrt(sum);
         },
 
+        axpy: function (a, x, y) {
+            var i, le = x.length,
+                p = [];
+            for (i = 0; i < le; i++) {
+                p[i] = a * x[i] + y[i];
+            }
+            return p;
+        },
+
         /**
          * Compute the factorial of a positive integer. If a non-integer value
          * is given, the fraction will be ignored.

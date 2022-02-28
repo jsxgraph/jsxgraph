@@ -55,10 +55,9 @@ var JXG = {},
     ////                                                                  ////
     ////             Attention! Slows down the loading time!              ////
     //////////////////////////////////////////////////////////////////////////
-    var preventCachingFiles = true;
-
-    // check and table are initialized at the end of the life
-    var table,
+    var preventCachingFiles = true,
+        // check and table are initialized at the end of the life
+        table,
         waitlist = [],
         checkwaitlist = true,
         checkJXG = function () {
@@ -146,6 +145,9 @@ var JXG = {},
     ////////////////////////////////////////////////////////////////////////////////
 
     JXG.Load = (function () {
+        var requirePathLocation = 'href',
+        allowDocumentWrite = true;
+
         function createHTMLElement(tagName, attr) {
             var el = document.createElement(tagName), i,
                 a_name, a_value, a_object;
@@ -162,13 +164,9 @@ var JXG = {},
             return el;
         }
 
-        var allowDocumentWrite = true;
-
         window.onload = function () {
             allowDocumentWrite = false;
         };
-
-        var requirePathLocation = 'href';
 
         return {
             requirePath: window.location.href,
@@ -298,7 +296,7 @@ var JXG = {},
                     xhr.open('POST', url, true);
                     xhr.send();
                 }(file));
-            },
+            }
         };
     })();
 
@@ -307,7 +305,7 @@ var JXG = {},
     ////////////////////////////////////////////////////////////////////////////////
 
     // Has to be a String for Makefile!
-    JXG.Load.baseFiles = 'jxg,base/constants,utils/type,utils/xml,utils/env,utils/event,utils/expect,utils/color,math/probfuncs,math/math,math/ia,math/extrapolate,math/numerics,math/nlp,math/plot,math/metapost,math/statistics,math/symbolic,math/geometry,math/clip,math/poly,math/complex,renderer/abstract,renderer/no,reader/file,parser/geonext,base/board,options,jsxgraph,base/element,base/coordselement,base/coords,base/point,base/line,base/group,base/circle,element/conic,base/polygon,base/curve,element/arc,element/sector,base/composition,element/composition,base/text,base/image,element/slider,element/measure,base/chart,base/transformation,base/turtle,base/ticks,utils/zip,utils/base64,utils/uuid,utils/encoding,server/server,element/locus,parser/datasource,parser/ca,parser/jessiecode,utils/dump,renderer/svg,renderer/vml,renderer/canvas,renderer/no,element/comb,element/slopetriangle,math/qdt,element/checkbox,element/input,element/button,base/foreignobject';
+    JXG.Load.baseFiles = 'jxg,base/constants,utils/type,utils/xml,utils/env,utils/event,utils/expect,utils/color,math/probfuncs,math/math,math/ia,math/extrapolate,math/numerics,math/nlp,math/plot,math/metapost,math/statistics,math/symbolic,math/geometry,math/clip,math/poly,math/complex,renderer/abstract,renderer/no,reader/file,parser/geonext,base/board,options,jsxgraph,base/element,base/coordselement,base/coords,base/point,base/line,base/group,base/circle,element/conic,base/polygon,base/curve,element/arc,element/sector,base/composition,element/composition,base/text,base/image,element/slider,element/measure,base/chart,base/transformation,base/turtle,base/ticks,utils/zip,utils/base64,utils/uuid,utils/encoding,server/server,element/locus,parser/datasource,parser/ca,parser/jessiecode,utils/dump,renderer/svg,renderer/vml,renderer/canvas,renderer/no,element/comb,element/slopetriangle,math/qdt,element/checkbox,element/input,element/button,base/foreignobject,options3d,3d/view3d';
     JXG.Load.setRequirePathToScriptFile('loadjsxgraph.js');
     JXG.Load.JSfiles(JXG.Load.baseFiles.split(','), preventCachingFiles);
     JXG.Load.baseFiles = null;
