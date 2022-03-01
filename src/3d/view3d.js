@@ -2,12 +2,10 @@
 
 "use strict";
 
-define(['jxg', 'options', 'base/constants', 'utils/type', 'math/math', 'base/element', 
-], function (JXG, Options, Const, Type, Mat, GeometryElement) {
+define(['jxg', 'options', 'base/constants', 'utils/type', 'math/math', 'base/element', '3d/threed',
+], function (JXG, Options, Const, Type, Mat, GeometryElement, ThreeD) {
 
-    JXG.ThreeD = {};
-
-    JXG.ThreeD.View3D = function (board, parents, attributes) {
+    ThreeD.View3D = function (board, parents, attributes) {
         var bcube, coords, size;
         this.constructor(board, attributes, Const.OBJECT_TYPE_VIEW3D, Const.OBJECT_CLASS_CURVE);
 
@@ -68,9 +66,9 @@ define(['jxg', 'options', 'base/constants', 'utils/type', 'math/math', 'base/ele
         this.methodMap = Type.deepCopy(this.methodMap, {
         });
     };
-    JXG.ThreeD.View3D.prototype = new GeometryElement();
+    ThreeD.View3D.prototype = new GeometryElement();
 
-    JXG.extend(JXG.ThreeD.View3D.prototype, /** @lends JXG.ThreeD.View3D.prototype */ {
+    JXG.extend(ThreeD.View3D.prototype, /** @lends ThreeD.View3D.prototype */ {
         create: function (elementType, parents, attributes) {
             var prefix = [],
                 is3D = false,
@@ -344,14 +342,14 @@ define(['jxg', 'options', 'base/constants', 'utils/type', 'math/math', 'base/ele
      * @param {*} attributes
      * @returns
      */
-    JXG.ThreeD.createView3D = function (board, parents, attributes) {
+    ThreeD.createView3D = function (board, parents, attributes) {
         var view, frame, attr,
             x, y, w, h,
             coords = parents[0], // llft corner
             size = parents[1];   // [w, h]
 
         attr = Type.copyAttributes(attributes, board.options, 'view3d');
-        view = new JXG.ThreeD.View3D(board, parents, attr);
+        view = new ThreeD.View3D(board, parents, attr);
 
         x = coords[0];
         y = coords[1];
@@ -426,11 +424,8 @@ define(['jxg', 'options', 'base/constants', 'utils/type', 'math/math', 'base/ele
 
         return view;
     };
-    JXG.registerElement('view3d', JXG.ThreeD.createView3D);
+    JXG.registerElement('view3d', ThreeD.createView3D);
 
-    return {
-        ThreeD: JXG.ThreeD,
-        View3D: JXG.ThreeD.View3D
-    };
+    return ThreeD.View3D;
 });
 
