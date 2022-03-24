@@ -4028,6 +4028,13 @@ declare namespace JXG {
     create(elementType: 'image', parents: unknown[], attributes?: ImageAttributes): Image;
     /**
      *
+     * @param elementType 'inequality'
+     * @param parents
+     * @param attributes
+     */
+    create(elementType: 'inequality', parents: unknown[], attributes?: InequalityAttributes): Inequality;
+    /**
+     *
      * @param elementType 'input'
      * @param parents
      * @param attributes
