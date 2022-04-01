@@ -123,12 +123,14 @@ define([
 
         /* Add line as child to defining points */
         if (this.point1._is_new) {
+            console.log("point1", this.point1);
             this.addChild(this.point1);
             delete this.point1._is_new;
         } else {
             this.point1.addChild(this);
         }
         if (this.point2._is_new) {
+            console.log("point2", this.point2);
             this.addChild(this.point2);
             delete this.point2._is_new;
         } else {

@@ -1267,6 +1267,7 @@ define([
                     attr.id = this.id + ld.i + 'Label' + this.labelCounter;
 
                     label = Text.createText(this.board, [ld.x, ld.y, ld.t], attr);
+                    this.addChild(label);
                     label.isDraggable = false;
                     label.dump = false;
                     this.labels.push(label);
