@@ -559,8 +559,35 @@ define([
 
         /**
          * Add more points to the polygon. The new points will be inserted at the end.
-         * @param {JXG.Point} p Arbitrary number of points
+         * The attributes of new border segments are set to the same values
+         * as those used when the polygon was created.
+         * If new vertices are supplied by coordinates, the default attributes of polygon
+         * vertices are taken as their attributes. Therefore, the visual attributes of
+         * new vertices and borders may have to be adapted afterwards.
+         * @param {JXG.Point} p Arbitrary number of points or coordinate arrays
          * @returns {JXG.Polygon} Reference to the polygon
+         * @example
+         * const board = JXG.JSXGraph.initBoard('jxgbox', {axis:true});
+         * var pg = board.create('polygon', [[1,2], [3,4], [-3,1]], {hasInnerPoints: true});
+         * var newPoint = board.create('point', [-1, -1]);
+         * var newPoint2 = board.create('point', [-1, -2]);
+         * pg.addPoints(newPoint, newPoint2, [1, -2]);
+         *
+         * </pre><div id="JXG70eb0fd2-d20f-4ba9-9ab6-0eac92aabfa5" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG70eb0fd2-d20f-4ba9-9ab6-0eac92aabfa5',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *     const board = JXG.JSXGraph.initBoard('jxgbox', {axis:true});
+         *     var pg = board.create('polygon', [[1,2], [3,4], [-3,1]], {hasInnerPoints: true});
+         *     var newPoint = board.create('point', [-1, -1]);
+         *     var newPoint2 = board.create('point', [-1, -2]);
+         *     pg.addPoints(newPoint, newPoint2, [1, -2]);
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
          */
         addPoints: function (p) {
             var args = Array.prototype.slice.call(arguments);
@@ -569,44 +596,72 @@ define([
         },
 
         /**
-         * Adds more points to the vertex list of the polygon, starting with index <tt><i</tt>
-         * @param {Number} idx The position where the new vertices are inserted, starting with 0.
-         * @param {JXG.Point} p Arbitrary number of points to insert.
+         * Insert points to the vertex list of the polygon after index <tt><idx</tt>.
+         * The attributes of new border segments are set to the same values
+         * as those used when the polygon was created.
+         * If new vertices are supplied by coordinates, the default attributes of polygon
+         * vertices are taken as their attributes. Therefore, the visual attributes of
+         * new vertices and borders may have to be adapted afterwards.
+         *
+         * @param {Number} idx The position after which the new vertices are inserted.
+         * Setting idx to -1 inserts the new points at the front, i.e. at position 0.
+         * @param {JXG.Point} p Arbitrary number of points or coordinate arrays to insert.
          * @returns {JXG.Polygon} Reference to the polygon object
+         *
+         * @example
+         * const board = JXG.JSXGraph.initBoard('jxgbox', {axis:true});
+         * var pg = board.create('polygon', [[1,2], [3,4], [-3,1]], {hasInnerPoints: true});
+         * var newPoint = board.create('point', [-1, -1]);
+         * pg.insertPoints(0, newPoint, newPoint, [1, -2]);
+         *
+         * </pre><div id="JXG17b84b2a-a851-4e3f-824f-7f6a60f166ca" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG17b84b2a-a851-4e3f-824f-7f6a60f166ca',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *     const board = JXG.JSXGraph.initBoard('jxgbox', {axis:true});
+         *     var pg = board.create('polygon', [[1,2], [3,4], [-3,1]], {hasInnerPoints: true});
+         *     var newPoint = board.create('point', [-1, -1]);
+         *     pg.insertPoints(0, newPoint, newPoint, [1, -2]);
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
          */
         insertPoints: function (idx, p) {
-            var i, npoints = [], tmp;
+            var i, le;
 
             if (arguments.length === 0) {
                 return this;
             }
 
 
-            if (idx < 0 || idx > this.vertices.length - 2) {
+            if (idx < -1 || idx > this.vertices.length - 2) {
                 return this;
             }
 
-            for (i = 1; i < arguments.length; i++) {
-                if (Type.isPoint(arguments[i])) {
-                    npoints.push(arguments[i]);
-                }
+            le = arguments.length - 1;
+            for (i = 1; i < le + 1; i++) {
+                this.vertices.splice(idx + i, 0,
+                    Type.providePoints(this.board, [arguments[i]], {}, 'polygon', ['vertices'])[0]
+                );
             }
-
-            tmp = this.vertices.slice(0, idx + 1).concat(npoints);
-            this.vertices = tmp.concat(this.vertices.slice(idx + 1));
-
+            if (idx === -1) {
+                this.vertices[this.vertices.length - 1] = this.vertices[0];
+            }
             if (this.withLines) {
-                tmp = this.borders.slice(0, idx);
-                this.board.removeObject(this.borders[idx]);
-
-                for (i = 0; i < npoints.length; i++) {
-                    tmp.push(this.board.create('segment', [this.vertices[idx + i], this.vertices[idx + i + 1]], this.attr_line));
+                if (idx < 0) {
+                    this.borders[this.borders.length - 1].point2 = this.vertices[this.vertices.length - 1];
+                } else {
+                    this.borders[idx].point2 = this.vertices[idx + 1];
                 }
-
-                tmp.push(this.board.create('segment', [this.vertices[idx + npoints.length], this.vertices[idx + npoints.length + 1]], this.attr_line));
-                this.borders = tmp.concat(this.borders.slice(idx + 1));
+                for (i = idx + 1; i < idx + 1 + le; i++) {
+                    this.borders.splice(i, 0,
+                        this.board.create('segment', [this.vertices[i], this.vertices[i + 1]], this.attr_line)
+                    );
+                }
             }
-
             this.board.update();
 
             return this;
@@ -621,7 +676,7 @@ define([
             var i, j, idx, nvertices = [], nborders = [],
                 nidx = [], partition = [];
 
-            // partition:
+            // Partition:
             // in order to keep the borders which could be recycled, we have to partition
             // the set of removed points. I.e. if the points 1, 2, 5, 6, 7, 10 are removed,
             // the partitions are
@@ -629,10 +684,10 @@ define([
             // this gives us the borders, that can be removed and the borders we have to create.
 
 
-            // remove the last vertex which is identical to the first
+            // Remove the last vertex which is identical to the first
             this.vertices = this.vertices.slice(0, this.vertices.length - 1);
 
-            // collect all valid parameters as indices in nidx
+            // Collect all valid parameters as indices in nidx
             for (i = 0; i < arguments.length; i++) {
                 idx = arguments[i];
                 if (Type.isPoint(idx)) {
@@ -644,22 +699,22 @@ define([
                 }
             }
 
-            // remove the polygon from each removed point's children
+            // Remove the polygon from each removed point's children
             for (i = 0; i < nidx.length; i++) {
                 this.vertices[nidx[i]].removeChild(this);
             }
 
-            // sort the elements to be eliminated
+            // Sort the elements to be eliminated
             nidx = nidx.sort();
             nvertices = this.vertices.slice();
             nborders = this.borders.slice();
 
-            // initialize the partition
+            // Initialize the partition
             if (this.withLines) {
                 partition.push([nidx[nidx.length - 1]]);
             }
 
-            // run through all existing vertices and copy all remaining ones to nvertices
+            // Run through all existing vertices and copy all remaining ones to nvertices,
             // compute the partition
             for (i = nidx.length - 1; i > -1; i--) {
                 nvertices[nidx[i]] = -1;
@@ -670,12 +725,12 @@ define([
                 }
             }
 
-            // finalize the partition computation
+            // Finalize the partition computation
             if (this.withLines) {
                 partition[partition.length - 1][1] = nidx[0];
             }
 
-            // update vertices
+            // Update vertices
             this.vertices = [];
             for (i = 0; i < nvertices.length; i++) {
                 if (Type.isPoint(nvertices[i])) {
@@ -686,7 +741,7 @@ define([
                 this.vertices.push(this.vertices[0]);
             }
 
-            // delete obsolete and create missing borders
+            // Delete obsolete and create missing borders
             if (this.withLines) {
                 for (i = 0; i < partition.length; i++) {
                     for (j = partition[i][1] - 1; j < partition[i][0] + 1; j++) {
