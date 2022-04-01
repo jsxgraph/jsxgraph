@@ -463,6 +463,10 @@ define([
         p2.dump = false;
         l1.dump = false;
         l2.dump = false;
+        if (withText) {
+            t.dump = false;
+        }
+
 
         p3.elType = 'slider';
         p3.parents = parents;
@@ -479,6 +483,14 @@ define([
             p3.subs.ticks = ti;
             p3.inherits.push(ti);
         }
+
+        p3.getParents = function() {
+            return [
+                this.point1.coords.usrCoords.slice(1),
+                this.point2.coords.usrCoords.slice(1),
+                [this._smin, this.position * (this._smax - this._smin) + this._smin, this._smax]
+            ];
+        };
 
         p3.baseline.on('up', function(evt) {
             var pos, c;
