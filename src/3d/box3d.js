@@ -2,7 +2,7 @@
 
 /**
  * Create axes and rear and front walls of the
- * view3d bounding box cube3d.
+ * view3d bounding box bbox3d.
  */
 define(['jxg', 'utils/type', 'math/math', 'math/geometry', '3d/view3d'
 ], function (JXG, Type, Mat, Geometry, ThreeD) {

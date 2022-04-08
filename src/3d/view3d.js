@@ -35,7 +35,7 @@ define(['jxg', 'options', 'base/constants', 'utils/type', 'math/math', 'base/ele
          * @type {Object} contains the axes of the view or null
          * @default null
          */
-        this.D3.axes = null;
+        this.D3.defaultAxes = null;
 
         /**
          * 3D-to-2D transformation matrix

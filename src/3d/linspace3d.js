@@ -164,7 +164,7 @@ define(['jxg', 'utils/type', 'math/math', 'math/geometry', '3d/view3d'
         el.updateDataArray = function () {
             var s1, e1, s2, e2,
                 c2d, l1, l2,
-                planes = ['xy', 'xz', 'yz'],
+                planes = ['xPlaneRear', 'yPlaneRear', 'zPlaneRear'],
                 points = [],
                 v1 = [0, 0, 0],
                 v2 = [0, 0, 0],
@@ -177,14 +177,14 @@ define(['jxg', 'utils/type', 'math/math', 'math/geometry', '3d/view3d'
             this.D3.updateNormal();
 
             // Infinite plane
-            if (this.D3.elType !== 'axisplane3d' && view.axes &&
+            if (this.D3.elType !== 'axisplane3d' && view.defaultAxes &&
                 (!D3.range1 || !D3.range2)
                 ) {
 
-                // Determine the intersections with the view cube
-                // For each face of the cube we determine two points 
+                // Determine the intersections with the view bbox3d
+                // For each face of the bbox3d we determine two points 
                 for (j = 0; j < planes.length; j++) {
-                    p = view.intersectionPlanePlane(this, view.axes[planes[j]]);
+                    p = view.intersectionPlanePlane(this, view.defaultAxes[planes[j]]);
                     if (p[0].length === 3 && p[1].length === 3) {
                         // This test is necessary to filter out intersection lines which are
                         // identical to intersections of axis planes (they would occur twice).
@@ -199,14 +199,14 @@ define(['jxg', 'utils/type', 'math/math', 'math/geometry', '3d/view3d'
                         }
                     }
 
-                    // Point on the "other" plane of the cube
+                    // Point on the "other" plane of the bbox3d
                     switch (planes[j]) {
-                        case 'xy': p = [0, 0, view.D3.bbox3d[2][1]]; break;
-                        case 'xz': p = [0, view.D3.bbox3d[1][1], 0]; break;
-                        case 'yz': p = [view.D3.bbox3d[0][1], 0, 0]; break;
+                        case 'xPlane': p = [view.D3.bbox3d[0][1], 0, 0]; break;
+                        case 'yPlane': p = [0, view.D3.bbox3d[1][1], 0]; break;
+                        case 'zPlane': p = [0, 0, view.D3.bbox3d[2][1]]; break;
                     }
-                    d = Mat.innerProduct(p, view.axes[planes[j]].D3.normal, 3);
-                    p = view.intersectionPlanePlane(this, view.axes[planes[j]], d);
+                    d = Mat.innerProduct(p, view.defaultAxes[planes[j]].D3.normal, 3);
+                    p = view.intersectionPlanePlane(this, view.defaultAxes[planes[j]], d);
                     if (p[0].length === 3 && p[1].length === 3) {
                         for (i = 0; i < points.length; i++) {
                             if ((Geometry.distance(p[0], points[i][0], 3) < Mat.eps && Geometry.distance(p[1], points[i][1], 3) < Mat.eps) ||
