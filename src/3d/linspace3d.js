@@ -181,10 +181,14 @@ define(['jxg', 'utils/type', 'math/math', 'math/geometry', '3d/view3d'
                 (!D3.range1 || !D3.range2)
                 ) {
 
+                // Start with the rear plane.
                 // Determine the intersections with the view bbox3d
-                // For each face of the bbox3d we determine two points 
+                // For each face of the bbox3d we determine two points
+                // which are the ends of the intersection line.
+                // We start with the three rear planes.
                 for (j = 0; j < planes.length; j++) {
                     p = view.intersectionPlanePlane(this, view.defaultAxes[planes[j]]);
+
                     if (p[0].length === 3 && p[1].length === 3) {
                         // This test is necessary to filter out intersection lines which are
                         // identical to intersections of axis planes (they would occur twice).
@@ -199,15 +203,16 @@ define(['jxg', 'utils/type', 'math/math', 'math/geometry', '3d/view3d'
                         }
                     }
 
-                    // Point on the "other" plane of the bbox3d
-                    switch (planes[j]) {
-                        case 'xPlane': p = [view.D3.bbox3d[0][1], 0, 0]; break;
-                        case 'yPlane': p = [0, view.D3.bbox3d[1][1], 0]; break;
-                        case 'zPlane': p = [0, 0, view.D3.bbox3d[2][1]]; break;
-                    }
+                    // Point on the front plane of the bbox3d
+                    p = [0, 0, 0];
+                    p[j] = view.D3.bbox3d[j][1];
+
+                    // d is the rhs of the Hesse normal form of the front plane.
                     d = Mat.innerProduct(p, view.defaultAxes[planes[j]].D3.normal, 3);
                     p = view.intersectionPlanePlane(this, view.defaultAxes[planes[j]], d);
+
                     if (p[0].length === 3 && p[1].length === 3) {
+                        // Do the same test as above
                         for (i = 0; i < points.length; i++) {
                             if ((Geometry.distance(p[0], points[i][0], 3) < Mat.eps && Geometry.distance(p[1], points[i][1], 3) < Mat.eps) ||
                                 (Geometry.distance(p[0], points[i][1], 3) < Mat.eps && Geometry.distance(p[1], points[i][0], 3) < Mat.eps)) {
@@ -220,6 +225,9 @@ define(['jxg', 'utils/type', 'math/math', 'math/geometry', '3d/view3d'
                     }
                 }
 
+                // Concatenate the intersection points to a polygon.
+                // If all wents well, each intersection should appear
+                // twice in the list.
                 first = 0;
                 pos = first;
                 i = 0;

@@ -243,7 +243,7 @@ define(['jxg', 'options', 'base/constants', 'utils/type', 'math/math', 'base/ele
          * @param {*} plane1
          * @param {*} plane2
          * @param {*} d
-         * @returns Array of length 2 conatining the coordinates of the defining points of
+         * @returns Array of length 2 containing the coordinates of the defining points of
          * of the intersection segment.
          */
         intersectionPlanePlane: function(plane1, plane2, d) {
