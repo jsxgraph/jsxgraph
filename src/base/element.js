@@ -1052,26 +1052,35 @@ define([
         },
 
         /**
-         * Resolves property shortcuts like <tt>color</tt> and expands them, e.g. <tt>strokeColor</tt> and <tt>fillColor</tt>.
-         * Writes the expanded properties back to the given <tt>properties</tt>.
-         * @param {Object} properties
-         * @returns {Object} The given parameter with shortcuts expanded.
+         * Resolves attribute shortcuts like <tt>color</tt> and expands them, e.g. <tt>strokeColor</tt> and <tt>fillColor</tt>.
+         * Writes the expanded attributes back to the given <tt>attributes</tt>.
+         * @param {Object} attributes object
+         * @returns {Object} The given attributes object with shortcuts expanded.
+         * @private
          */
-        resolveShortcuts: function (properties) {
-            var key, i;
+        resolveShortcuts: function (attributes) {
+            var key, i,
+                j,
+                subattr = ['traceattributes', 'traceAttributes'];
 
             for (key in Options.shortcuts) {
                 if (Options.shortcuts.hasOwnProperty(key)) {
-                    if (Type.exists(properties[key])) {
-                        for (i = 0; i < Options.shortcuts[key].length; i++) {
-                            if (!Type.exists(properties[Options.shortcuts[key][i]])) {
-                                properties[Options.shortcuts[key][i]] = properties[key];
+
+                        if (Type.exists(attributes[key])) {
+                            for (i = 0; i < Options.shortcuts[key].length; i++) {
+                                if (!Type.exists(attributes[Options.shortcuts[key][i]])) {
+                                    attributes[Options.shortcuts[key][i]] = attributes[key];
+                                }
                             }
                         }
-                    }
-                }
+                        for (j = 0; j < subattr.length; j++) {
+                            if (Type.isObject(attributes[subattr[j]])) {
+                                    attributes[subattr[j]] = this.resolveShortcuts(attributes[subattr[j]]);
+                                }
+                            }
+                        }
             }
-            return properties;
+            return attributes;
         },
 
         /**
