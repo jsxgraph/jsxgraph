@@ -783,6 +783,10 @@ define([
              *   visible: false      // Initial visibility. Should be set to false always
              * }
              * </pre>
+             * <p>
+             * Board events triggered by selection manipulation:
+             * 'startselecting', 'stopselecting', 'mousestartselecting', 'mousestopselecting',
+             * 'pointerstartselecting', 'pointerstopselecting', 'touchstartselecting', 'touchstopselecting'.
              *
              * @example
              * board.on('stopselecting', function(){
@@ -796,14 +800,10 @@ define([
              * });
              *
              * @name JXG.Board#selection
-             * @see JXG.Board#startselecting
-             * @see JXG.Board#stopselecting
-             * @see JXG.Board#mousestartselecting
-             * @see JXG.Board#pointerstartselecting
-             * @see JXG.Board#touchstartselecting
-             * @see JXG.Board#mousestopselecting
-             * @see JXG.Board#pointerstopselecting
-             * @see JXG.Board#touchstopselecting
+             *
+             * @see JXG.Board#startSelectionMode
+             * @see JXG.Board#stopSelectionMode
+             *
              * @type Object
              * @default
              */

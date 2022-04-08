@@ -2332,7 +2332,7 @@ define('utils/type',[
                 return html_sanitize(str, function () { return undefined; }, function (id) { return id; });
             }
 
-            if (str) {
+            if (str && typeof str === 'string') {
                 str = str.replace(/</g, '&lt;').replace(/>/g, '&gt;');
             }
 
@@ -25837,6 +25837,10 @@ define('options',[
              *   visible: false      // Initial visibility. Should be set to false always
              * }
              * </pre>
+             * <p>
+             * Board events triggered by selection manipulation:
+             * 'startselecting', 'stopselecting', 'mousestartselecting', 'mousestopselecting',
+             * 'pointerstartselecting', 'pointerstopselecting', 'touchstartselecting', 'touchstopselecting'.
              *
              * @example
              * board.on('stopselecting', function(){
@@ -25850,14 +25854,10 @@ define('options',[
              * });
              *
              * @name JXG.Board#selection
-             * @see JXG.Board#startselecting
-             * @see JXG.Board#stopselecting
-             * @see JXG.Board#mousestartselecting
-             * @see JXG.Board#pointerstartselecting
-             * @see JXG.Board#touchstartselecting
-             * @see JXG.Board#mousestopselecting
-             * @see JXG.Board#pointerstopselecting
-             * @see JXG.Board#touchstopselecting
+             *
+             * @see JXG.Board#startSelectionMode
+             * @see JXG.Board#stopSelectionMode
+             *
              * @type Object
              * @default
              */
@@ -35099,26 +35099,35 @@ define('base/element',[
         },
 
         /**
-         * Resolves property shortcuts like <tt>color</tt> and expands them, e.g. <tt>strokeColor</tt> and <tt>fillColor</tt>.
-         * Writes the expanded properties back to the given <tt>properties</tt>.
-         * @param {Object} properties
-         * @returns {Object} The given parameter with shortcuts expanded.
+         * Resolves attribute shortcuts like <tt>color</tt> and expands them, e.g. <tt>strokeColor</tt> and <tt>fillColor</tt>.
+         * Writes the expanded attributes back to the given <tt>attributes</tt>.
+         * @param {Object} attributes object
+         * @returns {Object} The given attributes object with shortcuts expanded.
+         * @private
          */
-        resolveShortcuts: function (properties) {
-            var key, i;
+        resolveShortcuts: function (attributes) {
+            var key, i,
+                j,
+                subattr = ['traceattributes', 'traceAttributes'];
 
             for (key in Options.shortcuts) {
                 if (Options.shortcuts.hasOwnProperty(key)) {
-                    if (Type.exists(properties[key])) {
-                        for (i = 0; i < Options.shortcuts[key].length; i++) {
-                            if (!Type.exists(properties[Options.shortcuts[key][i]])) {
-                                properties[Options.shortcuts[key][i]] = properties[key];
+
+                        if (Type.exists(attributes[key])) {
+                            for (i = 0; i < Options.shortcuts[key].length; i++) {
+                                if (!Type.exists(attributes[Options.shortcuts[key][i]])) {
+                                    attributes[Options.shortcuts[key][i]] = attributes[key];
+                                }
                             }
                         }
-                    }
-                }
+                        for (j = 0; j < subattr.length; j++) {
+                            if (Type.isObject(attributes[subattr[j]])) {
+                                    attributes[subattr[j]] = this.resolveShortcuts(attributes[subattr[j]]);
+                                }
+                            }
+                        }
             }
-            return properties;
+            return attributes;
         },
 
         /**
@@ -36546,8 +36555,6 @@ define('base/coordselement',[
          * @private
          */
         updateCoords: function (fromParent) {
-            var i;
-
             if (!this.needsUpdate) {
                 return this;
             }
@@ -36674,7 +36681,6 @@ define('base/coordselement',[
                     doRound = true;
                     newPos = 0.0;
                 } else {
-                    //this.coords.setCoordinates(Const.COORDS_BY_USER, Geometry.projectPointToLine(this, slide, this.board).usrCoords, false);
                     newCoords = Geometry.projectPointToLine(this, slide, this.board);
                     p1c = p1c.usrCoords.slice(0);
                     p2c = p2c.usrCoords.slice(0);
@@ -38181,7 +38187,7 @@ define('base/coordselement',[
                 if (direction < 0) {
                     alpha *= this.intervalCount / stepCount;
                 } else {
-                    alpha *= (stepCount - this.intervalCount);
+                    alpha *= (stepCount - this.intervalCount) / stepCount;
                 }
                 radius = this.slideObject.Radius();
 
@@ -45762,10 +45768,14 @@ define('base/board',[
                 }
             }
 
+            this.originMoveEnd();
+            this.update();
+
             // selection
             if (this.selectingMode) {
                 this._stopSelecting(evt);
                 this.triggerEventHandlers(['touchstopselecting', 'pointerstopselecting', 'stopselecting'], [evt]);
+                this.stopSelectionMode();
             } else {
                 for (i = this.downObjects.length - 1; i > -1; i--) {
                     found = false;
@@ -45776,32 +45786,30 @@ define('base/board',[
                     }
                     if (!found) {
                         this.downObjects[i].triggerEventHandlers(['touchend', 'up', 'pointerup', 'MSPointerUp'], [evt]);
-                        this.downObjects[i].snapToGrid();
-                        this.downObjects[i].snapToPoints();
+                        // this.downObjects[i].snapToGrid();
+                        // this.downObjects[i].snapToPoints();
                         this.downObjects.splice(i, 1);
                     }
                 }
             }
 
-            // this._pointerRemoveTouches(evt);
-            // if (this._board_touches.length === 0) {
-                if (this.hasPointerUp) {
-                    if (window.navigator.msPointerEnabled) {  // IE10-
-                        Env.removeEvent(this.document, 'MSPointerUp',   this.pointerUpListener, this);
-                    } else {
-                        Env.removeEvent(this.document, 'pointerup',     this.pointerUpListener, this);
-                        Env.removeEvent(this.document, 'pointercancel', this.pointerUpListener, this);
-                    }
-                    this.hasPointerUp = false;
+            if (this.hasPointerUp) {
+                if (window.navigator.msPointerEnabled) {  // IE10-
+                    Env.removeEvent(this.document, 'MSPointerUp',   this.pointerUpListener, this);
+                } else {
+                    Env.removeEvent(this.document, 'pointerup',     this.pointerUpListener, this);
+                    Env.removeEvent(this.document, 'pointercancel', this.pointerUpListener, this);
                 }
+                this.hasPointerUp = false;
+            }
 
-                // this.dehighlightAll();
-                // this.updateQuality = this.BOARD_QUALITY_HIGH;
-                // this.mode = this.BOARD_MODE_NONE;
+            // this.dehighlightAll();
+            // this.updateQuality = this.BOARD_QUALITY_HIGH;
+            // this.mode = this.BOARD_MODE_NONE;
 
-                this.originMoveEnd();
-                this.update();
-            // }
+            // this.originMoveEnd();
+            // this.update();
+
             // After one finger leaves the screen the gesture is stopped.
             this._pointerClearTouches();
             return true;
@@ -46144,6 +46152,7 @@ define('base/board',[
             if (this.selectingMode) {
                 this._stopSelecting(evt);
                 this.triggerEventHandlers(['touchstopselecting', 'stopselecting'], [evt]);
+                this.stopSelectionMode();
             } else if (evtTouches && evtTouches.length > 0) {
                 for (i = 0; i < this.touches.length; i++) {
                     tmpTouches[i] = this.touches[i];
@@ -46235,8 +46244,8 @@ define('base/board',[
                 }
                 if (!found) {
                     this.downObjects[i].triggerEventHandlers(['touchup', 'up'], [evt]);
-                    this.downObjects[i].snapToGrid();
-                    this.downObjects[i].snapToPoints();
+                    // this.downObjects[i].snapToGrid();
+                    // this.downObjects[i].snapToPoints();
                     this.downObjects.splice(i, 1);
                 }
             }
@@ -46399,11 +46408,11 @@ define('base/board',[
             // redraw with high precision
             this.updateQuality = this.BOARD_QUALITY_HIGH;
 
-            if (this.mouse && this.mouse.obj) {
-                // The parameter is needed for lines with snapToGrid enabled
-                this.mouse.obj.snapToGrid(this.mouse.targets[0]);
-                this.mouse.obj.snapToPoints();
-            }
+            // if (this.mouse && this.mouse.obj) {
+            //     // The parameter is needed for lines with snapToGrid enabled
+            //     this.mouse.obj.snapToGrid(this.mouse.targets[0]);
+            //     this.mouse.obj.snapToPoints();
+            // }
 
             this.originMoveEnd();
             this.dehighlightAll();
@@ -46413,6 +46422,7 @@ define('base/board',[
             if (this.selectingMode) {
                 this._stopSelecting(evt);
                 this.triggerEventHandlers(['mousestopselecting', 'stopselecting'], [evt]);
+                this.stopSelectionMode();
             } else {
                 for (i = 0; i < this.downObjects.length; i++) {
                     this.downObjects[i].triggerEventHandlers(['mouseup', 'up'], [evt]);
@@ -46593,7 +46603,7 @@ define('base/board',[
 
             this.update();
 
-            if (done) {
+            if (done && Type.exists(evt.preventDefault)) {
                 evt.preventDefault();
             }
             return true;
@@ -57018,7 +57028,7 @@ define('base/line',[
                 if (this.parents.length < 3) {    // Line through two points
                     this.point1.handleSnapToGrid(true, true);
                     this.point2.handleSnapToGrid(true, true);
-            } else if (Type.exists(pos)) {       // Free line
+                } else if (Type.exists(pos)) {       // Free line
                     sX = Type.evaluate(this.visProp.snapsizex);
                     sY = Type.evaluate(this.visProp.snapsizey);
 
@@ -61697,8 +61707,35 @@ define('base/polygon',[
 
         /**
          * Add more points to the polygon. The new points will be inserted at the end.
-         * @param {JXG.Point} p Arbitrary number of points
+         * The attributes of new border segments are set to the same values
+         * as those used when the polygon was created.
+         * If new vertices are supplied by coordinates, the default attributes of polygon
+         * vertices are taken as their attributes. Therefore, the visual attributes of
+         * new vertices and borders may have to be adapted afterwards.
+         * @param {JXG.Point} p Arbitrary number of points or coordinate arrays
          * @returns {JXG.Polygon} Reference to the polygon
+         * @example
+         * const board = JXG.JSXGraph.initBoard('jxgbox', {axis:true});
+         * var pg = board.create('polygon', [[1,2], [3,4], [-3,1]], {hasInnerPoints: true});
+         * var newPoint = board.create('point', [-1, -1]);
+         * var newPoint2 = board.create('point', [-1, -2]);
+         * pg.addPoints(newPoint, newPoint2, [1, -2]);
+         *
+         * </pre><div id="JXG70eb0fd2-d20f-4ba9-9ab6-0eac92aabfa5" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG70eb0fd2-d20f-4ba9-9ab6-0eac92aabfa5',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *     const board = JXG.JSXGraph.initBoard('jxgbox', {axis:true});
+         *     var pg = board.create('polygon', [[1,2], [3,4], [-3,1]], {hasInnerPoints: true});
+         *     var newPoint = board.create('point', [-1, -1]);
+         *     var newPoint2 = board.create('point', [-1, -2]);
+         *     pg.addPoints(newPoint, newPoint2, [1, -2]);
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
          */
         addPoints: function (p) {
             var args = Array.prototype.slice.call(arguments);
@@ -61707,44 +61744,72 @@ define('base/polygon',[
         },
 
         /**
-         * Adds more points to the vertex list of the polygon, starting with index <tt><i</tt>
-         * @param {Number} idx The position where the new vertices are inserted, starting with 0.
-         * @param {JXG.Point} p Arbitrary number of points to insert.
+         * Insert points to the vertex list of the polygon after index <tt><idx</tt>.
+         * The attributes of new border segments are set to the same values
+         * as those used when the polygon was created.
+         * If new vertices are supplied by coordinates, the default attributes of polygon
+         * vertices are taken as their attributes. Therefore, the visual attributes of
+         * new vertices and borders may have to be adapted afterwards.
+         *
+         * @param {Number} idx The position after which the new vertices are inserted.
+         * Setting idx to -1 inserts the new points at the front, i.e. at position 0.
+         * @param {JXG.Point} p Arbitrary number of points or coordinate arrays to insert.
          * @returns {JXG.Polygon} Reference to the polygon object
+         *
+         * @example
+         * const board = JXG.JSXGraph.initBoard('jxgbox', {axis:true});
+         * var pg = board.create('polygon', [[1,2], [3,4], [-3,1]], {hasInnerPoints: true});
+         * var newPoint = board.create('point', [-1, -1]);
+         * pg.insertPoints(0, newPoint, newPoint, [1, -2]);
+         *
+         * </pre><div id="JXG17b84b2a-a851-4e3f-824f-7f6a60f166ca" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG17b84b2a-a851-4e3f-824f-7f6a60f166ca',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *     const board = JXG.JSXGraph.initBoard('jxgbox', {axis:true});
+         *     var pg = board.create('polygon', [[1,2], [3,4], [-3,1]], {hasInnerPoints: true});
+         *     var newPoint = board.create('point', [-1, -1]);
+         *     pg.insertPoints(0, newPoint, newPoint, [1, -2]);
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
          */
         insertPoints: function (idx, p) {
-            var i, npoints = [], tmp;
+            var i, le;
 
             if (arguments.length === 0) {
                 return this;
             }
 
 
-            if (idx < 0 || idx > this.vertices.length - 2) {
+            if (idx < -1 || idx > this.vertices.length - 2) {
                 return this;
             }
 
-            for (i = 1; i < arguments.length; i++) {
-                if (Type.isPoint(arguments[i])) {
-                    npoints.push(arguments[i]);
-                }
+            le = arguments.length - 1;
+            for (i = 1; i < le + 1; i++) {
+                this.vertices.splice(idx + i, 0,
+                    Type.providePoints(this.board, [arguments[i]], {}, 'polygon', ['vertices'])[0]
+                );
             }
-
-            tmp = this.vertices.slice(0, idx + 1).concat(npoints);
-            this.vertices = tmp.concat(this.vertices.slice(idx + 1));
-
+            if (idx === -1) {
+                this.vertices[this.vertices.length - 1] = this.vertices[0];
+            }
             if (this.withLines) {
-                tmp = this.borders.slice(0, idx);
-                this.board.removeObject(this.borders[idx]);
-
-                for (i = 0; i < npoints.length; i++) {
-                    tmp.push(this.board.create('segment', [this.vertices[idx + i], this.vertices[idx + i + 1]], this.attr_line));
+                if (idx < 0) {
+                    this.borders[this.borders.length - 1].point2 = this.vertices[this.vertices.length - 1];
+                } else {
+                    this.borders[idx].point2 = this.vertices[idx + 1];
                 }
-
-                tmp.push(this.board.create('segment', [this.vertices[idx + npoints.length], this.vertices[idx + npoints.length + 1]], this.attr_line));
-                this.borders = tmp.concat(this.borders.slice(idx + 1));
+                for (i = idx + 1; i < idx + 1 + le; i++) {
+                    this.borders.splice(i, 0,
+                        this.board.create('segment', [this.vertices[i], this.vertices[i + 1]], this.attr_line)
+                    );
+                }
             }
-
             this.board.update();
 
             return this;
@@ -61759,7 +61824,7 @@ define('base/polygon',[
             var i, j, idx, nvertices = [], nborders = [],
                 nidx = [], partition = [];
 
-            // partition:
+            // Partition:
             // in order to keep the borders which could be recycled, we have to partition
             // the set of removed points. I.e. if the points 1, 2, 5, 6, 7, 10 are removed,
             // the partitions are
@@ -61767,10 +61832,10 @@ define('base/polygon',[
             // this gives us the borders, that can be removed and the borders we have to create.
 
 
-            // remove the last vertex which is identical to the first
+            // Remove the last vertex which is identical to the first
             this.vertices = this.vertices.slice(0, this.vertices.length - 1);
 
-            // collect all valid parameters as indices in nidx
+            // Collect all valid parameters as indices in nidx
             for (i = 0; i < arguments.length; i++) {
                 idx = arguments[i];
                 if (Type.isPoint(idx)) {
@@ -61782,22 +61847,22 @@ define('base/polygon',[
                 }
             }
 
-            // remove the polygon from each removed point's children
+            // Remove the polygon from each removed point's children
             for (i = 0; i < nidx.length; i++) {
                 this.vertices[nidx[i]].removeChild(this);
             }
 
-            // sort the elements to be eliminated
+            // Sort the elements to be eliminated
             nidx = nidx.sort();
             nvertices = this.vertices.slice();
             nborders = this.borders.slice();
 
-            // initialize the partition
+            // Initialize the partition
             if (this.withLines) {
                 partition.push([nidx[nidx.length - 1]]);
             }
 
-            // run through all existing vertices and copy all remaining ones to nvertices
+            // Run through all existing vertices and copy all remaining ones to nvertices,
             // compute the partition
             for (i = nidx.length - 1; i > -1; i--) {
                 nvertices[nidx[i]] = -1;
@@ -61808,12 +61873,12 @@ define('base/polygon',[
                 }
             }
 
-            // finalize the partition computation
+            // Finalize the partition computation
             if (this.withLines) {
                 partition[partition.length - 1][1] = nidx[0];
             }
 
-            // update vertices
+            // Update vertices
             this.vertices = [];
             for (i = 0; i < nvertices.length; i++) {
                 if (Type.isPoint(nvertices[i])) {
@@ -61824,7 +61889,7 @@ define('base/polygon',[
                 this.vertices.push(this.vertices[0]);
             }
 
-            // delete obsolete and create missing borders
+            // Delete obsolete and create missing borders
             if (this.withLines) {
                 for (i = 0; i < partition.length; i++) {
                     for (j = partition[i][1] - 1; j < partition[i][0] + 1; j++) {
@@ -72224,6 +72289,10 @@ define('element/slider',[
         p2.dump = false;
         l1.dump = false;
         l2.dump = false;
+        if (withText) {
+            t.dump = false;
+        }
+
 
         p3.elType = 'slider';
         p3.parents = parents;
@@ -72240,6 +72309,14 @@ define('element/slider',[
             p3.subs.ticks = ti;
             p3.inherits.push(ti);
         }
+
+        p3.getParents = function() {
+            return [
+                this.point1.coords.usrCoords.slice(1),
+                this.point2.coords.usrCoords.slice(1),
+                [this._smin, this.position * (this._smax - this._smin) + this._smin, this._smax]
+            ];
+        };
 
         p3.baseline.on('up', function(evt) {
             var pos, c;
@@ -76214,6 +76291,8 @@ define('base/ticks',[
                     attr.id = this.id + ld.i + 'Label' + this.labelCounter;
 
                     label = Text.createText(this.board, [ld.x, ld.y, ld.t], attr);
+                    this.addChild(label);
+                    label.setParents(this);
                     label.isDraggable = false;
                     label.dump = false;
                     this.labels.push(label);

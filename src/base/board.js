@@ -2417,10 +2417,14 @@ define([
                 }
             }
 
+            this.originMoveEnd();
+            this.update();
+
             // selection
             if (this.selectingMode) {
                 this._stopSelecting(evt);
                 this.triggerEventHandlers(['touchstopselecting', 'pointerstopselecting', 'stopselecting'], [evt]);
+                this.stopSelectionMode();
             } else {
                 for (i = this.downObjects.length - 1; i > -1; i--) {
                     found = false;
@@ -2431,32 +2435,30 @@ define([
                     }
                     if (!found) {
                         this.downObjects[i].triggerEventHandlers(['touchend', 'up', 'pointerup', 'MSPointerUp'], [evt]);
-                        this.downObjects[i].snapToGrid();
-                        this.downObjects[i].snapToPoints();
+                        // this.downObjects[i].snapToGrid();
+                        // this.downObjects[i].snapToPoints();
                         this.downObjects.splice(i, 1);
                     }
                 }
             }
 
-            // this._pointerRemoveTouches(evt);
-            // if (this._board_touches.length === 0) {
-                if (this.hasPointerUp) {
-                    if (window.navigator.msPointerEnabled) {  // IE10-
-                        Env.removeEvent(this.document, 'MSPointerUp',   this.pointerUpListener, this);
-                    } else {
-                        Env.removeEvent(this.document, 'pointerup',     this.pointerUpListener, this);
-                        Env.removeEvent(this.document, 'pointercancel', this.pointerUpListener, this);
-                    }
-                    this.hasPointerUp = false;
+            if (this.hasPointerUp) {
+                if (window.navigator.msPointerEnabled) {  // IE10-
+                    Env.removeEvent(this.document, 'MSPointerUp',   this.pointerUpListener, this);
+                } else {
+                    Env.removeEvent(this.document, 'pointerup',     this.pointerUpListener, this);
+                    Env.removeEvent(this.document, 'pointercancel', this.pointerUpListener, this);
                 }
+                this.hasPointerUp = false;
+            }
 
-                // this.dehighlightAll();
-                // this.updateQuality = this.BOARD_QUALITY_HIGH;
-                // this.mode = this.BOARD_MODE_NONE;
+            // this.dehighlightAll();
+            // this.updateQuality = this.BOARD_QUALITY_HIGH;
+            // this.mode = this.BOARD_MODE_NONE;
 
-                this.originMoveEnd();
-                this.update();
-            // }
+            // this.originMoveEnd();
+            // this.update();
+
             // After one finger leaves the screen the gesture is stopped.
             this._pointerClearTouches();
             return true;
@@ -2799,6 +2801,7 @@ define([
             if (this.selectingMode) {
                 this._stopSelecting(evt);
                 this.triggerEventHandlers(['touchstopselecting', 'stopselecting'], [evt]);
+                this.stopSelectionMode();
             } else if (evtTouches && evtTouches.length > 0) {
                 for (i = 0; i < this.touches.length; i++) {
                     tmpTouches[i] = this.touches[i];
@@ -2890,8 +2893,8 @@ define([
                 }
                 if (!found) {
                     this.downObjects[i].triggerEventHandlers(['touchup', 'up'], [evt]);
-                    this.downObjects[i].snapToGrid();
-                    this.downObjects[i].snapToPoints();
+                    // this.downObjects[i].snapToGrid();
+                    // this.downObjects[i].snapToPoints();
                     this.downObjects.splice(i, 1);
                 }
             }
@@ -3054,11 +3057,11 @@ define([
             // redraw with high precision
             this.updateQuality = this.BOARD_QUALITY_HIGH;
 
-            if (this.mouse && this.mouse.obj) {
-                // The parameter is needed for lines with snapToGrid enabled
-                this.mouse.obj.snapToGrid(this.mouse.targets[0]);
-                this.mouse.obj.snapToPoints();
-            }
+            // if (this.mouse && this.mouse.obj) {
+            //     // The parameter is needed for lines with snapToGrid enabled
+            //     this.mouse.obj.snapToGrid(this.mouse.targets[0]);
+            //     this.mouse.obj.snapToPoints();
+            // }
 
             this.originMoveEnd();
             this.dehighlightAll();
@@ -3068,6 +3071,7 @@ define([
             if (this.selectingMode) {
                 this._stopSelecting(evt);
                 this.triggerEventHandlers(['mousestopselecting', 'stopselecting'], [evt]);
+                this.stopSelectionMode();
             } else {
                 for (i = 0; i < this.downObjects.length; i++) {
                     this.downObjects[i].triggerEventHandlers(['mouseup', 'up'], [evt]);
@@ -3248,7 +3252,7 @@ define([
 
             this.update();
 
-            if (done) {
+            if (done && Type.exists(evt.preventDefault)) {
                 evt.preventDefault();
             }
             return true;
