@@ -6,10 +6,10 @@ define(['jxg', 'options', 'base/constants', 'utils/type', 'math/math', 'base/ele
 ], function (JXG, Options, Const, Type, Mat, GeometryElement, ThreeD) {
 
     ThreeD.View3D = function (board, parents, attributes) {
-        var bcube, coords, size;
+        var bbox3d, coords, size;
         this.constructor(board, attributes, Const.OBJECT_TYPE_VIEW3D, Const.OBJECT_CLASS_CURVE);
 
-        bcube = parents[2];  // [[x1, x2], [y1,y2], [z1,z2]]
+        bbox3d = parents[2];  // [[x1, x2], [y1,y2], [z1,z2]]
         coords = parents[0]; // llft corner
         size = parents[1];   // [w, h]
 
@@ -48,7 +48,7 @@ define(['jxg', 'options', 'base/constants', 'utils/type', 'math/math', 'base/ele
         ];
 
         // Bounding box (cube) [[x1, x2], [y1,y2], [z1,z2]]:
-        this.D3.bcube = bcube;
+        this.D3.bbox3d = bbox3d;
         this.D3.coords = coords;
         this.D3.size = size;
 
@@ -125,10 +125,10 @@ define(['jxg', 'options', 'base/constants', 'utils/type', 'math/math', 'base/ele
             D3.matrix[2][3] = Math.cos(e);
 
             if (true) {
-                mat[1][1] = D3.size[0] / (D3.bcube[0][1] - D3.bcube[0][0]); // w / d_x
-                mat[2][2] = D3.size[1] / (D3.bcube[1][1] - D3.bcube[1][0]); // h / d_y
-                mat[1][0] = D3.coords[0] - mat[1][1] * D3.bcube[0][0];     // llft_x
-                mat[2][0] = D3.coords[1] - mat[2][2] * D3.bcube[1][0];     // llft_y
+                mat[1][1] = D3.size[0] / (D3.bbox3d[0][1] - D3.bbox3d[0][0]); // w / d_x
+                mat[2][2] = D3.size[1] / (D3.bbox3d[1][1] - D3.bbox3d[1][0]); // h / d_y
+                mat[1][0] = D3.coords[0] - mat[1][1] * D3.bbox3d[0][0];     // llft_x
+                mat[2][0] = D3.coords[1] - mat[2][2] * D3.bbox3d[1][0];     // llft_y
 
                 D3.matrix = Mat.matMatMult(mat, D3.matrix);
             }
@@ -203,7 +203,7 @@ define(['jxg', 'options', 'base/constants', 'utils/type', 'math/math', 'base/ele
         },
 
         project3DToCube: function (c3d) {
-            var cube = this.D3.bcube;
+            var cube = this.D3.bbox3d;
             if (c3d[1] < cube[0][0]) { c3d[1] = cube[0][0]; }
             if (c3d[1] > cube[0][1]) { c3d[1] = cube[0][1]; }
             if (c3d[2] < cube[1][0]) { c3d[2] = cube[1][0]; }
@@ -220,8 +220,8 @@ define(['jxg', 'options', 'base/constants', 'utils/type', 'math/math', 'base/ele
             rnew = r;
             for (i = 0; i < 3; i++) {
                 if (d[i] !== 0) {
-                    r0 = (this.D3.bcube[i][0] - p[i]) / d[i];
-                    r1 = (this.D3.bcube[i][1] - p[i]) / d[i];
+                    r0 = (this.D3.bbox3d[i][0] - p[i]) / d[i];
+                    r1 = (this.D3.bbox3d[i][1] - p[i]) / d[i];
                     if (r < 0) {
                         rnew = Math.max(rnew, Math.min(r0, r1));
                     } else {
@@ -233,9 +233,9 @@ define(['jxg', 'options', 'base/constants', 'utils/type', 'math/math', 'base/ele
         },
 
         isInCube: function (q) {
-            return q[0] > this.D3.bcube[0][0] - Mat.eps && q[0] < this.D3.bcube[0][1] + Mat.eps &&
-                q[1] > this.D3.bcube[1][0] - Mat.eps && q[1] < this.D3.bcube[1][1] + Mat.eps &&
-                q[2] > this.D3.bcube[2][0] - Mat.eps && q[2] < this.D3.bcube[2][1] + Mat.eps;
+            return q[0] > this.D3.bbox3d[0][0] - Mat.eps && q[0] < this.D3.bbox3d[0][1] + Mat.eps &&
+                q[1] > this.D3.bbox3d[1][0] - Mat.eps && q[1] < this.D3.bbox3d[1][1] + Mat.eps &&
+                q[2] > this.D3.bbox3d[2][0] - Mat.eps && q[2] < this.D3.bbox3d[2][1] + Mat.eps;
         },
 
         /**
@@ -350,6 +350,7 @@ define(['jxg', 'options', 'base/constants', 'utils/type', 'math/math', 'base/ele
 
         attr = Type.copyAttributes(attributes, board.options, 'view3d');
         view = new ThreeD.View3D(board, parents, attr);
+        view.defaultAxes = view.create('axes3d', parents, attributes);
 
         x = coords[0];
         y = coords[1];

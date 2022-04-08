@@ -70,7 +70,14 @@ define([
     'element/checkbox',
     'element/input',
     'element/button',
-    'base/foreignobject'
+    'base/foreignobject',
+    '3d/box3d',
+    '3d/curve3d',
+    '3d/linspace3d',
+    '3d/point3d',
+    '3d/surface3d',
+    '3d/threed',
+    '3d/view3d'
 ], function (JXG, Env) {
     "use strict";
 

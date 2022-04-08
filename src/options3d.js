@@ -13,13 +13,38 @@ define([
         },
 
         axes3d: {
-            position: 'center',
-            xy: { visible: true, layer: 0, grid3d: { layer: 1 } },
-            xz: { visible: true, layer: 0, grid3d: { layer: 1 } },
-            yz: { visible: true, layer: 0, grid3d: { layer: 1 } },
-            xyAxes: {visible: true, strokeColor: '#888888'},
-            xzAxes: {visible: true, strokeColor: '#888888'},
-            yzAxes: {visible: true, strokeColor: '#888888'}
+            axesPosition: 'center',  // Possible values: 'center', otherwise: border
+
+            // Main axes
+            xAxis: { visible: true, point2: {name: 'x'}},
+            yAxis: { visible: true, point2: {name: 'y'}},
+            zAxis: { visible: true, point2: {name: 'z'}},
+
+            // Planes
+            xPlaneRear: { visible: true, layer: 0, mesh3d: { layer: 1 } },
+            yPlaneRear: { visible: true, layer: 0, mesh3d: { layer: 1 } },
+            zPlaneRear: { visible: true, layer: 0, mesh3d: { layer: 1 } },
+
+            xPlaneFront: { visible: false, layer: 0, mesh3d: { layer: 1 } },
+            yPlaneFront: { visible: false, layer: 0, mesh3d: { layer: 1 } },
+            zPlaneFront: { visible: false, layer: 0, mesh3d: { layer: 1 } },
+
+            // Axes on the planes
+            xPlaneRearYAxis: {visible: true, strokeColor: '#888888'},
+            xPlaneRearZAxis: {visible: true, strokeColor: '#888888'},
+            xPlaneFrontYAxis: {visible: false, strokeColor: '#888888'},
+            xPlaneFrontZAxis: {visible: false, strokeColor: '#888888'},
+
+            yPlaneRearXAxis: {visible: true, strokeColor: '#888888'},
+            yPlaneRearZAxis: {visible: true, strokeColor: '#888888'},
+            yPlaneFrontXAxis: {visible: false, strokeColor: '#888888'},
+            yPlaneFrontZAxis: {visible: false, strokeColor: '#888888'},
+
+            zPlaneRearXAxis: {visible: true, strokeColor: '#888888'},
+            zPlaneRearYAxis: {visible: true, strokeColor: '#888888'},
+            zPlaneFrontXAxis: {visible: false, strokeColor: '#888888'},
+            zPlaneFrontYAxis: {visible: false, strokeColor: '#888888'}
+
         },
 
         axis3d: {
@@ -32,7 +57,7 @@ define([
             point2: { visible: false, name: '', label: { visible: true } }
         },
 
-        grid3d: {
+        mesh3d: {
             strokeWidth: 1,
             strokeColor: '#9a9a9a',
             strokeOpacity: 0.6,

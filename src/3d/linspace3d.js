@@ -1,5 +1,9 @@
 /*global JXG:true, define: true*/
 
+/**
+ * Create linear spaces of dimension at least one,
+ * i.e. lines and planes.
+ */
 define(['jxg', 'utils/type', 'math/math', 'math/geometry', '3d/view3d'
 ], function (JXG, Type, Mat, Geometry, ThreeD) {
     "use strict";
@@ -197,9 +201,9 @@ define(['jxg', 'utils/type', 'math/math', 'math/geometry', '3d/view3d'
 
                     // Point on the "other" plane of the cube
                     switch (planes[j]) {
-                        case 'xy': p = [0, 0, view.D3.bcube[2][1]]; break;
-                        case 'xz': p = [0, view.D3.bcube[1][1], 0]; break;
-                        case 'yz': p = [view.D3.bcube[0][1], 0, 0]; break;
+                        case 'xy': p = [0, 0, view.D3.bbox3d[2][1]]; break;
+                        case 'xz': p = [0, view.D3.bbox3d[1][1], 0]; break;
+                        case 'yz': p = [view.D3.bbox3d[0][1], 0, 0]; break;
                     }
                     d = Mat.innerProduct(p, view.axes[planes[j]].D3.normal, 3);
                     p = view.intersectionPlanePlane(this, view.axes[planes[j]], d);
@@ -289,10 +293,10 @@ define(['jxg', 'utils/type', 'math/math', 'math/geometry', '3d/view3d'
             }
         };
 
-        attr = Type.copyAttributes(attributes.grid3d, board.options, 'grid3d');
+        attr = Type.copyAttributes(attributes.mesh3d, board.options, 'mesh3d');
 
         if (D3.range1 && D3.range2) {
-            grid = view.create('grid3d', [point.D3.coords.slice(1), vec1, D3.range1, vec2, D3.range2], attr);
+            grid = view.create('mesh3d', [point.D3.coords.slice(1), vec1, D3.range1, vec2, D3.range2], attr);
             el.grid = grid;
             el.inherits.push(grid);
         }
