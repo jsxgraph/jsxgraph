@@ -62,7 +62,7 @@ define(['jxg', 'utils/type', 'math/math', 'math/geometry', '3d/view3d'
             D3.getPointCoords = function (r) {
                 var p = [],
                     d = [],
-                    i, r0, r1, rnew;
+                    i;
 
                 p.push(point.D3.X());
                 p.push(point.D3.Y());
