@@ -8,23 +8,43 @@ define(['jxg', 'utils/type', 'math/math', 'math/geometry', '3d/view3d'
 ], function (JXG, Type, Mat, Geometry, ThreeD) {
     "use strict";
 
+    /**
+     * @class This element is used to provide a constructor for a 3D line.
+     * @pseudo
+     * @description There are two possibilities to create a Line3D object.
+     * <p>
+     * First: the line in 3D is defined by two points in 3D (Point3D).
+     * The points can be either existing points or coordinate arrays of
+     * the form [x, y, z].
+     * <p>Second: the line in 3D is defined by a point (or coordinate array [x, y, z])
+     * a direction given as array [x, y, z] and an optional range
+     * given as array [s, e]. The default value for the range is [-Infinity, Infinity].
+     * <p>
+     * All numbers can also be provided as functions returning a number.
+     *
+     * @name Line3D
+     * @augments JXG.Curve
+     * @constructor
+     * @type JXG.Curve
+     * @throws {Exception} If the element cannot be constructed with the given parent
+     * objects an exception is thrown.
+     * @param {JXG.Point_number,JXG.Point,JXG.Line,JXG.Circle} center,radius The center must be given as a {@link JXG.Point}, see {@link JXG.providePoints}, but the radius can be given
+     * as a number (which will create a circle with a fixed radius), another {@link JXG.Point}, a {@link JXG.Line} (the distance of start and end point of the
+     * line will determine the radius), or another {@link JXG.Circle}.
+     *
+     */
     ThreeD.createLine = function (board, parents, attributes) {
         var view = parents[0],
             attr, D3, point, point1, point2,
             el;
 
-        // D3: {
-        //    point,
-        //    direction,
-        //    range,
-        //    point1,
-        //    point2
-        // }
+        // Range
         D3 = {
             elType: 'line3d',
             range: parents[3] || [-Infinity, Infinity]
         };
 
+        // Point
         if (Type.isPoint(parents[1])) {
             point = parents[1];
         } else {
@@ -32,6 +52,7 @@ define(['jxg', 'utils/type', 'math/math', 'math/geometry', '3d/view3d'
         }
         D3.point = point;
 
+        // Direction
         if (Type.isPoint(parents[2]) && Type.exists(parents[2].D3)) {
             // Line defined by two points
 
@@ -48,6 +69,8 @@ define(['jxg', 'utils/type', 'math/math', 'math/geometry', '3d/view3d'
         } else {
             // Line defined by point, direction and range
 
+            // Directions are handled as arrays of length 4,
+            // i.e. with homogeneous coordinates.
             if (Type.isFunction(parents[2])) {
                 D3.direction = parents[2];
             } else if (parents[2].length === 3) {

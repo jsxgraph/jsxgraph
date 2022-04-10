@@ -4,7 +4,32 @@ define(['jxg', 'base/constants', 'math/math', 'math/geometry', 'utils/type', '3d
 ], function (JXG, Const, Mat, Geometry, Type, ThreeD) {
     "use strict";
 
-    ThreeD.createPoint = function (board, parents, attributes) {
+    /**
+     * @class This element is used to provide a constructor for a 3D Point.
+     * @pseudo
+     * @description There are two possibilities to create a Line3D object.
+     * <p>
+     * First: the line in 3D is defined by two points in 3D (Point3D).
+     * The points can be either existing points or coordinate arrays of
+     * the form [x, y, z].
+     * <p>Second: the line in 3D is defined by a point (or coordinate array [x, y, z])
+     * a direction given as array [x, y, z] and an optional range
+     * given as array [s, e]. The default value for the range is [-Infinity, Infinity].
+     * <p>
+     * All numbers can also be provided as functions returning a number.
+     *
+     * @name Point3D
+     * @augments JXG.Point
+     * @constructor
+     * @type JXG.Point
+     * @throws {Exception} If the element cannot be constructed with the given parent
+     * objects an exception is thrown.
+     * @param {JXG.Point_number,JXG.Point,JXG.Line,JXG.Circle} center,radius The center must be given as a {@link JXG.Point}, see {@link JXG.providePoints}, but the radius can be given
+     * as a number (which will create a circle with a fixed radius), another {@link JXG.Point}, a {@link JXG.Line} (the distance of start and end point of the
+     * line will determine the radius), or another {@link JXG.Circle}.
+     *
+     */
+     ThreeD.createPoint = function (board, parents, attributes) {
         var view = parents[0],
             attr, update2D, D3,
             i, c2d,
