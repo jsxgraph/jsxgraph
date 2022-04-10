@@ -14,6 +14,7 @@ define(['jxg', 'utils/type', 'math/math', 'math/geometry', '3d/view3d'
             attr,
             pos,
             directions = ['x', 'y', 'z'],
+            suffixAxis = 'Axis',
             dir, dir1,
             sides = ['Rear', 'Front'],
             rear = [0, 0, 0],   // x, y, z
@@ -42,14 +43,13 @@ define(['jxg', 'utils/type', 'math/math', 'math/geometry', '3d/view3d'
         for (i = 0; i < directions.length; i++) {
             // Run through ['x', 'y', 'z']
             dir = directions[i];
-            na = dir + 'Axis';
-            dir += 'axis';
+            na = dir + suffixAxis;
 
             if (pos === 'center') {    // Axes centered
                 from = [0, 0, 0];
                 to = [0, 0, 0];
                 to[i] = front[i];
-                axes[na] = view.create('axis3d', [from, to], attr[dir]);
+                axes[na] = view.create('axis3d', [from, to], attr[dir.toLowerCase()]);
             } else {
                 na += 'Border';        // Axes bordered
                 from = rear.slice();
@@ -62,8 +62,8 @@ define(['jxg', 'utils/type', 'math/math', 'math/geometry', '3d/view3d'
                     to[2] = rear[2];
                 }
                 to[i] = front[i];
-                attr[dir].lastArrow = false;
-                axes[na] = view.create('axis3d', [from, to], attr[dir]);
+                attr[na.toLowerCase()].lastArrow = false;
+                axes[na] = view.create('axis3d', [from, to], attr[na.toLowerCase()]);
 
                 // TODO
                 ticks_attr = {
@@ -78,6 +78,14 @@ define(['jxg', 'utils/type', 'math/math', 'math/geometry', '3d/view3d'
                 axes[na + 'Ticks'] = view.create('ticks', [axes[na], 1], ticks_attr);
             }
         }
+
+        // Origin (2D point)
+        axes.O = board.create('intersection', [
+                axes[directions[0] + suffixAxis],
+                axes[directions[1] + suffixAxis]
+            ], {
+                name: '', visible: false, withLabel: false
+            });
 
         // Planes
         for (i = 0; i < directions.length; i++) {
