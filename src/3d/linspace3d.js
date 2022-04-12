@@ -278,7 +278,7 @@ define(['jxg', 'utils/type', 'math/math', 'math/geometry', '3d/view3d'
                         }
                     }
                     if (pos === pos_akt) {
-                        console.log("Update plane3d: did not find next", pos);
+                        console.log("Error: update plane3d: did not find next", pos);
                         break;
                     }
                 } while (pos !== first);

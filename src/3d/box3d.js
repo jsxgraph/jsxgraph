@@ -49,7 +49,7 @@ define(['jxg', 'utils/type', 'math/math', 'math/geometry', '3d/view3d'
                 from = [0, 0, 0];
                 to = [0, 0, 0];
                 to[i] = front[i];
-                axes[na] = view.create('axis3d', [from, to], attr[dir.toLowerCase()]);
+                axes[na] = view.create('axis3d', [from, to], attr[na.toLowerCase()]);
             } else {
                 na += 'Border';        // Axes bordered
                 from = rear.slice();
