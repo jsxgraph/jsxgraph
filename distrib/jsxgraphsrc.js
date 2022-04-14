@@ -841,9 +841,9 @@ define('base/constants',['jxg'], function (JXG) {
     'use strict';
 
     var major = 1,
-        minor = 5,
-        patch = 0,
-        add = 'dev', //'dev'
+        minor = 4,
+        patch = 3,
+        add = '', //'dev'
         version = major + '.' + minor + '.' + patch + (add ? '-' + add : ''),
         constants;
 

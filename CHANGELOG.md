@@ -1,3 +1,25 @@
+1.4.3
+====
+
+New features
+-----------
+
+- Experimental support of 3D elements
+
+Improvements
+------------
+
+- Many improvements to index.d.ts
+- Make JSXGraph available as ES6 module
+
+Bug fixes
+---------
+
+- Ticks are now parents of their tick labels
+- polygon.insertPoints and polygon.addPoints
+- JessieCode dump of slider elements
+- Resolve shortcuts also for trace attributes
+
 1.4.2
 ====
 
