@@ -1375,7 +1375,7 @@ define([
     };
 
     /**
-     * @class Bisector lines are similar to {@link Bisector} but takes two lines as parent elements. The resulting element is
+     * @class Bisector lines are similar to {@link Bisector} but take two lines as parent elements. The resulting element is
      * a composition of two lines.
      * @pseudo
      * @constructor
