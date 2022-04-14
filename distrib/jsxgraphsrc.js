@@ -69620,7 +69620,7 @@ define('element/composition',[
     };
 
     /**
-     * @class Bisector lines are similar to {@link Bisector} but takes two lines as parent elements. The resulting element is
+     * @class Bisector lines are similar to {@link Bisector} but take two lines as parent elements. The resulting element is
      * a composition of two lines.
      * @pseudo
      * @constructor
@@ -80066,24 +80066,78 @@ define('element/button',[
     };
 });
 
+/*
+    Copyright 2008-2022
+        Matthias Ehmann,
+        Carsten Miller,
+        Andreas Walter,
+        Alfred Wassermann
 
+    This file is part of JSXGraph.
+
+    JSXGraph is free software dual licensed under the GNU LGPL or MIT License.
+
+    You can redistribute it and/or modify it under the terms of the
+
+      * GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version
+      OR
+      * MIT License: https://github.com/jsxgraph/jsxgraph/blob/master/LICENSE.MIT
+
+    JSXGraph is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License and
+    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
+    and <http://opensource.org/licenses/MIT/>.
+ */
 /*global JXG:true, define: true*/
 
 define('3d/threed',['jxg'
 ], function (JXG) {
+    "use strict";
 
     JXG.ThreeD = {};
 
     return JXG.ThreeD;
 });
 
+/*
+    Copyright 2008-2022
+        Matthias Ehmann,
+        Carsten Miller,
+        Andreas Walter,
+        Alfred Wassermann
 
+    This file is part of JSXGraph.
+
+    JSXGraph is free software dual licensed under the GNU LGPL or MIT License.
+
+    You can redistribute it and/or modify it under the terms of the
+
+      * GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version
+      OR
+      * MIT License: https://github.com/jsxgraph/jsxgraph/blob/master/LICENSE.MIT
+
+    JSXGraph is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License and
+    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
+    and <http://opensource.org/licenses/MIT/>.
+ */
 /*global JXG:true, define: true*/
-
-
 
 define('3d/view3d',['jxg', 'options', 'base/constants', 'utils/type', 'math/math', 'base/element', '3d/threed',
 ], function (JXG, Options, Const, Type, Mat, GeometryElement, ThreeD) {
+    "use strict";
 
     ThreeD.View3D = function (board, parents, attributes) {
         var bbox3d, coords, size;
@@ -80511,6 +80565,34 @@ define('3d/view3d',['jxg', 'options', 'base/constants', 'utils/type', 'math/math
 });
 
 
+/*
+    Copyright 2008-2022
+        Matthias Ehmann,
+        Carsten Miller,
+        Andreas Walter,
+        Alfred Wassermann
+
+    This file is part of JSXGraph.
+
+    JSXGraph is free software dual licensed under the GNU LGPL or MIT License.
+
+    You can redistribute it and/or modify it under the terms of the
+
+      * GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version
+      OR
+      * MIT License: https://github.com/jsxgraph/jsxgraph/blob/master/LICENSE.MIT
+
+    JSXGraph is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License and
+    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
+    and <http://opensource.org/licenses/MIT/>.
+ */
 /*global JXG:true, define: true*/
 
 /**
@@ -80527,6 +80609,7 @@ define('3d/box3d',['jxg', 'utils/type', 'math/math', 'math/geometry', '3d/view3d
             attr,
             pos,
             directions = ['x', 'y', 'z'],
+            suffixAxis = 'Axis',
             dir, dir1,
             sides = ['Rear', 'Front'],
             rear = [0, 0, 0],   // x, y, z
@@ -80555,14 +80638,13 @@ define('3d/box3d',['jxg', 'utils/type', 'math/math', 'math/geometry', '3d/view3d
         for (i = 0; i < directions.length; i++) {
             // Run through ['x', 'y', 'z']
             dir = directions[i];
-            na = dir + 'Axis';
-            dir += 'axis';
+            na = dir + suffixAxis;
 
             if (pos === 'center') {    // Axes centered
                 from = [0, 0, 0];
                 to = [0, 0, 0];
                 to[i] = front[i];
-                axes[na] = view.create('axis3d', [from, to], attr[dir]);
+                axes[na] = view.create('axis3d', [from, to], attr[na.toLowerCase()]);
             } else {
                 na += 'Border';        // Axes bordered
                 from = rear.slice();
@@ -80575,8 +80657,8 @@ define('3d/box3d',['jxg', 'utils/type', 'math/math', 'math/geometry', '3d/view3d
                     to[2] = rear[2];
                 }
                 to[i] = front[i];
-                attr[dir].lastArrow = false;
-                axes[na] = view.create('axis3d', [from, to], attr[dir]);
+                attr[na.toLowerCase()].lastArrow = false;
+                axes[na] = view.create('axis3d', [from, to], attr[na.toLowerCase()]);
 
                 // TODO
                 ticks_attr = {
@@ -80591,6 +80673,14 @@ define('3d/box3d',['jxg', 'utils/type', 'math/math', 'math/geometry', '3d/view3d
                 axes[na + 'Ticks'] = view.create('ticks', [axes[na], 1], ticks_attr);
             }
         }
+
+        // Origin (2D point)
+        axes.O = board.create('intersection', [
+                axes[directions[0] + suffixAxis],
+                axes[directions[1] + suffixAxis]
+            ], {
+                name: '', visible: false, withLabel: false
+            });
 
         // Planes
         for (i = 0; i < directions.length; i++) {
@@ -80726,9 +80816,9 @@ define('3d/box3d',['jxg', 'utils/type', 'math/math', 'math/geometry', '3d/view3d
             }
 
             res = view.getMesh(
-                (u, v) => q[0] + u * v1[0] + v * v2[0],
-                (u, v) => q[1] + u * v1[1] + v * v2[1],
-                (u, v) => q[2] + u * v1[2] + v * v2[2],
+                function(u, v) { return q[0] + u * v1[0] + v * v2[0]; },
+                function(u, v) { return q[1] + u * v1[1] + v * v2[1]; },
+                function(u, v) { return q[2] + u * v1[2] + v * v2[2]; },
                 [Math.ceil(s1), Math.floor(e1), (Math.ceil(e1) - Math.floor(s1)) / step],
                 [Math.ceil(s2), Math.floor(e2), (Math.ceil(e2) - Math.floor(s2)) / step]);
             this.dataX = res[0];
@@ -80739,6 +80829,34 @@ define('3d/box3d',['jxg', 'utils/type', 'math/math', 'math/geometry', '3d/view3d
     JXG.registerElement('mesh3d', ThreeD.createMesh);
 
 });
+/*
+    Copyright 2008-2022
+        Matthias Ehmann,
+        Carsten Miller,
+        Andreas Walter,
+        Alfred Wassermann
+
+    This file is part of JSXGraph.
+
+    JSXGraph is free software dual licensed under the GNU LGPL or MIT License.
+
+    You can redistribute it and/or modify it under the terms of the
+
+      * GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version
+      OR
+      * MIT License: https://github.com/jsxgraph/jsxgraph/blob/master/LICENSE.MIT
+
+    JSXGraph is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License and
+    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
+    and <http://opensource.org/licenses/MIT/>.
+ */
 /*global JXG:true, define: true*/
 
 define('3d/curve3d',['jxg', 'utils/type', '3d/view3d'
@@ -80808,6 +80926,34 @@ define('3d/curve3d',['jxg', 'utils/type', '3d/view3d'
     JXG.registerElement('curve3d', ThreeD.createCurve);
 
 });
+/*
+    Copyright 2008-2022
+        Matthias Ehmann,
+        Carsten Miller,
+        Andreas Walter,
+        Alfred Wassermann
+
+    This file is part of JSXGraph.
+
+    JSXGraph is free software dual licensed under the GNU LGPL or MIT License.
+
+    You can redistribute it and/or modify it under the terms of the
+
+      * GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version
+      OR
+      * MIT License: https://github.com/jsxgraph/jsxgraph/blob/master/LICENSE.MIT
+
+    JSXGraph is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License and
+    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
+    and <http://opensource.org/licenses/MIT/>.
+ */
 /*global JXG:true, define: true*/
 
 /**
@@ -81088,7 +81234,7 @@ define('3d/linspace3d',['jxg', 'utils/type', 'math/math', 'math/geometry', '3d/v
                         }
                     }
                     if (pos === pos_akt) {
-                        console.log("Update plane3d: did not find next", pos);
+                        console.log("Error: update plane3d: did not find next", pos);
                         break;
                     }
                 } while (pos !== first);
@@ -81155,6 +81301,34 @@ define('3d/linspace3d',['jxg', 'utils/type', 'math/math', 'math/geometry', '3d/v
     JXG.registerElement('plane3d', ThreeD.createPlane);
 
 });
+/*
+    Copyright 2008-2022
+        Matthias Ehmann,
+        Carsten Miller,
+        Andreas Walter,
+        Alfred Wassermann
+
+    This file is part of JSXGraph.
+
+    JSXGraph is free software dual licensed under the GNU LGPL or MIT License.
+
+    You can redistribute it and/or modify it under the terms of the
+
+      * GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version
+      OR
+      * MIT License: https://github.com/jsxgraph/jsxgraph/blob/master/LICENSE.MIT
+
+    JSXGraph is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License and
+    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
+    and <http://opensource.org/licenses/MIT/>.
+ */
 /*global JXG:true, define: true*/
 
 define('3d/point3d',['jxg', 'base/constants', 'math/math', 'math/geometry', 'utils/type', '3d/view3d'
@@ -81327,6 +81501,34 @@ define('3d/point3d',['jxg', 'base/constants', 'math/math', 'math/geometry', 'uti
     JXG.registerElement('point3d', ThreeD.createPoint);
 
 });
+/*
+    Copyright 2008-2022
+        Matthias Ehmann,
+        Carsten Miller,
+        Andreas Walter,
+        Alfred Wassermann
+
+    This file is part of JSXGraph.
+
+    JSXGraph is free software dual licensed under the GNU LGPL or MIT License.
+
+    You can redistribute it and/or modify it under the terms of the
+
+      * GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version
+      OR
+      * MIT License: https://github.com/jsxgraph/jsxgraph/blob/master/LICENSE.MIT
+
+    JSXGraph is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License and
+    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
+    and <http://opensource.org/licenses/MIT/>.
+ */
 /*global JXG:true, define: true*/
 
 define('3d/surface3d',['jxg', 'utils/type', '3d/view3d'
@@ -81369,8 +81571,8 @@ define('3d/surface3d',['jxg', 'utils/type', '3d/view3d'
 
     ThreeD.createFunctiongraph = function (board, parents, attributes) {
         var view = parents[0],
-            X = (u, v) => u,
-            Y = (u, v) => v,
+            X = function(u, v) { return u; },
+            Y = function(u, v) { return v; },
             Z = parents[1],
             range_u = parents[2],
             range_v = parents[3];

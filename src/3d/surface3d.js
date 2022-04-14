@@ -68,8 +68,8 @@ define(['jxg', 'utils/type', '3d/view3d'
 
     ThreeD.createFunctiongraph = function (board, parents, attributes) {
         var view = parents[0],
-            X = (u, v) => u,
-            Y = (u, v) => v,
+            X = function(u, v) { return u; },
+            Y = function(u, v) { return v; },
             Z = parents[1],
             range_u = parents[2],
             range_v = parents[3];

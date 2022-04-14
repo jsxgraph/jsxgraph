@@ -249,9 +249,9 @@ define(['jxg', 'utils/type', 'math/math', 'math/geometry', '3d/view3d'
             }
 
             res = view.getMesh(
-                (u, v) => q[0] + u * v1[0] + v * v2[0],
-                (u, v) => q[1] + u * v1[1] + v * v2[1],
-                (u, v) => q[2] + u * v1[2] + v * v2[2],
+                function(u, v) { return q[0] + u * v1[0] + v * v2[0]; },
+                function(u, v) { return q[1] + u * v1[1] + v * v2[1]; },
+                function(u, v) { return q[2] + u * v1[2] + v * v2[2]; },
                 [Math.ceil(s1), Math.floor(e1), (Math.ceil(e1) - Math.floor(s1)) / step],
                 [Math.ceil(s2), Math.floor(e2), (Math.ceil(e2) - Math.floor(s2)) / step]);
             this.dataX = res[0];
