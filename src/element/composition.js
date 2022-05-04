@@ -592,9 +592,6 @@ define([
             b.addChild(t);
         }
 
-
-
-
         t.elType = 'midpoint';
         t.setParents([a.id, b.id]);
 
