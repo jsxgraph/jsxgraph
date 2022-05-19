@@ -273,12 +273,12 @@ define([
             }
 
             id = board.containerObj.getAttribute('aria-labelledby');
-            node = document.getElementById(id);
+            node = doc.getElementById(id);
             if (node && node.parentNode) {
                 node.parentNode.removeChild(node);
             }
             id = board.containerObj.getAttribute('aria-describedby');
-            node = document.getElementById(id);
+            node = doc.getElementById(id);
             if (node && node.parentNode) {
                 node.parentNode.removeChild(node);
             }

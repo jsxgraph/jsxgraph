@@ -1694,10 +1694,11 @@ define([
          * 	setTimeout(function() { console.log('done'); }, 400);
          */
         dumpToCanvas: function (canvasId, w, h, ignoreTexts) {
-            var svg, tmpImg, cv, ctx;
+            var svg, tmpImg, cv, ctx,
+                doc = this.container.ownerDocument;
 
             // Prepare the canvas element
-            cv = document.getElementById(canvasId);
+            cv = doc.getElementById(canvasId);
 
             // Clear the canvas
             /* eslint-disable no-self-assign */
@@ -1833,7 +1834,8 @@ define([
             } else {
                 // Debug: use canvas element 'jxgbox_canvas' from jsxdev/dump.html
                 id = 'jxgbox_canvas';
-                canvas = document.getElementById(id);
+                // canvas = document.getElementById(id);
+                canvas = doc.getElementById(id);
             }
 
             if (newImg) {
@@ -1853,7 +1855,8 @@ define([
             }
 
             // Hide navigation bar in board
-            zbar = document.getElementById(this.container.id + '_navigationbar');
+            // zbar = document.getElementById(this.container.id + '_navigationbar');
+            zbar = doc.getElementById(this.container.id + '_navigationbar');
             if (Type.exists(zbar)) {
                 zbarDisplay = zbar.style.display;
                 zbar.style.display = 'none';

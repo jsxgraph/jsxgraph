@@ -27,7 +27,7 @@ Improvements
 ------------
 
 - Gradient fill color for points
-- Many improvenments to index.d.ts
+- Many improvements to index.d.ts
 - Improved keyboard control
 - Some preparations for 3D support
 - Reduce thick focus box on webkit browsers

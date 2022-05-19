@@ -4746,12 +4746,12 @@ define([
             this.inUpdate = true;
 
             if (this.attr.minimizereflow === 'all' && this.containerObj && this.renderer.type !== 'vml') {
-                storeActiveEl = document.activeElement; // Store focus element
+                storeActiveEl = this.document.activeElement; // Store focus element
                 insert = this.renderer.removeToInsertLater(this.containerObj);
             }
 
             if (this.attr.minimizereflow === 'svg' && this.renderer.type === 'svg') {
-                storeActiveEl = document.activeElement;
+                storeActiveEl = this.document.activeElement;
                 insert = this.renderer.removeToInsertLater(this.renderer.svgRoot);
             }
 
@@ -5944,14 +5944,14 @@ define([
 
             id = id || this.container;
             this._fullscreen_inner_id = id;
-            inner_node = document.getElementById(id);
+            inner_node = this.document.getElementById(id);
             wrap_id = 'fullscreenwrap_' + id;
 
             // Wrap a div around the JSXGraph div.
             if (this.document.getElementById(wrap_id)) {
                 wrap_node = this.document.getElementById(wrap_id);
             } else {
-                wrap_node = document.createElement('div');
+                wrap_node = this.document.createElement('div');
                 wrap_node.classList.add('JXG_wrap_private');
                 wrap_node.setAttribute('id', wrap_id);
                 inner_node.parentNode.insertBefore(wrap_node, inner_node);
