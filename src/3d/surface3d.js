@@ -54,9 +54,11 @@ define(['jxg', 'utils/type', '3d/view3d'
         el.updateDataArray = function () {
             var steps_u = Type.evaluate(this.visProp.stepsu),
                 steps_v = Type.evaluate(this.visProp.stepsv),
+                r_u = Type.evaluate(this.D3.range_u), // Type.evaluate(range_u),
+                r_v = Type.evaluate(this.D3.range_v), // Type.evaluate(range_v),
                 res = view.getMesh(this.D3.X, this.D3.Y, this.D3.Z,
-                    this.D3.range_u.concat([steps_u]),
-                    this.D3.range_v.concat([steps_v]));
+                    r_u.concat([steps_u]),
+                    r_v.concat([steps_v]));
             this.dataX = res[0];
             this.dataY = res[1];
         };
