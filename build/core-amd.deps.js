@@ -66,6 +66,7 @@ define([
     'element/input',
     'element/button',
     'base/foreignobject',
+    'options3d',
     '3d/box3d',
     '3d/curve3d',
     '3d/linspace3d',
