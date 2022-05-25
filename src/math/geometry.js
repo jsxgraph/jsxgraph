@@ -1852,7 +1852,6 @@ define([
                 len = path.borders.length,
                 intersections = [];
 
-            console.log();
             for (i = 0; i < len; i++) {
                 border = path.borders[i];
                 res = this.meetSegmentSegment(
@@ -1861,7 +1860,6 @@ define([
                     line.point1.coords.usrCoords,
                     line.point2.coords.usrCoords);
 
-                console.log(res);
                 if (
                     (!alwaysIntersect || (res[2] >= 0 && res[2] < 1)) &&
                     res[1] >= 0 && res[1] < 1) {
