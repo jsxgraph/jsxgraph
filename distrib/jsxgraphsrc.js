@@ -14737,6 +14737,30 @@ define('math/geometry',[
                     return that.meetCurveLine(el1, el2, i, el1.board, alwaysintersect);
                 };
 
+            } else if (el1.type === Const.OBJECT_TYPE_POLYGON || el2.type === Const.OBJECT_TYPE_POLYGON) {
+                // polygon - other
+                // Uses the Greiner-Hormann clipping algorithm
+                // Not implemented: polygon - point
+
+                if (el1.elementClass === Const.OBJECT_CLASS_LINE) {
+                    // line - path
+                    /** @ignore */
+                    func = function () {
+                        return that.meetPolygonLine(el2, el1, i, el1.board, alwaysintersect);
+                    };
+                } else if (el2.elementClass === Const.OBJECT_CLASS_LINE) {
+                    // path - line
+                    func = function () {
+                        return that.meetPolygonLine(el1, el2, i, el1.board, alwaysintersect);
+                    };
+                } else {
+                    // path - path
+                    /** @ignore */
+                    func = function () {
+                        return that.meetPathPath(el1, el2, i, el1.board);
+                    };
+                }
+
             } else if (el1.elementClass === Const.OBJECT_CLASS_LINE && el2.elementClass === Const.OBJECT_CLASS_LINE) {
                 // line - line, lines may also be segments.
                 /** @ignore */
@@ -15152,6 +15176,8 @@ define('math/geometry',[
          * @param {JXG.Line} li Line
          * @param {Number} nr Will return the nr-th intersection point.
          * @param {JXG.Board} board
+         * @param {Boolean} testSegment Test if intersection has to be inside of the segment or somewhere on the
+         * line defined by the segment
          * @returns {JXG.Coords} Coords object containing the intersection.
          */
         meetCurveLineContinuous: function (cu, li, nr, board, testSegment) {
@@ -15215,7 +15241,6 @@ define('math/geometry',[
 
             return (new Coords(Const.COORDS_BY_USER, [z, cu.X(t), cu.Y(t)], board));
         },
-
 
         /**
          * Intersection of line and curve, discrete case.
@@ -15401,6 +15426,89 @@ define('math/geometry',[
             u = (c[i] - d) / ( (q2[0] !== 0) ? (q2[i] / q2[0] - d) : q2[i] );
 
             return [c, t, u];
+        },
+
+        /**
+         * Find the n-th intersection point of two pathes, usually given by polygons. Uses parts of the
+         * Greiner-Hormann algorithm in JXG.Math.Clip.
+         *
+         * @param {JXG.Circle|JXG.Curve|JXG.Polygon} path1
+         * @param {JXG.Circle|JXG.Curve|JXG.Polygon} path2
+         * @param {Number} n
+         * @param {JXG.Board} board
+         *
+         * @returns {JXG.Coords} Intersection point. In case no intersection point is detected,
+         * the ideal point [0,0,0] is returned.
+         *
+         */
+        meetPathPath: function(path1, path2, nr, board) {
+            var S, C, len, intersections;
+
+            S = JXG.Math.Clip._getPath(path1, board);
+            len = S.length;
+            if (len > 0 && this.distance(S[0].coords.usrCoords, S[len - 1].coords.usrCoords, 3) < Mat.eps) {
+                S.pop();
+            }
+
+            C = JXG.Math.Clip._getPath(path2, board);
+            len = C.length;
+            if (len > 0 && this.distance(C[0].coords.usrCoords, C[len - 1].coords.usrCoords, 3) < Mat.eps * Mat.eps) {
+                C.pop();
+            }
+
+            // Handle cases where at least one of the paths is empty
+            if (nr < 0 || JXG.Math.Clip.isEmptyCase(S, C, 'intersection')) {
+                return (new Coords(Const.COORDS_BY_USER, [0, 0, 0], board));
+            }
+
+            JXG.Math.Clip.makeDoublyLinkedList(S);
+            JXG.Math.Clip.makeDoublyLinkedList(C);
+
+            intersections = JXG.Math.Clip.findIntersections(S, C, board)[0];
+            if (nr < intersections.length) {
+                return intersections[nr].coords;
+            }
+            return (new Coords(Const.COORDS_BY_USER, [0, 0, 0], board));
+        },
+
+        /**
+         * Find the n-th intersection point between a polygon and a line.
+         * @param {JXG.Polygon} path
+         * @param {JXG.Line} line
+         * @param {Number} nr
+         * @param {JXG.Board} board
+         * @param {Boolean} alwaysIntersect If false just the segment between the two defining points of the line are tested for intersection.
+         *
+         * @returns {JXG.Coords} Intersection point. In case no intersection point is detected,
+         * the ideal point [0,0,0] is returned.
+         */
+        meetPolygonLine: function(path, line, nr, board, alwaysIntersect) {
+            var i, res, border,
+                crds = [0,0,0],
+                len = path.borders.length,
+                intersections = [];
+
+            console.log();
+            for (i = 0; i < len; i++) {
+                border = path.borders[i];
+                res = this.meetSegmentSegment(
+                    border.point1.coords.usrCoords,
+                    border.point2.coords.usrCoords,
+                    line.point1.coords.usrCoords,
+                    line.point2.coords.usrCoords);
+
+                console.log(res);
+                if (
+                    (!alwaysIntersect || (res[2] >= 0 && res[2] < 1)) &&
+                    res[1] >= 0 && res[1] < 1) {
+                    intersections.push(res[0]);
+                }
+            }
+
+            if (nr >= 0 && nr < intersections.length) {
+                crds = intersections[nr];
+            }
+            return (new Coords(Const.COORDS_BY_USER, crds, board));
         },
 
         /****************************************/
@@ -23228,7 +23336,6 @@ define('math/clip',[
 
             // Collect all points into clip array C
             C = this._getPath(clip, board);
-
             len = C.length;
             if (len > 0 && Geometry.distance(C[0].coords.usrCoords, C[len - 1].coords.usrCoords, 3) < Mat.eps * Mat.eps) {
                 C.pop();
@@ -69049,14 +69156,21 @@ define('element/composition',[
     };
 
     /**
-     * @class A parallel is a line through a given point with the same slope as a given line.
+     * @class A parallel is a line through a given point with the same slope as a given line or
+     * the line through two given point.
+     * <p>
+     * If original line is given as a JSXGraph line object, the resulting parallel line will be defined by the given point and an
+     * infinitely far away point (an ideal point). That means, the line can not be shortened to a segment.
+     * <p>
+     * If the original line is given as two points, the resulting parallel line can be shortened to a a segment.
      * @pseudo
      * @name Parallel
      * @augments Line
      * @constructor
      * @type JXG.Line
      * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
-     * @param {JXG.Line_JXG.Point} l,p The constructed line contains p and has the same slope as l.
+     * @param {JXG.Line_JXG.Point} l,p The constructed line contains p and has the same slope as l. Alternative parameters are p1, p2, p: The
+     * constructed line contains p and has the same slope as the line through p1 and p2.
      * @example
      * // Create a parallel
      * var p1 = board.create('point', [0.0, 2.0]);
@@ -69074,22 +69188,47 @@ define('element/composition',[
      *   var plex1_p3 = plex1_board.create('point', [3.0, 3.0]);
      *   var plex1_pl1 = plex1_board.create('parallel', [plex1_l1, plex1_p3]);
      * </script><pre>
+     * @example
+     * var p1, p2, p3, l1, pl1;
+     *
+     * p1 = board.create('point', [0.0, 2.0]);
+     * p2 = board.create('point', [2.0, 1.0]);
+     * l1 = board.create('line', [p1, p2]);
+     *
+     * p3 = board.create('point', [1.0, 3.0]);
+     * pl1 = board.create('parallel', [p1, p2, p3], {straightFirst: false, straightLast: false});
+     *
+     * </pre><div id="JXGd643305d-20c3-4a88-91f9-8d0c4448594f" class="jxgbox" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     *     (function() {
+     *         var board = JXG.JSXGraph.initBoard('JXGd643305d-20c3-4a88-91f9-8d0c4448594f',
+     *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+     *     var p1, p2, p3, l1, pl1;
+     *
+     *     p1 = board.create('point', [0.0, 2.0]);
+     *     p2 = board.create('point', [2.0, 1.0]);
+     *     l1 = board.create('line', [p1, p2]);
+     *
+     *     p3 = board.create('point', [1.0, 3.0]);
+     *     pl1 = board.create('parallel', [p1, p2, p3], {straightFirst: false, straightLast: false});
+     *
+     *     })();
+     *
+     * </script><pre>
+     *
      */
     JXG.createParallel = function (board, parents, attributes) {
-        var p, pp, pl, li, i, attr;
+        var p, pp, pl, li, i, attr, ty = 1;
 
         for (i = 0; i < parents.length; ++i) {
             parents[i] = board.select(parents[i]);
         }
         p = null;
         if (parents.length === 3) {
+            // Line / segment through point parents[2] which is parallel to line through parents[0] and parents[1]
             parents = Type.providePoints(board, parents, attributes, 'point');
-            // line through point parents[2] which is parallel to line through parents[0] and parents[1]
             p = parents[2];
-            /** @ignore */
-            li = function () {
-                return Mat.crossProduct(parents[0].coords.usrCoords, parents[1].coords.usrCoords);
-            };
+            ty = 0;
         } else if (Type.isPointType(board, parents[0])) {
             // Parallel to line parents[1] through point parents[0]
             p = Type.providePoints(board, [parents[0]], attributes, 'point')[0];
@@ -69111,11 +69250,19 @@ define('element/composition',[
         }
 
         attr = Type.copyAttributes(attributes, board.options, 'parallel', 'point');
-        pp = board.create('point', [
-            function () {
-                return Mat.crossProduct([1, 0, 0], li());
-            }
-        ], attr);
+        if (ty === 1) {
+            // Line is given by line element. The parallel line is
+            // constructed as line through an ideal point.
+            pp = board.create('point', [
+                function () {
+                    return Mat.crossProduct([1, 0, 0], li());
+                }
+            ], attr);
+        } else {
+            // Line is given by two points. The parallel line is
+            // constructed as line through two finite point.
+            pp = board.create('parallelpoint', parents, attr);
+        }
         pp.isDraggable = true;
 
         attr = Type.copyAttributes(attributes, board.options, 'parallel');
@@ -69149,31 +69296,33 @@ define('element/composition',[
     };
 
     /**
-     * @class An arrow parallel is a parallel segment with an arrow attached.
+     * @class An arrow parallel is a segment with an arrow attached which is parallel through a given segment, given by its defining two points,
+     * through a given point.
+     * <p>
      * @pseudo
      * @constructor
      * @name Arrowparallel
      * @type Parallel
      * @augments Parallel
      * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
-     * @param {JXG.Line_JXG.Point} l,p The constructed arrow contains p and has the same slope as l.
+     * @param JXG.Point_JXG.Point_JXG.Point} p1, p2,p3 The constructed arrow contains p3 and has the same slope as the line through p1 and p2.
      * @example
      * // Create a parallel
      * var p1 = board.create('point', [0.0, 2.0]);
      * var p2 = board.create('point', [2.0, 1.0]);
-     * var l1 = board.create('line', [p1, p2]);
+     * var l1 = board.create('segment', [p1, p2]);
      *
      * var p3 = board.create('point', [3.0, 3.0]);
-     * var pl1 = board.create('arrowparallel', [l1, p3]);
+     * var pl1 = board.create('arrowparallel', [p1, p2, p3]);
      * </pre><div class="jxgbox" id="JXGeeacdf99-036f-4e83-aeb6-f7388423e369" style="width: 400px; height: 400px;"></div>
      * <script type="text/javascript">
      * (function () {
      *   var plex1_board = JXG.JSXGraph.initBoard('JXGeeacdf99-036f-4e83-aeb6-f7388423e369', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
      *   var plex1_p1 = plex1_board.create('point', [0.0, 2.0]);
      *   var plex1_p2 = plex1_board.create('point', [2.0, 1.0]);
-     *   var plex1_l1 = plex1_board.create('line', [plex1_p1, plex1_p2]);
+     *   var plex1_l1 = plex1_board.create('segment', [plex1_p1, plex1_p2]);
      *   var plex1_p3 = plex1_board.create('point', [3.0, 3.0]);
-     *   var plex1_pl1 = plex1_board.create('arrowparallel', [plex1_l1, plex1_p3]);
+     *   var plex1_pl1 = plex1_board.create('arrowparallel', [plex1_p1, plex1_p2, plex1_p3]);
      * })();
      * </script><pre>
      */
@@ -81557,9 +81706,11 @@ define('3d/surface3d',['jxg', 'utils/type', '3d/view3d'
         el.updateDataArray = function () {
             var steps_u = Type.evaluate(this.visProp.stepsu),
                 steps_v = Type.evaluate(this.visProp.stepsv),
+                r_u = Type.evaluate(this.D3.range_u), // Type.evaluate(range_u),
+                r_v = Type.evaluate(this.D3.range_v), // Type.evaluate(range_v),
                 res = view.getMesh(this.D3.X, this.D3.Y, this.D3.Z,
-                    this.D3.range_u.concat([steps_u]),
-                    this.D3.range_v.concat([steps_v]));
+                    r_u.concat([steps_u]),
+                    r_v.concat([steps_v]));
             this.dataX = res[0];
             this.dataY = res[1];
         };
@@ -81582,6 +81733,7 @@ define('3d/surface3d',['jxg', 'utils/type', '3d/view3d'
     JXG.registerElement('functiongraph3d', ThreeD.createFunctiongraph);
 
 });
+
 /*global define: true*/
 define('../build/core.deps.js',[
     'jxg',

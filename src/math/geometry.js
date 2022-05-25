@@ -1101,6 +1101,30 @@ define([
                     return that.meetCurveLine(el1, el2, i, el1.board, alwaysintersect);
                 };
 
+            } else if (el1.type === Const.OBJECT_TYPE_POLYGON || el2.type === Const.OBJECT_TYPE_POLYGON) {
+                // polygon - other
+                // Uses the Greiner-Hormann clipping algorithm
+                // Not implemented: polygon - point
+
+                if (el1.elementClass === Const.OBJECT_CLASS_LINE) {
+                    // line - path
+                    /** @ignore */
+                    func = function () {
+                        return that.meetPolygonLine(el2, el1, i, el1.board, alwaysintersect);
+                    };
+                } else if (el2.elementClass === Const.OBJECT_CLASS_LINE) {
+                    // path - line
+                    func = function () {
+                        return that.meetPolygonLine(el1, el2, i, el1.board, alwaysintersect);
+                    };
+                } else {
+                    // path - path
+                    /** @ignore */
+                    func = function () {
+                        return that.meetPathPath(el1, el2, i, el1.board);
+                    };
+                }
+
             } else if (el1.elementClass === Const.OBJECT_CLASS_LINE && el2.elementClass === Const.OBJECT_CLASS_LINE) {
                 // line - line, lines may also be segments.
                 /** @ignore */
@@ -1516,6 +1540,8 @@ define([
          * @param {JXG.Line} li Line
          * @param {Number} nr Will return the nr-th intersection point.
          * @param {JXG.Board} board
+         * @param {Boolean} testSegment Test if intersection has to be inside of the segment or somewhere on the
+         * line defined by the segment
          * @returns {JXG.Coords} Coords object containing the intersection.
          */
         meetCurveLineContinuous: function (cu, li, nr, board, testSegment) {
@@ -1579,7 +1605,6 @@ define([
 
             return (new Coords(Const.COORDS_BY_USER, [z, cu.X(t), cu.Y(t)], board));
         },
-
 
         /**
          * Intersection of line and curve, discrete case.
@@ -1765,6 +1790,89 @@ define([
             u = (c[i] - d) / ( (q2[0] !== 0) ? (q2[i] / q2[0] - d) : q2[i] );
 
             return [c, t, u];
+        },
+
+        /**
+         * Find the n-th intersection point of two pathes, usually given by polygons. Uses parts of the
+         * Greiner-Hormann algorithm in JXG.Math.Clip.
+         *
+         * @param {JXG.Circle|JXG.Curve|JXG.Polygon} path1
+         * @param {JXG.Circle|JXG.Curve|JXG.Polygon} path2
+         * @param {Number} n
+         * @param {JXG.Board} board
+         *
+         * @returns {JXG.Coords} Intersection point. In case no intersection point is detected,
+         * the ideal point [0,0,0] is returned.
+         *
+         */
+        meetPathPath: function(path1, path2, nr, board) {
+            var S, C, len, intersections;
+
+            S = JXG.Math.Clip._getPath(path1, board);
+            len = S.length;
+            if (len > 0 && this.distance(S[0].coords.usrCoords, S[len - 1].coords.usrCoords, 3) < Mat.eps) {
+                S.pop();
+            }
+
+            C = JXG.Math.Clip._getPath(path2, board);
+            len = C.length;
+            if (len > 0 && this.distance(C[0].coords.usrCoords, C[len - 1].coords.usrCoords, 3) < Mat.eps * Mat.eps) {
+                C.pop();
+            }
+
+            // Handle cases where at least one of the paths is empty
+            if (nr < 0 || JXG.Math.Clip.isEmptyCase(S, C, 'intersection')) {
+                return (new Coords(Const.COORDS_BY_USER, [0, 0, 0], board));
+            }
+
+            JXG.Math.Clip.makeDoublyLinkedList(S);
+            JXG.Math.Clip.makeDoublyLinkedList(C);
+
+            intersections = JXG.Math.Clip.findIntersections(S, C, board)[0];
+            if (nr < intersections.length) {
+                return intersections[nr].coords;
+            }
+            return (new Coords(Const.COORDS_BY_USER, [0, 0, 0], board));
+        },
+
+        /**
+         * Find the n-th intersection point between a polygon and a line.
+         * @param {JXG.Polygon} path
+         * @param {JXG.Line} line
+         * @param {Number} nr
+         * @param {JXG.Board} board
+         * @param {Boolean} alwaysIntersect If false just the segment between the two defining points of the line are tested for intersection.
+         *
+         * @returns {JXG.Coords} Intersection point. In case no intersection point is detected,
+         * the ideal point [0,0,0] is returned.
+         */
+        meetPolygonLine: function(path, line, nr, board, alwaysIntersect) {
+            var i, res, border,
+                crds = [0,0,0],
+                len = path.borders.length,
+                intersections = [];
+
+            console.log();
+            for (i = 0; i < len; i++) {
+                border = path.borders[i];
+                res = this.meetSegmentSegment(
+                    border.point1.coords.usrCoords,
+                    border.point2.coords.usrCoords,
+                    line.point1.coords.usrCoords,
+                    line.point2.coords.usrCoords);
+
+                console.log(res);
+                if (
+                    (!alwaysIntersect || (res[2] >= 0 && res[2] < 1)) &&
+                    res[1] >= 0 && res[1] < 1) {
+                    intersections.push(res[0]);
+                }
+            }
+
+            if (nr >= 0 && nr < intersections.length) {
+                crds = intersections[nr];
+            }
+            return (new Coords(Const.COORDS_BY_USER, crds, board));
         },
 
         /****************************************/
