@@ -48,7 +48,8 @@ define(['jxg', 'utils/type', 'math/math', 'math/geometry', '3d/view3d'
             rear = [0, 0, 0],   // x, y, z
             front = [0, 0, 0],  // x, y, z
             from, to,
-            vec1, vec2, range1, range2, na,
+            vec1, vec2, range1, range2,
+            na, na_parent,
             ticks_attr,
             axes = {};
 
@@ -64,9 +65,8 @@ define(['jxg', 'utils/type', 'math/math', 'math/geometry', '3d/view3d'
             }
         }
 
-        // Axes
+        // Main 3D axes
         attr = Type.copyAttributes(attributes, board.options, 'axes3d');
-
         pos = attr.axesposition;
         for (i = 0; i < directions.length; i++) {
             // Run through ['x', 'y', 'z']
@@ -115,7 +115,7 @@ define(['jxg', 'utils/type', 'math/math', 'math/geometry', '3d/view3d'
                 name: '', visible: false, withLabel: false
             });
 
-        // Planes
+        // Front and rear planes
         for (i = 0; i < directions.length; i++) {
             // Run through ['x', 'y', 'z']
             i1 = (i + 1) % 3;
@@ -135,13 +135,14 @@ define(['jxg', 'utils/type', 'math/math', 'math/geometry', '3d/view3d'
                 range2 = [rear[i2], front[i2]];
                 na = dir + 'Plane' + sides[j];
 
+                attr = Type.copyAttributes(attributes, board.options, 'axes3d', na);
                 axes[na] =
-                    view.create('plane3d', [from, vec1, vec2, range1, range2], attr[na.toLowerCase()]);
+                    view.create('plane3d', [from, vec1, vec2, range1, range2], attr);
                 axes[na].D3.elType = 'axisplane3d';
             }
         }
 
-        // Axes on planes
+        // Axes on front and rear planes
         for (i = 0; i < directions.length; i++) {
             // Run through ['x', 'y', 'z']
             dir = directions[i];
@@ -150,6 +151,7 @@ define(['jxg', 'utils/type', 'math/math', 'math/geometry', '3d/view3d'
                     i1 = (i + k) % 3;
                     dir1 = directions[i1];
                     na = dir + 'Plane' + sides[j] + dir1.toUpperCase() + 'Axis';
+                    na_parent = dir + 'Plane' + sides[j];
 
                     from = [0, 0, 0];
                     to = [0, 0, 0];
@@ -158,11 +160,13 @@ define(['jxg', 'utils/type', 'math/math', 'math/geometry', '3d/view3d'
                     from[i1] = rear[i1];
                     to[i1] = front[i1];
 
-                    axes[na] = view.create('axis3d', [from, to], attr[na.toLowerCase()]);
+                    attr = Type.copyAttributes(attributes, board.options, 'axes3d', na);
+                    axes[na] = view.create('axis3d', [from, to], attr);
+                    axes[na_parent].addChild(axes[na]);
+                    axes[na_parent].inherits.push(axes[na]);
                 }
             }
         }
-        // axes.Y2Dxy = view.create('axis3d', [[0, sy, sz], [0, ey, sz]], attr);
 
         return axes;
     };

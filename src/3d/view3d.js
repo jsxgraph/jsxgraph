@@ -363,11 +363,81 @@ define(['jxg', 'options', 'base/constants', 'utils/type', 'math/math', 'base/ele
     });
 
     /**
+     * @class This element creates a 3D view.
+     * @pseudo
+     * @description  A View3D element provides the container and the methods to create and display 3D elements.
+     * It is contained in a JSXGraph board.
+     * @name View3D
+     * @augments JXG.View3D
+     * @constructor
+     * @type Object
+     * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
+     * @param {Array_Array_Array} lower,dim,cube  Here, lower is an array of the form [x, y] and
+     * dim is an array of the form [w, h].
+     * The arrays [x, y] and [w, h] define the 2D frame into which the 3D cube is
+     * (roughly) projected.
+     * cube is an array of the form [[x1, x2], [y1, y2], [z1, z2]]
+     * which determines the coordinate ranges of the 3D cube.
      *
-     * @param {*} board
-     * @param {*} parents
-     * @param {*} attributes
-     * @returns
+     * @example
+     *  var bound = [-5, 5];
+     *  var view = board.create('view3d',
+     *      [[-6, -3],
+     *       [8, 8],
+     *       [bound, bound, bound]],
+     *      {
+     *          // Main axes
+     *          axesPosition: 'center',
+     *          xAxis: { strokeColor: 'blue', strokeWidth: 3},
+     *
+     *          // Planes
+     *          xPlaneRear: { fillColor: 'yellow',  mesh3d: {visible: false}},
+     *          yPlaneFront: { visible: true, fillColor: 'blue'},
+     *
+     *          // Axes on planes
+     *          xPlaneRearYAxis: {strokeColor: 'red'},
+     *          xPlaneRearZAxis: {strokeColor: 'red'},
+     *
+     *          yPlaneFrontXAxis: {strokeColor: 'blue'},
+     *          yPlaneFrontZAxis: {strokeColor: 'blue'},
+     *
+     *          zPlaneFrontXAxis: {visible: false},
+     *          zPlaneFrontYAxis: {visible: false}
+     *      });
+     *
+     * </pre><div id="JXGdd06d90e-be5d-4531-8f0b-65fc30b1a7c7" class="jxgbox" style="width: 500px; height: 500px;"></div>
+     * <script type="text/javascript">
+     *     (function() {
+     *         var board = JXG.JSXGraph.initBoard('JXGdd06d90e-be5d-4531-8f0b-65fc30b1a7c7',
+     *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false});
+     *                             var bound = [-5, 5];
+     *                             var view = board.create('view3d',
+     *                                 [[-6, -3], [8, 8],
+     *                                 [bound, bound, bound]],
+     *                                 {
+     *                                     // Main axes
+     *                                     axesPosition: 'center',
+     *                                     xAxis: { strokeColor: 'blue', strokeWidth: 3},
+     *
+     *                                     // Planes
+     *                                     xPlaneRear: { fillColor: 'yellow',  mesh3d: {visible: false}},
+     *                                     yPlaneFront: { visible: true, fillColor: 'blue'},
+     *
+     *                                     // Axes on planes
+     *                                     xPlaneRearYAxis: {strokeColor: 'red'},
+     *                                     xPlaneRearZAxis: {strokeColor: 'red'},
+     *
+     *                                     yPlaneFrontXAxis: {strokeColor: 'blue'},
+     *                                     yPlaneFrontZAxis: {strokeColor: 'blue'},
+     *
+     *                                     zPlaneFrontXAxis: {visible: false},
+     *                                     zPlaneFrontYAxis: {visible: false}
+     *                                 });
+     *
+     *     })();
+     *
+     * </script><pre>
+     *
      */
     ThreeD.createView3D = function (board, parents, attributes) {
         var view, frame, attr,

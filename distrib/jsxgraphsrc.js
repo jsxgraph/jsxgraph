@@ -843,7 +843,7 @@ define('base/constants',['jxg'], function (JXG) {
     var major = 1,
         minor = 4,
         patch = 4,
-        add = 'dev', //'dev'
+        add = '', //'dev'
         version = major + '.' + minor + '.' + patch + (add ? '-' + add : ''),
         constants;
 
@@ -80228,38 +80228,162 @@ define('options3d',[
         },
 
         axes3d: {
+            /**#@+
+             * @visprop
+             */
+
+            /**
+             * Position of the main axes in a View3D element. Possible values are
+             * 'center' and 'border'.
+             *
+             * @type String
+             * @name View3D#axesPosition
+             * @default 'center'
+             */
             axesPosition: 'center',  // Possible values: 'center', otherwise: border
 
             // Main axes
+
+            /**
+             * Attributes of the 3D x-axis.
+             *
+             * @type Line3D
+             * @name View3D#xAxis
+             */
             xAxis: { visible: true, point2: {name: 'x'}},
+
+            /**
+             * Attributes of the 3D y-axis.
+             *
+             * @type Line3D
+             * @name View3D#yAxis
+             */
             yAxis: { visible: true, point2: {name: 'y'}},
+
+            /**
+             * Attributes of the 3D z-axis.
+             *
+             * @type Line3D
+             * @name View3D#zAxis
+             */
             zAxis: { visible: true, point2: {name: 'z'}},
 
             // Planes
+            /**
+             * Attributes of the 3D plane orthogonal to the x-axis at the "rear" of the cube.
+             * @type Plane3D
+             * @name View3D#xPlaneRear
+             */
             xPlaneRear: { visible: true, layer: 0, mesh3d: { layer: 1 } },
+            /**
+             * Attributes of the 3D plane orthogonal to the y-axis at the "rear" of the cube.
+             * @type Plane3D
+             * @name View3D#yPlaneRear
+             */
             yPlaneRear: { visible: true, layer: 0, mesh3d: { layer: 1 } },
+            /**
+             * Attributes of the 3D plane orthogonal to the z-axis at the "rear" of the cube.
+             * @type Plane3D
+             * @name View3D#zPlaneRear
+             */
             zPlaneRear: { visible: true, layer: 0, mesh3d: { layer: 1 } },
 
+            /**
+             * Attributes of the 3D plane orthogonal to the x-axis at the "front" of the cube.
+             * @type Plane3D
+             * @name View3D#xPlaneFront
+             */
             xPlaneFront: { visible: false, layer: 0, mesh3d: { layer: 1 } },
+            /**
+             * Attributes of the 3D plane orthogonal to the y-axis at the "front" of the cube.
+             * @type Plane3D
+             * @name View3D#yPlaneFront
+             */
             yPlaneFront: { visible: false, layer: 0, mesh3d: { layer: 1 } },
+            /**
+             * Attributes of the 3D plane orthogonal to the z-axis at the "front" of the cube.
+             * @type Plane3D
+             * @name View3D#zPlaneFront
+             */
             zPlaneFront: { visible: false, layer: 0, mesh3d: { layer: 1 } },
 
             // Axes on the planes
-            xPlaneRearYAxis: {visible: true, strokeColor: '#888888'},
-            xPlaneRearZAxis: {visible: true, strokeColor: '#888888'},
-            xPlaneFrontYAxis: {visible: false, strokeColor: '#888888'},
-            xPlaneFrontZAxis: {visible: false, strokeColor: '#888888'},
+            /**
+             * Attributes of the 3D y-axis on the 3D plane orthogonal to the x-axis at the "rear" of the cube.
+             * @type Plane3D
+             * @name View3D#xPlaneRearYAxis
+             */
+            xPlaneRearYAxis: {visible: 'inherit', strokeColor: '#888888', strokeWidth: 1},
+            /**
+             * Attributes of the 3D z-axis on the 3D plane orthogonal to the x-axis at the "rear" of the cube.
+             * @type Plane3D
+             * @name View3D#xPlaneRearZAxis
+             */
+            xPlaneRearZAxis: {visible: 'inherit', strokeColor: '#888888', strokeWidth: 1},
+            /**
+             * Attributes of the 3D y-axis on the 3D plane orthogonal to the x-axis at the "front" of the cube.
+             * @type Plane3D
+             * @name View3D#xPlaneFrontYAxis
+             */
+            xPlaneFrontYAxis: {visible: 'inherit', strokeColor: '#888888', strokeWidth: 1},
+            /**
+             * Attributes of the 3D z-axis on the 3D plane orthogonal to the x-axis at the "front" of the cube.
+             * @type Plane3D
+             * @name View3D#xPlaneFrontZAxis
+             */
+            xPlaneFrontZAxis: {visible: 'inherit', strokeColor: '#888888', strokeWidth: 1},
 
-            yPlaneRearXAxis: {visible: true, strokeColor: '#888888'},
-            yPlaneRearZAxis: {visible: true, strokeColor: '#888888'},
-            yPlaneFrontXAxis: {visible: false, strokeColor: '#888888'},
-            yPlaneFrontZAxis: {visible: false, strokeColor: '#888888'},
+            /**
+             * Attributes of the 3D x-axis on the 3D plane orthogonal to the y-axis at the "rear" of the cube.
+             * @type Plane3D
+             * @name View3D#yPlaneRearXAxis
+             */
+            yPlaneRearXAxis: {visible: 'inherit', strokeColor: '#888888', strokeWidth: 1},
+            /**
+             * Attributes of the 3D z-axis on the 3D plane orthogonal to the y-axis at the "rear" of the cube.
+             * @type Plane3D
+             * @name View3D#yPlaneRearZAxis
+             */
+            yPlaneRearZAxis: {visible: 'inherit', strokeColor: '#888888', strokeWidth: 1},
+            /**
+             * Attributes of the 3D x-axis on the 3D plane orthogonal to the y-axis at the "front" of the cube.
+             * @type Plane3D
+             * @name View3D#yPlaneFrontXAxis
+             */
+            yPlaneFrontXAxis: {visible: 'inherit', strokeColor: '#888888', strokeWidth: 1},
+            /**
+             * Attributes of the 3D z-axis on the 3D plane orthogonal to the y-axis at the "front" of the cube.
+             * @type Plane3D
+             * @name View3D#yPlaneFrontZAxis
+             */
+            yPlaneFrontZAxis: {visible: 'inherit', strokeColor: '#888888', strokeWidth: 1},
 
-            zPlaneRearXAxis: {visible: true, strokeColor: '#888888'},
-            zPlaneRearYAxis: {visible: true, strokeColor: '#888888'},
-            zPlaneFrontXAxis: {visible: false, strokeColor: '#888888'},
-            zPlaneFrontYAxis: {visible: false, strokeColor: '#888888'}
+            /**
+             * Attributes of the 3D x-axis on the 3D plane orthogonal to the z-axis at the "rear" of the cube.
+             * @type Plane3D
+             * @name View3D#zPlaneRearXAxis
+             */
+            zPlaneRearXAxis: {visible: 'inherit', strokeColor: '#888888', strokeWidth: 1},
+            /**
+             * Attributes of the 3D y-axis on the 3D plane orthogonal to the z-axis at the "rear" of the cube.
+             * @type Plane3D
+             * @name View3D#zPlaneRearYAxis
+             */
+            zPlaneRearYAxis: {visible: 'inherit', strokeColor: '#888888', strokeWidth: 1},
+            /**
+             * Attributes of the 3D x-axis on the 3D plane orthogonal to the z-axis at the "front" of the cube.
+             * @type Plane3D
+             * @name View3D#zPlaneFrontXAxis
+             */
+            zPlaneFrontXAxis: {visible: 'inherit', strokeColor: '#888888', strokeWidth: 1},
+            /**
+             * Attributes of the 3D y-axis on the 3D plane orthogonal to the z-axis at the "front" of the cube.
+             * @type Plane3D
+             * @name View3D#zPlaneFrontYAxis
+             */
+            zPlaneFrontYAxis: {visible: 'inherit', strokeColor: '#888888', strokeWidth: 1}
 
+            /**#@-*/
         },
 
         axis3d: {
@@ -80741,11 +80865,81 @@ define('3d/view3d',['jxg', 'options', 'base/constants', 'utils/type', 'math/math
     });
 
     /**
+     * @class This element creates a 3D view.
+     * @pseudo
+     * @description  A View3D element provides the container and the methods to create and display 3D elements.
+     * It is contained in a JSXGraph board.
+     * @name View3D
+     * @augments JXG.View3D
+     * @constructor
+     * @type Object
+     * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
+     * @param {Array_Array_Array} lower,dim,cube  Here, lower is an array of the form [x, y] and
+     * dim is an array of the form [w, h].
+     * The arrays [x, y] and [w, h] define the 2D frame into which the 3D cube is
+     * (roughly) projected.
+     * cube is an array of the form [[x1, x2], [y1, y2], [z1, z2]]
+     * which determines the coordinate ranges of the 3D cube.
      *
-     * @param {*} board
-     * @param {*} parents
-     * @param {*} attributes
-     * @returns
+     * @example
+     *  var bound = [-5, 5];
+     *  var view = board.create('view3d',
+     *      [[-6, -3],
+     *       [8, 8],
+     *       [bound, bound, bound]],
+     *      {
+     *          // Main axes
+     *          axesPosition: 'center',
+     *          xAxis: { strokeColor: 'blue', strokeWidth: 3},
+     *
+     *          // Planes
+     *          xPlaneRear: { fillColor: 'yellow',  mesh3d: {visible: false}},
+     *          yPlaneFront: { visible: true, fillColor: 'blue'},
+     *
+     *          // Axes on planes
+     *          xPlaneRearYAxis: {strokeColor: 'red'},
+     *          xPlaneRearZAxis: {strokeColor: 'red'},
+     *
+     *          yPlaneFrontXAxis: {strokeColor: 'blue'},
+     *          yPlaneFrontZAxis: {strokeColor: 'blue'},
+     *
+     *          zPlaneFrontXAxis: {visible: false},
+     *          zPlaneFrontYAxis: {visible: false}
+     *      });
+     *
+     * </pre><div id="JXGdd06d90e-be5d-4531-8f0b-65fc30b1a7c7" class="jxgbox" style="width: 500px; height: 500px;"></div>
+     * <script type="text/javascript">
+     *     (function() {
+     *         var board = JXG.JSXGraph.initBoard('JXGdd06d90e-be5d-4531-8f0b-65fc30b1a7c7',
+     *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false});
+     *                             var bound = [-5, 5];
+     *                             var view = board.create('view3d',
+     *                                 [[-6, -3], [8, 8],
+     *                                 [bound, bound, bound]],
+     *                                 {
+     *                                     // Main axes
+     *                                     axesPosition: 'center',
+     *                                     xAxis: { strokeColor: 'blue', strokeWidth: 3},
+     *
+     *                                     // Planes
+     *                                     xPlaneRear: { fillColor: 'yellow',  mesh3d: {visible: false}},
+     *                                     yPlaneFront: { visible: true, fillColor: 'blue'},
+     *
+     *                                     // Axes on planes
+     *                                     xPlaneRearYAxis: {strokeColor: 'red'},
+     *                                     xPlaneRearZAxis: {strokeColor: 'red'},
+     *
+     *                                     yPlaneFrontXAxis: {strokeColor: 'blue'},
+     *                                     yPlaneFrontZAxis: {strokeColor: 'blue'},
+     *
+     *                                     zPlaneFrontXAxis: {visible: false},
+     *                                     zPlaneFrontYAxis: {visible: false}
+     *                                 });
+     *
+     *     })();
+     *
+     * </script><pre>
+     *
      */
     ThreeD.createView3D = function (board, parents, attributes) {
         var view, frame, attr,
@@ -80886,7 +81080,8 @@ define('3d/box3d',['jxg', 'utils/type', 'math/math', 'math/geometry', '3d/view3d
             rear = [0, 0, 0],   // x, y, z
             front = [0, 0, 0],  // x, y, z
             from, to,
-            vec1, vec2, range1, range2, na,
+            vec1, vec2, range1, range2,
+            na, na_parent,
             ticks_attr,
             axes = {};
 
@@ -80902,9 +81097,8 @@ define('3d/box3d',['jxg', 'utils/type', 'math/math', 'math/geometry', '3d/view3d
             }
         }
 
-        // Axes
+        // Main 3D axes
         attr = Type.copyAttributes(attributes, board.options, 'axes3d');
-
         pos = attr.axesposition;
         for (i = 0; i < directions.length; i++) {
             // Run through ['x', 'y', 'z']
@@ -80953,7 +81147,7 @@ define('3d/box3d',['jxg', 'utils/type', 'math/math', 'math/geometry', '3d/view3d
                 name: '', visible: false, withLabel: false
             });
 
-        // Planes
+        // Front and rear planes
         for (i = 0; i < directions.length; i++) {
             // Run through ['x', 'y', 'z']
             i1 = (i + 1) % 3;
@@ -80973,13 +81167,14 @@ define('3d/box3d',['jxg', 'utils/type', 'math/math', 'math/geometry', '3d/view3d
                 range2 = [rear[i2], front[i2]];
                 na = dir + 'Plane' + sides[j];
 
+                attr = Type.copyAttributes(attributes, board.options, 'axes3d', na);
                 axes[na] =
-                    view.create('plane3d', [from, vec1, vec2, range1, range2], attr[na.toLowerCase()]);
+                    view.create('plane3d', [from, vec1, vec2, range1, range2], attr);
                 axes[na].D3.elType = 'axisplane3d';
             }
         }
 
-        // Axes on planes
+        // Axes on front and rear planes
         for (i = 0; i < directions.length; i++) {
             // Run through ['x', 'y', 'z']
             dir = directions[i];
@@ -80988,6 +81183,7 @@ define('3d/box3d',['jxg', 'utils/type', 'math/math', 'math/geometry', '3d/view3d
                     i1 = (i + k) % 3;
                     dir1 = directions[i1];
                     na = dir + 'Plane' + sides[j] + dir1.toUpperCase() + 'Axis';
+                    na_parent = dir + 'Plane' + sides[j];
 
                     from = [0, 0, 0];
                     to = [0, 0, 0];
@@ -80996,11 +81192,13 @@ define('3d/box3d',['jxg', 'utils/type', 'math/math', 'math/geometry', '3d/view3d
                     from[i1] = rear[i1];
                     to[i1] = front[i1];
 
-                    axes[na] = view.create('axis3d', [from, to], attr[na.toLowerCase()]);
+                    attr = Type.copyAttributes(attributes, board.options, 'axes3d', na);
+                    axes[na] = view.create('axis3d', [from, to], attr);
+                    axes[na_parent].addChild(axes[na]);
+                    axes[na_parent].inherits.push(axes[na]);
                 }
             }
         }
-        // axes.Y2Dxy = view.create('axis3d', [[0, sy, sz], [0, ey, sz]], attr);
 
         return axes;
     };
