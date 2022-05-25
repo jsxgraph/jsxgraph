@@ -804,14 +804,21 @@ define([
     };
 
     /**
-     * @class A parallel is a line through a given point with the same slope as a given line.
+     * @class A parallel is a line through a given point with the same slope as a given line or
+     * the line through two given point.
+     * <p>
+     * If original line is given as a JSXGraph line object, the resulting parallel line will be defined by the given point and an
+     * infinitely far away point (an ideal point). That means, the line can not be shortened to a segment.
+     * <p>
+     * If the original line is given as two points, the resulting parallel line can be shortened to a a segment.
      * @pseudo
      * @name Parallel
      * @augments Line
      * @constructor
      * @type JXG.Line
      * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
-     * @param {JXG.Line_JXG.Point} l,p The constructed line contains p and has the same slope as l.
+     * @param {JXG.Line_JXG.Point} l,p The constructed line contains p and has the same slope as l. Alternative parameters are p1, p2, p: The
+     * constructed line contains p and has the same slope as the line through p1 and p2.
      * @example
      * // Create a parallel
      * var p1 = board.create('point', [0.0, 2.0]);
@@ -829,22 +836,47 @@ define([
      *   var plex1_p3 = plex1_board.create('point', [3.0, 3.0]);
      *   var plex1_pl1 = plex1_board.create('parallel', [plex1_l1, plex1_p3]);
      * </script><pre>
+     * @example
+     * var p1, p2, p3, l1, pl1;
+     *
+     * p1 = board.create('point', [0.0, 2.0]);
+     * p2 = board.create('point', [2.0, 1.0]);
+     * l1 = board.create('line', [p1, p2]);
+     *
+     * p3 = board.create('point', [1.0, 3.0]);
+     * pl1 = board.create('parallel', [p1, p2, p3], {straightFirst: false, straightLast: false});
+     *
+     * </pre><div id="JXGd643305d-20c3-4a88-91f9-8d0c4448594f" class="jxgbox" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     *     (function() {
+     *         var board = JXG.JSXGraph.initBoard('JXGd643305d-20c3-4a88-91f9-8d0c4448594f',
+     *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+     *     var p1, p2, p3, l1, pl1;
+     *
+     *     p1 = board.create('point', [0.0, 2.0]);
+     *     p2 = board.create('point', [2.0, 1.0]);
+     *     l1 = board.create('line', [p1, p2]);
+     *
+     *     p3 = board.create('point', [1.0, 3.0]);
+     *     pl1 = board.create('parallel', [p1, p2, p3], {straightFirst: false, straightLast: false});
+     *
+     *     })();
+     *
+     * </script><pre>
+     *
      */
     JXG.createParallel = function (board, parents, attributes) {
-        var p, pp, pl, li, i, attr;
+        var p, pp, pl, li, i, attr, ty = 1;
 
         for (i = 0; i < parents.length; ++i) {
             parents[i] = board.select(parents[i]);
         }
         p = null;
         if (parents.length === 3) {
+            // Line / segment through point parents[2] which is parallel to line through parents[0] and parents[1]
             parents = Type.providePoints(board, parents, attributes, 'point');
-            // line through point parents[2] which is parallel to line through parents[0] and parents[1]
             p = parents[2];
-            /** @ignore */
-            li = function () {
-                return Mat.crossProduct(parents[0].coords.usrCoords, parents[1].coords.usrCoords);
-            };
+            ty = 0;
         } else if (Type.isPointType(board, parents[0])) {
             // Parallel to line parents[1] through point parents[0]
             p = Type.providePoints(board, [parents[0]], attributes, 'point')[0];
@@ -866,11 +898,19 @@ define([
         }
 
         attr = Type.copyAttributes(attributes, board.options, 'parallel', 'point');
-        pp = board.create('point', [
-            function () {
-                return Mat.crossProduct([1, 0, 0], li());
-            }
-        ], attr);
+        if (ty === 1) {
+            // Line is given by line element. The parallel line is
+            // constructed as line through an ideal point.
+            pp = board.create('point', [
+                function () {
+                    return Mat.crossProduct([1, 0, 0], li());
+                }
+            ], attr);
+        } else {
+            // Line is given by two points. The parallel line is
+            // constructed as line through two finite point.
+            pp = board.create('parallelpoint', parents, attr);
+        }
         pp.isDraggable = true;
 
         attr = Type.copyAttributes(attributes, board.options, 'parallel');
@@ -904,31 +944,33 @@ define([
     };
 
     /**
-     * @class An arrow parallel is a parallel segment with an arrow attached.
+     * @class An arrow parallel is a segment with an arrow attached which is parallel through a given segment, given by its defining two points,
+     * through a given point.
+     * <p>
      * @pseudo
      * @constructor
      * @name Arrowparallel
      * @type Parallel
      * @augments Parallel
      * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
-     * @param {JXG.Line_JXG.Point} l,p The constructed arrow contains p and has the same slope as l.
+     * @param JXG.Point_JXG.Point_JXG.Point} p1, p2,p3 The constructed arrow contains p3 and has the same slope as the line through p1 and p2.
      * @example
      * // Create a parallel
      * var p1 = board.create('point', [0.0, 2.0]);
      * var p2 = board.create('point', [2.0, 1.0]);
-     * var l1 = board.create('line', [p1, p2]);
+     * var l1 = board.create('segment', [p1, p2]);
      *
      * var p3 = board.create('point', [3.0, 3.0]);
-     * var pl1 = board.create('arrowparallel', [l1, p3]);
+     * var pl1 = board.create('arrowparallel', [p1, p2, p3]);
      * </pre><div class="jxgbox" id="JXGeeacdf99-036f-4e83-aeb6-f7388423e369" style="width: 400px; height: 400px;"></div>
      * <script type="text/javascript">
      * (function () {
      *   var plex1_board = JXG.JSXGraph.initBoard('JXGeeacdf99-036f-4e83-aeb6-f7388423e369', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
      *   var plex1_p1 = plex1_board.create('point', [0.0, 2.0]);
      *   var plex1_p2 = plex1_board.create('point', [2.0, 1.0]);
-     *   var plex1_l1 = plex1_board.create('line', [plex1_p1, plex1_p2]);
+     *   var plex1_l1 = plex1_board.create('segment', [plex1_p1, plex1_p2]);
      *   var plex1_p3 = plex1_board.create('point', [3.0, 3.0]);
-     *   var plex1_pl1 = plex1_board.create('arrowparallel', [plex1_l1, plex1_p3]);
+     *   var plex1_pl1 = plex1_board.create('arrowparallel', [plex1_p1, plex1_p2, plex1_p3]);
      * })();
      * </script><pre>
      */
