@@ -3340,7 +3340,7 @@ define([
             }
 
             // If div is invisible - do nothing
-            if (w <= 0 || h <= 0) {
+            if (w <= 0 || h <= 0 || Type.isNaN(w) || Type.isNaN(h)) {
                 return;
             }
 
