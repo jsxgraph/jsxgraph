@@ -229,11 +229,29 @@ define([
         },
 
         surface3d: {
+            /**#@+
+             * @visprop
+             */
+
             highlight: false,
             tabindex: -1,
             strokeWidth: 1,
+
+            /**
+             * Number of intervals the mesh is divided into in direction of parameter u.
+             * @type Number
+             * @name Surface3D#stepsU
+             */
             stepsU: 30,
-            stepsV: 30
+
+            /**
+             * Number of intervals the mesh is divided into in direction of parameter v.
+             * @type Number
+             * @name Surface3D#stepsV
+             */
+             stepsV: 30
+
+            /**#@-*/
         },
 
         view3d: {

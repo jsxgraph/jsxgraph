@@ -31,6 +31,68 @@
 define(['jxg', 'utils/type', '3d/view3d'
 ], function (JXG, Type, ThreeD) {
     "use strict";
+
+
+    /**
+     * @class This element creates a 3D parametric surface.
+     * @pseudo
+     * @description A 3D parametric surface is defined by a function
+     *    <i>F: R<sup>2</sup> &rarr; R<sup>3</sup></i>.
+     *
+     * @name ParametricSurface3D
+     * @augments Curve
+     * @constructor
+     * @type Object
+     * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
+     * @param {Function_Function_Function_Array_Array} F<sub>X</sub>,F<sub>Y</sub>,F<sub>Z</sub>,rangeX,rangeY
+     * F<sub>X</sub>(u,v), F<sub>Y</sub>(u,v), F<sub>Z</sub>(u,v) are functions returning a number, rangeU is the array containing
+     * lower and upper bound for the range of parameter u, rangeV is the array containing
+     * lower and upper bound for the range of parameter v. rangeU and rangeV may also be functions returning an array of length two.
+     * @example
+     * var view = board.create('view3d',
+     * 		        [[-6, -3], [8, 8],
+     * 		        [[-5, 5], [-5, 5], [-5, 5]]]);
+     *
+     * // Sphere
+     * var c = view.create('parametricsurface3d', [
+     *     (u, v) => 2 * Math.sin(u) * Math.cos(v),
+     *     (u, v) => 2 * Math.sin(u) * Math.sin(v),
+     *     (u, v) => 2 * Math.cos(u),
+     *     [0, 2 * Math.PI],
+     *     [0, Math.PI]
+     * ], {
+     *     strokeColor: '#ff0000',
+     *     stepsU: 30,
+     *     stepsV: 30
+     * });
+     *
+     * </pre><div id="JXG52da0ecc-1ba9-4d41-850c-36e5120025a5" class="jxgbox" style="width: 500px; height: 500px;"></div>
+     * <script type="text/javascript">
+     *     (function() {
+     *         var board = JXG.JSXGraph.initBoard('JXG52da0ecc-1ba9-4d41-850c-36e5120025a5',
+     *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false});
+     *     var view = board.create('view3d',
+     *     		        [[-6, -3], [8, 8],
+     *     		        [[-5, 5], [-5, 5], [-5, 5]]]);
+     *
+     *     // Sphere
+     *     var c = view.create('parametricsurface3d', [
+     *         (u, v) => 2 * Math.sin(u) * Math.cos(v),
+     *         (u, v) => 2 * Math.sin(u) * Math.sin(v),
+     *         (u, v) => 2 * Math.cos(u),
+     *         [0, 2 * Math.PI],
+     *         [0, Math.PI]
+     *     ], {
+     *         strokeColor: '#ff0000',
+     *         stepsU: 20,
+     *         stepsV: 20
+     *     });
+     *
+     *     })();
+     *
+     * </script><pre>
+     *
+     */
     ThreeD.createParametricSurface = function (board, parents, attributes) {
         var view = parents[0],
             attr,
@@ -68,6 +130,81 @@ define(['jxg', 'utils/type', '3d/view3d'
     };
     JXG.registerElement('parametricsurface3d', ThreeD.createParametricSurface);
 
+    /**
+     * @class This element creates a 3D function graph.
+     * @pseudo
+     * @description A 3D function graph is defined by a function
+     *    <i>F: R<sup>2</sup> &rarr; R</i>.
+     *
+     * @name Functiongraph3D
+     * @augments ParametricSurface3D
+     * @constructor
+     * @type Object
+     * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
+     * @param {Function_Array_Array} F,rangeX,rangeY  F(x,y) is a function returning a number, rangeX is the array containing
+     * lower and upper bound for the range of x, rangeY is the array containing
+     * lower and upper bound for the range of y.
+     * @example
+     * var box = [-5, 5];
+     * var view = board.create('view3d',
+     *     [
+     *         [-6, -3], [8, 8],
+     *         [box, box, box]
+     *     ],
+     *     {
+     *         xPlaneRear: {visible: false},
+     *         yPlaneRear: {visible: false},
+     *     });
+     *
+     * // Function F to be plotted
+     * var F = (x, y) => Math.sin(x * y / 4);
+     *
+     * // 3D surface
+     * var c = view.create('functiongraph3d', [
+     *     F,
+     *     box, // () => [-s.Value()*5, s.Value() * 5],
+     *     box, // () => [-s.Value()*5, s.Value() * 5],
+     * ], {
+     *     strokeWidth: 0.5,
+     *     stepsU: 70,
+     *     stepsV: 70
+     * });
+     *
+     * </pre><div id="JXG87646dd4-9fe5-4c21-8734-089abc612515" class="jxgbox" style="width: 500px; height: 500px;"></div>
+     * <script type="text/javascript">
+     *     (function() {
+     *         var board = JXG.JSXGraph.initBoard('JXG87646dd4-9fe5-4c21-8734-089abc612515',
+     *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false});
+     *     var box = [-5, 5];
+     *     var view = board.create('view3d',
+     *         [
+     *             [-6, -3], [8, 8],
+     *             [box, box, box]
+     *         ],
+     *         {
+     *             xPlaneRear: {visible: false},
+     *             yPlaneRear: {visible: false},
+     *         });
+     *
+     *     // Function F to be plotted
+     *     var F = (x, y) => Math.sin(x * y / 4);
+     *
+     *     // 3D surface
+     *     var c = view.create('functiongraph3d', [
+     *         F,
+     *         box, // () => [-s.Value()*5, s.Value() * 5],
+     *         box, // () => [-s.Value()*5, s.Value() * 5],
+     *     ], {
+     *         strokeWidth: 0.5,
+     *         stepsU: 70,
+     *         stepsV: 70
+     *     });
+     *
+     *     })();
+     *
+     * </script><pre>
+     *
+     */
     ThreeD.createFunctiongraph = function (board, parents, attributes) {
         var view = parents[0],
             X = function(u, v) { return u; },
