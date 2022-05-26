@@ -2939,8 +2939,61 @@ declare namespace JXG {
    */
   export class Ticks extends GeometryElement {
     constructor(line: Line, ticks: number | unknown[], attributes: TicksAttributes);
+
+    /**
+     * Equidistant ticks. Distance is defined by `ticksFunction`.
+     */
+    equidistant: boolean;
+
+    /**
+     * Array of fixed ticks.
+     */
+    fixedTicks: number[] | null;
+
+    /**
+     * To ensure the uniqueness of label ids this counter is used.
+     */
+    labelCounter: number;
+
+    /**
+     * Array where the labels are saved.
+     */
+    labels: Label[];
+
+    /**
+     * The line the ticks belong to.
+     */
+    line: Line;
+
+    /**
+     * Least distance between two ticks, measured in pixels.
+     */
+    minTicksDistance: number;
+
+    /**
+     * Stores the ticks coordinates as an array of length 3.
+     *
+     * The first two entries of the array are path coordinates in screen
+     * coordinates of the tick (arrays of length 2). The 3rd entry is true if
+     * the tick is a major tick, otherwise false.
+     *
+     * If the tick is outside of the canvas, the return array is empty.
+     */
+    ticks: Array<[[x1: number, x2: number], [y1: number, y2: number], boolean]>;
+
+    /**
+     * Distance between two major ticks in user coordinates
+     */
+    ticksDelta: number;
+
+    /**
+     * A function calculating ticks delta depending on the ticks number.
+     */
+    ticksFunction: () => number;
+
     setAttribute(attributes: TicksAttributes): this;
   }
+
   /**
    *
    */
