@@ -4,6 +4,30 @@
 New features
 -----------
 
+- Intersecting points of polygons with other elements 
+- Support usage of jsxgraph in shadowDOM
+
+Improvements
+------------
+
+- Additions to index.d.ts
+- Initial API doc for some 3D elements
+- Handling of parallel lines and parallel arrows
+- Support of 3D elements
+
+Bug fixes
+---------
+
+- Add file options3d.js to jsxgraphcore.js
+- Resize of deleted container
+
+
+1.4.3
+====
+
+New features
+-----------
+
 - Experimental support of 3D elements
 
 Improvements
