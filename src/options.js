@@ -1519,6 +1519,8 @@ define([
             /**
              * A function that expects two {@link JXG.Coords}, the first one representing the coordinates of the
              * tick that is to be labeled, the second one the coordinates of the center (the tick with position 0).
+             * The tird parameter is a null, number or a string. In the latter two cases, this value is taken.
+             * Returns a string.
              *
              * @type function
              * @name Ticks#generateLabelText
@@ -1529,7 +1531,7 @@ define([
              * A function that expects two {@link JXG.Coords}, the first one representing the coordinates of the
              * tick that is to be labeled, the second one the coordinates of the center (the tick with position 0).
              *
-             * @deprecated Use {@link JGX.Options@generateLabelValue}
+             * @deprecated Use {@link JGX.Options@generateLabelText}
              * @type function
              * @name Ticks#generateLabelValue
              */

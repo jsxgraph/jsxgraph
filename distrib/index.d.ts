@@ -2824,7 +2824,7 @@ declare namespace JXG {
      * Attributes for the axis label.
      */
     label?: LabelOptions;
-    lastArrow?: ArrowSpecification;
+    lastArrow?: boolean | ArrowSpecification;
     margin?: number;
     /**
      * Attributes for the first point on the axis.
@@ -3022,7 +3022,7 @@ declare namespace JXG {
     /**
      *
      */
-    generateLabelText?: ((labeled: Coords, center: Coords) => string) | null;
+    generateLabelText?: ((labeled: Coords, center: Coords, value: null | Number | String) => string) | null;
     /**
      *
      */
@@ -3098,10 +3098,10 @@ declare namespace JXG {
     defaultDistance?: number;
     drawLabels?: boolean;
     drawZero?: boolean;
-    face?: '|';
+    face?: '|' | '<' | '>';
     fillColor?: string;
-    generateLabelText?: ((one: Coords, two: Coords) => void) | null;
-    generateLabelValue?: ((one: Coords, two: Coords) => void) | null;
+    generateLabelText?: ((one: Coords, two: Coords, value: null|Number|String) => void) | null;
+    generateLabelValue?: ((labeled: Coords, center: Coords) => string) | null;
     highlightFillColor?: string;
     highlightStrokeColor?: string;
     includeBoundaries?: boolean | number;
