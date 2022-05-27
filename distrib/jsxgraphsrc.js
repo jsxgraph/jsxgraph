@@ -44360,8 +44360,12 @@ define('base/board',[
          */
         getCoordsTopLeftCorner: function () {
             var cPos, doc, crect,
-                docElement = this.document.documentElement || this.document.body.parentNode,
-                docBody = this.document.body,
+                // In ownerDoc we need the "real" document object.
+                // The first version is used in the case of shadowDom,
+                // the second case in the "normal" case.
+                ownerDoc = this.document.ownerDocument || this.document, 
+                docElement = ownerDoc.documentElement || this.document.body.parentNode,
+                docBody = ownerDoc.body,
                 container = this.containerObj,
                 // viewport, content,
                 zoom, o;
@@ -48290,12 +48294,12 @@ define('base/board',[
             this.inUpdate = true;
 
             if (this.attr.minimizereflow === 'all' && this.containerObj && this.renderer.type !== 'vml') {
-                storeActiveEl = document.activeElement; // Store focus element
+                storeActiveEl = this.document.activeElement; // Store focus element
                 insert = this.renderer.removeToInsertLater(this.containerObj);
             }
 
             if (this.attr.minimizereflow === 'svg' && this.renderer.type === 'svg') {
-                storeActiveEl = document.activeElement;
+                storeActiveEl = this.document.activeElement;
                 insert = this.renderer.removeToInsertLater(this.renderer.svgRoot);
             }
 
@@ -48918,7 +48922,7 @@ define('base/board',[
                 o2 = o2.parentNode;
                 while (o2 !== o) {
                     this.cssTransMat = Mat.matMatMult(Env.getCSSTransformMatrix(o), this.cssTransMat);
-                    o2 = o2.parentNode;
+                    o2 = o2.parentNode || o2.host;
                 }
 
                 o = o.offsetParent;
@@ -49488,7 +49492,7 @@ define('base/board',[
 
             id = id || this.container;
             this._fullscreen_inner_id = id;
-            inner_node = document.getElementById(id);
+            inner_node = this.document.getElementById(id);
             wrap_id = 'fullscreenwrap_' + id;
 
             // Wrap a div around the JSXGraph div.
@@ -49534,16 +49538,16 @@ define('base/board',[
                 return;
             }
 
-            document.fullscreenElement = document.fullscreenElement ||
-                    document.webkitFullscreenElement ||
-                    document.mozFullscreenElement ||
-                    document.msFullscreenElement;
+            this.document.fullscreenElement = this.document.fullscreenElement ||
+                    this.document.webkitFullscreenElement ||
+                    this.document.mozFullscreenElement ||
+                    this.document.msFullscreenElement;
 
-            inner_node = document.getElementById(inner_id);
+            inner_node = this.document.getElementById(inner_id);
             // If full screen mode is started we have to remove CSS margin around the JSXGraph div.
             // Otherwise, the positioning of the fullscreen div will be false.
             // When leaving the fullscreen mode, the margin is put back in.
-            if (document.fullscreenElement) {
+            if (this.document.fullscreenElement) {
                 // Just entered fullscreen mode
 
                 // Get the data computed in board.toFullscreen()
@@ -49555,7 +49559,7 @@ define('base/board',[
                 // Further, the CSS margin has to be removed when in fullscreen mode,
                 // and must be restored later.
                 inner_node._cssFullscreenStore = {
-                    id: document.fullscreenElement.id,
+                    id: this.document.fullscreenElement.id,
                     isFullscreen: true,
                     margin: inner_node.style.margin,
                     width: inner_node.style.width,
@@ -49571,16 +49575,16 @@ define('base/board',[
                 // of the JSXGraph div.
                 Env.scaleJSXGraphDiv(document.fullscreenElement.id, inner_id, res.scale, res.vshift);
 
-                // Clear document.fullscreenElement, because Safari doesn't to it and
+                // Clear this.document.fullscreenElement, because Safari doesn't to it and
                 // when leaving full screen mode it is still set.
-                document.fullscreenElement = null;
+                this.document.fullscreenElement = null;
 
             } else if (Type.exists(inner_node._cssFullscreenStore)) {
                 // Just left the fullscreen mode
 
                 // Remove the CSS rules added in Env.scaleJSXGraphDiv
                 try {
-                    document.styleSheets[document.styleSheets.length - 1].deleteRule(0);
+                    this.document.styleSheets[this.document.styleSheets.length - 1].deleteRule(0);
                 } catch (err) {
                     console.log('JSXGraph: Could not remove CSS rules for full screen mode');
                 }
@@ -49588,7 +49592,6 @@ define('base/board',[
                 inner_node._cssFullscreenStore.isFullscreen = false;
                 inner_node.style.margin = inner_node._cssFullscreenStore.margin;
                 inner_node.style.width = inner_node._cssFullscreenStore.width;
-
             }
 
             this.updateCSSTransforms();
@@ -51498,10 +51501,11 @@ define('renderer/svg',[
          * 	setTimeout(function() { console.log('done'); }, 400);
          */
         dumpToCanvas: function (canvasId, w, h, ignoreTexts) {
-            var svg, tmpImg, cv, ctx;
+            var svg, tmpImg, cv, ctx,
+                doc = this.container.ownerDocument;
 
             // Prepare the canvas element
-            cv = document.getElementById(canvasId);
+            cv = doc.getElementById(canvasId);
 
             // Clear the canvas
             /* eslint-disable no-self-assign */
@@ -51637,7 +51641,8 @@ define('renderer/svg',[
             } else {
                 // Debug: use canvas element 'jxgbox_canvas' from jsxdev/dump.html
                 id = 'jxgbox_canvas';
-                canvas = document.getElementById(id);
+                // canvas = document.getElementById(id);
+                canvas = doc.getElementById(id);
             }
 
             if (newImg) {
@@ -51657,7 +51662,8 @@ define('renderer/svg',[
             }
 
             // Hide navigation bar in board
-            zbar = document.getElementById(this.container.id + '_navigationbar');
+            // zbar = document.getElementById(this.container.id + '_navigationbar');
+            zbar = doc.getElementById(this.container.id + '_navigationbar');
             if (Type.exists(zbar)) {
                 zbarDisplay = zbar.style.display;
                 zbar.style.display = 'none';
@@ -55193,6 +55199,7 @@ define('jsxgraph',[
          */
         _setARIA: function(container, attr) {
             var doc = attr.document || document,
+                doc_glob,
                 node_jsx, newNode, parent,
                 id_label, id_description;
 
@@ -55201,18 +55208,19 @@ define('jsxgraph',[
             }
 
             node_jsx = doc.getElementById(container);
+            doc_glob = node_jsx.ownerDocument;   // This is the window.document element, needed below.
             parent = node_jsx.parentNode;
 
             id_label = container + '_ARIAlabel';
             id_description = container + '_ARIAdescription';
 
-            newNode = doc.createElement('div');
+            newNode = doc_glob.createElement('div');
             newNode.innerHTML = attr.title;
             newNode.setAttribute('id', id_label);
             newNode.style.display = 'none';
             parent.insertBefore(newNode, node_jsx);
 
-            newNode = doc.createElement('div');
+            newNode = doc_glob.createElement('div');
             newNode.innerHTML = attr.description;
             newNode.setAttribute('id', id_description);
             newNode.style.display = 'none';
@@ -55238,12 +55246,12 @@ define('jsxgraph',[
             }
 
             id = board.containerObj.getAttribute('aria-labelledby');
-            node = document.getElementById(id);
+            node = doc.getElementById(id);
             if (node && node.parentNode) {
                 node.parentNode.removeChild(node);
             }
             id = board.containerObj.getAttribute('aria-describedby');
-            node = document.getElementById(id);
+            node = doc.getElementById(id);
             if (node && node.parentNode) {
                 node.parentNode.removeChild(node);
             }
@@ -68941,9 +68949,6 @@ define('element/composition',[
         } else {
             b.addChild(t);
         }
-
-
-
 
         t.elType = 'midpoint';
         t.setParents([a.id, b.id]);
