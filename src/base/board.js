@@ -816,8 +816,12 @@ define([
          */
         getCoordsTopLeftCorner: function () {
             var cPos, doc, crect,
-                docElement = this.document.documentElement || this.document.body.parentNode,
-                docBody = this.document.body,
+                // In ownerDoc we need the "real" document object.
+                // The first version is used in the case of shadowDom,
+                // the second case in the "normal" case.
+                ownerDoc = this.document.ownerDocument || this.document, 
+                docElement = ownerDoc.documentElement || this.document.body.parentNode,
+                docBody = ownerDoc.body,
                 container = this.containerObj,
                 // viewport, content,
                 zoom, o;
@@ -4746,12 +4750,12 @@ define([
             this.inUpdate = true;
 
             if (this.attr.minimizereflow === 'all' && this.containerObj && this.renderer.type !== 'vml') {
-                storeActiveEl = document.activeElement; // Store focus element
+                storeActiveEl = this.document.activeElement; // Store focus element
                 insert = this.renderer.removeToInsertLater(this.containerObj);
             }
 
             if (this.attr.minimizereflow === 'svg' && this.renderer.type === 'svg') {
-                storeActiveEl = document.activeElement;
+                storeActiveEl = this.document.activeElement;
                 insert = this.renderer.removeToInsertLater(this.renderer.svgRoot);
             }
 
@@ -5374,7 +5378,7 @@ define([
                 o2 = o2.parentNode;
                 while (o2 !== o) {
                     this.cssTransMat = Mat.matMatMult(Env.getCSSTransformMatrix(o), this.cssTransMat);
-                    o2 = o2.parentNode;
+                    o2 = o2.parentNode || o2.host;
                 }
 
                 o = o.offsetParent;
@@ -5944,7 +5948,7 @@ define([
 
             id = id || this.container;
             this._fullscreen_inner_id = id;
-            inner_node = document.getElementById(id);
+            inner_node = this.document.getElementById(id);
             wrap_id = 'fullscreenwrap_' + id;
 
             // Wrap a div around the JSXGraph div.
@@ -5990,16 +5994,16 @@ define([
                 return;
             }
 
-            document.fullscreenElement = document.fullscreenElement ||
-                    document.webkitFullscreenElement ||
-                    document.mozFullscreenElement ||
-                    document.msFullscreenElement;
+            this.document.fullscreenElement = this.document.fullscreenElement ||
+                    this.document.webkitFullscreenElement ||
+                    this.document.mozFullscreenElement ||
+                    this.document.msFullscreenElement;
 
-            inner_node = document.getElementById(inner_id);
+            inner_node = this.document.getElementById(inner_id);
             // If full screen mode is started we have to remove CSS margin around the JSXGraph div.
             // Otherwise, the positioning of the fullscreen div will be false.
             // When leaving the fullscreen mode, the margin is put back in.
-            if (document.fullscreenElement) {
+            if (this.document.fullscreenElement) {
                 // Just entered fullscreen mode
 
                 // Get the data computed in board.toFullscreen()
@@ -6011,7 +6015,7 @@ define([
                 // Further, the CSS margin has to be removed when in fullscreen mode,
                 // and must be restored later.
                 inner_node._cssFullscreenStore = {
-                    id: document.fullscreenElement.id,
+                    id: this.document.fullscreenElement.id,
                     isFullscreen: true,
                     margin: inner_node.style.margin,
                     width: inner_node.style.width,
@@ -6027,16 +6031,16 @@ define([
                 // of the JSXGraph div.
                 Env.scaleJSXGraphDiv(document.fullscreenElement.id, inner_id, res.scale, res.vshift);
 
-                // Clear document.fullscreenElement, because Safari doesn't to it and
+                // Clear this.document.fullscreenElement, because Safari doesn't to it and
                 // when leaving full screen mode it is still set.
-                document.fullscreenElement = null;
+                this.document.fullscreenElement = null;
 
             } else if (Type.exists(inner_node._cssFullscreenStore)) {
                 // Just left the fullscreen mode
 
                 // Remove the CSS rules added in Env.scaleJSXGraphDiv
                 try {
-                    document.styleSheets[document.styleSheets.length - 1].deleteRule(0);
+                    this.document.styleSheets[this.document.styleSheets.length - 1].deleteRule(0);
                 } catch (err) {
                     console.log('JSXGraph: Could not remove CSS rules for full screen mode');
                 }
@@ -6044,7 +6048,6 @@ define([
                 inner_node._cssFullscreenStore.isFullscreen = false;
                 inner_node.style.margin = inner_node._cssFullscreenStore.margin;
                 inner_node.style.width = inner_node._cssFullscreenStore.width;
-
             }
 
             this.updateCSSTransforms();

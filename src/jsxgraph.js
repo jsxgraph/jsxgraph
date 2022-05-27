@@ -228,6 +228,7 @@ define([
          */
         _setARIA: function(container, attr) {
             var doc = attr.document || document,
+                doc_glob,
                 node_jsx, newNode, parent,
                 id_label, id_description;
 
@@ -236,18 +237,19 @@ define([
             }
 
             node_jsx = doc.getElementById(container);
+            doc_glob = node_jsx.ownerDocument;   // This is the window.document element, needed below.
             parent = node_jsx.parentNode;
 
             id_label = container + '_ARIAlabel';
             id_description = container + '_ARIAdescription';
 
-            newNode = doc.createElement('div');
+            newNode = doc_glob.createElement('div');
             newNode.innerHTML = attr.title;
             newNode.setAttribute('id', id_label);
             newNode.style.display = 'none';
             parent.insertBefore(newNode, node_jsx);
 
-            newNode = doc.createElement('div');
+            newNode = doc_glob.createElement('div');
             newNode.innerHTML = attr.description;
             newNode.setAttribute('id', id_description);
             newNode.style.display = 'none';
@@ -273,12 +275,12 @@ define([
             }
 
             id = board.containerObj.getAttribute('aria-labelledby');
-            node = document.getElementById(id);
+            node = doc.getElementById(id);
             if (node && node.parentNode) {
                 node.parentNode.removeChild(node);
             }
             id = board.containerObj.getAttribute('aria-describedby');
-            node = document.getElementById(id);
+            node = doc.getElementById(id);
             if (node && node.parentNode) {
                 node.parentNode.removeChild(node);
             }
