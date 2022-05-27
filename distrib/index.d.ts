@@ -4319,7 +4319,7 @@ declare namespace JXG {
     /**
      *
      */
-    emulateColorBlindness(deficiency: 'protanopia' | 'deuteranopia' | 'tritanopia'): this;
+    emulateColorblindness(deficiency: 'protanopia' | 'deuteranopia' | 'tritanopia'): this;
     /**
      * After construction of the object the visibility is set and the label is constructed if necessary.
      * @param obj The object to add.
@@ -4337,10 +4337,10 @@ declare namespace JXG {
     getCoordsTopLeftCorner(): [number, number];
     getMousePosition(e: unknown, i?: number): [number, number];
     getScrCoordsOfMouse(x: number, y: number): [number, number];
-    getUseCoordsOfMouse(evt: unknown): [number, number];
+    getUsrCoordsOfMouse(evt: unknown): [number, number];
     hasPoint(x: number, y: number): boolean;
     highlightCustomInfobox(text: string, element?: GeometryElement): this;
-    highlightInfbox(x: number, y: number, element?: GeometryElement): this;
+    highlightInfobox(x: number, y: number, element?: GeometryElement): this;
     initInfobox(): this;
     initMoveObject(x: number, y: number, event: unknown, type: 'mouse' | 'pen' | 'touch'): GeometryElement[];
     initMoveOrigin(x: number, y: number): unknown;
