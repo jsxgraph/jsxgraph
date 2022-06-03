@@ -173,12 +173,8 @@ var JXG = {},
         return {
             requirePath: window.location.href,
 
-            setRequirePathToScriptFile: function (filename) {
+            getPathOfScriptFile: function (filename) {
                 var scripts, reg, i, s, requirePath = '';
-
-                if (requirePathLocation === filename) {
-                    return;
-                }
 
                 scripts = document.getElementsByTagName('script');
                 reg = new RegExp(filename + '(\\?.*)?$');
@@ -187,11 +183,20 @@ var JXG = {},
                     s = scripts[i];
                     if (s.src && s.src.match(reg)) {
                         requirePath = s.src.replace(reg, '');
-                        JXG.Load.requirePath = requirePath;
-                        requirePathLocation = filename;
                         break;
                     }
                 }
+
+                return requirePath;
+            },
+
+            setRequirePathToScriptFile: function (filename) {
+                if (requirePathLocation === filename) {
+                    return;
+                }
+
+                JXG.Load.requirePath = JXG.Load.getPathOfScriptFile(filename);
+                requirePathLocation = filename;
             },
 
             setRequirePathToHref: function () {
