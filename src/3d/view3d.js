@@ -454,7 +454,7 @@ define(['jxg', 'options', 'base/constants', 'utils/type', 'math/math', 'base/ele
         w = size[0];
         h = size[1];
 
-        /**
+        /*
          * Frame around the view object
          */
         if (false) {
