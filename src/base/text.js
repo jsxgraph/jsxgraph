@@ -200,6 +200,7 @@ define([
 
             this.orgText = text;
             if (Type.isFunction(text)) {
+                // <value> tags will not be evaluated.
                 this.updateText = function () {
                     resolvedText = text().toString();
                     if (ev_p && !ev_um && !ev_uk) {
@@ -220,14 +221,20 @@ define([
                         // Convert via ASCIIMathML
                         this.content = "'`" + text + "`'";
                     } else if (ev_um || ev_uk) {
-                        this.content = "'" + text + "'";
+                        if (ev_p) {
+                            this.content = this.generateTerm(text, true, true, true); // Replace value-tags
+                            this.content = this.content.replace(/\\/g, "\\\\");
+                        } else {
+                            this.content = "'" + text + "'";
+                        }
                     } else {
                         // Converts GEONExT syntax into JavaScript string
                         // Short math is allowed
                         // Avoid geonext2JS calls
-                        this.content = this.generateTerm(text, true, true);
+                        this.content = this.generateTerm(text, true, true, false);
                     }
                 }
+                // Convert JessieCode to JS function
                 updateText = this.board.jc.snippet(this.content, true, '', false);
                 this.updateText = function () {
                     this.plaintext = updateText();
@@ -589,14 +596,19 @@ define([
          * @param{Boolean} [expand] Optional flag if shortened math syntax is allowed (e.g. 3x instead of 3*x).
          * @param{Boolean} [avoidGeonext2JS] Optional flag if geonext2JS should be called. For backwards compatibility
          * this has to be set explicitely to true.
+         * @param{Boolean} [avoidReplaceSup] Optional flag if "_" and "^" are NOT replaced by HTML tags sub and sup. Default: false,
+         * i.e. the replacement is done.
+         *
          * @private
          * @see JXG.GeonextParser.geonext2JS
          */
-        generateTerm: function (contentStr, expand, avoidGeonext2JS) {
+        generateTerm: function (contentStr, expand, avoidGeonext2JS, avoidReplaceSup) {
             var res, term, i, j,
                 plaintext = '""';
 
-            // revert possible jc replacement
+            avoidReplaceSup = avoidReplaceSup || false;
+
+            // Revert possible jc replacement
             contentStr = contentStr || '';
             contentStr = contentStr.replace(/\r/g, '');
             contentStr = contentStr.replace(/\n/g, '');
@@ -616,7 +628,12 @@ define([
             j = contentStr.indexOf('</value>');
             if (i >= 0) {
                 while (i >= 0) {
-                    plaintext += ' + "' + this.replaceSub(this.replaceSup(contentStr.slice(0, i))) + '"';
+                    if (!avoidReplaceSup) {
+                        plaintext += ' + "' + this.replaceSub(this.replaceSup(contentStr.slice(0, i))) + '"';
+                        // plaintext += ' + "' + this.replaceSub(contentStr.slice(0, i)) + '"';
+                    } else {
+                        plaintext += ' + "' + contentStr.slice(0, i) + '"';
+                    }
                     term = contentStr.slice(i + 7, j);
                     term = term.replace(/\s+/g, ''); // Remove all whitespace
                     if (expand === true) {
@@ -649,8 +666,12 @@ define([
                 }
             }
 
-            plaintext += ' + "' + this.replaceSub(this.replaceSup(contentStr)) + '"';
-            plaintext = this.convertGeonextAndSketchometry2CSS(plaintext);
+            if (!avoidReplaceSup) {
+                plaintext += ' + "' + this.replaceSub(this.replaceSup(contentStr)) + '"';
+                plaintext = this.convertGeonextAndSketchometry2CSS(plaintext);
+            } else {
+                plaintext += ' + "' + contentStr + '"';
+            }
 
             // This should replace &amp;pi; by &pi;
             plaintext = plaintext.replace(/&amp;/g, '&');

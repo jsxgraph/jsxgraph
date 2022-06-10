@@ -1585,7 +1585,7 @@ define([
             case 'node_str':
                 //ret = node.value.replace(/\\'/, "'").replace(/\\"/, '"').replace(/\\\\/, '\\');
                 /*jslint regexp:true*/
-                ret = node.value.replace(/\\(.)/g, '$1'); // Remove backslash
+                ret = node.value.replace(/\\(.)/g, '$1'); // Remove backslash, important in JessieCode tags
                 /*jslint regexp:false*/
                 break;
             }
