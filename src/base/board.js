@@ -3136,7 +3136,7 @@ define([
          */
         keyDownListener: function (evt) {
             var id_node = evt.target.id,
-                id, el, res,
+                id, el, res, doc,
                 sX = 0,
                 sY = 0,
                 // dx, dy are provided in screen units and
@@ -3151,6 +3151,15 @@ define([
                 return false;
             }
 
+            doc = this.containerObj.shadowRoot || document;
+            // console.log(doc.activeElement)
+            if (doc.activeElement) {
+                el = doc.activeElement;
+                if (el.tagName === 'INPUT' || el.tagName === 'textarea') {
+                    return false;
+                }
+            }
+
             // Get the JSXGraph id from the id of the SVG node.
             id = id_node.replace(this.containerObj.id + '_', '');
             el = this.select(id);
@@ -3159,7 +3168,8 @@ define([
                 actPos = el.coords.usrCoords.slice(1);
             }
 
-            if (Type.evaluate(this.attr.keyboard.panshift) || Type.evaluate(this.attr.keyboard.panctrl)) {
+            if ((Type.evaluate(this.attr.keyboard.panshift) || Type.evaluate(this.attr.keyboard.panctrl)) &&
+                (Type.evaluate(this.attr.zoom.enabled) === true)) {
                 doZoom = true;
             }
 
@@ -3259,7 +3269,7 @@ define([
             if (done && Type.exists(evt.preventDefault)) {
                 evt.preventDefault();
             }
-            return true;
+            return done;
         },
 
         /**
@@ -5363,6 +5373,17 @@ define([
                 o2 = obj;
 
             this.cssTransMat = Env.getCSSTransformMatrix(o);
+
+            /*
+            o = o.parentNode === o.getRootNode() ? o.parentNode.host : o.parentNode;
+            console.log("o: " + o + (o ? " " + o.tagName : ""))
+            while (o) {
+                this.cssTransMat = Mat.matMatMult(Env.getCSSTransformMatrix(o), this.cssTransMat);
+                o = o.parentNode === o.getRootNode() ? o.parentNode.host : o.parentNode;
+                console.log("o: " + o + (o ? " " + o.tagName : ""))
+            }
+            this.cssTransMat = Mat.inverse(this.cssTransMat);
+            */
 
             /*
              * In Mozilla and Webkit: offsetParent seems to jump at least to the next iframe,
