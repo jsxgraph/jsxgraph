@@ -5405,12 +5405,14 @@ define([
          */
         updateCSSTransforms: function () {
             var obj = this.containerObj,
-                o = obj,
-                o2 = obj;
+                o = obj;
+                // o2 = obj;
 
             this.cssTransMat = Env.getCSSTransformMatrix(o);
 
-            /*
+            // Newer variant of walking up the tree.
+            // We walk up all parent nodes and collect possible CSS transforms.
+            // Works also for ShadowDOM
             o = o.parentNode === o.getRootNode() ? o.parentNode.host : o.parentNode;
             console.log("o: " + o + (o ? " " + o.tagName : ""))
             while (o) {
@@ -5419,7 +5421,6 @@ define([
                 console.log("o: " + o + (o ? " " + o.tagName : ""))
             }
             this.cssTransMat = Mat.inverse(this.cssTransMat);
-            */
 
             /*
              * In Mozilla and Webkit: offsetParent seems to jump at least to the next iframe,
@@ -5427,20 +5428,22 @@ define([
              * offsetParent walks up the DOM hierarchy.
              * In order to walk up the DOM hierarchy also in Mozilla and Webkit
              * we need the parentNode steps.
+             *
+             * Seems to be outdated
              */
-            o = o.offsetParent;
-            while (o) {
-                this.cssTransMat = Mat.matMatMult(Env.getCSSTransformMatrix(o), this.cssTransMat);
+            // o = o.offsetParent;
+            // while (o) {
+            //     this.cssTransMat = Mat.matMatMult(Env.getCSSTransformMatrix(o), this.cssTransMat);
 
-                o2 = o2.parentNode;
-                while (o2 !== o) {
-                    this.cssTransMat = Mat.matMatMult(Env.getCSSTransformMatrix(o), this.cssTransMat);
-                    o2 = o2.parentNode || o2.host;
-                }
+            //     o2 = o2.parentNode;
+            //     while (o2 !== o) {
+            //         this.cssTransMat = Mat.matMatMult(Env.getCSSTransformMatrix(o), this.cssTransMat);
+            //         o2 = o2.parentNode;
+            //     }
 
-                o = o.offsetParent;
-            }
-            this.cssTransMat = Mat.inverse(this.cssTransMat);
+            //     o = o.offsetParent;
+            // }
+            // this.cssTransMat = Mat.inverse(this.cssTransMat);
 
             return this;
         },
