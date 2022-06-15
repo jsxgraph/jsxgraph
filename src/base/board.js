@@ -2401,7 +2401,8 @@ define([
          * @returns {Boolean}
          */
         pointerUpListener: function (evt) {
-            var i, j, found, touchTargets;
+            var i, j, found, touchTargets,
+                updateNeeded = false;
 
             this.triggerEventHandlers(['touchend', 'up', 'pointerup', 'MSPointerUp'], [evt]);
             this.displayInfobox(false);
@@ -2439,8 +2440,14 @@ define([
                     }
                     if (!found) {
                         this.downObjects[i].triggerEventHandlers(['touchend', 'up', 'pointerup', 'MSPointerUp'], [evt]);
-                        // this.downObjects[i].snapToGrid();
-                        // this.downObjects[i].snapToPoints();
+                        if (!Type.exists(this.downObjects[i].coords)) {
+                            // snapTo methods have to be called e.g. for line elements here.
+                            // For coordsElements there might be a conflict with
+                            // attractors, see commit from 2022.04.08, 11:12:18.
+                            this.downObjects[i].snapToGrid();
+                            this.downObjects[i].snapToPoints();
+                            updateNeeded = true;
+                        }
                         this.downObjects.splice(i, 1);
                     }
                 }
@@ -2461,7 +2468,9 @@ define([
             // this.mode = this.BOARD_MODE_NONE;
 
             // this.originMoveEnd();
-            // this.update();
+            if (updateNeeded) {
+                this.update();
+            }
 
             // After one finger leaves the screen the gesture is stopped.
             this._pointerClearTouches();
@@ -2796,7 +2805,8 @@ define([
                 eps = this.options.precision.touch,
                 tmpTouches = [], found, foundNumber,
                 evtTouches = evt && evt[JXG.touchProperty],
-                touchTargets;
+                touchTargets,
+                updateNeeded = false;
 
             this.triggerEventHandlers(['touchend', 'up'], [evt]);
             this.displayInfobox(false);
@@ -2897,8 +2907,14 @@ define([
                 }
                 if (!found) {
                     this.downObjects[i].triggerEventHandlers(['touchup', 'up'], [evt]);
-                    // this.downObjects[i].snapToGrid();
-                    // this.downObjects[i].snapToPoints();
+                    if (!Type.exists(this.downObjects[i].coords)) {
+                        // snapTo methods have to be called e.g. for line elements here.
+                        // For coordsElements there might be a conflict with
+                        // attractors, see commit from 2022.04.08, 11:12:18.
+                        this.downObjects[i].snapToGrid();
+                        this.downObjects[i].snapToPoints();
+                        updateNeeded = true;
+                    }
                     this.downObjects.splice(i, 1);
                 }
             }
@@ -2914,7 +2930,9 @@ define([
                 this.updateQuality = this.BOARD_QUALITY_HIGH;
 
                 this.originMoveEnd();
-                this.update();
+                if (updateNeeded) {
+                    this.update();
+                }
             }
 
             return true;
@@ -3061,11 +3079,16 @@ define([
             // redraw with high precision
             this.updateQuality = this.BOARD_QUALITY_HIGH;
 
-            // if (this.mouse && this.mouse.obj) {
-            //     // The parameter is needed for lines with snapToGrid enabled
-            //     this.mouse.obj.snapToGrid(this.mouse.targets[0]);
-            //     this.mouse.obj.snapToPoints();
-            // }
+            if (this.mouse && this.mouse.obj) {
+                if (!Type.exists(this.mouse.obj.coords)) {
+                    // snapTo methods have to be called e.g. for line elements here.
+                    // For coordsElements there might be a conflict with
+                    // attractors, see commit from 2022.04.08, 11:12:18.
+                    // The parameter is needed for lines with snapToGrid enabled
+                    this.mouse.obj.snapToGrid(this.mouse.targets[0]);
+                    this.mouse.obj.snapToPoints();
+                }
+            }
 
             this.originMoveEnd();
             this.dehighlightAll();

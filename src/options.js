@@ -3507,7 +3507,6 @@ define([
              */
             lastArrow: false,
 
-
             /**
              * This number (pixel value) controls where infinite lines end at the canvas border. If zero, the line
              * ends exactly at the border, if negative there is a margin to the inside, if positive the line
@@ -3683,7 +3682,6 @@ define([
              * @default 'butt'
              */
             lineCap: 'butt'
-
 
             /**#@-*/
         },
