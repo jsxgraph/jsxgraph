@@ -1490,6 +1490,7 @@ define([
 
             /**
              * Controls if an element can get the focus with the tab key.
+             * tabindex corresponds to the HTML attribute of the same name.
              * See <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/tabindex">descriptiona at MDN</a>.
              * The additional value null completely disables focus of an element.
              * The value will be ignored if keyboard control of the board is not enabled or

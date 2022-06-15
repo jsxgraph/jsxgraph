@@ -26766,6 +26766,8 @@ define('options',[
             /**
              * A function that expects two {@link JXG.Coords}, the first one representing the coordinates of the
              * tick that is to be labeled, the second one the coordinates of the center (the tick with position 0).
+             * The tird parameter is a null, number or a string. In the latter two cases, this value is taken.
+             * Returns a string.
              *
              * @type function
              * @name Ticks#generateLabelText
@@ -26776,7 +26778,7 @@ define('options',[
              * A function that expects two {@link JXG.Coords}, the first one representing the coordinates of the
              * tick that is to be labeled, the second one the coordinates of the center (the tick with position 0).
              *
-             * @deprecated Use {@link JGX.Options@generateLabelValue}
+             * @deprecated Use {@link JGX.Options@generateLabelText}
              * @type function
              * @name Ticks#generateLabelValue
              */
@@ -38685,6 +38687,7 @@ define('base/text',[
 
             this.orgText = text;
             if (Type.isFunction(text)) {
+                // <value> tags will not be evaluated.
                 this.updateText = function () {
                     resolvedText = text().toString();
                     if (ev_p && !ev_um && !ev_uk) {
@@ -38705,14 +38708,20 @@ define('base/text',[
                         // Convert via ASCIIMathML
                         this.content = "'`" + text + "`'";
                     } else if (ev_um || ev_uk) {
-                        this.content = "'" + text + "'";
+                        if (ev_p) {
+                            this.content = this.generateTerm(text, true, true, true); // Replace value-tags
+                            this.content = this.content.replace(/\\/g, "\\\\");
+                        } else {
+                            this.content = "'" + text + "'";
+                        }
                     } else {
                         // Converts GEONExT syntax into JavaScript string
                         // Short math is allowed
                         // Avoid geonext2JS calls
-                        this.content = this.generateTerm(text, true, true);
+                        this.content = this.generateTerm(text, true, true, false);
                     }
                 }
+                // Convert JessieCode to JS function
                 updateText = this.board.jc.snippet(this.content, true, '', false);
                 this.updateText = function () {
                     this.plaintext = updateText();
@@ -39074,14 +39083,19 @@ define('base/text',[
          * @param{Boolean} [expand] Optional flag if shortened math syntax is allowed (e.g. 3x instead of 3*x).
          * @param{Boolean} [avoidGeonext2JS] Optional flag if geonext2JS should be called. For backwards compatibility
          * this has to be set explicitely to true.
+         * @param{Boolean} [avoidReplaceSup] Optional flag if "_" and "^" are NOT replaced by HTML tags sub and sup. Default: false,
+         * i.e. the replacement is done.
+         *
          * @private
          * @see JXG.GeonextParser.geonext2JS
          */
-        generateTerm: function (contentStr, expand, avoidGeonext2JS) {
+        generateTerm: function (contentStr, expand, avoidGeonext2JS, avoidReplaceSup) {
             var res, term, i, j,
                 plaintext = '""';
 
-            // revert possible jc replacement
+            avoidReplaceSup = avoidReplaceSup || false;
+
+            // Revert possible jc replacement
             contentStr = contentStr || '';
             contentStr = contentStr.replace(/\r/g, '');
             contentStr = contentStr.replace(/\n/g, '');
@@ -39101,7 +39115,12 @@ define('base/text',[
             j = contentStr.indexOf('</value>');
             if (i >= 0) {
                 while (i >= 0) {
-                    plaintext += ' + "' + this.replaceSub(this.replaceSup(contentStr.slice(0, i))) + '"';
+                    if (!avoidReplaceSup) {
+                        plaintext += ' + "' + this.replaceSub(this.replaceSup(contentStr.slice(0, i))) + '"';
+                        // plaintext += ' + "' + this.replaceSub(contentStr.slice(0, i)) + '"';
+                    } else {
+                        plaintext += ' + "' + contentStr.slice(0, i) + '"';
+                    }
                     term = contentStr.slice(i + 7, j);
                     term = term.replace(/\s+/g, ''); // Remove all whitespace
                     if (expand === true) {
@@ -39134,8 +39153,12 @@ define('base/text',[
                 }
             }
 
-            plaintext += ' + "' + this.replaceSub(this.replaceSup(contentStr)) + '"';
-            plaintext = this.convertGeonextAndSketchometry2CSS(plaintext);
+            if (!avoidReplaceSup) {
+                plaintext += ' + "' + this.replaceSub(this.replaceSup(contentStr)) + '"';
+                plaintext = this.convertGeonextAndSketchometry2CSS(plaintext);
+            } else {
+                plaintext += ' + "' + contentStr + '"';
+            }
 
             // This should replace &amp;pi; by &pi;
             plaintext = plaintext.replace(/&amp;/g, '&');
@@ -41294,7 +41317,7 @@ define('parser/jessiecode',[
             case 'node_str':
                 //ret = node.value.replace(/\\'/, "'").replace(/\\"/, '"').replace(/\\\\/, '\\');
                 /*jslint regexp:true*/
-                ret = node.value.replace(/\\(.)/, '$1');
+                ret = node.value.replace(/\\(.)/g, '$1'); // Remove backslash, important in JessieCode tags
                 /*jslint regexp:false*/
                 break;
             }
@@ -46680,7 +46703,7 @@ define('base/board',[
          */
         keyDownListener: function (evt) {
             var id_node = evt.target.id,
-                id, el, res,
+                id, el, res, doc,
                 sX = 0,
                 sY = 0,
                 // dx, dy are provided in screen units and
@@ -46695,6 +46718,15 @@ define('base/board',[
                 return false;
             }
 
+            doc = this.containerObj.shadowRoot || document;
+            // console.log(doc.activeElement)
+            if (doc.activeElement) {
+                el = doc.activeElement;
+                if (el.tagName === 'INPUT' || el.tagName === 'textarea') {
+                    return false;
+                }
+            }
+
             // Get the JSXGraph id from the id of the SVG node.
             id = id_node.replace(this.containerObj.id + '_', '');
             el = this.select(id);
@@ -46703,7 +46735,8 @@ define('base/board',[
                 actPos = el.coords.usrCoords.slice(1);
             }
 
-            if (Type.evaluate(this.attr.keyboard.panshift) || Type.evaluate(this.attr.keyboard.panctrl)) {
+            if ((Type.evaluate(this.attr.keyboard.panshift) || Type.evaluate(this.attr.keyboard.panctrl)) &&
+                (Type.evaluate(this.attr.zoom.enabled) === true)) {
                 doZoom = true;
             }
 
@@ -46803,7 +46836,7 @@ define('base/board',[
             if (done && Type.exists(evt.preventDefault)) {
                 evt.preventDefault();
             }
-            return true;
+            return done;
         },
 
         /**
@@ -48907,6 +48940,17 @@ define('base/board',[
                 o2 = obj;
 
             this.cssTransMat = Env.getCSSTransformMatrix(o);
+
+            /*
+            o = o.parentNode === o.getRootNode() ? o.parentNode.host : o.parentNode;
+            console.log("o: " + o + (o ? " " + o.tagName : ""))
+            while (o) {
+                this.cssTransMat = Mat.matMatMult(Env.getCSSTransformMatrix(o), this.cssTransMat);
+                o = o.parentNode === o.getRootNode() ? o.parentNode.host : o.parentNode;
+                console.log("o: " + o + (o ? " " + o.tagName : ""))
+            }
+            this.cssTransMat = Mat.inverse(this.cssTransMat);
+            */
 
             /*
              * In Mozilla and Webkit: offsetParent seems to jump at least to the next iframe,
@@ -55517,7 +55561,8 @@ define('jsxgraph',[
         }
     };
 
-    // JessieScript/JessieCode startup: Search for script tags of type text/jessiescript and interprete them.
+    // JessieScript/JessieCode startup: 
+    // Search for script tags of type text/jessiescript and interprete them.
     if (Env.isBrowser && typeof window === 'object' && typeof document === 'object') {
         Env.addEvent(window, 'load', function () {
             var type, i, j, div,

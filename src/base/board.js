@@ -3121,11 +3121,18 @@ define([
         },
 
         /**
-         * Allow moving of JSXGraph elements with arrow keys
-         * and zooming of the construction with + / -.
+         * Allow moving of JSXGraph elements with arrow keys.
+         * The selection of the element is done with the tab key. For this,
+         * the attribute "tabindex" of the element has to be set to some number (default=0).
+         * tabindex corresponds to the HTML attribute of the same name.
+         * <p>
          * Panning of the construction is done with arrow keys
-         * if the pan key (shift or ctrl) is pressed.
-         * The selection of the element is done with the tab key.
+         * if the pan key (shift or ctrl - depending on the board attributes) is pressed.
+         * <p>
+         * Zooming is triggered with the keys +, o, -, if
+         * the pan key (shift or ctrl - depending on the board attributes) is pressed.
+         * <p>
+         * Keyboard control is disabled if an HTML element of type input or textarea has received focus.
          *
          * @param  {Event} evt The browser's event object
          *
@@ -3151,8 +3158,8 @@ define([
                 return false;
             }
 
+            // An element of type input or textarea has foxus, get out of here.
             doc = this.containerObj.shadowRoot || document;
-            // console.log(doc.activeElement)
             if (doc.activeElement) {
                 el = doc.activeElement;
                 if (el.tagName === 'INPUT' || el.tagName === 'textarea') {
@@ -3168,13 +3175,15 @@ define([
                 actPos = el.coords.usrCoords.slice(1);
             }
 
-            if ((Type.evaluate(this.attr.keyboard.panshift) || Type.evaluate(this.attr.keyboard.panctrl)) &&
-                (Type.evaluate(this.attr.zoom.enabled) === true)) {
-                doZoom = true;
-            }
-
             if ((Type.evaluate(this.attr.keyboard.panshift) && evt.shiftKey) ||
                 (Type.evaluate(this.attr.keyboard.panctrl) && evt.ctrlKey)) {
+                // Pan key has been pressed
+
+                if (Type.evaluate(this.attr.zoom.enabled) === true) {
+                    doZoom = true;
+                }
+
+                // Arrow keys
                 if (evt.keyCode === 38) {           // up
                     this.clickUpArrow();
                 } else if (evt.keyCode === 40) {    // down
@@ -3183,10 +3192,20 @@ define([
                     this.clickLeftArrow();
                 } else if (evt.keyCode === 39) {    // right
                     this.clickRightArrow();
+
+                // Zoom keys
+                } else if (doZoom && evt.keyCode === 171) {   // +
+                    this.zoomIn();
+                } else if (doZoom && evt.keyCode === 173) {   // -
+                    this.zoomOut();
+                } else if (doZoom && evt.keyCode === 79) {   // o
+                    this.zoom100();
+
                 } else {
                     done = false;
                 }
             } else {
+
                 // Adapt dx, dy to snapToGrid and attractToGrid
                 // snapToGrid has priority.
                 if (Type.exists(el.visProp)) {
@@ -3229,14 +3248,6 @@ define([
                     dir = [-dx, 0];
                 } else if (evt.keyCode === 39) {    // right
                     dir = [dx, 0];
-                // } else if (evt.keyCode === 9) {  // tab
-
-                } else if (doZoom && evt.key === '+') {   // +
-                    this.zoomIn();
-                } else if (doZoom && evt.key === '-') {   // -
-                    this.zoomOut();
-                } else if (doZoom && evt.key === 'o') {   // o
-                    this.zoom100();
                 } else {
                     done = false;
                 }
@@ -3275,6 +3286,7 @@ define([
         /**
          * Event listener for SVG elements getting focus.
          * This is needed for highlighting when using keyboard control.
+         * Only elements having the attribute "tabindex" can receive focus.
          *
          * @see JXG.Board#keyFocusOutListener
          * @see JXG.Board#keyDownListener
@@ -3304,6 +3316,7 @@ define([
         /**
          * Event listener for SVG elements losing focus.
          * This is needed for dehighlighting when using keyboard control.
+         * Only elements having the attribute "tabindex" can receive focus.
          *
          * @see JXG.Board#keyFocusInListener
          * @see JXG.Board#keyDownListener
