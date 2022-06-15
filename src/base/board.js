@@ -3155,7 +3155,7 @@ define([
          * Zooming is triggered with the keys +, o, -, if
          * the pan key (shift or ctrl - depending on the board attributes) is pressed.
          * <p>
-         * Keyboard control is disabled if an HTML element of type input or textarea has received focus.
+         * Keyboard control (move, pan, and zoom) is disabled if an HTML element of type input or textarea has received focus.
          *
          * @param  {Event} evt The browser's event object
          *
