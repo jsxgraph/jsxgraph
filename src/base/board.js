@@ -5414,11 +5414,9 @@ define([
             // We walk up all parent nodes and collect possible CSS transforms.
             // Works also for ShadowDOM
             o = o.parentNode === o.getRootNode() ? o.parentNode.host : o.parentNode;
-            console.log("o: " + o + (o ? " " + o.tagName : ""))
             while (o) {
                 this.cssTransMat = Mat.matMatMult(Env.getCSSTransformMatrix(o), this.cssTransMat);
                 o = o.parentNode === o.getRootNode() ? o.parentNode.host : o.parentNode;
-                console.log("o: " + o + (o ? " " + o.tagName : ""))
             }
             this.cssTransMat = Mat.inverse(this.cssTransMat);
 
