@@ -5624,8 +5624,10 @@ define([
             display: 'html',
 
             /**
-             * Anchor element {@link Point}, {@link Text} or {@link Image} of the text. If it exists, the coordinates of the text are relative
-             * to this anchor element.
+             * Anchor element {@link Point}, {@link Text} or {@link Image} of the text.
+             * If it exists, the coordinates of the text are relative
+             * to this anchor element. In this case, only numbers are possible coordinates,
+             * functions are not supported.
              *
              * @name anchor
              * @memberOf Text.prototype
