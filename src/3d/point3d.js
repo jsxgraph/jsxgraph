@@ -193,6 +193,44 @@ define(['jxg', 'base/constants', 'math/math', 'math/geometry', 'utils/type', '3d
             return this;
         };
 
+        el.normalizeCoords3D = function () {
+            if (Math.abs(el.D3.coords[0]) > Mat.eps) {
+                el.D3.coords[1] /= el.D3.coords[0];
+                el.D3.coords[2] /= el.D3.coords[0];
+                el.D3.coords[3] /= el.D3.coords[0];
+                el.D3.coords[0] = 1.0;
+            }
+            return this;
+        };
+
+        el.setPosition3D = function (coords, noevent) {
+            var c = el.D3.coords,
+                oc = el.D3.coords.slice(); // Copy of original values
+
+            if (coords.length === 3) { // Euclidean coordinates
+                c[0] = 1.0;
+                c[1] = coords[0];
+                c[2] = coords[1];
+                c[3] = coords[2];
+            } else { // Homogeneous coordinates (normalized)
+                c[0] = coords[0];
+                c[1] = coords[1];
+                c[2] = coords[2];
+                el.normalizeCoords3D();
+            }
+
+            // console.log(el.emitter, !noevent, oc[0] !== c[0] || oc[1] !== c[1] || oc[2] !== c[2] || oc[3] !== c[3]);
+            // Not yet working
+            if (el.emitter && !noevent &&
+                (oc[0] !== c[0] || oc[1] !== c[1] || oc[2] !== c[2] || oc[3] !== c[3])) {
+                this.triggerEventHandlers(['update3D'], [oc]);
+            }
+            return this;
+        };
+
+        // Not yet working
+        el.__evt__update3D = function (oc) { };
+
         return el;
     };
     JXG.registerElement('point3d', ThreeD.createPoint);
