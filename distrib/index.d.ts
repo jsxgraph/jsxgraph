@@ -1855,6 +1855,11 @@ declare namespace JXG {
   }
   export interface HyperbolaAttributes extends ConicAttributes { }
 
+  export interface Parabola extends Conic {
+    setAttribute(attributes: ParabolaAttributes): this;
+  }
+  export interface ParabolaAttributes extends ConicAttributes { }
+
   /**
    *
    */
@@ -4071,7 +4076,7 @@ declare namespace JXG {
      * @param parents
      * @param attributes
      */
-    create(elementType: 'hyperbola', parents: unknown[], attributes?: {}): Hyperbola;
+    create(elementType: 'hyperbola', parents: unknown[], attributes?: HyperbolaAttributes): Hyperbola;
     /**
      *
      * @param elementType 'image'
@@ -4149,6 +4154,13 @@ declare namespace JXG {
      * @param attributes
      */
     create(elementType: 'normal', parents: unknown[], attributes?: NormalAttributes): Normal;
+    /**
+     *
+     * @param elementType 'parabola'
+     * @param parents
+     * @param attributes
+     */
+    create(elementType: 'parabola', parents: unknown[], attributes?: ParabolaAttributes): Parabola;
     /**
      *
      * @param elementType 'perpendicular'
