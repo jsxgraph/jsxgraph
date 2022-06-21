@@ -4418,11 +4418,13 @@ declare namespace JXG {
     setZoom(fX: number, fY: number): Board;
     showDependencies(): this;
     showXML(): this;
+    startResizeObserver(): unknown;
     startSelectionMode(): unknown;
     /**
      * Cancels all running animations.
      */
     stopAllAnimation(): Board;
+    stopResizeObserver(): unknown;
     stopSelectionMode(): [Coords, Coords];
     /**
      * Stop updates of the board.
