@@ -1,75 +1,77 @@
 /*
-    Copyright 2008-2022
-        Matthias Ehmann,
-        Carsten Miller,
-        Reinhard Oldenburg,
-        Alfred Wassermann
+ Copyright 2008-2022
+ Matthias Ehmann,
+ Carsten Miller,
+ Reinhard Oldenburg,
+ Andreas Walter,
+ Alfred Wassermann
 
-    This file is part of JSXGraph.
+ This file is part of JSXGraph.
 
-    JSXGraph is free software dual licensed under the GNU LGPL or MIT License.
+ JSXGraph is free software dual licensed under the GNU LGPL or MIT License.
 
-    You can redistribute it and/or modify it under the terms of the
+ You can redistribute it and/or modify it under the terms of the
 
-      * GNU Lesser General Public License as published by
-        the Free Software Foundation, either version 3 of the License, or
-        (at your option) any later version
-      OR
-      * MIT License: https://github.com/jsxgraph/jsxgraph/blob/master/LICENSE.MIT
+ * GNU Lesser General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version
+ OR
+ * MIT License: https://github.com/jsxgraph/jsxgraph/blob/master/LICENSE.MIT
 
-    JSXGraph is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
+ JSXGraph is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU Lesser General Public License for more details.
 
-    You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
-    and <http://opensource.org/licenses/MIT/>.
+ You should have received a copy of the GNU Lesser General Public License and
+ the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
+ and <http://opensource.org/licenses/MIT/>.
 
-    This is a port of jcobyla
+ This is a port of jcobyla
 
-    - to JavaScript by Reihard Oldenburg and
-    - to JSXGraph By Alfred Wassermann
-*/
+ - to JavaScript by Reihard Oldenburg and
+ - to JSXGraph by Alfred Wassermann
+ - optimized by Andreas Walter
+ */
 /*
  * jcobyla
- * 
+ *
  * The MIT License
  *
  * Copyright (c) 2012 Anders Gustafsson, Cureos AB.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
- * (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, 
- * publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, 
+ * (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge,
+ * publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
  * subject to the following conditions:
  *
  * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF 
- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE 
- * FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
+ * FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- * 
+ *
  * Remarks:
- * 
+ *
  * The original Fortran 77 version of this code was by Michael Powell (M.J.D.Powell @ damtp.cam.ac.uk)
  * The Fortran 90 version was by Alan Miller (Alan.Miller @ vic.cmis.csiro.au). Latest revision - 30 October 1998
  */
 
 /**
  * Constrained Optimization BY Linear Approximation in Java.
- * 
+ *
  * COBYLA2 is an implementation of Powell's nonlinear derivative free constrained optimization that uses
  * a linear approximation approach. The algorithm is a sequential trust region algorithm that employs linear
  * approximations to the objective and constraint functions, where the approximations are formed by linear
  * interpolation at n + 1 points in the space of the variables and tries to maintain a regular shaped simplex
  * over iterations.
- * 
+ *
  * It solves nonsmooth NLP with a moderate number of variables (about 100). Inequality constraints only.
- * 
+ *
  * The initial point X is taken as one vertex of the initial simplex with zero being another, so, X should
  * not be entered as the zero vector.
- * 
+ *
  * @author Anders Gustafsson, Cureos AB. Translation to Javascript by Reinhard Oldenburg, Goethe-University
  */
 
@@ -90,18 +92,18 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
      * The JXG.Math.Nlp namespace holds numerical algorithms for non-linear optimization.
      * @name JXG.Math.Nlp
      * @namespace
-     * 
+     *
      */
-    JXG.Math.Nlp =  {
+    JXG.Math.Nlp = {
 
-        arr: function(n) {
+        arr: function (n) {
             var a = new Array(n),
                 i;
 
             if (Type.exists(a.fill)) {
                 a.fill(0.0, 0, n);
             } else {
-                for (i = 0; i <n ; i++) {
+                for (i = 0; i < n; i++) {
                     a[i] = 0.0;
                 }
             }
@@ -109,7 +111,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
             return a;
         },
 
-        arr2: function(n, m) {
+        arr2: function (n, m) {
             var i = 0,
                 a = new Array(n);
 
@@ -120,7 +122,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
             return a;
         },
 
-        arraycopy: function(x, a, iox, b, n) {
+        arraycopy: function (x, a, iox, b, n) {
             var i = 0;
             while (i < n) {
                 iox[i + b] = x[i + a];
@@ -150,7 +152,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          * @param maxfun Maximum number of function evaluations before terminating.
          * @returns {Number} Exit status of the COBYLA2 optimization.
          */
-        FindMinimum: function(calcfc, n,  m, x, rhobeg, rhoend,  iprint,  maxfun) {
+        FindMinimum: function (calcfc, n, m, x, rhobeg, rhoend, iprint, maxfun) {
             // CobylaExitStatus FindMinimum(final Calcfc calcfc, int n, int m, double[] x, double rhobeg, double rhoend, int iprint, int maxfun)
             //     This subroutine minimizes an objective function F(X) subject to M
             //     inequality constraints on X, where X is a vector of variables that has
@@ -214,16 +216,16 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
 
             // Internal representation of the objective and constraints calculation method,
             // accounting for that X and CON arrays in the cobylb method are base-1 arrays.
-            fcalcfc = function(n, m, thisx, con) {  // int n, int m, double[] x, double[] con
-                    var ix = that.arr(n),
-                        ocon, f;
+            fcalcfc = function (n, m, thisx, con) {  // int n, int m, double[] x, double[] con
+                var ix = that.arr(n),
+                    ocon, f;
 
-                    that.arraycopy(thisx, 1, ix, 0, n);
-                    ocon = that.arr(m);
-                    f = calcfc(n, m, ix, ocon);
-                    that.arraycopy(ocon, 0, con, 1, m);
-                    return f;
-                };
+                that.arraycopy(thisx, 1, ix, 0, n);
+                ocon = that.arr(m);
+                f = calcfc(n, m, ix, ocon);
+                that.arraycopy(ocon, 0, con, 1, m);
+                return f;
+            };
 
             status = this.cobylb(fcalcfc, n, m, mpp, iox, rhobeg, rhoend, iprint, maxfun);
             this.arraycopy(iox, 1, x, 0, n);
@@ -235,18 +237,18 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
         //      double rhobeg, double rhoend, int iprint, int maxfun)
         /**
          * JavaScript implementation of the non-linear optimization method COBYLA.
-         * @param {Function} calcfc 
-         * @param {Number} n 
-         * @param {Number} m 
-         * @param {Number} mpp 
-         * @param {Number} x 
-         * @param {Number} rhobeg 
-         * @param {Number} rhoend 
-         * @param {Number} iprint 
-         * @param {Number} maxfun 
+         * @param {Function} calcfc
+         * @param {Number} n
+         * @param {Number} m
+         * @param {Number} mpp
+         * @param {Number} x
+         * @param {Number} rhobeg
+         * @param {Number} rhoend
+         * @param {Number} iprint
+         * @param {Number} maxfun
          * @returns {Number} Exit status of the COBYLA2 optimization
          */
-        cobylb: function (calcfc, n,  m,  mpp,  x, rhobeg,  rhoend,  iprint,  maxfun) {
+        cobylb: function (calcfc, n, m, mpp, x, rhobeg, rhoend, iprint, maxfun) {
             // calcf ist funktion die aufgerufen wird wie calcfc(n, m, ix, ocon)
             // N.B. Arguments CON, SIM, SIMI, DATMAT, A, VSIG, VETA, SIGBAR, DX, W & IACT
             //      have been removed.
@@ -322,413 +324,428 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
             //     the algorithm.
             //alert("Iteration "+nfvals+" x="+x);
             L_40:
-            do {
-                if (nfvals >= maxfun && nfvals > 0) {
-                    status = this.MaxIterationsReached;
-                    break L_40;
-                }
-
-                ++nfvals;
-                f = calcfc(n, m, x, con);
-                resmax = 0.0;
-                for (k = 1; k <= m; ++k) {
-                    resmax = Math.max(resmax, -con[k]);
-                }
-                //alert(    "   f="+f+"  resmax="+resmax);
-
-                if (nfvals === iprint - 1 || iprint === 3) {
-                    this.PrintIterationResult(nfvals, f, resmax, x, n, iprint);
-                }
-
-                con[mp] = f;
-                con[mpp] = resmax;
-
-                //     Set the recently calculated function values in a column of DATMAT. This
-                //     array has a column for each vertex of the current simplex, the entries of
-                //     each column being the values of the constraint functions (if any)
-                //     followed by the objective function and the greatest constraint violation
-                //     at the vertex.
-                skipVertexIdent = true;
-                if (!ibrnch) {
-                    skipVertexIdent = false;
-
-                    for (i = 1; i <= mpp; ++i) {
-                        datmat[i][jdrop] = con[i];
-                    }
-
-                    if (nfvals <= np) {
-                        //     Exchange the new vertex of the initial simplex with the optimal vertex if
-                        //     necessary. Then, if the initial simplex is not complete, pick its next
-                        //     vertex and calculate the function values there.
-
-                        if (jdrop <= n) {
-                            if (datmat[mp][np] <= f) {
-                                x[jdrop] = sim[jdrop][np];
-                            } else {
-                                sim[jdrop][np] = x[jdrop];
-                                for (k = 1; k <= mpp; ++k) {
-                                    datmat[k][jdrop] = datmat[k][np];
-                                    datmat[k][np] = con[k];
-                                }
-                                for (k = 1; k <= jdrop; ++k) {
-                                    sim[jdrop][k] = -rho;
-                                    temp = 0.0;
-                                    for (i = k; i <= jdrop; ++i) {
-                                        temp -= simi[i][k];
-                                    }
-                                    simi[jdrop][k] = temp;
-                                }
-                            }
-                        }
-                        if (nfvals <= n) {
-                            jdrop = nfvals;
-                            x[jdrop] += rho;
-                            continue L_40;
-                        }
-                    }
-                    ibrnch = true;
-                }
-
-                L_140:
                 do {
-                    L_550:
-                    do {
-                        if (!skipVertexIdent) {
-                            //     Identify the optimal vertex of the current simplex.
-                            phimin = datmat[mp][np] + parmu * datmat[mpp][np];
-                            nbest = np;
-
-                            for (j = 1; j <= n; ++j) {
-                                temp = datmat[mp][j] + parmu * datmat[mpp][j];
-                                if (temp < phimin) {
-                                    nbest = j;
-                                    phimin = temp;
-                                } else if (temp === phimin && parmu === 0.0 && datmat[mpp][j] < datmat[mpp][nbest]) {
-                                    nbest = j;
-                                }
-                            }
-
-                            //     Switch the best vertex into pole position if it is not there already,
-                            //     and also update SIM, SIMI and DATMAT.
-                            if (nbest <= n) {
-                                for (i = 1; i <= mpp; ++i) {
-                                    temp = datmat[i][np];
-                                    datmat[i][np] = datmat[i][nbest];
-                                    datmat[i][nbest] = temp;
-                                }
-                                for (i = 1; i <= n; ++i) {
-                                    temp = sim[i][nbest];
-                                    sim[i][nbest] = 0.0;
-                                    sim[i][np] += temp;
-
-                                    tempa = 0.0;
-                                    for (k = 1; k <= n; ++k)
-                                    {
-                                        sim[i][k] -= temp;
-                                        tempa -= simi[k][i];
-                                    }
-                                    simi[nbest][i] = tempa;
-                                }
-                            }
-
-                            //     Make an error return if SIGI is a poor approximation to the inverse of
-                            //     the leading N by N submatrix of SIG.
-                            error = 0.0;
-                            for (i = 1; i <= n; ++i) {
-                                for (j = 1; j <= n; ++j) {
-                                    temp = this.DOT_PRODUCT_ROW_COL(simi, i, sim, j, 1, n) - (i === j ? 1.0 : 0.0);
-                                    // console.log("A", temp);
-                                    // temp = this.DOT_PRODUCT(
-                                    //     this.PART(this.ROW(simi, i), 1, n),
-                                    //     this.PART(this.COL(sim, j), 1, n)
-                                    // ) - (i === j ? 1.0 : 0.0);
-                                    // console.log("B", temp);
-
-                                    error = Math.max(error, Math.abs(temp));
-                                }
-                            }
-                            if (error > 0.1) {
-                                status = this.DivergingRoundingErrors;
-                                break L_40;
-                            }
-
-                            //     Calculate the coefficients of the linear approximations to the objective
-                            //     and constraint functions, placing minus the objective function gradient
-                            //     after the constraint gradients in the array A. The vector W is used for
-                            //     working space.
-                            for (k = 1; k <= mp; ++k) {
-                                con[k] = -datmat[k][np];
-                                for (j = 1; j <= n; ++j) {
-                                    w[j] = datmat[k][j] + con[k];
-                                }
-
-                                for (i = 1; i <= n; ++i) {
-                                    a[i][k] = (k === mp ? -1.0 : 1.0) * 
-                                        this.DOT_PRODUCT_ROW_COL(w, -1, simi, i, 1, n);
-                                        // this.DOT_PRODUCT(this.PART(w, 1, n), this.PART(this.COL(simi, i), 1, n));
-                                }
-                            }
-
-                            //     Calculate the values of sigma and eta, and set IFLAG = 0 if the current
-                            //     simplex is not acceptable.
-                            iflag = true;
-                            parsig = alpha * rho;
-                            pareta = beta * rho;
-
-                            for (j = 1; j <= n; ++j) {
-                                wsig = 0.0;
-                                for (k = 1; k <= n; ++k) {
-                                    wsig += simi[j][k] * simi[j][k];
-                                }
-                                weta = 0.0;
-                                for (k = 1; k <= n; ++k) {
-                                    weta += sim[k][j] * sim[k][j];
-                                }
-                                vsig[j] = 1.0 / Math.sqrt(wsig);
-                                veta[j] = Math.sqrt(weta);
-                                if (vsig[j] < parsig || veta[j] > pareta) { iflag = false; }
-                            }
-
-                            //     If a new vertex is needed to improve acceptability, then decide which
-                            //     vertex to drop from the simplex.
-                            if (!ibrnch && !iflag) {
-                                jdrop = 0;
-                                temp = pareta;
-                                for (j = 1; j <= n; ++j) {
-                                    if (veta[j] > temp) {
-                                        jdrop = j;
-                                        temp = veta[j];
-                                    }
-                                }
-                                if (jdrop === 0) {
-                                    for (j = 1; j <= n; ++j) {
-                                        if (vsig[j] < temp) {
-                                            jdrop = j;
-                                            temp = vsig[j];
-                                        }
-                                    }
-                                }
-
-                                //     Calculate the step to the new vertex and its sign.
-                                temp = gamma * rho * vsig[jdrop];
-                                for (k = 1; k <= n; ++k) {
-                                    dx[k] = temp * simi[jdrop][k];
-                                }
-                                cvmaxp = 0.0;
-                                cvmaxm = 0.0;
-                                total = 0.0;
-                                for (k = 1; k <= mp; ++k) {
-                                    // total = this.DOT_PRODUCT(this.PART(this.COL(a, k), 1, n), this.PART(dx, 1, n));
-                                    total = this.DOT_PRODUCT_ROW_COL(dx, -1, a, k, 1, n);
-                                    if (k < mp) {
-                                        temp = datmat[k][np];
-                                        cvmaxp = Math.max(cvmaxp, -total - temp);
-                                        cvmaxm = Math.max(cvmaxm, total - temp);
-                                    }
-                                }
-                                dxsign = parmu * (cvmaxp - cvmaxm) > 2.0 * total ? -1.0 : 1.0;
-
-                                //     Update the elements of SIM and SIMI, and set the next X.
-                                temp = 0.0;
-                                for (i = 1; i <= n; ++i) {
-                                    dx[i] = dxsign * dx[i];
-                                    sim[i][jdrop] = dx[i];
-                                    temp += simi[jdrop][i] * dx[i];
-                                }
-                                for (k = 1; k <= n; ++k) {
-                                    simi[jdrop][k] /= temp;
-                                }
-
-                                for (j = 1; j <= n; ++j) {
-                                    if (j !== jdrop) {
-                                        // temp = this.DOT_PRODUCT(this.PART(this.ROW(simi, j), 1, n), this.PART(dx, 1, n));
-                                        temp = this.DOT_PRODUCT_ROW_COL(simi, j, dx, -1, 1, n);
-                                        for (k = 1; k <= n; ++k) {
-                                            simi[j][k] -= temp * simi[jdrop][k];
-                                        }
-                                    }
-                                    x[j] = sim[j][np] + dx[j];
-                                }
-                                continue L_40;
-                            }
-
-                            //     Calculate DX = x(*)-x(0).
-                            //     Branch if the length of DX is less than 0.5*RHO.
-                            ifull = this.trstlp(n, m, a, con, rho, dx);
-                            if (!ifull) {
-                                temp = 0.0;
-                                for (k = 1; k <= n; ++k) {
-                                    temp += dx[k] * dx[k];
-                                }
-                                if (temp < 0.25 * rho * rho) {
-                                    ibrnch = true;
-                                    break L_550;
-                                }
-                            }
-
-                            //     Predict the change to F and the new maximum constraint violation if the
-                            //     variables are altered from x(0) to x(0) + DX.
-                            total = 0.0;
-                            resnew = 0.0;
-                            con[mp] = 0.0;
-                            for (k = 1; k <= mp; ++k) {
-                                //total = con[k] - this.DOT_PRODUCT(this.PART(this.COL(a, k), 1, n), this.PART(dx, 1, n));
-                                total = con[k] - this.DOT_PRODUCT_ROW_COL(dx, -1, a, k, 1, n);
-                                if (k < mp) { resnew = Math.max(resnew, total); }
-                            }
-
-                            //     Increase PARMU if necessary and branch back if this change alters the
-                            //     optimal vertex. Otherwise PREREM and PREREC will be set to the predicted
-                            //     reductions in the merit function and the maximum constraint violation
-                            //     respectively.
-                            prerec = datmat[mpp][np] - resnew;
-                            barmu = prerec > 0.0 ? total / prerec : 0.0;
-                            if (parmu < 1.5 * barmu) {
-                                parmu = 2.0 * barmu;
-                                if (iprint >= 2) { console.log("Increase in PARMU to " + parmu); }
-                                phi = datmat[mp][np] + parmu * datmat[mpp][np];
-                                for (j = 1; j <= n; ++j) {
-                                    temp = datmat[mp][j] + parmu * datmat[mpp][j];
-                                    if (temp < phi || (temp === phi && parmu === 0.0 && datmat[mpp][j] < datmat[mpp][np])) {
-                                        continue L_140;
-                                    }
-                                }
-                            }
-                            prerem = parmu * prerec - total;
-
-                            //     Calculate the constraint and objective functions at x(*).
-                            //     Then find the actual reduction in the merit function.
-                            for (k = 1; k <= n; ++k) {
-                                x[k] = sim[k][np] + dx[k];
-                            }
-                            ibrnch = true;
-                            continue L_40;
-                        }
-
-                        skipVertexIdent = false;
-                        vmold = datmat[mp][np] + parmu * datmat[mpp][np];
-                        vmnew = f + parmu * resmax;
-                        trured = vmold - vmnew;
-                        if (parmu === 0.0 && f === datmat[mp][np]) {
-                            prerem = prerec;
-                            trured = datmat[mpp][np] - resmax;
-                        }
-
-                        //     Begin the operations that decide whether x(*) should replace one of the
-                        //     vertices of the current simplex, the change being mandatory if TRURED is
-                        //     positive. Firstly, JDROP is set to the index of the vertex that is to be
-                        //     replaced.
-                        ratio = trured <= 0.0 ? 1.0 : 0.0;
-                        jdrop = 0;
-                        for (j = 1; j <= n; ++j) {
-                            // temp = Math.abs(this.DOT_PRODUCT(this.PART(this.ROW(simi, j), 1, n), this.PART(dx, 1, n)));
-                            temp = Math.abs(this.DOT_PRODUCT_ROW_COL(simi, j, dx, -1, 1, n));
-                            if (temp > ratio) {
-                                jdrop = j;
-                                ratio = temp;
-                            }
-                            sigbar[j] = temp * vsig[j];
-                        }
-
-                        //     Calculate the value of ell.
-
-                        edgmax = delta * rho;
-                        l = 0;
-                        for (j = 1; j <= n; ++j) {
-                            if (sigbar[j] >= parsig || sigbar[j] >= vsig[j]) {
-                                temp = veta[j];
-                                if (trured > 0.0) {
-                                    temp = 0.0;
-                                    for (k = 1; k <= n; ++k) {
-                                        temp += Math.pow(dx[k] - sim[k][j], 2.0);
-                                    }
-                                    temp = Math.sqrt(temp);
-                                }
-                                if (temp > edgmax) {
-                                    l = j;
-                                    edgmax = temp;
-                                }
-                            }
-                        }
-                        if (l > 0) { jdrop = l; }
-
-                        if (jdrop !== 0) {
-                            //     Revise the simplex by updating the elements of SIM, SIMI and DATMAT.
-                            temp = 0.0;
-                            for (i = 1; i <= n; ++i) {
-                                sim[i][jdrop] = dx[i];
-                                temp += simi[jdrop][i] * dx[i];
-                            }
-                            for (k = 1; k <= n; ++k) { simi[jdrop][k] /= temp; }
-                            for (j = 1; j <= n; ++j) {
-                                if (j !== jdrop) {
-                                    // temp = this.DOT_PRODUCT(this.PART(this.ROW(simi, j), 1, n), this.PART(dx, 1, n));
-                                    temp = this.DOT_PRODUCT_ROW_COL(simi, j, dx, -1, 1, n);
-                                    for (k = 1; k <= n; ++k) {
-                                        simi[j][k] -= temp * simi[jdrop][k];
-                                    }
-                                }
-                            }
-                            for (k = 1; k <= mpp; ++k) {
-                                datmat[k][jdrop] = con[k];
-                            }
-
-                            //     Branch back for further iterations with the current RHO.
-                            if (trured > 0.0 && trured >= 0.1 * prerem) {
-                                continue L_140;
-                            }
-                        }
-                    } while (false);
-
-                    if (!iflag) {
-                        ibrnch = false;
-                        continue L_140;
-                    }
-
-                    if (rho <= rhoend) {
-                        status = this.Normal;
+                    if (nfvals >= maxfun && nfvals > 0) {
+                        status = this.MaxIterationsReached;
                         break L_40;
                     }
 
-                    //     Otherwise reduce RHO if it is not at its least value and reset PARMU.
-                    cmin = 0.0;
-                    cmax = 0.0;
-                    rho *= 0.5;
-                    if (rho <= 1.5 * rhoend) { rho = rhoend; }
-                    if (parmu > 0.0) {
-                        denom = 0.0;
-                        for (k = 1; k <= mp; ++k) {
-                            cmin = datmat[k][np];
-                            cmax = cmin;
-                            for (i = 1; i <= n; ++i) {
-                                cmin = Math.min(cmin, datmat[k][i]);
-                                cmax = Math.max(cmax, datmat[k][i]);
+                    ++nfvals;
+                    f = calcfc(n, m, x, con);
+                    resmax = 0.0;
+                    for (k = 1; k <= m; ++k) {
+                        resmax = Math.max(resmax, -con[k]);
+                    }
+                    //alert(    "   f="+f+"  resmax="+resmax);
+
+                    if (nfvals === iprint - 1 || iprint === 3) {
+                        this.PrintIterationResult(nfvals, f, resmax, x, n, iprint);
+                    }
+
+                    con[mp] = f;
+                    con[mpp] = resmax;
+
+                    //     Set the recently calculated function values in a column of DATMAT. This
+                    //     array has a column for each vertex of the current simplex, the entries of
+                    //     each column being the values of the constraint functions (if any)
+                    //     followed by the objective function and the greatest constraint violation
+                    //     at the vertex.
+                    skipVertexIdent = true;
+                    if (!ibrnch) {
+                        skipVertexIdent = false;
+
+                        for (i = 1; i <= mpp; ++i) {
+                            datmat[i][jdrop] = con[i];
+                        }
+
+                        if (nfvals <= np) {
+                            //     Exchange the new vertex of the initial simplex with the optimal vertex if
+                            //     necessary. Then, if the initial simplex is not complete, pick its next
+                            //     vertex and calculate the function values there.
+
+                            if (jdrop <= n) {
+                                if (datmat[mp][np] <= f) {
+                                    x[jdrop] = sim[jdrop][np];
+                                } else {
+                                    sim[jdrop][np] = x[jdrop];
+                                    for (k = 1; k <= mpp; ++k) {
+                                        datmat[k][jdrop] = datmat[k][np];
+                                        datmat[k][np] = con[k];
+                                    }
+                                    for (k = 1; k <= jdrop; ++k) {
+                                        sim[jdrop][k] = -rho;
+                                        temp = 0.0;
+                                        for (i = k; i <= jdrop; ++i) {
+                                            temp -= simi[i][k];
+                                        }
+                                        simi[jdrop][k] = temp;
+                                    }
+                                }
                             }
-                            if (k <= m && cmin < 0.5 * cmax) {
-                                temp = Math.max(cmax, 0.0) - cmin;
-                                denom = denom <= 0.0 ? temp : Math.min(denom, temp);
+                            if (nfvals <= n) {
+                                jdrop = nfvals;
+                                x[jdrop] += rho;
+                                continue L_40;
                             }
                         }
-                        if (denom === 0.0) {
-                            parmu = 0.0;
-                        } else if (cmax - cmin < parmu * denom) {
-                            parmu = (cmax - cmin) / denom;
-                        }
+                        ibrnch = true;
                     }
-                    if (iprint >= 2) {
-                        console.log("Reduction in RHO to "+rho+"  and PARMU = "+parmu);
-                    }
-                    if (iprint === 2) {
-                        this.PrintIterationResult(nfvals, datmat[mp][np], datmat[mpp][np], this.COL(sim, np), n, iprint);
-                    }
+
+                    L_140:
+                        do {
+                            L_550:
+                                do {
+                                    if (!skipVertexIdent) {
+                                        //     Identify the optimal vertex of the current simplex.
+                                        phimin = datmat[mp][np] + parmu * datmat[mpp][np];
+                                        nbest = np;
+
+                                        for (j = 1; j <= n; ++j) {
+                                            temp = datmat[mp][j] + parmu * datmat[mpp][j];
+                                            if (temp < phimin) {
+                                                nbest = j;
+                                                phimin = temp;
+                                            } else if (temp === phimin && parmu === 0.0 && datmat[mpp][j] < datmat[mpp][nbest]) {
+                                                nbest = j;
+                                            }
+                                        }
+
+                                        //     Switch the best vertex into pole position if it is not there already,
+                                        //     and also update SIM, SIMI and DATMAT.
+                                        if (nbest <= n) {
+                                            for (i = 1; i <= mpp; ++i) {
+                                                temp = datmat[i][np];
+                                                datmat[i][np] = datmat[i][nbest];
+                                                datmat[i][nbest] = temp;
+                                            }
+                                            for (i = 1; i <= n; ++i) {
+                                                temp = sim[i][nbest];
+                                                sim[i][nbest] = 0.0;
+                                                sim[i][np] += temp;
+
+                                                tempa = 0.0;
+                                                for (k = 1; k <= n; ++k) {
+                                                    sim[i][k] -= temp;
+                                                    tempa -= simi[k][i];
+                                                }
+                                                simi[nbest][i] = tempa;
+                                            }
+                                        }
+
+                                        //     Make an error return if SIGI is a poor approximation to the inverse of
+                                        //     the leading N by N submatrix of SIG.
+                                        error = 0.0;
+                                        for (i = 1; i <= n; ++i) {
+                                            for (j = 1; j <= n; ++j) {
+                                                temp = this.DOT_PRODUCT_ROW_COL(simi, i, sim, j, 1, n) - (i === j ? 1.0 : 0.0);
+                                                // console.log("A", temp);
+                                                // temp = this.DOT_PRODUCT(
+                                                //     this.PART(this.ROW(simi, i), 1, n),
+                                                //     this.PART(this.COL(sim, j), 1, n)
+                                                // ) - (i === j ? 1.0 : 0.0);
+                                                // console.log("B", temp);
+
+                                                error = Math.max(error, Math.abs(temp));
+                                            }
+                                        }
+                                        if (error > 0.1) {
+                                            status = this.DivergingRoundingErrors;
+                                            break L_40;
+                                        }
+
+                                        //     Calculate the coefficients of the linear approximations to the objective
+                                        //     and constraint functions, placing minus the objective function gradient
+                                        //     after the constraint gradients in the array A. The vector W is used for
+                                        //     working space.
+                                        for (k = 1; k <= mp; ++k) {
+                                            con[k] = -datmat[k][np];
+                                            for (j = 1; j <= n; ++j) {
+                                                w[j] = datmat[k][j] + con[k];
+                                            }
+
+                                            for (i = 1; i <= n; ++i) {
+                                                a[i][k] = (k === mp ? -1.0 : 1.0) *
+                                                    this.DOT_PRODUCT_ROW_COL(w, -1, simi, i, 1, n);
+                                                // this.DOT_PRODUCT(this.PART(w, 1, n), this.PART(this.COL(simi, i), 1, n));
+                                            }
+                                        }
+
+                                        //     Calculate the values of sigma and eta, and set IFLAG = 0 if the current
+                                        //     simplex is not acceptable.
+                                        iflag = true;
+                                        parsig = alpha * rho;
+                                        pareta = beta * rho;
+
+                                        for (j = 1; j <= n; ++j) {
+                                            wsig = 0.0;
+                                            for (k = 1; k <= n; ++k) {
+                                                wsig += simi[j][k] * simi[j][k];
+                                            }
+                                            weta = 0.0;
+                                            for (k = 1; k <= n; ++k) {
+                                                weta += sim[k][j] * sim[k][j];
+                                            }
+                                            vsig[j] = 1.0 / Math.sqrt(wsig);
+                                            veta[j] = Math.sqrt(weta);
+                                            if (vsig[j] < parsig || veta[j] > pareta) {
+                                                iflag = false;
+                                            }
+                                        }
+
+                                        //     If a new vertex is needed to improve acceptability, then decide which
+                                        //     vertex to drop from the simplex.
+                                        if (!ibrnch && !iflag) {
+                                            jdrop = 0;
+                                            temp = pareta;
+                                            for (j = 1; j <= n; ++j) {
+                                                if (veta[j] > temp) {
+                                                    jdrop = j;
+                                                    temp = veta[j];
+                                                }
+                                            }
+                                            if (jdrop === 0) {
+                                                for (j = 1; j <= n; ++j) {
+                                                    if (vsig[j] < temp) {
+                                                        jdrop = j;
+                                                        temp = vsig[j];
+                                                    }
+                                                }
+                                            }
+
+                                            //     Calculate the step to the new vertex and its sign.
+                                            temp = gamma * rho * vsig[jdrop];
+                                            for (k = 1; k <= n; ++k) {
+                                                dx[k] = temp * simi[jdrop][k];
+                                            }
+                                            cvmaxp = 0.0;
+                                            cvmaxm = 0.0;
+                                            total = 0.0;
+                                            for (k = 1; k <= mp; ++k) {
+                                                // total = this.DOT_PRODUCT(this.PART(this.COL(a, k), 1, n), this.PART(dx, 1, n));
+                                                total = this.DOT_PRODUCT_ROW_COL(dx, -1, a, k, 1, n);
+                                                if (k < mp) {
+                                                    temp = datmat[k][np];
+                                                    cvmaxp = Math.max(cvmaxp, -total - temp);
+                                                    cvmaxm = Math.max(cvmaxm, total - temp);
+                                                }
+                                            }
+                                            dxsign = parmu * (cvmaxp - cvmaxm) > 2.0 * total ? -1.0 : 1.0;
+
+                                            //     Update the elements of SIM and SIMI, and set the next X.
+                                            temp = 0.0;
+                                            for (i = 1; i <= n; ++i) {
+                                                dx[i] = dxsign * dx[i];
+                                                sim[i][jdrop] = dx[i];
+                                                temp += simi[jdrop][i] * dx[i];
+                                            }
+                                            for (k = 1; k <= n; ++k) {
+                                                simi[jdrop][k] /= temp;
+                                            }
+
+                                            for (j = 1; j <= n; ++j) {
+                                                if (j !== jdrop) {
+                                                    // temp = this.DOT_PRODUCT(this.PART(this.ROW(simi, j), 1, n), this.PART(dx, 1, n));
+                                                    temp = this.DOT_PRODUCT_ROW_COL(simi, j, dx, -1, 1, n);
+                                                    for (k = 1; k <= n; ++k) {
+                                                        simi[j][k] -= temp * simi[jdrop][k];
+                                                    }
+                                                }
+                                                x[j] = sim[j][np] + dx[j];
+                                            }
+                                            continue L_40;
+                                        }
+
+                                        //     Calculate DX = x(*)-x(0).
+                                        //     Branch if the length of DX is less than 0.5*RHO.
+                                        ifull = this.trstlp(n, m, a, con, rho, dx);
+                                        if (!ifull) {
+                                            temp = 0.0;
+                                            for (k = 1; k <= n; ++k) {
+                                                temp += dx[k] * dx[k];
+                                            }
+                                            if (temp < 0.25 * rho * rho) {
+                                                ibrnch = true;
+                                                break L_550;
+                                            }
+                                        }
+
+                                        //     Predict the change to F and the new maximum constraint violation if the
+                                        //     variables are altered from x(0) to x(0) + DX.
+                                        total = 0.0;
+                                        resnew = 0.0;
+                                        con[mp] = 0.0;
+                                        for (k = 1; k <= mp; ++k) {
+                                            //total = con[k] - this.DOT_PRODUCT(this.PART(this.COL(a, k), 1, n), this.PART(dx, 1, n));
+                                            total = con[k] - this.DOT_PRODUCT_ROW_COL(dx, -1, a, k, 1, n);
+                                            if (k < mp) {
+                                                resnew = Math.max(resnew, total);
+                                            }
+                                        }
+
+                                        //     Increase PARMU if necessary and branch back if this change alters the
+                                        //     optimal vertex. Otherwise PREREM and PREREC will be set to the predicted
+                                        //     reductions in the merit function and the maximum constraint violation
+                                        //     respectively.
+                                        prerec = datmat[mpp][np] - resnew;
+                                        barmu = prerec > 0.0 ? total / prerec : 0.0;
+                                        if (parmu < 1.5 * barmu) {
+                                            parmu = 2.0 * barmu;
+                                            if (iprint >= 2) {
+                                                console.log("Increase in PARMU to " + parmu);
+                                            }
+                                            phi = datmat[mp][np] + parmu * datmat[mpp][np];
+                                            for (j = 1; j <= n; ++j) {
+                                                temp = datmat[mp][j] + parmu * datmat[mpp][j];
+                                                if (temp < phi || (temp === phi && parmu === 0.0 && datmat[mpp][j] < datmat[mpp][np])) {
+                                                    continue L_140;
+                                                }
+                                            }
+                                        }
+                                        prerem = parmu * prerec - total;
+
+                                        //     Calculate the constraint and objective functions at x(*).
+                                        //     Then find the actual reduction in the merit function.
+                                        for (k = 1; k <= n; ++k) {
+                                            x[k] = sim[k][np] + dx[k];
+                                        }
+                                        ibrnch = true;
+                                        continue L_40;
+                                    }
+
+                                    skipVertexIdent = false;
+                                    vmold = datmat[mp][np] + parmu * datmat[mpp][np];
+                                    vmnew = f + parmu * resmax;
+                                    trured = vmold - vmnew;
+                                    if (parmu === 0.0 && f === datmat[mp][np]) {
+                                        prerem = prerec;
+                                        trured = datmat[mpp][np] - resmax;
+                                    }
+
+                                    //     Begin the operations that decide whether x(*) should replace one of the
+                                    //     vertices of the current simplex, the change being mandatory if TRURED is
+                                    //     positive. Firstly, JDROP is set to the index of the vertex that is to be
+                                    //     replaced.
+                                    ratio = trured <= 0.0 ? 1.0 : 0.0;
+                                    jdrop = 0;
+                                    for (j = 1; j <= n; ++j) {
+                                        // temp = Math.abs(this.DOT_PRODUCT(this.PART(this.ROW(simi, j), 1, n), this.PART(dx, 1, n)));
+                                        temp = Math.abs(this.DOT_PRODUCT_ROW_COL(simi, j, dx, -1, 1, n));
+                                        if (temp > ratio) {
+                                            jdrop = j;
+                                            ratio = temp;
+                                        }
+                                        sigbar[j] = temp * vsig[j];
+                                    }
+
+                                    //     Calculate the value of ell.
+
+                                    edgmax = delta * rho;
+                                    l = 0;
+                                    for (j = 1; j <= n; ++j) {
+                                        if (sigbar[j] >= parsig || sigbar[j] >= vsig[j]) {
+                                            temp = veta[j];
+                                            if (trured > 0.0) {
+                                                temp = 0.0;
+                                                for (k = 1; k <= n; ++k) {
+                                                    temp += Math.pow(dx[k] - sim[k][j], 2.0);
+                                                }
+                                                temp = Math.sqrt(temp);
+                                            }
+                                            if (temp > edgmax) {
+                                                l = j;
+                                                edgmax = temp;
+                                            }
+                                        }
+                                    }
+                                    if (l > 0) {
+                                        jdrop = l;
+                                    }
+
+                                    if (jdrop !== 0) {
+                                        //     Revise the simplex by updating the elements of SIM, SIMI and DATMAT.
+                                        temp = 0.0;
+                                        for (i = 1; i <= n; ++i) {
+                                            sim[i][jdrop] = dx[i];
+                                            temp += simi[jdrop][i] * dx[i];
+                                        }
+                                        for (k = 1; k <= n; ++k) {
+                                            simi[jdrop][k] /= temp;
+                                        }
+                                        for (j = 1; j <= n; ++j) {
+                                            if (j !== jdrop) {
+                                                // temp = this.DOT_PRODUCT(this.PART(this.ROW(simi, j), 1, n), this.PART(dx, 1, n));
+                                                temp = this.DOT_PRODUCT_ROW_COL(simi, j, dx, -1, 1, n);
+                                                for (k = 1; k <= n; ++k) {
+                                                    simi[j][k] -= temp * simi[jdrop][k];
+                                                }
+                                            }
+                                        }
+                                        for (k = 1; k <= mpp; ++k) {
+                                            datmat[k][jdrop] = con[k];
+                                        }
+
+                                        //     Branch back for further iterations with the current RHO.
+                                        if (trured > 0.0 && trured >= 0.1 * prerem) {
+                                            continue L_140;
+                                        }
+                                    }
+                                } while (false);
+
+                            if (!iflag) {
+                                ibrnch = false;
+                                continue L_140;
+                            }
+
+                            if (rho <= rhoend) {
+                                status = this.Normal;
+                                break L_40;
+                            }
+
+                            //     Otherwise reduce RHO if it is not at its least value and reset PARMU.
+                            cmin = 0.0;
+                            cmax = 0.0;
+                            rho *= 0.5;
+                            if (rho <= 1.5 * rhoend) {
+                                rho = rhoend;
+                            }
+                            if (parmu > 0.0) {
+                                denom = 0.0;
+                                for (k = 1; k <= mp; ++k) {
+                                    cmin = datmat[k][np];
+                                    cmax = cmin;
+                                    for (i = 1; i <= n; ++i) {
+                                        cmin = Math.min(cmin, datmat[k][i]);
+                                        cmax = Math.max(cmax, datmat[k][i]);
+                                    }
+                                    if (k <= m && cmin < 0.5 * cmax) {
+                                        temp = Math.max(cmax, 0.0) - cmin;
+                                        denom = denom <= 0.0 ? temp : Math.min(denom, temp);
+                                    }
+                                }
+                                if (denom === 0.0) {
+                                    parmu = 0.0;
+                                } else if (cmax - cmin < parmu * denom) {
+                                    parmu = (cmax - cmin) / denom;
+                                }
+                            }
+                            if (iprint >= 2) {
+                                console.log("Reduction in RHO to " + rho + "  and PARMU = " + parmu);
+                            }
+                            if (iprint === 2) {
+                                this.PrintIterationResult(nfvals, datmat[mp][np], datmat[mpp][np], this.COL(sim, np), n, iprint);
+                            }
+                        } while (true);
                 } while (true);
-            } while (true);
 
             switch (status) {
                 case this.Normal:
-                    if (iprint >= 1) { console.log("%nNormal return from subroutine COBYLA%n"); }
+                    if (iprint >= 1) {
+                        console.log("%nNormal return from subroutine COBYLA%n");
+                    }
                     if (ifull) {
-                        if (iprint >= 1) { this.PrintIterationResult(nfvals, f, resmax, x, n, iprint); }
+                        if (iprint >= 1) {
+                            this.PrintIterationResult(nfvals, f, resmax, x, n, iprint);
+                        }
                         return status;
                     }
                     break;
@@ -744,15 +761,19 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                     break;
             }
 
-            for (k = 1; k <= n; ++k) { x[k] = sim[k][np]; }
+            for (k = 1; k <= n; ++k) {
+                x[k] = sim[k][np];
+            }
             f = datmat[mp][np];
             resmax = datmat[mpp][np];
-            if (iprint >= 1) { this.PrintIterationResult(nfvals, f, resmax, x, n, iprint); }
+            if (iprint >= 1) {
+                this.PrintIterationResult(nfvals, f, resmax, x, n, iprint);
+            }
 
             return status;
         },
 
-        trstlp: function(n,  m,  a, b, rho,  dx) { //(int n, int m, double[][] a, double[] b, double rho, double[] dx)
+        trstlp: function (n, m, a, b, rho, dx) { //(int n, int m, double[][] a, double[] b, double rho, double[] dx)
             // N.B. Arguments Z, ZDOTA, VMULTC, SDIRN, DXNEW, VMULTD & IACT have been removed.
 
             //     This subroutine calculates an N-component vector DX by applying the
@@ -850,380 +871,426 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
             first = true;
             do {
                 L_60:
-                do {
-                    if (!first || (first && resmax === 0.0)) {
-                        mcon = m + 1;
-                        icon = mcon;
-                        iact[mcon] = mcon;
-                        vmultc[mcon] = 0.0;
-                    }
-                    first = false;
-
-                    optold = 0.0;
-                    icount = 0;
-                    step = 0;
-                    stpful = 0;
-
-                    L_70:
                     do {
-                        // optnew = (mcon === m) ? resmax : -this.DOT_PRODUCT(this.PART(dx, 1, n), this.PART(this.COL(a, mcon), 1, n));
-                        optnew = (mcon === m) ? resmax : -this.DOT_PRODUCT_ROW_COL(dx, -1, a, mcon, 1, n);
-
-                        if (icount === 0 || optnew < optold) {
-                            optold = optnew;
-                            nactx = nact;
-                            icount = 3;
-                        } else if (nact > nactx) {
-                            nactx = nact;
-                            icount = 3;
-                        } else {
-                            --icount;
+                        if (!first || (first && resmax === 0.0)) {
+                            mcon = m + 1;
+                            icon = mcon;
+                            iact[mcon] = mcon;
+                            vmultc[mcon] = 0.0;
                         }
-                        if (icount === 0) { break L_60; }
+                        first = false;
 
-                        //     If ICON exceeds NACT, then we add the constraint with index IACT(ICON) to
-                        //     the active set. Apply Givens rotations so that the last N-NACT-1 columns
-                        //     of Z are orthogonal to the gradient of the new constraint, a scalar
-                        //     product being set to zero if its nonzero value could be due to computer
-                        //     rounding errors. The array DXNEW is used for working space.
-                        ratio = 0;
-                        if (icon <= nact) {
-                            if (icon < nact) {
-                                //     Delete the constraint that has the index IACT(ICON) from the active set.
+                        optold = 0.0;
+                        icount = 0;
+                        step = 0;
+                        stpful = 0;
 
-                                isave = iact[icon];
-                                vsave = vmultc[icon];
-                                k = icon;
-                                do {
-                                    kp = k + 1;
-                                    kk = iact[kp];
-                                    sp = this.DOT_PRODUCT(
-                                            this.PART(this.COL(z, k), 1, n),
-                                            this.PART(this.COL(a, kk), 1, n)
-                                        );
-                                    temp = Math.sqrt(sp * sp + zdota[kp] * zdota[kp]);
-                                    alpha = zdota[kp] / temp;
-                                    beta = sp / temp;
-                                    zdota[kp] = alpha * zdota[k];
-                                    zdota[k] = temp;
-                                    for (i = 1; i <= n; ++i) {
-                                        temp = alpha * z[i][kp] + beta * z[i][k];
-                                        z[i][kp] = alpha * z[i][k] - beta * z[i][kp];
-                                        z[i][k] = temp;
+                        L_70:
+                            do {
+                                // optnew = (mcon === m) ? resmax : -this.DOT_PRODUCT(this.PART(dx, 1, n), this.PART(this.COL(a, mcon), 1, n));
+                                optnew = (mcon === m) ? resmax : -this.DOT_PRODUCT_ROW_COL(dx, -1, a, mcon, 1, n);
+
+                                if (icount === 0 || optnew < optold) {
+                                    optold = optnew;
+                                    nactx = nact;
+                                    icount = 3;
+                                } else if (nact > nactx) {
+                                    nactx = nact;
+                                    icount = 3;
+                                } else {
+                                    --icount;
+                                }
+                                if (icount === 0) {
+                                    break L_60;
+                                }
+
+                                //     If ICON exceeds NACT, then we add the constraint with index IACT(ICON) to
+                                //     the active set. Apply Givens rotations so that the last N-NACT-1 columns
+                                //     of Z are orthogonal to the gradient of the new constraint, a scalar
+                                //     product being set to zero if its nonzero value could be due to computer
+                                //     rounding errors. The array DXNEW is used for working space.
+                                ratio = 0;
+                                if (icon <= nact) {
+                                    if (icon < nact) {
+                                        //     Delete the constraint that has the index IACT(ICON) from the active set.
+
+                                        isave = iact[icon];
+                                        vsave = vmultc[icon];
+                                        k = icon;
+                                        do {
+                                            kp = k + 1;
+                                            kk = iact[kp];
+                                            sp = this.DOT_PRODUCT(
+                                                this.PART(this.COL(z, k), 1, n),
+                                                this.PART(this.COL(a, kk), 1, n)
+                                            );
+                                            temp = Math.sqrt(sp * sp + zdota[kp] * zdota[kp]);
+                                            alpha = zdota[kp] / temp;
+                                            beta = sp / temp;
+                                            zdota[kp] = alpha * zdota[k];
+                                            zdota[k] = temp;
+                                            for (i = 1; i <= n; ++i) {
+                                                temp = alpha * z[i][kp] + beta * z[i][k];
+                                                z[i][kp] = alpha * z[i][k] - beta * z[i][kp];
+                                                z[i][k] = temp;
+                                            }
+                                            iact[k] = kk;
+                                            vmultc[k] = vmultc[kp];
+                                            k = kp;
+                                        } while (k < nact);
+
+                                        iact[k] = isave;
+                                        vmultc[k] = vsave;
                                     }
-                                    iact[k] = kk;
-                                    vmultc[k] = vmultc[kp];
-                                    k = kp;
-                                } while (k < nact);
+                                    --nact;
 
-                                iact[k] = isave;
-                                vmultc[k] = vsave;
-                            }
-                            --nact;
-
-                            //     If stage one is in progress, then set SDIRN to the direction of the next
-                            //     change to the current vector of variables.
-                            if (mcon > m) {
-                                //     Pick the next search direction of stage two.
-                                temp = 1.0 / zdota[nact];
-                                for (k = 1; k <= n; ++k) { sdirn[k] = temp * z[k][nact]; }
-                            } else {
-                                // temp = this.DOT_PRODUCT(this.PART(sdirn, 1, n), this.PART(this.COL(z, nact + 1), 1, n));
-                                temp = this.DOT_PRODUCT_ROW_COL(sdirn, -1, z, nact + 1, 1, n);
-                                for (k = 1; k <= n; ++k) { sdirn[k] -= temp * z[k][nact + 1]; }
-                            }
-                        } else {
-                            kk = iact[icon];
-                            for (k = 1; k <= n; ++k) { dxnew[k] = a[k][kk]; }
-                            tot = 0.0;
-
-                            // {
-                                k = n;
-                                while (k > nact) {
-                                    sp = 0.0;
-                                    spabs = 0.0;
-                                    for (i = 1; i <= n; ++i) {
-                                        temp = z[i][k] * dxnew[i];
-                                        sp += temp;
-                                        spabs += Math.abs(temp);
-                                    }
-                                    acca = spabs + 0.1 * Math.abs(sp);
-                                    accb = spabs + 0.2 * Math.abs(sp);
-                                    if (spabs >= acca || acca >= accb) { sp = 0.0; }
-                                    if (tot === 0.0) {
-                                        tot = sp;
+                                    //     If stage one is in progress, then set SDIRN to the direction of the next
+                                    //     change to the current vector of variables.
+                                    if (mcon > m) {
+                                        //     Pick the next search direction of stage two.
+                                        temp = 1.0 / zdota[nact];
+                                        for (k = 1; k <= n; ++k) {
+                                            sdirn[k] = temp * z[k][nact];
+                                        }
                                     } else {
-                                        kp = k + 1;
-                                        temp = Math.sqrt(sp * sp + tot * tot);
-                                        alpha = sp / temp;
-                                        beta = tot / temp;
-                                        tot = temp;
-                                        for (i = 1; i <= n; ++i) {
-                                            temp = alpha * z[i][k] + beta * z[i][kp];
-                                            z[i][kp] = alpha * z[i][kp] - beta * z[i][k];
-                                            z[i][k] = temp;
+                                        // temp = this.DOT_PRODUCT(this.PART(sdirn, 1, n), this.PART(this.COL(z, nact + 1), 1, n));
+                                        temp = this.DOT_PRODUCT_ROW_COL(sdirn, -1, z, nact + 1, 1, n);
+                                        for (k = 1; k <= n; ++k) {
+                                            sdirn[k] -= temp * z[k][nact + 1];
                                         }
                                     }
-                                    --k;
-                                }
-                            // }
+                                } else {
+                                    kk = iact[icon];
+                                    for (k = 1; k <= n; ++k) {
+                                        dxnew[k] = a[k][kk];
+                                    }
+                                    tot = 0.0;
 
-                            if (tot === 0.0) {
-                                //     The next instruction is reached if a deletion has to be made from the
-                                //     active set in order to make room for the new active constraint, because
-                                //     the new constraint gradient is a linear combination of the gradients of
-                                //     the old active constraints.  Set the elements of VMULTD to the multipliers
-                                //     of the linear combination.  Further, set IOUT to the index of the
-                                //     constraint to be deleted, but branch if no suitable index can be found.
-
-                                ratio = -1.0;
-                                //{
-                                    k = nact;
-                                    do {
-                                        zdotv = 0.0;
-                                        zdvabs = 0.0;
-
+                                    // {
+                                    k = n;
+                                    while (k > nact) {
+                                        sp = 0.0;
+                                        spabs = 0.0;
                                         for (i = 1; i <= n; ++i) {
                                             temp = z[i][k] * dxnew[i];
-                                            zdotv += temp;
-                                            zdvabs += Math.abs(temp);
+                                            sp += temp;
+                                            spabs += Math.abs(temp);
                                         }
-                                        acca = zdvabs + 0.1 * Math.abs(zdotv);
-                                        accb = zdvabs + 0.2 * Math.abs(zdotv);
-                                        if (zdvabs < acca && acca < accb) {
-                                            temp = zdotv / zdota[k];
-                                            if (temp > 0.0 && iact[k] <= m) {
-                                                tempa = vmultc[k] / temp;
-                                                if (ratio < 0.0 || tempa < ratio) { ratio = tempa; }
-                                            }
-
-                                            if (k >= 2) {
-                                                kw = iact[k];
-                                                for (i = 1; i <= n; ++i) { dxnew[i] -= temp * a[i][kw]; }
-                                            }
-                                            vmultd[k] = temp;
+                                        acca = spabs + 0.1 * Math.abs(sp);
+                                        accb = spabs + 0.2 * Math.abs(sp);
+                                        if (spabs >= acca || acca >= accb) {
+                                            sp = 0.0;
+                                        }
+                                        if (tot === 0.0) {
+                                            tot = sp;
                                         } else {
-                                            vmultd[k] = 0.0;
+                                            kp = k + 1;
+                                            temp = Math.sqrt(sp * sp + tot * tot);
+                                            alpha = sp / temp;
+                                            beta = tot / temp;
+                                            tot = temp;
+                                            for (i = 1; i <= n; ++i) {
+                                                temp = alpha * z[i][k] + beta * z[i][kp];
+                                                z[i][kp] = alpha * z[i][kp] - beta * z[i][k];
+                                                z[i][k] = temp;
+                                            }
                                         }
-                                    } while (--k > 0);
-                                //}
-                                if (ratio < 0.0) { break L_60; }
+                                        --k;
+                                    }
+                                    // }
 
-                                //     Revise the Lagrange multipliers and reorder the active constraints so
-                                //     that the one to be replaced is at the end of the list. Also calculate the
-                                //     new value of ZDOTA(NACT) and branch if it is not acceptable.
+                                    if (tot === 0.0) {
+                                        //     The next instruction is reached if a deletion has to be made from the
+                                        //     active set in order to make room for the new active constraint, because
+                                        //     the new constraint gradient is a linear combination of the gradients of
+                                        //     the old active constraints.  Set the elements of VMULTD to the multipliers
+                                        //     of the linear combination.  Further, set IOUT to the index of the
+                                        //     constraint to be deleted, but branch if no suitable index can be found.
 
-                                for (k = 1; k <= nact; ++k) {
-                                    vmultc[k] = Math.max(0.0, vmultc[k] - ratio * vmultd[k]);
-                                }
-                                if (icon < nact) {
-                                    isave = iact[icon];
-                                    vsave = vmultc[icon];
-                                    k = icon;
-                                    do {
-                                        kp = k + 1;
-                                        kw = iact[kp];
-                                        sp = this.DOT_PRODUCT(
-                                                this.PART(this.COL(z, k), 1, n),
-                                                this.PART(this.COL(a, kw), 1, n)
-                                            );
-                                        temp = Math.sqrt(sp * sp + zdota[kp] * zdota[kp]);
-                                        alpha = zdota[kp] / temp;
-                                        beta = sp / temp;
-                                        zdota[kp] = alpha * zdota[k];
-                                        zdota[k] = temp;
-                                        for (i = 1; i <= n; ++i) {
-                                            temp = alpha * z[i][kp] + beta * z[i][k];
-                                            z[i][kp] = alpha * z[i][k] - beta * z[i][kp];
-                                            z[i][k] = temp;
+                                        ratio = -1.0;
+                                        //{
+                                        k = nact;
+                                        do {
+                                            zdotv = 0.0;
+                                            zdvabs = 0.0;
+
+                                            for (i = 1; i <= n; ++i) {
+                                                temp = z[i][k] * dxnew[i];
+                                                zdotv += temp;
+                                                zdvabs += Math.abs(temp);
+                                            }
+                                            acca = zdvabs + 0.1 * Math.abs(zdotv);
+                                            accb = zdvabs + 0.2 * Math.abs(zdotv);
+                                            if (zdvabs < acca && acca < accb) {
+                                                temp = zdotv / zdota[k];
+                                                if (temp > 0.0 && iact[k] <= m) {
+                                                    tempa = vmultc[k] / temp;
+                                                    if (ratio < 0.0 || tempa < ratio) {
+                                                        ratio = tempa;
+                                                    }
+                                                }
+
+                                                if (k >= 2) {
+                                                    kw = iact[k];
+                                                    for (i = 1; i <= n; ++i) {
+                                                        dxnew[i] -= temp * a[i][kw];
+                                                    }
+                                                }
+                                                vmultd[k] = temp;
+                                            } else {
+                                                vmultd[k] = 0.0;
+                                            }
+                                        } while (--k > 0);
+                                        //}
+                                        if (ratio < 0.0) {
+                                            break L_60;
                                         }
-                                        iact[k] = kw;
-                                        vmultc[k] = vmultc[kp];
-                                        k = kp;
-                                    } while (k < nact);
-                                    iact[k] = isave;
-                                    vmultc[k] = vsave;
-                                }
-                                temp = this.DOT_PRODUCT(
+
+                                        //     Revise the Lagrange multipliers and reorder the active constraints so
+                                        //     that the one to be replaced is at the end of the list. Also calculate the
+                                        //     new value of ZDOTA(NACT) and branch if it is not acceptable.
+
+                                        for (k = 1; k <= nact; ++k) {
+                                            vmultc[k] = Math.max(0.0, vmultc[k] - ratio * vmultd[k]);
+                                        }
+                                        if (icon < nact) {
+                                            isave = iact[icon];
+                                            vsave = vmultc[icon];
+                                            k = icon;
+                                            do {
+                                                kp = k + 1;
+                                                kw = iact[kp];
+                                                sp = this.DOT_PRODUCT(
+                                                    this.PART(this.COL(z, k), 1, n),
+                                                    this.PART(this.COL(a, kw), 1, n)
+                                                );
+                                                temp = Math.sqrt(sp * sp + zdota[kp] * zdota[kp]);
+                                                alpha = zdota[kp] / temp;
+                                                beta = sp / temp;
+                                                zdota[kp] = alpha * zdota[k];
+                                                zdota[k] = temp;
+                                                for (i = 1; i <= n; ++i) {
+                                                    temp = alpha * z[i][kp] + beta * z[i][k];
+                                                    z[i][kp] = alpha * z[i][k] - beta * z[i][kp];
+                                                    z[i][k] = temp;
+                                                }
+                                                iact[k] = kw;
+                                                vmultc[k] = vmultc[kp];
+                                                k = kp;
+                                            } while (k < nact);
+                                            iact[k] = isave;
+                                            vmultc[k] = vsave;
+                                        }
+                                        temp = this.DOT_PRODUCT(
                                             this.PART(this.COL(z, nact), 1, n),
                                             this.PART(this.COL(a, kk), 1, n)
                                         );
-                                if (temp === 0.0) { break L_60; }
-                                zdota[nact] = temp;
-                                vmultc[icon] = 0.0;
-                                vmultc[nact] = ratio;
-                            } else {
-                                //     Add the new constraint if this can be done without a deletion from the
-                                //     active set.
+                                        if (temp === 0.0) {
+                                            break L_60;
+                                        }
+                                        zdota[nact] = temp;
+                                        vmultc[icon] = 0.0;
+                                        vmultc[nact] = ratio;
+                                    } else {
+                                        //     Add the new constraint if this can be done without a deletion from the
+                                        //     active set.
 
-                                ++nact;
-                                zdota[nact] = tot;
-                                vmultc[icon] = vmultc[nact];
-                                vmultc[nact] = 0.0;
-                            }
+                                        ++nact;
+                                        zdota[nact] = tot;
+                                        vmultc[icon] = vmultc[nact];
+                                        vmultc[nact] = 0.0;
+                                    }
 
-                            //     Update IACT and ensure that the objective function continues to be
-                            //     treated as the last active constraint when MCON>M.
+                                    //     Update IACT and ensure that the objective function continues to be
+                                    //     treated as the last active constraint when MCON>M.
 
-                            iact[icon] = iact[nact];
-                            iact[nact] = kk;
-                            if (mcon > m && kk !== mcon) {
-                                k = nact - 1;
-                                sp = this.DOT_PRODUCT(
-                                        this.PART(this.COL(z, k), 1, n),
-                                        this.PART(this.COL(a, kk), 1, n)
-                                    );
-                                temp = Math.sqrt(sp * sp + zdota[nact] * zdota[nact]);
-                                alpha = zdota[nact] / temp;
-                                beta = sp / temp;
-                                zdota[nact] = alpha * zdota[k];
-                                zdota[k] = temp;
+                                    iact[icon] = iact[nact];
+                                    iact[nact] = kk;
+                                    if (mcon > m && kk !== mcon) {
+                                        k = nact - 1;
+                                        sp = this.DOT_PRODUCT(
+                                            this.PART(this.COL(z, k), 1, n),
+                                            this.PART(this.COL(a, kk), 1, n)
+                                        );
+                                        temp = Math.sqrt(sp * sp + zdota[nact] * zdota[nact]);
+                                        alpha = zdota[nact] / temp;
+                                        beta = sp / temp;
+                                        zdota[nact] = alpha * zdota[k];
+                                        zdota[k] = temp;
+                                        for (i = 1; i <= n; ++i) {
+                                            temp = alpha * z[i][nact] + beta * z[i][k];
+                                            z[i][nact] = alpha * z[i][k] - beta * z[i][nact];
+                                            z[i][k] = temp;
+                                        }
+                                        iact[nact] = iact[k];
+                                        iact[k] = kk;
+                                        temp = vmultc[k];
+                                        vmultc[k] = vmultc[nact];
+                                        vmultc[nact] = temp;
+                                    }
+
+                                    //     If stage one is in progress, then set SDIRN to the direction of the next
+                                    //     change to the current vector of variables.
+                                    if (mcon > m) {
+                                        //     Pick the next search direction of stage two.
+                                        temp = 1.0 / zdota[nact];
+                                        for (k = 1; k <= n; ++k) {
+                                            sdirn[k] = temp * z[k][nact];
+                                        }
+                                    } else {
+                                        kk = iact[nact];
+                                        // temp = (this.DOT_PRODUCT(this.PART(sdirn, 1, n),this.PART(this.COL(a, kk), 1, n)) - 1.0) / zdota[nact];
+                                        temp = (this.DOT_PRODUCT_ROW_COL(sdirn, -1, a, kk, 1, n) - 1.0) / zdota[nact];
+                                        for (k = 1; k <= n; ++k) {
+                                            sdirn[k] -= temp * z[k][nact];
+                                        }
+                                    }
+                                }
+
+                                //     Calculate the step to the boundary of the trust region or take the step
+                                //     that reduces RESMAX to zero. The two statements below that include the
+                                //     factor 1.0E-6 prevent some harmless underflows that occurred in a test
+                                //     calculation. Further, we skip the step if it could be zero within a
+                                //     reasonable tolerance for computer rounding errors.
+                                dd = rho * rho;
+                                sd = 0.0;
+                                ss = 0.0;
                                 for (i = 1; i <= n; ++i) {
-                                    temp = alpha * z[i][nact] + beta * z[i][k];
-                                    z[i][nact] = alpha * z[i][k] - beta * z[i][nact];
-                                    z[i][k] = temp;
+                                    if (Math.abs(dx[i]) >= 1.0E-6 * rho) {
+                                        dd -= dx[i] * dx[i];
+                                    }
+                                    sd += dx[i] * sdirn[i];
+                                    ss += sdirn[i] * sdirn[i];
                                 }
-                                iact[nact] = iact[k];
-                                iact[k] = kk;
-                                temp = vmultc[k];
-                                vmultc[k] = vmultc[nact];
-                                vmultc[nact] = temp;
-                            }
-
-                            //     If stage one is in progress, then set SDIRN to the direction of the next
-                            //     change to the current vector of variables.
-                            if (mcon > m) {
-                                //     Pick the next search direction of stage two.
-                                temp = 1.0 / zdota[nact];
-                                for (k = 1; k <= n; ++k) { sdirn[k] = temp * z[k][nact]; }
-                            } else {
-                                kk = iact[nact];
-                                // temp = (this.DOT_PRODUCT(this.PART(sdirn, 1, n),this.PART(this.COL(a, kk), 1, n)) - 1.0) / zdota[nact];
-                                temp = (this.DOT_PRODUCT_ROW_COL(sdirn, -1, a, kk, 1, n) - 1.0) / zdota[nact];
-                                for (k = 1; k <= n; ++k) { sdirn[k] -= temp * z[k][nact]; }
-                            }
-                        }
-
-                        //     Calculate the step to the boundary of the trust region or take the step
-                        //     that reduces RESMAX to zero. The two statements below that include the
-                        //     factor 1.0E-6 prevent some harmless underflows that occurred in a test
-                        //     calculation. Further, we skip the step if it could be zero within a
-                        //     reasonable tolerance for computer rounding errors.
-                        dd = rho * rho;
-                        sd = 0.0;
-                        ss = 0.0;
-                        for (i = 1; i <= n; ++i) {
-                            if (Math.abs(dx[i]) >= 1.0E-6 * rho) { dd -= dx[i] * dx[i]; }
-                            sd += dx[i] * sdirn[i];
-                            ss += sdirn[i] * sdirn[i];
-                        }
-                        if (dd <= 0.0) { break L_60; }
-                        temp = Math.sqrt(ss * dd);
-                        if (Math.abs(sd) >= 1.0E-6 * temp) { temp = Math.sqrt(ss * dd + sd * sd); }
-                        stpful = dd / (temp + sd);
-                        step = stpful;
-                        if (mcon === m) {
-                            acca = step + 0.1 * resmax;
-                            accb = step + 0.2 * resmax;
-                            if (step >= acca || acca >= accb) { break L_70; }
-                            step = Math.min(step, resmax);
-                        }
-
-                        //     Set DXNEW to the new variables if STEP is the steplength, and reduce
-                        //     RESMAX to the corresponding maximum residual if stage one is being done.
-                        //     Because DXNEW will be changed during the calculation of some Lagrange
-                        //     multipliers, it will be restored to the following value later.
-                        for (k = 1; k <= n; ++k) { dxnew[k] = dx[k] + step * sdirn[k]; }
-                        if (mcon === m) {
-                            resold = resmax;
-                            resmax = 0.0;
-                            for (k = 1; k <= nact; ++k) {
-                                kk = iact[k];
-                                // temp = b[kk] - this.DOT_PRODUCT(this.PART(this.COL(a, kk), 1, n), this.PART(dxnew, 1, n));
-                                temp = b[kk] - this.DOT_PRODUCT_ROW_COL(dxnew, -1, a, kk, 1, n);
-                                resmax = Math.max(resmax, temp);
-                            }
-                        }
-
-                        //     Set VMULTD to the VMULTC vector that would occur if DX became DXNEW. A
-                        //     device is included to force VMULTD(K) = 0.0 if deviations from this value
-                        //     can be attributed to computer rounding errors. First calculate the new
-                        //     Lagrange multipliers.
-                        //{
-                            k = nact;
-                            do {
-                                zdotw = 0.0;
-                                zdwabs = 0.0;
-                                for (i = 1; i <= n; ++i) {
-                                    temp = z[i][k] * dxnew[i];
-                                    zdotw += temp;
-                                    zdwabs += Math.abs(temp);
+                                if (dd <= 0.0) {
+                                    break L_60;
                                 }
-                                acca = zdwabs + 0.1 * Math.abs(zdotw);
-                                accb = zdwabs + 0.2 * Math.abs(zdotw);
-                                if (zdwabs >= acca || acca >= accb) { zdotw = 0.0; }
-                                vmultd[k] = zdotw / zdota[k];
-                                if (k >= 2) {
-                                    kk = iact[k];
-                                    for (i = 1; i <= n; ++i) { dxnew[i] -= vmultd[k] * a[i][kk]; }
+                                temp = Math.sqrt(ss * dd);
+                                if (Math.abs(sd) >= 1.0E-6 * temp) {
+                                    temp = Math.sqrt(ss * dd + sd * sd);
                                 }
-                            } while (k-- >= 2);
-                            if (mcon > m) { vmultd[nact] = Math.max(0.0, vmultd[nact]); }
-                        //}
-
-                        //     Complete VMULTC by finding the new constraint residuals.
-
-                        for (k = 1; k <= n; ++k) { dxnew[k] = dx[k] + step * sdirn[k]; }
-                        if (mcon > nact) {
-                            kl = nact + 1;
-                            for (k = kl; k <= mcon; ++k) {
-                                kk = iact[k];
-                                total = resmax - b[kk];
-                                sumabs = resmax + Math.abs(b[kk]);
-                                for (i = 1; i <= n; ++i) {
-                                    temp = a[i][kk] * dxnew[i];
-                                    total += temp;
-                                    sumabs += Math.abs(temp);
+                                stpful = dd / (temp + sd);
+                                step = stpful;
+                                if (mcon === m) {
+                                    acca = step + 0.1 * resmax;
+                                    accb = step + 0.2 * resmax;
+                                    if (step >= acca || acca >= accb) {
+                                        break L_70;
+                                    }
+                                    step = Math.min(step, resmax);
                                 }
-                                acca = sumabs + 0.1 * Math.abs(total);
-                                accb = sumabs + 0.2 * Math.abs(total);
-                                if (sumabs >= acca || acca >= accb) { total = 0.0; }
-                                vmultd[k] = total;
-                            }
+
+                                //     Set DXNEW to the new variables if STEP is the steplength, and reduce
+                                //     RESMAX to the corresponding maximum residual if stage one is being done.
+                                //     Because DXNEW will be changed during the calculation of some Lagrange
+                                //     multipliers, it will be restored to the following value later.
+                                for (k = 1; k <= n; ++k) {
+                                    dxnew[k] = dx[k] + step * sdirn[k];
+                                }
+                                if (mcon === m) {
+                                    resold = resmax;
+                                    resmax = 0.0;
+                                    for (k = 1; k <= nact; ++k) {
+                                        kk = iact[k];
+                                        // temp = b[kk] - this.DOT_PRODUCT(this.PART(this.COL(a, kk), 1, n), this.PART(dxnew, 1, n));
+                                        temp = b[kk] - this.DOT_PRODUCT_ROW_COL(dxnew, -1, a, kk, 1, n);
+                                        resmax = Math.max(resmax, temp);
+                                    }
+                                }
+
+                                //     Set VMULTD to the VMULTC vector that would occur if DX became DXNEW. A
+                                //     device is included to force VMULTD(K) = 0.0 if deviations from this value
+                                //     can be attributed to computer rounding errors. First calculate the new
+                                //     Lagrange multipliers.
+                                //{
+                                k = nact;
+                                do {
+                                    zdotw = 0.0;
+                                    zdwabs = 0.0;
+                                    for (i = 1; i <= n; ++i) {
+                                        temp = z[i][k] * dxnew[i];
+                                        zdotw += temp;
+                                        zdwabs += Math.abs(temp);
+                                    }
+                                    acca = zdwabs + 0.1 * Math.abs(zdotw);
+                                    accb = zdwabs + 0.2 * Math.abs(zdotw);
+                                    if (zdwabs >= acca || acca >= accb) {
+                                        zdotw = 0.0;
+                                    }
+                                    vmultd[k] = zdotw / zdota[k];
+                                    if (k >= 2) {
+                                        kk = iact[k];
+                                        for (i = 1; i <= n; ++i) {
+                                            dxnew[i] -= vmultd[k] * a[i][kk];
+                                        }
+                                    }
+                                } while (k-- >= 2);
+                                if (mcon > m) {
+                                    vmultd[nact] = Math.max(0.0, vmultd[nact]);
+                                }
+                                //}
+
+                                //     Complete VMULTC by finding the new constraint residuals.
+
+                                for (k = 1; k <= n; ++k) {
+                                    dxnew[k] = dx[k] + step * sdirn[k];
+                                }
+                                if (mcon > nact) {
+                                    kl = nact + 1;
+                                    for (k = kl; k <= mcon; ++k) {
+                                        kk = iact[k];
+                                        total = resmax - b[kk];
+                                        sumabs = resmax + Math.abs(b[kk]);
+                                        for (i = 1; i <= n; ++i) {
+                                            temp = a[i][kk] * dxnew[i];
+                                            total += temp;
+                                            sumabs += Math.abs(temp);
+                                        }
+                                        acca = sumabs + 0.1 * Math.abs(total);
+                                        accb = sumabs + 0.2 * Math.abs(total);
+                                        if (sumabs >= acca || acca >= accb) {
+                                            total = 0.0;
+                                        }
+                                        vmultd[k] = total;
+                                    }
+                                }
+
+                                //     Calculate the fraction of the step from DX to DXNEW that will be taken.
+
+                                ratio = 1.0;
+                                icon = 0;
+                                for (k = 1; k <= mcon; ++k) {
+                                    if (vmultd[k] < 0.0) {
+                                        temp = vmultc[k] / (vmultc[k] - vmultd[k]);
+                                        if (temp < ratio) {
+                                            ratio = temp;
+                                            icon = k;
+                                        }
+                                    }
+                                }
+
+                                //     Update DX, VMULTC and RESMAX.
+
+                                temp = 1.0 - ratio;
+                                for (k = 1; k <= n; ++k) {
+                                    dx[k] = temp * dx[k] + ratio * dxnew[k];
+                                }
+                                for (k = 1; k <= mcon; ++k) {
+                                    vmultc[k] = Math.max(0.0, temp * vmultc[k] + ratio * vmultd[k]);
+                                }
+                                if (mcon === m) {
+                                    resmax = resold + ratio * (resmax - resold);
+                                }
+
+                                //     If the full step is not acceptable then begin another iteration.
+                                //     Otherwise switch to stage two or end the calculation.
+                            } while (icon > 0);
+
+                        if (step === stpful) {
+                            return true;
                         }
 
-                        //     Calculate the fraction of the step from DX to DXNEW that will be taken.
-
-                        ratio = 1.0;
-                        icon = 0;
-                        for (k = 1; k <= mcon; ++k) {
-                            if (vmultd[k] < 0.0) {
-                                temp = vmultc[k] / (vmultc[k] - vmultd[k]);
-                                if (temp < ratio) {
-                                    ratio = temp;
-                                    icon = k;
-                                }
-                            }
-                        }
-
-                        //     Update DX, VMULTC and RESMAX.
-
-                        temp = 1.0 - ratio;
-                        for (k = 1; k <= n; ++k) { dx[k] = temp * dx[k] + ratio * dxnew[k]; }
-                        for (k = 1; k <= mcon; ++k) {
-                            vmultc[k] = Math.max(0.0, temp * vmultc[k] + ratio * vmultd[k]);
-                        }
-                        if (mcon === m) { resmax = resold + ratio * (resmax - resold); }
-
-                        //     If the full step is not acceptable then begin another iteration.
-                        //     Otherwise switch to stage two or end the calculation.
-                    } while (icon > 0);
-
-                    if (step === stpful) {
-                        return true;
-                    }
-
-                } while (true);
+                    } while (true);
 
                 //     We employ any freedom that may be available to reduce the objective
                 //     function before returning a DX whose length is less than RHO.
@@ -1233,12 +1300,16 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
             return false;
         },
 
-        PrintIterationResult: function(nfvals, f, resmax,  x,  n, iprint) {
-            if (iprint > 1) { console.log("NFVALS = "+nfvals+"  F = "+f+"  MAXCV = "+resmax); }
-            if (iprint > 1) { console.log("X = " + this.PART(x, 1, n)); }
+        PrintIterationResult: function (nfvals, f, resmax, x, n, iprint) {
+            if (iprint > 1) {
+                console.log("NFVALS = " + nfvals + "  F = " + f + "  MAXCV = " + resmax);
+            }
+            if (iprint > 1) {
+                console.log("X = " + this.PART(x, 1, n));
+            }
         },
 
-        ROW: function(src, rowidx) {
+        ROW: function (src, rowidx) {
             return src[rowidx].slice();
             // var col,
             //     cols = src[0].length,
@@ -1250,7 +1321,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
             // return dest;
         },
 
-        COL: function(src, colidx) {
+        COL: function (src, colidx) {
             var row,
                 rows = src.length,
                 dest = []; // this.arr(rows);
@@ -1261,7 +1332,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
             return dest;
         },
 
-        PART: function(src, from, to) {
+        PART: function (src, from, to) {
             return src.slice(from, to + 1);
             // var srcidx,
             //     dest = this.arr(to - from + 1),
@@ -1272,7 +1343,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
             // return dest;
         },
 
-        FORMAT: function(x) {
+        FORMAT: function (x) {
             return x.join(',');
             // var i, fmt = "";
             // for (i = 0; i < x.length; ++i) {
@@ -1281,7 +1352,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
             // return fmt;
         },
 
-        DOT_PRODUCT: function(lhs, rhs) {
+        DOT_PRODUCT: function (lhs, rhs) {
             var i, sum = 0.0,
                 len = lhs.length;
             for (i = 0; i < len; ++i) {
@@ -1290,7 +1361,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
             return sum;
         },
 
-        DOT_PRODUCT_ROW_COL: function(lhs, row, rhs, col, start, end) {
+        DOT_PRODUCT_ROW_COL: function (lhs, row, rhs, col, start, end) {
             var i, sum = 0.0;
 
             if (row === -1) {
