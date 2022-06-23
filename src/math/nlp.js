@@ -33,43 +33,43 @@
 */
 /*
  * jcobyla
- * 
+ *
  * The MIT License
  *
  * Copyright (c) 2012 Anders Gustafsson, Cureos AB.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
- * (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, 
- * publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, 
+ * (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge,
+ * publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
  * subject to the following conditions:
  *
  * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF 
- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE 
- * FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
+ * FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- * 
+ *
  * Remarks:
- * 
+ *
  * The original Fortran 77 version of this code was by Michael Powell (M.J.D.Powell @ damtp.cam.ac.uk)
  * The Fortran 90 version was by Alan Miller (Alan.Miller @ vic.cmis.csiro.au). Latest revision - 30 October 1998
  */
 
 /**
  * Constrained Optimization BY Linear Approximation in Java.
- * 
+ *
  * COBYLA2 is an implementation of Powell's nonlinear derivative free constrained optimization that uses
  * a linear approximation approach. The algorithm is a sequential trust region algorithm that employs linear
  * approximations to the objective and constraint functions, where the approximations are formed by linear
  * interpolation at n + 1 points in the space of the variables and tries to maintain a regular shaped simplex
  * over iterations.
- * 
+ *
  * It solves nonsmooth NLP with a moderate number of variables (about 100). Inequality constraints only.
- * 
+ *
  * The initial point X is taken as one vertex of the initial simplex with zero being another, so, X should
  * not be entered as the zero vector.
- * 
+ *
  * @author Anders Gustafsson, Cureos AB. Translation to Javascript by Reinhard Oldenburg, Goethe-University
  */
 
@@ -90,26 +90,29 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
      * The JXG.Math.Nlp namespace holds numerical algorithms for non-linear optimization.
      * @name JXG.Math.Nlp
      * @namespace
-     * 
+     *
      */
-    JXG.Math.Nlp =  {
+    JXG.Math.Nlp = {
 
-        arr: function(n) {
-            var a = new Array(n),
-                i;
+        arr: function (n) {
+            // Is 0 initialized
+            return new Float64Array(n);
 
-            if (Type.exists(a.fill)) {
-                a.fill(0.0, 0, n);
-            } else {
-                for (i = 0; i <n ; i++) {
-                    a[i] = 0.0;
-                }
-            }
+            // var a = new Array(n),
+            //     i;
 
-            return a;
+            // if (Type.exists(a.fill)) {
+            //     a.fill(0.0, 0, n);
+            // } else {
+            //     for (i = 0; i < n; i++) {
+            //         a[i] = 0.0;
+            //     }
+            // }
+
+            // return a;
         },
 
-        arr2: function(n, m) {
+        arr2: function (n, m) {
             var i = 0,
                 a = new Array(n);
 
@@ -120,7 +123,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
             return a;
         },
 
-        arraycopy: function(x, a, iox, b, n) {
+        arraycopy: function (x, a, iox, b, n) {
             var i = 0;
             while (i < n) {
                 iox[i + b] = x[i + a];
@@ -150,7 +153,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          * @param maxfun Maximum number of function evaluations before terminating.
          * @returns {Number} Exit status of the COBYLA2 optimization.
          */
-        FindMinimum: function(calcfc, n,  m, x, rhobeg, rhoend,  iprint,  maxfun) {
+        FindMinimum: function (calcfc, n, m, x, rhobeg, rhoend, iprint, maxfun) {
             // CobylaExitStatus FindMinimum(final Calcfc calcfc, int n, int m, double[] x, double rhobeg, double rhoend, int iprint, int maxfun)
             //     This subroutine minimizes an objective function F(X) subject to M
             //     inequality constraints on X, where X is a vector of variables that has
@@ -214,16 +217,16 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
 
             // Internal representation of the objective and constraints calculation method,
             // accounting for that X and CON arrays in the cobylb method are base-1 arrays.
-            fcalcfc = function(n, m, thisx, con) {  // int n, int m, double[] x, double[] con
-                    var ix = that.arr(n),
-                        ocon, f;
+            fcalcfc = function (n, m, thisx, con) {  // int n, int m, double[] x, double[] con
+                var ix = that.arr(n),
+                    ocon, f;
 
-                    that.arraycopy(thisx, 1, ix, 0, n);
-                    ocon = that.arr(m);
-                    f = calcfc(n, m, ix, ocon);
-                    that.arraycopy(ocon, 0, con, 1, m);
-                    return f;
-                };
+                that.arraycopy(thisx, 1, ix, 0, n);
+                ocon = that.arr(m);
+                f = calcfc(n, m, ix, ocon);
+                that.arraycopy(ocon, 0, con, 1, m);
+                return f;
+            };
 
             status = this.cobylb(fcalcfc, n, m, mpp, iox, rhobeg, rhoend, iprint, maxfun);
             this.arraycopy(iox, 1, x, 0, n);
@@ -235,18 +238,18 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
         //      double rhobeg, double rhoend, int iprint, int maxfun)
         /**
          * JavaScript implementation of the non-linear optimization method COBYLA.
-         * @param {Function} calcfc 
-         * @param {Number} n 
-         * @param {Number} m 
-         * @param {Number} mpp 
-         * @param {Number} x 
-         * @param {Number} rhobeg 
-         * @param {Number} rhoend 
-         * @param {Number} iprint 
-         * @param {Number} maxfun 
+         * @param {Function} calcfc
+         * @param {Number} n
+         * @param {Number} m
+         * @param {Number} mpp
+         * @param {Number} x
+         * @param {Number} rhobeg
+         * @param {Number} rhoend
+         * @param {Number} iprint
+         * @param {Number} maxfun
          * @returns {Number} Exit status of the COBYLA2 optimization
          */
-        cobylb: function (calcfc, n,  m,  mpp,  x, rhobeg,  rhoend,  iprint,  maxfun) {
+        cobylb: function (calcfc, n, m, mpp, x, rhobeg, rhoend, iprint, maxfun) {
             // calcf ist funktion die aufgerufen wird wie calcfc(n, m, ix, ocon)
             // N.B. Arguments CON, SIM, SIMI, DATMAT, A, VSIG, VETA, SIGBAR, DX, W & IACT
             //      have been removed.
@@ -422,8 +425,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                                     sim[i][np] += temp;
 
                                     tempa = 0.0;
-                                    for (k = 1; k <= n; ++k)
-                                    {
+                                    for (k = 1; k <= n; ++k) {
                                         sim[i][k] -= temp;
                                         tempa -= simi[k][i];
                                     }
@@ -434,17 +436,17 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                             //     Make an error return if SIGI is a poor approximation to the inverse of
                             //     the leading N by N submatrix of SIG.
                             error = 0.0;
-                            for (i = 1; i <= n; ++i) {
-                                for (j = 1; j <= n; ++j) {
-                                    temp = this.DOT_PRODUCT_ROW_COL(simi, i, sim, j, 1, n) - (i === j ? 1.0 : 0.0);
-                                    // console.log("A", temp);
-                                    // temp = this.DOT_PRODUCT(
-                                    //     this.PART(this.ROW(simi, i), 1, n),
-                                    //     this.PART(this.COL(sim, j), 1, n)
-                                    // ) - (i === j ? 1.0 : 0.0);
-                                    // console.log("B", temp);
+                            if (false) {
+                                for (i = 1; i <= n; ++i) {
+                                    for (j = 1; j <= n; ++j) {
+                                        temp = this.DOT_PRODUCT_ROW_COL(simi, i, sim, j, 1, n) - (i === j ? 1.0 : 0.0);
+                                        // temp = this.DOT_PRODUCT(
+                                        //     this.PART(this.ROW(simi, i), 1, n),
+                                        //     this.PART(this.COL(sim, j), 1, n)
+                                        // ) - (i === j ? 1.0 : 0.0);
 
-                                    error = Math.max(error, Math.abs(temp));
+                                        error = Math.max(error, Math.abs(temp));
+                                    }
                                 }
                             }
                             if (error > 0.1) {
@@ -463,9 +465,9 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                                 }
 
                                 for (i = 1; i <= n; ++i) {
-                                    a[i][k] = (k === mp ? -1.0 : 1.0) * 
+                                    a[i][k] = (k === mp ? -1.0 : 1.0) *
                                         this.DOT_PRODUCT_ROW_COL(w, -1, simi, i, 1, n);
-                                        // this.DOT_PRODUCT(this.PART(w, 1, n), this.PART(this.COL(simi, i), 1, n));
+                                    // this.DOT_PRODUCT(this.PART(w, 1, n), this.PART(this.COL(simi, i), 1, n));
                                 }
                             }
 
@@ -477,11 +479,9 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
 
                             for (j = 1; j <= n; ++j) {
                                 wsig = 0.0;
-                                for (k = 1; k <= n; ++k) {
-                                    wsig += simi[j][k] * simi[j][k];
-                                }
                                 weta = 0.0;
                                 for (k = 1; k <= n; ++k) {
+                                    wsig += simi[j][k] * simi[j][k];
                                     weta += sim[k][j] * sim[k][j];
                                 }
                                 vsig[j] = 1.0 / Math.sqrt(wsig);
@@ -716,7 +716,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                         }
                     }
                     if (iprint >= 2) {
-                        console.log("Reduction in RHO to "+rho+"  and PARMU = "+parmu);
+                        console.log("Reduction in RHO to " + rho + "  and PARMU = " + parmu);
                     }
                     if (iprint === 2) {
                         this.PrintIterationResult(nfvals, datmat[mp][np], datmat[mpp][np], this.COL(sim, np), n, iprint);
@@ -752,7 +752,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
             return status;
         },
 
-        trstlp: function(n,  m,  a, b, rho,  dx) { //(int n, int m, double[][] a, double[] b, double rho, double[] dx)
+        trstlp: function (n, m, a, b, rho, dx) { //(int n, int m, double[][] a, double[] b, double rho, double[] dx)
             // N.B. Arguments Z, ZDOTA, VMULTC, SDIRN, DXNEW, VMULTD & IACT have been removed.
 
             //     This subroutine calculates an N-component vector DX by applying the
@@ -898,9 +898,9 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                                     kp = k + 1;
                                     kk = iact[kp];
                                     sp = this.DOT_PRODUCT(
-                                            this.PART(this.COL(z, k), 1, n),
-                                            this.PART(this.COL(a, kk), 1, n)
-                                        );
+                                        this.PART(this.COL(z, k), 1, n),
+                                        this.PART(this.COL(a, kk), 1, n)
+                                    );
                                     temp = Math.sqrt(sp * sp + zdota[kp] * zdota[kp]);
                                     alpha = zdota[kp] / temp;
                                     beta = sp / temp;
@@ -938,34 +938,34 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                             tot = 0.0;
 
                             // {
-                                k = n;
-                                while (k > nact) {
-                                    sp = 0.0;
-                                    spabs = 0.0;
-                                    for (i = 1; i <= n; ++i) {
-                                        temp = z[i][k] * dxnew[i];
-                                        sp += temp;
-                                        spabs += Math.abs(temp);
-                                    }
-                                    acca = spabs + 0.1 * Math.abs(sp);
-                                    accb = spabs + 0.2 * Math.abs(sp);
-                                    if (spabs >= acca || acca >= accb) { sp = 0.0; }
-                                    if (tot === 0.0) {
-                                        tot = sp;
-                                    } else {
-                                        kp = k + 1;
-                                        temp = Math.sqrt(sp * sp + tot * tot);
-                                        alpha = sp / temp;
-                                        beta = tot / temp;
-                                        tot = temp;
-                                        for (i = 1; i <= n; ++i) {
-                                            temp = alpha * z[i][k] + beta * z[i][kp];
-                                            z[i][kp] = alpha * z[i][kp] - beta * z[i][k];
-                                            z[i][k] = temp;
-                                        }
-                                    }
-                                    --k;
+                            k = n;
+                            while (k > nact) {
+                                sp = 0.0;
+                                spabs = 0.0;
+                                for (i = 1; i <= n; ++i) {
+                                    temp = z[i][k] * dxnew[i];
+                                    sp += temp;
+                                    spabs += Math.abs(temp);
                                 }
+                                acca = spabs + 0.1 * Math.abs(sp);
+                                accb = spabs + 0.2 * Math.abs(sp);
+                                if (spabs >= acca || acca >= accb) { sp = 0.0; }
+                                if (tot === 0.0) {
+                                    tot = sp;
+                                } else {
+                                    kp = k + 1;
+                                    temp = Math.sqrt(sp * sp + tot * tot);
+                                    alpha = sp / temp;
+                                    beta = tot / temp;
+                                    tot = temp;
+                                    for (i = 1; i <= n; ++i) {
+                                        temp = alpha * z[i][k] + beta * z[i][kp];
+                                        z[i][kp] = alpha * z[i][kp] - beta * z[i][k];
+                                        z[i][k] = temp;
+                                    }
+                                }
+                                --k;
+                            }
                             // }
 
                             if (tot === 0.0) {
@@ -978,34 +978,34 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
 
                                 ratio = -1.0;
                                 //{
-                                    k = nact;
-                                    do {
-                                        zdotv = 0.0;
-                                        zdvabs = 0.0;
+                                k = nact;
+                                do {
+                                    zdotv = 0.0;
+                                    zdvabs = 0.0;
 
-                                        for (i = 1; i <= n; ++i) {
-                                            temp = z[i][k] * dxnew[i];
-                                            zdotv += temp;
-                                            zdvabs += Math.abs(temp);
+                                    for (i = 1; i <= n; ++i) {
+                                        temp = z[i][k] * dxnew[i];
+                                        zdotv += temp;
+                                        zdvabs += Math.abs(temp);
+                                    }
+                                    acca = zdvabs + 0.1 * Math.abs(zdotv);
+                                    accb = zdvabs + 0.2 * Math.abs(zdotv);
+                                    if (zdvabs < acca && acca < accb) {
+                                        temp = zdotv / zdota[k];
+                                        if (temp > 0.0 && iact[k] <= m) {
+                                            tempa = vmultc[k] / temp;
+                                            if (ratio < 0.0 || tempa < ratio) { ratio = tempa; }
                                         }
-                                        acca = zdvabs + 0.1 * Math.abs(zdotv);
-                                        accb = zdvabs + 0.2 * Math.abs(zdotv);
-                                        if (zdvabs < acca && acca < accb) {
-                                            temp = zdotv / zdota[k];
-                                            if (temp > 0.0 && iact[k] <= m) {
-                                                tempa = vmultc[k] / temp;
-                                                if (ratio < 0.0 || tempa < ratio) { ratio = tempa; }
-                                            }
 
-                                            if (k >= 2) {
-                                                kw = iact[k];
-                                                for (i = 1; i <= n; ++i) { dxnew[i] -= temp * a[i][kw]; }
-                                            }
-                                            vmultd[k] = temp;
-                                        } else {
-                                            vmultd[k] = 0.0;
+                                        if (k >= 2) {
+                                            kw = iact[k];
+                                            for (i = 1; i <= n; ++i) { dxnew[i] -= temp * a[i][kw]; }
                                         }
-                                    } while (--k > 0);
+                                        vmultd[k] = temp;
+                                    } else {
+                                        vmultd[k] = 0.0;
+                                    }
+                                } while (--k > 0);
                                 //}
                                 if (ratio < 0.0) { break L_60; }
 
@@ -1024,9 +1024,9 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                                         kp = k + 1;
                                         kw = iact[kp];
                                         sp = this.DOT_PRODUCT(
-                                                this.PART(this.COL(z, k), 1, n),
-                                                this.PART(this.COL(a, kw), 1, n)
-                                            );
+                                            this.PART(this.COL(z, k), 1, n),
+                                            this.PART(this.COL(a, kw), 1, n)
+                                        );
                                         temp = Math.sqrt(sp * sp + zdota[kp] * zdota[kp]);
                                         alpha = zdota[kp] / temp;
                                         beta = sp / temp;
@@ -1045,9 +1045,9 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                                     vmultc[k] = vsave;
                                 }
                                 temp = this.DOT_PRODUCT(
-                                            this.PART(this.COL(z, nact), 1, n),
-                                            this.PART(this.COL(a, kk), 1, n)
-                                        );
+                                    this.PART(this.COL(z, nact), 1, n),
+                                    this.PART(this.COL(a, kk), 1, n)
+                                );
                                 if (temp === 0.0) { break L_60; }
                                 zdota[nact] = temp;
                                 vmultc[icon] = 0.0;
@@ -1070,9 +1070,9 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                             if (mcon > m && kk !== mcon) {
                                 k = nact - 1;
                                 sp = this.DOT_PRODUCT(
-                                        this.PART(this.COL(z, k), 1, n),
-                                        this.PART(this.COL(a, kk), 1, n)
-                                    );
+                                    this.PART(this.COL(z, k), 1, n),
+                                    this.PART(this.COL(a, kk), 1, n)
+                                );
                                 temp = Math.sqrt(sp * sp + zdota[nact] * zdota[nact]);
                                 alpha = zdota[nact] / temp;
                                 beta = sp / temp;
@@ -1150,25 +1150,25 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                         //     can be attributed to computer rounding errors. First calculate the new
                         //     Lagrange multipliers.
                         //{
-                            k = nact;
-                            do {
-                                zdotw = 0.0;
-                                zdwabs = 0.0;
-                                for (i = 1; i <= n; ++i) {
-                                    temp = z[i][k] * dxnew[i];
-                                    zdotw += temp;
-                                    zdwabs += Math.abs(temp);
-                                }
-                                acca = zdwabs + 0.1 * Math.abs(zdotw);
-                                accb = zdwabs + 0.2 * Math.abs(zdotw);
-                                if (zdwabs >= acca || acca >= accb) { zdotw = 0.0; }
-                                vmultd[k] = zdotw / zdota[k];
-                                if (k >= 2) {
-                                    kk = iact[k];
-                                    for (i = 1; i <= n; ++i) { dxnew[i] -= vmultd[k] * a[i][kk]; }
-                                }
-                            } while (k-- >= 2);
-                            if (mcon > m) { vmultd[nact] = Math.max(0.0, vmultd[nact]); }
+                        k = nact;
+                        do {
+                            zdotw = 0.0;
+                            zdwabs = 0.0;
+                            for (i = 1; i <= n; ++i) {
+                                temp = z[i][k] * dxnew[i];
+                                zdotw += temp;
+                                zdwabs += Math.abs(temp);
+                            }
+                            acca = zdwabs + 0.1 * Math.abs(zdotw);
+                            accb = zdwabs + 0.2 * Math.abs(zdotw);
+                            if (zdwabs >= acca || acca >= accb) { zdotw = 0.0; }
+                            vmultd[k] = zdotw / zdota[k];
+                            if (k >= 2) {
+                                kk = iact[k];
+                                for (i = 1; i <= n; ++i) { dxnew[i] -= vmultd[k] * a[i][kk]; }
+                            }
+                        } while (k-- >= 2);
+                        if (mcon > m) { vmultd[nact] = Math.max(0.0, vmultd[nact]); }
                         //}
 
                         //     Complete VMULTC by finding the new constraint residuals.
@@ -1233,12 +1233,12 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
             return false;
         },
 
-        PrintIterationResult: function(nfvals, f, resmax,  x,  n, iprint) {
-            if (iprint > 1) { console.log("NFVALS = "+nfvals+"  F = "+f+"  MAXCV = "+resmax); }
+        PrintIterationResult: function (nfvals, f, resmax, x, n, iprint) {
+            if (iprint > 1) { console.log("NFVALS = " + nfvals + "  F = " + f + "  MAXCV = " + resmax); }
             if (iprint > 1) { console.log("X = " + this.PART(x, 1, n)); }
         },
 
-        ROW: function(src, rowidx) {
+        ROW: function (src, rowidx) {
             return src[rowidx].slice();
             // var col,
             //     cols = src[0].length,
@@ -1250,7 +1250,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
             // return dest;
         },
 
-        COL: function(src, colidx) {
+        COL: function (src, colidx) {
             var row,
                 rows = src.length,
                 dest = []; // this.arr(rows);
@@ -1261,7 +1261,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
             return dest;
         },
 
-        PART: function(src, from, to) {
+        PART: function (src, from, to) {
             return src.slice(from, to + 1);
             // var srcidx,
             //     dest = this.arr(to - from + 1),
@@ -1272,7 +1272,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
             // return dest;
         },
 
-        FORMAT: function(x) {
+        FORMAT: function (x) {
             return x.join(',');
             // var i, fmt = "";
             // for (i = 0; i < x.length; ++i) {
@@ -1281,7 +1281,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
             // return fmt;
         },
 
-        DOT_PRODUCT: function(lhs, rhs) {
+        DOT_PRODUCT: function (lhs, rhs) {
             var i, sum = 0.0,
                 len = lhs.length;
             for (i = 0; i < len; ++i) {
@@ -1290,7 +1290,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
             return sum;
         },
 
-        DOT_PRODUCT_ROW_COL: function(lhs, row, rhs, col, start, end) {
+        DOT_PRODUCT_ROW_COL: function (lhs, row, rhs, col, start, end) {
             var i, sum = 0.0;
 
             if (row === -1) {
