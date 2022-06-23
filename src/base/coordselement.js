@@ -198,8 +198,6 @@ define([
          * @private
          */
         updateCoords: function (fromParent) {
-            var i;
-
             if (!this.needsUpdate) {
                 return this;
             }
@@ -326,7 +324,6 @@ define([
                     doRound = true;
                     newPos = 0.0;
                 } else {
-                    //this.coords.setCoordinates(Const.COORDS_BY_USER, Geometry.projectPointToLine(this, slide, this.board).usrCoords, false);
                     newCoords = Geometry.projectPointToLine(this, slide, this.board);
                     p1c = p1c.usrCoords.slice(0);
                     p2c = p2c.usrCoords.slice(0);

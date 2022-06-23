@@ -816,8 +816,12 @@ define([
          */
         getCoordsTopLeftCorner: function () {
             var cPos, doc, crect,
-                docElement = this.document.documentElement || this.document.body.parentNode,
-                docBody = this.document.body,
+                // In ownerDoc we need the "real" document object.
+                // The first version is used in the case of shadowDom,
+                // the second case in the "normal" case.
+                ownerDoc = this.document.ownerDocument || this.document, 
+                docElement = ownerDoc.documentElement || this.document.body.parentNode,
+                docBody = ownerDoc.body,
                 container = this.containerObj,
                 // viewport, content,
                 zoom, o;
@@ -2397,7 +2401,8 @@ define([
          * @returns {Boolean}
          */
         pointerUpListener: function (evt) {
-            var i, j, found, touchTargets;
+            var i, j, found, touchTargets,
+                updateNeeded = false;
 
             this.triggerEventHandlers(['touchend', 'up', 'pointerup', 'MSPointerUp'], [evt]);
             this.displayInfobox(false);
@@ -2417,10 +2422,14 @@ define([
                 }
             }
 
+            this.originMoveEnd();
+            this.update();
+
             // selection
             if (this.selectingMode) {
                 this._stopSelecting(evt);
                 this.triggerEventHandlers(['touchstopselecting', 'pointerstopselecting', 'stopselecting'], [evt]);
+                this.stopSelectionMode();
             } else {
                 for (i = this.downObjects.length - 1; i > -1; i--) {
                     found = false;
@@ -2431,32 +2440,38 @@ define([
                     }
                     if (!found) {
                         this.downObjects[i].triggerEventHandlers(['touchend', 'up', 'pointerup', 'MSPointerUp'], [evt]);
-                        this.downObjects[i].snapToGrid();
-                        this.downObjects[i].snapToPoints();
+                        if (!Type.exists(this.downObjects[i].coords)) {
+                            // snapTo methods have to be called e.g. for line elements here.
+                            // For coordsElements there might be a conflict with
+                            // attractors, see commit from 2022.04.08, 11:12:18.
+                            this.downObjects[i].snapToGrid();
+                            this.downObjects[i].snapToPoints();
+                            updateNeeded = true;
+                        }
                         this.downObjects.splice(i, 1);
                     }
                 }
             }
 
-            // this._pointerRemoveTouches(evt);
-            // if (this._board_touches.length === 0) {
-                if (this.hasPointerUp) {
-                    if (window.navigator.msPointerEnabled) {  // IE10-
-                        Env.removeEvent(this.document, 'MSPointerUp',   this.pointerUpListener, this);
-                    } else {
-                        Env.removeEvent(this.document, 'pointerup',     this.pointerUpListener, this);
-                        Env.removeEvent(this.document, 'pointercancel', this.pointerUpListener, this);
-                    }
-                    this.hasPointerUp = false;
+            if (this.hasPointerUp) {
+                if (window.navigator.msPointerEnabled) {  // IE10-
+                    Env.removeEvent(this.document, 'MSPointerUp',   this.pointerUpListener, this);
+                } else {
+                    Env.removeEvent(this.document, 'pointerup',     this.pointerUpListener, this);
+                    Env.removeEvent(this.document, 'pointercancel', this.pointerUpListener, this);
                 }
+                this.hasPointerUp = false;
+            }
 
-                // this.dehighlightAll();
-                // this.updateQuality = this.BOARD_QUALITY_HIGH;
-                // this.mode = this.BOARD_MODE_NONE;
+            // this.dehighlightAll();
+            // this.updateQuality = this.BOARD_QUALITY_HIGH;
+            // this.mode = this.BOARD_MODE_NONE;
 
-                this.originMoveEnd();
+            // this.originMoveEnd();
+            if (updateNeeded) {
                 this.update();
-            // }
+            }
+
             // After one finger leaves the screen the gesture is stopped.
             this._pointerClearTouches();
             return true;
@@ -2790,7 +2805,8 @@ define([
                 eps = this.options.precision.touch,
                 tmpTouches = [], found, foundNumber,
                 evtTouches = evt && evt[JXG.touchProperty],
-                touchTargets;
+                touchTargets,
+                updateNeeded = false;
 
             this.triggerEventHandlers(['touchend', 'up'], [evt]);
             this.displayInfobox(false);
@@ -2799,6 +2815,7 @@ define([
             if (this.selectingMode) {
                 this._stopSelecting(evt);
                 this.triggerEventHandlers(['touchstopselecting', 'stopselecting'], [evt]);
+                this.stopSelectionMode();
             } else if (evtTouches && evtTouches.length > 0) {
                 for (i = 0; i < this.touches.length; i++) {
                     tmpTouches[i] = this.touches[i];
@@ -2890,8 +2907,14 @@ define([
                 }
                 if (!found) {
                     this.downObjects[i].triggerEventHandlers(['touchup', 'up'], [evt]);
-                    this.downObjects[i].snapToGrid();
-                    this.downObjects[i].snapToPoints();
+                    if (!Type.exists(this.downObjects[i].coords)) {
+                        // snapTo methods have to be called e.g. for line elements here.
+                        // For coordsElements there might be a conflict with
+                        // attractors, see commit from 2022.04.08, 11:12:18.
+                        this.downObjects[i].snapToGrid();
+                        this.downObjects[i].snapToPoints();
+                        updateNeeded = true;
+                    }
                     this.downObjects.splice(i, 1);
                 }
             }
@@ -2907,7 +2930,9 @@ define([
                 this.updateQuality = this.BOARD_QUALITY_HIGH;
 
                 this.originMoveEnd();
-                this.update();
+                if (updateNeeded) {
+                    this.update();
+                }
             }
 
             return true;
@@ -3055,9 +3080,14 @@ define([
             this.updateQuality = this.BOARD_QUALITY_HIGH;
 
             if (this.mouse && this.mouse.obj) {
-                // The parameter is needed for lines with snapToGrid enabled
-                this.mouse.obj.snapToGrid(this.mouse.targets[0]);
-                this.mouse.obj.snapToPoints();
+                if (!Type.exists(this.mouse.obj.coords)) {
+                    // snapTo methods have to be called e.g. for line elements here.
+                    // For coordsElements there might be a conflict with
+                    // attractors, see commit from 2022.04.08, 11:12:18.
+                    // The parameter is needed for lines with snapToGrid enabled
+                    this.mouse.obj.snapToGrid(this.mouse.targets[0]);
+                    this.mouse.obj.snapToPoints();
+                }
             }
 
             this.originMoveEnd();
@@ -3068,6 +3098,7 @@ define([
             if (this.selectingMode) {
                 this._stopSelecting(evt);
                 this.triggerEventHandlers(['mousestopselecting', 'stopselecting'], [evt]);
+                this.stopSelectionMode();
             } else {
                 for (i = 0; i < this.downObjects.length; i++) {
                     this.downObjects[i].triggerEventHandlers(['mouseup', 'up'], [evt]);
@@ -3113,11 +3144,18 @@ define([
         },
 
         /**
-         * Allow moving of JSXGraph elements with arrow keys
-         * and zooming of the construction with + / -.
+         * Allow moving of JSXGraph elements with arrow keys.
+         * The selection of the element is done with the tab key. For this,
+         * the attribute "tabindex" of the element has to be set to some number (default=0).
+         * tabindex corresponds to the HTML attribute of the same name.
+         * <p>
          * Panning of the construction is done with arrow keys
-         * if the pan key (shift or ctrl) is pressed.
-         * The selection of the element is done with the tab key.
+         * if the pan key (shift or ctrl - depending on the board attributes) is pressed.
+         * <p>
+         * Zooming is triggered with the keys +, o, -, if
+         * the pan key (shift or ctrl - depending on the board attributes) is pressed.
+         * <p>
+         * Keyboard control (move, pan, and zoom) is disabled if an HTML element of type input or textarea has received focus.
          *
          * @param  {Event} evt The browser's event object
          *
@@ -3128,7 +3166,7 @@ define([
          */
         keyDownListener: function (evt) {
             var id_node = evt.target.id,
-                id, el, res,
+                id, el, res, doc,
                 sX = 0,
                 sY = 0,
                 // dx, dy are provided in screen units and
@@ -3143,6 +3181,15 @@ define([
                 return false;
             }
 
+            // An element of type input or textarea has foxus, get out of here.
+            doc = this.containerObj.shadowRoot || document;
+            if (doc.activeElement) {
+                el = doc.activeElement;
+                if (el.tagName === 'INPUT' || el.tagName === 'textarea') {
+                    return false;
+                }
+            }
+
             // Get the JSXGraph id from the id of the SVG node.
             id = id_node.replace(this.containerObj.id + '_', '');
             el = this.select(id);
@@ -3151,12 +3198,15 @@ define([
                 actPos = el.coords.usrCoords.slice(1);
             }
 
-            if (Type.evaluate(this.attr.keyboard.panshift) || Type.evaluate(this.attr.keyboard.panctrl)) {
-                doZoom = true;
-            }
-
             if ((Type.evaluate(this.attr.keyboard.panshift) && evt.shiftKey) ||
                 (Type.evaluate(this.attr.keyboard.panctrl) && evt.ctrlKey)) {
+                // Pan key has been pressed
+
+                if (Type.evaluate(this.attr.zoom.enabled) === true) {
+                    doZoom = true;
+                }
+
+                // Arrow keys
                 if (evt.keyCode === 38) {           // up
                     this.clickUpArrow();
                 } else if (evt.keyCode === 40) {    // down
@@ -3165,10 +3215,20 @@ define([
                     this.clickLeftArrow();
                 } else if (evt.keyCode === 39) {    // right
                     this.clickRightArrow();
+
+                // Zoom keys
+                } else if (doZoom && evt.keyCode === 171) {   // +
+                    this.zoomIn();
+                } else if (doZoom && evt.keyCode === 173) {   // -
+                    this.zoomOut();
+                } else if (doZoom && evt.keyCode === 79) {   // o
+                    this.zoom100();
+
                 } else {
                     done = false;
                 }
             } else {
+
                 // Adapt dx, dy to snapToGrid and attractToGrid
                 // snapToGrid has priority.
                 if (Type.exists(el.visProp)) {
@@ -3211,14 +3271,6 @@ define([
                     dir = [-dx, 0];
                 } else if (evt.keyCode === 39) {    // right
                     dir = [dx, 0];
-                // } else if (evt.keyCode === 9) {  // tab
-
-                } else if (doZoom && evt.key === '+') {   // +
-                    this.zoomIn();
-                } else if (doZoom && evt.key === '-') {   // -
-                    this.zoomOut();
-                } else if (doZoom && evt.key === 'o') {   // o
-                    this.zoom100();
                 } else {
                     done = false;
                 }
@@ -3248,15 +3300,16 @@ define([
 
             this.update();
 
-            if (done) {
+            if (done && Type.exists(evt.preventDefault)) {
                 evt.preventDefault();
             }
-            return true;
+            return done;
         },
 
         /**
          * Event listener for SVG elements getting focus.
          * This is needed for highlighting when using keyboard control.
+         * Only elements having the attribute "tabindex" can receive focus.
          *
          * @see JXG.Board#keyFocusOutListener
          * @see JXG.Board#keyDownListener
@@ -3286,6 +3339,7 @@ define([
         /**
          * Event listener for SVG elements losing focus.
          * This is needed for dehighlighting when using keyboard control.
+         * Only elements having the attribute "tabindex" can receive focus.
          *
          * @see JXG.Board#keyFocusInListener
          * @see JXG.Board#keyDownListener
@@ -3336,8 +3390,8 @@ define([
             }
 
             // If div is invisible - do nothing
-            if (w <= 0 || h <= 0) {
-                return;
+            if (w <= 0 || h <= 0 || isNaN(w) || isNaN(h)) {
+                    return;
             }
 
             // If bounding box is not yet initialized, do it now.
@@ -4742,12 +4796,12 @@ define([
             this.inUpdate = true;
 
             if (this.attr.minimizereflow === 'all' && this.containerObj && this.renderer.type !== 'vml') {
-                storeActiveEl = document.activeElement; // Store focus element
+                storeActiveEl = this.document.activeElement; // Store focus element
                 insert = this.renderer.removeToInsertLater(this.containerObj);
             }
 
             if (this.attr.minimizereflow === 'svg' && this.renderer.type === 'svg') {
-                storeActiveEl = document.activeElement;
+                storeActiveEl = this.document.activeElement;
                 insert = this.renderer.removeToInsertLater(this.renderer.svgRoot);
             }
 
@@ -5351,10 +5405,20 @@ define([
          */
         updateCSSTransforms: function () {
             var obj = this.containerObj,
-                o = obj,
-                o2 = obj;
+                o = obj;
+                // o2 = obj;
 
             this.cssTransMat = Env.getCSSTransformMatrix(o);
+
+            // Newer variant of walking up the tree.
+            // We walk up all parent nodes and collect possible CSS transforms.
+            // Works also for ShadowDOM
+            o = o.parentNode === o.getRootNode() ? o.parentNode.host : o.parentNode;
+            while (o) {
+                this.cssTransMat = Mat.matMatMult(Env.getCSSTransformMatrix(o), this.cssTransMat);
+                o = o.parentNode === o.getRootNode() ? o.parentNode.host : o.parentNode;
+            }
+            this.cssTransMat = Mat.inverse(this.cssTransMat);
 
             /*
              * In Mozilla and Webkit: offsetParent seems to jump at least to the next iframe,
@@ -5362,20 +5426,22 @@ define([
              * offsetParent walks up the DOM hierarchy.
              * In order to walk up the DOM hierarchy also in Mozilla and Webkit
              * we need the parentNode steps.
+             *
+             * Seems to be outdated
              */
-            o = o.offsetParent;
-            while (o) {
-                this.cssTransMat = Mat.matMatMult(Env.getCSSTransformMatrix(o), this.cssTransMat);
+            // o = o.offsetParent;
+            // while (o) {
+            //     this.cssTransMat = Mat.matMatMult(Env.getCSSTransformMatrix(o), this.cssTransMat);
 
-                o2 = o2.parentNode;
-                while (o2 !== o) {
-                    this.cssTransMat = Mat.matMatMult(Env.getCSSTransformMatrix(o), this.cssTransMat);
-                    o2 = o2.parentNode;
-                }
+            //     o2 = o2.parentNode;
+            //     while (o2 !== o) {
+            //         this.cssTransMat = Mat.matMatMult(Env.getCSSTransformMatrix(o), this.cssTransMat);
+            //         o2 = o2.parentNode;
+            //     }
 
-                o = o.offsetParent;
-            }
-            this.cssTransMat = Mat.inverse(this.cssTransMat);
+            //     o = o.offsetParent;
+            // }
+            // this.cssTransMat = Mat.inverse(this.cssTransMat);
 
             return this;
         },
@@ -5940,7 +6006,7 @@ define([
 
             id = id || this.container;
             this._fullscreen_inner_id = id;
-            inner_node = document.getElementById(id);
+            inner_node = this.document.getElementById(id);
             wrap_id = 'fullscreenwrap_' + id;
 
             // Wrap a div around the JSXGraph div.
@@ -5986,16 +6052,16 @@ define([
                 return;
             }
 
-            document.fullscreenElement = document.fullscreenElement ||
-                    document.webkitFullscreenElement ||
-                    document.mozFullscreenElement ||
-                    document.msFullscreenElement;
+            this.document.fullscreenElement = this.document.fullscreenElement ||
+                    this.document.webkitFullscreenElement ||
+                    this.document.mozFullscreenElement ||
+                    this.document.msFullscreenElement;
 
-            inner_node = document.getElementById(inner_id);
+            inner_node = this.document.getElementById(inner_id);
             // If full screen mode is started we have to remove CSS margin around the JSXGraph div.
             // Otherwise, the positioning of the fullscreen div will be false.
             // When leaving the fullscreen mode, the margin is put back in.
-            if (document.fullscreenElement) {
+            if (this.document.fullscreenElement) {
                 // Just entered fullscreen mode
 
                 // Get the data computed in board.toFullscreen()
@@ -6007,7 +6073,7 @@ define([
                 // Further, the CSS margin has to be removed when in fullscreen mode,
                 // and must be restored later.
                 inner_node._cssFullscreenStore = {
-                    id: document.fullscreenElement.id,
+                    id: this.document.fullscreenElement.id,
                     isFullscreen: true,
                     margin: inner_node.style.margin,
                     width: inner_node.style.width,
@@ -6023,16 +6089,16 @@ define([
                 // of the JSXGraph div.
                 Env.scaleJSXGraphDiv(document.fullscreenElement.id, inner_id, res.scale, res.vshift);
 
-                // Clear document.fullscreenElement, because Safari doesn't to it and
+                // Clear this.document.fullscreenElement, because Safari doesn't to it and
                 // when leaving full screen mode it is still set.
-                document.fullscreenElement = null;
+                this.document.fullscreenElement = null;
 
             } else if (Type.exists(inner_node._cssFullscreenStore)) {
                 // Just left the fullscreen mode
 
                 // Remove the CSS rules added in Env.scaleJSXGraphDiv
                 try {
-                    document.styleSheets[document.styleSheets.length - 1].deleteRule(0);
+                    this.document.styleSheets[this.document.styleSheets.length - 1].deleteRule(0);
                 } catch (err) {
                     console.log('JSXGraph: Could not remove CSS rules for full screen mode');
                 }
@@ -6040,7 +6106,6 @@ define([
                 inner_node._cssFullscreenStore.isFullscreen = false;
                 inner_node.style.margin = inner_node._cssFullscreenStore.margin;
                 inner_node.style.width = inner_node._cssFullscreenStore.width;
-
             }
 
             this.updateCSSTransforms();

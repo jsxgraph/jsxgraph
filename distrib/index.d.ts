@@ -1855,6 +1855,11 @@ declare namespace JXG {
   }
   export interface HyperbolaAttributes extends ConicAttributes { }
 
+  export interface Parabola extends Conic {
+    setAttribute(attributes: ParabolaAttributes): this;
+  }
+  export interface ParabolaAttributes extends ConicAttributes { }
+
   /**
    *
    */
@@ -2824,7 +2829,7 @@ declare namespace JXG {
      * Attributes for the axis label.
      */
     label?: LabelOptions;
-    lastArrow?: ArrowSpecification;
+    lastArrow?: boolean | ArrowSpecification;
     margin?: number;
     /**
      * Attributes for the first point on the axis.
@@ -2939,8 +2944,61 @@ declare namespace JXG {
    */
   export class Ticks extends GeometryElement {
     constructor(line: Line, ticks: number | unknown[], attributes: TicksAttributes);
+
+    /**
+     * Equidistant ticks. Distance is defined by `ticksFunction`.
+     */
+    equidistant: boolean;
+
+    /**
+     * Array of fixed ticks.
+     */
+    fixedTicks: number[] | null;
+
+    /**
+     * To ensure the uniqueness of label ids this counter is used.
+     */
+    labelCounter: number;
+
+    /**
+     * Array where the labels are saved.
+     */
+    labels: Label[];
+
+    /**
+     * The line the ticks belong to.
+     */
+    line: Line;
+
+    /**
+     * Least distance between two ticks, measured in pixels.
+     */
+    minTicksDistance: number;
+
+    /**
+     * Stores the ticks coordinates as an array of length 3.
+     *
+     * The first two entries of the array are path coordinates in screen
+     * coordinates of the tick (arrays of length 2). The 3rd entry is true if
+     * the tick is a major tick, otherwise false.
+     *
+     * If the tick is outside of the canvas, the return array is empty.
+     */
+    ticks: Array<[[x1: number, x2: number], [y1: number, y2: number], boolean]>;
+
+    /**
+     * Distance between two major ticks in user coordinates
+     */
+    ticksDelta: number;
+
+    /**
+     * A function calculating ticks delta depending on the ticks number.
+     */
+    ticksFunction: () => number;
+
     setAttribute(attributes: TicksAttributes): this;
   }
+
   /**
    *
    */
@@ -2969,7 +3027,7 @@ declare namespace JXG {
     /**
      *
      */
-    generateLabelText?: ((labeled: Coords, center: Coords) => string) | null;
+    generateLabelText?: ((labeled: Coords, center: Coords, value: null | Number | String) => string) | null;
     /**
      *
      */
@@ -3045,10 +3103,10 @@ declare namespace JXG {
     defaultDistance?: number;
     drawLabels?: boolean;
     drawZero?: boolean;
-    face?: '|';
+    face?: '|' | '<' | '>';
     fillColor?: string;
-    generateLabelText?: ((one: Coords, two: Coords) => void) | null;
-    generateLabelValue?: ((one: Coords, two: Coords) => void) | null;
+    generateLabelText?: ((one: Coords, two: Coords, value: null|Number|String) => void) | null;
+    generateLabelValue?: ((labeled: Coords, center: Coords) => string) | null;
     highlightFillColor?: string;
     highlightStrokeColor?: string;
     includeBoundaries?: boolean | number;
@@ -4018,7 +4076,7 @@ declare namespace JXG {
      * @param parents
      * @param attributes
      */
-    create(elementType: 'hyperbola', parents: unknown[], attributes?: {}): Hyperbola;
+    create(elementType: 'hyperbola', parents: unknown[], attributes?: HyperbolaAttributes): Hyperbola;
     /**
      *
      * @param elementType 'image'
@@ -4096,6 +4154,13 @@ declare namespace JXG {
      * @param attributes
      */
     create(elementType: 'normal', parents: unknown[], attributes?: NormalAttributes): Normal;
+    /**
+     *
+     * @param elementType 'parabola'
+     * @param parents
+     * @param attributes
+     */
+    create(elementType: 'parabola', parents: unknown[], attributes?: ParabolaAttributes): Parabola;
     /**
      *
      * @param elementType 'perpendicular'
@@ -4266,7 +4331,7 @@ declare namespace JXG {
     /**
      *
      */
-    emulateColorBlindness(deficiency: 'protanopia' | 'deuteranopia' | 'tritanopia'): this;
+    emulateColorblindness(deficiency: 'protanopia' | 'deuteranopia' | 'tritanopia'): this;
     /**
      * After construction of the object the visibility is set and the label is constructed if necessary.
      * @param obj The object to add.
@@ -4284,10 +4349,10 @@ declare namespace JXG {
     getCoordsTopLeftCorner(): [number, number];
     getMousePosition(e: unknown, i?: number): [number, number];
     getScrCoordsOfMouse(x: number, y: number): [number, number];
-    getUseCoordsOfMouse(evt: unknown): [number, number];
+    getUsrCoordsOfMouse(evt: unknown): [number, number];
     hasPoint(x: number, y: number): boolean;
     highlightCustomInfobox(text: string, element?: GeometryElement): this;
-    highlightInfbox(x: number, y: number, element?: GeometryElement): this;
+    highlightInfobox(x: number, y: number, element?: GeometryElement): this;
     initInfobox(): this;
     initMoveObject(x: number, y: number, event: unknown, type: 'mouse' | 'pen' | 'touch'): GeometryElement[];
     initMoveOrigin(x: number, y: number): unknown;

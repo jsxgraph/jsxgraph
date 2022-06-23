@@ -1022,7 +1022,7 @@ define([
 
             // if value is Number
             if (Type.isNumber(value)) {
-                labelText = (Math.round(value * 1.e13) / 1.e13).toString();
+                labelText = (Math.round(value * 1.e11) / 1.e11).toString();
                 if (labelText.length > Type.evaluate(this.visProp.maxlabellength) ||
                         labelText.indexOf('e') !== -1) {
 

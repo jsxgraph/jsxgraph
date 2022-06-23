@@ -200,6 +200,7 @@ define([
 
             this.orgText = text;
             if (Type.isFunction(text)) {
+                // <value> tags will not be evaluated.
                 this.updateText = function () {
                     resolvedText = text().toString();
                     if (ev_p && !ev_um && !ev_uk) {
@@ -220,14 +221,20 @@ define([
                         // Convert via ASCIIMathML
                         this.content = "'`" + text + "`'";
                     } else if (ev_um || ev_uk) {
-                        this.content = "'" + text + "'";
+                        if (ev_p) {
+                            this.content = this.generateTerm(text, true, true, true); // Replace value-tags
+                            this.content = this.content.replace(/\\/g, "\\\\");
+                        } else {
+                            this.content = "'" + text + "'";
+                        }
                     } else {
                         // Converts GEONExT syntax into JavaScript string
                         // Short math is allowed
                         // Avoid geonext2JS calls
-                        this.content = this.generateTerm(text, true, true);
+                        this.content = this.generateTerm(text, true, true, false);
                     }
                 }
+                // Convert JessieCode to JS function
                 updateText = this.board.jc.snippet(this.content, true, '', false);
                 this.updateText = function () {
                     this.plaintext = updateText();
@@ -583,30 +590,43 @@ define([
         /**
          * Converts the GEONExT syntax of the <value> terms into JavaScript.
          * Also, all Objects whose name appears in the term are searched and
-         * the text is added as child to these objects.
+         * the text is added as child to these objects. 
+         * This method is called if the attribute parse==true is set.
          *
          * @param{String} contentStr String to be parsed
          * @param{Boolean} [expand] Optional flag if shortened math syntax is allowed (e.g. 3x instead of 3*x).
          * @param{Boolean} [avoidGeonext2JS] Optional flag if geonext2JS should be called. For backwards compatibility
          * this has to be set explicitely to true.
+         * @param{Boolean} [outputTeX] Optional flag which has to be true if the resulting term will be sent to MathJax or KaTeX. 
+         * If true, "_" and "^" are NOT replaced by HTML tags sub and sup. Default: false, i.e. the replacement is done.
+         * This flag allows the combination of &lt;value&gt; tag containing calculations with TeX output.
+         *
          * @private
          * @see JXG.GeonextParser.geonext2JS
          */
-        generateTerm: function (contentStr, expand, avoidGeonext2JS) {
+        generateTerm: function (contentStr, expand, avoidGeonext2JS, outputTeX) {
             var res, term, i, j,
                 plaintext = '""';
 
-            // revert possible jc replacement
+            outputTeX = outputTeX || false;
+
+            // Revert possible jc replacement
             contentStr = contentStr || '';
             contentStr = contentStr.replace(/\r/g, '');
             contentStr = contentStr.replace(/\n/g, '');
             contentStr = contentStr.replace(/"/g, '\'');
             contentStr = contentStr.replace(/'/g, "\\'");
 
-            contentStr = contentStr.replace(/&amp;arc;/g, '&ang;');
-            contentStr = contentStr.replace(/<arc\s*\/>/g, '&ang;');
-            contentStr = contentStr.replace(/&lt;arc\s*\/&gt;/g, '&ang;');
-            contentStr = contentStr.replace(/&lt;sqrt\s*\/&gt;/g, '&radic;');
+            if (!outputTeX) {
+                // Old GEONExT syntax, not (yet) supported as TeX output.
+                // Otherwise, the else clause should be used.
+                // That means, i.e. the <arc> tag and <sqrt> tag are not 
+                // converted into TeX syntax.
+                contentStr = contentStr.replace(/&amp;arc;/g, '&ang;');
+                contentStr = contentStr.replace(/<arc\s*\/>/g, '&ang;');
+                contentStr = contentStr.replace(/&lt;arc\s*\/&gt;/g, '&ang;');
+                contentStr = contentStr.replace(/&lt;sqrt\s*\/&gt;/g, '&radic;');
+            }
 
             contentStr = contentStr.replace(/&lt;value&gt;/g, '<value>');
             contentStr = contentStr.replace(/&lt;\/value&gt;/g, '</value>');
@@ -616,7 +636,12 @@ define([
             j = contentStr.indexOf('</value>');
             if (i >= 0) {
                 while (i >= 0) {
-                    plaintext += ' + "' + this.replaceSub(this.replaceSup(contentStr.slice(0, i))) + '"';
+                    if (!outputTeX) {
+                        plaintext += ' + "' + this.replaceSub(this.replaceSup(contentStr.slice(0, i))) + '"';
+                        // plaintext += ' + "' + this.replaceSub(contentStr.slice(0, i)) + '"';
+                    } else {
+                        plaintext += ' + "' + contentStr.slice(0, i) + '"';
+                    }
                     term = contentStr.slice(i + 7, j);
                     term = term.replace(/\s+/g, ''); // Remove all whitespace
                     if (expand === true) {
@@ -649,10 +674,14 @@ define([
                 }
             }
 
-            plaintext += ' + "' + this.replaceSub(this.replaceSup(contentStr)) + '"';
-            plaintext = this.convertGeonextAndSketchometry2CSS(plaintext);
+            if (!outputTeX) {
+                plaintext += ' + "' + this.replaceSub(this.replaceSup(contentStr)) + '"';
+                plaintext = this.convertGeonextAndSketchometry2CSS(plaintext);
+            } else {
+                plaintext += ' + "' + contentStr + '"';
+            }
 
-            // This should replace &amp;pi; by &pi;
+            // This should replace e.g. &amp;pi; by &pi;
             plaintext = plaintext.replace(/&amp;/g, '&');
             plaintext = plaintext.replace(/"/g, "'");
 

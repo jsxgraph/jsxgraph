@@ -1,3 +1,49 @@
+1.4.4
+====
+
+New features
+-----------
+
+- Intersecting points of polygons with other elements 
+- Support usage of jsxgraph in shadowDOM
+
+Improvements
+------------
+
+- Additions to index.d.ts
+- Initial API doc for some 3D elements
+- Handling of parallel lines and parallel arrows
+- Support of 3D elements
+
+Bug fixes
+---------
+
+- Add file options3d.js to jsxgraphcore.js
+- Resize of deleted container
+
+
+1.4.3
+====
+
+New features
+-----------
+
+- Experimental support of 3D elements
+
+Improvements
+------------
+
+- Many improvements to index.d.ts
+- Make JSXGraph available as ES6 module
+
+Bug fixes
+---------
+
+- Ticks are now parents of their tick labels
+- polygon.insertPoints and polygon.addPoints
+- JessieCode dump of slider elements
+- Resolve shortcuts also for trace attributes
+
 1.4.2
 ====
 
@@ -5,7 +51,7 @@ Improvements
 ------------
 
 - Gradient fill color for points
-- Many improvenments to index.d.ts
+- Many improvements to index.d.ts
 - Improved keyboard control
 - Some preparations for 3D support
 - Reduce thick focus box on webkit browsers

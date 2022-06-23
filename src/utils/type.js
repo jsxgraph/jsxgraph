@@ -977,7 +977,7 @@ define([
             }
 
             // options from attributes
-            o = attributes;
+            o = (typeof attributes === 'object') ? attributes : {};
             isAvail = true;
             for (i = 3; i < len; i++) {
                 if (this.exists(o[arguments[i]])) {

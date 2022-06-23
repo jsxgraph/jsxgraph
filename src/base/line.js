@@ -695,7 +695,7 @@ define([
                 if (this.parents.length < 3) {    // Line through two points
                     this.point1.handleSnapToGrid(true, true);
                     this.point2.handleSnapToGrid(true, true);
-            } else if (Type.exists(pos)) {       // Free line
+                } else if (Type.exists(pos)) {       // Free line
                     sX = Type.evaluate(this.visProp.snapsizex);
                     sY = Type.evaluate(this.visProp.snapsizey);
 

@@ -783,6 +783,10 @@ define([
              *   visible: false      // Initial visibility. Should be set to false always
              * }
              * </pre>
+             * <p>
+             * Board events triggered by selection manipulation:
+             * 'startselecting', 'stopselecting', 'mousestartselecting', 'mousestopselecting',
+             * 'pointerstartselecting', 'pointerstopselecting', 'touchstartselecting', 'touchstopselecting'.
              *
              * @example
              * board.on('stopselecting', function(){
@@ -796,14 +800,10 @@ define([
              * });
              *
              * @name JXG.Board#selection
-             * @see JXG.Board#startselecting
-             * @see JXG.Board#stopselecting
-             * @see JXG.Board#mousestartselecting
-             * @see JXG.Board#pointerstartselecting
-             * @see JXG.Board#touchstartselecting
-             * @see JXG.Board#mousestopselecting
-             * @see JXG.Board#pointerstopselecting
-             * @see JXG.Board#touchstopselecting
+             *
+             * @see JXG.Board#startSelectionMode
+             * @see JXG.Board#stopSelectionMode
+             *
              * @type Object
              * @default
              */
@@ -1490,6 +1490,7 @@ define([
 
             /**
              * Controls if an element can get the focus with the tab key.
+             * tabindex corresponds to the HTML attribute of the same name.
              * See <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/tabindex">descriptiona at MDN</a>.
              * The additional value null completely disables focus of an element.
              * The value will be ignored if keyboard control of the board is not enabled or
@@ -1519,6 +1520,8 @@ define([
             /**
              * A function that expects two {@link JXG.Coords}, the first one representing the coordinates of the
              * tick that is to be labeled, the second one the coordinates of the center (the tick with position 0).
+             * The tird parameter is a null, number or a string. In the latter two cases, this value is taken.
+             * Returns a string.
              *
              * @type function
              * @name Ticks#generateLabelText
@@ -1529,7 +1532,7 @@ define([
              * A function that expects two {@link JXG.Coords}, the first one representing the coordinates of the
              * tick that is to be labeled, the second one the coordinates of the center (the tick with position 0).
              *
-             * @deprecated Use {@link JGX.Options@generateLabelValue}
+             * @deprecated Use {@link JGX.Options@generateLabelText}
              * @type function
              * @name Ticks#generateLabelValue
              */
@@ -3505,7 +3508,6 @@ define([
              */
             lastArrow: false,
 
-
             /**
              * This number (pixel value) controls where infinite lines end at the canvas border. If zero, the line
              * ends exactly at the border, if negative there is a margin to the inside, if positive the line
@@ -3681,7 +3683,6 @@ define([
              * @default 'butt'
              */
             lineCap: 'butt'
-
 
             /**#@-*/
         },
@@ -5623,8 +5624,10 @@ define([
             display: 'html',
 
             /**
-             * Anchor element {@link Point}, {@link Text} or {@link Image} of the text. If it exists, the coordinates of the text are relative
-             * to this anchor element.
+             * Anchor element {@link Point}, {@link Text} or {@link Image} of the text.
+             * If it exists, the coordinates of the text are relative
+             * to this anchor element. In this case, only numbers are possible coordinates,
+             * functions are not supported.
              *
              * @name anchor
              * @memberOf Text.prototype

@@ -1888,7 +1888,6 @@ define([
 
             // Collect all points into clip array C
             C = this._getPath(clip, board);
-
             len = C.length;
             if (len > 0 && Geometry.distance(C[0].coords.usrCoords, C[len - 1].coords.usrCoords, 3) < Mat.eps * Mat.eps) {
                 C.pop();
