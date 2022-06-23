@@ -82,7 +82,7 @@
  utils/type
  */
 
-define(['jxg'], function (JXG) {
+define(['jxg', 'utils/type'], function (JXG, Type) {
 
     "use strict";
 
@@ -97,9 +97,15 @@ define(['jxg'], function (JXG) {
         arr: function(n) {
             var a = new Array(n),
                 i;
-            for (i = 0; i <n ; i++) {
-                a[i] = 0.0;
+
+            if (Type.exists(a.fill)) {
+                a.fill(0.0, 0, n);
+            } else {
+                for (i = 0; i <n ; i++) {
+                    a[i] = 0.0;
+                }
             }
+
             return a;
         },
 
@@ -430,10 +436,14 @@ define(['jxg'], function (JXG) {
                             error = 0.0;
                             for (i = 1; i <= n; ++i) {
                                 for (j = 1; j <= n; ++j) {
-                                    temp = this.DOT_PRODUCT(
-                                            this.PART(this.ROW(simi, i), 1, n),
-                                            this.PART(this.COL(sim, j), 1, n)
-                                        ) - (i === j ? 1.0 : 0.0);
+                                    temp = this.DOT_PRODUCT_ROW_COL(simi, i, sim, j, 1, n) - (i === j ? 1.0 : 0.0);
+                                    // console.log("A", temp);
+                                    // temp = this.DOT_PRODUCT(
+                                    //     this.PART(this.ROW(simi, i), 1, n),
+                                    //     this.PART(this.COL(sim, j), 1, n)
+                                    // ) - (i === j ? 1.0 : 0.0);
+                                    // console.log("B", temp);
+
                                     error = Math.max(error, Math.abs(temp));
                                 }
                             }
@@ -453,8 +463,9 @@ define(['jxg'], function (JXG) {
                                 }
 
                                 for (i = 1; i <= n; ++i) {
-                                    a[i][k] = (k === mp ? -1.0 : 1.0) * this.DOT_PRODUCT(
-                                        this.PART(w, 1, n), this.PART(this.COL(simi, i), 1, n));
+                                    a[i][k] = (k === mp ? -1.0 : 1.0) * 
+                                        this.DOT_PRODUCT_ROW_COL(w, -1, simi, i, 1, n);
+                                        // this.DOT_PRODUCT(this.PART(w, 1, n), this.PART(this.COL(simi, i), 1, n));
                                 }
                             }
 
@@ -507,10 +518,8 @@ define(['jxg'], function (JXG) {
                                 cvmaxm = 0.0;
                                 total = 0.0;
                                 for (k = 1; k <= mp; ++k) {
-                                    total = this.DOT_PRODUCT(
-                                        this.PART(this.COL(a, k), 1, n),
-                                        this.PART(dx, 1, n)
-                                        );
+                                    // total = this.DOT_PRODUCT(this.PART(this.COL(a, k), 1, n), this.PART(dx, 1, n));
+                                    total = this.DOT_PRODUCT_ROW_COL(dx, -1, a, k, 1, n);
                                     if (k < mp) {
                                         temp = datmat[k][np];
                                         cvmaxp = Math.max(cvmaxp, -total - temp);
@@ -532,10 +541,8 @@ define(['jxg'], function (JXG) {
 
                                 for (j = 1; j <= n; ++j) {
                                     if (j !== jdrop) {
-                                        temp = this.DOT_PRODUCT(
-                                            this.PART(this.ROW(simi, j), 1, n),
-                                            this.PART(dx, 1, n)
-                                            );
+                                        // temp = this.DOT_PRODUCT(this.PART(this.ROW(simi, j), 1, n), this.PART(dx, 1, n));
+                                        temp = this.DOT_PRODUCT_ROW_COL(simi, j, dx, -1, 1, n);
                                         for (k = 1; k <= n; ++k) {
                                             simi[j][k] -= temp * simi[jdrop][k];
                                         }
@@ -565,7 +572,8 @@ define(['jxg'], function (JXG) {
                             resnew = 0.0;
                             con[mp] = 0.0;
                             for (k = 1; k <= mp; ++k) {
-                                total = con[k] - this.DOT_PRODUCT(this.PART(this.COL(a, k), 1, n), this.PART(dx, 1, n));
+                                //total = con[k] - this.DOT_PRODUCT(this.PART(this.COL(a, k), 1, n), this.PART(dx, 1, n));
+                                total = con[k] - this.DOT_PRODUCT_ROW_COL(dx, -1, a, k, 1, n);
                                 if (k < mp) { resnew = Math.max(resnew, total); }
                             }
 
@@ -613,7 +621,8 @@ define(['jxg'], function (JXG) {
                         ratio = trured <= 0.0 ? 1.0 : 0.0;
                         jdrop = 0;
                         for (j = 1; j <= n; ++j) {
-                            temp = Math.abs(this.DOT_PRODUCT(this.PART(this.ROW(simi, j), 1, n), this.PART(dx, 1, n)));
+                            // temp = Math.abs(this.DOT_PRODUCT(this.PART(this.ROW(simi, j), 1, n), this.PART(dx, 1, n)));
+                            temp = Math.abs(this.DOT_PRODUCT_ROW_COL(simi, j, dx, -1, 1, n));
                             if (temp > ratio) {
                                 jdrop = j;
                                 ratio = temp;
@@ -653,7 +662,8 @@ define(['jxg'], function (JXG) {
                             for (k = 1; k <= n; ++k) { simi[jdrop][k] /= temp; }
                             for (j = 1; j <= n; ++j) {
                                 if (j !== jdrop) {
-                                    temp = this.DOT_PRODUCT(this.PART(this.ROW(simi, j), 1, n), this.PART(dx, 1, n));
+                                    // temp = this.DOT_PRODUCT(this.PART(this.ROW(simi, j), 1, n), this.PART(dx, 1, n));
+                                    temp = this.DOT_PRODUCT_ROW_COL(simi, j, dx, -1, 1, n);
                                     for (k = 1; k <= n; ++k) {
                                         simi[j][k] -= temp * simi[jdrop][k];
                                     }
@@ -856,9 +866,8 @@ define(['jxg'], function (JXG) {
 
                     L_70:
                     do {
-                        optnew = (mcon === m) ? resmax : -this.DOT_PRODUCT(
-                                this.PART(dx, 1, n), this.PART(this.COL(a, mcon), 1, n)
-                            );
+                        // optnew = (mcon === m) ? resmax : -this.DOT_PRODUCT(this.PART(dx, 1, n), this.PART(this.COL(a, mcon), 1, n));
+                        optnew = (mcon === m) ? resmax : -this.DOT_PRODUCT_ROW_COL(dx, -1, a, mcon, 1, n);
 
                         if (icount === 0 || optnew < optold) {
                             optold = optnew;
@@ -919,9 +928,8 @@ define(['jxg'], function (JXG) {
                                 temp = 1.0 / zdota[nact];
                                 for (k = 1; k <= n; ++k) { sdirn[k] = temp * z[k][nact]; }
                             } else {
-                                temp = this.DOT_PRODUCT(
-                                        this.PART(sdirn, 1, n), this.PART(this.COL(z, nact + 1), 1, n)
-                                    );
+                                // temp = this.DOT_PRODUCT(this.PART(sdirn, 1, n), this.PART(this.COL(z, nact + 1), 1, n));
+                                temp = this.DOT_PRODUCT_ROW_COL(sdirn, -1, z, nact + 1, 1, n);
                                 for (k = 1; k <= n; ++k) { sdirn[k] -= temp * z[k][nact + 1]; }
                             }
                         } else {
@@ -1090,10 +1098,8 @@ define(['jxg'], function (JXG) {
                                 for (k = 1; k <= n; ++k) { sdirn[k] = temp * z[k][nact]; }
                             } else {
                                 kk = iact[nact];
-                                temp = (this.DOT_PRODUCT(
-                                            this.PART(sdirn, 1, n),
-                                            this.PART(this.COL(a, kk), 1, n)
-                                        ) - 1.0) / zdota[nact];
+                                // temp = (this.DOT_PRODUCT(this.PART(sdirn, 1, n),this.PART(this.COL(a, kk), 1, n)) - 1.0) / zdota[nact];
+                                temp = (this.DOT_PRODUCT_ROW_COL(sdirn, -1, a, kk, 1, n) - 1.0) / zdota[nact];
                                 for (k = 1; k <= n; ++k) { sdirn[k] -= temp * z[k][nact]; }
                             }
                         }
@@ -1133,9 +1139,8 @@ define(['jxg'], function (JXG) {
                             resmax = 0.0;
                             for (k = 1; k <= nact; ++k) {
                                 kk = iact[k];
-                                temp = b[kk] - this.DOT_PRODUCT(
-                                        this.PART(this.COL(a, kk), 1, n), this.PART(dxnew, 1, n)
-                                    );
+                                // temp = b[kk] - this.DOT_PRODUCT(this.PART(this.COL(a, kk), 1, n), this.PART(dxnew, 1, n));
+                                temp = b[kk] - this.DOT_PRODUCT_ROW_COL(dxnew, -1, a, kk, 1, n);
                                 resmax = Math.max(resmax, temp);
                             }
                         }
@@ -1248,7 +1253,8 @@ define(['jxg'], function (JXG) {
         COL: function(src, colidx) {
             var row,
                 rows = src.length,
-                dest = this.arr(rows);
+                dest = []; // this.arr(rows);
+
             for (row = 0; row < rows; ++row) {
                 dest[row] = src[row][colidx];
             }
@@ -1275,12 +1281,38 @@ define(['jxg'], function (JXG) {
             // return fmt;
         },
 
-        DOT_PRODUCT: function(lhs,  rhs) {
+        DOT_PRODUCT: function(lhs, rhs) {
             var i, sum = 0.0,
                 len = lhs.length;
             for (i = 0; i < len; ++i) {
                 sum += lhs[i] * rhs[i];
             }
+            return sum;
+        },
+
+        DOT_PRODUCT_ROW_COL: function(lhs, row, rhs, col, start, end) {
+            var i, sum = 0.0;
+
+            if (row === -1) {
+                // lhs is vector
+                for (i = start; i <= end; ++i) {
+                    sum += lhs[i] * rhs[i][col];
+                }
+            } else {
+                // lhs is row of matrix
+                if (col === -1) {
+                    // rhs is vector
+                    for (i = start; i <= end; ++i) {
+                        sum += lhs[row][i] * rhs[i];
+                    }
+                } else {
+                    // rhs is column of matrix
+                    for (i = start; i <= end; ++i) {
+                        sum += lhs[row][i] * rhs[i][col];
+                    }
+                }
+            }
+
             return sum;
         }
 
