@@ -583,7 +583,7 @@ declare namespace JXG {
      * @param handler
      * @returns Reference to the object.
      */
-    off(event: string, handler: (e: Event) => void): this;
+    off(event: string, handler?: (e: Event) => void): this;
 
     /**
      * Register a new event handler.
