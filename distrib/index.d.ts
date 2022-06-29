@@ -558,6 +558,12 @@ declare namespace JXG {
     addRotation(angle: number): void;
 
     /**
+     * Get the value of the property key.
+     * @param key The name of the property you are looking for.
+     */
+    getAttribute(key: string): any;
+
+    /**
      * Returns the element name.
      */
     getName(): string;
