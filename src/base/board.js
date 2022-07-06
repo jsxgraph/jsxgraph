@@ -6002,16 +6002,17 @@ define([
          *
          */
         toFullscreen: function (id) {
-            var wrap_id, wrap_node, inner_node;
+            var wrap_id, wrap_node, inner_node,
+                doc = this.document;
 
             id = id || this.container;
             this._fullscreen_inner_id = id;
-            inner_node = this.document.getElementById(id);
+            inner_node = doc.getElementById(id);
             wrap_id = 'fullscreenwrap_' + id;
 
             // Wrap a div around the JSXGraph div.
-            if (this.document.getElementById(wrap_id)) {
-                wrap_node = this.document.getElementById(wrap_id);
+            if (doc.getElementById(wrap_id)) {
+                wrap_node = doc.getElementById(wrap_id);
             } else {
                 wrap_node = document.createElement('div');
                 wrap_node.classList.add('JXG_wrap_private');
@@ -6030,8 +6031,14 @@ define([
                 wrap_node.mozRequestFullScreen ||
                 wrap_node.msRequestFullscreen;
 
-            if (wrap_node.requestFullscreen) {
-                wrap_node.requestFullscreen();
+            if (doc.fullscreenElement === null) {
+                // Start fullscreen mode
+                if (wrap_node.requestFullscreen) {
+                    wrap_node.requestFullscreen();
+                }
+            } else {
+                // Leave fullscreen mode (e.g. when clicking on the icon)
+                document.exitFullscreen();
             }
 
             return this;
@@ -6045,23 +6052,24 @@ define([
          * @param  {Object} evt fullscreen event object (unused)
          */
         fullscreenListener: function (evt) {
-            var res, inner_id, inner_node;
+            var res, inner_id, inner_node,
+                doc = this.document;
 
             inner_id = this._fullscreen_inner_id;
             if (!Type.exists(inner_id)) {
                 return;
             }
 
-            this.document.fullscreenElement = this.document.fullscreenElement ||
-                    this.document.webkitFullscreenElement ||
-                    this.document.mozFullscreenElement ||
-                    this.document.msFullscreenElement;
+            doc.fullscreenElement = doc.fullscreenElement ||
+                    doc.webkitFullscreenElement ||
+                    doc.mozFullscreenElement ||
+                    doc.msFullscreenElement;
 
-            inner_node = this.document.getElementById(inner_id);
+            inner_node = doc.getElementById(inner_id);
             // If full screen mode is started we have to remove CSS margin around the JSXGraph div.
             // Otherwise, the positioning of the fullscreen div will be false.
             // When leaving the fullscreen mode, the margin is put back in.
-            if (this.document.fullscreenElement) {
+            if (doc.fullscreenElement) {
                 // Just entered fullscreen mode
 
                 // Get the data computed in board.toFullscreen()
@@ -6073,7 +6081,7 @@ define([
                 // Further, the CSS margin has to be removed when in fullscreen mode,
                 // and must be restored later.
                 inner_node._cssFullscreenStore = {
-                    id: this.document.fullscreenElement.id,
+                    id: doc.fullscreenElement.id,
                     isFullscreen: true,
                     margin: inner_node.style.margin,
                     width: inner_node.style.width,
@@ -6087,18 +6095,18 @@ define([
                 // Do the shifting and scaling via CSS pseudo rules
                 // We do this after fullscreen mode has been established to get the correct size
                 // of the JSXGraph div.
-                Env.scaleJSXGraphDiv(document.fullscreenElement.id, inner_id, res.scale, res.vshift);
+                Env.scaleJSXGraphDiv(doc.fullscreenElement.id, inner_id, res.scale, res.vshift, doc);
 
                 // Clear this.document.fullscreenElement, because Safari doesn't to it and
                 // when leaving full screen mode it is still set.
-                this.document.fullscreenElement = null;
+                doc.fullscreenElement = null;
 
             } else if (Type.exists(inner_node._cssFullscreenStore)) {
                 // Just left the fullscreen mode
 
                 // Remove the CSS rules added in Env.scaleJSXGraphDiv
                 try {
-                    this.document.styleSheets[this.document.styleSheets.length - 1].deleteRule(0);
+                    doc.styleSheets[doc.styleSheets.length - 1].deleteRule(0);
                 } catch (err) {
                     console.log('JSXGraph: Could not remove CSS rules for full screen mode');
                 }

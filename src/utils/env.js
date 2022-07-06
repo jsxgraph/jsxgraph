@@ -840,14 +840,15 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          * @param  {String} inner_id id of the DOM element which is scaled and shifted
          * @param  {Number} scale    Scaling factor
          * @param  {Number} vshift   Vertical shift (in pixel)
+         * @param  {Object} doc      document object or shadow root
          *
          * @private
          * @see JXG.Board#toFullscreen
          * @see JXG.Board#fullscreenListener
          *
          */
-        scaleJSXGraphDiv: function (wrap_id, inner_id, scale, vshift) {
-            var len = document.styleSheets.length, style,
+        scaleJSXGraphDiv: function (wrap_id, inner_id, scale, vshift, doc) {
+            var len = doc.styleSheets.length, style,
 
                 pseudo_keys = [':fullscreen', ':-webkit-full-screen', ':-moz-full-screen', ':-ms-fullscreen'],
                 len_pseudo = pseudo_keys.length, i,
@@ -865,22 +866,21 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                 // WebKit hack :(
                 style.appendChild(document.createTextNode(''));
                 // Add the <style> element to the page
-                document.body.appendChild(style);
-                len = document.styleSheets.length;
+                doc.appendChild(style);
+                len = doc.styleSheets.length;
             }
 
             // Remove a previously installed CSS rule.
-            if (document.styleSheets[len - 1].cssRules.length > 0 &&
-                regex.test(document.styleSheets[len - 1].cssRules[0].cssText) &&
-                document.styleSheets[len - 1].deleteRule) {
-
-                document.styleSheets[len - 1].deleteRule(0);
+            if (doc.styleSheets[len - 1].cssRules.length > 0 &&
+                regex.test(doc.styleSheets[len - 1].cssRules[0].cssText) &&
+                doc.styleSheets[len - 1].deleteRule) {
+                    doc.styleSheets[len - 1].deleteRule(0);
             }
 
             // Install a CSS rule to center the JSXGraph div at the first position of the list.
             for (i = 0; i < len_pseudo; i++) {
                 try {
-                    document.styleSheets[len - 1].insertRule('#' + wrap_id + pseudo_keys[i] + ' #' + inner_id + rule_inner, 0);
+                    doc.styleSheets[len - 1].insertRule('#' + wrap_id + pseudo_keys[i] + ' #' + inner_id + rule_inner, 0);
                     break;
                 } catch (err) {
                     // console.log('JXG.scaleJSXGraphDiv: Could not add CSS rule "' + pseudo_keys[i] + '".');
