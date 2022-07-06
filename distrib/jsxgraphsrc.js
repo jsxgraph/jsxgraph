@@ -3198,14 +3198,15 @@ define('utils/env',['jxg', 'utils/type'], function (JXG, Type) {
          * @param  {String} inner_id id of the DOM element which is scaled and shifted
          * @param  {Number} scale    Scaling factor
          * @param  {Number} vshift   Vertical shift (in pixel)
+         * @param  {Object} doc      document object or shadow root
          *
          * @private
          * @see JXG.Board#toFullscreen
          * @see JXG.Board#fullscreenListener
          *
          */
-        scaleJSXGraphDiv: function (wrap_id, inner_id, scale, vshift) {
-            var len = document.styleSheets.length, style,
+        scaleJSXGraphDiv: function (wrap_id, inner_id, scale, vshift, doc) {
+            var len = doc.styleSheets.length, style,
 
                 pseudo_keys = [':fullscreen', ':-webkit-full-screen', ':-moz-full-screen', ':-ms-fullscreen'],
                 len_pseudo = pseudo_keys.length, i,
@@ -3223,22 +3224,21 @@ define('utils/env',['jxg', 'utils/type'], function (JXG, Type) {
                 // WebKit hack :(
                 style.appendChild(document.createTextNode(''));
                 // Add the <style> element to the page
-                document.body.appendChild(style);
-                len = document.styleSheets.length;
+                doc.appendChild(style);
+                len = doc.styleSheets.length;
             }
 
             // Remove a previously installed CSS rule.
-            if (document.styleSheets[len - 1].cssRules.length > 0 &&
-                regex.test(document.styleSheets[len - 1].cssRules[0].cssText) &&
-                document.styleSheets[len - 1].deleteRule) {
-
-                document.styleSheets[len - 1].deleteRule(0);
+            if (doc.styleSheets[len - 1].cssRules.length > 0 &&
+                regex.test(doc.styleSheets[len - 1].cssRules[0].cssText) &&
+                doc.styleSheets[len - 1].deleteRule) {
+                    doc.styleSheets[len - 1].deleteRule(0);
             }
 
             // Install a CSS rule to center the JSXGraph div at the first position of the list.
             for (i = 0; i < len_pseudo; i++) {
                 try {
-                    document.styleSheets[len - 1].insertRule('#' + wrap_id + pseudo_keys[i] + ' #' + inner_id + rule_inner, 0);
+                    doc.styleSheets[len - 1].insertRule('#' + wrap_id + pseudo_keys[i] + ' #' + inner_id + rule_inner, 0);
                     break;
                 } catch (err) {
                     // console.log('JXG.scaleJSXGraphDiv: Could not add CSS rule "' + pseudo_keys[i] + '".');
@@ -11758,43 +11758,43 @@ define('math/numerics',['jxg', 'utils/type', 'utils/env', 'math/math'], function
 */
 /*
  * jcobyla
- * 
+ *
  * The MIT License
  *
  * Copyright (c) 2012 Anders Gustafsson, Cureos AB.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
- * (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, 
- * publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, 
+ * (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge,
+ * publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
  * subject to the following conditions:
  *
  * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF 
- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE 
- * FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
+ * FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- * 
+ *
  * Remarks:
- * 
+ *
  * The original Fortran 77 version of this code was by Michael Powell (M.J.D.Powell @ damtp.cam.ac.uk)
  * The Fortran 90 version was by Alan Miller (Alan.Miller @ vic.cmis.csiro.au). Latest revision - 30 October 1998
  */
 
 /**
  * Constrained Optimization BY Linear Approximation in Java.
- * 
+ *
  * COBYLA2 is an implementation of Powell's nonlinear derivative free constrained optimization that uses
  * a linear approximation approach. The algorithm is a sequential trust region algorithm that employs linear
  * approximations to the objective and constraint functions, where the approximations are formed by linear
  * interpolation at n + 1 points in the space of the variables and tries to maintain a regular shaped simplex
  * over iterations.
- * 
+ *
  * It solves nonsmooth NLP with a moderate number of variables (about 100). Inequality constraints only.
- * 
+ *
  * The initial point X is taken as one vertex of the initial simplex with zero being another, so, X should
  * not be entered as the zero vector.
- * 
+ *
  * @author Anders Gustafsson, Cureos AB. Translation to Javascript by Reinhard Oldenburg, Goethe-University
  */
 
@@ -11807,7 +11807,7 @@ define('math/numerics',['jxg', 'utils/type', 'utils/env', 'math/math'], function
  utils/type
  */
 
-define('math/nlp',['jxg'], function (JXG) {
+define('math/nlp',['jxg', 'utils/type'], function (JXG, Type) {
 
     "use strict";
 
@@ -11815,20 +11815,29 @@ define('math/nlp',['jxg'], function (JXG) {
      * The JXG.Math.Nlp namespace holds numerical algorithms for non-linear optimization.
      * @name JXG.Math.Nlp
      * @namespace
-     * 
+     *
      */
-    JXG.Math.Nlp =  {
+    JXG.Math.Nlp = {
 
-        arr: function(n) {
-            var a = new Array(n),
-                i;
-            for (i = 0; i <n ; i++) {
-                a[i] = 0.0;
-            }
-            return a;
+        arr: function (n) {
+            // Is 0 initialized
+            return new Float64Array(n);
+
+            // var a = new Array(n),
+            //     i;
+
+            // if (Type.exists(a.fill)) {
+            //     a.fill(0.0, 0, n);
+            // } else {
+            //     for (i = 0; i < n; i++) {
+            //         a[i] = 0.0;
+            //     }
+            // }
+
+            // return a;
         },
 
-        arr2: function(n, m) {
+        arr2: function (n, m) {
             var i = 0,
                 a = new Array(n);
 
@@ -11839,7 +11848,7 @@ define('math/nlp',['jxg'], function (JXG) {
             return a;
         },
 
-        arraycopy: function(x, a, iox, b, n) {
+        arraycopy: function (x, a, iox, b, n) {
             var i = 0;
             while (i < n) {
                 iox[i + b] = x[i + a];
@@ -11869,7 +11878,7 @@ define('math/nlp',['jxg'], function (JXG) {
          * @param maxfun Maximum number of function evaluations before terminating.
          * @returns {Number} Exit status of the COBYLA2 optimization.
          */
-        FindMinimum: function(calcfc, n,  m, x, rhobeg, rhoend,  iprint,  maxfun) {
+        FindMinimum: function (calcfc, n, m, x, rhobeg, rhoend, iprint, maxfun) {
             // CobylaExitStatus FindMinimum(final Calcfc calcfc, int n, int m, double[] x, double rhobeg, double rhoend, int iprint, int maxfun)
             //     This subroutine minimizes an objective function F(X) subject to M
             //     inequality constraints on X, where X is a vector of variables that has
@@ -11933,16 +11942,16 @@ define('math/nlp',['jxg'], function (JXG) {
 
             // Internal representation of the objective and constraints calculation method,
             // accounting for that X and CON arrays in the cobylb method are base-1 arrays.
-            fcalcfc = function(n, m, thisx, con) {  // int n, int m, double[] x, double[] con
-                    var ix = that.arr(n),
-                        ocon, f;
+            fcalcfc = function (n, m, thisx, con) {  // int n, int m, double[] x, double[] con
+                var ix = that.arr(n),
+                    ocon, f;
 
-                    that.arraycopy(thisx, 1, ix, 0, n);
-                    ocon = that.arr(m);
-                    f = calcfc(n, m, ix, ocon);
-                    that.arraycopy(ocon, 0, con, 1, m);
-                    return f;
-                };
+                that.arraycopy(thisx, 1, ix, 0, n);
+                ocon = that.arr(m);
+                f = calcfc(n, m, ix, ocon);
+                that.arraycopy(ocon, 0, con, 1, m);
+                return f;
+            };
 
             status = this.cobylb(fcalcfc, n, m, mpp, iox, rhobeg, rhoend, iprint, maxfun);
             this.arraycopy(iox, 1, x, 0, n);
@@ -11954,18 +11963,18 @@ define('math/nlp',['jxg'], function (JXG) {
         //      double rhobeg, double rhoend, int iprint, int maxfun)
         /**
          * JavaScript implementation of the non-linear optimization method COBYLA.
-         * @param {Function} calcfc 
-         * @param {Number} n 
-         * @param {Number} m 
-         * @param {Number} mpp 
-         * @param {Number} x 
-         * @param {Number} rhobeg 
-         * @param {Number} rhoend 
-         * @param {Number} iprint 
-         * @param {Number} maxfun 
+         * @param {Function} calcfc
+         * @param {Number} n
+         * @param {Number} m
+         * @param {Number} mpp
+         * @param {Number} x
+         * @param {Number} rhobeg
+         * @param {Number} rhoend
+         * @param {Number} iprint
+         * @param {Number} maxfun
          * @returns {Number} Exit status of the COBYLA2 optimization
          */
-        cobylb: function (calcfc, n,  m,  mpp,  x, rhobeg,  rhoend,  iprint,  maxfun) {
+        cobylb: function (calcfc, n, m, mpp, x, rhobeg, rhoend, iprint, maxfun) {
             // calcf ist funktion die aufgerufen wird wie calcfc(n, m, ix, ocon)
             // N.B. Arguments CON, SIM, SIMI, DATMAT, A, VSIG, VETA, SIGBAR, DX, W & IACT
             //      have been removed.
@@ -12141,8 +12150,7 @@ define('math/nlp',['jxg'], function (JXG) {
                                     sim[i][np] += temp;
 
                                     tempa = 0.0;
-                                    for (k = 1; k <= n; ++k)
-                                    {
+                                    for (k = 1; k <= n; ++k) {
                                         sim[i][k] -= temp;
                                         tempa -= simi[k][i];
                                     }
@@ -12153,13 +12161,17 @@ define('math/nlp',['jxg'], function (JXG) {
                             //     Make an error return if SIGI is a poor approximation to the inverse of
                             //     the leading N by N submatrix of SIG.
                             error = 0.0;
-                            for (i = 1; i <= n; ++i) {
-                                for (j = 1; j <= n; ++j) {
-                                    temp = this.DOT_PRODUCT(
-                                            this.PART(this.ROW(simi, i), 1, n),
-                                            this.PART(this.COL(sim, j), 1, n)
-                                        ) - (i === j ? 1.0 : 0.0);
-                                    error = Math.max(error, Math.abs(temp));
+                            if (false) {
+                                for (i = 1; i <= n; ++i) {
+                                    for (j = 1; j <= n; ++j) {
+                                        temp = this.DOT_PRODUCT_ROW_COL(simi, i, sim, j, 1, n) - (i === j ? 1.0 : 0.0);
+                                        // temp = this.DOT_PRODUCT(
+                                        //     this.PART(this.ROW(simi, i), 1, n),
+                                        //     this.PART(this.COL(sim, j), 1, n)
+                                        // ) - (i === j ? 1.0 : 0.0);
+
+                                        error = Math.max(error, Math.abs(temp));
+                                    }
                                 }
                             }
                             if (error > 0.1) {
@@ -12178,8 +12190,9 @@ define('math/nlp',['jxg'], function (JXG) {
                                 }
 
                                 for (i = 1; i <= n; ++i) {
-                                    a[i][k] = (k === mp ? -1.0 : 1.0) * this.DOT_PRODUCT(
-                                        this.PART(w, 1, n), this.PART(this.COL(simi, i), 1, n));
+                                    a[i][k] = (k === mp ? -1.0 : 1.0) *
+                                        this.DOT_PRODUCT_ROW_COL(w, -1, simi, i, 1, n);
+                                    // this.DOT_PRODUCT(this.PART(w, 1, n), this.PART(this.COL(simi, i), 1, n));
                                 }
                             }
 
@@ -12191,11 +12204,9 @@ define('math/nlp',['jxg'], function (JXG) {
 
                             for (j = 1; j <= n; ++j) {
                                 wsig = 0.0;
-                                for (k = 1; k <= n; ++k) {
-                                    wsig += simi[j][k] * simi[j][k];
-                                }
                                 weta = 0.0;
                                 for (k = 1; k <= n; ++k) {
+                                    wsig += simi[j][k] * simi[j][k];
                                     weta += sim[k][j] * sim[k][j];
                                 }
                                 vsig[j] = 1.0 / Math.sqrt(wsig);
@@ -12232,10 +12243,8 @@ define('math/nlp',['jxg'], function (JXG) {
                                 cvmaxm = 0.0;
                                 total = 0.0;
                                 for (k = 1; k <= mp; ++k) {
-                                    total = this.DOT_PRODUCT(
-                                        this.PART(this.COL(a, k), 1, n),
-                                        this.PART(dx, 1, n)
-                                        );
+                                    // total = this.DOT_PRODUCT(this.PART(this.COL(a, k), 1, n), this.PART(dx, 1, n));
+                                    total = this.DOT_PRODUCT_ROW_COL(dx, -1, a, k, 1, n);
                                     if (k < mp) {
                                         temp = datmat[k][np];
                                         cvmaxp = Math.max(cvmaxp, -total - temp);
@@ -12257,10 +12266,8 @@ define('math/nlp',['jxg'], function (JXG) {
 
                                 for (j = 1; j <= n; ++j) {
                                     if (j !== jdrop) {
-                                        temp = this.DOT_PRODUCT(
-                                            this.PART(this.ROW(simi, j), 1, n),
-                                            this.PART(dx, 1, n)
-                                            );
+                                        // temp = this.DOT_PRODUCT(this.PART(this.ROW(simi, j), 1, n), this.PART(dx, 1, n));
+                                        temp = this.DOT_PRODUCT_ROW_COL(simi, j, dx, -1, 1, n);
                                         for (k = 1; k <= n; ++k) {
                                             simi[j][k] -= temp * simi[jdrop][k];
                                         }
@@ -12290,7 +12297,8 @@ define('math/nlp',['jxg'], function (JXG) {
                             resnew = 0.0;
                             con[mp] = 0.0;
                             for (k = 1; k <= mp; ++k) {
-                                total = con[k] - this.DOT_PRODUCT(this.PART(this.COL(a, k), 1, n), this.PART(dx, 1, n));
+                                //total = con[k] - this.DOT_PRODUCT(this.PART(this.COL(a, k), 1, n), this.PART(dx, 1, n));
+                                total = con[k] - this.DOT_PRODUCT_ROW_COL(dx, -1, a, k, 1, n);
                                 if (k < mp) { resnew = Math.max(resnew, total); }
                             }
 
@@ -12338,7 +12346,8 @@ define('math/nlp',['jxg'], function (JXG) {
                         ratio = trured <= 0.0 ? 1.0 : 0.0;
                         jdrop = 0;
                         for (j = 1; j <= n; ++j) {
-                            temp = Math.abs(this.DOT_PRODUCT(this.PART(this.ROW(simi, j), 1, n), this.PART(dx, 1, n)));
+                            // temp = Math.abs(this.DOT_PRODUCT(this.PART(this.ROW(simi, j), 1, n), this.PART(dx, 1, n)));
+                            temp = Math.abs(this.DOT_PRODUCT_ROW_COL(simi, j, dx, -1, 1, n));
                             if (temp > ratio) {
                                 jdrop = j;
                                 ratio = temp;
@@ -12378,7 +12387,8 @@ define('math/nlp',['jxg'], function (JXG) {
                             for (k = 1; k <= n; ++k) { simi[jdrop][k] /= temp; }
                             for (j = 1; j <= n; ++j) {
                                 if (j !== jdrop) {
-                                    temp = this.DOT_PRODUCT(this.PART(this.ROW(simi, j), 1, n), this.PART(dx, 1, n));
+                                    // temp = this.DOT_PRODUCT(this.PART(this.ROW(simi, j), 1, n), this.PART(dx, 1, n));
+                                    temp = this.DOT_PRODUCT_ROW_COL(simi, j, dx, -1, 1, n);
                                     for (k = 1; k <= n; ++k) {
                                         simi[j][k] -= temp * simi[jdrop][k];
                                     }
@@ -12431,7 +12441,7 @@ define('math/nlp',['jxg'], function (JXG) {
                         }
                     }
                     if (iprint >= 2) {
-                        console.log("Reduction in RHO to "+rho+"  and PARMU = "+parmu);
+                        console.log("Reduction in RHO to " + rho + "  and PARMU = " + parmu);
                     }
                     if (iprint === 2) {
                         this.PrintIterationResult(nfvals, datmat[mp][np], datmat[mpp][np], this.COL(sim, np), n, iprint);
@@ -12467,7 +12477,7 @@ define('math/nlp',['jxg'], function (JXG) {
             return status;
         },
 
-        trstlp: function(n,  m,  a, b, rho,  dx) { //(int n, int m, double[][] a, double[] b, double rho, double[] dx)
+        trstlp: function (n, m, a, b, rho, dx) { //(int n, int m, double[][] a, double[] b, double rho, double[] dx)
             // N.B. Arguments Z, ZDOTA, VMULTC, SDIRN, DXNEW, VMULTD & IACT have been removed.
 
             //     This subroutine calculates an N-component vector DX by applying the
@@ -12581,9 +12591,8 @@ define('math/nlp',['jxg'], function (JXG) {
 
                     L_70:
                     do {
-                        optnew = (mcon === m) ? resmax : -this.DOT_PRODUCT(
-                                this.PART(dx, 1, n), this.PART(this.COL(a, mcon), 1, n)
-                            );
+                        // optnew = (mcon === m) ? resmax : -this.DOT_PRODUCT(this.PART(dx, 1, n), this.PART(this.COL(a, mcon), 1, n));
+                        optnew = (mcon === m) ? resmax : -this.DOT_PRODUCT_ROW_COL(dx, -1, a, mcon, 1, n);
 
                         if (icount === 0 || optnew < optold) {
                             optold = optnew;
@@ -12614,9 +12623,9 @@ define('math/nlp',['jxg'], function (JXG) {
                                     kp = k + 1;
                                     kk = iact[kp];
                                     sp = this.DOT_PRODUCT(
-                                            this.PART(this.COL(z, k), 1, n),
-                                            this.PART(this.COL(a, kk), 1, n)
-                                        );
+                                        this.PART(this.COL(z, k), 1, n),
+                                        this.PART(this.COL(a, kk), 1, n)
+                                    );
                                     temp = Math.sqrt(sp * sp + zdota[kp] * zdota[kp]);
                                     alpha = zdota[kp] / temp;
                                     beta = sp / temp;
@@ -12644,9 +12653,8 @@ define('math/nlp',['jxg'], function (JXG) {
                                 temp = 1.0 / zdota[nact];
                                 for (k = 1; k <= n; ++k) { sdirn[k] = temp * z[k][nact]; }
                             } else {
-                                temp = this.DOT_PRODUCT(
-                                        this.PART(sdirn, 1, n), this.PART(this.COL(z, nact + 1), 1, n)
-                                    );
+                                // temp = this.DOT_PRODUCT(this.PART(sdirn, 1, n), this.PART(this.COL(z, nact + 1), 1, n));
+                                temp = this.DOT_PRODUCT_ROW_COL(sdirn, -1, z, nact + 1, 1, n);
                                 for (k = 1; k <= n; ++k) { sdirn[k] -= temp * z[k][nact + 1]; }
                             }
                         } else {
@@ -12655,34 +12663,34 @@ define('math/nlp',['jxg'], function (JXG) {
                             tot = 0.0;
 
                             // {
-                                k = n;
-                                while (k > nact) {
-                                    sp = 0.0;
-                                    spabs = 0.0;
-                                    for (i = 1; i <= n; ++i) {
-                                        temp = z[i][k] * dxnew[i];
-                                        sp += temp;
-                                        spabs += Math.abs(temp);
-                                    }
-                                    acca = spabs + 0.1 * Math.abs(sp);
-                                    accb = spabs + 0.2 * Math.abs(sp);
-                                    if (spabs >= acca || acca >= accb) { sp = 0.0; }
-                                    if (tot === 0.0) {
-                                        tot = sp;
-                                    } else {
-                                        kp = k + 1;
-                                        temp = Math.sqrt(sp * sp + tot * tot);
-                                        alpha = sp / temp;
-                                        beta = tot / temp;
-                                        tot = temp;
-                                        for (i = 1; i <= n; ++i) {
-                                            temp = alpha * z[i][k] + beta * z[i][kp];
-                                            z[i][kp] = alpha * z[i][kp] - beta * z[i][k];
-                                            z[i][k] = temp;
-                                        }
-                                    }
-                                    --k;
+                            k = n;
+                            while (k > nact) {
+                                sp = 0.0;
+                                spabs = 0.0;
+                                for (i = 1; i <= n; ++i) {
+                                    temp = z[i][k] * dxnew[i];
+                                    sp += temp;
+                                    spabs += Math.abs(temp);
                                 }
+                                acca = spabs + 0.1 * Math.abs(sp);
+                                accb = spabs + 0.2 * Math.abs(sp);
+                                if (spabs >= acca || acca >= accb) { sp = 0.0; }
+                                if (tot === 0.0) {
+                                    tot = sp;
+                                } else {
+                                    kp = k + 1;
+                                    temp = Math.sqrt(sp * sp + tot * tot);
+                                    alpha = sp / temp;
+                                    beta = tot / temp;
+                                    tot = temp;
+                                    for (i = 1; i <= n; ++i) {
+                                        temp = alpha * z[i][k] + beta * z[i][kp];
+                                        z[i][kp] = alpha * z[i][kp] - beta * z[i][k];
+                                        z[i][k] = temp;
+                                    }
+                                }
+                                --k;
+                            }
                             // }
 
                             if (tot === 0.0) {
@@ -12695,34 +12703,34 @@ define('math/nlp',['jxg'], function (JXG) {
 
                                 ratio = -1.0;
                                 //{
-                                    k = nact;
-                                    do {
-                                        zdotv = 0.0;
-                                        zdvabs = 0.0;
+                                k = nact;
+                                do {
+                                    zdotv = 0.0;
+                                    zdvabs = 0.0;
 
-                                        for (i = 1; i <= n; ++i) {
-                                            temp = z[i][k] * dxnew[i];
-                                            zdotv += temp;
-                                            zdvabs += Math.abs(temp);
+                                    for (i = 1; i <= n; ++i) {
+                                        temp = z[i][k] * dxnew[i];
+                                        zdotv += temp;
+                                        zdvabs += Math.abs(temp);
+                                    }
+                                    acca = zdvabs + 0.1 * Math.abs(zdotv);
+                                    accb = zdvabs + 0.2 * Math.abs(zdotv);
+                                    if (zdvabs < acca && acca < accb) {
+                                        temp = zdotv / zdota[k];
+                                        if (temp > 0.0 && iact[k] <= m) {
+                                            tempa = vmultc[k] / temp;
+                                            if (ratio < 0.0 || tempa < ratio) { ratio = tempa; }
                                         }
-                                        acca = zdvabs + 0.1 * Math.abs(zdotv);
-                                        accb = zdvabs + 0.2 * Math.abs(zdotv);
-                                        if (zdvabs < acca && acca < accb) {
-                                            temp = zdotv / zdota[k];
-                                            if (temp > 0.0 && iact[k] <= m) {
-                                                tempa = vmultc[k] / temp;
-                                                if (ratio < 0.0 || tempa < ratio) { ratio = tempa; }
-                                            }
 
-                                            if (k >= 2) {
-                                                kw = iact[k];
-                                                for (i = 1; i <= n; ++i) { dxnew[i] -= temp * a[i][kw]; }
-                                            }
-                                            vmultd[k] = temp;
-                                        } else {
-                                            vmultd[k] = 0.0;
+                                        if (k >= 2) {
+                                            kw = iact[k];
+                                            for (i = 1; i <= n; ++i) { dxnew[i] -= temp * a[i][kw]; }
                                         }
-                                    } while (--k > 0);
+                                        vmultd[k] = temp;
+                                    } else {
+                                        vmultd[k] = 0.0;
+                                    }
+                                } while (--k > 0);
                                 //}
                                 if (ratio < 0.0) { break L_60; }
 
@@ -12741,9 +12749,9 @@ define('math/nlp',['jxg'], function (JXG) {
                                         kp = k + 1;
                                         kw = iact[kp];
                                         sp = this.DOT_PRODUCT(
-                                                this.PART(this.COL(z, k), 1, n),
-                                                this.PART(this.COL(a, kw), 1, n)
-                                            );
+                                            this.PART(this.COL(z, k), 1, n),
+                                            this.PART(this.COL(a, kw), 1, n)
+                                        );
                                         temp = Math.sqrt(sp * sp + zdota[kp] * zdota[kp]);
                                         alpha = zdota[kp] / temp;
                                         beta = sp / temp;
@@ -12762,9 +12770,9 @@ define('math/nlp',['jxg'], function (JXG) {
                                     vmultc[k] = vsave;
                                 }
                                 temp = this.DOT_PRODUCT(
-                                            this.PART(this.COL(z, nact), 1, n),
-                                            this.PART(this.COL(a, kk), 1, n)
-                                        );
+                                    this.PART(this.COL(z, nact), 1, n),
+                                    this.PART(this.COL(a, kk), 1, n)
+                                );
                                 if (temp === 0.0) { break L_60; }
                                 zdota[nact] = temp;
                                 vmultc[icon] = 0.0;
@@ -12787,9 +12795,9 @@ define('math/nlp',['jxg'], function (JXG) {
                             if (mcon > m && kk !== mcon) {
                                 k = nact - 1;
                                 sp = this.DOT_PRODUCT(
-                                        this.PART(this.COL(z, k), 1, n),
-                                        this.PART(this.COL(a, kk), 1, n)
-                                    );
+                                    this.PART(this.COL(z, k), 1, n),
+                                    this.PART(this.COL(a, kk), 1, n)
+                                );
                                 temp = Math.sqrt(sp * sp + zdota[nact] * zdota[nact]);
                                 alpha = zdota[nact] / temp;
                                 beta = sp / temp;
@@ -12815,10 +12823,8 @@ define('math/nlp',['jxg'], function (JXG) {
                                 for (k = 1; k <= n; ++k) { sdirn[k] = temp * z[k][nact]; }
                             } else {
                                 kk = iact[nact];
-                                temp = (this.DOT_PRODUCT(
-                                            this.PART(sdirn, 1, n),
-                                            this.PART(this.COL(a, kk), 1, n)
-                                        ) - 1.0) / zdota[nact];
+                                // temp = (this.DOT_PRODUCT(this.PART(sdirn, 1, n),this.PART(this.COL(a, kk), 1, n)) - 1.0) / zdota[nact];
+                                temp = (this.DOT_PRODUCT_ROW_COL(sdirn, -1, a, kk, 1, n) - 1.0) / zdota[nact];
                                 for (k = 1; k <= n; ++k) { sdirn[k] -= temp * z[k][nact]; }
                             }
                         }
@@ -12858,9 +12864,8 @@ define('math/nlp',['jxg'], function (JXG) {
                             resmax = 0.0;
                             for (k = 1; k <= nact; ++k) {
                                 kk = iact[k];
-                                temp = b[kk] - this.DOT_PRODUCT(
-                                        this.PART(this.COL(a, kk), 1, n), this.PART(dxnew, 1, n)
-                                    );
+                                // temp = b[kk] - this.DOT_PRODUCT(this.PART(this.COL(a, kk), 1, n), this.PART(dxnew, 1, n));
+                                temp = b[kk] - this.DOT_PRODUCT_ROW_COL(dxnew, -1, a, kk, 1, n);
                                 resmax = Math.max(resmax, temp);
                             }
                         }
@@ -12870,25 +12875,25 @@ define('math/nlp',['jxg'], function (JXG) {
                         //     can be attributed to computer rounding errors. First calculate the new
                         //     Lagrange multipliers.
                         //{
-                            k = nact;
-                            do {
-                                zdotw = 0.0;
-                                zdwabs = 0.0;
-                                for (i = 1; i <= n; ++i) {
-                                    temp = z[i][k] * dxnew[i];
-                                    zdotw += temp;
-                                    zdwabs += Math.abs(temp);
-                                }
-                                acca = zdwabs + 0.1 * Math.abs(zdotw);
-                                accb = zdwabs + 0.2 * Math.abs(zdotw);
-                                if (zdwabs >= acca || acca >= accb) { zdotw = 0.0; }
-                                vmultd[k] = zdotw / zdota[k];
-                                if (k >= 2) {
-                                    kk = iact[k];
-                                    for (i = 1; i <= n; ++i) { dxnew[i] -= vmultd[k] * a[i][kk]; }
-                                }
-                            } while (k-- >= 2);
-                            if (mcon > m) { vmultd[nact] = Math.max(0.0, vmultd[nact]); }
+                        k = nact;
+                        do {
+                            zdotw = 0.0;
+                            zdwabs = 0.0;
+                            for (i = 1; i <= n; ++i) {
+                                temp = z[i][k] * dxnew[i];
+                                zdotw += temp;
+                                zdwabs += Math.abs(temp);
+                            }
+                            acca = zdwabs + 0.1 * Math.abs(zdotw);
+                            accb = zdwabs + 0.2 * Math.abs(zdotw);
+                            if (zdwabs >= acca || acca >= accb) { zdotw = 0.0; }
+                            vmultd[k] = zdotw / zdota[k];
+                            if (k >= 2) {
+                                kk = iact[k];
+                                for (i = 1; i <= n; ++i) { dxnew[i] -= vmultd[k] * a[i][kk]; }
+                            }
+                        } while (k-- >= 2);
+                        if (mcon > m) { vmultd[nact] = Math.max(0.0, vmultd[nact]); }
                         //}
 
                         //     Complete VMULTC by finding the new constraint residuals.
@@ -12953,12 +12958,12 @@ define('math/nlp',['jxg'], function (JXG) {
             return false;
         },
 
-        PrintIterationResult: function(nfvals, f, resmax,  x,  n, iprint) {
-            if (iprint > 1) { console.log("NFVALS = "+nfvals+"  F = "+f+"  MAXCV = "+resmax); }
+        PrintIterationResult: function (nfvals, f, resmax, x, n, iprint) {
+            if (iprint > 1) { console.log("NFVALS = " + nfvals + "  F = " + f + "  MAXCV = " + resmax); }
             if (iprint > 1) { console.log("X = " + this.PART(x, 1, n)); }
         },
 
-        ROW: function(src, rowidx) {
+        ROW: function (src, rowidx) {
             return src[rowidx].slice();
             // var col,
             //     cols = src[0].length,
@@ -12970,17 +12975,18 @@ define('math/nlp',['jxg'], function (JXG) {
             // return dest;
         },
 
-        COL: function(src, colidx) {
+        COL: function (src, colidx) {
             var row,
                 rows = src.length,
-                dest = this.arr(rows);
+                dest = []; // this.arr(rows);
+
             for (row = 0; row < rows; ++row) {
                 dest[row] = src[row][colidx];
             }
             return dest;
         },
 
-        PART: function(src, from, to) {
+        PART: function (src, from, to) {
             return src.slice(from, to + 1);
             // var srcidx,
             //     dest = this.arr(to - from + 1),
@@ -12991,7 +12997,7 @@ define('math/nlp',['jxg'], function (JXG) {
             // return dest;
         },
 
-        FORMAT: function(x) {
+        FORMAT: function (x) {
             return x.join(',');
             // var i, fmt = "";
             // for (i = 0; i < x.length; ++i) {
@@ -13000,12 +13006,38 @@ define('math/nlp',['jxg'], function (JXG) {
             // return fmt;
         },
 
-        DOT_PRODUCT: function(lhs,  rhs) {
+        DOT_PRODUCT: function (lhs, rhs) {
             var i, sum = 0.0,
                 len = lhs.length;
             for (i = 0; i < len; ++i) {
                 sum += lhs[i] * rhs[i];
             }
+            return sum;
+        },
+
+        DOT_PRODUCT_ROW_COL: function (lhs, row, rhs, col, start, end) {
+            var i, sum = 0.0;
+
+            if (row === -1) {
+                // lhs is vector
+                for (i = start; i <= end; ++i) {
+                    sum += lhs[i] * rhs[i][col];
+                }
+            } else {
+                // lhs is row of matrix
+                if (col === -1) {
+                    // rhs is vector
+                    for (i = start; i <= end; ++i) {
+                        sum += lhs[row][i] * rhs[i];
+                    }
+                } else {
+                    // rhs is column of matrix
+                    for (i = start; i <= end; ++i) {
+                        sum += lhs[row][i] * rhs[i][col];
+                    }
+                }
+            }
+
             return sum;
         }
 
@@ -26737,6 +26769,7 @@ define('options',[
 
             /**
              * Controls if an element can get the focus with the tab key.
+             * tabindex corresponds to the HTML attribute of the same name.
              * See <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/tabindex">descriptiona at MDN</a>.
              * The additional value null completely disables focus of an element.
              * The value will be ignored if keyboard control of the board is not enabled or
@@ -28754,7 +28787,6 @@ define('options',[
              */
             lastArrow: false,
 
-
             /**
              * This number (pixel value) controls where infinite lines end at the canvas border. If zero, the line
              * ends exactly at the border, if negative there is a margin to the inside, if positive the line
@@ -28930,7 +28962,6 @@ define('options',[
              * @default 'butt'
              */
             lineCap: 'butt'
-
 
             /**#@-*/
         },
@@ -30872,8 +30903,10 @@ define('options',[
             display: 'html',
 
             /**
-             * Anchor element {@link Point}, {@link Text} or {@link Image} of the text. If it exists, the coordinates of the text are relative
-             * to this anchor element.
+             * Anchor element {@link Point}, {@link Text} or {@link Image} of the text.
+             * If it exists, the coordinates of the text are relative
+             * to this anchor element. In this case, only numbers are possible coordinates,
+             * functions are not supported.
              *
              * @name anchor
              * @memberOf Text.prototype
@@ -39077,23 +39110,25 @@ define('base/text',[
         /**
          * Converts the GEONExT syntax of the <value> terms into JavaScript.
          * Also, all Objects whose name appears in the term are searched and
-         * the text is added as child to these objects.
+         * the text is added as child to these objects. 
+         * This method is called if the attribute parse==true is set.
          *
          * @param{String} contentStr String to be parsed
          * @param{Boolean} [expand] Optional flag if shortened math syntax is allowed (e.g. 3x instead of 3*x).
          * @param{Boolean} [avoidGeonext2JS] Optional flag if geonext2JS should be called. For backwards compatibility
          * this has to be set explicitely to true.
-         * @param{Boolean} [avoidReplaceSup] Optional flag if "_" and "^" are NOT replaced by HTML tags sub and sup. Default: false,
-         * i.e. the replacement is done.
+         * @param{Boolean} [outputTeX] Optional flag which has to be true if the resulting term will be sent to MathJax or KaTeX. 
+         * If true, "_" and "^" are NOT replaced by HTML tags sub and sup. Default: false, i.e. the replacement is done.
+         * This flag allows the combination of &lt;value&gt; tag containing calculations with TeX output.
          *
          * @private
          * @see JXG.GeonextParser.geonext2JS
          */
-        generateTerm: function (contentStr, expand, avoidGeonext2JS, avoidReplaceSup) {
+        generateTerm: function (contentStr, expand, avoidGeonext2JS, outputTeX) {
             var res, term, i, j,
                 plaintext = '""';
 
-            avoidReplaceSup = avoidReplaceSup || false;
+            outputTeX = outputTeX || false;
 
             // Revert possible jc replacement
             contentStr = contentStr || '';
@@ -39102,10 +39137,16 @@ define('base/text',[
             contentStr = contentStr.replace(/"/g, '\'');
             contentStr = contentStr.replace(/'/g, "\\'");
 
-            contentStr = contentStr.replace(/&amp;arc;/g, '&ang;');
-            contentStr = contentStr.replace(/<arc\s*\/>/g, '&ang;');
-            contentStr = contentStr.replace(/&lt;arc\s*\/&gt;/g, '&ang;');
-            contentStr = contentStr.replace(/&lt;sqrt\s*\/&gt;/g, '&radic;');
+            if (!outputTeX) {
+                // Old GEONExT syntax, not (yet) supported as TeX output.
+                // Otherwise, the else clause should be used.
+                // That means, i.e. the <arc> tag and <sqrt> tag are not 
+                // converted into TeX syntax.
+                contentStr = contentStr.replace(/&amp;arc;/g, '&ang;');
+                contentStr = contentStr.replace(/<arc\s*\/>/g, '&ang;');
+                contentStr = contentStr.replace(/&lt;arc\s*\/&gt;/g, '&ang;');
+                contentStr = contentStr.replace(/&lt;sqrt\s*\/&gt;/g, '&radic;');
+            }
 
             contentStr = contentStr.replace(/&lt;value&gt;/g, '<value>');
             contentStr = contentStr.replace(/&lt;\/value&gt;/g, '</value>');
@@ -39115,7 +39156,7 @@ define('base/text',[
             j = contentStr.indexOf('</value>');
             if (i >= 0) {
                 while (i >= 0) {
-                    if (!avoidReplaceSup) {
+                    if (!outputTeX) {
                         plaintext += ' + "' + this.replaceSub(this.replaceSup(contentStr.slice(0, i))) + '"';
                         // plaintext += ' + "' + this.replaceSub(contentStr.slice(0, i)) + '"';
                     } else {
@@ -39153,14 +39194,14 @@ define('base/text',[
                 }
             }
 
-            if (!avoidReplaceSup) {
+            if (!outputTeX) {
                 plaintext += ' + "' + this.replaceSub(this.replaceSup(contentStr)) + '"';
                 plaintext = this.convertGeonextAndSketchometry2CSS(plaintext);
             } else {
                 plaintext += ' + "' + contentStr + '"';
             }
 
-            // This should replace &amp;pi; by &pi;
+            // This should replace e.g. &amp;pi; by &pi;
             plaintext = plaintext.replace(/&amp;/g, '&');
             plaintext = plaintext.replace(/"/g, "'");
 
@@ -45968,7 +46009,8 @@ define('base/board',[
          * @returns {Boolean}
          */
         pointerUpListener: function (evt) {
-            var i, j, found, touchTargets;
+            var i, j, found, touchTargets,
+                updateNeeded = false;
 
             this.triggerEventHandlers(['touchend', 'up', 'pointerup', 'MSPointerUp'], [evt]);
             this.displayInfobox(false);
@@ -46006,8 +46048,14 @@ define('base/board',[
                     }
                     if (!found) {
                         this.downObjects[i].triggerEventHandlers(['touchend', 'up', 'pointerup', 'MSPointerUp'], [evt]);
-                        // this.downObjects[i].snapToGrid();
-                        // this.downObjects[i].snapToPoints();
+                        if (!Type.exists(this.downObjects[i].coords)) {
+                            // snapTo methods have to be called e.g. for line elements here.
+                            // For coordsElements there might be a conflict with
+                            // attractors, see commit from 2022.04.08, 11:12:18.
+                            this.downObjects[i].snapToGrid();
+                            this.downObjects[i].snapToPoints();
+                            updateNeeded = true;
+                        }
                         this.downObjects.splice(i, 1);
                     }
                 }
@@ -46028,7 +46076,9 @@ define('base/board',[
             // this.mode = this.BOARD_MODE_NONE;
 
             // this.originMoveEnd();
-            // this.update();
+            if (updateNeeded) {
+                this.update();
+            }
 
             // After one finger leaves the screen the gesture is stopped.
             this._pointerClearTouches();
@@ -46363,7 +46413,8 @@ define('base/board',[
                 eps = this.options.precision.touch,
                 tmpTouches = [], found, foundNumber,
                 evtTouches = evt && evt[JXG.touchProperty],
-                touchTargets;
+                touchTargets,
+                updateNeeded = false;
 
             this.triggerEventHandlers(['touchend', 'up'], [evt]);
             this.displayInfobox(false);
@@ -46464,8 +46515,14 @@ define('base/board',[
                 }
                 if (!found) {
                     this.downObjects[i].triggerEventHandlers(['touchup', 'up'], [evt]);
-                    // this.downObjects[i].snapToGrid();
-                    // this.downObjects[i].snapToPoints();
+                    if (!Type.exists(this.downObjects[i].coords)) {
+                        // snapTo methods have to be called e.g. for line elements here.
+                        // For coordsElements there might be a conflict with
+                        // attractors, see commit from 2022.04.08, 11:12:18.
+                        this.downObjects[i].snapToGrid();
+                        this.downObjects[i].snapToPoints();
+                        updateNeeded = true;
+                    }
                     this.downObjects.splice(i, 1);
                 }
             }
@@ -46481,7 +46538,9 @@ define('base/board',[
                 this.updateQuality = this.BOARD_QUALITY_HIGH;
 
                 this.originMoveEnd();
-                this.update();
+                if (updateNeeded) {
+                    this.update();
+                }
             }
 
             return true;
@@ -46628,11 +46687,16 @@ define('base/board',[
             // redraw with high precision
             this.updateQuality = this.BOARD_QUALITY_HIGH;
 
-            // if (this.mouse && this.mouse.obj) {
-            //     // The parameter is needed for lines with snapToGrid enabled
-            //     this.mouse.obj.snapToGrid(this.mouse.targets[0]);
-            //     this.mouse.obj.snapToPoints();
-            // }
+            if (this.mouse && this.mouse.obj) {
+                if (!Type.exists(this.mouse.obj.coords)) {
+                    // snapTo methods have to be called e.g. for line elements here.
+                    // For coordsElements there might be a conflict with
+                    // attractors, see commit from 2022.04.08, 11:12:18.
+                    // The parameter is needed for lines with snapToGrid enabled
+                    this.mouse.obj.snapToGrid(this.mouse.targets[0]);
+                    this.mouse.obj.snapToPoints();
+                }
+            }
 
             this.originMoveEnd();
             this.dehighlightAll();
@@ -46688,11 +46752,18 @@ define('base/board',[
         },
 
         /**
-         * Allow moving of JSXGraph elements with arrow keys
-         * and zooming of the construction with + / -.
+         * Allow moving of JSXGraph elements with arrow keys.
+         * The selection of the element is done with the tab key. For this,
+         * the attribute "tabindex" of the element has to be set to some number (default=0).
+         * tabindex corresponds to the HTML attribute of the same name.
+         * <p>
          * Panning of the construction is done with arrow keys
-         * if the pan key (shift or ctrl) is pressed.
-         * The selection of the element is done with the tab key.
+         * if the pan key (shift or ctrl - depending on the board attributes) is pressed.
+         * <p>
+         * Zooming is triggered with the keys +, o, -, if
+         * the pan key (shift or ctrl - depending on the board attributes) is pressed.
+         * <p>
+         * Keyboard control (move, pan, and zoom) is disabled if an HTML element of type input or textarea has received focus.
          *
          * @param  {Event} evt The browser's event object
          *
@@ -46718,8 +46789,8 @@ define('base/board',[
                 return false;
             }
 
+            // An element of type input or textarea has foxus, get out of here.
             doc = this.containerObj.shadowRoot || document;
-            // console.log(doc.activeElement)
             if (doc.activeElement) {
                 el = doc.activeElement;
                 if (el.tagName === 'INPUT' || el.tagName === 'textarea') {
@@ -46735,13 +46806,15 @@ define('base/board',[
                 actPos = el.coords.usrCoords.slice(1);
             }
 
-            if ((Type.evaluate(this.attr.keyboard.panshift) || Type.evaluate(this.attr.keyboard.panctrl)) &&
-                (Type.evaluate(this.attr.zoom.enabled) === true)) {
-                doZoom = true;
-            }
-
             if ((Type.evaluate(this.attr.keyboard.panshift) && evt.shiftKey) ||
                 (Type.evaluate(this.attr.keyboard.panctrl) && evt.ctrlKey)) {
+                // Pan key has been pressed
+
+                if (Type.evaluate(this.attr.zoom.enabled) === true) {
+                    doZoom = true;
+                }
+
+                // Arrow keys
                 if (evt.keyCode === 38) {           // up
                     this.clickUpArrow();
                 } else if (evt.keyCode === 40) {    // down
@@ -46750,10 +46823,20 @@ define('base/board',[
                     this.clickLeftArrow();
                 } else if (evt.keyCode === 39) {    // right
                     this.clickRightArrow();
+
+                // Zoom keys
+                } else if (doZoom && evt.keyCode === 171) {   // +
+                    this.zoomIn();
+                } else if (doZoom && evt.keyCode === 173) {   // -
+                    this.zoomOut();
+                } else if (doZoom && evt.keyCode === 79) {   // o
+                    this.zoom100();
+
                 } else {
                     done = false;
                 }
             } else {
+
                 // Adapt dx, dy to snapToGrid and attractToGrid
                 // snapToGrid has priority.
                 if (Type.exists(el.visProp)) {
@@ -46796,14 +46879,6 @@ define('base/board',[
                     dir = [-dx, 0];
                 } else if (evt.keyCode === 39) {    // right
                     dir = [dx, 0];
-                // } else if (evt.keyCode === 9) {  // tab
-
-                } else if (doZoom && evt.key === '+') {   // +
-                    this.zoomIn();
-                } else if (doZoom && evt.key === '-') {   // -
-                    this.zoomOut();
-                } else if (doZoom && evt.key === 'o') {   // o
-                    this.zoom100();
                 } else {
                     done = false;
                 }
@@ -46842,6 +46917,7 @@ define('base/board',[
         /**
          * Event listener for SVG elements getting focus.
          * This is needed for highlighting when using keyboard control.
+         * Only elements having the attribute "tabindex" can receive focus.
          *
          * @see JXG.Board#keyFocusOutListener
          * @see JXG.Board#keyDownListener
@@ -46871,6 +46947,7 @@ define('base/board',[
         /**
          * Event listener for SVG elements losing focus.
          * This is needed for dehighlighting when using keyboard control.
+         * Only elements having the attribute "tabindex" can receive focus.
          *
          * @see JXG.Board#keyFocusInListener
          * @see JXG.Board#keyDownListener
@@ -46921,8 +46998,8 @@ define('base/board',[
             }
 
             // If div is invisible - do nothing
-            if (w <= 0 || h <= 0 || Type.isNaN(w) || Type.isNaN(h)) {
-                return;
+            if (w <= 0 || h <= 0 || isNaN(w) || isNaN(h)) {
+                    return;
             }
 
             // If bounding box is not yet initialized, do it now.
@@ -48936,21 +49013,20 @@ define('base/board',[
          */
         updateCSSTransforms: function () {
             var obj = this.containerObj,
-                o = obj,
-                o2 = obj;
+                o = obj;
+                // o2 = obj;
 
             this.cssTransMat = Env.getCSSTransformMatrix(o);
 
-            /*
+            // Newer variant of walking up the tree.
+            // We walk up all parent nodes and collect possible CSS transforms.
+            // Works also for ShadowDOM
             o = o.parentNode === o.getRootNode() ? o.parentNode.host : o.parentNode;
-            console.log("o: " + o + (o ? " " + o.tagName : ""))
             while (o) {
                 this.cssTransMat = Mat.matMatMult(Env.getCSSTransformMatrix(o), this.cssTransMat);
                 o = o.parentNode === o.getRootNode() ? o.parentNode.host : o.parentNode;
-                console.log("o: " + o + (o ? " " + o.tagName : ""))
             }
             this.cssTransMat = Mat.inverse(this.cssTransMat);
-            */
 
             /*
              * In Mozilla and Webkit: offsetParent seems to jump at least to the next iframe,
@@ -48958,20 +49034,22 @@ define('base/board',[
              * offsetParent walks up the DOM hierarchy.
              * In order to walk up the DOM hierarchy also in Mozilla and Webkit
              * we need the parentNode steps.
+             *
+             * Seems to be outdated
              */
-            o = o.offsetParent;
-            while (o) {
-                this.cssTransMat = Mat.matMatMult(Env.getCSSTransformMatrix(o), this.cssTransMat);
+            // o = o.offsetParent;
+            // while (o) {
+            //     this.cssTransMat = Mat.matMatMult(Env.getCSSTransformMatrix(o), this.cssTransMat);
 
-                o2 = o2.parentNode;
-                while (o2 !== o) {
-                    this.cssTransMat = Mat.matMatMult(Env.getCSSTransformMatrix(o), this.cssTransMat);
-                    o2 = o2.parentNode || o2.host;
-                }
+            //     o2 = o2.parentNode;
+            //     while (o2 !== o) {
+            //         this.cssTransMat = Mat.matMatMult(Env.getCSSTransformMatrix(o), this.cssTransMat);
+            //         o2 = o2.parentNode;
+            //     }
 
-                o = o.offsetParent;
-            }
-            this.cssTransMat = Mat.inverse(this.cssTransMat);
+            //     o = o.offsetParent;
+            // }
+            // this.cssTransMat = Mat.inverse(this.cssTransMat);
 
             return this;
         },
@@ -49532,16 +49610,17 @@ define('base/board',[
          *
          */
         toFullscreen: function (id) {
-            var wrap_id, wrap_node, inner_node;
+            var wrap_id, wrap_node, inner_node,
+                doc = this.document;
 
             id = id || this.container;
             this._fullscreen_inner_id = id;
-            inner_node = this.document.getElementById(id);
+            inner_node = doc.getElementById(id);
             wrap_id = 'fullscreenwrap_' + id;
 
             // Wrap a div around the JSXGraph div.
-            if (this.document.getElementById(wrap_id)) {
-                wrap_node = this.document.getElementById(wrap_id);
+            if (doc.getElementById(wrap_id)) {
+                wrap_node = doc.getElementById(wrap_id);
             } else {
                 wrap_node = document.createElement('div');
                 wrap_node.classList.add('JXG_wrap_private');
@@ -49560,8 +49639,14 @@ define('base/board',[
                 wrap_node.mozRequestFullScreen ||
                 wrap_node.msRequestFullscreen;
 
-            if (wrap_node.requestFullscreen) {
-                wrap_node.requestFullscreen();
+            if (doc.fullscreenElement === null) {
+                // Start fullscreen mode
+                if (wrap_node.requestFullscreen) {
+                    wrap_node.requestFullscreen();
+                }
+            } else {
+                // Leave fullscreen mode (e.g. when clicking on the icon)
+                document.exitFullscreen();
             }
 
             return this;
@@ -49575,23 +49660,24 @@ define('base/board',[
          * @param  {Object} evt fullscreen event object (unused)
          */
         fullscreenListener: function (evt) {
-            var res, inner_id, inner_node;
+            var res, inner_id, inner_node,
+                doc = this.document;
 
             inner_id = this._fullscreen_inner_id;
             if (!Type.exists(inner_id)) {
                 return;
             }
 
-            this.document.fullscreenElement = this.document.fullscreenElement ||
-                    this.document.webkitFullscreenElement ||
-                    this.document.mozFullscreenElement ||
-                    this.document.msFullscreenElement;
+            doc.fullscreenElement = doc.fullscreenElement ||
+                    doc.webkitFullscreenElement ||
+                    doc.mozFullscreenElement ||
+                    doc.msFullscreenElement;
 
-            inner_node = this.document.getElementById(inner_id);
+            inner_node = doc.getElementById(inner_id);
             // If full screen mode is started we have to remove CSS margin around the JSXGraph div.
             // Otherwise, the positioning of the fullscreen div will be false.
             // When leaving the fullscreen mode, the margin is put back in.
-            if (this.document.fullscreenElement) {
+            if (doc.fullscreenElement) {
                 // Just entered fullscreen mode
 
                 // Get the data computed in board.toFullscreen()
@@ -49603,7 +49689,7 @@ define('base/board',[
                 // Further, the CSS margin has to be removed when in fullscreen mode,
                 // and must be restored later.
                 inner_node._cssFullscreenStore = {
-                    id: this.document.fullscreenElement.id,
+                    id: doc.fullscreenElement.id,
                     isFullscreen: true,
                     margin: inner_node.style.margin,
                     width: inner_node.style.width,
@@ -49617,18 +49703,18 @@ define('base/board',[
                 // Do the shifting and scaling via CSS pseudo rules
                 // We do this after fullscreen mode has been established to get the correct size
                 // of the JSXGraph div.
-                Env.scaleJSXGraphDiv(document.fullscreenElement.id, inner_id, res.scale, res.vshift);
+                Env.scaleJSXGraphDiv(doc.fullscreenElement.id, inner_id, res.scale, res.vshift, doc);
 
                 // Clear this.document.fullscreenElement, because Safari doesn't to it and
                 // when leaving full screen mode it is still set.
-                this.document.fullscreenElement = null;
+                doc.fullscreenElement = null;
 
             } else if (Type.exists(inner_node._cssFullscreenStore)) {
                 // Just left the fullscreen mode
 
                 // Remove the CSS rules added in Env.scaleJSXGraphDiv
                 try {
-                    this.document.styleSheets[this.document.styleSheets.length - 1].deleteRule(0);
+                    doc.styleSheets[doc.styleSheets.length - 1].deleteRule(0);
                 } catch (err) {
                     console.log('JSXGraph: Could not remove CSS rules for full screen mode');
                 }
@@ -76331,7 +76417,7 @@ define('base/ticks',[
 
             // if value is Number
             if (Type.isNumber(value)) {
-                labelText = (Math.round(value * 1.e13) / 1.e13).toString();
+                labelText = (Math.round(value * 1.e11) / 1.e11).toString();
                 if (labelText.length > Type.evaluate(this.visProp.maxlabellength) ||
                         labelText.indexOf('e') !== -1) {
 
@@ -81024,7 +81110,7 @@ define('3d/view3d',['jxg', 'options', 'base/constants', 'utils/type', 'math/math
         w = size[0];
         h = size[1];
 
-        /**
+        /*
          * Frame around the view object
          */
         if (false) {
@@ -81872,24 +81958,198 @@ define('3d/point3d',['jxg', 'base/constants', 'math/math', 'math/geometry', 'uti
 ], function (JXG, Const, Mat, Geometry, Type, ThreeD) {
     "use strict";
 
+     JXG.Point3D = function (/*view, parents, attributes*/) {
+        /**
+         * Element type of a point3D.
+         * Accessible through subobject D3.
+         *
+         * @name Point3D#elType
+         * @type String
+         * @private
+         *
+         * @example
+         *   p.D3.elType;
+         */
+        this.elType = 'point3d';
+
+        /**
+         * Homogeneous coordinates of a Point3D, i.e. array of length 4: [w, x, y, z].
+         * Accessible through subobject D3.
+         *
+         * @example
+         *   p.D3.coords;
+         *
+         * @name Point3D#coords
+         * @type Array
+         * @private
+         */
+        this.coords = [1, 0, 0, 0];
+
+        /**
+         * Slide element, i.e. element the Point3D lives on.
+         * Accessible through subobject D3.
+         *
+         * @example
+         *   p.D3.slide;
+         *
+         * @name Point3D#slide
+         * @type {JXG.GeometryElement}
+         * @default null
+         * @private
+         *
+         */
+        this.slide = null;
+
+        /**
+         * Get x-coordinate of a 3D point.
+         * Accessible through subobject D3.
+         *
+         * @name X
+         * @memberOf Point3D
+         * @function
+         * @returns {Number}
+         *
+         * @example
+         *   p.D3.X();
+         */
+        this.X = function () { return this.coords[1]; };
+
+        /**
+         * Get y-coordinate of a 3D point.
+         * Accessible through subobject D3.
+         *
+         * @name Y
+         * @memberOf Point3D
+         * @function
+         * @returns Number
+         *
+         * @example
+         *   p.D3.Y();
+         */
+        this.Y = function () { return this.coords[2]; };
+
+        /**
+         * Get z-coordinate of a 3D point.
+         * Accessible through subobject D3.
+         *
+         * @name Z
+         * @memberOf Point3D
+         * @function
+         * @returns Number
+         *
+         * @example
+         *   p.D3.Z();
+         */
+        this.Z = function () { return this.coords[3]; };
+    };
+
+    JXG.extend(JXG.Point3D.prototype, /** @lends JXG.Curve.prototype */ {
+
+        /**
+         * Update the the homogeneous coords array.
+         * Accessible through subobject D3.
+         *
+         * @name updateCoords
+         * @memberOf Point3D
+         * @function
+         * @returns {Object} Reference to the D3 subobject
+         * @private
+         * @example
+         *    p.D3.updateCoords();
+         */
+        updateCoords: function () {
+            var res, i;
+
+            if (Type.isFunction(this.F)) {
+                res = Type.evaluate(this.F);
+                this.coords = [1, res[0], res[1], res[2]];
+            } else {
+                this.coords[0] = 1;
+                for (i = 0; i < 3; i++) {
+                    if (Type.isFunction(this.F[i])) {
+                        this.coords[i + 1] = Type.evaluate(this.F[i]);
+                    }
+                }
+            }
+            return this;
+        },
+
+        /**
+         * Normalize homogeneous coordinates such the the first coordinate (the w-coordinate is equal to 1 or 0)-
+         * Accessible through subobject D3.
+         * @name normalizeCoords
+         * @memberOf Point3D
+         * @function
+         * @returns {Object} Reference to the D3 subobject
+         * @private
+         * @example
+         *    p.D3.normalizeCoords();
+         */
+        normalizeCoords: function () {
+            if (Math.abs(this.coords[0]) > Mat.eps) {
+                this.coords[1] /= this.coords[0];
+                this.coords[2] /= this.coords[0];
+                this.coords[3] /= this.coords[0];
+                this.coords[0] = 1.0;
+            }
+            return this;
+        },
+
+        /**
+         * Set the position of a 3D point.
+         * Accessible through subobject D3.
+         *
+         * @name setPosition
+         * @memberOf Point3D
+         * @function
+         * @param {Array} coords 3D coordinates. Either of the form [x,y,z] (Euclidean) or [w,x,y,z] (homogeneous).
+         * @param {Boolean} [noevent] If true, no events are triggered.
+         * @returns {Object} Reference to the D3 subobject
+         *
+         * @see Point3D#setPosition3D
+         * @example
+         *    p.D3.setPosition([1, 3, 4]);
+         *    // Equivalent:
+         *    p.setPosition3D([1, 3, 4]);
+         */
+        setPosition: function (coords, noevent) {
+            var c = this.coords,
+                oc = this.coords.slice(); // Copy of original values
+
+            if (coords.length === 3) { // Euclidean coordinates
+                c[0] = 1.0;
+                c[1] = coords[0];
+                c[2] = coords[1];
+                c[3] = coords[2];
+            } else { // Homogeneous coordinates (normalized)
+                c[0] = coords[0];
+                c[1] = coords[1];
+                c[2] = coords[2];
+                c[3] = coords[2];
+                this.normalizeCoords();
+            }
+
+            // console.log(el.emitter, !noevent, oc[0] !== c[0] || oc[1] !== c[1] || oc[2] !== c[2] || oc[3] !== c[3]);
+            // Not yet working
+            // if (el.emitter && !noevent &&
+            //     (oc[0] !== c[0] || oc[1] !== c[1] || oc[2] !== c[2] || oc[3] !== c[3])) {
+            //     this.triggerEventHandlers(['update3D'], [oc]);
+            // }
+            return this;
+        }
+
+    });
+
     /**
      * @class This element is used to provide a constructor for a 3D Point.
      * @pseudo
-     * @description There are two possibilities to create a Line3D object.
-     * <p>
-     * First: the line in 3D is defined by two points in 3D (Point3D).
-     * The points can be either existing points or coordinate arrays of
-     * the form [x, y, z].
-     * <p>Second: the line in 3D is defined by a point (or coordinate array [x, y, z])
-     * a direction given as array [x, y, z] and an optional range
-     * given as array [s, e]. The default value for the range is [-Infinity, Infinity].
+     * @description A Point3D object is defined by 3 coordinates [x,y,z]
      * <p>
      * All numbers can also be provided as functions returning a number.
      *
      * @name Point3D
      * @augments JXG.Point
      * @constructor
-     * @type JXG.Point
      * @throws {Exception} If the element cannot be constructed with the given parent
      * objects an exception is thrown.
      * @param {JXG.Point_number,JXG.Point,JXG.Line,JXG.Circle} center,radius The center must be given as a {@link JXG.Point}, see {@link JXG.providePoints}, but the radius can be given
@@ -81897,7 +82157,7 @@ define('3d/point3d',['jxg', 'base/constants', 'math/math', 'math/geometry', 'uti
      * line will determine the radius), or another {@link JXG.Circle}.
      *
      */
-     ThreeD.createPoint = function (board, parents, attributes) {
+    ThreeD.createPoint = function (board, parents, attributes) {
         var view = parents[0],
             attr, update2D, D3,
             i, c2d,
@@ -81905,13 +82165,7 @@ define('3d/point3d',['jxg', 'base/constants', 'math/math', 'math/geometry', 'uti
 
         attr = Type.copyAttributes(attributes, board.options, 'point3d');
 
-        D3 = {
-            elType: 'point3d',
-            coords: [1, 0, 0, 0],
-            X: function () { return this.coords[1]; },
-            Y: function () { return this.coords[2]; },
-            Z: function () { return this.coords[3]; }
-        };
+        D3 = new JXG.Point3D();
 
         // If the last element of partents is a 3D object, the point is a glider
         // on that element.
@@ -81933,31 +82187,14 @@ define('3d/point3d',['jxg', 'base/constants', 'math/math', 'math/geometry', 'uti
             // Throw error
         }
 
-        /**
-         * Update the 4D coords array
-         * @returns Object
-         */
-        D3.updateCoords = function () {
-            var res, i;
-            if (Type.isFunction(this.F)) {
-                res = Type.evaluate(this.F);
-                this.coords = [1, res[0], res[1], res[2]];
-            } else {
-                this.coords[0] = 1;
-                for (i = 0; i < 3; i++) {
-                    if (Type.isFunction(this.F[i])) {
-                        this.coords[i + 1] = Type.evaluate(this.F[i]);
-                    }
-                }
-            }
-            return this;
-        };
         D3.updateCoords();
 
         c2d = view.project3DTo2D(D3.coords);
         el = board.create('point', c2d, attr);
         el.D3 = D3;
         el.D3.c2d = el.coords.usrCoords.slice(); // Copy of the coordinates to detect dragging
+
+        // Store the original 2D update method
         update2D = el.update;
 
         if (el.D3.slide) {
@@ -82032,6 +82269,23 @@ define('3d/point3d',['jxg', 'base/constants', 'math/math', 'math/geometry', 'uti
             update2D.apply(this, [drag]);
             return this;
         };
+
+        /**
+         * Alias of D3.setPosition
+         *
+         * @name Point3D#setPosition3D
+         * @memberOf Point3D
+         * @function
+         * @param {Array} coords 3D coordinates. Either of the form [x,y,z] (Euclidean) or [w,x,y,z] (homogeneous).
+         * @param {Boolean} noevent If true, no events are triggered.
+         * @returns {Object} Reference to the D3 subobject.
+         * @example
+         *    p.setPosition3D([1, 3,4]);
+         */
+        el.setPosition3D = function(coords, noevent) { return el.D3.setPosition(coords, noevent); };
+
+        // Not yet working
+        el.__evt__update3D = function (oc) { };
 
         return el;
     };
