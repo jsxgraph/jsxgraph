@@ -204,7 +204,8 @@ define(['jxg', 'utils/type', 'math/math', 'math/geometry', '3d/view3d'
                 D3.dir2[i] = Type.evaluate(D3.vec2[i]);
             }
             D3.normal = Mat.crossProduct(D3.dir1, D3.dir2);
-            D3.d = Mat.innerProduct(D3.point.D3.coords.slice(1), D3.normal, 3);
+            // D3.d = Mat.innerProduct(D3.point.D3.coords.slice(1), D3.normal, 3);
+            D3.d = Mat.innerProduct(D3.point.coords.slice(1), D3.normal, 3);
         };
         D3.updateNormal();
 
@@ -321,7 +322,8 @@ define(['jxg', 'utils/type', 'math/math', 'math/geometry', '3d/view3d'
                 s2 = Type.evaluate(this.D3.range2[0]);
                 e2 = Type.evaluate(this.D3.range2[1]);
 
-                q = this.D3.point.D3.coords.slice(1);
+                // q = this.D3.point.D3.coords.slice(1);
+                q = this.D3.point.coords.slice(1);
 
                 v1 = this.D3.dir1.slice();
                 v2 = this.D3.dir2.slice();
@@ -355,7 +357,8 @@ define(['jxg', 'utils/type', 'math/math', 'math/geometry', '3d/view3d'
         attr = Type.copyAttributes(attributes.mesh3d, board.options, 'mesh3d');
 
         if (D3.range1 && D3.range2) {
-            grid = view.create('mesh3d', [point.D3.coords.slice(1), vec1, D3.range1, vec2, D3.range2], attr);
+            // grid = view.create('mesh3d', [point.D3.coords.slice(1), vec1, D3.range1, vec2, D3.range2], attr);
+            grid = view.create('mesh3d', [point.coords.slice(1), vec1, D3.range1, vec2, D3.range2], attr);
             el.grid = grid;
             el.inherits.push(grid);
         }
