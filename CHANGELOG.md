@@ -4,13 +4,14 @@
 New features
 -----------
 
+- New element attribute `rotatable`
 - 3D points: new method setPosition3D()
 
 Improvements
 ------------
 
 - Allow value tags in strings in combination with MathJax
-- Continuous improvement of index.d.ts
+- Gradually improvement of index.d.ts
 - API doc
 - JSXGraph in shadowDOM
 - FullscreenMode in shadowDOM
