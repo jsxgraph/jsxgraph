@@ -1196,7 +1196,8 @@ define([
          */
         twoFingerTouchObject: function (tar, drag, id) {
             var np, op, nd, od,
-                d, alpha,
+                d,
+                alpha = 0,
                 S, t1, t3, t4, t5,
                 ar, i, len,
                 fixEl, moveEl, fix;
@@ -1230,7 +1231,9 @@ define([
                     return;
                 }
 
-                alpha = Geometry.rad(op.slice(1), fix.slice(1), np.slice(1));
+                if (Type.evaluate(drag.visProp.rotatable)) {
+                    alpha = Geometry.rad(op.slice(1), fix.slice(1), np.slice(1));
+                }
 
                 t1 = this.create('transform', [alpha, [fix[1], fix[2]]], {type: 'rotate'});
                 t1.update();

@@ -1411,13 +1411,32 @@ define([
              * <p>
              * In case the element is a polygon or line and it has the attribute "scalable:false",
              * moving the element with two fingers results in a rotation or translation.
+             * <p>
+             * If an element is set to be neither scalable nor rotatable, it can only be translated.
              *
              * @type Boolean
              * @default true
              * @name JXG.GeometryElement#scalable
              * @see JXG.Ticks#fixed
+             * @see JXG.GeometryElement#rotatable
              */
             scalable: true,
+
+            /**
+             * Determines whether two-finger manipulation may rotate this object.
+             * If set to false, the object can only be scaled and translated.
+             * <p>
+             * In case the element is a polygon or line and it has the attribute "rotatable:false",
+             * moving the element with two fingers results in a rotation or translation.
+             * <p>
+             * If an element is set to be neither scalable nor rotatable, it can only be translated.
+             *
+             * @type Boolean
+             * @default true
+             * @name JXG.GeometryElement#rotatable
+             * @see JXG.GeometryElement#scalable
+             */
+            rotatable: true,
 
             /**
              * If the element is dragged it will be moved on mousedown or touchstart to the
