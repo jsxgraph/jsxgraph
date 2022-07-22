@@ -255,6 +255,7 @@ define([
              * @name JXG.Board#showNavigation
              * @type Boolean
              * @default true
+             * @see JXG.AbstractRenderer#drawZoomBar
              */
             showNavigation: true,
 
@@ -265,6 +266,7 @@ define([
              * @name JXG.Board#showZoom
              * @type Boolean
              * @default true
+             * @see JXG.AbstractRenderer#drawZoomBar
              */
             showZoom: true,
 
@@ -275,6 +277,7 @@ define([
              * @name JXG.Board#showReload
              * @type Boolean
              * @default false
+             * @see JXG.AbstractRenderer#drawZoomBar
              */
             showReload: false,
 
@@ -284,6 +287,7 @@ define([
              * @name JXG.Board#showScreenshot
              * @type Boolean
              * @default false
+             * @see JXG.AbstractRenderer#drawZoomBar
              */
             showScreenshot: false,
 
@@ -316,6 +320,8 @@ define([
              * @type Boolean
              * @see JXG.Board#fullscreen
              * @default false
+             * @see JXG.AbstractRenderer#drawZoomBar
+             * @see JXG.AbstractRenderer#drawZoomBar
              */
             showFullscreen: false,
 
@@ -357,6 +363,7 @@ define([
              *
              * @name JXG.Board#fullscreen
              * @see JXG.Board#showFullscreen
+             * @see JXG.AbstractRenderer#drawZoomBar
              * @type Object
              */
             fullscreen: {
@@ -370,6 +377,7 @@ define([
              * @name JXG.Board#showClearTraces
              * @type Boolean
              * @default false
+             * @see JXG.AbstractRenderer#drawZoomBar
              */
             showClearTraces: false,
 
