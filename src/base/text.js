@@ -231,7 +231,11 @@ define([
                         // Converts GEONExT syntax into JavaScript string
                         // Short math is allowed
                         // Avoid geonext2JS calls
-                        this.content = this.generateTerm(text, true, true, false);
+                        if (ev_p) {
+                            this.content = this.generateTerm(text, true, true, false);
+                        } else  {
+                            this.content = "'" + text + "'";
+                        }
                     }
                 }
                 // Convert JessieCode to JS function
