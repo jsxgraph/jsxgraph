@@ -42,6 +42,5 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
         type: "3Dnamespace"
     };
 
-    console.log(JXG.ThreeD)
     return JXG.ThreeD;
 });

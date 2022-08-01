@@ -32,7 +32,6 @@ define(['jxg', 'base/constants', 'math/math', 'math/geometry', 'utils/type'
 ], function (JXG, Const, Mat, Geometry, Type) {
     "use strict";
 
-    console.log(Mat);
     JXG.GeometryElement3D = function (elType) {
         /**
          * Element type of a point3D.
@@ -189,8 +188,6 @@ define(['jxg', 'base/constants', 'math/math', 'math/geometry', 'utils/type'
          *
          * @example
          *    p.setPosition([1, 3, 4]);
-         *    // Equivalent:
-         *    p.setPosition3D([1, 3, 4]);
          */
         setPosition: function (coords, noevent) {
             var c = this.coords,
