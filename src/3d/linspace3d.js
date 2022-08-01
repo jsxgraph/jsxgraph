@@ -61,7 +61,7 @@ define(['jxg', 'utils/type', 'math/math', 'math/geometry', '3d/view3d'
      * line will determine the radius), or another {@link JXG.Circle}.
      *
      */
-    ThreeD.createLine = function (board, parents, attributes) {
+    ThreeD.createLine3D = function (board, parents, attributes) {
         var view = parents[0],
             attr, D3, point, point1, point2,
             el;
@@ -161,7 +161,7 @@ define(['jxg', 'utils/type', 'math/math', 'math/geometry', '3d/view3d'
 
         return el;
     };
-    JXG.registerElement('line3d', ThreeD.createLine);
+    JXG.registerElement('line3d', ThreeD.createLine3D);
 
     ThreeD.createPlane = function (board, parents, attributes) {
         var view = parents[0],

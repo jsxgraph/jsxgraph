@@ -2065,17 +2065,21 @@ define([
             throw new Error("JSXGraph: Can't create reflected element with parent types '" +
                 (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." + errStr);
         }
-
         t = Transform.createTransform(board, [l], {type: 'reflect'});
+
         if (Type.isPoint(org)) {
             r = Point.createPoint(board, [org, t], attr);
+
         // Arcs and sectors are treated as curves
         } else if (org.elementClass === Const.OBJECT_CLASS_CURVE){
             r = Curve.createCurve(board, [org, t], attr);
+
         } else if (org.elementClass === Const.OBJECT_CLASS_LINE){
             r = Line.createLine(board, [org, t], attr);
+
         } else if (org.type === Const.OBJECT_TYPE_POLYGON){
             r = Polygon.createPolygon(board, [org, t], attr);
+
         } else if (org.elementClass === Const.OBJECT_CLASS_CIRCLE) {
             if (attr.type.toLowerCase() === 'euclidean') {
                 // Create a circle element from a circle and a Euclidean transformation
@@ -2087,10 +2091,12 @@ define([
                 // Create a conic element from a circle and a projective transformation
                 r = Circle.createCircle(board, [org, t], attr);
             }
+
         } else {
             throw new Error("JSXGraph: Can't create reflected element with parent types '" +
                 (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." + errStr);
         }
+
         if (Type.exists(org._is_new)) {
             r.addChild(org);
             delete org._is_new;
