@@ -33,8 +33,6 @@ define(['jxg', 'base/constants', 'math/math', 'math/geometry', 'utils/type'
     "use strict";
 
     console.log(Mat);
-
-
     JXG.GeometryElement3D = function (elType) {
         /**
          * Element type of a point3D.
@@ -45,18 +43,17 @@ define(['jxg', 'base/constants', 'math/math', 'math/geometry', 'utils/type'
          * @private
          *
          * @example
-         *   p.D3.elType;
+         *   p.elType;
          */
         this.elType = elType;
-        this.el2D = null;
+
+        this.element2D = null;
         this.D3 = true;
     };
 
     JXG.Point3D = function (view, parents, attributes) {
         this.constructor(view.board, attributes, Const.OBJECT_TYPE_POINT, Const.OBJECT_CLASS_POINT);
-
-        this.el2D = null;
-        this.D3 = true;
+        this.add3D('point3d');
         this.view = view;
 
         this.id = this.view.board.setId(this, 'P3D');
@@ -64,10 +61,9 @@ define(['jxg', 'base/constants', 'math/math', 'math/geometry', 'utils/type'
 
         /**
          * Homogeneous coordinates of a Point3D, i.e. array of length 4: [w, x, y, z].
-         * Accessible through subobject D3.
          *
          * @example
-         *   p.D3.coords;
+         *   p.coords;
          *
          * @name Point3D#coords
          * @type Array
@@ -77,10 +73,9 @@ define(['jxg', 'base/constants', 'math/math', 'math/geometry', 'utils/type'
 
         /**
          * Slide element, i.e. element the Point3D lives on.
-         * Accessible through subobject D3.
          *
          * @example
-         *   p.D3.slide;
+         *   p.slide;
          *
          * @name Point3D#slide
          * @type {JXG.GeometryElement}
@@ -92,7 +87,6 @@ define(['jxg', 'base/constants', 'math/math', 'math/geometry', 'utils/type'
 
         /**
          * Get x-coordinate of a 3D point.
-         * Accessible through subobject D3.
          *
          * @name X
          * @memberOf Point3D
@@ -100,13 +94,12 @@ define(['jxg', 'base/constants', 'math/math', 'math/geometry', 'utils/type'
          * @returns {Number}
          *
          * @example
-         *   p.D3.X();
+         *   p.X();
          */
         this.X = function () { return this.coords[1]; };
 
         /**
          * Get y-coordinate of a 3D point.
-         * Accessible through subobject D3.
          *
          * @name Y
          * @memberOf Point3D
@@ -114,13 +107,12 @@ define(['jxg', 'base/constants', 'math/math', 'math/geometry', 'utils/type'
          * @returns Number
          *
          * @example
-         *   p.D3.Y();
+         *   p.Y();
          */
         this.Y = function () { return this.coords[2]; };
 
         /**
          * Get z-coordinate of a 3D point.
-         * Accessible through subobject D3.
          *
          * @name Z
          * @memberOf Point3D
@@ -128,16 +120,16 @@ define(['jxg', 'base/constants', 'math/math', 'math/geometry', 'utils/type'
          * @returns Number
          *
          * @example
-         *   p.D3.Z();
+         *   p.Z();
          */
         this.Z = function () { return this.coords[3]; };
     };
     JXG.Point3D.prototype = new JXG.GeometryElement();
+    Type.copyPrototypeMethods(JXG.Point3D, JXG.GeometryElement3D, 'add3D');
 
     JXG.extend(JXG.Point3D.prototype, /** @lends JXG.Point3D.prototype */ {
         /**
          * Update the the homogeneous coords array.
-         * Accessible through subobject D3.
          *
          * @name updateCoords
          * @memberOf Point3D
@@ -145,7 +137,7 @@ define(['jxg', 'base/constants', 'math/math', 'math/geometry', 'utils/type'
          * @returns {Object} Reference to the D3 subobject
          * @private
          * @example
-         *    p.D3.updateCoords();
+         *    p.updateCoords();
          */
         updateCoords: function () {
             var res, i;
@@ -166,14 +158,14 @@ define(['jxg', 'base/constants', 'math/math', 'math/geometry', 'utils/type'
 
         /**
          * Normalize homogeneous coordinates such the the first coordinate (the w-coordinate is equal to 1 or 0)-
-         * Accessible through subobject D3.
+         *
          * @name normalizeCoords
          * @memberOf Point3D
          * @function
          * @returns {Object} Reference to the D3 subobject
          * @private
          * @example
-         *    p.D3.normalizeCoords();
+         *    p.normalizeCoords();
          */
         normalizeCoords: function () {
             if (Math.abs(this.coords[0]) > Mat.eps) {
@@ -187,7 +179,6 @@ define(['jxg', 'base/constants', 'math/math', 'math/geometry', 'utils/type'
 
         /**
          * Set the position of a 3D point.
-         * Accessible through subobject D3.
          *
          * @name setPosition
          * @memberOf Point3D
@@ -196,9 +187,8 @@ define(['jxg', 'base/constants', 'math/math', 'math/geometry', 'utils/type'
          * @param {Boolean} [noevent] If true, no events are triggered.
          * @returns {Object} Reference to the D3 subobject
          *
-         * @see Point3D#setPosition3D
          * @example
-         *    p.D3.setPosition([1, 3, 4]);
+         *    p.setPosition([1, 3, 4]);
          *    // Equivalent:
          *    p.setPosition3D([1, 3, 4]);
          */
@@ -475,20 +465,6 @@ define(['jxg', 'base/constants', 'math/math', 'math/geometry', 'utils/type'
             return this;
         };
         */
-
-        /**
-         * Alias of D3.setPosition
-         *
-         * @name Point3D#setPosition3D
-         * @memberOf Point3D
-         * @function
-         * @param {Array} coords 3D coordinates. Either of the form [x,y,z] (Euclidean) or [w,x,y,z] (homogeneous).
-         * @param {Boolean} noevent If true, no events are triggered.
-         * @returns {Object} Reference to the D3 subobject.
-         * @example
-         *    p.setPosition3D([1, 3,4]);
-         */
-        el.setPosition3D = function(coords, noevent) { return el.setPosition(coords, noevent); };
 
         // Not yet working
         el.__evt__update3D = function (oc) { };
