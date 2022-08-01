@@ -32,11 +32,10 @@
  * Create axes and rear and front walls of the
  * view3d bounding box bbox3d.
  */
-define(['jxg', 'utils/type', 'math/math', 'math/geometry', '3d/view3d'
-], function (JXG, Type, Mat, Geometry, ThreeD) {
+define(['jxg', 'utils/type', 'math/math', 'math/geometry'], function (JXG, Type, Mat, Geometry) {
     "use strict";
 
-    ThreeD.createAxes = function (board, parents, attributes) {
+    JXG.ThreeD.createAxes = function (board, parents, attributes) {
         var view = parents[0],
             i, j, k, i1, i2,
             attr,
@@ -170,9 +169,9 @@ define(['jxg', 'utils/type', 'math/math', 'math/geometry', '3d/view3d'
 
         return axes;
     };
-    JXG.registerElement('axes3d', ThreeD.createAxes);
+    JXG.registerElement('axes3d', JXG.ThreeD.createAxes);
 
-    ThreeD.createAxis = function (board, parents, attributes) {
+    JXG.ThreeD.createAxis = function (board, parents, attributes) {
         var view = parents[0],
             attr,
             start = parents[1],
@@ -205,9 +204,9 @@ define(['jxg', 'utils/type', 'math/math', 'math/geometry', '3d/view3d'
 
         return el;
     };
-    JXG.registerElement('axis3d', ThreeD.createAxis);
+    JXG.registerElement('axis3d', JXG.ThreeD.createAxis);
 
-    ThreeD.createMesh = function (board, parents, attr) {
+    JXG.ThreeD.createMesh = function (board, parents, attr) {
         var view = parents[0],
             point = parents[1],
             vec1 = parents[2],
@@ -263,6 +262,6 @@ define(['jxg', 'utils/type', 'math/math', 'math/geometry', '3d/view3d'
         };
         return el;
     };
-    JXG.registerElement('mesh3d', ThreeD.createMesh);
+    JXG.registerElement('mesh3d', JXG.ThreeD.createMesh);
 
 });

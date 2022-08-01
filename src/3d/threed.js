@@ -27,12 +27,21 @@
     and <http://opensource.org/licenses/MIT/>.
  */
 /*global JXG:true, define: true*/
+/* depends:
+jxg
+*/
 
-define(['jxg'
-], function (JXG) {
+define(['jxg', 'utils/type'], function (JXG, Type) {
     "use strict";
 
-    JXG.ThreeD = {};
+    /**
+     * ThreeD namespace.
+     * @namespace
+     */
+    JXG.ThreeD = {
+        type: "3Dnamespace"
+    };
 
+    console.log(JXG.ThreeD)
     return JXG.ThreeD;
 });

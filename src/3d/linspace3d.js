@@ -32,8 +32,8 @@
  * Create linear spaces of dimension at least one,
  * i.e. lines and planes.
  */
-define(['jxg', 'utils/type', 'math/math', 'math/geometry', '3d/view3d'
-], function (JXG, Type, Mat, Geometry, ThreeD) {
+define(['jxg', 'utils/type', 'math/math', 'math/geometry'
+], function (JXG, Type, Mat, Geometry) {
     "use strict";
 
     /**
@@ -61,7 +61,7 @@ define(['jxg', 'utils/type', 'math/math', 'math/geometry', '3d/view3d'
      * line will determine the radius), or another {@link JXG.Circle}.
      *
      */
-    ThreeD.createLine = function (board, parents, attributes) {
+    JXG.ThreeD.createLine = function (board, parents, attributes) {
         var view = parents[0],
             attr, D3, point, point1, point2,
             el;
@@ -161,9 +161,9 @@ define(['jxg', 'utils/type', 'math/math', 'math/geometry', '3d/view3d'
 
         return el;
     };
-    JXG.registerElement('line3d', ThreeD.createLine);
+    JXG.registerElement('line3d', JXG.ThreeD.createLine);
 
-    ThreeD.createPlane = function (board, parents, attributes) {
+    JXG.ThreeD.createPlane = function (board, parents, attributes) {
         var view = parents[0],
             attr, D3,
             point,
@@ -373,6 +373,6 @@ define(['jxg', 'utils/type', 'math/math', 'math/geometry', '3d/view3d'
 
         return el;
     };
-    JXG.registerElement('plane3d', ThreeD.createPlane);
+    JXG.registerElement('plane3d', JXG.ThreeD.createPlane);
 
 });

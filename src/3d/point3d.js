@@ -28,9 +28,12 @@
  */
 /*global JXG:true, define: true*/
 
-define(['jxg', 'base/constants', 'math/math', 'math/geometry', 'utils/type', '3d/view3d'
-], function (JXG, Const, Mat, Geometry, Type, ThreeD) {
+define(['jxg', 'base/constants', 'math/math', 'math/geometry', 'utils/type'
+], function (JXG, Const, Mat, Geometry, Type) {
     "use strict";
+
+    console.log(Mat);
+
 
     JXG.GeometryElement3D = function (elType) {
         /**
@@ -45,18 +48,19 @@ define(['jxg', 'base/constants', 'math/math', 'math/geometry', 'utils/type', '3d
          *   p.D3.elType;
          */
         this.elType = elType;
-
         this.el2D = null;
-
         this.D3 = true;
     };
 
     JXG.Point3D = function (view, parents, attributes) {
-        //this.constructor('point3d');
         this.constructor(view.board, attributes, Const.OBJECT_TYPE_POINT, Const.OBJECT_CLASS_POINT);
 
         this.el2D = null;
         this.D3 = true;
+        this.view = view;
+
+        this.id = this.view.board.setId(this, 'P3D');
+        this.board.finalizeAdding(this);
 
         /**
          * Homogeneous coordinates of a Point3D, i.e. array of length 4: [w, x, y, z].
@@ -130,7 +134,7 @@ define(['jxg', 'base/constants', 'math/math', 'math/geometry', 'utils/type', '3d
     };
     JXG.Point3D.prototype = new JXG.GeometryElement();
 
-    JXG.extend(JXG.Point3D.prototype, /** @lends JXG.Curve.prototype */ {
+    JXG.extend(JXG.Point3D.prototype, /** @lends JXG.Point3D.prototype */ {
         /**
          * Update the the homogeneous coords array.
          * Accessible through subobject D3.
@@ -243,7 +247,7 @@ define(['jxg', 'base/constants', 'math/math', 'math/geometry', 'utils/type', '3d
      * line will determine the radius), or another {@link JXG.Circle}.
      *
      */
-    ThreeD.createPoint = function (board, parents, attributes) {
+    JXG.createPoint3D = function (board, parents, attributes) {
         //   parents[0]: view
         // followed by
         //   parents[1]: function or array
@@ -256,7 +260,6 @@ define(['jxg', 'base/constants', 'math/math', 'math/geometry', 'utils/type', '3d
             el;
 
         attr = Type.copyAttributes(attributes, board.options, 'point3d');
-        attr.name = "XXX";    
         el = new JXG.Point3D(view, parents, attr);
 
         // If the last element of parents is a 3D object, the point is a glider
@@ -285,7 +288,8 @@ define(['jxg', 'base/constants', 'math/math', 'math/geometry', 'utils/type', '3d
         el.updateCoords();
         c2d = view.project3DTo2D(el.coords);
 
-        attr.name = "XXX_2D";    
+        attr.name = el.name + "_{2D}";
+        // attr.fixed = true;
         el.el2D = board.create('point', c2d, attr);
         el.c2d = el.el2D.coords.usrCoords.slice(); // Copy of the coordinates to detect dragging
 
@@ -326,24 +330,23 @@ define(['jxg', 'base/constants', 'math/math', 'math/geometry', 'utils/type', '3d
                 this.c2d = c2d;
             };
         }
+
         el.update = function (drag) {
             var c3d, foot;
             if (false && !this.el2D.needsUpdate) {
                 return this;
             }
-console.log("up");
             // Update is called in from two methods:
             // Once in setToPositionDirectly and
             // once in the subsequent board.update
             if (this.el2D.draggable() &&
                 Geometry.distance(this.c2d, this.el2D.coords.usrCoords) !== 0) {
-
                 if (this.slide) {
                     this.projectCoords2Surface();
                 } else {
                     // Drag the point in its xy plane
                     foot = [1, 0, 0, this.coords[3]];
-                    c3d = view.project2DTo3DPlane(el, [1, 0, 0, 1], foot);
+                    c3d = view.project2DTo3DPlane(el.el2D, [1, 0, 0, 1], foot);
                     if (c3d[0] !== 0) {
                         this.coords = view.project3DToCube(c3d);
                     }
@@ -493,6 +496,6 @@ console.log("up");
         return el;
     };
 
-    JXG.registerElement('point3d', ThreeD.createPoint);
+    JXG.registerElement('point3d', JXG.createPoint3D);
 
 });

@@ -28,11 +28,11 @@
  */
 /*global JXG:true, define: true*/
 
-define(['jxg', 'options', 'base/constants', 'utils/type', 'math/math', 'base/element', '3d/threed',
-], function (JXG, Options, Const, Type, Mat, GeometryElement, ThreeD) {
+define(['jxg', 'options', 'base/constants', 'utils/type', 'math/math', 'base/element'], 
+function (JXG, Options, Const, Type, Mat, GeometryElement) {
     "use strict";
 
-    ThreeD.View3D = function (board, parents, attributes) {
+    JXG.ThreeD.View3D = function (board, parents, attributes) {
         var bbox3d, coords, size;
         this.constructor(board, attributes, Const.OBJECT_TYPE_VIEW3D, Const.OBJECT_CLASS_CURVE);
 
@@ -93,9 +93,9 @@ define(['jxg', 'options', 'base/constants', 'utils/type', 'math/math', 'base/ele
         this.methodMap = Type.deepCopy(this.methodMap, {
         });
     };
-    ThreeD.View3D.prototype = new GeometryElement();
+    JXG.ThreeD.View3D.prototype = new GeometryElement();
 
-    JXG.extend(ThreeD.View3D.prototype, /** @lends ThreeD.View3D.prototype */ {
+    JXG.extend(JXG.ThreeD.View3D.prototype, /** @lends ThreeD.View3D.prototype */ {
         create: function (elementType, parents, attributes) {
             var prefix = [],
                 is3D = false,
@@ -202,7 +202,7 @@ define(['jxg', 'options', 'base/constants', 'utils/type', 'math/math', 'base/ele
          * @returns Array of length 4 containing the projected
          * point in homogeneous coordinates.
          */
-        project2DTo3DPlane: function (point, normal, foot) {
+        project2DTo3DPlane: function (point2d, normal, foot) {
             var mat, rhs, d, le,
                 n = normal.slice(1),
                 sol = [1, 0, 0, 0];
@@ -215,7 +215,7 @@ define(['jxg', 'options', 'base/constants', 'utils/type', 'math/math', 'base/ele
             mat.push([0].concat(n));
 
             // 2D coordinates of point:
-            rhs = point.coords.usrCoords.concat([d]);
+            rhs = point2d.coords.usrCoords.concat([d]);
             try {
                 // Prevent singularity in case elevation angle is zero
                 if (mat[2][3] === 1.0) {
@@ -439,14 +439,14 @@ define(['jxg', 'options', 'base/constants', 'utils/type', 'math/math', 'base/ele
      * </script><pre>
      *
      */
-    ThreeD.createView3D = function (board, parents, attributes) {
+     JXG.ThreeD.createView3D = function (board, parents, attributes) {
         var view, frame, attr,
             x, y, w, h,
             coords = parents[0], // llft corner
             size = parents[1];   // [w, h]
 
         attr = Type.copyAttributes(attributes, board.options, 'view3d');
-        view = new ThreeD.View3D(board, parents, attr);
+        view = new JXG.ThreeD.View3D(board, parents, attr);
         view.defaultAxes = view.create('axes3d', parents, attributes);
 
         x = coords[0];
@@ -522,8 +522,8 @@ define(['jxg', 'options', 'base/constants', 'utils/type', 'math/math', 'base/ele
 
         return view;
     };
-    JXG.registerElement('view3d', ThreeD.createView3D);
+    JXG.registerElement('view3d', JXG.ThreeD.createView3D);
 
-    return ThreeD.View3D;
+    return JXG.ThreeD.View3D;
 });
 

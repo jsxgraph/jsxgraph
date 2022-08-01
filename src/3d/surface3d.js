@@ -28,10 +28,8 @@
  */
 /*global JXG:true, define: true*/
 
-define(['jxg', 'utils/type', '3d/view3d'
-], function (JXG, Type, ThreeD) {
+define(['jxg', 'utils/type'], function (JXG, Type) {
     "use strict";
-
 
     /**
      * @class This element creates a 3D parametric surface.
@@ -93,7 +91,7 @@ define(['jxg', 'utils/type', '3d/view3d'
      * </script><pre>
      *
      */
-    ThreeD.createParametricSurface = function (board, parents, attributes) {
+    JXG.ThreeD.createParametricSurface = function (board, parents, attributes) {
         var view = parents[0],
             attr,
             X = parents[1],
@@ -128,7 +126,7 @@ define(['jxg', 'utils/type', '3d/view3d'
 
         return el;
     };
-    JXG.registerElement('parametricsurface3d', ThreeD.createParametricSurface);
+    JXG.registerElement('parametricsurface3d', JXG.ThreeD.createParametricSurface);
 
     /**
      * @class This element creates a 3D function graph.
@@ -205,7 +203,7 @@ define(['jxg', 'utils/type', '3d/view3d'
      * </script><pre>
      *
      */
-    ThreeD.createFunctiongraph = function (board, parents, attributes) {
+    JXG.ThreeD.createFunctiongraph = function (board, parents, attributes) {
         var view = parents[0],
             X = function(u, v) { return u; },
             Y = function(u, v) { return v; },
@@ -215,6 +213,6 @@ define(['jxg', 'utils/type', '3d/view3d'
 
         return view.create('parametricsurface3d', [X, Y, Z, range_u, range_v], attributes);
     };
-    JXG.registerElement('functiongraph3d', ThreeD.createFunctiongraph);
+    JXG.registerElement('functiongraph3d', JXG.ThreeD.createFunctiongraph);
 
 });

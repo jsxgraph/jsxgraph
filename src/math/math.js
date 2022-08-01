@@ -39,9 +39,8 @@
 
 /**
  * @fileoverview In this file the namespace JXG.Math is defined, which is the base namespace
- * for namespaces like Math.Numerics, Math.Algebra, Math.Statistics etc.
+ * for namespaces like JXG.Math.Numerics, JXG.Math.Plot, JXG.Math.Statistics, JXG.Math.Clip etc.
  */
-
 define(['jxg', 'utils/type'], function (JXG, Type) {
 
     "use strict";
