@@ -334,7 +334,7 @@ define([
         this.numObjects = 0;
 
         /**
-         * An associative array to store the objects of the board by name. the name of the object is the key and value is a reference to the object.
+         * An associative array / dictionary to store the objects of the board by name. The name of the object is the key and value is a reference to the object.
          * @type Object
          */
         this.elementsByName = {};
@@ -5342,7 +5342,7 @@ define([
                 return s;
             }
 
-            // it's a string, most likely an id or a name.
+            // It's a string, most likely an id or a name.
             if (Type.isString(s) && s !== '') {
                 // Search by ID
                 if (Type.exists(this.objects[s])) {
@@ -5354,7 +5354,8 @@ define([
                 } else if (Type.exists(this.groups[s])) {
                     s = this.groups[s];
                 }
-            // it's a function or an object, but not an element
+
+            // It's a function or an object, but not an element
             } else if (!onlyByIdOrName &&
                 (Type.isFunction(s) ||
                  (Type.isObject(s) && !Type.isFunction(s.setAttribute))
@@ -5367,7 +5368,8 @@ define([
                     olist[flist[i].id] = flist[i];
                 }
                 s = new Composition(olist);
-            // it's an element which has been deleted (and still hangs around, e.g. in an attractor list
+
+            // It's an element which has been deleted (and still hangs around, e.g. in an attractor list
             } else if (Type.isObject(s) && Type.exists(s.id) && !Type.exists(this.objects[s.id])) {
                 s = null;
             }

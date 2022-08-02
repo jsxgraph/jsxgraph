@@ -74,7 +74,6 @@ define([
     'options3d',
     '3d/view3d',
     '3d/element3d',
-//    '3d/threed',
     '3d/box3d',
     '3d/point3d',
     '3d/curve3d',

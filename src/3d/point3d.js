@@ -33,9 +33,7 @@ define(['jxg', 'base/constants', 'math/math', 'math/geometry', 'utils/type' //, 
     "use strict";
 
     /**
-     * A 3D point is the basic geometric element. Based on points lines and circles can be constructed which can be intersected
-     * which in turn are points again which can be used to construct new lines, circles, polygons, etc. This class holds methods for
-     * all kind of points like free points, gliders, and intersection points.
+     * A 3D point is the basic geometric element.
      * @class Creates a new 3D point object. Do not use this constructor to create a 3D point. Use {@link JXG.Board#create} with
      * type {@link Point3D} instead.
      * @augments JXG.GeometryElement3D
@@ -65,6 +63,8 @@ define(['jxg', 'base/constants', 'math/math', 'math/geometry', 'utils/type' //, 
          * @private
          */
         this.coords = [1, 0, 0, 0];
+
+        this.F = null;
 
         /**
          * Optional slide element, i.e. element the Point3D lives on.
@@ -126,6 +126,10 @@ define(['jxg', 'base/constants', 'math/math', 'math/geometry', 'utils/type' //, 
          * @private
          */
         this._params = null;
+
+        this.methodMap = Type.deepCopy(this.methodMap, {
+            // TODO
+        });
     };
     JXG.Point3D.prototype = new JXG.GeometryElement();
     Type.copyPrototypeMethods(JXG.Point3D, JXG.GeometryElement3D, 'constructor3D');
@@ -143,11 +147,10 @@ define(['jxg', 'base/constants', 'math/math', 'math/geometry', 'utils/type' //, 
          *    p.updateCoords();
          */
         updateCoords: function () {
-            var res, i;
+            var i;
 
             if (Type.isFunction(this.F)) {
-                res = Type.evaluate(this.F);
-                this.coords = [1, res[0], res[1], res[2]];
+                this.coords = [1].concat(Type.evaluate(this.F));
             } else {
                 this.coords[0] = 1;
                 for (i = 0; i < 3; i++) {
@@ -221,6 +224,9 @@ define(['jxg', 'base/constants', 'math/math', 'math/geometry', 'utils/type' //, 
 
         update: function (drag) {
             var c3d, foot;
+            // if (!this.needsUpdate) {
+            //     return this;
+            // }
 
             // Update is called from two methods:
             // Once in setToPosition and
@@ -258,7 +264,6 @@ define(['jxg', 'base/constants', 'math/math', 'math/geometry', 'utils/type' //, 
         // Not yet working
         __evt__update3D: function (oc) { }
 
-
     });
 
     /**
@@ -281,11 +286,6 @@ define(['jxg', 'base/constants', 'math/math', 'math/geometry', 'utils/type' //, 
      * </ul>
      *
      * @example
-     *    var board = JXG.JSXGraph.initBoard('jxgbox1', {
-     *        boundingbox: [-8, 8, 8, -8],
-     *        keepaspectratio: false,
-     *        axis: false
-     *    });
      *    var bound = [-5, 5];
      *    var view = board.create('view3d',
      *        [[-6, -3], [8, 8],
@@ -327,7 +327,7 @@ define(['jxg', 'base/constants', 'math/math', 'math/geometry', 'utils/type' //, 
         attr = Type.copyAttributes(attributes, board.options, 'point3d');
         el = new JXG.Point3D(view, parents, attr);
 
-        // If the last element of parents is a 3D object, 
+        // If the last element of parents is a 3D object,
         // the point is a glider on that element.
         if (parents.length > 2 && Type.exists(parents[parents.length - 1].is3D)) {
             el.slide = parents.pop();

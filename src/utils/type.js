@@ -141,8 +141,16 @@ define([
          * @returns {Boolean} True, if v is of type JXG.Point.
          */
         isPoint: function (v) {
-            if (v !== null && typeof v === 'object') {
+            if (v !== null && typeof v === 'object' && this.exists(v.elementClass)) {
                 return (v.elementClass === Const.OBJECT_CLASS_POINT);
+            }
+
+            return false;
+        },
+
+        isPoint3D: function (v) {
+            if (v !== null && typeof v === 'object' && this.exists(v.elType)) {
+                return (v.elType === 'point3d');
             }
 
             return false;
@@ -388,6 +396,50 @@ define([
                 }
 
                 if (!this.isPoint(points[i])) {
+                    return false;
+                }
+            }
+
+            return points;
+        },
+
+        providePoints3D: function (view, parents, attributes, attrClass, attrArray) {
+            var i, j,
+                len,
+                lenAttr = 0,
+                points = [], attr, val;
+
+            if (!this.isArray(parents)) {
+                parents = [parents];
+            }
+            len = parents.length;
+            if (this.exists(attrArray)) {
+                lenAttr = attrArray.length;
+            }
+            if (lenAttr === 0) {
+                attr = this.copyAttributes(attributes, view.board.options, attrClass);
+            }
+
+            for (i = 0; i < len; ++i) {
+                if (lenAttr > 0) {
+                    j = Math.min(i, lenAttr - 1);
+                    attr = this.copyAttributes(attributes, view.board.options, attrClass, attrArray[j]);
+                }
+
+                if (this.isArray(parents[i]) && parents[i].length > 1) {
+                    points.push(view.create('point3d', parents[i], attr));
+                    points[points.length - 1]._is_new = true;
+                } else if (this.isFunction(parents[i])) {
+                    val = parents[i]();
+                    if (this.isArray(val) && (val.length > 1)) {
+                        points.push(view.create('point3d', [parents[i]], attr));
+                        points[points.length - 1]._is_new = true;
+                    }
+                } else {
+                    points.push(view.select(parents[i]));
+                }
+
+                if (!this.isPoint3D(points[i])) {
                     return false;
                 }
             }

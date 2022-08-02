@@ -1190,8 +1190,16 @@ define('utils/type',[
          * @returns {Boolean} True, if v is of type JXG.Point.
          */
         isPoint: function (v) {
-            if (v !== null && typeof v === 'object') {
+            if (v !== null && typeof v === 'object' && this.exists(v.elementClass)) {
                 return (v.elementClass === Const.OBJECT_CLASS_POINT);
+            }
+
+            return false;
+        },
+
+        isPoint3D: function (v) {
+            if (v !== null && typeof v === 'object' && this.exists(v.elType)) {
+                return (v.elType === 'point3d');
             }
 
             return false;
@@ -1437,6 +1445,50 @@ define('utils/type',[
                 }
 
                 if (!this.isPoint(points[i])) {
+                    return false;
+                }
+            }
+
+            return points;
+        },
+
+        providePoints3D: function (view, parents, attributes, attrClass, attrArray) {
+            var i, j,
+                len,
+                lenAttr = 0,
+                points = [], attr, val;
+
+            if (!this.isArray(parents)) {
+                parents = [parents];
+            }
+            len = parents.length;
+            if (this.exists(attrArray)) {
+                lenAttr = attrArray.length;
+            }
+            if (lenAttr === 0) {
+                attr = this.copyAttributes(attributes, view.board.options, attrClass);
+            }
+
+            for (i = 0; i < len; ++i) {
+                if (lenAttr > 0) {
+                    j = Math.min(i, lenAttr - 1);
+                    attr = this.copyAttributes(attributes, view.board.options, attrClass, attrArray[j]);
+                }
+
+                if (this.isArray(parents[i]) && parents[i].length > 1) {
+                    points.push(view.create('point3d', parents[i], attr));
+                    points[points.length - 1]._is_new = true;
+                } else if (this.isFunction(parents[i])) {
+                    val = parents[i]();
+                    if (this.isArray(val) && (val.length > 1)) {
+                        points.push(view.create('point3d', [parents[i]], attr));
+                        points[points.length - 1]._is_new = true;
+                    }
+                } else {
+                    points.push(view.select(parents[i]));
+                }
+
+                if (!this.isPoint3D(points[i])) {
                     return false;
                 }
             }
@@ -43941,7 +43993,7 @@ define('base/board',[
         this.numObjects = 0;
 
         /**
-         * An associative array to store the objects of the board by name. the name of the object is the key and value is a reference to the object.
+         * An associative array / dictionary to store the objects of the board by name. The name of the object is the key and value is a reference to the object.
          * @type Object
          */
         this.elementsByName = {};
@@ -48949,7 +49001,7 @@ define('base/board',[
                 return s;
             }
 
-            // it's a string, most likely an id or a name.
+            // It's a string, most likely an id or a name.
             if (Type.isString(s) && s !== '') {
                 // Search by ID
                 if (Type.exists(this.objects[s])) {
@@ -48961,7 +49013,8 @@ define('base/board',[
                 } else if (Type.exists(this.groups[s])) {
                     s = this.groups[s];
                 }
-            // it's a function or an object, but not an element
+
+            // It's a function or an object, but not an element
             } else if (!onlyByIdOrName &&
                 (Type.isFunction(s) ||
                  (Type.isObject(s) && !Type.isFunction(s.setAttribute))
@@ -48974,7 +49027,8 @@ define('base/board',[
                     olist[flist[i].id] = flist[i];
                 }
                 s = new Composition(olist);
-            // it's an element which has been deleted (and still hangs around, e.g. in an attractor list
+
+            // It's an element which has been deleted (and still hangs around, e.g. in an attractor list
             } else if (Type.isObject(s) && Type.exists(s.id) && !Type.exists(this.objects[s.id])) {
                 s = null;
             }
@@ -80644,8 +80698,8 @@ define('options3d',[
  */
 /*global JXG:true, define: true*/
 
-define('3d/view3d',['jxg', 'options', 'base/constants', 'utils/type', 'math/math', 'base/element'],
-function (JXG, Options, Const, Type, Mat, GeometryElement) {
+define('3d/view3d',['jxg', 'options', 'base/constants', 'utils/type', 'math/math', 'base/element','base/composition'],
+function (JXG, Options, Const, Type, Mat, GeometryElement, Composition) {
     "use strict";
 
     /**
@@ -80660,59 +80714,69 @@ function (JXG, Options, Const, Type, Mat, GeometryElement) {
      * [x,y] and side lengths [w, h] of the board.
      */
      JXG.View3D = function (board, parents, attributes) {
-        var bbox3d, coords, size;
         this.constructor(board, attributes, Const.OBJECT_TYPE_VIEW3D, Const.OBJECT_CLASS_CURVE);
-
-        coords = parents[0];  // llft corner
-        size = parents[1];    // [w, h]
-        bbox3d = parents[2];  // [[x1, x2], [y1,y2], [z1,z2]]
-
-        /**
-         * "Namespace" for all 3D handling
-         * @type object
-         * @private
-         */
-        this.D3 = {};
 
         /**
          * An associative array containing all geometric objects belonging to the view.
          * Key is the id of the object and value is a reference to the object.
          * @type Object
          */
-        this.D3.objects = {};
+        this.objects = {};
 
         /**
          * An array containing all geometric objects in this view in the order of construction.
          * @type Array
          */
-        this.D3.objectsList = [];
+        this.objectsList = [];
 
         /**
-         * @type {Object} contains the axes of the view or null
+         * An associative array / dictionary to store the objects of the board by name. The name of the object is the key and value is a reference to the object.
+         * @type Object
+         */
+         this.elementsByName = {};
+
+        /**
+         * Default axes of the 3D view, contains the axes of the view or null.
+         *
+         * @type {Object}
          * @default null
          */
-        this.D3.defaultAxes = null;
+        this.defaultAxes = null;
 
         /**
          * 3D-to-2D transformation matrix
-         * @type  {Array} 3 x 4 mattrix
+         * @type  {Array} 3 x 4 matrix
          */
-        this.D3.matrix = [
+        this.matrix3D = [
             [1, 0, 0, 0],
             [0, 1, 0, 0],
             [0, 0, 1, 0]
         ];
 
-        // Bounding box (cube) [[x1, x2], [y1,y2], [z1,z2]]:
-        this.D3.bbox3d = bbox3d;
-        this.D3.coords = coords;
-        this.D3.size = size;
+        /**
+         * Lower left corner [x, y] of the 3D view if elevation and azimuth are set to 0.
+         * @type array
+         */
+        this.llftCorner = parents[0];
+
+        /**
+         * Width and height [w, h] of the 3D view if elevation and azimuth are set to 0.
+         * @type array
+         */
+        this.size = parents[1];
+
+        /**
+         * Bounding box (cube) [[x1, x2], [y1,y2], [z1,z2]] of the 3D view
+         * @type array
+         */
+        this.bbox3D = parents[2];
 
         /**
          * Distance of the view to the origin. In other words, its
          * the radius of the sphere where the camera sits.
+         * @type Number
          */
-        this.D3.r = -1;
+        this.r = -1;
 
         this.timeoutAzimuth = null;
 
@@ -80720,12 +80784,25 @@ function (JXG, Options, Const, Type, Mat, GeometryElement) {
         this.board.finalizeAdding(this);
         this.elType = 'view3d';
         this.methodMap = Type.deepCopy(this.methodMap, {
+            // TODO
         });
     };
     JXG.View3D.prototype = new GeometryElement();
 
-    JXG.extend(JXG.View3D.prototype, /** @lends ThreeD.View3D.prototype */ {
-        create: function (elementType, parents, attributes) {
+    JXG.extend(JXG.View3D.prototype, /** @lends JXG.View3D.prototype */ {
+
+        /**
+         * Creates a new 3D element of type elementType.
+         * @param {String} elementType Type of the element to be constructed given as a string e.g. 'point3d' or 'surface3d'.
+         * @param {Array} parents Array of parent elements needed to construct the element e.g. coordinates for a 3D point or two
+         * 3D points to construct a line. This highly depends on the elementType that is constructed. See the corresponding JXG.create*
+         * methods for a list of possible parameters.
+         * @param {Object} [attributes] An object containing the attributes to be set. This also depends on the elementType.
+         * Common attributes are name, visible, strokeColor.
+         * @returns {Object} Reference to the created element. This is usually a GeometryElement3D, but can be an array containing
+         * two or more elements.
+         */
+         create: function (elementType, parents, attributes) {
             var prefix = [],
                 is3D = false,
                 el;
@@ -80735,55 +80812,119 @@ function (JXG, Options, Const, Type, Mat, GeometryElement) {
                 prefix.push(this);
             }
             el = this.board.create(elementType, prefix.concat(parents), attributes);
-            if (is3D) {
-                this.add(el);
-            }
             return el;
         },
 
-        add: function (el) {
-            this.D3.objects[el.id] = el;
-            this.D3.objectsList.push(el);
+        /**
+         * Select a single or multiple elements at once.
+         * @param {String|Object|function} str The name, id or a reference to a JSXGraph 3D element in the 3D view. An object will
+         * be used as a filter to return multiple elements at once filtered by the properties of the object.
+         * @param {Boolean} onlyByIdOrName If true (default:false) elements are only filtered by their id, name or groupId.
+         * The advanced filters consisting of objects or functions are ignored.
+         * @returns {JXG.GeometryElement3D|JXG.Composition}
+         * @example
+         * // select the element with name A
+         * view.select('A');
+         *
+         * // select all elements with strokecolor set to 'red' (but not '#ff0000')
+         * view.select({
+         *   strokeColor: 'red'
+         * });
+         *
+         * // select all points on or below the x/y plane and make them black.
+         * view.select({
+         *   elType: 'point3d',
+         *   Z: function (v) {
+         *     return v <= 0;
+         *   }
+         * }).setAttribute({color: 'black'});
+         *
+         * // select all elements
+         * view.select(function (el) {
+         *   return true;
+         * });
+         */
+         select: function (str, onlyByIdOrName) {
+            var flist, olist, i, l,
+                s = str;
+
+            if (s === null) {
+                return s;
+            }
+
+            // It's a string, most likely an id or a name.
+            if (Type.isString(s) && s !== '') {
+                // Search by ID
+                if (Type.exists(this.objects[s])) {
+                    s = this.objects[s];
+                // Search by name
+                } else if (Type.exists(this.elementsByName[s])) {
+                    s = this.elementsByName[s];
+                // // Search by group ID
+                // } else if (Type.exists(this.groups[s])) {
+                //     s = this.groups[s];
+                }
+
+            // It's a function or an object, but not an element
+            } else if (!onlyByIdOrName &&
+                (Type.isFunction(s) ||
+                 (Type.isObject(s) && !Type.isFunction(s.setAttribute))
+                )) {
+                    console.log("B")
+                    flist = Type.filterElements(this.objectsList, s);
+
+                    olist = {};
+                    l = flist.length;
+                    for (i = 0; i < l; i++) {
+                        olist[flist[i].id] = flist[i];
+                    }
+                    s = new Composition(olist);
+
+            // It's an element which has been deleted (and still hangs around, e.g. in an attractor list
+            } else if (Type.isObject(s) && Type.exists(s.id) && !Type.exists(this.objects[s.id])) {
+                s = null;
+            }
+
+            return s;
         },
 
         update: function () {
             // Update 3D-to-2D transformation matrix with the actual
             // elevation and azimuth angles.
 
-             var D3 = this.D3,
-                e, r, a, f, mat;
+            var e, r, a, f, mat;
 
-            if (!Type.exists(D3.el_slide) ||
-                !Type.exists(D3.az_slide) ||
+            if (!Type.exists(this.el_slide) ||
+                !Type.exists(this.az_slide) ||
                 !this.needsUpdate) {
                 return this;
             }
 
-            e = D3.el_slide.Value();
-            r = D3.r;
-            a = D3.az_slide.Value();
+            e = this.el_slide.Value();
+            r = this.r;
+            a = this.az_slide.Value();
             f = r * Math.sin(e);
             mat = [[1, 0, 0,], [0, 1, 0], [0, 0, 1]];
 
-            D3.matrix = [
+            this.matrix3D = [
                 [1, 0, 0, 0],
                 [0, 1, 0, 0],
                 [0, 0, 1, 0]
             ];
 
-            D3.matrix[1][1] = r * Math.cos(a);
-            D3.matrix[1][2] = -r * Math.sin(a);
-            D3.matrix[2][1] = f * Math.sin(a);
-            D3.matrix[2][2] = f * Math.cos(a);
-            D3.matrix[2][3] = Math.cos(e);
+            this.matrix3D[1][1] = r * Math.cos(a);
+            this.matrix3D[1][2] = -r * Math.sin(a);
+            this.matrix3D[2][1] = f * Math.sin(a);
+            this.matrix3D[2][2] = f * Math.cos(a);
+            this.matrix3D[2][3] = Math.cos(e);
 
             if (true) {
-                mat[1][1] = D3.size[0] / (D3.bbox3d[0][1] - D3.bbox3d[0][0]); // w / d_x
-                mat[2][2] = D3.size[1] / (D3.bbox3d[1][1] - D3.bbox3d[1][0]); // h / d_y
-                mat[1][0] = D3.coords[0] - mat[1][1] * D3.bbox3d[0][0];     // llft_x
-                mat[2][0] = D3.coords[1] - mat[2][2] * D3.bbox3d[1][0];     // llft_y
+                mat[1][1] = this.size[0] / (this.bbox3D[0][1] - this.bbox3D[0][0]); // w / d_x
+                mat[2][2] = this.size[1] / (this.bbox3D[1][1] - this.bbox3D[1][0]); // h / d_y
+                mat[1][0] = this.llftCorner[0] - mat[1][1] * this.bbox3D[0][0];     // llft_x
+                mat[2][0] = this.llftCorner[1] - mat[2][2] * this.bbox3D[1][0];     // llft_y
 
-                D3.matrix = Mat.matMatMult(mat, D3.matrix);
+                this.matrix3D = Mat.matMatMult(mat, this.matrix3D);
             }
 
             return this;
@@ -80816,7 +80957,7 @@ function (JXG, Options, Const, Type, Mat, GeometryElement) {
                     vec = x;
                 }
             }
-            return Mat.matVecMult(this.D3.matrix, vec);
+            return Mat.matVecMult(this.matrix3D, vec);
         },
 
         /**
@@ -80825,7 +80966,7 @@ function (JXG, Options, Const, Type, Mat, GeometryElement) {
          *
          * @param  {JXG.Point} point
          * @param  {Array} normal
-         * @returns Array of length 4 containing the projected
+         * @returns {Array} of length 4 containing the projected
          * point in homogeneous coordinates.
          */
         project2DTo3DPlane: function (point2d, normal, foot) {
@@ -80837,7 +80978,7 @@ function (JXG, Options, Const, Type, Mat, GeometryElement) {
             le = Mat.norm(n, 3);
             d = Mat.innerProduct(foot.slice(1), n, 3) / le;
 
-            mat = this.D3.matrix.slice(0, 3); // True copy
+            mat = this.matrix3D.slice(0, 3); // True copy
             mat.push([0].concat(n));
 
             // 2D coordinates of point:
@@ -80855,8 +80996,14 @@ function (JXG, Options, Const, Type, Mat, GeometryElement) {
             return sol;
         },
 
+        /**
+         * Limit 3D coordinates to the bounding cube.
+         *
+         * @param {Array} c3d 3D coordinates [x,y,z]
+         * @returns Array with updated 3D coordinates.
+         */
         project3DToCube: function (c3d) {
-            var cube = this.D3.bbox3d;
+            var cube = this.bbox3D;
             if (c3d[1] < cube[0][0]) { c3d[1] = cube[0][0]; }
             if (c3d[1] > cube[0][1]) { c3d[1] = cube[0][1]; }
             if (c3d[2] < cube[1][0]) { c3d[2] = cube[1][0]; }
@@ -80867,14 +81014,21 @@ function (JXG, Options, Const, Type, Mat, GeometryElement) {
             return c3d;
         },
 
+        /**
+         * Intersect a ray with the bounding cube of the 3D view.
+         * @param {Array} p 3D coordinates [x,y,z]
+         * @param {Array} d 3D direction vector of the line (array of length 3)
+         * @param {Number} r direction of the ray (positive if r > 0, negative if r < 0).
+         * @returns Affine ratio of the intersection of the line with the cube.
+         */
         intersectionLineCube: function (p, d, r) {
             var rnew, i, r0, r1;
 
             rnew = r;
             for (i = 0; i < 3; i++) {
                 if (d[i] !== 0) {
-                    r0 = (this.D3.bbox3d[i][0] - p[i]) / d[i];
-                    r1 = (this.D3.bbox3d[i][1] - p[i]) / d[i];
+                    r0 = (this.bbox3D[i][0] - p[i]) / d[i];
+                    r1 = (this.bbox3D[i][1] - p[i]) / d[i];
                     if (r < 0) {
                         rnew = Math.max(rnew, Math.min(r0, r1));
                     } else {
@@ -80885,18 +81039,23 @@ function (JXG, Options, Const, Type, Mat, GeometryElement) {
             return rnew;
         },
 
+        /**
+         * Test if coordinates are inside of the bounding cube.
+         * @param {array} q 3D coordinates [x,y,z] of a point.
+         * @returns Boolean
+         */
         isInCube: function (q) {
-            return q[0] > this.D3.bbox3d[0][0] - Mat.eps && q[0] < this.D3.bbox3d[0][1] + Mat.eps &&
-                q[1] > this.D3.bbox3d[1][0] - Mat.eps && q[1] < this.D3.bbox3d[1][1] + Mat.eps &&
-                q[2] > this.D3.bbox3d[2][0] - Mat.eps && q[2] < this.D3.bbox3d[2][1] + Mat.eps;
+            return q[0] > this.bbox3D[0][0] - Mat.eps && q[0] < this.bbox3D[0][1] + Mat.eps &&
+                q[1] > this.bbox3D[1][0] - Mat.eps && q[1] < this.bbox3D[1][1] + Mat.eps &&
+                q[2] > this.bbox3D[2][0] - Mat.eps && q[2] < this.bbox3D[2][1] + Mat.eps;
         },
 
         /**
          *
-         * @param {*} plane1
-         * @param {*} plane2
-         * @param {*} d
-         * @returns Array of length 2 containing the coordinates of the defining points of
+         * @param {JXG.Plane3D} plane1
+         * @param {JXG.Plane3D} plane2
+         * @param {JXG.Plane3D} d
+         * @returns {Array} of length 2 containing the coordinates of the defining points of
          * of the intersection segment.
          */
         intersectionPlanePlane: function(plane1, plane2, d) {
@@ -80968,14 +81127,14 @@ function (JXG, Options, Const, Type, Mat, GeometryElement) {
         },
 
         animateAzimuth: function () {
-            var s = this.D3.az_slide._smin,
-                e = this.D3.az_slide._smax,
+            var s = this.az_slide._smin,
+                e = this.az_slide._smax,
                 sdiff = e - s,
-                newVal = this.D3.az_slide.Value() + 0.1;
+                newVal = this.az_slide.Value() + 0.1;
 
-            this.D3.az_slide.position = ((newVal - s) / sdiff);
-            if (this.D3.az_slide.position > 1) {
-                this.D3.az_slide.position = 0.0;
+            this.az_slide.position = ((newVal - s) / sdiff);
+            if (this.az_slide.position > 1) {
+                this.az_slide.position = 0.0;
             }
             this.board.update();
 
@@ -81064,51 +81223,26 @@ function (JXG, Options, Const, Type, Mat, GeometryElement) {
      *
      */
      JXG.createView3D = function (board, parents, attributes) {
-        var view, frame, attr,
+        var view, attr,
             x, y, w, h,
             coords = parents[0], // llft corner
             size = parents[1];   // [w, h]
 
         attr = Type.copyAttributes(attributes, board.options, 'view3d');
         view = new JXG.View3D(board, parents, attr);
-        view.defaultAxes = view.create('axes3d', parents, attributes);
+        //view.defaultAxes = view.create('axes3d', parents, attributes);
 
         x = coords[0];
         y = coords[1];
         w = size[0];
         h = size[1];
 
-        /*
-         * Frame around the view object
-         */
-        if (false) {
-            frame = board.create('polygon', [
-                [coords[0], coords[1] + size[1]],           // ulft
-                [coords[0], coords[1]],                     // llft
-                [coords[0] + size[0], coords[1]],           // lrt
-                [coords[0] + size[0], coords[1] + size[1]], // urt
-            ], {
-                fillColor: 'none',
-                highlightFillColor: 'none',
-                highlight: false,
-                vertices: {
-                    fixed: true,
-                    visible: false
-                },
-                borders: {
-                    strokeColor: 'black',
-                    highlight: false,
-                    strokeWidth: 0.5,
-                    dash: 4
-                }
-            });
-            //view.add(frame);
-        }
-
         /**
          * Slider to adapt azimuth angle
+         * @name JXG.View3D#az_slide
+         * @type {Slider}
          */
-        view.D3.az_slide = board.create('slider', [[x - 1, y - 2], [x + w + 1, y - 2], [0, 1.0, 2 * Math.PI]], {
+        view.az_slide = board.create('slider', [[x - 1, y - 2], [x + w + 1, y - 2], [0, 1.0, 2 * Math.PI]], {
             style: 6, name: 'az',
             point1: { frozen: true },
             point2: { frozen: true }
@@ -81116,8 +81250,11 @@ function (JXG, Options, Const, Type, Mat, GeometryElement) {
 
         /**
          * Slider to adapt elevation angle
+         *
+         * @name JXG.View3D#el_slide
+         * @type {Slider}
          */
-        view.D3.el_slide = board.create('slider', [[x - 1, y], [x - 1, y + h], [0, 0.30, Math.PI / 2]], {
+        view.el_slide = board.create('slider', [[x - 1, y], [x - 1, y + h], [0, 0.30, Math.PI / 2]], {
             style: 6, name: 'el',
             point1: { frozen: true },
             point2: { frozen: true }
@@ -81197,6 +81334,7 @@ define('3d/element3d',['jxg'], function (JXG) {
      */
     JXG.GeometryElement3D = function (view, elType) {
         this.elType = elType;
+        this.id = this.board.setId(this, elType);
 
         /**
          * Pointer to the view3D in which the elemtn is constructed
@@ -81224,6 +81362,13 @@ define('3d/element3d',['jxg'], function (JXG) {
          * @private
          */
         this.is3D = true;
+        this.view.objects[this.id] = this;
+        this.view.objectsList.push(this);
+
+        if (this.name !== '') {
+            this.view.elementsByName[this.name] = this;
+        }
+
     };
 
     return JXG.GeometryElement3D;
@@ -81530,9 +81675,7 @@ define('3d/point3d',['jxg', 'base/constants', 'math/math', 'math/geometry', 'uti
     "use strict";
 
     /**
-     * A 3D point is the basic geometric element. Based on points lines and circles can be constructed which can be intersected
-     * which in turn are points again which can be used to construct new lines, circles, polygons, etc. This class holds methods for
-     * all kind of points like free points, gliders, and intersection points.
+     * A 3D point is the basic geometric element.
      * @class Creates a new 3D point object. Do not use this constructor to create a 3D point. Use {@link JXG.Board#create} with
      * type {@link Point3D} instead.
      * @augments JXG.GeometryElement3D
@@ -81562,6 +81705,8 @@ define('3d/point3d',['jxg', 'base/constants', 'math/math', 'math/geometry', 'uti
          * @private
          */
         this.coords = [1, 0, 0, 0];
+
+        this.F = null;
 
         /**
          * Optional slide element, i.e. element the Point3D lives on.
@@ -81623,6 +81768,10 @@ define('3d/point3d',['jxg', 'base/constants', 'math/math', 'math/geometry', 'uti
          * @private
          */
         this._params = null;
+
+        this.methodMap = Type.deepCopy(this.methodMap, {
+            // TODO
+        });
     };
     JXG.Point3D.prototype = new JXG.GeometryElement();
     Type.copyPrototypeMethods(JXG.Point3D, JXG.GeometryElement3D, 'constructor3D');
@@ -81640,11 +81789,10 @@ define('3d/point3d',['jxg', 'base/constants', 'math/math', 'math/geometry', 'uti
          *    p.updateCoords();
          */
         updateCoords: function () {
-            var res, i;
+            var i;
 
             if (Type.isFunction(this.F)) {
-                res = Type.evaluate(this.F);
-                this.coords = [1, res[0], res[1], res[2]];
+                this.coords = [1].concat(Type.evaluate(this.F));
             } else {
                 this.coords[0] = 1;
                 for (i = 0; i < 3; i++) {
@@ -81718,6 +81866,9 @@ define('3d/point3d',['jxg', 'base/constants', 'math/math', 'math/geometry', 'uti
 
         update: function (drag) {
             var c3d, foot;
+            // if (!this.needsUpdate) {
+            //     return this;
+            // }
 
             // Update is called from two methods:
             // Once in setToPosition and
@@ -81755,7 +81906,6 @@ define('3d/point3d',['jxg', 'base/constants', 'math/math', 'math/geometry', 'uti
         // Not yet working
         __evt__update3D: function (oc) { }
 
-
     });
 
     /**
@@ -81778,11 +81928,6 @@ define('3d/point3d',['jxg', 'base/constants', 'math/math', 'math/geometry', 'uti
      * </ul>
      *
      * @example
-     *    var board = JXG.JSXGraph.initBoard('jxgbox1', {
-     *        boundingbox: [-8, 8, 8, -8],
-     *        keepaspectratio: false,
-     *        axis: false
-     *    });
      *    var bound = [-5, 5];
      *    var view = board.create('view3d',
      *        [[-6, -3], [8, 8],
@@ -81824,7 +81969,7 @@ define('3d/point3d',['jxg', 'base/constants', 'math/math', 'math/geometry', 'uti
         attr = Type.copyAttributes(attributes, board.options, 'point3d');
         el = new JXG.Point3D(view, parents, attr);
 
-        // If the last element of parents is a 3D object, 
+        // If the last element of parents is a 3D object,
         // the point is a glider on that element.
         if (parents.length > 2 && Type.exists(parents[parents.length - 1].is3D)) {
             el.slide = parents.pop();
@@ -82032,9 +82177,116 @@ define('3d/curve3d',['jxg', 'utils/type'], function (JXG, Type) {
  * Create linear spaces of dimension at least one,
  * i.e. lines and planes.
  */
-define('3d/linspace3d',['jxg', 'utils/type', 'math/math', 'math/geometry'
-], function (JXG, Type, Mat, Geometry) {
+define('3d/linspace3d',['jxg', 'base/constants', 'utils/type', 'math/math', 'math/geometry'
+], function (JXG, Const, Type, Mat, Geometry) {
     "use strict";
+
+    /**
+     * Constructor for 3D lines.
+     * @class Creates a new 3D line object. Do not use this constructor to create a 3D line. Use {@link JXG.Board#create} with type {@link Point3D} instead.
+     *
+     * @augments JXG.GeometryElement3D
+     * @augments JXG.GeometryElement
+     * @param {View3D} view
+     * @param {Point3D|Array} point
+     * @param {Array} direction
+     * @param {Array} range
+     * @param {Object} attributes
+     * @see JXG.Board#generateName
+     */
+     JXG.Line3D = function (view, point, direction, range, attributes) {
+        this.constructor(view.board, attributes, Const.OBJECT_TYPE_POINT, Const.OBJECT_CLASS_POINT);
+        this.constructor3D(view, 'line3d');
+
+        this.id = this.view.board.setId(this, 'L3D');
+        this.board.finalizeAdding(this);
+
+        /**
+         * 3D point which - together with a direction - defines the line.
+         * @type {JXG.Point3D}
+         *
+         * @see JXG.Line3D#direction
+         */
+        this.point = point;
+
+        /**
+         * Direction which - together with a point - defines the line. Array of numbers or functions (of length 3) or function
+         * returning array of length 3.
+         *
+         * @type {Array,Function}
+         * @see JXG.Line3D#point
+         */
+        this.direction = direction;
+
+        /**
+         * Range [r1, r2] of the line. The 3D line goes from (point + r1 * direction) to (point + r2 * direction)
+         * @type {Array}
+         */
+        this.range = range || [-Infinity, Infinity];
+
+        /**
+         * Starting point of the 3D line
+         * @type {JXG.Point3D}
+         */
+        this.point1 = null;
+
+        /**
+         * End point of the 3D line
+         * @type {JXG.Point3D}
+         */
+         this.point2 = null;
+
+        this.methodMap = Type.deepCopy(this.methodMap, {
+            // TODO
+        });
+    };
+    JXG.Line3D.prototype = new JXG.GeometryElement();
+    Type.copyPrototypeMethods(JXG.Line3D, JXG.GeometryElement3D, 'constructor3D');
+
+    JXG.extend(JXG.Line3D.prototype, /** @lends JXG.Line3D.prototype */ {
+
+        /**
+         * Determining one end point of a 3D line.
+         * @param {Number|function} r
+         * @private
+         * @returns Array
+         */
+        getPointCoords: function (r) {
+            var p = [],
+                d = [],
+                i, r0;
+
+            p = [this.point.X(), this.point.Y(), this.point.Z()];
+
+            if (Type.isFunction(this.direction)) {
+                d = this.direction();
+            } else {
+                for (i = 1; i < 4; i++) {
+                    d.push(Type.evaluate(this.direction[i]));
+                }
+            }
+
+            r0 = Type.evaluate(r);
+            // TODO: test also in the finite case
+            if (Math.abs(r0) === Infinity) {
+                r = this.view.intersectionLineCube(p, d, r0);
+            }
+
+            return [
+                p[0] + d[0] * r0,
+                p[1] + d[1] * r0,
+                p[2] + d[2] * r0
+            ];
+        },
+
+        update: function() { return this; },
+
+        updateRenderer: function() {
+            this.needsUpdate = false;
+            return this;
+        }
+
+    });
 
     /**
      * @class This element is used to provide a constructor for a 3D line.
@@ -82051,113 +82303,125 @@ define('3d/linspace3d',['jxg', 'utils/type', 'math/math', 'math/geometry'
      * All numbers can also be provided as functions returning a number.
      *
      * @name Line3D
-     * @augments JXG.Curve
+     * @augments JXG.GeometryElement3D
      * @constructor
-     * @type JXG.Curve
+     * @type JXG.Line3D
      * @throws {Exception} If the element cannot be constructed with the given parent
      * objects an exception is thrown.
-     * @param {JXG.Point_number,JXG.Point,JXG.Line,JXG.Circle} center,radius The center must be given as a {@link JXG.Point}, see {@link JXG.providePoints}, but the radius can be given
-     * as a number (which will create a circle with a fixed radius), another {@link JXG.Point}, a {@link JXG.Line} (the distance of start and end point of the
-     * line will determine the radius), or another {@link JXG.Circle}.
+     * @param {JXG.Point3D,array_JXG.Point3D,array} point1,point2 First and second defining point. Alternatively, point, direction and rang can be supplied.
+     * <ul>
+     * <li> point: Point3D or array of length 3
+     * <li> direction: array of length 3
+     * <li> range: array of length 2.
+     * </ul>
+     *
+     * @example
+     *     var bound = [-5, 5];
+     *     var view = board.create('view3d',
+     *         [[-6, -3], [8, 8],
+     *         [bound, bound, bound]],
+     *         {});
+     *     var p = view.create('point3d', [1, 2, 2], { name:'A', size: 5 });
+     *     // Lines through 2 points
+     *     var l1 = view.create('line3d', [[1, 3, 3], [-3, -3, -3]], {point1: {visible: true}, point2: {visible: true} });
+     *     var l2 = view.create('line3d', [p, l1.point1]);
+     *
+     *     // Line by point, direction, range
+     *     var l3 = view.create('line3d', [p, [0, 0, 1], [-2, 4]]);
+     *
+     * </pre><div id="JXG05f9baa4-6059-4502-8911-6a934f823b3d" class="jxgbox" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     *     (function() {
+     *         var board = JXG.JSXGraph.initBoard('JXG05f9baa4-6059-4502-8911-6a934f823b3d',
+     *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false});
+     *         var bound = [-5, 5];
+     *         var view = board.create('view3d',
+     *             [[-6, -3], [8, 8],
+     *             [bound, bound, bound]],
+     *             {});
+     *         var p = view.create('point3d', [1, 2, 2], { name:'A', size: 5 });
+     *         // Lines through 2 points
+     *         var l1 = view.create('line3d', [[1, 3, 3], [-3, -3, -3]], {name: 'll1', point1: {visible: true}, point2: {visible: true} });
+     *         var l2 = view.create('line3d', [p, l1.point1]);
+     *         // Line by point, direction, range
+     *         var l3 = view.create('line3d', [p, [0, 0, 1], [-2, 4]]);
+     *
+     *     })();
+     *
+     * </script><pre>
      *
      */
     JXG.createLine3D = function (board, parents, attributes) {
         var view = parents[0],
-            attr, D3, point, point1, point2,
+            attr, points,
+            point, direction, range,
+            point1, point2,
             el;
 
-        // Range
-        D3 = {
-            elType: 'line3d',
-            range: parents[3] || [-Infinity, Infinity]
-        };
+        attr = Type.copyAttributes(attributes, board.options, 'line3d');
 
-        // Point
-        if (Type.isPoint(parents[1])) {
-            point = parents[1];
-        } else {
-            point = view.create('point3d', parents[1], { visible: false, name: '', withLabel: false });
-        }
-        D3.point = point;
+        // In any case, parents[1] contains a point or point coordinates
+        point = Type.providePoints3D(view, [parents[1]], attributes, 'line3d', ['point1'])[0];
 
-        // Direction
-        if (Type.isPoint(parents[2]) && Type.exists(parents[2].D3)) {
+        if (Type.isPoint3D(parents[2]) || (Type.isArray(parents[2]) && parents.length === 3)) {
             // Line defined by two points
 
             point1 = point;
-            point2 = parents[2];
-            D3.direction = function () {
+            point2 = Type.providePoints3D(view, [parents[2]],  attributes, 'line3d', ['point2'])[0];
+            direction = function () {
                 return [
-                    point2.D3.X() - point.D3.X(),
-                    point2.D3.Y() - point.D3.Y(),
-                    point2.D3.Z() - point.D3.Z()
+                    point2.X() - point.X(),
+                    point2.Y() - point.Y(),
+                    point2.Z() - point.Z()
                 ];
             };
-            D3.range = [0, 1];
+            range = [0, 1];
+            el = new JXG.Line3D(view, point, direction, range, attr);
         } else {
             // Line defined by point, direction and range
 
             // Directions are handled as arrays of length 4,
             // i.e. with homogeneous coordinates.
             if (Type.isFunction(parents[2])) {
-                D3.direction = parents[2];
+                direction = parents[2];
             } else if (parents[2].length === 3) {
-                D3.direction = [1].concat(parents[2]);
+                direction = [1].concat(parents[2]);
             } else if (parents[2].length === 4) {
-                D3.direction = parents[2];
+                direction = parents[2];
             } else {
                 // Throw error
             }
+            range = parents[3];
 
-            // Direction given as array
-            D3.getPointCoords = function (r) {
-                var p = [],
-                    d = [],
-                    i;
+            points = Type.providePoints3D(view, [[0, 0, 0], [0, 0, 0]],  attributes, 'line3d', ['point1', 'point2']);
 
-                p.push(point.D3.X());
-                p.push(point.D3.Y());
-                p.push(point.D3.Z());
+            // Create a line3d with two dummy points
+            el = new JXG.Line3D(view, point, direction, range, attr);
 
-                if (Type.isFunction(D3.direction)) {
-                    d = D3.direction();
-                } else {
-                    for (i = 1; i < 4; i++) {
-                        d.push(Type.evaluate(D3.direction[i]));
-                    }
-                }
-                if (Math.abs(r) === Infinity) {
-                    r = view.intersectionLineCube(p, d, r);
-                }
-                return [
-                    p[0] + d[0] * r,
-                    p[1] + d[1] * r,
-                    p[2] + d[2] * r
-                ];
-
+            // Now set the real points which define the line
+            points[0].F = function() {
+                return el.getPointCoords(Type.evaluate(el.range[0]));
             };
+            points[0].prepareUpdate().update();
+            point1 = points[0];
 
-            attr = Type.copyAttributes(attributes, board.options, 'line3d', 'point1');
-            point1 = view.create('point3d', [
-                function () {
-                    return D3.getPointCoords(Type.evaluate(D3.range[0]));
-                }
-            ], attr);
-            attr = Type.copyAttributes(attributes, board.options, 'line3d', 'point2');
-            point2 = view.create('point3d', [
-                function () {
-                    return D3.getPointCoords(Type.evaluate(D3.range[1]));
-                }
-            ], attr);
+            points[1].F = function() {
+                return el.getPointCoords(Type.evaluate(el.range[1]));
+            };
+            points[1].prepareUpdate().update();
+            point2 = points[1];
         }
 
-        attr = Type.copyAttributes(attributes, board.options, 'line3d');
-        el = view.create('segment', [point1, point2], attr);
-        el.point1 = point1;
-        el.point2 = point2;
+        // el.prepareUpdate().update();
+
+        el.element2D = view.create('segment', [point1.element2D, point2.element2D], attr);
+        el.addChild(el.element2D);
+        el.inherits.push(el.element2D);
+
         point1.addChild(el);
         point2.addChild(el);
-        el.D3 = D3;
+        el.point1 = point1;
+        el.point2 = point2;
 
         return el;
     };
@@ -82671,7 +82935,6 @@ define('../build/core.deps.js',[
     'options3d',
     '3d/view3d',
     '3d/element3d',
-//    '3d/threed',
     '3d/box3d',
     '3d/point3d',
     '3d/curve3d',
