@@ -91,7 +91,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
      * </script><pre>
      *
      */
-    JXG.ThreeD.createParametricSurface = function (board, parents, attributes) {
+    JXG.createParametricSurface3D = function (board, parents, attributes) {
         var view = parents[0],
             attr,
             X = parents[1],
@@ -126,7 +126,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
 
         return el;
     };
-    JXG.registerElement('parametricsurface3d', JXG.ThreeD.createParametricSurface);
+    JXG.registerElement('parametricsurface3d', JXG.createParametricSurface3D);
 
     /**
      * @class This element creates a 3D function graph.
@@ -203,7 +203,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
      * </script><pre>
      *
      */
-    JXG.ThreeD.createFunctiongraph = function (board, parents, attributes) {
+    JXG.createFunctiongraph3D = function (board, parents, attributes) {
         var view = parents[0],
             X = function(u, v) { return u; },
             Y = function(u, v) { return v; },
@@ -213,6 +213,6 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
 
         return view.create('parametricsurface3d', [X, Y, Z, range_u, range_v], attributes);
     };
-    JXG.registerElement('functiongraph3d', JXG.ThreeD.createFunctiongraph);
+    JXG.registerElement('functiongraph3d', JXG.createFunctiongraph3D);
 
 });

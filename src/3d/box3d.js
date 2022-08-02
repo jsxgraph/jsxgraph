@@ -35,7 +35,7 @@
 define(['jxg', 'utils/type', 'math/math', 'math/geometry'], function (JXG, Type, Mat, Geometry) {
     "use strict";
 
-    JXG.ThreeD.createAxes = function (board, parents, attributes) {
+    JXG.createAxes3D = function (board, parents, attributes) {
         var view = parents[0],
             i, j, k, i1, i2,
             attr,
@@ -169,9 +169,9 @@ define(['jxg', 'utils/type', 'math/math', 'math/geometry'], function (JXG, Type,
 
         return axes;
     };
-    JXG.registerElement('axes3d', JXG.ThreeD.createAxes);
+    JXG.registerElement('axes3d', JXG.createAxes3D);
 
-    JXG.ThreeD.createAxis = function (board, parents, attributes) {
+    JXG.createAxis3D = function (board, parents, attributes) {
         var view = parents[0],
             attr,
             start = parents[1],
@@ -204,9 +204,9 @@ define(['jxg', 'utils/type', 'math/math', 'math/geometry'], function (JXG, Type,
 
         return el;
     };
-    JXG.registerElement('axis3d', JXG.ThreeD.createAxis);
+    JXG.registerElement('axis3d', JXG.createAxis3D);
 
-    JXG.ThreeD.createMesh = function (board, parents, attr) {
+    JXG.createMesh3D = function (board, parents, attr) {
         var view = parents[0],
             point = parents[1],
             vec1 = parents[2],
@@ -262,6 +262,6 @@ define(['jxg', 'utils/type', 'math/math', 'math/geometry'], function (JXG, Type,
         };
         return el;
     };
-    JXG.registerElement('mesh3d', JXG.ThreeD.createMesh);
+    JXG.registerElement('mesh3d', JXG.createMesh3D);
 
 });

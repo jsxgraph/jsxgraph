@@ -72,14 +72,14 @@ define([
     'element/button',
     'base/foreignobject',
     'options3d',
-    '3d/threed',
-    '3d/box3d',
-    '3d/curve3d',
+    '3d/view3d',
     '3d/element3d',
-    '3d/linspace3d',
+//    '3d/threed',
+    '3d/box3d',
     '3d/point3d',
-    '3d/surface3d',
-    '3d/view3d'
+    '3d/curve3d',
+    '3d/linspace3d',
+    '3d/surface3d'
 ], function (JXG, Env) {
     "use strict";
 

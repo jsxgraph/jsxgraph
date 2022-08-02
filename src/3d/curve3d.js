@@ -31,7 +31,7 @@
 define(['jxg', 'utils/type'], function (JXG, Type) {
     "use strict";
 
-    JXG.ThreeD.createCurve = function (board, parents, attr) {
+    JXG.createCurve3D = function (board, parents, attr) {
         var view = parents[0],
             D3, el;
 
@@ -91,6 +91,6 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
 
         return el;
     };
-    JXG.registerElement('curve3d', JXG.ThreeD.createCurve);
+    JXG.registerElement('curve3d', JXG.createCurve3D);
 
 });

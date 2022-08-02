@@ -250,7 +250,10 @@ define(['jxg', 'base/constants', 'math/math', 'math/geometry', 'utils/type' //, 
             return this;
         },
 
-        updateRenderer: function() {},
+        updateRenderer: function() {
+            this.needsUpdate = false;
+            return this;
+        },
 
         // Not yet working
         __evt__update3D: function (oc) { }

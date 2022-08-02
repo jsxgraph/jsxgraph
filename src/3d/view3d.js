@@ -28,20 +28,33 @@
  */
 /*global JXG:true, define: true*/
 
-define(['jxg', 'options', 'base/constants', 'utils/type', 'math/math', 'base/element'], 
+define(['jxg', 'options', 'base/constants', 'utils/type', 'math/math', 'base/element'],
 function (JXG, Options, Const, Type, Mat, GeometryElement) {
     "use strict";
 
-    JXG.ThreeD.View3D = function (board, parents, attributes) {
+    /**
+     * 3D view inside of a JXGraph board.
+     *
+     * @class Creates a new 3D view. Do not use this constructor to create a 3D view. Use {@link JXG.Board#create} with
+     * type {@link View3D} instead.
+     *
+     * @augments JXG.GeometryElement
+     * @param {Array} parents Array consisting of lower left corner [x, y] of the view inside the board, [width, height] of the view
+     * and box size [[x1, x2], [y1,y2], [z1,z2]]. If the view's azimuth=0 and elevation=0, the 3D view will cover a rectangle with lower left corner
+     * [x,y] and side lengths [w, h] of the board.
+     */
+     JXG.View3D = function (board, parents, attributes) {
         var bbox3d, coords, size;
         this.constructor(board, attributes, Const.OBJECT_TYPE_VIEW3D, Const.OBJECT_CLASS_CURVE);
 
+        coords = parents[0];  // llft corner
+        size = parents[1];    // [w, h]
         bbox3d = parents[2];  // [[x1, x2], [y1,y2], [z1,z2]]
-        coords = parents[0]; // llft corner
-        size = parents[1];   // [w, h]
 
         /**
          * "Namespace" for all 3D handling
+         * @type object
+         * @private
          */
         this.D3 = {};
 
@@ -93,9 +106,9 @@ function (JXG, Options, Const, Type, Mat, GeometryElement) {
         this.methodMap = Type.deepCopy(this.methodMap, {
         });
     };
-    JXG.ThreeD.View3D.prototype = new GeometryElement();
+    JXG.View3D.prototype = new GeometryElement();
 
-    JXG.extend(JXG.ThreeD.View3D.prototype, /** @lends ThreeD.View3D.prototype */ {
+    JXG.extend(JXG.View3D.prototype, /** @lends ThreeD.View3D.prototype */ {
         create: function (elementType, parents, attributes) {
             var prefix = [],
                 is3D = false,
@@ -106,7 +119,7 @@ function (JXG, Options, Const, Type, Mat, GeometryElement) {
                 prefix.push(this);
             }
             el = this.board.create(elementType, prefix.concat(parents), attributes);
-            if (true || is3D) {
+            if (is3D) {
                 this.add(el);
             }
             return el;
@@ -117,14 +130,11 @@ function (JXG, Options, Const, Type, Mat, GeometryElement) {
             this.D3.objectsList.push(el);
         },
 
-        /**
-         * Update 3D-to-2D transformation matrix with the actual
-         * elevation and azimuth angles.
-         *
-         * @private
-         */
         update: function () {
-            var D3 = this.D3,
+            // Update 3D-to-2D transformation matrix with the actual
+            // elevation and azimuth angles.
+
+             var D3 = this.D3,
                 e, r, a, f, mat;
 
             if (!Type.exists(D3.el_slide) ||
@@ -229,6 +239,12 @@ function (JXG, Options, Const, Type, Mat, GeometryElement) {
             return sol;
         },
 
+        /**
+         * Limit 3D coordinates to the bounding cube.
+         * 
+         * @param {Array} c3d 3D coordinates [x,y,z]
+         * @returns Array with updated 3D coordinates.
+         */
         project3DToCube: function (c3d) {
             var cube = this.D3.bbox3d;
             if (c3d[1] < cube[0][0]) { c3d[1] = cube[0][0]; }
@@ -375,8 +391,9 @@ function (JXG, Options, Const, Type, Mat, GeometryElement) {
      * @param {Array_Array_Array} lower,dim,cube  Here, lower is an array of the form [x, y] and
      * dim is an array of the form [w, h].
      * The arrays [x, y] and [w, h] define the 2D frame into which the 3D cube is
-     * (roughly) projected.
-     * cube is an array of the form [[x1, x2], [y1, y2], [z1, z2]]
+     * (roughly) projected. If the view's azimuth=0 and elevation=0, the 3D view will cover a rectangle with lower left corner
+     * [x,y] and side lengths [w, h] of the board.
+     * The array 'cube' is of the form [[x1, x2], [y1, y2], [z1, z2]]
      * which determines the coordinate ranges of the 3D cube.
      *
      * @example
@@ -410,43 +427,40 @@ function (JXG, Options, Const, Type, Mat, GeometryElement) {
      *     (function() {
      *         var board = JXG.JSXGraph.initBoard('JXGdd06d90e-be5d-4531-8f0b-65fc30b1a7c7',
      *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false});
-     *                             var bound = [-5, 5];
-     *                             var view = board.create('view3d',
-     *                                 [[-6, -3], [8, 8],
-     *                                 [bound, bound, bound]],
-     *                                 {
-     *                                     // Main axes
-     *                                     axesPosition: 'center',
-     *                                     xAxis: { strokeColor: 'blue', strokeWidth: 3},
-     *
-     *                                     // Planes
-     *                                     xPlaneRear: { fillColor: 'yellow',  mesh3d: {visible: false}},
-     *                                     yPlaneFront: { visible: true, fillColor: 'blue'},
-     *
-     *                                     // Axes on planes
-     *                                     xPlaneRearYAxis: {strokeColor: 'red'},
-     *                                     xPlaneRearZAxis: {strokeColor: 'red'},
-     *
-     *                                     yPlaneFrontXAxis: {strokeColor: 'blue'},
-     *                                     yPlaneFrontZAxis: {strokeColor: 'blue'},
-     *
-     *                                     zPlaneFrontXAxis: {visible: false},
-     *                                     zPlaneFrontYAxis: {visible: false}
-     *                                 });
+     *         var bound = [-5, 5];
+     *         var view = board.create('view3d',
+     *             [[-6, -3], [8, 8],
+     *             [bound, bound, bound]],
+     *             {
+     *                 // Main axes
+     *                 axesPosition: 'center',
+     *                 xAxis: { strokeColor: 'blue', strokeWidth: 3},
+     *                 // Planes
+     *                 xPlaneRear: { fillColor: 'yellow',  mesh3d: {visible: false}},
+     *                 yPlaneFront: { visible: true, fillColor: 'blue'},
+     *                 // Axes on planes
+     *                 xPlaneRearYAxis: {strokeColor: 'red'},
+     *                 xPlaneRearZAxis: {strokeColor: 'red'},
+     *                 yPlaneFrontXAxis: {strokeColor: 'blue'},
+     *                 yPlaneFrontZAxis: {strokeColor: 'blue'},
+     *                 zPlaneFrontXAxis: {visible: false},
+     *                 zPlaneFrontYAxis: {visible: false}
+     *             });
+     *         board.update();
      *
      *     })();
      *
      * </script><pre>
      *
      */
-     JXG.ThreeD.createView3D = function (board, parents, attributes) {
+     JXG.createView3D = function (board, parents, attributes) {
         var view, frame, attr,
             x, y, w, h,
             coords = parents[0], // llft corner
             size = parents[1];   // [w, h]
 
         attr = Type.copyAttributes(attributes, board.options, 'view3d');
-        view = new JXG.ThreeD.View3D(board, parents, attr);
+        view = new JXG.View3D(board, parents, attr);
         view.defaultAxes = view.create('axes3d', parents, attributes);
 
         x = coords[0];
@@ -522,8 +536,8 @@ function (JXG, Options, Const, Type, Mat, GeometryElement) {
 
         return view;
     };
-    JXG.registerElement('view3d', JXG.ThreeD.createView3D);
+    JXG.registerElement('view3d', JXG.createView3D);
 
-    return JXG.ThreeD.View3D;
+    return JXG.View3D;
 });
 
