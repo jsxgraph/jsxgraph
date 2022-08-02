@@ -31,7 +31,7 @@
 jxg
 */
 
-define(['jxg', 'utils/type'], function (JXG, Type) {
+define(['jxg'], function (JXG) {
     "use strict";
 
     /**
