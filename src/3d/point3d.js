@@ -232,7 +232,7 @@ define(['jxg', 'base/constants', 'math/math', 'math/geometry', 'utils/type' //, 
          *    p.setPosition([1, 3, 4]);
          */
         setPosition: function (coords, noevent) {
-            var c = this.coords;
+            var c = this.coords,
                 oc = this.coords.slice(); // Copy of original values
 
             if (coords.length === 3) { // Euclidean coordinates

@@ -95,10 +95,7 @@ define(['jxg', 'base/constants', 'utils/type'], function (JXG, Const, Type) {
 
         updateDataArray: function () {
             var steps = Type.evaluate(this.visProp.numberpointshigh),
-                r = Type.evaluate(this.range),
-                s = r[0],
-                e = r[1],
-                delta = (e - s) / (steps - 1),
+                r, s, e, delta,
                 c2d, u,
                 dataX, dataY,
                 p = [0, 0, 0];
@@ -106,15 +103,29 @@ define(['jxg', 'base/constants', 'utils/type'], function (JXG, Const, Type) {
             dataX = [];
             dataY = [];
 
-            for (u = s; u <= e; u += delta) {
-                if (this.F !== null){
-                    p = this.F(u);
-                } else {
-                    p = [this.X(u), this.Y(u), this.Z(u)];
+            if (Type.isArray(this.X)) {
+                steps = this.X.length;
+                for (u = 0; u < steps; u++) {
+                    p = [this.X[u], this.Y[u], this.Z[u]];
+                    c2d = this.view.project3DTo2D(p);
+                    dataX.push(c2d[1]);
+                    dataY.push(c2d[2]);
                 }
-                c2d = this.view.project3DTo2D(p);
-                dataX.push(c2d[1]);
-                dataY.push(c2d[2]);
+            } else {
+                r = Type.evaluate(this.range);
+                s = r[0];
+                e = r[1];
+                delta = (e - s) / (steps - 1);
+                for (u = s; u <= e; u += delta) {
+                    if (this.F !== null){
+                        p = this.F(u);
+                    } else {
+                        p = [this.X(u), this.Y(u), this.Z(u)];
+                    }
+                    c2d = this.view.project3DTo2D(p);
+                    dataX.push(c2d[1]);
+                    dataY.push(c2d[2]);
+                }
             }
             return {'X': dataX, 'Y': dataY};
         },

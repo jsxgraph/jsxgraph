@@ -44505,7 +44505,7 @@ define('base/board',[
                 // In ownerDoc we need the "real" document object.
                 // The first version is used in the case of shadowDom,
                 // the second case in the "normal" case.
-                ownerDoc = this.document.ownerDocument || this.document, 
+                ownerDoc = this.document.ownerDocument || this.document,
                 docElement = ownerDoc.documentElement || this.document.body.parentNode,
                 docBody = ownerDoc.body,
                 container = this.containerObj,
@@ -80913,7 +80913,6 @@ function (JXG, Options, Const, Type, Mat, GeometryElement, Composition) {
                 (Type.isFunction(s) ||
                  (Type.isObject(s) && !Type.isFunction(s.setAttribute))
                 )) {
-                    console.log("B")
                     flist = Type.filterElements(this.objectsList, s);
 
                     olist = {};
@@ -80961,14 +80960,11 @@ function (JXG, Options, Const, Type, Mat, GeometryElement, Composition) {
             this.matrix3D[2][2] = f * Math.cos(a);
             this.matrix3D[2][3] = Math.cos(e);
 
-            if (true) {
-                mat[1][1] = this.size[0] / (this.bbox3D[0][1] - this.bbox3D[0][0]); // w / d_x
-                mat[2][2] = this.size[1] / (this.bbox3D[1][1] - this.bbox3D[1][0]); // h / d_y
-                mat[1][0] = this.llftCorner[0] - mat[1][1] * this.bbox3D[0][0];     // llft_x
-                mat[2][0] = this.llftCorner[1] - mat[2][2] * this.bbox3D[1][0];     // llft_y
-
-                this.matrix3D = Mat.matMatMult(mat, this.matrix3D);
-            }
+            mat[1][1] = this.size[0] / (this.bbox3D[0][1] - this.bbox3D[0][0]); // w / d_x
+            mat[2][2] = this.size[1] / (this.bbox3D[1][1] - this.bbox3D[1][0]); // h / d_y
+            mat[1][0] = this.llftCorner[0] - mat[1][1] * this.bbox3D[0][0];     // llft_x
+            mat[2][0] = this.llftCorner[1] - mat[2][2] * this.bbox3D[1][0];     // llft_y
+            this.matrix3D = Mat.matMatMult(mat, this.matrix3D);
 
             return this;
         },
@@ -81834,7 +81830,7 @@ define('3d/point3d',['jxg', 'base/constants', 'math/math', 'math/geometry', 'uti
          */
         this._params = null;
 
-        this._c2d;
+        this._c2d = null;
 
         this.methodMap = Type.deepCopy(this.methodMap, {
             // TODO
@@ -81928,7 +81924,7 @@ define('3d/point3d',['jxg', 'base/constants', 'math/math', 'math/geometry', 'uti
          *    p.setPosition([1, 3, 4]);
          */
         setPosition: function (coords, noevent) {
-            var c = this.coords,
+            var c = this.coords;
                 oc = this.coords.slice(); // Copy of original values
 
             if (coords.length === 3) { // Euclidean coordinates
@@ -82300,8 +82296,8 @@ define('3d/curve3d',['jxg', 'base/constants', 'utils/type'], function (JXG, Cons
         el.element2D = board.create('curve', [[], []], attr);
         el.element2D.updateDataArray = function() {
             var ret = el.updateDataArray();
-            this.dataX = ret['X'];
-            this.dataY = ret['Y'];
+            this.dataX = ret.X;
+            this.dataY = ret.Y;
         };
         el.addChild(el.element2D);
         el.inherits.push(el.element2D);
@@ -82605,7 +82601,7 @@ define('3d/linspace3d',['jxg', 'base/constants', 'utils/type', 'math/math', 'mat
         el.point2 = point2;
 
         el.update();
-        el.element2D.prepareUpdate().update().updateRenderer();        
+        el.element2D.prepareUpdate().update().updateRenderer();
         return el;
     };
     JXG.registerElement('line3d', JXG.createLine3D);
@@ -82909,8 +82905,8 @@ define('3d/linspace3d',['jxg', 'base/constants', 'utils/type', 'math/math', 'mat
             return { 'X': this.dataX, 'Y': this.dataY};
         },
 
-        update: function () { 
-            return this; 
+        update: function () {
+            return this;
         },
 
         updateRenderer: function () {
@@ -83184,8 +83180,8 @@ define('3d/surface3d',['jxg', 'base/constants', 'utils/type'], function (JXG, Co
         el.element2D = view.create('curve', [[], []], attr);
         el.element2D.updateDataArray = function() {
                 var ret = el.updateDataArray();
-                this.dataX = ret['X'];
-                this.dataY = ret['Y'];
+                this.dataX = ret.X;
+                this.dataY = ret.Y;
         };
         el.addChild(el.element2D);
         el.inherits.push(el.element2D);
