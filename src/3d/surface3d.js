@@ -32,12 +32,13 @@ define(['jxg', 'base/constants', 'utils/type'], function (JXG, Const, Type) {
     "use strict";
 
     /**
-     * Constructor for 3D lines.
+     * Constructor for 3D surfaces.
      * @class Creates a new 3D surface object. Do not use this constructor to create a 3D surface. Use {@link JXG.Board#create} with type {@link Surface3D} instead.
      *
      * @augments JXG.GeometryElement3D
      * @augments JXG.GeometryElement
      * @param {View3D} view
+     * @param {Function} F
      * @param {Function} X
      * @param {Function} Y
      * @param {Function} Z
@@ -46,12 +47,14 @@ define(['jxg', 'base/constants', 'utils/type'], function (JXG, Const, Type) {
      * @param {Object} attributes
      * @see JXG.Board#generateName
      */
-     JXG.Surface3D = function (view, X, Y, Z, range_u, range_v, attributes) {
+     JXG.Surface3D = function (view, F, X, Y, Z, range_u, range_v, attributes) {
         this.constructor(view.board, attributes, Const.OBJECT_TYPE_SURFACE3D, Const.OBJECT_CLASS_CURVE);
         this.constructor3D(view, 'surface3d');
 
         this.id = this.view.board.setId(this, 'S3D');
         this.board.finalizeAdding(this);
+
+        this.F = F;
 
         /**
          * Function which maps (u, v) to x; i.e. it defines the x-coordinate of the surface
@@ -74,6 +77,12 @@ define(['jxg', 'base/constants', 'utils/type'], function (JXG, Const, Type) {
          */
         this.Z = Z;
 
+        if (this.F !== null) {
+            this.X = function(u, v) { return this.F(u, v)[0]; };
+            this.Y = function(u, v) { return this.F(u, v)[1]; };
+            this.Z = function(u, v) { return this.F(u, v)[2]; };
+        }
+
         this.range_u = range_u;
         this.range_v = range_v;
 
@@ -91,9 +100,16 @@ define(['jxg', 'base/constants', 'utils/type'], function (JXG, Const, Type) {
                 steps_v = Type.evaluate(this.visProp.stepsv),
                 r_u = Type.evaluate(this.range_u),
                 r_v = Type.evaluate(this.range_v),
-                res = this.view.getMesh(this.X, this.Y, this.Z,
-                    r_u.concat([steps_u]),
-                    r_v.concat([steps_v]));
+                func, res;
+
+            if (this.F !== null) {
+                func = this.F;
+            } else {
+                func = [this.X, this.Y, this.Z];
+            }
+            res = this.view.getMesh(func,
+                r_u.concat([steps_u]),
+                r_v.concat([steps_v]));
 
             return {'X': res[0], 'Y': res[1]};
         },
@@ -118,10 +134,13 @@ define(['jxg', 'base/constants', 'utils/type'], function (JXG, Const, Type) {
      * @constructor
      * @type Object
      * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
-     * @param {Function_Function_Function_Array_Array} F<sub>X</sub>,F<sub>Y</sub>,F<sub>Z</sub>,rangeU,rangeV
-     * F<sub>X</sub>(u,v), F<sub>Y</sub>(u,v), F<sub>Z</sub>(u,v) are functions returning a number, rangeU is the array containing
-     * lower and upper bound for the range of parameter u, rangeV is the array containing
-     * lower and upper bound for the range of parameter v. rangeU and rangeV may also be functions returning an array of length two.
+     *
+     * @param {Function_Function_Function_Array,Function_Array,Function} F<sub>X</sub>,F<sub>Y</sub>,F<sub>Z</sub>,rangeU,rangeV F<sub>X</sub>(u,v), F<sub>Y</sub>(u,v), F<sub>Z</sub>(u,v)
+     * are functions returning a number, rangeU is the array containing lower and upper bound for the range of parameter u, rangeV is the array containing lower and
+     * upper bound for the range of parameter v. rangeU and rangeV may also be functions returning an array of length two.
+     * @param {Function_Array,Function_Array,Function} F,rangeU,rangeV Alternatively: F<sub>[X,Y,Z]</sub>(u,v) 
+     * a function returning an array [x,y,z] of numbers, rangeU and rangeV as above.
+     *
      * @example
      * var view = board.create('view3d',
      * 		        [[-6, -3], [8, 8],
@@ -169,16 +188,28 @@ define(['jxg', 'base/constants', 'utils/type'], function (JXG, Const, Type) {
      */
     JXG.createParametricSurface3D = function (board, parents, attributes) {
         var view = parents[0],
-            attr,
-            X = parents[1],
-            Y = parents[2],
-            Z = parents[3],
-            range_u = parents[4],
-            range_v = parents[5],
-            el;
+            F, X, Y, Z,
+            range_u, range_v,
+            attr, el;
+
+        if (parents.length === 4) {
+            F = parents[1];
+            range_u = parents[2];
+            range_v = parents[3];
+            X = null;
+            Y = null;
+            Z = null;
+        } else {
+            X = parents[1];
+            Y = parents[2];
+            Z = parents[3];
+            range_u = parents[4];
+            range_v = parents[5];
+            F = null;
+        }
 
         attr = Type.copyAttributes(attributes, board.options, 'surface3d');
-        el = new JXG.Surface3D(view, X, Y, Z, range_u, range_v, attr);
+        el = new JXG.Surface3D(view, F, X, Y, Z, range_u, range_v, attr);
 
         el.element2D = view.create('curve', [[], []], attr);
         el.element2D.updateDataArray = function() {

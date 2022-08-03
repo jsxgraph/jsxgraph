@@ -181,6 +181,19 @@ define([
             point2: { visible: false, name: '', label: { visible: true } }
         },
 
+        curve3d: {
+            /**#@+
+             * @visprop
+             */
+
+            highlight: false,
+            tabindex: -1,
+            strokeWidth: 1,
+            numberPointsHigh: 200
+
+            /**#@-*/
+        },
+
         mesh3d: {
             strokeWidth: 1,
             strokeColor: '#9a9a9a',
@@ -243,14 +256,14 @@ define([
             /**
              * Number of intervals the mesh is divided into in direction of parameter u.
              * @type Number
-             * @name Surface3D#stepsU
+             * @name ParametricSurface3D#stepsU
              */
             stepsU: 30,
 
             /**
              * Number of intervals the mesh is divided into in direction of parameter v.
              * @type Number
-             * @name Surface3D#stepsV
+             * @name ParametricSurface3D#stepsV
              */
              stepsV: 30
 

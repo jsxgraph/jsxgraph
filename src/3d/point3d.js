@@ -429,45 +429,6 @@ define(['jxg', 'base/constants', 'math/math', 'math/geometry', 'utils/type' //, 
 
         el._c2d = el.element2D.coords.usrCoords.slice(); // Store a copy of the coordinates to detect dragging
 
-        if (false && el.slide) {
-            // TODO
-            el._minFunc = function (n, m, x, con) {
-                var surface = el.slide,
-                    c3d = [1, surface.X(x[0], x[1]), surface.Y(x[0], x[1]), surface.Z(x[0], x[1])],
-                    c2d = view.project3DTo2D(c3d);
-
-                con[0] = el.element2D.X() - c2d[1];
-                con[1] = el.element2D.Y() - c2d[2];
-
-                return con[0] * con[0] + con[1] * con[1];
-            };
-
-            el.projectCoords2Surface = function () {
-                var n = 2,		// # of variables
-                    m = 2, 		// number of constraints
-                    x = [0, 0],
-                    // Various Cobyla constants, see Cobyla docs in Cobyja.js
-                    rhobeg = 5.0,
-                    rhoend = 1.0e-6,
-                    iprint = 0,
-                    maxfun = 200,
-                    surface = this.slide.D3,
-                    r, c3d, c2d;
-
-                if (Type.exists(this._params)) {
-                    x = this._params.slice();
-                }
-                r = Mat.Nlp.FindMinimum(this._minFunc, n, m, x, rhobeg, rhoend, iprint, maxfun);
-
-                c3d = [1, surface.X(x[0], x[1]), surface.Y(x[0], x[1]), surface.Z(x[0], x[1])];
-                c2d = view.project3DTo2D(c3d);
-                this._params = x;
-                this.coords = c3d;
-                this.element2D.coords.setCoordinates(Const.COORDS_BY_USER, c2d);
-                this._c2d = c2d;
-            };
-        }
-
         return el;
     };
 

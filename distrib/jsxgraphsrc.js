@@ -80612,6 +80612,19 @@ define('options3d',[
             point2: { visible: false, name: '', label: { visible: true } }
         },
 
+        curve3d: {
+            /**#@+
+             * @visprop
+             */
+
+            highlight: false,
+            tabindex: -1,
+            strokeWidth: 1,
+            numberPointsHigh: 200
+
+            /**#@-*/
+        },
+
         mesh3d: {
             strokeWidth: 1,
             strokeColor: '#9a9a9a',
@@ -80674,14 +80687,14 @@ define('options3d',[
             /**
              * Number of intervals the mesh is divided into in direction of parameter u.
              * @type Number
-             * @name Surface3D#stepsU
+             * @name ParametricSurface3D#stepsU
              */
             stepsU: 30,
 
             /**
              * Number of intervals the mesh is divided into in direction of parameter v.
              * @type Number
-             * @name Surface3D#stepsV
+             * @name ParametricSurface3D#stepsV
              */
              stepsV: 30
 
@@ -81111,7 +81124,7 @@ function (JXG, Options, Const, Type, Mat, GeometryElement, Composition) {
             return ret;
         },
 
-        getMesh: function (X, Y, Z, interval_u, interval_v) {
+        getMesh: function (func, interval_u, interval_v) {
             var i_u, i_v, u, v, c2d,
                 delta_u, delta_v,
                 p = [0, 0, 0],
@@ -81128,9 +81141,11 @@ function (JXG, Options, Const, Type, Mat, GeometryElement, Composition) {
                 u = interval_u[0] + delta_u * i_u;
                 for (i_v = 0; i_v <= steps_v; i_v++) {
                     v = interval_v[0] + delta_v * i_v;
-                    p[0] = X(u, v);
-                    p[1] = Y(u, v);
-                    p[2] = Z(u, v);
+                    if (Type.isFunction(func)) {
+                        p = func(u, v);
+                    } else {
+                        p = [func[0](u, v), func[1](u, v), func[2](u, v)];
+                    }
                     c2d = this.project3DTo2D(p);
                     dataX.push(c2d[1]);
                     dataY.push(c2d[2]);
@@ -81143,9 +81158,11 @@ function (JXG, Options, Const, Type, Mat, GeometryElement, Composition) {
                 v = interval_v[0] + delta_v * i_v;
                 for (i_u = 0; i_u <= steps_u; i_u++) {
                     u = interval_u[0] + delta_u * i_u;
-                    p[0] = X(u, v);
-                    p[1] = Y(u, v);
-                    p[2] = Z(u, v);
+                    if (Type.isFunction(func)) {
+                        p = func(u, v);
+                    } else {
+                        p = [func[0](u, v), func[1](u, v), func[2](u, v)];
+                    }
                     c2d = this.project3DTo2D(p);
                     dataX.push(c2d[1]);
                     dataY.push(c2d[2]);
@@ -81662,9 +81679,11 @@ define('3d/box3d',['jxg', 'utils/type', 'math/math', 'math/geometry'], function 
             // }
 
             res = view.getMesh(
-                function(u, v) { return q[0] + u * v1[0] + v * v2[0]; },
-                function(u, v) { return q[1] + u * v1[1] + v * v2[1]; },
-                function(u, v) { return q[2] + u * v1[2] + v * v2[2]; },
+                [
+                    function(u, v) { return q[0] + u * v1[0] + v * v2[0]; },
+                    function(u, v) { return q[1] + u * v1[1] + v * v2[1]; },
+                    function(u, v) { return q[2] + u * v1[2] + v * v2[2]; }
+                ],
                 [Math.ceil(s1), Math.floor(e1), (Math.ceil(e1) - Math.floor(s1)) / step],
                 [Math.ceil(s2), Math.floor(e2), (Math.ceil(e2) - Math.floor(s2)) / step]);
             this.dataX = res[0];
@@ -81743,8 +81762,9 @@ define('3d/point3d',['jxg', 'base/constants', 'math/math', 'math/geometry', 'uti
         this.coords = [0, 0, 0, 0];
 
         /**
-         * Function or array of functions defining the coordinates of the point, used in {@link updateCoords}.
+         * Function or array of functions or array of numbers defining the coordinates of the point, used in {@link updateCoords}.
          *
+         * @name F
          * @memberOf Point3D
          * @function
          * @private
@@ -81855,7 +81875,7 @@ define('3d/point3d',['jxg', 'base/constants', 'math/math', 'math/geometry', 'uti
 
         /**
          * Initialize the coords array.
-         * 
+         *
          * @private
          * @returns {Object} Reference to the Point3D object
          */
@@ -81897,6 +81917,7 @@ define('3d/point3d',['jxg', 'base/constants', 'math/math', 'math/geometry', 'uti
         /**
          * Set the position of a 3D point.
          *
+         * @name setPosition
          * @memberOf Point3D
          * @function
          * @param {Array} coords 3D coordinates. Either of the form [x,y,z] (Euclidean) or [w,x,y,z] (homogeneous).
@@ -81966,6 +81987,48 @@ define('3d/point3d',['jxg', 'base/constants', 'math/math', 'math/geometry', 'uti
         updateRenderer: function() {
             this.needsUpdate = false;
             return this;
+        },
+
+        projectCoords2Surface: function () {
+            var n = 2,		// # of variables
+                m = 2, 		// number of constraints
+                x = [0, 0],
+
+                // Various Cobyla constants, see Cobyla docs in Cobyja.js
+                rhobeg = 5.0,
+                rhoend = 1.0e-6,
+                iprint = 0,
+                maxfun = 200,
+
+                surface = this.slide,
+                that = this,
+                r, c3d, c2d,
+                _minFunc;
+
+            if (surface === null) {
+                return;
+            }
+
+            _minFunc = function (n, m, x, con) {
+                var c3d = [1, surface.X(x[0], x[1]), surface.Y(x[0], x[1]), surface.Z(x[0], x[1])],
+                    c2d = that.view.project3DTo2D(c3d);
+
+                con[0] = that.element2D.X() - c2d[1];
+                con[1] = that.element2D.Y() - c2d[2];
+
+                return con[0] * con[0] + con[1] * con[1];
+            };
+            if (Type.exists(this._params)) {
+                x = this._params.slice();
+            }
+            r = Mat.Nlp.FindMinimum(_minFunc, n, m, x, rhobeg, rhoend, iprint, maxfun);
+
+            c3d = [1, surface.X(x[0], x[1]), surface.Y(x[0], x[1]), surface.Z(x[0], x[1])];
+            c2d = this.view.project3DTo2D(c3d);
+            this._params = x;
+            this.coords = c3d;
+            this.element2D.coords.setCoordinates(Const.COORDS_BY_USER, c2d);
+            this._c2d = c2d;
         },
 
         // Not yet working
@@ -82062,45 +82125,6 @@ define('3d/point3d',['jxg', 'base/constants', 'math/math', 'math/geometry', 'uti
 
         el._c2d = el.element2D.coords.usrCoords.slice(); // Store a copy of the coordinates to detect dragging
 
-        if (false && el.slide) {
-            // TODO
-            el._minFunc = function (n, m, x, con) {
-                var surface = el.slide.D3,
-                    c3d = [1, surface.X(x[0], x[1]), surface.Y(x[0], x[1]), surface.Z(x[0], x[1])],
-                    c2d = view.project3DTo2D(c3d);
-
-                con[0] = el.element2D.X() - c2d[1];
-                con[1] = el.element2D.Y() - c2d[2];
-
-                return con[0] * con[0] + con[1] * con[1];
-            };
-
-            el.projectCoords2Surface = function () {
-                var n = 2,		// # of variables
-                    m = 2, 		// number of constraints
-                    x = [0, 0],
-                    // Various Cobyla constants, see Cobyla docs in Cobyja.js
-                    rhobeg = 5.0,
-                    rhoend = 1.0e-6,
-                    iprint = 0,
-                    maxfun = 200,
-                    surface = this.slide.D3,
-                    r, c3d, c2d;
-
-                if (Type.exists(this._params)) {
-                    x = this._params.slice();
-                }
-                r = Mat.Nlp.FindMinimum(this._minFunc, n, m, x, rhobeg, rhoend, iprint, maxfun);
-
-                c3d = [1, surface.X(x[0], x[1]), surface.Y(x[0], x[1]), surface.Z(x[0], x[1])];
-                c2d = view.project3DTo2D(c3d);
-                this._params = x;
-                this.coords = c3d;
-                this.element2D.coords.setCoordinates(Const.COORDS_BY_USER, c2d);
-                this._c2d = c2d;
-            };
-        }
-
         return el;
     };
 
@@ -82137,65 +82161,154 @@ define('3d/point3d',['jxg', 'base/constants', 'math/math', 'math/geometry', 'uti
  */
 /*global JXG:true, define: true*/
 
-define('3d/curve3d',['jxg', 'utils/type'], function (JXG, Type) {
+define('3d/curve3d',['jxg', 'base/constants', 'utils/type'], function (JXG, Const, Type) {
     "use strict";
 
-    JXG.createCurve3D = function (board, parents, attr) {
+    /**
+     * Constructor for 3D curves.
+     * @class Creates a new 3D curve object. Do not use this constructor to create a 3D curve. Use {@link JXG.Board#create} with type {@link Curve3D} instead.
+     *
+     * @augments JXG.GeometryElement3D
+     * @augments JXG.GeometryElement
+     * @param {View3D} view
+     * @param {Function} F
+     * @param {Function} X
+     * @param {Function} Y
+     * @param {Function} Z
+     * @param {Array} range
+     * @param {Object} attributes
+     * @see JXG.Board#generateName
+     */
+     JXG.Curve3D = function (view, F, X, Y, Z, range, attributes) {
+        this.constructor(view.board, attributes, Const.OBJECT_TYPE_CURVE3D, Const.OBJECT_CLASS_CURVE);
+        this.constructor3D(view, 'surface3d');
+
+        this.id = this.view.board.setId(this, 'S3D');
+        this.board.finalizeAdding(this);
+
+        this.F = F;
+
+        /**
+         * Function which maps u to x; i.e. it defines the x-coordinate of the curve
+         * @function
+         * @returns Number
+         */
+        this.X = X;
+
+        /**
+         * Function which maps u to y; i.e. it defines the y-coordinate of the curve
+         * @function
+         * @returns Number
+         */
+        this.Y = Y;
+
+        /**
+         * Function which maps u to z; i.e. it defines the x-coordinate of the curve
+         * @function
+         * @returns Number
+         */
+        this.Z = Z;
+
+        if (this.F !== null) {
+            this.X = function(u) { return this.F(u)[0]; };
+            this.Y = function(u) { return this.F(u)[1]; };
+            this.Z = function(u) { return this.F(u)[2]; };
+        }
+
+        this.range = range;
+
+        this.methodMap = Type.deepCopy(this.methodMap, {
+            // TODO
+        });
+    };
+    JXG.Curve3D.prototype = new JXG.GeometryElement();
+    Type.copyPrototypeMethods(JXG.Curve3D, JXG.GeometryElement3D, 'constructor3D');
+
+    JXG.extend(JXG.Curve3D.prototype, /** @lends JXG.Curve3D.prototype */ {
+
+        updateDataArray: function () {
+            var steps = Type.evaluate(this.visProp.numberpointshigh),
+                r = Type.evaluate(this.range),
+                s = r[0],
+                e = r[1],
+                delta = (e - s) / (steps - 1),
+                c2d, u,
+                dataX, dataY,
+                p = [0, 0, 0];
+
+            dataX = [];
+            dataY = [];
+
+            for (u = s; u <= e; u += delta) {
+                if (this.F !== null){
+                    p = this.F(u);
+                } else {
+                    p = [this.X(u), this.Y(u), this.Z(u)];
+                }
+                c2d = this.view.project3DTo2D(p);
+                dataX.push(c2d[1]);
+                dataY.push(c2d[2]);
+            }
+            return {'X': dataX, 'Y': dataY};
+        },
+
+        update: function () { return this; },
+
+        updateRenderer: function () {
+            this.needsUpdate = false;
+            return this;
+        }
+    });
+
+    /**
+     * @class This element creates a 3D parametric curves.
+     * @pseudo
+     * @description A 3D parametric curve is defined by a function
+     *    <i>F: R<sup>1</sup> &rarr; R<sup>3</sup></i>.
+     *
+     * @name Curve3D
+     * @augments Curve
+     * @constructor
+     * @type Object
+     * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
+     * @param {Function_Function_Function_Array,Function} F<sub>X</sub>,F<sub>Y</sub>,F<sub>Z</sub>,range
+     * F<sub>X</sub>(u), F<sub>Y</sub>(u), F<sub>Z</sub>(u) are functions returning a number, range is the array containing
+     * lower and upper bound for the range of the parameter u. range may also be a function returning an array of length two.
+     * @param {Function_Array,Function} F,range Alternatively: F<sub>[X,Y,Z]</sub>(u) a function returning an array [x,y,z] of numbers, range as above.
+     */
+    JXG.createCurve3D = function (board, parents, attributes) {
         var view = parents[0],
-            D3, el;
+            F, X, Y, Z, range,
+            attr, el;
 
-        D3 = {
-            elType: 'curve3D',
-            X: parents[1],
-            Y: parents[2],
-            Z: parents[3],
+        if (parents.length === 3) {
+            F = parents[1];
+            range = parents[2];
+            X = null;
+            Y = null;
+            Z = null;
+        } else {
+            X = parents[1];
+            Y = parents[2];
+            Z = parents[3];
+            range = parents[4];
+            F = null;
+        }
+        attr = Type.copyAttributes(attributes, board.options, 'curve3d');
+        el = new JXG.Curve3D(view, F, X, Y, Z, range, attr);
+
+        el.element2D = board.create('curve', [[], []], attr);
+        el.element2D.updateDataArray = function() {
+            var ret = el.updateDataArray();
+            this.dataX = ret['X'];
+            this.dataY = ret['Y'];
         };
-        D3.F = [D3.X, D3.Y, D3.Z];
+        el.addChild(el.element2D);
+        el.inherits.push(el.element2D);
 
-        el = board.create('curve', [[], []], attr);
-        el.D3 = D3;
-
-        if (Type.isFunction(el.D3.X)) {
-            // 3D curve given as t -> [X(t), Y(t), Z(t)]
-
-            el.D3.range = parents[4];
-            el.updateDataArray = function () {
-                var steps = Type.evaluate(this.visProp.numberpointshigh),
-                    s = Type.evaluate(this.D3.range[0]),
-                    e = Type.evaluate(this.D3.range[1]),
-                    delta = (e - s) / (steps - 1),
-                    c2d, t, i,
-                    p = [0, 0, 0];
-
-                this.dataX = [];
-                this.dataY = [];
-
-                for (t = s; t <= e; t += delta) {
-                    for (i = 0; i < 3; i++) {
-                        p[i] = this.D3.F[i](t);
-                    }
-                    c2d = view.project3DTo2D(p);
-                    this.dataX.push(c2d[1]);
-                    this.dataY.push(c2d[2]);
-                }
-            };
-        } else if (Type.isArray(el.D3.X)) {
-            // 3D curve given as array of 3D points
-
-            el.updateDataArray = function () {
-                var i,
-                    le = this.D3.X.length,
-                    c2d;
-
-                this.dataX = [];
-                this.dataY = [];
-
-                for (i = 0; i < le; i++) {
-                    c2d = view.project3DTo2D([this.D3.X[i], this.D3.Y[i], this.D3.Z[i]]);
-                    this.dataX.push(c2d[1]);
-                    this.dataY.push(c2d[2]);
-                }
-            };
+        el.element2D.prepareUpdate().update();
+        if (!board.isSuspendedUpdate) {
+            el.element2D.updateVisibility().updateRenderer();
         }
 
         return el;
@@ -82889,12 +83002,13 @@ define('3d/surface3d',['jxg', 'base/constants', 'utils/type'], function (JXG, Co
     "use strict";
 
     /**
-     * Constructor for 3D lines.
+     * Constructor for 3D surfaces.
      * @class Creates a new 3D surface object. Do not use this constructor to create a 3D surface. Use {@link JXG.Board#create} with type {@link Surface3D} instead.
      *
      * @augments JXG.GeometryElement3D
      * @augments JXG.GeometryElement
      * @param {View3D} view
+     * @param {Function} F
      * @param {Function} X
      * @param {Function} Y
      * @param {Function} Z
@@ -82903,12 +83017,14 @@ define('3d/surface3d',['jxg', 'base/constants', 'utils/type'], function (JXG, Co
      * @param {Object} attributes
      * @see JXG.Board#generateName
      */
-     JXG.Surface3D = function (view, X, Y, Z, range_u, range_v, attributes) {
+     JXG.Surface3D = function (view, F, X, Y, Z, range_u, range_v, attributes) {
         this.constructor(view.board, attributes, Const.OBJECT_TYPE_SURFACE3D, Const.OBJECT_CLASS_CURVE);
         this.constructor3D(view, 'surface3d');
 
         this.id = this.view.board.setId(this, 'S3D');
         this.board.finalizeAdding(this);
+
+        this.F = F;
 
         /**
          * Function which maps (u, v) to x; i.e. it defines the x-coordinate of the surface
@@ -82931,6 +83047,12 @@ define('3d/surface3d',['jxg', 'base/constants', 'utils/type'], function (JXG, Co
          */
         this.Z = Z;
 
+        if (this.F !== null) {
+            this.X = function(u, v) { return this.F(u, v)[0]; };
+            this.Y = function(u, v) { return this.F(u, v)[1]; };
+            this.Z = function(u, v) { return this.F(u, v)[2]; };
+        }
+
         this.range_u = range_u;
         this.range_v = range_v;
 
@@ -82948,9 +83070,16 @@ define('3d/surface3d',['jxg', 'base/constants', 'utils/type'], function (JXG, Co
                 steps_v = Type.evaluate(this.visProp.stepsv),
                 r_u = Type.evaluate(this.range_u),
                 r_v = Type.evaluate(this.range_v),
-                res = this.view.getMesh(this.X, this.Y, this.Z,
-                    r_u.concat([steps_u]),
-                    r_v.concat([steps_v]));
+                func, res;
+
+            if (this.F !== null) {
+                func = this.F;
+            } else {
+                func = [this.X, this.Y, this.Z];
+            }
+            res = this.view.getMesh(func,
+                r_u.concat([steps_u]),
+                r_v.concat([steps_v]));
 
             return {'X': res[0], 'Y': res[1]};
         },
@@ -82975,10 +83104,13 @@ define('3d/surface3d',['jxg', 'base/constants', 'utils/type'], function (JXG, Co
      * @constructor
      * @type Object
      * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
-     * @param {Function_Function_Function_Array_Array} F<sub>X</sub>,F<sub>Y</sub>,F<sub>Z</sub>,rangeU,rangeV
-     * F<sub>X</sub>(u,v), F<sub>Y</sub>(u,v), F<sub>Z</sub>(u,v) are functions returning a number, rangeU is the array containing
-     * lower and upper bound for the range of parameter u, rangeV is the array containing
-     * lower and upper bound for the range of parameter v. rangeU and rangeV may also be functions returning an array of length two.
+     *
+     * @param {Function_Function_Function_Array,Function_Array,Function} F<sub>X</sub>,F<sub>Y</sub>,F<sub>Z</sub>,rangeU,rangeV F<sub>X</sub>(u,v), F<sub>Y</sub>(u,v), F<sub>Z</sub>(u,v)
+     * are functions returning a number, rangeU is the array containing lower and upper bound for the range of parameter u, rangeV is the array containing lower and
+     * upper bound for the range of parameter v. rangeU and rangeV may also be functions returning an array of length two.
+     * @param {Function_Array,Function_Array,Function} F,rangeU,rangeV Alternatively: F<sub>[X,Y,Z]</sub>(u,v) 
+     * a function returning an array [x,y,z] of numbers, rangeU and rangeV as above.
+     *
      * @example
      * var view = board.create('view3d',
      * 		        [[-6, -3], [8, 8],
@@ -83026,16 +83158,28 @@ define('3d/surface3d',['jxg', 'base/constants', 'utils/type'], function (JXG, Co
      */
     JXG.createParametricSurface3D = function (board, parents, attributes) {
         var view = parents[0],
-            attr,
-            X = parents[1],
-            Y = parents[2],
-            Z = parents[3],
-            range_u = parents[4],
-            range_v = parents[5],
-            el;
+            F, X, Y, Z,
+            range_u, range_v,
+            attr, el;
+
+        if (parents.length === 4) {
+            F = parents[1];
+            range_u = parents[2];
+            range_v = parents[3];
+            X = null;
+            Y = null;
+            Z = null;
+        } else {
+            X = parents[1];
+            Y = parents[2];
+            Z = parents[3];
+            range_u = parents[4];
+            range_v = parents[5];
+            F = null;
+        }
 
         attr = Type.copyAttributes(attributes, board.options, 'surface3d');
-        el = new JXG.Surface3D(view, X, Y, Z, range_u, range_v, attr);
+        el = new JXG.Surface3D(view, F, X, Y, Z, range_u, range_v, attr);
 
         el.element2D = view.create('curve', [[], []], attr);
         el.element2D.updateDataArray = function() {

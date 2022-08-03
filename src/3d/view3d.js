@@ -411,7 +411,7 @@ function (JXG, Options, Const, Type, Mat, GeometryElement, Composition) {
             return ret;
         },
 
-        getMesh: function (X, Y, Z, interval_u, interval_v) {
+        getMesh: function (func, interval_u, interval_v) {
             var i_u, i_v, u, v, c2d,
                 delta_u, delta_v,
                 p = [0, 0, 0],
@@ -428,9 +428,11 @@ function (JXG, Options, Const, Type, Mat, GeometryElement, Composition) {
                 u = interval_u[0] + delta_u * i_u;
                 for (i_v = 0; i_v <= steps_v; i_v++) {
                     v = interval_v[0] + delta_v * i_v;
-                    p[0] = X(u, v);
-                    p[1] = Y(u, v);
-                    p[2] = Z(u, v);
+                    if (Type.isFunction(func)) {
+                        p = func(u, v);
+                    } else {
+                        p = [func[0](u, v), func[1](u, v), func[2](u, v)];
+                    }
                     c2d = this.project3DTo2D(p);
                     dataX.push(c2d[1]);
                     dataY.push(c2d[2]);
@@ -443,9 +445,11 @@ function (JXG, Options, Const, Type, Mat, GeometryElement, Composition) {
                 v = interval_v[0] + delta_v * i_v;
                 for (i_u = 0; i_u <= steps_u; i_u++) {
                     u = interval_u[0] + delta_u * i_u;
-                    p[0] = X(u, v);
-                    p[1] = Y(u, v);
-                    p[2] = Z(u, v);
+                    if (Type.isFunction(func)) {
+                        p = func(u, v);
+                    } else {
+                        p = [func[0](u, v), func[1](u, v), func[2](u, v)];
+                    }
                     c2d = this.project3DTo2D(p);
                     dataX.push(c2d[1]);
                     dataY.push(c2d[2]);
