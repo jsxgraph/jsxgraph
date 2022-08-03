@@ -36,9 +36,13 @@ define(['jxg', 'base/constants', 'utils/type', 'math/math', 'math/geometry'
 ], function (JXG, Const, Type, Mat, Geometry) {
     "use strict";
 
+    // -----------------------
+    //  Lines
+    // -----------------------
+
     /**
      * Constructor for 3D lines.
-     * @class Creates a new 3D line object. Do not use this constructor to create a 3D line. Use {@link JXG.Board#create} with type {@link Point3D} instead.
+     * @class Creates a new 3D line object. Do not use this constructor to create a 3D line. Use {@link JXG.Board#create} with type {@link Line3D} instead.
      *
      * @augments JXG.GeometryElement3D
      * @augments JXG.GeometryElement
@@ -49,8 +53,8 @@ define(['jxg', 'base/constants', 'utils/type', 'math/math', 'math/geometry'
      * @param {Object} attributes
      * @see JXG.Board#generateName
      */
-     JXG.Line3D = function (view, point, direction, range, attributes) {
-        this.constructor(view.board, attributes, Const.OBJECT_TYPE_POINT, Const.OBJECT_CLASS_POINT);
+    JXG.Line3D = function (view, point, direction, range, attributes) {
+        this.constructor(view.board, attributes, Const.OBJECT_TYPE_LINE3D, Const.OBJECT_CLASS_LINE);
         this.constructor3D(view, 'line3d');
 
         this.id = this.view.board.setId(this, 'L3D');
@@ -58,7 +62,7 @@ define(['jxg', 'base/constants', 'utils/type', 'math/math', 'math/geometry'
 
         /**
          * 3D point which - together with a direction - defines the line.
-         * @type {Point3D}
+         * @type JXG.Point3D
          *
          * @see JXG.Line3D#direction
          */
@@ -68,28 +72,31 @@ define(['jxg', 'base/constants', 'utils/type', 'math/math', 'math/geometry'
          * Direction which - together with a point - defines the line. Array of numbers or functions (of length 3) or function
          * returning array of length 3.
          *
-         * @type {Array,Function}
+         * @type Array,Function
          * @see JXG.Line3D#point
          */
         this.direction = direction;
 
         /**
-         * Range [r1, r2] of the line. The 3D line goes from (point + r1 * direction) to (point + r2 * direction)
-         * @type {Array}
+         * Range [r1, r2] of the line. r1, r2 can be numbers or functions.
+         * The 3D line goes from (point + r1 * direction) to (point + r2 * direction)
+         * @type Array
          */
         this.range = range || [-Infinity, Infinity];
 
         /**
          * Starting point of the 3D line
-         * @type {Point3D}
+         * @type JXG.Point3D
+         * @private
          */
         this.point1 = null;
 
         /**
          * End point of the 3D line
-         * @type {Point3D}
+         * @type JXG.Point3D
+         * @private
          */
-         this.point2 = null;
+        this.point2 = null;
 
         this.methodMap = Type.deepCopy(this.methodMap, {
             // TODO
@@ -101,7 +108,8 @@ define(['jxg', 'base/constants', 'utils/type', 'math/math', 'math/geometry'
     JXG.extend(JXG.Line3D.prototype, /** @lends JXG.Line3D.prototype */ {
 
         /**
-         * Determining one end point of a 3D line.
+         * Determine one end point of a 3D line from point, direction and range.
+         *
          * @param {Number|function} r
          * @private
          * @returns Array
@@ -134,9 +142,9 @@ define(['jxg', 'base/constants', 'utils/type', 'math/math', 'math/geometry'
             ];
         },
 
-        update: function() { return this; },
+        update: function () { return this; },
 
-        updateRenderer: function() {
+        updateRenderer: function () {
             this.needsUpdate = false;
             return this;
         }
@@ -163,11 +171,12 @@ define(['jxg', 'base/constants', 'utils/type', 'math/math', 'math/geometry'
      * @type JXG.Line3D
      * @throws {Exception} If the element cannot be constructed with the given parent
      * objects an exception is thrown.
-     * @param {JXG.Point3D,array_JXG.Point3D,array} point1,point2 First and second defining point. Alternatively, point, direction and rang can be supplied.
+     * @param {JXG.Point3D,array_JXG.Point3D,array} point1,point2 First and second defining point.
+     * @param {JXG.Point3D,array_array,function_array,function} point,direction,range Alternatively, point, direction and range can be supplied.
      * <ul>
      * <li> point: Point3D or array of length 3
-     * <li> direction: array of length 3
-     * <li> range: array of length 2.
+     * <li> direction: array of length 3 or function returning an array of numbers or function returning an array
+     * <li> range: array of length 2, elements can also be functions.
      * </ul>
      *
      * @example
@@ -200,7 +209,7 @@ define(['jxg', 'base/constants', 'utils/type', 'math/math', 'math/geometry'
      *         var l2 = view.create('line3d', [p, l1.point1]);
      *         // Line by point, direction, range
      *         var l3 = view.create('line3d', [p, [0, 0, 1], [-2, 4]]);
-     *
+     *     board.update();
      *     })();
      *
      * </script><pre>
@@ -216,13 +225,13 @@ define(['jxg', 'base/constants', 'utils/type', 'math/math', 'math/geometry'
         attr = Type.copyAttributes(attributes, board.options, 'line3d');
 
         // In any case, parents[1] contains a point or point coordinates
-        point = Type.providePoints3D(view, [parents[1]], attributes, 'line3d', ['point1'])[0];
+        point = Type.providePoints3D(view, [parents[1]], attributes, 'line3d', ['point'])[0];
 
         if (Type.isPoint3D(parents[2]) || (Type.isArray(parents[2]) && parents.length === 3)) {
             // Line defined by two points
 
             point1 = point;
-            point2 = Type.providePoints3D(view, [parents[2]],  attributes, 'line3d', ['point2'])[0];
+            point2 = Type.providePoints3D(view, [parents[2]], attributes, 'line3d', ['point2'])[0];
             direction = function () {
                 return [
                     point2.X() - point.X(),
@@ -244,30 +253,29 @@ define(['jxg', 'base/constants', 'utils/type', 'math/math', 'math/geometry'
             } else if (parents[2].length === 4) {
                 direction = parents[2];
             } else {
-                // Throw error
+                // TODO Throw error
             }
             range = parents[3];
 
-            points = Type.providePoints3D(view, [[0, 0, 0], [0, 0, 0]],  attributes, 'line3d', ['point1', 'point2']);
+            points = Type.providePoints3D(view, [[0, 0, 0], [0, 0, 0]], attributes, 'line3d', ['point1', 'point2']);
 
             // Create a line3d with two dummy points
             el = new JXG.Line3D(view, point, direction, range, attr);
 
             // Now set the real points which define the line
-            points[0].F = function() {
+            points[0].F = function () {
                 return el.getPointCoords(Type.evaluate(el.range[0]));
             };
             points[0].prepareUpdate().update();
             point1 = points[0];
 
-            points[1].F = function() {
+            points[1].F = function () {
                 return el.getPointCoords(Type.evaluate(el.range[1]));
             };
             points[1].prepareUpdate().update();
             point2 = points[1];
         }
-
-        // el.prepareUpdate().update();
+        // TODO Throw error
 
         el.element2D = view.create('segment', [point1.element2D, point2.element2D], attr);
         el.addChild(el.element2D);
@@ -278,61 +286,168 @@ define(['jxg', 'base/constants', 'utils/type', 'math/math', 'math/geometry'
         el.point1 = point1;
         el.point2 = point2;
 
+        el.update();
+        el.element2D.prepareUpdate().update().updateRenderer();        
         return el;
     };
     JXG.registerElement('line3d', JXG.createLine3D);
 
-    JXG.createPlane3D = function (board, parents, attributes) {
-        var view = parents[0],
-            attr, D3,
-            point,
-            vec1 = parents[2],
-            vec2 = parents[3],
-            el, grid, update;
+    // -----------------------
+    //  Planes
+    // -----------------------
 
-        // D3: {
-        //    point,
-        //    vec1,
-        //    vec2,
-        //    poin1,
-        //    point2,
-        //    normal array of len 3
-        //    d
-        // }
-        D3 = {
-            elType: 'plane3d',
-            dir1: [],
-            dir2: [],
-            range1: parents[4],
-            range2: parents[5],
-            vec1: vec1,
-            vec2: vec2
-        };
+    /**
+     * Constructor for 3D planes.
+     * @class Creates a new 3D plane object. Do not use this constructor to create a 3D plane. Use {@link JXG.Board#create} with type {@link Plane3D} instead.
+     *
+     * @augments JXG.GeometryElement3D
+     * @augments JXG.GeometryElement
+     * @param {View3D} view
+     * @param {Point3D,Array} point
+     * @param {Array} direction1
+     * @param {Array} range1
+     * @param {Array} direction2
+     * @param {Array} range2
+     * @param {Object} attributes
+     * @see JXG.Board#generateName
+     */
+    JXG.Plane3D = function (view, point, dir1, range1, dir2, range2, attributes) {
+        this.constructor(view.board, attributes, Const.OBJECT_TYPE_PLANE3D, Const.OBJECT_CLASS_AREA);
+        this.constructor3D(view, 'plane3d');
 
-        if (Type.isPoint(parents[1])) {
-            point = parents[1];
-        } else {
-            point = view.create('point3d', parents[1], { visible: false, name: '', withLabel: false });
-        }
-        D3.point = point;
+        this.id = this.view.board.setId(this, 'PL3D');
+        this.board.finalizeAdding(this);
 
-        D3.updateNormal = function () {
-            var i;
+        /**
+         * 3D point which - together with two direction vectors - defines the plane.
+         *
+         * @type JXG.Point3D
+         *
+         * @see JXG.3D#direction1
+         * @see JXG.3D#direction2
+         */
+        this.point = point;
+
+        /**
+         * Two linearly independent vectors - together with a point - define the plane. Each of these direction vectors is an
+         * array of numbers or functions (of length 3) or function returning array of length 3.
+         *
+         * @type Array,Function
+         *
+         * @see JXG.Plane3D#point
+         * @see JXG.Plane3D#direction2
+         */
+        this.direction1 = dir1;
+
+        /**
+         * Two linearly independent vectors - together with a point - define the plane. Each of these direction vectors is an
+         * array of numbers or functions (of length 3) or function returning array of length 3.
+         *
+         * @type Array,Function
+         * @see JXG.Plane3D#point
+         * @see JXG.Plane3D#direction1
+         */
+        this.direction2 = dir2;
+
+        /**
+         * Range [r1, r2] of {@link direction1}. The 3D line goes from (point + r1 * direction1) to (point + r2 * direction1)
+         * @type {Array}
+         */
+        this.range1 = range1 || [-Infinity, Infinity];
+
+        /**
+         * Range [r1, r2] of {@link direction2}. The 3D line goes from (point + r1 * direction2) to (point + r2 * direction2)
+         * @type {Array}
+         */
+        this.range2 = range2 || [-Infinity, Infinity];
+
+        /**
+         * Direction vector 1 of the 3D plane. Contains the evaluated coordinates from {@link direction1} and {@link range1}.
+         * @type Array
+         * @private
+         *
+         * @see updateNormal
+         */
+        this.vec1 =  [0, 0, 0];
+
+        /**
+         * Direction vector 2 of the 3D plane. Contains the evaluated coordinates from {@link direction2} and {@link range2}.
+         *
+         * @type Array
+         * @private
+         *
+         * @see updateNormal
+         */
+        this.vec2 =  [0, 0, 0];
+
+        this.grid = null;
+
+        /**
+         * Normal vector of the plane. Left hand side of the Hesse normal form.
+
+        * @type Array
+         * @private
+         *
+         * @see updateNormal
+         *
+         */
+        this.normal = [0, 0, 0];
+
+        /**
+         * Right hand side of the Hesse normal form.
+
+        * @type Array
+         * @private
+         *
+         * @see updateNormal
+         *
+         */
+        this.d = 0;
+
+        this.updateNormal();
+
+        this.methodMap = Type.deepCopy(this.methodMap, {
+            // TODO
+        });
+    };
+    JXG.Plane3D.prototype = new JXG.GeometryElement();
+    Type.copyPrototypeMethods(JXG.Plane3D, JXG.GeometryElement3D, 'constructor3D');
+
+    JXG.extend(JXG.Plane3D.prototype, /** @lends JXG.Plane3D.prototype */ {
+
+        /**
+         * Update the Hesse normal form of the plane, i.e. update normal vector and right hand side.
+         * Updates also {@link vec1} and {@link vec2}.
+         *
+         * @name updateNormal
+         * @function
+         * @returns {Object} Reference to the Plane3D object
+         * @private
+         * @example
+         *    plane.updateNormal();
+         *
+         */
+        updateNormal: function () {
+            var i, len;
             for (i = 0; i < 3; i++) {
-                D3.dir1[i] = Type.evaluate(D3.vec1[i]);
-                D3.dir2[i] = Type.evaluate(D3.vec2[i]);
+                this.vec1[i] = Type.evaluate(this.direction1[i]);
+                this.vec2[i] = Type.evaluate(this.direction2[i]);
             }
-            D3.normal = Mat.crossProduct(D3.dir1, D3.dir2);
-            // D3.d = Mat.innerProduct(D3.point.D3.coords.slice(1), D3.normal, 3);
-            D3.d = Mat.innerProduct(D3.point.coords.slice(1), D3.normal, 3);
-        };
-        D3.updateNormal();
 
-        attr = Type.copyAttributes(attributes, board.options, 'plane3d');
-        el = board.create('curve', [[], []], attr);
-        el.D3 = D3;
+            this.normal = Mat.crossProduct(this.vec1, this.vec2);
 
-        el.updateDataArray = function () {
+            len = Mat.norm(this.normal);
+            if (Math.abs(len) > Mat.eps) {
+                for (i = 0; i < 3; i++) {
+                    this.normal[i] /= len;
+                }
+            }
+            this.d = Mat.innerProduct(this.point.coords.slice(1), this.normal, 3);
+
+            return this;
+        },
+
+        updateDataArray: function () {
             var s1, e1, s2, e2,
                 c2d, l1, l2,
                 planes = ['xPlaneRear', 'yPlaneRear', 'zPlaneRear'],
@@ -340,17 +455,19 @@ define(['jxg', 'base/constants', 'utils/type', 'math/math', 'math/geometry'
                 v1 = [0, 0, 0],
                 v2 = [0, 0, 0],
                 q = [0, 0, 0],
-                p = [0, 0, 0], d, i, j, a, b, first, pos, pos_akt;
+                p = [0, 0, 0], d, i, j, a, b, first, pos, pos_akt,
+                view = this.view;
 
             this.dataX = [];
             this.dataY = [];
 
-            this.D3.updateNormal();
+            this.updateNormal();
 
             // Infinite plane
-            if (this.D3.elType !== 'axisplane3d' && view.defaultAxes &&
-                (!D3.range1 || !D3.range2)
-                ) {
+            if (this.elType !== 'axisplane3d' && view.defaultAxes &&
+                Type.evaluate(this.range1[0]) === -Infinity && Type.evaluate(this.range1[1]) === Infinity &&
+                Type.evaluate(this.range2[0]) === -Infinity && Type.evaluate(this.range2[1]) === Infinity
+            ) {
 
                 // Start with the rear plane.
                 // Determine the intersections with the view bbox3d
@@ -376,10 +493,10 @@ define(['jxg', 'base/constants', 'utils/type', 'math/math', 'math/geometry'
 
                     // Point on the front plane of the bbox3d
                     p = [0, 0, 0];
-                    p[j] = view.D3.bbox3d[j][1];
+                    p[j] = view.bbox3D[j][1];
 
                     // d is the rhs of the Hesse normal form of the front plane.
-                    d = Mat.innerProduct(p, view.defaultAxes[planes[j]].D3.normal, 3);
+                    d = Mat.innerProduct(p, view.defaultAxes[planes[j]].normal, 3);
                     p = view.intersectionPlanePlane(this, view.defaultAxes[planes[j]], d);
 
                     if (p[0].length === 3 && p[1].length === 3) {
@@ -430,22 +547,22 @@ define(['jxg', 'base/constants', 'utils/type', 'math/math', 'math/geometry'
                         break;
                     }
                 } while (pos !== first);
+
                 c2d = view.project3DTo2D(points[first][0]);
                 this.dataX.push(c2d[1]);
                 this.dataY.push(c2d[2]);
 
             } else {
                 // 3D bounded flat
-                s1 = Type.evaluate(this.D3.range1[0]);
-                e1 = Type.evaluate(this.D3.range1[1]);
-                s2 = Type.evaluate(this.D3.range2[0]);
-                e2 = Type.evaluate(this.D3.range2[1]);
+                s1 = Type.evaluate(this.range1[0]);
+                e1 = Type.evaluate(this.range1[1]);
+                s2 = Type.evaluate(this.range2[0]);
+                e2 = Type.evaluate(this.range2[1]);
 
-                // q = this.D3.point.D3.coords.slice(1);
-                q = this.D3.point.coords.slice(1);
+                q = this.point.coords.slice(1);
 
-                v1 = this.D3.dir1.slice();
-                v2 = this.D3.dir2.slice();
+                v1 = this.vec1.slice();
+                v2 = this.vec2.slice();
                 l1 = Mat.norm(v1, 3);
                 l2 = Mat.norm(v2, 3);
                 for (i = 0; i < 3; i++) {
@@ -471,24 +588,62 @@ define(['jxg', 'base/constants', 'utils/type', 'math/math', 'math/geometry'
                 this.dataX.push(this.dataX[0]);
                 this.dataY.push(this.dataY[0]);
             }
+            return { 'X': this.dataX, 'Y': this.dataY};
+        },
+
+        update: function () { 
+            return this; 
+        },
+
+        updateRenderer: function () {
+            this.needsUpdate = false;
+            return this;
+        }
+    });
+
+    JXG.createPlane3D = function (board, parents, attributes) {
+        var view = parents[0],
+            attr,
+            point,
+            dir1 = parents[2],
+            dir2 = parents[3],
+            range1 = parents[4] || [-Infinity, Infinity],
+            range2 = parents[5] || [-Infinity, Infinity],
+            el, grid;
+
+
+        point = Type.providePoints3D(view, [parents[1]], attributes, 'plane3d', ['point'])[0];
+        if (point === false) {
+            // TODO Throw error
+        }
+
+        attr = Type.copyAttributes(attributes, board.options, 'plane3d');
+        el = new JXG.Plane3D(view, point, dir1, range1, dir2, range2, attr);
+        point.addChild(el);
+
+
+        el.element2D = view.create('curve', [[], []], attr);
+        el.element2D.updateDataArray = function() {
+            var ret = el.updateDataArray();
+            this.dataX = ret.X;
+            this.dataY = ret.Y;
         };
+        el.addChild(el.element2D);
+        el.inherits.push(el.element2D);
 
         attr = Type.copyAttributes(attributes.mesh3d, board.options, 'mesh3d');
-
-        if (D3.range1 && D3.range2) {
-            // grid = view.create('mesh3d', [point.D3.coords.slice(1), vec1, D3.range1, vec2, D3.range2], attr);
-            grid = view.create('mesh3d', [point.coords.slice(1), vec1, D3.range1, vec2, D3.range2], attr);
+        if (Math.abs(el.range1[0]) !== Infinity && Math.abs(el.range1[1]) !== Infinity &&
+            Math.abs(el.range2[0]) !== Infinity && Math.abs(el.range2[1]) !== Infinity
+        ) {
+            grid = view.create('mesh3d', [ function() { return point.coords; }, dir1, range1, dir2, range2 ], attr);
             el.grid = grid;
             el.inherits.push(grid);
         }
 
-        // update = el.update;
-        // el.update = function () {
-        //     if (el.needsUpdate) {
-        //         update.apply(el);
-        //     }
-        //     return this;
-        // };
+        el.element2D.prepareUpdate().update();
+        if (!board.isSuspendedUpdate) {
+            el.element2D.updateVisibility().updateRenderer();
+        }
 
         return el;
     };

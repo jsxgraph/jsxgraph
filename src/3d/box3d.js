@@ -30,7 +30,7 @@
 
 /**
  * Create axes and rear and front walls of the
- * view3d bounding box bbox3d.
+ * view3d bounding box bbox3D.
  */
 define(['jxg', 'utils/type', 'math/math', 'math/geometry'], function (JXG, Type, Mat, Geometry) {
     "use strict";
@@ -52,10 +52,10 @@ define(['jxg', 'utils/type', 'math/math', 'math/geometry'], function (JXG, Type,
             ticks_attr,
             axes = {};
 
-        if (Type.exists(view.D3)) {
+        if (Type.exists(view.bbox3D)) {
             for (i = 0; i < directions.length; i++) {
-                rear[i] = view.D3.bbox3d[i][0];
-                front[i] = view.D3.bbox3d[i][1];
+                rear[i] = view.bbox3D[i][0];
+                front[i] = view.bbox3D[i][1];
             }
         } else {
             for (i = 0; i < directions.length; i++) {
@@ -135,9 +135,8 @@ define(['jxg', 'utils/type', 'math/math', 'math/geometry'], function (JXG, Type,
                 na = dir + 'Plane' + sides[j];
 
                 attr = Type.copyAttributes(attributes, board.options, 'axes3d', na);
-                axes[na] =
-                    view.create('plane3d', [from, vec1, vec2, range1, range2], attr);
-                axes[na].D3.elType = 'axisplane3d';
+                axes[na] = view.create('plane3d', [from, vec1, vec2, range1, range2], attr);
+                axes[na].elType = 'axisplane3d';
             }
         }
 
@@ -162,7 +161,7 @@ define(['jxg', 'utils/type', 'math/math', 'math/geometry'], function (JXG, Type,
                     attr = Type.copyAttributes(attributes, board.options, 'axes3d', na);
                     axes[na] = view.create('axis3d', [from, to], attr);
                     axes[na_parent].addChild(axes[na]);
-                    axes[na_parent].inherits.push(axes[na]);
+                    axes[na_parent].element2D.inherits.push(axes[na]);  // TODO: Access of element2D is not nice
                 }
             }
         }
@@ -209,9 +208,9 @@ define(['jxg', 'utils/type', 'math/math', 'math/geometry'], function (JXG, Type,
     JXG.createMesh3D = function (board, parents, attr) {
         var view = parents[0],
             point = parents[1],
-            vec1 = parents[2],
+            dir1 = parents[2],
             range1 = parents[3],
-            vec2 = parents[4],
+            dir2 = parents[4],
             range2 = parents[5],
             el;
 
@@ -230,10 +229,16 @@ define(['jxg', 'utils/type', 'math/math', 'math/geometry'], function (JXG, Type,
             this.dataX = [];
             this.dataY = [];
 
+            if (Type.isFunction(point)) {
+                q = point().slice(1);
+            } else {
+                for (i = 0; i < 3; i++) {
+                    q[i] = Type.evaluate(point[i]);
+                }
+            }
             for (i = 0; i < 3; i++) {
-                q[i] = Type.evaluate(point[i]);
-                v1[i] = Type.evaluate(vec1[i]);
-                v2[i] = Type.evaluate(vec2[i]);
+                v1[i] = Type.evaluate(dir1[i]);
+                v2[i] = Type.evaluate(dir2[i]);
             }
             l1 = JXG.Math.norm(v1, 3);
             l2 = JXG.Math.norm(v2, 3);
@@ -241,15 +246,14 @@ define(['jxg', 'utils/type', 'math/math', 'math/geometry'], function (JXG, Type,
                 v1[i] /= l1;
                 v2[i] /= l2;
             }
-            if (false) {
-                sol = Mat.Geometry.getPlaneBounds(v1, v2, q, s1, e1);
-                if (sol !== null) {
-                    s1 = sol[0];
-                    e1 = sol[1];
-                    s2 = sol[2];
-                    e2 = sol[3];
-                }
-            }
+
+            // sol = Mat.Geometry.getPlaneBounds(v1, v2, q, s1, e1);
+            // if (sol !== null) {
+            //     s1 = sol[0];
+            //     e1 = sol[1];
+            //     s2 = sol[2];
+            //     e2 = sol[3];
+            // }
 
             res = view.getMesh(
                 function(u, v) { return q[0] + u * v1[0] + v * v2[0]; },

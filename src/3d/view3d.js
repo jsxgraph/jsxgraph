@@ -392,11 +392,12 @@ function (JXG, Options, Const, Type, Mat, GeometryElement, Composition) {
             var ret = [[], []],
                 p, dir, r, q;
 
-            d = d || plane2.D3.d;
+            d = d || plane2.d;
 
-            p = Mat.Geometry.meet3Planes(plane1.D3.normal, plane1.D3.d, plane2.D3.normal, d,
-                     Mat.crossProduct(plane1.D3.normal, plane2.D3.normal), 0);
-            dir = Mat.Geometry.meetPlanePlane(plane1.D3.dir1, plane1.D3.dir2, plane2.D3.dir1, plane2.D3.dir2);
+            p = Mat.Geometry.meet3Planes(
+                        plane1.normal, plane1.d, plane2.normal, d, Mat.crossProduct(plane1.normal, plane2.normal
+                    ), 0);
+            dir = Mat.Geometry.meetPlanePlane(plane1.vec1, plane1.vec2, plane2.vec1, plane2.vec2);
             r = this.intersectionLineCube(p, dir, Infinity);
             q = Mat.axpy(r, dir, p);
             if (this.isInCube(q)) {
@@ -560,7 +561,7 @@ function (JXG, Options, Const, Type, Mat, GeometryElement, Composition) {
 
         attr = Type.copyAttributes(attributes, board.options, 'view3d');
         view = new JXG.View3D(board, parents, attr);
-        //view.defaultAxes = view.create('axes3d', parents, attributes);
+        view.defaultAxes = view.create('axes3d', parents, attributes);
 
         x = coords[0];
         y = coords[1];
@@ -593,18 +594,18 @@ function (JXG, Options, Const, Type, Mat, GeometryElement, Composition) {
         view.board.highlightInfobox = function (x, y, el) {
             var d;
 
-            if (Type.exists(el.D3)) {
+            if (Type.exists(el.is3D)) {
                 d = Type.evaluate(el.visProp.infoboxdigits);
                 if (d === 'auto') {
                     view.board.highlightCustomInfobox('(' +
-                        Type.autoDigits(el.D3.X()) + ' | ' +
-                        Type.autoDigits(el.D3.Y()) + ' | ' +
-                        Type.autoDigits(el.D3.Z()) + ')', el);
+                        Type.autoDigits(el.X()) + ' | ' +
+                        Type.autoDigits(el.Y()) + ' | ' +
+                        Type.autoDigits(el.Z()) + ')', el);
                 } else {
                     view.board.highlightCustomInfobox('(' +
-                        Type.toFixed(el.D3.X(), d) + ' | ' +
-                        Type.toFixed(el.D3.Y(), d) + ' | ' +
-                        Type.toFixed(el.D3.Z(), d) + ')', el);
+                        Type.toFixed(el.X(), d) + ' | ' +
+                        Type.toFixed(el.Y(), d) + ' | ' +
+                        Type.toFixed(el.Z(), d) + ')', el);
                 }
             } else {
                 view.board.highlightCustomInfobox('(' + x + ', ' + y + ')', el);

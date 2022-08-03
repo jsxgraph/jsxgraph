@@ -39,13 +39,14 @@ define(['jxg', 'base/constants', 'math/math', 'math/geometry', 'utils/type' //, 
      * @augments JXG.GeometryElement3D
      * @augments JXG.GeometryElement
      * @param {JXG.View3D} view The 3D view the point is drawn on.
-     * @param {Array} coordinates An array with the user coordinates of the point.
+     * @param {Function,Array} F Array of numbers, array of functions or function returning an array with defines the user coordinates of the point.
+     * @parame {JXG.GeometryElement3D} slide Object the 3D point should be bound to. If null, the point is a free point.
      * @param {Object} attributes An object containing visual properties like in {@link JXG.Options#point3d} and
      * {@link JXG.Options#elements}, and optional a name and an id.
      * @see JXG.Board#generateName
      */
-    JXG.Point3D = function (view, coordinates, attributes) {
-        this.constructor(view.board, attributes, Const.OBJECT_TYPE_POINT, Const.OBJECT_CLASS_POINT);
+    JXG.Point3D = function (view, F, slide, attributes) {
+        this.constructor(view.board, attributes, Const.OBJECT_TYPE_POINT3D, Const.OBJECT_CLASS_POINT);
         this.constructor3D(view, 'point3d');
 
         this.id = this.view.board.setId(this, 'P3D');
@@ -62,9 +63,19 @@ define(['jxg', 'base/constants', 'math/math', 'math/geometry', 'utils/type' //, 
          * @type Array
          * @private
          */
-        this.coords = [1, 0, 0, 0];
+        this.coords = [0, 0, 0, 0];
 
-        this.F = null;
+        /**
+         * Function or array of functions or array of numbers defining the coordinates of the point, used in {@link updateCoords}.
+         *
+         * @name F
+         * @memberOf Point3D
+         * @function
+         * @private
+         *
+         * @see updateCoords
+         */
+        this.F = F;
 
         /**
          * Optional slide element, i.e. element the Point3D lives on.
@@ -73,12 +84,12 @@ define(['jxg', 'base/constants', 'math/math', 'math/geometry', 'utils/type' //, 
          *   p.slide;
          *
          * @name Point3D#slide
-         * @type {JXG.GeometryElement}
+         * @type JXG.GeometryElement3D
          * @default null
          * @private
          *
          */
-        this.slide = null;
+        this.slide = slide;
 
         /**
          * Get x-coordinate of a 3D point.
@@ -122,10 +133,12 @@ define(['jxg', 'base/constants', 'math/math', 'math/geometry', 'utils/type' //, 
         /**
          * Store the last position of the 2D point for the optimizer.
          *
-         * @type array
+         * @type Array
          * @private
          */
         this._params = null;
+
+        this._c2d;
 
         this.methodMap = Type.deepCopy(this.methodMap, {
             // TODO
@@ -141,7 +154,7 @@ define(['jxg', 'base/constants', 'math/math', 'math/geometry', 'utils/type' //, 
          * @name updateCoords
          * @memberOf Point3D
          * @function
-         * @returns {Object} Reference to the D3 subobject
+         * @returns {Object} Reference to the Point3D object
          * @private
          * @example
          *    p.updateCoords();
@@ -154,9 +167,31 @@ define(['jxg', 'base/constants', 'math/math', 'math/geometry', 'utils/type' //, 
             } else {
                 this.coords[0] = 1;
                 for (i = 0; i < 3; i++) {
+                    // Attention: if F is array of numbers, coords are not updated.
+                    // Otherwise, dragging will not work anymore.
                     if (Type.isFunction(this.F[i])) {
                         this.coords[i + 1] = Type.evaluate(this.F[i]);
                     }
+                }
+            }
+            return this;
+        },
+
+        /**
+         * Initialize the coords array.
+         *
+         * @private
+         * @returns {Object} Reference to the Point3D object
+         */
+        initCoords: function () {
+            var i;
+
+            if (Type.isFunction(this.F)) {
+                this.coords = [1].concat(Type.evaluate(this.F));
+            } else {
+                this.coords[0] = 1;
+                for (i = 0; i < 3; i++) {
+                    this.coords[i + 1] = Type.evaluate(this.F[i]);
                 }
             }
             return this;
@@ -168,7 +203,7 @@ define(['jxg', 'base/constants', 'math/math', 'math/geometry', 'utils/type' //, 
          * @name normalizeCoords
          * @memberOf Point3D
          * @function
-         * @returns {Object} Reference to the D3 subobject
+         * @returns {Object} Reference to the Point3D object
          * @private
          * @example
          *    p.normalizeCoords();
@@ -191,7 +226,7 @@ define(['jxg', 'base/constants', 'math/math', 'math/geometry', 'utils/type' //, 
          * @function
          * @param {Array} coords 3D coordinates. Either of the form [x,y,z] (Euclidean) or [w,x,y,z] (homogeneous).
          * @param {Boolean} [noevent] If true, no events are triggered.
-         * @returns {Object} Reference to the D3 subobject
+         * @returns {Object} Reference to the Point3D object
          *
          * @example
          *    p.setPosition([1, 3, 4]);
@@ -224,9 +259,6 @@ define(['jxg', 'base/constants', 'math/math', 'math/geometry', 'utils/type' //, 
 
         update: function (drag) {
             var c3d, foot;
-            // if (!this.needsUpdate) {
-            //     return this;
-            // }
 
             // Update is called from two methods:
             // Once in setToPosition and
@@ -261,6 +293,48 @@ define(['jxg', 'base/constants', 'math/math', 'math/geometry', 'utils/type' //, 
             return this;
         },
 
+        projectCoords2Surface: function () {
+            var n = 2,		// # of variables
+                m = 2, 		// number of constraints
+                x = [0, 0],
+
+                // Various Cobyla constants, see Cobyla docs in Cobyja.js
+                rhobeg = 5.0,
+                rhoend = 1.0e-6,
+                iprint = 0,
+                maxfun = 200,
+
+                surface = this.slide,
+                that = this,
+                r, c3d, c2d,
+                _minFunc;
+
+            if (surface === null) {
+                return;
+            }
+
+            _minFunc = function (n, m, x, con) {
+                var c3d = [1, surface.X(x[0], x[1]), surface.Y(x[0], x[1]), surface.Z(x[0], x[1])],
+                    c2d = that.view.project3DTo2D(c3d);
+
+                con[0] = that.element2D.X() - c2d[1];
+                con[1] = that.element2D.Y() - c2d[2];
+
+                return con[0] * con[0] + con[1] * con[1];
+            };
+            if (Type.exists(this._params)) {
+                x = this._params.slice();
+            }
+            r = Mat.Nlp.FindMinimum(_minFunc, n, m, x, rhobeg, rhoend, iprint, maxfun);
+
+            c3d = [1, surface.X(x[0], x[1]), surface.Y(x[0], x[1]), surface.Z(x[0], x[1])];
+            c2d = this.view.project3DTo2D(c3d);
+            this._params = x;
+            this.coords = c3d;
+            this.element2D.coords.setCoordinates(Const.COORDS_BY_USER, c2d);
+            this._c2d = c2d;
+        },
+
         // Not yet working
         __evt__update3D: function (oc) { }
 
@@ -278,10 +352,10 @@ define(['jxg', 'base/constants', 'math/math', 'math/geometry', 'utils/type' //, 
      * @constructor
      * @throws {Exception} If the element cannot be constructed with the given parent
      * objects an exception is thrown.
-     * @param {number,function_number,function_number,function} x,y,z The coordinates are given as x, y, z consisting of numbers of functions. Alternatively,
-     * the coordinates can be supplied as
+     * @param {number,function_number,function_number,function} x,y,z The coordinates are given as x, y, z consisting of numbers of functions.
+     * @param {array,function} arr Alternatively, the coordinates can be supplied as
      *  <ul>
-     *   <li>array [x,y,z] of length 3 consisting of numbers or
+     *   <li>array arr=[x,y,z] of length 3 consisting of numbers or
      *   <li>function returning an array [x,y,z] of length 3 of numbers.
      * </ul>
      *
@@ -320,50 +394,45 @@ define(['jxg', 'base/constants', 'math/math', 'math/geometry', 'utils/type' //, 
         //   parents[1..3]: coordinates
 
         var view = parents[0],
-            attr,
-            i, c2d,
-            el;
-
-        attr = Type.copyAttributes(attributes, board.options, 'point3d');
-        el = new JXG.Point3D(view, parents, attr);
+            attr, F, slide,
+            c2d, el;
 
         // If the last element of parents is a 3D object,
         // the point is a glider on that element.
         if (parents.length > 2 && Type.exists(parents[parents.length - 1].is3D)) {
-            el.slide = parents.pop();
+            slide = parents.pop();
         } else {
-            el.slide = null;
+            slide = null;
         }
 
         if (parents.length === 2) {        // [view, array|fun] (Array [x, y, z] | function) returning [x, y, z]
-            el.F = parents[1];
-            el.coords = [1].concat(Type.evaluate(el.F));
-
+            F = parents[1];
         } else if (parents.length === 4) { // [view, x, y, z], (3 numbers | functions)
-            el.F = parents.slice(1);
-            for (i = 0; i < 3; i++) {
-                el.coords[i + 1] = Type.evaluate(el.F[i]);
-            }
+            F = parents.slice(1);
         } else {
-            // Throw error
             throw new Error("JSXGraph: Can't create point3d with parent types '" +
-                    (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
-                    "\nPossible parent types: [[x,y,z]], [x,y,z]");
-                    //  "\nPossible parent types: [[x,y,z]], [x,y,z], [element,transformation]"); // TODO
+                (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
+                "\nPossible parent types: [[x,y,z]], [x,y,z]");
+                //  "\nPossible parent types: [[x,y,z]], [x,y,z], [element,transformation]"); // TODO
         }
-        el.updateCoords();
+
+        attr = Type.copyAttributes(attributes, board.options, 'point3d');
+        el = new JXG.Point3D(view, F, slide, attr);
+        el.initCoords();
+
         c2d = view.project3DTo2D(el.coords);
 
         attr.name = el.name;
-        el.element2D = board.create('point', c2d, attr);
+        el.element2D = view.create('point', c2d, attr);
         el.addChild(el.element2D);
         el.inherits.push(el.element2D);
 
         el._c2d = el.element2D.coords.usrCoords.slice(); // Store a copy of the coordinates to detect dragging
 
-        if (el.slide) {
+        if (false && el.slide) {
+            // TODO
             el._minFunc = function (n, m, x, con) {
-                var surface = el.slide.D3,
+                var surface = el.slide,
                     c3d = [1, surface.X(x[0], x[1]), surface.Y(x[0], x[1]), surface.Z(x[0], x[1])],
                     c2d = view.project3DTo2D(c3d);
 

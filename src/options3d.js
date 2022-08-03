@@ -202,7 +202,8 @@ define([
             gradient: 'linear',
             gradientSecondColor: '#ffffff',
 
-            point1: {visible: false, name: ''},
+            point: {visible: false, name: ''},   // Used only in case of point/point
+            point1: {visible: false, name: ''},  // Used only in case of point/direction/range
             point2: {visible: false, name: ''}
         },
 
@@ -217,7 +218,9 @@ define([
             gradientSecondColor: '#ffffff',
             gradientAngle: Math.PI,
             fillColor: '#a7a7a7',
-            fillOpacity: 0.6
+            fillOpacity: 0.6,
+
+            point: {visible: false, name: '', fixed: true}
         },
 
         point3d: {

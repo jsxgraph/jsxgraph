@@ -111,7 +111,13 @@ define(['jxg'], function (JXG) {
         OBJECT_TYPE_BUTTON: 29,
         OBJECT_TYPE_TRANSFORMATION: 30,
         OBJECT_TYPE_FOREIGNOBJECT: 31,
+
         OBJECT_TYPE_VIEW3D: 32,
+        OBJECT_TYPE_POINT3D: 33,
+        OBJECT_TYPE_LINE3D: 34,
+        OBJECT_TYPE_PLANE3D: 35,
+        OBJECT_TYPE_CURVE3D: 36,
+        OBJECT_TYPE_SURFACE3D: 37,
 
         // IMPORTANT:
         // ----------
