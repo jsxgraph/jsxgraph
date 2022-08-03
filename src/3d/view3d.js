@@ -200,7 +200,6 @@ function (JXG, Options, Const, Type, Mat, GeometryElement, Composition) {
                 (Type.isFunction(s) ||
                  (Type.isObject(s) && !Type.isFunction(s.setAttribute))
                 )) {
-                    console.log("B")
                     flist = Type.filterElements(this.objectsList, s);
 
                     olist = {};
@@ -248,14 +247,11 @@ function (JXG, Options, Const, Type, Mat, GeometryElement, Composition) {
             this.matrix3D[2][2] = f * Math.cos(a);
             this.matrix3D[2][3] = Math.cos(e);
 
-            if (true) {
-                mat[1][1] = this.size[0] / (this.bbox3D[0][1] - this.bbox3D[0][0]); // w / d_x
-                mat[2][2] = this.size[1] / (this.bbox3D[1][1] - this.bbox3D[1][0]); // h / d_y
-                mat[1][0] = this.llftCorner[0] - mat[1][1] * this.bbox3D[0][0];     // llft_x
-                mat[2][0] = this.llftCorner[1] - mat[2][2] * this.bbox3D[1][0];     // llft_y
-
-                this.matrix3D = Mat.matMatMult(mat, this.matrix3D);
-            }
+            mat[1][1] = this.size[0] / (this.bbox3D[0][1] - this.bbox3D[0][0]); // w / d_x
+            mat[2][2] = this.size[1] / (this.bbox3D[1][1] - this.bbox3D[1][0]); // h / d_y
+            mat[1][0] = this.llftCorner[0] - mat[1][1] * this.bbox3D[0][0];     // llft_x
+            mat[2][0] = this.llftCorner[1] - mat[2][2] * this.bbox3D[1][0];     // llft_y
+            this.matrix3D = Mat.matMatMult(mat, this.matrix3D);
 
             return this;
         },

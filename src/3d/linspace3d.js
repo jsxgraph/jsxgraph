@@ -287,7 +287,7 @@ define(['jxg', 'base/constants', 'utils/type', 'math/math', 'math/geometry'
         el.point2 = point2;
 
         el.update();
-        el.element2D.prepareUpdate().update().updateRenderer();        
+        el.element2D.prepareUpdate().update().updateRenderer();
         return el;
     };
     JXG.registerElement('line3d', JXG.createLine3D);
@@ -591,8 +591,8 @@ define(['jxg', 'base/constants', 'utils/type', 'math/math', 'math/geometry'
             return { 'X': this.dataX, 'Y': this.dataY};
         },
 
-        update: function () { 
-            return this; 
+        update: function () {
+            return this;
         },
 
         updateRenderer: function () {

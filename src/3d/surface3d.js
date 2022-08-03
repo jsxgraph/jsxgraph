@@ -214,8 +214,8 @@ define(['jxg', 'base/constants', 'utils/type'], function (JXG, Const, Type) {
         el.element2D = view.create('curve', [[], []], attr);
         el.element2D.updateDataArray = function() {
                 var ret = el.updateDataArray();
-                this.dataX = ret['X'];
-                this.dataY = ret['Y'];
+                this.dataX = ret.X;
+                this.dataY = ret.Y;
         };
         el.addChild(el.element2D);
         el.inherits.push(el.element2D);
