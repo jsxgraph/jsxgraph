@@ -152,7 +152,9 @@ define(['jxg', 'base/constants', 'utils/type'], function (JXG, Const, Type) {
      * @param {Function_Function_Function_Array,Function} F<sub>X</sub>,F<sub>Y</sub>,F<sub>Z</sub>,range
      * F<sub>X</sub>(u), F<sub>Y</sub>(u), F<sub>Z</sub>(u) are functions returning a number, range is the array containing
      * lower and upper bound for the range of the parameter u. range may also be a function returning an array of length two.
-     * @param {Function_Array,Function} F,range Alternatively: F<sub>[X,Y,Z]</sub>(u) a function returning an array [x,y,z] of numbers, range as above.
+     * @param {Function_Array,Function} F,range Alternatively: F<sub>[X,Y,Z]</sub>(u) a function returning an array [x,y,z] of
+     * numbers, range as above.
+     * @param {Array_Array_Array} X,Y,Z Three arrays containing the coordinate points which define the curve.
      */
     JXG.createCurve3D = function (board, parents, attributes) {
         var view = parents[0],
@@ -172,6 +174,8 @@ define(['jxg', 'base/constants', 'utils/type'], function (JXG, Const, Type) {
             range = parents[4];
             F = null;
         }
+        // TODO Throw error
+
         attr = Type.copyAttributes(attributes, board.options, 'curve3d');
         el = new JXG.Curve3D(view, F, X, Y, Z, range, attr);
 

@@ -81924,7 +81924,7 @@ define('3d/point3d',['jxg', 'base/constants', 'math/math', 'math/geometry', 'uti
          *    p.setPosition([1, 3, 4]);
          */
         setPosition: function (coords, noevent) {
-            var c = this.coords;
+            var c = this.coords,
                 oc = this.coords.slice(); // Copy of original values
 
             if (coords.length === 3) { // Euclidean coordinates
@@ -82224,10 +82224,7 @@ define('3d/curve3d',['jxg', 'base/constants', 'utils/type'], function (JXG, Cons
 
         updateDataArray: function () {
             var steps = Type.evaluate(this.visProp.numberpointshigh),
-                r = Type.evaluate(this.range),
-                s = r[0],
-                e = r[1],
-                delta = (e - s) / (steps - 1),
+                r, s, e, delta,
                 c2d, u,
                 dataX, dataY,
                 p = [0, 0, 0];
@@ -82235,15 +82232,29 @@ define('3d/curve3d',['jxg', 'base/constants', 'utils/type'], function (JXG, Cons
             dataX = [];
             dataY = [];
 
-            for (u = s; u <= e; u += delta) {
-                if (this.F !== null){
-                    p = this.F(u);
-                } else {
-                    p = [this.X(u), this.Y(u), this.Z(u)];
+            if (Type.isArray(this.X)) {
+                steps = this.X.length;
+                for (u = 0; u < steps; u++) {
+                    p = [this.X[u], this.Y[u], this.Z[u]];
+                    c2d = this.view.project3DTo2D(p);
+                    dataX.push(c2d[1]);
+                    dataY.push(c2d[2]);
                 }
-                c2d = this.view.project3DTo2D(p);
-                dataX.push(c2d[1]);
-                dataY.push(c2d[2]);
+            } else {
+                r = Type.evaluate(this.range);
+                s = r[0];
+                e = r[1];
+                delta = (e - s) / (steps - 1);
+                for (u = s; u <= e; u += delta) {
+                    if (this.F !== null){
+                        p = this.F(u);
+                    } else {
+                        p = [this.X(u), this.Y(u), this.Z(u)];
+                    }
+                    c2d = this.view.project3DTo2D(p);
+                    dataX.push(c2d[1]);
+                    dataY.push(c2d[2]);
+                }
             }
             return {'X': dataX, 'Y': dataY};
         },
@@ -82270,7 +82281,9 @@ define('3d/curve3d',['jxg', 'base/constants', 'utils/type'], function (JXG, Cons
      * @param {Function_Function_Function_Array,Function} F<sub>X</sub>,F<sub>Y</sub>,F<sub>Z</sub>,range
      * F<sub>X</sub>(u), F<sub>Y</sub>(u), F<sub>Z</sub>(u) are functions returning a number, range is the array containing
      * lower and upper bound for the range of the parameter u. range may also be a function returning an array of length two.
-     * @param {Function_Array,Function} F,range Alternatively: F<sub>[X,Y,Z]</sub>(u) a function returning an array [x,y,z] of numbers, range as above.
+     * @param {Function_Array,Function} F,range Alternatively: F<sub>[X,Y,Z]</sub>(u) a function returning an array [x,y,z] of
+     * numbers, range as above.
+     * @param {Array_Array_Array} X,Y,Z Three arrays contiing the coordinate points which define the curve.
      */
     JXG.createCurve3D = function (board, parents, attributes) {
         var view = parents[0],
@@ -82290,6 +82303,8 @@ define('3d/curve3d',['jxg', 'base/constants', 'utils/type'], function (JXG, Cons
             range = parents[4];
             F = null;
         }
+        // TODO Throw error
+
         attr = Type.copyAttributes(attributes, board.options, 'curve3d');
         el = new JXG.Curve3D(view, F, X, Y, Z, range, attr);
 
