@@ -1862,6 +1862,13 @@ define([
 
         /**
          * The tiny zoom bar shown on the bottom of a board (if showNavigation on board creation is true).
+         * It is a div element and gets the CSS class "JXG_navigation" and the id {board id}_navigationbar.
+         *
+         * The buttons get the CSS class "JXG_navigation_button" and the id {board_id}_name where name is
+         * one of [top, down, left, right, out, 100, in, fullscreen, screenshot, reload, cleartraces].
+         *
+         * The symbols are hard-coded.
+         *
          * @param {JXG.Board} board Reference to a JSXGraph board.
          * @param {Object} attr Attributes of the navigation bar
          *
@@ -1881,11 +1888,12 @@ define([
                         e.cancelBubble = true;
                     }
                 },
-                createButton = function (label, handler) {
+                createButton = function (label, handler, id) {
                     var button;
 
+                    id = id || '';
+
                     button = doc.createElement('span');
-                    node.appendChild(button);
                     button.appendChild(doc.createTextNode(label));
 
                     // Style settings are superseded by adding the CSS class below
@@ -1896,6 +1904,9 @@ define([
                         button.classList.add('JXG_navigation_button');
                     }
                     // button.setAttribute('tabindex', 0);
+
+                    button.setAttribute('id', id);
+                    node.appendChild(button);
 
                     // Highlighting is now done with CSS
                     // Env.addEvent(button, 'mouseover', function () {
@@ -1920,7 +1931,7 @@ define([
                 doc = board.containerObj.ownerDocument;
                 node = doc.createElement('div');
 
-                node.setAttribute('id', board.containerObj.id + '_navigationbar');
+                node.setAttribute('id', board.container + '_navigationbar');
 
                 // Style settings are superseded by adding the CSS class below
                 node.style.color = attr.strokecolor;
@@ -1942,7 +1953,7 @@ define([
                 if (board.attr.showfullscreen) {
                     createButton(board.attr.fullscreen.symbol, function () {
                         board.toFullscreen(board.attr.fullscreen.id);
-                    });
+                    }, board.container + '_navigation_fullscreen');
                 }
 
                 if (board.attr.showscreenshot) {
@@ -1950,7 +1961,7 @@ define([
                         window.setTimeout(function() {
                             board.renderer.screenshot(board, '', false);
                         }, 330);
-                    });
+                    }, board.container + '_navigation_screenshot');
                 }
 
                 if (board.attr.showreload) {
@@ -1959,26 +1970,26 @@ define([
                     // of this button. That's why this anonymous function wrapper is required.
                     createButton('\u21BB', function () {
                         board.reload();
-                    });
+                    }, board.container + '_navigation_reload');
                 }
 
                 if (board.attr.showcleartraces) {
                     // clear traces symbol (otimes): \u27F2
                     createButton('\u2297', function () {
                         board.clearTraces();
-                    });
+                    }, board.container + '_navigation_cleartraces');
                 }
 
                 if (board.attr.shownavigation) {
                     if (board.attr.showzoom) {
-                        createButton('\u2013', board.zoomOut);
-                        createButton('o', board.zoom100);
-                        createButton('+', board.zoomIn);
+                        createButton('\u2013', board.zoomOut, board.container + '_navigation_out');
+                        createButton('o', board.zoom100, board.container + '_navigation_100');
+                        createButton('+', board.zoomIn, board.container + '_navigation_in');
                     }
-                    createButton('\u2190', board.clickLeftArrow);
-                    createButton('\u2193', board.clickUpArrow);
-                    createButton('\u2191', board.clickDownArrow);
-                    createButton('\u2192', board.clickRightArrow);
+                    createButton('\u2190', board.clickLeftArrow, board.container + '_navigation_left');
+                    createButton('\u2193', board.clickUpArrow, board.container + '_navigation_up');
+                    createButton('\u2191', board.clickDownArrow, board.container + '_navigation_down');
+                    createButton('\u2192', board.clickRightArrow, board.container + '_navigation_right');
                 }
             }
         },

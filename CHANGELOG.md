@@ -1,10 +1,38 @@
+1.4.5
+====
+
+New features
+-----------
+
+- New element attribute `rotatable`
+- 3D points: new method setPosition3D()
+
+Improvements
+------------
+
+- Allow value tags in strings in combination with MathJax
+- Gradually improvement of index.d.ts
+- API doc
+- JSXGraph in shadowDOM
+- FullscreenMode in shadowDOM
+- Speed improvement COBYLA
+
+Bug fixes
+---------
+
+- Handling of backslashes in strings. Improves MathJax in JessieCode
+- Keyboard mode: allow o-key and arrow keys in input fields
+- Precision problem in tick labels
+- Fix regression: snapToGrid for lines
+- Fix regression: resizeObserver was broken in v1.4.4
+
 1.4.4
 ====
 
 New features
 -----------
 
-- Intersecting points of polygons with other elements 
+- Intersecting points of polygons with other elements
 - Support usage of jsxgraph in shadowDOM
 
 Improvements

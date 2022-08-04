@@ -255,6 +255,7 @@ define([
              * @name JXG.Board#showNavigation
              * @type Boolean
              * @default true
+             * @see JXG.AbstractRenderer#drawZoomBar
              */
             showNavigation: true,
 
@@ -265,6 +266,7 @@ define([
              * @name JXG.Board#showZoom
              * @type Boolean
              * @default true
+             * @see JXG.AbstractRenderer#drawZoomBar
              */
             showZoom: true,
 
@@ -275,6 +277,7 @@ define([
              * @name JXG.Board#showReload
              * @type Boolean
              * @default false
+             * @see JXG.AbstractRenderer#drawZoomBar
              */
             showReload: false,
 
@@ -284,6 +287,7 @@ define([
              * @name JXG.Board#showScreenshot
              * @type Boolean
              * @default false
+             * @see JXG.AbstractRenderer#drawZoomBar
              */
             showScreenshot: false,
 
@@ -316,6 +320,8 @@ define([
              * @type Boolean
              * @see JXG.Board#fullscreen
              * @default false
+             * @see JXG.AbstractRenderer#drawZoomBar
+             * @see JXG.AbstractRenderer#drawZoomBar
              */
             showFullscreen: false,
 
@@ -357,6 +363,7 @@ define([
              *
              * @name JXG.Board#fullscreen
              * @see JXG.Board#showFullscreen
+             * @see JXG.AbstractRenderer#drawZoomBar
              * @type Object
              */
             fullscreen: {
@@ -370,6 +377,7 @@ define([
              * @name JXG.Board#showClearTraces
              * @type Boolean
              * @default false
+             * @see JXG.AbstractRenderer#drawZoomBar
              */
             showClearTraces: false,
 
@@ -1411,13 +1419,32 @@ define([
              * <p>
              * In case the element is a polygon or line and it has the attribute "scalable:false",
              * moving the element with two fingers results in a rotation or translation.
+             * <p>
+             * If an element is set to be neither scalable nor rotatable, it can only be translated.
              *
              * @type Boolean
              * @default true
              * @name JXG.GeometryElement#scalable
              * @see JXG.Ticks#fixed
+             * @see JXG.GeometryElement#rotatable
              */
             scalable: true,
+
+            /**
+             * Determines whether two-finger manipulation may rotate this object.
+             * If set to false, the object can only be scaled and translated.
+             * <p>
+             * In case the element is a polygon or line and it has the attribute "rotatable:false",
+             * moving the element with two fingers results in a rotation or translation.
+             * <p>
+             * If an element is set to be neither scalable nor rotatable, it can only be translated.
+             *
+             * @type Boolean
+             * @default true
+             * @name JXG.GeometryElement#rotatable
+             * @see JXG.GeometryElement#scalable
+             */
+            rotatable: true,
 
             /**
              * If the element is dragged it will be moved on mousedown or touchstart to the

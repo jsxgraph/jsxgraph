@@ -736,7 +736,7 @@ define([
      *
      * @example
      * // Parameters: A, C, F, B/2, D/2, E/2
-     * var conic = board.create('conic', [1, 2, -4, 0, 0, 0]s);
+     * var conic = board.create('conic', [1, 2, -4, 0, 0, 0]);
      *
      * </pre><div id="JXG8576a04a-52d8-4a7e-8d54-e32443910b97" class="jxgbox" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
@@ -744,7 +744,7 @@ define([
      *         var board = JXG.JSXGraph.initBoard('JXG8576a04a-52d8-4a7e-8d54-e32443910b97',
      *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
      *     // Parameters: A, C, F, B/2, D/2, E/2
-     *     var conic = board.create('conic', [1, 2, -4, 0, 0, 0]s);
+     *     var conic = board.create('conic', [1, 2, -4, 0, 0, 0]);
      *     })();
      *
      * </script><pre>

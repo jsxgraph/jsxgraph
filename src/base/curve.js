@@ -1378,13 +1378,13 @@ define([
             attr = Type.copyAttributes(attributes, board.options, 'curve');
 
         obj = board.select(parents[0], true);
-        if (Type.isObject(obj) &&
+        if (Type.isTransformationOrArray(parents[1]) &&
+            Type.isObject(obj) &&
             (obj.type === Const.OBJECT_TYPE_CURVE ||
                 obj.type === Const.OBJECT_TYPE_ANGLE ||
                 obj.type === Const.OBJECT_TYPE_ARC ||
                 obj.type === Const.OBJECT_TYPE_CONIC ||
-                obj.type === Const.OBJECT_TYPE_SECTOR) &&
-            Type.isTransformationOrArray(parents[1])) {
+                obj.type === Const.OBJECT_TYPE_SECTOR) ) {
 
             if (obj.type === Const.OBJECT_TYPE_SECTOR) {
                 attr = Type.copyAttributes(attributes, board.options, 'sector');

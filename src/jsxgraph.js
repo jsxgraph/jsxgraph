@@ -302,6 +302,8 @@ define([
          * @param {Boolean|Object} [attributes.grid] If set to true, shows the grid. Can also be set to an object that is given to the grid as its attribute object.
          * @param {Boolean} [attributes.registerEvents=true] Register mouse / touch events.
          * @returns {JXG.Board} Reference to the created board.
+         *
+         * @see JXG.AbstractRenderer#drawZoomBar
          */
         initBoard: function (box, attributes) {
             var originX, originY, unitX, unitY,

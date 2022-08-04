@@ -57,7 +57,7 @@ define(['jxg', 'base/constants', 'math/math', 'math/geometry', 'utils/type', '3d
      * line will determine the radius), or another {@link JXG.Circle}.
      *
      */
-     ThreeD.createPoint = function (board, parents, attributes) {
+     ThreeD.createPoint3D = function (board, parents, attributes) {
         var view = parents[0],
             attr, update2D, D3,
             i, c2d,
@@ -233,6 +233,6 @@ define(['jxg', 'base/constants', 'math/math', 'math/geometry', 'utils/type', '3d
 
         return el;
     };
-    JXG.registerElement('point3d', ThreeD.createPoint);
+    JXG.registerElement('point3d', ThreeD.createPoint3D);
 
 });

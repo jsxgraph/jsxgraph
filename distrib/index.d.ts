@@ -558,6 +558,12 @@ declare namespace JXG {
     addRotation(angle: number): void;
 
     /**
+     * Get the value of the property key.
+     * @param key The name of the property you are looking for.
+     */
+    getAttribute(key: string): any;
+
+    /**
      * Returns the element name.
      */
     getName(): string;
@@ -583,7 +589,7 @@ declare namespace JXG {
      * @param handler
      * @returns Reference to the object.
      */
-    off(event: string, handler: (e: Event) => void): this;
+    off(event: string, handler?: (e: Event) => void): this;
 
     /**
      * Register a new event handler.
@@ -4418,11 +4424,13 @@ declare namespace JXG {
     setZoom(fX: number, fY: number): Board;
     showDependencies(): this;
     showXML(): this;
+    startResizeObserver(): unknown;
     startSelectionMode(): unknown;
     /**
      * Cancels all running animations.
      */
     stopAllAnimation(): Board;
+    stopResizeObserver(): unknown;
     stopSelectionMode(): [Coords, Coords];
     /**
      * Stop updates of the board.
