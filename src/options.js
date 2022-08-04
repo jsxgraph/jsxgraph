@@ -5637,8 +5637,8 @@ define([
             anchor: null,
 
             /**
-             * The horizontal alignment of the text. Possible values include <tt>'auto</tt>, <tt>'left'</tt>, <tt>'middle'</tt>, and
-             * <tt>'right'</tt>.
+             * The horizontal alignment of the text. Possible values include <tt>'auto</tt>, <tt>'left'</tt>,
+             * <tt>'middle'</tt>, and <tt>'right'</tt>.
              *
              * @name anchorX
              * @memberOf Text.prototype
@@ -5650,10 +5650,11 @@ define([
             /**
              * The vertical alignment of the text. Possible values include <tt>'auto</tt>, <tt>'top'</tt>, <tt>'middle'</tt>, and
              * <tt>'bottom'</tt>.
+             * For MathJax or KaTeX, 'top' is recommended.
              *
              * @name anchorY
              * @memberOf Text.prototype
-             * @default 'auto'
+             * @default 'middle'
              * @type String
              */
             anchorY: 'middle',
@@ -5664,6 +5665,7 @@ define([
              * @name cssClass
              * @memberOf Text.prototype
              * @type String
+             * @default 'JXGtext'
              */
             cssClass: 'JXGtext',
 
@@ -5673,6 +5675,7 @@ define([
              * @name highlightCssClass
              * @memberOf Text.prototype
              * @type String
+             * @default 'JXGtext'
              */
             highlightCssClass: 'JXGtext',
 

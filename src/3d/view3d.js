@@ -50,18 +50,21 @@ function (JXG, Options, Const, Type, Mat, GeometryElement, Composition) {
          * An associative array containing all geometric objects belonging to the view.
          * Key is the id of the object and value is a reference to the object.
          * @type Object
+         * @private
          */
         this.objects = {};
 
         /**
          * An array containing all geometric objects in this view in the order of construction.
          * @type Array
+         * @private
          */
         this.objectsList = [];
 
         /**
          * An associative array / dictionary to store the objects of the board by name. The name of the object is the key and value is a reference to the object.
          * @type Object
+         * @private
          */
          this.elementsByName = {};
 
@@ -76,6 +79,7 @@ function (JXG, Options, Const, Type, Mat, GeometryElement, Composition) {
         /**
          * 3D-to-2D transformation matrix
          * @type  {Array} 3 x 4 matrix
+         * @private
          */
         this.matrix3D = [
             [1, 0, 0, 0],
@@ -86,12 +90,14 @@ function (JXG, Options, Const, Type, Mat, GeometryElement, Composition) {
         /**
          * Lower left corner [x, y] of the 3D view if elevation and azimuth are set to 0.
          * @type array
+         * @private
          */
         this.llftCorner = parents[0];
 
         /**
          * Width and height [w, h] of the 3D view if elevation and azimuth are set to 0.
          * @type array
+         * @private
          */
         this.size = parents[1];
 
@@ -103,7 +109,7 @@ function (JXG, Options, Const, Type, Mat, GeometryElement, Composition) {
 
         /**
          * Distance of the view to the origin. In other words, its
-         * the radius of the sphere where the camera sits.
+         * the radius of the sphere where the camera sits.view.board.update
          * @type Number
          */
         this.r = -1;
@@ -133,7 +139,7 @@ function (JXG, Options, Const, Type, Mat, GeometryElement, Composition) {
          * @returns {Object} Reference to the created element. This is usually a GeometryElement3D, but can be an array containing
          * two or more elements.
          */
-         create: function (elementType, parents, attributes) {
+        create: function (elementType, parents, attributes) {
             var prefix = [],
                 is3D = false,
                 el;
@@ -176,7 +182,7 @@ function (JXG, Options, Const, Type, Mat, GeometryElement, Composition) {
          *   return true;
          * });
          */
-         select: function (str, onlyByIdOrName) {
+        select: function (str, onlyByIdOrName) {
             var flist, olist, i, l,
                 s = str;
 
@@ -289,11 +295,12 @@ function (JXG, Options, Const, Type, Mat, GeometryElement, Composition) {
         },
 
         /**
-         * Project a 2D coordinate to the plane through the origin
-         * defined by its normal vector `normal`.
+         * Project a 2D coordinate to the plane defined by the point foot
+         * and the normal vector `normal`.
          *
          * @param  {JXG.Point} point
          * @param  {Array} normal
+         * @param  {Array} foot
          * @returns {Array} of length 4 containing the projected
          * point in homogeneous coordinates.
          */
@@ -409,6 +416,38 @@ function (JXG, Options, Const, Type, Mat, GeometryElement, Composition) {
             return ret;
         },
 
+        /**
+         * Generate mesh for a surface / plane.
+         * Returns array [dataX, dataY] for a JSXGraph curve's updateDataArray function.
+         * @param {Array,Function} func
+         * @param {Array} interval_u
+         * @param {Array} interval_v
+         * @returns Array
+         * @private
+         *
+         * @example
+         *  var el = view.create('curve', [[], []]);
+         *  el.updateDataArray = function () {
+         *      var steps_u = Type.evaluate(this.visProp.stepsu),
+         *           steps_v = Type.evaluate(this.visProp.stepsv),
+         *           r_u = Type.evaluate(this.range_u),
+         *           r_v = Type.evaluate(this.range_v),
+         *           func, ret;
+         *
+         *      if (this.F !== null) {
+         *          func = this.F;
+         *      } else {
+         *          func = [this.X, this.Y, this.Z];
+         *      }
+         *      ret = this.view.getMesh(func,
+         *          r_u.concat([steps_u]),
+         *          r_v.concat([steps_v]));
+         *
+         *      this.dataX = ret[0];
+         *      this.dataY = ret[1];
+         *  };
+         *
+         */
         getMesh: function (func, interval_u, interval_v) {
             var i_u, i_v, u, v, c2d,
                 delta_u, delta_v,
@@ -459,6 +498,9 @@ function (JXG, Options, Const, Type, Mat, GeometryElement, Composition) {
             return [dataX, dataY];
         },
 
+        /**
+         *
+         */
         animateAzimuth: function () {
             var s = this.az_slide._smin,
                 e = this.az_slide._smax,
@@ -474,6 +516,9 @@ function (JXG, Options, Const, Type, Mat, GeometryElement, Composition) {
             this.timeoutAzimuth = setTimeout(function () { this.animateAzimuth(); }.bind(this), 200);
         },
 
+        /**
+         *
+         */
         stopAzimuth: function () {
             clearTimeout(this.timeoutAzimuth);
             this.timeoutAzimuth = null;
@@ -593,6 +638,7 @@ function (JXG, Options, Const, Type, Mat, GeometryElement, Composition) {
 
         view.board.highlightInfobox = function (x, y, el) {
             var d, i,
+                c3d, foot,
                 brd = el.board,
                 p = null;
 
@@ -604,6 +650,12 @@ function (JXG, Options, Const, Type, Mat, GeometryElement, Composition) {
                 }
             }
             if (p) {
+                foot = [1, 0, 0, p.coords[3]];
+                c3d = view.project2DTo3DPlane(p.element2D, [1, 0, 0, 1], foot);
+                if (!view.isInCube(c3d)) {
+                    view.board.highlightCustomInfobox('', p);
+                    return;
+                }
                 d = Type.evaluate(p.visProp.infoboxdigits);
                 if (d === 'auto') {
                     view.board.highlightCustomInfobox('(' +
