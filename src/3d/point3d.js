@@ -46,7 +46,7 @@ define(['jxg', 'base/constants', 'math/math', 'math/geometry', 'utils/type' //, 
      * @see JXG.Board#generateName
      */
     JXG.Point3D = function (view, F, slide, attributes) {
-        this.constructor(view.board, attributes, Const.OBJECT_TYPE_POINT3D, Const.OBJECT_CLASS_POINT);
+        this.constructor(view.board, attributes, Const.OBJECT_TYPE_POINT3D, Const.OBJECT_CLASS_3D);
         this.constructor3D(view, 'point3d');
 
         this.id = this.view.board.setId(this, 'P3D');

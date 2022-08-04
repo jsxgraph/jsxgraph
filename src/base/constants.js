@@ -133,6 +133,7 @@ define(['jxg'], function (JXG) {
         OBJECT_CLASS_AREA: 5,
         OBJECT_CLASS_OTHER: 6,
         OBJECT_CLASS_TEXT: 7,
+        OBJECT_CLASS_3D: 8,
 
         // SketchReader constants
         GENTYPE_ABC: 1, // unused

@@ -48,7 +48,7 @@ define(['jxg', 'base/constants', 'utils/type'], function (JXG, Const, Type) {
      * @see JXG.Board#generateName
      */
      JXG.Surface3D = function (view, F, X, Y, Z, range_u, range_v, attributes) {
-        this.constructor(view.board, attributes, Const.OBJECT_TYPE_SURFACE3D, Const.OBJECT_CLASS_CURVE);
+        this.constructor(view.board, attributes, Const.OBJECT_TYPE_SURFACE3D, Const.OBJECT_CLASS_3D);
         this.constructor3D(view, 'surface3d');
 
         this.id = this.view.board.setId(this, 'S3D');

@@ -44,7 +44,7 @@ function (JXG, Options, Const, Type, Mat, GeometryElement, Composition) {
      * [x,y] and side lengths [w, h] of the board.
      */
      JXG.View3D = function (board, parents, attributes) {
-        this.constructor(board, attributes, Const.OBJECT_TYPE_VIEW3D, Const.OBJECT_CLASS_CURVE);
+        this.constructor(board, attributes, Const.OBJECT_TYPE_VIEW3D, Const.OBJECT_CLASS_3D);
 
         /**
          * An associative array containing all geometric objects belonging to the view.
@@ -594,7 +594,7 @@ function (JXG, Options, Const, Type, Mat, GeometryElement, Composition) {
         view.board.highlightInfobox = function (x, y, el) {
             var d;
 
-            if (Type.exists(el.is3D)) {
+            if (Type.exists(el.is3D) && el.type === Const.OBJECT_TYPE_POINT3D) {
                 d = Type.evaluate(el.visProp.infoboxdigits);
                 if (d === 'auto') {
                     view.board.highlightCustomInfobox('(' +
@@ -608,6 +608,7 @@ function (JXG, Options, Const, Type, Mat, GeometryElement, Composition) {
                         Type.toFixed(el.Z(), d) + ')', el);
                 }
             } else {
+                console.log('nix')
                 view.board.highlightCustomInfobox('(' + x + ', ' + y + ')', el);
             }
         };
