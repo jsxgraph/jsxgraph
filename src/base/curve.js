@@ -2326,7 +2326,7 @@ define([
         /**
          * @ignore
          */
-         c.updateDataArray = function () {
+        c.updateDataArray = function () {
             var i, j = 0,
                 len = this.xterm.length;
 
