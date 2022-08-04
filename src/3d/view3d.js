@@ -592,23 +592,31 @@ function (JXG, Options, Const, Type, Mat, GeometryElement, Composition) {
         });
 
         view.board.highlightInfobox = function (x, y, el) {
-            var d;
+            var d, i,
+                brd = el.board,
+                p = null;
 
-            if (Type.exists(el.is3D) && el.type === Const.OBJECT_TYPE_POINT3D) {
-                d = Type.evaluate(el.visProp.infoboxdigits);
+            // Search 3D parent
+            for (i = 0; i < el.parents.length; i++) {
+                p = brd.objects[el.parents[i]];
+                if (p.is3D) {
+                    break;
+                }
+            }
+            if (p) {
+                d = Type.evaluate(p.visProp.infoboxdigits);
                 if (d === 'auto') {
                     view.board.highlightCustomInfobox('(' +
-                        Type.autoDigits(el.X()) + ' | ' +
-                        Type.autoDigits(el.Y()) + ' | ' +
-                        Type.autoDigits(el.Z()) + ')', el);
+                        Type.autoDigits(p.X()) + ' | ' +
+                        Type.autoDigits(p.Y()) + ' | ' +
+                        Type.autoDigits(p.Z()) + ')', p);
                 } else {
                     view.board.highlightCustomInfobox('(' +
-                        Type.toFixed(el.X(), d) + ' | ' +
-                        Type.toFixed(el.Y(), d) + ' | ' +
-                        Type.toFixed(el.Z(), d) + ')', el);
+                        Type.toFixed(p.X(), d) + ' | ' +
+                        Type.toFixed(p.Y(), d) + ' | ' +
+                        Type.toFixed(p.Z(), d) + ')', p);
                 }
             } else {
-                console.log('nix')
                 view.board.highlightCustomInfobox('(' + x + ', ' + y + ')', el);
             }
         };

@@ -237,6 +237,7 @@ define([
         },
 
         point3d: {
+            infoboxDigits: 'auto',
             strokeWidth: 0,
             gradient: 'radial',
             gradientSecondColor: '#555555',

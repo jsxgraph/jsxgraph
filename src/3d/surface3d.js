@@ -219,6 +219,7 @@ define(['jxg', 'base/constants', 'utils/type'], function (JXG, Const, Type) {
         };
         el.addChild(el.element2D);
         el.inherits.push(el.element2D);
+        el.element2D.setParents(el);
 
         el.element2D.prepareUpdate().update();
         if (!board.isSuspendedUpdate) {

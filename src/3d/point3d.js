@@ -353,7 +353,7 @@ define(['jxg', 'base/constants', 'math/math', 'math/geometry', 'utils/type' //, 
      * @throws {Exception} If the element cannot be constructed with the given parent
      * objects an exception is thrown.
      * @param {number,function_number,function_number,function} x,y,z The coordinates are given as x, y, z consisting of numbers of functions.
-     * @param {array,function} arr Alternatively, the coordinates can be supplied as
+     * @param {array,function} F Alternatively, the coordinates can be supplied as
      *  <ul>
      *   <li>array arr=[x,y,z] of length 3 consisting of numbers or
      *   <li>function returning an array [x,y,z] of length 3 of numbers.
@@ -426,6 +426,7 @@ define(['jxg', 'base/constants', 'math/math', 'math/geometry', 'utils/type' //, 
         el.element2D = view.create('point', c2d, attr);
         el.addChild(el.element2D);
         el.inherits.push(el.element2D);
+        el.element2D.setParents(el);
 
         el._c2d = el.element2D.coords.usrCoords.slice(); // Store a copy of the coordinates to detect dragging
 

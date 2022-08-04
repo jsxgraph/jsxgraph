@@ -280,6 +280,7 @@ define(['jxg', 'base/constants', 'utils/type', 'math/math', 'math/geometry'
         el.element2D = view.create('segment', [point1.element2D, point2.element2D], attr);
         el.addChild(el.element2D);
         el.inherits.push(el.element2D);
+        el.element2D.setParents(el);
 
         point1.addChild(el);
         point2.addChild(el);
@@ -630,6 +631,8 @@ define(['jxg', 'base/constants', 'utils/type', 'math/math', 'math/geometry'
         };
         el.addChild(el.element2D);
         el.inherits.push(el.element2D);
+        el.element2D.setParents(el);
+
 
         attr = Type.copyAttributes(attributes.mesh3d, board.options, 'mesh3d');
         if (Math.abs(el.range1[0]) !== Infinity && Math.abs(el.range1[1]) !== Infinity &&
@@ -637,7 +640,9 @@ define(['jxg', 'base/constants', 'utils/type', 'math/math', 'math/geometry'
         ) {
             grid = view.create('mesh3d', [ function() { return point.coords; }, dir1, range1, dir2, range2 ], attr);
             el.grid = grid;
+            el.addChild(grid);
             el.inherits.push(grid);
+            grid.setParents(el);
         }
 
         el.element2D.prepareUpdate().update();
