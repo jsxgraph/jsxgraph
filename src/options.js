@@ -3469,6 +3469,44 @@ define([
              * </pre>
              * type=7 is the default for curves if firstArrow: true
              *
+             * @example
+             *     board.options.line.lastArrow = false;
+             *     board.options.line.firstArrow = {size: 10, highlightSize: 10};
+             *     board.options.line.point1 = {visible: false, withLabel: true, label: {visible: true, anchorX: 'right'}};
+             *     board.options.line.strokeWidth = 4;
+             *     board.options.line.highlightStrokeWidth = 4;
+             *
+             *     board.create('segment', [[-5,4], [3,4]], {firstArrow: {type: 1}, point1: {name: 'type:1'}});
+             *     board.create('segment', [[-5,3], [3,3]], {firstArrow: {type: 2}, point1: {name: 'type:2'}});
+             *     board.create('segment', [[-5,2], [3,2]], {firstArrow: {type: 3}, point1: {name: 'type:3'}});
+             *     board.create('segment', [[-5,1], [3,1]], {firstArrow: {type: 4}, point1: {name: 'type:4'}});
+             *     board.create('segment', [[-5,0], [3,0]], {firstArrow: {type: 5}, point1: {name: 'type:5'}});
+             *     board.create('segment', [[-5,-1], [3,-1]], {firstArrow: {type: 6}, point1: {name: 'type:6'}});
+             *     board.create('segment', [[-5,-2], [3,-2]], {firstArrow: {type: 7}, point1: {name: 'type:7'}});
+             *
+             * </pre><div id="JXGc94a93da-c942-4204-8bb6-b39726cbb09b" class="jxgbox" style="width: 300px; height: 300px;"></div>
+             * <script type="text/javascript">
+             *     (function() {
+             *         var board = JXG.JSXGraph.initBoard('JXGc94a93da-c942-4204-8bb6-b39726cbb09b',
+             *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false});
+             *         board.options.line.lastArrow = false;
+             *         board.options.line.firstArrow = {size: 10, highlightSize: 10};
+             *         board.options.line.point1 = {visible: false, withLabel: true, label: {visible: true, anchorX: 'right'}};
+             *         board.options.line.strokeWidth = 4;
+             *         board.options.line.highlightStrokeWidth = 4;
+             *
+             *         board.create('segment', [[-5,4], [3,4]], {firstArrow: {type: 1}, point1: {name: 'type:1'}});
+             *         board.create('segment', [[-5,3], [3,3]], {firstArrow: {type: 2}, point1: {name: 'type:2'}});
+             *         board.create('segment', [[-5,2], [3,2]], {firstArrow: {type: 3}, point1: {name: 'type:3'}});
+             *         board.create('segment', [[-5,1], [3,1]], {firstArrow: {type: 4}, point1: {name: 'type:4'}});
+             *         board.create('segment', [[-5,0], [3,0]], {firstArrow: {type: 5}, point1: {name: 'type:5'}});
+             *         board.create('segment', [[-5,-1], [3,-1]], {firstArrow: {type: 6}, point1: {name: 'type:6'}});
+             *         board.create('segment', [[-5,-2], [3,-2]], {firstArrow: {type: 7}, point1: {name: 'type:7'}});
+             *
+             *     })();
+             *
+             * </script><pre>
+             *
              * @name Line#firstArrow
              * @see Line#lastArrow
              * @see Line#touchFirstPoint
@@ -3522,10 +3560,46 @@ define([
              *              touchLastPoint: true,
              *              firstArrow: {type: 3, size: 8}
              *             });
-             *
              *     })();
              *
              * </script>
+             *
+             * @example
+             *     board.options.line.strokeWidth = 4;
+             *     board.options.line.highlightStrokeWidth = 4;
+             *     board.options.line.firstArrow = false;
+             *     board.options.line.lastArrow = {size: 10, highlightSize: 10};
+             *     board.options.line.point2 = {visible: false, withLabel: true, label: {visible: true}};
+             *
+             *     board.create('segment', [[-5,4], [3,4]], {lastArrow: {type: 1}, point2: {name: 'type:1'}});
+             *     board.create('segment', [[-5,3], [3,3]], {lastArrow: {type: 2}, point2: {name: 'type:2'}});
+             *     board.create('segment', [[-5,2], [3,2]], {lastArrow: {type: 3}, point2: {name: 'type:3'}});
+             *     board.create('segment', [[-5,1], [3,1]], {lastArrow: {type: 4}, point2: {name: 'type:4'}});
+             *     board.create('segment', [[-5,0], [3,0]], {lastArrow: {type: 5}, point2: {name: 'type:5'}});
+             *     board.create('segment', [[-5,-1], [3,-1]], {lastArrow: {type: 6}, point2: {name: 'type:6'}});
+             *     board.create('segment', [[-5,-2], [3,-2]], {lastArrow: {type: 7}, point2: {name: 'type:7'}});
+             *
+             * </pre><div id="JXGca206b1c-e319-4899-8b90-778f53fd926d" class="jxgbox" style="width: 300px; height: 300px;"></div>
+             * <script type="text/javascript">
+             *     (function() {
+             *         var board = JXG.JSXGraph.initBoard('JXGca206b1c-e319-4899-8b90-778f53fd926d',
+             *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false});
+             *         board.options.line.strokeWidth = 4;
+             *         board.options.line.highlightStrokeWidth = 4;
+             *         board.options.line.firstArrow = false;
+             *         board.options.line.lastArrow = {size: 10, highlightSize: 10};
+             *         board.options.line.point2 = {visible: false, withLabel: true, label: {visible: true}};
+             *
+             *         board.create('segment', [[-5,4], [3,4]], {lastArrow: {type: 1}, point2: {name: 'type:1'}});
+             *         board.create('segment', [[-5,3], [3,3]], {lastArrow: {type: 2}, point2: {name: 'type:2'}});
+             *         board.create('segment', [[-5,2], [3,2]], {lastArrow: {type: 3}, point2: {name: 'type:3'}});
+             *         board.create('segment', [[-5,1], [3,1]], {lastArrow: {type: 4}, point2: {name: 'type:4'}});
+             *         board.create('segment', [[-5,0], [3,0]], {lastArrow: {type: 5}, point2: {name: 'type:5'}});
+             *         board.create('segment', [[-5,-1], [3,-1]], {lastArrow: {type: 6}, point2: {name: 'type:6'}});
+             *         board.create('segment', [[-5,-2], [3,-2]], {lastArrow: {type: 7}, point2: {name: 'type:7'}});
+             *     })();
+             *
+             * </script><pre>
              *
              * @name Line#lastArrow
              * @see Line#firstArrow
