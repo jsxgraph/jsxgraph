@@ -107,7 +107,7 @@ define(['jxg', 'utils/type', 'math/math', 'math/geometry'], function (JXG, Type,
         }
 
         // Origin (2D point)
-        axes.O = board.create('intersection', [
+        axes.O = view.create('intersection', [
                 axes[directions[0] + suffixAxis],
                 axes[directions[1] + suffixAxis]
             ], {
@@ -179,7 +179,7 @@ define(['jxg', 'utils/type', 'math/math', 'math/geometry'], function (JXG, Type,
 
         // Use 2D points to create axis
         attr = Type.copyAttributes(attributes.point1, board.options, 'axis3d', 'point1');
-        el_start = board.create('point', [
+        el_start = view.create('point', [
             (function (xx, yy, zz) {
                 return function () { return view.project3DTo2D(xx, yy, zz)[1]; };
             })(start[0], start[1], start[2]),
@@ -189,7 +189,7 @@ define(['jxg', 'utils/type', 'math/math', 'math/geometry'], function (JXG, Type,
         ], attr);
 
         attr = Type.copyAttributes(attributes.point2, board.options, 'axis3d', 'point2');
-        el_end = board.create('point', [
+        el_end = view.create('point', [
             (function (xx, yy, zz) {
                 return function () { return view.project3DTo2D(xx, yy, zz)[1]; };
             })(end[0], end[1], end[2]),
@@ -199,7 +199,7 @@ define(['jxg', 'utils/type', 'math/math', 'math/geometry'], function (JXG, Type,
         ], attr);
 
         attr = Type.copyAttributes(attributes, board.options, 'axis3d');
-        el = board.create('arrow', [el_start, el_end], attr);
+        el = view.create('arrow', [el_start, el_end], attr);
 
         return el;
     };
@@ -214,7 +214,7 @@ define(['jxg', 'utils/type', 'math/math', 'math/geometry'], function (JXG, Type,
             range2 = parents[5],
             el;
 
-        el = board.create('curve', [[], []], attr);
+        el = view.create('curve', [[], []], attr);
         el.updateDataArray = function () {
             var s1 = range1[0],
                 e1 = range1[1],

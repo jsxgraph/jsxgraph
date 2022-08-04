@@ -209,7 +209,6 @@ define(['jxg', 'base/constants', 'utils/type', 'math/math', 'math/geometry'
      *         var l2 = view.create('line3d', [p, l1.point1]);
      *         // Line by point, direction, range
      *         var l3 = view.create('line3d', [p, [0, 0, 1], [-2, 4]]);
-     *     board.update();
      *     })();
      *
      * </script><pre>

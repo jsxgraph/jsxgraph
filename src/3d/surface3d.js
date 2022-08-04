@@ -180,7 +180,6 @@ define(['jxg', 'base/constants', 'utils/type'], function (JXG, Const, Type) {
      *         stepsU: 20,
      *         stepsV: 20
      *     });
-     *     board.update(); 
      *     })();
      *
      * </script><pre>
@@ -299,7 +298,6 @@ define(['jxg', 'base/constants', 'utils/type'], function (JXG, Const, Type) {
      *         stepsU: 70,
      *         stepsV: 70
      *     });
-     *     board.update();
      *     })();
      *
      * </script><pre>

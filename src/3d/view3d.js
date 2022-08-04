@@ -113,6 +113,7 @@ function (JXG, Options, Const, Type, Mat, GeometryElement, Composition) {
         this.id = this.board.setId(this, 'V');
         this.board.finalizeAdding(this);
         this.elType = 'view3d';
+
         this.methodMap = Type.deepCopy(this.methodMap, {
             // TODO
         });
@@ -142,6 +143,7 @@ function (JXG, Options, Const, Type, Mat, GeometryElement, Composition) {
                 prefix.push(this);
             }
             el = this.board.create(elementType, prefix.concat(parents), attributes);
+
             return el;
         },
 
@@ -546,8 +548,6 @@ function (JXG, Options, Const, Type, Mat, GeometryElement, Composition) {
      *                 zPlaneFrontXAxis: {visible: false},
      *                 zPlaneFrontYAxis: {visible: false}
      *             });
-     *         board.update();
-     *
      *     })();
      *
      * </script><pre>
@@ -620,6 +620,8 @@ function (JXG, Options, Const, Type, Mat, GeometryElement, Composition) {
                 view.board.highlightCustomInfobox('(' + x + ', ' + y + ')', el);
             }
         };
+
+        view.board.update();
 
         return view;
     };

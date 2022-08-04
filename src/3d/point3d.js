@@ -380,7 +380,6 @@ define(['jxg', 'base/constants', 'math/math', 'math/geometry', 'utils/type' //, 
      *             {});
      *         var p = view.create('point3d', [1, 2, 2], { name:'A', size: 5 });
      *         var q = view.create('point3d', function() { return [p.X(), p.Y(), p.Z() - 3]; }, { name:'B', size: 5 });
-     *         board.update();
      *     })();
      *
      * </script><pre>
