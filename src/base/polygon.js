@@ -590,9 +590,14 @@ define([
          *
          */
         addPoints: function (p) {
-            var args = Array.prototype.slice.call(arguments);
+            var idx, args = Array.prototype.slice.call(arguments);
 
-            return this.insertPoints.apply(this, [this.vertices.length - 2].concat(args));
+            if (this.elType === 'polygonalchain') {
+                idx = this.vertices.length - 1;
+            } else {
+                idx = this.vertices.length - 2;
+            }
+            return this.insertPoints.apply(this, [idx].concat(args));
         },
 
         /**
