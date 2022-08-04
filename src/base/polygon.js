@@ -635,14 +635,18 @@ define([
          *
          */
         insertPoints: function (idx, p) {
-            var i, le;
+            var i, le, last;
 
             if (arguments.length === 0) {
                 return this;
             }
+            if (this.elType === 'polygonalchain') {
+                last = this.vertices.length - 1;
+            } else {
+                last = this.vertices.length - 2;
+            }
 
-
-            if (idx < -1 || idx > this.vertices.length - 2) {
+            if (idx < -1 || idx > last) {
                 return this;
             }
 
@@ -652,11 +656,11 @@ define([
                     Type.providePoints(this.board, [arguments[i]], {}, 'polygon', ['vertices'])[0]
                 );
             }
-            if (idx === -1) {
+            if (idx === -1 && this.elType !== 'polygonalchain') {
                 this.vertices[this.vertices.length - 1] = this.vertices[0];
             }
             if (this.withLines) {
-                if (idx < 0) {
+                if (idx < 0 && this.elType !== 'polygonalchain') {
                     this.borders[this.borders.length - 1].point2 = this.vertices[this.vertices.length - 1];
                 } else {
                     this.borders[idx].point2 = this.vertices[idx + 1];
