@@ -25534,6 +25534,7 @@ define('options',[
              * @name JXG.Board#showNavigation
              * @type Boolean
              * @default true
+             * @see JXG.AbstractRenderer#drawZoomBar
              */
             showNavigation: true,
 
@@ -25544,6 +25545,7 @@ define('options',[
              * @name JXG.Board#showZoom
              * @type Boolean
              * @default true
+             * @see JXG.AbstractRenderer#drawZoomBar
              */
             showZoom: true,
 
@@ -25554,6 +25556,7 @@ define('options',[
              * @name JXG.Board#showReload
              * @type Boolean
              * @default false
+             * @see JXG.AbstractRenderer#drawZoomBar
              */
             showReload: false,
 
@@ -25563,6 +25566,7 @@ define('options',[
              * @name JXG.Board#showScreenshot
              * @type Boolean
              * @default false
+             * @see JXG.AbstractRenderer#drawZoomBar
              */
             showScreenshot: false,
 
@@ -25595,6 +25599,8 @@ define('options',[
              * @type Boolean
              * @see JXG.Board#fullscreen
              * @default false
+             * @see JXG.AbstractRenderer#drawZoomBar
+             * @see JXG.AbstractRenderer#drawZoomBar
              */
             showFullscreen: false,
 
@@ -25636,6 +25642,7 @@ define('options',[
              *
              * @name JXG.Board#fullscreen
              * @see JXG.Board#showFullscreen
+             * @see JXG.AbstractRenderer#drawZoomBar
              * @type Object
              */
             fullscreen: {
@@ -25649,6 +25656,7 @@ define('options',[
              * @name JXG.Board#showClearTraces
              * @type Boolean
              * @default false
+             * @see JXG.AbstractRenderer#drawZoomBar
              */
             showClearTraces: false,
 
@@ -28740,6 +28748,44 @@ define('options',[
              * </pre>
              * type=7 is the default for curves if firstArrow: true
              *
+             * @example
+             *     board.options.line.lastArrow = false;
+             *     board.options.line.firstArrow = {size: 10, highlightSize: 10};
+             *     board.options.line.point1 = {visible: false, withLabel: true, label: {visible: true, anchorX: 'right'}};
+             *     board.options.line.strokeWidth = 4;
+             *     board.options.line.highlightStrokeWidth = 4;
+             *
+             *     board.create('segment', [[-5,4], [3,4]], {firstArrow: {type: 1}, point1: {name: 'type:1'}});
+             *     board.create('segment', [[-5,3], [3,3]], {firstArrow: {type: 2}, point1: {name: 'type:2'}});
+             *     board.create('segment', [[-5,2], [3,2]], {firstArrow: {type: 3}, point1: {name: 'type:3'}});
+             *     board.create('segment', [[-5,1], [3,1]], {firstArrow: {type: 4}, point1: {name: 'type:4'}});
+             *     board.create('segment', [[-5,0], [3,0]], {firstArrow: {type: 5}, point1: {name: 'type:5'}});
+             *     board.create('segment', [[-5,-1], [3,-1]], {firstArrow: {type: 6}, point1: {name: 'type:6'}});
+             *     board.create('segment', [[-5,-2], [3,-2]], {firstArrow: {type: 7}, point1: {name: 'type:7'}});
+             *
+             * </pre><div id="JXGc94a93da-c942-4204-8bb6-b39726cbb09b" class="jxgbox" style="width: 300px; height: 300px;"></div>
+             * <script type="text/javascript">
+             *     (function() {
+             *         var board = JXG.JSXGraph.initBoard('JXGc94a93da-c942-4204-8bb6-b39726cbb09b',
+             *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false});
+             *         board.options.line.lastArrow = false;
+             *         board.options.line.firstArrow = {size: 10, highlightSize: 10};
+             *         board.options.line.point1 = {visible: false, withLabel: true, label: {visible: true, anchorX: 'right'}};
+             *         board.options.line.strokeWidth = 4;
+             *         board.options.line.highlightStrokeWidth = 4;
+             *
+             *         board.create('segment', [[-5,4], [3,4]], {firstArrow: {type: 1}, point1: {name: 'type:1'}});
+             *         board.create('segment', [[-5,3], [3,3]], {firstArrow: {type: 2}, point1: {name: 'type:2'}});
+             *         board.create('segment', [[-5,2], [3,2]], {firstArrow: {type: 3}, point1: {name: 'type:3'}});
+             *         board.create('segment', [[-5,1], [3,1]], {firstArrow: {type: 4}, point1: {name: 'type:4'}});
+             *         board.create('segment', [[-5,0], [3,0]], {firstArrow: {type: 5}, point1: {name: 'type:5'}});
+             *         board.create('segment', [[-5,-1], [3,-1]], {firstArrow: {type: 6}, point1: {name: 'type:6'}});
+             *         board.create('segment', [[-5,-2], [3,-2]], {firstArrow: {type: 7}, point1: {name: 'type:7'}});
+             *
+             *     })();
+             *
+             * </script><pre>
+             *
              * @name Line#firstArrow
              * @see Line#lastArrow
              * @see Line#touchFirstPoint
@@ -28793,10 +28839,46 @@ define('options',[
              *              touchLastPoint: true,
              *              firstArrow: {type: 3, size: 8}
              *             });
-             *
              *     })();
              *
              * </script>
+             *
+             * @example
+             *     board.options.line.strokeWidth = 4;
+             *     board.options.line.highlightStrokeWidth = 4;
+             *     board.options.line.firstArrow = false;
+             *     board.options.line.lastArrow = {size: 10, highlightSize: 10};
+             *     board.options.line.point2 = {visible: false, withLabel: true, label: {visible: true}};
+             *
+             *     board.create('segment', [[-5,4], [3,4]], {lastArrow: {type: 1}, point2: {name: 'type:1'}});
+             *     board.create('segment', [[-5,3], [3,3]], {lastArrow: {type: 2}, point2: {name: 'type:2'}});
+             *     board.create('segment', [[-5,2], [3,2]], {lastArrow: {type: 3}, point2: {name: 'type:3'}});
+             *     board.create('segment', [[-5,1], [3,1]], {lastArrow: {type: 4}, point2: {name: 'type:4'}});
+             *     board.create('segment', [[-5,0], [3,0]], {lastArrow: {type: 5}, point2: {name: 'type:5'}});
+             *     board.create('segment', [[-5,-1], [3,-1]], {lastArrow: {type: 6}, point2: {name: 'type:6'}});
+             *     board.create('segment', [[-5,-2], [3,-2]], {lastArrow: {type: 7}, point2: {name: 'type:7'}});
+             *
+             * </pre><div id="JXGca206b1c-e319-4899-8b90-778f53fd926d" class="jxgbox" style="width: 300px; height: 300px;"></div>
+             * <script type="text/javascript">
+             *     (function() {
+             *         var board = JXG.JSXGraph.initBoard('JXGca206b1c-e319-4899-8b90-778f53fd926d',
+             *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false});
+             *         board.options.line.strokeWidth = 4;
+             *         board.options.line.highlightStrokeWidth = 4;
+             *         board.options.line.firstArrow = false;
+             *         board.options.line.lastArrow = {size: 10, highlightSize: 10};
+             *         board.options.line.point2 = {visible: false, withLabel: true, label: {visible: true}};
+             *
+             *         board.create('segment', [[-5,4], [3,4]], {lastArrow: {type: 1}, point2: {name: 'type:1'}});
+             *         board.create('segment', [[-5,3], [3,3]], {lastArrow: {type: 2}, point2: {name: 'type:2'}});
+             *         board.create('segment', [[-5,2], [3,2]], {lastArrow: {type: 3}, point2: {name: 'type:3'}});
+             *         board.create('segment', [[-5,1], [3,1]], {lastArrow: {type: 4}, point2: {name: 'type:4'}});
+             *         board.create('segment', [[-5,0], [3,0]], {lastArrow: {type: 5}, point2: {name: 'type:5'}});
+             *         board.create('segment', [[-5,-1], [3,-1]], {lastArrow: {type: 6}, point2: {name: 'type:6'}});
+             *         board.create('segment', [[-5,-2], [3,-2]], {lastArrow: {type: 7}, point2: {name: 'type:7'}});
+             *     })();
+             *
+             * </script><pre>
              *
              * @name Line#lastArrow
              * @see Line#firstArrow
@@ -33260,6 +33342,13 @@ define('renderer/abstract',[
 
         /**
          * The tiny zoom bar shown on the bottom of a board (if showNavigation on board creation is true).
+         * It is a div element and gets the CSS class "JXG_navigation" and the id {board id}_navigationbar.
+         *
+         * The buttons get the CSS class "JXG_navigation_button" and the id {board_id}_name where name is
+         * one of [top, down, left, right, out, 100, in, fullscreen, screenshot, reload, cleartraces].
+         *
+         * The symbols are hard-coded.
+         *
          * @param {JXG.Board} board Reference to a JSXGraph board.
          * @param {Object} attr Attributes of the navigation bar
          *
@@ -33279,11 +33368,12 @@ define('renderer/abstract',[
                         e.cancelBubble = true;
                     }
                 },
-                createButton = function (label, handler) {
+                createButton = function (label, handler, id) {
                     var button;
 
+                    id = id || '';
+
                     button = doc.createElement('span');
-                    node.appendChild(button);
                     button.appendChild(doc.createTextNode(label));
 
                     // Style settings are superseded by adding the CSS class below
@@ -33294,6 +33384,9 @@ define('renderer/abstract',[
                         button.classList.add('JXG_navigation_button');
                     }
                     // button.setAttribute('tabindex', 0);
+
+                    button.setAttribute('id', id);
+                    node.appendChild(button);
 
                     // Highlighting is now done with CSS
                     // Env.addEvent(button, 'mouseover', function () {
@@ -33318,7 +33411,7 @@ define('renderer/abstract',[
                 doc = board.containerObj.ownerDocument;
                 node = doc.createElement('div');
 
-                node.setAttribute('id', board.containerObj.id + '_navigationbar');
+                node.setAttribute('id', board.container + '_navigationbar');
 
                 // Style settings are superseded by adding the CSS class below
                 node.style.color = attr.strokecolor;
@@ -33340,7 +33433,7 @@ define('renderer/abstract',[
                 if (board.attr.showfullscreen) {
                     createButton(board.attr.fullscreen.symbol, function () {
                         board.toFullscreen(board.attr.fullscreen.id);
-                    });
+                    }, board.container + '_navigation_fullscreen');
                 }
 
                 if (board.attr.showscreenshot) {
@@ -33348,7 +33441,7 @@ define('renderer/abstract',[
                         window.setTimeout(function() {
                             board.renderer.screenshot(board, '', false);
                         }, 330);
-                    });
+                    }, board.container + '_navigation_screenshot');
                 }
 
                 if (board.attr.showreload) {
@@ -33357,26 +33450,26 @@ define('renderer/abstract',[
                     // of this button. That's why this anonymous function wrapper is required.
                     createButton('\u21BB', function () {
                         board.reload();
-                    });
+                    }, board.container + '_navigation_reload');
                 }
 
                 if (board.attr.showcleartraces) {
                     // clear traces symbol (otimes): \u27F2
                     createButton('\u2297', function () {
                         board.clearTraces();
-                    });
+                    }, board.container + '_navigation_cleartraces');
                 }
 
                 if (board.attr.shownavigation) {
                     if (board.attr.showzoom) {
-                        createButton('\u2013', board.zoomOut);
-                        createButton('o', board.zoom100);
-                        createButton('+', board.zoomIn);
+                        createButton('\u2013', board.zoomOut, board.container + '_navigation_out');
+                        createButton('o', board.zoom100, board.container + '_navigation_100');
+                        createButton('+', board.zoomIn, board.container + '_navigation_in');
                     }
-                    createButton('\u2190', board.clickLeftArrow);
-                    createButton('\u2193', board.clickUpArrow);
-                    createButton('\u2191', board.clickDownArrow);
-                    createButton('\u2192', board.clickRightArrow);
+                    createButton('\u2190', board.clickLeftArrow, board.container + '_navigation_left');
+                    createButton('\u2193', board.clickUpArrow, board.container + '_navigation_up');
+                    createButton('\u2191', board.clickDownArrow, board.container + '_navigation_down');
+                    createButton('\u2192', board.clickRightArrow, board.container + '_navigation_right');
                 }
             }
         },
@@ -38735,49 +38828,63 @@ define('base/text',[
             var updateText, resolvedText,
                 ev_p = Type.evaluate(this.visProp.parse),
                 ev_um = Type.evaluate(this.visProp.usemathjax),
-                ev_uk = Type.evaluate(this.visProp.usekatex);
+                ev_uk = Type.evaluate(this.visProp.usekatex),
+                convertJessieCode = false;
 
             this.orgText = text;
+
             if (Type.isFunction(text)) {
-                // <value> tags will not be evaluated.
+                // <value> tags will not be evaluated if text is provided by a function
                 this.updateText = function () {
-                    resolvedText = text().toString();
+                    resolvedText = text().toString();  // Evaluate function
                     if (ev_p && !ev_um && !ev_uk) {
                         this.plaintext = this.replaceSub(this.replaceSup(this.convertGeonextAndSketchometry2CSS(resolvedText)));
                     } else {
                         this.plaintext = resolvedText;
                     }
                 };
-            } else if (Type.isString(text) && !ev_p) {   // Do not parse
-                this.updateText = function () {
-                    this.plaintext = text;
-                };
-            } else {                                     // Parse
+
+            } else {
+
                 if (Type.isNumber(text)) {
                     this.content = Type.toFixed(text, Type.evaluate(this.visProp.digits));
-                } else {
-                    if (Type.evaluate(this.visProp.useasciimathml)) {
-                        // Convert via ASCIIMathML
+                } else if (Type.isString(text) && ev_p) {
+
+                    if (Type.evaluate(this.visProp.useasciimathml)) {   // ASCIIMathML
                         this.content = "'`" + text + "`'";
-                    } else if (ev_um || ev_uk) {
-                        if (ev_p) {
-                            this.content = this.generateTerm(text, true, true, true); // Replace value-tags
-                            this.content = this.content.replace(/\\/g, "\\\\");
-                        } else {
-                            this.content = "'" + text + "'";
-                        }
+
+                    } else if (ev_um || ev_uk) {                        // MathJax or KaTeX
+                        // Replace value-tags by functions
+                        this.content = this.valueTagToJessieCode(text);
+                        this.content = this.content.replace(/\\/g, "\\\\"); // Replace single backshlash by double
+
                     } else {
+                        // No TeX involved.
                         // Converts GEONExT syntax into JavaScript string
                         // Short math is allowed
+                        // Replace value-tags by functions
                         // Avoid geonext2JS calls
-                        this.content = this.generateTerm(text, true, true, false);
+                        this.content = this.poorMansTeX(this.valueTagToJessieCode(text));
                     }
+                    convertJessieCode = true;
                 }
-                // Convert JessieCode to JS function
-                updateText = this.board.jc.snippet(this.content, true, '', false);
-                this.updateText = function () {
-                    this.plaintext = updateText();
-                };
+
+                // Generate function which returns the text to be displayed
+                if (convertJessieCode) {
+
+                    // Convert JessieCode to JS function
+                    updateText = this.board.jc.snippet(this.content, true, '', false);
+
+                    // Ticks have been esacped in valueTagToJessieCode
+                    this.updateText = function () {
+                        this.plaintext = this.unescapeTicks(updateText());
+                    };
+                } else {
+                    this.updateText = function () {
+                        this.plaintext = text;
+                    };
+
+                }
             }
         },
 
@@ -39129,25 +39236,23 @@ define('base/text',[
         /**
          * Converts the GEONExT syntax of the <value> terms into JavaScript.
          * Also, all Objects whose name appears in the term are searched and
-         * the text is added as child to these objects. 
+         * the text is added as child to these objects.
          * This method is called if the attribute parse==true is set.
          *
          * @param{String} contentStr String to be parsed
          * @param{Boolean} [expand] Optional flag if shortened math syntax is allowed (e.g. 3x instead of 3*x).
          * @param{Boolean} [avoidGeonext2JS] Optional flag if geonext2JS should be called. For backwards compatibility
          * this has to be set explicitely to true.
-         * @param{Boolean} [outputTeX] Optional flag which has to be true if the resulting term will be sent to MathJax or KaTeX. 
+         * @param{Boolean} [outputTeX] Optional flag which has to be true if the resulting term will be sent to MathJax or KaTeX.
          * If true, "_" and "^" are NOT replaced by HTML tags sub and sup. Default: false, i.e. the replacement is done.
          * This flag allows the combination of &lt;value&gt; tag containing calculations with TeX output.
          *
          * @private
          * @see JXG.GeonextParser.geonext2JS
          */
-        generateTerm: function (contentStr, expand, avoidGeonext2JS, outputTeX) {
+        generateTerm: function (contentStr, expand, avoidGeonext2JS) {
             var res, term, i, j,
                 plaintext = '""';
-
-            outputTeX = outputTeX || false;
 
             // Revert possible jc replacement
             contentStr = contentStr || '';
@@ -39156,16 +39261,14 @@ define('base/text',[
             contentStr = contentStr.replace(/"/g, '\'');
             contentStr = contentStr.replace(/'/g, "\\'");
 
-            if (!outputTeX) {
-                // Old GEONExT syntax, not (yet) supported as TeX output.
-                // Otherwise, the else clause should be used.
-                // That means, i.e. the <arc> tag and <sqrt> tag are not 
-                // converted into TeX syntax.
-                contentStr = contentStr.replace(/&amp;arc;/g, '&ang;');
-                contentStr = contentStr.replace(/<arc\s*\/>/g, '&ang;');
-                contentStr = contentStr.replace(/&lt;arc\s*\/&gt;/g, '&ang;');
-                contentStr = contentStr.replace(/&lt;sqrt\s*\/&gt;/g, '&radic;');
-            }
+            // Old GEONExT syntax, not (yet) supported as TeX output.
+            // Otherwise, the else clause should be used.
+            // That means, i.e. the <arc> tag and <sqrt> tag are not
+            // converted into TeX syntax.
+            contentStr = contentStr.replace(/&amp;arc;/g, '&ang;');
+            contentStr = contentStr.replace(/<arc\s*\/>/g, '&ang;');
+            contentStr = contentStr.replace(/&lt;arc\s*\/&gt;/g, '&ang;');
+            contentStr = contentStr.replace(/&lt;sqrt\s*\/&gt;/g, '&radic;');
 
             contentStr = contentStr.replace(/&lt;value&gt;/g, '<value>');
             contentStr = contentStr.replace(/&lt;\/value&gt;/g, '</value>');
@@ -39175,12 +39278,9 @@ define('base/text',[
             j = contentStr.indexOf('</value>');
             if (i >= 0) {
                 while (i >= 0) {
-                    if (!outputTeX) {
-                        plaintext += ' + "' + this.replaceSub(this.replaceSup(contentStr.slice(0, i))) + '"';
-                        // plaintext += ' + "' + this.replaceSub(contentStr.slice(0, i)) + '"';
-                    } else {
-                        plaintext += ' + "' + contentStr.slice(0, i) + '"';
-                    }
+                    plaintext += ' + "' + this.replaceSub(this.replaceSup(contentStr.slice(0, i))) + '"';
+                    // plaintext += ' + "' + this.replaceSub(contentStr.slice(0, i)) + '"';
+
                     term = contentStr.slice(i + 7, j);
                     term = term.replace(/\s+/g, ''); // Remove all whitespace
                     if (expand === true) {
@@ -39213,18 +39313,85 @@ define('base/text',[
                 }
             }
 
-            if (!outputTeX) {
-                plaintext += ' + "' + this.replaceSub(this.replaceSup(contentStr)) + '"';
-                plaintext = this.convertGeonextAndSketchometry2CSS(plaintext);
-            } else {
-                plaintext += ' + "' + contentStr + '"';
-            }
+            plaintext += ' + "' + this.replaceSub(this.replaceSup(contentStr)) + '"';
+            plaintext = this.convertGeonextAndSketchometry2CSS(plaintext);
 
             // This should replace e.g. &amp;pi; by &pi;
             plaintext = plaintext.replace(/&amp;/g, '&');
             plaintext = plaintext.replace(/"/g, "'");
 
             return plaintext;
+        },
+
+        valueTagToJessieCode: function(contentStr) {
+            var res, term, i, j,
+                expandShortMath = true,
+                textComps = [],
+                tick = '"';
+
+            contentStr = contentStr || '';
+            contentStr = contentStr.replace(/\r/g, '');
+            contentStr = contentStr.replace(/\n/g, '');
+
+            contentStr = contentStr.replace(/&lt;value&gt;/g, '<value>');
+            contentStr = contentStr.replace(/&lt;\/value&gt;/g, '</value>');
+
+            // Convert content of value tag (GEONExT/JessieCode) syntax into JavaScript syntax
+            i = contentStr.indexOf('<value>');
+            j = contentStr.indexOf('</value>');
+            if (i >= 0) {
+                while (i >= 0) {
+                    // Add string fragment before <value> tag
+                    textComps.push(tick + this.escapeTicks(contentStr.slice(0, i)) + tick);
+
+                    term = contentStr.slice(i + 7, j);
+                    term = term.replace(/\s+/g, ''); // Remove all whitespace
+                    if (expandShortMath === true) {
+                        term = this.expandShortMath(term);
+                    }
+                    res = term;
+                    res = res.replace(/\\"/g, "'").replace(/\\'/g, "'");
+
+                    // Hack: apply rounding once only.
+                    if (res.indexOf('toFixed') < 0) {
+                        // Output of a value tag
+                        // Run the JessieCode parser
+                        if (Type.isNumber((Type.bind(this.board.jc.snippet(res, true, '', false), this))())) {
+                            // Output is number
+                            textComps.push('(' + res + ').toFixed(' + (Type.evaluate(this.visProp.digits)) + ')');
+                        } else {
+                            // Output is a string
+                            textComps.push('(' + res + ')');
+                        }
+                    } else {
+                        textComps.push('(' + res + ')');
+                    }
+                    contentStr = contentStr.slice(j + 8);
+                    i = contentStr.indexOf('<value>');
+                    j = contentStr.indexOf('</value>');
+                }
+            }
+            // Add trailing string fragment
+            textComps.push(tick + this.escapeTicks(contentStr) + tick);
+
+            return textComps.join(' + ').replace(/&amp;/g, '&');
+        },
+
+        poorMansTeX: function(s) {
+            s = s.replace(/<arc\s*\/*>/g, '&ang;')
+                .replace(/&lt;arc\s*\/*&gt;/g, '&ang;')
+                .replace(/<sqrt\s*\/*>/g, '&radic;')
+                .replace(/&lt;sqrt\s*\/*&gt;/g, '&radic;');
+
+            return this.convertGeonextAndSketchometry2CSS(this.replaceSub(this.replaceSup(s)));
+        },
+
+        escapeTicks: function(s) {
+            return s.replace(/"/g, '%22').replace(/'/g, '%27');
+        },
+
+        unescapeTicks: function(s) {
+            return s.replace(/%22/g, '"').replace(/%27/g, "'");
         },
 
         /**
@@ -55425,6 +55592,8 @@ define('jsxgraph',[
          * @param {Boolean|Object} [attributes.grid] If set to true, shows the grid. Can also be set to an object that is given to the grid as its attribute object.
          * @param {Boolean} [attributes.registerEvents=true] Register mouse / touch events.
          * @returns {JXG.Board} Reference to the created board.
+         *
+         * @see JXG.AbstractRenderer#drawZoomBar
          */
         initBoard: function (box, attributes) {
             var originX, originY, unitX, unitY,
@@ -60285,7 +60454,7 @@ define('element/conic',[
      *
      * @example
      * // Parameters: A, C, F, B/2, D/2, E/2
-     * var conic = board.create('conic', [1, 2, -4, 0, 0, 0]s);
+     * var conic = board.create('conic', [1, 2, -4, 0, 0, 0]);
      *
      * </pre><div id="JXG8576a04a-52d8-4a7e-8d54-e32443910b97" class="jxgbox" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
@@ -60293,7 +60462,7 @@ define('element/conic',[
      *         var board = JXG.JSXGraph.initBoard('JXG8576a04a-52d8-4a7e-8d54-e32443910b97',
      *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
      *     // Parameters: A, C, F, B/2, D/2, E/2
-     *     var conic = board.create('conic', [1, 2, -4, 0, 0, 0]s);
+     *     var conic = board.create('conic', [1, 2, -4, 0, 0, 0]);
      *     })();
      *
      * </script><pre>
@@ -62092,9 +62261,14 @@ define('base/polygon',[
          *
          */
         addPoints: function (p) {
-            var args = Array.prototype.slice.call(arguments);
+            var idx, args = Array.prototype.slice.call(arguments);
 
-            return this.insertPoints.apply(this, [this.vertices.length - 2].concat(args));
+            if (this.elType === 'polygonalchain') {
+                idx = this.vertices.length - 1;
+            } else {
+                idx = this.vertices.length - 2;
+            }
+            return this.insertPoints.apply(this, [idx].concat(args));
         },
 
         /**
@@ -62132,14 +62306,18 @@ define('base/polygon',[
          *
          */
         insertPoints: function (idx, p) {
-            var i, le;
+            var i, le, last;
 
             if (arguments.length === 0) {
                 return this;
             }
+            if (this.elType === 'polygonalchain') {
+                last = this.vertices.length - 1;
+            } else {
+                last = this.vertices.length - 2;
+            }
 
-
-            if (idx < -1 || idx > this.vertices.length - 2) {
+            if (idx < -1 || idx > last) {
                 return this;
             }
 
@@ -62149,11 +62327,11 @@ define('base/polygon',[
                     Type.providePoints(this.board, [arguments[i]], {}, 'polygon', ['vertices'])[0]
                 );
             }
-            if (idx === -1) {
+            if (idx === -1 && this.elType !== 'polygonalchain') {
                 this.vertices[this.vertices.length - 1] = this.vertices[0];
             }
             if (this.withLines) {
-                if (idx < 0) {
+                if (idx < 0 && this.elType !== 'polygonalchain') {
                     this.borders[this.borders.length - 1].point2 = this.vertices[this.vertices.length - 1];
                 } else {
                     this.borders[idx].point2 = this.vertices[idx + 1];
@@ -64255,13 +64433,13 @@ define('base/curve',[
             attr = Type.copyAttributes(attributes, board.options, 'curve');
 
         obj = board.select(parents[0], true);
-        if (Type.isObject(obj) &&
+        if (Type.isTransformationOrArray(parents[1]) &&
+            Type.isObject(obj) &&
             (obj.type === Const.OBJECT_TYPE_CURVE ||
                 obj.type === Const.OBJECT_TYPE_ANGLE ||
                 obj.type === Const.OBJECT_TYPE_ARC ||
                 obj.type === Const.OBJECT_TYPE_CONIC ||
-                obj.type === Const.OBJECT_TYPE_SECTOR) &&
-            Type.isTransformationOrArray(parents[1])) {
+                obj.type === Const.OBJECT_TYPE_SECTOR) ) {
 
             if (obj.type === Const.OBJECT_TYPE_SECTOR) {
                 attr = Type.copyAttributes(attributes, board.options, 'sector');
@@ -70576,17 +70754,21 @@ define('element/composition',[
             throw new Error("JSXGraph: Can't create reflected element with parent types '" +
                 (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." + errStr);
         }
-
         t = Transform.createTransform(board, [l], {type: 'reflect'});
+
         if (Type.isPoint(org)) {
             r = Point.createPoint(board, [org, t], attr);
+
         // Arcs and sectors are treated as curves
         } else if (org.elementClass === Const.OBJECT_CLASS_CURVE){
             r = Curve.createCurve(board, [org, t], attr);
+
         } else if (org.elementClass === Const.OBJECT_CLASS_LINE){
             r = Line.createLine(board, [org, t], attr);
+
         } else if (org.type === Const.OBJECT_TYPE_POLYGON){
             r = Polygon.createPolygon(board, [org, t], attr);
+
         } else if (org.elementClass === Const.OBJECT_CLASS_CIRCLE) {
             if (attr.type.toLowerCase() === 'euclidean') {
                 // Create a circle element from a circle and a Euclidean transformation
@@ -70598,10 +70780,12 @@ define('element/composition',[
                 // Create a conic element from a circle and a projective transformation
                 r = Circle.createCircle(board, [org, t], attr);
             }
+
         } else {
             throw new Error("JSXGraph: Can't create reflected element with parent types '" +
                 (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." + errStr);
         }
+
         if (Type.exists(org._is_new)) {
             r.addChild(org);
             delete org._is_new;
@@ -79243,13 +79427,13 @@ define('element/checkbox',[
      * @constructor
      * @type JXG.Text
      *
-     * @param {number,function_number,function_String_String} x,y,label Parent elements for checkbox elements.
+     * @param {number,function_number,function_String,function} x,y,label Parent elements for checkbox elements.
      *                     <p>
      *                     x and y are the coordinates of the lower left corner of the text box.
      *                      The position of the text is fixed,
      *                     x and y are numbers. The position is variable if x or y are functions.
      *                     <p>
-     *                     The label of the input element may be given as string.
+     *                     The label of the input element may be given as string or function.
      *                     <p>
      *                     The value of the checkbox can be controlled with the attribute <tt>checked</tt>
      *                     <p>The HTML node can be accessed with <tt>element.rendNodeCheckbox</tt>
@@ -79358,7 +79542,7 @@ define('element/checkbox',[
             '</span>'
             ];
 
-        //t = JXG.createText(board, par, attr);
+        // 1. Create checkbox element with empty label
         t = board.create('text', par, attr);
         t.type = Type.OBJECT_TYPE_CHECKBOX;
 
@@ -79368,10 +79552,14 @@ define('element/checkbox',[
         t.rendNodeTag = t.rendNodeCheckbox; // Needed for unified treatment in setAttribute
         t.rendNodeTag.disabled = !!attr.disabled;
 
-        t.rendNodeLabel.innerHTML = parents[2];
+        // t.rendNodeLabel.innerHTML = parents[2];
         t.rendNodeCheckbox.id = t.rendNode.id + '_checkbox';
         t.rendNodeLabel.id = t.rendNode.id + '_label';
         t.rendNodeLabel.setAttribute('for', t.rendNodeCheckbox.id);
+
+        // 2. Set parents[2] (string|function) as label of the checkbox element.
+        // abstract.js selects the correct DOM element for the update
+        t.setText(parents[2]);
 
         // This sets the font-size of the checkbox itself
         t.visPropOld.fontsize = "0px";
@@ -79485,14 +79673,14 @@ define('element/input',[
      * @constructor
      * @type JXG.Text
      *
-     * @param {number,function_number,function_String_String} x,y,value,label Parent elements for input elements.
+     * @param {number,function_number,function_String_String,function} x,y,value,label Parent elements for input elements.
      *                     <p>
      *                     x and y are the coordinates of the lower left corner of the text box. The position of the text is fixed,
      *                     x and y are numbers. The position is variable if x or y are functions.
      *                     <p>
-     *                     The default value of the input element may be given as string.
+     *                     The default value of the input element must be given as string.
      *                     <p>
-     *                     The label of the input element may be given  as string.
+     *                     The label of the input element may be given as string or function.
      *
      * @example
      *  // Create an input element at position [1,4].
@@ -79553,18 +79741,22 @@ define('element/input',[
             '</span>'
             ];
 
-        //t = JXG.createText(board, par, attr);
+        // 1. Create input element with empty label
         t = board.create('text', par, attr);
         t.type = Type.OBJECT_TYPE_INPUT;
 
         t.rendNodeLabel = t.rendNode.childNodes[0].childNodes[0];
         t.rendNodeInput = t.rendNode.childNodes[0].childNodes[1];
-        t.rendNodeLabel.innerHTML = parents[3];
+        // t.rendNodeLabel.innerHTML = parents[3];
         t.rendNodeInput.value = parents[2];
         t.rendNodeTag = t.rendNodeInput; // Needed for unified treatment in setAttribute
         t.rendNodeTag.disabled = !!attr.disabled;
         t.rendNodeLabel.id = t.rendNode.id + '_label';
         t.rendNodeInput.id = t.rendNode.id + '_input';
+
+        // 2. Set parents[3] (string|function) as label of the input element.
+        // abstract.js selects the correct DOM element for the update
+        t.setText(parents[3]);
 
         t._value = parents[2];
         t.update = function () {
@@ -79724,7 +79916,7 @@ define('element/button',[
      * @constructor
      * @type JXG.Text
      *
-     * @param {number,function_number,function_String_function} x,y,label,handler Parent elements for button elements.
+     * @param {number,function_number,function_String,function_function} x,y,label,handler Parent elements for button elements.
      *                     <p>
      *                     x and y are the coordinates of the lower left corner of the text box.
      *                      The position of the text is fixed,
@@ -79858,17 +80050,21 @@ define('element/button',[
             //    "\nPossible parents are: [x, y, label, handler]");
         //}
 
+        // 1. Create empty button
         par = [parents[0], parents[1], '<button type="button" style="width:100%;"></button>'];
-
         t = board.create('text', par, attr);
         t.type = Type.OBJECT_TYPE_BUTTON;
 
         t.rendNodeButton = t.rendNode.childNodes[0];
         t.rendNodeButton.id = t.rendNode.id + '_button';
-        t.rendNodeButton.innerHTML = parents[2];
+        // t.rendNodeButton.innerHTML = parents[2];
 
         t.rendNodeTag = t.rendNodeButton; // Needed for unified treatment in setAttribute
         t.rendNodeTag.disabled = !!attr.disabled;
+
+        // 2. Set parents[2] (string|function) as content of the button.
+        // abstract.js selects the correct DOM element for the update
+        t.setText(parents[2]);
 
         // This sets the font-size of the button text
         t.visPropOld.fontsize = "0px";
@@ -80381,9 +80577,9 @@ define('options3d',[
 
     JXG.extend(Options, {
 
-        infobox: {
-            strokeColor: 'black'
-        },
+        // infobox: {
+        //     strokeColor: 'black'
+        // },
 
         axes3d: {
             /**#@+
@@ -81508,7 +81704,7 @@ define('3d/curve3d',['jxg', 'utils/type', '3d/view3d'
 ], function (JXG, Type, ThreeD) {
     "use strict";
 
-    ThreeD.createCurve = function (board, parents, attr) {
+    ThreeD.createCurve3D = function (board, parents, attr) {
         var view = parents[0],
             D3, el;
 
@@ -81568,7 +81764,7 @@ define('3d/curve3d',['jxg', 'utils/type', '3d/view3d'
 
         return el;
     };
-    JXG.registerElement('curve3d', ThreeD.createCurve);
+    JXG.registerElement('curve3d', ThreeD.createCurve3D);
 
 });
 /*
@@ -81634,7 +81830,7 @@ define('3d/linspace3d',['jxg', 'utils/type', 'math/math', 'math/geometry', '3d/v
      * line will determine the radius), or another {@link JXG.Circle}.
      *
      */
-    ThreeD.createLine = function (board, parents, attributes) {
+    ThreeD.createLine3D = function (board, parents, attributes) {
         var view = parents[0],
             attr, D3, point, point1, point2,
             el;
@@ -81734,7 +81930,7 @@ define('3d/linspace3d',['jxg', 'utils/type', 'math/math', 'math/geometry', '3d/v
 
         return el;
     };
-    JXG.registerElement('line3d', ThreeD.createLine);
+    JXG.registerElement('line3d', ThreeD.createLine3D);
 
     ThreeD.createPlane = function (board, parents, attributes) {
         var view = parents[0],
@@ -82005,7 +82201,7 @@ define('3d/point3d',['jxg', 'base/constants', 'math/math', 'math/geometry', 'uti
      * line will determine the radius), or another {@link JXG.Circle}.
      *
      */
-     ThreeD.createPoint = function (board, parents, attributes) {
+     ThreeD.createPoint3D = function (board, parents, attributes) {
         var view = parents[0],
             attr, update2D, D3,
             i, c2d,
@@ -82181,7 +82377,7 @@ define('3d/point3d',['jxg', 'base/constants', 'math/math', 'math/geometry', 'uti
 
         return el;
     };
-    JXG.registerElement('point3d', ThreeD.createPoint);
+    JXG.registerElement('point3d', ThreeD.createPoint3D);
 
 });
 /*

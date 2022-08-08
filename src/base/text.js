@@ -222,8 +222,7 @@ define([
                         this.content = "'`" + text + "`'";
 
                     } else if (ev_um || ev_uk) {                        // MathJax or KaTeX
-                        // Replace value-tags
-                        // this.content = this.generateTerm(text, true, true, true);
+                        // Replace value-tags by functions
                         this.content = this.valueTagToJessieCode(text);
                         this.content = this.content.replace(/\\/g, "\\\\"); // Replace single backshlash by double
 
@@ -231,8 +230,8 @@ define([
                         // No TeX involved.
                         // Converts GEONExT syntax into JavaScript string
                         // Short math is allowed
+                        // Replace value-tags by functions
                         // Avoid geonext2JS calls
-                        // this.content = this.generateTerm(text, true, true);
                         this.content = this.poorMansTeX(this.valueTagToJessieCode(text));
                     }
                     convertJessieCode = true;
@@ -747,10 +746,10 @@ define([
         },
 
         poorMansTeX: function(s) {
-            s = s.replace(/<arc\s*\/>/g, '&ang;')
-                .replace(/&lt;arc\s*\/&gt;/g, '&ang;')
-                .replace(/<sqrt\s*\/>/g, '&radic;')
-                .replace(/&lt;sqrt\s*\/&gt;/g, '&radic;');
+            s = s.replace(/<arc\s*\/*>/g, '&ang;')
+                .replace(/&lt;arc\s*\/*&gt;/g, '&ang;')
+                .replace(/<sqrt\s*\/*>/g, '&radic;')
+                .replace(/&lt;sqrt\s*\/*&gt;/g, '&radic;');
 
             return this.convertGeonextAndSketchometry2CSS(this.replaceSub(this.replaceSup(s)));
         },
