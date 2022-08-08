@@ -69,13 +69,13 @@ define([
      * @constructor
      * @type JXG.Text
      *
-     * @param {number,function_number,function_String_String} x,y,label Parent elements for checkbox elements.
+     * @param {number,function_number,function_String,function} x,y,label Parent elements for checkbox elements.
      *                     <p>
      *                     x and y are the coordinates of the lower left corner of the text box.
      *                      The position of the text is fixed,
      *                     x and y are numbers. The position is variable if x or y are functions.
      *                     <p>
-     *                     The label of the input element may be given as string.
+     *                     The label of the input element may be given as string or function.
      *                     <p>
      *                     The value of the checkbox can be controlled with the attribute <tt>checked</tt>
      *                     <p>The HTML node can be accessed with <tt>element.rendNodeCheckbox</tt>
@@ -184,7 +184,7 @@ define([
             '</span>'
             ];
 
-        //t = JXG.createText(board, par, attr);
+        // 1. Create checkbox element with empty label
         t = board.create('text', par, attr);
         t.type = Type.OBJECT_TYPE_CHECKBOX;
 
@@ -194,10 +194,14 @@ define([
         t.rendNodeTag = t.rendNodeCheckbox; // Needed for unified treatment in setAttribute
         t.rendNodeTag.disabled = !!attr.disabled;
 
-        t.rendNodeLabel.innerHTML = parents[2];
+        // t.rendNodeLabel.innerHTML = parents[2];
         t.rendNodeCheckbox.id = t.rendNode.id + '_checkbox';
         t.rendNodeLabel.id = t.rendNode.id + '_label';
         t.rendNodeLabel.setAttribute('for', t.rendNodeCheckbox.id);
+
+        // 2. Set parents[2] (string|function) as label of the checkbox element.
+        // abstract.js selects the correct DOM element for the update
+        t.setText(parents[2]);
 
         // This sets the font-size of the checkbox itself
         t.visPropOld.fontsize = "0px";

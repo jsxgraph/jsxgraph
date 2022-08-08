@@ -218,8 +218,6 @@ define([
                     this.content = Type.toFixed(text, Type.evaluate(this.visProp.digits));
                 } else if (Type.isString(text) && ev_p) {
 
-console.log("parse:", text);
-
                     if (Type.evaluate(this.visProp.useasciimathml)) {   // ASCIIMathML
                         this.content = "'`" + text + "`'";
 
@@ -243,7 +241,6 @@ console.log("parse:", text);
                 // Generate function which returns the text to be displayed
                 if (convertJessieCode) {
 
-  console.log("JessieCode parse:", this.id, this.content);
                     // Convert JessieCode to JS function
                     updateText = this.board.jc.snippet(this.content, true, '', false);
 
@@ -626,8 +623,6 @@ console.log("parse:", text);
             var res, term, i, j,
                 plaintext = '""';
 
-console.log("generateTerm: should be retired!");
-
             // Revert possible jc replacement
             contentStr = contentStr || '';
             contentStr = contentStr.replace(/\r/g, '');
@@ -703,23 +698,21 @@ console.log("generateTerm: should be retired!");
                 textComps = [],
                 tick = '"';
 
-            // Revert possible jc replacement
             contentStr = contentStr || '';
             contentStr = contentStr.replace(/\r/g, '');
             contentStr = contentStr.replace(/\n/g, '');
-            // contentStr = contentStr.replace(/"/g, '\'');
-            // contentStr = contentStr.replace(/'/g, "\\'");
 
             contentStr = contentStr.replace(/&lt;value&gt;/g, '<value>');
             contentStr = contentStr.replace(/&lt;\/value&gt;/g, '</value>');
 
-            // Convert content of value tag (GEONExT/JessieCode) syntax into  JavaScript syntax
+            // Convert content of value tag (GEONExT/JessieCode) syntax into JavaScript syntax
             i = contentStr.indexOf('<value>');
             j = contentStr.indexOf('</value>');
             if (i >= 0) {
                 while (i >= 0) {
                     // Add string fragment before <value> tag
                     textComps.push(tick + this.escapeTicks(contentStr.slice(0, i)) + tick);
+
                     term = contentStr.slice(i + 7, j);
                     term = term.replace(/\s+/g, ''); // Remove all whitespace
                     if (expandShortMath === true) {
@@ -749,10 +742,6 @@ console.log("generateTerm: should be retired!");
             }
             // Add trailing string fragment
             textComps.push(tick + this.escapeTicks(contentStr) + tick);
-
-            // This should replace e.g. &amp;pi; by &pi;
-            // plaintext = plaintext.replace(/&amp;/g, '&');
-            // plaintext = plaintext.replace(/"/g, "'");
 
             return textComps.join(' + ').replace(/&amp;/g, '&');
         },

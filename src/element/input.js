@@ -71,14 +71,14 @@ define([
      * @constructor
      * @type JXG.Text
      *
-     * @param {number,function_number,function_String_String} x,y,value,label Parent elements for input elements.
+     * @param {number,function_number,function_String_String,function} x,y,value,label Parent elements for input elements.
      *                     <p>
      *                     x and y are the coordinates of the lower left corner of the text box. The position of the text is fixed,
      *                     x and y are numbers. The position is variable if x or y are functions.
      *                     <p>
-     *                     The default value of the input element may be given as string.
+     *                     The default value of the input element must be given as string.
      *                     <p>
-     *                     The label of the input element may be given  as string.
+     *                     The label of the input element may be given as string or function.
      *
      * @example
      *  // Create an input element at position [1,4].
@@ -139,18 +139,22 @@ define([
             '</span>'
             ];
 
-        //t = JXG.createText(board, par, attr);
+        // 1. Create input element with empty label
         t = board.create('text', par, attr);
         t.type = Type.OBJECT_TYPE_INPUT;
 
         t.rendNodeLabel = t.rendNode.childNodes[0].childNodes[0];
         t.rendNodeInput = t.rendNode.childNodes[0].childNodes[1];
-        t.rendNodeLabel.innerHTML = parents[3];
+        // t.rendNodeLabel.innerHTML = parents[3];
         t.rendNodeInput.value = parents[2];
         t.rendNodeTag = t.rendNodeInput; // Needed for unified treatment in setAttribute
         t.rendNodeTag.disabled = !!attr.disabled;
         t.rendNodeLabel.id = t.rendNode.id + '_label';
         t.rendNodeInput.id = t.rendNode.id + '_input';
+
+        // 2. Set parents[3] (string|function) as label of the input element.
+        // abstract.js selects the correct DOM element for the update
+        t.setText(parents[3]);
 
         t._value = parents[2];
         t.update = function () {
