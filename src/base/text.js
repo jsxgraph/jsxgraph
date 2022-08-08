@@ -218,7 +218,7 @@ define([
                     this.content = Type.toFixed(text, Type.evaluate(this.visProp.digits));
                 } else if (Type.isString(text) && ev_p) {
 
-console.log("parse==true", text);
+console.log("parse:", text);
 
                     if (Type.evaluate(this.visProp.useasciimathml)) {   // ASCIIMathML
                         this.content = "'`" + text + "`'";
@@ -246,6 +246,8 @@ console.log("parse==true", text);
   console.log("JessieCode parse:", this.id, this.content);
                     // Convert JessieCode to JS function
                     updateText = this.board.jc.snippet(this.content, true, '', false);
+
+                    // Ticks have been esacped in valueTagToJessieCode
                     this.updateText = function () {
                         this.plaintext = this.unescapeTicks(updateText());
                     };
@@ -756,9 +758,12 @@ console.log("generateTerm: should be retired!");
         },
 
         poorMansTeX: function(s) {
-            var txt = this.convertGeonextAndSketchometry2CSS(this.replaceSub(this.replaceSup(s)));
-// console.log("PMT", txt);
-            return txt;
+            s = s.replace(/<arc\s*\/>/g, '&ang;')
+                .replace(/&lt;arc\s*\/&gt;/g, '&ang;')
+                .replace(/<sqrt\s*\/>/g, '&radic;')
+                .replace(/&lt;sqrt\s*\/&gt;/g, '&radic;');
+
+            return this.convertGeonextAndSketchometry2CSS(this.replaceSub(this.replaceSup(s)));
         },
 
         escapeTicks: function(s) {
