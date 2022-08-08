@@ -217,6 +217,9 @@ define([
                 if (Type.isNumber(text)) {
                     this.content = Type.toFixed(text, Type.evaluate(this.visProp.digits));
                 } else if (Type.isString(text) && ev_p) {
+
+console.log("parse==true", text);
+
                     if (Type.evaluate(this.visProp.useasciimathml)) {   // ASCIIMathML
                         this.content = "'`" + text + "`'";
 
@@ -239,11 +242,12 @@ define([
 
                 // Generate function which returns the text to be displayed
                 if (convertJessieCode) {
+
+  console.log("JessieCode parse:", this.id, this.content);
                     // Convert JessieCode to JS function
-// console.log("JessieCode parse:", this.content);
                     updateText = this.board.jc.snippet(this.content, true, '', false);
                     this.updateText = function () {
-                        this.plaintext = updateText();
+                        this.plaintext = this.unescapeTicks(updateText());
                     };
                 } else {
                     this.updateText = function () {
@@ -620,6 +624,8 @@ define([
             var res, term, i, j,
                 plaintext = '""';
 
+console.log("generateTerm: should be retired!");
+
             // Revert possible jc replacement
             contentStr = contentStr || '';
             contentStr = contentStr.replace(/\r/g, '');
@@ -692,14 +698,15 @@ define([
         valueTagToJessieCode: function(contentStr) {
             var res, term, i, j,
                 expandShortMath = true,
-                plaintext = '""';
+                textComps = [],
+                tick = '"';
 
             // Revert possible jc replacement
             contentStr = contentStr || '';
             contentStr = contentStr.replace(/\r/g, '');
             contentStr = contentStr.replace(/\n/g, '');
-            contentStr = contentStr.replace(/"/g, '\'');
-            contentStr = contentStr.replace(/'/g, "\\'");
+            // contentStr = contentStr.replace(/"/g, '\'');
+            // contentStr = contentStr.replace(/'/g, "\\'");
 
             contentStr = contentStr.replace(/&lt;value&gt;/g, '<value>');
             contentStr = contentStr.replace(/&lt;\/value&gt;/g, '</value>');
@@ -709,7 +716,8 @@ define([
             j = contentStr.indexOf('</value>');
             if (i >= 0) {
                 while (i >= 0) {
-                    plaintext += ' + "' + contentStr.slice(0, i) + '"';
+                    // Add string fragment before <value> tag
+                    textComps.push(tick + this.escapeTicks(contentStr.slice(0, i)) + tick);
                     term = contentStr.slice(i + 7, j);
                     term = term.replace(/\s+/g, ''); // Remove all whitespace
                     if (expandShortMath === true) {
@@ -724,32 +732,41 @@ define([
                         // Run the JessieCode parser
                         if (Type.isNumber((Type.bind(this.board.jc.snippet(res, true, '', false), this))())) {
                             // Output is number
-                            plaintext += '+(' + res + ').toFixed(' + (Type.evaluate(this.visProp.digits)) + ')';
+                            textComps.push('(' + res + ').toFixed(' + (Type.evaluate(this.visProp.digits)) + ')');
                         } else {
                             // Output is a string
-                            plaintext += '+(' + res + ')';
+                            textComps.push('(' + res + ')');
                         }
                     } else {
-                        plaintext += '+(' + res + ')';
+                        textComps.push('(' + res + ')');
                     }
                     contentStr = contentStr.slice(j + 8);
                     i = contentStr.indexOf('<value>');
                     j = contentStr.indexOf('</value>');
                 }
             }
-            plaintext += ' + "' + contentStr + '"';
+            // Add trailing string fragment
+            textComps.push(tick + this.escapeTicks(contentStr) + tick);
 
             // This should replace e.g. &amp;pi; by &pi;
-            plaintext = plaintext.replace(/&amp;/g, '&');
-            plaintext = plaintext.replace(/"/g, "'");
+            // plaintext = plaintext.replace(/&amp;/g, '&');
+            // plaintext = plaintext.replace(/"/g, "'");
 
-            return plaintext;
+            return textComps.join(' + ').replace(/&amp;/g, '&');
         },
 
         poorMansTeX: function(s) {
             var txt = this.convertGeonextAndSketchometry2CSS(this.replaceSub(this.replaceSup(s)));
 // console.log("PMT", txt);
             return txt;
+        },
+
+        escapeTicks: function(s) {
+            return s.replace(/"/g, '%22').replace(/'/g, '%27');
+        },
+
+        unescapeTicks: function(s) {
+            return s.replace(/%22/g, '"').replace(/%27/g, "'");
         },
 
         /**
