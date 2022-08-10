@@ -80,6 +80,14 @@ define([
         this.vertices = [];
         for (i = 0; i < vertices.length; i++) {
             this.vertices[i] = this.board.select(vertices[i]);
+
+            // The _is_new flag is replaced by _is_new_pol.
+            // Otherwise, the polygon would disappear if the last border element
+            // is removed (and the point has been provided by coordinates)
+            if (this.vertices[i]._is_new) {
+                delete this.vertices[i]._is_new;
+                this.vertices[i]._is_new_pol = true;
+            }
         }
 
         // Close the polygon
@@ -127,9 +135,9 @@ define([
         // - add  points (supplied as coordinate arrays by the user and created by Type.providePoints) as children to the polygon
         for (i = 0; i < this.vertices.length - 1; i++) {
             p = this.board.select(this.vertices[i]);
-            if (Type.exists(p._is_new)) {
+            if (Type.exists(p._is_new_pol)) {
                 this.addChild(p);
-                delete p._is_new;
+                delete p._is_new_pol;
             } else {
                 p.addChild(this);
             }
@@ -635,16 +643,13 @@ define([
          *
          */
         insertPoints: function (idx, p) {
-            var i, le, last;
+            var i, le, last, start, p;
 
             if (arguments.length === 0) {
                 return this;
             }
-            if (this.elType === 'polygonalchain') {
-                last = this.vertices.length - 1;
-            } else {
-                last = this.vertices.length - 2;
-            }
+
+            last = this.vertices.length - 1;
 
             if (idx < -1 || idx > last) {
                 return this;
@@ -652,20 +657,31 @@ define([
 
             le = arguments.length - 1;
             for (i = 1; i < le + 1; i++) {
-                this.vertices.splice(idx + i, 0,
-                    Type.providePoints(this.board, [arguments[i]], {}, 'polygon', ['vertices'])[0]
-                );
-            }
-            if (idx === -1 && this.elType !== 'polygonalchain') {
-                this.vertices[this.vertices.length - 1] = this.vertices[0];
-            }
-            if (this.withLines) {
-                if (idx < 0 && this.elType !== 'polygonalchain') {
-                    this.borders[this.borders.length - 1].point2 = this.vertices[this.vertices.length - 1];
-                } else {
-                    this.borders[idx].point2 = this.vertices[idx + 1];
+                p = Type.providePoints(this.board, [arguments[i]], {}, 'polygon', ['vertices'])[0];
+                if (p._is_new) {
+                    this.addChild(p);
+                    delete p._is_new;
                 }
-                for (i = idx + 1; i < idx + 1 + le; i++) {
+                this.vertices.splice(idx + i, 0, p);
+            }
+
+            if (this.withLines) {
+                start = idx + 1;
+                if (this.elType === 'polygon') {
+                    if (idx < 0) {
+                        this.vertices[this.vertices.length - 1] = this.vertices[0];
+                        this.borders[this.borders.length - 1].point2 = this.vertices[this.vertices.length - 1];
+                    } else {
+                        this.borders[idx].point2 = this.vertices[start];
+                    }
+                } else {
+                    if (idx >= 0 && idx < last) {
+                        this.borders[idx].point2 = this.vertices[start];
+                    } else {
+                        start = idx;
+                    }
+                }
+                for (i = start; i < start + le; i++) {
                     this.borders.splice(i, 0,
                         this.board.create('segment', [this.vertices[i], this.vertices[i + 1]], this.attr_line)
                     );
@@ -1033,7 +1049,6 @@ define([
         intersect: function(polygon) {
             return this.sutherlandHodgman(polygon);
         }
-
 
     });
 
