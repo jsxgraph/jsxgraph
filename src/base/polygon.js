@@ -663,6 +663,7 @@ define([
             for (i = 1; i < le + 1; i++) {
                 q = Type.providePoints(this.board, [arguments[i]], {}, 'polygon', ['vertices'])[0];
                 if (q._is_new) {
+                    // Add the point as child of the polygon, but not of the borders.
                     this.addChild(q);
                     delete q._is_new;
                 }
@@ -673,16 +674,24 @@ define([
                 start = idx + 1;
                 if (this.elType === 'polygon') {
                     if (idx < 0) {
+                        // Add point(s) in the front
                         this.vertices[this.vertices.length - 1] = this.vertices[0];
                         this.borders[this.borders.length - 1].point2 = this.vertices[this.vertices.length - 1];
                     } else {
+                        // Insert point(s) (middle or end)
                         this.borders[idx].point2 = this.vertices[start];
                     }
                 } else {
-                    if (idx >= 0 && idx < this.borders.length) {
-                        this.borders[idx].point2 = this.vertices[start];
-                    } else {
-                        start = idx;
+                    // Add point(s) in the front: do nothing
+                    // Else:
+                    if (idx >= 0) {
+                        if (idx < this.borders.length) {
+                            // Insert point(s) in the middle
+                            this.borders[idx].point2 = this.vertices[start];
+                        } else {
+                            // Add point at the end
+                            start = idx;
+                        }
                     }
                 }
                 for (i = start; i < start + le; i++) {
