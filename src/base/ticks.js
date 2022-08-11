@@ -659,6 +659,7 @@ define([
             } else if (!ev_it) {
                 ticksDelta /= (ev_mt + 1);
             }
+            // Now, ticksdelta is the distance between two minor ticks
             this.ticksDelta = ticksDelta;
 
             if (ticksDelta < Mat.eps) {
@@ -754,6 +755,7 @@ define([
          */
         processTickPosition: function (coordsZero, tickPosition, ticksDelta, deltas) {
             var x, y, tickCoords, ti,
+                isLabelPosition,
                 labelVal = null;
 
             // Calculates tick coordinates
@@ -776,13 +778,16 @@ define([
             // a multiple of the number of minorticks+1
             tickCoords.major = Math.round(tickPosition / ticksDelta) % (Type.evaluate(this.visProp.minorticks) + 1) === 0;
 
+            isLabelPosition = Math.round(tickPosition / ticksDelta) % (Type.evaluate(this.visProp.ticksperlabel)) === 0;
+
             // Compute the start position and the end position of a tick.
             // If both positions are out of the canvas, ti is empty.
             ti = this.createTickPath(tickCoords, tickCoords.major);
             if (ti.length === 3) {
                 this.ticks.push(ti);
-                if (tickCoords.major && Type.evaluate(this.visProp.drawlabels)) {
-                    // major tick label
+                // if (tickCoords.major && Type.evaluate(this.visProp.drawlabels)) {
+                if (isLabelPosition && Type.evaluate(this.visProp.drawlabels)) {
+                        // major tick label
                     this.labelsData.push(
                         this.generateLabelData(
                             this.generateLabelText(tickCoords, coordsZero, labelVal),

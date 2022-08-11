@@ -1757,6 +1757,8 @@ define([
              */
             minorTicks: 4,
 
+            minorTicksPerLabel: 4,
+
             /**
              * Scale the ticks but not the tick labels.
              * @type Number
