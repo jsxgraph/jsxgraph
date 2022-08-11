@@ -67,6 +67,12 @@ describe("Test polygons", function () {
         expect(po.vertices[1].coords.usrCoords).toEqual([1, 1, 6]);
     });
 
+    it("polygon removePoints last", function() {
+        var po = board.create('polygon', [[-1,2], [4, 2], [1, 6]]);
+        po.removePoints(2);
+        expect(po.vertices[1].coords.usrCoords).toEqual([1, 4, 2]);
+    });
+
     it("polygon multiple removePoints", function() {
         var po = board.create('polygon', [[-1,2], [4, 2], [1, 6], [2, 7], [3, 7], [4, 1], [3, 1]]);
         po.removePoints(1, 2, 3);
@@ -91,11 +97,44 @@ describe("Test polygons", function () {
         expect(po.vertices[1].coords.usrCoords).toEqual([1, 1, 6]);
     });
 
+    it("polygonalchain removePoints last", function() {
+        var po = board.create('polygonalchain', [[-1,2], [4, 2], [1, 6]]);
+        po.removePoints(2);
+        expect(po.vertices[1].coords.usrCoords).toEqual([1, 4, 2]);
+    });
+
     it("polygonalchain multiple removePoints", function() {
         var po = board.create('polygonalchain', [[-1,2], [4, 2], [1, 6], [2, 7], [3, 7], [4, 1], [3, 1]]);
         po.removePoints(1, 2, 3);
         expect(po.vertices[3].coords.usrCoords).toEqual([1, 3, 1]);
     });
 
+    it("polygon removePoints 2", function() {
+        var po = board.create('polygon', [[-1,2], [4, 2], [1, 6]]);
+        po.removePoints(0, 1);
+        expect(po.vertices.length).toEqual(1);
+        expect(po.borders.length).toEqual(0);
+    });
+
+    it("polygonalchain removePoints 2", function() {
+        var po = board.create('polygonalchain', [[-1,2], [4, 2], [1, 6]]);
+        po.removePoints(0, 1);
+        expect(po.vertices.length).toEqual(1);
+        expect(po.borders.length).toEqual(0);
+    });
+
+    it("polygon removePoints 3", function() {
+        var po = board.create('polygon', [[-1,2], [4, 2], [1, 6]]);
+        po.removePoints(0, 1, 2);
+        expect(po.vertices.length).toEqual(0);
+        expect(po.borders.length).toEqual(0);
+    });
+
+    it("polygonalchain removePoints 3", function() {
+        var po = board.create('polygonalchain', [[-1,2], [4, 2], [1, 6]]);
+        po.removePoints(0, 1, 2);
+        expect(po.vertices.length).toEqual(0);
+        expect(po.borders.length).toEqual(0);
+    });
 
 });

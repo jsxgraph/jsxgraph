@@ -713,7 +713,7 @@ define([
          * @returns {JXG.Polygon} Reference to the polygon
          */
         removePoints: function (p) {
-            var i, j, idx, firstPoint,
+            var i, j, j0, idx, firstPoint,
                 nvertices = [], nborders = [],
                 nidx = [], partition = [];
 
@@ -792,7 +792,9 @@ define([
             }
 
             // Close the polygon again
-            if (this.elType === 'polygon' && this.vertices[this.vertices.length - 1].id !== this.vertices[0].id) {
+            if (this.elType === 'polygon' &&
+                this.vertices.length > 1 &&
+                this.vertices[this.vertices.length - 1].id !== this.vertices[0].id) {
                 this.vertices.push(this.vertices[0]);
             }
 
@@ -800,18 +802,17 @@ define([
             if (this.withLines) {
                 for (i = 0; i < partition.length; i++) {
                     for (j = partition[i][1] - 1; j < partition[i][0] + 1; j++) {
-
                         // special cases
-                        if (this.elType === 'polygon' && j < 0) {
-                            // First vertex is removed, so the last border has to be removed, too
-                            j = 0;
-                            this.board.removeObject(this.borders[nborders.length - 1]);
-                            nborders[nborders.length - 1] = -1;
-                        } else if (j > nborders.length - 1) {
-                            j = nborders.length - 1;
+                        if (j < 0) {
+                            if (this.elType === 'polygon') {
+                                // First vertex is removed, so the last border has to be removed, too
+                                this.board.removeObject(this.borders[nborders.length - 1]);
+                                nborders[nborders.length - 1] = -1;
+                            }
+                        } else if (j < nborders.length) {
+                            this.board.removeObject(this.borders[j]);
+                            nborders[j] = -1;
                         }
-                        this.board.removeObject(this.borders[j]);
-                        nborders[j] = -1;
                     }
 
                     // Only create the new segment if it's not the closing border.
@@ -837,6 +838,7 @@ define([
 
                 // if the first and/or the last vertex is removed, the closing border is created at the end.
                 if (this.elType === 'polygon' &&
+                    this.vertices.length > 2 &&  // Avoid trivial case of polygon with 1 vertex
                     (partition[0][1] === this.vertices.length - 1 || partition[partition.length - 1][1] === 0)) {
                     this.borders.push(this.board.create('segment',
                             [this.vertices[0], this.vertices[this.vertices.length - 2]],
