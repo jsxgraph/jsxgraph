@@ -1547,7 +1547,7 @@ define([
             /**
              * A function that expects two {@link JXG.Coords}, the first one representing the coordinates of the
              * tick that is to be labeled, the second one the coordinates of the center (the tick with position 0).
-             * The tird parameter is a null, number or a string. In the latter two cases, this value is taken.
+             * The third parameter is a null, number or a string. In the latter two cases, this value is taken.
              * Returns a string.
              *
              * @type function
@@ -1823,7 +1823,7 @@ define([
             digits: 3,
 
             /**
-             * The default distance between two ticks. Please be aware that this value does not have
+             * The default distance (in user coordinates, not  pixels) between two ticks. Please be aware that this value does not have
              * to be used if {@link Ticks#insertTicks} is set to true.
              *
              * @type Number
