@@ -1757,7 +1757,72 @@ define([
              */
             minorTicks: 4,
 
-            minorTicksPerLabel: 4,
+            /**
+             * By default, i.e. if ticksPerLabel==false, labels are generated for major ticks, only.
+             * If ticksPerLabel is set to a(n integer) number, this denotes the number of minor ticks
+             * between two labels.
+             *
+             * @type {Number|Boolean}
+             * @name Ticks#ticksPerLabel
+             * @default false
+             *
+             * @example
+             * const board = JXG.JSXGraph.initBoard('jxgbox', {
+             *     boundingbox: [-4, 4, 4, -4],
+             *     axis: true,
+             *     defaultAxes: {
+             *         x: {
+             *             ticks: {
+             *                 minorTicks: 7,
+             *                 ticksPerLabel: 4,
+             *                 minorHeight: 20,
+             *             }
+             *         },
+             *         y: {
+             *             ticks: {
+             *                 minorTicks: 3,
+             *                 ticksPerLabel: 2,
+             *                 minorHeight: 20
+             *             }
+             *         }
+             *     },
+             *     zoom: {
+             *         wheel: true
+             *     }
+             * });
+             *
+             * </pre><div id="JXGbc45a421-c867-4b0a-9b8d-2b2576020690" class="jxgbox" style="width: 300px; height: 300px;"></div>
+             * <script type="text/javascript">
+             *     (function() {
+             *         var board = JXG.JSXGraph.initBoard('JXGbc45a421-c867-4b0a-9b8d-2b2576020690',
+             *             {showcopyright: false, shownavigation: false,
+             *              boundingbox: [-4, 4, 4, -4],
+             *         axis: true,
+             *         defaultAxes: {
+             *             x: {
+             *                 ticks: {
+             *                     minorTicks: 7,
+             *                     ticksPerLabel: 4,
+             *                     minorHeight: 20,
+             *                 }
+             *             },
+             *             y: {
+             *                 ticks: {
+             *                     minorTicks: 3,
+             *                     ticksPerLabel: 2,
+             *                     minorHeight: 20
+             *                 }
+             *             }
+             *         },
+             *         zoom: {
+             *             wheel: true
+             *         }
+             *     });
+             *     })();
+             *
+             * </script><pre>
+             */
+            ticksPerLabel: false,
 
             /**
              * Scale the ticks but not the tick labels.
