@@ -1785,9 +1785,6 @@ define([
              *                 minorHeight: 20
              *             }
              *         }
-             *     },
-             *     zoom: {
-             *         wheel: true
              *     }
              * });
              *
@@ -1813,9 +1810,6 @@ define([
              *                     minorHeight: 20
              *                 }
              *             }
-             *         },
-             *         zoom: {
-             *             wheel: true
              *         }
              *     });
              *     })();
