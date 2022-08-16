@@ -26826,7 +26826,7 @@ define('options',[
             /**
              * A function that expects two {@link JXG.Coords}, the first one representing the coordinates of the
              * tick that is to be labeled, the second one the coordinates of the center (the tick with position 0).
-             * The tird parameter is a null, number or a string. In the latter two cases, this value is taken.
+             * The third parameter is a null, number or a string. In the latter two cases, this value is taken.
              * Returns a string.
              *
              * @type function
@@ -27037,6 +27037,67 @@ define('options',[
             minorTicks: 4,
 
             /**
+             * By default, i.e. if ticksPerLabel==false, labels are generated for major ticks, only.
+             * If ticksPerLabel is set to a(n integer) number, this denotes the number of minor ticks
+             * between two labels.
+             *
+             * @type {Number|Boolean}
+             * @name Ticks#ticksPerLabel
+             * @default false
+             *
+             * @example
+             * const board = JXG.JSXGraph.initBoard('jxgbox', {
+             *     boundingbox: [-4, 4, 4, -4],
+             *     axis: true,
+             *     defaultAxes: {
+             *         x: {
+             *             ticks: {
+             *                 minorTicks: 7,
+             *                 ticksPerLabel: 4,
+             *                 minorHeight: 20,
+             *             }
+             *         },
+             *         y: {
+             *             ticks: {
+             *                 minorTicks: 3,
+             *                 ticksPerLabel: 2,
+             *                 minorHeight: 20
+             *             }
+             *         }
+             *     }
+             * });
+             *
+             * </pre><div id="JXGbc45a421-c867-4b0a-9b8d-2b2576020690" class="jxgbox" style="width: 300px; height: 300px;"></div>
+             * <script type="text/javascript">
+             *     (function() {
+             *         var board = JXG.JSXGraph.initBoard('JXGbc45a421-c867-4b0a-9b8d-2b2576020690',
+             *             {showcopyright: false, shownavigation: false,
+             *              boundingbox: [-4, 4, 4, -4],
+             *         axis: true,
+             *         defaultAxes: {
+             *             x: {
+             *                 ticks: {
+             *                     minorTicks: 7,
+             *                     ticksPerLabel: 4,
+             *                     minorHeight: 20,
+             *                 }
+             *             },
+             *             y: {
+             *                 ticks: {
+             *                     minorTicks: 3,
+             *                     ticksPerLabel: 2,
+             *                     minorHeight: 20
+             *                 }
+             *             }
+             *         }
+             *     });
+             *     })();
+             *
+             * </script><pre>
+             */
+            ticksPerLabel: false,
+
+            /**
              * Scale the ticks but not the tick labels.
              * @type Number
              * @default 1
@@ -27102,7 +27163,7 @@ define('options',[
             digits: 3,
 
             /**
-             * The default distance between two ticks. Please be aware that this value does not have
+             * The default distance (in user coordinates, not  pixels) between two ticks. Please be aware that this value does not have
              * to be used if {@link Ticks#insertTicks} is set to true.
              *
              * @type Number
@@ -76318,6 +76379,7 @@ define('base/ticks',[
             } else if (!ev_it) {
                 ticksDelta /= (ev_mt + 1);
             }
+            // Now, ticksdelta is the distance between two minor ticks
             this.ticksDelta = ticksDelta;
 
             if (ticksDelta < Mat.eps) {
@@ -76413,6 +76475,8 @@ define('base/ticks',[
          */
         processTickPosition: function (coordsZero, tickPosition, ticksDelta, deltas) {
             var x, y, tickCoords, ti,
+                isLabelPosition,
+                ticksPerLabel = Type.evaluate(this.visProp.ticksperlabel),
                 labelVal = null;
 
             // Calculates tick coordinates
@@ -76435,13 +76499,19 @@ define('base/ticks',[
             // a multiple of the number of minorticks+1
             tickCoords.major = Math.round(tickPosition / ticksDelta) % (Type.evaluate(this.visProp.minorticks) + 1) === 0;
 
+            if (!ticksPerLabel) {
+                // In case of null, 0 or false, majorTicks are labelled
+                ticksPerLabel = Type.evaluate(this.visProp.minorticks) + 1;
+            }
+            isLabelPosition = Math.round(tickPosition / ticksDelta) % (ticksPerLabel) === 0;
+
             // Compute the start position and the end position of a tick.
             // If both positions are out of the canvas, ti is empty.
             ti = this.createTickPath(tickCoords, tickCoords.major);
             if (ti.length === 3) {
                 this.ticks.push(ti);
-                if (tickCoords.major && Type.evaluate(this.visProp.drawlabels)) {
-                    // major tick label
+                if (isLabelPosition && Type.evaluate(this.visProp.drawlabels)) {
+                    // Create a label at this position
                     this.labelsData.push(
                         this.generateLabelData(
                             this.generateLabelText(tickCoords, coordsZero, labelVal),

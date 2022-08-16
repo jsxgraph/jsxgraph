@@ -32,7 +32,14 @@
 describe("Test text handling", function() {
     var board;
 
-    jasmine.clock().install();
+    // jasmine.clock().install();
+    beforeEach(function() {
+      jasmine.clock().install();
+    });
+
+    afterEach(function() {
+      jasmine.clock().uninstall();
+    });
 
     document.getElementsByTagName('body')[0].innerHTML = '<div id="jxgbox" style="width: 100px; height: 100px;"></div>';
     board = JXG.JSXGraph.initBoard('jxgbox', {
@@ -55,13 +62,6 @@ describe("Test text handling", function() {
         el.setText('text 2')
         expect(el.rendNode.innerHTML).toEqual('text 2');
 
-    });
-
-    it("size", function() {
-        var el = board.create('text', [0, 10, 'test']);
-        jasmine.clock().tick(100);
-
-        expect(el.size).toEqual([19, 14]);
     });
 
     it("setText", function() {
