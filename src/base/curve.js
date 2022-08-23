@@ -235,7 +235,7 @@ define([
          */
         hasPoint: function (x, y, start) {
             var t, checkPoint, len, invMat, c,
-                i, tX, tY,
+                i, tX, tY, isIn,
                 res = [],
                 points, qdt,
                 steps = Type.evaluate(this.visProp.numberpointslow),
@@ -318,6 +318,13 @@ define([
                 } else {
                     points = this.points;
                     len = this.numberPoints - 1;
+                }
+
+                if (this.bezierDegree === 1 && Type.evaluate(this.visProp.hasinnerpoints)) {
+                    isIn = this.pnpoly(x, y, Const.COORDS_BY_USER);
+                    if (isIn) {
+                        return true;
+                    }
                 }
 
                 for (i = start; i < len; i++) {
@@ -1209,7 +1216,36 @@ define([
                 }
             }
             return [isTransformed, curve_org];
+        },
+
+        pnpoly: function(x_in, y_in, coord_type) {
+            var i, j, len,
+                x, y, crds,
+                v = this.points,
+                isIn = false;
+
+            if (coord_type === Const.COORDS_BY_USER) {
+                crds = new Coords(Const.COORDS_BY_USER, [x_in, y_in], this.board);
+                x = crds.scrCoords[1];
+                y = crds.scrCoords[2];
+            } else {
+                x = x_in;
+                y = y_in;
+            }
+
+            len = this.points.length;
+            for (i = 0, j = len - 2; i < len - 1; j = i++) {
+                if (((v[i].scrCoords[2] > y) !== (v[j].scrCoords[2] > y)) &&
+                    (x < (v[j].scrCoords[1] - v[i].scrCoords[1]) *
+                    (y - v[i].scrCoords[2]) / (v[j].scrCoords[2] - v[i].scrCoords[2]) + v[i].scrCoords[1])
+                   ) {
+                    isIn = !isIn;
+                }
+            }
+
+            return isIn;
         }
+
 
     });
 
