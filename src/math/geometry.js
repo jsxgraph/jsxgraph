@@ -1042,6 +1042,127 @@ define([
             return r;
         },
 
+        /**
+         * Determinant of three points in the Euclidean plane.
+         * Zero, if the points are collinear. Used to determine of a point q is left or
+         * right to a segment defined by points p1 and p2.
+         * @private
+         * @param  {Array} p1 Coordinates of the first point of the segment. Array of length 3. First coordinate is equal to 1.
+         * @param  {Array} p2 Coordinates of the second point of the segment. Array of length 3. First coordinate is equal to 1.
+         * @param  {Array} q Coordinates of the point. Array of length 3. First coordinate is equal to 1.
+         * @return {Number} Signed area of the triangle formed by these three points.
+         */
+        det3p: function(p1, p2, q) {
+            return (p1[1] - q[1]) * (p2[2] - q[2]) - (p2[1] - q[1]) * (p1[2] - q[2]);
+        },
+
+        /**
+         * Winding number of a point in respect to a polygon path.
+         *
+         * The point is regarded outside if the winding number is zero,
+         * inside otherwise. The algorithm tries to find degenerate cases, i.e.
+         * if the point is on the path. This is regarded as "outside".
+         * If the point is a vertex of the path, it is regarded as "inside".
+         *
+         * Implementation of algorithm 7 from "The point in polygon problem for
+         * arbitrary polygons" by Kai Hormann and Alexander Agathos, Computational Geometry,
+         * Volume 20, Issue 3, November 2001, Pages 131-144.
+         *
+         * @param  {Array} usrCoords Homogenous coordinates of the point
+         * @param  {Array} path      Array of points determining a path, i.e. the vertices of the polygon. The array elements
+         * do not have to be full points, but have to have a subobject "coords".
+         * @return {Number}          Winding number of the point. The point is
+         *                           regarded outside if the winding number is zero,
+         *                           inside otherwise.
+         */
+        windingNumber: function(usrCoords, path, isClosedPath) {
+            var wn = 0,
+                le = path.length,
+                x = usrCoords[1],
+                y = usrCoords[2],
+                p0, p1, p2, d, sign, i, off = 0;
+
+            if (le === 0) {
+                return 0;
+            }
+
+            isClosedPath = isClosedPath || false;
+            if (isClosedPath) {
+                off = 1;
+            }
+
+            // Infinite points are declared outside
+            if (isNaN(x) || isNaN(y)) {
+                return 1;
+            }
+
+            if (Type.exists(path[0].coords)) {
+                p0 = path[0].coords;
+                p1 = path[le - 1].coords;
+            } else {
+                p0 = path[0];
+                p1 = path[le - 1];
+            }
+            // Handle the case if the point is the first vertex of the path, i.e. inside.
+            if (p0.usrCoords[1] === x && p0.usrCoords[2] === y) {
+                return 1;
+            }
+
+            for (i = 0; i < le - off; i++) {
+                // Consider the edge from p1 = path[i] to p2 = path[i+1]
+                if (Type.exists(path[i].coords)) {
+                    p1 = path[i].coords.usrCoords;
+                    p2 = path[(i + 1) % le].coords.usrCoords;
+                } else {
+                    p1 = path[i].usrCoords;
+                    p2 = path[(i + 1) % le].usrCoords;
+                }
+
+                // If one of the two points p1, p2 is undefined or infinite,
+                // move on.
+                if (p1[0] === 0 || p2[0] === 0 ||
+                    isNaN(p1[1]) || isNaN(p2[1]) ||
+                    isNaN(p1[2]) || isNaN(p2[2])) {
+                    continue;
+                }
+
+                if (p2[2] === y) {
+                    if (p2[1] === x) {
+                        return 1;
+                    }
+                    if (p1[2] === y && ((p2[1] > x) === (p1[1] < x))) {
+                        return 0;
+                    }
+                }
+
+                if ((p1[2] < y) !== (p2[2] < y)) {                        // Crossing
+                    sign = 2 * ((p2[2] > p1[2]) ? 1 : 0) - 1;
+                    if (p1[1] >= x) {
+                        if (p2[1] > x) {
+                            wn += sign;
+                        } else {
+                            d = this.det3p(p1, p2, usrCoords);
+                            if (d === 0) {  // Point is on line, i.e. outside
+                                return 0;
+                            }
+                            if ((d > 0 + Mat.eps) === (p2[2] > p1[2])) {  // Right crossing
+                                wn += sign;
+                            }
+                        }
+                    } else {
+                        if (p2[1] > x) {
+                            d = this.det3p(p1, p2, usrCoords);
+                            if ((d > 0 + Mat.eps) === (p2[2] > p1[2])) {  // Right crossing
+                                wn += sign;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return wn;
+        },
+
         /****************************************/
         /****          INTERSECTIONS         ****/
         /****************************************/
@@ -2831,7 +2952,6 @@ define([
             return p;
         },
 
-
         meetPlanePlane: function (v11, v12, v21, v22) {
             var i, no1, no2,
                 v = [0, 0, 0],
@@ -2891,7 +3011,7 @@ define([
                 return [s1, e1, s2, e2];
             }
             return null;
-        },
+        }
 
     });
 

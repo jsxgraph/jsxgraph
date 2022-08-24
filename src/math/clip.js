@@ -1022,7 +1022,7 @@ define([
                 }
                 P = P._next;
             }
-            if (this.windingNumber(P.coords.usrCoords, path) % 2 === 0) {
+            if (Geometry.windingNumber(P.coords.usrCoords, path) === 0) {
                 // Outside
                 status = 'entry';
             } else {
@@ -1477,10 +1477,10 @@ define([
             }
 
             // Test if one curve is contained by the other
-            if (this.windingNumber(P.coords.usrCoords, C) === 0) {
+            if (Geometry.windingNumber(P.coords.usrCoords, C) === 0) {
                 // P is outside of C:
                 // Either S is disjoint from C or C is inside of S
-                if (this.windingNumber(Q.coords.usrCoords, S) !== 0) {
+                if (Geometry.windingNumber(Q.coords.usrCoords, S) !== 0) {
                     // C is inside of S, i.e. C subset of S
 
                     if (clip_type === 'union') {

@@ -321,8 +321,17 @@ define([
                 }
 
                 if (this.bezierDegree === 1 && Type.evaluate(this.visProp.hasinnerpoints)) {
-                    isIn = this.pnpoly(x, y, Const.COORDS_BY_USER);
-                    if (isIn) {
+                    // for (i = 0; i < this.points.length; i++) {
+                    //     console.log(this.points[i].usrCoords)
+                    // }
+
+                    // isIn = this.pnpoly(x, y, Const.COORDS_BY_USER);
+                    // if (isIn) {
+                    //     return true;
+                    // }
+                    isIn = Geometry.windingNumber([1, x, y], this.points, true);
+                    console.log("isIn", isIn);
+                    if (isIn !== 0) {
                         return true;
                     }
                 }
