@@ -845,14 +845,14 @@ define([
          */
         _handleFullyDegenerateCase: function(S, C, board) {
             var P, Q, l, M, crds, q1, q2, node,
-                i, j, le, le2, is_on_Q,
+                i, j, leP, leQ, is_on_Q, tmp,
                 is_fully_degenerated,
                 arr = [S, C];
 
             for (l = 0; l < 2; l++) {
                 P = arr[l];
-                le = P.length;
-                for (i = 0, is_fully_degenerated = true; i < le; i++) {
+                leP = P.length;
+                for (i = 0, is_fully_degenerated = true; i < leP; i++) {
                     if (!P[i].intersection) {
                         is_fully_degenerated = false;
                         break;
@@ -862,22 +862,23 @@ define([
                 if (is_fully_degenerated) {
                     // All nodes of P are also on the other path.
                     Q = arr[(l + 1) % 2];
-                    le2 = Q.length;
+                    leQ = Q.length;
 
                     // We search for a midpoint of one edge of P which is not the other path and
                     // we add that midpoint to P.
-                    for (i = 0; i < le; i++) {
+                    for (i = 0; i < leP; i++) {
                         q1 = P[i].coords.usrCoords;
-                        q2 = P[(i + 1) % le].coords.usrCoords;
-                        // M id the midpoint
+                        q2 = P[i]._next.coords.usrCoords;
+
+                        // M is the midpoint
                         M = [(q1[0] +  q2[0]) * 0.5,
                              (q1[1] +  q2[1]) * 0.5,
                              (q1[2] +  q2[2]) * 0.5];
 
                         // Test if M is on path Q. If this is not the case,
                         // we take M as additional point of P.
-                        for (j = 0, is_on_Q = false; j < le2; j++) {
-                            if (Math.abs(Geometry.det3p(Q[j].coords.usrCoords, Q[(j + 1) % le2].coords.usrCoords, M)) < Mat.eps) {
+                        for (j = 0, is_on_Q = false; j < leQ; j++) {
+                            if (Math.abs(Geometry.det3p(Q[j].coords.usrCoords, Q[(j + 1) % leQ].coords.usrCoords, M)) < Mat.eps) {
                                 is_on_Q = true;
                                 break;
                             }
@@ -891,10 +892,14 @@ define([
                                     coords: crds,
                                     elementClass: Const.OBJECT_CLASS_POINT
                                 };
+
+                            tmp = P[i]._next;
                             P[i]._next = node;
                             node._prev = P[i];
-                            P[(i + 1) % le]._prev = node;
-                            node._next = P[(i + 1) % le];
+                            node._next = tmp;
+                            tmp._prev = node;
+
+
                             if (P[i]._end) {
                                 P[i]._end = false;
                                 node._end = true;
@@ -918,9 +923,11 @@ define([
             if (Geometry.windingNumber(P.coords.usrCoords, path) === 0) {
                 // Outside
                 status = 'entry';
+                // console.log(P.coords.usrCoords, ' is outside')
             } else {
                 // Inside
                 status = 'exit';
+                // console.log(P.coords.usrCoords, ' is inside')
             }
 
             return [P, status];
