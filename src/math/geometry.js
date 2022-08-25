@@ -1046,7 +1046,7 @@ define([
          * Determinant of three points in the Euclidean plane.
          * Zero, if the points are collinear. Used to determine of a point q is left or
          * right to a segment defined by points p1 and p2.
-         * @private
+         *
          * @param  {Array} p1 Coordinates of the first point of the segment. Array of length 3. First coordinate is equal to 1.
          * @param  {Array} p2 Coordinates of the second point of the segment. Array of length 3. First coordinate is equal to 1.
          * @param  {Array} q Coordinates of the point. Array of length 3. First coordinate is equal to 1.

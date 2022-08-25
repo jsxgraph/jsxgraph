@@ -255,9 +255,19 @@ define([
                 // 'inherit'
                 prec = this.board.options.precision.hasPoint;
             }
+
+            // From now on, x,y are usrCoords
             checkPoint = new Coords(Const.COORDS_BY_SCREEN, [x, y], this.board, false);
             x = checkPoint.usrCoords[1];
             y = checkPoint.usrCoords[2];
+
+            // Handle inner points of the curve
+            if (this.bezierDegree === 1 && Type.evaluate(this.visProp.hasinnerpoints)) {
+                isIn = Geometry.windingNumber([1, x, y], this.points, true);
+                if (isIn !== 0) {
+                    return true;
+                }
+            }
 
             // We use usrCoords. Only in the final distance calculation
             // screen coords are used
@@ -276,11 +286,11 @@ define([
 
             ev_ct = Type.evaluate(this.visProp.curvetype);
             if (ev_ct === 'parameter' || ev_ct === 'polar') {
+
+                // Transform the mouse/touch coordinates
+                // back to the original position of the curve.
+                // This is needed, because we work with the function terms, not the points.
                 if (this.transformations.length > 0) {
-                    /**
-                     * Transform the mouse/touch coordinates
-                     * back to the original position of the curve.
-                     */
                     this.updateTransformMatrix();
                     invMat = Mat.inverse(this.transformMat);
                     c = Mat.matVecMult(invMat, [1, x, y]);
@@ -304,6 +314,9 @@ define([
             } else if (ev_ct === 'plot' ||
                 ev_ct === 'functiongraph') {
 
+                // Here, we can ignore transformations of the curve,
+                // since we are working directly with the points.
+
                 if (!Type.exists(start) || start < 0) {
                     start = 0;
                 }
@@ -318,13 +331,6 @@ define([
                 } else {
                     points = this.points;
                     len = this.numberPoints - 1;
-                }
-
-                if (this.bezierDegree === 1 && Type.evaluate(this.visProp.hasinnerpoints)) {
-                    isIn = Geometry.windingNumber([1, x, y], this.points, true);
-                    if (isIn !== 0) {
-                        return true;
-                    }
                 }
 
                 for (i = start; i < len; i++) {
