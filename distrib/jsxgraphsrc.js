@@ -14714,11 +14714,13 @@ define('math/geometry',[
          * Determinant of three points in the Euclidean plane.
          * Zero, if the points are collinear. Used to determine of a point q is left or
          * right to a segment defined by points p1 and p2.
-         * @private
+         *
          * @param  {Array} p1 Coordinates of the first point of the segment. Array of length 3. First coordinate is equal to 1.
          * @param  {Array} p2 Coordinates of the second point of the segment. Array of length 3. First coordinate is equal to 1.
          * @param  {Array} q Coordinates of the point. Array of length 3. First coordinate is equal to 1.
          * @return {Number} Signed area of the triangle formed by these three points.
+         *
+         * @see #windingNumber
          */
         det3p: function(p1, p2, q) {
             return (p1[1] - q[1]) * (p2[2] - q[2]) - (p2[1] - q[1]) * (p1[2] - q[2]);
@@ -14737,13 +14739,16 @@ define('math/geometry',[
          * Volume 20, Issue 3, November 2001, Pages 131-144.
          *
          * @param  {Array} usrCoords Homogenous coordinates of the point
-         * @param  {Array} path      Array of points determining a path, i.e. the vertices of the polygon. The array elements
-         * do not have to be full points, but have to have a subobject "coords".
+         * @param  {Array} path      Array of points / coords determining a path, i.e. the vertices of the polygon / path. The array elements
+         * do not have to be full points, but have to have a subobject "coords" or should be of type JXG.Coords.
+         * @param  {Boolean} [doNotClosePath=false] If true the last point of the path is not connected to the first point.
+         * This is necessary if the path consists of two or more closed subpaths, e.g. if the figure has a hole.
+         *
          * @return {Number}          Winding number of the point. The point is
          *                           regarded outside if the winding number is zero,
          *                           inside otherwise.
          */
-        windingNumber: function(usrCoords, path, isClosedPath) {
+        windingNumber: function(usrCoords, path, doNotClosePath) {
             var wn = 0,
                 le = path.length,
                 x = usrCoords[1],
@@ -14754,8 +14759,8 @@ define('math/geometry',[
                 return 0;
             }
 
-            isClosedPath = isClosedPath || false;
-            if (isClosedPath) {
+            doNotClosePath = doNotClosePath || false;
+            if (doNotClosePath) {
                 off = 1;
             }
 
@@ -14777,7 +14782,7 @@ define('math/geometry',[
             }
 
             for (i = 0; i < le - off; i++) {
-                // Consider the edge from p1 = path[i] to p2 = path[i+1]
+                // Consider the edge from p1 = path[i] to p2 = path[i+1]isClosedPath
                 if (Type.exists(path[i].coords)) {
                     p1 = path[i].coords.usrCoords;
                     p2 = path[(i + 1) % le].coords.usrCoords;
@@ -14829,6 +14834,82 @@ define('math/geometry',[
             }
 
             return wn;
+        },
+
+        /**
+         * Decides if a point (x,y) is inside of a path / polygon.
+         * Does not work correct if the path has hole. In this case, windingNumber is the preferred method.
+         * Implements W. Randolf Franklin's pnpoly method.
+         *
+         * See <a href="https://wrf.ecse.rpi.edu/Research/Short_Notes/pnpoly.html">https://wrf.ecse.rpi.edu/Research/Short_Notes/pnpoly.html</a>.
+         *
+         * @param {Number} x_in x-coordinate (screen or user coordinates)
+         * @param {Number} y_in y-coordinate (screen or user coordinates)
+         * @param  {Array} path  Array of points / coords determining a path, i.e. the vertices of the polygon / path. The array elements
+         * do not have to be full points, but have to have a subobject "coords" or should be of type JXG.Coords.
+         * @param {Number} [coord_type=JXG.COORDS_BY_SCREEN] Type of coordinates used here.
+         *   Possible values are <b>JXG.COORDS_BY_USER</b> and <b>JXG.COORDS_BY_SCREEN</b>.
+         *   Default value is JXG.COORDS_BY_SCREEN.
+         *
+         * @returns {Boolean} if (x_in, y_in) is inside of the polygon.
+         * @see JXG.Polygon.hasPoint
+         * @see JXG.Polygon.pnpoly
+         * @see #windingNumber
+         *
+         * @example
+         * var pol = board.create('polygon', [[-1,2], [2,2], [-1,4]]);
+         * var p = board.create('point', [4, 3]);
+         * var txt = board.create('text', [-1, 0.5, function() {
+         *   return 'Point A is inside of the polygon = ' +
+         *     JXG.Math.Geometry.pnpoly(p.X(), p.Y(), JXG.COORDS_BY_USER, pol.vertices);
+         * }]);
+         *
+         * </pre><div id="JXG4656ed42-f965-4e35-bb66-c334a4529683" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG4656ed42-f965-4e35-bb66-c334a4529683',
+         *             {boundingbox: [-2, 5, 5,-2], axis: true, showcopyright: false, shownavigation: false});
+         *     var pol = board.create('polygon', [[-1,2], [2,2], [-1,4]]);
+         *     var p = board.create('point', [4, 3]);
+         *     var txt = board.create('text', [-1, 0.5, function() {
+         *     		return 'Point A is inside of the polygon = ' + JXG.Math.Geometry.pnpoly(p.X(), p.Y(), JXG.COORDS_BY_USER, pol.vertices);
+         *     }]);
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
+         */
+        pnpoly: function(x_in, y_in, path, coord_type) {
+            var i, j, len,
+                x, y, crds,
+                v = path,
+                vi, vj,
+                isIn = false;
+
+            if (coord_type === Const.COORDS_BY_USER) {
+                crds = new Coords(Const.COORDS_BY_USER, [x_in, y_in], this.board);
+                x = crds.scrCoords[1];
+                y = crds.scrCoords[2];
+            } else {
+                x = x_in;
+                y = y_in;
+            }
+
+            len = path.length;
+            for (i = 0, j = len - 2; i < len - 1; j = i++) {
+                vi = (Type.exists(v[i].coords)) ? v[i].coords : v[i];
+                vj = (Type.exists(v[j].coords)) ? v[j].coords : v[j];
+
+                if (((vi.scrCoords[2] > y) !== (vj.scrCoords[2] > y)) &&
+                    (x < (vj.scrCoords[1] - vi.scrCoords[1]) *
+                    (y - vi.scrCoords[2]) / (vj.scrCoords[2] - vi.scrCoords[2]) + vi.scrCoords[1])
+                   ) {
+                    isIn = !isIn;
+                }
+            }
+
+            return isIn;
         },
 
         /****************************************/
@@ -21725,114 +21806,6 @@ define('math/clip',[
         },
 
         /**
-         * Determinant of three points in the Euclidean plane.
-         * Zero, if the points are collinear. Used to determine of a point q is left or
-         * right to a segment defined by points p1 and p2.
-         * @private
-         * @param  {Array} p1 Coordinates of the first point of the segment. Array of length 3. First coordinate is equal to 1.
-         * @param  {Array} p2 Coordinates of the second point of the segment. Array of length 3. First coordinate is equal to 1.
-         * @param  {Array} q Coordinates of the point. Array of length 3. First coordinate is equal to 1.
-         * @return {Number} Signed area of the triangle formed by these three points.
-         */
-        det: function(p1, p2, q) {
-            return (p1[1] - q[1]) * (p2[2] - q[2]) - (p2[1] - q[1]) * (p1[2] - q[2]);
-        },
-
-        /**
-         * Winding number of a point in respect to a polygon path.
-         *
-         * The point is regarded outside if the winding number is zero,
-         * inside otherwise. The algorithm tries to find degenerate cases, i.e.
-         * if the point is on the path. This is regarded as "outside".
-         * If the point is a vertex of the path, it is regarded as "inside".
-         *
-         * Implementation of algorithm 7 from "The point in polygon problem for
-         * arbitrary polygons" by Kai Hormann and Alexander Agathos, Computational Geometry,
-         * Volume 20, Issue 3, November 2001, Pages 131-144.
-         *
-         * @param  {Array} usrCoords Homogenous coordinates of the point
-         * @param  {Array} path      Array of points determining a path, i.e. the vertices of the polygon. The array elements
-         * do not have to be full points, but have to have a subobject "coords".
-         * @return {Number}          Winding number of the point. The point is
-         *                           regarded outside if the winding number is zero,
-         *                           inside otherwise.
-         */
-        windingNumber: function(usrCoords, path) {
-            var wn = 0,
-                le = path.length,
-                x = usrCoords[1],
-                y = usrCoords[2],
-                p1, p2, d, sign, i;
-
-            if (le === 0) {
-                return 0;
-            }
-
-            // Infinite points are declared outside
-            if (isNaN(x) || isNaN(y)) {
-                return 1;
-            }
-
-            // Handle the case if the point is a vertex of the path
-            if (path[0].coords.usrCoords[1] === x &&
-                path[0].coords.usrCoords[2] === y) {
-
-                // console.log('<<<<<<< Vertex 1');
-                return 1;
-            }
-
-            for (i = 0; i < le; i++) {
-                // Consider the edge from p1 = path[i] to p2 = path[i+1]
-                p1 = path[i].coords.usrCoords;
-                p2 = path[(i + 1) % le].coords.usrCoords;
-                if (p1[0] === 0 || p2[0] === 0 ||
-                    isNaN(p1[1]) || isNaN(p2[1]) ||
-                    isNaN(p1[2]) || isNaN(p2[2])) {
-
-                    continue;
-                }
-
-                if (p2[2] === y) {
-                    if (p2[1] === x) {
-                        // console.log('<<<<<<< Vertex 2');
-                        return 1;
-                    }
-                    if (p1[2] === y && ((p2[1] > x) === (p1[1] < x))) {
-                        // console.log('<<<<<<< Edge 1', p1, p2, [x, y]);
-                        return 0;
-                    }
-                }
-
-                if ((p1[2] < y) !== (p2[2] < y)) {
-                    sign = 2 * ((p2[2] > p1[2]) ? 1 : 0) - 1;
-                    if (p1[1] >= x) {
-                        if (p2[1] > x) {
-                            wn += sign;
-                        } else {
-                            d = this.det(p1, p2, usrCoords);
-                            if (d === 0) {
-                                // console.log('<<<<<<< Edge 2');
-                                return 0;
-                            }
-                            if ((d > 0) === (p2[2] > p1[2])) {
-                                wn += sign;
-                            }
-                        }
-                    } else {
-                        if (p2[1] > x) {
-                            d = this.det(p1, p2, usrCoords);
-                            if ((d > 0 + Mat.eps) === (p2[2] > p1[2])) {
-                                wn += sign;
-                            }
-                        }
-                    }
-                }
-            }
-
-            return wn;
-        },
-
-        /**
          * JavaScript object containing the intersection of two paths. Every intersection point is on one path, but
          * comes with a neighbour point having the same coordinates and being on the other path.
          *
@@ -22253,9 +22226,9 @@ define('math/clip',[
          * @private
          */
         _getPosition: function(q, p1, p2, p3) {
-            var s1 = this.det(q, p1, p2),
-                s2 = this.det(q, p2, p3),
-                s3 = this.det(p1, p2, p3);
+            var s1 = Geometry.det3p(q, p1, p2),
+                s2 = Geometry.det3p(q, p2, p3),
+                s3 = Geometry.det3p(p1, p2, p3);
 
             // Left turn
             if (s3 >= 0) {
@@ -22285,7 +22258,7 @@ define('math/clip',[
          */
         _classifyDegenerateIntersections: function(P) {
             var Pp, Pm, Qp, Qm, Q, side,
-                cnt, tmp,
+                cnt, tmp, det,
                 oppositeDir,
                 s1, s2, s3, s4,
                 DEBUG = false;
@@ -22293,6 +22266,7 @@ define('math/clip',[
             if (DEBUG) {
                 console.log("\n-------------- _classifyDegenerateIntersections()", (Type.exists(P.data))?P.data.pathname:' ');
             }
+            det = Geometry.det3p;
             cnt = 0;
             P._tours = 0;
             while (true) {
@@ -22335,20 +22309,20 @@ define('math/clip',[
                         console.log("Pp", this._getPosition(Pp,  Qm, Q.coords.usrCoords, Qp));
                     }
 
-                    s1 = this.det(P.coords.usrCoords, Pm, Qm);
-                    s2 = this.det(P.coords.usrCoords, Pp, Qp);
-                    s3 = this.det(P.coords.usrCoords, Pm, Qp);
-                    s4 = this.det(P.coords.usrCoords, Pp, Qm);
+                    s1 = det(P.coords.usrCoords, Pm, Qm);
+                    s2 = det(P.coords.usrCoords, Pp, Qp);
+                    s3 = det(P.coords.usrCoords, Pm, Qp);
+                    s4 = det(P.coords.usrCoords, Pp, Qm);
 
                     if (s1 === 0 && s2 === 0 && s3 === 0 && s4 === 0) {
                         P.coords.usrCoords[1] *= 1 + Math.random() * Mat.eps;
                         P.coords.usrCoords[2] *= 1 + Math.random() * Mat.eps;
                         Q.coords.usrCoords[1] = P.coords.usrCoords[1];
                         Q.coords.usrCoords[2] = P.coords.usrCoords[2];
-                        s1 = this.det(P.coords.usrCoords, Pm, Qm);
-                        s2 = this.det(P.coords.usrCoords, Pp, Qp);
-                        s3 = this.det(P.coords.usrCoords, Pm, Qp);
-                        s4 = this.det(P.coords.usrCoords, Pp, Qm);
+                        s1 = det(P.coords.usrCoords, Pm, Qm);
+                        s2 = det(P.coords.usrCoords, Pp, Qp);
+                        s3 = det(P.coords.usrCoords, Pm, Qp);
+                        s4 = det(P.coords.usrCoords, Pp, Qm);
                         if (DEBUG) {
                             console.log("Random shift", P.coords.usrCoords);
                             console.log(s1, s2, s3, s4, s2 === 0);
@@ -22582,7 +22556,7 @@ define('math/clip',[
                         // Test if M is on path Q. If this is not the case,
                         // we take M as additional point of P.
                         for (j = 0, is_on_Q = false; j < le2; j++) {
-                            if (Math.abs(this.det(Q[j].coords.usrCoords, Q[(j + 1) % le2].coords.usrCoords, M)) < Mat.eps) {
+                            if (Math.abs(Geometry.det3p(Q[j].coords.usrCoords, Q[(j + 1) % le2].coords.usrCoords, M)) < Mat.eps) {
                                 is_on_Q = true;
                                 break;
                             }
@@ -62025,10 +61999,7 @@ define('base/polygon',[
     JXG.extend(JXG.Polygon.prototype, /** @lends JXG.Polygon.prototype */ {
 
         /**
-         * Decides if a point (x,y) is inside of the polygon.
-         * Implements W. Randolf Franklin's pnpoly method.
-         *
-         * See <a href="https://wrf.ecse.rpi.edu/Research/Short_Notes/pnpoly.html">https://wrf.ecse.rpi.edu/Research/Short_Notes/pnpoly.html</a>.
+         * Wrapper for JXG.Math.Geometry.pnpoly.
          *
          * @param {Number} x_in x-coordinate (screen or user coordinates)
          * @param {Number} y_in y-coordinate (screen or user coordinates)
@@ -62036,7 +62007,9 @@ define('base/polygon',[
          *   Possible values are <b>JXG.COORDS_BY_USER</b> and <b>JXG.COORDS_BY_SCREEN</b>.
          *   Default value is JXG.COORDS_BY_SCREEN
          *
-         * @returns {Boolean} if (x,y) is inside of the polygon.
+         * @returns {Boolean} if (x_in, y_in) is inside of the polygon.
+         * @see JXG.Math.Geometry#pnpoly
+         *
          * @example
          * var pol = board.create('polygon', [[-1,2], [2,2], [-1,4]]);
          * var p = board.create('point', [4, 3]);
@@ -62062,31 +62035,7 @@ define('base/polygon',[
          *
          */
         pnpoly: function(x_in, y_in, coord_type) {
-            var i, j, len,
-                x, y, crds,
-                v = this.vertices,
-                isIn = false;
-
-            if (coord_type === Const.COORDS_BY_USER) {
-                crds = new Coords(Const.COORDS_BY_USER, [x_in, y_in], this.board);
-                x = crds.scrCoords[1];
-                y = crds.scrCoords[2];
-            } else {
-                x = x_in;
-                y = y_in;
-            }
-
-            len = this.vertices.length;
-            for (i = 0, j = len - 2; i < len - 1; j = i++) {
-                if (((v[i].coords.scrCoords[2] > y) !== (v[j].coords.scrCoords[2] > y)) &&
-                    (x < (v[j].coords.scrCoords[1] - v[i].coords.scrCoords[1]) *
-                    (y - v[i].coords.scrCoords[2]) / (v[j].coords.scrCoords[2] - v[i].coords.scrCoords[2]) + v[i].coords.scrCoords[1])
-                   ) {
-                    isIn = !isIn;
-                }
-            }
-
-            return isIn;
+            return Geometry.pnpoly(x_in, y_in, this.vertices, coord_type);
         },
 
         /**
@@ -63549,9 +63498,19 @@ define('base/curve',[
                 // 'inherit'
                 prec = this.board.options.precision.hasPoint;
             }
+
+            // From now on, x,y are usrCoords
             checkPoint = new Coords(Const.COORDS_BY_SCREEN, [x, y], this.board, false);
             x = checkPoint.usrCoords[1];
             y = checkPoint.usrCoords[2];
+
+            // Handle inner points of the curve
+            if (this.bezierDegree === 1 && Type.evaluate(this.visProp.hasinnerpoints)) {
+                isIn = Geometry.windingNumber([1, x, y], this.points, true);
+                if (isIn !== 0) {
+                    return true;
+                }
+            }
 
             // We use usrCoords. Only in the final distance calculation
             // screen coords are used
@@ -63570,11 +63529,11 @@ define('base/curve',[
 
             ev_ct = Type.evaluate(this.visProp.curvetype);
             if (ev_ct === 'parameter' || ev_ct === 'polar') {
+
+                // Transform the mouse/touch coordinates
+                // back to the original position of the curve.
+                // This is needed, because we work with the function terms, not the points.
                 if (this.transformations.length > 0) {
-                    /**
-                     * Transform the mouse/touch coordinates
-                     * back to the original position of the curve.
-                     */
                     this.updateTransformMatrix();
                     invMat = Mat.inverse(this.transformMat);
                     c = Mat.matVecMult(invMat, [1, x, y]);
@@ -63598,6 +63557,9 @@ define('base/curve',[
             } else if (ev_ct === 'plot' ||
                 ev_ct === 'functiongraph') {
 
+                // Here, we can ignore transformations of the curve,
+                // since we are working directly with the points.
+
                 if (!Type.exists(start) || start < 0) {
                     start = 0;
                 }
@@ -63612,22 +63574,6 @@ define('base/curve',[
                 } else {
                     points = this.points;
                     len = this.numberPoints - 1;
-                }
-
-                if (this.bezierDegree === 1 && Type.evaluate(this.visProp.hasinnerpoints)) {
-                    // for (i = 0; i < this.points.length; i++) {
-                    //     console.log(this.points[i].usrCoords)
-                    // }
-
-                    // isIn = this.pnpoly(x, y, Const.COORDS_BY_USER);
-                    // if (isIn) {
-                    //     return true;
-                    // }
-                    isIn = Geometry.windingNumber([1, x, y], this.points, true);
-                    console.log("isIn", isIn);
-                    if (isIn !== 0) {
-                        return true;
-                    }
                 }
 
                 for (i = start; i < len; i++) {

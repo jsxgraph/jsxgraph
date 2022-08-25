@@ -547,9 +547,9 @@ define([
          * @private
          */
         _getPosition: function(q, p1, p2, p3) {
-            var s1 = this.det(q, p1, p2),
-                s2 = this.det(q, p2, p3),
-                s3 = this.det(p1, p2, p3);
+            var s1 = Geometry.det3p(q, p1, p2),
+                s2 = Geometry.det3p(q, p2, p3),
+                s3 = Geometry.det3p(p1, p2, p3);
 
             // Left turn
             if (s3 >= 0) {
@@ -579,7 +579,7 @@ define([
          */
         _classifyDegenerateIntersections: function(P) {
             var Pp, Pm, Qp, Qm, Q, side,
-                cnt, tmp,
+                cnt, tmp, det,
                 oppositeDir,
                 s1, s2, s3, s4,
                 DEBUG = false;
@@ -587,6 +587,7 @@ define([
             if (DEBUG) {
                 console.log("\n-------------- _classifyDegenerateIntersections()", (Type.exists(P.data))?P.data.pathname:' ');
             }
+            det = Geometry.det3p;
             cnt = 0;
             P._tours = 0;
             while (true) {
@@ -629,20 +630,20 @@ define([
                         console.log("Pp", this._getPosition(Pp,  Qm, Q.coords.usrCoords, Qp));
                     }
 
-                    s1 = this.det(P.coords.usrCoords, Pm, Qm);
-                    s2 = this.det(P.coords.usrCoords, Pp, Qp);
-                    s3 = this.det(P.coords.usrCoords, Pm, Qp);
-                    s4 = this.det(P.coords.usrCoords, Pp, Qm);
+                    s1 = det(P.coords.usrCoords, Pm, Qm);
+                    s2 = det(P.coords.usrCoords, Pp, Qp);
+                    s3 = det(P.coords.usrCoords, Pm, Qp);
+                    s4 = det(P.coords.usrCoords, Pp, Qm);
 
                     if (s1 === 0 && s2 === 0 && s3 === 0 && s4 === 0) {
                         P.coords.usrCoords[1] *= 1 + Math.random() * Mat.eps;
                         P.coords.usrCoords[2] *= 1 + Math.random() * Mat.eps;
                         Q.coords.usrCoords[1] = P.coords.usrCoords[1];
                         Q.coords.usrCoords[2] = P.coords.usrCoords[2];
-                        s1 = this.det(P.coords.usrCoords, Pm, Qm);
-                        s2 = this.det(P.coords.usrCoords, Pp, Qp);
-                        s3 = this.det(P.coords.usrCoords, Pm, Qp);
-                        s4 = this.det(P.coords.usrCoords, Pp, Qm);
+                        s1 = det(P.coords.usrCoords, Pm, Qm);
+                        s2 = det(P.coords.usrCoords, Pp, Qp);
+                        s3 = det(P.coords.usrCoords, Pm, Qp);
+                        s4 = det(P.coords.usrCoords, Pp, Qm);
                         if (DEBUG) {
                             console.log("Random shift", P.coords.usrCoords);
                             console.log(s1, s2, s3, s4, s2 === 0);
@@ -876,7 +877,7 @@ define([
                         // Test if M is on path Q. If this is not the case,
                         // we take M as additional point of P.
                         for (j = 0, is_on_Q = false; j < le2; j++) {
-                            if (Math.abs(this.det(Q[j].coords.usrCoords, Q[(j + 1) % le2].coords.usrCoords, M)) < Mat.eps) {
+                            if (Math.abs(Geometry.det3p(Q[j].coords.usrCoords, Q[(j + 1) % le2].coords.usrCoords, M)) < Mat.eps) {
                                 is_on_Q = true;
                                 break;
                             }
