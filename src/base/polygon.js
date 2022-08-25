@@ -173,10 +173,7 @@ define([
     JXG.extend(JXG.Polygon.prototype, /** @lends JXG.Polygon.prototype */ {
 
         /**
-         * Decides if a point (x,y) is inside of the polygon.
-         * Implements W. Randolf Franklin's pnpoly method.
-         *
-         * See <a href="https://wrf.ecse.rpi.edu/Research/Short_Notes/pnpoly.html">https://wrf.ecse.rpi.edu/Research/Short_Notes/pnpoly.html</a>.
+         * Wrapper for JXG.Math.Geometry.pnpoly.
          *
          * @param {Number} x_in x-coordinate (screen or user coordinates)
          * @param {Number} y_in y-coordinate (screen or user coordinates)
@@ -184,7 +181,9 @@ define([
          *   Possible values are <b>JXG.COORDS_BY_USER</b> and <b>JXG.COORDS_BY_SCREEN</b>.
          *   Default value is JXG.COORDS_BY_SCREEN
          *
-         * @returns {Boolean} if (x,y) is inside of the polygon.
+         * @returns {Boolean} if (x_in, y_in) is inside of the polygon.
+         * @see JXG.Math.Geometry#pnpoly
+         *
          * @example
          * var pol = board.create('polygon', [[-1,2], [2,2], [-1,4]]);
          * var p = board.create('point', [4, 3]);
@@ -210,31 +209,7 @@ define([
          *
          */
         pnpoly: function(x_in, y_in, coord_type) {
-            var i, j, len,
-                x, y, crds,
-                v = this.vertices,
-                isIn = false;
-
-            if (coord_type === Const.COORDS_BY_USER) {
-                crds = new Coords(Const.COORDS_BY_USER, [x_in, y_in], this.board);
-                x = crds.scrCoords[1];
-                y = crds.scrCoords[2];
-            } else {
-                x = x_in;
-                y = y_in;
-            }
-
-            len = this.vertices.length;
-            for (i = 0, j = len - 2; i < len - 1; j = i++) {
-                if (((v[i].coords.scrCoords[2] > y) !== (v[j].coords.scrCoords[2] > y)) &&
-                    (x < (v[j].coords.scrCoords[1] - v[i].coords.scrCoords[1]) *
-                    (y - v[i].coords.scrCoords[2]) / (v[j].coords.scrCoords[2] - v[i].coords.scrCoords[2]) + v[i].coords.scrCoords[1])
-                   ) {
-                    isIn = !isIn;
-                }
-            }
-
-            return isIn;
+            return Geometry.pnpoly(x_in, y_in, this.vertices, coord_type);
         },
 
         /**

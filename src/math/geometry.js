@@ -1051,6 +1051,8 @@ define([
          * @param  {Array} p2 Coordinates of the second point of the segment. Array of length 3. First coordinate is equal to 1.
          * @param  {Array} q Coordinates of the point. Array of length 3. First coordinate is equal to 1.
          * @return {Number} Signed area of the triangle formed by these three points.
+         *
+         * @see #windingNumber
          */
         det3p: function(p1, p2, q) {
             return (p1[1] - q[1]) * (p2[2] - q[2]) - (p2[1] - q[1]) * (p1[2] - q[2]);
@@ -1069,13 +1071,16 @@ define([
          * Volume 20, Issue 3, November 2001, Pages 131-144.
          *
          * @param  {Array} usrCoords Homogenous coordinates of the point
-         * @param  {Array} path      Array of points determining a path, i.e. the vertices of the polygon. The array elements
-         * do not have to be full points, but have to have a subobject "coords".
+         * @param  {Array} path      Array of points / coords determining a path, i.e. the vertices of the polygon / path. The array elements
+         * do not have to be full points, but have to have a subobject "coords" or should be of type JXG.Coords.
+         * @param  {Boolean} [doNotClosePath=false] If true the last point of the path is not connected to the first point.
+         * This is necessary if the path consists of two or more closed subpaths, e.g. if the figure has a hole.
+         *
          * @return {Number}          Winding number of the point. The point is
          *                           regarded outside if the winding number is zero,
          *                           inside otherwise.
          */
-        windingNumber: function(usrCoords, path, isClosedPath) {
+        windingNumber: function(usrCoords, path, doNotClosePath) {
             var wn = 0,
                 le = path.length,
                 x = usrCoords[1],
@@ -1086,8 +1091,8 @@ define([
                 return 0;
             }
 
-            isClosedPath = isClosedPath || false;
-            if (isClosedPath) {
+            doNotClosePath = doNotClosePath || false;
+            if (doNotClosePath) {
                 off = 1;
             }
 
@@ -1109,7 +1114,7 @@ define([
             }
 
             for (i = 0; i < le - off; i++) {
-                // Consider the edge from p1 = path[i] to p2 = path[i+1]
+                // Consider the edge from p1 = path[i] to p2 = path[i+1]isClosedPath
                 if (Type.exists(path[i].coords)) {
                     p1 = path[i].coords.usrCoords;
                     p2 = path[(i + 1) % le].coords.usrCoords;
@@ -1161,6 +1166,82 @@ define([
             }
 
             return wn;
+        },
+
+        /**
+         * Decides if a point (x,y) is inside of a path / polygon.
+         * Does not work correct if the path has hole. In this case, windingNumber is the preferred method.
+         * Implements W. Randolf Franklin's pnpoly method.
+         *
+         * See <a href="https://wrf.ecse.rpi.edu/Research/Short_Notes/pnpoly.html">https://wrf.ecse.rpi.edu/Research/Short_Notes/pnpoly.html</a>.
+         *
+         * @param {Number} x_in x-coordinate (screen or user coordinates)
+         * @param {Number} y_in y-coordinate (screen or user coordinates)
+         * @param  {Array} path  Array of points / coords determining a path, i.e. the vertices of the polygon / path. The array elements
+         * do not have to be full points, but have to have a subobject "coords" or should be of type JXG.Coords.
+         * @param {Number} [coord_type=JXG.COORDS_BY_SCREEN] Type of coordinates used here.
+         *   Possible values are <b>JXG.COORDS_BY_USER</b> and <b>JXG.COORDS_BY_SCREEN</b>.
+         *   Default value is JXG.COORDS_BY_SCREEN.
+         *
+         * @returns {Boolean} if (x_in, y_in) is inside of the polygon.
+         * @see JXG.Polygon.hasPoint
+         * @see JXG.Polygon.pnpoly
+         * @see #windingNumber
+         *
+         * @example
+         * var pol = board.create('polygon', [[-1,2], [2,2], [-1,4]]);
+         * var p = board.create('point', [4, 3]);
+         * var txt = board.create('text', [-1, 0.5, function() {
+         *   return 'Point A is inside of the polygon = ' +
+         *     JXG.Math.Geometry.pnpoly(p.X(), p.Y(), JXG.COORDS_BY_USER, pol.vertices);
+         * }]);
+         *
+         * </pre><div id="JXG4656ed42-f965-4e35-bb66-c334a4529683" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG4656ed42-f965-4e35-bb66-c334a4529683',
+         *             {boundingbox: [-2, 5, 5,-2], axis: true, showcopyright: false, shownavigation: false});
+         *     var pol = board.create('polygon', [[-1,2], [2,2], [-1,4]]);
+         *     var p = board.create('point', [4, 3]);
+         *     var txt = board.create('text', [-1, 0.5, function() {
+         *     		return 'Point A is inside of the polygon = ' + JXG.Math.Geometry.pnpoly(p.X(), p.Y(), JXG.COORDS_BY_USER, pol.vertices);
+         *     }]);
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
+         */
+        pnpoly: function(x_in, y_in, path, coord_type) {
+            var i, j, len,
+                x, y, crds,
+                v = path,
+                vi, vj,
+                isIn = false;
+
+            if (coord_type === Const.COORDS_BY_USER) {
+                crds = new Coords(Const.COORDS_BY_USER, [x_in, y_in], this.board);
+                x = crds.scrCoords[1];
+                y = crds.scrCoords[2];
+            } else {
+                x = x_in;
+                y = y_in;
+            }
+
+            len = path.length;
+            for (i = 0, j = len - 2; i < len - 1; j = i++) {
+                vi = (Type.exists(v[i].coords)) ? v[i].coords : v[i];
+                vj = (Type.exists(v[j].coords)) ? v[j].coords : v[j];
+
+                if (((vi.scrCoords[2] > y) !== (vj.scrCoords[2] > y)) &&
+                    (x < (vj.scrCoords[1] - vi.scrCoords[1]) *
+                    (y - vi.scrCoords[2]) / (vj.scrCoords[2] - vi.scrCoords[2]) + vi.scrCoords[1])
+                   ) {
+                    isIn = !isIn;
+                }
+            }
+
+            return isIn;
         },
 
         /****************************************/
