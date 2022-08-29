@@ -3,6 +3,7 @@
  Matthias Ehmann,
  Carsten Miller,
  Reinhard Oldenburg,
+ Andreas Walter,
  Alfred Wassermann
 
  This file is part of JSXGraph.
@@ -29,7 +30,8 @@
  This is a port of jcobyla
 
  - to JavaScript by Reihard Oldenburg and
- - to JSXGraph By Alfred Wassermann
+ - to JSXGraph by Alfred Wassermann
+ - optimized by Andreas Walter
  */
 /*
  * jcobyla
@@ -95,21 +97,18 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
     JXG.Math.Nlp = {
 
         arr: function (n) {
-            // Is 0 initialized
-            return new Float64Array(n);
+            var a = new Array(n),
+                i;
 
-            // var a = new Array(n),
-            //     i;
+            if (Type.exists(a.fill)) {
+                a.fill(0.0, 0, n);
+            } else {
+                for (i = 0; i < n; i++) {
+                    a[i] = 0.0;
+                }
+            }
 
-            // if (Type.exists(a.fill)) {
-            //     a.fill(0.0, 0, n);
-            // } else {
-            //     for (i = 0; i < n; i++) {
-            //         a[i] = 0.0;
-            //     }
-            // }
-
-            // return a;
+            return a;
         },
 
         arr2: function (n, m) {
@@ -486,7 +485,9 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                                             }
                                             vsig[j] = 1.0 / Math.sqrt(wsig);
                                             veta[j] = Math.sqrt(weta);
-                                            if (vsig[j] < parsig || veta[j] > pareta) { iflag = false; }
+                                            if (vsig[j] < parsig || veta[j] > pareta) {
+                                                iflag = false;
+                                            }
                                         }
 
                                         //     If a new vertex is needed to improve acceptability, then decide which
@@ -574,7 +575,9 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                                         for (k = 1; k <= mp; ++k) {
                                             //total = con[k] - this.DOT_PRODUCT(this.PART(this.COL(a, k), 1, n), this.PART(dx, 1, n));
                                             total = con[k] - this.DOT_PRODUCT_ROW_COL(dx, -1, a, k, 1, n);
-                                            if (k < mp) { resnew = Math.max(resnew, total); }
+                                            if (k < mp) {
+                                                resnew = Math.max(resnew, total);
+                                            }
                                         }
 
                                         //     Increase PARMU if necessary and branch back if this change alters the
@@ -585,7 +588,9 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                                         barmu = prerec > 0.0 ? total / prerec : 0.0;
                                         if (parmu < 1.5 * barmu) {
                                             parmu = 2.0 * barmu;
-                                            if (iprint >= 2) { console.log("Increase in PARMU to " + parmu); }
+                                            if (iprint >= 2) {
+                                                console.log("Increase in PARMU to " + parmu);
+                                            }
                                             phi = datmat[mp][np] + parmu * datmat[mpp][np];
                                             for (j = 1; j <= n; ++j) {
                                                 temp = datmat[mp][j] + parmu * datmat[mpp][j];
@@ -650,7 +655,9 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                                             }
                                         }
                                     }
-                                    if (l > 0) { jdrop = l; }
+                                    if (l > 0) {
+                                        jdrop = l;
+                                    }
 
                                     if (jdrop !== 0) {
                                         //     Revise the simplex by updating the elements of SIM, SIMI and DATMAT.
@@ -659,7 +666,9 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                                             sim[i][jdrop] = dx[i];
                                             temp += simi[jdrop][i] * dx[i];
                                         }
-                                        for (k = 1; k <= n; ++k) { simi[jdrop][k] /= temp; }
+                                        for (k = 1; k <= n; ++k) {
+                                            simi[jdrop][k] /= temp;
+                                        }
                                         for (j = 1; j <= n; ++j) {
                                             if (j !== jdrop) {
                                                 // temp = this.DOT_PRODUCT(this.PART(this.ROW(simi, j), 1, n), this.PART(dx, 1, n));
@@ -694,7 +703,9 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                             cmin = 0.0;
                             cmax = 0.0;
                             rho *= 0.5;
-                            if (rho <= 1.5 * rhoend) { rho = rhoend; }
+                            if (rho <= 1.5 * rhoend) {
+                                rho = rhoend;
+                            }
                             if (parmu > 0.0) {
                                 denom = 0.0;
                                 for (k = 1; k <= mp; ++k) {
@@ -726,9 +737,13 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
 
             switch (status) {
                 case this.Normal:
-                    if (iprint >= 1) { console.log("%nNormal return from subroutine COBYLA%n"); }
+                    if (iprint >= 1) {
+                        console.log("%nNormal return from subroutine COBYLA%n");
+                    }
                     if (ifull) {
-                        if (iprint >= 1) { this.PrintIterationResult(nfvals, f, resmax, x, n, iprint); }
+                        if (iprint >= 1) {
+                            this.PrintIterationResult(nfvals, f, resmax, x, n, iprint);
+                        }
                         return status;
                     }
                     break;
@@ -744,10 +759,14 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                     break;
             }
 
-            for (k = 1; k <= n; ++k) { x[k] = sim[k][np]; }
+            for (k = 1; k <= n; ++k) {
+                x[k] = sim[k][np];
+            }
             f = datmat[mp][np];
             resmax = datmat[mpp][np];
-            if (iprint >= 1) { this.PrintIterationResult(nfvals, f, resmax, x, n, iprint); }
+            if (iprint >= 1) {
+                this.PrintIterationResult(nfvals, f, resmax, x, n, iprint);
+            }
 
             return status;
         },
@@ -879,7 +898,9 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                                 } else {
                                     --icount;
                                 }
-                                if (icount === 0) { break L_60; }
+                                if (icount === 0) {
+                                    break L_60;
+                                }
 
                                 //     If ICON exceeds NACT, then we add the constraint with index IACT(ICON) to
                                 //     the active set. Apply Givens rotations so that the last N-NACT-1 columns
@@ -926,15 +947,21 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                                     if (mcon > m) {
                                         //     Pick the next search direction of stage two.
                                         temp = 1.0 / zdota[nact];
-                                        for (k = 1; k <= n; ++k) { sdirn[k] = temp * z[k][nact]; }
+                                        for (k = 1; k <= n; ++k) {
+                                            sdirn[k] = temp * z[k][nact];
+                                        }
                                     } else {
                                         // temp = this.DOT_PRODUCT(this.PART(sdirn, 1, n), this.PART(this.COL(z, nact + 1), 1, n));
                                         temp = this.DOT_PRODUCT_ROW_COL(sdirn, -1, z, nact + 1, 1, n);
-                                        for (k = 1; k <= n; ++k) { sdirn[k] -= temp * z[k][nact + 1]; }
+                                        for (k = 1; k <= n; ++k) {
+                                            sdirn[k] -= temp * z[k][nact + 1];
+                                        }
                                     }
                                 } else {
                                     kk = iact[icon];
-                                    for (k = 1; k <= n; ++k) { dxnew[k] = a[k][kk]; }
+                                    for (k = 1; k <= n; ++k) {
+                                        dxnew[k] = a[k][kk];
+                                    }
                                     tot = 0.0;
 
                                     // {
@@ -949,7 +976,9 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                                         }
                                         acca = spabs + 0.1 * Math.abs(sp);
                                         accb = spabs + 0.2 * Math.abs(sp);
-                                        if (spabs >= acca || acca >= accb) { sp = 0.0; }
+                                        if (spabs >= acca || acca >= accb) {
+                                            sp = 0.0;
+                                        }
                                         if (tot === 0.0) {
                                             tot = sp;
                                         } else {
@@ -994,12 +1023,16 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                                                 temp = zdotv / zdota[k];
                                                 if (temp > 0.0 && iact[k] <= m) {
                                                     tempa = vmultc[k] / temp;
-                                                    if (ratio < 0.0 || tempa < ratio) { ratio = tempa; }
+                                                    if (ratio < 0.0 || tempa < ratio) {
+                                                        ratio = tempa;
+                                                    }
                                                 }
 
                                                 if (k >= 2) {
                                                     kw = iact[k];
-                                                    for (i = 1; i <= n; ++i) { dxnew[i] -= temp * a[i][kw]; }
+                                                    for (i = 1; i <= n; ++i) {
+                                                        dxnew[i] -= temp * a[i][kw];
+                                                    }
                                                 }
                                                 vmultd[k] = temp;
                                             } else {
@@ -1007,7 +1040,9 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                                             }
                                         } while (--k > 0);
                                         //}
-                                        if (ratio < 0.0) { break L_60; }
+                                        if (ratio < 0.0) {
+                                            break L_60;
+                                        }
 
                                         //     Revise the Lagrange multipliers and reorder the active constraints so
                                         //     that the one to be replaced is at the end of the list. Also calculate the
@@ -1048,7 +1083,9 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                                             this.PART(this.COL(z, nact), 1, n),
                                             this.PART(this.COL(a, kk), 1, n)
                                         );
-                                        if (temp === 0.0) { break L_60; }
+                                        if (temp === 0.0) {
+                                            break L_60;
+                                        }
                                         zdota[nact] = temp;
                                         vmultc[icon] = 0.0;
                                         vmultc[nact] = ratio;
@@ -1095,12 +1132,16 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                                     if (mcon > m) {
                                         //     Pick the next search direction of stage two.
                                         temp = 1.0 / zdota[nact];
-                                        for (k = 1; k <= n; ++k) { sdirn[k] = temp * z[k][nact]; }
+                                        for (k = 1; k <= n; ++k) {
+                                            sdirn[k] = temp * z[k][nact];
+                                        }
                                     } else {
                                         kk = iact[nact];
                                         // temp = (this.DOT_PRODUCT(this.PART(sdirn, 1, n),this.PART(this.COL(a, kk), 1, n)) - 1.0) / zdota[nact];
                                         temp = (this.DOT_PRODUCT_ROW_COL(sdirn, -1, a, kk, 1, n) - 1.0) / zdota[nact];
-                                        for (k = 1; k <= n; ++k) { sdirn[k] -= temp * z[k][nact]; }
+                                        for (k = 1; k <= n; ++k) {
+                                            sdirn[k] -= temp * z[k][nact];
+                                        }
                                     }
                                 }
 
@@ -1113,19 +1154,27 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                                 sd = 0.0;
                                 ss = 0.0;
                                 for (i = 1; i <= n; ++i) {
-                                    if (Math.abs(dx[i]) >= 1.0E-6 * rho) { dd -= dx[i] * dx[i]; }
+                                    if (Math.abs(dx[i]) >= 1.0E-6 * rho) {
+                                        dd -= dx[i] * dx[i];
+                                    }
                                     sd += dx[i] * sdirn[i];
                                     ss += sdirn[i] * sdirn[i];
                                 }
-                                if (dd <= 0.0) { break L_60; }
+                                if (dd <= 0.0) {
+                                    break L_60;
+                                }
                                 temp = Math.sqrt(ss * dd);
-                                if (Math.abs(sd) >= 1.0E-6 * temp) { temp = Math.sqrt(ss * dd + sd * sd); }
+                                if (Math.abs(sd) >= 1.0E-6 * temp) {
+                                    temp = Math.sqrt(ss * dd + sd * sd);
+                                }
                                 stpful = dd / (temp + sd);
                                 step = stpful;
                                 if (mcon === m) {
                                     acca = step + 0.1 * resmax;
                                     accb = step + 0.2 * resmax;
-                                    if (step >= acca || acca >= accb) { break L_70; }
+                                    if (step >= acca || acca >= accb) {
+                                        break L_70;
+                                    }
                                     step = Math.min(step, resmax);
                                 }
 
@@ -1133,7 +1182,9 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                                 //     RESMAX to the corresponding maximum residual if stage one is being done.
                                 //     Because DXNEW will be changed during the calculation of some Lagrange
                                 //     multipliers, it will be restored to the following value later.
-                                for (k = 1; k <= n; ++k) { dxnew[k] = dx[k] + step * sdirn[k]; }
+                                for (k = 1; k <= n; ++k) {
+                                    dxnew[k] = dx[k] + step * sdirn[k];
+                                }
                                 if (mcon === m) {
                                     resold = resmax;
                                     resmax = 0.0;
@@ -1161,19 +1212,27 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                                     }
                                     acca = zdwabs + 0.1 * Math.abs(zdotw);
                                     accb = zdwabs + 0.2 * Math.abs(zdotw);
-                                    if (zdwabs >= acca || acca >= accb) { zdotw = 0.0; }
+                                    if (zdwabs >= acca || acca >= accb) {
+                                        zdotw = 0.0;
+                                    }
                                     vmultd[k] = zdotw / zdota[k];
                                     if (k >= 2) {
                                         kk = iact[k];
-                                        for (i = 1; i <= n; ++i) { dxnew[i] -= vmultd[k] * a[i][kk]; }
+                                        for (i = 1; i <= n; ++i) {
+                                            dxnew[i] -= vmultd[k] * a[i][kk];
+                                        }
                                     }
                                 } while (k-- >= 2);
-                                if (mcon > m) { vmultd[nact] = Math.max(0.0, vmultd[nact]); }
+                                if (mcon > m) {
+                                    vmultd[nact] = Math.max(0.0, vmultd[nact]);
+                                }
                                 //}
 
                                 //     Complete VMULTC by finding the new constraint residuals.
 
-                                for (k = 1; k <= n; ++k) { dxnew[k] = dx[k] + step * sdirn[k]; }
+                                for (k = 1; k <= n; ++k) {
+                                    dxnew[k] = dx[k] + step * sdirn[k];
+                                }
                                 if (mcon > nact) {
                                     kl = nact + 1;
                                     for (k = kl; k <= mcon; ++k) {
@@ -1187,7 +1246,9 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                                         }
                                         acca = sumabs + 0.1 * Math.abs(total);
                                         accb = sumabs + 0.2 * Math.abs(total);
-                                        if (sumabs >= acca || acca >= accb) { total = 0.0; }
+                                        if (sumabs >= acca || acca >= accb) {
+                                            total = 0.0;
+                                        }
                                         vmultd[k] = total;
                                     }
                                 }
@@ -1209,11 +1270,15 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                                 //     Update DX, VMULTC and RESMAX.
 
                                 temp = 1.0 - ratio;
-                                for (k = 1; k <= n; ++k) { dx[k] = temp * dx[k] + ratio * dxnew[k]; }
+                                for (k = 1; k <= n; ++k) {
+                                    dx[k] = temp * dx[k] + ratio * dxnew[k];
+                                }
                                 for (k = 1; k <= mcon; ++k) {
                                     vmultc[k] = Math.max(0.0, temp * vmultc[k] + ratio * vmultd[k]);
                                 }
-                                if (mcon === m) { resmax = resold + ratio * (resmax - resold); }
+                                if (mcon === m) {
+                                    resmax = resold + ratio * (resmax - resold);
+                                }
 
                                 //     If the full step is not acceptable then begin another iteration.
                                 //     Otherwise switch to stage two or end the calculation.
@@ -1234,8 +1299,12 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
         },
 
         PrintIterationResult: function (nfvals, f, resmax, x, n, iprint) {
-            if (iprint > 1) { console.log("NFVALS = " + nfvals + "  F = " + f + "  MAXCV = " + resmax); }
-            if (iprint > 1) { console.log("X = " + this.PART(x, 1, n)); }
+            if (iprint > 1) {
+                console.log("NFVALS = " + nfvals + "  F = " + f + "  MAXCV = " + resmax);
+            }
+            if (iprint > 1) {
+                console.log("X = " + this.PART(x, 1, n));
+            }
         },
 
         ROW: function (src, rowidx) {
