@@ -956,6 +956,7 @@ define([
                 len = el.vertices.length;
 
             node.setAttributeNS(null, 'stroke', 'none');
+            node.setAttributeNS(null, 'fill-rule', 'evenodd');
             if (el.elType === 'polygonalchain') {
                 len++;
             }

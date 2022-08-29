@@ -143,7 +143,7 @@ define([
                 if (doFill) {
                     context.lineTo(shape[0][0], shape[0][1]);
                     context.closePath();
-                    context.fill();
+                    context.fill('evenodd');
                 } else {
                     context.stroke();
                 }
@@ -160,7 +160,7 @@ define([
 
             context.save();
             if (this._setColor(el, 'fill')) {
-                context.fill();
+                context.fill('evenodd');
             }
             context.restore();
         },
