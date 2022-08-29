@@ -235,7 +235,7 @@ define([
          */
         hasPoint: function (x, y, start) {
             var t, checkPoint, len, invMat, c,
-                i, tX, tY,
+                i, tX, tY, isIn,
                 res = [],
                 points, qdt,
                 steps = Type.evaluate(this.visProp.numberpointslow),
@@ -255,9 +255,19 @@ define([
                 // 'inherit'
                 prec = this.board.options.precision.hasPoint;
             }
+
+            // From now on, x,y are usrCoords
             checkPoint = new Coords(Const.COORDS_BY_SCREEN, [x, y], this.board, false);
             x = checkPoint.usrCoords[1];
             y = checkPoint.usrCoords[2];
+
+            // Handle inner points of the curve
+            if (this.bezierDegree === 1 && Type.evaluate(this.visProp.hasinnerpoints)) {
+                isIn = Geometry.windingNumber([1, x, y], this.points, true);
+                if (isIn !== 0) {
+                    return true;
+                }
+            }
 
             // We use usrCoords. Only in the final distance calculation
             // screen coords are used
@@ -276,11 +286,11 @@ define([
 
             ev_ct = Type.evaluate(this.visProp.curvetype);
             if (ev_ct === 'parameter' || ev_ct === 'polar') {
+
+                // Transform the mouse/touch coordinates
+                // back to the original position of the curve.
+                // This is needed, because we work with the function terms, not the points.
                 if (this.transformations.length > 0) {
-                    /**
-                     * Transform the mouse/touch coordinates
-                     * back to the original position of the curve.
-                     */
                     this.updateTransformMatrix();
                     invMat = Mat.inverse(this.transformMat);
                     c = Mat.matVecMult(invMat, [1, x, y]);
@@ -303,6 +313,9 @@ define([
                 }
             } else if (ev_ct === 'plot' ||
                 ev_ct === 'functiongraph') {
+
+                // Here, we can ignore transformations of the curve,
+                // since we are working directly with the points.
 
                 if (!Type.exists(start) || start < 0) {
                     start = 0;
@@ -1209,7 +1222,36 @@ define([
                 }
             }
             return [isTransformed, curve_org];
+        },
+
+        pnpoly: function(x_in, y_in, coord_type) {
+            var i, j, len,
+                x, y, crds,
+                v = this.points,
+                isIn = false;
+
+            if (coord_type === Const.COORDS_BY_USER) {
+                crds = new Coords(Const.COORDS_BY_USER, [x_in, y_in], this.board);
+                x = crds.scrCoords[1];
+                y = crds.scrCoords[2];
+            } else {
+                x = x_in;
+                y = y_in;
+            }
+
+            len = this.points.length;
+            for (i = 0, j = len - 2; i < len - 1; j = i++) {
+                if (((v[i].scrCoords[2] > y) !== (v[j].scrCoords[2] > y)) &&
+                    (x < (v[j].scrCoords[1] - v[i].scrCoords[1]) *
+                    (y - v[i].scrCoords[2]) / (v[j].scrCoords[2] - v[i].scrCoords[2]) + v[i].scrCoords[1])
+                   ) {
+                    isIn = !isIn;
+                }
+            }
+
+            return isIn;
         }
+
 
     });
 

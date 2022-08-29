@@ -4956,6 +4956,7 @@ declare namespace JXG {
     display?: 'html' | 'internal';
     dragArea?: 'all' | 'small';
     fontSize?: number;
+    fontUnit?: 'px' | 'vw' | 'vh' | 'vmax' | 'vmin' | 'rem';
     highlight?: boolean;
     highlightCssClass?: string;
     highlightCssDefaultStyle?: string;

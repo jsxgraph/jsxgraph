@@ -71,7 +71,7 @@ define([
      * @constructor
      * @type JXG.Text
      *
-     * @param {number,function_number,function_String_function} x,y,label,handler Parent elements for button elements.
+     * @param {number,function_number,function_String,function_function} x,y,label,handler Parent elements for button elements.
      *                     <p>
      *                     x and y are the coordinates of the lower left corner of the text box.
      *                      The position of the text is fixed,
@@ -205,17 +205,21 @@ define([
             //    "\nPossible parents are: [x, y, label, handler]");
         //}
 
+        // 1. Create empty button
         par = [parents[0], parents[1], '<button type="button" style="width:100%;"></button>'];
-
         t = board.create('text', par, attr);
         t.type = Type.OBJECT_TYPE_BUTTON;
 
         t.rendNodeButton = t.rendNode.childNodes[0];
         t.rendNodeButton.id = t.rendNode.id + '_button';
-        t.rendNodeButton.innerHTML = parents[2];
+        // t.rendNodeButton.innerHTML = parents[2];
 
         t.rendNodeTag = t.rendNodeButton; // Needed for unified treatment in setAttribute
         t.rendNodeTag.disabled = !!attr.disabled;
+
+        // 2. Set parents[2] (string|function) as content of the button.
+        // abstract.js selects the correct DOM element for the update
+        t.setText(parents[2]);
 
         // This sets the font-size of the button text
         t.visPropOld.fontsize = "0px";

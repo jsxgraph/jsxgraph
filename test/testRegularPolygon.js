@@ -108,5 +108,4 @@ describe("Test regular polygons", function () {
         expect(p[3].coords.scrCoords[2]).toBeCloseTo(250, 12);
 
     });
-
 });

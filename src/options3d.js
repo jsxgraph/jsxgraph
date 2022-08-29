@@ -8,9 +8,9 @@ define([
 
     JXG.extend(Options, {
 
-        infobox: {
-            strokeColor: 'black'
-        },
+        // infobox: {
+        //     strokeColor: 'black'
+        // },
 
         axes3d: {
             /**#@+

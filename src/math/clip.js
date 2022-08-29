@@ -127,114 +127,6 @@ define([
         },
 
         /**
-         * Determinant of three points in the Euclidean plane.
-         * Zero, if the points are collinear. Used to determine of a point q is left or
-         * right to a segment defined by points p1 and p2.
-         * @private
-         * @param  {Array} p1 Coordinates of the first point of the segment. Array of length 3. First coordinate is equal to 1.
-         * @param  {Array} p2 Coordinates of the second point of the segment. Array of length 3. First coordinate is equal to 1.
-         * @param  {Array} q Coordinates of the point. Array of length 3. First coordinate is equal to 1.
-         * @return {Number} Signed area of the triangle formed by these three points.
-         */
-        det: function(p1, p2, q) {
-            return (p1[1] - q[1]) * (p2[2] - q[2]) - (p2[1] - q[1]) * (p1[2] - q[2]);
-        },
-
-        /**
-         * Winding number of a point in respect to a polygon path.
-         *
-         * The point is regarded outside if the winding number is zero,
-         * inside otherwise. The algorithm tries to find degenerate cases, i.e.
-         * if the point is on the path. This is regarded as "outside".
-         * If the point is a vertex of the path, it is regarded as "inside".
-         *
-         * Implementation of algorithm 7 from "The point in polygon problem for
-         * arbitrary polygons" by Kai Hormann and Alexander Agathos, Computational Geometry,
-         * Volume 20, Issue 3, November 2001, Pages 131-144.
-         *
-         * @param  {Array} usrCoords Homogenous coordinates of the point
-         * @param  {Array} path      Array of points determining a path, i.e. the vertices of the polygon. The array elements
-         * do not have to be full points, but have to have a subobject "coords".
-         * @return {Number}          Winding number of the point. The point is
-         *                           regarded outside if the winding number is zero,
-         *                           inside otherwise.
-         */
-        windingNumber: function(usrCoords, path) {
-            var wn = 0,
-                le = path.length,
-                x = usrCoords[1],
-                y = usrCoords[2],
-                p1, p2, d, sign, i;
-
-            if (le === 0) {
-                return 0;
-            }
-
-            // Infinite points are declared outside
-            if (isNaN(x) || isNaN(y)) {
-                return 1;
-            }
-
-            // Handle the case if the point is a vertex of the path
-            if (path[0].coords.usrCoords[1] === x &&
-                path[0].coords.usrCoords[2] === y) {
-
-                // console.log('<<<<<<< Vertex 1');
-                return 1;
-            }
-
-            for (i = 0; i < le; i++) {
-                // Consider the edge from p1 = path[i] to p2 = path[i+1]
-                p1 = path[i].coords.usrCoords;
-                p2 = path[(i + 1) % le].coords.usrCoords;
-                if (p1[0] === 0 || p2[0] === 0 ||
-                    isNaN(p1[1]) || isNaN(p2[1]) ||
-                    isNaN(p1[2]) || isNaN(p2[2])) {
-
-                    continue;
-                }
-
-                if (p2[2] === y) {
-                    if (p2[1] === x) {
-                        // console.log('<<<<<<< Vertex 2');
-                        return 1;
-                    }
-                    if (p1[2] === y && ((p2[1] > x) === (p1[1] < x))) {
-                        // console.log('<<<<<<< Edge 1', p1, p2, [x, y]);
-                        return 0;
-                    }
-                }
-
-                if ((p1[2] < y) !== (p2[2] < y)) {
-                    sign = 2 * ((p2[2] > p1[2]) ? 1 : 0) - 1;
-                    if (p1[1] >= x) {
-                        if (p2[1] > x) {
-                            wn += sign;
-                        } else {
-                            d = this.det(p1, p2, usrCoords);
-                            if (d === 0) {
-                                // console.log('<<<<<<< Edge 2');
-                                return 0;
-                            }
-                            if ((d > 0) === (p2[2] > p1[2])) {
-                                wn += sign;
-                            }
-                        }
-                    } else {
-                        if (p2[1] > x) {
-                            d = this.det(p1, p2, usrCoords);
-                            if ((d > 0 + Mat.eps) === (p2[2] > p1[2])) {
-                                wn += sign;
-                            }
-                        }
-                    }
-                }
-            }
-
-            return wn;
-        },
-
-        /**
          * JavaScript object containing the intersection of two paths. Every intersection point is on one path, but
          * comes with a neighbour point having the same coordinates and being on the other path.
          *
@@ -655,9 +547,9 @@ define([
          * @private
          */
         _getPosition: function(q, p1, p2, p3) {
-            var s1 = this.det(q, p1, p2),
-                s2 = this.det(q, p2, p3),
-                s3 = this.det(p1, p2, p3);
+            var s1 = Geometry.det3p(q, p1, p2),
+                s2 = Geometry.det3p(q, p2, p3),
+                s3 = Geometry.det3p(p1, p2, p3);
 
             // Left turn
             if (s3 >= 0) {
@@ -687,7 +579,7 @@ define([
          */
         _classifyDegenerateIntersections: function(P) {
             var Pp, Pm, Qp, Qm, Q, side,
-                cnt, tmp,
+                cnt, tmp, det,
                 oppositeDir,
                 s1, s2, s3, s4,
                 DEBUG = false;
@@ -695,6 +587,7 @@ define([
             if (DEBUG) {
                 console.log("\n-------------- _classifyDegenerateIntersections()", (Type.exists(P.data))?P.data.pathname:' ');
             }
+            det = Geometry.det3p;
             cnt = 0;
             P._tours = 0;
             while (true) {
@@ -737,20 +630,20 @@ define([
                         console.log("Pp", this._getPosition(Pp,  Qm, Q.coords.usrCoords, Qp));
                     }
 
-                    s1 = this.det(P.coords.usrCoords, Pm, Qm);
-                    s2 = this.det(P.coords.usrCoords, Pp, Qp);
-                    s3 = this.det(P.coords.usrCoords, Pm, Qp);
-                    s4 = this.det(P.coords.usrCoords, Pp, Qm);
+                    s1 = det(P.coords.usrCoords, Pm, Qm);
+                    s2 = det(P.coords.usrCoords, Pp, Qp);
+                    s3 = det(P.coords.usrCoords, Pm, Qp);
+                    s4 = det(P.coords.usrCoords, Pp, Qm);
 
                     if (s1 === 0 && s2 === 0 && s3 === 0 && s4 === 0) {
                         P.coords.usrCoords[1] *= 1 + Math.random() * Mat.eps;
                         P.coords.usrCoords[2] *= 1 + Math.random() * Mat.eps;
                         Q.coords.usrCoords[1] = P.coords.usrCoords[1];
                         Q.coords.usrCoords[2] = P.coords.usrCoords[2];
-                        s1 = this.det(P.coords.usrCoords, Pm, Qm);
-                        s2 = this.det(P.coords.usrCoords, Pp, Qp);
-                        s3 = this.det(P.coords.usrCoords, Pm, Qp);
-                        s4 = this.det(P.coords.usrCoords, Pp, Qm);
+                        s1 = det(P.coords.usrCoords, Pm, Qm);
+                        s2 = det(P.coords.usrCoords, Pp, Qp);
+                        s3 = det(P.coords.usrCoords, Pm, Qp);
+                        s4 = det(P.coords.usrCoords, Pp, Qm);
                         if (DEBUG) {
                             console.log("Random shift", P.coords.usrCoords);
                             console.log(s1, s2, s3, s4, s2 === 0);
@@ -952,14 +845,14 @@ define([
          */
         _handleFullyDegenerateCase: function(S, C, board) {
             var P, Q, l, M, crds, q1, q2, node,
-                i, j, le, le2, is_on_Q,
+                i, j, leP, leQ, is_on_Q, tmp,
                 is_fully_degenerated,
                 arr = [S, C];
 
             for (l = 0; l < 2; l++) {
                 P = arr[l];
-                le = P.length;
-                for (i = 0, is_fully_degenerated = true; i < le; i++) {
+                leP = P.length;
+                for (i = 0, is_fully_degenerated = true; i < leP; i++) {
                     if (!P[i].intersection) {
                         is_fully_degenerated = false;
                         break;
@@ -969,22 +862,23 @@ define([
                 if (is_fully_degenerated) {
                     // All nodes of P are also on the other path.
                     Q = arr[(l + 1) % 2];
-                    le2 = Q.length;
+                    leQ = Q.length;
 
                     // We search for a midpoint of one edge of P which is not the other path and
                     // we add that midpoint to P.
-                    for (i = 0; i < le; i++) {
+                    for (i = 0; i < leP; i++) {
                         q1 = P[i].coords.usrCoords;
-                        q2 = P[(i + 1) % le].coords.usrCoords;
-                        // M id the midpoint
+                        q2 = P[i]._next.coords.usrCoords;
+
+                        // M is the midpoint
                         M = [(q1[0] +  q2[0]) * 0.5,
                              (q1[1] +  q2[1]) * 0.5,
                              (q1[2] +  q2[2]) * 0.5];
 
                         // Test if M is on path Q. If this is not the case,
                         // we take M as additional point of P.
-                        for (j = 0, is_on_Q = false; j < le2; j++) {
-                            if (Math.abs(this.det(Q[j].coords.usrCoords, Q[(j + 1) % le2].coords.usrCoords, M)) < Mat.eps) {
+                        for (j = 0, is_on_Q = false; j < leQ; j++) {
+                            if (Math.abs(Geometry.det3p(Q[j].coords.usrCoords, Q[(j + 1) % leQ].coords.usrCoords, M)) < Mat.eps) {
                                 is_on_Q = true;
                                 break;
                             }
@@ -998,10 +892,14 @@ define([
                                     coords: crds,
                                     elementClass: Const.OBJECT_CLASS_POINT
                                 };
+
+                            tmp = P[i]._next;
                             P[i]._next = node;
                             node._prev = P[i];
-                            P[(i + 1) % le]._prev = node;
-                            node._next = P[(i + 1) % le];
+                            node._next = tmp;
+                            tmp._prev = node;
+
+
                             if (P[i]._end) {
                                 P[i]._end = false;
                                 node._end = true;
@@ -1022,12 +920,14 @@ define([
                 }
                 P = P._next;
             }
-            if (this.windingNumber(P.coords.usrCoords, path) % 2 === 0) {
+            if (Geometry.windingNumber(P.coords.usrCoords, path) === 0) {
                 // Outside
                 status = 'entry';
+                // console.log(P.coords.usrCoords, ' is outside')
             } else {
                 // Inside
                 status = 'exit';
+                // console.log(P.coords.usrCoords, ' is inside')
             }
 
             return [P, status];
@@ -1477,10 +1377,10 @@ define([
             }
 
             // Test if one curve is contained by the other
-            if (this.windingNumber(P.coords.usrCoords, C) === 0) {
+            if (Geometry.windingNumber(P.coords.usrCoords, C) === 0) {
                 // P is outside of C:
                 // Either S is disjoint from C or C is inside of S
-                if (this.windingNumber(Q.coords.usrCoords, S) !== 0) {
+                if (Geometry.windingNumber(Q.coords.usrCoords, S) !== 0) {
                     // C is inside of S, i.e. C subset of S
 
                     if (clip_type === 'union') {

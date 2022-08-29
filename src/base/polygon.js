@@ -80,6 +80,14 @@ define([
         this.vertices = [];
         for (i = 0; i < vertices.length; i++) {
             this.vertices[i] = this.board.select(vertices[i]);
+
+            // The _is_new flag is replaced by _is_new_pol.
+            // Otherwise, the polygon would disappear if the last border element
+            // is removed (and the point has been provided by coordinates)
+            if (this.vertices[i]._is_new) {
+                delete this.vertices[i]._is_new;
+                this.vertices[i]._is_new_pol = true;
+            }
         }
 
         // Close the polygon
@@ -127,9 +135,9 @@ define([
         // - add  points (supplied as coordinate arrays by the user and created by Type.providePoints) as children to the polygon
         for (i = 0; i < this.vertices.length - 1; i++) {
             p = this.board.select(this.vertices[i]);
-            if (Type.exists(p._is_new)) {
+            if (Type.exists(p._is_new_pol)) {
                 this.addChild(p);
-                delete p._is_new;
+                delete p._is_new_pol;
             } else {
                 p.addChild(this);
             }
@@ -165,10 +173,7 @@ define([
     JXG.extend(JXG.Polygon.prototype, /** @lends JXG.Polygon.prototype */ {
 
         /**
-         * Decides if a point (x,y) is inside of the polygon.
-         * Implements W. Randolf Franklin's pnpoly method.
-         *
-         * See <a href="https://wrf.ecse.rpi.edu/Research/Short_Notes/pnpoly.html">https://wrf.ecse.rpi.edu/Research/Short_Notes/pnpoly.html</a>.
+         * Wrapper for JXG.Math.Geometry.pnpoly.
          *
          * @param {Number} x_in x-coordinate (screen or user coordinates)
          * @param {Number} y_in y-coordinate (screen or user coordinates)
@@ -176,7 +181,9 @@ define([
          *   Possible values are <b>JXG.COORDS_BY_USER</b> and <b>JXG.COORDS_BY_SCREEN</b>.
          *   Default value is JXG.COORDS_BY_SCREEN
          *
-         * @returns {Boolean} if (x,y) is inside of the polygon.
+         * @returns {Boolean} if (x_in, y_in) is inside of the polygon.
+         * @see JXG.Math.Geometry#pnpoly
+         *
          * @example
          * var pol = board.create('polygon', [[-1,2], [2,2], [-1,4]]);
          * var p = board.create('point', [4, 3]);
@@ -202,31 +209,7 @@ define([
          *
          */
         pnpoly: function(x_in, y_in, coord_type) {
-            var i, j, len,
-                x, y, crds,
-                v = this.vertices,
-                isIn = false;
-
-            if (coord_type === Const.COORDS_BY_USER) {
-                crds = new Coords(Const.COORDS_BY_USER, [x_in, y_in], this.board);
-                x = crds.scrCoords[1];
-                y = crds.scrCoords[2];
-            } else {
-                x = x_in;
-                y = y_in;
-            }
-
-            len = this.vertices.length;
-            for (i = 0, j = len - 2; i < len - 1; j = i++) {
-                if (((v[i].coords.scrCoords[2] > y) !== (v[j].coords.scrCoords[2] > y)) &&
-                    (x < (v[j].coords.scrCoords[1] - v[i].coords.scrCoords[1]) *
-                    (y - v[i].coords.scrCoords[2]) / (v[j].coords.scrCoords[2] - v[i].coords.scrCoords[2]) + v[i].coords.scrCoords[1])
-                   ) {
-                    isIn = !isIn;
-                }
-            }
-
-            return isIn;
+            return Geometry.pnpoly(x_in, y_in, this.vertices, coord_type);
         },
 
         /**
@@ -590,9 +573,14 @@ define([
          *
          */
         addPoints: function (p) {
-            var args = Array.prototype.slice.call(arguments);
+            var idx, args = Array.prototype.slice.call(arguments);
 
-            return this.insertPoints.apply(this, [this.vertices.length - 2].concat(args));
+            if (this.elType === 'polygonalchain') {
+                idx = this.vertices.length - 1;
+            } else {
+                idx = this.vertices.length - 2;
+            }
+            return this.insertPoints.apply(this, [idx].concat(args));
         },
 
         /**
@@ -630,38 +618,65 @@ define([
          *
          */
         insertPoints: function (idx, p) {
-            var i, le;
+            var i, le, last, start, q;
 
             if (arguments.length === 0) {
                 return this;
             }
 
+            last = this.vertices.length - 1;
+            if (this.elType === 'polygon') {
+                last--;
+            }
 
-            if (idx < -1 || idx > this.vertices.length - 2) {
+            // Wrong insertion index, get out of here
+            if (idx < -1 || idx > last) {
                 return this;
             }
 
             le = arguments.length - 1;
             for (i = 1; i < le + 1; i++) {
-                this.vertices.splice(idx + i, 0,
-                    Type.providePoints(this.board, [arguments[i]], {}, 'polygon', ['vertices'])[0]
-                );
-            }
-            if (idx === -1) {
-                this.vertices[this.vertices.length - 1] = this.vertices[0];
-            }
-            if (this.withLines) {
-                if (idx < 0) {
-                    this.borders[this.borders.length - 1].point2 = this.vertices[this.vertices.length - 1];
-                } else {
-                    this.borders[idx].point2 = this.vertices[idx + 1];
+                q = Type.providePoints(this.board, [arguments[i]], {}, 'polygon', ['vertices'])[0];
+                if (q._is_new) {
+                    // Add the point as child of the polygon, but not of the borders.
+                    this.addChild(q);
+                    delete q._is_new;
                 }
-                for (i = idx + 1; i < idx + 1 + le; i++) {
+                this.vertices.splice(idx + i, 0, q);
+            }
+
+            if (this.withLines) {
+                start = idx + 1;
+                if (this.elType === 'polygon') {
+                    if (idx < 0) {
+                        // Add point(s) in the front
+                        this.vertices[this.vertices.length - 1] = this.vertices[0];
+                        this.borders[this.borders.length - 1].point2 = this.vertices[this.vertices.length - 1];
+                    } else {
+                        // Insert point(s) (middle or end)
+                        this.borders[idx].point2 = this.vertices[start];
+                    }
+                } else {
+                    // Add point(s) in the front: do nothing
+                    // Else:
+                    if (idx >= 0) {
+                        if (idx < this.borders.length) {
+                            // Insert point(s) in the middle
+                            this.borders[idx].point2 = this.vertices[start];
+                        } else {
+                            // Add point at the end
+                            start = idx;
+                        }
+                    }
+                }
+                for (i = start; i < start + le; i++) {
                     this.borders.splice(i, 0,
                         this.board.create('segment', [this.vertices[i], this.vertices[i + 1]], this.attr_line)
                     );
                 }
             }
+            this.inherits = [];
+            this.inherits.push(this.vertices, this.borders);
             this.board.update();
 
             return this;
@@ -673,7 +688,8 @@ define([
          * @returns {JXG.Polygon} Reference to the polygon
          */
         removePoints: function (p) {
-            var i, j, idx, nvertices = [], nborders = [],
+            var i, j, j0, idx, firstPoint,
+                nvertices = [], nborders = [],
                 nidx = [], partition = [];
 
             // Partition:
@@ -684,8 +700,11 @@ define([
             // this gives us the borders, that can be removed and the borders we have to create.
 
 
-            // Remove the last vertex which is identical to the first
-            this.vertices = this.vertices.slice(0, this.vertices.length - 1);
+            // In case of polygon: remove the last vertex from the list of vertices since
+            // it is identical to the first
+            if (this.elType === 'polygon') {
+                firstPoint = this.vertices.pop();
+            }
 
             // Collect all valid parameters as indices in nidx
             for (i = 0; i < arguments.length; i++) {
@@ -693,10 +712,17 @@ define([
                 if (Type.isPoint(idx)) {
                     idx = this.findPoint(idx);
                 }
-
                 if (Type.isNumber(idx) && idx > -1 && idx < this.vertices.length && Type.indexOf(nidx, idx) === -1) {
                     nidx.push(idx);
                 }
+            }
+
+            if (nidx.length === 0) {
+                // Wrong index, get out of here
+                if (this.elType === 'polygon') {
+                    this.vertices.push(firstPoint);
+                }
+                return this;
             }
 
             // Remove the polygon from each removed point's children
@@ -709,7 +735,7 @@ define([
             nvertices = this.vertices.slice();
             nborders = this.borders.slice();
 
-            // Initialize the partition
+            // Initialize the partition with an array containing the last point to be removed
             if (this.withLines) {
                 partition.push([nidx[nidx.length - 1]]);
             }
@@ -719,7 +745,9 @@ define([
             for (i = nidx.length - 1; i > -1; i--) {
                 nvertices[nidx[i]] = -1;
 
-                if (this.withLines && (nidx[i] - 1 > nidx[i - 1])) {
+                // Find gaps between the list of points to be removed.
+                // In this case a new partition is added.
+                if (this.withLines && nidx.length > 1 && (nidx[i] - 1 > nidx[i - 1])) {
                     partition[partition.length - 1][1] = nidx[i];
                     partition.push([nidx[i - 1]]);
                 }
@@ -737,7 +765,11 @@ define([
                     this.vertices.push(nvertices[i]);
                 }
             }
-            if (this.vertices[this.vertices.length - 1].id !== this.vertices[0].id) {
+
+            // Close the polygon again
+            if (this.elType === 'polygon' &&
+                this.vertices.length > 1 &&
+                this.vertices[this.vertices.length - 1].id !== this.vertices[0].id) {
                 this.vertices.push(this.vertices[0]);
             }
 
@@ -747,23 +779,28 @@ define([
                     for (j = partition[i][1] - 1; j < partition[i][0] + 1; j++) {
                         // special cases
                         if (j < 0) {
-                            // first vertex is removed, so the last border has to be removed, too
-                            j = 0;
-                            this.board.removeObject(this.borders[nborders.length - 1]);
-                            nborders[nborders.length - 1] = -1;
-                        } else if (j > nborders.length - 1) {
-                            j = nborders.length - 1;
+                            if (this.elType === 'polygon') {
+                                // First vertex is removed, so the last border has to be removed, too
+                                this.board.removeObject(this.borders[nborders.length - 1]);
+                                nborders[nborders.length - 1] = -1;
+                            }
+                        } else if (j < nborders.length) {
+                            this.board.removeObject(this.borders[j]);
+                            nborders[j] = -1;
                         }
-
-                        this.board.removeObject(this.borders[j]);
-                        nborders[j] = -1;
                     }
 
-                    // only create the new segment if it's not the closing border. the closing border is getting a special treatment at the end
-                    // the if clause is newer than the min/max calls inside createSegment; i'm sure this makes the min/max calls obsolete, but
-                    // just to be sure...
+                    // Only create the new segment if it's not the closing border.
+                    // The closing border is getting a special treatment at the end.
                     if (partition[i][1] !== 0 && partition[i][0] !== nvertices.length - 1) {
-                        nborders[partition[i][0] - 1] = this.board.create('segment', [nvertices[Math.max(partition[i][1] - 1, 0)], nvertices[Math.min(partition[i][0] + 1, this.vertices.length - 1)]], this.attr_line);
+                        // nborders[partition[i][0] - 1] = this.board.create('segment', [
+                        //             nvertices[Math.max(partition[i][1] - 1, 0)],
+                        //             nvertices[Math.min(partition[i][0] + 1, this.vertices.length - 1)]
+                        //         ], this.attr_line);
+                        nborders[partition[i][0] - 1] = this.board.create('segment', [
+                            nvertices[partition[i][1] - 1],
+                            nvertices[partition[i][0] + 1]
+                        ], this.attr_line);
                     }
                 }
 
@@ -775,10 +812,16 @@ define([
                 }
 
                 // if the first and/or the last vertex is removed, the closing border is created at the end.
-                if (partition[0][1] === this.vertices.length - 1 || partition[partition.length - 1][1] === 0) {
-                    this.borders.push(this.board.create('segment', [this.vertices[0], this.vertices[this.vertices.length - 2]], this.attr_line));
+                if (this.elType === 'polygon' &&
+                    this.vertices.length > 2 &&  // Avoid trivial case of polygon with 1 vertex
+                    (partition[0][1] === this.vertices.length - 1 || partition[partition.length - 1][1] === 0)) {
+                    this.borders.push(this.board.create('segment',
+                            [this.vertices[0], this.vertices[this.vertices.length - 2]],
+                            this.attr_line));
                 }
             }
+            this.inherits = [];
+            this.inherits.push(this.vertices, this.borders);
 
             this.board.update();
 
@@ -1024,7 +1067,6 @@ define([
         intersect: function(polygon) {
             return this.sutherlandHodgman(polygon);
         }
-
 
     });
 

@@ -732,7 +732,7 @@ define([
             var x = Math.abs(val),
                 str;
 
-            if (x > 0.1) {
+            if (x >= 0.1) {
                 str = this.toFixed(val, 2);
             } else if (x >= 0.01) {
                 str = this.toFixed(val, 4);
