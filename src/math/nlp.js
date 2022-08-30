@@ -97,18 +97,8 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
     JXG.Math.Nlp = {
 
         arr: function (n) {
-            var a = new Array(n),
-                i;
-
-            if (Type.exists(a.fill)) {
-                a.fill(0.0, 0, n);
-            } else {
-                for (i = 0; i < n; i++) {
-                    a[i] = 0.0;
-                }
-            }
-
-            return a;
+            // Is 0 initialized
+            return new Float64Array(n);
         },
 
         arr2: function (n, m) {
