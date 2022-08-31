@@ -330,7 +330,8 @@ define([
              * controls if the icon is shown.
              * The following attribute(s) can be set:
              * <ul>
-             *  <li>symbol (String): Unicode symbol which is shown in the navigation bar. Default: '\u25a1'
+             *  <li>symbol (String): Unicode symbol which is shown in the navigation bar.  Default: svg code for '\u26f6', other
+             * possibilities are the unicode symbols '\u26f6' and '\u25a1'. However, '\u26f6' is not supported by MacOS and iOS.
              *  <li>id (String): Id of the HTML element which is brought to full screen or null if the JSXgraph div is taken.
              * It may be an outer div element, e.g. if the old aspect ratio trick is used. Default: null, i.e. use the JSXGraph div.
              * </ul>
@@ -362,12 +363,14 @@ define([
              * </script><pre>
              *
              * @name JXG.Board#fullscreen
+             * @default svg code
              * @see JXG.Board#showFullscreen
              * @see JXG.AbstractRenderer#drawZoomBar
              * @type Object
              */
             fullscreen: {
-                symbol: '\u25a1', // '\u26f6' (not supported by MacOS), // '\u25a1'
+                symbol: '<svg height="1em" width="1em" version="1.1" viewBox="10 10 18 18"><path fill="#666" d="m 10,16 2,0 0,-4 4,0 0,-2 L 10,10 l 0,6 0,0 z"></path><path fill="#666" d="m 20,10 0,2 4,0 0,4 2,0 L 26,10 l -6,0 0,0 z"></path><path fill="#666" d="m 24,24 -4,0 0,2 L 26,26 l 0,-6 -2,0 0,4 0,0 z"></path><path fill="#666" d="M 12,20 10,20 10,26 l 6,0 0,-2 -4,0 0,-4 0,0 z"></path></svg>', 
+                    // '\u25a1', // '\u26f6' (not supported by MacOS),
                 id: null
             },
 

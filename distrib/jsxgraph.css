@@ -108,6 +108,12 @@
     background: rgba(184, 184, 184, 0.5);
 }
 
+.JXG_navigation_button svg {
+    top: 0.2em;
+    position: relative;
+    padding: 0;
+}
+
 /* CSS rules for the wrapping div in fullscreen mode */
 
 .JXG_wrap_private:-moz-full-screen {

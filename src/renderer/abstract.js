@@ -1894,7 +1894,7 @@ define([
                     id = id || '';
 
                     button = doc.createElement('span');
-                    button.appendChild(doc.createTextNode(label));
+                    button.innerHTML = label;  // button.appendChild(doc.createTextNode(label));
 
                     // Style settings are superseded by adding the CSS class below
                     button.style.paddingLeft = '7px';
