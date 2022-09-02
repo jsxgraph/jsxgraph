@@ -1732,6 +1732,8 @@ define([
 
                         if (js) {
                             e = '$jc$.mergeAttributes(' + list.join(', ') + ')';
+                        } else {
+                            e = list.join(', ');
                         }
                     }
                     node.children[0].withProps = !!node.children[2];
@@ -1739,7 +1741,7 @@ define([
                     for (i = 0; i < node.children[1].length; i++) {
                         list.push(this.compile(node.children[1][i], js));
                     }
-                    ret = this.compile(node.children[0], js) + '(' + list.join(', ') + (node.children[2] && js ? ', ' + e : '') + ')' + (node.children[2] && !js ? e : '');
+                    ret = this.compile(node.children[0], js) + '(' + list.join(', ') + (node.children[2] && js ? ', ' + e : '') + ')' + (node.children[2] && !js ? ' ' + e : '');
                     if (js) {
                         // Inserting a newline here allows simulataneously
                         // - procedural calls like Q.moveTo(...); and
@@ -1900,7 +1902,11 @@ define([
             }
 
             if (node.needsBrackets) {
-                ret = '{\n' + ret + '\n}\n';
+                if (js) {
+                    ret = '{\n' + ret + '\n}\n';
+                } else {
+                    ret = '<< ' + ret + ' >>';
+                }
             }
 
             return ret;
