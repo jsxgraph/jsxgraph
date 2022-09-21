@@ -817,9 +817,9 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                 scale = Math.min(r_w, r_h);
 
             // Adapt vshift and scale for landscape on tablets
+            // Landscape on iOS: it returns 'landscape', but still width < height.
             if (window.matchMedia && window.matchMedia('(orientation:landscape)').matches &&
                 window.screen.width < window.screen.height) {
-                // Landscape on iOS: it returns 'landscape', but still width < height.
                 r_w = window.screen.height / width;
                 r_h = window.screen.width / height;
                 scale = Math.min(r_w, r_h);
@@ -848,7 +848,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          *
          */
         scaleJSXGraphDiv: function (wrap_id, inner_id, scale, vshift, doc) {
-            var len = doc.styleSheets.length, style,
+            var len = doc.styleSheets.length, style, rule,
 
                 pseudo_keys = [':fullscreen', ':-webkit-full-screen', ':-moz-full-screen', ':-ms-fullscreen'],
                 len_pseudo = pseudo_keys.length, i,
@@ -880,7 +880,12 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
             // Install a CSS rule to center the JSXGraph div at the first position of the list.
             for (i = 0; i < len_pseudo; i++) {
                 try {
-                    doc.styleSheets[len - 1].insertRule('#' + wrap_id + pseudo_keys[i] + ' #' + inner_id + rule_inner, 0);
+                    rule = '#' + wrap_id + pseudo_keys[i] + ' #' + inner_id + rule_inner;
+
+                    // See https://areknawo.com/css-media-rule-in-javascript/ for media-queries & JavaScript
+                    // rule = '@media all and (orientation:landscape) {' + rule + '}';
+
+                    doc.styleSheets[len - 1].insertRule(rule, 0);
                     break;
                 } catch (err) {
                     // console.log('JXG.scaleJSXGraphDiv: Could not add CSS rule "' + pseudo_keys[i] + '".');
