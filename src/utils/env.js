@@ -793,53 +793,121 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
             window.setTimeout(timerFun, 1);
         },
 
-        /**
-         * Calculate the scale factor and vertical shift for the JSXGraph div
-         * in full screen mode.
-         *
-         * @param {Object} obj Reference to a DOM node.
-         * @returns Object {scale: number, vshift: number}
-         * @see JXG.Board#fullscreenListener
-         * @private
-         */
-        _getScaleFactors: function (node) {
-            var width = node.getBoundingClientRect().width,
-                height = node.getBoundingClientRect().height,
+        // /**
+        //  * Calculate the scale factor and vertical shift for the JSXGraph div
+        //  * in full screen mode.
+        //  *
+        //  * @param {Object} obj Reference to a DOM node.
+        //  * @returns Object {scale: number, vshift: number}
+        //  * @see JXG.Board#fullscreenListener
+        //  * @private
+        //  */
+        // _getScaleFactors: function (node) {
+        //     var width = node.getBoundingClientRect().width,
+        //         height = node.getBoundingClientRect().height,
 
-                // Determine the maximum scale factor.
-                r_w = window.screen.width / width,
-                r_h = window.screen.height / height,
+        //         // Determine the maximum scale factor.
+        //         r_w = window.screen.width / width,
+        //         r_h = window.screen.height / height,
 
-                // Determine the vertical shift to place the div in the center of the screen
-                vshift = (window.screen.height - height) * 0.5,
+        //         // Determine the vertical shift to place the div in the center of the screen
+        //         vshift = (window.screen.height - height) * 0.5,
 
-                // Scaling factor: if not supplied, it's taken as large as possible
-                scale = Math.min(r_w, r_h);
+        //         // Scaling factor: if not supplied, it's taken as large as possible
+        //         scale = Math.min(r_w, r_h);
 
-            // Adapt vshift and scale for landscape on tablets
-            if (window.matchMedia && window.matchMedia('(orientation:landscape)').matches &&
-                window.screen.width < window.screen.height) {
-                // Landscape on iOS: it returns 'landscape', but still width < height.
-                r_w = window.screen.height / width;
-                r_h = window.screen.width / height;
-                scale = Math.min(r_w, r_h);
-                vshift = (window.screen.width - height) * 0.5;
-            }
-            scale *= 0.85;
+        //     // console.log(window.devicePixelRatio, window.screen.width, window.innerWidth, document.body.clientWidth);
 
-            return { scale: scale, vshift: vshift, width: width };
-        },
+        //     // Adapt vshift and scale for landscape on tablets
+        //     // Landscape on iOS: it returns 'landscape', but still width < height.
+        //     if (window.matchMedia && window.matchMedia('(orientation:landscape)').matches &&
+        //         window.screen.width < window.screen.height) {
+        //         r_w = window.screen.height / width;
+        //         r_h = window.screen.width / height;
+        //         scale = Math.min(r_w, r_h);
+        //         vshift = (window.screen.width - height) * 0.5;
+        //     }
+        //     scale *= 0.85;
+
+        //     return { scale: scale, vshift: vshift, width: width, ratio: width / height };
+        // },
+
+        // /**
+        //  * Scale and vertically shift a DOM element (usually a JSXGraph div)
+        //  * inside of a parent DOM
+        //  * element which is set to fullscreen.
+        //  * This is realized with a CSS transformation.
+        //  *          *
+        //  * @param  {String} wrap_id  id of the parent DOM element which is in fullscreen mode
+        //  * @param  {String} inner_id id of the DOM element which is scaled and shifted
+        //  * @param  {Number} scale    Scaling factor
+        //  * @param  {Number} vshift   Vertical shift (in pixel)
+        //  * @param  {Object} doc      document object or shadow root
+        //  *
+        //  * @private
+        //  * @see JXG.Board#toFullscreen
+        //  * @see JXG.Board#fullscreenListener
+        //  *
+        //  */
+        // scaleJSXGraphDivOld: function (wrap_id, inner_id, scale, vshift, doc) {
+        //     var len = doc.styleSheets.length, style, rule, w, h, b, wi, hi, bi,
+
+        //         pseudo_keys = [':fullscreen', ':-webkit-full-screen', ':-moz-full-screen', ':-ms-fullscreen'],
+        //         len_pseudo = pseudo_keys.length, i,
+
+        //         // CSS rules to center the inner div horizontally and vertically.
+        //         rule_inner = '{margin:0 auto;transform:matrix(' + scale + ',0,0,' + scale + ',0,' + vshift + ');}',
+
+        //         // A previously installed CSS rule to center the JSXGraph div has to
+        //         // be searched and removed again.
+        //         regex = new RegExp('.*#' + wrap_id + ':.*full.*screen.*#' + inner_id + '.*auto;.*transform:.*matrix');
+
+        //     if (len === 0) {
+        //         // In case there is not a single CSS rule defined at all.
+        //         style = document.createElement('style');
+        //         // WebKit hack :(
+        //         style.appendChild(document.createTextNode(''));
+        //         // Add the <style> element to the page
+        //         doc.appendChild(style);
+        //         len = doc.styleSheets.length;
+        //     }
+
+        //     // Remove a previously installed CSS rule.
+        //     if (doc.styleSheets[len - 1].cssRules.length > 0 &&
+        //         regex.test(doc.styleSheets[len - 1].cssRules[0].cssText) &&
+        //         doc.styleSheets[len - 1].deleteRule) {
+        //             doc.styleSheets[len - 1].deleteRule(0);
+        //     }
+
+        //     // Install a CSS rule to center the JSXGraph div at the first position of the list.
+        //     for (i = 0; i < len_pseudo; i++) {
+        //         try {
+        //             rule = '#' + wrap_id + pseudo_keys[i] + ' #' + inner_id + rule_inner;
+
+        //             // See https://areknawo.com/css-media-rule-in-javascript/ for media-queries & JavaScript
+        //             // rule = '@media all and (orientation:landscape) {' + rule + '}';
+
+        //             doc.styleSheets[len - 1].insertRule(rule, 0);
+        //             break;
+        //         } catch (err) {
+        //             // console.log('JXG.scaleJSXGraphDiv: Could not add CSS rule "' + pseudo_keys[i] + '".');
+        //             // console.log('One possible reason could be that the id of the JSXGraph container does not start with a letter.');
+        //         }
+        //     }
+        //     if (i === len_pseudo) {
+        //         console.log('JXG.scaleJSXGraphDiv: Could not add any CSS rule.');
+        //         console.log('One possible reason could be that the id of the JSXGraph container does not start with a letter.');
+        //     }
+        // },
 
         /**
          * Scale and vertically shift a DOM element (usually a JSXGraph div)
          * inside of a parent DOM
          * element which is set to fullscreen.
          * This is realized with a CSS transformation.
-         *          *
+         *
          * @param  {String} wrap_id  id of the parent DOM element which is in fullscreen mode
          * @param  {String} inner_id id of the DOM element which is scaled and shifted
-         * @param  {Number} scale    Scaling factor
-         * @param  {Number} vshift   Vertical shift (in pixel)
          * @param  {Object} doc      document object or shadow root
          *
          * @private
@@ -847,18 +915,36 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          * @see JXG.Board#fullscreenListener
          *
          */
-        scaleJSXGraphDiv: function (wrap_id, inner_id, scale, vshift, doc) {
-            var len = doc.styleSheets.length, style,
+         scaleJSXGraphDiv: function (wrap_id, inner_id, doc) {
+            var len = doc.styleSheets.length, style, rule, w, h, b, wi, hi, bi,
+                scale_l, vshift_l, // scale_p, vshift_p,
+                f = 0.85,
+                rule_inner_l, // rule_inner_p,
 
                 pseudo_keys = [':fullscreen', ':-webkit-full-screen', ':-moz-full-screen', ':-ms-fullscreen'],
                 len_pseudo = pseudo_keys.length, i,
 
-                // CSS rules to center the inner div horizontally and vertically.
-                rule_inner = '{margin:0 auto;transform:matrix(' + scale + ',0,0,' + scale + ',0,' + vshift + ');}',
-
                 // A previously installed CSS rule to center the JSXGraph div has to
                 // be searched and removed again.
                 regex = new RegExp('.*#' + wrap_id + ':.*full.*screen.*#' + inner_id + '.*auto;.*transform:.*matrix');
+
+            b = doc.getElementById(wrap_id).getBoundingClientRect();
+            h = b.height;
+            w = b.width;
+
+            bi = doc.getElementById(inner_id).getBoundingClientRect();
+            hi = bi.height;
+            wi = bi.width;
+
+            if (wi / hi >= w / h) {
+                scale_l = f * w / wi;
+            } else {
+                scale_l = f * h / hi;
+            }
+            vshift_l = (h - hi) * 0.5;
+
+            // CSS rules to center the inner div horizontally and vertically.
+            rule_inner_l = '{margin:0 auto;transform:matrix(' + scale_l + ',0,0,' + scale_l + ',0,' + vshift_l + ');}';
 
             if (len === 0) {
                 // In case there is not a single CSS rule defined at all.
@@ -880,7 +966,10 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
             // Install a CSS rule to center the JSXGraph div at the first position of the list.
             for (i = 0; i < len_pseudo; i++) {
                 try {
-                    doc.styleSheets[len - 1].insertRule('#' + wrap_id + pseudo_keys[i] + ' #' + inner_id + rule_inner, 0);
+                    rule = '#' + wrap_id + pseudo_keys[i] + ' #' + inner_id + rule_inner_l;
+                    // rule = '@media all and (orientation:landscape) {' + rule + '}';
+                    doc.styleSheets[len - 1].insertRule(rule, 0);
+
                     break;
                 } catch (err) {
                     // console.log('JXG.scaleJSXGraphDiv: Could not add CSS rule "' + pseudo_keys[i] + '".');
@@ -892,6 +981,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                 console.log('One possible reason could be that the id of the JSXGraph container does not start with a letter.');
             }
         }
+
     });
 
     return JXG;
