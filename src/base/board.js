@@ -6006,7 +6006,7 @@ define([
          */
         toFullscreen: function (id) {
             var wrap_id, wrap_node, inner_node,
-                doc = this.document;
+                doc = this.document, fullscreenElement;
 
             id = id || this.container;
             this._fullscreen_inner_id = id;
@@ -6034,14 +6034,24 @@ define([
                 wrap_node.mozRequestFullScreen ||
                 wrap_node.msRequestFullscreen;
 
-            if (doc.fullscreenElement === null) {
+            if (doc.fullscreenElement !== undefined) {
+                fullscreenElement = doc.fullscreenElement;
+            } else if (doc.webkitFullscreenElement !== undefined) {
+                fullscreenElement = doc.webkitFullscreenElement;
+            } else {
+                fullscreenElement = doc.msFullscreenElement;
+            }
+            if (fullscreenElement === null) {
                 // Start fullscreen mode
                 if (wrap_node.requestFullscreen) {
                     wrap_node.requestFullscreen();
                 }
             } else {
-                // Leave fullscreen mode (e.g. when clicking on the icon)
-                document.exitFullscreen();
+                if (Type.exists(document.exitFullscreen)) {
+                    document.exitFullscreen();
+                } else if (Type.exists(document.webkitExitFullscreen)) {
+                    document.webkitExitFullscreen();
+                }
             }
 
             return this;
@@ -6055,7 +6065,7 @@ define([
          * @param  {Object} evt fullscreen event object (unused)
          */
         fullscreenListener: function (evt) {
-            var res, inner_id, inner_node,
+            var res, inner_id, inner_node, fullscreenElement,
                 doc = this.document;
 
             inner_id = this._fullscreen_inner_id;
@@ -6063,16 +6073,19 @@ define([
                 return;
             }
 
-            doc.fullscreenElement = doc.fullscreenElement ||
-                    doc.webkitFullscreenElement ||
-                    doc.mozFullscreenElement ||
-                    doc.msFullscreenElement;
+            if (doc.fullscreenElement !== undefined) {
+                fullscreenElement = doc.fullscreenElement;
+            } else if (doc.webkitFullscreenElement !== undefined) {
+                fullscreenElement = doc.webkitFullscreenElement;
+            } else {
+                fullscreenElement = doc.msFullscreenElement;
+            }
 
             inner_node = doc.getElementById(inner_id);
             // If full screen mode is started we have to remove CSS margin around the JSXGraph div.
             // Otherwise, the positioning of the fullscreen div will be false.
             // When leaving the fullscreen mode, the margin is put back in.
-            if (doc.fullscreenElement) {
+            if (fullscreenElement) {
                 // Just entered fullscreen mode
 
                 // Get the data computed in board.toFullscreen()
@@ -6084,7 +6097,7 @@ define([
                 // Further, the CSS margin has to be removed when in fullscreen mode,
                 // and must be restored later.
                 inner_node._cssFullscreenStore = {
-                    id: doc.fullscreenElement.id,
+                    id: fullscreenElement.id,
                     isFullscreen: true,
                     margin: inner_node.style.margin,
                     width: inner_node.style.width,
@@ -6098,11 +6111,11 @@ define([
                 // Do the shifting and scaling via CSS pseudo rules
                 // We do this after fullscreen mode has been established to get the correct size
                 // of the JSXGraph div.
-                Env.scaleJSXGraphDiv(doc.fullscreenElement.id, inner_id, res.scale, res.vshift, doc);
+                Env.scaleJSXGraphDiv(fullscreenElement.id, inner_id, res.scale, res.vshift, doc);
 
-                // Clear this.document.fullscreenElement, because Safari doesn't to it and
+                // Clear this.doc.fullscreenElement, because Safari doesn't to it and
                 // when leaving full screen mode it is still set.
-                doc.fullscreenElement = null;
+                fullscreenElement = null;
 
             } else if (Type.exists(inner_node._cssFullscreenStore)) {
                 // Just left the fullscreen mode
