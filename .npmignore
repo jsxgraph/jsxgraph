@@ -8,3 +8,5 @@
 !distrib/*.ts
 !distrib/*.css
 !distrib/*/*.js
+# Allow all JavaScript files from the build folder
+!build/*.js

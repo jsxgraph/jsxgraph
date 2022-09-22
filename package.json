@@ -1,4 +1,4 @@
-{
+1{
   "name": "jsxgraph",
   "description": "Interactive geometry, plotting, visualization",
   "homepage": "https://jsxgraph.org",
@@ -40,6 +40,9 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/jsxgraph/jsxgraph.git"
+  },
+  "dependencies": {
+    "canvas": "^2.10.1",
   },
   "devDependencies": {
     "almond": "^0.3.3",
