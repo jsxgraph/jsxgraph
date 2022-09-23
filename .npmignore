@@ -1,4 +1,4 @@
-# Exclude ervything
+# Exclude everything
 *
 # Allow all JavaScript files from the src folder
 !src/*
