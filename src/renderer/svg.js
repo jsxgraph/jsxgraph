@@ -138,15 +138,22 @@ define([
         this.filter.setAttributeNS(null, 'filterUnits', 'userSpaceOnUse');
 
         this.feOffset = this.container.ownerDocument.createElementNS(this.svgNamespace, 'feOffset');
+        this.feOffset.setAttributeNS(null, 'in', 'SourceAlpha'); // b/w: SourceAlpha, Color: SourceGraphic
         this.feOffset.setAttributeNS(null, 'result', 'offOut');
-        this.feOffset.setAttributeNS(null, 'in', 'SourceAlpha');
         this.feOffset.setAttributeNS(null, 'dx', '5');
         this.feOffset.setAttributeNS(null, 'dy', '5');
         this.filter.appendChild(this.feOffset);
 
+        // this.feColor = this.container.ownerDocument.createElementNS(this.svgNamespace, 'feColorMatrix');
+        // this.feColor.setAttributeNS(null, 'in', 'offOut');
+        // this.feColor.setAttributeNS(null, 'result', 'colorOut');
+        // this.feColor.setAttributeNS(null, 'type', 'matrix');
+        // this.feColor.setAttributeNS(null, 'values', '0.1 0 0 0 0  0 0.1 0 0 0  0 0 0.1 0 50  0 0 0 1 0');
+        // this.filter.appendChild(this.feColor);
+
         this.feGaussianBlur = this.container.ownerDocument.createElementNS(this.svgNamespace, 'feGaussianBlur');
-        this.feGaussianBlur.setAttributeNS(null, 'result', 'blurOut');
         this.feGaussianBlur.setAttributeNS(null, 'in', 'offOut');
+        this.feGaussianBlur.setAttributeNS(null, 'result', 'blurOut');
         this.feGaussianBlur.setAttributeNS(null, 'stdDeviation', '3');
         this.filter.appendChild(this.feGaussianBlur);
 
@@ -1412,9 +1419,14 @@ define([
         // documented in JXG.AbstractRenderer
         setShadow: function (el) {
             var ev_s = Type.evaluate(el.visProp.shadow);
+                // ev_c = Type.evaluate(el.visProp.shadowcolor),
+                // c;
+
             if (el.visPropOld.shadow === ev_s) {
                 return;
             }
+
+            // c = JXG.rgbParser(ev_c);
 
             if (Type.exists(el.rendNode)) {
                 if (ev_s) {

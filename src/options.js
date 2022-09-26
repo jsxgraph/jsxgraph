@@ -1356,6 +1356,8 @@ define([
              */
             shadow: false,
 
+            shadowColor: 'black',
+
             /**
              * If true the element will be traced, i.e. on every movement the element will be copied
              * to the background. Use {@link JXG.GeometryElement#clearTrace} to delete the trace elements.
