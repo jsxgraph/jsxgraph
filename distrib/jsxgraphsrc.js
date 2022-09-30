@@ -3152,52 +3152,13 @@ define('utils/env',['jxg', 'utils/type'], function (JXG, Type) {
         },
 
         /**
-         * Calculate the scale factor and vertical shift for the JSXGraph div
-         * in full screen mode.
-         *
-         * @param {Object} obj Reference to a DOM node.
-         * @returns Object {scale: number, vshift: number}
-         * @see JXG.Board#fullscreenListener
-         * @private
-         */
-        _getScaleFactors: function (node) {
-            var width = node.getBoundingClientRect().width,
-                height = node.getBoundingClientRect().height,
-
-                // Determine the maximum scale factor.
-                r_w = window.screen.width / width,
-                r_h = window.screen.height / height,
-
-                // Determine the vertical shift to place the div in the center of the screen
-                vshift = (window.screen.height - height) * 0.5,
-
-                // Scaling factor: if not supplied, it's taken as large as possible
-                scale = Math.min(r_w, r_h);
-
-            // Adapt vshift and scale for landscape on tablets
-            if (window.matchMedia && window.matchMedia('(orientation:landscape)').matches &&
-                window.screen.width < window.screen.height) {
-                // Landscape on iOS: it returns 'landscape', but still width < height.
-                r_w = window.screen.height / width;
-                r_h = window.screen.width / height;
-                scale = Math.min(r_w, r_h);
-                vshift = (window.screen.width - height) * 0.5;
-            }
-            scale *= 0.85;
-
-            return { scale: scale, vshift: vshift, width: width };
-        },
-
-        /**
          * Scale and vertically shift a DOM element (usually a JSXGraph div)
          * inside of a parent DOM
          * element which is set to fullscreen.
          * This is realized with a CSS transformation.
-         *          *
+         *
          * @param  {String} wrap_id  id of the parent DOM element which is in fullscreen mode
          * @param  {String} inner_id id of the DOM element which is scaled and shifted
-         * @param  {Number} scale    Scaling factor
-         * @param  {Number} vshift   Vertical shift (in pixel)
          * @param  {Object} doc      document object or shadow root
          *
          * @private
@@ -3205,18 +3166,36 @@ define('utils/env',['jxg', 'utils/type'], function (JXG, Type) {
          * @see JXG.Board#fullscreenListener
          *
          */
-        scaleJSXGraphDiv: function (wrap_id, inner_id, scale, vshift, doc) {
-            var len = doc.styleSheets.length, style,
+         scaleJSXGraphDiv: function (wrap_id, inner_id, doc) {
+            var len = doc.styleSheets.length, style, rule, w, h, b, wi, hi, bi,
+                scale_l, vshift_l, // scale_p, vshift_p,
+                f = 0.85,
+                rule_inner_l, // rule_inner_p,
 
                 pseudo_keys = [':fullscreen', ':-webkit-full-screen', ':-moz-full-screen', ':-ms-fullscreen'],
                 len_pseudo = pseudo_keys.length, i,
 
-                // CSS rules to center the inner div horizontally and vertically.
-                rule_inner = '{margin:0 auto;transform:matrix(' + scale + ',0,0,' + scale + ',0,' + vshift + ');}',
-
                 // A previously installed CSS rule to center the JSXGraph div has to
                 // be searched and removed again.
                 regex = new RegExp('.*#' + wrap_id + ':.*full.*screen.*#' + inner_id + '.*auto;.*transform:.*matrix');
+
+            b = doc.getElementById(wrap_id).getBoundingClientRect();
+            h = b.height;
+            w = b.width;
+
+            bi = doc.getElementById(inner_id).getBoundingClientRect();
+            hi = bi.height;
+            wi = bi.width;
+
+            if (wi / hi >= w / h) {
+                scale_l = f * w / wi;
+            } else {
+                scale_l = f * h / hi;
+            }
+            vshift_l = (h - hi) * 0.5;
+
+            // CSS rules to center the inner div horizontally and vertically.
+            rule_inner_l = '{margin:0 auto;transform:matrix(' + scale_l + ',0,0,' + scale_l + ',0,' + vshift_l + ');}';
 
             if (len === 0) {
                 // In case there is not a single CSS rule defined at all.
@@ -3238,7 +3217,10 @@ define('utils/env',['jxg', 'utils/type'], function (JXG, Type) {
             // Install a CSS rule to center the JSXGraph div at the first position of the list.
             for (i = 0; i < len_pseudo; i++) {
                 try {
-                    doc.styleSheets[len - 1].insertRule('#' + wrap_id + pseudo_keys[i] + ' #' + inner_id + rule_inner, 0);
+                    rule = '#' + wrap_id + pseudo_keys[i] + ' #' + inner_id + rule_inner_l;
+                    // rule = '@media all and (orientation:landscape) {' + rule + '}';
+                    doc.styleSheets[len - 1].insertRule(rule, 0);
+
                     break;
                 } catch (err) {
                     // console.log('JXG.scaleJSXGraphDiv: Could not add CSS rule "' + pseudo_keys[i] + '".');
@@ -3250,6 +3232,7 @@ define('utils/env',['jxg', 'utils/type'], function (JXG, Type) {
                 console.log('One possible reason could be that the id of the JSXGraph container does not start with a letter.');
             }
         }
+
     });
 
     return JXG;
@@ -16495,7 +16478,7 @@ define('math/geometry',[
                 for (i = 0; i < steps; i++) {
                     f_new = minfunc(t_new);
 
-                    if (f_new < f_old || f_old === Infinity) {
+                    if (f_new < f_old || f_old === Infinity || isNaN(f_old)) {
                         t = t_new;
                         f_old = f_new;
                     }
@@ -26794,6 +26777,8 @@ define('options',[
              * @default false
              */
             shadow: false,
+
+            shadowColor: 'black',
 
             /**
              * If true the element will be traced, i.e. on every movement the element will be copied
@@ -41915,6 +41900,8 @@ define('parser/jessiecode',[
 
                         if (js) {
                             e = '$jc$.mergeAttributes(' + list.join(', ') + ')';
+                        } else {
+                            e = list.join(', ');
                         }
                     }
                     node.children[0].withProps = !!node.children[2];
@@ -41922,7 +41909,7 @@ define('parser/jessiecode',[
                     for (i = 0; i < node.children[1].length; i++) {
                         list.push(this.compile(node.children[1][i], js));
                     }
-                    ret = this.compile(node.children[0], js) + '(' + list.join(', ') + (node.children[2] && js ? ', ' + e : '') + ')' + (node.children[2] && !js ? e : '');
+                    ret = this.compile(node.children[0], js) + '(' + list.join(', ') + (node.children[2] && js ? ', ' + e : '') + ')' + (node.children[2] && !js ? ' ' + e : '');
                     if (js) {
                         // Inserting a newline here allows simulataneously
                         // - procedural calls like Q.moveTo(...); and
@@ -42083,7 +42070,11 @@ define('parser/jessiecode',[
             }
 
             if (node.needsBrackets) {
-                ret = '{\n' + ret + '\n}\n';
+                if (js) {
+                    ret = '{\n' + ret + '\n}\n';
+                } else {
+                    ret = '<< ' + ret + ' >>';
+                }
             }
 
             return ret;
@@ -50024,7 +50015,7 @@ define('base/board',[
          */
         toFullscreen: function (id) {
             var wrap_id, wrap_node, inner_node,
-                doc = this.document;
+                doc = this.document, fullscreenElement;
 
             id = id || this.container;
             this._fullscreen_inner_id = id;
@@ -50044,7 +50035,7 @@ define('base/board',[
 
             // Get the real width and height of the JSXGraph div
             // and determine the scaling and vertical shift amount
-            this._fullscreen_res = Env._getScaleFactors(inner_node);
+            // this._fullscreen_res = Env._getScaleFactors(inner_node);
 
             // Trigger fullscreen mode
             wrap_node.requestFullscreen = wrap_node.requestFullscreen ||
@@ -50052,14 +50043,24 @@ define('base/board',[
                 wrap_node.mozRequestFullScreen ||
                 wrap_node.msRequestFullscreen;
 
-            if (doc.fullscreenElement === null) {
+            if (doc.fullscreenElement !== undefined) {
+                fullscreenElement = doc.fullscreenElement;
+            } else if (doc.webkitFullscreenElement !== undefined) {
+                fullscreenElement = doc.webkitFullscreenElement;
+            } else {
+                fullscreenElement = doc.msFullscreenElement;
+            }
+            if (fullscreenElement === null) {
                 // Start fullscreen mode
                 if (wrap_node.requestFullscreen) {
                     wrap_node.requestFullscreen();
                 }
             } else {
-                // Leave fullscreen mode (e.g. when clicking on the icon)
-                document.exitFullscreen();
+                if (Type.exists(document.exitFullscreen)) {
+                    document.exitFullscreen();
+                } else if (Type.exists(document.webkitExitFullscreen)) {
+                    document.webkitExitFullscreen();
+                }
             }
 
             return this;
@@ -50073,7 +50074,7 @@ define('base/board',[
          * @param  {Object} evt fullscreen event object (unused)
          */
         fullscreenListener: function (evt) {
-            var res, inner_id, inner_node,
+            var inner_id, inner_node, fullscreenElement, // res,
                 doc = this.document;
 
             inner_id = this._fullscreen_inner_id;
@@ -50081,20 +50082,23 @@ define('base/board',[
                 return;
             }
 
-            doc.fullscreenElement = doc.fullscreenElement ||
-                    doc.webkitFullscreenElement ||
-                    doc.mozFullscreenElement ||
-                    doc.msFullscreenElement;
+            if (doc.fullscreenElement !== undefined) {
+                fullscreenElement = doc.fullscreenElement;
+            } else if (doc.webkitFullscreenElement !== undefined) {
+                fullscreenElement = doc.webkitFullscreenElement;
+            } else {
+                fullscreenElement = doc.msFullscreenElement;
+            }
 
             inner_node = doc.getElementById(inner_id);
             // If full screen mode is started we have to remove CSS margin around the JSXGraph div.
             // Otherwise, the positioning of the fullscreen div will be false.
             // When leaving the fullscreen mode, the margin is put back in.
-            if (doc.fullscreenElement) {
+            if (fullscreenElement) {
                 // Just entered fullscreen mode
 
                 // Get the data computed in board.toFullscreen()
-                res = this._fullscreen_res;
+                // res = this._fullscreen_res;
 
                 // Store the scaling data.
                 // It is used in AbstractRenderer.updateText to restore the scaling matrix
@@ -50102,25 +50106,26 @@ define('base/board',[
                 // Further, the CSS margin has to be removed when in fullscreen mode,
                 // and must be restored later.
                 inner_node._cssFullscreenStore = {
-                    id: doc.fullscreenElement.id,
+                    id: fullscreenElement.id,
                     isFullscreen: true,
                     margin: inner_node.style.margin,
-                    width: inner_node.style.width,
-                    scale: res.scale,
-                    vshift: res.vshift
+                    // width: inner_node.style.width
+                    // scale: res.scale,
+                    // vshift: res.vshift
                 };
 
                 inner_node.style.margin = '';
-                inner_node.style.width = res.width + 'px';
+                // inner_node.style.width = res.width + 'px';
 
                 // Do the shifting and scaling via CSS pseudo rules
                 // We do this after fullscreen mode has been established to get the correct size
                 // of the JSXGraph div.
-                Env.scaleJSXGraphDiv(doc.fullscreenElement.id, inner_id, res.scale, res.vshift, doc);
+                // Env.scaleJSXGraphDiv(fullscreenElement.id, inner_id, res.scale, res.vshift, res.ratio, doc);
+                Env.scaleJSXGraphDiv(fullscreenElement.id, inner_id, doc);
 
-                // Clear this.document.fullscreenElement, because Safari doesn't to it and
+                // Clear this.doc.fullscreenElement, because Safari doesn't to it and
                 // when leaving full screen mode it is still set.
-                doc.fullscreenElement = null;
+                fullscreenElement = null;
 
             } else if (Type.exists(inner_node._cssFullscreenStore)) {
                 // Just left the fullscreen mode
@@ -50134,7 +50139,7 @@ define('base/board',[
 
                 inner_node._cssFullscreenStore.isFullscreen = false;
                 inner_node.style.margin = inner_node._cssFullscreenStore.margin;
-                inner_node.style.width = inner_node._cssFullscreenStore.width;
+                // inner_node.style.width = inner_node._cssFullscreenStore.width;
             }
 
             this.updateCSSTransforms();
@@ -50488,15 +50493,22 @@ define('renderer/svg',[
         this.filter.setAttributeNS(null, 'filterUnits', 'userSpaceOnUse');
 
         this.feOffset = this.container.ownerDocument.createElementNS(this.svgNamespace, 'feOffset');
+        this.feOffset.setAttributeNS(null, 'in', 'SourceAlpha'); // b/w: SourceAlpha, Color: SourceGraphic
         this.feOffset.setAttributeNS(null, 'result', 'offOut');
-        this.feOffset.setAttributeNS(null, 'in', 'SourceAlpha');
         this.feOffset.setAttributeNS(null, 'dx', '5');
         this.feOffset.setAttributeNS(null, 'dy', '5');
         this.filter.appendChild(this.feOffset);
 
+        // this.feColor = this.container.ownerDocument.createElementNS(this.svgNamespace, 'feColorMatrix');
+        // this.feColor.setAttributeNS(null, 'in', 'offOut');
+        // this.feColor.setAttributeNS(null, 'result', 'colorOut');
+        // this.feColor.setAttributeNS(null, 'type', 'matrix');
+        // this.feColor.setAttributeNS(null, 'values', '0.1 0 0 0 0  0 0.1 0 0 0  0 0 0.1 0 50  0 0 0 1 0');
+        // this.filter.appendChild(this.feColor);
+
         this.feGaussianBlur = this.container.ownerDocument.createElementNS(this.svgNamespace, 'feGaussianBlur');
-        this.feGaussianBlur.setAttributeNS(null, 'result', 'blurOut');
         this.feGaussianBlur.setAttributeNS(null, 'in', 'offOut');
+        this.feGaussianBlur.setAttributeNS(null, 'result', 'blurOut');
         this.feGaussianBlur.setAttributeNS(null, 'stdDeviation', '3');
         this.filter.appendChild(this.feGaussianBlur);
 
@@ -51762,9 +51774,14 @@ define('renderer/svg',[
         // documented in JXG.AbstractRenderer
         setShadow: function (el) {
             var ev_s = Type.evaluate(el.visProp.shadow);
+                // ev_c = Type.evaluate(el.visProp.shadowcolor),
+                // c;
+
             if (el.visPropOld.shadow === ev_s) {
                 return;
             }
+
+            // c = JXG.rgbParser(ev_c);
 
             if (Type.exists(el.rendNode)) {
                 if (ev_s) {
