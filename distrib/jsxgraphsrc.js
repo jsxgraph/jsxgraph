@@ -843,7 +843,7 @@ define('base/constants',['jxg'], function (JXG) {
     var major = 1,
         minor = 4,
         patch = 6,
-        add = 'dev', //'dev'
+        add = '', //'dev'
         version = major + '.' + minor + '.' + patch + (add ? '-' + add : ''),
         constants;
 

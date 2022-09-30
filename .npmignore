@@ -1,6 +1,6 @@
 # Exclude everything
 *
-# Allow all JavaScript files from the src folder
+# Allow all files from the src folder
 !src/*
 !src/*/*
 # Allow all JavaScript files from the distrib folder
@@ -8,3 +8,6 @@
 !distrib/*.ts
 !distrib/*.css
 !distrib/*/*.js
+# Allow all files from the build folder
+!build/*
+!build/*/*
