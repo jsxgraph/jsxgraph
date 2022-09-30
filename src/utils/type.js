@@ -141,8 +141,16 @@ define([
          * @returns {Boolean} True, if v is of type JXG.Point.
          */
         isPoint: function (v) {
-            if (v !== null && typeof v === 'object') {
+            if (v !== null && typeof v === 'object' && this.exists(v.elementClass)) {
                 return (v.elementClass === Const.OBJECT_CLASS_POINT);
+            }
+
+            return false;
+        },
+
+        isPoint3D: function (v) {
+            if (v !== null && typeof v === 'object' && this.exists(v.elType)) {
+                return (v.elType === 'point3d');
             }
 
             return false;
@@ -388,6 +396,71 @@ define([
                 }
 
                 if (!this.isPoint(points[i])) {
+                    return false;
+                }
+            }
+
+            return points;
+        },
+
+        /**
+         *  Test if the parents array contains existing points. If instead parents contains coordinate arrays or
+         *  function returning coordinate arrays
+         *  free points with these coordinates are created.
+         *
+         * @param {JXG.View3D} view View3D object
+         * @param {Array} parents Array containing parent elements for a new object. This array may contain
+         *    <ul>
+         *      <li> {@link JXG.Point3D} objects
+         *      <li> {@link JXG.GeometryElement#name} of {@link JXG.Point3D} objects
+         *      <li> {@link JXG.GeometryElement#id} of {@link JXG.Point3D} objects
+         *      <li> Coordinates of 3D points given as array of numbers of length three, e.g. [2, 3, 1].
+         *      <li> Coordinates of 3D points given as array of functions of length three. Each function returns one coordinate, e.g.
+         *           [function(){ return 2; }, function(){ return 3; }, function(){ return 1; }]
+         *      <li> Function returning coordinates, e.g. function() { return [2, 3, 1]; }
+         *    </ul>
+         *  In the last three cases a new 3D point will be created.
+         * @param {String} attrClass Main attribute class of newly created 3D points, see {@link JXG#copyAttributes}
+         * @param {Array} attrArray List of subtype attributes for the newly created 3D points. The list of subtypes is mapped to the list of new 3D points.
+         * @returns {Array} List of newly created {@link JXG.Point3D} elements or false if not all returned elements are 3D points.
+         */
+         providePoints3D: function (view, parents, attributes, attrClass, attrArray) {
+            var i, j,
+                len,
+                lenAttr = 0,
+                points = [], attr, val;
+
+            if (!this.isArray(parents)) {
+                parents = [parents];
+            }
+            len = parents.length;
+            if (this.exists(attrArray)) {
+                lenAttr = attrArray.length;
+            }
+            if (lenAttr === 0) {
+                attr = this.copyAttributes(attributes, view.board.options, attrClass);
+            }
+
+            for (i = 0; i < len; ++i) {
+                if (lenAttr > 0) {
+                    j = Math.min(i, lenAttr - 1);
+                    attr = this.copyAttributes(attributes, view.board.options, attrClass, attrArray[j]);
+                }
+
+                if (this.isArray(parents[i]) && parents[i].length > 1) {
+                    points.push(view.create('point3d', parents[i], attr));
+                    points[points.length - 1]._is_new = true;
+                } else if (this.isFunction(parents[i])) {
+                    val = parents[i]();
+                    if (this.isArray(val) && (val.length > 1)) {
+                        points.push(view.create('point3d', [parents[i]], attr));
+                        points[points.length - 1]._is_new = true;
+                    }
+                } else {
+                    points.push(view.select(parents[i]));
+                }
+
+                if (!this.isPoint3D(points[i])) {
                     return false;
                 }
             }

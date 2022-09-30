@@ -28,74 +28,117 @@
  */
 /*global JXG:true, define: true*/
 
-define(['jxg', 'options', 'base/constants', 'utils/type', 'math/math', 'base/element', '3d/threed',
-], function (JXG, Options, Const, Type, Mat, GeometryElement, ThreeD) {
+define(['jxg', 'options', 'base/constants', 'utils/type', 'math/math', 'base/element','base/composition'],
+function (JXG, Options, Const, Type, Mat, GeometryElement, Composition) {
     "use strict";
 
-    ThreeD.View3D = function (board, parents, attributes) {
-        var bbox3d, coords, size;
-        this.constructor(board, attributes, Const.OBJECT_TYPE_VIEW3D, Const.OBJECT_CLASS_CURVE);
-
-        bbox3d = parents[2];  // [[x1, x2], [y1,y2], [z1,z2]]
-        coords = parents[0]; // llft corner
-        size = parents[1];   // [w, h]
-
-        /**
-         * "Namespace" for all 3D handling
-         */
-        this.D3 = {};
+    /**
+     * 3D view inside of a JXGraph board.
+     *
+     * @class Creates a new 3D view. Do not use this constructor to create a 3D view. Use {@link JXG.Board#create} with
+     * type {@link View3D} instead.
+     *
+     * @augments JXG.GeometryElement
+     * @param {Array} parents Array consisting of lower left corner [x, y] of the view inside the board, [width, height] of the view
+     * and box size [[x1, x2], [y1,y2], [z1,z2]]. If the view's azimuth=0 and elevation=0, the 3D view will cover a rectangle with lower left corner
+     * [x,y] and side lengths [w, h] of the board.
+     */
+     JXG.View3D = function (board, parents, attributes) {
+        this.constructor(board, attributes, Const.OBJECT_TYPE_VIEW3D, Const.OBJECT_CLASS_3D);
 
         /**
          * An associative array containing all geometric objects belonging to the view.
          * Key is the id of the object and value is a reference to the object.
          * @type Object
+         * @private
          */
-        this.D3.objects = {};
+        this.objects = {};
 
         /**
          * An array containing all geometric objects in this view in the order of construction.
          * @type Array
+         * @private
          */
-        this.D3.objectsList = [];
+        this.objectsList = [];
 
         /**
-         * @type {Object} contains the axes of the view or null
+         * An associative array / dictionary to store the objects of the board by name. The name of the object is the key and value is a reference to the object.
+         * @type Object
+         * @private
+         */
+         this.elementsByName = {};
+
+        /**
+         * Default axes of the 3D view, contains the axes of the view or null.
+         *
+         * @type {Object}
          * @default null
          */
-        this.D3.defaultAxes = null;
+        this.defaultAxes = null;
 
         /**
          * 3D-to-2D transformation matrix
-         * @type  {Array} 3 x 4 mattrix
+         * @type  {Array} 3 x 4 matrix
+         * @private
          */
-        this.D3.matrix = [
+        this.matrix3D = [
             [1, 0, 0, 0],
             [0, 1, 0, 0],
             [0, 0, 1, 0]
         ];
 
-        // Bounding box (cube) [[x1, x2], [y1,y2], [z1,z2]]:
-        this.D3.bbox3d = bbox3d;
-        this.D3.coords = coords;
-        this.D3.size = size;
+        /**
+         * Lower left corner [x, y] of the 3D view if elevation and azimuth are set to 0.
+         * @type array
+         * @private
+         */
+        this.llftCorner = parents[0];
+
+        /**
+         * Width and height [w, h] of the 3D view if elevation and azimuth are set to 0.
+         * @type array
+         * @private
+         */
+        this.size = parents[1];
+
+        /**
+         * Bounding box (cube) [[x1, x2], [y1,y2], [z1,z2]] of the 3D view
+         * @type array
+         */
+        this.bbox3D = parents[2];
 
         /**
          * Distance of the view to the origin. In other words, its
-         * the radius of the sphere where the camera sits.
+         * the radius of the sphere where the camera sits.view.board.update
+         * @type Number
          */
-        this.D3.r = -1;
+        this.r = -1;
 
         this.timeoutAzimuth = null;
 
         this.id = this.board.setId(this, 'V');
         this.board.finalizeAdding(this);
         this.elType = 'view3d';
+
         this.methodMap = Type.deepCopy(this.methodMap, {
+            // TODO
         });
     };
-    ThreeD.View3D.prototype = new GeometryElement();
+    JXG.View3D.prototype = new GeometryElement();
 
-    JXG.extend(ThreeD.View3D.prototype, /** @lends ThreeD.View3D.prototype */ {
+    JXG.extend(JXG.View3D.prototype, /** @lends JXG.View3D.prototype */ {
+
+        /**
+         * Creates a new 3D element of type elementType.
+         * @param {String} elementType Type of the element to be constructed given as a string e.g. 'point3d' or 'surface3d'.
+         * @param {Array} parents Array of parent elements needed to construct the element e.g. coordinates for a 3D point or two
+         * 3D points to construct a line. This highly depends on the elementType that is constructed. See the corresponding JXG.create*
+         * methods for a list of possible parameters.
+         * @param {Object} [attributes] An object containing the attributes to be set. This also depends on the elementType.
+         * Common attributes are name, visible, strokeColor.
+         * @returns {Object} Reference to the created element. This is usually a GeometryElement3D, but can be an array containing
+         * two or more elements.
+         */
         create: function (elementType, parents, attributes) {
             var prefix = [],
                 is3D = false,
@@ -106,59 +149,117 @@ define(['jxg', 'options', 'base/constants', 'utils/type', 'math/math', 'base/ele
                 prefix.push(this);
             }
             el = this.board.create(elementType, prefix.concat(parents), attributes);
-            if (true || is3D) {
-                this.add(el);
-            }
+
             return el;
         },
 
-        add: function (el) {
-            this.D3.objects[el.id] = el;
-            this.D3.objectsList.push(el);
+        /**
+         * Select a single or multiple elements at once.
+         * @param {String|Object|function} str The name, id or a reference to a JSXGraph 3D element in the 3D view. An object will
+         * be used as a filter to return multiple elements at once filtered by the properties of the object.
+         * @param {Boolean} onlyByIdOrName If true (default:false) elements are only filtered by their id, name or groupId.
+         * The advanced filters consisting of objects or functions are ignored.
+         * @returns {JXG.GeometryElement3D|JXG.Composition}
+         * @example
+         * // select the element with name A
+         * view.select('A');
+         *
+         * // select all elements with strokecolor set to 'red' (but not '#ff0000')
+         * view.select({
+         *   strokeColor: 'red'
+         * });
+         *
+         * // select all points on or below the x/y plane and make them black.
+         * view.select({
+         *   elType: 'point3d',
+         *   Z: function (v) {
+         *     return v <= 0;
+         *   }
+         * }).setAttribute({color: 'black'});
+         *
+         * // select all elements
+         * view.select(function (el) {
+         *   return true;
+         * });
+         */
+        select: function (str, onlyByIdOrName) {
+            var flist, olist, i, l,
+                s = str;
+
+            if (s === null) {
+                return s;
+            }
+
+            // It's a string, most likely an id or a name.
+            if (Type.isString(s) && s !== '') {
+                // Search by ID
+                if (Type.exists(this.objects[s])) {
+                    s = this.objects[s];
+                // Search by name
+                } else if (Type.exists(this.elementsByName[s])) {
+                    s = this.elementsByName[s];
+                // // Search by group ID
+                // } else if (Type.exists(this.groups[s])) {
+                //     s = this.groups[s];
+                }
+
+            // It's a function or an object, but not an element
+            } else if (!onlyByIdOrName &&
+                (Type.isFunction(s) ||
+                 (Type.isObject(s) && !Type.isFunction(s.setAttribute))
+                )) {
+                    flist = Type.filterElements(this.objectsList, s);
+
+                    olist = {};
+                    l = flist.length;
+                    for (i = 0; i < l; i++) {
+                        olist[flist[i].id] = flist[i];
+                    }
+                    s = new Composition(olist);
+
+            // It's an element which has been deleted (and still hangs around, e.g. in an attractor list
+            } else if (Type.isObject(s) && Type.exists(s.id) && !Type.exists(this.objects[s.id])) {
+                s = null;
+            }
+
+            return s;
         },
 
-        /**
-         * Update 3D-to-2D transformation matrix with the actual
-         * elevation and azimuth angles.
-         *
-         * @private
-         */
         update: function () {
-            var D3 = this.D3,
-                e, r, a, f, mat;
+            // Update 3D-to-2D transformation matrix with the actual
+            // elevation and azimuth angles.
 
-            if (!Type.exists(D3.el_slide) ||
-                !Type.exists(D3.az_slide) ||
+            var e, r, a, f, mat;
+
+            if (!Type.exists(this.el_slide) ||
+                !Type.exists(this.az_slide) ||
                 !this.needsUpdate) {
                 return this;
             }
 
-            e = D3.el_slide.Value();
-            r = D3.r;
-            a = D3.az_slide.Value();
+            e = this.el_slide.Value();
+            r = this.r;
+            a = this.az_slide.Value();
             f = r * Math.sin(e);
             mat = [[1, 0, 0,], [0, 1, 0], [0, 0, 1]];
 
-            D3.matrix = [
+            this.matrix3D = [
                 [1, 0, 0, 0],
                 [0, 1, 0, 0],
                 [0, 0, 1, 0]
             ];
 
-            D3.matrix[1][1] = r * Math.cos(a);
-            D3.matrix[1][2] = -r * Math.sin(a);
-            D3.matrix[2][1] = f * Math.sin(a);
-            D3.matrix[2][2] = f * Math.cos(a);
-            D3.matrix[2][3] = Math.cos(e);
+            this.matrix3D[1][1] = r * Math.cos(a);
+            this.matrix3D[1][2] = -r * Math.sin(a);
+            this.matrix3D[2][1] = f * Math.sin(a);
+            this.matrix3D[2][2] = f * Math.cos(a);
+            this.matrix3D[2][3] = Math.cos(e);
 
-            if (true) {
-                mat[1][1] = D3.size[0] / (D3.bbox3d[0][1] - D3.bbox3d[0][0]); // w / d_x
-                mat[2][2] = D3.size[1] / (D3.bbox3d[1][1] - D3.bbox3d[1][0]); // h / d_y
-                mat[1][0] = D3.coords[0] - mat[1][1] * D3.bbox3d[0][0];     // llft_x
-                mat[2][0] = D3.coords[1] - mat[2][2] * D3.bbox3d[1][0];     // llft_y
-
-                D3.matrix = Mat.matMatMult(mat, D3.matrix);
-            }
+            mat[1][1] = this.size[0] / (this.bbox3D[0][1] - this.bbox3D[0][0]); // w / d_x
+            mat[2][2] = this.size[1] / (this.bbox3D[1][1] - this.bbox3D[1][0]); // h / d_y
+            mat[1][0] = this.llftCorner[0] - mat[1][1] * this.bbox3D[0][0];     // llft_x
+            mat[2][0] = this.llftCorner[1] - mat[2][2] * this.bbox3D[1][0];     // llft_y
+            this.matrix3D = Mat.matMatMult(mat, this.matrix3D);
 
             return this;
         },
@@ -190,19 +291,20 @@ define(['jxg', 'options', 'base/constants', 'utils/type', 'math/math', 'base/ele
                     vec = x;
                 }
             }
-            return Mat.matVecMult(this.D3.matrix, vec);
+            return Mat.matVecMult(this.matrix3D, vec);
         },
 
         /**
-         * Project a 2D coordinate to the plane through the origin
-         * defined by its normal vector `normal`.
+         * Project a 2D coordinate to the plane defined by the point foot
+         * and the normal vector `normal`.
          *
          * @param  {JXG.Point} point
          * @param  {Array} normal
-         * @returns Array of length 4 containing the projected
+         * @param  {Array} foot
+         * @returns {Array} of length 4 containing the projected
          * point in homogeneous coordinates.
          */
-        project2DTo3DPlane: function (point, normal, foot) {
+        project2DTo3DPlane: function (point2d, normal, foot) {
             var mat, rhs, d, le,
                 n = normal.slice(1),
                 sol = [1, 0, 0, 0];
@@ -211,11 +313,11 @@ define(['jxg', 'options', 'base/constants', 'utils/type', 'math/math', 'base/ele
             le = Mat.norm(n, 3);
             d = Mat.innerProduct(foot.slice(1), n, 3) / le;
 
-            mat = this.D3.matrix.slice(0, 3); // True copy
+            mat = this.matrix3D.slice(0, 3); // True copy
             mat.push([0].concat(n));
 
             // 2D coordinates of point:
-            rhs = point.coords.usrCoords.concat([d]);
+            rhs = point2d.coords.usrCoords.concat([d]);
             try {
                 // Prevent singularity in case elevation angle is zero
                 if (mat[2][3] === 1.0) {
@@ -229,8 +331,14 @@ define(['jxg', 'options', 'base/constants', 'utils/type', 'math/math', 'base/ele
             return sol;
         },
 
+        /**
+         * Limit 3D coordinates to the bounding cube.
+         *
+         * @param {Array} c3d 3D coordinates [x,y,z]
+         * @returns Array with updated 3D coordinates.
+         */
         project3DToCube: function (c3d) {
-            var cube = this.D3.bbox3d;
+            var cube = this.bbox3D;
             if (c3d[1] < cube[0][0]) { c3d[1] = cube[0][0]; }
             if (c3d[1] > cube[0][1]) { c3d[1] = cube[0][1]; }
             if (c3d[2] < cube[1][0]) { c3d[2] = cube[1][0]; }
@@ -241,14 +349,21 @@ define(['jxg', 'options', 'base/constants', 'utils/type', 'math/math', 'base/ele
             return c3d;
         },
 
+        /**
+         * Intersect a ray with the bounding cube of the 3D view.
+         * @param {Array} p 3D coordinates [x,y,z]
+         * @param {Array} d 3D direction vector of the line (array of length 3)
+         * @param {Number} r direction of the ray (positive if r > 0, negative if r < 0).
+         * @returns Affine ratio of the intersection of the line with the cube.
+         */
         intersectionLineCube: function (p, d, r) {
             var rnew, i, r0, r1;
 
             rnew = r;
             for (i = 0; i < 3; i++) {
                 if (d[i] !== 0) {
-                    r0 = (this.D3.bbox3d[i][0] - p[i]) / d[i];
-                    r1 = (this.D3.bbox3d[i][1] - p[i]) / d[i];
+                    r0 = (this.bbox3D[i][0] - p[i]) / d[i];
+                    r1 = (this.bbox3D[i][1] - p[i]) / d[i];
                     if (r < 0) {
                         rnew = Math.max(rnew, Math.min(r0, r1));
                     } else {
@@ -259,29 +374,35 @@ define(['jxg', 'options', 'base/constants', 'utils/type', 'math/math', 'base/ele
             return rnew;
         },
 
+        /**
+         * Test if coordinates are inside of the bounding cube.
+         * @param {array} q 3D coordinates [x,y,z] of a point.
+         * @returns Boolean
+         */
         isInCube: function (q) {
-            return q[0] > this.D3.bbox3d[0][0] - Mat.eps && q[0] < this.D3.bbox3d[0][1] + Mat.eps &&
-                q[1] > this.D3.bbox3d[1][0] - Mat.eps && q[1] < this.D3.bbox3d[1][1] + Mat.eps &&
-                q[2] > this.D3.bbox3d[2][0] - Mat.eps && q[2] < this.D3.bbox3d[2][1] + Mat.eps;
+            return q[0] > this.bbox3D[0][0] - Mat.eps && q[0] < this.bbox3D[0][1] + Mat.eps &&
+                q[1] > this.bbox3D[1][0] - Mat.eps && q[1] < this.bbox3D[1][1] + Mat.eps &&
+                q[2] > this.bbox3D[2][0] - Mat.eps && q[2] < this.bbox3D[2][1] + Mat.eps;
         },
 
         /**
          *
-         * @param {*} plane1
-         * @param {*} plane2
-         * @param {*} d
-         * @returns Array of length 2 containing the coordinates of the defining points of
+         * @param {JXG.Plane3D} plane1
+         * @param {JXG.Plane3D} plane2
+         * @param {JXG.Plane3D} d
+         * @returns {Array} of length 2 containing the coordinates of the defining points of
          * of the intersection segment.
          */
         intersectionPlanePlane: function(plane1, plane2, d) {
             var ret = [[], []],
                 p, dir, r, q;
 
-            d = d || plane2.D3.d;
+            d = d || plane2.d;
 
-            p = Mat.Geometry.meet3Planes(plane1.D3.normal, plane1.D3.d, plane2.D3.normal, d,
-                     Mat.crossProduct(plane1.D3.normal, plane2.D3.normal), 0);
-            dir = Mat.Geometry.meetPlanePlane(plane1.D3.dir1, plane1.D3.dir2, plane2.D3.dir1, plane2.D3.dir2);
+            p = Mat.Geometry.meet3Planes(
+                        plane1.normal, plane1.d, plane2.normal, d, Mat.crossProduct(plane1.normal, plane2.normal
+                    ), 0);
+            dir = Mat.Geometry.meetPlanePlane(plane1.vec1, plane1.vec2, plane2.vec1, plane2.vec2);
             r = this.intersectionLineCube(p, dir, Infinity);
             q = Mat.axpy(r, dir, p);
             if (this.isInCube(q)) {
@@ -295,7 +416,39 @@ define(['jxg', 'options', 'base/constants', 'utils/type', 'math/math', 'base/ele
             return ret;
         },
 
-        getMesh: function (X, Y, Z, interval_u, interval_v) {
+        /**
+         * Generate mesh for a surface / plane.
+         * Returns array [dataX, dataY] for a JSXGraph curve's updateDataArray function.
+         * @param {Array,Function} func
+         * @param {Array} interval_u
+         * @param {Array} interval_v
+         * @returns Array
+         * @private
+         *
+         * @example
+         *  var el = view.create('curve', [[], []]);
+         *  el.updateDataArray = function () {
+         *      var steps_u = Type.evaluate(this.visProp.stepsu),
+         *           steps_v = Type.evaluate(this.visProp.stepsv),
+         *           r_u = Type.evaluate(this.range_u),
+         *           r_v = Type.evaluate(this.range_v),
+         *           func, ret;
+         *
+         *      if (this.F !== null) {
+         *          func = this.F;
+         *      } else {
+         *          func = [this.X, this.Y, this.Z];
+         *      }
+         *      ret = this.view.getMesh(func,
+         *          r_u.concat([steps_u]),
+         *          r_v.concat([steps_v]));
+         *
+         *      this.dataX = ret[0];
+         *      this.dataY = ret[1];
+         *  };
+         *
+         */
+        getMesh: function (func, interval_u, interval_v) {
             var i_u, i_v, u, v, c2d,
                 delta_u, delta_v,
                 p = [0, 0, 0],
@@ -312,9 +465,11 @@ define(['jxg', 'options', 'base/constants', 'utils/type', 'math/math', 'base/ele
                 u = interval_u[0] + delta_u * i_u;
                 for (i_v = 0; i_v <= steps_v; i_v++) {
                     v = interval_v[0] + delta_v * i_v;
-                    p[0] = X(u, v);
-                    p[1] = Y(u, v);
-                    p[2] = Z(u, v);
+                    if (Type.isFunction(func)) {
+                        p = func(u, v);
+                    } else {
+                        p = [func[0](u, v), func[1](u, v), func[2](u, v)];
+                    }
                     c2d = this.project3DTo2D(p);
                     dataX.push(c2d[1]);
                     dataY.push(c2d[2]);
@@ -327,9 +482,11 @@ define(['jxg', 'options', 'base/constants', 'utils/type', 'math/math', 'base/ele
                 v = interval_v[0] + delta_v * i_v;
                 for (i_u = 0; i_u <= steps_u; i_u++) {
                     u = interval_u[0] + delta_u * i_u;
-                    p[0] = X(u, v);
-                    p[1] = Y(u, v);
-                    p[2] = Z(u, v);
+                    if (Type.isFunction(func)) {
+                        p = func(u, v);
+                    } else {
+                        p = [func[0](u, v), func[1](u, v), func[2](u, v)];
+                    }
                     c2d = this.project3DTo2D(p);
                     dataX.push(c2d[1]);
                     dataY.push(c2d[2]);
@@ -341,21 +498,27 @@ define(['jxg', 'options', 'base/constants', 'utils/type', 'math/math', 'base/ele
             return [dataX, dataY];
         },
 
+        /**
+         *
+         */
         animateAzimuth: function () {
-            var s = this.D3.az_slide._smin,
-                e = this.D3.az_slide._smax,
+            var s = this.az_slide._smin,
+                e = this.az_slide._smax,
                 sdiff = e - s,
-                newVal = this.D3.az_slide.Value() + 0.1;
+                newVal = this.az_slide.Value() + 0.1;
 
-            this.D3.az_slide.position = ((newVal - s) / sdiff);
-            if (this.D3.az_slide.position > 1) {
-                this.D3.az_slide.position = 0.0;
+            this.az_slide.position = ((newVal - s) / sdiff);
+            if (this.az_slide.position > 1) {
+                this.az_slide.position = 0.0;
             }
             this.board.update();
 
             this.timeoutAzimuth = setTimeout(function () { this.animateAzimuth(); }.bind(this), 200);
         },
 
+        /**
+         *
+         */
         stopAzimuth: function () {
             clearTimeout(this.timeoutAzimuth);
             this.timeoutAzimuth = null;
@@ -375,8 +538,9 @@ define(['jxg', 'options', 'base/constants', 'utils/type', 'math/math', 'base/ele
      * @param {Array_Array_Array} lower,dim,cube  Here, lower is an array of the form [x, y] and
      * dim is an array of the form [w, h].
      * The arrays [x, y] and [w, h] define the 2D frame into which the 3D cube is
-     * (roughly) projected.
-     * cube is an array of the form [[x1, x2], [y1, y2], [z1, z2]]
+     * (roughly) projected. If the view's azimuth=0 and elevation=0, the 3D view will cover a rectangle with lower left corner
+     * [x,y] and side lengths [w, h] of the board.
+     * The array 'cube' is of the form [[x1, x2], [y1, y2], [z1, z2]]
      * which determines the coordinate ranges of the 3D cube.
      *
      * @example
@@ -410,43 +574,38 @@ define(['jxg', 'options', 'base/constants', 'utils/type', 'math/math', 'base/ele
      *     (function() {
      *         var board = JXG.JSXGraph.initBoard('JXGdd06d90e-be5d-4531-8f0b-65fc30b1a7c7',
      *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false});
-     *                             var bound = [-5, 5];
-     *                             var view = board.create('view3d',
-     *                                 [[-6, -3], [8, 8],
-     *                                 [bound, bound, bound]],
-     *                                 {
-     *                                     // Main axes
-     *                                     axesPosition: 'center',
-     *                                     xAxis: { strokeColor: 'blue', strokeWidth: 3},
-     *
-     *                                     // Planes
-     *                                     xPlaneRear: { fillColor: 'yellow',  mesh3d: {visible: false}},
-     *                                     yPlaneFront: { visible: true, fillColor: 'blue'},
-     *
-     *                                     // Axes on planes
-     *                                     xPlaneRearYAxis: {strokeColor: 'red'},
-     *                                     xPlaneRearZAxis: {strokeColor: 'red'},
-     *
-     *                                     yPlaneFrontXAxis: {strokeColor: 'blue'},
-     *                                     yPlaneFrontZAxis: {strokeColor: 'blue'},
-     *
-     *                                     zPlaneFrontXAxis: {visible: false},
-     *                                     zPlaneFrontYAxis: {visible: false}
-     *                                 });
-     *
+     *         var bound = [-5, 5];
+     *         var view = board.create('view3d',
+     *             [[-6, -3], [8, 8],
+     *             [bound, bound, bound]],
+     *             {
+     *                 // Main axes
+     *                 axesPosition: 'center',
+     *                 xAxis: { strokeColor: 'blue', strokeWidth: 3},
+     *                 // Planes
+     *                 xPlaneRear: { fillColor: 'yellow',  mesh3d: {visible: false}},
+     *                 yPlaneFront: { visible: true, fillColor: 'blue'},
+     *                 // Axes on planes
+     *                 xPlaneRearYAxis: {strokeColor: 'red'},
+     *                 xPlaneRearZAxis: {strokeColor: 'red'},
+     *                 yPlaneFrontXAxis: {strokeColor: 'blue'},
+     *                 yPlaneFrontZAxis: {strokeColor: 'blue'},
+     *                 zPlaneFrontXAxis: {visible: false},
+     *                 zPlaneFrontYAxis: {visible: false}
+     *             });
      *     })();
      *
      * </script><pre>
      *
      */
-    ThreeD.createView3D = function (board, parents, attributes) {
-        var view, frame, attr,
+     JXG.createView3D = function (board, parents, attributes) {
+        var view, attr,
             x, y, w, h,
             coords = parents[0], // llft corner
             size = parents[1];   // [w, h]
 
         attr = Type.copyAttributes(attributes, board.options, 'view3d');
-        view = new ThreeD.View3D(board, parents, attr);
+        view = new JXG.View3D(board, parents, attr);
         view.defaultAxes = view.create('axes3d', parents, attributes);
 
         x = coords[0];
@@ -454,37 +613,12 @@ define(['jxg', 'options', 'base/constants', 'utils/type', 'math/math', 'base/ele
         w = size[0];
         h = size[1];
 
-        /*
-         * Frame around the view object
-         */
-        if (false) {
-            frame = board.create('polygon', [
-                [coords[0], coords[1] + size[1]],           // ulft
-                [coords[0], coords[1]],                     // llft
-                [coords[0] + size[0], coords[1]],           // lrt
-                [coords[0] + size[0], coords[1] + size[1]], // urt
-            ], {
-                fillColor: 'none',
-                highlightFillColor: 'none',
-                highlight: false,
-                vertices: {
-                    fixed: true,
-                    visible: false
-                },
-                borders: {
-                    strokeColor: 'black',
-                    highlight: false,
-                    strokeWidth: 0.5,
-                    dash: 4
-                }
-            });
-            //view.add(frame);
-        }
-
         /**
          * Slider to adapt azimuth angle
+         * @name JXG.View3D#az_slide
+         * @type {Slider}
          */
-        view.D3.az_slide = board.create('slider', [[x - 1, y - 2], [x + w + 1, y - 2], [0, 1.0, 2 * Math.PI]], {
+        view.az_slide = board.create('slider', [[x - 1, y - 2], [x + w + 1, y - 2], [0, 1.0, 2 * Math.PI]], {
             style: 6, name: 'az',
             point1: { frozen: true },
             point2: { frozen: true }
@@ -492,38 +626,59 @@ define(['jxg', 'options', 'base/constants', 'utils/type', 'math/math', 'base/ele
 
         /**
          * Slider to adapt elevation angle
+         *
+         * @name JXG.View3D#el_slide
+         * @type {Slider}
          */
-        view.D3.el_slide = board.create('slider', [[x - 1, y], [x - 1, y + h], [0, 0.30, Math.PI / 2]], {
+        view.el_slide = board.create('slider', [[x - 1, y], [x - 1, y + h], [0, 0.30, Math.PI / 2]], {
             style: 6, name: 'el',
             point1: { frozen: true },
             point2: { frozen: true }
         });
 
         view.board.highlightInfobox = function (x, y, el) {
-            var d;
+            var d, i,
+                c3d, foot,
+                brd = el.board,
+                p = null;
 
-            if (Type.exists(el.D3)) {
-                d = Type.evaluate(el.visProp.infoboxdigits);
+            // Search 3D parent
+            for (i = 0; i < el.parents.length; i++) {
+                p = brd.objects[el.parents[i]];
+                if (p.is3D) {
+                    break;
+                }
+            }
+            if (p) {
+                foot = [1, 0, 0, p.coords[3]];
+                c3d = view.project2DTo3DPlane(p.element2D, [1, 0, 0, 1], foot);
+                if (!view.isInCube(c3d)) {
+                    view.board.highlightCustomInfobox('', p);
+                    return;
+                }
+                d = Type.evaluate(p.visProp.infoboxdigits);
                 if (d === 'auto') {
                     view.board.highlightCustomInfobox('(' +
-                        Type.autoDigits(el.D3.X()) + ' | ' +
-                        Type.autoDigits(el.D3.Y()) + ' | ' +
-                        Type.autoDigits(el.D3.Z()) + ')', el);
+                        Type.autoDigits(p.X()) + ' | ' +
+                        Type.autoDigits(p.Y()) + ' | ' +
+                        Type.autoDigits(p.Z()) + ')', p);
                 } else {
                     view.board.highlightCustomInfobox('(' +
-                        Type.toFixed(el.D3.X(), d) + ' | ' +
-                        Type.toFixed(el.D3.Y(), d) + ' | ' +
-                        Type.toFixed(el.D3.Z(), d) + ')', el);
+                        Type.toFixed(p.X(), d) + ' | ' +
+                        Type.toFixed(p.Y(), d) + ' | ' +
+                        Type.toFixed(p.Z(), d) + ')', p);
                 }
             } else {
                 view.board.highlightCustomInfobox('(' + x + ', ' + y + ')', el);
             }
         };
 
+        view.board.update();
+
         return view;
     };
-    JXG.registerElement('view3d', ThreeD.createView3D);
+    JXG.registerElement('view3d', JXG.createView3D);
 
-    return ThreeD.View3D;
+    return JXG.View3D;
 });
 
