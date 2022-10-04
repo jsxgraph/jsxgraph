@@ -2768,7 +2768,7 @@ define([
                 for (i = 0; i < steps; i++) {
                     f_new = minfunc(t_new);
 
-                    if (f_new < f_old || f_old === Infinity) {
+                    if (f_new < f_old || f_old === Infinity || isNaN(f_old)) {
                         t = t_new;
                         f_old = f_new;
                     }

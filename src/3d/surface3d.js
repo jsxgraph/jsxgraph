@@ -28,10 +28,100 @@
  */
 /*global JXG:true, define: true*/
 
-define(['jxg', 'utils/type', '3d/view3d'
-], function (JXG, Type, ThreeD) {
+define(['jxg', 'base/constants', 'utils/type'], function (JXG, Const, Type) {
     "use strict";
 
+    /**
+     * Constructor for 3D surfaces.
+     * @class Creates a new 3D surface object. Do not use this constructor to create a 3D surface. Use {@link JXG.Board#create} with type {@link Surface3D} instead.
+     *
+     * @augments JXG.GeometryElement3D
+     * @augments JXG.GeometryElement
+     * @param {View3D} view
+     * @param {Function} F
+     * @param {Function} X
+     * @param {Function} Y
+     * @param {Function} Z
+     * @param {Array} range_u
+     * @param {Array} range_v
+     * @param {Object} attributes
+     * @see JXG.Board#generateName
+     */
+     JXG.Surface3D = function (view, F, X, Y, Z, range_u, range_v, attributes) {
+        this.constructor(view.board, attributes, Const.OBJECT_TYPE_SURFACE3D, Const.OBJECT_CLASS_3D);
+        this.constructor3D(view, 'surface3d');
+
+        this.id = this.view.board.setId(this, 'S3D');
+        this.board.finalizeAdding(this);
+
+        this.F = F;
+
+        /**
+         * Function which maps (u, v) to x; i.e. it defines the x-coordinate of the surface
+         * @function
+         * @returns Number
+         */
+        this.X = X;
+
+        /**
+         * Function which maps (u, v) to y; i.e. it defines the y-coordinate of the surface
+         * @function
+         * @returns Number
+         */
+        this.Y = Y;
+
+        /**
+         * Function which maps (u, v) to z; i.e. it defines the x-coordinate of the surface
+         * @function
+         * @returns Number
+         */
+        this.Z = Z;
+
+        if (this.F !== null) {
+            this.X = function(u, v) { return this.F(u, v)[0]; };
+            this.Y = function(u, v) { return this.F(u, v)[1]; };
+            this.Z = function(u, v) { return this.F(u, v)[2]; };
+        }
+
+        this.range_u = range_u;
+        this.range_v = range_v;
+
+        this.methodMap = Type.deepCopy(this.methodMap, {
+            // TODO
+        });
+    };
+    JXG.Surface3D.prototype = new JXG.GeometryElement();
+    Type.copyPrototypeMethods(JXG.Surface3D, JXG.GeometryElement3D, 'constructor3D');
+
+    JXG.extend(JXG.Surface3D.prototype, /** @lends JXG.Surface3D.prototype */ {
+
+        updateDataArray: function () {
+            var steps_u = Type.evaluate(this.visProp.stepsu),
+                steps_v = Type.evaluate(this.visProp.stepsv),
+                r_u = Type.evaluate(this.range_u),
+                r_v = Type.evaluate(this.range_v),
+                func, res;
+
+            if (this.F !== null) {
+                func = this.F;
+            } else {
+                func = [this.X, this.Y, this.Z];
+            }
+            res = this.view.getMesh(func,
+                r_u.concat([steps_u]),
+                r_v.concat([steps_v]));
+
+            return {'X': res[0], 'Y': res[1]};
+        },
+
+        update: function () { return this; },
+
+        updateRenderer: function () {
+            this.needsUpdate = false;
+            return this;
+        }
+
+    });
 
     /**
      * @class This element creates a 3D parametric surface.
@@ -44,10 +134,13 @@ define(['jxg', 'utils/type', '3d/view3d'
      * @constructor
      * @type Object
      * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
-     * @param {Function_Function_Function_Array_Array} F<sub>X</sub>,F<sub>Y</sub>,F<sub>Z</sub>,rangeX,rangeY
-     * F<sub>X</sub>(u,v), F<sub>Y</sub>(u,v), F<sub>Z</sub>(u,v) are functions returning a number, rangeU is the array containing
-     * lower and upper bound for the range of parameter u, rangeV is the array containing
-     * lower and upper bound for the range of parameter v. rangeU and rangeV may also be functions returning an array of length two.
+     *
+     * @param {Function_Function_Function_Array,Function_Array,Function} F<sub>X</sub>,F<sub>Y</sub>,F<sub>Z</sub>,rangeU,rangeV F<sub>X</sub>(u,v), F<sub>Y</sub>(u,v), F<sub>Z</sub>(u,v)
+     * are functions returning a number, rangeU is the array containing lower and upper bound for the range of parameter u, rangeV is the array containing lower and
+     * upper bound for the range of parameter v. rangeU and rangeV may also be functions returning an array of length two.
+     * @param {Function_Array,Function_Array,Function} F,rangeU,rangeV Alternatively: F<sub>[X,Y,Z]</sub>(u,v) 
+     * a function returning an array [x,y,z] of numbers, rangeU and rangeV as above.
+     *
      * @example
      * var view = board.create('view3d',
      * 		        [[-6, -3], [8, 8],
@@ -72,8 +165,8 @@ define(['jxg', 'utils/type', '3d/view3d'
      *         var board = JXG.JSXGraph.initBoard('JXG52da0ecc-1ba9-4d41-850c-36e5120025a5',
      *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false});
      *     var view = board.create('view3d',
-     *     		        [[-6, -3], [8, 8],
-     *     		        [[-5, 5], [-5, 5], [-5, 5]]]);
+     *            [[-6, -3], [8, 8],
+     *            [[-5, 5], [-5, 5], [-5, 5]]]);
      *
      *     // Sphere
      *     var c = view.create('parametricsurface3d', [
@@ -87,48 +180,54 @@ define(['jxg', 'utils/type', '3d/view3d'
      *         stepsU: 20,
      *         stepsV: 20
      *     });
-     *
      *     })();
      *
      * </script><pre>
      *
      */
-    ThreeD.createParametricSurface = function (board, parents, attributes) {
+    JXG.createParametricSurface3D = function (board, parents, attributes) {
         var view = parents[0],
-            attr,
-            X = parents[1],
-            Y = parents[2],
-            Z = parents[3],
-            range_u = parents[4],
-            range_v = parents[5],
-            D3, el;
+            F, X, Y, Z,
+            range_u, range_v,
+            attr, el;
 
-        D3 = {
-            elType: 'surface3d',
-            X: X,
-            Y: Y,
-            Z: Z,
-            range_u: range_u,
-            range_v: range_v
-        };
+        if (parents.length === 4) {
+            F = parents[1];
+            range_u = parents[2];
+            range_v = parents[3];
+            X = null;
+            Y = null;
+            Z = null;
+        } else {
+            X = parents[1];
+            Y = parents[2];
+            Z = parents[3];
+            range_u = parents[4];
+            range_v = parents[5];
+            F = null;
+        }
+
         attr = Type.copyAttributes(attributes, board.options, 'surface3d');
-        el = board.create('curve', [[], []], attr);
-        el.updateDataArray = function () {
-            var steps_u = Type.evaluate(this.visProp.stepsu),
-                steps_v = Type.evaluate(this.visProp.stepsv),
-                r_u = Type.evaluate(this.D3.range_u), // Type.evaluate(range_u),
-                r_v = Type.evaluate(this.D3.range_v), // Type.evaluate(range_v),
-                res = view.getMesh(this.D3.X, this.D3.Y, this.D3.Z,
-                    r_u.concat([steps_u]),
-                    r_v.concat([steps_v]));
-            this.dataX = res[0];
-            this.dataY = res[1];
+        el = new JXG.Surface3D(view, F, X, Y, Z, range_u, range_v, attr);
+
+        el.element2D = view.create('curve', [[], []], attr);
+        el.element2D.updateDataArray = function() {
+                var ret = el.updateDataArray();
+                this.dataX = ret.X;
+                this.dataY = ret.Y;
         };
-        el.D3 = D3;
+        el.addChild(el.element2D);
+        el.inherits.push(el.element2D);
+        el.element2D.setParents(el);
+
+        el.element2D.prepareUpdate().update();
+        if (!board.isSuspendedUpdate) {
+            el.element2D.updateVisibility().updateRenderer();
+        }
 
         return el;
     };
-    JXG.registerElement('parametricsurface3d', ThreeD.createParametricSurface);
+    JXG.registerElement('parametricsurface3d', JXG.createParametricSurface3D);
 
     /**
      * @class This element creates a 3D function graph.
@@ -199,13 +298,12 @@ define(['jxg', 'utils/type', '3d/view3d'
      *         stepsU: 70,
      *         stepsV: 70
      *     });
-     *
      *     })();
      *
      * </script><pre>
      *
      */
-    ThreeD.createFunctiongraph = function (board, parents, attributes) {
+    JXG.createFunctiongraph3D = function (board, parents, attributes) {
         var view = parents[0],
             X = function(u, v) { return u; },
             Y = function(u, v) { return v; },
@@ -215,6 +313,6 @@ define(['jxg', 'utils/type', '3d/view3d'
 
         return view.create('parametricsurface3d', [X, Y, Z, range_u, range_v], attributes);
     };
-    JXG.registerElement('functiongraph3d', ThreeD.createFunctiongraph);
+    JXG.registerElement('functiongraph3d', JXG.createFunctiongraph3D);
 
 });

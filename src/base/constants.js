@@ -43,7 +43,7 @@ define(['jxg'], function (JXG) {
     var major = 1,
         minor = 4,
         patch = 6,
-        add = 'dev', //'dev'
+        add = '', //'dev'
         version = major + '.' + minor + '.' + patch + (add ? '-' + add : ''),
         constants;
 
@@ -111,7 +111,13 @@ define(['jxg'], function (JXG) {
         OBJECT_TYPE_BUTTON: 29,
         OBJECT_TYPE_TRANSFORMATION: 30,
         OBJECT_TYPE_FOREIGNOBJECT: 31,
+
         OBJECT_TYPE_VIEW3D: 32,
+        OBJECT_TYPE_POINT3D: 33,
+        OBJECT_TYPE_LINE3D: 34,
+        OBJECT_TYPE_PLANE3D: 35,
+        OBJECT_TYPE_CURVE3D: 36,
+        OBJECT_TYPE_SURFACE3D: 37,
 
         // IMPORTANT:
         // ----------
@@ -127,6 +133,7 @@ define(['jxg'], function (JXG) {
         OBJECT_CLASS_AREA: 5,
         OBJECT_CLASS_OTHER: 6,
         OBJECT_CLASS_TEXT: 7,
+        OBJECT_CLASS_3D: 8,
 
         // SketchReader constants
         GENTYPE_ABC: 1, // unused

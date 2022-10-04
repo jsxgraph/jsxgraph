@@ -1,3 +1,32 @@
+1.4.6
+====
+
+New features
+-----------
+
+- New feature: ids for navigation buttons
+- New ticks attribute `ticksPerLabel`: allows minor ticks to be labelled as well
+- Attribute `hasInnerPoints` for curves
+- Set evenodd fill rule for polygon fills
+
+Improvements
+------------
+
+- Refactor 3D API
+- Refactor text handling (MathJax / JessieCode / HTML)
+- Allow functions as input for labels of checkbox, input and button
+- TypeScript: fontUnit added to TextOptions
+- Clipping: handle more extreme cases
+- Fullscreen mode support independent from browser zoom level (webkit)
+
+Bug fixes
+---------
+
+- Conflicting 2D and 3D calls
+- polygonalchain: add / remove points
+- Replace fullscreen icon by SVG image
+- Problems with integral element / gliders on function graphs which are not defined everywhere (like log)
+
 1.4.5
 ====
 

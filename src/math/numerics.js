@@ -1930,7 +1930,7 @@ define(['jxg', 'utils/type', 'utils/env', 'math/math'], function (JXG, Type, Env
          * @param {Number} digits Number of decimal digits of the coefficients
          * @param {String} param Name of the parameter. Default: 'x'.
          * @param {String} dot Multiplication symbol. Default: ' * '.
-         * @returns {String} containing the Lagrange polynomial through
+         * @returns {Function} returning the Lagrange polynomial through
          *    the supplied points.
          * @memberof JXG.Math.Numerics
          *
