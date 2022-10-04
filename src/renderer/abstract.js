@@ -1987,8 +1987,8 @@ define([
                         createButton('+', board.zoomIn, board.container + '_navigation_in');
                     }
                     createButton('\u2190', board.clickLeftArrow, board.container + '_navigation_left');
-                    createButton('\u2193', board.clickUpArrow, board.container + '_navigation_up');
-                    createButton('\u2191', board.clickDownArrow, board.container + '_navigation_down');
+                    createButton('\u2193', board.clickUpArrow, board.container + '_navigation_down'); // Down arrow
+                    createButton('\u2191', board.clickDownArrow, board.container + '_navigation_up'); // Up arrow
                     createButton('\u2192', board.clickRightArrow, board.container + '_navigation_right');
                 }
             }
