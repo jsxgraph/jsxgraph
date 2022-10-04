@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-empty-interface */
-/* eslint-disable prettier/prettier */
 /* eslint-disable @typescript-eslint/ban-types */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable max-len */
@@ -49,7 +48,7 @@ declare namespace JXG {
         constructor(elements: { [what: string]: GeometryElement | Composition });
         /**
          * Adds an element to the composition container.
-    
+
          * @param what Descriptive name for the element, e.g. startpoint or area. This is used to access the element later on. There are some reserved names: elements, add, remove, update, prepareUpdate, updateRenderer, highlight, noHighlight, and all names that would form invalid object property names in JavaScript.
          * @param element A reference to the element that is to be added. This can be another composition, too.
          * @returns True, if the element was added successfully. Reasons why adding the element failed include using a reserved name and providing an invalid element.
@@ -693,6 +692,44 @@ declare namespace JXG {
     }
 
     type HTMLColorString = string;
+
+    /**
+     * Default color palette.
+     */
+    export const palette: {
+        black: string;
+        orange: string;
+        skyblue: string;
+        bluishgreen: string;
+        yellow: string;
+        darkblue: string;
+        vermillion: string;
+        reddishpurple: string;
+        blue: string;
+        red: string;
+        green: string;
+        purple: string;
+        white: string;
+    };
+
+    /**
+     * Bang Wong color palette, optimized for various type of color blindness.
+     */
+    export const paletteWong: {
+        black: string;
+        orange: string;
+        skyblue: string;
+        bluishgreen: string;
+        yellow: string;
+        darkblue: string;
+        vermillion: string;
+        reddishpurple: string;
+        blue: string;
+        red: string;
+        green: string;
+        purple: string;
+        white: string;
+    };
 
     export type Coordinate = number | string | NumberFunction | Point | Transformation;
 
@@ -1565,6 +1602,26 @@ declare namespace JXG {
         recursionDepthHigh?: number;
         recursionDepthLow?: number;
         useQDT?: boolean;
+    }
+
+    /**
+     *
+     */
+    export interface Boxplot extends Curve {
+        setAttribute(attributes: BoxplotAttributes): this;
+    }
+    /**
+     *
+     */
+    export interface BoxplotAttributes extends CurveAttributes {
+        /**
+         * Direction of the box plot.
+         */
+        dir?: 'horizontal' | 'vertical';
+        /**
+         * Relative width of the maximum and minimum quantile.
+         */
+        smallWidth?: number;
     }
 
     /**
@@ -3133,6 +3190,10 @@ declare namespace JXG {
         strokeWidth?: number;
         ticksDistance?: number;
         tickEndings?: [number, number];
+        /**
+         *
+         */
+        ticksPerLabel?: number;
         // TODO: linear used in JSXGraph workshop Dec 16, 2020.
         type?: 'line' | 'linear' | 'polar';
         useUnicodeMinus?: boolean;
@@ -4032,10 +4093,17 @@ declare namespace JXG {
         create(elementType: 'bisector', parents: unknown[], attributes?: BisectorAttributes): Bisector;
         /**
          *
-         * @param elementType 'button'
+         * @param elementType 'boxplot'
          * @param parents
          * @param attributes
          */
+        create(elementType: 'boxplot', parents: unknown[], attributes?: BoxplotAttributes): Boxplot;
+        /**
+        *
+        * @param elementType 'button'
+        * @param parents
+        * @param attributes
+        */
         create(elementType: 'button', parents: unknown[], attributes?: ButtonAttributes): Button;
         /**
          *
@@ -5491,9 +5559,13 @@ declare namespace JXG {
         Clip: Clip;
         Geometry: Geometry;
         /**
-         * The JXG.Math.Numerics namespace holds numerical algorithms, constants, and variables.
+         * Numerical algorithms, constants, and variables.
          */
         Numerics: Numerics;
+        /**
+         * Functions for mathematical statistics.
+         */
+        Statistics: Statistics;
     }
     /**
      * Math Namespace
@@ -5668,6 +5740,32 @@ declare namespace JXG {
          * return An array of vectors describing the solution of the o.d.e. on the given interval I.
          */
         rungeKutta(butcher: unknown, x0: number[], I: number[], N: number, f: unknown): number[][];
+    }
+
+    /**
+     * Functions for mathematical statistics.
+     */
+    export interface Statistics {
+        /**
+         * Extracts the maximum value from the array.
+         * @param arr
+         * @returns The highest number from the array. It returns NaN if not every element could be interpreted as a number and -Infinity if an empty array is given or no element could be interpreted as a number.
+         */
+        max(arr: number[]): number;
+        /**
+        * Extracts the minimum value from the array.
+        * @param arr
+        * @returns The lowest number from the array. It returns NaN if not every element could be interpreted as a number and Infinity if an empty array is given or no element could be interpreted as a number.
+        */
+        min(arr: number[]): number;
+        /**
+         * The P-th percentile ( 0 < P ≤ 100 ) of a list of N ordered values (sorted from least to greatest) is the smallest value in the list such that no more than P percent of the data is strictly less than the value and at least P percent of the data is less than or equal to that value.
+         * See https://en.wikipedia.org/wiki/Percentile. Here, the linear interpolation between closest ranks method is used.
+         * @param arr The set of values, need not be ordered.
+         * @param percentile One or several percentiles.
+         * @returns Depending if a number or an array is the input for percentile, a number or an array containing the percentils is returned.
+         */
+        percentile(arr: number[], percentile: number | number[]): number | number[];
     }
 }
 
