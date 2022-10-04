@@ -113,8 +113,8 @@ define(['jxg', 'base/constants', 'utils/type'], function (JXG, Const, Type) {
                 }
             } else {
                 r = Type.evaluate(this.range);
-                s = r[0];
-                e = r[1];
+                s = Type.evaluate(r[0]);
+                e = Type.evaluate(r[1]);
                 delta = (e - s) / (steps - 1);
                 for (u = s; u <= e; u += delta) {
                     if (this.F !== null){
