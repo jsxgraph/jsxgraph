@@ -9962,7 +9962,7 @@ define('math/numerics',['jxg', 'utils/type', 'utils/env', 'math/math'], function
          * @param {Number} digits Number of decimal digits of the coefficients
          * @param {String} param Name of the parameter. Default: 'x'.
          * @param {String} dot Multiplication symbol. Default: ' * '.
-         * @returns {String} containing the Lagrange polynomial through
+         * @returns {Function} returning the Lagrange polynomial through
          *    the supplied points.
          * @memberof JXG.Math.Numerics
          *
@@ -33758,8 +33758,8 @@ define('renderer/abstract',[
                         createButton('+', board.zoomIn, board.container + '_navigation_in');
                     }
                     createButton('\u2190', board.clickLeftArrow, board.container + '_navigation_left');
-                    createButton('\u2193', board.clickUpArrow, board.container + '_navigation_up');
-                    createButton('\u2191', board.clickDownArrow, board.container + '_navigation_down');
+                    createButton('\u2193', board.clickUpArrow, board.container + '_navigation_down'); // Down arrow
+                    createButton('\u2191', board.clickDownArrow, board.container + '_navigation_up'); // Up arrow
                     createButton('\u2192', board.clickRightArrow, board.container + '_navigation_right');
                 }
             }
@@ -44743,7 +44743,7 @@ define('base/board',[
                 return '';
             }
 
-            if (Type.isPoint(object)) {
+            if (Type.isPoint(object) || Type.isPoint3D(object)) {
                 // points have capital letters
                 possibleNames = ['', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O',
                     'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
@@ -82854,8 +82854,8 @@ define('3d/curve3d',['jxg', 'base/constants', 'utils/type'], function (JXG, Cons
                 }
             } else {
                 r = Type.evaluate(this.range);
-                s = r[0];
-                e = r[1];
+                s = Type.evaluate(r[0]);
+                e = Type.evaluate(r[1]);
                 delta = (e - s) / (steps - 1);
                 for (u = s; u <= e; u += delta) {
                     if (this.F !== null){

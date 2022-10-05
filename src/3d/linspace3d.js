@@ -171,8 +171,8 @@ define(['jxg', 'base/constants', 'utils/type', 'math/math', 'math/geometry'
      * @type JXG.Line3D
      * @throws {Exception} If the element cannot be constructed with the given parent
      * objects an exception is thrown.
-     * @param {JXG.Point3D,array_JXG.Point3D,array} point1,point2 First and second defining point.
-     * @param {JXG.Point3D,array_array,function_array,function} point,direction,range Alternatively, point, direction and range can be supplied.
+     * @param {JXG.Point3D,array,function_JXG.Point3D,array,function} point1,point2 First and second defining point.
+     * @param {JXG.Point3D,array,function_array,function_array,function} point,direction,range Alternatively, point, direction and range can be supplied.
      * <ul>
      * <li> point: Point3D or array of length 3
      * <li> direction: array of length 3 or function returning an array of numbers or function returning an array
@@ -226,8 +226,11 @@ define(['jxg', 'base/constants', 'utils/type', 'math/math', 'math/geometry'
         // In any case, parents[1] contains a point or point coordinates
         point = Type.providePoints3D(view, [parents[1]], attributes, 'line3d', ['point'])[0];
 
-        if (Type.isPoint3D(parents[2]) || (Type.isArray(parents[2]) && parents.length === 3)) {
-            // Line defined by two points
+        if (Type.isPoint3D(parents[2]) ||
+            (parents.length === 3 &&
+                (Type.isArray(parents[2]) || Type.isFunction(parents[2]))
+            ) ) {
+            // Line defined by two points; [view, point1, point2]
 
             point1 = point;
             point2 = Type.providePoints3D(view, [parents[2]], attributes, 'line3d', ['point2'])[0];
@@ -601,6 +604,7 @@ define(['jxg', 'base/constants', 'utils/type', 'math/math', 'math/geometry'
         }
     });
 
+    // TODO docs
     JXG.createPlane3D = function (board, parents, attributes) {
         var view = parents[0],
             attr,
