@@ -1,6 +1,8 @@
 trunk
 .htaccess
 .c9revisions
+distrib/jsxgraphcore.js
+distrib/jsxgraphsrc.js
 build/bin/*
 src/require.js
 node_modules
