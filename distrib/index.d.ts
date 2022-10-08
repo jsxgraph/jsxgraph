@@ -731,6 +731,11 @@ declare namespace JXG {
         white: string;
     };
 
+    /**
+     * Use the color scheme of JSXGraph up to version 1.3.2.
+     */
+    export type setClassicColors = () => void;
+
     export type Coordinate = number | string | NumberFunction | Point | Transformation;
 
     /**
@@ -5767,6 +5772,8 @@ declare namespace JXG {
          */
         percentile(arr: number[], percentile: number | number[]): number | number[];
     }
+
+    export type touchProperty = string;
 }
 
 /**
