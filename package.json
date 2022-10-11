@@ -54,16 +54,25 @@
     "karma-requirejs": "^1.1.0",
     "prettier": "2.3.1",
     "requirejs": "^2.3.6",
-    "terser": "^5.10.0"
+    "terser": "^5.10.0",
+    "webpack": "^5.38.1",
+    "webpack-cli": "^4.9.2"
+  },
+  "peerDependencies": {
+    "canvas": "^2.10.1"
   },
   "engines": {
     "node": ">=0.6.0"
   },
   "scripts": {
+    "build:bundle": "webpack --config config/webpack.config.js",
     "buildCore": "./node_modules/requirejs/bin/r.js -o build/core.build.json",
     "buildCompressor": "./node_modules/requirejs/bin/r.js -o build/compressor.build.json",
     "format": "prettier -w src",
     "test": "make tests"
   },
-  "prettier": {}
+  "prettier": {},
+  "dependencies": {
+    "path-browserify": "^1.0.1"
+  }
 }
