@@ -43,11 +43,16 @@
  math/numerics
 */
 
-define([
-    'jxg', 'options', 'renderer/abstract', 'base/constants', 'utils/type', 'utils/color', 'utils/base64', 'math/numerics'
-], function (JXG, Options, AbstractRenderer, Const, Type, Color, Base64, Numerics) {
+import JXG from 'jxg';
+import Options from 'options';
+import AbstractRenderer from 'renderer/abstract';
+import Const from 'base/constants';
+import Type from 'utils/type';
+import Color from 'utils/color';
+import Base64 from 'utils/base64';
+import Numerics from 'math/numerics';
 
-    "use strict";
+    
 
     /**
      * Uses SVG to implement the rendering methods defined in {@link JXG.AbstractRenderer}.
@@ -1904,5 +1909,5 @@ define([
 
     });
 
-    return JXG.SVGRenderer;
-});
+    export default JXG.SVGRenderer;
+

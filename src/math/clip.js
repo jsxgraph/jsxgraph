@@ -50,11 +50,14 @@ console.log("P:", P.coords.usrCoords, P.data.type)
  * * Check if input polygons are closed. If not, handle this case.
  */
 
-define([
-    'jxg', 'base/constants', 'base/coords', 'math/math', 'math/geometry', 'utils/type'
-], function (JXG, Const, Coords, Mat, Geometry, Type) {
+import JXG from 'jxg';
+import Const from 'base/constants';
+import Coords from 'base/coords';
+import Mat from 'math/math';
+import Geometry from 'math/geometry';
+import Type from 'utils/type';
 
-    "use strict";
+    
 
     /**
      * Math.Clip namespace definition. This namespace contains algorithms for Boolean operations on paths, i.e.
@@ -2051,5 +2054,5 @@ define([
     JXG.extend(Mat.Clip, /** @lends JXG.Math.Clip */ {
     });
 
-    return Mat.Clip;
-});
+    export default Mat.Clip;
+

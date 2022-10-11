@@ -17,9 +17,9 @@
  jxg
  */
 
-define(['jxg'], function (JXG) {
+import JXG from 'jxg';
 
-    'use strict';
+    
 
     // constants
     var uuidCharsStr = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz',
@@ -61,5 +61,4 @@ define(['jxg'], function (JXG) {
         return prefix + uuid.join('');
     };
 
-    return JXG.Util;
-});
+    export default JXG.Util;

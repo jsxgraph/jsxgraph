@@ -47,11 +47,15 @@
    transform
  */
 
-define([
-    'jxg', 'math/geometry', 'math/math', 'math/statistics', 'base/coords', 'base/constants', 'utils/type'
-], function (JXG, Geometry, Mat, Statistics, Coords, Const, Type) {
+import JXG from 'jxg';
+import Geometry from 'math/geometry';
+import Mat from 'math/math';
+import Statistics from 'math/statistics';
+import Coords from 'base/coords';
+import Const from 'base/constants';
+import Type from 'utils/type';
 
-    "use strict";
+    
 
     /**
      * @class A circular sector is a subarea of the area enclosed by a circle. It is enclosed by two radii and an arc.
@@ -1495,7 +1499,7 @@ define([
 
     JXG.registerElement('reflexangle', JXG.createReflexAngle);
 
-    return {
+    export default {
         createSector: JXG.createSector,
         createCircumcircleSector: JXG.createCircumcircleSector,
         createMinorSector: JXG.createMinorSector,
@@ -1504,4 +1508,4 @@ define([
         createReflexAngle: JXG.createReflexAngle,
         createNonreflexAngle: JXG.createNonreflexAngle
     };
-});
+

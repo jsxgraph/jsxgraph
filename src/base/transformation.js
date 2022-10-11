@@ -44,11 +44,12 @@
  * @fileoverview This file contains code for transformations of geometrical objects.
  */
 
-define([
-    'jxg', 'base/constants', 'math/math', 'utils/type'
-], function (JXG, Const, Mat, Type) {
+import JXG from 'jxg';
+import Const from 'base/constants';
+import Mat from 'math/math';
+import Type from 'utils/type';
 
-    "use strict";
+    
 
     /**
      * A transformation consists of a 3x3 matrix, i.e. it is a projective transformation.
@@ -738,8 +739,8 @@ define([
 
     JXG.registerElement('transform', JXG.createTransform);
 
-    return {
+    export default {
         Transformation: JXG.Transformation,
         createTransform: JXG.createTransform
     };
-});
+

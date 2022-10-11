@@ -51,11 +51,16 @@
  * This object provides the coordinate handling of points, images and texts.
  */
 
-define([
-    'jxg', 'math/math', 'math/geometry', 'math/numerics', 'math/statistics', 'base/coords', 'base/constants', 'utils/type',
-], function (JXG, Mat, Geometry, Numerics, Statistics, Coords, Const, Type) {
+import JXG from 'jxg';
+import Mat from 'math/math';
+import Geometry from 'math/geometry';
+import Numerics from 'math/numerics';
+import Statistics from 'math/statistics';
+import Coords from 'base/coords';
+import Const from 'base/constants';
+import Type from 'utils/type';
 
-    "use strict";
+    
 
     /**
      * An element containing coords is the basic geometric element. Based on points lines and circles can be constructed which can be intersected
@@ -1929,6 +1934,6 @@ define([
         return el;
     };
 
-    return JXG.CoordsElement;
+    export default JXG.CoordsElement;
 
-});
+

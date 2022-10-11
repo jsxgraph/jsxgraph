@@ -47,9 +47,10 @@
  * renderers is the class AbstractRenderer.
  */
 
-define(['jxg', 'renderer/abstract'], function (JXG, AbstractRenderer) {
+import JXG from 'jxg';
+import AbstractRenderer from 'renderer/abstract';
 
-    "use strict";
+    
 
     /**
      * This renderer draws nothing. It is intended to be used in environments where none of our rendering engines
@@ -665,5 +666,5 @@ define(['jxg', 'renderer/abstract'], function (JXG, AbstractRenderer) {
      */
     JXG.NoRenderer.prototype = new AbstractRenderer();
 
-    return JXG.NoRenderer;
-});
+    export default JXG.NoRenderer;
+

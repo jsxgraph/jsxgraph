@@ -38,9 +38,10 @@
  utils/type
  */
 
-define(['math/math', 'utils/type'], function (Mat, Type) {
+import Mat from 'math/math';
+import Type from 'utils/type';
 
-    "use strict";
+    
 
     /**
      * Instantiate a new quad tree.
@@ -235,5 +236,5 @@ define(['math/math', 'utils/type'], function (Mat, Type) {
         }
     });
 
-    return Mat.Quadtree;
-});
+    export default Mat.Quadtree;
+

@@ -42,9 +42,10 @@
  * @fileoverview The JXG.Dump namespace provides methods to save a board to javascript.
  */
 
-define(['jxg', 'utils/type'], function (JXG, Type) {
+import JXG from 'jxg';
+import Type from 'utils/type';
 
-    "use strict";
+    
 
     /**
      * The JXG.Dump namespace provides classes and methods to save a board to javascript.
@@ -396,5 +397,5 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
         }
     };
 
-    return JXG.Dump;
-});
+    export default JXG.Dump;
+

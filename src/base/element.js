@@ -45,11 +45,17 @@
  utils/type
  */
 
-define([
-    'jxg', 'base/constants', 'base/coords', 'math/math', 'math/statistics', 'options', 'utils/event', 'utils/color', 'utils/type'
-], function (JXG, Const, Coords, Mat, Statistics, Options, EventEmitter, Color, Type) {
+import JXG from 'jxg';
+import Const from 'base/constants';
+import Coords from 'base/coords';
+import Mat from 'math/math';
+import Statistics from 'math/statistics';
+import Options from 'options';
+import EventEmitter from 'utils/event';
+import Color from 'utils/color';
+import Type from 'utils/type';
 
-    "use strict";
+    
 
     /**
      * Constructs a new GeometryElement object.
@@ -2305,5 +2311,5 @@ define([
 
     });
 
-    return JXG.GeometryElement;
-});
+    export default JXG.GeometryElement;
+

@@ -58,14 +58,26 @@
    circle
  */
 
-define([
-    'jxg', 'math/numerics', 'math/statistics', 'base/constants', 'base/coords', 'base/element', 'parser/datasource',
-    'utils/color', 'utils/type', 'utils/env', 'base/curve', 'base/point', 'base/text', 'base/polygon', 'element/sector',
-    'base/transformation', 'base/line', 'base/circle'
-], function (JXG, Numerics, Statistics, Const, Coords, GeometryElement, DataSource, Color, Type, Env, Curve, Point, Text,
-        Polygon, Sector, Transform, Line, Circle) {
+import JXG from 'jxg';
+import Numerics from 'math/numerics';
+import Statistics from 'math/statistics';
+import Const from 'base/constants';
+import Coords from 'base/coords';
+import GeometryElement from 'base/element';
+import DataSource from 'parser/datasource';
+import Color from 'utils/color';
+import Type from 'utils/type';
+import Env from 'utils/env';
+import Curve from 'base/curve';
+import Point from 'base/point';
+import Text from 'base/text';
+import Polygon from 'base/polygon';
+import Sector from 'element/sector';
+import Transform from 'base/transformation';
+import Line from 'base/line';
+import Circle from 'base/circle';
 
-    "use strict";
+    
 
      /**
       *
@@ -1366,10 +1378,10 @@ define([
 
     JXG.registerElement('legend', JXG.createLegend);
 
-    return {
+    export default {
         Chart: JXG.Chart,
         Legend: JXG.Legend,
         createChart: JXG.createChart,
         createLegend: JXG.createLegend
     };
-});
+

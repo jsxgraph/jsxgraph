@@ -48,11 +48,15 @@
  * stuff like intersection points, angles, midpoint, and so on.
  */
 
-define([
-    'jxg', 'base/constants', 'base/coords', 'math/math', 'math/numerics', 'utils/type', 'utils/expect'
-], function (JXG, Const, Coords, Mat, Numerics, Type, Expect) {
+import JXG from 'jxg';
+import Const from 'base/constants';
+import Coords from 'base/coords';
+import Mat from 'math/math';
+import Numerics from 'math/numerics';
+import Type from 'utils/type';
+import Expect from 'utils/expect';
 
-    "use strict";
+    
 
     /**
      * Math.Geometry namespace definition. This namespace holds geometrical algorithms,
@@ -3096,5 +3100,5 @@ define([
 
     });
 
-    return Mat.Geometry;
-});
+    export default Mat.Geometry;
+

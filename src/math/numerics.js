@@ -43,9 +43,12 @@
  * algorithms for solving linear equations etc.
  */
 
-define(['jxg', 'utils/type', 'utils/env', 'math/math'], function (JXG, Type, Env, Mat) {
+import JXG from 'jxg';
+import Type from 'utils/type';
+import Env from 'utils/env';
+import Mat from 'math/math';
 
-    "use strict";
+    
 
     // Predefined butcher tableaus for the common Runge-Kutta method (fourth order), Heun method (second order), and Euler method (first order).
     var predefinedButcher = {
@@ -3750,5 +3753,5 @@ define(['jxg', 'utils/type', 'utils/env', 'math/math'], function (JXG, Type, Env
         }
     };
 
-    return Mat.Numerics;
-});
+    export default Mat.Numerics;
+

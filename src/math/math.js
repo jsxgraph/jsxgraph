@@ -41,9 +41,10 @@
  * @fileoverview In this file the namespace JXG.Math is defined, which is the base namespace
  * for namespaces like JXG.Math.Numerics, JXG.Math.Plot, JXG.Math.Statistics, JXG.Math.Clip etc.
  */
-define(['jxg', 'utils/type'], function (JXG, Type) {
+import JXG from 'jxg';
+import Type from 'utils/type';
 
-    "use strict";
+    
 
     var undef,
 
@@ -1093,5 +1094,5 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
         }
     };
 
-    return JXG.Math;
-});
+    export default JXG.Math;
+

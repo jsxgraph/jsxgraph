@@ -43,11 +43,11 @@
  * @fileoverview In this file the Text element is defined.
  */
 
-define([
-    'jxg', 'utils/env', 'utils/type'
-], function (JXG, Env, Type) {
+import JXG from 'jxg';
+import Env from 'utils/env';
+import Type from 'utils/type';
 
-    "use strict";
+    
 
     var priv = {
             ButtonClickEventHandler: function () {
@@ -247,7 +247,7 @@ define([
 
     JXG.registerElement('button', JXG.createButton);
 
-    return {
+    export default {
         createButton: JXG.createButton
     };
-});
+

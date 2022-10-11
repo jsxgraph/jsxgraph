@@ -59,11 +59,16 @@
  * renderers is the class AbstractRenderer defined in this file.
  */
 
-define([
-    'jxg', 'options', 'base/coords', 'base/constants', 'math/math', 'math/geometry', 'utils/type', 'utils/env'
-], function (JXG, Options, Coords, Const, Mat, Geometry, Type, Env) {
+import JXG from 'jxg';
+import Options from 'options';
+import Coords from 'base/coords';
+import Const from 'base/constants';
+import Mat from 'math/math';
+import Geometry from 'math/geometry';
+import Type from 'utils/type';
+import Env from 'utils/env';
 
-    "use strict";
+    
 
     /**
      * <p>This class defines the interface to the graphics part of JSXGraph. This class is an abstract class, it
@@ -2101,5 +2106,5 @@ define([
 
     });
 
-    return JXG.AbstractRenderer;
-});
+    export default JXG.AbstractRenderer;
+

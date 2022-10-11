@@ -53,12 +53,18 @@
  * @version 0.99
  */
 
-define([
-    'jxg', 'utils/env', 'utils/type', 'base/board', 'reader/file', 'options',
-    'renderer/svg', 'renderer/vml', 'renderer/canvas', 'renderer/no'
-], function (JXG, Env, Type, Board, FileReader, Options, SVGRenderer, VMLRenderer, CanvasRenderer, NoRenderer) {
+import JXG from 'jxg';
+import Env from 'utils/env';
+import Type from 'utils/type';
+import Board from 'base/board';
+import FileReader from 'reader/file';
+import Options from 'options';
+import SVGRenderer from 'renderer/svg';
+import VMLRenderer from 'renderer/vml';
+import CanvasRenderer from 'renderer/canvas';
+import NoRenderer from 'renderer/no';
 
-    "use strict";
+    
 
     /**
      * Constructs a new JSXGraph singleton object.
@@ -677,5 +683,5 @@ define([
         }, window);
     }
 
-    return JXG.JSXGraph;
-});
+    export default JXG.JSXGraph;
+

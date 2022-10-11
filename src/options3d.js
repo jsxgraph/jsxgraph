@@ -1,10 +1,9 @@
 /*global JXG:true, define: true*/
 
-define([
-    'jxg', 'options'
-], function (JXG, Options) {
+import JXG from 'jxg';
+import Options from 'options';
 
-    "use strict";
+    
 
     JXG.extend(Options, {
 
@@ -277,6 +276,6 @@ define([
 
     });
 
-    return JXG.Options;
-});
+    export default JXG.Options;
+
 

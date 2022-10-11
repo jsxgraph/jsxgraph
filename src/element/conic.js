@@ -49,11 +49,15 @@
  * @fileoverview In this file the conic sections defined.
  */
 
-define([
-    'jxg', 'base/constants', 'base/coords', 'math/math', 'math/numerics', 'math/geometry', 'utils/type'
-], function (JXG, Const, Coords, Mat, Numerics, Geometry, Type) {
+import JXG from 'jxg';
+import Const from 'base/constants';
+import Coords from 'base/coords';
+import Mat from 'math/math';
+import Numerics from 'math/numerics';
+import Geometry from 'math/geometry';
+import Type from 'utils/type';
 
-    "use strict";
+    
 
     /**
      * @class This element is used to provide a constructor for an ellipse. An ellipse is given by two points (the foci) and a third point on the the ellipse or
@@ -1012,10 +1016,10 @@ define([
     JXG.registerElement('parabola', JXG.createParabola);
     JXG.registerElement('conic', JXG.createConic);
 
-    return {
+    export default {
         createEllipse: JXG.createEllipse,
         createHyperbola: JXG.createHyperbola,
         createParabola: JXG.createParabola,
         createConic: JXG.createConic
     };
-});
+

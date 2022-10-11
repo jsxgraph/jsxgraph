@@ -45,11 +45,15 @@
    transform
  */
 
-define([
-    'jxg', 'base/constants', 'base/coords', 'math/statistics', 'math/geometry', 'utils/type', 'base/element'
-], function (JXG, Const, Coords, Statistics, Geometry, Type, GeometryElement) {
+import JXG from 'jxg';
+import Const from 'base/constants';
+import Coords from 'base/coords';
+import Statistics from 'math/statistics';
+import Geometry from 'math/geometry';
+import Type from 'utils/type';
+import GeometryElement from 'base/element';
 
-    "use strict";
+    
 
     /**
      * Creates a new instance of JXG.Polygon.
@@ -1408,9 +1412,9 @@ define([
     JXG.registerElement('regularpolygon', JXG.createRegularPolygon);
     JXG.registerElement('polygonalchain', JXG.createPolygonalChain);
 
-    return {
+    export default {
         Polygon: JXG.Polygon,
         createPolygon: JXG.createPolygon,
         createRegularPolygon: JXG.createRegularPolygon
     };
-});
+

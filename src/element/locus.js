@@ -54,11 +54,11 @@
  curve
  */
 
-define([
-    'jxg', 'math/symbolic', 'utils/type'
-], function (JXG, Symbolic, Type) {
+import JXG from 'jxg';
+import Symbolic from 'math/symbolic';
+import Type from 'utils/type';
 
-    "use strict";
+    
 
     /**
      * @class This element is used to visualize the locus of a given dependent point.
@@ -174,7 +174,7 @@ define([
 
     JXG.registerElement('locus', JXG.createLocus);
 
-    return {
+    export default {
         createLocus: JXG.createLocus
     };
-});
+

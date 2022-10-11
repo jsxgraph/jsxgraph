@@ -49,11 +49,11 @@
  * a board.
  */
 
-define([
-    'jxg', 'utils/type', 'base/element'
-], function (JXG, Type, GeometryElement) {
+import JXG from 'jxg';
+import Type from 'utils/type';
+import GeometryElement from 'base/element';
 
-    "use strict";
+    
 
     /**
      * @class A tape measure can be used to measure distances between points.
@@ -196,7 +196,7 @@ define([
 
     JXG.registerElement('tapemeasure', JXG.createTapemeasure);
 
-    return {
+    export default {
         createTapemeasure: JXG.createTapemeasure
     };
-});
+

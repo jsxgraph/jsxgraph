@@ -52,12 +52,19 @@
  * @fileoverview In this file the geometry element Curve is defined.
  */
 
-define([
-    'jxg', 'base/constants', 'base/coords', 'base/element', 'math/math', 'math/numerics',
-    'math/plot', 'math/geometry', 'parser/geonext', 'utils/type', 'math/qdt'
-], function (JXG, Const, Coords, GeometryElement, Mat, Numerics, Plot, Geometry, GeonextParser, Type, QDT) {
+import JXG from 'jxg';
+import Const from 'base/constants';
+import Coords from 'base/coords';
+import GeometryElement from 'base/element';
+import Mat from 'math/math';
+import Numerics from 'math/numerics';
+import Plot from 'math/plot';
+import Geometry from 'math/geometry';
+import GeonextParser from 'parser/geonext';
+import Type from 'utils/type';
+import QDT from 'math/qdt';
 
-    "use strict";
+    
 
     /**
      * Curves are the common object for function graphs, parametric curves, polar curves, and data plots.
@@ -2785,7 +2792,7 @@ define([
 
     JXG.registerElement('boxplot', JXG.createBoxPlot);
 
-    return {
+    export default {
         Curve: JXG.Curve,
         createCardinalSpline: JXG.createCardinalSpline,
         createCurve: JXG.createCurve,
@@ -2801,4 +2808,4 @@ define([
         createStepfunction: JXG.createStepfunction,
         createTracecurve: JXG.createTracecurve
     };
-});
+

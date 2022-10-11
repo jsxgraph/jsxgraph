@@ -43,11 +43,15 @@
  math/numerics
 */
 
-define([
-    'jxg', 'renderer/abstract', 'base/constants', 'utils/type', 'utils/color', 'math/math', 'math/numerics'
-], function (JXG, AbstractRenderer, Const, Type, Color, Mat, Numerics) {
+import JXG from 'jxg';
+import AbstractRenderer from 'renderer/abstract';
+import Const from 'base/constants';
+import Type from 'utils/type';
+import Color from 'utils/color';
+import Mat from 'math/math';
+import Numerics from 'math/numerics';
 
-    "use strict";
+    
 
     /**
      * Uses VML to implement the rendering methods defined in {@link JXG.AbstractRenderer}.
@@ -1042,5 +1046,5 @@ define([
         }
     });
 
-    return JXG.VMLRenderer;
-});
+    export default JXG.VMLRenderer;
+

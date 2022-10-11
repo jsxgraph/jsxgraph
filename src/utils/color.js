@@ -45,10 +45,11 @@
  * Stoyan Stefanov <sstoo@gmail.com> (see http://www.phpied.com/rgb-color-parser-in-javascript/)
  */
 
-define(['jxg', 'utils/type', 'math/math'],
-    function (JXG, Type, Mat) {
+import JXG from 'jxg';
+import Type from 'utils/type';
+import Mat from 'math/math';
 
-    "use strict";
+    
 
     // private constants and helper functions
 
@@ -1016,5 +1017,5 @@ define(['jxg', 'utils/type', 'math/math'],
      */
     JXG.palette = JXG.paletteWong;
 
-    return JXG;
-});
+    export default JXG;
+

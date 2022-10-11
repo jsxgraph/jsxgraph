@@ -37,11 +37,11 @@
  * @fileoverview In this file the Comb element is defined.
  */
 
-define([
-    'jxg', 'utils/type', 'base/point'
-], function (JXG, Type, Point) {
+import JXG from 'jxg';
+import Type from 'utils/type';
+import Point from 'base/point';
 
-    "use strict";
+    
 
     /**
      * @class A comb to display domains of inequalities.
@@ -234,8 +234,8 @@ define([
 
     JXG.registerElement('comb', JXG.createComb);
 
-    return {
+    export default {
         createComb: JXG.createComb
     };
 
-});
+

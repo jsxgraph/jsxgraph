@@ -54,12 +54,16 @@
  * a board.
  */
 
-define([
-    'jxg', 'options', 'math/math', 'math/geometry', 'base/constants', 'base/element',
-    'utils/type', 'base/coordselement'
-], function (JXG, Options, Mat, Geometry, Const, GeometryElement, Type, CoordsElement) {
+import JXG from 'jxg';
+import Options from 'options';
+import Mat from 'math/math';
+import Geometry from 'math/geometry';
+import Const from 'base/constants';
+import GeometryElement from 'base/element';
+import Type from 'utils/type';
+import CoordsElement from 'base/coordselement';
 
-    "use strict";
+    
 
     /**
      * A point is the basic geometric element. Based on points lines and circles can be constructed which can be intersected
@@ -872,7 +876,7 @@ define([
     JXG.registerElement('otherintersection', JXG.createOtherIntersectionPoint);
     JXG.registerElement('polepoint', JXG.createPolePoint);
 
-    return {
+    export default {
         Point: JXG.Point,
         createPoint: JXG.createPoint,
         createGlider: JXG.createGlider,
@@ -880,4 +884,4 @@ define([
         createOtherIntersection: JXG.createOtherIntersectionPoint,
         createPolePoint: JXG.createPolePoint
     };
-});
+

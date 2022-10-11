@@ -45,11 +45,10 @@
  * the type of a variable.
  */
 
-define([
-    'jxg', 'base/constants'
-], function (JXG, Const) {
+import JXG from 'jxg';
+import Const from 'base/constants';
 
-    'use strict';
+    
 
     JXG.extend(JXG, /** @lends JXG */ {
         /**
@@ -1377,5 +1376,5 @@ define([
         }
     });
 
-    return JXG;
-});
+    export default JXG;
+

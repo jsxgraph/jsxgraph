@@ -46,11 +46,15 @@
  * @fileoverview In this file the geometry element Image is defined.
  */
 
-define([
-    'jxg', 'base/constants', 'base/coords', 'base/element', 'math/math', 'utils/type', 'base/coordselement'
-], function (JXG, Const, Coords, GeometryElement, Mat, Type, CoordsElement) {
+import JXG from 'jxg';
+import Const from 'base/constants';
+import Coords from 'base/coords';
+import GeometryElement from 'base/element';
+import Mat from 'math/math';
+import Type from 'utils/type';
+import CoordsElement from 'base/coordselement';
 
-    "use strict";
+    
 
     /**
      * Construct and handle images
@@ -410,8 +414,8 @@ define([
 
     JXG.registerElement('image', JXG.createImage);
 
-    return {
+    export default {
         Image: JXG.Image,
         createImage: JXG.createImage
     };
-});
+

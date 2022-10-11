@@ -47,9 +47,9 @@
  * defined in this file directly in the JXG namespace.
  */
 
-define([], function () {
 
-    'use strict';
+
+    
 
     /**
      * JXG is the top object of JSXGraph and defines the namespace
@@ -349,5 +349,5 @@ define([], function () {
         }
     });
 
-    return jxg;
-});
+    export default jxg;
+

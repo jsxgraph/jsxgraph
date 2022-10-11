@@ -48,9 +48,18 @@
  * JSXGraph to display interactive math graphics.
  */
 
-define([
-    'jxg', 'base/constants', 'base/text', 'math/math', 'math/ia', 'math/geometry', 'math/statistics', 'utils/type', 'utils/uuid', 'utils/env'
-], function (JXG, Const, Text, Mat, Interval, Geometry, Statistics, Type, UUID, Env) {
+import JXG from 'jxg';
+import Const from 'base/constants';
+import Text from 'base/text';
+import Mat from 'math/math';
+import Interval from 'math/ia';
+import Geometry from 'math/geometry';
+import Statistics from 'math/statistics';
+import Type from 'utils/type';
+import UUID from 'utils/uuid';
+import Env from 'utils/env';
+import $__fs from 'fs';
+import $__path from 'path';
 
     ;
 
@@ -3541,7 +3550,7 @@ exports.main = function commonjsMain (args) {
         console.log('Usage: '+args[0]+' FILE');
         process.exit(1);
     }
-    var source = require('fs').readFileSync(require('path').normalize(args[1]), "utf8");
+    var source = $__fs.readFileSync($__path.normalize(args[1]), "utf8");
     return exports.parser.parse(source);
 };
 if (typeof module !== 'undefined' && require.main === module) {
@@ -3551,5 +3560,5 @@ if (typeof module !== 'undefined' && require.main === module) {
     // Work around an issue with browsers that don't support Object.getPrototypeOf()
     parser.yy.parseError = parser.parseError;
 
-    return JXG.JessieCode;
-});
+    export default JXG.JessieCode;
+

@@ -44,9 +44,11 @@
  * manipulate polynomials.
  */
 
-define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
+import JXG from 'jxg';
+import Mat from 'math/math';
+import Type from 'utils/type';
 
-    "use strict";
+    
 
     /**
      * The JXG.Math.Poly namespace holds algorithms to create and manipulate polynomials.
@@ -308,5 +310,5 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         }
     });
 
-    return Mat.Poly;
-});
+    export default Mat.Poly;
+

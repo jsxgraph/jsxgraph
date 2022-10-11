@@ -52,11 +52,17 @@
  * @version 0.1
  */
 
-define([
-    'jxg', 'math/math', 'math/geometry', 'math/numerics', 'base/constants', 'base/element', 'base/coords', 'utils/type', 'base/text'
-], function (JXG, Mat, Geometry, Numerics, Const, GeometryElement, Coords, Type, Text) {
+import JXG from 'jxg';
+import Mat from 'math/math';
+import Geometry from 'math/geometry';
+import Numerics from 'math/numerics';
+import Const from 'base/constants';
+import GeometryElement from 'base/element';
+import Coords from 'base/coords';
+import Type from 'utils/type';
+import Text from 'base/text';
 
-    "use strict";
+    
 
     /**
      * Creates ticks for an axis.
@@ -1523,10 +1529,10 @@ define([
     JXG.registerElement('hash', JXG.createHatchmark);
     JXG.registerElement('hatch', JXG.createHatchmark);
 
-    return {
+    export default {
         Ticks: JXG.Ticks,
         createTicks: JXG.createTicks,
         createHashmark: JXG.createHatchmark,
         createHatchmark: JXG.createHatchmark
     };
-});
+

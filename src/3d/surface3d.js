@@ -28,8 +28,10 @@
  */
 /*global JXG:true, define: true*/
 
-define(['jxg', 'base/constants', 'utils/type'], function (JXG, Const, Type) {
-    "use strict";
+import JXG from 'jxg';
+import Const from 'base/constants';
+import Type from 'utils/type';
+    
 
     /**
      * Constructor for 3D surfaces.
@@ -315,4 +317,4 @@ define(['jxg', 'base/constants', 'utils/type'], function (JXG, Const, Type) {
     };
     JXG.registerElement('functiongraph3d', JXG.createFunctiongraph3D);
 
-});
+

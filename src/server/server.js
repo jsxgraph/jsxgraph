@@ -45,11 +45,12 @@
  * server side a python plugin system is used.
  */
 
-define([
-    'jxg', 'utils/zip', 'utils/base64', 'utils/type'
-], function (JXG, Zip, Base64, Type) {
+import JXG from 'jxg';
+import Zip from 'utils/zip';
+import Base64 from 'utils/base64';
+import Type from 'utils/type';
 
-    "use strict";
+    
 
     /**
      * @namespace
@@ -238,5 +239,4 @@ define([
 
     JXG.Server.load = JXG.Server.loadModule;
 
-    return JXG.Server;
-});
+    export default JXG.Server;

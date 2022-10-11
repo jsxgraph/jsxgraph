@@ -5,9 +5,9 @@
  jxg
  */
 
-define(['jxg'], function (JXG) {
+import JXG from 'jxg';
 
-    "use strict";
+    
 
     // constants
     var UTF8_ACCEPT = 0,
@@ -238,5 +238,5 @@ define(['jxg'], function (JXG) {
         }
     };
 
-    return JXG.Util.UTF8;
-});
+    export default JXG.Util.UTF8;
+

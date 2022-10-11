@@ -47,12 +47,16 @@
  * @fileoverview In this file the Text element is defined.
  */
 
-define([
-    'jxg', 'base/constants', 'base/element', 'parser/geonext',
-    'utils/env', 'utils/type', 'math/math', 'base/coordselement'
-], function (JXG, Const, GeometryElement, GeonextParser, Env, Type, Mat, CoordsElement) {
+import JXG from 'jxg';
+import Const from 'base/constants';
+import GeometryElement from 'base/element';
+import GeonextParser from 'parser/geonext';
+import Env from 'utils/env';
+import Type from 'utils/type';
+import Mat from 'math/math';
+import CoordsElement from 'base/coordselement';
 
-    "use strict";
+    
 
     var priv = {
         HTMLSliderInputEventHandler: function () {
@@ -1253,9 +1257,9 @@ define([
 
     JXG.registerElement('htmlslider', JXG.createHTMLSlider);
 
-    return {
+    export default {
         Text: JXG.Text,
         createText: JXG.createText,
         createHTMLSlider: JXG.createHTMLSlider
     };
-});
+

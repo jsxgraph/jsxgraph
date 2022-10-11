@@ -32,8 +32,11 @@
  * Create axes and rear and front walls of the
  * view3d bounding box bbox3D.
  */
-define(['jxg', 'utils/type', 'math/math', 'math/geometry'], function (JXG, Type, Mat, Geometry) {
-    "use strict";
+import JXG from 'jxg';
+import Type from 'utils/type';
+import Mat from 'math/math';
+import Geometry from 'math/geometry';
+    
 
     JXG.createAxes3D = function (board, parents, attributes) {
         var view = parents[0],
@@ -270,4 +273,3 @@ define(['jxg', 'utils/type', 'math/math', 'math/geometry'], function (JXG, Type,
     };
     JXG.registerElement('mesh3d', JXG.createMesh3D);
 
-});

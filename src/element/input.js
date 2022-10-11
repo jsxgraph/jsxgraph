@@ -43,11 +43,11 @@
  * @fileoverview In this file the Text element is defined.
  */
 
-define([
-    'jxg', 'utils/env', 'utils/type'
-], function (JXG, Env, Type) {
+import JXG from 'jxg';
+import Env from 'utils/env';
+import Type from 'utils/type';
 
-    "use strict";
+    
 
     var priv = {
             InputInputEventHandler: function (evt) {
@@ -236,7 +236,7 @@ define([
 
     JXG.registerElement('input', JXG.createInput);
 
-    return {
+    export default {
         createInput: JXG.createInput
     };
-});
+

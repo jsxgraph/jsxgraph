@@ -51,11 +51,12 @@
  * @author A.W.
  */
 
-define([
-    'jxg', 'base/constants', 'base/element', 'utils/type'
-], function (JXG, Const, GeometryElement, Type) {
+import JXG from 'jxg';
+import Const from 'base/constants';
+import GeometryElement from 'base/element';
+import Type from 'utils/type';
 
-    "use strict";
+    
 
     /**
      * Constructs a new Turtle object.
@@ -811,8 +812,8 @@ define([
 
     JXG.registerElement('turtle', JXG.createTurtle);
 
-    return {
+    export default {
         Turtle: JXG.Turtle,
         createTurtle: JXG.createTurtle
     };
-});
+

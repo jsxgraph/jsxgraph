@@ -42,9 +42,10 @@
  * @fileoverview In this file the EventEmitter interface is defined.
  */
 
-define(['jxg', 'utils/type'], function (JXG, Type) {
+import JXG from 'jxg';
+import Type from 'utils/type';
 
-    "use strict";
+    
 
     /**
      * Event namespace
@@ -167,5 +168,5 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
         }
     };
 
-    return JXG.EventEmitter;
-});
+    export default JXG.EventEmitter;
+

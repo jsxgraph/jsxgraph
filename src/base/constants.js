@@ -37,8 +37,8 @@
  jxg
  */
 
-define(['jxg'], function (JXG) {
-    'use strict';
+import JXG from 'jxg';
+    
 
     var major = 1,
         minor = 4,
@@ -251,5 +251,5 @@ define(['jxg'], function (JXG) {
 
     JXG.extendConstants(JXG, constants);
 
-    return constants;
-});
+    export default constants;
+

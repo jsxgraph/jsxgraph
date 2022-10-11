@@ -45,11 +45,16 @@
  * @fileoverview Here, the computer algebra algorithms are implemented.
  */
 
-define([
-    'jxg', 'base/constants', 'base/text', 'math/math', 'math/geometry', 'math/statistics', 'utils/type', 'utils/env'
-], function (JXG, Const, Text, Mat, Geometry, Statistics, Type, Env) {
+import JXG from 'jxg';
+import Const from 'base/constants';
+import Text from 'base/text';
+import Mat from 'math/math';
+import Geometry from 'math/geometry';
+import Statistics from 'math/statistics';
+import Type from 'utils/type';
+import Env from 'utils/env';
 
-    "use strict";
+    
 
     /**
      * A JessieCode object provides an interface to the parser and stores all variables and objects used within a JessieCode script.
@@ -1356,5 +1361,5 @@ define([
 
     });
 
-    return JXG.CA;
-});
+    export default JXG.CA;
+

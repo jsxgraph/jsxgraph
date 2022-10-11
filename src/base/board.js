@@ -62,15 +62,23 @@
  * used to manage a geonext board like managing geometric elements, managing mouse and touch events, etc.
  */
 
-define([
-    'jxg', 'base/constants', 'base/coords', 'options', 'math/numerics', 'math/math', 'math/geometry', 'math/complex',
-    'math/statistics',
-    'parser/jessiecode', 'utils/color', 'utils/type', 'utils/event', 'utils/env',
-    'base/composition'
-], function (JXG, Const, Coords, Options, Numerics, Mat, Geometry, Complex, Statistics, JessieCode, Color, Type,
-                EventEmitter, Env, Composition) {
+import JXG from 'jxg';
+import Const from 'base/constants';
+import Coords from 'base/coords';
+import Options from 'options';
+import Numerics from 'math/numerics';
+import Mat from 'math/math';
+import Geometry from 'math/geometry';
+import Complex from 'math/complex';
+import Statistics from 'math/statistics';
+import JessieCode from 'parser/jessiecode';
+import Color from 'utils/color';
+import Type from 'utils/type';
+import EventEmitter from 'utils/event';
+import Env from 'utils/env';
+import Composition from 'base/composition';
 
-    'use strict';
+    
 
     /**
      * Constructs a new Board object.
@@ -6343,5 +6351,5 @@ define([
         }
     });
 
-    return JXG.Board;
-});
+    export default JXG.Board;
+

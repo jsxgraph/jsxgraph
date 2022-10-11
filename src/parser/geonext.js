@@ -41,11 +41,11 @@
  math/geometry
  */
 
-define([
-    'jxg', 'base/constants', 'utils/type'
-], function (JXG, Const, Type) {
+import JXG from 'jxg';
+import Const from 'base/constants';
+import Type from 'utils/type';
 
-    "use strict";
+    
 
     /**
      * Parser helper routines. The methods in here are for parsing expressions in Geonext Syntax.
@@ -508,5 +508,5 @@ define([
         }
     };
 
-    return JXG.GeonextParser;
-});
+    export default JXG.GeonextParser;
+

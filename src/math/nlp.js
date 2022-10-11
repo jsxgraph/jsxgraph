@@ -84,9 +84,10 @@
  utils/type
  */
 
-define(['jxg', 'utils/type'], function (JXG, Type) {
+import JXG from 'jxg';
+import Type from 'utils/type';
 
-    "use strict";
+    
 
     /**
      * The JXG.Math.Nlp namespace holds numerical algorithms for non-linear optimization.
@@ -1377,5 +1378,5 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
 
     };
 
-    return JXG.Math.Nlp;
-});
+    export default JXG.Math.Nlp;
+

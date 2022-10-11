@@ -38,9 +38,10 @@
  utils/type
  */
 
-define(['jxg', 'utils/type'], function (JXG, Type) {
+import JXG from 'jxg';
+import Type from 'utils/type';
 
-    "use strict";
+    
 
     /**
      * A composition is a simple container that manages none or more {@link JXG.GeometryElement}s.
@@ -280,5 +281,5 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
         }
     });
 
-    return JXG.Composition;
-});
+    export default JXG.Composition;
+

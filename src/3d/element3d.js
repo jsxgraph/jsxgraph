@@ -28,8 +28,8 @@
  */
 /*global JXG:true, define: true*/
 
-define(['jxg'], function (JXG) {
-    "use strict";
+import JXG from 'jxg';
+    
 
     /**
      * Constructs a new GeometryElement3D object.
@@ -80,5 +80,4 @@ define(['jxg'], function (JXG) {
 
     };
 
-    return JXG.GeometryElement3D;
-});
+    export default JXG.GeometryElement3D;

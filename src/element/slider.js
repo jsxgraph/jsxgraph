@@ -54,11 +54,14 @@
  * a board.
  */
 
-define([
-    'jxg', 'math/math', 'base/constants', 'base/coords', 'utils/type', 'base/point'
-], function (JXG, Mat, Const, Coords, Type, Point) {
+import JXG from 'jxg';
+import Mat from 'math/math';
+import Const from 'base/constants';
+import Coords from 'base/coords';
+import Type from 'utils/type';
+import Point from 'base/point';
 
-    "use strict";
+    
 
     /**
      * @class A slider can be used to choose values from a given range of numbers.
@@ -550,7 +553,7 @@ define([
 
     JXG.registerElement('slider', JXG.createSlider);
 
-    return {
+    export default {
         createSlider: JXG.createSlider
     };
-});
+

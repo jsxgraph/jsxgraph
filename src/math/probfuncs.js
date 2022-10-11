@@ -38,9 +38,10 @@
  utils/type
  */
 
-define(['math/math', 'utils/type'], function (Mat, Type) {
+import Mat from 'math/math';
+import Type from 'utils/type';
 
-    "use strict";
+    
 
     /**
      * Probability functions, e.g. error function,
@@ -679,5 +680,5 @@ define(['math/math', 'utils/type'], function (Mat, Type) {
         }
     };
 
-    return Mat.ProbFuncs;
-});
+    export default Mat.ProbFuncs;
+

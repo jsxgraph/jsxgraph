@@ -45,9 +45,9 @@
  * @fileoverview Utilities for uncompressing and base64 decoding
  */
 
-define(['jxg'], function (JXG) {
+import JXG from 'jxg';
 
-    "use strict";
+    
 
     // Zip routine constants
 
@@ -855,5 +855,5 @@ define(['jxg'], function (JXG) {
         };
     };
 
-    return JXG.Util;
-});
+    export default JXG.Util;
+

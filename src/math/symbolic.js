@@ -49,11 +49,14 @@
  * @author graphjs
  */
 
-define([
-    'base/constants', 'base/coords', 'math/math', 'math/geometry', 'server/server', 'utils/type'
-], function (Const, Coords, Mat, Geometry, Server, Type) {
+import Const from 'base/constants';
+import Coords from 'base/coords';
+import Mat from 'math/math';
+import Geometry from 'math/geometry';
+import Server from 'server/server';
+import Type from 'utils/type';
 
-    "use strict";
+    
 
     var undef;
 
@@ -377,5 +380,5 @@ define([
         }
     };
 
-    return Mat.Symbolic;
-});
+    export default Mat.Symbolic;
+

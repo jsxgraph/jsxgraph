@@ -38,9 +38,10 @@
  utils/type
  */
 
-define(['jxg', 'utils/type'], function (JXG, Type) {
+import JXG from 'jxg';
+import Type from 'utils/type';
 
-    "use strict";
+    
 
     /**
      * Holds browser independent xml parsing routines. Won't work in environments other than browsers.
@@ -100,5 +101,4 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
         }
     };
 
-    return JXG.XML;
-});
+    export default JXG.XML;

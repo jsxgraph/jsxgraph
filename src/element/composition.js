@@ -76,15 +76,22 @@
  *   <li>{@link Reflection}</li></ul>
  */
 
-define([
-    'jxg', 'math/math', 'math/geometry', 'math/numerics', 'base/coords',
-    'utils/type', 'base/constants', 'base/point', 'base/line', 'base/circle', 'base/transformation',
-    'base/composition', 'base/curve', 'base/polygon'
-], function (JXG, Mat, Geometry, Numerics, Coords,
-    Type, Const, Point, Line, Circle, Transform,
-    Composition, Curve, Polygon) {
+import JXG from 'jxg';
+import Mat from 'math/math';
+import Geometry from 'math/geometry';
+import Numerics from 'math/numerics';
+import Coords from 'base/coords';
+import Type from 'utils/type';
+import Const from 'base/constants';
+import Point from 'base/point';
+import Line from 'base/line';
+import Circle from 'base/circle';
+import Transform from 'base/transformation';
+import Composition from 'base/composition';
+import Curve from 'base/curve';
+import Polygon from 'base/polygon';
 
-    "use strict";
+    
 
     /**
      * @class This is used to construct a point that is the orthogonal projection of a point to a line.
@@ -3088,7 +3095,7 @@ define([
     JXG.registerElement('grid', JXG.createGrid);
     JXG.registerElement('inequality', JXG.createInequality);
 
-    return {
+    export default {
         createArrowParallel: JXG.createArrowParallel,
         createBisector: JXG.createBisector,
         createAngularBisectorOfTwoLines: JXG.createAngularBisectorsOfTwoLines,
@@ -3111,4 +3118,4 @@ define([
         createGrid: JXG.createGrid,
         createInequality: JXG.createInequality
     };
-});
+

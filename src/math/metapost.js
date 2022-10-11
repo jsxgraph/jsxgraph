@@ -69,9 +69,10 @@
  * by D.E. Knuth and J.D. Hobby.
  */
 
-define(['utils/type', 'math/math'], function (Type, Mat) {
+import Type from 'utils/type';
+import Mat from 'math/math';
 
-    "use strict";
+    
 
     /**
      * The JXG.Math.Metapost namespace holds algorithms translated from Metapost
@@ -668,5 +669,5 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
 
     };
 
-    return Mat.Metapost;
-});
+    export default Mat.Metapost;
+

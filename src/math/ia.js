@@ -37,9 +37,11 @@
  utils/type
  */
 
-define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
+import JXG from 'jxg';
+import Mat from 'math/math';
+import Type from 'utils/type';
 
-    "use strict";
+    
 
     JXG.Math.DoubleBits = function() {
         var hasTypedArrays = false,
@@ -1574,7 +1576,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
     JXG.Math.IntervalArithmetic.WHOLE    = new MatInterval().setWhole();
     JXG.Math.IntervalArithmetic.EMPTY    = new MatInterval().setEmpty();
 
-    return JXG.Math.IntervalArithmetic;
-});
+    export default JXG.Math.IntervalArithmetic;
+
 
 

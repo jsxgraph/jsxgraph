@@ -28,9 +28,12 @@
  */
 /*global JXG:true, define: true*/
 
-define(['jxg', 'base/constants', 'math/math', 'math/geometry', 'utils/type' //, '3d/element3d'
-], function (JXG, Const, Mat, Geometry, Type) { //, GeometryElement3D) {
-    "use strict";
+import JXG from 'jxg';
+import Const from 'base/constants';
+import Mat from 'math/math';
+import Geometry from 'math/geometry';
+import Type from 'utils/type'; //, GeometryElement3D) {
+    
 
     /**
      * A 3D point is the basic geometric element.
@@ -434,4 +437,3 @@ define(['jxg', 'base/constants', 'math/math', 'math/geometry', 'utils/type' //, 
 
     JXG.registerElement('point3d', JXG.createPoint3D);
 
-});

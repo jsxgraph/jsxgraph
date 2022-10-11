@@ -53,11 +53,15 @@
  * a board.
  */
 
-define([
-    'jxg', 'base/element', 'base/coords', 'base/constants', 'element/conic', 'parser/geonext', 'utils/type'
-], function (JXG, GeometryElement, Coords, Const, Conic, GeonextParser, Type) {
+import JXG from 'jxg';
+import GeometryElement from 'base/element';
+import Coords from 'base/coords';
+import Const from 'base/constants';
+import Conic from 'element/conic';
+import GeonextParser from 'parser/geonext';
+import Type from 'utils/type';
 
-    "use strict";
+    
 
     /**
      * A circle consists of all points with a given distance from one point. This point is called center, the distance is called radius.
@@ -923,8 +927,8 @@ define([
 
     JXG.registerElement('circle', JXG.createCircle);
 
-    return {
+    export default {
         Circle: JXG.Circle,
         createCircle: JXG.createCircle
     };
-});
+

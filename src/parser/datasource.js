@@ -43,9 +43,10 @@
  * javascript arrays and HTML tables.
  */
 
-define(['jxg', 'utils/type'], function (JXG, Type) {
+import JXG from 'jxg';
+import Type from 'utils/type';
 
-    "use strict";
+    
 
     JXG.DataSource = function () {
         this.data = [];
@@ -238,5 +239,5 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
         }
     });
 
-    return JXG.DataSource;
-});
+    export default JXG.DataSource;
+

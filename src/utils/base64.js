@@ -38,9 +38,10 @@
  utils/encoding
  */
 
-define(['jxg', 'utils/encoding'], function (JXG, Encoding) {
+import JXG from 'jxg';
+import Encoding from 'utils/encoding';
 
-    "use strict";
+    
 
     var alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/',
         pad = '=';
@@ -206,5 +207,5 @@ define(['jxg', 'utils/encoding'], function (JXG, Encoding) {
         }
     };
 
-    return JXG.Util.Base64;
-});
+    export default JXG.Util.Base64;
+

@@ -37,9 +37,9 @@
  utils/type
  */
 
-define(['math/math'], function (Mat) {
+import Mat from 'math/math';
 
-    "use strict";
+    
 
     /**
      * Functions for extrapolation of sequences. Used for finding limits of sequences which is used for curve plotting.
@@ -417,5 +417,5 @@ define(['math/math'], function (Mat) {
         }
     };
 
-    return Mat.Extrapolate;
-});
+    export default Mat.Extrapolate;
+

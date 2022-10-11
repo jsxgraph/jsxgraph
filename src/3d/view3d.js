@@ -28,9 +28,14 @@
  */
 /*global JXG:true, define: true*/
 
-define(['jxg', 'options', 'base/constants', 'utils/type', 'math/math', 'base/element','base/composition'],
-function (JXG, Options, Const, Type, Mat, GeometryElement, Composition) {
-    "use strict";
+import JXG from 'jxg';
+import Options from 'options';
+import Const from 'base/constants';
+import Type from 'utils/type';
+import Mat from 'math/math';
+import GeometryElement from 'base/element';
+import Composition from 'base/composition';
+    
 
     /**
      * 3D view inside of a JXGraph board.
@@ -679,6 +684,6 @@ function (JXG, Options, Const, Type, Mat, GeometryElement, Composition) {
     };
     JXG.registerElement('view3d', JXG.createView3D);
 
-    return JXG.View3D;
-});
+    export default JXG.View3D;
+
 

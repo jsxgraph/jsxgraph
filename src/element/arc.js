@@ -52,11 +52,15 @@
  * style and functional properties that are required to draw an arc on a board.
  */
 
-define([
-    'jxg', 'math/geometry', 'math/math', 'base/coords', 'base/circle', 'utils/type', 'base/constants'
-], function (JXG, Geometry, Mat, Coords, Circle, Type, Const) {
+import JXG from 'jxg';
+import Geometry from 'math/geometry';
+import Mat from 'math/math';
+import Coords from 'base/coords';
+import Circle from 'base/circle';
+import Type from 'utils/type';
+import Const from 'base/constants';
 
-    "use strict";
+    
 
     /**
      * @class An arc is a segment of the circumference of a circle. It is defined by a center, one point that
@@ -606,11 +610,11 @@ define([
 
     JXG.registerElement('majorarc', JXG.createMajorArc);
 
-    return {
+    export default {
         createArc: JXG.createArc,
         createSemicircle: JXG.createSemicircle,
         createCircumcircleArc: JXG.createCircumcircleArc,
         createMinorArc: JXG.createMinorArc,
         createMajorArc: JXG.createMajorArc
     };
-});
+

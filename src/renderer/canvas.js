@@ -47,12 +47,20 @@
  math/numerics
 */
 
-define([
-    'jxg', 'renderer/abstract', 'base/constants', 'utils/env', 'utils/type', 'utils/uuid', 'utils/color',
-    'base/coords', 'math/math', 'math/geometry', 'math/numerics'
-], function (JXG, AbstractRenderer, Const, Env, Type, UUID, Color, Coords, Mat, Geometry, Numerics) {
+import JXG from 'jxg';
+import AbstractRenderer from 'renderer/abstract';
+import Const from 'base/constants';
+import Env from 'utils/env';
+import Type from 'utils/type';
+import UUID from 'utils/uuid';
+import Color from 'utils/color';
+import Coords from 'base/coords';
+import Mat from 'math/math';
+import Geometry from 'math/geometry';
+import Numerics from 'math/numerics';
+import $__canvas from 'canvas';
 
-    "use strict";
+    
 
     /**
      * Uses HTML Canvas to implement the rendering methods defined in {@link JXG.AbstractRenderer}.
@@ -94,7 +102,7 @@ define([
 
         } else if (Env.isNode()) {
             try {
-                this.canvasId = (typeof module === 'object' ? module.require('canvas') : require('canvas'));
+                this.canvasId = (typeof module === 'object' ? module.require('canvas') : $__canvas);
                 this.canvasRoot = new this.canvasId(500, 500);
                 this.context = this.canvasRoot.getContext('2d');
             } catch (err) {
@@ -1546,5 +1554,5 @@ define([
         }
     });
 
-    return JXG.CanvasRenderer;
-});
+    export default JXG.CanvasRenderer;
+

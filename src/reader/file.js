@@ -41,11 +41,13 @@
  utils/base64
  */
 
-define([
-    'jxg', 'utils/env', 'utils/type', 'utils/encoding', 'utils/base64'
-], function (JXG, Env, Type, Encoding, Base64) {
+import JXG from 'jxg';
+import Env from 'utils/env';
+import Type from 'utils/type';
+import Encoding from 'utils/encoding';
+import Base64 from 'utils/base64';
 
-    "use strict";
+    
 
     /**
      * The FileReader object bundles the file input capabilities of JSXGraph.
@@ -283,5 +285,5 @@ End Function\n\
 </script>\n');
     }
 
-    return JXG.FileReader;
-});
+    export default JXG.FileReader;
+

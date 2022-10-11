@@ -39,9 +39,11 @@
  utils/type
  */
 
-define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
+import JXG from 'jxg';
+import Mat from 'math/math';
+import Type from 'utils/type';
 
-    "use strict";
+    
 
     /**
      * Functions for mathematical statistics. Most functions are like in the statistics package R.
@@ -615,5 +617,5 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         }
     };
 
-    return Mat.Statistics;
-});
+    export default Mat.Statistics;
+

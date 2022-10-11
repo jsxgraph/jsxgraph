@@ -41,11 +41,13 @@
  utils/type
  */
 
-define([
-    'jxg', 'base/constants', 'math/math', 'utils/color', 'utils/type'
-], function (JXG, Const, Mat, Color, Type) {
+import JXG from 'jxg';
+import Const from 'base/constants';
+import Mat from 'math/math';
+import Color from 'utils/color';
+import Type from 'utils/type';
 
-    "use strict";
+    
 
     /**
      * Options Namespace
@@ -6265,5 +6267,5 @@ define([
     // needs to be exported
     JXG.Options.normalizePointFace = JXG.normalizePointFace;
 
-    return JXG.Options;
-});
+    export default JXG.Options;
+

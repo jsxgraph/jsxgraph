@@ -44,9 +44,11 @@
  * the browser runs on is a tablet/cell or a desktop computer.
  */
 
-define(['jxg', 'utils/type'], function (JXG, Type) {
+import JXG from 'jxg';
+import Type from 'utils/type';
+import $__canvas from 'canvas';
 
-    'use strict';
+    
 
     JXG.extendConstants(JXG, /** @lends JXG */{
         /**
@@ -170,7 +172,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
 
             if (this.isNode()) {
                 try {
-                    c = (typeof module === 'object' ? module.require('canvas') : require('canvas'));
+                    c = (typeof module === 'object' ? module.require('canvas') : $__canvas);
                     hasCanvas = !!c;
                 } catch (err) {
                 }
@@ -877,5 +879,5 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
 
     });
 
-    return JXG;
-});
+    export default JXG;
+

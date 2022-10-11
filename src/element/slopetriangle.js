@@ -41,11 +41,12 @@
  * @fileoverview Example file for a triangle implemented as a extension to JSXGraph.
  */
 
-define([
-    'jxg', 'utils/type', 'base/constants', 'base/polygon'
-], function (JXG, Type, Const, Polygon) {
+import JXG from 'jxg';
+import Type from 'utils/type';
+import Const from 'base/constants';
+import Polygon from 'base/polygon';
 
-    "use strict";
+    
 
     var priv = {
             removeSlopeTriangle: function () {
@@ -222,7 +223,7 @@ define([
 
     JXG.registerElement('slopetriangle', JXG.createSlopeTriangle);
 
-    return {
+    export default {
         createSlopeTriangle: JXG.createSlopeTriangle
     };
-});
+

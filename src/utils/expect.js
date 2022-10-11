@@ -42,11 +42,12 @@
  * @fileoverview expect.js provides utilities for parameter magic by normalizing multi-type parameters.
  */
 
-define([
-    'jxg', 'utils/type', 'base/constants', 'base/coords'
-], function (JXG, Type, Const, Coords) {
+import JXG from 'jxg';
+import Type from 'utils/type';
+import Const from 'base/constants';
+import Coords from 'base/coords';
 
-    "use strict";
+    
 
     var Expect = {
         /**
@@ -127,5 +128,5 @@ define([
 
     JXG.Expect = Expect;
 
-    return Expect;
-});
+    export default Expect;
+

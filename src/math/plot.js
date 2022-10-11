@@ -37,11 +37,18 @@
  utils/type
  */
 
-define(['jxg', 'base/constants', 'base/coords', 'math/math', 'math/extrapolate', 'math/numerics',
-        'math/statistics', 'math/geometry', 'math/ia', 'utils/type'],
-        function (JXG, Const, Coords, Mat, Extrapolate, Numerics, Statistics, Geometry, IntervalArithmetic, Type) {
+import JXG from 'jxg';
+import Const from 'base/constants';
+import Coords from 'base/coords';
+import Mat from 'math/math';
+import Extrapolate from 'math/extrapolate';
+import Numerics from 'math/numerics';
+import Statistics from 'math/statistics';
+import Geometry from 'math/geometry';
+import IntervalArithmetic from 'math/ia';
+import Type from 'utils/type';
 
-    "use strict";
+    
 
     /**
      * Functions for plotting of curves.
@@ -2294,5 +2301,5 @@ console.log("Polynomial of degree", level);
     };
 
 
-    return Mat.Plot;
-});
+    export default Mat.Plot;
+

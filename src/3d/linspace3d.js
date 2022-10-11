@@ -32,9 +32,12 @@
  * Create linear spaces of dimension at least one,
  * i.e. lines and planes.
  */
-define(['jxg', 'base/constants', 'utils/type', 'math/math', 'math/geometry'
-], function (JXG, Const, Type, Mat, Geometry) {
-    "use strict";
+import JXG from 'jxg';
+import Const from 'base/constants';
+import Type from 'utils/type';
+import Mat from 'math/math';
+import Geometry from 'math/geometry';
+    
 
     // -----------------------
     //  Lines
@@ -657,4 +660,3 @@ define(['jxg', 'base/constants', 'utils/type', 'math/math', 'math/geometry'
     };
     JXG.registerElement('plane3d', JXG.createPlane3D);
 
-});

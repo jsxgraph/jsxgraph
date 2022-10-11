@@ -43,9 +43,10 @@
  * arithmetic functions.
  */
 
-define(['jxg', 'utils/type'], function (JXG, Type) {
+import JXG from 'jxg';
+import Type from 'utils/type';
 
-    "use strict";
+    
 
     /**
      * Creates a new complex number.
@@ -306,5 +307,5 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
 
     JXG.Complex.C = JXG.C;
 
-    return JXG.Complex;
-});
+    export default JXG.Complex;
+

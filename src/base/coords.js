@@ -40,11 +40,13 @@
  math/math
  */
 
-define([
-    'jxg', 'base/constants', 'utils/event', 'utils/type', 'math/math'
-], function (JXG, Const, EventEmitter, Type, Mat) {
+import JXG from 'jxg';
+import Const from 'base/constants';
+import EventEmitter from 'utils/event';
+import Type from 'utils/type';
+import Mat from 'math/math';
 
-    "use strict";
+    
 
     /**
      * @fileoverview In this file the Coords object is defined, a class to manage all
@@ -274,5 +276,5 @@ define([
         __evt: function () {}
     });
 
-    return JXG.Coords;
-});
+    export default JXG.Coords;
+
