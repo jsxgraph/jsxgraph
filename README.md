@@ -19,42 +19,19 @@ to optimize the performance.
 Lehrstuhl für Mathematik und ihre Didaktik
 University of Bayreuth, Germany
 
-Upcoming event: 3rd JSXGraph conference (online)
---------------
-
-Date: October 4th - 6th, 2022
-
-Conference homepage: <https://jsxgraph.org/conf2022/>
-
-The conference will bring together developers and teachers, instructors and designers who are interested or already experienced in using JSXGraph (https://jsxgraph.org) to enhance digital learning of STEM topics.
-
-The conference will be an entirely online conference. All participants are required to register (https://jsxgraph.org/conf2022/registration/), registration is free.
-
-We invite all participants to contribute a talk or workshop and
-
-- report about their concepts, experience, and workflow,
-- present their applications and best practices,
-- discuss pedagogical concepts involving JSXGraph.
-
-Deadline for submission of talks / presentations: 31. August 2022
-
-Details about the conference software will be announced at a later stage.
-
-The 3nd International JSXGraph conference 2022 will be organized by the center of Mobile Learning with Digital Technology (https://mobiles-lernen.uni-bayreuth.de/) at the University of Bayreuth, Germany.
-
-
 Website
 -------
 
-* Project web site: https://jsxgraph.org/
-* Project wiki with hundreds of examples: https://jsxgraph.org/wiki/
-* GitHub project site: https://github.com/jsxgraph/jsxgraph
-* Mailing List/Google Group: https://groups.google.com/group/jsxgraph
-* JSXGraph questions at https://stackoverflow.com/search?tab=newest&q=jsxgraph
-* jsFiddle template: https://jsfiddle.net/8kep9syd/
-* Moodle filter: https://github.com/jsxgraph/moodle-filter_jsxgraph
-* (outdated: SourceForge project site: https://sf.net/projects/jsxgraph)
-* CDNs: Embed JSXGraph via
+- Project web site: https://jsxgraph.org/
+- Project wiki with hundreds of examples: https://jsxgraph.org/wiki/
+- GitHub project site: https://github.com/jsxgraph/jsxgraph
+- Mailing List/Google Group: https://groups.google.com/group/jsxgraph
+- JSXGraph questions at https://stackoverflow.com/search?tab=newest&q=jsxgraph
+- jsFiddle template: https://jsfiddle.net/8kep9syd/
+- YouTube channel: https://www.youtube.com/channel/UCANBFoVoOyW2eNyTvx-VZdQ
+- Moodle filter: https://github.com/jsxgraph/moodle-filter_jsxgraph
+- (outdated: SourceForge project site: https://sf.net/projects/jsxgraph)
+- CDNs: Embed JSXGraph via
 
 ```
 <script type="text/javascript" charset="UTF-8"
@@ -67,9 +44,9 @@ or
 
 ```
 <script type="text/javascript" charset="UTF-8"
- src="//cdnjs.cloudflare.com/ajax/libs/jsxgraph/1.2.3/jsxgraphcore.js"></script>
+ src="//cdnjs.cloudflare.com/ajax/libs/jsxgraph/1.4.6/jsxgraphcore.js"></script>
 <link rel="stylesheet"
- type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/jsxgraph/1.2.3/jsxgraph.css" />
+ type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/jsxgraph/1.4.6/jsxgraph.css" />
 ```
 
 Please report bugs to our issue tracking system found at
