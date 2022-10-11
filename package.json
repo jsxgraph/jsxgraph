@@ -52,6 +52,7 @@
     "karma-chrome-launcher": "^3.1.0",
     "karma-jasmine": "^4.0.1",
     "karma-requirejs": "^1.1.0",
+    "prettier": "2.3.1",
     "requirejs": "^2.3.6",
     "terser": "^5.10.0"
   },
@@ -61,6 +62,8 @@
   "scripts": {
     "buildCore": "./node_modules/requirejs/bin/r.js -o build/core.build.json",
     "buildCompressor": "./node_modules/requirejs/bin/r.js -o build/compressor.build.json",
+    "format": "prettier -w src",
     "test": "make tests"
-  }
+  },
+  "prettier": {}
 }

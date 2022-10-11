@@ -29,7 +29,6 @@
  and <http://opensource.org/licenses/MIT/>.
  */
 
-
 /*global JXG: true, define: true, DOMParser: true, ActiveXObject: true*/
 /*jslint nomen: true, plusplus: true*/
 
@@ -38,67 +37,65 @@
  utils/type
  */
 
-import JXG from 'jxg';
-import Type from 'utils/type';
+import JXG from "jxg";
+import Type from "utils/type";
 
-    
+/**
+ * Holds browser independent xml parsing routines. Won't work in environments other than browsers.
+ * @namespace
+ */
+JXG.XML = {
+  /**
+   * Cleans out unneccessary whitespaces in a chunk of xml.
+   * @param {Object} el
+   */
+  cleanWhitespace: function (el) {
+    var cur = el.firstChild;
 
-    /**
-     * Holds browser independent xml parsing routines. Won't work in environments other than browsers.
-     * @namespace
-     */
-    JXG.XML = {
-        /**
-         * Cleans out unneccessary whitespaces in a chunk of xml.
-         * @param {Object} el
-         */
-        cleanWhitespace: function (el) {
-            var cur = el.firstChild;
+    while (Type.exists(cur)) {
+      if (cur.nodeType === 3 && !/\S/.test(cur.nodeValue)) {
+        el.removeChild(cur);
+      } else if (cur.nodeType === 1) {
+        this.cleanWhitespace(cur);
+      }
+      cur = cur.nextSibling;
+    }
+  },
 
-            while (Type.exists(cur)) {
-                if (cur.nodeType === 3 && !/\S/.test(cur.nodeValue)) {
-                    el.removeChild(cur);
-                } else if (cur.nodeType === 1) {
-                    this.cleanWhitespace(cur);
-                }
-                cur = cur.nextSibling;
-            }
-        },
+  /**
+   * Converts a given string into a XML tree.
+   * @param {String} str
+   * @returns {Object} The xml tree represented by the root node.
+   */
+  parse: function (str) {
+    var parser, tree, DP;
 
-        /**
-         * Converts a given string into a XML tree.
-         * @param {String} str
-         * @returns {Object} The xml tree represented by the root node.
-         */
-        parse: function (str) {
-            var parser, tree, DP;
+    // DOMParser is a function in all browsers, except older IE and Safari.
+    // In IE it does not exists (workaround in else branch), in Safari it's an object.
+    if (typeof DOMParser === "function" || typeof DOMParser === "object") {
+      DP = DOMParser;
+    } else {
+      // IE workaround, since there is no DOMParser
+      DP = function () {
+        this.parseFromString = function (str) {
+          var d;
 
-            // DOMParser is a function in all browsers, except older IE and Safari.
-            // In IE it does not exists (workaround in else branch), in Safari it's an object.
-            if (typeof DOMParser === 'function' || typeof DOMParser === 'object') {
-                DP = DOMParser;
-            } else {
-                // IE workaround, since there is no DOMParser
-                DP = function () {
-                    this.parseFromString = function (str) {
-                        var d;
+          if (typeof ActiveXObject === "function") {
+            d = new ActiveXObject("MSXML.DomDocument");
+            d.loadXML(str);
+          }
 
-                        if (typeof ActiveXObject === 'function') {
-                            d = new ActiveXObject('MSXML.DomDocument');
-                            d.loadXML(str);
-                        }
+          return d;
+        };
+      };
+    }
 
-                        return d;
-                    };
-                };
-            }
+    parser = new DP();
+    tree = parser.parseFromString(str, "text/xml");
+    this.cleanWhitespace(tree);
 
-            parser = new DP();
-            tree = parser.parseFromString(str, 'text/xml');
-            this.cleanWhitespace(tree);
+    return tree;
+  },
+};
 
-            return tree;
-        }
-    };
-
-    export default JXG.XML;
+export default JXG.XML;
