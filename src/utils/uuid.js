@@ -17,49 +17,50 @@
  jxg
  */
 
-define(['jxg'], function (JXG) {
+define(["jxg"], function (JXG) {
+  "use strict";
 
-    'use strict';
+  // constants
+  var uuidCharsStr =
+      "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
+    uuidChars = uuidCharsStr.split("");
 
-    // constants
-    var uuidCharsStr = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz',
-        uuidChars = uuidCharsStr.split('');
+  /**
+   * General utility routines
+   * @namespace
+   */
+  JXG.Util = JXG.Util || {};
 
-    /**
-     * General utility routines
-     * @namespace
-     */
-    JXG.Util = JXG.Util || {};
+  JXG.Util.genUUID = function (prefix) {
+    var r,
+      i,
+      uuid = [],
+      rnd = 0;
 
-    JXG.Util.genUUID = function (prefix) {
-        var r, i,
-            uuid = [],
-            rnd = 0;
+    prefix = prefix || "";
 
-        prefix = prefix || '';
+    if (prefix !== "" && prefix.substr(prefix.length - 1) !== "-") {
+      prefix = prefix + "-";
+    }
 
-        if (prefix !== '' && prefix.substr(prefix.length - 1) !== '-') {
-            prefix = prefix + '-';
+    for (i = 0; i < 36; i++) {
+      if (i === 8 || i === 13 || i === 18 || i === 23) {
+        uuid[i] = "-";
+      } else if (i === 14) {
+        uuid[i] = "4";
+      } else {
+        if (rnd <= 0x02) {
+          rnd = (0x2000000 + Math.random() * 0x1000000) | 0;
         }
 
-        for (i = 0; i < 36; i++) {
-            if (i === 8 || i === 13 || i === 18 || i === 23) {
-                uuid[i] = '-';
-            } else if (i === 14) {
-                uuid[i] = '4';
-            } else {
-                if (rnd <= 0x02) {
-                    rnd = 0x2000000 + (Math.random() * 0x1000000) | 0;
-                }
+        r = rnd & 0xf;
+        rnd = rnd >> 4;
+        uuid[i] = uuidChars[i === 19 ? (r & 0x3) | 0x8 : r];
+      }
+    }
 
-                r = rnd & 0xf;
-                rnd = rnd >> 4;
-                uuid[i] = uuidChars[(i === 19) ? (r & 0x3) | 0x8 : r];
-            }
-        }
+    return prefix + uuid.join("");
+  };
 
-        return prefix + uuid.join('');
-    };
-
-    return JXG.Util;
+  return JXG.Util;
 });

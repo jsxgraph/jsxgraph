@@ -29,118 +29,119 @@
     and <http://opensource.org/licenses/MIT/>.
  */
 
-describe("Test JXG.Composition", function() {
-    var board;
+describe("Test JXG.Composition", function () {
+  var board;
 
-    document.getElementsByTagName('body')[0].innerHTML = '<div id="jxgbox" style="width: 100px; height: 100px;"></div>';
-    board = JXG.JSXGraph.initBoard('jxgbox', {
-        renderer: 'svg',
-        axis: false,
-        grid: false,
-        boundingbox: [-5, 5, 5, -5],
-        showCopyright: false,
-        showNavigation: false
-    });
+  document.getElementsByTagName("body")[0].innerHTML =
+    '<div id="jxgbox" style="width: 100px; height: 100px;"></div>';
+  board = JXG.JSXGraph.initBoard("jxgbox", {
+    renderer: "svg",
+    axis: false,
+    grid: false,
+    boundingbox: [-5, 5, 5, -5],
+    showCopyright: false,
+    showNavigation: false,
+  });
 
-    it("constructor", function() {
-        var p = board.create('point', [0, 0], {id: 'elId'}),
-            c = new JXG.Composition({
-                    element: p
-                }),
-            d = new JXG.Composition();
+  it("constructor", function () {
+    var p = board.create("point", [0, 0], { id: "elId" }),
+      c = new JXG.Composition({
+        element: p,
+      }),
+      d = new JXG.Composition();
 
-        expect(c).toBeInstanceOf(Object);
-        expect(c.element).toBeInstanceOf(Object);
-        expect(c.element.id).toEqual('elId');
-        expect(d).toBeInstanceOf(Object);
-        expect(d.elements).not.toBeNull();
-    });
+    expect(c).toBeInstanceOf(Object);
+    expect(c.element).toBeInstanceOf(Object);
+    expect(c.element.id).toEqual("elId");
+    expect(d).toBeInstanceOf(Object);
+    expect(d.elements).not.toBeNull();
+  });
 
-    it("Add", function() {
-        var p = board.create('point', [0, 0], {id: 'elId'}),
-            c = new JXG.Composition({});
-        expect(c.add('el', p)).toBeTrue();
-        expect(c.el).toBeInstanceOf(JXG.Point);
-        expect(c.el).toEqual(c.elements.elId);
-        expect(c.add('update', null)).toBeFalse();
+  it("Add", function () {
+    var p = board.create("point", [0, 0], { id: "elId" }),
+      c = new JXG.Composition({});
+    expect(c.add("el", p)).toBeTrue();
+    expect(c.el).toBeInstanceOf(JXG.Point);
+    expect(c.el).toEqual(c.elements.elId);
+    expect(c.add("update", null)).toBeFalse();
 
-        // Composition do not overwrite existing properties
-        expect(c.update).toBeInstanceOf(Function);
-    });
+    // Composition do not overwrite existing properties
+    expect(c.update).toBeInstanceOf(Function);
+  });
 
-    it("Remove", function() {
-        var p = board.create('point', [0, 0], {id: 'elId'}),
-            c = new JXG.Composition({element: p});
+  it("Remove", function () {
+    var p = board.create("point", [0, 0], { id: "elId" }),
+      c = new JXG.Composition({ element: p });
 
-        expect(c.remove('element')).toBeTrue();
-        expect(c.element).toBeUndefined();
-        expect(c.remove('update')).toBeFalse();
-        expect(c.update).toBeInstanceOf(Function);
-    });
+    expect(c.remove("element")).toBeTrue();
+    expect(c.element).toBeUndefined();
+    expect(c.remove("update")).toBeFalse();
+    expect(c.update).toBeInstanceOf(Function);
+  });
 
-    it("Update", function() {
-        var spy = jasmine.createSpy("call update");
+  it("Update", function () {
+    var spy = jasmine.createSpy("call update");
 
-        var p = board.create('point', [0, 0], {id: 'elId'}),
-            c = new JXG.Composition({element: p});
+    var p = board.create("point", [0, 0], { id: "elId" }),
+      c = new JXG.Composition({ element: p });
 
-        c.element.update = spy;
-        c.update();
-        expect(c.element.update).toHaveBeenCalled();
-    });
+    c.element.update = spy;
+    c.update();
+    expect(c.element.update).toHaveBeenCalled();
+  });
 
-    it("setAttribute", function() {
-        var spy = jasmine.createSpy("call setAttribute");
+  it("setAttribute", function () {
+    var spy = jasmine.createSpy("call setAttribute");
 
-        var p = board.create('point', [0, 0], {id: 'elId'}),
-            c = new JXG.Composition({element: p});
-        c.element.setAttribute = spy;
-        c.setAttribute();
-        
-        expect(c.element.setAttribute).toHaveBeenCalled();
-    });
+    var p = board.create("point", [0, 0], { id: "elId" }),
+      c = new JXG.Composition({ element: p });
+    c.element.setAttribute = spy;
+    c.setAttribute();
 
-    it("highlight", function() {
-        var spy = jasmine.createSpy("call highlight");
+    expect(c.element.setAttribute).toHaveBeenCalled();
+  });
 
-        var p = board.create('point', [0, 0], {id: 'elId'}),
-            c = new JXG.Composition({element: p});
-        c.element.highlight = spy;
-        c.highlight();
+  it("highlight", function () {
+    var spy = jasmine.createSpy("call highlight");
 
-        expect(c.element.highlight).toHaveBeenCalled();
-    });
+    var p = board.create("point", [0, 0], { id: "elId" }),
+      c = new JXG.Composition({ element: p });
+    c.element.highlight = spy;
+    c.highlight();
 
-    it("nohighlight", function() {
-        var spy = jasmine.createSpy("call noHighlight");
+    expect(c.element.highlight).toHaveBeenCalled();
+  });
 
-        var p = board.create('point', [0, 0], {id: 'elId'}),
-            c = new JXG.Composition({element: p});
-        c.element.noHighlight = spy;
-        c.noHighlight();
+  it("nohighlight", function () {
+    var spy = jasmine.createSpy("call noHighlight");
 
-        expect(c.element.noHighlight).toHaveBeenCalled();
-    });
+    var p = board.create("point", [0, 0], { id: "elId" }),
+      c = new JXG.Composition({ element: p });
+    c.element.noHighlight = spy;
+    c.noHighlight();
 
-    it("prepareUpdate", function() {
-        var spy = jasmine.createSpy("call prepareUpdate");
+    expect(c.element.noHighlight).toHaveBeenCalled();
+  });
 
-        var p = board.create('point', [0, 0], {id: 'elId'}),
-            c = new JXG.Composition({element: p});
-        c.element.prepareUpdate = spy;
-        c.prepareUpdate();
+  it("prepareUpdate", function () {
+    var spy = jasmine.createSpy("call prepareUpdate");
 
-        expect(c.element.prepareUpdate).toHaveBeenCalled();
-    });
+    var p = board.create("point", [0, 0], { id: "elId" }),
+      c = new JXG.Composition({ element: p });
+    c.element.prepareUpdate = spy;
+    c.prepareUpdate();
 
-    it("updateRenderer", function() {
-        var spy = jasmine.createSpy("call updateRenderer");
+    expect(c.element.prepareUpdate).toHaveBeenCalled();
+  });
 
-        var p = board.create('point', [0, 0], {id: 'elId'}),
-            c = new JXG.Composition({element: p});
-        c.element.updateRenderer = spy;
-        c.updateRenderer();
+  it("updateRenderer", function () {
+    var spy = jasmine.createSpy("call updateRenderer");
 
-        expect(c.element.updateRenderer).toHaveBeenCalled();
-    });
+    var p = board.create("point", [0, 0], { id: "elId" }),
+      c = new JXG.Composition({ element: p });
+    c.element.updateRenderer = spy;
+    c.updateRenderer();
+
+    expect(c.element.updateRenderer).toHaveBeenCalled();
+  });
 });

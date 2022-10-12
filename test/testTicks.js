@@ -27,38 +27,37 @@
     and <http://opensource.org/licenses/MIT/>.
  */
 describe("Test ticks", function () {
-    var board, target,
-        pointerId = 0;
+  var board,
+    target,
+    pointerId = 0;
 
-    document.getElementsByTagName('body')[0].innerHTML = '<div id="jxgbox" style="width: 500px; height: 500px;"></div>';
-    target = document.getElementById('jxgbox');
+  document.getElementsByTagName("body")[0].innerHTML =
+    '<div id="jxgbox" style="width: 500px; height: 500px;"></div>';
+  target = document.getElementById("jxgbox");
 
-    board = JXG.JSXGraph.initBoard('jxgbox', {
-        boundingbox: [-4, 4, 4, -4],
-        axis: true,
-        defaultAxes: {
-            x: {
-                ticks: {
-                    minorTicks: 7,
-                    ticksPerLabel: 4,
-                    minorHeight: 20,
-                }
-            },
-            y: { 
-                ticks: {
-                    minorTicks: 3,
-                    ticksPerLabel: 2,
-                    minorHeight: 20
-                }
-            }
-        }
-    });
+  board = JXG.JSXGraph.initBoard("jxgbox", {
+    boundingbox: [-4, 4, 4, -4],
+    axis: true,
+    defaultAxes: {
+      x: {
+        ticks: {
+          minorTicks: 7,
+          ticksPerLabel: 4,
+          minorHeight: 20,
+        },
+      },
+      y: {
+        ticks: {
+          minorTicks: 3,
+          ticksPerLabel: 2,
+          minorHeight: 20,
+        },
+      },
+    },
+  });
 
-    it("Test ticksPerLabel", function () {
-
-        expect(board.defaultAxes.x.ticks[0].labels[0].plaintext).toEqual('0.5');
-        expect(board.defaultAxes.x.ticks[0].labels[1].plaintext).toEqual('1');
-    
-    });
-
+  it("Test ticksPerLabel", function () {
+    expect(board.defaultAxes.x.ticks[0].labels[0].plaintext).toEqual("0.5");
+    expect(board.defaultAxes.x.ticks[0].labels[1].plaintext).toEqual("1");
+  });
 });
