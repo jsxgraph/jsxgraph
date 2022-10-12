@@ -4,6 +4,7 @@ Not included by purpose are the folowing files:
     'jsxgraphnode.js'
     'loadjsxgraph.js'
     'math/bst.js'
+    'math/heap.js'
     'parser/jessiescript.js'
     'reader/cinderella.js'
     'reader/geogebra.js'
@@ -14,4 +15,3 @@ Not included by purpose are the folowing files:
     'reader/tracenpoche.js'
     'themes/dark.js'
     'themes/gui.js'
-
