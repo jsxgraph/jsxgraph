@@ -3,7 +3,7 @@ const baseConfig = require("./webpack.config.base");
 
 const libraryName = "JSXGraph";
 const PATHS = {
-  entryPoint: path.resolve(__dirname, "../build/core.deps.js"),
+  entryPoint: path.resolve(__dirname, "../src/index.js"),
   bundles: path.resolve(__dirname, "../distrib"),
 };
 

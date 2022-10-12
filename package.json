@@ -2,9 +2,14 @@
   "name": "jsxgraph",
   "description": "Interactive geometry, plotting, visualization",
   "homepage": "https://jsxgraph.org",
-  "version": "1.4.6",
-  "main": "distrib/jsxgraphcore.js",
-  "types": "distrib/index.d.ts",
+  "version": "1.5.0",
+  "main": "./src/index.js",
+  "types": "./src/index.d.ts",
+  "files": [
+    "src",
+    "distrib",
+    "*.md"
+  ],
   "maintainers": [
     {
       "name": "Alfred Wassermann",
@@ -71,8 +76,7 @@
     "node": ">=0.6.0"
   },
   "scripts": {
-    "build:bundle": "webpack --config config/webpack.config.js",
-    "buildCore": "./node_modules/requirejs/bin/r.js -o build/core.build.json",
+    "buildCore": "webpack --config config/webpack.config.js",
     "buildCompressor": "./node_modules/requirejs/bin/r.js -o build/compressor.build.json",
     "eslint": "make eslint",
     "check-format": "prettier --check build src test tests",

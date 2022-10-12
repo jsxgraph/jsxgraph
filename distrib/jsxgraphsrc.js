@@ -11,7 +11,7301 @@
 return /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 532:
+/***/ 292:
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+/* globals document, ImageData */
+
+const parseFont = __webpack_require__(850)
+
+exports.parseFont = parseFont
+
+exports.createCanvas = function (width, height) {
+  return Object.assign(document.createElement('canvas'), { width: width, height: height })
+}
+
+exports.createImageData = function (array, width, height) {
+  // Browser implementation of ImageData looks at the number of arguments passed
+  switch (arguments.length) {
+    case 0: return new ImageData()
+    case 1: return new ImageData(array)
+    case 2: return new ImageData(array, width)
+    default: return new ImageData(array, width, height)
+  }
+}
+
+exports.loadImage = function (src, options) {
+  return new Promise(function (resolve, reject) {
+    const image = Object.assign(document.createElement('img'), options)
+
+    function cleanup () {
+      image.onload = null
+      image.onerror = null
+    }
+
+    image.onload = function () { cleanup(); resolve(image) }
+    image.onerror = function () { cleanup(); reject(new Error('Failed to load the image "' + src + '"')) }
+
+    image.src = src
+  })
+}
+
+
+/***/ }),
+
+/***/ 850:
+/***/ ((module) => {
+
+"use strict";
+
+
+/**
+ * Font RegExp helpers.
+ */
+
+const weights = 'bold|bolder|lighter|[1-9]00'
+const styles = 'italic|oblique'
+const variants = 'small-caps'
+const stretches = 'ultra-condensed|extra-condensed|condensed|semi-condensed|semi-expanded|expanded|extra-expanded|ultra-expanded'
+const units = 'px|pt|pc|in|cm|mm|%|em|ex|ch|rem|q'
+const string = '\'([^\']+)\'|"([^"]+)"|[\\w\\s-]+'
+
+// [ [ <‘font-style’> || <font-variant-css21> || <‘font-weight’> || <‘font-stretch’> ]?
+//    <‘font-size’> [ / <‘line-height’> ]? <‘font-family’> ]
+// https://drafts.csswg.org/css-fonts-3/#font-prop
+const weightRe = new RegExp(`(${weights}) +`, 'i')
+const styleRe = new RegExp(`(${styles}) +`, 'i')
+const variantRe = new RegExp(`(${variants}) +`, 'i')
+const stretchRe = new RegExp(`(${stretches}) +`, 'i')
+const sizeFamilyRe = new RegExp(
+  `([\\d\\.]+)(${units}) *((?:${string})( *, *(?:${string}))*)`)
+
+/**
+ * Cache font parsing.
+ */
+
+const cache = {}
+
+const defaultHeight = 16 // pt, common browser default
+
+/**
+ * Parse font `str`.
+ *
+ * @param {String} str
+ * @return {Object} Parsed font. `size` is in device units. `unit` is the unit
+ *   appearing in the input string.
+ * @api private
+ */
+
+module.exports = str => {
+  // Cached
+  if (cache[str]) return cache[str]
+
+  // Try for required properties first.
+  const sizeFamily = sizeFamilyRe.exec(str)
+  if (!sizeFamily) return // invalid
+
+  // Default values and required properties
+  const font = {
+    weight: 'normal',
+    style: 'normal',
+    stretch: 'normal',
+    variant: 'normal',
+    size: parseFloat(sizeFamily[1]),
+    unit: sizeFamily[2],
+    family: sizeFamily[3].replace(/["']/g, '').replace(/ *, */g, ',')
+  }
+
+  // Optional, unordered properties.
+  let weight, style, variant, stretch
+  // Stop search at `sizeFamily.index`
+  const substr = str.substring(0, sizeFamily.index)
+  if ((weight = weightRe.exec(substr))) font.weight = weight[1]
+  if ((style = styleRe.exec(substr))) font.style = style[1]
+  if ((variant = variantRe.exec(substr))) font.variant = variant[1]
+  if ((stretch = stretchRe.exec(substr))) font.stretch = stretch[1]
+
+  // Convert to device units. (`font.unit` is the original unit)
+  // TODO: ch, ex
+  switch (font.unit) {
+    case 'pt':
+      font.size /= 0.75
+      break
+    case 'pc':
+      font.size *= 16
+      break
+    case 'in':
+      font.size *= 96
+      break
+    case 'cm':
+      font.size *= 96.0 / 2.54
+      break
+    case 'mm':
+      font.size *= 96.0 / 25.4
+      break
+    case '%':
+      // TODO disabled because existing unit tests assume 100
+      // font.size *= defaultHeight / 100 / 0.75
+      break
+    case 'em':
+    case 'rem':
+      font.size *= defaultHeight / 0.75
+      break
+    case 'q':
+      font.size *= 96 / 25.4 / 4
+      break
+  }
+
+  return (cache[str] = font)
+}
+
+
+/***/ }),
+
+/***/ 470:
+/***/ ((module) => {
+
+"use strict";
+// 'path' module extracted from Node.js v8.11.1 (only the posix part)
+// transplited with Babel
+
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+
+
+function assertPath(path) {
+  if (typeof path !== 'string') {
+    throw new TypeError('Path must be a string. Received ' + JSON.stringify(path));
+  }
+}
+
+// Resolves . and .. elements in a path with directory names
+function normalizeStringPosix(path, allowAboveRoot) {
+  var res = '';
+  var lastSegmentLength = 0;
+  var lastSlash = -1;
+  var dots = 0;
+  var code;
+  for (var i = 0; i <= path.length; ++i) {
+    if (i < path.length)
+      code = path.charCodeAt(i);
+    else if (code === 47 /*/*/)
+      break;
+    else
+      code = 47 /*/*/;
+    if (code === 47 /*/*/) {
+      if (lastSlash === i - 1 || dots === 1) {
+        // NOOP
+      } else if (lastSlash !== i - 1 && dots === 2) {
+        if (res.length < 2 || lastSegmentLength !== 2 || res.charCodeAt(res.length - 1) !== 46 /*.*/ || res.charCodeAt(res.length - 2) !== 46 /*.*/) {
+          if (res.length > 2) {
+            var lastSlashIndex = res.lastIndexOf('/');
+            if (lastSlashIndex !== res.length - 1) {
+              if (lastSlashIndex === -1) {
+                res = '';
+                lastSegmentLength = 0;
+              } else {
+                res = res.slice(0, lastSlashIndex);
+                lastSegmentLength = res.length - 1 - res.lastIndexOf('/');
+              }
+              lastSlash = i;
+              dots = 0;
+              continue;
+            }
+          } else if (res.length === 2 || res.length === 1) {
+            res = '';
+            lastSegmentLength = 0;
+            lastSlash = i;
+            dots = 0;
+            continue;
+          }
+        }
+        if (allowAboveRoot) {
+          if (res.length > 0)
+            res += '/..';
+          else
+            res = '..';
+          lastSegmentLength = 2;
+        }
+      } else {
+        if (res.length > 0)
+          res += '/' + path.slice(lastSlash + 1, i);
+        else
+          res = path.slice(lastSlash + 1, i);
+        lastSegmentLength = i - lastSlash - 1;
+      }
+      lastSlash = i;
+      dots = 0;
+    } else if (code === 46 /*.*/ && dots !== -1) {
+      ++dots;
+    } else {
+      dots = -1;
+    }
+  }
+  return res;
+}
+
+function _format(sep, pathObject) {
+  var dir = pathObject.dir || pathObject.root;
+  var base = pathObject.base || (pathObject.name || '') + (pathObject.ext || '');
+  if (!dir) {
+    return base;
+  }
+  if (dir === pathObject.root) {
+    return dir + base;
+  }
+  return dir + sep + base;
+}
+
+var posix = {
+  // path.resolve([from ...], to)
+  resolve: function resolve() {
+    var resolvedPath = '';
+    var resolvedAbsolute = false;
+    var cwd;
+
+    for (var i = arguments.length - 1; i >= -1 && !resolvedAbsolute; i--) {
+      var path;
+      if (i >= 0)
+        path = arguments[i];
+      else {
+        if (cwd === undefined)
+          cwd = process.cwd();
+        path = cwd;
+      }
+
+      assertPath(path);
+
+      // Skip empty entries
+      if (path.length === 0) {
+        continue;
+      }
+
+      resolvedPath = path + '/' + resolvedPath;
+      resolvedAbsolute = path.charCodeAt(0) === 47 /*/*/;
+    }
+
+    // At this point the path should be resolved to a full absolute path, but
+    // handle relative paths to be safe (might happen when process.cwd() fails)
+
+    // Normalize the path
+    resolvedPath = normalizeStringPosix(resolvedPath, !resolvedAbsolute);
+
+    if (resolvedAbsolute) {
+      if (resolvedPath.length > 0)
+        return '/' + resolvedPath;
+      else
+        return '/';
+    } else if (resolvedPath.length > 0) {
+      return resolvedPath;
+    } else {
+      return '.';
+    }
+  },
+
+  normalize: function normalize(path) {
+    assertPath(path);
+
+    if (path.length === 0) return '.';
+
+    var isAbsolute = path.charCodeAt(0) === 47 /*/*/;
+    var trailingSeparator = path.charCodeAt(path.length - 1) === 47 /*/*/;
+
+    // Normalize the path
+    path = normalizeStringPosix(path, !isAbsolute);
+
+    if (path.length === 0 && !isAbsolute) path = '.';
+    if (path.length > 0 && trailingSeparator) path += '/';
+
+    if (isAbsolute) return '/' + path;
+    return path;
+  },
+
+  isAbsolute: function isAbsolute(path) {
+    assertPath(path);
+    return path.length > 0 && path.charCodeAt(0) === 47 /*/*/;
+  },
+
+  join: function join() {
+    if (arguments.length === 0)
+      return '.';
+    var joined;
+    for (var i = 0; i < arguments.length; ++i) {
+      var arg = arguments[i];
+      assertPath(arg);
+      if (arg.length > 0) {
+        if (joined === undefined)
+          joined = arg;
+        else
+          joined += '/' + arg;
+      }
+    }
+    if (joined === undefined)
+      return '.';
+    return posix.normalize(joined);
+  },
+
+  relative: function relative(from, to) {
+    assertPath(from);
+    assertPath(to);
+
+    if (from === to) return '';
+
+    from = posix.resolve(from);
+    to = posix.resolve(to);
+
+    if (from === to) return '';
+
+    // Trim any leading backslashes
+    var fromStart = 1;
+    for (; fromStart < from.length; ++fromStart) {
+      if (from.charCodeAt(fromStart) !== 47 /*/*/)
+        break;
+    }
+    var fromEnd = from.length;
+    var fromLen = fromEnd - fromStart;
+
+    // Trim any leading backslashes
+    var toStart = 1;
+    for (; toStart < to.length; ++toStart) {
+      if (to.charCodeAt(toStart) !== 47 /*/*/)
+        break;
+    }
+    var toEnd = to.length;
+    var toLen = toEnd - toStart;
+
+    // Compare paths to find the longest common path from root
+    var length = fromLen < toLen ? fromLen : toLen;
+    var lastCommonSep = -1;
+    var i = 0;
+    for (; i <= length; ++i) {
+      if (i === length) {
+        if (toLen > length) {
+          if (to.charCodeAt(toStart + i) === 47 /*/*/) {
+            // We get here if `from` is the exact base path for `to`.
+            // For example: from='/foo/bar'; to='/foo/bar/baz'
+            return to.slice(toStart + i + 1);
+          } else if (i === 0) {
+            // We get here if `from` is the root
+            // For example: from='/'; to='/foo'
+            return to.slice(toStart + i);
+          }
+        } else if (fromLen > length) {
+          if (from.charCodeAt(fromStart + i) === 47 /*/*/) {
+            // We get here if `to` is the exact base path for `from`.
+            // For example: from='/foo/bar/baz'; to='/foo/bar'
+            lastCommonSep = i;
+          } else if (i === 0) {
+            // We get here if `to` is the root.
+            // For example: from='/foo'; to='/'
+            lastCommonSep = 0;
+          }
+        }
+        break;
+      }
+      var fromCode = from.charCodeAt(fromStart + i);
+      var toCode = to.charCodeAt(toStart + i);
+      if (fromCode !== toCode)
+        break;
+      else if (fromCode === 47 /*/*/)
+        lastCommonSep = i;
+    }
+
+    var out = '';
+    // Generate the relative path based on the path difference between `to`
+    // and `from`
+    for (i = fromStart + lastCommonSep + 1; i <= fromEnd; ++i) {
+      if (i === fromEnd || from.charCodeAt(i) === 47 /*/*/) {
+        if (out.length === 0)
+          out += '..';
+        else
+          out += '/..';
+      }
+    }
+
+    // Lastly, append the rest of the destination (`to`) path that comes after
+    // the common path parts
+    if (out.length > 0)
+      return out + to.slice(toStart + lastCommonSep);
+    else {
+      toStart += lastCommonSep;
+      if (to.charCodeAt(toStart) === 47 /*/*/)
+        ++toStart;
+      return to.slice(toStart);
+    }
+  },
+
+  _makeLong: function _makeLong(path) {
+    return path;
+  },
+
+  dirname: function dirname(path) {
+    assertPath(path);
+    if (path.length === 0) return '.';
+    var code = path.charCodeAt(0);
+    var hasRoot = code === 47 /*/*/;
+    var end = -1;
+    var matchedSlash = true;
+    for (var i = path.length - 1; i >= 1; --i) {
+      code = path.charCodeAt(i);
+      if (code === 47 /*/*/) {
+          if (!matchedSlash) {
+            end = i;
+            break;
+          }
+        } else {
+        // We saw the first non-path separator
+        matchedSlash = false;
+      }
+    }
+
+    if (end === -1) return hasRoot ? '/' : '.';
+    if (hasRoot && end === 1) return '//';
+    return path.slice(0, end);
+  },
+
+  basename: function basename(path, ext) {
+    if (ext !== undefined && typeof ext !== 'string') throw new TypeError('"ext" argument must be a string');
+    assertPath(path);
+
+    var start = 0;
+    var end = -1;
+    var matchedSlash = true;
+    var i;
+
+    if (ext !== undefined && ext.length > 0 && ext.length <= path.length) {
+      if (ext.length === path.length && ext === path) return '';
+      var extIdx = ext.length - 1;
+      var firstNonSlashEnd = -1;
+      for (i = path.length - 1; i >= 0; --i) {
+        var code = path.charCodeAt(i);
+        if (code === 47 /*/*/) {
+            // If we reached a path separator that was not part of a set of path
+            // separators at the end of the string, stop now
+            if (!matchedSlash) {
+              start = i + 1;
+              break;
+            }
+          } else {
+          if (firstNonSlashEnd === -1) {
+            // We saw the first non-path separator, remember this index in case
+            // we need it if the extension ends up not matching
+            matchedSlash = false;
+            firstNonSlashEnd = i + 1;
+          }
+          if (extIdx >= 0) {
+            // Try to match the explicit extension
+            if (code === ext.charCodeAt(extIdx)) {
+              if (--extIdx === -1) {
+                // We matched the extension, so mark this as the end of our path
+                // component
+                end = i;
+              }
+            } else {
+              // Extension does not match, so our result is the entire path
+              // component
+              extIdx = -1;
+              end = firstNonSlashEnd;
+            }
+          }
+        }
+      }
+
+      if (start === end) end = firstNonSlashEnd;else if (end === -1) end = path.length;
+      return path.slice(start, end);
+    } else {
+      for (i = path.length - 1; i >= 0; --i) {
+        if (path.charCodeAt(i) === 47 /*/*/) {
+            // If we reached a path separator that was not part of a set of path
+            // separators at the end of the string, stop now
+            if (!matchedSlash) {
+              start = i + 1;
+              break;
+            }
+          } else if (end === -1) {
+          // We saw the first non-path separator, mark this as the end of our
+          // path component
+          matchedSlash = false;
+          end = i + 1;
+        }
+      }
+
+      if (end === -1) return '';
+      return path.slice(start, end);
+    }
+  },
+
+  extname: function extname(path) {
+    assertPath(path);
+    var startDot = -1;
+    var startPart = 0;
+    var end = -1;
+    var matchedSlash = true;
+    // Track the state of characters (if any) we see before our first dot and
+    // after any path separator we find
+    var preDotState = 0;
+    for (var i = path.length - 1; i >= 0; --i) {
+      var code = path.charCodeAt(i);
+      if (code === 47 /*/*/) {
+          // If we reached a path separator that was not part of a set of path
+          // separators at the end of the string, stop now
+          if (!matchedSlash) {
+            startPart = i + 1;
+            break;
+          }
+          continue;
+        }
+      if (end === -1) {
+        // We saw the first non-path separator, mark this as the end of our
+        // extension
+        matchedSlash = false;
+        end = i + 1;
+      }
+      if (code === 46 /*.*/) {
+          // If this is our first dot, mark it as the start of our extension
+          if (startDot === -1)
+            startDot = i;
+          else if (preDotState !== 1)
+            preDotState = 1;
+      } else if (startDot !== -1) {
+        // We saw a non-dot and non-path separator before our dot, so we should
+        // have a good chance at having a non-empty extension
+        preDotState = -1;
+      }
+    }
+
+    if (startDot === -1 || end === -1 ||
+        // We saw a non-dot character immediately before the dot
+        preDotState === 0 ||
+        // The (right-most) trimmed path component is exactly '..'
+        preDotState === 1 && startDot === end - 1 && startDot === startPart + 1) {
+      return '';
+    }
+    return path.slice(startDot, end);
+  },
+
+  format: function format(pathObject) {
+    if (pathObject === null || typeof pathObject !== 'object') {
+      throw new TypeError('The "pathObject" argument must be of type Object. Received type ' + typeof pathObject);
+    }
+    return _format('/', pathObject);
+  },
+
+  parse: function parse(path) {
+    assertPath(path);
+
+    var ret = { root: '', dir: '', base: '', ext: '', name: '' };
+    if (path.length === 0) return ret;
+    var code = path.charCodeAt(0);
+    var isAbsolute = code === 47 /*/*/;
+    var start;
+    if (isAbsolute) {
+      ret.root = '/';
+      start = 1;
+    } else {
+      start = 0;
+    }
+    var startDot = -1;
+    var startPart = 0;
+    var end = -1;
+    var matchedSlash = true;
+    var i = path.length - 1;
+
+    // Track the state of characters (if any) we see before our first dot and
+    // after any path separator we find
+    var preDotState = 0;
+
+    // Get non-dir info
+    for (; i >= start; --i) {
+      code = path.charCodeAt(i);
+      if (code === 47 /*/*/) {
+          // If we reached a path separator that was not part of a set of path
+          // separators at the end of the string, stop now
+          if (!matchedSlash) {
+            startPart = i + 1;
+            break;
+          }
+          continue;
+        }
+      if (end === -1) {
+        // We saw the first non-path separator, mark this as the end of our
+        // extension
+        matchedSlash = false;
+        end = i + 1;
+      }
+      if (code === 46 /*.*/) {
+          // If this is our first dot, mark it as the start of our extension
+          if (startDot === -1) startDot = i;else if (preDotState !== 1) preDotState = 1;
+        } else if (startDot !== -1) {
+        // We saw a non-dot and non-path separator before our dot, so we should
+        // have a good chance at having a non-empty extension
+        preDotState = -1;
+      }
+    }
+
+    if (startDot === -1 || end === -1 ||
+    // We saw a non-dot character immediately before the dot
+    preDotState === 0 ||
+    // The (right-most) trimmed path component is exactly '..'
+    preDotState === 1 && startDot === end - 1 && startDot === startPart + 1) {
+      if (end !== -1) {
+        if (startPart === 0 && isAbsolute) ret.base = ret.name = path.slice(1, end);else ret.base = ret.name = path.slice(startPart, end);
+      }
+    } else {
+      if (startPart === 0 && isAbsolute) {
+        ret.name = path.slice(1, startDot);
+        ret.base = path.slice(1, end);
+      } else {
+        ret.name = path.slice(startPart, startDot);
+        ret.base = path.slice(startPart, end);
+      }
+      ret.ext = path.slice(startDot, end);
+    }
+
+    if (startPart > 0) ret.dir = path.slice(0, startPart - 1);else if (isAbsolute) ret.dir = '/';
+
+    return ret;
+  },
+
+  sep: '/',
+  delimiter: ':',
+  win32: null,
+  posix: null
+};
+
+posix.posix = posix;
+
+module.exports = posix;
+
+
+/***/ }),
+
+/***/ 351:
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "Z": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var jxg__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(765);
+/*
+    Copyright 2008-2022
+        Matthias Ehmann,
+        Michael Gerhaeuser,
+        Carsten Miller,
+        Bianca Valentin,
+        Andreas Walter,
+        Alfred Wassermann,
+        Peter Wilfahrt
+
+    This file is part of JSXGraph.
+
+    JSXGraph is free software dual licensed under the GNU LGPL or MIT License.
+
+    You can redistribute it and/or modify it under the terms of the
+
+      * GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version
+      OR
+      * MIT License: https://github.com/jsxgraph/jsxgraph/blob/master/LICENSE.MIT
+
+    JSXGraph is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License and
+    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
+    and <http://opensource.org/licenses/MIT/>.
+ */
+
+/*global JXG: true, define: true*/
+/*jslint nomen: true, plusplus: true*/
+
+/* depends:
+ jxg
+ */
+
+
+
+var major = 1,
+  minor = 4,
+  patch = 7,
+  add = "dev", //'dev'
+  version = major + "." + minor + "." + patch + (add ? "-" + add : ""),
+  constants;
+
+constants = /** @lends JXG */ {
+  /**
+   * Constant: the currently used JSXGraph version.
+   *
+   * @name JXG.version
+   * @type String
+   */
+  version: version,
+
+  /**
+   * Constant: the small gray version indicator in the top left corner of every JSXGraph board (if
+   * showCopyright is not set to false on board creation).
+   *
+   * @name JXG.licenseText
+   * @type String
+   */
+  licenseText:
+    "JSXGraph v" + version + " Copyright (C) see https://jsxgraph.org",
+
+  /**
+   *  Constant: user coordinates relative to the coordinates system defined by the bounding box.
+   *  @name JXG.COORDS_BY_USER
+   *  @type Number
+   */
+  COORDS_BY_USER: 0x0001,
+
+  /**
+   *  Constant: screen coordinates in pixel relative to the upper left corner of the div element.
+   *  @name JXG.COORDS_BY_SCREEN
+   *  @type Number
+   */
+  COORDS_BY_SCREEN: 0x0002,
+
+  // object types
+  OBJECT_TYPE_ARC: 1,
+  OBJECT_TYPE_ARROW: 2,
+  OBJECT_TYPE_AXIS: 3,
+  OBJECT_TYPE_AXISPOINT: 4,
+  OBJECT_TYPE_TICKS: 5,
+  OBJECT_TYPE_CIRCLE: 6,
+  OBJECT_TYPE_CONIC: 7,
+  OBJECT_TYPE_CURVE: 8,
+  OBJECT_TYPE_GLIDER: 9,
+  OBJECT_TYPE_IMAGE: 10,
+  OBJECT_TYPE_LINE: 11,
+  OBJECT_TYPE_POINT: 12,
+  OBJECT_TYPE_SLIDER: 13,
+  OBJECT_TYPE_CAS: 14,
+  OBJECT_TYPE_GXTCAS: 15,
+  OBJECT_TYPE_POLYGON: 16,
+  OBJECT_TYPE_SECTOR: 17,
+  OBJECT_TYPE_TEXT: 18,
+  OBJECT_TYPE_ANGLE: 19,
+  OBJECT_TYPE_INTERSECTION: 20,
+  OBJECT_TYPE_TURTLE: 21,
+  OBJECT_TYPE_VECTOR: 22,
+  OBJECT_TYPE_OPROJECT: 23,
+  OBJECT_TYPE_GRID: 24,
+  OBJECT_TYPE_TANGENT: 25,
+  OBJECT_TYPE_HTMLSLIDER: 26,
+  OBJECT_TYPE_CHECKBOX: 27,
+  OBJECT_TYPE_INPUT: 28,
+  OBJECT_TYPE_BUTTON: 29,
+  OBJECT_TYPE_TRANSFORMATION: 30,
+  OBJECT_TYPE_FOREIGNOBJECT: 31,
+
+  OBJECT_TYPE_VIEW3D: 32,
+  OBJECT_TYPE_POINT3D: 33,
+  OBJECT_TYPE_LINE3D: 34,
+  OBJECT_TYPE_PLANE3D: 35,
+  OBJECT_TYPE_CURVE3D: 36,
+  OBJECT_TYPE_SURFACE3D: 37,
+
+  // IMPORTANT:
+  // ----------
+  // For being able to differentiate between the (sketchometry specific) SPECIAL_OBJECT_TYPEs and
+  // (core specific) OBJECT_TYPEs, the non-sketchometry types MUST NOT be changed
+  // to values > 100.
+
+  // object classes
+  OBJECT_CLASS_POINT: 1,
+  OBJECT_CLASS_LINE: 2,
+  OBJECT_CLASS_CIRCLE: 3,
+  OBJECT_CLASS_CURVE: 4,
+  OBJECT_CLASS_AREA: 5,
+  OBJECT_CLASS_OTHER: 6,
+  OBJECT_CLASS_TEXT: 7,
+  OBJECT_CLASS_3D: 8,
+
+  // SketchReader constants
+  GENTYPE_ABC: 1, // unused
+  GENTYPE_AXIS: 2,
+  GENTYPE_MID: 3,
+
+  /**
+   * @ignore
+   * @deprecated, now use {@link JXG.GENTYPE_REFLECTION_ON_LINE}
+   *
+   */
+  GENTYPE_REFLECTION: 4,
+  /**
+   * @ignore
+   * @deprecated, now use {@link JXG.GENTYPE_REFLECTION_ON_POINT}
+   */
+  GENTYPE_MIRRORELEMENT: 5,
+
+  GENTYPE_REFLECTION_ON_LINE: 4,
+  GENTYPE_REFLECTION_ON_POINT: 5,
+  GENTYPE_TANGENT: 6,
+  GENTYPE_PARALLEL: 7,
+  GENTYPE_BISECTORLINES: 8,
+  GENTYPE_BOARDIMG: 9,
+  GENTYPE_BISECTOR: 10,
+  GENTYPE_NORMAL: 11,
+  GENTYPE_POINT: 12,
+  GENTYPE_GLIDER: 13,
+  GENTYPE_INTERSECTION: 14,
+  GENTYPE_CIRCLE: 15,
+  /**
+   * @ignore @deprecated NOT USED ANY MORE SINCE SKETCHOMETRY 2.0 (only for old constructions needed)
+   */
+  GENTYPE_CIRCLE2POINTS: 16,
+
+  GENTYPE_LINE: 17,
+  GENTYPE_TRIANGLE: 18,
+  GENTYPE_QUADRILATERAL: 19,
+  GENTYPE_TEXT: 20,
+  GENTYPE_POLYGON: 21,
+  GENTYPE_REGULARPOLYGON: 22,
+  GENTYPE_SECTOR: 23,
+  GENTYPE_ANGLE: 24,
+  GENTYPE_PLOT: 25,
+  GENTYPE_SLIDER: 26,
+  GENTYPE_TRUNCATE: 27,
+  GENTYPE_JCODE: 28,
+  GENTYPE_MOVEMENT: 29,
+  GENTYPE_COMBINED: 30,
+  GENTYPE_RULER: 31,
+  GENTYPE_SLOPETRIANGLE: 32,
+  GENTYPE_PERPSEGMENT: 33,
+  GENTYPE_LABELMOVEMENT: 34,
+  GENTYPE_VECTOR: 35,
+  GENTYPE_NONREFLEXANGLE: 36,
+  GENTYPE_REFLEXANGLE: 37,
+  GENTYPE_PATH: 38,
+  GENTYPE_DERIVATIVE: 39,
+  // 40 // unused ...
+  GENTYPE_DELETE: 41,
+  GENTYPE_COPY: 42,
+  GENTYPE_MIRROR: 43,
+  GENTYPE_ROTATE: 44,
+  GENTYPE_ABLATION: 45,
+  GENTYPE_MIGRATE: 46,
+  GENTYPE_VECTORCOPY: 47,
+  GENTYPE_POLYGONCOPY: 48,
+  /**
+   * Constants
+   * @name Constants
+   * @namespace
+   */ //        GENTYPE_TRANSFORM: 48, // unused
+  // 49 ... 50 // unused ...
+
+  // IMPORTANT:
+  // ----------
+  // For being able to differentiate between the (GUI-specific) CTX and
+  // (CORE-specific) non-CTX steps, the non-CTX steps MUST NOT be changed
+  // to values > 50.
+
+  GENTYPE_CTX_TYPE_G: 51,
+  GENTYPE_CTX_TYPE_P: 52,
+  GENTYPE_CTX_TRACE: 53,
+  GENTYPE_CTX_VISIBILITY: 54,
+  GENTYPE_CTX_CCVISIBILITY: 55, // unused
+  GENTYPE_CTX_MPVISIBILITY: 56,
+  GENTYPE_CTX_WITHLABEL: 57,
+  GENTYPE_CTX_LABEL: 58,
+  GENTYPE_CTX_FIXED: 59,
+  GENTYPE_CTX_STROKEWIDTH: 60,
+  GENTYPE_CTX_LABELSIZE: 61,
+  GENTYPE_CTX_SIZE: 62,
+  GENTYPE_CTX_FACE: 63,
+  GENTYPE_CTX_STRAIGHT: 64,
+  GENTYPE_CTX_ARROW: 65,
+  GENTYPE_CTX_COLOR: 66,
+  GENTYPE_CTX_RADIUS: 67,
+  GENTYPE_CTX_COORDS: 68,
+  GENTYPE_CTX_TEXT: 69,
+  GENTYPE_CTX_ANGLERADIUS: 70,
+  GENTYPE_CTX_DOTVISIBILITY: 71,
+  GENTYPE_CTX_FILLOPACITY: 72,
+  GENTYPE_CTX_PLOT: 73,
+  GENTYPE_CTX_SCALE: 74,
+  GENTYPE_CTX_INTVAL: 75,
+  GENTYPE_CTX_POINT1: 76,
+  GENTYPE_CTX_POINT2: 77,
+  GENTYPE_CTX_LABELSTICKY: 78,
+  GENTYPE_CTX_TYPE_I: 79,
+  GENTYPE_CTX_HASINNERPOINTS: 80,
+  GENTYPE_CTX_SNAPWIDTH: 81,
+  GENTYPE_CTX_SNAPTOGRID: 82,
+};
+
+jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].extendConstants */ .Z.extendConstants(jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"] */ .Z, constants);
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (constants);
+
+
+/***/ }),
+
+/***/ 705:
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "Z": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var jxg__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(765);
+/* harmony import */ var base_constants__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(351);
+/* harmony import */ var utils_event__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(88);
+/* harmony import */ var utils_type__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(109);
+/* harmony import */ var math_math__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(275);
+/*
+    Copyright 2008-2022
+        Matthias Ehmann,
+        Michael Gerhaeuser,
+        Carsten Miller,
+        Bianca Valentin,
+        Alfred Wassermann,
+        Peter Wilfahrt
+
+    This file is part of JSXGraph.
+
+    JSXGraph is free software dual licensed under the GNU LGPL or MIT License.
+
+    You can redistribute it and/or modify it under the terms of the
+
+      * GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version
+      OR
+      * MIT License: https://github.com/jsxgraph/jsxgraph/blob/master/LICENSE.MIT
+
+    JSXGraph is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License and
+    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
+    and <http://opensource.org/licenses/MIT/>.
+ */
+
+/*global JXG: true, define: true, AMprocessNode: true, MathJax: true, document: true */
+/*jslint nomen: true, plusplus: true*/
+
+/* depends:
+ jxg
+ base/constants
+ utils/event
+ math/math
+ */
+
+
+
+
+
+
+
+/**
+ * @fileoverview In this file the Coords object is defined, a class to manage all
+ * properties and methods coordinates usually have.
+ */
+
+/**
+ * Constructs a new Coordinates object.
+ * @class This is the Coordinates class.
+ * All members a coordinate has to provide
+ * are defined here.
+ * @param {Number} method The type of coordinates given by the user. Accepted values are <b>COORDS_BY_SCREEN</b> and <b>COORDS_BY_USER</b>.
+ * @param {Array} coordinates An array of affine coordinates.
+ * @param {JXG.Board} board A reference to a board.
+ * @oaram {Boolean} [emitter=true]
+ * @borrows JXG.EventEmitter#on as this.on
+ * @borrows JXG.EventEmitter#off as this.off
+ * @borrows JXG.EventEmitter#triggerEventHandlers as this.triggerEventHandlers
+ * @borrows JXG.EventEmitter#eventHandlers as this.eventHandlers
+ * @constructor
+ */
+jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].Coords */ .Z.Coords = function (method, coordinates, board, emitter) {
+  /**
+   * Stores the board the object is used on.
+   * @type JXG.Board
+   */
+  this.board = board;
+
+  /**
+   * Stores coordinates for user view as homogeneous coordinates.
+   * @type Array
+   */
+  this.usrCoords = [];
+  //this.usrCoords = new Float64Array(3);
+
+  /**
+   * Stores coordinates for screen view as homogeneous coordinates.
+   * @type Array
+   */
+  this.scrCoords = [];
+  //this.scrCoords = new Float64Array(3);
+
+  /**
+   * If true, this coordinates object will emit update events every time
+   * the coordinates are set.
+   * @type boolean
+   * @default true
+   */
+  this.emitter = !utils_type__WEBPACK_IMPORTED_MODULE_3__/* ["default"].exists */ .Z.exists(emitter) || emitter;
+
+  if (this.emitter) {
+    utils_event__WEBPACK_IMPORTED_MODULE_2__/* ["default"].eventify */ .Z.eventify(this);
+  }
+  this.setCoordinates(method, coordinates, false, true);
+};
+
+jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].extend */ .Z.extend(
+  jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].Coords.prototype */ .Z.Coords.prototype,
+  /** @lends JXG.Coords.prototype */ {
+    /**
+     * Normalize homogeneous coordinates
+     * @private
+     */
+    normalizeUsrCoords: function () {
+      if (Math.abs(this.usrCoords[0]) > math_math__WEBPACK_IMPORTED_MODULE_4__/* ["default"].eps */ .Z.eps) {
+        this.usrCoords[1] /= this.usrCoords[0];
+        this.usrCoords[2] /= this.usrCoords[0];
+        this.usrCoords[0] = 1.0;
+      }
+    },
+
+    /**
+     * Compute screen coordinates out of given user coordinates.
+     * @private
+     */
+    usr2screen: function (doRound) {
+      var mround = Math.round, // Is faster on IE, maybe slower with JIT compilers
+        b = this.board,
+        uc = this.usrCoords,
+        oc = b.origin.scrCoords;
+
+      if (doRound === true) {
+        this.scrCoords[0] = mround(uc[0]);
+        this.scrCoords[1] = mround(uc[0] * oc[1] + uc[1] * b.unitX);
+        this.scrCoords[2] = mround(uc[0] * oc[2] - uc[2] * b.unitY);
+      } else {
+        this.scrCoords[0] = uc[0];
+        this.scrCoords[1] = uc[0] * oc[1] + uc[1] * b.unitX;
+        this.scrCoords[2] = uc[0] * oc[2] - uc[2] * b.unitY;
+      }
+    },
+
+    /**
+     * Compute user coordinates out of given screen coordinates.
+     * @private
+     */
+    screen2usr: function () {
+      var o = this.board.origin.scrCoords,
+        sc = this.scrCoords,
+        b = this.board;
+
+      this.usrCoords[0] = 1.0;
+      this.usrCoords[1] = (sc[1] - o[1]) / b.unitX;
+      this.usrCoords[2] = (o[2] - sc[2]) / b.unitY;
+    },
+
+    /**
+     * Calculate distance of one point to another.
+     * @param {Number} coord_type The type of coordinates used here. Possible values are <b>JXG.COORDS_BY_USER</b> and <b>JXG.COORDS_BY_SCREEN</b>.
+     * @param {JXG.Coords} coordinates The Coords object to which the distance is calculated.
+     * @returns {Number} The distance
+     */
+    distance: function (coord_type, coordinates) {
+      var sum = 0,
+        c,
+        ucr = this.usrCoords,
+        scr = this.scrCoords,
+        f;
+
+      if (coord_type === base_constants__WEBPACK_IMPORTED_MODULE_1__/* ["default"].COORDS_BY_USER */ .Z.COORDS_BY_USER) {
+        c = coordinates.usrCoords;
+        f = ucr[0] - c[0];
+        sum = f * f;
+
+        if (sum > math_math__WEBPACK_IMPORTED_MODULE_4__/* ["default"].eps */ .Z.eps * math_math__WEBPACK_IMPORTED_MODULE_4__/* ["default"].eps */ .Z.eps) {
+          return Number.POSITIVE_INFINITY;
+        }
+        f = ucr[1] - c[1];
+        sum += f * f;
+        f = ucr[2] - c[2];
+        sum += f * f;
+      } else {
+        c = coordinates.scrCoords;
+        //f = scr[0]-c[0];
+        //sum = f*f;
+        f = scr[1] - c[1];
+        sum += f * f;
+        f = scr[2] - c[2];
+        sum += f * f;
+      }
+
+      return Math.sqrt(sum);
+    },
+
+    /**
+     * Set coordinates by either user coordinates or screen coordinates and recalculate the other one.
+     * @param {Number} coord_type The type of coordinates used here. Possible values are <b>COORDS_BY_USER</b> and <b>COORDS_BY_SCREEN</b>.
+     * @param {Array} coordinates An array of affine coordinates the Coords object is set to.
+     * @param {Boolean} [doRound=true] flag If true or null round the coordinates in usr2screen. This is used in smooth curve plotting.
+     * The IE needs rounded coordinates. Id doRound==false we have to round in updatePathString.
+     * @param {Boolean} [noevent=false]
+     * @returns {JXG.Coords} Reference to the coords object.
+     */
+    setCoordinates: function (coord_type, coordinates, doRound, noevent) {
+      var uc = this.usrCoords,
+        sc = this.scrCoords,
+        // Original values
+        ou = [uc[0], uc[1], uc[2]],
+        os = [sc[0], sc[1], sc[2]];
+
+      if (coord_type === base_constants__WEBPACK_IMPORTED_MODULE_1__/* ["default"].COORDS_BY_USER */ .Z.COORDS_BY_USER) {
+        if (coordinates.length === 2) {
+          // Euclidean coordinates
+          uc[0] = 1.0;
+          uc[1] = coordinates[0];
+          uc[2] = coordinates[1];
+        } else {
+          // Homogeneous coordinates (normalized)
+          uc[0] = coordinates[0];
+          uc[1] = coordinates[1];
+          uc[2] = coordinates[2];
+          this.normalizeUsrCoords();
+        }
+        this.usr2screen(doRound);
+      } else {
+        if (coordinates.length === 2) {
+          // Euclidean coordinates
+          sc[1] = coordinates[0];
+          sc[2] = coordinates[1];
+        } else {
+          // Homogeneous coordinates (normalized)
+          sc[1] = coordinates[1];
+          sc[2] = coordinates[2];
+        }
+        this.screen2usr();
+      }
+
+      if (this.emitter && !noevent && (os[1] !== sc[1] || os[2] !== sc[2])) {
+        this.triggerEventHandlers(["update"], [ou, os]);
+      }
+
+      return this;
+    },
+
+    /**
+     * Copy array, either scrCoords or usrCoords
+     * Uses slice() in case of standard arrays and set() in case of
+     * typed arrays.
+     * @private
+     * @param {String} obj Either 'scrCoords' or 'usrCoords'
+     * @param {Number} offset Offset, defaults to 0 if not given
+     * @returns {Array} Returns copy of the coords array either as standard array or as
+     *   typed array.
+     */
+    copy: function (obj, offset) {
+      if (offset === undefined) {
+        offset = 0;
+      }
+
+      return this[obj].slice(offset);
+    },
+
+    /**
+     * Test if one of the usrCoords is NaN or the coordinates are infinite.
+     * @returns {Boolean} true if the coordinates are finite, false otherwise.
+     */
+    isReal: function () {
+      return (
+        !isNaN(this.usrCoords[1] + this.usrCoords[2]) &&
+        Math.abs(this.usrCoords[0]) > math_math__WEBPACK_IMPORTED_MODULE_4__/* ["default"].eps */ .Z.eps
+      );
+    },
+
+    /**
+     * Triggered whenever the coordinates change.
+     * @name JXG.Coords#update
+     * @param {Array} ou Old user coordinates
+     * @param {Array} os Old screen coordinates
+     * @event
+     */
+    __evt__update: function (ou, os) {},
+
+    /**
+     * @ignore
+     */
+    __evt: function () {},
+  }
+);
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].Coords */ .Z.Coords);
+
+
+/***/ }),
+
+/***/ 218:
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "Z": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var jxg__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(765);
+/* harmony import */ var math_math__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(275);
+/* harmony import */ var math_geometry__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(922);
+/* harmony import */ var math_numerics__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(336);
+/* harmony import */ var math_statistics__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(309);
+/* harmony import */ var base_coords__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(705);
+/* harmony import */ var base_constants__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(351);
+/* harmony import */ var utils_type__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(109);
+/*
+    Copyright 2008-2022
+        Matthias Ehmann,
+        Michael Gerhaeuser,
+        Carsten Miller,
+        Alfred Wassermann
+
+    This file is part of JSXGraph.
+
+    JSXGraph is free software dual licensed under the GNU LGPL or MIT License.
+
+    You can redistribute it and/or modify it under the terms of the
+
+      * GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version
+      OR
+      * MIT License: https://github.com/jsxgraph/jsxgraph/blob/master/LICENSE.MIT
+
+    JSXGraph is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License and
+    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
+    and <http://opensource.org/licenses/MIT/>.
+ */
+
+/*global JXG: true, define: true, console: true, window: true*/
+/*jslint nomen: true, plusplus: true*/
+
+/* depends:
+ jxg
+ options
+ math/math
+ math/geometry
+ math/numerics
+ base/coords
+ base/constants
+ base/element
+ parser/geonext
+ utils/type
+  elements:
+   transform
+ */
+
+/**
+ * @fileoverview The geometry object CoordsElement is defined in this file.
+ * This object provides the coordinate handling of points, images and texts.
+ */
+
+
+
+
+
+
+
+
+
+
+/**
+ * An element containing coords is the basic geometric element. Based on points lines and circles can be constructed which can be intersected
+ * which in turn are points again which can be used to construct new lines, circles, polygons, etc. This class holds methods for
+ * all kind of coordinate elements like points, texts and images.
+ * @class Creates a new coords element object. Do not use this constructor to create an element.
+ *
+ * @private
+ * @augments JXG.GeometryElement
+ * @param {Array} coordinates An array with the affine user coordinates of the point.
+ * {@link JXG.Options#elements}, and - optionally - a name and an id.
+ */
+jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].CoordsElement */ .Z.CoordsElement = function (coordinates, isLabel) {
+  var i;
+
+  if (!utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].exists */ .Z.exists(coordinates)) {
+    coordinates = [1, 0, 0];
+  }
+
+  for (i = 0; i < coordinates.length; ++i) {
+    coordinates[i] = parseFloat(coordinates[i]);
+  }
+
+  /**
+   * Coordinates of the element.
+   * @type JXG.Coords
+   * @private
+   */
+  this.coords = new base_coords__WEBPACK_IMPORTED_MODULE_5__/* ["default"] */ .Z(base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].COORDS_BY_USER */ .Z.COORDS_BY_USER, coordinates, this.board);
+  this.initialCoords = new base_coords__WEBPACK_IMPORTED_MODULE_5__/* ["default"] */ .Z(
+    base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].COORDS_BY_USER */ .Z.COORDS_BY_USER,
+    coordinates,
+    this.board
+  );
+
+  /**
+   * Relative position on a slide element (line, circle, curve) if element is a glider on this element.
+   * @type Number
+   * @private
+   */
+  this.position = null;
+
+  /**
+   * True if there the method this.updateConstraint() has been set. It is
+   * probably different from the prototype function() {return this;}.
+   * Used in updateCoords fo glider elements.
+   *
+   * @see JXG.CoordsElement#updateCoords
+   * @type Boolean
+   * @private
+   */
+  this.isConstrained = false;
+
+  /**
+   * Determines whether the element slides on a polygon if point is a glider.
+   * @type Boolean
+   * @default false
+   * @private
+   */
+  this.onPolygon = false;
+
+  /**
+   * When used as a glider this member stores the object, where to glide on.
+   * To set the object to glide on use the method
+   * {@link JXG.Point#makeGlider} and DO NOT set this property directly
+   * as it will break the dependency tree.
+   * @type JXG.GeometryElement
+   */
+  this.slideObject = null;
+
+  /**
+   * List of elements the element is bound to, i.e. the element glides on.
+   * Only the last entry is active.
+   * Use {@link JXG.Point#popSlideObject} to remove the currently active slideObject.
+   */
+  this.slideObjects = [];
+
+  /**
+   * A {@link JXG.CoordsElement#updateGlider} call is usually followed
+   * by a general {@link JXG.Board#update} which calls
+   * {@link JXG.CoordsElement#updateGliderFromParent}.
+   * To prevent double updates, {@link JXG.CoordsElement#needsUpdateFromParent}
+   * is set to false in updateGlider() and reset to true in the following call to
+   * {@link JXG.CoordsElement#updateGliderFromParent}
+   * @type Boolean
+   */
+  this.needsUpdateFromParent = true;
+
+  /**
+   * Stores the groups of this element in an array of Group.
+   * @type Array
+   * @see JXG.Group
+   * @private
+   */
+  this.groups = [];
+
+  /*
+   * Do we need this?
+   */
+  this.Xjc = null;
+  this.Yjc = null;
+
+  // documented in GeometryElement
+  this.methodMap = utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].deepCopy */ .Z.deepCopy(this.methodMap, {
+    move: "moveTo",
+    moveTo: "moveTo",
+    moveAlong: "moveAlong",
+    visit: "visit",
+    glide: "makeGlider",
+    makeGlider: "makeGlider",
+    intersect: "makeIntersection",
+    makeIntersection: "makeIntersection",
+    X: "X",
+    Y: "Y",
+    free: "free",
+    setPosition: "setGliderPosition",
+    setGliderPosition: "setGliderPosition",
+    addConstraint: "addConstraint",
+    dist: "Dist",
+    onPolygon: "onPolygon",
+  });
+
+  /*
+   * this.element may have been set by the object constructor.
+   */
+  if (utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].exists */ .Z.exists(this.element)) {
+    this.addAnchor(coordinates, isLabel);
+  }
+  this.isDraggable = true;
+};
+
+jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].extend */ .Z.extend(
+  jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].CoordsElement.prototype */ .Z.CoordsElement.prototype,
+  /** @lends JXG.CoordsElement.prototype */ {
+    /**
+     * Dummy function for unconstrained points or gliders.
+     * @private
+     */
+    updateConstraint: function () {
+      return this;
+    },
+
+    /**
+     * Updates the coordinates of the element.
+     * @private
+     */
+    updateCoords: function (fromParent) {
+      if (!this.needsUpdate) {
+        return this;
+      }
+
+      if (!utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].exists */ .Z.exists(fromParent)) {
+        fromParent = false;
+      }
+
+      if (!utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].evaluate */ .Z.evaluate(this.visProp.frozen)) {
+        this.updateConstraint();
+      }
+
+      /*
+       * We need to calculate the new coordinates no matter of the elements visibility because
+       * a child could be visible and depend on the coordinates of the element/point (e.g. perpendicular).
+       *
+       * Check if the element is a glider and calculate new coords in dependency of this.slideObject.
+       * This function is called with fromParent==true in case it is a glider element for example if
+       * the defining elements of the line or circle have been changed.
+       */
+      if (this.type === base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_TYPE_GLIDER */ .Z.OBJECT_TYPE_GLIDER) {
+        if (this.isConstrained) {
+          fromParent = false;
+        }
+
+        if (fromParent) {
+          this.updateGliderFromParent();
+        } else {
+          this.updateGlider();
+        }
+      }
+
+      this.updateTransform(fromParent);
+
+      return this;
+    },
+
+    /**
+     * Update of glider in case of dragging the glider or setting the postion of the glider.
+     * The relative position of the glider has to be updated.
+     *
+     * In case of a glider on a line:
+     * If the second point is an ideal point, then -1 < this.position < 1,
+     * this.position==+/-1 equals point2, this.position==0 equals point1
+     *
+     * If the first point is an ideal point, then 0 < this.position < 2
+     * this.position==0  or 2 equals point1, this.position==1 equals point2
+     *
+     * @private
+     */
+    updateGlider: function () {
+      var i,
+        p1c,
+        p2c,
+        d,
+        v,
+        poly,
+        cc,
+        pos,
+        sgn,
+        alpha,
+        beta,
+        delta = 2.0 * Math.PI,
+        angle,
+        cp,
+        c,
+        invMat,
+        newCoords,
+        newPos,
+        doRound = false,
+        ev_sw,
+        slide = this.slideObject,
+        res,
+        cu,
+        slides = [],
+        isTransformed;
+
+      this.needsUpdateFromParent = false;
+      if (slide.elementClass === base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_CLASS_CIRCLE */ .Z.OBJECT_CLASS_CIRCLE) {
+        if (utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].evaluate */ .Z.evaluate(this.visProp.isgeonext)) {
+          delta = 1.0;
+        }
+        newCoords = math_geometry__WEBPACK_IMPORTED_MODULE_2__/* ["default"].projectPointToCircle */ .Z.projectPointToCircle(this, slide, this.board);
+        newPos =
+          math_geometry__WEBPACK_IMPORTED_MODULE_2__/* ["default"].rad */ .Z.rad(
+            [slide.center.X() + 1.0, slide.center.Y()],
+            slide.center,
+            this
+          ) / delta;
+      } else if (slide.elementClass === base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_CLASS_LINE */ .Z.OBJECT_CLASS_LINE) {
+        /*
+         * onPolygon==true: the point is a slider on a segment and this segment is one of the
+         * "borders" of a polygon.
+         * This is a GEONExT feature.
+         */
+        if (this.onPolygon) {
+          p1c = slide.point1.coords.usrCoords;
+          p2c = slide.point2.coords.usrCoords;
+          i = 1;
+          d = p2c[i] - p1c[i];
+
+          if (Math.abs(d) < math_math__WEBPACK_IMPORTED_MODULE_1__/* ["default"].eps */ .Z.eps) {
+            i = 2;
+            d = p2c[i] - p1c[i];
+          }
+
+          cc = math_geometry__WEBPACK_IMPORTED_MODULE_2__/* ["default"].projectPointToLine */ .Z.projectPointToLine(this, slide, this.board);
+          pos = (cc.usrCoords[i] - p1c[i]) / d;
+          poly = slide.parentPolygon;
+
+          if (pos < 0) {
+            for (i = 0; i < poly.borders.length; i++) {
+              if (slide === poly.borders[i]) {
+                slide =
+                  poly.borders[
+                    (i - 1 + poly.borders.length) % poly.borders.length
+                  ];
+                break;
+              }
+            }
+          } else if (pos > 1.0) {
+            for (i = 0; i < poly.borders.length; i++) {
+              if (slide === poly.borders[i]) {
+                slide =
+                  poly.borders[
+                    (i + 1 + poly.borders.length) % poly.borders.length
+                  ];
+                break;
+              }
+            }
+          }
+
+          // If the slide object has changed, save the change to the glider.
+          if (slide.id !== this.slideObject.id) {
+            this.slideObject = slide;
+          }
+        }
+
+        p1c = slide.point1.coords;
+        p2c = slide.point2.coords;
+
+        // Distance between the two defining points
+        d = p1c.distance(base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].COORDS_BY_USER */ .Z.COORDS_BY_USER, p2c);
+
+        // The defining points are identical
+        if (d < math_math__WEBPACK_IMPORTED_MODULE_1__/* ["default"].eps */ .Z.eps) {
+          //this.coords.setCoordinates(Const.COORDS_BY_USER, p1c);
+          newCoords = p1c;
+          doRound = true;
+          newPos = 0.0;
+        } else {
+          newCoords = math_geometry__WEBPACK_IMPORTED_MODULE_2__/* ["default"].projectPointToLine */ .Z.projectPointToLine(this, slide, this.board);
+          p1c = p1c.usrCoords.slice(0);
+          p2c = p2c.usrCoords.slice(0);
+
+          // The second point is an ideal point
+          if (Math.abs(p2c[0]) < math_math__WEBPACK_IMPORTED_MODULE_1__/* ["default"].eps */ .Z.eps) {
+            i = 1;
+            d = p2c[i];
+
+            if (Math.abs(d) < math_math__WEBPACK_IMPORTED_MODULE_1__/* ["default"].eps */ .Z.eps) {
+              i = 2;
+              d = p2c[i];
+            }
+
+            d = (newCoords.usrCoords[i] - p1c[i]) / d;
+            sgn = d >= 0 ? 1 : -1;
+            d = Math.abs(d);
+            newPos = (sgn * d) / (d + 1);
+
+            // The first point is an ideal point
+          } else if (Math.abs(p1c[0]) < math_math__WEBPACK_IMPORTED_MODULE_1__/* ["default"].eps */ .Z.eps) {
+            i = 1;
+            d = p1c[i];
+
+            if (Math.abs(d) < math_math__WEBPACK_IMPORTED_MODULE_1__/* ["default"].eps */ .Z.eps) {
+              i = 2;
+              d = p1c[i];
+            }
+
+            d = (newCoords.usrCoords[i] - p2c[i]) / d;
+
+            // 1.0 - d/(1-d);
+            if (d < 0.0) {
+              newPos = (1 - 2.0 * d) / (1.0 - d);
+            } else {
+              newPos = 1 / (d + 1);
+            }
+          } else {
+            i = 1;
+            d = p2c[i] - p1c[i];
+
+            if (Math.abs(d) < math_math__WEBPACK_IMPORTED_MODULE_1__/* ["default"].eps */ .Z.eps) {
+              i = 2;
+              d = p2c[i] - p1c[i];
+            }
+            newPos = (newCoords.usrCoords[i] - p1c[i]) / d;
+          }
+        }
+
+        // Snap the glider point of the slider into its appropiate position
+        // First, recalculate the new value of this.position
+        // Second, call update(fromParent==true) to make the positioning snappier.
+        ev_sw = utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].evaluate */ .Z.evaluate(this.visProp.snapwidth);
+        if (
+          utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].evaluate */ .Z.evaluate(ev_sw) > 0.0 &&
+          Math.abs(this._smax - this._smin) >= math_math__WEBPACK_IMPORTED_MODULE_1__/* ["default"].eps */ .Z.eps
+        ) {
+          newPos = Math.max(Math.min(newPos, 1), 0);
+
+          v = newPos * (this._smax - this._smin) + this._smin;
+          v = Math.round(v / ev_sw) * ev_sw;
+          newPos = (v - this._smin) / (this._smax - this._smin);
+          this.update(true);
+        }
+
+        p1c = slide.point1.coords;
+        if (
+          !utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].evaluate */ .Z.evaluate(slide.visProp.straightfirst) &&
+          Math.abs(p1c.usrCoords[0]) > math_math__WEBPACK_IMPORTED_MODULE_1__/* ["default"].eps */ .Z.eps &&
+          newPos < 0
+        ) {
+          newCoords = p1c;
+          doRound = true;
+          newPos = 0;
+        }
+
+        p2c = slide.point2.coords;
+        if (
+          !utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].evaluate */ .Z.evaluate(slide.visProp.straightlast) &&
+          Math.abs(p2c.usrCoords[0]) > math_math__WEBPACK_IMPORTED_MODULE_1__/* ["default"].eps */ .Z.eps &&
+          newPos > 1
+        ) {
+          newCoords = p2c;
+          doRound = true;
+          newPos = 1;
+        }
+      } else if (slide.type === base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_TYPE_TURTLE */ .Z.OBJECT_TYPE_TURTLE) {
+        // In case, the point is a constrained glider.
+        this.updateConstraint();
+        res = math_geometry__WEBPACK_IMPORTED_MODULE_2__/* ["default"].projectPointToTurtle */ .Z.projectPointToTurtle(this, slide, this.board);
+        newCoords = res[0];
+        newPos = res[1]; // save position for the overwriting below
+      } else if (slide.elementClass === base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_CLASS_CURVE */ .Z.OBJECT_CLASS_CURVE) {
+        if (
+          slide.type === base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_TYPE_ARC */ .Z.OBJECT_TYPE_ARC ||
+          slide.type === base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_TYPE_SECTOR */ .Z.OBJECT_TYPE_SECTOR
+        ) {
+          newCoords = math_geometry__WEBPACK_IMPORTED_MODULE_2__/* ["default"].projectPointToCircle */ .Z.projectPointToCircle(this, slide, this.board);
+
+          angle = math_geometry__WEBPACK_IMPORTED_MODULE_2__/* ["default"].rad */ .Z.rad(slide.radiuspoint, slide.center, this);
+          alpha = 0.0;
+          beta = math_geometry__WEBPACK_IMPORTED_MODULE_2__/* ["default"].rad */ .Z.rad(
+            slide.radiuspoint,
+            slide.center,
+            slide.anglepoint
+          );
+          newPos = angle;
+
+          ev_sw = utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].evaluate */ .Z.evaluate(slide.visProp.selection);
+          if (
+            (ev_sw === "minor" && beta > Math.PI) ||
+            (ev_sw === "major" && beta < Math.PI)
+          ) {
+            alpha = beta;
+            beta = 2 * Math.PI;
+          }
+
+          // Correct the position if we are outside of the sector/arc
+          if (angle < alpha || angle > beta) {
+            newPos = beta;
+
+            if (
+              (angle < alpha && angle > alpha * 0.5) ||
+              (angle > beta && angle > beta * 0.5 + Math.PI)
+            ) {
+              newPos = alpha;
+            }
+
+            this.needsUpdateFromParent = true;
+            this.updateGliderFromParent();
+          }
+
+          delta = beta - alpha;
+          if (this.visProp.isgeonext) {
+            delta = 1.0;
+          }
+          if (Math.abs(delta) > math_math__WEBPACK_IMPORTED_MODULE_1__/* ["default"].eps */ .Z.eps) {
+            newPos /= delta;
+          }
+        } else {
+          // In case, the point is a constrained glider.
+          this.updateConstraint();
+
+          // Handle the case if the curve comes from a transformation of a continous curve.
+          if (slide.transformations.length > 0) {
+            isTransformed = false;
+            res = slide.getTransformationSource();
+            if (res[0]) {
+              isTransformed = res[0];
+              slides.push(slide);
+              slides.push(res[1]);
+            }
+            // Recurse
+            while (res[0] && utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].exists */ .Z.exists(res[1]._transformationSource)) {
+              res = res[1].getTransformationSource();
+              slides.push(res[1]);
+            }
+
+            cu = this.coords.usrCoords;
+            if (isTransformed) {
+              for (i = 0; i < slides.length; i++) {
+                slides[i].updateTransformMatrix();
+                invMat = math_math__WEBPACK_IMPORTED_MODULE_1__/* ["default"].inverse */ .Z.inverse(slides[i].transformMat);
+                cu = math_math__WEBPACK_IMPORTED_MODULE_1__/* ["default"].matVecMult */ .Z.matVecMult(invMat, cu);
+              }
+              cp = new base_coords__WEBPACK_IMPORTED_MODULE_5__/* ["default"] */ .Z(base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].COORDS_BY_USER */ .Z.COORDS_BY_USER, cu, this.board).usrCoords;
+              c = math_geometry__WEBPACK_IMPORTED_MODULE_2__/* ["default"].projectCoordsToCurve */ .Z.projectCoordsToCurve(
+                cp[1],
+                cp[2],
+                this.position || 0,
+                slides[slides.length - 1],
+                this.board
+              );
+              // projectPointCurve() already would apply the transformation.
+              // Since we are projecting on the original curve, we have to do
+              // the transformations "by hand".
+              cu = c[0].usrCoords;
+              for (i = slides.length - 2; i >= 0; i--) {
+                cu = math_math__WEBPACK_IMPORTED_MODULE_1__/* ["default"].matVecMult */ .Z.matVecMult(slides[i].transformMat, cu);
+              }
+              c[0] = new base_coords__WEBPACK_IMPORTED_MODULE_5__/* ["default"] */ .Z(base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].COORDS_BY_USER */ .Z.COORDS_BY_USER, cu, this.board);
+            } else {
+              slide.updateTransformMatrix();
+              invMat = math_math__WEBPACK_IMPORTED_MODULE_1__/* ["default"].inverse */ .Z.inverse(slide.transformMat);
+              cu = math_math__WEBPACK_IMPORTED_MODULE_1__/* ["default"].matVecMult */ .Z.matVecMult(invMat, cu);
+              cp = new base_coords__WEBPACK_IMPORTED_MODULE_5__/* ["default"] */ .Z(base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].COORDS_BY_USER */ .Z.COORDS_BY_USER, cu, this.board).usrCoords;
+              c = math_geometry__WEBPACK_IMPORTED_MODULE_2__/* ["default"].projectCoordsToCurve */ .Z.projectCoordsToCurve(
+                cp[1],
+                cp[2],
+                this.position || 0,
+                slide,
+                this.board
+              );
+            }
+
+            newCoords = c[0];
+            newPos = c[1];
+          } else {
+            res = math_geometry__WEBPACK_IMPORTED_MODULE_2__/* ["default"].projectPointToCurve */ .Z.projectPointToCurve(this, slide, this.board);
+            newCoords = res[0];
+            newPos = res[1]; // save position for the overwriting below
+          }
+        }
+      } else if (utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].isPoint */ .Z.isPoint(slide)) {
+        //this.coords.setCoordinates(Const.COORDS_BY_USER, Geometry.projectPointToPoint(this, slide, this.board).usrCoords, false);
+        newCoords = math_geometry__WEBPACK_IMPORTED_MODULE_2__/* ["default"].projectPointToPoint */ .Z.projectPointToPoint(this, slide, this.board);
+        newPos = this.position; // save position for the overwriting below
+      }
+
+      this.coords.setCoordinates(
+        base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].COORDS_BY_USER */ .Z.COORDS_BY_USER,
+        newCoords.usrCoords,
+        doRound
+      );
+      this.position = newPos;
+    },
+
+    /**
+     * Update of a glider in case a parent element has been updated. That means the
+     * relative position of the glider stays the same.
+     * @private
+     */
+    updateGliderFromParent: function () {
+      var p1c,
+        p2c,
+        r,
+        lbda,
+        c,
+        slide = this.slideObject,
+        slides = [],
+        res,
+        i,
+        isTransformed,
+        baseangle,
+        alpha,
+        angle,
+        beta,
+        delta = 2.0 * Math.PI;
+
+      if (!this.needsUpdateFromParent) {
+        this.needsUpdateFromParent = true;
+        return;
+      }
+
+      if (slide.elementClass === base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_CLASS_CIRCLE */ .Z.OBJECT_CLASS_CIRCLE) {
+        r = slide.Radius();
+        if (utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].evaluate */ .Z.evaluate(this.visProp.isgeonext)) {
+          delta = 1.0;
+        }
+        c = [
+          slide.center.X() + r * Math.cos(this.position * delta),
+          slide.center.Y() + r * Math.sin(this.position * delta),
+        ];
+      } else if (slide.elementClass === base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_CLASS_LINE */ .Z.OBJECT_CLASS_LINE) {
+        p1c = slide.point1.coords.usrCoords;
+        p2c = slide.point2.coords.usrCoords;
+
+        // If one of the defining points of the line does not exist,
+        // the glider should disappear
+        if (
+          (p1c[0] === 0 && p1c[1] === 0 && p1c[2] === 0) ||
+          (p2c[0] === 0 && p2c[1] === 0 && p2c[2] === 0)
+        ) {
+          c = [0, 0, 0];
+          // The second point is an ideal point
+        } else if (Math.abs(p2c[0]) < math_math__WEBPACK_IMPORTED_MODULE_1__/* ["default"].eps */ .Z.eps) {
+          lbda = Math.min(Math.abs(this.position), 1 - math_math__WEBPACK_IMPORTED_MODULE_1__/* ["default"].eps */ .Z.eps);
+          lbda /= 1.0 - lbda;
+
+          if (this.position < 0) {
+            lbda = -lbda;
+          }
+
+          c = [
+            p1c[0] + lbda * p2c[0],
+            p1c[1] + lbda * p2c[1],
+            p1c[2] + lbda * p2c[2],
+          ];
+          // The first point is an ideal point
+        } else if (Math.abs(p1c[0]) < math_math__WEBPACK_IMPORTED_MODULE_1__/* ["default"].eps */ .Z.eps) {
+          lbda = Math.max(this.position, math_math__WEBPACK_IMPORTED_MODULE_1__/* ["default"].eps */ .Z.eps);
+          lbda = Math.min(lbda, 2 - math_math__WEBPACK_IMPORTED_MODULE_1__/* ["default"].eps */ .Z.eps);
+
+          if (lbda > 1) {
+            lbda = (lbda - 1) / (lbda - 2);
+          } else {
+            lbda = (1 - lbda) / lbda;
+          }
+
+          c = [
+            p2c[0] + lbda * p1c[0],
+            p2c[1] + lbda * p1c[1],
+            p2c[2] + lbda * p1c[2],
+          ];
+        } else {
+          lbda = this.position;
+          c = [
+            p1c[0] + lbda * (p2c[0] - p1c[0]),
+            p1c[1] + lbda * (p2c[1] - p1c[1]),
+            p1c[2] + lbda * (p2c[2] - p1c[2]),
+          ];
+        }
+      } else if (slide.type === base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_TYPE_TURTLE */ .Z.OBJECT_TYPE_TURTLE) {
+        this.coords.setCoordinates(base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].COORDS_BY_USER */ .Z.COORDS_BY_USER, [
+          slide.Z(this.position),
+          slide.X(this.position),
+          slide.Y(this.position),
+        ]);
+        // In case, the point is a constrained glider.
+        this.updateConstraint();
+        c = math_geometry__WEBPACK_IMPORTED_MODULE_2__/* ["default"].projectPointToTurtle */ .Z.projectPointToTurtle(this, slide, this.board)[0].usrCoords;
+      } else if (slide.elementClass === base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_CLASS_CURVE */ .Z.OBJECT_CLASS_CURVE) {
+        // Handle the case if the curve comes from a transformation of a continuous curve.
+        isTransformed = false;
+        res = slide.getTransformationSource();
+        if (res[0]) {
+          isTransformed = res[0];
+          slides.push(slide);
+          slides.push(res[1]);
+        }
+        // Recurse
+        while (res[0] && utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].exists */ .Z.exists(res[1]._transformationSource)) {
+          res = res[1].getTransformationSource();
+          slides.push(res[1]);
+        }
+        if (isTransformed) {
+          this.coords.setCoordinates(base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].COORDS_BY_USER */ .Z.COORDS_BY_USER, [
+            slides[slides.length - 1].Z(this.position),
+            slides[slides.length - 1].X(this.position),
+            slides[slides.length - 1].Y(this.position),
+          ]);
+        } else {
+          this.coords.setCoordinates(base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].COORDS_BY_USER */ .Z.COORDS_BY_USER, [
+            slide.Z(this.position),
+            slide.X(this.position),
+            slide.Y(this.position),
+          ]);
+        }
+
+        if (
+          slide.type === base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_TYPE_ARC */ .Z.OBJECT_TYPE_ARC ||
+          slide.type === base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_TYPE_SECTOR */ .Z.OBJECT_TYPE_SECTOR
+        ) {
+          baseangle = math_geometry__WEBPACK_IMPORTED_MODULE_2__/* ["default"].rad */ .Z.rad(
+            [slide.center.X() + 1, slide.center.Y()],
+            slide.center,
+            slide.radiuspoint
+          );
+
+          alpha = 0.0;
+          beta = math_geometry__WEBPACK_IMPORTED_MODULE_2__/* ["default"].rad */ .Z.rad(
+            slide.radiuspoint,
+            slide.center,
+            slide.anglepoint
+          );
+
+          if (
+            (slide.visProp.selection === "minor" && beta > Math.PI) ||
+            (slide.visProp.selection === "major" && beta < Math.PI)
+          ) {
+            alpha = beta;
+            beta = 2 * Math.PI;
+          }
+
+          delta = beta - alpha;
+          if (utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].evaluate */ .Z.evaluate(this.visProp.isgeonext)) {
+            delta = 1.0;
+          }
+          angle = this.position * delta;
+
+          // Correct the position if we are outside of the sector/arc
+          if (angle < alpha || angle > beta) {
+            angle = beta;
+
+            if (
+              (angle < alpha && angle > alpha * 0.5) ||
+              (angle > beta && angle > beta * 0.5 + Math.PI)
+            ) {
+              angle = alpha;
+            }
+
+            this.position = angle;
+            if (Math.abs(delta) > math_math__WEBPACK_IMPORTED_MODULE_1__/* ["default"].eps */ .Z.eps) {
+              this.position /= delta;
+            }
+          }
+
+          r = slide.Radius();
+          c = [
+            slide.center.X() + r * Math.cos(this.position * delta + baseangle),
+            slide.center.Y() + r * Math.sin(this.position * delta + baseangle),
+          ];
+        } else {
+          // In case, the point is a constrained glider.
+          this.updateConstraint();
+
+          if (isTransformed) {
+            c = math_geometry__WEBPACK_IMPORTED_MODULE_2__/* ["default"].projectPointToCurve */ .Z.projectPointToCurve(
+              this,
+              slides[slides.length - 1],
+              this.board
+            )[0].usrCoords;
+            // projectPointCurve() already would do the transformation.
+            // But since we are projecting on the original curve, we have to do
+            // the transformation "by hand".
+            for (i = slides.length - 2; i >= 0; i--) {
+              c = new base_coords__WEBPACK_IMPORTED_MODULE_5__/* ["default"] */ .Z(
+                base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].COORDS_BY_USER */ .Z.COORDS_BY_USER,
+                math_math__WEBPACK_IMPORTED_MODULE_1__/* ["default"].matVecMult */ .Z.matVecMult(slides[i].transformMat, c),
+                this.board
+              ).usrCoords;
+            }
+          } else {
+            c = math_geometry__WEBPACK_IMPORTED_MODULE_2__/* ["default"].projectPointToCurve */ .Z.projectPointToCurve(this, slide, this.board)[0]
+              .usrCoords;
+          }
+        }
+      } else if (utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].isPoint */ .Z.isPoint(slide)) {
+        c = math_geometry__WEBPACK_IMPORTED_MODULE_2__/* ["default"].projectPointToPoint */ .Z.projectPointToPoint(this, slide, this.board).usrCoords;
+      }
+
+      this.coords.setCoordinates(base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].COORDS_BY_USER */ .Z.COORDS_BY_USER, c, false);
+    },
+
+    updateRendererGeneric: function (rendererMethod) {
+      //var wasReal;
+
+      if (!this.needsUpdate) {
+        return this;
+      }
+
+      if (this.visPropCalc.visible) {
+        //wasReal = this.isReal;
+        this.isReal = !isNaN(
+          this.coords.usrCoords[1] + this.coords.usrCoords[2]
+        );
+        //Homogeneous coords: ideal point
+        this.isReal =
+          Math.abs(this.coords.usrCoords[0]) > math_math__WEBPACK_IMPORTED_MODULE_1__/* ["default"].eps */ .Z.eps ? this.isReal : false;
+
+        if (
+          // wasReal &&
+          !this.isReal
+        ) {
+          this.updateVisibility(false);
+        }
+      }
+
+      // Call the renderer only if element is visible.
+      // Update the position
+      if (this.visPropCalc.visible) {
+        this.board.renderer[rendererMethod](this);
+      }
+
+      // Update the label if visible.
+      if (
+        this.hasLabel &&
+        this.visPropCalc.visible &&
+        this.label &&
+        this.label.visPropCalc.visible &&
+        this.isReal
+      ) {
+        this.label.update();
+        this.board.renderer.updateText(this.label);
+      }
+
+      // Update rendNode display
+      this.setDisplayRendNode();
+      // if (this.visPropCalc.visible !== this.visPropOld.visible) {
+      //     this.board.renderer.display(this, this.visPropCalc.visible);
+      //     this.visPropOld.visible = this.visPropCalc.visible;
+      //
+      //     if (this.hasLabel) {
+      //         this.board.renderer.display(this.label, this.label.visPropCalc.visible);
+      //     }
+      // }
+
+      this.needsUpdate = false;
+      return this;
+    },
+
+    /**
+     * Getter method for x, this is used by for CAS-points to access point coordinates.
+     * @returns {Number} User coordinate of point in x direction.
+     */
+    X: function () {
+      return this.coords.usrCoords[1];
+    },
+
+    /**
+     * Getter method for y, this is used by CAS-points to access point coordinates.
+     * @returns {Number} User coordinate of point in y direction.
+     */
+    Y: function () {
+      return this.coords.usrCoords[2];
+    },
+
+    /**
+     * Getter method for z, this is used by CAS-points to access point coordinates.
+     * @returns {Number} User coordinate of point in z direction.
+     */
+    Z: function () {
+      return this.coords.usrCoords[0];
+    },
+
+    /**
+     * New evaluation of the function term.
+     * This is required for CAS-points: Their XTerm() method is
+     * overwritten in {@link JXG.CoordsElement#addConstraint}.
+     *
+     * @returns {Number} User coordinate of point in x direction.
+     * @private
+     */
+    XEval: function () {
+      return this.coords.usrCoords[1];
+    },
+
+    /**
+     * New evaluation of the function term.
+     * This is required for CAS-points: Their YTerm() method is overwritten
+     * in {@link JXG.CoordsElement#addConstraint}.
+     *
+     * @returns {Number} User coordinate of point in y direction.
+     * @private
+     */
+    YEval: function () {
+      return this.coords.usrCoords[2];
+    },
+
+    /**
+     * New evaluation of the function term.
+     * This is required for CAS-points: Their ZTerm() method is overwritten in
+     * {@link JXG.CoordsElement#addConstraint}.
+     *
+     * @returns {Number} User coordinate of point in z direction.
+     * @private
+     */
+    ZEval: function () {
+      return this.coords.usrCoords[0];
+    },
+
+    /**
+     * Getter method for the distance to a second point, this is required for CAS-elements.
+     * Here, function inlining seems to be worthwile  (for plotting).
+     * @param {JXG.Point} point2 The point to which the distance shall be calculated.
+     * @returns {Number} Distance in user coordinate to the given point
+     */
+    Dist: function (point2) {
+      if (this.isReal && point2.isReal) {
+        return this.coords.distance(base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].COORDS_BY_USER */ .Z.COORDS_BY_USER, point2.coords);
+      }
+      return NaN;
+    },
+
+    /**
+     * Alias for {@link JXG.Element#handleSnapToGrid}
+     * @param {Boolean} force force snapping independent from what the snaptogrid attribute says
+     * @returns {JXG.CoordsElement} Reference to this element
+     */
+    snapToGrid: function (force) {
+      return this.handleSnapToGrid(force);
+    },
+
+    /**
+     * Let a point snap to the nearest point in distance of
+     * {@link JXG.Point#attractorDistance}.
+     * The function uses the coords object of the point as
+     * its actual position.
+     * @param {Boolean} force force snapping independent from what the snaptogrid attribute says
+     * @returns {JXG.Point} Reference to this element
+     */
+    handleSnapToPoints: function (force) {
+      var i,
+        pEl,
+        pCoords,
+        d = 0,
+        len,
+        dMax = Infinity,
+        c = null,
+        ev_au,
+        ev_ad,
+        ev_is2p = utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].evaluate */ .Z.evaluate(this.visProp.ignoredsnaptopoints),
+        len2,
+        j,
+        ignore = false;
+
+      len = this.board.objectsList.length;
+
+      if (ev_is2p) {
+        len2 = ev_is2p.length;
+      }
+
+      if (utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].evaluate */ .Z.evaluate(this.visProp.snaptopoints) || force) {
+        ev_au = utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].evaluate */ .Z.evaluate(this.visProp.attractorunit);
+        ev_ad = utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].evaluate */ .Z.evaluate(this.visProp.attractordistance);
+
+        for (i = 0; i < len; i++) {
+          pEl = this.board.objectsList[i];
+
+          if (ev_is2p) {
+            ignore = false;
+            for (j = 0; j < len2; j++) {
+              if (pEl === this.board.select(ev_is2p[j])) {
+                ignore = true;
+                break;
+              }
+            }
+            if (ignore) {
+              continue;
+            }
+          }
+
+          if (utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].isPoint */ .Z.isPoint(pEl) && pEl !== this && pEl.visPropCalc.visible) {
+            pCoords = math_geometry__WEBPACK_IMPORTED_MODULE_2__/* ["default"].projectPointToPoint */ .Z.projectPointToPoint(this, pEl, this.board);
+            if (ev_au === "screen") {
+              d = pCoords.distance(base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].COORDS_BY_SCREEN */ .Z.COORDS_BY_SCREEN, this.coords);
+            } else {
+              d = pCoords.distance(base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].COORDS_BY_USER */ .Z.COORDS_BY_USER, this.coords);
+            }
+
+            if (d < ev_ad && d < dMax) {
+              dMax = d;
+              c = pCoords;
+            }
+          }
+        }
+
+        if (c !== null) {
+          this.coords.setCoordinates(base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].COORDS_BY_USER */ .Z.COORDS_BY_USER, c.usrCoords);
+        }
+      }
+
+      return this;
+    },
+
+    /**
+     * Alias for {@link JXG.CoordsElement#handleSnapToPoints}.
+     *
+     * @param {Boolean} force force snapping independent from what the snaptogrid attribute says
+     * @returns {JXG.Point} Reference to this element
+     */
+    snapToPoints: function (force) {
+      return this.handleSnapToPoints(force);
+    },
+
+    /**
+     * A point can change its type from free point to glider
+     * and vice versa. If it is given an array of attractor elements
+     * (attribute attractors) and the attribute attractorDistance
+     * then the point will be made a glider if it less than attractorDistance
+     * apart from one of its attractor elements.
+     * If attractorDistance is equal to zero, the point stays in its
+     * current form.
+     * @returns {JXG.Point} Reference to this element
+     */
+    handleAttractors: function () {
+      var i,
+        el,
+        projCoords,
+        d = 0.0,
+        projection,
+        ev_au = utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].evaluate */ .Z.evaluate(this.visProp.attractorunit),
+        ev_ad = utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].evaluate */ .Z.evaluate(this.visProp.attractordistance),
+        ev_sd = utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].evaluate */ .Z.evaluate(this.visProp.snatchdistance),
+        ev_a = utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].evaluate */ .Z.evaluate(this.visProp.attractors),
+        len = ev_a.length;
+
+      if (ev_ad === 0.0) {
+        return;
+      }
+
+      for (i = 0; i < len; i++) {
+        el = this.board.select(ev_a[i]);
+
+        if (utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].exists */ .Z.exists(el) && el !== this) {
+          if (utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].isPoint */ .Z.isPoint(el)) {
+            projCoords = math_geometry__WEBPACK_IMPORTED_MODULE_2__/* ["default"].projectPointToPoint */ .Z.projectPointToPoint(this, el, this.board);
+          } else if (el.elementClass === base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_CLASS_LINE */ .Z.OBJECT_CLASS_LINE) {
+            projection = math_geometry__WEBPACK_IMPORTED_MODULE_2__/* ["default"].projectCoordsToSegment */ .Z.projectCoordsToSegment(
+              this.coords.usrCoords,
+              el.point1.coords.usrCoords,
+              el.point2.coords.usrCoords
+            );
+            if (
+              !utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].evaluate */ .Z.evaluate(el.visProp.straightfirst) &&
+              projection[1] < 0.0
+            ) {
+              projCoords = el.point1.coords;
+            } else if (
+              !utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].evaluate */ .Z.evaluate(el.visProp.straightlast) &&
+              projection[1] > 1.0
+            ) {
+              projCoords = el.point2.coords;
+            } else {
+              projCoords = new base_coords__WEBPACK_IMPORTED_MODULE_5__/* ["default"] */ .Z(
+                base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].COORDS_BY_USER */ .Z.COORDS_BY_USER,
+                projection[0],
+                this.board
+              );
+            }
+          } else if (el.elementClass === base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_CLASS_CIRCLE */ .Z.OBJECT_CLASS_CIRCLE) {
+            projCoords = math_geometry__WEBPACK_IMPORTED_MODULE_2__/* ["default"].projectPointToCircle */ .Z.projectPointToCircle(this, el, this.board);
+          } else if (el.elementClass === base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_CLASS_CURVE */ .Z.OBJECT_CLASS_CURVE) {
+            projCoords = math_geometry__WEBPACK_IMPORTED_MODULE_2__/* ["default"].projectPointToCurve */ .Z.projectPointToCurve(this, el, this.board)[0];
+          } else if (el.type === base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_TYPE_TURTLE */ .Z.OBJECT_TYPE_TURTLE) {
+            projCoords = math_geometry__WEBPACK_IMPORTED_MODULE_2__/* ["default"].projectPointToTurtle */ .Z.projectPointToTurtle(this, el, this.board)[0];
+          } else if (el.type === base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_TYPE_POLYGON */ .Z.OBJECT_TYPE_POLYGON) {
+            projCoords = new base_coords__WEBPACK_IMPORTED_MODULE_5__/* ["default"] */ .Z(
+              base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].COORDS_BY_USER */ .Z.COORDS_BY_USER,
+              math_geometry__WEBPACK_IMPORTED_MODULE_2__/* ["default"].projectCoordsToPolygon */ .Z.projectCoordsToPolygon(this.coords.usrCoords, el),
+              this.board
+            );
+          }
+
+          if (ev_au === "screen") {
+            d = projCoords.distance(base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].COORDS_BY_SCREEN */ .Z.COORDS_BY_SCREEN, this.coords);
+          } else {
+            d = projCoords.distance(base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].COORDS_BY_USER */ .Z.COORDS_BY_USER, this.coords);
+          }
+
+          if (d < ev_ad) {
+            if (
+              !(
+                this.type === base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_TYPE_GLIDER */ .Z.OBJECT_TYPE_GLIDER &&
+                (el === this.slideObject ||
+                  (this.slideObject &&
+                    this.onPolygon &&
+                    this.slideObject.parentPolygon === el))
+              )
+            ) {
+              this.makeGlider(el);
+            }
+            break; // bind the point to the first attractor in its list.
+          }
+          if (
+            d >= ev_sd &&
+            (el === this.slideObject ||
+              (this.slideObject &&
+                this.onPolygon &&
+                this.slideObject.parentPolygon === el))
+          ) {
+            this.popSlideObject();
+          }
+        }
+      }
+
+      return this;
+    },
+
+    /**
+     * Sets coordinates and calls the point's update() method.
+     * @param {Number} method The type of coordinates used here.
+     * Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
+     * @param {Array} coords coordinates <tt>([z], x, y)</tt> in screen/user units
+     * @returns {JXG.Point} this element
+     */
+    setPositionDirectly: function (method, coords) {
+      var i,
+        c,
+        dc,
+        oldCoords = this.coords,
+        newCoords;
+
+      if (this.relativeCoords) {
+        c = new base_coords__WEBPACK_IMPORTED_MODULE_5__/* ["default"] */ .Z(method, coords, this.board);
+        if (utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].evaluate */ .Z.evaluate(this.visProp.islabel)) {
+          dc = math_statistics__WEBPACK_IMPORTED_MODULE_4__/* ["default"].subtract */ .Z.subtract(c.scrCoords, oldCoords.scrCoords);
+          this.relativeCoords.scrCoords[1] += dc[1];
+          this.relativeCoords.scrCoords[2] += dc[2];
+        } else {
+          dc = math_statistics__WEBPACK_IMPORTED_MODULE_4__/* ["default"].subtract */ .Z.subtract(c.usrCoords, oldCoords.usrCoords);
+          this.relativeCoords.usrCoords[1] += dc[1];
+          this.relativeCoords.usrCoords[2] += dc[2];
+        }
+
+        return this;
+      }
+
+      this.coords.setCoordinates(method, coords);
+      this.handleSnapToGrid();
+      this.handleSnapToPoints();
+      this.handleAttractors();
+
+      // Update the initial coordinates. This is needed for free points
+      // that have a transformation bound to it.
+      for (i = this.transformations.length - 1; i >= 0; i--) {
+        if (method === base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].COORDS_BY_SCREEN */ .Z.COORDS_BY_SCREEN) {
+          newCoords = new base_coords__WEBPACK_IMPORTED_MODULE_5__/* ["default"] */ .Z(method, coords, this.board).usrCoords;
+        } else {
+          if (coords.length === 2) {
+            coords = [1].concat(coords);
+          }
+          newCoords = coords;
+        }
+        this.initialCoords.setCoordinates(
+          base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].COORDS_BY_USER */ .Z.COORDS_BY_USER,
+          math_math__WEBPACK_IMPORTED_MODULE_1__/* ["default"].matVecMult */ .Z.matVecMult(math_math__WEBPACK_IMPORTED_MODULE_1__/* ["default"].inverse */ .Z.inverse(this.transformations[i].matrix), newCoords)
+        );
+      }
+      this.prepareUpdate().update();
+
+      // If the user suspends the board updates we need to recalculate the relative position of
+      // the point on the slide object. This is done in updateGlider() which is NOT called during the
+      // update process triggered by unsuspendUpdate.
+      if (
+        this.board.isSuspendedUpdate &&
+        this.type === base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_TYPE_GLIDER */ .Z.OBJECT_TYPE_GLIDER
+      ) {
+        this.updateGlider();
+      }
+
+      return this;
+    },
+
+    /**
+     * Translates the point by <tt>tv = (x, y)</tt>.
+     * @param {Number} method The type of coordinates used here.
+     * Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
+     * @param {Array} tv (x, y)
+     * @returns {JXG.Point}
+     */
+    setPositionByTransform: function (method, tv) {
+      var t;
+
+      tv = new base_coords__WEBPACK_IMPORTED_MODULE_5__/* ["default"] */ .Z(method, tv, this.board);
+      t = this.board.create("transform", tv.usrCoords.slice(1), {
+        type: "translate",
+      });
+
+      if (
+        this.transformations.length > 0 &&
+        this.transformations[this.transformations.length - 1].isNumericMatrix
+      ) {
+        this.transformations[this.transformations.length - 1].melt(t);
+      } else {
+        this.addTransform(this, t);
+      }
+
+      this.prepareUpdate().update();
+
+      return this;
+    },
+
+    /**
+     * Sets coordinates and calls the point's update() method.
+     * @param {Number} method The type of coordinates used here.
+     * Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
+     * @param {Array} coords coordinates in screen/user units
+     * @returns {JXG.Point}
+     */
+    setPosition: function (method, coords) {
+      return this.setPositionDirectly(method, coords);
+    },
+
+    /**
+     * Sets the position of a glider relative to the defining elements
+     * of the {@link JXG.Point#slideObject}.
+     * @param {Number} x
+     * @returns {JXG.Point} Reference to the point element.
+     */
+    setGliderPosition: function (x) {
+      if (this.type === base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_TYPE_GLIDER */ .Z.OBJECT_TYPE_GLIDER) {
+        this.position = x;
+        this.board.update();
+      }
+
+      return this;
+    },
+
+    /**
+     * Convert the point to glider and update the construction.
+     * To move the point visual onto the glider, a call of board update is necessary.
+     * @param {String|Object} slide The object the point will be bound to.
+     */
+    makeGlider: function (slide) {
+      var slideobj = this.board.select(slide),
+        onPolygon = false,
+        min,
+        i,
+        dist;
+
+      if (slideobj.type === base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_TYPE_POLYGON */ .Z.OBJECT_TYPE_POLYGON) {
+        // Search for the closest edge of the polygon.
+        min = Number.MAX_VALUE;
+        for (i = 0; i < slideobj.borders.length; i++) {
+          dist = jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].Math.Geometry.distPointLine */ .Z.Math.Geometry.distPointLine(
+            this.coords.usrCoords,
+            slideobj.borders[i].stdform
+          );
+          if (dist < min) {
+            min = dist;
+            slide = slideobj.borders[i];
+          }
+        }
+        slideobj = this.board.select(slide);
+        onPolygon = true;
+      }
+
+      /* Gliders on Ticks are forbidden */
+      if (!utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].exists */ .Z.exists(slideobj)) {
+        throw new Error("JSXGraph: slide object undefined.");
+      } else if (slideobj.type === base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_TYPE_TICKS */ .Z.OBJECT_TYPE_TICKS) {
+        throw new Error("JSXGraph: gliders on ticks are not possible.");
+      }
+
+      this.slideObject = this.board.select(slide);
+      this.slideObjects.push(this.slideObject);
+      this.addParents(slide);
+
+      this.type = base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_TYPE_GLIDER */ .Z.OBJECT_TYPE_GLIDER;
+      this.elType = "glider";
+      this.visProp.snapwidth = -1; // By default, deactivate snapWidth
+      this.slideObject.addChild(this);
+      this.isDraggable = true;
+      this.onPolygon = onPolygon;
+
+      this.generatePolynomial = function () {
+        return this.slideObject.generatePolynomial(this);
+      };
+
+      // Determine the initial value of this.position
+      this.updateGlider();
+      this.needsUpdateFromParent = true;
+      this.updateGliderFromParent();
+
+      return this;
+    },
+
+    /**
+     * Remove the last slideObject. If there are more than one elements the point is bound to,
+     * the second last element is the new active slideObject.
+     */
+    popSlideObject: function () {
+      if (this.slideObjects.length > 0) {
+        this.slideObjects.pop();
+
+        // It may not be sufficient to remove the point from
+        // the list of childElement. For complex dependencies
+        // one may have to go to the list of ancestor and descendants.  A.W.
+        // Yes indeed, see #51 on github bugtracker
+        //  delete this.slideObject.childElements[this.id];
+        this.slideObject.removeChild(this);
+
+        if (this.slideObjects.length === 0) {
+          this.type = this._org_type;
+          if (this.type === base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_TYPE_POINT */ .Z.OBJECT_TYPE_POINT) {
+            this.elType = "point";
+          } else if (this.elementClass === base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_CLASS_TEXT */ .Z.OBJECT_CLASS_TEXT) {
+            this.elType = "text";
+          } else if (this.type === base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_TYPE_IMAGE */ .Z.OBJECT_TYPE_IMAGE) {
+            this.elType = "image";
+          } else if (this.type === base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_TYPE_FOREIGNOBJECT */ .Z.OBJECT_TYPE_FOREIGNOBJECT) {
+            this.elType = "foreignobject";
+          }
+
+          this.slideObject = null;
+        } else {
+          this.slideObject = this.slideObjects[this.slideObjects.length - 1];
+        }
+      }
+    },
+
+    /**
+     * Converts a calculated element into a free element,
+     * i.e. it will delete all ancestors and transformations and,
+     * if the element is currently a glider, will remove the slideObject reference.
+     */
+    free: function () {
+      var ancestorId, ancestor;
+      // child;
+
+      if (this.type !== base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_TYPE_GLIDER */ .Z.OBJECT_TYPE_GLIDER) {
+        // remove all transformations
+        this.transformations.length = 0;
+
+        delete this.updateConstraint;
+        this.isConstrained = false;
+        // this.updateConstraint = function () {
+        //     return this;
+        // };
+
+        if (!this.isDraggable) {
+          this.isDraggable = true;
+
+          if (this.elementClass === base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_CLASS_POINT */ .Z.OBJECT_CLASS_POINT) {
+            this.type = base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_TYPE_POINT */ .Z.OBJECT_TYPE_POINT;
+            this.elType = "point";
+          }
+
+          this.XEval = function () {
+            return this.coords.usrCoords[1];
+          };
+
+          this.YEval = function () {
+            return this.coords.usrCoords[2];
+          };
+
+          this.ZEval = function () {
+            return this.coords.usrCoords[0];
+          };
+
+          this.Xjc = null;
+          this.Yjc = null;
+        } else {
+          return;
+        }
+      }
+
+      // a free point does not depend on anything. And instead of running through tons of descendants and ancestor
+      // structures, where we eventually are going to visit a lot of objects twice or thrice with hard to read and
+      // comprehend code, just run once through all objects and delete all references to this point and its label.
+      for (ancestorId in this.board.objects) {
+        if (this.board.objects.hasOwnProperty(ancestorId)) {
+          ancestor = this.board.objects[ancestorId];
+
+          if (ancestor.descendants) {
+            delete ancestor.descendants[this.id];
+            delete ancestor.childElements[this.id];
+
+            if (this.hasLabel) {
+              delete ancestor.descendants[this.label.id];
+              delete ancestor.childElements[this.label.id];
+            }
+          }
+        }
+      }
+
+      // A free point does not depend on anything. Remove all ancestors.
+      this.ancestors = {}; // only remove the reference
+
+      // Completely remove all slideObjects of the element
+      this.slideObject = null;
+      this.slideObjects = [];
+      if (this.elementClass === base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_CLASS_POINT */ .Z.OBJECT_CLASS_POINT) {
+        this.type = base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_TYPE_POINT */ .Z.OBJECT_TYPE_POINT;
+        this.elType = "point";
+      } else if (this.elementClass === base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_CLASS_TEXT */ .Z.OBJECT_CLASS_TEXT) {
+        this.type = this._org_type;
+        this.elType = "text";
+      } else if (this.elementClass === base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_CLASS_OTHER */ .Z.OBJECT_CLASS_OTHER) {
+        this.type = this._org_type;
+        this.elType = "image";
+      }
+    },
+
+    /**
+     * Convert the point to CAS point and call update().
+     * @param {Array} terms [[zterm], xterm, yterm] defining terms for the z, x and y coordinate.
+     * The z-coordinate is optional and it is used for homogeneous coordinates.
+     * The coordinates may be either <ul>
+     *   <li>a JavaScript function,</li>
+     *   <li>a string containing GEONExT syntax. This string will be converted into a JavaScript
+     *     function here,</li>
+     *   <li>a Number</li>
+     *   <li>a pointer to a slider object. This will be converted into a call of the Value()-method
+     *     of this slider.</li>
+     *   </ul>
+     * @see JXG.GeonextParser#geonext2JS
+     */
+    addConstraint: function (terms) {
+      var i,
+        v,
+        newfuncs = [],
+        what = ["X", "Y"],
+        makeConstFunction = function (z) {
+          return function () {
+            return z;
+          };
+        },
+        makeSliderFunction = function (a) {
+          return function () {
+            return a.Value();
+          };
+        };
+
+      if (this.elementClass === base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_CLASS_POINT */ .Z.OBJECT_CLASS_POINT) {
+        this.type = base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_TYPE_CAS */ .Z.OBJECT_TYPE_CAS;
+      }
+
+      this.isDraggable = false;
+
+      for (i = 0; i < terms.length; i++) {
+        v = terms[i];
+
+        if (utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].isString */ .Z.isString(v)) {
+          // Convert GEONExT syntax into JavaScript syntax
+          //t  = JXG.GeonextParser.geonext2JS(v, this.board);
+          //newfuncs[i] = new Function('','return ' + t + ';');
+          //v = GeonextParser.replaceNameById(v, this.board);
+          newfuncs[i] = this.board.jc.snippet(v, true, null, true);
+
+          if (terms.length === 2) {
+            this[what[i] + "jc"] = terms[i];
+          }
+        } else if (utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].isFunction */ .Z.isFunction(v)) {
+          newfuncs[i] = v;
+        } else if (utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].isNumber */ .Z.isNumber(v)) {
+          newfuncs[i] = makeConstFunction(v);
+          // Slider
+        } else if (utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].isObject */ .Z.isObject(v) && utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].isFunction */ .Z.isFunction(v.Value)) {
+          newfuncs[i] = makeSliderFunction(v);
+        }
+
+        newfuncs[i].origin = v;
+      }
+
+      // Intersection function
+      if (terms.length === 1) {
+        this.updateConstraint = function () {
+          var c = newfuncs[0]();
+
+          // Array
+          if (utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].isArray */ .Z.isArray(c)) {
+            this.coords.setCoordinates(base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].COORDS_BY_USER */ .Z.COORDS_BY_USER, c);
+            // Coords object
+          } else {
+            this.coords = c;
+          }
+          return this;
+        };
+        // Euclidean coordinates
+      } else if (terms.length === 2) {
+        this.XEval = newfuncs[0];
+        this.YEval = newfuncs[1];
+
+        this.setParents([newfuncs[0].origin, newfuncs[1].origin]);
+
+        this.updateConstraint = function () {
+          this.coords.setCoordinates(base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].COORDS_BY_USER */ .Z.COORDS_BY_USER, [
+            this.XEval(),
+            this.YEval(),
+          ]);
+          return this;
+        };
+        // Homogeneous coordinates
+      } else {
+        this.ZEval = newfuncs[0];
+        this.XEval = newfuncs[1];
+        this.YEval = newfuncs[2];
+
+        this.setParents([
+          newfuncs[0].origin,
+          newfuncs[1].origin,
+          newfuncs[2].origin,
+        ]);
+
+        this.updateConstraint = function () {
+          this.coords.setCoordinates(base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].COORDS_BY_USER */ .Z.COORDS_BY_USER, [
+            this.ZEval(),
+            this.XEval(),
+            this.YEval(),
+          ]);
+          return this;
+        };
+      }
+      this.isConstrained = true;
+
+      /**
+       * We have to do an update. Otherwise, elements relying on this point will receive NaN.
+       */
+      this.prepareUpdate().update();
+      if (!this.board.isSuspendedUpdate) {
+        this.updateVisibility().updateRenderer();
+        if (this.hasLabel) {
+          this.label.fullUpdate();
+        }
+      }
+
+      return this;
+    },
+
+    /**
+     * In case there is an attribute "anchor", the element is bound to
+     * this anchor element.
+     * This is handled with this.relativeCoords. If the element is a label
+     * relativeCoords are given in scrCoords, otherwise in usrCoords.
+     * @param{Array} coordinates Offset from th anchor element. These are the values for this.relativeCoords.
+     * In case of a label, coordinates are screen coordinates. Otherwise, coordinates are user coordinates.
+     * @param{Boolean} isLabel Yes/no
+     * @private
+     */
+    addAnchor: function (coordinates, isLabel) {
+      if (isLabel) {
+        this.relativeCoords = new base_coords__WEBPACK_IMPORTED_MODULE_5__/* ["default"] */ .Z(
+          base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].COORDS_BY_SCREEN */ .Z.COORDS_BY_SCREEN,
+          coordinates.slice(0, 2),
+          this.board
+        );
+      } else {
+        this.relativeCoords = new base_coords__WEBPACK_IMPORTED_MODULE_5__/* ["default"] */ .Z(
+          base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].COORDS_BY_USER */ .Z.COORDS_BY_USER,
+          coordinates,
+          this.board
+        );
+      }
+      this.element.addChild(this);
+      if (isLabel) {
+        this.addParents(this.element);
+      }
+
+      this.XEval = function () {
+        var sx, coords, anchor, ev_o;
+
+        if (utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].evaluate */ .Z.evaluate(this.visProp.islabel)) {
+          ev_o = utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].evaluate */ .Z.evaluate(this.visProp.offset);
+          sx = parseFloat(ev_o[0]);
+          anchor = this.element.getLabelAnchor();
+          coords = new base_coords__WEBPACK_IMPORTED_MODULE_5__/* ["default"] */ .Z(
+            base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].COORDS_BY_SCREEN */ .Z.COORDS_BY_SCREEN,
+            [sx + this.relativeCoords.scrCoords[1] + anchor.scrCoords[1], 0],
+            this.board
+          );
+
+          return coords.usrCoords[1];
+        }
+
+        anchor = this.element.getTextAnchor();
+        return this.relativeCoords.usrCoords[1] + anchor.usrCoords[1];
+      };
+
+      this.YEval = function () {
+        var sy, coords, anchor, ev_o;
+
+        if (utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].evaluate */ .Z.evaluate(this.visProp.islabel)) {
+          ev_o = utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].evaluate */ .Z.evaluate(this.visProp.offset);
+          sy = -parseFloat(ev_o[1]);
+          anchor = this.element.getLabelAnchor();
+          coords = new base_coords__WEBPACK_IMPORTED_MODULE_5__/* ["default"] */ .Z(
+            base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].COORDS_BY_SCREEN */ .Z.COORDS_BY_SCREEN,
+            [0, sy + this.relativeCoords.scrCoords[2] + anchor.scrCoords[2]],
+            this.board
+          );
+
+          return coords.usrCoords[2];
+        }
+
+        anchor = this.element.getTextAnchor();
+        return this.relativeCoords.usrCoords[2] + anchor.usrCoords[2];
+      };
+
+      this.ZEval = utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].createFunction */ .Z.createFunction(1, this.board, "");
+
+      this.updateConstraint = function () {
+        this.coords.setCoordinates(base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].COORDS_BY_USER */ .Z.COORDS_BY_USER, [
+          this.ZEval(),
+          this.XEval(),
+          this.YEval(),
+        ]);
+      };
+      this.isConstrained = true;
+
+      this.updateConstraint();
+      //this.coords = new Coords(Const.COORDS_BY_SCREEN, [0, 0], this.board);
+    },
+
+    /**
+     * Applies the transformations of the element.
+     * This method applies to text and images. Point transformations are handled differently.
+     * @param {Boolean} fromParent True if the drag comes from a child element. Unused.
+     * @returns {JXG.CoordsElement} Reference to itself.
+     */
+    updateTransform: function (fromParent) {
+      var i;
+
+      if (this.transformations.length === 0) {
+        return this;
+      }
+
+      for (i = 0; i < this.transformations.length; i++) {
+        this.transformations[i].update();
+      }
+
+      return this;
+    },
+
+    /**
+     * Add transformations to this element.
+     * @param {JXG.GeometryElement} el
+     * @param {JXG.Transformation|Array} transform Either one {@link JXG.Transformation}
+     * or an array of {@link JXG.Transformation}s.
+     * @returns {JXG.CoordsElement} Reference to itself.
+     */
+    addTransform: function (el, transform) {
+      var i,
+        list = utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].isArray */ .Z.isArray(transform) ? transform : [transform],
+        len = list.length;
+
+      // There is only one baseElement possible
+      if (this.transformations.length === 0) {
+        this.baseElement = el;
+      }
+
+      for (i = 0; i < len; i++) {
+        this.transformations.push(list[i]);
+      }
+
+      return this;
+    },
+
+    /**
+     * Animate the point.
+     * @param {Number} direction The direction the glider is animated. Can be +1 or -1.
+     * @param {Number} stepCount The number of steps in which the parent element is divided.
+     * Must be at least 1.
+     * @param {Number} delay Time in msec between two animation steps. Default is 250.
+     * @returns {JXG.CoordsElement} Reference to iself.
+     *
+     * @name Glider#startAnimation
+     * @see Glider#stopAnimation
+     * @function
+     * @example
+     * // Divide the circle line into 6 steps and
+     * // visit every step 330 msec counterclockwise.
+     * var ci = board.create('circle', [[-1,2], [2,1]]);
+     * var gl = board.create('glider', [0,2, ci]);
+     * gl.startAnimation(-1, 6, 330);
+     *
+     * </pre><div id="JXG0f35a50e-e99d-11e8-a1ca-04d3b0c2aad3" class="jxgbox" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     *     (function() {
+     *         var board = JXG.JSXGraph.initBoard('JXG0f35a50e-e99d-11e8-a1ca-04d3b0c2aad3',
+     *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+     *     // Divide the circle line into 6 steps and
+     *     // visit every step 330 msec counterclockwise.
+     *     var ci = board.create('circle', [[-1,2], [2,1]]);
+     *     var gl = board.create('glider', [0,2, ci]);
+     *     gl.startAnimation(-1, 6, 330);
+     *
+     *     })();
+     *
+     * </script><pre>
+     *
+     * @example
+     * // Divide the slider area into 20 steps and
+     * // visit every step 30 msec.
+     * var n = board.create('slider',[[-2,4],[2,4],[1,5,100]],{name:'n'});
+     * n.startAnimation(1, 20, 30);
+     *
+     * </pre><div id="JXG40ce04b8-e99c-11e8-a1ca-04d3b0c2aad3" class="jxgbox" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     *     (function() {
+     *         var board = JXG.JSXGraph.initBoard('JXG40ce04b8-e99c-11e8-a1ca-04d3b0c2aad3',
+     *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+     *     // Divide the slider area into 20 steps and
+     *     // visit every step 30 msec.
+     *     var n = board.create('slider',[[-2,4],[2,4],[1,5,100]],{name:'n'});
+     *     n.startAnimation(1, 20, 30);
+     *
+     *     })();
+     * </script><pre>
+     *
+     */
+    startAnimation: function (direction, stepCount, delay) {
+      var that = this;
+
+      delay = delay || 250;
+
+      if (
+        this.type === base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_TYPE_GLIDER */ .Z.OBJECT_TYPE_GLIDER &&
+        !utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].exists */ .Z.exists(this.intervalCode)
+      ) {
+        this.intervalCode = window.setInterval(function () {
+          that._anim(direction, stepCount);
+        }, delay);
+
+        if (!utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].exists */ .Z.exists(this.intervalCount)) {
+          this.intervalCount = 0;
+        }
+      }
+      return this;
+    },
+
+    /**
+     * Stop animation.
+     * @name Glider#stopAnimation
+     * @see Glider#startAnimation
+     * @function
+     * @returns {JXG.CoordsElement} Reference to itself.
+     */
+    stopAnimation: function () {
+      if (utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].exists */ .Z.exists(this.intervalCode)) {
+        window.clearInterval(this.intervalCode);
+        delete this.intervalCode;
+      }
+
+      return this;
+    },
+
+    /**
+     * Starts an animation which moves the point along a given path in given time.
+     * @param {Array|function} path The path the point is moved on.
+     * This can be either an array of arrays or containing x and y values of the points of
+     * the path, or an array of points, or a function taking the amount of elapsed time since the animation
+     * has started and returns an array containing a x and a y value or NaN.
+     * In case of NaN the animation stops.
+     * @param {Number} time The time in milliseconds in which to finish the animation
+     * @param {Object} [options] Optional settings for the animation.
+     * @param {function} [options.callback] A function that is called as soon as the animation is finished.
+     * @param {Boolean} [options.interpolate=true] If <tt>path</tt> is an array moveAlong()
+     * will interpolate the path
+     * using {@link JXG.Math.Numerics.Neville}. Set this flag to false if you don't want to use interpolation.
+     * @returns {JXG.CoordsElement} Reference to itself.
+     * @see JXG.CoordsElement#moveAlong
+     * @see JXG.CoordsElement#moveTo
+     * @see JXG.GeometryElement#animate
+     */
+    moveAlong: function (path, time, options) {
+      options = options || {};
+
+      var i,
+        neville,
+        interpath = [],
+        p = [],
+        delay = this.board.attr.animationdelay,
+        steps = time / delay,
+        len,
+        pos,
+        part,
+        makeFakeFunction = function (i, j) {
+          return function () {
+            return path[i][j];
+          };
+        };
+
+      if (utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].isArray */ .Z.isArray(path)) {
+        len = path.length;
+        for (i = 0; i < len; i++) {
+          if (utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].isPoint */ .Z.isPoint(path[i])) {
+            p[i] = path[i];
+          } else {
+            p[i] = {
+              elementClass: base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_CLASS_POINT */ .Z.OBJECT_CLASS_POINT,
+              X: makeFakeFunction(i, 0),
+              Y: makeFakeFunction(i, 1),
+            };
+          }
+        }
+
+        time = time || 0;
+        if (time === 0) {
+          this.setPosition(base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].COORDS_BY_USER */ .Z.COORDS_BY_USER, [
+            p[p.length - 1].X(),
+            p[p.length - 1].Y(),
+          ]);
+          return this.board.update(this);
+        }
+
+        if (!utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].exists */ .Z.exists(options.interpolate) || options.interpolate) {
+          neville = math_numerics__WEBPACK_IMPORTED_MODULE_3__/* ["default"].Neville */ .Z.Neville(p);
+          for (i = 0; i < steps; i++) {
+            interpath[i] = [];
+            interpath[i][0] = neville[0](((steps - i) / steps) * neville[3]());
+            interpath[i][1] = neville[1](((steps - i) / steps) * neville[3]());
+          }
+        } else {
+          len = path.length - 1;
+          for (i = 0; i < steps; ++i) {
+            pos = Math.floor((i / steps) * len);
+            part = (i / steps) * len - pos;
+
+            interpath[i] = [];
+            interpath[i][0] = (1.0 - part) * p[pos].X() + part * p[pos + 1].X();
+            interpath[i][1] = (1.0 - part) * p[pos].Y() + part * p[pos + 1].Y();
+          }
+          interpath.push([p[len].X(), p[len].Y()]);
+          interpath.reverse();
+          /*
+                    for (i = 0; i < steps; i++) {
+                        interpath[i] = [];
+                        interpath[i][0] = path[Math.floor((steps - i) / steps * (path.length - 1))][0];
+                        interpath[i][1] = path[Math.floor((steps - i) / steps * (path.length - 1))][1];
+                    }
+                    */
+        }
+
+        this.animationPath = interpath;
+      } else if (utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].isFunction */ .Z.isFunction(path)) {
+        this.animationPath = path;
+        this.animationStart = new Date().getTime();
+      }
+
+      this.animationCallback = options.callback;
+      this.board.addAnimation(this);
+
+      return this;
+    },
+
+    /**
+     * Starts an animated point movement towards the given coordinates <tt>where</tt>.
+     * The animation is done after <tt>time</tt> milliseconds.
+     * If the second parameter is not given or is equal to 0, setPosition() is called, see #setPosition,
+     * i.e. the coordinates are changed without animation.
+     * @param {Array} where Array containing the x and y coordinate of the target location.
+     * @param {Number} [time] Number of milliseconds the animation should last.
+     * @param {Object} [options] Optional settings for the animation
+     * @param {function} [options.callback] A function that is called as soon as the animation is finished.
+     * @param {String} [options.effect='<>'] animation effects like speed fade in and out. possible values are
+     * '<>' for speed increase on start and slow down at the end (default) and '--' for constant speed during
+     * the whole animation.
+     * @returns {JXG.CoordsElement} Reference to itself.
+     * @see JXG.CoordsElement#moveAlong
+     * @see JXG.CoordsElement#visit
+     * @see JXG.GeometryElement#animate
+     */
+    moveTo: function (where, time, options) {
+      options = options || {};
+      where = new base_coords__WEBPACK_IMPORTED_MODULE_5__/* ["default"] */ .Z(base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].COORDS_BY_USER */ .Z.COORDS_BY_USER, where, this.board);
+
+      var i,
+        delay = this.board.attr.animationdelay,
+        steps = Math.ceil(time / delay),
+        coords = [],
+        X = this.coords.usrCoords[1],
+        Y = this.coords.usrCoords[2],
+        dX = where.usrCoords[1] - X,
+        dY = where.usrCoords[2] - Y,
+        /** @ignore */
+        stepFun = function (i) {
+          if (options.effect && options.effect === "<>") {
+            return Math.pow(Math.sin(((i / steps) * Math.PI) / 2), 2);
+          }
+          return i / steps;
+        };
+
+      if (
+        !utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].exists */ .Z.exists(time) ||
+        time === 0 ||
+        Math.abs(where.usrCoords[0] - this.coords.usrCoords[0]) > math_math__WEBPACK_IMPORTED_MODULE_1__/* ["default"].eps */ .Z.eps
+      ) {
+        this.setPosition(base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].COORDS_BY_USER */ .Z.COORDS_BY_USER, where.usrCoords);
+        return this.board.update(this);
+      }
+
+      // In case there is no callback and we are already at the endpoint we can stop here
+      if (
+        !utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].exists */ .Z.exists(options.callback) &&
+        Math.abs(dX) < math_math__WEBPACK_IMPORTED_MODULE_1__/* ["default"].eps */ .Z.eps &&
+        Math.abs(dY) < math_math__WEBPACK_IMPORTED_MODULE_1__/* ["default"].eps */ .Z.eps
+      ) {
+        return this;
+      }
+
+      for (i = steps; i >= 0; i--) {
+        coords[steps - i] = [
+          where.usrCoords[0],
+          X + dX * stepFun(i),
+          Y + dY * stepFun(i),
+        ];
+      }
+
+      this.animationPath = coords;
+      this.animationCallback = options.callback;
+      this.board.addAnimation(this);
+
+      return this;
+    },
+
+    /**
+     * Starts an animated point movement towards the given coordinates <tt>where</tt>. After arriving at
+     * <tt>where</tt> the point moves back to where it started. The animation is done after <tt>time</tt>
+     * milliseconds.
+     * @param {Array} where Array containing the x and y coordinate of the target location.
+     * @param {Number} time Number of milliseconds the animation should last.
+     * @param {Object} [options] Optional settings for the animation
+     * @param {function} [options.callback] A function that is called as soon as the animation is finished.
+     * @param {String} [options.effect='<>'] animation effects like speed fade in and out. possible values are
+     * '<>' for speed increase on start and slow down at the end (default) and '--' for constant speed during
+     * the whole animation.
+     * @param {Number} [options.repeat=1] How often this animation should be repeated.
+     * @returns {JXG.CoordsElement} Reference to itself.
+     * @see JXG.CoordsElement#moveAlong
+     * @see JXG.CoordsElement#moveTo
+     * @see JXG.GeometryElement#animate
+     */
+    visit: function (where, time, options) {
+      where = new base_coords__WEBPACK_IMPORTED_MODULE_5__/* ["default"] */ .Z(base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].COORDS_BY_USER */ .Z.COORDS_BY_USER, where, this.board);
+
+      var i,
+        j,
+        steps,
+        delay = this.board.attr.animationdelay,
+        coords = [],
+        X = this.coords.usrCoords[1],
+        Y = this.coords.usrCoords[2],
+        dX = where.usrCoords[1] - X,
+        dY = where.usrCoords[2] - Y,
+        /** @ignore */
+        stepFun = function (i) {
+          var x = i < steps / 2 ? (2 * i) / steps : (2 * (steps - i)) / steps;
+
+          if (options.effect && options.effect === "<>") {
+            return Math.pow(Math.sin((x * Math.PI) / 2), 2);
+          }
+
+          return x;
+        };
+
+      // support legacy interface where the third parameter was the number of repeats
+      if (utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].isNumber */ .Z.isNumber(options)) {
+        options = { repeat: options };
+      } else {
+        options = options || {};
+        if (!utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].exists */ .Z.exists(options.repeat)) {
+          options.repeat = 1;
+        }
+      }
+
+      steps = Math.ceil(time / (delay * options.repeat));
+
+      for (j = 0; j < options.repeat; j++) {
+        for (i = steps; i >= 0; i--) {
+          coords[j * (steps + 1) + steps - i] = [
+            where.usrCoords[0],
+            X + dX * stepFun(i),
+            Y + dY * stepFun(i),
+          ];
+        }
+      }
+      this.animationPath = coords;
+      this.animationCallback = options.callback;
+      this.board.addAnimation(this);
+
+      return this;
+    },
+
+    /**
+     * Animates a glider. Is called by the browser after startAnimation is called.
+     * @param {Number} direction The direction the glider is animated.
+     * @param {Number} stepCount The number of steps in which the parent element is divided.
+     * Must be at least 1.
+     * @see #startAnimation
+     * @see #stopAnimation
+     * @private
+     * @returns {JXG.CoordsElement} Reference to itself.
+     */
+    _anim: function (direction, stepCount) {
+      var dX, dY, alpha, startPoint, newX, radius, sp1c, sp2c, res, d;
+
+      this.intervalCount += 1;
+      if (this.intervalCount > stepCount) {
+        this.intervalCount = 0;
+      }
+
+      if (this.slideObject.elementClass === base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_CLASS_LINE */ .Z.OBJECT_CLASS_LINE) {
+        sp1c = this.slideObject.point1.coords.scrCoords;
+        sp2c = this.slideObject.point2.coords.scrCoords;
+
+        dX = Math.round(((sp2c[1] - sp1c[1]) * this.intervalCount) / stepCount);
+        dY = Math.round(((sp2c[2] - sp1c[2]) * this.intervalCount) / stepCount);
+        if (direction > 0) {
+          startPoint = this.slideObject.point1;
+        } else {
+          startPoint = this.slideObject.point2;
+          dX *= -1;
+          dY *= -1;
+        }
+
+        this.coords.setCoordinates(base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].COORDS_BY_SCREEN */ .Z.COORDS_BY_SCREEN, [
+          startPoint.coords.scrCoords[1] + dX,
+          startPoint.coords.scrCoords[2] + dY,
+        ]);
+      } else if (this.slideObject.elementClass === base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_CLASS_CURVE */ .Z.OBJECT_CLASS_CURVE) {
+        if (direction > 0) {
+          newX = Math.round(
+            (this.intervalCount / stepCount) * this.board.canvasWidth
+          );
+        } else {
+          newX = Math.round(
+            ((stepCount - this.intervalCount) / stepCount) *
+              this.board.canvasWidth
+          );
+        }
+
+        this.coords.setCoordinates(base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].COORDS_BY_SCREEN */ .Z.COORDS_BY_SCREEN, [newX, 0]);
+        res = math_geometry__WEBPACK_IMPORTED_MODULE_2__/* ["default"].projectPointToCurve */ .Z.projectPointToCurve(this, this.slideObject, this.board);
+        this.coords = res[0];
+        this.position = res[1];
+      } else if (this.slideObject.elementClass === base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_CLASS_CIRCLE */ .Z.OBJECT_CLASS_CIRCLE) {
+        alpha = 2 * Math.PI;
+        if (direction < 0) {
+          alpha *= this.intervalCount / stepCount;
+        } else {
+          alpha *= (stepCount - this.intervalCount) / stepCount;
+        }
+        radius = this.slideObject.Radius();
+
+        this.coords.setCoordinates(base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].COORDS_BY_USER */ .Z.COORDS_BY_USER, [
+          this.slideObject.center.coords.usrCoords[1] +
+            radius * Math.cos(alpha),
+          this.slideObject.center.coords.usrCoords[2] +
+            radius * Math.sin(alpha),
+        ]);
+      }
+
+      this.board.update(this);
+      return this;
+    },
+
+    // documented in GeometryElement
+    getTextAnchor: function () {
+      return this.coords;
+    },
+
+    // documented in GeometryElement
+    getLabelAnchor: function () {
+      return this.coords;
+    },
+
+    // documented in element.js
+    getParents: function () {
+      var p = [this.Z(), this.X(), this.Y()];
+
+      if (this.parents.length !== 0) {
+        p = this.parents;
+      }
+
+      if (this.type === base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_TYPE_GLIDER */ .Z.OBJECT_TYPE_GLIDER) {
+        p = [this.X(), this.Y(), this.slideObject.id];
+      }
+
+      return p;
+    },
+  }
+);
+
+/**
+ * Generic method to create point, text or image.
+ * Determines the type of the construction, i.e. free, or constrained by function,
+ * transformation or of glider type.
+ * @param{Object} Callback Object type, e.g. JXG.Point, JXG.Text or JXG.Image
+ * @param{Object} board Link to the board object
+ * @param{Array} coords Array with coordinates. This may be: array of numbers, function
+ * returning an array of numbers, array of functions returning a number, object and transformation.
+ * If the attribute "slideObject" exists, a glider element is constructed.
+ * @param{Object} attr Attributes object
+ * @param{Object} arg1 Optional argument 1: in case of text this is the text content,
+ * in case of an image this is the url.
+ * @param{Array} arg2 Optional argument 2: in case of image this is an array containing the size of
+ * the image.
+ * @returns{Object} returns the created object or false.
+ */
+jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].CoordsElement.create */ .Z.CoordsElement.create = function (
+  Callback,
+  board,
+  coords,
+  attr,
+  arg1,
+  arg2
+) {
+  var el,
+    isConstrained = false,
+    i;
+
+  for (i = 0; i < coords.length; i++) {
+    if (utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].isFunction */ .Z.isFunction(coords[i]) || utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].isString */ .Z.isString(coords[i])) {
+      isConstrained = true;
+    }
+  }
+
+  if (!isConstrained) {
+    if (utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].isNumber */ .Z.isNumber(coords[0]) && utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].isNumber */ .Z.isNumber(coords[1])) {
+      el = new Callback(board, coords, attr, arg1, arg2);
+
+      if (utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].exists */ .Z.exists(attr.slideobject)) {
+        el.makeGlider(attr.slideobject);
+      } else {
+        // Free element
+        el.baseElement = el;
+      }
+      el.isDraggable = true;
+    } else if (
+      utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].isObject */ .Z.isObject(coords[0]) &&
+      utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].isTransformationOrArray */ .Z.isTransformationOrArray(coords[1])
+    ) {
+      // Transformation
+      // TODO less general specification of isObject
+      el = new Callback(board, [0, 0], attr, arg1, arg2);
+      el.addTransform(coords[0], coords[1]);
+      el.isDraggable = false;
+    } else {
+      return false;
+    }
+  } else {
+    el = new Callback(board, [0, 0], attr, arg1, arg2);
+    el.addConstraint(coords);
+  }
+
+  el.handleSnapToGrid();
+  el.handleSnapToPoints();
+  el.handleAttractors();
+
+  el.addParents(coords);
+  return el;
+};
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].CoordsElement */ .Z.CoordsElement);
+
+
+/***/ }),
+
+/***/ 958:
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "Z": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var jxg__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(765);
+/* harmony import */ var base_constants__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(351);
+/* harmony import */ var base_coords__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(705);
+/* harmony import */ var math_math__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(275);
+/* harmony import */ var math_statistics__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(309);
+/* harmony import */ var options__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(766);
+/* harmony import */ var utils_event__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(88);
+/* harmony import */ var utils_color__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(327);
+/* harmony import */ var utils_type__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(109);
+/*
+    Copyright 2008-2022
+        Matthias Ehmann,
+        Michael Gerhaeuser,
+        Carsten Miller,
+        Bianca Valentin,
+        Alfred Wassermann,
+        Peter Wilfahrt
+
+    This file is part of JSXGraph.
+
+    JSXGraph is free software dual licensed under the GNU LGPL or MIT License.
+
+    You can redistribute it and/or modify it under the terms of the
+
+      * GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version
+      OR
+      * MIT License: https://github.com/jsxgraph/jsxgraph/blob/master/LICENSE.MIT
+
+    JSXGraph is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License and
+    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
+    and <http://opensource.org/licenses/MIT/>.
+ */
+
+/*global JXG: true, define: true*/
+/*jslint nomen: true, plusplus: true, unparam: true*/
+
+/* depends:
+ jxg
+ base/constants
+ base/coords
+ math/math
+ options
+ parser/geonext
+ utils/event
+ utils/color
+ utils/type
+ */
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * Constructs a new GeometryElement object.
+ * @class This is the basic class for geometry elements like points, circles and lines.
+ * @constructor
+ * @param {JXG.Board} board Reference to the board the element is constructed on.
+ * @param {Object} attributes Hash of attributes and their values.
+ * @param {Number} type Element type (a <tt>JXG.OBJECT_TYPE_</tt> value).
+ * @param {Number} oclass The element's class (a <tt>JXG.OBJECT_CLASS_</tt> value).
+ * @borrows JXG.EventEmitter#on as this.on
+ * @borrows JXG.EventEmitter#off as this.off
+ * @borrows JXG.EventEmitter#triggerEventHandlers as this.triggerEventHandlers
+ * @borrows JXG.EventEmitter#eventHandlers as this.eventHandlers
+ */
+jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].GeometryElement */ .Z.GeometryElement = function (board, attributes, type, oclass) {
+  var name, key, attr;
+
+  /**
+   * Controls if updates are necessary
+   * @type Boolean
+   * @default true
+   */
+  this.needsUpdate = true;
+
+  /**
+   * Controls if this element can be dragged. In GEONExT only
+   * free points and gliders can be dragged.
+   * @type Boolean
+   * @default false
+   */
+  this.isDraggable = false;
+
+  /**
+   * If element is in two dimensional real space this is true, else false.
+   * @type Boolean
+   * @default true
+   */
+  this.isReal = true;
+
+  /**
+   * Stores all dependent objects to be updated when this point is moved.
+   * @type Object
+   */
+  this.childElements = {};
+
+  /**
+   * If element has a label subelement then this property will be set to true.
+   * @type Boolean
+   * @default false
+   */
+  this.hasLabel = false;
+
+  /**
+   * True, if the element is currently highlighted.
+   * @type Boolean
+   * @default false
+   */
+  this.highlighted = false;
+
+  /**
+   * Stores all Intersection Objects which in this moment are not real and
+   * so hide this element.
+   * @type Object
+   */
+  this.notExistingParents = {};
+
+  /**
+   * Keeps track of all objects drawn as part of the trace of the element.
+   * @see JXG.GeometryElement#clearTrace
+   * @see JXG.GeometryElement#numTraces
+   * @type Object
+   */
+  this.traces = {};
+
+  /**
+   * Counts the number of objects drawn as part of the trace of the element.
+   * @see JXG.GeometryElement#clearTrace
+   * @see JXG.GeometryElement#traces
+   * @type Number
+   */
+  this.numTraces = 0;
+
+  /**
+   * Stores the  transformations which are applied during update in an array
+   * @type Array
+   * @see JXG.Transformation
+   */
+  this.transformations = [];
+
+  /**
+   * @type JXG.GeometryElement
+   * @default null
+   * @private
+   */
+  this.baseElement = null;
+
+  /**
+   * Elements depending on this element are stored here.
+   * @type Object
+   */
+  this.descendants = {};
+
+  /**
+   * Elements on which this element depends on are stored here.
+   * @type Object
+   */
+  this.ancestors = {};
+
+  /**
+   * Ids of elements on which this element depends directly are stored here.
+   * @type Object
+   */
+  this.parents = [];
+
+  /**
+   * Stores variables for symbolic computations
+   * @type Object
+   */
+  this.symbolic = {};
+
+  /**
+   * Stores the SVG (or VML) rendering node for the element. This enables low-level
+   * access to SVG nodes. The properties of such an SVG node can then be changed
+   * by calling setAttribute(). Note that there are a few elements which consist
+   * of more than one SVG nodes:
+   * <ul>
+   * <li> Elements with arrow tail or head: rendNodeTriangleStart, rendNodeTriangleEnd
+   * <li> SVG (or VML) texts: rendNodeText
+   * <li> Button: rendNodeForm, rendNodeButton, rendNodeTag
+   * <li> Checkbox: rendNodeForm, rendNodeCheckbox, rendNodeLabel, rendNodeTag
+   * <li> Input: rendNodeForm, rendNodeInput, rendNodeLabel, rendNodeTag
+   * </ul>
+   *
+   * Here is are two examples: The first example shows how to access the SVG node,
+   * the second example demonstrates how to change SVG attributes.
+   * @example
+   *     var p1 = board.create('point', [0, 0]);
+   *     console.log(p1.rendNode);
+   *     // returns the full SVG node details of the point p1, something like:
+   *     // &lt;ellipse id='box_jxgBoard1P6' stroke='#ff0000' stroke-opacity='1' stroke-width='2px'
+   *     //   fill='#ff0000' fill-opacity='1' cx='250' cy='250' rx='4' ry='4'
+   *     //   style='position: absolute;'&gt;
+   *     // &lt;/ellipse&gt;
+   *
+   * @example
+   *     var s = board.create('segment', [p1, p2], {strokeWidth: 60});
+   *     s.rendNode.setAttribute('stroke-linecap', 'round');
+   *
+   * @type Object
+   */
+  this.rendNode = null;
+
+  /**
+   * The string used with {@link JXG.Board#create}
+   * @type String
+   */
+  this.elType = "";
+
+  /**
+   * The element is saved with an explicit entry in the file (<tt>true</tt>) or implicitly
+   * via a composition.
+   * @type Boolean
+   * @default true
+   */
+  this.dump = true;
+
+  /**
+   * Subs contains the subelements, created during the create method.
+   * @type Object
+   */
+  this.subs = {};
+
+  /**
+   * Inherits contains the subelements, which may have an attribute
+   * (in particular the attribute "visible") having value 'inherit'.
+   * @type Object
+   */
+  this.inherits = [];
+
+  /**
+   * The position of this element inside the {@link JXG.Board#objectsList}.
+   * @type Number
+   * @default -1
+   * @private
+   */
+  this._pos = -1;
+
+  /**
+   * [c, b0, b1, a, k, r, q0, q1]
+   *
+   * See
+   * A.E. Middleditch, T.W. Stacey, and S.B. Tor:
+   * "Intersection Algorithms for Lines and Circles",
+   * ACM Transactions on Graphics, Vol. 8, 1, 1989, pp 25-40.
+   *
+   * The meaning of the parameters is:
+   * Circle: points p=[p0, p1] on the circle fulfill
+   *  a&lt;p, p&gt; + &lt;b, p&gt; + c = 0
+   * For convenience we also store
+   *  r: radius
+   *  k: discriminant = sqrt(&lt;b,b&gt;-4ac)
+   *  q=[q0, q1] center
+   *
+   * Points have radius = 0.
+   * Lines have radius = infinity.
+   * b: normalized vector, representing the direction of the line.
+   *
+   * Should be put into Coords, when all elements possess Coords.
+   * @type Array
+   * @default [1, 0, 0, 0, 1, 1, 0, 0]
+   */
+  this.stdform = [1, 0, 0, 0, 1, 1, 0, 0];
+
+  /**
+   * The methodMap determines which methods can be called from within JessieCode and under which name it
+   * can be used. The map is saved in an object, the name of a property is the name of the method used in JessieCode,
+   * the value of a property is the name of the method in JavaScript.
+   * @type Object
+   */
+  this.methodMap = {
+    setLabel: "setLabel",
+    label: "label",
+    setName: "setName",
+    getName: "getName",
+    addTransform: "addTransform",
+    setProperty: "setAttribute",
+    setAttribute: "setAttribute",
+    addChild: "addChild",
+    animate: "animate",
+    on: "on",
+    off: "off",
+    trigger: "trigger",
+    addTicks: "addTicks",
+    removeTicks: "removeTicks",
+    removeAllTicks: "removeAllTicks",
+  };
+
+  /**
+   * Quadratic form representation of circles (and conics)
+   * @type Array
+   * @default [[1,0,0],[0,1,0],[0,0,1]]
+   */
+  this.quadraticform = [
+    [1, 0, 0],
+    [0, 1, 0],
+    [0, 0, 1],
+  ];
+
+  /**
+   * An associative array containing all visual properties.
+   * @type Object
+   * @default empty object
+   */
+  this.visProp = {};
+
+  /**
+   * An associative array containing visual properties which are calculated from
+   * the attribute values (i.e. visProp) and from other constraints.
+   * An example: if an intersection point does not have real coordinates,
+   * visPropCalc.visible is set to false.
+   * Additionally, the user can control visibility with the attribute "visible",
+   * even by supplying a functions as value.
+   *
+   * @type Object
+   * @default empty object
+   */
+  this.visPropCalc = {
+    visible: false,
+  };
+
+  utils_event__WEBPACK_IMPORTED_MODULE_6__/* ["default"].eventify */ .Z.eventify(this);
+
+  /**
+   * Is the mouse over this element?
+   * @type Boolean
+   * @default false
+   */
+  this.mouseover = false;
+
+  /**
+   * Time stamp containing the last time this element has been dragged.
+   * @type Date
+   * @default creation time
+   */
+  this.lastDragTime = new Date();
+
+  if (arguments.length > 0) {
+    /**
+     * Reference to the board associated with the element.
+     * @type JXG.Board
+     */
+    this.board = board;
+
+    /**
+     * Type of the element.
+     * @constant
+     * @type Number
+     */
+    this.type = type;
+
+    /**
+     * Original type of the element at construction time. Used for removing glider property.
+     * @constant
+     * @type Number
+     */
+    this._org_type = type;
+
+    /**
+     * The element's class.
+     * @constant
+     * @type Number
+     */
+    this.elementClass = oclass || base_constants__WEBPACK_IMPORTED_MODULE_1__/* ["default"].OBJECT_CLASS_OTHER */ .Z.OBJECT_CLASS_OTHER;
+
+    /**
+     * Unique identifier for the element. Equivalent to id-attribute of renderer element.
+     * @type String
+     */
+    this.id = attributes.id;
+
+    name = attributes.name;
+    /* If name is not set or null or even undefined, generate an unique name for this object */
+    if (!utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].exists */ .Z.exists(name)) {
+      name = this.board.generateName(this);
+    }
+
+    if (name !== "") {
+      this.board.elementsByName[name] = this;
+    }
+
+    /**
+     * Not necessarily unique name for the element.
+     * @type String
+     * @default Name generated by {@link JXG.Board#generateName}.
+     * @see JXG.Board#generateName
+     */
+    this.name = name;
+
+    this.needsRegularUpdate = attributes.needsregularupdate;
+
+    // create this.visPropOld and set default values
+    utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].clearVisPropOld */ .Z.clearVisPropOld(this);
+
+    attr = this.resolveShortcuts(attributes);
+    for (key in attr) {
+      if (attr.hasOwnProperty(key)) {
+        this._set(key, attr[key]);
+      }
+    }
+
+    this.visProp.draft = attr.draft && attr.draft.draft;
+    //this.visProp.gradientangle = '270';
+    // this.visProp.gradientsecondopacity = Type.evaluate(this.visProp.fillopacity);
+    //this.visProp.gradientpositionx = 0.5;
+    //this.visProp.gradientpositiony = 0.5;
+  }
+};
+
+jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].extend */ .Z.extend(
+  jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].GeometryElement.prototype */ .Z.GeometryElement.prototype,
+  /** @lends JXG.GeometryElement.prototype */ {
+    /**
+     * Add an element as a child to the current element. Can be used to model dependencies between geometry elements.
+     * @param {JXG.GeometryElement} obj The dependent object.
+     */
+    addChild: function (obj) {
+      var el, el2;
+
+      this.childElements[obj.id] = obj;
+      this.addDescendants(obj);
+      obj.ancestors[this.id] = this;
+
+      for (el in this.descendants) {
+        if (this.descendants.hasOwnProperty(el)) {
+          this.descendants[el].ancestors[this.id] = this;
+
+          for (el2 in this.ancestors) {
+            if (this.ancestors.hasOwnProperty(el2)) {
+              this.descendants[el].ancestors[this.ancestors[el2].id] =
+                this.ancestors[el2];
+            }
+          }
+        }
+      }
+
+      for (el in this.ancestors) {
+        if (this.ancestors.hasOwnProperty(el)) {
+          for (el2 in this.descendants) {
+            if (this.descendants.hasOwnProperty(el2)) {
+              this.ancestors[el].descendants[this.descendants[el2].id] =
+                this.descendants[el2];
+            }
+          }
+        }
+      }
+      return this;
+    },
+
+    /**
+     * Adds the given object to the descendants list of this object and all its child objects.
+     * @param {JXG.GeometryElement} obj The element that is to be added to the descendants list.
+     * @private
+     * @return
+     */
+    addDescendants: function (obj) {
+      var el;
+
+      this.descendants[obj.id] = obj;
+      for (el in obj.childElements) {
+        if (obj.childElements.hasOwnProperty(el)) {
+          this.addDescendants(obj.childElements[el]);
+        }
+      }
+      return this;
+    },
+
+    /**
+     * Adds ids of elements to the array this.parents. This method needs to be called if some dependencies
+     * can not be detected automatically by JSXGraph. For example if a function graph is given by a function
+     * which referes to coordinates of a point, calling addParents() is necessary.
+     *
+     * @param {Array} parents Array of elements or ids of elements.
+     * Alternatively, one can give a list of objects as parameters.
+     * @returns {JXG.Object} reference to the object itself.
+     *
+     * @example
+     * // Movable function graph
+     * var A = board.create('point', [1, 0], {name:'A'}),
+     *     B = board.create('point', [3, 1], {name:'B'}),
+     *     f = board.create('functiongraph', function(x) {
+     *          var ax = A.X(),
+     *              ay = A.Y(),
+     *              bx = B.X(),
+     *              by = B.Y(),
+     *              a = (by - ay) / ( (bx - ax) * (bx - ax) );
+     *           return a * (x - ax) * (x - ax) + ay;
+     *      }, {fixed: false});
+     * f.addParents([A, B]);
+     * </pre><div class="jxgbox" id="JXG7c91d4d2-986c-4378-8135-24505027f251" style="width: 400px; height: 400px;"></div>
+     * <script type="text/javascript">
+     * (function() {
+     *   var board = JXG.JSXGraph.initBoard('JXG7c91d4d2-986c-4378-8135-24505027f251', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
+     *   var A = board.create('point', [1, 0], {name:'A'}),
+     *       B = board.create('point', [3, 1], {name:'B'}),
+     *       f = board.create('functiongraph', function(x) {
+     *            var ax = A.X(),
+     *                ay = A.Y(),
+     *                bx = B.X(),
+     *                by = B.Y(),
+     *                a = (by - ay) / ( (bx - ax) * (bx - ax) );
+     *             return a * (x - ax) * (x - ax) + ay;
+     *        }, {fixed: false});
+     *   f.addParents([A, B]);
+     * })();
+     * </script><pre>
+     *
+     **/
+    addParents: function (parents) {
+      var i, len, par;
+
+      if (utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].isArray */ .Z.isArray(parents)) {
+        par = parents;
+      } else {
+        par = arguments;
+      }
+
+      len = par.length;
+      for (i = 0; i < len; ++i) {
+        if (!utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].exists */ .Z.exists(par[i])) {
+          continue;
+        }
+        if (utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].isId */ .Z.isId(this.board, par[i])) {
+          this.parents.push(par[i]);
+        } else if (utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].exists */ .Z.exists(par[i].id)) {
+          this.parents.push(par[i].id);
+        }
+      }
+      this.parents = utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].uniqueArray */ .Z.uniqueArray(this.parents);
+    },
+
+    /**
+     * Sets ids of elements to the array this.parents.
+     * First, this.parents is cleared. See {@link JXG.GeometryElement#addParents}.
+     * @param {Array} parents Array of elements or ids of elements.
+     * Alternatively, one can give a list of objects as parameters.
+     * @returns {JXG.Object} reference to the object itself.
+     **/
+    setParents: function (parents) {
+      this.parents = [];
+      this.addParents(parents);
+    },
+
+    /**
+     * Remove an element as a child from the current element.
+     * @param {JXG.GeometryElement} obj The dependent object.
+     */
+    removeChild: function (obj) {
+      //var el, el2;
+
+      delete this.childElements[obj.id];
+      this.removeDescendants(obj);
+      delete obj.ancestors[this.id];
+
+      /*
+             // I do not know if these addDescendants stuff has to be adapted to removeChild. A.W.
+            for (el in this.descendants) {
+                if (this.descendants.hasOwnProperty(el)) {
+                    delete this.descendants[el].ancestors[this.id];
+
+                    for (el2 in this.ancestors) {
+                        if (this.ancestors.hasOwnProperty(el2)) {
+                            this.descendants[el].ancestors[this.ancestors[el2].id] = this.ancestors[el2];
+                        }
+                    }
+                }
+            }
+
+            for (el in this.ancestors) {
+                if (this.ancestors.hasOwnProperty(el)) {
+                    for (el2 in this.descendants) {
+                        if (this.descendants.hasOwnProperty(el2)) {
+                            this.ancestors[el].descendants[this.descendants[el2].id] = this.descendants[el2];
+                        }
+                    }
+                }
+            }
+            */
+      return this;
+    },
+
+    /**
+     * Removes the given object from the descendants list of this object and all its child objects.
+     * @param {JXG.GeometryElement} obj The element that is to be removed from the descendants list.
+     * @private
+     * @return
+     */
+    removeDescendants: function (obj) {
+      var el;
+
+      delete this.descendants[obj.id];
+      for (el in obj.childElements) {
+        if (obj.childElements.hasOwnProperty(el)) {
+          this.removeDescendants(obj.childElements[el]);
+        }
+      }
+      return this;
+    },
+
+    /**
+     * Counts the direct children of an object without counting labels.
+     * @private
+     * @returns {number} Number of children
+     */
+    countChildren: function () {
+      var prop,
+        d,
+        s = 0;
+
+      d = this.childElements;
+      for (prop in d) {
+        if (d.hasOwnProperty(prop) && prop.indexOf("Label") < 0) {
+          s++;
+        }
+      }
+      return s;
+    },
+
+    /**
+     * Returns the elements name. Used in JessieCode.
+     * @returns {String}
+     */
+    getName: function () {
+      return this.name;
+    },
+
+    /**
+     * Add transformations to this element.
+     * @param {JXG.Transformation|Array} transform Either one {@link JXG.Transformation}
+     * or an array of {@link JXG.Transformation}s.
+     * @returns {JXG.GeometryElement} Reference to the element.
+     */
+    addTransform: function (transform) {
+      return this;
+    },
+
+    /**
+     * Decides whether an element can be dragged. This is used in
+     * {@link JXG.GeometryElement#setPositionDirectly} methods
+     * where all parent elements are checked if they may be dragged, too.
+     * @private
+     * @returns {boolean}
+     */
+    draggable: function () {
+      return (
+        this.isDraggable &&
+        !utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].evaluate */ .Z.evaluate(this.visProp.fixed) &&
+        /*!this.visProp.frozen &&*/ this.type !== base_constants__WEBPACK_IMPORTED_MODULE_1__/* ["default"].OBJECT_TYPE_GLIDER */ .Z.OBJECT_TYPE_GLIDER
+      );
+    },
+
+    /**
+     * Translates the object by <tt>(x, y)</tt>. In case the element is defined by points, the defining points are
+     * translated, e.g. a circle constructed by a center point and a point on the circle line.
+     * @param {Number} method The type of coordinates used here.
+     * Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
+     * @param {Array} coords array of translation vector.
+     * @returns {JXG.GeometryElement} Reference to the element object.
+     */
+    setPosition: function (method, coords) {
+      var parents = [],
+        el,
+        i,
+        len,
+        t;
+
+      if (!utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].exists */ .Z.exists(this.parents)) {
+        return this;
+      }
+
+      len = this.parents.length;
+      for (i = 0; i < len; ++i) {
+        el = this.board.select(this.parents[i]);
+        if (utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].isPoint */ .Z.isPoint(el)) {
+          if (!el.draggable()) {
+            return this;
+          }
+          parents.push(el);
+        }
+      }
+
+      if (coords.length === 3) {
+        coords = coords.slice(1);
+      }
+
+      t = this.board.create("transform", coords, { type: "translate" });
+
+      // We distinguish two cases:
+      // 1) elements which depend on free elements, i.e. arcs and sectors
+      // 2) other elements
+      //
+      // In the first case we simply transform the parents elements
+      // In the second case we add a transform to the element.
+      //
+      len = parents.length;
+      if (len > 0) {
+        t.applyOnce(parents);
+      } else {
+        if (
+          this.transformations.length > 0 &&
+          this.transformations[this.transformations.length - 1].isNumericMatrix
+        ) {
+          this.transformations[this.transformations.length - 1].melt(t);
+        } else {
+          this.addTransform(t);
+        }
+      }
+
+      /*
+       * If - against the default configuration - defining gliders are marked as
+       * draggable, then their position has to be updated now.
+       */
+      for (i = 0; i < len; ++i) {
+        if (parents[i].type === base_constants__WEBPACK_IMPORTED_MODULE_1__/* ["default"].OBJECT_TYPE_GLIDER */ .Z.OBJECT_TYPE_GLIDER) {
+          parents[i].updateGlider();
+        }
+      }
+
+      return this;
+    },
+
+    /**
+     * Moves an element by the difference of two coordinates.
+     * @param {Number} method The type of coordinates used here.
+     * Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
+     * @param {Array} coords coordinates in screen/user units
+     * @param {Array} oldcoords previous coordinates in screen/user units
+     * @returns {JXG.GeometryElement} this element
+     */
+    setPositionDirectly: function (method, coords, oldcoords) {
+      var c = new base_coords__WEBPACK_IMPORTED_MODULE_2__/* ["default"] */ .Z(method, coords, this.board, false),
+        oldc = new base_coords__WEBPACK_IMPORTED_MODULE_2__/* ["default"] */ .Z(method, oldcoords, this.board, false),
+        dc = math_statistics__WEBPACK_IMPORTED_MODULE_4__/* ["default"].subtract */ .Z.subtract(c.usrCoords, oldc.usrCoords);
+
+      this.setPosition(base_constants__WEBPACK_IMPORTED_MODULE_1__/* ["default"].COORDS_BY_USER */ .Z.COORDS_BY_USER, dc);
+
+      return this;
+    },
+
+    /**
+     * Array of strings containing the polynomials defining the element.
+     * Used for determining geometric loci the groebner way.
+     * @returns {Array} An array containing polynomials describing the locus of the current object.
+     * @public
+     */
+    generatePolynomial: function () {
+      return [];
+    },
+
+    /**
+     * Animates properties for that object like stroke or fill color, opacity and maybe
+     * even more later.
+     * @param {Object} hash Object containing properties with target values for the animation.
+     * @param {number} time Number of milliseconds to complete the animation.
+     * @param {Object} [options] Optional settings for the animation:<ul><li>callback: A function that is called as soon as the animation is finished.</li></ul>
+     * @returns {JXG.GeometryElement} A reference to the object
+     */
+    animate: function (hash, time, options) {
+      options = options || {};
+      var r,
+        p,
+        i,
+        delay = this.board.attr.animationdelay,
+        steps = Math.ceil(time / delay),
+        self = this,
+        animateColor = function (startRGB, endRGB, property) {
+          var hsv1, hsv2, sh, ss, sv;
+          hsv1 = utils_color__WEBPACK_IMPORTED_MODULE_7__/* ["default"].rgb2hsv */ .Z.rgb2hsv(startRGB);
+          hsv2 = utils_color__WEBPACK_IMPORTED_MODULE_7__/* ["default"].rgb2hsv */ .Z.rgb2hsv(endRGB);
+
+          sh = (hsv2[0] - hsv1[0]) / steps;
+          ss = (hsv2[1] - hsv1[1]) / steps;
+          sv = (hsv2[2] - hsv1[2]) / steps;
+          self.animationData[property] = [];
+
+          for (i = 0; i < steps; i++) {
+            self.animationData[property][steps - i - 1] = utils_color__WEBPACK_IMPORTED_MODULE_7__/* ["default"].hsv2rgb */ .Z.hsv2rgb(
+              hsv1[0] + (i + 1) * sh,
+              hsv1[1] + (i + 1) * ss,
+              hsv1[2] + (i + 1) * sv
+            );
+          }
+        },
+        animateFloat = function (start, end, property, round) {
+          var tmp, s;
+
+          start = parseFloat(start);
+          end = parseFloat(end);
+
+          // we can't animate without having valid numbers.
+          // And parseFloat returns NaN if the given string doesn't contain
+          // a valid float number.
+          if (isNaN(start) || isNaN(end)) {
+            return;
+          }
+
+          s = (end - start) / steps;
+          self.animationData[property] = [];
+
+          for (i = 0; i < steps; i++) {
+            tmp = start + (i + 1) * s;
+            self.animationData[property][steps - i - 1] = round
+              ? Math.floor(tmp)
+              : tmp;
+          }
+        };
+
+      this.animationData = {};
+
+      for (r in hash) {
+        if (hash.hasOwnProperty(r)) {
+          p = r.toLowerCase();
+
+          switch (p) {
+            case "strokecolor":
+            case "fillcolor":
+              animateColor(this.visProp[p], hash[r], p);
+              break;
+            case "size":
+              if (!utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].isPoint */ .Z.isPoint(this)) {
+                break;
+              }
+              animateFloat(this.visProp[p], hash[r], p, true);
+              break;
+            case "strokeopacity":
+            case "strokewidth":
+            case "fillopacity":
+              animateFloat(this.visProp[p], hash[r], p, false);
+              break;
+          }
+        }
+      }
+
+      this.animationCallback = options.callback;
+      this.board.addAnimation(this);
+      return this;
+    },
+
+    /**
+     * General update method. Should be overwritten by the element itself.
+     * Can be used sometimes to commit changes to the object.
+     * @return {JXG.GeometryElement} Reference to the element
+     */
+    update: function () {
+      if (utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].evaluate */ .Z.evaluate(this.visProp.trace)) {
+        this.cloneToBackground();
+      }
+      return this;
+    },
+
+    /**
+     * Provide updateRenderer method.
+     * @return {JXG.GeometryElement} Reference to the element
+     * @private
+     */
+    updateRenderer: function () {
+      return this;
+    },
+
+    /**
+     * Run through the full update chain of an element.
+     * @param  {Boolean} visible Set visibility in case the elements attribute value is 'inherit'. null is allowed.
+     * @return {JXG.GeometryElement} Reference to the element
+     * @private
+     */
+    fullUpdate: function (visible) {
+      return this.prepareUpdate()
+        .update()
+        .updateVisibility(visible)
+        .updateRenderer();
+    },
+
+    /**
+     * Show the element or hide it. If hidden, it will still exist but not be
+     * visible on the board.
+     * @param  {Boolean} val true: show the element, false: hide the element
+     * @return {JXG.GeometryElement} Reference to the element
+     * @private
+     */
+    setDisplayRendNode: function (val) {
+      var i, len, s, len_s, obj;
+
+      if (val === undefined) {
+        val = this.visPropCalc.visible;
+      }
+
+      if (val === this.visPropOld.visible) {
+        return this;
+      }
+
+      // Set display of the element itself
+      this.board.renderer.display(this, val);
+
+      // Set the visibility of elements which inherit the attribute 'visible'
+      len = this.inherits.length;
+      for (s = 0; s < len; s++) {
+        obj = this.inherits[s];
+        if (utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].isArray */ .Z.isArray(obj)) {
+          len_s = obj.length;
+          for (i = 0; i < len_s; i++) {
+            if (
+              utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].exists */ .Z.exists(obj[i]) &&
+              utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].exists */ .Z.exists(obj[i].rendNode) &&
+              utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].evaluate */ .Z.evaluate(obj[i].visProp.visible) === "inherit"
+            ) {
+              obj[i].setDisplayRendNode(val);
+            }
+          }
+        } else {
+          if (
+            utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].exists */ .Z.exists(obj) &&
+            utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].exists */ .Z.exists(obj.rendNode) &&
+            utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].evaluate */ .Z.evaluate(obj.visProp.visible) === "inherit"
+          ) {
+            obj.setDisplayRendNode(val);
+          }
+        }
+      }
+
+      // Set the visibility of the label if it inherits the attribute 'visible'
+      if (
+        this.hasLabel &&
+        utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].exists */ .Z.exists(this.label) &&
+        utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].exists */ .Z.exists(this.label.rendNode)
+      ) {
+        if (utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].evaluate */ .Z.evaluate(this.label.visProp.visible) === "inherit") {
+          this.label.setDisplayRendNode(val);
+        }
+      }
+
+      return this;
+    },
+
+    /**
+     * Hide the element. It will still exist but not be visible on the board.
+     * Alias for "element.setAttribute({visible: false});"
+     * @return {JXG.GeometryElement} Reference to the element
+     */
+    hide: function () {
+      this.setAttribute({ visible: false });
+      return this;
+    },
+
+    /**
+     * Hide the element. It will still exist but not be visible on the board.
+     * Alias for {@link JXG.GeometryElement#hide}
+     * @returns {JXG.GeometryElement} Reference to the element
+     */
+    hideElement: function () {
+      this.hide();
+      return this;
+    },
+
+    /**
+     * Make the element visible.
+     * Alias for "element.setAttribute({visible: true});"
+     * @return {JXG.GeometryElement} Reference to the element
+     */
+    show: function () {
+      this.setAttribute({ visible: true });
+      return this;
+    },
+
+    /**
+     * Make the element visible.
+     * Alias for {@link JXG.GeometryElement#show}
+     * @returns {JXG.GeometryElement} Reference to the element
+     */
+    showElement: function () {
+      this.show();
+      return this;
+    },
+
+    /**
+     * Set the visibility of an element. The visibility is influenced by
+     * (listed in ascending priority):
+     * <ol>
+     * <li> The value of the element's attribute 'visible'
+     * <li> The visibility of a parent element. (Example: label)
+     * This overrules the value of the element's attribute value only if
+     * this attribute value of the element is 'inherit'.
+     * <li> being inside of the canvas
+     * </ol>
+     * <p>
+     * This method is called three times for most elements:
+     * <ol>
+     * <li> between {@link JXG.GeometryElement#update}
+     * and {@link JXG.GeometryElement#updateRenderer}. In case the value is 'inherit', nothing is done.
+     * <li> Recursively, called by itself for child elements. Here, 'inherit' is overruled by the parent's value.
+     * <li> In {@link JXG.GeometryElement#updateRenderer}, if the element is outside of the canvas.
+     * </ol>
+     *
+     * @param  {Boolean} parent_val Visibility of the parent element.
+     * @return {JXG.GeometryElement} Reference to the element.
+     * @private
+     */
+    updateVisibility: function (parent_val) {
+      var i, len, s, len_s, obj, val;
+
+      if (this.needsUpdate) {
+        // Handle the element
+        if (parent_val !== undefined) {
+          this.visPropCalc.visible = parent_val;
+        } else {
+          val = utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].evaluate */ .Z.evaluate(this.visProp.visible);
+
+          // infobox uses hiddenByParent
+          if (utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].exists */ .Z.exists(this.hiddenByParent) && this.hiddenByParent) {
+            val = false;
+          }
+          if (val !== "inherit") {
+            this.visPropCalc.visible = val;
+          }
+        }
+
+        // Handle elements which inherit the visibility
+        len = this.inherits.length;
+        for (s = 0; s < len; s++) {
+          obj = this.inherits[s];
+          if (utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].isArray */ .Z.isArray(obj)) {
+            len_s = obj.length;
+            for (i = 0; i < len_s; i++) {
+              if (
+                utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].exists */ .Z.exists(obj[i]) /*&& Type.exists(obj[i].rendNode)*/ &&
+                utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].evaluate */ .Z.evaluate(obj[i].visProp.visible) === "inherit"
+              ) {
+                obj[i]
+                  .prepareUpdate()
+                  .updateVisibility(this.visPropCalc.visible);
+              }
+            }
+          } else {
+            if (
+              utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].exists */ .Z.exists(obj) /*&& Type.exists(obj.rendNode)*/ &&
+              utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].evaluate */ .Z.evaluate(obj.visProp.visible) === "inherit"
+            ) {
+              obj.prepareUpdate().updateVisibility(this.visPropCalc.visible);
+            }
+          }
+        }
+
+        // Handle the label if it inherits the visibility
+        if (
+          utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].exists */ .Z.exists(this.label) &&
+          utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].exists */ .Z.exists(this.label.visProp) &&
+          utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].evaluate */ .Z.evaluate(this.label.visProp.visible)
+        ) {
+          this.label.prepareUpdate().updateVisibility(this.visPropCalc.visible);
+        }
+      }
+      return this;
+    },
+
+    /**
+     * Sets the value of property <tt>property</tt> to <tt>value</tt>.
+     * @param {String} property The property's name.
+     * @param value The new value
+     * @private
+     */
+    _set: function (property, value) {
+      var el;
+
+      property = property.toLocaleLowerCase();
+
+      // Search for entries in visProp with "color" as part of the property name
+      // and containing a RGBA string
+      if (
+        this.visProp.hasOwnProperty(property) &&
+        property.indexOf("color") >= 0 &&
+        utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].isString */ .Z.isString(value) &&
+        value.length === 9 &&
+        value.charAt(0) === "#"
+      ) {
+        value = utils_color__WEBPACK_IMPORTED_MODULE_7__/* ["default"].rgba2rgbo */ .Z.rgba2rgbo(value);
+        this.visProp[property] = value[0];
+        // Previously: *=. But then, we can only decrease opacity.
+        this.visProp[property.replace("color", "opacity")] = value[1];
+      } else {
+        if (
+          value !== null &&
+          utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].isObject */ .Z.isObject(value) &&
+          !utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].exists */ .Z.exists(value.id) &&
+          !utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].exists */ .Z.exists(value.name)
+        ) {
+          // value is of type {prop: val, prop: val,...}
+          // Convert these attributes to lowercase, too
+          this.visProp[property] = {};
+          for (el in value) {
+            if (value.hasOwnProperty(el)) {
+              this.visProp[property][el.toLocaleLowerCase()] = value[el];
+            }
+          }
+        } else {
+          this.visProp[property] = value;
+        }
+      }
+    },
+
+    /**
+     * Resolves attribute shortcuts like <tt>color</tt> and expands them, e.g. <tt>strokeColor</tt> and <tt>fillColor</tt>.
+     * Writes the expanded attributes back to the given <tt>attributes</tt>.
+     * @param {Object} attributes object
+     * @returns {Object} The given attributes object with shortcuts expanded.
+     * @private
+     */
+    resolveShortcuts: function (attributes) {
+      var key,
+        i,
+        j,
+        subattr = ["traceattributes", "traceAttributes"];
+
+      for (key in options__WEBPACK_IMPORTED_MODULE_5__/* ["default"].shortcuts */ .Z.shortcuts) {
+        if (options__WEBPACK_IMPORTED_MODULE_5__/* ["default"].shortcuts.hasOwnProperty */ .Z.shortcuts.hasOwnProperty(key)) {
+          if (utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].exists */ .Z.exists(attributes[key])) {
+            for (i = 0; i < options__WEBPACK_IMPORTED_MODULE_5__/* ["default"].shortcuts */ .Z.shortcuts[key].length; i++) {
+              if (!utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].exists */ .Z.exists(attributes[options__WEBPACK_IMPORTED_MODULE_5__/* ["default"].shortcuts */ .Z.shortcuts[key][i]])) {
+                attributes[options__WEBPACK_IMPORTED_MODULE_5__/* ["default"].shortcuts */ .Z.shortcuts[key][i]] = attributes[key];
+              }
+            }
+          }
+          for (j = 0; j < subattr.length; j++) {
+            if (utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].isObject */ .Z.isObject(attributes[subattr[j]])) {
+              attributes[subattr[j]] = this.resolveShortcuts(
+                attributes[subattr[j]]
+              );
+            }
+          }
+        }
+      }
+      return attributes;
+    },
+
+    /**
+     * Sets a label and its text
+     * If label doesn't exist, it creates one
+     * @param {String} str
+     */
+    setLabel: function (str) {
+      if (!this.hasLabel) {
+        this.setAttribute({ withlabel: true });
+      }
+      this.setLabelText(str);
+    },
+
+    /**
+     * Updates the element's label text, strips all html.
+     * @param {String} str
+     */
+    setLabelText: function (str) {
+      if (utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].exists */ .Z.exists(this.label)) {
+        str = str.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        this.label.setText(str);
+      }
+
+      return this;
+    },
+
+    /**
+     * Updates the element's label text and the element's attribute "name", strips all html.
+     * @param {String} str
+     */
+    setName: function (str) {
+      str = str.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+      if (this.elType !== "slider") {
+        this.setLabelText(str);
+      }
+      this.setAttribute({ name: str });
+    },
+
+    /**
+     * Deprecated alias for {@link JXG.GeometryElement#setAttribute}.
+     * @deprecated Use {@link JXG.GeometryElement#setAttribute}.
+     */
+    setProperty: function () {
+      jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].deprecated */ .Z.deprecated("setProperty()", "setAttribute()");
+      this.setAttribute.apply(this, arguments);
+    },
+
+    /**
+     * Sets an arbitrary number of attributes. This method has one or more
+     * parameters of the following types:
+     * <ul>
+     * <li> object: {key1:value1,key2:value2,...}
+     * <li> string: "key1:value"
+     * <li> array: [key, value]
+     * </ul>
+     * @param {Object} attributes An object with attributes.
+     * @returns {JXG.GeometryElement} A reference to the element.
+     *
+     * @function
+     * @example
+     * // Set property directly on creation of an element using the attributes object parameter
+     * var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-1, 5, 5, 1]};
+     * var p = board.create('point', [2, 2], {visible: false});
+     *
+     * // Now make this point visible and fixed:
+     * p.setAttribute({
+     *     fixed: true,
+     *     visible: true
+     * });
+     */
+    setAttribute: function (attributes) {
+      var i,
+        j,
+        le,
+        key,
+        value,
+        arg,
+        opacity,
+        pair,
+        oldvalue,
+        properties = {};
+
+      // Normalize the user input
+      for (i = 0; i < arguments.length; i++) {
+        arg = arguments[i];
+        if (utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].isString */ .Z.isString(arg)) {
+          // pairRaw is string of the form 'key:value'
+          pair = arg.split(":");
+          properties[utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].trim */ .Z.trim(pair[0])] = utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].trim */ .Z.trim(pair[1]);
+        } else if (!utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].isArray */ .Z.isArray(arg)) {
+          // pairRaw consists of objects of the form {key1:value1,key2:value2,...}
+          jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].extend */ .Z.extend(properties, arg);
+        } else {
+          // pairRaw consists of array [key,value]
+          properties[arg[0]] = arg[1];
+        }
+      }
+
+      // Handle shortcuts
+      properties = this.resolveShortcuts(properties);
+
+      for (i in properties) {
+        if (properties.hasOwnProperty(i)) {
+          key = i.replace(/\s+/g, "").toLowerCase();
+          value = properties[i];
+
+          // This handles the subobjects, if the key:value pairs are contained in an object.
+          // Example:
+          // ticks.setAttribute({
+          //      strokeColor: 'blue',
+          //      label: {
+          //          visible: false
+          //      }
+          // })
+          // Now, only the supplied label attributes are overwritten.
+          // Otherwise, the value of label would be {visible:false} only.
+          if (utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].isObject */ .Z.isObject(value) && utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].exists */ .Z.exists(this.visProp[key])) {
+            this.visProp[key] = utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].merge */ .Z.merge(this.visProp[key], value);
+
+            // First, handle the special case
+            // ticks.setAttribute({label: {anchorX: "right", ..., visible: true});
+            if (
+              this.type === base_constants__WEBPACK_IMPORTED_MODULE_1__/* ["default"].OBJECT_TYPE_TICKS */ .Z.OBJECT_TYPE_TICKS &&
+              utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].exists */ .Z.exists(this.labels)
+            ) {
+              le = this.labels.length;
+              for (j = 0; j < le; j++) {
+                this.labels[j].setAttribute(value);
+              }
+            } else if (utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].exists */ .Z.exists(this[key])) {
+              if (utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].isArray */ .Z.isArray(this[key])) {
+                for (j = 0; j < this[key].length; j++) {
+                  this[key][j].setAttribute(value);
+                }
+              } else {
+                this[key].setAttribute(value);
+              }
+            }
+            continue;
+          }
+
+          oldvalue = this.visProp[key];
+          switch (key) {
+            case "name":
+              oldvalue = this.name;
+              delete this.board.elementsByName[this.name];
+              this.name = value;
+              this.board.elementsByName[this.name] = this;
+              break;
+            case "needsregularupdate":
+              this.needsRegularUpdate = !(value === "false" || value === false);
+              this.board.renderer.setBuffering(
+                this,
+                this.needsRegularUpdate ? "auto" : "static"
+              );
+              break;
+            case "labelcolor":
+              value = utils_color__WEBPACK_IMPORTED_MODULE_7__/* ["default"].rgba2rgbo */ .Z.rgba2rgbo(value);
+              opacity = value[1];
+              value = value[0];
+              if (opacity === 0) {
+                if (utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].exists */ .Z.exists(this.label) && this.hasLabel) {
+                  this.label.hideElement();
+                }
+              }
+              if (utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].exists */ .Z.exists(this.label) && this.hasLabel) {
+                this.label.visProp.strokecolor = value;
+                this.board.renderer.setObjectStrokeColor(
+                  this.label,
+                  value,
+                  opacity
+                );
+              }
+              if (this.elementClass === base_constants__WEBPACK_IMPORTED_MODULE_1__/* ["default"].OBJECT_CLASS_TEXT */ .Z.OBJECT_CLASS_TEXT) {
+                this.visProp.strokecolor = value;
+                this.visProp.strokeopacity = opacity;
+                this.board.renderer.setObjectStrokeColor(this, value, opacity);
+              }
+              break;
+            case "infoboxtext":
+              if (utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].isString */ .Z.isString(value)) {
+                this.infoboxText = value;
+              } else {
+                this.infoboxText = false;
+              }
+              break;
+            case "visible":
+              if (value === "false") {
+                this.visProp.visible = false;
+              } else if (value === "true") {
+                this.visProp.visible = true;
+              } else {
+                this.visProp.visible = value;
+              }
+
+              this.setDisplayRendNode(utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].evaluate */ .Z.evaluate(this.visProp.visible));
+              if (
+                utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].evaluate */ .Z.evaluate(this.visProp.visible) &&
+                utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].exists */ .Z.exists(this.updateSize)
+              ) {
+                this.updateSize();
+              }
+
+              break;
+            case "face":
+              if (utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].isPoint */ .Z.isPoint(this)) {
+                this.visProp.face = value;
+                this.board.renderer.changePointStyle(this);
+              }
+              break;
+            case "trace":
+              if (value === "false" || value === false) {
+                this.clearTrace();
+                this.visProp.trace = false;
+              } else if (value === "pause") {
+                this.visProp.trace = false;
+              } else {
+                this.visProp.trace = true;
+              }
+              break;
+            case "gradient":
+              this.visProp.gradient = value;
+              this.board.renderer.setGradient(this);
+              break;
+            case "gradientsecondcolor":
+              value = utils_color__WEBPACK_IMPORTED_MODULE_7__/* ["default"].rgba2rgbo */ .Z.rgba2rgbo(value);
+              this.visProp.gradientsecondcolor = value[0];
+              this.visProp.gradientsecondopacity = value[1];
+              this.board.renderer.updateGradient(this);
+              break;
+            case "gradientsecondopacity":
+              this.visProp.gradientsecondopacity = value;
+              this.board.renderer.updateGradient(this);
+              break;
+            case "withlabel":
+              this.visProp.withlabel = value;
+              if (!utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].evaluate */ .Z.evaluate(value)) {
+                if (this.label && this.hasLabel) {
+                  //this.label.hideElement();
+                  this.label.setAttribute({ visible: false });
+                }
+              } else {
+                if (!this.label) {
+                  this.createLabel();
+                }
+                //this.label.showElement();
+                this.label.setAttribute({ visible: "inherit" });
+                //this.label.setDisplayRendNode(Type.evaluate(this.visProp.visible));
+              }
+              this.hasLabel = value;
+              break;
+            case "radius":
+              if (
+                this.type === base_constants__WEBPACK_IMPORTED_MODULE_1__/* ["default"].OBJECT_TYPE_ANGLE */ .Z.OBJECT_TYPE_ANGLE ||
+                this.type === base_constants__WEBPACK_IMPORTED_MODULE_1__/* ["default"].OBJECT_TYPE_SECTOR */ .Z.OBJECT_TYPE_SECTOR
+              ) {
+                this.setRadius(value);
+              }
+              break;
+            case "rotate":
+              if (
+                (this.elementClass === base_constants__WEBPACK_IMPORTED_MODULE_1__/* ["default"].OBJECT_CLASS_TEXT */ .Z.OBJECT_CLASS_TEXT &&
+                  utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].evaluate */ .Z.evaluate(this.visProp.display) === "internal") ||
+                this.type === base_constants__WEBPACK_IMPORTED_MODULE_1__/* ["default"].OBJECT_TYPE_IMAGE */ .Z.OBJECT_TYPE_IMAGE
+              ) {
+                this.addRotation(value);
+              }
+              break;
+            case "ticksdistance":
+              if (
+                this.type === base_constants__WEBPACK_IMPORTED_MODULE_1__/* ["default"].OBJECT_TYPE_TICKS */ .Z.OBJECT_TYPE_TICKS &&
+                utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].isNumber */ .Z.isNumber(value)
+              ) {
+                this.ticksFunction = this.makeTicksFunction(value);
+              }
+              break;
+            case "generatelabelvalue":
+              if (
+                this.type === base_constants__WEBPACK_IMPORTED_MODULE_1__/* ["default"].OBJECT_TYPE_TICKS */ .Z.OBJECT_TYPE_TICKS &&
+                utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].isFunction */ .Z.isFunction(value)
+              ) {
+                this.generateLabelValue = value;
+              }
+              break;
+            case "onpolygon":
+              if (this.type === base_constants__WEBPACK_IMPORTED_MODULE_1__/* ["default"].OBJECT_TYPE_GLIDER */ .Z.OBJECT_TYPE_GLIDER) {
+                this.onPolygon = !!value;
+              }
+              break;
+            case "disabled":
+              // button, checkbox, input. Is not available on initial call.
+              if (utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].exists */ .Z.exists(this.rendNodeTag)) {
+                this.rendNodeTag.disabled = !!value;
+              }
+              break;
+            case "checked":
+              // checkbox Is not available on initial call.
+              if (utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].exists */ .Z.exists(this.rendNodeTag)) {
+                this.rendNodeCheckbox.checked = !!value;
+              }
+              break;
+            case "maxlength":
+              // input. Is not available on initial call.
+              if (utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].exists */ .Z.exists(this.rendNodeTag)) {
+                this.rendNodeTag.maxlength = !!value;
+              }
+              break;
+            case "layer":
+              this.board.renderer.setLayer(this, utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].evaluate */ .Z.evaluate(value));
+              this._set(key, value);
+              break;
+            case "tabindex":
+              if (utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].exists */ .Z.exists(this.rendNode)) {
+                this.rendNode.setAttribute("tabindex", value);
+                this._set(key, value);
+              }
+              break;
+            default:
+              if (
+                utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].exists */ .Z.exists(this.visProp[key]) &&
+                (!jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].Validator */ .Z.Validator[key] ||
+                  (jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].Validator */ .Z.Validator[key] && jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].Validator */ .Z.Validator[key](value)) ||
+                  (jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].Validator */ .Z.Validator[key] &&
+                    utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].isFunction */ .Z.isFunction(value) &&
+                    jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].Validator */ .Z.Validator[key](value())))
+              ) {
+                value =
+                  value.toLowerCase && value.toLowerCase() === "false"
+                    ? false
+                    : value;
+                this._set(key, value);
+              }
+              break;
+          }
+          this.triggerEventHandlers(
+            ["attribute:" + key],
+            [oldvalue, value, this]
+          );
+        }
+      }
+
+      this.triggerEventHandlers(["attribute"], [properties, this]);
+
+      if (!utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].evaluate */ .Z.evaluate(this.visProp.needsregularupdate)) {
+        this.board.fullUpdate();
+      } else {
+        this.board.update(this);
+      }
+
+      return this;
+    },
+
+    /**
+     * Deprecated alias for {@link JXG.GeometryElement#getAttribute}.
+     * @deprecated Use {@link JXG.GeometryElement#getAttribute}.
+     */
+    getProperty: function () {
+      jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].deprecated */ .Z.deprecated("getProperty()", "getAttribute()");
+      this.getProperty.apply(this, arguments);
+    },
+
+    /**
+     * Get the value of the property <tt>key</tt>.
+     * @param {String} key The name of the property you are looking for
+     * @returns The value of the property
+     */
+    getAttribute: function (key) {
+      var result;
+      key = key.toLowerCase();
+
+      switch (key) {
+        case "needsregularupdate":
+          result = this.needsRegularUpdate;
+          break;
+        case "labelcolor":
+          result = this.label.visProp.strokecolor;
+          break;
+        case "infoboxtext":
+          result = this.infoboxText;
+          break;
+        case "withlabel":
+          result = this.hasLabel;
+          break;
+        default:
+          result = this.visProp[key];
+          break;
+      }
+
+      return result;
+    },
+
+    /**
+     * Set the dash style of an object. See {@link JXG.GeometryElement#dash}
+     * for a list of available dash styles.
+     * You should use {@link JXG.GeometryElement#setAttribute} instead of this method.
+     *
+     * @param {number} dash Indicates the new dash style
+     * @private
+     */
+    setDash: function (dash) {
+      this.setAttribute({ dash: dash });
+      return this;
+    },
+
+    /**
+     * Notify all child elements for updates.
+     * @private
+     */
+    prepareUpdate: function () {
+      this.needsUpdate = true;
+      return this;
+    },
+
+    /**
+     * Removes the element from the construction.  This only removes the SVG or VML node of the element and its label (if available) from
+     * the renderer, to remove the element completely you should use {@link JXG.Board#removeObject}.
+     */
+    remove: function () {
+      this.board.renderer.remove(this.board.renderer.getElementById(this.id));
+
+      if (this.hasLabel) {
+        this.board.renderer.remove(
+          this.board.renderer.getElementById(this.label.id)
+        );
+      }
+      return this;
+    },
+
+    /**
+     * Returns the coords object where a text that is bound to the element shall be drawn.
+     * Differs in some cases from the values that getLabelAnchor returns.
+     * @returns {JXG.Coords} JXG.Coords Place where the text shall be drawn.
+     * @see JXG.GeometryElement#getLabelAnchor
+     */
+    getTextAnchor: function () {
+      return new base_coords__WEBPACK_IMPORTED_MODULE_2__/* ["default"] */ .Z(base_constants__WEBPACK_IMPORTED_MODULE_1__/* ["default"].COORDS_BY_USER */ .Z.COORDS_BY_USER, [0, 0], this.board);
+    },
+
+    /**
+     * Returns the coords object where the label of the element shall be drawn.
+     * Differs in some cases from the values that getTextAnchor returns.
+     * @returns {JXG.Coords} JXG.Coords Place where the text shall be drawn.
+     * @see JXG.GeometryElement#getTextAnchor
+     */
+    getLabelAnchor: function () {
+      return new base_coords__WEBPACK_IMPORTED_MODULE_2__/* ["default"] */ .Z(base_constants__WEBPACK_IMPORTED_MODULE_1__/* ["default"].COORDS_BY_USER */ .Z.COORDS_BY_USER, [0, 0], this.board);
+    },
+
+    /**
+     * Determines whether the element has arrows at start or end of the arc.
+     * If it is set to be a "typical" vector, ie lastArrow == true,
+     * then the element.type is set to VECTOR.
+     * @param {Boolean} firstArrow True if there is an arrow at the start of the arc, false otherwise.
+     * @param {Boolean} lastArrow True if there is an arrow at the end of the arc, false otherwise.
+     */
+    setArrow: function (firstArrow, lastArrow) {
+      this.visProp.firstarrow = firstArrow;
+      this.visProp.lastarrow = lastArrow;
+      if (lastArrow) {
+        this.type = base_constants__WEBPACK_IMPORTED_MODULE_1__/* ["default"].OBJECT_TYPE_VECTOR */ .Z.OBJECT_TYPE_VECTOR;
+        this.elType = "arrow";
+      }
+
+      this.prepareUpdate().update().updateVisibility().updateRenderer();
+      return this;
+    },
+
+    /**
+     * Creates a gradient nodes in the renderer.
+     * @see JXG.SVGRenderer#setGradient
+     * @private
+     */
+    createGradient: function () {
+      var ev_g = utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].evaluate */ .Z.evaluate(this.visProp.gradient);
+      if (ev_g === "linear" || ev_g === "radial") {
+        this.board.renderer.setGradient(this);
+      }
+    },
+
+    /**
+     * Creates a label element for this geometry element.
+     * @see #addLabelToElement
+     */
+    createLabel: function () {
+      var attr,
+        that = this;
+
+      // this is a dirty hack to resolve the text-dependency. If there is no text element available,
+      // just don't create a label. This method is usually not called by a user, so we won't throw
+      // an exception here and simply output a warning via JXG.debug.
+      if (jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].elements.text */ .Z.elements.text) {
+        attr = utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].deepCopy */ .Z.deepCopy(this.visProp.label, null);
+        attr.id = this.id + "Label";
+        attr.isLabel = true;
+        attr.anchor = this;
+        attr.priv = this.visProp.priv;
+
+        if (this.visProp.withlabel) {
+          this.label = jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].elements.text */ .Z.elements.text(
+            this.board,
+            [
+              0,
+              0,
+              function () {
+                if (utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].isFunction */ .Z.isFunction(that.name)) {
+                  return that.name();
+                }
+                return that.name;
+              },
+            ],
+            attr
+          );
+          this.label.needsUpdate = true;
+          this.label.dump = false;
+          this.label.fullUpdate();
+
+          this.hasLabel = true;
+        }
+      } else {
+        jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].debug */ .Z.debug(
+          "JSXGraph: Can't create label: text element is not available. Make sure you include base/text"
+        );
+      }
+
+      return this;
+    },
+
+    /**
+     * Highlights the element.
+     * @param {Boolean} [force=false] Force the highlighting
+     * @returns {JXG.Board}
+     */
+    highlight: function (force) {
+      force = utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].def */ .Z.def(force, false);
+      // I know, we have the JXG.Board.highlightedObjects AND JXG.GeometryElement.highlighted and YES we need both.
+      // Board.highlightedObjects is for the internal highlighting and GeometryElement.highlighted is for user highlighting
+      // initiated by the user, e.g. through custom DOM events. We can't just pick one because this would break user
+      // defined highlighting in many ways:
+      //  * if overriding the highlight() methods the user had to handle the highlightedObjects stuff, otherwise he'd break
+      //    everything (e.g. the pie chart example https://jsxgraph.org/wiki/index.php/Pie_chart (not exactly
+      //    user defined but for this type of chart the highlight method was overridden and not adjusted to the changes in here)
+      //    where it just kept highlighting until the radius of the pie was far beyond infinity...
+      //  * user defined highlighting would get pointless, everytime the user highlights something using .highlight(), it would get
+      //    dehighlighted immediately, because highlight puts the element into highlightedObjects and from there it gets dehighlighted
+      //    through dehighlightAll.
+
+      // highlight only if not highlighted
+      if (
+        utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].evaluate */ .Z.evaluate(this.visProp.highlight) &&
+        (!this.highlighted || force)
+      ) {
+        this.highlighted = true;
+        this.board.highlightedObjects[this.id] = this;
+        this.board.renderer.highlight(this);
+      }
+      return this;
+    },
+
+    /**
+     * Uses the "normal" properties of the element.
+     * @returns {JXG.Board}
+     */
+    noHighlight: function () {
+      // see comment in JXG.GeometryElement.highlight()
+
+      // dehighlight only if not highlighted
+      if (this.highlighted) {
+        this.highlighted = false;
+        delete this.board.highlightedObjects[this.id];
+        this.board.renderer.noHighlight(this);
+      }
+      return this;
+    },
+
+    /**
+     * Removes all objects generated by the trace function.
+     */
+    clearTrace: function () {
+      var obj;
+
+      for (obj in this.traces) {
+        if (this.traces.hasOwnProperty(obj)) {
+          this.board.renderer.remove(this.traces[obj]);
+        }
+      }
+
+      this.numTraces = 0;
+      return this;
+    },
+
+    /**
+     * Copy the element to background. This is used for tracing elements.
+     * @returns {JXG.GeometryElement} A reference to the element
+     */
+    cloneToBackground: function () {
+      return this;
+    },
+
+    /**
+     * Dimensions of the smallest rectangle enclosing the element.
+     * @returns {Array} The coordinates of the enclosing rectangle in a format
+     * like the bounding box in {@link JXG.Board#setBoundingBox}.
+     *
+     * @returns {Array} similar to {@link JXG.Board#setBoundingBox}.
+     */
+    bounds: function () {
+      return [0, 0, 0, 0];
+    },
+
+    /**
+     * Normalize the element's standard form.
+     * @private
+     */
+    normalize: function () {
+      this.stdform = math_math__WEBPACK_IMPORTED_MODULE_3__/* ["default"].normalize */ .Z.normalize(this.stdform);
+      return this;
+    },
+
+    /**
+     * EXPERIMENTAL. Generate JSON object code of visProp and other properties.
+     * @type String
+     * @private
+     * @ignore
+     * @returns JSON string containing element's properties.
+     */
+    toJSON: function () {
+      var vis,
+        key,
+        json = ['{"name":', this.name];
+
+      json.push(", " + '"id":' + this.id);
+
+      vis = [];
+      for (key in this.visProp) {
+        if (this.visProp.hasOwnProperty(key)) {
+          if (utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].exists */ .Z.exists(this.visProp[key])) {
+            vis.push('"' + key + '":' + this.visProp[key]);
+          }
+        }
+      }
+      json.push(', "visProp":{' + vis.toString() + "}");
+      json.push("}");
+
+      return json.join("");
+    },
+
+    /**
+     * Rotate texts or images by a given degree. Works only for texts where JXG.Text#display equal to "internal".
+     * @param {number} angle The degree of the rotation (90 means vertical text).
+     * @see JXG.GeometryElement#rotate
+     */
+    addRotation: function (angle) {
+      var tOffInv,
+        tOff,
+        tS,
+        tSInv,
+        tRot,
+        that = this;
+
+      if (
+        ((this.elementClass === base_constants__WEBPACK_IMPORTED_MODULE_1__/* ["default"].OBJECT_CLASS_TEXT */ .Z.OBJECT_CLASS_TEXT &&
+          utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].evaluate */ .Z.evaluate(this.visProp.display) === "internal") ||
+          this.type === base_constants__WEBPACK_IMPORTED_MODULE_1__/* ["default"].OBJECT_TYPE_IMAGE */ .Z.OBJECT_TYPE_IMAGE) &&
+        angle !== 0
+      ) {
+        tOffInv = this.board.create(
+          "transform",
+          [
+            function () {
+              return -that.X();
+            },
+            function () {
+              return -that.Y();
+            },
+          ],
+          { type: "translate" }
+        );
+
+        tOff = this.board.create(
+          "transform",
+          [
+            function () {
+              return that.X();
+            },
+            function () {
+              return that.Y();
+            },
+          ],
+          { type: "translate" }
+        );
+
+        tS = this.board.create(
+          "transform",
+          [
+            function () {
+              return that.board.unitX / that.board.unitY;
+            },
+            function () {
+              return 1;
+            },
+          ],
+          { type: "scale" }
+        );
+
+        tSInv = this.board.create(
+          "transform",
+          [
+            function () {
+              return that.board.unitY / that.board.unitX;
+            },
+            function () {
+              return 1;
+            },
+          ],
+          { type: "scale" }
+        );
+
+        tRot = this.board.create(
+          "transform",
+          [
+            function () {
+              return (utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].evaluate */ .Z.evaluate(angle) * Math.PI) / 180;
+            },
+          ],
+          { type: "rotate" }
+        );
+
+        tOffInv.bindTo(this);
+        tS.bindTo(this);
+        tRot.bindTo(this);
+        tSInv.bindTo(this);
+        tOff.bindTo(this);
+      }
+
+      return this;
+    },
+
+    /**
+     * Set the highlightStrokeColor of an element
+     * @param {String} sColor String which determines the stroke color of an object when its highlighted.
+     * @see JXG.GeometryElement#highlightStrokeColor
+     * @deprecated Use {@link JXG.GeometryElement#setAttribute}
+     */
+    highlightStrokeColor: function (sColor) {
+      jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].deprecated */ .Z.deprecated("highlightStrokeColor()", "setAttribute()");
+      this.setAttribute({ highlightStrokeColor: sColor });
+      return this;
+    },
+
+    /**
+     * Set the strokeColor of an element
+     * @param {String} sColor String which determines the stroke color of an object.
+     * @see JXG.GeometryElement#strokeColor
+     * @deprecated Use {@link JXG.GeometryElement#setAttribute}
+     */
+    strokeColor: function (sColor) {
+      jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].deprecated */ .Z.deprecated("strokeColor()", "setAttribute()");
+      this.setAttribute({ strokeColor: sColor });
+      return this;
+    },
+
+    /**
+     * Set the strokeWidth of an element
+     * @param {Number} width Integer which determines the stroke width of an outline.
+     * @see JXG.GeometryElement#strokeWidth
+     * @deprecated Use {@link JXG.GeometryElement#setAttribute}
+     */
+    strokeWidth: function (width) {
+      jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].deprecated */ .Z.deprecated("strokeWidth()", "setAttribute()");
+      this.setAttribute({ strokeWidth: width });
+      return this;
+    },
+
+    /**
+     * Set the fillColor of an element
+     * @param {String} fColor String which determines the fill color of an object.
+     * @see JXG.GeometryElement#fillColor
+     * @deprecated Use {@link JXG.GeometryElement#setAttribute}
+     */
+    fillColor: function (fColor) {
+      jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].deprecated */ .Z.deprecated("fillColor()", "setAttribute()");
+      this.setAttribute({ fillColor: fColor });
+      return this;
+    },
+
+    /**
+     * Set the highlightFillColor of an element
+     * @param {String} fColor String which determines the fill color of an object when its highlighted.
+     * @see JXG.GeometryElement#highlightFillColor
+     * @deprecated Use {@link JXG.GeometryElement#setAttribute}
+     */
+    highlightFillColor: function (fColor) {
+      jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].deprecated */ .Z.deprecated("highlightFillColor()", "setAttribute()");
+      this.setAttribute({ highlightFillColor: fColor });
+      return this;
+    },
+
+    /**
+     * Set the labelColor of an element
+     * @param {String} lColor String which determines the text color of an object's label.
+     * @see JXG.GeometryElement#labelColor
+     * @deprecated Use {@link JXG.GeometryElement#setAttribute}
+     */
+    labelColor: function (lColor) {
+      jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].deprecated */ .Z.deprecated("labelColor()", "setAttribute()");
+      this.setAttribute({ labelColor: lColor });
+      return this;
+    },
+
+    /**
+     * Set the dash type of an element
+     * @param {Number} d Integer which determines the way of dashing an element's outline.
+     * @see JXG.GeometryElement#dash
+     * @deprecated Use {@link JXG.GeometryElement#setAttribute}
+     */
+    dash: function (d) {
+      jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].deprecated */ .Z.deprecated("dash()", "setAttribute()");
+      this.setAttribute({ dash: d });
+      return this;
+    },
+
+    /**
+     * Set the visibility of an element
+     * @param {Boolean} v Boolean which determines whether the element is drawn.
+     * @see JXG.GeometryElement#visible
+     * @deprecated Use {@link JXG.GeometryElement#setAttribute}
+     */
+    visible: function (v) {
+      jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].deprecated */ .Z.deprecated("visible()", "setAttribute()");
+      this.setAttribute({ visible: v });
+      return this;
+    },
+
+    /**
+     * Set the shadow of an element
+     * @param {Boolean} s Boolean which determines whether the element has a shadow or not.
+     * @see JXG.GeometryElement#shadow
+     * @deprecated Use {@link JXG.GeometryElement#setAttribute}
+     */
+    shadow: function (s) {
+      jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].deprecated */ .Z.deprecated("shadow()", "setAttribute()");
+      this.setAttribute({ shadow: s });
+      return this;
+    },
+
+    /**
+     * The type of the element as used in {@link JXG.Board#create}.
+     * @returns {String}
+     */
+    getType: function () {
+      return this.elType;
+    },
+
+    /**
+     * List of the element ids resp. values used as parents in {@link JXG.Board#create}.
+     * @returns {Array}
+     */
+    getParents: function () {
+      return utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].isArray */ .Z.isArray(this.parents) ? this.parents : [];
+    },
+
+    /**
+     * Snaps the element to the grid. Only works for points, lines and circles. Points will snap to the grid
+     * as defined in their properties {@link JXG.Point#snapSizeX} and {@link JXG.Point#snapSizeY}. Lines and circles
+     * will snap their parent points to the grid, if they have {@link JXG.Point#snapToGrid} set to true.
+     * @returns {JXG.GeometryElement} Reference to the element.
+     */
+    snapToGrid: function () {
+      return this;
+    },
+
+    /**
+     * Snaps the element to points. Only works for points. Points will snap to the next point
+     * as defined in their properties {@link JXG.Point#attractorDistance} and {@link JXG.Point#attractorUnit}.
+     * Lines and circles
+     * will snap their parent points to points.
+     * @returns {JXG.GeometryElement} Reference to the element.
+     */
+    snapToPoints: function () {
+      return this;
+    },
+
+    /**
+     * Retrieve a copy of the current visProp.
+     * @returns {Object}
+     */
+    getAttributes: function () {
+      var attributes = utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].deepCopy */ .Z.deepCopy(this.visProp),
+        /*
+                cleanThis = ['attractors', 'snatchdistance', 'traceattributes', 'frozen',
+                    'shadow', 'gradientangle', 'gradientsecondopacity', 'gradientpositionx', 'gradientpositiony',
+                    'needsregularupdate', 'zoom', 'layer', 'offset'],
+                */
+        cleanThis = [],
+        i,
+        len = cleanThis.length;
+
+      attributes.id = this.id;
+      attributes.name = this.name;
+
+      for (i = 0; i < len; i++) {
+        delete attributes[cleanThis[i]];
+      }
+
+      return attributes;
+    },
+
+    /**
+     * Checks whether (x,y) is near the element.
+     * @param {Number} x Coordinate in x direction, screen coordinates.
+     * @param {Number} y Coordinate in y direction, screen coordinates.
+     * @returns {Boolean} True if (x,y) is near the element, False otherwise.
+     */
+    hasPoint: function (x, y) {
+      return false;
+    },
+
+    /**
+     * Adds ticks to this line or curve. Ticks can be added to a curve or any kind of line: line, arrow, and axis.
+     * @param {JXG.Ticks} ticks Reference to a ticks object which is describing the ticks (color, distance, how many, etc.).
+     * @returns {String} Id of the ticks object.
+     */
+    addTicks: function (ticks) {
+      if (ticks.id === "" || !utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].exists */ .Z.exists(ticks.id)) {
+        ticks.id = this.id + "_ticks_" + (this.ticks.length + 1);
+      }
+
+      this.board.renderer.drawTicks(ticks);
+      this.ticks.push(ticks);
+
+      return ticks.id;
+    },
+
+    /**
+     * Removes all ticks from a line or curve.
+     */
+    removeAllTicks: function () {
+      var t;
+      if (utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].exists */ .Z.exists(this.ticks)) {
+        for (t = this.ticks.length - 1; t >= 0; t--) {
+          this.removeTicks(this.ticks[t]);
+        }
+        this.ticks = [];
+        this.board.update();
+      }
+    },
+
+    /**
+     * Removes ticks identified by parameter named tick from this line or curve.
+     * @param {JXG.Ticks} tick Reference to tick object to remove.
+     */
+    removeTicks: function (tick) {
+      var t, j;
+
+      if (utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].exists */ .Z.exists(this.defaultTicks) && this.defaultTicks === tick) {
+        this.defaultTicks = null;
+      }
+
+      if (utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].exists */ .Z.exists(this.ticks)) {
+        for (t = this.ticks.length - 1; t >= 0; t--) {
+          if (this.ticks[t] === tick) {
+            this.board.removeObject(this.ticks[t]);
+
+            if (this.ticks[t].ticks) {
+              for (j = 0; j < this.ticks[t].ticks.length; j++) {
+                if (utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].exists */ .Z.exists(this.ticks[t].labels[j])) {
+                  this.board.removeObject(this.ticks[t].labels[j]);
+                }
+              }
+            }
+
+            delete this.ticks[t];
+            break;
+          }
+        }
+      }
+    },
+
+    /**
+     * Determine values of snapSizeX and snapSizeY. If the attributes
+     * snapSizex and snapSizeY are greater than zero, these values are taken.
+     * Otherwise, determine the distance between major ticks of the
+     * default axes.
+     * @returns {Array} containing the snap sizes for x and y direction.
+     * @private
+     */
+    getSnapSizes: function () {
+      var sX, sY, ticks;
+
+      sX = utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].evaluate */ .Z.evaluate(this.visProp.snapsizex);
+      sY = utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].evaluate */ .Z.evaluate(this.visProp.snapsizey);
+
+      if (
+        sX <= 0 &&
+        this.board.defaultAxes &&
+        this.board.defaultAxes.x.defaultTicks
+      ) {
+        ticks = this.board.defaultAxes.x.defaultTicks;
+        sX = ticks.ticksDelta * (utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].evaluate */ .Z.evaluate(ticks.visProp.minorticks) + 1);
+      }
+
+      if (
+        sY <= 0 &&
+        this.board.defaultAxes &&
+        this.board.defaultAxes.y.defaultTicks
+      ) {
+        ticks = this.board.defaultAxes.y.defaultTicks;
+        sY = ticks.ticksDelta * (utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].evaluate */ .Z.evaluate(ticks.visProp.minorticks) + 1);
+      }
+
+      return [sX, sY];
+    },
+
+    /**
+     * Move an element to its nearest grid point.
+     * The function uses the coords object of the element as
+     * its actual position. If there is no coords object or if the object is fixed, nothing is done.
+     * @param {Boolean} force force snapping independent from what the snaptogrid attribute says
+     * @param {Boolean} fromParent True if the drag comes from a child element. This is the case if a line
+     *    through two points is dragged. In this case we do not try to force the points to stay inside of
+     *    the visible board, but the distance between the two points stays constant.
+     * @returns {JXG.GeometryElement} Reference to this element
+     */
+    handleSnapToGrid: function (force, fromParent) {
+      var x,
+        y,
+        rx,
+        ry,
+        rcoords,
+        boardBB,
+        res,
+        sX,
+        sY,
+        needsSnapToGrid = false,
+        attractToGrid = utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].evaluate */ .Z.evaluate(this.visProp.attracttogrid),
+        ev_au = utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].evaluate */ .Z.evaluate(this.visProp.attractorunit),
+        ev_ad = utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].evaluate */ .Z.evaluate(this.visProp.attractordistance);
+
+      if (!utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].exists */ .Z.exists(this.coords) || utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].evaluate */ .Z.evaluate(this.visProp.fixed)) {
+        return this;
+      }
+
+      needsSnapToGrid =
+        utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].evaluate */ .Z.evaluate(this.visProp.snaptogrid) ||
+        attractToGrid ||
+        force === true;
+
+      if (needsSnapToGrid) {
+        x = this.coords.usrCoords[1];
+        y = this.coords.usrCoords[2];
+        res = this.getSnapSizes();
+        sX = res[0];
+        sY = res[1];
+
+        // If no valid snap sizes are available, don't change the coords.
+        if (sX > 0 && sY > 0) {
+          boardBB = this.board.getBoundingBox();
+          rx = Math.round(x / sX) * sX;
+          ry = Math.round(y / sY) * sY;
+          rcoords = new jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].Coords */ .Z.Coords(base_constants__WEBPACK_IMPORTED_MODULE_1__/* ["default"].COORDS_BY_USER */ .Z.COORDS_BY_USER, [rx, ry], this.board);
+          if (
+            !attractToGrid ||
+            rcoords.distance(
+              ev_au === "screen"
+                ? base_constants__WEBPACK_IMPORTED_MODULE_1__/* ["default"].COORDS_BY_SCREEN */ .Z.COORDS_BY_SCREEN
+                : base_constants__WEBPACK_IMPORTED_MODULE_1__/* ["default"].COORDS_BY_USER */ .Z.COORDS_BY_USER,
+              this.coords
+            ) < ev_ad
+          ) {
+            x = rx;
+            y = ry;
+            // Checking whether x and y are still within boundingBox.
+            // If not, adjust them to remain within the board.
+            // Otherwise a point may become invisible.
+            if (!fromParent) {
+              if (x < boardBB[0]) {
+                x += sX;
+              } else if (x > boardBB[2]) {
+                x -= sX;
+              }
+
+              if (y < boardBB[3]) {
+                y += sY;
+              } else if (y > boardBB[1]) {
+                y -= sY;
+              }
+            }
+            this.coords.setCoordinates(base_constants__WEBPACK_IMPORTED_MODULE_1__/* ["default"].COORDS_BY_USER */ .Z.COORDS_BY_USER, [x, y]);
+          }
+        }
+      }
+      return this;
+    },
+
+    getBoundingBox: function () {
+      var i,
+        le,
+        v,
+        x,
+        y,
+        bb = [Infinity, Infinity, -Infinity, -Infinity];
+
+      if (this.type === base_constants__WEBPACK_IMPORTED_MODULE_1__/* ["default"].OBJECT_TYPE_POLYGON */ .Z.OBJECT_TYPE_POLYGON) {
+        le = this.vertices.length - 1;
+        if (le <= 0) {
+          return bb;
+        }
+        for (i = 0; i < le; i++) {
+          v = this.vertices[i].X();
+          bb[0] = v < bb[0] ? v : bb[0];
+          bb[2] = v > bb[2] ? v : bb[2];
+          v = this.vertices[i].Y();
+          bb[1] = v < bb[1] ? v : bb[1];
+          bb[3] = v > bb[3] ? v : bb[3];
+        }
+      } else if (this.elementClass === base_constants__WEBPACK_IMPORTED_MODULE_1__/* ["default"].OBJECT_CLASS_CIRCLE */ .Z.OBJECT_CLASS_CIRCLE) {
+        x = this.center.X();
+        y = this.center.Y();
+        bb = [
+          x - this.radius,
+          y + this.radius,
+          x + this.radius,
+          y - this.radius,
+        ];
+      } else if (this.elementClass === base_constants__WEBPACK_IMPORTED_MODULE_1__/* ["default"].OBJECT_CLASS_CURVE */ .Z.OBJECT_CLASS_CURVE) {
+        le = this.vertices.length;
+        if (le === 0) {
+          return bb;
+        }
+        for (i = 0; i < le; i++) {
+          v = this.points[i].coords.usrCoords[1];
+          bb[0] = v < bb[0] ? v : bb[0];
+          bb[2] = v > bb[2] ? v : bb[2];
+          v = this.points[i].coords.usrCoords[1];
+          bb[1] = v < bb[1] ? v : bb[1];
+          bb[3] = v > bb[3] ? v : bb[3];
+        }
+      }
+
+      return bb;
+    },
+
+    /**
+     * Alias of {@link JXG.EventEmitter.on}.
+     *
+     * @name addEvent
+     * @memberof JXG.GeometryElement
+     * @function
+     */
+    addEvent: jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].shortcut */ .Z.shortcut(jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].GeometryElement.prototype */ .Z.GeometryElement.prototype, "on"),
+
+    /**
+     * Alias of {@link JXG.EventEmitter.off}.
+     *
+     * @name removeEvent
+     * @memberof JXG.GeometryElement
+     * @function
+     */
+    removeEvent: jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].shortcut */ .Z.shortcut(jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].GeometryElement.prototype */ .Z.GeometryElement.prototype, "off"),
+
+    /* **************************
+     *     EVENT DEFINITION
+     * for documentation purposes
+     * ************************** */
+
+    //region Event handler documentation
+    /**
+     * @event
+     * @description This event is fired whenever the user is hovering over an element.
+     * @name JXG.GeometryElement#over
+     * @param {Event} e The browser's event object.
+     */
+    __evt__over: function (e) {},
+
+    /**
+     * @event
+     * @description This event is fired whenever the user puts the mouse over an element.
+     * @name JXG.GeometryElement#mouseover
+     * @param {Event} e The browser's event object.
+     */
+    __evt__mouseover: function (e) {},
+
+    /**
+     * @event
+     * @description This event is fired whenever the user is leaving an element.
+     * @name JXG.GeometryElement#out
+     * @param {Event} e The browser's event object.
+     */
+    __evt__out: function (e) {},
+
+    /**
+     * @event
+     * @description This event is fired whenever the user puts the mouse away from an element.
+     * @name JXG.GeometryElement#mouseout
+     * @param {Event} e The browser's event object.
+     */
+    __evt__mouseout: function (e) {},
+
+    /**
+     * @event
+     * @description This event is fired whenever the user is moving over an element.
+     * @name JXG.GeometryElement#move
+     * @param {Event} e The browser's event object.
+     */
+    __evt__move: function (e) {},
+
+    /**
+     * @event
+     * @description This event is fired whenever the user is moving the mouse over an element.
+     * @name JXG.GeometryElement#mousemove
+     * @param {Event} e The browser's event object.
+     */
+    __evt__mousemove: function (e) {},
+
+    /**
+     * @event
+     * @description This event is fired whenever the user drags an element.
+     * @name JXG.GeometryElement#drag
+     * @param {Event} e The browser's event object.
+     */
+    __evt__drag: function (e) {},
+
+    /**
+     * @event
+     * @description This event is fired whenever the user drags the element with a mouse.
+     * @name JXG.GeometryElement#mousedrag
+     * @param {Event} e The browser's event object.
+     */
+    __evt__mousedrag: function (e) {},
+
+    /**
+     * @event
+     * @description This event is fired whenever the user drags the element with a pen.
+     * @name JXG.GeometryElement#pendrag
+     * @param {Event} e The browser's event object.
+     */
+    __evt__pendrag: function (e) {},
+
+    /**
+     * @event
+     * @description This event is fired whenever the user drags the element on a touch device.
+     * @name JXG.GeometryElement#touchdrag
+     * @param {Event} e The browser's event object.
+     */
+    __evt__touchdrag: function (e) {},
+
+    /**
+     * @event
+     * @description Whenever the user starts to touch or click an element.
+     * @name JXG.GeometryElement#down
+     * @param {Event} e The browser's event object.
+     */
+    __evt__down: function (e) {},
+
+    /**
+     * @event
+     * @description Whenever the user starts to click an element.
+     * @name JXG.GeometryElement#mousedown
+     * @param {Event} e The browser's event object.
+     */
+    __evt__mousedown: function (e) {},
+
+    /**
+     * @event
+     * @description Whenever the user taps an element with the pen.
+     * @name JXG.GeometryElement#pendown
+     * @param {Event} e The browser's event object.
+     */
+    __evt__pendown: function (e) {},
+
+    /**
+     * @event
+     * @description Whenever the user starts to touch an element.
+     * @name JXG.GeometryElement#touchdown
+     * @param {Event} e The browser's event object.
+     */
+    __evt__touchdown: function (e) {},
+
+    /**
+     * @event
+     * @description Whenever the user stops to touch or click an element.
+     * @name JXG.GeometryElement#up
+     * @param {Event} e The browser's event object.
+     */
+    __evt__up: function (e) {},
+
+    /**
+     * @event
+     * @description Whenever the user releases the mousebutton over an element.
+     * @name JXG.GeometryElement#mouseup
+     * @param {Event} e The browser's event object.
+     */
+    __evt__mouseup: function (e) {},
+
+    /**
+     * @event
+     * @description Whenever the user lifts the pen over an element.
+     * @name JXG.GeometryElement#penup
+     * @param {Event} e The browser's event object.
+     */
+    __evt__penup: function (e) {},
+
+    /**
+     * @event
+     * @description Whenever the user stops touching an element.
+     * @name JXG.GeometryElement#touchup
+     * @param {Event} e The browser's event object.
+     */
+    __evt__touchup: function (e) {},
+
+    /**
+     * @event
+     * @description Notify every time an attribute is changed.
+     * @name JXG.GeometryElement#attribute
+     * @param {Object} o A list of changed attributes and their new value.
+     * @param {Object} el Reference to the element
+     */
+    __evt__attribute: function (o, el) {},
+
+    /**
+     * @event
+     * @description This is a generic event handler. It exists for every possible attribute that can be set for
+     * any element, e.g. if you want to be notified everytime an element's strokecolor is changed, is the event
+     * <tt>attribute:strokecolor</tt>.
+     * @name JXG.GeometryElement#attribute:key
+     * @param val The old value.
+     * @param nval The new value
+     * @param {Object} el Reference to the element
+     */
+    __evt__attribute_: function (val, nval, el) {},
+
+    /**
+     * @ignore
+     */
+    __evt: function () {},
+    //endregion
+  }
+);
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].GeometryElement */ .Z.GeometryElement);
+
+
+/***/ }),
+
+/***/ 573:
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "Z": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var jxg__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(765);
+/* harmony import */ var base_constants__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(351);
+/* harmony import */ var base_element__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(958);
+/* harmony import */ var parser_geonext__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(632);
+/* harmony import */ var utils_env__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(503);
+/* harmony import */ var utils_type__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(109);
+/* harmony import */ var math_math__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(275);
+/* harmony import */ var base_coordselement__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(218);
+/*
+    Copyright 2008-2022
+        Matthias Ehmann,
+        Michael Gerhaeuser,
+        Carsten Miller,
+        Bianca Valentin,
+        Alfred Wassermann,
+        Peter Wilfahrt
+
+    This file is part of JSXGraph.
+
+    JSXGraph is free software dual licensed under the GNU LGPL or MIT License.
+
+    You can redistribute it and/or modify it under the terms of the
+
+      * GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version
+      OR
+      * MIT License: https://github.com/jsxgraph/jsxgraph/blob/master/LICENSE.MIT
+
+    JSXGraph is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License and
+    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
+    and <http://opensource.org/licenses/MIT/>.
+ */
+
+/*global JXG: true, define: true, window: true*/
+/*jslint nomen: true, plusplus: true*/
+
+/* depends:
+ jxg
+ base/constants
+ base/coords
+ base/element
+ parser/geonext
+ math/statistics
+ utils/env
+ utils/type
+ */
+
+/**
+ * @fileoverview In this file the Text element is defined.
+ */
+
+
+
+
+
+
+
+
+
+
+var priv = {
+  HTMLSliderInputEventHandler: function () {
+    this._val = parseFloat(this.rendNodeRange.value);
+    this.rendNodeOut.value = this.rendNodeRange.value;
+    this.board.update();
+  },
+};
+
+/**
+ * Construct and handle texts.
+ *
+ * The coordinates can be relative to the coordinates of an element
+ * given in {@link JXG.Options#text.anchor}.
+ *
+ * MathJax, HTML and GEONExT syntax can be handled.
+ * @class Creates a new text object. Do not use this constructor to create a text. Use {@link JXG.Board#create} with
+ * type {@link Text} instead.
+ * @augments JXG.GeometryElement
+ * @augments JXG.CoordsElement
+ * @param {string|JXG.Board} board The board the new text is drawn on.
+ * @param {Array} coordinates An array with the user coordinates of the text.
+ * @param {Object} attributes An object containing visual properties and optional a name and a id.
+ * @param {string|function} content A string or a function returning a string.
+ *
+ */
+jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].Text */ .Z.Text = function (board, coords, attributes, content) {
+  this.constructor(
+    board,
+    attributes,
+    base_constants__WEBPACK_IMPORTED_MODULE_1__/* ["default"].OBJECT_TYPE_TEXT */ .Z.OBJECT_TYPE_TEXT,
+    base_constants__WEBPACK_IMPORTED_MODULE_1__/* ["default"].OBJECT_CLASS_TEXT */ .Z.OBJECT_CLASS_TEXT
+  );
+
+  this.element = this.board.select(attributes.anchor);
+  this.coordsConstructor(coords, utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].evaluate */ .Z.evaluate(this.visProp.islabel));
+
+  this.content = "";
+  this.plaintext = "";
+  this.plaintextOld = null;
+  this.orgText = "";
+
+  this.needsSizeUpdate = false;
+  // Only used by infobox anymore
+  this.hiddenByParent = false;
+
+  /**
+   * Width and height of the the text element in pixel.
+   *
+   * @private
+   * @type Array
+   */
+  this.size = [1.0, 1.0];
+  this.id = this.board.setId(this, "T");
+
+  this.board.renderer.drawText(this);
+  this.board.finalizeAdding(this);
+
+  // Set text before drawing
+  // this._createFctUpdateText(content);
+  // this.updateText();
+
+  this.setText(content);
+
+  if (utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].isString */ .Z.isString(this.content)) {
+    this.notifyParents(this.content);
+  }
+  this.elType = "text";
+
+  this.methodMap = utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].deepCopy */ .Z.deepCopy(this.methodMap, {
+    setText: "setTextJessieCode",
+    // free: 'free',
+    move: "setCoords",
+  });
+};
+
+jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].Text.prototype */ .Z.Text.prototype = new base_element__WEBPACK_IMPORTED_MODULE_2__/* ["default"] */ .Z();
+utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].copyPrototypeMethods */ .Z.copyPrototypeMethods(jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].Text */ .Z.Text, base_coordselement__WEBPACK_IMPORTED_MODULE_7__/* ["default"] */ .Z, "coordsConstructor");
+
+jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].extend */ .Z.extend(
+  jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].Text.prototype */ .Z.Text.prototype,
+  /** @lends JXG.Text.prototype */ {
+    /**
+     * @private
+     * Test if the the screen coordinates (x,y) are in a small stripe
+     * at the left side or at the right side of the text.
+     * Sensitivity is set in this.board.options.precision.hasPoint.
+     * If dragarea is set to 'all' (default), tests if the the screen
+     * coordinates (x,y) are in within the text boundary.
+     * @param {Number} x
+     * @param {Number} y
+     * @returns {Boolean}
+     */
+    hasPoint: function (x, y) {
+      var lft, rt, top, bot, ax, ay, type, r;
+
+      if (utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].isObject */ .Z.isObject(utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].evaluate */ .Z.evaluate(this.visProp.precision))) {
+        type = this.board._inputDevice;
+        r = utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].evaluate */ .Z.evaluate(this.visProp.precision[type]);
+      } else {
+        // 'inherit'
+        r = this.board.options.precision.hasPoint;
+      }
+      if (this.transformations.length > 0) {
+        //Transform the mouse/touch coordinates
+        // back to the original position of the text.
+        lft = math_math__WEBPACK_IMPORTED_MODULE_6__/* ["default"].matVecMult */ .Z.matVecMult(
+          math_math__WEBPACK_IMPORTED_MODULE_6__/* ["default"].inverse */ .Z.inverse(
+            this.board.renderer.joinTransforms(this, this.transformations)
+          ),
+          [1, x, y]
+        );
+        x = lft[1];
+        y = lft[2];
+      }
+
+      ax = this.getAnchorX();
+      if (ax === "right") {
+        lft = this.coords.scrCoords[1] - this.size[0];
+      } else if (ax === "middle") {
+        lft = this.coords.scrCoords[1] - 0.5 * this.size[0];
+      } else {
+        lft = this.coords.scrCoords[1];
+      }
+      rt = lft + this.size[0];
+
+      ay = this.getAnchorY();
+      if (ay === "top") {
+        bot = this.coords.scrCoords[2] + this.size[1];
+      } else if (ay === "middle") {
+        bot = this.coords.scrCoords[2] + 0.5 * this.size[1];
+      } else {
+        bot = this.coords.scrCoords[2];
+      }
+      top = bot - this.size[1];
+
+      if (utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].evaluate */ .Z.evaluate(this.visProp.dragarea) === "all") {
+        return x >= lft - r && x < rt + r && y >= top - r && y <= bot + r;
+      }
+      // e.g. 'small'
+      return (
+        y >= top - r &&
+        y <= bot + r &&
+        ((x >= lft - r && x <= lft + 2 * r) || (x >= rt - 2 * r && x <= rt + r))
+      );
+    },
+
+    /**
+     * This sets the updateText function of this element depending on the type of text content passed.
+     * Used by {@link JXG.Text#_setText} and {@link JXG.Text} constructor.
+     * @param {String|Function|Number} text
+     * @private
+     */
+    _createFctUpdateText: function (text) {
+      var updateText,
+        resolvedText,
+        ev_p = utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].evaluate */ .Z.evaluate(this.visProp.parse),
+        ev_um = utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].evaluate */ .Z.evaluate(this.visProp.usemathjax),
+        ev_uk = utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].evaluate */ .Z.evaluate(this.visProp.usekatex),
+        convertJessieCode = false;
+
+      this.orgText = text;
+
+      if (utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].isFunction */ .Z.isFunction(text)) {
+        // <value> tags will not be evaluated if text is provided by a function
+        this.updateText = function () {
+          resolvedText = text().toString(); // Evaluate function
+          if (ev_p && !ev_um && !ev_uk) {
+            this.plaintext = this.replaceSub(
+              this.replaceSup(
+                this.convertGeonextAndSketchometry2CSS(resolvedText)
+              )
+            );
+          } else {
+            this.plaintext = resolvedText;
+          }
+        };
+      } else {
+        if (utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].isNumber */ .Z.isNumber(text)) {
+          this.content = utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].toFixed */ .Z.toFixed(text, utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].evaluate */ .Z.evaluate(this.visProp.digits));
+        } else if (utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].isString */ .Z.isString(text) && ev_p) {
+          if (utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].evaluate */ .Z.evaluate(this.visProp.useasciimathml)) {
+            // ASCIIMathML
+            this.content = "'`" + text + "`'";
+          } else if (ev_um || ev_uk) {
+            // MathJax or KaTeX
+            // Replace value-tags by functions
+            this.content = this.valueTagToJessieCode(text);
+            this.content = this.content.replace(/\\/g, "\\\\"); // Replace single backshlash by double
+          } else {
+            // No TeX involved.
+            // Converts GEONExT syntax into JavaScript string
+            // Short math is allowed
+            // Replace value-tags by functions
+            // Avoid geonext2JS calls
+            this.content = this.poorMansTeX(this.valueTagToJessieCode(text));
+          }
+          convertJessieCode = true;
+        }
+
+        // Generate function which returns the text to be displayed
+        if (convertJessieCode) {
+          // Convert JessieCode to JS function
+          updateText = this.board.jc.snippet(this.content, true, "", false);
+
+          // Ticks have been esacped in valueTagToJessieCode
+          this.updateText = function () {
+            this.plaintext = this.unescapeTicks(updateText());
+          };
+        } else {
+          this.updateText = function () {
+            this.plaintext = text;
+          };
+        }
+      }
+    },
+
+    /**
+     * Defines new content. This is used by {@link JXG.Text#setTextJessieCode} and {@link JXG.Text#setText}. This is required because
+     * JessieCode needs to filter all Texts inserted into the DOM and thus has to replace setText by setTextJessieCode.
+     * @param {String|Function|Number} text
+     * @returns {JXG.Text}
+     * @private
+     */
+    _setText: function (text) {
+      this._createFctUpdateText(text);
+
+      // First evaluation of the string.
+      // We need this for display='internal' and Canvas
+      this.updateText();
+      this.fullUpdate();
+
+      // We do not call updateSize for the infobox to speed up rendering
+      if (!this.board.infobox || this.id !== this.board.infobox.id) {
+        this.updateSize(); // updateSize() is called at least once.
+      }
+
+      // This may slow down canvas renderer
+      // if (this.board.renderer.type === 'canvas') {
+      //     this.board.fullUpdate();
+      // }
+
+      return this;
+    },
+
+    /**
+     * Defines new content but converts &lt; and &gt; to HTML entities before updating the DOM.
+     * @param {String|function} text
+     */
+    setTextJessieCode: function (text) {
+      var s;
+
+      this.visProp.castext = text;
+      if (utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].isFunction */ .Z.isFunction(text)) {
+        s = function () {
+          return utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].sanitizeHTML */ .Z.sanitizeHTML(text());
+        };
+      } else {
+        if (utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].isNumber */ .Z.isNumber(text)) {
+          s = text;
+        } else {
+          s = utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].sanitizeHTML */ .Z.sanitizeHTML(text);
+        }
+      }
+
+      return this._setText(s);
+    },
+
+    /**
+     * Defines new content.
+     * @param {String|function} text
+     * @returns {JXG.Text} Reference to the text object.
+     */
+    setText: function (text) {
+      return this._setText(text);
+    },
+
+    /**
+     * Recompute the width and the height of the text box.
+     * Updates the array {@link JXG.Text#size} with pixel values.
+     * The result may differ from browser to browser
+     * by some pixels.
+     * In canvas an old IEs we use a very crude estimation of the dimensions of
+     * the textbox.
+     * JSXGraph needs {@link JXG.Text#size} for applying rotations in IE and
+     * for aligning text.
+     *
+     * @return {[type]} [description]
+     */
+    updateSize: function () {
+      var tmp,
+        that,
+        node,
+        ev_d = utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].evaluate */ .Z.evaluate(this.visProp.display);
+
+      if (!utils_env__WEBPACK_IMPORTED_MODULE_4__/* ["default"].isBrowser */ .Z.isBrowser || this.board.renderer.type === "no") {
+        return this;
+      }
+      node = this.rendNode;
+
+      /**
+       * offsetWidth and offsetHeight seem to be supported for internal vml elements by IE10+ in IE8 mode.
+       */
+      if (ev_d === "html" || this.board.renderer.type === "vml") {
+        if (utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].exists */ .Z.exists(node.offsetWidth)) {
+          that = this;
+          window.setTimeout(function () {
+            that.size = [node.offsetWidth, node.offsetHeight];
+            that.needsUpdate = true;
+            that.updateRenderer();
+          }, 0);
+          // In case, there is non-zero padding or borders
+          // the following approach does not longer work.
+          // s = [node.offsetWidth, node.offsetHeight];
+          // if (s[0] === 0 && s[1] === 0) { // Some browsers need some time to set offsetWidth and offsetHeight
+          //     that = this;
+          //     window.setTimeout(function () {
+          //         that.size = [node.offsetWidth, node.offsetHeight];
+          //         that.needsUpdate = true;
+          //         that.updateRenderer();
+          //     }, 0);
+          // } else {
+          //     this.size = s;
+          // }
+        } else {
+          this.size = this.crudeSizeEstimate();
+        }
+      } else if (ev_d === "internal") {
+        if (this.board.renderer.type === "svg") {
+          that = this;
+          window.setTimeout(function () {
+            try {
+              tmp = node.getBBox();
+              that.size = [tmp.width, tmp.height];
+              that.needsUpdate = true;
+              that.updateRenderer();
+            } catch (e) {}
+          }, 0);
+        } else if (this.board.renderer.type === "canvas") {
+          this.size = this.crudeSizeEstimate();
+        }
+      }
+
+      return this;
+    },
+
+    /**
+     * A very crude estimation of the dimensions of the textbox in case nothing else is available.
+     * @returns {Array}
+     */
+    crudeSizeEstimate: function () {
+      var ev_fs = parseFloat(utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].evaluate */ .Z.evaluate(this.visProp.fontsize));
+      return [ev_fs * this.plaintext.length * 0.45, ev_fs * 0.9];
+    },
+
+    /**
+     * Decode unicode entities into characters.
+     * @param {String} string
+     * @returns {String}
+     */
+    utf8_decode: function (string) {
+      return string.replace(/&#x(\w+);/g, function (m, p1) {
+        return String.fromCharCode(parseInt(p1, 16));
+      });
+    },
+
+    /**
+     * Replace _{} by &lt;sub&gt;
+     * @param {String} te String containing _{}.
+     * @returns {String} Given string with _{} replaced by &lt;sub&gt;.
+     */
+    replaceSub: function (te) {
+      if (!te.indexOf) {
+        return te;
+      }
+
+      var j,
+        i = te.indexOf("_{");
+
+      // the regexp in here are not used for filtering but to provide some kind of sugar for label creation,
+      // i.e. replacing _{...} with <sub>...</sub>. What is passed would get out anyway.
+      /*jslint regexp: true*/
+
+      while (i >= 0) {
+        te = te.substr(0, i) + te.substr(i).replace(/_\{/, "<sub>");
+        j = te.substr(i).indexOf("}");
+        if (j >= 0) {
+          te = te.substr(0, j) + te.substr(j).replace(/\}/, "</sub>");
+        }
+        i = te.indexOf("_{");
+      }
+
+      i = te.indexOf("_");
+      while (i >= 0) {
+        te = te.substr(0, i) + te.substr(i).replace(/_(.?)/, "<sub>$1</sub>");
+        i = te.indexOf("_");
+      }
+
+      return te;
+    },
+
+    /**
+     * Replace ^{} by &lt;sup&gt;
+     * @param {String} te String containing ^{}.
+     * @returns {String} Given string with ^{} replaced by &lt;sup&gt;.
+     */
+    replaceSup: function (te) {
+      if (!te.indexOf) {
+        return te;
+      }
+
+      var j,
+        i = te.indexOf("^{");
+
+      // the regexp in here are not used for filtering but to provide some kind of sugar for label creation,
+      // i.e. replacing ^{...} with <sup>...</sup>. What is passed would get out anyway.
+      /*jslint regexp: true*/
+
+      while (i >= 0) {
+        te = te.substr(0, i) + te.substr(i).replace(/\^\{/, "<sup>");
+        j = te.substr(i).indexOf("}");
+        if (j >= 0) {
+          te = te.substr(0, j) + te.substr(j).replace(/\}/, "</sup>");
+        }
+        i = te.indexOf("^{");
+      }
+
+      i = te.indexOf("^");
+      while (i >= 0) {
+        te = te.substr(0, i) + te.substr(i).replace(/\^(.?)/, "<sup>$1</sup>");
+        i = te.indexOf("^");
+      }
+
+      return te;
+    },
+
+    /**
+     * Return the width of the text element.
+     * @returns {Array} [width, height] in pixel
+     */
+    getSize: function () {
+      return this.size;
+    },
+
+    /**
+     * Move the text to new coordinates.
+     * @param {number} x
+     * @param {number} y
+     * @returns {object} reference to the text object.
+     */
+    setCoords: function (x, y) {
+      var coordsAnchor, dx, dy;
+      if (utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].isArray */ .Z.isArray(x) && x.length > 1) {
+        y = x[1];
+        x = x[0];
+      }
+
+      if (utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].evaluate */ .Z.evaluate(this.visProp.islabel) && utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].exists */ .Z.exists(this.element)) {
+        coordsAnchor = this.element.getLabelAnchor();
+        dx = (x - coordsAnchor.usrCoords[1]) * this.board.unitX;
+        dy = -(y - coordsAnchor.usrCoords[2]) * this.board.unitY;
+
+        this.relativeCoords.setCoordinates(base_constants__WEBPACK_IMPORTED_MODULE_1__/* ["default"].COORDS_BY_SCREEN */ .Z.COORDS_BY_SCREEN, [dx, dy]);
+      } else {
+        /*
+                this.X = function () {
+                    return x;
+                };
+
+                this.Y = function () {
+                    return y;
+                };
+                */
+        this.coords.setCoordinates(base_constants__WEBPACK_IMPORTED_MODULE_1__/* ["default"].COORDS_BY_USER */ .Z.COORDS_BY_USER, [x, y]);
+      }
+
+      // this should be a local update, otherwise there might be problems
+      // with the tick update routine resulting in orphaned tick labels
+      this.fullUpdate();
+
+      return this;
+    },
+
+    /**
+     * Evaluates the text.
+     * Then, the update function of the renderer
+     * is called.
+     */
+    update: function (fromParent) {
+      if (!this.needsUpdate) {
+        return this;
+      }
+
+      this.updateCoords(fromParent);
+      this.updateText();
+
+      if (utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].evaluate */ .Z.evaluate(this.visProp.display) === "internal") {
+        if (utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].isString */ .Z.isString(this.plaintext)) {
+          this.plaintext = this.utf8_decode(this.plaintext);
+        }
+      }
+
+      this.checkForSizeUpdate();
+      if (this.needsSizeUpdate) {
+        this.updateSize();
+      }
+
+      return this;
+    },
+
+    /**
+     * Used to save updateSize() calls.
+     * Called in JXG.Text.update
+     * That means this.update() has been called.
+     * More tests are in JXG.Renderer.updateTextStyle. The latter tests
+     * are one update off. But this should pose not too many problems, since
+     * it affects fontSize and cssClass changes.
+     *
+     * @private
+     */
+    checkForSizeUpdate: function () {
+      if (this.board.infobox && this.id === this.board.infobox.id) {
+        this.needsSizeUpdate = false;
+      } else {
+        // For some magic reason it is more efficient on the iPad to
+        // call updateSize() for EVERY text element EVERY time.
+        this.needsSizeUpdate = this.plaintextOld !== this.plaintext;
+
+        if (this.needsSizeUpdate) {
+          this.plaintextOld = this.plaintext;
+        }
+      }
+    },
+
+    /**
+     * The update function of the renderert
+     * is called.
+     * @private
+     */
+    updateRenderer: function () {
+      if (
+        //this.board.updateQuality === this.board.BOARD_QUALITY_HIGH &&
+        utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].evaluate */ .Z.evaluate(this.visProp.autoposition)
+      ) {
+        this.setAutoPosition().updateConstraint();
+      }
+      return this.updateRendererGeneric("updateText");
+    },
+
+    /**
+     * Converts shortened math syntax into correct syntax:  3x instead of 3*x or
+     * (a+b)(3+1) instead of (a+b)*(3+1).
+     *
+     * @private
+     * @param{String} expr Math term
+     * @returns {string} expanded String
+     */
+    expandShortMath: function (expr) {
+      var re = /([)0-9.])\s*([(a-zA-Z_])/g;
+      return expr.replace(re, "$1*$2");
+    },
+
+    /**
+     * Converts the GEONExT syntax of the <value> terms into JavaScript.
+     * Also, all Objects whose name appears in the term are searched and
+     * the text is added as child to these objects.
+     * This method is called if the attribute parse==true is set.
+     *
+     * @param{String} contentStr String to be parsed
+     * @param{Boolean} [expand] Optional flag if shortened math syntax is allowed (e.g. 3x instead of 3*x).
+     * @param{Boolean} [avoidGeonext2JS] Optional flag if geonext2JS should be called. For backwards compatibility
+     * this has to be set explicitely to true.
+     * @param{Boolean} [outputTeX] Optional flag which has to be true if the resulting term will be sent to MathJax or KaTeX.
+     * If true, "_" and "^" are NOT replaced by HTML tags sub and sup. Default: false, i.e. the replacement is done.
+     * This flag allows the combination of &lt;value&gt; tag containing calculations with TeX output.
+     *
+     * @private
+     * @see JXG.GeonextParser.geonext2JS
+     */
+    generateTerm: function (contentStr, expand, avoidGeonext2JS) {
+      var res,
+        term,
+        i,
+        j,
+        plaintext = '""';
+
+      // Revert possible jc replacement
+      contentStr = contentStr || "";
+      contentStr = contentStr.replace(/\r/g, "");
+      contentStr = contentStr.replace(/\n/g, "");
+      contentStr = contentStr.replace(/"/g, "'");
+      contentStr = contentStr.replace(/'/g, "\\'");
+
+      // Old GEONExT syntax, not (yet) supported as TeX output.
+      // Otherwise, the else clause should be used.
+      // That means, i.e. the <arc> tag and <sqrt> tag are not
+      // converted into TeX syntax.
+      contentStr = contentStr.replace(/&amp;arc;/g, "&ang;");
+      contentStr = contentStr.replace(/<arc\s*\/>/g, "&ang;");
+      contentStr = contentStr.replace(/&lt;arc\s*\/&gt;/g, "&ang;");
+      contentStr = contentStr.replace(/&lt;sqrt\s*\/&gt;/g, "&radic;");
+
+      contentStr = contentStr.replace(/&lt;value&gt;/g, "<value>");
+      contentStr = contentStr.replace(/&lt;\/value&gt;/g, "</value>");
+
+      // Convert GEONExT syntax into  JavaScript syntax
+      i = contentStr.indexOf("<value>");
+      j = contentStr.indexOf("</value>");
+      if (i >= 0) {
+        while (i >= 0) {
+          plaintext +=
+            ' + "' +
+            this.replaceSub(this.replaceSup(contentStr.slice(0, i))) +
+            '"';
+          // plaintext += ' + "' + this.replaceSub(contentStr.slice(0, i)) + '"';
+
+          term = contentStr.slice(i + 7, j);
+          term = term.replace(/\s+/g, ""); // Remove all whitespace
+          if (expand === true) {
+            term = this.expandShortMath(term);
+          }
+          if (avoidGeonext2JS) {
+            res = term;
+          } else {
+            res = parser_geonext__WEBPACK_IMPORTED_MODULE_3__/* ["default"].geonext2JS */ .Z.geonext2JS(term, this.board);
+          }
+          res = res.replace(/\\"/g, "'");
+          res = res.replace(/\\'/g, "'");
+
+          // GEONExT-Hack: apply rounding once only.
+          if (res.indexOf("toFixed") < 0) {
+            // output of a value tag
+            if (
+              utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].isNumber */ .Z.isNumber(
+                utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].bind */ .Z.bind(this.board.jc.snippet(res, true, "", false), this)()
+              )
+            ) {
+              // may also be a string
+              plaintext +=
+                "+(" +
+                res +
+                ").toFixed(" +
+                utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].evaluate */ .Z.evaluate(this.visProp.digits) +
+                ")";
+            } else {
+              plaintext += "+(" + res + ")";
+            }
+          } else {
+            plaintext += "+(" + res + ")";
+          }
+
+          contentStr = contentStr.slice(j + 8);
+          i = contentStr.indexOf("<value>");
+          j = contentStr.indexOf("</value>");
+        }
+      }
+
+      plaintext += ' + "' + this.replaceSub(this.replaceSup(contentStr)) + '"';
+      plaintext = this.convertGeonextAndSketchometry2CSS(plaintext);
+
+      // This should replace e.g. &amp;pi; by &pi;
+      plaintext = plaintext.replace(/&amp;/g, "&");
+      plaintext = plaintext.replace(/"/g, "'");
+
+      return plaintext;
+    },
+
+    valueTagToJessieCode: function (contentStr) {
+      var res,
+        term,
+        i,
+        j,
+        expandShortMath = true,
+        textComps = [],
+        tick = '"';
+
+      contentStr = contentStr || "";
+      contentStr = contentStr.replace(/\r/g, "");
+      contentStr = contentStr.replace(/\n/g, "");
+
+      contentStr = contentStr.replace(/&lt;value&gt;/g, "<value>");
+      contentStr = contentStr.replace(/&lt;\/value&gt;/g, "</value>");
+
+      // Convert content of value tag (GEONExT/JessieCode) syntax into JavaScript syntax
+      i = contentStr.indexOf("<value>");
+      j = contentStr.indexOf("</value>");
+      if (i >= 0) {
+        while (i >= 0) {
+          // Add string fragment before <value> tag
+          textComps.push(
+            tick + this.escapeTicks(contentStr.slice(0, i)) + tick
+          );
+
+          term = contentStr.slice(i + 7, j);
+          term = term.replace(/\s+/g, ""); // Remove all whitespace
+          if (expandShortMath === true) {
+            term = this.expandShortMath(term);
+          }
+          res = term;
+          res = res.replace(/\\"/g, "'").replace(/\\'/g, "'");
+
+          // Hack: apply rounding once only.
+          if (res.indexOf("toFixed") < 0) {
+            // Output of a value tag
+            // Run the JessieCode parser
+            if (
+              utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].isNumber */ .Z.isNumber(
+                utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].bind */ .Z.bind(this.board.jc.snippet(res, true, "", false), this)()
+              )
+            ) {
+              // Output is number
+              textComps.push(
+                "(" +
+                  res +
+                  ").toFixed(" +
+                  utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].evaluate */ .Z.evaluate(this.visProp.digits) +
+                  ")"
+              );
+            } else {
+              // Output is a string
+              textComps.push("(" + res + ")");
+            }
+          } else {
+            textComps.push("(" + res + ")");
+          }
+          contentStr = contentStr.slice(j + 8);
+          i = contentStr.indexOf("<value>");
+          j = contentStr.indexOf("</value>");
+        }
+      }
+      // Add trailing string fragment
+      textComps.push(tick + this.escapeTicks(contentStr) + tick);
+
+      return textComps.join(" + ").replace(/&amp;/g, "&");
+    },
+
+    poorMansTeX: function (s) {
+      s = s
+        .replace(/<arc\s*\/*>/g, "&ang;")
+        .replace(/&lt;arc\s*\/*&gt;/g, "&ang;")
+        .replace(/<sqrt\s*\/*>/g, "&radic;")
+        .replace(/&lt;sqrt\s*\/*&gt;/g, "&radic;");
+
+      return this.convertGeonextAndSketchometry2CSS(
+        this.replaceSub(this.replaceSup(s))
+      );
+    },
+
+    escapeTicks: function (s) {
+      return s.replace(/"/g, "%22").replace(/'/g, "%27");
+    },
+
+    unescapeTicks: function (s) {
+      return s.replace(/%22/g, '"').replace(/%27/g, "'");
+    },
+
+    /**
+     * Converts the GEONExT tags <overline> and <arrow> to
+     * HTML span tags with proper CSS formatting.
+     * @private
+     * @see JXG.Text.generateTerm
+     * @see JXG.Text._setText
+     */
+    convertGeonext2CSS: function (s) {
+      if (utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].isString */ .Z.isString(s)) {
+        s = s.replace(
+          /(<|&lt;)overline(>|&gt;)/g,
+          "<span style=text-decoration:overline;>"
+        );
+        s = s.replace(/(<|&lt;)\/overline(>|&gt;)/g, "</span>");
+        s = s.replace(
+          /(<|&lt;)arrow(>|&gt;)/g,
+          "<span style=text-decoration:overline;>"
+        );
+        s = s.replace(/(<|&lt;)\/arrow(>|&gt;)/g, "</span>");
+      }
+
+      return s;
+    },
+
+    /**
+     * Converts the sketchometry tag <sketchofont> to
+     * HTML span tags with proper CSS formatting.
+     * @private
+     * @see JXG.Text.generateTerm
+     * @see JXG.Text._setText
+     */
+    convertSketchometry2CSS: function (s) {
+      if (utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].isString */ .Z.isString(s)) {
+        s = s.replace(
+          /(<|&lt;)sketchofont(>|&gt;)/g,
+          "<span style=font-family:sketchometry-light;font-weight:500;>"
+        );
+        s = s.replace(/(<|&lt;)\/sketchofont(>|&gt;)/g, "</span>");
+        s = s.replace(
+          /(<|&lt;)sketchometry-light(>|&gt;)/g,
+          "<span style=font-family:sketchometry-light;font-weight:500;>"
+        );
+        s = s.replace(/(<|&lt;)\/sketchometry-light(>|&gt;)/g, "</span>");
+      }
+
+      return s;
+    },
+
+    /**
+     * Alias for convertGeonext2CSS and convertSketchometry2CSS
+     * @private
+     * @see JXG.Text.convertGeonext2CSS
+     * @see JXG.Text.convertSketchometry2CSS
+     */
+    convertGeonextAndSketchometry2CSS: function (s) {
+      s = this.convertGeonext2CSS(s);
+      s = this.convertSketchometry2CSS(s);
+      return s;
+    },
+
+    /**
+     * Finds dependencies in a given term and notifies the parents by adding the
+     * dependent object to the found objects child elements.
+     * @param {String} content String containing dependencies for the given object.
+     * @private
+     */
+    notifyParents: function (content) {
+      var search,
+        res = null;
+
+      // revert possible jc replacement
+      content = content.replace(/&lt;value&gt;/g, "<value>");
+      content = content.replace(/&lt;\/value&gt;/g, "</value>");
+
+      do {
+        search = /<value>([\w\s*/^\-+()[\],<>=!]+)<\/value>/;
+        res = search.exec(content);
+
+        if (res !== null) {
+          parser_geonext__WEBPACK_IMPORTED_MODULE_3__/* ["default"].findDependencies */ .Z.findDependencies(this, res[1], this.board);
+          content = content.substr(res.index);
+          content = content.replace(search, "");
+        }
+      } while (res !== null);
+
+      return this;
+    },
+
+    // documented in element.js
+    getParents: function () {
+      var p;
+      if (this.relativeCoords !== undefined) {
+        // Texts with anchor elements, excluding labels
+        p = [
+          this.relativeCoords.usrCoords[1],
+          this.relativeCoords.usrCoords[2],
+          this.orgText,
+        ];
+      } else {
+        // Other texts
+        p = [this.Z(), this.X(), this.Y(), this.orgText];
+      }
+
+      if (this.parents.length !== 0) {
+        p = this.parents;
+      }
+
+      return p;
+    },
+
+    bounds: function () {
+      var c = this.coords.usrCoords;
+
+      if (
+        utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].evaluate */ .Z.evaluate(this.visProp.islabel) ||
+        this.board.unitY === 0 ||
+        this.board.unitX === 0
+      ) {
+        return [0, 0, 0, 0];
+      }
+      return [
+        c[1],
+        c[2] + this.size[1] / this.board.unitY,
+        c[1] + this.size[0] / this.board.unitX,
+        c[2],
+      ];
+    },
+
+    getAnchorX: function () {
+      var a = utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].evaluate */ .Z.evaluate(this.visProp.anchorx);
+      if (a === "auto") {
+        switch (this.visProp.position) {
+          case "top":
+          case "bot":
+            return "middle";
+          case "rt":
+          case "lrt":
+          case "urt":
+            return "left";
+          case "lft":
+          case "llft":
+          case "ulft":
+          default:
+            return "right";
+        }
+      }
+      return a;
+    },
+
+    getAnchorY: function () {
+      var a = utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].evaluate */ .Z.evaluate(this.visProp.anchory);
+      if (a === "auto") {
+        switch (this.visProp.position) {
+          case "top":
+          case "ulft":
+          case "urt":
+            return "bottom";
+          case "bot":
+          case "lrt":
+          case "llft":
+            return "top";
+          case "rt":
+          case "lft":
+          default:
+            return "middle";
+        }
+      }
+      return a;
+    },
+
+    /**
+     * Computes the number of overlaps of a box of w pixels width, h pixels height
+     * and center (x, y)
+     *
+     * @private
+     * @param  {Number} x x-coordinate of the center (screen coordinates)
+     * @param  {Number} y y-coordinate of the center (screen coordinates)
+     * @param  {Number} w width of the box in pixel
+     * @param  {Number} h width of the box in pixel
+     * @return {Number}   Number of overlapping elements
+     */
+    getNumberofConflicts: function (x, y, w, h) {
+      var count = 0,
+        i,
+        obj,
+        le,
+        savePointPrecision;
+
+      // Set the precision of hasPoint to half the max if label isn't too long
+      savePointPrecision = this.board.options.precision.hasPoint;
+      // this.board.options.precision.hasPoint = Math.max(w, h) * 0.5;
+      this.board.options.precision.hasPoint = (w + h) * 0.25;
+      // TODO:
+      // Make it compatible with the objects' visProp.precision attribute
+      for (i = 0, le = this.board.objectsList.length; i < le; i++) {
+        obj = this.board.objectsList[i];
+        if (
+          obj.visPropCalc.visible &&
+          obj.elType !== "axis" &&
+          obj.elType !== "ticks" &&
+          obj !== this.board.infobox &&
+          obj !== this &&
+          obj.hasPoint(x, y)
+        ) {
+          count++;
+        }
+      }
+      this.board.options.precision.hasPoint = savePointPrecision;
+
+      return count;
+    },
+
+    /**
+     * Sets the offset of a label element to the position with the least number
+     * of overlaps with other elements, while retaining the distance to its
+     * anchor element. Twelve different angles are possible.
+     *
+     * @returns {JXG.Text} Reference to the text object.
+     */
+    setAutoPosition: function () {
+      var x,
+        y,
+        cx,
+        cy,
+        anchorCoords,
+        // anchorX, anchorY,
+        w = this.size[0],
+        h = this.size[1],
+        start_angle,
+        angle,
+        optimum = {
+          conflicts: Infinity,
+          angle: 0,
+          r: 0,
+        },
+        max_r,
+        delta_r,
+        conflicts,
+        offset,
+        r,
+        num_positions = 12,
+        step = (2 * Math.PI) / num_positions,
+        j,
+        dx,
+        dy,
+        co,
+        si;
+
+      if (
+        this === this.board.infobox ||
+        !this.visPropCalc.visible ||
+        !utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].evaluate */ .Z.evaluate(this.visProp.islabel) ||
+        !this.element
+      ) {
+        return this;
+      }
+
+      // anchorX = Type.evaluate(this.visProp.anchorx);
+      // anchorY = Type.evaluate(this.visProp.anchory);
+      offset = utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].evaluate */ .Z.evaluate(this.visProp.offset);
+      anchorCoords = this.element.getLabelAnchor();
+      cx = anchorCoords.scrCoords[1];
+      cy = anchorCoords.scrCoords[2];
+
+      // Set dx, dy as the relative position of the center of the label
+      // to its anchor element ignoring anchorx and anchory.
+      dx = offset[0];
+      dy = offset[1];
+
+      conflicts = this.getNumberofConflicts(cx + dx, cy - dy, w, h);
+      if (conflicts === 0) {
+        return this;
+      }
+      // console.log(this.id, conflicts, w, h);
+      // r = Geometry.distance([0, 0], offset, 2);
+
+      r = 12;
+      max_r = 28;
+      delta_r = 0.2 * r;
+
+      start_angle = Math.atan2(dy, dx);
+
+      optimum.conflicts = conflicts;
+      optimum.angle = start_angle;
+      optimum.r = r;
+
+      while (optimum.conflicts > 0 && r < max_r) {
+        for (
+          j = 1, angle = start_angle + step;
+          j < num_positions && optimum.conflicts > 0;
+          j++
+        ) {
+          co = Math.cos(angle);
+          si = Math.sin(angle);
+
+          x = cx + r * co;
+          y = cy - r * si;
+
+          conflicts = this.getNumberofConflicts(x, y, w, h);
+          if (conflicts < optimum.conflicts) {
+            optimum.conflicts = conflicts;
+            optimum.angle = angle;
+            optimum.r = r;
+          }
+          if (optimum.conflicts === 0) {
+            break;
+          }
+          angle += step;
+        }
+        r += delta_r;
+      }
+      // console.log(this.id, "after", optimum)
+      r = optimum.r;
+      co = Math.cos(optimum.angle);
+      si = Math.sin(optimum.angle);
+      this.visProp.offset = [r * co, r * si];
+
+      if (co < -0.2) {
+        this.visProp.anchorx = "right";
+      } else if (co > 0.2) {
+        this.visProp.anchorx = "left";
+      } else {
+        this.visProp.anchorx = "middle";
+      }
+
+      return this;
+    },
+  }
+);
+
+/**
+ * @class Construct and handle texts.
+ *
+ * The coordinates can be relative to the coordinates of an element
+ * given in {@link JXG.Options#text.anchor}.
+ *
+ * MathJaX, HTML and GEONExT syntax can be handled.
+ * @pseudo
+ * @description
+ * @name Text
+ * @augments JXG.Text
+ * @constructor
+ * @type JXG.Text
+ *
+ * @param {number,function_number,function_number,function_String,function} z_,x,y,str Parent elements for text elements.
+ *                     <p>
+ *   Parent elements can be two or three elements of type number, a string containing a GEONE<sub>x</sub>T
+ *   constraint, or a function which takes no parameter and returns a number. Every parent element determines one coordinate. If a coordinate is
+ *   given by a number, the number determines the initial position of a free text. If given by a string or a function that coordinate will be constrained
+ *   that means the user won't be able to change the texts's position directly by mouse because it will be calculated automatically depending on the string
+ *   or the function's return value. If two parent elements are given the coordinates will be interpreted as 2D affine Euclidean coordinates, if three such
+ *   parent elements are given they will be interpreted as homogeneous coordinates.
+ *                     <p>
+ *                     The text to display may be given as string or as function returning a string.
+ *
+ * There is the attribute 'display' which takes the values 'html' or 'internal'. In case of 'html' a HTML division tag is created to display
+ * the text. In this case it is also possible to use ASCIIMathML. Incase of 'internal', a SVG or VML text element is used to display the text.
+ * @see JXG.Text
+ * @example
+ * // Create a fixed text at position [0,1].
+ *   var t1 = board.create('text',[0,1,"Hello World"]);
+ * </pre><div class="jxgbox" id="JXG896013aa-f24e-4e83-ad50-7bc7df23f6b7" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *   var t1_board = JXG.JSXGraph.initBoard('JXG896013aa-f24e-4e83-ad50-7bc7df23f6b7', {boundingbox: [-3, 6, 5, -3], axis: true, showcopyright: false, shownavigation: false});
+ *   var t1 = t1_board.create('text',[0,1,"Hello World"]);
+ * </script><pre>
+ * @example
+ * // Create a variable text at a variable position.
+ *   var s = board.create('slider',[[0,4],[3,4],[-2,0,2]]);
+ *   var graph = board.create('text',
+ *                        [function(x){ return s.Value();}, 1,
+ *                         function(){return "The value of s is"+JXG.toFixed(s.Value(), 2);}
+ *                        ]
+ *                     );
+ * </pre><div class="jxgbox" id="JXG5441da79-a48d-48e8-9e53-75594c384a1c" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *   var t2_board = JXG.JSXGraph.initBoard('JXG5441da79-a48d-48e8-9e53-75594c384a1c', {boundingbox: [-3, 6, 5, -3], axis: true, showcopyright: false, shownavigation: false});
+ *   var s = t2_board.create('slider',[[0,4],[3,4],[-2,0,2]]);
+ *   var t2 = t2_board.create('text',[function(x){ return s.Value();}, 1, function(){return "The value of s is "+JXG.toFixed(s.Value(), 2);}]);
+ * </script><pre>
+ * @example
+ * // Create a text bound to the point A
+ * var p = board.create('point',[0, 1]),
+ *     t = board.create('text',[0, -1,"Hello World"], {anchor: p});
+ *
+ * </pre><div class="jxgbox" id="JXGff5a64b2-2b9a-11e5-8dd9-901b0e1b8723" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXGff5a64b2-2b9a-11e5-8dd9-901b0e1b8723',
+ *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+ *     var p = board.create('point',[0, 1]),
+ *         t = board.create('text',[0, -1,"Hello World"], {anchor: p});
+ *
+ *     })();
+ *
+ * </script><pre>
+ *
+ */
+jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].createText */ .Z.createText = function (board, parents, attributes) {
+  var t,
+    attr = utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].copyAttributes */ .Z.copyAttributes(attributes, board.options, "text"),
+    coords = parents.slice(0, -1),
+    content = parents[parents.length - 1];
+
+  // downwards compatibility
+  attr.anchor = attr.parent || attr.anchor;
+  t = base_coordselement__WEBPACK_IMPORTED_MODULE_7__/* ["default"].create */ .Z.create(jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].Text */ .Z.Text, board, coords, attr, content);
+
+  if (!t) {
+    throw new Error(
+      "JSXGraph: Can't create text with parent types '" +
+        typeof parents[0] +
+        "' and '" +
+        typeof parents[1] +
+        "'." +
+        "\nPossible parent types: [x,y], [z,x,y], [element,transformation]"
+    );
+  }
+
+  if (attr.rotate !== 0 && attr.display === "internal") {
+    // This is the default value, i.e. no rotation
+    t.addRotation(attr.rotate);
+  }
+
+  return t;
+};
+
+jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].registerElement */ .Z.registerElement("text", jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].createText */ .Z.createText);
+
+/**
+ * @class Labels are text objects tied to other elements like points, lines and curves.
+ * Labels are handled internally by JSXGraph, only. There is NO constructor "board.create('label', ...)".
+ *
+ * @pseudo
+ * @description
+ * @name Label
+ * @augments JXG.Text
+ * @constructor
+ * @type JXG.Text
+ */
+//  See element.js#createLabel
+
+/**
+ * [[x,y], [w px, h px], [range]
+ */
+jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].createHTMLSlider */ .Z.createHTMLSlider = function (board, parents, attributes) {
+  var t,
+    par,
+    attr = utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].copyAttributes */ .Z.copyAttributes(attributes, board.options, "htmlslider");
+
+  if (
+    parents.length !== 2 ||
+    parents[0].length !== 2 ||
+    parents[1].length !== 3
+  ) {
+    throw new Error(
+      "JSXGraph: Can't create htmlslider with parent types '" +
+        typeof parents[0] +
+        "' and '" +
+        typeof parents[1] +
+        "'." +
+        "\nPossible parents are: [[x,y], [min, start, max]]"
+    );
+  }
+
+  // backwards compatibility
+  attr.anchor = attr.parent || attr.anchor;
+  attr.fixed = attr.fixed || true;
+
+  par = [
+    parents[0][0],
+    parents[0][1],
+    '<form style="display:inline">' +
+      '<input type="range" /><span></span><input type="text" />' +
+      "</form>",
+  ];
+
+  t = jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].createText */ .Z.createText(board, par, attr);
+  t.type = utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].OBJECT_TYPE_HTMLSLIDER */ .Z.OBJECT_TYPE_HTMLSLIDER;
+
+  t.rendNodeForm = t.rendNode.childNodes[0];
+
+  t.rendNodeRange = t.rendNodeForm.childNodes[0];
+  t.rendNodeRange.min = parents[1][0];
+  t.rendNodeRange.max = parents[1][2];
+  t.rendNodeRange.step = attr.step;
+  t.rendNodeRange.value = parents[1][1];
+
+  t.rendNodeLabel = t.rendNodeForm.childNodes[1];
+  t.rendNodeLabel.id = t.rendNode.id + "_label";
+
+  if (attr.withlabel) {
+    t.rendNodeLabel.innerHTML = t.name + "=";
+  }
+
+  t.rendNodeOut = t.rendNodeForm.childNodes[2];
+  t.rendNodeOut.value = parents[1][1];
+
+  try {
+    t.rendNodeForm.id = t.rendNode.id + "_form";
+    t.rendNodeRange.id = t.rendNode.id + "_range";
+    t.rendNodeOut.id = t.rendNode.id + "_out";
+  } catch (e) {
+    jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].debug */ .Z.debug(e);
+  }
+
+  t.rendNodeRange.style.width = attr.widthrange + "px";
+  t.rendNodeRange.style.verticalAlign = "middle";
+  t.rendNodeOut.style.width = attr.widthout + "px";
+
+  t._val = parents[1][1];
+
+  if (jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].supportsVML */ .Z.supportsVML()) {
+    /*
+     * OnChange event is used for IE browsers
+     * The range element is supported since IE10
+     */
+    utils_env__WEBPACK_IMPORTED_MODULE_4__/* ["default"].addEvent */ .Z.addEvent(t.rendNodeForm, "change", priv.HTMLSliderInputEventHandler, t);
+  } else {
+    /*
+     * OnInput event is used for non-IE browsers
+     */
+    utils_env__WEBPACK_IMPORTED_MODULE_4__/* ["default"].addEvent */ .Z.addEvent(t.rendNodeForm, "input", priv.HTMLSliderInputEventHandler, t);
+  }
+
+  t.Value = function () {
+    return this._val;
+  };
+
+  return t;
+};
+
+jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].registerElement */ .Z.registerElement("htmlslider", jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].createHTMLSlider */ .Z.createHTMLSlider);
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  Text: jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].Text */ .Z.Text,
+  createText: jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].createText */ .Z.createText,
+  createHTMLSlider: jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].createHTMLSlider */ .Z.createHTMLSlider,
+});
+
+
+/***/ }),
+
+/***/ 748:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -20,7 +7314,7 @@ __webpack_require__.r(__webpack_exports__);
 
 // EXPORTS
 __webpack_require__.d(__webpack_exports__, {
-  "default": () => (/* binding */ core_deps)
+  "default": () => (/* binding */ src)
 });
 
 // EXTERNAL MODULE: ./src/jxg.js
@@ -60024,9 +67318,8 @@ jxg/* default.createFunctiongraph3D */.Z.createFunctiongraph3D = function (board
 };
 jxg/* default.registerElement */.Z.registerElement("functiongraph3d", jxg/* default.createFunctiongraph3D */.Z.createFunctiongraph3D);
 
-;// CONCATENATED MODULE: ./build/core.deps.js
+;// CONCATENATED MODULE: ./src/index.js
 /* module decorator */ module = __webpack_require__.hmd(module);
-/*global define: true*/
 
 
 
@@ -60123,7301 +67416,7 @@ if (env/* default.isBrowser */.Z.isBrowser) {
   self.JXG = jxg/* default */.Z;
 }
 
-/* harmony default export */ const core_deps = (jxg/* default */.Z);
-
-
-/***/ }),
-
-/***/ 292:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-/* globals document, ImageData */
-
-const parseFont = __webpack_require__(850)
-
-exports.parseFont = parseFont
-
-exports.createCanvas = function (width, height) {
-  return Object.assign(document.createElement('canvas'), { width: width, height: height })
-}
-
-exports.createImageData = function (array, width, height) {
-  // Browser implementation of ImageData looks at the number of arguments passed
-  switch (arguments.length) {
-    case 0: return new ImageData()
-    case 1: return new ImageData(array)
-    case 2: return new ImageData(array, width)
-    default: return new ImageData(array, width, height)
-  }
-}
-
-exports.loadImage = function (src, options) {
-  return new Promise(function (resolve, reject) {
-    const image = Object.assign(document.createElement('img'), options)
-
-    function cleanup () {
-      image.onload = null
-      image.onerror = null
-    }
-
-    image.onload = function () { cleanup(); resolve(image) }
-    image.onerror = function () { cleanup(); reject(new Error('Failed to load the image "' + src + '"')) }
-
-    image.src = src
-  })
-}
-
-
-/***/ }),
-
-/***/ 850:
-/***/ ((module) => {
-
-"use strict";
-
-
-/**
- * Font RegExp helpers.
- */
-
-const weights = 'bold|bolder|lighter|[1-9]00'
-const styles = 'italic|oblique'
-const variants = 'small-caps'
-const stretches = 'ultra-condensed|extra-condensed|condensed|semi-condensed|semi-expanded|expanded|extra-expanded|ultra-expanded'
-const units = 'px|pt|pc|in|cm|mm|%|em|ex|ch|rem|q'
-const string = '\'([^\']+)\'|"([^"]+)"|[\\w\\s-]+'
-
-// [ [ <‘font-style’> || <font-variant-css21> || <‘font-weight’> || <‘font-stretch’> ]?
-//    <‘font-size’> [ / <‘line-height’> ]? <‘font-family’> ]
-// https://drafts.csswg.org/css-fonts-3/#font-prop
-const weightRe = new RegExp(`(${weights}) +`, 'i')
-const styleRe = new RegExp(`(${styles}) +`, 'i')
-const variantRe = new RegExp(`(${variants}) +`, 'i')
-const stretchRe = new RegExp(`(${stretches}) +`, 'i')
-const sizeFamilyRe = new RegExp(
-  `([\\d\\.]+)(${units}) *((?:${string})( *, *(?:${string}))*)`)
-
-/**
- * Cache font parsing.
- */
-
-const cache = {}
-
-const defaultHeight = 16 // pt, common browser default
-
-/**
- * Parse font `str`.
- *
- * @param {String} str
- * @return {Object} Parsed font. `size` is in device units. `unit` is the unit
- *   appearing in the input string.
- * @api private
- */
-
-module.exports = str => {
-  // Cached
-  if (cache[str]) return cache[str]
-
-  // Try for required properties first.
-  const sizeFamily = sizeFamilyRe.exec(str)
-  if (!sizeFamily) return // invalid
-
-  // Default values and required properties
-  const font = {
-    weight: 'normal',
-    style: 'normal',
-    stretch: 'normal',
-    variant: 'normal',
-    size: parseFloat(sizeFamily[1]),
-    unit: sizeFamily[2],
-    family: sizeFamily[3].replace(/["']/g, '').replace(/ *, */g, ',')
-  }
-
-  // Optional, unordered properties.
-  let weight, style, variant, stretch
-  // Stop search at `sizeFamily.index`
-  const substr = str.substring(0, sizeFamily.index)
-  if ((weight = weightRe.exec(substr))) font.weight = weight[1]
-  if ((style = styleRe.exec(substr))) font.style = style[1]
-  if ((variant = variantRe.exec(substr))) font.variant = variant[1]
-  if ((stretch = stretchRe.exec(substr))) font.stretch = stretch[1]
-
-  // Convert to device units. (`font.unit` is the original unit)
-  // TODO: ch, ex
-  switch (font.unit) {
-    case 'pt':
-      font.size /= 0.75
-      break
-    case 'pc':
-      font.size *= 16
-      break
-    case 'in':
-      font.size *= 96
-      break
-    case 'cm':
-      font.size *= 96.0 / 2.54
-      break
-    case 'mm':
-      font.size *= 96.0 / 25.4
-      break
-    case '%':
-      // TODO disabled because existing unit tests assume 100
-      // font.size *= defaultHeight / 100 / 0.75
-      break
-    case 'em':
-    case 'rem':
-      font.size *= defaultHeight / 0.75
-      break
-    case 'q':
-      font.size *= 96 / 25.4 / 4
-      break
-  }
-
-  return (cache[str] = font)
-}
-
-
-/***/ }),
-
-/***/ 470:
-/***/ ((module) => {
-
-"use strict";
-// 'path' module extracted from Node.js v8.11.1 (only the posix part)
-// transplited with Babel
-
-// Copyright Joyent, Inc. and other Node contributors.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a
-// copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to permit
-// persons to whom the Software is furnished to do so, subject to the
-// following conditions:
-//
-// The above copyright notice and this permission notice shall be included
-// in all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-// USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-
-
-function assertPath(path) {
-  if (typeof path !== 'string') {
-    throw new TypeError('Path must be a string. Received ' + JSON.stringify(path));
-  }
-}
-
-// Resolves . and .. elements in a path with directory names
-function normalizeStringPosix(path, allowAboveRoot) {
-  var res = '';
-  var lastSegmentLength = 0;
-  var lastSlash = -1;
-  var dots = 0;
-  var code;
-  for (var i = 0; i <= path.length; ++i) {
-    if (i < path.length)
-      code = path.charCodeAt(i);
-    else if (code === 47 /*/*/)
-      break;
-    else
-      code = 47 /*/*/;
-    if (code === 47 /*/*/) {
-      if (lastSlash === i - 1 || dots === 1) {
-        // NOOP
-      } else if (lastSlash !== i - 1 && dots === 2) {
-        if (res.length < 2 || lastSegmentLength !== 2 || res.charCodeAt(res.length - 1) !== 46 /*.*/ || res.charCodeAt(res.length - 2) !== 46 /*.*/) {
-          if (res.length > 2) {
-            var lastSlashIndex = res.lastIndexOf('/');
-            if (lastSlashIndex !== res.length - 1) {
-              if (lastSlashIndex === -1) {
-                res = '';
-                lastSegmentLength = 0;
-              } else {
-                res = res.slice(0, lastSlashIndex);
-                lastSegmentLength = res.length - 1 - res.lastIndexOf('/');
-              }
-              lastSlash = i;
-              dots = 0;
-              continue;
-            }
-          } else if (res.length === 2 || res.length === 1) {
-            res = '';
-            lastSegmentLength = 0;
-            lastSlash = i;
-            dots = 0;
-            continue;
-          }
-        }
-        if (allowAboveRoot) {
-          if (res.length > 0)
-            res += '/..';
-          else
-            res = '..';
-          lastSegmentLength = 2;
-        }
-      } else {
-        if (res.length > 0)
-          res += '/' + path.slice(lastSlash + 1, i);
-        else
-          res = path.slice(lastSlash + 1, i);
-        lastSegmentLength = i - lastSlash - 1;
-      }
-      lastSlash = i;
-      dots = 0;
-    } else if (code === 46 /*.*/ && dots !== -1) {
-      ++dots;
-    } else {
-      dots = -1;
-    }
-  }
-  return res;
-}
-
-function _format(sep, pathObject) {
-  var dir = pathObject.dir || pathObject.root;
-  var base = pathObject.base || (pathObject.name || '') + (pathObject.ext || '');
-  if (!dir) {
-    return base;
-  }
-  if (dir === pathObject.root) {
-    return dir + base;
-  }
-  return dir + sep + base;
-}
-
-var posix = {
-  // path.resolve([from ...], to)
-  resolve: function resolve() {
-    var resolvedPath = '';
-    var resolvedAbsolute = false;
-    var cwd;
-
-    for (var i = arguments.length - 1; i >= -1 && !resolvedAbsolute; i--) {
-      var path;
-      if (i >= 0)
-        path = arguments[i];
-      else {
-        if (cwd === undefined)
-          cwd = process.cwd();
-        path = cwd;
-      }
-
-      assertPath(path);
-
-      // Skip empty entries
-      if (path.length === 0) {
-        continue;
-      }
-
-      resolvedPath = path + '/' + resolvedPath;
-      resolvedAbsolute = path.charCodeAt(0) === 47 /*/*/;
-    }
-
-    // At this point the path should be resolved to a full absolute path, but
-    // handle relative paths to be safe (might happen when process.cwd() fails)
-
-    // Normalize the path
-    resolvedPath = normalizeStringPosix(resolvedPath, !resolvedAbsolute);
-
-    if (resolvedAbsolute) {
-      if (resolvedPath.length > 0)
-        return '/' + resolvedPath;
-      else
-        return '/';
-    } else if (resolvedPath.length > 0) {
-      return resolvedPath;
-    } else {
-      return '.';
-    }
-  },
-
-  normalize: function normalize(path) {
-    assertPath(path);
-
-    if (path.length === 0) return '.';
-
-    var isAbsolute = path.charCodeAt(0) === 47 /*/*/;
-    var trailingSeparator = path.charCodeAt(path.length - 1) === 47 /*/*/;
-
-    // Normalize the path
-    path = normalizeStringPosix(path, !isAbsolute);
-
-    if (path.length === 0 && !isAbsolute) path = '.';
-    if (path.length > 0 && trailingSeparator) path += '/';
-
-    if (isAbsolute) return '/' + path;
-    return path;
-  },
-
-  isAbsolute: function isAbsolute(path) {
-    assertPath(path);
-    return path.length > 0 && path.charCodeAt(0) === 47 /*/*/;
-  },
-
-  join: function join() {
-    if (arguments.length === 0)
-      return '.';
-    var joined;
-    for (var i = 0; i < arguments.length; ++i) {
-      var arg = arguments[i];
-      assertPath(arg);
-      if (arg.length > 0) {
-        if (joined === undefined)
-          joined = arg;
-        else
-          joined += '/' + arg;
-      }
-    }
-    if (joined === undefined)
-      return '.';
-    return posix.normalize(joined);
-  },
-
-  relative: function relative(from, to) {
-    assertPath(from);
-    assertPath(to);
-
-    if (from === to) return '';
-
-    from = posix.resolve(from);
-    to = posix.resolve(to);
-
-    if (from === to) return '';
-
-    // Trim any leading backslashes
-    var fromStart = 1;
-    for (; fromStart < from.length; ++fromStart) {
-      if (from.charCodeAt(fromStart) !== 47 /*/*/)
-        break;
-    }
-    var fromEnd = from.length;
-    var fromLen = fromEnd - fromStart;
-
-    // Trim any leading backslashes
-    var toStart = 1;
-    for (; toStart < to.length; ++toStart) {
-      if (to.charCodeAt(toStart) !== 47 /*/*/)
-        break;
-    }
-    var toEnd = to.length;
-    var toLen = toEnd - toStart;
-
-    // Compare paths to find the longest common path from root
-    var length = fromLen < toLen ? fromLen : toLen;
-    var lastCommonSep = -1;
-    var i = 0;
-    for (; i <= length; ++i) {
-      if (i === length) {
-        if (toLen > length) {
-          if (to.charCodeAt(toStart + i) === 47 /*/*/) {
-            // We get here if `from` is the exact base path for `to`.
-            // For example: from='/foo/bar'; to='/foo/bar/baz'
-            return to.slice(toStart + i + 1);
-          } else if (i === 0) {
-            // We get here if `from` is the root
-            // For example: from='/'; to='/foo'
-            return to.slice(toStart + i);
-          }
-        } else if (fromLen > length) {
-          if (from.charCodeAt(fromStart + i) === 47 /*/*/) {
-            // We get here if `to` is the exact base path for `from`.
-            // For example: from='/foo/bar/baz'; to='/foo/bar'
-            lastCommonSep = i;
-          } else if (i === 0) {
-            // We get here if `to` is the root.
-            // For example: from='/foo'; to='/'
-            lastCommonSep = 0;
-          }
-        }
-        break;
-      }
-      var fromCode = from.charCodeAt(fromStart + i);
-      var toCode = to.charCodeAt(toStart + i);
-      if (fromCode !== toCode)
-        break;
-      else if (fromCode === 47 /*/*/)
-        lastCommonSep = i;
-    }
-
-    var out = '';
-    // Generate the relative path based on the path difference between `to`
-    // and `from`
-    for (i = fromStart + lastCommonSep + 1; i <= fromEnd; ++i) {
-      if (i === fromEnd || from.charCodeAt(i) === 47 /*/*/) {
-        if (out.length === 0)
-          out += '..';
-        else
-          out += '/..';
-      }
-    }
-
-    // Lastly, append the rest of the destination (`to`) path that comes after
-    // the common path parts
-    if (out.length > 0)
-      return out + to.slice(toStart + lastCommonSep);
-    else {
-      toStart += lastCommonSep;
-      if (to.charCodeAt(toStart) === 47 /*/*/)
-        ++toStart;
-      return to.slice(toStart);
-    }
-  },
-
-  _makeLong: function _makeLong(path) {
-    return path;
-  },
-
-  dirname: function dirname(path) {
-    assertPath(path);
-    if (path.length === 0) return '.';
-    var code = path.charCodeAt(0);
-    var hasRoot = code === 47 /*/*/;
-    var end = -1;
-    var matchedSlash = true;
-    for (var i = path.length - 1; i >= 1; --i) {
-      code = path.charCodeAt(i);
-      if (code === 47 /*/*/) {
-          if (!matchedSlash) {
-            end = i;
-            break;
-          }
-        } else {
-        // We saw the first non-path separator
-        matchedSlash = false;
-      }
-    }
-
-    if (end === -1) return hasRoot ? '/' : '.';
-    if (hasRoot && end === 1) return '//';
-    return path.slice(0, end);
-  },
-
-  basename: function basename(path, ext) {
-    if (ext !== undefined && typeof ext !== 'string') throw new TypeError('"ext" argument must be a string');
-    assertPath(path);
-
-    var start = 0;
-    var end = -1;
-    var matchedSlash = true;
-    var i;
-
-    if (ext !== undefined && ext.length > 0 && ext.length <= path.length) {
-      if (ext.length === path.length && ext === path) return '';
-      var extIdx = ext.length - 1;
-      var firstNonSlashEnd = -1;
-      for (i = path.length - 1; i >= 0; --i) {
-        var code = path.charCodeAt(i);
-        if (code === 47 /*/*/) {
-            // If we reached a path separator that was not part of a set of path
-            // separators at the end of the string, stop now
-            if (!matchedSlash) {
-              start = i + 1;
-              break;
-            }
-          } else {
-          if (firstNonSlashEnd === -1) {
-            // We saw the first non-path separator, remember this index in case
-            // we need it if the extension ends up not matching
-            matchedSlash = false;
-            firstNonSlashEnd = i + 1;
-          }
-          if (extIdx >= 0) {
-            // Try to match the explicit extension
-            if (code === ext.charCodeAt(extIdx)) {
-              if (--extIdx === -1) {
-                // We matched the extension, so mark this as the end of our path
-                // component
-                end = i;
-              }
-            } else {
-              // Extension does not match, so our result is the entire path
-              // component
-              extIdx = -1;
-              end = firstNonSlashEnd;
-            }
-          }
-        }
-      }
-
-      if (start === end) end = firstNonSlashEnd;else if (end === -1) end = path.length;
-      return path.slice(start, end);
-    } else {
-      for (i = path.length - 1; i >= 0; --i) {
-        if (path.charCodeAt(i) === 47 /*/*/) {
-            // If we reached a path separator that was not part of a set of path
-            // separators at the end of the string, stop now
-            if (!matchedSlash) {
-              start = i + 1;
-              break;
-            }
-          } else if (end === -1) {
-          // We saw the first non-path separator, mark this as the end of our
-          // path component
-          matchedSlash = false;
-          end = i + 1;
-        }
-      }
-
-      if (end === -1) return '';
-      return path.slice(start, end);
-    }
-  },
-
-  extname: function extname(path) {
-    assertPath(path);
-    var startDot = -1;
-    var startPart = 0;
-    var end = -1;
-    var matchedSlash = true;
-    // Track the state of characters (if any) we see before our first dot and
-    // after any path separator we find
-    var preDotState = 0;
-    for (var i = path.length - 1; i >= 0; --i) {
-      var code = path.charCodeAt(i);
-      if (code === 47 /*/*/) {
-          // If we reached a path separator that was not part of a set of path
-          // separators at the end of the string, stop now
-          if (!matchedSlash) {
-            startPart = i + 1;
-            break;
-          }
-          continue;
-        }
-      if (end === -1) {
-        // We saw the first non-path separator, mark this as the end of our
-        // extension
-        matchedSlash = false;
-        end = i + 1;
-      }
-      if (code === 46 /*.*/) {
-          // If this is our first dot, mark it as the start of our extension
-          if (startDot === -1)
-            startDot = i;
-          else if (preDotState !== 1)
-            preDotState = 1;
-      } else if (startDot !== -1) {
-        // We saw a non-dot and non-path separator before our dot, so we should
-        // have a good chance at having a non-empty extension
-        preDotState = -1;
-      }
-    }
-
-    if (startDot === -1 || end === -1 ||
-        // We saw a non-dot character immediately before the dot
-        preDotState === 0 ||
-        // The (right-most) trimmed path component is exactly '..'
-        preDotState === 1 && startDot === end - 1 && startDot === startPart + 1) {
-      return '';
-    }
-    return path.slice(startDot, end);
-  },
-
-  format: function format(pathObject) {
-    if (pathObject === null || typeof pathObject !== 'object') {
-      throw new TypeError('The "pathObject" argument must be of type Object. Received type ' + typeof pathObject);
-    }
-    return _format('/', pathObject);
-  },
-
-  parse: function parse(path) {
-    assertPath(path);
-
-    var ret = { root: '', dir: '', base: '', ext: '', name: '' };
-    if (path.length === 0) return ret;
-    var code = path.charCodeAt(0);
-    var isAbsolute = code === 47 /*/*/;
-    var start;
-    if (isAbsolute) {
-      ret.root = '/';
-      start = 1;
-    } else {
-      start = 0;
-    }
-    var startDot = -1;
-    var startPart = 0;
-    var end = -1;
-    var matchedSlash = true;
-    var i = path.length - 1;
-
-    // Track the state of characters (if any) we see before our first dot and
-    // after any path separator we find
-    var preDotState = 0;
-
-    // Get non-dir info
-    for (; i >= start; --i) {
-      code = path.charCodeAt(i);
-      if (code === 47 /*/*/) {
-          // If we reached a path separator that was not part of a set of path
-          // separators at the end of the string, stop now
-          if (!matchedSlash) {
-            startPart = i + 1;
-            break;
-          }
-          continue;
-        }
-      if (end === -1) {
-        // We saw the first non-path separator, mark this as the end of our
-        // extension
-        matchedSlash = false;
-        end = i + 1;
-      }
-      if (code === 46 /*.*/) {
-          // If this is our first dot, mark it as the start of our extension
-          if (startDot === -1) startDot = i;else if (preDotState !== 1) preDotState = 1;
-        } else if (startDot !== -1) {
-        // We saw a non-dot and non-path separator before our dot, so we should
-        // have a good chance at having a non-empty extension
-        preDotState = -1;
-      }
-    }
-
-    if (startDot === -1 || end === -1 ||
-    // We saw a non-dot character immediately before the dot
-    preDotState === 0 ||
-    // The (right-most) trimmed path component is exactly '..'
-    preDotState === 1 && startDot === end - 1 && startDot === startPart + 1) {
-      if (end !== -1) {
-        if (startPart === 0 && isAbsolute) ret.base = ret.name = path.slice(1, end);else ret.base = ret.name = path.slice(startPart, end);
-      }
-    } else {
-      if (startPart === 0 && isAbsolute) {
-        ret.name = path.slice(1, startDot);
-        ret.base = path.slice(1, end);
-      } else {
-        ret.name = path.slice(startPart, startDot);
-        ret.base = path.slice(startPart, end);
-      }
-      ret.ext = path.slice(startDot, end);
-    }
-
-    if (startPart > 0) ret.dir = path.slice(0, startPart - 1);else if (isAbsolute) ret.dir = '/';
-
-    return ret;
-  },
-
-  sep: '/',
-  delimiter: ':',
-  win32: null,
-  posix: null
-};
-
-posix.posix = posix;
-
-module.exports = posix;
-
-
-/***/ }),
-
-/***/ 351:
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "Z": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var jxg__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(765);
-/*
-    Copyright 2008-2022
-        Matthias Ehmann,
-        Michael Gerhaeuser,
-        Carsten Miller,
-        Bianca Valentin,
-        Andreas Walter,
-        Alfred Wassermann,
-        Peter Wilfahrt
-
-    This file is part of JSXGraph.
-
-    JSXGraph is free software dual licensed under the GNU LGPL or MIT License.
-
-    You can redistribute it and/or modify it under the terms of the
-
-      * GNU Lesser General Public License as published by
-        the Free Software Foundation, either version 3 of the License, or
-        (at your option) any later version
-      OR
-      * MIT License: https://github.com/jsxgraph/jsxgraph/blob/master/LICENSE.MIT
-
-    JSXGraph is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
-
-    You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
-    and <http://opensource.org/licenses/MIT/>.
- */
-
-/*global JXG: true, define: true*/
-/*jslint nomen: true, plusplus: true*/
-
-/* depends:
- jxg
- */
-
-
-
-var major = 1,
-  minor = 4,
-  patch = 7,
-  add = "dev", //'dev'
-  version = major + "." + minor + "." + patch + (add ? "-" + add : ""),
-  constants;
-
-constants = /** @lends JXG */ {
-  /**
-   * Constant: the currently used JSXGraph version.
-   *
-   * @name JXG.version
-   * @type String
-   */
-  version: version,
-
-  /**
-   * Constant: the small gray version indicator in the top left corner of every JSXGraph board (if
-   * showCopyright is not set to false on board creation).
-   *
-   * @name JXG.licenseText
-   * @type String
-   */
-  licenseText:
-    "JSXGraph v" + version + " Copyright (C) see https://jsxgraph.org",
-
-  /**
-   *  Constant: user coordinates relative to the coordinates system defined by the bounding box.
-   *  @name JXG.COORDS_BY_USER
-   *  @type Number
-   */
-  COORDS_BY_USER: 0x0001,
-
-  /**
-   *  Constant: screen coordinates in pixel relative to the upper left corner of the div element.
-   *  @name JXG.COORDS_BY_SCREEN
-   *  @type Number
-   */
-  COORDS_BY_SCREEN: 0x0002,
-
-  // object types
-  OBJECT_TYPE_ARC: 1,
-  OBJECT_TYPE_ARROW: 2,
-  OBJECT_TYPE_AXIS: 3,
-  OBJECT_TYPE_AXISPOINT: 4,
-  OBJECT_TYPE_TICKS: 5,
-  OBJECT_TYPE_CIRCLE: 6,
-  OBJECT_TYPE_CONIC: 7,
-  OBJECT_TYPE_CURVE: 8,
-  OBJECT_TYPE_GLIDER: 9,
-  OBJECT_TYPE_IMAGE: 10,
-  OBJECT_TYPE_LINE: 11,
-  OBJECT_TYPE_POINT: 12,
-  OBJECT_TYPE_SLIDER: 13,
-  OBJECT_TYPE_CAS: 14,
-  OBJECT_TYPE_GXTCAS: 15,
-  OBJECT_TYPE_POLYGON: 16,
-  OBJECT_TYPE_SECTOR: 17,
-  OBJECT_TYPE_TEXT: 18,
-  OBJECT_TYPE_ANGLE: 19,
-  OBJECT_TYPE_INTERSECTION: 20,
-  OBJECT_TYPE_TURTLE: 21,
-  OBJECT_TYPE_VECTOR: 22,
-  OBJECT_TYPE_OPROJECT: 23,
-  OBJECT_TYPE_GRID: 24,
-  OBJECT_TYPE_TANGENT: 25,
-  OBJECT_TYPE_HTMLSLIDER: 26,
-  OBJECT_TYPE_CHECKBOX: 27,
-  OBJECT_TYPE_INPUT: 28,
-  OBJECT_TYPE_BUTTON: 29,
-  OBJECT_TYPE_TRANSFORMATION: 30,
-  OBJECT_TYPE_FOREIGNOBJECT: 31,
-
-  OBJECT_TYPE_VIEW3D: 32,
-  OBJECT_TYPE_POINT3D: 33,
-  OBJECT_TYPE_LINE3D: 34,
-  OBJECT_TYPE_PLANE3D: 35,
-  OBJECT_TYPE_CURVE3D: 36,
-  OBJECT_TYPE_SURFACE3D: 37,
-
-  // IMPORTANT:
-  // ----------
-  // For being able to differentiate between the (sketchometry specific) SPECIAL_OBJECT_TYPEs and
-  // (core specific) OBJECT_TYPEs, the non-sketchometry types MUST NOT be changed
-  // to values > 100.
-
-  // object classes
-  OBJECT_CLASS_POINT: 1,
-  OBJECT_CLASS_LINE: 2,
-  OBJECT_CLASS_CIRCLE: 3,
-  OBJECT_CLASS_CURVE: 4,
-  OBJECT_CLASS_AREA: 5,
-  OBJECT_CLASS_OTHER: 6,
-  OBJECT_CLASS_TEXT: 7,
-  OBJECT_CLASS_3D: 8,
-
-  // SketchReader constants
-  GENTYPE_ABC: 1, // unused
-  GENTYPE_AXIS: 2,
-  GENTYPE_MID: 3,
-
-  /**
-   * @ignore
-   * @deprecated, now use {@link JXG.GENTYPE_REFLECTION_ON_LINE}
-   *
-   */
-  GENTYPE_REFLECTION: 4,
-  /**
-   * @ignore
-   * @deprecated, now use {@link JXG.GENTYPE_REFLECTION_ON_POINT}
-   */
-  GENTYPE_MIRRORELEMENT: 5,
-
-  GENTYPE_REFLECTION_ON_LINE: 4,
-  GENTYPE_REFLECTION_ON_POINT: 5,
-  GENTYPE_TANGENT: 6,
-  GENTYPE_PARALLEL: 7,
-  GENTYPE_BISECTORLINES: 8,
-  GENTYPE_BOARDIMG: 9,
-  GENTYPE_BISECTOR: 10,
-  GENTYPE_NORMAL: 11,
-  GENTYPE_POINT: 12,
-  GENTYPE_GLIDER: 13,
-  GENTYPE_INTERSECTION: 14,
-  GENTYPE_CIRCLE: 15,
-  /**
-   * @ignore @deprecated NOT USED ANY MORE SINCE SKETCHOMETRY 2.0 (only for old constructions needed)
-   */
-  GENTYPE_CIRCLE2POINTS: 16,
-
-  GENTYPE_LINE: 17,
-  GENTYPE_TRIANGLE: 18,
-  GENTYPE_QUADRILATERAL: 19,
-  GENTYPE_TEXT: 20,
-  GENTYPE_POLYGON: 21,
-  GENTYPE_REGULARPOLYGON: 22,
-  GENTYPE_SECTOR: 23,
-  GENTYPE_ANGLE: 24,
-  GENTYPE_PLOT: 25,
-  GENTYPE_SLIDER: 26,
-  GENTYPE_TRUNCATE: 27,
-  GENTYPE_JCODE: 28,
-  GENTYPE_MOVEMENT: 29,
-  GENTYPE_COMBINED: 30,
-  GENTYPE_RULER: 31,
-  GENTYPE_SLOPETRIANGLE: 32,
-  GENTYPE_PERPSEGMENT: 33,
-  GENTYPE_LABELMOVEMENT: 34,
-  GENTYPE_VECTOR: 35,
-  GENTYPE_NONREFLEXANGLE: 36,
-  GENTYPE_REFLEXANGLE: 37,
-  GENTYPE_PATH: 38,
-  GENTYPE_DERIVATIVE: 39,
-  // 40 // unused ...
-  GENTYPE_DELETE: 41,
-  GENTYPE_COPY: 42,
-  GENTYPE_MIRROR: 43,
-  GENTYPE_ROTATE: 44,
-  GENTYPE_ABLATION: 45,
-  GENTYPE_MIGRATE: 46,
-  GENTYPE_VECTORCOPY: 47,
-  GENTYPE_POLYGONCOPY: 48,
-  /**
-   * Constants
-   * @name Constants
-   * @namespace
-   */ //        GENTYPE_TRANSFORM: 48, // unused
-  // 49 ... 50 // unused ...
-
-  // IMPORTANT:
-  // ----------
-  // For being able to differentiate between the (GUI-specific) CTX and
-  // (CORE-specific) non-CTX steps, the non-CTX steps MUST NOT be changed
-  // to values > 50.
-
-  GENTYPE_CTX_TYPE_G: 51,
-  GENTYPE_CTX_TYPE_P: 52,
-  GENTYPE_CTX_TRACE: 53,
-  GENTYPE_CTX_VISIBILITY: 54,
-  GENTYPE_CTX_CCVISIBILITY: 55, // unused
-  GENTYPE_CTX_MPVISIBILITY: 56,
-  GENTYPE_CTX_WITHLABEL: 57,
-  GENTYPE_CTX_LABEL: 58,
-  GENTYPE_CTX_FIXED: 59,
-  GENTYPE_CTX_STROKEWIDTH: 60,
-  GENTYPE_CTX_LABELSIZE: 61,
-  GENTYPE_CTX_SIZE: 62,
-  GENTYPE_CTX_FACE: 63,
-  GENTYPE_CTX_STRAIGHT: 64,
-  GENTYPE_CTX_ARROW: 65,
-  GENTYPE_CTX_COLOR: 66,
-  GENTYPE_CTX_RADIUS: 67,
-  GENTYPE_CTX_COORDS: 68,
-  GENTYPE_CTX_TEXT: 69,
-  GENTYPE_CTX_ANGLERADIUS: 70,
-  GENTYPE_CTX_DOTVISIBILITY: 71,
-  GENTYPE_CTX_FILLOPACITY: 72,
-  GENTYPE_CTX_PLOT: 73,
-  GENTYPE_CTX_SCALE: 74,
-  GENTYPE_CTX_INTVAL: 75,
-  GENTYPE_CTX_POINT1: 76,
-  GENTYPE_CTX_POINT2: 77,
-  GENTYPE_CTX_LABELSTICKY: 78,
-  GENTYPE_CTX_TYPE_I: 79,
-  GENTYPE_CTX_HASINNERPOINTS: 80,
-  GENTYPE_CTX_SNAPWIDTH: 81,
-  GENTYPE_CTX_SNAPTOGRID: 82,
-};
-
-jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].extendConstants */ .Z.extendConstants(jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"] */ .Z, constants);
-
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (constants);
-
-
-/***/ }),
-
-/***/ 705:
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "Z": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var jxg__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(765);
-/* harmony import */ var base_constants__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(351);
-/* harmony import */ var utils_event__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(88);
-/* harmony import */ var utils_type__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(109);
-/* harmony import */ var math_math__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(275);
-/*
-    Copyright 2008-2022
-        Matthias Ehmann,
-        Michael Gerhaeuser,
-        Carsten Miller,
-        Bianca Valentin,
-        Alfred Wassermann,
-        Peter Wilfahrt
-
-    This file is part of JSXGraph.
-
-    JSXGraph is free software dual licensed under the GNU LGPL or MIT License.
-
-    You can redistribute it and/or modify it under the terms of the
-
-      * GNU Lesser General Public License as published by
-        the Free Software Foundation, either version 3 of the License, or
-        (at your option) any later version
-      OR
-      * MIT License: https://github.com/jsxgraph/jsxgraph/blob/master/LICENSE.MIT
-
-    JSXGraph is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
-
-    You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
-    and <http://opensource.org/licenses/MIT/>.
- */
-
-/*global JXG: true, define: true, AMprocessNode: true, MathJax: true, document: true */
-/*jslint nomen: true, plusplus: true*/
-
-/* depends:
- jxg
- base/constants
- utils/event
- math/math
- */
-
-
-
-
-
-
-
-/**
- * @fileoverview In this file the Coords object is defined, a class to manage all
- * properties and methods coordinates usually have.
- */
-
-/**
- * Constructs a new Coordinates object.
- * @class This is the Coordinates class.
- * All members a coordinate has to provide
- * are defined here.
- * @param {Number} method The type of coordinates given by the user. Accepted values are <b>COORDS_BY_SCREEN</b> and <b>COORDS_BY_USER</b>.
- * @param {Array} coordinates An array of affine coordinates.
- * @param {JXG.Board} board A reference to a board.
- * @oaram {Boolean} [emitter=true]
- * @borrows JXG.EventEmitter#on as this.on
- * @borrows JXG.EventEmitter#off as this.off
- * @borrows JXG.EventEmitter#triggerEventHandlers as this.triggerEventHandlers
- * @borrows JXG.EventEmitter#eventHandlers as this.eventHandlers
- * @constructor
- */
-jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].Coords */ .Z.Coords = function (method, coordinates, board, emitter) {
-  /**
-   * Stores the board the object is used on.
-   * @type JXG.Board
-   */
-  this.board = board;
-
-  /**
-   * Stores coordinates for user view as homogeneous coordinates.
-   * @type Array
-   */
-  this.usrCoords = [];
-  //this.usrCoords = new Float64Array(3);
-
-  /**
-   * Stores coordinates for screen view as homogeneous coordinates.
-   * @type Array
-   */
-  this.scrCoords = [];
-  //this.scrCoords = new Float64Array(3);
-
-  /**
-   * If true, this coordinates object will emit update events every time
-   * the coordinates are set.
-   * @type boolean
-   * @default true
-   */
-  this.emitter = !utils_type__WEBPACK_IMPORTED_MODULE_3__/* ["default"].exists */ .Z.exists(emitter) || emitter;
-
-  if (this.emitter) {
-    utils_event__WEBPACK_IMPORTED_MODULE_2__/* ["default"].eventify */ .Z.eventify(this);
-  }
-  this.setCoordinates(method, coordinates, false, true);
-};
-
-jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].extend */ .Z.extend(
-  jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].Coords.prototype */ .Z.Coords.prototype,
-  /** @lends JXG.Coords.prototype */ {
-    /**
-     * Normalize homogeneous coordinates
-     * @private
-     */
-    normalizeUsrCoords: function () {
-      if (Math.abs(this.usrCoords[0]) > math_math__WEBPACK_IMPORTED_MODULE_4__/* ["default"].eps */ .Z.eps) {
-        this.usrCoords[1] /= this.usrCoords[0];
-        this.usrCoords[2] /= this.usrCoords[0];
-        this.usrCoords[0] = 1.0;
-      }
-    },
-
-    /**
-     * Compute screen coordinates out of given user coordinates.
-     * @private
-     */
-    usr2screen: function (doRound) {
-      var mround = Math.round, // Is faster on IE, maybe slower with JIT compilers
-        b = this.board,
-        uc = this.usrCoords,
-        oc = b.origin.scrCoords;
-
-      if (doRound === true) {
-        this.scrCoords[0] = mround(uc[0]);
-        this.scrCoords[1] = mround(uc[0] * oc[1] + uc[1] * b.unitX);
-        this.scrCoords[2] = mround(uc[0] * oc[2] - uc[2] * b.unitY);
-      } else {
-        this.scrCoords[0] = uc[0];
-        this.scrCoords[1] = uc[0] * oc[1] + uc[1] * b.unitX;
-        this.scrCoords[2] = uc[0] * oc[2] - uc[2] * b.unitY;
-      }
-    },
-
-    /**
-     * Compute user coordinates out of given screen coordinates.
-     * @private
-     */
-    screen2usr: function () {
-      var o = this.board.origin.scrCoords,
-        sc = this.scrCoords,
-        b = this.board;
-
-      this.usrCoords[0] = 1.0;
-      this.usrCoords[1] = (sc[1] - o[1]) / b.unitX;
-      this.usrCoords[2] = (o[2] - sc[2]) / b.unitY;
-    },
-
-    /**
-     * Calculate distance of one point to another.
-     * @param {Number} coord_type The type of coordinates used here. Possible values are <b>JXG.COORDS_BY_USER</b> and <b>JXG.COORDS_BY_SCREEN</b>.
-     * @param {JXG.Coords} coordinates The Coords object to which the distance is calculated.
-     * @returns {Number} The distance
-     */
-    distance: function (coord_type, coordinates) {
-      var sum = 0,
-        c,
-        ucr = this.usrCoords,
-        scr = this.scrCoords,
-        f;
-
-      if (coord_type === base_constants__WEBPACK_IMPORTED_MODULE_1__/* ["default"].COORDS_BY_USER */ .Z.COORDS_BY_USER) {
-        c = coordinates.usrCoords;
-        f = ucr[0] - c[0];
-        sum = f * f;
-
-        if (sum > math_math__WEBPACK_IMPORTED_MODULE_4__/* ["default"].eps */ .Z.eps * math_math__WEBPACK_IMPORTED_MODULE_4__/* ["default"].eps */ .Z.eps) {
-          return Number.POSITIVE_INFINITY;
-        }
-        f = ucr[1] - c[1];
-        sum += f * f;
-        f = ucr[2] - c[2];
-        sum += f * f;
-      } else {
-        c = coordinates.scrCoords;
-        //f = scr[0]-c[0];
-        //sum = f*f;
-        f = scr[1] - c[1];
-        sum += f * f;
-        f = scr[2] - c[2];
-        sum += f * f;
-      }
-
-      return Math.sqrt(sum);
-    },
-
-    /**
-     * Set coordinates by either user coordinates or screen coordinates and recalculate the other one.
-     * @param {Number} coord_type The type of coordinates used here. Possible values are <b>COORDS_BY_USER</b> and <b>COORDS_BY_SCREEN</b>.
-     * @param {Array} coordinates An array of affine coordinates the Coords object is set to.
-     * @param {Boolean} [doRound=true] flag If true or null round the coordinates in usr2screen. This is used in smooth curve plotting.
-     * The IE needs rounded coordinates. Id doRound==false we have to round in updatePathString.
-     * @param {Boolean} [noevent=false]
-     * @returns {JXG.Coords} Reference to the coords object.
-     */
-    setCoordinates: function (coord_type, coordinates, doRound, noevent) {
-      var uc = this.usrCoords,
-        sc = this.scrCoords,
-        // Original values
-        ou = [uc[0], uc[1], uc[2]],
-        os = [sc[0], sc[1], sc[2]];
-
-      if (coord_type === base_constants__WEBPACK_IMPORTED_MODULE_1__/* ["default"].COORDS_BY_USER */ .Z.COORDS_BY_USER) {
-        if (coordinates.length === 2) {
-          // Euclidean coordinates
-          uc[0] = 1.0;
-          uc[1] = coordinates[0];
-          uc[2] = coordinates[1];
-        } else {
-          // Homogeneous coordinates (normalized)
-          uc[0] = coordinates[0];
-          uc[1] = coordinates[1];
-          uc[2] = coordinates[2];
-          this.normalizeUsrCoords();
-        }
-        this.usr2screen(doRound);
-      } else {
-        if (coordinates.length === 2) {
-          // Euclidean coordinates
-          sc[1] = coordinates[0];
-          sc[2] = coordinates[1];
-        } else {
-          // Homogeneous coordinates (normalized)
-          sc[1] = coordinates[1];
-          sc[2] = coordinates[2];
-        }
-        this.screen2usr();
-      }
-
-      if (this.emitter && !noevent && (os[1] !== sc[1] || os[2] !== sc[2])) {
-        this.triggerEventHandlers(["update"], [ou, os]);
-      }
-
-      return this;
-    },
-
-    /**
-     * Copy array, either scrCoords or usrCoords
-     * Uses slice() in case of standard arrays and set() in case of
-     * typed arrays.
-     * @private
-     * @param {String} obj Either 'scrCoords' or 'usrCoords'
-     * @param {Number} offset Offset, defaults to 0 if not given
-     * @returns {Array} Returns copy of the coords array either as standard array or as
-     *   typed array.
-     */
-    copy: function (obj, offset) {
-      if (offset === undefined) {
-        offset = 0;
-      }
-
-      return this[obj].slice(offset);
-    },
-
-    /**
-     * Test if one of the usrCoords is NaN or the coordinates are infinite.
-     * @returns {Boolean} true if the coordinates are finite, false otherwise.
-     */
-    isReal: function () {
-      return (
-        !isNaN(this.usrCoords[1] + this.usrCoords[2]) &&
-        Math.abs(this.usrCoords[0]) > math_math__WEBPACK_IMPORTED_MODULE_4__/* ["default"].eps */ .Z.eps
-      );
-    },
-
-    /**
-     * Triggered whenever the coordinates change.
-     * @name JXG.Coords#update
-     * @param {Array} ou Old user coordinates
-     * @param {Array} os Old screen coordinates
-     * @event
-     */
-    __evt__update: function (ou, os) {},
-
-    /**
-     * @ignore
-     */
-    __evt: function () {},
-  }
-);
-
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].Coords */ .Z.Coords);
-
-
-/***/ }),
-
-/***/ 218:
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "Z": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var jxg__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(765);
-/* harmony import */ var math_math__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(275);
-/* harmony import */ var math_geometry__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(922);
-/* harmony import */ var math_numerics__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(336);
-/* harmony import */ var math_statistics__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(309);
-/* harmony import */ var base_coords__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(705);
-/* harmony import */ var base_constants__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(351);
-/* harmony import */ var utils_type__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(109);
-/*
-    Copyright 2008-2022
-        Matthias Ehmann,
-        Michael Gerhaeuser,
-        Carsten Miller,
-        Alfred Wassermann
-
-    This file is part of JSXGraph.
-
-    JSXGraph is free software dual licensed under the GNU LGPL or MIT License.
-
-    You can redistribute it and/or modify it under the terms of the
-
-      * GNU Lesser General Public License as published by
-        the Free Software Foundation, either version 3 of the License, or
-        (at your option) any later version
-      OR
-      * MIT License: https://github.com/jsxgraph/jsxgraph/blob/master/LICENSE.MIT
-
-    JSXGraph is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
-
-    You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
-    and <http://opensource.org/licenses/MIT/>.
- */
-
-/*global JXG: true, define: true, console: true, window: true*/
-/*jslint nomen: true, plusplus: true*/
-
-/* depends:
- jxg
- options
- math/math
- math/geometry
- math/numerics
- base/coords
- base/constants
- base/element
- parser/geonext
- utils/type
-  elements:
-   transform
- */
-
-/**
- * @fileoverview The geometry object CoordsElement is defined in this file.
- * This object provides the coordinate handling of points, images and texts.
- */
-
-
-
-
-
-
-
-
-
-
-/**
- * An element containing coords is the basic geometric element. Based on points lines and circles can be constructed which can be intersected
- * which in turn are points again which can be used to construct new lines, circles, polygons, etc. This class holds methods for
- * all kind of coordinate elements like points, texts and images.
- * @class Creates a new coords element object. Do not use this constructor to create an element.
- *
- * @private
- * @augments JXG.GeometryElement
- * @param {Array} coordinates An array with the affine user coordinates of the point.
- * {@link JXG.Options#elements}, and - optionally - a name and an id.
- */
-jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].CoordsElement */ .Z.CoordsElement = function (coordinates, isLabel) {
-  var i;
-
-  if (!utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].exists */ .Z.exists(coordinates)) {
-    coordinates = [1, 0, 0];
-  }
-
-  for (i = 0; i < coordinates.length; ++i) {
-    coordinates[i] = parseFloat(coordinates[i]);
-  }
-
-  /**
-   * Coordinates of the element.
-   * @type JXG.Coords
-   * @private
-   */
-  this.coords = new base_coords__WEBPACK_IMPORTED_MODULE_5__/* ["default"] */ .Z(base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].COORDS_BY_USER */ .Z.COORDS_BY_USER, coordinates, this.board);
-  this.initialCoords = new base_coords__WEBPACK_IMPORTED_MODULE_5__/* ["default"] */ .Z(
-    base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].COORDS_BY_USER */ .Z.COORDS_BY_USER,
-    coordinates,
-    this.board
-  );
-
-  /**
-   * Relative position on a slide element (line, circle, curve) if element is a glider on this element.
-   * @type Number
-   * @private
-   */
-  this.position = null;
-
-  /**
-   * True if there the method this.updateConstraint() has been set. It is
-   * probably different from the prototype function() {return this;}.
-   * Used in updateCoords fo glider elements.
-   *
-   * @see JXG.CoordsElement#updateCoords
-   * @type Boolean
-   * @private
-   */
-  this.isConstrained = false;
-
-  /**
-   * Determines whether the element slides on a polygon if point is a glider.
-   * @type Boolean
-   * @default false
-   * @private
-   */
-  this.onPolygon = false;
-
-  /**
-   * When used as a glider this member stores the object, where to glide on.
-   * To set the object to glide on use the method
-   * {@link JXG.Point#makeGlider} and DO NOT set this property directly
-   * as it will break the dependency tree.
-   * @type JXG.GeometryElement
-   */
-  this.slideObject = null;
-
-  /**
-   * List of elements the element is bound to, i.e. the element glides on.
-   * Only the last entry is active.
-   * Use {@link JXG.Point#popSlideObject} to remove the currently active slideObject.
-   */
-  this.slideObjects = [];
-
-  /**
-   * A {@link JXG.CoordsElement#updateGlider} call is usually followed
-   * by a general {@link JXG.Board#update} which calls
-   * {@link JXG.CoordsElement#updateGliderFromParent}.
-   * To prevent double updates, {@link JXG.CoordsElement#needsUpdateFromParent}
-   * is set to false in updateGlider() and reset to true in the following call to
-   * {@link JXG.CoordsElement#updateGliderFromParent}
-   * @type Boolean
-   */
-  this.needsUpdateFromParent = true;
-
-  /**
-   * Stores the groups of this element in an array of Group.
-   * @type Array
-   * @see JXG.Group
-   * @private
-   */
-  this.groups = [];
-
-  /*
-   * Do we need this?
-   */
-  this.Xjc = null;
-  this.Yjc = null;
-
-  // documented in GeometryElement
-  this.methodMap = utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].deepCopy */ .Z.deepCopy(this.methodMap, {
-    move: "moveTo",
-    moveTo: "moveTo",
-    moveAlong: "moveAlong",
-    visit: "visit",
-    glide: "makeGlider",
-    makeGlider: "makeGlider",
-    intersect: "makeIntersection",
-    makeIntersection: "makeIntersection",
-    X: "X",
-    Y: "Y",
-    free: "free",
-    setPosition: "setGliderPosition",
-    setGliderPosition: "setGliderPosition",
-    addConstraint: "addConstraint",
-    dist: "Dist",
-    onPolygon: "onPolygon",
-  });
-
-  /*
-   * this.element may have been set by the object constructor.
-   */
-  if (utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].exists */ .Z.exists(this.element)) {
-    this.addAnchor(coordinates, isLabel);
-  }
-  this.isDraggable = true;
-};
-
-jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].extend */ .Z.extend(
-  jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].CoordsElement.prototype */ .Z.CoordsElement.prototype,
-  /** @lends JXG.CoordsElement.prototype */ {
-    /**
-     * Dummy function for unconstrained points or gliders.
-     * @private
-     */
-    updateConstraint: function () {
-      return this;
-    },
-
-    /**
-     * Updates the coordinates of the element.
-     * @private
-     */
-    updateCoords: function (fromParent) {
-      if (!this.needsUpdate) {
-        return this;
-      }
-
-      if (!utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].exists */ .Z.exists(fromParent)) {
-        fromParent = false;
-      }
-
-      if (!utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].evaluate */ .Z.evaluate(this.visProp.frozen)) {
-        this.updateConstraint();
-      }
-
-      /*
-       * We need to calculate the new coordinates no matter of the elements visibility because
-       * a child could be visible and depend on the coordinates of the element/point (e.g. perpendicular).
-       *
-       * Check if the element is a glider and calculate new coords in dependency of this.slideObject.
-       * This function is called with fromParent==true in case it is a glider element for example if
-       * the defining elements of the line or circle have been changed.
-       */
-      if (this.type === base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_TYPE_GLIDER */ .Z.OBJECT_TYPE_GLIDER) {
-        if (this.isConstrained) {
-          fromParent = false;
-        }
-
-        if (fromParent) {
-          this.updateGliderFromParent();
-        } else {
-          this.updateGlider();
-        }
-      }
-
-      this.updateTransform(fromParent);
-
-      return this;
-    },
-
-    /**
-     * Update of glider in case of dragging the glider or setting the postion of the glider.
-     * The relative position of the glider has to be updated.
-     *
-     * In case of a glider on a line:
-     * If the second point is an ideal point, then -1 < this.position < 1,
-     * this.position==+/-1 equals point2, this.position==0 equals point1
-     *
-     * If the first point is an ideal point, then 0 < this.position < 2
-     * this.position==0  or 2 equals point1, this.position==1 equals point2
-     *
-     * @private
-     */
-    updateGlider: function () {
-      var i,
-        p1c,
-        p2c,
-        d,
-        v,
-        poly,
-        cc,
-        pos,
-        sgn,
-        alpha,
-        beta,
-        delta = 2.0 * Math.PI,
-        angle,
-        cp,
-        c,
-        invMat,
-        newCoords,
-        newPos,
-        doRound = false,
-        ev_sw,
-        slide = this.slideObject,
-        res,
-        cu,
-        slides = [],
-        isTransformed;
-
-      this.needsUpdateFromParent = false;
-      if (slide.elementClass === base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_CLASS_CIRCLE */ .Z.OBJECT_CLASS_CIRCLE) {
-        if (utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].evaluate */ .Z.evaluate(this.visProp.isgeonext)) {
-          delta = 1.0;
-        }
-        newCoords = math_geometry__WEBPACK_IMPORTED_MODULE_2__/* ["default"].projectPointToCircle */ .Z.projectPointToCircle(this, slide, this.board);
-        newPos =
-          math_geometry__WEBPACK_IMPORTED_MODULE_2__/* ["default"].rad */ .Z.rad(
-            [slide.center.X() + 1.0, slide.center.Y()],
-            slide.center,
-            this
-          ) / delta;
-      } else if (slide.elementClass === base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_CLASS_LINE */ .Z.OBJECT_CLASS_LINE) {
-        /*
-         * onPolygon==true: the point is a slider on a segment and this segment is one of the
-         * "borders" of a polygon.
-         * This is a GEONExT feature.
-         */
-        if (this.onPolygon) {
-          p1c = slide.point1.coords.usrCoords;
-          p2c = slide.point2.coords.usrCoords;
-          i = 1;
-          d = p2c[i] - p1c[i];
-
-          if (Math.abs(d) < math_math__WEBPACK_IMPORTED_MODULE_1__/* ["default"].eps */ .Z.eps) {
-            i = 2;
-            d = p2c[i] - p1c[i];
-          }
-
-          cc = math_geometry__WEBPACK_IMPORTED_MODULE_2__/* ["default"].projectPointToLine */ .Z.projectPointToLine(this, slide, this.board);
-          pos = (cc.usrCoords[i] - p1c[i]) / d;
-          poly = slide.parentPolygon;
-
-          if (pos < 0) {
-            for (i = 0; i < poly.borders.length; i++) {
-              if (slide === poly.borders[i]) {
-                slide =
-                  poly.borders[
-                    (i - 1 + poly.borders.length) % poly.borders.length
-                  ];
-                break;
-              }
-            }
-          } else if (pos > 1.0) {
-            for (i = 0; i < poly.borders.length; i++) {
-              if (slide === poly.borders[i]) {
-                slide =
-                  poly.borders[
-                    (i + 1 + poly.borders.length) % poly.borders.length
-                  ];
-                break;
-              }
-            }
-          }
-
-          // If the slide object has changed, save the change to the glider.
-          if (slide.id !== this.slideObject.id) {
-            this.slideObject = slide;
-          }
-        }
-
-        p1c = slide.point1.coords;
-        p2c = slide.point2.coords;
-
-        // Distance between the two defining points
-        d = p1c.distance(base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].COORDS_BY_USER */ .Z.COORDS_BY_USER, p2c);
-
-        // The defining points are identical
-        if (d < math_math__WEBPACK_IMPORTED_MODULE_1__/* ["default"].eps */ .Z.eps) {
-          //this.coords.setCoordinates(Const.COORDS_BY_USER, p1c);
-          newCoords = p1c;
-          doRound = true;
-          newPos = 0.0;
-        } else {
-          newCoords = math_geometry__WEBPACK_IMPORTED_MODULE_2__/* ["default"].projectPointToLine */ .Z.projectPointToLine(this, slide, this.board);
-          p1c = p1c.usrCoords.slice(0);
-          p2c = p2c.usrCoords.slice(0);
-
-          // The second point is an ideal point
-          if (Math.abs(p2c[0]) < math_math__WEBPACK_IMPORTED_MODULE_1__/* ["default"].eps */ .Z.eps) {
-            i = 1;
-            d = p2c[i];
-
-            if (Math.abs(d) < math_math__WEBPACK_IMPORTED_MODULE_1__/* ["default"].eps */ .Z.eps) {
-              i = 2;
-              d = p2c[i];
-            }
-
-            d = (newCoords.usrCoords[i] - p1c[i]) / d;
-            sgn = d >= 0 ? 1 : -1;
-            d = Math.abs(d);
-            newPos = (sgn * d) / (d + 1);
-
-            // The first point is an ideal point
-          } else if (Math.abs(p1c[0]) < math_math__WEBPACK_IMPORTED_MODULE_1__/* ["default"].eps */ .Z.eps) {
-            i = 1;
-            d = p1c[i];
-
-            if (Math.abs(d) < math_math__WEBPACK_IMPORTED_MODULE_1__/* ["default"].eps */ .Z.eps) {
-              i = 2;
-              d = p1c[i];
-            }
-
-            d = (newCoords.usrCoords[i] - p2c[i]) / d;
-
-            // 1.0 - d/(1-d);
-            if (d < 0.0) {
-              newPos = (1 - 2.0 * d) / (1.0 - d);
-            } else {
-              newPos = 1 / (d + 1);
-            }
-          } else {
-            i = 1;
-            d = p2c[i] - p1c[i];
-
-            if (Math.abs(d) < math_math__WEBPACK_IMPORTED_MODULE_1__/* ["default"].eps */ .Z.eps) {
-              i = 2;
-              d = p2c[i] - p1c[i];
-            }
-            newPos = (newCoords.usrCoords[i] - p1c[i]) / d;
-          }
-        }
-
-        // Snap the glider point of the slider into its appropiate position
-        // First, recalculate the new value of this.position
-        // Second, call update(fromParent==true) to make the positioning snappier.
-        ev_sw = utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].evaluate */ .Z.evaluate(this.visProp.snapwidth);
-        if (
-          utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].evaluate */ .Z.evaluate(ev_sw) > 0.0 &&
-          Math.abs(this._smax - this._smin) >= math_math__WEBPACK_IMPORTED_MODULE_1__/* ["default"].eps */ .Z.eps
-        ) {
-          newPos = Math.max(Math.min(newPos, 1), 0);
-
-          v = newPos * (this._smax - this._smin) + this._smin;
-          v = Math.round(v / ev_sw) * ev_sw;
-          newPos = (v - this._smin) / (this._smax - this._smin);
-          this.update(true);
-        }
-
-        p1c = slide.point1.coords;
-        if (
-          !utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].evaluate */ .Z.evaluate(slide.visProp.straightfirst) &&
-          Math.abs(p1c.usrCoords[0]) > math_math__WEBPACK_IMPORTED_MODULE_1__/* ["default"].eps */ .Z.eps &&
-          newPos < 0
-        ) {
-          newCoords = p1c;
-          doRound = true;
-          newPos = 0;
-        }
-
-        p2c = slide.point2.coords;
-        if (
-          !utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].evaluate */ .Z.evaluate(slide.visProp.straightlast) &&
-          Math.abs(p2c.usrCoords[0]) > math_math__WEBPACK_IMPORTED_MODULE_1__/* ["default"].eps */ .Z.eps &&
-          newPos > 1
-        ) {
-          newCoords = p2c;
-          doRound = true;
-          newPos = 1;
-        }
-      } else if (slide.type === base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_TYPE_TURTLE */ .Z.OBJECT_TYPE_TURTLE) {
-        // In case, the point is a constrained glider.
-        this.updateConstraint();
-        res = math_geometry__WEBPACK_IMPORTED_MODULE_2__/* ["default"].projectPointToTurtle */ .Z.projectPointToTurtle(this, slide, this.board);
-        newCoords = res[0];
-        newPos = res[1]; // save position for the overwriting below
-      } else if (slide.elementClass === base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_CLASS_CURVE */ .Z.OBJECT_CLASS_CURVE) {
-        if (
-          slide.type === base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_TYPE_ARC */ .Z.OBJECT_TYPE_ARC ||
-          slide.type === base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_TYPE_SECTOR */ .Z.OBJECT_TYPE_SECTOR
-        ) {
-          newCoords = math_geometry__WEBPACK_IMPORTED_MODULE_2__/* ["default"].projectPointToCircle */ .Z.projectPointToCircle(this, slide, this.board);
-
-          angle = math_geometry__WEBPACK_IMPORTED_MODULE_2__/* ["default"].rad */ .Z.rad(slide.radiuspoint, slide.center, this);
-          alpha = 0.0;
-          beta = math_geometry__WEBPACK_IMPORTED_MODULE_2__/* ["default"].rad */ .Z.rad(
-            slide.radiuspoint,
-            slide.center,
-            slide.anglepoint
-          );
-          newPos = angle;
-
-          ev_sw = utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].evaluate */ .Z.evaluate(slide.visProp.selection);
-          if (
-            (ev_sw === "minor" && beta > Math.PI) ||
-            (ev_sw === "major" && beta < Math.PI)
-          ) {
-            alpha = beta;
-            beta = 2 * Math.PI;
-          }
-
-          // Correct the position if we are outside of the sector/arc
-          if (angle < alpha || angle > beta) {
-            newPos = beta;
-
-            if (
-              (angle < alpha && angle > alpha * 0.5) ||
-              (angle > beta && angle > beta * 0.5 + Math.PI)
-            ) {
-              newPos = alpha;
-            }
-
-            this.needsUpdateFromParent = true;
-            this.updateGliderFromParent();
-          }
-
-          delta = beta - alpha;
-          if (this.visProp.isgeonext) {
-            delta = 1.0;
-          }
-          if (Math.abs(delta) > math_math__WEBPACK_IMPORTED_MODULE_1__/* ["default"].eps */ .Z.eps) {
-            newPos /= delta;
-          }
-        } else {
-          // In case, the point is a constrained glider.
-          this.updateConstraint();
-
-          // Handle the case if the curve comes from a transformation of a continous curve.
-          if (slide.transformations.length > 0) {
-            isTransformed = false;
-            res = slide.getTransformationSource();
-            if (res[0]) {
-              isTransformed = res[0];
-              slides.push(slide);
-              slides.push(res[1]);
-            }
-            // Recurse
-            while (res[0] && utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].exists */ .Z.exists(res[1]._transformationSource)) {
-              res = res[1].getTransformationSource();
-              slides.push(res[1]);
-            }
-
-            cu = this.coords.usrCoords;
-            if (isTransformed) {
-              for (i = 0; i < slides.length; i++) {
-                slides[i].updateTransformMatrix();
-                invMat = math_math__WEBPACK_IMPORTED_MODULE_1__/* ["default"].inverse */ .Z.inverse(slides[i].transformMat);
-                cu = math_math__WEBPACK_IMPORTED_MODULE_1__/* ["default"].matVecMult */ .Z.matVecMult(invMat, cu);
-              }
-              cp = new base_coords__WEBPACK_IMPORTED_MODULE_5__/* ["default"] */ .Z(base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].COORDS_BY_USER */ .Z.COORDS_BY_USER, cu, this.board).usrCoords;
-              c = math_geometry__WEBPACK_IMPORTED_MODULE_2__/* ["default"].projectCoordsToCurve */ .Z.projectCoordsToCurve(
-                cp[1],
-                cp[2],
-                this.position || 0,
-                slides[slides.length - 1],
-                this.board
-              );
-              // projectPointCurve() already would apply the transformation.
-              // Since we are projecting on the original curve, we have to do
-              // the transformations "by hand".
-              cu = c[0].usrCoords;
-              for (i = slides.length - 2; i >= 0; i--) {
-                cu = math_math__WEBPACK_IMPORTED_MODULE_1__/* ["default"].matVecMult */ .Z.matVecMult(slides[i].transformMat, cu);
-              }
-              c[0] = new base_coords__WEBPACK_IMPORTED_MODULE_5__/* ["default"] */ .Z(base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].COORDS_BY_USER */ .Z.COORDS_BY_USER, cu, this.board);
-            } else {
-              slide.updateTransformMatrix();
-              invMat = math_math__WEBPACK_IMPORTED_MODULE_1__/* ["default"].inverse */ .Z.inverse(slide.transformMat);
-              cu = math_math__WEBPACK_IMPORTED_MODULE_1__/* ["default"].matVecMult */ .Z.matVecMult(invMat, cu);
-              cp = new base_coords__WEBPACK_IMPORTED_MODULE_5__/* ["default"] */ .Z(base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].COORDS_BY_USER */ .Z.COORDS_BY_USER, cu, this.board).usrCoords;
-              c = math_geometry__WEBPACK_IMPORTED_MODULE_2__/* ["default"].projectCoordsToCurve */ .Z.projectCoordsToCurve(
-                cp[1],
-                cp[2],
-                this.position || 0,
-                slide,
-                this.board
-              );
-            }
-
-            newCoords = c[0];
-            newPos = c[1];
-          } else {
-            res = math_geometry__WEBPACK_IMPORTED_MODULE_2__/* ["default"].projectPointToCurve */ .Z.projectPointToCurve(this, slide, this.board);
-            newCoords = res[0];
-            newPos = res[1]; // save position for the overwriting below
-          }
-        }
-      } else if (utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].isPoint */ .Z.isPoint(slide)) {
-        //this.coords.setCoordinates(Const.COORDS_BY_USER, Geometry.projectPointToPoint(this, slide, this.board).usrCoords, false);
-        newCoords = math_geometry__WEBPACK_IMPORTED_MODULE_2__/* ["default"].projectPointToPoint */ .Z.projectPointToPoint(this, slide, this.board);
-        newPos = this.position; // save position for the overwriting below
-      }
-
-      this.coords.setCoordinates(
-        base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].COORDS_BY_USER */ .Z.COORDS_BY_USER,
-        newCoords.usrCoords,
-        doRound
-      );
-      this.position = newPos;
-    },
-
-    /**
-     * Update of a glider in case a parent element has been updated. That means the
-     * relative position of the glider stays the same.
-     * @private
-     */
-    updateGliderFromParent: function () {
-      var p1c,
-        p2c,
-        r,
-        lbda,
-        c,
-        slide = this.slideObject,
-        slides = [],
-        res,
-        i,
-        isTransformed,
-        baseangle,
-        alpha,
-        angle,
-        beta,
-        delta = 2.0 * Math.PI;
-
-      if (!this.needsUpdateFromParent) {
-        this.needsUpdateFromParent = true;
-        return;
-      }
-
-      if (slide.elementClass === base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_CLASS_CIRCLE */ .Z.OBJECT_CLASS_CIRCLE) {
-        r = slide.Radius();
-        if (utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].evaluate */ .Z.evaluate(this.visProp.isgeonext)) {
-          delta = 1.0;
-        }
-        c = [
-          slide.center.X() + r * Math.cos(this.position * delta),
-          slide.center.Y() + r * Math.sin(this.position * delta),
-        ];
-      } else if (slide.elementClass === base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_CLASS_LINE */ .Z.OBJECT_CLASS_LINE) {
-        p1c = slide.point1.coords.usrCoords;
-        p2c = slide.point2.coords.usrCoords;
-
-        // If one of the defining points of the line does not exist,
-        // the glider should disappear
-        if (
-          (p1c[0] === 0 && p1c[1] === 0 && p1c[2] === 0) ||
-          (p2c[0] === 0 && p2c[1] === 0 && p2c[2] === 0)
-        ) {
-          c = [0, 0, 0];
-          // The second point is an ideal point
-        } else if (Math.abs(p2c[0]) < math_math__WEBPACK_IMPORTED_MODULE_1__/* ["default"].eps */ .Z.eps) {
-          lbda = Math.min(Math.abs(this.position), 1 - math_math__WEBPACK_IMPORTED_MODULE_1__/* ["default"].eps */ .Z.eps);
-          lbda /= 1.0 - lbda;
-
-          if (this.position < 0) {
-            lbda = -lbda;
-          }
-
-          c = [
-            p1c[0] + lbda * p2c[0],
-            p1c[1] + lbda * p2c[1],
-            p1c[2] + lbda * p2c[2],
-          ];
-          // The first point is an ideal point
-        } else if (Math.abs(p1c[0]) < math_math__WEBPACK_IMPORTED_MODULE_1__/* ["default"].eps */ .Z.eps) {
-          lbda = Math.max(this.position, math_math__WEBPACK_IMPORTED_MODULE_1__/* ["default"].eps */ .Z.eps);
-          lbda = Math.min(lbda, 2 - math_math__WEBPACK_IMPORTED_MODULE_1__/* ["default"].eps */ .Z.eps);
-
-          if (lbda > 1) {
-            lbda = (lbda - 1) / (lbda - 2);
-          } else {
-            lbda = (1 - lbda) / lbda;
-          }
-
-          c = [
-            p2c[0] + lbda * p1c[0],
-            p2c[1] + lbda * p1c[1],
-            p2c[2] + lbda * p1c[2],
-          ];
-        } else {
-          lbda = this.position;
-          c = [
-            p1c[0] + lbda * (p2c[0] - p1c[0]),
-            p1c[1] + lbda * (p2c[1] - p1c[1]),
-            p1c[2] + lbda * (p2c[2] - p1c[2]),
-          ];
-        }
-      } else if (slide.type === base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_TYPE_TURTLE */ .Z.OBJECT_TYPE_TURTLE) {
-        this.coords.setCoordinates(base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].COORDS_BY_USER */ .Z.COORDS_BY_USER, [
-          slide.Z(this.position),
-          slide.X(this.position),
-          slide.Y(this.position),
-        ]);
-        // In case, the point is a constrained glider.
-        this.updateConstraint();
-        c = math_geometry__WEBPACK_IMPORTED_MODULE_2__/* ["default"].projectPointToTurtle */ .Z.projectPointToTurtle(this, slide, this.board)[0].usrCoords;
-      } else if (slide.elementClass === base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_CLASS_CURVE */ .Z.OBJECT_CLASS_CURVE) {
-        // Handle the case if the curve comes from a transformation of a continuous curve.
-        isTransformed = false;
-        res = slide.getTransformationSource();
-        if (res[0]) {
-          isTransformed = res[0];
-          slides.push(slide);
-          slides.push(res[1]);
-        }
-        // Recurse
-        while (res[0] && utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].exists */ .Z.exists(res[1]._transformationSource)) {
-          res = res[1].getTransformationSource();
-          slides.push(res[1]);
-        }
-        if (isTransformed) {
-          this.coords.setCoordinates(base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].COORDS_BY_USER */ .Z.COORDS_BY_USER, [
-            slides[slides.length - 1].Z(this.position),
-            slides[slides.length - 1].X(this.position),
-            slides[slides.length - 1].Y(this.position),
-          ]);
-        } else {
-          this.coords.setCoordinates(base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].COORDS_BY_USER */ .Z.COORDS_BY_USER, [
-            slide.Z(this.position),
-            slide.X(this.position),
-            slide.Y(this.position),
-          ]);
-        }
-
-        if (
-          slide.type === base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_TYPE_ARC */ .Z.OBJECT_TYPE_ARC ||
-          slide.type === base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_TYPE_SECTOR */ .Z.OBJECT_TYPE_SECTOR
-        ) {
-          baseangle = math_geometry__WEBPACK_IMPORTED_MODULE_2__/* ["default"].rad */ .Z.rad(
-            [slide.center.X() + 1, slide.center.Y()],
-            slide.center,
-            slide.radiuspoint
-          );
-
-          alpha = 0.0;
-          beta = math_geometry__WEBPACK_IMPORTED_MODULE_2__/* ["default"].rad */ .Z.rad(
-            slide.radiuspoint,
-            slide.center,
-            slide.anglepoint
-          );
-
-          if (
-            (slide.visProp.selection === "minor" && beta > Math.PI) ||
-            (slide.visProp.selection === "major" && beta < Math.PI)
-          ) {
-            alpha = beta;
-            beta = 2 * Math.PI;
-          }
-
-          delta = beta - alpha;
-          if (utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].evaluate */ .Z.evaluate(this.visProp.isgeonext)) {
-            delta = 1.0;
-          }
-          angle = this.position * delta;
-
-          // Correct the position if we are outside of the sector/arc
-          if (angle < alpha || angle > beta) {
-            angle = beta;
-
-            if (
-              (angle < alpha && angle > alpha * 0.5) ||
-              (angle > beta && angle > beta * 0.5 + Math.PI)
-            ) {
-              angle = alpha;
-            }
-
-            this.position = angle;
-            if (Math.abs(delta) > math_math__WEBPACK_IMPORTED_MODULE_1__/* ["default"].eps */ .Z.eps) {
-              this.position /= delta;
-            }
-          }
-
-          r = slide.Radius();
-          c = [
-            slide.center.X() + r * Math.cos(this.position * delta + baseangle),
-            slide.center.Y() + r * Math.sin(this.position * delta + baseangle),
-          ];
-        } else {
-          // In case, the point is a constrained glider.
-          this.updateConstraint();
-
-          if (isTransformed) {
-            c = math_geometry__WEBPACK_IMPORTED_MODULE_2__/* ["default"].projectPointToCurve */ .Z.projectPointToCurve(
-              this,
-              slides[slides.length - 1],
-              this.board
-            )[0].usrCoords;
-            // projectPointCurve() already would do the transformation.
-            // But since we are projecting on the original curve, we have to do
-            // the transformation "by hand".
-            for (i = slides.length - 2; i >= 0; i--) {
-              c = new base_coords__WEBPACK_IMPORTED_MODULE_5__/* ["default"] */ .Z(
-                base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].COORDS_BY_USER */ .Z.COORDS_BY_USER,
-                math_math__WEBPACK_IMPORTED_MODULE_1__/* ["default"].matVecMult */ .Z.matVecMult(slides[i].transformMat, c),
-                this.board
-              ).usrCoords;
-            }
-          } else {
-            c = math_geometry__WEBPACK_IMPORTED_MODULE_2__/* ["default"].projectPointToCurve */ .Z.projectPointToCurve(this, slide, this.board)[0]
-              .usrCoords;
-          }
-        }
-      } else if (utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].isPoint */ .Z.isPoint(slide)) {
-        c = math_geometry__WEBPACK_IMPORTED_MODULE_2__/* ["default"].projectPointToPoint */ .Z.projectPointToPoint(this, slide, this.board).usrCoords;
-      }
-
-      this.coords.setCoordinates(base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].COORDS_BY_USER */ .Z.COORDS_BY_USER, c, false);
-    },
-
-    updateRendererGeneric: function (rendererMethod) {
-      //var wasReal;
-
-      if (!this.needsUpdate) {
-        return this;
-      }
-
-      if (this.visPropCalc.visible) {
-        //wasReal = this.isReal;
-        this.isReal = !isNaN(
-          this.coords.usrCoords[1] + this.coords.usrCoords[2]
-        );
-        //Homogeneous coords: ideal point
-        this.isReal =
-          Math.abs(this.coords.usrCoords[0]) > math_math__WEBPACK_IMPORTED_MODULE_1__/* ["default"].eps */ .Z.eps ? this.isReal : false;
-
-        if (
-          // wasReal &&
-          !this.isReal
-        ) {
-          this.updateVisibility(false);
-        }
-      }
-
-      // Call the renderer only if element is visible.
-      // Update the position
-      if (this.visPropCalc.visible) {
-        this.board.renderer[rendererMethod](this);
-      }
-
-      // Update the label if visible.
-      if (
-        this.hasLabel &&
-        this.visPropCalc.visible &&
-        this.label &&
-        this.label.visPropCalc.visible &&
-        this.isReal
-      ) {
-        this.label.update();
-        this.board.renderer.updateText(this.label);
-      }
-
-      // Update rendNode display
-      this.setDisplayRendNode();
-      // if (this.visPropCalc.visible !== this.visPropOld.visible) {
-      //     this.board.renderer.display(this, this.visPropCalc.visible);
-      //     this.visPropOld.visible = this.visPropCalc.visible;
-      //
-      //     if (this.hasLabel) {
-      //         this.board.renderer.display(this.label, this.label.visPropCalc.visible);
-      //     }
-      // }
-
-      this.needsUpdate = false;
-      return this;
-    },
-
-    /**
-     * Getter method for x, this is used by for CAS-points to access point coordinates.
-     * @returns {Number} User coordinate of point in x direction.
-     */
-    X: function () {
-      return this.coords.usrCoords[1];
-    },
-
-    /**
-     * Getter method for y, this is used by CAS-points to access point coordinates.
-     * @returns {Number} User coordinate of point in y direction.
-     */
-    Y: function () {
-      return this.coords.usrCoords[2];
-    },
-
-    /**
-     * Getter method for z, this is used by CAS-points to access point coordinates.
-     * @returns {Number} User coordinate of point in z direction.
-     */
-    Z: function () {
-      return this.coords.usrCoords[0];
-    },
-
-    /**
-     * New evaluation of the function term.
-     * This is required for CAS-points: Their XTerm() method is
-     * overwritten in {@link JXG.CoordsElement#addConstraint}.
-     *
-     * @returns {Number} User coordinate of point in x direction.
-     * @private
-     */
-    XEval: function () {
-      return this.coords.usrCoords[1];
-    },
-
-    /**
-     * New evaluation of the function term.
-     * This is required for CAS-points: Their YTerm() method is overwritten
-     * in {@link JXG.CoordsElement#addConstraint}.
-     *
-     * @returns {Number} User coordinate of point in y direction.
-     * @private
-     */
-    YEval: function () {
-      return this.coords.usrCoords[2];
-    },
-
-    /**
-     * New evaluation of the function term.
-     * This is required for CAS-points: Their ZTerm() method is overwritten in
-     * {@link JXG.CoordsElement#addConstraint}.
-     *
-     * @returns {Number} User coordinate of point in z direction.
-     * @private
-     */
-    ZEval: function () {
-      return this.coords.usrCoords[0];
-    },
-
-    /**
-     * Getter method for the distance to a second point, this is required for CAS-elements.
-     * Here, function inlining seems to be worthwile  (for plotting).
-     * @param {JXG.Point} point2 The point to which the distance shall be calculated.
-     * @returns {Number} Distance in user coordinate to the given point
-     */
-    Dist: function (point2) {
-      if (this.isReal && point2.isReal) {
-        return this.coords.distance(base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].COORDS_BY_USER */ .Z.COORDS_BY_USER, point2.coords);
-      }
-      return NaN;
-    },
-
-    /**
-     * Alias for {@link JXG.Element#handleSnapToGrid}
-     * @param {Boolean} force force snapping independent from what the snaptogrid attribute says
-     * @returns {JXG.CoordsElement} Reference to this element
-     */
-    snapToGrid: function (force) {
-      return this.handleSnapToGrid(force);
-    },
-
-    /**
-     * Let a point snap to the nearest point in distance of
-     * {@link JXG.Point#attractorDistance}.
-     * The function uses the coords object of the point as
-     * its actual position.
-     * @param {Boolean} force force snapping independent from what the snaptogrid attribute says
-     * @returns {JXG.Point} Reference to this element
-     */
-    handleSnapToPoints: function (force) {
-      var i,
-        pEl,
-        pCoords,
-        d = 0,
-        len,
-        dMax = Infinity,
-        c = null,
-        ev_au,
-        ev_ad,
-        ev_is2p = utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].evaluate */ .Z.evaluate(this.visProp.ignoredsnaptopoints),
-        len2,
-        j,
-        ignore = false;
-
-      len = this.board.objectsList.length;
-
-      if (ev_is2p) {
-        len2 = ev_is2p.length;
-      }
-
-      if (utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].evaluate */ .Z.evaluate(this.visProp.snaptopoints) || force) {
-        ev_au = utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].evaluate */ .Z.evaluate(this.visProp.attractorunit);
-        ev_ad = utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].evaluate */ .Z.evaluate(this.visProp.attractordistance);
-
-        for (i = 0; i < len; i++) {
-          pEl = this.board.objectsList[i];
-
-          if (ev_is2p) {
-            ignore = false;
-            for (j = 0; j < len2; j++) {
-              if (pEl === this.board.select(ev_is2p[j])) {
-                ignore = true;
-                break;
-              }
-            }
-            if (ignore) {
-              continue;
-            }
-          }
-
-          if (utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].isPoint */ .Z.isPoint(pEl) && pEl !== this && pEl.visPropCalc.visible) {
-            pCoords = math_geometry__WEBPACK_IMPORTED_MODULE_2__/* ["default"].projectPointToPoint */ .Z.projectPointToPoint(this, pEl, this.board);
-            if (ev_au === "screen") {
-              d = pCoords.distance(base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].COORDS_BY_SCREEN */ .Z.COORDS_BY_SCREEN, this.coords);
-            } else {
-              d = pCoords.distance(base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].COORDS_BY_USER */ .Z.COORDS_BY_USER, this.coords);
-            }
-
-            if (d < ev_ad && d < dMax) {
-              dMax = d;
-              c = pCoords;
-            }
-          }
-        }
-
-        if (c !== null) {
-          this.coords.setCoordinates(base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].COORDS_BY_USER */ .Z.COORDS_BY_USER, c.usrCoords);
-        }
-      }
-
-      return this;
-    },
-
-    /**
-     * Alias for {@link JXG.CoordsElement#handleSnapToPoints}.
-     *
-     * @param {Boolean} force force snapping independent from what the snaptogrid attribute says
-     * @returns {JXG.Point} Reference to this element
-     */
-    snapToPoints: function (force) {
-      return this.handleSnapToPoints(force);
-    },
-
-    /**
-     * A point can change its type from free point to glider
-     * and vice versa. If it is given an array of attractor elements
-     * (attribute attractors) and the attribute attractorDistance
-     * then the point will be made a glider if it less than attractorDistance
-     * apart from one of its attractor elements.
-     * If attractorDistance is equal to zero, the point stays in its
-     * current form.
-     * @returns {JXG.Point} Reference to this element
-     */
-    handleAttractors: function () {
-      var i,
-        el,
-        projCoords,
-        d = 0.0,
-        projection,
-        ev_au = utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].evaluate */ .Z.evaluate(this.visProp.attractorunit),
-        ev_ad = utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].evaluate */ .Z.evaluate(this.visProp.attractordistance),
-        ev_sd = utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].evaluate */ .Z.evaluate(this.visProp.snatchdistance),
-        ev_a = utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].evaluate */ .Z.evaluate(this.visProp.attractors),
-        len = ev_a.length;
-
-      if (ev_ad === 0.0) {
-        return;
-      }
-
-      for (i = 0; i < len; i++) {
-        el = this.board.select(ev_a[i]);
-
-        if (utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].exists */ .Z.exists(el) && el !== this) {
-          if (utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].isPoint */ .Z.isPoint(el)) {
-            projCoords = math_geometry__WEBPACK_IMPORTED_MODULE_2__/* ["default"].projectPointToPoint */ .Z.projectPointToPoint(this, el, this.board);
-          } else if (el.elementClass === base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_CLASS_LINE */ .Z.OBJECT_CLASS_LINE) {
-            projection = math_geometry__WEBPACK_IMPORTED_MODULE_2__/* ["default"].projectCoordsToSegment */ .Z.projectCoordsToSegment(
-              this.coords.usrCoords,
-              el.point1.coords.usrCoords,
-              el.point2.coords.usrCoords
-            );
-            if (
-              !utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].evaluate */ .Z.evaluate(el.visProp.straightfirst) &&
-              projection[1] < 0.0
-            ) {
-              projCoords = el.point1.coords;
-            } else if (
-              !utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].evaluate */ .Z.evaluate(el.visProp.straightlast) &&
-              projection[1] > 1.0
-            ) {
-              projCoords = el.point2.coords;
-            } else {
-              projCoords = new base_coords__WEBPACK_IMPORTED_MODULE_5__/* ["default"] */ .Z(
-                base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].COORDS_BY_USER */ .Z.COORDS_BY_USER,
-                projection[0],
-                this.board
-              );
-            }
-          } else if (el.elementClass === base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_CLASS_CIRCLE */ .Z.OBJECT_CLASS_CIRCLE) {
-            projCoords = math_geometry__WEBPACK_IMPORTED_MODULE_2__/* ["default"].projectPointToCircle */ .Z.projectPointToCircle(this, el, this.board);
-          } else if (el.elementClass === base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_CLASS_CURVE */ .Z.OBJECT_CLASS_CURVE) {
-            projCoords = math_geometry__WEBPACK_IMPORTED_MODULE_2__/* ["default"].projectPointToCurve */ .Z.projectPointToCurve(this, el, this.board)[0];
-          } else if (el.type === base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_TYPE_TURTLE */ .Z.OBJECT_TYPE_TURTLE) {
-            projCoords = math_geometry__WEBPACK_IMPORTED_MODULE_2__/* ["default"].projectPointToTurtle */ .Z.projectPointToTurtle(this, el, this.board)[0];
-          } else if (el.type === base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_TYPE_POLYGON */ .Z.OBJECT_TYPE_POLYGON) {
-            projCoords = new base_coords__WEBPACK_IMPORTED_MODULE_5__/* ["default"] */ .Z(
-              base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].COORDS_BY_USER */ .Z.COORDS_BY_USER,
-              math_geometry__WEBPACK_IMPORTED_MODULE_2__/* ["default"].projectCoordsToPolygon */ .Z.projectCoordsToPolygon(this.coords.usrCoords, el),
-              this.board
-            );
-          }
-
-          if (ev_au === "screen") {
-            d = projCoords.distance(base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].COORDS_BY_SCREEN */ .Z.COORDS_BY_SCREEN, this.coords);
-          } else {
-            d = projCoords.distance(base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].COORDS_BY_USER */ .Z.COORDS_BY_USER, this.coords);
-          }
-
-          if (d < ev_ad) {
-            if (
-              !(
-                this.type === base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_TYPE_GLIDER */ .Z.OBJECT_TYPE_GLIDER &&
-                (el === this.slideObject ||
-                  (this.slideObject &&
-                    this.onPolygon &&
-                    this.slideObject.parentPolygon === el))
-              )
-            ) {
-              this.makeGlider(el);
-            }
-            break; // bind the point to the first attractor in its list.
-          }
-          if (
-            d >= ev_sd &&
-            (el === this.slideObject ||
-              (this.slideObject &&
-                this.onPolygon &&
-                this.slideObject.parentPolygon === el))
-          ) {
-            this.popSlideObject();
-          }
-        }
-      }
-
-      return this;
-    },
-
-    /**
-     * Sets coordinates and calls the point's update() method.
-     * @param {Number} method The type of coordinates used here.
-     * Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
-     * @param {Array} coords coordinates <tt>([z], x, y)</tt> in screen/user units
-     * @returns {JXG.Point} this element
-     */
-    setPositionDirectly: function (method, coords) {
-      var i,
-        c,
-        dc,
-        oldCoords = this.coords,
-        newCoords;
-
-      if (this.relativeCoords) {
-        c = new base_coords__WEBPACK_IMPORTED_MODULE_5__/* ["default"] */ .Z(method, coords, this.board);
-        if (utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].evaluate */ .Z.evaluate(this.visProp.islabel)) {
-          dc = math_statistics__WEBPACK_IMPORTED_MODULE_4__/* ["default"].subtract */ .Z.subtract(c.scrCoords, oldCoords.scrCoords);
-          this.relativeCoords.scrCoords[1] += dc[1];
-          this.relativeCoords.scrCoords[2] += dc[2];
-        } else {
-          dc = math_statistics__WEBPACK_IMPORTED_MODULE_4__/* ["default"].subtract */ .Z.subtract(c.usrCoords, oldCoords.usrCoords);
-          this.relativeCoords.usrCoords[1] += dc[1];
-          this.relativeCoords.usrCoords[2] += dc[2];
-        }
-
-        return this;
-      }
-
-      this.coords.setCoordinates(method, coords);
-      this.handleSnapToGrid();
-      this.handleSnapToPoints();
-      this.handleAttractors();
-
-      // Update the initial coordinates. This is needed for free points
-      // that have a transformation bound to it.
-      for (i = this.transformations.length - 1; i >= 0; i--) {
-        if (method === base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].COORDS_BY_SCREEN */ .Z.COORDS_BY_SCREEN) {
-          newCoords = new base_coords__WEBPACK_IMPORTED_MODULE_5__/* ["default"] */ .Z(method, coords, this.board).usrCoords;
-        } else {
-          if (coords.length === 2) {
-            coords = [1].concat(coords);
-          }
-          newCoords = coords;
-        }
-        this.initialCoords.setCoordinates(
-          base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].COORDS_BY_USER */ .Z.COORDS_BY_USER,
-          math_math__WEBPACK_IMPORTED_MODULE_1__/* ["default"].matVecMult */ .Z.matVecMult(math_math__WEBPACK_IMPORTED_MODULE_1__/* ["default"].inverse */ .Z.inverse(this.transformations[i].matrix), newCoords)
-        );
-      }
-      this.prepareUpdate().update();
-
-      // If the user suspends the board updates we need to recalculate the relative position of
-      // the point on the slide object. This is done in updateGlider() which is NOT called during the
-      // update process triggered by unsuspendUpdate.
-      if (
-        this.board.isSuspendedUpdate &&
-        this.type === base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_TYPE_GLIDER */ .Z.OBJECT_TYPE_GLIDER
-      ) {
-        this.updateGlider();
-      }
-
-      return this;
-    },
-
-    /**
-     * Translates the point by <tt>tv = (x, y)</tt>.
-     * @param {Number} method The type of coordinates used here.
-     * Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
-     * @param {Array} tv (x, y)
-     * @returns {JXG.Point}
-     */
-    setPositionByTransform: function (method, tv) {
-      var t;
-
-      tv = new base_coords__WEBPACK_IMPORTED_MODULE_5__/* ["default"] */ .Z(method, tv, this.board);
-      t = this.board.create("transform", tv.usrCoords.slice(1), {
-        type: "translate",
-      });
-
-      if (
-        this.transformations.length > 0 &&
-        this.transformations[this.transformations.length - 1].isNumericMatrix
-      ) {
-        this.transformations[this.transformations.length - 1].melt(t);
-      } else {
-        this.addTransform(this, t);
-      }
-
-      this.prepareUpdate().update();
-
-      return this;
-    },
-
-    /**
-     * Sets coordinates and calls the point's update() method.
-     * @param {Number} method The type of coordinates used here.
-     * Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
-     * @param {Array} coords coordinates in screen/user units
-     * @returns {JXG.Point}
-     */
-    setPosition: function (method, coords) {
-      return this.setPositionDirectly(method, coords);
-    },
-
-    /**
-     * Sets the position of a glider relative to the defining elements
-     * of the {@link JXG.Point#slideObject}.
-     * @param {Number} x
-     * @returns {JXG.Point} Reference to the point element.
-     */
-    setGliderPosition: function (x) {
-      if (this.type === base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_TYPE_GLIDER */ .Z.OBJECT_TYPE_GLIDER) {
-        this.position = x;
-        this.board.update();
-      }
-
-      return this;
-    },
-
-    /**
-     * Convert the point to glider and update the construction.
-     * To move the point visual onto the glider, a call of board update is necessary.
-     * @param {String|Object} slide The object the point will be bound to.
-     */
-    makeGlider: function (slide) {
-      var slideobj = this.board.select(slide),
-        onPolygon = false,
-        min,
-        i,
-        dist;
-
-      if (slideobj.type === base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_TYPE_POLYGON */ .Z.OBJECT_TYPE_POLYGON) {
-        // Search for the closest edge of the polygon.
-        min = Number.MAX_VALUE;
-        for (i = 0; i < slideobj.borders.length; i++) {
-          dist = jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].Math.Geometry.distPointLine */ .Z.Math.Geometry.distPointLine(
-            this.coords.usrCoords,
-            slideobj.borders[i].stdform
-          );
-          if (dist < min) {
-            min = dist;
-            slide = slideobj.borders[i];
-          }
-        }
-        slideobj = this.board.select(slide);
-        onPolygon = true;
-      }
-
-      /* Gliders on Ticks are forbidden */
-      if (!utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].exists */ .Z.exists(slideobj)) {
-        throw new Error("JSXGraph: slide object undefined.");
-      } else if (slideobj.type === base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_TYPE_TICKS */ .Z.OBJECT_TYPE_TICKS) {
-        throw new Error("JSXGraph: gliders on ticks are not possible.");
-      }
-
-      this.slideObject = this.board.select(slide);
-      this.slideObjects.push(this.slideObject);
-      this.addParents(slide);
-
-      this.type = base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_TYPE_GLIDER */ .Z.OBJECT_TYPE_GLIDER;
-      this.elType = "glider";
-      this.visProp.snapwidth = -1; // By default, deactivate snapWidth
-      this.slideObject.addChild(this);
-      this.isDraggable = true;
-      this.onPolygon = onPolygon;
-
-      this.generatePolynomial = function () {
-        return this.slideObject.generatePolynomial(this);
-      };
-
-      // Determine the initial value of this.position
-      this.updateGlider();
-      this.needsUpdateFromParent = true;
-      this.updateGliderFromParent();
-
-      return this;
-    },
-
-    /**
-     * Remove the last slideObject. If there are more than one elements the point is bound to,
-     * the second last element is the new active slideObject.
-     */
-    popSlideObject: function () {
-      if (this.slideObjects.length > 0) {
-        this.slideObjects.pop();
-
-        // It may not be sufficient to remove the point from
-        // the list of childElement. For complex dependencies
-        // one may have to go to the list of ancestor and descendants.  A.W.
-        // Yes indeed, see #51 on github bugtracker
-        //  delete this.slideObject.childElements[this.id];
-        this.slideObject.removeChild(this);
-
-        if (this.slideObjects.length === 0) {
-          this.type = this._org_type;
-          if (this.type === base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_TYPE_POINT */ .Z.OBJECT_TYPE_POINT) {
-            this.elType = "point";
-          } else if (this.elementClass === base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_CLASS_TEXT */ .Z.OBJECT_CLASS_TEXT) {
-            this.elType = "text";
-          } else if (this.type === base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_TYPE_IMAGE */ .Z.OBJECT_TYPE_IMAGE) {
-            this.elType = "image";
-          } else if (this.type === base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_TYPE_FOREIGNOBJECT */ .Z.OBJECT_TYPE_FOREIGNOBJECT) {
-            this.elType = "foreignobject";
-          }
-
-          this.slideObject = null;
-        } else {
-          this.slideObject = this.slideObjects[this.slideObjects.length - 1];
-        }
-      }
-    },
-
-    /**
-     * Converts a calculated element into a free element,
-     * i.e. it will delete all ancestors and transformations and,
-     * if the element is currently a glider, will remove the slideObject reference.
-     */
-    free: function () {
-      var ancestorId, ancestor;
-      // child;
-
-      if (this.type !== base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_TYPE_GLIDER */ .Z.OBJECT_TYPE_GLIDER) {
-        // remove all transformations
-        this.transformations.length = 0;
-
-        delete this.updateConstraint;
-        this.isConstrained = false;
-        // this.updateConstraint = function () {
-        //     return this;
-        // };
-
-        if (!this.isDraggable) {
-          this.isDraggable = true;
-
-          if (this.elementClass === base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_CLASS_POINT */ .Z.OBJECT_CLASS_POINT) {
-            this.type = base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_TYPE_POINT */ .Z.OBJECT_TYPE_POINT;
-            this.elType = "point";
-          }
-
-          this.XEval = function () {
-            return this.coords.usrCoords[1];
-          };
-
-          this.YEval = function () {
-            return this.coords.usrCoords[2];
-          };
-
-          this.ZEval = function () {
-            return this.coords.usrCoords[0];
-          };
-
-          this.Xjc = null;
-          this.Yjc = null;
-        } else {
-          return;
-        }
-      }
-
-      // a free point does not depend on anything. And instead of running through tons of descendants and ancestor
-      // structures, where we eventually are going to visit a lot of objects twice or thrice with hard to read and
-      // comprehend code, just run once through all objects and delete all references to this point and its label.
-      for (ancestorId in this.board.objects) {
-        if (this.board.objects.hasOwnProperty(ancestorId)) {
-          ancestor = this.board.objects[ancestorId];
-
-          if (ancestor.descendants) {
-            delete ancestor.descendants[this.id];
-            delete ancestor.childElements[this.id];
-
-            if (this.hasLabel) {
-              delete ancestor.descendants[this.label.id];
-              delete ancestor.childElements[this.label.id];
-            }
-          }
-        }
-      }
-
-      // A free point does not depend on anything. Remove all ancestors.
-      this.ancestors = {}; // only remove the reference
-
-      // Completely remove all slideObjects of the element
-      this.slideObject = null;
-      this.slideObjects = [];
-      if (this.elementClass === base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_CLASS_POINT */ .Z.OBJECT_CLASS_POINT) {
-        this.type = base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_TYPE_POINT */ .Z.OBJECT_TYPE_POINT;
-        this.elType = "point";
-      } else if (this.elementClass === base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_CLASS_TEXT */ .Z.OBJECT_CLASS_TEXT) {
-        this.type = this._org_type;
-        this.elType = "text";
-      } else if (this.elementClass === base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_CLASS_OTHER */ .Z.OBJECT_CLASS_OTHER) {
-        this.type = this._org_type;
-        this.elType = "image";
-      }
-    },
-
-    /**
-     * Convert the point to CAS point and call update().
-     * @param {Array} terms [[zterm], xterm, yterm] defining terms for the z, x and y coordinate.
-     * The z-coordinate is optional and it is used for homogeneous coordinates.
-     * The coordinates may be either <ul>
-     *   <li>a JavaScript function,</li>
-     *   <li>a string containing GEONExT syntax. This string will be converted into a JavaScript
-     *     function here,</li>
-     *   <li>a Number</li>
-     *   <li>a pointer to a slider object. This will be converted into a call of the Value()-method
-     *     of this slider.</li>
-     *   </ul>
-     * @see JXG.GeonextParser#geonext2JS
-     */
-    addConstraint: function (terms) {
-      var i,
-        v,
-        newfuncs = [],
-        what = ["X", "Y"],
-        makeConstFunction = function (z) {
-          return function () {
-            return z;
-          };
-        },
-        makeSliderFunction = function (a) {
-          return function () {
-            return a.Value();
-          };
-        };
-
-      if (this.elementClass === base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_CLASS_POINT */ .Z.OBJECT_CLASS_POINT) {
-        this.type = base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_TYPE_CAS */ .Z.OBJECT_TYPE_CAS;
-      }
-
-      this.isDraggable = false;
-
-      for (i = 0; i < terms.length; i++) {
-        v = terms[i];
-
-        if (utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].isString */ .Z.isString(v)) {
-          // Convert GEONExT syntax into JavaScript syntax
-          //t  = JXG.GeonextParser.geonext2JS(v, this.board);
-          //newfuncs[i] = new Function('','return ' + t + ';');
-          //v = GeonextParser.replaceNameById(v, this.board);
-          newfuncs[i] = this.board.jc.snippet(v, true, null, true);
-
-          if (terms.length === 2) {
-            this[what[i] + "jc"] = terms[i];
-          }
-        } else if (utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].isFunction */ .Z.isFunction(v)) {
-          newfuncs[i] = v;
-        } else if (utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].isNumber */ .Z.isNumber(v)) {
-          newfuncs[i] = makeConstFunction(v);
-          // Slider
-        } else if (utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].isObject */ .Z.isObject(v) && utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].isFunction */ .Z.isFunction(v.Value)) {
-          newfuncs[i] = makeSliderFunction(v);
-        }
-
-        newfuncs[i].origin = v;
-      }
-
-      // Intersection function
-      if (terms.length === 1) {
-        this.updateConstraint = function () {
-          var c = newfuncs[0]();
-
-          // Array
-          if (utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].isArray */ .Z.isArray(c)) {
-            this.coords.setCoordinates(base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].COORDS_BY_USER */ .Z.COORDS_BY_USER, c);
-            // Coords object
-          } else {
-            this.coords = c;
-          }
-          return this;
-        };
-        // Euclidean coordinates
-      } else if (terms.length === 2) {
-        this.XEval = newfuncs[0];
-        this.YEval = newfuncs[1];
-
-        this.setParents([newfuncs[0].origin, newfuncs[1].origin]);
-
-        this.updateConstraint = function () {
-          this.coords.setCoordinates(base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].COORDS_BY_USER */ .Z.COORDS_BY_USER, [
-            this.XEval(),
-            this.YEval(),
-          ]);
-          return this;
-        };
-        // Homogeneous coordinates
-      } else {
-        this.ZEval = newfuncs[0];
-        this.XEval = newfuncs[1];
-        this.YEval = newfuncs[2];
-
-        this.setParents([
-          newfuncs[0].origin,
-          newfuncs[1].origin,
-          newfuncs[2].origin,
-        ]);
-
-        this.updateConstraint = function () {
-          this.coords.setCoordinates(base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].COORDS_BY_USER */ .Z.COORDS_BY_USER, [
-            this.ZEval(),
-            this.XEval(),
-            this.YEval(),
-          ]);
-          return this;
-        };
-      }
-      this.isConstrained = true;
-
-      /**
-       * We have to do an update. Otherwise, elements relying on this point will receive NaN.
-       */
-      this.prepareUpdate().update();
-      if (!this.board.isSuspendedUpdate) {
-        this.updateVisibility().updateRenderer();
-        if (this.hasLabel) {
-          this.label.fullUpdate();
-        }
-      }
-
-      return this;
-    },
-
-    /**
-     * In case there is an attribute "anchor", the element is bound to
-     * this anchor element.
-     * This is handled with this.relativeCoords. If the element is a label
-     * relativeCoords are given in scrCoords, otherwise in usrCoords.
-     * @param{Array} coordinates Offset from th anchor element. These are the values for this.relativeCoords.
-     * In case of a label, coordinates are screen coordinates. Otherwise, coordinates are user coordinates.
-     * @param{Boolean} isLabel Yes/no
-     * @private
-     */
-    addAnchor: function (coordinates, isLabel) {
-      if (isLabel) {
-        this.relativeCoords = new base_coords__WEBPACK_IMPORTED_MODULE_5__/* ["default"] */ .Z(
-          base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].COORDS_BY_SCREEN */ .Z.COORDS_BY_SCREEN,
-          coordinates.slice(0, 2),
-          this.board
-        );
-      } else {
-        this.relativeCoords = new base_coords__WEBPACK_IMPORTED_MODULE_5__/* ["default"] */ .Z(
-          base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].COORDS_BY_USER */ .Z.COORDS_BY_USER,
-          coordinates,
-          this.board
-        );
-      }
-      this.element.addChild(this);
-      if (isLabel) {
-        this.addParents(this.element);
-      }
-
-      this.XEval = function () {
-        var sx, coords, anchor, ev_o;
-
-        if (utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].evaluate */ .Z.evaluate(this.visProp.islabel)) {
-          ev_o = utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].evaluate */ .Z.evaluate(this.visProp.offset);
-          sx = parseFloat(ev_o[0]);
-          anchor = this.element.getLabelAnchor();
-          coords = new base_coords__WEBPACK_IMPORTED_MODULE_5__/* ["default"] */ .Z(
-            base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].COORDS_BY_SCREEN */ .Z.COORDS_BY_SCREEN,
-            [sx + this.relativeCoords.scrCoords[1] + anchor.scrCoords[1], 0],
-            this.board
-          );
-
-          return coords.usrCoords[1];
-        }
-
-        anchor = this.element.getTextAnchor();
-        return this.relativeCoords.usrCoords[1] + anchor.usrCoords[1];
-      };
-
-      this.YEval = function () {
-        var sy, coords, anchor, ev_o;
-
-        if (utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].evaluate */ .Z.evaluate(this.visProp.islabel)) {
-          ev_o = utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].evaluate */ .Z.evaluate(this.visProp.offset);
-          sy = -parseFloat(ev_o[1]);
-          anchor = this.element.getLabelAnchor();
-          coords = new base_coords__WEBPACK_IMPORTED_MODULE_5__/* ["default"] */ .Z(
-            base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].COORDS_BY_SCREEN */ .Z.COORDS_BY_SCREEN,
-            [0, sy + this.relativeCoords.scrCoords[2] + anchor.scrCoords[2]],
-            this.board
-          );
-
-          return coords.usrCoords[2];
-        }
-
-        anchor = this.element.getTextAnchor();
-        return this.relativeCoords.usrCoords[2] + anchor.usrCoords[2];
-      };
-
-      this.ZEval = utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].createFunction */ .Z.createFunction(1, this.board, "");
-
-      this.updateConstraint = function () {
-        this.coords.setCoordinates(base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].COORDS_BY_USER */ .Z.COORDS_BY_USER, [
-          this.ZEval(),
-          this.XEval(),
-          this.YEval(),
-        ]);
-      };
-      this.isConstrained = true;
-
-      this.updateConstraint();
-      //this.coords = new Coords(Const.COORDS_BY_SCREEN, [0, 0], this.board);
-    },
-
-    /**
-     * Applies the transformations of the element.
-     * This method applies to text and images. Point transformations are handled differently.
-     * @param {Boolean} fromParent True if the drag comes from a child element. Unused.
-     * @returns {JXG.CoordsElement} Reference to itself.
-     */
-    updateTransform: function (fromParent) {
-      var i;
-
-      if (this.transformations.length === 0) {
-        return this;
-      }
-
-      for (i = 0; i < this.transformations.length; i++) {
-        this.transformations[i].update();
-      }
-
-      return this;
-    },
-
-    /**
-     * Add transformations to this element.
-     * @param {JXG.GeometryElement} el
-     * @param {JXG.Transformation|Array} transform Either one {@link JXG.Transformation}
-     * or an array of {@link JXG.Transformation}s.
-     * @returns {JXG.CoordsElement} Reference to itself.
-     */
-    addTransform: function (el, transform) {
-      var i,
-        list = utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].isArray */ .Z.isArray(transform) ? transform : [transform],
-        len = list.length;
-
-      // There is only one baseElement possible
-      if (this.transformations.length === 0) {
-        this.baseElement = el;
-      }
-
-      for (i = 0; i < len; i++) {
-        this.transformations.push(list[i]);
-      }
-
-      return this;
-    },
-
-    /**
-     * Animate the point.
-     * @param {Number} direction The direction the glider is animated. Can be +1 or -1.
-     * @param {Number} stepCount The number of steps in which the parent element is divided.
-     * Must be at least 1.
-     * @param {Number} delay Time in msec between two animation steps. Default is 250.
-     * @returns {JXG.CoordsElement} Reference to iself.
-     *
-     * @name Glider#startAnimation
-     * @see Glider#stopAnimation
-     * @function
-     * @example
-     * // Divide the circle line into 6 steps and
-     * // visit every step 330 msec counterclockwise.
-     * var ci = board.create('circle', [[-1,2], [2,1]]);
-     * var gl = board.create('glider', [0,2, ci]);
-     * gl.startAnimation(-1, 6, 330);
-     *
-     * </pre><div id="JXG0f35a50e-e99d-11e8-a1ca-04d3b0c2aad3" class="jxgbox" style="width: 300px; height: 300px;"></div>
-     * <script type="text/javascript">
-     *     (function() {
-     *         var board = JXG.JSXGraph.initBoard('JXG0f35a50e-e99d-11e8-a1ca-04d3b0c2aad3',
-     *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
-     *     // Divide the circle line into 6 steps and
-     *     // visit every step 330 msec counterclockwise.
-     *     var ci = board.create('circle', [[-1,2], [2,1]]);
-     *     var gl = board.create('glider', [0,2, ci]);
-     *     gl.startAnimation(-1, 6, 330);
-     *
-     *     })();
-     *
-     * </script><pre>
-     *
-     * @example
-     * // Divide the slider area into 20 steps and
-     * // visit every step 30 msec.
-     * var n = board.create('slider',[[-2,4],[2,4],[1,5,100]],{name:'n'});
-     * n.startAnimation(1, 20, 30);
-     *
-     * </pre><div id="JXG40ce04b8-e99c-11e8-a1ca-04d3b0c2aad3" class="jxgbox" style="width: 300px; height: 300px;"></div>
-     * <script type="text/javascript">
-     *     (function() {
-     *         var board = JXG.JSXGraph.initBoard('JXG40ce04b8-e99c-11e8-a1ca-04d3b0c2aad3',
-     *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
-     *     // Divide the slider area into 20 steps and
-     *     // visit every step 30 msec.
-     *     var n = board.create('slider',[[-2,4],[2,4],[1,5,100]],{name:'n'});
-     *     n.startAnimation(1, 20, 30);
-     *
-     *     })();
-     * </script><pre>
-     *
-     */
-    startAnimation: function (direction, stepCount, delay) {
-      var that = this;
-
-      delay = delay || 250;
-
-      if (
-        this.type === base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_TYPE_GLIDER */ .Z.OBJECT_TYPE_GLIDER &&
-        !utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].exists */ .Z.exists(this.intervalCode)
-      ) {
-        this.intervalCode = window.setInterval(function () {
-          that._anim(direction, stepCount);
-        }, delay);
-
-        if (!utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].exists */ .Z.exists(this.intervalCount)) {
-          this.intervalCount = 0;
-        }
-      }
-      return this;
-    },
-
-    /**
-     * Stop animation.
-     * @name Glider#stopAnimation
-     * @see Glider#startAnimation
-     * @function
-     * @returns {JXG.CoordsElement} Reference to itself.
-     */
-    stopAnimation: function () {
-      if (utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].exists */ .Z.exists(this.intervalCode)) {
-        window.clearInterval(this.intervalCode);
-        delete this.intervalCode;
-      }
-
-      return this;
-    },
-
-    /**
-     * Starts an animation which moves the point along a given path in given time.
-     * @param {Array|function} path The path the point is moved on.
-     * This can be either an array of arrays or containing x and y values of the points of
-     * the path, or an array of points, or a function taking the amount of elapsed time since the animation
-     * has started and returns an array containing a x and a y value or NaN.
-     * In case of NaN the animation stops.
-     * @param {Number} time The time in milliseconds in which to finish the animation
-     * @param {Object} [options] Optional settings for the animation.
-     * @param {function} [options.callback] A function that is called as soon as the animation is finished.
-     * @param {Boolean} [options.interpolate=true] If <tt>path</tt> is an array moveAlong()
-     * will interpolate the path
-     * using {@link JXG.Math.Numerics.Neville}. Set this flag to false if you don't want to use interpolation.
-     * @returns {JXG.CoordsElement} Reference to itself.
-     * @see JXG.CoordsElement#moveAlong
-     * @see JXG.CoordsElement#moveTo
-     * @see JXG.GeometryElement#animate
-     */
-    moveAlong: function (path, time, options) {
-      options = options || {};
-
-      var i,
-        neville,
-        interpath = [],
-        p = [],
-        delay = this.board.attr.animationdelay,
-        steps = time / delay,
-        len,
-        pos,
-        part,
-        makeFakeFunction = function (i, j) {
-          return function () {
-            return path[i][j];
-          };
-        };
-
-      if (utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].isArray */ .Z.isArray(path)) {
-        len = path.length;
-        for (i = 0; i < len; i++) {
-          if (utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].isPoint */ .Z.isPoint(path[i])) {
-            p[i] = path[i];
-          } else {
-            p[i] = {
-              elementClass: base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_CLASS_POINT */ .Z.OBJECT_CLASS_POINT,
-              X: makeFakeFunction(i, 0),
-              Y: makeFakeFunction(i, 1),
-            };
-          }
-        }
-
-        time = time || 0;
-        if (time === 0) {
-          this.setPosition(base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].COORDS_BY_USER */ .Z.COORDS_BY_USER, [
-            p[p.length - 1].X(),
-            p[p.length - 1].Y(),
-          ]);
-          return this.board.update(this);
-        }
-
-        if (!utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].exists */ .Z.exists(options.interpolate) || options.interpolate) {
-          neville = math_numerics__WEBPACK_IMPORTED_MODULE_3__/* ["default"].Neville */ .Z.Neville(p);
-          for (i = 0; i < steps; i++) {
-            interpath[i] = [];
-            interpath[i][0] = neville[0](((steps - i) / steps) * neville[3]());
-            interpath[i][1] = neville[1](((steps - i) / steps) * neville[3]());
-          }
-        } else {
-          len = path.length - 1;
-          for (i = 0; i < steps; ++i) {
-            pos = Math.floor((i / steps) * len);
-            part = (i / steps) * len - pos;
-
-            interpath[i] = [];
-            interpath[i][0] = (1.0 - part) * p[pos].X() + part * p[pos + 1].X();
-            interpath[i][1] = (1.0 - part) * p[pos].Y() + part * p[pos + 1].Y();
-          }
-          interpath.push([p[len].X(), p[len].Y()]);
-          interpath.reverse();
-          /*
-                    for (i = 0; i < steps; i++) {
-                        interpath[i] = [];
-                        interpath[i][0] = path[Math.floor((steps - i) / steps * (path.length - 1))][0];
-                        interpath[i][1] = path[Math.floor((steps - i) / steps * (path.length - 1))][1];
-                    }
-                    */
-        }
-
-        this.animationPath = interpath;
-      } else if (utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].isFunction */ .Z.isFunction(path)) {
-        this.animationPath = path;
-        this.animationStart = new Date().getTime();
-      }
-
-      this.animationCallback = options.callback;
-      this.board.addAnimation(this);
-
-      return this;
-    },
-
-    /**
-     * Starts an animated point movement towards the given coordinates <tt>where</tt>.
-     * The animation is done after <tt>time</tt> milliseconds.
-     * If the second parameter is not given or is equal to 0, setPosition() is called, see #setPosition,
-     * i.e. the coordinates are changed without animation.
-     * @param {Array} where Array containing the x and y coordinate of the target location.
-     * @param {Number} [time] Number of milliseconds the animation should last.
-     * @param {Object} [options] Optional settings for the animation
-     * @param {function} [options.callback] A function that is called as soon as the animation is finished.
-     * @param {String} [options.effect='<>'] animation effects like speed fade in and out. possible values are
-     * '<>' for speed increase on start and slow down at the end (default) and '--' for constant speed during
-     * the whole animation.
-     * @returns {JXG.CoordsElement} Reference to itself.
-     * @see JXG.CoordsElement#moveAlong
-     * @see JXG.CoordsElement#visit
-     * @see JXG.GeometryElement#animate
-     */
-    moveTo: function (where, time, options) {
-      options = options || {};
-      where = new base_coords__WEBPACK_IMPORTED_MODULE_5__/* ["default"] */ .Z(base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].COORDS_BY_USER */ .Z.COORDS_BY_USER, where, this.board);
-
-      var i,
-        delay = this.board.attr.animationdelay,
-        steps = Math.ceil(time / delay),
-        coords = [],
-        X = this.coords.usrCoords[1],
-        Y = this.coords.usrCoords[2],
-        dX = where.usrCoords[1] - X,
-        dY = where.usrCoords[2] - Y,
-        /** @ignore */
-        stepFun = function (i) {
-          if (options.effect && options.effect === "<>") {
-            return Math.pow(Math.sin(((i / steps) * Math.PI) / 2), 2);
-          }
-          return i / steps;
-        };
-
-      if (
-        !utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].exists */ .Z.exists(time) ||
-        time === 0 ||
-        Math.abs(where.usrCoords[0] - this.coords.usrCoords[0]) > math_math__WEBPACK_IMPORTED_MODULE_1__/* ["default"].eps */ .Z.eps
-      ) {
-        this.setPosition(base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].COORDS_BY_USER */ .Z.COORDS_BY_USER, where.usrCoords);
-        return this.board.update(this);
-      }
-
-      // In case there is no callback and we are already at the endpoint we can stop here
-      if (
-        !utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].exists */ .Z.exists(options.callback) &&
-        Math.abs(dX) < math_math__WEBPACK_IMPORTED_MODULE_1__/* ["default"].eps */ .Z.eps &&
-        Math.abs(dY) < math_math__WEBPACK_IMPORTED_MODULE_1__/* ["default"].eps */ .Z.eps
-      ) {
-        return this;
-      }
-
-      for (i = steps; i >= 0; i--) {
-        coords[steps - i] = [
-          where.usrCoords[0],
-          X + dX * stepFun(i),
-          Y + dY * stepFun(i),
-        ];
-      }
-
-      this.animationPath = coords;
-      this.animationCallback = options.callback;
-      this.board.addAnimation(this);
-
-      return this;
-    },
-
-    /**
-     * Starts an animated point movement towards the given coordinates <tt>where</tt>. After arriving at
-     * <tt>where</tt> the point moves back to where it started. The animation is done after <tt>time</tt>
-     * milliseconds.
-     * @param {Array} where Array containing the x and y coordinate of the target location.
-     * @param {Number} time Number of milliseconds the animation should last.
-     * @param {Object} [options] Optional settings for the animation
-     * @param {function} [options.callback] A function that is called as soon as the animation is finished.
-     * @param {String} [options.effect='<>'] animation effects like speed fade in and out. possible values are
-     * '<>' for speed increase on start and slow down at the end (default) and '--' for constant speed during
-     * the whole animation.
-     * @param {Number} [options.repeat=1] How often this animation should be repeated.
-     * @returns {JXG.CoordsElement} Reference to itself.
-     * @see JXG.CoordsElement#moveAlong
-     * @see JXG.CoordsElement#moveTo
-     * @see JXG.GeometryElement#animate
-     */
-    visit: function (where, time, options) {
-      where = new base_coords__WEBPACK_IMPORTED_MODULE_5__/* ["default"] */ .Z(base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].COORDS_BY_USER */ .Z.COORDS_BY_USER, where, this.board);
-
-      var i,
-        j,
-        steps,
-        delay = this.board.attr.animationdelay,
-        coords = [],
-        X = this.coords.usrCoords[1],
-        Y = this.coords.usrCoords[2],
-        dX = where.usrCoords[1] - X,
-        dY = where.usrCoords[2] - Y,
-        /** @ignore */
-        stepFun = function (i) {
-          var x = i < steps / 2 ? (2 * i) / steps : (2 * (steps - i)) / steps;
-
-          if (options.effect && options.effect === "<>") {
-            return Math.pow(Math.sin((x * Math.PI) / 2), 2);
-          }
-
-          return x;
-        };
-
-      // support legacy interface where the third parameter was the number of repeats
-      if (utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].isNumber */ .Z.isNumber(options)) {
-        options = { repeat: options };
-      } else {
-        options = options || {};
-        if (!utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].exists */ .Z.exists(options.repeat)) {
-          options.repeat = 1;
-        }
-      }
-
-      steps = Math.ceil(time / (delay * options.repeat));
-
-      for (j = 0; j < options.repeat; j++) {
-        for (i = steps; i >= 0; i--) {
-          coords[j * (steps + 1) + steps - i] = [
-            where.usrCoords[0],
-            X + dX * stepFun(i),
-            Y + dY * stepFun(i),
-          ];
-        }
-      }
-      this.animationPath = coords;
-      this.animationCallback = options.callback;
-      this.board.addAnimation(this);
-
-      return this;
-    },
-
-    /**
-     * Animates a glider. Is called by the browser after startAnimation is called.
-     * @param {Number} direction The direction the glider is animated.
-     * @param {Number} stepCount The number of steps in which the parent element is divided.
-     * Must be at least 1.
-     * @see #startAnimation
-     * @see #stopAnimation
-     * @private
-     * @returns {JXG.CoordsElement} Reference to itself.
-     */
-    _anim: function (direction, stepCount) {
-      var dX, dY, alpha, startPoint, newX, radius, sp1c, sp2c, res, d;
-
-      this.intervalCount += 1;
-      if (this.intervalCount > stepCount) {
-        this.intervalCount = 0;
-      }
-
-      if (this.slideObject.elementClass === base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_CLASS_LINE */ .Z.OBJECT_CLASS_LINE) {
-        sp1c = this.slideObject.point1.coords.scrCoords;
-        sp2c = this.slideObject.point2.coords.scrCoords;
-
-        dX = Math.round(((sp2c[1] - sp1c[1]) * this.intervalCount) / stepCount);
-        dY = Math.round(((sp2c[2] - sp1c[2]) * this.intervalCount) / stepCount);
-        if (direction > 0) {
-          startPoint = this.slideObject.point1;
-        } else {
-          startPoint = this.slideObject.point2;
-          dX *= -1;
-          dY *= -1;
-        }
-
-        this.coords.setCoordinates(base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].COORDS_BY_SCREEN */ .Z.COORDS_BY_SCREEN, [
-          startPoint.coords.scrCoords[1] + dX,
-          startPoint.coords.scrCoords[2] + dY,
-        ]);
-      } else if (this.slideObject.elementClass === base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_CLASS_CURVE */ .Z.OBJECT_CLASS_CURVE) {
-        if (direction > 0) {
-          newX = Math.round(
-            (this.intervalCount / stepCount) * this.board.canvasWidth
-          );
-        } else {
-          newX = Math.round(
-            ((stepCount - this.intervalCount) / stepCount) *
-              this.board.canvasWidth
-          );
-        }
-
-        this.coords.setCoordinates(base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].COORDS_BY_SCREEN */ .Z.COORDS_BY_SCREEN, [newX, 0]);
-        res = math_geometry__WEBPACK_IMPORTED_MODULE_2__/* ["default"].projectPointToCurve */ .Z.projectPointToCurve(this, this.slideObject, this.board);
-        this.coords = res[0];
-        this.position = res[1];
-      } else if (this.slideObject.elementClass === base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_CLASS_CIRCLE */ .Z.OBJECT_CLASS_CIRCLE) {
-        alpha = 2 * Math.PI;
-        if (direction < 0) {
-          alpha *= this.intervalCount / stepCount;
-        } else {
-          alpha *= (stepCount - this.intervalCount) / stepCount;
-        }
-        radius = this.slideObject.Radius();
-
-        this.coords.setCoordinates(base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].COORDS_BY_USER */ .Z.COORDS_BY_USER, [
-          this.slideObject.center.coords.usrCoords[1] +
-            radius * Math.cos(alpha),
-          this.slideObject.center.coords.usrCoords[2] +
-            radius * Math.sin(alpha),
-        ]);
-      }
-
-      this.board.update(this);
-      return this;
-    },
-
-    // documented in GeometryElement
-    getTextAnchor: function () {
-      return this.coords;
-    },
-
-    // documented in GeometryElement
-    getLabelAnchor: function () {
-      return this.coords;
-    },
-
-    // documented in element.js
-    getParents: function () {
-      var p = [this.Z(), this.X(), this.Y()];
-
-      if (this.parents.length !== 0) {
-        p = this.parents;
-      }
-
-      if (this.type === base_constants__WEBPACK_IMPORTED_MODULE_6__/* ["default"].OBJECT_TYPE_GLIDER */ .Z.OBJECT_TYPE_GLIDER) {
-        p = [this.X(), this.Y(), this.slideObject.id];
-      }
-
-      return p;
-    },
-  }
-);
-
-/**
- * Generic method to create point, text or image.
- * Determines the type of the construction, i.e. free, or constrained by function,
- * transformation or of glider type.
- * @param{Object} Callback Object type, e.g. JXG.Point, JXG.Text or JXG.Image
- * @param{Object} board Link to the board object
- * @param{Array} coords Array with coordinates. This may be: array of numbers, function
- * returning an array of numbers, array of functions returning a number, object and transformation.
- * If the attribute "slideObject" exists, a glider element is constructed.
- * @param{Object} attr Attributes object
- * @param{Object} arg1 Optional argument 1: in case of text this is the text content,
- * in case of an image this is the url.
- * @param{Array} arg2 Optional argument 2: in case of image this is an array containing the size of
- * the image.
- * @returns{Object} returns the created object or false.
- */
-jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].CoordsElement.create */ .Z.CoordsElement.create = function (
-  Callback,
-  board,
-  coords,
-  attr,
-  arg1,
-  arg2
-) {
-  var el,
-    isConstrained = false,
-    i;
-
-  for (i = 0; i < coords.length; i++) {
-    if (utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].isFunction */ .Z.isFunction(coords[i]) || utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].isString */ .Z.isString(coords[i])) {
-      isConstrained = true;
-    }
-  }
-
-  if (!isConstrained) {
-    if (utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].isNumber */ .Z.isNumber(coords[0]) && utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].isNumber */ .Z.isNumber(coords[1])) {
-      el = new Callback(board, coords, attr, arg1, arg2);
-
-      if (utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].exists */ .Z.exists(attr.slideobject)) {
-        el.makeGlider(attr.slideobject);
-      } else {
-        // Free element
-        el.baseElement = el;
-      }
-      el.isDraggable = true;
-    } else if (
-      utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].isObject */ .Z.isObject(coords[0]) &&
-      utils_type__WEBPACK_IMPORTED_MODULE_7__/* ["default"].isTransformationOrArray */ .Z.isTransformationOrArray(coords[1])
-    ) {
-      // Transformation
-      // TODO less general specification of isObject
-      el = new Callback(board, [0, 0], attr, arg1, arg2);
-      el.addTransform(coords[0], coords[1]);
-      el.isDraggable = false;
-    } else {
-      return false;
-    }
-  } else {
-    el = new Callback(board, [0, 0], attr, arg1, arg2);
-    el.addConstraint(coords);
-  }
-
-  el.handleSnapToGrid();
-  el.handleSnapToPoints();
-  el.handleAttractors();
-
-  el.addParents(coords);
-  return el;
-};
-
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].CoordsElement */ .Z.CoordsElement);
-
-
-/***/ }),
-
-/***/ 958:
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "Z": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var jxg__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(765);
-/* harmony import */ var base_constants__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(351);
-/* harmony import */ var base_coords__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(705);
-/* harmony import */ var math_math__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(275);
-/* harmony import */ var math_statistics__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(309);
-/* harmony import */ var options__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(766);
-/* harmony import */ var utils_event__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(88);
-/* harmony import */ var utils_color__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(327);
-/* harmony import */ var utils_type__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(109);
-/*
-    Copyright 2008-2022
-        Matthias Ehmann,
-        Michael Gerhaeuser,
-        Carsten Miller,
-        Bianca Valentin,
-        Alfred Wassermann,
-        Peter Wilfahrt
-
-    This file is part of JSXGraph.
-
-    JSXGraph is free software dual licensed under the GNU LGPL or MIT License.
-
-    You can redistribute it and/or modify it under the terms of the
-
-      * GNU Lesser General Public License as published by
-        the Free Software Foundation, either version 3 of the License, or
-        (at your option) any later version
-      OR
-      * MIT License: https://github.com/jsxgraph/jsxgraph/blob/master/LICENSE.MIT
-
-    JSXGraph is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
-
-    You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
-    and <http://opensource.org/licenses/MIT/>.
- */
-
-/*global JXG: true, define: true*/
-/*jslint nomen: true, plusplus: true, unparam: true*/
-
-/* depends:
- jxg
- base/constants
- base/coords
- math/math
- options
- parser/geonext
- utils/event
- utils/color
- utils/type
- */
-
-
-
-
-
-
-
-
-
-
-
-/**
- * Constructs a new GeometryElement object.
- * @class This is the basic class for geometry elements like points, circles and lines.
- * @constructor
- * @param {JXG.Board} board Reference to the board the element is constructed on.
- * @param {Object} attributes Hash of attributes and their values.
- * @param {Number} type Element type (a <tt>JXG.OBJECT_TYPE_</tt> value).
- * @param {Number} oclass The element's class (a <tt>JXG.OBJECT_CLASS_</tt> value).
- * @borrows JXG.EventEmitter#on as this.on
- * @borrows JXG.EventEmitter#off as this.off
- * @borrows JXG.EventEmitter#triggerEventHandlers as this.triggerEventHandlers
- * @borrows JXG.EventEmitter#eventHandlers as this.eventHandlers
- */
-jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].GeometryElement */ .Z.GeometryElement = function (board, attributes, type, oclass) {
-  var name, key, attr;
-
-  /**
-   * Controls if updates are necessary
-   * @type Boolean
-   * @default true
-   */
-  this.needsUpdate = true;
-
-  /**
-   * Controls if this element can be dragged. In GEONExT only
-   * free points and gliders can be dragged.
-   * @type Boolean
-   * @default false
-   */
-  this.isDraggable = false;
-
-  /**
-   * If element is in two dimensional real space this is true, else false.
-   * @type Boolean
-   * @default true
-   */
-  this.isReal = true;
-
-  /**
-   * Stores all dependent objects to be updated when this point is moved.
-   * @type Object
-   */
-  this.childElements = {};
-
-  /**
-   * If element has a label subelement then this property will be set to true.
-   * @type Boolean
-   * @default false
-   */
-  this.hasLabel = false;
-
-  /**
-   * True, if the element is currently highlighted.
-   * @type Boolean
-   * @default false
-   */
-  this.highlighted = false;
-
-  /**
-   * Stores all Intersection Objects which in this moment are not real and
-   * so hide this element.
-   * @type Object
-   */
-  this.notExistingParents = {};
-
-  /**
-   * Keeps track of all objects drawn as part of the trace of the element.
-   * @see JXG.GeometryElement#clearTrace
-   * @see JXG.GeometryElement#numTraces
-   * @type Object
-   */
-  this.traces = {};
-
-  /**
-   * Counts the number of objects drawn as part of the trace of the element.
-   * @see JXG.GeometryElement#clearTrace
-   * @see JXG.GeometryElement#traces
-   * @type Number
-   */
-  this.numTraces = 0;
-
-  /**
-   * Stores the  transformations which are applied during update in an array
-   * @type Array
-   * @see JXG.Transformation
-   */
-  this.transformations = [];
-
-  /**
-   * @type JXG.GeometryElement
-   * @default null
-   * @private
-   */
-  this.baseElement = null;
-
-  /**
-   * Elements depending on this element are stored here.
-   * @type Object
-   */
-  this.descendants = {};
-
-  /**
-   * Elements on which this element depends on are stored here.
-   * @type Object
-   */
-  this.ancestors = {};
-
-  /**
-   * Ids of elements on which this element depends directly are stored here.
-   * @type Object
-   */
-  this.parents = [];
-
-  /**
-   * Stores variables for symbolic computations
-   * @type Object
-   */
-  this.symbolic = {};
-
-  /**
-   * Stores the SVG (or VML) rendering node for the element. This enables low-level
-   * access to SVG nodes. The properties of such an SVG node can then be changed
-   * by calling setAttribute(). Note that there are a few elements which consist
-   * of more than one SVG nodes:
-   * <ul>
-   * <li> Elements with arrow tail or head: rendNodeTriangleStart, rendNodeTriangleEnd
-   * <li> SVG (or VML) texts: rendNodeText
-   * <li> Button: rendNodeForm, rendNodeButton, rendNodeTag
-   * <li> Checkbox: rendNodeForm, rendNodeCheckbox, rendNodeLabel, rendNodeTag
-   * <li> Input: rendNodeForm, rendNodeInput, rendNodeLabel, rendNodeTag
-   * </ul>
-   *
-   * Here is are two examples: The first example shows how to access the SVG node,
-   * the second example demonstrates how to change SVG attributes.
-   * @example
-   *     var p1 = board.create('point', [0, 0]);
-   *     console.log(p1.rendNode);
-   *     // returns the full SVG node details of the point p1, something like:
-   *     // &lt;ellipse id='box_jxgBoard1P6' stroke='#ff0000' stroke-opacity='1' stroke-width='2px'
-   *     //   fill='#ff0000' fill-opacity='1' cx='250' cy='250' rx='4' ry='4'
-   *     //   style='position: absolute;'&gt;
-   *     // &lt;/ellipse&gt;
-   *
-   * @example
-   *     var s = board.create('segment', [p1, p2], {strokeWidth: 60});
-   *     s.rendNode.setAttribute('stroke-linecap', 'round');
-   *
-   * @type Object
-   */
-  this.rendNode = null;
-
-  /**
-   * The string used with {@link JXG.Board#create}
-   * @type String
-   */
-  this.elType = "";
-
-  /**
-   * The element is saved with an explicit entry in the file (<tt>true</tt>) or implicitly
-   * via a composition.
-   * @type Boolean
-   * @default true
-   */
-  this.dump = true;
-
-  /**
-   * Subs contains the subelements, created during the create method.
-   * @type Object
-   */
-  this.subs = {};
-
-  /**
-   * Inherits contains the subelements, which may have an attribute
-   * (in particular the attribute "visible") having value 'inherit'.
-   * @type Object
-   */
-  this.inherits = [];
-
-  /**
-   * The position of this element inside the {@link JXG.Board#objectsList}.
-   * @type Number
-   * @default -1
-   * @private
-   */
-  this._pos = -1;
-
-  /**
-   * [c, b0, b1, a, k, r, q0, q1]
-   *
-   * See
-   * A.E. Middleditch, T.W. Stacey, and S.B. Tor:
-   * "Intersection Algorithms for Lines and Circles",
-   * ACM Transactions on Graphics, Vol. 8, 1, 1989, pp 25-40.
-   *
-   * The meaning of the parameters is:
-   * Circle: points p=[p0, p1] on the circle fulfill
-   *  a&lt;p, p&gt; + &lt;b, p&gt; + c = 0
-   * For convenience we also store
-   *  r: radius
-   *  k: discriminant = sqrt(&lt;b,b&gt;-4ac)
-   *  q=[q0, q1] center
-   *
-   * Points have radius = 0.
-   * Lines have radius = infinity.
-   * b: normalized vector, representing the direction of the line.
-   *
-   * Should be put into Coords, when all elements possess Coords.
-   * @type Array
-   * @default [1, 0, 0, 0, 1, 1, 0, 0]
-   */
-  this.stdform = [1, 0, 0, 0, 1, 1, 0, 0];
-
-  /**
-   * The methodMap determines which methods can be called from within JessieCode and under which name it
-   * can be used. The map is saved in an object, the name of a property is the name of the method used in JessieCode,
-   * the value of a property is the name of the method in JavaScript.
-   * @type Object
-   */
-  this.methodMap = {
-    setLabel: "setLabel",
-    label: "label",
-    setName: "setName",
-    getName: "getName",
-    addTransform: "addTransform",
-    setProperty: "setAttribute",
-    setAttribute: "setAttribute",
-    addChild: "addChild",
-    animate: "animate",
-    on: "on",
-    off: "off",
-    trigger: "trigger",
-    addTicks: "addTicks",
-    removeTicks: "removeTicks",
-    removeAllTicks: "removeAllTicks",
-  };
-
-  /**
-   * Quadratic form representation of circles (and conics)
-   * @type Array
-   * @default [[1,0,0],[0,1,0],[0,0,1]]
-   */
-  this.quadraticform = [
-    [1, 0, 0],
-    [0, 1, 0],
-    [0, 0, 1],
-  ];
-
-  /**
-   * An associative array containing all visual properties.
-   * @type Object
-   * @default empty object
-   */
-  this.visProp = {};
-
-  /**
-   * An associative array containing visual properties which are calculated from
-   * the attribute values (i.e. visProp) and from other constraints.
-   * An example: if an intersection point does not have real coordinates,
-   * visPropCalc.visible is set to false.
-   * Additionally, the user can control visibility with the attribute "visible",
-   * even by supplying a functions as value.
-   *
-   * @type Object
-   * @default empty object
-   */
-  this.visPropCalc = {
-    visible: false,
-  };
-
-  utils_event__WEBPACK_IMPORTED_MODULE_6__/* ["default"].eventify */ .Z.eventify(this);
-
-  /**
-   * Is the mouse over this element?
-   * @type Boolean
-   * @default false
-   */
-  this.mouseover = false;
-
-  /**
-   * Time stamp containing the last time this element has been dragged.
-   * @type Date
-   * @default creation time
-   */
-  this.lastDragTime = new Date();
-
-  if (arguments.length > 0) {
-    /**
-     * Reference to the board associated with the element.
-     * @type JXG.Board
-     */
-    this.board = board;
-
-    /**
-     * Type of the element.
-     * @constant
-     * @type Number
-     */
-    this.type = type;
-
-    /**
-     * Original type of the element at construction time. Used for removing glider property.
-     * @constant
-     * @type Number
-     */
-    this._org_type = type;
-
-    /**
-     * The element's class.
-     * @constant
-     * @type Number
-     */
-    this.elementClass = oclass || base_constants__WEBPACK_IMPORTED_MODULE_1__/* ["default"].OBJECT_CLASS_OTHER */ .Z.OBJECT_CLASS_OTHER;
-
-    /**
-     * Unique identifier for the element. Equivalent to id-attribute of renderer element.
-     * @type String
-     */
-    this.id = attributes.id;
-
-    name = attributes.name;
-    /* If name is not set or null or even undefined, generate an unique name for this object */
-    if (!utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].exists */ .Z.exists(name)) {
-      name = this.board.generateName(this);
-    }
-
-    if (name !== "") {
-      this.board.elementsByName[name] = this;
-    }
-
-    /**
-     * Not necessarily unique name for the element.
-     * @type String
-     * @default Name generated by {@link JXG.Board#generateName}.
-     * @see JXG.Board#generateName
-     */
-    this.name = name;
-
-    this.needsRegularUpdate = attributes.needsregularupdate;
-
-    // create this.visPropOld and set default values
-    utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].clearVisPropOld */ .Z.clearVisPropOld(this);
-
-    attr = this.resolveShortcuts(attributes);
-    for (key in attr) {
-      if (attr.hasOwnProperty(key)) {
-        this._set(key, attr[key]);
-      }
-    }
-
-    this.visProp.draft = attr.draft && attr.draft.draft;
-    //this.visProp.gradientangle = '270';
-    // this.visProp.gradientsecondopacity = Type.evaluate(this.visProp.fillopacity);
-    //this.visProp.gradientpositionx = 0.5;
-    //this.visProp.gradientpositiony = 0.5;
-  }
-};
-
-jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].extend */ .Z.extend(
-  jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].GeometryElement.prototype */ .Z.GeometryElement.prototype,
-  /** @lends JXG.GeometryElement.prototype */ {
-    /**
-     * Add an element as a child to the current element. Can be used to model dependencies between geometry elements.
-     * @param {JXG.GeometryElement} obj The dependent object.
-     */
-    addChild: function (obj) {
-      var el, el2;
-
-      this.childElements[obj.id] = obj;
-      this.addDescendants(obj);
-      obj.ancestors[this.id] = this;
-
-      for (el in this.descendants) {
-        if (this.descendants.hasOwnProperty(el)) {
-          this.descendants[el].ancestors[this.id] = this;
-
-          for (el2 in this.ancestors) {
-            if (this.ancestors.hasOwnProperty(el2)) {
-              this.descendants[el].ancestors[this.ancestors[el2].id] =
-                this.ancestors[el2];
-            }
-          }
-        }
-      }
-
-      for (el in this.ancestors) {
-        if (this.ancestors.hasOwnProperty(el)) {
-          for (el2 in this.descendants) {
-            if (this.descendants.hasOwnProperty(el2)) {
-              this.ancestors[el].descendants[this.descendants[el2].id] =
-                this.descendants[el2];
-            }
-          }
-        }
-      }
-      return this;
-    },
-
-    /**
-     * Adds the given object to the descendants list of this object and all its child objects.
-     * @param {JXG.GeometryElement} obj The element that is to be added to the descendants list.
-     * @private
-     * @return
-     */
-    addDescendants: function (obj) {
-      var el;
-
-      this.descendants[obj.id] = obj;
-      for (el in obj.childElements) {
-        if (obj.childElements.hasOwnProperty(el)) {
-          this.addDescendants(obj.childElements[el]);
-        }
-      }
-      return this;
-    },
-
-    /**
-     * Adds ids of elements to the array this.parents. This method needs to be called if some dependencies
-     * can not be detected automatically by JSXGraph. For example if a function graph is given by a function
-     * which referes to coordinates of a point, calling addParents() is necessary.
-     *
-     * @param {Array} parents Array of elements or ids of elements.
-     * Alternatively, one can give a list of objects as parameters.
-     * @returns {JXG.Object} reference to the object itself.
-     *
-     * @example
-     * // Movable function graph
-     * var A = board.create('point', [1, 0], {name:'A'}),
-     *     B = board.create('point', [3, 1], {name:'B'}),
-     *     f = board.create('functiongraph', function(x) {
-     *          var ax = A.X(),
-     *              ay = A.Y(),
-     *              bx = B.X(),
-     *              by = B.Y(),
-     *              a = (by - ay) / ( (bx - ax) * (bx - ax) );
-     *           return a * (x - ax) * (x - ax) + ay;
-     *      }, {fixed: false});
-     * f.addParents([A, B]);
-     * </pre><div class="jxgbox" id="JXG7c91d4d2-986c-4378-8135-24505027f251" style="width: 400px; height: 400px;"></div>
-     * <script type="text/javascript">
-     * (function() {
-     *   var board = JXG.JSXGraph.initBoard('JXG7c91d4d2-986c-4378-8135-24505027f251', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
-     *   var A = board.create('point', [1, 0], {name:'A'}),
-     *       B = board.create('point', [3, 1], {name:'B'}),
-     *       f = board.create('functiongraph', function(x) {
-     *            var ax = A.X(),
-     *                ay = A.Y(),
-     *                bx = B.X(),
-     *                by = B.Y(),
-     *                a = (by - ay) / ( (bx - ax) * (bx - ax) );
-     *             return a * (x - ax) * (x - ax) + ay;
-     *        }, {fixed: false});
-     *   f.addParents([A, B]);
-     * })();
-     * </script><pre>
-     *
-     **/
-    addParents: function (parents) {
-      var i, len, par;
-
-      if (utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].isArray */ .Z.isArray(parents)) {
-        par = parents;
-      } else {
-        par = arguments;
-      }
-
-      len = par.length;
-      for (i = 0; i < len; ++i) {
-        if (!utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].exists */ .Z.exists(par[i])) {
-          continue;
-        }
-        if (utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].isId */ .Z.isId(this.board, par[i])) {
-          this.parents.push(par[i]);
-        } else if (utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].exists */ .Z.exists(par[i].id)) {
-          this.parents.push(par[i].id);
-        }
-      }
-      this.parents = utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].uniqueArray */ .Z.uniqueArray(this.parents);
-    },
-
-    /**
-     * Sets ids of elements to the array this.parents.
-     * First, this.parents is cleared. See {@link JXG.GeometryElement#addParents}.
-     * @param {Array} parents Array of elements or ids of elements.
-     * Alternatively, one can give a list of objects as parameters.
-     * @returns {JXG.Object} reference to the object itself.
-     **/
-    setParents: function (parents) {
-      this.parents = [];
-      this.addParents(parents);
-    },
-
-    /**
-     * Remove an element as a child from the current element.
-     * @param {JXG.GeometryElement} obj The dependent object.
-     */
-    removeChild: function (obj) {
-      //var el, el2;
-
-      delete this.childElements[obj.id];
-      this.removeDescendants(obj);
-      delete obj.ancestors[this.id];
-
-      /*
-             // I do not know if these addDescendants stuff has to be adapted to removeChild. A.W.
-            for (el in this.descendants) {
-                if (this.descendants.hasOwnProperty(el)) {
-                    delete this.descendants[el].ancestors[this.id];
-
-                    for (el2 in this.ancestors) {
-                        if (this.ancestors.hasOwnProperty(el2)) {
-                            this.descendants[el].ancestors[this.ancestors[el2].id] = this.ancestors[el2];
-                        }
-                    }
-                }
-            }
-
-            for (el in this.ancestors) {
-                if (this.ancestors.hasOwnProperty(el)) {
-                    for (el2 in this.descendants) {
-                        if (this.descendants.hasOwnProperty(el2)) {
-                            this.ancestors[el].descendants[this.descendants[el2].id] = this.descendants[el2];
-                        }
-                    }
-                }
-            }
-            */
-      return this;
-    },
-
-    /**
-     * Removes the given object from the descendants list of this object and all its child objects.
-     * @param {JXG.GeometryElement} obj The element that is to be removed from the descendants list.
-     * @private
-     * @return
-     */
-    removeDescendants: function (obj) {
-      var el;
-
-      delete this.descendants[obj.id];
-      for (el in obj.childElements) {
-        if (obj.childElements.hasOwnProperty(el)) {
-          this.removeDescendants(obj.childElements[el]);
-        }
-      }
-      return this;
-    },
-
-    /**
-     * Counts the direct children of an object without counting labels.
-     * @private
-     * @returns {number} Number of children
-     */
-    countChildren: function () {
-      var prop,
-        d,
-        s = 0;
-
-      d = this.childElements;
-      for (prop in d) {
-        if (d.hasOwnProperty(prop) && prop.indexOf("Label") < 0) {
-          s++;
-        }
-      }
-      return s;
-    },
-
-    /**
-     * Returns the elements name. Used in JessieCode.
-     * @returns {String}
-     */
-    getName: function () {
-      return this.name;
-    },
-
-    /**
-     * Add transformations to this element.
-     * @param {JXG.Transformation|Array} transform Either one {@link JXG.Transformation}
-     * or an array of {@link JXG.Transformation}s.
-     * @returns {JXG.GeometryElement} Reference to the element.
-     */
-    addTransform: function (transform) {
-      return this;
-    },
-
-    /**
-     * Decides whether an element can be dragged. This is used in
-     * {@link JXG.GeometryElement#setPositionDirectly} methods
-     * where all parent elements are checked if they may be dragged, too.
-     * @private
-     * @returns {boolean}
-     */
-    draggable: function () {
-      return (
-        this.isDraggable &&
-        !utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].evaluate */ .Z.evaluate(this.visProp.fixed) &&
-        /*!this.visProp.frozen &&*/ this.type !== base_constants__WEBPACK_IMPORTED_MODULE_1__/* ["default"].OBJECT_TYPE_GLIDER */ .Z.OBJECT_TYPE_GLIDER
-      );
-    },
-
-    /**
-     * Translates the object by <tt>(x, y)</tt>. In case the element is defined by points, the defining points are
-     * translated, e.g. a circle constructed by a center point and a point on the circle line.
-     * @param {Number} method The type of coordinates used here.
-     * Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
-     * @param {Array} coords array of translation vector.
-     * @returns {JXG.GeometryElement} Reference to the element object.
-     */
-    setPosition: function (method, coords) {
-      var parents = [],
-        el,
-        i,
-        len,
-        t;
-
-      if (!utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].exists */ .Z.exists(this.parents)) {
-        return this;
-      }
-
-      len = this.parents.length;
-      for (i = 0; i < len; ++i) {
-        el = this.board.select(this.parents[i]);
-        if (utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].isPoint */ .Z.isPoint(el)) {
-          if (!el.draggable()) {
-            return this;
-          }
-          parents.push(el);
-        }
-      }
-
-      if (coords.length === 3) {
-        coords = coords.slice(1);
-      }
-
-      t = this.board.create("transform", coords, { type: "translate" });
-
-      // We distinguish two cases:
-      // 1) elements which depend on free elements, i.e. arcs and sectors
-      // 2) other elements
-      //
-      // In the first case we simply transform the parents elements
-      // In the second case we add a transform to the element.
-      //
-      len = parents.length;
-      if (len > 0) {
-        t.applyOnce(parents);
-      } else {
-        if (
-          this.transformations.length > 0 &&
-          this.transformations[this.transformations.length - 1].isNumericMatrix
-        ) {
-          this.transformations[this.transformations.length - 1].melt(t);
-        } else {
-          this.addTransform(t);
-        }
-      }
-
-      /*
-       * If - against the default configuration - defining gliders are marked as
-       * draggable, then their position has to be updated now.
-       */
-      for (i = 0; i < len; ++i) {
-        if (parents[i].type === base_constants__WEBPACK_IMPORTED_MODULE_1__/* ["default"].OBJECT_TYPE_GLIDER */ .Z.OBJECT_TYPE_GLIDER) {
-          parents[i].updateGlider();
-        }
-      }
-
-      return this;
-    },
-
-    /**
-     * Moves an element by the difference of two coordinates.
-     * @param {Number} method The type of coordinates used here.
-     * Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
-     * @param {Array} coords coordinates in screen/user units
-     * @param {Array} oldcoords previous coordinates in screen/user units
-     * @returns {JXG.GeometryElement} this element
-     */
-    setPositionDirectly: function (method, coords, oldcoords) {
-      var c = new base_coords__WEBPACK_IMPORTED_MODULE_2__/* ["default"] */ .Z(method, coords, this.board, false),
-        oldc = new base_coords__WEBPACK_IMPORTED_MODULE_2__/* ["default"] */ .Z(method, oldcoords, this.board, false),
-        dc = math_statistics__WEBPACK_IMPORTED_MODULE_4__/* ["default"].subtract */ .Z.subtract(c.usrCoords, oldc.usrCoords);
-
-      this.setPosition(base_constants__WEBPACK_IMPORTED_MODULE_1__/* ["default"].COORDS_BY_USER */ .Z.COORDS_BY_USER, dc);
-
-      return this;
-    },
-
-    /**
-     * Array of strings containing the polynomials defining the element.
-     * Used for determining geometric loci the groebner way.
-     * @returns {Array} An array containing polynomials describing the locus of the current object.
-     * @public
-     */
-    generatePolynomial: function () {
-      return [];
-    },
-
-    /**
-     * Animates properties for that object like stroke or fill color, opacity and maybe
-     * even more later.
-     * @param {Object} hash Object containing properties with target values for the animation.
-     * @param {number} time Number of milliseconds to complete the animation.
-     * @param {Object} [options] Optional settings for the animation:<ul><li>callback: A function that is called as soon as the animation is finished.</li></ul>
-     * @returns {JXG.GeometryElement} A reference to the object
-     */
-    animate: function (hash, time, options) {
-      options = options || {};
-      var r,
-        p,
-        i,
-        delay = this.board.attr.animationdelay,
-        steps = Math.ceil(time / delay),
-        self = this,
-        animateColor = function (startRGB, endRGB, property) {
-          var hsv1, hsv2, sh, ss, sv;
-          hsv1 = utils_color__WEBPACK_IMPORTED_MODULE_7__/* ["default"].rgb2hsv */ .Z.rgb2hsv(startRGB);
-          hsv2 = utils_color__WEBPACK_IMPORTED_MODULE_7__/* ["default"].rgb2hsv */ .Z.rgb2hsv(endRGB);
-
-          sh = (hsv2[0] - hsv1[0]) / steps;
-          ss = (hsv2[1] - hsv1[1]) / steps;
-          sv = (hsv2[2] - hsv1[2]) / steps;
-          self.animationData[property] = [];
-
-          for (i = 0; i < steps; i++) {
-            self.animationData[property][steps - i - 1] = utils_color__WEBPACK_IMPORTED_MODULE_7__/* ["default"].hsv2rgb */ .Z.hsv2rgb(
-              hsv1[0] + (i + 1) * sh,
-              hsv1[1] + (i + 1) * ss,
-              hsv1[2] + (i + 1) * sv
-            );
-          }
-        },
-        animateFloat = function (start, end, property, round) {
-          var tmp, s;
-
-          start = parseFloat(start);
-          end = parseFloat(end);
-
-          // we can't animate without having valid numbers.
-          // And parseFloat returns NaN if the given string doesn't contain
-          // a valid float number.
-          if (isNaN(start) || isNaN(end)) {
-            return;
-          }
-
-          s = (end - start) / steps;
-          self.animationData[property] = [];
-
-          for (i = 0; i < steps; i++) {
-            tmp = start + (i + 1) * s;
-            self.animationData[property][steps - i - 1] = round
-              ? Math.floor(tmp)
-              : tmp;
-          }
-        };
-
-      this.animationData = {};
-
-      for (r in hash) {
-        if (hash.hasOwnProperty(r)) {
-          p = r.toLowerCase();
-
-          switch (p) {
-            case "strokecolor":
-            case "fillcolor":
-              animateColor(this.visProp[p], hash[r], p);
-              break;
-            case "size":
-              if (!utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].isPoint */ .Z.isPoint(this)) {
-                break;
-              }
-              animateFloat(this.visProp[p], hash[r], p, true);
-              break;
-            case "strokeopacity":
-            case "strokewidth":
-            case "fillopacity":
-              animateFloat(this.visProp[p], hash[r], p, false);
-              break;
-          }
-        }
-      }
-
-      this.animationCallback = options.callback;
-      this.board.addAnimation(this);
-      return this;
-    },
-
-    /**
-     * General update method. Should be overwritten by the element itself.
-     * Can be used sometimes to commit changes to the object.
-     * @return {JXG.GeometryElement} Reference to the element
-     */
-    update: function () {
-      if (utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].evaluate */ .Z.evaluate(this.visProp.trace)) {
-        this.cloneToBackground();
-      }
-      return this;
-    },
-
-    /**
-     * Provide updateRenderer method.
-     * @return {JXG.GeometryElement} Reference to the element
-     * @private
-     */
-    updateRenderer: function () {
-      return this;
-    },
-
-    /**
-     * Run through the full update chain of an element.
-     * @param  {Boolean} visible Set visibility in case the elements attribute value is 'inherit'. null is allowed.
-     * @return {JXG.GeometryElement} Reference to the element
-     * @private
-     */
-    fullUpdate: function (visible) {
-      return this.prepareUpdate()
-        .update()
-        .updateVisibility(visible)
-        .updateRenderer();
-    },
-
-    /**
-     * Show the element or hide it. If hidden, it will still exist but not be
-     * visible on the board.
-     * @param  {Boolean} val true: show the element, false: hide the element
-     * @return {JXG.GeometryElement} Reference to the element
-     * @private
-     */
-    setDisplayRendNode: function (val) {
-      var i, len, s, len_s, obj;
-
-      if (val === undefined) {
-        val = this.visPropCalc.visible;
-      }
-
-      if (val === this.visPropOld.visible) {
-        return this;
-      }
-
-      // Set display of the element itself
-      this.board.renderer.display(this, val);
-
-      // Set the visibility of elements which inherit the attribute 'visible'
-      len = this.inherits.length;
-      for (s = 0; s < len; s++) {
-        obj = this.inherits[s];
-        if (utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].isArray */ .Z.isArray(obj)) {
-          len_s = obj.length;
-          for (i = 0; i < len_s; i++) {
-            if (
-              utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].exists */ .Z.exists(obj[i]) &&
-              utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].exists */ .Z.exists(obj[i].rendNode) &&
-              utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].evaluate */ .Z.evaluate(obj[i].visProp.visible) === "inherit"
-            ) {
-              obj[i].setDisplayRendNode(val);
-            }
-          }
-        } else {
-          if (
-            utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].exists */ .Z.exists(obj) &&
-            utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].exists */ .Z.exists(obj.rendNode) &&
-            utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].evaluate */ .Z.evaluate(obj.visProp.visible) === "inherit"
-          ) {
-            obj.setDisplayRendNode(val);
-          }
-        }
-      }
-
-      // Set the visibility of the label if it inherits the attribute 'visible'
-      if (
-        this.hasLabel &&
-        utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].exists */ .Z.exists(this.label) &&
-        utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].exists */ .Z.exists(this.label.rendNode)
-      ) {
-        if (utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].evaluate */ .Z.evaluate(this.label.visProp.visible) === "inherit") {
-          this.label.setDisplayRendNode(val);
-        }
-      }
-
-      return this;
-    },
-
-    /**
-     * Hide the element. It will still exist but not be visible on the board.
-     * Alias for "element.setAttribute({visible: false});"
-     * @return {JXG.GeometryElement} Reference to the element
-     */
-    hide: function () {
-      this.setAttribute({ visible: false });
-      return this;
-    },
-
-    /**
-     * Hide the element. It will still exist but not be visible on the board.
-     * Alias for {@link JXG.GeometryElement#hide}
-     * @returns {JXG.GeometryElement} Reference to the element
-     */
-    hideElement: function () {
-      this.hide();
-      return this;
-    },
-
-    /**
-     * Make the element visible.
-     * Alias for "element.setAttribute({visible: true});"
-     * @return {JXG.GeometryElement} Reference to the element
-     */
-    show: function () {
-      this.setAttribute({ visible: true });
-      return this;
-    },
-
-    /**
-     * Make the element visible.
-     * Alias for {@link JXG.GeometryElement#show}
-     * @returns {JXG.GeometryElement} Reference to the element
-     */
-    showElement: function () {
-      this.show();
-      return this;
-    },
-
-    /**
-     * Set the visibility of an element. The visibility is influenced by
-     * (listed in ascending priority):
-     * <ol>
-     * <li> The value of the element's attribute 'visible'
-     * <li> The visibility of a parent element. (Example: label)
-     * This overrules the value of the element's attribute value only if
-     * this attribute value of the element is 'inherit'.
-     * <li> being inside of the canvas
-     * </ol>
-     * <p>
-     * This method is called three times for most elements:
-     * <ol>
-     * <li> between {@link JXG.GeometryElement#update}
-     * and {@link JXG.GeometryElement#updateRenderer}. In case the value is 'inherit', nothing is done.
-     * <li> Recursively, called by itself for child elements. Here, 'inherit' is overruled by the parent's value.
-     * <li> In {@link JXG.GeometryElement#updateRenderer}, if the element is outside of the canvas.
-     * </ol>
-     *
-     * @param  {Boolean} parent_val Visibility of the parent element.
-     * @return {JXG.GeometryElement} Reference to the element.
-     * @private
-     */
-    updateVisibility: function (parent_val) {
-      var i, len, s, len_s, obj, val;
-
-      if (this.needsUpdate) {
-        // Handle the element
-        if (parent_val !== undefined) {
-          this.visPropCalc.visible = parent_val;
-        } else {
-          val = utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].evaluate */ .Z.evaluate(this.visProp.visible);
-
-          // infobox uses hiddenByParent
-          if (utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].exists */ .Z.exists(this.hiddenByParent) && this.hiddenByParent) {
-            val = false;
-          }
-          if (val !== "inherit") {
-            this.visPropCalc.visible = val;
-          }
-        }
-
-        // Handle elements which inherit the visibility
-        len = this.inherits.length;
-        for (s = 0; s < len; s++) {
-          obj = this.inherits[s];
-          if (utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].isArray */ .Z.isArray(obj)) {
-            len_s = obj.length;
-            for (i = 0; i < len_s; i++) {
-              if (
-                utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].exists */ .Z.exists(obj[i]) /*&& Type.exists(obj[i].rendNode)*/ &&
-                utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].evaluate */ .Z.evaluate(obj[i].visProp.visible) === "inherit"
-              ) {
-                obj[i]
-                  .prepareUpdate()
-                  .updateVisibility(this.visPropCalc.visible);
-              }
-            }
-          } else {
-            if (
-              utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].exists */ .Z.exists(obj) /*&& Type.exists(obj.rendNode)*/ &&
-              utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].evaluate */ .Z.evaluate(obj.visProp.visible) === "inherit"
-            ) {
-              obj.prepareUpdate().updateVisibility(this.visPropCalc.visible);
-            }
-          }
-        }
-
-        // Handle the label if it inherits the visibility
-        if (
-          utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].exists */ .Z.exists(this.label) &&
-          utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].exists */ .Z.exists(this.label.visProp) &&
-          utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].evaluate */ .Z.evaluate(this.label.visProp.visible)
-        ) {
-          this.label.prepareUpdate().updateVisibility(this.visPropCalc.visible);
-        }
-      }
-      return this;
-    },
-
-    /**
-     * Sets the value of property <tt>property</tt> to <tt>value</tt>.
-     * @param {String} property The property's name.
-     * @param value The new value
-     * @private
-     */
-    _set: function (property, value) {
-      var el;
-
-      property = property.toLocaleLowerCase();
-
-      // Search for entries in visProp with "color" as part of the property name
-      // and containing a RGBA string
-      if (
-        this.visProp.hasOwnProperty(property) &&
-        property.indexOf("color") >= 0 &&
-        utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].isString */ .Z.isString(value) &&
-        value.length === 9 &&
-        value.charAt(0) === "#"
-      ) {
-        value = utils_color__WEBPACK_IMPORTED_MODULE_7__/* ["default"].rgba2rgbo */ .Z.rgba2rgbo(value);
-        this.visProp[property] = value[0];
-        // Previously: *=. But then, we can only decrease opacity.
-        this.visProp[property.replace("color", "opacity")] = value[1];
-      } else {
-        if (
-          value !== null &&
-          utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].isObject */ .Z.isObject(value) &&
-          !utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].exists */ .Z.exists(value.id) &&
-          !utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].exists */ .Z.exists(value.name)
-        ) {
-          // value is of type {prop: val, prop: val,...}
-          // Convert these attributes to lowercase, too
-          this.visProp[property] = {};
-          for (el in value) {
-            if (value.hasOwnProperty(el)) {
-              this.visProp[property][el.toLocaleLowerCase()] = value[el];
-            }
-          }
-        } else {
-          this.visProp[property] = value;
-        }
-      }
-    },
-
-    /**
-     * Resolves attribute shortcuts like <tt>color</tt> and expands them, e.g. <tt>strokeColor</tt> and <tt>fillColor</tt>.
-     * Writes the expanded attributes back to the given <tt>attributes</tt>.
-     * @param {Object} attributes object
-     * @returns {Object} The given attributes object with shortcuts expanded.
-     * @private
-     */
-    resolveShortcuts: function (attributes) {
-      var key,
-        i,
-        j,
-        subattr = ["traceattributes", "traceAttributes"];
-
-      for (key in options__WEBPACK_IMPORTED_MODULE_5__/* ["default"].shortcuts */ .Z.shortcuts) {
-        if (options__WEBPACK_IMPORTED_MODULE_5__/* ["default"].shortcuts.hasOwnProperty */ .Z.shortcuts.hasOwnProperty(key)) {
-          if (utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].exists */ .Z.exists(attributes[key])) {
-            for (i = 0; i < options__WEBPACK_IMPORTED_MODULE_5__/* ["default"].shortcuts */ .Z.shortcuts[key].length; i++) {
-              if (!utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].exists */ .Z.exists(attributes[options__WEBPACK_IMPORTED_MODULE_5__/* ["default"].shortcuts */ .Z.shortcuts[key][i]])) {
-                attributes[options__WEBPACK_IMPORTED_MODULE_5__/* ["default"].shortcuts */ .Z.shortcuts[key][i]] = attributes[key];
-              }
-            }
-          }
-          for (j = 0; j < subattr.length; j++) {
-            if (utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].isObject */ .Z.isObject(attributes[subattr[j]])) {
-              attributes[subattr[j]] = this.resolveShortcuts(
-                attributes[subattr[j]]
-              );
-            }
-          }
-        }
-      }
-      return attributes;
-    },
-
-    /**
-     * Sets a label and its text
-     * If label doesn't exist, it creates one
-     * @param {String} str
-     */
-    setLabel: function (str) {
-      if (!this.hasLabel) {
-        this.setAttribute({ withlabel: true });
-      }
-      this.setLabelText(str);
-    },
-
-    /**
-     * Updates the element's label text, strips all html.
-     * @param {String} str
-     */
-    setLabelText: function (str) {
-      if (utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].exists */ .Z.exists(this.label)) {
-        str = str.replace(/</g, "&lt;").replace(/>/g, "&gt;");
-        this.label.setText(str);
-      }
-
-      return this;
-    },
-
-    /**
-     * Updates the element's label text and the element's attribute "name", strips all html.
-     * @param {String} str
-     */
-    setName: function (str) {
-      str = str.replace(/</g, "&lt;").replace(/>/g, "&gt;");
-      if (this.elType !== "slider") {
-        this.setLabelText(str);
-      }
-      this.setAttribute({ name: str });
-    },
-
-    /**
-     * Deprecated alias for {@link JXG.GeometryElement#setAttribute}.
-     * @deprecated Use {@link JXG.GeometryElement#setAttribute}.
-     */
-    setProperty: function () {
-      jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].deprecated */ .Z.deprecated("setProperty()", "setAttribute()");
-      this.setAttribute.apply(this, arguments);
-    },
-
-    /**
-     * Sets an arbitrary number of attributes. This method has one or more
-     * parameters of the following types:
-     * <ul>
-     * <li> object: {key1:value1,key2:value2,...}
-     * <li> string: "key1:value"
-     * <li> array: [key, value]
-     * </ul>
-     * @param {Object} attributes An object with attributes.
-     * @returns {JXG.GeometryElement} A reference to the element.
-     *
-     * @function
-     * @example
-     * // Set property directly on creation of an element using the attributes object parameter
-     * var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-1, 5, 5, 1]};
-     * var p = board.create('point', [2, 2], {visible: false});
-     *
-     * // Now make this point visible and fixed:
-     * p.setAttribute({
-     *     fixed: true,
-     *     visible: true
-     * });
-     */
-    setAttribute: function (attributes) {
-      var i,
-        j,
-        le,
-        key,
-        value,
-        arg,
-        opacity,
-        pair,
-        oldvalue,
-        properties = {};
-
-      // Normalize the user input
-      for (i = 0; i < arguments.length; i++) {
-        arg = arguments[i];
-        if (utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].isString */ .Z.isString(arg)) {
-          // pairRaw is string of the form 'key:value'
-          pair = arg.split(":");
-          properties[utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].trim */ .Z.trim(pair[0])] = utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].trim */ .Z.trim(pair[1]);
-        } else if (!utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].isArray */ .Z.isArray(arg)) {
-          // pairRaw consists of objects of the form {key1:value1,key2:value2,...}
-          jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].extend */ .Z.extend(properties, arg);
-        } else {
-          // pairRaw consists of array [key,value]
-          properties[arg[0]] = arg[1];
-        }
-      }
-
-      // Handle shortcuts
-      properties = this.resolveShortcuts(properties);
-
-      for (i in properties) {
-        if (properties.hasOwnProperty(i)) {
-          key = i.replace(/\s+/g, "").toLowerCase();
-          value = properties[i];
-
-          // This handles the subobjects, if the key:value pairs are contained in an object.
-          // Example:
-          // ticks.setAttribute({
-          //      strokeColor: 'blue',
-          //      label: {
-          //          visible: false
-          //      }
-          // })
-          // Now, only the supplied label attributes are overwritten.
-          // Otherwise, the value of label would be {visible:false} only.
-          if (utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].isObject */ .Z.isObject(value) && utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].exists */ .Z.exists(this.visProp[key])) {
-            this.visProp[key] = utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].merge */ .Z.merge(this.visProp[key], value);
-
-            // First, handle the special case
-            // ticks.setAttribute({label: {anchorX: "right", ..., visible: true});
-            if (
-              this.type === base_constants__WEBPACK_IMPORTED_MODULE_1__/* ["default"].OBJECT_TYPE_TICKS */ .Z.OBJECT_TYPE_TICKS &&
-              utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].exists */ .Z.exists(this.labels)
-            ) {
-              le = this.labels.length;
-              for (j = 0; j < le; j++) {
-                this.labels[j].setAttribute(value);
-              }
-            } else if (utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].exists */ .Z.exists(this[key])) {
-              if (utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].isArray */ .Z.isArray(this[key])) {
-                for (j = 0; j < this[key].length; j++) {
-                  this[key][j].setAttribute(value);
-                }
-              } else {
-                this[key].setAttribute(value);
-              }
-            }
-            continue;
-          }
-
-          oldvalue = this.visProp[key];
-          switch (key) {
-            case "name":
-              oldvalue = this.name;
-              delete this.board.elementsByName[this.name];
-              this.name = value;
-              this.board.elementsByName[this.name] = this;
-              break;
-            case "needsregularupdate":
-              this.needsRegularUpdate = !(value === "false" || value === false);
-              this.board.renderer.setBuffering(
-                this,
-                this.needsRegularUpdate ? "auto" : "static"
-              );
-              break;
-            case "labelcolor":
-              value = utils_color__WEBPACK_IMPORTED_MODULE_7__/* ["default"].rgba2rgbo */ .Z.rgba2rgbo(value);
-              opacity = value[1];
-              value = value[0];
-              if (opacity === 0) {
-                if (utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].exists */ .Z.exists(this.label) && this.hasLabel) {
-                  this.label.hideElement();
-                }
-              }
-              if (utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].exists */ .Z.exists(this.label) && this.hasLabel) {
-                this.label.visProp.strokecolor = value;
-                this.board.renderer.setObjectStrokeColor(
-                  this.label,
-                  value,
-                  opacity
-                );
-              }
-              if (this.elementClass === base_constants__WEBPACK_IMPORTED_MODULE_1__/* ["default"].OBJECT_CLASS_TEXT */ .Z.OBJECT_CLASS_TEXT) {
-                this.visProp.strokecolor = value;
-                this.visProp.strokeopacity = opacity;
-                this.board.renderer.setObjectStrokeColor(this, value, opacity);
-              }
-              break;
-            case "infoboxtext":
-              if (utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].isString */ .Z.isString(value)) {
-                this.infoboxText = value;
-              } else {
-                this.infoboxText = false;
-              }
-              break;
-            case "visible":
-              if (value === "false") {
-                this.visProp.visible = false;
-              } else if (value === "true") {
-                this.visProp.visible = true;
-              } else {
-                this.visProp.visible = value;
-              }
-
-              this.setDisplayRendNode(utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].evaluate */ .Z.evaluate(this.visProp.visible));
-              if (
-                utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].evaluate */ .Z.evaluate(this.visProp.visible) &&
-                utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].exists */ .Z.exists(this.updateSize)
-              ) {
-                this.updateSize();
-              }
-
-              break;
-            case "face":
-              if (utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].isPoint */ .Z.isPoint(this)) {
-                this.visProp.face = value;
-                this.board.renderer.changePointStyle(this);
-              }
-              break;
-            case "trace":
-              if (value === "false" || value === false) {
-                this.clearTrace();
-                this.visProp.trace = false;
-              } else if (value === "pause") {
-                this.visProp.trace = false;
-              } else {
-                this.visProp.trace = true;
-              }
-              break;
-            case "gradient":
-              this.visProp.gradient = value;
-              this.board.renderer.setGradient(this);
-              break;
-            case "gradientsecondcolor":
-              value = utils_color__WEBPACK_IMPORTED_MODULE_7__/* ["default"].rgba2rgbo */ .Z.rgba2rgbo(value);
-              this.visProp.gradientsecondcolor = value[0];
-              this.visProp.gradientsecondopacity = value[1];
-              this.board.renderer.updateGradient(this);
-              break;
-            case "gradientsecondopacity":
-              this.visProp.gradientsecondopacity = value;
-              this.board.renderer.updateGradient(this);
-              break;
-            case "withlabel":
-              this.visProp.withlabel = value;
-              if (!utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].evaluate */ .Z.evaluate(value)) {
-                if (this.label && this.hasLabel) {
-                  //this.label.hideElement();
-                  this.label.setAttribute({ visible: false });
-                }
-              } else {
-                if (!this.label) {
-                  this.createLabel();
-                }
-                //this.label.showElement();
-                this.label.setAttribute({ visible: "inherit" });
-                //this.label.setDisplayRendNode(Type.evaluate(this.visProp.visible));
-              }
-              this.hasLabel = value;
-              break;
-            case "radius":
-              if (
-                this.type === base_constants__WEBPACK_IMPORTED_MODULE_1__/* ["default"].OBJECT_TYPE_ANGLE */ .Z.OBJECT_TYPE_ANGLE ||
-                this.type === base_constants__WEBPACK_IMPORTED_MODULE_1__/* ["default"].OBJECT_TYPE_SECTOR */ .Z.OBJECT_TYPE_SECTOR
-              ) {
-                this.setRadius(value);
-              }
-              break;
-            case "rotate":
-              if (
-                (this.elementClass === base_constants__WEBPACK_IMPORTED_MODULE_1__/* ["default"].OBJECT_CLASS_TEXT */ .Z.OBJECT_CLASS_TEXT &&
-                  utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].evaluate */ .Z.evaluate(this.visProp.display) === "internal") ||
-                this.type === base_constants__WEBPACK_IMPORTED_MODULE_1__/* ["default"].OBJECT_TYPE_IMAGE */ .Z.OBJECT_TYPE_IMAGE
-              ) {
-                this.addRotation(value);
-              }
-              break;
-            case "ticksdistance":
-              if (
-                this.type === base_constants__WEBPACK_IMPORTED_MODULE_1__/* ["default"].OBJECT_TYPE_TICKS */ .Z.OBJECT_TYPE_TICKS &&
-                utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].isNumber */ .Z.isNumber(value)
-              ) {
-                this.ticksFunction = this.makeTicksFunction(value);
-              }
-              break;
-            case "generatelabelvalue":
-              if (
-                this.type === base_constants__WEBPACK_IMPORTED_MODULE_1__/* ["default"].OBJECT_TYPE_TICKS */ .Z.OBJECT_TYPE_TICKS &&
-                utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].isFunction */ .Z.isFunction(value)
-              ) {
-                this.generateLabelValue = value;
-              }
-              break;
-            case "onpolygon":
-              if (this.type === base_constants__WEBPACK_IMPORTED_MODULE_1__/* ["default"].OBJECT_TYPE_GLIDER */ .Z.OBJECT_TYPE_GLIDER) {
-                this.onPolygon = !!value;
-              }
-              break;
-            case "disabled":
-              // button, checkbox, input. Is not available on initial call.
-              if (utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].exists */ .Z.exists(this.rendNodeTag)) {
-                this.rendNodeTag.disabled = !!value;
-              }
-              break;
-            case "checked":
-              // checkbox Is not available on initial call.
-              if (utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].exists */ .Z.exists(this.rendNodeTag)) {
-                this.rendNodeCheckbox.checked = !!value;
-              }
-              break;
-            case "maxlength":
-              // input. Is not available on initial call.
-              if (utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].exists */ .Z.exists(this.rendNodeTag)) {
-                this.rendNodeTag.maxlength = !!value;
-              }
-              break;
-            case "layer":
-              this.board.renderer.setLayer(this, utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].evaluate */ .Z.evaluate(value));
-              this._set(key, value);
-              break;
-            case "tabindex":
-              if (utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].exists */ .Z.exists(this.rendNode)) {
-                this.rendNode.setAttribute("tabindex", value);
-                this._set(key, value);
-              }
-              break;
-            default:
-              if (
-                utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].exists */ .Z.exists(this.visProp[key]) &&
-                (!jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].Validator */ .Z.Validator[key] ||
-                  (jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].Validator */ .Z.Validator[key] && jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].Validator */ .Z.Validator[key](value)) ||
-                  (jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].Validator */ .Z.Validator[key] &&
-                    utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].isFunction */ .Z.isFunction(value) &&
-                    jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].Validator */ .Z.Validator[key](value())))
-              ) {
-                value =
-                  value.toLowerCase && value.toLowerCase() === "false"
-                    ? false
-                    : value;
-                this._set(key, value);
-              }
-              break;
-          }
-          this.triggerEventHandlers(
-            ["attribute:" + key],
-            [oldvalue, value, this]
-          );
-        }
-      }
-
-      this.triggerEventHandlers(["attribute"], [properties, this]);
-
-      if (!utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].evaluate */ .Z.evaluate(this.visProp.needsregularupdate)) {
-        this.board.fullUpdate();
-      } else {
-        this.board.update(this);
-      }
-
-      return this;
-    },
-
-    /**
-     * Deprecated alias for {@link JXG.GeometryElement#getAttribute}.
-     * @deprecated Use {@link JXG.GeometryElement#getAttribute}.
-     */
-    getProperty: function () {
-      jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].deprecated */ .Z.deprecated("getProperty()", "getAttribute()");
-      this.getProperty.apply(this, arguments);
-    },
-
-    /**
-     * Get the value of the property <tt>key</tt>.
-     * @param {String} key The name of the property you are looking for
-     * @returns The value of the property
-     */
-    getAttribute: function (key) {
-      var result;
-      key = key.toLowerCase();
-
-      switch (key) {
-        case "needsregularupdate":
-          result = this.needsRegularUpdate;
-          break;
-        case "labelcolor":
-          result = this.label.visProp.strokecolor;
-          break;
-        case "infoboxtext":
-          result = this.infoboxText;
-          break;
-        case "withlabel":
-          result = this.hasLabel;
-          break;
-        default:
-          result = this.visProp[key];
-          break;
-      }
-
-      return result;
-    },
-
-    /**
-     * Set the dash style of an object. See {@link JXG.GeometryElement#dash}
-     * for a list of available dash styles.
-     * You should use {@link JXG.GeometryElement#setAttribute} instead of this method.
-     *
-     * @param {number} dash Indicates the new dash style
-     * @private
-     */
-    setDash: function (dash) {
-      this.setAttribute({ dash: dash });
-      return this;
-    },
-
-    /**
-     * Notify all child elements for updates.
-     * @private
-     */
-    prepareUpdate: function () {
-      this.needsUpdate = true;
-      return this;
-    },
-
-    /**
-     * Removes the element from the construction.  This only removes the SVG or VML node of the element and its label (if available) from
-     * the renderer, to remove the element completely you should use {@link JXG.Board#removeObject}.
-     */
-    remove: function () {
-      this.board.renderer.remove(this.board.renderer.getElementById(this.id));
-
-      if (this.hasLabel) {
-        this.board.renderer.remove(
-          this.board.renderer.getElementById(this.label.id)
-        );
-      }
-      return this;
-    },
-
-    /**
-     * Returns the coords object where a text that is bound to the element shall be drawn.
-     * Differs in some cases from the values that getLabelAnchor returns.
-     * @returns {JXG.Coords} JXG.Coords Place where the text shall be drawn.
-     * @see JXG.GeometryElement#getLabelAnchor
-     */
-    getTextAnchor: function () {
-      return new base_coords__WEBPACK_IMPORTED_MODULE_2__/* ["default"] */ .Z(base_constants__WEBPACK_IMPORTED_MODULE_1__/* ["default"].COORDS_BY_USER */ .Z.COORDS_BY_USER, [0, 0], this.board);
-    },
-
-    /**
-     * Returns the coords object where the label of the element shall be drawn.
-     * Differs in some cases from the values that getTextAnchor returns.
-     * @returns {JXG.Coords} JXG.Coords Place where the text shall be drawn.
-     * @see JXG.GeometryElement#getTextAnchor
-     */
-    getLabelAnchor: function () {
-      return new base_coords__WEBPACK_IMPORTED_MODULE_2__/* ["default"] */ .Z(base_constants__WEBPACK_IMPORTED_MODULE_1__/* ["default"].COORDS_BY_USER */ .Z.COORDS_BY_USER, [0, 0], this.board);
-    },
-
-    /**
-     * Determines whether the element has arrows at start or end of the arc.
-     * If it is set to be a "typical" vector, ie lastArrow == true,
-     * then the element.type is set to VECTOR.
-     * @param {Boolean} firstArrow True if there is an arrow at the start of the arc, false otherwise.
-     * @param {Boolean} lastArrow True if there is an arrow at the end of the arc, false otherwise.
-     */
-    setArrow: function (firstArrow, lastArrow) {
-      this.visProp.firstarrow = firstArrow;
-      this.visProp.lastarrow = lastArrow;
-      if (lastArrow) {
-        this.type = base_constants__WEBPACK_IMPORTED_MODULE_1__/* ["default"].OBJECT_TYPE_VECTOR */ .Z.OBJECT_TYPE_VECTOR;
-        this.elType = "arrow";
-      }
-
-      this.prepareUpdate().update().updateVisibility().updateRenderer();
-      return this;
-    },
-
-    /**
-     * Creates a gradient nodes in the renderer.
-     * @see JXG.SVGRenderer#setGradient
-     * @private
-     */
-    createGradient: function () {
-      var ev_g = utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].evaluate */ .Z.evaluate(this.visProp.gradient);
-      if (ev_g === "linear" || ev_g === "radial") {
-        this.board.renderer.setGradient(this);
-      }
-    },
-
-    /**
-     * Creates a label element for this geometry element.
-     * @see #addLabelToElement
-     */
-    createLabel: function () {
-      var attr,
-        that = this;
-
-      // this is a dirty hack to resolve the text-dependency. If there is no text element available,
-      // just don't create a label. This method is usually not called by a user, so we won't throw
-      // an exception here and simply output a warning via JXG.debug.
-      if (jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].elements.text */ .Z.elements.text) {
-        attr = utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].deepCopy */ .Z.deepCopy(this.visProp.label, null);
-        attr.id = this.id + "Label";
-        attr.isLabel = true;
-        attr.anchor = this;
-        attr.priv = this.visProp.priv;
-
-        if (this.visProp.withlabel) {
-          this.label = jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].elements.text */ .Z.elements.text(
-            this.board,
-            [
-              0,
-              0,
-              function () {
-                if (utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].isFunction */ .Z.isFunction(that.name)) {
-                  return that.name();
-                }
-                return that.name;
-              },
-            ],
-            attr
-          );
-          this.label.needsUpdate = true;
-          this.label.dump = false;
-          this.label.fullUpdate();
-
-          this.hasLabel = true;
-        }
-      } else {
-        jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].debug */ .Z.debug(
-          "JSXGraph: Can't create label: text element is not available. Make sure you include base/text"
-        );
-      }
-
-      return this;
-    },
-
-    /**
-     * Highlights the element.
-     * @param {Boolean} [force=false] Force the highlighting
-     * @returns {JXG.Board}
-     */
-    highlight: function (force) {
-      force = utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].def */ .Z.def(force, false);
-      // I know, we have the JXG.Board.highlightedObjects AND JXG.GeometryElement.highlighted and YES we need both.
-      // Board.highlightedObjects is for the internal highlighting and GeometryElement.highlighted is for user highlighting
-      // initiated by the user, e.g. through custom DOM events. We can't just pick one because this would break user
-      // defined highlighting in many ways:
-      //  * if overriding the highlight() methods the user had to handle the highlightedObjects stuff, otherwise he'd break
-      //    everything (e.g. the pie chart example https://jsxgraph.org/wiki/index.php/Pie_chart (not exactly
-      //    user defined but for this type of chart the highlight method was overridden and not adjusted to the changes in here)
-      //    where it just kept highlighting until the radius of the pie was far beyond infinity...
-      //  * user defined highlighting would get pointless, everytime the user highlights something using .highlight(), it would get
-      //    dehighlighted immediately, because highlight puts the element into highlightedObjects and from there it gets dehighlighted
-      //    through dehighlightAll.
-
-      // highlight only if not highlighted
-      if (
-        utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].evaluate */ .Z.evaluate(this.visProp.highlight) &&
-        (!this.highlighted || force)
-      ) {
-        this.highlighted = true;
-        this.board.highlightedObjects[this.id] = this;
-        this.board.renderer.highlight(this);
-      }
-      return this;
-    },
-
-    /**
-     * Uses the "normal" properties of the element.
-     * @returns {JXG.Board}
-     */
-    noHighlight: function () {
-      // see comment in JXG.GeometryElement.highlight()
-
-      // dehighlight only if not highlighted
-      if (this.highlighted) {
-        this.highlighted = false;
-        delete this.board.highlightedObjects[this.id];
-        this.board.renderer.noHighlight(this);
-      }
-      return this;
-    },
-
-    /**
-     * Removes all objects generated by the trace function.
-     */
-    clearTrace: function () {
-      var obj;
-
-      for (obj in this.traces) {
-        if (this.traces.hasOwnProperty(obj)) {
-          this.board.renderer.remove(this.traces[obj]);
-        }
-      }
-
-      this.numTraces = 0;
-      return this;
-    },
-
-    /**
-     * Copy the element to background. This is used for tracing elements.
-     * @returns {JXG.GeometryElement} A reference to the element
-     */
-    cloneToBackground: function () {
-      return this;
-    },
-
-    /**
-     * Dimensions of the smallest rectangle enclosing the element.
-     * @returns {Array} The coordinates of the enclosing rectangle in a format
-     * like the bounding box in {@link JXG.Board#setBoundingBox}.
-     *
-     * @returns {Array} similar to {@link JXG.Board#setBoundingBox}.
-     */
-    bounds: function () {
-      return [0, 0, 0, 0];
-    },
-
-    /**
-     * Normalize the element's standard form.
-     * @private
-     */
-    normalize: function () {
-      this.stdform = math_math__WEBPACK_IMPORTED_MODULE_3__/* ["default"].normalize */ .Z.normalize(this.stdform);
-      return this;
-    },
-
-    /**
-     * EXPERIMENTAL. Generate JSON object code of visProp and other properties.
-     * @type String
-     * @private
-     * @ignore
-     * @returns JSON string containing element's properties.
-     */
-    toJSON: function () {
-      var vis,
-        key,
-        json = ['{"name":', this.name];
-
-      json.push(", " + '"id":' + this.id);
-
-      vis = [];
-      for (key in this.visProp) {
-        if (this.visProp.hasOwnProperty(key)) {
-          if (utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].exists */ .Z.exists(this.visProp[key])) {
-            vis.push('"' + key + '":' + this.visProp[key]);
-          }
-        }
-      }
-      json.push(', "visProp":{' + vis.toString() + "}");
-      json.push("}");
-
-      return json.join("");
-    },
-
-    /**
-     * Rotate texts or images by a given degree. Works only for texts where JXG.Text#display equal to "internal".
-     * @param {number} angle The degree of the rotation (90 means vertical text).
-     * @see JXG.GeometryElement#rotate
-     */
-    addRotation: function (angle) {
-      var tOffInv,
-        tOff,
-        tS,
-        tSInv,
-        tRot,
-        that = this;
-
-      if (
-        ((this.elementClass === base_constants__WEBPACK_IMPORTED_MODULE_1__/* ["default"].OBJECT_CLASS_TEXT */ .Z.OBJECT_CLASS_TEXT &&
-          utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].evaluate */ .Z.evaluate(this.visProp.display) === "internal") ||
-          this.type === base_constants__WEBPACK_IMPORTED_MODULE_1__/* ["default"].OBJECT_TYPE_IMAGE */ .Z.OBJECT_TYPE_IMAGE) &&
-        angle !== 0
-      ) {
-        tOffInv = this.board.create(
-          "transform",
-          [
-            function () {
-              return -that.X();
-            },
-            function () {
-              return -that.Y();
-            },
-          ],
-          { type: "translate" }
-        );
-
-        tOff = this.board.create(
-          "transform",
-          [
-            function () {
-              return that.X();
-            },
-            function () {
-              return that.Y();
-            },
-          ],
-          { type: "translate" }
-        );
-
-        tS = this.board.create(
-          "transform",
-          [
-            function () {
-              return that.board.unitX / that.board.unitY;
-            },
-            function () {
-              return 1;
-            },
-          ],
-          { type: "scale" }
-        );
-
-        tSInv = this.board.create(
-          "transform",
-          [
-            function () {
-              return that.board.unitY / that.board.unitX;
-            },
-            function () {
-              return 1;
-            },
-          ],
-          { type: "scale" }
-        );
-
-        tRot = this.board.create(
-          "transform",
-          [
-            function () {
-              return (utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].evaluate */ .Z.evaluate(angle) * Math.PI) / 180;
-            },
-          ],
-          { type: "rotate" }
-        );
-
-        tOffInv.bindTo(this);
-        tS.bindTo(this);
-        tRot.bindTo(this);
-        tSInv.bindTo(this);
-        tOff.bindTo(this);
-      }
-
-      return this;
-    },
-
-    /**
-     * Set the highlightStrokeColor of an element
-     * @param {String} sColor String which determines the stroke color of an object when its highlighted.
-     * @see JXG.GeometryElement#highlightStrokeColor
-     * @deprecated Use {@link JXG.GeometryElement#setAttribute}
-     */
-    highlightStrokeColor: function (sColor) {
-      jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].deprecated */ .Z.deprecated("highlightStrokeColor()", "setAttribute()");
-      this.setAttribute({ highlightStrokeColor: sColor });
-      return this;
-    },
-
-    /**
-     * Set the strokeColor of an element
-     * @param {String} sColor String which determines the stroke color of an object.
-     * @see JXG.GeometryElement#strokeColor
-     * @deprecated Use {@link JXG.GeometryElement#setAttribute}
-     */
-    strokeColor: function (sColor) {
-      jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].deprecated */ .Z.deprecated("strokeColor()", "setAttribute()");
-      this.setAttribute({ strokeColor: sColor });
-      return this;
-    },
-
-    /**
-     * Set the strokeWidth of an element
-     * @param {Number} width Integer which determines the stroke width of an outline.
-     * @see JXG.GeometryElement#strokeWidth
-     * @deprecated Use {@link JXG.GeometryElement#setAttribute}
-     */
-    strokeWidth: function (width) {
-      jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].deprecated */ .Z.deprecated("strokeWidth()", "setAttribute()");
-      this.setAttribute({ strokeWidth: width });
-      return this;
-    },
-
-    /**
-     * Set the fillColor of an element
-     * @param {String} fColor String which determines the fill color of an object.
-     * @see JXG.GeometryElement#fillColor
-     * @deprecated Use {@link JXG.GeometryElement#setAttribute}
-     */
-    fillColor: function (fColor) {
-      jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].deprecated */ .Z.deprecated("fillColor()", "setAttribute()");
-      this.setAttribute({ fillColor: fColor });
-      return this;
-    },
-
-    /**
-     * Set the highlightFillColor of an element
-     * @param {String} fColor String which determines the fill color of an object when its highlighted.
-     * @see JXG.GeometryElement#highlightFillColor
-     * @deprecated Use {@link JXG.GeometryElement#setAttribute}
-     */
-    highlightFillColor: function (fColor) {
-      jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].deprecated */ .Z.deprecated("highlightFillColor()", "setAttribute()");
-      this.setAttribute({ highlightFillColor: fColor });
-      return this;
-    },
-
-    /**
-     * Set the labelColor of an element
-     * @param {String} lColor String which determines the text color of an object's label.
-     * @see JXG.GeometryElement#labelColor
-     * @deprecated Use {@link JXG.GeometryElement#setAttribute}
-     */
-    labelColor: function (lColor) {
-      jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].deprecated */ .Z.deprecated("labelColor()", "setAttribute()");
-      this.setAttribute({ labelColor: lColor });
-      return this;
-    },
-
-    /**
-     * Set the dash type of an element
-     * @param {Number} d Integer which determines the way of dashing an element's outline.
-     * @see JXG.GeometryElement#dash
-     * @deprecated Use {@link JXG.GeometryElement#setAttribute}
-     */
-    dash: function (d) {
-      jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].deprecated */ .Z.deprecated("dash()", "setAttribute()");
-      this.setAttribute({ dash: d });
-      return this;
-    },
-
-    /**
-     * Set the visibility of an element
-     * @param {Boolean} v Boolean which determines whether the element is drawn.
-     * @see JXG.GeometryElement#visible
-     * @deprecated Use {@link JXG.GeometryElement#setAttribute}
-     */
-    visible: function (v) {
-      jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].deprecated */ .Z.deprecated("visible()", "setAttribute()");
-      this.setAttribute({ visible: v });
-      return this;
-    },
-
-    /**
-     * Set the shadow of an element
-     * @param {Boolean} s Boolean which determines whether the element has a shadow or not.
-     * @see JXG.GeometryElement#shadow
-     * @deprecated Use {@link JXG.GeometryElement#setAttribute}
-     */
-    shadow: function (s) {
-      jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].deprecated */ .Z.deprecated("shadow()", "setAttribute()");
-      this.setAttribute({ shadow: s });
-      return this;
-    },
-
-    /**
-     * The type of the element as used in {@link JXG.Board#create}.
-     * @returns {String}
-     */
-    getType: function () {
-      return this.elType;
-    },
-
-    /**
-     * List of the element ids resp. values used as parents in {@link JXG.Board#create}.
-     * @returns {Array}
-     */
-    getParents: function () {
-      return utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].isArray */ .Z.isArray(this.parents) ? this.parents : [];
-    },
-
-    /**
-     * Snaps the element to the grid. Only works for points, lines and circles. Points will snap to the grid
-     * as defined in their properties {@link JXG.Point#snapSizeX} and {@link JXG.Point#snapSizeY}. Lines and circles
-     * will snap their parent points to the grid, if they have {@link JXG.Point#snapToGrid} set to true.
-     * @returns {JXG.GeometryElement} Reference to the element.
-     */
-    snapToGrid: function () {
-      return this;
-    },
-
-    /**
-     * Snaps the element to points. Only works for points. Points will snap to the next point
-     * as defined in their properties {@link JXG.Point#attractorDistance} and {@link JXG.Point#attractorUnit}.
-     * Lines and circles
-     * will snap their parent points to points.
-     * @returns {JXG.GeometryElement} Reference to the element.
-     */
-    snapToPoints: function () {
-      return this;
-    },
-
-    /**
-     * Retrieve a copy of the current visProp.
-     * @returns {Object}
-     */
-    getAttributes: function () {
-      var attributes = utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].deepCopy */ .Z.deepCopy(this.visProp),
-        /*
-                cleanThis = ['attractors', 'snatchdistance', 'traceattributes', 'frozen',
-                    'shadow', 'gradientangle', 'gradientsecondopacity', 'gradientpositionx', 'gradientpositiony',
-                    'needsregularupdate', 'zoom', 'layer', 'offset'],
-                */
-        cleanThis = [],
-        i,
-        len = cleanThis.length;
-
-      attributes.id = this.id;
-      attributes.name = this.name;
-
-      for (i = 0; i < len; i++) {
-        delete attributes[cleanThis[i]];
-      }
-
-      return attributes;
-    },
-
-    /**
-     * Checks whether (x,y) is near the element.
-     * @param {Number} x Coordinate in x direction, screen coordinates.
-     * @param {Number} y Coordinate in y direction, screen coordinates.
-     * @returns {Boolean} True if (x,y) is near the element, False otherwise.
-     */
-    hasPoint: function (x, y) {
-      return false;
-    },
-
-    /**
-     * Adds ticks to this line or curve. Ticks can be added to a curve or any kind of line: line, arrow, and axis.
-     * @param {JXG.Ticks} ticks Reference to a ticks object which is describing the ticks (color, distance, how many, etc.).
-     * @returns {String} Id of the ticks object.
-     */
-    addTicks: function (ticks) {
-      if (ticks.id === "" || !utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].exists */ .Z.exists(ticks.id)) {
-        ticks.id = this.id + "_ticks_" + (this.ticks.length + 1);
-      }
-
-      this.board.renderer.drawTicks(ticks);
-      this.ticks.push(ticks);
-
-      return ticks.id;
-    },
-
-    /**
-     * Removes all ticks from a line or curve.
-     */
-    removeAllTicks: function () {
-      var t;
-      if (utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].exists */ .Z.exists(this.ticks)) {
-        for (t = this.ticks.length - 1; t >= 0; t--) {
-          this.removeTicks(this.ticks[t]);
-        }
-        this.ticks = [];
-        this.board.update();
-      }
-    },
-
-    /**
-     * Removes ticks identified by parameter named tick from this line or curve.
-     * @param {JXG.Ticks} tick Reference to tick object to remove.
-     */
-    removeTicks: function (tick) {
-      var t, j;
-
-      if (utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].exists */ .Z.exists(this.defaultTicks) && this.defaultTicks === tick) {
-        this.defaultTicks = null;
-      }
-
-      if (utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].exists */ .Z.exists(this.ticks)) {
-        for (t = this.ticks.length - 1; t >= 0; t--) {
-          if (this.ticks[t] === tick) {
-            this.board.removeObject(this.ticks[t]);
-
-            if (this.ticks[t].ticks) {
-              for (j = 0; j < this.ticks[t].ticks.length; j++) {
-                if (utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].exists */ .Z.exists(this.ticks[t].labels[j])) {
-                  this.board.removeObject(this.ticks[t].labels[j]);
-                }
-              }
-            }
-
-            delete this.ticks[t];
-            break;
-          }
-        }
-      }
-    },
-
-    /**
-     * Determine values of snapSizeX and snapSizeY. If the attributes
-     * snapSizex and snapSizeY are greater than zero, these values are taken.
-     * Otherwise, determine the distance between major ticks of the
-     * default axes.
-     * @returns {Array} containing the snap sizes for x and y direction.
-     * @private
-     */
-    getSnapSizes: function () {
-      var sX, sY, ticks;
-
-      sX = utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].evaluate */ .Z.evaluate(this.visProp.snapsizex);
-      sY = utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].evaluate */ .Z.evaluate(this.visProp.snapsizey);
-
-      if (
-        sX <= 0 &&
-        this.board.defaultAxes &&
-        this.board.defaultAxes.x.defaultTicks
-      ) {
-        ticks = this.board.defaultAxes.x.defaultTicks;
-        sX = ticks.ticksDelta * (utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].evaluate */ .Z.evaluate(ticks.visProp.minorticks) + 1);
-      }
-
-      if (
-        sY <= 0 &&
-        this.board.defaultAxes &&
-        this.board.defaultAxes.y.defaultTicks
-      ) {
-        ticks = this.board.defaultAxes.y.defaultTicks;
-        sY = ticks.ticksDelta * (utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].evaluate */ .Z.evaluate(ticks.visProp.minorticks) + 1);
-      }
-
-      return [sX, sY];
-    },
-
-    /**
-     * Move an element to its nearest grid point.
-     * The function uses the coords object of the element as
-     * its actual position. If there is no coords object or if the object is fixed, nothing is done.
-     * @param {Boolean} force force snapping independent from what the snaptogrid attribute says
-     * @param {Boolean} fromParent True if the drag comes from a child element. This is the case if a line
-     *    through two points is dragged. In this case we do not try to force the points to stay inside of
-     *    the visible board, but the distance between the two points stays constant.
-     * @returns {JXG.GeometryElement} Reference to this element
-     */
-    handleSnapToGrid: function (force, fromParent) {
-      var x,
-        y,
-        rx,
-        ry,
-        rcoords,
-        boardBB,
-        res,
-        sX,
-        sY,
-        needsSnapToGrid = false,
-        attractToGrid = utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].evaluate */ .Z.evaluate(this.visProp.attracttogrid),
-        ev_au = utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].evaluate */ .Z.evaluate(this.visProp.attractorunit),
-        ev_ad = utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].evaluate */ .Z.evaluate(this.visProp.attractordistance);
-
-      if (!utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].exists */ .Z.exists(this.coords) || utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].evaluate */ .Z.evaluate(this.visProp.fixed)) {
-        return this;
-      }
-
-      needsSnapToGrid =
-        utils_type__WEBPACK_IMPORTED_MODULE_8__/* ["default"].evaluate */ .Z.evaluate(this.visProp.snaptogrid) ||
-        attractToGrid ||
-        force === true;
-
-      if (needsSnapToGrid) {
-        x = this.coords.usrCoords[1];
-        y = this.coords.usrCoords[2];
-        res = this.getSnapSizes();
-        sX = res[0];
-        sY = res[1];
-
-        // If no valid snap sizes are available, don't change the coords.
-        if (sX > 0 && sY > 0) {
-          boardBB = this.board.getBoundingBox();
-          rx = Math.round(x / sX) * sX;
-          ry = Math.round(y / sY) * sY;
-          rcoords = new jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].Coords */ .Z.Coords(base_constants__WEBPACK_IMPORTED_MODULE_1__/* ["default"].COORDS_BY_USER */ .Z.COORDS_BY_USER, [rx, ry], this.board);
-          if (
-            !attractToGrid ||
-            rcoords.distance(
-              ev_au === "screen"
-                ? base_constants__WEBPACK_IMPORTED_MODULE_1__/* ["default"].COORDS_BY_SCREEN */ .Z.COORDS_BY_SCREEN
-                : base_constants__WEBPACK_IMPORTED_MODULE_1__/* ["default"].COORDS_BY_USER */ .Z.COORDS_BY_USER,
-              this.coords
-            ) < ev_ad
-          ) {
-            x = rx;
-            y = ry;
-            // Checking whether x and y are still within boundingBox.
-            // If not, adjust them to remain within the board.
-            // Otherwise a point may become invisible.
-            if (!fromParent) {
-              if (x < boardBB[0]) {
-                x += sX;
-              } else if (x > boardBB[2]) {
-                x -= sX;
-              }
-
-              if (y < boardBB[3]) {
-                y += sY;
-              } else if (y > boardBB[1]) {
-                y -= sY;
-              }
-            }
-            this.coords.setCoordinates(base_constants__WEBPACK_IMPORTED_MODULE_1__/* ["default"].COORDS_BY_USER */ .Z.COORDS_BY_USER, [x, y]);
-          }
-        }
-      }
-      return this;
-    },
-
-    getBoundingBox: function () {
-      var i,
-        le,
-        v,
-        x,
-        y,
-        bb = [Infinity, Infinity, -Infinity, -Infinity];
-
-      if (this.type === base_constants__WEBPACK_IMPORTED_MODULE_1__/* ["default"].OBJECT_TYPE_POLYGON */ .Z.OBJECT_TYPE_POLYGON) {
-        le = this.vertices.length - 1;
-        if (le <= 0) {
-          return bb;
-        }
-        for (i = 0; i < le; i++) {
-          v = this.vertices[i].X();
-          bb[0] = v < bb[0] ? v : bb[0];
-          bb[2] = v > bb[2] ? v : bb[2];
-          v = this.vertices[i].Y();
-          bb[1] = v < bb[1] ? v : bb[1];
-          bb[3] = v > bb[3] ? v : bb[3];
-        }
-      } else if (this.elementClass === base_constants__WEBPACK_IMPORTED_MODULE_1__/* ["default"].OBJECT_CLASS_CIRCLE */ .Z.OBJECT_CLASS_CIRCLE) {
-        x = this.center.X();
-        y = this.center.Y();
-        bb = [
-          x - this.radius,
-          y + this.radius,
-          x + this.radius,
-          y - this.radius,
-        ];
-      } else if (this.elementClass === base_constants__WEBPACK_IMPORTED_MODULE_1__/* ["default"].OBJECT_CLASS_CURVE */ .Z.OBJECT_CLASS_CURVE) {
-        le = this.vertices.length;
-        if (le === 0) {
-          return bb;
-        }
-        for (i = 0; i < le; i++) {
-          v = this.points[i].coords.usrCoords[1];
-          bb[0] = v < bb[0] ? v : bb[0];
-          bb[2] = v > bb[2] ? v : bb[2];
-          v = this.points[i].coords.usrCoords[1];
-          bb[1] = v < bb[1] ? v : bb[1];
-          bb[3] = v > bb[3] ? v : bb[3];
-        }
-      }
-
-      return bb;
-    },
-
-    /**
-     * Alias of {@link JXG.EventEmitter.on}.
-     *
-     * @name addEvent
-     * @memberof JXG.GeometryElement
-     * @function
-     */
-    addEvent: jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].shortcut */ .Z.shortcut(jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].GeometryElement.prototype */ .Z.GeometryElement.prototype, "on"),
-
-    /**
-     * Alias of {@link JXG.EventEmitter.off}.
-     *
-     * @name removeEvent
-     * @memberof JXG.GeometryElement
-     * @function
-     */
-    removeEvent: jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].shortcut */ .Z.shortcut(jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].GeometryElement.prototype */ .Z.GeometryElement.prototype, "off"),
-
-    /* **************************
-     *     EVENT DEFINITION
-     * for documentation purposes
-     * ************************** */
-
-    //region Event handler documentation
-    /**
-     * @event
-     * @description This event is fired whenever the user is hovering over an element.
-     * @name JXG.GeometryElement#over
-     * @param {Event} e The browser's event object.
-     */
-    __evt__over: function (e) {},
-
-    /**
-     * @event
-     * @description This event is fired whenever the user puts the mouse over an element.
-     * @name JXG.GeometryElement#mouseover
-     * @param {Event} e The browser's event object.
-     */
-    __evt__mouseover: function (e) {},
-
-    /**
-     * @event
-     * @description This event is fired whenever the user is leaving an element.
-     * @name JXG.GeometryElement#out
-     * @param {Event} e The browser's event object.
-     */
-    __evt__out: function (e) {},
-
-    /**
-     * @event
-     * @description This event is fired whenever the user puts the mouse away from an element.
-     * @name JXG.GeometryElement#mouseout
-     * @param {Event} e The browser's event object.
-     */
-    __evt__mouseout: function (e) {},
-
-    /**
-     * @event
-     * @description This event is fired whenever the user is moving over an element.
-     * @name JXG.GeometryElement#move
-     * @param {Event} e The browser's event object.
-     */
-    __evt__move: function (e) {},
-
-    /**
-     * @event
-     * @description This event is fired whenever the user is moving the mouse over an element.
-     * @name JXG.GeometryElement#mousemove
-     * @param {Event} e The browser's event object.
-     */
-    __evt__mousemove: function (e) {},
-
-    /**
-     * @event
-     * @description This event is fired whenever the user drags an element.
-     * @name JXG.GeometryElement#drag
-     * @param {Event} e The browser's event object.
-     */
-    __evt__drag: function (e) {},
-
-    /**
-     * @event
-     * @description This event is fired whenever the user drags the element with a mouse.
-     * @name JXG.GeometryElement#mousedrag
-     * @param {Event} e The browser's event object.
-     */
-    __evt__mousedrag: function (e) {},
-
-    /**
-     * @event
-     * @description This event is fired whenever the user drags the element with a pen.
-     * @name JXG.GeometryElement#pendrag
-     * @param {Event} e The browser's event object.
-     */
-    __evt__pendrag: function (e) {},
-
-    /**
-     * @event
-     * @description This event is fired whenever the user drags the element on a touch device.
-     * @name JXG.GeometryElement#touchdrag
-     * @param {Event} e The browser's event object.
-     */
-    __evt__touchdrag: function (e) {},
-
-    /**
-     * @event
-     * @description Whenever the user starts to touch or click an element.
-     * @name JXG.GeometryElement#down
-     * @param {Event} e The browser's event object.
-     */
-    __evt__down: function (e) {},
-
-    /**
-     * @event
-     * @description Whenever the user starts to click an element.
-     * @name JXG.GeometryElement#mousedown
-     * @param {Event} e The browser's event object.
-     */
-    __evt__mousedown: function (e) {},
-
-    /**
-     * @event
-     * @description Whenever the user taps an element with the pen.
-     * @name JXG.GeometryElement#pendown
-     * @param {Event} e The browser's event object.
-     */
-    __evt__pendown: function (e) {},
-
-    /**
-     * @event
-     * @description Whenever the user starts to touch an element.
-     * @name JXG.GeometryElement#touchdown
-     * @param {Event} e The browser's event object.
-     */
-    __evt__touchdown: function (e) {},
-
-    /**
-     * @event
-     * @description Whenever the user stops to touch or click an element.
-     * @name JXG.GeometryElement#up
-     * @param {Event} e The browser's event object.
-     */
-    __evt__up: function (e) {},
-
-    /**
-     * @event
-     * @description Whenever the user releases the mousebutton over an element.
-     * @name JXG.GeometryElement#mouseup
-     * @param {Event} e The browser's event object.
-     */
-    __evt__mouseup: function (e) {},
-
-    /**
-     * @event
-     * @description Whenever the user lifts the pen over an element.
-     * @name JXG.GeometryElement#penup
-     * @param {Event} e The browser's event object.
-     */
-    __evt__penup: function (e) {},
-
-    /**
-     * @event
-     * @description Whenever the user stops touching an element.
-     * @name JXG.GeometryElement#touchup
-     * @param {Event} e The browser's event object.
-     */
-    __evt__touchup: function (e) {},
-
-    /**
-     * @event
-     * @description Notify every time an attribute is changed.
-     * @name JXG.GeometryElement#attribute
-     * @param {Object} o A list of changed attributes and their new value.
-     * @param {Object} el Reference to the element
-     */
-    __evt__attribute: function (o, el) {},
-
-    /**
-     * @event
-     * @description This is a generic event handler. It exists for every possible attribute that can be set for
-     * any element, e.g. if you want to be notified everytime an element's strokecolor is changed, is the event
-     * <tt>attribute:strokecolor</tt>.
-     * @name JXG.GeometryElement#attribute:key
-     * @param val The old value.
-     * @param nval The new value
-     * @param {Object} el Reference to the element
-     */
-    __evt__attribute_: function (val, nval, el) {},
-
-    /**
-     * @ignore
-     */
-    __evt: function () {},
-    //endregion
-  }
-);
-
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].GeometryElement */ .Z.GeometryElement);
-
-
-/***/ }),
-
-/***/ 573:
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "Z": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var jxg__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(765);
-/* harmony import */ var base_constants__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(351);
-/* harmony import */ var base_element__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(958);
-/* harmony import */ var parser_geonext__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(632);
-/* harmony import */ var utils_env__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(503);
-/* harmony import */ var utils_type__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(109);
-/* harmony import */ var math_math__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(275);
-/* harmony import */ var base_coordselement__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(218);
-/*
-    Copyright 2008-2022
-        Matthias Ehmann,
-        Michael Gerhaeuser,
-        Carsten Miller,
-        Bianca Valentin,
-        Alfred Wassermann,
-        Peter Wilfahrt
-
-    This file is part of JSXGraph.
-
-    JSXGraph is free software dual licensed under the GNU LGPL or MIT License.
-
-    You can redistribute it and/or modify it under the terms of the
-
-      * GNU Lesser General Public License as published by
-        the Free Software Foundation, either version 3 of the License, or
-        (at your option) any later version
-      OR
-      * MIT License: https://github.com/jsxgraph/jsxgraph/blob/master/LICENSE.MIT
-
-    JSXGraph is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
-
-    You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
-    and <http://opensource.org/licenses/MIT/>.
- */
-
-/*global JXG: true, define: true, window: true*/
-/*jslint nomen: true, plusplus: true*/
-
-/* depends:
- jxg
- base/constants
- base/coords
- base/element
- parser/geonext
- math/statistics
- utils/env
- utils/type
- */
-
-/**
- * @fileoverview In this file the Text element is defined.
- */
-
-
-
-
-
-
-
-
-
-
-var priv = {
-  HTMLSliderInputEventHandler: function () {
-    this._val = parseFloat(this.rendNodeRange.value);
-    this.rendNodeOut.value = this.rendNodeRange.value;
-    this.board.update();
-  },
-};
-
-/**
- * Construct and handle texts.
- *
- * The coordinates can be relative to the coordinates of an element
- * given in {@link JXG.Options#text.anchor}.
- *
- * MathJax, HTML and GEONExT syntax can be handled.
- * @class Creates a new text object. Do not use this constructor to create a text. Use {@link JXG.Board#create} with
- * type {@link Text} instead.
- * @augments JXG.GeometryElement
- * @augments JXG.CoordsElement
- * @param {string|JXG.Board} board The board the new text is drawn on.
- * @param {Array} coordinates An array with the user coordinates of the text.
- * @param {Object} attributes An object containing visual properties and optional a name and a id.
- * @param {string|function} content A string or a function returning a string.
- *
- */
-jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].Text */ .Z.Text = function (board, coords, attributes, content) {
-  this.constructor(
-    board,
-    attributes,
-    base_constants__WEBPACK_IMPORTED_MODULE_1__/* ["default"].OBJECT_TYPE_TEXT */ .Z.OBJECT_TYPE_TEXT,
-    base_constants__WEBPACK_IMPORTED_MODULE_1__/* ["default"].OBJECT_CLASS_TEXT */ .Z.OBJECT_CLASS_TEXT
-  );
-
-  this.element = this.board.select(attributes.anchor);
-  this.coordsConstructor(coords, utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].evaluate */ .Z.evaluate(this.visProp.islabel));
-
-  this.content = "";
-  this.plaintext = "";
-  this.plaintextOld = null;
-  this.orgText = "";
-
-  this.needsSizeUpdate = false;
-  // Only used by infobox anymore
-  this.hiddenByParent = false;
-
-  /**
-   * Width and height of the the text element in pixel.
-   *
-   * @private
-   * @type Array
-   */
-  this.size = [1.0, 1.0];
-  this.id = this.board.setId(this, "T");
-
-  this.board.renderer.drawText(this);
-  this.board.finalizeAdding(this);
-
-  // Set text before drawing
-  // this._createFctUpdateText(content);
-  // this.updateText();
-
-  this.setText(content);
-
-  if (utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].isString */ .Z.isString(this.content)) {
-    this.notifyParents(this.content);
-  }
-  this.elType = "text";
-
-  this.methodMap = utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].deepCopy */ .Z.deepCopy(this.methodMap, {
-    setText: "setTextJessieCode",
-    // free: 'free',
-    move: "setCoords",
-  });
-};
-
-jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].Text.prototype */ .Z.Text.prototype = new base_element__WEBPACK_IMPORTED_MODULE_2__/* ["default"] */ .Z();
-utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].copyPrototypeMethods */ .Z.copyPrototypeMethods(jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].Text */ .Z.Text, base_coordselement__WEBPACK_IMPORTED_MODULE_7__/* ["default"] */ .Z, "coordsConstructor");
-
-jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].extend */ .Z.extend(
-  jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].Text.prototype */ .Z.Text.prototype,
-  /** @lends JXG.Text.prototype */ {
-    /**
-     * @private
-     * Test if the the screen coordinates (x,y) are in a small stripe
-     * at the left side or at the right side of the text.
-     * Sensitivity is set in this.board.options.precision.hasPoint.
-     * If dragarea is set to 'all' (default), tests if the the screen
-     * coordinates (x,y) are in within the text boundary.
-     * @param {Number} x
-     * @param {Number} y
-     * @returns {Boolean}
-     */
-    hasPoint: function (x, y) {
-      var lft, rt, top, bot, ax, ay, type, r;
-
-      if (utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].isObject */ .Z.isObject(utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].evaluate */ .Z.evaluate(this.visProp.precision))) {
-        type = this.board._inputDevice;
-        r = utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].evaluate */ .Z.evaluate(this.visProp.precision[type]);
-      } else {
-        // 'inherit'
-        r = this.board.options.precision.hasPoint;
-      }
-      if (this.transformations.length > 0) {
-        //Transform the mouse/touch coordinates
-        // back to the original position of the text.
-        lft = math_math__WEBPACK_IMPORTED_MODULE_6__/* ["default"].matVecMult */ .Z.matVecMult(
-          math_math__WEBPACK_IMPORTED_MODULE_6__/* ["default"].inverse */ .Z.inverse(
-            this.board.renderer.joinTransforms(this, this.transformations)
-          ),
-          [1, x, y]
-        );
-        x = lft[1];
-        y = lft[2];
-      }
-
-      ax = this.getAnchorX();
-      if (ax === "right") {
-        lft = this.coords.scrCoords[1] - this.size[0];
-      } else if (ax === "middle") {
-        lft = this.coords.scrCoords[1] - 0.5 * this.size[0];
-      } else {
-        lft = this.coords.scrCoords[1];
-      }
-      rt = lft + this.size[0];
-
-      ay = this.getAnchorY();
-      if (ay === "top") {
-        bot = this.coords.scrCoords[2] + this.size[1];
-      } else if (ay === "middle") {
-        bot = this.coords.scrCoords[2] + 0.5 * this.size[1];
-      } else {
-        bot = this.coords.scrCoords[2];
-      }
-      top = bot - this.size[1];
-
-      if (utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].evaluate */ .Z.evaluate(this.visProp.dragarea) === "all") {
-        return x >= lft - r && x < rt + r && y >= top - r && y <= bot + r;
-      }
-      // e.g. 'small'
-      return (
-        y >= top - r &&
-        y <= bot + r &&
-        ((x >= lft - r && x <= lft + 2 * r) || (x >= rt - 2 * r && x <= rt + r))
-      );
-    },
-
-    /**
-     * This sets the updateText function of this element depending on the type of text content passed.
-     * Used by {@link JXG.Text#_setText} and {@link JXG.Text} constructor.
-     * @param {String|Function|Number} text
-     * @private
-     */
-    _createFctUpdateText: function (text) {
-      var updateText,
-        resolvedText,
-        ev_p = utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].evaluate */ .Z.evaluate(this.visProp.parse),
-        ev_um = utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].evaluate */ .Z.evaluate(this.visProp.usemathjax),
-        ev_uk = utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].evaluate */ .Z.evaluate(this.visProp.usekatex),
-        convertJessieCode = false;
-
-      this.orgText = text;
-
-      if (utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].isFunction */ .Z.isFunction(text)) {
-        // <value> tags will not be evaluated if text is provided by a function
-        this.updateText = function () {
-          resolvedText = text().toString(); // Evaluate function
-          if (ev_p && !ev_um && !ev_uk) {
-            this.plaintext = this.replaceSub(
-              this.replaceSup(
-                this.convertGeonextAndSketchometry2CSS(resolvedText)
-              )
-            );
-          } else {
-            this.plaintext = resolvedText;
-          }
-        };
-      } else {
-        if (utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].isNumber */ .Z.isNumber(text)) {
-          this.content = utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].toFixed */ .Z.toFixed(text, utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].evaluate */ .Z.evaluate(this.visProp.digits));
-        } else if (utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].isString */ .Z.isString(text) && ev_p) {
-          if (utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].evaluate */ .Z.evaluate(this.visProp.useasciimathml)) {
-            // ASCIIMathML
-            this.content = "'`" + text + "`'";
-          } else if (ev_um || ev_uk) {
-            // MathJax or KaTeX
-            // Replace value-tags by functions
-            this.content = this.valueTagToJessieCode(text);
-            this.content = this.content.replace(/\\/g, "\\\\"); // Replace single backshlash by double
-          } else {
-            // No TeX involved.
-            // Converts GEONExT syntax into JavaScript string
-            // Short math is allowed
-            // Replace value-tags by functions
-            // Avoid geonext2JS calls
-            this.content = this.poorMansTeX(this.valueTagToJessieCode(text));
-          }
-          convertJessieCode = true;
-        }
-
-        // Generate function which returns the text to be displayed
-        if (convertJessieCode) {
-          // Convert JessieCode to JS function
-          updateText = this.board.jc.snippet(this.content, true, "", false);
-
-          // Ticks have been esacped in valueTagToJessieCode
-          this.updateText = function () {
-            this.plaintext = this.unescapeTicks(updateText());
-          };
-        } else {
-          this.updateText = function () {
-            this.plaintext = text;
-          };
-        }
-      }
-    },
-
-    /**
-     * Defines new content. This is used by {@link JXG.Text#setTextJessieCode} and {@link JXG.Text#setText}. This is required because
-     * JessieCode needs to filter all Texts inserted into the DOM and thus has to replace setText by setTextJessieCode.
-     * @param {String|Function|Number} text
-     * @returns {JXG.Text}
-     * @private
-     */
-    _setText: function (text) {
-      this._createFctUpdateText(text);
-
-      // First evaluation of the string.
-      // We need this for display='internal' and Canvas
-      this.updateText();
-      this.fullUpdate();
-
-      // We do not call updateSize for the infobox to speed up rendering
-      if (!this.board.infobox || this.id !== this.board.infobox.id) {
-        this.updateSize(); // updateSize() is called at least once.
-      }
-
-      // This may slow down canvas renderer
-      // if (this.board.renderer.type === 'canvas') {
-      //     this.board.fullUpdate();
-      // }
-
-      return this;
-    },
-
-    /**
-     * Defines new content but converts &lt; and &gt; to HTML entities before updating the DOM.
-     * @param {String|function} text
-     */
-    setTextJessieCode: function (text) {
-      var s;
-
-      this.visProp.castext = text;
-      if (utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].isFunction */ .Z.isFunction(text)) {
-        s = function () {
-          return utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].sanitizeHTML */ .Z.sanitizeHTML(text());
-        };
-      } else {
-        if (utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].isNumber */ .Z.isNumber(text)) {
-          s = text;
-        } else {
-          s = utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].sanitizeHTML */ .Z.sanitizeHTML(text);
-        }
-      }
-
-      return this._setText(s);
-    },
-
-    /**
-     * Defines new content.
-     * @param {String|function} text
-     * @returns {JXG.Text} Reference to the text object.
-     */
-    setText: function (text) {
-      return this._setText(text);
-    },
-
-    /**
-     * Recompute the width and the height of the text box.
-     * Updates the array {@link JXG.Text#size} with pixel values.
-     * The result may differ from browser to browser
-     * by some pixels.
-     * In canvas an old IEs we use a very crude estimation of the dimensions of
-     * the textbox.
-     * JSXGraph needs {@link JXG.Text#size} for applying rotations in IE and
-     * for aligning text.
-     *
-     * @return {[type]} [description]
-     */
-    updateSize: function () {
-      var tmp,
-        that,
-        node,
-        ev_d = utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].evaluate */ .Z.evaluate(this.visProp.display);
-
-      if (!utils_env__WEBPACK_IMPORTED_MODULE_4__/* ["default"].isBrowser */ .Z.isBrowser || this.board.renderer.type === "no") {
-        return this;
-      }
-      node = this.rendNode;
-
-      /**
-       * offsetWidth and offsetHeight seem to be supported for internal vml elements by IE10+ in IE8 mode.
-       */
-      if (ev_d === "html" || this.board.renderer.type === "vml") {
-        if (utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].exists */ .Z.exists(node.offsetWidth)) {
-          that = this;
-          window.setTimeout(function () {
-            that.size = [node.offsetWidth, node.offsetHeight];
-            that.needsUpdate = true;
-            that.updateRenderer();
-          }, 0);
-          // In case, there is non-zero padding or borders
-          // the following approach does not longer work.
-          // s = [node.offsetWidth, node.offsetHeight];
-          // if (s[0] === 0 && s[1] === 0) { // Some browsers need some time to set offsetWidth and offsetHeight
-          //     that = this;
-          //     window.setTimeout(function () {
-          //         that.size = [node.offsetWidth, node.offsetHeight];
-          //         that.needsUpdate = true;
-          //         that.updateRenderer();
-          //     }, 0);
-          // } else {
-          //     this.size = s;
-          // }
-        } else {
-          this.size = this.crudeSizeEstimate();
-        }
-      } else if (ev_d === "internal") {
-        if (this.board.renderer.type === "svg") {
-          that = this;
-          window.setTimeout(function () {
-            try {
-              tmp = node.getBBox();
-              that.size = [tmp.width, tmp.height];
-              that.needsUpdate = true;
-              that.updateRenderer();
-            } catch (e) {}
-          }, 0);
-        } else if (this.board.renderer.type === "canvas") {
-          this.size = this.crudeSizeEstimate();
-        }
-      }
-
-      return this;
-    },
-
-    /**
-     * A very crude estimation of the dimensions of the textbox in case nothing else is available.
-     * @returns {Array}
-     */
-    crudeSizeEstimate: function () {
-      var ev_fs = parseFloat(utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].evaluate */ .Z.evaluate(this.visProp.fontsize));
-      return [ev_fs * this.plaintext.length * 0.45, ev_fs * 0.9];
-    },
-
-    /**
-     * Decode unicode entities into characters.
-     * @param {String} string
-     * @returns {String}
-     */
-    utf8_decode: function (string) {
-      return string.replace(/&#x(\w+);/g, function (m, p1) {
-        return String.fromCharCode(parseInt(p1, 16));
-      });
-    },
-
-    /**
-     * Replace _{} by &lt;sub&gt;
-     * @param {String} te String containing _{}.
-     * @returns {String} Given string with _{} replaced by &lt;sub&gt;.
-     */
-    replaceSub: function (te) {
-      if (!te.indexOf) {
-        return te;
-      }
-
-      var j,
-        i = te.indexOf("_{");
-
-      // the regexp in here are not used for filtering but to provide some kind of sugar for label creation,
-      // i.e. replacing _{...} with <sub>...</sub>. What is passed would get out anyway.
-      /*jslint regexp: true*/
-
-      while (i >= 0) {
-        te = te.substr(0, i) + te.substr(i).replace(/_\{/, "<sub>");
-        j = te.substr(i).indexOf("}");
-        if (j >= 0) {
-          te = te.substr(0, j) + te.substr(j).replace(/\}/, "</sub>");
-        }
-        i = te.indexOf("_{");
-      }
-
-      i = te.indexOf("_");
-      while (i >= 0) {
-        te = te.substr(0, i) + te.substr(i).replace(/_(.?)/, "<sub>$1</sub>");
-        i = te.indexOf("_");
-      }
-
-      return te;
-    },
-
-    /**
-     * Replace ^{} by &lt;sup&gt;
-     * @param {String} te String containing ^{}.
-     * @returns {String} Given string with ^{} replaced by &lt;sup&gt;.
-     */
-    replaceSup: function (te) {
-      if (!te.indexOf) {
-        return te;
-      }
-
-      var j,
-        i = te.indexOf("^{");
-
-      // the regexp in here are not used for filtering but to provide some kind of sugar for label creation,
-      // i.e. replacing ^{...} with <sup>...</sup>. What is passed would get out anyway.
-      /*jslint regexp: true*/
-
-      while (i >= 0) {
-        te = te.substr(0, i) + te.substr(i).replace(/\^\{/, "<sup>");
-        j = te.substr(i).indexOf("}");
-        if (j >= 0) {
-          te = te.substr(0, j) + te.substr(j).replace(/\}/, "</sup>");
-        }
-        i = te.indexOf("^{");
-      }
-
-      i = te.indexOf("^");
-      while (i >= 0) {
-        te = te.substr(0, i) + te.substr(i).replace(/\^(.?)/, "<sup>$1</sup>");
-        i = te.indexOf("^");
-      }
-
-      return te;
-    },
-
-    /**
-     * Return the width of the text element.
-     * @returns {Array} [width, height] in pixel
-     */
-    getSize: function () {
-      return this.size;
-    },
-
-    /**
-     * Move the text to new coordinates.
-     * @param {number} x
-     * @param {number} y
-     * @returns {object} reference to the text object.
-     */
-    setCoords: function (x, y) {
-      var coordsAnchor, dx, dy;
-      if (utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].isArray */ .Z.isArray(x) && x.length > 1) {
-        y = x[1];
-        x = x[0];
-      }
-
-      if (utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].evaluate */ .Z.evaluate(this.visProp.islabel) && utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].exists */ .Z.exists(this.element)) {
-        coordsAnchor = this.element.getLabelAnchor();
-        dx = (x - coordsAnchor.usrCoords[1]) * this.board.unitX;
-        dy = -(y - coordsAnchor.usrCoords[2]) * this.board.unitY;
-
-        this.relativeCoords.setCoordinates(base_constants__WEBPACK_IMPORTED_MODULE_1__/* ["default"].COORDS_BY_SCREEN */ .Z.COORDS_BY_SCREEN, [dx, dy]);
-      } else {
-        /*
-                this.X = function () {
-                    return x;
-                };
-
-                this.Y = function () {
-                    return y;
-                };
-                */
-        this.coords.setCoordinates(base_constants__WEBPACK_IMPORTED_MODULE_1__/* ["default"].COORDS_BY_USER */ .Z.COORDS_BY_USER, [x, y]);
-      }
-
-      // this should be a local update, otherwise there might be problems
-      // with the tick update routine resulting in orphaned tick labels
-      this.fullUpdate();
-
-      return this;
-    },
-
-    /**
-     * Evaluates the text.
-     * Then, the update function of the renderer
-     * is called.
-     */
-    update: function (fromParent) {
-      if (!this.needsUpdate) {
-        return this;
-      }
-
-      this.updateCoords(fromParent);
-      this.updateText();
-
-      if (utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].evaluate */ .Z.evaluate(this.visProp.display) === "internal") {
-        if (utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].isString */ .Z.isString(this.plaintext)) {
-          this.plaintext = this.utf8_decode(this.plaintext);
-        }
-      }
-
-      this.checkForSizeUpdate();
-      if (this.needsSizeUpdate) {
-        this.updateSize();
-      }
-
-      return this;
-    },
-
-    /**
-     * Used to save updateSize() calls.
-     * Called in JXG.Text.update
-     * That means this.update() has been called.
-     * More tests are in JXG.Renderer.updateTextStyle. The latter tests
-     * are one update off. But this should pose not too many problems, since
-     * it affects fontSize and cssClass changes.
-     *
-     * @private
-     */
-    checkForSizeUpdate: function () {
-      if (this.board.infobox && this.id === this.board.infobox.id) {
-        this.needsSizeUpdate = false;
-      } else {
-        // For some magic reason it is more efficient on the iPad to
-        // call updateSize() for EVERY text element EVERY time.
-        this.needsSizeUpdate = this.plaintextOld !== this.plaintext;
-
-        if (this.needsSizeUpdate) {
-          this.plaintextOld = this.plaintext;
-        }
-      }
-    },
-
-    /**
-     * The update function of the renderert
-     * is called.
-     * @private
-     */
-    updateRenderer: function () {
-      if (
-        //this.board.updateQuality === this.board.BOARD_QUALITY_HIGH &&
-        utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].evaluate */ .Z.evaluate(this.visProp.autoposition)
-      ) {
-        this.setAutoPosition().updateConstraint();
-      }
-      return this.updateRendererGeneric("updateText");
-    },
-
-    /**
-     * Converts shortened math syntax into correct syntax:  3x instead of 3*x or
-     * (a+b)(3+1) instead of (a+b)*(3+1).
-     *
-     * @private
-     * @param{String} expr Math term
-     * @returns {string} expanded String
-     */
-    expandShortMath: function (expr) {
-      var re = /([)0-9.])\s*([(a-zA-Z_])/g;
-      return expr.replace(re, "$1*$2");
-    },
-
-    /**
-     * Converts the GEONExT syntax of the <value> terms into JavaScript.
-     * Also, all Objects whose name appears in the term are searched and
-     * the text is added as child to these objects.
-     * This method is called if the attribute parse==true is set.
-     *
-     * @param{String} contentStr String to be parsed
-     * @param{Boolean} [expand] Optional flag if shortened math syntax is allowed (e.g. 3x instead of 3*x).
-     * @param{Boolean} [avoidGeonext2JS] Optional flag if geonext2JS should be called. For backwards compatibility
-     * this has to be set explicitely to true.
-     * @param{Boolean} [outputTeX] Optional flag which has to be true if the resulting term will be sent to MathJax or KaTeX.
-     * If true, "_" and "^" are NOT replaced by HTML tags sub and sup. Default: false, i.e. the replacement is done.
-     * This flag allows the combination of &lt;value&gt; tag containing calculations with TeX output.
-     *
-     * @private
-     * @see JXG.GeonextParser.geonext2JS
-     */
-    generateTerm: function (contentStr, expand, avoidGeonext2JS) {
-      var res,
-        term,
-        i,
-        j,
-        plaintext = '""';
-
-      // Revert possible jc replacement
-      contentStr = contentStr || "";
-      contentStr = contentStr.replace(/\r/g, "");
-      contentStr = contentStr.replace(/\n/g, "");
-      contentStr = contentStr.replace(/"/g, "'");
-      contentStr = contentStr.replace(/'/g, "\\'");
-
-      // Old GEONExT syntax, not (yet) supported as TeX output.
-      // Otherwise, the else clause should be used.
-      // That means, i.e. the <arc> tag and <sqrt> tag are not
-      // converted into TeX syntax.
-      contentStr = contentStr.replace(/&amp;arc;/g, "&ang;");
-      contentStr = contentStr.replace(/<arc\s*\/>/g, "&ang;");
-      contentStr = contentStr.replace(/&lt;arc\s*\/&gt;/g, "&ang;");
-      contentStr = contentStr.replace(/&lt;sqrt\s*\/&gt;/g, "&radic;");
-
-      contentStr = contentStr.replace(/&lt;value&gt;/g, "<value>");
-      contentStr = contentStr.replace(/&lt;\/value&gt;/g, "</value>");
-
-      // Convert GEONExT syntax into  JavaScript syntax
-      i = contentStr.indexOf("<value>");
-      j = contentStr.indexOf("</value>");
-      if (i >= 0) {
-        while (i >= 0) {
-          plaintext +=
-            ' + "' +
-            this.replaceSub(this.replaceSup(contentStr.slice(0, i))) +
-            '"';
-          // plaintext += ' + "' + this.replaceSub(contentStr.slice(0, i)) + '"';
-
-          term = contentStr.slice(i + 7, j);
-          term = term.replace(/\s+/g, ""); // Remove all whitespace
-          if (expand === true) {
-            term = this.expandShortMath(term);
-          }
-          if (avoidGeonext2JS) {
-            res = term;
-          } else {
-            res = parser_geonext__WEBPACK_IMPORTED_MODULE_3__/* ["default"].geonext2JS */ .Z.geonext2JS(term, this.board);
-          }
-          res = res.replace(/\\"/g, "'");
-          res = res.replace(/\\'/g, "'");
-
-          // GEONExT-Hack: apply rounding once only.
-          if (res.indexOf("toFixed") < 0) {
-            // output of a value tag
-            if (
-              utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].isNumber */ .Z.isNumber(
-                utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].bind */ .Z.bind(this.board.jc.snippet(res, true, "", false), this)()
-              )
-            ) {
-              // may also be a string
-              plaintext +=
-                "+(" +
-                res +
-                ").toFixed(" +
-                utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].evaluate */ .Z.evaluate(this.visProp.digits) +
-                ")";
-            } else {
-              plaintext += "+(" + res + ")";
-            }
-          } else {
-            plaintext += "+(" + res + ")";
-          }
-
-          contentStr = contentStr.slice(j + 8);
-          i = contentStr.indexOf("<value>");
-          j = contentStr.indexOf("</value>");
-        }
-      }
-
-      plaintext += ' + "' + this.replaceSub(this.replaceSup(contentStr)) + '"';
-      plaintext = this.convertGeonextAndSketchometry2CSS(plaintext);
-
-      // This should replace e.g. &amp;pi; by &pi;
-      plaintext = plaintext.replace(/&amp;/g, "&");
-      plaintext = plaintext.replace(/"/g, "'");
-
-      return plaintext;
-    },
-
-    valueTagToJessieCode: function (contentStr) {
-      var res,
-        term,
-        i,
-        j,
-        expandShortMath = true,
-        textComps = [],
-        tick = '"';
-
-      contentStr = contentStr || "";
-      contentStr = contentStr.replace(/\r/g, "");
-      contentStr = contentStr.replace(/\n/g, "");
-
-      contentStr = contentStr.replace(/&lt;value&gt;/g, "<value>");
-      contentStr = contentStr.replace(/&lt;\/value&gt;/g, "</value>");
-
-      // Convert content of value tag (GEONExT/JessieCode) syntax into JavaScript syntax
-      i = contentStr.indexOf("<value>");
-      j = contentStr.indexOf("</value>");
-      if (i >= 0) {
-        while (i >= 0) {
-          // Add string fragment before <value> tag
-          textComps.push(
-            tick + this.escapeTicks(contentStr.slice(0, i)) + tick
-          );
-
-          term = contentStr.slice(i + 7, j);
-          term = term.replace(/\s+/g, ""); // Remove all whitespace
-          if (expandShortMath === true) {
-            term = this.expandShortMath(term);
-          }
-          res = term;
-          res = res.replace(/\\"/g, "'").replace(/\\'/g, "'");
-
-          // Hack: apply rounding once only.
-          if (res.indexOf("toFixed") < 0) {
-            // Output of a value tag
-            // Run the JessieCode parser
-            if (
-              utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].isNumber */ .Z.isNumber(
-                utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].bind */ .Z.bind(this.board.jc.snippet(res, true, "", false), this)()
-              )
-            ) {
-              // Output is number
-              textComps.push(
-                "(" +
-                  res +
-                  ").toFixed(" +
-                  utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].evaluate */ .Z.evaluate(this.visProp.digits) +
-                  ")"
-              );
-            } else {
-              // Output is a string
-              textComps.push("(" + res + ")");
-            }
-          } else {
-            textComps.push("(" + res + ")");
-          }
-          contentStr = contentStr.slice(j + 8);
-          i = contentStr.indexOf("<value>");
-          j = contentStr.indexOf("</value>");
-        }
-      }
-      // Add trailing string fragment
-      textComps.push(tick + this.escapeTicks(contentStr) + tick);
-
-      return textComps.join(" + ").replace(/&amp;/g, "&");
-    },
-
-    poorMansTeX: function (s) {
-      s = s
-        .replace(/<arc\s*\/*>/g, "&ang;")
-        .replace(/&lt;arc\s*\/*&gt;/g, "&ang;")
-        .replace(/<sqrt\s*\/*>/g, "&radic;")
-        .replace(/&lt;sqrt\s*\/*&gt;/g, "&radic;");
-
-      return this.convertGeonextAndSketchometry2CSS(
-        this.replaceSub(this.replaceSup(s))
-      );
-    },
-
-    escapeTicks: function (s) {
-      return s.replace(/"/g, "%22").replace(/'/g, "%27");
-    },
-
-    unescapeTicks: function (s) {
-      return s.replace(/%22/g, '"').replace(/%27/g, "'");
-    },
-
-    /**
-     * Converts the GEONExT tags <overline> and <arrow> to
-     * HTML span tags with proper CSS formatting.
-     * @private
-     * @see JXG.Text.generateTerm
-     * @see JXG.Text._setText
-     */
-    convertGeonext2CSS: function (s) {
-      if (utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].isString */ .Z.isString(s)) {
-        s = s.replace(
-          /(<|&lt;)overline(>|&gt;)/g,
-          "<span style=text-decoration:overline;>"
-        );
-        s = s.replace(/(<|&lt;)\/overline(>|&gt;)/g, "</span>");
-        s = s.replace(
-          /(<|&lt;)arrow(>|&gt;)/g,
-          "<span style=text-decoration:overline;>"
-        );
-        s = s.replace(/(<|&lt;)\/arrow(>|&gt;)/g, "</span>");
-      }
-
-      return s;
-    },
-
-    /**
-     * Converts the sketchometry tag <sketchofont> to
-     * HTML span tags with proper CSS formatting.
-     * @private
-     * @see JXG.Text.generateTerm
-     * @see JXG.Text._setText
-     */
-    convertSketchometry2CSS: function (s) {
-      if (utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].isString */ .Z.isString(s)) {
-        s = s.replace(
-          /(<|&lt;)sketchofont(>|&gt;)/g,
-          "<span style=font-family:sketchometry-light;font-weight:500;>"
-        );
-        s = s.replace(/(<|&lt;)\/sketchofont(>|&gt;)/g, "</span>");
-        s = s.replace(
-          /(<|&lt;)sketchometry-light(>|&gt;)/g,
-          "<span style=font-family:sketchometry-light;font-weight:500;>"
-        );
-        s = s.replace(/(<|&lt;)\/sketchometry-light(>|&gt;)/g, "</span>");
-      }
-
-      return s;
-    },
-
-    /**
-     * Alias for convertGeonext2CSS and convertSketchometry2CSS
-     * @private
-     * @see JXG.Text.convertGeonext2CSS
-     * @see JXG.Text.convertSketchometry2CSS
-     */
-    convertGeonextAndSketchometry2CSS: function (s) {
-      s = this.convertGeonext2CSS(s);
-      s = this.convertSketchometry2CSS(s);
-      return s;
-    },
-
-    /**
-     * Finds dependencies in a given term and notifies the parents by adding the
-     * dependent object to the found objects child elements.
-     * @param {String} content String containing dependencies for the given object.
-     * @private
-     */
-    notifyParents: function (content) {
-      var search,
-        res = null;
-
-      // revert possible jc replacement
-      content = content.replace(/&lt;value&gt;/g, "<value>");
-      content = content.replace(/&lt;\/value&gt;/g, "</value>");
-
-      do {
-        search = /<value>([\w\s*/^\-+()[\],<>=!]+)<\/value>/;
-        res = search.exec(content);
-
-        if (res !== null) {
-          parser_geonext__WEBPACK_IMPORTED_MODULE_3__/* ["default"].findDependencies */ .Z.findDependencies(this, res[1], this.board);
-          content = content.substr(res.index);
-          content = content.replace(search, "");
-        }
-      } while (res !== null);
-
-      return this;
-    },
-
-    // documented in element.js
-    getParents: function () {
-      var p;
-      if (this.relativeCoords !== undefined) {
-        // Texts with anchor elements, excluding labels
-        p = [
-          this.relativeCoords.usrCoords[1],
-          this.relativeCoords.usrCoords[2],
-          this.orgText,
-        ];
-      } else {
-        // Other texts
-        p = [this.Z(), this.X(), this.Y(), this.orgText];
-      }
-
-      if (this.parents.length !== 0) {
-        p = this.parents;
-      }
-
-      return p;
-    },
-
-    bounds: function () {
-      var c = this.coords.usrCoords;
-
-      if (
-        utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].evaluate */ .Z.evaluate(this.visProp.islabel) ||
-        this.board.unitY === 0 ||
-        this.board.unitX === 0
-      ) {
-        return [0, 0, 0, 0];
-      }
-      return [
-        c[1],
-        c[2] + this.size[1] / this.board.unitY,
-        c[1] + this.size[0] / this.board.unitX,
-        c[2],
-      ];
-    },
-
-    getAnchorX: function () {
-      var a = utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].evaluate */ .Z.evaluate(this.visProp.anchorx);
-      if (a === "auto") {
-        switch (this.visProp.position) {
-          case "top":
-          case "bot":
-            return "middle";
-          case "rt":
-          case "lrt":
-          case "urt":
-            return "left";
-          case "lft":
-          case "llft":
-          case "ulft":
-          default:
-            return "right";
-        }
-      }
-      return a;
-    },
-
-    getAnchorY: function () {
-      var a = utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].evaluate */ .Z.evaluate(this.visProp.anchory);
-      if (a === "auto") {
-        switch (this.visProp.position) {
-          case "top":
-          case "ulft":
-          case "urt":
-            return "bottom";
-          case "bot":
-          case "lrt":
-          case "llft":
-            return "top";
-          case "rt":
-          case "lft":
-          default:
-            return "middle";
-        }
-      }
-      return a;
-    },
-
-    /**
-     * Computes the number of overlaps of a box of w pixels width, h pixels height
-     * and center (x, y)
-     *
-     * @private
-     * @param  {Number} x x-coordinate of the center (screen coordinates)
-     * @param  {Number} y y-coordinate of the center (screen coordinates)
-     * @param  {Number} w width of the box in pixel
-     * @param  {Number} h width of the box in pixel
-     * @return {Number}   Number of overlapping elements
-     */
-    getNumberofConflicts: function (x, y, w, h) {
-      var count = 0,
-        i,
-        obj,
-        le,
-        savePointPrecision;
-
-      // Set the precision of hasPoint to half the max if label isn't too long
-      savePointPrecision = this.board.options.precision.hasPoint;
-      // this.board.options.precision.hasPoint = Math.max(w, h) * 0.5;
-      this.board.options.precision.hasPoint = (w + h) * 0.25;
-      // TODO:
-      // Make it compatible with the objects' visProp.precision attribute
-      for (i = 0, le = this.board.objectsList.length; i < le; i++) {
-        obj = this.board.objectsList[i];
-        if (
-          obj.visPropCalc.visible &&
-          obj.elType !== "axis" &&
-          obj.elType !== "ticks" &&
-          obj !== this.board.infobox &&
-          obj !== this &&
-          obj.hasPoint(x, y)
-        ) {
-          count++;
-        }
-      }
-      this.board.options.precision.hasPoint = savePointPrecision;
-
-      return count;
-    },
-
-    /**
-     * Sets the offset of a label element to the position with the least number
-     * of overlaps with other elements, while retaining the distance to its
-     * anchor element. Twelve different angles are possible.
-     *
-     * @returns {JXG.Text} Reference to the text object.
-     */
-    setAutoPosition: function () {
-      var x,
-        y,
-        cx,
-        cy,
-        anchorCoords,
-        // anchorX, anchorY,
-        w = this.size[0],
-        h = this.size[1],
-        start_angle,
-        angle,
-        optimum = {
-          conflicts: Infinity,
-          angle: 0,
-          r: 0,
-        },
-        max_r,
-        delta_r,
-        conflicts,
-        offset,
-        r,
-        num_positions = 12,
-        step = (2 * Math.PI) / num_positions,
-        j,
-        dx,
-        dy,
-        co,
-        si;
-
-      if (
-        this === this.board.infobox ||
-        !this.visPropCalc.visible ||
-        !utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].evaluate */ .Z.evaluate(this.visProp.islabel) ||
-        !this.element
-      ) {
-        return this;
-      }
-
-      // anchorX = Type.evaluate(this.visProp.anchorx);
-      // anchorY = Type.evaluate(this.visProp.anchory);
-      offset = utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].evaluate */ .Z.evaluate(this.visProp.offset);
-      anchorCoords = this.element.getLabelAnchor();
-      cx = anchorCoords.scrCoords[1];
-      cy = anchorCoords.scrCoords[2];
-
-      // Set dx, dy as the relative position of the center of the label
-      // to its anchor element ignoring anchorx and anchory.
-      dx = offset[0];
-      dy = offset[1];
-
-      conflicts = this.getNumberofConflicts(cx + dx, cy - dy, w, h);
-      if (conflicts === 0) {
-        return this;
-      }
-      // console.log(this.id, conflicts, w, h);
-      // r = Geometry.distance([0, 0], offset, 2);
-
-      r = 12;
-      max_r = 28;
-      delta_r = 0.2 * r;
-
-      start_angle = Math.atan2(dy, dx);
-
-      optimum.conflicts = conflicts;
-      optimum.angle = start_angle;
-      optimum.r = r;
-
-      while (optimum.conflicts > 0 && r < max_r) {
-        for (
-          j = 1, angle = start_angle + step;
-          j < num_positions && optimum.conflicts > 0;
-          j++
-        ) {
-          co = Math.cos(angle);
-          si = Math.sin(angle);
-
-          x = cx + r * co;
-          y = cy - r * si;
-
-          conflicts = this.getNumberofConflicts(x, y, w, h);
-          if (conflicts < optimum.conflicts) {
-            optimum.conflicts = conflicts;
-            optimum.angle = angle;
-            optimum.r = r;
-          }
-          if (optimum.conflicts === 0) {
-            break;
-          }
-          angle += step;
-        }
-        r += delta_r;
-      }
-      // console.log(this.id, "after", optimum)
-      r = optimum.r;
-      co = Math.cos(optimum.angle);
-      si = Math.sin(optimum.angle);
-      this.visProp.offset = [r * co, r * si];
-
-      if (co < -0.2) {
-        this.visProp.anchorx = "right";
-      } else if (co > 0.2) {
-        this.visProp.anchorx = "left";
-      } else {
-        this.visProp.anchorx = "middle";
-      }
-
-      return this;
-    },
-  }
-);
-
-/**
- * @class Construct and handle texts.
- *
- * The coordinates can be relative to the coordinates of an element
- * given in {@link JXG.Options#text.anchor}.
- *
- * MathJaX, HTML and GEONExT syntax can be handled.
- * @pseudo
- * @description
- * @name Text
- * @augments JXG.Text
- * @constructor
- * @type JXG.Text
- *
- * @param {number,function_number,function_number,function_String,function} z_,x,y,str Parent elements for text elements.
- *                     <p>
- *   Parent elements can be two or three elements of type number, a string containing a GEONE<sub>x</sub>T
- *   constraint, or a function which takes no parameter and returns a number. Every parent element determines one coordinate. If a coordinate is
- *   given by a number, the number determines the initial position of a free text. If given by a string or a function that coordinate will be constrained
- *   that means the user won't be able to change the texts's position directly by mouse because it will be calculated automatically depending on the string
- *   or the function's return value. If two parent elements are given the coordinates will be interpreted as 2D affine Euclidean coordinates, if three such
- *   parent elements are given they will be interpreted as homogeneous coordinates.
- *                     <p>
- *                     The text to display may be given as string or as function returning a string.
- *
- * There is the attribute 'display' which takes the values 'html' or 'internal'. In case of 'html' a HTML division tag is created to display
- * the text. In this case it is also possible to use ASCIIMathML. Incase of 'internal', a SVG or VML text element is used to display the text.
- * @see JXG.Text
- * @example
- * // Create a fixed text at position [0,1].
- *   var t1 = board.create('text',[0,1,"Hello World"]);
- * </pre><div class="jxgbox" id="JXG896013aa-f24e-4e83-ad50-7bc7df23f6b7" style="width: 300px; height: 300px;"></div>
- * <script type="text/javascript">
- *   var t1_board = JXG.JSXGraph.initBoard('JXG896013aa-f24e-4e83-ad50-7bc7df23f6b7', {boundingbox: [-3, 6, 5, -3], axis: true, showcopyright: false, shownavigation: false});
- *   var t1 = t1_board.create('text',[0,1,"Hello World"]);
- * </script><pre>
- * @example
- * // Create a variable text at a variable position.
- *   var s = board.create('slider',[[0,4],[3,4],[-2,0,2]]);
- *   var graph = board.create('text',
- *                        [function(x){ return s.Value();}, 1,
- *                         function(){return "The value of s is"+JXG.toFixed(s.Value(), 2);}
- *                        ]
- *                     );
- * </pre><div class="jxgbox" id="JXG5441da79-a48d-48e8-9e53-75594c384a1c" style="width: 300px; height: 300px;"></div>
- * <script type="text/javascript">
- *   var t2_board = JXG.JSXGraph.initBoard('JXG5441da79-a48d-48e8-9e53-75594c384a1c', {boundingbox: [-3, 6, 5, -3], axis: true, showcopyright: false, shownavigation: false});
- *   var s = t2_board.create('slider',[[0,4],[3,4],[-2,0,2]]);
- *   var t2 = t2_board.create('text',[function(x){ return s.Value();}, 1, function(){return "The value of s is "+JXG.toFixed(s.Value(), 2);}]);
- * </script><pre>
- * @example
- * // Create a text bound to the point A
- * var p = board.create('point',[0, 1]),
- *     t = board.create('text',[0, -1,"Hello World"], {anchor: p});
- *
- * </pre><div class="jxgbox" id="JXGff5a64b2-2b9a-11e5-8dd9-901b0e1b8723" style="width: 300px; height: 300px;"></div>
- * <script type="text/javascript">
- *     (function() {
- *         var board = JXG.JSXGraph.initBoard('JXGff5a64b2-2b9a-11e5-8dd9-901b0e1b8723',
- *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
- *     var p = board.create('point',[0, 1]),
- *         t = board.create('text',[0, -1,"Hello World"], {anchor: p});
- *
- *     })();
- *
- * </script><pre>
- *
- */
-jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].createText */ .Z.createText = function (board, parents, attributes) {
-  var t,
-    attr = utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].copyAttributes */ .Z.copyAttributes(attributes, board.options, "text"),
-    coords = parents.slice(0, -1),
-    content = parents[parents.length - 1];
-
-  // downwards compatibility
-  attr.anchor = attr.parent || attr.anchor;
-  t = base_coordselement__WEBPACK_IMPORTED_MODULE_7__/* ["default"].create */ .Z.create(jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].Text */ .Z.Text, board, coords, attr, content);
-
-  if (!t) {
-    throw new Error(
-      "JSXGraph: Can't create text with parent types '" +
-        typeof parents[0] +
-        "' and '" +
-        typeof parents[1] +
-        "'." +
-        "\nPossible parent types: [x,y], [z,x,y], [element,transformation]"
-    );
-  }
-
-  if (attr.rotate !== 0 && attr.display === "internal") {
-    // This is the default value, i.e. no rotation
-    t.addRotation(attr.rotate);
-  }
-
-  return t;
-};
-
-jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].registerElement */ .Z.registerElement("text", jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].createText */ .Z.createText);
-
-/**
- * @class Labels are text objects tied to other elements like points, lines and curves.
- * Labels are handled internally by JSXGraph, only. There is NO constructor "board.create('label', ...)".
- *
- * @pseudo
- * @description
- * @name Label
- * @augments JXG.Text
- * @constructor
- * @type JXG.Text
- */
-//  See element.js#createLabel
-
-/**
- * [[x,y], [w px, h px], [range]
- */
-jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].createHTMLSlider */ .Z.createHTMLSlider = function (board, parents, attributes) {
-  var t,
-    par,
-    attr = utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].copyAttributes */ .Z.copyAttributes(attributes, board.options, "htmlslider");
-
-  if (
-    parents.length !== 2 ||
-    parents[0].length !== 2 ||
-    parents[1].length !== 3
-  ) {
-    throw new Error(
-      "JSXGraph: Can't create htmlslider with parent types '" +
-        typeof parents[0] +
-        "' and '" +
-        typeof parents[1] +
-        "'." +
-        "\nPossible parents are: [[x,y], [min, start, max]]"
-    );
-  }
-
-  // backwards compatibility
-  attr.anchor = attr.parent || attr.anchor;
-  attr.fixed = attr.fixed || true;
-
-  par = [
-    parents[0][0],
-    parents[0][1],
-    '<form style="display:inline">' +
-      '<input type="range" /><span></span><input type="text" />' +
-      "</form>",
-  ];
-
-  t = jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].createText */ .Z.createText(board, par, attr);
-  t.type = utils_type__WEBPACK_IMPORTED_MODULE_5__/* ["default"].OBJECT_TYPE_HTMLSLIDER */ .Z.OBJECT_TYPE_HTMLSLIDER;
-
-  t.rendNodeForm = t.rendNode.childNodes[0];
-
-  t.rendNodeRange = t.rendNodeForm.childNodes[0];
-  t.rendNodeRange.min = parents[1][0];
-  t.rendNodeRange.max = parents[1][2];
-  t.rendNodeRange.step = attr.step;
-  t.rendNodeRange.value = parents[1][1];
-
-  t.rendNodeLabel = t.rendNodeForm.childNodes[1];
-  t.rendNodeLabel.id = t.rendNode.id + "_label";
-
-  if (attr.withlabel) {
-    t.rendNodeLabel.innerHTML = t.name + "=";
-  }
-
-  t.rendNodeOut = t.rendNodeForm.childNodes[2];
-  t.rendNodeOut.value = parents[1][1];
-
-  try {
-    t.rendNodeForm.id = t.rendNode.id + "_form";
-    t.rendNodeRange.id = t.rendNode.id + "_range";
-    t.rendNodeOut.id = t.rendNode.id + "_out";
-  } catch (e) {
-    jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].debug */ .Z.debug(e);
-  }
-
-  t.rendNodeRange.style.width = attr.widthrange + "px";
-  t.rendNodeRange.style.verticalAlign = "middle";
-  t.rendNodeOut.style.width = attr.widthout + "px";
-
-  t._val = parents[1][1];
-
-  if (jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].supportsVML */ .Z.supportsVML()) {
-    /*
-     * OnChange event is used for IE browsers
-     * The range element is supported since IE10
-     */
-    utils_env__WEBPACK_IMPORTED_MODULE_4__/* ["default"].addEvent */ .Z.addEvent(t.rendNodeForm, "change", priv.HTMLSliderInputEventHandler, t);
-  } else {
-    /*
-     * OnInput event is used for non-IE browsers
-     */
-    utils_env__WEBPACK_IMPORTED_MODULE_4__/* ["default"].addEvent */ .Z.addEvent(t.rendNodeForm, "input", priv.HTMLSliderInputEventHandler, t);
-  }
-
-  t.Value = function () {
-    return this._val;
-  };
-
-  return t;
-};
-
-jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].registerElement */ .Z.registerElement("htmlslider", jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].createHTMLSlider */ .Z.createHTMLSlider);
-
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  Text: jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].Text */ .Z.Text,
-  createText: jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].createText */ .Z.createText,
-  createHTMLSlider: jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].createHTMLSlider */ .Z.createHTMLSlider,
-});
+/* harmony default export */ const src = (jxg/* default */.Z);
 
 
 /***/ }),
@@ -96963,7 +96962,7 @@ jxg__WEBPACK_IMPORTED_MODULE_0__/* ["default"].Util.genUUID */ .Z.Util.genUUID =
 /******/ 	// module cache are used so entry inlining is disabled
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
-/******/ 	var __webpack_exports__ = __webpack_require__(__webpack_require__.s = 532);
+/******/ 	var __webpack_exports__ = __webpack_require__(__webpack_require__.s = 748);
 /******/ 	
 /******/ 	return __webpack_exports__;
 /******/ })()
