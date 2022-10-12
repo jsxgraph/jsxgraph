@@ -32,17 +32,12 @@
 /*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
-/* depends:
- jxg
- utils/type
- */
-
 /**
  * @fileoverview In this file the EventEmitter interface is defined.
  */
 
-import JXG from "jxg";
-import Type from "utils/type";
+import JXG from "../jxg";
+import Type from "./type";
 
 /**
  * Event namespace

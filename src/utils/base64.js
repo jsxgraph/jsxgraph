@@ -32,13 +32,8 @@
 /*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true, bitwise: true*/
 
-/* depends:
- jxg
- utils/encoding
- */
-
-import JXG from "jxg";
-import Encoding from "utils/encoding";
+import JXG from "../jxg";
+import Encoding from "./encoding";
 
 var alphabet =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/",

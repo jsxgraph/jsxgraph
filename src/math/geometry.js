@@ -33,27 +33,18 @@
 /*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
-/* depends:
- jxg
- base/constants
- base/coords
- math/math
- math/numerics
- utils/type
- */
-
 /**
  * @fileoverview This file contains the Math.Geometry namespace for calculating algebraic/geometric
  * stuff like intersection points, angles, midpoint, and so on.
  */
 
-import JXG from "jxg";
-import Const from "base/constants";
-import Coords from "base/coords";
-import Mat from "math/math";
-import Numerics from "math/numerics";
-import Type from "utils/type";
-import Expect from "utils/expect";
+import JXG from "../jxg";
+import Const from "../base/constants";
+import Coords from "../base/coords";
+import Mat from "./math";
+import Numerics from "./numerics";
+import Type from "../utils/type";
+import Expect from "../utils/expect";
 
 /**
  * Math.Geometry namespace definition. This namespace holds geometrical algorithms,

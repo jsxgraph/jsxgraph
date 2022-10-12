@@ -32,18 +32,13 @@
 /*global JXG: true, define: true, document: true*/
 /*jslint nomen: true, plusplus: true*/
 
-/* depends:
- jxg
- utils/type
- */
-
 /**
  * @fileoverview The JXG.DataSource is a helper class for data organization. Currently supported data sources are
  * javascript arrays and HTML tables.
  */
 
-import JXG from "jxg";
-import Type from "utils/type";
+import JXG from "../jxg";
+import Type from "../utils/type";
 
 JXG.DataSource = function () {
   this.data = [];

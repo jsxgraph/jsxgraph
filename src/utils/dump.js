@@ -32,17 +32,12 @@
 /*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
-/* depends:
- jxg
- utils/type
- */
-
 /**
  * @fileoverview The JXG.Dump namespace provides methods to save a board to javascript.
  */
 
-import JXG from "jxg";
-import Type from "utils/type";
+import JXG from "../jxg";
+import Type from "./type";
 
 /**
  * The JXG.Dump namespace provides classes and methods to save a board to javascript.

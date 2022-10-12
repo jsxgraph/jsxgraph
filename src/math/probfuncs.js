@@ -31,14 +31,8 @@
 /*jslint nomen: true, plusplus: true*/
 /*eslint no-loss-of-precision: off */
 
-/* depends:
- jxg
- math/math
- utils/type
- */
-
-import Mat from "math/math";
-import Type from "utils/type";
+import Mat from "./math";
+import Type from "../utils/type";
 
 /**
  * Probability functions, e.g. error function,

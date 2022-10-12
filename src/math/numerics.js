@@ -33,20 +33,15 @@
 /*jslint nomen: true, plusplus: true*/
 /*eslint no-loss-of-precision: off */
 
-/* depends:
- utils/type
- math/math
- */
-
 /**
  * @fileoverview In this file the namespace Math.Numerics is defined, which holds numerical
  * algorithms for solving linear equations etc.
  */
 
-import JXG from "jxg";
-import Type from "utils/type";
-import Env from "utils/env";
-import Mat from "math/math";
+import JXG from "../jxg";
+import Type from "../utils/type";
+import Env from "../utils/env";
+import Mat from "./math";
 
 // Predefined butcher tableaus for the common Runge-Kutta method (fourth order), Heun method (second order), and Euler method (first order).
 var predefinedButcher = {

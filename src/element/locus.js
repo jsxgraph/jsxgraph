@@ -32,30 +32,9 @@
 /*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
-/* depends:
- jxg
- math/math
- math/geometry
- math/numerics
- math/statistics
- math/symbolic
- base/composition
- base/coords
- base/constants
- utils/type
- elements:
- line
- circle
- transform
- point
- glider
- text
- curve
- */
-
-import JXG from "jxg";
-import Symbolic from "math/symbolic";
-import Type from "utils/type";
+import JXG from "../jxg";
+import Symbolic from "../math/symbolic";
+import Type from "../utils/type";
 
 /**
  * @class This element is used to visualize the locus of a given dependent point.

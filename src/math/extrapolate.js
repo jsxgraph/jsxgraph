@@ -30,13 +30,7 @@
 /*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
-/* depends:
- jxg
- math/math
- utils/type
- */
-
-import Mat from "math/math";
+import Mat from "./math";
 
 /**
  * Functions for extrapolation of sequences. Used for finding limits of sequences which is used for curve plotting.

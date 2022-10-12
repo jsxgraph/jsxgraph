@@ -30,15 +30,9 @@
 /*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
-/* depends:
- jxg
- math/math
- utils/type
- */
-
-import JXG from "jxg";
-import Mat from "math/math";
-import Type from "utils/type";
+import JXG from "../jxg";
+import Mat from "./math";
+import Type from "../utils/type";
 
 JXG.Math.DoubleBits = function () {
   var hasTypedArrays = false,

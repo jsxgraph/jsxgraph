@@ -32,29 +32,17 @@
 /*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
-/* depends:
- jxg
- base/constants
- math/math
- math/geometry
- math/numerics
- utils/type
-  elements:
-   point
-   curve
- */
-
 /**
  * @fileoverview In this file the conic sections defined.
  */
 
-import JXG from "jxg";
-import Const from "base/constants";
-import Coords from "base/coords";
-import Mat from "math/math";
-import Numerics from "math/numerics";
-import Geometry from "math/geometry";
-import Type from "utils/type";
+import JXG from "../jxg";
+import Const from "../base/constants";
+import Coords from "../base/coords";
+import Mat from "../math/math";
+import Numerics from "../math/numerics";
+import Geometry from "../math/geometry";
+import Type from "../utils/type";
 
 /**
  * @class This element is used to provide a constructor for an ellipse. An ellipse is given by two points (the foci) and a third point on the the ellipse or

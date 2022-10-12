@@ -32,28 +32,18 @@
 /*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
-/* depends:
- jxg
- base/constants
- base/coords
- math/math
- math/geometry
- server/server
- utils/type
- */
-
 /**
  * @fileoverview In this file the namespace Math.Symbolic is defined, which holds methods
  * and algorithms for symbolic computations.
  * @author graphjs
  */
 
-import Const from "base/constants";
-import Coords from "base/coords";
-import Mat from "math/math";
-import Geometry from "math/geometry";
-import Server from "server/server";
-import Type from "utils/type";
+import Const from "../base/constants";
+import Coords from "../base/coords";
+import Mat from "./math";
+import Geometry from "./geometry";
+import Server from "../server/server";
+import Type from "../utils/type";
 
 var undef;
 

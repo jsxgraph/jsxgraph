@@ -30,22 +30,16 @@
 /*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
-/* depends:
- jxg
- math/math
- utils/type
- */
-
-import JXG from "jxg";
-import Const from "base/constants";
-import Coords from "base/coords";
-import Mat from "math/math";
-import Extrapolate from "math/extrapolate";
-import Numerics from "math/numerics";
-import Statistics from "math/statistics";
-import Geometry from "math/geometry";
-import IntervalArithmetic from "math/ia";
-import Type from "utils/type";
+import JXG from "../jxg";
+import Const from "../base/constants";
+import Coords from "../base/coords";
+import Mat from "./math";
+import Extrapolate from "./extrapolate";
+import Numerics from "./numerics";
+import Statistics from "./statistics";
+import Geometry from "./geometry";
+import IntervalArithmetic from "./ia";
+import Type from "../utils/type";
 
 /**
  * Functions for plotting of curves.

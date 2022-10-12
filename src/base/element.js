@@ -32,27 +32,15 @@
 /*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true, unparam: true*/
 
-/* depends:
- jxg
- base/constants
- base/coords
- math/math
- options
- parser/geonext
- utils/event
- utils/color
- utils/type
- */
-
-import JXG from "jxg";
-import Const from "base/constants";
-import Coords from "base/coords";
-import Mat from "math/math";
-import Statistics from "math/statistics";
-import Options from "options";
-import EventEmitter from "utils/event";
-import Color from "utils/color";
-import Type from "utils/type";
+import JXG from "../jxg";
+import Const from "./constants";
+import Coords from "./coords";
+import Mat from "../math/math";
+import Statistics from "../math/statistics";
+import Options from "../options";
+import EventEmitter from "../utils/event";
+import Color from "../utils/color";
+import Type from "../utils/type";
 
 /**
  * Constructs a new GeometryElement object.

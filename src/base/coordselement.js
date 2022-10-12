@@ -30,34 +30,19 @@
 /*global JXG: true, define: true, console: true, window: true*/
 /*jslint nomen: true, plusplus: true*/
 
-/* depends:
- jxg
- options
- math/math
- math/geometry
- math/numerics
- base/coords
- base/constants
- base/element
- parser/geonext
- utils/type
-  elements:
-   transform
- */
-
 /**
  * @fileoverview The geometry object CoordsElement is defined in this file.
  * This object provides the coordinate handling of points, images and texts.
  */
 
-import JXG from "jxg";
-import Mat from "math/math";
-import Geometry from "math/geometry";
-import Numerics from "math/numerics";
-import Statistics from "math/statistics";
-import Coords from "base/coords";
-import Const from "base/constants";
-import Type from "utils/type";
+import JXG from "../jxg";
+import Mat from "../math/math";
+import Geometry from "../math/geometry";
+import Numerics from "../math/numerics";
+import Statistics from "../math/statistics";
+import Coords from "./coords";
+import Const from "./constants";
+import Type from "../utils/type";
 
 /**
  * An element containing coords is the basic geometric element. Based on points lines and circles can be constructed which can be intersected

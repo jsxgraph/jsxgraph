@@ -32,38 +32,22 @@
 /*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
-/* depends:
- jxg
- math/math
- math/geometry
- math/numerics
- math/statistics
- base/constants
- base/coords
- base/element
- utils/type
-  elements:
-   transform
-   point
-   ticks
- */
-
 /**
  * @fileoverview The geometry object Line is defined in this file. Line stores all
  * style and functional properties that are required to draw and move a line on
  * a board.
  */
 
-import JXG from "jxg";
-import Mat from "math/math";
-import Geometry from "math/geometry";
-import Numerics from "math/numerics";
-import Statistics from "math/statistics";
-import Const from "base/constants";
-import Coords from "base/coords";
-import GeometryElement from "base/element";
-import Type from "utils/type";
-import Point from "base/point";
+import JXG from "../jxg";
+import Mat from "../math/math";
+import Geometry from "../math/geometry";
+import Numerics from "../math/numerics";
+import Statistics from "../math/statistics";
+import Const from "./constants";
+import Coords from "./coords";
+import GeometryElement from "./element";
+import Type from "../utils/type";
+import Point from "./point";
 
 /**
  * The Line class is a basic class for all kind of line objects, e.g. line, arrow, and axis. It is usually defined by two points and can

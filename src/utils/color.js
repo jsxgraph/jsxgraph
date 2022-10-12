@@ -34,20 +34,14 @@
 
 /*jslint nomen: true, plusplus: true*/
 
-/* depends:
- jxg
- utils/type
- math/math
- */
-
 /**
  * Functions for color conversions. This was originally based on a class to parse color values by
  * Stoyan Stefanov <sstoo@gmail.com> (see http://www.phpied.com/rgb-color-parser-in-javascript/)
  */
 
-import JXG from "jxg";
-import Type from "utils/type";
-import Mat from "math/math";
+import JXG from "../jxg";
+import Type from "./type";
+import Mat from "../math/math";
 
 // private constants and helper functions
 

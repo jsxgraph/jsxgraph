@@ -36,15 +36,11 @@
 /*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true, bitwise: true*/
 
-/* depends:
- jxg
- */
-
 /**
  * @fileoverview Utilities for uncompressing and base64 decoding
  */
 
-import JXG from "jxg";
+import JXG from "../jxg";
 
 // Zip routine constants
 

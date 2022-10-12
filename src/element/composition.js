@@ -32,27 +32,6 @@
 /*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
-/* depends:
- jxg
- math/math
- math/geometry
- math/numerics
- math/statistics
- math/symbolic
- base/composition
- base/coords
- base/constants
- utils/type
-  elements:
-   line
-   circle
-   transform
-   point
-   glider
-   text
-   curve
- */
-
 /**
  * @fileoverview This file contains our composition elements, i.e. these elements are mostly put together
  * from one or more {@link JXG.GeometryElement} but with a special meaning. E.g. the midpoint element is contained here
@@ -75,20 +54,20 @@
  *   <li>{@link Reflection}</li></ul>
  */
 
-import JXG from "jxg";
-import Mat from "math/math";
-import Geometry from "math/geometry";
-import Numerics from "math/numerics";
-import Coords from "base/coords";
-import Type from "utils/type";
-import Const from "base/constants";
-import Point from "base/point";
-import Line from "base/line";
-import Circle from "base/circle";
-import Transform from "base/transformation";
-import Composition from "base/composition";
-import Curve from "base/curve";
-import Polygon from "base/polygon";
+import JXG from "../jxg";
+import Mat from "../math/math";
+import Geometry from "../math/geometry";
+import Numerics from "../math/numerics";
+import Coords from "../base/coords";
+import Type from "../utils/type";
+import Const from "../base/constants";
+import Point from "../base/point";
+import Line from "../base/line";
+import Circle from "../base/circle";
+import Transform from "../base/transformation";
+import Composition from "../base/composition";
+import Curve from "../base/curve";
+import Polygon from "../base/polygon";
 
 /**
  * @class This is used to construct a point that is the orthogonal projection of a point to a line.

@@ -1,5 +1,0 @@
-/*!Type.exists(el.rendNode.getTotalLength) && */
-
-/*!Type.exists(el.rendNode.getTotalLength) &&*/
-
-/*!this.visProp.frozen &&*/

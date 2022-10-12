@@ -33,11 +33,7 @@
 /*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
-/* depends:
- jxg
- */
-
-import JXG from "jxg";
+import JXG from "../jxg";
 
 var major = 1,
   minor = 4,

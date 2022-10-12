@@ -13,11 +13,7 @@
 /*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true, bitwise: true*/
 
-/* depends:
- jxg
- */
-
-import JXG from "jxg";
+import JXG from "../jxg";
 
 // constants
 var uuidCharsStr =

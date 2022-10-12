@@ -32,26 +32,17 @@
 /*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
-/* depends:
- jxg
- base/constants
- base/coords
- base/element
- math/math
- utils/type
- */
-
 /**
  * @fileoverview In this file the geometry element Image is defined.
  */
 
-import JXG from "jxg";
-import Const from "base/constants";
-import Coords from "base/coords";
-import GeometryElement from "base/element";
-import Mat from "math/math";
-import Type from "utils/type";
-import CoordsElement from "base/coordselement";
+import JXG from "../jxg";
+import Const from "./constants";
+import Coords from "./coords";
+import GeometryElement from "./element";
+import Mat from "../math/math";
+import Type from "../utils/type";
+import CoordsElement from "./coordselement";
 
 /**
  * Construct and handle images

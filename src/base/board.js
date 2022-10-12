@@ -33,49 +33,26 @@
 
 /*jslint nomen: true, plusplus: true*/
 
-/* depends:
- jxg
- base/constants
- base/coords
- options
- math/numerics
- math/math
- math/geometry
- math/complex
- parser/jessiecode
- parser/geonext
- utils/color
- utils/type
- utils/event
- utils/env
-  elements:
-   transform
-   point
-   line
-   text
-   grid
- */
-
 /**
  * @fileoverview The JXG.Board class is defined in this file. JXG.Board controls all properties and methods
  * used to manage a geonext board like managing geometric elements, managing mouse and touch events, etc.
  */
 
-import JXG from "jxg";
-import Const from "base/constants";
-import Coords from "base/coords";
-import Options from "options";
-import Numerics from "math/numerics";
-import Mat from "math/math";
-import Geometry from "math/geometry";
-import Complex from "math/complex";
-import Statistics from "math/statistics";
-import JessieCode from "parser/jessiecode";
-import Color from "utils/color";
-import Type from "utils/type";
-import EventEmitter from "utils/event";
-import Env from "utils/env";
-import Composition from "base/composition";
+import JXG from "../jxg";
+import Const from "./constants";
+import Coords from "./coords";
+import Options from "../options";
+import Numerics from "../math/numerics";
+import Mat from "../math/math";
+import Geometry from "../math/geometry";
+import Complex from "../math/complex";
+import Statistics from "../math/statistics";
+import JessieCode from "../parser/jessiecode";
+import Color from "../utils/color";
+import Type from "../utils/type";
+import EventEmitter from "../utils/event";
+import Env from "../utils/env";
+import Composition from "./composition";
 
 /**
  * Constructs a new Board object.

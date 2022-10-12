@@ -32,15 +32,6 @@
 /*global JXG: true*/
 /*jslint nomen: true, plusplus: true*/
 
-/* depends:
- jxg
- utils/type
-  elements:
-   point
-   segment
-   text
- */
-
 (function () {
   "use strict";
 

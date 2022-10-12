@@ -32,19 +32,13 @@
 /*global JXG: true, define: true, window: true*/
 /*jslint nomen: true, plusplus: true*/
 
-/* depends:
- jxg
- utils/env
- utils/type
- */
-
 /**
  * @fileoverview In this file the Text element is defined.
  */
 
-import JXG from "jxg";
-import Env from "utils/env";
-import Type from "utils/type";
+import JXG from "../jxg";
+import Env from "../utils/env";
+import Type from "../utils/type";
 
 var priv = {
   ButtonClickEventHandler: function () {

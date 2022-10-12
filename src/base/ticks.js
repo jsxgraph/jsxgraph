@@ -32,18 +32,6 @@
 /*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
-/* depends:
- jxg
- math/math
- math/geometry
- base/constants
- base/element
- base/coords
- utils/type
-  elements:
-   text
- */
-
 /**
  * @fileoverview In this file the geometry object Ticks is defined. Ticks provides
  * methods for creation and management of ticks on an axis.
@@ -51,15 +39,15 @@
  * @version 0.1
  */
 
-import JXG from "jxg";
-import Mat from "math/math";
-import Geometry from "math/geometry";
-import Numerics from "math/numerics";
-import Const from "base/constants";
-import GeometryElement from "base/element";
-import Coords from "base/coords";
-import Type from "utils/type";
-import Text from "base/text";
+import JXG from "../jxg";
+import Mat from "../math/math";
+import Geometry from "../math/geometry";
+import Numerics from "../math/numerics";
+import Const from "./constants";
+import GeometryElement from "./element";
+import Coords from "./coords";
+import Type from "../utils/type";
+import Text from "./text";
 
 /**
  * Creates ticks for an axis.

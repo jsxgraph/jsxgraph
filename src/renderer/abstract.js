@@ -39,17 +39,6 @@
 /*jslint nomen: true, plusplus: true, newcap: true, unparam: true*/
 /*eslint no-unused-vars: "off"*/
 
-/* depends:
- jxg
- options
- base/coords
- base/constants
- math/math
- math/geometry
- utils/type
- utils/env
-*/
-
 /**
  * @fileoverview JSXGraph can use various technologies to render the contents of a construction, e.g.
  * SVG, VML, and HTML5 Canvas. To accomplish this, The rendering and the logic and control mechanisms
@@ -58,14 +47,14 @@
  * renderers is the class AbstractRenderer defined in this file.
  */
 
-import JXG from "jxg";
-import Options from "options";
-import Coords from "base/coords";
-import Const from "base/constants";
-import Mat from "math/math";
-import Geometry from "math/geometry";
-import Type from "utils/type";
-import Env from "utils/env";
+import JXG from "../jxg";
+import Options from "../options";
+import Coords from "../base/coords";
+import Const from "../base/constants";
+import Mat from "../math/math";
+import Geometry from "../math/geometry";
+import Type from "../utils/type";
+import Env from "../utils/env";
 
 /**
  * <p>This class defines the interface to the graphics part of JSXGraph. This class is an abstract class, it

@@ -59,18 +59,13 @@
 /*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
-/* depends:
- utils/type
- math/math
- */
-
 /**
  * @fileoverview In this file the namespace Math.Metapost is defined which holds algorithms translated from Metapost
  * by D.E. Knuth and J.D. Hobby.
  */
 
-import Type from "utils/type";
-import Mat from "math/math";
+import Type from "../utils/type";
+import Mat from "./math";
 
 /**
  * The JXG.Math.Metapost namespace holds algorithms translated from Metapost

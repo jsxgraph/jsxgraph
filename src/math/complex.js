@@ -32,18 +32,14 @@
 /*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
-/* depends:
- jxg
- */
-
 /**
  * @fileoverview A class for complex arithmetics JXG.Complex is defined in this
  * file. Also a namespace JXG.C is included to provide instance-independent
  * arithmetic functions.
  */
 
-import JXG from "jxg";
-import Type from "utils/type";
+import JXG from "../jxg";
+import Type from "../utils/type";
 
 /**
  * Creates a new complex number.

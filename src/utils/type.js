@@ -33,11 +33,6 @@
 /*global JXG: true, define: true, html_sanitize: true*/
 /*jslint nomen: true, plusplus: true*/
 
-/* depends:
- jxg
- base/constants
- */
-
 /**
  * @fileoverview type.js contains several functions to help deal with javascript's weak types.
  * This file mainly consists of detector functions which verify if a variable is or is not of
@@ -45,8 +40,8 @@
  * the type of a variable.
  */
 
-import JXG from "jxg";
-import Const from "base/constants";
+import JXG from "../jxg";
+import Const from "../base/constants";
 
 JXG.extend(
   JXG,

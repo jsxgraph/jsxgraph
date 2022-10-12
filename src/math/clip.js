@@ -31,16 +31,6 @@ console.log("P:", P.coords.usrCoords, P.data.type)
 /*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
-/* depends:
- jxg
- base/constants
- base/coords
- math/math
- math/numerics
- math/geometry
- utils/type
- */
-
 /**
  * @fileoverview This file contains the Math.Clip namespace for clipping and computing boolean operations
  * on polygons and curves
@@ -49,12 +39,12 @@ console.log("P:", P.coords.usrCoords, P.data.type)
  * * Check if input polygons are closed. If not, handle this case.
  */
 
-import JXG from "jxg";
-import Const from "base/constants";
-import Coords from "base/coords";
-import Mat from "math/math";
-import Geometry from "math/geometry";
-import Type from "utils/type";
+import JXG from "../jxg";
+import Const from "../base/constants";
+import Coords from "../base/coords";
+import Mat from "./math";
+import Geometry from "./geometry";
+import Type from "../utils/type";
 
 /**
  * Math.Clip namespace definition. This namespace contains algorithms for Boolean operations on paths, i.e.

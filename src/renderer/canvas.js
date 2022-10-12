@@ -32,31 +32,17 @@
 /*global JXG: true, define: true, AMprocessNode: true, document: true, Image: true, module: true, require: true */
 /*jslint nomen: true, plusplus: true, newcap:true*/
 
-/* depends:
- jxg
- renderer/abstract
- base/constants
- utils/env
- utils/type
- utils/uuid
- utils/color
- base/coords
- math/math
- math/geometry
- math/numerics
-*/
-
-import JXG from "jxg";
-import AbstractRenderer from "renderer/abstract";
-import Const from "base/constants";
-import Env from "utils/env";
-import Type from "utils/type";
-import UUID from "utils/uuid";
-import Color from "utils/color";
-import Coords from "base/coords";
-import Mat from "math/math";
-import Geometry from "math/geometry";
-import Numerics from "math/numerics";
+import JXG from "../jxg";
+import AbstractRenderer from "./abstract";
+import Const from "../base/constants";
+import Env from "../utils/env";
+import Type from "../utils/type";
+import UUID from "../utils/uuid";
+import Color from "../utils/color";
+import Coords from "../base/coords";
+import Mat from "../math/math";
+import Geometry from "../math/geometry";
+import Numerics from "../math/numerics";
 import $__canvas from "canvas";
 
 /**

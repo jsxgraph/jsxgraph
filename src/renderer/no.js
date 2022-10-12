@@ -33,11 +33,6 @@
 /*jslint nomen: true, plusplus: true, newcap:true, unparam: true*/
 /*eslint no-unused-vars: "off"*/
 
-/* depends:
- jxg
- renderer/abstract
-*/
-
 /**
  * @fileoverview JSXGraph can use various technologies to render the contents of a construction, e.g.
  * SVG, VML, and HTML5 Canvas. To accomplish this, The rendering and the logic and control mechanisms
@@ -46,8 +41,8 @@
  * renderers is the class AbstractRenderer.
  */
 
-import JXG from "jxg";
-import AbstractRenderer from "renderer/abstract";
+import JXG from "../jxg";
+import AbstractRenderer from "./abstract";
 
 /**
  * This renderer draws nothing. It is intended to be used in environments where none of our rendering engines

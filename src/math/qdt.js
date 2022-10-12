@@ -32,13 +32,8 @@
 /*global JXG:true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
-/* depends:
- math/math
- utils/type
- */
-
-import Mat from "math/math";
-import Type from "utils/type";
+import Mat from "./math";
+import Type from "../utils/type";
 
 /**
  * Instantiate a new quad tree.

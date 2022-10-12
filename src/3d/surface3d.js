@@ -28,9 +28,9 @@
  */
 /*global JXG:true, define: true*/
 
-import JXG from "jxg";
-import Const from "base/constants";
-import Type from "utils/type";
+import JXG from "../jxg";
+import Const from "../base/constants";
+import Type from "../utils/type";
 
 /**
  * Constructor for 3D surfaces.

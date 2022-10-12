@@ -28,7 +28,7 @@
  */
 /*global JXG:true, define: true*/
 
-import JXG from "jxg";
+import JXG from "../jxg";
 
 /**
  * Constructs a new GeometryElement3D object.

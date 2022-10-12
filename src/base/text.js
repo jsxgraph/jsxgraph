@@ -32,29 +32,18 @@
 /*global JXG: true, define: true, window: true*/
 /*jslint nomen: true, plusplus: true*/
 
-/* depends:
- jxg
- base/constants
- base/coords
- base/element
- parser/geonext
- math/statistics
- utils/env
- utils/type
- */
-
 /**
  * @fileoverview In this file the Text element is defined.
  */
 
-import JXG from "jxg";
-import Const from "base/constants";
-import GeometryElement from "base/element";
-import GeonextParser from "parser/geonext";
-import Env from "utils/env";
-import Type from "utils/type";
-import Mat from "math/math";
-import CoordsElement from "base/coordselement";
+import JXG from "../jxg";
+import Const from "./constants";
+import GeometryElement from "./element";
+import GeonextParser from "../parser/geonext";
+import Env from "../utils/env";
+import Type from "../utils/type";
+import Mat from "../math/math";
+import CoordsElement from "./coordselement";
 
 var priv = {
   HTMLSliderInputEventHandler: function () {

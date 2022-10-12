@@ -32,19 +32,14 @@
 /*global JXG: true, define: true, html_sanitize: true*/
 /*jslint nomen: true, plusplus: true*/
 
-/* depends:
- jxg
- base/constants
- */
-
 /**
  * @fileoverview expect.js provides utilities for parameter magic by normalizing multi-type parameters.
  */
 
-import JXG from "jxg";
-import Type from "utils/type";
-import Const from "base/constants";
-import Coords from "base/coords";
+import JXG from "../jxg";
+import Type from "./type";
+import Const from "../base/constants";
+import Coords from "../base/coords";
 
 var Expect = {
   /**

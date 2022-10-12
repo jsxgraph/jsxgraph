@@ -32,36 +32,21 @@
 /*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
-/* depends:
- jxg
- base/constants
- base/coords
- base/element
- math/math
- math/geometry
- math/statistics
- math/numerics
- parser/geonext
- utils/type
-  elements:
-   transform
- */
-
 /**
  * @fileoverview In this file the geometry element Curve is defined.
  */
 
-import JXG from "jxg";
-import Const from "base/constants";
-import Coords from "base/coords";
-import GeometryElement from "base/element";
-import Mat from "math/math";
-import Numerics from "math/numerics";
-import Plot from "math/plot";
-import Geometry from "math/geometry";
-import GeonextParser from "parser/geonext";
-import Type from "utils/type";
-import QDT from "math/qdt";
+import JXG from "../jxg";
+import Const from "./constants";
+import Coords from "./coords";
+import GeometryElement from "./element";
+import Mat from "../math/math";
+import Numerics from "../math/numerics";
+import Plot from "../math/plot";
+import Geometry from "../math/geometry";
+import GeonextParser from "../parser/geonext";
+import Type from "../utils/type";
+import QDT from "../math/qdt";
 
 /**
  * Curves are the common object for function graphs, parametric curves, polar curves, and data plots.

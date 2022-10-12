@@ -1,6 +1,4 @@
 # Ignore artifacts:
-build/bin
-build/bundle
 build/*.json
 build/*.Md
 3rdparty

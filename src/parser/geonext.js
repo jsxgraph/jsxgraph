@@ -32,17 +32,9 @@
 /*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
-/* depends:
- jxg
- base/constants
- utils/type
- math/math
- math/geometry
- */
-
-import JXG from "jxg";
-import Const from "base/constants";
-import Type from "utils/type";
+import JXG from "../jxg";
+import Const from "../base/constants";
+import Type from "../utils/type";
 
 /**
  * Parser helper routines. The methods in here are for parsing expressions in Geonext Syntax.

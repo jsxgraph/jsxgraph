@@ -33,19 +33,14 @@
 /*global JXG: true, define: true, window: true, document: true, navigator: true, module: true, global: true, self: true, require: true*/
 /*jslint nomen: true, plusplus: true*/
 
-/* depends:
- jxg
- utils/type
- */
-
 /**
  * @fileoverview The functions in this file help with the detection of the environment JSXGraph runs in. We can distinguish
  * between node.js, windows 8 app and browser, what rendering techniques are supported and (most of the time) if the device
  * the browser runs on is a tablet/cell or a desktop computer.
  */
 
-import JXG from "jxg";
-import Type from "utils/type";
+import JXG from "../jxg";
+import Type from "./type";
 import $__canvas from "canvas";
 
 JXG.extendConstants(

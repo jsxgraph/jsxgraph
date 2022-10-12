@@ -32,25 +32,15 @@
 /*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
-/* depends:
- jxg
- utils/type
- base/element
-  elements:
-   point
-   segment
-   ticks
- */
-
 /**
  * @fileoverview Geometry objects for measurements are defined in this file. This file stores all
  * style and functional properties that are required to use a tape measure on
  * a board.
  */
 
-import JXG from "jxg";
-import Type from "utils/type";
-import GeometryElement from "base/element";
+import JXG from "../jxg";
+import Type from "../utils/type";
+import GeometryElement from "../base/element";
 
 /**
  * @class A tape measure can be used to measure distances between points.

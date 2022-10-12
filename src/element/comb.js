@@ -28,17 +28,13 @@
 /*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
-/* depends:
- see define call
- */
-
 /**
  * @fileoverview In this file the Comb element is defined.
  */
 
-import JXG from "jxg";
-import Type from "utils/type";
-import Point from "base/point";
+import JXG from "../jxg";
+import Type from "../utils/type";
+import Point from "../base/point";
 
 /**
  * @class A comb to display domains of inequalities.

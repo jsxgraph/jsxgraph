@@ -38,9 +38,6 @@
 /*global JXG: true, define: true, jQuery: true, window: true, document: true, navigator: true, require: true, module: true, console: true */
 /*jslint nomen:true, plusplus:true, forin:true*/
 
-/* depends:
- */
-
 /**
  * @fileoverview The JSXGraph object is defined in this file. JXG.JSXGraph controls all boards.
  * It has methods to create, save, load and free boards. Additionally some helper functions are

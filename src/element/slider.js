@@ -32,33 +32,18 @@
 /*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
-/* depends:
- jxg
- math/math
- base/constants
- base/point
- utils/type
-  elements:
-   point
-   group
-   segment
-   ticks
-   glider
-   text
- */
-
 /**
  * @fileoverview The geometry object slider is defined in this file. Slider stores all
  * style and functional properties that are required to draw and use a slider on
  * a board.
  */
 
-import JXG from "jxg";
-import Mat from "math/math";
-import Const from "base/constants";
-import Coords from "base/coords";
-import Type from "utils/type";
-import Point from "base/point";
+import JXG from "../jxg";
+import Mat from "../math/math";
+import Const from "../base/constants";
+import Coords from "../base/coords";
+import Type from "../utils/type";
+import Point from "../base/point";
 
 /**
  * @class A slider can be used to choose values from a given range of numbers.

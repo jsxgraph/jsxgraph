@@ -32,22 +32,16 @@
 /*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
-/* depends:
- jxg
- base/constants
- utils/type
- */
-
 /**
  * @fileoverview In this file the class Group is defined, a class for
  * managing grouping of points.
  */
 
-import JXG from "jxg";
-import Const from "base/constants";
-import Mat from "math/math";
-import Geometry from "math/geometry";
-import Type from "utils/type";
+import JXG from "../jxg";
+import Const from "./constants";
+import Mat from "../math/math";
+import Geometry from "../math/geometry";
+import Type from "../utils/type";
 
 /**
  * Creates a new instance of Group.

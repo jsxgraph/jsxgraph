@@ -32,49 +32,24 @@
 /*global JXG: true, define: true, document: true*/
 /*jslint nomen: true, plusplus: true*/
 
-/* depends:
- jxg
- math/numerics
- math/statistics
- base/constants
- base/coords
- base/element
- parser/datasource
- utils/color
- utils/type
- utils/env
-  elements:
-   curve
-   spline
-   functiongraph
-   point
-   text
-   polygon
-   sector
-   transform
-   line
-   legend
-   circle
- */
-
-import JXG from "jxg";
-import Numerics from "math/numerics";
-import Statistics from "math/statistics";
-import Const from "base/constants";
-import Coords from "base/coords";
-import GeometryElement from "base/element";
-import DataSource from "parser/datasource";
-import Color from "utils/color";
-import Type from "utils/type";
-import Env from "utils/env";
-import Curve from "base/curve";
-import Point from "base/point";
-import Text from "base/text";
-import Polygon from "base/polygon";
-import Sector from "element/sector";
-import Transform from "base/transformation";
-import Line from "base/line";
-import Circle from "base/circle";
+import JXG from "../jxg";
+import Numerics from "../math/numerics";
+import Statistics from "../math/statistics";
+import Const from "./constants";
+import Coords from "./coords";
+import GeometryElement from "./element";
+import DataSource from "../parser/datasource";
+import Color from "../utils/color";
+import Type from "../utils/type";
+import Env from "../utils/env";
+import Curve from "./curve";
+import Point from "./point";
+import Text from "./text";
+import Polygon from "./polygon";
+import Sector from "../element/sector";
+import Transform from "./transformation";
+import Line from "./line";
+import Circle from "./circle";
 
 /**
  *

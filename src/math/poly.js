@@ -32,20 +32,14 @@
 /*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
-/* depends:
- jxg
- math/math
- utils/type
- */
-
 /**
  * @fileoverview In this file the namespace Math.Poly is defined, which holds algorithms to create and
  * manipulate polynomials.
  */
 
-import JXG from "jxg";
-import Mat from "math/math";
-import Type from "utils/type";
+import JXG from "../jxg";
+import Mat from "./math";
+import Type from "../utils/type";
 
 /**
  * The JXG.Math.Poly namespace holds algorithms to create and manipulate polynomials.

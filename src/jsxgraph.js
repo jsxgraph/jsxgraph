@@ -32,19 +32,6 @@
 /*global JXG: true, document:true, jQuery:true, define: true, window: true*/
 /*jslint nomen: true, plusplus: true*/
 
-/* depends:
- jxg
- utils/env
- utils/type
- base/board
- reader/file
- options
- renderer/svg
- renderer/vml
- renderer/canvas
- renderer/no
- */
-
 /**
  * @fileoverview The JSXGraph object is defined in this file. JXG.JSXGraph controls all boards.
  * It has methods to create, save, load and free boards. Additionally some helper functions are
@@ -52,16 +39,16 @@
  * @version 0.99
  */
 
-import JXG from "jxg";
-import Env from "utils/env";
-import Type from "utils/type";
-import Board from "base/board";
-import FileReader from "reader/file";
-import Options from "options";
-import SVGRenderer from "renderer/svg";
-import VMLRenderer from "renderer/vml";
-import CanvasRenderer from "renderer/canvas";
-import NoRenderer from "renderer/no";
+import JXG from "./jxg";
+import Env from "./utils/env";
+import Type from "./utils/type";
+import Board from "./base/board";
+import FileReader from "./reader/file";
+import Options from "./options";
+import SVGRenderer from "./renderer/svg";
+import VMLRenderer from "./renderer/vml";
+import CanvasRenderer from "./renderer/canvas";
+import NoRenderer from "./renderer/no";
 
 /**
  * Constructs a new JSXGraph singleton object.

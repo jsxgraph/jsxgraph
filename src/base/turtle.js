@@ -32,28 +32,16 @@
 /*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
-/* depends:
- jxg
- base/constants
- base/element
- utils/type
-  elements:
-   curve
-   point
-   line
-   transform
- */
-
 /**
  * @fileoverview The JSXGraph object Turtle is defined. It acts like
  * "turtle graphics".
  * @author A.W.
  */
 
-import JXG from "jxg";
-import Const from "base/constants";
-import GeometryElement from "base/element";
-import Type from "utils/type";
+import JXG from "../jxg";
+import Const from "./constants";
+import GeometryElement from "./element";
+import Type from "../utils/type";
 
 /**
  * Constructs a new Turtle object.

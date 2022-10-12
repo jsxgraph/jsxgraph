@@ -32,35 +32,20 @@
 /*global JXG: true, define: true, console: true, window: true*/
 /*jslint nomen: true, plusplus: true*/
 
-/* depends:
- jxg
- options
- math/math
- math/geometry
- math/numerics
- base/coords
- base/constants
- base/element
- parser/geonext
- utils/type
-  elements:
-   transform
- */
-
 /**
  * @fileoverview The geometry object Point is defined in this file. Point stores all
  * style and functional properties that are required to draw and move a point on
  * a board.
  */
 
-import JXG from "jxg";
-import Options from "options";
-import Mat from "math/math";
-import Geometry from "math/geometry";
-import Const from "base/constants";
-import GeometryElement from "base/element";
-import Type from "utils/type";
-import CoordsElement from "base/coordselement";
+import JXG from "../jxg";
+import Options from "../options";
+import Mat from "../math/math";
+import Geometry from "../math/geometry";
+import Const from "./constants";
+import GeometryElement from "./element";
+import Type from "../utils/type";
+import CoordsElement from "./coordselement";
 
 /**
  * A point is the basic geometric element. Based on points lines and circles can be constructed which can be intersected

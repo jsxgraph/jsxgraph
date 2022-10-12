@@ -32,18 +32,14 @@
 /*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
-/* depends:
- see define call
- */
-
 /**
  * @fileoverview Example file for a triangle implemented as a extension to JSXGraph.
  */
 
-import JXG from "jxg";
-import Type from "utils/type";
-import Const from "base/constants";
-import Polygon from "base/polygon";
+import JXG from "../jxg";
+import Type from "../utils/type";
+import Const from "../base/constants";
+import Polygon from "../base/polygon";
 
 var priv = {
   removeSlopeTriangle: function () {

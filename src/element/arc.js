@@ -32,32 +32,18 @@
 /*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
-/* depends:
- jxg
- math/geometry
- math/math
- base/coords
- base/circle
- utils/type
- base/constants
-  elements:
-   curve
-   midpoint
-   circumcenter
- */
-
 /**
  * @fileoverview In this file the geometry object Arc is defined. Arc stores all
  * style and functional properties that are required to draw an arc on a board.
  */
 
-import JXG from "jxg";
-import Geometry from "math/geometry";
-import Mat from "math/math";
-import Coords from "base/coords";
-import Circle from "base/circle";
-import Type from "utils/type";
-import Const from "base/constants";
+import JXG from "../jxg";
+import Geometry from "../math/geometry";
+import Mat from "../math/math";
+import Coords from "../base/coords";
+import Circle from "../base/circle";
+import Type from "../utils/type";
+import Const from "../base/constants";
 
 /**
  * @class An arc is a segment of the circumference of a circle. It is defined by a center, one point that

@@ -32,33 +32,19 @@
 /*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
-/* depends:
- jxg
- base/element
- base/constants
- base/coords
- parser/geonext
- math/geometry
- math/statistics
- utils/type
-  elements:
-   transform
-   point
- */
-
 /**
  * @fileoverview The geometry object Circle is defined in this file. Circle stores all
  * style and functional properties that are required to draw and move a circle on
  * a board.
  */
 
-import JXG from "jxg";
-import GeometryElement from "base/element";
-import Coords from "base/coords";
-import Const from "base/constants";
-import Conic from "element/conic";
-import GeonextParser from "parser/geonext";
-import Type from "utils/type";
+import JXG from "../jxg";
+import GeometryElement from "./element";
+import Coords from "./coords";
+import Const from "./constants";
+import Conic from "../element/conic";
+import GeonextParser from "../parser/geonext";
+import Type from "../utils/type";
 
 /**
  * A circle consists of all points with a given distance from one point. This point is called center, the distance is called radius.

@@ -29,30 +29,18 @@
 /*jslint nomen: true, plusplus: true*/
 /*eslint eqeqeq: "off"*/
 
-/* depends:
- jxg
- parser/geonext
- base/constants
- base/text
- math/math
- math/geometry
- math/statistics
- utils/type
- utils/uuid
- */
-
 /**
  * @fileoverview Here, the computer algebra algorithms are implemented.
  */
 
-import JXG from "jxg";
-import Const from "base/constants";
-import Text from "base/text";
-import Mat from "math/math";
-import Geometry from "math/geometry";
-import Statistics from "math/statistics";
-import Type from "utils/type";
-import Env from "utils/env";
+import JXG from "../jxg";
+import Const from "../base/constants";
+import Text from "../base/text";
+import Mat from "../math/math";
+import Geometry from "../math/geometry";
+import Statistics from "../math/statistics";
+import Type from "../utils/type";
+import Env from "../utils/env";
 
 /**
  * A JessieCode object provides an interface to the parser and stores all variables and objects used within a JessieCode script.

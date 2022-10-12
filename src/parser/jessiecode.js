@@ -28,18 +28,6 @@
 /*global JXG: true, define: true, window: true, console: true, self: true, document: true, parser: true*/
 /*jslint nomen: true, plusplus: true*/
 
-/* depends:
- jxg
- parser/geonext
- base/constants
- base/text
- math/math
- math/geometry
- math/statistics
- utils/type
- utils/uuid
- */
-
 /**
  * @fileoverview JessieCode is a scripting language designed to provide a
  * simple scripting language to build constructions
@@ -48,16 +36,16 @@
  * JSXGraph to display interactive math graphics.
  */
 
-import JXG from "jxg";
-import Const from "base/constants";
-import Text from "base/text";
-import Mat from "math/math";
-import Interval from "math/ia";
-import Geometry from "math/geometry";
-import Statistics from "math/statistics";
-import Type from "utils/type";
-import UUID from "utils/uuid";
-import Env from "utils/env";
+import JXG from "../jxg";
+import Const from "../base/constants";
+import Text from "../base/text";
+import Mat from "../math/math";
+import Interval from "../math/ia";
+import Geometry from "../math/geometry";
+import Statistics from "../math/statistics";
+import Type from "../utils/type";
+import UUID from "../utils/uuid";
+import Env from "../utils/env";
 import $__fs from "fs";
 import $__path from "path";
 // IE 6-8 compatibility

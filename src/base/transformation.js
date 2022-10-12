@@ -32,21 +32,14 @@
 /*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
-/*depends:
- jxg
- base/constants
- math/math
- utils/type
- */
-
 /**
  * @fileoverview This file contains code for transformations of geometrical objects.
  */
 
-import JXG from "jxg";
-import Const from "base/constants";
-import Mat from "math/math";
-import Type from "utils/type";
+import JXG from "../jxg";
+import Const from "./constants";
+import Mat from "../math/math";
+import Type from "../utils/type";
 
 /**
  * A transformation consists of a 3x3 matrix, i.e. it is a projective transformation.

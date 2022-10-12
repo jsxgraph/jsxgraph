@@ -32,25 +32,14 @@
 /*global JXG: true, define: true, AMprocessNode: true, MathJax: true, document: true */
 /*jslint nomen: true, plusplus: true, newcap:true*/
 
-/* depends:
- jxg
- options
- renderer/abstract
- base/constants
- utils/type
- utils/env
- utils/color
- math/numerics
-*/
-
-import JXG from "jxg";
-import Options from "options";
-import AbstractRenderer from "renderer/abstract";
-import Const from "base/constants";
-import Type from "utils/type";
-import Color from "utils/color";
-import Base64 from "utils/base64";
-import Numerics from "math/numerics";
+import JXG from "../jxg";
+import Options from "../options";
+import AbstractRenderer from "./abstract";
+import Const from "../base/constants";
+import Type from "../utils/type";
+import Color from "../utils/color";
+import Base64 from "../utils/base64";
+import Numerics from "../math/numerics";
 
 /**
  * Uses SVG to implement the rendering methods defined in {@link JXG.AbstractRenderer}.
