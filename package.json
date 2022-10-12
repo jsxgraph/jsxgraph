@@ -61,6 +61,7 @@
   "scripts": {
     "buildCore": "./node_modules/requirejs/bin/r.js -o build/core.build.json",
     "buildCompressor": "./node_modules/requirejs/bin/r.js -o build/compressor.build.json",
-    "test": "make tests"
+    "eslint": "make eslint",
+    "test": "make test"
   }
 }
