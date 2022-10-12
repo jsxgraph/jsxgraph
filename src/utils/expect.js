@@ -41,93 +41,89 @@
  * @fileoverview expect.js provides utilities for parameter magic by normalizing multi-type parameters.
  */
 
-define(["jxg", "utils/type", "base/constants", "base/coords"], function (
-  JXG,
-  Type,
-  Const,
-  Coords
-) {
-  "use strict";
+import JXG from "jxg";
+import Type from "utils/type";
+import Const from "base/constants";
+import Coords from "base/coords";
 
-  var Expect = {
-    /**
-     * Apply an expect method on every element of an array.
-     *
-     * @param {Array} a
-     * @param {function} format
-     * @param {Boolean} [copy=false]
-     *
-     * @returns {Array}
-     */
-    each: function (a, format, copy) {
-      var i,
-        len,
-        r = [];
+var Expect = {
+  /**
+   * Apply an expect method on every element of an array.
+   *
+   * @param {Array} a
+   * @param {function} format
+   * @param {Boolean} [copy=false]
+   *
+   * @returns {Array}
+   */
+  each: function (a, format, copy) {
+    var i,
+      len,
+      r = [];
 
-      if (Type.exists(a.length)) {
-        len = a.length;
-        for (i = 0; i < len; i++) {
-          r.push(format.call(this, a[i], copy));
-        }
+    if (Type.exists(a.length)) {
+      len = a.length;
+      for (i = 0; i < len; i++) {
+        r.push(format.call(this, a[i], copy));
       }
+    }
 
-      return r;
-    },
+    return r;
+  },
 
-    /**
-     * Normalize points and coord objects into a coord object.
-     *
-     * @param {JXG.Point|JXG.Coords} c
-     * @param {Boolean} [copy=false] Return a copy, not a reference
-     *
-     * @returns {JXG.Coords}
-     */
-    coords: function (c, copy) {
-      var coord = c;
+  /**
+   * Normalize points and coord objects into a coord object.
+   *
+   * @param {JXG.Point|JXG.Coords} c
+   * @param {Boolean} [copy=false] Return a copy, not a reference
+   *
+   * @returns {JXG.Coords}
+   */
+  coords: function (c, copy) {
+    var coord = c;
 
-      if (c && c.elementClass === Const.OBJECT_CLASS_POINT) {
-        coord = c.coords;
-      } else if (c.usrCoords && c.scrCoords && c.usr2screen) {
-        coord = c;
-      }
+    if (c && c.elementClass === Const.OBJECT_CLASS_POINT) {
+      coord = c.coords;
+    } else if (c.usrCoords && c.scrCoords && c.usr2screen) {
+      coord = c;
+    }
 
-      if (copy) {
-        coord = new Coords(Const.COORDS_BY_USER, coord.usrCoords, coord.board);
-      }
+    if (copy) {
+      coord = new Coords(Const.COORDS_BY_USER, coord.usrCoords, coord.board);
+    }
 
-      return coord;
-    },
+    return coord;
+  },
 
-    /**
-     * Normalize points, coordinate arrays and coord objects into a coordinate array.
-     *
-     * @param {JXG.Point|JXG.Coords|Array} c
-     * @param {Boolean} [copy=false] Return a copy, not a reference
-     *
-     * @returns {Array} Homogeneous coordinates
-     */
-    coordsArray: function (c, copy) {
-      var coord;
+  /**
+   * Normalize points, coordinate arrays and coord objects into a coordinate array.
+   *
+   * @param {JXG.Point|JXG.Coords|Array} c
+   * @param {Boolean} [copy=false] Return a copy, not a reference
+   *
+   * @returns {Array} Homogeneous coordinates
+   */
+  coordsArray: function (c, copy) {
+    var coord;
 
-      if (!Type.isArray(c)) {
-        coord = this.coords(c).usrCoords;
-      } else {
-        coord = c;
-      }
+    if (!Type.isArray(c)) {
+      coord = this.coords(c).usrCoords;
+    } else {
+      coord = c;
+    }
 
-      if (coord.length < 3) {
-        coord.unshift(1);
-      }
+    if (coord.length < 3) {
+      coord.unshift(1);
+    }
 
-      if (copy) {
-        coord = [coord[0], coord[1], coord[2]];
-      }
+    if (copy) {
+      coord = [coord[0], coord[1], coord[2]];
+    }
 
-      return coord;
-    },
-  };
+    return coord;
+  },
+};
 
-  JXG.Expect = Expect;
+JXG.Expect = Expect;
 
-  return Expect;
-});
+export default Expect;

@@ -42,202 +42,201 @@
  * javascript arrays and HTML tables.
  */
 
-define(["jxg", "utils/type"], function (JXG, Type) {
-  "use strict";
+import JXG from "jxg";
+import Type from "utils/type";
 
-  JXG.DataSource = function () {
-    this.data = [];
-    this.columnHeaders = [];
-    this.rowHeaders = [];
+JXG.DataSource = function () {
+  this.data = [];
+  this.columnHeaders = [];
+  this.rowHeaders = [];
 
-    return this;
-  };
+  return this;
+};
 
-  JXG.extend(
-    JXG.DataSource.prototype,
-    /** @lends JXG.DataSource.prototype */ {
-      loadFromArray: function (table, columnHeader, rowHeader) {
-        var i, j, cell;
+JXG.extend(
+  JXG.DataSource.prototype,
+  /** @lends JXG.DataSource.prototype */ {
+    loadFromArray: function (table, columnHeader, rowHeader) {
+      var i, j, cell;
 
-        if (Type.isArray(columnHeader)) {
-          this.columnHeaders = columnHeader;
-          columnHeader = false;
-        }
+      if (Type.isArray(columnHeader)) {
+        this.columnHeaders = columnHeader;
+        columnHeader = false;
+      }
 
-        if (Type.isArray(rowHeader)) {
-          this.rowHeaders = rowHeader;
-          rowHeader = false;
-        }
+      if (Type.isArray(rowHeader)) {
+        this.rowHeaders = rowHeader;
+        rowHeader = false;
+      }
 
+      this.data = [];
+
+      if (columnHeader) {
+        this.columnHeaders = [];
+      }
+
+      if (rowHeader) {
+        this.rowHeaders = [];
+      }
+
+      if (Type.exists(table)) {
+        // extract the data
         this.data = [];
 
+        for (i = 0; i < table.length; i++) {
+          this.data[i] = [];
+
+          for (j = 0; j < table[i].length; j++) {
+            cell = table[i][j];
+            if (parseFloat(cell).toString() === cell) {
+              this.data[i][j] = parseFloat(cell);
+            } else if (cell !== "-") {
+              this.data[i][j] = cell;
+            } else {
+              this.data[i][j] = NaN;
+            }
+          }
+        }
+
         if (columnHeader) {
-          this.columnHeaders = [];
+          this.columnHeaders = this.data[0].slice(1);
+          this.data = this.data.slice(1);
         }
 
         if (rowHeader) {
           this.rowHeaders = [];
-        }
-
-        if (Type.exists(table)) {
-          // extract the data
-          this.data = [];
-
-          for (i = 0; i < table.length; i++) {
-            this.data[i] = [];
-
-            for (j = 0; j < table[i].length; j++) {
-              cell = table[i][j];
-              if (parseFloat(cell).toString() === cell) {
-                this.data[i][j] = parseFloat(cell);
-              } else if (cell !== "-") {
-                this.data[i][j] = cell;
-              } else {
-                this.data[i][j] = NaN;
-              }
-            }
-          }
-
-          if (columnHeader) {
-            this.columnHeaders = this.data[0].slice(1);
-            this.data = this.data.slice(1);
-          }
-
-          if (rowHeader) {
-            this.rowHeaders = [];
-            for (i = 0; i < this.data.length; i++) {
-              this.rowHeaders.push(this.data[i][0]);
-              this.data[i] = this.data[i].slice(1);
-            }
+          for (i = 0; i < this.data.length; i++) {
+            this.rowHeaders.push(this.data[i][0]);
+            this.data[i] = this.data[i].slice(1);
           }
         }
+      }
 
-        return this;
-      },
+      return this;
+    },
 
-      loadFromTable: function (table, columnHeader, rowHeader) {
-        var row, i, j, col, cell, name;
+    loadFromTable: function (table, columnHeader, rowHeader) {
+      var row, i, j, col, cell, name;
 
-        if (Type.isArray(columnHeader)) {
-          this.columnHeaders = columnHeader;
-          columnHeader = false;
-        }
+      if (Type.isArray(columnHeader)) {
+        this.columnHeaders = columnHeader;
+        columnHeader = false;
+      }
 
-        if (Type.isArray(rowHeader)) {
-          this.rowHeaders = rowHeader;
-          rowHeader = false;
-        }
+      if (Type.isArray(rowHeader)) {
+        this.rowHeaders = rowHeader;
+        rowHeader = false;
+      }
 
+      this.data = [];
+
+      if (columnHeader) {
+        this.columnHeaders = [];
+      }
+
+      if (rowHeader) {
+        this.rowHeaders = [];
+      }
+
+      // to adjust: examples in examples folder & wiki
+      table = document.getElementById(table);
+
+      if (Type.exists(table)) {
+        // extract the data
+        row = table.getElementsByTagName("tr");
         this.data = [];
 
+        for (i = 0; i < row.length; i++) {
+          col = row[i].getElementsByTagName("td");
+          this.data[i] = [];
+
+          for (j = 0; j < col.length; j++) {
+            cell = col[j].innerHTML;
+
+            if (parseFloat(cell).toString() === cell) {
+              this.data[i][j] = parseFloat(cell);
+            } else if (cell !== "-") {
+              this.data[i][j] = cell;
+            } else {
+              this.data[i][j] = NaN;
+            }
+          }
+        }
+
         if (columnHeader) {
-          this.columnHeaders = [];
+          this.columnHeaders = this.data[0].slice(1);
+          this.data = this.data.slice(1);
         }
 
         if (rowHeader) {
           this.rowHeaders = [];
-        }
-
-        // to adjust: examples in examples folder & wiki
-        table = document.getElementById(table);
-
-        if (Type.exists(table)) {
-          // extract the data
-          row = table.getElementsByTagName("tr");
-          this.data = [];
-
-          for (i = 0; i < row.length; i++) {
-            col = row[i].getElementsByTagName("td");
-            this.data[i] = [];
-
-            for (j = 0; j < col.length; j++) {
-              cell = col[j].innerHTML;
-
-              if (parseFloat(cell).toString() === cell) {
-                this.data[i][j] = parseFloat(cell);
-              } else if (cell !== "-") {
-                this.data[i][j] = cell;
-              } else {
-                this.data[i][j] = NaN;
-              }
-            }
-          }
-
-          if (columnHeader) {
-            this.columnHeaders = this.data[0].slice(1);
-            this.data = this.data.slice(1);
-          }
-
-          if (rowHeader) {
-            this.rowHeaders = [];
-            for (i = 0; i < this.data.length; i++) {
-              this.rowHeaders.push(this.data[i][0]);
-              this.data[i] = this.data[i].slice(1);
-            }
+          for (i = 0; i < this.data.length; i++) {
+            this.rowHeaders.push(this.data[i][0]);
+            this.data[i] = this.data[i].slice(1);
           }
         }
+      }
 
-        return this;
-      },
+      return this;
+    },
 
-      addColumn: function (name, pos, data) {
-        throw new Error("not implemented");
-      },
+    addColumn: function (name, pos, data) {
+      throw new Error("not implemented");
+    },
 
-      addRow: function (name, pos, data) {
-        throw new Error("not implemented");
-      },
+    addRow: function (name, pos, data) {
+      throw new Error("not implemented");
+    },
 
-      getColumn: function (col) {
-        var i,
-          result = [];
-
-        // get column index if column is given as column header title
-        if (Type.isString(col)) {
-          for (i = 0; i < this.columnHeaders.length; i++) {
-            if (col === this.columnHeaders[i]) {
-              col = i;
-              break;
-            }
-          }
-        }
-
-        // build column array
-        for (i = 0; i < this.data.length; i++) {
-          if (this.data[i].length > col) {
-            result[i] = parseFloat(this.data[i][col]);
-          }
-        }
-
-        return result;
-      },
-
-      getRow: function (row) {
-        var result, i;
-
-        // get column index if column is given as column header title
-        if (Type.isString(row)) {
-          for (i = 0; i < this.rowHeaders.length; i++) {
-            if (row === this.rowHeaders[i]) {
-              row = i;
-              break;
-            }
-          }
-        }
-
-        // allocate memory for result array
+    getColumn: function (col) {
+      var i,
         result = [];
 
-        // build column array. result = this.data[row] is a flat copy and will
-        // destroy our local data copy, that's why we're copying it element wise.
-        for (i = 0; i < this.data[row].length; i++) {
-          result[i] = this.data[row][i];
+      // get column index if column is given as column header title
+      if (Type.isString(col)) {
+        for (i = 0; i < this.columnHeaders.length; i++) {
+          if (col === this.columnHeaders[i]) {
+            col = i;
+            break;
+          }
         }
+      }
 
-        return result;
-      },
-    }
-  );
+      // build column array
+      for (i = 0; i < this.data.length; i++) {
+        if (this.data[i].length > col) {
+          result[i] = parseFloat(this.data[i][col]);
+        }
+      }
 
-  return JXG.DataSource;
-});
+      return result;
+    },
+
+    getRow: function (row) {
+      var result, i;
+
+      // get column index if column is given as column header title
+      if (Type.isString(row)) {
+        for (i = 0; i < this.rowHeaders.length; i++) {
+          if (row === this.rowHeaders[i]) {
+            row = i;
+            break;
+          }
+        }
+      }
+
+      // allocate memory for result array
+      result = [];
+
+      // build column array. result = this.data[row] is a flat copy and will
+      // destroy our local data copy, that's why we're copying it element wise.
+      for (i = 0; i < this.data[row].length; i++) {
+        result[i] = this.data[row][i];
+      }
+
+      return result;
+    },
+  }
+);
+
+export default JXG.DataSource;

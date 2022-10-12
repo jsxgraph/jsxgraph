@@ -66,8 +66,8 @@
     "buildCore": "./node_modules/requirejs/bin/r.js -o build/core.build.json",
     "buildCompressor": "./node_modules/requirejs/bin/r.js -o build/compressor.build.json",
     "eslint": "make eslint",
-    "check-format": "prettier --check src test tests",
-    "format": "prettier --write src test tests",
+    "check-format": "prettier --check build src test tests",
+    "format": "prettier --write build src test tests",
     "test": "make test"
   }
 }

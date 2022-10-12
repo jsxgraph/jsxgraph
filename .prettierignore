@@ -1,5 +1,8 @@
 # Ignore artifacts:
-build
+build/bin
+build/bundle
+build/*.json
+build/*.Md
 3rdparty
 distrib
 doc
