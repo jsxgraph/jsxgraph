@@ -3,11 +3,11 @@
    <title>JSXGraph example</title>
    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
    <script type="text/javascript" src="prototype.js"></script>
-   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+   <script type="text/javascript" src="../distrib/jsxgraphcore.js"></script>
 </head>
 <body style="font-family:Arial">
 <h1>Inscribing Four Circles in a Triangle</h1>
-Inscribe a circle in a triangle ABC; let denote r<sub>M</sub> its radius. <br> 
+Inscribe a circle in a triangle ABC; let denote r<sub>M</sub> its radius. <br>
 Construct tangents to the inscribed circle parallel to the sides of the triangle. <br>
 Construct inscribed circles within each of the smaller triangles with radii r<sub>A</sub>, r<sub>B</sub>, and r<sub>C</sub>. <br>
 Then r<sub>A</sub> + r<sub>B</sub> + r<sub>C</sub> = r<sub>M</sub>.
@@ -45,23 +45,23 @@ Then r<sub>A</sub> + r<sub>B</sub> + r<sub>C</sub> = r<sub>M</sub>.
 <script type="text/javascript">
 /* <![CDATA[ */
     var board = JXG.JSXGraph.initBoard('box', {originX: 200, originY: 200, unitX: 50, unitY: 50});
-    
+
     var p1 = board.createElement('point', [0.5,-1.5] , {name:'A',fillColor:'red',strokeColor:'red'});
     var p2 = board.createElement('point', [7.5,0.5] , {name:'B',fillColor:'red',strokeColor:'red'});
     var p3 = board.createElement('point', [2,3] , {name:'C',fillColor:'red',strokeColor:'red'});
-    
+
     var b1 = board.createElement('line',['A','B'],{name:'',straightFirst:false,straightLast:false});
     var b2 = board.createElement('line',['A','C'],{name:'',straightFirst:false,straightLast:false});
     var b3 = board.createElement('line',['C','B'],{name:'',straightFirst:false,straightLast:false});
 
     var l1 = board.createElement('bisector',['B','A','C'],{name:'',visible:false}); // alpha
     var l2 = board.createElement('bisector',['C','B','A'],{name:'',visible:false}); // beta
-    
+
     var i1 = board.createElement('intersection',[l1,l2,0],{name:'',visible:false});
     var pp1 = board.createElement('perpendicularpoint',[i1,b1],{name:"C'",fillColor:'blue',visible:false});
     var pp2 = board.createElement('perpendicularpoint',[i1,b2],{name:"B'",fillColor:'blue',visible:false});
     var pp3 = board.createElement('perpendicularpoint',[i1,b3],{name:"A'",fillColor:'blue',visible:false});
-    
+
     var c2 = board.createElement('circumcircle',[pp1,pp2,pp3],{name:['M','']});
     c2.setProperty({strokeColor:'#3CB371'});
     c2.center.setProperty({fillColor:'blue'});
@@ -90,33 +90,33 @@ Then r<sub>A</sub> + r<sub>B</sub> + r<sub>C</sub> = r<sub>M</sub>.
     /* nicht Umkreise, sondern Inkreise! */
     var l11 = board.createElement('bisector',[i4,'C',i3],{name:'',visible:false}); // alpha
     var l21 = board.createElement('bisector',['C',i3,i4],{name:'',visible:false}); // beta
-    
+
     var i11 = board.createElement('intersection',[l11,l21,0],{name:'',visible:true});
     var pp11 = board.createElement('perpendicularpoint',[i11,l5],{name:"",visible:false});
     var pp21 = board.createElement('perpendicularpoint',[i11,b2],{name:"",visible:false});
-    var pp31 = board.createElement('perpendicularpoint',[i11,b3],{name:"",visible:false});    
-    
+    var pp31 = board.createElement('perpendicularpoint',[i11,b3],{name:"",visible:false});
+
     var c12 = board.createElement('circumcircle',[pp11,pp21,pp31],{name:['C_1','']});
     c12.setProperty({strokeColor:'#3CB371'});
     c12.center.setProperty({fillColor:'blue'});
-    
+
     var l12 = board.createElement('bisector',[i13,'B',i14],{name:'',visible:false}); // alpha
-    var l22 = board.createElement('bisector',[i14,i13,'B'],{name:'',visible:false}); // beta    
+    var l22 = board.createElement('bisector',[i14,i13,'B'],{name:'',visible:false}); // beta
     var i12 = board.createElement('intersection',[l12,l22,0],{name:'',visible:true});
     var pp12 = board.createElement('perpendicularpoint',[i12,l15],{name:"",visible:false});
     var pp22 = board.createElement('perpendicularpoint',[i12,b1],{name:"",visible:false});
-    var pp32 = board.createElement('perpendicularpoint',[i12,b3],{name:"",visible:false});     
+    var pp32 = board.createElement('perpendicularpoint',[i12,b3],{name:"",visible:false});
 
     var c22 = board.createElement('circumcircle',[pp12,pp22,pp32],{name:['B_1','']});
     c22.setProperty({strokeColor:'#3CB371'});
     c22.center.setProperty({fillColor:'blue'});
 
     var l13 = board.createElement('bisector',[i23,'A',i24],{name:'',visible:false}); // alpha
-    var l23 = board.createElement('bisector',[i24,i23,'A'],{name:'',visible:false}); // beta    
+    var l23 = board.createElement('bisector',[i24,i23,'A'],{name:'',visible:false}); // beta
     var i13 = board.createElement('intersection',[l13,l23,0],{name:'',visible:true});
     var pp13 = board.createElement('perpendicularpoint',[i13,l25],{name:"",visible:false});
     var pp23 = board.createElement('perpendicularpoint',[i13,b1],{name:"",visible:false});
-    var pp33 = board.createElement('perpendicularpoint',[i13,b2],{name:"",visible:false});     
+    var pp33 = board.createElement('perpendicularpoint',[i13,b2],{name:"",visible:false});
     var c32 = board.createElement('circumcircle',[pp13,pp23,pp33],{name:['A_1','']});
     c32.setProperty({strokeColor:'#3CB371'});
     c32.setProperty({fillColor:'blue'});

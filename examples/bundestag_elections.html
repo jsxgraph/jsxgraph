@@ -3,7 +3,7 @@
     <title>JSXGraph example: Bundestag elections</title>
     <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
     <script type="text/javascript" src="jquery-3.5.1.min.js"></script>
-    <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+    <script type="text/javascript" src="../distrib/jsxgraphcore.js"></script>
     <style type="text/css">
         a.topmenu {
             padding: 5px;
@@ -426,7 +426,7 @@
             years = [1949, 1953, 1957, 1961, 1965, 1969, 1972, 1976, 1980, 1983, 1987, 1990, 1994, 1998, 2002, 2005, 2009],
             hStroke = [], charts1, charts2, charts3, i;
 
-       
+
  // sub page 1
         charts1 = board1.create('chart', ['btw'], {chartStyle: 'point,line', withHeaders: true, colors: colors, strokeColor: colors, fillColor: colors, highlightFillColor: colors, highlightStrokeColor: colors});
 

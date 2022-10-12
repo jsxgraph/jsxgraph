@@ -6,7 +6,7 @@
     <!--script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/distrib/MathJax/MathJax.js"></script-->
     <!--script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraphcore.js"></script-->
     <!--script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jsxgraph/0.92/jsxgraphcore.js"></script-->
-    <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+    <script type="text/javascript" src="../distrib/jsxgraphcore.js"></script>
     <!--script type="text/javascript" src="../../JessieCode/jessiecode.par.js"></script-->
     <!--script type="text/javascript" src="../../JessieCode/jessiecode.bnf.js"></script-->
 
@@ -58,33 +58,33 @@
 
     var rotate = (function () {
         JXG.Options.text.display = 'internal';
-        
+
         var board = JXG.JSXGraph.initBoard('jxgbox', {axis: false, boundingbox: [-10,10,10,-10], grid: true, keepaspectratio: true}),
             p = board.create('point', [1, 2]);
-        
+
         //p.label.content.addRotation(30);
         //board.update();
-        
+
         // OR
-        
+
         p.label.content.setProperty({rotate: 30});
     }());
-    
+
     var setprop = (function () {
         var board = JXG.JSXGraph.initBoard('jxgbox', {axis: false, boundingbox: [-10,10,10,-10], grid: true, keepaspectratio: true}),
             line, lines = ['Math.sin(x)', 'Math.cos(x)', 'Math.tan(x)'], funcs = {};
-        
+
         for (line in lines) {
             var fname = 'f_'.concat(line);
             funcs[fname] = (function (fun) {
                 return new Function ('x', 'return (' + fun + ');');
             })(lines[line]);
             board.create('functiongraph', [funcs['f_'.concat(line)]],{name: fname, strokeWidth: 2, dash:2, strokeColor  : 'green', doAdvancedPlot:false});
-        }   
-        
+        }
+
         board.create('axis', [[0, 0], [1, 0]], {ticks: {drawZero: false}});
     });
-    
+
     var spline = (function () {
         var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-5, 10, 7, -5], axis:true});
         var p = [];
@@ -113,7 +113,7 @@
         var r = board.create('point', [0, 1], {label: {offset: [10,10]}});
 
         var a = board.create('angle', [p, q, r]);
-        
+
         var t = board.create('text', [2, 2, '<button onclick="alert(\'Hello!\');">Click</button>'], {fixed: true});
     });
 

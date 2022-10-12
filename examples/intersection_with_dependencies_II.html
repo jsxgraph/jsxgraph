@@ -3,7 +3,7 @@
    <title>JSXGraph example</title>
    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
    <script type="text/javascript" src="prototype.js"></script>
-   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+   <script type="text/javascript" src="../distrib/jsxgraphcore.js"></script>
 </head>
 <body>
 <h2>Intersections - Version 2 </h2>
@@ -15,19 +15,19 @@
     /* <![CDATA[ */
 
         board = JXG.JSXGraph.initBoard('jxgbox', {originX: 50, originY: 300, unitX: 50, unitY: 50});
-        
-        var p1 = board.createElement('point', [2, 0], {style:5,name:"A",fillColor:'blue'}); 
-        var p2 = board.createElement('point', [8, 0], {style:5,name:"B",fillColor:'blue'}); 
-        var p3 = board.createElement('point', [0, -1], {style:5,name:"C",fillColor:'blue'}); 
-        var p4 = board.createElement('point', [10, -1], {style:5,name:"D",fillColor:'blue'}); 	
-        
-        var p5 = board.createElement('point', [5, -1], {style:5,name:"E",fillColor:'blue'}); 	
-        var p6 = board.createElement('point', [3, 0], {style:5,name:"F",fillColor:'blue'}); 
-        
+
+        var p1 = board.createElement('point', [2, 0], {style:5,name:"A",fillColor:'blue'});
+        var p2 = board.createElement('point', [8, 0], {style:5,name:"B",fillColor:'blue'});
+        var p3 = board.createElement('point', [0, -1], {style:5,name:"C",fillColor:'blue'});
+        var p4 = board.createElement('point', [10, -1], {style:5,name:"D",fillColor:'blue'});
+
+        var p5 = board.createElement('point', [5, -1], {style:5,name:"E",fillColor:'blue'});
+        var p6 = board.createElement('point', [3, 0], {style:5,name:"F",fillColor:'blue'});
+
         var c1 = board.createElement('circle',[p1,p3]);
         var c2 = board.createElement('circle',[p2,p4]);
         var c3 = board.createElement('circle',[p5,p6]);
-        
+
         //var i11 = board.createElement('point',[board.intersectionFunc(c1,c3,0)], {style:8,name:"G"});
         var i11 = board.createElement('intersection',[c1,c3,0], {style:8,name:"G"});
         var i12 = board.createElement('otherintersection',[c1,c3,i11], {style:8,name:"H"});

@@ -2,7 +2,7 @@
     <head>
         <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
         <script type="text/javascript" src="prototype.js"></script>
-        <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+        <script type="text/javascript" src="../distrib/jsxgraphcore.js"></script>
    </head>
      <body>
         <h1>Epidemien - SIR model without vital dynamics</h1>
@@ -13,14 +13,14 @@
         <div id="jsxgbox" class="jxgbox" style="width:600px; height:600px;"></div>
         <script type="text/javascript">
             var brd = JXG.JSXGraph.initBoard('jsxgbox', {originX: 20, originY: 300, unitX: 20, unitY: 250});
-            
+
             var S = brd.createElement('turtle',[],{strokeColor:'blue',strokeWidth:3});
             var I = brd.createElement('turtle',[],{strokeColor:'red',strokeWidth:3});
             var R = brd.createElement('turtle',[],{strokeColor:'green',strokeWidth:3});
-            
+
             var xaxis = brd.createElement('axis', [[0,0], [1,0]], {});
             var yaxis = brd.createElement('axis', [[0,0], [0,1]], {});
-            
+
             var s = brd.createElement('slider', [[0,-0.5], [10,-0.5],[0,0.03,1]], {name:'s'});
             brd.createElement('text', [12,-0.5, "initially infected population rate"]);
             var beta = brd.createElement('slider', [[0,-0.6], [10,-0.6],[0,0.5,1]], {name:'&beta;'});
@@ -29,11 +29,11 @@
             brd.createElement('text', [12,-0.7, "&gamma;: recovery rate"]);
 
             brd.createElement('text', [12,-0.4, function() {return "I(t)="+Math.round(I.pos[1],3);}]);
-            
+
             S.hideTurtle();
             I.hideTurtle();
             R.hideTurtle();
-            
+
             function clearturtle() {
                 S.cs();
                 I.cs();
@@ -42,22 +42,22 @@
                 I.hideTurtle();
                 R.hideTurtle();
             }
-            
+
             function run() {
                 S.setPos(0,1.0-s.Value());
                 R.setPos(0,0);
                 I.setPos(0,s.X());
-                
+
                 delta = 0.1; // global
                 t = 0.0;  // global
                 loop();
              }
-             
+
              function turtleMove(turtle,dx,dy) {
                 turtle.lookTo([1.0+turtle.pos[0],dy+turtle.pos[1]]);
                 turtle.fd(dx*Math.sqrt(1+dy*dy));
              }
-             
+
              function loop() {
                 var dS = -beta.Value()*S.pos[1]*I.pos[1];
                 var dR = gamma.Value()*I.pos[1];
@@ -65,13 +65,13 @@
                 turtleMove(S,delta,dS);
                 turtleMove(R,delta,dR);
                 turtleMove(I,delta,dI);
-                
+
                 t += delta;
                 if (t<20.0 && I.pos[1]) {
                     setTimeout(loop,10);
                 }
              }
-             
+
 
 //*/
         </script>
@@ -79,4 +79,3 @@
         Hong Kong flu: initially 7.9 million people, 10 infected, 0 recovered. Thus S(0) = 1, I(0) = 1.27E-6, R(0) = 0, see http://www.cs.princeton.edu/introcs/94diffeq/.
      </body>
 </html>
-             

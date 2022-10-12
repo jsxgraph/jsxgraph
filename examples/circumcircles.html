@@ -3,7 +3,7 @@
    <title>JSXGraph example</title>
    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
    <script type="text/javascript" src="prototype.js"></script>
-   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+   <script type="text/javascript" src="../distrib/jsxgraphcore.js"></script>
 </head>
 <body>
 <h1>Circumcircles of Subtriangles</h1>
@@ -22,29 +22,29 @@ Then A'A'', B'B'', and C'C'' meet in one point, P.
 /* <![CDATA[ */
 //    var board = JXG.JSXGraph.initBoard('box', {originX: 200, originY: 200, unitX: 50, unitY: 50});
     var board = JXG.JSXGraph.initBoard('box', {boundingbox:[-4,4,10,-4], keepaspectratio:true, axis:false, grid:true});
-    
+
     var p1 = board.createElement('point', [0.5,-1.5] , {name:'A',fillColor:'red',strokeColor:'red', withLabel:false});
 
     var p2 = board.createElement('point', [7.5,0.5] , {name:'B',fillColor:'red',strokeColor:'red'});
     var p3 = board.createElement('point', [2,3] , {name:'C',fillColor:'red',strokeColor:'red'});
-    
+
     var b1 = board.createElement('line',['A','B'],{name:'',straightFirst:false,straightLast:false});
     var b2 = board.createElement('line',['A','C'],{name:'',straightFirst:false,straightLast:false});
     var b3 = board.createElement('line',['C','B'],{name:'',straightFirst:false,straightLast:false});
     var c1 = board.createElement('circumcircle',['A','B','C'],{name:''});
     c1.setProperty('strokeColor:#AAAAAA');
-    
+
     var l1 = board.createElement('bisector',['B','A','C'],{name:'',visible:false}); // alpha
     var l2 = board.createElement('bisector',['C','B','A'],{name:'',visible:false}); // beta
-    
+
     var i1 = board.createElement('intersection',[l1,l2,0],{name:'',visible:false});
     var pp1 = board.createElement('perpendicularpoint',[i1,b1],{name:"C'",fillColor:'blue'});
     var pp2 = board.createElement('perpendicularpoint',[i1,b2],{name:"B'",fillColor:'blue'});
     var pp3 = board.createElement('perpendicularpoint',[i1,b3],{name:"A'",fillColor:'blue'});
-    
+
     var c2 = board.createElement('circumcircle',[pp1,pp2,pp3],{name:''});
     c2.setProperty('strokeColor:#3CB371');
-    
+
     var c3 = board.createElement('circumcircle',[p3,pp2,pp3],{name:''});
     c3.setProperty('strokeColor:#FF8C00');
 
@@ -56,12 +56,12 @@ Then A'A'', B'B'', and C'C'' meet in one point, P.
 
     var i2 = board.createElement('otherintersection',[c3,c1,p3],{name:"C''",fillColor:'blue'});
     var i3 = board.createElement('otherintersection',[c4,c1,p2],{name:"B''",fillColor:'blue'});
-    var i4 = board.createElement('otherintersection',[c5,c1,p1],{name:"A''",fillColor:'blue'}); 
+    var i4 = board.createElement('otherintersection',[c5,c1,p1],{name:"A''",fillColor:'blue'});
 
     var ll1 = board.createElement('line',[i2,pp1],{name:'',straightFirst:false,straightLast:false,strokeColor:'#FF6347'});
     var ll2 = board.createElement('line',[i3,pp2],{name:'',straightFirst:false,straightLast:false,strokeColor:'#FF6347'});
     var ll3 = board.createElement('line',[i4,pp3],{name:'',straightFirst:false,straightLast:false,strokeColor:'#FF6347'});
-    
+
     var i5 = board.createElement('intersection',[ll1,ll2,0],{name:"P",fillColor:'#9932CC',strokeColor:'#9932CC'});
 
 /* ]]> */

@@ -3,7 +3,7 @@
    <title>JSXGraph example</title>
    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
    <script type="text/javascript" src="prototype.js"></script>
-   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+   <script type="text/javascript" src="../distrib/jsxgraphcore.js"></script>
 </head>
 <body>
 <h2>Colorful tangents</h2>
@@ -15,7 +15,7 @@
     /* <![CDATA[ */
         JXG.Options.layer.curve = 8;
 
-    
+
         var board, cons, p = [], t=[], f;
         board = JXG.JSXGraph.initBoard('jxgbox', {grid:true, originX: 300, originY: 400, unitX: 50, unitY: 50, axis:true});
         board.suspendUpdate();

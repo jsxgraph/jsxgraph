@@ -3,13 +3,13 @@
    <title>JSXGraph example</title>
    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
    <script type="text/javascript" src="prototype.js"></script>
-   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+   <script type="text/javascript" src="../distrib/jsxgraphcore.js"></script>
    <script type="text/javascript" src="../src/reader/geonext.js"></script>
 </head>
 <body>
 
 <h1>Optimizing a fenced area</h1>
-      
+
       <!-- Die beiden Zeichenflaechen, schoen nebeneinander angeordnet in einer Tabelle -->
       <table border="0">
         <tr><td>
@@ -18,9 +18,9 @@
             <div id="box2" class="jxgbox" style="width:500px; height:500px;"></div>
         </td></tr>
       </table>
-      
+
       <!-- Die Tabelle mit den Werten -->
-      
+
       <table style="border: 0px solid black; text-align: center" width="500px">
 	    <tr><th style="border: 1px solid black" width="100px">Length of fence</th><th style="border: 1px solid black" width="100px">Length of side a</th><th style="border: 1px solid black" width="100px">Length of side b</th><th style="border: 1px solid black" width="100px">Area of rectangle</th></tr>
 	    <tr><td id="print_fencelength">1</td><td id="print_sidelength1">2,5</td><td id="print_sidelength2">2</td><td id="print_area">3</td></tr>

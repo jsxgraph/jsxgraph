@@ -3,7 +3,7 @@
    <title>JSXGraph example</title>
    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
    <script type="text/javascript" src="prototype.js"></script>
-   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+   <script type="text/javascript" src="../distrib/jsxgraphcore.js"></script>
    <script type="text/javascript" src="../src/reader/cinderella.js"></script>
 </head>
 <body style="background-color:#b5bcca;">
@@ -35,8 +35,8 @@
         <option>---------------------------------------------------</option>
         <option value='polygone'>Polygone</option>
         <option>---------------------------------------------------</option>
-        <option value='arcs'>Kreisboegen</option>        
-        <option value='arcsWithFillcolor'>Segment (Kreisbogen mit Fuellung)</option> 
+        <option value='arcs'>Kreisboegen</option>
+        <option value='arcsWithFillcolor'>Segment (Kreisbogen mit Fuellung)</option>
         <option>---------------------------------------------------</option>
         <option value='conic1'>Kegelschnitt durch fuenf Punkte</option>
         <option value='conic2'>Kegelschnitt durch fuenf Punkte mit Eigenschaften</option>
@@ -57,7 +57,7 @@
     <input type='button' onclick="loadFile('filenames','cdy');" value='komprimierte Datei lesen'/>
     <h2>Reading Cinderella Files</h2>
     <div id="jxgbox" class="jxgbox" style="width:600px; height:450px; background-color:#b5bcca;"></div>
-    <div id="debug" style="display:block;"></div>   
+    <div id="debug" style="display:block;"></div>
     <script type="text/javascript">
     //<![CDATA[
         //board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-9,9,18,-5], axis:true, keepaspectratio:true}); // zum Testen
@@ -74,10 +74,9 @@
     document.title = "JSXGraph example: "+ document.getElementById(bspname).options[document.getElementById(bspname).selectedIndex].text;
     board = JXG.JSXGraph.loadBoardFromFile('jxgbox',value, format);
     board.setBoundingBox([-9,9,18,-5],true);
-    
-  }     
+
+  }
     //]]>
-    </script>    
+    </script>
 </body>
 </html>
-

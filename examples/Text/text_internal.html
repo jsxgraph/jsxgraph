@@ -2,7 +2,7 @@
 <head>
    <title>JSXGraph example</title>
    <link rel="stylesheet" type="text/css" href="../../distrib/jsxgraph.css" />
-   <script type="text/javascript" src="../../src/loadjsxgraph.js"></script>
+   <script type="text/javascript" src="../../distrib/jsxgraphcore.js"></script>
    <script type="text/javascript" src="../../src/renderer/canvas.js"></script>
 </head>
 <body>
@@ -13,24 +13,24 @@
     var brd, txt, p0, p1, p2, im;
     //JXG.Options.renderer = 'canvas';
     JXG.Options.text.display = 'internal';
-    
+
     brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-5,5,5,-5], axis:true, showNavigation:true, showCopyright:true});
-    p0 = brd.create('point', [0,0], {style:5, name:'offset'}); 
-    p1 = brd.create('point', [3,0], {style:5, name:'rot+scale'}); 
-    txt = brd.create('text',[function(){return p0.X()},function(){return p0.Y()}, JXG.JSXGraph.rendererType], 
+    p0 = brd.create('point', [0,0], {style:5, name:'offset'});
+    p1 = brd.create('point', [3,0], {style:5, name:'rot+scale'});
+    txt = brd.create('text',[function(){return p0.X()},function(){return p0.Y()}, JXG.JSXGraph.rendererType],
 		{fontSize:'64', strokeColor:'blue', highlightStrokeColor:'#DDDD00'});
 
-    var tOffInv = brd.create('transform', [function(){return -p0.X()},function(){return -p0.Y()}], {type:'translate'}); 
-    var tOff = brd.create('transform', [function(){return p0.X()},function(){return p0.Y()}], {type:'translate'}); 
+    var tOffInv = brd.create('transform', [function(){return -p0.X()},function(){return -p0.Y()}], {type:'translate'});
+    var tOff = brd.create('transform', [function(){return p0.X()},function(){return p0.Y()}], {type:'translate'});
 
     tOff.bindTo(p1);
 
     // This is a rotation in screen coordinates.
     // ratio is the the ratio between the board dimensions (maxY-minY)/(maxX-minX) in user coordinates
     ratio = 1;
-    var ts1 = brd.create('transform', [function(){return ratio;}, function(){return 1;}], {type:'scale'}); 
-    var ts2 = brd.create('transform', [function(){return 1/ratio;}, function(){return 1;}], {type:'scale'}); 
-    var tRot = brd.create('transform', [function(){return Math.atan2((p1.Y()-p0.Y())/ratio, p1.X()-p0.X());}], {type:'rotate'}); 
+    var ts1 = brd.create('transform', [function(){return ratio;}, function(){return 1;}], {type:'scale'});
+    var ts2 = brd.create('transform', [function(){return 1/ratio;}, function(){return 1;}], {type:'scale'});
+    var tRot = brd.create('transform', [function(){return Math.atan2((p1.Y()-p0.Y())/ratio, p1.X()-p0.X());}], {type:'rotate'});
 
     // Rotate text around point "offset" by dragging point "rot+scale"
     tOffInv.bindTo(txt); ts1.bindTo(txt); tRot.bindTo(txt); ts2.bindTo(txt); tOff.bindTo(txt);

@@ -3,31 +3,31 @@
    <title>JSXGraph example</title>
    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
    <script type="text/javascript" src="prototype.js"></script>
-   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+   <script type="text/javascript" src="../distrib/jsxgraphcore.js"></script>
 </head>
 <body>
 <a href="http://samples.msdn.microsoft.com/workshop/samples/vml/redoval.htm">Simple VML example from Microsoft</a>
 <div id="box" class="jxgbox" style="width:800px; height:400px; overflow:hidden;"></div>
 <div id="debug" style="display:block;"></div>
 
-<div id="myinfobox" 
+<div id="myinfobox"
     style="
         display:none;
-        position:absolute; 
+        position:absolute;
         border-width:2px; border-color:red; border-style:solid;
         background-color:#ffff88;
         padding:10px;
         /* Cross-browser opacity: */
-        -ms-filter:'progid:DXImageTransform.Microsoft.Alpha(Opacity=50)'; 
+        -ms-filter:'progid:DXImageTransform.Microsoft.Alpha(Opacity=50)';
         filter: alpha(opacity=50);
         opacity:.5;
     "
-></div> 
+></div>
 
 <script type="text/javascript">
 /* <![CDATA[ */
 var board = JXG.JSXGraph.initBoard('box', {boundingbox:[-4,4,12,-4], keepaspectratio:true,axis:true});
-    
+
 var p1 = board.createElement('point', [0,2] , {name:'A',fillColor:'red',strokeColor:'red'});
 var p2 = board.createElement('point', [0,3] , {name:'B',fillColor:'red',strokeColor:'red'});
 var c = board.createElement('circle', [p1,p2] , {name:'c',strokeColor:'red'});
