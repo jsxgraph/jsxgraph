@@ -28,33 +28,35 @@
  */
 
 describe("Test JXG.Dump", function () {
-    var board;
+  var board;
 
-    document.getElementsByTagName('body')[0].innerHTML = '<div id="jxgbox" style="width: 100px; height: 100px;"></div>';
-    board = JXG.JSXGraph.initBoard('jxgbox', {
-        renderer: 'no',
-        axis: false,
-        grid: false,
-        boundingbox: [-5, 5, 5, -5],
-        showCopyright: false,
-        showNavigation: false
-    });
+  document.getElementsByTagName("body")[0].innerHTML =
+    '<div id="jxgbox" style="width: 100px; height: 100px;"></div>';
+  board = JXG.JSXGraph.initBoard("jxgbox", {
+    renderer: "no",
+    axis: false,
+    grid: false,
+    boundingbox: [-5, 5, 5, -5],
+    showCopyright: false,
+    showNavigation: false,
+  });
 
-    it("toJessie", function () {
-        var s, p, txt;
+  it("toJessie", function () {
+    var s, p, txt;
 
-        p = board.create('point', [2, 1]);
-        s = board.create('line', [2, 1, 2]);
-        s = board.create('text', [3, 2, 'test']);
-        s = board.create('circle', [p, 5]);
-        s = board.create('circle', [[1, 1], 5]);
-        txt = JXG.Dump.toJessie(board);
+    p = board.create("point", [2, 1]);
+    s = board.create("line", [2, 1, 2]);
+    s = board.create("text", [3, 2, "test"]);
+    s = board.create("circle", [p, 5]);
+    s = board.create("circle", [[1, 1], 5]);
+    txt = JXG.Dump.toJessie(board);
 
-        expect(txt.indexOf('point(2, 1) <<')).toBeGreaterThan(-1);
-        expect(txt.match(/line\("jxgBoard\d+P3", "jxgBoard\d+P4"\) <</).length).toBeGreaterThan(0);
-        expect(txt.indexOf('text(1, 3, 2, \"test\") <<')).not.toBeNull();
-        expect(txt.match(/circle\("jxgBoard\d+P1", 5\) <</).length).not.toBeNull();
-        expect(txt.match(/circle\("jxgBoard\d+P8", 5\) <</)).not.toBeNull();
-    });
-
+    expect(txt.indexOf("point(2, 1) <<")).toBeGreaterThan(-1);
+    expect(
+      txt.match(/line\("jxgBoard\d+P3", "jxgBoard\d+P4"\) <</).length
+    ).toBeGreaterThan(0);
+    expect(txt.indexOf('text(1, 3, 2, "test") <<')).not.toBeNull();
+    expect(txt.match(/circle\("jxgBoard\d+P1", 5\) <</).length).not.toBeNull();
+    expect(txt.match(/circle\("jxgBoard\d+P8", 5\) <</)).not.toBeNull();
+  });
 });

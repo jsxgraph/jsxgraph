@@ -29,7 +29,6 @@
     and <http://opensource.org/licenses/MIT/>.
  */
 
-
 /*global JXG: true, define: true, window: true*/
 /*jslint nomen: true, plusplus: true*/
 
@@ -43,201 +42,206 @@
  * @fileoverview In this file the Text element is defined.
  */
 
-define([
-    'jxg', 'utils/env', 'utils/type'
-], function (JXG, Env, Type) {
+define(["jxg", "utils/env", "utils/type"], function (JXG, Env, Type) {
+  "use strict";
 
-    "use strict";
+  var priv = {
+    CheckboxChangeEventHandler: function () {
+      this._value = this.rendNodeCheckbox.checked;
+      this.board.update();
+    },
+  };
 
-    var priv = {
-            CheckboxChangeEventHandler: function () {
-                this._value = this.rendNodeCheckbox.checked;
-                this.board.update();
-            }
-        };
+  /**
+   * @class This element is used to provide a constructor for special texts containing a
+   * form checkbox element.
+   * <p>
+   * For this element, the attribute "display" has to have the value 'html' (which is the default).
+   *
+   * @pseudo
+   * @description
+   * @name Checkbox
+   * @augments Text
+   * @constructor
+   * @type JXG.Text
+   *
+   * @param {number,function_number,function_String,function} x,y,label Parent elements for checkbox elements.
+   *                     <p>
+   *                     x and y are the coordinates of the lower left corner of the text box.
+   *                      The position of the text is fixed,
+   *                     x and y are numbers. The position is variable if x or y are functions.
+   *                     <p>
+   *                     The label of the input element may be given as string or function.
+   *                     <p>
+   *                     The value of the checkbox can be controlled with the attribute <tt>checked</tt>
+   *                     <p>The HTML node can be accessed with <tt>element.rendNodeCheckbox</tt>
+   *
+   * @example
+   *   // Create a checkbox element at position [0,3].
+   *   var checkbox = board.create('checkbox', [0, 3, 'Change Y'], {});
+   *   var p = board.create('point', [
+   *       function(){ return 0.5;}, // X-coordinate
+   *       function() {
+   *           y = 0.5;
+   *           if (checkbox.Value()) {
+   *               y += 0.5;
+   *           }
+   *           return y;
+   *       }]);
+   * </pre><div class="jxgbox" id="JXG0e835e0b-ed0c-4b85-b682-78158c0e6f5c" style="width: 300px; height: 300px;"></div>
+   * <script type="text/javascript">
+   * (function() {
+   *   var t1_board = JXG.JSXGraph.initBoard('JXG0e835e0b-ed0c-4b85-b682-78158c0e6f5c', {boundingbox: [-3, 6, 5, -3], axis: true, showcopyright: false, shownavigation: false});
+   *   var checkbox = t1_board.create('checkbox', [0, 3, 'Change Y'], {});
+   *   var p = t1_board.create('point', [
+   *       function(){ return 0.5;}, // X-coordinate
+   *       function() {
+   *           y = 0.5;
+   *           if (checkbox.Value()) {
+   *               y += 0.5;
+   *           }
+   *           return y;
+   *       }]);
+   * })();
+   * </script><pre>
+   *
+   * The checkbox can be supplied with custom-made events by using the property rendNodeCheckbox.
+   * @example
+   * var checkbox = board.create('checkbox', [0, 4, 'Click me']),
+   *     p = board.create('point', [1, 1]);
+   *
+   * JXG.addEvent(checkbox.rendNodeCheckbox, 'change', function() {
+   *     if (this.Value()) {
+   *         p.moveTo([4, 1]);
+   *     } else {
+   *         p.moveTo([1, 1]);
+   *     }
+   * }, checkbox);
+   * </pre><div class="jxgbox" id="JXGb2f2345a-057d-44ce-bd7a-6aaff70bc810" style="width: 300px; height: 300px;"></div>
+   * <script type="text/javascript">
+   * (function() {
+   * var board = JXG.JSXGraph.initBoard('JXGb2f2345a-057d-44ce-bd7a-6aaff70bc810', {boundingbox: [-3, 6, 5, -3], axis: true, showcopyright: false, shownavigation: false});
+   * var checkbox = board.create('checkbox', [0, 4, 'Click me']),
+   *     p = board.create('point', [1, 1]);
+   *
+   * JXG.addEvent(checkbox.rendNodeCheckbox, 'change', function() {
+   *     if (this.Value()) {
+   *         p.moveTo([4, 1]);
+   *     } else {
+   *         p.moveTo([1, 1]);
+   *     }
+   * }, checkbox);
+   * })();
+   * </script><pre>
+   *
+   * @example
+   *         var i1 = board.create('input', [-3, 4, 'sin(x)', 'f(x)='], {cssStyle: 'width:4em', maxlength: 2});
+   *         var c1 = board.create('checkbox', [-3, 2, 'label 1'], {});
+   *         var b1 = board.create('button', [-3, -1, 'Change texts', function () {
+   *                 i1.setText('g(x)');
+   *                 i1.set('cos(x)');
+   *                 c1.setText('label 2');
+   *                 b1.setText('Texts are changed');
+   *             }],
+   *             {cssStyle: 'width:400px'});
+   *
+   * </pre><div id="JXG11cac8gg-2354-47e7-9da4-eb298e53de05" class="jxgbox" style="width: 300px; height: 300px;"></div>
+   * <script type="text/javascript">
+   *     (function() {
+   *         var board = JXG.JSXGraph.initBoard('JXG11cac8gg-2354-47e7-9da4-eb298e53de05',
+   *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+   *             var i1 = board.create('input', [-3, 4, 'sin(x)', 'f(x)='], {cssStyle: 'width:4em', maxlength: 2});
+   *             var c1 = board.create('checkbox', [-3, 2, 'label 1'], {});
+   *             var b1 = board.create('button', [-3, -1, 'Change texts', function () {
+   *                     i1.setText('g(x)');
+   *                     i1.set('cos(x)');
+   *                     c1.setText('label 2');
+   *                     b1.setText('Texts are changed');
+   *                 }],
+   *                 {cssStyle: 'width:400px'});
+   *
+   *     })();
+   *
+   * </script><pre>
+   */
+  JXG.createCheckbox = function (board, parents, attributes) {
+    var t,
+      par,
+      attr = Type.copyAttributes(attributes, board.options, "checkbox");
+
+    //if (parents.length !== 3) {
+    //throw new Error("JSXGraph: Can't create checkbox with parent types '" +
+    //    (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
+    //    "\nPossible parents are: [[x,y], label]");
+    //}
+
+    par = [
+      parents[0],
+      parents[1],
+      '<span style="display:inline">' +
+        '<input type="checkbox" /><label for=""></label>' +
+        "</span>",
+    ];
+
+    // 1. Create checkbox element with empty label
+    t = board.create("text", par, attr);
+    t.type = Type.OBJECT_TYPE_CHECKBOX;
+
+    t.rendNodeCheckbox = t.rendNode.childNodes[0].childNodes[0];
+    t.rendNodeLabel = t.rendNode.childNodes[0].childNodes[1];
+
+    t.rendNodeTag = t.rendNodeCheckbox; // Needed for unified treatment in setAttribute
+    t.rendNodeTag.disabled = !!attr.disabled;
+
+    // t.rendNodeLabel.innerHTML = parents[2];
+    t.rendNodeCheckbox.id = t.rendNode.id + "_checkbox";
+    t.rendNodeLabel.id = t.rendNode.id + "_label";
+    t.rendNodeLabel.setAttribute("for", t.rendNodeCheckbox.id);
+
+    // 2. Set parents[2] (string|function) as label of the checkbox element.
+    // abstract.js selects the correct DOM element for the update
+    t.setText(parents[2]);
+
+    // This sets the font-size of the checkbox itself
+    t.visPropOld.fontsize = "0px";
+    board.renderer.updateTextStyle(t, false);
+
+    t.rendNodeCheckbox.checked = attr.checked;
+
+    t._value = attr.checked;
 
     /**
-     * @class This element is used to provide a constructor for special texts containing a
-     * form checkbox element.
-     * <p>
-     * For this element, the attribute "display" has to have the value 'html' (which is the default).
-     *
-     * @pseudo
-     * @description
-     * @name Checkbox
-     * @augments Text
-     * @constructor
-     * @type JXG.Text
-     *
-     * @param {number,function_number,function_String,function} x,y,label Parent elements for checkbox elements.
-     *                     <p>
-     *                     x and y are the coordinates of the lower left corner of the text box.
-     *                      The position of the text is fixed,
-     *                     x and y are numbers. The position is variable if x or y are functions.
-     *                     <p>
-     *                     The label of the input element may be given as string or function.
-     *                     <p>
-     *                     The value of the checkbox can be controlled with the attribute <tt>checked</tt>
-     *                     <p>The HTML node can be accessed with <tt>element.rendNodeCheckbox</tt>
-     *
-     * @example
-     *   // Create a checkbox element at position [0,3].
-     *   var checkbox = board.create('checkbox', [0, 3, 'Change Y'], {});
-     *   var p = board.create('point', [
-     *       function(){ return 0.5;}, // X-coordinate
-     *       function() {
-     *           y = 0.5;
-     *           if (checkbox.Value()) {
-     *               y += 0.5;
-     *           }
-     *           return y;
-     *       }]);
-     * </pre><div class="jxgbox" id="JXG0e835e0b-ed0c-4b85-b682-78158c0e6f5c" style="width: 300px; height: 300px;"></div>
-     * <script type="text/javascript">
-     * (function() {
-     *   var t1_board = JXG.JSXGraph.initBoard('JXG0e835e0b-ed0c-4b85-b682-78158c0e6f5c', {boundingbox: [-3, 6, 5, -3], axis: true, showcopyright: false, shownavigation: false});
-     *   var checkbox = t1_board.create('checkbox', [0, 3, 'Change Y'], {});
-     *   var p = t1_board.create('point', [
-     *       function(){ return 0.5;}, // X-coordinate
-     *       function() {
-     *           y = 0.5;
-     *           if (checkbox.Value()) {
-     *               y += 0.5;
-     *           }
-     *           return y;
-     *       }]);
-     * })();
-     * </script><pre>
-     *
-     * The checkbox can be supplied with custom-made events by using the property rendNodeCheckbox.
-     * @example
-     * var checkbox = board.create('checkbox', [0, 4, 'Click me']),
-     *     p = board.create('point', [1, 1]);
-     *
-     * JXG.addEvent(checkbox.rendNodeCheckbox, 'change', function() {
-     *     if (this.Value()) {
-     *         p.moveTo([4, 1]);
-     *     } else {
-     *         p.moveTo([1, 1]);
-     *     }
-     * }, checkbox);
-     * </pre><div class="jxgbox" id="JXGb2f2345a-057d-44ce-bd7a-6aaff70bc810" style="width: 300px; height: 300px;"></div>
-     * <script type="text/javascript">
-     * (function() {
-     * var board = JXG.JSXGraph.initBoard('JXGb2f2345a-057d-44ce-bd7a-6aaff70bc810', {boundingbox: [-3, 6, 5, -3], axis: true, showcopyright: false, shownavigation: false});
-     * var checkbox = board.create('checkbox', [0, 4, 'Click me']),
-     *     p = board.create('point', [1, 1]);
-     *
-     * JXG.addEvent(checkbox.rendNodeCheckbox, 'change', function() {
-     *     if (this.Value()) {
-     *         p.moveTo([4, 1]);
-     *     } else {
-     *         p.moveTo([1, 1]);
-     *     }
-     * }, checkbox);
-     * })();
-     * </script><pre>
-     *
-     * @example
-     *         var i1 = board.create('input', [-3, 4, 'sin(x)', 'f(x)='], {cssStyle: 'width:4em', maxlength: 2});
-     *         var c1 = board.create('checkbox', [-3, 2, 'label 1'], {});
-     *         var b1 = board.create('button', [-3, -1, 'Change texts', function () {
-     *                 i1.setText('g(x)');
-     *                 i1.set('cos(x)');
-     *                 c1.setText('label 2');
-     *                 b1.setText('Texts are changed');
-     *             }],
-     *             {cssStyle: 'width:400px'});
-     *
-     * </pre><div id="JXG11cac8gg-2354-47e7-9da4-eb298e53de05" class="jxgbox" style="width: 300px; height: 300px;"></div>
-     * <script type="text/javascript">
-     *     (function() {
-     *         var board = JXG.JSXGraph.initBoard('JXG11cac8gg-2354-47e7-9da4-eb298e53de05',
-     *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
-     *             var i1 = board.create('input', [-3, 4, 'sin(x)', 'f(x)='], {cssStyle: 'width:4em', maxlength: 2});
-     *             var c1 = board.create('checkbox', [-3, 2, 'label 1'], {});
-     *             var b1 = board.create('button', [-3, -1, 'Change texts', function () {
-     *                     i1.setText('g(x)');
-     *                     i1.set('cos(x)');
-     *                     c1.setText('label 2');
-     *                     b1.setText('Texts are changed');
-     *                 }],
-     *                 {cssStyle: 'width:400px'});
-     *
-     *     })();
-     *
-     * </script><pre>
+     * Returns the value of the checkbox element
+     * @name Value
+     * @memberOf Checkbox.prototype
+     * @function
+     * @returns {String} value of the checkbox.
      */
-    JXG.createCheckbox = function (board, parents, attributes) {
-        var t, par,
-            attr = Type.copyAttributes(attributes, board.options, 'checkbox');
-
-        //if (parents.length !== 3) {
-            //throw new Error("JSXGraph: Can't create checkbox with parent types '" +
-            //    (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
-            //    "\nPossible parents are: [[x,y], label]");
-        //}
-
-        par = [parents[0], parents[1],
-            '<span style="display:inline">' +
-            '<input type="checkbox" /><label for=""></label>' +
-            '</span>'
-            ];
-
-        // 1. Create checkbox element with empty label
-        t = board.create('text', par, attr);
-        t.type = Type.OBJECT_TYPE_CHECKBOX;
-
-        t.rendNodeCheckbox = t.rendNode.childNodes[0].childNodes[0];
-        t.rendNodeLabel = t.rendNode.childNodes[0].childNodes[1];
-
-        t.rendNodeTag = t.rendNodeCheckbox; // Needed for unified treatment in setAttribute
-        t.rendNodeTag.disabled = !!attr.disabled;
-
-        // t.rendNodeLabel.innerHTML = parents[2];
-        t.rendNodeCheckbox.id = t.rendNode.id + '_checkbox';
-        t.rendNodeLabel.id = t.rendNode.id + '_label';
-        t.rendNodeLabel.setAttribute('for', t.rendNodeCheckbox.id);
-
-        // 2. Set parents[2] (string|function) as label of the checkbox element.
-        // abstract.js selects the correct DOM element for the update
-        t.setText(parents[2]);
-
-        // This sets the font-size of the checkbox itself
-        t.visPropOld.fontsize = "0px";
-        board.renderer.updateTextStyle(t, false);
-
-        t.rendNodeCheckbox.checked = attr.checked;
-
-        t._value = attr.checked;
-
-        /**
-         * Returns the value of the checkbox element
-         * @name Value
-         * @memberOf Checkbox.prototype
-         * @function
-         * @returns {String} value of the checkbox.
-         */
-        t.Value = function () {
-            return this._value;
-        };
-
-        t.update = function () {
-            if (this.needsUpdate) {
-                JXG.Text.prototype.update.call(this);
-                this._value = this.rendNodeCheckbox.checked;
-            }
-            return this;
-        };
-
-        Env.addEvent(t.rendNodeCheckbox, 'change', priv.CheckboxChangeEventHandler, t);
-
-        return t;
+    t.Value = function () {
+      return this._value;
     };
 
-    JXG.registerElement('checkbox', JXG.createCheckbox);
-
-    return {
-        createCheckbox: JXG.createCheckbox
+    t.update = function () {
+      if (this.needsUpdate) {
+        JXG.Text.prototype.update.call(this);
+        this._value = this.rendNodeCheckbox.checked;
+      }
+      return this;
     };
+
+    Env.addEvent(
+      t.rendNodeCheckbox,
+      "change",
+      priv.CheckboxChangeEventHandler,
+      t
+    );
+
+    return t;
+  };
+
+  JXG.registerElement("checkbox", JXG.createCheckbox);
+
+  return {
+    createCheckbox: JXG.createCheckbox,
+  };
 });
