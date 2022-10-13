@@ -46,8 +46,13 @@ import Statistics from "../math/statistics";
 import Type from "../utils/type";
 import UUID from "../utils/uuid";
 import Env from "../utils/env";
+// if (typeof window === 'undefined') {
+//     globalThis.$__fs = (await import("fs")).default;
+//     globalThis.$__path = (await import("path")).default;
+// }
 import $__fs from "fs";
 import $__path from "path";
+
 // IE 6-8 compatibility
 if (!Object.create) {
     Object.create = function (o, properties) {
@@ -6804,7 +6809,7 @@ var parser = (function () {
     return new Parser();
 })();
 
-if (typeof require !== "undefined" && typeof exports !== "undefined") {
+if (typeof windows !== "undefined" && typeof require !== "undefined" && typeof exports !== "undefined") {
     exports.parser = parser;
     exports.Parser = parser.Parser;
     exports.parse = function () {

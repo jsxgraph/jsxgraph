@@ -17,5 +17,8 @@ module.exports = {
           test: /core\.js$/
         })
       ]
+    // },
+    // experiments: {
+    //   topLevelAwait: true
     }
 };

@@ -43,6 +43,9 @@ import Coords from "../base/coords";
 import Mat from "../math/math";
 import Geometry from "../math/geometry";
 import Numerics from "../math/numerics";
+// if (typeof window === 'undefined') {
+//     globalThis.$__canvas = (await import("canvas")).default;
+// }
 import $__canvas from "canvas";
 
 /**
