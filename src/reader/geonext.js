@@ -232,7 +232,7 @@
                         // 10-12
                         "plus",
                         "plus",
-                        "plus",
+                        "plus"
                     ],
                     sizemap = [
                         // 0-2
@@ -242,7 +242,7 @@
                         // 7-9
                         2, 3, 4,
                         // 10-12
-                        2, 3, 4,
+                        2, 3, 4
                     ],
                     remove = [
                         "color",
@@ -258,7 +258,7 @@
                         "area",
                         "showinfo",
                         "showcoord",
-                        "fix",
+                        "fix"
                     ];
 
                 gxtEl.strokeWidth = gxtEl.strokewidth;
@@ -285,7 +285,7 @@
                     delete gxtEl.label;
                 }
                 gxtEl.label = gxtEl.label || {
-                    opacity: gxtEl.labelOpacity,
+                    opacity: gxtEl.labelOpacity
                 };
 
                 // clean up
@@ -373,7 +373,7 @@
                         h = this.gEBTN(fileNode, "height");
                         im = board.create("image", [picStr, [x, y], [w, h]], {
                             anchor: el,
-                            layer: level,
+                            layer: level
                         });
 
                         return im;
@@ -415,7 +415,7 @@
                             im = board.create("image", [picStr, [xf, yf], [wf, hf]], {
                                 layer: level,
                                 id: id,
-                                anchor: el,
+                                anchor: el
                             });
 
                             tRot = board.create(
@@ -427,7 +427,7 @@
                                             el.point2.X() - el.point1.X()
                                         );
                                     },
-                                    el.point1,
+                                    el.point1
                                 ],
                                 { type: "rotate" }
                             );
@@ -451,7 +451,7 @@
                             im = board.create("image", [picStr, [xf, yf], [wf, hf]], {
                                 layer: level,
                                 id: id,
-                                anchor: el,
+                                anchor: el
                             });
                             board.renderer.display(el.label, false);
                             el.image = im;
@@ -473,14 +473,14 @@
                             im = board.create("image", [picStr, [xf, yf], [wf, hf]], {
                                 layer: level,
                                 id: id,
-                                anchor: el,
+                                anchor: el
                             });
                             el.image = im;
                         } else {
                             im = board.create("image", [picStr, [x, y], [w, h]], {
                                 layer: level,
                                 id: id,
-                                anchor: el,
+                                anchor: el
                             });
                             el.image = im;
                         }
@@ -888,7 +888,7 @@
                                         withLabel: false,
                                         visible: false,
                                         name: "",
-                                        fixed: true,
+                                        fixed: true
                                     }
                                 );
 
@@ -1009,7 +1009,7 @@
                                                 p1.Y() +
                                                 ((p2.Y() - p1.Y()) * el.Radius) / p1.Dist(p2)
                                             );
-                                        },
+                                        }
                                     ],
                                     c[1]
                                 );
@@ -1056,7 +1056,7 @@
                         gxtEl.border = [];
                         gxtEl.borders = {
                             ids: [],
-                            names: [],
+                            names: []
                         };
                         for (i = 0; i < Data.getElementsByTagName("border").length; i++) {
                             gxtEl.border[i] = {};
@@ -1169,7 +1169,7 @@
                             fillColor: "none",
                             highlightFillColor: "none",
                             highlightStrokeColor: gxtEl.highlightStrokeColor,
-                            visible: JXG.str2Bool(gxtEl.visible),
+                            visible: JXG.str2Bool(gxtEl.visible)
                         });
 
                         this.printDebugMessage("debug", gxtEl, Data.nodeName, "OK");
@@ -1303,7 +1303,7 @@
                                 isLabel: false,
                                 strokeColor: gxtEl.colorLabel,
                                 fixed: gxtEl.fixed,
-                                visible: JXG.str2Bool(gxtEl.visible),
+                                visible: JXG.str2Bool(gxtEl.visible)
                             }
                         );
                         break;
@@ -1329,7 +1329,7 @@
                                 board.jc.snippet(gxtEl.functionx, true, "t", true),
                                 board.jc.snippet(gxtEl.functiony, true, "t", true),
                                 board.jc.snippet(gxtEl.min, true, "", true),
-                                board.jc.snippet(gxtEl.max, true, "", true),
+                                board.jc.snippet(gxtEl.max, true, "", true)
                             ],
                             gxtEl
                         );
@@ -1436,8 +1436,8 @@
                         scrCoords: [
                             1,
                             parseFloat(this.gEBTN(tmp, "x")) * board.zoomX,
-                            parseFloat(this.gEBTN(tmp, "y")) * board.zoomY,
-                        ],
+                            parseFloat(this.gEBTN(tmp, "y")) * board.zoomY
+                        ]
                     };
 
                     // screen to user coordinates conversion
@@ -1527,11 +1527,11 @@
                     board.options.axis.ticks.minorHeight = 4;
                     board.create("axis", [
                         [0, 0],
-                        [1, 0],
+                        [1, 0]
                     ]);
                     board.create("axis", [
                         [0, 0],
-                        [0, 1],
+                        [0, 1]
                     ]);
                 }
 
@@ -1717,7 +1717,7 @@
                         "xval",
                         "y",
                         "yval",
-                        "zoom",
+                        "zoom"
                     ],
                     list = arr.join("|"),
                     regex = "&lt;(/?(" + list + "))&gt;",
@@ -1736,7 +1736,7 @@
                 /*jslint regexp:false*/
 
                 return str;
-            },
+            }
         }
     );
 

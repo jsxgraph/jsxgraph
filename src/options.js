@@ -47,7 +47,7 @@ import Type from "./utils/type";
 JXG.Options = {
     jc: {
         enabled: true,
-        compile: true,
+        compile: true
     },
 
     /*
@@ -217,11 +217,11 @@ JXG.Options = {
                         anchorX: "middle",
                         anchorY: "top",
                         fontSize: 12,
-                        offset: [0, -3],
+                        offset: [0, -3]
                     },
                     drawZero: false,
-                    visible: "inherit",
-                },
+                    visible: "inherit"
+                }
             },
             y: {
                 name: "y",
@@ -231,13 +231,13 @@ JXG.Options = {
                         anchorX: "right",
                         anchorY: "middle",
                         fontSize: 12,
-                        offset: [-6, 0],
+                        offset: [-6, 0]
                     },
                     tickEndings: [1, 0],
                     drawZero: false,
-                    visible: "inherit",
-                },
-            },
+                    visible: "inherit"
+                }
+            }
         },
 
         /**
@@ -302,7 +302,7 @@ JXG.Options = {
             symbol: "\u2318", //'\u22b9', //'\u26f6',
             css: "background-color:#eeeeee; opacity:1.0; border:2px solid black; border-radius:10px; text-align:center",
             cssButton:
-                "padding: 4px 10px; border: solid #356AA0 1px; border-radius: 5px; position: absolute; right: 2ex; top: 2ex; background-color: rgba(255, 255, 255, 0.3);",
+                "padding: 4px 10px; border: solid #356AA0 1px; border-radius: 5px; position: absolute; right: 2ex; top: 2ex; background-color: rgba(255, 255, 255, 0.3);"
         },
 
         /**
@@ -363,7 +363,7 @@ JXG.Options = {
         fullscreen: {
             symbol: '<svg height="1em" width="1em" version="1.1" viewBox="10 10 18 18"><path fill="#666" d="m 10,16 2,0 0,-4 4,0 0,-2 L 10,10 l 0,6 0,0 z"></path><path fill="#666" d="m 20,10 0,2 4,0 0,4 2,0 L 26,10 l -6,0 0,0 z"></path><path fill="#666" d="m 24,24 -4,0 0,2 L 26,26 l 0,-6 -2,0 0,4 0,0 z"></path><path fill="#666" d="M 12,20 10,20 10,26 l 6,0 0,-2 -4,0 0,-4 0,0 z"></path></svg>',
             // '\u25a1', // '\u26f6' (not supported by MacOS),
-            id: null,
+            id: null
         },
 
         /**
@@ -575,7 +575,7 @@ JXG.Options = {
             max: 10000.0,
             pinchHorizontal: true,
             pinchVertical: true,
-            pinchSensitivity: 7,
+            pinchSensitivity: 7
         },
 
         /**
@@ -596,7 +596,7 @@ JXG.Options = {
         pan: {
             needShift: true,
             needTwoFingers: false,
-            enabled: true,
+            enabled: true
         },
 
         /**
@@ -614,7 +614,7 @@ JXG.Options = {
          * @default {enabled: true}
          */
         drag: {
-            enabled: true,
+            enabled: true
         },
 
         /**
@@ -674,7 +674,7 @@ JXG.Options = {
             dx: 10,
             dy: 10,
             panShift: true,
-            panCtrl: false,
+            panCtrl: false
         },
 
         /**
@@ -716,7 +716,7 @@ JXG.Options = {
          */
         resize: {
             enabled: true,
-            throttle: 10,
+            throttle: 10
         },
 
         /**
@@ -817,10 +817,10 @@ JXG.Options = {
             needCtrl: true,
             withLines: false,
             vertices: {
-                visible: false,
+                visible: false
             },
             fillColor: "#ffff00",
-            visible: false,
+            visible: false
         },
 
         /**
@@ -834,7 +834,7 @@ JXG.Options = {
          * @type Boolean
          * @default true
          */
-        showInfobox: true,
+        showInfobox: true
 
         /**#@-*/
     },
@@ -873,7 +873,7 @@ JXG.Options = {
         cursor: "pointer",
         zIndex: "100",
         right: "5px",
-        bottom: "5px",
+        bottom: "5px"
         //border: 'none 1px black',
         //borderRadius: '4px'
     },
@@ -1502,7 +1502,7 @@ JXG.Options = {
             fillColor: "#565656",
             strokeOpacity: 0.8,
             fillOpacity: 0.8,
-            strokeWidth: 1,
+            strokeWidth: 1
         },
 
         /**
@@ -1526,7 +1526,7 @@ JXG.Options = {
          * @see JXG.GeometryElement#fixed
          * @see JXG.GeometryElement#visible
          */
-        tabindex: 0,
+        tabindex: 0
 
         // close the meta tag
         /**#@-*/
@@ -1946,7 +1946,7 @@ JXG.Options = {
          * @name Ticks#type
          * @default 'linear'
          */
-        type: "linear",
+        type: "linear"
 
         // close the meta tag
         /**#@-*/
@@ -1963,7 +1963,7 @@ JXG.Options = {
         face: "|",
         strokeWidth: 2,
         strokeColor: Color.palette.blue,
-        ticksDistance: 0.2,
+        ticksDistance: 0.2
     },
 
     /**
@@ -1994,7 +1994,7 @@ JXG.Options = {
         mouse: 4,
         pen: 4,
         epsilon: 0.0001, // Unused
-        hasPoint: 4,
+        hasPoint: 4
     },
 
     /**
@@ -2055,7 +2055,7 @@ JXG.Options = {
         ticks: 2,
         grid: 1,
         image: 0,
-        trace: 0,
+        trace: 0
     },
 
     /* special angle options */
@@ -2131,7 +2131,7 @@ JXG.Options = {
         radiuspoint: {
             withLabel: false,
             visible: false,
-            name: "",
+            name: ""
         },
 
         /**
@@ -2140,7 +2140,7 @@ JXG.Options = {
         pointsquare: {
             withLabel: false,
             visible: false,
-            name: "",
+            name: ""
         },
 
         dot: {
@@ -2150,13 +2150,13 @@ JXG.Options = {
             size: 2,
             face: "o",
             withLabel: false,
-            name: "",
+            name: ""
         },
 
         label: {
             position: "top",
             offset: [0, 0],
-            strokeColor: Color.palette.blue,
+            strokeColor: Color.palette.blue
         },
 
         /**
@@ -2169,8 +2169,8 @@ JXG.Options = {
          */
         arc: {
             visible: false,
-            fillColor: "none",
-        },
+            fillColor: "none"
+        }
 
         /**#@-*/
     },
@@ -2202,7 +2202,7 @@ JXG.Options = {
 
         label: {
             anchorX: "auto",
-            anchorY: "auto",
+            anchorY: "auto"
         },
         firstArrow: false,
         lastArrow: false,
@@ -2234,7 +2234,7 @@ JXG.Options = {
          * @type Point
          * @name Arc#anglePoint
          */
-        anglePoint: {},
+        anglePoint: {}
 
         /**#@-*/
     },
@@ -2250,8 +2250,8 @@ JXG.Options = {
         lastArrow: {
             type: 1,
             highlightSize: 6,
-            size: 6,
-        },
+            size: 6
+        }
 
         /**#@-*/
     },
@@ -2268,7 +2268,7 @@ JXG.Options = {
         lastArrow: {
             type: 1,
             highlightSize: 8,
-            size: 8,
+            size: 8
         },
         strokeColor: "#666666",
         highlightStrokeWidth: 1,
@@ -2304,7 +2304,7 @@ JXG.Options = {
                 needsRegularUpdate: false,
                 display: "internal",
                 visible: "inherit",
-                layer: 9,
+                layer: 9
             },
             visible: "inherit",
             needsRegularUpdate: false,
@@ -2320,7 +2320,7 @@ JXG.Options = {
             tickEndings: [0, 1],
             minorTicks: 4,
             ticksDistance: 1, // TODO doc
-            strokeOpacity: 0.25,
+            strokeOpacity: 0.25
         },
 
         /**
@@ -2332,7 +2332,7 @@ JXG.Options = {
         point1: {
             // Default values for point1 if created by line
             needsRegularUpdate: false,
-            visible: false,
+            visible: false
         },
 
         /**
@@ -2344,7 +2344,7 @@ JXG.Options = {
         point2: {
             // Default values for point2 if created by line
             needsRegularUpdate: false,
-            visible: false,
+            visible: false
         },
 
         tabindex: -1,
@@ -2357,8 +2357,8 @@ JXG.Options = {
          */
         label: {
             position: "lft",
-            offset: [10, 10],
-        },
+            offset: [10, 10]
+        }
         /**#@-*/
     },
 
@@ -2381,8 +2381,8 @@ JXG.Options = {
             visible: false,
             fixed: false,
             withLabel: false,
-            name: "",
-        },
+            name: ""
+        }
 
         /**#@-*/
     },
@@ -2401,7 +2401,7 @@ JXG.Options = {
          */
         line1: {
             //
-            strokeColor: "#000000",
+            strokeColor: "#000000"
         },
 
         /**
@@ -2412,8 +2412,8 @@ JXG.Options = {
          */
         line2: {
             //
-            strokeColor: "#000000",
-        },
+            strokeColor: "#000000"
+        }
 
         /**#@-*/
     },
@@ -2449,7 +2449,7 @@ JXG.Options = {
         highlightStrokeWidth: 2,
         highlightStrokeColor: Color.palette.blue,
         highlightFillColor: Color.palette.blue,
-        highlightFillOpacity: 0.1,
+        highlightFillOpacity: 0.1
 
         /**#@-*/
     },
@@ -2471,7 +2471,7 @@ JXG.Options = {
          */
         disabled: false,
 
-        display: "html",
+        display: "html"
 
         /**#@-*/
     },
@@ -2527,8 +2527,8 @@ JXG.Options = {
             highlightFillOpacity: 1.0,
             withLabel: false,
             name: "",
-            fixed: false,
-        },
+            fixed: false
+        }
 
         /**#@-*/
     },
@@ -2548,7 +2548,7 @@ JXG.Options = {
             "#FFFF88",
             "#c3d9ff",
             "#4096EE",
-            "#008C00",
+            "#008C00"
         ],
         highlightcolors: null,
         fillcolor: null,
@@ -2558,7 +2558,7 @@ JXG.Options = {
         fillOpacity: 0.6,
         withLines: false,
 
-        label: {},
+        label: {}
         /**#@-*/
     },
 
@@ -2590,7 +2590,7 @@ JXG.Options = {
          */
         checked: false,
 
-        display: "html",
+        display: "html"
 
         /**#@-*/
     },
@@ -2632,7 +2632,7 @@ JXG.Options = {
             highlightFillColor: "#c3d9ff",
             highlightStrokeColor: "#c3d9ff",
 
-            name: "",
+            name: ""
         },
 
         /**
@@ -2645,7 +2645,7 @@ JXG.Options = {
             visible: false,
             withLabel: false,
             fixed: false,
-            name: "",
+            name: ""
         },
 
         /**
@@ -2655,8 +2655,8 @@ JXG.Options = {
          * @name Circle#label
          */
         label: {
-            position: "urt",
-        },
+            position: "urt"
+        }
         /**#@-*/
     },
 
@@ -2686,8 +2686,8 @@ JXG.Options = {
             strokeColor: Color.palette.red,
             highlightFillColor: "#c3d9ff",
             highlightStrokeColor: "#c3d9ff",
-            name: "",
-        },
+            name: ""
+        }
         /**#@-*/
     },
 
@@ -2711,8 +2711,8 @@ JXG.Options = {
             visible: false,
             withLabel: false,
             fixed: false,
-            name: "",
-        },
+            name: ""
+        }
         /**#@-*/
     },
 
@@ -2740,8 +2740,8 @@ JXG.Options = {
             visible: false,
             fixed: false,
             withLabel: false,
-            name: "",
-        },
+            name: ""
+        }
         /**#@-*/
     },
 
@@ -2767,7 +2767,7 @@ JXG.Options = {
             fixed: false,
             visible: false,
             withLabel: false,
-            name: "",
+            name: ""
         },
 
         /**
@@ -2779,7 +2779,7 @@ JXG.Options = {
         center: {
             visible: false,
             withLabel: false,
-            name: "",
+            name: ""
         },
 
         /**
@@ -2790,7 +2790,7 @@ JXG.Options = {
          */
         point: {
             withLabel: false,
-            name: "",
+            name: ""
         },
 
         /**
@@ -2801,8 +2801,8 @@ JXG.Options = {
          * @name Conic#line
          */
         line: {
-            visible: false,
-        },
+            visible: false
+        }
 
         /**#@-*/
     },
@@ -2950,7 +2950,7 @@ JXG.Options = {
          * @name Circle#label
          */
         label: {
-            position: "lft",
+            position: "lft"
         },
 
         /**
@@ -2973,7 +2973,7 @@ JXG.Options = {
          * @type Boolean / Object
          * @default false
          */
-        lastArrow: false,
+        lastArrow: false
 
         /**#@-*/
     },
@@ -2985,7 +2985,7 @@ JXG.Options = {
          */
         attractors: [],
         fixed: true,
-        visible: true,
+        visible: true
 
         /**#@-*/
     },
@@ -2995,7 +2995,7 @@ JXG.Options = {
          * @visprop
          */
 
-        label: {},
+        label: {}
         /**#@-*/
     },
 
@@ -3028,13 +3028,13 @@ JXG.Options = {
         /**
          * @deprecated
          */
-        snapSizeY: 10,
+        snapSizeY: 10
 
         /**#@-*/
     },
 
     group: {
-        needsRegularUpdate: true,
+        needsRegularUpdate: true
     },
 
     /* special html slider options */
@@ -3058,7 +3058,7 @@ JXG.Options = {
         display: "html",
         anchorX: "left",
         anchorY: "middle",
-        withLabel: false,
+        withLabel: false
 
         /**#@-*/
     },
@@ -3152,7 +3152,7 @@ JXG.Options = {
          * @type Array
          * @default empty
          */
-        attractors: [],
+        attractors: []
 
         /**#@-*/
     },
@@ -3183,8 +3183,8 @@ JXG.Options = {
             strokeColor: Color.palette.red,
             highlightFillColor: "#c3d9ff",
             highlightStrokeColor: "#c3d9ff",
-            name: "",
-        },
+            name: ""
+        }
         /**#@-*/
     },
 
@@ -3206,7 +3206,7 @@ JXG.Options = {
          * @name Inequality#inverse
          * @visprop
          */
-        inverse: false,
+        inverse: false
         /**#@-*/
     },
 
@@ -3229,7 +3229,7 @@ JXG.Options = {
         visible: true,
         parse: false,
         transitionDuration: 0,
-        needsRegularUpdate: false,
+        needsRegularUpdate: false
 
         /**#@-*/
     },
@@ -3263,7 +3263,7 @@ JXG.Options = {
             withLabel: false,
             color: Color.palette.red,
             fillOpacity: 0.8,
-            layer: 9,
+            layer: 9
         },
 
         /**
@@ -3278,7 +3278,7 @@ JXG.Options = {
             visible: false,
             fixed: false,
             withLabel: false,
-            name: "",
+            name: ""
         },
 
         /**
@@ -3294,7 +3294,7 @@ JXG.Options = {
             withLabel: false,
             color: Color.palette.red,
             fillOpacity: 0.8,
-            layer: 9,
+            layer: 9
         },
 
         /**
@@ -3309,7 +3309,7 @@ JXG.Options = {
             visible: false,
             fixed: false,
             withLabel: false,
-            name: "",
+            name: ""
         },
 
         /**
@@ -3319,8 +3319,8 @@ JXG.Options = {
          * @name Integral#label
          */
         label: {
-            fontSize: 20,
-        },
+            fontSize: 20
+        }
         /**#@-*/
     },
 
@@ -3352,7 +3352,7 @@ JXG.Options = {
          */
         maxlength: 524288,
 
-        display: "html",
+        display: "html"
 
         /**#@-*/
     },
@@ -3373,7 +3373,7 @@ JXG.Options = {
          * @type Boolean
          * @default true
          */
-        alwaysIntersect: true,
+        alwaysIntersect: true
 
         /**#@-*/
     },
@@ -3467,7 +3467,7 @@ JXG.Options = {
          *
          *
          */
-        autoPosition: false,
+        autoPosition: false
 
         /**#@-*/
     },
@@ -3508,7 +3508,7 @@ JXG.Options = {
             "#FFFF88",
             "#c3d9ff",
             "#4096EE",
-            "#008C00",
+            "#008C00"
         ],
 
         /**
@@ -3520,7 +3520,7 @@ JXG.Options = {
          */
         rowHeight: 20,
 
-        strokeWidth: 5,
+        strokeWidth: 5
 
         /**#@-*/
     },
@@ -3737,7 +3737,7 @@ JXG.Options = {
             visible: false,
             withLabel: false,
             fixed: false,
-            name: "",
+            name: ""
         },
 
         /**
@@ -3751,7 +3751,7 @@ JXG.Options = {
             visible: false,
             withLabel: false,
             fixed: false,
-            name: "",
+            name: ""
         },
 
         /**
@@ -3763,7 +3763,7 @@ JXG.Options = {
         ticks: {
             drawLabels: true,
             label: {
-                offset: [4, -12 + 3], // This seems to be a good offset for 12 point fonts
+                offset: [4, -12 + 3] // This seems to be a good offset for 12 point fonts
             },
             drawZero: false,
             insertTicks: false,
@@ -3773,7 +3773,7 @@ JXG.Options = {
             minorTicks: 4,
             defaultDistance: 1,
             strokeOpacity: 0.3,
-            visible: "inherit",
+            visible: "inherit"
         },
 
         /**
@@ -3783,7 +3783,7 @@ JXG.Options = {
          * @name Line#label
          */
         label: {
-            position: "llft",
+            position: "llft"
         },
 
         /**
@@ -3863,7 +3863,7 @@ JXG.Options = {
          * @type String
          * @default 'butt'
          */
-        lineCap: "butt",
+        lineCap: "butt"
 
         /**#@-*/
     },
@@ -3878,7 +3878,7 @@ JXG.Options = {
         translateTo10: false,
         stretch: false,
         toOrigin: null,
-        to10: null,
+        to10: null
         /**#@-*/
     },
 
@@ -3933,8 +3933,8 @@ JXG.Options = {
             highlightFillOpacity: 1.0,
             withLabel: false,
             name: "",
-            fixed: false,
-        },
+            fixed: false
+        }
 
         /**#@-*/
     },
@@ -3974,7 +3974,7 @@ JXG.Options = {
          * @name mirrorelement#type
          * @default 'Euclidean'
          */
-        type: "Euclidean",
+        type: "Euclidean"
 
         /**#@-*/
     },
@@ -4008,8 +4008,8 @@ JXG.Options = {
             visible: false,
             fixed: false,
             withLabel: false,
-            name: "",
-        },
+            name: ""
+        }
         /**#@-*/
     },
 
@@ -4039,12 +4039,12 @@ JXG.Options = {
             visible: false,
             fixed: false,
             withLabel: false,
-            name: "",
+            name: ""
         },
 
         label: {
-            position: "llft",
-        },
+            position: "llft"
+        }
         /**#@-*/
     },
 
@@ -4056,7 +4056,7 @@ JXG.Options = {
 
         strokeColor: "#000000", // Perpendicular line
         straightFirst: true,
-        straightLast: true,
+        straightLast: true
         /**#@-*/
     },
 
@@ -4074,8 +4074,8 @@ JXG.Options = {
             visible: false,
             fixed: true,
             withLabel: false,
-            name: "",
-        },
+            name: ""
+        }
         /**#@-*/
     },
 
@@ -4366,7 +4366,7 @@ JXG.Options = {
          * @type Array
          * @default empty
          */
-        ignoredSnapToPoints: [],
+        ignoredSnapToPoints: []
 
         /**#@-*/
     },
@@ -4416,9 +4416,9 @@ JXG.Options = {
             // Polygon layer + 1
             layer: 5,
             label: {
-                position: "top",
+                position: "top"
             },
-            visible: "inherit",
+            visible: "inherit"
         },
 
         /**
@@ -4434,7 +4434,7 @@ JXG.Options = {
             strokeColor: Color.palette.red,
             fillColor: Color.palette.red,
             fixed: false,
-            visible: "inherit",
+            visible: "inherit"
         },
 
         /**
@@ -4444,8 +4444,8 @@ JXG.Options = {
          * @name Polygon#label
          */
         label: {
-            offset: [0, 0],
-        },
+            offset: [0, 0]
+        }
 
         /**#@-*/
     },
@@ -4458,7 +4458,7 @@ JXG.Options = {
          */
 
         fillColor: "none",
-        highlightFillColor: "none",
+        highlightFillColor: "none"
 
         /**#@-*/
     },
@@ -4480,8 +4480,8 @@ JXG.Options = {
         anglePoint: {
             size: 2,
             visible: false,
-            withLabel: false,
-        },
+            withLabel: false
+        }
 
         /**#@-*/
     },
@@ -4513,7 +4513,7 @@ JXG.Options = {
          * @name reflection#type
          * @default 'Euclidean'
          */
-        type: "Euclidean",
+        type: "Euclidean"
 
         /**#@-*/
     },
@@ -4560,8 +4560,8 @@ JXG.Options = {
             // Polygon layer + 1
             layer: 5,
             label: {
-                position: "top",
-            },
+                position: "top"
+            }
         },
 
         /**
@@ -4575,7 +4575,7 @@ JXG.Options = {
             withLabel: true,
             strokeColor: Color.palette.red,
             fillColor: Color.palette.red,
-            fixed: false,
+            fixed: false
         },
 
         /**
@@ -4585,8 +4585,8 @@ JXG.Options = {
          * @name Polygon#label
          */
         label: {
-            offset: [0, 0],
-        },
+            offset: [0, 0]
+        }
 
         /**#@-*/
     },
@@ -4599,7 +4599,7 @@ JXG.Options = {
 
         withLabel: false,
         fillOpacity: 0.3,
-        fillColor: Color.palette.yellow,
+        fillColor: Color.palette.yellow
 
         /**#@-*/
     },
@@ -4638,7 +4638,7 @@ JXG.Options = {
          */
         arc: {
             visible: false,
-            fillColor: "none",
+            fillColor: "none"
         },
 
         /**
@@ -4649,7 +4649,7 @@ JXG.Options = {
          */
         radiusPoint: {
             visible: false,
-            withLabel: false,
+            withLabel: false
         },
 
         /**
@@ -4660,7 +4660,7 @@ JXG.Options = {
          */
         center: {
             visible: false,
-            withLabel: false,
+            withLabel: false
         },
 
         /**
@@ -4671,7 +4671,7 @@ JXG.Options = {
          */
         anglePoint: {
             visible: false,
-            withLabel: false,
+            withLabel: false
         },
 
         /**
@@ -4683,8 +4683,8 @@ JXG.Options = {
         label: {
             offset: [0, 0],
             anchorX: "auto",
-            anchorY: "auto",
-        },
+            anchorY: "auto"
+        }
 
         /**#@-*/
     },
@@ -4696,8 +4696,8 @@ JXG.Options = {
          */
 
         label: {
-            position: "top",
-        },
+            position: "top"
+        }
         /**#@-*/
     },
 
@@ -4720,8 +4720,8 @@ JXG.Options = {
             strokeColor: Color.palette.red,
             highlightFillColor: "#eeeeee",
             highlightStrokeColor: Color.palette.red,
-            name: "",
-        },
+            name: ""
+        }
 
         /**#@-*/
     },
@@ -4853,7 +4853,7 @@ JXG.Options = {
             withLabel: false,
             visible: false,
             fixed: true,
-            name: "",
+            name: ""
         },
 
         /**
@@ -4868,7 +4868,7 @@ JXG.Options = {
             withLabel: false,
             visible: false,
             fixed: true,
-            name: "",
+            name: ""
         },
 
         /**
@@ -4886,7 +4886,7 @@ JXG.Options = {
             name: "",
             strokeWidth: 1,
             strokeColor: "#000000",
-            highlightStrokeColor: "#888888",
+            highlightStrokeColor: "#888888"
         },
 
         /**
@@ -4906,7 +4906,7 @@ JXG.Options = {
             drawZero: true,
             label: {
                 offset: [-4, -14],
-                display: "internal",
+                display: "internal"
             },
 
             minTicksDistance: 30,
@@ -4919,7 +4919,7 @@ JXG.Options = {
             strokeWidth: 1,
             tickEndings: [0, 1],
             strokeColor: "#000000",
-            visible: "inherit",
+            visible: "inherit"
         },
 
         /**
@@ -4935,7 +4935,7 @@ JXG.Options = {
             tabindex: null,
             name: "",
             strokeColor: "#000000",
-            highlightStrokeColor: "#888888",
+            highlightStrokeColor: "#888888"
         },
 
         /**
@@ -4946,7 +4946,7 @@ JXG.Options = {
          */
         label: {
             visible: "inherit",
-            strokeColor: "#000000",
+            strokeColor: "#000000"
         },
 
         /**
@@ -4956,7 +4956,7 @@ JXG.Options = {
          * @name Slider#moveOnUp
          * @default: true
          */
-        moveOnUp: true,
+        moveOnUp: true
 
         /**#@-*/
     },
@@ -5013,7 +5013,7 @@ JXG.Options = {
             visible: false,
             withLabel: false,
             fixed: false,
-            name: "",
+            name: ""
         },
 
         /**
@@ -5026,7 +5026,7 @@ JXG.Options = {
             visible: false,
             withLabel: false,
             fixed: false,
-            name: "",
+            name: ""
         },
 
         /**
@@ -5038,8 +5038,8 @@ JXG.Options = {
         curve: {
             strokeWidth: 1,
             strokeColor: "#000000",
-            fillColor: "none",
-        },
+            fillColor: "none"
+        }
     },
 
     /* special options for slope triangle */
@@ -5056,8 +5056,8 @@ JXG.Options = {
         borders: {
             lastArrow: {
                 type: 1,
-                size: 6,
-            },
+                size: 6
+            }
         },
 
         /**
@@ -5069,7 +5069,7 @@ JXG.Options = {
         glider: {
             fixed: true,
             visible: false,
-            withLabel: false,
+            withLabel: false
         },
 
         /**
@@ -5081,7 +5081,7 @@ JXG.Options = {
         baseline: {
             visible: false,
             withLabel: false,
-            name: "",
+            name: ""
         },
 
         /**
@@ -5093,7 +5093,7 @@ JXG.Options = {
         basepoint: {
             visible: false,
             withLabel: false,
-            name: "",
+            name: ""
         },
 
         /**
@@ -5107,7 +5107,7 @@ JXG.Options = {
         tangent: {
             visible: false,
             withLabel: false,
-            name: "",
+            name: ""
         },
 
         /**
@@ -5119,7 +5119,7 @@ JXG.Options = {
         toppoint: {
             visible: false,
             withLabel: false,
-            name: "",
+            name: ""
         },
 
         /**
@@ -5129,8 +5129,8 @@ JXG.Options = {
          * @name Slopetriangle#label
          */
         label: {
-            visible: true,
-        },
+            visible: true
+        }
         /**#@-*/
     },
 
@@ -5210,7 +5210,7 @@ JXG.Options = {
             attractorDistance: 20,
             showInfobox: false,
             withLabel: false,
-            name: "",
+            name: ""
         },
 
         /**
@@ -5231,7 +5231,7 @@ JXG.Options = {
             attractorDistance: 20,
             showInfobox: false,
             withLabel: false,
-            name: "",
+            name: ""
         },
 
         /**
@@ -5252,7 +5252,7 @@ JXG.Options = {
             strokeOpacity: 1,
             strokeWidth: 1,
             strokeColor: "#000000",
-            visible: "inherit",
+            visible: "inherit"
         },
 
         /**
@@ -5262,8 +5262,8 @@ JXG.Options = {
          * @name Tapemeasure#label
          */
         label: {
-            position: "top",
-        },
+            position: "top"
+        }
         /**#@-*/
     },
 
@@ -5927,7 +5927,7 @@ JXG.Options = {
          * @type Array
          * @default empty
          */
-        attractors: [],
+        attractors: []
 
         /**#@-*/
     },
@@ -5947,7 +5947,7 @@ JXG.Options = {
          * @name numberPoints
          * @type Number
          */
-        numberPoints: 100,
+        numberPoints: 100
 
         /**#@-*/
     },
@@ -5972,8 +5972,8 @@ JXG.Options = {
             strokeWidth: 2,
             withLabel: false,
             strokeColor: Color.palette.red,
-            lastArrow: true,
-        },
+            lastArrow: true
+        }
         /**#@-*/
     },
 
@@ -5992,8 +5992,8 @@ JXG.Options = {
         opacity: ["strokeOpacity", "fillOpacity"],
         highlightColor: ["highlightStrokeColor", "highlightFillColor"],
         highlightOpacity: ["highlightStrokeOpacity", "highlightFillOpacity"],
-        strokeWidth: ["strokeWidth", "highlightStrokeWidth"],
-    },
+        strokeWidth: ["strokeWidth", "highlightStrokeWidth"]
+    }
 };
 
 /**
@@ -6103,7 +6103,7 @@ JXG.Validator = (function () {
             useMathJax: false,
             withLabel: false,
             withTicks: false,
-            zoom: false,
+            zoom: false
         };
 
     // this seems like a redundant step but it makes sure that
@@ -6158,7 +6158,7 @@ JXG.normalizePointFace = function (s) {
         triangleleft: "<",
         "<": "<",
         triangleright: ">",
-        ">": ">",
+        ">": ">"
     };
 
     return map[s];

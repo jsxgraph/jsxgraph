@@ -144,7 +144,7 @@ JXG.extend(
             }
 
             return this.coefficient + "*" + s.join("*");
-        },
+        }
     }
 );
 
@@ -307,7 +307,7 @@ JXG.extend(
             }
 
             return s.join("+");
-        },
+        }
     }
 );
 

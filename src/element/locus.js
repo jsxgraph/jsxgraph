@@ -156,5 +156,5 @@ JXG.createLocus = function (board, parents, attributes) {
 JXG.registerElement("locus", JXG.createLocus);
 
 export default {
-    createLocus: JXG.createLocus,
+    createLocus: JXG.createLocus
 };

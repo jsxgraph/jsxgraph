@@ -102,7 +102,7 @@ Copyright 2008-2022
                 toFixed: 8, // should be enough for now ...
                 freeLine: false,
                 useGlider: false,
-                useSymbols: false,
+                useSymbols: false
             },
 
             /**
@@ -2725,7 +2725,7 @@ Copyright 2008-2022
                 step.dest_sub_ids = JXG.uniqueArray(step.dest_sub_ids);
 
                 return step;
-            },
+            }
         }
     );
 

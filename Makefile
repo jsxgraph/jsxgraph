@@ -51,7 +51,7 @@ LINTLIST=$(shell echo $(FILELIST) | sed 's/src\/parser\/jessiecode\.js//')
 LINTFLAGS=--bitwise true --white true --continue true
 ESLINTFLAGS=
 
-PRETTIERFLAGS=-w --print-width 96 --tab-width 4
+PRETTIERFLAGS=-w --print-width 96 --tab-width 4 --trailing-comma none
 
 READERSOUT=build/bin/readers/geonext.min.js build/bin/readers/geogebra.min.js build/bin/readers/intergeo.min.js build/bin/readers/sketch.min.js
 

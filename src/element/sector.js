@@ -320,7 +320,7 @@ JXG.createSector = function (board, parents, attributes) {
         el.methodMap = JXG.deepCopy(el.methodMap, {
             radius: "Radius",
             getRadius: "Radius",
-            setRadius: "setRadius",
+            setRadius: "setRadius"
         });
 
         //    el.prepareUpdate().update();
@@ -383,7 +383,7 @@ JXG.createSector = function (board, parents, attributes) {
             anglepoint: "anglepoint",
             radius: "Radius",
             getRadius: "Radius",
-            setRadius: "setRadius",
+            setRadius: "setRadius"
         });
 
         /**
@@ -588,7 +588,7 @@ JXG.createSector = function (board, parents, attributes) {
             Const.COORDS_BY_USER,
             [
                 pmc[1] + Math.cos(angle * 0.5) * bxminusax - Math.sin(angle * 0.5) * byminusay,
-                pmc[2] + Math.sin(angle * 0.5) * bxminusax + Math.cos(angle * 0.5) * byminusay,
+                pmc[2] + Math.sin(angle * 0.5) * bxminusax + Math.cos(angle * 0.5) * byminusay
             ],
             this.board
         );
@@ -731,7 +731,7 @@ JXG.createCircumcircleSector = function (board, parents, attributes) {
      */
     el.center = mp;
     el.subs = {
-        center: mp,
+        center: mp
     };
 
     return el;
@@ -1176,7 +1176,7 @@ JXG.createAngle = function (board, parents, attributes) {
 
             if (p.draggable()) {
                 t1 = this.board.create("transform", [val, this.center], {
-                    type: "rotate",
+                    type: "rotate"
                 });
                 p.addTransform(q, t1);
                 // Immediately apply the transformation.
@@ -1200,7 +1200,7 @@ JXG.createAngle = function (board, parents, attributes) {
                     };
                 }
                 t2 = this.board.create("transform", [val2, this.center], {
-                    type: "rotate",
+                    type: "rotate"
                 });
                 p.coords.on("update", function () {
                     t2.update();
@@ -1369,10 +1369,10 @@ JXG.createAngle = function (board, parents, attributes) {
                 mat = [
                     [1, 0, 0],
                     [B[1] - 0.5 * B[1] * co + 0.5 * B[2] * si, co * 0.5, -si * 0.5],
-                    [B[2] - 0.5 * B[1] * si - 0.5 * B[2] * co, si * 0.5, co * 0.5],
+                    [B[2] - 0.5 * B[1] * si - 0.5 * B[2] * co, si * 0.5, co * 0.5]
                 ];
                 return Mat.matVecMult(mat, A);
-            },
+            }
         ],
         attrsub
     );
@@ -1432,7 +1432,7 @@ JXG.createAngle = function (board, parents, attributes) {
         mat = [
             [1, 0, 0],
             [B[1] - 0.5 * B[1] * co + 0.5 * B[2] * si, co * 0.5, -si * 0.5],
-            [B[2] - 0.5 * B[1] * si - 0.5 * B[2] * co, si * 0.5, co * 0.5],
+            [B[2] - 0.5 * B[1] * si - 0.5 * B[2] * co, si * 0.5, co * 0.5]
         ];
         vec = Mat.matVecMult(mat, A);
         vec[1] /= vec[0];
@@ -1443,7 +1443,7 @@ JXG.createAngle = function (board, parents, attributes) {
         vec = [
             vec[0],
             B[1] + ((vec[1] - B[1]) * (r + dx)) / d,
-            B[2] + ((vec[2] - B[2]) * (r + dx)) / d,
+            B[2] + ((vec[2] - B[2]) * (r + dx)) / d
         ];
 
         l_vp.position = Geometry.calcLabelQuadrant(Geometry.rad([1, 0], [0, 0], vec));
@@ -1465,7 +1465,7 @@ JXG.createAngle = function (board, parents, attributes) {
     el.methodMap = Type.deepCopy(el.methodMap, {
         Value: "Value",
         setAngle: "setAngle",
-        free: "free",
+        free: "free"
     });
 
     return el;
@@ -1578,5 +1578,5 @@ export default {
     createMajorSector: JXG.createMajorSector,
     createAngle: JXG.createAngle,
     createReflexAngle: JXG.createReflexAngle,
-    createNonreflexAngle: JXG.createNonreflexAngle,
+    createNonreflexAngle: JXG.createNonreflexAngle
 };

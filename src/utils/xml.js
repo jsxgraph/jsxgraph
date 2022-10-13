@@ -90,7 +90,7 @@ JXG.XML = {
         this.cleanWhitespace(tree);
 
         return tree;
-    },
+    }
 };
 
 export default JXG.XML;

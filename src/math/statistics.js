@@ -629,7 +629,7 @@ Mat.Statistics = {
         this.spare = v * s;
         this.hasSpare = true;
         return mean + stdDev * u * s;
-    },
+    }
 };
 
 export default Mat.Statistics;

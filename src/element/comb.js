@@ -258,5 +258,5 @@ JXG.createComb = function (board, parents, attributes) {
 JXG.registerElement("comb", JXG.createComb);
 
 export default {
-    createComb: JXG.createComb,
+    createComb: JXG.createComb
 };

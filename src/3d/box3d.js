@@ -110,7 +110,7 @@ JXG.createAxes3D = function (board, parents, attributes) {
                 visible: true, // Für z-Ticks wird path nicht berechnet
                 minorTicks: 0,
                 tickEndings: [0, 1],
-                drawLabels: false,
+                drawLabels: false
             };
             if (i === 2) {
                 ticks_attr.tickEndings = [1, 0];
@@ -126,7 +126,7 @@ JXG.createAxes3D = function (board, parents, attributes) {
         {
             name: "",
             visible: false,
-            withLabel: false,
+            withLabel: false
         }
     );
 
@@ -209,7 +209,7 @@ JXG.createAxis3D = function (board, parents, attributes) {
                 return function () {
                     return view.project3DTo2D(xx, yy, zz)[2];
                 };
-            })(start[0], start[1], start[2]),
+            })(start[0], start[1], start[2])
         ],
         attr
     );
@@ -227,7 +227,7 @@ JXG.createAxis3D = function (board, parents, attributes) {
                 return function () {
                     return view.project3DTo2D(xx, yy, zz)[2];
                 };
-            })(end[0], end[1], end[2]),
+            })(end[0], end[1], end[2])
         ],
         attr
     );
@@ -303,7 +303,7 @@ JXG.createMesh3D = function (board, parents, attr) {
                 },
                 function (u, v) {
                     return q[2] + u * v1[2] + v * v2[2];
-                },
+                }
             ],
             [Math.ceil(s1), Math.floor(e1), (Math.ceil(e1) - Math.floor(s1)) / step],
             [Math.ceil(s2), Math.floor(e2), (Math.ceil(e2) - Math.floor(s2)) / step]

@@ -88,7 +88,7 @@
                         tmp = splitted[i].split(" ");
                         nodes.push({
                             name: tmp[0],
-                            coords: [parseInt(tmp[1], 10), parseInt(tmp[2], 10)],
+                            coords: [parseInt(tmp[1], 10), parseInt(tmp[2], 10)]
                         });
                         nodenumbers[tmp[0]] = i - 1;
                         // no pre-defined coordinates
@@ -153,7 +153,7 @@
                     adjMatrix: adjMatrix,
                     nodenumbers: nodenumbers,
                     weighted: weighted,
-                    directed: directed,
+                    directed: directed
                 };
 
                 return this.board.addedGraph;
@@ -221,22 +221,22 @@
                             if (graph.directed) {
                                 s = this.board.create("segment", [
                                     nodes[i].name,
-                                    nodes[j].name,
+                                    nodes[j].name
                                 ]);
                                 s.setAttribute({ lastArrow: true });
 
                                 if (graph.weighted) {
                                     t = this.board.create("text", [0, 0, adjMatrix[i][j]], {
-                                        anchor: s,
+                                        anchor: s
                                     });
                                     this.board.addedGraph.segments[i].push({
                                         edge: s,
-                                        weight: t,
+                                        weight: t
                                     });
                                 } else {
                                     this.board.addedGraph.segments[i].push({
                                         edge: s,
-                                        weight: 1,
+                                        weight: 1
                                     });
                                 }
                             } else {
@@ -257,7 +257,7 @@
 
                             if (graph.weighted) {
                                 t = this.board.create("text", [0, 0, adjMatrix[i][j]], {
-                                    anchor: s,
+                                    anchor: s
                                 });
                                 this.board.addedGraph.segments[i].push({ edge: s, weight: t });
                             } else {
@@ -268,7 +268,7 @@
                         }
                     }
                 }
-            },
+            }
         }
     );
 

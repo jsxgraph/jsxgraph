@@ -44,7 +44,7 @@ var priv = {
     CheckboxChangeEventHandler: function () {
         this._value = this.rendNodeCheckbox.checked;
         this.board.update();
-    },
+    }
 };
 
 /**
@@ -175,7 +175,7 @@ JXG.createCheckbox = function (board, parents, attributes) {
         parents[1],
         '<span style="display:inline">' +
             '<input type="checkbox" /><label for=""></label>' +
-            "</span>",
+            "</span>"
     ];
 
     // 1. Create checkbox element with empty label
@@ -232,5 +232,5 @@ JXG.createCheckbox = function (board, parents, attributes) {
 JXG.registerElement("checkbox", JXG.createCheckbox);
 
 export default {
-    createCheckbox: JXG.createCheckbox,
+    createCheckbox: JXG.createCheckbox
 };

@@ -167,7 +167,7 @@ JXG.extend(
         denormalized: function (n) {
             var hi = this.hi(n);
             return !(hi & 0x7ff00000);
-        },
+        }
     }
 );
 
@@ -278,7 +278,7 @@ JXG.extend(MatInterval.prototype, {
 
     clone: function () {
         return new MatInterval().set(this.lo, this.hi);
-    },
+    }
 });
 
 /**
@@ -1642,7 +1642,7 @@ JXG.Math.IntervalArithmetic = {
             }
         }
         return doubleBits.pack(lo, hi);
-    },
+    }
 };
 
 JXG.Math.IntervalArithmetic.PI = new MatInterval(

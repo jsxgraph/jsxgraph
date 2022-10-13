@@ -76,8 +76,8 @@ var priv = {
         math: Mat,
         "math/geometry": Geometry,
         "math/statistics": Statistics,
-        "math/numerics": Mat.Numerics,
-    },
+        "math/numerics": Mat.Numerics
+    }
 };
 
 /**
@@ -101,7 +101,7 @@ JXG.JessieCode = function (code, geonext) {
         args: [],
         locals: {},
         context: null,
-        previous: null,
+        previous: null
     };
 
     /**
@@ -220,7 +220,7 @@ JXG.extend(
             return {
                 type: type,
                 value: value,
-                children: children,
+                children: children
             };
         },
 
@@ -260,7 +260,7 @@ JXG.extend(
                 args: args,
                 locals: {},
                 context: null,
-                previous: this.scope,
+                previous: this.scope
             };
 
             this.scope.hasChild = true;
@@ -1083,7 +1083,7 @@ JXG.extend(
                 el = this.board.elementsByName[v];
 
             node = this.createNode("node_op", "op_execfun", this.createNode("node_var", "$"), [
-                this.createNode("node_str", el.id),
+                this.createNode("node_str", el.id)
             ]);
 
             node.replaced = true;
@@ -1276,17 +1276,17 @@ JXG.extend(
             if (node.type === "node_var") {
                 res = {
                     o: this.scope.locals,
-                    what: node.value,
+                    what: node.value
                 };
             } else if (node.type === "node_op" && node.value === "op_property") {
                 res = {
                     o: this.execute(node.children[0]),
-                    what: node.children[1],
+                    what: node.children[1]
                 };
             } else if (node.type === "node_op" && node.value === "op_extvalue") {
                 res = {
                     o: this.execute(node.children[0]),
-                    what: this.execute(node.children[1]),
+                    what: this.execute(node.children[1])
                 };
             } else {
                 throw new Error("Syntax error: Invalid left-hand side of assignment.");
@@ -1307,7 +1307,7 @@ JXG.extend(
                     this.compile(node.children[0], js),
                     node.children[1].type === "node_const"
                         ? node.children[1].value
-                        : this.compile(node.children[1], js),
+                        : this.compile(node.children[1], js)
                 ];
             } else {
                 throw new Error("Syntax error: Invalid left-hand side of assignment.");
@@ -1566,7 +1566,7 @@ JXG.extend(
                                     // SketchBin currently works only if the last column of the
                                     // parent position is taken. This is due to how I patched JS/CC
                                     // to count the lines and columns. So, ecol will do for now
-                                    col: node.children[1][i].ecol,
+                                    col: node.children[1][i].ecol
                                 });
                             }
 
@@ -2783,7 +2783,7 @@ JXG.extend(
                     getName: that.getName,
                     name: that.getName,
                     $board: that.board,
-                    $log: that.log,
+                    $log: that.log
                 };
 
             // special scopes for factorial, deg, and rad
@@ -2894,14 +2894,14 @@ JXG.extend(
                         name: name,
                         type: "function",
                         numParams: that.length,
-                        origin: origin,
+                        origin: origin
                     };
                 } else if (JXG.isNumber(that)) {
                     return {
                         name: name,
                         type: "constant",
                         value: that,
-                        origin: origin,
+                        origin: origin
                     };
                 } else if (that !== undefined) {
                     console.error("undefined type", that);
@@ -2958,7 +2958,7 @@ JXG.extend(
                 list: merge,
                 functions: funcs,
                 functions_jessiecode: funcsJC,
-                constants: consts,
+                constants: consts
             };
         },
 
@@ -3009,7 +3009,7 @@ JXG.extend(
             } else {
                 console.log("Log: ", arguments);
             }
-        },
+        }
     }
 );
 
@@ -3119,38 +3119,38 @@ var parser = (function () {
         $Vp = [1, 39],
         $Vq = [
             5, 7, 8, 14, 15, 16, 17, 19, 20, 21, 23, 26, 27, 50, 51, 58, 65, 74, 75, 76, 77, 78,
-            79, 80, 82, 91, 93,
+            79, 80, 82, 91, 93
         ],
         $Vr = [
             5, 7, 8, 12, 14, 15, 16, 17, 19, 20, 21, 23, 26, 27, 50, 51, 58, 65, 74, 75, 76, 77,
-            78, 79, 80, 82, 91, 93,
+            78, 79, 80, 82, 91, 93
         ],
         $Vs = [
             8, 10, 16, 32, 34, 35, 37, 39, 41, 42, 43, 45, 46, 47, 48, 50, 51, 53, 54, 55, 57,
-            64, 65, 66, 83, 86,
+            64, 65, 66, 83, 86
         ],
         $Vt = [2, 48],
         $Vu = [1, 72],
         $Vv = [
             10, 16, 32, 34, 35, 37, 39, 41, 42, 43, 45, 46, 47, 48, 50, 51, 53, 54, 55, 57, 66,
-            83, 86,
+            83, 86
         ],
         $Vw = [1, 78],
         $Vx = [
             8, 10, 16, 32, 34, 35, 37, 41, 42, 43, 45, 46, 47, 48, 50, 51, 53, 54, 55, 57, 64,
-            65, 66, 83, 86,
+            65, 66, 83, 86
         ],
         $Vy = [1, 82],
         $Vz = [
             8, 10, 16, 32, 34, 35, 37, 39, 45, 46, 47, 48, 50, 51, 53, 54, 55, 57, 64, 65, 66,
-            83, 86,
+            83, 86
         ],
         $VA = [1, 83],
         $VB = [1, 84],
         $VC = [1, 85],
         $VD = [
             8, 10, 16, 32, 34, 35, 37, 39, 41, 42, 43, 50, 51, 53, 54, 55, 57, 64, 65, 66, 83,
-            86,
+            86
         ],
         $VE = [1, 89],
         $VF = [1, 90],
@@ -3159,13 +3159,13 @@ var parser = (function () {
         $VI = [1, 97],
         $VJ = [
             8, 10, 16, 32, 34, 35, 37, 39, 41, 42, 43, 45, 46, 47, 48, 53, 54, 55, 57, 64, 65,
-            66, 83, 86,
+            66, 83, 86
         ],
         $VK = [1, 103],
         $VL = [1, 104],
         $VM = [
             8, 10, 16, 32, 34, 35, 37, 39, 41, 42, 43, 45, 46, 47, 48, 50, 51, 57, 64, 65, 66,
-            83, 86,
+            83, 86
         ],
         $VN = [1, 105],
         $VO = [1, 106],
@@ -3177,7 +3177,7 @@ var parser = (function () {
         $VU = [10, 66, 86],
         $VV = [
             8, 10, 16, 20, 32, 34, 35, 37, 39, 41, 42, 43, 45, 46, 47, 48, 50, 51, 53, 54, 55,
-            57, 64, 65, 66, 82, 83, 86,
+            57, 64, 65, 66, 82, 83, 86
         ],
         $VW = [1, 167],
         $VX = [10, 86];
@@ -3279,7 +3279,7 @@ var parser = (function () {
             MAP: 93,
             "->": 94,
             $accept: 0,
-            $end: 1,
+            $end: 1
         },
         terminals_: {
             2: "error",
@@ -3332,7 +3332,7 @@ var parser = (function () {
             86: ",",
             91: "FUNCTION",
             93: "MAP",
-            94: "->",
+            94: "->"
         },
         productions_: [
             0,
@@ -3440,7 +3440,7 @@ var parser = (function () {
             [63, 5],
             [63, 6],
             [92, 1],
-            [92, 3],
+            [92, 3]
         ],
         performAction: function anonymous(
             yytext,
@@ -3928,7 +3928,7 @@ var parser = (function () {
             o(
                 [
                     5, 7, 8, 14, 15, 16, 17, 19, 20, 21, 23, 26, 50, 51, 58, 65, 74, 75, 76, 77,
-                    78, 79, 80, 82, 91, 93,
+                    78, 79, 80, 82, 91, 93
                 ],
                 $V0,
                 { 3: 1, 4: 2 }
@@ -3992,7 +3992,7 @@ var parser = (function () {
                 80: $Vm,
                 82: $Vn,
                 91: $Vo,
-                93: $Vp,
+                93: $Vp
             },
             { 1: [2, 1] },
             o($Vq, [2, 13]),
@@ -4006,7 +4006,7 @@ var parser = (function () {
             o(
                 [
                     7, 8, 14, 15, 16, 17, 19, 20, 21, 23, 26, 27, 50, 51, 58, 65, 74, 75, 76,
-                    77, 78, 79, 80, 82, 91, 93,
+                    77, 78, 79, 80, 82, 91, 93
                 ],
                 $V0,
                 { 4: 61 }
@@ -4071,7 +4071,7 @@ var parser = (function () {
                 80: $Vm,
                 82: $Vn,
                 91: $Vo,
-                93: $Vp,
+                93: $Vp
             },
             { 20: [1, 66] },
             { 20: [1, 67] },
@@ -4116,7 +4116,7 @@ var parser = (function () {
                 80: $Vm,
                 82: $Vn,
                 91: $Vo,
-                93: $Vp,
+                93: $Vp
             },
             { 16: [1, 70] },
             o($Vr, [2, 11]),
@@ -4125,7 +4125,7 @@ var parser = (function () {
             o(
                 [
                     8, 10, 16, 34, 35, 37, 39, 41, 42, 43, 45, 46, 47, 48, 50, 51, 53, 54, 55,
-                    64, 65, 66, 83, 86,
+                    64, 65, 66, 83, 86
                 ],
                 $Vt,
                 { 32: [1, 71], 57: $Vu }
@@ -4133,7 +4133,7 @@ var parser = (function () {
             o(
                 [
                     8, 10, 16, 32, 35, 39, 41, 42, 43, 45, 46, 47, 48, 50, 51, 53, 54, 55, 57,
-                    64, 65, 66, 83, 86,
+                    64, 65, 66, 83, 86
                 ],
                 [2, 26],
                 { 34: [1, 73], 37: [1, 74] }
@@ -4189,7 +4189,7 @@ var parser = (function () {
                 80: $Vm,
                 82: $Vn,
                 91: $Vo,
-                93: $Vp,
+                93: $Vp
             },
             { 8: [1, 87] },
             { 8: [1, 88] },
@@ -4209,7 +4209,7 @@ var parser = (function () {
                 83: [1, 93],
                 84: 94,
                 85: 95,
-                87: 96,
+                87: 96
             },
             {
                 8: $V2,
@@ -4252,7 +4252,7 @@ var parser = (function () {
                 81: 101,
                 82: $Vn,
                 91: $Vo,
-                93: $Vp,
+                93: $Vp
             },
             o($VJ, [2, 36], { 50: $VK, 51: $VL }),
             o($Vs, [2, 70]),
@@ -4296,7 +4296,7 @@ var parser = (function () {
                 80: $Vm,
                 82: $Vn,
                 91: $Vo,
-                93: $Vp,
+                93: $Vp
             },
             {
                 8: $V2,
@@ -4329,7 +4329,7 @@ var parser = (function () {
                 80: $Vm,
                 82: $Vn,
                 91: $Vo,
-                93: $Vp,
+                93: $Vp
             },
             {
                 8: $V2,
@@ -4362,7 +4362,7 @@ var parser = (function () {
                 80: $Vm,
                 82: $Vn,
                 91: $Vo,
-                93: $Vp,
+                93: $Vp
             },
             {
                 6: 6,
@@ -4422,7 +4422,7 @@ var parser = (function () {
                 80: $Vm,
                 82: $Vn,
                 91: $Vo,
-                93: $Vp,
+                93: $Vp
             },
             {
                 8: $V2,
@@ -4464,7 +4464,7 @@ var parser = (function () {
                 80: $Vm,
                 82: $Vn,
                 91: $Vo,
-                93: $Vp,
+                93: $Vp
             },
             {
                 8: $V2,
@@ -4506,7 +4506,7 @@ var parser = (function () {
                 80: $Vm,
                 82: $Vn,
                 91: $Vo,
-                93: $Vp,
+                93: $Vp
             },
             {
                 8: $V2,
@@ -4548,7 +4548,7 @@ var parser = (function () {
                 80: $Vm,
                 82: $Vn,
                 91: $Vo,
-                93: $Vp,
+                93: $Vp
             },
             { 14: [1, 116] },
             o($Vr, [2, 7]),
@@ -4595,7 +4595,7 @@ var parser = (function () {
                 80: $Vm,
                 82: $Vn,
                 91: $Vo,
-                93: $Vp,
+                93: $Vp
             },
             {
                 8: $V2,
@@ -4628,7 +4628,7 @@ var parser = (function () {
                 80: $Vm,
                 82: $Vn,
                 91: $Vo,
-                93: $Vp,
+                93: $Vp
             },
             {
                 8: $V2,
@@ -4669,7 +4669,7 @@ var parser = (function () {
                 80: $Vm,
                 82: $Vn,
                 91: $Vo,
-                93: $Vp,
+                93: $Vp
             },
             {
                 8: $V2,
@@ -4707,7 +4707,7 @@ var parser = (function () {
                 80: $Vm,
                 82: $Vn,
                 91: $Vo,
-                93: $Vp,
+                93: $Vp
             },
             { 20: [1, 122] },
             {
@@ -4750,7 +4750,7 @@ var parser = (function () {
                 80: $Vm,
                 82: $Vn,
                 91: $Vo,
-                93: $Vp,
+                93: $Vp
             },
             o($Vs, [2, 87], { 89: 124, 90: 125, 68: 127, 20: $VQ, 82: $Vn }),
             {
@@ -4794,7 +4794,7 @@ var parser = (function () {
                 81: 129,
                 82: $Vn,
                 91: $Vo,
-                93: $Vp,
+                93: $Vp
             },
             o($Vs, [2, 89]),
             {
@@ -4837,7 +4837,7 @@ var parser = (function () {
                 80: $Vm,
                 82: $Vn,
                 91: $Vo,
-                93: $Vp,
+                93: $Vp
             },
             { 20: [1, 131] },
             {
@@ -4875,7 +4875,7 @@ var parser = (function () {
                 80: $Vm,
                 82: $Vn,
                 91: $Vo,
-                93: $Vp,
+                93: $Vp
             },
             {
                 8: $V2,
@@ -4911,7 +4911,7 @@ var parser = (function () {
                 80: $Vm,
                 82: $Vn,
                 91: $Vo,
-                93: $Vp,
+                93: $Vp
             },
             {
                 8: $V2,
@@ -4947,7 +4947,7 @@ var parser = (function () {
                 80: $Vm,
                 82: $Vn,
                 91: $Vo,
-                93: $Vp,
+                93: $Vp
             },
             {
                 8: $V2,
@@ -4983,7 +4983,7 @@ var parser = (function () {
                 80: $Vm,
                 82: $Vn,
                 91: $Vo,
-                93: $Vp,
+                93: $Vp
             },
             { 10: [1, 136] },
             { 10: [1, 137], 20: $VR, 92: 138 },
@@ -5021,7 +5021,7 @@ var parser = (function () {
                 80: $Vm,
                 82: $Vn,
                 91: $Vo,
-                93: $Vp,
+                93: $Vp
             },
             {
                 8: $V2,
@@ -5056,7 +5056,7 @@ var parser = (function () {
                 80: $Vm,
                 82: $Vn,
                 91: $Vo,
-                93: $Vp,
+                93: $Vp
             },
             {
                 8: $V2,
@@ -5091,7 +5091,7 @@ var parser = (function () {
                 80: $Vm,
                 82: $Vn,
                 91: $Vo,
-                93: $Vp,
+                93: $Vp
             },
             {
                 8: $V2,
@@ -5126,7 +5126,7 @@ var parser = (function () {
                 80: $Vm,
                 82: $Vn,
                 91: $Vo,
-                93: $Vp,
+                93: $Vp
             },
             o($Vs, [2, 79]),
             { 83: [1, 146], 86: [1, 147] },
@@ -5170,7 +5170,7 @@ var parser = (function () {
                 80: $Vm,
                 82: $Vn,
                 91: $Vo,
-                93: $Vp,
+                93: $Vp
             },
             {
                 8: $V2,
@@ -5204,7 +5204,7 @@ var parser = (function () {
                 80: $Vm,
                 82: $Vn,
                 91: $Vo,
-                93: $Vp,
+                93: $Vp
             },
             {
                 8: $V2,
@@ -5237,7 +5237,7 @@ var parser = (function () {
                 80: $Vm,
                 82: $Vn,
                 91: $Vo,
-                93: $Vp,
+                93: $Vp
             },
             {
                 8: $V2,
@@ -5270,7 +5270,7 @@ var parser = (function () {
                 80: $Vm,
                 82: $Vn,
                 91: $Vo,
-                93: $Vp,
+                93: $Vp
             },
             {
                 8: $V2,
@@ -5303,13 +5303,13 @@ var parser = (function () {
                 80: $Vm,
                 82: $Vn,
                 91: $Vo,
-                93: $Vp,
+                93: $Vp
             },
             o($Vs, [2, 51]),
             o(
                 [
                     8, 10, 16, 32, 34, 35, 37, 39, 41, 42, 43, 45, 46, 47, 48, 50, 51, 53, 54,
-                    55, 64, 65, 66, 83, 86,
+                    55, 64, 65, 66, 83, 86
                 ],
                 $Vt,
                 { 57: $Vu }
@@ -5320,7 +5320,7 @@ var parser = (function () {
                 [
                     5, 7, 8, 10, 12, 14, 15, 16, 17, 19, 20, 21, 23, 26, 27, 32, 34, 35, 37, 39,
                     41, 42, 43, 45, 46, 47, 48, 50, 51, 53, 54, 55, 57, 58, 64, 65, 66, 74, 75,
-                    76, 77, 78, 79, 80, 82, 83, 86, 91, 93,
+                    76, 77, 78, 79, 80, 82, 83, 86, 91, 93
                 ],
                 [2, 12]
             ),
@@ -5338,7 +5338,7 @@ var parser = (function () {
             o(
                 [
                     8, 10, 16, 32, 34, 35, 37, 39, 41, 42, 43, 45, 46, 47, 48, 50, 51, 53, 54,
-                    55, 57, 64, 65, 66, 83,
+                    55, 57, 64, 65, 66, 83
                 ],
                 [2, 88],
                 { 86: [1, 162] }
@@ -5374,7 +5374,7 @@ var parser = (function () {
                 79: $Vl,
                 80: $Vm,
                 85: 170,
-                87: 96,
+                87: 96
             },
             {
                 8: $V2,
@@ -5415,7 +5415,7 @@ var parser = (function () {
                 80: $Vm,
                 82: $Vn,
                 91: $Vo,
-                93: $Vp,
+                93: $Vp
             },
             o($Vs, [2, 78]),
             {
@@ -5457,7 +5457,7 @@ var parser = (function () {
                 80: $Vm,
                 82: $Vn,
                 91: $Vo,
-                93: $Vp,
+                93: $Vp
             },
             o($VM, [2, 42], { 53: $VN, 54: $VO, 55: $VP }),
             o($VM, [2, 43], { 53: $VN, 54: $VO, 55: $VP }),
@@ -5521,7 +5521,7 @@ var parser = (function () {
                 80: $Vm,
                 82: $Vn,
                 91: $Vo,
-                93: $Vp,
+                93: $Vp
             },
             {
                 6: 6,
@@ -5580,7 +5580,7 @@ var parser = (function () {
                 80: $Vm,
                 82: $Vn,
                 91: $Vo,
-                93: $Vp,
+                93: $Vp
             },
             {
                 8: $V2,
@@ -5622,7 +5622,7 @@ var parser = (function () {
                 80: $Vm,
                 82: $Vn,
                 91: $Vo,
-                93: $Vp,
+                93: $Vp
             },
             {
                 8: $V2,
@@ -5664,7 +5664,7 @@ var parser = (function () {
                 80: $Vm,
                 82: $Vn,
                 91: $Vo,
-                93: $Vp,
+                93: $Vp
             },
             {
                 8: $V2,
@@ -5705,7 +5705,7 @@ var parser = (function () {
                 80: $Vm,
                 82: $Vn,
                 91: $Vo,
-                93: $Vp,
+                93: $Vp
             },
             o($Vs, [2, 60]),
             { 20: $VQ, 68: 127, 82: $Vn, 90: 178 },
@@ -5754,7 +5754,7 @@ var parser = (function () {
                 80: $Vm,
                 82: $Vn,
                 91: $Vo,
-                93: $Vp,
+                93: $Vp
             },
             { 94: [1, 182] },
             o($VS, [2, 82]),
@@ -5809,7 +5809,7 @@ var parser = (function () {
                 80: $Vm,
                 82: $Vn,
                 91: $Vo,
-                93: $Vp,
+                93: $Vp
             },
             {
                 6: 6,
@@ -5868,7 +5868,7 @@ var parser = (function () {
                 80: $Vm,
                 82: $Vn,
                 91: $Vo,
-                93: $Vp,
+                93: $Vp
             },
             {
                 8: $V2,
@@ -5910,7 +5910,7 @@ var parser = (function () {
                 80: $Vm,
                 82: $Vn,
                 91: $Vo,
-                93: $Vp,
+                93: $Vp
             },
             { 16: [1, 189] },
             o($Vs, [2, 103]),
@@ -5974,9 +5974,9 @@ var parser = (function () {
                 80: $Vm,
                 82: $Vn,
                 91: $Vo,
-                93: $Vp,
+                93: $Vp
             },
-            o($Vr, [2, 5]),
+            o($Vr, [2, 5])
         ],
         defaultActions: { 3: [2, 1], 97: [2, 84], 98: [2, 85], 99: [2, 86] },
         parseError: function parseError(str, hash) {
@@ -6090,7 +6090,7 @@ var parser = (function () {
                         token: this.terminals_[symbol] || symbol,
                         line: lexer.yylineno,
                         loc: yyloc,
-                        expected: expected,
+                        expected: expected
                     });
                 }
                 if (action[0] instanceof Array && action.length > 1) {
@@ -6128,12 +6128,12 @@ var parser = (function () {
                             first_line: lstack[lstack.length - (len || 1)].first_line,
                             last_line: lstack[lstack.length - 1].last_line,
                             first_column: lstack[lstack.length - (len || 1)].first_column,
-                            last_column: lstack[lstack.length - 1].last_column,
+                            last_column: lstack[lstack.length - 1].last_column
                         };
                         if (ranges) {
                             yyval._$.range = [
                                 lstack[lstack.length - (len || 1)].range[0],
-                                lstack[lstack.length - 1].range[1],
+                                lstack[lstack.length - 1].range[1]
                             ];
                         }
                         r = this.performAction.apply(
@@ -6145,7 +6145,7 @@ var parser = (function () {
                                 sharedState.yy,
                                 action[1],
                                 vstack,
-                                lstack,
+                                lstack
                             ].concat(args)
                         );
                         if (typeof r !== "undefined") {
@@ -6167,7 +6167,7 @@ var parser = (function () {
                 }
             }
             return true;
-        },
+        }
     };
 
     var AST = {
@@ -6175,7 +6175,7 @@ var parser = (function () {
             return {
                 type: type,
                 value: value,
-                children: children,
+                children: children
             };
         },
 
@@ -6193,7 +6193,7 @@ var parser = (function () {
             n.ecol = pos[3];
 
             return n;
-        },
+        }
     };
 
     var lc = function (lc1) {
@@ -6225,7 +6225,7 @@ var parser = (function () {
                     first_line: 1,
                     first_column: 0,
                     last_line: 1,
-                    last_column: 0,
+                    last_column: 0
                 };
                 if (this.options.ranges) {
                     this.yylloc.range = [0, 0];
@@ -6283,7 +6283,7 @@ var parser = (function () {
                         ? (lines.length === oldLines.length ? this.yylloc.first_column : 0) +
                           oldLines[oldLines.length - lines.length].length -
                           lines[0].length
-                        : this.yylloc.first_column - len,
+                        : this.yylloc.first_column - len
                 };
 
                 if (this.options.ranges) {
@@ -6312,7 +6312,7 @@ var parser = (function () {
                         {
                             text: "",
                             token: null,
-                            line: this.yylineno,
+                            line: this.yylineno
                         }
                     );
                 }
@@ -6361,7 +6361,7 @@ var parser = (function () {
                             first_line: this.yylloc.first_line,
                             last_line: this.last_line,
                             first_column: this.yylloc.first_column,
-                            last_column: this.yylloc.last_column,
+                            last_column: this.yylloc.last_column
                         },
                         yytext: this.yytext,
                         match: this.match,
@@ -6373,7 +6373,7 @@ var parser = (function () {
                         _input: this._input,
                         yy: this.yy,
                         conditionStack: this.conditionStack.slice(0),
-                        done: this.done,
+                        done: this.done
                     };
                     if (this.options.ranges) {
                         backup.yylloc.range = this.yylloc.range.slice(0);
@@ -6391,7 +6391,7 @@ var parser = (function () {
                     last_column: lines
                         ? lines[lines.length - 1].length -
                           lines[lines.length - 1].match(/\r?\n?/)[0].length
-                        : this.yylloc.last_column + match[0].length,
+                        : this.yylloc.last_column + match[0].length
                 };
                 this.yytext += match[0];
                 this.match += match[0];
@@ -6481,7 +6481,7 @@ var parser = (function () {
                         {
                             text: "",
                             token: null,
-                            line: this.yylineno,
+                            line: this.yylineno
                         }
                     );
                 }
@@ -6779,7 +6779,7 @@ var parser = (function () {
                 /^(?:,)/,
                 /^(?:$)/,
                 /^(?:[A-Za-z_\$][A-Za-z0-9_]*)/,
-                /^(?:.)/,
+                /^(?:.)/
             ],
             conditions: {
                 INITIAL: {
@@ -6787,11 +6787,11 @@ var parser = (function () {
                         0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
                         20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37,
                         38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55,
-                        56, 57,
+                        56, 57
                     ],
-                    inclusive: true,
-                },
-            },
+                    inclusive: true
+                }
+            }
         };
         return lexer;
     })();

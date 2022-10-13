@@ -44,7 +44,7 @@ var priv = {
     InputInputEventHandler: function (evt) {
         this._value = this.rendNodeInput.value;
         this.board.update();
-    },
+    }
 };
 
 /**
@@ -130,7 +130,7 @@ JXG.createInput = function (board, parents, attributes) {
             '<span></span><input type="text" maxlength="' +
             attr.maxlength +
             '" style="width:100%"/>' +
-            "</span>",
+            "</span>"
     ];
 
     // 1. Create input element with empty label
@@ -258,5 +258,5 @@ JXG.createInput = function (board, parents, attributes) {
 JXG.registerElement("input", JXG.createInput);
 
 export default {
-    createInput: JXG.createInput,
+    createInput: JXG.createInput
 };

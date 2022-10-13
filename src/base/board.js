@@ -597,7 +597,7 @@ JXG.Board = function (
      */
     this.selectingBox = [
         [0, 0],
-        [0, 0],
+        [0, 0]
     ];
 
     this.mathLib = Math; // Math or JXG.Math.IntervalArithmetic
@@ -629,7 +629,7 @@ JXG.Board = function (
         zoom100: "zoom100",
         zoomElements: "zoomElements",
         remove: "removeObject",
-        removeObject: "removeObject",
+        removeObject: "removeObject"
     };
 };
 
@@ -688,7 +688,7 @@ JXG.extend(
                     "W",
                     "X",
                     "Y",
-                    "Z",
+                    "Z"
                 ];
             } else if (object.type === Const.OBJECT_TYPE_ANGLE) {
                 possibleNames = [
@@ -716,7 +716,7 @@ JXG.extend(
                     "&phi;",
                     "&chi;",
                     "&psi;",
-                    "&omega;",
+                    "&omega;"
                 ];
             } else {
                 // all other elements get lowercase labels
@@ -747,7 +747,7 @@ JXG.extend(
                     "w",
                     "x",
                     "y",
-                    "z",
+                    "z"
                 ];
             }
 
@@ -1135,7 +1135,7 @@ JXG.extend(
                                 offset.push(
                                     Statistics.subtract(dragEl.coords.scrCoords.slice(1), [
                                         x,
-                                        y,
+                                        y
                                     ])
                                 );
                             } else {
@@ -1365,7 +1365,7 @@ JXG.extend(
                 }
 
                 t1 = this.create("transform", [alpha, [fix[1], fix[2]]], {
-                    type: "rotate",
+                    type: "rotate"
                 });
                 t1.update();
 
@@ -1374,11 +1374,11 @@ JXG.extend(
                     d = Geometry.distance(np, fix) / Geometry.distance(op, fix);
 
                     t3 = this.create("transform", [-fix[1], -fix[2]], {
-                        type: "translate",
+                        type: "translate"
                     });
                     t4 = this.create("transform", [d, d], { type: "scale" });
                     t5 = this.create("transform", [fix[1], fix[2]], {
-                        type: "translate",
+                        type: "translate"
                     });
                     t1.melt(t3).melt(t4).melt(t5);
                 }
@@ -1446,7 +1446,7 @@ JXG.extend(
 
                 // Rotate and scale by the movement of the second finger
                 t1 = this.create("transform", [-fix[1], -fix[2]], {
-                    type: "translate",
+                    type: "translate"
                 });
                 t2 = this.create("transform", [alpha], { type: "rotate" });
                 t1.melt(t2);
@@ -1456,7 +1456,7 @@ JXG.extend(
                     t1.melt(t3);
                 }
                 t4 = this.create("transform", [fix[1], fix[2]], {
-                    type: "translate",
+                    type: "translate"
                 });
                 t1.melt(t4);
 
@@ -1837,7 +1837,7 @@ JXG.extend(
                     "fullscreenchange",
                     "mozfullscreenchange",
                     "webkitfullscreenchange",
-                    "msfullscreenchange",
+                    "msfullscreenchange"
                 ],
                 le = events.length;
 
@@ -1880,7 +1880,7 @@ JXG.extend(
                     "fullscreenchange",
                     "mozfullscreenchange",
                     "webkitfullscreenchange",
-                    "msfullscreenchange",
+                    "msfullscreenchange"
                 ],
                 le = events.length;
 
@@ -2104,11 +2104,11 @@ JXG.extend(
             // Compute the angle of the two finger directions
             dir1 = [
                 evt.touches[0].clientX - this.prevCoords[0][0],
-                evt.touches[0].clientY - this.prevCoords[0][1],
+                evt.touches[0].clientY - this.prevCoords[0][1]
             ];
             dir2 = [
                 evt.touches[1].clientX - this.prevCoords[1][0],
-                evt.touches[1].clientY - this.prevCoords[1][1],
+                evt.touches[1].clientY - this.prevCoords[1][1]
             ];
 
             if (
@@ -2137,7 +2137,7 @@ JXG.extend(
             this.prevScale = evt.scale;
             this.prevCoords = [
                 [evt.touches[0].clientX, evt.touches[0].clientY],
-                [evt.touches[1].clientX, evt.touches[1].clientY],
+                [evt.touches[1].clientX, evt.touches[1].clientY]
             ];
 
             c = new Coords(Const.COORDS_BY_SCREEN, this.getMousePosition(evt, 0), this);
@@ -2207,7 +2207,7 @@ JXG.extend(
             );
             this.prevCoords = [
                 [evt.touches[0].clientX, evt.touches[0].clientY],
-                [evt.touches[1].clientX, evt.touches[1].clientY],
+                [evt.touches[1].clientX, evt.touches[1].clientY]
             ];
             this.isPreviousGesture = "none";
 
@@ -2297,7 +2297,7 @@ JXG.extend(
                 this._board_touches.push({
                     pointerId: evt.pointerId,
                     clientX: evt.clientX,
-                    clientY: evt.clientY,
+                    clientY: evt.clientY
                 });
             }
 
@@ -2476,7 +2476,7 @@ JXG.extend(
                 Yprev: NaN,
                 Xstart: [],
                 Ystart: [],
-                Zstart: [],
+                Zstart: []
             };
 
             // If no draggable object can be found, get out here immediately
@@ -2503,7 +2503,7 @@ JXG.extend(
                     j =
                         this.touches.push({
                             obj: target,
-                            targets: [target_obj],
+                            targets: [target_obj]
                         }) - 1;
                 }
 
@@ -2935,7 +2935,7 @@ JXG.extend(
                             Yprev: NaN,
                             Xstart: [],
                             Ystart: [],
-                            Zstart: [],
+                            Zstart: []
                         };
 
                         if (
@@ -3253,7 +3253,7 @@ JXG.extend(
                     if (found) {
                         this.touches.push({
                             obj: tmpTouches[i].obj,
-                            targets: [],
+                            targets: []
                         });
 
                         for (j = 0; j < touchTargets.length; j++) {
@@ -3266,7 +3266,7 @@ JXG.extend(
                                     Yprev: NaN,
                                     Xstart: touchTargets[j].Xstart,
                                     Ystart: touchTargets[j].Ystart,
-                                    Zstart: touchTargets[j].Zstart,
+                                    Zstart: touchTargets[j].Zstart
                                 });
                             }
                         }
@@ -3369,9 +3369,9 @@ JXG.extend(
                             X: pos[0],
                             Y: pos[1],
                             Xprev: NaN,
-                            Yprev: NaN,
-                        },
-                    ],
+                            Yprev: NaN
+                        }
+                    ]
                 };
                 this.mouse.obj = elements[elements.length - 1];
 
@@ -3814,7 +3814,7 @@ JXG.extend(
             this.resizeContainer(w, h, true);
             this._prevDim = {
                 w: w,
-                h: h,
+                h: h
             };
         },
 
@@ -3932,7 +3932,7 @@ JXG.extend(
                 options = {
                     root: null,
                     rootMargin: "0px",
-                    threshold: 0.8,
+                    threshold: 0.8
                 };
 
             try {
@@ -4541,7 +4541,7 @@ JXG.extend(
                     bb[0] + dX * lr,
                     bb[1] - dY * tr,
                     bb[2] - dX * (1 - lr),
-                    bb[3] + dY * (1 - tr),
+                    bb[3] + dY * (1 - tr)
                 ],
                 this.keepaspectratio,
                 "update"
@@ -4581,7 +4581,7 @@ JXG.extend(
                     bb[0] + dX * lr,
                     bb[1] - dY * tr,
                     bb[2] - dX * (1 - lr),
-                    bb[3] + dY * (1 - tr),
+                    bb[3] + dY * (1 - tr)
                 ],
                 this.keepaspectratio,
                 "update"
@@ -4891,7 +4891,7 @@ JXG.extend(
                 name: "Ursprung",
                 withLabel: false,
                 visible: false,
-                fixed: true,
+                fixed: true
             });
 
             p2 = this.create("point", [1, 0], {
@@ -4899,7 +4899,7 @@ JXG.extend(
                 name: "Punkt_1_0",
                 withLabel: false,
                 visible: false,
-                fixed: true,
+                fixed: true
             });
 
             p3 = this.create("point", [0, 1], {
@@ -4907,21 +4907,21 @@ JXG.extend(
                 name: "Punkt_0_1",
                 withLabel: false,
                 visible: false,
-                fixed: true,
+                fixed: true
             });
 
             this.create("line", [p1, p2], {
                 id: this.id + "gXLe0",
                 name: "X-Achse",
                 withLabel: false,
-                visible: false,
+                visible: false
             });
 
             this.create("line", [p1, p3], {
                 id: this.id + "gYLe0",
                 name: "Y-Achse",
                 withLabel: false,
-                visible: false,
+                visible: false
             });
 
             return this;
@@ -5822,7 +5822,7 @@ JXG.extend(
                                 strokecolor: o.visProp.strokecolor,
                                 fillcolor: o.visProp.fillcolor,
                                 highlightstrokecolor: o.visProp.highlightstrokecolor,
-                                highlightfillcolor: o.visProp.highlightfillcolor,
+                                highlightfillcolor: o.visProp.highlightfillcolor
                             };
                         }
                         o.setAttribute({
@@ -5841,7 +5841,7 @@ JXG.extend(
                             highlightfillcolor: Color.rgb2cb(
                                 Type.evaluate(o.visPropOriginal.highlightfillcolor),
                                 deficiency
-                            ),
+                            )
                         });
                     } else if (Type.exists(o.visPropOriginal)) {
                         JXG.extend(o.visProp, o.visPropOriginal);
@@ -6104,7 +6104,7 @@ JXG.extend(
             this.selectionPolygon.setAttribute({ visible: true });
             this.selectingBox = [
                 [0, 0],
-                [0, 0],
+                [0, 0]
             ];
             this._setSelectionPolygonFromBox();
             this.selectionPolygon.fullUpdate();
@@ -6122,7 +6122,7 @@ JXG.extend(
             this.selectionPolygon.setAttribute({ visible: false });
             return [
                 this.selectionPolygon.vertices[0].coords,
-                this.selectionPolygon.vertices[2].coords,
+                this.selectionPolygon.vertices[2].coords
             ];
         },
 
@@ -6136,7 +6136,7 @@ JXG.extend(
             this.isSelecting = true;
             this.selectingBox = [
                 [pos[0], pos[1]],
-                [pos[0], pos[1]],
+                [pos[0], pos[1]]
             ];
             this._setSelectionPolygonFromBox();
         },
@@ -6177,19 +6177,19 @@ JXG.extend(
 
             this.selectionPolygon.vertices[0].setPositionDirectly(JXG.COORDS_BY_SCREEN, [
                 A[0],
-                A[1],
+                A[1]
             ]);
             this.selectionPolygon.vertices[1].setPositionDirectly(JXG.COORDS_BY_SCREEN, [
                 A[0],
-                B[1],
+                B[1]
             ]);
             this.selectionPolygon.vertices[2].setPositionDirectly(JXG.COORDS_BY_SCREEN, [
                 B[0],
-                B[1],
+                B[1]
             ]);
             this.selectionPolygon.vertices[3].setPositionDirectly(JXG.COORDS_BY_SCREEN, [
                 B[0],
-                A[1],
+                A[1]
             ]);
         },
 
@@ -6225,7 +6225,7 @@ JXG.extend(
                             [0, 0],
                             [0, 0],
                             [0, 0],
-                            [0, 0],
+                            [0, 0]
                         ],
                         selectionattr
                     );
@@ -6699,7 +6699,7 @@ JXG.extend(
                 inner_node._cssFullscreenStore = {
                     id: fullscreenElement.id,
                     isFullscreen: true,
-                    margin: inner_node.style.margin,
+                    margin: inner_node.style.margin
                     // width: inner_node.style.width
                     // scale: res.scale,
                     // vshift: res.vshift
@@ -6831,7 +6831,7 @@ JXG.extend(
                             [
                                 function () {
                                     return alpha;
-                                },
+                                }
                             ],
                             { type: "rotate" }
                         ),
@@ -6846,7 +6846,7 @@ JXG.extend(
                                 },
                                 function () {
                                     return c1.Y(t1);
-                                },
+                                }
                             ],
                             { type: "rotate" }
                         ),
@@ -6858,7 +6858,7 @@ JXG.extend(
                                 },
                                 function () {
                                     return Ty;
-                                },
+                                }
                             ],
                             { type: "translate" }
                         ),
@@ -6945,7 +6945,7 @@ JXG.extend(
                     return this;
                 };
             return new Roulette();
-        },
+        }
     }
 );
 

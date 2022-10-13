@@ -636,7 +636,7 @@ JXG.extend(
                 showFirst: 1, // Show arrow head. 0 if the distance is too small
                 showLast: 1, // Show arrow head. 0 if the distance is too small
                 minLen: minlen,
-                strokeWidth: strokewidth,
+                strokeWidth: strokewidth
             };
         },
 
@@ -1244,7 +1244,7 @@ JXG.extend(
                             try {
                                 /* eslint-disable no-undef */
                                 katex.render(content, el.rendNode, {
-                                    throwOnError: false,
+                                    throwOnError: false
                                 });
                                 /* eslint-enable no-undef */
                             } catch (e) {
@@ -1504,7 +1504,7 @@ JXG.extend(
                 m = [
                     [1, 0, 0],
                     [-ox / ux, 1 / ux, 0],
-                    [oy / uy, 0, -1 / uy],
+                    [oy / uy, 0, -1 / uy]
                 ];
 
             for (i = 0; i < len; i++) {
@@ -1519,7 +1519,7 @@ JXG.extend(
                 [
                     [1, 0, 0],
                     [ox, ux, 0],
-                    [oy, 0, -uy],
+                    [oy, 0, -uy]
                 ],
                 m
             );
@@ -2350,7 +2350,7 @@ JXG.extend(
          * @param {Number} value Layer number
          * @private
          */
-        setLayer: function (el, level) {},
+        setLayer: function (el, level) {}
     }
 );
 

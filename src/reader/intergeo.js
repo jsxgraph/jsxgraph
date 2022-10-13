@@ -199,7 +199,7 @@
 
                 this.objects[node.getAttribute("id")] = {
                     id: node.getAttribute("id"),
-                    coords: null,
+                    coords: null
                 };
                 this.objects[node.getAttribute("id")].coords = parents;
                 this.objects[node.getAttribute("id")].id = node.getAttribute("id");
@@ -217,7 +217,7 @@
 
                 this.objects[node.getAttribute("id")] = {
                     id: node.getAttribute("id"),
-                    coords: null,
+                    coords: null
                 };
                 i = 0;
                 p = node.childNodes[i];
@@ -273,7 +273,7 @@
 
                 this.objects[node.getAttribute("id")] = {
                     id: node.getAttribute("id"),
-                    coords: null,
+                    coords: null
                 };
                 i = 0;
                 p = node.childNodes[i];
@@ -416,7 +416,7 @@
             setAttributes: function (o) {
                 o.setAttribute({
                     strokecolor: this.board.options.point.strokeColor,
-                    fillColor: this.board.options.point.fillColor,
+                    fillColor: this.board.options.point.fillColor
                 });
             },
 
@@ -458,7 +458,7 @@
                 el = this.board.create("line", [c[2], c[0], c[1]], {
                     name: id,
                     strokeColor: "black",
-                    withLabel: true,
+                    withLabel: true
                 });
                 this.objects[id] = el;
             },
@@ -470,7 +470,7 @@
                     c = p.coords;
                     // (a_00,a_11,a_22,a_01,a_12,a_22)
                     p = this.board.create("conic", [c[0], c[4], c[8], c[1], c[5], c[2]], {
-                        name: p.id,
+                        name: p.id
                     });
                     p.exists = true;
                 }
@@ -515,7 +515,7 @@
                     name: param[0],
                     withLabel: true,
                     straightFirst: !isRay,
-                    straightLast: true,
+                    straightLast: true
                 });
                 this.objects[param[0]] = el;
                 this.objects[param[0]].exists = true;
@@ -539,7 +539,7 @@
                             return c[2] - c[0] * p.X() - c[1] * p.Y() - c[2] * p.Z();
                         },
                         c[0],
-                        c[1],
+                        c[1]
                     ],
                     { name: param[0], strokeColor: "black", withLabel: true }
                 );
@@ -560,7 +560,7 @@
                     name: param[0],
                     withLabel: true,
                     straightFirst: !isRay,
-                    straightLast: true,
+                    straightLast: true
                 });
 
                 this.objects[param[0]] = el;
@@ -582,9 +582,9 @@
                     straightLast: true,
                     point: {
                         name: param[0] + "foot",
-                        id: param[0] + "foot",
+                        id: param[0] + "foot"
                     },
-                    withLabel: true,
+                    withLabel: true
                 });
                 this.objects[param[0]] = el;
                 this.objects[param[0]].exists = true;
@@ -603,7 +603,7 @@
                     straightFirst: false,
                     straightLast: false,
                     strokeColor: "black",
-                    withLabel: true,
+                    withLabel: true
                 });
                 this.objects[param[0]] = el;
                 this.objects[param[0]].exists = true;
@@ -617,7 +617,7 @@
                 this.objects[param[0]] = this.board.create("intersection", [l1, l2, 0], {
                     name: param[0],
                     id: param[0],
-                    withLabel: true,
+                    withLabel: true
                 });
                 this.setAttributes(this.objects[param[0]]);
                 this.objects[param[0]].exists = true;
@@ -632,7 +632,7 @@
                 this.objects[param[0]] = this.board.create("line", [c, a, b], {
                     name: param[0],
                     id: param[0],
-                    withLabel: true,
+                    withLabel: true
                 });
                 this.objects[param[0]].exists = true;
             },
@@ -644,7 +644,7 @@
                 this.board.create("glider", [0, 0, l], {
                     name: param[0],
                     id: param[0],
-                    withLabel: true,
+                    withLabel: true
                 });
                 this.objects[param[0]].exists = true;
             },
@@ -660,7 +660,7 @@
                     {
                         name: param[0],
                         id: param[0],
-                        withLabel: true,
+                        withLabel: true
                     }
                 );
 
@@ -682,7 +682,7 @@
                     },
                     function () {
                         return line.point1.Y();
-                    },
+                    }
                 ]);
 
                 q.addConstraint([
@@ -694,7 +694,7 @@
                     },
                     function () {
                         return line.point2.Y();
-                    },
+                    }
                 ]);
 
                 this.setAttributes(p);
@@ -718,7 +718,7 @@
                     withLabel: true,
                     straightFirst: isLine,
                     straightLast: true,
-                    strokeColor: "#000000",
+                    strokeColor: "#000000"
                 });
 
                 this.objects[param[0]] = el;
@@ -735,7 +735,7 @@
                 el2 = this.addPoint(this.objects[param[2]]);
 
                 el = this.board.create("midpoint", [el1.id, el2.id], {
-                    name: param[0],
+                    name: param[0]
                 });
 
                 this.setAttributes(el);
@@ -746,7 +746,7 @@
                 var param = this.readParams(node),
                     l = this.board.select(param[1]),
                     el = this.board.create("midpoint", [l.point1, l.point2], {
-                        name: param[0],
+                        name: param[0]
                     });
 
                 this.setAttributes(el);
@@ -767,9 +767,9 @@
                     id: param[0],
                     point: {
                         name: param[0] + "c",
-                        id: param[0] + "c",
+                        id: param[0] + "c"
                     },
-                    withLabel: true,
+                    withLabel: true
                 });
                 this.objects[param[0]].exists = true;
             },
@@ -785,7 +785,7 @@
                             },
                             function () {
                                 return c.center.Y();
-                            },
+                            }
                         ],
                         { name: param[0], id: param[0], withLabel: true }
                     );
@@ -815,16 +815,16 @@
                         },
                         function () {
                             return JXG.Math.matVecMult(c.quadraticform, p.coords.usrCoords)[2];
-                        },
+                        }
                     ],
                     { visible: false }
                 );
 
                 i1 = this.board.create("intersection", [c, polar, 0], {
-                    visible: false,
+                    visible: false
                 });
                 i2 = this.board.create("intersection", [c, polar, 1], {
-                    visible: false,
+                    visible: false
                 });
                 t1 = this.board.create("tangent", [i1, c]);
                 t2 = this.board.create("tangent", [i2, c]);
@@ -845,12 +845,12 @@
                 p1 = this.board.create("intersection", [c1, c2, 0], {
                     name: param[0],
                     id: param[0],
-                    withLabel: true,
+                    withLabel: true
                 });
                 p2 = this.board.create("intersection", [c1, c2, 1], {
                     name: param[1],
                     id: param[1],
-                    withLabel: true,
+                    withLabel: true
                 });
                 this.setAttributes(p1);
                 this.setAttributes(p2);
@@ -868,12 +868,12 @@
                 p1 = this.board.create("intersection", [c1, c2, 0], {
                     name: param[0],
                     id: param[0],
-                    withLabel: true,
+                    withLabel: true
                 });
                 p2 = this.board.create("intersection", [c1, c2, 1], {
                     name: param[1],
                     id: param[1],
-                    withLabel: true,
+                    withLabel: true
                 });
                 this.setAttributes(p1);
                 this.setAttributes(p2);
@@ -889,7 +889,7 @@
                 this.board.create("circle", [el1.id, el2.id], {
                     name: param[0],
                     id: param[0],
-                    withLabel: true,
+                    withLabel: true
                 });
 
                 this.objects[param[0]].exists = true;
@@ -905,7 +905,7 @@
                 p2 = this.board.create("otherintersection", [c1, c2, p1], {
                     name: param[0],
                     id: param[0],
-                    withLabel: true,
+                    withLabel: true
                 });
                 this.setAttributes(p2);
                 this.objects[param[0]].exists = true;
@@ -929,15 +929,15 @@
                         name: param[0],
                         id: param[0],
                         straightFirst: true,
-                        straightLast: true,
+                        straightLast: true
                     },
                     line2: {
                         name: param[1],
                         id: param[1],
                         straightFirst: true,
-                        straightLast: true,
+                        straightLast: true
                     },
-                    withLabel: true,
+                    withLabel: true
                 });
 
                 this.objects[param[0]].exists = true;
@@ -967,7 +967,7 @@
                 this.board.create("polygon", p, {
                     name: param[0],
                     id: param[0],
-                    withLabel: true,
+                    withLabel: true
                 });
                 this.objects[param[0]].exists = true;
             },
@@ -1142,7 +1142,7 @@
                 for (s = 0; s < tree[0].childNodes.length; s++) {
                     this.readDisplayProperty(tree, s);
                 }
-            },
+            }
         }
     );
 

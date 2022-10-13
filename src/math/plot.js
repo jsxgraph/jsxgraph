@@ -1250,7 +1250,7 @@ Mat.Plot = {
             left_y: y_l,
             right_x: x_r,
             right_y: y_r,
-            t: t,
+            t: t
         };
     },
 
@@ -1680,7 +1680,7 @@ Mat.Plot = {
                 t: t_approx, //t_values[pos],
                 x: x_values[pos],
                 y: y_values[pos],
-                type: "other",
+                type: "other"
             };
 
         if (pos < 5) {
@@ -1906,7 +1906,7 @@ Mat.Plot = {
         return [
             group[pos].i + degree / 2,
             pos_mean,
-            t_values[Math.floor(pos_mean)] + h * (pos_mean - Math.floor(pos_mean)),
+            t_values[Math.floor(pos_mean)] + h * (pos_mean - Math.floor(pos_mean))
         ];
     },
 
@@ -2440,7 +2440,7 @@ Mat.Plot = {
                     t: comp.t_values[0],
                     x: comp.x_values[0],
                     y: comp.y_values[0],
-                    type: "borderleft",
+                    type: "borderleft"
                 });
             }
             if (groups[groups.length - 1].type !== "borderright") {
@@ -2450,7 +2450,7 @@ Mat.Plot = {
                     t: comp.t_values[le - 1],
                     x: comp.x_values[le - 1],
                     y: comp.y_values[le - 1],
-                    type: "borderright",
+                    type: "borderright"
                 });
             }
 
@@ -2599,7 +2599,7 @@ Mat.Plot = {
      */
     updateParametricCurve: function (curve, mi, ma) {
         return this.updateParametricCurve_v2(curve, mi, ma);
-    },
+    }
 };
 
 export default Mat.Plot;

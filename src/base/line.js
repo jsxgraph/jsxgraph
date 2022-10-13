@@ -140,7 +140,7 @@ JXG.Line = function (board, p1, p2, attributes) {
         getYIntersect: "getRise",
         getAngle: "getAngle",
         L: "L",
-        length: "L",
+        length: "L"
     });
 };
 
@@ -356,13 +356,13 @@ JXG.extend(
                     if ((d1 > d2 && drag2) || (d1 <= d2 && drag2 && !drag1)) {
                         this.point2.setPositionDirectly(Const.COORDS_BY_USER, [
                             this.point1.X() + ((this.point2.X() - this.point1.X()) * dnew) / d,
-                            this.point1.Y() + ((this.point2.Y() - this.point1.Y()) * dnew) / d,
+                            this.point1.Y() + ((this.point2.Y() - this.point1.Y()) * dnew) / d
                         ]);
                         this.point2.fullUpdate();
                     } else if ((d1 <= d2 && drag1) || (d1 > d2 && drag1 && !drag2)) {
                         this.point1.setPositionDirectly(Const.COORDS_BY_USER, [
                             this.point2.X() + ((this.point1.X() - this.point2.X()) * dnew) / d,
-                            this.point2.Y() + ((this.point1.Y() - this.point2.Y()) * dnew) / d,
+                            this.point2.Y() + ((this.point1.Y() - this.point2.Y()) * dnew) / d
                         ]);
                         this.point1.fullUpdate();
                     }
@@ -376,13 +376,13 @@ JXG.extend(
                     if (drag2) {
                         this.point2.setPositionDirectly(Const.COORDS_BY_USER, [
                             this.point1.X() + (x * dnew) / d,
-                            this.point1.Y() + (y * dnew) / d,
+                            this.point1.Y() + (y * dnew) / d
                         ]);
                         this.point2.fullUpdate();
                     } else if (drag1) {
                         this.point1.setPositionDirectly(Const.COORDS_BY_USER, [
                             this.point2.X() + (x * dnew) / d,
-                            this.point2.Y() + (y * dnew) / d,
+                            this.point2.Y() + (y * dnew) / d
                         ]);
                         this.point1.fullUpdate();
                     }
@@ -535,8 +535,8 @@ JXG.extend(
                     w1,
                     ")*(",
                     v2,
-                    ")",
-                ].join(""),
+                    ")"
+                ].join("")
             ];
         },
 
@@ -597,7 +597,7 @@ JXG.extend(
                 Const.COORDS_BY_USER,
                 [
                     0.5 * (this.point2.X() + this.point1.X()),
-                    0.5 * (this.point2.Y() + this.point1.Y()),
+                    0.5 * (this.point2.Y() + this.point1.Y())
                 ],
                 this.board
             );
@@ -716,7 +716,7 @@ JXG.extend(
             copy.visProp.layer = this.board.options.layer.trace;
             Type.clearVisPropOld(copy);
             copy.visPropCalc = {
-                visible: Type.evaluate(copy.visProp.visible),
+                visible: Type.evaluate(copy.visProp.visible)
             };
 
             s = this.getSlope();
@@ -807,7 +807,7 @@ JXG.extend(
                             c2.usrCoords
                         );
                         t = this.board.create("transform", dc.slice(1), {
-                            type: "translate",
+                            type: "translate"
                         });
                         t.applyOnce([this.point1, this.point2]);
                     }
@@ -933,7 +933,7 @@ JXG.extend(
                 Math.min(p1c[1], p2c[1]),
                 Math.max(p1c[2], p2c[2]),
                 Math.max(p1c[1], p2c[1]),
-                Math.min(p1c[2], p2c[2]),
+                Math.min(p1c[2], p2c[2])
             ];
         },
 
@@ -941,7 +941,7 @@ JXG.extend(
         remove: function () {
             this.removeAllTicks();
             GeometryElement.prototype.remove.call(this);
-        },
+        }
 
         // hideElement: function () {
         //     var i;
@@ -1193,7 +1193,7 @@ JXG.createLine = function (board, parents, attributes) {
                 [
                     c[2]() * c[2]() + c[1]() * c[1](),
                     c[2]() - c[1]() * c[0]() + c[2](),
-                    -c[1]() - c[2]() * c[0]() - c[1](),
+                    -c[1]() - c[2]() * c[0]() - c[1]()
                 ],
                 attr
             );
@@ -1209,7 +1209,7 @@ JXG.createLine = function (board, parents, attributes) {
                     },
                     function () {
                         return (-c[1]() - c[2]() * c[0]() - c[1]()) * 0.5;
-                    },
+                    }
                 ],
                 attr
             );
@@ -1223,7 +1223,7 @@ JXG.createLine = function (board, parents, attributes) {
                 [
                     c[2]() * c[2]() + c[1]() * c[1](),
                     -c[1]() * c[0]() + c[2](),
-                    -c[2]() * c[0]() - c[1](),
+                    -c[2]() * c[0]() - c[1]()
                 ],
                 attr
             );
@@ -1239,7 +1239,7 @@ JXG.createLine = function (board, parents, attributes) {
                     },
                     function () {
                         return -c[2]() * c[0]() - c[1]();
-                    },
+                    }
                 ],
                 attr
             );
@@ -1289,9 +1289,9 @@ JXG.createLine = function (board, parents, attributes) {
                     return [
                         (c[2] * c[2] + c[1] * c[1]) * 0.5,
                         (c[2] - c[1] * c[0] + c[2]) * 0.5,
-                        (-c[1] - c[2] * c[0] - c[1]) * 0.5,
+                        (-c[1] - c[2] * c[0] - c[1]) * 0.5
                     ];
-                },
+                }
             ],
             attr
         );
@@ -1306,9 +1306,9 @@ JXG.createLine = function (board, parents, attributes) {
                     return [
                         c[2] * c[2] + c[1] * c[1],
                         -c[1] * c[0] + c[2],
-                        -c[2] * c[0] - c[1],
+                        -c[2] * c[0] - c[1]
                     ];
-                },
+                }
             ],
             attr
         );
@@ -1553,7 +1553,7 @@ JXG.createAxis = function (board, parents, attributes) {
         el.defaultTicks.dump = false;
         el.elType = "axis";
         el.subs = {
-            ticks: el.defaultTicks,
+            ticks: el.defaultTicks
         };
         el.inherits.push(el.defaultTicks);
     } else {
@@ -1657,7 +1657,7 @@ JXG.createTangent = function (board, parents, attributes) {
                     },
                     function () {
                         return -Numerics.D(c.X)(p.position);
-                    },
+                    }
                 ],
                 attributes
             );
@@ -1859,7 +1859,7 @@ JXG.createTangent = function (board, parents, attributes) {
                             p2 = [1, p1[1] + dx, p1[2] + dy];
                         }
                         return p1[1] - p2[1];
-                    },
+                    }
                 ],
                 attributes
             );
@@ -1945,7 +1945,7 @@ JXG.createTangent = function (board, parents, attributes) {
                     }
 
                     return el.X(i) - el.X(i + 1);
-                },
+                }
             ],
             attributes
         );
@@ -1970,7 +1970,7 @@ JXG.createTangent = function (board, parents, attributes) {
                 },
                 function () {
                     return Mat.matVecMult(c.quadraticform, p.coords.usrCoords)[2];
-                },
+                }
             ],
             attributes
         );
@@ -2058,9 +2058,9 @@ JXG.createRadicalAxis = function (board, parents, attributes) {
 
                 return Mat.matVecMult(Mat.transpose([a.slice(0, 3), b.slice(0, 3)]), [
                     b[3],
-                    -a[3],
+                    -a[3]
                 ]);
-            },
+            }
         ],
         attributes
     );
@@ -2199,5 +2199,5 @@ export default {
     createAxis: JXG.createAxis,
     createArrow: JXG.createArrow,
     createRadicalAxis: JXG.createRadicalAxis,
-    createPolarLine: JXG.createPolarLine,
+    createPolarLine: JXG.createPolarLine
 };

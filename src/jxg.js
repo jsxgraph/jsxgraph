@@ -107,7 +107,7 @@ jxg.defineConstant = function (object, name, value, ignoreRedefine) {
         value: value,
         writable: false,
         enumerable: true,
-        configurable: false,
+        configurable: false
     });
 };
 
@@ -340,7 +340,7 @@ jxg.extend(
          */
         debug: function (s) {
             jxg.debugInt.apply(this, arguments);
-        },
+        }
     }
 );
 

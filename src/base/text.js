@@ -50,7 +50,7 @@ var priv = {
         this._val = parseFloat(this.rendNodeRange.value);
         this.rendNodeOut.value = this.rendNodeRange.value;
         this.board.update();
-    },
+    }
 };
 
 /**
@@ -111,7 +111,7 @@ JXG.Text = function (board, coords, attributes, content) {
     this.methodMap = Type.deepCopy(this.methodMap, {
         setText: "setTextJessieCode",
         // free: 'free',
-        move: "setCoords",
+        move: "setCoords"
     });
 };
 
@@ -883,7 +883,7 @@ JXG.extend(
                 p = [
                     this.relativeCoords.usrCoords[1],
                     this.relativeCoords.usrCoords[2],
-                    this.orgText,
+                    this.orgText
                 ];
             } else {
                 // Other texts
@@ -911,7 +911,7 @@ JXG.extend(
                 c[1],
                 c[2] + this.size[1] / this.board.unitY,
                 c[1] + this.size[0] / this.board.unitX,
-                c[2],
+                c[2]
             ];
         },
 
@@ -1020,7 +1020,7 @@ JXG.extend(
                 optimum = {
                     conflicts: Infinity,
                     angle: 0,
-                    r: 0,
+                    r: 0
                 },
                 max_r,
                 delta_r,
@@ -1113,7 +1113,7 @@ JXG.extend(
             }
 
             return this;
-        },
+        }
     }
 );
 
@@ -1257,7 +1257,7 @@ JXG.createHTMLSlider = function (board, parents, attributes) {
         parents[0][1],
         '<form style="display:inline">' +
             '<input type="range" /><span></span><input type="text" />' +
-            "</form>",
+            "</form>"
     ];
 
     t = JXG.createText(board, par, attr);
@@ -1320,5 +1320,5 @@ JXG.registerElement("htmlslider", JXG.createHTMLSlider);
 export default {
     Text: JXG.Text,
     createText: JXG.createText,
-    createHTMLSlider: JXG.createHTMLSlider,
+    createHTMLSlider: JXG.createHTMLSlider
 };

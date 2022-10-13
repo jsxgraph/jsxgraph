@@ -222,7 +222,7 @@ JXG.FileReader = {
         if (Type.isFunction(callback)) {
             callback(board);
         }
-    },
+    }
 };
 
 // The following code is vbscript. This is a workaround to enable binary data downloads via AJAX in

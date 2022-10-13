@@ -141,7 +141,7 @@ Mat.Clip = {
             pathname: pathname,
             done: false,
             type: type,
-            idx: 0,
+            idx: 0
         };
 
         // Set after initialisation
@@ -166,7 +166,7 @@ Mat.Clip = {
             pos: pos,
             intersection: false,
             coords: coords,
-            elementClass: Const.OBJECT_CLASS_POINT,
+            elementClass: Const.OBJECT_CLASS_POINT
         });
     },
 
@@ -1002,7 +1002,7 @@ Mat.Clip = {
                             pos: i,
                             intersection: false,
                             coords: crds,
-                            elementClass: Const.OBJECT_CLASS_POINT,
+                            elementClass: Const.OBJECT_CLASS_POINT
                         };
 
                         tmp = P[i]._next;
@@ -1663,7 +1663,7 @@ Mat.Clip = {
                         [
                             obj.center.coords.usrCoords[0],
                             obj.center.coords.usrCoords[1] + Math.cos(i * rad + alpha) * r,
-                            obj.center.coords.usrCoords[2] + Math.sin(i * rad + alpha) * r,
+                            obj.center.coords.usrCoords[2] + Math.sin(i * rad + alpha) * r
                         ],
                         board
                     ),
@@ -1694,7 +1694,7 @@ Mat.Clip = {
                         [
                             obj.center.coords.usrCoords[0],
                             obj.center.coords.usrCoords[1] + Math.cos(i * rad) * r,
-                            obj.center.coords.usrCoords[2] + Math.sin(i * rad) * r,
+                            obj.center.coords.usrCoords[2] + Math.sin(i * rad) * r
                         ],
                         board
                     ),
@@ -2247,7 +2247,7 @@ Mat.Clip = {
      */
     difference: function (path1, path2, board) {
         return this.greinerHormann(path1, path2, "difference", board);
-    },
+    }
 }; //);
 
 JXG.extend(Mat.Clip, /** @lends JXG.Math.Clip */ {});

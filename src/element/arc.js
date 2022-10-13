@@ -103,7 +103,7 @@ JXG.createArc = function (board, parents, attributes) {
     points = Type.providePoints(board, parents, attributes, "arc", [
         "center",
         "radiusPoint",
-        "anglePoint",
+        "anglePoint"
     ]);
     if (points === false || points.length < 3) {
         throw new Error(
@@ -368,7 +368,7 @@ JXG.createArc = function (board, parents, attributes) {
             Const.COORDS_BY_USER,
             [
                 pmc[1] + Math.cos(angle * 0.5) * bxminusax - Math.sin(angle * 0.5) * byminusay,
-                pmc[2] + Math.sin(angle * 0.5) * bxminusax + Math.cos(angle * 0.5) * byminusay,
+                pmc[2] + Math.sin(angle * 0.5) * bxminusax + Math.cos(angle * 0.5) * byminusay
             ],
             this.board
         );
@@ -398,7 +398,7 @@ JXG.createArc = function (board, parents, attributes) {
         center: "center",
         radiuspoint: "radiuspoint",
         anglepoint: "anglepoint",
-        Value: "Value",
+        Value: "Value"
     });
 
     el.prepareUpdate().update();
@@ -459,7 +459,7 @@ JXG.createSemicircle = function (board, parents, attributes) {
     el.elType = "semicircle";
     el.setParents([points[0].id, points[1].id]);
     el.subs = {
-        midpoint: mp,
+        midpoint: mp
     };
     el.inherits.push(mp);
 
@@ -535,7 +535,7 @@ JXG.createCircumcircleArc = function (board, parents, attributes) {
     el.elType = "circumcirclearc";
     el.setParents([points[0].id, points[1].id, points[2].id]);
     el.subs = {
-        center: mp,
+        center: mp
     };
     el.inherits.push(mp);
 
@@ -634,5 +634,5 @@ export default {
     createSemicircle: JXG.createSemicircle,
     createCircumcircleArc: JXG.createCircumcircleArc,
     createMinorArc: JXG.createMinorArc,
-    createMajorArc: JXG.createMajorArc,
+    createMajorArc: JXG.createMajorArc
 };

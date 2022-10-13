@@ -83,7 +83,7 @@ JXG.CanvasRenderer = function (container, dim) {
             'px" height="',
             dim.height,
             'px"><',
-            "/canvas>",
+            "/canvas>"
         ].join("");
         this.canvasRoot = this.container.ownerDocument.getElementById(this.canvasId);
         this.canvasRoot.style.display = "block";
@@ -106,7 +106,7 @@ JXG.CanvasRenderer = function (container, dim) {
         [10, 10],
         [20, 20],
         [20, 10, 10, 10],
-        [20, 5, 10, 5],
+        [20, 5, 10, 5]
     ];
 };
 
@@ -190,7 +190,7 @@ JXG.extend(
         _rotatePoint: function (angle, x, y) {
             return [
                 x * Math.cos(angle) - y * Math.sin(angle),
-                x * Math.sin(angle) + y * Math.cos(angle),
+                x * Math.sin(angle) + y * Math.cos(angle)
             ];
         },
 
@@ -701,14 +701,14 @@ JXG.extend(
                             [w, -w * 0.5],
                             [0.0, 0.0],
                             [w, w * 0.5],
-                            [w * 0.5, 0.0],
+                            [w * 0.5, 0.0]
                         ];
                     } else if (type === 3) {
                         arrowTail = [
                             [w / 3.0, -w * 0.5],
                             [0.0, -w * 0.5],
                             [0.0, w * 0.5],
-                            [w / 3.0, w * 0.5],
+                            [w / 3.0, w * 0.5]
                         ];
                     } else if (type === 4) {
                         w /= 10;
@@ -726,7 +726,7 @@ JXG.extend(
                             [0.0, 0.0],
                             [2.87, 2.13],
                             [6.47, 2.79],
-                            [10.0, 3.31],
+                            [10.0, 3.31]
                         ];
                         len = arrowTail.length;
                         for (i = 0; i < len; i++) {
@@ -751,7 +751,7 @@ JXG.extend(
                             [0.0, 0.0],
                             [3.19, 1.49],
                             [6.61, 2.37],
-                            [10.0, 3.28],
+                            [10.0, 3.28]
                         ];
                         len = arrowTail.length;
                         for (i = 0; i < len; i++) {
@@ -776,7 +776,7 @@ JXG.extend(
                             [0.0, 0.0],
                             [3.21, 1.33],
                             [6.61, 2.09],
-                            [10.0, 2.84],
+                            [10.0, 2.84]
                         ];
                         len = arrowTail.length;
                         for (i = 0; i < len; i++) {
@@ -795,7 +795,7 @@ JXG.extend(
                             [10.0, 5.2],
                             [5.96, 5.2],
                             [2.01, 3.47],
-                            [0.0, 0.0],
+                            [0.0, 0.0]
                         ];
                         len = arrowTail.length;
                         for (i = 0; i < len; i++) {
@@ -808,7 +808,7 @@ JXG.extend(
                         arrowTail = [
                             [w, -w * 0.5],
                             [0.0, 0.0],
-                            [w, w * 0.5],
+                            [w, w * 0.5]
                         ];
                     }
                 }
@@ -824,14 +824,14 @@ JXG.extend(
                             [-w, -w * 0.5],
                             [0.0, 0.0],
                             [-w, w * 0.5],
-                            [-w * 0.5, 0.0],
+                            [-w * 0.5, 0.0]
                         ];
                     } else if (type === 3) {
                         arrowHead = [
                             [-w / 3.0, -w * 0.5],
                             [0.0, -w * 0.5],
                             [0.0, w * 0.5],
-                            [-w / 3.0, w * 0.5],
+                            [-w / 3.0, w * 0.5]
                         ];
                     } else if (type === 4) {
                         w /= 10;
@@ -849,7 +849,7 @@ JXG.extend(
                             [0.0, 0.0],
                             [2.87, 2.13],
                             [6.47, 2.79],
-                            [10.0, 3.31],
+                            [10.0, 3.31]
                         ];
                         len = arrowHead.length;
                         for (i = 0; i < len; i++) {
@@ -874,7 +874,7 @@ JXG.extend(
                             [0.0, 0.0],
                             [3.19, 1.49],
                             [6.61, 2.37],
-                            [10.0, 3.28],
+                            [10.0, 3.28]
                         ];
                         len = arrowHead.length;
                         for (i = 0; i < len; i++) {
@@ -899,7 +899,7 @@ JXG.extend(
                             [0.0, 0.0],
                             [3.21, 1.33],
                             [6.61, 2.09],
-                            [10.0, 2.84],
+                            [10.0, 2.84]
                         ];
                         len = arrowHead.length;
                         for (i = 0; i < len; i++) {
@@ -918,7 +918,7 @@ JXG.extend(
                             [10.0, 5.2],
                             [5.96, 5.2],
                             [2.01, 3.47],
-                            [0.0, 0.0],
+                            [0.0, 0.0]
                         ];
                         len = arrowHead.length;
                         for (i = 0; i < len; i++) {
@@ -931,7 +931,7 @@ JXG.extend(
                         arrowHead = [
                             [-w, -w * 0.5],
                             [0.0, 0.0],
-                            [-w, w * 0.5],
+                            [-w, w * 0.5]
                         ];
                     }
                 }
@@ -1663,7 +1663,7 @@ JXG.extend(
 
         removeToInsertLater: function () {
             return function () {};
-        },
+        }
     }
 );
 

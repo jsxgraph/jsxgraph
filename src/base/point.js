@@ -261,7 +261,7 @@ JXG.extend(
                     // 10-12
                     "plus",
                     "plus",
-                    "plus",
+                    "plus"
                 ],
                 sizemap = [
                     // 0-2
@@ -271,7 +271,7 @@ JXG.extend(
                     // 7-9
                     2, 3, 4,
                     // 10-12
-                    2, 3, 4,
+                    2, 3, 4
                 ];
 
             this.visProp.face = facemap[i];
@@ -445,14 +445,14 @@ JXG.extend(
             Type.clearVisPropOld(copy);
 
             copy.visPropCalc = {
-                visible: Type.evaluate(copy.visProp.visible),
+                visible: Type.evaluate(copy.visProp.visible)
             };
 
             this.board.renderer.drawPoint(copy);
             this.traces[copy.id] = copy.rendNode;
 
             return this;
-        },
+        }
     }
 );
 
@@ -778,7 +778,7 @@ JXG.createOtherIntersectionPoint = function (board, parents, attributes) {
                 }
 
                 return Geometry.meet(el1.stdform, el2.stdform, 1, el1.board);
-            },
+            }
         ],
         attributes
     );
@@ -929,9 +929,9 @@ JXG.createPolePoint = function (board, parents, attributes) {
                 return [
                     JXG.Math.Numerics.det([s, q[1], q[2]]),
                     JXG.Math.Numerics.det([q[0], s, q[2]]),
-                    JXG.Math.Numerics.det([q[0], q[1], s]),
+                    JXG.Math.Numerics.det([q[0], q[1], s])
                 ];
-            },
+            }
         ],
         attributes
     );
@@ -957,5 +957,5 @@ export default {
     createGlider: JXG.createGlider,
     createIntersection: JXG.createIntersectionPoint,
     createOtherIntersection: JXG.createOtherIntersectionPoint,
-    createPolePoint: JXG.createPolePoint,
+    createPolePoint: JXG.createPolePoint
 };

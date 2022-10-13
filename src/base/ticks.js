@@ -350,7 +350,7 @@ JXG.extend(
             } else {
                 bounds = {
                     lower: this.line.minX(),
-                    upper: this.line.maxX(),
+                    upper: this.line.maxX()
                 };
             }
 
@@ -468,8 +468,8 @@ JXG.extend(
                     return Geometry.projectPointToLine(
                         {
                             coords: {
-                                usrCoords: [1, 0, 0],
-                            },
+                                usrCoords: [1, 0, 0]
+                            }
                         },
                         this.line,
                         this.board
@@ -498,7 +498,7 @@ JXG.extend(
                         [
                             c1z + (c2z - c1z) * ev_a,
                             c1x + (c2x - c1x) * ev_a,
-                            c1y + (c2y - c1y) * ev_a,
+                            c1y + (c2y - c1y) * ev_a
                         ],
                         this.board
                     );
@@ -554,7 +554,7 @@ JXG.extend(
             if (this.line.elementClass === Const.OBJECT_CLASS_CURVE) {
                 return {
                     lower: this.line.minX(),
-                    upper: this.line.maxX(),
+                    upper: this.line.maxX()
                 };
             }
 
@@ -612,13 +612,13 @@ JXG.extend(
                 if (fA) {
                     point1.setCoordinates(Const.COORDS_BY_SCREEN, [
                         point1.scrCoords[1],
-                        point1.scrCoords[2],
+                        point1.scrCoords[2]
                     ]);
                 }
                 if (lA) {
                     point2.setCoordinates(Const.COORDS_BY_SCREEN, [
                         point2.scrCoords[1],
-                        point2.scrCoords[2],
+                        point2.scrCoords[2]
                     ]);
                 }
                 // if (fA) {
@@ -670,7 +670,7 @@ JXG.extend(
 
             return {
                 lower: lowerBound,
-                upper: upperBound,
+                upper: upperBound
             };
         },
 
@@ -695,12 +695,12 @@ JXG.extend(
             dirLine = [
                 p2.usrCoords[0] - p1.usrCoords[0],
                 p2.usrCoords[1] - p1.usrCoords[1],
-                p2.usrCoords[2] - p1.usrCoords[2],
+                p2.usrCoords[2] - p1.usrCoords[2]
             ];
             dirPoint = [
                 point.usrCoords[0] - zero.usrCoords[0],
                 point.usrCoords[1] - zero.usrCoords[1],
-                point.usrCoords[2] - zero.usrCoords[2],
+                point.usrCoords[2] - zero.usrCoords[2]
             ];
             if (Mat.innerProduct(dirLine, dirPoint, 3) < 0) {
                 distance *= -1;
@@ -1002,7 +1002,7 @@ JXG.extend(
             }
             return {
                 x: (point2UsrCoords[1] - point1UsrCoords[1]) / distP1P2,
-                y: (point2UsrCoords[2] - point1UsrCoords[2]) / distP1P2,
+                y: (point2UsrCoords[2] - point1UsrCoords[2]) / distP1P2
             };
         },
 
@@ -1299,7 +1299,7 @@ JXG.extend(
                 x: tick.usrCoords[1] + xa / this.board.unitX,
                 y: tick.usrCoords[2] + ya / this.board.unitY,
                 t: labelText,
-                i: tickNumber,
+                i: tickNumber
             };
         },
 
@@ -1391,7 +1391,7 @@ JXG.extend(
                         highlightStrokeColor: this.board.options.text.strokeColor,
                         highlightStrokeWidth: this.board.options.text.strokeWidth,
                         highlightStrokeOpacity: this.board.options.text.strokeOpacity,
-                        priv: this.visProp.priv,
+                        priv: this.visProp.priv
                     };
                     attr = Type.deepCopy(attr, this.visProp.label);
                     attr.id = this.id + ld.i + "Label" + this.labelCounter;
@@ -1462,7 +1462,7 @@ JXG.extend(
             }
 
             return this;
-        },
+        }
     }
 );
 
@@ -1668,5 +1668,5 @@ export default {
     Ticks: JXG.Ticks,
     createTicks: JXG.createTicks,
     createHashmark: JXG.createHatchmark,
-    createHatchmark: JXG.createHatchmark,
+    createHatchmark: JXG.createHatchmark
 };

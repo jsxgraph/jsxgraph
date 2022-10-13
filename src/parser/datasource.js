@@ -230,7 +230,7 @@ JXG.extend(
             }
 
             return result;
-        },
+        }
     }
 );
 

@@ -191,7 +191,7 @@ JXG.Circle = function (board, method, par1, par2, attributes) {
         radius: "Radius",
         center: "center",
         line: "line",
-        point2: "point2",
+        point2: "point2"
     });
 };
 
@@ -290,7 +290,7 @@ JXG.extend(
             }
 
             return [
-                "((" + g1 + ")-(" + m1 + "))^2 + ((" + g2 + ")-(" + m2 + "))^2 - (" + rsq + ")",
+                "((" + g1 + ")-(" + m1 + "))^2 + ((" + g2 + ")-(" + m2 + "))^2 - (" + rsq + ")"
             ];
         },
 
@@ -392,7 +392,7 @@ JXG.extend(
                     x,
                     x + r * c,
                     x + r,
-                    x + r,
+                    x + r
                 ];
                 this.dataY = [
                     y,
@@ -407,7 +407,7 @@ JXG.extend(
                     y - r,
                     y - r,
                     y - r * c,
-                    y,
+                    y
                 ];
                 this.bezierDegree = 3;
                 for (i = 0; i < this.numberPoints; i++) {
@@ -435,7 +435,7 @@ JXG.extend(
             this.quadraticform = [
                 [mX * mX + mY * mY - r * r, -mX, -mY],
                 [-mX, 1, 0],
-                [-mY, 0, 1],
+                [-mY, 0, 1]
             ];
         },
 
@@ -645,7 +645,7 @@ JXG.extend(
                     id: this.id + "T" + this.numTraces,
                     elementClass: Const.OBJECT_CLASS_CIRCLE,
                     center: {
-                        coords: this.center.coords,
+                        coords: this.center.coords
                     },
                     Radius: function () {
                         return r;
@@ -654,7 +654,7 @@ JXG.extend(
                         return r;
                     },
                     board: this.board,
-                    visProp: Type.deepCopy(this.visProp, this.visProp.traceattributes, true),
+                    visProp: Type.deepCopy(this.visProp, this.visProp.traceattributes, true)
                 };
 
             copy.visProp.layer = this.board.options.layer.trace;
@@ -662,7 +662,7 @@ JXG.extend(
             this.numTraces++;
             Type.clearVisPropOld(copy);
             copy.visPropCalc = {
-                visible: Type.evaluate(copy.visProp.visible),
+                visible: Type.evaluate(copy.visProp.visible)
             };
 
             er = this.board.renderer.enhancedRendering;
@@ -794,7 +794,7 @@ JXG.extend(
                 return this.parents.concat(this.radius);
             }
             return this.parents;
-        },
+        }
     }
 );
 
@@ -918,7 +918,7 @@ JXG.createCircle = function (board, parents, attributes) {
                 obj.center,
                 function () {
                     return 2 * obj.Radius();
-                },
+                }
             ],
             attr
         );
@@ -1012,5 +1012,5 @@ JXG.registerElement("circle", JXG.createCircle);
 
 export default {
     Circle: JXG.Circle,
-    createCircle: JXG.createCircle,
+    createCircle: JXG.createCircle
 };

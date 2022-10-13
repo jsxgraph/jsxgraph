@@ -238,12 +238,12 @@ JXG.Board.prototype.construct = function (string, mode, params, paraIn, macroNam
                             if (typeof defElements == "string") {
                                 defElements = [
                                     JXG.getReference(this, defElements.charAt(0)),
-                                    JXG.getReference(this, defElements.charAt(1)),
+                                    JXG.getReference(this, defElements.charAt(1))
                                 ];
                             } else {
                                 defElements = [
                                     JXG.getReference(this, defElements[0]),
-                                    JXG.getReference(this, defElements[1]),
+                                    JXG.getReference(this, defElements[1])
                                 ];
                             }
                             output.lines.push(this.create("line", defElements, attributes));
@@ -426,7 +426,7 @@ JXG.Board.prototype.construct = function (string, mode, params, paraIn, macroNam
                                     [
                                         defElements[1],
                                         defElements[2],
-                                        JXG.getReference(this, defElements[0]),
+                                        JXG.getReference(this, defElements[0])
                                     ],
                                     attributes
                                 )
@@ -570,7 +570,7 @@ JXG.Board.prototype.construct = function (string, mode, params, paraIn, macroNam
                                     type,
                                     [
                                         JXG.getReference(this, defElements[0]),
-                                        JXG.getReference(this, defElements[1]),
+                                        JXG.getReference(this, defElements[1])
                                     ],
                                     attributes
                                 )
@@ -611,7 +611,7 @@ JXG.Board.prototype.construct = function (string, mode, params, paraIn, macroNam
                                         [
                                             JXG.getReference(this, defElements[0]),
                                             JXG.getReference(this, defElements[1]),
-                                            JXG.getReference(this, defElements[2]),
+                                            JXG.getReference(this, defElements[2])
                                         ],
                                         attributes
                                     )
@@ -642,7 +642,7 @@ JXG.Board.prototype.construct = function (string, mode, params, paraIn, macroNam
                                     "phi",
                                     "chi",
                                     "psi",
-                                    "omega",
+                                    "omega"
                                 ];
                                 type = "";
                                 for (j = 0; j < possibleNames.length; j++) {
@@ -673,7 +673,7 @@ JXG.Board.prototype.construct = function (string, mode, params, paraIn, macroNam
                                         [
                                             JXG.getReference(this, defElements[0]),
                                             JXG.getReference(this, defElements[1]),
-                                            JXG.getReference(this, defElements[2]),
+                                            JXG.getReference(this, defElements[2])
                                         ],
                                         attributes
                                     )

@@ -52,7 +52,7 @@ Mat.BST.prototype.newNode = function (it, le, ri, n) {
         item: it,
         l: le,
         r: ri,
-        N: n,
+        N: n
     };
 };
 

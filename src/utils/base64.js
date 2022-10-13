@@ -222,7 +222,7 @@ JXG.Util.Base64 = {
         }
 
         return ar;
-    },
+    }
 };
 
 export default JXG.Util.Base64;

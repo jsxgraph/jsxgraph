@@ -154,13 +154,13 @@ JXG.createTapemeasure = function (board, parents, attributes) {
     li.getParents = function () {
         return [
             [p1.X(), p1.Y()],
-            [p2.X(), p2.Y()],
+            [p2.X(), p2.Y()]
         ];
     };
 
     li.subs = {
         point1: p1,
-        point2: p2,
+        point2: p2
     };
 
     if (withTicks) {
@@ -168,7 +168,7 @@ JXG.createTapemeasure = function (board, parents, attributes) {
     }
 
     li.methodMap = JXG.deepCopy(li.methodMap, {
-        Value: "Value",
+        Value: "Value"
     });
 
     li.prepareUpdate().update();
@@ -185,5 +185,5 @@ JXG.createTapemeasure = function (board, parents, attributes) {
 JXG.registerElement("tapemeasure", JXG.createTapemeasure);
 
 export default {
-    createTapemeasure: JXG.createTapemeasure,
+    createTapemeasure: JXG.createTapemeasure
 };

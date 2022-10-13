@@ -202,7 +202,7 @@ JXG.createEllipse = function (board, parents, attributes) {
             },
             function () {
                 return (F[0].Y() + F[1].Y()) * 0.5;
-            },
+            }
         ],
         attr_center
     );
@@ -217,7 +217,7 @@ JXG.createEllipse = function (board, parents, attributes) {
                 return 0;
             },
             parents[3],
-            parents[4],
+            parents[4]
         ],
         attr_curve
     );
@@ -245,7 +245,7 @@ JXG.createEllipse = function (board, parents, attributes) {
             curve.quadraticform = [
                 [f * f - bx * bx - by * by, (f * axbx) / r + bx, (f * ayby) / r + by],
                 [(f * axbx) / r + bx, (axbx * axbx) / rr - 1, (axbx * ayby) / rr],
-                [(f * ayby) / r + by, (axbx * ayby) / rr, (ayby * ayby) / rr - 1],
+                [(f * ayby) / r + by, (axbx * ayby) / rr, (ayby * ayby) / rr - 1]
             ];
         }
     };
@@ -277,7 +277,7 @@ JXG.createEllipse = function (board, parents, attributes) {
     curve.midpoint = curve.center = M;
     curve.type = Const.OBJECT_TYPE_CONIC;
     curve.subs = {
-        center: curve.center,
+        center: curve.center
     };
     curve.inherits.push(curve.center, F[0], F[1]);
     if (Type.isPoint(C)) {
@@ -448,7 +448,7 @@ JXG.createHyperbola = function (board, parents, attributes) {
             },
             function () {
                 return (F[0].Y() + F[1].Y()) * 0.5;
-            },
+            }
         ],
         attr_center
     );
@@ -463,7 +463,7 @@ JXG.createHyperbola = function (board, parents, attributes) {
                 return 0;
             },
             parents[3],
-            parents[4],
+            parents[4]
         ],
         attr_curve
     );
@@ -489,7 +489,7 @@ JXG.createHyperbola = function (board, parents, attributes) {
             curve.quadraticform = [
                 [f * f - bx * bx - by * by, (f * axbx) / r + bx, (f * ayby) / r + by],
                 [(f * axbx) / r + bx, (axbx * axbx) / rr - 1, (axbx * ayby) / rr],
-                [(f * ayby) / r + by, (axbx * ayby) / rr, (ayby * ayby) / rr - 1],
+                [(f * ayby) / r + by, (axbx * ayby) / rr, (ayby * ayby) / rr - 1]
             ];
         }
     };
@@ -520,7 +520,7 @@ JXG.createHyperbola = function (board, parents, attributes) {
 
     curve.midpoint = curve.center = M;
     curve.subs = {
-        center: curve.center,
+        center: curve.center
     };
     curve.inherits.push(curve.center, F[0], F[1]);
     if (Type.isPoint(C)) {
@@ -649,7 +649,7 @@ JXG.createParabola = function (board, parents, attributes) {
                 return Geometry.meetLineLine(v, l.stdform, 0, board).usrCoords;
                 */
                 return Geometry.projectPointToLine(F1, l, board).usrCoords;
-            },
+            }
         ],
         attr_center
     );
@@ -665,14 +665,14 @@ JXG.createParabola = function (board, parents, attributes) {
                 return 0;
             },
             parents[2],
-            parents[3],
+            parents[3]
         ],
         attr_curve
     );
 
     curve.midpoint = curve.center = M;
     curve.subs = {
-        center: curve.center,
+        center: curve.center
     };
     curve.inherits.push(curve.center);
 
@@ -691,7 +691,7 @@ JXG.createParabola = function (board, parents, attributes) {
             curve.quadraticform = [
                 [c * c - ab * (px * px + py * py), c * a + ab * px, c * b + ab * py],
                 [c * a + ab * px, -b * b, a * b],
-                [c * b + ab * py, a * b, -a * a],
+                [c * b + ab * py, a * b, -a * a]
             ];
         }
     };
@@ -831,12 +831,12 @@ JXG.createConic = function (board, parents, attributes) {
         rotationMatrix = [
             [1, 0, 0],
             [0, 1, 0],
-            [0, 0, 1],
+            [0, 0, 1]
         ],
         M = [
             [1, 0, 0],
             [0, 1, 0],
-            [0, 0, 1],
+            [0, 0, 1]
         ],
         points = [],
         p = [],
@@ -890,7 +890,7 @@ JXG.createConic = function (board, parents, attributes) {
         definingMat = [
             [0, 0, 0],
             [0, 0, 0],
-            [0, 0, 0],
+            [0, 0, 0]
         ];
         definingMat[0][0] = Type.isFunction(parents[2])
             ? function () {
@@ -959,7 +959,7 @@ JXG.createConic = function (board, parents, attributes) {
             mat = [
                 [0, 0, 0],
                 [0, 0, 0],
-                [0, 0, 0],
+                [0, 0, 0]
             ];
 
         for (i = 0; i < 3; i++) {
@@ -981,7 +981,7 @@ JXG.createConic = function (board, parents, attributes) {
             mat = [
                 [0, 0, 0],
                 [0, 0, 0],
-                [0, 0, 0],
+                [0, 0, 0]
             ];
 
         Mv = Mat.matVecMult(B, p);
@@ -1009,7 +1009,7 @@ JXG.createConic = function (board, parents, attributes) {
                 return 0;
             },
             0,
-            2 * Math.PI,
+            2 * Math.PI
         ],
         attr_curve
     );
@@ -1111,9 +1111,9 @@ JXG.createConic = function (board, parents, attributes) {
                 return [
                     m[1][1] * m[2][2] - m[1][2] * m[1][2],
                     m[1][2] * m[0][2] - m[2][2] * m[0][1],
-                    m[0][1] * m[1][2] - m[1][1] * m[0][2],
+                    m[0][1] * m[1][2] - m[1][1] * m[0][2]
                 ];
-            },
+            }
         ],
         attr_center
     );
@@ -1121,7 +1121,7 @@ JXG.createConic = function (board, parents, attributes) {
     curve.type = Const.OBJECT_TYPE_CONIC;
     curve.center = curve.midpoint;
     curve.subs = {
-        center: curve.center,
+        center: curve.center
     };
     curve.inherits.push(curve.center);
     curve.inherits = curve.inherits.concat(points);
@@ -1148,5 +1148,5 @@ export default {
     createEllipse: JXG.createEllipse,
     createHyperbola: JXG.createHyperbola,
     createParabola: JXG.createParabola,
-    createConic: JXG.createConic,
+    createConic: JXG.createConic
 };

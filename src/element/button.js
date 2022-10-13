@@ -46,7 +46,7 @@ var priv = {
             this._handler();
         }
         this.board.update();
-    },
+    }
 };
 
 /**
@@ -267,5 +267,5 @@ JXG.createButton = function (board, parents, attributes) {
 JXG.registerElement("button", JXG.createButton);
 
 export default {
-    createButton: JXG.createButton,
+    createButton: JXG.createButton
 };

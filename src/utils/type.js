@@ -1046,7 +1046,7 @@ JXG.extend(
                     polygon: 1,
                     text: 1,
                     ticks: 1,
-                    integral: 1,
+                    integral: 1
                 };
 
             len = arguments.length;
@@ -1225,7 +1225,7 @@ JXG.extend(
                 tabindex: -100000,
                 transitionduration: 0,
                 top: -100000,
-                visible: null,
+                visible: null
             };
 
             return el;
@@ -1420,7 +1420,7 @@ JXG.extend(
             }
 
             return s;
-        },
+        }
     }
 );
 

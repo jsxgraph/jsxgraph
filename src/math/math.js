@@ -443,7 +443,7 @@ JXG.Math = {
         return [
             c1[1] * c2[2] - c1[2] * c2[1],
             c1[2] * c2[0] - c1[0] * c2[2],
-            c1[0] * c2[1] - c1[1] * c2[0],
+            c1[0] * c2[1] - c1[1] * c2[0]
         ];
     },
 
@@ -1115,7 +1115,7 @@ JXG.Math = {
             s[0] += y;
         }
         return s;
-    },
+    }
 };
 
 export default JXG.Math;

@@ -1832,7 +1832,7 @@ JXG.extend(
                 1,
                 Infinity,
                 Infinity,
-                Infinity,
+                Infinity
             ];
             radicalAxis = Mat.normalize(radicalAxis);
 
@@ -1969,7 +1969,7 @@ JXG.extend(
             for (i = 0; i < steps; i++) {
                 t = Numerics.root(func0, [
                     Math.max(tnew, cu.minX()),
-                    Math.min(tnew + delta, cu.maxX()),
+                    Math.min(tnew + delta, cu.maxX())
                 ]);
                 ft = Math.abs(func0(t));
                 if (ft <= fmin) {
@@ -1986,7 +1986,7 @@ JXG.extend(
             // Compute "exact" t
             t = Numerics.root(func1, [
                 Math.max(t - delta, cu.minX()),
-                Math.min(t + delta, cu.maxX()),
+                Math.min(t + delta, cu.maxX())
             ]);
 
             ft = func1(t);
@@ -2053,7 +2053,7 @@ JXG.extend(
                                 cu.points[i - 1].usrCoords.slice(1),
                                 cu.points[i].usrCoords.slice(1),
                                 cu.points[i + 1].usrCoords.slice(1),
-                                cu.points[i + 2].usrCoords.slice(1),
+                                cu.points[i + 2].usrCoords.slice(1)
                             ],
                             [lip1.slice(1), lip2.slice(1)],
                             testSegment
@@ -2327,7 +2327,7 @@ JXG.extend(
 
             return [
                 [curve[0], p0, p00, p000],
-                [p000, p22, p2, curve[3]],
+                [p000, p22, p2, curve[3]]
             ];
         },
 
@@ -2774,7 +2774,7 @@ JXG.extend(
                 matrix = [
                     [1, 0, 0],
                     [x * (1 - co) + y * si, co, -si],
-                    [y * (1 - co) - x * si, si, co],
+                    [y * (1 - co) - x * si, si, co]
                 ];
                 v = Mat.matVecMult(matrix, p1);
                 p4 = [v[0] / v[0], v[1] / v[0], v[2] / v[0]];
@@ -2804,12 +2804,12 @@ JXG.extend(
                 dataX = dataX.concat([
                     p4[1] + 0.333 * (x - p4[1]),
                     p4[1] + 0.666 * (x - p4[1]),
-                    x,
+                    x
                 ]);
                 dataY = dataY.concat([
                     p4[2] + 0.333 * (y - p4[2]),
                     p4[2] + 0.666 * (y - p4[2]),
-                    y,
+                    y
                 ]);
             }
 
@@ -3107,7 +3107,7 @@ JXG.extend(
                 //t = Numerics.root(Numerics.D(minfunc), t);
                 t = Numerics.fminbr(minfunc, [
                     Math.max(t - delta, minX),
-                    Math.min(t + delta, maxX),
+                    Math.min(t + delta, maxX)
                 ]);
 
                 // Distinction between closed and open curves is not necessary.
@@ -3263,7 +3263,7 @@ JXG.extend(
                     // right
                     [-1, 1, 2, 2, 1, 2, 3],
                     // bottom
-                    [1, 2, 3, 0, 3, 2, 3],
+                    [1, 2, 3, 0, 3, 2, 3]
                 ],
                 coords = point.coords || point,
                 bbox = brd.getBoundingBox();
@@ -3437,7 +3437,7 @@ JXG.extend(
             if (v1[2] + v2[0] !== 0) {
                 mat = [
                     [v1[0], v2[0]],
-                    [v1[1], v2[1]],
+                    [v1[1], v2[1]]
                 ];
                 rhs = [s - q[0], s - q[1]];
 
@@ -3452,7 +3452,7 @@ JXG.extend(
                 return [s1, e1, s2, e2];
             }
             return null;
-        },
+        }
     }
 );
 

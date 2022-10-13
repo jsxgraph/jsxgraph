@@ -1124,7 +1124,7 @@ JXG.extend(
                                 " ",
                                 scr[1],
                                 " ",
-                                scr[2],
+                                scr[2]
                             ].join("");
                         }
 
@@ -2177,7 +2177,7 @@ JXG.extend(
             }
 
             return this;
-        },
+        }
     }
 );
 

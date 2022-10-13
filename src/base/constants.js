@@ -240,7 +240,7 @@ constants = /** @lends JXG */ {
     GENTYPE_CTX_TYPE_I: 79,
     GENTYPE_CTX_HASINNERPOINTS: 80,
     GENTYPE_CTX_SNAPWIDTH: 81,
-    GENTYPE_CTX_SNAPTOGRID: 82,
+    GENTYPE_CTX_SNAPTOGRID: 82
 };
 
 JXG.extendConstants(JXG, constants);

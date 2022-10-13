@@ -225,7 +225,7 @@ Type.extend(
             }
 
             return this._query(_x, _y);
-        },
+        }
     }
 );
 

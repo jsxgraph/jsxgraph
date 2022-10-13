@@ -53,7 +53,7 @@ JXG.TracenpocheReader = function (board, str) {
                 type: type,
                 value: value,
                 from: from,
-                to: i,
+                to: i
             };
         };
 
@@ -284,11 +284,11 @@ JXG.TracenpocheReader = function (board, str) {
         board.setBoundingBox([-10, 10, 10, -10], true);
         board.create("axis", [
             [0, 0],
-            [1, 0],
+            [1, 0]
         ]);
         board.create("axis", [
             [0, 0],
-            [0, 1],
+            [0, 1]
         ]);
 
         /*
@@ -351,7 +351,7 @@ JXG.TracenpocheReader = function (board, str) {
             },
             pop: function () {
                 scope = this.parent;
-            },
+            }
         };
 
         var new_scope = function () {
@@ -452,7 +452,7 @@ JXG.TracenpocheReader = function (board, str) {
             },
             led: function (left) {
                 error(this, "Missing operator.");
-            },
+            }
         };
 
         /*
@@ -885,7 +885,7 @@ JXG.TracenpocheReader = function (board, str) {
         "reflexion",
         "rotation",
         "symetrie",
-        "translation",
+        "translation"
     ];
 
     /*
@@ -929,7 +929,7 @@ JXG.TracenpocheReader = function (board, str) {
                     },
                     function () {
                         return p1.Y() + (p2.Y() - p1.Y()) * lambda();
-                    },
+                    }
                 ],
                 this.handleAtts(attributes)
             );
@@ -946,7 +946,7 @@ JXG.TracenpocheReader = function (board, str) {
                         },
                         function () {
                             return p1.Y() + (p2.Y() - p1.Y()) * lambda();
-                        },
+                        }
                     ],
                     this.handleAtts(attributes)
                 );
@@ -961,7 +961,7 @@ JXG.TracenpocheReader = function (board, str) {
                         },
                         function () {
                             return c.center.Y() + c.Radius() * Math.sin(lambda());
-                        },
+                        }
                     ],
                     this.handleAtts(attributes)
                 );
@@ -1005,7 +1005,7 @@ JXG.TracenpocheReader = function (board, str) {
             // parallel projection along parents[2]
             lpar = this.board.create("parallel", [parents[2], parents[0]], {
                 visible: false,
-                withLabel: false,
+                withLabel: false
             });
             return this.board.create(
                 "intersection",
@@ -1040,7 +1040,7 @@ JXG.TracenpocheReader = function (board, str) {
                         s += parents[i + 1];
                     }
                     return y / s;
-                },
+                }
             ],
             this.handleAtts(attributes)
         );
@@ -1098,7 +1098,7 @@ JXG.TracenpocheReader = function (board, str) {
         if (parents.length == 1) {
             m = this.board.create("midpoint", [parents[0]], {
                 visible: false,
-                withLabel: false,
+                withLabel: false
             });
             el = this.board.create(
                 "perpendicular",
@@ -1108,11 +1108,11 @@ JXG.TracenpocheReader = function (board, str) {
         } else {
             li = this.board.create("line", parents, {
                 visible: false,
-                withLabel: false,
+                withLabel: false
             });
             m = this.board.create("midpoint", parents, {
                 visible: false,
-                withLabel: false,
+                withLabel: false
             });
             el = this.board.create("perpendicular", [li, m], this.handleAtts(attributes));
         }
@@ -1141,7 +1141,7 @@ JXG.TracenpocheReader = function (board, str) {
             gli = this.board.create("glider", [x, f.Y(x), f], {
                 fixed: true,
                 visible: false,
-                withLabel: false,
+                withLabel: false
             });
             return this.board.create("tangent", [f, gli], this.handleAtts(attributes));
         } else if (JXG.exists(parents[1].Value)) {
@@ -1155,7 +1155,7 @@ JXG.TracenpocheReader = function (board, str) {
                     },
                     function () {
                         return f.Y(x.Value());
-                    },
+                    }
                 ],
                 { visible: false, withLabel: false }
             );
@@ -1172,7 +1172,7 @@ JXG.TracenpocheReader = function (board, str) {
                     },
                     function () {
                         return f.Y(x.X());
-                    },
+                    }
                 ],
                 { visible: false, withLabel: false }
             );
@@ -1218,7 +1218,7 @@ JXG.TracenpocheReader = function (board, str) {
             [
                 [0, -2],
                 [3, -2],
-                [parents[1], parents[0], parents[2]],
+                [parents[1], parents[0], parents[2]]
             ],
             atts
         );
@@ -1256,7 +1256,7 @@ JXG.TracenpocheReader = function (board, str) {
                         return (-a + 1) * c.Y();
                     },
                     0,
-                    a,
+                    a
                 ],
                 { type: "generic" }
             );
@@ -1281,7 +1281,7 @@ JXG.TracenpocheReader = function (board, str) {
                     0,
                     function () {
                         return a.Value();
-                    },
+                    }
                 ],
                 { type: "generic" }
             );
@@ -1291,7 +1291,7 @@ JXG.TracenpocheReader = function (board, str) {
     this.symetrie = function (parents, attributes) {
         if (parents.length == 1 && JXG.isPoint(parents[0])) {
             return this.board.create("transform", [Math.PI, parents[0]], {
-                type: "rotate",
+                type: "rotate"
             });
         }
     };
@@ -1305,7 +1305,7 @@ JXG.TracenpocheReader = function (board, str) {
         if (JXG.isNumber(a)) {
             a = (Math.PI * a) / 180.0;
             return this.board.create("transform", [a, parents[0]], {
-                type: "rotate",
+                type: "rotate"
             });
         } else {
             // slider
@@ -1315,7 +1315,7 @@ JXG.TracenpocheReader = function (board, str) {
                     function () {
                         return (Math.PI * a.Value()) / 180.0;
                     },
-                    parents[0],
+                    parents[0]
                 ],
                 { type: "rotate" }
             );
@@ -1332,7 +1332,7 @@ JXG.TracenpocheReader = function (board, str) {
                     },
                     function () {
                         return parents[0].point2.Y() - parents[0].point1.Y();
-                    },
+                    }
                 ],
                 { type: "translate" }
             );
@@ -1345,7 +1345,7 @@ JXG.TracenpocheReader = function (board, str) {
                     },
                     function () {
                         return parents[1].Y() - parents[0].Y();
-                    },
+                    }
                 ],
                 { type: "translate" }
             );

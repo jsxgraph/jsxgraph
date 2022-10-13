@@ -271,7 +271,7 @@ JXG.Server = {
             { module: module },
             true
         );
-    },
+    }
 };
 
 JXG.Server.load = JXG.Server.loadModule;

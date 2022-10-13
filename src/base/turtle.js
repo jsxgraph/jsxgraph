@@ -194,7 +194,7 @@ JXG.Turtle = function (board, parents, attributes) {
         pos: "pos",
         moveTo: "moveTo",
         X: "X",
-        Y: "Y",
+        Y: "Y"
     });
 
     return this;
@@ -214,7 +214,7 @@ JXG.extend(
                 fixed: true,
                 name: "",
                 visible: false,
-                withLabel: false,
+                withLabel: false
             };
 
             this.arrowLen =
@@ -256,7 +256,7 @@ JXG.extend(
             this.objects.push(this.arrow);
 
             this.subs = {
-                arrow: this.arrow,
+                arrow: this.arrow
             };
             this.inherits.push(this.arrow);
 
@@ -857,7 +857,7 @@ JXG.extend(
                 }
             }
             return false;
-        },
+        }
     }
 );
 
@@ -887,5 +887,5 @@ JXG.registerElement("turtle", JXG.createTurtle);
 
 export default {
     Turtle: JXG.Turtle,
-    createTurtle: JXG.createTurtle,
+    createTurtle: JXG.createTurtle
 };

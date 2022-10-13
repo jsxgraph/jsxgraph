@@ -88,7 +88,7 @@ JXG.View3D = function (board, parents, attributes) {
     this.matrix3D = [
         [1, 0, 0, 0],
         [0, 1, 0, 0],
-        [0, 0, 1, 0],
+        [0, 0, 1, 0]
     ];
 
     /**
@@ -258,13 +258,13 @@ JXG.extend(
             mat = [
                 [1, 0, 0],
                 [0, 1, 0],
-                [0, 0, 1],
+                [0, 0, 1]
             ];
 
             this.matrix3D = [
                 [1, 0, 0, 0],
                 [0, 1, 0, 0],
-                [0, 0, 1, 0],
+                [0, 0, 1, 0]
             ];
 
             this.matrix3D[1][1] = r * Math.cos(a);
@@ -582,7 +582,7 @@ JXG.extend(
         stopAzimuth: function () {
             clearTimeout(this.timeoutAzimuth);
             this.timeoutAzimuth = null;
-        },
+        }
     }
 );
 
@@ -688,13 +688,13 @@ JXG.createView3D = function (board, parents, attributes) {
         [
             [x - 1, y - 2],
             [x + w + 1, y - 2],
-            [0, 1.0, 2 * Math.PI],
+            [0, 1.0, 2 * Math.PI]
         ],
         {
             style: 6,
             name: "az",
             point1: { frozen: true },
-            point2: { frozen: true },
+            point2: { frozen: true }
         }
     );
 
@@ -709,13 +709,13 @@ JXG.createView3D = function (board, parents, attributes) {
         [
             [x - 1, y],
             [x - 1, y + h],
-            [0, 0.3, Math.PI / 2],
+            [0, 0.3, Math.PI / 2]
         ],
         {
             style: 6,
             name: "el",
             point1: { frozen: true },
-            point2: { frozen: true },
+            point2: { frozen: true }
         }
     );
 

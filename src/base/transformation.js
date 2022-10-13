@@ -104,7 +104,7 @@ JXG.Transformation = function (board, type, params) {
     this.matrix = [
         [1, 0, 0],
         [0, 1, 0],
-        [0, 0, 1],
+        [0, 0, 1]
     ];
     this.board = board;
     this.isNumericMatrix = false;
@@ -115,7 +115,7 @@ JXG.Transformation = function (board, type, params) {
         applyOnce: "applyOnce",
         bindTo: "bindTo",
         bind: "bindTo",
-        melt: "melt",
+        melt: "melt"
     };
 };
 
@@ -462,7 +462,7 @@ JXG.extend(
             }
 
             return p;
-        },
+        }
     }
 );
 
@@ -744,5 +744,5 @@ JXG.registerElement("transform", JXG.createTransform);
 
 export default {
     Transformation: JXG.Transformation,
-    createTransform: JXG.createTransform,
+    createTransform: JXG.createTransform
 };

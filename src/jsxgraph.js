@@ -414,7 +414,7 @@ JXG.JSXGraph = {
                 "axis",
                 [
                     [0, 0],
-                    [1, 0],
+                    [1, 0]
                 ],
                 axattr_x
             );
@@ -422,7 +422,7 @@ JXG.JSXGraph = {
                 "axis",
                 [
                     [0, 0],
-                    [0, 1],
+                    [0, 1]
                 ],
                 axattr_y
             );
@@ -601,7 +601,7 @@ JXG.JSXGraph = {
     registerElement: function (element, creator) {
         JXG.deprecated("JXG.JSXGraph.registerElement()", "JXG.registerElement()");
         JXG.registerElement(element, creator);
-    },
+    }
 };
 
 // JessieScript/JessieCode startup:
@@ -637,7 +637,7 @@ if (Env.isBrowser && typeof window === "object" && typeof document === "object")
                         keepaspectratio: true,
                         grid: grid,
                         axis: axis,
-                        showReload: true,
+                        showReload: true
                     });
 
                     if (type.toLowerCase().indexOf("script") > -1) {

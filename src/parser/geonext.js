@@ -424,7 +424,7 @@ JXG.GeonextParser = {
                 "Sin",
                 "Sqrt",
                 "Tan",
-                "Trunc",
+                "Trunc"
             ],
             to = [
                 "abs",
@@ -444,7 +444,7 @@ JXG.GeonextParser = {
                 "sin",
                 "sqrt",
                 "tan",
-                "ceil",
+                "ceil"
             ];
 
         // Hacks, to enable not well formed XML, @see JXG.GeonextReader#replaceLessThan
@@ -549,7 +549,7 @@ JXG.GeonextParser = {
         newterm = newterm.replace(/fasle/g, "false");
 
         return newterm;
-    },
+    }
 };
 
 export default JXG.GeonextParser;

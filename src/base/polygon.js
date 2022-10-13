@@ -164,7 +164,7 @@ JXG.Polygon = function (board, vertices, attributes) {
         bounds: "bounds",
         addPoints: "addPoints",
         insertPoints: "insertPoints",
-        removePoints: "removePoints",
+        removePoints: "removePoints"
     });
 };
 
@@ -355,7 +355,7 @@ JXG.extend(
             Type.clearVisPropOld(copy);
 
             copy.visPropCalc = {
-                visible: Type.evaluate(copy.visProp.visible),
+                visible: Type.evaluate(copy.visProp.visible)
             };
 
             er = this.board.renderer.enhancedRendering;
@@ -647,7 +647,7 @@ JXG.extend(
             le = arguments.length - 1;
             for (i = 1; i < le + 1; i++) {
                 q = Type.providePoints(this.board, [arguments[i]], {}, "polygon", [
-                    "vertices",
+                    "vertices"
                 ])[0];
                 if (q._is_new) {
                     // Add the point as child of the polygon, but not of the borders.
@@ -1123,7 +1123,7 @@ JXG.extend(
          */
         intersect: function (polygon) {
             return this.sutherlandHodgman(polygon);
-        },
+        }
     }
 );
 
@@ -1374,7 +1374,7 @@ JXG.createRegularPolygon = function (board, parents, attributes) {
     }
 
     p = Type.providePoints(board, parents.slice(0, len), attributes, "regularpolygon", [
-        "vertices",
+        "vertices"
     ]);
     if (p === false) {
         throw new Error(
@@ -1385,7 +1385,7 @@ JXG.createRegularPolygon = function (board, parents, attributes) {
     attr = Type.copyAttributes(attributes, board.options, "regularpolygon", "vertices");
     for (i = 2; i < n; i++) {
         rot = board.create("transform", [Math.PI * (2 - (n - 2) / n), p[i - 1]], {
-            type: "rotate",
+            type: "rotate"
         });
         if (pointsExist) {
             p[i].addTransform(p[i - 2], rot);
@@ -1492,5 +1492,5 @@ JXG.registerElement("polygonalchain", JXG.createPolygonalChain);
 export default {
     Polygon: JXG.Polygon,
     createPolygon: JXG.createPolygon,
-    createRegularPolygon: JXG.createRegularPolygon,
+    createRegularPolygon: JXG.createRegularPolygon
 };

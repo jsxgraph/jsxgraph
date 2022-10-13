@@ -275,7 +275,7 @@ JXG.GeometryElement = function (board, attributes, type, oclass) {
         trigger: "trigger",
         addTicks: "addTicks",
         removeTicks: "removeTicks",
-        removeAllTicks: "removeAllTicks",
+        removeAllTicks: "removeAllTicks"
     };
 
     /**
@@ -286,7 +286,7 @@ JXG.GeometryElement = function (board, attributes, type, oclass) {
     this.quadraticform = [
         [1, 0, 0],
         [0, 1, 0],
-        [0, 0, 1],
+        [0, 0, 1]
     ];
 
     /**
@@ -308,7 +308,7 @@ JXG.GeometryElement = function (board, attributes, type, oclass) {
      * @default empty object
      */
     this.visPropCalc = {
-        visible: false,
+        visible: false
     };
 
     EventEmitter.eventify(this);
@@ -1611,7 +1611,7 @@ JXG.extend(
                                     return that.name();
                                 }
                                 return that.name;
-                            },
+                            }
                         ],
                         attr
                     );
@@ -1773,7 +1773,7 @@ JXG.extend(
                         },
                         function () {
                             return -that.Y();
-                        },
+                        }
                     ],
                     { type: "translate" }
                 );
@@ -1786,7 +1786,7 @@ JXG.extend(
                         },
                         function () {
                             return that.Y();
-                        },
+                        }
                     ],
                     { type: "translate" }
                 );
@@ -1799,7 +1799,7 @@ JXG.extend(
                         },
                         function () {
                             return 1;
-                        },
+                        }
                     ],
                     { type: "scale" }
                 );
@@ -1812,7 +1812,7 @@ JXG.extend(
                         },
                         function () {
                             return 1;
-                        },
+                        }
                     ],
                     { type: "scale" }
                 );
@@ -1822,7 +1822,7 @@ JXG.extend(
                     [
                         function () {
                             return (Type.evaluate(angle) * Math.PI) / 180;
-                        },
+                        }
                     ],
                     { type: "rotate" }
                 );
@@ -2417,7 +2417,7 @@ JXG.extend(
         /**
          * @ignore
          */
-        __evt: function () {},
+        __evt: function () {}
         //endregion
     }
 );

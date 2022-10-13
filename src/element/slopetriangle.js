@@ -59,7 +59,7 @@ var priv = {
     },
     Value: function () {
         return this.tangent.getSlope();
-    },
+    }
 };
 
 /**
@@ -157,7 +157,7 @@ JXG.createSlopeTriangle = function (board, parents, attributes) {
         [
             function () {
                 return [tglide.X() + 1, tglide.Y()];
-            },
+            }
         ],
         attr
     );
@@ -175,9 +175,9 @@ JXG.createSlopeTriangle = function (board, parents, attributes) {
             function () {
                 return [
                     glider.X(),
-                    glider.Y() + (glider.X() - tglide.X()) * tangent.getSlope(),
+                    glider.Y() + (glider.X() - tglide.X()) * tangent.getSlope()
                 ];
-            },
+            }
         ],
         attr
     );
@@ -213,7 +213,7 @@ JXG.createSlopeTriangle = function (board, parents, attributes) {
             },
             function () {
                 return "";
-            },
+            }
         ],
         attr
     );
@@ -234,7 +234,7 @@ JXG.createSlopeTriangle = function (board, parents, attributes) {
         basePoint: basepoint,
         baseLine: baseline,
         topPoint: toppoint,
-        label: label,
+        label: label
     };
     el.inherits.push(glider, basepoint, baseline, toppoint, label);
 
@@ -246,7 +246,7 @@ JXG.createSlopeTriangle = function (board, parents, attributes) {
         toppoint: "toppoint",
         label: "label",
         Value: "Value",
-        V: "Value",
+        V: "Value"
     });
 
     el.remove = priv.removeSlopeTriangle;
@@ -257,5 +257,5 @@ JXG.createSlopeTriangle = function (board, parents, attributes) {
 JXG.registerElement("slopetriangle", JXG.createSlopeTriangle);
 
 export default {
-    createSlopeTriangle: JXG.createSlopeTriangle,
+    createSlopeTriangle: JXG.createSlopeTriangle
 };

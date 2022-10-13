@@ -133,7 +133,7 @@ JXG.createOrthogonalProjection = function (board, parents, attributes) {
         [
             function () {
                 return Geometry.projectPointToLine(p, l, board);
-            },
+            }
         ],
         attr
     );
@@ -341,7 +341,7 @@ JXG.createPerpendicular = function (board, parents, attributes) {
             },
             function () {
                 return l.stdform[1] * p.Z();
-            },
+            }
         ],
         attr
     );
@@ -422,7 +422,7 @@ JXG.createPerpendicularPoint = function (board, parents, attributes) {
         [
             function () {
                 return Geometry.perpendicular(l, p, board)[0];
-            },
+            }
         ],
         attributes
     );
@@ -630,7 +630,7 @@ JXG.createPerpendicularSegment = function (board, parents, attributes) {
         [
             function () {
                 return Geometry.perpendicular(l, p, board)[1] ? [t, p] : [p, t];
-            },
+            }
         ],
         attr
     );
@@ -654,7 +654,7 @@ JXG.createPerpendicularSegment = function (board, parents, attributes) {
     pd.elType = "perpendicularsegment";
     pd.setParents([p.id, l.id]);
     pd.subs = {
-        point: t,
+        point: t
     };
     pd.inherits.push(t);
 
@@ -743,7 +743,7 @@ JXG.createMidpoint = function (board, parents, attributes) {
                 }
 
                 return y * 0.5;
-            },
+            }
         ],
         attr
     );
@@ -943,7 +943,7 @@ JXG.createParallelPoint = function (board, parents, attributes) {
             },
             function () {
                 return c.coords.usrCoords[2] + b.coords.usrCoords[2] - a.coords.usrCoords[2];
-            },
+            }
         ],
         attributes
     );
@@ -1202,7 +1202,7 @@ JXG.createParallel = function (board, parents, attributes) {
             [
                 function () {
                     return Mat.crossProduct([1, 0, 0], li());
-                },
+                }
             ],
             attr
         );
@@ -1219,7 +1219,7 @@ JXG.createParallel = function (board, parents, attributes) {
 
     pl.elType = "parallel";
     pl.subs = {
-        point: pp,
+        point: pp
     };
 
     pl.inherits.push(pp);
@@ -1283,7 +1283,7 @@ JXG.createArrowParallel = function (board, parents, attributes) {
         attributes.lastArrow = true;
         p = JXG.createParallel(board, parents, attributes).setAttribute({
             straightFirst: false,
-            straightLast: false,
+            straightLast: false
         });
         p.elType = "arrowparallel";
 
@@ -1381,7 +1381,7 @@ JXG.createNormal = function (board, parents, attributes) {
                 function () {
                     var p = Mat.crossProduct([1, 0, 0], c.stdform);
                     return [p[0], -p[2], p[1]];
-                },
+                }
             ],
             attrp
         );
@@ -1398,7 +1398,7 @@ JXG.createNormal = function (board, parents, attributes) {
          */
         l.point = pp;
         l.subs = {
-            point: pp,
+            point: pp
         };
         l.inherits.push(pp);
     } else if (c.elementClass === Const.OBJECT_CLASS_CIRCLE) {
@@ -1421,7 +1421,7 @@ JXG.createNormal = function (board, parents, attributes) {
                     },
                     function () {
                         return Numerics.D(f)(p.position);
-                    },
+                    }
                 ],
                 attr
             );
@@ -1605,7 +1605,7 @@ JXG.createNormal = function (board, parents, attributes) {
                             p2 = [1, p1[1] - dy, p1[2] + dx];
                             return p1[1] - p2[1];
                         }
-                    },
+                    }
                 ],
                 attr
             );
@@ -1700,7 +1700,7 @@ JXG.createNormal = function (board, parents, attributes) {
                     }
 
                     return el.Y(i + 1) - el.Y(i);
-                },
+                }
             ],
             attr
         );
@@ -1771,7 +1771,7 @@ JXG.createBisector = function (board, parents, attributes) {
             [
                 function () {
                     return Geometry.angleBisector(parents[0], parents[1], parents[2], board);
-                },
+                }
             ],
             attr
         );
@@ -1805,7 +1805,7 @@ JXG.createBisector = function (board, parents, attributes) {
         l.elType = "bisector";
         l.setParents(parents);
         l.subs = {
-            point: p,
+            point: p
         };
         l.inherits.push(p);
 
@@ -1918,7 +1918,7 @@ JXG.createAngularBisectorsOfTwoLines = function (board, parents, attributes) {
                     );
 
                 return l1.stdform[2] / d1 - l2.stdform[2] / d2;
-            },
+            }
         ],
         attr
     );
@@ -1959,7 +1959,7 @@ JXG.createAngularBisectorsOfTwoLines = function (board, parents, attributes) {
                     );
 
                 return l1.stdform[2] / d1 + l2.stdform[2] / d2;
-            },
+            }
         ],
         attr
     );
@@ -1988,7 +1988,7 @@ JXG.createAngularBisectorsOfTwoLines = function (board, parents, attributes) {
     ret.setParents([l1.id, l2.id]);
     ret.subs = {
         line1: g1,
-        line2: g2,
+        line2: g2
     };
     // ret.inherits.push(g1, g2);
 
@@ -2116,7 +2116,7 @@ JXG.createCircumcenter = function (board, parents, attributes) {
             [
                 function () {
                     return Geometry.circumcenter(a, b, c, board);
-                },
+                }
             ],
             attributes
         );
@@ -2169,7 +2169,7 @@ JXG.createCircumcenter = function (board, parents, attributes) {
                     t2,
                     ")-(",
                     b2,
-                    "))^2",
+                    "))^2"
                 ].join(""),
                 poly2 = [
                     "((",
@@ -2188,7 +2188,7 @@ JXG.createCircumcenter = function (board, parents, attributes) {
                     t2,
                     ")-(",
                     c2,
-                    "))^2",
+                    "))^2"
                 ].join("");
 
             return [poly1, poly2];
@@ -2268,11 +2268,11 @@ JXG.createIncenter = function (board, parents, attributes) {
                         Const.COORDS_BY_USER,
                         [
                             (a * A.X() + b * B.X() + c * C.X()) / (a + b + c),
-                            (a * A.Y() + b * B.Y() + c * C.Y()) / (a + b + c),
+                            (a * A.Y() + b * B.Y() + c * C.Y()) / (a + b + c)
                         ],
                         board
                     );
-                },
+                }
             ],
             attributes
         );
@@ -2360,7 +2360,7 @@ JXG.createCircumcircle = function (board, parents, attributes) {
         c.elType = "circumcircle";
         c.setParents(parents);
         c.subs = {
-            center: p,
+            center: p
         };
         c.inherits.push(c);
         for (i = 0; i < 3; i++) {
@@ -2466,7 +2466,7 @@ JXG.createIncircle = function (board, parents, attributes) {
                         s = (a + b + c) / 2;
 
                     return Math.sqrt(((s - a) * (s - b) * (s - c)) / s);
-                },
+                }
             ],
             attr
         );
@@ -2491,7 +2491,7 @@ JXG.createIncircle = function (board, parents, attributes) {
         c.center = p;
 
         c.subs = {
-            center: c.center,
+            center: c.center
         };
         c.inherits.push(p);
     } catch (e) {
@@ -2687,7 +2687,7 @@ JXG.createReflection = function (board, parents, attributes) {
                     r_c,
                     function () {
                         return org.Radius();
-                    },
+                    }
                 ],
                 attr
             );
@@ -2755,7 +2755,7 @@ JXG.createReflection = function (board, parents, attributes) {
                     r1,
                     ")-(",
                     p1,
-                    "))",
+                    "))"
                 ].join(""),
                 poly2 = [
                     "((",
@@ -2774,7 +2774,7 @@ JXG.createReflection = function (board, parents, attributes) {
                     p2,
                     ")-(",
                     a2,
-                    "))^2",
+                    "))^2"
                 ].join("");
 
             return [poly1, poly2];
@@ -2941,7 +2941,7 @@ JXG.createMirrorElement = function (board, parents, attributes) {
                     r_c,
                     function () {
                         return org.Radius();
-                    },
+                    }
                 ],
                 attr
             );
@@ -3119,7 +3119,7 @@ JXG.createIntegral = function (board, parents, attributes) {
                 }
 
                 return 0;
-            },
+            }
         ],
         attr
     );
@@ -3146,7 +3146,7 @@ JXG.createIntegral = function (board, parents, attributes) {
                 }
 
                 return 0;
-            },
+            }
         ],
         attr
     );
@@ -3165,7 +3165,7 @@ JXG.createIntegral = function (board, parents, attributes) {
                             [
                                 Type.evaluate(this.visProp.offset[0]) +
                                     this.board.origin.scrCoords[1],
-                                0,
+                                0
                             ],
                             this.board,
                             false
@@ -3188,7 +3188,7 @@ JXG.createIntegral = function (board, parents, attributes) {
                             [
                                 0,
                                 Type.evaluate(this.visProp.offset[1]) +
-                                    this.board.origin.scrCoords[2],
+                                    this.board.origin.scrCoords[2]
                             ],
                             this.board,
                             false
@@ -3208,7 +3208,7 @@ JXG.createIntegral = function (board, parents, attributes) {
                 function () {
                     var Int = Numerics.NewtonCotes([pa_on_axis.X(), pb_on_axis.X()], curve.Y);
                     return "&int; = " + Type.toFixed(Int, 4);
-                },
+                }
             ],
             attr
         );
@@ -3232,7 +3232,7 @@ JXG.createIntegral = function (board, parents, attributes) {
         curveLeft: pa_on_curve,
         baseLeft: pa_on_axis,
         curveRight: pb_on_curve,
-        baseRight: pb_on_axis,
+        baseRight: pb_on_axis
     };
     p.inherits.push(pa_on_curve, pa_on_axis, pb_on_curve, pb_on_axis);
 
@@ -3377,7 +3377,7 @@ JXG.createIntegral = function (board, parents, attributes) {
         baseLeft: "baseLeft",
         curveRight: "curveRight",
         baseRight: "baseRight",
-        Value: "Value",
+        Value: "Value"
     });
 
     /**
@@ -3649,8 +3649,8 @@ JXG.createInequality = function (board, parents, attributes) {
                 // contains centroid of the board
                 dp = {
                     coords: {
-                        usrCoords: [1, (bb[0] + bb[2]) / 2, attr.inverse ? bb[1] : bb[3]],
-                    },
+                        usrCoords: [1, (bb[0] + bb[2]) / 2, attr.inverse ? bb[1] : bb[3]]
+                    }
                 },
                 slope1 = parents[0].stdform.slice(1),
                 slope2 = slope1;
@@ -3681,8 +3681,8 @@ JXG.createInequality = function (board, parents, attributes) {
             // reuse dp
             dp = {
                 coords: {
-                    usrCoords: [1, (bb[0] + bb[2]) / 2, (bb[1] + bb[3]) / 2],
-                },
+                    usrCoords: [1, (bb[0] + bb[2]) / 2, (bb[1] + bb[3]) / 2]
+                }
             };
 
             // If dp is on the line, Geometry.perpendicular will return a point not on the line.
@@ -3865,5 +3865,5 @@ export default {
     createPerpendicularSegmen: JXG.createPerpendicularSegment,
     createReflection: JXG.createReflection,
     createGrid: JXG.createGrid,
-    createInequality: JXG.createInequality,
+    createInequality: JXG.createInequality
 };

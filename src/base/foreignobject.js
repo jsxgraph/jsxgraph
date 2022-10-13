@@ -109,7 +109,7 @@ JXG.ForeignObject = function (board, coords, attributes, content, size) {
 
     this.methodMap = JXG.deepCopy(this.methodMap, {
         addTransformation: "addTransform",
-        trans: "addTransform",
+        trans: "addTransform"
     });
 };
 
@@ -209,7 +209,7 @@ JXG.extend(
                 this.usrSize = [this.W(), this.H()];
                 this.size = [
                     Math.abs(this.usrSize[0] * this.board.unitX),
-                    Math.abs(this.usrSize[1] * this.board.unitY),
+                    Math.abs(this.usrSize[1] * this.board.unitY)
                 ];
             } else {
                 if (this.rendNode.hasChildNodes()) {
@@ -238,7 +238,7 @@ JXG.extend(
                 this.span = [
                     [this.Z(), this.X(), this.Y()],
                     [this.Z(), this.W(), 0],
-                    [this.Z(), 0, this.H()],
+                    [this.Z(), 0, this.H()]
                 ];
             } else {
                 // v contains the three defining corners of the rectangle/image
@@ -325,7 +325,7 @@ JXG.extend(
          * Returns the height of the foreignObject in user coordinates.
          * @returns {number} height of the image in user coordinates
          */
-        H: function () {}, // Needed for docs, defined in constructor
+        H: function () {} // Needed for docs, defined in constructor
     }
 );
 
@@ -480,5 +480,5 @@ JXG.registerElement("fo", JXG.createForeignObject);
 
 export default {
     ForeignObject: JXG.ForeignObject,
-    createForeignobject: JXG.createForeignObject,
+    createForeignobject: JXG.createForeignObject
 };

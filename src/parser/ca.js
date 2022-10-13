@@ -128,7 +128,7 @@ JXG.extend(
                                     "op_mul",
                                     Type.deepCopy(arg[0]),
                                     Type.deepCopy(arg[0])
-                                ),
+                                )
                             ]
                         )
                     );
@@ -330,7 +330,7 @@ JXG.extend(
                                         Type.deepCopy(arg[0]),
                                         Type.deepCopy(arg[0])
                                     )
-                                ),
+                                )
                             ]
                         )
                     );
@@ -359,7 +359,7 @@ JXG.extend(
                                             Type.deepCopy(arg[0]),
                                             Type.deepCopy(arg[0])
                                         )
-                                    ),
+                                    )
                                 ]
                             )
                         )
@@ -467,7 +467,7 @@ JXG.extend(
                                         Type.deepCopy(arg[0])
                                     ),
                                     this.createNode("node_const", 1.0)
-                                ),
+                                )
                             ]
                         )
                     );
@@ -493,7 +493,7 @@ JXG.extend(
                                         Type.deepCopy(arg[0])
                                     ),
                                     this.createNode("node_const", 1.0)
-                                ),
+                                )
                             ]
                         )
                     );
@@ -930,7 +930,7 @@ JXG.extend(
                         node.type = "node_op";
                         node.value = "op_neg";
                         node.children = [
-                            this.createNode("node_op", "op_mul", n0.children[0], n1),
+                            this.createNode("node_op", "op_mul", n0.children[0], n1)
                         ];
                         this.mayNotBeSimplified = true;
                         return node;
@@ -940,7 +940,7 @@ JXG.extend(
                         node.type = "node_op";
                         node.value = "op_neg";
                         node.children = [
-                            this.createNode("node_op", "op_mul", n0, n1.children[0]),
+                            this.createNode("node_op", "op_mul", n0, n1.children[0])
                         ];
                         this.mayNotBeSimplified = true;
                         return node;
@@ -1037,7 +1037,7 @@ JXG.extend(
                     ) {
                         node.children = [
                             n0.children[0],
-                            this.createNode("node_op", "op_mul", n0.children[1], n1),
+                            this.createNode("node_op", "op_mul", n0.children[1], n1)
                         ];
                         this.mayNotBeSimplified = true;
                         return node;
@@ -1176,7 +1176,7 @@ JXG.extend(
                                     n0.children[0],
                                     n1.children[0]
                                 ),
-                                n0.children[1],
+                                n0.children[1]
                             ];
                             this.mayNotBeSimplified = true;
                             return node;
@@ -1195,7 +1195,7 @@ JXG.extend(
                                     n0.children[0],
                                     this.createNode("node_const", 1.0)
                                 ),
-                                n1,
+                                n1
                             ];
                             this.mayNotBeSimplified = true;
                             return node;
@@ -1214,7 +1214,7 @@ JXG.extend(
                                     this.createNode("node_const", 1.0),
                                     n1.children[0]
                                 ),
-                                n0,
+                                n0
                             ];
                             this.mayNotBeSimplified = true;
                             return node;
@@ -1309,7 +1309,7 @@ JXG.extend(
                         node.type = "node_op";
                         node.value = "op_neg";
                         node.children = [
-                            this.createNode("node_op", "op_div", n0.children[0], n1),
+                            this.createNode("node_op", "op_div", n0.children[0], n1)
                         ];
                         this.mayNotBeSimplified = true;
                         return node;
@@ -1319,7 +1319,7 @@ JXG.extend(
                         node.type = "node_op";
                         node.value = "op_neg";
                         node.children = [
-                            this.createNode("node_op", "op_div", n0, n1.children[0]),
+                            this.createNode("node_op", "op_div", n0, n1.children[0])
                         ];
                         this.mayNotBeSimplified = true;
                         return node;
@@ -1355,7 +1355,7 @@ JXG.extend(
                         node.value = "op_mul";
                         node.children = [
                             n0.children[0],
-                            this.createNode("node_op", "op_div", n0.children[1], n1),
+                            this.createNode("node_op", "op_div", n0.children[1], n1)
                         ];
                         this.mayNotBeSimplified = true;
                         return node;
@@ -1414,7 +1414,7 @@ JXG.extend(
                     if (n0.type == "node_op" && n0.value == "op_exp") {
                         node.children = [
                             n0.children[0],
-                            this.createNode("node_op", "op_mul", n0.children[1], n1),
+                            this.createNode("node_op", "op_mul", n0.children[1], n1)
                         ];
                         return node;
                     }
@@ -1480,7 +1480,7 @@ JXG.extend(
                                     n0.children[0],
                                     n1.children[0]
                                 ),
-                                n0.children[1],
+                                n0.children[1]
                             ];
                             this.mayNotBeSimplified = true;
                             return node;
@@ -1499,7 +1499,7 @@ JXG.extend(
                                     n0.children[0],
                                     this.createNode("node_const", 1.0)
                                 ),
-                                n1,
+                                n1
                             ];
                             this.mayNotBeSimplified = true;
                             return node;
@@ -1518,7 +1518,7 @@ JXG.extend(
                                     this.createNode("node_const", 1.0),
                                     n1.children[0]
                                 ),
-                                n0,
+                                n0
                             ];
                             this.mayNotBeSimplified = true;
                             return node;
@@ -1636,7 +1636,7 @@ JXG.extend(
             }
 
             return node;
-        },
+        }
     }
 );
 

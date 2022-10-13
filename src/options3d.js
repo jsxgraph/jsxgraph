@@ -97,7 +97,7 @@ JXG.extend(Options, {
         xPlaneRearYAxis: {
             visible: "inherit",
             strokeColor: "#888888",
-            strokeWidth: 1,
+            strokeWidth: 1
         },
         /**
          * Attributes of the 3D z-axis on the 3D plane orthogonal to the x-axis at the "rear" of the cube.
@@ -107,7 +107,7 @@ JXG.extend(Options, {
         xPlaneRearZAxis: {
             visible: "inherit",
             strokeColor: "#888888",
-            strokeWidth: 1,
+            strokeWidth: 1
         },
         /**
          * Attributes of the 3D y-axis on the 3D plane orthogonal to the x-axis at the "front" of the cube.
@@ -117,7 +117,7 @@ JXG.extend(Options, {
         xPlaneFrontYAxis: {
             visible: "inherit",
             strokeColor: "#888888",
-            strokeWidth: 1,
+            strokeWidth: 1
         },
         /**
          * Attributes of the 3D z-axis on the 3D plane orthogonal to the x-axis at the "front" of the cube.
@@ -127,7 +127,7 @@ JXG.extend(Options, {
         xPlaneFrontZAxis: {
             visible: "inherit",
             strokeColor: "#888888",
-            strokeWidth: 1,
+            strokeWidth: 1
         },
 
         /**
@@ -138,7 +138,7 @@ JXG.extend(Options, {
         yPlaneRearXAxis: {
             visible: "inherit",
             strokeColor: "#888888",
-            strokeWidth: 1,
+            strokeWidth: 1
         },
         /**
          * Attributes of the 3D z-axis on the 3D plane orthogonal to the y-axis at the "rear" of the cube.
@@ -148,7 +148,7 @@ JXG.extend(Options, {
         yPlaneRearZAxis: {
             visible: "inherit",
             strokeColor: "#888888",
-            strokeWidth: 1,
+            strokeWidth: 1
         },
         /**
          * Attributes of the 3D x-axis on the 3D plane orthogonal to the y-axis at the "front" of the cube.
@@ -158,7 +158,7 @@ JXG.extend(Options, {
         yPlaneFrontXAxis: {
             visible: "inherit",
             strokeColor: "#888888",
-            strokeWidth: 1,
+            strokeWidth: 1
         },
         /**
          * Attributes of the 3D z-axis on the 3D plane orthogonal to the y-axis at the "front" of the cube.
@@ -168,7 +168,7 @@ JXG.extend(Options, {
         yPlaneFrontZAxis: {
             visible: "inherit",
             strokeColor: "#888888",
-            strokeWidth: 1,
+            strokeWidth: 1
         },
 
         /**
@@ -179,7 +179,7 @@ JXG.extend(Options, {
         zPlaneRearXAxis: {
             visible: "inherit",
             strokeColor: "#888888",
-            strokeWidth: 1,
+            strokeWidth: 1
         },
         /**
          * Attributes of the 3D y-axis on the 3D plane orthogonal to the z-axis at the "rear" of the cube.
@@ -189,7 +189,7 @@ JXG.extend(Options, {
         zPlaneRearYAxis: {
             visible: "inherit",
             strokeColor: "#888888",
-            strokeWidth: 1,
+            strokeWidth: 1
         },
         /**
          * Attributes of the 3D x-axis on the 3D plane orthogonal to the z-axis at the "front" of the cube.
@@ -199,7 +199,7 @@ JXG.extend(Options, {
         zPlaneFrontXAxis: {
             visible: "inherit",
             strokeColor: "#888888",
-            strokeWidth: 1,
+            strokeWidth: 1
         },
         /**
          * Attributes of the 3D y-axis on the 3D plane orthogonal to the z-axis at the "front" of the cube.
@@ -209,8 +209,8 @@ JXG.extend(Options, {
         zPlaneFrontYAxis: {
             visible: "inherit",
             strokeColor: "#888888",
-            strokeWidth: 1,
-        },
+            strokeWidth: 1
+        }
 
         /**#@-*/
     },
@@ -222,7 +222,7 @@ JXG.extend(Options, {
         tabindex: null,
 
         point1: { visible: false, name: "" },
-        point2: { visible: false, name: "", label: { visible: true } },
+        point2: { visible: false, name: "", label: { visible: true } }
     },
 
     curve3d: {
@@ -233,7 +233,7 @@ JXG.extend(Options, {
         highlight: false,
         tabindex: -1,
         strokeWidth: 1,
-        numberPointsHigh: 200,
+        numberPointsHigh: 200
 
         /**#@-*/
     },
@@ -247,7 +247,7 @@ JXG.extend(Options, {
         fillOpacity: 0.1,
         tabindex: null,
 
-        visible: "inherit",
+        visible: "inherit"
     },
 
     line3d: {
@@ -261,7 +261,7 @@ JXG.extend(Options, {
 
         point: { visible: false, name: "" }, // Used only in case of point/point
         point1: { visible: false, name: "" }, // Used only in case of point/direction/range
-        point2: { visible: false, name: "" },
+        point2: { visible: false, name: "" }
     },
 
     plane3d: {
@@ -277,7 +277,7 @@ JXG.extend(Options, {
         fillColor: "#a7a7a7",
         fillOpacity: 0.6,
 
-        point: { visible: false, name: "", fixed: true },
+        point: { visible: false, name: "", fixed: true }
     },
 
     point3d: {
@@ -286,7 +286,7 @@ JXG.extend(Options, {
         gradient: "radial",
         gradientSecondColor: "#555555",
         fillColor: "yellow",
-        highlightStrokeColor: "#555555",
+        highlightStrokeColor: "#555555"
     },
 
     surface3d: {
@@ -310,14 +310,14 @@ JXG.extend(Options, {
          * @type Number
          * @name ParametricSurface3D#stepsV
          */
-        stepsV: 30,
+        stepsV: 30
 
         /**#@-*/
     },
 
     view3d: {
-        needsRegularUpdate: true,
-    },
+        needsRegularUpdate: true
+    }
 });
 
 export default JXG.Options;

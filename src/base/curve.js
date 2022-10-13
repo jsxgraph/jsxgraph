@@ -140,7 +140,7 @@ JXG.Curve = function (board, parents, attributes) {
         generateTerm: "generateTerm",
         setTerm: "generateTerm",
         move: "moveTo",
-        moveTo: "moveTo",
+        moveTo: "moveTo"
     });
 };
 
@@ -863,7 +863,7 @@ JXG.extend(
             this.transformMat = [
                 [1, 0, 0],
                 [0, 1, 0],
-                [0, 0, 1],
+                [0, 0, 1]
             ];
 
             for (i = 0; i < len; i++) {
@@ -1161,7 +1161,7 @@ JXG.extend(
                     bezierDegree: this.bezierDegree,
                     numberPoints: this.numberPoints,
                     board: this.board,
-                    visProp: Type.deepCopy(this.visProp, this.visProp.traceattributes, true),
+                    visProp: Type.deepCopy(this.visProp, this.visProp.traceattributes, true)
                 };
 
             copy.visProp.layer = this.board.options.layer.trace;
@@ -1170,7 +1170,7 @@ JXG.extend(
 
             Type.clearVisPropOld(copy);
             copy.visPropCalc = {
-                visible: Type.evaluate(copy.visProp.visible),
+                visible: Type.evaluate(copy.visProp.visible)
             };
             er = this.board.renderer.enhancedRendering;
             this.board.renderer.enhancedRendering = true;
@@ -1285,7 +1285,7 @@ JXG.extend(
                     delta = [
                         where[0] - p.usrCoords[0],
                         where[1] - p.usrCoords[1],
-                        where[2] - p.usrCoords[2],
+                        where[2] - p.usrCoords[2]
                     ];
                 } else {
                     delta = [where[0] - p.usrCoords[1], where[1] - p.usrCoords[2]];
@@ -1353,7 +1353,7 @@ JXG.extend(
             }
 
             return isIn;
-        },
+        }
     }
 );
 
@@ -1756,7 +1756,7 @@ JXG.createSpline = function (board, parents, attributes) {
             //maxX()
             function () {
                 return x[x.length - 1];
-            },
+            }
         ];
     };
 
@@ -1944,7 +1944,7 @@ JXG.createCardinalSpline = function (board, parents, attributes) {
                     var dx = this.X() - p.X(),
                         dy = this.Y() - p.Y();
                     return Math.sqrt(dx * dx + dy * dy);
-                },
+                }
             };
         };
 
@@ -2176,7 +2176,7 @@ JXG.createMetapostSpline = function (board, parents, attributes) {
                 },
                 Y: function () {
                     return q[ii][1];
-                },
+                }
             };
         };
 
@@ -2638,7 +2638,7 @@ JXG.createDerivative = function (board, parents, attributes) {
                 return dy(t) / dx(t);
             },
             curve.minX(),
-            curve.maxX(),
+            curve.maxX()
         ],
         attr
     );
@@ -2979,7 +2979,7 @@ JXG.createBoxPlot = function (board, parents, attributes) {
             this.Q[4](),
             this.Q[4](),
             this.Q[4](),
-            this.Q[4](),
+            this.Q[4]()
         ];
         if (dir === "vertical") {
             this.dataX = v1;
@@ -3008,5 +3008,5 @@ export default {
     createSpline: JXG.createSpline,
     createRiemannsum: JXG.createRiemannsum,
     createStepfunction: JXG.createStepfunction,
-    createTracecurve: JXG.createTracecurve,
+    createTracecurve: JXG.createTracecurve
 };

@@ -149,7 +149,7 @@ JXG.extend(
         updateRenderer: function () {
             this.needsUpdate = false;
             return this;
-        },
+        }
     }
 );
 
@@ -265,7 +265,7 @@ JXG.createLine3D = function (board, parents, attributes) {
             view,
             [
                 [0, 0, 0],
-                [0, 0, 0],
+                [0, 0, 0]
             ],
             attributes,
             "line3d",
@@ -647,7 +647,7 @@ JXG.extend(
         updateRenderer: function () {
             this.needsUpdate = false;
             return this;
-        },
+        }
     }
 );
 
@@ -698,7 +698,7 @@ JXG.createPlane3D = function (board, parents, attributes) {
                 dir1,
                 range1,
                 dir2,
-                range2,
+                range2
             ],
             attr
         );

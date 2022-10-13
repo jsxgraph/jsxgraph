@@ -184,7 +184,7 @@ JXG.Dump = {
         methods.push({
             obj: boardVarName,
             method: "setBoundingBox",
-            params: [board.getBoundingBox(), board.keepaspectratio],
+            params: [board.getBoundingBox(), board.keepaspectratio]
         });
 
         return methods;
@@ -238,7 +238,7 @@ JXG.Dump = {
                     props.push({
                         obj: obj.id,
                         prop: "onPolygon",
-                        val: true,
+                        val: true
                     });
                 }
 
@@ -251,7 +251,7 @@ JXG.Dump = {
         return {
             elements: elementList,
             props: props,
-            methods: methods,
+            methods: methods
         };
     },
 
@@ -449,7 +449,7 @@ JXG.Dump = {
         }
 
         return script.join("\n");
-    },
+    }
 };
 
 export default JXG.Dump;

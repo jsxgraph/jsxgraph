@@ -272,7 +272,7 @@ JXG.extend(
         /**
          * @ignore
          */
-        __evt: function () {},
+        __evt: function () {}
     }
 );
 

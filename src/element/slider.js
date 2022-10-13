@@ -254,7 +254,7 @@ JXG.createSlider = function (board, parents, attributes) {
         smax: "_smax",
         smin: "_smin",
         setMax: "setMax",
-        setMin: "setMin",
+        setMin: "setMin"
     });
 
     /**
@@ -358,7 +358,7 @@ JXG.createSlider = function (board, parents, attributes) {
                     }
 
                     return n;
-                },
+                }
             ],
             attr
         );
@@ -445,7 +445,7 @@ JXG.createSlider = function (board, parents, attributes) {
                     }
 
                     return (d / dFull) * sdiff + smin;
-                },
+                }
             ],
             attr
         );
@@ -487,7 +487,7 @@ JXG.createSlider = function (board, parents, attributes) {
         point1: p1,
         point2: p2,
         baseLine: l1,
-        highLine: l2,
+        highLine: l2
     };
     p3.inherits.push(p1, p2, l1, l2);
 
@@ -501,7 +501,7 @@ JXG.createSlider = function (board, parents, attributes) {
         return [
             this.point1.coords.usrCoords.slice(1),
             this.point2.coords.usrCoords.slice(1),
-            [this._smin, this.position * (this._smax - this._smin) + this._smin, this._smax],
+            [this._smin, this.position * (this._smax - this._smin) + this._smin, this._smax]
         ];
     };
 
@@ -562,5 +562,5 @@ JXG.createSlider = function (board, parents, attributes) {
 JXG.registerElement("slider", JXG.createSlider);
 
 export default {
-    createSlider: JXG.createSlider,
+    createSlider: JXG.createSlider
 };

@@ -125,7 +125,7 @@ JXG.Composition = function (elements) {
              * @memberOf JXG.Composition.prototype
              * @function
              */
-            "noHighlight",
+            "noHighlight"
         ],
         generateMethod = function (what) {
             return function () {
@@ -161,7 +161,7 @@ JXG.Composition = function (elements) {
         setParents: "setParents",
         add: "add",
         remove: "remove",
-        select: "select",
+        select: "select"
     };
 
     for (e in elements) {
@@ -271,7 +271,7 @@ JXG.extend(
             }
 
             return this.attr;
-        },
+        }
     }
 );
 

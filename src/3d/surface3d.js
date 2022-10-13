@@ -133,7 +133,7 @@ JXG.extend(
         updateRenderer: function () {
             this.needsUpdate = false;
             return this;
-        },
+        }
     }
 );
 

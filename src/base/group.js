@@ -124,7 +124,7 @@ JXG.Group = function (board, id, name, objects, attributes) {
         remove: "removePoint",
         removePoint: "removePoint",
         setAttribute: "setAttribute",
-        setProperty: "setAttribute",
+        setProperty: "setAttribute"
     };
 };
 
@@ -252,7 +252,7 @@ JXG.extend(
             if (drag.action === "translation") {
                 t = [
                     obj.coords.usrCoords[1] - this.coords[drag.id].usrCoords[1],
-                    obj.coords.usrCoords[2] - this.coords[drag.id].usrCoords[2],
+                    obj.coords.usrCoords[2] - this.coords[drag.id].usrCoords[2]
                 ];
             } else if (drag.action === "rotation" || drag.action === "scaling") {
                 if (drag.action === "rotation") {
@@ -280,7 +280,7 @@ JXG.extend(
                         this.objects[drag.id].point
                     );
                     t = this.board.create("transform", [alpha, center[0], center[1]], {
-                        type: "rotate",
+                        type: "rotate"
                     });
                     t.update(); // This initializes t.matrix, which is needed if the action element is the first group element.
                 } else if (drag.action === "scaling") {
@@ -364,7 +364,7 @@ JXG.extend(
                 return {
                     action: action,
                     id: "",
-                    changed: changed,
+                    changed: changed
                 };
             }
 
@@ -394,7 +394,7 @@ JXG.extend(
             return {
                 action: action,
                 id: dragObjId,
-                changed: changed,
+                changed: changed
             };
         },
 
@@ -445,7 +445,7 @@ JXG.extend(
                                 if (!Type.isInArray(drag.changed, obj.id)) {
                                     obj.coords.setCoordinates(Const.COORDS_BY_USER, [
                                         this.coords[el].usrCoords[1] + t[0],
-                                        this.coords[el].usrCoords[2] + t[1],
+                                        this.coords[el].usrCoords[2] + t[1]
                                     ]);
                                 }
                             } else if (
@@ -725,7 +725,7 @@ JXG.extend(
             }
 
             return this;
-        },
+        }
     }
 );
 
@@ -978,5 +978,5 @@ JXG.registerElement("group", JXG.createGroup);
 
 export default {
     Group: JXG.Group,
-    createGroup: JXG.createGroup,
+    createGroup: JXG.createGroup
 };

@@ -410,7 +410,7 @@ Mat.Symbolic = {
         }
 
         return result;
-    },
+    }
 };
 
 export default Mat.Symbolic;

@@ -158,7 +158,7 @@ JXG.CoordsElement = function (coordinates, isLabel) {
         setGliderPosition: "setGliderPosition",
         addConstraint: "addConstraint",
         dist: "Dist",
-        onPolygon: "onPolygon",
+        onPolygon: "onPolygon"
     });
 
     /*
@@ -580,7 +580,7 @@ JXG.extend(
                 }
                 c = [
                     slide.center.X() + r * Math.cos(this.position * delta),
-                    slide.center.Y() + r * Math.sin(this.position * delta),
+                    slide.center.Y() + r * Math.sin(this.position * delta)
                 ];
             } else if (slide.elementClass === Const.OBJECT_CLASS_LINE) {
                 p1c = slide.point1.coords.usrCoords;
@@ -605,7 +605,7 @@ JXG.extend(
                     c = [
                         p1c[0] + lbda * p2c[0],
                         p1c[1] + lbda * p2c[1],
-                        p1c[2] + lbda * p2c[2],
+                        p1c[2] + lbda * p2c[2]
                     ];
                     // The first point is an ideal point
                 } else if (Math.abs(p1c[0]) < Mat.eps) {
@@ -621,21 +621,21 @@ JXG.extend(
                     c = [
                         p2c[0] + lbda * p1c[0],
                         p2c[1] + lbda * p1c[1],
-                        p2c[2] + lbda * p1c[2],
+                        p2c[2] + lbda * p1c[2]
                     ];
                 } else {
                     lbda = this.position;
                     c = [
                         p1c[0] + lbda * (p2c[0] - p1c[0]),
                         p1c[1] + lbda * (p2c[1] - p1c[1]),
-                        p1c[2] + lbda * (p2c[2] - p1c[2]),
+                        p1c[2] + lbda * (p2c[2] - p1c[2])
                     ];
                 }
             } else if (slide.type === Const.OBJECT_TYPE_TURTLE) {
                 this.coords.setCoordinates(Const.COORDS_BY_USER, [
                     slide.Z(this.position),
                     slide.X(this.position),
-                    slide.Y(this.position),
+                    slide.Y(this.position)
                 ]);
                 // In case, the point is a constrained glider.
                 this.updateConstraint();
@@ -658,13 +658,13 @@ JXG.extend(
                     this.coords.setCoordinates(Const.COORDS_BY_USER, [
                         slides[slides.length - 1].Z(this.position),
                         slides[slides.length - 1].X(this.position),
-                        slides[slides.length - 1].Y(this.position),
+                        slides[slides.length - 1].Y(this.position)
                     ]);
                 } else {
                     this.coords.setCoordinates(Const.COORDS_BY_USER, [
                         slide.Z(this.position),
                         slide.X(this.position),
-                        slide.Y(this.position),
+                        slide.Y(this.position)
                     ]);
                 }
 
@@ -715,7 +715,7 @@ JXG.extend(
                     r = slide.Radius();
                     c = [
                         slide.center.X() + r * Math.cos(this.position * delta + baseangle),
-                        slide.center.Y() + r * Math.sin(this.position * delta + baseangle),
+                        slide.center.Y() + r * Math.sin(this.position * delta + baseangle)
                     ];
                 } else {
                     // In case, the point is a constrained glider.
@@ -1142,7 +1142,7 @@ JXG.extend(
 
             tv = new Coords(method, tv, this.board);
             t = this.board.create("transform", tv.usrCoords.slice(1), {
-                type: "translate",
+                type: "translate"
             });
 
             if (
@@ -1446,7 +1446,7 @@ JXG.extend(
                 this.updateConstraint = function () {
                     this.coords.setCoordinates(Const.COORDS_BY_USER, [
                         this.XEval(),
-                        this.YEval(),
+                        this.YEval()
                     ]);
                     return this;
                 };
@@ -1462,7 +1462,7 @@ JXG.extend(
                     this.coords.setCoordinates(Const.COORDS_BY_USER, [
                         this.ZEval(),
                         this.XEval(),
-                        this.YEval(),
+                        this.YEval()
                     ]);
                     return this;
                 };
@@ -1554,7 +1554,7 @@ JXG.extend(
                 this.coords.setCoordinates(Const.COORDS_BY_USER, [
                     this.ZEval(),
                     this.XEval(),
-                    this.YEval(),
+                    this.YEval()
                 ]);
             };
             this.isConstrained = true;
@@ -1738,7 +1738,7 @@ JXG.extend(
                         p[i] = {
                             elementClass: Const.OBJECT_CLASS_POINT,
                             X: makeFakeFunction(i, 0),
-                            Y: makeFakeFunction(i, 1),
+                            Y: makeFakeFunction(i, 1)
                         };
                     }
                 }
@@ -1747,7 +1747,7 @@ JXG.extend(
                 if (time === 0) {
                     this.setPosition(Const.COORDS_BY_USER, [
                         p[p.length - 1].X(),
-                        p[p.length - 1].Y(),
+                        p[p.length - 1].Y()
                     ]);
                     return this.board.update(this);
                 }
@@ -1851,7 +1851,7 @@ JXG.extend(
                 coords[steps - i] = [
                     where.usrCoords[0],
                     X + dX * stepFun(i),
-                    Y + dY * stepFun(i),
+                    Y + dY * stepFun(i)
                 ];
             }
 
@@ -1919,7 +1919,7 @@ JXG.extend(
                     coords[j * (steps + 1) + steps - i] = [
                         where.usrCoords[0],
                         X + dX * stepFun(i),
-                        Y + dY * stepFun(i),
+                        Y + dY * stepFun(i)
                     ];
                 }
             }
@@ -1964,7 +1964,7 @@ JXG.extend(
 
                 this.coords.setCoordinates(Const.COORDS_BY_SCREEN, [
                     startPoint.coords.scrCoords[1] + dX,
-                    startPoint.coords.scrCoords[2] + dY,
+                    startPoint.coords.scrCoords[2] + dY
                 ]);
             } else if (this.slideObject.elementClass === Const.OBJECT_CLASS_CURVE) {
                 if (direction > 0) {
@@ -1992,7 +1992,7 @@ JXG.extend(
 
                 this.coords.setCoordinates(Const.COORDS_BY_USER, [
                     this.slideObject.center.coords.usrCoords[1] + radius * Math.cos(alpha),
-                    this.slideObject.center.coords.usrCoords[2] + radius * Math.sin(alpha),
+                    this.slideObject.center.coords.usrCoords[2] + radius * Math.sin(alpha)
                 ]);
             }
 
@@ -2023,7 +2023,7 @@ JXG.extend(
             }
 
             return p;
-        },
+        }
     }
 );
 

@@ -427,7 +427,7 @@ Mat.Extrapolate = {
         //     }
         // }
         // return [f(x0 + Math.sign(h0) * Math.sqrt(Mat.eps)), 'direct', 0];
-    },
+    }
 };
 
 export default Mat.Extrapolate;

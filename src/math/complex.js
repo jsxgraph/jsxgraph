@@ -206,7 +206,7 @@ JXG.extend(
             this.imaginary *= -1;
 
             return this;
-        },
+        }
     }
 );
 

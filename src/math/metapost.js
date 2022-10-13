@@ -597,7 +597,7 @@ Mat.Metapost = {
                 },
                 set_left_curl: function (x) {
                     this.lx = x || 0;
-                },
+                }
             });
         }
         len = knots.length;
@@ -639,7 +639,7 @@ Mat.Metapost = {
             tension: 1,
             direction: {},
             curl: {},
-            isClosed: false,
+            isClosed: false
         };
 
         knots = this.makeknots(point_list, Type.evaluate(controls.tension), controls.isClosed);
@@ -700,7 +700,7 @@ Mat.Metapost = {
         }
 
         return [x, y];
-    },
+    }
 };
 
 export default Mat.Metapost;

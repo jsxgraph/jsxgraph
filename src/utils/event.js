@@ -106,7 +106,7 @@ JXG.EventEmitter = {
 
         this.eventHandlers[event].push({
             handler: handler,
-            context: context,
+            context: context
         });
 
         return this;
@@ -157,7 +157,7 @@ JXG.EventEmitter = {
         o.triggerEventHandlers = this.trigger;
         o.trigger = this.trigger;
         o.suspended = {};
-    },
+    }
 };
 
 export default JXG.EventEmitter;

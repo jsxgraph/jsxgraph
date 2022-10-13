@@ -18,17 +18,17 @@ JXG.Options = JXG.merge(JXG.Options, {
             wheel: true,
             needShift: true,
             pinchHorizontal: false,
-            pinchVertical: false,
+            pinchVertical: false
         },
         pan: {
             needShift: true,
             needTwoFingers: true,
-            enabled: true,
+            enabled: true
         },
 
         selection: {
-            enabled: false,
-        },
+            enabled: false
+        }
     },
 
     angle: {
@@ -36,7 +36,7 @@ JXG.Options = JXG.merge(JXG.Options, {
         strokeColor: "#000",
         strokeWidth: 1,
         radius: 1.0,
-        orthotype: "sectordot",
+        orthotype: "sectordot"
     },
 
     axis: {
@@ -47,20 +47,20 @@ JXG.Options = JXG.merge(JXG.Options, {
             minorHeight: -1,
             label: {
                 fontSize: 14,
-                display: "internal",
-            },
+                display: "internal"
+            }
         },
         label: {
             position: "urt",
             offset: [-15, 30],
-            display: "internal",
-        },
+            display: "internal"
+        }
     },
 
     circle: {
         strokeColor: "#36f",
         strokeOpacity: 0.9,
-        strokeWidth: 3,
+        strokeWidth: 3
     },
 
     curve: {
@@ -68,28 +68,28 @@ JXG.Options = JXG.merge(JXG.Options, {
         strokeWidth: 3,
         strokeOpacity: 0.9,
         recursionDepthLow: 7,
-        recursionDepthHigh: 17,
+        recursionDepthHigh: 17
     },
 
     elements: {
-        transitionDuration: 170,
+        transitionDuration: 170
     },
 
     glider: {
         strokeColor: "orange",
         fillColor: "orange",
-        opacity: 1,
+        opacity: 1
     },
 
     intersection: {
         strokeColor: "#808080",
         fillColor: "#808080",
-        opacity: 1,
+        opacity: 1
     },
 
     label: {
         offset: [12, 12],
-        autoPosition: true,
+        autoPosition: true
     },
 
     line: {
@@ -97,13 +97,13 @@ JXG.Options = JXG.merge(JXG.Options, {
         strokeColor: "#36f",
         strokeOpacity: 0.9,
         strokeWidth: 3,
-        scalable: false,
+        scalable: false
     },
 
     midpoint: {
         strokeColor: "#808080",
         fillColor: "#808080",
-        opacity: 1,
+        opacity: 1
     },
 
     perpendicularsegment: {
@@ -111,8 +111,8 @@ JXG.Options = JXG.merge(JXG.Options, {
             visible: true,
             strokeColor: "#808080",
             fillColor: "#808080",
-            opacity: 1,
-        },
+            opacity: 1
+        }
     },
 
     point: {
@@ -131,7 +131,7 @@ JXG.Options = JXG.merge(JXG.Options, {
         snapY: -1,
 
         snapsizeX: 0.5,
-        snapsizeY: 0.5,
+        snapsizeY: 0.5
     },
 
     polygon: {
@@ -147,12 +147,12 @@ JXG.Options = JXG.merge(JXG.Options, {
             strokeColor: "#444444",
             strokeOpacity: 0.9,
             strokeWidth: 2,
-            fixed: true,
-        },
+            fixed: true
+        }
     },
 
     precision: {
-        touchMax: Infinity,
+        touchMax: Infinity
     },
 
     sector: {
@@ -160,16 +160,16 @@ JXG.Options = JXG.merge(JXG.Options, {
         highlightStrokeWidth: 0,
         arc: {
             visible: true,
-            fillColor: "none",
-        },
+            fillColor: "none"
+        }
     },
 
     segment: {
         label: {
             position: "bot",
-            offsets: [0, -12],
+            offsets: [0, -12]
         },
-        scalable: false,
+        scalable: false
     },
 
     slider: {
@@ -187,7 +187,7 @@ JXG.Options = JXG.merge(JXG.Options, {
             strokeOpacity: 0.5,
             highlightStrokeOpacity: 0.5,
             needsRegularUpdate: true,
-            fixed: false,
+            fixed: false
         },
         baseline: {
             strokeColor: "#444444",
@@ -196,14 +196,14 @@ JXG.Options = JXG.merge(JXG.Options, {
             highlightStrokeOpacity: 0.5,
             needsRegularUpdate: true,
             fixed: false,
-            scalable: false,
+            scalable: false
         },
         highline: {
             strokeColor: "#444444",
             highlightStrokeColor: "#444444",
             strokeOpacity: 0.5,
             highlightStrokeOpacity: 0.5,
-            needsRegularUpdate: true,
+            needsRegularUpdate: true
         },
         point1: {
             fixed: false,
@@ -215,7 +215,7 @@ JXG.Options = JXG.merge(JXG.Options, {
             highlightFillColor: "#444444",
             strokeOpacity: 0.5,
             highlightStrokeOpacity: 0.5,
-            size: 3,
+            size: 3
         },
         point2: {
             fixed: false,
@@ -227,8 +227,8 @@ JXG.Options = JXG.merge(JXG.Options, {
             highlightFillColor: "#444444",
             strokeOpacity: 0.5,
             highlightStrokeOpacity: 0.5,
-            size: 3,
-        },
+            size: 3
+        }
     },
 
     slopetriangle: {
@@ -236,7 +236,7 @@ JXG.Options = JXG.merge(JXG.Options, {
             strokeColor: "#808080",
             fillColor: "#808080",
             opacity: 1,
-            visible: true,
+            visible: true
         },
 
         /*
@@ -256,8 +256,8 @@ JXG.Options = JXG.merge(JXG.Options, {
             strokeColor: "#808080",
             fillColor: "#808080",
             opacity: 1,
-            visible: true,
-        },
+            visible: true
+        }
     },
 
     tapemeasure: {
@@ -270,17 +270,17 @@ JXG.Options = JXG.merge(JXG.Options, {
             strokeOpacity: 0.7,
             snapToPoints: true,
             attractorUnit: "screen",
-            attractorDistance: 20,
+            attractorDistance: 20
         },
         point2: {
             strokeOpacity: 0.7,
             snapToPoints: true,
             attractorUnit: "screen",
-            attractorDistance: 20,
+            attractorDistance: 20
         },
         ticks: {
-            strokeOpacity: 0.7,
-        },
+            strokeOpacity: 0.7
+        }
     },
 
     text: {
@@ -289,10 +289,10 @@ JXG.Options = JXG.merge(JXG.Options, {
         highlightStrokeColor: "#222",
         strokeOpacity: 1,
         highlightStrokeOpacity: 0.66666,
-        digits: 2,
+        digits: 2
     },
 
-    trunclen: 2,
+    trunclen: 2
 
     /*
     line: {

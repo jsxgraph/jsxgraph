@@ -100,7 +100,7 @@ JXG.VMLRenderer = function (container) {
         "Dash",
         "LongDash",
         "ShortDashDot",
-        "LongDashDot",
+        "LongDashDot"
     ];
 };
 
@@ -270,28 +270,28 @@ JXG.extend(
                 p[0] = Mat.matVecMult(m, [
                     1,
                     el.coords.scrCoords[1] - offset[0] * el.size[0],
-                    el.coords.scrCoords[2] + (1 - offset[1]) * el.size[1] + this.vOffsetText,
+                    el.coords.scrCoords[2] + (1 - offset[1]) * el.size[1] + this.vOffsetText
                 ]);
                 p[0][1] /= p[0][0];
                 p[0][2] /= p[0][0];
                 p[1] = Mat.matVecMult(m, [
                     1,
                     el.coords.scrCoords[1] + (1 - offset[0]) * el.size[0],
-                    el.coords.scrCoords[2] + (1 - offset[1]) * el.size[1] + this.vOffsetText,
+                    el.coords.scrCoords[2] + (1 - offset[1]) * el.size[1] + this.vOffsetText
                 ]);
                 p[1][1] /= p[1][0];
                 p[1][2] /= p[1][0];
                 p[2] = Mat.matVecMult(m, [
                     1,
                     el.coords.scrCoords[1] + (1 - offset[0]) * el.size[0],
-                    el.coords.scrCoords[2] - offset[1] * el.size[1] + this.vOffsetText,
+                    el.coords.scrCoords[2] - offset[1] * el.size[1] + this.vOffsetText
                 ]);
                 p[2][1] /= p[2][0];
                 p[2][2] /= p[2][0];
                 p[3] = Mat.matVecMult(m, [
                     1,
                     el.coords.scrCoords[1] - offset[0] * el.size[0],
-                    el.coords.scrCoords[2] - offset[1] * el.size[1] + this.vOffsetText,
+                    el.coords.scrCoords[2] - offset[1] * el.size[1] + this.vOffsetText
                 ]);
                 p[3][1] /= p[3][0];
                 p[3][2] /= p[3][0];
@@ -409,21 +409,21 @@ JXG.extend(
                 p[1] = Mat.matVecMult(m, [
                     1,
                     el.coords.scrCoords[1] + el.size[0],
-                    el.coords.scrCoords[2],
+                    el.coords.scrCoords[2]
                 ]);
                 p[1][1] /= p[1][0];
                 p[1][2] /= p[1][0];
                 p[2] = Mat.matVecMult(m, [
                     1,
                     el.coords.scrCoords[1] + el.size[0],
-                    el.coords.scrCoords[2] - el.size[1],
+                    el.coords.scrCoords[2] - el.size[1]
                 ]);
                 p[2][1] /= p[2][0];
                 p[2][2] /= p[2][0];
                 p[3] = Mat.matVecMult(m, [
                     1,
                     el.coords.scrCoords[1],
-                    el.coords.scrCoords[2] - el.size[1],
+                    el.coords.scrCoords[2] - el.size[1]
                 ]);
                 p[3][1] /= p[3][0];
                 p[3][2] /= p[3][0];
@@ -594,7 +594,7 @@ JXG.extend(
                     " l ",
                     Math.floor(r * p2x),
                     ", ",
-                    Math.floor(r * p2y),
+                    Math.floor(r * p2y)
                 ];
                 this.updatePathPrim(node, s, board);
             }
@@ -644,7 +644,7 @@ JXG.extend(
                         " l ",
                         mround(r * (scr[1] - size)),
                         ", ",
-                        mround(r * (scr[2] + size)),
+                        mround(r * (scr[2] + size))
                     ].join("")
                 );
             } else if (type === "+") {
@@ -665,7 +665,7 @@ JXG.extend(
                         " l ",
                         mround(r * scr[1]),
                         ", ",
-                        mround(r * (scr[2] + size)),
+                        mround(r * (scr[2] + size))
                     ].join("")
                 );
             } else if (type === "<>") {
@@ -687,7 +687,7 @@ JXG.extend(
                         mround(r * scr[1]),
                         ", ",
                         mround(r * (scr[2] - size)),
-                        " x e ",
+                        " x e "
                     ].join("")
                 );
             } else if (type === "^") {
@@ -705,7 +705,7 @@ JXG.extend(
                         mround(r * (scr[1] + sqrt32)),
                         ", ",
                         mround(r * (scr[2] + s05)),
-                        " x e ",
+                        " x e "
                     ].join("")
                 );
             } else if (type === "v") {
@@ -723,7 +723,7 @@ JXG.extend(
                         mround(r * (scr[1] + sqrt32)),
                         ", ",
                         mround(r * (scr[2] - s05)),
-                        " x e ",
+                        " x e "
                     ].join("")
                 );
             } else if (type === ">") {
@@ -744,7 +744,7 @@ JXG.extend(
                         " l ",
                         mround(r * (scr[1] + size)),
                         ", ",
-                        mround(r * scr[2]),
+                        mround(r * scr[2])
                     ].join("")
                 );
             } else if (type === "<") {
@@ -762,7 +762,7 @@ JXG.extend(
                         mround(r * (scr[1] + s05)),
                         ", ",
                         mround(r * (scr[2] + sqrt32)),
-                        " x e ",
+                        " x e "
                     ].join("")
                 );
             }
@@ -938,7 +938,7 @@ JXG.extend(
                                     " ",
                                     mround(r * scr[1]),
                                     " ",
-                                    mround(r * scr[2]),
+                                    mround(r * scr[2])
                                 ].join("")
                             );
                         }
@@ -1294,7 +1294,7 @@ JXG.extend(
         // Already documented in JXG.AbstractRenderer
         unsuspendRedraw: function () {
             this.container.style.display = "";
-        },
+        }
     }
 );
 

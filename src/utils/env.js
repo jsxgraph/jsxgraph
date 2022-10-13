@@ -52,7 +52,7 @@ JXG.extendConstants(
          * @default 'touches'
          * @private
          */
-        touchProperty: "touches",
+        touchProperty: "touches"
     }
 );
 
@@ -365,7 +365,7 @@ JXG.extend(
             if (!this.isBrowser || elementId === null) {
                 return {
                     width: 500,
-                    height: 500,
+                    height: 500
                 };
             }
 
@@ -392,7 +392,7 @@ JXG.extend(
                     : element.style;
                 return {
                     width: pixelDimRegExp.test(style.width) ? parseFloat(style.width) : 0,
-                    height: pixelDimRegExp.test(style.height) ? parseFloat(style.height) : 0,
+                    height: pixelDimRegExp.test(style.height) ? parseFloat(style.height) : 0
                 };
             }
 
@@ -421,7 +421,7 @@ JXG.extend(
 
             return {
                 width: originalWidth,
-                height: originalHeight,
+                height: originalHeight
             };
         },
 
@@ -693,7 +693,7 @@ JXG.extend(
                     "webkitTransform",
                     "MozTransform",
                     "msTransform",
-                    "oTransform",
+                    "oTransform"
                 ];
 
             // Take the first transformation matrix
@@ -769,12 +769,12 @@ JXG.extend(
                     "webkitTransform",
                     "MozTransform",
                     "msTransform",
-                    "oTransform",
+                    "oTransform"
                 ],
                 mat = [
                     [1, 0, 0],
                     [0, 1, 0],
-                    [0, 0, 1],
+                    [0, 0, 1]
                 ];
 
             // This should work on all browsers except IE 6-8
@@ -813,7 +813,7 @@ JXG.extend(
                         mat = [
                             [1, 0, 0],
                             [0, arr[0], arr[1]],
-                            [0, arr[2], arr[3]],
+                            [0, arr[2], arr[3]]
                         ];
                     } else if (str.indexOf("scaleX") === 0) {
                         mat[1][1] = arr[0];
@@ -905,7 +905,7 @@ JXG.extend(
                     ":fullscreen",
                     ":-webkit-full-screen",
                     ":-moz-full-screen",
-                    ":-ms-fullscreen",
+                    ":-ms-fullscreen"
                 ],
                 len_pseudo = pseudo_keys.length,
                 i,
@@ -982,7 +982,7 @@ JXG.extend(
                     "One possible reason could be that the id of the JSXGraph container does not start with a letter."
                 );
             }
-        },
+        }
     }
 );
 

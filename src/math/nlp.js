@@ -1424,7 +1424,7 @@ JXG.Math.Nlp = {
         }
 
         return sum;
-    },
+    }
 };
 
 export default JXG.Math.Nlp;

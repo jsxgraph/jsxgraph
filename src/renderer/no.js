@@ -718,7 +718,7 @@ JXG.extend(
 
         removeToInsertLater: function () {
             return function () {};
-        },
+        }
     }
 );
 

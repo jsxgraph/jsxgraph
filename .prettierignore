@@ -1,6 +1,6 @@
 # Ignore artifacts:
 build/*.json
-build/*.Md
+build/*.md
 3rdparty
 distrib
 doc

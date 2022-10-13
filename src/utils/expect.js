@@ -116,7 +116,7 @@ var Expect = {
         }
 
         return coord;
-    },
+    }
 };
 
 JXG.Expect = Expect;

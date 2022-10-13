@@ -248,7 +248,7 @@ JXG.extend(
                     fixed: true,
                     withLabel: false,
                     visible: false,
-                    name: "",
+                    name: ""
                 };
 
             attr = Type.copyAttributes(attributes, board.options, "chart");
@@ -436,7 +436,7 @@ JXG.extend(
                         Const.COORDS_BY_USER,
                         [
                             this.point1.coords.usrCoords[1] + dx * f,
-                            this.point1.coords.usrCoords[2] + dy * f,
+                            this.point1.coords.usrCoords[2] + dy * f
                         ],
                         this.board
                     );
@@ -463,7 +463,7 @@ JXG.extend(
                     fixed: true,
                     withLabel: false,
                     visible: false,
-                    name: "",
+                    name: ""
                 };
 
             if (!Type.isArray(labelArray)) {
@@ -492,7 +492,7 @@ JXG.extend(
                     },
                     function () {
                         return yc;
-                    },
+                    }
                 ],
                 hiddenPoint
             );
@@ -636,7 +636,7 @@ JXG.extend(
                     var t, tscale, trot;
 
                     t = board.create("transform", [-(starts[i] - sshifts[i]), 0], {
-                        type: "translate",
+                        type: "translate"
                     });
                     tscale = board.create(
                         "transform",
@@ -783,7 +783,7 @@ JXG.extend(
                 fillopacity: attributes.fillOpacity || 0.4,
                 highlightfillcolor: attributes.highlightFillColor || "#FF7400",
                 highlightstrokecolor: attributes.highlightStrokeColor || "black",
-                gradient: attributes.gradient || "none",
+                gradient: attributes.gradient || "none"
             };
 
             cent = attributes.center || [0, 0];
@@ -793,7 +793,7 @@ JXG.extend(
                 name: "",
                 fixed: true,
                 withlabel: false,
-                visible: false,
+                visible: false
             });
             start_angle = Math.PI / 2 - Math.PI / numofparams;
             start_angle = attributes.startangle || 0;
@@ -810,7 +810,7 @@ JXG.extend(
                     name: "",
                     fixed: true,
                     withlabel: false,
-                    visible: false,
+                    visible: false
                 });
                 line[i] = board.create("line", [center, p[i]], {
                     name: paramArray[i],
@@ -820,7 +820,7 @@ JXG.extend(
                     straightFirst: false,
                     straightLast: false,
                     withLabel: true,
-                    highlightStrokeColor: myAtts.highlightstrokecolor,
+                    highlightStrokeColor: myAtts.highlightstrokecolor
                 });
                 line[i].getLabelAnchor = get_anchor;
                 t = get_transform(rad, i);
@@ -831,7 +831,7 @@ JXG.extend(
                         name: "",
                         fixed: true,
                         withlabel: false,
-                        visible: false,
+                        visible: false
                     });
                     pdata[j][i].addTransform(pdata[j][i], t);
                 }
@@ -847,7 +847,7 @@ JXG.extend(
                     withLabel: false,
                     fillColor: myAtts.fillcolor,
                     fillOpacity: myAtts.fillopacity,
-                    highlightFillColor: myAtts.highlightfillcolor,
+                    highlightFillColor: myAtts.highlightfillcolor
                 });
 
                 for (j = 0; j < numofparams; j++) {
@@ -871,7 +871,7 @@ JXG.extend(
                         [xc + radius + lxoff, yc + radius - lyoff],
                         {
                             labels: labelArray,
-                            colors: colorArray,
+                            colors: colorArray
                         }
                     );
                     break;
@@ -916,7 +916,7 @@ JXG.extend(
                         size: 0,
                         fixed: true,
                         withLabel: true,
-                        visible: true,
+                        visible: true
                     });
                     pcircles[i].addTransform(pcircles[i], t);
                     circles[i] = board.create("circle", [center, pcircles[i]], myAtts);
@@ -928,7 +928,7 @@ JXG.extend(
                 lines: line,
                 points: pdata,
                 midpoint: center,
-                polygons: polygons,
+                polygons: polygons
             };
         },
 
@@ -961,7 +961,7 @@ JXG.extend(
          */
         updateDataArray: function () {
             return this;
-        },
+        }
     }
 );
 
@@ -1407,14 +1407,14 @@ JXG.Legend.prototype.drawVerticalLegend = function (board, attributes) {
         this.myAtts.label = {
             offset: [10, 0],
             strokeColor: this.color_array[i % this.color_array.length],
-            strokeWidth: this.myAtts.strokewidth,
+            strokeWidth: this.myAtts.strokewidth
         };
 
         this.lines[i] = board.create(
             "line",
             [
                 [this.coords.usrCoords[1], this.coords.usrCoords[2] - i * offy],
-                [this.coords.usrCoords[1] + line_length, this.coords.usrCoords[2] - i * offy],
+                [this.coords.usrCoords[1] + line_length, this.coords.usrCoords[2] - i * offy]
             ],
             this.myAtts
         );
@@ -1497,5 +1497,5 @@ export default {
     Chart: JXG.Chart,
     Legend: JXG.Legend,
     createChart: JXG.createChart,
-    createLegend: JXG.createLegend,
+    createLegend: JXG.createLegend
 };

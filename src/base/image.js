@@ -78,7 +78,7 @@ JXG.Image = function (board, coords, attributes, url, size) {
      */
     this.size = [
         Math.abs(this.usrSize[0] * board.unitX),
-        Math.abs(this.usrSize[1] * board.unitY),
+        Math.abs(this.usrSize[1] * board.unitY)
     ];
 
     /**
@@ -94,7 +94,7 @@ JXG.Image = function (board, coords, attributes, url, size) {
     this.span = [
         this.coords.usrCoords.slice(0),
         [this.coords.usrCoords[0], this.W(), 0],
-        [this.coords.usrCoords[0], 0, this.H()],
+        [this.coords.usrCoords[0], 0, this.H()]
     ];
 
     //this.parent = board.select(attributes.anchor);
@@ -105,7 +105,7 @@ JXG.Image = function (board, coords, attributes, url, size) {
 
     this.methodMap = JXG.deepCopy(this.methodMap, {
         addTransformation: "addTransform",
-        trans: "addTransform",
+        trans: "addTransform"
     });
 };
 
@@ -204,7 +204,7 @@ JXG.extend(
             this.usrSize = [this.W(), this.H()];
             this.size = [
                 Math.abs(this.usrSize[0] * this.board.unitX),
-                Math.abs(this.usrSize[1] * this.board.unitY),
+                Math.abs(this.usrSize[1] * this.board.unitY)
             ];
 
             return this;
@@ -227,7 +227,7 @@ JXG.extend(
                 this.span = [
                     [this.Z(), this.X(), this.Y()],
                     [this.Z(), this.W(), 0],
-                    [this.Z(), 0, this.H()],
+                    [this.Z(), 0, this.H()]
                 ];
             } else {
                 // v contains the three defining corners of the rectangle/image
@@ -362,7 +362,7 @@ JXG.extend(
          * Returns the height of the image in user coordinates.
          * @returns {number} height of the image in user coordinates
          */
-        H: function () {}, // Needed for docs, defined in constructor
+        H: function () {} // Needed for docs, defined in constructor
     }
 );
 
@@ -427,5 +427,5 @@ JXG.registerElement("image", JXG.createImage);
 
 export default {
     Image: JXG.Image,
-    createImage: JXG.createImage,
+    createImage: JXG.createImage
 };

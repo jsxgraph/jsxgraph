@@ -190,7 +190,7 @@ var simpleColors = {
         white: "ffffff",
         whitesmoke: "f5f5f5",
         yellow: "ffff00",
-        yellowgreen: "9acd32",
+        yellowgreen: "9acd32"
     },
     // array of color definition objects
     colorDefs = [
@@ -199,21 +199,21 @@ var simpleColors = {
             example: ["rgba(123, 234, 45, 0.5)", "rgba(255,234,245,1.0)"],
             process: function (bits) {
                 return [parseInt(bits[1], 10), parseInt(bits[2], 10), parseInt(bits[3], 10)];
-            },
+            }
         },
         {
             re: /^\s*rgb\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*\)\s*$/,
             example: ["rgb(123, 234, 45)", "rgb(255,234,245)"],
             process: function (bits) {
                 return [parseInt(bits[1], 10), parseInt(bits[2], 10), parseInt(bits[3], 10)];
-            },
+            }
         },
         {
             re: /^(\w{2})(\w{2})(\w{2})$/,
             example: ["#00ff00", "336699"],
             process: function (bits) {
                 return [parseInt(bits[1], 16), parseInt(bits[2], 16), parseInt(bits[3], 16)];
-            },
+            }
         },
         {
             re: /^(\w{1})(\w{1})(\w{1})$/,
@@ -222,10 +222,10 @@ var simpleColors = {
                 return [
                     parseInt(bits[1] + bits[1], 16),
                     parseInt(bits[2] + bits[2], 16),
-                    parseInt(bits[3] + bits[3], 16),
+                    parseInt(bits[3] + bits[3], 16)
                 ];
-            },
-        },
+            }
+        }
     ];
 
 /**
@@ -277,7 +277,7 @@ JXG.rgbParser = function (color, ag, ab) {
             return [
                 Math.ceil(values[0] * 255),
                 Math.ceil(values[1] * 255),
-                Math.ceil(values[2] * 255),
+                Math.ceil(values[2] * 255)
             ];
         }
 
@@ -556,7 +556,7 @@ JXG.rgb2LMS = function (color, ag, ab) {
         matrix = [
             [0.05059983, 0.08585369, 0.0095242],
             [0.01893033, 0.08925308, 0.01370054],
-            [0.00292202, 0.00975732, 0.07145979],
+            [0.00292202, 0.00975732, 0.07145979]
         ];
 
     r = JXG.rgbParser(color, ag, ab);
@@ -598,7 +598,7 @@ JXG.LMS2rgb = function (l, m, s) {
         matrix = [
             [30.830854, -29.832659, 1.610474],
             [-6.481468, 17.715578, -2.532642],
-            [-0.37569, -1.199062, 14.273846],
+            [-0.37569, -1.199062, 14.273846]
         ],
         // re-gamma, inspired by GIMP modules/display-filter-color-blind.c:
         // Copyright (C) 2002-2003 Michael Natterer <mitch@gimp.org>,
@@ -1013,8 +1013,8 @@ JXG.extend(
             red: "#D55E00", // vermillion
             green: "#009E73", // bluishgreen
             purple: "#CC79A7", // reddishpurple
-            white: "#ffffff",
-        },
+            white: "#ffffff"
+        }
     }
 );
 

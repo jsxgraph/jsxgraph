@@ -2,12 +2,12 @@ JXG.Options = JXG.merge(JXG.Options, {
     board: {
         showCopyright: false,
         showNavigation: false,
-        showInfobox: true,
+        showInfobox: true
     },
 
     navbar: {
         strokeColor: "#bbb",
-        fillColor: "none",
+        fillColor: "none"
     },
 
     elements: {
@@ -16,7 +16,7 @@ JXG.Options = JXG.merge(JXG.Options, {
         fillColor: "none",
         highlightFillColor: "none",
         strokeOpacity: 0.6,
-        highlightStrokeOpacity: 1,
+        highlightStrokeOpacity: 1
     },
 
     point: {
@@ -26,7 +26,7 @@ JXG.Options = JXG.merge(JXG.Options, {
         highlightFillColor: "#eeeeee",
         strokeColor: "white",
         highlightStrokeColor: "white",
-        showInfobox: "inherit",
+        showInfobox: "inherit"
     },
 
     line: {
@@ -41,28 +41,28 @@ JXG.Options = JXG.merge(JXG.Options, {
             minorHeight: 4,
             majorHeight: 10,
             minorTicks: 4,
-            defaultDistance: 1,
+            defaultDistance: 1
         },
-        labelOffsets: [10, 10],
+        labelOffsets: [10, 10]
     },
 
     axis: {
         strokeColor: "#aaa",
-        highlightStrokeColor: "#aaa",
+        highlightStrokeColor: "#aaa"
     },
 
     circle: {
         fillColor: "none",
         highlightFillColor: "none",
         strokeColor: "#0000ff",
-        highlightStrokeColor: "#C3D9FF",
+        highlightStrokeColor: "#C3D9FF"
     },
 
     conic: {
         fillColor: "none",
         highlightFillColor: "none",
         strokeColor: "#0000ff",
-        highlightStrokeColor: "#C3D9FF",
+        highlightStrokeColor: "#C3D9FF"
     },
 
     angle: {
@@ -73,7 +73,7 @@ JXG.Options = JXG.merge(JXG.Options, {
         strokeColor: "#FF7F00",
         textColor: "#0000FF",
         fillOpacity: 0.3,
-        highlightFillOpacity: 0.3,
+        highlightFillOpacity: 0.3
     },
 
     /* special arc options */
@@ -83,7 +83,7 @@ JXG.Options = JXG.merge(JXG.Options, {
         fillColor: "none",
         highlightFillColor: "none",
         strokeColor: "#0000ff",
-        highlightStrokeColor: "#C3D9FF",
+        highlightStrokeColor: "#C3D9FF"
     },
 
     /* special polygon options */
@@ -95,8 +95,8 @@ JXG.Options = JXG.merge(JXG.Options, {
         borders: {
             withLabel: false,
             highlightStrokeColor: "#eee",
-            layer: 5,
-        },
+            layer: 5
+        }
     },
 
     text: {
@@ -104,12 +104,12 @@ JXG.Options = JXG.merge(JXG.Options, {
         strokeColor: "gray",
         useASCIIMathML: false,
         useMathJax: false,
-        defaultDisplay: "html",
+        defaultDisplay: "html"
     },
 
     curve: {
         strokeWidth: "2px",
-        strokeColor: "#6BBA70",
+        strokeColor: "#6BBA70"
     },
 
     slider: {
@@ -120,14 +120,14 @@ JXG.Options = JXG.merge(JXG.Options, {
             strokeColor: "white",
             highlightStrokeColor: "white",
             size: 6,
-            face: "<>",
+            face: "<>"
         },
         baseline: {
             needsRegularUpdate: false,
             name: "",
             strokeWidth: 1,
             strokeColor: "#ddd",
-            highlightStrokeColor: "#ddd",
+            highlightStrokeColor: "#ddd"
         },
         /* line ticks options */
         ticks: {
@@ -141,22 +141,22 @@ JXG.Options = JXG.merge(JXG.Options, {
             defaultDistance: 1,
             opacity: 1,
             strokeWidth: 2,
-            strokeColor: "#ddd",
+            strokeColor: "#ddd"
         },
         highline: {
             strokeWidth: 5,
             name: "",
             strokeColor: "#eee",
-            highlightStrokeColor: "#eee",
+            highlightStrokeColor: "#eee"
         },
         label: {
-            strokeColor: "#ccc",
-        },
+            strokeColor: "#ccc"
+        }
     },
 
     chart: {
-        fillOpacity: 0.6,
+        fillOpacity: 0.6
     },
 
-    trunclen: 2,
+    trunclen: 2
 });

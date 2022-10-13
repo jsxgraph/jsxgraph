@@ -97,8 +97,8 @@
                                 fillColor: erg[0][0],
                                 strokeColor: erg[2],
                                 label: {
-                                    strokeColor: erg[3],
-                                },
+                                    strokeColor: erg[3]
+                                }
                             }
                         );
 
@@ -140,7 +140,7 @@
                                 withLabel: true,
                                 strokeColor: erg[0][0],
                                 strokeWidth: erg[0][2],
-                                dash: erg[1],
+                                dash: erg[1]
                             }
                         );
 
@@ -168,7 +168,7 @@
                                 strokeColor: erg[0][0],
                                 fillColor: erg[1],
                                 fillOpacity: erg[2],
-                                strokeWidth: erg[0][2],
+                                strokeWidth: erg[0][2]
                             }
                         );
 
@@ -204,7 +204,7 @@
                                 strokeColor: erg[0][0],
                                 fillColor: erg[1],
                                 fillOpacity: erg[2],
-                                strokeWidth: erg[0][2],
+                                strokeWidth: erg[0][2]
                             }
                         );
 
@@ -237,7 +237,7 @@
                             [
                                 circle.center.coords.usrCoords[1] + defPoints[0],
                                 circle.center.coords.usrCoords[2] - defPoints[1],
-                                circle,
+                                circle
                             ],
                             {
                                 name: objName,
@@ -245,8 +245,8 @@
                                 fillColor: erg[0][0],
                                 strokeColor: erg[2],
                                 label: {
-                                    strokeColor: erg[3],
-                                },
+                                    strokeColor: erg[3]
+                                }
                             }
                         );
 
@@ -277,7 +277,7 @@
                             [
                                 pCoords[0] / pCoords[2],
                                 -pCoords[1] / pCoords[2],
-                                this.board.select(defName),
+                                this.board.select(defName)
                             ],
                             {
                                 name: objName,
@@ -285,8 +285,8 @@
                                 fillColor: erg[0][0],
                                 strokeColor: erg[2],
                                 label: {
-                                    strokeColor: erg[3],
-                                },
+                                    strokeColor: erg[3]
+                                }
                             }
                         );
 
@@ -314,7 +314,7 @@
                                 size: erg[0][1],
                                 fillColor: erg[0][0],
                                 strokeColor: erg[2],
-                                labelColor: erg[3],
+                                labelColor: erg[3]
                             }
                         );
 
@@ -337,7 +337,7 @@
                             [
                                 this.board.select(defName[0]),
                                 this.board.select(defName[1]),
-                                this.board.select(defName[2]),
+                                this.board.select(defName[2])
                             ],
                             {
                                 name: objName,
@@ -347,8 +347,8 @@
                                 strokeWidth: erg[0][2],
                                 center: {
                                     name: "",
-                                    visible: false,
-                                },
+                                    visible: false
+                                }
                             }
                         );
 
@@ -375,7 +375,7 @@
                                 withLabel: true,
                                 strokeColor: erg[0][0],
                                 strokeWidth: erg[0][2],
-                                dash: erg[1],
+                                dash: erg[1]
                             }
                         );
 
@@ -403,7 +403,7 @@
                                 withLabel: true,
                                 strokeColor: erg[0][0],
                                 strokeWidth: erg[0][2],
-                                dash: erg[1],
+                                dash: erg[1]
                             }
                         );
 
@@ -430,14 +430,14 @@
                                 this.board.select(defName[1]),
                                 this.board.select(defName[2]),
                                 this.board.select(defName[3]),
-                                this.board.select(defName[4]),
+                                this.board.select(defName[4])
                             ],
                             {
                                 name: objName,
                                 strokeColor: erg[0][0],
                                 fillColor: erg[1],
                                 fillOpacity: erg[2],
-                                strokeWidth: erg[0][2],
+                                strokeWidth: erg[0][2]
                             }
                         );
 
@@ -463,14 +463,14 @@
                                 [
                                     this.board.select(defName[0]),
                                     this.board.select(defName[1]),
-                                    this.board.select(defName[2]),
+                                    this.board.select(defName[2])
                                 ],
                                 {
                                     name: objName,
                                     strokeColor: erg[0][0],
                                     fillColor: erg[1],
                                     fillOpacity: erg[2],
-                                    strokeWidth: erg[0][2],
+                                    strokeWidth: erg[0][2]
                                 }
                             );
                         } else {
@@ -479,14 +479,14 @@
                                 [
                                     this.board.select(defName[0]),
                                     this.board.select(defName[1]),
-                                    this.board.select(defName[2]),
+                                    this.board.select(defName[2])
                                 ],
                                 {
                                     name: objName,
                                     strokeColor: erg[0][0],
                                     fillColor: erg[1],
                                     fillOpacity: erg[2],
-                                    strokeWidth: erg[0][2],
+                                    strokeWidth: erg[0][2]
                                 }
                             );
                         }
@@ -518,7 +518,7 @@
                                 strokeColor: erg[0][0],
                                 fillColor: erg[1],
                                 fillOpacity: erg[2],
-                                strokeWidth: erg[0][2],
+                                strokeWidth: erg[0][2]
                             }
                         );
 
@@ -541,13 +541,13 @@
                         poly = this.board.create("polygon", defName, {
                             name: objName,
                             fillColor: erg[1],
-                            fillOpacity: erg[2],
+                            fillOpacity: erg[2]
                         });
 
                         for (j = 0; j < poly.borders.length; j++) {
                             poly.borders[j].setAttribute({
                                 strokeColor: erg[0][0],
-                                strokeWidth: erg[0][2],
+                                strokeWidth: erg[0][2]
                             });
                         }
 
@@ -572,14 +572,14 @@
                             [
                                 this.board.select(defName[0]),
                                 this.board.select(defName[1]),
-                                this.board.select(defName[2]),
+                                this.board.select(defName[2])
                             ],
                             {
                                 name: objName,
                                 strokeColor: erg[0][0],
                                 fillColor: erg[1],
                                 fillOpacity: erg[2],
-                                strokeWidth: erg[0][2],
+                                strokeWidth: erg[0][2]
                             }
                         );
 
@@ -607,7 +607,7 @@
                             "point",
                             [
                                 j.coords.usrCoords[1] + parseFloat(pCoords[0]),
-                                j.coords.usrCoords[2] + parseFloat(pCoords[1]),
+                                j.coords.usrCoords[2] + parseFloat(pCoords[1])
                             ],
                             { visible: false }
                         );
@@ -620,7 +620,7 @@
                             withLabel: true,
                             strokeColor: erg[0][0],
                             strokeWidth: erg[0][2],
-                            dash: erg[1],
+                            dash: erg[1]
                         });
 
                         // circle defined by compass
@@ -648,7 +648,7 @@
                                 strokeColor: erg[0][0],
                                 fillColor: erg[1],
                                 fillOpacity: erg[2],
-                                strokeWidth: erg[0][2],
+                                strokeWidth: erg[0][2]
                             }
                         );
 
@@ -686,12 +686,12 @@
                             [this.board.select(defName[0]), this.board.select(defName[1])],
                             {
                                 line1: {
-                                    name: objName2,
+                                    name: objName2
                                 },
                                 line2: {
-                                    name: objName,
+                                    name: objName
                                 },
-                                withLabel: true,
+                                withLabel: true
                             }
                         );
 
@@ -700,7 +700,7 @@
                             lines.line1.setAttribute({
                                 strokeColor: erg[0][0],
                                 strokeWidth: erg[0][2],
-                                dash: erg[1],
+                                dash: erg[1]
                             });
                         } else {
                             if (objName2 === "") {
@@ -708,18 +708,18 @@
                                 lines.line2.setAttribute({
                                     strokeColor: erg[0][0],
                                     strokeWidth: erg[0][2],
-                                    dash: erg[1],
+                                    dash: erg[1]
                                 });
                             } else {
                                 lines.line1.setAttribute({
                                     strokeColor: erg[0][0],
                                     strokeWidth: erg[0][2],
-                                    dash: erg[1],
+                                    dash: erg[1]
                                 });
                                 lines.line2.setAttribute({
                                     strokeColor: erg2[0][0],
                                     strokeWidth: erg2[0][2],
-                                    dash: erg2[1],
+                                    dash: erg2[1]
                                 });
                             }
                         }
@@ -747,7 +747,7 @@
                                 size: erg[0][1],
                                 fillColor: erg[0][0],
                                 strokeColor: erg[2],
-                                labelColor: erg[3],
+                                labelColor: erg[3]
                             }
                         );
 
@@ -797,7 +797,7 @@
                                 [
                                     this.board.select(defName[0]),
                                     this.board.select(defName[1]),
-                                    j,
+                                    j
                                 ],
                                 {
                                     name: objName2,
@@ -805,8 +805,8 @@
                                     fillColor: erg[0][0],
                                     strokeColor: erg[2],
                                     label: {
-                                        strokeColor: erg[3],
-                                    },
+                                        strokeColor: erg[3]
+                                    }
                                 }
                             );
 
@@ -816,7 +816,7 @@
                                     [
                                         this.board.select(defName[0]),
                                         this.board.select(defName[1]),
-                                        point,
+                                        point
                                     ],
                                     {
                                         name: objName,
@@ -824,8 +824,8 @@
                                         fillColor: erg2[0][0],
                                         strokeColor: erg2[2],
                                         label: {
-                                            strokeColor: erg2[3],
-                                        },
+                                            strokeColor: erg2[3]
+                                        }
                                     }
                                 );
                             }
@@ -835,7 +835,7 @@
                                 [
                                     this.board.select(defName[0]),
                                     this.board.select(defName[1]),
-                                    k,
+                                    k
                                 ],
                                 {
                                     name: objName,
@@ -843,8 +843,8 @@
                                     fillColor: erg[0][0],
                                     strokeColor: erg[2],
                                     label: {
-                                        strokeColor: erg[3],
-                                    },
+                                        strokeColor: erg[3]
+                                    }
                                 }
                             );
                         }
@@ -1030,7 +1030,7 @@
                     fileStr = new JXG.Util.Unzip(bA).unzip()[0][0];
                 }
                 return fileStr;
-            },
+            }
         }
     );
 

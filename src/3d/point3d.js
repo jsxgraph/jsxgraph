@@ -333,7 +333,7 @@ JXG.extend(
                         1,
                         surface.X(x[0], x[1]),
                         surface.Y(x[0], x[1]),
-                        surface.Z(x[0], x[1]),
+                        surface.Z(x[0], x[1])
                     ],
                     c2d = that.view.project3DTo2D(c3d);
 
@@ -356,7 +356,7 @@ JXG.extend(
         },
 
         // Not yet working
-        __evt__update3D: function (oc) {},
+        __evt__update3D: function (oc) {}
     }
 );
 
