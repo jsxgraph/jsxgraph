@@ -120,146 +120,143 @@ import Point from "../base/point";
  *
  */
 JXG.createComb = function (board, parents, attributes) {
-  var p1, p2, c, attr, parent_types;
-  //ds, angle, width, p;
+    var p1, p2, c, attr, parent_types;
+    //ds, angle, width, p;
 
-  if (parents.length === 2) {
-    // point 1 given by coordinates
-    if (Type.isArray(parents[0]) && parents[0].length > 1) {
-      attr = Type.copyAttributes(attributes, board.options, "comb", "point1");
-      p1 = board.create("point", parents[0], attr);
-    } else if (Type.isString(parents[0]) || Type.isPoint(parents[0])) {
-      p1 = board.select(parents[0]);
-    } else if (Type.isFunction(parents[0]) && Type.isPoint(parents[0]())) {
-      p1 = parents[0]();
-    } else if (
-      Type.isFunction(parents[0]) &&
-      parents[0]().length &&
-      parents[0]().length >= 2
-    ) {
-      attr = Type.copyAttributes(attributes, board.options, "comb", "point1");
-      p1 = Point.createPoint(board, parents[0](), attr);
+    if (parents.length === 2) {
+        // point 1 given by coordinates
+        if (Type.isArray(parents[0]) && parents[0].length > 1) {
+            attr = Type.copyAttributes(attributes, board.options, "comb", "point1");
+            p1 = board.create("point", parents[0], attr);
+        } else if (Type.isString(parents[0]) || Type.isPoint(parents[0])) {
+            p1 = board.select(parents[0]);
+        } else if (Type.isFunction(parents[0]) && Type.isPoint(parents[0]())) {
+            p1 = parents[0]();
+        } else if (
+            Type.isFunction(parents[0]) &&
+            parents[0]().length &&
+            parents[0]().length >= 2
+        ) {
+            attr = Type.copyAttributes(attributes, board.options, "comb", "point1");
+            p1 = Point.createPoint(board, parents[0](), attr);
+        } else {
+            throw new Error(
+                "JSXGraph: Can't create comb with parent types '" +
+                    typeof parents[0] +
+                    "' and '" +
+                    typeof parents[1] +
+                    "'." +
+                    "\nPossible parent types: [point,point], [[x1,y1],[x2,y2]]"
+            );
+        }
+
+        // point 2 given by coordinates
+        if (Type.isArray(parents[1]) && parents[1].length > 1) {
+            attr = Type.copyAttributes(attributes, board.options, "comb", "point2");
+            p2 = board.create("point", parents[1], attr);
+        } else if (Type.isString(parents[1]) || Type.isPoint(parents[1])) {
+            p2 = board.select(parents[1]);
+        } else if (Type.isFunction(parents[1]) && Type.isPoint(parents[1]())) {
+            p2 = parents[1]();
+        } else if (
+            Type.isFunction(parents[1]) &&
+            parents[1]().length &&
+            parents[1]().length >= 2
+        ) {
+            attr = Type.copyAttributes(attributes, board.options, "comb", "point2");
+            p2 = Point.createPoint(board, parents[1](), attr);
+        } else {
+            throw new Error(
+                "JSXGraph: Can't create comb with parent types '" +
+                    typeof parents[0] +
+                    "' and '" +
+                    typeof parents[1] +
+                    "'." +
+                    "\nPossible parent types: [point,point], [[x1,y1],[x2,y2]]"
+            );
+        }
     } else {
-      throw new Error(
-        "JSXGraph: Can't create comb with parent types '" +
-          typeof parents[0] +
-          "' and '" +
-          typeof parents[1] +
-          "'." +
-          "\nPossible parent types: [point,point], [[x1,y1],[x2,y2]]"
-      );
+        parent_types = parents.map(function (parent) {
+            return "'" + typeof parent + "'";
+        });
+        throw new Error(
+            "JSXGraph: Can't create comb with parent types " +
+                parent_types.join(", ") +
+                "." +
+                "\nPossible parent types: [point,point], [[x1,y1],[x2,y2]]"
+        );
     }
 
-    // point 2 given by coordinates
-    if (Type.isArray(parents[1]) && parents[1].length > 1) {
-      attr = Type.copyAttributes(attributes, board.options, "comb", "point2");
-      p2 = board.create("point", parents[1], attr);
-    } else if (Type.isString(parents[1]) || Type.isPoint(parents[1])) {
-      p2 = board.select(parents[1]);
-    } else if (Type.isFunction(parents[1]) && Type.isPoint(parents[1]())) {
-      p2 = parents[1]();
-    } else if (
-      Type.isFunction(parents[1]) &&
-      parents[1]().length &&
-      parents[1]().length >= 2
-    ) {
-      attr = Type.copyAttributes(attributes, board.options, "comb", "point2");
-      p2 = Point.createPoint(board, parents[1](), attr);
-    } else {
-      throw new Error(
-        "JSXGraph: Can't create comb with parent types '" +
-          typeof parents[0] +
-          "' and '" +
-          typeof parents[1] +
-          "'." +
-          "\nPossible parent types: [point,point], [[x1,y1],[x2,y2]]"
-      );
-    }
-  } else {
-    parent_types = parents.map(function (parent) {
-      return "'" + typeof parent + "'";
-    });
-    throw new Error(
-      "JSXGraph: Can't create comb with parent types " +
-        parent_types.join(", ") +
-        "." +
-        "\nPossible parent types: [point,point], [[x1,y1],[x2,y2]]"
-    );
-  }
+    // attr = Type.copyAttributes(attributes, board.options, 'comb', 'curve');
+    attr = Type.copyAttributes(attributes, board.options, "comb");
+    Type.merge(attr, Type.copyAttributes(attributes, board.options, "comb", "curve"));
+    c = board.create("curve", [[0], [0]], attr);
 
-  // attr = Type.copyAttributes(attributes, board.options, 'comb', 'curve');
-  attr = Type.copyAttributes(attributes, board.options, "comb");
-  Type.merge(
-    attr,
-    Type.copyAttributes(attributes, board.options, "comb", "curve")
-  );
-  c = board.create("curve", [[0], [0]], attr);
+    /**
+     * @ignore
+     */
+    c.updateDataArray = function () {
+        var s = 0,
+            max_s = p1.Dist(p2),
+            cs,
+            sn,
+            dx,
+            dy,
+            x,
+            y,
+            f,
+            p1_inner = p1,
+            p2_inner = p2,
+            ds,
+            angle,
+            width;
 
-  /**
-   * @ignore
-   */
-  c.updateDataArray = function () {
-    var s = 0,
-      max_s = p1.Dist(p2),
-      cs,
-      sn,
-      dx,
-      dy,
-      x,
-      y,
-      f,
-      p1_inner = p1,
-      p2_inner = p2,
-      ds,
-      angle,
-      width;
+        ds = Type.evaluate(c.visProp.frequency);
+        angle = -Type.evaluate(c.visProp.angle);
+        width = Type.evaluate(c.visProp.width);
+        if (Type.evaluate(c.visProp.reverse)) {
+            p1_inner = p2;
+            p2_inner = p1;
+            angle = -angle;
+        }
+        cs = Math.cos(angle);
+        sn = Math.sin(angle);
+        dx = (p2_inner.X() - p1_inner.X()) / max_s;
+        dy = (p2_inner.Y() - p1_inner.Y()) / max_s;
 
-    ds = Type.evaluate(c.visProp.frequency);
-    angle = -Type.evaluate(c.visProp.angle);
-    width = Type.evaluate(c.visProp.width);
-    if (Type.evaluate(c.visProp.reverse)) {
-      p1_inner = p2;
-      p2_inner = p1;
-      angle = -angle;
-    }
-    cs = Math.cos(angle);
-    sn = Math.sin(angle);
-    dx = (p2_inner.X() - p1_inner.X()) / max_s;
-    dy = (p2_inner.Y() - p1_inner.Y()) / max_s;
+        // But instead of lifting by sin(angle), we want lifting by width.
+        cs *= width / Math.abs(sn);
+        sn *= width / Math.abs(sn);
 
-    // But instead of lifting by sin(angle), we want lifting by width.
-    cs *= width / Math.abs(sn);
-    sn *= width / Math.abs(sn);
+        this.dataX = [];
+        this.dataY = [];
+        // TODO Handle infinite boundaries?
+        while (s < max_s) {
+            x = p1_inner.X() + dx * s;
+            y = p1_inner.Y() + dy * s;
 
-    this.dataX = [];
-    this.dataY = [];
-    // TODO Handle infinite boundaries?
-    while (s < max_s) {
-      x = p1_inner.X() + dx * s;
-      y = p1_inner.Y() + dy * s;
+            // We may need to cut the last piece of a comb.
+            f = Math.min(cs, max_s - s) / Math.abs(cs);
+            sn *= f;
+            cs *= f;
 
-      // We may need to cut the last piece of a comb.
-      f = Math.min(cs, max_s - s) / Math.abs(cs);
-      sn *= f;
-      cs *= f;
+            this.dataX.push(x);
+            this.dataY.push(y);
 
-      this.dataX.push(x);
-      this.dataY.push(y);
+            this.dataX.push(x + dx * cs + dy * sn);
+            this.dataY.push(y - dx * sn + dy * cs);
 
-      this.dataX.push(x + dx * cs + dy * sn);
-      this.dataY.push(y - dx * sn + dy * cs);
+            this.dataX.push(NaN); // Force a jump
+            this.dataY.push(NaN);
+            s += ds;
+        }
+    };
 
-      this.dataX.push(NaN); // Force a jump
-      this.dataY.push(NaN);
-      s += ds;
-    }
-  };
-
-  return c;
+    return c;
 };
 
 JXG.registerElement("comb", JXG.createComb);
 
 export default {
-  createComb: JXG.createComb,
+    createComb: JXG.createComb,
 };

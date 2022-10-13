@@ -99,378 +99,371 @@ import Type from "../utils/type";
  *
  */
 JXG.Transformation = function (board, type, params) {
-  this.elementClass = Const.OBJECT_CLASS_OTHER;
-  this.type = Const.OBJECT_TYPE_TRANSFORMATION;
-  this.matrix = [
-    [1, 0, 0],
-    [0, 1, 0],
-    [0, 0, 1],
-  ];
-  this.board = board;
-  this.isNumericMatrix = false;
-  this.setMatrix(board, type, params);
+    this.elementClass = Const.OBJECT_CLASS_OTHER;
+    this.type = Const.OBJECT_TYPE_TRANSFORMATION;
+    this.matrix = [
+        [1, 0, 0],
+        [0, 1, 0],
+        [0, 0, 1],
+    ];
+    this.board = board;
+    this.isNumericMatrix = false;
+    this.setMatrix(board, type, params);
 
-  this.methodMap = {
-    apply: "apply",
-    applyOnce: "applyOnce",
-    bindTo: "bindTo",
-    bind: "bindTo",
-    melt: "melt",
-  };
+    this.methodMap = {
+        apply: "apply",
+        applyOnce: "applyOnce",
+        bindTo: "bindTo",
+        bind: "bindTo",
+        melt: "melt",
+    };
 };
 
 JXG.Transformation.prototype = {};
 
 JXG.extend(
-  JXG.Transformation.prototype,
-  /** @lends JXG.Transformation.prototype */ {
-    /**
-     * Updates the numerical data for the transformation, i.e. the entry of the subobject matrix.
-     * @returns {JXG.Transform} returns pointer to itself
-     */
-    update: function () {
-      return this;
-    },
+    JXG.Transformation.prototype,
+    /** @lends JXG.Transformation.prototype */ {
+        /**
+         * Updates the numerical data for the transformation, i.e. the entry of the subobject matrix.
+         * @returns {JXG.Transform} returns pointer to itself
+         */
+        update: function () {
+            return this;
+        },
 
-    /**
-     * Set the transformation matrix for different types of standard transforms.
-     * @param {JXG.Board} board
-     * @param {String} type   Transformation type, possible values are
-     *                        'translate', 'scale', 'reflect', 'rotate',
-     *                        'shear', 'generic'.
-     * @param {Array} params Parameters for the various transformation types.
-     *
-     * <p>These are
-     * @param {Array} x,y Shift vector (number or function) in case of 'translate'.
-     * @param {Array} scale_x,scale_y Scale vector (number or function) in case of 'scale'.
-     * @param {Array} line|point_pair|"four coordinates" In case of 'reflect' the parameters could
-     *                be a line, a pair of points or four number (or functions) p_x, p_y, q_x, q_y,
-     *                determining a line through points (p_x, p_y) and (q_x, q_y).
-     * @param {Array} angle,x,y|angle,[x,y] In case of 'rotate' the parameters are an angle or angle function,
-     *                returning the angle in Radians and - optionally - a coordinate pair or a point defining the
-     *                rotation center. If the rotation center is not given, the transformation rotates around (0,0).
-     * @param {Array} shear_x,shear_y Shear vector (number or function) in case of 'shear'.
-     * @param {Array} a,b,c,d,e,f,g,h,i Nine matrix entries (numbers or functions) for a generic
-     *                projective transformation  in case of 'generic'.
-     *
-     * <p>A transformation with a generic matrix looks like:
-     * <pre>
-     * ( a  b  c )   ( z )
-     * ( d  e  f ) * ( x )
-     * ( g  h  i )   ( y )
-     * </pre>
-     *
-     */
-    setMatrix: function (board, type, params) {
-      var i;
+        /**
+         * Set the transformation matrix for different types of standard transforms.
+         * @param {JXG.Board} board
+         * @param {String} type   Transformation type, possible values are
+         *                        'translate', 'scale', 'reflect', 'rotate',
+         *                        'shear', 'generic'.
+         * @param {Array} params Parameters for the various transformation types.
+         *
+         * <p>These are
+         * @param {Array} x,y Shift vector (number or function) in case of 'translate'.
+         * @param {Array} scale_x,scale_y Scale vector (number or function) in case of 'scale'.
+         * @param {Array} line|point_pair|"four coordinates" In case of 'reflect' the parameters could
+         *                be a line, a pair of points or four number (or functions) p_x, p_y, q_x, q_y,
+         *                determining a line through points (p_x, p_y) and (q_x, q_y).
+         * @param {Array} angle,x,y|angle,[x,y] In case of 'rotate' the parameters are an angle or angle function,
+         *                returning the angle in Radians and - optionally - a coordinate pair or a point defining the
+         *                rotation center. If the rotation center is not given, the transformation rotates around (0,0).
+         * @param {Array} shear_x,shear_y Shear vector (number or function) in case of 'shear'.
+         * @param {Array} a,b,c,d,e,f,g,h,i Nine matrix entries (numbers or functions) for a generic
+         *                projective transformation  in case of 'generic'.
+         *
+         * <p>A transformation with a generic matrix looks like:
+         * <pre>
+         * ( a  b  c )   ( z )
+         * ( d  e  f ) * ( x )
+         * ( g  h  i )   ( y )
+         * </pre>
+         *
+         */
+        setMatrix: function (board, type, params) {
+            var i;
 
-      this.isNumericMatrix = true;
+            this.isNumericMatrix = true;
 
-      for (i = 0; i < params.length; i++) {
-        if (typeof params[i] !== "number") {
-          this.isNumericMatrix = false;
-          break;
-        }
-      }
-
-      if (type === "translate") {
-        if (params.length !== 2) {
-          throw new Error(
-            "JSXGraph: translate transformation needs 2 parameters."
-          );
-        }
-        this.evalParam = Type.createEvalFunction(board, params, 2);
-        this.update = function () {
-          this.matrix[1][0] = this.evalParam(0);
-          this.matrix[2][0] = this.evalParam(1);
-        };
-      } else if (type === "scale") {
-        if (params.length !== 2) {
-          throw new Error("JSXGraph: scale transformation needs 2 parameters.");
-        }
-        this.evalParam = Type.createEvalFunction(board, params, 2);
-        this.update = function () {
-          this.matrix[1][1] = this.evalParam(0); // x
-          this.matrix[2][2] = this.evalParam(1); // y
-        };
-        // Input: line or two points
-      } else if (type === "reflect") {
-        // line or two points
-        if (params.length < 4) {
-          params[0] = board.select(params[0]);
-        }
-
-        // two points
-        if (params.length === 2) {
-          params[1] = board.select(params[1]);
-        }
-
-        // 4 coordinates [px,py,qx,qy]
-        if (params.length === 4) {
-          this.evalParam = Type.createEvalFunction(board, params, 4);
-        }
-
-        this.update = function () {
-          var x, y, z, xoff, yoff, d, v, p;
-          // Determine homogeneous coordinates of reflections axis
-          // line
-          if (params.length === 1) {
-            v = params[0].stdform;
-            // two points
-          } else if (params.length === 2) {
-            v = Mat.crossProduct(
-              params[1].coords.usrCoords,
-              params[0].coords.usrCoords
-            );
-            // two points coordinates [px,py,qx,qy]
-          } else if (params.length === 4) {
-            v = Mat.crossProduct(
-              [1, this.evalParam(2), this.evalParam(3)],
-              [1, this.evalParam(0), this.evalParam(1)]
-            );
-          }
-
-          // Project origin to the line.  This gives a finite point p
-          x = v[1];
-          y = v[2];
-          z = v[0];
-          p = [-z * x, -z * y, x * x + y * y];
-          d = p[2];
-
-          // Normalize p
-          xoff = p[0] / p[2];
-          yoff = p[1] / p[2];
-
-          // x, y is the direction of the line
-          x = -v[2];
-          y = v[1];
-
-          this.matrix[1][1] = (x * x - y * y) / d;
-          this.matrix[1][2] = (2 * x * y) / d;
-          this.matrix[2][1] = this.matrix[1][2];
-          this.matrix[2][2] = -this.matrix[1][1];
-          this.matrix[1][0] =
-            xoff * (1 - this.matrix[1][1]) - yoff * this.matrix[1][2];
-          this.matrix[2][0] =
-            yoff * (1 - this.matrix[2][2]) - xoff * this.matrix[2][1];
-        };
-      } else if (type === "rotate") {
-        // angle, x, y
-        if (params.length === 3) {
-          this.evalParam = Type.createEvalFunction(board, params, 3);
-          // angle, p or angle
-        } else if (params.length > 0 && params.length <= 2) {
-          this.evalParam = Type.createEvalFunction(board, params, 1);
-
-          if (params.length === 2 && !Type.isArray(params[1])) {
-            params[1] = board.select(params[1]);
-          }
-        }
-
-        this.update = function () {
-          var x,
-            y,
-            beta = this.evalParam(0),
-            co = Math.cos(beta),
-            si = Math.sin(beta);
-
-          this.matrix[1][1] = co;
-          this.matrix[1][2] = -si;
-          this.matrix[2][1] = si;
-          this.matrix[2][2] = co;
-
-          // rotate around [x,y] otherwise rotate around [0,0]
-          if (params.length > 1) {
-            if (params.length === 3) {
-              x = this.evalParam(1);
-              y = this.evalParam(2);
-            } else {
-              if (Type.isArray(params[1])) {
-                x = params[1][0];
-                y = params[1][1];
-              } else {
-                x = params[1].X();
-                y = params[1].Y();
-              }
+            for (i = 0; i < params.length; i++) {
+                if (typeof params[i] !== "number") {
+                    this.isNumericMatrix = false;
+                    break;
+                }
             }
-            this.matrix[1][0] = x * (1 - co) + y * si;
-            this.matrix[2][0] = y * (1 - co) - x * si;
-          }
-        };
-      } else if (type === "shear") {
-        if (params.length !== 2) {
-          throw new Error("JSXGraph: shear transformation needs 2 parameters.");
-        }
 
-        this.evalParam = Type.createEvalFunction(board, params, 2);
-        this.update = function () {
-          this.matrix[1][2] = this.evalParam(0);
-          this.matrix[2][1] = this.evalParam(1);
-        };
-      } else if (type === "generic") {
-        if (params.length !== 9) {
-          throw new Error(
-            "JSXGraph: generic transformation needs 9 parameters."
-          );
-        }
+            if (type === "translate") {
+                if (params.length !== 2) {
+                    throw new Error("JSXGraph: translate transformation needs 2 parameters.");
+                }
+                this.evalParam = Type.createEvalFunction(board, params, 2);
+                this.update = function () {
+                    this.matrix[1][0] = this.evalParam(0);
+                    this.matrix[2][0] = this.evalParam(1);
+                };
+            } else if (type === "scale") {
+                if (params.length !== 2) {
+                    throw new Error("JSXGraph: scale transformation needs 2 parameters.");
+                }
+                this.evalParam = Type.createEvalFunction(board, params, 2);
+                this.update = function () {
+                    this.matrix[1][1] = this.evalParam(0); // x
+                    this.matrix[2][2] = this.evalParam(1); // y
+                };
+                // Input: line or two points
+            } else if (type === "reflect") {
+                // line or two points
+                if (params.length < 4) {
+                    params[0] = board.select(params[0]);
+                }
 
-        this.evalParam = Type.createEvalFunction(board, params, 9);
+                // two points
+                if (params.length === 2) {
+                    params[1] = board.select(params[1]);
+                }
 
-        this.update = function () {
-          this.matrix[0][0] = this.evalParam(0);
-          this.matrix[0][1] = this.evalParam(1);
-          this.matrix[0][2] = this.evalParam(2);
-          this.matrix[1][0] = this.evalParam(3);
-          this.matrix[1][1] = this.evalParam(4);
-          this.matrix[1][2] = this.evalParam(5);
-          this.matrix[2][0] = this.evalParam(6);
-          this.matrix[2][1] = this.evalParam(7);
-          this.matrix[2][2] = this.evalParam(8);
-        };
-      }
-    },
+                // 4 coordinates [px,py,qx,qy]
+                if (params.length === 4) {
+                    this.evalParam = Type.createEvalFunction(board, params, 4);
+                }
 
-    /**
-     * Transform a GeometryElement:
-     * First, the transformation matrix is updated, then do the matrix-vector-multiplication.
-     * @private
-     * @param {JXG.GeometryElement} p element which is transformed
-     * @param {String} 'self' Apply the transformation to the initialCoords instead of the coords if this is set.
-     * @returns {Array}
-     */
-    apply: function (p, self) {
-      this.update();
+                this.update = function () {
+                    var x, y, z, xoff, yoff, d, v, p;
+                    // Determine homogeneous coordinates of reflections axis
+                    // line
+                    if (params.length === 1) {
+                        v = params[0].stdform;
+                        // two points
+                    } else if (params.length === 2) {
+                        v = Mat.crossProduct(
+                            params[1].coords.usrCoords,
+                            params[0].coords.usrCoords
+                        );
+                        // two points coordinates [px,py,qx,qy]
+                    } else if (params.length === 4) {
+                        v = Mat.crossProduct(
+                            [1, this.evalParam(2), this.evalParam(3)],
+                            [1, this.evalParam(0), this.evalParam(1)]
+                        );
+                    }
 
-      if (Type.exists(self)) {
-        return Mat.matVecMult(this.matrix, p.initialCoords.usrCoords);
-      }
-      return Mat.matVecMult(this.matrix, p.coords.usrCoords);
-    },
+                    // Project origin to the line.  This gives a finite point p
+                    x = v[1];
+                    y = v[2];
+                    z = v[0];
+                    p = [-z * x, -z * y, x * x + y * y];
+                    d = p[2];
 
-    /**
-     * Applies a transformation once to a GeometryElement or an array of elements.
-     * If it is a free point, then it can be dragged around later
-     * and will overwrite the transformed coordinates.
-     * @param {JXG.Point,Array} p
-     */
-    applyOnce: function (p) {
-      var c, len, i;
+                    // Normalize p
+                    xoff = p[0] / p[2];
+                    yoff = p[1] / p[2];
 
-      if (!Type.isArray(p)) {
-        p = [p];
-      }
+                    // x, y is the direction of the line
+                    x = -v[2];
+                    y = v[1];
 
-      len = p.length;
+                    this.matrix[1][1] = (x * x - y * y) / d;
+                    this.matrix[1][2] = (2 * x * y) / d;
+                    this.matrix[2][1] = this.matrix[1][2];
+                    this.matrix[2][2] = -this.matrix[1][1];
+                    this.matrix[1][0] =
+                        xoff * (1 - this.matrix[1][1]) - yoff * this.matrix[1][2];
+                    this.matrix[2][0] =
+                        yoff * (1 - this.matrix[2][2]) - xoff * this.matrix[2][1];
+                };
+            } else if (type === "rotate") {
+                // angle, x, y
+                if (params.length === 3) {
+                    this.evalParam = Type.createEvalFunction(board, params, 3);
+                    // angle, p or angle
+                } else if (params.length > 0 && params.length <= 2) {
+                    this.evalParam = Type.createEvalFunction(board, params, 1);
 
-      for (i = 0; i < len; i++) {
-        this.update();
-        c = Mat.matVecMult(this.matrix, p[i].coords.usrCoords);
-        p[i].coords.setCoordinates(Const.COORDS_BY_USER, c);
-      }
-    },
+                    if (params.length === 2 && !Type.isArray(params[1])) {
+                        params[1] = board.select(params[1]);
+                    }
+                }
 
-    /**
-     * Binds a transformation to a GeometryElement or an array of elements. In every update of the
-     * GeometryElement(s), the transformation is executed. That means, in order to immediately
-     * apply the transformation, a call of board.update() has to follow.
-     * @param  {Array,JXG.Object} p JXG.Object or array of JXG.Object to
-     *                            which the transformation is bound to.
-     */
-    bindTo: function (p) {
-      var i, len;
-      if (Type.isArray(p)) {
-        len = p.length;
+                this.update = function () {
+                    var x,
+                        y,
+                        beta = this.evalParam(0),
+                        co = Math.cos(beta),
+                        si = Math.sin(beta);
 
-        for (i = 0; i < len; i++) {
-          p[i].transformations.push(this);
-        }
-      } else {
-        p.transformations.push(this);
-      }
-    },
+                    this.matrix[1][1] = co;
+                    this.matrix[1][2] = -si;
+                    this.matrix[2][1] = si;
+                    this.matrix[2][2] = co;
 
-    /**
-     * Unused
-     * @deprecated Use setAttribute
-     * @param term
-     */
-    setProperty: function (term) {
-      JXG.deprecated(
-        "Transformation.setProperty()",
-        "Transformation.setAttribute()"
-      );
-    },
+                    // rotate around [x,y] otherwise rotate around [0,0]
+                    if (params.length > 1) {
+                        if (params.length === 3) {
+                            x = this.evalParam(1);
+                            y = this.evalParam(2);
+                        } else {
+                            if (Type.isArray(params[1])) {
+                                x = params[1][0];
+                                y = params[1][1];
+                            } else {
+                                x = params[1].X();
+                                y = params[1].Y();
+                            }
+                        }
+                        this.matrix[1][0] = x * (1 - co) + y * si;
+                        this.matrix[2][0] = y * (1 - co) - x * si;
+                    }
+                };
+            } else if (type === "shear") {
+                if (params.length !== 2) {
+                    throw new Error("JSXGraph: shear transformation needs 2 parameters.");
+                }
 
-    /**
-     * Empty method. Unused.
-     * @param {Object} term Key-value pairs of the attributes.
-     */
-    setAttribute: function (term) {},
+                this.evalParam = Type.createEvalFunction(board, params, 2);
+                this.update = function () {
+                    this.matrix[1][2] = this.evalParam(0);
+                    this.matrix[2][1] = this.evalParam(1);
+                };
+            } else if (type === "generic") {
+                if (params.length !== 9) {
+                    throw new Error("JSXGraph: generic transformation needs 9 parameters.");
+                }
 
-    /**
-     * Combine two transformations to one transformation. This only works if
-     * both of transformation matrices consist solely of numbers, and do not
-     * contain functions.
-     *
-     * Multiplies the transformation with a transformation t from the left.
-     * i.e. (this) = (t) join (this)
-     * @param  {JXG.Transform} t Transformation which is the left multiplicand
-     * @returns {JXG.Transform} the transformation object.
-     */
-    melt: function (t) {
-      var res = [],
-        i,
-        len,
-        len0,
-        k,
-        s,
-        j;
+                this.evalParam = Type.createEvalFunction(board, params, 9);
 
-      len = t.matrix.length;
-      len0 = this.matrix[0].length;
+                this.update = function () {
+                    this.matrix[0][0] = this.evalParam(0);
+                    this.matrix[0][1] = this.evalParam(1);
+                    this.matrix[0][2] = this.evalParam(2);
+                    this.matrix[1][0] = this.evalParam(3);
+                    this.matrix[1][1] = this.evalParam(4);
+                    this.matrix[1][2] = this.evalParam(5);
+                    this.matrix[2][0] = this.evalParam(6);
+                    this.matrix[2][1] = this.evalParam(7);
+                    this.matrix[2][2] = this.evalParam(8);
+                };
+            }
+        },
 
-      for (i = 0; i < len; i++) {
-        res[i] = [];
-      }
+        /**
+         * Transform a GeometryElement:
+         * First, the transformation matrix is updated, then do the matrix-vector-multiplication.
+         * @private
+         * @param {JXG.GeometryElement} p element which is transformed
+         * @param {String} 'self' Apply the transformation to the initialCoords instead of the coords if this is set.
+         * @returns {Array}
+         */
+        apply: function (p, self) {
+            this.update();
 
-      this.update();
-      t.update();
+            if (Type.exists(self)) {
+                return Mat.matVecMult(this.matrix, p.initialCoords.usrCoords);
+            }
+            return Mat.matVecMult(this.matrix, p.coords.usrCoords);
+        },
 
-      for (i = 0; i < len; i++) {
-        for (j = 0; j < len0; j++) {
-          s = 0;
-          for (k = 0; k < len; k++) {
-            s += t.matrix[i][k] * this.matrix[k][j];
-          }
-          res[i][j] = s;
-        }
-      }
+        /**
+         * Applies a transformation once to a GeometryElement or an array of elements.
+         * If it is a free point, then it can be dragged around later
+         * and will overwrite the transformed coordinates.
+         * @param {JXG.Point,Array} p
+         */
+        applyOnce: function (p) {
+            var c, len, i;
 
-      this.update = function () {
-        var len = this.matrix.length,
-          len0 = this.matrix[0].length;
+            if (!Type.isArray(p)) {
+                p = [p];
+            }
 
-        for (i = 0; i < len; i++) {
-          for (j = 0; j < len0; j++) {
-            this.matrix[i][j] = res[i][j];
-          }
-        }
-      };
-      return this;
-    },
+            len = p.length;
 
-    // documented in element.js
-    // Not yet, since transformations are not listed in board.objects.
-    getParents: function () {
-      var p = [[].concat.apply([], this.matrix)];
+            for (i = 0; i < len; i++) {
+                this.update();
+                c = Mat.matVecMult(this.matrix, p[i].coords.usrCoords);
+                p[i].coords.setCoordinates(Const.COORDS_BY_USER, c);
+            }
+        },
 
-      if (this.parents.length !== 0) {
-        p = this.parents;
-      }
+        /**
+         * Binds a transformation to a GeometryElement or an array of elements. In every update of the
+         * GeometryElement(s), the transformation is executed. That means, in order to immediately
+         * apply the transformation, a call of board.update() has to follow.
+         * @param  {Array,JXG.Object} p JXG.Object or array of JXG.Object to
+         *                            which the transformation is bound to.
+         */
+        bindTo: function (p) {
+            var i, len;
+            if (Type.isArray(p)) {
+                len = p.length;
 
-      return p;
-    },
-  }
+                for (i = 0; i < len; i++) {
+                    p[i].transformations.push(this);
+                }
+            } else {
+                p.transformations.push(this);
+            }
+        },
+
+        /**
+         * Unused
+         * @deprecated Use setAttribute
+         * @param term
+         */
+        setProperty: function (term) {
+            JXG.deprecated("Transformation.setProperty()", "Transformation.setAttribute()");
+        },
+
+        /**
+         * Empty method. Unused.
+         * @param {Object} term Key-value pairs of the attributes.
+         */
+        setAttribute: function (term) {},
+
+        /**
+         * Combine two transformations to one transformation. This only works if
+         * both of transformation matrices consist solely of numbers, and do not
+         * contain functions.
+         *
+         * Multiplies the transformation with a transformation t from the left.
+         * i.e. (this) = (t) join (this)
+         * @param  {JXG.Transform} t Transformation which is the left multiplicand
+         * @returns {JXG.Transform} the transformation object.
+         */
+        melt: function (t) {
+            var res = [],
+                i,
+                len,
+                len0,
+                k,
+                s,
+                j;
+
+            len = t.matrix.length;
+            len0 = this.matrix[0].length;
+
+            for (i = 0; i < len; i++) {
+                res[i] = [];
+            }
+
+            this.update();
+            t.update();
+
+            for (i = 0; i < len; i++) {
+                for (j = 0; j < len0; j++) {
+                    s = 0;
+                    for (k = 0; k < len; k++) {
+                        s += t.matrix[i][k] * this.matrix[k][j];
+                    }
+                    res[i][j] = s;
+                }
+            }
+
+            this.update = function () {
+                var len = this.matrix.length,
+                    len0 = this.matrix[0].length;
+
+                for (i = 0; i < len; i++) {
+                    for (j = 0; j < len0; j++) {
+                        this.matrix[i][j] = res[i][j];
+                    }
+                }
+            };
+            return this;
+        },
+
+        // documented in element.js
+        // Not yet, since transformations are not listed in board.objects.
+        getParents: function () {
+            var p = [[].concat.apply([], this.matrix)];
+
+            if (this.parents.length !== 0) {
+                p = this.parents;
+            }
+
+            return p;
+        },
+    }
 );
 
 /**
@@ -744,12 +737,12 @@ JXG.extend(
  *
  */
 JXG.createTransform = function (board, parents, attributes) {
-  return new JXG.Transformation(board, attributes.type, parents);
+    return new JXG.Transformation(board, attributes.type, parents);
 };
 
 JXG.registerElement("transform", JXG.createTransform);
 
 export default {
-  Transformation: JXG.Transformation,
-  createTransform: JXG.createTransform,
+    Transformation: JXG.Transformation,
+    createTransform: JXG.createTransform,
 };

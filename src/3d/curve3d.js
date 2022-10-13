@@ -48,115 +48,110 @@ import Type from "../utils/type";
  * @see JXG.Board#generateName
  */
 JXG.Curve3D = function (view, F, X, Y, Z, range, attributes) {
-  this.constructor(
-    view.board,
-    attributes,
-    Const.OBJECT_TYPE_CURVE3D,
-    Const.OBJECT_CLASS_3D
-  );
-  this.constructor3D(view, "surface3d");
+    this.constructor(view.board, attributes, Const.OBJECT_TYPE_CURVE3D, Const.OBJECT_CLASS_3D);
+    this.constructor3D(view, "surface3d");
 
-  this.id = this.view.board.setId(this, "S3D");
-  this.board.finalizeAdding(this);
+    this.id = this.view.board.setId(this, "S3D");
+    this.board.finalizeAdding(this);
 
-  this.F = F;
+    this.F = F;
 
-  /**
-   * Function which maps u to x; i.e. it defines the x-coordinate of the curve
-   * @function
-   * @returns Number
-   */
-  this.X = X;
+    /**
+     * Function which maps u to x; i.e. it defines the x-coordinate of the curve
+     * @function
+     * @returns Number
+     */
+    this.X = X;
 
-  /**
-   * Function which maps u to y; i.e. it defines the y-coordinate of the curve
-   * @function
-   * @returns Number
-   */
-  this.Y = Y;
+    /**
+     * Function which maps u to y; i.e. it defines the y-coordinate of the curve
+     * @function
+     * @returns Number
+     */
+    this.Y = Y;
 
-  /**
-   * Function which maps u to z; i.e. it defines the x-coordinate of the curve
-   * @function
-   * @returns Number
-   */
-  this.Z = Z;
+    /**
+     * Function which maps u to z; i.e. it defines the x-coordinate of the curve
+     * @function
+     * @returns Number
+     */
+    this.Z = Z;
 
-  if (this.F !== null) {
-    this.X = function (u) {
-      return this.F(u)[0];
-    };
-    this.Y = function (u) {
-      return this.F(u)[1];
-    };
-    this.Z = function (u) {
-      return this.F(u)[2];
-    };
-  }
+    if (this.F !== null) {
+        this.X = function (u) {
+            return this.F(u)[0];
+        };
+        this.Y = function (u) {
+            return this.F(u)[1];
+        };
+        this.Z = function (u) {
+            return this.F(u)[2];
+        };
+    }
 
-  this.range = range;
+    this.range = range;
 
-  this.methodMap = Type.deepCopy(this.methodMap, {
-    // TODO
-  });
+    this.methodMap = Type.deepCopy(this.methodMap, {
+        // TODO
+    });
 };
 JXG.Curve3D.prototype = new JXG.GeometryElement();
 Type.copyPrototypeMethods(JXG.Curve3D, JXG.GeometryElement3D, "constructor3D");
 
 JXG.extend(
-  JXG.Curve3D.prototype,
-  /** @lends JXG.Curve3D.prototype */ {
-    updateDataArray: function () {
-      var steps = Type.evaluate(this.visProp.numberpointshigh),
-        r,
-        s,
-        e,
-        delta,
-        c2d,
-        u,
-        dataX,
-        dataY,
-        p = [0, 0, 0];
+    JXG.Curve3D.prototype,
+    /** @lends JXG.Curve3D.prototype */ {
+        updateDataArray: function () {
+            var steps = Type.evaluate(this.visProp.numberpointshigh),
+                r,
+                s,
+                e,
+                delta,
+                c2d,
+                u,
+                dataX,
+                dataY,
+                p = [0, 0, 0];
 
-      dataX = [];
-      dataY = [];
+            dataX = [];
+            dataY = [];
 
-      if (Type.isArray(this.X)) {
-        steps = this.X.length;
-        for (u = 0; u < steps; u++) {
-          p = [this.X[u], this.Y[u], this.Z[u]];
-          c2d = this.view.project3DTo2D(p);
-          dataX.push(c2d[1]);
-          dataY.push(c2d[2]);
-        }
-      } else {
-        r = Type.evaluate(this.range);
-        s = Type.evaluate(r[0]);
-        e = Type.evaluate(r[1]);
-        delta = (e - s) / (steps - 1);
-        for (u = s; u <= e; u += delta) {
-          if (this.F !== null) {
-            p = this.F(u);
-          } else {
-            p = [this.X(u), this.Y(u), this.Z(u)];
-          }
-          c2d = this.view.project3DTo2D(p);
-          dataX.push(c2d[1]);
-          dataY.push(c2d[2]);
-        }
-      }
-      return { X: dataX, Y: dataY };
-    },
+            if (Type.isArray(this.X)) {
+                steps = this.X.length;
+                for (u = 0; u < steps; u++) {
+                    p = [this.X[u], this.Y[u], this.Z[u]];
+                    c2d = this.view.project3DTo2D(p);
+                    dataX.push(c2d[1]);
+                    dataY.push(c2d[2]);
+                }
+            } else {
+                r = Type.evaluate(this.range);
+                s = Type.evaluate(r[0]);
+                e = Type.evaluate(r[1]);
+                delta = (e - s) / (steps - 1);
+                for (u = s; u <= e; u += delta) {
+                    if (this.F !== null) {
+                        p = this.F(u);
+                    } else {
+                        p = [this.X(u), this.Y(u), this.Z(u)];
+                    }
+                    c2d = this.view.project3DTo2D(p);
+                    dataX.push(c2d[1]);
+                    dataY.push(c2d[2]);
+                }
+            }
+            return { X: dataX, Y: dataY };
+        },
 
-    update: function () {
-      return this;
-    },
+        update: function () {
+            return this;
+        },
 
-    updateRenderer: function () {
-      this.needsUpdate = false;
-      return this;
-    },
-  }
+        updateRenderer: function () {
+            this.needsUpdate = false;
+            return this;
+        },
+    }
 );
 
 /**
@@ -178,48 +173,48 @@ JXG.extend(
  * @param {Array_Array_Array} X,Y,Z Three arrays containing the coordinate points which define the curve.
  */
 JXG.createCurve3D = function (board, parents, attributes) {
-  var view = parents[0],
-    F,
-    X,
-    Y,
-    Z,
-    range,
-    attr,
-    el;
+    var view = parents[0],
+        F,
+        X,
+        Y,
+        Z,
+        range,
+        attr,
+        el;
 
-  if (parents.length === 3) {
-    F = parents[1];
-    range = parents[2];
-    X = null;
-    Y = null;
-    Z = null;
-  } else {
-    X = parents[1];
-    Y = parents[2];
-    Z = parents[3];
-    range = parents[4];
-    F = null;
-  }
-  // TODO Throw error
+    if (parents.length === 3) {
+        F = parents[1];
+        range = parents[2];
+        X = null;
+        Y = null;
+        Z = null;
+    } else {
+        X = parents[1];
+        Y = parents[2];
+        Z = parents[3];
+        range = parents[4];
+        F = null;
+    }
+    // TODO Throw error
 
-  attr = Type.copyAttributes(attributes, board.options, "curve3d");
-  el = new JXG.Curve3D(view, F, X, Y, Z, range, attr);
+    attr = Type.copyAttributes(attributes, board.options, "curve3d");
+    el = new JXG.Curve3D(view, F, X, Y, Z, range, attr);
 
-  el.element2D = board.create("curve", [[], []], attr);
-  el.element2D.updateDataArray = function () {
-    var ret = el.updateDataArray();
-    this.dataX = ret.X;
-    this.dataY = ret.Y;
-  };
-  el.addChild(el.element2D);
-  el.inherits.push(el.element2D);
-  el.element2D.setParents(el);
+    el.element2D = board.create("curve", [[], []], attr);
+    el.element2D.updateDataArray = function () {
+        var ret = el.updateDataArray();
+        this.dataX = ret.X;
+        this.dataY = ret.Y;
+    };
+    el.addChild(el.element2D);
+    el.inherits.push(el.element2D);
+    el.element2D.setParents(el);
 
-  el.element2D.prepareUpdate().update();
-  if (!board.isSuspendedUpdate) {
-    el.element2D.updateVisibility().updateRenderer();
-  }
+    el.element2D.prepareUpdate().update();
+    if (!board.isSuspendedUpdate) {
+        el.element2D.updateVisibility().updateRenderer();
+    }
 
-  return el;
+    return el;
 };
 JXG.registerElement("curve3d", JXG.createCurve3D);

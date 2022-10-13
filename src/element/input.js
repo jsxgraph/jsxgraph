@@ -41,10 +41,10 @@ import Env from "../utils/env";
 import Type from "../utils/type";
 
 var priv = {
-  InputInputEventHandler: function (evt) {
-    this._value = this.rendNodeInput.value;
-    this.board.update();
-  },
+    InputInputEventHandler: function (evt) {
+        this._value = this.rendNodeInput.value;
+        this.board.update();
+    },
 };
 
 /**
@@ -119,144 +119,144 @@ var priv = {
  * </script><pre>
  */
 JXG.createInput = function (board, parents, attributes) {
-  var t,
-    par,
-    attr = Type.copyAttributes(attributes, board.options, "input");
+    var t,
+        par,
+        attr = Type.copyAttributes(attributes, board.options, "input");
 
-  par = [
-    parents[0],
-    parents[1],
-    '<span style="display:inline; white-space:nowrap; padding:0px;">' +
-      '<span></span><input type="text" maxlength="' +
-      attr.maxlength +
-      '" style="width:100%"/>' +
-      "</span>",
-  ];
+    par = [
+        parents[0],
+        parents[1],
+        '<span style="display:inline; white-space:nowrap; padding:0px;">' +
+            '<span></span><input type="text" maxlength="' +
+            attr.maxlength +
+            '" style="width:100%"/>' +
+            "</span>",
+    ];
 
-  // 1. Create input element with empty label
-  t = board.create("text", par, attr);
-  t.type = Type.OBJECT_TYPE_INPUT;
+    // 1. Create input element with empty label
+    t = board.create("text", par, attr);
+    t.type = Type.OBJECT_TYPE_INPUT;
 
-  t.rendNodeLabel = t.rendNode.childNodes[0].childNodes[0];
-  t.rendNodeInput = t.rendNode.childNodes[0].childNodes[1];
-  // t.rendNodeLabel.innerHTML = parents[3];
-  t.rendNodeInput.value = parents[2];
-  t.rendNodeTag = t.rendNodeInput; // Needed for unified treatment in setAttribute
-  t.rendNodeTag.disabled = !!attr.disabled;
-  t.rendNodeLabel.id = t.rendNode.id + "_label";
-  t.rendNodeInput.id = t.rendNode.id + "_input";
+    t.rendNodeLabel = t.rendNode.childNodes[0].childNodes[0];
+    t.rendNodeInput = t.rendNode.childNodes[0].childNodes[1];
+    // t.rendNodeLabel.innerHTML = parents[3];
+    t.rendNodeInput.value = parents[2];
+    t.rendNodeTag = t.rendNodeInput; // Needed for unified treatment in setAttribute
+    t.rendNodeTag.disabled = !!attr.disabled;
+    t.rendNodeLabel.id = t.rendNode.id + "_label";
+    t.rendNodeInput.id = t.rendNode.id + "_input";
 
-  // 2. Set parents[3] (string|function) as label of the input element.
-  // abstract.js selects the correct DOM element for the update
-  t.setText(parents[3]);
+    // 2. Set parents[3] (string|function) as label of the input element.
+    // abstract.js selects the correct DOM element for the update
+    t.setText(parents[3]);
 
-  t._value = parents[2];
-  t.update = function () {
-    if (this.needsUpdate) {
-      JXG.Text.prototype.update.call(this);
-      this._value = this.rendNodeInput.value;
-    }
-    return this;
-  };
+    t._value = parents[2];
+    t.update = function () {
+        if (this.needsUpdate) {
+            JXG.Text.prototype.update.call(this);
+            this._value = this.rendNodeInput.value;
+        }
+        return this;
+    };
 
-  /**
-   * Returns the value (content) of the input element
-   * @name Value
-   * @memberOf Input.prototype
-   * @function
-   * @returns {String} content of the input field.
-   */
-  t.Value = function () {
-    return this._value;
-  };
+    /**
+     * Returns the value (content) of the input element
+     * @name Value
+     * @memberOf Input.prototype
+     * @function
+     * @returns {String} content of the input field.
+     */
+    t.Value = function () {
+        return this._value;
+    };
 
-  /**
-   * Sets value of the input element.
-   * @name set
-   * @memberOf Input.prototype
-   * @function
-   *
-   * @param {String} val
-   * @returns {JXG.GeometryElement} Reference to the element.
-   *
-   * @example
-   *         var i1 = board.create('input', [-3, 4, 'sin(x)', 'f(x)='], {cssStyle: 'width:4em', maxlength: 2});
-   *         var c1 = board.create('checkbox', [-3, 2, 'label 1'], {});
-   *         var b1 = board.create('button', [-3, -1, 'Change texts', function () {
-   *                 i1.setText('g(x)');
-   *                 i1.set('cos(x)');
-   *                 c1.setText('label 2');
-   *                 b1.setText('Texts are changed');
-   *             }],
-   *             {cssStyle: 'width:400px'});
-   *
-   * </pre><div id="JXG11cac8ff-2354-47e7-9da4-eb298e53de05" class="jxgbox" style="width: 300px; height: 300px;"></div>
-   * <script type="text/javascript">
-   *     (function() {
-   *         var board = JXG.JSXGraph.initBoard('JXG11cac8ff-2354-47e7-9da4-eb298e53de05',
-   *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
-   *             var i1 = board.create('input', [-3, 4, 'sin(x)', 'f(x)='], {cssStyle: 'width:4em', maxlength: 2});
-   *             var c1 = board.create('checkbox', [-3, 2, 'label 1'], {});
-   *             var b1 = board.create('button', [-3, -1, 'Change texts', function () {
-   *                     i1.setText('g(x)');
-   *                     i1.set('cos(x)');
-   *                     c1.setText('label 2');
-   *                     b1.setText('Texts are changed');
-   *                 }],
-   *                 {cssStyle: 'width:400px'});
-   *
-   *     })();
-   *
-   * </script><pre>
-   *
-   */
-  t.set = function (val) {
-    this._value = val;
-    this.rendNodeInput.value = val;
-    return this;
-  };
+    /**
+     * Sets value of the input element.
+     * @name set
+     * @memberOf Input.prototype
+     * @function
+     *
+     * @param {String} val
+     * @returns {JXG.GeometryElement} Reference to the element.
+     *
+     * @example
+     *         var i1 = board.create('input', [-3, 4, 'sin(x)', 'f(x)='], {cssStyle: 'width:4em', maxlength: 2});
+     *         var c1 = board.create('checkbox', [-3, 2, 'label 1'], {});
+     *         var b1 = board.create('button', [-3, -1, 'Change texts', function () {
+     *                 i1.setText('g(x)');
+     *                 i1.set('cos(x)');
+     *                 c1.setText('label 2');
+     *                 b1.setText('Texts are changed');
+     *             }],
+     *             {cssStyle: 'width:400px'});
+     *
+     * </pre><div id="JXG11cac8ff-2354-47e7-9da4-eb298e53de05" class="jxgbox" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     *     (function() {
+     *         var board = JXG.JSXGraph.initBoard('JXG11cac8ff-2354-47e7-9da4-eb298e53de05',
+     *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+     *             var i1 = board.create('input', [-3, 4, 'sin(x)', 'f(x)='], {cssStyle: 'width:4em', maxlength: 2});
+     *             var c1 = board.create('checkbox', [-3, 2, 'label 1'], {});
+     *             var b1 = board.create('button', [-3, -1, 'Change texts', function () {
+     *                     i1.setText('g(x)');
+     *                     i1.set('cos(x)');
+     *                     c1.setText('label 2');
+     *                     b1.setText('Texts are changed');
+     *                 }],
+     *                 {cssStyle: 'width:400px'});
+     *
+     *     })();
+     *
+     * </script><pre>
+     *
+     */
+    t.set = function (val) {
+        this._value = val;
+        this.rendNodeInput.value = val;
+        return this;
+    };
 
-  Env.addEvent(t.rendNodeInput, "input", priv.InputInputEventHandler, t);
-  Env.addEvent(
-    t.rendNodeInput,
-    "mousedown",
-    function (evt) {
-      if (Type.exists(evt.stopPropagation)) {
-        evt.stopPropagation();
-      }
-    },
-    t
-  );
-  Env.addEvent(
-    t.rendNodeInput,
-    "touchstart",
-    function (evt) {
-      if (Type.exists(evt.stopPropagation)) {
-        evt.stopPropagation();
-      }
-    },
-    t
-  );
-  Env.addEvent(
-    t.rendNodeInput,
-    "pointerdown",
-    function (evt) {
-      if (Type.exists(evt.stopPropagation)) {
-        evt.stopPropagation();
-      }
-    },
-    t
-  );
+    Env.addEvent(t.rendNodeInput, "input", priv.InputInputEventHandler, t);
+    Env.addEvent(
+        t.rendNodeInput,
+        "mousedown",
+        function (evt) {
+            if (Type.exists(evt.stopPropagation)) {
+                evt.stopPropagation();
+            }
+        },
+        t
+    );
+    Env.addEvent(
+        t.rendNodeInput,
+        "touchstart",
+        function (evt) {
+            if (Type.exists(evt.stopPropagation)) {
+                evt.stopPropagation();
+            }
+        },
+        t
+    );
+    Env.addEvent(
+        t.rendNodeInput,
+        "pointerdown",
+        function (evt) {
+            if (Type.exists(evt.stopPropagation)) {
+                evt.stopPropagation();
+            }
+        },
+        t
+    );
 
-  // This sets the font-size of the input HTML element
-  t.visPropOld.fontsize = "0px";
-  board.renderer.updateTextStyle(t, false);
+    // This sets the font-size of the input HTML element
+    t.visPropOld.fontsize = "0px";
+    board.renderer.updateTextStyle(t, false);
 
-  return t;
+    return t;
 };
 
 JXG.registerElement("input", JXG.createInput);
 
 export default {
-  createInput: JXG.createInput,
+    createInput: JXG.createInput,
 };

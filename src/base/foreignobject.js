@@ -59,287 +59,274 @@ import CoordsElement from "./coordselement";
  *
  */
 JXG.ForeignObject = function (board, coords, attributes, content, size) {
-  this.constructor(
-    board,
-    attributes,
-    Const.OBJECT_TYPE_FOREIGNOBJECT,
-    Const.OBJECT_CLASS_OTHER
-  );
-  this.element = this.board.select(attributes.anchor);
-  this.coordsConstructor(coords);
+    this.constructor(
+        board,
+        attributes,
+        Const.OBJECT_TYPE_FOREIGNOBJECT,
+        Const.OBJECT_CLASS_OTHER
+    );
+    this.element = this.board.select(attributes.anchor);
+    this.coordsConstructor(coords);
 
-  this._useUserSize = false;
+    this._useUserSize = false;
 
-  /**
-   * Array of length two containing [width, height] of the foreignObject in pixel.
-   * @type Array
-   */
-  this.size = [1, 1];
-  if (Type.exists(size) && size.length > 0) {
-    this._useUserSize = true;
+    /**
+     * Array of length two containing [width, height] of the foreignObject in pixel.
+     * @type Array
+     */
+    this.size = [1, 1];
+    if (Type.exists(size) && size.length > 0) {
+        this._useUserSize = true;
 
-    this.W = Type.createFunction(size[0], this.board, "");
-    this.H = Type.createFunction(size[1], this.board, "");
-    this.usrSize = [this.W(), this.H()];
-  }
+        this.W = Type.createFunction(size[0], this.board, "");
+        this.H = Type.createFunction(size[1], this.board, "");
+        this.usrSize = [this.W(), this.H()];
+    }
 
-  // this.size = [Math.abs(this.usrSize[0] * board.unitX), Math.abs(this.usrSize[1] * board.unitY)];
+    // this.size = [Math.abs(this.usrSize[0] * board.unitX), Math.abs(this.usrSize[1] * board.unitY)];
 
-  /**
-   * 'href' of the foreignObject.
-   * @type {string}
-   */
-  this.content = content;
+    /**
+     * 'href' of the foreignObject.
+     * @type {string}
+     */
+    this.content = content;
 
-  this.elType = "foreignobject";
+    this.elType = "foreignobject";
 
-  // span contains the anchor point and the two vectors
-  // spanning the foreignObject rectangle.
-  // this.span = [
-  //     this.coords.usrCoords.slice(0),
-  //     [this.coords.usrCoords[0], this.W(), 0],
-  //     [this.coords.usrCoords[0], 0, this.H()]
-  // ];
-  //this.parent = board.select(attributes.anchor);
+    // span contains the anchor point and the two vectors
+    // spanning the foreignObject rectangle.
+    // this.span = [
+    //     this.coords.usrCoords.slice(0),
+    //     [this.coords.usrCoords[0], this.W(), 0],
+    //     [this.coords.usrCoords[0], 0, this.H()]
+    // ];
+    //this.parent = board.select(attributes.anchor);
 
-  this.id = this.board.setId(this, "Im");
+    this.id = this.board.setId(this, "Im");
 
-  this.board.renderer.drawForeignObject(this);
-  this.board.finalizeAdding(this);
+    this.board.renderer.drawForeignObject(this);
+    this.board.finalizeAdding(this);
 
-  this.methodMap = JXG.deepCopy(this.methodMap, {
-    addTransformation: "addTransform",
-    trans: "addTransform",
-  });
+    this.methodMap = JXG.deepCopy(this.methodMap, {
+        addTransformation: "addTransform",
+        trans: "addTransform",
+    });
 };
 
 JXG.ForeignObject.prototype = new GeometryElement();
-Type.copyPrototypeMethods(
-  JXG.ForeignObject,
-  CoordsElement,
-  "coordsConstructor"
-);
+Type.copyPrototypeMethods(JXG.ForeignObject, CoordsElement, "coordsConstructor");
 
 JXG.extend(
-  JXG.ForeignObject.prototype,
-  /** @lends JXG.ForeignObject.prototype */ {
-    /**
-     * Checks whether (x,y) is over or near the image;
-     * @param {Number} x Coordinate in x direction, screen coordinates.
-     * @param {Number} y Coordinate in y direction, screen coordinates.
-     * @returns {Boolean} True if (x,y) is over the image, False otherwise.
-     */
-    hasPoint: function (x, y) {
-      var dx,
-        dy,
-        r,
-        type,
-        prec,
-        c,
-        v,
-        p,
-        dot,
-        len = this.transformations.length;
+    JXG.ForeignObject.prototype,
+    /** @lends JXG.ForeignObject.prototype */ {
+        /**
+         * Checks whether (x,y) is over or near the image;
+         * @param {Number} x Coordinate in x direction, screen coordinates.
+         * @param {Number} y Coordinate in y direction, screen coordinates.
+         * @returns {Boolean} True if (x,y) is over the image, False otherwise.
+         */
+        hasPoint: function (x, y) {
+            var dx,
+                dy,
+                r,
+                type,
+                prec,
+                c,
+                v,
+                p,
+                dot,
+                len = this.transformations.length;
 
-      if (Type.isObject(Type.evaluate(this.visProp.precision))) {
-        type = this.board._inputDevice;
-        prec = Type.evaluate(this.visProp.precision[type]);
-      } else {
-        // 'inherit'
-        prec = this.board.options.precision.hasPoint;
-      }
+            if (Type.isObject(Type.evaluate(this.visProp.precision))) {
+                type = this.board._inputDevice;
+                prec = Type.evaluate(this.visProp.precision[type]);
+            } else {
+                // 'inherit'
+                prec = this.board.options.precision.hasPoint;
+            }
 
-      // Easy case: no transformation
-      if (len === 0) {
-        dx = x - this.coords.scrCoords[1];
-        dy = this.coords.scrCoords[2] - y;
-        r = prec;
+            // Easy case: no transformation
+            if (len === 0) {
+                dx = x - this.coords.scrCoords[1];
+                dy = this.coords.scrCoords[2] - y;
+                r = prec;
 
-        return (
-          dx >= -r &&
-          dx - this.size[0] <= r &&
-          dy >= -r &&
-          dy - this.size[1] <= r
-        );
-      }
+                return dx >= -r && dx - this.size[0] <= r && dy >= -r && dy - this.size[1] <= r;
+            }
 
-      // foreignObject is transformed
-      c = new Coords(Const.COORDS_BY_SCREEN, [x, y], this.board);
-      // v is the vector from anchor point to the drag point
-      c = c.usrCoords;
-      v = [
-        c[0] - this.span[0][0],
-        c[1] - this.span[0][1],
-        c[2] - this.span[0][2],
-      ];
-      dot = Mat.innerProduct; // shortcut
+            // foreignObject is transformed
+            c = new Coords(Const.COORDS_BY_SCREEN, [x, y], this.board);
+            // v is the vector from anchor point to the drag point
+            c = c.usrCoords;
+            v = [c[0] - this.span[0][0], c[1] - this.span[0][1], c[2] - this.span[0][2]];
+            dot = Mat.innerProduct; // shortcut
 
-      // Project the drag point to the sides.
-      p = dot(v, this.span[1]);
-      if (0 <= p && p <= dot(this.span[1], this.span[1])) {
-        p = dot(v, this.span[2]);
+            // Project the drag point to the sides.
+            p = dot(v, this.span[1]);
+            if (0 <= p && p <= dot(this.span[1], this.span[1])) {
+                p = dot(v, this.span[2]);
 
-        if (0 <= p && p <= dot(this.span[2], this.span[2])) {
-          return true;
-        }
-      }
-      return false;
-    },
+                if (0 <= p && p <= dot(this.span[2], this.span[2])) {
+                    return true;
+                }
+            }
+            return false;
+        },
 
-    /**
-     * Recalculate the coordinates of lower left corner and the width and height.
-     *
-     * @returns {JXG.ForeignObject} A reference to the element
-     * @private
-     */
-    update: function (fromParent) {
-      if (!this.needsUpdate) {
-        return this;
-      }
-      this.updateCoords(fromParent);
-      this.updateSize();
-      // this.updateSpan();
-      return this;
-    },
+        /**
+         * Recalculate the coordinates of lower left corner and the width and height.
+         *
+         * @returns {JXG.ForeignObject} A reference to the element
+         * @private
+         */
+        update: function (fromParent) {
+            if (!this.needsUpdate) {
+                return this;
+            }
+            this.updateCoords(fromParent);
+            this.updateSize();
+            // this.updateSpan();
+            return this;
+        },
 
-    /**
-     * Send an update request to the renderer.
-     * @private
-     */
-    updateRenderer: function () {
-      return this.updateRendererGeneric("updateForeignObject");
-    },
+        /**
+         * Send an update request to the renderer.
+         * @private
+         */
+        updateRenderer: function () {
+            return this.updateRendererGeneric("updateForeignObject");
+        },
 
-    /**
-     * Updates the internal arrays containing size of the foreignObject.
-     * @returns {JXG.ForeignObject} A reference to the element
-     * @private
-     */
-    updateSize: function () {
-      var bb = [0, 0];
+        /**
+         * Updates the internal arrays containing size of the foreignObject.
+         * @returns {JXG.ForeignObject} A reference to the element
+         * @private
+         */
+        updateSize: function () {
+            var bb = [0, 0];
 
-      if (this._useUserSize) {
-        this.usrSize = [this.W(), this.H()];
-        this.size = [
-          Math.abs(this.usrSize[0] * this.board.unitX),
-          Math.abs(this.usrSize[1] * this.board.unitY),
-        ];
-      } else {
-        if (this.rendNode.hasChildNodes()) {
-          bb = this.rendNode.childNodes[0].getBoundingClientRect();
-          this.size = [bb.width, bb.height];
-        }
-      }
+            if (this._useUserSize) {
+                this.usrSize = [this.W(), this.H()];
+                this.size = [
+                    Math.abs(this.usrSize[0] * this.board.unitX),
+                    Math.abs(this.usrSize[1] * this.board.unitY),
+                ];
+            } else {
+                if (this.rendNode.hasChildNodes()) {
+                    bb = this.rendNode.childNodes[0].getBoundingClientRect();
+                    this.size = [bb.width, bb.height];
+                }
+            }
 
-      return this;
-    },
+            return this;
+        },
 
-    /**
-     * Update the anchor point of the foreignObject, i.e. the lower left corner
-     * and the two vectors which span the rectangle.
-     * @returns {JXG.ForeignObject} A reference to the element
-     * @private
-     *
-     */
-    updateSpan: function () {
-      var i,
-        j,
-        len = this.transformations.length,
-        v = [];
+        /**
+         * Update the anchor point of the foreignObject, i.e. the lower left corner
+         * and the two vectors which span the rectangle.
+         * @returns {JXG.ForeignObject} A reference to the element
+         * @private
+         *
+         */
+        updateSpan: function () {
+            var i,
+                j,
+                len = this.transformations.length,
+                v = [];
 
-      if (len === 0) {
-        this.span = [
-          [this.Z(), this.X(), this.Y()],
-          [this.Z(), this.W(), 0],
-          [this.Z(), 0, this.H()],
-        ];
-      } else {
-        // v contains the three defining corners of the rectangle/image
-        v[0] = [this.Z(), this.X(), this.Y()];
-        v[1] = [this.Z(), this.X() + this.W(), this.Y()];
-        v[2] = [this.Z(), this.X(), this.Y() + this.H()];
+            if (len === 0) {
+                this.span = [
+                    [this.Z(), this.X(), this.Y()],
+                    [this.Z(), this.W(), 0],
+                    [this.Z(), 0, this.H()],
+                ];
+            } else {
+                // v contains the three defining corners of the rectangle/image
+                v[0] = [this.Z(), this.X(), this.Y()];
+                v[1] = [this.Z(), this.X() + this.W(), this.Y()];
+                v[2] = [this.Z(), this.X(), this.Y() + this.H()];
 
-        // Transform the three corners
-        for (i = 0; i < len; i++) {
-          for (j = 0; j < 3; j++) {
-            v[j] = Mat.matVecMult(this.transformations[i].matrix, v[j]);
-          }
-        }
-        // Normalize the vectors
-        for (j = 0; j < 3; j++) {
-          v[j][1] /= v[j][0];
-          v[j][2] /= v[j][0];
-          v[j][0] /= v[j][0];
-        }
-        // Compute the two vectors spanning the rectangle
-        // by subtracting the anchor point.
-        for (j = 1; j < 3; j++) {
-          v[j][0] -= v[0][0];
-          v[j][1] -= v[0][1];
-          v[j][2] -= v[0][2];
-        }
-        this.span = v;
-      }
+                // Transform the three corners
+                for (i = 0; i < len; i++) {
+                    for (j = 0; j < 3; j++) {
+                        v[j] = Mat.matVecMult(this.transformations[i].matrix, v[j]);
+                    }
+                }
+                // Normalize the vectors
+                for (j = 0; j < 3; j++) {
+                    v[j][1] /= v[j][0];
+                    v[j][2] /= v[j][0];
+                    v[j][0] /= v[j][0];
+                }
+                // Compute the two vectors spanning the rectangle
+                // by subtracting the anchor point.
+                for (j = 1; j < 3; j++) {
+                    v[j][0] -= v[0][0];
+                    v[j][1] -= v[0][1];
+                    v[j][2] -= v[0][2];
+                }
+                this.span = v;
+            }
 
-      return this;
-    },
+            return this;
+        },
 
-    addTransform: function (transform) {
-      var i;
+        addTransform: function (transform) {
+            var i;
 
-      if (Type.isArray(transform)) {
-        for (i = 0; i < transform.length; i++) {
-          this.transformations.push(transform[i]);
-        }
-      } else {
-        this.transformations.push(transform);
-      }
+            if (Type.isArray(transform)) {
+                for (i = 0; i < transform.length; i++) {
+                    this.transformations.push(transform[i]);
+                }
+            } else {
+                this.transformations.push(transform);
+            }
 
-      return this;
-    },
+            return this;
+        },
 
-    // Documented in element.js
-    getParents: function () {
-      var p = [this.url, [this.Z(), this.X(), this.Y()], this.usrSize];
+        // Documented in element.js
+        getParents: function () {
+            var p = [this.url, [this.Z(), this.X(), this.Y()], this.usrSize];
 
-      if (this.parents.length !== 0) {
-        p = this.parents;
-      }
+            if (this.parents.length !== 0) {
+                p = this.parents;
+            }
 
-      return p;
-    },
+            return p;
+        },
 
-    /**
-     * Set the width and height of the foreignObject. After setting a new size,
-     * board.update() or foreignobject.fullUpdate()
-     * has to be called to make the change visible.
-     * @param  {number, function, string} width  Number, function or string
-     *                            that determines the new width of the foreignObject
-     * @param  {number, function, string} height Number, function or string
-     *                            that determines the new height of the foreignObject
-     * @returns {JXG.ForeignObject} A reference to the element
-     *
-     */
-    setSize: function (width, height) {
-      this.W = Type.createFunction(width, this.board, "");
-      this.H = Type.createFunction(height, this.board, "");
-      this._useUserSize = true;
+        /**
+         * Set the width and height of the foreignObject. After setting a new size,
+         * board.update() or foreignobject.fullUpdate()
+         * has to be called to make the change visible.
+         * @param  {number, function, string} width  Number, function or string
+         *                            that determines the new width of the foreignObject
+         * @param  {number, function, string} height Number, function or string
+         *                            that determines the new height of the foreignObject
+         * @returns {JXG.ForeignObject} A reference to the element
+         *
+         */
+        setSize: function (width, height) {
+            this.W = Type.createFunction(width, this.board, "");
+            this.H = Type.createFunction(height, this.board, "");
+            this._useUserSize = true;
 
-      return this;
-    },
+            return this;
+        },
 
-    /**
-     * Returns the width of the foreignObject in user coordinates.
-     * @returns {number} width of the image in user coordinates
-     */
-    W: function () {}, // Needed for docs, defined in constructor
+        /**
+         * Returns the width of the foreignObject in user coordinates.
+         * @returns {number} width of the image in user coordinates
+         */
+        W: function () {}, // Needed for docs, defined in constructor
 
-    /**
-     * Returns the height of the foreignObject in user coordinates.
-     * @returns {number} height of the image in user coordinates
-     */
-    H: function () {}, // Needed for docs, defined in constructor
-  }
+        /**
+         * Returns the height of the foreignObject in user coordinates.
+         * @returns {number} height of the image in user coordinates
+         */
+        H: function () {}, // Needed for docs, defined in constructor
+    }
 );
 
 /**
@@ -462,43 +449,36 @@ JXG.extend(
  *
  */
 JXG.createForeignObject = function (board, parents, attributes) {
-  var attr,
-    fo,
-    content = parents[0],
-    coords = parents[1],
-    size = [];
+    var attr,
+        fo,
+        content = parents[0],
+        coords = parents[1],
+        size = [];
 
-  if (parents.length >= 2) {
-    size = parents[2];
-  }
+    if (parents.length >= 2) {
+        size = parents[2];
+    }
 
-  attr = Type.copyAttributes(attributes, board.options, "foreignobject");
-  fo = CoordsElement.create(
-    JXG.ForeignObject,
-    board,
-    coords,
-    attr,
-    content,
-    size
-  );
-  if (!fo) {
-    throw new Error(
-      "JSXGraph: Can't create foreignObject with parent types '" +
-        typeof parents[0] +
-        "' and '" +
-        typeof parents[1] +
-        "'." +
-        "\nPossible parent types: [string, [x, y], [w, h]], [string, [x, y]], [element,transformation]"
-    );
-  }
+    attr = Type.copyAttributes(attributes, board.options, "foreignobject");
+    fo = CoordsElement.create(JXG.ForeignObject, board, coords, attr, content, size);
+    if (!fo) {
+        throw new Error(
+            "JSXGraph: Can't create foreignObject with parent types '" +
+                typeof parents[0] +
+                "' and '" +
+                typeof parents[1] +
+                "'." +
+                "\nPossible parent types: [string, [x, y], [w, h]], [string, [x, y]], [element,transformation]"
+        );
+    }
 
-  return fo;
+    return fo;
 };
 
 JXG.registerElement("foreignobject", JXG.createForeignObject);
 JXG.registerElement("fo", JXG.createForeignObject);
 
 export default {
-  ForeignObject: JXG.ForeignObject,
-  createForeignobject: JXG.createForeignObject,
+    ForeignObject: JXG.ForeignObject,
+    createForeignobject: JXG.createForeignObject,
 };

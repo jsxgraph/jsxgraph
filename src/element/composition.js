@@ -98,174 +98,174 @@ import Polygon from "../base/polygon";
  * </script><pre>
  */
 JXG.createOrthogonalProjection = function (board, parents, attributes) {
-  var l, p, t, attr;
+    var l, p, t, attr;
 
-  parents[0] = board.select(parents[0]);
-  parents[1] = board.select(parents[1]);
+    parents[0] = board.select(parents[0]);
+    parents[1] = board.select(parents[1]);
 
-  if (
-    Type.isPointType(board, parents[0]) &&
-    parents[1].elementClass === Const.OBJECT_CLASS_LINE
-  ) {
-    p = Type.providePoints(board, [parents[0]], attributes, "point")[0];
-    l = parents[1];
-  } else if (
-    Type.isPointType(board, parents[1]) &&
-    parents[0].elementClass === Const.OBJECT_CLASS_LINE
-  ) {
-    p = Type.providePoints(board, [parents[1]], attributes, "point")[0];
-    l = parents[0];
-  } else {
-    throw new Error(
-      "JSXGraph: Can't create perpendicular point with parent types '" +
-        typeof parents[0] +
-        "' and '" +
-        typeof parents[1] +
-        "'." +
-        "\nPossible parent types: [point,line]"
+    if (
+        Type.isPointType(board, parents[0]) &&
+        parents[1].elementClass === Const.OBJECT_CLASS_LINE
+    ) {
+        p = Type.providePoints(board, [parents[0]], attributes, "point")[0];
+        l = parents[1];
+    } else if (
+        Type.isPointType(board, parents[1]) &&
+        parents[0].elementClass === Const.OBJECT_CLASS_LINE
+    ) {
+        p = Type.providePoints(board, [parents[1]], attributes, "point")[0];
+        l = parents[0];
+    } else {
+        throw new Error(
+            "JSXGraph: Can't create perpendicular point with parent types '" +
+                typeof parents[0] +
+                "' and '" +
+                typeof parents[1] +
+                "'." +
+                "\nPossible parent types: [point,line]"
+        );
+    }
+
+    attr = Type.copyAttributes(attributes, board.options, "orthogonalprojection");
+
+    t = board.create(
+        "point",
+        [
+            function () {
+                return Geometry.projectPointToLine(p, l, board);
+            },
+        ],
+        attr
     );
-  }
 
-  attr = Type.copyAttributes(attributes, board.options, "orthogonalprojection");
+    if (Type.exists(p._is_new)) {
+        t.addChild(p);
+        delete p._is_new;
+    } else {
+        p.addChild(t);
+    }
+    l.addChild(t);
 
-  t = board.create(
-    "point",
-    [
-      function () {
-        return Geometry.projectPointToLine(p, l, board);
-      },
-    ],
-    attr
-  );
+    t.elType = "orthogonalprojection";
+    t.setParents([p.id, t.id]);
 
-  if (Type.exists(p._is_new)) {
-    t.addChild(p);
-    delete p._is_new;
-  } else {
-    p.addChild(t);
-  }
-  l.addChild(t);
+    t.update();
 
-  t.elType = "orthogonalprojection";
-  t.setParents([p.id, t.id]);
-
-  t.update();
-
-  /**
-   * Used to generate a polynomial for the orthogonal projection
-   * @name Orthogonalprojection#generatePolynomial
-   * @returns {Array} An array containing the generated polynomial.
-   * @private
-   */
-  t.generatePolynomial = function () {
-    /*
-     *  Perpendicular takes point P and line L and creates point T and line M:
-     *
-     *                          | M
-     *                          |
-     *                          x P (p1,p2)
-     *                          |
-     *                          |
-     *  L                       |
-     *  ----------x-------------x------------------------x--------
-     *            A (a1,a2)     |T (t1,t2)               B (b1,b2)
-     *                          |
-     *                          |
-     *
-     * So we have two conditions:
-     *
-     *   (a)  AT  || TB          (collinearity condition)
-     *   (b)  PT _|_ AB          (orthogonality condition)
-     *
-     *      a2-t2       t2-b2
-     *     -------  =  -------           (1)
-     *      a1-t1       t1-b1
-     *
-     *      p2-t2         a1-b1
-     *     -------  =  - -------         (2)
-     *      p1-t1         a2-b2
-     *
-     * Multiplying (1) and (2) with denominators and simplifying gives
-     *
-     *    a2t1 - a2b1 + t2b1 - a1t2 + a1b2 - t1b2 = 0                  (1')
-     *
-     *    p2a2 - p2b2 - t2a2 + t2b2 + p1a1 - p1b1 - t1a1 + t1b1 = 0    (2')
-     *
+    /**
+     * Used to generate a polynomial for the orthogonal projection
+     * @name Orthogonalprojection#generatePolynomial
+     * @returns {Array} An array containing the generated polynomial.
+     * @private
      */
+    t.generatePolynomial = function () {
+        /*
+         *  Perpendicular takes point P and line L and creates point T and line M:
+         *
+         *                          | M
+         *                          |
+         *                          x P (p1,p2)
+         *                          |
+         *                          |
+         *  L                       |
+         *  ----------x-------------x------------------------x--------
+         *            A (a1,a2)     |T (t1,t2)               B (b1,b2)
+         *                          |
+         *                          |
+         *
+         * So we have two conditions:
+         *
+         *   (a)  AT  || TB          (collinearity condition)
+         *   (b)  PT _|_ AB          (orthogonality condition)
+         *
+         *      a2-t2       t2-b2
+         *     -------  =  -------           (1)
+         *      a1-t1       t1-b1
+         *
+         *      p2-t2         a1-b1
+         *     -------  =  - -------         (2)
+         *      p1-t1         a2-b2
+         *
+         * Multiplying (1) and (2) with denominators and simplifying gives
+         *
+         *    a2t1 - a2b1 + t2b1 - a1t2 + a1b2 - t1b2 = 0                  (1')
+         *
+         *    p2a2 - p2b2 - t2a2 + t2b2 + p1a1 - p1b1 - t1a1 + t1b1 = 0    (2')
+         *
+         */
 
-    var a1 = l.point1.symbolic.x,
-      a2 = l.point1.symbolic.y,
-      b1 = l.point2.symbolic.x,
-      b2 = l.point2.symbolic.y,
-      p1 = p.symbolic.x,
-      p2 = p.symbolic.y,
-      t1 = t.symbolic.x,
-      t2 = t.symbolic.y,
-      poly1 =
-        "(" +
-        a2 +
-        ")*(" +
-        t1 +
-        ")-(" +
-        a2 +
-        ")*(" +
-        b1 +
-        ")+(" +
-        t2 +
-        ")*(" +
-        b1 +
-        ")-(" +
-        a1 +
-        ")*(" +
-        t2 +
-        ")+(" +
-        a1 +
-        ")*(" +
-        b2 +
-        ")-(" +
-        t1 +
-        ")*(" +
-        b2 +
-        ")",
-      poly2 =
-        "(" +
-        p2 +
-        ")*(" +
-        a2 +
-        ")-(" +
-        p2 +
-        ")*(" +
-        b2 +
-        ")-(" +
-        t2 +
-        ")*(" +
-        a2 +
-        ")+(" +
-        t2 +
-        ")*(" +
-        b2 +
-        ")+(" +
-        p1 +
-        ")*(" +
-        a1 +
-        ")-(" +
-        p1 +
-        ")*(" +
-        b1 +
-        ")-(" +
-        t1 +
-        ")*(" +
-        a1 +
-        ")+(" +
-        t1 +
-        ")*(" +
-        b1 +
-        ")";
+        var a1 = l.point1.symbolic.x,
+            a2 = l.point1.symbolic.y,
+            b1 = l.point2.symbolic.x,
+            b2 = l.point2.symbolic.y,
+            p1 = p.symbolic.x,
+            p2 = p.symbolic.y,
+            t1 = t.symbolic.x,
+            t2 = t.symbolic.y,
+            poly1 =
+                "(" +
+                a2 +
+                ")*(" +
+                t1 +
+                ")-(" +
+                a2 +
+                ")*(" +
+                b1 +
+                ")+(" +
+                t2 +
+                ")*(" +
+                b1 +
+                ")-(" +
+                a1 +
+                ")*(" +
+                t2 +
+                ")+(" +
+                a1 +
+                ")*(" +
+                b2 +
+                ")-(" +
+                t1 +
+                ")*(" +
+                b2 +
+                ")",
+            poly2 =
+                "(" +
+                p2 +
+                ")*(" +
+                a2 +
+                ")-(" +
+                p2 +
+                ")*(" +
+                b2 +
+                ")-(" +
+                t2 +
+                ")*(" +
+                a2 +
+                ")+(" +
+                t2 +
+                ")*(" +
+                b2 +
+                ")+(" +
+                p1 +
+                ")*(" +
+                a1 +
+                ")-(" +
+                p1 +
+                ")*(" +
+                b1 +
+                ")-(" +
+                t1 +
+                ")*(" +
+                a1 +
+                ")+(" +
+                t1 +
+                ")*(" +
+                b1 +
+                ")";
 
-    return [poly1, poly2];
-  };
+        return [poly1, poly2];
+    };
 
-  return t;
+    return t;
 };
 
 /**
@@ -301,63 +301,63 @@ JXG.createOrthogonalProjection = function (board, parents, attributes) {
      * </script><pre>
      */
 JXG.createPerpendicular = function (board, parents, attributes) {
-  var p, l, pd, attr;
+    var p, l, pd, attr;
 
-  parents[0] = board.select(parents[0]);
-  parents[1] = board.select(parents[1]);
+    parents[0] = board.select(parents[0]);
+    parents[1] = board.select(parents[1]);
 
-  if (
-    Type.isPointType(board, parents[0]) &&
-    parents[1].elementClass === Const.OBJECT_CLASS_LINE
-  ) {
-    l = parents[1];
-    p = Type.providePoints(board, [parents[0]], attributes, "point")[0];
-  } else if (
-    Type.isPointType(board, parents[1]) &&
-    parents[0].elementClass === Const.OBJECT_CLASS_LINE
-  ) {
-    l = parents[0];
-    p = Type.providePoints(board, [parents[1]], attributes, "point")[0];
-  } else {
-    throw new Error(
-      "JSXGraph: Can't create perpendicular with parent types '" +
-        typeof parents[0] +
-        "' and '" +
-        typeof parents[1] +
-        "'." +
-        "\nPossible parent types: [line,point]"
+    if (
+        Type.isPointType(board, parents[0]) &&
+        parents[1].elementClass === Const.OBJECT_CLASS_LINE
+    ) {
+        l = parents[1];
+        p = Type.providePoints(board, [parents[0]], attributes, "point")[0];
+    } else if (
+        Type.isPointType(board, parents[1]) &&
+        parents[0].elementClass === Const.OBJECT_CLASS_LINE
+    ) {
+        l = parents[0];
+        p = Type.providePoints(board, [parents[1]], attributes, "point")[0];
+    } else {
+        throw new Error(
+            "JSXGraph: Can't create perpendicular with parent types '" +
+                typeof parents[0] +
+                "' and '" +
+                typeof parents[1] +
+                "'." +
+                "\nPossible parent types: [line,point]"
+        );
+    }
+
+    attr = Type.copyAttributes(attributes, board.options, "perpendicular");
+    pd = Line.createLine(
+        board,
+        [
+            function () {
+                return l.stdform[2] * p.X() - l.stdform[1] * p.Y();
+            },
+            function () {
+                return -l.stdform[2] * p.Z();
+            },
+            function () {
+                return l.stdform[1] * p.Z();
+            },
+        ],
+        attr
     );
-  }
 
-  attr = Type.copyAttributes(attributes, board.options, "perpendicular");
-  pd = Line.createLine(
-    board,
-    [
-      function () {
-        return l.stdform[2] * p.X() - l.stdform[1] * p.Y();
-      },
-      function () {
-        return -l.stdform[2] * p.Z();
-      },
-      function () {
-        return l.stdform[1] * p.Z();
-      },
-    ],
-    attr
-  );
+    pd.elType = "perpendicular";
+    pd.setParents([l.id, p.id]);
 
-  pd.elType = "perpendicular";
-  pd.setParents([l.id, p.id]);
+    if (Type.exists(p._is_new)) {
+        pd.addChild(p);
+        delete p._is_new;
+    } else {
+        p.addChild(pd);
+    }
+    l.addChild(pd);
 
-  if (Type.exists(p._is_new)) {
-    pd.addChild(p);
-    delete p._is_new;
-  } else {
-    p.addChild(pd);
-  }
-  l.addChild(pd);
-
-  return pd;
+    return pd;
 };
 
 /**
@@ -390,170 +390,170 @@ JXG.createPerpendicular = function (board, parents, attributes) {
  * </script><pre>
  */
 JXG.createPerpendicularPoint = function (board, parents, attributes) {
-  var l, p, t;
+    var l, p, t;
 
-  parents[0] = board.select(parents[0]);
-  parents[1] = board.select(parents[1]);
-  if (
-    Type.isPointType(board, parents[0]) &&
-    parents[1].elementClass === Const.OBJECT_CLASS_LINE
-  ) {
-    p = Type.providePoints(board, [parents[0]], attributes, "point")[0];
-    l = parents[1];
-  } else if (
-    Type.isPointType(board, parents[1]) &&
-    parents[0].elementClass === Const.OBJECT_CLASS_LINE
-  ) {
-    p = Type.providePoints(board, [parents[1]], attributes, "point")[0];
-    l = parents[0];
-  } else {
-    throw new Error(
-      "JSXGraph: Can't create perpendicular point with parent types '" +
-        typeof parents[0] +
-        "' and '" +
-        typeof parents[1] +
-        "'." +
-        "\nPossible parent types: [point,line]"
+    parents[0] = board.select(parents[0]);
+    parents[1] = board.select(parents[1]);
+    if (
+        Type.isPointType(board, parents[0]) &&
+        parents[1].elementClass === Const.OBJECT_CLASS_LINE
+    ) {
+        p = Type.providePoints(board, [parents[0]], attributes, "point")[0];
+        l = parents[1];
+    } else if (
+        Type.isPointType(board, parents[1]) &&
+        parents[0].elementClass === Const.OBJECT_CLASS_LINE
+    ) {
+        p = Type.providePoints(board, [parents[1]], attributes, "point")[0];
+        l = parents[0];
+    } else {
+        throw new Error(
+            "JSXGraph: Can't create perpendicular point with parent types '" +
+                typeof parents[0] +
+                "' and '" +
+                typeof parents[1] +
+                "'." +
+                "\nPossible parent types: [point,line]"
+        );
+    }
+
+    t = board.create(
+        "point",
+        [
+            function () {
+                return Geometry.perpendicular(l, p, board)[0];
+            },
+        ],
+        attributes
     );
-  }
 
-  t = board.create(
-    "point",
-    [
-      function () {
-        return Geometry.perpendicular(l, p, board)[0];
-      },
-    ],
-    attributes
-  );
+    if (Type.exists(p._is_new)) {
+        t.addChild(p);
+        delete p._is_new;
+    } else {
+        p.addChild(t);
+    }
+    l.addChild(t);
 
-  if (Type.exists(p._is_new)) {
-    t.addChild(p);
-    delete p._is_new;
-  } else {
-    p.addChild(t);
-  }
-  l.addChild(t);
+    t.elType = "perpendicularpoint";
+    t.setParents([p.id, l.id]);
 
-  t.elType = "perpendicularpoint";
-  t.setParents([p.id, l.id]);
+    t.update();
 
-  t.update();
-
-  /**
-   * Used to generate a polynomial for the perpendicular point
-   * @name PerpendicularPoint#generatePolynomial
-   * @returns {Array} An array containing the generated polynomial.
-   * @private
-   */
-  t.generatePolynomial = function () {
-    /*
-     *  Perpendicular takes point P and line L and creates point T and line M:
-     *
-     *                          | M
-     *                          |
-     *                          x P (p1,p2)
-     *                          |
-     *                          |
-     *  L                       |
-     *  ----------x-------------x------------------------x--------
-     *            A (a1,a2)     |T (t1,t2)               B (b1,b2)
-     *                          |
-     *                          |
-     *
-     * So we have two conditions:
-     *
-     *   (a)  AT  || TB          (collinearity condition)
-     *   (b)  PT _|_ AB          (orthogonality condition)
-     *
-     *      a2-t2       t2-b2
-     *     -------  =  -------           (1)
-     *      a1-t1       t1-b1
-     *
-     *      p2-t2         a1-b1
-     *     -------  =  - -------         (2)
-     *      p1-t1         a2-b2
-     *
-     * Multiplying (1) and (2) with denominators and simplifying gives
-     *
-     *    a2t1 - a2b1 + t2b1 - a1t2 + a1b2 - t1b2 = 0                  (1')
-     *
-     *    p2a2 - p2b2 - t2a2 + t2b2 + p1a1 - p1b1 - t1a1 + t1b1 = 0    (2')
-     *
+    /**
+     * Used to generate a polynomial for the perpendicular point
+     * @name PerpendicularPoint#generatePolynomial
+     * @returns {Array} An array containing the generated polynomial.
+     * @private
      */
-    var a1 = l.point1.symbolic.x,
-      a2 = l.point1.symbolic.y,
-      b1 = l.point2.symbolic.x,
-      b2 = l.point2.symbolic.y,
-      p1 = p.symbolic.x,
-      p2 = p.symbolic.y,
-      t1 = t.symbolic.x,
-      t2 = t.symbolic.y,
-      poly1 =
-        "(" +
-        a2 +
-        ")*(" +
-        t1 +
-        ")-(" +
-        a2 +
-        ")*(" +
-        b1 +
-        ")+(" +
-        t2 +
-        ")*(" +
-        b1 +
-        ")-(" +
-        a1 +
-        ")*(" +
-        t2 +
-        ")+(" +
-        a1 +
-        ")*(" +
-        b2 +
-        ")-(" +
-        t1 +
-        ")*(" +
-        b2 +
-        ")",
-      poly2 =
-        "(" +
-        p2 +
-        ")*(" +
-        a2 +
-        ")-(" +
-        p2 +
-        ")*(" +
-        b2 +
-        ")-(" +
-        t2 +
-        ")*(" +
-        a2 +
-        ")+(" +
-        t2 +
-        ")*(" +
-        b2 +
-        ")+(" +
-        p1 +
-        ")*(" +
-        a1 +
-        ")-(" +
-        p1 +
-        ")*(" +
-        b1 +
-        ")-(" +
-        t1 +
-        ")*(" +
-        a1 +
-        ")+(" +
-        t1 +
-        ")*(" +
-        b1 +
-        ")";
+    t.generatePolynomial = function () {
+        /*
+         *  Perpendicular takes point P and line L and creates point T and line M:
+         *
+         *                          | M
+         *                          |
+         *                          x P (p1,p2)
+         *                          |
+         *                          |
+         *  L                       |
+         *  ----------x-------------x------------------------x--------
+         *            A (a1,a2)     |T (t1,t2)               B (b1,b2)
+         *                          |
+         *                          |
+         *
+         * So we have two conditions:
+         *
+         *   (a)  AT  || TB          (collinearity condition)
+         *   (b)  PT _|_ AB          (orthogonality condition)
+         *
+         *      a2-t2       t2-b2
+         *     -------  =  -------           (1)
+         *      a1-t1       t1-b1
+         *
+         *      p2-t2         a1-b1
+         *     -------  =  - -------         (2)
+         *      p1-t1         a2-b2
+         *
+         * Multiplying (1) and (2) with denominators and simplifying gives
+         *
+         *    a2t1 - a2b1 + t2b1 - a1t2 + a1b2 - t1b2 = 0                  (1')
+         *
+         *    p2a2 - p2b2 - t2a2 + t2b2 + p1a1 - p1b1 - t1a1 + t1b1 = 0    (2')
+         *
+         */
+        var a1 = l.point1.symbolic.x,
+            a2 = l.point1.symbolic.y,
+            b1 = l.point2.symbolic.x,
+            b2 = l.point2.symbolic.y,
+            p1 = p.symbolic.x,
+            p2 = p.symbolic.y,
+            t1 = t.symbolic.x,
+            t2 = t.symbolic.y,
+            poly1 =
+                "(" +
+                a2 +
+                ")*(" +
+                t1 +
+                ")-(" +
+                a2 +
+                ")*(" +
+                b1 +
+                ")+(" +
+                t2 +
+                ")*(" +
+                b1 +
+                ")-(" +
+                a1 +
+                ")*(" +
+                t2 +
+                ")+(" +
+                a1 +
+                ")*(" +
+                b2 +
+                ")-(" +
+                t1 +
+                ")*(" +
+                b2 +
+                ")",
+            poly2 =
+                "(" +
+                p2 +
+                ")*(" +
+                a2 +
+                ")-(" +
+                p2 +
+                ")*(" +
+                b2 +
+                ")-(" +
+                t2 +
+                ")*(" +
+                a2 +
+                ")+(" +
+                t2 +
+                ")*(" +
+                b2 +
+                ")+(" +
+                p1 +
+                ")*(" +
+                a1 +
+                ")-(" +
+                p1 +
+                ")*(" +
+                b1 +
+                ")-(" +
+                t1 +
+                ")*(" +
+                a1 +
+                ")+(" +
+                t1 +
+                ")*(" +
+                b1 +
+                ")";
 
-    return [poly1, poly2];
-  };
+        return [poly1, poly2];
+    };
 
-  return t;
+    return t;
 };
 
 /**
@@ -590,80 +590,75 @@ JXG.createPerpendicularPoint = function (board, parents, attributes) {
  * </script><pre>
  */
 JXG.createPerpendicularSegment = function (board, parents, attributes) {
-  var p, l, pd, t, attr;
+    var p, l, pd, t, attr;
 
-  parents[0] = board.select(parents[0]);
-  parents[1] = board.select(parents[1]);
-  if (
-    Type.isPointType(board, parents[0]) &&
-    parents[1].elementClass === Const.OBJECT_CLASS_LINE
-  ) {
-    l = parents[1];
-    p = Type.providePoints(board, [parents[0]], attributes, "point")[0];
-  } else if (
-    Type.isPointType(board, parents[1]) &&
-    parents[0].elementClass === Const.OBJECT_CLASS_LINE
-  ) {
-    l = parents[0];
-    p = Type.providePoints(board, [parents[1]], attributes, "point")[0];
-  } else {
-    throw new Error(
-      "JSXGraph: Can't create perpendicular with parent types '" +
-        typeof parents[0] +
-        "' and '" +
-        typeof parents[1] +
-        "'." +
-        "\nPossible parent types: [line,point]"
+    parents[0] = board.select(parents[0]);
+    parents[1] = board.select(parents[1]);
+    if (
+        Type.isPointType(board, parents[0]) &&
+        parents[1].elementClass === Const.OBJECT_CLASS_LINE
+    ) {
+        l = parents[1];
+        p = Type.providePoints(board, [parents[0]], attributes, "point")[0];
+    } else if (
+        Type.isPointType(board, parents[1]) &&
+        parents[0].elementClass === Const.OBJECT_CLASS_LINE
+    ) {
+        l = parents[0];
+        p = Type.providePoints(board, [parents[1]], attributes, "point")[0];
+    } else {
+        throw new Error(
+            "JSXGraph: Can't create perpendicular with parent types '" +
+                typeof parents[0] +
+                "' and '" +
+                typeof parents[1] +
+                "'." +
+                "\nPossible parent types: [line,point]"
+        );
+    }
+    attr = Type.copyAttributes(attributes, board.options, "perpendicularsegment", "point");
+    t = JXG.createPerpendicularPoint(board, [l, p], attr);
+    t.dump = false;
+
+    if (!Type.exists(attributes.layer)) {
+        attributes.layer = board.options.layer.line;
+    }
+
+    attr = Type.copyAttributes(attributes, board.options, "perpendicularsegment");
+    pd = Line.createLine(
+        board,
+        [
+            function () {
+                return Geometry.perpendicular(l, p, board)[1] ? [t, p] : [p, t];
+            },
+        ],
+        attr
     );
-  }
-  attr = Type.copyAttributes(
-    attributes,
-    board.options,
-    "perpendicularsegment",
-    "point"
-  );
-  t = JXG.createPerpendicularPoint(board, [l, p], attr);
-  t.dump = false;
 
-  if (!Type.exists(attributes.layer)) {
-    attributes.layer = board.options.layer.line;
-  }
+    /**
+     * Helper point
+     * @memberOf PerpendicularSegment.prototype
+     * @type PerpendicularPoint
+     * @name point
+     */
+    pd.point = t;
 
-  attr = Type.copyAttributes(attributes, board.options, "perpendicularsegment");
-  pd = Line.createLine(
-    board,
-    [
-      function () {
-        return Geometry.perpendicular(l, p, board)[1] ? [t, p] : [p, t];
-      },
-    ],
-    attr
-  );
+    if (Type.exists(p._is_new)) {
+        pd.addChild(p);
+        delete p._is_new;
+    } else {
+        p.addChild(pd);
+    }
+    l.addChild(pd);
 
-  /**
-   * Helper point
-   * @memberOf PerpendicularSegment.prototype
-   * @type PerpendicularPoint
-   * @name point
-   */
-  pd.point = t;
+    pd.elType = "perpendicularsegment";
+    pd.setParents([p.id, l.id]);
+    pd.subs = {
+        point: t,
+    };
+    pd.inherits.push(t);
 
-  if (Type.exists(p._is_new)) {
-    pd.addChild(p);
-    delete p._is_new;
-  } else {
-    p.addChild(pd);
-  }
-  l.addChild(pd);
-
-  pd.elType = "perpendicularsegment";
-  pd.setParents([p.id, l.id]);
-  pd.subs = {
-    point: t,
-  };
-  pd.inherits.push(t);
-
-  return pd;
+    return pd;
 };
 
 /**
@@ -698,177 +693,174 @@ JXG.createPerpendicularSegment = function (board, parents, attributes) {
  * </script><pre>
  */
 JXG.createMidpoint = function (board, parents, attributes) {
-  var a, b, t, i, attr;
+    var a, b, t, i, attr;
 
-  for (i = 0; i < parents.length; ++i) {
-    parents[i] = board.select(parents[i]);
-  }
-  if (
-    parents.length === 2 &&
-    Type.isPointType(board, parents[0]) &&
-    Type.isPointType(board, parents[1])
-  ) {
-    parents = Type.providePoints(board, parents, attributes, "point");
-    a = parents[0];
-    b = parents[1];
-  } else if (
-    parents.length === 1 &&
-    parents[0].elementClass === Const.OBJECT_CLASS_LINE
-  ) {
-    a = parents[0].point1;
-    b = parents[0].point2;
-  } else {
-    throw new Error(
-      "JSXGraph: Can't create midpoint." +
-        "\nPossible parent types: [point,point], [line]"
+    for (i = 0; i < parents.length; ++i) {
+        parents[i] = board.select(parents[i]);
+    }
+    if (
+        parents.length === 2 &&
+        Type.isPointType(board, parents[0]) &&
+        Type.isPointType(board, parents[1])
+    ) {
+        parents = Type.providePoints(board, parents, attributes, "point");
+        a = parents[0];
+        b = parents[1];
+    } else if (parents.length === 1 && parents[0].elementClass === Const.OBJECT_CLASS_LINE) {
+        a = parents[0].point1;
+        b = parents[0].point2;
+    } else {
+        throw new Error(
+            "JSXGraph: Can't create midpoint." +
+                "\nPossible parent types: [point,point], [line]"
+        );
+    }
+
+    attr = Type.copyAttributes(attributes, board.options, "midpoint");
+    t = board.create(
+        "point",
+        [
+            function () {
+                var x = a.coords.usrCoords[1] + b.coords.usrCoords[1];
+                if (
+                    isNaN(x) ||
+                    Math.abs(a.coords.usrCoords[0]) < Mat.eps ||
+                    Math.abs(b.coords.usrCoords[0]) < Mat.eps
+                ) {
+                    return NaN;
+                }
+
+                return x * 0.5;
+            },
+            function () {
+                var y = a.coords.usrCoords[2] + b.coords.usrCoords[2];
+                if (
+                    isNaN(y) ||
+                    Math.abs(a.coords.usrCoords[0]) < Mat.eps ||
+                    Math.abs(b.coords.usrCoords[0]) < Mat.eps
+                ) {
+                    return NaN;
+                }
+
+                return y * 0.5;
+            },
+        ],
+        attr
     );
-  }
+    if (Type.exists(a._is_new)) {
+        t.addChild(a);
+        delete a._is_new;
+    } else {
+        a.addChild(t);
+    }
+    if (Type.exists(b._is_new)) {
+        t.addChild(b);
+        delete b._is_new;
+    } else {
+        b.addChild(t);
+    }
 
-  attr = Type.copyAttributes(attributes, board.options, "midpoint");
-  t = board.create(
-    "point",
-    [
-      function () {
-        var x = a.coords.usrCoords[1] + b.coords.usrCoords[1];
-        if (
-          isNaN(x) ||
-          Math.abs(a.coords.usrCoords[0]) < Mat.eps ||
-          Math.abs(b.coords.usrCoords[0]) < Mat.eps
-        ) {
-          return NaN;
-        }
+    t.elType = "midpoint";
+    t.setParents([a.id, b.id]);
 
-        return x * 0.5;
-      },
-      function () {
-        var y = a.coords.usrCoords[2] + b.coords.usrCoords[2];
-        if (
-          isNaN(y) ||
-          Math.abs(a.coords.usrCoords[0]) < Mat.eps ||
-          Math.abs(b.coords.usrCoords[0]) < Mat.eps
-        ) {
-          return NaN;
-        }
+    t.prepareUpdate().update();
 
-        return y * 0.5;
-      },
-    ],
-    attr
-  );
-  if (Type.exists(a._is_new)) {
-    t.addChild(a);
-    delete a._is_new;
-  } else {
-    a.addChild(t);
-  }
-  if (Type.exists(b._is_new)) {
-    t.addChild(b);
-    delete b._is_new;
-  } else {
-    b.addChild(t);
-  }
-
-  t.elType = "midpoint";
-  t.setParents([a.id, b.id]);
-
-  t.prepareUpdate().update();
-
-  /**
-   * Used to generate a polynomial for the midpoint.
-   * @name Midpoint#generatePolynomial
-   * @returns {Array} An array containing the generated polynomial.
-   * @private
-   */
-  t.generatePolynomial = function () {
-    /*
-     *  Midpoint takes two point A and B or line L (with points P and Q) and creates point T:
-     *
-     *  L (not necessarily)
-     *  ----------x------------------x------------------x--------
-     *            A (a1,a2)          T (t1,t2)          B (b1,b2)
-     *
-     * So we have two conditions:
-     *
-     *   (a)   AT  ||  TB           (collinearity condition)
-     *   (b)  [AT] == [TB]          (equidistant condition)
-     *
-     *      a2-t2       t2-b2
-     *     -------  =  -------                                         (1)
-     *      a1-t1       t1-b1
-     *
-     *     (a1 - t1)^2 + (a2 - t2)^2 = (b1 - t1)^2 + (b2 - t2)^2       (2)
-     *
-     *
-     * Multiplying (1) with denominators and simplifying (1) and (2) gives
-     *
-     *    a2t1 - a2b1 + t2b1 - a1t2 + a1b2 - t1b2 = 0                      (1')
-     *
-     *    a1^2 - 2a1t1 + a2^2 - 2a2t2 - b1^2 + 2b1t1 - b2^2 + 2b2t2 = 0    (2')
-     *
+    /**
+     * Used to generate a polynomial for the midpoint.
+     * @name Midpoint#generatePolynomial
+     * @returns {Array} An array containing the generated polynomial.
+     * @private
      */
-    var a1 = a.symbolic.x,
-      a2 = a.symbolic.y,
-      b1 = b.symbolic.x,
-      b2 = b.symbolic.y,
-      t1 = t.symbolic.x,
-      t2 = t.symbolic.y,
-      poly1 =
-        "(" +
-        a2 +
-        ")*(" +
-        t1 +
-        ")-(" +
-        a2 +
-        ")*(" +
-        b1 +
-        ")+(" +
-        t2 +
-        ")*(" +
-        b1 +
-        ")-(" +
-        a1 +
-        ")*(" +
-        t2 +
-        ")+(" +
-        a1 +
-        ")*(" +
-        b2 +
-        ")-(" +
-        t1 +
-        ")*(" +
-        b2 +
-        ")",
-      poly2 =
-        "(" +
-        a1 +
-        ")^2 - 2*(" +
-        a1 +
-        ")*(" +
-        t1 +
-        ")+(" +
-        a2 +
-        ")^2-2*(" +
-        a2 +
-        ")*(" +
-        t2 +
-        ")-(" +
-        b1 +
-        ")^2+2*(" +
-        b1 +
-        ")*(" +
-        t1 +
-        ")-(" +
-        b2 +
-        ")^2+2*(" +
-        b2 +
-        ")*(" +
-        t2 +
-        ")";
+    t.generatePolynomial = function () {
+        /*
+         *  Midpoint takes two point A and B or line L (with points P and Q) and creates point T:
+         *
+         *  L (not necessarily)
+         *  ----------x------------------x------------------x--------
+         *            A (a1,a2)          T (t1,t2)          B (b1,b2)
+         *
+         * So we have two conditions:
+         *
+         *   (a)   AT  ||  TB           (collinearity condition)
+         *   (b)  [AT] == [TB]          (equidistant condition)
+         *
+         *      a2-t2       t2-b2
+         *     -------  =  -------                                         (1)
+         *      a1-t1       t1-b1
+         *
+         *     (a1 - t1)^2 + (a2 - t2)^2 = (b1 - t1)^2 + (b2 - t2)^2       (2)
+         *
+         *
+         * Multiplying (1) with denominators and simplifying (1) and (2) gives
+         *
+         *    a2t1 - a2b1 + t2b1 - a1t2 + a1b2 - t1b2 = 0                      (1')
+         *
+         *    a1^2 - 2a1t1 + a2^2 - 2a2t2 - b1^2 + 2b1t1 - b2^2 + 2b2t2 = 0    (2')
+         *
+         */
+        var a1 = a.symbolic.x,
+            a2 = a.symbolic.y,
+            b1 = b.symbolic.x,
+            b2 = b.symbolic.y,
+            t1 = t.symbolic.x,
+            t2 = t.symbolic.y,
+            poly1 =
+                "(" +
+                a2 +
+                ")*(" +
+                t1 +
+                ")-(" +
+                a2 +
+                ")*(" +
+                b1 +
+                ")+(" +
+                t2 +
+                ")*(" +
+                b1 +
+                ")-(" +
+                a1 +
+                ")*(" +
+                t2 +
+                ")+(" +
+                a1 +
+                ")*(" +
+                b2 +
+                ")-(" +
+                t1 +
+                ")*(" +
+                b2 +
+                ")",
+            poly2 =
+                "(" +
+                a1 +
+                ")^2 - 2*(" +
+                a1 +
+                ")*(" +
+                t1 +
+                ")+(" +
+                a2 +
+                ")^2-2*(" +
+                a2 +
+                ")*(" +
+                t2 +
+                ")-(" +
+                b1 +
+                ")^2+2*(" +
+                b1 +
+                ")*(" +
+                t1 +
+                ")-(" +
+                b2 +
+                ")^2+2*(" +
+                b2 +
+                ")*(" +
+                t2 +
+                ")";
 
-    return [poly1, poly2];
-  };
+        return [poly1, poly2];
+    };
 
-  return t;
+    return t;
 };
 
 /**
@@ -901,208 +893,204 @@ JXG.createMidpoint = function (board, parents, attributes) {
  * </script><pre>
  */
 JXG.createParallelPoint = function (board, parents, attributes) {
-  var a, b, c, p, i;
+    var a, b, c, p, i;
 
-  for (i = 0; i < parents.length; ++i) {
-    parents[i] = board.select(parents[i]);
-  }
-  if (
-    parents.length === 3 &&
-    Type.isPointType(board, parents[0]) &&
-    Type.isPointType(board, parents[1]) &&
-    Type.isPointType(board, parents[2])
-  ) {
-    parents = Type.providePoints(board, parents, attributes, "point");
-    a = parents[0];
-    b = parents[1];
-    c = parents[2];
-  } else if (
-    Type.isPointType(board, parents[0]) &&
-    parents[1].elementClass === Const.OBJECT_CLASS_LINE
-  ) {
-    c = Type.providePoints(board, [parents[0]], attributes, "point")[0];
-    a = parents[1].point1;
-    b = parents[1].point2;
-  } else if (
-    Type.isPointType(board, parents[1]) &&
-    parents[0].elementClass === Const.OBJECT_CLASS_LINE
-  ) {
-    c = Type.providePoints(board, [parents[1]], attributes, "point")[0];
-    a = parents[0].point1;
-    b = parents[0].point2;
-  } else {
-    throw new Error(
-      "JSXGraph: Can't create parallel point with parent types '" +
-        typeof parents[0] +
-        "', '" +
-        typeof parents[1] +
-        "' and '" +
-        typeof parents[2] +
-        "'." +
-        "\nPossible parent types: [line,point], [point,point,point]"
+    for (i = 0; i < parents.length; ++i) {
+        parents[i] = board.select(parents[i]);
+    }
+    if (
+        parents.length === 3 &&
+        Type.isPointType(board, parents[0]) &&
+        Type.isPointType(board, parents[1]) &&
+        Type.isPointType(board, parents[2])
+    ) {
+        parents = Type.providePoints(board, parents, attributes, "point");
+        a = parents[0];
+        b = parents[1];
+        c = parents[2];
+    } else if (
+        Type.isPointType(board, parents[0]) &&
+        parents[1].elementClass === Const.OBJECT_CLASS_LINE
+    ) {
+        c = Type.providePoints(board, [parents[0]], attributes, "point")[0];
+        a = parents[1].point1;
+        b = parents[1].point2;
+    } else if (
+        Type.isPointType(board, parents[1]) &&
+        parents[0].elementClass === Const.OBJECT_CLASS_LINE
+    ) {
+        c = Type.providePoints(board, [parents[1]], attributes, "point")[0];
+        a = parents[0].point1;
+        b = parents[0].point2;
+    } else {
+        throw new Error(
+            "JSXGraph: Can't create parallel point with parent types '" +
+                typeof parents[0] +
+                "', '" +
+                typeof parents[1] +
+                "' and '" +
+                typeof parents[2] +
+                "'." +
+                "\nPossible parent types: [line,point], [point,point,point]"
+        );
+    }
+
+    p = board.create(
+        "point",
+        [
+            function () {
+                return c.coords.usrCoords[1] + b.coords.usrCoords[1] - a.coords.usrCoords[1];
+            },
+            function () {
+                return c.coords.usrCoords[2] + b.coords.usrCoords[2] - a.coords.usrCoords[2];
+            },
+        ],
+        attributes
     );
-  }
 
-  p = board.create(
-    "point",
-    [
-      function () {
-        return (
-          c.coords.usrCoords[1] + b.coords.usrCoords[1] - a.coords.usrCoords[1]
-        );
-      },
-      function () {
-        return (
-          c.coords.usrCoords[2] + b.coords.usrCoords[2] - a.coords.usrCoords[2]
-        );
-      },
-    ],
-    attributes
-  );
+    // required for algorithms requiring dependencies between elements
+    if (Type.exists(a._is_new)) {
+        p.addChild(a);
+        delete a._is_new;
+    } else {
+        a.addChild(p);
+    }
+    if (Type.exists(b._is_new)) {
+        p.addChild(b);
+        delete b._is_new;
+    } else {
+        b.addChild(p);
+    }
+    if (Type.exists(c._is_new)) {
+        p.addChild(c);
+        delete c._is_new;
+    } else {
+        c.addChild(p);
+    }
 
-  // required for algorithms requiring dependencies between elements
-  if (Type.exists(a._is_new)) {
-    p.addChild(a);
-    delete a._is_new;
-  } else {
-    a.addChild(p);
-  }
-  if (Type.exists(b._is_new)) {
-    p.addChild(b);
-    delete b._is_new;
-  } else {
-    b.addChild(p);
-  }
-  if (Type.exists(c._is_new)) {
-    p.addChild(c);
-    delete c._is_new;
-  } else {
-    c.addChild(p);
-  }
+    p.elType = "parallelpoint";
+    p.setParents([a.id, b.id, c.id]);
 
-  p.elType = "parallelpoint";
-  p.setParents([a.id, b.id, c.id]);
+    // required to set the coordinates because functions are considered as constraints. hence, the coordinates get set first after an update.
+    // can be removed if the above issue is resolved.
+    p.prepareUpdate().update();
 
-  // required to set the coordinates because functions are considered as constraints. hence, the coordinates get set first after an update.
-  // can be removed if the above issue is resolved.
-  p.prepareUpdate().update();
+    p.generatePolynomial = function () {
+        /*
+         *  Parallelpoint takes three points A, B and C or line L (with points B and C) and creates point T:
+         *
+         *
+         *                     C (c1,c2)                             T (t1,t2)
+         *                      x                                     x
+         *                     /                                     /
+         *                    /                                     /
+         *                   /                                     /
+         *                  /                                     /
+         *                 /                                     /
+         *                /                                     /
+         *               /                                     /
+         *              /                                     /
+         *  L (opt)    /                                     /
+         *  ----------x-------------------------------------x--------
+         *            A (a1,a2)                             B (b1,b2)
+         *
+         * So we have two conditions:
+         *
+         *   (a)   CT  ||  AB           (collinearity condition I)
+         *   (b)   BT  ||  AC           (collinearity condition II)
+         *
+         * The corresponding equations are
+         *
+         *    (b2 - a2)(t1 - c1) - (t2 - c2)(b1 - a1) = 0         (1)
+         *    (t2 - b2)(a1 - c1) - (t1 - b1)(a2 - c2) = 0         (2)
+         *
+         * Simplifying (1) and (2) gives
+         *
+         *    b2t1 - b2c1 - a2t1 + a2c1 - t2b1 + t2a1 + c2b1 - c2a1 = 0      (1')
+         *    t2a1 - t2c1 - b2a1 + b2c1 - t1a2 + t1c2 + b1a2 - b1c2 = 0      (2')
+         *
+         */
+        var a1 = a.symbolic.x,
+            a2 = a.symbolic.y,
+            b1 = b.symbolic.x,
+            b2 = b.symbolic.y,
+            c1 = c.symbolic.x,
+            c2 = c.symbolic.y,
+            t1 = p.symbolic.x,
+            t2 = p.symbolic.y,
+            poly1 =
+                "(" +
+                b2 +
+                ")*(" +
+                t1 +
+                ")-(" +
+                b2 +
+                ")*(" +
+                c1 +
+                ")-(" +
+                a2 +
+                ")*(" +
+                t1 +
+                ")+(" +
+                a2 +
+                ")*(" +
+                c1 +
+                ")-(" +
+                t2 +
+                ")*(" +
+                b1 +
+                ")+(" +
+                t2 +
+                ")*(" +
+                a1 +
+                ")+(" +
+                c2 +
+                ")*(" +
+                b1 +
+                ")-(" +
+                c2 +
+                ")*(" +
+                a1 +
+                ")",
+            poly2 =
+                "(" +
+                t2 +
+                ")*(" +
+                a1 +
+                ")-(" +
+                t2 +
+                ")*(" +
+                c1 +
+                ")-(" +
+                b2 +
+                ")*(" +
+                a1 +
+                ")+(" +
+                b2 +
+                ")*(" +
+                c1 +
+                ")-(" +
+                t1 +
+                ")*(" +
+                a2 +
+                ")+(" +
+                t1 +
+                ")*(" +
+                c2 +
+                ")+(" +
+                b1 +
+                ")*(" +
+                a2 +
+                ")-(" +
+                b1 +
+                ")*(" +
+                c2 +
+                ")";
 
-  p.generatePolynomial = function () {
-    /*
-     *  Parallelpoint takes three points A, B and C or line L (with points B and C) and creates point T:
-     *
-     *
-     *                     C (c1,c2)                             T (t1,t2)
-     *                      x                                     x
-     *                     /                                     /
-     *                    /                                     /
-     *                   /                                     /
-     *                  /                                     /
-     *                 /                                     /
-     *                /                                     /
-     *               /                                     /
-     *              /                                     /
-     *  L (opt)    /                                     /
-     *  ----------x-------------------------------------x--------
-     *            A (a1,a2)                             B (b1,b2)
-     *
-     * So we have two conditions:
-     *
-     *   (a)   CT  ||  AB           (collinearity condition I)
-     *   (b)   BT  ||  AC           (collinearity condition II)
-     *
-     * The corresponding equations are
-     *
-     *    (b2 - a2)(t1 - c1) - (t2 - c2)(b1 - a1) = 0         (1)
-     *    (t2 - b2)(a1 - c1) - (t1 - b1)(a2 - c2) = 0         (2)
-     *
-     * Simplifying (1) and (2) gives
-     *
-     *    b2t1 - b2c1 - a2t1 + a2c1 - t2b1 + t2a1 + c2b1 - c2a1 = 0      (1')
-     *    t2a1 - t2c1 - b2a1 + b2c1 - t1a2 + t1c2 + b1a2 - b1c2 = 0      (2')
-     *
-     */
-    var a1 = a.symbolic.x,
-      a2 = a.symbolic.y,
-      b1 = b.symbolic.x,
-      b2 = b.symbolic.y,
-      c1 = c.symbolic.x,
-      c2 = c.symbolic.y,
-      t1 = p.symbolic.x,
-      t2 = p.symbolic.y,
-      poly1 =
-        "(" +
-        b2 +
-        ")*(" +
-        t1 +
-        ")-(" +
-        b2 +
-        ")*(" +
-        c1 +
-        ")-(" +
-        a2 +
-        ")*(" +
-        t1 +
-        ")+(" +
-        a2 +
-        ")*(" +
-        c1 +
-        ")-(" +
-        t2 +
-        ")*(" +
-        b1 +
-        ")+(" +
-        t2 +
-        ")*(" +
-        a1 +
-        ")+(" +
-        c2 +
-        ")*(" +
-        b1 +
-        ")-(" +
-        c2 +
-        ")*(" +
-        a1 +
-        ")",
-      poly2 =
-        "(" +
-        t2 +
-        ")*(" +
-        a1 +
-        ")-(" +
-        t2 +
-        ")*(" +
-        c1 +
-        ")-(" +
-        b2 +
-        ")*(" +
-        a1 +
-        ")+(" +
-        b2 +
-        ")*(" +
-        c1 +
-        ")-(" +
-        t1 +
-        ")*(" +
-        a2 +
-        ")+(" +
-        t1 +
-        ")*(" +
-        c2 +
-        ")+(" +
-        b1 +
-        ")*(" +
-        a2 +
-        ")-(" +
-        b1 +
-        ")*(" +
-        c2 +
-        ")";
+        return [poly1, poly2];
+    };
 
-    return [poly1, poly2];
-  };
-
-  return p;
+    return p;
 };
 
 /**
@@ -1168,91 +1156,91 @@ JXG.createParallelPoint = function (board, parents, attributes) {
  *
  */
 JXG.createParallel = function (board, parents, attributes) {
-  var p,
-    pp,
-    pl,
-    li,
-    i,
-    attr,
-    ty = 1;
+    var p,
+        pp,
+        pl,
+        li,
+        i,
+        attr,
+        ty = 1;
 
-  for (i = 0; i < parents.length; ++i) {
-    parents[i] = board.select(parents[i]);
-  }
-  p = null;
-  if (parents.length === 3) {
-    // Line / segment through point parents[2] which is parallel to line through parents[0] and parents[1]
-    parents = Type.providePoints(board, parents, attributes, "point");
-    p = parents[2];
-    ty = 0;
-  } else if (Type.isPointType(board, parents[0])) {
-    // Parallel to line parents[1] through point parents[0]
-    p = Type.providePoints(board, [parents[0]], attributes, "point")[0];
-    /** @ignore */
-    li = function () {
-      return parents[1].stdform;
+    for (i = 0; i < parents.length; ++i) {
+        parents[i] = board.select(parents[i]);
+    }
+    p = null;
+    if (parents.length === 3) {
+        // Line / segment through point parents[2] which is parallel to line through parents[0] and parents[1]
+        parents = Type.providePoints(board, parents, attributes, "point");
+        p = parents[2];
+        ty = 0;
+    } else if (Type.isPointType(board, parents[0])) {
+        // Parallel to line parents[1] through point parents[0]
+        p = Type.providePoints(board, [parents[0]], attributes, "point")[0];
+        /** @ignore */
+        li = function () {
+            return parents[1].stdform;
+        };
+    } else if (Type.isPointType(board, parents[1])) {
+        // Parallel to line parents[0] through point parents[1]
+        p = Type.providePoints(board, [parents[1]], attributes, "point")[0];
+        /** @ignore */
+        li = function () {
+            return parents[0].stdform;
+        };
+    }
+
+    if (!Type.exists(attributes.layer)) {
+        attributes.layer = board.options.layer.line;
+    }
+
+    attr = Type.copyAttributes(attributes, board.options, "parallel", "point");
+    if (ty === 1) {
+        // Line is given by line element. The parallel line is
+        // constructed as line through an ideal point.
+        pp = board.create(
+            "point",
+            [
+                function () {
+                    return Mat.crossProduct([1, 0, 0], li());
+                },
+            ],
+            attr
+        );
+    } else {
+        // Line is given by two points. The parallel line is
+        // constructed as line through two finite point.
+        pp = board.create("parallelpoint", parents, attr);
+    }
+    pp.isDraggable = true;
+
+    attr = Type.copyAttributes(attributes, board.options, "parallel");
+    // line creator also calls addChild
+    pl = board.create("line", [p, pp], attr);
+
+    pl.elType = "parallel";
+    pl.subs = {
+        point: pp,
     };
-  } else if (Type.isPointType(board, parents[1])) {
-    // Parallel to line parents[0] through point parents[1]
-    p = Type.providePoints(board, [parents[1]], attributes, "point")[0];
-    /** @ignore */
-    li = function () {
-      return parents[0].stdform;
-    };
-  }
 
-  if (!Type.exists(attributes.layer)) {
-    attributes.layer = board.options.layer.line;
-  }
+    pl.inherits.push(pp);
+    pl.setParents([parents[0].id, parents[1].id]);
+    if (parents.length === 3) {
+        pl.addParents(parents[2].id);
+    }
 
-  attr = Type.copyAttributes(attributes, board.options, "parallel", "point");
-  if (ty === 1) {
-    // Line is given by line element. The parallel line is
-    // constructed as line through an ideal point.
-    pp = board.create(
-      "point",
-      [
-        function () {
-          return Mat.crossProduct([1, 0, 0], li());
-        },
-      ],
-      attr
-    );
-  } else {
-    // Line is given by two points. The parallel line is
-    // constructed as line through two finite point.
-    pp = board.create("parallelpoint", parents, attr);
-  }
-  pp.isDraggable = true;
+    // p.addChild(pl);
 
-  attr = Type.copyAttributes(attributes, board.options, "parallel");
-  // line creator also calls addChild
-  pl = board.create("line", [p, pp], attr);
+    /**
+     * Helper point used to create the parallel line. This point lies on the line at infinity, hence it's not visible,
+     * not even with visible set to <tt>true</tt>. Creating another line through this point would make that other line
+     * parallel to the create parallel.
+     * @memberOf Parallel.prototype
+     * @name point
+     * @type JXG.Point
+     */
+    pl.point = pp;
 
-  pl.elType = "parallel";
-  pl.subs = {
-    point: pp,
-  };
-
-  pl.inherits.push(pp);
-  pl.setParents([parents[0].id, parents[1].id]);
-  if (parents.length === 3) {
-    pl.addParents(parents[2].id);
-  }
-
-  // p.addChild(pl);
-
-  /**
-   * Helper point used to create the parallel line. This point lies on the line at infinity, hence it's not visible,
-   * not even with visible set to <tt>true</tt>. Creating another line through this point would make that other line
-   * parallel to the create parallel.
-   * @memberOf Parallel.prototype
-   * @name point
-   * @type JXG.Point
-   */
-  pl.point = pp;
-
-  return pl;
+    return pl;
 };
 
 /**
@@ -1287,31 +1275,31 @@ JXG.createParallel = function (board, parents, attributes) {
  * </script><pre>
  */
 JXG.createArrowParallel = function (board, parents, attributes) {
-  var p;
+    var p;
 
-  /* parallel arrow point polynomials are done in createParallelPoint */
-  try {
-    attributes.firstArrow = false;
-    attributes.lastArrow = true;
-    p = JXG.createParallel(board, parents, attributes).setAttribute({
-      straightFirst: false,
-      straightLast: false,
-    });
-    p.elType = "arrowparallel";
+    /* parallel arrow point polynomials are done in createParallelPoint */
+    try {
+        attributes.firstArrow = false;
+        attributes.lastArrow = true;
+        p = JXG.createParallel(board, parents, attributes).setAttribute({
+            straightFirst: false,
+            straightLast: false,
+        });
+        p.elType = "arrowparallel";
 
-    // parents are set in createParallel
+        // parents are set in createParallel
 
-    return p;
-  } catch (e) {
-    throw new Error(
-      "JSXGraph: Can't create arrowparallel with parent types '" +
-        typeof parents[0] +
-        "' and '" +
-        typeof parents[1] +
-        "'." +
-        "\nPossible parent types: [line,point], [point,point,point]"
-    );
-  }
+        return p;
+    } catch (e) {
+        throw new Error(
+            "JSXGraph: Can't create arrowparallel with parent types '" +
+                typeof parents[0] +
+                "' and '" +
+                typeof parents[1] +
+                "'." +
+                "\nPossible parent types: [line,point], [point,point,point]"
+        );
+    }
 };
 
 /**
@@ -1345,401 +1333,400 @@ JXG.createArrowParallel = function (board, parents, attributes) {
  * </script><pre>
  */
 JXG.createNormal = function (board, parents, attributes) {
-  var p, c, l, i, g, f, attr, pp, attrp;
+    var p, c, l, i, g, f, attr, pp, attrp;
 
-  for (i = 0; i < parents.length; ++i) {
-    parents[i] = board.select(parents[i]);
-  }
-  // One arguments: glider on line, circle or curve
-  if (parents.length === 1) {
-    p = parents[0];
-    c = p.slideObject;
-    // Two arguments: (point,line), (point,circle), (line,point) or (circle,point)
-  } else if (parents.length === 2) {
-    if (Type.isPointType(board, parents[0])) {
-      p = Type.providePoints(board, [parents[0]], attributes, "point")[0];
-      c = parents[1];
-    } else if (Type.isPointType(board, parents[1])) {
-      c = parents[0];
-      p = Type.providePoints(board, [parents[1]], attributes, "point")[0];
-    } else {
-      throw new Error(
-        "JSXGraph: Can't create normal with parent types '" +
-          typeof parents[0] +
-          "' and '" +
-          typeof parents[1] +
-          "'." +
-          "\nPossible parent types: [point,line], [point,circle], [glider]"
-      );
+    for (i = 0; i < parents.length; ++i) {
+        parents[i] = board.select(parents[i]);
     }
-  } else {
-    throw new Error(
-      "JSXGraph: Can't create normal with parent types '" +
-        typeof parents[0] +
-        "' and '" +
-        typeof parents[1] +
-        "'." +
-        "\nPossible parent types: [point,line], [point,circle], [glider]"
-    );
-  }
-
-  attr = Type.copyAttributes(attributes, board.options, "normal");
-  if (c.elementClass === Const.OBJECT_CLASS_LINE) {
-    // Private point
-    attrp = Type.copyAttributes(attributes, board.options, "normal", "point");
-    pp = board.create(
-      "point",
-      [
-        function () {
-          var p = Mat.crossProduct([1, 0, 0], c.stdform);
-          return [p[0], -p[2], p[1]];
-        },
-      ],
-      attrp
-    );
-    pp.isDraggable = true;
-
-    l = board.create("line", [p, pp], attr);
-
-    /**
-     * A helper point used to create a normal to a {@link JXG.Line} object. For normals to circles or curves this
-     * element is <tt>undefined</tt>.
-     * @type JXG.Point
-     * @name point
-     * @memberOf Normal.prototype
-     */
-    l.point = pp;
-    l.subs = {
-      point: pp,
-    };
-    l.inherits.push(pp);
-  } else if (c.elementClass === Const.OBJECT_CLASS_CIRCLE) {
-    l = board.create("line", [c.midpoint, p], attr);
-  } else if (c.elementClass === Const.OBJECT_CLASS_CURVE) {
-    if (Type.evaluate(c.visProp.curvetype) !== "plot") {
-      g = c.X;
-      f = c.Y;
-      l = board.create(
-        "line",
-        [
-          function () {
-            return (
-              -p.X() * Numerics.D(g)(p.position) -
-              p.Y() * Numerics.D(f)(p.position)
+    // One arguments: glider on line, circle or curve
+    if (parents.length === 1) {
+        p = parents[0];
+        c = p.slideObject;
+        // Two arguments: (point,line), (point,circle), (line,point) or (circle,point)
+    } else if (parents.length === 2) {
+        if (Type.isPointType(board, parents[0])) {
+            p = Type.providePoints(board, [parents[0]], attributes, "point")[0];
+            c = parents[1];
+        } else if (Type.isPointType(board, parents[1])) {
+            c = parents[0];
+            p = Type.providePoints(board, [parents[1]], attributes, "point")[0];
+        } else {
+            throw new Error(
+                "JSXGraph: Can't create normal with parent types '" +
+                    typeof parents[0] +
+                    "' and '" +
+                    typeof parents[1] +
+                    "'." +
+                    "\nPossible parent types: [point,line], [point,circle], [glider]"
             );
-          },
-          function () {
-            return Numerics.D(g)(p.position);
-          },
-          function () {
-            return Numerics.D(f)(p.position);
-          },
-        ],
-        attr
-      );
+        }
     } else {
-      // curveType 'plot'
-      l = board.create(
-        "line",
-        [
-          function () {
-            var i = Math.floor(p.position),
-              lbda = p.position - i,
-              p1,
-              p2,
-              t,
-              A,
-              B,
-              C,
-              D,
-              dx,
-              dy,
-              d;
-
-            if (c.bezierdegree === 1) {
-              if (i === c.numberPoints - 1) {
-                i -= 1;
-                lbda = 1;
-              }
-            } else if (c.bezierDegree === 3) {
-              // i is start of the Bezier segment
-              // t is the position in the Bezier segment
-              i = Math.floor((p.position * (c.numberPoints - 1)) / 3) * 3;
-              t = (p.position * (c.numberPoints - 1) - i) / 3;
-              if (i >= c.numberPoints - 1) {
-                i = c.numberPoints - 4;
-                t = 1;
-              }
-            } else {
-              return 0;
-            }
-
-            if (i < 0) {
-              return 1;
-            }
-
-            if (c.bezierDegree === 1) {
-              return (
-                (c.Y(i) + lbda * (c.Y(i + 1) - c.Y(i))) *
-                  (c.Y(i) - c.Y(i + 1)) -
-                (c.X(i) + lbda * (c.X(i + 1) - c.X(i))) * (c.X(i + 1) - c.X(i))
-              );
-            } else {
-              A = c.points[i].usrCoords;
-              B = c.points[i + 1].usrCoords;
-              C = c.points[i + 2].usrCoords;
-              D = c.points[i + 3].usrCoords;
-              dx =
-                (1 - t) * (1 - t) * (B[1] - A[1]) +
-                2 * (1 - t) * t * (C[1] - B[1]) +
-                t * t * (D[1] - C[1]);
-              dy =
-                (1 - t) * (1 - t) * (B[2] - A[2]) +
-                2 * (1 - t) * t * (C[2] - B[2]) +
-                t * t * (D[2] - C[2]);
-              d = Math.sqrt(dx * dx + dy * dy);
-              dx /= d;
-              dy /= d;
-              p1 = p.coords.usrCoords;
-              p2 = [1, p1[1] - dy, p1[2] + dx];
-              return p1[2] * p2[1] - p1[1] * p2[2];
-            }
-          },
-          function () {
-            var i = Math.floor(p.position),
-              p1,
-              p2,
-              t,
-              A,
-              B,
-              C,
-              D,
-              dx,
-              dy,
-              d;
-
-            if (c.bezierdegree === 1) {
-              if (i === c.numberPoints - 1) {
-                i -= 1;
-              }
-            } else if (c.bezierDegree === 3) {
-              // i is start of the Bezier segment
-              // t is the position in the Bezier segment
-              i = Math.floor((p.position * (c.numberPoints - 1)) / 3) * 3;
-              t = (p.position * (c.numberPoints - 1) - i) / 3;
-              if (i >= c.numberPoints - 1) {
-                i = c.numberPoints - 4;
-                t = 1;
-              }
-            } else {
-              return 0;
-            }
-
-            if (i < 0) {
-              return 0;
-            }
-            if (c.bezierDegree === 1) {
-              return c.X(i + 1) - c.X(i);
-            } else {
-              A = c.points[i].usrCoords;
-              B = c.points[i + 1].usrCoords;
-              C = c.points[i + 2].usrCoords;
-              D = c.points[i + 3].usrCoords;
-              dx =
-                (1 - t) * (1 - t) * (B[1] - A[1]) +
-                2 * (1 - t) * t * (C[1] - B[1]) +
-                t * t * (D[1] - C[1]);
-              dy =
-                (1 - t) * (1 - t) * (B[2] - A[2]) +
-                2 * (1 - t) * t * (C[2] - B[2]) +
-                t * t * (D[2] - C[2]);
-              d = Math.sqrt(dx * dx + dy * dy);
-              dx /= d;
-              dy /= d;
-              p1 = p.coords.usrCoords;
-              p2 = [1, p1[1] - dy, p1[2] + dx];
-              return p2[2] - p1[2];
-            }
-          },
-          function () {
-            var i = Math.floor(p.position),
-              p1,
-              p2,
-              t,
-              A,
-              B,
-              C,
-              D,
-              dx,
-              dy,
-              d;
-
-            if (c.bezierdegree === 1) {
-              if (i === c.numberPoints - 1) {
-                i -= 1;
-              }
-            } else if (c.bezierDegree === 3) {
-              // i is start of the Bezier segment
-              // t is the position in the Bezier segment
-              i = Math.floor((p.position * (c.numberPoints - 1)) / 3) * 3;
-              t = (p.position * (c.numberPoints - 1) - i) / 3;
-              if (i >= c.numberPoints - 1) {
-                i = c.numberPoints - 4;
-                t = 1;
-              }
-            } else {
-              return 0;
-            }
-
-            if (i < 0) {
-              return 0;
-            }
-
-            if (c.bezierDegree === 1) {
-              return c.Y(i + 1) - c.Y(i);
-            } else {
-              A = c.points[i].usrCoords;
-              B = c.points[i + 1].usrCoords;
-              C = c.points[i + 2].usrCoords;
-              D = c.points[i + 3].usrCoords;
-              dx =
-                (1 - t) * (1 - t) * (B[1] - A[1]) +
-                2 * (1 - t) * t * (C[1] - B[1]) +
-                t * t * (D[1] - C[1]);
-              dy =
-                (1 - t) * (1 - t) * (B[2] - A[2]) +
-                2 * (1 - t) * t * (C[2] - B[2]) +
-                t * t * (D[2] - C[2]);
-              d = Math.sqrt(dx * dx + dy * dy);
-              dx /= d;
-              dy /= d;
-              p1 = p.coords.usrCoords;
-              p2 = [1, p1[1] - dy, p1[2] + dx];
-              return p1[1] - p2[1];
-            }
-          },
-        ],
-        attr
-      );
+        throw new Error(
+            "JSXGraph: Can't create normal with parent types '" +
+                typeof parents[0] +
+                "' and '" +
+                typeof parents[1] +
+                "'." +
+                "\nPossible parent types: [point,line], [point,circle], [glider]"
+        );
     }
-  } else if (c.type === Const.OBJECT_TYPE_TURTLE) {
-    l = board.create(
-      "line",
-      [
-        function () {
-          var el,
-            j,
-            i = Math.floor(p.position),
-            lbda = p.position - i;
 
-          // run through all curves of this turtle
-          for (j = 0; j < c.objects.length; j++) {
-            el = c.objects[j];
+    attr = Type.copyAttributes(attributes, board.options, "normal");
+    if (c.elementClass === Const.OBJECT_CLASS_LINE) {
+        // Private point
+        attrp = Type.copyAttributes(attributes, board.options, "normal", "point");
+        pp = board.create(
+            "point",
+            [
+                function () {
+                    var p = Mat.crossProduct([1, 0, 0], c.stdform);
+                    return [p[0], -p[2], p[1]];
+                },
+            ],
+            attrp
+        );
+        pp.isDraggable = true;
 
-            if (el.type === Const.OBJECT_TYPE_CURVE) {
-              if (i < el.numberPoints) {
-                break;
-              }
+        l = board.create("line", [p, pp], attr);
 
-              i -= el.numberPoints;
-            }
-          }
+        /**
+         * A helper point used to create a normal to a {@link JXG.Line} object. For normals to circles or curves this
+         * element is <tt>undefined</tt>.
+         * @type JXG.Point
+         * @name point
+         * @memberOf Normal.prototype
+         */
+        l.point = pp;
+        l.subs = {
+            point: pp,
+        };
+        l.inherits.push(pp);
+    } else if (c.elementClass === Const.OBJECT_CLASS_CIRCLE) {
+        l = board.create("line", [c.midpoint, p], attr);
+    } else if (c.elementClass === Const.OBJECT_CLASS_CURVE) {
+        if (Type.evaluate(c.visProp.curvetype) !== "plot") {
+            g = c.X;
+            f = c.Y;
+            l = board.create(
+                "line",
+                [
+                    function () {
+                        return (
+                            -p.X() * Numerics.D(g)(p.position) -
+                            p.Y() * Numerics.D(f)(p.position)
+                        );
+                    },
+                    function () {
+                        return Numerics.D(g)(p.position);
+                    },
+                    function () {
+                        return Numerics.D(f)(p.position);
+                    },
+                ],
+                attr
+            );
+        } else {
+            // curveType 'plot'
+            l = board.create(
+                "line",
+                [
+                    function () {
+                        var i = Math.floor(p.position),
+                            lbda = p.position - i,
+                            p1,
+                            p2,
+                            t,
+                            A,
+                            B,
+                            C,
+                            D,
+                            dx,
+                            dy,
+                            d;
 
-          if (i === el.numberPoints - 1) {
-            i -= 1;
-            lbda = 1;
-          }
+                        if (c.bezierdegree === 1) {
+                            if (i === c.numberPoints - 1) {
+                                i -= 1;
+                                lbda = 1;
+                            }
+                        } else if (c.bezierDegree === 3) {
+                            // i is start of the Bezier segment
+                            // t is the position in the Bezier segment
+                            i = Math.floor((p.position * (c.numberPoints - 1)) / 3) * 3;
+                            t = (p.position * (c.numberPoints - 1) - i) / 3;
+                            if (i >= c.numberPoints - 1) {
+                                i = c.numberPoints - 4;
+                                t = 1;
+                            }
+                        } else {
+                            return 0;
+                        }
 
-          if (i < 0) {
-            return 1;
-          }
+                        if (i < 0) {
+                            return 1;
+                        }
 
-          return (
-            (el.Y(i) + lbda * (el.Y(i + 1) - el.Y(i))) *
-              (el.Y(i) - el.Y(i + 1)) -
-            (el.X(i) + lbda * (el.X(i + 1) - el.X(i))) * (el.X(i + 1) - el.X(i))
-          );
-        },
-        function () {
-          var el,
-            j,
-            i = Math.floor(p.position);
+                        if (c.bezierDegree === 1) {
+                            return (
+                                (c.Y(i) + lbda * (c.Y(i + 1) - c.Y(i))) *
+                                    (c.Y(i) - c.Y(i + 1)) -
+                                (c.X(i) + lbda * (c.X(i + 1) - c.X(i))) * (c.X(i + 1) - c.X(i))
+                            );
+                        } else {
+                            A = c.points[i].usrCoords;
+                            B = c.points[i + 1].usrCoords;
+                            C = c.points[i + 2].usrCoords;
+                            D = c.points[i + 3].usrCoords;
+                            dx =
+                                (1 - t) * (1 - t) * (B[1] - A[1]) +
+                                2 * (1 - t) * t * (C[1] - B[1]) +
+                                t * t * (D[1] - C[1]);
+                            dy =
+                                (1 - t) * (1 - t) * (B[2] - A[2]) +
+                                2 * (1 - t) * t * (C[2] - B[2]) +
+                                t * t * (D[2] - C[2]);
+                            d = Math.sqrt(dx * dx + dy * dy);
+                            dx /= d;
+                            dy /= d;
+                            p1 = p.coords.usrCoords;
+                            p2 = [1, p1[1] - dy, p1[2] + dx];
+                            return p1[2] * p2[1] - p1[1] * p2[2];
+                        }
+                    },
+                    function () {
+                        var i = Math.floor(p.position),
+                            p1,
+                            p2,
+                            t,
+                            A,
+                            B,
+                            C,
+                            D,
+                            dx,
+                            dy,
+                            d;
 
-          // run through all curves of this turtle
-          for (j = 0; j < c.objects.length; j++) {
-            el = c.objects[j];
-            if (el.type === Const.OBJECT_TYPE_CURVE) {
-              if (i < el.numberPoints) {
-                break;
-              }
+                        if (c.bezierdegree === 1) {
+                            if (i === c.numberPoints - 1) {
+                                i -= 1;
+                            }
+                        } else if (c.bezierDegree === 3) {
+                            // i is start of the Bezier segment
+                            // t is the position in the Bezier segment
+                            i = Math.floor((p.position * (c.numberPoints - 1)) / 3) * 3;
+                            t = (p.position * (c.numberPoints - 1) - i) / 3;
+                            if (i >= c.numberPoints - 1) {
+                                i = c.numberPoints - 4;
+                                t = 1;
+                            }
+                        } else {
+                            return 0;
+                        }
 
-              i -= el.numberPoints;
-            }
-          }
+                        if (i < 0) {
+                            return 0;
+                        }
+                        if (c.bezierDegree === 1) {
+                            return c.X(i + 1) - c.X(i);
+                        } else {
+                            A = c.points[i].usrCoords;
+                            B = c.points[i + 1].usrCoords;
+                            C = c.points[i + 2].usrCoords;
+                            D = c.points[i + 3].usrCoords;
+                            dx =
+                                (1 - t) * (1 - t) * (B[1] - A[1]) +
+                                2 * (1 - t) * t * (C[1] - B[1]) +
+                                t * t * (D[1] - C[1]);
+                            dy =
+                                (1 - t) * (1 - t) * (B[2] - A[2]) +
+                                2 * (1 - t) * t * (C[2] - B[2]) +
+                                t * t * (D[2] - C[2]);
+                            d = Math.sqrt(dx * dx + dy * dy);
+                            dx /= d;
+                            dy /= d;
+                            p1 = p.coords.usrCoords;
+                            p2 = [1, p1[1] - dy, p1[2] + dx];
+                            return p2[2] - p1[2];
+                        }
+                    },
+                    function () {
+                        var i = Math.floor(p.position),
+                            p1,
+                            p2,
+                            t,
+                            A,
+                            B,
+                            C,
+                            D,
+                            dx,
+                            dy,
+                            d;
 
-          if (i === el.numberPoints - 1) {
-            i -= 1;
-          }
+                        if (c.bezierdegree === 1) {
+                            if (i === c.numberPoints - 1) {
+                                i -= 1;
+                            }
+                        } else if (c.bezierDegree === 3) {
+                            // i is start of the Bezier segment
+                            // t is the position in the Bezier segment
+                            i = Math.floor((p.position * (c.numberPoints - 1)) / 3) * 3;
+                            t = (p.position * (c.numberPoints - 1) - i) / 3;
+                            if (i >= c.numberPoints - 1) {
+                                i = c.numberPoints - 4;
+                                t = 1;
+                            }
+                        } else {
+                            return 0;
+                        }
 
-          if (i < 0) {
-            return 0;
-          }
+                        if (i < 0) {
+                            return 0;
+                        }
 
-          return el.X(i + 1) - el.X(i);
-        },
-        function () {
-          var el,
-            j,
-            i = Math.floor(p.position);
+                        if (c.bezierDegree === 1) {
+                            return c.Y(i + 1) - c.Y(i);
+                        } else {
+                            A = c.points[i].usrCoords;
+                            B = c.points[i + 1].usrCoords;
+                            C = c.points[i + 2].usrCoords;
+                            D = c.points[i + 3].usrCoords;
+                            dx =
+                                (1 - t) * (1 - t) * (B[1] - A[1]) +
+                                2 * (1 - t) * t * (C[1] - B[1]) +
+                                t * t * (D[1] - C[1]);
+                            dy =
+                                (1 - t) * (1 - t) * (B[2] - A[2]) +
+                                2 * (1 - t) * t * (C[2] - B[2]) +
+                                t * t * (D[2] - C[2]);
+                            d = Math.sqrt(dx * dx + dy * dy);
+                            dx /= d;
+                            dy /= d;
+                            p1 = p.coords.usrCoords;
+                            p2 = [1, p1[1] - dy, p1[2] + dx];
+                            return p1[1] - p2[1];
+                        }
+                    },
+                ],
+                attr
+            );
+        }
+    } else if (c.type === Const.OBJECT_TYPE_TURTLE) {
+        l = board.create(
+            "line",
+            [
+                function () {
+                    var el,
+                        j,
+                        i = Math.floor(p.position),
+                        lbda = p.position - i;
 
-          // run through all curves of this turtle
-          for (j = 0; j < c.objects.length; j++) {
-            el = c.objects[j];
-            if (el.type === Const.OBJECT_TYPE_CURVE) {
-              if (i < el.numberPoints) {
-                break;
-              }
+                    // run through all curves of this turtle
+                    for (j = 0; j < c.objects.length; j++) {
+                        el = c.objects[j];
 
-              i -= el.numberPoints;
-            }
-          }
+                        if (el.type === Const.OBJECT_TYPE_CURVE) {
+                            if (i < el.numberPoints) {
+                                break;
+                            }
 
-          if (i === el.numberPoints - 1) {
-            i -= 1;
-          }
+                            i -= el.numberPoints;
+                        }
+                    }
 
-          if (i < 0) {
-            return 0;
-          }
+                    if (i === el.numberPoints - 1) {
+                        i -= 1;
+                        lbda = 1;
+                    }
 
-          return el.Y(i + 1) - el.Y(i);
-        },
-      ],
-      attr
-    );
-  } else {
-    throw new Error(
-      "JSXGraph: Can't create normal with parent types '" +
-        typeof parents[0] +
-        "' and '" +
-        typeof parents[1] +
-        "'." +
-        "\nPossible parent types: [point,line], [point,circle], [glider]"
-    );
-  }
+                    if (i < 0) {
+                        return 1;
+                    }
 
-  l.elType = "normal";
-  l.setParents(parents);
+                    return (
+                        (el.Y(i) + lbda * (el.Y(i + 1) - el.Y(i))) * (el.Y(i) - el.Y(i + 1)) -
+                        (el.X(i) + lbda * (el.X(i + 1) - el.X(i))) * (el.X(i + 1) - el.X(i))
+                    );
+                },
+                function () {
+                    var el,
+                        j,
+                        i = Math.floor(p.position);
 
-  if (Type.exists(p._is_new)) {
-    l.addChild(p);
-    delete p._is_new;
-  } else {
-    p.addChild(l);
-  }
-  c.addChild(l);
+                    // run through all curves of this turtle
+                    for (j = 0; j < c.objects.length; j++) {
+                        el = c.objects[j];
+                        if (el.type === Const.OBJECT_TYPE_CURVE) {
+                            if (i < el.numberPoints) {
+                                break;
+                            }
 
-  return l;
+                            i -= el.numberPoints;
+                        }
+                    }
+
+                    if (i === el.numberPoints - 1) {
+                        i -= 1;
+                    }
+
+                    if (i < 0) {
+                        return 0;
+                    }
+
+                    return el.X(i + 1) - el.X(i);
+                },
+                function () {
+                    var el,
+                        j,
+                        i = Math.floor(p.position);
+
+                    // run through all curves of this turtle
+                    for (j = 0; j < c.objects.length; j++) {
+                        el = c.objects[j];
+                        if (el.type === Const.OBJECT_TYPE_CURVE) {
+                            if (i < el.numberPoints) {
+                                break;
+                            }
+
+                            i -= el.numberPoints;
+                        }
+                    }
+
+                    if (i === el.numberPoints - 1) {
+                        i -= 1;
+                    }
+
+                    if (i < 0) {
+                        return 0;
+                    }
+
+                    return el.Y(i + 1) - el.Y(i);
+                },
+            ],
+            attr
+        );
+    } else {
+        throw new Error(
+            "JSXGraph: Can't create normal with parent types '" +
+                typeof parents[0] +
+                "' and '" +
+                typeof parents[1] +
+                "'." +
+                "\nPossible parent types: [point,line], [point,circle], [glider]"
+        );
+    }
+
+    l.elType = "normal";
+    l.setParents(parents);
+
+    if (Type.exists(p._is_new)) {
+        l.addChild(p);
+        delete p._is_new;
+    } else {
+        p.addChild(l);
+    }
+    c.addChild(l);
+
+    return l;
 };
 
 /**
@@ -1771,77 +1758,68 @@ JXG.createNormal = function (board, parents, attributes) {
  * </script><pre>
  */
 JXG.createBisector = function (board, parents, attributes) {
-  var p, l, i, attr;
+    var p, l, i, attr;
 
-  parents = Type.providePoints(board, parents, attributes, "point");
-  if (
-    Type.isPoint(parents[0]) &&
-    Type.isPoint(parents[1]) &&
-    Type.isPoint(parents[2])
-  ) {
-    // hidden and fixed helper
-    attr = Type.copyAttributes(attributes, board.options, "bisector", "point");
-    attr.snapToGrid = false;
+    parents = Type.providePoints(board, parents, attributes, "point");
+    if (Type.isPoint(parents[0]) && Type.isPoint(parents[1]) && Type.isPoint(parents[2])) {
+        // hidden and fixed helper
+        attr = Type.copyAttributes(attributes, board.options, "bisector", "point");
+        attr.snapToGrid = false;
 
-    p = board.create(
-      "point",
-      [
-        function () {
-          return Geometry.angleBisector(
-            parents[0],
-            parents[1],
-            parents[2],
-            board
-          );
-        },
-      ],
-      attr
+        p = board.create(
+            "point",
+            [
+                function () {
+                    return Geometry.angleBisector(parents[0], parents[1], parents[2], board);
+                },
+            ],
+            attr
+        );
+        p.dump = false;
+
+        for (i = 0; i < 3; i++) {
+            // required for algorithm requiring dependencies between elements
+            if (Type.exists(parents[i]._is_new)) {
+                p.addChild(parents[i]);
+                delete parents[i]._is_new;
+            } else {
+                parents[i].addChild(p);
+            }
+        }
+
+        if (!Type.exists(attributes.layer)) {
+            attributes.layer = board.options.layer.line;
+        }
+
+        attr = Type.copyAttributes(attributes, board.options, "bisector");
+        l = Line.createLine(board, [parents[1], p], attr);
+
+        /**
+         * Helper point
+         * @memberOf Bisector.prototype
+         * @type Point
+         * @name point
+         */
+        l.point = p;
+
+        l.elType = "bisector";
+        l.setParents(parents);
+        l.subs = {
+            point: p,
+        };
+        l.inherits.push(p);
+
+        return l;
+    }
+
+    throw new Error(
+        "JSXGraph: Can't create angle bisector with parent types '" +
+            typeof parents[0] +
+            "' and '" +
+            typeof parents[1] +
+            "'." +
+            "\nPossible parent types: [point,point,point]"
     );
-    p.dump = false;
-
-    for (i = 0; i < 3; i++) {
-      // required for algorithm requiring dependencies between elements
-      if (Type.exists(parents[i]._is_new)) {
-        p.addChild(parents[i]);
-        delete parents[i]._is_new;
-      } else {
-        parents[i].addChild(p);
-      }
-    }
-
-    if (!Type.exists(attributes.layer)) {
-      attributes.layer = board.options.layer.line;
-    }
-
-    attr = Type.copyAttributes(attributes, board.options, "bisector");
-    l = Line.createLine(board, [parents[1], p], attr);
-
-    /**
-     * Helper point
-     * @memberOf Bisector.prototype
-     * @type Point
-     * @name point
-     */
-    l.point = p;
-
-    l.elType = "bisector";
-    l.setParents(parents);
-    l.subs = {
-      point: p,
-    };
-    l.inherits.push(p);
-
-    return l;
-  }
-
-  throw new Error(
-    "JSXGraph: Can't create angle bisector with parent types '" +
-      typeof parents[0] +
-      "' and '" +
-      typeof parents[1] +
-      "'." +
-      "\nPossible parent types: [point,point,point]"
-  );
 };
 
 /**
@@ -1879,152 +1857,142 @@ JXG.createBisector = function (board, parents, attributes) {
  * </script><pre>
  */
 JXG.createAngularBisectorsOfTwoLines = function (board, parents, attributes) {
-  // The angular bisectors of two line [c1,a1,b1] and [c2,a2,b2] are determined by the equation:
-  // (a1*x+b1*y+c1*z)/sqrt(a1^2+b1^2) = +/- (a2*x+b2*y+c2*z)/sqrt(a2^2+b2^2)
+    // The angular bisectors of two line [c1,a1,b1] and [c2,a2,b2] are determined by the equation:
+    // (a1*x+b1*y+c1*z)/sqrt(a1^2+b1^2) = +/- (a2*x+b2*y+c2*z)/sqrt(a2^2+b2^2)
 
-  var g1,
-    g2,
-    attr,
-    ret,
-    l1 = board.select(parents[0]),
-    l2 = board.select(parents[1]);
+    var g1,
+        g2,
+        attr,
+        ret,
+        l1 = board.select(parents[0]),
+        l2 = board.select(parents[1]);
 
-  if (
-    l1.elementClass !== Const.OBJECT_CLASS_LINE ||
-    l2.elementClass !== Const.OBJECT_CLASS_LINE
-  ) {
-    throw new Error(
-      "JSXGraph: Can't create angle bisectors of two lines with parent types '" +
-        typeof parents[0] +
-        "' and '" +
-        typeof parents[1] +
-        "'." +
-        "\nPossible parent types: [line,line]"
+    if (
+        l1.elementClass !== Const.OBJECT_CLASS_LINE ||
+        l2.elementClass !== Const.OBJECT_CLASS_LINE
+    ) {
+        throw new Error(
+            "JSXGraph: Can't create angle bisectors of two lines with parent types '" +
+                typeof parents[0] +
+                "' and '" +
+                typeof parents[1] +
+                "'." +
+                "\nPossible parent types: [line,line]"
+        );
+    }
+
+    if (!Type.exists(attributes.layer)) {
+        attributes.layer = board.options.layer.line;
+    }
+
+    attr = Type.copyAttributes(attributes, board.options, "bisectorlines", "line1");
+    g1 = board.create(
+        "line",
+        [
+            function () {
+                var d1 = Math.sqrt(
+                        l1.stdform[1] * l1.stdform[1] + l1.stdform[2] * l1.stdform[2]
+                    ),
+                    d2 = Math.sqrt(
+                        l2.stdform[1] * l2.stdform[1] + l2.stdform[2] * l2.stdform[2]
+                    );
+
+                return l1.stdform[0] / d1 - l2.stdform[0] / d2;
+            },
+            function () {
+                var d1 = Math.sqrt(
+                        l1.stdform[1] * l1.stdform[1] + l1.stdform[2] * l1.stdform[2]
+                    ),
+                    d2 = Math.sqrt(
+                        l2.stdform[1] * l2.stdform[1] + l2.stdform[2] * l2.stdform[2]
+                    );
+
+                return l1.stdform[1] / d1 - l2.stdform[1] / d2;
+            },
+            function () {
+                var d1 = Math.sqrt(
+                        l1.stdform[1] * l1.stdform[1] + l1.stdform[2] * l1.stdform[2]
+                    ),
+                    d2 = Math.sqrt(
+                        l2.stdform[1] * l2.stdform[1] + l2.stdform[2] * l2.stdform[2]
+                    );
+
+                return l1.stdform[2] / d1 - l2.stdform[2] / d2;
+            },
+        ],
+        attr
     );
-  }
 
-  if (!Type.exists(attributes.layer)) {
-    attributes.layer = board.options.layer.line;
-  }
+    if (!Type.exists(attributes.layer)) {
+        attributes.layer = board.options.layer.line;
+    }
+    attr = Type.copyAttributes(attributes, board.options, "bisectorlines", "line2");
+    g2 = board.create(
+        "line",
+        [
+            function () {
+                var d1 = Math.sqrt(
+                        l1.stdform[1] * l1.stdform[1] + l1.stdform[2] * l1.stdform[2]
+                    ),
+                    d2 = Math.sqrt(
+                        l2.stdform[1] * l2.stdform[1] + l2.stdform[2] * l2.stdform[2]
+                    );
 
-  attr = Type.copyAttributes(
-    attributes,
-    board.options,
-    "bisectorlines",
-    "line1"
-  );
-  g1 = board.create(
-    "line",
-    [
-      function () {
-        var d1 = Math.sqrt(
-            l1.stdform[1] * l1.stdform[1] + l1.stdform[2] * l1.stdform[2]
-          ),
-          d2 = Math.sqrt(
-            l2.stdform[1] * l2.stdform[1] + l2.stdform[2] * l2.stdform[2]
-          );
+                return l1.stdform[0] / d1 + l2.stdform[0] / d2;
+            },
+            function () {
+                var d1 = Math.sqrt(
+                        l1.stdform[1] * l1.stdform[1] + l1.stdform[2] * l1.stdform[2]
+                    ),
+                    d2 = Math.sqrt(
+                        l2.stdform[1] * l2.stdform[1] + l2.stdform[2] * l2.stdform[2]
+                    );
 
-        return l1.stdform[0] / d1 - l2.stdform[0] / d2;
-      },
-      function () {
-        var d1 = Math.sqrt(
-            l1.stdform[1] * l1.stdform[1] + l1.stdform[2] * l1.stdform[2]
-          ),
-          d2 = Math.sqrt(
-            l2.stdform[1] * l2.stdform[1] + l2.stdform[2] * l2.stdform[2]
-          );
+                return l1.stdform[1] / d1 + l2.stdform[1] / d2;
+            },
+            function () {
+                var d1 = Math.sqrt(
+                        l1.stdform[1] * l1.stdform[1] + l1.stdform[2] * l1.stdform[2]
+                    ),
+                    d2 = Math.sqrt(
+                        l2.stdform[1] * l2.stdform[1] + l2.stdform[2] * l2.stdform[2]
+                    );
 
-        return l1.stdform[1] / d1 - l2.stdform[1] / d2;
-      },
-      function () {
-        var d1 = Math.sqrt(
-            l1.stdform[1] * l1.stdform[1] + l1.stdform[2] * l1.stdform[2]
-          ),
-          d2 = Math.sqrt(
-            l2.stdform[1] * l2.stdform[1] + l2.stdform[2] * l2.stdform[2]
-          );
+                return l1.stdform[2] / d1 + l2.stdform[2] / d2;
+            },
+        ],
+        attr
+    );
 
-        return l1.stdform[2] / d1 - l2.stdform[2] / d2;
-      },
-    ],
-    attr
-  );
+    // documentation
+    /**
+     * First line.
+     * @memberOf Bisectorlines.prototype
+     * @name line1
+     * @type Line
+     */
 
-  if (!Type.exists(attributes.layer)) {
-    attributes.layer = board.options.layer.line;
-  }
-  attr = Type.copyAttributes(
-    attributes,
-    board.options,
-    "bisectorlines",
-    "line2"
-  );
-  g2 = board.create(
-    "line",
-    [
-      function () {
-        var d1 = Math.sqrt(
-            l1.stdform[1] * l1.stdform[1] + l1.stdform[2] * l1.stdform[2]
-          ),
-          d2 = Math.sqrt(
-            l2.stdform[1] * l2.stdform[1] + l2.stdform[2] * l2.stdform[2]
-          );
+    /**
+     * Second line.
+     * @memberOf Bisectorlines.prototype
+     * @name line2
+     * @type Line
+     */
 
-        return l1.stdform[0] / d1 + l2.stdform[0] / d2;
-      },
-      function () {
-        var d1 = Math.sqrt(
-            l1.stdform[1] * l1.stdform[1] + l1.stdform[2] * l1.stdform[2]
-          ),
-          d2 = Math.sqrt(
-            l2.stdform[1] * l2.stdform[1] + l2.stdform[2] * l2.stdform[2]
-          );
+    ret = new Composition({ line1: g1, line2: g2 });
 
-        return l1.stdform[1] / d1 + l2.stdform[1] / d2;
-      },
-      function () {
-        var d1 = Math.sqrt(
-            l1.stdform[1] * l1.stdform[1] + l1.stdform[2] * l1.stdform[2]
-          ),
-          d2 = Math.sqrt(
-            l2.stdform[1] * l2.stdform[1] + l2.stdform[2] * l2.stdform[2]
-          );
+    g1.dump = false;
+    g2.dump = false;
 
-        return l1.stdform[2] / d1 + l2.stdform[2] / d2;
-      },
-    ],
-    attr
-  );
+    ret.elType = "bisectorlines";
+    ret.setParents([l1.id, l2.id]);
+    ret.subs = {
+        line1: g1,
+        line2: g2,
+    };
+    // ret.inherits.push(g1, g2);
 
-  // documentation
-  /**
-   * First line.
-   * @memberOf Bisectorlines.prototype
-   * @name line1
-   * @type Line
-   */
-
-  /**
-   * Second line.
-   * @memberOf Bisectorlines.prototype
-   * @name line2
-   * @type Line
-   */
-
-  ret = new Composition({ line1: g1, line2: g2 });
-
-  g1.dump = false;
-  g2.dump = false;
-
-  ret.elType = "bisectorlines";
-  ret.setParents([l1.id, l2.id]);
-  ret.subs = {
-    line1: g1,
-    line2: g2,
-  };
-  // ret.inherits.push(g1, g2);
-
-  return ret;
+    return ret;
 };
 
 // /**
@@ -2135,114 +2103,110 @@ JXG.createAngularBisectorsOfTwoLines = function (board, parents, attributes) {
  * </script><pre>
  */
 JXG.createCircumcenter = function (board, parents, attributes) {
-  var p, i, a, b, c;
+    var p, i, a, b, c;
 
-  parents = Type.providePoints(board, parents, attributes, "point");
-  if (
-    Type.isPoint(parents[0]) &&
-    Type.isPoint(parents[1]) &&
-    Type.isPoint(parents[2])
-  ) {
-    a = parents[0];
-    b = parents[1];
-    c = parents[2];
+    parents = Type.providePoints(board, parents, attributes, "point");
+    if (Type.isPoint(parents[0]) && Type.isPoint(parents[1]) && Type.isPoint(parents[2])) {
+        a = parents[0];
+        b = parents[1];
+        c = parents[2];
 
-    p = Point.createPoint(
-      board,
-      [
-        function () {
-          return Geometry.circumcenter(a, b, c, board);
-        },
-      ],
-      attributes
-    );
+        p = Point.createPoint(
+            board,
+            [
+                function () {
+                    return Geometry.circumcenter(a, b, c, board);
+                },
+            ],
+            attributes
+        );
 
-    for (i = 0; i < 3; i++) {
-      if (Type.exists(parents[i]._is_new)) {
-        p.addChild(parents[i]);
-        delete parents[i]._is_new;
-      } else {
-        parents[i].addChild(p);
-      }
+        for (i = 0; i < 3; i++) {
+            if (Type.exists(parents[i]._is_new)) {
+                p.addChild(parents[i]);
+                delete parents[i]._is_new;
+            } else {
+                parents[i].addChild(p);
+            }
+        }
+
+        p.elType = "circumcenter";
+        p.setParents(parents);
+
+        p.generatePolynomial = function () {
+            /*
+             *  CircumcircleMidpoint takes three points A, B and C  and creates point M, which is the circumcenter of A, B, and C.
+             *
+             *
+             * So we have two conditions:
+             *
+             *   (a)   CT  ==  AT           (distance condition I)
+             *   (b)   BT  ==  AT           (distance condition II)
+             *
+             */
+            var a1 = a.symbolic.x,
+                a2 = a.symbolic.y,
+                b1 = b.symbolic.x,
+                b2 = b.symbolic.y,
+                c1 = c.symbolic.x,
+                c2 = c.symbolic.y,
+                t1 = p.symbolic.x,
+                t2 = p.symbolic.y,
+                poly1 = [
+                    "((",
+                    t1,
+                    ")-(",
+                    a1,
+                    "))^2+((",
+                    t2,
+                    ")-(",
+                    a2,
+                    "))^2-((",
+                    t1,
+                    ")-(",
+                    b1,
+                    "))^2-((",
+                    t2,
+                    ")-(",
+                    b2,
+                    "))^2",
+                ].join(""),
+                poly2 = [
+                    "((",
+                    t1,
+                    ")-(",
+                    a1,
+                    "))^2+((",
+                    t2,
+                    ")-(",
+                    a2,
+                    "))^2-((",
+                    t1,
+                    ")-(",
+                    c1,
+                    "))^2-((",
+                    t2,
+                    ")-(",
+                    c2,
+                    "))^2",
+                ].join("");
+
+            return [poly1, poly2];
+        };
+
+        return p;
     }
 
-    p.elType = "circumcenter";
-    p.setParents(parents);
-
-    p.generatePolynomial = function () {
-      /*
-       *  CircumcircleMidpoint takes three points A, B and C  and creates point M, which is the circumcenter of A, B, and C.
-       *
-       *
-       * So we have two conditions:
-       *
-       *   (a)   CT  ==  AT           (distance condition I)
-       *   (b)   BT  ==  AT           (distance condition II)
-       *
-       */
-      var a1 = a.symbolic.x,
-        a2 = a.symbolic.y,
-        b1 = b.symbolic.x,
-        b2 = b.symbolic.y,
-        c1 = c.symbolic.x,
-        c2 = c.symbolic.y,
-        t1 = p.symbolic.x,
-        t2 = p.symbolic.y,
-        poly1 = [
-          "((",
-          t1,
-          ")-(",
-          a1,
-          "))^2+((",
-          t2,
-          ")-(",
-          a2,
-          "))^2-((",
-          t1,
-          ")-(",
-          b1,
-          "))^2-((",
-          t2,
-          ")-(",
-          b2,
-          "))^2",
-        ].join(""),
-        poly2 = [
-          "((",
-          t1,
-          ")-(",
-          a1,
-          "))^2+((",
-          t2,
-          ")-(",
-          a2,
-          "))^2-((",
-          t1,
-          ")-(",
-          c1,
-          "))^2-((",
-          t2,
-          ")-(",
-          c2,
-          "))^2",
-        ].join("");
-
-      return [poly1, poly2];
-    };
-
-    return p;
-  }
-
-  throw new Error(
-    "JSXGraph: Can't create circumcircle midpoint with parent types '" +
-      typeof parents[0] +
-      "', '" +
-      typeof parents[1] +
-      "' and '" +
-      typeof parents[2] +
-      "'." +
-      "\nPossible parent types: [point,point,point]"
-  );
+    throw new Error(
+        "JSXGraph: Can't create circumcircle midpoint with parent types '" +
+            typeof parents[0] +
+            "', '" +
+            typeof parents[1] +
+            "' and '" +
+            typeof parents[2] +
+            "'." +
+            "\nPossible parent types: [point,point,point]"
+    );
 };
 
 /**
@@ -2271,76 +2235,73 @@ JXG.createCircumcenter = function (board, parents, attributes) {
  * </script><pre>
  */
 JXG.createIncenter = function (board, parents, attributes) {
-  var p, A, B, C, i;
+    var p, A, B, C, i;
 
-  parents = Type.providePoints(board, parents, attributes, "point");
-  if (
-    parents.length >= 3 &&
-    Type.isPoint(parents[0]) &&
-    Type.isPoint(parents[1]) &&
-    Type.isPoint(parents[2])
-  ) {
-    A = parents[0];
-    B = parents[1];
-    C = parents[2];
+    parents = Type.providePoints(board, parents, attributes, "point");
+    if (
+        parents.length >= 3 &&
+        Type.isPoint(parents[0]) &&
+        Type.isPoint(parents[1]) &&
+        Type.isPoint(parents[2])
+    ) {
+        A = parents[0];
+        B = parents[1];
+        C = parents[2];
 
-    p = board.create(
-      "point",
-      [
-        function () {
-          var a, b, c;
-
-          a = Math.sqrt(
-            (B.X() - C.X()) * (B.X() - C.X()) +
-              (B.Y() - C.Y()) * (B.Y() - C.Y())
-          );
-          b = Math.sqrt(
-            (A.X() - C.X()) * (A.X() - C.X()) +
-              (A.Y() - C.Y()) * (A.Y() - C.Y())
-          );
-          c = Math.sqrt(
-            (B.X() - A.X()) * (B.X() - A.X()) +
-              (B.Y() - A.Y()) * (B.Y() - A.Y())
-          );
-
-          return new Coords(
-            Const.COORDS_BY_USER,
+        p = board.create(
+            "point",
             [
-              (a * A.X() + b * B.X() + c * C.X()) / (a + b + c),
-              (a * A.Y() + b * B.Y() + c * C.Y()) / (a + b + c),
-            ],
-            board
-          );
-        },
-      ],
-      attributes
-    );
+                function () {
+                    var a, b, c;
 
-    for (i = 0; i < 3; i++) {
-      if (Type.exists(parents[i]._is_new)) {
-        p.addChild(parents[i]);
-        delete parents[i]._is_new;
-      } else {
-        parents[i].addChild(p);
-      }
+                    a = Math.sqrt(
+                        (B.X() - C.X()) * (B.X() - C.X()) + (B.Y() - C.Y()) * (B.Y() - C.Y())
+                    );
+                    b = Math.sqrt(
+                        (A.X() - C.X()) * (A.X() - C.X()) + (A.Y() - C.Y()) * (A.Y() - C.Y())
+                    );
+                    c = Math.sqrt(
+                        (B.X() - A.X()) * (B.X() - A.X()) + (B.Y() - A.Y()) * (B.Y() - A.Y())
+                    );
+
+                    return new Coords(
+                        Const.COORDS_BY_USER,
+                        [
+                            (a * A.X() + b * B.X() + c * C.X()) / (a + b + c),
+                            (a * A.Y() + b * B.Y() + c * C.Y()) / (a + b + c),
+                        ],
+                        board
+                    );
+                },
+            ],
+            attributes
+        );
+
+        for (i = 0; i < 3; i++) {
+            if (Type.exists(parents[i]._is_new)) {
+                p.addChild(parents[i]);
+                delete parents[i]._is_new;
+            } else {
+                parents[i].addChild(p);
+            }
+        }
+
+        p.elType = "incenter";
+        p.setParents(parents);
+    } else {
+        throw new Error(
+            "JSXGraph: Can't create incenter with parent types '" +
+                typeof parents[0] +
+                "', '" +
+                typeof parents[1] +
+                "' and '" +
+                typeof parents[2] +
+                "'." +
+                "\nPossible parent types: [point,point,point]"
+        );
     }
 
-    p.elType = "incenter";
-    p.setParents(parents);
-  } else {
-    throw new Error(
-      "JSXGraph: Can't create incenter with parent types '" +
-        typeof parents[0] +
-        "', '" +
-        typeof parents[1] +
-        "' and '" +
-        typeof parents[2] +
-        "'." +
-        "\nPossible parent types: [point,point,point]"
-    );
-  }
-
-  return p;
+    return p;
 };
 
 /**
@@ -2368,69 +2329,64 @@ JXG.createIncenter = function (board, parents, attributes) {
  * </script><pre>
  */
 JXG.createCircumcircle = function (board, parents, attributes) {
-  var p, c, attr, i;
+    var p, c, attr, i;
 
-  parents = Type.providePoints(board, parents, attributes, "point");
-  if (parents === false) {
-    throw new Error(
-      "JSXGraph: Can't create circumcircle with parent types '" +
-        typeof parents[0] +
-        "', '" +
-        typeof parents[1] +
-        "' and '" +
-        typeof parents[2] +
-        "'." +
-        "\nPossible parent types: [point,point,point]"
-    );
-  }
-
-  try {
-    attr = Type.copyAttributes(
-      attributes,
-      board.options,
-      "circumcircle",
-      "center"
-    );
-    p = JXG.createCircumcenter(board, parents, attr);
-
-    p.dump = false;
-
-    if (!Type.exists(attributes.layer)) {
-      attributes.layer = board.options.layer.circle;
+    parents = Type.providePoints(board, parents, attributes, "point");
+    if (parents === false) {
+        throw new Error(
+            "JSXGraph: Can't create circumcircle with parent types '" +
+                typeof parents[0] +
+                "', '" +
+                typeof parents[1] +
+                "' and '" +
+                typeof parents[2] +
+                "'." +
+                "\nPossible parent types: [point,point,point]"
+        );
     }
-    attr = Type.copyAttributes(attributes, board.options, "circumcircle");
-    c = Circle.createCircle(board, [p, parents[0]], attr);
 
-    c.elType = "circumcircle";
-    c.setParents(parents);
-    c.subs = {
-      center: p,
-    };
-    c.inherits.push(c);
-    for (i = 0; i < 3; i++) {
-      if (Type.exists(parents[i]._is_new)) {
-        c.addChild(parents[i]);
-        delete parents[i]._is_new;
-      } else {
-        parents[i].addChild(c);
-      }
+    try {
+        attr = Type.copyAttributes(attributes, board.options, "circumcircle", "center");
+        p = JXG.createCircumcenter(board, parents, attr);
+
+        p.dump = false;
+
+        if (!Type.exists(attributes.layer)) {
+            attributes.layer = board.options.layer.circle;
+        }
+        attr = Type.copyAttributes(attributes, board.options, "circumcircle");
+        c = Circle.createCircle(board, [p, parents[0]], attr);
+
+        c.elType = "circumcircle";
+        c.setParents(parents);
+        c.subs = {
+            center: p,
+        };
+        c.inherits.push(c);
+        for (i = 0; i < 3; i++) {
+            if (Type.exists(parents[i]._is_new)) {
+                c.addChild(parents[i]);
+                delete parents[i]._is_new;
+            } else {
+                parents[i].addChild(c);
+            }
+        }
+    } catch (e) {
+        throw new Error(
+            "JSXGraph: Can't create circumcircle with parent types '" +
+                typeof parents[0] +
+                "', '" +
+                typeof parents[1] +
+                "' and '" +
+                typeof parents[2] +
+                "'." +
+                "\nPossible parent types: [point,point,point]"
+        );
     }
-  } catch (e) {
-    throw new Error(
-      "JSXGraph: Can't create circumcircle with parent types '" +
-        typeof parents[0] +
-        "', '" +
-        typeof parents[1] +
-        "' and '" +
-        typeof parents[2] +
-        "'." +
-        "\nPossible parent types: [point,point,point]"
-    );
-  }
 
-  // p is already stored as midpoint in c so there's no need to store it explicitly.
+    // p is already stored as midpoint in c so there's no need to store it explicitly.
 
-  return c;
+    return c;
 };
 
 /**
@@ -2459,101 +2415,101 @@ JXG.createCircumcircle = function (board, parents, attributes) {
  * </script><pre>
  */
 JXG.createIncircle = function (board, parents, attributes) {
-  var i, p, c, attr;
+    var i, p, c, attr;
 
-  parents = Type.providePoints(board, parents, attributes, "point");
-  if (parents === false) {
-    throw new Error(
-      "JSXGraph: Can't create circumcircle with parent types '" +
-        typeof parents[0] +
-        "', '" +
-        typeof parents[1] +
-        "' and '" +
-        typeof parents[2] +
-        "'." +
-        "\nPossible parent types: [point,point,point]"
-    );
-  }
-  try {
-    attr = Type.copyAttributes(attributes, board.options, "incircle", "center");
-    p = JXG.createIncenter(board, parents, attr);
-
-    p.dump = false;
-
-    if (!Type.exists(attributes.layer)) {
-      attributes.layer = board.options.layer.circle;
+    parents = Type.providePoints(board, parents, attributes, "point");
+    if (parents === false) {
+        throw new Error(
+            "JSXGraph: Can't create circumcircle with parent types '" +
+                typeof parents[0] +
+                "', '" +
+                typeof parents[1] +
+                "' and '" +
+                typeof parents[2] +
+                "'." +
+                "\nPossible parent types: [point,point,point]"
+        );
     }
-    attr = Type.copyAttributes(attributes, board.options, "incircle");
-    c = Circle.createCircle(
-      board,
-      [
-        p,
-        function () {
-          var a = Math.sqrt(
-              (parents[1].X() - parents[2].X()) *
-                (parents[1].X() - parents[2].X()) +
-                (parents[1].Y() - parents[2].Y()) *
-                  (parents[1].Y() - parents[2].Y())
-            ),
-            b = Math.sqrt(
-              (parents[0].X() - parents[2].X()) *
-                (parents[0].X() - parents[2].X()) +
-                (parents[0].Y() - parents[2].Y()) *
-                  (parents[0].Y() - parents[2].Y())
-            ),
-            c = Math.sqrt(
-              (parents[1].X() - parents[0].X()) *
-                (parents[1].X() - parents[0].X()) +
-                (parents[1].Y() - parents[0].Y()) *
-                  (parents[1].Y() - parents[0].Y())
-            ),
-            s = (a + b + c) / 2;
+    try {
+        attr = Type.copyAttributes(attributes, board.options, "incircle", "center");
+        p = JXG.createIncenter(board, parents, attr);
 
-          return Math.sqrt(((s - a) * (s - b) * (s - c)) / s);
-        },
-      ],
-      attr
-    );
+        p.dump = false;
 
-    c.elType = "incircle";
-    c.setParents(parents);
-    for (i = 0; i < 3; i++) {
-      if (Type.exists(parents[i]._is_new)) {
-        c.addChild(parents[i]);
-        delete parents[i]._is_new;
-      } else {
-        parents[i].addChild(c);
-      }
+        if (!Type.exists(attributes.layer)) {
+            attributes.layer = board.options.layer.circle;
+        }
+        attr = Type.copyAttributes(attributes, board.options, "incircle");
+        c = Circle.createCircle(
+            board,
+            [
+                p,
+                function () {
+                    var a = Math.sqrt(
+                            (parents[1].X() - parents[2].X()) *
+                                (parents[1].X() - parents[2].X()) +
+                                (parents[1].Y() - parents[2].Y()) *
+                                    (parents[1].Y() - parents[2].Y())
+                        ),
+                        b = Math.sqrt(
+                            (parents[0].X() - parents[2].X()) *
+                                (parents[0].X() - parents[2].X()) +
+                                (parents[0].Y() - parents[2].Y()) *
+                                    (parents[0].Y() - parents[2].Y())
+                        ),
+                        c = Math.sqrt(
+                            (parents[1].X() - parents[0].X()) *
+                                (parents[1].X() - parents[0].X()) +
+                                (parents[1].Y() - parents[0].Y()) *
+                                    (parents[1].Y() - parents[0].Y())
+                        ),
+                        s = (a + b + c) / 2;
+
+                    return Math.sqrt(((s - a) * (s - b) * (s - c)) / s);
+                },
+            ],
+            attr
+        );
+
+        c.elType = "incircle";
+        c.setParents(parents);
+        for (i = 0; i < 3; i++) {
+            if (Type.exists(parents[i]._is_new)) {
+                c.addChild(parents[i]);
+                delete parents[i]._is_new;
+            } else {
+                parents[i].addChild(c);
+            }
+        }
+
+        /**
+         * The center of the incircle
+         * @memberOf Incircle.prototype
+         * @type Incenter
+         * @name center
+         */
+        c.center = p;
+
+        c.subs = {
+            center: c.center,
+        };
+        c.inherits.push(p);
+    } catch (e) {
+        throw new Error(
+            "JSXGraph: Can't create circumcircle with parent types '" +
+                typeof parents[0] +
+                "', '" +
+                typeof parents[1] +
+                "' and '" +
+                typeof parents[2] +
+                "'." +
+                "\nPossible parent types: [point,point,point]"
+        );
     }
 
-    /**
-     * The center of the incircle
-     * @memberOf Incircle.prototype
-     * @type Incenter
-     * @name center
-     */
-    c.center = p;
+    // p is already stored as midpoint in c so there's no need to store it explicitly.
 
-    c.subs = {
-      center: c.center,
-    };
-    c.inherits.push(p);
-  } catch (e) {
-    throw new Error(
-      "JSXGraph: Can't create circumcircle with parent types '" +
-        typeof parents[0] +
-        "', '" +
-        typeof parents[1] +
-        "' and '" +
-        typeof parents[2] +
-        "'." +
-        "\nPossible parent types: [point,point,point]"
-    );
-  }
-
-  // p is already stored as midpoint in c so there's no need to store it explicitly.
-
-  return c;
+    return c;
 };
 
 /**
@@ -2656,183 +2612,176 @@ JXG.createIncircle = function (board, parents, attributes) {
  *
  */
 JXG.createReflection = function (board, parents, attributes) {
-  var l,
-    org,
-    r,
-    r_c,
-    t,
-    i,
-    attr,
-    attr2,
-    errStr =
-      "\nPossible parent types: [point|line|curve|polygon|circle|arc|sector, line]";
+    var l,
+        org,
+        r,
+        r_c,
+        t,
+        i,
+        attr,
+        attr2,
+        errStr = "\nPossible parent types: [point|line|curve|polygon|circle|arc|sector, line]";
 
-  for (i = 0; i < parents.length; ++i) {
-    parents[i] = board.select(parents[i]);
-  }
-
-  attr = Type.copyAttributes(attributes, board.options, "reflection");
-
-  if (Type.isPoint(parents[0])) {
-    org = Type.providePoints(board, [parents[0]], attr2)[0];
-  } else if (
-    parents[0].elementClass === Const.OBJECT_CLASS_CURVE ||
-    parents[0].elementClass === Const.OBJECT_CLASS_LINE ||
-    parents[0].type === Const.OBJECT_TYPE_POLYGON ||
-    parents[0].elementClass === Const.OBJECT_CLASS_CIRCLE
-  ) {
-    org = parents[0];
-  } else {
-    throw new Error(
-      "JSXGraph: Can't create reflection element with parent types '" +
-        typeof parents[0] +
-        "' and '" +
-        typeof parents[1] +
-        "'." +
-        errStr
-    );
-  }
-
-  if (parents[1].elementClass === Const.OBJECT_CLASS_LINE) {
-    l = parents[1];
-  } else {
-    throw new Error(
-      "JSXGraph: Can't create reflected element with parent types '" +
-        typeof parents[0] +
-        "' and '" +
-        typeof parents[1] +
-        "'." +
-        errStr
-    );
-  }
-  t = Transform.createTransform(board, [l], { type: "reflect" });
-
-  if (Type.isPoint(org)) {
-    r = Point.createPoint(board, [org, t], attr);
-
-    // Arcs and sectors are treated as curves
-  } else if (org.elementClass === Const.OBJECT_CLASS_CURVE) {
-    r = Curve.createCurve(board, [org, t], attr);
-  } else if (org.elementClass === Const.OBJECT_CLASS_LINE) {
-    r = Line.createLine(board, [org, t], attr);
-  } else if (org.type === Const.OBJECT_TYPE_POLYGON) {
-    r = Polygon.createPolygon(board, [org, t], attr);
-  } else if (org.elementClass === Const.OBJECT_CLASS_CIRCLE) {
-    if (attr.type.toLowerCase() === "euclidean") {
-      // Create a circle element from a circle and a Euclidean transformation
-      attr2 = Type.copyAttributes(
-        attributes,
-        board.options,
-        "reflection",
-        "center"
-      );
-      r_c = Point.createPoint(board, [org.center, t], attr2);
-      r_c
-        .prepareUpdate()
-        .update()
-        .updateVisibility(Type.evaluate(r_c.visProp.visible))
-        .updateRenderer();
-      r = Circle.createCircle(
-        board,
-        [
-          r_c,
-          function () {
-            return org.Radius();
-          },
-        ],
-        attr
-      );
-    } else {
-      // Create a conic element from a circle and a projective transformation
-      r = Circle.createCircle(board, [org, t], attr);
+    for (i = 0; i < parents.length; ++i) {
+        parents[i] = board.select(parents[i]);
     }
-  } else {
-    throw new Error(
-      "JSXGraph: Can't create reflected element with parent types '" +
-        typeof parents[0] +
-        "' and '" +
-        typeof parents[1] +
-        "'." +
-        errStr
-    );
-  }
 
-  if (Type.exists(org._is_new)) {
-    r.addChild(org);
-    delete org._is_new;
-  } else {
-    // org.addChild(r);
-  }
-  l.addChild(r);
+    attr = Type.copyAttributes(attributes, board.options, "reflection");
 
-  r.elType = "reflection";
-  r.addParents(l);
-  r.prepareUpdate().update(); //.updateVisibility(Type.evaluate(r.visProp.visible)).updateRenderer();
+    if (Type.isPoint(parents[0])) {
+        org = Type.providePoints(board, [parents[0]], attr2)[0];
+    } else if (
+        parents[0].elementClass === Const.OBJECT_CLASS_CURVE ||
+        parents[0].elementClass === Const.OBJECT_CLASS_LINE ||
+        parents[0].type === Const.OBJECT_TYPE_POLYGON ||
+        parents[0].elementClass === Const.OBJECT_CLASS_CIRCLE
+    ) {
+        org = parents[0];
+    } else {
+        throw new Error(
+            "JSXGraph: Can't create reflection element with parent types '" +
+                typeof parents[0] +
+                "' and '" +
+                typeof parents[1] +
+                "'." +
+                errStr
+        );
+    }
 
-  if (Type.isPoint(r)) {
-    r.generatePolynomial = function () {
-      /*
-       *  Reflection takes a point R and a line L and creates point P, which is the reflection of R on L.
-       *  L is defined by two points A and B.
-       *
-       * So we have two conditions:
-       *
-       *   (a)   RP  _|_  AB            (orthogonality condition)
-       *   (b)   AR  ==   AP            (distance condition)
-       *
-       */
-      var a1 = l.point1.symbolic.x,
-        a2 = l.point1.symbolic.y,
-        b1 = l.point2.symbolic.x,
-        b2 = l.point2.symbolic.y,
-        p1 = org.symbolic.x,
-        p2 = org.symbolic.y,
-        r1 = r.symbolic.x,
-        r2 = r.symbolic.y,
-        poly1 = [
-          "((",
-          r2,
-          ")-(",
-          p2,
-          "))*((",
-          a2,
-          ")-(",
-          b2,
-          "))+((",
-          a1,
-          ")-(",
-          b1,
-          "))*((",
-          r1,
-          ")-(",
-          p1,
-          "))",
-        ].join(""),
-        poly2 = [
-          "((",
-          r1,
-          ")-(",
-          a1,
-          "))^2+((",
-          r2,
-          ")-(",
-          a2,
-          "))^2-((",
-          p1,
-          ")-(",
-          a1,
-          "))^2-((",
-          p2,
-          ")-(",
-          a2,
-          "))^2",
-        ].join("");
+    if (parents[1].elementClass === Const.OBJECT_CLASS_LINE) {
+        l = parents[1];
+    } else {
+        throw new Error(
+            "JSXGraph: Can't create reflected element with parent types '" +
+                typeof parents[0] +
+                "' and '" +
+                typeof parents[1] +
+                "'." +
+                errStr
+        );
+    }
+    t = Transform.createTransform(board, [l], { type: "reflect" });
 
-      return [poly1, poly2];
-    };
-  }
+    if (Type.isPoint(org)) {
+        r = Point.createPoint(board, [org, t], attr);
 
-  return r;
+        // Arcs and sectors are treated as curves
+    } else if (org.elementClass === Const.OBJECT_CLASS_CURVE) {
+        r = Curve.createCurve(board, [org, t], attr);
+    } else if (org.elementClass === Const.OBJECT_CLASS_LINE) {
+        r = Line.createLine(board, [org, t], attr);
+    } else if (org.type === Const.OBJECT_TYPE_POLYGON) {
+        r = Polygon.createPolygon(board, [org, t], attr);
+    } else if (org.elementClass === Const.OBJECT_CLASS_CIRCLE) {
+        if (attr.type.toLowerCase() === "euclidean") {
+            // Create a circle element from a circle and a Euclidean transformation
+            attr2 = Type.copyAttributes(attributes, board.options, "reflection", "center");
+            r_c = Point.createPoint(board, [org.center, t], attr2);
+            r_c.prepareUpdate()
+                .update()
+                .updateVisibility(Type.evaluate(r_c.visProp.visible))
+                .updateRenderer();
+            r = Circle.createCircle(
+                board,
+                [
+                    r_c,
+                    function () {
+                        return org.Radius();
+                    },
+                ],
+                attr
+            );
+        } else {
+            // Create a conic element from a circle and a projective transformation
+            r = Circle.createCircle(board, [org, t], attr);
+        }
+    } else {
+        throw new Error(
+            "JSXGraph: Can't create reflected element with parent types '" +
+                typeof parents[0] +
+                "' and '" +
+                typeof parents[1] +
+                "'." +
+                errStr
+        );
+    }
+
+    if (Type.exists(org._is_new)) {
+        r.addChild(org);
+        delete org._is_new;
+    } else {
+        // org.addChild(r);
+    }
+    l.addChild(r);
+
+    r.elType = "reflection";
+    r.addParents(l);
+    r.prepareUpdate().update(); //.updateVisibility(Type.evaluate(r.visProp.visible)).updateRenderer();
+
+    if (Type.isPoint(r)) {
+        r.generatePolynomial = function () {
+            /*
+             *  Reflection takes a point R and a line L and creates point P, which is the reflection of R on L.
+             *  L is defined by two points A and B.
+             *
+             * So we have two conditions:
+             *
+             *   (a)   RP  _|_  AB            (orthogonality condition)
+             *   (b)   AR  ==   AP            (distance condition)
+             *
+             */
+            var a1 = l.point1.symbolic.x,
+                a2 = l.point1.symbolic.y,
+                b1 = l.point2.symbolic.x,
+                b2 = l.point2.symbolic.y,
+                p1 = org.symbolic.x,
+                p2 = org.symbolic.y,
+                r1 = r.symbolic.x,
+                r2 = r.symbolic.y,
+                poly1 = [
+                    "((",
+                    r2,
+                    ")-(",
+                    p2,
+                    "))*((",
+                    a2,
+                    ")-(",
+                    b2,
+                    "))+((",
+                    a1,
+                    ")-(",
+                    b1,
+                    "))*((",
+                    r1,
+                    ")-(",
+                    p1,
+                    "))",
+                ].join(""),
+                poly2 = [
+                    "((",
+                    r1,
+                    ")-(",
+                    a1,
+                    "))^2+((",
+                    r2,
+                    ")-(",
+                    a2,
+                    "))^2-((",
+                    p1,
+                    ")-(",
+                    a1,
+                    "))^2-((",
+                    p2,
+                    ")-(",
+                    a2,
+                    "))^2",
+                ].join("");
+
+            return [poly1, poly2];
+        };
+    }
+
+    return r;
 };
 
 /**
@@ -2915,127 +2864,115 @@ JXG.createReflection = function (board, parents, attributes) {
  * </script><pre>
  */
 JXG.createMirrorElement = function (board, parents, attributes) {
-  var org,
-    i,
-    m,
-    r,
-    r_c,
-    t,
-    attr,
-    attr2,
-    errStr =
-      "\nPossible parent types: [point|line|curve|polygon|circle|arc|sector, point]";
+    var org,
+        i,
+        m,
+        r,
+        r_c,
+        t,
+        attr,
+        attr2,
+        errStr = "\nPossible parent types: [point|line|curve|polygon|circle|arc|sector, point]";
 
-  for (i = 0; i < parents.length; ++i) {
-    parents[i] = board.select(parents[i]);
-  }
-
-  attr = Type.copyAttributes(attributes, board.options, "mirrorelement");
-  if (Type.isPoint(parents[0])) {
-    // Create point to be mirrored if supplied by coords array.
-    org = Type.providePoints(board, [parents[0]], attr)[0];
-  } else if (
-    parents[0].elementClass === Const.OBJECT_CLASS_CURVE ||
-    parents[0].elementClass === Const.OBJECT_CLASS_LINE ||
-    parents[0].type === Const.OBJECT_TYPE_POLYGON ||
-    parents[0].elementClass === Const.OBJECT_CLASS_CIRCLE
-  ) {
-    org = parents[0];
-  } else {
-    throw new Error(
-      "JSXGraph: Can't create mirror element with parent types '" +
-        typeof parents[0] +
-        "' and '" +
-        typeof parents[1] +
-        "'." +
-        errStr
-    );
-  }
-
-  if (Type.isPoint(parents[1])) {
-    attr2 = Type.copyAttributes(
-      attributes,
-      board.options,
-      "mirrorelement",
-      "point"
-    );
-    // Create mirror point if supplied by coords array.
-    m = Type.providePoints(board, [parents[1]], attr2)[0];
-  } else {
-    throw new Error(
-      "JSXGraph: Can't create mirror element with parent types '" +
-        typeof parents[0] +
-        "' and '" +
-        typeof parents[1] +
-        "'." +
-        errStr
-    );
-  }
-
-  t = Transform.createTransform(board, [Math.PI, m], { type: "rotate" });
-  if (Type.isPoint(org)) {
-    r = Point.createPoint(board, [org, t], attr);
-
-    // Arcs and sectors are treated as curves
-  } else if (org.elementClass === Const.OBJECT_CLASS_CURVE) {
-    r = Curve.createCurve(board, [org, t], attr);
-  } else if (org.elementClass === Const.OBJECT_CLASS_LINE) {
-    r = Line.createLine(board, [org, t], attr);
-  } else if (org.type === Const.OBJECT_TYPE_POLYGON) {
-    r = Polygon.createPolygon(board, [org, t], attr);
-  } else if (org.elementClass === Const.OBJECT_CLASS_CIRCLE) {
-    if (attr.type.toLowerCase() === "euclidean") {
-      // Create a circle element from a circle and a Euclidean transformation
-      attr2 = Type.copyAttributes(
-        attributes,
-        board.options,
-        "mirrorelement",
-        "center"
-      );
-      r_c = Point.createPoint(board, [org.center, t], attr2);
-      r_c
-        .prepareUpdate()
-        .update()
-        .updateVisibility(Type.evaluate(r_c.visProp.visible))
-        .updateRenderer();
-      r = Circle.createCircle(
-        board,
-        [
-          r_c,
-          function () {
-            return org.Radius();
-          },
-        ],
-        attr
-      );
-    } else {
-      // Create a conic element from a circle and a projective transformation
-      r = Circle.createCircle(board, [org, t], attr);
+    for (i = 0; i < parents.length; ++i) {
+        parents[i] = board.select(parents[i]);
     }
-  } else {
-    throw new Error(
-      "JSXGraph: Can't create mirror element with parent types '" +
-        typeof parents[0] +
-        "' and '" +
-        typeof parents[1] +
-        "'." +
-        errStr
-    );
-  }
 
-  if (Type.exists(org._is_new)) {
-    r.addChild(org);
-    delete org._is_new;
-  } else {
-    // org.addChild(r);
-  }
-  m.addChild(r);
+    attr = Type.copyAttributes(attributes, board.options, "mirrorelement");
+    if (Type.isPoint(parents[0])) {
+        // Create point to be mirrored if supplied by coords array.
+        org = Type.providePoints(board, [parents[0]], attr)[0];
+    } else if (
+        parents[0].elementClass === Const.OBJECT_CLASS_CURVE ||
+        parents[0].elementClass === Const.OBJECT_CLASS_LINE ||
+        parents[0].type === Const.OBJECT_TYPE_POLYGON ||
+        parents[0].elementClass === Const.OBJECT_CLASS_CIRCLE
+    ) {
+        org = parents[0];
+    } else {
+        throw new Error(
+            "JSXGraph: Can't create mirror element with parent types '" +
+                typeof parents[0] +
+                "' and '" +
+                typeof parents[1] +
+                "'." +
+                errStr
+        );
+    }
 
-  r.elType = "mirrorelement";
-  r.addParents(m);
-  r.prepareUpdate().update();
+    if (Type.isPoint(parents[1])) {
+        attr2 = Type.copyAttributes(attributes, board.options, "mirrorelement", "point");
+        // Create mirror point if supplied by coords array.
+        m = Type.providePoints(board, [parents[1]], attr2)[0];
+    } else {
+        throw new Error(
+            "JSXGraph: Can't create mirror element with parent types '" +
+                typeof parents[0] +
+                "' and '" +
+                typeof parents[1] +
+                "'." +
+                errStr
+        );
+    }
 
-  return r;
+    t = Transform.createTransform(board, [Math.PI, m], { type: "rotate" });
+    if (Type.isPoint(org)) {
+        r = Point.createPoint(board, [org, t], attr);
+
+        // Arcs and sectors are treated as curves
+    } else if (org.elementClass === Const.OBJECT_CLASS_CURVE) {
+        r = Curve.createCurve(board, [org, t], attr);
+    } else if (org.elementClass === Const.OBJECT_CLASS_LINE) {
+        r = Line.createLine(board, [org, t], attr);
+    } else if (org.type === Const.OBJECT_TYPE_POLYGON) {
+        r = Polygon.createPolygon(board, [org, t], attr);
+    } else if (org.elementClass === Const.OBJECT_CLASS_CIRCLE) {
+        if (attr.type.toLowerCase() === "euclidean") {
+            // Create a circle element from a circle and a Euclidean transformation
+            attr2 = Type.copyAttributes(attributes, board.options, "mirrorelement", "center");
+            r_c = Point.createPoint(board, [org.center, t], attr2);
+            r_c.prepareUpdate()
+                .update()
+                .updateVisibility(Type.evaluate(r_c.visProp.visible))
+                .updateRenderer();
+            r = Circle.createCircle(
+                board,
+                [
+                    r_c,
+                    function () {
+                        return org.Radius();
+                    },
+                ],
+                attr
+            );
+        } else {
+            // Create a conic element from a circle and a projective transformation
+            r = Circle.createCircle(board, [org, t], attr);
+        }
+    } else {
+        throw new Error(
+            "JSXGraph: Can't create mirror element with parent types '" +
+                typeof parents[0] +
+                "' and '" +
+                typeof parents[1] +
+                "'." +
+                errStr
+        );
+    }
+
+    if (Type.exists(org._is_new)) {
+        r.addChild(org);
+        delete org._is_new;
+    } else {
+        // org.addChild(r);
+    }
+    m.addChild(r);
+
+    r.elType = "mirrorelement";
+    r.addParents(m);
+    r.prepareUpdate().update();
+
+    return r;
 };
 
 /**
@@ -3064,9 +3001,9 @@ JXG.createMirrorElement = function (board, parents, attributes) {
  * </script><pre>
  */
 JXG.createMirrorPoint = function (board, parents, attributes) {
-  var el = JXG.createMirrorElement(board, parents, attributes);
-  el.elType = "mirrorpoint";
-  return el;
+    var el = JXG.createMirrorElement(board, parents, attributes);
+    el.elType = "mirrorpoint";
+    return el;
 };
 
 /**
@@ -3093,384 +3030,363 @@ JXG.createMirrorPoint = function (board, parents, attributes) {
  * </script><pre>
  */
 JXG.createIntegral = function (board, parents, attributes) {
-  var interval,
-    curve,
-    attr,
-    start,
-    end,
-    startx,
-    starty,
-    endx,
-    endy,
-    pa_on_curve,
-    pa_on_axis,
-    pb_on_curve,
-    pb_on_axis,
-    t = null,
-    p;
+    var interval,
+        curve,
+        attr,
+        start,
+        end,
+        startx,
+        starty,
+        endx,
+        endy,
+        pa_on_curve,
+        pa_on_axis,
+        pb_on_curve,
+        pb_on_axis,
+        t = null,
+        p;
 
-  if (
-    Type.isArray(parents[0]) &&
-    parents[1].elementClass === Const.OBJECT_CLASS_CURVE
-  ) {
-    interval = parents[0];
-    curve = parents[1];
-  } else if (
-    Type.isArray(parents[1]) &&
-    parents[0].elementClass === Const.OBJECT_CLASS_CURVE
-  ) {
-    interval = parents[1];
-    curve = parents[0];
-  } else {
-    throw new Error(
-      "JSXGraph: Can't create integral with parent types '" +
-        typeof parents[0] +
-        "' and '" +
-        typeof parents[1] +
-        "'." +
-        "\nPossible parent types: [[number|function,number|function],curve]"
-    );
-  }
-
-  attr = Type.copyAttributes(attributes, board.options, "integral");
-  attr.withLabel = false; // There is a custom 'label' below.
-  p = board.create("curve", [[0], [0]], attr);
-
-  // Correct the interval if necessary - NOT ANYMORE, GGB's fault
-  start = interval[0];
-  end = interval[1];
-
-  if (Type.isFunction(start)) {
-    startx = start;
-    starty = function () {
-      return curve.Y(startx());
-    };
-    start = startx();
-  } else {
-    startx = start;
-    starty = curve.Y(start);
-  }
-
-  if (Type.isFunction(end)) {
-    endx = end;
-    endy = function () {
-      return curve.Y(endx());
-    };
-    end = endx();
-  } else {
-    endx = end;
-    endy = curve.Y(end);
-  }
-
-  attr = Type.copyAttributes(
-    attributes,
-    board.options,
-    "integral",
-    "curveLeft"
-  );
-  pa_on_curve = board.create("glider", [startx, starty, curve], attr);
-  if (Type.isFunction(startx)) {
-    pa_on_curve.hideElement();
-  }
-
-  attr = Type.copyAttributes(attributes, board.options, "integral", "baseLeft");
-  pa_on_axis = board.create(
-    "point",
-    [
-      function () {
-        if (Type.evaluate(p.visProp.axis) === "y") {
-          return 0;
-        }
-
-        return pa_on_curve.X();
-      },
-      function () {
-        if (Type.evaluate(p.visProp.axis) === "y") {
-          return pa_on_curve.Y();
-        }
-
-        return 0;
-      },
-    ],
-    attr
-  );
-
-  attr = Type.copyAttributes(
-    attributes,
-    board.options,
-    "integral",
-    "curveRight"
-  );
-  pb_on_curve = board.create("glider", [endx, endy, curve], attr);
-  if (Type.isFunction(endx)) {
-    pb_on_curve.hideElement();
-  }
-
-  attr = Type.copyAttributes(
-    attributes,
-    board.options,
-    "integral",
-    "baseRight"
-  );
-  pb_on_axis = board.create(
-    "point",
-    [
-      function () {
-        if (Type.evaluate(p.visProp.axis) === "y") {
-          return 0;
-        }
-        return pb_on_curve.X();
-      },
-      function () {
-        if (Type.evaluate(p.visProp.axis) === "y") {
-          return pb_on_curve.Y();
-        }
-
-        return 0;
-      },
-    ],
-    attr
-  );
-
-  attr = Type.copyAttributes(attributes, board.options, "integral");
-  if (attr.withlabel !== false && attr.axis !== "y") {
-    attr = Type.copyAttributes(attributes, board.options, "integral", "label");
-    attr = Type.copyAttributes(attr, board.options, "label");
-
-    t = board.create(
-      "text",
-      [
-        function () {
-          var off = new Coords(
-              Const.COORDS_BY_SCREEN,
-              [
-                Type.evaluate(this.visProp.offset[0]) +
-                  this.board.origin.scrCoords[1],
-                0,
-              ],
-              this.board,
-              false
-            ),
-            bb = this.board.getBoundingBox(),
-            dx = (bb[2] - bb[0]) * 0.1,
-            x = pb_on_curve.X();
-
-          if (x < bb[0]) {
-            x = bb[0] + dx;
-          } else if (x > bb[2]) {
-            x = bb[2] - dx;
-          }
-
-          return x + off.usrCoords[1];
-        },
-        function () {
-          var off = new Coords(
-              Const.COORDS_BY_SCREEN,
-              [
-                0,
-                Type.evaluate(this.visProp.offset[1]) +
-                  this.board.origin.scrCoords[2],
-              ],
-              this.board,
-              false
-            ),
-            bb = this.board.getBoundingBox(),
-            dy = (bb[1] - bb[3]) * 0.1,
-            y = pb_on_curve.Y();
-
-          if (y > bb[1]) {
-            y = bb[1] - dy;
-          } else if (y < bb[3]) {
-            y = bb[3] + dy;
-          }
-
-          return y + off.usrCoords[2];
-        },
-        function () {
-          var Int = Numerics.NewtonCotes(
-            [pa_on_axis.X(), pb_on_axis.X()],
-            curve.Y
-          );
-          return "&int; = " + Type.toFixed(Int, 4);
-        },
-      ],
-      attr
-    );
-
-    t.dump = false;
-
-    pa_on_curve.addChild(t);
-    pb_on_curve.addChild(t);
-  }
-
-  // dump stuff
-  pa_on_curve.dump = false;
-  pa_on_axis.dump = false;
-
-  pb_on_curve.dump = false;
-  pb_on_axis.dump = false;
-
-  p.elType = "integral";
-  p.setParents([curve.id, interval]);
-  p.subs = {
-    curveLeft: pa_on_curve,
-    baseLeft: pa_on_axis,
-    curveRight: pb_on_curve,
-    baseRight: pb_on_axis,
-  };
-  p.inherits.push(pa_on_curve, pa_on_axis, pb_on_curve, pb_on_axis);
-
-  if (attr.withLabel) {
-    p.subs.label = t;
-    p.inherits.push(t);
-  }
-
-  /**
-   * Returns the current value of the integral.
-   * @memberOf Integral
-   * @name Value
-   * @function
-   * @returns {Number}
-   */
-  p.Value = function () {
-    return Numerics.I([pa_on_axis.X(), pb_on_axis.X()], curve.Y);
-  };
-
-  /**
-   * documented in JXG.Curve
-   * @ignore
-   */
-  p.updateDataArray = function () {
-    var x, y, i, left, right, lowx, upx, lowy, upy;
-
-    if (Type.evaluate(this.visProp.axis) === "y") {
-      if (pa_on_curve.Y() < pb_on_curve.Y()) {
-        lowx = pa_on_curve.X();
-        lowy = pa_on_curve.Y();
-        upx = pb_on_curve.X();
-        upy = pb_on_curve.Y();
-      } else {
-        lowx = pb_on_curve.X();
-        lowy = pb_on_curve.Y();
-        upx = pa_on_curve.X();
-        upy = pa_on_curve.Y();
-      }
-      left = Math.min(lowx, upx);
-      right = Math.max(lowx, upx);
-
-      x = [0, lowx];
-      y = [lowy, lowy];
-
-      for (i = 0; i < curve.numberPoints; i++) {
-        if (
-          lowy <= curve.points[i].usrCoords[2] &&
-          left <= curve.points[i].usrCoords[1] &&
-          curve.points[i].usrCoords[2] <= upy &&
-          curve.points[i].usrCoords[1] <= right
-        ) {
-          x.push(curve.points[i].usrCoords[1]);
-          y.push(curve.points[i].usrCoords[2]);
-        }
-      }
-      x.push(upx);
-      y.push(upy);
-      x.push(0);
-      y.push(upy);
-
-      // close the curve
-      x.push(0);
-      y.push(lowy);
+    if (Type.isArray(parents[0]) && parents[1].elementClass === Const.OBJECT_CLASS_CURVE) {
+        interval = parents[0];
+        curve = parents[1];
+    } else if (
+        Type.isArray(parents[1]) &&
+        parents[0].elementClass === Const.OBJECT_CLASS_CURVE
+    ) {
+        interval = parents[1];
+        curve = parents[0];
     } else {
-      if (pa_on_axis.X() < pb_on_axis.X()) {
-        left = pa_on_axis.X();
-        right = pb_on_axis.X();
-      } else {
-        left = pb_on_axis.X();
-        right = pa_on_axis.X();
-      }
-
-      x = [left, left];
-      y = [0, curve.Y(left)];
-
-      for (i = 0; i < curve.numberPoints; i++) {
-        if (
-          left <= curve.points[i].usrCoords[1] &&
-          curve.points[i].usrCoords[1] <= right
-        ) {
-          x.push(curve.points[i].usrCoords[1]);
-          y.push(curve.points[i].usrCoords[2]);
-        }
-      }
-      x.push(right);
-      y.push(curve.Y(right));
-      x.push(right);
-      y.push(0);
-
-      // close the curve
-      x.push(left);
-      y.push(0);
+        throw new Error(
+            "JSXGraph: Can't create integral with parent types '" +
+                typeof parents[0] +
+                "' and '" +
+                typeof parents[1] +
+                "'." +
+                "\nPossible parent types: [[number|function,number|function],curve]"
+        );
     }
 
-    this.dataX = x;
-    this.dataY = y;
-  };
+    attr = Type.copyAttributes(attributes, board.options, "integral");
+    attr.withLabel = false; // There is a custom 'label' below.
+    p = board.create("curve", [[0], [0]], attr);
 
-  pa_on_curve.addChild(p);
-  pb_on_curve.addChild(p);
-  pa_on_axis.addChild(p);
-  pb_on_axis.addChild(p);
+    // Correct the interval if necessary - NOT ANYMORE, GGB's fault
+    start = interval[0];
+    end = interval[1];
 
-  /**
-   * The point on the axis initially corresponding to the lower value of the interval.
-   *
-   * @name baseLeft
-   * @memberOf Integral
-   * @type JXG.Point
-   */
-  p.baseLeft = pa_on_axis;
+    if (Type.isFunction(start)) {
+        startx = start;
+        starty = function () {
+            return curve.Y(startx());
+        };
+        start = startx();
+    } else {
+        startx = start;
+        starty = curve.Y(start);
+    }
 
-  /**
-   * The point on the axis initially corresponding to the higher value of the interval.
-   *
-   * @name baseRight
-   * @memberOf Integral
-   * @type JXG.Point
-   */
-  p.baseRight = pb_on_axis;
+    if (Type.isFunction(end)) {
+        endx = end;
+        endy = function () {
+            return curve.Y(endx());
+        };
+        end = endx();
+    } else {
+        endx = end;
+        endy = curve.Y(end);
+    }
 
-  /**
-   * The glider on the curve corresponding to the lower value of the interval.
-   *
-   * @name curveLeft
-   * @memberOf Integral
-   * @type Glider
-   */
-  p.curveLeft = pa_on_curve;
+    attr = Type.copyAttributes(attributes, board.options, "integral", "curveLeft");
+    pa_on_curve = board.create("glider", [startx, starty, curve], attr);
+    if (Type.isFunction(startx)) {
+        pa_on_curve.hideElement();
+    }
 
-  /**
-   * The glider on the axis corresponding to the higher value of the interval.
-   *
-   * @name curveRight
-   * @memberOf Integral
-   * @type Glider
-   */
-  p.curveRight = pb_on_curve;
+    attr = Type.copyAttributes(attributes, board.options, "integral", "baseLeft");
+    pa_on_axis = board.create(
+        "point",
+        [
+            function () {
+                if (Type.evaluate(p.visProp.axis) === "y") {
+                    return 0;
+                }
 
-  p.methodMap = JXG.deepCopy(p.methodMap, {
-    curveLeft: "curveLeft",
-    baseLeft: "baseLeft",
-    curveRight: "curveRight",
-    baseRight: "baseRight",
-    Value: "Value",
-  });
+                return pa_on_curve.X();
+            },
+            function () {
+                if (Type.evaluate(p.visProp.axis) === "y") {
+                    return pa_on_curve.Y();
+                }
 
-  /**
-   * documented in GeometryElement
-   * @ignore
-   */
-  p.label = t;
+                return 0;
+            },
+        ],
+        attr
+    );
 
-  return p;
+    attr = Type.copyAttributes(attributes, board.options, "integral", "curveRight");
+    pb_on_curve = board.create("glider", [endx, endy, curve], attr);
+    if (Type.isFunction(endx)) {
+        pb_on_curve.hideElement();
+    }
+
+    attr = Type.copyAttributes(attributes, board.options, "integral", "baseRight");
+    pb_on_axis = board.create(
+        "point",
+        [
+            function () {
+                if (Type.evaluate(p.visProp.axis) === "y") {
+                    return 0;
+                }
+                return pb_on_curve.X();
+            },
+            function () {
+                if (Type.evaluate(p.visProp.axis) === "y") {
+                    return pb_on_curve.Y();
+                }
+
+                return 0;
+            },
+        ],
+        attr
+    );
+
+    attr = Type.copyAttributes(attributes, board.options, "integral");
+    if (attr.withlabel !== false && attr.axis !== "y") {
+        attr = Type.copyAttributes(attributes, board.options, "integral", "label");
+        attr = Type.copyAttributes(attr, board.options, "label");
+
+        t = board.create(
+            "text",
+            [
+                function () {
+                    var off = new Coords(
+                            Const.COORDS_BY_SCREEN,
+                            [
+                                Type.evaluate(this.visProp.offset[0]) +
+                                    this.board.origin.scrCoords[1],
+                                0,
+                            ],
+                            this.board,
+                            false
+                        ),
+                        bb = this.board.getBoundingBox(),
+                        dx = (bb[2] - bb[0]) * 0.1,
+                        x = pb_on_curve.X();
+
+                    if (x < bb[0]) {
+                        x = bb[0] + dx;
+                    } else if (x > bb[2]) {
+                        x = bb[2] - dx;
+                    }
+
+                    return x + off.usrCoords[1];
+                },
+                function () {
+                    var off = new Coords(
+                            Const.COORDS_BY_SCREEN,
+                            [
+                                0,
+                                Type.evaluate(this.visProp.offset[1]) +
+                                    this.board.origin.scrCoords[2],
+                            ],
+                            this.board,
+                            false
+                        ),
+                        bb = this.board.getBoundingBox(),
+                        dy = (bb[1] - bb[3]) * 0.1,
+                        y = pb_on_curve.Y();
+
+                    if (y > bb[1]) {
+                        y = bb[1] - dy;
+                    } else if (y < bb[3]) {
+                        y = bb[3] + dy;
+                    }
+
+                    return y + off.usrCoords[2];
+                },
+                function () {
+                    var Int = Numerics.NewtonCotes([pa_on_axis.X(), pb_on_axis.X()], curve.Y);
+                    return "&int; = " + Type.toFixed(Int, 4);
+                },
+            ],
+            attr
+        );
+
+        t.dump = false;
+
+        pa_on_curve.addChild(t);
+        pb_on_curve.addChild(t);
+    }
+
+    // dump stuff
+    pa_on_curve.dump = false;
+    pa_on_axis.dump = false;
+
+    pb_on_curve.dump = false;
+    pb_on_axis.dump = false;
+
+    p.elType = "integral";
+    p.setParents([curve.id, interval]);
+    p.subs = {
+        curveLeft: pa_on_curve,
+        baseLeft: pa_on_axis,
+        curveRight: pb_on_curve,
+        baseRight: pb_on_axis,
+    };
+    p.inherits.push(pa_on_curve, pa_on_axis, pb_on_curve, pb_on_axis);
+
+    if (attr.withLabel) {
+        p.subs.label = t;
+        p.inherits.push(t);
+    }
+
+    /**
+     * Returns the current value of the integral.
+     * @memberOf Integral
+     * @name Value
+     * @function
+     * @returns {Number}
+     */
+    p.Value = function () {
+        return Numerics.I([pa_on_axis.X(), pb_on_axis.X()], curve.Y);
+    };
+
+    /**
+     * documented in JXG.Curve
+     * @ignore
+     */
+    p.updateDataArray = function () {
+        var x, y, i, left, right, lowx, upx, lowy, upy;
+
+        if (Type.evaluate(this.visProp.axis) === "y") {
+            if (pa_on_curve.Y() < pb_on_curve.Y()) {
+                lowx = pa_on_curve.X();
+                lowy = pa_on_curve.Y();
+                upx = pb_on_curve.X();
+                upy = pb_on_curve.Y();
+            } else {
+                lowx = pb_on_curve.X();
+                lowy = pb_on_curve.Y();
+                upx = pa_on_curve.X();
+                upy = pa_on_curve.Y();
+            }
+            left = Math.min(lowx, upx);
+            right = Math.max(lowx, upx);
+
+            x = [0, lowx];
+            y = [lowy, lowy];
+
+            for (i = 0; i < curve.numberPoints; i++) {
+                if (
+                    lowy <= curve.points[i].usrCoords[2] &&
+                    left <= curve.points[i].usrCoords[1] &&
+                    curve.points[i].usrCoords[2] <= upy &&
+                    curve.points[i].usrCoords[1] <= right
+                ) {
+                    x.push(curve.points[i].usrCoords[1]);
+                    y.push(curve.points[i].usrCoords[2]);
+                }
+            }
+            x.push(upx);
+            y.push(upy);
+            x.push(0);
+            y.push(upy);
+
+            // close the curve
+            x.push(0);
+            y.push(lowy);
+        } else {
+            if (pa_on_axis.X() < pb_on_axis.X()) {
+                left = pa_on_axis.X();
+                right = pb_on_axis.X();
+            } else {
+                left = pb_on_axis.X();
+                right = pa_on_axis.X();
+            }
+
+            x = [left, left];
+            y = [0, curve.Y(left)];
+
+            for (i = 0; i < curve.numberPoints; i++) {
+                if (
+                    left <= curve.points[i].usrCoords[1] &&
+                    curve.points[i].usrCoords[1] <= right
+                ) {
+                    x.push(curve.points[i].usrCoords[1]);
+                    y.push(curve.points[i].usrCoords[2]);
+                }
+            }
+            x.push(right);
+            y.push(curve.Y(right));
+            x.push(right);
+            y.push(0);
+
+            // close the curve
+            x.push(left);
+            y.push(0);
+        }
+
+        this.dataX = x;
+        this.dataY = y;
+    };
+
+    pa_on_curve.addChild(p);
+    pb_on_curve.addChild(p);
+    pa_on_axis.addChild(p);
+    pb_on_axis.addChild(p);
+
+    /**
+     * The point on the axis initially corresponding to the lower value of the interval.
+     *
+     * @name baseLeft
+     * @memberOf Integral
+     * @type JXG.Point
+     */
+    p.baseLeft = pa_on_axis;
+
+    /**
+     * The point on the axis initially corresponding to the higher value of the interval.
+     *
+     * @name baseRight
+     * @memberOf Integral
+     * @type JXG.Point
+     */
+    p.baseRight = pb_on_axis;
+
+    /**
+     * The glider on the curve corresponding to the lower value of the interval.
+     *
+     * @name curveLeft
+     * @memberOf Integral
+     * @type Glider
+     */
+    p.curveLeft = pa_on_curve;
+
+    /**
+     * The glider on the axis corresponding to the higher value of the interval.
+     *
+     * @name curveRight
+     * @memberOf Integral
+     * @type Glider
+     */
+    p.curveRight = pb_on_curve;
+
+    p.methodMap = JXG.deepCopy(p.methodMap, {
+        curveLeft: "curveLeft",
+        baseLeft: "baseLeft",
+        curveRight: "curveRight",
+        baseRight: "baseRight",
+        Value: "Value",
+    });
+
+    /**
+     * documented in GeometryElement
+     * @ignore
+     */
+    p.label = t;
+
+    return p;
 };
 
 /**
@@ -3497,141 +3413,141 @@ JXG.createIntegral = function (board, parents, attributes) {
  * </script><pre>
  */
 JXG.createGrid = function (board, parents, attributes) {
-  var c, attr;
+    var c, attr;
 
-  attr = Type.copyAttributes(attributes, board.options, "grid");
-  c = board.create("curve", [[null], [null]], attr);
+    attr = Type.copyAttributes(attributes, board.options, "grid");
+    c = board.create("curve", [[null], [null]], attr);
 
-  c.elType = "grid";
-  c.type = Const.OBJECT_TYPE_GRID;
+    c.elType = "grid";
+    c.type = Const.OBJECT_TYPE_GRID;
 
-  /**
-   * @ignore
-   */
-  c.updateDataArray = function () {
-    var start,
-      end,
-      i,
-      topLeft,
-      bottomRight,
-      gridX = Type.evaluate(this.visProp.gridx),
-      gridY = Type.evaluate(this.visProp.gridy);
+    /**
+     * @ignore
+     */
+    c.updateDataArray = function () {
+        var start,
+            end,
+            i,
+            topLeft,
+            bottomRight,
+            gridX = Type.evaluate(this.visProp.gridx),
+            gridY = Type.evaluate(this.visProp.gridy);
 
-    if (Type.isArray(this.visProp.topleft)) {
-      topLeft = new Coords(
-        Type.evaluate(this.visProp.tltype) || Const.COORDS_BY_USER,
-        this.visProp.topleft,
-        board
-      );
-    } else {
-      topLeft = new Coords(Const.COORDS_BY_SCREEN, [0, 0], board);
-    }
+        if (Type.isArray(this.visProp.topleft)) {
+            topLeft = new Coords(
+                Type.evaluate(this.visProp.tltype) || Const.COORDS_BY_USER,
+                this.visProp.topleft,
+                board
+            );
+        } else {
+            topLeft = new Coords(Const.COORDS_BY_SCREEN, [0, 0], board);
+        }
 
-    if (Type.isArray(this.visProp.bottomright)) {
-      bottomRight = new Coords(
-        Type.evaluate(this.visProp.brtype) || Const.COORDS_BY_USER,
-        this.visProp.bottomright,
-        board
-      );
-    } else {
-      bottomRight = new Coords(
-        Const.COORDS_BY_SCREEN,
-        [board.canvasWidth, board.canvasHeight],
-        board
-      );
-    }
+        if (Type.isArray(this.visProp.bottomright)) {
+            bottomRight = new Coords(
+                Type.evaluate(this.visProp.brtype) || Const.COORDS_BY_USER,
+                this.visProp.bottomright,
+                board
+            );
+        } else {
+            bottomRight = new Coords(
+                Const.COORDS_BY_SCREEN,
+                [board.canvasWidth, board.canvasHeight],
+                board
+            );
+        }
 
-    //
-    //      |         |         |
-    //  ----+---------+---------+-----
-    //      |        /|         |
-    //      |    gridY|     <---+------   Grid Cell
-    //      |        \|         |
-    //  ----+---------+---------+-----
-    //      |         |\ gridX /|
-    //      |         |         |
-    //
-    // uc: usercoordinates
-    //
-    // currently one grid cell is 1/JXG.Options.grid.gridX uc wide and 1/JXG.Options.grid.gridY uc high.
-    // this may work perfectly with GeonextReader (#readGeonext, initialization of gridX and gridY) but it
-    // is absolutely not user friendly when it comes to use it as an API interface.
-    // i changed this to use gridX and gridY as the actual width and height of the grid cell. for this i
-    // had to refactor these methods:
-    //
-    //  DONE JXG.Board.calculateSnapSizes (init p1, p2)
-    //  DONE JXG.GeonextReader.readGeonext (init gridX, gridY)
-    //
+        //
+        //      |         |         |
+        //  ----+---------+---------+-----
+        //      |        /|         |
+        //      |    gridY|     <---+------   Grid Cell
+        //      |        \|         |
+        //  ----+---------+---------+-----
+        //      |         |\ gridX /|
+        //      |         |         |
+        //
+        // uc: usercoordinates
+        //
+        // currently one grid cell is 1/JXG.Options.grid.gridX uc wide and 1/JXG.Options.grid.gridY uc high.
+        // this may work perfectly with GeonextReader (#readGeonext, initialization of gridX and gridY) but it
+        // is absolutely not user friendly when it comes to use it as an API interface.
+        // i changed this to use gridX and gridY as the actual width and height of the grid cell. for this i
+        // had to refactor these methods:
+        //
+        //  DONE JXG.Board.calculateSnapSizes (init p1, p2)
+        //  DONE JXG.GeonextReader.readGeonext (init gridX, gridY)
+        //
 
-    board.options.grid.hasGrid = true;
+        board.options.grid.hasGrid = true;
 
-    // fix_grid: adding integer function to calculation of start and end values, and adding to calculation of start and end values below
-    // To allow this:
-    // (axes on the outside, min value of grid = 0.25)
-    //
-    //      |    |         |          |
-    // 1.5 -+----+---------+----------+-----
-    //      |    |         |          |
-    //      |    |         |          |
-    //      |    |         |          |
-    //   1 -+----+---------+----------+-----
-    //      |    |         |          |
-    //      |    |         |          |
-    //      |    |         |          |
-    // 0.5 -+----+---------+----------+-----
-    //      |    |         |          |
-    //      +----+---------+----------+-----
-    //           |         |          |
-    //          0.5        1         1.5
-    //
-    // fix_grid: these lines disabled:
-    // topLeft.setCoordinates(Const.COORDS_BY_USER, [Math.ceil(topLeft.usrCoords[1] / gridX) * gridX, Math.floor(topLeft.usrCoords[2] / gridY) * gridY]);
-    // bottomRight.setCoordinates(Const.COORDS_BY_USER, [Math.floor(bottomRight.usrCoords[1] / gridX) * gridX, Math.ceil(bottomRight.usrCoords[2] / gridY) * gridY]);
+        // fix_grid: adding integer function to calculation of start and end values, and adding to calculation of start and end values below
+        // To allow this:
+        // (axes on the outside, min value of grid = 0.25)
+        //
+        //      |    |         |          |
+        // 1.5 -+----+---------+----------+-----
+        //      |    |         |          |
+        //      |    |         |          |
+        //      |    |         |          |
+        //   1 -+----+---------+----------+-----
+        //      |    |         |          |
+        //      |    |         |          |
+        //      |    |         |          |
+        // 0.5 -+----+---------+----------+-----
+        //      |    |         |          |
+        //      +----+---------+----------+-----
+        //           |         |          |
+        //          0.5        1         1.5
+        //
+        // fix_grid: these lines disabled:
+        // topLeft.setCoordinates(Const.COORDS_BY_USER, [Math.ceil(topLeft.usrCoords[1] / gridX) * gridX, Math.floor(topLeft.usrCoords[2] / gridY) * gridY]);
+        // bottomRight.setCoordinates(Const.COORDS_BY_USER, [Math.floor(bottomRight.usrCoords[1] / gridX) * gridX, Math.ceil(bottomRight.usrCoords[2] / gridY) * gridY]);
 
-    c.dataX = [];
-    c.dataY = [];
+        c.dataX = [];
+        c.dataY = [];
 
-    // Sometimes the bounding box is used to invert the axis. We have to take this into account here.
-    // fix_grid: adding integer function to calculation of start and end values
-    start = Math.floor(topLeft.usrCoords[2] / gridY) * gridY;
-    end = Math.ceil(bottomRight.usrCoords[2] / gridY) * gridY;
+        // Sometimes the bounding box is used to invert the axis. We have to take this into account here.
+        // fix_grid: adding integer function to calculation of start and end values
+        start = Math.floor(topLeft.usrCoords[2] / gridY) * gridY;
+        end = Math.ceil(bottomRight.usrCoords[2] / gridY) * gridY;
 
-    if (topLeft.usrCoords[2] < bottomRight.usrCoords[2]) {
-      start = Math.ceil(bottomRight.usrCoords[2] / gridY) * gridY; // bottomRight.usrCoords[2];
-      end = Math.floor(topLeft.usrCoords[2] / gridY) * gridY;
-    }
+        if (topLeft.usrCoords[2] < bottomRight.usrCoords[2]) {
+            start = Math.ceil(bottomRight.usrCoords[2] / gridY) * gridY; // bottomRight.usrCoords[2];
+            end = Math.floor(topLeft.usrCoords[2] / gridY) * gridY;
+        }
 
-    // start with the horizontal grid:
-    for (i = start; i > end - gridY; i -= gridY) {
-      c.dataX.push(topLeft.usrCoords[1], bottomRight.usrCoords[1], NaN);
-      c.dataY.push(i, i, NaN);
-    }
+        // start with the horizontal grid:
+        for (i = start; i > end - gridY; i -= gridY) {
+            c.dataX.push(topLeft.usrCoords[1], bottomRight.usrCoords[1], NaN);
+            c.dataY.push(i, i, NaN);
+        }
 
-    // fix_grid: adding integer function to calculation of start and end values
-    start = Math.ceil(topLeft.usrCoords[1] / gridX) * gridX;
-    end = Math.floor(bottomRight.usrCoords[1] / gridX) * gridX;
+        // fix_grid: adding integer function to calculation of start and end values
+        start = Math.ceil(topLeft.usrCoords[1] / gridX) * gridX;
+        end = Math.floor(bottomRight.usrCoords[1] / gridX) * gridX;
 
-    if (topLeft.usrCoords[1] > bottomRight.usrCoords[1]) {
-      start = Math.floor(bottomRight.usrCoords[1] / gridX) * gridX;
-      end = Math.ceil(topLeft.usrCoords[1] / gridX) * gridX;
-    }
+        if (topLeft.usrCoords[1] > bottomRight.usrCoords[1]) {
+            start = Math.floor(bottomRight.usrCoords[1] / gridX) * gridX;
+            end = Math.ceil(topLeft.usrCoords[1] / gridX) * gridX;
+        }
 
-    // build vertical grid
-    for (i = start; i < end + gridX; i += gridX) {
-      c.dataX.push(i, i, NaN);
-      c.dataY.push(topLeft.usrCoords[2], bottomRight.usrCoords[2], NaN);
-    }
-  };
+        // build vertical grid
+        for (i = start; i < end + gridX; i += gridX) {
+            c.dataX.push(i, i, NaN);
+            c.dataY.push(topLeft.usrCoords[2], bottomRight.usrCoords[2], NaN);
+        }
+    };
 
-  // we don't care about highlighting so we turn it off completely to save a lot of
-  // time on every mouse move
-  c.hasPoint = function () {
-    return false;
-  };
+    // we don't care about highlighting so we turn it off completely to save a lot of
+    // time on every mouse move
+    c.hasPoint = function () {
+        return false;
+    };
 
-  board.grids.push(c);
+    board.grids.push(c);
 
-  return c;
+    return c;
 };
 
 /**
@@ -3711,210 +3627,197 @@ JXG.createGrid = function (board, parents, attributes) {
  *
  */
 JXG.createInequality = function (board, parents, attributes) {
-  var f, a, attr;
+    var f, a, attr;
 
-  attr = Type.copyAttributes(attributes, board.options, "inequality");
-  if (parents[0].elementClass === Const.OBJECT_CLASS_LINE) {
-    a = board.create("curve", [[], []], attr);
-    a.hasPoint = function () {
-      return false;
-    };
-    a.updateDataArray = function () {
-      var i1,
-        i2,
-        // This will be the height of the area. We mustn't rely upon the board height because if we pan the view
-        // such that the line is not visible anymore, the borders of the area will get visible in some cases.
-        h,
-        bb = board.getBoundingBox(),
-        factor = attr.inverse ? -1 : 1,
-        expansion = 1.5,
-        w = expansion * Math.max(bb[2] - bb[0], bb[1] - bb[3]),
-        // Fake a point (for Math.Geometry.perpendicular)
-        // contains centroid of the board
-        dp = {
-          coords: {
-            usrCoords: [1, (bb[0] + bb[2]) / 2, attr.inverse ? bb[1] : bb[3]],
-          },
-        },
-        slope1 = parents[0].stdform.slice(1),
-        slope2 = slope1;
+    attr = Type.copyAttributes(attributes, board.options, "inequality");
+    if (parents[0].elementClass === Const.OBJECT_CLASS_LINE) {
+        a = board.create("curve", [[], []], attr);
+        a.hasPoint = function () {
+            return false;
+        };
+        a.updateDataArray = function () {
+            var i1,
+                i2,
+                // This will be the height of the area. We mustn't rely upon the board height because if we pan the view
+                // such that the line is not visible anymore, the borders of the area will get visible in some cases.
+                h,
+                bb = board.getBoundingBox(),
+                factor = attr.inverse ? -1 : 1,
+                expansion = 1.5,
+                w = expansion * Math.max(bb[2] - bb[0], bb[1] - bb[3]),
+                // Fake a point (for Math.Geometry.perpendicular)
+                // contains centroid of the board
+                dp = {
+                    coords: {
+                        usrCoords: [1, (bb[0] + bb[2]) / 2, attr.inverse ? bb[1] : bb[3]],
+                    },
+                },
+                slope1 = parents[0].stdform.slice(1),
+                slope2 = slope1;
 
-      // This is wrong. Example:
-      // var line = board.create('line', [0, -1, -1]);
-      // var ineq = board.create('inequality', [line]);
-      //
-      // if (slope1[1] > 0) {
-      //     slope1 = Statistics.multiply(slope1, -1);
-      //     slope2 = slope1;
-      // }
+            // This is wrong. Example:
+            // var line = board.create('line', [0, -1, -1]);
+            // var ineq = board.create('inequality', [line]);
+            //
+            // if (slope1[1] > 0) {
+            //     slope1 = Statistics.multiply(slope1, -1);
+            //     slope2 = slope1;
+            // }
 
-      // Calculate the area height as
-      //  expansion times the distance of the line to the
-      // point in the middle of the top/bottom border.
-      h =
-        expansion *
-        Math.max(
-          Geometry.perpendicular(parents[0], dp, board)[0].distance(
-            Const.COORDS_BY_USER,
-            dp.coords
-          ),
-          w
-        );
-      h *= factor;
+            // Calculate the area height as
+            //  expansion times the distance of the line to the
+            // point in the middle of the top/bottom border.
+            h =
+                expansion *
+                Math.max(
+                    Geometry.perpendicular(parents[0], dp, board)[0].distance(
+                        Const.COORDS_BY_USER,
+                        dp.coords
+                    ),
+                    w
+                );
+            h *= factor;
 
-      // reuse dp
-      dp = {
-        coords: {
-          usrCoords: [1, (bb[0] + bb[2]) / 2, (bb[1] + bb[3]) / 2],
-        },
-      };
+            // reuse dp
+            dp = {
+                coords: {
+                    usrCoords: [1, (bb[0] + bb[2]) / 2, (bb[1] + bb[3]) / 2],
+                },
+            };
 
-      // If dp is on the line, Geometry.perpendicular will return a point not on the line.
-      // Since this somewhat odd behavior of Geometry.perpendicular is needed in GEONExT,
-      // it is circumvented here.
-      if (
-        Math.abs(
-          Mat.innerProduct(dp.coords.usrCoords, parents[0].stdform, 3)
-        ) >= Mat.eps
-      ) {
-        dp = Geometry.perpendicular(parents[0], dp, board)[0].usrCoords;
-      } else {
-        dp = dp.coords.usrCoords;
-      }
-      i1 = [1, dp[1] + slope1[1] * w, dp[2] - slope1[0] * w];
-      i2 = [1, dp[1] - slope2[1] * w, dp[2] + slope2[0] * w];
+            // If dp is on the line, Geometry.perpendicular will return a point not on the line.
+            // Since this somewhat odd behavior of Geometry.perpendicular is needed in GEONExT,
+            // it is circumvented here.
+            if (
+                Math.abs(Mat.innerProduct(dp.coords.usrCoords, parents[0].stdform, 3)) >=
+                Mat.eps
+            ) {
+                dp = Geometry.perpendicular(parents[0], dp, board)[0].usrCoords;
+            } else {
+                dp = dp.coords.usrCoords;
+            }
+            i1 = [1, dp[1] + slope1[1] * w, dp[2] - slope1[0] * w];
+            i2 = [1, dp[1] - slope2[1] * w, dp[2] + slope2[0] * w];
 
-      // One of the vectors based in i1 and orthogonal to the parent line has the direction d1 = (slope1, -1)
-      // We will go from i1 to to i1 + h*d1, from there to i2 + h*d2 (with d2 calculated equivalent to d1) and
-      // end up in i2.
-      this.dataX = [
-        i1[1],
-        i1[1] + slope1[0] * h,
-        i2[1] + slope2[0] * h,
-        i2[1],
-        i1[1],
-      ];
-      this.dataY = [
-        i1[2],
-        i1[2] + slope1[1] * h,
-        i2[2] + slope2[1] * h,
-        i2[2],
-        i1[2],
-      ];
-    };
-  } else if (
-    parents[0].elementClass === Const.OBJECT_CLASS_CURVE &&
-    parents[0].visProp.curvetype === "functiongraph"
-  ) {
-    a = board.create("curve", [[], []], attr);
-    a.updateDataArray = function () {
-      var bbox = this.board.getBoundingBox(),
-        points = [],
-        infty,
-        first,
-        last,
-        len,
-        i,
-        mi = parents[0].minX(),
-        ma = parents[0].maxX(),
-        curve_mi,
-        curve_ma,
-        firstx,
-        lastx,
-        enlarge = (bbox[1] - bbox[3]) * 0.3, // enlarge the bbox vertically by this amount
-        inverse = Type.evaluate(this.visProp.inverse);
+            // One of the vectors based in i1 and orthogonal to the parent line has the direction d1 = (slope1, -1)
+            // We will go from i1 to to i1 + h*d1, from there to i2 + h*d2 (with d2 calculated equivalent to d1) and
+            // end up in i2.
+            this.dataX = [i1[1], i1[1] + slope1[0] * h, i2[1] + slope2[0] * h, i2[1], i1[1]];
+            this.dataY = [i1[2], i1[2] + slope1[1] * h, i2[2] + slope2[1] * h, i2[2], i1[2]];
+        };
+    } else if (
+        parents[0].elementClass === Const.OBJECT_CLASS_CURVE &&
+        parents[0].visProp.curvetype === "functiongraph"
+    ) {
+        a = board.create("curve", [[], []], attr);
+        a.updateDataArray = function () {
+            var bbox = this.board.getBoundingBox(),
+                points = [],
+                infty,
+                first,
+                last,
+                len,
+                i,
+                mi = parents[0].minX(),
+                ma = parents[0].maxX(),
+                curve_mi,
+                curve_ma,
+                firstx,
+                lastx,
+                enlarge = (bbox[1] - bbox[3]) * 0.3, // enlarge the bbox vertically by this amount
+                inverse = Type.evaluate(this.visProp.inverse);
 
-      // inverse == true <=> Fill area with y >= f(x)
-      infty = inverse ? 1 : 3; // we will use either bbox[1] or bbox[3] below
+            // inverse == true <=> Fill area with y >= f(x)
+            infty = inverse ? 1 : 3; // we will use either bbox[1] or bbox[3] below
 
-      this.dataX = [];
-      this.dataY = [];
-      len = parents[0].points.length;
-      if (len === 0) {
-        return;
-      }
+            this.dataX = [];
+            this.dataY = [];
+            len = parents[0].points.length;
+            if (len === 0) {
+                return;
+            }
 
-      bbox[1] += enlarge;
-      bbox[3] -= enlarge;
+            bbox[1] += enlarge;
+            bbox[3] -= enlarge;
 
-      last = -1;
-      while (last < len - 1) {
-        // Find the first point with real coordinates on this curve segment
-        for (i = last + 1, first = len; i < len; i++) {
-          if (parents[0].points[i].isReal()) {
-            first = i;
-            break;
-          }
+            last = -1;
+            while (last < len - 1) {
+                // Find the first point with real coordinates on this curve segment
+                for (i = last + 1, first = len; i < len; i++) {
+                    if (parents[0].points[i].isReal()) {
+                        first = i;
+                        break;
+                    }
+                }
+                // No real points found -> exit
+                if (first >= len) {
+                    break;
+                }
+
+                // Find the last point with real coordinates on this curve segment
+                for (i = first, last = len - 1; i < len - 1; i++) {
+                    if (!parents[0].points[i + 1].isReal()) {
+                        last = i;
+                        break;
+                    }
+                }
+
+                firstx = parents[0].points[first].usrCoords[1];
+                lastx = parents[0].points[last].usrCoords[1];
+
+                // Restrict the plot interval if the function ends inside of the board
+                curve_mi = bbox[0] < mi ? mi : bbox[0];
+                curve_ma = bbox[2] > ma ? ma : bbox[2];
+
+                // Found NaNs
+                curve_mi = first === 0 ? curve_mi : Math.max(curve_mi, firstx);
+                curve_ma = last === len - 1 ? curve_ma : Math.min(curve_ma, lastx);
+
+                // First and last relevant x-coordinate of the curve
+                curve_mi = first === 0 ? mi : firstx;
+                curve_ma = last === len - 1 ? ma : lastx;
+
+                // Copy the curve points
+                points = [];
+
+                points.push([1, curve_mi, bbox[infty]]);
+                points.push([1, curve_mi, parents[0].points[first].usrCoords[2]]);
+                for (i = first; i <= last; i++) {
+                    points.push(parents[0].points[i].usrCoords);
+                }
+                points.push([1, curve_ma, parents[0].points[last].usrCoords[2]]);
+                points.push([1, curve_ma, bbox[infty]]);
+                points.push(points[0]);
+
+                for (i = 0; i < points.length; i++) {
+                    this.dataX.push(points[i][1]);
+                    this.dataY.push(points[i][2]);
+                }
+
+                if (last < len - 1) {
+                    this.dataX.push(NaN);
+                    this.dataY.push(NaN);
+                }
+            }
+        };
+
+        // Previous code:
+        a.hasPoint = function () {
+            return false;
+        };
+    } else {
+        // Not yet practical?
+        f = Type.createFunction(parents[0]);
+        if (!Type.exists(f)) {
+            throw new Error(
+                "JSXGraph: Can't create area with the given parents." +
+                    "\nPossible parent types: [line], [function]"
+            );
         }
-        // No real points found -> exit
-        if (first >= len) {
-          break;
-        }
-
-        // Find the last point with real coordinates on this curve segment
-        for (i = first, last = len - 1; i < len - 1; i++) {
-          if (!parents[0].points[i + 1].isReal()) {
-            last = i;
-            break;
-          }
-        }
-
-        firstx = parents[0].points[first].usrCoords[1];
-        lastx = parents[0].points[last].usrCoords[1];
-
-        // Restrict the plot interval if the function ends inside of the board
-        curve_mi = bbox[0] < mi ? mi : bbox[0];
-        curve_ma = bbox[2] > ma ? ma : bbox[2];
-
-        // Found NaNs
-        curve_mi = first === 0 ? curve_mi : Math.max(curve_mi, firstx);
-        curve_ma = last === len - 1 ? curve_ma : Math.min(curve_ma, lastx);
-
-        // First and last relevant x-coordinate of the curve
-        curve_mi = first === 0 ? mi : firstx;
-        curve_ma = last === len - 1 ? ma : lastx;
-
-        // Copy the curve points
-        points = [];
-
-        points.push([1, curve_mi, bbox[infty]]);
-        points.push([1, curve_mi, parents[0].points[first].usrCoords[2]]);
-        for (i = first; i <= last; i++) {
-          points.push(parents[0].points[i].usrCoords);
-        }
-        points.push([1, curve_ma, parents[0].points[last].usrCoords[2]]);
-        points.push([1, curve_ma, bbox[infty]]);
-        points.push(points[0]);
-
-        for (i = 0; i < points.length; i++) {
-          this.dataX.push(points[i][1]);
-          this.dataY.push(points[i][2]);
-        }
-
-        if (last < len - 1) {
-          this.dataX.push(NaN);
-          this.dataY.push(NaN);
-        }
-      }
-    };
-
-    // Previous code:
-    a.hasPoint = function () {
-      return false;
-    };
-  } else {
-    // Not yet practical?
-    f = Type.createFunction(parents[0]);
-    if (!Type.exists(f)) {
-      throw new Error(
-        "JSXGraph: Can't create area with the given parents." +
-          "\nPossible parent types: [line], [function]"
-      );
     }
-  }
 
-  a.addParents(parents[0]);
-  return a;
+    a.addParents(parents[0]);
+    return a;
 };
 
 JXG.registerElement("arrowparallel", JXG.createArrowParallel);
@@ -3942,25 +3845,25 @@ JXG.registerElement("grid", JXG.createGrid);
 JXG.registerElement("inequality", JXG.createInequality);
 
 export default {
-  createArrowParallel: JXG.createArrowParallel,
-  createBisector: JXG.createBisector,
-  createAngularBisectorOfTwoLines: JXG.createAngularBisectorsOfTwoLines,
-  createCircumcircle: JXG.createCircumcircle,
-  createCircumcenter: JXG.createCircumcenter,
-  createIncenter: JXG.createIncenter,
-  createIncircle: JXG.createIncircle,
-  createIntegral: JXG.createIntegral,
-  createMidpoint: JXG.createMidpoint,
-  createMirrorElement: JXG.createMirrorElement,
-  createMirrorPoint: JXG.createMirrorPoint,
-  createNormal: JXG.createNormal,
-  createOrthogonalProjection: JXG.createOrthogonalProjection,
-  createParallel: JXG.createParallel,
-  createParallelPoint: JXG.createParallelPoint,
-  createPerpendicular: JXG.createPerpendicular,
-  createPerpendicularPoint: JXG.createPerpendicularPoint,
-  createPerpendicularSegmen: JXG.createPerpendicularSegment,
-  createReflection: JXG.createReflection,
-  createGrid: JXG.createGrid,
-  createInequality: JXG.createInequality,
+    createArrowParallel: JXG.createArrowParallel,
+    createBisector: JXG.createBisector,
+    createAngularBisectorOfTwoLines: JXG.createAngularBisectorsOfTwoLines,
+    createCircumcircle: JXG.createCircumcircle,
+    createCircumcenter: JXG.createCircumcenter,
+    createIncenter: JXG.createIncenter,
+    createIncircle: JXG.createIncircle,
+    createIntegral: JXG.createIntegral,
+    createMidpoint: JXG.createMidpoint,
+    createMirrorElement: JXG.createMirrorElement,
+    createMirrorPoint: JXG.createMirrorPoint,
+    createNormal: JXG.createNormal,
+    createOrthogonalProjection: JXG.createOrthogonalProjection,
+    createParallel: JXG.createParallel,
+    createParallelPoint: JXG.createParallelPoint,
+    createPerpendicular: JXG.createPerpendicular,
+    createPerpendicularPoint: JXG.createPerpendicularPoint,
+    createPerpendicularSegmen: JXG.createPerpendicularSegment,
+    createReflection: JXG.createReflection,
+    createGrid: JXG.createGrid,
+    createInequality: JXG.createInequality,
 };

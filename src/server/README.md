@@ -11,7 +11,7 @@ plot that points in JSXGraph.
 
 Scripts available:
 
-- jxggroebner.py
+-   jxggroebner.py
 
 ## General configuration
 
@@ -23,14 +23,14 @@ javascript in your page after loading jsxgraph.
 
 ## jxggroebner.py
 
-- **Required software**
+-   **Required software**
 
-  - CoCoA (http://cocoa.dima.unige.it/)
-  - Python (http://python.org/)
-  - numpy (http://numpy.scipy.org/)
-  - matplotlib (http://matplotlib.sourceforge.net/)
+    -   CoCoA (http://cocoa.dima.unige.it/)
+    -   Python (http://python.org/)
+    -   numpy (http://numpy.scipy.org/)
+    -   matplotlib (http://matplotlib.sourceforge.net/)
 
-- **Setup**
+-   **Setup**
 
 Install CoCoA so it can be started by just typing cocoa in a terminal or adjust
 the configuration in jsxgroebner.py. Install all of the python packages.

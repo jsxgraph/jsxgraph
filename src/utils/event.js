@@ -44,120 +44,120 @@ import Type from "./type";
  * @namespace
  */
 JXG.EventEmitter = {
-  /**
-   * Holds the registered event handlers.
-   * @type Object
-   */
-  eventHandlers: {},
+    /**
+     * Holds the registered event handlers.
+     * @type Object
+     */
+    eventHandlers: {},
 
-  /**
-   * Events can be suspended to prevent endless loops.
-   * @type Object
-   */
-  suspended: {},
+    /**
+     * Events can be suspended to prevent endless loops.
+     * @type Object
+     */
+    suspended: {},
 
-  /**
-   * Triggers all event handlers of this element for a given event.
-   * @param {Array} event
-   * @param {Array} args The arguments passed onto the event handler
-   * @returns Reference to the object.
-   */
-  trigger: function (event, args) {
-    var i, j, h, evt, len1, len2;
+    /**
+     * Triggers all event handlers of this element for a given event.
+     * @param {Array} event
+     * @param {Array} args The arguments passed onto the event handler
+     * @returns Reference to the object.
+     */
+    trigger: function (event, args) {
+        var i, j, h, evt, len1, len2;
 
-    len1 = event.length;
-    for (j = 0; j < len1; j++) {
-      evt = this.eventHandlers[event[j]];
+        len1 = event.length;
+        for (j = 0; j < len1; j++) {
+            evt = this.eventHandlers[event[j]];
 
-      if (!this.suspended[event[j]]) {
-        this.suspended[event[j]] = true;
+            if (!this.suspended[event[j]]) {
+                this.suspended[event[j]] = true;
 
-        if (evt) {
-          len2 = evt.length;
+                if (evt) {
+                    len2 = evt.length;
 
-          for (i = 0; i < len2; i++) {
-            h = evt[i];
-            h.handler.apply(h.context, args);
-          }
+                    for (i = 0; i < len2; i++) {
+                        h = evt[i];
+                        h.handler.apply(h.context, args);
+                    }
+                }
+
+                this.suspended[event[j]] = false;
+            }
         }
 
-        this.suspended[event[j]] = false;
-      }
-    }
+        return this;
+    },
 
-    return this;
-  },
+    /**
+     * Register a new event handler. For a list of possible events see documentation
+     * of the elements and objects implementing
+     * the {@link EventEmitter} interface.
+     * @param {String} event
+     * @param {Function} handler
+     * @param {Object} [context] The context the handler will be called in, default is the element itself.
+     * @returns Reference to the object.
+     */
+    on: function (event, handler, context) {
+        if (!Type.isArray(this.eventHandlers[event])) {
+            this.eventHandlers[event] = [];
+        }
 
-  /**
-   * Register a new event handler. For a list of possible events see documentation
-   * of the elements and objects implementing
-   * the {@link EventEmitter} interface.
-   * @param {String} event
-   * @param {Function} handler
-   * @param {Object} [context] The context the handler will be called in, default is the element itself.
-   * @returns Reference to the object.
-   */
-  on: function (event, handler, context) {
-    if (!Type.isArray(this.eventHandlers[event])) {
-      this.eventHandlers[event] = [];
-    }
+        context = Type.def(context, this);
 
-    context = Type.def(context, this);
+        this.eventHandlers[event].push({
+            handler: handler,
+            context: context,
+        });
 
-    this.eventHandlers[event].push({
-      handler: handler,
-      context: context,
-    });
+        return this;
+    },
 
-    return this;
-  },
+    /**
+     * Unregister an event handler.
+     * @param {String} event
+     * @param {Function} [handler]
+     * @returns Reference to the object.
+     */
+    off: function (event, handler) {
+        var i;
 
-  /**
-   * Unregister an event handler.
-   * @param {String} event
-   * @param {Function} [handler]
-   * @returns Reference to the object.
-   */
-  off: function (event, handler) {
-    var i;
+        if (!event || !Type.isArray(this.eventHandlers[event])) {
+            return this;
+        }
 
-    if (!event || !Type.isArray(this.eventHandlers[event])) {
-      return this;
-    }
+        if (handler) {
+            i = Type.indexOf(this.eventHandlers[event], handler, "handler");
+            if (i > -1) {
+                this.eventHandlers[event].splice(i, 1);
+            }
 
-    if (handler) {
-      i = Type.indexOf(this.eventHandlers[event], handler, "handler");
-      if (i > -1) {
-        this.eventHandlers[event].splice(i, 1);
-      }
+            if (this.eventHandlers[event].length === 0) {
+                delete this.eventHandlers[event];
+            }
+        } else {
+            delete this.eventHandlers[event];
+        }
 
-      if (this.eventHandlers[event].length === 0) {
-        delete this.eventHandlers[event];
-      }
-    } else {
-      delete this.eventHandlers[event];
-    }
+        return this;
+    },
 
-    return this;
-  },
-
-  /**
-   * @description Implements the functionality from this interface in the given object.
-   * All objects getting their event handling
-   * capabilities from this method should document it by adding
-   * the <tt>on, off, triggerEventHandlers</tt> via the
-   * borrows tag as methods to their documentation:
-   * <pre>@borrows JXG.EventEmitter#on as this.on</pre>
-   * @param {Object} o
-   */
-  eventify: function (o) {
-    o.eventHandlers = {};
-    o.on = this.on;
-    o.off = this.off;
-    o.triggerEventHandlers = this.trigger;
-    o.trigger = this.trigger;
-    o.suspended = {};
-  },
+    /**
+     * @description Implements the functionality from this interface in the given object.
+     * All objects getting their event handling
+     * capabilities from this method should document it by adding
+     * the <tt>on, off, triggerEventHandlers</tt> via the
+     * borrows tag as methods to their documentation:
+     * <pre>@borrows JXG.EventEmitter#on as this.on</pre>
+     * @param {Object} o
+     */
+    eventify: function (o) {
+        o.eventHandlers = {};
+        o.on = this.on;
+        o.off = this.off;
+        o.triggerEventHandlers = this.trigger;
+        o.trigger = this.trigger;
+        o.suspended = {};
+    },
 };
 
 export default JXG.EventEmitter;

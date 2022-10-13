@@ -49,165 +49,165 @@ import Type from "../utils/type";
  * @param {Number} [y=0] Imaginary part.
  */
 JXG.Complex = function (x, y) {
-  /**
-   * This property is only to signalize that this object is of type JXG.Complex. Only
-   * used internally to distinguish between normal JavaScript numbers and JXG.Complex numbers.
-   * @type Boolean
-   * @default true
-   * @private
-   */
-  this.isComplex = true;
+    /**
+     * This property is only to signalize that this object is of type JXG.Complex. Only
+     * used internally to distinguish between normal JavaScript numbers and JXG.Complex numbers.
+     * @type Boolean
+     * @default true
+     * @private
+     */
+    this.isComplex = true;
 
-  /* is the first argument a complex number? if it is,
-   * extract real and imaginary part. */
-  if (x && x.isComplex) {
-    y = x.imaginary;
-    x = x.real;
-  }
+    /* is the first argument a complex number? if it is,
+     * extract real and imaginary part. */
+    if (x && x.isComplex) {
+        y = x.imaginary;
+        x = x.real;
+    }
 
-  /**
-   * Real part of the complex number.
-   * @type Number
-   * @default 0
-   */
-  this.real = x || 0;
+    /**
+     * Real part of the complex number.
+     * @type Number
+     * @default 0
+     */
+    this.real = x || 0;
 
-  /**
-   * Imaginary part of the complex number.
-   * @type Number
-   * @default 0
-   */
-  this.imaginary = y || 0;
+    /**
+     * Imaginary part of the complex number.
+     * @type Number
+     * @default 0
+     */
+    this.imaginary = y || 0;
 
-  /**
-   * Absolute value in the polar form of the complex number. Currently unused.
-   * @type Number
-   */
-  this.absval = 0;
+    /**
+     * Absolute value in the polar form of the complex number. Currently unused.
+     * @type Number
+     */
+    this.absval = 0;
 
-  /**
-   * Angle value in the polar form of the complex number. Currently unused.
-   * @type Number
-   */
-  this.angle = 0;
+    /**
+     * Angle value in the polar form of the complex number. Currently unused.
+     * @type Number
+     */
+    this.angle = 0;
 };
 
 JXG.extend(
-  JXG.Complex.prototype,
-  /** @lends JXG.Complex.prototype */ {
-    /**
-     * Converts a complex number into a string.
-     * @returns {String} Formatted string containing the complex number in human readable form (algebraic form).
-     */
-    toString: function () {
-      return this.real + " + " + this.imaginary + "i";
-    },
+    JXG.Complex.prototype,
+    /** @lends JXG.Complex.prototype */ {
+        /**
+         * Converts a complex number into a string.
+         * @returns {String} Formatted string containing the complex number in human readable form (algebraic form).
+         */
+        toString: function () {
+            return this.real + " + " + this.imaginary + "i";
+        },
 
-    /**
-     * Add another complex number to this complex number.
-     * @param {JXG.Complex,Number} c A JavaScript number or a JXG.Complex object to be added to the current object.
-     * @returns {JXG.Complex} Reference to this complex number
-     */
-    add: function (c) {
-      if (Type.isNumber(c)) {
-        this.real += c;
-      } else {
-        this.real += c.real;
-        this.imaginary += c.imaginary;
-      }
+        /**
+         * Add another complex number to this complex number.
+         * @param {JXG.Complex,Number} c A JavaScript number or a JXG.Complex object to be added to the current object.
+         * @returns {JXG.Complex} Reference to this complex number
+         */
+        add: function (c) {
+            if (Type.isNumber(c)) {
+                this.real += c;
+            } else {
+                this.real += c.real;
+                this.imaginary += c.imaginary;
+            }
 
-      return this;
-    },
+            return this;
+        },
 
-    /**
-     * Subtract another complex number from this complex number.
-     * @param {JXG.Complex,Number} c A JavaScript number or a JXG.Complex object to subtract from the current object.
-     * @returns {JXG.Complex} Reference to this complex number
-     */
-    sub: function (c) {
-      if (Type.isNumber(c)) {
-        this.real -= c;
-      } else {
-        this.real -= c.real;
-        this.imaginary -= c.imaginary;
-      }
+        /**
+         * Subtract another complex number from this complex number.
+         * @param {JXG.Complex,Number} c A JavaScript number or a JXG.Complex object to subtract from the current object.
+         * @returns {JXG.Complex} Reference to this complex number
+         */
+        sub: function (c) {
+            if (Type.isNumber(c)) {
+                this.real -= c;
+            } else {
+                this.real -= c.real;
+                this.imaginary -= c.imaginary;
+            }
 
-      return this;
-    },
+            return this;
+        },
 
-    /**
-     * Multiply another complex number to this complex number.
-     * @param {JXG.Complex,Number} c A JavaScript number or a JXG.Complex object to
-     * multiply with the current object.
-     * @returns {JXG.Complex} Reference to this complex number
-     */
-    mult: function (c) {
-      var re, im;
+        /**
+         * Multiply another complex number to this complex number.
+         * @param {JXG.Complex,Number} c A JavaScript number or a JXG.Complex object to
+         * multiply with the current object.
+         * @returns {JXG.Complex} Reference to this complex number
+         */
+        mult: function (c) {
+            var re, im;
 
-      if (Type.isNumber(c)) {
-        this.real *= c;
-        this.imaginary *= c;
-      } else {
-        re = this.real;
-        im = this.imaginary;
+            if (Type.isNumber(c)) {
+                this.real *= c;
+                this.imaginary *= c;
+            } else {
+                re = this.real;
+                im = this.imaginary;
 
-        //  (a+ib)(x+iy) = ax-by + i(xb+ay)
-        this.real = re * c.real - im * c.imaginary;
-        this.imaginary = re * c.imaginary + im * c.real;
-      }
+                //  (a+ib)(x+iy) = ax-by + i(xb+ay)
+                this.real = re * c.real - im * c.imaginary;
+                this.imaginary = re * c.imaginary + im * c.real;
+            }
 
-      return this;
-    },
+            return this;
+        },
 
-    /**
-     * Divide this complex number by the given complex number.
-     * @param {JXG.Complex,Number} c A JavaScript number or a JXG.Complex object to
-     * divide the current object by.
-     * @returns {JXG.Complex} Reference to this complex number
-     */
-    div: function (c) {
-      var denom, im, re;
+        /**
+         * Divide this complex number by the given complex number.
+         * @param {JXG.Complex,Number} c A JavaScript number or a JXG.Complex object to
+         * divide the current object by.
+         * @returns {JXG.Complex} Reference to this complex number
+         */
+        div: function (c) {
+            var denom, im, re;
 
-      if (Type.isNumber(c)) {
-        if (Math.abs(c) < Math.eps) {
-          this.real = Infinity;
-          this.imaginary = Infinity;
+            if (Type.isNumber(c)) {
+                if (Math.abs(c) < Math.eps) {
+                    this.real = Infinity;
+                    this.imaginary = Infinity;
 
-          return this;
-        }
+                    return this;
+                }
 
-        this.real /= c;
-        this.imaginary /= c;
-      } else {
-        //  (a+ib)(x+iy) = ax-by + i(xb+ay)
-        if (Math.abs(c.real) < Math.eps && Math.abs(c.imaginary) < Math.eps) {
-          this.real = Infinity;
-          this.imaginary = Infinity;
+                this.real /= c;
+                this.imaginary /= c;
+            } else {
+                //  (a+ib)(x+iy) = ax-by + i(xb+ay)
+                if (Math.abs(c.real) < Math.eps && Math.abs(c.imaginary) < Math.eps) {
+                    this.real = Infinity;
+                    this.imaginary = Infinity;
 
-          return this;
-        }
+                    return this;
+                }
 
-        denom = c.real * c.real + c.imaginary * c.imaginary;
+                denom = c.real * c.real + c.imaginary * c.imaginary;
 
-        re = this.real;
-        im = this.imaginary;
-        this.real = (re * c.real + im * c.imaginary) / denom;
-        this.imaginary = (im * c.real - re * c.imaginary) / denom;
-      }
+                re = this.real;
+                im = this.imaginary;
+                this.real = (re * c.real + im * c.imaginary) / denom;
+                this.imaginary = (im * c.real - re * c.imaginary) / denom;
+            }
 
-      return this;
-    },
+            return this;
+        },
 
-    /**
-     * Conjugate a complex number in place.
-     * @returns {JXG.Complex} Reference to this complex number
-     */
-    conj: function () {
-      this.imaginary *= -1;
+        /**
+         * Conjugate a complex number in place.
+         * @returns {JXG.Complex} Reference to this complex number
+         */
+        conj: function () {
+            this.imaginary *= -1;
 
-      return this;
-    },
-  }
+            return this;
+        },
+    }
 );
 
 /**
@@ -235,9 +235,9 @@ JXG.C = {};
  * @returns {JXG.Complex} A complex number equal to the sum of the given parameters.
  */
 JXG.C.add = function (z1, z2) {
-  var z = new JXG.Complex(z1);
-  z.add(z2);
-  return z;
+    var z = new JXG.Complex(z1);
+    z.add(z2);
+    return z;
 };
 
 /**
@@ -247,9 +247,9 @@ JXG.C.add = function (z1, z2) {
  * @returns {JXG.Complex} A complex number equal to the difference of the given parameters.
  */
 JXG.C.sub = function (z1, z2) {
-  var z = new JXG.Complex(z1);
-  z.sub(z2);
-  return z;
+    var z = new JXG.Complex(z1);
+    z.sub(z2);
+    return z;
 };
 
 /**
@@ -259,9 +259,9 @@ JXG.C.sub = function (z1, z2) {
  * @returns {JXG.Complex} A complex number equal to the product of the given parameters.
  */
 JXG.C.mult = function (z1, z2) {
-  var z = new JXG.Complex(z1);
-  z.mult(z2);
-  return z;
+    var z = new JXG.Complex(z1);
+    z.mult(z2);
+    return z;
 };
 
 /**
@@ -271,9 +271,9 @@ JXG.C.mult = function (z1, z2) {
  * @returns {JXG.Complex} A complex number equal to the quotient of the given parameters.
  */
 JXG.C.div = function (z1, z2) {
-  var z = new JXG.Complex(z1);
-  z.div(z2);
-  return z;
+    var z = new JXG.Complex(z1);
+    z.div(z2);
+    return z;
 };
 
 /**
@@ -282,9 +282,9 @@ JXG.C.div = function (z1, z2) {
  * @returns {JXG.Complex} A complex number equal to the conjugate of the given parameter.
  */
 JXG.C.conj = function (z1) {
-  var z = new JXG.Complex(z1);
-  z.conj();
-  return z;
+    var z = new JXG.Complex(z1);
+    z.conj();
+    return z;
 };
 
 /**
@@ -293,12 +293,12 @@ JXG.C.conj = function (z1) {
  * @returns {Number} real number equal to the absolute value of the given parameter.
  */
 JXG.C.abs = function (z1) {
-  var z = new JXG.Complex(z1);
+    var z = new JXG.Complex(z1);
 
-  z.conj();
-  z.mult(z1);
+    z.conj();
+    z.mult(z1);
 
-  return Math.sqrt(z.real);
+    return Math.sqrt(z.real);
 };
 
 JXG.Complex.C = JXG.C;

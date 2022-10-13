@@ -1,4 +1,5 @@
-.PHONY: tests test test-server
+# .PHONY: tests test test-server
+.PHONY: test docs core prettier release line eslint readers
 
 # Build tools
 WEBPACK=./node_modules/.bin/webpack
@@ -10,6 +11,7 @@ LINT=./node_modules/.bin/jslint
 ESLINT=./node_modules/eslint/bin/eslint.js
 HINT=./node_modules/.bin/jshint
 KARMA=node_modules/karma/bin/karma
+PRETTIER=./node_modules/.bin/prettier
 
 # System tools
 CP=cp
@@ -48,6 +50,8 @@ FILELIST=$(shell cat src/loadjsxgraph.js | grep "baseFiles\s*=\s*'\(\w*,\)\+" | 
 LINTLIST=$(shell echo $(FILELIST) | sed 's/src\/parser\/jessiecode\.js//')
 LINTFLAGS=--bitwise true --white true --continue true
 ESLINTFLAGS=
+
+PRETTIERFLAGS=-w --print-width 96 --tab-width 4
 
 READERSOUT=build/bin/readers/geonext.min.js build/bin/readers/geogebra.min.js build/bin/readers/intergeo.min.js build/bin/readers/sketch.min.js
 
@@ -104,6 +108,9 @@ docs: core
 
 	# Test
 	$(CD) $(OUTPUT) && $(UNZIP) -o docs.zip
+
+prettier:
+	$(PRETTIER) $(PRETTIERFLAGS) src
 
 readers: $(READERSOUT)
 	$(MKDIR) $(MKDIRFLAGS) $(OUTPUT)

@@ -162,414 +162,405 @@ import Point from "../base/point";
  *
  */
 JXG.createSlider = function (board, parents, attributes) {
-  var pos0,
-    pos1,
-    smin,
-    start,
-    smax,
-    sdiff,
-    p1,
-    p2,
-    l1,
-    ticks,
-    ti,
-    startx,
-    starty,
-    p3,
-    l2,
-    t,
-    withText,
-    withTicks,
-    snapWidth,
-    sw,
-    s,
-    attr,
-    digits;
+    var pos0,
+        pos1,
+        smin,
+        start,
+        smax,
+        sdiff,
+        p1,
+        p2,
+        l1,
+        ticks,
+        ti,
+        startx,
+        starty,
+        p3,
+        l2,
+        t,
+        withText,
+        withTicks,
+        snapWidth,
+        sw,
+        s,
+        attr,
+        digits;
 
-  attr = Type.copyAttributes(attributes, board.options, "slider");
-  withTicks = attr.withticks;
-  withText = attr.withlabel;
-  snapWidth = attr.snapwidth;
+    attr = Type.copyAttributes(attributes, board.options, "slider");
+    withTicks = attr.withticks;
+    withText = attr.withlabel;
+    snapWidth = attr.snapwidth;
 
-  // start point
-  attr = Type.copyAttributes(attributes, board.options, "slider", "point1");
-  p1 = board.create("point", parents[0], attr);
+    // start point
+    attr = Type.copyAttributes(attributes, board.options, "slider", "point1");
+    p1 = board.create("point", parents[0], attr);
 
-  // end point
-  attr = Type.copyAttributes(attributes, board.options, "slider", "point2");
-  p2 = board.create("point", parents[1], attr);
-  //g = board.create('group', [p1, p2]);
+    // end point
+    attr = Type.copyAttributes(attributes, board.options, "slider", "point2");
+    p2 = board.create("point", parents[1], attr);
+    //g = board.create('group', [p1, p2]);
 
-  // Base line
-  attr = Type.copyAttributes(attributes, board.options, "slider", "baseline");
-  l1 = board.create("segment", [p1, p2], attr);
+    // Base line
+    attr = Type.copyAttributes(attributes, board.options, "slider", "baseline");
+    l1 = board.create("segment", [p1, p2], attr);
 
-  // This is required for a correct projection of the glider onto the segment below
-  l1.updateStdform();
+    // This is required for a correct projection of the glider onto the segment below
+    l1.updateStdform();
 
-  pos0 = p1.coords.usrCoords.slice(1);
-  pos1 = p2.coords.usrCoords.slice(1);
-  smin = parents[2][0];
-  start = parents[2][1];
-  smax = parents[2][2];
-  sdiff = smax - smin;
+    pos0 = p1.coords.usrCoords.slice(1);
+    pos1 = p2.coords.usrCoords.slice(1);
+    smin = parents[2][0];
+    start = parents[2][1];
+    smax = parents[2][2];
+    sdiff = smax - smin;
 
-  sw = Type.evaluate(snapWidth);
-  s = sw === -1 ? start : Math.round(start / sw) * sw;
-  startx = pos0[0] + ((pos1[0] - pos0[0]) * (s - smin)) / (smax - smin);
-  starty = pos0[1] + ((pos1[1] - pos0[1]) * (s - smin)) / (smax - smin);
+    sw = Type.evaluate(snapWidth);
+    s = sw === -1 ? start : Math.round(start / sw) * sw;
+    startx = pos0[0] + ((pos1[0] - pos0[0]) * (s - smin)) / (smax - smin);
+    starty = pos0[1] + ((pos1[1] - pos0[1]) * (s - smin)) / (smax - smin);
 
-  // glider point
-  attr = Type.copyAttributes(attributes, board.options, "slider");
-  // overwrite this in any case; the sliders label is a special text element, not the gliders label.
-  // this will be set back to true after the text was created (and only if withlabel was true initially).
-  attr.withLabel = false;
-  // gliders set snapwidth=-1 by default (i.e. deactivate them)
-  p3 = board.create("glider", [startx, starty, l1], attr);
-  p3.setAttribute({ snapwidth: snapWidth });
+    // glider point
+    attr = Type.copyAttributes(attributes, board.options, "slider");
+    // overwrite this in any case; the sliders label is a special text element, not the gliders label.
+    // this will be set back to true after the text was created (and only if withlabel was true initially).
+    attr.withLabel = false;
+    // gliders set snapwidth=-1 by default (i.e. deactivate them)
+    p3 = board.create("glider", [startx, starty, l1], attr);
+    p3.setAttribute({ snapwidth: snapWidth });
 
-  // Segment from start point to glider point: highline
-  attr = Type.copyAttributes(attributes, board.options, "slider", "highline");
-  l2 = board.create("segment", [p1, p3], attr);
-
-  /**
-   * Returns the current slider value.
-   * @memberOf Slider.prototype
-   * @name Value
-   * @function
-   * @returns {Number}
-   */
-  p3.Value = function () {
-    var sdiff = this._smax - this._smin,
-      ev_sw = Type.evaluate(this.visProp.snapwidth);
-
-    return ev_sw === -1
-      ? this.position * sdiff + this._smin
-      : Math.round((this.position * sdiff + this._smin) / ev_sw) * ev_sw;
-  };
-
-  p3.methodMap = Type.deepCopy(p3.methodMap, {
-    Value: "Value",
-    setValue: "setValue",
-    smax: "_smax",
-    smin: "_smin",
-    setMax: "setMax",
-    setMin: "setMin",
-  });
-
-  /**
-   * End value of the slider range.
-   * @memberOf Slider.prototype
-   * @name _smax
-   * @type Number
-   */
-  p3._smax = smax;
-
-  /**
-   * Start value of the slider range.
-   * @memberOf Slider.prototype
-   * @name _smin
-   * @type Number
-   */
-  p3._smin = smin;
-
-  /**
-   * Sets the maximum value of the slider.
-   * @memberOf Slider.prototype
-   * @name setMax
-   * @param {Number} val New maximum value
-   * @returns {Object} this object
-   */
-  p3.setMax = function (val) {
-    this._smax = val;
-    return this;
-  };
-
-  /**
-   * Sets the value of the slider. This call must be followed
-   * by a board update call.
-   * @memberOf Slider.prototype
-   * @name setValue
-   * @param {Number} val New value
-   * @returns {Object} this object
-   */
-  p3.setValue = function (val) {
-    var sdiff = this._smax - this._smin;
-
-    if (Math.abs(sdiff) > Mat.eps) {
-      this.position = (val - this._smin) / sdiff;
-    } else {
-      this.position = 0.0; //this._smin;
-    }
-    this.position = Math.max(0.0, Math.min(1.0, this.position));
-    return this;
-  };
-
-  /**
-   * Sets the minimum value of the slider.
-   * @memberOf Slider.prototype
-   * @name setMin
-   * @param {Number} val New minimum value
-   * @returns {Object} this object
-   */
-  p3.setMin = function (val) {
-    this._smin = val;
-    return this;
-  };
-
-  if (withText) {
-    attr = Type.copyAttributes(attributes, board.options, "slider", "label");
-    t = board.create(
-      "text",
-      [
-        function () {
-          return (p2.X() - p1.X()) * 0.05 + p2.X();
-        },
-        function () {
-          return (p2.Y() - p1.Y()) * 0.05 + p2.Y();
-        },
-        function () {
-          var n,
-            d = Type.evaluate(p3.visProp.digits),
-            sl = Type.evaluate(p3.visProp.suffixlabel),
-            ul = Type.evaluate(p3.visProp.unitlabel),
-            pl = Type.evaluate(p3.visProp.postlabel);
-
-          if (d === 2 && Type.evaluate(p3.visProp.precision) !== 2) {
-            // Backwards compatibility
-            d = Type.evaluate(p3.visProp.precision);
-          }
-
-          if (sl !== null) {
-            n = sl;
-          } else if (p3.name && p3.name !== "") {
-            n = p3.name + " = ";
-          } else {
-            n = "";
-          }
-
-          n += Type.toFixed(p3.Value(), d);
-
-          if (ul !== null) {
-            n += ul;
-          }
-          if (pl !== null) {
-            n += pl;
-          }
-
-          return n;
-        },
-      ],
-      attr
-    );
+    // Segment from start point to glider point: highline
+    attr = Type.copyAttributes(attributes, board.options, "slider", "highline");
+    l2 = board.create("segment", [p1, p3], attr);
 
     /**
-     * The text element to the right of the slider, indicating its current value.
+     * Returns the current slider value.
      * @memberOf Slider.prototype
-     * @name label
-     * @type JXG.Text
+     * @name Value
+     * @function
+     * @returns {Number}
      */
-    p3.label = t;
+    p3.Value = function () {
+        var sdiff = this._smax - this._smin,
+            ev_sw = Type.evaluate(this.visProp.snapwidth);
 
-    // reset the withlabel attribute
-    p3.visProp.withlabel = true;
-    p3.hasLabel = true;
-  }
+        return ev_sw === -1
+            ? this.position * sdiff + this._smin
+            : Math.round((this.position * sdiff + this._smin) / ev_sw) * ev_sw;
+    };
 
-  /**
-   * Start point of the base line.
-   * @memberOf Slider.prototype
-   * @name point1
-   * @type JXG.Point
-   */
-  p3.point1 = p1;
+    p3.methodMap = Type.deepCopy(p3.methodMap, {
+        Value: "Value",
+        setValue: "setValue",
+        smax: "_smax",
+        smin: "_smin",
+        setMax: "setMax",
+        setMin: "setMin",
+    });
 
-  /**
-   * End point of the base line.
-   * @memberOf Slider.prototype
-   * @name point2
-   * @type JXG.Point
-   */
-  p3.point2 = p2;
+    /**
+     * End value of the slider range.
+     * @memberOf Slider.prototype
+     * @name _smax
+     * @type Number
+     */
+    p3._smax = smax;
 
-  /**
-   * The baseline the glider is bound to.
-   * @memberOf Slider.prototype
-   * @name baseline
-   * @type JXG.Line
-   */
-  p3.baseline = l1;
+    /**
+     * Start value of the slider range.
+     * @memberOf Slider.prototype
+     * @name _smin
+     * @type Number
+     */
+    p3._smin = smin;
 
-  /**
-   * A line on top of the baseline, indicating the slider's progress.
-   * @memberOf Slider.prototype
-   * @name highline
-   * @type JXG.Line
-   */
-  p3.highline = l2;
+    /**
+     * Sets the maximum value of the slider.
+     * @memberOf Slider.prototype
+     * @name setMax
+     * @param {Number} val New maximum value
+     * @returns {Object} this object
+     */
+    p3.setMax = function (val) {
+        this._smax = val;
+        return this;
+    };
 
-  if (withTicks) {
-    // Function to generate correct label texts
+    /**
+     * Sets the value of the slider. This call must be followed
+     * by a board update call.
+     * @memberOf Slider.prototype
+     * @name setValue
+     * @param {Number} val New value
+     * @returns {Object} this object
+     */
+    p3.setValue = function (val) {
+        var sdiff = this._smax - this._smin;
 
-    attr = Type.copyAttributes(attributes, board.options, "slider", "ticks");
-    if (!Type.exists(attr.generatelabeltext)) {
-      attr.generateLabelText = function (tick, zero, value) {
-        var labelText,
-          dFull = p3.point1.Dist(p3.point2),
-          smin = p3._smin,
-          smax = p3._smax,
-          val =
-            (this.getDistanceFromZero(zero, tick) * (smax - smin)) / dFull +
-            smin;
-
-        if (dFull < Mat.eps || Math.abs(val) < Mat.eps) {
-          // Point is zero
-          labelText = "0";
+        if (Math.abs(sdiff) > Mat.eps) {
+            this.position = (val - this._smin) / sdiff;
         } else {
-          labelText = this.formatLabelText(val);
+            this.position = 0.0; //this._smin;
         }
-        return labelText;
-      };
-    }
-    ticks = 2;
-    ti = board.create(
-      "ticks",
-      [
-        p3.baseline,
-        p3.point1.Dist(p1) / ticks,
-
-        function (tick) {
-          var dFull = p3.point1.Dist(p3.point2),
-            d = p3.point1.coords.distance(Const.COORDS_BY_USER, tick);
-
-          if (dFull < Mat.eps) {
-            return 0;
-          }
-
-          return (d / dFull) * sdiff + smin;
-        },
-      ],
-      attr
-    );
+        this.position = Math.max(0.0, Math.min(1.0, this.position));
+        return this;
+    };
 
     /**
-     * Ticks give a rough indication about the slider's current value.
+     * Sets the minimum value of the slider.
      * @memberOf Slider.prototype
-     * @name ticks
-     * @type JXG.Ticks
+     * @name setMin
+     * @param {Number} val New minimum value
+     * @returns {Object} this object
      */
-    p3.ticks = ti;
-  }
+    p3.setMin = function (val) {
+        this._smin = val;
+        return this;
+    };
 
-  // override the point's remove method to ensure the removal of all elements
-  p3.remove = function () {
     if (withText) {
-      board.removeObject(t);
+        attr = Type.copyAttributes(attributes, board.options, "slider", "label");
+        t = board.create(
+            "text",
+            [
+                function () {
+                    return (p2.X() - p1.X()) * 0.05 + p2.X();
+                },
+                function () {
+                    return (p2.Y() - p1.Y()) * 0.05 + p2.Y();
+                },
+                function () {
+                    var n,
+                        d = Type.evaluate(p3.visProp.digits),
+                        sl = Type.evaluate(p3.visProp.suffixlabel),
+                        ul = Type.evaluate(p3.visProp.unitlabel),
+                        pl = Type.evaluate(p3.visProp.postlabel);
+
+                    if (d === 2 && Type.evaluate(p3.visProp.precision) !== 2) {
+                        // Backwards compatibility
+                        d = Type.evaluate(p3.visProp.precision);
+                    }
+
+                    if (sl !== null) {
+                        n = sl;
+                    } else if (p3.name && p3.name !== "") {
+                        n = p3.name + " = ";
+                    } else {
+                        n = "";
+                    }
+
+                    n += Type.toFixed(p3.Value(), d);
+
+                    if (ul !== null) {
+                        n += ul;
+                    }
+                    if (pl !== null) {
+                        n += pl;
+                    }
+
+                    return n;
+                },
+            ],
+            attr
+        );
+
+        /**
+         * The text element to the right of the slider, indicating its current value.
+         * @memberOf Slider.prototype
+         * @name label
+         * @type JXG.Text
+         */
+        p3.label = t;
+
+        // reset the withlabel attribute
+        p3.visProp.withlabel = true;
+        p3.hasLabel = true;
     }
 
-    board.removeObject(l2);
-    board.removeObject(l1);
-    board.removeObject(p2);
-    board.removeObject(p1);
+    /**
+     * Start point of the base line.
+     * @memberOf Slider.prototype
+     * @name point1
+     * @type JXG.Point
+     */
+    p3.point1 = p1;
 
-    Point.Point.prototype.remove.call(p3);
-  };
+    /**
+     * End point of the base line.
+     * @memberOf Slider.prototype
+     * @name point2
+     * @type JXG.Point
+     */
+    p3.point2 = p2;
 
-  p1.dump = false;
-  p2.dump = false;
-  l1.dump = false;
-  l2.dump = false;
-  if (withText) {
-    t.dump = false;
-  }
+    /**
+     * The baseline the glider is bound to.
+     * @memberOf Slider.prototype
+     * @name baseline
+     * @type JXG.Line
+     */
+    p3.baseline = l1;
 
-  p3.elType = "slider";
-  p3.parents = parents;
-  p3.subs = {
-    point1: p1,
-    point2: p2,
-    baseLine: l1,
-    highLine: l2,
-  };
-  p3.inherits.push(p1, p2, l1, l2);
+    /**
+     * A line on top of the baseline, indicating the slider's progress.
+     * @memberOf Slider.prototype
+     * @name highline
+     * @type JXG.Line
+     */
+    p3.highline = l2;
 
-  if (withTicks) {
-    ti.dump = false;
-    p3.subs.ticks = ti;
-    p3.inherits.push(ti);
-  }
-
-  p3.getParents = function () {
-    return [
-      this.point1.coords.usrCoords.slice(1),
-      this.point2.coords.usrCoords.slice(1),
-      [
-        this._smin,
-        this.position * (this._smax - this._smin) + this._smin,
-        this._smax,
-      ],
-    ];
-  };
-
-  p3.baseline.on("up", function (evt) {
-    var pos, c;
-
-    if (
-      Type.evaluate(p3.visProp.moveonup) &&
-      !Type.evaluate(p3.visProp.fixed)
-    ) {
-      pos = l1.board.getMousePosition(evt, 0);
-      c = new Coords(Const.COORDS_BY_SCREEN, pos, this.board);
-      p3.moveTo([c.usrCoords[1], c.usrCoords[2]]);
-    }
-  });
-
-  // Save the visibility attribute of the sub-elements
-  // for (el in p3.subs) {
-  //     p3.subs[el].status = {
-  //         visible: p3.subs[el].visProp.visible
-  //     };
-  // }
-
-  // p3.hideElement = function () {
-  //     var el;
-  //     GeometryElement.prototype.hideElement.call(this);
-  //
-  //     for (el in this.subs) {
-  //         // this.subs[el].status.visible = this.subs[el].visProp.visible;
-  //         this.subs[el].hideElement();
-  //     }
-  // };
-
-  //         p3.showElement = function () {
-  //             var el;
-  //             GeometryElement.prototype.showElement.call(this);
-  //
-  //             for (el in this.subs) {
-  // //                if (this.subs[el].status.visible) {
-  //                 this.subs[el].showElement();
-  // //                }
-  //             }
-  //         };
-
-  // This is necessary to show baseline, highline and ticks
-  // when opening the board in case the visible attributes are set
-  // to 'inherit'.
-  p3.prepareUpdate().update();
-  if (!board.isSuspendedUpdate) {
-    p3.updateVisibility().updateRenderer();
-    p3.baseline.updateVisibility().updateRenderer();
-    p3.highline.updateVisibility().updateRenderer();
     if (withTicks) {
-      p3.ticks.updateVisibility().updateRenderer();
-    }
-  }
+        // Function to generate correct label texts
 
-  return p3;
+        attr = Type.copyAttributes(attributes, board.options, "slider", "ticks");
+        if (!Type.exists(attr.generatelabeltext)) {
+            attr.generateLabelText = function (tick, zero, value) {
+                var labelText,
+                    dFull = p3.point1.Dist(p3.point2),
+                    smin = p3._smin,
+                    smax = p3._smax,
+                    val = (this.getDistanceFromZero(zero, tick) * (smax - smin)) / dFull + smin;
+
+                if (dFull < Mat.eps || Math.abs(val) < Mat.eps) {
+                    // Point is zero
+                    labelText = "0";
+                } else {
+                    labelText = this.formatLabelText(val);
+                }
+                return labelText;
+            };
+        }
+        ticks = 2;
+        ti = board.create(
+            "ticks",
+            [
+                p3.baseline,
+                p3.point1.Dist(p1) / ticks,
+
+                function (tick) {
+                    var dFull = p3.point1.Dist(p3.point2),
+                        d = p3.point1.coords.distance(Const.COORDS_BY_USER, tick);
+
+                    if (dFull < Mat.eps) {
+                        return 0;
+                    }
+
+                    return (d / dFull) * sdiff + smin;
+                },
+            ],
+            attr
+        );
+
+        /**
+         * Ticks give a rough indication about the slider's current value.
+         * @memberOf Slider.prototype
+         * @name ticks
+         * @type JXG.Ticks
+         */
+        p3.ticks = ti;
+    }
+
+    // override the point's remove method to ensure the removal of all elements
+    p3.remove = function () {
+        if (withText) {
+            board.removeObject(t);
+        }
+
+        board.removeObject(l2);
+        board.removeObject(l1);
+        board.removeObject(p2);
+        board.removeObject(p1);
+
+        Point.Point.prototype.remove.call(p3);
+    };
+
+    p1.dump = false;
+    p2.dump = false;
+    l1.dump = false;
+    l2.dump = false;
+    if (withText) {
+        t.dump = false;
+    }
+
+    p3.elType = "slider";
+    p3.parents = parents;
+    p3.subs = {
+        point1: p1,
+        point2: p2,
+        baseLine: l1,
+        highLine: l2,
+    };
+    p3.inherits.push(p1, p2, l1, l2);
+
+    if (withTicks) {
+        ti.dump = false;
+        p3.subs.ticks = ti;
+        p3.inherits.push(ti);
+    }
+
+    p3.getParents = function () {
+        return [
+            this.point1.coords.usrCoords.slice(1),
+            this.point2.coords.usrCoords.slice(1),
+            [this._smin, this.position * (this._smax - this._smin) + this._smin, this._smax],
+        ];
+    };
+
+    p3.baseline.on("up", function (evt) {
+        var pos, c;
+
+        if (Type.evaluate(p3.visProp.moveonup) && !Type.evaluate(p3.visProp.fixed)) {
+            pos = l1.board.getMousePosition(evt, 0);
+            c = new Coords(Const.COORDS_BY_SCREEN, pos, this.board);
+            p3.moveTo([c.usrCoords[1], c.usrCoords[2]]);
+        }
+    });
+
+    // Save the visibility attribute of the sub-elements
+    // for (el in p3.subs) {
+    //     p3.subs[el].status = {
+    //         visible: p3.subs[el].visProp.visible
+    //     };
+    // }
+
+    // p3.hideElement = function () {
+    //     var el;
+    //     GeometryElement.prototype.hideElement.call(this);
+    //
+    //     for (el in this.subs) {
+    //         // this.subs[el].status.visible = this.subs[el].visProp.visible;
+    //         this.subs[el].hideElement();
+    //     }
+    // };
+
+    //         p3.showElement = function () {
+    //             var el;
+    //             GeometryElement.prototype.showElement.call(this);
+    //
+    //             for (el in this.subs) {
+    // //                if (this.subs[el].status.visible) {
+    //                 this.subs[el].showElement();
+    // //                }
+    //             }
+    //         };
+
+    // This is necessary to show baseline, highline and ticks
+    // when opening the board in case the visible attributes are set
+    // to 'inherit'.
+    p3.prepareUpdate().update();
+    if (!board.isSuspendedUpdate) {
+        p3.updateVisibility().updateRenderer();
+        p3.baseline.updateVisibility().updateRenderer();
+        p3.highline.updateVisibility().updateRenderer();
+        if (withTicks) {
+            p3.ticks.updateVisibility().updateRenderer();
+        }
+    }
+
+    return p3;
 };
 
 JXG.registerElement("slider", JXG.createSlider);
 
 export default {
-  createSlider: JXG.createSlider,
+    createSlider: JXG.createSlider,
 };

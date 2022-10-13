@@ -42,24 +42,24 @@ import Const from "../base/constants";
 import Polygon from "../base/polygon";
 
 var priv = {
-  removeSlopeTriangle: function () {
-    Polygon.Polygon.prototype.remove.call(this);
+    removeSlopeTriangle: function () {
+        Polygon.Polygon.prototype.remove.call(this);
 
-    this.board.removeObject(this.toppoint);
-    this.board.removeObject(this.glider);
+        this.board.removeObject(this.toppoint);
+        this.board.removeObject(this.glider);
 
-    this.board.removeObject(this.baseline);
-    this.board.removeObject(this.basepoint);
+        this.board.removeObject(this.baseline);
+        this.board.removeObject(this.basepoint);
 
-    this.board.removeObject(this.label);
+        this.board.removeObject(this.label);
 
-    if (this._isPrivateTangent) {
-      this.board.removeObject(this.tangent);
-    }
-  },
-  Value: function () {
-    return this.tangent.getSlope();
-  },
+        if (this._isPrivateTangent) {
+            this.board.removeObject(this.tangent);
+        }
+    },
+    Value: function () {
+        return this.tangent.getSlope();
+    },
 };
 
 /**
@@ -117,183 +117,145 @@ var priv = {
  * </script><pre>
  */
 JXG.createSlopeTriangle = function (board, parents, attributes) {
-  var el,
-    tangent,
-    tglide,
-    glider,
-    toppoint,
-    baseline,
-    basepoint,
-    label,
-    attr,
-    isPrivateTangent = false;
+    var el,
+        tangent,
+        tglide,
+        glider,
+        toppoint,
+        baseline,
+        basepoint,
+        label,
+        attr,
+        isPrivateTangent = false;
 
-  if (parents.length === 1 && parents[0].type === Const.OBJECT_TYPE_TANGENT) {
-    tangent = parents[0];
-    tglide = tangent.glider;
-  } else if (
-    parents.length === 1 &&
-    parents[0].type === Const.OBJECT_TYPE_GLIDER
-  ) {
-    tglide = parents[0];
-    attr = Type.copyAttributes(
-      attributes,
-      board.options,
-      "slopetriangle",
-      "tangent"
+    if (parents.length === 1 && parents[0].type === Const.OBJECT_TYPE_TANGENT) {
+        tangent = parents[0];
+        tglide = tangent.glider;
+    } else if (parents.length === 1 && parents[0].type === Const.OBJECT_TYPE_GLIDER) {
+        tglide = parents[0];
+        attr = Type.copyAttributes(attributes, board.options, "slopetriangle", "tangent");
+        tangent = board.create("tangent", [tglide], attr);
+        isPrivateTangent = true;
+    } else if (
+        parents.length === 2 &&
+        parents[0].elementClass === Const.OBJECT_CLASS_LINE &&
+        Type.isPoint(parents[1])
+    ) {
+        tangent = parents[0];
+        tglide = parents[1];
+    } else {
+        throw new Error(
+            "JSXGraph: Can't create slope triangle with parent types '" +
+                typeof parents[0] +
+                "'."
+        );
+    }
+
+    attr = Type.copyAttributes(attributes, board.options, "slopetriangle", "basepoint");
+    basepoint = board.create(
+        "point",
+        [
+            function () {
+                return [tglide.X() + 1, tglide.Y()];
+            },
+        ],
+        attr
     );
-    tangent = board.create("tangent", [tglide], attr);
-    isPrivateTangent = true;
-  } else if (
-    parents.length === 2 &&
-    parents[0].elementClass === Const.OBJECT_CLASS_LINE &&
-    Type.isPoint(parents[1])
-  ) {
-    tangent = parents[0];
-    tglide = parents[1];
-  } else {
-    throw new Error(
-      "JSXGraph: Can't create slope triangle with parent types '" +
-        typeof parents[0] +
-        "'."
+
+    attr = Type.copyAttributes(attributes, board.options, "slopetriangle", "baseline");
+    baseline = board.create("line", [tglide, basepoint], attr);
+
+    attr = Type.copyAttributes(attributes, board.options, "slopetriangle", "glider");
+    glider = board.create("glider", [tglide.X() + 1, tglide.Y(), baseline], attr);
+
+    attr = Type.copyAttributes(attributes, board.options, "slopetriangle", "toppoint");
+    toppoint = board.create(
+        "point",
+        [
+            function () {
+                return [
+                    glider.X(),
+                    glider.Y() + (glider.X() - tglide.X()) * tangent.getSlope(),
+                ];
+            },
+        ],
+        attr
     );
-  }
 
-  attr = Type.copyAttributes(
-    attributes,
-    board.options,
-    "slopetriangle",
-    "basepoint"
-  );
-  basepoint = board.create(
-    "point",
-    [
-      function () {
-        return [tglide.X() + 1, tglide.Y()];
-      },
-    ],
-    attr
-  );
+    attr = Type.copyAttributes(attributes, board.options, "slopetriangle");
+    attr.borders = Type.copyAttributes(attr.borders, board.options, "slopetriangle", "borders");
+    el = board.create("polygon", [tglide, glider, toppoint], attr);
 
-  attr = Type.copyAttributes(
-    attributes,
-    board.options,
-    "slopetriangle",
-    "baseline"
-  );
-  baseline = board.create("line", [tglide, basepoint], attr);
+    /**
+     * Returns the value of the slope triangle, that is the slope of the tangent.
+     * @name Value
+     * @memberOf Slopetriangle.prototype
+     * @function
+     * @returns {Number} slope of the tangent.
+     */
+    el.Value = priv.Value;
+    el.tangent = tangent;
+    el._isPrivateTangent = isPrivateTangent;
 
-  attr = Type.copyAttributes(
-    attributes,
-    board.options,
-    "slopetriangle",
-    "glider"
-  );
-  glider = board.create("glider", [tglide.X() + 1, tglide.Y(), baseline], attr);
+    //el.borders[0].setArrow(false, {type: 2, size: 10});
+    //el.borders[1].setArrow(false, {type: 2, size: 10});
+    el.borders[2].setArrow(false, false);
 
-  attr = Type.copyAttributes(
-    attributes,
-    board.options,
-    "slopetriangle",
-    "toppoint"
-  );
-  toppoint = board.create(
-    "point",
-    [
-      function () {
-        return [
-          glider.X(),
-          glider.Y() + (glider.X() - tglide.X()) * tangent.getSlope(),
-        ];
-      },
-    ],
-    attr
-  );
+    attr = Type.copyAttributes(attributes, board.options, "slopetriangle", "label");
+    label = board.create(
+        "text",
+        [
+            function () {
+                return glider.X() + 0.1;
+            },
+            function () {
+                return (glider.Y() + toppoint.Y()) * 0.5;
+            },
+            function () {
+                return "";
+            },
+        ],
+        attr
+    );
 
-  attr = Type.copyAttributes(attributes, board.options, "slopetriangle");
-  attr.borders = Type.copyAttributes(
-    attr.borders,
-    board.options,
-    "slopetriangle",
-    "borders"
-  );
-  el = board.create("polygon", [tglide, glider, toppoint], attr);
+    label._setText(function () {
+        return Type.toFixed(el.Value(), Type.evaluate(label.visProp.digits));
+    });
+    label.fullUpdate();
 
-  /**
-   * Returns the value of the slope triangle, that is the slope of the tangent.
-   * @name Value
-   * @memberOf Slopetriangle.prototype
-   * @function
-   * @returns {Number} slope of the tangent.
-   */
-  el.Value = priv.Value;
-  el.tangent = tangent;
-  el._isPrivateTangent = isPrivateTangent;
+    el.glider = glider;
+    el.basepoint = basepoint;
+    el.baseline = baseline;
+    el.toppoint = toppoint;
+    el.label = label;
 
-  //el.borders[0].setArrow(false, {type: 2, size: 10});
-  //el.borders[1].setArrow(false, {type: 2, size: 10});
-  el.borders[2].setArrow(false, false);
+    el.subs = {
+        glider: glider,
+        basePoint: basepoint,
+        baseLine: baseline,
+        topPoint: toppoint,
+        label: label,
+    };
+    el.inherits.push(glider, basepoint, baseline, toppoint, label);
 
-  attr = Type.copyAttributes(
-    attributes,
-    board.options,
-    "slopetriangle",
-    "label"
-  );
-  label = board.create(
-    "text",
-    [
-      function () {
-        return glider.X() + 0.1;
-      },
-      function () {
-        return (glider.Y() + toppoint.Y()) * 0.5;
-      },
-      function () {
-        return "";
-      },
-    ],
-    attr
-  );
+    el.methodMap = JXG.deepCopy(el.methodMap, {
+        tangent: "tangent",
+        glider: "glider",
+        basepoint: "basepoint",
+        baseline: "baseline",
+        toppoint: "toppoint",
+        label: "label",
+        Value: "Value",
+        V: "Value",
+    });
 
-  label._setText(function () {
-    return Type.toFixed(el.Value(), Type.evaluate(label.visProp.digits));
-  });
-  label.fullUpdate();
+    el.remove = priv.removeSlopeTriangle;
 
-  el.glider = glider;
-  el.basepoint = basepoint;
-  el.baseline = baseline;
-  el.toppoint = toppoint;
-  el.label = label;
-
-  el.subs = {
-    glider: glider,
-    basePoint: basepoint,
-    baseLine: baseline,
-    topPoint: toppoint,
-    label: label,
-  };
-  el.inherits.push(glider, basepoint, baseline, toppoint, label);
-
-  el.methodMap = JXG.deepCopy(el.methodMap, {
-    tangent: "tangent",
-    glider: "glider",
-    basepoint: "basepoint",
-    baseline: "baseline",
-    toppoint: "toppoint",
-    label: "label",
-    Value: "Value",
-    V: "Value",
-  });
-
-  el.remove = priv.removeSlopeTriangle;
-
-  return el;
+    return el;
 };
 
 JXG.registerElement("slopetriangle", JXG.createSlopeTriangle);
 
 export default {
-  createSlopeTriangle: JXG.createSlopeTriangle,
+    createSlopeTriangle: JXG.createSlopeTriangle,
 };

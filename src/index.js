@@ -80,18 +80,18 @@ import "./3d/surface3d";
 
 // We're in the browser, export JXG to the global JXG symbol for backwards compatibility
 if (Env.isBrowser) {
-  window.JXG = JXG;
+    window.JXG = JXG;
 
-  // In node there are two cases:
-  // 1) jsxgraph is used without requirejs (e.g. as jsxgraphcore.js)
-  // 2) jsxgraph is loaded using requirejs (e.g. the dev version)
-  //
-  // in case 2) module is undefined, the export is set in src/jsxgraphnode.js using
-  // the return value of this factory function
+    // In node there are two cases:
+    // 1) jsxgraph is used without requirejs (e.g. as jsxgraphcore.js)
+    // 2) jsxgraph is loaded using requirejs (e.g. the dev version)
+    //
+    // in case 2) module is undefined, the export is set in src/jsxgraphnode.js using
+    // the return value of this factory function
 } else if (Env.isNode() && typeof module === "object") {
-  module.exports = JXG;
+    module.exports = JXG;
 } else if (Env.isWebWorker()) {
-  self.JXG = JXG;
+    self.JXG = JXG;
 }
 
 export default JXG;

@@ -72,93 +72,89 @@ import Type from "../utils/type";
  * </script><pre>
  */
 JXG.createLocus = function (board, parents, attributes) {
-  var c, p;
+    var c, p;
 
-  if (
-    Type.isArray(parents) &&
-    parents.length === 1 &&
-    Type.isPoint(parents[0])
-  ) {
-    p = parents[0];
-  } else {
-    throw new Error(
-      "JSXGraph: Can't create locus with parent of type other than point." +
-        "\nPossible parent types: [point]"
-    );
-  }
-
-  c = board.create("curve", [[null], [null]], attributes);
-  c.dontCallServer = false;
-
-  c.elType = "locus";
-  c.setParents([p.id]);
-
-  /**
-   * Should be documented in JXG.Curve
-   * @ignore
-   */
-  c.updateDataArray = function () {
-    var spe, cb, data;
-
-    if (c.board.mode > 0) {
-      return;
+    if (Type.isArray(parents) && parents.length === 1 && Type.isPoint(parents[0])) {
+        p = parents[0];
+    } else {
+        throw new Error(
+            "JSXGraph: Can't create locus with parent of type other than point." +
+                "\nPossible parent types: [point]"
+        );
     }
 
-    spe = Symbolic.generatePolynomials(board, p, true).join("|");
-    if (spe === c.spe) {
-      return;
-    }
+    c = board.create("curve", [[null], [null]], attributes);
+    c.dontCallServer = false;
 
-    c.spe = spe;
+    c.elType = "locus";
+    c.setParents([p.id]);
 
-    cb = function (x, y, eq, t) {
-      c.dataX = x;
-      c.dataY = y;
+    /**
+     * Should be documented in JXG.Curve
+     * @ignore
+     */
+    c.updateDataArray = function () {
+        var spe, cb, data;
 
-      /**
-       * The implicit definition of the locus.
-       * @memberOf Locus.prototype
-       * @name eq
-       * @type String
-       */
-      c.eq = eq;
+        if (c.board.mode > 0) {
+            return;
+        }
 
-      /**
-       * The time it took to calculate the locus
-       * @memberOf Locus.prototype
-       * @name ctime
-       * @type Number
-       */
-      c.ctime = t;
+        spe = Symbolic.generatePolynomials(board, p, true).join("|");
+        if (spe === c.spe) {
+            return;
+        }
 
-      // convert equation and use it to build a generatePolynomial-method
-      c.generatePolynomial = (function (equations) {
-        return function (point) {
-          var i,
-            x = "(" + point.symbolic.x + ")",
-            y = "(" + point.symbolic.y + ")",
-            res = [];
+        c.spe = spe;
 
-          for (i = 0; i < equations.length; i++) {
-            res[i] = equations[i]
-              .replace(/\*\*/g, "^")
-              .replace(/x/g, x)
-              .replace(/y/g, y);
-          }
+        cb = function (x, y, eq, t) {
+            c.dataX = x;
+            c.dataY = y;
 
-          return res;
+            /**
+             * The implicit definition of the locus.
+             * @memberOf Locus.prototype
+             * @name eq
+             * @type String
+             */
+            c.eq = eq;
+
+            /**
+             * The time it took to calculate the locus
+             * @memberOf Locus.prototype
+             * @name ctime
+             * @type Number
+             */
+            c.ctime = t;
+
+            // convert equation and use it to build a generatePolynomial-method
+            c.generatePolynomial = (function (equations) {
+                return function (point) {
+                    var i,
+                        x = "(" + point.symbolic.x + ")",
+                        y = "(" + point.symbolic.y + ")",
+                        res = [];
+
+                    for (i = 0; i < equations.length; i++) {
+                        res[i] = equations[i]
+                            .replace(/\*\*/g, "^")
+                            .replace(/x/g, x)
+                            .replace(/y/g, y);
+                    }
+
+                    return res;
+                };
+            })(eq);
         };
-      })(eq);
-    };
-    data = Symbolic.geometricLocusByGroebnerBase(board, p, cb);
+        data = Symbolic.geometricLocusByGroebnerBase(board, p, cb);
 
-    cb(data.datax, data.datay, data.polynomial, data.exectime);
-  };
-  return c;
+        cb(data.datax, data.datay, data.polynomial, data.exectime);
+    };
+    return c;
 };
 
 JXG.registerElement("locus", JXG.createLocus);
 
 export default {
-  createLocus: JXG.createLocus,
+    createLocus: JXG.createLocus,
 };

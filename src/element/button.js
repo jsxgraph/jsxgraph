@@ -41,12 +41,12 @@ import Env from "../utils/env";
 import Type from "../utils/type";
 
 var priv = {
-  ButtonClickEventHandler: function () {
-    if (this._handler) {
-      this._handler();
-    }
-    this.board.update();
-  },
+    ButtonClickEventHandler: function () {
+        if (this._handler) {
+            this._handler();
+        }
+        this.board.update();
+    },
 };
 
 /**
@@ -187,89 +187,85 @@ var priv = {
  *
  */
 JXG.createButton = function (board, parents, attributes) {
-  var t,
-    par,
-    attr = Type.copyAttributes(attributes, board.options, "button");
+    var t,
+        par,
+        attr = Type.copyAttributes(attributes, board.options, "button");
 
-  //if (parents.length < 3) {
-  //throw new Error("JSXGraph: Can't create button with parent types '" +
-  //    (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
-  //    "\nPossible parents are: [x, y, label, handler]");
-  //}
+    //if (parents.length < 3) {
+    //throw new Error("JSXGraph: Can't create button with parent types '" +
+    //    (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
+    //    "\nPossible parents are: [x, y, label, handler]");
+    //}
 
-  // 1. Create empty button
-  par = [
-    parents[0],
-    parents[1],
-    '<button type="button" style="width:100%;"></button>',
-  ];
-  t = board.create("text", par, attr);
-  t.type = Type.OBJECT_TYPE_BUTTON;
+    // 1. Create empty button
+    par = [parents[0], parents[1], '<button type="button" style="width:100%;"></button>'];
+    t = board.create("text", par, attr);
+    t.type = Type.OBJECT_TYPE_BUTTON;
 
-  t.rendNodeButton = t.rendNode.childNodes[0];
-  t.rendNodeButton.id = t.rendNode.id + "_button";
-  // t.rendNodeButton.innerHTML = parents[2];
+    t.rendNodeButton = t.rendNode.childNodes[0];
+    t.rendNodeButton.id = t.rendNode.id + "_button";
+    // t.rendNodeButton.innerHTML = parents[2];
 
-  t.rendNodeTag = t.rendNodeButton; // Needed for unified treatment in setAttribute
-  t.rendNodeTag.disabled = !!attr.disabled;
+    t.rendNodeTag = t.rendNodeButton; // Needed for unified treatment in setAttribute
+    t.rendNodeTag.disabled = !!attr.disabled;
 
-  // 2. Set parents[2] (string|function) as content of the button.
-  // abstract.js selects the correct DOM element for the update
-  t.setText(parents[2]);
+    // 2. Set parents[2] (string|function) as content of the button.
+    // abstract.js selects the correct DOM element for the update
+    t.setText(parents[2]);
 
-  // This sets the font-size of the button text
-  t.visPropOld.fontsize = "0px";
-  board.renderer.updateTextStyle(t, false);
+    // This sets the font-size of the button text
+    t.visPropOld.fontsize = "0px";
+    board.renderer.updateTextStyle(t, false);
 
-  if (parents[3]) {
-    if (Type.isString(parents[3])) {
-      t._jc = new JXG.JessieCode();
-      t._jc.use(board);
-      t._handler = function () {
-        t._jc.parse(parents[3]);
-      };
-    } else {
-      t._handler = parents[3];
+    if (parents[3]) {
+        if (Type.isString(parents[3])) {
+            t._jc = new JXG.JessieCode();
+            t._jc.use(board);
+            t._handler = function () {
+                t._jc.parse(parents[3]);
+            };
+        } else {
+            t._handler = parents[3];
+        }
     }
-  }
 
-  Env.addEvent(t.rendNodeButton, "click", priv.ButtonClickEventHandler, t);
-  Env.addEvent(
-    t.rendNodeButton,
-    "mousedown",
-    function (evt) {
-      if (Type.exists(evt.stopPropagation)) {
-        evt.stopPropagation();
-      }
-    },
-    t
-  );
-  Env.addEvent(
-    t.rendNodeButton,
-    "touchstart",
-    function (evt) {
-      if (Type.exists(evt.stopPropagation)) {
-        evt.stopPropagation();
-      }
-    },
-    t
-  );
-  Env.addEvent(
-    t.rendNodeButton,
-    "pointerdown",
-    function (evt) {
-      if (Type.exists(evt.stopPropagation)) {
-        evt.stopPropagation();
-      }
-    },
-    t
-  );
+    Env.addEvent(t.rendNodeButton, "click", priv.ButtonClickEventHandler, t);
+    Env.addEvent(
+        t.rendNodeButton,
+        "mousedown",
+        function (evt) {
+            if (Type.exists(evt.stopPropagation)) {
+                evt.stopPropagation();
+            }
+        },
+        t
+    );
+    Env.addEvent(
+        t.rendNodeButton,
+        "touchstart",
+        function (evt) {
+            if (Type.exists(evt.stopPropagation)) {
+                evt.stopPropagation();
+            }
+        },
+        t
+    );
+    Env.addEvent(
+        t.rendNodeButton,
+        "pointerdown",
+        function (evt) {
+            if (Type.exists(evt.stopPropagation)) {
+                evt.stopPropagation();
+            }
+        },
+        t
+    );
 
-  return t;
+    return t;
 };
 
 JXG.registerElement("button", JXG.createButton);
 
 export default {
-  createButton: JXG.createButton,
+    createButton: JXG.createButton,
 };

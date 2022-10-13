@@ -98,328 +98,311 @@ import Const from "../base/constants";
  *
  */
 JXG.createArc = function (board, parents, attributes) {
-  var el, attr, points;
+    var el, attr, points;
 
-  points = Type.providePoints(board, parents, attributes, "arc", [
-    "center",
-    "radiusPoint",
-    "anglePoint",
-  ]);
-  if (points === false || points.length < 3) {
-    throw new Error(
-      "JSXGraph: Can't create Arc with parent types '" +
-        typeof parents[0] +
-        "' and '" +
-        typeof parents[1] +
-        "' and '" +
-        typeof parents[2] +
-        "'." +
-        "\nPossible parent types: [point,point,point], [arc, transformation]"
-    );
-  }
-
-  attr = Type.copyAttributes(attributes, board.options, "arc");
-  el = board.create("curve", [[0], [0]], attr);
-
-  el.elType = "arc";
-  el.setParents(points);
-
-  /**
-   * documented in JXG.GeometryElement
-   * @ignore
-   */
-  el.type = Const.OBJECT_TYPE_ARC;
-
-  /**
-   * Center of the arc.
-   * @memberOf Arc.prototype
-   * @name center
-   * @type JXG.Point
-   */
-  el.center = points[0];
-
-  /**
-   * Point defining the arc's radius.
-   * @memberOf Arc.prototype
-   * @name radiuspoint
-   * @type JXG.Point
-   */
-  el.radiuspoint = points[1];
-  el.point2 = el.radiuspoint;
-
-  /**
-   * The point defining the arc's angle.
-   * @memberOf Arc.prototype
-   * @name anglepoint
-   * @type JXG.Point
-   */
-  el.anglepoint = points[2];
-  el.point3 = el.anglepoint;
-
-  // Add arc as child to defining points
-  // or vice versa if the points are provided as coordinates
-  if (Type.exists(el.center._is_new)) {
-    el.addChild(el.center);
-    delete el.center._is_new;
-  } else {
-    el.center.addChild(el);
-  }
-  if (Type.exists(el.radiuspoint._is_new)) {
-    el.addChild(el.radiuspoint);
-    delete el.radiuspoint._is_new;
-  } else {
-    el.radiuspoint.addChild(el);
-  }
-  if (Type.exists(el.anglepoint._is_new)) {
-    el.addChild(el.anglepoint);
-    delete el.anglepoint._is_new;
-  } else {
-    el.anglepoint.addChild(el);
-  }
-
-  // should be documented in options
-  el.useDirection = attr.usedirection;
-
-  // documented in JXG.Curve
-  el.updateDataArray = function () {
-    var ar,
-      phi,
-      det,
-      p0c,
-      p1c,
-      p2c,
-      sgn = 1,
-      A = this.radiuspoint,
-      B = this.center,
-      C = this.anglepoint,
-      ev_s = Type.evaluate(this.visProp.selection);
-
-    phi = Geometry.rad(A, B, C);
-    if (
-      (ev_s === "minor" && phi > Math.PI) ||
-      (ev_s === "major" && phi < Math.PI)
-    ) {
-      sgn = -1;
+    points = Type.providePoints(board, parents, attributes, "arc", [
+        "center",
+        "radiusPoint",
+        "anglePoint",
+    ]);
+    if (points === false || points.length < 3) {
+        throw new Error(
+            "JSXGraph: Can't create Arc with parent types '" +
+                typeof parents[0] +
+                "' and '" +
+                typeof parents[1] +
+                "' and '" +
+                typeof parents[2] +
+                "'." +
+                "\nPossible parent types: [point,point,point], [arc, transformation]"
+        );
     }
 
-    // This is true for circumCircleArcs. In that case there is
-    // a fourth parent element: [center, point1, point3, point2]
-    if (this.useDirection) {
-      p0c = points[1].coords.usrCoords;
-      p1c = points[3].coords.usrCoords;
-      p2c = points[2].coords.usrCoords;
-      det =
-        (p0c[1] - p2c[1]) * (p0c[2] - p1c[2]) -
-        (p0c[2] - p2c[2]) * (p0c[1] - p1c[1]);
+    attr = Type.copyAttributes(attributes, board.options, "arc");
+    el = board.create("curve", [[0], [0]], attr);
 
-      if (det < 0) {
-        this.radiuspoint = points[1];
-        this.anglepoint = points[2];
-      } else {
-        this.radiuspoint = points[2];
-        this.anglepoint = points[1];
-      }
-    }
-
-    A = A.coords.usrCoords;
-    B = B.coords.usrCoords;
-    C = C.coords.usrCoords;
-
-    ar = Geometry.bezierArc(A, B, C, false, sgn);
-
-    this.dataX = ar[0];
-    this.dataY = ar[1];
-
-    this.bezierDegree = 3;
-
-    this.updateStdform();
-    this.updateQuadraticform();
-  };
-
-  /**
-   * Determines the arc's current radius. I.e. the distance between {@link Arc#center} and {@link Arc#radiuspoint}.
-   * @memberOf Arc.prototype
-   * @name Radius
-   * @function
-   * @returns {Number} The arc's radius
-   */
-  el.Radius = function () {
-    return this.radiuspoint.Dist(this.center);
-  };
-
-  /**
-   * @deprecated Use {@link Arc#Radius}
-   * @memberOf Arc.prototype
-   * @name getRadius
-   * @function
-   * @returns {Number}
-   */
-  el.getRadius = function () {
-    JXG.deprecated("Arc.getRadius()", "Arc.Radius()");
-    return this.Radius();
-  };
-
-  /**
-   * Returns the length of the arc.
-   * @memberOf Arc.prototype
-   * @name Value
-   * @function
-   * @returns {Number} The arc length
-   */
-  el.Value = function () {
-    return (
-      this.Radius() *
-      Geometry.rad(this.radiuspoint, this.center, this.anglepoint)
-    );
-  };
-
-  // documented in geometry element
-  el.hasPoint = function (x, y) {
-    var dist,
-      checkPoint,
-      has,
-      invMat,
-      c,
-      prec,
-      type,
-      r = this.Radius();
-
-    if (Type.evaluate(this.visProp.hasinnerpoints)) {
-      return this.hasPointSector(x, y);
-    }
-
-    if (Type.isObject(Type.evaluate(this.visProp.precision))) {
-      type = this.board._inputDevice;
-      prec = Type.evaluate(this.visProp.precision[type]);
-    } else {
-      // 'inherit'
-      prec = this.board.options.precision.hasPoint;
-    }
-    prec /= Math.min(this.board.unitX, this.board.unitY);
-    checkPoint = new Coords(Const.COORDS_BY_SCREEN, [x, y], this.board);
-
-    if (this.transformations.length > 0) {
-      // Transform the mouse/touch coordinates
-      // back to the original position of the curve.
-      this.updateTransformMatrix();
-      invMat = Mat.inverse(this.transformMat);
-      c = Mat.matVecMult(invMat, checkPoint.usrCoords);
-      checkPoint = new Coords(Const.COORDS_BY_USER, c, this.board);
-    }
-
-    dist = this.center.coords.distance(Const.COORDS_BY_USER, checkPoint);
-    has = Math.abs(dist - r) < prec;
+    el.elType = "arc";
+    el.setParents(points);
 
     /**
-     * At that point we know that the user has touched the circle line.
-     * Now, we have to check, if the user has hit the arc path.
+     * documented in JXG.GeometryElement
+     * @ignore
      */
-    if (has) {
-      has = Geometry.coordsOnArc(this, checkPoint);
+    el.type = Const.OBJECT_TYPE_ARC;
+
+    /**
+     * Center of the arc.
+     * @memberOf Arc.prototype
+     * @name center
+     * @type JXG.Point
+     */
+    el.center = points[0];
+
+    /**
+     * Point defining the arc's radius.
+     * @memberOf Arc.prototype
+     * @name radiuspoint
+     * @type JXG.Point
+     */
+    el.radiuspoint = points[1];
+    el.point2 = el.radiuspoint;
+
+    /**
+     * The point defining the arc's angle.
+     * @memberOf Arc.prototype
+     * @name anglepoint
+     * @type JXG.Point
+     */
+    el.anglepoint = points[2];
+    el.point3 = el.anglepoint;
+
+    // Add arc as child to defining points
+    // or vice versa if the points are provided as coordinates
+    if (Type.exists(el.center._is_new)) {
+        el.addChild(el.center);
+        delete el.center._is_new;
+    } else {
+        el.center.addChild(el);
     }
-    return has;
-  };
-
-  /**
-   * Checks whether (x,y) is within the sector defined by the arc.
-   * @memberOf Arc.prototype
-   * @name hasPointSector
-   * @function
-   * @param {Number} x Coordinate in x direction, screen coordinates.
-   * @param {Number} y Coordinate in y direction, screen coordinates.
-   * @returns {Boolean} True if (x,y) is within the sector defined by the arc, False otherwise.
-   */
-  el.hasPointSector = function (x, y) {
-    var checkPoint = new Coords(Const.COORDS_BY_SCREEN, [x, y], this.board),
-      r = this.Radius(),
-      dist = this.center.coords.distance(Const.COORDS_BY_USER, checkPoint),
-      has = dist < r;
-
-    if (has) {
-      has = Geometry.coordsOnArc(this, checkPoint);
+    if (Type.exists(el.radiuspoint._is_new)) {
+        el.addChild(el.radiuspoint);
+        delete el.radiuspoint._is_new;
+    } else {
+        el.radiuspoint.addChild(el);
     }
-    return has;
-  };
-
-  // documented in geometry element
-  el.getTextAnchor = function () {
-    return this.center.coords;
-  };
-
-  // documented in geometry element
-  el.getLabelAnchor = function () {
-    var coords,
-      vec,
-      vecx,
-      vecy,
-      len,
-      angle = Geometry.rad(this.radiuspoint, this.center, this.anglepoint),
-      dx = 10 / this.board.unitX,
-      dy = 10 / this.board.unitY,
-      p2c = this.point2.coords.usrCoords,
-      pmc = this.center.coords.usrCoords,
-      bxminusax = p2c[1] - pmc[1],
-      byminusay = p2c[2] - pmc[2],
-      ev_s = Type.evaluate(this.visProp.selection),
-      l_vp = this.label ? this.label.visProp : this.visProp.label;
-
-    // If this is uncommented, the angle label can not be dragged
-    //if (Type.exists(this.label)) {
-    //    this.label.relativeCoords = new Coords(Const.COORDS_BY_SCREEN, [0, 0], this.board);
-    //}
-
-    if (
-      (ev_s === "minor" && angle > Math.PI) ||
-      (ev_s === "major" && angle < Math.PI)
-    ) {
-      angle = -(2 * Math.PI - angle);
+    if (Type.exists(el.anglepoint._is_new)) {
+        el.addChild(el.anglepoint);
+        delete el.anglepoint._is_new;
+    } else {
+        el.anglepoint.addChild(el);
     }
 
-    coords = new Coords(
-      Const.COORDS_BY_USER,
-      [
-        pmc[1] +
-          Math.cos(angle * 0.5) * bxminusax -
-          Math.sin(angle * 0.5) * byminusay,
-        pmc[2] +
-          Math.sin(angle * 0.5) * bxminusax +
-          Math.cos(angle * 0.5) * byminusay,
-      ],
-      this.board
-    );
+    // should be documented in options
+    el.useDirection = attr.usedirection;
 
-    vecx = coords.usrCoords[1] - pmc[1];
-    vecy = coords.usrCoords[2] - pmc[2];
+    // documented in JXG.Curve
+    el.updateDataArray = function () {
+        var ar,
+            phi,
+            det,
+            p0c,
+            p1c,
+            p2c,
+            sgn = 1,
+            A = this.radiuspoint,
+            B = this.center,
+            C = this.anglepoint,
+            ev_s = Type.evaluate(this.visProp.selection);
 
-    len = Math.sqrt(vecx * vecx + vecy * vecy);
-    vecx = (vecx * (len + dx)) / len;
-    vecy = (vecy * (len + dy)) / len;
-    vec = [pmc[1] + vecx, pmc[2] + vecy];
+        phi = Geometry.rad(A, B, C);
+        if ((ev_s === "minor" && phi > Math.PI) || (ev_s === "major" && phi < Math.PI)) {
+            sgn = -1;
+        }
 
-    l_vp.position = Geometry.calcLabelQuadrant(
-      Geometry.rad([1, 0], [0, 0], vec)
-    );
+        // This is true for circumCircleArcs. In that case there is
+        // a fourth parent element: [center, point1, point3, point2]
+        if (this.useDirection) {
+            p0c = points[1].coords.usrCoords;
+            p1c = points[3].coords.usrCoords;
+            p2c = points[2].coords.usrCoords;
+            det = (p0c[1] - p2c[1]) * (p0c[2] - p1c[2]) - (p0c[2] - p2c[2]) * (p0c[1] - p1c[1]);
 
-    return new Coords(Const.COORDS_BY_USER, vec, this.board);
-  };
+            if (det < 0) {
+                this.radiuspoint = points[1];
+                this.anglepoint = points[2];
+            } else {
+                this.radiuspoint = points[2];
+                this.anglepoint = points[1];
+            }
+        }
 
-  // documentation in jxg.circle
-  el.updateQuadraticform = Circle.Circle.prototype.updateQuadraticform;
+        A = A.coords.usrCoords;
+        B = B.coords.usrCoords;
+        C = C.coords.usrCoords;
 
-  // documentation in jxg.circle
-  el.updateStdform = Circle.Circle.prototype.updateStdform;
+        ar = Geometry.bezierArc(A, B, C, false, sgn);
 
-  el.methodMap = JXG.deepCopy(el.methodMap, {
-    getRadius: "getRadius",
-    radius: "Radius",
-    center: "center",
-    radiuspoint: "radiuspoint",
-    anglepoint: "anglepoint",
-    Value: "Value",
-  });
+        this.dataX = ar[0];
+        this.dataY = ar[1];
 
-  el.prepareUpdate().update();
-  return el;
+        this.bezierDegree = 3;
+
+        this.updateStdform();
+        this.updateQuadraticform();
+    };
+
+    /**
+     * Determines the arc's current radius. I.e. the distance between {@link Arc#center} and {@link Arc#radiuspoint}.
+     * @memberOf Arc.prototype
+     * @name Radius
+     * @function
+     * @returns {Number} The arc's radius
+     */
+    el.Radius = function () {
+        return this.radiuspoint.Dist(this.center);
+    };
+
+    /**
+     * @deprecated Use {@link Arc#Radius}
+     * @memberOf Arc.prototype
+     * @name getRadius
+     * @function
+     * @returns {Number}
+     */
+    el.getRadius = function () {
+        JXG.deprecated("Arc.getRadius()", "Arc.Radius()");
+        return this.Radius();
+    };
+
+    /**
+     * Returns the length of the arc.
+     * @memberOf Arc.prototype
+     * @name Value
+     * @function
+     * @returns {Number} The arc length
+     */
+    el.Value = function () {
+        return this.Radius() * Geometry.rad(this.radiuspoint, this.center, this.anglepoint);
+    };
+
+    // documented in geometry element
+    el.hasPoint = function (x, y) {
+        var dist,
+            checkPoint,
+            has,
+            invMat,
+            c,
+            prec,
+            type,
+            r = this.Radius();
+
+        if (Type.evaluate(this.visProp.hasinnerpoints)) {
+            return this.hasPointSector(x, y);
+        }
+
+        if (Type.isObject(Type.evaluate(this.visProp.precision))) {
+            type = this.board._inputDevice;
+            prec = Type.evaluate(this.visProp.precision[type]);
+        } else {
+            // 'inherit'
+            prec = this.board.options.precision.hasPoint;
+        }
+        prec /= Math.min(this.board.unitX, this.board.unitY);
+        checkPoint = new Coords(Const.COORDS_BY_SCREEN, [x, y], this.board);
+
+        if (this.transformations.length > 0) {
+            // Transform the mouse/touch coordinates
+            // back to the original position of the curve.
+            this.updateTransformMatrix();
+            invMat = Mat.inverse(this.transformMat);
+            c = Mat.matVecMult(invMat, checkPoint.usrCoords);
+            checkPoint = new Coords(Const.COORDS_BY_USER, c, this.board);
+        }
+
+        dist = this.center.coords.distance(Const.COORDS_BY_USER, checkPoint);
+        has = Math.abs(dist - r) < prec;
+
+        /**
+         * At that point we know that the user has touched the circle line.
+         * Now, we have to check, if the user has hit the arc path.
+         */
+        if (has) {
+            has = Geometry.coordsOnArc(this, checkPoint);
+        }
+        return has;
+    };
+
+    /**
+     * Checks whether (x,y) is within the sector defined by the arc.
+     * @memberOf Arc.prototype
+     * @name hasPointSector
+     * @function
+     * @param {Number} x Coordinate in x direction, screen coordinates.
+     * @param {Number} y Coordinate in y direction, screen coordinates.
+     * @returns {Boolean} True if (x,y) is within the sector defined by the arc, False otherwise.
+     */
+    el.hasPointSector = function (x, y) {
+        var checkPoint = new Coords(Const.COORDS_BY_SCREEN, [x, y], this.board),
+            r = this.Radius(),
+            dist = this.center.coords.distance(Const.COORDS_BY_USER, checkPoint),
+            has = dist < r;
+
+        if (has) {
+            has = Geometry.coordsOnArc(this, checkPoint);
+        }
+        return has;
+    };
+
+    // documented in geometry element
+    el.getTextAnchor = function () {
+        return this.center.coords;
+    };
+
+    // documented in geometry element
+    el.getLabelAnchor = function () {
+        var coords,
+            vec,
+            vecx,
+            vecy,
+            len,
+            angle = Geometry.rad(this.radiuspoint, this.center, this.anglepoint),
+            dx = 10 / this.board.unitX,
+            dy = 10 / this.board.unitY,
+            p2c = this.point2.coords.usrCoords,
+            pmc = this.center.coords.usrCoords,
+            bxminusax = p2c[1] - pmc[1],
+            byminusay = p2c[2] - pmc[2],
+            ev_s = Type.evaluate(this.visProp.selection),
+            l_vp = this.label ? this.label.visProp : this.visProp.label;
+
+        // If this is uncommented, the angle label can not be dragged
+        //if (Type.exists(this.label)) {
+        //    this.label.relativeCoords = new Coords(Const.COORDS_BY_SCREEN, [0, 0], this.board);
+        //}
+
+        if ((ev_s === "minor" && angle > Math.PI) || (ev_s === "major" && angle < Math.PI)) {
+            angle = -(2 * Math.PI - angle);
+        }
+
+        coords = new Coords(
+            Const.COORDS_BY_USER,
+            [
+                pmc[1] + Math.cos(angle * 0.5) * bxminusax - Math.sin(angle * 0.5) * byminusay,
+                pmc[2] + Math.sin(angle * 0.5) * bxminusax + Math.cos(angle * 0.5) * byminusay,
+            ],
+            this.board
+        );
+
+        vecx = coords.usrCoords[1] - pmc[1];
+        vecy = coords.usrCoords[2] - pmc[2];
+
+        len = Math.sqrt(vecx * vecx + vecy * vecy);
+        vecx = (vecx * (len + dx)) / len;
+        vecy = (vecy * (len + dy)) / len;
+        vec = [pmc[1] + vecx, pmc[2] + vecy];
+
+        l_vp.position = Geometry.calcLabelQuadrant(Geometry.rad([1, 0], [0, 0], vec));
+
+        return new Coords(Const.COORDS_BY_USER, vec, this.board);
+    };
+
+    // documentation in jxg.circle
+    el.updateQuadraticform = Circle.Circle.prototype.updateQuadraticform;
+
+    // documentation in jxg.circle
+    el.updateStdform = Circle.Circle.prototype.updateStdform;
+
+    el.methodMap = JXG.deepCopy(el.methodMap, {
+        getRadius: "getRadius",
+        radius: "Radius",
+        center: "center",
+        radiuspoint: "radiuspoint",
+        anglepoint: "anglepoint",
+        Value: "Value",
+    });
+
+    el.prepareUpdate().update();
+    return el;
 };
 
 JXG.registerElement("arc", JXG.createArc);
@@ -452,43 +435,43 @@ JXG.registerElement("arc", JXG.createArc);
  * </script><pre>
  */
 JXG.createSemicircle = function (board, parents, attributes) {
-  var el, mp, attr, points;
+    var el, mp, attr, points;
 
-  // we need 2 points
-  points = Type.providePoints(board, parents, attributes, "point");
-  if (points === false || points.length !== 2) {
-    throw new Error(
-      "JSXGraph: Can't create Semicircle with parent types '" +
-        typeof parents[0] +
-        "' and '" +
-        typeof parents[1] +
-        "'." +
-        "\nPossible parent types: [point,point]"
-    );
-  }
+    // we need 2 points
+    points = Type.providePoints(board, parents, attributes, "point");
+    if (points === false || points.length !== 2) {
+        throw new Error(
+            "JSXGraph: Can't create Semicircle with parent types '" +
+                typeof parents[0] +
+                "' and '" +
+                typeof parents[1] +
+                "'." +
+                "\nPossible parent types: [point,point]"
+        );
+    }
 
-  attr = Type.copyAttributes(attributes, board.options, "semicircle", "center");
-  mp = board.create("midpoint", points, attr);
-  mp.dump = false;
+    attr = Type.copyAttributes(attributes, board.options, "semicircle", "center");
+    mp = board.create("midpoint", points, attr);
+    mp.dump = false;
 
-  attr = Type.copyAttributes(attributes, board.options, "semicircle");
-  el = board.create("arc", [mp, points[1], points[0]], attr);
-  el.elType = "semicircle";
-  el.setParents([points[0].id, points[1].id]);
-  el.subs = {
-    midpoint: mp,
-  };
-  el.inherits.push(mp);
+    attr = Type.copyAttributes(attributes, board.options, "semicircle");
+    el = board.create("arc", [mp, points[1], points[0]], attr);
+    el.elType = "semicircle";
+    el.setParents([points[0].id, points[1].id]);
+    el.subs = {
+        midpoint: mp,
+    };
+    el.inherits.push(mp);
 
-  /**
-   * The midpoint of the two defining points.
-   * @memberOf Semicircle.prototype
-   * @name midpoint
-   * @type Midpoint
-   */
-  el.midpoint = el.center = mp;
+    /**
+     * The midpoint of the two defining points.
+     * @memberOf Semicircle.prototype
+     * @name midpoint
+     * @type Midpoint
+     */
+    el.midpoint = el.center = mp;
 
-  return el;
+    return el;
 };
 
 JXG.registerElement("semicircle", JXG.createSemicircle);
@@ -524,52 +507,47 @@ JXG.registerElement("semicircle", JXG.createSemicircle);
  * </script><pre>
  */
 JXG.createCircumcircleArc = function (board, parents, attributes) {
-  var el, mp, attr, points;
+    var el, mp, attr, points;
 
-  // We need three points
-  points = Type.providePoints(board, parents, attributes, "point");
-  if (points === false || points.length !== 3) {
-    throw new Error(
-      "JSXGraph: create Circumcircle Arc with parent types '" +
-        typeof parents[0] +
-        "' and '" +
-        typeof parents[1] +
-        "' and '" +
-        typeof parents[2] +
-        "'." +
-        "\nPossible parent types: [point,point,point]"
-    );
-  }
+    // We need three points
+    points = Type.providePoints(board, parents, attributes, "point");
+    if (points === false || points.length !== 3) {
+        throw new Error(
+            "JSXGraph: create Circumcircle Arc with parent types '" +
+                typeof parents[0] +
+                "' and '" +
+                typeof parents[1] +
+                "' and '" +
+                typeof parents[2] +
+                "'." +
+                "\nPossible parent types: [point,point,point]"
+        );
+    }
 
-  attr = Type.copyAttributes(
-    attributes,
-    board.options,
-    "circumcirclearc",
-    "center"
-  );
-  mp = board.create("circumcenter", points, attr);
-  mp.dump = false;
+    attr = Type.copyAttributes(attributes, board.options, "circumcirclearc", "center");
+    mp = board.create("circumcenter", points, attr);
+    mp.dump = false;
 
-  attr = Type.copyAttributes(attributes, board.options, "circumcirclearc");
-  attr.usedirection = true;
-  el = board.create("arc", [mp, points[0], points[2], points[1]], attr);
+    attr = Type.copyAttributes(attributes, board.options, "circumcirclearc");
+    attr.usedirection = true;
+    el = board.create("arc", [mp, points[0], points[2], points[1]], attr);
 
-  el.elType = "circumcirclearc";
-  el.setParents([points[0].id, points[1].id, points[2].id]);
-  el.subs = {
-    center: mp,
-  };
-  el.inherits.push(mp);
+    el.elType = "circumcirclearc";
+    el.setParents([points[0].id, points[1].id, points[2].id]);
+    el.subs = {
+        center: mp,
+    };
+    el.inherits.push(mp);
 
-  /**
-   * The midpoint of the circumcircle of the three points defining the circumcircle arc.
-   * @memberOf CircumcircleArc.prototype
-   * @name center
-   * @type Circumcenter
-   */
-  el.center = mp;
+    /**
+     * The midpoint of the circumcircle of the three points defining the circumcircle arc.
+     * @memberOf CircumcircleArc.prototype
+     * @name center
+     * @type Circumcenter
+     */
+    el.center = mp;
 
-  return el;
+    return el;
 };
 
 JXG.registerElement("circumcirclearc", JXG.createCircumcircleArc);
@@ -607,8 +585,8 @@ JXG.registerElement("circumcirclearc", JXG.createCircumcircleArc);
  */
 
 JXG.createMinorArc = function (board, parents, attributes) {
-  attributes.selection = "minor";
-  return JXG.createArc(board, parents, attributes);
+    attributes.selection = "minor";
+    return JXG.createArc(board, parents, attributes);
 };
 
 JXG.registerElement("minorarc", JXG.createMinorArc);
@@ -645,16 +623,16 @@ JXG.registerElement("minorarc", JXG.createMinorArc);
  * </script><pre>
  */
 JXG.createMajorArc = function (board, parents, attributes) {
-  attributes.selection = "major";
-  return JXG.createArc(board, parents, attributes);
+    attributes.selection = "major";
+    return JXG.createArc(board, parents, attributes);
 };
 
 JXG.registerElement("majorarc", JXG.createMajorArc);
 
 export default {
-  createArc: JXG.createArc,
-  createSemicircle: JXG.createSemicircle,
-  createCircumcircleArc: JXG.createCircumcircleArc,
-  createMinorArc: JXG.createMinorArc,
-  createMajorArc: JXG.createMajorArc,
+    createArc: JXG.createArc,
+    createSemicircle: JXG.createSemicircle,
+    createCircumcircleArc: JXG.createCircumcircleArc,
+    createMinorArc: JXG.createMinorArc,
+    createMajorArc: JXG.createMajorArc,
 };

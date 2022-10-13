@@ -62,24 +62,19 @@ import CoordsElement from "./coordselement";
  * @see JXG.Board#generateName
  */
 JXG.Point = function (board, coordinates, attributes) {
-  this.constructor(
-    board,
-    attributes,
-    Const.OBJECT_TYPE_POINT,
-    Const.OBJECT_CLASS_POINT
-  );
-  this.element = this.board.select(attributes.anchor);
-  this.coordsConstructor(coordinates);
+    this.constructor(board, attributes, Const.OBJECT_TYPE_POINT, Const.OBJECT_CLASS_POINT);
+    this.element = this.board.select(attributes.anchor);
+    this.coordsConstructor(coordinates);
 
-  this.elType = "point";
+    this.elType = "point";
 
-  /* Register point at board. */
-  this.id = this.board.setId(this, "P");
-  this.board.renderer.drawPoint(this);
-  this.board.finalizeAdding(this);
+    /* Register point at board. */
+    this.id = this.board.setId(this, "P");
+    this.board.renderer.drawPoint(this);
+    this.board.finalizeAdding(this);
 
-  this.createGradient();
-  this.createLabel();
+    this.createGradient();
+    this.createLabel();
 };
 
 /**
@@ -89,393 +84,376 @@ JXG.Point.prototype = new GeometryElement();
 Type.copyPrototypeMethods(JXG.Point, CoordsElement, "coordsConstructor");
 
 JXG.extend(
-  JXG.Point.prototype,
-  /** @lends JXG.Point.prototype */ {
-    /**
-     * Checks whether (x,y) is near the point.
-     * @param {Number} x Coordinate in x direction, screen coordinates.
-     * @param {Number} y Coordinate in y direction, screen coordinates.
-     * @returns {Boolean} True if (x,y) is near the point, False otherwise.
-     * @private
-     */
-    hasPoint: function (x, y) {
-      var coordsScr = this.coords.scrCoords,
-        r,
-        prec,
-        type,
-        unit = Type.evaluate(this.visProp.sizeunit);
+    JXG.Point.prototype,
+    /** @lends JXG.Point.prototype */ {
+        /**
+         * Checks whether (x,y) is near the point.
+         * @param {Number} x Coordinate in x direction, screen coordinates.
+         * @param {Number} y Coordinate in y direction, screen coordinates.
+         * @returns {Boolean} True if (x,y) is near the point, False otherwise.
+         * @private
+         */
+        hasPoint: function (x, y) {
+            var coordsScr = this.coords.scrCoords,
+                r,
+                prec,
+                type,
+                unit = Type.evaluate(this.visProp.sizeunit);
 
-      if (Type.isObject(Type.evaluate(this.visProp.precision))) {
-        type = this.board._inputDevice;
-        prec = Type.evaluate(this.visProp.precision[type]);
-      } else {
-        // 'inherit'
-        prec = this.board.options.precision.hasPoint;
-      }
-      r = parseFloat(Type.evaluate(this.visProp.size));
-      if (unit === "user") {
-        r *= Math.sqrt(this.board.unitX * this.board.unitY);
-      }
+            if (Type.isObject(Type.evaluate(this.visProp.precision))) {
+                type = this.board._inputDevice;
+                prec = Type.evaluate(this.visProp.precision[type]);
+            } else {
+                // 'inherit'
+                prec = this.board.options.precision.hasPoint;
+            }
+            r = parseFloat(Type.evaluate(this.visProp.size));
+            if (unit === "user") {
+                r *= Math.sqrt(this.board.unitX * this.board.unitY);
+            }
 
-      r += parseFloat(Type.evaluate(this.visProp.strokewidth)) * 0.5;
-      if (r < prec) {
-        r = prec;
-      }
+            r += parseFloat(Type.evaluate(this.visProp.strokewidth)) * 0.5;
+            if (r < prec) {
+                r = prec;
+            }
 
-      return (
-        Math.abs(coordsScr[1] - x) < r + 2 && Math.abs(coordsScr[2] - y) < r + 2
-      );
-    },
+            return Math.abs(coordsScr[1] - x) < r + 2 && Math.abs(coordsScr[2] - y) < r + 2;
+        },
 
-    /**
-     * Updates the position of the point.
-     */
-    update: function (fromParent) {
-      if (!this.needsUpdate) {
-        return this;
-      }
+        /**
+         * Updates the position of the point.
+         */
+        update: function (fromParent) {
+            if (!this.needsUpdate) {
+                return this;
+            }
 
-      this.updateCoords(fromParent);
+            this.updateCoords(fromParent);
 
-      if (Type.evaluate(this.visProp.trace)) {
-        this.cloneToBackground(true);
-      }
+            if (Type.evaluate(this.visProp.trace)) {
+                this.cloneToBackground(true);
+            }
 
-      return this;
-    },
+            return this;
+        },
 
-    /**
-     * Applies the transformations of the element to {@link JXG.Point#baseElement}.
-     * Point transformations are relative to a base element.
-     * @param {Boolean} fromParent True if the drag comes from a child element. This is the case if a line
-     *    through two points is dragged. Otherwise, the element is the drag element and we apply the
-     *    the inverse transformation to the baseElement if is different from the element.
-     * @returns {JXG.CoordsElement} Reference to this object.
-     */
-    updateTransform: function (fromParent) {
-      var c, i;
+        /**
+         * Applies the transformations of the element to {@link JXG.Point#baseElement}.
+         * Point transformations are relative to a base element.
+         * @param {Boolean} fromParent True if the drag comes from a child element. This is the case if a line
+         *    through two points is dragged. Otherwise, the element is the drag element and we apply the
+         *    the inverse transformation to the baseElement if is different from the element.
+         * @returns {JXG.CoordsElement} Reference to this object.
+         */
+        updateTransform: function (fromParent) {
+            var c, i;
 
-      if (this.transformations.length === 0 || this.baseElement === null) {
-        return this;
-      }
+            if (this.transformations.length === 0 || this.baseElement === null) {
+                return this;
+            }
 
-      if (this === this.baseElement) {
-        // Case of bindTo
-        c = this.transformations[0].apply(this.baseElement, "self");
-        this.coords.setCoordinates(Const.COORDS_BY_USER, c);
-      } else {
-        c = this.transformations[0].apply(this.baseElement);
-      }
-      this.coords.setCoordinates(Const.COORDS_BY_USER, c);
+            if (this === this.baseElement) {
+                // Case of bindTo
+                c = this.transformations[0].apply(this.baseElement, "self");
+                this.coords.setCoordinates(Const.COORDS_BY_USER, c);
+            } else {
+                c = this.transformations[0].apply(this.baseElement);
+            }
+            this.coords.setCoordinates(Const.COORDS_BY_USER, c);
 
-      for (i = 1; i < this.transformations.length; i++) {
-        this.coords.setCoordinates(
-          Const.COORDS_BY_USER,
-          this.transformations[i].apply(this)
-        );
-      }
-      return this;
-    },
+            for (i = 1; i < this.transformations.length; i++) {
+                this.coords.setCoordinates(
+                    Const.COORDS_BY_USER,
+                    this.transformations[i].apply(this)
+                );
+            }
+            return this;
+        },
 
-    /**
-     * Calls the renderer to update the drawing.
-     * @private
-     */
-    updateRenderer: function () {
-      this.updateRendererGeneric("updatePoint");
-      return this;
-    },
+        /**
+         * Calls the renderer to update the drawing.
+         * @private
+         */
+        updateRenderer: function () {
+            this.updateRendererGeneric("updatePoint");
+            return this;
+        },
 
-    // documented in JXG.GeometryElement
-    bounds: function () {
-      return this.coords.usrCoords
-        .slice(1)
-        .concat(this.coords.usrCoords.slice(1));
-    },
+        // documented in JXG.GeometryElement
+        bounds: function () {
+            return this.coords.usrCoords.slice(1).concat(this.coords.usrCoords.slice(1));
+        },
 
-    /**
-     * Convert the point to intersection point and update the construction.
-     * To move the point visual onto the intersection, a call of board update is necessary.
-     *
-     * @param {String|Object} el1, el2, i, j The intersecting objects and the numbers.
-     **/
-    makeIntersection: function (el1, el2, i, j) {
-      var func;
+        /**
+         * Convert the point to intersection point and update the construction.
+         * To move the point visual onto the intersection, a call of board update is necessary.
+         *
+         * @param {String|Object} el1, el2, i, j The intersecting objects and the numbers.
+         **/
+        makeIntersection: function (el1, el2, i, j) {
+            var func;
 
-      el1 = this.board.select(el1);
-      el2 = this.board.select(el2);
+            el1 = this.board.select(el1);
+            el2 = this.board.select(el2);
 
-      func = Geometry.intersectionFunction(
-        this.board,
-        el1,
-        el2,
-        i,
-        j,
-        Type.evaluate(this.visProp.alwaysintersect)
-      );
-      this.addConstraint([func]);
+            func = Geometry.intersectionFunction(
+                this.board,
+                el1,
+                el2,
+                i,
+                j,
+                Type.evaluate(this.visProp.alwaysintersect)
+            );
+            this.addConstraint([func]);
 
-      try {
-        el1.addChild(this);
-        el2.addChild(this);
-      } catch (e) {
-        throw new Error(
-          "JSXGraph: Can't create 'intersection' with parent types '" +
-            typeof el1 +
-            "' and '" +
-            typeof el2 +
-            "'."
-        );
-      }
+            try {
+                el1.addChild(this);
+                el2.addChild(this);
+            } catch (e) {
+                throw new Error(
+                    "JSXGraph: Can't create 'intersection' with parent types '" +
+                        typeof el1 +
+                        "' and '" +
+                        typeof el2 +
+                        "'."
+                );
+            }
 
-      this.type = Const.OBJECT_TYPE_INTERSECTION;
-      this.elType = "intersection";
-      this.parents = [el1.id, el2.id, i, j];
+            this.type = Const.OBJECT_TYPE_INTERSECTION;
+            this.elType = "intersection";
+            this.parents = [el1.id, el2.id, i, j];
 
-      this.generatePolynomial = function () {
-        var poly1 = el1.generatePolynomial(this),
-          poly2 = el2.generatePolynomial(this);
+            this.generatePolynomial = function () {
+                var poly1 = el1.generatePolynomial(this),
+                    poly2 = el2.generatePolynomial(this);
 
-        if (poly1.length === 0 || poly2.length === 0) {
-          return [];
-        }
+                if (poly1.length === 0 || poly2.length === 0) {
+                    return [];
+                }
 
-        return [poly1[0], poly2[0]];
-      };
+                return [poly1[0], poly2[0]];
+            };
 
-      this.prepareUpdate().update();
-    },
+            this.prepareUpdate().update();
+        },
 
-    /**
-     * Set the style of a point.
-     * Used for GEONExT import and should not be used to set the point's face and size.
-     * @param {Number} i Integer to determine the style.
-     * @private
-     */
-    setStyle: function (i) {
-      var facemap = [
-          // 0-2
-          "cross",
-          "cross",
-          "cross",
-          // 3-6
-          "circle",
-          "circle",
-          "circle",
-          "circle",
-          // 7-9
-          "square",
-          "square",
-          "square",
-          // 10-12
-          "plus",
-          "plus",
-          "plus",
-        ],
-        sizemap = [
-          // 0-2
-          2, 3, 4,
-          // 3-6
-          1, 2, 3, 4,
-          // 7-9
-          2, 3, 4,
-          // 10-12
-          2, 3, 4,
-        ];
+        /**
+         * Set the style of a point.
+         * Used for GEONExT import and should not be used to set the point's face and size.
+         * @param {Number} i Integer to determine the style.
+         * @private
+         */
+        setStyle: function (i) {
+            var facemap = [
+                    // 0-2
+                    "cross",
+                    "cross",
+                    "cross",
+                    // 3-6
+                    "circle",
+                    "circle",
+                    "circle",
+                    "circle",
+                    // 7-9
+                    "square",
+                    "square",
+                    "square",
+                    // 10-12
+                    "plus",
+                    "plus",
+                    "plus",
+                ],
+                sizemap = [
+                    // 0-2
+                    2, 3, 4,
+                    // 3-6
+                    1, 2, 3, 4,
+                    // 7-9
+                    2, 3, 4,
+                    // 10-12
+                    2, 3, 4,
+                ];
 
-      this.visProp.face = facemap[i];
-      this.visProp.size = sizemap[i];
+            this.visProp.face = facemap[i];
+            this.visProp.size = sizemap[i];
 
-      this.board.renderer.changePointStyle(this);
-      return this;
-    },
+            this.board.renderer.changePointStyle(this);
+            return this;
+        },
 
-    /**
-     * @deprecated Use JXG#normalizePointFace instead
-     * @param s
-     * @returns {*}
-     */
-    normalizeFace: function (s) {
-      JXG.deprecated("Point.normalizeFace()", "JXG.normalizePointFace()");
-      return Options.normalizePointFace(s);
-    },
+        /**
+         * @deprecated Use JXG#normalizePointFace instead
+         * @param s
+         * @returns {*}
+         */
+        normalizeFace: function (s) {
+            JXG.deprecated("Point.normalizeFace()", "JXG.normalizePointFace()");
+            return Options.normalizePointFace(s);
+        },
 
-    /**
-     * Set the face of a point element.
-     * @param {String} f String which determines the face of the point. See {@link JXG.GeometryElement#face} for a list of available faces.
-     * @see JXG.GeometryElement#face
-     * @deprecated Use setAttribute()
-     */
-    face: function (f) {
-      JXG.deprecated("Point.face()", "Point.setAttribute()");
-      this.setAttribute({ face: f });
-    },
+        /**
+         * Set the face of a point element.
+         * @param {String} f String which determines the face of the point. See {@link JXG.GeometryElement#face} for a list of available faces.
+         * @see JXG.GeometryElement#face
+         * @deprecated Use setAttribute()
+         */
+        face: function (f) {
+            JXG.deprecated("Point.face()", "Point.setAttribute()");
+            this.setAttribute({ face: f });
+        },
 
-    /**
-     * Set the size of a point element
-     * @param {Number} s Integer which determines the size of the point.
-     * @see JXG.GeometryElement#size
-     * @deprecated Use setAttribute()
-     */
-    size: function (s) {
-      JXG.deprecated("Point.size()", "Point.setAttribute()");
-      this.setAttribute({ size: s });
-    },
+        /**
+         * Set the size of a point element
+         * @param {Number} s Integer which determines the size of the point.
+         * @see JXG.GeometryElement#size
+         * @deprecated Use setAttribute()
+         */
+        size: function (s) {
+            JXG.deprecated("Point.size()", "Point.setAttribute()");
+            this.setAttribute({ size: s });
+        },
 
-    /**
-     * Test if the point is on (is incident with) element "el".
-     *
-     * @param {JXG.GeometryElement} el
-     * @param {Number} tol
-     * @returns {Boolean}
-     *
-     * @example
-     * var circ = board.create('circle', [[-2, -2], 1]);
-     * var seg = board.create('segment', [[-1, -3], [0,0]]);
-     * var line = board.create('line', [[1, 3], [2, -2]]);
-     * var po = board.create('point', [-1, 0], {color: 'blue'});
-     * var curve = board.create('functiongraph', ['sin(x)'], {strokeColor: 'blue'});
-     * var pol = board.create('polygon', [[2,2], [4,2], [4,3]], {strokeColor: 'blue'});
-     *
-     * var point = board.create('point', [-1, 1], {
-     *               attractors: [line, seg, circ, po, curve, pol],
-     *               attractorDistance: 0.2
-     *             });
-     *
-     * var txt = board.create('text', [-4, 3, function() {
-     *              return 'point on line: ' + point.isOn(line) + '<br>' +
-     *                 'point on seg: ' + point.isOn(seg) + '<br>' +
-     *                 'point on circ = ' + point.isOn(circ) + '<br>' +
-     *                 'point on point = ' + point.isOn(po) + '<br>' +
-     *                 'point on curve = ' + point.isOn(curve) + '<br>' +
-     *                 'point on polygon = ' + point.isOn(pol) + '<br>';
-     * }]);
-     *
-     * </pre><div id="JXG6c7d7404-758a-44eb-802c-e9644b9fab71" class="jxgbox" style="width: 300px; height: 300px;"></div>
-     * <script type="text/javascript">
-     *     (function() {
-     *         var board = JXG.JSXGraph.initBoard('JXG6c7d7404-758a-44eb-802c-e9644b9fab71',
-     *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
-     *     var circ = board.create('circle', [[-2, -2], 1]);
-     *     var seg = board.create('segment', [[-1, -3], [0,0]]);
-     *     var line = board.create('line', [[1, 3], [2, -2]]);
-     *     var po = board.create('point', [-1, 0], {color: 'blue'});
-     *     var curve = board.create('functiongraph', ['sin(x)'], {strokeColor: 'blue'});
-     *     var pol = board.create('polygon', [[2,2], [4,2], [4,3]], {strokeColor: 'blue'});
-     *
-     *     var point = board.create('point', [-1, 1], {
-     *                   attractors: [line, seg, circ, po, curve, pol],
-     *                   attractorDistance: 0.2
-     *                 });
-     *
-     *     var txt = board.create('text', [-4, 3, function() {
-     *             return 'point on line: ' + point.isOn(line) + '<br>' +
-     *                     'point on seg: ' + point.isOn(seg) + '<br>' +
-     *                     'point on circ = ' + point.isOn(circ) + '<br>' +
-     *                     'point on point = ' + point.isOn(po) + '<br>' +
-     *                     'point on curve = ' + point.isOn(curve) + '<br>' +
-     *                     'point on polygon = ' + point.isOn(pol) + '<br>';
-     *     }]);
-     *
-     *     })();
-     *
-     * </script><pre>
-     *
-     */
-    isOn: function (el, tol) {
-      var arr, crds;
+        /**
+         * Test if the point is on (is incident with) element "el".
+         *
+         * @param {JXG.GeometryElement} el
+         * @param {Number} tol
+         * @returns {Boolean}
+         *
+         * @example
+         * var circ = board.create('circle', [[-2, -2], 1]);
+         * var seg = board.create('segment', [[-1, -3], [0,0]]);
+         * var line = board.create('line', [[1, 3], [2, -2]]);
+         * var po = board.create('point', [-1, 0], {color: 'blue'});
+         * var curve = board.create('functiongraph', ['sin(x)'], {strokeColor: 'blue'});
+         * var pol = board.create('polygon', [[2,2], [4,2], [4,3]], {strokeColor: 'blue'});
+         *
+         * var point = board.create('point', [-1, 1], {
+         *               attractors: [line, seg, circ, po, curve, pol],
+         *               attractorDistance: 0.2
+         *             });
+         *
+         * var txt = board.create('text', [-4, 3, function() {
+         *              return 'point on line: ' + point.isOn(line) + '<br>' +
+         *                 'point on seg: ' + point.isOn(seg) + '<br>' +
+         *                 'point on circ = ' + point.isOn(circ) + '<br>' +
+         *                 'point on point = ' + point.isOn(po) + '<br>' +
+         *                 'point on curve = ' + point.isOn(curve) + '<br>' +
+         *                 'point on polygon = ' + point.isOn(pol) + '<br>';
+         * }]);
+         *
+         * </pre><div id="JXG6c7d7404-758a-44eb-802c-e9644b9fab71" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG6c7d7404-758a-44eb-802c-e9644b9fab71',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *     var circ = board.create('circle', [[-2, -2], 1]);
+         *     var seg = board.create('segment', [[-1, -3], [0,0]]);
+         *     var line = board.create('line', [[1, 3], [2, -2]]);
+         *     var po = board.create('point', [-1, 0], {color: 'blue'});
+         *     var curve = board.create('functiongraph', ['sin(x)'], {strokeColor: 'blue'});
+         *     var pol = board.create('polygon', [[2,2], [4,2], [4,3]], {strokeColor: 'blue'});
+         *
+         *     var point = board.create('point', [-1, 1], {
+         *                   attractors: [line, seg, circ, po, curve, pol],
+         *                   attractorDistance: 0.2
+         *                 });
+         *
+         *     var txt = board.create('text', [-4, 3, function() {
+         *             return 'point on line: ' + point.isOn(line) + '<br>' +
+         *                     'point on seg: ' + point.isOn(seg) + '<br>' +
+         *                     'point on circ = ' + point.isOn(circ) + '<br>' +
+         *                     'point on point = ' + point.isOn(po) + '<br>' +
+         *                     'point on curve = ' + point.isOn(curve) + '<br>' +
+         *                     'point on polygon = ' + point.isOn(pol) + '<br>';
+         *     }]);
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
+         */
+        isOn: function (el, tol) {
+            var arr, crds;
 
-      tol = tol || Mat.eps;
+            tol = tol || Mat.eps;
 
-      if (Type.isPoint(el)) {
-        return this.Dist(el) < tol;
-      } else if (el.elementClass === Const.OBJECT_CLASS_LINE) {
-        if (
-          el.elType === "segment" &&
-          !Type.evaluate(this.visProp.alwaysintersect)
-        ) {
-          arr = JXG.Math.Geometry.projectCoordsToSegment(
-            this.coords.usrCoords,
-            el.point1.coords.usrCoords,
-            el.point2.coords.usrCoords
-          );
-          if (
-            arr[1] >= 0 &&
-            arr[1] <= 1 &&
-            Geometry.distPointLine(this.coords.usrCoords, el.stdform) < tol
-          ) {
-            return true;
-          } else {
+            if (Type.isPoint(el)) {
+                return this.Dist(el) < tol;
+            } else if (el.elementClass === Const.OBJECT_CLASS_LINE) {
+                if (el.elType === "segment" && !Type.evaluate(this.visProp.alwaysintersect)) {
+                    arr = JXG.Math.Geometry.projectCoordsToSegment(
+                        this.coords.usrCoords,
+                        el.point1.coords.usrCoords,
+                        el.point2.coords.usrCoords
+                    );
+                    if (
+                        arr[1] >= 0 &&
+                        arr[1] <= 1 &&
+                        Geometry.distPointLine(this.coords.usrCoords, el.stdform) < tol
+                    ) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                } else {
+                    return Geometry.distPointLine(this.coords.usrCoords, el.stdform) < tol;
+                }
+            } else if (el.elementClass === Const.OBJECT_CLASS_CIRCLE) {
+                if (Type.evaluate(el.visProp.hasinnerpoints)) {
+                    return this.Dist(el.center) < el.Radius() + tol;
+                }
+                return Math.abs(this.Dist(el.center) - el.Radius()) < tol;
+            } else if (el.elementClass === Const.OBJECT_CLASS_CURVE) {
+                crds = Geometry.projectPointToCurve(this, el, this.board)[0];
+                return Geometry.distance(this.coords.usrCoords, crds.usrCoords, 3) < tol;
+            } else if (el.type === Const.OBJECT_TYPE_POLYGON) {
+                if (Type.evaluate(el.visProp.hasinnerpoints)) {
+                    if (
+                        el.pnpoly(
+                            this.coords.usrCoords[1],
+                            this.coords.usrCoords[2],
+                            JXG.COORDS_BY_USER
+                        )
+                    ) {
+                        return true;
+                    }
+                }
+                arr = Geometry.projectCoordsToPolygon(this.coords.usrCoords, el);
+                return Geometry.distance(this.coords.usrCoords, arr, 3) < tol;
+            } else if (el.type === Const.OBJECT_TYPE_TURTLE) {
+                crds = Geometry.projectPointToTurtle(this, el, this.board);
+                return Geometry.distance(this.coords.usrCoords, crds.usrCoords, 3) < tol;
+            }
+
+            // TODO: Arc, Sector
             return false;
-          }
-        } else {
-          return (
-            Geometry.distPointLine(this.coords.usrCoords, el.stdform) < tol
-          );
-        }
-      } else if (el.elementClass === Const.OBJECT_CLASS_CIRCLE) {
-        if (Type.evaluate(el.visProp.hasinnerpoints)) {
-          return this.Dist(el.center) < el.Radius() + tol;
-        }
-        return Math.abs(this.Dist(el.center) - el.Radius()) < tol;
-      } else if (el.elementClass === Const.OBJECT_CLASS_CURVE) {
-        crds = Geometry.projectPointToCurve(this, el, this.board)[0];
-        return (
-          Geometry.distance(this.coords.usrCoords, crds.usrCoords, 3) < tol
-        );
-      } else if (el.type === Const.OBJECT_TYPE_POLYGON) {
-        if (Type.evaluate(el.visProp.hasinnerpoints)) {
-          if (
-            el.pnpoly(
-              this.coords.usrCoords[1],
-              this.coords.usrCoords[2],
-              JXG.COORDS_BY_USER
-            )
-          ) {
-            return true;
-          }
-        }
-        arr = Geometry.projectCoordsToPolygon(this.coords.usrCoords, el);
-        return Geometry.distance(this.coords.usrCoords, arr, 3) < tol;
-      } else if (el.type === Const.OBJECT_TYPE_TURTLE) {
-        crds = Geometry.projectPointToTurtle(this, el, this.board);
-        return (
-          Geometry.distance(this.coords.usrCoords, crds.usrCoords, 3) < tol
-        );
-      }
+        },
 
-      // TODO: Arc, Sector
-      return false;
-    },
+        // Already documented in GeometryElement
+        cloneToBackground: function () {
+            var copy = {};
 
-    // Already documented in GeometryElement
-    cloneToBackground: function () {
-      var copy = {};
+            copy.id = this.id + "T" + this.numTraces;
+            this.numTraces += 1;
 
-      copy.id = this.id + "T" + this.numTraces;
-      this.numTraces += 1;
+            copy.coords = this.coords;
+            copy.visProp = Type.deepCopy(this.visProp, this.visProp.traceattributes, true);
+            copy.visProp.layer = this.board.options.layer.trace;
+            copy.elementClass = Const.OBJECT_CLASS_POINT;
+            copy.board = this.board;
+            Type.clearVisPropOld(copy);
 
-      copy.coords = this.coords;
-      copy.visProp = Type.deepCopy(
-        this.visProp,
-        this.visProp.traceattributes,
-        true
-      );
-      copy.visProp.layer = this.board.options.layer.trace;
-      copy.elementClass = Const.OBJECT_CLASS_POINT;
-      copy.board = this.board;
-      Type.clearVisPropOld(copy);
+            copy.visPropCalc = {
+                visible: Type.evaluate(copy.visProp.visible),
+            };
 
-      copy.visPropCalc = {
-        visible: Type.evaluate(copy.visProp.visible),
-      };
+            this.board.renderer.drawPoint(copy);
+            this.traces[copy.id] = copy.rendNode;
 
-      this.board.renderer.drawPoint(copy);
-      this.traces[copy.id] = copy.rendNode;
-
-      return this;
-    },
-  }
+            return this;
+        },
+    }
 );
 
 /**
@@ -529,22 +507,22 @@ JXG.extend(
  * </script><pre>
  */
 JXG.createPoint = function (board, parents, attributes) {
-  var el, attr;
+    var el, attr;
 
-  attr = Type.copyAttributes(attributes, board.options, "point");
-  el = CoordsElement.create(JXG.Point, board, parents, attr);
-  if (!el) {
-    throw new Error(
-      "JSXGraph: Can't create point with parent types '" +
-        typeof parents[0] +
-        "' and '" +
-        typeof parents[1] +
-        "'." +
-        "\nPossible parent types: [x,y], [z,x,y], [element,transformation]"
-    );
-  }
+    attr = Type.copyAttributes(attributes, board.options, "point");
+    el = CoordsElement.create(JXG.Point, board, parents, attr);
+    if (!el) {
+        throw new Error(
+            "JSXGraph: Can't create point with parent types '" +
+                typeof parents[0] +
+                "' and '" +
+                typeof parents[1] +
+                "'." +
+                "\nPossible parent types: [x,y], [z,x,y], [element,transformation]"
+        );
+    }
 
-  return el;
+    return el;
 };
 
 /**
@@ -602,21 +580,21 @@ JXG.createPoint = function (board, parents, attributes) {
  * </script><pre>
  */
 JXG.createGlider = function (board, parents, attributes) {
-  var el,
-    coords,
-    attr = Type.copyAttributes(attributes, board.options, "glider");
+    var el,
+        coords,
+        attr = Type.copyAttributes(attributes, board.options, "glider");
 
-  if (parents.length === 1) {
-    coords = [0, 0];
-  } else {
-    coords = parents.slice(0, 2);
-  }
-  el = board.create("point", coords, attr);
+    if (parents.length === 1) {
+        coords = [0, 0];
+    } else {
+        coords = parents.slice(0, 2);
+    }
+    el = board.create("point", coords, attr);
 
-  // eltype is set in here
-  el.makeGlider(parents[parents.length - 1]);
+    // eltype is set in here
+    el.makeGlider(parents[parents.length - 1]);
 
-  return el;
+    return el;
 };
 
 /**
@@ -656,77 +634,70 @@ JXG.createGlider = function (board, parents, attributes) {
  * </script><pre>
  */
 JXG.createIntersectionPoint = function (board, parents, attributes) {
-  var el,
-    el1,
-    el2,
-    func,
-    i,
-    j,
-    attr = Type.copyAttributes(attributes, board.options, "intersection");
+    var el,
+        el1,
+        el2,
+        func,
+        i,
+        j,
+        attr = Type.copyAttributes(attributes, board.options, "intersection");
 
-  // make sure we definitely have the indices
-  parents.push(0, 0);
+    // make sure we definitely have the indices
+    parents.push(0, 0);
 
-  el1 = board.select(parents[0]);
-  el2 = board.select(parents[1]);
+    el1 = board.select(parents[0]);
+    el2 = board.select(parents[1]);
 
-  i = parents[2] || 0;
-  j = parents[3] || 0;
+    i = parents[2] || 0;
+    j = parents[3] || 0;
 
-  el = board.create("point", [0, 0, 0], attr);
+    el = board.create("point", [0, 0, 0], attr);
 
-  // el.visProp.alwaysintersect is evaluated as late as in the returned function
-  func = Geometry.intersectionFunction(
-    board,
-    el1,
-    el2,
-    i,
-    j,
-    el.visProp.alwaysintersect
-  );
-  el.addConstraint([func]);
+    // el.visProp.alwaysintersect is evaluated as late as in the returned function
+    func = Geometry.intersectionFunction(board, el1, el2, i, j, el.visProp.alwaysintersect);
+    el.addConstraint([func]);
 
-  try {
-    el1.addChild(el);
-    el2.addChild(el);
-  } catch (e) {
-    throw new Error(
-      "JSXGraph: Can't create 'intersection' with parent types '" +
-        typeof parents[0] +
-        "' and '" +
-        typeof parents[1] +
-        "'."
-    );
-  }
-
-  el.type = Const.OBJECT_TYPE_INTERSECTION;
-  el.elType = "intersection";
-  el.setParents([el1.id, el2.id]);
-
-  /**
-   * Array of length 2 containing the numbers i and j.
-   * The intersection point is i-th intersection point.
-   * j is unused.
-   * @type Array
-   * @private
-   */
-  el.intersectionNumbers = [i, j];
-  el.getParents = function () {
-    return this.parents.concat(this.intersectionNumbers);
-  };
-
-  el.generatePolynomial = function () {
-    var poly1 = el1.generatePolynomial(el),
-      poly2 = el2.generatePolynomial(el);
-
-    if (poly1.length === 0 || poly2.length === 0) {
-      return [];
+    try {
+        el1.addChild(el);
+        el2.addChild(el);
+    } catch (e) {
+        throw new Error(
+            "JSXGraph: Can't create 'intersection' with parent types '" +
+                typeof parents[0] +
+                "' and '" +
+                typeof parents[1] +
+                "'."
+        );
     }
 
-    return [poly1[0], poly2[0]];
-  };
+    el.type = Const.OBJECT_TYPE_INTERSECTION;
+    el.elType = "intersection";
+    el.setParents([el1.id, el2.id]);
 
-  return el;
+    /**
+     * Array of length 2 containing the numbers i and j.
+     * The intersection point is i-th intersection point.
+     * j is unused.
+     * @type Array
+     * @private
+     */
+    el.intersectionNumbers = [i, j];
+    el.getParents = function () {
+        return this.parents.concat(this.intersectionNumbers);
+    };
+
+    el.generatePolynomial = function () {
+        var poly1 = el1.generatePolynomial(el),
+            poly2 = el2.generatePolynomial(el);
+
+        if (poly1.length === 0 || poly2.length === 0) {
+            return [];
+        }
+
+        return [poly1[0], poly2[0]];
+    };
+
+    return el;
 };
 
 /**
@@ -765,72 +736,72 @@ JXG.createIntersectionPoint = function (board, parents, attributes) {
  * </script><pre>
  */
 JXG.createOtherIntersectionPoint = function (board, parents, attributes) {
-  var el, el1, el2, other;
+    var el, el1, el2, other;
 
-  if (
-    parents.length !== 3 ||
-    !Type.isPoint(parents[2]) ||
-    (parents[0].elementClass !== Const.OBJECT_CLASS_LINE &&
-      parents[0].elementClass !== Const.OBJECT_CLASS_CIRCLE) ||
-    (parents[1].elementClass !== Const.OBJECT_CLASS_LINE &&
-      parents[1].elementClass !== Const.OBJECT_CLASS_CIRCLE)
-  ) {
-    // Failure
-    throw new Error(
-      "JSXGraph: Can't create 'other intersection point' with parent types '" +
-        typeof parents[0] +
-        "',  '" +
-        typeof parents[1] +
-        "'and  '" +
-        typeof parents[2] +
-        "'." +
-        "\nPossible parent types: [circle|line,circle|line,point]"
-    );
-  }
-
-  el1 = board.select(parents[0]);
-  el2 = board.select(parents[1]);
-  other = board.select(parents[2]);
-
-  el = board.create(
-    "point",
-    [
-      function () {
-        var c = Geometry.meet(el1.stdform, el2.stdform, 0, el1.board);
-
-        if (
-          Math.abs(other.X() - c.usrCoords[1]) > Mat.eps ||
-          Math.abs(other.Y() - c.usrCoords[2]) > Mat.eps ||
-          Math.abs(other.Z() - c.usrCoords[0]) > Mat.eps
-        ) {
-          return c;
-        }
-
-        return Geometry.meet(el1.stdform, el2.stdform, 1, el1.board);
-      },
-    ],
-    attributes
-  );
-
-  el.type = Const.OBJECT_TYPE_INTERSECTION;
-  el.elType = "otherintersection";
-  el.setParents([el1.id, el2.id, other]);
-
-  el1.addChild(el);
-  el2.addChild(el);
-
-  el.generatePolynomial = function () {
-    var poly1 = el1.generatePolynomial(el),
-      poly2 = el2.generatePolynomial(el);
-
-    if (poly1.length === 0 || poly2.length === 0) {
-      return [];
+    if (
+        parents.length !== 3 ||
+        !Type.isPoint(parents[2]) ||
+        (parents[0].elementClass !== Const.OBJECT_CLASS_LINE &&
+            parents[0].elementClass !== Const.OBJECT_CLASS_CIRCLE) ||
+        (parents[1].elementClass !== Const.OBJECT_CLASS_LINE &&
+            parents[1].elementClass !== Const.OBJECT_CLASS_CIRCLE)
+    ) {
+        // Failure
+        throw new Error(
+            "JSXGraph: Can't create 'other intersection point' with parent types '" +
+                typeof parents[0] +
+                "',  '" +
+                typeof parents[1] +
+                "'and  '" +
+                typeof parents[2] +
+                "'." +
+                "\nPossible parent types: [circle|line,circle|line,point]"
+        );
     }
 
-    return [poly1[0], poly2[0]];
-  };
+    el1 = board.select(parents[0]);
+    el2 = board.select(parents[1]);
+    other = board.select(parents[2]);
 
-  return el;
+    el = board.create(
+        "point",
+        [
+            function () {
+                var c = Geometry.meet(el1.stdform, el2.stdform, 0, el1.board);
+
+                if (
+                    Math.abs(other.X() - c.usrCoords[1]) > Mat.eps ||
+                    Math.abs(other.Y() - c.usrCoords[2]) > Mat.eps ||
+                    Math.abs(other.Z() - c.usrCoords[0]) > Mat.eps
+                ) {
+                    return c;
+                }
+
+                return Geometry.meet(el1.stdform, el2.stdform, 1, el1.board);
+            },
+        ],
+        attributes
+    );
+
+    el.type = Const.OBJECT_TYPE_INTERSECTION;
+    el.elType = "otherintersection";
+    el.setParents([el1.id, el2.id, other]);
+
+    el1.addChild(el);
+    el2.addChild(el);
+
+    el.generatePolynomial = function () {
+        var poly1 = el1.generatePolynomial(el),
+            poly2 = el2.generatePolynomial(el);
+
+        if (poly1.length === 0 || poly2.length === 0) {
+            return [];
+        }
+
+        return [poly1[0], poly2[0]];
+    };
+
+    return el;
 };
 
 /**
@@ -895,83 +866,83 @@ JXG.createOtherIntersectionPoint = function (board, parents, attributes) {
  * </script><pre>
  */
 JXG.createPolePoint = function (board, parents, attributes) {
-  var el,
-    el1,
-    el2,
-    firstParentIsConic,
-    secondParentIsConic,
-    firstParentIsLine,
-    secondParentIsLine;
+    var el,
+        el1,
+        el2,
+        firstParentIsConic,
+        secondParentIsConic,
+        firstParentIsLine,
+        secondParentIsLine;
 
-  if (parents.length > 1) {
-    firstParentIsConic =
-      parents[0].type === Const.OBJECT_TYPE_CONIC ||
-      parents[0].elementClass === Const.OBJECT_CLASS_CIRCLE;
-    secondParentIsConic =
-      parents[1].type === Const.OBJECT_TYPE_CONIC ||
-      parents[1].elementClass === Const.OBJECT_CLASS_CIRCLE;
+    if (parents.length > 1) {
+        firstParentIsConic =
+            parents[0].type === Const.OBJECT_TYPE_CONIC ||
+            parents[0].elementClass === Const.OBJECT_CLASS_CIRCLE;
+        secondParentIsConic =
+            parents[1].type === Const.OBJECT_TYPE_CONIC ||
+            parents[1].elementClass === Const.OBJECT_CLASS_CIRCLE;
 
-    firstParentIsLine = parents[0].elementClass === Const.OBJECT_CLASS_LINE;
-    secondParentIsLine = parents[1].elementClass === Const.OBJECT_CLASS_LINE;
-  }
+        firstParentIsLine = parents[0].elementClass === Const.OBJECT_CLASS_LINE;
+        secondParentIsLine = parents[1].elementClass === Const.OBJECT_CLASS_LINE;
+    }
 
-  /*        if (parents.length !== 2 || !((
+    /*        if (parents.length !== 2 || !((
                 parents[0].type === Const.OBJECT_TYPE_CONIC ||
                 parents[0].elementClass === Const.OBJECT_CLASS_CIRCLE) &&
                 parents[1].elementClass === Const.OBJECT_CLASS_LINE ||
                 parents[0].elementClass === Const.OBJECT_CLASS_LINE && (
                 parents[1].type === Const.OBJECT_TYPE_CONIC ||
                 parents[1].elementClass === Const.OBJECT_CLASS_CIRCLE))) {*/
-  if (
-    parents.length !== 2 ||
-    !(
-      (firstParentIsConic && secondParentIsLine) ||
-      (firstParentIsLine && secondParentIsConic)
-    )
-  ) {
-    // Failure
-    throw new Error(
-      "JSXGraph: Can't create 'pole point' with parent types '" +
-        typeof parents[0] +
-        "' and '" +
-        typeof parents[1] +
-        "'." +
-        "\nPossible parent type: [conic|circle,line], [line,conic|circle]"
+    if (
+        parents.length !== 2 ||
+        !(
+            (firstParentIsConic && secondParentIsLine) ||
+            (firstParentIsLine && secondParentIsConic)
+        )
+    ) {
+        // Failure
+        throw new Error(
+            "JSXGraph: Can't create 'pole point' with parent types '" +
+                typeof parents[0] +
+                "' and '" +
+                typeof parents[1] +
+                "'." +
+                "\nPossible parent type: [conic|circle,line], [line,conic|circle]"
+        );
+    }
+
+    if (secondParentIsLine) {
+        el1 = board.select(parents[0]);
+        el2 = board.select(parents[1]);
+    } else {
+        el1 = board.select(parents[1]);
+        el2 = board.select(parents[0]);
+    }
+
+    el = board.create(
+        "point",
+        [
+            function () {
+                var q = el1.quadraticform,
+                    s = el2.stdform.slice(0, 3);
+
+                return [
+                    JXG.Math.Numerics.det([s, q[1], q[2]]),
+                    JXG.Math.Numerics.det([q[0], s, q[2]]),
+                    JXG.Math.Numerics.det([q[0], q[1], s]),
+                ];
+            },
+        ],
+        attributes
     );
-  }
 
-  if (secondParentIsLine) {
-    el1 = board.select(parents[0]);
-    el2 = board.select(parents[1]);
-  } else {
-    el1 = board.select(parents[1]);
-    el2 = board.select(parents[0]);
-  }
+    el.elType = "polepoint";
+    el.setParents([el1.id, el2.id]);
 
-  el = board.create(
-    "point",
-    [
-      function () {
-        var q = el1.quadraticform,
-          s = el2.stdform.slice(0, 3);
+    el1.addChild(el);
+    el2.addChild(el);
 
-        return [
-          JXG.Math.Numerics.det([s, q[1], q[2]]),
-          JXG.Math.Numerics.det([q[0], s, q[2]]),
-          JXG.Math.Numerics.det([q[0], q[1], s]),
-        ];
-      },
-    ],
-    attributes
-  );
-
-  el.elType = "polepoint";
-  el.setParents([el1.id, el2.id]);
-
-  el1.addChild(el);
-  el2.addChild(el);
-
-  return el;
+    return el;
 };
 
 JXG.registerElement("point", JXG.createPoint);
@@ -981,10 +952,10 @@ JXG.registerElement("otherintersection", JXG.createOtherIntersectionPoint);
 JXG.registerElement("polepoint", JXG.createPolePoint);
 
 export default {
-  Point: JXG.Point,
-  createPoint: JXG.createPoint,
-  createGlider: JXG.createGlider,
-  createIntersection: JXG.createIntersectionPoint,
-  createOtherIntersection: JXG.createOtherIntersectionPoint,
-  createPolePoint: JXG.createPolePoint,
+    Point: JXG.Point,
+    createPoint: JXG.createPoint,
+    createGlider: JXG.createGlider,
+    createIntersection: JXG.createIntersectionPoint,
+    createOtherIntersection: JXG.createOtherIntersectionPoint,
+    createPolePoint: JXG.createPolePoint,
 };

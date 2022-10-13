@@ -16,9 +16,8 @@
 import JXG from "../jxg";
 
 // constants
-var uuidCharsStr =
-    "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
-  uuidChars = uuidCharsStr.split("");
+var uuidCharsStr = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
+    uuidChars = uuidCharsStr.split("");
 
 /**
  * General utility routines
@@ -27,34 +26,34 @@ var uuidCharsStr =
 JXG.Util = JXG.Util || {};
 
 JXG.Util.genUUID = function (prefix) {
-  var r,
-    i,
-    uuid = [],
-    rnd = 0;
+    var r,
+        i,
+        uuid = [],
+        rnd = 0;
 
-  prefix = prefix || "";
+    prefix = prefix || "";
 
-  if (prefix !== "" && prefix.substr(prefix.length - 1) !== "-") {
-    prefix = prefix + "-";
-  }
-
-  for (i = 0; i < 36; i++) {
-    if (i === 8 || i === 13 || i === 18 || i === 23) {
-      uuid[i] = "-";
-    } else if (i === 14) {
-      uuid[i] = "4";
-    } else {
-      if (rnd <= 0x02) {
-        rnd = (0x2000000 + Math.random() * 0x1000000) | 0;
-      }
-
-      r = rnd & 0xf;
-      rnd = rnd >> 4;
-      uuid[i] = uuidChars[i === 19 ? (r & 0x3) | 0x8 : r];
+    if (prefix !== "" && prefix.substr(prefix.length - 1) !== "-") {
+        prefix = prefix + "-";
     }
-  }
 
-  return prefix + uuid.join("");
+    for (i = 0; i < 36; i++) {
+        if (i === 8 || i === 13 || i === 18 || i === 23) {
+            uuid[i] = "-";
+        } else if (i === 14) {
+            uuid[i] = "4";
+        } else {
+            if (rnd <= 0x02) {
+                rnd = (0x2000000 + Math.random() * 0x1000000) | 0;
+            }
+
+            r = rnd & 0xf;
+            rnd = rnd >> 4;
+            uuid[i] = uuidChars[i === 19 ? (r & 0x3) | 0x8 : r];
+        }
+    }
+
+    return prefix + uuid.join("");
 };
 
 export default JXG.Util;

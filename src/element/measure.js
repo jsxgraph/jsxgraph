@@ -71,134 +71,119 @@ import GeometryElement from "../base/element";
  * </script><pre>
  */
 JXG.createTapemeasure = function (board, parents, attributes) {
-  var pos0, pos1, attr, withTicks, withText, digits, li, p1, p2, n, ti;
+    var pos0, pos1, attr, withTicks, withText, digits, li, p1, p2, n, ti;
 
-  pos0 = parents[0];
-  pos1 = parents[1];
+    pos0 = parents[0];
+    pos1 = parents[1];
 
-  // start point
-  attr = Type.copyAttributes(
-    attributes,
-    board.options,
-    "tapemeasure",
-    "point1"
-  );
-  p1 = board.create("point", pos0, attr);
+    // start point
+    attr = Type.copyAttributes(attributes, board.options, "tapemeasure", "point1");
+    p1 = board.create("point", pos0, attr);
 
-  // end point
-  attr = Type.copyAttributes(
-    attributes,
-    board.options,
-    "tapemeasure",
-    "point2"
-  );
-  p2 = board.create("point", pos1, attr);
+    // end point
+    attr = Type.copyAttributes(attributes, board.options, "tapemeasure", "point2");
+    p2 = board.create("point", pos1, attr);
 
-  p1.setAttribute({ ignoredSnapToPoints: [p2] });
-  p2.setAttribute({ ignoredSnapToPoints: [p1] });
+    p1.setAttribute({ ignoredSnapToPoints: [p2] });
+    p2.setAttribute({ ignoredSnapToPoints: [p1] });
 
-  // tape measure line
-  attr = Type.copyAttributes(attributes, board.options, "tapemeasure");
-  withTicks = attr.withticks;
-  withText = attr.withlabel;
-  digits = attr.digits;
+    // tape measure line
+    attr = Type.copyAttributes(attributes, board.options, "tapemeasure");
+    withTicks = attr.withticks;
+    withText = attr.withlabel;
+    digits = attr.digits;
 
-  if (digits === 2 && attr.precision !== 2) {
-    // Backward compatibility
-    digits = attr.precision;
-  }
-
-  // Below, we will replace the label by the measurement function.
-  if (withText) {
-    attr.withlabel = true;
-  }
-  li = board.create("segment", [p1, p2], attr);
-  // p1, p2 are already added to li.inherits
-
-  if (withText) {
-    if (attributes.name && attributes.name !== "") {
-      n = attributes.name + " = ";
-    } else {
-      n = "";
+    if (digits === 2 && attr.precision !== 2) {
+        // Backward compatibility
+        digits = attr.precision;
     }
-    li.label.setText(function () {
-      return n + Type.toFixed(p1.Dist(p2), digits);
-    });
-  }
 
-  if (withTicks) {
-    attr = Type.copyAttributes(
-      attributes,
-      board.options,
-      "tapemeasure",
-      "ticks"
-    );
-    //ticks  = 2;
-    ti = board.create("ticks", [li, 0.1], attr);
-    li.inherits.push(ti);
-  }
+    // Below, we will replace the label by the measurement function.
+    if (withText) {
+        attr.withlabel = true;
+    }
+    li = board.create("segment", [p1, p2], attr);
+    // p1, p2 are already added to li.inherits
 
-  // override the segments's remove method to ensure the removal of all elements
-  /** @ignore */
-  li.remove = function () {
+    if (withText) {
+        if (attributes.name && attributes.name !== "") {
+            n = attributes.name + " = ";
+        } else {
+            n = "";
+        }
+        li.label.setText(function () {
+            return n + Type.toFixed(p1.Dist(p2), digits);
+        });
+    }
+
     if (withTicks) {
-      li.removeTicks(ti);
+        attr = Type.copyAttributes(attributes, board.options, "tapemeasure", "ticks");
+        //ticks  = 2;
+        ti = board.create("ticks", [li, 0.1], attr);
+        li.inherits.push(ti);
     }
 
-    board.removeObject(p2);
-    board.removeObject(p1);
+    // override the segments's remove method to ensure the removal of all elements
+    /** @ignore */
+    li.remove = function () {
+        if (withTicks) {
+            li.removeTicks(ti);
+        }
 
-    GeometryElement.prototype.remove.call(this);
-  };
+        board.removeObject(p2);
+        board.removeObject(p1);
 
-  /**
-   * Returns the length of the tape measure.
-   * @name Value
-   * @memberOf Tapemeasure.prototype
-   * @function
-   * @returns {Number} length of tape measure.
-   */
-  li.Value = function () {
-    return p1.Dist(p2);
-  };
+        GeometryElement.prototype.remove.call(this);
+    };
 
-  p1.dump = false;
-  p2.dump = false;
+    /**
+     * Returns the length of the tape measure.
+     * @name Value
+     * @memberOf Tapemeasure.prototype
+     * @function
+     * @returns {Number} length of tape measure.
+     */
+    li.Value = function () {
+        return p1.Dist(p2);
+    };
 
-  li.elType = "tapemeasure";
-  li.getParents = function () {
-    return [
-      [p1.X(), p1.Y()],
-      [p2.X(), p2.Y()],
-    ];
-  };
+    p1.dump = false;
+    p2.dump = false;
 
-  li.subs = {
-    point1: p1,
-    point2: p2,
-  };
+    li.elType = "tapemeasure";
+    li.getParents = function () {
+        return [
+            [p1.X(), p1.Y()],
+            [p2.X(), p2.Y()],
+        ];
+    };
 
-  if (withTicks) {
-    ti.dump = false;
-  }
+    li.subs = {
+        point1: p1,
+        point2: p2,
+    };
 
-  li.methodMap = JXG.deepCopy(li.methodMap, {
-    Value: "Value",
-  });
+    if (withTicks) {
+        ti.dump = false;
+    }
 
-  li.prepareUpdate().update();
-  if (!board.isSuspendedUpdate) {
-    li.updateVisibility().updateRenderer();
-    // The point updates are necessary in case of snapToGrid==true
-    li.point1.updateVisibility().updateRenderer();
-    li.point2.updateVisibility().updateRenderer();
-  }
+    li.methodMap = JXG.deepCopy(li.methodMap, {
+        Value: "Value",
+    });
 
-  return li;
+    li.prepareUpdate().update();
+    if (!board.isSuspendedUpdate) {
+        li.updateVisibility().updateRenderer();
+        // The point updates are necessary in case of snapToGrid==true
+        li.point1.updateVisibility().updateRenderer();
+        li.point2.updateVisibility().updateRenderer();
+    }
+
+    return li;
 };
 
 JXG.registerElement("tapemeasure", JXG.createTapemeasure);
 
 export default {
-  createTapemeasure: JXG.createTapemeasure,
+    createTapemeasure: JXG.createTapemeasure,
 };

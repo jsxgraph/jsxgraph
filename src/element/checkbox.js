@@ -41,10 +41,10 @@ import Env from "../utils/env";
 import Type from "../utils/type";
 
 var priv = {
-  CheckboxChangeEventHandler: function () {
-    this._value = this.rendNodeCheckbox.checked;
-    this.board.update();
-  },
+    CheckboxChangeEventHandler: function () {
+        this._value = this.rendNodeCheckbox.checked;
+        this.board.update();
+    },
 };
 
 /**
@@ -160,82 +160,77 @@ var priv = {
  * </script><pre>
  */
 JXG.createCheckbox = function (board, parents, attributes) {
-  var t,
-    par,
-    attr = Type.copyAttributes(attributes, board.options, "checkbox");
+    var t,
+        par,
+        attr = Type.copyAttributes(attributes, board.options, "checkbox");
 
-  //if (parents.length !== 3) {
-  //throw new Error("JSXGraph: Can't create checkbox with parent types '" +
-  //    (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
-  //    "\nPossible parents are: [[x,y], label]");
-  //}
+    //if (parents.length !== 3) {
+    //throw new Error("JSXGraph: Can't create checkbox with parent types '" +
+    //    (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
+    //    "\nPossible parents are: [[x,y], label]");
+    //}
 
-  par = [
-    parents[0],
-    parents[1],
-    '<span style="display:inline">' +
-      '<input type="checkbox" /><label for=""></label>' +
-      "</span>",
-  ];
+    par = [
+        parents[0],
+        parents[1],
+        '<span style="display:inline">' +
+            '<input type="checkbox" /><label for=""></label>' +
+            "</span>",
+    ];
 
-  // 1. Create checkbox element with empty label
-  t = board.create("text", par, attr);
-  t.type = Type.OBJECT_TYPE_CHECKBOX;
+    // 1. Create checkbox element with empty label
+    t = board.create("text", par, attr);
+    t.type = Type.OBJECT_TYPE_CHECKBOX;
 
-  t.rendNodeCheckbox = t.rendNode.childNodes[0].childNodes[0];
-  t.rendNodeLabel = t.rendNode.childNodes[0].childNodes[1];
+    t.rendNodeCheckbox = t.rendNode.childNodes[0].childNodes[0];
+    t.rendNodeLabel = t.rendNode.childNodes[0].childNodes[1];
 
-  t.rendNodeTag = t.rendNodeCheckbox; // Needed for unified treatment in setAttribute
-  t.rendNodeTag.disabled = !!attr.disabled;
+    t.rendNodeTag = t.rendNodeCheckbox; // Needed for unified treatment in setAttribute
+    t.rendNodeTag.disabled = !!attr.disabled;
 
-  // t.rendNodeLabel.innerHTML = parents[2];
-  t.rendNodeCheckbox.id = t.rendNode.id + "_checkbox";
-  t.rendNodeLabel.id = t.rendNode.id + "_label";
-  t.rendNodeLabel.setAttribute("for", t.rendNodeCheckbox.id);
+    // t.rendNodeLabel.innerHTML = parents[2];
+    t.rendNodeCheckbox.id = t.rendNode.id + "_checkbox";
+    t.rendNodeLabel.id = t.rendNode.id + "_label";
+    t.rendNodeLabel.setAttribute("for", t.rendNodeCheckbox.id);
 
-  // 2. Set parents[2] (string|function) as label of the checkbox element.
-  // abstract.js selects the correct DOM element for the update
-  t.setText(parents[2]);
+    // 2. Set parents[2] (string|function) as label of the checkbox element.
+    // abstract.js selects the correct DOM element for the update
+    t.setText(parents[2]);
 
-  // This sets the font-size of the checkbox itself
-  t.visPropOld.fontsize = "0px";
-  board.renderer.updateTextStyle(t, false);
+    // This sets the font-size of the checkbox itself
+    t.visPropOld.fontsize = "0px";
+    board.renderer.updateTextStyle(t, false);
 
-  t.rendNodeCheckbox.checked = attr.checked;
+    t.rendNodeCheckbox.checked = attr.checked;
 
-  t._value = attr.checked;
+    t._value = attr.checked;
 
-  /**
-   * Returns the value of the checkbox element
-   * @name Value
-   * @memberOf Checkbox.prototype
-   * @function
-   * @returns {String} value of the checkbox.
-   */
-  t.Value = function () {
-    return this._value;
-  };
+    /**
+     * Returns the value of the checkbox element
+     * @name Value
+     * @memberOf Checkbox.prototype
+     * @function
+     * @returns {String} value of the checkbox.
+     */
+    t.Value = function () {
+        return this._value;
+    };
 
-  t.update = function () {
-    if (this.needsUpdate) {
-      JXG.Text.prototype.update.call(this);
-      this._value = this.rendNodeCheckbox.checked;
-    }
-    return this;
-  };
+    t.update = function () {
+        if (this.needsUpdate) {
+            JXG.Text.prototype.update.call(this);
+            this._value = this.rendNodeCheckbox.checked;
+        }
+        return this;
+    };
 
-  Env.addEvent(
-    t.rendNodeCheckbox,
-    "change",
-    priv.CheckboxChangeEventHandler,
-    t
-  );
+    Env.addEvent(t.rendNodeCheckbox, "change", priv.CheckboxChangeEventHandler, t);
 
-  return t;
+    return t;
 };
 
 JXG.registerElement("checkbox", JXG.createCheckbox);
 
 export default {
-  createCheckbox: JXG.createCheckbox,
+    createCheckbox: JXG.createCheckbox,
 };

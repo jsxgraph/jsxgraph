@@ -49,100 +49,92 @@ import Type from "../utils/type";
  * @see JXG.Board#generateName
  */
 JXG.Surface3D = function (view, F, X, Y, Z, range_u, range_v, attributes) {
-  this.constructor(
-    view.board,
-    attributes,
-    Const.OBJECT_TYPE_SURFACE3D,
-    Const.OBJECT_CLASS_3D
-  );
-  this.constructor3D(view, "surface3d");
+    this.constructor(
+        view.board,
+        attributes,
+        Const.OBJECT_TYPE_SURFACE3D,
+        Const.OBJECT_CLASS_3D
+    );
+    this.constructor3D(view, "surface3d");
 
-  this.id = this.view.board.setId(this, "S3D");
-  this.board.finalizeAdding(this);
+    this.id = this.view.board.setId(this, "S3D");
+    this.board.finalizeAdding(this);
 
-  this.F = F;
+    this.F = F;
 
-  /**
-   * Function which maps (u, v) to x; i.e. it defines the x-coordinate of the surface
-   * @function
-   * @returns Number
-   */
-  this.X = X;
+    /**
+     * Function which maps (u, v) to x; i.e. it defines the x-coordinate of the surface
+     * @function
+     * @returns Number
+     */
+    this.X = X;
 
-  /**
-   * Function which maps (u, v) to y; i.e. it defines the y-coordinate of the surface
-   * @function
-   * @returns Number
-   */
-  this.Y = Y;
+    /**
+     * Function which maps (u, v) to y; i.e. it defines the y-coordinate of the surface
+     * @function
+     * @returns Number
+     */
+    this.Y = Y;
 
-  /**
-   * Function which maps (u, v) to z; i.e. it defines the x-coordinate of the surface
-   * @function
-   * @returns Number
-   */
-  this.Z = Z;
+    /**
+     * Function which maps (u, v) to z; i.e. it defines the x-coordinate of the surface
+     * @function
+     * @returns Number
+     */
+    this.Z = Z;
 
-  if (this.F !== null) {
-    this.X = function (u, v) {
-      return this.F(u, v)[0];
-    };
-    this.Y = function (u, v) {
-      return this.F(u, v)[1];
-    };
-    this.Z = function (u, v) {
-      return this.F(u, v)[2];
-    };
-  }
+    if (this.F !== null) {
+        this.X = function (u, v) {
+            return this.F(u, v)[0];
+        };
+        this.Y = function (u, v) {
+            return this.F(u, v)[1];
+        };
+        this.Z = function (u, v) {
+            return this.F(u, v)[2];
+        };
+    }
 
-  this.range_u = range_u;
-  this.range_v = range_v;
+    this.range_u = range_u;
+    this.range_v = range_v;
 
-  this.methodMap = Type.deepCopy(this.methodMap, {
-    // TODO
-  });
+    this.methodMap = Type.deepCopy(this.methodMap, {
+        // TODO
+    });
 };
 JXG.Surface3D.prototype = new JXG.GeometryElement();
-Type.copyPrototypeMethods(
-  JXG.Surface3D,
-  JXG.GeometryElement3D,
-  "constructor3D"
-);
+Type.copyPrototypeMethods(JXG.Surface3D, JXG.GeometryElement3D, "constructor3D");
 
 JXG.extend(
-  JXG.Surface3D.prototype,
-  /** @lends JXG.Surface3D.prototype */ {
-    updateDataArray: function () {
-      var steps_u = Type.evaluate(this.visProp.stepsu),
-        steps_v = Type.evaluate(this.visProp.stepsv),
-        r_u = Type.evaluate(this.range_u),
-        r_v = Type.evaluate(this.range_v),
-        func,
-        res;
+    JXG.Surface3D.prototype,
+    /** @lends JXG.Surface3D.prototype */ {
+        updateDataArray: function () {
+            var steps_u = Type.evaluate(this.visProp.stepsu),
+                steps_v = Type.evaluate(this.visProp.stepsv),
+                r_u = Type.evaluate(this.range_u),
+                r_v = Type.evaluate(this.range_v),
+                func,
+                res;
 
-      if (this.F !== null) {
-        func = this.F;
-      } else {
-        func = [this.X, this.Y, this.Z];
-      }
-      res = this.view.getMesh(
-        func,
-        r_u.concat([steps_u]),
-        r_v.concat([steps_v])
-      );
+            if (this.F !== null) {
+                func = this.F;
+            } else {
+                func = [this.X, this.Y, this.Z];
+            }
+            res = this.view.getMesh(func, r_u.concat([steps_u]), r_v.concat([steps_v]));
 
-      return { X: res[0], Y: res[1] };
-    },
+            return { X: res[0], Y: res[1] };
+        },
 
-    update: function () {
-      return this;
-    },
+        update: function () {
+            return this;
+        },
 
-    updateRenderer: function () {
-      this.needsUpdate = false;
-      return this;
-    },
-  }
+        updateRenderer: function () {
+            this.needsUpdate = false;
+            return this;
+        },
+    }
 );
 
 /**
@@ -208,51 +200,51 @@ JXG.extend(
  *
  */
 JXG.createParametricSurface3D = function (board, parents, attributes) {
-  var view = parents[0],
-    F,
-    X,
-    Y,
-    Z,
-    range_u,
-    range_v,
-    attr,
-    el;
+    var view = parents[0],
+        F,
+        X,
+        Y,
+        Z,
+        range_u,
+        range_v,
+        attr,
+        el;
 
-  if (parents.length === 4) {
-    F = parents[1];
-    range_u = parents[2];
-    range_v = parents[3];
-    X = null;
-    Y = null;
-    Z = null;
-  } else {
-    X = parents[1];
-    Y = parents[2];
-    Z = parents[3];
-    range_u = parents[4];
-    range_v = parents[5];
-    F = null;
-  }
+    if (parents.length === 4) {
+        F = parents[1];
+        range_u = parents[2];
+        range_v = parents[3];
+        X = null;
+        Y = null;
+        Z = null;
+    } else {
+        X = parents[1];
+        Y = parents[2];
+        Z = parents[3];
+        range_u = parents[4];
+        range_v = parents[5];
+        F = null;
+    }
 
-  attr = Type.copyAttributes(attributes, board.options, "surface3d");
-  el = new JXG.Surface3D(view, F, X, Y, Z, range_u, range_v, attr);
+    attr = Type.copyAttributes(attributes, board.options, "surface3d");
+    el = new JXG.Surface3D(view, F, X, Y, Z, range_u, range_v, attr);
 
-  el.element2D = view.create("curve", [[], []], attr);
-  el.element2D.updateDataArray = function () {
-    var ret = el.updateDataArray();
-    this.dataX = ret.X;
-    this.dataY = ret.Y;
-  };
-  el.addChild(el.element2D);
-  el.inherits.push(el.element2D);
-  el.element2D.setParents(el);
+    el.element2D = view.create("curve", [[], []], attr);
+    el.element2D.updateDataArray = function () {
+        var ret = el.updateDataArray();
+        this.dataX = ret.X;
+        this.dataY = ret.Y;
+    };
+    el.addChild(el.element2D);
+    el.inherits.push(el.element2D);
+    el.element2D.setParents(el);
 
-  el.element2D.prepareUpdate().update();
-  if (!board.isSuspendedUpdate) {
-    el.element2D.updateVisibility().updateRenderer();
-  }
+    el.element2D.prepareUpdate().update();
+    if (!board.isSuspendedUpdate) {
+        el.element2D.updateVisibility().updateRenderer();
+    }
 
-  return el;
+    return el;
 };
 JXG.registerElement("parametricsurface3d", JXG.createParametricSurface3D);
 
@@ -331,21 +323,17 @@ JXG.registerElement("parametricsurface3d", JXG.createParametricSurface3D);
  *
  */
 JXG.createFunctiongraph3D = function (board, parents, attributes) {
-  var view = parents[0],
-    X = function (u, v) {
-      return u;
-    },
-    Y = function (u, v) {
-      return v;
-    },
-    Z = parents[1],
-    range_u = parents[2],
-    range_v = parents[3];
+    var view = parents[0],
+        X = function (u, v) {
+            return u;
+        },
+        Y = function (u, v) {
+            return v;
+        },
+        Z = parents[1],
+        range_u = parents[2],
+        range_v = parents[3];
 
-  return view.create(
-    "parametricsurface3d",
-    [X, Y, Z, range_u, range_v],
-    attributes
-  );
+    return view.create("parametricsurface3d", [X, Y, Z, range_u, range_v], attributes);
 };
 JXG.registerElement("functiongraph3d", JXG.createFunctiongraph3D);

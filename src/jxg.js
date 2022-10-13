@@ -56,7 +56,7 @@ var jxg = {};
 // therefore must not re-use the global JXG variable. But in this case JXG.extend will already be defined.
 // This is the reason for this check.
 if (typeof JXG === "object" && !JXG.extend) {
-  jxg = JXG;
+    jxg = JXG;
 }
 
 // We need the following two methods "extend" and "shortcut" to create the JXG object via JXG.extend.
@@ -69,24 +69,24 @@ if (typeof JXG === "object" && !JXG.extend) {
  * @param {Boolean} [toLower=false] If true the keys are convert to lower case. This is needed for visProp, see JXG#copyAttributes
  */
 jxg.extend = function (object, extension, onlyOwn, toLower) {
-  var e, e2;
+    var e, e2;
 
-  onlyOwn = onlyOwn || false;
-  toLower = toLower || false;
+    onlyOwn = onlyOwn || false;
+    toLower = toLower || false;
 
-  // the purpose of this for...in loop is indeed to use hasOwnProperty only if the caller
-  // explicitly wishes so.
-  for (e in extension) {
-    if (!onlyOwn || (onlyOwn && extension.hasOwnProperty(e))) {
-      if (toLower) {
-        e2 = e.toLowerCase();
-      } else {
-        e2 = e;
-      }
+    // the purpose of this for...in loop is indeed to use hasOwnProperty only if the caller
+    // explicitly wishes so.
+    for (e in extension) {
+        if (!onlyOwn || (onlyOwn && extension.hasOwnProperty(e))) {
+            if (toLower) {
+                e2 = e.toLowerCase();
+            } else {
+                e2 = e;
+            }
 
-      object[e2] = extension[e];
+            object[e2] = extension[e];
+        }
     }
-  }
 };
 
 /**
@@ -97,18 +97,18 @@ jxg.extend = function (object, extension, onlyOwn, toLower) {
  * @param {Boolean} ignoreRedefine This should be left at its default: false.
  */
 jxg.defineConstant = function (object, name, value, ignoreRedefine) {
-  ignoreRedefine = ignoreRedefine || false;
+    ignoreRedefine = ignoreRedefine || false;
 
-  if (ignoreRedefine && jxg.exists(object[name])) {
-    return;
-  }
+    if (ignoreRedefine && jxg.exists(object[name])) {
+        return;
+    }
 
-  Object.defineProperty(object, name, {
-    value: value,
-    writable: false,
-    enumerable: true,
-    configurable: false,
-  });
+    Object.defineProperty(object, name, {
+        value: value,
+        writable: false,
+        enumerable: true,
+        configurable: false,
+    });
 };
 
 /**
@@ -119,236 +119,229 @@ jxg.defineConstant = function (object, name, value, ignoreRedefine) {
  * @param {Boolean} [toUpper=false] If true the keys are convert to lower case. This is needed for visProp, see JXG#copyAttributes
  */
 jxg.extendConstants = function (object, constants, onlyOwn, toUpper) {
-  var e, e2;
+    var e, e2;
 
-  onlyOwn = onlyOwn || false;
-  toUpper = toUpper || false;
+    onlyOwn = onlyOwn || false;
+    toUpper = toUpper || false;
 
-  // The purpose of this for...in loop is indeed to use hasOwnProperty only if the caller explicitly wishes so.
-  for (e in constants) {
-    if (!onlyOwn || (onlyOwn && constants.hasOwnProperty(e))) {
-      if (toUpper) {
-        e2 = e.toUpperCase();
-      } else {
-        e2 = e;
-      }
+    // The purpose of this for...in loop is indeed to use hasOwnProperty only if the caller explicitly wishes so.
+    for (e in constants) {
+        if (!onlyOwn || (onlyOwn && constants.hasOwnProperty(e))) {
+            if (toUpper) {
+                e2 = e.toUpperCase();
+            } else {
+                e2 = e;
+            }
 
-      this.defineConstant(object, e2, constants[e]);
+            this.defineConstant(object, e2, constants[e]);
+        }
     }
-  }
 };
 
 jxg.extend(
-  jxg,
-  /** @lends JXG */ {
-    /**
-     * Store a reference to every board in this central list. This will at some point
-     * replace JXG.JSXGraph.boards.
-     * @type Object
-     */
-    boards: {},
+    jxg,
+    /** @lends JXG */ {
+        /**
+         * Store a reference to every board in this central list. This will at some point
+         * replace JXG.JSXGraph.boards.
+         * @type Object
+         */
+        boards: {},
 
-    /**
-     * Store the available file readers in this structure.
-     * @type Object
-     */
-    readers: {},
+        /**
+         * Store the available file readers in this structure.
+         * @type Object
+         */
+        readers: {},
 
-    /**
-     * Associative array that keeps track of all constructable elements registered
-     * via {@link JXG.registerElement}.
-     * @type Object
-     */
-    elements: {},
+        /**
+         * Associative array that keeps track of all constructable elements registered
+         * via {@link JXG.registerElement}.
+         * @type Object
+         */
+        elements: {},
 
-    /**
-     * This registers a new construction element to JSXGraph for the construction via the {@link JXG.Board.create}
-     * interface.
-     * @param {String} element The elements name. This is case-insensitive, existing elements with the same name
-     * will be overwritten.
-     * @param {Function} creator A reference to a function taking three parameters: First the board, the element is
-     * to be created on, a parent element array, and an attributes object. See {@link JXG.createPoint} or any other
-     * <tt>JXG.create...</tt> function for an example.
-     */
-    registerElement: function (element, creator) {
-      element = element.toLowerCase();
-      this.elements[element] = creator;
-    },
+        /**
+         * This registers a new construction element to JSXGraph for the construction via the {@link JXG.Board.create}
+         * interface.
+         * @param {String} element The elements name. This is case-insensitive, existing elements with the same name
+         * will be overwritten.
+         * @param {Function} creator A reference to a function taking three parameters: First the board, the element is
+         * to be created on, a parent element array, and an attributes object. See {@link JXG.createPoint} or any other
+         * <tt>JXG.create...</tt> function for an example.
+         */
+        registerElement: function (element, creator) {
+            element = element.toLowerCase();
+            this.elements[element] = creator;
+        },
 
-    /**
-     * Register a file reader.
-     * @param {function} reader A file reader. This object has to provide two methods: <tt>prepareString()</tt>
-     * and <tt>read()</tt>.
-     * @param {Array} ext
-     */
-    registerReader: function (reader, ext) {
-      var i, e;
+        /**
+         * Register a file reader.
+         * @param {function} reader A file reader. This object has to provide two methods: <tt>prepareString()</tt>
+         * and <tt>read()</tt>.
+         * @param {Array} ext
+         */
+        registerReader: function (reader, ext) {
+            var i, e;
 
-      for (i = 0; i < ext.length; i++) {
-        e = ext[i].toLowerCase();
+            for (i = 0; i < ext.length; i++) {
+                e = ext[i].toLowerCase();
 
-        if (typeof this.readers[e] !== "function") {
-          this.readers[e] = reader;
-        }
-      }
-    },
+                if (typeof this.readers[e] !== "function") {
+                    this.readers[e] = reader;
+                }
+            }
+        },
 
-    /**
-     * Creates a shortcut to a method, e.g. {@link JXG.Board#createElement} is a shortcut to {@link JXG.Board#create}.
-     * Sometimes the target is undefined by the time you want to define the shortcut so we need this little helper.
-     * @param {Object} object The object the method we want to create a shortcut for belongs to.
-     * @param {String} fun The method we want to create a shortcut for.
-     * @returns {Function} A function that calls the given method.
-     */
-    shortcut: function (object, fun) {
-      return function () {
-        return object[fun].apply(this, arguments);
-      };
-    },
+        /**
+         * Creates a shortcut to a method, e.g. {@link JXG.Board#createElement} is a shortcut to {@link JXG.Board#create}.
+         * Sometimes the target is undefined by the time you want to define the shortcut so we need this little helper.
+         * @param {Object} object The object the method we want to create a shortcut for belongs to.
+         * @param {String} fun The method we want to create a shortcut for.
+         * @returns {Function} A function that calls the given method.
+         */
+        shortcut: function (object, fun) {
+            return function () {
+                return object[fun].apply(this, arguments);
+            };
+        },
 
-    /**
-     * s may be a string containing the name or id of an element or even a reference
-     * to the element itself. This function returns a reference to the element. Search order: id, name.
-     * @param {JXG.Board} board Reference to the board the element belongs to.
-     * @param {String} s String or reference to a JSXGraph element.
-     * @returns {Object} Reference to the object given in parameter object
-     * @deprecated Use {@link JXG.Board#select}
-     */
-    getRef: function (board, s) {
-      jxg.deprecated("JXG.getRef()", "Board.select()");
-      return board.select(s);
-    },
+        /**
+         * s may be a string containing the name or id of an element or even a reference
+         * to the element itself. This function returns a reference to the element. Search order: id, name.
+         * @param {JXG.Board} board Reference to the board the element belongs to.
+         * @param {String} s String or reference to a JSXGraph element.
+         * @returns {Object} Reference to the object given in parameter object
+         * @deprecated Use {@link JXG.Board#select}
+         */
+        getRef: function (board, s) {
+            jxg.deprecated("JXG.getRef()", "Board.select()");
+            return board.select(s);
+        },
 
-    /**
-     * This is just a shortcut to {@link JXG.getRef}.
-     * @deprecated Use {@link JXG.Board#select}.
-     */
-    getReference: function (board, s) {
-      jxg.deprecated("JXG.getReference()", "Board.select()");
-      return board.select(s);
-    },
+        /**
+         * This is just a shortcut to {@link JXG.getRef}.
+         * @deprecated Use {@link JXG.Board#select}.
+         */
+        getReference: function (board, s) {
+            jxg.deprecated("JXG.getReference()", "Board.select()");
+            return board.select(s);
+        },
 
-    /**
-     * s may be the string containing the id of an HTML tag that hosts a JSXGraph board.
-     * This function returns the reference to the board.
-     * @param  {String} s String of an HTML tag that hosts a JSXGraph board
-     * @returns {Object} Reference to the board or null.
-     */
-    getBoardByContainerId: function (s) {
-      var b;
-      for (b in JXG.boards) {
-        if (JXG.boards.hasOwnProperty(b) && JXG.boards[b].container === s) {
-          return JXG.boards[b];
-        }
-      }
+        /**
+         * s may be the string containing the id of an HTML tag that hosts a JSXGraph board.
+         * This function returns the reference to the board.
+         * @param  {String} s String of an HTML tag that hosts a JSXGraph board
+         * @returns {Object} Reference to the board or null.
+         */
+        getBoardByContainerId: function (s) {
+            var b;
+            for (b in JXG.boards) {
+                if (JXG.boards.hasOwnProperty(b) && JXG.boards[b].container === s) {
+                    return JXG.boards[b];
+                }
+            }
 
-      return null;
-    },
+            return null;
+        },
 
-    /**
-     * This method issues a warning to the developer that the given function is deprecated
-     * and, if available, offers an alternative to the deprecated function.
-     * @param {String} what Describes the function that is deprecated
-     * @param {String} [replacement] The replacement that should be used instead.
-     */
-    deprecated: function (what, replacement) {
-      var warning = what + " is deprecated.";
+        /**
+         * This method issues a warning to the developer that the given function is deprecated
+         * and, if available, offers an alternative to the deprecated function.
+         * @param {String} what Describes the function that is deprecated
+         * @param {String} [replacement] The replacement that should be used instead.
+         */
+        deprecated: function (what, replacement) {
+            var warning = what + " is deprecated.";
 
-      if (replacement) {
-        warning += " Please use " + replacement + " instead.";
-      }
+            if (replacement) {
+                warning += " Please use " + replacement + " instead.";
+            }
 
-      jxg.warn(warning);
-    },
+            jxg.warn(warning);
+        },
 
-    /**
-     * Outputs a warning via console.warn(), if available. If console.warn() is
-     * unavailable this function will look for an HTML element with the id 'warning'
-     * and append the warning to this element's innerHTML.
-     * @param {String} warning The warning text
-     */
-    warn: function (warning) {
-      if (typeof window === "object" && window.console && console.warn) {
-        console.warn("WARNING:", warning);
-      } else if (
-        typeof document === "object" &&
-        document.getElementById("warning")
-      ) {
-        document.getElementById("debug").innerHTML +=
-          "WARNING: " + warning + "<br />";
-      }
-    },
+        /**
+         * Outputs a warning via console.warn(), if available. If console.warn() is
+         * unavailable this function will look for an HTML element with the id 'warning'
+         * and append the warning to this element's innerHTML.
+         * @param {String} warning The warning text
+         */
+        warn: function (warning) {
+            if (typeof window === "object" && window.console && console.warn) {
+                console.warn("WARNING:", warning);
+            } else if (typeof document === "object" && document.getElementById("warning")) {
+                document.getElementById("debug").innerHTML += "WARNING: " + warning + "<br />";
+            }
+        },
 
-    /**
-     * Add something to the debug log. If available a JavaScript debug console is used. Otherwise
-     * we're looking for a HTML div with id "debug". If this doesn't exist, too, the output is omitted.
-     * @param s An arbitrary number of parameters.
-     * @see JXG#debugWST
-     */
-    debugInt: function (s) {
-      var i, p;
+        /**
+         * Add something to the debug log. If available a JavaScript debug console is used. Otherwise
+         * we're looking for a HTML div with id "debug". If this doesn't exist, too, the output is omitted.
+         * @param s An arbitrary number of parameters.
+         * @see JXG#debugWST
+         */
+        debugInt: function (s) {
+            var i, p;
 
-      for (i = 0; i < arguments.length; i++) {
-        p = arguments[i];
-        if (typeof window === "object" && window.console && console.log) {
-          console.log(p);
-        } else if (
-          typeof document === "object" &&
-          document.getElementById("debug")
-        ) {
-          document.getElementById("debug").innerHTML += p + "<br/>";
-        }
-      }
-    },
+            for (i = 0; i < arguments.length; i++) {
+                p = arguments[i];
+                if (typeof window === "object" && window.console && console.log) {
+                    console.log(p);
+                } else if (typeof document === "object" && document.getElementById("debug")) {
+                    document.getElementById("debug").innerHTML += p + "<br/>";
+                }
+            }
+        },
 
-    /**
-     * Add something to the debug log. If available a JavaScript debug console is used. Otherwise
-     * we're looking for a HTML div with id "debug". If this doesn't exist, too, the output is omitted.
-     * This method adds a stack trace (if available).
-     * @param s An arbitrary number of parameters.
-     * @see JXG#debug
-     */
-    debugWST: function (s) {
-      var e = new Error();
+        /**
+         * Add something to the debug log. If available a JavaScript debug console is used. Otherwise
+         * we're looking for a HTML div with id "debug". If this doesn't exist, too, the output is omitted.
+         * This method adds a stack trace (if available).
+         * @param s An arbitrary number of parameters.
+         * @see JXG#debug
+         */
+        debugWST: function (s) {
+            var e = new Error();
 
-      jxg.debugInt.apply(this, arguments);
+            jxg.debugInt.apply(this, arguments);
 
-      if (e && e.stack) {
-        jxg.debugInt("stacktrace");
-        jxg.debugInt(e.stack.split("\n").slice(1).join("\n"));
-      }
-    },
+            if (e && e.stack) {
+                jxg.debugInt("stacktrace");
+                jxg.debugInt(e.stack.split("\n").slice(1).join("\n"));
+            }
+        },
 
-    /**
-     * Add something to the debug log. If available a JavaScript debug console is used. Otherwise
-     * we're looking for a HTML div with id "debug". If this doesn't exist, too, the output is omitted.
-     * This method adds a line of the stack trace (if available).
-     *
-     * @param s An arbitrary number of parameters.
-     * @see JXG#debug
-     */
-    debugLine: function (s) {
-      var e = new Error();
+        /**
+         * Add something to the debug log. If available a JavaScript debug console is used. Otherwise
+         * we're looking for a HTML div with id "debug". If this doesn't exist, too, the output is omitted.
+         * This method adds a line of the stack trace (if available).
+         *
+         * @param s An arbitrary number of parameters.
+         * @see JXG#debug
+         */
+        debugLine: function (s) {
+            var e = new Error();
 
-      jxg.debugInt.apply(this, arguments);
+            jxg.debugInt.apply(this, arguments);
 
-      if (e && e.stack) {
-        jxg.debugInt("Called from", e.stack.split("\n").slice(2, 3).join("\n"));
-      }
-    },
+            if (e && e.stack) {
+                jxg.debugInt("Called from", e.stack.split("\n").slice(2, 3).join("\n"));
+            }
+        },
 
-    /**
-     * Add something to the debug log. If available a JavaScript debug console is used. Otherwise
-     * we're looking for a HTML div with id "debug". If this doesn't exist, too, the output is omitted.
-     * @param s An arbitrary number of parameters.
-     * @see JXG#debugWST
-     * @see JXG#debugLine
-     * @see JXG#debugInt
-     */
-    debug: function (s) {
-      jxg.debugInt.apply(this, arguments);
-    },
-  }
+        /**
+         * Add something to the debug log. If available a JavaScript debug console is used. Otherwise
+         * we're looking for a HTML div with id "debug". If this doesn't exist, too, the output is omitted.
+         * @param s An arbitrary number of parameters.
+         * @see JXG#debugWST
+         * @see JXG#debugLine
+         * @see JXG#debugInt
+         */
+        debug: function (s) {
+            jxg.debugInt.apply(this, arguments);
+        },
+    }
 );
 
 export default jxg;
