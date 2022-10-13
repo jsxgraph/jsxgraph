@@ -1,5 +1,5 @@
 import JXG from "./jxg";
-import Env from "./utils/env";
+import Env from "./utils/env"; // Needed below
 import "./base/constants";
 import "./utils/type";
 import "./utils/xml";

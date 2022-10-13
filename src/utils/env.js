@@ -41,9 +41,6 @@
 
 import JXG from "../jxg";
 import Type from "./type";
-// if (typeof window === 'undefined') {
-//     globalThis.$__canvas = (await import("canvas")).default;
-// }
 import $__canvas from "canvas";
 
 JXG.extendConstants(
