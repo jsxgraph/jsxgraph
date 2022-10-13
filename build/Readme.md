@@ -1,5 +1,5 @@
 All src files of JSXGraph have to be included into `core.deps.json`.
-Not included by purpose are the folowing files:
+Not included by purpose are the following files:
 
     'jsxgraphnode.js'
     'loadjsxgraph.js'
