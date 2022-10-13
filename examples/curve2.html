@@ -3,7 +3,7 @@
    <title>JSXGraph example</title>
    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
    <script type="text/javascript" src="prototype.js"></script>
-   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+   <script type="text/javascript" src="../distrib/jsxgraphcore.js"></script>
 </head>
 <body>
   <h2>Polynomial regression</h2>
@@ -39,7 +39,7 @@
         var up = parseInt(s.Value());
         this.dataX = datax.slice(50,up);
         this.dataY = data.slice(50,up);
-        
+
         // Close the path
         this.dataX.push(datax[up-1]);
         this.dataY.push(0);
@@ -48,15 +48,15 @@
         this.dataX.push(50);
         this.dataY.push(data[50]);
     };
-    
-    brd.addHook(function(){ 
-        if (s2.Value()<s.Value()) { 
-            s2.position = s.position; 
-        } 
+
+    brd.addHook(function(){
+        if (s2.Value()<s.Value()) {
+            s2.position = s.position;
+        }
     });
-    
+
     brd.update();
-    
+
   /* ]]> */
   </script>
 </body>

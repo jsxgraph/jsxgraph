@@ -2,7 +2,7 @@
 <head>
    <title>JSXGraph example</title>
    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
-   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+   <script type="text/javascript" src="../distrib/jsxgraphcore.js"></script>
 </head>
 <body>
   <h2>Transformations part 2</h2>
@@ -13,20 +13,20 @@
 
         // Globale Variable
         var p0,p1;
-        
+
         board = JXG.JSXGraph.initBoard('jxgbox', {originX: 250, originY: 300, unitX: 50, unitY: 50});
         b1axisx = board.createElement('axis', [[0,0], [0,1]], {});
         b1axisy = board.createElement('axis', [[0,0], [1,0]], {});
 
-        p0 = board.createElement('point', [0,3], {style:5, name:'A',strokecolor:'blue', fillcolor:'red'}); 
-        p1 = board.createElement('point', [3,3], {style:5, name:'B',strokecolor:'blue', fillcolor:'red'}); 
-//        l1 = board.createElement('line', [p0,p1], {}); 
-//        c1 = board.createElement('circle', [p0,p1], {}); 
-        f = board.createElement('curve', 
-            ['x',function(x){return Math.tan(x)*p1.X();}], 
+        p0 = board.createElement('point', [0,3], {style:5, name:'A',strokecolor:'blue', fillcolor:'red'});
+        p1 = board.createElement('point', [3,3], {style:5, name:'B',strokecolor:'blue', fillcolor:'red'});
+//        l1 = board.createElement('line', [p0,p1], {});
+//        c1 = board.createElement('circle', [p0,p1], {});
+        f = board.createElement('curve',
+            ['x',function(x){return Math.tan(x)*p1.X();}],
             { name:'c',curveType:'plot'});
-        p2 = board.createElement('glider', [0,3,f], {style:5, name:'C',strokecolor:'blue', fillcolor:'red'}); 
-        
+        p2 = board.createElement('glider', [0,3,f], {style:5, name:'C',strokecolor:'blue', fillcolor:'red'});
+
         board.update();
   /* ]]> */
   </script>

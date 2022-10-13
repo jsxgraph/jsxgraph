@@ -3,7 +3,7 @@
    <title>JSXGraph example</title>
    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
    <script type="text/javascript" src="prototype.js"></script>
-   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+   <script type="text/javascript" src="../distrib/jsxgraphcore.js"></script>
 </head>
 <body>
   <h2>Polynomial regression</h2>
@@ -39,7 +39,7 @@
             this.dataY[i] = s.Value() * data[i];
         }
     };
-    
+
 dd = new function(){
     this.d = 3;
     this.f = function(){ return this.d;  }

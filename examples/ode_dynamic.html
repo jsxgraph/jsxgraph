@@ -3,7 +3,7 @@
    <title>JSXGraph example</title>
    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
    <script type="text/javascript" src="prototype.js"></script>
-   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+   <script type="text/javascript" src="../distrib/jsxgraphcore.js"></script>
 </head>
 <body>
 <h2>Solving ODEs numerically with explicit Runge-Kutta methods</h2>
@@ -68,7 +68,7 @@
 
         return data;
     }
-    
+
     function createCurve() {
         var data = ode();
         var t = [];
@@ -79,7 +79,7 @@
             datapred[i] = data[i][0];
             dataprey[i] = data[i][1];
         }
-        
+
         g3 = b._curve([t, datapred], {strokeColor:'red', strokeWidth:'2px'});
 
         g4 = b._curve([t, dataprey], {strokeColor:'blue', strokeWidth:'2px'});
@@ -95,7 +95,7 @@
             }
         }
     }
-    
+
     createCurve();
 
 //    b._text([0.2, 25, '<a href="#" onclick="scp1.setPositionByTransform(JXG.COORDS_BY_USER, -scp1.X(), -scp1.Y()); scp1.visit([25, 0], 4000, 5);;">Animate Glider</a>'], {});
@@ -110,7 +110,7 @@
     var bar = b2._chart([data], {chartStyle:'bar',labels:['Predator<img src="http://byfiles.storage.live.com/y1pmHk6c8i1Uf1e5ubQsm%5f9MzCFylipabgLKUzmux8-4mruwl413qYrMbM40bwRWNnGWWcbA4tZaYE" />', 'Prey<img src="http://www.barflaedle.de/WebRoot/Store15/Shops/61964125/49F0/14A5/28D7/3F6C/0B74/C0A8/28BC/E0AA/schaf%5f500.jpg" />'],width:0.8,dir:'horizontal'});
 
 
-    
+
 //    sct1 = b.createElement('text', [10, 10, function () { var x = scp1.X(); for(var i=1; i<g3.dataX.length; i++) { if((x >= g3.dataX[i-1]) && (x <= g3.dataX[i])) return 'Preed: ' + g3.dataY[i] + ', Prey: ' + g4.dataY[i]; }; }]);
 
 

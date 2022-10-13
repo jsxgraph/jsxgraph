@@ -32,53 +32,6 @@
 /*global JXG: true*/
 /*jslint nomen: true, plusplus: true*/
 
-/* depends:
- jxg
- base/constants
- base/coords
- math/numerics
- utils/type
- utils/color
- utils/base64
- utils/encoding
- utils/zip
- utils/xml
-  elements:
-   grid
-   axis
-   circle
-   glider
-   point
-   line
-   normal
-   regularpolygon
-   polygon
-   intersection
-   otherintersection
-   midpoint
-   text
-   arrow
-   transform
-   mirrorpoint
-   reflection
-   arc
-   ellipse
-   conic
-   sector
-   perpendicular
-   tangent
-   polar
-   circumcirclearc
-   circumcirclesector
-   semicircle
-   angle
-   bisector
-   slider
-   functiongraph
-   segment
-   integral
- */
-
 (function () {
   "use strict";
 

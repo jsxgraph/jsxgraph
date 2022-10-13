@@ -2,7 +2,7 @@
 <head>
    <title>JSXGraph example</title>
    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
-   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+   <script type="text/javascript" src="../distrib/jsxgraphcore.js"></script>
 </head>
 <body>
   <h2>Chart examples</h2>
@@ -26,7 +26,7 @@
         var board = JXG.JSXGraph.initBoard('jxgbox', {originX: 350, originY: 450, unitX: 50, unitY: 20, axis:true});
 
         var dataArr = [4, 1.2, 3, NaN, 5, 4, 1.54, function () { return 2; }];
-        
+
 board.create('curve', [[0,1,2,3,4, 5, 6, 7], dataArr]);
         // Line chart
         function lineChart() {
@@ -68,7 +68,7 @@ board.create('curve', [[0,1,2,3,4, 5, 6, 7], dataArr]);
             var a = board.create('chart', dataArr, {chartStyle:'bar,line,point',width:0.8,style:6,labels:dataArr});
             board.unsuspendUpdate();
         }
-        
+
         // Two bar charts
         function twoBarCharts() {
             JXG.JSXGraph.freeBoard(board);
@@ -115,7 +115,7 @@ board.create('curve', [[0,1,2,3,4, 5, 6, 7], dataArr]);
             JXG.JSXGraph.freeBoard(board);
             board = JXG.JSXGraph.initBoard('jxgbox', {originX: 250, originY: 450, unitX: 50, unitY: 50});
             board.suspendUpdate();
-            var a = board.create('chart', dataArr, 
+            var a = board.create('chart', dataArr,
                 {chartStyle:'pie', colors:['#B02B2C','#3F4C6B','#C79810','#D15600'],fillOpacity:0.9,center:[5,2],strokeColor:'#ffffff',strokeWidth:6, highlightBySize:true, highlightOnSector:true}
             );
             board.unsuspendUpdate();

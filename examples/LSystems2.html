@@ -3,7 +3,7 @@
    <title>JSXGraph example</title>
    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
    <script type="text/javascript" src="prototype.js"></script>
-   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+   <script type="text/javascript" src="../distrib/jsxgraphcore.js"></script>
 </head>
 <body>
 <h1>L-Systems</h1>
@@ -20,13 +20,13 @@ if (true) {
 var level = 6;
 var axiom = 'A';
 var rules = {
-    'A':'B-A-B', 
+    'A':'B-A-B',
     'B':'A+B+A',
     '+' : '+',
     '-' : '-'
 };
-var symbols = { 'A':'F', 
-                'B':'F', 
+var symbols = { 'A':'F',
+                'B':'F',
                 '+':'+',
                 '-':'-',
                 '[':'[',
@@ -41,17 +41,17 @@ if (false) {
 var level = 3;
 var axiom = 'F+F+F+F';
 var rules = {
-    'F':'F+F-F-FF+F+F-F', 
+    'F':'F+F-F-FF+F+F-F',
     '+' : '+',
     '-' : '-'
 };
-var symbols = { 'F':'F', 
+var symbols = { 'F':'F',
                 '+':'+',
                 '-':'-',
                 '[':'[',
                 ']':']'
               } ;
-              
+
 var angle = 90;
 var len = 200/Math.pow(4,level);
 var shrink = 1;
@@ -61,11 +61,11 @@ if (false) {
 var level = 5;
 var axiom = '+F';
 var rules = {
-    'F':'F-F+F+F-F', 
+    'F':'F-F+F+F-F',
     '+' : '+',
     '-' : '-'
 };
-var symbols = { 'F':'F', 
+var symbols = { 'F':'F',
                 '+':'+',
                 '-':'-',
                 '[':'[',
@@ -81,8 +81,8 @@ var level = 8;
 var axiom = 'Fl';
 var rules = {
     'F' : 'F',
-    'l' : 'l+rF+', 
-    'r' : '-Fl-r', 
+    'l' : 'l+rF+',
+    'r' : '-Fl-r',
     '+' : '+',
     '-' : '-'
 };
@@ -94,7 +94,7 @@ var symbols = { 'F':'F',
                 '[':'[',
                 ']':']'
               } ;
-              
+
 var angle = 90;
 var len = 500/(level*level);
 var shrink = 1;
@@ -105,7 +105,7 @@ var level = 2;
 var axiom = 'F-F-F-F';
 var rules = {
     'F' : 'F-f+FF-F-FF-Ff-FF+f-FF+F+FF+Ff+FFF',
-    'f' : 'ffffff', 
+    'f' : 'ffffff',
     '+' : '+',
     '-' : '-'
 };
@@ -116,7 +116,7 @@ var symbols = { 'F':'F',
                 '[':'[',
                 ']':']'
               } ;
-              
+
 var angle = 90;
 var len = 20/Math.pow(2,level);
 var shrink = 1;
@@ -127,8 +127,8 @@ var level = 4;
 var axiom = 'X';
 var rules = {
     'F' : 'F',
-    'X' : 'XFYFX+F+YFXFY-F-XFYFX', 
-    'Y' : 'YFXFY-F-XFYFX+F+YFXFY', 
+    'X' : 'XFYFX+F+YFXFY-F-XFYFX',
+    'Y' : 'YFXFY-F-XFYFX+F+YFXFY',
     '+' : '+',
     '-' : '-'
 };
@@ -140,7 +140,7 @@ var symbols = { 'F':'F',
                 '[':'[',
                 ']':']'
               } ;
-              
+
 var angle = 90;
 var len = 300/Math.pow(3,level);
 var shrink = 1;
@@ -152,8 +152,8 @@ var level = 5;
 var axiom = 'XF';
 var rules = {
     'F' : 'F',
-    'X' : 'X+YF++YF-FX--FXFX-YF+', 
-    'Y' : '-FX+YFYF++YF+FX--FX-Y', 
+    'X' : 'X+YF++YF-FX--FXFX-YF+',
+    'Y' : '-FX+YFYF++YF+FX--FX-Y',
     '+' : '+',
     '-' : '-'
 };
@@ -165,7 +165,7 @@ var symbols = { 'F':'F',
                 '[':'[',
                 ']':']'
               } ;
-              
+
 var angle = 60;
 var len = 300/Math.pow(3,level);
 var shrink = 1;
@@ -188,7 +188,7 @@ var symbols = { 'F':'F',
                 '[':'[',
                 ']':']'
               } ;
-              
+
 var angle = 25.7;
 var len = 200/Math.pow(3,level);
 var shrink = 1;
@@ -213,7 +213,7 @@ var symbols = { 'F':'F',
                 '[':'[',
                 ']':']'
               } ;
-              
+
 var angle = 22.5;
 var len = 300/Math.pow(3,level);
 var shrink = 1;
@@ -240,7 +240,7 @@ var symbols = { 'F':'F',
                 '[':'[',
                 ']':']'
               } ;
-              
+
 var angle = 60;
 var len = 100/(level);
 var shrink = 1;
@@ -269,7 +269,7 @@ var symbols = { 'F':'F',
                 '[':'[',
                 ']':']'
               } ;
-              
+
 var angle = 60;
 var len = 100/(level);
 var shrink = 1;
@@ -292,7 +292,7 @@ var rules = {
     '[' : '[',
     ']' : ']'
   };
-var symbols = { 
+var symbols = {
                 '1':'F',
                 '6':' ',
                 '7':' ',
@@ -319,7 +319,7 @@ function expander(level,axiom,rules) {
             return this.code.charAt(this.pos++);
         }
     });
-    
+
     this.code = '';
     this.pos = 0;
     this.next = function() {
@@ -389,7 +389,7 @@ function clearturtle() {
   t.cs();
 }
 
-     
+
 /* ]]> */
 </script>
 </body>

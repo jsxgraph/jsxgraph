@@ -2,7 +2,7 @@
 <html>
 <head>
     <title></title>
-    <script type="text/javascript" src="../../src/loadjsxgraph.js"></script>
+    <script type="text/javascript" src="../../distrib/jsxgraphcore.js"></script>
     <link rel="stylesheet" type="text/css" href="../../distrib/jsxgraph.css" />
     <script type="text/javascript" src="../jquery-3.5.1.min.js"></script>
 </head>
@@ -18,15 +18,15 @@
         for (i = 0; i < no; i++) {
             points.push(board.create('point', [Math.random()*8-4, Math.random()*8-4]));
         }
-        
+
         var test = board.create('polygon', points);
-        
+
         board.create('polygon', points);
 
         group = board.create('group', points);
         //group.addPoints(points);
         //group.removePoint(points[1]);
-        
+
         board.removeObject(test);
     })();
 </script>

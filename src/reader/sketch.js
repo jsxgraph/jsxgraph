@@ -33,18 +33,6 @@ Copyright 2008-2022
 /*global JXG: true*/
 /*jslint nomen: true, plusplus: true*/
 
-/* depends:
- jxg
- base/constants
- math/math
- options
- utils/zip
- utils/encoding
- utils/base64
- utils/uuid
- utils/type
- */
-
 (function () {
   "use strict";
 

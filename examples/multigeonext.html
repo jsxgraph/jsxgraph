@@ -2,7 +2,7 @@
 <head>
    <title>example</title>
    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
-   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+   <script type="text/javascript" src="../distrib/jsxgraphcore.js"></script>
    <script type="text/javascript" src="../src/reader/geonext.js"></script>
 
 </head>
@@ -17,10 +17,10 @@
    </div>
    <script type="text/javascript">
     /* <![CDATA[ */
-    
+
         var files = ['gxt/blubb1.nc.gxt', 'gxt/blubb2.nc.gxt', 'gxt/blubb3.nc.gxt', 'gxt/blubb81.nc.gxt'],
             boards = [];
-    
+
         function loadingChain(step) {
             if(step >= files.length)
                 return;
@@ -31,7 +31,7 @@
         }
 
         loadingChain(0);
-        
+
 /*
         board1 = JXG.JSXGraph.loadBoardFromFile('box1','gxt/blubb1.nc.gxt','Geonext');
         board2 = JXG.JSXGraph.loadBoardFromFile('box2','gxt/blubb2.nc.gxt','Geonext');

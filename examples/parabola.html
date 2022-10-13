@@ -3,7 +3,7 @@
    <title>JSXGraph example</title>
    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
    <script type="text/javascript" src="prototype.js"></script>
-   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+   <script type="text/javascript" src="../distrib/jsxgraphcore.js"></script>
    <script type="text/javascript" src="../src/reader/geonext.js"></script>
 </head>
 <body>
@@ -14,32 +14,32 @@
 
         <table style="border: 0px solid black; text-align: center" width="500px">
         <tr><td rowspan="2"><div id="box2" class='jxgbox' style="width:375.0px; height:150.0px; border:0px dashed black; "></div></td><th style="border: 1px solid black" width="100px">a</th><th style="border: 1px solid black" width="100px">b</th><th style="border: 1px solid black" width="100px">c</th></tr>
-        <tr><td><input type="text" id="print_a" size="2" maxlength="7" 
+        <tr><td><input type="text" id="print_a" size="2" maxlength="7"
     style="border:none; text-align:right; font-size:1.2em; "
     onKeyUp="board2.getElement('A').setPositionX(JXG.COORDS_BY_USER,parseFloat(this.value)); board2.update(); board.update();" onfocus="hook=false;" onblur="hook=true"
-></td><td><input type="text" id="print_b" size="2" maxlength="7" 
+></td><td><input type="text" id="print_b" size="2" maxlength="7"
     style="border:none; text-align:right; font-size:1.2em; "
     onKeyUp="board2.getElement('B').setPositionX(JXG.COORDS_BY_USER,parseFloat(this.value)); board2.update(); board.update(); board2.update(); board.update();" onfocus="hook=false;" onblur="hook=true"
-></td><td><input type="text" id="print_c" size="2" maxlength="7" 
+></td><td><input type="text" id="print_c" size="2" maxlength="7"
     style="border:none; text-align:right; font-size:1.2em; "
     onKeyUp="board2.getElement('C').setPositionX(JXG.COORDS_BY_USER,parseFloat(this.value)); board2.update(); board.update(); board2.update(); board.update();" onfocus="hook=false;" onblur="hook=true"
 ></td></tr>
-      </table>  
-  
+      </table>
+
 			<script language="JavaScript">
 				hook = true;
 				board2 = JXG.JSXGraph.loadBoardFromString('box2', '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', 'Geonext');
-						
+
 
 				board = JXG.JSXGraph.initBoard('box', {originX: 250, originY: 250, unitX: 50, unitY: 50});
                 board2.addChild(board);
-                
+
 				// Axes
 				b1axisx = board.createElement('axis', [[0,0], [1,0]], {});
 				b1axisy = board.createElement('axis', [[0,0], [0,1]], {});
 
-				curve = board.createElement('curve', [function(t){ return t; }, function(t){ return JXG.getReference(board2, 'A').X()*t*t+JXG.getReference(board2, 'B').X()*t+JXG.getReference(board2, 'C').X(); }, -10, 10]);						
-			
+				curve = board.createElement('curve', [function(t){ return t; }, function(t){ return JXG.getReference(board2, 'A').X()*t*t+JXG.getReference(board2, 'B').X()*t+JXG.getReference(board2, 'C').X(); }, -10, 10]);
+
 				function print_table() {
 					if (hook){
 						$('print_a').value = Math.round(JXG.getReference(board2, 'A').X(),2);
@@ -47,7 +47,7 @@
 						$('print_c').value = Math.round(JXG.getReference(board2, 'C').X(),2);
 					}
 				};
-				
+
 				print_table_id = board2.addHook(print_table);
 			</script>
 

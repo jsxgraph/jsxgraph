@@ -3,7 +3,7 @@
    <title>JSXGraph example</title>
    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
 <script type="text/javascript" src="jquery-3.5.1.min.js"></script>
-   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+   <script type="text/javascript" src="../distrib/jsxgraphcore.js"></script>
 </head>
 <body>
 <h2>Lines with ticks</h2>
@@ -23,12 +23,12 @@
 
         p2 = board.createElement('point', [8, -3], {style:2,name:"P_{2}"}); // Angabe fester Koordinaten
         p1 = board.createElement('point', [3, -3], {style:3,name:"P_{1}"}); // Angabe fester Koordinaten
-        
+
         l1 = board.createElement('line', [p1, p2], {straightFirst: true, straightLast: true});
         board.createElement('ticks', [l1,2], {}); //l1.enableTicks();
 
         c = board.createElement('circle', [p1, 2]);
-        
+
   /* ]]> */
   </script>
 </body>

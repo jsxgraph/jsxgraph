@@ -3,7 +3,7 @@
    <title>JSXGraph example</title>
    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
    <!--<script type="text/javascript" src="prototype.js"></script>-->
-   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+   <script type="text/javascript" src="../distrib/jsxgraphcore.js"></script>
 
 </head>
 <body>
@@ -14,47 +14,47 @@
     /* <![CDATA[ */
     //(function(){
         var p0, p1, picStr, board;
-        
+
         picStr = "http://easyimup.de/uploads/garfield-1069_e254457.gif";
         //picStr = "./uccellino.jpg";
         picStr = "./fagiolo.jpg";
 
         board = JXG.JSXGraph.initBoard('jxgbox', {originX: 250, originY: 250, unitX: 40, unitY: 40, axis:true, grid:true});
 
-        var p0 = board.create('point', [-1,0], {style:5, name:'opacity'}); 
+        var p0 = board.create('point', [-1,0], {style:5, name:'opacity'});
 
         /*
-        var p1 = board.create('point', [3,0], {style:5, name:'rot+scale'}); 
-        var li = board.create('line', [p0,p1]); 
+        var p1 = board.create('point', [3,0], {style:5, name:'rot+scale'});
+        var li = board.create('line', [p0,p1]);
         */
-        var p1 = board.create('point', [1,1]); 
-        var p2 = board.create('point', [4,3]); 
-        var im = board.create('image',[picStr, 
+        var p1 = board.create('point', [1,1]);
+        var p2 = board.create('point', [4,3]);
+        var im = board.create('image',[picStr,
                                 [function(){return p1.X()}, function(){return p1.Y(); }],
                                 [function(){return p2.X() - p1.X()}, function(){return p2.Y() - p1.Y(); }]],
-            {id:'imx', 
-             opacity: function(){ return Math.exp(-Math.abs(p0.X())*0.4);}, 
-             rotate:0, 
-             frozen:false }); 
+            {id:'imx',
+             opacity: function(){ return Math.exp(-Math.abs(p0.X())*0.4);},
+             rotate:0,
+             frozen:false });
 
         /*
-        // 
+        //
         // Translate image and point "rot+scale" by freagging point "offset"
-        var tOff = board.create('transform', [function(){return p0.X()},function(){return p0.Y()}], {type:'translate'}); 
+        var tOff = board.create('transform', [function(){return p0.X()},function(){return p0.Y()}], {type:'translate'});
         tOff.bindTo(im);
         tOff.bindTo(p1);
-        
+
         // Rotate image around point "offset" by dragging point "rot+scale"
-        var tRot = board.create('transform', [function(){return Math.atan2(p1.Y()-p0.Y(),p1.X()-p0.X())}, p0], {type:'rotate'}); 
+        var tRot = board.create('transform', [function(){return Math.atan2(p1.Y()-p0.Y(),p1.X()-p0.X())}, p0], {type:'rotate'});
         tRot.bindTo(im);
-        
+
         // Scale image by dragging point "rot+scale"
         // We do this by moving the image back to the origin (inverse of transformation tOff),
         // then scale the image (because scaling "starts from (0,0))
         // Finally, we move the image back to point "Offset"
-        var tOffInv = board.create('transform', [function(){return -p0.X()},function(){return -p0.Y()}], {type:'translate'}); 
+        var tOffInv = board.create('transform', [function(){return -p0.X()},function(){return -p0.Y()}], {type:'translate'});
         var tScale = board.create('transform', [function(){return p1.Dist(p0)/3;},
-                                            function(){return p1.Dist(p0)/3;}], {type:'scale'}); 
+                                            function(){return p1.Dist(p0)/3;}], {type:'scale'});
         tOffInv.bindTo(im); tScale.bindTo(im); tOff.bindTo(im);
         //board.update();
         */

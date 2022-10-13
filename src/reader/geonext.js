@@ -32,47 +32,6 @@
 /*global JXG: true, XMLSerializer: true, Image: true*/
 /*jslint nomen: true, plusplus: true*/
 
-/* depends:
- jxg
- base/constants
- base/group
- parser/geonext
- utils/type
- utils/color
- utils/zip
- utils/base64
- utils/xml
-  elements:
-   image
-   transform
-   point
-   line
-   circle
-   glider
-   intersection
-   arrowparallel
-   bisector
-   circumcircle
-   circumcenter
-   midpoint
-   reflection
-   mirrorpoint
-   perpendicularsegment
-   parallelpoint
-   perpendicularpoint
-   sector
-   segment
-   polygon
-   curve
-   arrow
-   arc
-   angle
-   text
-   tracecurve
-   grid
-   axis
- */
-
 (function () {
   "use strict";
 

@@ -3,7 +3,7 @@
    <title>JSXGraph example: YahooFinance server module</title>
    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
    <script type="text/javascript" src="jquery-3.5.1.min.js"></script>
-   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+   <script type="text/javascript" src="../distrib/jsxgraphcore.js"></script>
 </head>
 <body>
 <h2>Get shareprices with YahooFinance server module</h2>
@@ -35,11 +35,11 @@ In case there's no internet connection goto <a href="fakeshareprice.html">fake d
             val = data.price;
             if (restart) {
                 restart = false
-                g = board.create('curve', [x,y],{strokeWidth:3, strokeColor:'green',shadow:false}); 
-                txt = board.create('text', [3,(hi+lo)*0.5,function(){return share + ' = '+val;}],{fontSize:'14px'}); 
+                g = board.create('curve', [x,y],{strokeWidth:3, strokeColor:'green',shadow:false});
+                txt = board.create('text', [3,(hi+lo)*0.5,function(){return share + ' = '+val;}],{fontSize:'14px'});
                 reg = board.create('functiongraph',[JXG.Math.Numerics.regressionPolynomial(1,g.dataX,g.dataY)],{strokecolor:'red',dash:3});
             } else {
-                g.dataX = x;                    
+                g.dataX = x;
                 g.dataY = y;
             }
             board.update();

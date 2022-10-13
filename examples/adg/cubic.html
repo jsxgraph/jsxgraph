@@ -2,7 +2,7 @@
 <head>
    <title>Lima&ccedil;on | JSXGraph Example</title>
    <link rel="stylesheet" type="text/css" href="../../distrib/jsxgraph.css" />
-   <script type="text/javascript" src="../../src/loadjsxgraph.js"></script>
+   <script type="text/javascript" src="../../distrib/jsxgraphcore.js"></script>
 </head>
 <body>
 <div id="debug" style="display: none"></div>
@@ -77,20 +77,20 @@
     loc3 = null;
 
     opt = false;
-    
+
     //board.options.locus.translateToOrigin = true;
 //    board.options.locus.toOrigin = ;
     //board.options.locus.translateTo10 = true;
 //    board.options.locus.to10 = p4;
 
     tl = board.create('locus', [z], {strokeWidth: '3px', strokeOpacity: 0.9, strokeColor: 'black'});
-    
+
     i = board.create('glider', [tl]);
     j = board.create('circle', [i, 4]);
     k = board.create('intersection', [j, e, 0]);
     l = board.create('midpoint', [k, a]);
     tl2 = board.create('locus', [l]);
-    
+
 
     function chooseCoordinateSystem() {
         var k, o;
@@ -299,7 +299,7 @@
     }
 })(window, document);
 
-    
+
   /* ]]> */
   </script>
 <br/>

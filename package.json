@@ -2,9 +2,14 @@
   "name": "jsxgraph",
   "description": "Interactive geometry, plotting, visualization",
   "homepage": "https://jsxgraph.org",
-  "version": "1.4.6",
-  "main": "distrib/jsxgraphcore.js",
-  "types": "distrib/index.d.ts",
+  "version": "1.5.0",
+  "main": "./src/index.js",
+  "types": "./src/index.d.ts",
+  "files": [
+    "src",
+    "distrib",
+    "*.md"
+  ],
   "maintainers": [
     {
       "name": "Alfred Wassermann",
@@ -42,6 +47,12 @@
     "url": "https://github.com/jsxgraph/jsxgraph.git"
   },
   "prettier": {},
+  "dependencies": {
+    "path-browserify": "^1.0.1"
+  },
+  "peerDependencies": {
+    "canvas": "^2.10.1"
+  },
   "devDependencies": {
     "almond": "^0.3.3",
     "eslint": "^8.4.1",
@@ -57,17 +68,19 @@
     "karma-requirejs": "^1.1.0",
     "prettier": "^2.7.1",
     "requirejs": "^2.3.6",
-    "terser": "^5.10.0"
+    "terser": "^5.10.0",
+    "webpack": "^5.38.1",
+    "webpack-cli": "^4.9.2"
   },
   "engines": {
     "node": ">=0.6.0"
   },
   "scripts": {
-    "buildCore": "./node_modules/requirejs/bin/r.js -o build/core.build.json",
+    "buildCore": "webpack --config config/webpack.config.js",
     "buildCompressor": "./node_modules/requirejs/bin/r.js -o build/compressor.build.json",
     "eslint": "make eslint",
-    "check-format": "prettier --check src test tests",
-    "format": "prettier --write src test tests",
+    "check-format": "prettier --check build src test tests",
+    "format": "prettier --write build src test tests",
     "test": "make test"
   }
 }

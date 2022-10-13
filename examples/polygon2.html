@@ -4,7 +4,7 @@
    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
 <script type="text/javascript" src="jquery-3.5.1.min.js"></script>
 <!--<script type="text/javascript" src="prototype.js"></script>-->
-<script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+<script type="text/javascript" src="../distrib/jsxgraphcore.js"></script>
 </head>
 <body>
 <h1 onclick="brd.clearTraces();">Polygon</h1>
@@ -23,11 +23,11 @@ var C = brd.create('point', [-4,-3], {name:'C', withLabel:true, visible:true});
 
 var p2 = brd.create('polygon', [A,B,C],
     {borders:{
-        visible:true, 
-        withLabel:true, 
-        label:{position:'top'}}, 
+        visible:true,
+        withLabel:true,
+        label:{position:'top'}},
      vertices:{visible:false, size:2},
-     withLabel:false, 
+     withLabel:false,
      hasInnerPoints:true,
      fillColor:'yellow',
      highlightFillColor:'blue',

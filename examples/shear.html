@@ -2,7 +2,7 @@
 <head>
    <title>JSXGraph example</title>
    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
-   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+   <script type="text/javascript" src="../distrib/jsxgraphcore.js"></script>
 </head>
 <body>
   <h2>Transformations</h2>
@@ -19,7 +19,7 @@
   shearimg = board.create('image',["uccellino.jpg", [1, 1], [3, 3]], {fixed: true});
   sheartransform = board.create('transform', [
     function() { return shearsx.Value(); },
-    function() { return shearsy.Value(); }], {type:'shear'}); 
+    function() { return shearsy.Value(); }], {type:'shear'});
   sheartransform.bindTo(shearimg);
 
   board.update();

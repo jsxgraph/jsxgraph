@@ -3,7 +3,7 @@
    <title>JSXGraph example</title>
    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
    <script type="text/javascript" src="prototype.js"></script>
-   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+   <script type="text/javascript" src="../distrib/jsxgraphcore.js"></script>
 </head>
 <body>
     <h2>Power Series for Sine</h2>
@@ -24,7 +24,7 @@ board1.createElement('functiongraph', [function(t){ return Math.sin(t); }, -10, 
 var s = board1.createElement('slider', [[2,-4],[7,-4],[0,1,10]], {name:'S',snapWidth:1});
 
 board1.createElement('curve', [
-    function(t){ return t; }, 
+    function(t){ return t; },
     function(t) {
         var val = 0;
         for(var i = 0; i < s.Value() + 1; i++) {
@@ -35,7 +35,7 @@ board1.createElement('curve', [
     },
 -10, 10], {strokeColor: "#bb0000"});
 board1.unsuspendUpdate();
-</script> 
+</script>
 
 <h2>Power Series for Cosine</h2>
 <div id="jxgbox2" class="jxgbox" style="width:600px; height:300px;"></div>
@@ -52,7 +52,7 @@ board2.createElement('functiongraph', [function(t){ return Math.cos(t); }, -10, 
 var s2 = board2.createElement('slider', [[2,-4],[7,-4],[0,0,10]], {name:'S2',snapWidth:1});
 
 board2.createElement('curve', [
-    function(t){ return t; }, 
+    function(t){ return t; },
     function(t) {
         var val = 0;
         for(var i = 0; i < s2.Value() + 1; i++) {

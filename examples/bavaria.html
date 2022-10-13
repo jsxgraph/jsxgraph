@@ -2,7 +2,7 @@
 <head>
    <title>JSXGraph example</title>
    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
-   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+   <script type="text/javascript" src="../distrib/jsxgraphcore.js"></script>
    <script type="text/javascript" src="germany.js"></script>
 </head>
 <body>
@@ -35,7 +35,7 @@ for(i=0;i<points.length;i++) {
         pointsBY.push(points[i]);
     }
 }
-    
+
     var minXArr =[];
 var minYArr = [];
 var maxXArr = [];
@@ -53,7 +53,7 @@ for(j=0;j<anz;j++) {
         x.push(1*(1*a[0]).toFixed(1));
         y.push(1*(1*a[1]).toFixed(1));
     }
-        
+
 
     var minX = 10000000000000000;
     var maxX = -100000000000000;
@@ -108,23 +108,23 @@ for(i=0;i<xArr.length;i++) {
 
     brd.suspendUpdate();
 for(i=0;i<xArr.length;i++) {
-    
+
     var graph;
     if(i%3==0) {
         graph = brd.createElement('curve', [xArr[i],yArr[i]], {strokeColor:'black',fillColor:'#32CD32',highlightFillColor:'#90EE90',name:wahlkreiseBY[i]});
     }
     else if(i%3==1) {
-        graph = brd.createElement('curve', [xArr[i],yArr[i]], {strokeColor:'black',fillColor:'#FFA500',highlightFillColor:'#EEEE00',name:wahlkreiseBY[i]}); 
+        graph = brd.createElement('curve', [xArr[i],yArr[i]], {strokeColor:'black',fillColor:'#FFA500',highlightFillColor:'#EEEE00',name:wahlkreiseBY[i]});
     }
     else {
-        graph = brd.createElement('curve', [xArr[i],yArr[i]], {strokeColor:'black',fillColor:'#CD0000',highlightFillColor:'#FF6347',name:wahlkreiseBY[i]}); 
+        graph = brd.createElement('curve', [xArr[i],yArr[i]], {strokeColor:'black',fillColor:'#CD0000',highlightFillColor:'#FF6347',name:wahlkreiseBY[i]});
     }
-    
+
     graph.hasPoint = function(x,y){ // see: http://local.wasp.uwa.edu.au/~pbourke/geometry/insidepoly/
         var k, j, c = false , xx, yy;
         checkPoint = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x,y], this.board);
         xx = checkPoint.usrCoords[1];
-        yy = checkPoint.usrCoords[2];    
+        yy = checkPoint.usrCoords[2];
         for (k = 0, j = this.dataX.length-1; k < this.dataX.length; j = k++) {
             if ((((this.dataY[k] <= yy) && (yy < this.dataY[j])) ||
                 ((this.dataY[j] <= yy) && (yy < this.dataY[k]))) &&
@@ -132,7 +132,7 @@ for(i=0;i<xArr.length;i++) {
                     c = !c;
                 }
         }
-        //document.getElementById('debug').innerHTML += (this.name+':'+c+';');        
+        //document.getElementById('debug').innerHTML += (this.name+':'+c+';');
         return c;
     }
 }

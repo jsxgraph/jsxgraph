@@ -2,17 +2,17 @@
 <html>
 <head>
     <title></title>
-    <script type="text/javascript" src="../../src/loadjsxgraph.js"></script>
+    <script type="text/javascript" src="../../distrib/jsxgraphcore.js"></script>
     <link rel="stylesheet" type="text/css" href="../../distrib/jsxgraph.css" />
     <script type="text/javascript" src="../jquery-3.5.1.min.js"></script>
-    
+
     <style type="text/css">
         #box {
             width:500px;
             height:500px;
             margin: 0 4em 1em 0;
             float: left;
-        }​
+        }
     </style>
 </head>
 <body>
@@ -30,7 +30,7 @@
     var V = [];
     var E = [];
     var polyPoints = [], polygon, group;
-    
+
     //initialize boards
     JXG.Options.point.snapToGrid = true;
     JXG.Options.axis.ticks.majorHeight = -1;
@@ -41,8 +41,8 @@
                     xmax, ymin],
         axis: true
     });
-    
-    
+
+
     //styles
     var pointStyle = {
         fillColor: 'red',
@@ -70,38 +70,38 @@
         strokeOpacity: .3,
         fillOpacity: 0.05
     }
-    
-    
+
+
     for (var i = 0; i < 4; i++) {
         V[i] = {};
     }
-    
+
     V[0].pt = board.create('point', [0, 0]);
     V[1].pt = board.create('point', [1, 3]);
     V[2].pt = board.create('point', [3, 2]);
     V[3].pt = board.create('point', [-2, 2]);
-    
+
     window.group = group = board.create('group', []);
-    
-    
+
+
     for (var i = 0; i < 4; i++) {
-    
+
         JXG.addEvent(V[i].pt.rendNode, 'mousedown', function(e) {
             isSelectMode = false;
-    
+
         }, V[i]);
-    
+
         V[i].pt.on('up', (function() {
             isSelectMode = true;
         }));
     }
-    
-    
-    
+
+
+
     //selection UI
     var isSelectMode = true;
     var selecting = false;
-    
+
     function clearSelection() {
         for (var i = 0; i < selectedPts.length; i++) {
             selectedPts[i].pt.setAttribute(pointStyle);
@@ -110,20 +110,20 @@
         polyPoints = [];
         board.removeObject(polygon);
         group.ungroup();
-    
+
     }
-    
+
     function startSelection() {
         isSelectMode = true;
     }
-    
+
     var rectStart, rectEnd, rectCorner1, rectCorner2, rect;
     var getMouseCoords = function(e) {
         var cPos = board.getCoordsTopLeftCorner(e),
             absPos = JXG.getPosition(e),
             dx = absPos[0] - cPos[0],
             dy = absPos[1] - cPos[1];
-    
+
         return new JXG.Coords(JXG.COORDS_BY_SCREEN, [dx, dy], board);
     },
         down = function(e) {
@@ -131,19 +131,19 @@
             var canCreate = true,
                 coords = getMouseCoords(e),
                 el;
-    
+
             clearSelection();
-    
+
             if (canCreate) {
                 rectStart = board.create('point', [coords.usrCoords[1], coords.usrCoords[2]], rectPointStyle);
-    
+
                 rectEnd = board.create('point', [coords.usrCoords[1], coords.usrCoords[2]], rectPointStyle);
-    
+
                 rectCorner1 = board.create('point', [rectStart.X(), function() {
                     return rectEnd.Y();}], rectPointStyle);
                 rectCorner2 = board.create('point', [function() {
                     return rectEnd.X();}, rectStart.Y()], rectPointStyle);
-    
+
                 rect = board.create('polygon', [rectStart, rectCorner1, rectEnd, rectCorner2], rectStyle);
                 selecting = true;
             }
@@ -177,20 +177,20 @@
                     if (V[i].pt.X() >= minX && V[i].pt.X() <= maxX && V[i].pt.Y() >= minY && V[i].pt.Y() <= maxY) {
                         selectedPts.push(V[i]);
                     }
-    
+
                 }
-    
-                
+
+
                 board.removeObject(rect);
                 board.removeObject(rectCorner1);
                 board.removeObject(rectCorner2);
                 board.removeObject(rectStart);
                 board.removeObject(rectEnd);
-               
+
                 for (var i = 0; i < selectedPts.length; i++) {
                     selectedPts[i].pt.setAttribute(selectedStyle);
                     polyPoints.push(selectedPts[i].pt)
-                
+
                 }
                 polygon = board.create('polygon', polyPoints);
                 group.addPoints(polyPoints);
@@ -203,15 +203,15 @@
                         isSelectMode = true;
                     }, polygon.borders[i]);
                 }
-                
+
                 selecting = false;
             }
         };
-    
+
     board.addHook(down, 'mousedown');
     board.addHook(move, 'mousemove');
     board.addHook(up, 'mouseup');
-    
+
     btn = document.getElementById('clearbtn');
     btn.addEventListener('click', clearSelection, false);
 </script>

@@ -2,7 +2,7 @@
 <head>
    <title>ODE | JSXGraph Example</title>
    <link rel="stylesheet" type="text/css" href="../../distrib/jsxgraph.css" />
-   <script type="text/javascript" src="../../src/loadjsxgraph.js"></script>
+   <script type="text/javascript" src="../../distrib/jsxgraphcore.js"></script>
 </head>
 <body>
 <div id="debug" style="display: none"></div>
@@ -29,18 +29,18 @@ var N = brd.create('slider',[[-7,9.5],[7,9.5],[-15,10,15]], {name:'N'});
 var P1 = brd.create('point',[1,-1], {name:'(x_0,c_1)'});
 var line = brd.create('line',[function(){return -P1.X();},function(){return 1;},function(){return 0;}],{visible:false});
 var P2 = brd.create('glider',[1,-0.5,line], {name:'(x_0,c_2)'});
- 
+
 function doIt() {
   var txt1 = JXG.GeonextParser.geonext2JS(document.getElementById("odeinput1").value);
   var txt2 = JXG.GeonextParser.geonext2JS(document.getElementById("odeinput2").value);
   f = new Function("x", "yy", "var y1 = yy[0], y2 = yy[1];  var z1 = " + txt1 + "; var z2 = " + txt2 + "; return [z1,z2];");
   brd.update();
 }
- 
+
 function ode() {
    return JXG.Math.Numerics.rungeKutta(JXG.Math.Numerics.predefinedButcher.Heun, [P1.Y(),P2.Y()], [P1.X(), P1.X()+N.Value()], 200, f);
 }
- 
+
 var g1 = brd.createElement('curve', [[0],[0]], {strokeColor:'red', strokeWidth:'2px', name:'y_1', withLabel:false});
 var g2 = brd.createElement('curve', [[0],[0]], {strokeColor:'black', strokeWidth:'2px', name:'y_2', withLabel:false});
 g1.updateDataArray = function() {

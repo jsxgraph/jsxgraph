@@ -2,7 +2,7 @@
 <head>
    <title>JSXGraph example</title>
    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
-   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+   <script type="text/javascript" src="../distrib/jsxgraphcore.js"></script>
 </head>
 <body>
   <h2>Transformations</h2>
@@ -13,22 +13,22 @@
 
         // Globale Variable
         var p0,p1, p2, p3, p4, t;
-        
+
         board = JXG.JSXGraph.initBoard('jxgbox', {originX: 250, originY: 250, unitX: 40, unitY: 40});
         b1axisx = board.create('axis', [[0,0], [0,1]], {});
         b1axisy = board.create('axis', [[0,0], [1,0]], {});
-        p0 = board.create('point', [0,3], {style:5, name:'off',strokecolor:'blue', fillcolor:'red'}); 
-        p1 = board.create('point', [1,1], {style:9, name:'A',strokecolor:'blue'}); 
+        p0 = board.create('point', [0,3], {style:5, name:'off',strokecolor:'blue', fillcolor:'red'});
+        p1 = board.create('point', [1,1], {style:9, name:'A',strokecolor:'blue'});
 
         t = board.create('transform', [function(){return p0.X();},"Y(off)"], {type:'translate'});
-        p2 = board.create('point', [p1,t], {name:'translate',strokecolor:'red'}); 
+        p2 = board.create('point', [p1,t], {name:'translate',strokecolor:'red'});
 
         t = board.create('transform', [2,0.5], {type:'scale'});
-        p2 = board.create('point', [p1,t], {name:'scale'}); 
+        p2 = board.create('point', [p1,t], {name:'scale'});
 
         p3 = board.create('point', [2,1], {name:'C', fixed:true});
         t = board.create('transform', ["Y(off)",'C'], {type:'rotate'});  // angle, rotation center
-        p2 = board.create('point', [p1,t], {name:'rotate'}); 
+        p2 = board.create('point', [p1,t], {name:'rotate'});
         board.create('line',[p2,p3], {straightFirst:false, straightLast:false});
         board.create('line',[p1,p3], {straightFirst:false, straightLast:false});
 
@@ -36,14 +36,14 @@
         var t1 = board.create('transform', [-2,-1], {type:'translate'});
         var t2 = board.create('transform', [Math.PI/4], {type:'rotate'});
         var t3 = board.create('transform', [2,1], {type:'translate'});
-        p2 = board.create('point', [p1,[t1,t2,t3]], {name:'ro2'}); 
+        p2 = board.create('point', [p1,[t1,t2,t3]], {name:'ro2'});
 
         // Reflection
         p4 = board.create('point', [1,3], {name:'D'});
         var p5 = board.create('point', [-2,0], {name:''});
         var l = board.create('line',[p5,p4], {strokewidth:0.2});
         t = board.create('transform', [l.id], {type:'reflect'});  // Possible are l, l.id, l.name
-        p2 = board.create('point', [p1,t], {name:'reflect', strokecolor:'red'}); 
+        p2 = board.create('point', [p1,t], {name:'reflect', strokecolor:'red'});
 
         // one time application of a transform
         p1 = board.create('point', [1,-2]);
@@ -62,15 +62,15 @@
         sq[2] = board.create('point', [sq[0],[right,up]], {style:7});
         sq[3] = board.create('point', [sq[0],up], {style:7});
         var pol = board.create('polygon',sq, {fillColor:'blue', gradient:'radial', gradientsecondcolor:'white', gradientSecondOpacity:'0'});
-        
+
 
         // Rotate the square around point sq[0]
         var rot = board.create('transform', ["Y(off)",sq[0]], {type:'rotate'});
         //rot.bindTo(sq);
         rot.bindTo(sq.slice(1));
-        
+
         board.addConditions("<data>B.x=If(X(B)>0,X(B),0)</data>");
-        
+
         board.update();
 
   /* ]]> */

@@ -1,15 +1,15 @@
 <html>
 <head>
-<title>Slope fields and the Runge-Kutta method</title> 
+<title>Slope fields and the Runge-Kutta method</title>
 <link rel="stylesheet" type="text/css" href="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraph.css" />
-<script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+<script type="text/javascript" src="../distrib/jsxgraphcore.js"></script>
 </head>
 <body>
 
 <form>
 dy / dx = f(x,y) = <input type="text" id="odeinput" value="(2-x)*y""><input type=button value="ok" onclick="doIt()"> <br />
 Segment length = <input name="SegmentLength" id="SegmentLength" size="20" value="0.4" type="text"><input type=button value="ok" onclick="doIt()"> <br />
-x min = <input id="Xmin" size="10" value="-4" type="text"><input type=button value="ok" onclick="doIt()"> 
+x min = <input id="Xmin" size="10" value="-4" type="text"><input type=button value="ok" onclick="doIt()">
 x max = <input id="Xmax" size="10"  value="4" type="text"><input type=button value="ok" onclick="doIt()"> <br />
 </form>
 
@@ -34,7 +34,7 @@ var P;
 
 function doIt() {
   JXG.JSXGraph.freeBoard(brd);
-  
+
   length = parseFloat(document.getElementById('SegmentLength').value);
   xmin = parseFloat(document.getElementById('Xmin').value);
   xmax = parseFloat(document.getElementById('Xmax').value);
@@ -52,23 +52,23 @@ function ode() {
    return JXG.Math.Numerics.rungeKutta('heun', [P.Y()], [P.X(), P.X()+N], 200, f);
 }
 
-function slope(x,y,f) { 
+function slope(x,y,f) {
   return f(x,[y])[0];
 }
 
 
 function slopefield(f) {
    var xval, yval;
-   for (var i=0;i<=xnum;i++) { 
+   for (var i=0;i<=xnum;i++) {
      xval = xmin + i*xsep;
-     for (var j=0;j<=ynum;j++) { 
+     for (var j=0;j<=ynum;j++) {
        yval = ymin + j*ysep;
 
        brd.create('segment',[
-       [xval-0.5*length*Math.cos(Math.atan( slope(xval,yval,f) )), yval-0.5*length*Math.sin(Math.atan( slope(xval,yval,f) ))], 
+       [xval-0.5*length*Math.cos(Math.atan( slope(xval,yval,f) )), yval-0.5*length*Math.sin(Math.atan( slope(xval,yval,f) ))],
        [xval+0.5*length*Math.cos(Math.atan( slope(xval,yval,f) )), yval+0.5*length*Math.sin(Math.atan( slope(xval,yval,f) ))]
-       ], 
-       {strokeWidth:1, dash:0});    
+       ],
+       {strokeWidth:1, dash:0});
      }
    }
 }

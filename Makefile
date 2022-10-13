@@ -1,6 +1,7 @@
 .PHONY: tests test test-server
 
 # Build tools
+WEBPACK=./node_modules/.bin/webpack
 REQUIREJS=./node_modules/.bin/r.js
 MINIFYER=./node_modules/terser/bin/terser
 
@@ -55,14 +56,8 @@ all: core readers docs
 
 core:
 	$(MKDIR) $(MKDIRFLAGS) $(BUILDBIN)
-	# Build uncompressed file jsxgraphcore.js and copy it to jsxgraphsrc.js
-	$(REQUIREJS) -o $(BUILD)/core.build.json
-	$(CP) $(BUILDBIN)/jsxgraphcore.js $(OUTPUT)/jsxgraphsrc.js
-
-	# Build compressed file jsxgraphcore-min.js and copy it to jsxgraphcore.js
-	$(MINIFYER) $(BUILDBIN)/jsxgraphcore.js -c -m -o $(BUILDBIN)/jsxgraphcore-min.js
-	{ $(CAT) COPYRIGHT; $(CAT) $(BUILDBIN)/jsxgraphcore-min.js; } > $(BUILDBIN)/jsxgraphcore.min.js
-	$(CP) $(BUILDBIN)/jsxgraphcore.min.js $(OUTPUT)/jsxgraphcore.js
+	# Build uncompressed AND minified files jsgraphsrc.js and jsxgraphcore.js and copy them to the distrib directory.
+	$(WEBPACK) --config config/webpack.config.js
 
 core-min:
 	echo "INFO: core-min deactived. It is covered by core"
@@ -74,7 +69,7 @@ release: core docs
 	$(CP) $(BUILDBIN)/jsxgraphcore.js $(TMP)/jsxgraphsrc.js
 	$(CP) $(OUTPUT)/docs.zip $(TMP)/docs.zip
 	$(CP) $(OUTPUT)/jsxgraph.css $(TMP)/jsxgraph.css
-	$(CP) $(OUTPUT)/index.d.ts $(TMP)/index.d.ts
+	$(CP) src/index.d.ts $(TMP)/index.d.ts
 	$(CP) -r src/themes $(TMP)/themes
 	$(CP) README.md LICENSE.MIT LICENSE.LGPL $(TMP)/
 	$(CD) $(TMP) && $(ZIP) $(ZIPFLAGS) jsxgraph.zip jsxgraph* themes/ index.d.ts docs.zip README.md LICENSE.*
