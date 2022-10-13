@@ -79,8 +79,8 @@
     "buildCore": "webpack --config config/webpack.config.js",
     "buildCompressor": "./node_modules/requirejs/bin/r.js -o build/compressor.build.json",
     "eslint": "make eslint",
-    "check-format": "prettier --check build src test tests",
-    "format": "prettier --write build src test tests",
+    "check-format": "prettier --print-width 96 --tab-width 4 --trailing-comma none --check build src test",
+    "format": "prettier --print-width 96 --tab-width 4 --trailing-comma none --write build src test",
     "test": "make test"
   }
 }
