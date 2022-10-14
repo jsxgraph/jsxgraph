@@ -82,8 +82,8 @@
     "buildCore": "webpack --config config/webpack.config.js",
     "buildCompressor": "webpack --config config/webpack.config.compressor.js",
     "eslint": "make eslint",
-    "check-format": "prettier --check build src test extensions",
-    "format": "prettier --write build src test extensions",
+    "check-format": "prettier --check src test extensions",
+    "format": "prettier --write src test extensions",
     "test": "make test"
   }
 }

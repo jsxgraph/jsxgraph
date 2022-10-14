@@ -26,11 +26,7 @@ const config = {
     },
     optimization: {
         minimize: true,
-        minimizer: [
-            new TerserPlugin({
-                test: /plot\.js$/
-            })
-        ]
+        minimizer: [new TerserPlugin({})]
     }
 };
 
