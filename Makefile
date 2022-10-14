@@ -121,9 +121,8 @@ build/bin/readers/%.min.js: src/reader/%.js
 	{ $(CAT) COPYRIGHT; $(MINIFYER) $^ -c -m ; } > $@
 
 compressor: core
-	$(REQUIREJS) -o build/compressor.build.json
-	{ $(CAT) JSXCompressor/COPYING; $(CAT) $(BUILDBIN)/jsxcompressor.js; } > JSXCompressor/jsxcompressor.min.js
-	$(CP) $(BUILDBIN)/jsxgraphcore.js JSXCompressor/jsxgraphcore.js
+	$(WEBPACK) --config config/webpack.config.compressor.js
+	$(CP) $(OUTPUT)/jsxgraphcore.js JSXCompressor/jsxgraphcore.js
 	$(CP) $(OUTPUT)/jsxgraph.css JSXCompressor/jsxgraph.css
 
 plot:

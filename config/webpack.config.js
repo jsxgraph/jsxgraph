@@ -1,5 +1,6 @@
 const path = require("path");
 const baseConfig = require("./webpack.config.base");
+const TerserPlugin = require("terser-webpack-plugin");
 
 const libraryName = "JSXGraph";
 const PATHS = {
@@ -9,6 +10,9 @@ const PATHS = {
 
 const config = {
     ...baseConfig,
+    // Activate source maps for the bundles in order to preserve the original
+    // source when the user debugs the application
+    devtool: "source-map",
     entry: {
         jsxgraphsrc: [PATHS.entryPoint],
         jsxgraphcore: [PATHS.entryPoint]

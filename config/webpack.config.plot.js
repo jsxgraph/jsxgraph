@@ -1,5 +1,6 @@
 const path = require("path");
 const baseConfig = require("./webpack.config.base");
+const TerserPlugin = require("terser-webpack-plugin");
 
 const libraryName = "JSXPlot";
 const PATHS = {
