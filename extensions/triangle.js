@@ -58,61 +58,57 @@ import Group from "../src/base/group";
  * </table>
  */
 JXG.createTriangle = function (board, parents, attributes) {
-  var p1, p2, p3, l1, l2, l3, ret, i, attr;
+    var p1, p2, p3, l1, l2, l3, ret, i, attr;
 
-  if (
-    Type.isPoint(parents[0]) &&
-    Type.isPoint(parents[1]) &&
-    Type.isPoint(parents[2])
-  ) {
-    p1 = parents[0];
-    p2 = parents[1];
-    p3 = parents[2];
+    if (Type.isPoint(parents[0]) && Type.isPoint(parents[1]) && Type.isPoint(parents[2])) {
+        p1 = parents[0];
+        p2 = parents[1];
+        p3 = parents[2];
 
-    attr = Type.copyAttributes(attributes, board.options, "line");
+        attr = Type.copyAttributes(attributes, board.options, "line");
 
-    l1 = board.create("line", [p1, p2], attr);
-    l2 = board.create("line", [p2, p3], attr);
-    l3 = board.create("line", [p3, p1], attr);
+        l1 = board.create("line", [p1, p2], attr);
+        l2 = board.create("line", [p2, p3], attr);
+        l3 = board.create("line", [p3, p1], attr);
 
-    var g = board.create("group", [p1, p2, p3]);
+        var g = board.create("group", [p1, p2, p3]);
 
-    ret = [p1, p2, p3, l1, l2, l3, g];
-    ret.points = [p1, p2, p3];
-    ret.lines = [l1, l2, l3];
-    ret.group = g;
+        ret = [p1, p2, p3, l1, l2, l3, g];
+        ret.points = [p1, p2, p3];
+        ret.lines = [l1, l2, l3];
+        ret.group = g;
 
-    for (i = 1; i <= 3; i++) {
-      ret["point" + i] = ret.points[i - 1];
-      ret["line" + i] = ret.lines[i - 1];
+        for (i = 1; i <= 3; i++) {
+            ret["point" + i] = ret.points[i - 1];
+            ret["line" + i] = ret.lines[i - 1];
+        }
+        ret.multipleElements = true;
+
+        // special treatment for triangle because of backwards compatibility:
+        ret.A = p1;
+        ret.B = p2;
+        ret.C = p3;
+
+        ret.a = l2;
+        ret.b = l3;
+        ret.c = l1;
+
+        return ret;
     }
-    ret.multipleElements = true;
 
-    // special treatment for triangle because of backwards compatibility:
-    ret.A = p1;
-    ret.B = p2;
-    ret.C = p3;
-
-    ret.a = l2;
-    ret.b = l3;
-    ret.c = l1;
-
-    return ret;
-  }
-
-  throw new Error(
-    "JSXGraph: Can't create triangle with parent types '" +
-      typeof parents[0] +
-      "' and '" +
-      typeof parents[1] +
-      "' and '" +
-      typeof parents[2] +
-      "'."
-  );
+    throw new Error(
+        "JSXGraph: Can't create triangle with parent types '" +
+            typeof parents[0] +
+            "' and '" +
+            typeof parents[1] +
+            "' and '" +
+            typeof parents[2] +
+            "'."
+    );
 };
 
 JXG.registerElement("triangle", JXG.createTriangle);
 
 export default {
-  createTriangle: JXG.createTriangle,
+    createTriangle: JXG.createTriangle
 };

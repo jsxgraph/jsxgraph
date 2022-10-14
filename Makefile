@@ -64,7 +64,7 @@ core:
 	$(WEBPACK) --config config/webpack.config.js
 
 core-min:
-	echo "INFO: core-min deactived. It is covered by core"
+	echo "INFO: core-min deactivated. It is covered by core"
 
 release: core docs
 	$(MKDIR) $(MKDIRFLAGS) $(TMP)

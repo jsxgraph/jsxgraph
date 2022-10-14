@@ -40,19 +40,19 @@ import Point from "../src/base/point";
 import Line from "../src/base/line";
 
 JXG.extend(Options, {
-  square: {
-    points: {
-      withLabel: false,
-      visible: false,
-      name: "",
-    },
+    square: {
+        points: {
+            withLabel: false,
+            visible: false,
+            name: ""
+        },
 
-    lines: {
-      straightFirst: false,
-      straightLast: false,
-      withLabel: true,
-    },
-  },
+        lines: {
+            straightFirst: false,
+            straightLast: false,
+            withLabel: true
+        }
+    }
 });
 
 /**
@@ -82,86 +82,86 @@ JXG.extend(Options, {
  * </script><pre>
  */
 JXG.createSquare = function (board, parents, attributes) {
-  var p1, p2, p3, p4, l1, l2, l3, l4, ret, i, attr, sq;
+    var p1, p2, p3, p4, l1, l2, l3, l4, ret, i, attr, sq;
 
-  if (Type.isPoint(parents[0]) && Type.isPoint(parents[1])) {
-    p1 = parents[0];
-    p2 = parents[1];
+    if (Type.isPoint(parents[0]) && Type.isPoint(parents[1])) {
+        p1 = parents[0];
+        p2 = parents[1];
 
-    attr = Type.copyAttributes(attributes, board.options, "square", "points");
+        attr = Type.copyAttributes(attributes, board.options, "square", "points");
 
-    p3 = board.create(
-      "point",
-      [
-        function () {
-          return -p1.Y() + (p1.X() + p2.X()) / 2 + (p1.Y() + p2.Y()) / 2;
-        },
-        function () {
-          return p1.X() - (p1.X() + p2.X()) / 2 + (p1.Y() + p2.Y()) / 2;
-        },
-      ],
-      attr
-    );
+        p3 = board.create(
+            "point",
+            [
+                function () {
+                    return -p1.Y() + (p1.X() + p2.X()) / 2 + (p1.Y() + p2.Y()) / 2;
+                },
+                function () {
+                    return p1.X() - (p1.X() + p2.X()) / 2 + (p1.Y() + p2.Y()) / 2;
+                }
+            ],
+            attr
+        );
 
-    p4 = board.create(
-      "point",
-      [
-        function () {
-          return -p2.Y() + (p1.X() + p2.X()) / 2 + (p1.Y() + p2.Y()) / 2;
-        },
-        function () {
-          return p2.X() - (p1.X() + p2.X()) / 2 + (p1.Y() + p2.Y()) / 2;
-        },
-      ],
-      attr
-    );
+        p4 = board.create(
+            "point",
+            [
+                function () {
+                    return -p2.Y() + (p1.X() + p2.X()) / 2 + (p1.Y() + p2.Y()) / 2;
+                },
+                function () {
+                    return p2.X() - (p1.X() + p2.X()) / 2 + (p1.Y() + p2.Y()) / 2;
+                }
+            ],
+            attr
+        );
 
-    attr = Type.copyAttributes(attributes, board.options, "square", "lines");
-    l1 = board.create("line", [p1, p3], attr);
-    l2 = board.create("line", [p1, p4], attr);
-    l3 = board.create("line", [p2, p3], attr);
-    l4 = board.create("line", [p2, p4], attr);
+        attr = Type.copyAttributes(attributes, board.options, "square", "lines");
+        l1 = board.create("line", [p1, p3], attr);
+        l2 = board.create("line", [p1, p4], attr);
+        l3 = board.create("line", [p2, p3], attr);
+        l4 = board.create("line", [p2, p4], attr);
 
-    /** @lends Square.prototype */
-    sq = {
-      /**
-       * Contains the square's points. The first two points are the ones given as parent elements by the user.
-       * The third and the fourth point are a rotation of pi/2 of the first resp. the second point around the
-       * center of the square.
-       * @type Array
-       */
-      points: [p1, p2, p3, p4],
+        /** @lends Square.prototype */
+        sq = {
+            /**
+             * Contains the square's points. The first two points are the ones given as parent elements by the user.
+             * The third and the fourth point are a rotation of pi/2 of the first resp. the second point around the
+             * center of the square.
+             * @type Array
+             */
+            points: [p1, p2, p3, p4],
 
-      /**
-       * Contains the square's stroke lines. The first line is the one from the point 1 to point 3, the second line
-       * the one from point 1 to point 4. The same with the third and the fourth line but with point 2 instead of
-       * point 1. The order of the points is the same as in {@link Square#points}.
-       * @type Array
-       */
-      lines: [l1, l2, l3, l4],
-    };
+            /**
+             * Contains the square's stroke lines. The first line is the one from the point 1 to point 3, the second line
+             * the one from point 1 to point 4. The same with the third and the fourth line but with point 2 instead of
+             * point 1. The order of the points is the same as in {@link Square#points}.
+             * @type Array
+             */
+            lines: [l1, l2, l3, l4]
+        };
 
-    ret = new Composition(sq);
+        ret = new Composition(sq);
 
-    for (i = 1; i <= 4; i++) {
-      ret["point" + i] = ret.points[i - 1];
-      ret["line" + i] = ret.lines[i - 1];
+        for (i = 1; i <= 4; i++) {
+            ret["point" + i] = ret.points[i - 1];
+            ret["line" + i] = ret.lines[i - 1];
+        }
+
+        return ret;
     }
 
-    return ret;
-  }
-
-  throw new Error(
-    "JSXGraph: Can't create square with parent types '" +
-      typeof parents[0] +
-      "' and '" +
-      typeof parents[1] +
-      "'."
-  );
+    throw new Error(
+        "JSXGraph: Can't create square with parent types '" +
+            typeof parents[0] +
+            "' and '" +
+            typeof parents[1] +
+            "'."
+    );
 };
 
 JXG.registerElement("square", JXG.createSquare);
 
 export default {
-  createSquare: JXG.createSquare,
+    createSquare: JXG.createSquare
 };

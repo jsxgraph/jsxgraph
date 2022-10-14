@@ -47,7 +47,11 @@
     "type": "git",
     "url": "https://github.com/jsxgraph/jsxgraph.git"
   },
-  "prettier": {},
+  "prettier": {
+    "printWidth": 96,
+    "tabWidth": 4,
+    "trailingComma": "none"
+  },
   "dependencies": {
     "path-browserify": "^1.0.1"
   },
@@ -78,10 +82,10 @@
   },
   "scripts": {
     "buildCore": "webpack --config config/webpack.config.js",
-    "buildCompressor": "./node_modules/requirejs/bin/r.js -o build/compressor.build.json",
+    "buildCompressor": "webpack --config config/webpack.config.compressor.js",
     "eslint": "make eslint",
-    "check-format": "prettier --print-width 96 --tab-width 4 --trailing-comma none --check build src test extensions",
-    "format": "prettier --print-width 96 --tab-width 4 --trailing-comma none --write build src test extensions",
+    "check-format": "prettier --check build src test extensions",
+    "format": "prettier --write build src test extensions",
     "test": "make test"
   }
 }

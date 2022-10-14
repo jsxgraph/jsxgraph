@@ -69,84 +69,80 @@ import Point from "../src/base/point";
  * </script><pre>
  */
 JXG.createCentroid = function (board, parents, attributes) {
-  if (
-    Type.isPoint(parents[0]) &&
-    Type.isPoint(parents[1]) &&
-    Type.isPoint(parents[2])
-  ) {
-    var p1 = parents[0],
-      p2 = parents[1],
-      p3 = parents[2],
-      attr = Type.copyAttributes(attributes, board.options, "point"),
-      cent = board.create(
-        "point",
-        [
-          function () {
-            return (p1.X() + p2.X() + p3.X()) / 3;
-          },
-          function () {
-            return (p1.Y() + p2.Y() + p3.Y()) / 3;
-          },
-        ],
-        attr
-      );
+    if (Type.isPoint(parents[0]) && Type.isPoint(parents[1]) && Type.isPoint(parents[2])) {
+        var p1 = parents[0],
+            p2 = parents[1],
+            p3 = parents[2],
+            attr = Type.copyAttributes(attributes, board.options, "point"),
+            cent = board.create(
+                "point",
+                [
+                    function () {
+                        return (p1.X() + p2.X() + p3.X()) / 3;
+                    },
+                    function () {
+                        return (p1.Y() + p2.Y() + p3.Y()) / 3;
+                    }
+                ],
+                attr
+            );
 
-    p1.addChild(cent);
-    p2.addChild(cent);
-    p3.addChild(cent);
+        p1.addChild(cent);
+        p2.addChild(cent);
+        p3.addChild(cent);
 
-    cent.elType = "centroid";
-    cent.parents = [parents[0].id, parents[1].id, parents[2].id];
+        cent.elType = "centroid";
+        cent.parents = [parents[0].id, parents[1].id, parents[2].id];
 
-    /**
-     * The first one of the points given as parent elements.
-     * @name Centroid#p1
-     * @type JXG.Point
-     */
-    cent.p1 = p1;
+        /**
+         * The first one of the points given as parent elements.
+         * @name Centroid#p1
+         * @type JXG.Point
+         */
+        cent.p1 = p1;
 
-    /**
-     * The second one of the points given as parent elements.
-     * @name Centroid#p2
-     * @type JXG.Point
-     */
-    cent.p2 = p2;
+        /**
+         * The second one of the points given as parent elements.
+         * @name Centroid#p2
+         * @type JXG.Point
+         */
+        cent.p2 = p2;
 
-    /**
-     * The last one of the points given as parent elements.
-     * @name Centroid#p3
-     * @type JXG.Point
-     */
-    cent.p3 = p3;
+        /**
+         * The last one of the points given as parent elements.
+         * @name Centroid#p3
+         * @type JXG.Point
+         */
+        cent.p3 = p3;
 
-    cent.methodMap = JXG.deepCopy(cent.methodMap, {
-      p1: "p1",
-      p2: "p2",
-      p3: "p3",
-    });
+        cent.methodMap = JXG.deepCopy(cent.methodMap, {
+            p1: "p1",
+            p2: "p2",
+            p3: "p3"
+        });
 
-    /**
-     * documented in geometry element
-     * @ignore
-     */
-    cent.generatePolynom = function () {};
+        /**
+         * documented in geometry element
+         * @ignore
+         */
+        cent.generatePolynom = function () {};
 
-    return cent;
-  }
+        return cent;
+    }
 
-  throw new Error(
-    "JSXGraph: Can't create centroid with parent types '" +
-      typeof parents[0] +
-      "' and '" +
-      typeof parents[1] +
-      "' and '" +
-      typeof parents[2] +
-      "'."
-  );
+    throw new Error(
+        "JSXGraph: Can't create centroid with parent types '" +
+            typeof parents[0] +
+            "' and '" +
+            typeof parents[1] +
+            "' and '" +
+            typeof parents[2] +
+            "'."
+    );
 };
 
 JXG.registerElement("centroid", JXG.createCentroid);
 
 export default {
-  createCentroid: JXG.createCentroid,
+    createCentroid: JXG.createCentroid
 };

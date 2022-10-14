@@ -1,17 +1,16 @@
 const path = require("path");
 const baseConfig = require("./webpack.config.base");
 
-const libraryName = "JSXGraph";
+const libraryName = "JSXPlot";
 const PATHS = {
-    entryPoint: path.resolve(__dirname, "../src/index.js"),
+    entryPoint: path.resolve(__dirname, "../src/plot.js"),
     bundles: path.resolve(__dirname, "../distrib")
 };
 
 const config = {
     ...baseConfig,
     entry: {
-        jsxgraphsrc: [PATHS.entryPoint],
-        jsxgraphcore: [PATHS.entryPoint]
+        jsxplot: [PATHS.entryPoint]
     },
     // The output defines how and where we want the bundles. The special value
     // `[name]` in `filename` tell Webpack to use the name we defined above. We
@@ -28,7 +27,7 @@ const config = {
         minimize: true,
         minimizer: [
             new TerserPlugin({
-                test: /core\.js$/
+                test: /plot\.js$/
             })
         ]
     }
