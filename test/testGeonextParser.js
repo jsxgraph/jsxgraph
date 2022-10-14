@@ -30,21 +30,17 @@
  */
 
 describe("Test GeonextParser", function () {
-  it("Geonext2JS", function () {
-    var ob = {
-      Val: function () {
-        return 2.0;
-      },
-    };
+    it("Geonext2JS", function () {
+        var ob = {
+            Val: function () {
+                return 2.0;
+            }
+        };
 
-    expect(JXG.GeonextParser.geonext2JS("x^2", null)).toEqual("pow(x,2)");
-    expect(JXG.GeonextParser.geonext2JS("sin(x)", null)).toEqual("sin(x)");
-    expect(JXG.GeonextParser.geonext2JS("asin(x)", null)).toEqual("asin(x)");
-    expect(JXG.GeonextParser.geonext2JS("sin(x^2)", null)).toEqual(
-      "sin(pow(x,2))"
-    );
-    expect(JXG.GeonextParser.geonext2JS("ob.Val()^x", null)).toEqual(
-      "pow(ob.Val(),x)"
-    );
-  });
+        expect(JXG.GeonextParser.geonext2JS("x^2", null)).toEqual("pow(x,2)");
+        expect(JXG.GeonextParser.geonext2JS("sin(x)", null)).toEqual("sin(x)");
+        expect(JXG.GeonextParser.geonext2JS("asin(x)", null)).toEqual("asin(x)");
+        expect(JXG.GeonextParser.geonext2JS("sin(x^2)", null)).toEqual("sin(pow(x,2))");
+        expect(JXG.GeonextParser.geonext2JS("ob.Val()^x", null)).toEqual("pow(ob.Val(),x)");
+    });
 });

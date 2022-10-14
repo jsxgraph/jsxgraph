@@ -30,12 +30,12 @@
  */
 
 describe("Test JXG.Math.Poly", function () {
-  var r = new JXG.Math.Poly.Ring(["x", "y", "z"]),
-    m = new JXG.Math.Poly.Monomial(r, 4, [1, 2, 3]),
-    p = new JXG.Math.Poly.Polynomial(r);
+    var r = new JXG.Math.Poly.Ring(["x", "y", "z"]),
+        m = new JXG.Math.Poly.Monomial(r, 4, [1, 2, 3]),
+        p = new JXG.Math.Poly.Polynomial(r);
 
-  it("Ring", function () {
-    expect(JXG.exists(r.vars)).toBeTrue();
-    expect(r.vars.length).toEqual(3);
-  });
+    it("Ring", function () {
+        expect(JXG.exists(r.vars)).toBeTrue();
+        expect(r.vars.length).toEqual(3);
+    });
 });

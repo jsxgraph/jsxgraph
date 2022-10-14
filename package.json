@@ -8,6 +8,7 @@
   "files": [
     "src",
     "distrib",
+    "extensions",
     "*.md"
   ],
   "maintainers": [
@@ -79,8 +80,8 @@
     "buildCore": "webpack --config config/webpack.config.js",
     "buildCompressor": "./node_modules/requirejs/bin/r.js -o build/compressor.build.json",
     "eslint": "make eslint",
-    "check-format": "prettier --print-width 96 --tab-width 4 --trailing-comma none --check build src test",
-    "format": "prettier --print-width 96 --tab-width 4 --trailing-comma none --write build src test",
+    "check-format": "prettier --print-width 96 --tab-width 4 --trailing-comma none --check build src test extensions",
+    "format": "prettier --print-width 96 --tab-width 4 --trailing-comma none --write build src test extensions",
     "test": "make test"
   }
 }

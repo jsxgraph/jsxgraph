@@ -30,24 +30,24 @@
  */
 
 describe("Test JXG.Group", function () {
-  var board, A, B, C;
+    var board, A, B, C;
 
-  document.getElementsByTagName("body")[0].innerHTML =
-    '<div id="jxgbox" style="width: 100px; height: 100px;"></div>';
-  board = JXG.JSXGraph.initBoard("jxgbox", {
-    renderer: "svg",
-    axis: false,
-    grid: false,
-    boundingbox: [-5, 5, 5, -5],
-    showCopyright: false,
-    showNavigation: false,
-  });
-  A = board.create("point", [1, 1]);
-  B = board.create("point", [1, 1]);
-  C = board.create("point", [1, 1]);
+    document.getElementsByTagName("body")[0].innerHTML =
+        '<div id="jxgbox" style="width: 100px; height: 100px;"></div>';
+    board = JXG.JSXGraph.initBoard("jxgbox", {
+        renderer: "svg",
+        axis: false,
+        grid: false,
+        boundingbox: [-5, 5, 5, -5],
+        showCopyright: false,
+        showNavigation: false
+    });
+    A = board.create("point", [1, 1]);
+    B = board.create("point", [1, 1]);
+    C = board.create("point", [1, 1]);
 
-  it("Create group", function () {
-    var g = board.create("group", [A, B, C]);
-    expect(g).toBeInstanceOf(JXG.Group);
-  });
+    it("Create group", function () {
+        var g = board.create("group", [A, B, C]);
+        expect(g).toBeInstanceOf(JXG.Group);
+    });
 });
