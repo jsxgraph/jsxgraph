@@ -5,7 +5,7 @@ const TerserPlugin = require("terser-webpack-plugin");
 const libraryName = "JSXPlot";
 const PATHS = {
     entryPoint: path.resolve(__dirname, "../src/plot.js"),
-    bundles: path.resolve(__dirname, "../distrib")
+    bundles: path.resolve(__dirname, "../build/bin")
 };
 
 const config = {

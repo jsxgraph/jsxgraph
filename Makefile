@@ -3,7 +3,6 @@
 
 # Build tools
 WEBPACK=./node_modules/.bin/webpack
-REQUIREJS=./node_modules/.bin/r.js
 MINIFYER=./node_modules/terser/bin/terser
 
 # Code quality
@@ -127,7 +126,7 @@ compressor: core
 
 plot:
 	$(MKDIR) $(MKDIRFLAGS) $(BUILDBIN)
-	$(REQUIREJS) -o build/plot.build.json
+	$(WEBPACK) --config config/webpack.config.plot.js
 
 hint:
 	$(HINT) src/$(LINTLIST).js
