@@ -1601,7 +1601,7 @@ define([
 
                 if (this.containerObj !== null) {
                     // This is needed for capturing touch events.
-                    // It is also in jsxgraph.css, but one never knows...
+                    // It is in jsxgraph.css, for ms-touch-action...
                     this.containerObj.style.touchAction = 'none';
                 }
 
@@ -2282,8 +2282,15 @@ define([
                 }
             }
 
+            if (this.mode === this.BOARD_MODE_NONE) {
+                this.containerObj.style.touchAction = 'pan-x pan-y';
+            } else {
+                this.containerObj.style.touchAction = 'none';
+            }
+
             this.triggerEventHandlers(['touchstart', 'down', 'pointerdown', 'MSPointerDown'], [evt]);
-            return false;
+
+            return true;
         },
 
         // /**
