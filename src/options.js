@@ -606,7 +606,7 @@ define([
                 needShift: true,
                 needTwoFingers: false
             },
-            browserPan: true,
+            browserPan: false,
 
             /**
              * Control the possibilities for dragging objects.
