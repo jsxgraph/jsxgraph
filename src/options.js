@@ -602,10 +602,11 @@ define([
              * @type Object
              */
             pan: {
+                enabled: true,
                 needShift: true,
-                needTwoFingers: false,
-                enabled: true
+                needTwoFingers: false
             },
+            browserPan: true,
 
             /**
              * Control the possibilities for dragging objects.

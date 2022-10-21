@@ -2119,7 +2119,7 @@ define([
             var i, j, k, pos, elements, sel,
                 target_obj,
                 type = 'mouse', // Used in case of no browser
-                found, target;
+                found, target, ta;
 
             // Fix for Firefox browser: When using a second finger, the
             // touch event for the first finger is sent again.
@@ -2282,11 +2282,16 @@ define([
                 }
             }
 
-            if (this.mode === this.BOARD_MODE_NONE) {
-                this.containerObj.style.touchAction = 'pan-x pan-y';
-            } else {
-                this.containerObj.style.touchAction = 'none';
+            // Allow browser scrolling
+            // For this: pan by one finger has to be disabled
+            ta = 'none';             // JSXGraph catches all user touch events
+            if (this.mode === this.BOARD_MODE_NONE &&
+                Type.evaluate(this.attr.browserpan) &&
+                !(Type.evaluate(this.attr.pan.enabled) && !Type.evaluate(this.attr.pan.needtwofingers))
+               ) {
+                ta = 'pan-x pan-y';  // JSXGraph allows browser scrolling
             }
+            this.containerObj.style.touchAction = ta;
 
             this.triggerEventHandlers(['touchstart', 'down', 'pointerdown', 'MSPointerDown'], [evt]);
 
@@ -2484,6 +2489,7 @@ define([
 
             // After one finger leaves the screen the gesture is stopped.
             this._pointerClearTouches();
+
             return true;
         },
 
