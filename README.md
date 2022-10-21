@@ -55,13 +55,13 @@ https://github.com/jsxgraph/jsxgraph/issues
 Usage
 -----
 
-Include 
+Include
 
-* `jsxgraphcore.js` and 
-* `jsxgraph.css` and, 
-* if required, one or more file readers 
+* `jsxgraphcore.js` and
+* `jsxgraph.css` and,
+* if required, one or more file readers
 
-from a CDN or a local version in your HTML file. 
+from a CDN or a local version in your HTML file.
 
 For developing content, it is recommended to include `jsxgraphsrc.js` (`jsxgraphcore.js` is the minified version of `jsxgraphsrc.js`).
 For further usage instructions please consult our [wiki](https://jsxgraph.org/wiki/)
@@ -76,9 +76,17 @@ Build and develop JSXGraph
 2) In order to build and develop *JSXGraph* you need [node.js](https://nodejs.org/) v0.6+. First, install all
 dependencies required to build JSXGraph using npm in the JSXGraph root directory: `$ npm install`.
 This will create a new subdirectory ```node_modules``` in the JSXGraph root directory which holds
-all tools and libraries required to build ```jsxgraphcore.js```. 
+all tools and libraries required to build ```jsxgraphcore.js```.
 
-3) To build JSXGraph run `$ make core` which will output an unminified version ```jsxgraphsrc.js```  and the minified version ```jsxgraphcore.js``` in ```distrib```.
+3) To build JSXGraph run `$ npm run buildCore`. This will output an unminified version `jsxgraphsrc.js`
+and the minified version `jsxgraphcore.js` into the folder `distrib`.
+
+4) Develop JSXGraph
+  - Edit the source files in the folder `src`
+  - Write unit tests in folder `test`
+  - Run `$ npm run eslint` and `$ npm run test` to check for errors
+  - Run `$ npm run check-format` and `$ npm run format` to adapt the formatting of the source code
+  - Submit a pull request
 
 
 License
