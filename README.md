@@ -63,6 +63,34 @@ Include
 
 from a CDN or a local version in your HTML file. 
 
+**HTML template:**
+
+```
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>JSXGraph template</title>
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+    <link href="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraph.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraphcore.js" type="text/javascript" charset="UTF-8"></script>
+
+    <!-- The next line is optional: MathJax -->
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" id="MathJax-script" async></script>
+  </head>
+  <body>
+
+  <div id="jxgbox" class="jxgbox" style="max-width:800px; aspect-ratio: 1/1;"></div>
+
+  <script>
+    var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-8, 8, 8, -8]});
+    var p = board.create('point', [1, 3], {name: 'point'});
+  </script>
+
+  </body>
+</html>
+```
+
 For developing content, it is recommended to include `jsxgraphsrc.js` (`jsxgraphcore.js` is the minified version of `jsxgraphsrc.js`).
 For further usage instructions please consult our [wiki](https://jsxgraph.org/wiki/)
 especially our [tutorials](https://jsxgraph.org/wiki/index.php/Documentation)
