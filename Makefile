@@ -3,7 +3,6 @@
 
 # Build tools
 WEBPACK=./node_modules/.bin/webpack
-REQUIREJS=./node_modules/.bin/r.js
 MINIFYER=./node_modules/terser/bin/terser
 
 # Code quality
@@ -64,7 +63,7 @@ core:
 	$(WEBPACK) --config config/webpack.config.js
 
 core-min:
-	echo "INFO: core-min deactived. It is covered by core"
+	echo "INFO: core-min deactivated. It is covered by core"
 
 release: core docs
 	$(MKDIR) $(MKDIRFLAGS) $(TMP)
@@ -121,14 +120,13 @@ build/bin/readers/%.min.js: src/reader/%.js
 	{ $(CAT) COPYRIGHT; $(MINIFYER) $^ -c -m ; } > $@
 
 compressor: core
-	$(REQUIREJS) -o build/compressor.build.json
-	{ $(CAT) JSXCompressor/COPYING; $(CAT) $(BUILDBIN)/jsxcompressor.js; } > JSXCompressor/jsxcompressor.min.js
-	$(CP) $(BUILDBIN)/jsxgraphcore.js JSXCompressor/jsxgraphcore.js
+	$(WEBPACK) --config config/webpack.config.compressor.js
+	$(CP) $(OUTPUT)/jsxgraphcore.js JSXCompressor/jsxgraphcore.js
 	$(CP) $(OUTPUT)/jsxgraph.css JSXCompressor/jsxgraph.css
 
 plot:
 	$(MKDIR) $(MKDIRFLAGS) $(BUILDBIN)
-	$(REQUIREJS) -o build/plot.build.json
+	$(WEBPACK) --config config/webpack.config.plot.js
 
 hint:
 	$(HINT) src/$(LINTLIST).js

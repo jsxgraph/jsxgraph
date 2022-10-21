@@ -4,10 +4,12 @@
   "homepage": "https://jsxgraph.org",
   "version": "1.5.0",
   "main": "./src/index.js",
+  "module": "./build/esm/index.js",
   "types": "./src/index.d.ts",
   "files": [
     "src",
     "distrib",
+    "extensions",
     "*.md"
   ],
   "maintainers": [
@@ -46,7 +48,11 @@
     "type": "git",
     "url": "https://github.com/jsxgraph/jsxgraph.git"
   },
-  "prettier": {},
+  "prettier": {
+    "printWidth": 96,
+    "tabWidth": 4,
+    "trailingComma": "none"
+  },
   "dependencies": {
     "path-browserify": "^1.0.1"
   },
@@ -54,7 +60,6 @@
     "canvas": "^2.10.1"
   },
   "devDependencies": {
-    "almond": "^0.3.3",
     "eslint": "^8.4.1",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.2.1",
@@ -65,9 +70,7 @@
     "karma": "^6.3.7",
     "karma-chrome-launcher": "^3.1.0",
     "karma-jasmine": "^4.0.1",
-    "karma-requirejs": "^1.1.0",
     "prettier": "^2.7.1",
-    "requirejs": "^2.3.6",
     "terser": "^5.10.0",
     "webpack": "^5.38.1",
     "webpack-cli": "^4.9.2"
@@ -77,10 +80,10 @@
   },
   "scripts": {
     "buildCore": "webpack --config config/webpack.config.js",
-    "buildCompressor": "./node_modules/requirejs/bin/r.js -o build/compressor.build.json",
+    "buildCompressor": "webpack --config config/webpack.config.compressor.js",
     "eslint": "make eslint",
-    "check-format": "prettier --print-width 96 --tab-width 4 --trailing-comma none --check build src test",
-    "format": "prettier --print-width 96 --tab-width 4 --trailing-comma none --write build src test",
+    "check-format": "prettier --check src test extensions",
+    "format": "prettier --write src test extensions",
     "test": "make test"
   }
 }

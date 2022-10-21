@@ -6805,7 +6805,11 @@ var parser = (function () {
     return new Parser();
 })();
 
-if (typeof windows !== "undefined" && typeof require !== "undefined" && typeof exports !== "undefined") {
+if (
+    typeof windows !== "undefined" &&
+    typeof require !== "undefined" &&
+    typeof exports !== "undefined"
+) {
     exports.parser = parser;
     exports.Parser = parser.Parser;
     exports.parse = function () {

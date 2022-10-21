@@ -2,20 +2,16 @@ const path = require("path");
 const baseConfig = require("./webpack.config.base");
 const TerserPlugin = require("terser-webpack-plugin");
 
-const libraryName = "JSXGraph";
+const libraryName = "JSXCompressor";
 const PATHS = {
-    entryPoint: path.resolve(__dirname, "../src/index.js"),
-    bundles: path.resolve(__dirname, "../distrib")
+    entryPoint: path.resolve(__dirname, "../src/compressor.js"),
+    bundles: path.resolve(__dirname, "../JSXCompressor")
 };
 
 const config = {
     ...baseConfig,
-    // Activate source maps for the bundles in order to preserve the original
-    // source when the user debugs the application
-    devtool: "source-map",
     entry: {
-        jsxgraphsrc: [PATHS.entryPoint],
-        jsxgraphcore: [PATHS.entryPoint]
+        "jsxcompressor.min": [PATHS.entryPoint]
     },
     // The output defines how and where we want the bundles. The special value
     // `[name]` in `filename` tell Webpack to use the name we defined above. We
@@ -30,11 +26,7 @@ const config = {
     },
     optimization: {
         minimize: true,
-        minimizer: [
-            new TerserPlugin({
-                test: /core\.js$/
-            })
-        ]
+        minimizer: [new TerserPlugin({})]
     }
 };
 
