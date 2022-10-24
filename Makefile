@@ -1,5 +1,4 @@
-# .PHONY: tests test test-server
-.PHONY: test docs core prettier release line eslint readers
+.PHONY: test docs core core-min prettier release line eslint readers
 
 # Build tools
 WEBPACK=./node_modules/.bin/webpack
