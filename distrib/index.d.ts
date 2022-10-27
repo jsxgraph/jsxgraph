@@ -1838,6 +1838,7 @@ declare namespace JXG {
         strokeColor?: string;
         strokeOpacity?: number;
         useMathJax?: boolean;
+        useKatex?: boolean;
         visible?: 'inherit' | boolean;
     }
 
