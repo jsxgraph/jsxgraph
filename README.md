@@ -33,7 +33,7 @@ Website
 - (outdated: SourceForge project site: https://sf.net/projects/jsxgraph)
 - CDNs: Embed JSXGraph via
 
-```
+```html
 <script type="text/javascript" charset="UTF-8"
  src="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraphcore.js"></script>
 <link rel="stylesheet"
@@ -42,7 +42,7 @@ Website
 
 or
 
-```
+```html
 <script type="text/javascript" charset="UTF-8"
  src="//cdnjs.cloudflare.com/ajax/libs/jsxgraph/1.4.6/jsxgraphcore.js"></script>
 <link rel="stylesheet"
@@ -65,7 +65,7 @@ from a CDN or a local version in your HTML file.
 
 **HTML template:**
 
-```
+```html
 <!doctype html>
 <html lang="en">
   <head>
