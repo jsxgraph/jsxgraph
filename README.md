@@ -33,7 +33,7 @@ Website
 - (outdated: SourceForge project site: https://sf.net/projects/jsxgraph)
 - CDNs: Embed JSXGraph via
 
-```
+```html
 <script type="text/javascript" charset="UTF-8"
  src="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraphcore.js"></script>
 <link rel="stylesheet"
@@ -42,7 +42,7 @@ Website
 
 or
 
-```
+```html
 <script type="text/javascript" charset="UTF-8"
  src="//cdnjs.cloudflare.com/ajax/libs/jsxgraph/1.4.6/jsxgraphcore.js"></script>
 <link rel="stylesheet"
@@ -65,7 +65,7 @@ from a CDN or a local version in your HTML file.
 
 **HTML template:**
 
-```
+```html
 <!doctype html>
 <html lang="en">
   <head>
@@ -112,26 +112,17 @@ all tools and libraries required to build ```jsxgraphcore.js```.
 License
 -------
 
-    Copyright 2008-2022
-        Matthias Ehmann,
-        Michael Gerhaeuser,
-        Carsten Miller,
-        Emmanuel Ostenne,
-        Bianca Valentin,
-        Heiko Vogel,
-        Alfred Wassermann,
-        Peter Wilfahrt
-
-
 JSXGraph is free software dual licensed under the GNU LGPL or MIT License.
 
 You can redistribute it and/or modify it under the terms of the
 
-  * GNU Lesser General Public License as published by
+- GNU Lesser General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version
-  OR
-  * MIT License: https://github.com/jsxgraph/jsxgraph/blob/master/LICENSE.MIT
+  
+or
+
+- MIT License: https://github.com/jsxgraph/jsxgraph/blob/master/LICENSE.MIT
 
 JSXGraph is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
