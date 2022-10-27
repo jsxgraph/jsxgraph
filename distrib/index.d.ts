@@ -1265,10 +1265,6 @@ declare namespace JXG {
          *
          */
         useMathJax?: boolean;
-        /**
-         * Render the text through Katex.
-         */
-        useKatex?: boolean;
     }
 
     /**
@@ -1842,7 +1838,6 @@ declare namespace JXG {
         strokeColor?: string;
         strokeOpacity?: number;
         useMathJax?: boolean;
-        useKatex?: boolean;
         visible?: 'inherit' | boolean;
     }
 
