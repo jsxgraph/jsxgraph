@@ -1265,6 +1265,10 @@ declare namespace JXG {
          *
          */
         useMathJax?: boolean;
+        /**
+         * Render the text through Katex.
+         */
+        useKatex?: boolean;
     }
 
     /**
@@ -5144,6 +5148,7 @@ declare namespace JXG {
         useASCIIMathML?: boolean;
         useCaja?: boolean;
         useMathJax?: boolean;
+        useKatex?: boolean;
         visible?: boolean;
         withLabel?: boolean;
     }
