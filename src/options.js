@@ -1412,14 +1412,95 @@ define([
             dash: 0,
 
             /**
-             * If true the element will get a shadow.
-             * @type Boolean
+             * If enabled:true the element will get a shadow.
+             *
+             * Customize the shadow of a (stroke) object. If the object's RGB color is [r,g,b], it's opacity is op, and
+             * the parameter color is given as [r', g', b'] and opacity as op'
+             * the shadow will have RGB color [blend*r + r', blend*g + g', blend*b + b'] and the opacity will be equal to op * op'.
+             * Further, blur and offset can be adjusted.
+             *
+             * Only available with SVG, not with canvas.
+             *
+             * @type Object
              * @name JXG.GeometryElement#shadow
-             * @default false
+             * @default shadow: {
+             *   enabled: false,
+             *   color: [0, 0, 0],
+             *   opacity: 1,
+             *   blur: 3,
+             *   blend: 0.1,
+             *   offset: [5, 5]
+             * }
+             * 
+             * @example
+             * board.options.line.strokeWidth = 2
+             * // No shadow
+             * var li1 = board.create('line', [[-2, 5], [2, 6]], {strokeColor: 'red', shadow: false});
+             * 
+             * // Default shadow
+             * var li2 = board.create('line', [[-2, 3], [2, 4]], {strokeColor: 'red', shadow: true});
+             * 
+             * // No shadow
+             * var li3 = board.create('line', [[-2, 1], [2, 2]], {strokeColor: 'blue', shadow: {enabled: false}});
+             * 
+             * // Shadow uses same color as line
+             * var li4 = board.create('line', [[-2, -1], [2, 0]], {strokeColor: 'blue',
+             *             shadow: {enabled: true, color: '#000000', blend: 1}
+             *         });
+             * 
+             * // Shadow color as a mixture between black and the line color, additionally set opacity
+             * var li5 = board.create('line', [[-2, -3], [2, -2]], {strokeColor: 'blue',
+             *             shadow: {enabled: true, color: '#000000', blend: 0.5, opacity: 0.5}
+             *         });
+             * 
+             * // Use different value for blur and offset [dx, dy]
+             * var li6 = board.create('line', [[-2, -5], [2, -4]], {strokeColor: 'blue',
+             *             shadow: {enabled: true, offset:[0, 25], blur: 6}
+             *         });
+             * 
+             * </pre><div id="JXG1185a9fa-0fa5-425f-8c15-55b56e1be958" class="jxgbox" style="width: 300px; height: 300px;"></div>
+             * <script type="text/javascript">
+             *     (function() {
+             *         var board = JXG.JSXGraph.initBoard('JXG1185a9fa-0fa5-425f-8c15-55b56e1be958',
+             *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+             *     board.options.line.strokeWidth = 2
+             *     // No shadow
+             *     var li1 = board.create('line', [[-2, 5], [2, 6]], {strokeColor: 'red', shadow: false});
+             *     
+             *     // Default shadow
+             *     var li2 = board.create('line', [[-2, 3], [2, 4]], {strokeColor: 'red', shadow: true});
+             *     
+             *     // No shadow
+             *     var li3 = board.create('line', [[-2, 1], [2, 2]], {strokeColor: 'blue', shadow: {enabled: false}});
+             *     
+             *     // Shadow uses same color as line
+             *     var li4 = board.create('line', [[-2, -1], [2, 0]], {strokeColor: 'blue',
+             *                 shadow: {enabled: true, color: '#000000', blend: 1}
+             *             });
+             *     
+             *     // Shadow color as a mixture between black and the line color, additionally set opacity
+             *     var li5 = board.create('line', [[-2, -3], [2, -2]], {strokeColor: 'blue',
+             *                 shadow: {enabled: true, color: '#000000', blend: 0.5, opacity: 0.5}
+             *             });
+             *     
+             *     // Use different value for blur and offset [dx, dy]
+             *     var li6 = board.create('line', [[-2, -5], [2, -4]], {strokeColor: 'blue',
+             *                 shadow: {enabled: true, offset:[0, 25], blur: 6}
+             *             });
+             * 
+             *     })();
+             * 
+             * </script><pre>
+             * 
              */
-            shadow: false,
-
-            shadowColor: 'black',
+            shadow: {
+                enabled: false,
+                color: [0, 0, 0],
+                opacity: 1,
+                blur: 3,
+                blend: 0.1,
+                offset: [5, 5]
+            },
 
             /**
              * If true the element will be traced, i.e. on every movement the element will be copied

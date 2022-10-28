@@ -937,7 +937,6 @@ define([
             var c, i, prop, i2;
 
             toLower = toLower || false;
-
             if (typeof obj !== 'object' || obj === null) {
                 return obj;
             }
@@ -1000,6 +999,46 @@ define([
         },
 
         /**
+         * In-place merging of attributes
+         *
+         * @param {Object} attr Object with attributes - usually containing default options
+         * @param {Object} special Special option values which overwrite (recursively) the default options
+         * @param {Boolean} [toLower=true] If true the keys are convert to lower case.
+         *
+         * @private
+         */
+        mergeAttr: function (attr, special, toLower) {
+            var e, e2, o;
+
+            toLower = toLower || true;
+
+            for (e in special) {
+                if (special.hasOwnProperty(e)) {
+                    e2 = (toLower) ? e.toLowerCase(): e;
+
+                    o = special[e];
+                    if (this.isObject(o) && o !== null && !this.exists(o.board)) {
+                        if (attr[e2] === undefined || attr[e2] === null || !this.isObject(attr[e2])) {
+                            // The last test handles the case:
+                            //   attr.draft = false;
+                            //   special.draft = { strokewidth: 4}
+                            attr[e2] = {};
+                        }
+                        this.mergeAttr(attr[e2], o, toLower)
+                    } else {
+                        // Flat copy
+                        // This is also used in the cases
+                        //   attr.shadow = { enabled: true ...}
+                        //   special.shadow = false;
+                        // and
+                        //   special.anchor is a JSXGraph element
+                        attr[e2] = o;
+                    }
+                }
+            }
+        },
+
+        /**
          * Generates an attributes object that is filled with default values from the Options object
          * and overwritten by the user specified attributes.
          * @param {Object} attributes user specified attributes
@@ -1023,7 +1062,7 @@ define([
 
             len = arguments.length;
             if (len < 3 || primitives[s]) {
-                // default options from Options.elements
+                // Default options from Options.elements
                 a = JXG.deepCopy(options.elements, null, true);
             } else {
                 a = {};
@@ -1034,7 +1073,8 @@ define([
                 a.layer = options.layer[s];
             }
 
-            // default options from specific elements
+            // Default options from the specific element like 'line' in
+            // copyAttribute(attributes, board.options, 'line')
             o = options;
             isAvail = true;
             for (i = 2; i < len; i++) {
@@ -1049,7 +1089,11 @@ define([
                 a = JXG.deepCopy(a, o, true);
             }
 
-            // options from attributes
+            // Merge the specific options given in the parameter 'attributes'
+            // into the default options.
+            // Additionally, we step into a subelement of attribut like line.point1 in case it is supplied as in
+            // copyAttribute(attributes, board.options, 'line', 'point1')
+            // In this case we would merge attributes.point1 into the global line.point1 attributes.
             o = (typeof attributes === 'object') ? attributes : {};
             isAvail = true;
             for (i = 3; i < len; i++) {
@@ -1061,7 +1105,7 @@ define([
                 }
             }
             if (isAvail) {
-                this.extend(a, o, null, true);
+                this.mergeAttr(a, o, true);
             }
 
             if (arguments[2] === 'board') {
