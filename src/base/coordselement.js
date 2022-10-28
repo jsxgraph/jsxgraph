@@ -751,7 +751,7 @@ JXG.extend(
         updateRendererGeneric: function (rendererMethod) {
             //var wasReal;
 
-            if (!this.needsUpdate) {
+            if (!this.needsUpdate || !this.board.renderer) {
                 return this;
             }
 
