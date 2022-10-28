@@ -5143,6 +5143,7 @@ declare namespace JXG {
         useASCIIMathML?: boolean;
         useCaja?: boolean;
         useMathJax?: boolean;
+        useKatex?: boolean;
         visible?: boolean;
         withLabel?: boolean;
     }
