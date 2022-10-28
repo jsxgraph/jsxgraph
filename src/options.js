@@ -369,7 +369,7 @@ define([
              * @type Object
              */
             fullscreen: {
-                symbol: '<svg height="1em" width="1em" version="1.1" viewBox="10 10 18 18"><path fill="#666" d="m 10,16 2,0 0,-4 4,0 0,-2 L 10,10 l 0,6 0,0 z"></path><path fill="#666" d="m 20,10 0,2 4,0 0,4 2,0 L 26,10 l -6,0 0,0 z"></path><path fill="#666" d="m 24,24 -4,0 0,2 L 26,26 l 0,-6 -2,0 0,4 0,0 z"></path><path fill="#666" d="M 12,20 10,20 10,26 l 6,0 0,-2 -4,0 0,-4 0,0 z"></path></svg>', 
+                symbol: '<svg height="1em" width="1em" version="1.1" viewBox="10 10 18 18"><path fill="#666" d="m 10,16 2,0 0,-4 4,0 0,-2 L 10,10 l 0,6 0,0 z"></path><path fill="#666" d="m 20,10 0,2 4,0 0,4 2,0 L 26,10 l -6,0 0,0 z"></path><path fill="#666" d="m 24,24 -4,0 0,2 L 26,26 l 0,-6 -2,0 0,4 0,0 z"></path><path fill="#666" d="M 12,20 10,20 10,26 l 6,0 0,-2 -4,0 0,-4 0,0 z"></path></svg>',
                     // '\u25a1', // '\u26f6' (not supported by MacOS),
                 id: null
             },
@@ -1431,33 +1431,33 @@ define([
              *   blend: 0.1,
              *   offset: [5, 5]
              * }
-             * 
+             *
              * @example
              * board.options.line.strokeWidth = 2
              * // No shadow
              * var li1 = board.create('line', [[-2, 5], [2, 6]], {strokeColor: 'red', shadow: false});
-             * 
+             *
              * // Default shadow
              * var li2 = board.create('line', [[-2, 3], [2, 4]], {strokeColor: 'red', shadow: true});
-             * 
+             *
              * // No shadow
              * var li3 = board.create('line', [[-2, 1], [2, 2]], {strokeColor: 'blue', shadow: {enabled: false}});
-             * 
+             *
              * // Shadow uses same color as line
              * var li4 = board.create('line', [[-2, -1], [2, 0]], {strokeColor: 'blue',
              *             shadow: {enabled: true, color: '#000000', blend: 1}
              *         });
-             * 
+             *
              * // Shadow color as a mixture between black and the line color, additionally set opacity
              * var li5 = board.create('line', [[-2, -3], [2, -2]], {strokeColor: 'blue',
              *             shadow: {enabled: true, color: '#000000', blend: 0.5, opacity: 0.5}
              *         });
-             * 
+             *
              * // Use different value for blur and offset [dx, dy]
              * var li6 = board.create('line', [[-2, -5], [2, -4]], {strokeColor: 'blue',
              *             shadow: {enabled: true, offset:[0, 25], blur: 6}
              *         });
-             * 
+             *
              * </pre><div id="JXG1185a9fa-0fa5-425f-8c15-55b56e1be958" class="jxgbox" style="width: 300px; height: 300px;"></div>
              * <script type="text/javascript">
              *     (function() {
@@ -1466,32 +1466,32 @@ define([
              *     board.options.line.strokeWidth = 2
              *     // No shadow
              *     var li1 = board.create('line', [[-2, 5], [2, 6]], {strokeColor: 'red', shadow: false});
-             *     
+             *
              *     // Default shadow
              *     var li2 = board.create('line', [[-2, 3], [2, 4]], {strokeColor: 'red', shadow: true});
-             *     
+             *
              *     // No shadow
              *     var li3 = board.create('line', [[-2, 1], [2, 2]], {strokeColor: 'blue', shadow: {enabled: false}});
-             *     
+             *
              *     // Shadow uses same color as line
              *     var li4 = board.create('line', [[-2, -1], [2, 0]], {strokeColor: 'blue',
              *                 shadow: {enabled: true, color: '#000000', blend: 1}
              *             });
-             *     
+             *
              *     // Shadow color as a mixture between black and the line color, additionally set opacity
              *     var li5 = board.create('line', [[-2, -3], [2, -2]], {strokeColor: 'blue',
              *                 shadow: {enabled: true, color: '#000000', blend: 0.5, opacity: 0.5}
              *             });
-             *     
+             *
              *     // Use different value for blur and offset [dx, dy]
              *     var li6 = board.create('line', [[-2, -5], [2, -4]], {strokeColor: 'blue',
              *                 shadow: {enabled: true, offset:[0, 25], blur: 6}
              *             });
-             * 
+             *
              *     })();
-             * 
+             *
              * </script><pre>
-             * 
+             *
              */
             shadow: {
                 enabled: false,
