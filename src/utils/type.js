@@ -999,7 +999,7 @@ define([
         },
 
         /**
-         * In-place merging of attributes
+         * In-place (deep) merging of attributes. Allows attributes like `{shadow: {enabled: true...}}`
          *
          * @param {Object} attr Object with attributes - usually containing default options
          * @param {Object} special Special option values which overwrite (recursively) the default options
