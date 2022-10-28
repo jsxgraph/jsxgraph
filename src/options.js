@@ -599,6 +599,8 @@ define([
              * </pre>
              *
              * @name JXG.Board#pan
+             * @see JXG.Board#browserPan
+             *
              * @type Object
              */
             pan: {
@@ -606,6 +608,66 @@ define([
                 needShift: true,
                 needTwoFingers: false
             },
+
+            /**
+             * Enable browser scrolling on touch interfaces if the user double taps into an empty region
+             * of the board.
+             *
+             * <ul>
+             * <li> Implemented for pointer touch devices - not with mouse, pen or old iOS touch.
+             * <li> It only works if browserPan:true
+             * <li> One finger action by the settings "pan.enabled:true" and "pan.needTwoFingers:false" has priority
+             * </ul>
+             *
+             * @name JXG.Board#browserPan
+             * @see JXG.Board#pan
+             * @type Boolean
+             * @default false
+             *
+             * @example
+             * const board = JXG.JSXGraph.initBoard('jxgbox', {
+             *     boundingbox: [-5, 5, 5, -5], axis: true,
+             *     pan: {
+             *         enabled: true,
+             *         needTwoFingers: true,
+             *     },
+             *     browserPan: true,
+             *     zoom: {
+             *         enabled: false
+             *     }
+             * });
+             *
+             * var p1 = board.create('point', [1, -1]);
+             * var p2 = board.create('point', [2.5, -2]);
+             * var li1 = board.create('line', [p1, p2]);
+             *
+             * </pre><div id="JXGcd50c814-be81-4280-9458-d73e50cece8d" class="jxgbox" style="width: 300px; height: 300px;"></div>
+             * <script type="text/javascript">
+             *     (function() {
+             *         var board = JXG.JSXGraph.initBoard('JXGcd50c814-be81-4280-9458-d73e50cece8d',
+             *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+             *     const board = JXG.JSXGraph.initBoard('jxgbox', {
+             *         boundingbox: [-5, 5, 5, -5], axis: true,
+             *         pan: {
+             *             enabled: true,
+             *             needTwoFingers: true,
+             *         },
+             *         browserPan: true,
+             *         zoom: {
+             *             enabled: false
+             *         }
+             *     });
+             *
+             *     var p1 = board.create('point', [1, -1]);
+             *     var p2 = board.create('point', [2.5, -2]);
+             *     var li1 = board.create('line', [p1, p2]);
+             *
+             *     })();
+             *
+             * </script><pre>
+             *
+             *
+             */
             browserPan: false,
 
             /**
