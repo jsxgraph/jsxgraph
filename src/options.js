@@ -1414,9 +1414,9 @@ define([
             /**
              * If enabled:true the element will get a shadow.
              *
-             * Customize the shadow of a (stroke) object. If the object's RGB color is [r,g,b], it's opacity is op, and
-             * the parameter color is given as [r', g', b'] and opacity as op'
-             * the shadow will have RGB color [blend*r + r', blend*g + g', blend*b + b'] and the opacity will be equal to op * op'.
+             * Customize the shadow of a (stroke) object. If the object's RGB color is [r,g,b], its opacity is op, and
+             * the parameters "color" is given as [r', g', b'] and "opacity" as op' the shadow will have
+             * RGB color [blend*r + r', blend*g + g', blend*b + b'] and its opacity will be equal to op * op'.
              * Further, blur and offset can be adjusted.
              *
              * Only available with SVG, not with canvas.
