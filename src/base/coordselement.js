@@ -682,7 +682,7 @@ define([
         updateRendererGeneric: function (rendererMethod) {
             //var wasReal;
 
-            if (!this.needsUpdate || !this.board.renderer) {
+            if (!this.needsUpdate) {//} || !this.board.renderer) {
                 return this;
             }
 
