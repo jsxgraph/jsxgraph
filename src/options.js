@@ -2117,7 +2117,14 @@ define([
             face: '|',
             strokeWidth: 2,
             strokeColor: Color.palette.blue,
-            ticksDistance: 0.2
+            /**
+             * The default distance (in user coordinates, not  pixels) between two hatch symbols. 
+             * 
+             * @type Number
+             * @name Hatch#ticksDistance
+             * @default 0.2
+             */
+             ticksDistance: 0.2
         },
 
         /**

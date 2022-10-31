@@ -1428,7 +1428,7 @@ define([
      * @type JXG.Ticks
      * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
      * @param {JXG.Line|JXG.curve} line The line or curve the hatch marks are going to be attached to.
-     * @param {Number} numberofhashes Number of dashes.
+     * @param {Number} numberofhashes Number of dashes. The distance of the hashes can be controlled with the attribute ticksDistance.
      * @example
      * // Create an axis providing two coords pairs.
      *   var p1 = board.create('point', [0, 3]);
@@ -1452,7 +1452,7 @@ define([
      * var p = board.create('point', [-5, 0]);
      * var q = board.create('point', [5, 0]);
      * var li = board.create('line', [p, q]);
-     * var h = board.create('hatch', [li, 2], {anchor: 0.2});
+     * var h = board.create('hatch', [li, 2], {anchor: 0.2, ticksDistance:0.4});
      *
      * </pre><div id="JXG05d720ee-99c9-11e6-a9c7-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
@@ -1463,7 +1463,7 @@ define([
      *     var p = board.create('point', [-5, 0]);
      *     var q = board.create('point', [5, 0]);
      *     var li = board.create('line', [p, q]);
-     *     var h = board.create('hatch', [li, 2], {anchor: 0.2});
+     *     var h = board.create('hatch', [li, 2], {anchor: 0.2, ticksDistance:0.4});
      *
      *     })();
      *
@@ -1508,6 +1508,7 @@ define([
         width = attr.ticksdistance;
         totalwidth = (num - 1) * width;
         base = -totalwidth * 0.5;
+        console.log(totalwidth, width, attr.ticksdistance)
 
         for (i = 0; i < num; i++) {
             pos[i] = base + i * width;
