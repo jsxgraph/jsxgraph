@@ -4645,6 +4645,10 @@ define([
             var el,
                 len = this.objectsList.length;
 
+            if (!this.renderer) {
+                return;
+            }
+
             /*
             objs = this.objectsList.slice(0);
             objs.sort(function (a, b) {
