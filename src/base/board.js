@@ -4465,15 +4465,20 @@ define([
          * @param {Number} canvasWidth New width of the container.
          * @param {Number} canvasHeight New height of the container.
          * @param {Boolean} [dontset=false] If true do not set the CSS width and height of the DOM element.
-         * @param {Boolean} [dontSetBoundingBox=false] If true do not call setBoundingBox().
+         * @param {Boolean} [dontSetBoundingBox=false] If true do not call setBoundingBox(), but keep view centered around original visible center.
          * @returns {JXG.Board} Reference to the board
          */
         resizeContainer: function (canvasWidth, canvasHeight, dontset, dontSetBoundingBox) {
-            var box;
+            var box,
+                oldWidth, oldHeight,
+                oX, oY;
                 // w, h, cx, cy;
                 // box_act,
                 // shift_x = 0,
                 // shift_y = 0;
+
+            oldWidth = this.canvasWidth;
+            oldHeight = this.canvasHeight;
 
             if (!dontSetBoundingBox) {
                 // box_act = this.getBoundingBox();    // This is the actual bounding box.
@@ -4510,6 +4515,14 @@ define([
 
             if (!dontSetBoundingBox) {
                 this.setBoundingBox(box, this.keepaspectratio, 'keep');
+            } else {
+                oX = (this.canvasWidth - oldWidth) / 2;
+                oY = (this.canvasHeight - oldHeight) / 2;
+
+                this.moveOrigin(
+                    this.origin.scrCoords[1] + oX,
+                    this.origin.scrCoords[2] + oY,
+                );
             }
 
             return this;
