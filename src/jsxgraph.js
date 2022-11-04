@@ -481,7 +481,7 @@ define([
             attr = this._setAttributes(attributes);
 
             dimensions = Env.getDimensions(box, attr.document);
-            renderer = this.initRenderer(box, dimensions, attr.document);
+            renderer = this.initRenderer(box, dimensions, attr.document, attr.renderer);
             this._setARIA(box, attr);
 
             /* User default parameters, in parse* the values in the gxt files are submitted to board */
