@@ -227,13 +227,16 @@ define([
          * @private
          */
         _setARIA: function(container, attr) {
-            var doc = attr.document || document,
+            var doc = attr.document,
                 doc_glob,
                 node_jsx, newNode, parent,
                 id_label, id_description;
 
             if (typeof doc !== 'object') {
-                return;
+                if (!Env.isBrowser) {
+                    return;
+                }
+                doc = document;
             }
 
             node_jsx = doc.getElementById(container);
