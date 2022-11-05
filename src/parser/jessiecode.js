@@ -678,16 +678,19 @@ JXG.extend(
                 this.replaceNames(node.children[1]);
 
                 /** @ignore */
-                fun = (function ($jc$) {
+                fun = (function (jc) {
                     var fun,
-                        str = "var f = " + $jc$.functionCodeJS(node) + "; f;";
+                        str =
+                            "var f = function($jc$) { return " +
+                            jc.functionCodeJS(node) +
+                            "}; f;";
 
                     try {
                         // yeah, eval is evil, but we don't have much choice here.
                         // the str is well defined and there is no user input in it that we didn't check before
 
                         /*jslint evil:true*/
-                        fun = eval(str);
+                        fun = eval(str)(jc);
                         /*jslint evil:false*/
 
                         scope.argtypes = [];
@@ -697,9 +700,7 @@ JXG.extend(
 
                         return fun;
                     } catch (e) {
-                        $jc$._warn(
-                            "error compiling function\n\n" + str + "\n\n" + e.toString()
-                        );
+                        jc._warn("error compiling function\n\n" + str + "\n\n" + e.toString());
                         return function () {};
                     }
                 })(this);
