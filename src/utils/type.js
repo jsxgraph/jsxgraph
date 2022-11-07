@@ -136,6 +136,17 @@ define([
         },
 
         /**
+         * Tests if the input variable is a DOM Document or DocumentFragment node
+         * @param v A variable of any type
+         */
+        isDocumentOrFragment: function (v) {
+            return this.isObject(v) && (
+                v.nodeType === 9 || // Node.DOCUMENT_NODE  
+                v.nodeType === 11   // Node.DOCUMENT_FRAGMENT_NODE
+            );
+        },
+
+        /**
          * Checks if a given variable is a reference of a JSXGraph Point element.
          * @param v A variable of any type.
          * @returns {Boolean} True, if v is of type JXG.Point.
@@ -1017,14 +1028,14 @@ define([
                     e2 = (toLower) ? e.toLowerCase(): e;
 
                     o = special[e];
-                    if (this.isObject(o) && o !== null && !this.exists(o.board)) {
+                    if (this.isObject(o) && o !== null && !this.isDocumentOrFragment(o) && !this.exists(o.board)) {
                         if (attr[e2] === undefined || attr[e2] === null || !this.isObject(attr[e2])) {
                             // The last test handles the case:
                             //   attr.draft = false;
                             //   special.draft = { strokewidth: 4}
                             attr[e2] = {};
                         }
-                        this.mergeAttr(attr[e2], o, toLower)
+                        this.mergeAttr(attr[e2], o, toLower);
                     } else {
                         // Flat copy
                         // This is also used in the cases

@@ -1998,12 +1998,13 @@ define([
          * Wrapper for getElementById for maybe other renderers which elements are not directly accessible by DOM
          * methods like document.getElementById().
          * @param {String} id Unique identifier for element.
-         * @returns {Object} Reference to a JavaScript object. In case of SVG/VMLRenderer it's a reference to a SVG/VML
-         * node.
+         * @returns {Object} Reference to a JavaScript object. In case of SVG/VMLRenderer it's a reference to a SVG/VML node.
          */
         getElementById: function (id) {
             if (Type.exists(this.container)) {
-                return this.container.ownerDocument.getElementById(this.container.id + '_' + id);
+                // Use querySelector over getElementById for compatibility with both 'regular' document
+                // and ShadowDOM fragments.
+                return this.container.querySelector('#' + this.container.id + '_' + id);
             }
             return '';
         },
