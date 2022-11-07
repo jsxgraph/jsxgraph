@@ -227,13 +227,16 @@ define([
          * @private
          */
         _setARIA: function(container, attr) {
-            var doc = attr.document || document,
+            var doc = attr.document,
                 doc_glob,
                 node_jsx, newNode, parent,
                 id_label, id_description;
 
             if (typeof doc !== 'object') {
-                return;
+                if (!Env.isBrowser) {
+                    return;
+                }
+                doc = document;
             }
 
             node_jsx = doc.getElementById(container);
@@ -481,7 +484,7 @@ define([
             attr = this._setAttributes(attributes);
 
             dimensions = Env.getDimensions(box, attr.document);
-            renderer = this.initRenderer(box, dimensions, attr.document);
+            renderer = this.initRenderer(box, dimensions, attr.document, attr.renderer);
             this._setARIA(box, attr);
 
             /* User default parameters, in parse* the values in the gxt files are submitted to board */
