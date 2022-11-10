@@ -4932,6 +4932,17 @@ declare namespace JXG {
          */
         renderer: 'svg' | 'canvas' | 'vml' | 'no' | 'auto';
 
+        /**
+         * Control if JSXGraph reacts to resizing of the JSXGraph container element
+         * by the user / browser.
+         * The attribute "throttle" determines the minimal time in msec between to
+         * resize calls.
+         */
+        resize: {
+            enabled?: boolean;
+            throttle: number;
+        };
+
         selection: {
             enabled?: boolean;
             fillColor?: string;
