@@ -1102,7 +1102,7 @@ define([
 
             // Merge the specific options given in the parameter 'attributes'
             // into the default options.
-            // Additionally, we step into a subelement of attribut like line.point1 in case it is supplied as in
+            // Additionally, we step into a subelement of attribute like line.point1 in case it is supplied as in
             // copyAttribute(attributes, board.options, 'line', 'point1')
             // In this case we would merge attributes.point1 into the global line.point1 attributes.
             o = (typeof attributes === 'object') ? attributes : {};
