@@ -136,6 +136,17 @@ JXG.extend(
         },
 
         /**
+         * Tests if the input variable is a DOM Document or DocumentFragment node
+         * @param v A variable of any type
+         */
+        isDocumentOrFragment: function (v) {
+            return this.isObject(v) && (
+                v.nodeType === 9 || // Node.DOCUMENT_NODE  
+                v.nodeType === 11   // Node.DOCUMENT_FRAGMENT_NODE
+            );
+        },
+
+        /**
          * Checks if a given variable is a reference of a JSXGraph Point element.
          * @param v A variable of any type.
          * @returns {Boolean} True, if v is of type JXG.Point.
@@ -961,8 +972,7 @@ JXG.extend(
             var c, i, prop, i2;
 
             toLower = toLower || false;
-
-            if (typeof obj !== "object" || obj === null) {
+            if (typeof obj !== 'object' || obj === null) {
                 return obj;
             }
 
@@ -1024,6 +1034,46 @@ JXG.extend(
         },
 
         /**
+         * In-place (deep) merging of attributes. Allows attributes like `{shadow: {enabled: true...}}`
+         *
+         * @param {Object} attr Object with attributes - usually containing default options
+         * @param {Object} special Special option values which overwrite (recursively) the default options
+         * @param {Boolean} [toLower=true] If true the keys are convert to lower case.
+         *
+         * @private
+         */
+        mergeAttr: function (attr, special, toLower) {
+            var e, e2, o;
+
+            toLower = toLower || true;
+
+            for (e in special) {
+                if (special.hasOwnProperty(e)) {
+                    e2 = (toLower) ? e.toLowerCase(): e;
+
+                    o = special[e];
+                    if (this.isObject(o) && o !== null && !this.isDocumentOrFragment(o) && !this.exists(o.board)) {
+                        if (attr[e2] === undefined || attr[e2] === null || !this.isObject(attr[e2])) {
+                            // The last test handles the case:
+                            //   attr.draft = false;
+                            //   special.draft = { strokewidth: 4}
+                            attr[e2] = {};
+                        }
+                        this.mergeAttr(attr[e2], o, toLower);
+                    } else {
+                        // Flat copy
+                        // This is also used in the cases
+                        //   attr.shadow = { enabled: true ...}
+                        //   special.shadow = false;
+                        // and
+                        //   special.anchor is a JSXGraph element
+                        attr[e2] = o;
+                    }
+                }
+            }
+        },
+
+        /**
          * Generates an attributes object that is filled with default values from the Options object
          * and overwritten by the user specified attributes.
          * @param {Object} attributes user specified attributes
@@ -1051,7 +1101,7 @@ JXG.extend(
 
             len = arguments.length;
             if (len < 3 || primitives[s]) {
-                // default options from Options.elements
+                // Default options from Options.elements
                 a = JXG.deepCopy(options.elements, null, true);
             } else {
                 a = {};
@@ -1062,7 +1112,8 @@ JXG.extend(
                 a.layer = options.layer[s];
             }
 
-            // default options from specific elements
+            // Default options from the specific element like 'line' in
+            // copyAttribute(attributes, board.options, 'line')
             o = options;
             isAvail = true;
             for (i = 2; i < len; i++) {
@@ -1077,8 +1128,12 @@ JXG.extend(
                 a = JXG.deepCopy(a, o, true);
             }
 
-            // options from attributes
-            o = typeof attributes === "object" ? attributes : {};
+            // Merge the specific options given in the parameter 'attributes'
+            // into the default options.
+            // Additionally, we step into a subelement of attribut like line.point1 in case it is supplied as in
+            // copyAttribute(attributes, board.options, 'line', 'point1')
+            // In this case we would merge attributes.point1 into the global line.point1 attributes.
+            o = (typeof attributes === 'object') ? attributes : {};
             isAvail = true;
             for (i = 3; i < len; i++) {
                 if (this.exists(o[arguments[i]])) {
@@ -1089,7 +1144,7 @@ JXG.extend(
                 }
             }
             if (isAvail) {
-                this.extend(a, o, null, true);
+                this.mergeAttr(a, o, true);
             }
 
             if (arguments[2] === "board") {

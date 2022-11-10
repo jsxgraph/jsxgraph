@@ -137,17 +137,17 @@ JXG.Board = function (
      */
     this.BOARD_QUALITY_HIGH = 0x2;
 
-    /**
-     * Pointer to the document element containing the board.
-     * @type Object
-     */
-    // Former version:
-    // this.document = attributes.document || document;
-    if (Type.exists(attributes.document) && attributes.document !== false) {
-        this.document = attributes.document;
-    } else if (document !== undefined && Type.isObject(document)) {
-        this.document = document;
-    }
+        /**
+         * Pointer to the document element containing the board.
+         * @type Object
+         */
+        // Former version:
+        // this.document = attributes.document || document;
+        if (Type.exists(attributes.document) && attributes.document !== false) {
+            this.document = attributes.document;
+        } else if (Env.isBrowser) {
+            this.document = document;
+        }
 
     /**
      * The html-id of the html element containing the board.
@@ -1770,8 +1770,8 @@ JXG.extend(
 
                 if (this.containerObj !== null) {
                     // This is needed for capturing touch events.
-                    // It is also in jsxgraph.css, but one never knows...
-                    this.containerObj.style.touchAction = "none";
+                    // It is in jsxgraph.css, for ms-touch-action...
+                    this.containerObj.style.touchAction = 'none';
                 }
 
                 this.hasPointerHandlers = true;
@@ -2388,9 +2388,8 @@ JXG.extend(
                 elements,
                 sel,
                 target_obj,
-                type = "mouse", // Used in case of no browser
-                found,
-                target;
+                type = 'mouse', // Used in case of no browser
+                found, target, ta;
 
             // Fix for Firefox browser: When using a second finger, the
             // touch event for the first finger is sent again.
@@ -2562,11 +2561,20 @@ JXG.extend(
                 }
             }
 
-            this.triggerEventHandlers(
-                ["touchstart", "down", "pointerdown", "MSPointerDown"],
-                [evt]
-            );
-            return false;
+            // Allow browser scrolling
+            // For this: pan by one finger has to be disabled
+            ta = 'none';             // JSXGraph catches all user touch events
+            if (this.mode === this.BOARD_MODE_NONE &&
+                Type.evaluate(this.attr.browserpan) &&
+                !(Type.evaluate(this.attr.pan.enabled) && !Type.evaluate(this.attr.pan.needtwofingers))
+               ) {
+                ta = 'pan-x pan-y';  // JSXGraph allows browser scrolling
+            }
+            this.containerObj.style.touchAction = ta;
+
+            this.triggerEventHandlers(['touchstart', 'down', 'pointerdown', 'MSPointerDown'], [evt]);
+
+            return true;
         },
 
         // /**
@@ -2786,6 +2794,7 @@ JXG.extend(
 
             // After one finger leaves the screen the gesture is stopped.
             this._pointerClearTouches();
+
             return true;
         },
 
@@ -4936,15 +4945,20 @@ JXG.extend(
          * @param {Number} canvasWidth New width of the container.
          * @param {Number} canvasHeight New height of the container.
          * @param {Boolean} [dontset=false] If true do not set the CSS width and height of the DOM element.
-         * @param {Boolean} [dontSetBoundingBox=false] If true do not call setBoundingBox().
+         * @param {Boolean} [dontSetBoundingBox=false] If true do not call setBoundingBox(), but keep view centered around original visible center.
          * @returns {JXG.Board} Reference to the board
          */
         resizeContainer: function (canvasWidth, canvasHeight, dontset, dontSetBoundingBox) {
-            var box;
-            // w, h, cx, cy;
-            // box_act,
-            // shift_x = 0,
-            // shift_y = 0;
+            var box,
+                oldWidth, oldHeight,
+                oX, oY;
+                // w, h, cx, cy;
+                // box_act,
+                // shift_x = 0,
+                // shift_y = 0;
+
+            oldWidth = this.canvasWidth;
+            oldHeight = this.canvasHeight;
 
             if (!dontSetBoundingBox) {
                 // box_act = this.getBoundingBox();    // This is the actual bounding box.
@@ -4980,7 +4994,15 @@ JXG.extend(
             this.renderer.resize(this.canvasWidth, this.canvasHeight);
 
             if (!dontSetBoundingBox) {
-                this.setBoundingBox(box, this.keepaspectratio, "keep");
+                this.setBoundingBox(box, this.keepaspectratio, 'keep');
+            } else {
+                oX = (this.canvasWidth - oldWidth) / 2;
+                oY = (this.canvasHeight - oldHeight) / 2;
+
+                this.moveOrigin(
+                    this.origin.scrCoords[1] + oX,
+                    this.origin.scrCoords[2] + oY,
+                );
             }
 
             return this;
@@ -5121,6 +5143,10 @@ JXG.extend(
         updateRenderer: function () {
             var el,
                 len = this.objectsList.length;
+
+            if (!this.renderer) {
+                return;
+            }
 
             /*
             objs = this.objectsList.slice(0);

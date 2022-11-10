@@ -226,9 +226,12 @@ JXG.JSXGraph = {
             id_label,
             id_description;
 
-        if (typeof doc !== "object") {
-            return;
-        }
+            if (typeof doc !== 'object') {
+                if (!Env.isBrowser) {
+                    return;
+                }
+                doc = document;
+            }
 
         node_jsx = doc.getElementById(container);
         doc_glob = node_jsx.ownerDocument; // This is the window.document element, needed below.
@@ -524,9 +527,9 @@ JXG.JSXGraph = {
         attributes = attributes || {};
         attr = this._setAttributes(attributes);
 
-        dimensions = Env.getDimensions(box, attr.document);
-        renderer = this.initRenderer(box, dimensions, attr.document);
-        this._setARIA(box, attr);
+            dimensions = Env.getDimensions(box, attr.document);
+            renderer = this.initRenderer(box, dimensions, attr.document, attr.renderer);
+            this._setARIA(box, attr);
 
         /* User default parameters, in parse* the values in the gxt files are submitted to board */
         board = new Board(

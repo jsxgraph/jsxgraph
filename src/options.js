@@ -317,54 +317,54 @@ JXG.Options = {
          */
         showFullscreen: false,
 
-        /**
-         * Attribute(s) to control the fullscreen icon. The attribute "showFullscreen"
-         * controls if the icon is shown.
-         * The following attribute(s) can be set:
-         * <ul>
-         *  <li>symbol (String): Unicode symbol which is shown in the navigation bar.  Default: svg code for '\u26f6', other
-         * possibilities are the unicode symbols '\u26f6' and '\u25a1'. However, '\u26f6' is not supported by MacOS and iOS.
-         *  <li>id (String): Id of the HTML element which is brought to full screen or null if the JSXgraph div is taken.
-         * It may be an outer div element, e.g. if the old aspect ratio trick is used. Default: null, i.e. use the JSXGraph div.
-         * </ul>
-         *
-         * @example
-         * var board = JXG.JSXGraph.initBoard('35bec5a2-fd4d-11e8-ab14-901b0e1b8723',
-         *             {boundingbox: [-8, 8, 8,-8], axis: true,
-         *             showcopyright: false,
-         *             showFullscreen: true,
-         *             fullscreen: {
-         *                  symbol: '\u22c7'
-         *              }
-         *             });
-         * var pol = board.create('polygon', [[0, 1], [3,4], [1,-4]], {fillColor: 'yellow'});
-         *
-         * </pre><div id="JXGa35bec5a2-fd4d-11e8-ab14-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
-         * <script type="text/javascript">
-         *     (function() {
-         *         var board = JXG.JSXGraph.initBoard('JXGa35bec5a2-fd4d-11e8-ab14-901b0e1b8723',
-         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false,
-         *              showFullscreen: true,
-         *              fullscreen: {
-         *                  symbol: '\u22c7'
-         *                  }
-         *             });
-         *     var pol = board.create('polygon', [[0, 1], [3,4], [1,-4]], {fillColor: 'yellow'});
-         *     })();
-         *
-         * </script><pre>
-         *
-         * @name JXG.Board#fullscreen
-         * @default svg code
-         * @see JXG.Board#showFullscreen
-         * @see JXG.AbstractRenderer#drawZoomBar
-         * @type Object
-         */
-        fullscreen: {
-            symbol: '<svg height="1em" width="1em" version="1.1" viewBox="10 10 18 18"><path fill="#666" d="m 10,16 2,0 0,-4 4,0 0,-2 L 10,10 l 0,6 0,0 z"></path><path fill="#666" d="m 20,10 0,2 4,0 0,4 2,0 L 26,10 l -6,0 0,0 z"></path><path fill="#666" d="m 24,24 -4,0 0,2 L 26,26 l 0,-6 -2,0 0,4 0,0 z"></path><path fill="#666" d="M 12,20 10,20 10,26 l 6,0 0,-2 -4,0 0,-4 0,0 z"></path></svg>',
-            // '\u25a1', // '\u26f6' (not supported by MacOS),
-            id: null
-        },
+            /**
+             * Attribute(s) to control the fullscreen icon. The attribute "showFullscreen"
+             * controls if the icon is shown.
+             * The following attribute(s) can be set:
+             * <ul>
+             *  <li>symbol (String): Unicode symbol which is shown in the navigation bar.  Default: svg code for '\u26f6', other
+             * possibilities are the unicode symbols '\u26f6' and '\u25a1'. However, '\u26f6' is not supported by MacOS and iOS.
+             *  <li>id (String): Id of the HTML element which is brought to full screen or null if the JSXgraph div is taken.
+             * It may be an outer div element, e.g. if the old aspect ratio trick is used. Default: null, i.e. use the JSXGraph div.
+             * </ul>
+             *
+             * @example
+             * var board = JXG.JSXGraph.initBoard('35bec5a2-fd4d-11e8-ab14-901b0e1b8723',
+             *             {boundingbox: [-8, 8, 8,-8], axis: true,
+             *             showcopyright: false,
+             *             showFullscreen: true,
+             *             fullscreen: {
+             *                  symbol: '\u22c7'
+             *              }
+             *             });
+             * var pol = board.create('polygon', [[0, 1], [3,4], [1,-4]], {fillColor: 'yellow'});
+             *
+             * </pre><div id="JXGa35bec5a2-fd4d-11e8-ab14-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
+             * <script type="text/javascript">
+             *     (function() {
+             *         var board = JXG.JSXGraph.initBoard('JXGa35bec5a2-fd4d-11e8-ab14-901b0e1b8723',
+             *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false,
+             *              showFullscreen: true,
+             *              fullscreen: {
+             *                  symbol: '\u22c7'
+             *                  }
+             *             });
+             *     var pol = board.create('polygon', [[0, 1], [3,4], [1,-4]], {fillColor: 'yellow'});
+             *     })();
+             *
+             * </script><pre>
+             *
+             * @name JXG.Board#fullscreen
+             * @default svg code
+             * @see JXG.Board#showFullscreen
+             * @see JXG.AbstractRenderer#drawZoomBar
+             * @type Object
+             */
+            fullscreen: {
+                symbol: '<svg height="1em" width="1em" version="1.1" viewBox="10 10 18 18"><path fill="#666" d="m 10,16 2,0 0,-4 4,0 0,-2 L 10,10 l 0,6 0,0 z"></path><path fill="#666" d="m 20,10 0,2 4,0 0,4 2,0 L 26,10 l -6,0 0,0 z"></path><path fill="#666" d="m 24,24 -4,0 0,2 L 26,26 l 0,-6 -2,0 0,4 0,0 z"></path><path fill="#666" d="M 12,20 10,20 10,26 l 6,0 0,-2 -4,0 0,-4 0,0 z"></path></svg>',
+                    // '\u25a1', // '\u26f6' (not supported by MacOS),
+                id: null
+            },
 
         /**
          * Show a button which allows to clear all traces of a board.
@@ -578,44 +578,107 @@ JXG.Options = {
             pinchSensitivity: 7
         },
 
-        /**
-         * Control the possibilities for panning interaction (i.e. moving the origin).
-         *
-         * Possible sub-attributes with default values are:
-         * <pre>
-         * pan: {
-         *   enabled: true   // Allow panning
-         *   needTwoFingers: false, // panning is done with two fingers on touch devices
-         *   needShift: true, // mouse panning needs pressing of the shift key
-         * }
-         * </pre>
-         *
-         * @name JXG.Board#pan
-         * @type Object
-         */
-        pan: {
-            needShift: true,
-            needTwoFingers: false,
-            enabled: true
-        },
+            /**
+             * Control the possibilities for panning interaction (i.e. moving the origin).
+             *
+             * Possible sub-attributes with default values are:
+             * <pre>
+             * pan: {
+             *   enabled: true   // Allow panning
+             *   needTwoFingers: false, // panning is done with two fingers on touch devices
+             *   needShift: true, // mouse panning needs pressing of the shift key
+             * }
+             * </pre>
+             *
+             * @name JXG.Board#pan
+             * @see JXG.Board#browserPan
+             *
+             * @type Object
+             */
+            pan: {
+                enabled: true,
+                needShift: true,
+                needTwoFingers: false
+            },
 
-        /**
-         * Control the possibilities for dragging objects.
-         *
-         * Possible sub-attributes with default values are:
-         * <pre>
-         * drag: {
-         *   enabled: true   // Allow dragging
-         * }
-         * </pre>
-         *
-         * @name JXG.Board#drag
-         * @type Object
-         * @default {enabled: true}
-         */
-        drag: {
-            enabled: true
-        },
+            /**
+             * Enable browser scrolling on touch interfaces if the user double taps into an empty region
+             * of the board.
+             *
+             * <ul>
+             * <li> Implemented for pointer touch devices - not with mouse, pen or old iOS touch.
+             * <li> It only works if browserPan:true
+             * <li> One finger action by the settings "pan.enabled:true" and "pan.needTwoFingers:false" has priority
+             * </ul>
+             *
+             * @name JXG.Board#browserPan
+             * @see JXG.Board#pan
+             * @type Boolean
+             * @default false
+             *
+             * @example
+             * const board = JXG.JSXGraph.initBoard('jxgbox', {
+             *     boundingbox: [-5, 5, 5, -5], axis: true,
+             *     pan: {
+             *         enabled: true,
+             *         needTwoFingers: true,
+             *     },
+             *     browserPan: true,
+             *     zoom: {
+             *         enabled: false
+             *     }
+             * });
+             *
+             * var p1 = board.create('point', [1, -1]);
+             * var p2 = board.create('point', [2.5, -2]);
+             * var li1 = board.create('line', [p1, p2]);
+             *
+             * </pre><div id="JXGcd50c814-be81-4280-9458-d73e50cece8d" class="jxgbox" style="width: 300px; height: 300px;"></div>
+             * <script type="text/javascript">
+             *     (function() {
+             *         var board = JXG.JSXGraph.initBoard('JXGcd50c814-be81-4280-9458-d73e50cece8d',
+             *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+             *     const board = JXG.JSXGraph.initBoard('jxgbox', {
+             *         boundingbox: [-5, 5, 5, -5], axis: true,
+             *         pan: {
+             *             enabled: true,
+             *             needTwoFingers: true,
+             *         },
+             *         browserPan: true,
+             *         zoom: {
+             *             enabled: false
+             *         }
+             *     });
+             *
+             *     var p1 = board.create('point', [1, -1]);
+             *     var p2 = board.create('point', [2.5, -2]);
+             *     var li1 = board.create('line', [p1, p2]);
+             *
+             *     })();
+             *
+             * </script><pre>
+             *
+             *
+             */
+            browserPan: false,
+
+            /**
+             * Control the possibilities for dragging objects.
+             *
+             * Possible sub-attributes with default values are:
+             * <pre>
+             * drag: {
+             *   enabled: true   // Allow dragging
+             * }
+             * </pre>
+             *
+             * @name JXG.Board#drag
+             * @type Object
+             * @default {enabled: true}
+             */
+            drag: {
+                enabled: true
+            },
 
         /**
          * Control using the keyboard to change the construction.
@@ -1339,32 +1402,113 @@ JXG.Options = {
              */
         dash: 0,
 
-        /**
-         * If true the element will get a shadow.
-         * @type Boolean
-         * @name JXG.GeometryElement#shadow
-         * @default false
-         */
-        shadow: false,
+            /**
+             * If enabled:true the element will get a shadow.
+             *
+             * Customize the shadow of a (stroke) object. If the object's RGB color is [r,g,b], its opacity is op, and
+             * the parameters "color" is given as [r', g', b'] and "opacity" as op' the shadow will have
+             * RGB color [blend*r + r', blend*g + g', blend*b + b'] and its opacity will be equal to op * op'.
+             * Further, blur and offset can be adjusted.
+             *
+             * Only available with SVG, not with canvas.
+             *
+             * @type Object
+             * @name JXG.GeometryElement#shadow
+             * @default shadow: {
+             *   enabled: false,
+             *   color: [0, 0, 0],
+             *   opacity: 1,
+             *   blur: 3,
+             *   blend: 0.1,
+             *   offset: [5, 5]
+             * }
+             *
+             * @example
+             * board.options.line.strokeWidth = 2
+             * // No shadow
+             * var li1 = board.create('line', [[-2, 5], [2, 6]], {strokeColor: 'red', shadow: false});
+             *
+             * // Default shadow
+             * var li2 = board.create('line', [[-2, 3], [2, 4]], {strokeColor: 'red', shadow: true});
+             *
+             * // No shadow
+             * var li3 = board.create('line', [[-2, 1], [2, 2]], {strokeColor: 'blue', shadow: {enabled: false}});
+             *
+             * // Shadow uses same color as line
+             * var li4 = board.create('line', [[-2, -1], [2, 0]], {strokeColor: 'blue',
+             *             shadow: {enabled: true, color: '#000000', blend: 1}
+             *         });
+             *
+             * // Shadow color as a mixture between black and the line color, additionally set opacity
+             * var li5 = board.create('line', [[-2, -3], [2, -2]], {strokeColor: 'blue',
+             *             shadow: {enabled: true, color: '#000000', blend: 0.5, opacity: 0.5}
+             *         });
+             *
+             * // Use different value for blur and offset [dx, dy]
+             * var li6 = board.create('line', [[-2, -5], [2, -4]], {strokeColor: 'blue',
+             *             shadow: {enabled: true, offset:[0, 25], blur: 6}
+             *         });
+             *
+             * </pre><div id="JXG1185a9fa-0fa5-425f-8c15-55b56e1be958" class="jxgbox" style="width: 300px; height: 300px;"></div>
+             * <script type="text/javascript">
+             *     (function() {
+             *         var board = JXG.JSXGraph.initBoard('JXG1185a9fa-0fa5-425f-8c15-55b56e1be958',
+             *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+             *     board.options.line.strokeWidth = 2
+             *     // No shadow
+             *     var li1 = board.create('line', [[-2, 5], [2, 6]], {strokeColor: 'red', shadow: false});
+             *
+             *     // Default shadow
+             *     var li2 = board.create('line', [[-2, 3], [2, 4]], {strokeColor: 'red', shadow: true});
+             *
+             *     // No shadow
+             *     var li3 = board.create('line', [[-2, 1], [2, 2]], {strokeColor: 'blue', shadow: {enabled: false}});
+             *
+             *     // Shadow uses same color as line
+             *     var li4 = board.create('line', [[-2, -1], [2, 0]], {strokeColor: 'blue',
+             *                 shadow: {enabled: true, color: '#000000', blend: 1}
+             *             });
+             *
+             *     // Shadow color as a mixture between black and the line color, additionally set opacity
+             *     var li5 = board.create('line', [[-2, -3], [2, -2]], {strokeColor: 'blue',
+             *                 shadow: {enabled: true, color: '#000000', blend: 0.5, opacity: 0.5}
+             *             });
+             *
+             *     // Use different value for blur and offset [dx, dy]
+             *     var li6 = board.create('line', [[-2, -5], [2, -4]], {strokeColor: 'blue',
+             *                 shadow: {enabled: true, offset:[0, 25], blur: 6}
+             *             });
+             *
+             *     })();
+             *
+             * </script><pre>
+             *
+             */
+            shadow: {
+                enabled: false,
+                color: [0, 0, 0],
+                opacity: 1,
+                blur: 3,
+                blend: 0.1,
+                offset: [5, 5]
+            },
 
-        shadowColor: "black",
-
-        /**
-         * If true the element will be traced, i.e. on every movement the element will be copied
-         * to the background. Use {@link JXG.GeometryElement#clearTrace} to delete the trace elements.
-         *
-         * The calling of element.setAttribute({trace:false}) additionally
-         * deletes all traces of this element. By calling
-         * element.setAttribute({trace:'pause'})
-         * the removal of already existing traces can be prevented.
-         * @see JXG.GeometryElement#clearTrace
-         * @see JXG.GeometryElement#traces
-         * @see JXG.GeometryElement#numTraces
-         * @type Boolean|String
-         * @default false
-         * @name JXG.GeometryElement#trace
-         */
-        trace: false,
+            /**
+             * If true the element will be traced, i.e. on every movement the element will be copied
+             * to the background. Use {@link JXG.GeometryElement#clearTrace} to delete the trace elements.
+             *
+             * The calling of element.setAttribute({trace:false}) additionally
+             * deletes all traces of this element. By calling
+             * element.setAttribute({trace:'pause'})
+             * the removal of already existing traces can be prevented.
+             * @see JXG.GeometryElement#clearTrace
+             * @see JXG.GeometryElement#traces
+             * @see JXG.GeometryElement#numTraces
+             * @type Boolean|String
+             * @default false
+             * @name JXG.GeometryElement#trace
+             */
+            trace: false,
 
         /**
          * Extra visual properties for traces of an element
@@ -1952,19 +2096,26 @@ JXG.Options = {
         /**#@-*/
     },
 
-    /*
-     *  Generic options used by {@link JXG.Hatch}
-     */
-    hatch: {
-        drawLabels: false,
-        drawZero: true,
-        majorHeight: 20,
-        anchor: "middle",
-        face: "|",
-        strokeWidth: 2,
-        strokeColor: Color.palette.blue,
-        ticksDistance: 0.2
-    },
+         /*
+          *  Generic options used by {@link JXG.Hatch}
+          */
+        hatch: {
+            drawLabels: false,
+            drawZero: true,
+            majorHeight: 20,
+            anchor: 'middle',
+            face: '|',
+            strokeWidth: 2,
+            strokeColor: Color.palette.blue,
+            /**
+             * The default distance (in user coordinates, not  pixels) between two hatch symbols. 
+             * 
+             * @type Number
+             * @name Hatch#ticksDistance
+             * @default 0.2
+             */
+             ticksDistance: 0.2
+        },
 
     /**
      * Precision options, defining how close a pointer device (mouse, finger, pen) has to be

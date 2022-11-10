@@ -1543,91 +1543,86 @@ JXG.createTicks = function (board, parents, attributes) {
     return el;
 };
 
-/**
- * @class Hatches can be used to mark congruent lines or curves.
- * @pseudo
- * @description
- * @name Hatch
- * @augments JXG.Ticks
- * @constructor
- * @type JXG.Ticks
- * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {JXG.Line|JXG.curve} line The line or curve the hatch marks are going to be attached to.
- * @param {Number} numberofhashes Number of dashes.
- * @example
- * // Create an axis providing two coords pairs.
- *   var p1 = board.create('point', [0, 3]);
- *   var p2 = board.create('point', [1, 3]);
- *   var l1 = board.create('line', [p1, p2]);
- *   var t = board.create('hatch', [l1, 3]);
- * </pre><div class="jxgbox" id="JXG4a20af06-4395-451c-b7d1-002757cf01be" style="width: 300px; height: 300px;"></div>
- * <script type="text/javascript">
- * (function () {
- *   var board = JXG.JSXGraph.initBoard('JXG4a20af06-4395-451c-b7d1-002757cf01be', {boundingbox: [-1, 7, 7, -1], showcopyright: false, shownavigation: false});
- *   var p1 = board.create('point', [0, 3]);
- *   var p2 = board.create('point', [1, 3]);
- *   var l1 = board.create('line', [p1, p2]);
- *   var t = board.create('hatch', [l1, 3]);
- * })();
- * </script><pre>
- *
- * @example
- * // Alter the position of the hatch
- *
- * var p = board.create('point', [-5, 0]);
- * var q = board.create('point', [5, 0]);
- * var li = board.create('line', [p, q]);
- * var h = board.create('hatch', [li, 2], {anchor: 0.2});
- *
- * </pre><div id="JXG05d720ee-99c9-11e6-a9c7-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
- * <script type="text/javascript">
- *     (function() {
- *         var board = JXG.JSXGraph.initBoard('JXG05d720ee-99c9-11e6-a9c7-901b0e1b8723',
- *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
- *
- *     var p = board.create('point', [-5, 0]);
- *     var q = board.create('point', [5, 0]);
- *     var li = board.create('line', [p, q]);
- *     var h = board.create('hatch', [li, 2], {anchor: 0.2});
- *
- *     })();
- *
- * </script><pre>
- *
- * @example
- * // Alternative hatch faces
- *
- * var li = board.create('line', [[-6,0], [6,3]]);
- * var h1 = board.create('hatch', [li, 2], {tickEndings: [1,1], face:'|'});
- * var h2 = board.create('hatch', [li, 2], {tickEndings: [1,1], face:'>', anchor: 0.3});
- * var h3 = board.create('hatch', [li, 2], {tickEndings: [1,1], face:'<', anchor: 0.7});
- *
- * </pre><div id="JXG974f7e89-eac8-4187-9aa3-fb8068e8384b" class="jxgbox" style="width: 300px; height: 300px;"></div>
- * <script type="text/javascript">
- *     (function() {
- *         var board = JXG.JSXGraph.initBoard('JXG974f7e89-eac8-4187-9aa3-fb8068e8384b',
- *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
- *     // Alternative hatch faces
- *
- *     var li = board.create('line', [[-6,0], [6,3]]);
- *     var h1 = board.create('hatch', [li, 2], {tickEndings: [1,1], face:'|'});
- *     var h2 = board.create('hatch', [li, 2], {tickEndings: [1,1], face:'>', anchor: 0.3});
- *     var h3 = board.create('hatch', [li, 2], {tickEndings: [1,1], face:'<', anchor: 0.7});
- *
- *     })();
- *
- * </script><pre>
- *
- */
-JXG.createHatchmark = function (board, parents, attributes) {
-    var num,
-        i,
-        base,
-        width,
-        totalwidth,
-        el,
-        pos = [],
-        attr = Type.copyAttributes(attributes, board.options, "hatch");
+    /**
+     * @class Hatches can be used to mark congruent lines or curves.
+     * @pseudo
+     * @description
+     * @name Hatch
+     * @augments JXG.Ticks
+     * @constructor
+     * @type JXG.Ticks
+     * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
+     * @param {JXG.Line|JXG.curve} line The line or curve the hatch marks are going to be attached to.
+     * @param {Number} numberofhashes Number of dashes. The distance of the hashes can be controlled with the attribute ticksDistance.
+     * @example
+     * // Create an axis providing two coords pairs.
+     *   var p1 = board.create('point', [0, 3]);
+     *   var p2 = board.create('point', [1, 3]);
+     *   var l1 = board.create('line', [p1, p2]);
+     *   var t = board.create('hatch', [l1, 3]);
+     * </pre><div class="jxgbox" id="JXG4a20af06-4395-451c-b7d1-002757cf01be" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     * (function () {
+     *   var board = JXG.JSXGraph.initBoard('JXG4a20af06-4395-451c-b7d1-002757cf01be', {boundingbox: [-1, 7, 7, -1], showcopyright: false, shownavigation: false});
+     *   var p1 = board.create('point', [0, 3]);
+     *   var p2 = board.create('point', [1, 3]);
+     *   var l1 = board.create('line', [p1, p2]);
+     *   var t = board.create('hatch', [l1, 3]);
+     * })();
+     * </script><pre>
+     *
+     * @example
+     * // Alter the position of the hatch
+     *
+     * var p = board.create('point', [-5, 0]);
+     * var q = board.create('point', [5, 0]);
+     * var li = board.create('line', [p, q]);
+     * var h = board.create('hatch', [li, 2], {anchor: 0.2, ticksDistance:0.4});
+     *
+     * </pre><div id="JXG05d720ee-99c9-11e6-a9c7-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     *     (function() {
+     *         var board = JXG.JSXGraph.initBoard('JXG05d720ee-99c9-11e6-a9c7-901b0e1b8723',
+     *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+     *
+     *     var p = board.create('point', [-5, 0]);
+     *     var q = board.create('point', [5, 0]);
+     *     var li = board.create('line', [p, q]);
+     *     var h = board.create('hatch', [li, 2], {anchor: 0.2, ticksDistance:0.4});
+     *
+     *     })();
+     *
+     * </script><pre>
+     *
+     * @example
+     * // Alternative hatch faces
+     *
+     * var li = board.create('line', [[-6,0], [6,3]]);
+     * var h1 = board.create('hatch', [li, 2], {tickEndings: [1,1], face:'|'});
+     * var h2 = board.create('hatch', [li, 2], {tickEndings: [1,1], face:'>', anchor: 0.3});
+     * var h3 = board.create('hatch', [li, 2], {tickEndings: [1,1], face:'<', anchor: 0.7});
+     *
+     * </pre><div id="JXG974f7e89-eac8-4187-9aa3-fb8068e8384b" class="jxgbox" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     *     (function() {
+     *         var board = JXG.JSXGraph.initBoard('JXG974f7e89-eac8-4187-9aa3-fb8068e8384b',
+     *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+     *     // Alternative hatch faces
+     *
+     *     var li = board.create('line', [[-6,0], [6,3]]);
+     *     var h1 = board.create('hatch', [li, 2], {tickEndings: [1,1], face:'|'});
+     *     var h2 = board.create('hatch', [li, 2], {tickEndings: [1,1], face:'>', anchor: 0.3});
+     *     var h3 = board.create('hatch', [li, 2], {tickEndings: [1,1], face:'<', anchor: 0.7});
+     *
+     *     })();
+     *
+     * </script><pre>
+     *
+     */
+    JXG.createHatchmark = function (board, parents, attributes) {
+        var num, i, base, width, totalwidth, el,
+            pos = [],
+            attr = Type.copyAttributes(attributes, board.options, 'hatch');
 
     if (
         (parents[0].elementClass !== Const.OBJECT_CLASS_LINE &&
@@ -1654,8 +1649,9 @@ JXG.createHatchmark = function (board, parents, attributes) {
         pos[i] = base + i * width;
     }
 
-    el = board.create("ticks", [parents[0], pos], attr);
-    el.elType = "hatch";
+        el = board.create('ticks', [parents[0], pos], attr);
+        el.elType = 'hatch';
+        parents[0].inherits.push(el);
 
     return el;
 };

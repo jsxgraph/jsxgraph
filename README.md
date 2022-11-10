@@ -33,7 +33,7 @@ Website
 - (outdated: SourceForge project site: https://sf.net/projects/jsxgraph)
 - CDNs: Embed JSXGraph via
 
-```
+```html
 <script type="text/javascript" charset="UTF-8"
  src="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraphcore.js"></script>
 <link rel="stylesheet"
@@ -42,7 +42,7 @@ Website
 
 or
 
-```
+```html
 <script type="text/javascript" charset="UTF-8"
  src="//cdnjs.cloudflare.com/ajax/libs/jsxgraph/1.4.6/jsxgraphcore.js"></script>
 <link rel="stylesheet"
@@ -62,6 +62,34 @@ Include
 * if required, one or more file readers
 
 from a CDN or a local version in your HTML file.
+
+**HTML template:**
+
+```html
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>JSXGraph template</title>
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+    <link href="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraph.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraphcore.js" charset="UTF-8"></script>
+
+    <!-- The next line is optional: MathJax -->
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" id="MathJax-script" async></script>
+  </head>
+  <body>
+
+  <div id="jxgbox" class="jxgbox" style="max-width:800px; aspect-ratio: 1/1;"></div>
+
+  <script>
+    var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-8, 8, 8, -8]});
+    var p = board.create('point', [1, 3], {name: 'point'});
+  </script>
+
+  </body>
+</html>
+```
 
 For developing content, it is recommended to include `jsxgraphsrc.js` (`jsxgraphcore.js` is the minified version of `jsxgraphsrc.js`).
 For further usage instructions please consult our [wiki](https://jsxgraph.org/wiki/)
@@ -89,26 +117,17 @@ and the minified version `jsxgraphcore.js` into the folder `distrib`.
 License
 -------
 
-    Copyright 2008-2022
-        Matthias Ehmann,
-        Michael Gerhaeuser,
-        Carsten Miller,
-        Emmanuel Ostenne,
-        Bianca Valentin,
-        Heiko Vogel,
-        Alfred Wassermann,
-        Peter Wilfahrt
-
-
 JSXGraph is free software dual licensed under the GNU LGPL or MIT License.
 
 You can redistribute it and/or modify it under the terms of the
 
-  * GNU Lesser General Public License as published by
+- GNU Lesser General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version
-  OR
-  * MIT License: https://github.com/jsxgraph/jsxgraph/blob/master/LICENSE.MIT
+  
+or
+
+- MIT License: https://github.com/jsxgraph/jsxgraph/blob/master/LICENSE.MIT
 
 JSXGraph is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of

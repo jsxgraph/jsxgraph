@@ -183,4 +183,5 @@ describe("Test text handling", function () {
             );
         expect(el.rendNode.innerHTML).toEqual("√val<sub>x</sub> 1+1+π=5.14");
     });
+
 });
