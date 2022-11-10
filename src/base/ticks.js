@@ -1508,7 +1508,6 @@ define([
         width = attr.ticksdistance;
         totalwidth = (num - 1) * width;
         base = -totalwidth * 0.5;
-        console.log(totalwidth, width, attr.ticksdistance)
 
         for (i = 0; i < num; i++) {
             pos[i] = base + i * width;
