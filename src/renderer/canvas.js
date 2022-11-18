@@ -95,7 +95,7 @@ define([
         } else if (Env.isNode()) {
             try {
                 this.canvasId = (typeof module === 'object' ? module.require('canvas') : require('canvas'));
-                this.canvasRoot = new this.canvasId(500, 500);
+                this.canvasRoot = this.canvasId.createCanvas(500, 500);
                 this.context = this.canvasRoot.getContext('2d');
             } catch (err) {
                 console.log("Warning: 'canvas' not found. You might need to call 'npm install canvas'");
