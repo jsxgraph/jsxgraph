@@ -29,6 +29,7 @@ const config = {
         umdNamedDefine: true
     },
     target: ['web', 'es5'],
+    // externals: 'canvas',
     optimization: {
         minimize: true,
         minimizer: [
