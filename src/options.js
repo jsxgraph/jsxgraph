@@ -228,6 +228,8 @@ define([
                             fontSize: 12,
                             offset: [0, -3]
                         },
+                        tickEndings: [0, 1],
+                        majorTickEndings: [1, 1],
                         drawZero: false,
                         visible: 'inherit'
                     }
@@ -243,6 +245,7 @@ define([
                             offset: [-6, 0]
                         },
                         tickEndings: [1, 0],
+                        majorTickEndings: [1, 1],
                         drawZero: false,
                         visible: 'inherit'
                     }
@@ -1886,7 +1889,7 @@ define([
             majorHeight: 10,
 
             /**
-             * Decides in which direction ticks are visible. Possible values are either the constants
+             * Decides in which direction minor ticks are visible. Possible values are either the constants
              * 0=false or 1=true or a function returning 0 or 1.
              *
              * In case of [0,1] the tick is only visible to the right of the line. In case of
@@ -1894,9 +1897,24 @@ define([
              *
              * @type Array
              * @name Ticks#tickEndings
+             * @see Ticks#majorTickEndings
              * @default [1, 1]
              */
             tickEndings: [1, 1],
+
+            /**
+             * Decides in which direction major ticks are visible. Possible values are either the constants
+             * 0=false or 1=true or a function returning 0 or 1.
+             *
+             * In case of [0,1] the tick is only visible to the right of the line. In case of
+             * [1,0] the tick is only visible to the left of the line.
+             *
+             * @type Array
+             * @name Ticks#majorTickEndings
+             * @see Ticks#tickEndings
+             * @default [1, 1]
+             */
+            majorTickEndings: [1, 1],
 
             /**
              * The number of minor ticks between two major ticks.
@@ -2483,6 +2501,7 @@ define([
                 minorHeight: 10,          // if <0: full width and height
                 majorHeight: -1,          // if <0: full width and height
                 tickEndings: [0, 1],
+                majorTickEndings: [1, 1],
                 minorTicks: 4,
                 ticksDistance: 1,         // TODO doc
                 strokeOpacity: 0.25
@@ -5056,6 +5075,7 @@ define([
                 strokeOpacity: 1,
                 strokeWidth: 1,
                 tickEndings: [0, 1],
+                majortickEndings: [0, 1],
                 strokeColor: '#000000',
                 visible: 'inherit'
             },
@@ -5387,6 +5407,7 @@ define([
                 majorHeight: 16,
                 minorTicks: 4,
                 tickEndings: [0, 1],
+                majorTickEndings: [0, 1],
                 defaultDistance: 0.1,
                 strokeOpacity: 1,
                 strokeWidth: 1,
