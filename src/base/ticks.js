@@ -1056,11 +1056,15 @@ JXG.extend(
                 dxs = this.dxMaj;
                 dys = this.dyMaj;
                 style = this.majStyle;
+                te0 = Type.evaluate(this.visProp.majortickendings[0]) > 0;
+                te1 = Type.evaluate(this.visProp.majortickendings[1]) > 0;
             } else {
                 dxs = this.dxMin;
                 dys = this.dyMin;
                 style = this.minStyle;
-            }
+                te0 = Type.evaluate(this.visProp.tickendings[0]) > 0;
+                te1 = Type.evaluate(this.visProp.tickendings[1]) > 0;
+        }
             lineStdForm = [-dys * c[1] - dxs * c[2], dys, dxs];
 
             // For all ticks regardless if of finite or infinite
@@ -1099,10 +1103,7 @@ JXG.extend(
                 // line style
                 if (style === "infinite") {
                     intersection = Geometry.meetLineBoard(lineStdForm, this.board);
-
-                    te0 = Type.evaluate(this.visProp.tickendings[0]) > 0;
-                    te1 = Type.evaluate(this.visProp.tickendings[1]) > 0;
-
+                    
                     if (te0 && te1) {
                         x[0] = intersection[0].scrCoords[1];
                         x[1] = intersection[1].scrCoords[1];
@@ -1172,8 +1173,8 @@ JXG.extend(
                     dxr = Math.cos(alpha) * dxs - Math.sin(alpha) * dys;
                     dyr = Math.sin(alpha) * dxs + Math.cos(alpha) * dys;
 
-                    x[0] = c[1] + dxr * Type.evaluate(this.visProp.tickendings[0]);
-                    y[0] = c[2] - dyr * Type.evaluate(this.visProp.tickendings[0]);
+                    x[0] = c[1] + dxr * te0; // Type.evaluate(this.visProp.tickendings[0]);
+                    y[0] = c[2] - dyr * te0; // Type.evaluate(this.visProp.tickendings[0]);
                     x[1] = c[1];
                     y[1] = c[2];
 
@@ -1181,8 +1182,8 @@ JXG.extend(
                     dxr = Math.cos(alpha) * dxs - Math.sin(alpha) * dys;
                     dyr = Math.sin(alpha) * dxs + Math.cos(alpha) * dys;
 
-                    x[2] = c[1] - dxr * Type.evaluate(this.visProp.tickendings[1]);
-                    y[2] = c[2] + dyr * Type.evaluate(this.visProp.tickendings[1]);
+                    x[2] = c[1] - dxr * te1; // Type.evaluate(this.visProp.tickendings[1]);
+                    y[2] = c[2] + dyr * te1; // Type.evaluate(this.visProp.tickendings[1]);
                 }
 
                 // Check if (parts of) the tick is inside the canvas.

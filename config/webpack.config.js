@@ -28,6 +28,7 @@ const config = {
         library: libraryName,
         umdNamedDefine: true
     },
+    target: ['web', 'es5'],
     optimization: {
         minimize: true,
         minimizer: [

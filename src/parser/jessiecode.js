@@ -2891,7 +2891,7 @@ JXG.extend(
                 else if (origin === "Math") that = math[name];
                 else return;
 
-                if (FORBIDDEN.includes(name)) {
+                if (FORBIDDEN.indexOf(name) >= 0) {
                     return;
                 } else if (JXG.isFunction(that)) {
                     return {

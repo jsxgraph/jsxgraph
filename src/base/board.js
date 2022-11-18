@@ -5001,7 +5001,7 @@ JXG.extend(
 
                 this.moveOrigin(
                     this.origin.scrCoords[1] + oX,
-                    this.origin.scrCoords[2] + oY,
+                    this.origin.scrCoords[2] + oY
                 );
             }
 
@@ -5995,47 +5995,38 @@ JXG.extend(
          */
         updateCSSTransforms: function () {
             var obj = this.containerObj,
-                o = obj;
-            // o2 = obj;
+                o = obj,
+                o2 = obj;
 
             this.cssTransMat = Env.getCSSTransformMatrix(o);
 
             // Newer variant of walking up the tree.
             // We walk up all parent nodes and collect possible CSS transforms.
             // Works also for ShadowDOM
-            o = o.parentNode === o.getRootNode() ? o.parentNode.host : o.parentNode;
-            while (o) {
-                this.cssTransMat = Mat.matMatMult(
-                    Env.getCSSTransformMatrix(o),
-                    this.cssTransMat
-                );
+            if (Type.exists(o.getRootNode)) {
                 o = o.parentNode === o.getRootNode() ? o.parentNode.host : o.parentNode;
+                while (o) {
+                    this.cssTransMat = Mat.matMatMult(Env.getCSSTransformMatrix(o), this.cssTransMat);
+                    o = o.parentNode === o.getRootNode() ? o.parentNode.host : o.parentNode;
+                }
+                this.cssTransMat = Mat.inverse(this.cssTransMat);
+            } else {
+                /*
+                 * This is necessary for IE11
+                 */
+                o = o.offsetParent;
+                while (o) {
+                    this.cssTransMat = Mat.matMatMult(Env.getCSSTransformMatrix(o), this.cssTransMat);
+
+                    o2 = o2.parentNode;
+                    while (o2 !== o) {
+                        this.cssTransMat = Mat.matMatMult(Env.getCSSTransformMatrix(o), this.cssTransMat);
+                        o2 = o2.parentNode;
+                    }
+                    o = o.offsetParent;
+                }
+                this.cssTransMat = Mat.inverse(this.cssTransMat);
             }
-            this.cssTransMat = Mat.inverse(this.cssTransMat);
-
-            /*
-             * In Mozilla and Webkit: offsetParent seems to jump at least to the next iframe,
-             * if not to the body. In IE and if we are in an position:absolute environment
-             * offsetParent walks up the DOM hierarchy.
-             * In order to walk up the DOM hierarchy also in Mozilla and Webkit
-             * we need the parentNode steps.
-             *
-             * Seems to be outdated
-             */
-            // o = o.offsetParent;
-            // while (o) {
-            //     this.cssTransMat = Mat.matMatMult(Env.getCSSTransformMatrix(o), this.cssTransMat);
-
-            //     o2 = o2.parentNode;
-            //     while (o2 !== o) {
-            //         this.cssTransMat = Mat.matMatMult(Env.getCSSTransformMatrix(o), this.cssTransMat);
-            //         o2 = o2.parentNode;
-            //     }
-
-            //     o = o.offsetParent;
-            // }
-            // this.cssTransMat = Mat.inverse(this.cssTransMat);
-
             return this;
         },
 
