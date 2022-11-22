@@ -1996,7 +1996,7 @@ define([
 
             /**
              * A string that is appended to every tick, used to represent the scale
-             * factor given in {@link Ticks#scaleSymbol}.
+             * factor given in {@link Ticks#scale}.
              *
              * @type String
              * @default ''
