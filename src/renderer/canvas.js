@@ -92,6 +92,8 @@ JXG.CanvasRenderer = function (container, dim) {
         try {
             this.canvasId = typeof module === "object" ? module.require("canvas") : $__canvas;
             this.canvasRoot = new this.canvasId(500, 500);
+            // this.canvasId = typeof module === "object" ? module.require('canvas') : import('canvas');
+            // this.canvasRoot = this.canvasId.createCanvas(500, 500);
             this.context = this.canvasRoot.getContext("2d");
         } catch (err) {
             console.log(

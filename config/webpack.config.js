@@ -21,15 +21,29 @@ const config = {
     // `[name]` in `filename` tell Webpack to use the name we defined above. We
     // target a UMD and name it MyLib. When including the bundle in the browser it
     // will be accessible at `window.MyLib`
+    // ----------------------------------
+    // Working config for including JSXGraph in web browsers
+    // output: {
+    //     path: PATHS.bundles,
+    //     filename: "[name].js",
+    //     libraryTarget: "umd",
+    //     library: libraryName,
+    //     umdNamedDefine: true
+    // },
+    // target: ['web', 'es5'],
+
+    // Experimental config for running JSXGraph as server module in node
     output: {
         path: PATHS.bundles,
         filename: "[name].js",
         libraryTarget: "umd",
-        library: libraryName,
-        umdNamedDefine: true
+        umdNamedDefine: true,
+        library: libraryName
     },
-    target: ['web', 'es5'],
-    // externals: 'canvas',
+    target: ['node'],
+
+    externals: 'canvas',
+    // ----------------------------------
     optimization: {
         minimize: true,
         minimizer: [

@@ -178,6 +178,7 @@ JXG.extend(
             if (this.isNode()) {
                 try {
                     c = typeof module === "object" ? module.require("canvas") : $__canvas;
+                    // c = typeof module === "object" ? module.require("canvas") : import('canvas');
                     hasCanvas = !!c;
                 } catch (err) {}
             }
