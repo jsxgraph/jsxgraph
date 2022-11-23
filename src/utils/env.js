@@ -41,7 +41,7 @@
 
 import JXG from "../jxg";
 import Type from "./type";
-import $__canvas from "canvas";
+// import $__canvas from "canvas";
 
 JXG.extendConstants(
     JXG,
@@ -177,8 +177,8 @@ JXG.extend(
 
             if (this.isNode()) {
                 try {
-                    c = typeof module === "object" ? module.require("canvas") : $__canvas;
-                    // c = typeof module === "object" ? module.require("canvas") : import('canvas');
+                    // c = typeof module === "object" ? module.require("canvas") : $__canvas;
+                    c = typeof module === "object" ? module.require("canvas") : import('canvas');
                     hasCanvas = !!c;
                 } catch (err) {}
             }

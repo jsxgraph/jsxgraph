@@ -43,7 +43,7 @@ import Coords from "../base/coords";
 import Mat from "../math/math";
 import Geometry from "../math/geometry";
 import Numerics from "../math/numerics";
-import $__canvas from "canvas";
+// import $__canvas from "canvas";
 
 /**
  * Uses HTML Canvas to implement the rendering methods defined in {@link JXG.AbstractRenderer}.
@@ -90,10 +90,10 @@ JXG.CanvasRenderer = function (container, dim) {
         this.context = this.canvasRoot.getContext("2d");
     } else if (Env.isNode()) {
         try {
-            this.canvasId = typeof module === "object" ? module.require("canvas") : $__canvas;
-            this.canvasRoot = new this.canvasId(500, 500);
-            // this.canvasId = typeof module === "object" ? module.require('canvas') : import('canvas');
-            // this.canvasRoot = this.canvasId.createCanvas(500, 500);
+            // this.canvasId = typeof module === "object" ? module.require("canvas") : $__canvas;
+            // this.canvasRoot = new this.canvasId(500, 500);
+            this.canvasId = typeof module === "object" ? module.require('canvas') : import('canvas');
+            this.canvasRoot = this.canvasId.createCanvas(500, 500);
             this.context = this.canvasRoot.getContext("2d");
         } catch (err) {
             console.log(

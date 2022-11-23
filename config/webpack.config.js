@@ -23,24 +23,14 @@ const config = {
     // will be accessible at `window.MyLib`
     // ----------------------------------
     // Working config for including JSXGraph in web browsers
-    // output: {
-    //     path: PATHS.bundles,
-    //     filename: "[name].js",
-    //     libraryTarget: "umd",
-    //     library: libraryName,
-    //     umdNamedDefine: true
-    // },
-    // target: ['web', 'es5'],
-
-    // Experimental config for running JSXGraph as server module in node
     output: {
         path: PATHS.bundles,
         filename: "[name].js",
         libraryTarget: "umd",
-        umdNamedDefine: true,
-        library: libraryName
+        library: libraryName,
+        umdNamedDefine: false
     },
-    target: ['node'],
+    target: ['web', 'es5'],
 
     externals: 'canvas',
     // ----------------------------------
