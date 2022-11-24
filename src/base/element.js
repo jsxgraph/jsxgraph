@@ -2015,6 +2015,7 @@ define([
          */
         handleSnapToGrid: function (force, fromParent) {
             var x, y, rx, ry, rcoords,
+                mi, ma,
                 boardBB, res, sX, sY,
                 needsSnapToGrid = false,
                 attractToGrid = Type.evaluate(this.visProp.attracttogrid),
@@ -2039,6 +2040,7 @@ define([
                     boardBB = this.board.getBoundingBox();
                     rx = Math.round(x / sX) * sX;
                     ry = Math.round(y / sY) * sY;
+
                     rcoords = new JXG.Coords(Const.COORDS_BY_USER, [rx, ry], this.board);
                     if (!attractToGrid ||
                         rcoords.distance(
@@ -2050,15 +2052,19 @@ define([
                         // If not, adjust them to remain within the board.
                         // Otherwise a point may become invisible.
                         if (!fromParent) {
-                            if (x < boardBB[0]) {
+                            mi = Math.min(boardBB[0], boardBB[2]);
+                            ma = Math.max(boardBB[0], boardBB[2]);
+                            if (x < mi) {
                                 x += sX;
-                            } else if (x > boardBB[2]) {
+                            } else if (x > ma) {
                                 x -= sX;
                             }
 
-                            if (y < boardBB[3]) {
+                            mi = Math.min(boardBB[1], boardBB[3]);
+                            ma = Math.max(boardBB[1], boardBB[3]);
+                            if (y < mi) {
                                 y += sY;
-                            } else if (y > boardBB[1]) {
+                            } else if (y > ma) {
                                 y -= sY;
                             }
                         }
