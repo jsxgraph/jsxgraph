@@ -218,13 +218,14 @@ JXG.JSXGraph = {
      * @private
      */
     _setARIA: function (container, attr) {
-        var doc = attr.document || document,
+        var doc = attr.document,
             doc_glob,
             node_jsx,
             newNode,
             parent,
             id_label,
             id_description;
+
 
             if (typeof doc !== 'object') {
                 if (!Env.isBrowser) {

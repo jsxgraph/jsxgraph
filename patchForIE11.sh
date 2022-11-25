@@ -4,7 +4,7 @@ echo "patch jsxgraphsrc.js"
 sed -i "s/\`/'/g" distrib/jsxgraphsrc.js
 sed -i "s/str => /function(str)/" distrib/jsxgraphsrc.js
 sed -i "s/(self,/(typeof self !== 'undefined' ? self : this,/g" distrib/jsxgraphsrc.js
-sed -i "s/\(module.exports = factory.*\);$/\1.default;/" distrib/jsxgraphsrc.js
+sed -i "s/\(module.exports = factory.*)\);$/\1.default;/" distrib/jsxgraphsrc.js
 # module.exports = factory((function webpackLoadOptionalExternalModule() { try { return require("canvas"); } catch(e) {} }()));
 
 echo "patch jsxgraphcore.js"
