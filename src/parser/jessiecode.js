@@ -46,8 +46,8 @@ import Statistics from "../math/statistics";
 import Type from "../utils/type";
 import UUID from "../utils/uuid";
 import Env from "../utils/env";
-import $__fs from "fs";
-import $__path from "path";
+// import $__fs from "fs";
+// import $__path from "path";
 
 // IE 6-8 compatibility
 if (!Object.create) {
@@ -6823,7 +6823,7 @@ if (
             console.log("Usage: " + args[0] + " FILE");
             process.exit(1);
         }
-        var source = $__fs.readFileSync($__path.normalize(args[1]), "utf8");
+        var source = ""; // $__fs.readFileSync($__path.normalize(args[1]), "utf8");
         return exports.parser.parse(source);
     };
     if (typeof module !== "undefined" && require.main === module) {
