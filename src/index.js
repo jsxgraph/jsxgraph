@@ -78,6 +78,7 @@ import "./3d/curve3d";
 import "./3d/linspace3d";
 import "./3d/surface3d";
 
+
 // We're in the browser, export JXG to the global JXG symbol for backwards compatibility
 if (Env.isBrowser) {
     window.JXG = JXG;
@@ -86,10 +87,11 @@ if (Env.isBrowser) {
     // 1) jsxgraph is used without requirejs (e.g. as jsxgraphcore.js)
     // 2) jsxgraph is loaded using requirejs (e.g. the dev version)
     //
-    // in case 2) module is undefined, the export is set in src/jsxgraphnode.js using
+    // Nodejs compatibility is handled by webpack
+    // OLD: in case 2) module is undefined, the export is set in src/jsxgraphnode.js using
     // the return value of this factory function
-} else if (Env.isNode() && typeof module === "object") {
-    module.exports = JXG;
+    // } else if (Env.isNode() && typeof module === "object") {
+    //     module.exports = JXG;
 } else if (Env.isWebWorker()) {
     self.JXG = JXG;
 }

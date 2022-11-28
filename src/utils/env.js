@@ -193,17 +193,19 @@ JXG.extend(
          * @returns {Boolean}
          */
         isNode: function () {
-            // this is not a 100% sure but should be valid in most cases
-
-            // we are not inside a browser
+            // This is not a 100% sure but should be valid in most cases
+            // We are not inside a browser
             return (
                 !this.isBrowser &&
+                (typeof process !== 'undefined') &&
+                (process.release.name.search(/node|io.js/) !== -1)
                 // there is a module object (plain node, no requirejs)
-                ((typeof module === "object" && !!module.exports) ||
-                    // there is a global object and requirejs is loaded
-                    (typeof global === "object" &&
-                        global.requirejsVars &&
-                        !global.requirejsVars.isBrowser))
+                // ((typeof module === "object" && !!module.exports) ||
+                //     // there is a global object and requirejs is loaded
+                //     (typeof global === "object" &&
+                //         global.requirejsVars &&
+                //         !global.requirejsVars.isBrowser)
+                // )
             );
         },
 
