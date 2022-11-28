@@ -3391,7 +3391,8 @@ define([
          */
         updateContainerDims: function() {
             var w, h,
-                bb, css;
+                bb, css,
+                width_adjustment, height_adjustment;
 
             // Get size of the board's container div
             bb = this.containerObj.getBoundingClientRect();
@@ -3401,8 +3402,14 @@ define([
             // Subtract the border size
             if (window && window.getComputedStyle) {
                 css = window.getComputedStyle(this.containerObj, null);
-                w -= parseFloat(css.getPropertyValue('border-left-width')) + parseFloat(css.getPropertyValue('border-right-width'));
-                h -= parseFloat(css.getPropertyValue('border-top-width'))  + parseFloat(css.getPropertyValue('border-bottom-width'));
+                width_adjustment = parseFloat(css.getPropertyValue('border-left-width')) + parseFloat(css.getPropertyValue('border-right-width'));
+                if(!isNaN(width_adjustment)) {
+                    w -= width_adjustment;
+                }
+                height_adjustment = parseFloat(css.getPropertyValue('border-top-width'))  + parseFloat(css.getPropertyValue('border-bottom-width'));
+                if(!isNaN(height_adjustment)) {
+                    h -= height_adjustment;
+                }
             }
 
             // If div is invisible - do nothing
