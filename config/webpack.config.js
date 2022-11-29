@@ -42,7 +42,38 @@ const config = {
             amd: 'AMD'
         }
     },
-    target: ['web', 'es5'],
+    target: ["web", "es5"],
+
+    plugins: [
+        new ReplaceInFileWebpackPlugin([
+            {
+                dir: "distrib",
+                files: ["jsxgraphcore.js", "jsxgraphsrc.js"],
+                rules: [
+                    {
+                        search: /\(self,/,
+                        replace: "(typeof self !== 'undefined' ? self : this,"
+                    },
+
+                    // AMD and nodejs
+                    {
+                        search: /return __webpack_exports__;/,
+                        replace: "return __webpack_exports__.default;"
+                    },
+
+                    // AMD does not need canvas
+                    { search: /\["canvas"\], factory/, replace: "[], factory" },
+
+                    // ?
+                    {
+                        search: /\] = factory\(require\("canvas"\)\);/,
+                        replace: "] = factory();"
+                    },
+                    { search: /factory\(root\["canvas"\]\)/, replace: "factory()" }
+                ]
+            }
+        ])
+    ],
 
     // externals: 'canvas',
     externals: {
@@ -52,50 +83,6 @@ const config = {
             root: 'canvas'
         }
     },
-    // ----------------------------------
-    plugins: [
-        new ReplaceInFileWebpackPlugin([{
-            dir: 'distrib',
-            files: ['jsxgraphsrc.js'],
-            rules: [{
-            //     search: /\(self,/,
-            //     replace: "(,"
-            // },{
-            //     search: /return __webpack_exports__;/,
-            //     replace: "return __webpack_exports__.default;"
-            //},{
-            //     search: /\["canvas"\], factory/,
-            //     replace: "[], factory"
-            // },{
-            //     search: /\] = factory\(require\("canvas"\)\);/,
-            //     replace: "] = factory();"
-            // },{
-                search: /factory\(root\["canvas"\]\)/,
-                replace: "factory()"
-            }]
-        },
-        {
-            dir: 'distrib',
-            files: ['jsxgraphcore.js'],
-            rules: [{
-            //     search: /\(self,/,
-            //     replace: "(typeof self!=='undefined'?self:this,"
-            // },{
-            //     search: /return __webpack_exports__/,
-            //     replace: "return __webpack_exports__.default"
-            // },{
-            //     search: /define\(\["canvas"\]/,
-            //     replace: "define([]"
-            // },{
-            //     search: /exports.jsxgraphcore=e\(require\("canvas"\)\)/,
-            //     replace: "exports.jsxgraphcore=e()"
-            // },{
-                search: /t.jsxgraphcore=e\(t.canvas\)/,
-                replace: "t.jsxgraphcore=e()"
-            }]
-        }])
-    ],
-
     // ----------------------------------
     optimization: {
         minimize: true,
