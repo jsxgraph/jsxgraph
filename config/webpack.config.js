@@ -1,5 +1,6 @@
 const path = require("path");
 const baseConfig = require("./webpack.config.base");
+const ReplaceInFileWebpackPlugin = require("replace-in-file-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
 
 const libraryName = "jsxgraphcore";
@@ -30,9 +31,40 @@ const config = {
         library: libraryName,
         umdNamedDefine: false
     },
-    target: ['web', 'es5'],
+    target: ["web", "es5"],
 
-    externals: 'canvas',
+    plugins: [
+        new ReplaceInFileWebpackPlugin([
+            {
+                dir: "distrib",
+                files: ["jsxgraphcore.js"],
+                rules: [
+                    {
+                        search: /\(self,/,
+                        replace: "(typeof self !== 'undefined' ? self : this,"
+                    },
+
+                    // AMD and nodejs
+                    {
+                        search: /return __webpack_exports__;/,
+                        replace: "return __webpack_exports__.default;"
+                    },
+
+                    // AMD does not need canvas
+                    { search: /\["canvas"\], factory/, replace: "[], factory" },
+
+                    // ?
+                    {
+                        search: /\] = factory\(require\("canvas"\)\);/,
+                        replace: "] = factory();"
+                    },
+                    { search: /factory\(root\["canvas"\]\)/, replace: "factory()" }
+                ]
+            }
+        ])
+    ],
+
+    externals: "canvas",
     // ----------------------------------
     optimization: {
         minimize: true,
