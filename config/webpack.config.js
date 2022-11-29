@@ -37,7 +37,7 @@ const config = {
         new ReplaceInFileWebpackPlugin([
             {
                 dir: "distrib",
-                files: ["jsxgraphcore.js"],
+                files: ["jsxgraphcore.js", "jsxgraphsrc.js"],
                 rules: [
                     {
                         search: /\(self,/,
