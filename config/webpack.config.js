@@ -28,8 +28,19 @@ const config = {
         path: PATHS.bundles,
         filename: "[name].js",
         libraryTarget: "umd",
-        library: libraryName,
-        umdNamedDefine: false
+        library: {
+            name: libraryName,
+            type: 'var',
+            export: 'default'
+        },
+        umdNamedDefine: false,
+        globalObject: "typeof self !== 'undefined' ? self : this",
+        auxiliaryComment: {
+            root: 'Root',
+            commonjs: 'CommonJS',
+            commonjs2: 'CommonJS2',
+            amd: 'AMD'
+        }
     },
     target: ["web", "es5"],
 
@@ -64,7 +75,14 @@ const config = {
         ])
     ],
 
-    externals: "canvas",
+    // externals: 'canvas',
+    externals: {
+        canvas: {
+            commonjs: 'canvas',
+            commonjs2: 'canvas',
+            root: 'canvas'
+        }
+    },
     // ----------------------------------
     optimization: {
         minimize: true,
