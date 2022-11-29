@@ -50,25 +50,25 @@ const config = {
                 dir: "distrib",
                 files: ["jsxgraphcore.js", "jsxgraphsrc.js"],
                 rules: [
-                    {
-                        search: /\(self,/,
-                        replace: "(typeof self !== 'undefined' ? self : this,"
-                    },
+                    // {
+                    //     search: /\(self,/,
+                    //     replace: "(typeof self !== 'undefined' ? self : this,"
+                    // },
 
                     // AMD and nodejs
-                    {
-                        search: /return __webpack_exports__;/,
-                        replace: "return __webpack_exports__.default;"
-                    },
+                    // {
+                    //     search: /return __webpack_exports__;/,
+                    //     replace: "return __webpack_exports__.default;"
+                    // },
 
                     // AMD does not need canvas
-                    { search: /\["canvas"\], factory/, replace: "[], factory" },
+                    // { search: /\["canvas"\], factory/, replace: "[], factory" },
 
-                    // ?
-                    {
-                        search: /\] = factory\(require\("canvas"\)\);/,
-                        replace: "] = factory();"
-                    },
+                    // commonjs
+                    // {
+                    //     search: /\] = factory\(require\("canvas"\)\);/,
+                    //     replace: "] = factory();"
+                    // },
                     { search: /factory\(root\["canvas"\]\)/, replace: "factory()" }
                 ]
             }
