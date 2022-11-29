@@ -28,30 +28,48 @@ const config = {
         path: PATHS.bundles,
         filename: "[name].js",
         libraryTarget: "umd",
-        library: libraryName,
-        umdNamedDefine: false
+        library: {
+            name: libraryName,
+            type: 'var',
+            export: 'default'
+        },
+        umdNamedDefine: false,
+        globalObject: "typeof self !== 'undefined' ? self : this",
+        auxiliaryComment: {
+            root: 'Root',
+            commonjs: 'CommonJS',
+            commonjs2: 'CommonJS2',
+            amd: 'AMD'
+        }
     },
     target: ['web', 'es5'],
 
-    externals: 'canvas',
+    // externals: 'canvas',
+    externals: {
+        canvas: {
+            commonjs: 'canvas',
+            commonjs2: 'canvas',
+            root: 'canvas'
+        }
+    },
     // ----------------------------------
     plugins: [
         new ReplaceInFileWebpackPlugin([{
             dir: 'distrib',
             files: ['jsxgraphsrc.js'],
             rules: [{
-                search: /\(self,/,
-                replace: "(typeof self !== 'undefined' ? self : this,"
-            },{
-                search: /return __webpack_exports__;/,
-                replace: "return __webpack_exports__.default;"
-            },{
-                search: /\["canvas"\], factory/,
-                replace: "[], factory"
-            },{
-                search: /\] = factory\(require\("canvas"\)\);/,
-                replace: "] = factory();"
-            },{
+            //     search: /\(self,/,
+            //     replace: "(,"
+            // },{
+            //     search: /return __webpack_exports__;/,
+            //     replace: "return __webpack_exports__.default;"
+            //},{
+            //     search: /\["canvas"\], factory/,
+            //     replace: "[], factory"
+            // },{
+            //     search: /\] = factory\(require\("canvas"\)\);/,
+            //     replace: "] = factory();"
+            // },{
                 search: /factory\(root\["canvas"\]\)/,
                 replace: "factory()"
             }]
@@ -60,18 +78,18 @@ const config = {
             dir: 'distrib',
             files: ['jsxgraphcore.js'],
             rules: [{
-                search: /\(self,/,
-                replace: "(typeof self!=='undefined'?self:this,"
-            },{
-                search: /return __webpack_exports__/,
-                replace: "return __webpack_exports__.default"
-            },{
-                search: /define\(\["canvas"\]/,
-                replace: "define([]"
-            },{
-                search: /exports.jsxgraphcore=e\(require\("canvas"\)\)/,
-                replace: "exports.jsxgraphcore=e()"
-            },{
+            //     search: /\(self,/,
+            //     replace: "(typeof self!=='undefined'?self:this,"
+            // },{
+            //     search: /return __webpack_exports__/,
+            //     replace: "return __webpack_exports__.default"
+            // },{
+            //     search: /define\(\["canvas"\]/,
+            //     replace: "define([]"
+            // },{
+            //     search: /exports.jsxgraphcore=e\(require\("canvas"\)\)/,
+            //     replace: "exports.jsxgraphcore=e()"
+            // },{
                 search: /t.jsxgraphcore=e\(t.canvas\)/,
                 replace: "t.jsxgraphcore=e()"
             }]
