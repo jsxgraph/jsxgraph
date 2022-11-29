@@ -2,7 +2,7 @@ const path = require("path");
 const baseConfig = require("./webpack.config.base");
 const TerserPlugin = require("terser-webpack-plugin");
 
-const libraryName = "JSXGraph";
+const libraryName = "jsxgraphcore";
 const PATHS = {
     entryPoint: path.resolve(__dirname, "../src/index.js"),
     bundles: path.resolve(__dirname, "../distrib")
