@@ -1,5 +1,6 @@
 const path = require("path");
 const baseConfig = require("./webpack.config.base");
+const ReplaceInFileWebpackPlugin = require("replace-in-file-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
 
 const libraryName = "jsxgraphcore";
@@ -33,6 +34,50 @@ const config = {
     target: ['web', 'es5'],
 
     externals: 'canvas',
+    // ----------------------------------
+    plugins: [
+        new ReplaceInFileWebpackPlugin([{
+            dir: 'distrib',
+            files: ['jsxgraphsrc.js'],
+            rules: [{
+                search: /\(self,/,
+                replace: "(typeof self !== 'undefined' ? self : this,"
+            },{
+                search: /return __webpack_exports__;/,
+                replace: "return __webpack_exports__.default;"
+            },{
+                search: /\["canvas"\], factory/,
+                replace: "[], factory"
+            },{
+                search: /\] = factory\(require\("canvas"\)\);/,
+                replace: "] = factory();"
+            },{
+                search: /factory\(root\["canvas"\]\)/,
+                replace: "factory()"
+            }]
+        },
+        {
+            dir: 'distrib',
+            files: ['jsxgraphcore.js'],
+            rules: [{
+                search: /\(self,/,
+                replace: "(typeof self!=='undefined'?self:this,"
+            },{
+                search: /return __webpack_exports__/,
+                replace: "return __webpack_exports__.default"
+            },{
+                search: /define\(\["canvas"\]/,
+                replace: "define([]"
+            },{
+                search: /exports.jsxgraphcore=e\(require\("canvas"\)\)/,
+                replace: "exports.jsxgraphcore=e()"
+            },{
+                search: /t.jsxgraphcore=e\(t.canvas\)/,
+                replace: "t.jsxgraphcore=e()"
+            }]
+        }])
+    ],
+
     // ----------------------------------
     optimization: {
         minimize: true,

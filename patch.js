@@ -1,22 +1,3 @@
-if (false) {
-const replace = require('replace-in-file');
-const options = {
-    files: "distrib/jsxgraphsrc.js",
-    from: [/\(self,/,
-           /return __webpack_exports__;/,
-           /\["canvas"\], factory/,
-           /\] = factory\(require\("canvas"\)\);/,
-           /factory\(root\["canvas"\]\)/
-        ],
-    to: ["(typeof self !== 'undefined' ? self : this,",
-         "return __webpack_exports__.default;",         // AMD and nodejs
-         "[], factory",                                 // AMD does not need canvas
-         "] = factory();",                              // ?
-         "factory()"                                    // Web-Browser
-        ]
-};
-}
-
 module.exports = {
     files: "distrib/jsxgraphsrc.js",
     from: [/\(self,/,
