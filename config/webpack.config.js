@@ -3,7 +3,7 @@ const baseConfig = require("./webpack.config.base");
 const ReplaceInFileWebpackPlugin = require("replace-in-file-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
 
-const libraryName = "jsxgraphcore";
+const libraryName = "JXG";
 const PATHS = {
     entryPoint: path.resolve(__dirname, "../src/index.js"),
     bundles: path.resolve(__dirname, "../distrib")
@@ -36,9 +36,9 @@ const config = {
         umdNamedDefine: false,
         globalObject: "typeof self !== 'undefined' ? self : this",
         auxiliaryComment: {
-            root: 'Root',
+            root: 'Root (browser)',
             commonjs: 'CommonJS',
-            commonjs2: 'CommonJS2',
+            commonjs2: 'CommonJS2 (nodejs)',
             amd: 'AMD'
         }
     },
@@ -69,7 +69,12 @@ const config = {
                     //     search: /\] = factory\(require\("canvas"\)\);/,
                     //     replace: "] = factory();"
                     // },
-                    { search: /factory\(root\["canvas"\]\)/, replace: "factory()" }
+                    // { search: /factory\(root\["canvas"\]\)/, replace: "factory()" }
+                    // browser
+                    // { 
+                    //     search: /root\["jsxgraphcore"\] = factory\(root\["canvas"\]\);/,
+                    //     replace: "root['JXG'] = factory();"
+                    // }
                 ]
             }
         ])
