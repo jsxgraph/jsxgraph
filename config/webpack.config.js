@@ -13,7 +13,7 @@ const PATHS = {
     bundles: path.resolve(__dirname, "../distrib")
 };
 
-const config = {
+const config_es5 = {
     ...baseConfig,
     // Activate source maps for the bundles in order to preserve the original
     // source when the user debugs the application
@@ -105,7 +105,6 @@ const config = {
             root: 'canvas'
         }
     },
-    // ----------------------------------
     optimization: {
         minimize: true,
         minimizer: [
@@ -116,4 +115,28 @@ const config = {
     }
 };
 
-module.exports = config;
+const config_es6 = {
+    ...baseConfig,
+    devtool: "source-map",
+    entry: {
+        jsxgraphsrc_es6: [PATHS.entryPoint],
+        jsxgraphcore_es6: [PATHS.entryPoint]
+    },
+    output: {
+        path: PATHS.bundles,
+        filename: "[name].js",
+    },
+    target: ["web"],
+
+    externals: 'canvas',
+    optimization: {
+        minimize: true,
+        minimizer: [
+            new TerserPlugin({
+                test: /core_es6\.js$/
+            })
+        ]
+    }
+};
+
+module.exports = [config_es5, config_es6];

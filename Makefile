@@ -60,7 +60,6 @@ core:
 	$(MKDIR) $(MKDIRFLAGS) $(BUILDBIN)
 	# Build uncompressed AND minified files jsgraphsrc.js and jsxgraphcore.js and copy them to the distrib directory.
 	$(WEBPACK) --config config/webpack.config.js
-	# sh ./patchWebpackOutput.sh
 
 core-min:
 	echo "INFO: core-min deactivated. It is covered by core"
