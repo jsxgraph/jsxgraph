@@ -464,7 +464,7 @@ define([
          * If reducedUpdate is set to true then only the dragged element and few (e.g. 2) following
          * elements are updated during mouse move. On mouse up the whole construction is
          * updated. This enables us to be fast even on very slow devices.
-         * @type Boolean
+         * @type BooleanupdateQuality: 2
          * @default false
          */
         this.reducedUpdate = false;
@@ -5030,7 +5030,7 @@ define([
             var h, w, ux, uy,
                 offX = 0,
                 offY = 0,
-                ratio, nux1, nuy1, nux2, nuy2, dx1, dy1, dx2, dy2,
+                ratio, dx, dy, prev_w, prev_h,
                 dim = Env.getDimensions(this.container, this.document);
 
             if (!Type.isArray(bbox)) {
@@ -5050,49 +5050,55 @@ define([
 
             ux = this.unitX;
             uy = this.unitY;
-            ratio = ux / uy;
+            ratio = ux / uy; // Keep this ratio if aspectratio==true
 
             this.canvasWidth = parseFloat(dim.width);   // parseInt(dim.width, 10);
             this.canvasHeight = parseFloat(dim.height); // parseInt(dim.height, 10);
             w = this.canvasWidth;
             h = this.canvasHeight;
             if (keepaspectratio) {
-                nuy1 = h / (bbox[1] - bbox[3]);
-                nux1 = nuy1 * ratio;
-
-                nux2 = w / (bbox[2] - bbox[0]);
-                nuy2 = nux2 / ratio;
-
-                dx1 = w - nux1 * (bbox[2] - bbox[0]);
-                dy1 = h - nuy1 * (bbox[1] - bbox[3]);
-                dx2 = w - nux2 * (bbox[2] - bbox[0]);
-                dy2 = h - nuy2 * (bbox[1] - bbox[3]);
-                console.log(dx1, dy1, dx2, dy2);
-                if (dx2 < -Mat.eps || dy2 < -Mat.eps) {
-                    // Keep unitY
-                    console.log("Kepp unitY")
-                    this.unitX = nux1;
-                    this.unitY = nux1;
+                dx = bbox[2] - bbox[0];
+                dy = bbox[1] - bbox[3];
+                prev_w = ux * dx;
+                prev_h = uy * dy;
+                if (w >= h) {
+                    if (prev_w >= prev_h) {
+                        this.unitY = h / dy;
+                        this.unitX = this.unitY * ratio;
+                    } else {
+                        // Switch dominating interval
+                        this.unitY = h / Math.abs(dx) * Mat.sign(dy);
+                        this.unitX = this.unitY * ratio;
+                    }
                 } else {
-                    // Keep unitX
-                    console.log("Keep unitX")
-                    this.unitX = nux2;
-                    this.unitY = nux2;
+                    if (prev_h >= prev_w) {
+                        this.unitX = w / dx;
+                        this.unitY = this.unitX / ratio;
+                    } else {
+                        // Switch dominating interval
+                        this.unitX = w / Math.abs(dy) * Mat.sign(dx);
+                        this.unitY = this.unitX / ratio;
+                    }
                 }
+                // Add the additional units in equal portions left and right
+                offX = (w / this.unitX - dx) * 0.5;
+                // Add the additional units in equal portions above and below
+                offY = (h / this.unitY - dy) * 0.5;
 
                 // this.unitX = w / (bbox[2] - bbox[0]);
                 // this.unitY = h / (bbox[1] - bbox[3]);
                 // if (Math.abs(this.unitX) < Math.abs(this.unitY)) {
                 //     this.unitY = Math.abs(this.unitX) * this.unitY / Math.abs(this.unitY);
                 //     // Add the additional units in equal portions above and below
-                offY = (h / this.unitY - (bbox[1] - bbox[3])) * 0.5;
+                //     offY = (h / this.unitY - (bbox[1] - bbox[3])) * 0.5;
                 // } else {
                 //     this.unitX = Math.abs(this.unitY) * this.unitX / Math.abs(this.unitX);
                 //     // Add the additional units in equal portions left and right
-                offX = (w / this.unitX - (bbox[2] - bbox[0])) * 0.5;
+                //     offX = (w / this.unitX - (bbox[2] - bbox[0])) * 0.5;
                 // }
 
                 this.keepaspectratio = true;
+
             } else {
                 this.unitX = w / (bbox[2] - bbox[0]);
                 this.unitY = h / (bbox[1] - bbox[3]);
