@@ -41,8 +41,8 @@ const config_es5 = {
         //    import JXG from "...jsxgraphcore"
         library: {
             name: libraryName,
-            type: 'var',
-            export: 'default'
+            type: "var",
+            export: "default"
         },
 
         // Unnamed AMD define
@@ -53,10 +53,10 @@ const config_es5 = {
 
         // Just comments
         auxiliaryComment: {
-            root: 'Root (browser)',
-            commonjs: 'CommonJS',
-            commonjs2: 'CommonJS2 (nodejs)',
-            amd: 'AMD'
+            root: "Root (browser)",
+            commonjs: "CommonJS",
+            commonjs2: "CommonJS2 (nodejs)",
+            amd: "AMD"
         }
     },
     target: ["web", "es5"],
@@ -100,9 +100,9 @@ const config_es5 = {
         // AMD does not need canvas, so would root.
         // commonjs2 needs the canvas plug-in
         canvas: {
-            commonjs: 'canvas',
-            commonjs2: 'canvas',
-            root: 'canvas'
+            commonjs: "canvas",
+            commonjs2: "canvas",
+            root: "canvas"
         }
     },
     optimization: {
@@ -115,28 +115,31 @@ const config_es5 = {
     }
 };
 
-const config_es6 = {
+const module_config = {
     ...baseConfig,
     devtool: "source-map",
     entry: {
-        jsxgraphsrc_es6: [PATHS.entryPoint],
-        jsxgraphcore_es6: [PATHS.entryPoint]
+        jsxgraphsrc: [PATHS.entryPoint],
+        jsxgraphcore: [PATHS.entryPoint]
+    },
+    experiments: {
+        outputModule: true
     },
     output: {
         path: PATHS.bundles,
-        filename: "[name].js",
+        filename: "[name].mjs",
+        library: { type: "module" }
     },
-    target: ["web"],
 
-    externals: 'canvas',
+    // externals: "canvas",
     optimization: {
         minimize: true,
         minimizer: [
             new TerserPlugin({
-                test: /core_es6\.js$/
+                test: /core\.mjs$/
             })
         ]
     }
 };
 
-module.exports = [config_es5, config_es6];
+module.exports = [config_es5, module_config];

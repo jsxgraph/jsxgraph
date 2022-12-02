@@ -3,6 +3,8 @@ trunk
 .c9revisions
 distrib/jsxgraphcore.js*
 distrib/jsxgraphsrc.js*
+distrib/jsxgraphcore.mjs*
+distrib/jsxgraphsrc.mjs*
 build/bin/*
 src/require.js
 node_modules
