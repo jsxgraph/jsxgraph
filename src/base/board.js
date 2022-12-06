@@ -5030,6 +5030,7 @@ define([
             var h, w, ux, uy,
                 offX = 0,
                 offY = 0,
+                zoom_ratio = 1, 
                 ratio, dx, dy, prev_w, prev_h,
                 dim = Env.getDimensions(this.container, this.document);
 
@@ -5056,6 +5057,9 @@ define([
             h = this.canvasHeight;
             if (keepaspectratio) {
                 ratio = ux / uy;            // Keep this ratio if aspectratio==true
+                if (setZoom === 'keep') {
+                    zoom_ratio = this.zoomX / this.zoomY;
+                }
                 dx = bbox[2] - bbox[0];
                 dy = bbox[1] - bbox[3];
                 prev_w = ux * dx;
@@ -5066,16 +5070,16 @@ define([
                         this.unitX = this.unitY * ratio;
                     } else {
                         // Switch dominating interval
-                        this.unitY = h / Math.abs(dx) * Mat.sign(dy);
+                        this.unitY = h / Math.abs(dx) * Mat.sign(dy) / zoom_ratio;
                         this.unitX = this.unitY * ratio;
                     }
                 } else {
-                    if (prev_h >= prev_w) {
+                    if (prev_h > prev_w) {
                         this.unitX = w / dx;
                         this.unitY = this.unitX / ratio;
                     } else {
                         // Switch dominating interval
-                        this.unitX = w / Math.abs(dy) * Mat.sign(dx);
+                        this.unitX = w / Math.abs(dy) * Mat.sign(dx) * zoom_ratio;
                         this.unitY = this.unitX / ratio;
                     }
                 }
@@ -5083,21 +5087,7 @@ define([
                 offX = (w / this.unitX - dx) * 0.5;
                 // Add the additional units in equal portions above and below
                 offY = (h / this.unitY - dy) * 0.5;
-
-                // this.unitX = w / (bbox[2] - bbox[0]);
-                // this.unitY = h / (bbox[1] - bbox[3]);
-                // if (Math.abs(this.unitX) < Math.abs(this.unitY)) {
-                //     this.unitY = Math.abs(this.unitX) * this.unitY / Math.abs(this.unitY);
-                //     // Add the additional units in equal portions above and below
-                //     offY = (h / this.unitY - (bbox[1] - bbox[3])) * 0.5;
-                // } else {
-                //     this.unitX = Math.abs(this.unitY) * this.unitX / Math.abs(this.unitX);
-                //     // Add the additional units in equal portions left and right
-                //     offX = (w / this.unitX - (bbox[2] - bbox[0])) * 0.5;
-                // }
-
                 this.keepaspectratio = true;
-
             } else {
                 this.unitX = w / (bbox[2] - bbox[0]);
                 this.unitY = h / (bbox[1] - bbox[3]);
