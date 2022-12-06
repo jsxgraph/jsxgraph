@@ -5050,13 +5050,12 @@ define([
 
             ux = this.unitX;
             uy = this.unitY;
-            ratio = ux / uy; // Keep this ratio if aspectratio==true
-
             this.canvasWidth = parseFloat(dim.width);   // parseInt(dim.width, 10);
             this.canvasHeight = parseFloat(dim.height); // parseInt(dim.height, 10);
             w = this.canvasWidth;
             h = this.canvasHeight;
             if (keepaspectratio) {
+                ratio = ux / uy;            // Keep this ratio if aspectratio==true
                 dx = bbox[2] - bbox[0];
                 dy = bbox[1] - bbox[3];
                 prev_w = ux * dx;
