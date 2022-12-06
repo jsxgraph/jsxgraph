@@ -388,13 +388,16 @@ define([
             showClearTraces: false,
 
             /**
-             * If set to true the bounding box might be changed such that
-             * the ratio of width and height of the hosting HTML div is equal
-             * to the ratio of width and height of the bounding box.
-             *
+             * If set to true, the ratio between horizontal and vertical unit sizes
+             * stays constant - independent of size changes of the hosting HTML div element.
+             * <p>
+             * If the aspect ration of the hosting div changes, JSXGraphs will change
+             * the user supplied bounding box accordingly.
              * This is necessary if circles should look like circles and not
              * like ellipses. It is recommended to set keepAspectRatio = true
-             * for geometric applets. For function plotting keepAspectRatio = false
+             * for geometric applets.
+             * <p>
+             * For function plotting keepAspectRatio = false
              * might be the better choice.
              *
              * @name JXG.Board#keepAspectRatio
@@ -1212,7 +1215,7 @@ define([
             /**
              * Angle (in radians) of the gradiant in case the gradient is of type 'linear'.
              * If the angle is 0, the first color is on the left and the second color is on the right.
-             * If the angle is pi/4 the first color is on top and the second color at the
+             * If the angle is &pi;/2 the first color is on top and the second color at the
              * bottom.
              * @type Number
              * @name JXG.GeometryElement#gradientAngle
