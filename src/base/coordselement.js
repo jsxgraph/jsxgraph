@@ -1300,8 +1300,8 @@ define([
                     newfuncs[i] = v;
                 } else if (Type.isNumber(v)) {
                     newfuncs[i] = makeConstFunction(v);
-                // Slider
-            } else if (Type.isObject(v) && Type.isFunction(v.Value)) {
+                } else if (Type.isObject(v) && Type.isFunction(v.Value)) {
+                    // Slider
                     newfuncs[i] = makeSliderFunction(v);
                 }
 
