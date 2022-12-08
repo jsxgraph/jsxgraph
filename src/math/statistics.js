@@ -545,8 +545,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
          * <script type="text/javascript">
          *     (function() {
          *         var board = JXG.JSXGraph.initBoard('JXG0a28be85-91c5-44d3-aae6-114e81217cf0',
-         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
-         *     var board = JXG.JSXGraph.initBoard('jxgbox', { boundingbox: [-6,6,6,-6], axis : true });
+         *             {boundingbox: [-6,6,6,-6], axis: true, showcopyright: false, shownavigation: false});
          *     var a=[];
          *     a[0]=board.create('point', [0,0]);
          *     a[1]=board.create('point', [3,0]);
