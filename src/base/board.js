@@ -2404,7 +2404,7 @@ define([
             //if (this.mode !== this.BOARD_MODE_DRAG) {
                 //this.displayInfobox(false);
             //}
-            this.triggerEventHandlers(['touchmove', 'move', 'pointermove', 'MSPointerMove'], [evt, this.mode]);
+            this.triggerEventHandlers(['pointermove', 'MSPointerMove', 'move'], [evt, this.mode]);
             this.updateQuality = this.BOARD_QUALITY_HIGH;
 
             return this.mode === this.BOARD_MODE_NONE;
@@ -3276,9 +3276,9 @@ define([
                         dx = Math.max(sX, dx);
                         dy = Math.max(sY, dy);
                     }
-
                 }
 
+                // Arrow keys
                 if (evt.keyCode === 38) {           // up
                     dir = [0, dy];
                 } else if (evt.keyCode === 40) {    // down
@@ -3300,6 +3300,7 @@ define([
                         !Type.evaluate(el.visProp.fixed)
                     ) {
 
+                    this.mode = this.BOARD_MODE_DRAG;
                     if (Type.exists(el.coords)) {
                         dir[0] += actPos[0];
                         dir[1] += actPos[1];
@@ -3310,7 +3311,9 @@ define([
                     if (Type.exists(el.coords)) {
                         this.updateInfobox(el);
                     }
-                    this.triggerEventHandlers(['hit'], [evt, el]);
+                    this.triggerEventHandlers(['keymove', 'move'], [evt, this.mode]);
+                    el.triggerEventHandlers(['keydrag', 'drag'], [evt]);
+                    this.mode = this.BOARD_MODE_NONE;
                 }
             }
 
@@ -3345,11 +3348,11 @@ define([
             el = this.select(id);
             if (Type.exists(el.highlight)) {
                 el.highlight(true);
+                el.triggerEventHandlers(['hit'], [evt]);
             }
             if (Type.exists(el.coords)) {
                 this.updateInfobox(el);
             }
-            this.triggerEventHandlers(['hit'], [evt, el]);
         },
 
         /**
@@ -5030,7 +5033,7 @@ define([
             var h, w, ux, uy,
                 offX = 0,
                 offY = 0,
-                zoom_ratio = 1, 
+                zoom_ratio = 1,
                 ratio, dx, dy, prev_w, prev_h,
                 dim = Env.getDimensions(this.container, this.document);
 
@@ -5808,7 +5811,7 @@ define([
 
         /**
          * @event
-         * @description This event is fired whenever the user is moving the mouse over the board  with a
+         * @description This event is fired whenever the user is moving the mouse over the board with a
          * device sending pointer events.
          * @name JXG.Board#pointermove
          * @param {Event} e The browser's event object.
@@ -5826,6 +5829,17 @@ define([
          * @see JXG.Board#mode
          */
         __evt__touchmove: function (e, mode) { },
+
+        /**
+         * @event
+         * @description This event is fired whenever the user is moving an element over the board by
+         * pressing arrow keys on a keyboard.
+         * @name JXG.Board#keymove
+         * @param {Event} e The browser's event object.
+         * @param {Number} mode The mode the board currently is in
+         * @see JXG.Board#mode
+         */
+        __evt__keymove: function (e, mode) { },
 
         /**
          * @event

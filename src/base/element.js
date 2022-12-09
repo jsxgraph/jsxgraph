@@ -2220,6 +2220,15 @@ define([
 
         /**
          * @event
+         * @description This event is fired whenever the user drags the element by pressing arrow keys 
+         * on the keyboard.
+         * @name JXG.GeometryElement#keydrag
+         * @param {Event} e The browser's event object.
+         */
+        __evt__keydrag: function (e) { },
+
+        /**
+         * @event
          * @description Whenever the user starts to touch or click an element.
          * @name JXG.GeometryElement#down
          * @param {Event} e The browser's event object.
