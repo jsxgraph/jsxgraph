@@ -34,7 +34,7 @@ import Type from "../utils/type";
 
 /**
  * Constructor for 3D surfaces.
- * @class Creates a new 3D surface object. Do not use this constructor to create a 3D surface. Use {@link JXG.Board#create} with type {@link Surface3D} instead.
+ * @class Creates a new 3D surface object. Do not use this constructor to create a 3D surface. Use {@link JXG.View3D#create} with type {@link Surface3D} instead.
  *
  * @augments JXG.GeometryElement3D
  * @augments JXG.GeometryElement

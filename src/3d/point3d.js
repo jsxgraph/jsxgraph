@@ -37,7 +37,7 @@ import Type from "../utils/type";
 
 /**
  * A 3D point is the basic geometric element.
- * @class Creates a new 3D point object. Do not use this constructor to create a 3D point. Use {@link JXG.Board#create} with
+ * @class Creates a new 3D point object. Do not use this constructor to create a 3D point. Use {@link JXG.View3D#create} with
  * type {@link Point3D} instead.
  * @augments JXG.GeometryElement3D
  * @augments JXG.GeometryElement

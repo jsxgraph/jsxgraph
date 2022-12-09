@@ -34,7 +34,7 @@ import Type from "../utils/type";
 
 /**
  * Constructor for 3D curves.
- * @class Creates a new 3D curve object. Do not use this constructor to create a 3D curve. Use {@link JXG.Board#create} with type {@link Curve3D} instead.
+ * @class Creates a new 3D curve object. Do not use this constructor to create a 3D curve. Use {@link JXG.View3D#create} with type {@link Curve3D} instead.
  *
  * @augments JXG.GeometryElement3D
  * @augments JXG.GeometryElement

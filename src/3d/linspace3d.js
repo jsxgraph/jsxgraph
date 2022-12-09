@@ -44,7 +44,7 @@ import Geometry from "../math/geometry";
 
 /**
  * Constructor for 3D lines.
- * @class Creates a new 3D line object. Do not use this constructor to create a 3D line. Use {@link JXG.Board#create} with type {@link Line3D} instead.
+ * @class Creates a new 3D line object. Do not use this constructor to create a 3D line. Use {@link JXG.View3D#create} with type {@link Line3D} instead.
  *
  * @augments JXG.GeometryElement3D
  * @augments JXG.GeometryElement
