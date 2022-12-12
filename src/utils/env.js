@@ -802,16 +802,17 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          * @param  {String} wrap_id  id of the parent DOM element which is in fullscreen mode
          * @param  {String} inner_id id of the DOM element which is scaled and shifted
          * @param  {Object} doc      document object or shadow root
+         * @param  {Number} scale    Relative size of the JSXGraph board in the fullscreen window.
          *
          * @private
          * @see JXG.Board#toFullscreen
          * @see JXG.Board#fullscreenListener
          *
          */
-         scaleJSXGraphDiv: function (wrap_id, inner_id, doc) {
+         scaleJSXGraphDiv: function (wrap_id, inner_id, doc, scale) {
             var len = doc.styleSheets.length, style, rule, w, h, b, wi, hi, bi,
                 scale_l, vshift_l, // scale_p, vshift_p,
-                f = 0.85,
+                f = scale,
                 rule_inner_l, // rule_inner_p,
 
                 pseudo_keys = [':fullscreen', ':-webkit-full-screen', ':-moz-full-screen', ':-ms-fullscreen'],

@@ -6179,8 +6179,7 @@ define([
                 // Do the shifting and scaling via CSS pseudo rules
                 // We do this after fullscreen mode has been established to get the correct size
                 // of the JSXGraph div.
-                // Env.scaleJSXGraphDiv(fullscreenElement.id, inner_id, res.scale, res.vshift, res.ratio, doc);
-                Env.scaleJSXGraphDiv(fullscreenElement.id, inner_id, doc);
+                Env.scaleJSXGraphDiv(fullscreenElement.id, inner_id, doc, Type.evaluate(this.attr.fullscreen.scale));
 
                 // Clear this.doc.fullscreenElement, because Safari doesn't to it and
                 // when leaving full screen mode it is still set.
