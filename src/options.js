@@ -914,7 +914,11 @@ define([
              * @type Boolean
              * @default true
              */
-            showInfobox: true
+            showInfobox: true,
+
+            logging: {
+                enabled: true
+            }
 
             /**#@-*/
         },

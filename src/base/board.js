@@ -595,6 +595,8 @@ define([
          */
         this.selectingBox = [[0, 0], [0, 0]];
 
+        this.userLog = [];
+
         this.mathLib = Math;        // Math or JXG.Math.IntervalArithmetic
         this.mathLibJXG = JXG.Math; // JXG.Math or JXG.Math.IntervalArithmetic
 
@@ -1108,6 +1110,8 @@ define([
             if (drag.coords) {
                 dragScrCoords = drag.coords.scrCoords.slice();
             }
+
+            this.addLogEntry('drag', drag);
 
             /*
              * Save the position.
@@ -6201,6 +6205,28 @@ define([
             }
 
             this.updateCSSTransforms();
+        },
+
+        addLogEntry: function(type, obj) {
+            var t,
+                id = obj.id,
+                last = this.userLog.length - 1;
+            if (Type.evaluate(this.attr.logging.enabled)) {
+                t = (new Date()).getTime();
+                if (last >= 0 &&
+                    this.userLog[last].type === type &&
+                    this.userLog[last].id === id) {
+
+                    this.userLog[last].end = t;
+                } else {
+                    this.userLog.push({
+                        type: type,
+                        id: id,
+                        start: t,
+                        end: t
+                    });
+                }
+            }
         },
 
         /**
