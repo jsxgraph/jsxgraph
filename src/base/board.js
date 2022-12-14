@@ -6215,7 +6215,10 @@ define([
                 t = (new Date()).getTime();
                 if (last >= 0 &&
                     this.userLog[last].type === type &&
-                    this.userLog[last].id === id) {
+                    this.userLog[last].id === id &&
+                    // Distinguish consecutive drag events of
+                    // the same element
+                    t - this.userLog[last].end < 500) {
 
                     this.userLog[last].end = t;
                 } else {
