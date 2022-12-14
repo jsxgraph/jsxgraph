@@ -623,7 +623,6 @@ JXG.Board = function (
             removeObject: 'removeObject'
         };
     };
-};
 
 JXG.extend(
     JXG.Board.prototype,

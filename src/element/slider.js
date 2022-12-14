@@ -512,6 +512,7 @@ JXG.createSlider = function (board, parents, attributes) {
             pos = l1.board.getMousePosition(evt, 0);
             c = new Coords(Const.COORDS_BY_SCREEN, pos, this.board);
             p3.moveTo([c.usrCoords[1], c.usrCoords[2]]);
+            p3.triggerEventHandlers(['drag'], [evt]);
         }
     });
 
