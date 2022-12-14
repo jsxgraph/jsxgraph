@@ -29,7 +29,6 @@
 /*global JXG:true, define: true*/
 
 import JXG from "../jxg";
-import Options from "../options";
 import Const from "../base/constants";
 import Type from "../utils/type";
 import Mat from "../math/math";

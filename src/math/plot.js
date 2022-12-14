@@ -984,107 +984,108 @@ Mat.Plot = {
      * @private
      */
     _findStartPoint: function (curve, a, ta, b, tb) {
-        var i,
-            delta,
-            tc,
-            td,
-            z,
-            isFound,
-            w2,
-            h2,
-            pnt = new Coords(Const.COORDS_BY_USER, [0, 0], curve.board, false),
-            steps = 40,
-            eps = 0.01,
-            fnX1,
-            fnX2,
-            fnY1,
-            fnY2,
-            bbox = curve.board.getBoundingBox();
-
         // The code below is too unstable.
         // E.g. [function(t) { return Math.pow(t, 2) * (t + 5) * Math.pow(t - 5, 2); }, -8, 8]
         // Therefore, we return here.
-        if (true || !this._isOutsidePoint(a, curve.board)) {
-            return [a, ta];
-        }
+        return [a, ta];
 
-        w2 = (bbox[2] - bbox[0]) * 0.3;
-        h2 = (bbox[1] - bbox[3]) * 0.3;
-        bbox[0] -= w2;
-        bbox[1] += h2;
-        bbox[2] += w2;
-        bbox[3] -= h2;
+        // var i,
+        //     delta,
+        //     tc,
+        //     td,
+        //     z,
+        //     isFound,
+        //     w2,
+        //     h2,
+        //     pnt = new Coords(Const.COORDS_BY_USER, [0, 0], curve.board, false),
+        //     steps = 40,
+        //     eps = 0.01,
+        //     fnX1,
+        //     fnX2,
+        //     fnY1,
+        //     fnY2,
+        //     bbox = curve.board.getBoundingBox();
 
-        delta = (tb - ta) / steps;
-        tc = ta + delta;
-        isFound = false;
+        // if (true || !this._isOutsidePoint(a, curve.board)) {
+        //     return [a, ta];
+        // }
+        // w2 = (bbox[2] - bbox[0]) * 0.3;
+        // h2 = (bbox[1] - bbox[3]) * 0.3;
+        // bbox[0] -= w2;
+        // bbox[1] += h2;
+        // bbox[2] += w2;
+        // bbox[3] -= h2;
 
-        fnX1 = function (t) {
-            return curve.X(t, true) - bbox[0];
-        };
-        fnY1 = function (t) {
-            return curve.Y(t, true) - bbox[1];
-        };
-        fnX2 = function (t) {
-            return curve.X(t, true) - bbox[2];
-        };
-        fnY2 = function (t) {
-            return curve.Y(t, true) - bbox[3];
-        };
-        for (i = 0; i < steps; ++i) {
-            // Left border
-            z = bbox[0];
-            td = Numerics.root(fnX1, [tc - delta, tc], curve);
-            // td = Numerics.fzero(fnX1, [tc - delta, tc], this);
-            // console.log("A", tc - delta, tc, td, Math.abs(this.X(td, true) - z));
-            if (Math.abs(curve.X(td, true) - z) < eps) {
-                //} * Math.abs(z)) {
-                isFound = true;
-                break;
-            }
-            // Top border
-            z = bbox[1];
-            td = Numerics.root(fnY1, [tc - delta, tc], curve);
-            // td = Numerics.fzero(fnY1, [tc - delta, tc], this);
-            // console.log("B", tc - delta, tc, td, Math.abs(this.Y(td, true) - z));
-            if (Math.abs(curve.Y(td, true) - z) < eps) {
-                // * Math.abs(z)) {
-                isFound = true;
-                break;
-            }
-            // Right border
-            z = bbox[2];
-            td = Numerics.root(fnX2, [tc - delta, tc], curve);
-            // td = Numerics.fzero(fnX2, [tc - delta, tc], this);
-            // console.log("C", tc - delta, tc, td, Math.abs(this.X(td, true) - z));
-            if (Math.abs(curve.X(td, true) - z) < eps) {
-                // * Math.abs(z)) {
-                isFound = true;
-                break;
-            }
-            // Bottom border
-            z = bbox[3];
-            td = Numerics.root(fnY2, [tc - delta, tc], curve);
-            // td = Numerics.fzero(fnY2, [tc - delta, tc], this);
-            // console.log("D", tc - delta, tc, td, Math.abs(this.Y(td, true) - z));
-            if (Math.abs(curve.Y(td, true) - z) < eps) {
-                // * Math.abs(z)) {
-                isFound = true;
-                break;
-            }
-            tc += delta;
-        }
-        if (isFound) {
-            pnt.setCoordinates(
-                Const.COORDS_BY_USER,
-                [curve.X(td, true), curve.Y(td, true)],
-                false
-            );
-            return [pnt.scrCoords, td];
-        }
-        console.log("TODO _findStartPoint", curve.Y.toString(), tc);
-        pnt.setCoordinates(Const.COORDS_BY_USER, [curve.X(ta, true), curve.Y(ta, true)], false);
-        return [pnt.scrCoords, ta];
+        // delta = (tb - ta) / steps;
+        // tc = ta + delta;
+        // isFound = false;
+
+        // fnX1 = function (t) {
+        //     return curve.X(t, true) - bbox[0];
+        // };
+        // fnY1 = function (t) {
+        //     return curve.Y(t, true) - bbox[1];
+        // };
+        // fnX2 = function (t) {
+        //     return curve.X(t, true) - bbox[2];
+        // };
+        // fnY2 = function (t) {
+        //     return curve.Y(t, true) - bbox[3];
+        // };
+        // for (i = 0; i < steps; ++i) {
+        //     // Left border
+        //     z = bbox[0];
+        //     td = Numerics.root(fnX1, [tc - delta, tc], curve);
+        //     // td = Numerics.fzero(fnX1, [tc - delta, tc], this);
+        //     // console.log("A", tc - delta, tc, td, Math.abs(this.X(td, true) - z));
+        //     if (Math.abs(curve.X(td, true) - z) < eps) {
+        //         //} * Math.abs(z)) {
+        //         isFound = true;
+        //         break;
+        //     }
+        //     // Top border
+        //     z = bbox[1];
+        //     td = Numerics.root(fnY1, [tc - delta, tc], curve);
+        //     // td = Numerics.fzero(fnY1, [tc - delta, tc], this);
+        //     // console.log("B", tc - delta, tc, td, Math.abs(this.Y(td, true) - z));
+        //     if (Math.abs(curve.Y(td, true) - z) < eps) {
+        //         // * Math.abs(z)) {
+        //         isFound = true;
+        //         break;
+        //     }
+        //     // Right border
+        //     z = bbox[2];
+        //     td = Numerics.root(fnX2, [tc - delta, tc], curve);
+        //     // td = Numerics.fzero(fnX2, [tc - delta, tc], this);
+        //     // console.log("C", tc - delta, tc, td, Math.abs(this.X(td, true) - z));
+        //     if (Math.abs(curve.X(td, true) - z) < eps) {
+        //         // * Math.abs(z)) {
+        //         isFound = true;
+        //         break;
+        //     }
+        //     // Bottom border
+        //     z = bbox[3];
+        //     td = Numerics.root(fnY2, [tc - delta, tc], curve);
+        //     // td = Numerics.fzero(fnY2, [tc - delta, tc], this);
+        //     // console.log("D", tc - delta, tc, td, Math.abs(this.Y(td, true) - z));
+        //     if (Math.abs(curve.Y(td, true) - z) < eps) {
+        //         // * Math.abs(z)) {
+        //         isFound = true;
+        //         break;
+        //     }
+        //     tc += delta;
+        // }
+        // if (isFound) {
+        //     pnt.setCoordinates(
+        //         Const.COORDS_BY_USER,
+        //         [curve.X(td, true), curve.Y(td, true)],
+        //         false
+        //     );
+        //     return [pnt.scrCoords, td];
+        // }
+        // console.log("TODO _findStartPoint", curve.Y.toString(), tc);
+        // pnt.setCoordinates(Const.COORDS_BY_USER, [curve.X(ta, true), curve.Y(ta, true)], false);
+        // return [pnt.scrCoords, ta];
     },
 
     /**

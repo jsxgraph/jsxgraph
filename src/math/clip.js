@@ -622,20 +622,11 @@ Mat.Clip = {
      * @see JXG.Math.Clip#_handleIntersectionChains
      */
     _classifyDegenerateIntersections: function (P) {
-        var Pp,
-            Pm,
-            Qp,
-            Qm,
-            Q,
-            side,
-            cnt,
-            tmp,
-            det,
+        var Pp, Pm, Qp, Qm,  Q,
+            side, cnt, tmp, det,
             oppositeDir,
-            s1,
-            s2,
-            s3,
-            s4,
+            s1, s2, s3, s4,
+            endless = true,
             DEBUG = false;
 
         if (DEBUG) {
@@ -647,7 +638,7 @@ Mat.Clip = {
         det = Geometry.det3p;
         cnt = 0;
         P._tours = 0;
-        while (true) {
+        while (endless) {
             if (DEBUG) {
                 console.log("Inspect P:", P.coords.usrCoords, P.data ? P.data.type : " ");
             }
@@ -833,6 +824,7 @@ Mat.Clip = {
         var cnt = 0,
             start_status = "Null",
             P_start,
+            endless = true,
             intersection_chain = false,
             wait_for_exit = false,
             DEBUG = false;
@@ -843,7 +835,7 @@ Mat.Clip = {
                 Type.exists(P.data) ? P.data.pathname : " "
             );
         }
-        while (true) {
+        while (endless) {
             if (P.intersection === true) {
                 if (DEBUG) {
                     if (P.data.type === "T") {
@@ -1063,13 +1055,9 @@ Mat.Clip = {
      * @param  {Array} path2 Second path
      */
     markEntryExit: function (path1, path2, starters) {
-        var status,
-            P,
-            cnt,
-            res,
-            i,
-            len,
-            start,
+        var status, P, cnt, res,
+            i, len, start,
+            endless = true,
             chain_start = null,
             intersection_chain = 0,
             DEBUG = false;
@@ -1107,7 +1095,7 @@ Mat.Clip = {
             chain_start = null;
             intersection_chain = 0;
 
-            while (true) {
+            while (endless) {
                 if (P.intersection === true) {
                     if (P.data.type === "X" && intersection_chain === 1) {
                         // While we are in an intersection chain, i.e. a delayed crossing,

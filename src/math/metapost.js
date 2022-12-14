@@ -97,7 +97,8 @@ Mat.Metapost = {
      * @private
      */
     make_choices: function (knots) {
-        var dely, h, k, delx, n, q, p, s, cosine, t, sine, delta_x, delta_y, delta, psi;
+        var dely, h, k, delx, n, q, p, s, cosine, t, sine, delta_x, delta_y, delta, psi,
+            endless = true;
 
         p = knots[0];
         do {
@@ -136,7 +137,7 @@ Mat.Metapost = {
         // Find the first breakpoint, h, on the path
         // MP 292
         h = knots[0];
-        while (true) {
+        while (endless) {
             if (h.ltype !== this.MP_OPEN || h.rtype !== this.MP_OPEN) {
                 break;
             }
@@ -148,7 +149,7 @@ Mat.Metapost = {
         }
 
         p = h;
-        while (true) {
+        while (endless) {
             if (!p) {
                 break;
             }
@@ -175,7 +176,7 @@ Mat.Metapost = {
                 psi = [null];
 
                 // tuple([]) = tuple([[], [], [], [null]]);
-                while (true) {
+                while (endless) {
                     t = s.next;
                     // None;
                     delta_x.push(t.x - s.x);
@@ -252,32 +253,11 @@ Mat.Metapost = {
      * @private
      */
     mp_solve_choices: function (p, q, n, delta_x, delta_y, delta, psi) {
-        var aa,
-            acc,
-            vv,
-            bb,
-            ldelta,
-            ee,
-            k,
-            s,
-            ww,
-            uu,
-            lt,
-            r,
-            t,
-            ff,
-            theta,
-            rt,
-            dd,
-            cc,
-            ct_st,
-            ct,
-            st,
-            cf_sf,
-            cf,
-            sf,
-            i,
-            k_idx;
+        var aa, acc, vv, bb, ldelta, ee, k,
+            s, ww, uu, lt, r, t, ff,
+            theta, rt, dd, cc, ct_st,
+            ct, st, cf_sf, cf, sf, i, k_idx,
+            endless = true;
 
         ldelta = delta.length + 1;
         uu = new Array(ldelta);
@@ -290,7 +270,7 @@ Mat.Metapost = {
         k = 0;
         s = p;
         r = 0;
-        while (true) {
+        while (endless) {
             t = s.next;
             if (k === 0) {
                 // MP 306
@@ -377,7 +357,7 @@ Mat.Metapost = {
                     if (s.ltype === this.MP_END_CYCLE) {
                         aa = 0;
                         bb = this.FRACTION_ONE;
-                        while (true) {
+                        while (endless) {
                             k -= 1;
                             if (k === 0) {
                                 k = n;
@@ -427,7 +407,7 @@ Mat.Metapost = {
 
         s = p;
         k = 0;
-        while (true) {
+        while (endless) {
             t = s.next;
             ct_st = this.mp_n_sin_cos(theta[k]);
             ct = ct_st[0];

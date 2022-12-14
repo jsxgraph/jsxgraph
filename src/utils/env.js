@@ -41,7 +41,6 @@
 
 import JXG from "../jxg";
 import Type from "./type";
-// import $__canvas from "canvas";
 
 JXG.extendConstants(
     JXG,
@@ -195,10 +194,13 @@ JXG.extend(
         isNode: function () {
             // This is not a 100% sure but should be valid in most cases
             // We are not inside a browser
+            /* eslint-disable no-undef */
             return (
                 !this.isBrowser &&
                 (typeof process !== 'undefined') &&
                 (process.release.name.search(/node|io.js/) !== -1)
+            /* eslint-enable no-undef */
+
                 // there is a module object (plain node, no requirejs)
                 // ((typeof module === "object" && !!module.exports) ||
                 //     // there is a global object and requirejs is loaded

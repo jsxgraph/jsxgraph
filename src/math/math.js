@@ -798,6 +798,9 @@ JXG.Math = {
      * @returns {Number}   gcd(a, b) if a and b are numbers, NaN else.
      */
     gcd: function (a, b) {
+        var tmp,
+            endless = true;
+
         a = Math.abs(a);
         b = Math.abs(b);
 
@@ -805,12 +808,12 @@ JXG.Math = {
             return NaN;
         }
         if (b > a) {
-            var temp = a;
+            tmp = a;
             a = b;
-            b = temp;
+            b = tmp;
         }
 
-        while (true) {
+        while (endless) {
             a %= b;
             if (a === 0) {
                 return b;

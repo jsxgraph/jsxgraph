@@ -141,7 +141,7 @@ JXG.extend(
          */
         isDocumentOrFragment: function (v) {
             return this.isObject(v) && (
-                v.nodeType === 9 || // Node.DOCUMENT_NODE  
+                v.nodeType === 9 || // Node.DOCUMENT_NODE
                 v.nodeType === 11   // Node.DOCUMENT_FRAGMENT_NODE
             );
         },
@@ -1052,7 +1052,7 @@ JXG.extend(
                     e2 = (toLower) ? e.toLowerCase(): e;
 
                     o = special[e];
-                    if (this.isObject(o) && o !== null && 
+                    if (this.isObject(o) && o !== null &&
                         // Do not recurse into a document object or a JSXGraph object
                         !this.isDocumentOrFragment(o) && !this.exists(o.board) &&
                         // Do not recurse if a string is provided as "new String(...)"

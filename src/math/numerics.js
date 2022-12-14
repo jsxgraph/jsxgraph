@@ -3732,9 +3732,9 @@ Mat.Numerics = {
     RamerDouglasPeucker: function (pts, eps) {
         var allPts = [],
             newPts = [],
-            i,
-            k,
-            len,
+            i, k, len,
+            endless = true,
+
             /**
              * findSplit() is a subroutine of {@link JXG.Math.Numerics.RamerDouglasPeucker}.
              * It searches for the point between index i and j which
@@ -3746,17 +3746,9 @@ Mat.Numerics = {
              * @private
              */
             findSplit = function (pts, i, j) {
-                var d,
-                    k,
-                    ci,
-                    cj,
-                    ck,
-                    x0,
-                    y0,
-                    x1,
-                    y1,
-                    den,
-                    lbda,
+                var d, k, ci, cj, ck,
+                    x0, y0, x1, y1,
+                    den, lbda,
                     huge = 10000,
                     dist = 0,
                     f = i;
@@ -3860,7 +3852,7 @@ Mat.Numerics = {
         len = pts.length;
 
         i = 0;
-        while (true) {
+        while (endless) {
             // Search for the next point without NaN coordinates
             while (i < len && isNaN(pts[i].scrCoords[1] + pts[i].scrCoords[2])) {
                 i += 1;

@@ -34,35 +34,23 @@
  */
 import JXG from "../jxg";
 import Type from "../utils/type";
-import Mat from "../math/math";
-import Geometry from "../math/geometry";
+// import Mat from "../math/math";
+// import Geometry from "../math/geometry";
 
 JXG.createAxes3D = function (board, parents, attributes) {
     var view = parents[0],
-        i,
-        j,
-        k,
-        i1,
-        i2,
-        attr,
-        pos,
-        directions = ["x", "y", "z"],
-        suffixAxis = "Axis",
-        dir,
-        dir1,
-        sides = ["Rear", "Front"],
-        rear = [0, 0, 0], // x, y, z
-        front = [0, 0, 0], // x, y, z
-        from,
-        to,
-        vec1,
-        vec2,
-        range1,
-        range2,
-        na,
-        na_parent,
-        ticks_attr,
-        axes = {};
+    directions = ["x", "y", "z"],
+    suffixAxis = "Axis",
+    sides = ["Rear", "Front"],
+    rear = [0, 0, 0], // x, y, z
+    front = [0, 0, 0], // x, y, z
+    i, j, k, i1, i2, attr, pos,
+    dir, dir1,
+    from, to, vec1, vec2,
+    range1, range2,
+    na, na_parent,
+    ticks_attr,
+    axes = {};
 
     if (Type.exists(view.bbox3D)) {
         for (i = 0; i < directions.length; i++) {

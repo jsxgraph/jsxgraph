@@ -596,7 +596,7 @@ JXG.extend(
                 y,
                 r = this.Radius(),
                 c = this.center.coords.usrCoords,
-                SQRTH = 7.07106781186547524401e-1; // sqrt(2)/2
+                SQRTH = 7.071067811865e-1; // sqrt(2)/2
 
             switch (Type.evaluate(this.visProp.label.position)) {
                 case "lft":

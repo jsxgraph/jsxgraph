@@ -1103,7 +1103,7 @@ JXG.extend(
                 // line style
                 if (style === "infinite") {
                     intersection = Geometry.meetLineBoard(lineStdForm, this.board);
-                    
+
                     if (te0 && te1) {
                         x[0] = intersection[0].scrCoords[1];
                         x[1] = intersection[1].scrCoords[1];

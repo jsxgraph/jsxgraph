@@ -148,8 +148,8 @@ JXG.Util.Unzip = function (barray) {
     function readBit() {
         var carry;
 
+        // Prevent problems on iOS7 with >>
         try {
-            // Prevent problems on iOS7 with >>
             bits++;
             carry = bb & 1;
             bb >>= 1;
@@ -159,11 +159,12 @@ JXG.Util.Unzip = function (barray) {
                 carry = bb & 1;
                 bb = (bb >> 1) | 0x80;
             }
-
-            return carry;
         } catch (e) {
+            console.log("Probably problems on iOS7 with >>");
             throw e;
         }
+
+        return carry;
     }
 
     function readBits(a) {
@@ -180,9 +181,9 @@ JXG.Util.Unzip = function (barray) {
                 res = bitReverse[res] >> (8 - a);
             }
         } catch (e) {
+            console.log("Probably problems on iOS7 with >>");
             throw e;
         }
-
         return res;
     }
 
@@ -208,7 +209,8 @@ JXG.Util.Unzip = function (barray) {
     }
 
     function isPat() {
-        while (true) {
+        var endless = true;
+        while (endless) {
             if (fpos[len] >= fmax) {
                 return -1;
             }
@@ -288,13 +290,13 @@ JXG.Util.Unzip = function (barray) {
 
     function decodeValue(currentTree) {
         var len,
-            i,
-            b,
+            i, b,
+            endless = true,
             xtreepos = 0,
             X = currentTree[xtreepos];
 
         /* decode one symbol of the data */
-        while (true) {
+        while (endless) {
             b = readBit();
 
             if (b) {
@@ -324,23 +326,10 @@ JXG.Util.Unzip = function (barray) {
     }
 
     function deflateLoop() {
-        var last,
-            c,
-            type,
-            i,
-            j,
-            l,
-            ll,
-            ll2,
-            len,
-            blockLen,
-            dist,
-            cSum,
-            n,
-            literalCodes,
-            distCodes,
-            lenCodes,
-            z;
+        var last, c, type, i, j, l, ll, ll2,
+            len, blockLen, dist, cSum, n, z,
+            literalCodes, distCodes, lenCodes,
+            endless = true;
 
         do {
             last = readBit();
@@ -365,7 +354,7 @@ JXG.Util.Unzip = function (barray) {
                 }
             } else if (type === 1) {
                 /* Fixed Huffman tables -- fixed decode routine */
-                while (true) {
+                while (endless) {
                     /*
                          256    0000000        0
                          :   :     :
@@ -532,7 +521,7 @@ JXG.Util.Unzip = function (barray) {
                     return 1;
                 }
 
-                while (true) {
+                while (endless) {
                     j = decodeValue(literalTree);
 
                     // In C64: if carry set
@@ -697,6 +686,7 @@ JXG.Util.Unzip = function (barray) {
                 return true;
             }
         } catch (e) {
+            console.log("Probably problems on iOS7 with >>");
             throw e;
         }
         return false;
@@ -712,12 +702,7 @@ JXG.Util.Unzip = function (barray) {
      * @private
      */
     function skipdir() {
-        var crc,
-            compSize,
-            size,
-            os,
-            i,
-            c,
+        var crc, compSize, size, os, i, c,
             tmp = [];
 
         if (gpflags & 8) {

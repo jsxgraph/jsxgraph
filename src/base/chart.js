@@ -42,14 +42,14 @@ import DataSource from "../parser/datasource";
 import Color from "../utils/color";
 import Type from "../utils/type";
 import Env from "../utils/env";
-import Curve from "./curve";
-import Point from "./point";
-import Text from "./text";
-import Polygon from "./polygon";
-import Sector from "../element/sector";
-import Transform from "./transformation";
-import Line from "./line";
-import Circle from "./circle";
+// import Curve from "./curve";
+// import Point from "./point";
+// import Text from "./text";
+// import Polygon from "./polygon";
+// import Sector from "../element/sector";
+// import Transform from "./transformation";
+// import Line from "./line";
+// import Circle from "./circle";
 
 /**
  *

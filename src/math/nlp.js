@@ -79,7 +79,7 @@
 /*jslint nomen: true, plusplus: true, continue: true*/
 
 import JXG from "../jxg";
-import Type from "../utils/type";
+// import Type from "../utils/type";
 
 /**
  * The JXG.Math.Nlp namespace holds numerical algorithms for non-linear optimization.
@@ -271,36 +271,14 @@ JXG.Math.Nlp = {
             sigbar = this.arr(1 + n),
             dx = this.arr(1 + n),
             w = this.arr(1 + n),
-            i,
-            j,
-            k,
-            l,
-            temp,
-            tempa,
-            nfvals,
-            jdrop,
-            ibrnch,
-            skipVertexIdent,
-            phimin,
-            nbest,
-            error,
-            pareta,
-            wsig,
-            weta,
-            cvmaxp,
-            cvmaxm,
-            dxsign,
-            resnew,
-            barmu,
-            phi,
-            vmold,
-            vmnew,
-            trured,
-            ratio,
-            edgmax,
-            cmin,
-            cmax,
-            denom;
+            i, j, k, l,
+            temp, tempa,
+            nfvals, jdrop, ibrnch, skipVertexIdent,
+            phimin, nbest, error, pareta, wsig, weta,
+            cvmaxp, cvmaxm, dxsign, resnew, barmu,
+            phi, vmold, vmnew, trured, ratio, edgmax,
+            cmin, cmax, denom,
+            endless = true;
 
         if (iprint >= 2) {
             console.log("The initial value of RHO is " + rho + " and PARMU is set to zero.");
@@ -435,21 +413,21 @@ JXG.Math.Nlp = {
                         //     Make an error return if SIGI is a poor approximation to the inverse of
                         //     the leading N by N submatrix of SIG.
                         error = 0.0;
-                        if (false) {
-                            for (i = 1; i <= n; ++i) {
-                                for (j = 1; j <= n; ++j) {
-                                    temp =
-                                        this.DOT_PRODUCT_ROW_COL(simi, i, sim, j, 1, n) -
-                                        (i === j ? 1.0 : 0.0);
-                                    // temp = this.DOT_PRODUCT(
-                                    //     this.PART(this.ROW(simi, i), 1, n),
-                                    //     this.PART(this.COL(sim, j), 1, n)
-                                    // ) - (i === j ? 1.0 : 0.0);
+                        // if (false) {
+                        //     for (i = 1; i <= n; ++i) {
+                        //         for (j = 1; j <= n; ++j) {
+                        //             temp =
+                        //                 this.DOT_PRODUCT_ROW_COL(simi, i, sim, j, 1, n) -
+                        //                 (i === j ? 1.0 : 0.0);
+                        //             // temp = this.DOT_PRODUCT(
+                        //             //     this.PART(this.ROW(simi, i), 1, n),
+                        //             //     this.PART(this.COL(sim, j), 1, n)
+                        //             // ) - (i === j ? 1.0 : 0.0);
 
-                                    error = Math.max(error, Math.abs(temp));
-                                }
-                            }
-                        }
+                        //             error = Math.max(error, Math.abs(temp));
+                        //         }
+                        //     }
+                        // }
                         if (error > 0.1) {
                             status = this.DivergingRoundingErrors;
                             break L_40;
@@ -644,7 +622,6 @@ JXG.Math.Nlp = {
                     }
 
                     //     Calculate the value of ell.
-
                     edgmax = delta * rho;
                     l = 0;
                     for (j = 1; j <= n; ++j) {
@@ -695,7 +672,8 @@ JXG.Math.Nlp = {
                             continue L_140;
                         }
                     }
-                } while (false);
+                    // If we end up here, we drop out.
+                } while (!endless);
 
                 if (!iflag) {
                     ibrnch = false;
@@ -747,8 +725,8 @@ JXG.Math.Nlp = {
                         iprint
                     );
                 }
-            } while (true);
-        } while (true);
+            } while (endless);
+        } while (endless);
 
         switch (status) {
             case this.Normal:
@@ -845,40 +823,15 @@ JXG.Math.Nlp = {
             iact = this.arr(2 + m),
             mcon = m,
             nact = 0,
-            icon,
-            resmax,
-            i,
-            k,
-            first,
-            optold,
-            icount,
-            step,
-            stpful,
-            optnew,
-            ratio,
-            isave,
-            vsave,
-            total,
-            kp,
-            kk,
-            sp,
-            alpha,
-            beta,
-            tot,
-            spabs,
-            acca,
-            accb,
-            zdotv,
-            zdvabs,
-            kw,
-            dd,
-            ss,
-            sd,
-            zdotw,
-            zdwabs,
-            kl,
-            sumabs,
-            tempa;
+            icon, resmax,
+            i, k, first, optold, icount,
+            step, stpful, optnew, ratio,
+            isave, vsave, total,
+            kp, kk, sp, alpha, beta, tot, spabs,
+            acca, accb, zdotv, zdvabs, kw,
+            dd, ss, sd,
+            zdotw, zdwabs, kl, sumabs, tempa,
+            endless = true;
 
         for (i = 1; i <= n; ++i) {
             z[i][i] = 1.0;
@@ -1328,7 +1281,7 @@ JXG.Math.Nlp = {
                 if (step === stpful) {
                     return true;
                 }
-            } while (true);
+            } while (endless);
 
             //     We employ any freedom that may be available to reduce the objective
             //     function before returning a DX whose length is less than RHO.
