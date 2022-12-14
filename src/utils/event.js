@@ -68,13 +68,10 @@ JXG.EventEmitter = {
         len1 = event.length;
         for (j = 0; j < len1; j++) {
             evt = this.eventHandlers[event[j]];
-
             if (!this.suspended[event[j]]) {
                 this.suspended[event[j]] = true;
-
                 if (evt) {
                     len2 = evt.length;
-
                     for (i = 0; i < len2; i++) {
                         h = evt[i];
                         h.handler.apply(h.context, args);

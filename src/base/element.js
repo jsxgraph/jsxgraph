@@ -2116,15 +2116,9 @@ JXG.extend(
          * @returns {JXG.GeometryElement} Reference to this element
          */
         handleSnapToGrid: function (force, fromParent) {
-            var x,
-                y,
-                rx,
-                ry,
-                rcoords,
-                boardBB,
-                res,
-                sX,
-                sY,
+            var x, y, rx, ry, rcoords,
+                mi, ma,
+                boardBB, res, sX, sY,
                 needsSnapToGrid = false,
                 attractToGrid = Type.evaluate(this.visProp.attracttogrid),
                 ev_au = Type.evaluate(this.visProp.attractorunit),
@@ -2149,6 +2143,7 @@ JXG.extend(
                     boardBB = this.board.getBoundingBox();
                     rx = Math.round(x / sX) * sX;
                     ry = Math.round(y / sY) * sY;
+
                     rcoords = new JXG.Coords(Const.COORDS_BY_USER, [rx, ry], this.board);
                     if (
                         !attractToGrid ||
@@ -2163,15 +2158,19 @@ JXG.extend(
                         // If not, adjust them to remain within the board.
                         // Otherwise a point may become invisible.
                         if (!fromParent) {
-                            if (x < boardBB[0]) {
+                            mi = Math.min(boardBB[0], boardBB[2]);
+                            ma = Math.max(boardBB[0], boardBB[2]);
+                            if (x < mi) {
                                 x += sX;
-                            } else if (x > boardBB[2]) {
+                            } else if (x > ma) {
                                 x -= sX;
                             }
 
-                            if (y < boardBB[3]) {
+                            mi = Math.min(boardBB[1], boardBB[3]);
+                            ma = Math.max(boardBB[1], boardBB[3]);
+                            if (y < mi) {
                                 y += sY;
-                            } else if (y > boardBB[1]) {
+                            } else if (y > ma) {
                                 y -= sY;
                             }
                         }
@@ -2328,6 +2327,15 @@ JXG.extend(
          * @param {Event} e The browser's event object.
          */
         __evt__touchdrag: function (e) {},
+
+        /**
+         * @event
+         * @description This event is fired whenever the user drags the element by pressing arrow keys 
+         * on the keyboard.
+         * @name JXG.GeometryElement#keydrag
+         * @param {Event} e The browser's event object.
+         */
+        __evt__keydrag: function (e) { },
 
         /**
          * @event

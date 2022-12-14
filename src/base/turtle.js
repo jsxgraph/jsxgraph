@@ -162,40 +162,43 @@ JXG.Turtle = function (board, parents, attributes) {
 
     this.init(x, y, dir);
 
-    this.methodMap = Type.deepCopy(this.methodMap, {
-        forward: "forward",
-        fd: "forward",
-        back: "back",
-        bk: "back",
-        right: "right",
-        rt: "right",
-        left: "left",
-        lt: "left",
-        penUp: "penUp",
-        pu: "penUp",
-        penDown: "penDown",
-        pd: "penDown",
-        clearScreen: "clearScreen",
-        cs: "clearScreen",
-        clean: "clean",
-        setPos: "setPos",
-        home: "home",
-        hideTurtle: "hideTurtle",
-        ht: "hideTurtle",
-        showTurtle: "showTurtle",
-        st: "showTurtle",
-        penSize: "setPenSize",
-        penColor: "setPenColor",
-        pushTurtle: "pushTurtle",
-        push: "pushTurtle",
-        popTurtle: "popTurtle",
-        pop: "popTurtle",
-        lookTo: "lookTo",
-        pos: "pos",
-        moveTo: "moveTo",
-        X: "X",
-        Y: "Y"
-    });
+        this.methodMap = Type.deepCopy(this.methodMap, {
+            forward: 'forward',
+            fd: 'forward',
+            back: 'back',
+            bk: 'back',
+            right: 'right',
+            rt: 'right',
+            left: 'left',
+            lt: 'left',
+            penUp: 'penUp',
+            pu: 'penUp',
+            penDown: 'penDown',
+            pd: 'penDown',
+            clearScreen: 'clearScreen',
+            cs: 'clearScreen',
+            clean: 'clean',
+            setPos: 'setPos',
+            home: 'home',
+            hideTurtle: 'hideTurtle',
+            ht: 'hideTurtle',
+            showTurtle: 'showTurtle',
+            st: 'showTurtle',
+            penSize: 'setPenSize',
+            penColor: 'setPenColor',
+            getPenColor: 'getPenColor',
+            getHighlightPenColor: 'getHighlightPenColor',
+            getPenSize: 'getPenSize',
+            pushTurtle: 'pushTurtle',
+            push: 'pushTurtle',
+            popTurtle: 'popTurtle',
+            pop: 'popTurtle',
+            lookTo: 'lookTo',
+            pos: 'pos',
+            moveTo: 'moveTo',
+            X: 'X',
+            Y: 'Y'
+        });
 
     return this;
 };
@@ -487,6 +490,48 @@ JXG.extend(
             this.objects.push(this.curve);
 
             return this;
+        },
+
+        /**
+         * Get attribute of the last turtle curve object.
+         * 
+         * @param {String} key 
+         * @returns attribute value
+         * @private
+         */
+        getPenAttribute: function(key) {
+            var pos, le = this.objects.length;
+            if (le === 4) {
+                // No new turtle objects have been created
+                pos = 0;
+            } else {
+                pos = le - 1;
+            }
+            return Type.evaluate(this.objects[pos].visProp[key]);
+        },
+
+        /**
+         * Get most recently set turtle size (in pixel).
+         * @returns Number Size of the last turtle segment in pixel.
+         */
+        getPenSize: function() {
+            return this.getPenAttribute('strokewidth');
+        },
+
+        /**
+         * Get most recently set turtle color.
+         * @returns String RGB color value of the last turtle segment.
+         */
+        getPenColor: function() {
+            return this.getPenAttribute('strokecolor');
+        },
+
+        /**
+         * Get most recently set turtle color.
+         * @returns String RGB highlight color value of the last turtle segment.
+         */
+         getHighlightPenColor: function() {
+            return this.getPenAttribute('highlightstrokecolor');
         },
 
         /**

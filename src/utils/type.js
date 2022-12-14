@@ -1052,7 +1052,11 @@ JXG.extend(
                     e2 = (toLower) ? e.toLowerCase(): e;
 
                     o = special[e];
-                    if (this.isObject(o) && o !== null && !this.isDocumentOrFragment(o) && !this.exists(o.board)) {
+                    if (this.isObject(o) && o !== null && 
+                        // Do not recurse into a document object or a JSXGraph object
+                        !this.isDocumentOrFragment(o) && !this.exists(o.board) &&
+                        // Do not recurse if a string is provided as "new String(...)"
+                        typeof o.valueOf() !== 'string') {
                         if (attr[e2] === undefined || attr[e2] === null || !this.isObject(attr[e2])) {
                             // The last test handles the case:
                             //   attr.draft = false;
