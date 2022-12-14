@@ -589,6 +589,17 @@ JXG.Board = function (
          */
         this.selectingBox = [[0, 0], [0, 0]];
 
+        /**
+         * Array to log user activity. 
+         * Entries are objects of the form "{type, id, start, end}" notifying
+         * the start time as well as the last time of a single event of type "type"
+         * on a JSXGraph element of id "id". 
+         * <p> "start" and "end" contain the amount of milliseconds elapsed between 1 January 1970 00:00:00 UTC
+         * and the time the event happened.
+         * <p>
+         * For the time being (i.e. v1.5.0) the only supported type is 'drag'.
+         * @type Array
+         */
         this.userLog = [];
 
         this.mathLib = Math;        // Math or JXG.Math.IntervalArithmetic
@@ -6780,6 +6791,15 @@ JXG.extend(
             this.updateCSSTransforms();
         },
 
+        /**
+         * Add user activity to the array "board.userLog".
+         * 
+         * @param {String} type Event type, e.g. "drag"
+         * @param {Object} obj JSXGraph element object
+         * 
+         * @see JXG.Board#userLog
+         * @return {JXG.Board} Reference to the board
+         */
         addLogEntry: function(type, obj) {
             var t,
                 id = obj.id,
@@ -6803,6 +6823,7 @@ JXG.extend(
                     });
                 }
             }
+            return this;
         },
 
         /**

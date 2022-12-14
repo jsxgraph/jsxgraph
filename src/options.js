@@ -908,6 +908,20 @@ JXG.Options = {
              */
             showInfobox: true,
 
+            /**
+             * If enabled, user activities are logged in array "board.userLog".
+             * 
+             * @name JXG.Board#showInfobox
+             * @type Object
+             * @default {enabled: false}
+             * 
+             * @example
+             *     var board = JXG.JSXGraph.initBoard('jxgbox', {
+             *         boundingbox: [-5,5,5,-5],
+             *         logging: {enabled: true}
+             *     });
+             * @see JXG.Board#userLog
+             */
             logging: {
                 enabled: false
             }
