@@ -917,7 +917,7 @@ define([
             showInfobox: true,
 
             logging: {
-                enabled: true
+                enabled: false
             }
 
             /**#@-*/
