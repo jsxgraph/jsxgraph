@@ -144,5 +144,6 @@ describe("Test text handling", function() {
             el =  board.create('text', [-2, -1, '<sqrt>val_x 1</sqrt>+1+&pi;=<value>1 + 1 + PI</value>'], {parse: true});
         expect(el.rendNode.innerHTML).toEqual('√val<sub>x</sub> 1+1+π=5.14');
     });
+
 });
 

@@ -124,46 +124,75 @@ define([
          * @type Node
          * @see http://www.w3.org/TR/SVG/filters.html#FilterElement
          */
-        this.filter = this.container.ownerDocument.createElementNS(this.svgNamespace, 'filter');
-        this.filter.setAttributeNS(null, 'id', this.container.id + '_' + 'f1');
-        /*
-        this.filter.setAttributeNS(null, 'x', '-100%');
-        this.filter.setAttributeNS(null, 'y', '-100%');
-        this.filter.setAttributeNS(null, 'width', '400%');
-        this.filter.setAttributeNS(null, 'height', '400%');
-        //this.filter.setAttributeNS(null, 'filterUnits', 'userSpaceOnUse');
-        */
-        this.filter.setAttributeNS(null, 'width', '300%');
-        this.filter.setAttributeNS(null, 'height', '300%');
-        this.filter.setAttributeNS(null, 'filterUnits', 'userSpaceOnUse');
 
-        this.feOffset = this.container.ownerDocument.createElementNS(this.svgNamespace, 'feOffset');
-        this.feOffset.setAttributeNS(null, 'in', 'SourceAlpha'); // b/w: SourceAlpha, Color: SourceGraphic
-        this.feOffset.setAttributeNS(null, 'result', 'offOut');
-        this.feOffset.setAttributeNS(null, 'dx', '5');
-        this.feOffset.setAttributeNS(null, 'dy', '5');
-        this.filter.appendChild(this.feOffset);
+        /**
+         * Create an SVG shadow filter. If the object's RGB color is [r,g,b], it's opacity is op, and
+         * the parameter color is given as [r', g', b'] with opacity op'
+         * the shadow will have RGB color [blend*r + r', blend*g + g', blend*b + b'] and the opacity will be equal to op * op'.
+         * Further, blur and offset can be adjusted.
+         * 
+         * The shadow color is [r*ble
+         * @param {String} id Node is of the filter.
+         * @param {Array|String} rgb RGB value for the blend color or the string 'none' for default values. Default 'black'.
+         * @param {Number} opacity Value between 0 and 1, default is 1.
+         * @param {Number} blend  Value between 0 and 1, default is 0.1.
+         * @param {Number} blur  Default: 3
+         * @param {Array} offset [dx, dy]. Default is [5,5].
+         * @returns DOM node to be added to this.defs.
+         * @private
+         */
+        this.createShadowFilter = function(id, rgb, opacity, blend, blur, offset) {
+            var filter = this.container.ownerDocument.createElementNS(this.svgNamespace, 'filter'),
+                feOffset, feColor, feGaussianBlur, feBlend,
+                mat;
 
-        // this.feColor = this.container.ownerDocument.createElementNS(this.svgNamespace, 'feColorMatrix');
-        // this.feColor.setAttributeNS(null, 'in', 'offOut');
-        // this.feColor.setAttributeNS(null, 'result', 'colorOut');
-        // this.feColor.setAttributeNS(null, 'type', 'matrix');
-        // this.feColor.setAttributeNS(null, 'values', '0.1 0 0 0 0  0 0.1 0 0 0  0 0 0.1 0 50  0 0 0 1 0');
-        // this.filter.appendChild(this.feColor);
+            filter.setAttributeNS(null, 'id', id);
+            filter.setAttributeNS(null, 'width', '300%');
+            filter.setAttributeNS(null, 'height', '300%');
+            filter.setAttributeNS(null, 'filterUnits', 'userSpaceOnUse');
 
-        this.feGaussianBlur = this.container.ownerDocument.createElementNS(this.svgNamespace, 'feGaussianBlur');
-        this.feGaussianBlur.setAttributeNS(null, 'in', 'offOut');
-        this.feGaussianBlur.setAttributeNS(null, 'result', 'blurOut');
-        this.feGaussianBlur.setAttributeNS(null, 'stdDeviation', '3');
-        this.filter.appendChild(this.feGaussianBlur);
+            feOffset = this.container.ownerDocument.createElementNS(this.svgNamespace, 'feOffset');
+            feOffset.setAttributeNS(null, 'in', 'SourceGraphic'); // b/w: SourceAlpha, Color: SourceGraphic
+            feOffset.setAttributeNS(null, 'result', 'offOut');
+            feOffset.setAttributeNS(null, 'dx', offset[0]);
+            feOffset.setAttributeNS(null, 'dy', offset[1]);
+            filter.appendChild(feOffset);
 
-        this.feBlend = this.container.ownerDocument.createElementNS(this.svgNamespace, 'feBlend');
-        this.feBlend.setAttributeNS(null, 'in', 'SourceGraphic');
-        this.feBlend.setAttributeNS(null, 'in2', 'blurOut');
-        this.feBlend.setAttributeNS(null, 'mode', 'normal');
-        this.filter.appendChild(this.feBlend);
+            feColor = this.container.ownerDocument.createElementNS(this.svgNamespace, 'feColorMatrix');
+            feColor.setAttributeNS(null, 'in', 'offOut');
+            feColor.setAttributeNS(null, 'result', 'colorOut');
+            feColor.setAttributeNS(null, 'type', 'matrix');
+            // See https://developer.mozilla.org/en-US/docs/Web/SVG/Element/feColorMatrix
+            if (rgb === 'none' || !Type.isArray(rgb) || rgb.length < 3) {
+                feColor.setAttributeNS(null, 'values', '0.1 0 0 0 0  0 0.1 0 0 0  0 0 0.1 0 0  0 0 0 ' + opacity + ' 0');
+            } else {
+                rgb[0] /= 255;
+                rgb[1] /= 255;
+                rgb[2] /= 255;
+                mat = blend + ' 0 0 0 ' + rgb[0] +
+                          '  0 ' + blend + ' 0 0 ' + rgb[1] +
+                          '  0 0 ' + blend + ' 0 ' + rgb[2] +
+                          '  0 0 0 ' + opacity + ' 0';
+                feColor.setAttributeNS(null, 'values', mat);
+            }
+            filter.appendChild(feColor);
 
-        this.defs.appendChild(this.filter);
+            feGaussianBlur = this.container.ownerDocument.createElementNS(this.svgNamespace, 'feGaussianBlur');
+            feGaussianBlur.setAttributeNS(null, 'in', 'colorOut');
+            feGaussianBlur.setAttributeNS(null, 'result', 'blurOut');
+            feGaussianBlur.setAttributeNS(null, 'stdDeviation', blur);
+            filter.appendChild(feGaussianBlur);
+
+            feBlend = this.container.ownerDocument.createElementNS(this.svgNamespace, 'feBlend');
+            feBlend.setAttributeNS(null, 'in', 'SourceGraphic');
+            feBlend.setAttributeNS(null, 'in2', 'blurOut');
+            feBlend.setAttributeNS(null, 'mode', 'normal');
+            filter.appendChild(feBlend);
+
+            return filter;
+        };
+        /* Default shadow filter */
+        this.defs.appendChild(this.createShadowFilter(this.container.id + '_' + 'f1', 'none', 1, 0.1, 3, [5, 5]));
 
         /**
          * JSXGraph uses a layer system to sort the elements on the board. This puts certain types of elements in front
@@ -1418,24 +1447,57 @@ define([
 
         // documented in JXG.AbstractRenderer
         setShadow: function (el) {
-            var ev_s = Type.evaluate(el.visProp.shadow);
-                // ev_c = Type.evaluate(el.visProp.shadowcolor),
-                // c;
+            var ev_s = Type.evaluate(el.visProp.shadow),
+                ev_s_json, c, b, bl, o, op, id, node,
+                use_board_filter = true,
+                show = false;
 
-            if (el.visPropOld.shadow === ev_s) {
+            ev_s_json = JSON.stringify(ev_s);
+            if (ev_s_json === el.visPropOld.shadow) {
                 return;
             }
 
-            // c = JXG.rgbParser(ev_c);
+            if (typeof ev_s === 'boolean') {
+                use_board_filter = true;
+                show = ev_s;
+                c = 'none';
+                b = 3;
+                bl = 0.1;
+                o = [5, 5];
+                op = 1;
+            } else {
+                if (Type.evaluate(ev_s.enabled)) {
+                    use_board_filter = false;
+                    show = true;
+                    c = JXG.rgbParser(Type.evaluate(ev_s.color));
+                    b = Type.evaluate(ev_s.blur);
+                    bl = Type.evaluate(ev_s.blend);
+                    o = Type.evaluate(ev_s.offset);
+                    op = Type.evaluate(ev_s.opacity);
+                } else {
+                    show = false;
+                }
+            }
 
             if (Type.exists(el.rendNode)) {
-                if (ev_s) {
-                    el.rendNode.setAttributeNS(null, 'filter', 'url(#' + this.container.id + '_' + 'f1)');
+                if (show) {
+                    if (use_board_filter) {
+                        el.rendNode.setAttributeNS(null, 'filter', 'url(#' + this.container.id + '_' + 'f1)');
+                    } else {
+                        node = this.container.ownerDocument.getElementById(id);
+                        if (node) {
+                            this.defs.removeChild(node);
+                        }
+                        id = el.rendNode.id + '_' + 'f1';
+                        this.defs.appendChild(this.createShadowFilter(id, c, op, bl, b, o));
+                        el.rendNode.setAttributeNS(null, 'filter', 'url(#' + id + ')');
+                    }
                 } else {
                     el.rendNode.removeAttributeNS(null, 'filter');
                 }
             }
-            el.visPropOld.shadow = ev_s;
+
+            el.visPropOld.shadow = ev_s_json;
         },
 
         /* **************************

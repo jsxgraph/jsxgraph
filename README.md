@@ -19,44 +19,21 @@ to optimize the performance.
 Lehrstuhl für Mathematik und ihre Didaktik
 University of Bayreuth, Germany
 
-Upcoming event: 3rd JSXGraph conference (online)
---------------
-
-Date: October 4th - 6th, 2022
-
-Conference homepage: <https://jsxgraph.org/conf2022/>
-
-The conference will bring together developers and teachers, instructors and designers who are interested or already experienced in using JSXGraph (https://jsxgraph.org) to enhance digital learning of STEM topics.
-
-The conference will be an entirely online conference. All participants are required to register (https://jsxgraph.org/conf2022/registration/), registration is free.
-
-We invite all participants to contribute a talk or workshop and
-
-- report about their concepts, experience, and workflow,
-- present their applications and best practices,
-- discuss pedagogical concepts involving JSXGraph.
-
-Deadline for submission of talks / presentations: 31. August 2022
-
-Details about the conference software will be announced at a later stage.
-
-The 3nd International JSXGraph conference 2022 will be organized by the center of Mobile Learning with Digital Technology (https://mobiles-lernen.uni-bayreuth.de/) at the University of Bayreuth, Germany.
-
-
 Website
 -------
 
-* Project web site: https://jsxgraph.org/
-* Project wiki with hundreds of examples: https://jsxgraph.org/wiki/
-* GitHub project site: https://github.com/jsxgraph/jsxgraph
-* Mailing List/Google Group: https://groups.google.com/group/jsxgraph
-* JSXGraph questions at https://stackoverflow.com/search?tab=newest&q=jsxgraph
-* jsFiddle template: https://jsfiddle.net/8kep9syd/
-* Moodle filter: https://github.com/jsxgraph/moodle-filter_jsxgraph
-* (outdated: SourceForge project site: https://sf.net/projects/jsxgraph)
-* CDNs: Embed JSXGraph via
+- Project web site: https://jsxgraph.org/
+- Project wiki with hundreds of examples: https://jsxgraph.org/wiki/
+- GitHub project site: https://github.com/jsxgraph/jsxgraph
+- Mailing List/Google Group: https://groups.google.com/group/jsxgraph
+- JSXGraph questions at https://stackoverflow.com/search?tab=newest&q=jsxgraph
+- jsFiddle template: https://jsfiddle.net/8kep9syd/
+- YouTube channel: https://www.youtube.com/channel/UCANBFoVoOyW2eNyTvx-VZdQ
+- Moodle filter: https://github.com/jsxgraph/moodle-filter_jsxgraph
+- (outdated: SourceForge project site: https://sf.net/projects/jsxgraph)
+- CDNs: Embed JSXGraph via
 
-```
+```html
 <script type="text/javascript" charset="UTF-8"
  src="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraphcore.js"></script>
 <link rel="stylesheet"
@@ -65,11 +42,11 @@ Website
 
 or
 
-```
+```html
 <script type="text/javascript" charset="UTF-8"
- src="//cdnjs.cloudflare.com/ajax/libs/jsxgraph/1.2.3/jsxgraphcore.js"></script>
+ src="//cdnjs.cloudflare.com/ajax/libs/jsxgraph/1.4.6/jsxgraphcore.js"></script>
 <link rel="stylesheet"
- type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/jsxgraph/1.2.3/jsxgraph.css" />
+ type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/jsxgraph/1.4.6/jsxgraph.css" />
 ```
 
 Please report bugs to our issue tracking system found at
@@ -85,6 +62,34 @@ Include
 * if required, one or more file readers 
 
 from a CDN or a local version in your HTML file. 
+
+**HTML template:**
+
+```html
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>JSXGraph template</title>
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+    <link href="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraph.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraphcore.js" charset="UTF-8"></script>
+
+    <!-- The next line is optional: MathJax -->
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" id="MathJax-script" async></script>
+  </head>
+  <body>
+
+  <div id="jxgbox" class="jxgbox" style="max-width:800px; aspect-ratio: 1/1;"></div>
+
+  <script>
+    var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-8, 8, 8, -8]});
+    var p = board.create('point', [1, 3], {name: 'point'});
+  </script>
+
+  </body>
+</html>
+```
 
 For developing content, it is recommended to include `jsxgraphsrc.js` (`jsxgraphcore.js` is the minified version of `jsxgraphsrc.js`).
 For further usage instructions please consult our [wiki](https://jsxgraph.org/wiki/)
@@ -107,26 +112,17 @@ all tools and libraries required to build ```jsxgraphcore.js```.
 License
 -------
 
-    Copyright 2008-2022
-        Matthias Ehmann,
-        Michael Gerhaeuser,
-        Carsten Miller,
-        Emmanuel Ostenne,
-        Bianca Valentin,
-        Heiko Vogel,
-        Alfred Wassermann,
-        Peter Wilfahrt
-
-
 JSXGraph is free software dual licensed under the GNU LGPL or MIT License.
 
 You can redistribute it and/or modify it under the terms of the
 
-  * GNU Lesser General Public License as published by
+- GNU Lesser General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version
-  OR
-  * MIT License: https://github.com/jsxgraph/jsxgraph/blob/master/LICENSE.MIT
+  
+or
+
+- MIT License: https://github.com/jsxgraph/jsxgraph/blob/master/LICENSE.MIT
 
 JSXGraph is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of

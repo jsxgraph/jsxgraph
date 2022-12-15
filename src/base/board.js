@@ -151,7 +151,7 @@ define([
         // this.document = attributes.document || document;
         if (Type.exists(attributes.document) && attributes.document !== false) {
             this.document = attributes.document;
-        } else if (document !== undefined && Type.isObject(document)) {
+        } else if (Env.isBrowser) {
             this.document = document;
         }
 
@@ -464,7 +464,7 @@ define([
          * If reducedUpdate is set to true then only the dragged element and few (e.g. 2) following
          * elements are updated during mouse move. On mouse up the whole construction is
          * updated. This enables us to be fast even on very slow devices.
-         * @type Boolean
+         * @type BooleanupdateQuality: 2
          * @default false
          */
         this.reducedUpdate = false;
@@ -594,6 +594,8 @@ define([
          * @default [ [0,0], [0,0] ]
          */
         this.selectingBox = [[0, 0], [0, 0]];
+
+        this.userLog = [];
 
         this.mathLib = Math;        // Math or JXG.Math.IntervalArithmetic
         this.mathLibJXG = JXG.Math; // JXG.Math or JXG.Math.IntervalArithmetic
@@ -1109,6 +1111,8 @@ define([
                 dragScrCoords = drag.coords.scrCoords.slice();
             }
 
+            this.addLogEntry('drag', drag);
+
             /*
              * Save the position.
              */
@@ -1601,7 +1605,7 @@ define([
 
                 if (this.containerObj !== null) {
                     // This is needed for capturing touch events.
-                    // It is also in jsxgraph.css, but one never knows...
+                    // It is in jsxgraph.css, for ms-touch-action...
                     this.containerObj.style.touchAction = 'none';
                 }
 
@@ -2119,7 +2123,7 @@ define([
             var i, j, k, pos, elements, sel,
                 target_obj,
                 type = 'mouse', // Used in case of no browser
-                found, target;
+                found, target, ta;
 
             // Fix for Firefox browser: When using a second finger, the
             // touch event for the first finger is sent again.
@@ -2282,8 +2286,20 @@ define([
                 }
             }
 
+            // Allow browser scrolling
+            // For this: pan by one finger has to be disabled
+            ta = 'none';             // JSXGraph catches all user touch events
+            if (this.mode === this.BOARD_MODE_NONE &&
+                Type.evaluate(this.attr.browserpan) &&
+                !(Type.evaluate(this.attr.pan.enabled) && !Type.evaluate(this.attr.pan.needtwofingers))
+               ) {
+                ta = 'pan-x pan-y';  // JSXGraph allows browser scrolling
+            }
+            this.containerObj.style.touchAction = ta;
+
             this.triggerEventHandlers(['touchstart', 'down', 'pointerdown', 'MSPointerDown'], [evt]);
-            return false;
+
+            return true;
         },
 
         // /**
@@ -2392,7 +2408,7 @@ define([
             //if (this.mode !== this.BOARD_MODE_DRAG) {
                 //this.displayInfobox(false);
             //}
-            this.triggerEventHandlers(['touchmove', 'move', 'pointermove', 'MSPointerMove'], [evt, this.mode]);
+            this.triggerEventHandlers(['pointermove', 'MSPointerMove', 'move'], [evt, this.mode]);
             this.updateQuality = this.BOARD_QUALITY_HIGH;
 
             return this.mode === this.BOARD_MODE_NONE;
@@ -2477,6 +2493,7 @@ define([
 
             // After one finger leaves the screen the gesture is stopped.
             this._pointerClearTouches();
+
             return true;
         },
 
@@ -3263,9 +3280,9 @@ define([
                         dx = Math.max(sX, dx);
                         dy = Math.max(sY, dy);
                     }
-
                 }
 
+                // Arrow keys
                 if (evt.keyCode === 38) {           // up
                     dir = [0, dy];
                 } else if (evt.keyCode === 40) {    // down
@@ -3287,6 +3304,7 @@ define([
                         !Type.evaluate(el.visProp.fixed)
                     ) {
 
+                    this.mode = this.BOARD_MODE_DRAG;
                     if (Type.exists(el.coords)) {
                         dir[0] += actPos[0];
                         dir[1] += actPos[1];
@@ -3297,7 +3315,9 @@ define([
                     if (Type.exists(el.coords)) {
                         this.updateInfobox(el);
                     }
-                    this.triggerEventHandlers(['hit'], [evt, el]);
+                    this.triggerEventHandlers(['keymove', 'move'], [evt, this.mode]);
+                    el.triggerEventHandlers(['keydrag', 'drag'], [evt]);
+                    this.mode = this.BOARD_MODE_NONE;
                 }
             }
 
@@ -3332,11 +3352,11 @@ define([
             el = this.select(id);
             if (Type.exists(el.highlight)) {
                 el.highlight(true);
+                el.triggerEventHandlers(['hit'], [evt]);
             }
             if (Type.exists(el.coords)) {
                 this.updateInfobox(el);
             }
-            this.triggerEventHandlers(['hit'], [evt, el]);
         },
 
         /**
@@ -3378,7 +3398,8 @@ define([
          */
         updateContainerDims: function() {
             var w, h,
-                bb, css;
+                bb, css,
+                width_adjustment, height_adjustment;
 
             // Get size of the board's container div
             bb = this.containerObj.getBoundingClientRect();
@@ -3388,8 +3409,14 @@ define([
             // Subtract the border size
             if (window && window.getComputedStyle) {
                 css = window.getComputedStyle(this.containerObj, null);
-                w -= parseFloat(css.getPropertyValue('border-left-width')) + parseFloat(css.getPropertyValue('border-right-width'));
-                h -= parseFloat(css.getPropertyValue('border-top-width'))  + parseFloat(css.getPropertyValue('border-bottom-width'));
+                width_adjustment = parseFloat(css.getPropertyValue('border-left-width')) + parseFloat(css.getPropertyValue('border-right-width'));
+                if(!isNaN(width_adjustment)) {
+                    w -= width_adjustment;
+                }
+                height_adjustment = parseFloat(css.getPropertyValue('border-top-width'))  + parseFloat(css.getPropertyValue('border-bottom-width'));
+                if(!isNaN(height_adjustment)) {
+                    h -= height_adjustment;
+                }
             }
 
             // If div is invisible - do nothing
@@ -4452,18 +4479,23 @@ define([
          * @param {Number} canvasWidth New width of the container.
          * @param {Number} canvasHeight New height of the container.
          * @param {Boolean} [dontset=false] If true do not set the CSS width and height of the DOM element.
-         * @param {Boolean} [dontSetBoundingBox=false] If true do not call setBoundingBox().
+         * @param {Boolean} [dontSetBoundingBox=false] If true do not call setBoundingBox(), but keep view centered around original visible center.
          * @returns {JXG.Board} Reference to the board
          */
         resizeContainer: function (canvasWidth, canvasHeight, dontset, dontSetBoundingBox) {
-            var box;
+            var box,
+                oldWidth, oldHeight,
+                oX, oY;
                 // w, h, cx, cy;
                 // box_act,
                 // shift_x = 0,
                 // shift_y = 0;
 
+            oldWidth = this.canvasWidth;
+            oldHeight = this.canvasHeight;
+
             if (!dontSetBoundingBox) {
-                // box_act = this.getBoundingBox();    // This is the actual bounding box.
+                // box_act = this.getBoundingBox();
                 box = this.getBoundingBox();    // This is the actual bounding box.
             }
 
@@ -4497,6 +4529,14 @@ define([
 
             if (!dontSetBoundingBox) {
                 this.setBoundingBox(box, this.keepaspectratio, 'keep');
+            } else {
+                oX = (this.canvasWidth - oldWidth) / 2;
+                oY = (this.canvasHeight - oldHeight) / 2;
+
+                this.moveOrigin(
+                    this.origin.scrCoords[1] + oX,
+                    this.origin.scrCoords[2] + oY
+                );
             }
 
             return this;
@@ -4631,6 +4671,10 @@ define([
         updateRenderer: function () {
             var el,
                 len = this.objectsList.length;
+
+            if (!this.renderer) {
+                return;
+            }
 
             /*
             objs = this.objectsList.slice(0);
@@ -4993,6 +5037,8 @@ define([
             var h, w, ux, uy,
                 offX = 0,
                 offY = 0,
+                zoom_ratio = 1,
+                ratio, dx, dy, prev_w, prev_h,
                 dim = Env.getDimensions(this.container, this.document);
 
             if (!Type.isArray(bbox)) {
@@ -5012,23 +5058,42 @@ define([
 
             ux = this.unitX;
             uy = this.unitY;
-
-            this.canvasWidth = parseInt(dim.width, 10);
-            this.canvasHeight = parseInt(dim.height, 10);
+            this.canvasWidth = parseFloat(dim.width);   // parseInt(dim.width, 10);
+            this.canvasHeight = parseFloat(dim.height); // parseInt(dim.height, 10);
             w = this.canvasWidth;
             h = this.canvasHeight;
             if (keepaspectratio) {
-                this.unitX = w / (bbox[2] - bbox[0]);
-                this.unitY = h / (bbox[1] - bbox[3]);
-                if (Math.abs(this.unitX) < Math.abs(this.unitY)) {
-                    this.unitY = Math.abs(this.unitX) * this.unitY / Math.abs(this.unitY);
-                    // Add the additional units in equal portions above and below
-                    offY = (h / this.unitY - (bbox[1] - bbox[3])) * 0.5;
-                } else {
-                    this.unitX = Math.abs(this.unitY) * this.unitX / Math.abs(this.unitX);
-                    // Add the additional units in equal portions left and right
-                    offX = (w / this.unitX - (bbox[2] - bbox[0])) * 0.5;
+                ratio = ux / uy;            // Keep this ratio if aspectratio==true
+                if (setZoom === 'keep') {
+                    zoom_ratio = this.zoomX / this.zoomY;
                 }
+                dx = bbox[2] - bbox[0];
+                dy = bbox[1] - bbox[3];
+                prev_w = ux * dx;
+                prev_h = uy * dy;
+                if (w >= h) {
+                    if (prev_w >= prev_h) {
+                        this.unitY = h / dy;
+                        this.unitX = this.unitY * ratio;
+                    } else {
+                        // Switch dominating interval
+                        this.unitY = h / Math.abs(dx) * Mat.sign(dy) / zoom_ratio;
+                        this.unitX = this.unitY * ratio;
+                    }
+                } else {
+                    if (prev_h > prev_w) {
+                        this.unitX = w / dx;
+                        this.unitY = this.unitX / ratio;
+                    } else {
+                        // Switch dominating interval
+                        this.unitX = w / Math.abs(dy) * Mat.sign(dx) * zoom_ratio;
+                        this.unitY = this.unitX / ratio;
+                    }
+                }
+                // Add the additional units in equal portions left and right
+                offX = (w / this.unitX - dx) * 0.5;
+                // Add the additional units in equal portions above and below
+                offY = (h / this.unitY - dy) * 0.5;
                 this.keepaspectratio = true;
             } else {
                 this.unitX = w / (bbox[2] - bbox[0]);
@@ -5410,44 +5475,38 @@ define([
          */
         updateCSSTransforms: function () {
             var obj = this.containerObj,
-                o = obj;
-                // o2 = obj;
+                o = obj,
+                o2 = obj;
 
             this.cssTransMat = Env.getCSSTransformMatrix(o);
 
             // Newer variant of walking up the tree.
             // We walk up all parent nodes and collect possible CSS transforms.
             // Works also for ShadowDOM
-            o = o.parentNode === o.getRootNode() ? o.parentNode.host : o.parentNode;
-            while (o) {
-                this.cssTransMat = Mat.matMatMult(Env.getCSSTransformMatrix(o), this.cssTransMat);
+            if (Type.exists(o.getRootNode)) {
                 o = o.parentNode === o.getRootNode() ? o.parentNode.host : o.parentNode;
+                while (o) {
+                    this.cssTransMat = Mat.matMatMult(Env.getCSSTransformMatrix(o), this.cssTransMat);
+                    o = o.parentNode === o.getRootNode() ? o.parentNode.host : o.parentNode;
+                }
+                this.cssTransMat = Mat.inverse(this.cssTransMat);
+            } else {
+                /*
+                 * This is necessary for IE11
+                 */
+                o = o.offsetParent;
+                while (o) {
+                    this.cssTransMat = Mat.matMatMult(Env.getCSSTransformMatrix(o), this.cssTransMat);
+
+                    o2 = o2.parentNode;
+                    while (o2 !== o) {
+                        this.cssTransMat = Mat.matMatMult(Env.getCSSTransformMatrix(o), this.cssTransMat);
+                        o2 = o2.parentNode;
+                    }
+                    o = o.offsetParent;
+                }
+                this.cssTransMat = Mat.inverse(this.cssTransMat);
             }
-            this.cssTransMat = Mat.inverse(this.cssTransMat);
-
-            /*
-             * In Mozilla and Webkit: offsetParent seems to jump at least to the next iframe,
-             * if not to the body. In IE and if we are in an position:absolute environment
-             * offsetParent walks up the DOM hierarchy.
-             * In order to walk up the DOM hierarchy also in Mozilla and Webkit
-             * we need the parentNode steps.
-             *
-             * Seems to be outdated
-             */
-            // o = o.offsetParent;
-            // while (o) {
-            //     this.cssTransMat = Mat.matMatMult(Env.getCSSTransformMatrix(o), this.cssTransMat);
-
-            //     o2 = o2.parentNode;
-            //     while (o2 !== o) {
-            //         this.cssTransMat = Mat.matMatMult(Env.getCSSTransformMatrix(o), this.cssTransMat);
-            //         o2 = o2.parentNode;
-            //     }
-
-            //     o = o.offsetParent;
-            // }
-            // this.cssTransMat = Mat.inverse(this.cssTransMat);
-
             return this;
         },
 
@@ -5756,7 +5815,7 @@ define([
 
         /**
          * @event
-         * @description This event is fired whenever the user is moving the mouse over the board  with a
+         * @description This event is fired whenever the user is moving the mouse over the board with a
          * device sending pointer events.
          * @name JXG.Board#pointermove
          * @param {Event} e The browser's event object.
@@ -5774,6 +5833,17 @@ define([
          * @see JXG.Board#mode
          */
         __evt__touchmove: function (e, mode) { },
+
+        /**
+         * @event
+         * @description This event is fired whenever the user is moving an element over the board by
+         * pressing arrow keys on a keyboard.
+         * @name JXG.Board#keymove
+         * @param {Event} e The browser's event object.
+         * @param {Number} mode The mode the board currently is in
+         * @see JXG.Board#mode
+         */
+        __evt__keymove: function (e, mode) { },
 
         /**
          * @event
@@ -6113,8 +6183,7 @@ define([
                 // Do the shifting and scaling via CSS pseudo rules
                 // We do this after fullscreen mode has been established to get the correct size
                 // of the JSXGraph div.
-                // Env.scaleJSXGraphDiv(fullscreenElement.id, inner_id, res.scale, res.vshift, res.ratio, doc);
-                Env.scaleJSXGraphDiv(fullscreenElement.id, inner_id, doc);
+                Env.scaleJSXGraphDiv(fullscreenElement.id, inner_id, doc, Type.evaluate(this.attr.fullscreen.scale));
 
                 // Clear this.doc.fullscreenElement, because Safari doesn't to it and
                 // when leaving full screen mode it is still set.
@@ -6136,6 +6205,31 @@ define([
             }
 
             this.updateCSSTransforms();
+        },
+
+        addLogEntry: function(type, obj) {
+            var t,
+                id = obj.id,
+                last = this.userLog.length - 1;
+            if (Type.evaluate(this.attr.logging.enabled)) {
+                t = (new Date()).getTime();
+                if (last >= 0 &&
+                    this.userLog[last].type === type &&
+                    this.userLog[last].id === id &&
+                    // Distinguish consecutive drag events of
+                    // the same element
+                    t - this.userLog[last].end < 500) {
+
+                    this.userLog[last].end = t;
+                } else {
+                    this.userLog.push({
+                        type: type,
+                        id: id,
+                        start: t,
+                        end: t
+                    });
+                }
+            }
         },
 
         /**

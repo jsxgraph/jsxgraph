@@ -682,7 +682,7 @@ define([
         updateRendererGeneric: function (rendererMethod) {
             //var wasReal;
 
-            if (!this.needsUpdate) {
+            if (!this.needsUpdate || !this.board.renderer) {
                 return this;
             }
 
@@ -1300,8 +1300,8 @@ define([
                     newfuncs[i] = v;
                 } else if (Type.isNumber(v)) {
                     newfuncs[i] = makeConstFunction(v);
-                // Slider
-            } else if (Type.isObject(v) && Type.isFunction(v.Value)) {
+                } else if (Type.isObject(v) && Type.isFunction(v.Value)) {
+                    // Slider
                     newfuncs[i] = makeSliderFunction(v);
                 }
 

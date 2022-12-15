@@ -364,6 +364,7 @@ var JXG = {},
         'element/foreignobject': checkJXG,
 
         'math/bst': makeCheck('Math.BST'),
+        'math/heap': makeCheck('Math.Heap'),
         'math/qdt': makeCheck('Math.Quadtree'),
         'math/complex': makeCheck('Complex'),
         'math/geometry': makeCheck('Math.Geometry'),

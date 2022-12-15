@@ -4,6 +4,14 @@
 New features
 -----------
 
+- New attribute `majorTickEndings`
+
+1.4.6
+====
+
+New features
+-----------
+
 - New feature: ids for navigation buttons
 - New ticks attribute `ticksPerLabel`: allows minor ticks to be labelled as well
 - Attribute `hasInnerPoints` for curves

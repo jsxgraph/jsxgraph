@@ -228,6 +228,8 @@ define([
                             fontSize: 12,
                             offset: [0, -3]
                         },
+                        tickEndings: [0, 1],
+                        majorTickEndings: [1, 1],
                         drawZero: false,
                         visible: 'inherit'
                     }
@@ -243,6 +245,7 @@ define([
                             offset: [-6, 0]
                         },
                         tickEndings: [1, 0],
+                        majorTickEndings: [1, 1],
                         drawZero: false,
                         visible: 'inherit'
                     }
@@ -330,9 +333,11 @@ define([
              * controls if the icon is shown.
              * The following attribute(s) can be set:
              * <ul>
-             *  <li>symbol (String): Unicode symbol which is shown in the navigation bar.  Default: svg code for '\u26f6', other
+             *  <li> symbol (String): Unicode symbol which is shown in the navigation bar.  Default: svg code for '\u26f6', other
              * possibilities are the unicode symbols '\u26f6' and '\u25a1'. However, '\u26f6' is not supported by MacOS and iOS.
-             *  <li>id (String): Id of the HTML element which is brought to full screen or null if the JSXgraph div is taken.
+             *  <li> scale (number between 0 and 1): Relative size of the larger side of the JSXGraph board in the fullscreen window. 1.0 gives full width or height.
+             * Default value is 0.85.
+             *  <li> id (String): Id of the HTML element which is brought to full screen or null if the JSXgraph div is taken.
              * It may be an outer div element, e.g. if the old aspect ratio trick is used. Default: null, i.e. use the JSXGraph div.
              * </ul>
              *
@@ -369,8 +374,9 @@ define([
              * @type Object
              */
             fullscreen: {
-                symbol: '<svg height="1em" width="1em" version="1.1" viewBox="10 10 18 18"><path fill="#666" d="m 10,16 2,0 0,-4 4,0 0,-2 L 10,10 l 0,6 0,0 z"></path><path fill="#666" d="m 20,10 0,2 4,0 0,4 2,0 L 26,10 l -6,0 0,0 z"></path><path fill="#666" d="m 24,24 -4,0 0,2 L 26,26 l 0,-6 -2,0 0,4 0,0 z"></path><path fill="#666" d="M 12,20 10,20 10,26 l 6,0 0,-2 -4,0 0,-4 0,0 z"></path></svg>', 
+                symbol: '<svg height="1em" width="1em" version="1.1" viewBox="10 10 18 18"><path fill="#666" d="m 10,16 2,0 0,-4 4,0 0,-2 L 10,10 l 0,6 0,0 z"></path><path fill="#666" d="m 20,10 0,2 4,0 0,4 2,0 L 26,10 l -6,0 0,0 z"></path><path fill="#666" d="m 24,24 -4,0 0,2 L 26,26 l 0,-6 -2,0 0,4 0,0 z"></path><path fill="#666" d="M 12,20 10,20 10,26 l 6,0 0,-2 -4,0 0,-4 0,0 z"></path></svg>',
                     // '\u25a1', // '\u26f6' (not supported by MacOS),
+                scale: 0.85,
                 id: null
             },
 
@@ -385,13 +391,16 @@ define([
             showClearTraces: false,
 
             /**
-             * If set to true the bounding box might be changed such that
-             * the ratio of width and height of the hosting HTML div is equal
-             * to the ratio of width and height of the bounding box.
-             *
+             * If set to true, the ratio between horizontal and vertical unit sizes
+             * stays constant - independent of size changes of the hosting HTML div element.
+             * <p>
+             * If the aspect ration of the hosting div changes, JSXGraphs will change
+             * the user supplied bounding box accordingly.
              * This is necessary if circles should look like circles and not
              * like ellipses. It is recommended to set keepAspectRatio = true
-             * for geometric applets. For function plotting keepAspectRatio = false
+             * for geometric applets.
+             * <p>
+             * For function plotting keepAspectRatio = false
              * might be the better choice.
              *
              * @name JXG.Board#keepAspectRatio
@@ -599,13 +608,76 @@ define([
              * </pre>
              *
              * @name JXG.Board#pan
+             * @see JXG.Board#browserPan
+             *
              * @type Object
              */
             pan: {
+                enabled: true,
                 needShift: true,
-                needTwoFingers: false,
-                enabled: true
+                needTwoFingers: false
             },
+
+            /**
+             * Enable browser scrolling on touch interfaces if the user double taps into an empty region
+             * of the board.
+             *
+             * <ul>
+             * <li> Implemented for pointer touch devices - not with mouse, pen or old iOS touch.
+             * <li> It only works if browserPan:true
+             * <li> One finger action by the settings "pan.enabled:true" and "pan.needTwoFingers:false" has priority
+             * </ul>
+             *
+             * @name JXG.Board#browserPan
+             * @see JXG.Board#pan
+             * @type Boolean
+             * @default false
+             *
+             * @example
+             * const board = JXG.JSXGraph.initBoard('jxgbox', {
+             *     boundingbox: [-5, 5, 5, -5], axis: true,
+             *     pan: {
+             *         enabled: true,
+             *         needTwoFingers: true,
+             *     },
+             *     browserPan: true,
+             *     zoom: {
+             *         enabled: false
+             *     }
+             * });
+             *
+             * var p1 = board.create('point', [1, -1]);
+             * var p2 = board.create('point', [2.5, -2]);
+             * var li1 = board.create('line', [p1, p2]);
+             *
+             * </pre><div id="JXGcd50c814-be81-4280-9458-d73e50cece8d" class="jxgbox" style="width: 300px; height: 300px;"></div>
+             * <script type="text/javascript">
+             *     (function() {
+             *         var board = JXG.JSXGraph.initBoard('JXGcd50c814-be81-4280-9458-d73e50cece8d',
+             *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+             *     const board = JXG.JSXGraph.initBoard('jxgbox', {
+             *         boundingbox: [-5, 5, 5, -5], axis: true,
+             *         pan: {
+             *             enabled: true,
+             *             needTwoFingers: true,
+             *         },
+             *         browserPan: true,
+             *         zoom: {
+             *             enabled: false
+             *         }
+             *     });
+             *
+             *     var p1 = board.create('point', [1, -1]);
+             *     var p2 = board.create('point', [2.5, -2]);
+             *     var li1 = board.create('line', [p1, p2]);
+             *
+             *     })();
+             *
+             * </script><pre>
+             *
+             *
+             */
+            browserPan: false,
 
             /**
              * Control the possibilities for dragging objects.
@@ -842,7 +914,11 @@ define([
              * @type Boolean
              * @default true
              */
-            showInfobox: true
+            showInfobox: true,
+
+            logging: {
+                enabled: false
+            }
 
             /**#@-*/
         },
@@ -1146,7 +1222,7 @@ define([
             /**
              * Angle (in radians) of the gradiant in case the gradient is of type 'linear'.
              * If the angle is 0, the first color is on the left and the second color is on the right.
-             * If the angle is pi/4 the first color is on top and the second color at the
+             * If the angle is &pi;/2 the first color is on top and the second color at the
              * bottom.
              * @type Number
              * @name JXG.GeometryElement#gradientAngle
@@ -1349,14 +1425,95 @@ define([
             dash: 0,
 
             /**
-             * If true the element will get a shadow.
-             * @type Boolean
+             * If enabled:true the element will get a shadow.
+             *
+             * Customize the shadow of a (stroke) object. If the object's RGB color is [r,g,b], its opacity is op, and
+             * the parameters "color" is given as [r', g', b'] and "opacity" as op' the shadow will have
+             * RGB color [blend*r + r', blend*g + g', blend*b + b'] and its opacity will be equal to op * op'.
+             * Further, blur and offset can be adjusted.
+             *
+             * Only available with SVG, not with canvas.
+             *
+             * @type Object
              * @name JXG.GeometryElement#shadow
-             * @default false
+             * @default shadow: {
+             *   enabled: false,
+             *   color: [0, 0, 0],
+             *   opacity: 1,
+             *   blur: 3,
+             *   blend: 0.1,
+             *   offset: [5, 5]
+             * }
+             *
+             * @example
+             * board.options.line.strokeWidth = 2
+             * // No shadow
+             * var li1 = board.create('line', [[-2, 5], [2, 6]], {strokeColor: 'red', shadow: false});
+             *
+             * // Default shadow
+             * var li2 = board.create('line', [[-2, 3], [2, 4]], {strokeColor: 'red', shadow: true});
+             *
+             * // No shadow
+             * var li3 = board.create('line', [[-2, 1], [2, 2]], {strokeColor: 'blue', shadow: {enabled: false}});
+             *
+             * // Shadow uses same color as line
+             * var li4 = board.create('line', [[-2, -1], [2, 0]], {strokeColor: 'blue',
+             *             shadow: {enabled: true, color: '#000000', blend: 1}
+             *         });
+             *
+             * // Shadow color as a mixture between black and the line color, additionally set opacity
+             * var li5 = board.create('line', [[-2, -3], [2, -2]], {strokeColor: 'blue',
+             *             shadow: {enabled: true, color: '#000000', blend: 0.5, opacity: 0.5}
+             *         });
+             *
+             * // Use different value for blur and offset [dx, dy]
+             * var li6 = board.create('line', [[-2, -5], [2, -4]], {strokeColor: 'blue',
+             *             shadow: {enabled: true, offset:[0, 25], blur: 6}
+             *         });
+             *
+             * </pre><div id="JXG1185a9fa-0fa5-425f-8c15-55b56e1be958" class="jxgbox" style="width: 300px; height: 300px;"></div>
+             * <script type="text/javascript">
+             *     (function() {
+             *         var board = JXG.JSXGraph.initBoard('JXG1185a9fa-0fa5-425f-8c15-55b56e1be958',
+             *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+             *     board.options.line.strokeWidth = 2
+             *     // No shadow
+             *     var li1 = board.create('line', [[-2, 5], [2, 6]], {strokeColor: 'red', shadow: false});
+             *
+             *     // Default shadow
+             *     var li2 = board.create('line', [[-2, 3], [2, 4]], {strokeColor: 'red', shadow: true});
+             *
+             *     // No shadow
+             *     var li3 = board.create('line', [[-2, 1], [2, 2]], {strokeColor: 'blue', shadow: {enabled: false}});
+             *
+             *     // Shadow uses same color as line
+             *     var li4 = board.create('line', [[-2, -1], [2, 0]], {strokeColor: 'blue',
+             *                 shadow: {enabled: true, color: '#000000', blend: 1}
+             *             });
+             *
+             *     // Shadow color as a mixture between black and the line color, additionally set opacity
+             *     var li5 = board.create('line', [[-2, -3], [2, -2]], {strokeColor: 'blue',
+             *                 shadow: {enabled: true, color: '#000000', blend: 0.5, opacity: 0.5}
+             *             });
+             *
+             *     // Use different value for blur and offset [dx, dy]
+             *     var li6 = board.create('line', [[-2, -5], [2, -4]], {strokeColor: 'blue',
+             *                 shadow: {enabled: true, offset:[0, 25], blur: 6}
+             *             });
+             *
+             *     })();
+             *
+             * </script><pre>
+             *
              */
-            shadow: false,
-
-            shadowColor: 'black',
+            shadow: {
+                enabled: false,
+                color: [0, 0, 0],
+                opacity: 1,
+                blur: 3,
+                blend: 0.1,
+                offset: [5, 5]
+            },
 
             /**
              * If true the element will be traced, i.e. on every movement the element will be copied
@@ -1742,7 +1899,7 @@ define([
             majorHeight: 10,
 
             /**
-             * Decides in which direction finite ticks are visible. Possible values are either the constants
+             * Decides in which direction minor ticks are visible. Possible values are either the constants
              * 0=false or 1=true or a function returning 0 or 1.
              *
              * In case of [0,1] the tick is only visible to the right of the line. In case of
@@ -1750,9 +1907,24 @@ define([
              *
              * @type Array
              * @name Ticks#tickEndings
+             * @see Ticks#majorTickEndings
              * @default [1, 1]
              */
             tickEndings: [1, 1],
+
+            /**
+             * Decides in which direction major ticks are visible. Possible values are either the constants
+             * 0=false or 1=true or a function returning 0 or 1.
+             *
+             * In case of [0,1] the tick is only visible to the right of the line. In case of
+             * [1,0] the tick is only visible to the left of the line.
+             *
+             * @type Array
+             * @name Ticks#majorTickEndings
+             * @see Ticks#tickEndings
+             * @default [1, 1]
+             */
+            majorTickEndings: [1, 1],
 
             /**
              * The number of minor ticks between two major ticks.
@@ -1834,7 +2006,7 @@ define([
 
             /**
              * A string that is appended to every tick, used to represent the scale
-             * factor given in {@link Ticks#scaleSymbol}.
+             * factor given in {@link Ticks#scale}.
              *
              * @type String
              * @default ''
@@ -1973,7 +2145,14 @@ define([
             face: '|',
             strokeWidth: 2,
             strokeColor: Color.palette.blue,
-            ticksDistance: 0.2
+            /**
+             * The default distance (in user coordinates, not  pixels) between two hatch symbols. 
+             * 
+             * @type Number
+             * @name Hatch#ticksDistance
+             * @default 0.2
+             */
+             ticksDistance: 0.2
         },
 
         /**
@@ -2332,6 +2511,7 @@ define([
                 minorHeight: 10,          // if <0: full width and height
                 majorHeight: -1,          // if <0: full width and height
                 tickEndings: [0, 1],
+                majorTickEndings: [1, 1],
                 minorTicks: 4,
                 ticksDistance: 1,         // TODO doc
                 strokeOpacity: 0.25
@@ -4905,6 +5085,7 @@ define([
                 strokeOpacity: 1,
                 strokeWidth: 1,
                 tickEndings: [0, 1],
+                majortickEndings: [0, 1],
                 strokeColor: '#000000',
                 visible: 'inherit'
             },
@@ -5236,6 +5417,7 @@ define([
                 majorHeight: 16,
                 minorTicks: 4,
                 tickEndings: [0, 1],
+                majorTickEndings: [0, 1],
                 defaultDistance: 0.1,
                 strokeOpacity: 1,
                 strokeWidth: 1,
