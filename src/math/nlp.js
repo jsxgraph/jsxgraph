@@ -120,6 +120,11 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
             }
         },
 
+        lastNumberOfEvaluations: 0,
+        GetLastNumberOfEvaluations: function () {
+            return this.lastNumberOfEvaluations;
+        },
+
         // status Variables
         Normal: 0,
         MaxIterationsReached: 1,
@@ -140,9 +145,10 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          * @param iprint Print level, 0 <= iprint <= 3, where 0 provides no output and
          * 3 provides full output to the console.
          * @param maxfun Maximum number of function evaluations before terminating.
+         * @param [testForRoundingErrors=false]
          * @returns {Number} Exit status of the COBYLA2 optimization.
          */
-        FindMinimum: function (calcfc, n, m, x, rhobeg, rhoend, iprint, maxfun) {
+        FindMinimum: function (calcfc, n, m, x, rhobeg, rhoend, iprint, maxfun, testForRoundingErrors) {
             // CobylaExitStatus FindMinimum(final Calcfc calcfc, int n, int m, double[] x, double rhobeg, double rhoend, int iprint, int maxfun)
             //     This subroutine minimizes an objective function F(X) subject to M
             //     inequality constraints on X, where X is a vector of variables that has
@@ -201,6 +207,12 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                 that = this,
                 fcalcfc;
 
+            this.lastNumberOfEvaluations = 0;
+
+            if (testForRoundingErrors) {
+                console.log("Experimental feature 'testForRoundingErrors' is activated.");
+            }
+
             iox[0] = 0.0;
             this.arraycopy(x, 0, iox, 1, n);
 
@@ -210,6 +222,8 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                 var ix = that.arr(n),
                     ocon, f;
 
+                that.lastNumberOfEvaluations = that.lastNumberOfEvaluations + 1;
+
                 that.arraycopy(thisx, 1, ix, 0, n);
                 ocon = that.arr(m);
                 f = calcfc(n, m, ix, ocon);
@@ -217,7 +231,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                 return f;
             };
 
-            status = this.cobylb(fcalcfc, n, m, mpp, iox, rhobeg, rhoend, iprint, maxfun);
+            status = this.cobylb(fcalcfc, n, m, mpp, iox, rhobeg, rhoend, iprint, maxfun, testForRoundingErrors);
             this.arraycopy(iox, 1, x, 0, n);
 
             return status;
@@ -236,9 +250,10 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          * @param {Number} rhoend
          * @param {Number} iprint
          * @param {Number} maxfun
+         * @param {Boolean} [testForRoundingErrors=false]
          * @returns {Number} Exit status of the COBYLA2 optimization
          */
-        cobylb: function (calcfc, n, m, mpp, x, rhobeg, rhoend, iprint, maxfun) {
+        cobylb: function (calcfc, n, m, mpp, x, rhobeg, rhoend, iprint, maxfun, testForRoundingErrors) {
             // calcf ist funktion die aufgerufen wird wie calcfc(n, m, ix, ocon)
             // N.B. Arguments CON, SIM, SIMI, DATMAT, A, VSIG, VETA, SIGBAR, DX, W & IACT
             //      have been removed.
@@ -425,7 +440,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                                         //     Make an error return if SIGI is a poor approximation to the inverse of
                                         //     the leading N by N submatrix of SIG.
                                         error = 0.0;
-                                        if (false) {
+                                        if (testForRoundingErrors) {
                                             for (i = 1; i <= n; ++i) {
                                                 for (j = 1; j <= n; ++j) {
                                                     temp = this.DOT_PRODUCT_ROW_COL(simi, i, sim, j, 1, n) - (i === j ? 1.0 : 0.0);
