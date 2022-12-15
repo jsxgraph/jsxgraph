@@ -945,15 +945,17 @@ define([
                 dxs = this.dxMaj;
                 dys = this.dyMaj;
                 style = this.majStyle;
-                te0 = Type.evaluate(this.visProp.majortickendings[0]) > 0;
-                te1 = Type.evaluate(this.visProp.majortickendings[1]) > 0;
+                // if (Type.exists(this.visProp.majortickendings)) {
+                    te0 = Type.evaluate(this.visProp.majortickendings[0]) > 0;
+                    te1 = Type.evaluate(this.visProp.majortickendings[1]) > 0;
+                // }
             } else {
                 dxs = this.dxMin;
                 dys = this.dyMin;
                 style = this.minStyle;
                 te0 = Type.evaluate(this.visProp.tickendings[0]) > 0;
                 te1 = Type.evaluate(this.visProp.tickendings[1]) > 0;
-        }
+                }
             lineStdForm = [-dys * c[1] - dxs * c[2], dys, dxs];
 
             // For all ticks regardless if of finite or infinite
@@ -987,7 +989,7 @@ define([
                 // line style
                 if (style === 'infinite') {
                     intersection = Geometry.meetLineBoard(lineStdForm, this.board);
-                    
+
                     if (te0 && te1) {
                         x[0] = intersection[0].scrCoords[1];
                         x[1] = intersection[1].scrCoords[1];
@@ -996,20 +998,20 @@ define([
                     } else {
                         // Assuming the usrCoords of both intersections are normalized, a 'signed distance'
                         // with respect to the parent line is computed for the intersections. The sign is
-                        // used to conclude whether the point is either at the left or right side of the 
+                        // used to conclude whether the point is either at the left or right side of the
                         // line. The magnitude can be used to compare the points and determine which point
                         // is closest to the line.
                         dists = [
                             Mat.innerProduct(
                                 intersection[0].usrCoords.slice(1, 3),
-                                this.line.stdform.slice(1, 3) 
+                                this.line.stdform.slice(1, 3)
                             ) + this.line.stdform[0],
                             Mat.innerProduct(
                                 intersection[1].usrCoords.slice(1, 3),
                                 this.line.stdform.slice(1, 3)
                             ) + this.line.stdform[0],
                         ];
-                        
+
                         // Reverse intersection array order if first intersection is not the leftmost one.
                         if (dists[0] < dists[1]) {
                             intersection.reverse();
@@ -1029,7 +1031,7 @@ define([
                                 y[0] = intersection[0].scrCoords[2];
                                 x[1] = intersection[1].scrCoords[1];
                                 y[1] = intersection[1].scrCoords[2];
-                            } 
+                            }
                         } else if (te1) { // Right-infinite tick
                             if (dists[1] > 0) { // intersections at the wrong side of line
                                 return [];

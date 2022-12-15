@@ -552,7 +552,7 @@ define([
         }
     };
 
-    // JessieScript/JessieCode startup: 
+    // JessieScript/JessieCode startup:
     // Search for script tags of type text/jessiescript and interprete them.
     if (Env.isBrowser && typeof window === 'object' && typeof document === 'object') {
         Env.addEvent(window, 'load', function () {

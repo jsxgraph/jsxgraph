@@ -391,9 +391,12 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
             };
 
             el.origin = fn;
-            owner['x_internal' + type] = owner['x_internal' + type] || [];
-            owner['x_internal' + type].push(el);
-
+            // Check if owner is a board
+            if (typeof owner === 'object' && Type.exists(owner.BOARD_MODE_NONE)) {
+                owner['x_internal' + type] = owner['x_internal' + type] || [];
+                owner['x_internal' + type].push(el);
+            }
+            console.log(type, owner)
             // Non-IE browser
             if (Type.exists(obj) && Type.exists(obj.addEventListener)) {
                 obj.addEventListener(type, el, false);
