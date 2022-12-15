@@ -82,7 +82,7 @@
     "buildCompressor": "webpack --config config/webpack.config.compressor.js",
     "eslint": "make eslint",
     "check-format": "prettier --check src test extensions",
-    "format": "prettier --write src test extensions",
+    "//No! format": "//prettier --write src test extensions",
     "serve": "http-server -c-1",
     "test": "make test"
   }
