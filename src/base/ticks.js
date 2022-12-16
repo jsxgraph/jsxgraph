@@ -945,13 +945,8 @@ define([
                 dxs = this.dxMaj;
                 dys = this.dyMaj;
                 style = this.majStyle;
-                if (Type.exists(this.visProp.majortickendings)) {
-                    te0 = Type.evaluate(this.visProp.majortickendings[0]) > 0;
-                    te1 = Type.evaluate(this.visProp.majortickendings[1]) > 0;
-                } else {
-                    te0 = true;
-                    te1 = true;
-                }
+                te0 = Type.evaluate(this.visProp.majortickendings[0]) > 0;
+                te1 = Type.evaluate(this.visProp.majortickendings[1]) > 0;
             } else {
                 dxs = this.dxMin;
                 dys = this.dyMin;
@@ -991,6 +986,10 @@ define([
             } else {
                 // line style
                 if (style === 'infinite') {
+                    // Emergency fix to make tick lines backward compatible
+                    // Problematic are infinite ticks which have set tickendings:[0,1] for some reason.
+                    // This is the default setting for minor ticks
+                    te0 = te1 = true;
                     intersection = Geometry.meetLineBoard(lineStdForm, this.board);
 
                     if (te0 && te1) {
