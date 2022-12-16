@@ -396,7 +396,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                 owner['x_internal' + type] = owner['x_internal' + type] || [];
                 owner['x_internal' + type].push(el);
             }
-            console.log(type, owner)
+
             // Non-IE browser
             if (Type.exists(obj) && Type.exists(obj.addEventListener)) {
                 obj.addEventListener(type, el, false);

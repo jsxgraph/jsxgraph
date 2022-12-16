@@ -958,7 +958,7 @@ define([
                 style = this.minStyle;
                 te0 = Type.evaluate(this.visProp.tickendings[0]) > 0;
                 te1 = Type.evaluate(this.visProp.tickendings[1]) > 0;
-                }
+            }
             lineStdForm = [-dys * c[1] - dxs * c[2], dys, dxs];
 
             // For all ticks regardless if of finite or infinite
