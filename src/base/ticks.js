@@ -989,7 +989,9 @@ define([
                     // Emergency fix to make infinite tick lines backward compatible
                     // Problematic are infinite ticks which have set tickendings:[0,1] for some reason.
                     // For example, this is the default setting for minor ticks
-                    te0 = te1 = true;
+                    if (Type.evaluate(this.visProp.ignoreinfinitetickendings)) {
+                        te0 = te1 = true;
+                    }
                     intersection = Geometry.meetLineBoard(lineStdForm, this.board);
 
                     if (te0 && te1) {
