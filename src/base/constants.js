@@ -38,7 +38,7 @@ import JXG from "../jxg";
 var major = 1,
     minor = 5,
     patch = 0,
-    add = "es6", //'dev'
+    add = "rc1", //'dev'
     version = major + "." + minor + "." + patch + (add ? "-" + add : ""),
     constants;
 
