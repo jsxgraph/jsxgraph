@@ -637,7 +637,8 @@ JXG.extend(
             return (
                 this.isDraggable &&
                 !Type.evaluate(this.visProp.fixed) &&
-                /*!this.visProp.frozen &&*/ this.type !== Const.OBJECT_TYPE_GLIDER
+                // !this.visProp.frozen &&
+                this.type !== Const.OBJECT_TYPE_GLIDER
             );
         },
 

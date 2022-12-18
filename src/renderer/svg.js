@@ -347,8 +347,8 @@ JXG.extend(
                     node3.setAttributeNS(null, "d", "M 10,0 L 0,5 L 10,10 z");
                 }
                 if (
-                    /*!Type.exists(el.rendNode.getTotalLength) && */ el.elementClass ===
-                    Const.OBJECT_CLASS_LINE
+                    // !Type.exists(el.rendNode.getTotalLength) &&
+                    el.elementClass === Const.OBJECT_CLASS_LINE
                 ) {
                     if (type === 2) {
                         v = 4.9;
@@ -412,8 +412,8 @@ JXG.extend(
                     node3.setAttributeNS(null, "d", "M 0,0 L 10,5 L 0,10 z");
                 }
                 if (
-                    /*!Type.exists(el.rendNode.getTotalLength) &&*/ el.elementClass ===
-                    Const.OBJECT_CLASS_LINE
+                    // !Type.exists(el.rendNode.getTotalLength) &&
+                    el.elementClass === Const.OBJECT_CLASS_LINE
                 ) {
                     if (type === 2) {
                         v = 5.1;
