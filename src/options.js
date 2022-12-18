@@ -1933,6 +1933,18 @@ JXG.Options = {
             majorTickEndings: [1, 1],
 
             /**
+             * If true, ignore the tick endings attribute for infinite (full height) ticks.
+             * This affects major and minor ticks.
+             *
+             * @type Boolean
+             * @name Ticks#ignoreInfiniteTickEndings
+             * @see Ticks#tickEndings
+             * @see Ticks#majorTickEndings
+             * @default true
+             */
+            ignoreInfiniteTickEndings: true,
+
+            /**
              * The number of minor ticks between two major ticks.
              * @type Number
              * @name Ticks#minorTicks

@@ -213,7 +213,7 @@ var JXG = {},
         requirePathLocation = "href";
       },
 
-      JSfiles: function (fileArray, preventCaching, root) {
+      JSfiles: function (fileArray, preventCaching, root, strictOrder) {
         var postfix = "",
           i,
           file;
@@ -226,6 +226,7 @@ var JXG = {},
         if (root.substr(-1) !== "/") {
           root += "/";
         }
+        strictOrder = strictOrder || false;
 
         for (i = 0; i < fileArray.length; i++) {
           file = fileArray[i];
@@ -240,8 +241,12 @@ var JXG = {},
             if (JXG.isMetroApp() || !allowDocumentWrite) {
               el = createHTMLElement("script", {
                 type: "text/javascript",
-                src: src,
+                src: src
               });
+              if(strictOrder) {
+                el.defer = true;
+                el.async = false;
+              }
               head = document.getElementsByTagName("head")[0];
               head.appendChild(el);
             } else {

@@ -112,6 +112,10 @@ JXG.Math.Nlp = {
         }
     },
 
+    lastNumberOfEvaluations: 0,
+    GetLastNumberOfEvaluations: function () {
+        return this.lastNumberOfEvaluations;
+    },
     // status Variables
     Normal: 0,
     MaxIterationsReached: 1,
@@ -132,9 +136,10 @@ JXG.Math.Nlp = {
      * @param iprint Print level, 0 <= iprint <= 3, where 0 provides no output and
      * 3 provides full output to the console.
      * @param maxfun Maximum number of function evaluations before terminating.
+     * @param [testForRoundingErrors=false]
      * @returns {Number} Exit status of the COBYLA2 optimization.
      */
-    FindMinimum: function (calcfc, n, m, x, rhobeg, rhoend, iprint, maxfun) {
+    FindMinimum: function (calcfc, n, m, x, rhobeg, rhoend, iprint, maxfun, testForRoundingErrors) {
         // CobylaExitStatus FindMinimum(final Calcfc calcfc, int n, int m, double[] x, double rhobeg, double rhoend, int iprint, int maxfun)
         //     This subroutine minimizes an objective function F(X) subject to M
         //     inequality constraints on X, where X is a vector of variables that has
@@ -193,6 +198,12 @@ JXG.Math.Nlp = {
             that = this,
             fcalcfc;
 
+        this.lastNumberOfEvaluations = 0;
+
+        if (testForRoundingErrors) {
+            console.log("Experimental feature 'testForRoundingErrors' is activated.");
+        }
+
         iox[0] = 0.0;
         this.arraycopy(x, 0, iox, 1, n);
 
@@ -201,9 +212,9 @@ JXG.Math.Nlp = {
         fcalcfc = function (n, m, thisx, con) {
             // int n, int m, double[] x, double[] con
             var ix = that.arr(n),
-                ocon,
-                f;
+                ocon, f;
 
+            that.lastNumberOfEvaluations = that.lastNumberOfEvaluations + 1;
             that.arraycopy(thisx, 1, ix, 0, n);
             ocon = that.arr(m);
             f = calcfc(n, m, ix, ocon);
@@ -211,7 +222,7 @@ JXG.Math.Nlp = {
             return f;
         };
 
-        status = this.cobylb(fcalcfc, n, m, mpp, iox, rhobeg, rhoend, iprint, maxfun);
+        status = this.cobylb(fcalcfc, n, m, mpp, iox, rhobeg, rhoend, iprint, maxfun, testForRoundingErrors);
         this.arraycopy(iox, 1, x, 0, n);
 
         return status;
@@ -230,9 +241,10 @@ JXG.Math.Nlp = {
      * @param {Number} rhoend
      * @param {Number} iprint
      * @param {Number} maxfun
+     * @param {Boolean} [testForRoundingErrors=false]
      * @returns {Number} Exit status of the COBYLA2 optimization
      */
-    cobylb: function (calcfc, n, m, mpp, x, rhobeg, rhoend, iprint, maxfun) {
+    cobylb: function (calcfc, n, m, mpp, x, rhobeg, rhoend, iprint, maxfun, testForRoundingErrors) {
         // calcf ist funktion die aufgerufen wird wie calcfc(n, m, ix, ocon)
         // N.B. Arguments CON, SIM, SIMI, DATMAT, A, VSIG, VETA, SIGBAR, DX, W & IACT
         //      have been removed.
@@ -413,21 +425,21 @@ JXG.Math.Nlp = {
                         //     Make an error return if SIGI is a poor approximation to the inverse of
                         //     the leading N by N submatrix of SIG.
                         error = 0.0;
-                        // if (false) {
-                        //     for (i = 1; i <= n; ++i) {
-                        //         for (j = 1; j <= n; ++j) {
-                        //             temp =
-                        //                 this.DOT_PRODUCT_ROW_COL(simi, i, sim, j, 1, n) -
-                        //                 (i === j ? 1.0 : 0.0);
-                        //             // temp = this.DOT_PRODUCT(
-                        //             //     this.PART(this.ROW(simi, i), 1, n),
-                        //             //     this.PART(this.COL(sim, j), 1, n)
-                        //             // ) - (i === j ? 1.0 : 0.0);
+                        if (testForRoundingErrors) {
+                            for (i = 1; i <= n; ++i) {
+                                for (j = 1; j <= n; ++j) {
+                                    temp =
+                                        this.DOT_PRODUCT_ROW_COL(simi, i, sim, j, 1, n) -
+                                        (i === j ? 1.0 : 0.0);
+                                    // temp = this.DOT_PRODUCT(
+                                    //     this.PART(this.ROW(simi, i), 1, n),
+                                    //     this.PART(this.COL(sim, j), 1, n)
+                                    // ) - (i === j ? 1.0 : 0.0);
 
-                        //             error = Math.max(error, Math.abs(temp));
-                        //         }
-                        //     }
-                        // }
+                                    error = Math.max(error, Math.abs(temp));
+                                }
+                            }
+                        }
                         if (error > 0.1) {
                             status = this.DivergingRoundingErrors;
                             break L_40;

@@ -1064,7 +1064,7 @@ JXG.extend(
                 style = this.minStyle;
                 te0 = Type.evaluate(this.visProp.tickendings[0]) > 0;
                 te1 = Type.evaluate(this.visProp.tickendings[1]) > 0;
-        }
+            }
             lineStdForm = [-dys * c[1] - dxs * c[2], dys, dxs];
 
             // For all ticks regardless if of finite or infinite
@@ -1101,7 +1101,12 @@ JXG.extend(
                 }
             } else {
                 // line style
-                if (style === "infinite") {
+                if (style === 'infinite') {
+                    // Problematic are infinite ticks which have set tickendings:[0,1].
+                    // For example, this is the default setting for minor ticks
+                    if (Type.evaluate(this.visProp.ignoreinfinitetickendings)) {
+                        te0 = te1 = true;
+                    }
                     intersection = Geometry.meetLineBoard(lineStdForm, this.board);
 
                     if (te0 && te1) {
