@@ -66,14 +66,14 @@ var priv = {
  * @type JXG.Text
  *
  * @param {number,function_number,function_String,function_function} x,y,label,handler Parent elements for button elements.
- *                     <p>
- *                     x and y are the coordinates of the lower left corner of the text box.
- *                      The position of the text is fixed,
- *                     x and y are numbers. The position is variable if x or y are functions.
- *                     <p>
- *                     The label of the input element may be given  as string.
- *                     <p>
- *                     The (optional) handler function which is called when the button is pressed.
+ *  <p>
+ *  x and y are the coordinates of the lower left corner of the text box.
+ *   The position of the text is fixed,
+ *  x and y are numbers. The position is variable if x or y are functions.
+ *  <p>
+ *  The label of the input element may be given  as string.
+ *  <p>
+ *  The (optional) handler function which is called when the button is pressed.
  *
  * @example
  *  var p = board.create('point', [0.5, 0.5], {id: 'p1'});

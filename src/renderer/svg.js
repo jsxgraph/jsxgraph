@@ -1417,8 +1417,7 @@ JXG.extend(
         setObjectTransition: function (el, duration) {
             var node,
                 transitionStr,
-                i,
-                len,
+                i, len,
                 nodes = ["rendNode", "rendNodeTriangleStart", "rendNodeTriangleEnd"];
 
             if (duration === undefined) {
@@ -1436,18 +1435,10 @@ JXG.extend(
                 transitionStr = " color " + duration + "ms," + " opacity " + duration + "ms";
             } else {
                 transitionStr =
-                    " fill " +
-                    duration +
-                    "ms," +
-                    " fill-opacity " +
-                    duration +
-                    "ms," +
-                    " stroke " +
-                    duration +
-                    "ms," +
-                    " stroke-opacity " +
-                    duration +
-                    "ms";
+                    " fill " + duration + "ms," +
+                    " fill-opacity " + duration + "ms," +
+                    " stroke " + duration + "ms," + 
+                    " stroke-opacity " + duration + "ms";
             }
 
             len = nodes.length;
@@ -1490,10 +1481,7 @@ JXG.extend(
 
         // documented in JXG.AbstractRenderer
         setObjectFillColor: function (el, color, opacity, rendNode) {
-            var node,
-                c,
-                rgbo,
-                oo,
+            var node, c, rgbo, oo,
                 rgba = Type.evaluate(color),
                 o = Type.evaluate(opacity),
                 grad = Type.evaluate(el.visProp.gradient);
@@ -1565,11 +1553,9 @@ JXG.extend(
         // documented in JXG.AbstractRenderer
         setObjectStrokeColor: function (el, color, opacity) {
             var rgba = Type.evaluate(color),
-                c,
-                rgbo,
+                c, rgbo,
                 o = Type.evaluate(opacity),
-                oo,
-                node;
+                oo, node;
 
             o = o > 0 ? o : 0;
 
