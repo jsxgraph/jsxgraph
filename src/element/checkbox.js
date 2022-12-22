@@ -52,7 +52,10 @@ var priv = {
  * form checkbox element.
  * <p>
  * For this element, the attribute "display" has to have the value 'html' (which is the default).
- *
+ * <p>
+ * The underlying HTML checkbox element can be accessed through the sub-object 'rendNodeCheck', e.g. to
+ * add event listeners.
+ * 
  * @pseudo
  * @description
  * @name Checkbox
@@ -61,15 +64,15 @@ var priv = {
  * @type JXG.Text
  *
  * @param {number,function_number,function_String,function} x,y,label Parent elements for checkbox elements.
- *                     <p>
- *                     x and y are the coordinates of the lower left corner of the text box.
- *                      The position of the text is fixed,
- *                     x and y are numbers. The position is variable if x or y are functions.
- *                     <p>
- *                     The label of the input element may be given as string or function.
- *                     <p>
- *                     The value of the checkbox can be controlled with the attribute <tt>checked</tt>
- *                     <p>The HTML node can be accessed with <tt>element.rendNodeCheckbox</tt>
+ *   <p>
+ *   x and y are the coordinates of the lower left corner of the text box.
+ *    The position of the text is fixed,
+ *   x and y are numbers. The position is variable if x or y are functions.
+ *   <p>
+ *   The label of the input element may be given as string or function.
+ *   <p>
+ *   The value of the checkbox can be controlled with the attribute <tt>checked</tt>
+ *   <p>The HTML node can be accessed with <tt>element.rendNodeCheckbox</tt>
  *
  * @example
  *   // Create a checkbox element at position [0,3].

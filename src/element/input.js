@@ -55,6 +55,10 @@ var priv = {
  * label must be added.
  * <p>
  * For this element, the attribute "display" has to have the value 'html' (which is the default).
+ * <p>
+ * The underlying HTML input field can be accessed through the sub-object 'rendNodeInput', e.g. to
+ * add event listeners.
+ * 
  * @pseudo
  * @description
  * @name Input
@@ -63,13 +67,13 @@ var priv = {
  * @type JXG.Text
  *
  * @param {number,function_number,function_String_String,function} x,y,value,label Parent elements for input elements.
- *                     <p>
- *                     x and y are the coordinates of the lower left corner of the text box. The position of the text is fixed,
- *                     x and y are numbers. The position is variable if x or y are functions.
- *                     <p>
- *                     The default value of the input element must be given as string.
- *                     <p>
- *                     The label of the input element may be given as string or function.
+ *   <p>
+ *   x and y are the coordinates of the lower left corner of the text box. The position of the text is fixed,
+ *   x and y are numbers. The position is variable if x or y are functions.
+ *   <p>
+ *   The default value of the input element must be given as string.
+ *   <p>
+ *   The label of the input element may be given as string or function.
  *
  * @example
  *  // Create an input element at position [1,4].
@@ -117,6 +121,65 @@ var priv = {
  *      t1_board.update();
  *  }
  * </script><pre>
+ * 
+ * @example
+ * // Add the `keyup` event to an input field
+ * var A = board.create('point', [3, -2]);
+ * var i = board.create('input', [-4, -4, "1", "x "]);
+ * 
+ * i.rendNodeInput.addEventListener("keyup", ( function () {
+ *    var x = parseFloat(this.value);
+ *    if (!isNaN(x)) {
+ * 	   A.moveTo([x, 3], 100);
+ *    }
+ * }));
+ * 
+ * </pre><div id="JXG81c84fa7-3f36-4874-9e0f-d4b9e93e755b" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXG81c84fa7-3f36-4874-9e0f-d4b9e93e755b',
+ *             {boundingbox: [-5, 5, 5, -5], axis: true, showcopyright: false, shownavigation: false});
+ *     var A = board.create('point', [3, -2]);
+ *     var i = board.create('input', [-4, -4, "1", "x "]);
+ *     
+ *     i.rendNodeInput.addEventListener("keyup", ( function () {
+ *        var x = parseFloat(this.value);
+ *        if (!isNaN(x)) {
+ *     	    A.moveTo([x, 3], 100);
+ *        }
+ *     }));
+ * 
+ *     })();
+ * 
+ * </script><pre>
+ * 
+ * @example
+ * // Add the `change` event to an input field
+ * var A = board.create('point', [3, -2]);
+ * var i = board.create('input', [-4, -4, "1", "x "]);
+ * 
+ * i.rendNodeInput.addEventListener("change", ( function () {
+ *    var x = parseFloat(i.Value());
+ *    A.moveTo([x, 2], 100);
+ * }));
+ * 
+ * </pre><div id="JXG51c4d78b-a7ad-4c34-a983-b3ddae6192d7" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXG51c4d78b-a7ad-4c34-a983-b3ddae6192d7',
+ *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+ *     var A = board.create('point', [3, -2]);
+ *     var i = board.create('input', [-4, -4, "1", "x "]);
+ *     
+ *     i.rendNodeInput.addEventListener("change", ( function () {
+ *        var x = parseFloat(i.Value());
+ *        A.moveTo([x, 2], 100);
+ *     }));
+ * 
+ *     })();
+ * 
+ * </script><pre>
+ * 
  */
 JXG.createInput = function (board, parents, attributes) {
     var t,

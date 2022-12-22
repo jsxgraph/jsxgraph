@@ -54,6 +54,9 @@ var priv = {
  * form button element.
  * <p>
  * For this element, the attribute "display" has to have the value 'html' (which is the default).
+ * <p>
+ * The underlying HTML button element can be accessed through the sub-object 'rendNodeButton', e.g. to
+ * add event listeners.
  *
  * @pseudo
  * @description
