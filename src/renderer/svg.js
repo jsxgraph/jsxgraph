@@ -1432,13 +1432,15 @@ JXG.extend(
                 el.elementClass === Const.OBJECT_CLASS_TEXT &&
                 Type.evaluate(el.visProp.display) === "html"
             ) {
-                transitionStr = " color " + duration + "ms," + " opacity " + duration + "ms";
+                transitionStr = " color " + duration + "ms," + 
+                    " opacity " + duration + "ms";
             } else {
                 transitionStr =
                     " fill " + duration + "ms," +
                     " fill-opacity " + duration + "ms," +
                     " stroke " + duration + "ms," + 
-                    " stroke-opacity " + duration + "ms";
+                    " stroke-opacity " + duration + "ms," +
+                    " stroke-width " + duration + "ms";
             }
 
             len = nodes.length;
