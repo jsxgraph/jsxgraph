@@ -436,8 +436,11 @@ JXG.extend(
          * @param {String} type The event to catch, without leading 'on', e.g. 'mousemove' instead of 'onmousemove'.
          * @param {Function} fn The function to call when the event is triggered.
          * @param {Object} owner The scope in which the event trigger is called.
+         * @param {Object|Boolean} [options=false] This parameter is passed as the third parameter to the method addEventListener. Depending on the data type it is either
+         * an options object or the useCapture Boolean.
+         * 
          */
-        addEvent: function (obj, type, fn, owner) {
+        addEvent: function (obj, type, fn, owner, options) {
             var el = function () {
                 return fn.apply(owner, arguments);
             };
@@ -451,7 +454,8 @@ JXG.extend(
 
             // Non-IE browser
             if (Type.exists(obj) && Type.exists(obj.addEventListener)) {
-                obj.addEventListener(type, el, false);
+                options = options || false;  // options or useCapture
+                obj.addEventListener(type, el, options);
             }
 
             // IE
