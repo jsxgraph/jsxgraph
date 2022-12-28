@@ -5646,6 +5646,8 @@ JXG.Options = {
             */
             highlightCssStyle: '',
 
+            transitionDuration: 0,
+
             /**
              * If true, the input will be given to ASCIIMathML before rendering.
              *

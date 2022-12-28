@@ -32,7 +32,7 @@
       document.getElementById(id).style.display = ( document.getElementById(id).style.display == 'block' ? 'none' : 'block' );
       document.cookie = id.toLowerCase() + 'status=' + document.getElementById(id).style.display + ';';
   	};
-  	
+
 	function initList(id) {
       var cookieList = document.cookie.split(';');
       for(var c=0; c<cookieList.length; c++) {
@@ -41,7 +41,7 @@
         }
       }
   	};
-  	
+
   	initList('myElList');
     initList('myClList');
   /* ]]> */

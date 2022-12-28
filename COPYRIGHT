@@ -33,12 +33,6 @@
 */
 
 /**
- * almond 0.2.5 Copyright (c) 2011-2012, The Dojo Foundation All Rights Reserved.
- * Available via the MIT or new BSD license.
- * see: https://github.com/jrburke/almond for details
- */
-
-/**
  * UTF-8 Decoder by Bjoern Hoehrmann
  *
  * Copyright (c) 2008-2009 Bjoern Hoehrmann <bjoern@hoehrmann.de>

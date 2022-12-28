@@ -1,4 +1,4 @@
-.PHONY: test docs core core-min prettier release line eslint readers
+.PHONY: test docs core core-min prettier release lint eslint readers
 
 # Build tools
 WEBPACK=./node_modules/.bin/webpack
@@ -25,8 +25,8 @@ OUTPUT=distrib
 THIRDPARTY=3rdparty
 BUILD=build
 TMP=tmp
-BUILDBIN=$(BUILD)/bin
-BUILDREADERS=$(BUILDBIN)/readers
+# BUILDBIN=$(BUILD)/bin
+BUILDREADERS=tmpreaders
 
 # API docs
 JSDOC2=node ./node_modules/.bin/jsdoc2
@@ -41,8 +41,12 @@ MKDIRFLAGS=-p
 RMFLAGS=-rf
 ZIPFLAGS=-r
 
+# Extract version number from package.json
+VERSION=$(shell grep -o '"version": "[^"]*' package.json | grep -o '[^"]*$$')
+
 # Filelists - required for docs, linters, and to build the readers
-FILELIST=$(shell cat src/loadjsxgraph.js | grep "baseFiles\s*=\s*'\(\w*,\)\+" | awk -F \' '{ print $$2 }' | sed 's/,/.js src\//g')
+# FILELIST=$(shell cat src/loadjsxgraph.js | grep "baseFiles\s*=\s*'\(\w*,\)\+" | awk -F \' '{ print $$2 }' | sed 's/,/.js src\//g')
+FILELIST=$(shell cat src/index.js | awk '/import/ {if (match($$0,/"\.(.+)"/,m)) print "src"m[1]".js" }')
 
 # Lintlist - jessiecode.js is developed externally (github:jsxgraph/jessiecode) and won't be linted in here
 LINTLIST=$(shell echo $(FILELIST) | sed 's/src\/parser\/jessiecode\.js//')
@@ -51,33 +55,34 @@ ESLINTFLAGS=
 
 PRETTIERFLAGS=-w --print-width 96 --tab-width 4 --trailing-comma none
 
-READERSOUT=build/bin/readers/geonext.min.js build/bin/readers/geogebra.min.js build/bin/readers/intergeo.min.js build/bin/readers/sketch.min.js
+READERSOUT=tmpreaders/geonext.min.js tmpreaders/geogebra.min.js tmpreaders/intergeo.min.js tmpreaders/sketch.min.js
 
 # Rules
 all: core readers docs
 
 core:
-	$(MKDIR) $(MKDIRFLAGS) $(BUILDBIN)
-	# Build uncompressed AND minified files jsgraphsrc.js and jsxgraphcore.js and copy them to the distrib directory.
+	# Build uncompressed AND minified files
+	#   jsgraphsrc.js, jsxgraphsrc.mjs, jsxgraphcore.js, jsxgraphcore.mjs and
+	# copy them to the distrib directory.
 	$(WEBPACK) --config config/webpack.config.js
+	cat COPYRIGHT $(OUTPUT)/jsxgraphcore.js >$(OUTPUT)/tmp.file; mv $(OUTPUT)/tmp.file $(OUTPUT)/jsxgraphcore.js
+	cat COPYRIGHT $(OUTPUT)/jsxgraphcore.mjs >$(OUTPUT)/tmp.file; mv $(OUTPUT)/tmp.file $(OUTPUT)/jsxgraphcore.mjs
 
 core-min:
 	echo "INFO: core-min deactivated. It is covered by core"
 
 release: core docs
 	$(MKDIR) $(MKDIRFLAGS) $(TMP)
-	$(MKDIR) $(MKDIRFLAGS) $(OUTPUT)
-	$(CP) $(BUILDBIN)/jsxgraphcore.min.js $(TMP)/jsxgraphcore.js
-	$(CP) $(BUILDBIN)/jsxgraphcore.js $(TMP)/jsxgraphsrc.js
-	$(CP) $(OUTPUT)/docs.zip $(TMP)/docs.zip
-	$(CP) $(OUTPUT)/jsxgraph.css $(TMP)/jsxgraph.css
-	$(CP) src/index.d.ts $(TMP)/index.d.ts
-	$(CP) -r src/themes $(TMP)/themes
+	$(CP) $(OUTPUT)/jsxgraphcore.js $(TMP)/jsxgraphcore.js
+	$(CP) $(OUTPUT)/jsxgraphsrc.js  $(TMP)/jsxgraphsrc.js
+	$(CP) $(OUTPUT)/jsxgraph.css    $(TMP)/jsxgraph.css
+	$(CP) $(OUTPUT)/docs.zip        $(TMP)/docs.zip
+	$(CP) src/index.d.ts            $(TMP)/index.d.ts
+	$(CP) -r src/themes             $(TMP)/themes
 	$(CP) README.md LICENSE.MIT LICENSE.LGPL $(TMP)/
 	$(CD) $(TMP) && $(ZIP) $(ZIPFLAGS) jsxgraph.zip jsxgraph* themes/ index.d.ts docs.zip README.md LICENSE.*
 	$(CP) $(TMP)/jsxgraph.zip $(OUTPUT)/jsxgraph.zip
-
-	$(RM) $(RMFLAGS) tmp
+	$(RM) $(RMFLAGS) $(TMP)
 
 docs: core
 	# Set up tmp dir
@@ -86,8 +91,8 @@ docs: core
 
 	# Update template related files
 	$(CP) $(THIRDPARTY)/jquery.min.js $(JSDOC2TPLSTAT)/jquery.min.js
-	$(CP) $(BUILDBIN)/jsxgraphcore.min.js $(JSDOC2TPLSTAT)/jsxgraphcore.js
-	$(CP) $(OUTPUT)/jsxgraph.css $(JSDOC2TPLSTAT)/jsxgraph.css
+	$(CP) $(OUTPUT)/jsxgraphcore.js   $(JSDOC2TPLSTAT)/jsxgraphcore.js
+	$(CP) $(OUTPUT)/jsxgraph.css      $(JSDOC2TPLSTAT)/jsxgraph.css
 
 	# Patch run.js
 	$(CP) $(JSDOC2PTCH)/*.js ./node_modules/jsdoc2/app
@@ -96,7 +101,7 @@ docs: core
 	$(CP) $(JSDOC2PLG)/*.js ./node_modules/jsdoc2/app/plugins/
 
 	# Run node-jsdoc2
-	$(JSDOC2) $(JSDOC2FLAGS) src/loadjsxgraph.js src/$(FILELIST).js
+	$(JSDOC2) $(JSDOC2FLAGS) $(FILELIST)
 
 	# Compress the result: zip -r tmp/docs.zip tmp/docs/
 	$(CD) $(TMP) && $(ZIP) $(ZIPFLAGS) docs.zip docs/
@@ -107,21 +112,22 @@ docs: core
 	# Test
 	$(CD) $(OUTPUT) && $(UNZIP) -o docs.zip
 
-prettier:
-	$(PRETTIER) $(PRETTIERFLAGS) src
+# prettier:
+# 	$(PRETTIER) $(PRETTIERFLAGS) src
 
 readers: $(READERSOUT)
 	$(MKDIR) $(MKDIRFLAGS) $(OUTPUT)
 	$(CP) $(BUILDREADERS)/* $(OUTPUT)
+	$(RM) $(RMFLAGS) $(BUILDREADERS)
 
-build/bin/readers/%.min.js: src/reader/%.js
+tmpreaders/%.min.js: src/reader/%.js
 	$(MKDIR) $(MKDIRFLAGS) $(BUILDREADERS)
 	{ $(CAT) COPYRIGHT; $(MINIFYER) $^ -c -m ; } > $@
 
 compressor: core
 	$(WEBPACK) --config config/webpack.config.compressor.js
 	$(CP) $(OUTPUT)/jsxgraphcore.js JSXCompressor/jsxgraphcore.js
-	$(CP) $(OUTPUT)/jsxgraph.css JSXCompressor/jsxgraph.css
+	$(CP) $(OUTPUT)/jsxgraph.css    JSXCompressor/jsxgraph.css
 
 plot:
 	$(MKDIR) $(MKDIRFLAGS) $(BUILDBIN)
