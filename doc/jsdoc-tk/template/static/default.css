@@ -18,7 +18,8 @@ body {
   color: #404040;
   position: relative;
   background: #FFF;
-  width: 800px;
+  /*width: 1028px;*/
+  margin: 0;
 }
 
 h1,h2,h3,h4,h5,h6 {

@@ -65,6 +65,9 @@ core:
 	#   jsgraphsrc.js, jsxgraphsrc.mjs, jsxgraphcore.js, jsxgraphcore.mjs and
 	# copy them to the distrib directory.
 	$(WEBPACK) --config config/webpack.config.js
+	# Update version number in line 2 of file COPYRIGHT
+	sed -i '2s/.*/    JSXGraph $(VERSION)/' COPYRIGHT
+	# Prepend file to the jsxgraphcore.* files
 	cat COPYRIGHT $(OUTPUT)/jsxgraphcore.js >$(OUTPUT)/tmp.file; mv $(OUTPUT)/tmp.file $(OUTPUT)/jsxgraphcore.js
 	cat COPYRIGHT $(OUTPUT)/jsxgraphcore.mjs >$(OUTPUT)/tmp.file; mv $(OUTPUT)/tmp.file $(OUTPUT)/jsxgraphcore.mjs
 
@@ -93,6 +96,9 @@ docs: core
 	$(CP) $(THIRDPARTY)/jquery.min.js $(JSDOC2TPLSTAT)/jquery.min.js
 	$(CP) $(OUTPUT)/jsxgraphcore.js   $(JSDOC2TPLSTAT)/jsxgraphcore.js
 	$(CP) $(OUTPUT)/jsxgraph.css      $(JSDOC2TPLSTAT)/jsxgraph.css
+
+	# Update version number in line 2 of file doc/jsdoc-tk/template/static/header.html
+	sed -i '2s/.*/<h1>JSXGraph $(VERSION) Reference<\/h1>/' doc/jsdoc-tk/template/static/header.html
 
 	# Patch run.js
 	$(CP) $(JSDOC2PTCH)/*.js ./node_modules/jsdoc2/app
