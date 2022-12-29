@@ -90,6 +90,11 @@ pre.code
 	width: 800px;
 }
 
+.details {
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+}
+
 .summary {
     font-family: arial, sans-serif;
     font-weight: bold;
@@ -202,6 +207,7 @@ ul.inheritsList
 
 .fineprint
 {
-	text-align: center;
+    margin-left: 260px;
+	text-align: left;
 	font-size: 10px;
 }

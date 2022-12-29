@@ -1,7 +1,7 @@
 <div align="center">{+new Link().toFile("index.html").withText("Class Index")+}
 | {+new Link().toFile("files.html").withText("File Index")+}</div>
 <hr />
-<details id="myElList" open >
+<details id="myElList" open class="details">
     <summary onClick="switchList('myElList')" class="summary">Elements</summary>
     <ul class="classList">
     	<for each="thisClass" in="data">
@@ -12,7 +12,7 @@
 	    </for>
     </ul>
 </details>
-<details id="myClList" open >
+<details id="myClList" open class="details">
     <summary onClick="switchList('myClList')" class="summary">Classes</summary>
     <ul class="classList">
     	<for each="thisClass" in="data">
@@ -32,17 +32,21 @@
 
 <script type="text/javascript">
   /* <![CDATA[ */
+
 	function initList(id) {
       var val, c,
         cookieList = document.cookie.split('; ');
 
+    console.log(document.cookie);
       for(c = 0; c < cookieList.length; c++) {
         if(cookieList[c].indexOf(id.toLowerCase() + 'open') != -1) {
           val = cookieList[c].split('=')[1];
           if (val === '1') {
             document.getElementById(id).setAttribute('open', '');
+            console.log(id, "open");
           } else {
             document.getElementById(id).removeAttribute('open');
+            console.log(id, 'close')
           }
         }
       }

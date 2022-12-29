@@ -276,12 +276,14 @@ JXG.createLine3D = function (board, parents, attributes) {
         el = new JXG.Line3D(view, point, direction, range, attr);
 
         // Now set the real points which define the line
+        /** @ignore */
         points[0].F = function () {
             return el.getPointCoords(Type.evaluate(el.range[0]));
         };
         points[0].prepareUpdate().update();
         point1 = points[0];
 
+        /** @ignore */
         points[1].F = function () {
             return el.getPointCoords(Type.evaluate(el.range[1]));
         };
@@ -434,7 +436,7 @@ JXG.extend(
          * Update the Hesse normal form of the plane, i.e. update normal vector and right hand side.
          * Updates also {@link vec1} and {@link vec2}.
          *
-         * @name updateNormal
+         * @name JXG.Plane3D#updateNormal
          * @function
          * @returns {Object} Reference to the Plane3D object
          * @private

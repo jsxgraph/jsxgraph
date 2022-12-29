@@ -41,35 +41,35 @@ var alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/
 // Util namespace
 JXG.Util = JXG.Util || {};
 
-// Local helper functions
-/**
- * Extracts one byte from a string and ensures the result is less than or equal to 255.
- * @param {String} s
- * @param {Number} i
- * @returns {Number} <= 255
- * @private
- */
-function _getByte(s, i) {
-    return s.charCodeAt(i) & 0xff;
-}
-
-/**
- * Determines the index of a base64 character in the base64 alphabet.
- * @param {String} s
- * @param {Number} i
- * @returns {Number}
- * @throws {Error} If the character can not be found in the alphabet.
- * @private
- */
-function _getIndex(s, i) {
-    return alphabet.indexOf(s.charAt(i));
-}
-
 /**
  * Base64 routines
  * @namespace
  */
 JXG.Util.Base64 = {
+    // Local helper functions
+    /**
+     * Extracts one byte from a string and ensures the result is less than or equal to 255.
+     * @param {String} s
+     * @param {Number} i
+     * @returns {Number} <= 255
+     * @private
+     */
+    _getByte: function(s, i) {
+        return s.charCodeAt(i) & 0xff;
+    },
+
+    /**
+     * Determines the index of a base64 character in the base64 alphabet.
+     * @param {String} s
+     * @param {Number} i
+     * @returns {Number}
+     * @throws {Error} If the character can not be found in the alphabet.
+     * @private
+     */
+    _getIndex: function(s, i) {
+        return alphabet.indexOf(s.charAt(i));
+    },
+
     /**
      * Encode the given string.
      * @param {String} input
@@ -89,9 +89,9 @@ JXG.Util.Base64 = {
 
         for (i = 0; i < len - padLen; i += 3) {
             bin =
-                (_getByte(encInput, i) << 16) |
-                (_getByte(encInput, i + 1) << 8) |
-                _getByte(encInput, i + 2);
+                (this._getByte(encInput, i) << 16) |
+                (this._getByte(encInput, i + 1) << 8) |
+                this._getByte(encInput, i + 2);
             buffer.push(
                 alphabet.charAt(bin >> 18),
                 alphabet.charAt((bin >> 12) & 63),
@@ -102,7 +102,7 @@ JXG.Util.Base64 = {
 
         switch (padLen) {
             case 1:
-                bin = _getByte(encInput, len - 1);
+                bin = this._getByte(encInput, len - 1);
                 buffer.push(
                     alphabet.charAt(bin >> 2),
                     alphabet.charAt((bin << 4) & 63),
@@ -111,7 +111,7 @@ JXG.Util.Base64 = {
                 );
                 break;
             case 2:
-                bin = (_getByte(encInput, len - 2) << 8) | _getByte(encInput, len - 1);
+                bin = (this._getByte(encInput, len - 2) << 8) | this._getByte(encInput, len - 1);
                 buffer.push(
                     alphabet.charAt(bin >> 10),
                     alphabet.charAt((bin >> 4) & 63),
@@ -168,10 +168,10 @@ JXG.Util.Base64 = {
 
         for (i = 0; i < len; i += 4) {
             bin =
-                (_getIndex(encInput, i) << 18) |
-                (_getIndex(encInput, i + 1) << 12) |
-                (_getIndex(encInput, i + 2) << 6) |
-                _getIndex(encInput, i + 3);
+                (this._getIndex(encInput, i) << 18) |
+                (this._getIndex(encInput, i + 1) << 12) |
+                (this._getIndex(encInput, i + 2) << 6) |
+                this._getIndex(encInput, i + 3);
             buffer.push(bin >> 16, (bin >> 8) & 255, bin & 255);
 
             // flush the buffer, if it gets too big fromCharCode will crash
@@ -184,14 +184,14 @@ JXG.Util.Base64 = {
         switch (padLen) {
             case 1:
                 bin =
-                    (_getIndex(encInput, len) << 12) |
-                    (_getIndex(encInput, len + 1) << 6) |
-                    _getIndex(encInput, len + 2);
+                    (this._getIndex(encInput, len) << 12) |
+                    (this._getIndex(encInput, len + 1) << 6) |
+                    this._getIndex(encInput, len + 2);
                 buffer.push(bin >> 10, (bin >> 2) & 255);
                 break;
 
             case 2:
-                bin = (_getIndex(encInput, i) << 6) | _getIndex(encInput, i + 1);
+                bin = (this._getIndex(encInput, i) << 6) | this._getIndex(encInput, i + 1);
                 buffer.push(bin >> 4);
                 break;
         }
