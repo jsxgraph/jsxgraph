@@ -646,18 +646,17 @@ JXG.Options = {
              * <script type="text/javascript">
              *     (function() {
              *         var board = JXG.JSXGraph.initBoard('JXGcd50c814-be81-4280-9458-d73e50cece8d',
-             *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
-             *     const board = JXG.JSXGraph.initBoard('jxgbox', {
-             *         boundingbox: [-5, 5, 5, -5], axis: true,
-             *         pan: {
-             *             enabled: true,
-             *             needTwoFingers: true,
-             *         },
-             *         browserPan: true,
-             *         zoom: {
-             *             enabled: false
-             *         }
-             *     });
+             *             {showcopyright: false, shownavigation: false,
+             *              axis: true,
+             *              pan: {
+             *                enabled: true,
+             *                needTwoFingers: true,
+             *             },
+             *             browserPan: true,
+             *             zoom: {
+             *               enabled: false
+             *             }
+             *          });
              *
              *     var p1 = board.create('point', [1, -1]);
              *     var p2 = board.create('point', [2.5, -2]);

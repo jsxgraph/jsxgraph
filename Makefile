@@ -86,7 +86,7 @@ release: core docs
 	$(CP) $(TMP)/jsxgraph.zip $(OUTPUT)/jsxgraph.zip
 	$(RM) $(RMFLAGS) $(TMP)
 
-docs: core
+docs: 
 	# Set up tmp dir
 	$(MKDIR) $(MKDIRFLAGS) $(TMP)
 	$(MKDIR) $(MKDIRFLAGS) $(OUTPUT)

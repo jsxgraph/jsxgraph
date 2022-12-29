@@ -1,45 +1,62 @@
 <div align="center">{+new Link().toFile("index.html").withText("Class Index")+}
 | {+new Link().toFile("files.html").withText("File Index")+}</div>
 <hr />
-<h2 onclick="switchList('myElList');" style="cursor: pointer"><img src="static/expandable.gif"/> Elements</h2>
-<ul class="classList" id="myElList" style="display: block;">
-	<for each="thisClass" in="data">
-	<li>{!
-		if(thisClass.isPseudo)
-			output += new Link().toClass(thisClass.alias);
-	!}</li>
-	</for>
-</ul>
-<h2 onclick="switchList('myClList');" style="cursor: pointer"><img src="static/expandable.gif"/> Classes</h2>
-<ul class="classList" id="myClList" style="display: block;">
-	<for each="thisClass" in="data">
-	<li>{!
-		if (thisClass.alias == "_global_") {
-			output += "<i>"+new Link().toClass(thisClass.alias)+"</i>";
-		}
-		else {
-			if(!thisClass.isPseudo)
-				output += new Link().toClass(thisClass.alias);
-		}
-	!}</li>
-	</for>
-</ul>
+<details id="myElList" open >
+    <summary onClick="switchList('myElList')" class="summary">Elements</summary>
+    <ul class="classList">
+    	<for each="thisClass" in="data">
+        	<li>{!
+    		if(thisClass.isPseudo)
+	    		output += new Link().toClass(thisClass.alias);
+	        !}</li>
+	    </for>
+    </ul>
+</details>
+<details id="myClList" open >
+    <summary onClick="switchList('myClList')" class="summary">Classes</summary>
+    <ul class="classList">
+    	<for each="thisClass" in="data">
+	      <li>{!
+	      	if (thisClass.alias == "_global_") {
+	      		output += "<i>"+new Link().toClass(thisClass.alias)+"</i>";
+	      	}
+	      	else {
+	      		if(!thisClass.isPseudo)
+	      			output += new Link().toClass(thisClass.alias);
+	      	}
+	      !}</li>
+	    </for>
+    </ul>
+</details>
 <hr />
 
 <script type="text/javascript">
   /* <![CDATA[ */
-   	function switchList(id) {
-      document.getElementById(id).style.display = ( document.getElementById(id).style.display == 'block' ? 'none' : 'block' );
-      document.cookie = id.toLowerCase() + 'status=' + document.getElementById(id).style.display + ';';
-  	};
-
 	function initList(id) {
-      var cookieList = document.cookie.split(';');
-      for(var c=0; c<cookieList.length; c++) {
-        if(cookieList[c].indexOf(id.toLowerCase() + 'status') != -1) {
-          document.getElementById(id).style.display = cookieList[c].split('=')[1];
+      var val, c,
+        cookieList = document.cookie.split('; ');
+
+      for(c = 0; c < cookieList.length; c++) {
+        if(cookieList[c].indexOf(id.toLowerCase() + 'open') != -1) {
+          val = cookieList[c].split('=')[1];
+          if (val === '1') {
+            document.getElementById(id).setAttribute('open', '');
+          } else {
+            document.getElementById(id).removeAttribute('open');
+          }
         }
       }
+  	};
+
+   	function switchList(id) {
+        var val = document.getElementById(id).getAttribute('open');
+        if (val === null) {
+            val = '1';
+        } else {
+            val = '0';
+        }
+        // document.cookie = id.toLowerCase() + 'open=' + val + ';max-age=0';
+        document.cookie = id.toLowerCase() + 'open=' + val + '';
   	};
 
   	initList('myElList');

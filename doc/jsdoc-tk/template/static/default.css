@@ -90,6 +90,12 @@ pre.code
 	width: 800px;
 }
 
+.summary {
+    font-family: arial, sans-serif;
+    font-weight: bold;
+    font-size: 1em;
+}
+
 .classList
 {
 	list-style-type: none;
@@ -196,6 +202,6 @@ ul.inheritsList
 
 .fineprint
 {
-	text-align: right;
+	text-align: center;
 	font-size: 10px;
 }
