@@ -1206,7 +1206,7 @@ JXG.createText = function (board, parents, attributes) {
         );
     }
 
-    if (attr.rotate !== 0 && attr.display === "internal") {
+    if (attr.rotate !== 0) {
         // This is the default value, i.e. no rotation
         t.addRotation(attr.rotate);
     }

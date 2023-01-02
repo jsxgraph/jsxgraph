@@ -6063,7 +6063,6 @@ JXG.Options = {
 
             /**
              * Text rotation in degrees.
-             * Works for non-zero values only in combination with display=='internal'.
              *
              * @name Text#rotate
              * @type Number

@@ -1110,7 +1110,9 @@ JXG.extend(
                 id,
                 wrap_id,
                 ax,
-                ay;
+                ay,
+                to_h,
+                to_v;
 
             if (el.visPropCalc.visible) {
                 this.updateTextStyle(el, false);
@@ -1127,13 +1129,16 @@ JXG.extend(
                         if (ax === "right") {
                             // v = Math.floor(el.board.canvasWidth - c);
                             v = el.board.canvasWidth - c;
+                            to_h = "right";
                         } else if (ax === "middle") {
                             // v = Math.floor(c - 0.5 * el.size[0]);
                             v = c - 0.5 * el.size[0];
+                            to_h = "center";
                         } else {
                             // 'left'
                             // v = Math.floor(c);
                             v = c;
+                            to_h = "left";
                         }
 
                         // This may be useful for foreignObj.
@@ -1160,13 +1165,16 @@ JXG.extend(
                         if (ay === "bottom") {
                             // v = Math.floor(el.board.canvasHeight - c);
                             v = el.board.canvasHeight - c;
+                            to_v = "bottom";
                         } else if (ay === "middle") {
                             // v = Math.floor(c - 0.5 * el.size[1]);
                             v = c - 0.5 * el.size[1];
+                            to_v = "center";
                         } else {
                             // top
                             // v = Math.floor(c);
                             v = c;
+                            to_v = "top";
                         }
 
                         // This may be useful for foreignObj.
@@ -1261,7 +1269,19 @@ JXG.extend(
                             }
                         }
                     }
-                    this.transformImage(el, el.transformations);
+
+                    let angle = Type.evaluate(el.visProp.rotate),
+                        co, si;
+
+                    if (angle != 0) {
+                        // Don't forget to convert to rad
+                        angle = angle / 180 * Math.PI;
+                        co = Math.cos(angle);
+                        si = Math.sin(angle);
+                        
+                        el.rendNode.style['transform'] = `matrix(${co}, ${-1 * si}, ${si}, ${co}, 0, 0)`;
+                        el.rendNode.style['transform-origin'] = to_v + ' ' + to_h;
+                    }
                 } else {
                     this.updateInternalText(el);
                 }
