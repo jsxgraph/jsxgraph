@@ -909,11 +909,11 @@ JXG.Options = {
 
             /**
              * If enabled, user activities are logged in array "board.userLog".
-             * 
+             *
              * @name JXG.Board#showInfobox
              * @type Object
              * @default {enabled: false}
-             * 
+             *
              * @example
              *     var board = JXG.JSXGraph.initBoard('jxgbox', {
              *         boundingbox: [-5,5,5,-5],
@@ -1348,6 +1348,32 @@ JXG.Options = {
              * @type Array
              * @name JXG.GeometryElement#transitionProperties
              * @see JXG.GeometryElement#transitionDuration
+             *
+             *
+             * @example
+             * var p1 = board.create("point", [0, 2], {
+             *     name: "A",
+             *     highlightStrokeWidth: 10,
+             *     transitionDuration: 1000,
+             *     transitionProperties: ['width', 'height', 'stroke-width',
+             *         'fill', 'fill-opacity', 'rx', 'ry', 'stroke', 'stroke-opacity'] });
+             *
+             * </pre><div id="JXGdf5230a1-5870-43db-b6ff-4d5b2f5b786b" class="jxgbox" style="width: 300px; height: 300px;"></div>
+             * <script type="text/javascript">
+             *     (function() {
+             *         var board = JXG.JSXGraph.initBoard('JXGdf5230a1-5870-43db-b6ff-4d5b2f5b786b',
+             *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+             *     var p1 = board.create("point", [0, 2], {
+             *         name: "A",
+             *         highlightStrokeWidth: 20,
+             *         transitionDuration: 1000,
+             *         transitionProperties: ['width', 'height', 'stroke-width',
+             *             'fill', 'fill-opacity', 'rx', 'ry', 'stroke', 'stroke-opacity'] });
+             *
+             *     })();
+             *
+             * </script><pre>
+             *
              */
             transitionProperties: ['fill', 'fill-opacity', 'stroke', 'stroke-opacity', 'stroke-width'],
 
@@ -2178,8 +2204,8 @@ JXG.Options = {
             strokeWidth: 2,
             strokeColor: Color.palette.blue,
             /**
-             * The default distance (in user coordinates, not  pixels) between two hatch symbols. 
-             * 
+             * The default distance (in user coordinates, not  pixels) between two hatch symbols.
+             *
              * @type Number
              * @name Hatch#ticksDistance
              * @default 0.2
