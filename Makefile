@@ -139,13 +139,13 @@ plot:
 	$(WEBPACK) --config config/webpack.config.plot.js
 
 hint:
-	$(HINT) src/$(LINTLIST).js
+	$(HINT) $(LINTLIST)
 
 lint:
-	$(LINT) $(LINTFLAGS) src/$(LINTLIST).js
+	$(LINT) $(LINTFLAGS) $(LINTLIST)
 
 eslint:
-	$(ESLINT) $(ESLINTFLAGS) src/$(LINTLIST).js
+	$(ESLINT) $(ESLINTFLAGS) $(LINTLIST)
 
 test: core
 	$(KARMA) start karma/karma.conf.js

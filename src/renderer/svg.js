@@ -1415,7 +1415,8 @@ JXG.extend(
 
         // documented in JXG.AbstractRenderer
         setObjectTransition: function (el, duration) {
-            var node,
+            var node, props,
+                transitionArr = [],
                 transitionStr,
                 i, len,
                 nodes = ["rendNode", "rendNodeTriangleStart", "rendNodeTriangleEnd"];
@@ -1424,29 +1425,37 @@ JXG.extend(
                 duration = Type.evaluate(el.visProp.transitionduration);
             }
 
-            if (duration === el.visPropOld.transitionduration) {
+            props = Type.evaluate(el.visProp.transitionproperties);
+            if (duration === el.visPropOld.transitionduration &&
+                props === el.visPropOld.transitionproperties) {
                 return;
             }
 
-            if (
-                el.elementClass === Const.OBJECT_CLASS_TEXT &&
-                Type.evaluate(el.visProp.display) === "html"
-            ) {
-                // transitionStr = " color " + duration + "ms," +
-                //     " opacity " + duration + "ms";
-                transitionStr = " all " + duration + "ms ease";
-            } else {
-                transitionStr =
-                    " fill " + duration + "ms," +
-                    " fill-opacity " + duration + "ms," +
-                    " stroke " + duration + "ms," +
-                    " stroke-opacity " + duration + "ms," +
-                    " stroke-width " + duration + "ms," +
-                    " width " + duration + "ms," +
-                    " height " + duration + "ms," +
-                    " rx " + duration + "ms," +
-                    " ry " + duration + "ms";
+            // if (
+            //     el.elementClass === Const.OBJECT_CLASS_TEXT &&
+            //     Type.evaluate(el.visProp.display) === "html"
+            // ) {
+            //     // transitionStr = " color " + duration + "ms," +
+            //     //     " opacity " + duration + "ms";
+            //     transitionStr = " all " + duration + "ms ease";
+            // } else {
+            //     transitionStr =
+            //         " fill " + duration + "ms," +
+            //         " fill-opacity " + duration + "ms," +
+            //         " stroke " + duration + "ms," +
+            //         " stroke-opacity " + duration + "ms," +
+            //         " stroke-width " + duration + "ms," +
+            //         " width " + duration + "ms," +
+            //         " height " + duration + "ms," +
+            //         " rx " + duration + "ms," +
+            //         " ry " + duration + "ms";
+            // }
+
+            len = props.length;
+            for (i = 0; i < len; i++) {
+                transitionArr.push(props[i] + ' ' + duration+ 'ms');
             }
+            transitionStr = transitionArr.join(', ');
 
             len = nodes.length;
             for (i = 0; i < len; ++i) {
@@ -1457,6 +1466,7 @@ JXG.extend(
             }
 
             el.visPropOld.transitionduration = duration;
+            el.visPropOld.transitionproperties = props;
         },
 
         /**

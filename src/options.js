@@ -1320,10 +1320,12 @@ JXG.Options = {
             gradientFR: 0.0,
 
             /**
-             * Transition duration (in milliseconds) for color and opacity
-             * changes. Works in SVG renderer, only.
+             * Transition duration (in milliseconds) for certain cahnges of properties like color and opacity.
+             * The properties can be set in the attribute transitionProperties
+             * Works in SVG renderer, only.
              * @type Number
              * @name JXG.GeometryElement#transitionDuration
+             * @see JXG.GeometryElement#transitionProperties
              * @see JXG.GeometryElement#strokeColor
              * @see JXG.GeometryElement#highlightStrokeColor
              * @see JXG.GeometryElement#strokeOpacity
@@ -1332,9 +1334,22 @@ JXG.Options = {
              * @see JXG.GeometryElement#highlightFillColor
              * @see JXG.GeometryElement#fillOpacity
              * @see JXG.GeometryElement#highlightFillOpacity
-             * @default {@link JXG.Options.elements#transitionDuration}
+             * @default 100 {@link JXG.Options.elements#transitionDuration}
              */
             transitionDuration: 100,
+
+            /**
+             * Properties which change smoothly in the time set in transitionDuration.
+             * Possible values are
+             * ['fill', 'fill-opacity', 'stroke', 'stroke-opacity', 'stroke-width', 'width', 'height', 'rx', 'ry']
+             * (and maybe more) for geometry elements and
+             * ['color', 'opacity', 'all'] for HTML texts.
+             *
+             * @type Array
+             * @name JXG.GeometryElement#transitionProperties
+             * @see JXG.GeometryElement#transitionDuration
+             */
+            transitionProperties: ['fill', 'fill-opacity', 'stroke', 'stroke-opacity', 'stroke-width'],
 
             /**
              * Width of the element's stroke.
@@ -4337,6 +4352,7 @@ JXG.Options = {
 
             strokeWidth: 2,
 
+            transitionProperties: ['fill', 'fill-opacity', 'stroke', 'stroke-opacity', 'stroke-width', 'width', 'height', 'rx', 'ry'],
             fillColor: Color.palette.red,
             strokeColor: Color.palette.red,
             highlightFillColor:'#c3d9ff',
@@ -5645,7 +5661,7 @@ JXG.Options = {
             */
             highlightCssStyle: '',
 
-            transitionDuration: 0,
+            transitionProperties:  ['color', 'opacity'],
 
             /**
              * If true, the input will be given to ASCIIMathML before rendering.

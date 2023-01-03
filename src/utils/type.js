@@ -294,7 +294,7 @@ JXG.extend(
          * to evaluate.
          */
         createEvalFunction: function (board, param, n) {
-            var f = [], func, i,
+            var f = [], func, i, e,
                 deps = {};
 
             for (i = 0; i < n; i++) {
