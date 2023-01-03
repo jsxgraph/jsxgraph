@@ -294,16 +294,22 @@ JXG.extend(
          * to evaluate.
          */
         createEvalFunction: function (board, param, n) {
-            var f = [],
-                i;
+            var f = [], func, i,
+                deps = {};
 
             for (i = 0; i < n; i++) {
                 f[i] = JXG.createFunction(param[i], board, "", true);
+                for (e in f[i].deps) {
+                    deps[e] = f[i].deps;
+                }
             }
 
-            return function (k) {
+            func = function (k) {
                 return f[k]();
             };
+            func.deps = deps;
+
+            return func;
         },
 
         /**
@@ -331,17 +337,20 @@ JXG.extend(
                 f = board.jc.snippet(term, true, variableName, true);
             } else if (this.isFunction(term)) {
                 f = term;
+                f.deps = {};
             } else if (this.isNumber(term)) {
                 /** @ignore */
                 f = function () {
                     return term;
                 };
+                f.deps = {};
             } else if (this.isString(term)) {
                 // In case of string function like fontsize
                 /** @ignore */
                 f = function () {
                     return term;
                 };
+                f.deps = {};
             }
 
             if (f !== null) {

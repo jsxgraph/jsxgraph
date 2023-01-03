@@ -80,6 +80,8 @@ JXG.ForeignObject = function (board, coords, attributes, content, size) {
 
         this.W = Type.createFunction(size[0], this.board, "");
         this.H = Type.createFunction(size[1], this.board, "");
+        this.addParentsFromJCFunctions([this.W, this.H]);
+
         this.usrSize = [this.W(), this.H()];
     }
 
@@ -311,6 +313,7 @@ JXG.extend(
             this.W = Type.createFunction(width, this.board, "");
             this.H = Type.createFunction(height, this.board, "");
             this._useUserSize = true;
+            this.addParentsFromJCFunctions([this.W, this.H]);
 
             return this;
         },

@@ -1376,8 +1376,7 @@ JXG.extend(
          * @see JXG.GeonextParser#geonext2JS
          */
         addConstraint: function (terms) {
-            var i,
-                v,
+            var i, v,
                 newfuncs = [],
                 what = ["X", "Y"],
                 makeConstFunction = function (z) {
@@ -1406,7 +1405,9 @@ JXG.extend(
                     //newfuncs[i] = new Function('','return ' + t + ';');
                     //v = GeonextParser.replaceNameById(v, this.board);
                     newfuncs[i] = this.board.jc.snippet(v, true, null, true);
+                    this.addParentsFromJCFunctions([newfuncs[i]]);
 
+                    // Store original term as 'Xjc' or 'Yjc'
                     if (terms.length === 2) {
                         this[what[i] + "jc"] = terms[i];
                     }
@@ -1440,8 +1441,7 @@ JXG.extend(
             } else if (terms.length === 2) {
                 this.XEval = newfuncs[0];
                 this.YEval = newfuncs[1];
-
-                this.setParents([newfuncs[0].origin, newfuncs[1].origin]);
+                this.addParents([newfuncs[0].origin, newfuncs[1].origin]);
 
                 this.updateConstraint = function () {
                     this.coords.setCoordinates(Const.COORDS_BY_USER, [
@@ -1456,7 +1456,7 @@ JXG.extend(
                 this.XEval = newfuncs[1];
                 this.YEval = newfuncs[2];
 
-                this.setParents([newfuncs[0].origin, newfuncs[1].origin, newfuncs[2].origin]);
+                this.addParents([newfuncs[0].origin, newfuncs[1].origin, newfuncs[2].origin]);
 
                 this.updateConstraint = function () {
                     this.coords.setCoordinates(Const.COORDS_BY_USER, [

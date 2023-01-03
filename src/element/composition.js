@@ -3808,6 +3808,8 @@ JXG.createInequality = function (board, parents, attributes) {
     } else {
         // Not yet practical?
         f = Type.createFunction(parents[0]);
+        a.addParentsFromJCFunctions([f]);
+
         if (!Type.exists(f)) {
             throw new Error(
                 "JSXGraph: Can't create area with the given parents." +

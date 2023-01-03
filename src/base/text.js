@@ -191,7 +191,7 @@ JXG.extend(
          * @private
          */
         _createFctUpdateText: function (text) {
-            var updateText,
+            var updateText, e,
                 resolvedText,
                 ev_p = Type.evaluate(this.visProp.parse),
                 ev_um = Type.evaluate(this.visProp.usemathjax),
@@ -241,6 +241,10 @@ JXG.extend(
                 if (convertJessieCode) {
                     // Convert JessieCode to JS function
                     updateText = this.board.jc.snippet(this.content, true, "", false);
+                    for (e in updateText.deps) {
+                        this.addParents(updateText.deps[e]);
+                        updateText.deps[e].addChild(this);
+                    }
 
                     // Ticks have been esacped in valueTagToJessieCode
                     this.updateText = function () {

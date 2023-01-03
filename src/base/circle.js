@@ -139,6 +139,7 @@ JXG.Circle = function (board, method, par1, par2, attributes) {
         this.updateRadius = Type.createFunction(par2, this.board, null, true);
         // First evaluation of the radius function
         this.updateRadius();
+        this.addParentsFromJCFunctions([this.updateRadius]);
     } else if (method === "pointLine") {
         // dann ist p2 die Id eines Objekts vom Typ Line!
         this.line = board.select(par2);
@@ -538,6 +539,7 @@ JXG.extend(
          */
         setRadius: function (r) {
             this.updateRadius = Type.createFunction(r, this.board, null, true);
+            this.addParentsFromJCFunctions([this.updateRadius]);
             this.board.update();
 
             return this;

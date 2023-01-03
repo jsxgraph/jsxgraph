@@ -162,7 +162,7 @@ JXG.extend(
          *
          */
         setMatrix: function (board, type, params) {
-            var i;
+            var i, e, obj;
 
             this.isNumericMatrix = true;
 
@@ -323,6 +323,13 @@ JXG.extend(
                     this.matrix[2][1] = this.evalParam(7);
                     this.matrix[2][2] = this.evalParam(8);
                 };
+            }
+
+            // Handle dependencies
+            for (e in this.evalParam.deps) {
+                obj = this.evalParam.deps[e];
+                this.addParents(obj);
+                obj.addChild(this);
             }
         },
 
@@ -740,7 +747,7 @@ JXG.createTransform = function (board, parents, attributes) {
     return new JXG.Transformation(board, attributes.type, parents);
 };
 
-JXG.registerElement("transform", JXG.createTransform);
+JXG.registerElement('transform', JXG.createTransform);
 
 export default {
     Transformation: JXG.Transformation,

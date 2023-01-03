@@ -69,6 +69,7 @@ JXG.Image = function (board, coords, attributes, url, size) {
 
     this.W = Type.createFunction(size[0], this.board, "");
     this.H = Type.createFunction(size[1], this.board, "");
+    this.addParentsFromJCFunctions([this.W, this.H]);
 
     this.usrSize = [this.W(), this.H()];
 
@@ -346,7 +347,7 @@ JXG.extend(
         setSize: function (width, height) {
             this.W = Type.createFunction(width, this.board, "");
             this.H = Type.createFunction(height, this.board, "");
-
+            this.addParentsFromJCFunctions([this.W, this.H]);
             // this.fullUpdate();
 
             return this;

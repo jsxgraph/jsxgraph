@@ -1045,10 +1045,12 @@ JXG.extend(
                 this.X = function (phi) {
                     return xterm(phi) * Math.cos(phi) + fx();
                 };
+                this.X.deps = fx.deps;
 
                 this.Y = function (phi) {
                     return xterm(phi) * Math.sin(phi) + fy();
                 };
+                this.Y.deps = fy.deps;
 
                 this.visProp.curvetype = "polar";
             }
@@ -1060,6 +1062,8 @@ JXG.extend(
             if (Type.exists(ma)) {
                 this.maxX = Type.createFunction(ma, this.board, "");
             }
+
+            this.addParentsFromJCFunctions([this.X, this.Y, this.minX, this.maxX]);
         },
 
         /**
@@ -2348,6 +2352,8 @@ JXG.createRiemannsum = function (board, parents, attributes) {
         this.sum = u[2];
     };
 
+    c.addParentsFromJCFunctions([n, type]);
+
     return c;
 };
 
@@ -2921,10 +2927,7 @@ JXG.registerElement("curveunion", JXG.createCurveUnion);
  *
  */
 JXG.createBoxPlot = function (board, parents, attributes) {
-    var box,
-        i,
-        len,
-        w2,
+    var box, i, len, w2,
         attr = Type.copyAttributes(attributes, board.options, "boxplot");
 
     if (parents.length !== 3) {
@@ -2989,6 +2992,9 @@ JXG.createBoxPlot = function (board, parents, attributes) {
             this.dataY = v1;
         }
     };
+
+    box.addParentsFromJCFunctions([box.Q, box.x, box.w]);
+
     return box;
 };
 
