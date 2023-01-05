@@ -1248,7 +1248,7 @@ JXG.extend(
                                 });
                                 /* eslint-enable no-undef */
                             } catch (e) {
-                                JXG.debug("KaTeX (not yet) loaded");
+                                JXG.debug("KaTeX not loaded (yet)");
                             }
                         } else if (Type.evaluate(el.visProp.useasciimathml)) {
                             // This is not a constructor.
@@ -1257,7 +1257,7 @@ JXG.extend(
                             try {
                                 AMprocessNode(el.rendNode, false);
                             } catch (e) {
-                                JXG.debug("AsciiMathML (not yet) loaded");
+                                JXG.debug("AsciiMathML not loaded (yet)");
                             }
                         }
                     }
