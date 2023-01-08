@@ -4331,15 +4331,18 @@ JXG.Options = {
              * There are different point styles which differ in appearance.
              * Posssible values are
              * <table><tr><th>Value</th></tr>
-             * <tr><td>cross</td></tr>
-             * <tr><td>circle</td></tr>
-             * <tr><td>square</td></tr>
-             * <tr><td>plus</td></tr>
-             * <tr><td>diamond</td></tr>
-             * <tr><td>triangleUp</td></tr>
-             * <tr><td>triangleDown</td></tr>
-             * <tr><td>triangleLeft</td></tr>
-             * <tr><td>triangleRight</td></tr>
+             * <tr><th>Input</th><th>Output</th></tr>
+             * <tr><td>cross</td><td>x</td></tr>
+             * <tr><td>circle</td><td>o</td></tr>
+             * <tr><td>square, []</td><td>[]</td></tr>
+             * <tr><td>plus</td><td>+</td></tr>
+             * <tr><td>minus</td><td>-</td></tr>
+             * <tr><td>divide</td><td>|</td></tr>
+             * <tr><td>diamond</td><td>&lt;&gt;</td></tr>
+             * <tr><td>triangleup</td><td>A</td></tr>
+             * <tr><td>triangledown</td><td>v</td></tr>
+             * <tr><td>triangleleft</td><td>&lt;</td></tr>
+             * <tr><td>triangleright</td><td>&gt;</td></tr>
              * </table>
              *
              * @name Point#face
@@ -6355,15 +6358,17 @@ JXG.Options = {
      * simplify if- and switch-clauses regarding point faces. The translation table is as follows:
      * <table>
      * <tr><th>Input</th><th>Output</th></tr>
-     * <tr><td>cross, x</td><td>x</td></tr>
-     * <tr><td>circle, o</td><td>o</td></tr>
+     * <tr><td>cross</td><td>x</td></tr>
+     * <tr><td>circle</td><td>o</td></tr>
      * <tr><td>square, []</td><td>[]</td></tr>
-     * <tr><td>plus, +</td><td>+</td></tr>
-     * <tr><td>diamond, &lt;&gt;</td><td>&lt;&gt;</td></tr>
-     * <tr><td>triangleup, a, ^</td><td>A</td></tr>
-     * <tr><td>triangledown, v</td><td>v</td></tr>
-     * <tr><td>triangleleft, &lt;</td><td>&lt;</td></tr>
-     * <tr><td>triangleright, &gt;</td><td>&gt;</td></tr>
+     * <tr><td>plus</td><td>+</td></tr>
+     * <tr><td>minus</td><td>-</td></tr>
+     * <tr><td>divide</td><td>|</td></tr>
+     * <tr><td>diamond</td><td>&lt;&gt;</td></tr>
+     * <tr><td>triangleup</td><td>A</td></tr>
+     * <tr><td>triangledown</td><td>v</td></tr>
+     * <tr><td>triangleleft</td><td>&lt;</td></tr>
+     * <tr><td>triangleright</td><td>&gt;</td></tr>
      * </table>
      * @param {String} s A string which should determine a valid point face.
      * @returns {String} Returns a normalized string or undefined if the given string is not a valid
@@ -6379,6 +6384,10 @@ JXG.Options = {
             '[]': '[]',
             plus: '+',
             '+': '+',
+            divide: '|',
+            '|': '|',
+            minus: '-',
+            '-': '-',
             diamond: '<>',
             '<>': '<>',
             triangleup: '^',

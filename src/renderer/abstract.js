@@ -280,6 +280,7 @@ JXG.extend(
                 // in these cases to not use el directly.
                 face = Options.normalizePointFace(Type.evaluate(el.visProp.face));
 
+            console.log("Draw", face)
             // determine how the point looks like
             if (face === "o") {
                 prim = "ellipse";
@@ -287,7 +288,7 @@ JXG.extend(
                 prim = "rect";
             } else {
                 // cross/x, diamond/<>, triangleup/a/^, triangledown/v, triangleleft/<,
-                // triangleright/>, plus/+,
+                // triangleright/>, plus/+, |, -
                 prim = "path";
             }
 
@@ -1687,7 +1688,7 @@ JXG.extend(
          * @param {Number} size A positive number describing the size. Usually the half of the width and height of
          * the drawn point.
          * @param {String} type A string describing the point's face. This method only accepts the shortcut version of
-         * each possible face: <tt>x, +, <>, ^, v, >, < </tt>
+         * each possible face: <tt>x, +, |, -, [], <>, ^, v, >, < </tt>
          */
         updatePathStringPoint: function (element, size, type) {
             /* stub */

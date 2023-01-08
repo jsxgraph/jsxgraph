@@ -950,6 +950,26 @@ JXG.extend(
                     scr[1] +
                     " " +
                     (scr[2] + size);
+            } else if (type === "|") {
+                s =
+                    " M " +
+                    scr[1] +
+                    " " +
+                    (scr[2] - size) +
+                    " L " +
+                    scr[1] +
+                    " " +
+                    (scr[2] + size);
+            } else if (type === "-") {
+                s =
+                    " M " +
+                    (scr[1] - size) +
+                    " " +
+                    scr[2] +
+                    " L " +
+                    (scr[1] + size) +
+                    " " +
+                    scr[2];
             } else if (type === "<>") {
                 s =
                     " M " +

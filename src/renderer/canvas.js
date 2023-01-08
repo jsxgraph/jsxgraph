@@ -558,6 +558,26 @@ JXG.extend(
                     context.closePath();
                     this._stroke(el);
                     break;
+                case "divide":
+                case "|":
+                    context.beginPath();
+                    context.moveTo(scr[1], scr[2] - size);
+                    context.lineTo(scr[1], scr[2] + size);
+                    context.lineCap = "round";
+                    context.lineJoin = "round";
+                    context.closePath();
+                    this._stroke(el);
+                    break;
+                case "minus":
+                case "-":
+                    context.beginPath();
+                    context.moveTo(scr[1] - size, scr[2]);
+                    context.lineTo(scr[1] + size, scr[2]);
+                    context.lineCap = "round";
+                    context.lineJoin = "round";
+                    context.closePath();
+                    this._stroke(el);
+                    break;
                 case "diamond": // <>
                 case "<>":
                     context.beginPath();
