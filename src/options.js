@@ -212,6 +212,7 @@ JXG.Options = {
             defaultAxes: {
                 x: {
                     name: 'x',
+                    fixed: true,
                     ticks: {
                         label: {
                             visible: 'inherit',
@@ -223,11 +224,13 @@ JXG.Options = {
                         tickEndings: [0, 1],
                         majorTickEndings: [1, 1],
                         drawZero: false,
+                        needsRegularUpdate: false,
                         visible: 'inherit'
                     }
                 },
                 y: {
                     name: 'y',
+                    fixed: true,
                     ticks: {
                         label: {
                             visible: 'inherit',
@@ -239,6 +242,7 @@ JXG.Options = {
                         tickEndings: [1, 0],
                         majorTickEndings: [1, 1],
                         drawZero: false,
+                        needsRegularUpdate: false,
                         visible: 'inherit'
                     }
                 }
@@ -2523,7 +2527,6 @@ JXG.Options = {
             strokeColor: '#666666',
             highlightStrokeWidth: 1,
             highlightStrokeColor: '#888888',
-
 
             /**
              * Show / hide ticks.

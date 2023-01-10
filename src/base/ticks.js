@@ -340,7 +340,7 @@ JXG.extend(
                 }
             }
 
-            // Get Zero (coords element for lines , number for curves)
+            // Get Zero (coords element for lines, number for curves)
             coordsZero = this.getZeroCoordinates();
 
             // Calculate lower bound and upper bound limits based on distance
@@ -452,15 +452,8 @@ JXG.extend(
          * @private
          */
         getZeroCoordinates: function () {
-            var c1x,
-                c1y,
-                c1z,
-                c2x,
-                c2y,
-                c2z,
-                t,
-                mi,
-                ma,
+            var c1x, c1y, c1z, c2x, c2y, c2z,
+                t, mi, ma,
                 ev_a = Type.evaluate(this.visProp.anchor);
 
             if (this.line.elementClass === Const.OBJECT_CLASS_LINE) {

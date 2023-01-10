@@ -1131,7 +1131,6 @@ JXG.extend(
                         ) {
                             dragEl = pEl;
                             collect.push(dragEl);
-
                             // Save offset for large coords elements.
                             if (Type.exists(dragEl.coords)) {
                                 offset.push(

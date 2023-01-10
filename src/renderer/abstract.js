@@ -280,7 +280,6 @@ JXG.extend(
                 // in these cases to not use el directly.
                 face = Options.normalizePointFace(Type.evaluate(el.visProp.face));
 
-            console.log("Draw", face)
             // determine how the point looks like
             if (face === "o") {
                 prim = "ellipse";
