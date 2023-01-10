@@ -90,18 +90,22 @@ JXG.CanvasRenderer = function (container, dim) {
         this.context = this.canvasRoot.getContext("2d");
     } else if (Env.isNode()) {
         // Do not use try to get more concise error message
-        // try {
+        try {
             // this.canvasId = typeof module === "object" ? module.require("canvas") : $__canvas;
             // this.canvasRoot = new this.canvasId(500, 500);
-            this.canvasId = typeof module === "object" ? module.require('canvas') : import('canvas');
             // this.canvasId = (typeof module === 'object' ? module.require('canvas') : require('canvas'));
-            this.canvasRoot = this.canvasId.createCanvas(500, 500);
+
+            //this.canvasId = typeof module === "object" ? module.require('canvas') : import('canvas');
+            // this.canvasRoot = this.canvasId.createCanvas(500, 500);
+            this.canvasRoot = JXG.createCanvas(500, 500);
             this.context = this.canvasRoot.getContext("2d");
-        // } catch (err) {
-        //     console.log(
-        //         "Warning: 'canvas' not found. You might need to call 'npm install canvas'"
-        //     );
-        // }
+        } catch (err) {
+            throw new Error('JXG.createCanvas not available.\n' +
+                'Install the npm package `canvas`\n' +
+                'and call:\n' +
+                '    import { createCanvas } from "canvas";\n' +
+                '    JXG.createCanvas = createCanvas;\n');
+        }
     }
 
     this.dashArray = [

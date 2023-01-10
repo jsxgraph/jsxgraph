@@ -174,12 +174,25 @@ JXG.extend(
             var c,
                 hasCanvas = false;
 
+            // if (this.isNode()) {
+            //     try {
+            //         // c = typeof module === "object" ? module.require("canvas") : $__canvas;
+            //         c = typeof module === "object" ? module.require("canvas") : import('canvas');
+            //         hasCanvas = !!c;
+            //     } catch (err) {}
+            // }
+
             if (this.isNode()) {
-                try {
-                    // c = typeof module === "object" ? module.require("canvas") : $__canvas;
-                    c = typeof module === "object" ? module.require("canvas") : import('canvas');
-                    hasCanvas = !!c;
-                } catch (err) {}
+                //try {
+                //    JXG.createCanvas(500, 500);
+                    hasCanvas = true;
+                // } catch (err) {
+                //     throw new Error('JXG.createCanvas not available.\n' +
+                //         'Install the npm package `canvas`\n' +
+                //         'and call:\n' +
+                //         '    import { createCanvas } from "canvas";\n' +
+                //         '    JXG.createCanvas = createCanvas;\n');
+                // }
             }
 
             return (
@@ -438,7 +451,7 @@ JXG.extend(
          * @param {Object} owner The scope in which the event trigger is called.
          * @param {Object|Boolean} [options=false] This parameter is passed as the third parameter to the method addEventListener. Depending on the data type it is either
          * an options object or the useCapture Boolean.
-         * 
+         *
          */
         addEvent: function (obj, type, fn, owner, options) {
             var el = function () {
