@@ -3982,7 +3982,7 @@ JXG.extend(
          *
          **********************************************************/
 
-        /**
+        /**in
          * Initialize the info box object which is used to display
          * the coordinates of points near the mouse pointer,
          * @returns {JXG.Board} Reference to the board
@@ -3999,11 +3999,7 @@ JXG.extend(
              *
              */
             this.infobox = this.create("text", [0, 0, "0,0"], attr);
-
-            this.infobox.distanceX = -20;
-            this.infobox.distanceY = 25;
             // this.infobox.needsUpdateSize = false;  // That is not true, but it speeds drawing up.
-
             this.infobox.dump = false;
 
             this.displayInfobox(false);
@@ -4020,11 +4016,9 @@ JXG.extend(
          *
          */
         updateInfobox: function (el) {
-            var x,
-                y,
-                xc,
-                yc,
+            var x, y, xc, yc,
                 vpinfoboxdigits,
+                distX, distY,
                 vpsi = Type.evaluate(el.visProp.showinfobox);
 
             if ((!Type.evaluate(this.attr.showinfobox) && vpsi === "inherit") || !vpsi) {
@@ -4034,11 +4028,13 @@ JXG.extend(
             if (Type.isPoint(el)) {
                 xc = el.coords.usrCoords[1];
                 yc = el.coords.usrCoords[2];
+                distX = Type.evaluate(this.infobox.visProp.distancex);
+                distY = Type.evaluate(this.infobox.visProp.distancey);
 
                 vpinfoboxdigits = Type.evaluate(el.visProp.infoboxdigits);
                 this.infobox.setCoords(
-                    xc + this.infobox.distanceX / this.unitX,
-                    yc + this.infobox.distanceY / this.unitY
+                    xc + distX / this.unitX,
+                    yc + distY / this.unitY
                 );
 
                 if (typeof el.infoboxText !== "string") {

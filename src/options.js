@@ -3457,6 +3457,26 @@ JXG.Options = {
              * @visprop
              */
 
+            /**
+             * Horizontal offset in pixel of the infobox text from its anchor point.
+             *
+             * @type Number
+             * @default -20
+             * @name infobox#distanceX
+             * @visprop
+             * /
+            distanceX: -20,
+
+            /**
+             * Vertical offset in pixel of the infobox text from its anchor point.
+             *
+             * @type Number
+             * @default 25
+             * @name infobox#distanceX
+             * @visprop
+             * /
+            distanceY: 25,
+
             fontSize: 12,
             isLabel: false,
             strokeColor: '#bbbbbb',
