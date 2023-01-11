@@ -59,4 +59,28 @@ describe("Test JessieCode", function () {
         expect(f.Y(2)).toEqual(4);
     });
 
+    it("Jessiecode arithmetic 1", function() {
+        board.jc.parse(
+            'a = +1;'+
+            'b = 1+1;'+
+
+            'c = [1, 2] + [3, 4];'+
+            's = \'hello\';' +
+            'r = s + \' world\';' +
+            't = s + b;'
+        );
+        expect(board.jc.scope.locals.a).toEqual(1);
+        expect(board.jc.scope.locals.b).toEqual(2);
+        expect(board.jc.scope.locals.c.length).toEqual(2);
+        expect(board.jc.scope.locals.c[0]).toEqual(4);
+        expect(board.jc.scope.locals.c[1]).toEqual(6);
+        expect(board.jc.scope.locals.r).toEqual('hello world');
+        expect(board.jc.scope.locals.t).toEqual('hello2');
+    });
+
+    it("Jessiecode unary minus", function() {
+        board.jc.parse('y = -2^4;');
+        expect(board.jc.scope.locals.y).toEqual(-16);
+    });
+
 });

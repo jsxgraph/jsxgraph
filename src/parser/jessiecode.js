@@ -44,7 +44,6 @@ import Interval from "../math/ia";
 import Geometry from "../math/geometry";
 import Statistics from "../math/statistics";
 import Type from "../utils/type";
-import UUID from "../utils/uuid";
 import Env from "../utils/env";
 
     // IE 6-8 compatibility
