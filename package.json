@@ -3,6 +3,10 @@
   "description": "Interactive geometry, plotting, visualization",
   "homepage": "https://jsxgraph.org",
   "version": "1.5.0-rc2",
+  "exports": {
+    "types": "./src/index.d.ts",
+    "default": "./src/index.js"
+  },
   "main": "./src/index.js",
   "module": "./src/index.js",
   "types": "./src/index.d.ts",
