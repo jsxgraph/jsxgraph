@@ -3,10 +3,14 @@ trunk
 .c9revisions
 *.sublime-*
 .idea/
+*.tgz
+**/*.tgz
+distrib/docs.zip
 distrib/jsxgraphcore.js*
 distrib/jsxgraphsrc.js*
 distrib/jsxgraphcore.mjs*
 distrib/jsxgraphsrc.mjs*
+distrib/jsxgraph.zip
 build/bin/*
 src/require.js
 package-lock.json
