@@ -365,7 +365,7 @@ declare namespace JXG {
     ): void;
     export function filterElements<T>(list: T[], filter: object | Function): T[];
     export function getBoardByContainerId(s: string): Board | null;
-    export function getCSSTrasform(cPos: number[], obj: Element): number[];
+    export function getCSSTransform(cPos: number[], obj: Element): number[];
     export function getCSSTransformMatrix(obj: unknown): number[];
     export function getDimensions(
         elementId: string,
