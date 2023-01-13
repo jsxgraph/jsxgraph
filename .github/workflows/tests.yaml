@@ -1,9 +1,9 @@
-name: Tests
+name: Unit tests
 
 on:
   pull_request:
   push:
-    branches: [master]
+    branches: [main]
 
 jobs:
   tests:
