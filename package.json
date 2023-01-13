@@ -7,7 +7,7 @@
     "types": "./src/index.d.ts",
     "default": "./src/index.js"
   },
-  "main": "./src/index.js",
+  "main": "./distrib/jsxgraphcore.js",
   "module": "./src/index.js",
   "types": "./src/index.d.ts",
   "files": [

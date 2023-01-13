@@ -33,7 +33,7 @@ const config_es5 = {
         filename: "[name].js",
         libraryTarget: "umd",
 
-        // In index.js JSXgraph is exported via "export default JXG"
+        // In index.js, JSXGraph is exported via "export default JXG"
         // Without "export: 'default'" below, with
         //    import pgk from "...jsxgraphcore"
         // JXG would be available as "pkg.default"
@@ -41,8 +41,8 @@ const config_es5 = {
         //    import JXG from "...jsxgraphcore"
         library: {
             name: libraryName,
-            type: "var",
-            export: "default"
+            export: "default",
+            type: "umd"
         },
 
         // Unnamed AMD define

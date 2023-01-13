@@ -230,5 +230,3 @@ if (Env.isBrowser) {
 }
 
 export default JXG;
-
-
