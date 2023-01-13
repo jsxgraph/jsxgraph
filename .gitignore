@@ -13,7 +13,6 @@ distrib/jsxgraphsrc.mjs*
 distrib/jsxgraph.zip
 build/bin/*
 src/require.js
-package-lock.json
 node_modules
 tmp/*
 doc/jsdoc-tk/template/static/jquery.min.js
