@@ -2451,4 +2451,6 @@ JXG.extend(
     }
 );
 
-export default JXG.GeometryElement;
+// export default JXG.GeometryElement;
+const GeometryElement = JXG.GeometryElement;
+export { GeometryElement as default,  GeometryElement };

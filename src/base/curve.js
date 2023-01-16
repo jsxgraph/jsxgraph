@@ -3000,6 +3000,7 @@ JXG.createBoxPlot = function (board, parents, attributes) {
 
 JXG.registerElement("boxplot", JXG.createBoxPlot);
 
+/*
 export default {
     Curve: JXG.Curve,
     createCardinalSpline: JXG.createCardinalSpline,
@@ -3016,3 +3017,6 @@ export default {
     createStepfunction: JXG.createStepfunction,
     createTracecurve: JXG.createTracecurve
 };
+*/
+const Curve = JXG.Curve;
+export { Curve as default, Curve};
