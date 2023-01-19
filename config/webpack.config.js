@@ -17,7 +17,7 @@ const config_es5 = {
     ...baseConfig,
     // Activate source maps for the bundles in order to preserve the original
     // source when the user debugs the application
-    devtool: "source-map",
+    // devtool: "source-map",
     entry: {
         jsxgraphsrc: [PATHS.entryPoint],
         jsxgraphcore: [PATHS.entryPoint]
