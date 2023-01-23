@@ -89,6 +89,10 @@ JXG.EventEmitter = {
      * Register a new event handler. For a list of possible events see documentation
      * of the elements and objects implementing
      * the {@link EventEmitter} interface.
+     * 
+     * As of version 1.5.0, it is only possible to access the element via "this" if the event listener 
+     * is supplied as regular JavaScript function and not as arrow function.
+     * 
      * @param {String} event
      * @param {Function} handler
      * @param {Object} [context] The context the handler will be called in, default is the element itself.

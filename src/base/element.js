@@ -2252,7 +2252,7 @@ JXG.extend(
          * @memberof JXG.GeometryElement
          * @function
          */
-        addEvent: JXG.shortcut(JXG.GeometryElement.prototype, "on"),
+        addEvent: JXG.shortcut(JXG.GeometryElement.prototype, 'on'),
 
         /**
          * Alias of {@link JXG.EventEmitter.off}.
@@ -2261,7 +2261,7 @@ JXG.extend(
          * @memberof JXG.GeometryElement
          * @function
          */
-        removeEvent: JXG.shortcut(JXG.GeometryElement.prototype, "off"),
+        removeEvent: JXG.shortcut(JXG.GeometryElement.prototype, 'off'),
 
         /* **************************
          *     EVENT DEFINITION
