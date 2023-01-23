@@ -34,7 +34,6 @@
 
 import JXG from "../jxg";
 import Type from "../utils/type";
-import Point from "../base/point";
 
 /**
  * @class A comb to display domains of inequalities.

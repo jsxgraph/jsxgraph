@@ -383,13 +383,11 @@ JXG.extend(
         // Already documented in JXG.AbstractRenderer
         transformImage: function (el, t) {
             var m,
-                s,
                 maxX,
                 maxY,
                 minX,
                 minY,
                 i,
-                nt,
                 node = el.rendNode,
                 p = [],
                 len = t.length;
@@ -1123,8 +1121,7 @@ JXG.extend(
                 rgbo,
                 o = Type.evaluate(opacity),
                 oo,
-                node = el.rendNode,
-                t;
+                node = el.rendNode;
 
             o = o > 0 ? o : 0;
 
@@ -1179,7 +1176,6 @@ JXG.extend(
             var rgba = Type.evaluate(color),
                 c,
                 rgbo,
-                t,
                 o = Type.evaluate(opacity),
                 oo,
                 node = el.rendNode,

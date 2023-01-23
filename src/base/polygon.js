@@ -707,10 +707,7 @@ JXG.extend(
          * @returns {JXG.Polygon} Reference to the polygon
          */
         removePoints: function (p) {
-            var i,
-                j,
-                j0,
-                idx,
+            var i, j, idx,
                 firstPoint,
                 nvertices = [],
                 nborders = [],

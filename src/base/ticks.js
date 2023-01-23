@@ -47,7 +47,6 @@ import Const from "./constants";
 import GeometryElement from "./element";
 import Coords from "./coords";
 import Type from "../utils/type";
-import Text from "./text";
 
 /**
  * Creates ticks for an axis.

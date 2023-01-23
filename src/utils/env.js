@@ -131,7 +131,7 @@ JXG.extend(
          * @default false
          */
         supportsES6: function () {
-            var testMap;
+            // var testMap;
             /* jshint ignore:start */
             try {
                 // This would kill the old uglifyjs: testMap = (a = 0) => a;
@@ -171,8 +171,7 @@ JXG.extend(
          * @returns {Boolean} True, if the browser supports HTML canvas.
          */
         supportsCanvas: function () {
-            var c,
-                hasCanvas = false;
+            var hasCanvas = false;
 
             // if (this.isNode()) {
             //     try {

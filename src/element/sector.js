@@ -685,9 +685,7 @@ JXG.createSector = function (board, parents, attributes) {
      */
     if (type === "3points") {
         el.setPositionDirectly = function (method, coords, oldcoords) {
-            var dc,
-                t,
-                i,
+            var dc, t,
                 c = new Coords(method, coords, this.board),
                 oldc = new Coords(method, oldcoords, this.board);
 
@@ -742,7 +740,7 @@ JXG.registerElement("sector", JXG.createSector);
  * </script><pre>
  */
 JXG.createCircumcircleSector = function (board, parents, attributes) {
-    var el, mp, attr, points, i;
+    var el, mp, attr, points;
 
     points = Type.providePoints(board, parents, attributes, "point");
     if (points === false) {

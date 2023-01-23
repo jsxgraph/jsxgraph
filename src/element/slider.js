@@ -162,29 +162,14 @@ import Point from "../base/point";
  *
  */
 JXG.createSlider = function (board, parents, attributes) {
-    var pos0,
-        pos1,
-        smin,
-        start,
-        smax,
-        sdiff,
-        p1,
-        p2,
-        l1,
-        ticks,
-        ti,
-        startx,
-        starty,
-        p3,
-        l2,
-        t,
-        withText,
-        withTicks,
-        snapWidth,
-        sw,
-        s,
-        attr,
-        digits;
+    var pos0, pos1,
+        smin, start, smax, sdiff,
+        p1, p2, p3, l1, l2,
+        ticks, ti, t,
+        startx, starty,
+        withText, withTicks,
+        snapWidth, sw, s,
+        attr;
 
     attr = Type.copyAttributes(attributes, board.options, "slider");
     withTicks = attr.withticks;

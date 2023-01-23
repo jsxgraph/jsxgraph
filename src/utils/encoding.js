@@ -5,7 +5,7 @@ import JXG from "../jxg";
 
 // constants
 var UTF8_ACCEPT = 0,
-    UTF8_REJECT = 12,
+    // UTF8_REJECT = 12,
     UTF8D = [
         // The first part of the table maps bytes to character classes that
         // to reduce the size of the transition table and create bitmasks.

@@ -42,7 +42,6 @@ import JXG from "../jxg";
 import GeometryElement from "./element";
 import Coords from "./coords";
 import Const from "./constants";
-import Conic from "../element/conic";
 import GeonextParser from "../parser/geonext";
 import Type from "../utils/type";
 

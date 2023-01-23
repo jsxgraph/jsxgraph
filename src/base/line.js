@@ -47,7 +47,6 @@ import Const from "./constants";
 import Coords from "./coords";
 import GeometryElement from "./element";
 import Type from "../utils/type";
-import Point from "./point";
 
 /**
  * The Line class is a basic class for all kind of line objects, e.g. line, arrow, and axis. It is usually defined by two points and can
