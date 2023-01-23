@@ -256,6 +256,6 @@ JXG.createSlopeTriangle = function (board, parents, attributes) {
 
 JXG.registerElement("slopetriangle", JXG.createSlopeTriangle);
 
-export default {
-    createSlopeTriangle: JXG.createSlopeTriangle
-};
+// export default {
+//     createSlopeTriangle: JXG.createSlopeTriangle
+// };

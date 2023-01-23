@@ -1094,7 +1094,7 @@ JXG.createLine = function (board, parents, attributes) {
             parents[0]().length >= 2
         ) {
             attr = Type.copyAttributes(attributes, board.options, "line", "point1");
-            p1 = Point.createPoint(board, parents[0](), attr);
+            p1 = JXG.createPoint(board, parents[0](), attr);
             constrained = true;
         } else if (Type.isObject(parents[0]) && Type.isTransformationOrArray(parents[1])) {
             doTransform = true;
@@ -1129,7 +1129,7 @@ JXG.createLine = function (board, parents, attributes) {
             parents[1]().length >= 2
         ) {
             attr = Type.copyAttributes(attributes, board.options, "line", "point2");
-            p2 = Point.createPoint(board, parents[1](), attr);
+            p2 = JXG.createPoint(board, parents[1](), attr);
             constrained = true;
         } else {
             throw new Error(

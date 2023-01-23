@@ -562,6 +562,6 @@ JXG.createSlider = function (board, parents, attributes) {
 
 JXG.registerElement("slider", JXG.createSlider);
 
-export default {
-    createSlider: JXG.createSlider
-};
+// export default {
+//     createSlider: JXG.createSlider
+// };

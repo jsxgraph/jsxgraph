@@ -1659,12 +1659,12 @@ JXG.createReflexAngle = function (board, parents, attributes) {
 
 JXG.registerElement("reflexangle", JXG.createReflexAngle);
 
-export default {
-    createSector: JXG.createSector,
-    createCircumcircleSector: JXG.createCircumcircleSector,
-    createMinorSector: JXG.createMinorSector,
-    createMajorSector: JXG.createMajorSector,
-    createAngle: JXG.createAngle,
-    createReflexAngle: JXG.createReflexAngle,
-    createNonreflexAngle: JXG.createNonreflexAngle
-};
+// export default {
+//     createSector: JXG.createSector,
+//     createCircumcircleSector: JXG.createCircumcircleSector,
+//     createMinorSector: JXG.createMinorSector,
+//     createMajorSector: JXG.createMajorSector,
+//     createAngle: JXG.createAngle,
+//     createReflexAngle: JXG.createReflexAngle,
+//     createNonreflexAngle: JXG.createNonreflexAngle
+// };

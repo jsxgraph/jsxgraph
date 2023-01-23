@@ -184,6 +184,6 @@ JXG.createTapemeasure = function (board, parents, attributes) {
 
 JXG.registerElement("tapemeasure", JXG.createTapemeasure);
 
-export default {
-    createTapemeasure: JXG.createTapemeasure
-};
+// export default {
+//     createTapemeasure: JXG.createTapemeasure
+// };

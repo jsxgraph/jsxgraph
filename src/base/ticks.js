@@ -1451,7 +1451,7 @@ JXG.extend(
                     attr = Type.deepCopy(attr, this.visProp.label);
                     attr.id = this.id + ld.i + "Label" + this.labelCounter;
 
-                    label = Text.createText(this.board, [ld.x, ld.y, ld.t], attr);
+                    label = JXG.createText(this.board, [ld.x, ld.y, ld.t], attr);
                     this.addChild(label);
                     label.setParents(this);
                     label.isDraggable = false;

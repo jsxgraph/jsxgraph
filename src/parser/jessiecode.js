@@ -811,8 +811,8 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
         }
 
         if (Text) {
-            setTextBackup = Text.Text.prototype.setText;
-            Text.Text.prototype.setText = Text.Text.prototype.setTextJessieCode;
+            setTextBackup = Text.prototype.setText;
+            Text.prototype.setText = Text.prototype.setTextJessieCode;
         }
 
         try {
@@ -854,7 +854,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
         } finally {
             // make sure the original text method is back in place
             if (Text) {
-                Text.Text.prototype.setText = setTextBackup;
+                Text.prototype.setText = setTextBackup;
             }
         }
 

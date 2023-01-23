@@ -1144,9 +1144,9 @@ JXG.registerElement("hyperbola", JXG.createHyperbola);
 JXG.registerElement("parabola", JXG.createParabola);
 JXG.registerElement("conic", JXG.createConic);
 
-export default {
-    createEllipse: JXG.createEllipse,
-    createHyperbola: JXG.createHyperbola,
-    createParabola: JXG.createParabola,
-    createConic: JXG.createConic
-};
+// export default {
+//     createEllipse: JXG.createEllipse,
+//     createHyperbola: JXG.createHyperbola,
+//     createParabola: JXG.createParabola,
+//     createConic: JXG.createConic
+// };

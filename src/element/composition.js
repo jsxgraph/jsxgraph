@@ -63,11 +63,11 @@ import Type from "../utils/type";
 import Const from "../base/constants";
 import Point from "../base/point";
 import Line from "../base/line";
-import Circle from "../base/circle";
-import Transform from "../base/transformation";
+// import Circle from "../base/circle";
+// import Transform from "../base/transformation";
 import Composition from "../base/composition";
-import Curve from "../base/curve";
-import Polygon from "../base/polygon";
+// import Curve from "../base/curve";
+// import Polygon from "../base/polygon";
 
 /**
  * @class This is used to construct a point that is the orthogonal projection of a point to a line.
@@ -330,7 +330,7 @@ JXG.createPerpendicular = function (board, parents, attributes) {
     }
 
     attr = Type.copyAttributes(attributes, board.options, "perpendicular");
-    pd = Line.createLine(
+    pd = JXG.createLine(
         board,
         [
             function () {
@@ -625,7 +625,7 @@ JXG.createPerpendicularSegment = function (board, parents, attributes) {
     }
 
     attr = Type.copyAttributes(attributes, board.options, "perpendicularsegment");
-    pd = Line.createLine(
+    pd = JXG.createLine(
         board,
         [
             function () {
@@ -1792,7 +1792,7 @@ JXG.createBisector = function (board, parents, attributes) {
         }
 
         attr = Type.copyAttributes(attributes, board.options, "bisector");
-        l = Line.createLine(board, [parents[1], p], attr);
+        l = JXG.createLine(board, [parents[1], p], attr);
 
         /**
          * Helper point
@@ -2049,7 +2049,7 @@ JXG.createAngularBisectorsOfTwoLines = function (board, parents, attributes) {
 //         }
 
 //         attr = Type.copyAttributes(attributes, board.options, 'msector');
-//         l = Line.createLine(board, [parents[1], p], attr);
+//         l = JXG.createLine(board, [parents[1], p], attr);
 
 //         /**
 //          * Helper point
@@ -2111,7 +2111,7 @@ JXG.createCircumcenter = function (board, parents, attributes) {
         b = parents[1];
         c = parents[2];
 
-        p = Point.createPoint(
+        p = JXG.createPoint(
             board,
             [
                 function () {
@@ -2355,7 +2355,7 @@ JXG.createCircumcircle = function (board, parents, attributes) {
             attributes.layer = board.options.layer.circle;
         }
         attr = Type.copyAttributes(attributes, board.options, "circumcircle");
-        c = Circle.createCircle(board, [p, parents[0]], attr);
+        c = JXG.createCircle(board, [p, parents[0]], attr);
 
         c.elType = "circumcircle";
         c.setParents(parents);
@@ -2440,7 +2440,7 @@ JXG.createIncircle = function (board, parents, attributes) {
             attributes.layer = board.options.layer.circle;
         }
         attr = Type.copyAttributes(attributes, board.options, "incircle");
-        c = Circle.createCircle(
+        c = JXG.createCircle(
             board,
             [
                 p,
@@ -2660,28 +2660,28 @@ JXG.createReflection = function (board, parents, attributes) {
                 errStr
         );
     }
-    t = Transform.createTransform(board, [l], { type: "reflect" });
+    t = JXG.createTransform(board, [l], { type: "reflect" });
 
     if (Type.isPoint(org)) {
-        r = Point.createPoint(board, [org, t], attr);
+        r = JXG.createPoint(board, [org, t], attr);
 
         // Arcs and sectors are treated as curves
     } else if (org.elementClass === Const.OBJECT_CLASS_CURVE) {
-        r = Curve.createCurve(board, [org, t], attr);
+        r = JXG.createCurve(board, [org, t], attr);
     } else if (org.elementClass === Const.OBJECT_CLASS_LINE) {
-        r = Line.createLine(board, [org, t], attr);
+        r = JXG.createLine(board, [org, t], attr);
     } else if (org.type === Const.OBJECT_TYPE_POLYGON) {
-        r = Polygon.createPolygon(board, [org, t], attr);
+        r = JXG.createPolygon(board, [org, t], attr);
     } else if (org.elementClass === Const.OBJECT_CLASS_CIRCLE) {
         if (attr.type.toLowerCase() === "euclidean") {
             // Create a circle element from a circle and a Euclidean transformation
             attr2 = Type.copyAttributes(attributes, board.options, "reflection", "center");
-            r_c = Point.createPoint(board, [org.center, t], attr2);
+            r_c = JXG.createPoint(board, [org.center, t], attr2);
             r_c.prepareUpdate()
                 .update()
                 .updateVisibility(Type.evaluate(r_c.visProp.visible))
                 .updateRenderer();
-            r = Circle.createCircle(
+            r = JXG.createCircle(
                 board,
                 [
                     r_c,
@@ -2693,7 +2693,7 @@ JXG.createReflection = function (board, parents, attributes) {
             );
         } else {
             // Create a conic element from a circle and a projective transformation
-            r = Circle.createCircle(board, [org, t], attr);
+            r = JXG.createCircle(board, [org, t], attr);
         }
     } else {
         throw new Error(
@@ -2915,27 +2915,27 @@ JXG.createMirrorElement = function (board, parents, attributes) {
         );
     }
 
-    t = Transform.createTransform(board, [Math.PI, m], { type: "rotate" });
+    t = JXG.createTransform(board, [Math.PI, m], { type: "rotate" });
     if (Type.isPoint(org)) {
-        r = Point.createPoint(board, [org, t], attr);
+        r = JXG.createPoint(board, [org, t], attr);
 
         // Arcs and sectors are treated as curves
     } else if (org.elementClass === Const.OBJECT_CLASS_CURVE) {
-        r = Curve.createCurve(board, [org, t], attr);
+        r = JXG.createCurve(board, [org, t], attr);
     } else if (org.elementClass === Const.OBJECT_CLASS_LINE) {
-        r = Line.createLine(board, [org, t], attr);
+        r = JXG.createLine(board, [org, t], attr);
     } else if (org.type === Const.OBJECT_TYPE_POLYGON) {
-        r = Polygon.createPolygon(board, [org, t], attr);
+        r = JXG.createPolygon(board, [org, t], attr);
     } else if (org.elementClass === Const.OBJECT_CLASS_CIRCLE) {
         if (attr.type.toLowerCase() === "euclidean") {
             // Create a circle element from a circle and a Euclidean transformation
             attr2 = Type.copyAttributes(attributes, board.options, "mirrorelement", "center");
-            r_c = Point.createPoint(board, [org.center, t], attr2);
+            r_c = JXG.createPoint(board, [org.center, t], attr2);
             r_c.prepareUpdate()
                 .update()
                 .updateVisibility(Type.evaluate(r_c.visProp.visible))
                 .updateRenderer();
-            r = Circle.createCircle(
+            r = JXG.createCircle(
                 board,
                 [
                     r_c,
@@ -2947,7 +2947,7 @@ JXG.createMirrorElement = function (board, parents, attributes) {
             );
         } else {
             // Create a conic element from a circle and a projective transformation
-            r = Circle.createCircle(board, [org, t], attr);
+            r = JXG.createCircle(board, [org, t], attr);
         }
     } else {
         throw new Error(
@@ -3846,26 +3846,26 @@ JXG.registerElement("reflection", JXG.createReflection);
 JXG.registerElement("grid", JXG.createGrid);
 JXG.registerElement("inequality", JXG.createInequality);
 
-export default {
-    createArrowParallel: JXG.createArrowParallel,
-    createBisector: JXG.createBisector,
-    createAngularBisectorOfTwoLines: JXG.createAngularBisectorsOfTwoLines,
-    createCircumcircle: JXG.createCircumcircle,
-    createCircumcenter: JXG.createCircumcenter,
-    createIncenter: JXG.createIncenter,
-    createIncircle: JXG.createIncircle,
-    createIntegral: JXG.createIntegral,
-    createMidpoint: JXG.createMidpoint,
-    createMirrorElement: JXG.createMirrorElement,
-    createMirrorPoint: JXG.createMirrorPoint,
-    createNormal: JXG.createNormal,
-    createOrthogonalProjection: JXG.createOrthogonalProjection,
-    createParallel: JXG.createParallel,
-    createParallelPoint: JXG.createParallelPoint,
-    createPerpendicular: JXG.createPerpendicular,
-    createPerpendicularPoint: JXG.createPerpendicularPoint,
-    createPerpendicularSegmen: JXG.createPerpendicularSegment,
-    createReflection: JXG.createReflection,
-    createGrid: JXG.createGrid,
-    createInequality: JXG.createInequality
-};
+// export default {
+//     createArrowParallel: JXG.createArrowParallel,
+//     createBisector: JXG.createBisector,
+//     createAngularBisectorOfTwoLines: JXG.createAngularBisectorsOfTwoLines,
+//     createCircumcircle: JXG.createCircumcircle,
+//     createCircumcenter: JXG.createCircumcenter,
+//     createIncenter: JXG.createIncenter,
+//     createIncircle: JXG.createIncircle,
+//     createIntegral: JXG.createIntegral,
+//     createMidpoint: JXG.createMidpoint,
+//     createMirrorElement: JXG.createMirrorElement,
+//     createMirrorPoint: JXG.createMirrorPoint,
+//     createNormal: JXG.createNormal,
+//     createOrthogonalProjection: JXG.createOrthogonalProjection,
+//     createParallel: JXG.createParallel,
+//     createParallelPoint: JXG.createParallelPoint,
+//     createPerpendicular: JXG.createPerpendicular,
+//     createPerpendicularPoint: JXG.createPerpendicularPoint,
+//     createPerpendicularSegmen: JXG.createPerpendicularSegment,
+//     createReflection: JXG.createReflection,
+//     createGrid: JXG.createGrid,
+//     createInequality: JXG.createInequality
+// };

@@ -913,7 +913,7 @@ JXG.createCircle = function (board, parents, attributes) {
         //     el = JXG.createCircle(board, [obj.center, function() { return obj.Radius(); }], attr);
         // } else {
         // Create a conic element from a circle and a projective transformation
-        el = Conic.createEllipse(
+        el = JXG.createEllipse(
             board,
             [
                 obj.center,

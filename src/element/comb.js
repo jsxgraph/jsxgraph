@@ -138,7 +138,7 @@ JXG.createComb = function (board, parents, attributes) {
             parents[0]().length >= 2
         ) {
             attr = Type.copyAttributes(attributes, board.options, "comb", "point1");
-            p1 = Point.createPoint(board, parents[0](), attr);
+            p1 = JXG.createPoint(board, parents[0](), attr);
         } else {
             throw new Error(
                 "JSXGraph: Can't create comb with parent types '" +
@@ -164,7 +164,7 @@ JXG.createComb = function (board, parents, attributes) {
             parents[1]().length >= 2
         ) {
             attr = Type.copyAttributes(attributes, board.options, "comb", "point2");
-            p2 = Point.createPoint(board, parents[1](), attr);
+            p2 = JXG.createPoint(board, parents[1](), attr);
         } else {
             throw new Error(
                 "JSXGraph: Can't create comb with parent types '" +
@@ -257,6 +257,6 @@ JXG.createComb = function (board, parents, attributes) {
 
 JXG.registerElement("comb", JXG.createComb);
 
-export default {
-    createComb: JXG.createComb
-};
+// export default {
+//     createComb: JXG.createComb
+// };

@@ -387,10 +387,10 @@ JXG.createArc = function (board, parents, attributes) {
     };
 
     // documentation in jxg.circle
-    el.updateQuadraticform = Circle.Circle.prototype.updateQuadraticform;
+    el.updateQuadraticform = Circle.prototype.updateQuadraticform;
 
     // documentation in jxg.circle
-    el.updateStdform = Circle.Circle.prototype.updateStdform;
+    el.updateStdform = Circle.prototype.updateStdform;
 
     el.methodMap = JXG.deepCopy(el.methodMap, {
         getRadius: "getRadius",
@@ -629,10 +629,10 @@ JXG.createMajorArc = function (board, parents, attributes) {
 
 JXG.registerElement("majorarc", JXG.createMajorArc);
 
-export default {
-    createArc: JXG.createArc,
-    createSemicircle: JXG.createSemicircle,
-    createCircumcircleArc: JXG.createCircumcircleArc,
-    createMinorArc: JXG.createMinorArc,
-    createMajorArc: JXG.createMajorArc
-};
+// export default {
+//     createArc: JXG.createArc,
+//     createSemicircle: JXG.createSemicircle,
+//     createCircumcircleArc: JXG.createCircumcircleArc,
+//     createMinorArc: JXG.createMinorArc,
+//     createMajorArc: JXG.createMajorArc
+// };

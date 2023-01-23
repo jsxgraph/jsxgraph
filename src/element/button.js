@@ -269,6 +269,6 @@ JXG.createButton = function (board, parents, attributes) {
 
 JXG.registerElement("button", JXG.createButton);
 
-export default {
-    createButton: JXG.createButton
-};
+// export default {
+//     createButton: JXG.createButton
+// };

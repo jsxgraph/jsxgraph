@@ -320,6 +320,6 @@ JXG.createInput = function (board, parents, attributes) {
 
 JXG.registerElement("input", JXG.createInput);
 
-export default {
-    createInput: JXG.createInput
-};
+// export default {
+//     createInput: JXG.createInput
+// };

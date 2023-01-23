@@ -234,6 +234,6 @@ JXG.createCheckbox = function (board, parents, attributes) {
 
 JXG.registerElement("checkbox", JXG.createCheckbox);
 
-export default {
-    createCheckbox: JXG.createCheckbox
-};
+// export default {
+//     createCheckbox: JXG.createCheckbox
+// };
