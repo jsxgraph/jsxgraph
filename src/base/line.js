@@ -2190,14 +2190,15 @@ JXG.registerElement("polar", JXG.createTangent);
 JXG.registerElement("radicalaxis", JXG.createRadicalAxis);
 JXG.registerElement("polarline", JXG.createPolarLine);
 
-export default {
-    Line: JXG.Line,
-    createLine: JXG.createLine,
-    createTangent: JXG.createTangent,
-    createPolar: JXG.createTangent,
-    createSegment: JXG.createSegment,
-    createAxis: JXG.createAxis,
-    createArrow: JXG.createArrow,
-    createRadicalAxis: JXG.createRadicalAxis,
-    createPolarLine: JXG.createPolarLine
-};
+export default JXG.Line;
+// export default {
+//     Line: JXG.Line,
+//     createLine: JXG.createLine,
+//     createTangent: JXG.createTangent,
+//     createPolar: JXG.createTangent,
+//     createSegment: JXG.createSegment,
+//     createAxis: JXG.createAxis,
+//     createArrow: JXG.createArrow,
+//     createRadicalAxis: JXG.createRadicalAxis,
+//     createPolarLine: JXG.createPolarLine
+// };

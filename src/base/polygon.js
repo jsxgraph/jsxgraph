@@ -1489,8 +1489,9 @@ JXG.registerElement("polygon", JXG.createPolygon);
 JXG.registerElement("regularpolygon", JXG.createRegularPolygon);
 JXG.registerElement("polygonalchain", JXG.createPolygonalChain);
 
-export default {
-    Polygon: JXG.Polygon,
-    createPolygon: JXG.createPolygon,
-    createRegularPolygon: JXG.createRegularPolygon
-};
+export default JXG.Polygon;
+// export default {
+//     Polygon: JXG.Polygon,
+//     createPolygon: JXG.createPolygon,
+//     createRegularPolygon: JXG.createRegularPolygon
+// };

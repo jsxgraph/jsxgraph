@@ -426,7 +426,8 @@ JXG.createImage = function (board, parents, attributes) {
 
 JXG.registerElement("image", JXG.createImage);
 
-export default {
-    Image: JXG.Image,
-    createImage: JXG.createImage
-};
+export default JXG.Image;
+// export default {
+//     Image: JXG.Image,
+//     createImage: JXG.createImage
+// };

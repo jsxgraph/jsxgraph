@@ -976,7 +976,8 @@ JXG.createGroup = function (board, parents, attributes) {
 
 JXG.registerElement("group", JXG.createGroup);
 
-export default {
-    Group: JXG.Group,
-    createGroup: JXG.createGroup
-};
+export default JXG.Group;
+// export default {
+//     Group: JXG.Group,
+//     createGroup: JXG.createGroup
+// };

@@ -481,7 +481,8 @@ JXG.createForeignObject = function (board, parents, attributes) {
 JXG.registerElement("foreignobject", JXG.createForeignObject);
 JXG.registerElement("fo", JXG.createForeignObject);
 
-export default {
-    ForeignObject: JXG.ForeignObject,
-    createForeignobject: JXG.createForeignObject
-};
+export default JXG.ForeignObject;
+// export default {
+//     ForeignObject: JXG.ForeignObject,
+//     createForeignobject: JXG.createForeignObject
+// };

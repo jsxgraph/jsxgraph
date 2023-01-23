@@ -245,7 +245,7 @@ constants = /** @lends JXG */ {
 
 JXG.extendConstants(JXG, constants);
 
-// export default constants;
-const COORDS_BY_SCREEN = constants.COORDS_BY_SCREEN;
-export {constants as default, 
-        COORDS_BY_SCREEN};
+export default constants;
+// const COORDS_BY_SCREEN = constants.COORDS_BY_SCREEN;
+// export {constants as default, 
+//         COORDS_BY_SCREEN};

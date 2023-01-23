@@ -951,11 +951,12 @@ JXG.registerElement("intersection", JXG.createIntersectionPoint);
 JXG.registerElement("otherintersection", JXG.createOtherIntersectionPoint);
 JXG.registerElement("polepoint", JXG.createPolePoint);
 
-export default {
-    Point: JXG.Point,
-    createPoint: JXG.createPoint,
-    createGlider: JXG.createGlider,
-    createIntersection: JXG.createIntersectionPoint,
-    createOtherIntersection: JXG.createOtherIntersectionPoint,
-    createPolePoint: JXG.createPolePoint
-};
+export default JXG.Point;
+// export default {
+//     Point: JXG.Point,
+//     createPoint: JXG.createPoint,
+//     createGlider: JXG.createGlider,
+//     createIntersection: JXG.createIntersectionPoint,
+//     createOtherIntersection: JXG.createOtherIntersectionPoint,
+//     createPolePoint: JXG.createPolePoint
+// };

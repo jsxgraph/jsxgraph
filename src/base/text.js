@@ -1321,8 +1321,9 @@ JXG.createHTMLSlider = function (board, parents, attributes) {
 
 JXG.registerElement("htmlslider", JXG.createHTMLSlider);
 
-export default {
-    Text: JXG.Text,
-    createText: JXG.createText,
-    createHTMLSlider: JXG.createHTMLSlider
-};
+export default JXG.Text;
+// export default {
+//     Text: JXG.Text,
+//     createText: JXG.createText,
+//     createHTMLSlider: JXG.createHTMLSlider
+// };

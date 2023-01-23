@@ -1495,7 +1495,7 @@ JXG.registerElement("legend", JXG.createLegend);
 
 export default {
     Chart: JXG.Chart,
-    Legend: JXG.Legend,
-    createChart: JXG.createChart,
-    createLegend: JXG.createLegend
+    Legend: JXG.Legend
+    // createChart: JXG.createChart,
+    // createLegend: JXG.createLegend
 };

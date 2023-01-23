@@ -1012,7 +1012,8 @@ JXG.createCircle = function (board, parents, attributes) {
 
 JXG.registerElement("circle", JXG.createCircle);
 
-export default {
-    Circle: JXG.Circle,
-    createCircle: JXG.createCircle
-};
+export default JXG.Circle;
+// export default {
+//     Circle: JXG.Circle,
+//     createCircle: JXG.createCircle
+// };

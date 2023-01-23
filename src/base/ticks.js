@@ -1715,9 +1715,10 @@ JXG.registerElement("ticks", JXG.createTicks);
 JXG.registerElement("hash", JXG.createHatchmark);
 JXG.registerElement("hatch", JXG.createHatchmark);
 
-export default {
-    Ticks: JXG.Ticks,
-    createTicks: JXG.createTicks,
-    createHashmark: JXG.createHatchmark,
-    createHatchmark: JXG.createHatchmark
-};
+export default JXG.Ticks;
+// export default {
+//     Ticks: JXG.Ticks,
+//     createTicks: JXG.createTicks,
+//     createHashmark: JXG.createHatchmark,
+//     createHatchmark: JXG.createHatchmark
+// };

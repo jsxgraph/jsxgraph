@@ -930,7 +930,8 @@ JXG.createTurtle = function (board, parents, attributes) {
 
 JXG.registerElement("turtle", JXG.createTurtle);
 
-export default {
-    Turtle: JXG.Turtle,
-    createTurtle: JXG.createTurtle
-};
+export default JXG.Turtle;
+// export default {
+//     Turtle: JXG.Turtle,
+//     createTurtle: JXG.createTurtle
+// };

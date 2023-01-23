@@ -749,7 +749,8 @@ JXG.createTransform = function (board, parents, attributes) {
 
 JXG.registerElement('transform', JXG.createTransform);
 
-export default {
-    Transformation: JXG.Transformation,
-    createTransform: JXG.createTransform
-};
+export default JXG.Transformation;
+// export default {
+//     Transformation: JXG.Transformation,
+//     createTransform: JXG.createTransform
+// };

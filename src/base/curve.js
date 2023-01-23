@@ -3000,23 +3000,24 @@ JXG.createBoxPlot = function (board, parents, attributes) {
 
 JXG.registerElement("boxplot", JXG.createBoxPlot);
 
-/*
-export default {
-    Curve: JXG.Curve,
-    createCardinalSpline: JXG.createCardinalSpline,
-    createCurve: JXG.createCurve,
-    createCurveDifference: JXG.createCurveDifference,
-    createCurveIntersection: JXG.createCurveIntersection,
-    createCurveUnion: JXG.createCurveUnion,
-    createDerivative: JXG.createDerivative,
-    createFunctiongraph: JXG.createFunctiongraph,
-    createMetapostSpline: JXG.createMetapostSpline,
-    createPlot: JXG.createFunctiongraph,
-    createSpline: JXG.createSpline,
-    createRiemannsum: JXG.createRiemannsum,
-    createStepfunction: JXG.createStepfunction,
-    createTracecurve: JXG.createTracecurve
-};
-*/
-const Curve = JXG.Curve;
-export { Curve as default, Curve};
+export default JXG.Curve;
+
+// export default {
+//     Curve: JXG.Curve,
+//     createCardinalSpline: JXG.createCardinalSpline,
+//     createCurve: JXG.createCurve,
+//     createCurveDifference: JXG.createCurveDifference,
+//     createCurveIntersection: JXG.createCurveIntersection,
+//     createCurveUnion: JXG.createCurveUnion,
+//     createDerivative: JXG.createDerivative,
+//     createFunctiongraph: JXG.createFunctiongraph,
+//     createMetapostSpline: JXG.createMetapostSpline,
+//     createPlot: JXG.createFunctiongraph,
+//     createSpline: JXG.createSpline,
+//     createRiemannsum: JXG.createRiemannsum,
+//     createStepfunction: JXG.createStepfunction,
+//     createTracecurve: JXG.createTracecurve
+// };
+
+// const Curve = JXG.Curve;
+// export { Curve as default, Curve};
