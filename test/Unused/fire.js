@@ -7,7 +7,7 @@
  * fire.js is free software; You can redistribute it and/or
  * modify it under the terms of the MIT license. You should have
  * received a copy of the MIT license along with fire.js. If not,
- * see http://www.opensource.org/licenses/MIT
+ * see https://www.opensource.org/licenses/MIT
  */
 
 var fire = (function (window, document, undefined) {
