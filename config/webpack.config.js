@@ -9,7 +9,7 @@ const TerserPlugin = require("terser-webpack-plugin");
 // Name of JSXGraph namespace
 const libraryName = "JXG";
 const PATHS = {
-    entryPoint: path.resolve(__dirname, "../src/index2.js"),
+    entryPoint: path.resolve(__dirname, "../src/index.js"),
     bundles: path.resolve(__dirname, "../distrib")
 };
 

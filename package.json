@@ -5,10 +5,10 @@
   "version": "1.5.0-rc2",
   "exports": {
     "types": "./src/index.d.ts",
-    "default": "./src/index2.js"
+    "default": "./src/index.js"
   },
   "main": "./distrib/jsxgraphcore.js",
-  "module": "./src/index2.js",
+  "module": "./src/index.js",
   "types": "./src/index.d.ts",
   "files": [
     "src",
