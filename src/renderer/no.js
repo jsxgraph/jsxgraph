@@ -25,8 +25,8 @@
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
-    and <http://opensource.org/licenses/MIT/>.
+    the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
+    and <https://opensource.org/licenses/MIT/>.
  */
 
 /*global JXG: true, define: true, AMprocessNode: true, MathJax: true, document: true */
@@ -565,7 +565,7 @@ JXG.extend(
          * because it is called from outside the renderer.
          * @param {Node} node The SVG DOM Node which buffering type to update.
          * @param {String} type Either 'auto', 'dynamic', or 'static'. For an explanation see
-         *   {@link http://www.w3.org/TR/SVGTiny12/painting.html#BufferedRenderingProperty}.
+         *   {@link https://www.w3.org/TR/SVGTiny12/painting.html#BufferedRenderingProperty}.
          */
         setBuffering: function (node, type) {
             /* stub */

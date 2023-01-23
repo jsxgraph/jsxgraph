@@ -6251,7 +6251,7 @@ declare namespace JXG {
         ): number;
         /**
          * Solve initial value problems numerically using Runge-Kutta-methods.
-         * See http://en.wikipedia.org/wiki/Runge-Kutta_methods for more information on the algorithm.
+         * See https://en.wikipedia.org/wiki/Runge-Kutta_methods for more information on the algorithm.
          * @param butcher
          * @param x0
          * @param I

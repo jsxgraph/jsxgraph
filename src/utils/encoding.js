@@ -51,7 +51,6 @@ JXG.Util.UTF8 = {
 
         // See
         // http://ecmanaut.blogspot.ca/2006/07/encoding-decoding-utf8-in-javascript.html
-        // http://monsur.hossa.in/2012/07/20/utf-8-in-javascript.html
         if (typeof unescape === "function" && typeof encodeURIComponent === "function") {
             return unescape(encodeURIComponent(string));
         }
@@ -84,7 +83,7 @@ JXG.Util.UTF8 = {
                  The following code is a translation from C99 to JavaScript.
 
                  The original C99 code can be found at
-                 http://bjoern.hoehrmann.de/utf-8/decoder/dfa/
+                    https://bjoern.hoehrmann.de/utf-8/decoder/dfa/
 
                  Original copyright note:
 

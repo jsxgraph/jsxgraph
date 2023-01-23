@@ -25,8 +25,8 @@
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
-    and <http://opensource.org/licenses/MIT/>.
+    the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
+    and <https://opensource.org/licenses/MIT/>.
  */
 
 /*global JXG: true, define: true*/
@@ -2197,7 +2197,7 @@ Mat.Numerics = {
 
     /**
      * Determine the coefficients of a cardinal spline polynom, See
-     * http://stackoverflow.com/questions/9489736/catmull-rom-curve-with-no-cusps-and-no-self-intersections
+     * https://stackoverflow.com/questions/9489736/catmull-rom-curve-with-no-cusps-and-no-self-intersections
      * @param  {Number} x1 point 1
      * @param  {Number} x2 point 2
      * @param  {Number} t1 tangent slope 1
@@ -2214,8 +2214,8 @@ Mat.Numerics = {
      * is uniformly parametrized.
      * Two artificial control points at the beginning and the end are added.
      *
-     * The implementation (especially  the centripetal parametrization) is from
-     * http://stackoverflow.com/questions/9489736/catmull-rom-curve-with-no-cusps-and-no-self-intersections .
+     * The implementation (especially the centripetal parametrization) is from
+     * https://stackoverflow.com/questions/9489736/catmull-rom-curve-with-no-cusps-and-no-self-intersections .
      * @param {Array} points Array consisting of JXG.Points.
      * @param {Number|Function} tau The tension parameter, either a constant number or a function returning a number. This number is between 0 and 1.
      * tau=1/2 give Catmull-Rom splines.
@@ -3006,7 +3006,7 @@ Mat.Numerics = {
 
     /**
      * Solve initial value problems numerically using Runge-Kutta-methods.
-     * See {@link http://en.wikipedia.org/wiki/Runge-Kutta_methods} for more information on the algorithm.
+     * See {@link https://en.wikipedia.org/wiki/Runge-Kutta_methods} for more information on the algorithm.
      * @param {object,String} butcher Butcher tableau describing the Runge-Kutta method to use. This can be either a string describing
      * a Runge-Kutta method with a Butcher tableau predefined in JSXGraph like 'euler', 'heun', 'rk4' or an object providing the structure
      * <pre>
@@ -3017,7 +3017,7 @@ Mat.Numerics = {
      *     c: &lt;Array&gt;
      * }
      * </pre>
-     * which corresponds to the Butcher tableau structure shown here: http://en.wikipedia.org/w/index.php?title=List_of_Runge%E2%80%93Kutta_methods&oldid=357796696
+     * which corresponds to the Butcher tableau structure shown here: https://en.wikipedia.org/w/index.php?title=List_of_Runge%E2%80%93Kutta_methods&oldid=357796696
      * @param {Array} x0 Initial value vector. If the problem is of one-dimensional, the initial value also has to be given in an array.
      * @param {Array} I Interval on which to integrate.
      * @param {Number} N Number of evaluation points.
@@ -3244,7 +3244,7 @@ Mat.Numerics = {
      *  Brent's root finder from
      *  G.Forsythe, M.Malcolm, C.Moler, Computer methods for mathematical
      *  computations. M., Mir, 1980, p.180 of the Russian edition
-     *  http://www.netlib.org/c/brent.shar
+     *  https://www.netlib.org/c/brent.shar
      *
      * If x0 is an array containing lower and upper bound for the zero
      * algorithm 748 is applied. Otherwise, if x0 is a number,

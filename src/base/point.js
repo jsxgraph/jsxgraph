@@ -25,8 +25,8 @@
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
-    and <http://opensource.org/licenses/MIT/>.
+    the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
+    and <https://opensource.org/licenses/MIT/>.
  */
 
 /*global JXG: true, define: true, console: true, window: true*/
@@ -810,7 +810,7 @@ JXG.createOtherIntersectionPoint = function (board, parents, attributes) {
  * @description The pole point is the unique reciprocal relationship of a line with respect to a conic.
  * The lines tangent to the intersections of a conic and a line intersect at the pole point of that line with respect to that conic.
  * A line tangent to a conic has the pole point of that line with respect to that conic as the tangent point.
- * See {@link http://en.wikipedia.org/wiki/Pole_and_polar} for more information on pole and polar.
+ * See {@link https://en.wikipedia.org/wiki/Pole_and_polar} for more information on pole and polar.
  * @name PolePoint
  * @augments JXG.Point
  * @constructor

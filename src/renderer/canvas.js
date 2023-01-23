@@ -25,8 +25,8 @@
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
-    and <http://opensource.org/licenses/MIT/>.
+    the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
+    and <https://opensource.org/licenses/MIT/>.
  */
 
 /*global JXG: true, define: true, AMprocessNode: true, document: true, Image: true, module: true, require: true */
@@ -1685,7 +1685,7 @@ JXG.extend(
             this.context = this.canvasRoot.getContext("2d");
             // The width and height of the canvas is set to twice the CSS values,
             // followed by an appropiate scaling.
-            // See http://stackoverflow.com/questions/22416462/canvas-element-with-blurred-lines
+            // See https://stackoverflow.com/questions/22416462/canvas-element-with-blurred-lines
             this.context.scale(2, 2);
         },
 

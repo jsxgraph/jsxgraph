@@ -25,8 +25,8 @@
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
-    and <http://opensource.org/licenses/MIT/>.
+    the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
+    and <https://opensource.org/licenses/MIT/>.
  */
 
 /*global JXG: true, define: true*/
@@ -2079,7 +2079,7 @@ JXG.createRadicalAxis = function (board, parents, attributes) {
  * @description The polar line is the unique reciprocal relationship of a point with respect to a conic.
  * The lines through the intersections of a conic and the polar line of a point with respect to that conic and through that point are tangent to the conic.
  * A point on a conic has the polar line of that point with respect to that conic as the tangent line to that conic at that point.
- * See {@link http://en.wikipedia.org/wiki/Pole_and_polar} for more information on pole and polar.
+ * See {@link https://en.wikipedia.org/wiki/Pole_and_polar} for more information on pole and polar.
  * @name PolarLine
  * @augments JXG.Line
  * @constructor

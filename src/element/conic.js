@@ -25,8 +25,8 @@
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
-    and <http://opensource.org/licenses/MIT/>.
+    the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
+    and <https://opensource.org/licenses/MIT/>.
  */
 
 /*global JXG: true, define: true*/
@@ -1101,7 +1101,7 @@ JXG.createConic = function (board, parents, attributes) {
         return polarForm(phi, suspendUpdate)[2];
     };
 
-    // Center coordinates see http://en.wikipedia.org/wiki/Matrix_representation_of_conic_sections
+    // Center coordinates see https://en.wikipedia.org/wiki/Matrix_representation_of_conic_sections
     curve.midpoint = board.create(
         "point",
         [

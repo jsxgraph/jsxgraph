@@ -26,8 +26,8 @@
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
-    and <http://opensource.org/licenses/MIT/>.
+    the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
+    and <https://opensource.org/licenses/MIT/>.
  */
 
 /*global JXG: true, define: true, window: true, document: true, navigator: true, module: true, global: true, self: true, require: true*/
@@ -160,7 +160,7 @@ JXG.extend(
             return (
                 this.isBrowser &&
                 document.implementation.hasFeature(
-                    "http://www.w3.org/TR/SVG11/feature#BasicStructure",
+                    "https://www.w3.org/TR/SVG11/feature#BasicStructure",
                     "1.1"
                 )
             );
@@ -236,7 +236,7 @@ JXG.extend(
         },
 
         /**
-         * Checks if the environments supports the W3C Pointer Events API {@link http://www.w3.org/Submission/pointer-events/}
+         * Checks if the environments supports the W3C Pointer Events API {@link https://www.w3.org/TR/pointerevents/}
          * @returns {Boolean}
          */
         supportsPointerEvents: function () {

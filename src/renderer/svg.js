@@ -25,8 +25,8 @@
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
-    and <http://opensource.org/licenses/MIT/>.
+    the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
+    and <https://opensource.org/licenses/MIT/>.
  */
 
 /*global JXG: true, define: true, AMprocessNode: true, MathJax: true, document: true */
@@ -68,7 +68,7 @@ JXG.SVGRenderer = function (container, dim) {
 
     /**
      * The SVG Namespace used in JSXGraph.
-     * @see http://www.w3.org/TR/SVG/
+     * @see http://www.w3.org/TR/SVG2/
      * @type String
      * @default http://www.w3.org/2000/svg
      */
@@ -107,7 +107,7 @@ JXG.SVGRenderer = function (container, dim) {
     /**
      * The <tt>defs</tt> element is a container element to reference reusable SVG elements.
      * @type Node
-     * @see http://www.w3.org/TR/SVG/struct.html#DefsElement
+     * @see https://www.w3.org/TR/SVG2/struct.html#DefsElement
      */
     this.defs = this.container.ownerDocument.createElementNS(this.svgNamespace, "defs");
     this.svgRoot.appendChild(this.defs);
@@ -115,7 +115,7 @@ JXG.SVGRenderer = function (container, dim) {
         /**
          * Filters are used to apply shadows.
          * @type Node
-         * @see http://www.w3.org/TR/SVG/filters.html#FilterElement
+         * @see https://www.w3.org/TR/SVG2/struct.html#DefsElement
          */
 
         /**
@@ -229,7 +229,7 @@ JXG.SVGRenderer = function (container, dim) {
      * <li> 20px dash, 5px space, 10px dash, 5px space</li></ol>
      * @type Array
      * @default ['2, 2', '5, 5', '10, 10', '20, 20', '20, 10, 10, 10', '20, 5, 10, 5']
-     * @see http://www.w3.org/TR/SVG/painting.html#StrokeProperties
+     * @see https://www.w3.org/TR/SVG2/painting.html#StrokeProperties
      */
     this.dashArray = ["2, 2", "5, 5", "10, 10", "20, 20", "20, 10, 10, 10", "20, 5, 10, 5"];
 };

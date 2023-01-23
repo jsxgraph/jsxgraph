@@ -25,10 +25,10 @@ javascript in your page after loading jsxgraph.
 
 -   **Required software**
 
-    -   CoCoA (http://cocoa.dima.unige.it/)
-    -   Python (http://python.org/)
-    -   numpy (http://numpy.scipy.org/)
-    -   matplotlib (http://matplotlib.sourceforge.net/)
+    -   CoCoA (https://cocoa.dima.unige.it/)
+    -   Python (https://python.org/)
+    -   numpy (https://numpy.scipy.org/)
+    -   matplotlib (https://matplotlib.sourceforge.net/)
 
 -   **Setup**
 
