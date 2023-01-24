@@ -43,7 +43,7 @@ import Polygon from "../base/polygon";
 
 var priv = {
     removeSlopeTriangle: function () {
-        Polygon.Polygon.prototype.remove.call(this);
+        Polygon.prototype.remove.call(this);
 
         this.board.removeObject(this.toppoint);
         this.board.removeObject(this.glider);

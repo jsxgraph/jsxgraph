@@ -202,4 +202,33 @@ describe("Test polygons", function () {
         expect(po.vertices.length).toEqual(0);
         expect(po.borders.length).toEqual(0);
     });
+
+    it("remove slopetriangle", function () {
+        var f = board.jc.snippet('sin(x)', true, 'x');
+        var graph = board.create('functiongraph', [f]);
+
+        // Glider on curve
+        var p = board.create('glider', [1, 0, graph]);
+        // Tangent in P
+        var t = board.create('tangent', [p]);
+        // Slope triangle in P
+        var st = board.create('slopetriangle', [t]);
+
+        JXG.JSXGraph.freeBoard(board);
+        board = JXG.JSXGraph.initBoard("jxgbox", {
+            renderer: "svg",
+            axis: false,
+            grid: false,
+            boundingbox: [-10, 10, 10, -10],
+            keyboard: {
+                enabled: true,
+                dy: 20,
+                dx: 20,
+                panShift: true,
+                panCtrl: false
+            },
+            showCopyright: false,
+            showNavigation: false
+        });
+    });
 });
