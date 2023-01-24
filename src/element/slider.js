@@ -455,7 +455,7 @@ JXG.createSlider = function (board, parents, attributes) {
         board.removeObject(p2);
         board.removeObject(p1);
 
-        Point.Point.prototype.remove.call(p3);
+        Point.prototype.remove.call(p3);
     };
 
     p1.dump = false;
