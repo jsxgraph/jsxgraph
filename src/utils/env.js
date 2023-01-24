@@ -157,13 +157,12 @@ JXG.extend(
          * @returns {Boolean} True, if the browser supports SVG.
          */
         supportsSVG: function () {
-            return (
-                this.isBrowser &&
-                document.implementation.hasFeature(
-                    "https://www.w3.org/TR/SVG11/feature#BasicStructure",
-                    "1.1"
-                )
-            );
+            var svgSupport;
+            if (!this.isBrowser) {
+                return false;
+            }
+            svgSupport = !!document.createElementNS && !!document.createElementNS('http://www.w3.org/2000/svg', 'svg').createSVGRect;
+            return svgSupport;
         },
 
         /**

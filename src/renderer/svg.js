@@ -112,100 +112,94 @@ JXG.SVGRenderer = function (container, dim) {
     this.defs = this.container.ownerDocument.createElementNS(this.svgNamespace, "defs");
     this.svgRoot.appendChild(this.defs);
 
-        /**
-         * Filters are used to apply shadows.
-         * @type Node
-         * @see https://www.w3.org/TR/SVG2/struct.html#DefsElement
-         */
+    /**
+     * Filters are used to apply shadows.
+     * @type Node
+     * @see https://www.w3.org/TR/SVG2/struct.html#DefsElement
+     */
+    /**
+     * Create an SVG shadow filter. If the object's RGB color is [r,g,b], it's opacity is op, and
+     * the parameter color is given as [r', g', b'] with opacity op'
+     * the shadow will have RGB color [blend*r + r', blend*g + g', blend*b + b'] and the opacity will be equal to op * op'.
+     * Further, blur and offset can be adjusted.
+     * 
+     * The shadow color is [r*ble
+     * @param {String} id Node is of the filter.
+     * @param {Array|String} rgb RGB value for the blend color or the string 'none' for default values. Default 'black'.
+     * @param {Number} opacity Value between 0 and 1, default is 1.
+     * @param {Number} blend  Value between 0 and 1, default is 0.1.
+     * @param {Number} blur  Default: 3
+     * @param {Array} offset [dx, dy]. Default is [5,5].
+     * @returns DOM node to be added to this.defs.
+     * @private
+     */
+    this.createShadowFilter = function(id, rgb, opacity, blend, blur, offset) {
+        var filter = this.container.ownerDocument.createElementNS(this.svgNamespace, 'filter'),
+            feOffset, feColor, feGaussianBlur, feBlend,
+            mat;
 
-        /**
-         * Create an SVG shadow filter. If the object's RGB color is [r,g,b], it's opacity is op, and
-         * the parameter color is given as [r', g', b'] with opacity op'
-         * the shadow will have RGB color [blend*r + r', blend*g + g', blend*b + b'] and the opacity will be equal to op * op'.
-         * Further, blur and offset can be adjusted.
-         * 
-         * The shadow color is [r*ble
-         * @param {String} id Node is of the filter.
-         * @param {Array|String} rgb RGB value for the blend color or the string 'none' for default values. Default 'black'.
-         * @param {Number} opacity Value between 0 and 1, default is 1.
-         * @param {Number} blend  Value between 0 and 1, default is 0.1.
-         * @param {Number} blur  Default: 3
-         * @param {Array} offset [dx, dy]. Default is [5,5].
-         * @returns DOM node to be added to this.defs.
-         * @private
-         */
-        this.createShadowFilter = function(id, rgb, opacity, blend, blur, offset) {
-            var filter = this.container.ownerDocument.createElementNS(this.svgNamespace, 'filter'),
-                feOffset, feColor, feGaussianBlur, feBlend,
-                mat;
+        filter.setAttributeNS(null, 'id', id);
+        filter.setAttributeNS(null, 'width', '300%');
+        filter.setAttributeNS(null, 'height', '300%');
+        filter.setAttributeNS(null, 'filterUnits', 'userSpaceOnUse');
 
-            filter.setAttributeNS(null, 'id', id);
-            filter.setAttributeNS(null, 'width', '300%');
-            filter.setAttributeNS(null, 'height', '300%');
-            filter.setAttributeNS(null, 'filterUnits', 'userSpaceOnUse');
+        feOffset = this.container.ownerDocument.createElementNS(this.svgNamespace, 'feOffset');
+        feOffset.setAttributeNS(null, 'in', 'SourceGraphic'); // b/w: SourceAlpha, Color: SourceGraphic
+        feOffset.setAttributeNS(null, 'result', 'offOut');
+        feOffset.setAttributeNS(null, 'dx', offset[0]);
+        feOffset.setAttributeNS(null, 'dy', offset[1]);
+        filter.appendChild(feOffset);
 
-            feOffset = this.container.ownerDocument.createElementNS(this.svgNamespace, 'feOffset');
-            feOffset.setAttributeNS(null, 'in', 'SourceGraphic'); // b/w: SourceAlpha, Color: SourceGraphic
-            feOffset.setAttributeNS(null, 'result', 'offOut');
-            feOffset.setAttributeNS(null, 'dx', offset[0]);
-            feOffset.setAttributeNS(null, 'dy', offset[1]);
-            filter.appendChild(feOffset);
-
-            feColor = this.container.ownerDocument.createElementNS(this.svgNamespace, 'feColorMatrix');
-            feColor.setAttributeNS(null, 'in', 'offOut');
-            feColor.setAttributeNS(null, 'result', 'colorOut');
-            feColor.setAttributeNS(null, 'type', 'matrix');
-            // See https://developer.mozilla.org/en-US/docs/Web/SVG/Element/feColorMatrix
-            if (rgb === 'none' || !Type.isArray(rgb) || rgb.length < 3) {
-                feColor.setAttributeNS(null, 'values', '0.1 0 0 0 0  0 0.1 0 0 0  0 0 0.1 0 0  0 0 0 ' + opacity + ' 0');
-            } else {
-                rgb[0] /= 255;
-                rgb[1] /= 255;
-                rgb[2] /= 255;
-                mat = blend + ' 0 0 0 ' + rgb[0] +
-                          '  0 ' + blend + ' 0 0 ' + rgb[1] +
-                          '  0 0 ' + blend + ' 0 ' + rgb[2] +
-                          '  0 0 0 ' + opacity + ' 0';
-                feColor.setAttributeNS(null, 'values', mat);
-            }
-            filter.appendChild(feColor);
-
-            feGaussianBlur = this.container.ownerDocument.createElementNS(this.svgNamespace, 'feGaussianBlur');
-            feGaussianBlur.setAttributeNS(null, 'in', 'colorOut');
-            feGaussianBlur.setAttributeNS(null, 'result', 'blurOut');
-            feGaussianBlur.setAttributeNS(null, 'stdDeviation', blur);
-            filter.appendChild(feGaussianBlur);
-
-            feBlend = this.container.ownerDocument.createElementNS(this.svgNamespace, 'feBlend');
-            feBlend.setAttributeNS(null, 'in', 'SourceGraphic');
-            feBlend.setAttributeNS(null, 'in2', 'blurOut');
-            feBlend.setAttributeNS(null, 'mode', 'normal');
-            filter.appendChild(feBlend);
-
-            return filter;
-        };
-        /* Default shadow filter */
-        this.defs.appendChild(this.createShadowFilter(this.container.id + '_' + 'f1', 'none', 1, 0.1, 3, [5, 5]));
-
-        /**
-         * JSXGraph uses a layer system to sort the elements on the board. This puts certain types of elements in front
-         * of other types of elements. For the order used see {@link JXG.Options.layer}. The number of layers is documented
-         * there, too. The higher the number, the "more on top" are the elements on this layer.
-         * @type Array
-         */
-        this.layer = [];
-        for (i = 0; i < Options.layer.numlayers; i++) {
-            this.layer[i] = this.container.ownerDocument.createElementNS(this.svgNamespace, 'g');
-            this.svgRoot.appendChild(this.layer[i]);
+        feColor = this.container.ownerDocument.createElementNS(this.svgNamespace, 'feColorMatrix');
+        feColor.setAttributeNS(null, 'in', 'offOut');
+        feColor.setAttributeNS(null, 'result', 'colorOut');
+        feColor.setAttributeNS(null, 'type', 'matrix');
+        // See https://developer.mozilla.org/en-US/docs/Web/SVG/Element/feColorMatrix
+        if (rgb === 'none' || !Type.isArray(rgb) || rgb.length < 3) {
+            feColor.setAttributeNS(null, 'values', '0.1 0 0 0 0  0 0.1 0 0 0  0 0 0.1 0 0  0 0 0 ' + opacity + ' 0');
+        } else {
+            rgb[0] /= 255;
+            rgb[1] /= 255;
+            rgb[2] /= 255;
+            mat = blend + ' 0 0 0 ' + rgb[0] +
+                      '  0 ' + blend + ' 0 0 ' + rgb[1] +
+                      '  0 0 ' + blend + ' 0 ' + rgb[2] +
+                      '  0 0 0 ' + opacity + ' 0';
+            feColor.setAttributeNS(null, 'values', mat);
         }
+        filter.appendChild(feColor);
 
-    // Already documented in JXG.AbstractRenderer
-    this.supportsForeignObject = document.implementation.hasFeature(
-        "http://w3.org/TR/SVG11/feature#Extensibility",
-        "1.1"
-    );
+        feGaussianBlur = this.container.ownerDocument.createElementNS(this.svgNamespace, 'feGaussianBlur');
+        feGaussianBlur.setAttributeNS(null, 'in', 'colorOut');
+        feGaussianBlur.setAttributeNS(null, 'result', 'blurOut');
+        feGaussianBlur.setAttributeNS(null, 'stdDeviation', blur);
+        filter.appendChild(feGaussianBlur);
 
-    if (this.supportsForeignObject) {
+        feBlend = this.container.ownerDocument.createElementNS(this.svgNamespace, 'feBlend');
+        feBlend.setAttributeNS(null, 'in', 'SourceGraphic');
+        feBlend.setAttributeNS(null, 'in2', 'blurOut');
+        feBlend.setAttributeNS(null, 'mode', 'normal');
+        filter.appendChild(feBlend);
+
+        return filter;
+    };
+        
+    /* Default shadow filter */
+    this.defs.appendChild(this.createShadowFilter(this.container.id + '_' + 'f1', 'none', 1, 0.1, 3, [5, 5]));
+
+    /**
+     * JSXGraph uses a layer system to sort the elements on the board. This puts certain types of elements in front
+     * of other types of elements. For the order used see {@link JXG.Options.layer}. The number of layers is documented
+     * there, too. The higher the number, the "more on top" are the elements on this layer.
+     * @type Array
+     */
+    this.layer = [];
+    for (i = 0; i < Options.layer.numlayers; i++) {
+        this.layer[i] = this.container.ownerDocument.createElementNS(this.svgNamespace, 'g');
+        this.svgRoot.appendChild(this.layer[i]);
+    }
+
+    try {
         this.foreignObjLayer = this.container.ownerDocument.createElementNS(
             this.svgNamespace,
             "foreignObject"
@@ -217,6 +211,9 @@ JXG.SVGRenderer = function (container, dim) {
         this.foreignObjLayer.setAttribute("height", "100%");
         this.foreignObjLayer.setAttribute("id", this.container.id + "_foreignObj");
         this.svgRoot.appendChild(this.foreignObjLayer);
+        this.supportsForeignObject = true;
+    } catch (e) {
+        this.supportsForeignObject = false;
     }
 
     /**

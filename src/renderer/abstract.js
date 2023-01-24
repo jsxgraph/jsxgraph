@@ -150,9 +150,8 @@ JXG.AbstractRenderer = function () {
 
     /**
      * True if the browsers' SVG engine supports foreignObject.
-     * Not supported browsers are IE 9 - 11.
-     * All other browsers return ture, since it is tested with
-     * document.implementation.hasFeature() which is deprecated.
+     * Not supported browsers are IE 9 - 11. 
+     * It is tested in svg renderer.
      *
      * @type Boolean
      * @private
