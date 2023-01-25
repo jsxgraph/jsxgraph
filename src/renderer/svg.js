@@ -122,7 +122,7 @@ JXG.SVGRenderer = function (container, dim) {
      * the parameter color is given as [r', g', b'] with opacity op'
      * the shadow will have RGB color [blend*r + r', blend*g + g', blend*b + b'] and the opacity will be equal to op * op'.
      * Further, blur and offset can be adjusted.
-     * 
+     *
      * The shadow color is [r*ble
      * @param {String} id Node is of the filter.
      * @param {Array|String} rgb RGB value for the blend color or the string 'none' for default values. Default 'black'.
@@ -183,7 +183,7 @@ JXG.SVGRenderer = function (container, dim) {
 
         return filter;
     };
-        
+
     /* Default shadow filter */
     this.defs.appendChild(this.createShadowFilter(this.container.id + '_' + 'f1', 'none', 1, 0.1, 3, [5, 5]));
 
