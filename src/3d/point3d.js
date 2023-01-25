@@ -160,7 +160,7 @@ JXG.extend(
     JXG.Point3D.prototype,
     /** @lends JXG.Point3D.prototype */ {
         /**
-         * Update the the homogeneous coords array.
+         * Update the homogeneous coords array.
          *
          * @name updateCoords
          * @memberOf Point3D
