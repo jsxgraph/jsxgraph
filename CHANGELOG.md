@@ -1,10 +1,62 @@
-1.4.6
+1.5.0
 ====
 
 New features
 -----------
 
-- New attribute `majorTickEndings`
+- Code base switched from AMD to ES6 imports
+- New attributes `majorTickEndings`, `ignoreInfiniteTickEndings`
+- New math class Mat.Heap
+- New board attribute `browserPan`: allows to scroll web page by swiping in JSXGraph board
+- New element attribute `shadow`: enables individual shadows for each stroke element (in SVG)
+- New turtle methods: getPenColor, getHighlightPenColor, getPenSize
+- New events for keyboad handling:
+    - keymove for board
+    - keydrag for elements
+- New board attribute fullscreen{ scale: 0.85 }
+- New board attribute `logging`: enables logs of user activity
+- SVG: enable more flexible transitions
+- New attribute transitionProperties
+- New point faces | ('divide') and - ('minus')
+- New attributes distanceX/Y for infobox element
+
+Improvements
+------------
+
+- Ecosystem:
+    - .gitignore, Makefile, package.json
+    - Add github actions
+    - Add `distrib/jsxgraphcore.js` and `distrib/jsxgraphsrc.js` to .gitignore
+    - Update README.md
+    - Add version number to API references
+- Continuous improvement of `index.d.ts`
+- Remove all 3rd party dependencies of jsxgraphcore.js, e.g. canvas.
+- Deep merging of attributes: new method `mergeAttr` in `env.js`
+- Unit tests
+- Merge document attribute as black box in stead of object
+- Shadow DOM support
+- Browserless support
+- API docs
+- Stability of bounding box in orientation changes or resizes if `keepaspectratio=true`
+- Click on slider triggers 'drag' event
+- Add dependence on elements in JessieCode function
+- startAnimation: allow functions as parameters
+
+Bug fixes
+---------
+
+- 3D curves
+- Swap ids of navigation buttons up/down
+- Coords event handler
+- Pass explicit reference to $jc$ in jessiecode.js
+- inherited visibility of hatch
+- Keep resized view centered if not setting bounding box
+- Set renderer argument when loading board from string
+- Some fixes for IE11 compatibility
+- Fix regression in snapToGrid
+- updateContainerDims: avoid NaN when containerObj is not attached to the page
+- Remove the global variable `x_internalload`
+- Speed improvement in defaultAxes
 
 1.4.6
 ====

@@ -458,7 +458,7 @@ JXG.Board = function (
          * If reducedUpdate is set to true then only the dragged element and few (e.g. 2) following
          * elements are updated during mouse move. On mouse up the whole construction is
          * updated. This enables us to be fast even on very slow devices.
-         * @type BooleanupdateQuality: 2
+         * @type Boolean
          * @default false
          */
         this.reducedUpdate = false;
