@@ -3464,7 +3464,7 @@ JXG.Options = {
              * @default -20
              * @name infobox#distanceX
              * @visprop
-             * /
+             */
             distanceX: -20,
 
             /**
@@ -3474,7 +3474,7 @@ JXG.Options = {
              * @default 25
              * @name infobox#distanceX
              * @visprop
-             * /
+             */
             distanceY: 25,
 
             fontSize: 12,
@@ -6251,7 +6251,7 @@ JXG.Options = {
             highlightOpacity: ['highlightStrokeOpacity', 'highlightFillOpacity'],
             strokeWidth: ['strokeWidth', 'highlightStrokeWidth']
         }
-    };
+};
 
     /**
      * Holds all possible properties and the according validators for geometry elements.
