@@ -3982,13 +3982,13 @@ JXG.extend(
          *
          **********************************************************/
 
-        /**in
+        /**
          * Initialize the info box object which is used to display
          * the coordinates of points near the mouse pointer,
          * @returns {JXG.Board} Reference to the board
          */
         initInfobox: function () {
-            var attr = Type.copyAttributes({}, this.options, "infobox");
+            var attr = Type.copyAttributes({}, this.options, 'infobox');
 
             attr.id = this.id + "_infobox";
             /**
@@ -3998,7 +3998,7 @@ JXG.extend(
              * @type JXG.Text
              *
              */
-            this.infobox = this.create("text", [0, 0, "0,0"], attr);
+            this.infobox = this.create('text', [0, 0, '0,0'], attr);
             // this.infobox.needsUpdateSize = false;  // That is not true, but it speeds drawing up.
             this.infobox.dump = false;
 
