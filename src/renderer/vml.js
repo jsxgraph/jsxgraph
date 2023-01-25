@@ -63,7 +63,7 @@ JXG.VMLRenderer = function (container) {
         return false;
     };
 
-    this.resolution = 10; // Paths are drawn with a a resolution of this.resolution/pixel.
+    this.resolution = 10; // Paths are drawn with a resolution of this.resolution/pixel.
 
     // Add VML includes and namespace
     // Original: IE <=7

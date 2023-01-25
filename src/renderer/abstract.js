@@ -539,7 +539,7 @@ JXG.extend(
                Handle arrow heads.
 
                The default arrow head is an isosceles triangle with base length 10 units and height 10 units.
-               These 10 units are scaled to strokeWidth * arrowSize pixels pixels.
+               These 10 units are scaled to strokeWidth * arrowSize pixels.
             */
             if (ev_fa || ev_la) {
                 if (Type.exists(ev_fa.type)) {
@@ -727,7 +727,7 @@ JXG.extend(
                Handle arrow heads.
 
                The default arrow head (type==1) is an isosceles triangle with base length 10 units and height 10 units.
-               These 10 units are scaled to strokeWidth * arrowSize pixels pixels.
+               These 10 units are scaled to strokeWidth * arrowSize pixels.
             */
             if (a.evFirst || a.evLast) {
                 // Correct the position of the arrow heads

@@ -86,7 +86,7 @@ JXG.Text = function (board, coords, attributes, content) {
     this.hiddenByParent = false;
 
     /**
-     * Width and height of the the text element in pixel.
+     * Width and height of the text element in pixel.
      *
      * @private
      * @type Array
@@ -123,10 +123,10 @@ JXG.extend(
     /** @lends JXG.Text.prototype */ {
         /**
          * @private
-         * Test if the the screen coordinates (x,y) are in a small stripe
+         * Test if the screen coordinates (x,y) are in a small stripe
          * at the left side or at the right side of the text.
          * Sensitivity is set in this.board.options.precision.hasPoint.
-         * If dragarea is set to 'all' (default), tests if the the screen
+         * If dragarea is set to 'all' (default), tests if the screen
          * coordinates (x,y) are in within the text boundary.
          * @param {Number} x
          * @param {Number} y

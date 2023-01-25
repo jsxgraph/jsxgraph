@@ -3701,7 +3701,7 @@ JXG.createInequality = function (board, parents, attributes) {
             i2 = [1, dp[1] - slope2[1] * w, dp[2] + slope2[0] * w];
 
             // One of the vectors based in i1 and orthogonal to the parent line has the direction d1 = (slope1, -1)
-            // We will go from i1 to to i1 + h*d1, from there to i2 + h*d2 (with d2 calculated equivalent to d1) and
+            // We will go from i1 to i1 + h*d1, from there to i2 + h*d2 (with d2 calculated equivalent to d1) and
             // end up in i2.
             this.dataX = [i1[1], i1[1] + slope1[0] * h, i2[1] + slope2[0] * h, i2[1], i1[1]];
             this.dataY = [i1[2], i1[2] + slope1[1] * h, i2[2] + slope2[1] * h, i2[2], i1[2]];

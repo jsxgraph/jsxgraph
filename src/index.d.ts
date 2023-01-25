@@ -3524,11 +3524,11 @@ declare namespace JXG {
          */
         lt(angle: number): Turtle;
         /**
-         * Gives the upper bound of the parameter if the the turtle is treated as parametric curve.
+         * Gives the upper bound of the parameter if the turtle is treated as parametric curve.
          */
         maxX(): number;
         /**
-         * Gives the lower bound of the parameter if the the turtle is treated as parametric curve.
+         * Gives the lower bound of the parameter if the turtle is treated as parametric curve.
          */
         minX(): number;
         /**

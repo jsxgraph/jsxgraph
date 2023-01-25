@@ -6836,13 +6836,13 @@ JXG.extend(
          * @example
          *
          * // Line which will be the floor to roll upon.
-         * var line = brd.create('curve', [function (t) { return t;}, function (t){ return 1;}], {strokeWidth:6});
+         * var line = board.create('curve', [function (t) { return t;}, function (t){ return 1;}], {strokeWidth:6});
          * // Center of the rolling circle
-         * var C = brd.create('point',[0,2],{name:'C'});
+         * var C = board.create('point',[0,2],{name:'C'});
          * // Starting point of the rolling circle
-         * var P = brd.create('point',[0,1],{name:'P', trace:true});
+         * var P = board.create('point',[0,1],{name:'P', trace:true});
          * // Circle defined as a curve. The circle "starts" at P, i.e. circle(0) = P
-         * var circle = brd.create('curve',[
+         * var circle = board.create('curve',[
          *           function (t){var d = P.Dist(C),
          *                           beta = JXG.Math.Geometry.rad([C.X()+1,C.Y()],C,P);
          *                       t += beta;
@@ -6857,8 +6857,8 @@ JXG.extend(
          *           {strokeWidth:6, strokeColor:'green'});
          *
          * // Point on circle
-         * var B = brd.create('glider',[0,2,circle],{name:'B', color:'blue',trace:false});
-         * var roll = brd.createRoulette(line, circle, 0, Math.PI/20, 1, 100, [C,P,B]);
+         * var B = board.create('glider',[0,2,circle],{name:'B', color:'blue',trace:false});
+         * var roll = board.createRoulette(line, circle, 0, Math.PI/20, 1, 100, [C,P,B]);
          * roll.start() // Start the rolling, to be stopped by roll.stop()
          *
          * </pre><div class="jxgbox" id="JXGe5e1b53c-a036-4a46-9e35-190d196beca5" style="width: 300px; height: 300px;"></div>

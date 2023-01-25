@@ -598,7 +598,7 @@ JXG.createGlider = function (board, parents, attributes) {
 };
 
 /**
- * @class An intersection point is a point which lives on two JSXGraph elements, i.e. it is one point of the the set
+ * @class An intersection point is a point which lives on two JSXGraph elements, i.e. it is one point of the set
  * consisting of the intersection points of the two elements. The following element types can be (mutually) intersected: line, circle,
  * curve, polygon, polygonal chain.
  *

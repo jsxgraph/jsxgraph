@@ -45,7 +45,7 @@ import Geometry from "../math/geometry";
 import Type from "../utils/type";
 
 /**
- * @class This element is used to provide a constructor for an ellipse. An ellipse is given by two points (the foci) and a third point on the the ellipse or
+ * @class This element is used to provide a constructor for an ellipse. An ellipse is given by two points (the foci) and a third point on the ellipse or
  * the length of the major axis.
  * @pseudo
  * @description
@@ -323,7 +323,7 @@ JXG.createEllipse = function (board, parents, attributes) {
 };
 
 /**
- * @class This element is used to provide a constructor for an hyperbola. An hyperbola is given by two points (the foci) and a third point on the the hyperbola or
+ * @class This element is used to provide a constructor for an hyperbola. An hyperbola is given by two points (the foci) and a third point on the hyperbola or
  * the length of the major axis.
  * @pseudo
  * @description

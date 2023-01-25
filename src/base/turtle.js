@@ -855,14 +855,14 @@ JXG.extend(
         },
 
         /**
-         * Gives the lower bound of the parameter if the the turtle is treated as parametric curve.
+         * Gives the lower bound of the parameter if the turtle is treated as parametric curve.
          */
         minX: function () {
             return 0;
         },
 
         /**
-         * Gives the upper bound of the parameter if the the turtle is treated as parametric curve.
+         * Gives the upper bound of the parameter if the turtle is treated as parametric curve.
          * May be overwritten in @see generateTerm.
          */
         maxX: function () {
