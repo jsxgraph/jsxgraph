@@ -15,31 +15,30 @@ New features
     - keydrag for elements
 - New board attribute fullscreen{ scale: 0.85 }
 - New board attribute `logging`: enables logs of user activity
-- SVG: enable more flexible transitions
-- New attribute transitionProperties
+- New attribute transitionProperties: enables more flexible transitions
 - New point faces | ('divide') and - ('minus')
 - New attributes distanceX/Y for infobox element
 
 Improvements
 ------------
 
+- Stability of bounding box after orientation changes or resizes if `keepaspectratio=true`
+- Remove all 3rd party dependencies of jsxgraphcore.js, e.g. canvas.
 - Ecosystem:
     - .gitignore, Makefile, package.json
     - Add github actions
     - Add `distrib/jsxgraphcore.js` and `distrib/jsxgraphsrc.js` to .gitignore
     - Update README.md
     - Add version number to API references
+- Add unit tests
 - Continuous improvement of `index.d.ts`
-- Remove all 3rd party dependencies of jsxgraphcore.js, e.g. canvas.
 - Deep merging of attributes: new method `mergeAttr` in `env.js`
-- Unit tests
-- Merge document attribute as black box in stead of object
-- Shadow DOM support
-- Browserless support
+- Merge document attribute as black box instead of object (shadowDOM)
+- Improve shadow DOM support
+- Improve browserless support
 - API docs
-- Stability of bounding box in orientation changes or resizes if `keepaspectratio=true`
 - Click on slider triggers 'drag' event
-- Add dependence on elements in JessieCode function
+- Add dependence on elements when creating JessieCode function
 - startAnimation: allow functions as parameters
 
 Bug fixes
