@@ -1,9 +1,6 @@
 const path = require("path");
 const baseConfig = require("./webpack.config.base");
 
-// Unused: replace-in-file-webpack-plugin
-// in package.json: "replace-in-file-webpack-plugin": "^1.0.6",
-// const ReplaceInFileWebpackPlugin = require("replace-in-file-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
 
 // Name of JSXGraph namespace
