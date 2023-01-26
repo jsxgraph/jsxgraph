@@ -78,7 +78,7 @@ To uncompress and run this code, the following code has to be included:
 <!-- -------------------------------------------------------- -->
 <script src="./jsxcompressor.js" type="text/javascript"></script>
 <script type="text/javascript">
-eval(JSXCompressor.decompress(jxgcompressed));
+eval(JSXCompressor.default.decompress(jxgcompressed));
 </script>
 <!-- -------------------------------------------------------- -->
 

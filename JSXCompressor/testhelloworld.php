@@ -21,7 +21,7 @@ function jxgcompress($filename)
     jxgcompress("./helloworld.js");
 ?>   
 
-eval(JXG.decompress(jxgcompressed));
+eval(JSXCompressor.default.decompress(jxgcompressed));
 </script>
 </body>
 </html>

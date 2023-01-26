@@ -131,7 +131,6 @@ tmpreaders/%.min.js: src/reader/%.js
 
 compressor: core
 	$(WEBPACK) --config config/webpack.config.compressor.js
-	$(CP) $(OUTPUT)/jsxgraphcore.js JSXCompressor/jsxgraphcore.js
 	$(CP) $(OUTPUT)/jsxgraph.css    JSXCompressor/jsxgraph.css
 
 plot:
