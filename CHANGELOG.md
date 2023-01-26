@@ -4,6 +4,7 @@
 New features
 -----------
 
+- API change in JSXCompressor. Old: `JXG.decompress` New: `JSXCompressor.decompress`
 - Code base switched from AMD to ES6 imports
 - New attributes `majorTickEndings`, `ignoreInfiniteTickEndings`
 - New math class Mat.Heap

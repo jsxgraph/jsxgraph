@@ -26,7 +26,7 @@
 '''
 import sys
 import os
-import urllib
+import urllib.request, urllib.parse, urllib.error
 import base64
 import zlib
 
@@ -40,6 +40,6 @@ if __name__ == '__main__':
         sys.exit(0) 
     f = open(filename, "r")
     text = f.read()
-    text = urllib.unquote(zlib.decompress(base64.b64decode(text)))
-    print text
+    text = urllib.parse.unquote(zlib.decompress(base64.b64decode(text)))
+    print(text, end="")
     
