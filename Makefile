@@ -77,6 +77,8 @@ release: core docs
 	$(MKDIR) $(MKDIRFLAGS) $(TMP)
 	$(CP) $(OUTPUT)/jsxgraphcore.js $(TMP)/jsxgraphcore.js
 	$(CP) $(OUTPUT)/jsxgraphsrc.js  $(TMP)/jsxgraphsrc.js
+	$(CP) $(OUTPUT)/jsxgraphcore.mjs $(TMP)/jsxgraphcore.mjs
+	$(CP) $(OUTPUT)/jsxgraphsrc.mjs  $(TMP)/jsxgraphsrc.mjs
 	$(CP) $(OUTPUT)/jsxgraph.css    $(TMP)/jsxgraph.css
 	$(CP) $(OUTPUT)/docs.zip        $(TMP)/docs.zip
 	$(CP) src/index.d.ts            $(TMP)/index.d.ts
