@@ -41,6 +41,7 @@ Improvements
 - Click on slider triggers 'drag' event
 - Add dependence on elements when creating JessieCode function
 - startAnimation: allow functions as parameters
+- Update JSXCompressor package
 
 Bug fixes
 ---------

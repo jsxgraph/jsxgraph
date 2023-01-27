@@ -343,7 +343,8 @@ JXG.Options = {
              *             showcopyright: false,
              *             showFullscreen: true,
              *             fullscreen: {
-             *                  symbol: '\u22c7'
+             *                  symbol: '\u22c7',
+             *                  scale: 0.95
              *              }
              *             });
              * var pol = board.create('polygon', [[0, 1], [3,4], [1,-4]], {fillColor: 'yellow'});
@@ -355,7 +356,8 @@ JXG.Options = {
              *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false,
              *              showFullscreen: true,
              *              fullscreen: {
-             *                  symbol: '\u22c7'
+             *                  symbol: '\u22c7',
+             *                  scale: 0.95
              *                  }
              *             });
              *     var pol = board.create('polygon', [[0, 1], [3,4], [1,-4]], {fillColor: 'yellow'});
@@ -914,15 +916,54 @@ JXG.Options = {
             /**
              * If enabled, user activities are logged in array "board.userLog".
              *
-             * @name JXG.Board#showInfobox
+             * @name JXG.Board#logging
              * @type Object
              * @default {enabled: false}
              *
              * @example
-             *     var board = JXG.JSXGraph.initBoard('jxgbox', {
-             *         boundingbox: [-5,5,5,-5],
-             *         logging: {enabled: true}
-             *     });
+             * var board = JXG.JSXGraph.initBoard(BOARDID,
+             *          {
+             *              boundingbox: [-8, 8, 8,-8], 
+             *              axis: true, 
+             *              logging: {enabled: true},
+             *              showcopyright: false, 
+             *              shownavigation: false
+             *          });
+             * var A = board.create('point', [-4, 0], { name: 'A' });
+             * var B = board.create('point', [1, 2], { name: 'B' });
+             * var showUserLog = function() {
+             *     var txt = '';
+             * 
+             *     for (let i = 0; i < board.userLog.length; i++) {
+             *         txt += JSON.stringify(board.userLog[i]) + '\n';
+             *     }
+             *     alert(txt);
+             * };
+             * var but = board.create('button', [4, 4, 'Show user log', showUserLog]);
+             * 
+             * </pre><div id="JXGe152375c-f478-41aa-a9e6-e104403fc75d" class="jxgbox" style="width: 300px; height: 300px;"></div>
+             * <script type="text/javascript">
+             *     (function() {
+             *         var board = JXG.JSXGraph.initBoard('JXGe152375c-f478-41aa-a9e6-e104403fc75d',
+             *             {boundingbox: [-8, 8, 8,-8], axis: true, logging: {enabled: true},
+             *              showcopyright: false, shownavigation: false});
+             *     var A = board.create('point', [-4, 0], { name: 'A' });
+             *     var B = board.create('point', [1, 2], { name: 'B' });
+             *     var showUserLog = function() {
+             *         var txt = '';
+             *     
+             *         for (let i = 0; i < board.userLog.length; i++) {
+             *             txt += JSON.stringify(board.userLog[i]) + '\n';
+             *         }
+             *         alert(txt);
+             *     };
+             *     var but = board.create('button', [4, 4, 'Show user log', showUserLog]);
+             * 
+             *     })();
+             * 
+             * </script><pre>
+             * 
+             * 
              * @see JXG.Board#userLog
              */
             logging: {
@@ -1475,14 +1516,19 @@ JXG.Options = {
             dash: 0,
 
             /**
-             * If enabled:true the element will get a shadow.
-             *
-             * Customize the shadow of a (stroke) object. If the object's RGB color is [r,g,b], its opacity is op, and
-             * the parameters "color" is given as [r', g', b'] and "opacity" as op' the shadow will have
-             * RGB color [blend*r + r', blend*g + g', blend*b + b'] and its opacity will be equal to op * op'.
-             * Further, blur and offset can be adjusted.
-             *
-             * Only available with SVG, not with canvas.
+             * If enabled:true the (stroke) element will get a customized shadow.
+             * <p>
+             * Customize <i>color</i> and <i>opacity</i>:
+             * If the object's RGB stroke color is <tt>[r,g,b]</tt> and its opacity is <tt>op</i>, and
+             * the shadow parameters <i>color</i> is given as <tt>[r', g', b']</tt> and <i>opacity</i> as <tt>op'</tt> 
+             * the shadow will receive the RGB color 
+             * <center>
+             * <tt>[blend*r + r', blend*g + g', blend*b + b'] </tt>
+             * </center>
+             * and its opacity will be equal to <tt>op * op'</tt>.
+             * Further, the parameters <i>blur</i> and <i>offset</i> can be adjusted.
+             * <p>
+             * This attribute is only available with SVG, not with canvas.
              *
              * @type Object
              * @name JXG.GeometryElement#shadow
@@ -1969,9 +2015,63 @@ JXG.Options = {
              * In case of [0,1] the tick is only visible to the right of the line. In case of
              * [1,0] the tick is only visible to the left of the line.
              *
-             * @type Array
+            * @example
+            *         var board = JXG.JSXGraph.initBoard("jxgbox", {
+            *             boundingbox: [-5, 5, 5, -5],
+            *             axis: true,
+            *             defaultAxes: {
+            *                 x: {
+            *                     ticks: {
+            *                         majorTickEndings: [1, 0],
+            *                         ignoreInfiniteTickEndings: false
+            *                     }
+            *                 },
+            *                 y: {
+            *                     ticks: {
+            *                         majorTickEndings: [0, 1],
+            *                         ignoreInfiniteTickEndings: false
+            *                     }
+            *                 }
+            *             }
+            *         });
+            * 
+            *         var p = board.create('point', [1, 1]);
+            *         var l = board.create('line', [1, -1, 1]);
+            * 
+            * </pre><div id="JXGf9ccb731-7a73-44d1-852e-f9c9c405a9d1" class="jxgbox" style="width: 300px; height: 300px;"></div>
+            * <script type="text/javascript">
+            *     (function() {
+            *         var board = JXG.JSXGraph.initBoard('JXGf9ccb731-7a73-44d1-852e-f9c9c405a9d1',
+            *             {   showcopyright: false, shownavigation: false,
+            *                 boundingbox: [-5, 5, 5, -5],
+            *                 axis: true,
+            *                 defaultAxes: {
+            *                     x: {
+            *                         ticks: {
+            *                             majorTickEndings: [1, 0],
+            *                             ignoreInfiniteTickEndings: false
+            *                         }
+            *                     },
+            *                     y: {
+            *                         ticks: {
+            *                             majorTickEndings: [0, 1],
+            *                             ignoreInfiniteTickEndings: false
+            *                         }
+            *                     }
+            *                 }
+            *             });
+            *     
+            *             var p = board.create('point', [1, 1]);
+            *             var l = board.create('line', [1, -1, 1]);
+            * 
+            *     })();
+            * 
+            * </script><pre>
+            * 
+            * @type Array
              * @name Ticks#majorTickEndings
              * @see Ticks#tickEndings
+             * @see Ticks#ignoreInfiniteTickEndings
              * @default [1, 1]
              */
             majorTickEndings: [1, 1],
