@@ -608,7 +608,7 @@ JXG.createGlider = function (board, parents, attributes) {
  * @constructor
  * @type JXG.Point
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {JXG.Line,JXG.Circle_JXG.Line,JXG.Circle_Number} el1,el2,i The result will be a intersection point on el1 and el2. i determines the
+ * @param {JXG.Line,JXG.Circle_JXG.Line,JXG.Circle_Number|Function} el1,el2,i The result will be a intersection point on el1 and el2. i determines the
  * intersection point if two points are available: <ul>
  *   <li>i==0: use the positive square root,</li>
  *   <li>i==1: use the negative square root.</li></ul>
