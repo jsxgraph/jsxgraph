@@ -536,39 +536,21 @@ Mat.Metapost = {
      * @param {Number} tension
      * @param {Boolean} cycle
      */
-    makeknots: function (p, tension, cycle) {
-        var i, len, l, r,
+    makeknots: function (p) {
+        var i, len,
             knots = [];
 
-        tension = tension || 1;
         len = p.length;
         for (i = 0; i < len; i++) {
-            if (Type.isObject(tension)) {
-                if (tension.hasOwnProperty(i)) {
-                    if (Type.exists(tension[i].l)) {
-                        l = Type.evaluate(tension[i].l);
-                    }
-                    if (Type.exists(tension[i].r)) {
-                        r = Type.evaluate(tension[i].r);
-                    }
-                } else {
-                    l = 1;
-                    r = 1;
-                }
-            } else {
-                l = Type.evaluate(tension);
-                r = l;
-            }
-
             knots.push({
                 x: p[i][0],
                 y: p[i][1],
                 ltype: this.MP_OPEN,
                 rtype: this.MP_OPEN,
-                ly: l,
-                ry: r,
-                lx: l,
-                rx: r,
+                lx: false,
+                rx: false,
+                ly: 1,
+                ry: 1,
                 left_curl: function () {
                     return this.lx || 0;
                 },
@@ -600,12 +582,6 @@ Mat.Metapost = {
         }
         knots[len - 1].next = knots[0];
 
-        if (!cycle) {
-            knots[len - 1].rtype = this.MP_ENDPOINT;
-            knots[len - 1].ltype = this.MP_CURL;
-            knots[0].rtype = this.MP_CURL;
-        }
-
         return knots;
     },
 
@@ -617,10 +593,9 @@ Mat.Metapost = {
      * @returns {Array}
      */
     curve: function (point_list, controls) {
-        var knots,
-            len,
-            i,
-            val,
+        var knots, len, i, ii,
+            val, obj,
+            isClosed = false,
             x = [],
             y = [];
 
@@ -632,38 +607,105 @@ Mat.Metapost = {
         };
 
         // knots = this.makeknots(point_list, Type.evaluate(controls.tension), controls.isClosed);
-        knots = this.makeknots(point_list, controls.tension, controls.isClosed);
+        knots = this.makeknots(point_list);
 
         len = knots.length;
-        for (i in controls.direction) {
-            if (controls.direction.hasOwnProperty(i)) {
-                val = Type.evaluate(controls.direction[i]);
-                if (Type.isArray(val)) {
-                    if (val[0] !== false) {
-                        knots[i].lx = (val[0] * Math.PI) / 180;
-                        knots[i].ltype = this.MP_GIVEN;
-                    }
-                    if (val[1] !== false) {
-                        knots[i].rx = (val[1] * Math.PI) / 180;
-                        knots[i].rtype = this.MP_GIVEN;
-                    }
-                } else {
-                    knots[i].lx = (val * Math.PI) / 180;
-                    knots[i].rx = (val * Math.PI) / 180;
-                    knots[i].ltype = knots[i].rtype = this.MP_GIVEN;
-                }
-            }
+        if (Type.exists(controls.isClosed) && Type.evaluate(controls.isClosed)) {
+            isClosed = true;
         }
-        for (i in controls.curl) {
-            if (controls.curl.hasOwnProperty(i)) {
-                val = Type.evaluate(controls.curl[i]);
-                if (parseInt(i, 10) === 0) {
-                    knots[i].rtype = this.MP_CURL;
-                    knots[i].set_right_curl(val);
-                } else if (parseInt(i, 10) === len - 1) {
-                    knots[i].ltype = this.MP_CURL;
-                    knots[i].set_left_curl(val);
+
+        if (!isClosed) {
+            knots[0].ltype = this.MP_ENDPOINT;
+            knots[0].rtype = this.MP_CURL;
+            knots[len - 1].rtype = this.MP_ENDPOINT;
+            knots[len - 1].ltype = this.MP_CURL;
+        }
+
+        // for (i in controls.direction) {
+        //     if (controls.direction.hasOwnProperty(i)) {
+        //         val = Type.evaluate(controls.direction[i]);
+        //         if (Type.isArray(val)) {
+        //             if (val[0] !== false) {
+        //                 knots[i].lx = (val[0] * Math.PI) / 180;
+        //                 knots[i].ltype = this.MP_GIVEN;
+        //             }
+        //             if (val[1] !== false) {
+        //                 knots[i].rx = (val[1] * Math.PI) / 180;
+        //                 knots[i].rtype = this.MP_GIVEN;
+        //             }
+        //         } else {
+        //             knots[i].lx = (val * Math.PI) / 180;
+        //             knots[i].rx = (val * Math.PI) / 180;
+        //             knots[i].ltype = knots[i].rtype = this.MP_GIVEN;
+        //         }
+        //     }
+        // }
+
+        // for (i in controls.curl) {
+        //     if (controls.curl.hasOwnProperty(i)) {
+        //         val = Type.evaluate(controls.curl[i]);
+        //         if (parseInt(i, 10) === 0) {
+        //             knots[i].rtype = this.MP_CURL;
+        //             knots[i].set_right_curl(val);
+        //         } else if (parseInt(i, 10) === len - 1) {
+        //             knots[i].ltype = this.MP_CURL;
+        //             knots[i].set_left_curl(val);
+        //         }
+        //     }
+        // }
+
+        for (ii in controls) {
+            if (controls.hasOwnProperty(ii)) {
+                i = parseInt(ii, 10);
+                if (isNaN(i) || i < 0 || i >= len) {
+                    continue;
                 }
+
+                obj = controls[i];
+                if (Type.exists(obj.type)) {
+                    switch (obj.type) {
+                        case 'curl':
+                            knots[i].ltype = this.MP_CURL;
+                            knots[i].rtype = this.MP_CURL;
+                            knots[i].lx = Type.evaluate(obj.curl);
+                            knots[i].rx = Type.evaluate(obj.curl);
+                            break;
+                    }
+                }
+
+                if (Type.exists(obj.direction)) {
+                    val = Type.evaluate(obj.direction);
+                    if (Type.isArray(val)) {
+                        if (val[0] !== false) {
+                            knots[i].lx = (val[0] * Math.PI) / 180;
+                            knots[i].ltype = this.MP_GIVEN;
+                        }
+                        if (val[1] !== false) {
+                            knots[i].rx = (val[1] * Math.PI) / 180;
+                            knots[i].rtype = this.MP_GIVEN;
+                        }
+                    } else {
+                        knots[i].lx = (val * Math.PI) / 180;
+                        knots[i].rx = (val * Math.PI) / 180;
+                        knots[i].ltype = knots[i].rtype = this.MP_GIVEN;
+                    }
+                }
+
+                if (Type.exists(obj.tension)) {
+                    val = Type.evaluate(obj.tension);
+                    if (Type.isArray(val)) {
+                        if (val[0] !== false) {
+                            knots[i].ly = Type.evaluate(val[0]);
+                        }
+                        if (val[1] !== false) {
+                            knots[i].ry = Type.evaluate(val[1]);
+                        }
+                    } else {
+                        knots[i].ly = val;
+                        knots[i].ry = val;
+                    }
+                }
+
             }
         }
 
@@ -680,7 +722,7 @@ Mat.Metapost = {
         x.push(knots[len - 1].x);
         y.push(knots[len - 1].y);
 
-        if (controls.isClosed) {
+        if (isClosed) {
             x.push(knots[len - 1].rx);
             y.push(knots[len - 1].ry);
             x.push(knots[0].lx);

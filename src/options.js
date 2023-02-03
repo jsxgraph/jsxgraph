@@ -4235,7 +4235,7 @@ JXG.Options = {
              * @visprop
              */
 
-             /**
+            /**
               * Controls if the data points of the cardinal spline when given as
               * arrays should be converted into {@link JXG.Points}.
               *
