@@ -343,7 +343,8 @@ JXG.extend(
 
                 for (i = start; i < len; i++) {
                     if (this.bezierDegree === 3) {
-                        res.push(Geometry.projectCoordsToBeziersegment([1, x, y], this, i));
+                        //res.push(Geometry.projectCoordsToBeziersegment([1, x, y], this, i));
+                        res = Geometry.projectCoordsToBeziersegment([1, x, y], this, i);
                     } else {
                         if (qdt) {
                             if (points[i].prev) {
