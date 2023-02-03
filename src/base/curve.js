@@ -1642,7 +1642,7 @@ JXG.registerElement("plot", JXG.createFunctiongraph);
  * @param {JXG.Board} board Reference to the board the spline is drawn on.
  * @param {Array} parents Array of points the spline interpolates. This can be
  *   <ul>
- *   <li> an array of JXGGraph points</li>
+ *   <li> an array of JSXGraph points</li>
  *   <li> an array of coordinate pairs</li>
  *   <li> an array of functions returning coordinate pairs</li>
  *   <li> an array consisting of an array with x-coordinates and an array of y-coordinates</li>
@@ -1794,7 +1794,7 @@ JXG.registerElement("spline", JXG.createSpline);
  * <p>
  *   First entry: Array of points the spline interpolates. This can be
  *   <ul>
- *   <li> an array of JXGGraph points</li>
+ *   <li> an array of JSXGraph points</li>
  *   <li> an array of coordinate pairs</li>
  *   <li> an array of functions returning coordinate pairs</li>
  *   <li> an array consisting of an array with x-coordinates and an array of y-coordinates</li>
@@ -2005,7 +2005,7 @@ JXG.registerElement("cardinalspline", JXG.createCardinalSpline);
  * <p>
  *   First entry: Array of points the spline interpolates. This can be
  *   <ul>
- *   <li> an array of JXGGraph points</li>
+ *   <li> an array of JSXGraph points</li>
  *   <li> an object of coordinate pairs</li>
  *   <li> an array of functions returning coordinate pairs</li>
  *   <li> an array consisting of an array with x-coordinates and an array of y-coordinates</li>
@@ -2166,7 +2166,7 @@ JXG.createMetapostSpline = function (board, parents, attributes) {
     }
 
     if (attributes.createpoints === true) {
-        points = Type.providePoints(board, q, attributes, "metapostspline", ["points"]);
+        points = Type.providePoints(board, q, attributes, 'metapostspline', ['points']);
     } else {
         points = [];
 

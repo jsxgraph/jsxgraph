@@ -537,23 +537,38 @@ Mat.Metapost = {
      * @param {Boolean} cycle
      */
     makeknots: function (p, tension, cycle) {
-        var i,
-            len,
+        var i, len, l, r,
             knots = [];
 
         tension = tension || 1;
-
         len = p.length;
         for (i = 0; i < len; i++) {
+            if (Type.isObject(tension)) {
+                if (tension.hasOwnProperty(i)) {
+                    if (Type.exists(tension[i].l)) {
+                        l = Type.evaluate(tension[i].l);
+                    }
+                    if (Type.exists(tension[i].r)) {
+                        r = Type.evaluate(tension[i].r);
+                    }
+                } else {
+                    l = 1;
+                    r = 1;
+                }
+            } else {
+                l = Type.evaluate(tension);
+                r = l;
+            }
+
             knots.push({
                 x: p[i][0],
                 y: p[i][1],
                 ltype: this.MP_OPEN,
                 rtype: this.MP_OPEN,
-                ly: tension,
-                ry: tension,
-                lx: tension,
-                rx: tension,
+                ly: l,
+                ry: r,
+                lx: l,
+                rx: r,
                 left_curl: function () {
                     return this.lx || 0;
                 },
@@ -561,25 +576,20 @@ Mat.Metapost = {
                     return this.rx || 0;
                 },
                 left_tension: function () {
-                    if (!this.ly) {
-                        this.ly = 1;
-                    }
-                    return this.ly;
+                    return this.ly || 1;
                 },
                 right_tension: function () {
-                    if (!this.ry) {
-                        this.ry = 1;
-                    }
-                    return this.ry;
+                    return this.ry || 1;
                 },
-                set_right_curl: function (x) {
-                    this.rx = x || 0;
+                set_right_curl: function (v) {
+                    this.rx = v || 0;
                 },
-                set_left_curl: function (x) {
-                    this.lx = x || 0;
+                set_left_curl: function (v) {
+                    this.lx = v || 0;
                 }
             });
         }
+
         len = knots.length;
         for (i = 0; i < len; i++) {
             knots[i].next = knots[i + 1] || knots[i];
@@ -592,7 +602,6 @@ Mat.Metapost = {
 
         if (!cycle) {
             knots[len - 1].rtype = this.MP_ENDPOINT;
-
             knots[len - 1].ltype = this.MP_CURL;
             knots[0].rtype = this.MP_CURL;
         }
@@ -622,7 +631,8 @@ Mat.Metapost = {
             isClosed: false
         };
 
-        knots = this.makeknots(point_list, Type.evaluate(controls.tension), controls.isClosed);
+        // knots = this.makeknots(point_list, Type.evaluate(controls.tension), controls.isClosed);
+        knots = this.makeknots(point_list, controls.tension, controls.isClosed);
 
         len = knots.length;
         for (i in controls.direction) {
