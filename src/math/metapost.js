@@ -486,7 +486,7 @@ Mat.Metapost = {
         return Math.min(
             4.0,
             ((3.0 - alpha) * alpha * alpha * gamma + beta * beta * beta) /
-                (alpha * alpha * alpha * gamma + (3.0 - beta) * beta * beta)
+            (alpha * alpha * alpha * gamma + (3.0 - beta) * beta * beta)
         );
     },
 
@@ -510,7 +510,7 @@ Mat.Metapost = {
         return Math.min(
             4.0,
             (2.0 + Math.sqrt(2) * (st - sf / 16.0) * (sf - st / 16.0) * (ct - cf)) /
-                (1.5 * t * (2 + (Math.sqrt(5) - 1) * ct + (3 - Math.sqrt(5)) * cf))
+            (1.5 * t * (2 + (Math.sqrt(5) - 1) * ct + (3 - Math.sqrt(5)) * cf))
         );
     },
 
@@ -667,79 +667,91 @@ Mat.Metapost = {
                     continue;
                 }
 
+                // Handle individual curl
                 obj = controls[i];
                 if (Type.exists(obj.type)) {
                     switch (obj.type) {
                         case 'curl':
-                            knots[i].ltype = this.MP_CURL;
-                            knots[i].rtype = this.MP_CURL;
-                            knots[i].lx = Type.evaluate(obj.curl);
-                            knots[i].rx = Type.evaluate(obj.curl);
+                            val = Type.evaluate(obj.curl);
+                            if (i === 0) {
+                                knots[i].rtype = this.MP_CURL;
+                                knots[i].set_right_curl(val);
+                            } else if (i === len - 1) {
+                                knots[i].ltype = this.MP_CURL;
+                                knots[i].set_left_curl(val);
+                            } else {
+                                knots[i].ltype = this.MP_CURL;
+                                knots[i].rtype = this.MP_CURL;
+                                knots[i].lx = val;
+                                knots[i].rx = val;
+                            }
                             break;
+                        }
                     }
-                }
 
-                if (Type.exists(obj.direction)) {
-                    val = Type.evaluate(obj.direction);
-                    if (Type.isArray(val)) {
-                        if (val[0] !== false) {
-                            knots[i].lx = (val[0] * Math.PI) / 180;
-                            knots[i].ltype = this.MP_GIVEN;
+                    // Handle individual directions
+                    if (Type.exists(obj.direction)) {
+                        val = Type.evaluate(obj.direction);
+                        if (Type.isArray(val)) {
+                            if (val[0] !== false) {
+                                knots[i].lx = (val[0] * Math.PI) / 180;
+                                knots[i].ltype = this.MP_GIVEN;
+                            }
+                            if (val[1] !== false) {
+                                knots[i].rx = (val[1] * Math.PI) / 180;
+                                knots[i].rtype = this.MP_GIVEN;
+                            }
+                        } else {
+                            knots[i].lx = (val * Math.PI) / 180;
+                            knots[i].rx = (val * Math.PI) / 180;
+                            knots[i].ltype = knots[i].rtype = this.MP_GIVEN;
                         }
-                        if (val[1] !== false) {
-                            knots[i].rx = (val[1] * Math.PI) / 180;
-                            knots[i].rtype = this.MP_GIVEN;
-                        }
-                    } else {
-                        knots[i].lx = (val * Math.PI) / 180;
-                        knots[i].rx = (val * Math.PI) / 180;
-                        knots[i].ltype = knots[i].rtype = this.MP_GIVEN;
                     }
-                }
 
-                if (Type.exists(obj.tension)) {
-                    val = Type.evaluate(obj.tension);
-                    if (Type.isArray(val)) {
-                        if (val[0] !== false) {
-                            knots[i].ly = Type.evaluate(val[0]);
+                    // Handle individual tension
+                    if (Type.exists(obj.tension)) {
+                        val = Type.evaluate(obj.tension);
+                        if (Type.isArray(val)) {
+                            if (val[0] !== false) {
+                                knots[i].ly = Type.evaluate(val[0]);
+                            }
+                            if (val[1] !== false) {
+                                knots[i].ry = Type.evaluate(val[1]);
+                            }
+                        } else {
+                            knots[i].ly = val;
+                            knots[i].ry = val;
                         }
-                        if (val[1] !== false) {
-                            knots[i].ry = Type.evaluate(val[1]);
-                        }
-                    } else {
-                        knots[i].ly = val;
-                        knots[i].ry = val;
                     }
                 }
             }
+
+            // Generate ths Bezier curve
+            this.make_choices(knots);
+
+            // Return the coordinates
+            for (i = 0; i < len - 1; i++) {
+                x.push(knots[i].x);
+                x.push(knots[i].rx);
+                x.push(knots[i + 1].lx);
+                y.push(knots[i].y);
+                y.push(knots[i].ry);
+                y.push(knots[i + 1].ly);
+            }
+            x.push(knots[len - 1].x);
+            y.push(knots[len - 1].y);
+
+            if (isClosed) {
+                x.push(knots[len - 1].rx);
+                y.push(knots[len - 1].ry);
+                x.push(knots[0].lx);
+                y.push(knots[0].ly);
+                x.push(knots[0].x);
+                y.push(knots[0].y);
+            }
+
+            return [x, y];
         }
+    };
 
-        // Generate ths Bezier curve
-        this.make_choices(knots);
-
-        // Return the coordinates
-        for (i = 0; i < len - 1; i++) {
-            x.push(knots[i].x);
-            x.push(knots[i].rx);
-            x.push(knots[i + 1].lx);
-            y.push(knots[i].y);
-            y.push(knots[i].ry);
-            y.push(knots[i + 1].ly);
-        }
-        x.push(knots[len - 1].x);
-        y.push(knots[len - 1].y);
-
-        if (isClosed) {
-            x.push(knots[len - 1].rx);
-            y.push(knots[len - 1].ry);
-            x.push(knots[0].lx);
-            y.push(knots[0].ly);
-            x.push(knots[0].x);
-            y.push(knots[0].y);
-        }
-
-        return [x, y];
-    }
-};
-
-export default Mat.Metapost;
+    export default Mat.Metapost;
