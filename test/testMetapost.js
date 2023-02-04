@@ -128,12 +128,6 @@ describe("Test JXG.Math.Clip", function () {
         expect(cu.X(4)).toBeCloseTo(30, 6);
         expect(cu.Y(4)).toBeCloseTo(50, 6);
 
-        /*
-                  for (t = 0; t <= 4; t += 0.5) {
-                    console.log(`expect(cu.X(${t})).toBeCloseTo(${cu.X(t)}, 6);`);
-                    console.log(`expect(cu.Y(${t})).toBeCloseTo(${cu.Y(t)}, 6);`);
-                }
-        */
     });
 
     it("MetaPost fig 4b", function () {
@@ -184,6 +178,73 @@ describe("Test JXG.Math.Clip", function () {
         expect(cu.Y(4)).toBeCloseTo(50, 6);
 
         // for (t = 0; t <= 4; t += 0.5) {
+        //     console.log(`expect(cu.X(${t})).toBeCloseTo(${cu.X(t)}, 6);`);
+        //     console.log(`expect(cu.Y(${t})).toBeCloseTo(${cu.Y(t)}, 6);`);
+        // }
+    });
+
+    it("MetaPost fig 10a", function () {
+        var z0 = [0, 0],
+            z1 = [20, 5],
+            z2 = [40, 0];
+
+        var dir_up = 90,
+            dir_down = 270,
+            dir_left = 180,
+            dir_right = 0;
+
+        var controls = {
+            0: { direction: dir_up },
+            1: { direction: dir_right },
+            2: { direction: dir_down }
+        };
+        var cu = board.create('metapostspline', [[z0, z1, z2], controls]);
+
+        expect(cu.X(0)).toBeCloseTo(0, 6);
+        expect(cu.Y(0)).toBeCloseTo(0, 6);
+        expect(cu.X(0.5)).toBeCloseTo(6.682166534049175, 6);
+        expect(cu.Y(0.5)).toBeCloseTo(5.586740446211073, 6);
+        expect(cu.X(1)).toBeCloseTo(20, 6);
+        expect(cu.Y(1)).toBeCloseTo(5, 6);
+        expect(cu.X(1.5)).toBeCloseTo(33.31783346595083, 6);
+        expect(cu.Y(1.5)).toBeCloseTo(5.586740446211073, 6);
+        expect(cu.X(2)).toBeCloseTo(40, 6);
+        expect(cu.Y(2)).toBeCloseTo(0, 6);
+
+        // for (t = 0; t <= 2; t += 0.5) {
+        //     console.log(`expect(cu.X(${t})).toBeCloseTo(${cu.X(t)}, 6);`);
+        //     console.log(`expect(cu.Y(${t})).toBeCloseTo(${cu.Y(t)}, 6);`);
+        // }
+    });
+
+    it("MetaPost fig 11b", function () {
+        var z0 = [0, 0],
+            z1 = [10, 10],
+            z2 = [30, 10],
+            z3 = [40, 0];
+
+        var controls = {
+            1: { tension: [1, 1.3] },
+            2: { tension: [1.3, 1] }
+        };
+        var cu = board.create('metapostspline', [[z0, z1, z2, z3], controls]);
+
+        expect(cu.X(0)).toBeCloseTo(0, 6);
+        expect(cu.Y(0)).toBeCloseTo(0, 6);
+        expect(cu.X(0.5)).toBeCloseTo(4.28623269746538, 6);
+        expect(cu.Y(0.5)).toBeCloseTo(5.879813776632417, 6);
+        expect(cu.X(1)).toBeCloseTo(10, 6);
+        expect(cu.Y(1)).toBeCloseTo(10, 6);
+        expect(cu.X(1.5)).toBeCloseTo(20, 6);
+        expect(cu.Y(1.5)).toBeCloseTo(11.41119741302082, 6);
+        expect(cu.X(2)).toBeCloseTo(30, 6);
+        expect(cu.Y(2)).toBeCloseTo(10, 6);
+        expect(cu.X(2.5)).toBeCloseTo(35.71376730253462, 6);
+        expect(cu.Y(2.5)).toBeCloseTo(5.879813776632417, 6);
+        expect(cu.X(3)).toBeCloseTo(40, 6);
+        expect(cu.Y(3)).toBeCloseTo(0, 6);
+
+        // for (t = 0; t <= 3; t += 0.5) {
         //     console.log(`expect(cu.X(${t})).toBeCloseTo(${cu.X(t)}, 6);`);
         //     console.log(`expect(cu.Y(${t})).toBeCloseTo(${cu.Y(t)}, 6);`);
         // }
