@@ -536,7 +536,7 @@ Mat.Metapost = {
      * @param {Number} tension
      * @param {Boolean} cycle
      */
-    makeknots: function (p) {
+    makeknots: function (p, tension) {
         var i, len,
             knots = [];
 
@@ -549,8 +549,8 @@ Mat.Metapost = {
                 rtype: this.MP_OPEN,
                 lx: false,
                 rx: false,
-                ly: 1,
-                ry: 1,
+                ly: tension,
+                ry: tension,
                 left_curl: function () {
                     return this.lx || 0;
                 },
@@ -606,8 +606,13 @@ Mat.Metapost = {
             isClosed: false
         };
 
-        // knots = this.makeknots(point_list, Type.evaluate(controls.tension), controls.isClosed);
-        knots = this.makeknots(point_list);
+        // Change default tension
+        val = 1;
+        if (controls.hasOwnProperty('tension')) {
+            val = Type.evaluate(controls.tension);
+        }
+
+        knots = this.makeknots(point_list, val);
 
         len = knots.length;
         if (Type.exists(controls.isClosed) && Type.evaluate(controls.isClosed)) {
@@ -654,6 +659,7 @@ Mat.Metapost = {
         //     }
         // }
 
+        // Set individual point control values
         for (ii in controls) {
             if (controls.hasOwnProperty(ii)) {
                 i = parseInt(ii, 10);
@@ -705,12 +711,13 @@ Mat.Metapost = {
                         knots[i].ry = val;
                     }
                 }
-
             }
         }
 
+        // Generate ths Bezier curve
         this.make_choices(knots);
 
+        // Return the coordinates
         for (i = 0; i < len - 1; i++) {
             x.push(knots[i].x);
             x.push(knots[i].rx);
