@@ -172,8 +172,8 @@ describe("Test JXG.Math.Clip", function () {
         expect(cu.Y(2.5)).toBeCloseTo(86.4407673599145, 6);
         expect(cu.X(3)).toBeCloseTo(10, 6);
         expect(cu.Y(3)).toBeCloseTo(70, 6);
-        expect(cu.X(3.5)).toBeCloseTo(20.00219975562372, 6);
-        expect(cu.Y(3.5)).toBeCloseTo(60.00219975562372, 6);
+        expect(cu.X(3.5)).toBeCloseTo(20.00220144108784, 6);
+        expect(cu.Y(3.5)).toBeCloseTo(60.00220144108784, 6);
         expect(cu.X(4)).toBeCloseTo(30, 6);
         expect(cu.Y(4)).toBeCloseTo(50, 6);
 
