@@ -613,7 +613,7 @@ JXG.Options = {
             pan: {
                 enabled: true,
                 needShift: true,
-                needTwoFingers: true
+                needTwoFingers: false
             },
 
             /**
