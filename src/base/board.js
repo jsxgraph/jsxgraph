@@ -1240,14 +1240,10 @@ JXG.extend(
                 if (!isNaN(o.targets[0].Xprev + o.targets[0].Yprev)) {
                     drag.setPositionDirectly(
                         Const.COORDS_BY_SCREEN,
-                        [newPos.scrCoords[1], newPos.scrCoords[2]],
-                        [o.targets[0].Xprev, o.targets[0].Yprev]
+                        this.drag_position,
+                        [newPos.scrCoords[1], newPos.scrCoords[2]]
                     );
                 }
-                // Remember the actual position for the next move event. Then we are able to
-                // compute the difference vector.
-                o.targets[0].Xprev = newPos.scrCoords[1];
-                o.targets[0].Yprev = newPos.scrCoords[2];
             }
             // This may be necessary for some gliders and labels
             if (Type.exists(drag.coords)) {
@@ -3693,6 +3689,7 @@ JXG.extend(
                         !Type.evaluate(el.visProp.fixed)
                     ) {
 
+
                     this.mode = this.BOARD_MODE_DRAG;
                     if (Type.exists(el.coords)) {
                         dir[0] += actPos[0];
@@ -3700,10 +3697,18 @@ JXG.extend(
                     }
                     // For coordsElement setPosition has to call setPositionDirectly.
                     // Otherwise the position is set by a translation.
-                    el.setPosition(JXG.COORDS_BY_USER, dir);
                     if (Type.exists(el.coords)) {
+                        el.setPosition(JXG.COORDS_BY_USER, dir);
                         this.updateInfobox(el);
+                    } else {
+                        this.displayInfobox(false);
+                        el.setPositionDirectly(
+                            Const.COORDS_BY_USER,
+                            dir,
+                            [0, 0]
+                        );
                     }
+
                     this.triggerEventHandlers(['keymove', 'move'], [evt, this.mode]);
                     el.triggerEventHandlers(['keydrag', 'drag'], [evt]);
                     this.mode = this.BOARD_MODE_NONE;
