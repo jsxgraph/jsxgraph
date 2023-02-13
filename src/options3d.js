@@ -259,8 +259,8 @@ JXG.extend(Options, {
         gradient: "linear",
         gradientSecondColor: "#ffffff",
 
-        point: { visible: false, name: "" }, // Used only in case of point/point
-        point1: { visible: false, name: "" }, // Used only in case of point/direction/range
+        point: { visible: false, name: "" }, // Used in cases of point/direction/range
+        point1: { visible: false, name: "" }, // Used in point/point
         point2: { visible: false, name: "" }
     },
 

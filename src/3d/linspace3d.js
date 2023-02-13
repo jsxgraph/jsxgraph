@@ -230,7 +230,6 @@ JXG.createLine3D = function (board, parents, attributes) {
     attr = Type.copyAttributes(attributes, board.options, 'line3d');
 
     // In any case, parents[1] contains a point or point coordinates
-    point = Type.providePoints3D(view, [parents[1]], attributes, 'line3d', ['point'])[0];
 
     if (
         Type.isPoint3D(parents[2]) ||
@@ -238,15 +237,16 @@ JXG.createLine3D = function (board, parents, attributes) {
     ) {
         // Line defined by two points; [view, point1, point2]
 
-        point1 = point;
+        point1 = Type.providePoints3D(view, [parents[1]], attributes, 'line3d', ['point1'])[0];
         point2 = Type.providePoints3D(view, [parents[2]], attributes, 'line3d', ['point2'])[0];
         direction = function () {
-            return [point2.X() - point.X(), point2.Y() - point.Y(), point2.Z() - point.Z()];
+            return [point2.X() - point1.X(), point2.Y() - point1.Y(), point2.Z() - point1.Z()];
         };
         range = [0, 1];
-        el = new JXG.Line3D(view, point, direction, range, attr);
+        el = new JXG.Line3D(view, point1, direction, range, attr);
     } else {
         // Line defined by point, direction and range
+        point = Type.providePoints3D(view, [parents[1]], attributes, 'line3d', ['point'])[0];
 
         // Directions are handled as arrays of length 4,
         // i.e. with homogeneous coordinates.
