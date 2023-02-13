@@ -1396,6 +1396,8 @@ JXG.extend(
                 }
             }
 
+            this.setTabindex(el);
+
             this.setObjectTransition(el);
             if (display === "html" && this.type !== "no") {
                 // Set new CSS class
