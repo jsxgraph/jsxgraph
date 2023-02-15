@@ -1637,9 +1637,7 @@ JXG.extend(
                     if (Type.evaluate(el.visProp.firstarrow)) {
                         this._setArrowColor(
                             el.rendNodeTriangleStart,
-                            c,
-                            oo,
-                            el,
+                            c, oo, el,
                             el.visPropCalc.typeFirst
                         );
                     }
@@ -1647,9 +1645,7 @@ JXG.extend(
                     if (Type.evaluate(el.visProp.lastarrow)) {
                         this._setArrowColor(
                             el.rendNodeTriangleEnd,
-                            c,
-                            oo,
-                            el,
+                            c, oo, el,
                             el.visPropCalc.typeLast
                         );
                     }
