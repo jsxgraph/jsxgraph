@@ -3566,6 +3566,7 @@ JXG.extend(
                 // are converted to user coordinates
                 dx = Type.evaluate(this.attr.keyboard.dx) / this.unitX,
                 dy = Type.evaluate(this.attr.keyboard.dy) / this.unitY,
+                // u = 100,
                 doZoom = false,
                 done = true,
                 dir,
@@ -3574,6 +3575,9 @@ JXG.extend(
             if (!this.attr.keyboard.enabled || id_node === "") {
                 return false;
             }
+
+            // dx = Math.round(dx * u) / u;
+            // dy = Math.round(dy * u) / u;
 
             // An element of type input or textarea has foxus, get out of here.
             doc = this.containerObj.shadowRoot || document;
