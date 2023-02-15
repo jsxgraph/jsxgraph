@@ -1240,10 +1240,14 @@ JXG.extend(
                 if (!isNaN(o.targets[0].Xprev + o.targets[0].Yprev)) {
                     drag.setPositionDirectly(
                         Const.COORDS_BY_SCREEN,
-                        this.drag_position,
-                        [newPos.scrCoords[1], newPos.scrCoords[2]]
+                        [newPos.scrCoords[1], newPos.scrCoords[2]],
+                        [o.targets[0].Xprev, o.targets[0].Yprev]
                     );
                 }
+                // Remember the actual position for the next move event. Then we are able to
+                // compute the difference vector.
+                o.targets[0].Xprev = newPos.scrCoords[1];
+                o.targets[0].Yprev = newPos.scrCoords[2];
             }
             // This may be necessary for some gliders and labels
             if (Type.exists(drag.coords)) {
