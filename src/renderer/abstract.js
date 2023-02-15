@@ -2250,10 +2250,16 @@ JXG.extend(
          * @returns {Object} Reference to a JavaScript object. In case of SVG/VMLRenderer it's a reference to a SVG/VML node.
          */
         getElementById: function (id) {
+            var str;
             if (Type.exists(this.container)) {
                 // Use querySelector over getElementById for compatibility with both 'regular' document
                 // and ShadowDOM fragments.
-                return this.container.querySelector('#' + this.container.id + '_' + id);
+                str = this.container.id + '_' + id;
+                // Mask special symbols like '/' and '\' in id
+                if (Type.exists(CSS) && Type.exists(CSS.escape)) {
+                    str = CSS.escape(str);
+                }
+                return this.container.querySelector('#' + str);
             }
             return "";
         },
