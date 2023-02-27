@@ -1,12 +1,12 @@
 /*
-Copyright 2008-2023
-        Matthias Ehmann,
-        Michael Gerhaeuser,
-        Carsten Miller,
-        Bianca Valentin,
-        Andreas Walter,
-        Alfred Wassermann,
-        Peter Wilfahrt
+ Copyright 2008-2023
+ Matthias Ehmann,
+ Michael Gerhaeuser,
+ Carsten Miller,
+ Bianca Valentin,
+ Andreas Walter,
+ Alfred Wassermann,
+ Peter Wilfahrt
 
  This file is part of JSXGraph.
 
@@ -1020,13 +1020,13 @@ Copyright 2008-2023
                             (options.useSymbols
                                 ? ""
                                 : " <<id: '" +
-                                  step.dest_id +
-                                  "'" +
-                                  ", snaptogrid: " +
-                                  JXG.Options.elements.snapToGrid +
-                                  ", snaptopoints: " +
-                                  JXG.Options.elements.snapToPoints +
-                                  ">>") +
+                                step.dest_id +
+                                "'" +
+                                ", snaptogrid: " +
+                                JXG.Options.elements.snapToGrid +
+                                ", snaptopoints: " +
+                                JXG.Options.elements.snapToPoints +
+                                ">>") +
                             "; ";
 
                         reset_str = "remove(" + step.dest_id + "); ";
@@ -1045,12 +1045,12 @@ Copyright 2008-2023
                                 (options.useSymbols
                                     ? ""
                                     : "<<id: '" +
-                                      step.dest_id +
-                                      "'" +
-                                      ", snaptogrid: false, snaptopoints: false" +
-                                      ", snaptopoints: " +
-                                      JXG.Options.elements.snapToPoints +
-                                      ">>") + ";";
+                                    step.dest_id +
+                                    "'" +
+                                    ", snaptogrid: false, snaptopoints: false" +
+                                    ", snaptopoints: " +
+                                    JXG.Options.elements.snapToPoints +
+                                    ">>") + ";";
                         } else {
                             set_str =
                                 assign +
@@ -1715,10 +1715,21 @@ Copyright 2008-2023
 
                         set_str += assign + "polygon(";
 
-                        for (i = 0; i < step.src_ids.length; i++) {
-                            set_str += step.src_ids[i];
-                            if (i < step.src_ids.length - 1) {
-                                set_str += ", ";
+                        if (step.src_ids.length === 3) {
+                            for (i = 0; i < step.src_ids.length; i++) {
+                                set_str += step.src_ids[i];
+                                if (i < step.src_ids.length - 1) {
+                                    set_str += ", ";
+                                }
+                            }
+                        } else {
+                            for (i = 0; i < 3; i++) {
+                                if (step.dest_sub_ids[i] !== 0) {
+                                    if (step.src_ids.length > 0 || i > 0) {
+                                        set_str += ", ";
+                                    }
+                                    set_str += step.dest_sub_ids[i];
+                                }
                             }
                         }
 
@@ -1831,11 +1842,11 @@ Copyright 2008-2023
                             step.args.p2 +
                             " ]) <<";
                         /*
-                     set_str += attrid + 'name: \'\', point1: <<id: \'' + step.dest_sub_ids[0] + '\', snaptogrid: '
-                     + JXG.Options.elements.snapToGrid + ', snaptopoints: ' + JXG.Options.elements.snapToPoints + '>>, '
-                     + 'point2: <<id: \'' + step.dest_sub_ids[1] + '\''+ ', snaptogrid: '
-                     + JXG.Options.elements.snapToGrid + ', snaptopoints: ' + JXG.Options.elements.snapToPoints + '>> >>; ';
-                     */
+                         set_str += attrid + 'name: \'\', point1: <<id: \'' + step.dest_sub_ids[0] + '\', snaptogrid: '
+                         + JXG.Options.elements.snapToGrid + ', snaptopoints: ' + JXG.Options.elements.snapToPoints + '>>, '
+                         + 'point2: <<id: \'' + step.dest_sub_ids[1] + '\''+ ', snaptogrid: '
+                         + JXG.Options.elements.snapToGrid + ', snaptopoints: ' + JXG.Options.elements.snapToPoints + '>> >>; ';
+                         */
                         set_str +=
                             attrid +
                             "name: ''" +
@@ -1938,13 +1949,13 @@ Copyright 2008-2023
                                 (options.useSymbols
                                     ? ""
                                     : " <<id: '" +
-                                      step.dest_sub_ids[i] +
-                                      "'" +
-                                      ", snaptogrid: " +
-                                      JXG.Options.elements.snapToGrid +
-                                      ", snaptopoints: " +
-                                      JXG.Options.elements.snapToPoints +
-                                      ">>") +
+                                    step.dest_sub_ids[i] +
+                                    "'" +
+                                    ", snaptogrid: " +
+                                    JXG.Options.elements.snapToGrid +
+                                    ", snaptopoints: " +
+                                    JXG.Options.elements.snapToPoints +
+                                    ">>") +
                                 "; ";
 
                             reset_str += "remove(" + step.dest_sub_ids[i] + "); ";
@@ -2262,36 +2273,36 @@ Copyright 2008-2023
                         break;
 
                     /*
-                 case JXG.GENTYPE_TRANSFORM:
+                     case JXG.GENTYPE_TRANSFORM:
 
-                 set_str = step.dest_sub_ids[0] + ' = transform(' + step.args.tmat + ') <<type: \'generic\'>>; ';
-                 set_str += 'point(' + step.src_ids[0] + ', ' + step.dest_sub_ids[0] + ') <<id: \'' + step.dest_id;
-                 set_str += '\', visible: true>>; ';
+                     set_str = step.dest_sub_ids[0] + ' = transform(' + step.args.tmat + ') <<type: \'generic\'>>; ';
+                     set_str += 'point(' + step.src_ids[0] + ', ' + step.dest_sub_ids[0] + ') <<id: \'' + step.dest_id;
+                     set_str += '\', visible: true>>; ';
 
-                 reset_str = 'remove(' + step.dest_id + '); ';
-                 reset_str += 'remove(' + step.dest_sub_ids[0] + '); ';
+                     reset_str = 'remove(' + step.dest_id + '); ';
+                     reset_str += 'remove(' + step.dest_sub_ids[0] + '); ';
 
-                 break;
+                     break;
 
-                 case JXG.GENTYPE_PERPENDICULAR_BISECTOR:
-                 if (step.args.create_line) {
-                 sub_id = step.dest_sub_ids[2];
-                 set_str = 'line(' + step.src_ids[0] + ', ' + step.src_ids[1] + ') <<id: \'' + sub_id;
-                 set_str += '\', visible: true>>; ';
-                 reset_str = 'remove(' + sub_id + '); ';
-                 } else {
-                 sub_id = step.src_ids[2];
-                 }
+                     case JXG.GENTYPE_PERPENDICULAR_BISECTOR:
+                     if (step.args.create_line) {
+                     sub_id = step.dest_sub_ids[2];
+                     set_str = 'line(' + step.src_ids[0] + ', ' + step.src_ids[1] + ') <<id: \'' + sub_id;
+                     set_str += '\', visible: true>>; ';
+                     reset_str = 'remove(' + sub_id + '); ';
+                     } else {
+                     sub_id = step.src_ids[2];
+                     }
 
-                 set_str += 'midpoint(' + step.src_ids[0] + ', ' + step.src_ids[1] + ') <<id: \'' + step.dest_sub_ids[0];
-                 set_str += '\', fillColor: \'' + step.args.fillColor + '\'>>; ';
-                 set_str += assign + 'normal(' + step.dest_sub_ids[0] + ', ' + sub_id + ') <<' + attrid;
-                 set_str += ' point: <<id: \'' + step.dest_sub_ids[1] + '\', name: \'';
-                 set_str += '\'>> >>; ';
-                 reset_str = 'remove(' + step.dest_sub_ids[0] + '); ' + reset_str;
-                 reset_str = 'remove(' + step.dest_id + '); remove(' + step.dest_sub_ids[1] + '); ' + reset_str;
-                 break;
-                 */
+                     set_str += 'midpoint(' + step.src_ids[0] + ', ' + step.src_ids[1] + ') <<id: \'' + step.dest_sub_ids[0];
+                     set_str += '\', fillColor: \'' + step.args.fillColor + '\'>>; ';
+                     set_str += assign + 'normal(' + step.dest_sub_ids[0] + ', ' + sub_id + ') <<' + attrid;
+                     set_str += ' point: <<id: \'' + step.dest_sub_ids[1] + '\', name: \'';
+                     set_str += '\'>> >>; ';
+                     reset_str = 'remove(' + step.dest_sub_ids[0] + '); ' + reset_str;
+                     reset_str = 'remove(' + step.dest_id + '); remove(' + step.dest_sub_ids[1] + '); ' + reset_str;
+                     break;
+                     */
 
                     case JXG.GENTYPE_DELETE:
                         arr = [];
