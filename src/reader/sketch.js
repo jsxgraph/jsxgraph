@@ -1722,15 +1722,6 @@ Copyright 2008-2023
                             }
                         }
 
-                        for (i = 0; i < 3; i++) {
-                            if (step.dest_sub_ids[i] !== 0) {
-                                if (step.src_ids.length > 0 || i > 0) {
-                                    set_str += ", ";
-                                }
-                                set_str += step.dest_sub_ids[i];
-                            }
-                        }
-
                         set_str +=
                             ") <<borders: <<ids: ['" +
                             step.dest_sub_ids[3] +
