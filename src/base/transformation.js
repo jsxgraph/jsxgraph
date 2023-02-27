@@ -214,14 +214,14 @@ JXG.extend(
                     // line
                     if (params.length === 1) {
                         v = params[0].stdform;
-                        // two points
                     } else if (params.length === 2) {
+                        // two points
                         v = Mat.crossProduct(
                             params[1].coords.usrCoords,
                             params[0].coords.usrCoords
                         );
-                        // two points coordinates [px,py,qx,qy]
                     } else if (params.length === 4) {
+                        // two points coordinates [px,py,qx,qy]
                         v = Mat.crossProduct(
                             [1, this.evalParam(2), this.evalParam(3)],
                             [1, this.evalParam(0), this.evalParam(1)]
@@ -326,11 +326,14 @@ JXG.extend(
             }
 
             // Handle dependencies
-            for (e in this.evalParam.deps) {
-                obj = this.evalParam.deps[e];
-                this.addParents(obj);
-                obj.addChild(this);
-            }
+            // NO: transformations do not have method addParents
+            // if (Type.exists(this.evalParam)) {
+            //     for (e in this.evalParam.deps) {
+            //         obj = this.evalParam.deps[e];
+            //         this.addParents(obj);
+            //         obj.addChild(this);
+            //     }
+            // }
         },
 
         /**

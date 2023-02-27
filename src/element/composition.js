@@ -2613,14 +2613,8 @@ JXG.createIncircle = function (board, parents, attributes) {
  *
  */
 JXG.createReflection = function (board, parents, attributes) {
-    var l,
-        org,
-        r,
-        r_c,
-        t,
-        i,
-        attr,
-        attr2,
+    var l, org, r, r_c,
+        t, i, attr, attr2,
         errStr = "\nPossible parent types: [point|line|curve|polygon|circle|arc|sector, line]";
 
     for (i = 0; i < parents.length; ++i) {
@@ -2739,44 +2733,8 @@ JXG.createReflection = function (board, parents, attributes) {
                 p2 = org.symbolic.y,
                 r1 = r.symbolic.x,
                 r2 = r.symbolic.y,
-                poly1 = [
-                    "((",
-                    r2,
-                    ")-(",
-                    p2,
-                    "))*((",
-                    a2,
-                    ")-(",
-                    b2,
-                    "))+((",
-                    a1,
-                    ")-(",
-                    b1,
-                    "))*((",
-                    r1,
-                    ")-(",
-                    p1,
-                    "))"
-                ].join(""),
-                poly2 = [
-                    "((",
-                    r1,
-                    ")-(",
-                    a1,
-                    "))^2+((",
-                    r2,
-                    ")-(",
-                    a2,
-                    "))^2-((",
-                    p1,
-                    ")-(",
-                    a1,
-                    "))^2-((",
-                    p2,
-                    ")-(",
-                    a2,
-                    "))^2"
-                ].join("");
+                poly1 = ["((", r2, ")-(", p2, "))*((", a2, ")-(", b2, "))+((", a1, ")-(", b1, "))*((", r1, ")-(", p1, "))"].join(""),
+                poly2 = ["((", r1, ")-(", a1, "))^2+((", r2, ")-(", a2, "))^2-((", p1, ")-(", a1, "))^2-((", p2, ")-(", a2, "))^2"].join("");
 
             return [poly1, poly2];
         };
@@ -2865,14 +2823,8 @@ JXG.createReflection = function (board, parents, attributes) {
  * </script><pre>
  */
 JXG.createMirrorElement = function (board, parents, attributes) {
-    var org,
-        i,
-        m,
-        r,
-        r_c,
-        t,
-        attr,
-        attr2,
+    var org, i, m, r, r_c, t,
+        attr, attr2,
         errStr = "\nPossible parent types: [point|line|curve|polygon|circle|arc|sector, point]";
 
     for (i = 0; i < parents.length; ++i) {
