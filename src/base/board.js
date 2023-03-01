@@ -1028,7 +1028,7 @@ JXG.extend(
         },
 
         /**
-         * Get the position of the mouse in screen coordinates, relative to the upper left corner
+         * Get the position of the pointing device in screen coordinates, relative to the upper left corner
          * of the host tag.
          * @param {Event} e Event object given by the browser.
          * @param {Number} [i] Only use in case of touch events. This determines which finger to use and should not be set

@@ -547,7 +547,9 @@ JXG.extend(
         },
 
         /**
-         * Cross browser mouse / touch coordinates retrieval relative to the board's top left corner.
+         * Cross browser mouse / pointer / touch coordinates retrieval relative to the documents's top left corner.
+         * This method might be a bit outdated today, since pointer events and clientX/Y are omnipresent.
+         * 
          * @param {Object} [e] The browsers event object. If omitted, <tt>window.event</tt> will be used.
          * @param {Number} [index] If <tt>e</tt> is a touch event, this provides the index of the touch coordinates, i.e. it determines which finger.
          * @param {Object} [doc] The document object.
