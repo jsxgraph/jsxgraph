@@ -501,13 +501,41 @@ JXG.Options = {
         maxFrameRate: 40,
 
         /**
-         * Allow user interaction by registering mouse, pointer and touch events.
+         * Allow user interaction by registering mouse, pointer, keyboard or touch events.
+         * Decide if JSXGraph listens to these events. Keyboard events can then turned off 
+         * separately with the keyboard attribute.
          *
          * @name JXG.Board#registerEvents
+         * @see JXG.Board#keyboard
+         * @see JXG.Board#registerResizeEvent
+         * @see JXG.Board#registerFullscreenEvent
          * @type Boolean
          * @default true
          */
         registerEvents: true,
+
+        /**
+         * Listen to resize events, i.e. start "resizeObserver" or handle the resize event with
+         * "resizeListener". This is independent from the mouse, touch, pointer events.
+         *
+         * @name JXG.Board#registerResizeEvent
+         * @see JXG.Board#registerEvents
+         * @see JXG.Board#registerFullscreenEvent
+         * @type Boolean
+         * @default true
+         */
+        registerResizeEvent: true,
+
+        /**
+         * Listen to fullscreen event.
+         *
+         * @name JXG.Board#registerFullscreenEvents
+         * @see JXG.Board#registerEvents
+         * @see JXG.Board#registerResizeEvent
+         * @type Boolean
+         * @default true
+         */
+        registerFullscreenEvent: true,
 
         /**
          * Change redraw strategy in SVG rendering engine.

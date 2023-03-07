@@ -608,6 +608,13 @@ JXG.Board = function (
         if (this.attr.registerevents) {
             this.addEventHandlers();
         }
+        if (this.attr.registerresizeevent) {
+            this.addResizeEventHandlers();
+        }
+        if (this.attr.registerfullscreenevent) {
+            this.addFullscreenEventHandlers();
+        }
+
 
         this.methodMap = {
             update: 'update',
@@ -1674,7 +1681,8 @@ JXG.extend(
          **********************************************************/
 
         /**
-         *  Add all possible event handlers to the board object
+         * Add all possible event handlers to the board object 
+         * which move objects, i.e. mouse, pointer and touch events.
          */
         addEventHandlers: function () {
             if (Env.supportsPointerEvents()) {
@@ -1685,7 +1693,7 @@ JXG.extend(
             }
 
             // This one produces errors on IE
-            //Env.addEvent(this.containerObj, 'contextmenu', function (e) { e.preventDefault(); return false;}, this);
+            // // Env.addEvent(this.containerObj, 'contextmenu', function (e) { e.preventDefault(); return false;}, this);
             // This one works on IE, Firefox and Chromium with default configurations. On some Safari
             // or Opera versions the user must explicitly allow the deactivation of the context menu.
             if (this.containerObj !== null) {
@@ -1697,9 +1705,14 @@ JXG.extend(
                 };
             }
 
-            this.addFullscreenEventHandlers();
             this.addKeyboardEventHandlers();
+        },
 
+        /**
+         * Add resize event handlers
+         * 
+         */
+        addResizeEventHandlers: function () {
             if (Env.isBrowser) {
                 try {
                     // Supported by all new browsers
@@ -1707,7 +1720,7 @@ JXG.extend(
                     this.startResizeObserver();
                 } catch (err) {
                     // Certain Safari and edge version do not support
-                    // resizeObserver, but intersectionObserver
+                    // resizeObserver, but intersectionObserver.
                     // resize event: triggered if size of window changes
                     Env.addEvent(window, "resize", this.resizeListener, this);
                     // intersectionObserver: triggered if JSXGraph becomes visible.
@@ -1730,6 +1743,7 @@ JXG.extend(
 
             this.removeFullscreenEventHandlers();
             this.removeKeyboardEventHandlers();
+
             if (Env.isBrowser) {
                 if (Type.exists(this.resizeObserver)) {
                     this.stopResizeObserver();
@@ -1847,11 +1861,11 @@ JXG.extend(
                 ],
                 le = events.length;
 
-            if (!this.hasFullsceenEventHandlers && Env.isBrowser) {
+            if (!this.hasFullscreenEventHandlers && Env.isBrowser) {
                 for (i = 0; i < le; i++) {
                     Env.addEvent(this.document, events[i], this.fullscreenListener, this);
                 }
-                this.hasFullsceenEventHandlers = true;
+                this.hasFullscreenEventHandlers = true;
             }
         },
 
@@ -1890,11 +1904,11 @@ JXG.extend(
                 ],
                 le = events.length;
 
-            if (this.hasFullsceenEventHandlers && Env.isBrowser) {
+            if (this.hasFullscreenEventHandlers && Env.isBrowser) {
                 for (i = 0; i < le; i++) {
                     Env.removeEvent(this.document, events[i], this.fullscreenListener, this);
                 }
-                this.hasFullsceenEventHandlers = false;
+                this.hasFullscreenEventHandlers = false;
             }
         },
 
