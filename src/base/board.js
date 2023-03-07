@@ -1702,9 +1702,12 @@ JXG.extend(
 
             if (Env.isBrowser) {
                 try {
+                    // Supported by all new browsers
                     // resizeObserver: triggered if size of the JSXGraph div changes.
                     this.startResizeObserver();
                 } catch (err) {
+                    // Certain Safari and edge version do not support
+                    // resizeObserver, but intersectionObserver
                     // resize event: triggered if size of window changes
                     Env.addEvent(window, "resize", this.resizeListener, this);
                     // intersectionObserver: triggered if JSXGraph becomes visible.
