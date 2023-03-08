@@ -2234,50 +2234,29 @@
                     case JXG.GENTYPE_SLIDER:
                         set_str =
                             assign +
-                            "slider([" +
-                            pn(step.args.x1) +
-                            ", " +
-                            pn(step.args.y1) +
-                            "], [" +
-                            pn(step.args.x2);
-                        set_str +=
-                            ", " +
-                            pn(step.args.y2) +
-                            "], [" +
-                            pn(step.args.start) +
-                            ", " +
-                            pn(step.args.ini) +
-                            ", ";
-                        set_str += pn(step.args.end) + "]) <<" + attrid;
-                        set_str += " snapWidth: 0.1, ";
-                        set_str += "baseline: <<id: '";
-                        set_str +=
-                            step.dest_sub_ids[0] +
-                            "', name: '', priv: true>>, highline: <<id: '";
-                        set_str +=
-                            step.dest_sub_ids[1] + "', name: '', priv: true>>, point1: <<id: '";
-                        set_str +=
-                            step.dest_sub_ids[2] +
-                            "', name: '', priv: false, frozen: true>>, point2: <<id: '";
-                        set_str +=
-                            step.dest_sub_ids[3] +
-                            "', name: '', priv: false, frozen: true>>, label: <<id: '";
-                        set_str += step.dest_sub_ids[4] + "', name: '', priv: true>>";
+                            "slider(" +
+                            "[" + pn(step.args.x1) + ", " + pn(step.args.y1) + "], " +
+                            "[" + pn(step.args.x2) + ", " + pn(step.args.y2) + "], " +
+                            "[" + pn(step.args.min ?? step.args.start) + ", " + pn(step.args.start ?? step.args.ini) + ", " + pn(step.args.max ?? step.args.end) + "]) ";
+                        set_str += "<<" + attrid;
+                        set_str += " snapWidth: " + pn(step.args.step ?? "0.1") + ", ";
+                        set_str += "baseline: <<id: '" + step.dest_sub_ids[0] + "', name: '', priv: true>>, ";
+                        set_str += "highline: <<id: '" + step.dest_sub_ids[1] + "', name: '', priv: true>>, ";
+                        set_str += "point1: <<id: '" + step.dest_sub_ids[2] + "', name: '', priv: false, frozen: true>>, ";
+                        set_str += "point2: <<id: '" + step.dest_sub_ids[3] + "', name: '', priv: false, frozen: true>>, ";
+                        set_str += "label: <<id: '" + step.dest_sub_ids[4] + "', name: '', priv: true>>";
                         set_str += ", name: '" + step.args.name + "'>>; ";
 
-                        reset_str =
-                            "remove(" +
-                            step.dest_id +
-                            "); remove(" +
-                            step.dest_sub_ids[4] +
-                            "); remove(";
-                        reset_str +=
-                            step.dest_sub_ids[3] +
-                            "); remove(" +
-                            step.dest_sub_ids[2] +
-                            "); remove(";
-                        reset_str += step.dest_sub_ids[1] + "); remove(";
-                        reset_str += step.dest_sub_ids[0] + "); ";
+                        reset_str = "remove(" + step.dest_id + "); ";
+                        reset_str += "remove(" + step.dest_sub_ids[4] + "); ";
+                        reset_str += "remove(" + step.dest_sub_ids[3] + "); "
+                        reset_str += "remove(" + step.dest_sub_ids[2] + "); "
+                        reset_str += "remove(" + step.dest_sub_ids[1] + "); "
+                        reset_str += "remove(" + step.dest_sub_ids[0] + "); ";
+
+                        console.log(set_str);
+                        console.log(reset_str);
+
                         break;
 
                     /*
