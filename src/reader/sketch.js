@@ -2253,10 +2253,6 @@
                         reset_str += "remove(" + step.dest_sub_ids[2] + "); "
                         reset_str += "remove(" + step.dest_sub_ids[1] + "); "
                         reset_str += "remove(" + step.dest_sub_ids[0] + "); ";
-
-                        console.log(set_str);
-                        console.log(reset_str);
-
                         break;
 
                     /*
