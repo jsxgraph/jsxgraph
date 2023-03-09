@@ -202,7 +202,7 @@ JXG.extend(
                 el2,
                 i,
                 j,
-                Type.evaluate(this.visProp.alwaysintersect)
+                this.visProp.alwaysintersect
             );
             this.addConstraint([func]);
 

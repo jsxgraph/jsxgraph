@@ -1437,7 +1437,7 @@ JXG.extend(
                 // with the exception that the curve is of arc type
                 /** @ignore */
                 func = function () {
-                    return that.meetCurveLine(el1, el2, i, el1.board, alwaysintersect);
+                    return that.meetCurveLine(el1, el2, i, el1.board, Type.evaluate(alwaysintersect));
                 };
             } else if (
                 el1.type === Const.OBJECT_TYPE_POLYGON ||
@@ -1451,12 +1451,26 @@ JXG.extend(
                     // line - path
                     /** @ignore */
                     func = function () {
-                        return that.meetPolygonLine(el2, el1, i, el1.board, alwaysintersect);
+                        var first1 = Type.evaluate(el1.visProp.straightfirst),
+                            last1 = Type.evaluate(el1.visProp.straightlast),
+                            first2 = Type.evaluate(el2.visProp.straightfirst),
+                            last2 = Type.evaluate(el2.visProp.straightlast),
+                            a_not;
+                        
+                        a_not = (!Type.evaluate(alwaysintersect) && (!first1 || !last1 || !first2 || !last2));
+                        return that.meetPolygonLine(el2, el1, i, el1.board, a_not);
                     };
                 } else if (el2.elementClass === Const.OBJECT_CLASS_LINE) {
                     // path - line
                     func = function () {
-                        return that.meetPolygonLine(el1, el2, i, el1.board, alwaysintersect);
+                        var first1 = Type.evaluate(el1.visProp.straightfirst),
+                            last1 = Type.evaluate(el1.visProp.straightlast),
+                            first2 = Type.evaluate(el2.visProp.straightfirst),
+                            last2 = Type.evaluate(el2.visProp.straightlast),
+                            a_not;
+                        
+                        a_not = (!Type.evaluate(alwaysintersect) && (!first1 || !last1 || !first2 || !last2));
+                        return that.meetPolygonLine(el1, el2, i, el1.board, a_not);
                     };
                 } else {
                     // path - path
@@ -1525,7 +1539,7 @@ JXG.extend(
                         r,
                         dx;
 
-                    if (alwaysintersect) {
+                    if (Type.evaluate(alwaysintersect)) {
                         return res;
                     }
                     if (el1.elementClass === Const.OBJECT_CLASS_LINE) {
