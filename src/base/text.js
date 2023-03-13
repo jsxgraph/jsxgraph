@@ -826,14 +826,9 @@ JXG.extend(
             if (Type.isString(s)) {
                 s = s.replace(
                     /(<|&lt;)sketchofont(>|&gt;)/g,
-                    "<span style=font-family:sketchometry-light;font-weight:500;>"
+                    "<span class='sketcho sketcho-inherit sketcho-"
                 );
-                s = s.replace(/(<|&lt;)\/sketchofont(>|&gt;)/g, "</span>");
-                s = s.replace(
-                    /(<|&lt;)sketchometry-light(>|&gt;)/g,
-                    "<span style=font-family:sketchometry-light;font-weight:500;>"
-                );
-                s = s.replace(/(<|&lt;)\/sketchometry-light(>|&gt;)/g, "</span>");
+                s = s.replace(/(<|&lt;)\/sketchofont(>|&gt;)/g, "'></span>");
             }
 
             return s;
