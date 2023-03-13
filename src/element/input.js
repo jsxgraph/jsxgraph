@@ -180,6 +180,57 @@ var priv = {
  * 
  * </script><pre>
  * 
+ * 
+ * @example
+ *   Apply CSS classes to label and input tag
+ *     &lt;style&gt;
+ *         div.JXGtext_inp {
+ *             font-weight: bold;
+ *         }
+ * 
+ *         // Label
+ *         div.JXGtext_inp > span > span {
+ *             padding: 3px;
+ *         }
+ * 
+ *         // Input field
+ *         div.JXGtext_inp > span > input {
+ *             width: 100px;
+ *             border: solid 4px red;
+ *             border-radius: 25px;
+ *         }
+ *     &lt;/style&gt;
+ * 
+ * var inp = board.create('input', [-6, 1, 'x', 'y'], {
+ *      CssClass: 'JXGtext_inp', HighlightCssClass: 'JXGtext_inp'
+ * });
+ * 
+ * </pre>
+ *         <style>
+ *             div.JXGtext_inp {
+ *                 font-weight: bold;
+ *             }
+ *     
+ *             div.JXGtext_inp > span > span {
+ *                 padding: 3px;
+ *             }
+ *     
+ *             div.JXGtext_inp > span > input {
+ *                 width: 100px;
+ *                 border: solid 4px red;
+ *                 border-radius: 25px;
+ *             }
+ *         </style>
+ * <div id="JXGa3642ebd-a7dc-41ac-beb2-0c9e705ab8b4" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXGa3642ebd-a7dc-41ac-beb2-0c9e705ab8b4',
+ *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+ *         var inp = board.create('input', [-6, 1, 'x', 'y'], {CssClass: 'JXGtext_inp', HighlightCssClass: 'JXGtext_inp'});
+ * 
+ *     })();
+ * </script><pre>
+ * 
  */
 JXG.createInput = function (board, parents, attributes) {
     var t,
