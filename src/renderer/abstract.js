@@ -939,11 +939,9 @@ JXG.extend(
             var radius = el.Radius();
 
             if (
-                radius > 0.0 &&
+                /*radius > 0.0 &&*/
                 Math.abs(el.center.coords.usrCoords[0]) > Mat.eps &&
-                !isNaN(
-                    radius + el.center.coords.scrCoords[1] + el.center.coords.scrCoords[2]
-                ) &&
+                !isNaN(radius + el.center.coords.scrCoords[1] + el.center.coords.scrCoords[2]) &&
                 radius * el.board.unitX < 2000000
             ) {
                 this.updateEllipsePrim(

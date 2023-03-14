@@ -380,34 +380,10 @@ JXG.extend(
 
                 this.numberPoints = 13;
                 this.dataX = [
-                    x + r,
-                    x + r,
-                    x + r * c,
-                    x,
-                    x - r * c,
-                    x - r,
-                    x - r,
-                    x - r,
-                    x - r * c,
-                    x,
-                    x + r * c,
-                    x + r,
-                    x + r
+                    x + r, x + r, x + r * c, x, x - r * c, x - r, x - r, x - r, x - r * c, x, x + r * c, x + r, x + r
                 ];
                 this.dataY = [
-                    y,
-                    y + r * c,
-                    y + r,
-                    y + r,
-                    y + r,
-                    y + r * c,
-                    y,
-                    y - r * c,
-                    y - r,
-                    y - r,
-                    y - r,
-                    y - r * c,
-                    y
+                    y, y + r * c, y + r, y + r, y + r, y + r * c, y, y - r * c, y - r, y - r, y - r, y - r * c, y
                 ];
                 this.bezierDegree = 3;
                 for (i = 0; i < this.numberPoints; i++) {
