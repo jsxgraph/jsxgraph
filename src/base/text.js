@@ -225,7 +225,7 @@ JXG.extend(
                         // MathJax or KaTeX
                         // Replace value-tags by functions
                         this.content = this.valueTagToJessieCode(text);
-                        this.content = this.content.replace(/\\/g, "\\\\"); // Replace single backshlash by double
+                        this.content = this.content.replace(/\\/g, "\\\\"); // Replace single backslash by double
                     } else {
                         // No TeX involved.
                         // Converts GEONExT syntax into JavaScript string
@@ -246,7 +246,7 @@ JXG.extend(
                         updateText.deps[e].addChild(this);
                     }
 
-                    // Ticks have been esacped in valueTagToJessieCode
+                    // Ticks have been escaped in valueTagToJessieCode
                     this.updateText = function () {
                         this.plaintext = this.unescapeTicks(updateText());
                     };
