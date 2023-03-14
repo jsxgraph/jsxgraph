@@ -828,16 +828,12 @@ JXG.extend(
                     /(<|&lt;)sketchofont(>|&gt;)/g,
                     "<span style=font-family:sketchometry-light;font-weight:500;>"
                 );
-<<<<<<< HEAD
-                s = s.replace(/(<|&lt;)\/sketchofont(>|&gt;)/g, "\"></span>");
-=======
                 s = s.replace(/(<|&lt;)\/sketchofont(>|&gt;)/g, "</span>");
                 s = s.replace(
                     /(<|&lt;)sketchometry-light(>|&gt;)/g,
                     "<span style=font-family:sketchometry-light;font-weight:500;>"
                 );
                 s = s.replace(/(<|&lt;)\/sketchometry-light(>|&gt;)/g, "</span>");
->>>>>>> 0e0674820262c3f3f1b31c684d79c2494dbceb99
             }
 
             return s;
