@@ -207,7 +207,7 @@ JXG.extend(
                     if (ev_p && !ev_um && !ev_uk) {
                         this.plaintext = this.replaceSub(
                             this.replaceSup(
-                                this.convertGeonextAndSketchometry2CSS(resolvedText)
+                                this.convertGeonextAndSketchometry2CSS(resolvedText, false)
                             )
                         );
                     } else {
@@ -234,6 +234,7 @@ JXG.extend(
                         // Replace value-tags by functions
                         // Avoid geonext2JS calls
                         this.content = this.poorMansTeX(this.valueTagToJessieCode(text));
+                        console.log("POOR Mans", this.content)
                     }
                     convertJessieCode = true;
                 }
@@ -780,7 +781,7 @@ JXG.extend(
                 .replace(/&lt;arc\s*\/*&gt;/g, "&ang;")
                 .replace(/<sqrt\s*\/*>/g, "&radic;")
                 .replace(/&lt;sqrt\s*\/*&gt;/g, "&radic;");
-            return this.convertGeonextAndSketchometry2CSS(this.replaceSub(this.replaceSup(s)));
+            return this.convertGeonextAndSketchometry2CSS(this.replaceSub(this.replaceSup(s)), true);
         },
 
         escapeTicks: function (s) {
@@ -817,18 +818,27 @@ JXG.extend(
 
         /**
          * Converts the sketchometry tag <sketchofont> to
-         * HTML span tags with proper CSS formatting.
+         * HTML span tags with proper CSS formatting. 
+         *
+         * @param {String|Function|Number} s Text
+         * @param {Boolean} escape Flag if ticks should be escaped. Escaping is necessary
+         * if s is a text. It has to be avoided if s is a function returning text.
          * @private
-         * @see JXG.Text.generateTerm
          * @see JXG.Text._setText
+         * @see JXG.Text.convertGeonextAndSketchometry2CSS
+         * 
          */
-        convertSketchometry2CSS: function (s) {
+        convertSketchometry2CSS: function (s, escape) {
+            var t1 = "<span class=\"sketcho sketcho-inherit sketcho-", 
+                t2 = "\"></span>";
+
             if (Type.isString(s)) {
-                 s = s.replace(
-                 /(<|&lt;)sketchofont(>|&gt;)/g,
-                 "<span class=\"sketcho sketcho-inherit sketcho-"
-                 );
-                 s = s.replace(/(<|&lt;)\/sketchofont(>|&gt;)/g, "\"></span>");
+                if (escape) {
+                    t1 = this.escapeTicks(t1);
+                    t2 = this.escapeTicks(t2);
+                }
+                s = s.replace(/(<|&lt;)sketchofont(>|&gt;)/g, t1);
+                s = s.replace(/(<|&lt;)\/sketchofont(>|&gt;)/g, t2);
             }
 
             return s;
@@ -836,13 +846,16 @@ JXG.extend(
 
         /**
          * Alias for convertGeonext2CSS and convertSketchometry2CSS
+         * 
+         * @param {String|Function|Number} s Text
+         * @param {Boolean} escape Flag if ticks should be escaped
          * @private
          * @see JXG.Text.convertGeonext2CSS
          * @see JXG.Text.convertSketchometry2CSS
          */
-        convertGeonextAndSketchometry2CSS: function (s) {
+        convertGeonextAndSketchometry2CSS: function (s, escape) {
             s = this.convertGeonext2CSS(s);
-            s = this.convertSketchometry2CSS(s);
+            s = this.convertSketchometry2CSS(s, escape);
             return s;
         },
 
