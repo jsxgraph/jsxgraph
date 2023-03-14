@@ -850,7 +850,7 @@ JXG.extend(
                     this.borders.push(
                         this.board.create(
                             "segment",
-                            [this.vertices[0], this.vertices[this.vertices.length - 2]],
+                            [this.vertices[this.vertices.length - 2], this.vertices[0]],
                             this.attr_line
                         )
                     );

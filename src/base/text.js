@@ -224,6 +224,7 @@ JXG.extend(
                     } else if (ev_um || ev_uk) {
                         // MathJax or KaTeX
                         // Replace value-tags by functions
+                        // sketchofont is ignored
                         this.content = this.valueTagToJessieCode(text);
                         this.content = this.content.replace(/\\/g, "\\\\"); // Replace single backslash by double
                     } else {
@@ -779,7 +780,6 @@ JXG.extend(
                 .replace(/&lt;arc\s*\/*&gt;/g, "&ang;")
                 .replace(/<sqrt\s*\/*>/g, "&radic;")
                 .replace(/&lt;sqrt\s*\/*&gt;/g, "&radic;");
-
             return this.convertGeonextAndSketchometry2CSS(this.replaceSub(this.replaceSup(s)));
         },
 
@@ -824,13 +824,11 @@ JXG.extend(
          */
         convertSketchometry2CSS: function (s) {
             if (Type.isString(s)) {
-                /*
                 s = s.replace(
                     /(<|&lt;)sketchofont(>|&gt;)/g,
                     "<span class=\"sketcho sketcho-inherit sketcho-"
                 );
                 s = s.replace(/(<|&lt;)\/sketchofont(>|&gt;)/g, "\"></span>");
-                 */
             }
 
             return s;
