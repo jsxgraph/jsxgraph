@@ -1213,6 +1213,7 @@
                                 JXG.Options.elements.snapToGrid +
                                 ", snaptopoints: " +
                                 JXG.Options.elements.snapToPoints +
+                                ", hasInnerPoints: true" +
                                 ">>;";
 
                             reset_str =
@@ -1274,6 +1275,7 @@
                                 JXG.Options.elements.snapToGrid +
                                 ", snaptopoints: " +
                                 JXG.Options.elements.snapToPoints +
+                                ", hasInnerPoints: true" +
                                 ">>;";
 
                             reset_str =
@@ -2052,10 +2054,8 @@
                     case JXG.GENTYPE_SECTOR:
                         set_str = assign + "sector(" + step.src_ids.join(", ") + ") ";
                         set_str += "<<";
-                        set_str +=
-                            attrid + " name: '', fillOpacity: " + JXG.Options.opacityLevel;
-                        set_str +=
-                            ", arc: <<id: '" + step.dest_sub_ids[0] + "', priv: true>> >>; ";
+                        set_str += attrid + " name: '', fillOpacity: " + JXG.Options.opacityLevel + ", hasInnerPoints: true";
+                        set_str += ", arc: <<id: '" + step.dest_sub_ids[0] + "', priv: true>> >>; ";
                         reset_str = "remove(" + step.dest_id + "); ";
                         break;
 
