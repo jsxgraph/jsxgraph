@@ -209,7 +209,7 @@ JXG.Options = {
          * @default {x: {name:'x'}, y: {name: 'y'}}
          *
          * @example
-         * const board = JXG.JSXGraph.initBoard('jxgbox', {
+         * const board = JXG.JSXGraph.initBoard('id', {
          *     boundingbox: [-5, 5, 5, -5], axis:true,
          *     defaultAxes: {
          *         x: {
@@ -232,13 +232,12 @@ JXG.Options = {
          *         }
          *     }
          * });
-         * 
+         *
          * </pre><div id="JXGc3af5eb8-7401-4476-80b5-379ecbd068c6" class="jxgbox" style="width: 300px; height: 300px;"></div>
          * <script type="text/javascript">
          *     (function() {
-         *         var board = JXG.JSXGraph.initBoard('JXGc3af5eb8-7401-4476-80b5-379ecbd068c6',
-         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
-         *     const board = JXG.JSXGraph.initBoard('jxgbox', {
+         *     var board = JXG.JSXGraph.initBoard('JXGc3af5eb8-7401-4476-80b5-379ecbd068c6', {
+         *         showcopyright: false, shownavigation: false,
          *         boundingbox: [-5, 5, 5, -5], axis:true,
          *         defaultAxes: {
          *             x: {
@@ -261,11 +260,11 @@ JXG.Options = {
          *             }
          *         }
          *     });
-         * 
+         *
          *     })();
-         * 
+         *
          * </script><pre>
-         * 
+         *
          */
         defaultAxes: {
             x: {
@@ -560,7 +559,7 @@ JXG.Options = {
 
         /**
          * Allow user interaction by registering mouse, pointer, keyboard or touch events.
-         * Decide if JSXGraph listens to these events. Keyboard events can then turned off 
+         * Decide if JSXGraph listens to these events. Keyboard events can then turned off
          * separately with the keyboard attribute.
          *
          * @name JXG.Board#registerEvents
@@ -1009,24 +1008,24 @@ JXG.Options = {
          * @example
          * var board = JXG.JSXGraph.initBoard(BOARDID,
          *          {
-         *              boundingbox: [-8, 8, 8,-8], 
-         *              axis: true, 
+         *              boundingbox: [-8, 8, 8,-8],
+         *              axis: true,
          *              logging: {enabled: true},
-         *              showcopyright: false, 
+         *              showcopyright: false,
          *              shownavigation: false
          *          });
          * var A = board.create('point', [-4, 0], { name: 'A' });
          * var B = board.create('point', [1, 2], { name: 'B' });
          * var showUserLog = function() {
          *     var txt = '';
-         * 
+         *
          *     for (let i = 0; i < board.userLog.length; i++) {
          *         txt += JSON.stringify(board.userLog[i]) + '\n';
          *     }
          *     alert(txt);
          * };
          * var but = board.create('button', [4, 4, 'Show user log', showUserLog]);
-         * 
+         *
          * </pre><div id="JXGe152375c-f478-41aa-a9e6-e104403fc75d" class="jxgbox" style="width: 300px; height: 300px;"></div>
          * <script type="text/javascript">
          *     (function() {
@@ -1037,19 +1036,19 @@ JXG.Options = {
          *     var B = board.create('point', [1, 2], { name: 'B' });
          *     var showUserLog = function() {
          *         var txt = '';
-         *     
+         *
          *         for (let i = 0; i < board.userLog.length; i++) {
          *             txt += JSON.stringify(board.userLog[i]) + '\n';
          *         }
          *         alert(txt);
          *     };
          *     var but = board.create('button', [4, 4, 'Show user log', showUserLog]);
-         * 
+         *
          *     })();
-         * 
+         *
          * </script><pre>
-         * 
-         * 
+         *
+         *
          * @see JXG.Board#userLog
          */
         logging: {
@@ -1606,8 +1605,8 @@ JXG.Options = {
          * <p>
          * Customize <i>color</i> and <i>opacity</i>:
          * If the object's RGB stroke color is <tt>[r,g,b]</tt> and its opacity is <tt>op</i>, and
-         * the shadow parameters <i>color</i> is given as <tt>[r', g', b']</tt> and <i>opacity</i> as <tt>op'</tt> 
-         * the shadow will receive the RGB color 
+         * the shadow parameters <i>color</i> is given as <tt>[r', g', b']</tt> and <i>opacity</i> as <tt>op'</tt>
+         * the shadow will receive the RGB color
          * <center>
          * <tt>[blend*r + r', blend*g + g', blend*b + b'] </tt>
          * </center>
@@ -2120,10 +2119,10 @@ JXG.Options = {
         *                 }
         *             }
         *         });
-        * 
+        *
         *         var p = board.create('point', [1, 1]);
         *         var l = board.create('line', [1, -1, 1]);
-        * 
+        *
         * </pre><div id="JXGf9ccb731-7a73-44d1-852e-f9c9c405a9d1" class="jxgbox" style="width: 300px; height: 300px;"></div>
         * <script type="text/javascript">
         *     (function() {
@@ -2146,14 +2145,14 @@ JXG.Options = {
         *                     }
         *                 }
         *             });
-        *     
+        *
         *             var p = board.create('point', [1, 1]);
         *             var l = board.create('line', [1, -1, 1]);
-        * 
+        *
         *     })();
-        * 
+        *
         * </script><pre>
-        * 
+        *
         * @type Array
          * @name Ticks#majorTickEndings
          * @see Ticks#tickEndings

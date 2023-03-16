@@ -618,8 +618,7 @@ JXG.extend(
 
         // documented in geometry element
         getLabelAnchor: function () {
-            var x,
-                y,
+            var x, y,
                 fs = 0,
                 c1 = new Coords(Const.COORDS_BY_USER, this.point1.coords.usrCoords, this.board),
                 c2 = new Coords(Const.COORDS_BY_USER, this.point2.coords.usrCoords, this.board),

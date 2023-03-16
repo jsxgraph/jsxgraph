@@ -234,7 +234,6 @@ JXG.extend(
                         // Replace value-tags by functions
                         // Avoid geonext2JS calls
                         this.content = this.poorMansTeX(this.valueTagToJessieCode(text));
-                        console.log("POOR Mans", this.content)
                     }
                     convertJessieCode = true;
                 }
