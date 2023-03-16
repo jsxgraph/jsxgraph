@@ -2060,13 +2060,13 @@
                         set_str += ", arc: <<id: '" + step.dest_sub_ids[0] + "', priv: true>> >>; ";
 
                         set_str += "glider(function () { return " + step.src_ids[2] + ".X(); }, function () { return " + step.src_ids[2] + ".Y(); }, " + step.dest_id + ") ";
-                        set_str += "<<id: '" + (step.dest_sub_ids[1] ?? step.dest_id + "_point") + "', name:''>>; ";
+                        set_str += "<<id: '" + (step.dest_sub_ids[1] ?? step.dest_id + "_point") + "', name:'', parents: ['" + step.dest_sub_ids[0] + "', '" + step.src_ids[2] + "'] >>; ";
 
                         set_str += "segment(" + step.src_ids[0] + ", " + step.src_ids[1] + ") ";
-                        set_str += "<<id: '" + (step.dest_sub_ids[2] ?? step.dest_id + "_segment1") + "', name:''>>; ";
+                        set_str += "<<id: '" + (step.dest_sub_ids[2] ?? step.dest_id + "_segment1") + "', name:'', parents: ['" + step.dest_sub_ids[0] + "', '" + step.src_ids[0] + "', '" + step.src_ids[1] + "'] >>; ";
 
-                        set_str += "segment(" + step.src_ids[0] + ", " +  (step.dest_sub_ids[1] ?? step.dest_id + "_point")  + ") ";
-                        set_str += "<<id: '" + (step.dest_sub_ids[3] ?? step.dest_id + "_segment2") + "', name:''>>; ";
+                        set_str += "segment(" + step.src_ids[0] + ", " + (step.dest_sub_ids[1] ?? step.dest_id + "_point") + ") ";
+                        set_str += "<<id: '" + (step.dest_sub_ids[3] ?? step.dest_id + "_segment2") + "', name:'', parents: ['" + step.dest_sub_ids[0] + "', '" + step.src_ids[0] + "', '" + (step.dest_sub_ids[1] ?? step.dest_id + "_point") + "'] >>; ";
 
                         reset_str = "";
                         reset_str += "remove(" + (step.dest_sub_ids[1] ?? step.dest_id + "_point") + "); ";
