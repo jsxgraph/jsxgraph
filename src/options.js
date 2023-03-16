@@ -208,6 +208,64 @@ JXG.Options = {
          * @type Object
          * @default {x: {name:'x'}, y: {name: 'y'}}
          *
+         * @example
+         * const board = JXG.JSXGraph.initBoard('jxgbox', {
+         *     boundingbox: [-5, 5, 5, -5], axis:true,
+         *     defaultAxes: {
+         *         x: {
+         *           name: 'Distance (mi)',
+         *           withLabel: true,
+         *           label: {
+         *             position: 'rt',
+         *             offset: [-5, 15],
+         *             anchorX: 'right'
+         *           }
+         *         },
+         *         y: {
+         *           withLabel: true,
+         *           name: 'Y',
+         *           label: {
+         *             position: 'rt',
+         *             offset: [-20, -5],
+         *             anchorY: 'top'
+         *           }
+         *         }
+         *     }
+         * });
+         * 
+         * </pre><div id="JXGc3af5eb8-7401-4476-80b5-379ecbd068c6" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXGc3af5eb8-7401-4476-80b5-379ecbd068c6',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *     const board = JXG.JSXGraph.initBoard('jxgbox', {
+         *         boundingbox: [-5, 5, 5, -5], axis:true,
+         *         defaultAxes: {
+         *             x: {
+         *               name: 'Distance (mi)',
+         *               withLabel: true,
+         *               label: {
+         *                 position: 'rt',
+         *                 offset: [-5, 15],
+         *                 anchorX: 'right'
+         *               }
+         *             },
+         *             y: {
+         *               withLabel: true,
+         *               name: 'Y',
+         *               label: {
+         *                 position: 'rt',
+         *                 offset: [-20, -5],
+         *                 anchorY: 'top'
+         *               }
+         *             }
+         *         }
+         *     });
+         * 
+         *     })();
+         * 
+         * </script><pre>
+         * 
          */
         defaultAxes: {
             x: {
