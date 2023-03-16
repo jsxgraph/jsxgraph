@@ -2065,7 +2065,7 @@
                         set_str += "segment(" + step.src_ids[0] + ", " + step.src_ids[1] + ") ";
                         set_str += "<<id: '" + (step.dest_sub_ids[2] ?? step.dest_id + "_segment1") + "', name:''>>; ";
 
-                        set_str += "segment(" + step.src_ids[0] + ", " + (step.dest_sub_ids[2] ?? step.dest_id + "_point") + ") ";
+                        set_str += "segment(" + step.src_ids[0] + ", " +  (step.dest_sub_ids[1] ?? step.dest_id + "_point")  + ") ";
                         set_str += "<<id: '" + (step.dest_sub_ids[3] ?? step.dest_id + "_segment2") + "', name:''>>; ";
 
                         reset_str = "";
