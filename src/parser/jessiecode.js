@@ -1,28 +1,28 @@
 /*
  JessieCode Interpreter and Compiler
 
- Copyright 2011-2023
- Michael Gerhaeuser,
- Alfred Wassermann
+    Copyright 2011-2023
+        Michael Gerhaeuser,
+        Alfred Wassermann
 
- JessieCode is free software dual licensed under the GNU LGPL or MIT License.
+    JessieCode is free software dual licensed under the GNU LGPL or MIT License.
 
- You can redistribute it and/or modify it under the terms of the
+    You can redistribute it and/or modify it under the terms of the
 
- * GNU Lesser General Public License as published by
- the Free Software Foundation, either version 3 of the License, or
- (at your option) any later version
- OR
- * MIT License: https://github.com/jsxgraph/jsxgraph/blob/master/LICENSE.MIT
+      * GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version
+      OR
+      * MIT License: https://github.com/jsxgraph/jsxgraph/blob/master/LICENSE.MIT
 
- JessieCode is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU Lesser General Public License for more details.
+    JessieCode is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
 
- You should have received a copy of the GNU Lesser General Public License and
- the MIT License along with JessieCode. If not, see <https://www.gnu.org/licenses/>
- and <https://opensource.org/licenses/MIT/>.
+    You should have received a copy of the GNU Lesser General Public License and
+    the MIT License along with JessieCode. If not, see <https://www.gnu.org/licenses/>
+    and <https://opensource.org/licenses/MIT/>.
  */
 
 /*global JXG: true, define: true, window: true, console: true, self: true, document: true, parser: true*/
@@ -54,8 +54,7 @@ if (!Object.create) {
 
         if (typeof properties != 'undefined') throw new Error("This browser's implementation of Object.create is a shim and doesn't support a second argument.");
 
-        function F() {
-        }
+        function F() { }
 
         F.prototype = o;
 
@@ -666,7 +665,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                 } catch (e) {
                     // $jc$._warn('error compiling function\n\n' + str + '\n\n' + e.toString());
                     jc._warn("error compiling function\n\n" + str + "\n\n" + e.toString());
-                    return function () {};
+                    return function () { };
                 }
             }(this));
 
@@ -1107,9 +1106,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
         }
 
         if (compile && typeof e[v] === 'function') {
-            return function () {
-                return e[v].apply(e, arguments);
-            };
+            return function () { return e[v].apply(e, arguments); };
         }
 
         return e[v];
@@ -2626,7 +2623,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
 
     _log: function (msg) {
         if (typeof window !== 'object' && typeof self === 'object' && self.postMessage) {
-            self.postMessage({type: 'log', msg: 'Log: ' + msg.toString()});
+            self.postMessage({ type: 'log', msg: 'Log: ' + msg.toString() });
         } else {
             console.log('Log: ', arguments);
         }
