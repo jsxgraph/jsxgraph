@@ -1206,15 +1206,8 @@ JXG.extend(
          * });
          */
         setAttribute: function (attributes) {
-            var i,
-                j,
-                le,
-                key,
-                value,
-                arg,
-                opacity,
-                pair,
-                oldvalue,
+            var i, j, le, key, value, arg,
+                opacity, pair, oldvalue,
                 properties = {};
 
             // Normalize the user input
@@ -1252,7 +1245,7 @@ JXG.extend(
                     // Now, only the supplied label attributes are overwritten.
                     // Otherwise, the value of label would be {visible:false} only.
                     if (Type.isObject(value) && Type.exists(this.visProp[key])) {
-                        this.visProp[key] = Type.merge(this.visProp[key], value);
+                        this.visProp[key] = Type.mergeAttr(this.visProp[key], value);
 
                         // First, handle the special case
                         // ticks.setAttribute({label: {anchorX: "right", ..., visible: true});

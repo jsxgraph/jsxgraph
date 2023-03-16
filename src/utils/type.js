@@ -930,37 +930,86 @@ JXG.extend(
         },
 
         /**
-         * Recursively merges obj2 into obj1. Contrary to {@link JXG#deepCopy} this won't create a new object
+         * Recursively merges obj2 into obj1 in-place. Contrary to {@link JXG#deepCopy} this won't create a new object
          * but instead will overwrite obj1.
+         * <p>
+         * In contrast to method JXG.mergeAttr, merge recurses into any kind of object, e.g. DOM object and JSXGraph objects.
+         * So, please be careful.
          * @param {Object} obj1
          * @param {Object} obj2
          * @returns {Object}
+         * @see JXG#mergeAttr
+         *
+         * @example
+         * JXG.Options = JXG.merge(JXG.Options, {
+         *     board: {
+         *         showNavigation: false,
+         *         showInfobox: true
+         *     },
+         *     point: {
+         *         face: 'o',
+         *         size: 4,
+         *         fillColor: '#eeeeee',
+         *         highlightFillColor: '#eeeeee',
+         *         strokeColor: 'white',
+         *         highlightStrokeColor: 'white',
+         *         showInfobox: 'inherit'
+         *     }
+         * });
+         *
+         * </pre><div id="JXGc5bf0f2a-bd5a-4612-97c2-09f17b1bbc6b" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXGc5bf0f2a-bd5a-4612-97c2-09f17b1bbc6b',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *     JXG.Options = JXG.merge(JXG.Options, {
+         *         board: {
+         *             showNavigation: false,
+         *             showInfobox: true
+         *         },
+         *         point: {
+         *             face: 'o',
+         *             size: 4,
+         *             fillColor: '#eeeeee',
+         *             highlightFillColor: '#eeeeee',
+         *             strokeColor: 'white',
+         *             highlightStrokeColor: 'white',
+         *             showInfobox: 'inherit'
+         *         }
+         *     });
+         *
+         *
+         *     })();
+         *
+         * </script><pre>
          */
         merge: function (obj1, obj2) {
-            var i, j;
+            var i, j, o, oo;
 
             for (i in obj2) {
                 if (obj2.hasOwnProperty(i)) {
-                    if (this.isArray(obj2[i])) {
+                    o = obj2[i];
+                    if (this.isArray(o)) {
                         if (!obj1[i]) {
                             obj1[i] = [];
                         }
 
-                        for (j = 0; j < obj2[i].length; j++) {
-                            if (typeof obj2[i][j] === "object") {
-                                obj1[i][j] = this.merge(obj1[i][j], obj2[i][j]);
+                        for (j = 0; j < o.length; j++) {
+                            oo = obj2[i][j];
+                            if (typeof obj2[i][j] === 'object') {
+                                obj1[i][j] = this.merge(obj1[i][j], oo);
                             } else {
                                 obj1[i][j] = obj2[i][j];
                             }
                         }
-                    } else if (typeof obj2[i] === "object") {
+                    } else if (typeof o === 'object') {
                         if (!obj1[i]) {
                             obj1[i] = {};
                         }
 
-                        obj1[i] = this.merge(obj1[i], obj2[i]);
+                        obj1[i] = this.merge(obj1[i], o);
                     } else {
-                        obj1[i] = obj2[i];
+                        obj1[i] = o;
                     }
                 }
             }
@@ -1044,12 +1093,16 @@ JXG.extend(
 
         /**
          * In-place (deep) merging of attributes. Allows attributes like `{shadow: {enabled: true...}}`
+         * <p>
+         * In contrast to method JXG.merge, mergeAttr does not recurse into DOM objects and JSXGraph objects. Instead
+         * handles (pointers) to these objects are used.
          *
          * @param {Object} attr Object with attributes - usually containing default options
          * @param {Object} special Special option values which overwrite (recursively) the default options
          * @param {Boolean} [toLower=true] If true the keys are convert to lower case.
          *
-         * @private
+         * @see JXG#merge
+         *
          */
         mergeAttr: function (attr, special, toLower) {
             var e, e2, o;
