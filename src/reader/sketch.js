@@ -2057,7 +2057,7 @@
                         set_str += "sector(" + step.src_ids.join(", ") + ") ";
                         set_str += "<<";
                         set_str += attrid + " name: '', fillOpacity: " + JXG.Options.opacityLevel + ", hasInnerPoints: true";
-                        set_str += ", arc: <<id: '" + step.dest_sub_ids[0] + "', priv: true>> >>; ";
+                        set_str += ", arc: <<id: '" + step.dest_sub_ids[0] + "'>> >>; ";
 
                         set_str += "glider(function () { return " + step.src_ids[2] + ".X(); }, function () { return " + step.src_ids[2] + ".Y(); }, " + step.dest_id + ") ";
                         set_str += "<<id: '" + (step.dest_sub_ids[1] ?? step.dest_id + "_point") + "', name:'', parents: ['" + step.dest_sub_ids[0] + "', '" + step.src_ids[2] + "'] >>; ";
