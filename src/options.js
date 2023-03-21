@@ -6235,6 +6235,17 @@ JXG.Options = {
         useKatex: false,
 
         /**
+         * Object or function returning an object that contains macros for KaTeX.
+         * 
+         * @name katexMacros
+         * @memberOf Text.prototype
+         * @default {}}
+         * @type Object
+         * 
+         */
+        katexMacros: {},
+
+        /**
          * Determines the rendering method of the text. Possible values
          * include <tt>'html'</tt> and <tt>'internal</tt>.
          *
