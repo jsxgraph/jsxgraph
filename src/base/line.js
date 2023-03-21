@@ -637,6 +637,14 @@ JXG.extend(
             }
 
             switch (Type.evaluate(this.label.visProp.position)) {
+                case 'last':
+                    x = c2[1];
+                    y = c2[2];
+                    break
+                case 'first':
+                    x = c1[1];
+                    y = c1[2];
+                    break
                 case "lft":
                 case "llft":
                 case "ulft":
