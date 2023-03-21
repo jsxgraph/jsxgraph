@@ -209,6 +209,15 @@ JXG.extend(
         },
 
         /**
+         * Checks if v is an empty object or empty.
+         * @param v {Object|Array}
+         * @returns {boolean} True, if v is an empty object or array.
+         */
+        isEmpty: function (v) {
+            return Object.keys(v).length === 0;
+        },
+
+        /**
          * Checks if a given variable is neither undefined nor null. You should not use this together with global
          * variables!
          * @param v A variable of any type.
@@ -238,15 +247,6 @@ JXG.extend(
         //         return result;
         //     };
         // }()),
-
-        /**
-         * Checks if v is an empty object or empty.
-         * @param v {Object|Array}
-         * @returns {boolean} True, if v is an empty object or array.
-         */
-        isEmpty: function (v) {
-            return Object.keys(v).length === 0;
-        },
 
         /**
          * Handle default parameters.

@@ -1117,8 +1117,7 @@ JXG.extend(
                     this.downObjects.push(pEl);
                 }
 
-                if (
-                    haspoint &&
+                if (haspoint &&
                     pEl.isDraggable &&
                     pEl.visPropCalc.visible &&
                     ((this.geonextCompatibilityMode &&
@@ -1184,8 +1183,7 @@ JXG.extend(
             }
 
             // Move drag element to the top of the layer
-            if (
-                this.renderer.type === "svg" &&
+            if (this.renderer.type === "svg" &&
                 Type.exists(collect[0]) &&
                 Type.evaluate(collect[0].visProp.dragtotopoflayer) &&
                 collect.length === 1 &&
@@ -1234,7 +1232,7 @@ JXG.extend(
                 dragScrCoords = drag.coords.scrCoords.slice();
             }
 
-            this.addLogEntry('drag', drag);
+            this.addLogEntry('drag', drag, newPos.usrCoords.slice(1));
 
             /*
              * Save the position.
@@ -6837,10 +6835,13 @@ JXG.extend(
          * @see JXG.Board#userLog
          * @return {JXG.Board} Reference to the board
          */
-        addLogEntry: function(type, obj) {
-            var t,
-                id = obj.id,
+        addLogEntry: function(type, obj, pos) {
+            var t, id,
                 last = this.userLog.length - 1;
+
+            if (Type.exists(obj.elementClass)) {
+                id = obj.id;
+            }
             if (Type.evaluate(this.attr.logging.enabled)) {
                 t = (new Date()).getTime();
                 if (last >= 0 &&
@@ -6851,12 +6852,18 @@ JXG.extend(
                     t - this.userLog[last].end < 500) {
 
                     this.userLog[last].end = t;
+                    this.userLog[last].endpos = pos;
                 } else {
                     this.userLog.push({
                         type: type,
                         id: id,
                         start: t,
-                        end: t
+                        startpos: pos,
+                        end: t,
+                        endpos: pos,
+                        bbox: this.getBoundingBox(),
+                        canvas: [this.canvasWidth, this.canvasHeight],
+                        zoom: [this.zoomX, this.zoomY]
                     });
                 }
             }
