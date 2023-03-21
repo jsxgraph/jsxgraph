@@ -1435,7 +1435,8 @@ JXG.extend(
             var node, props,
                 transitionArr = [],
                 transitionStr,
-                i, len,
+                i,
+                len = 0,
                 nodes = ["rendNode", "rendNodeTriangleStart", "rendNodeTriangleEnd"];
 
             if (duration === undefined) {
@@ -1468,7 +1469,9 @@ JXG.extend(
             //         " ry " + duration + "ms";
             // }
 
-            len = props.length;
+            if (Type.exists(props)) {
+                len = props.length;
+            }
             for (i = 0; i < len; i++) {
                 transitionArr.push(props[i] + ' ' + duration+ 'ms');
             }

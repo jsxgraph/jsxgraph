@@ -1061,12 +1061,7 @@ JXG.extend(
  * </script><pre>
  */
 JXG.createLine = function (board, parents, attributes) {
-    var ps,
-        el,
-        p1,
-        p2,
-        i,
-        attr,
+    var ps, el, p1, p2, i, attr,
         c = [],
         doTransform = false,
         constrained = false,

@@ -1148,14 +1148,11 @@ JXG.extend(
          * @returns {Object} The resulting attributes object
          */
         copyAttributes: function (attributes, options, s) {
-            var a,
-                i,
-                len,
-                o,
-                isAvail,
+            var a, i, len, o, isAvail,
                 primitives = {
                     circle: 1,
                     curve: 1,
+                    foreignobject: 1,
                     image: 1,
                     line: 1,
                     point: 1,
