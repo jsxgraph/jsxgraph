@@ -3840,6 +3840,8 @@ JXG.Options = {
          * Possible string values for the position of a label for
          * label anchor points are:
          * <ul>
+         * <li> 'first' (lines only)
+         * <li> 'last' (lines only)
          * <li> 'lft'
          * <li> 'rt'
          * <li> 'top'
