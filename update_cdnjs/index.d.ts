@@ -5614,6 +5614,7 @@ declare namespace JXG {
         useCaja?: boolean;
         useMathJax?: boolean;
         useKatex?: boolean;
+        katexMacros: Object;
         visible?: boolean;
         withLabel?: boolean;
     }

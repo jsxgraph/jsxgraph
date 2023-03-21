@@ -6239,9 +6239,19 @@ JXG.Options = {
          * 
          * @name katexMacros
          * @memberOf Text.prototype
-         * @default {}}
+         * @default {}
          * @type Object
          * 
+         * @example
+         * // to globally apply macros to all text elements use:
+         * JXG.Options.text.katexMacros = {'\\jxg': 'JSXGraph is awesome'};
+         *
+         * const board = JXG.JSXGraph.initBoard('jxgbox', {
+         *     boundingbox: [-2, 5, 8, -5], axis:true
+         * });
+         *
+         * // This macro only get applied to the p ('text') element
+         * var p = board.create('text', [1, 0, '\\jsg \\sR '], { katexMacros: {'\\sR':'\\mathbb{R}'} });
          */
         katexMacros: {},
 
