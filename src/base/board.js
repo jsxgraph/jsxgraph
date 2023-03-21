@@ -443,6 +443,13 @@ JXG.Board = function (
      */
     this.downObjects = [];
 
+    /**
+     * Collects all elements that have keyboard focus. Should be either one or no element.
+     * Elements are stored with their id.
+     * @type Array
+     */
+    this.focusObjects = [];
+
     if (this.attr.showcopyright) {
         this.renderer.displayCopyright(Const.licenseText, parseInt(this.options.text.fontSize, 10));
     }
@@ -590,10 +597,10 @@ JXG.Board = function (
     this.selectingBox = [[0, 0], [0, 0]];
 
     /**
-     * Array to log user activity. 
+     * Array to log user activity.
      * Entries are objects of the form "{type, id, start, end}" notifying
      * the start time as well as the last time of a single event of type "type"
-     * on a JSXGraph element of id "id". 
+     * on a JSXGraph element of id "id".
      * <p> "start" and "end" contain the amount of milliseconds elapsed between 1 January 1970 00:00:00 UTC
      * and the time the event happened.
      * <p>
@@ -1681,7 +1688,7 @@ JXG.extend(
          **********************************************************/
 
         /**
-         * Add all possible event handlers to the board object 
+         * Add all possible event handlers to the board object
          * which move objects, i.e. mouse, pointer and touch events.
          */
         addEventHandlers: function () {
@@ -1710,7 +1717,7 @@ JXG.extend(
 
         /**
          * Add resize event handlers
-         * 
+         *
          */
         addResizeEventHandlers: function () {
             if (Env.isBrowser) {
@@ -3772,6 +3779,7 @@ JXG.extend(
             el = this.select(id);
             if (Type.exists(el.highlight)) {
                 el.highlight(true);
+                this.focusObjects = [id];
                 el.triggerEventHandlers(['hit'], [evt]);
             }
             if (Type.exists(el.coords)) {
@@ -3794,11 +3802,7 @@ JXG.extend(
             if (!this.attr.keyboard.enabled) {
                 return false;
             }
-            // var id_node = evt.target.id,
-            //     id, el;
-
-            // id = id_node.replace(this.containerObj.id + '_', '');
-            // el = this.select(id);
+            this.focusObjects = []; // This has to be before displayInfobox(false)
             this.dehighlightAll();
             this.displayInfobox(false);
         },
@@ -4101,6 +4105,11 @@ JXG.extend(
          *
          */
         displayInfobox: function (val) {
+            if (!val && this.focusObjects.length > 0 &&
+                this.select(this.focusObjects[0]).elementClass === Const.OBJECT_CLASS_POINT) {
+                // If an element has focus we do not hide its infobox
+                return this;
+            }
             if (this.infobox.hiddenByParent === val) {
                 this.infobox.hiddenByParent = !val;
                 this.infobox.prepareUpdate().updateVisibility(val).updateRenderer();
@@ -4144,18 +4153,21 @@ JXG.extend(
         dehighlightAll: function () {
             var el,
                 pEl,
-                needsDehighlight = false;
+                stillHighlighted = {},
+                needsDeHighlight = false;
 
             for (el in this.highlightedObjects) {
                 if (this.highlightedObjects.hasOwnProperty(el)) {
+
                     pEl = this.highlightedObjects[el];
-
-                    if (this.hasMouseHandlers || this.hasPointerHandlers) {
-                        pEl.noHighlight();
+                    if (this.focusObjects.indexOf(el) < 0) { // Element does not have focus
+                        if (this.hasMouseHandlers || this.hasPointerHandlers) {
+                            pEl.noHighlight();
+                        }
+                        needsDeHighlight = true;
+                    } else {
+                        stillHighlighted[el] = pEl;
                     }
-
-                    needsDehighlight = true;
-
                     // In highlightedObjects should only be objects which fulfill all these conditions
                     // And in case of complex elements, like a turtle based fractal, it should be faster to
                     // just de-highlight the element instead of checking hasPoint...
@@ -4163,13 +4175,13 @@ JXG.extend(
                 }
             }
 
-            this.highlightedObjects = {};
+            this.highlightedObjects = stillHighlighted;
 
             // We do not need to redraw during dehighlighting in CanvasRenderer
             // because we are redrawing anyhow
             //  -- We do need to redraw during dehighlighting. Otherwise objects won't be dehighlighted until
             // another object is highlighted.
-            if (this.renderer.type === "canvas" && needsDehighlight) {
+            if (this.renderer.type === "canvas" && needsDeHighlight) {
                 this.prepareUpdate();
                 this.renderer.suspendRedraw(this);
                 this.updateRenderer();
@@ -6818,10 +6830,10 @@ JXG.extend(
 
         /**
          * Add user activity to the array "board.userLog".
-         * 
+         *
          * @param {String} type Event type, e.g. "drag"
          * @param {Object} obj JSXGraph element object
-         * 
+         *
          * @see JXG.Board#userLog
          * @return {JXG.Board} Reference to the board
          */
