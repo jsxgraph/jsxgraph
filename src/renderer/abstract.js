@@ -1240,7 +1240,7 @@ JXG.extend(
                             try {
                                 /* eslint-disable no-undef */
                                 katex.render(content, el.rendNode, {
-                                    macros: Type.evaluate(el.visProp.katexMacros),
+                                    macros: Type.evaluate(el.visProp.katexmacros),
                                     throwOnError: false
                                 });
                                 /* eslint-enable no-undef */
