@@ -4302,9 +4302,17 @@ JXG.extend(
 
                 if (Type.exists(el.coords)) {
                     if (Type.evaluate(el.visProp.frozen)) {
-                        el.coords.screen2usr();
+                        if (el.is3D) {
+                            el.element2D.coords.screen2usr();
+                        } else {
+                            el.coords.screen2usr();
+                        }
                     } else {
-                        el.coords.usr2screen();
+                        if (el.is3D) {
+                            el.element2D.coords.usr2screen();
+                        } else{
+                            el.coords.usr2screen();
+                        }
                     }
                 }
             }
