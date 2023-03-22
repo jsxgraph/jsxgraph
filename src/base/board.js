@@ -1107,6 +1107,10 @@ JXG.extend(
                 len = this.objectsList.length,
                 dragEl = { visProp: { layer: -10000 } };
 
+            // Store status of key presses for 3D movement
+            this._shiftKey = evt.shiftKey;
+            this._ctrlKey = evt.ctrlKey;
+
             //for (el in this.objects) {
             for (el = 0; el < len; el++) {
                 pEl = this.objectsList[el];

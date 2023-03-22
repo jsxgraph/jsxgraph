@@ -742,13 +742,14 @@ JXG.createView3D = function (board, parents, attributes) {
     );
 
     view.board.highlightInfobox = function (x, y, el) {
-        var d,
-            i,
-            c3d,
-            foot,
+        var d, i, c3d, foot,
+            pre = '<span style="color:black; font-size:200%">\u21C4 &nbsp;</span>',
             brd = el.board,
             p = null;
 
+        if (el.board._shiftKey) {
+            pre = '<span style="color:black; font-size:200%">\u21C5 &nbsp;</span>';
+        }
         // Search 3D parent
         for (i = 0; i < el.parents.length; i++) {
             p = brd.objects[el.parents[i]];
@@ -766,6 +767,7 @@ JXG.createView3D = function (board, parents, attributes) {
             d = Type.evaluate(p.visProp.infoboxdigits);
             if (d === "auto") {
                 view.board.highlightCustomInfobox(
+                    pre + 
                     "(" +
                         Type.autoDigits(p.X()) +
                         " | " +
@@ -777,6 +779,7 @@ JXG.createView3D = function (board, parents, attributes) {
                 );
             } else {
                 view.board.highlightCustomInfobox(
+                    pre + 
                     "(" +
                         Type.toFixed(p.X(), d) +
                         " | " +
