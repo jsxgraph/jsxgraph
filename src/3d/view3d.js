@@ -315,7 +315,7 @@ JXG.extend(
          * Project a 2D coordinate to the plane defined by the point foot
          * and the normal vector `normal`.
          *
-         * @param  {JXG.Point} point
+         * @param  {JXG.Point} point2d
          * @param  {Array} normal
          * @param  {Array} foot
          * @returns {Array} of length 4 containing the projected
@@ -349,6 +349,29 @@ JXG.extend(
             }
 
             return sol;
+        },
+
+        /**
+         * Project a 2D coordinate to a new 3D position by keeping
+         * the 3D x, y coordinates and changing only the z coordinate.
+         * All horizontal moves of the 2D point are ignored.
+         *
+         * @param {JXG.Point} point2d
+         * @param {Array} coords3D
+         * @returns {Array} of length 4 containing the projected
+         * point in homogeneous coordinates.
+         */
+        project2DTo3DVertical: function(point2d, coords3D) {
+            var m3D = this.matrix3D[2],
+                b = m3D[3],
+                rhs = point2d.coords.usrCoords[2]; // y in 2D
+
+            rhs -= m3D[0] * m3D[0] + m3D[1] * coords3D[1] + m3D[2] * coords3D[2];
+            if (Math.abs(b) < Mat.eps) {
+                return coords3D; // No changes
+            } else {
+                return coords3D.slice(0, 3).concat([rhs / b]);
+            }
         },
 
         /**

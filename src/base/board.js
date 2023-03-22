@@ -1227,18 +1227,21 @@ JXG.extend(
             }
             drag = o.obj;
 
-            // Save updates for very small movements of coordsElements, see below
+            // Avoid updates for very small movements of coordsElements, see below
             if (drag.coords) {
                 dragScrCoords = drag.coords.scrCoords.slice();
             }
 
             this.addLogEntry('drag', drag, newPos.usrCoords.slice(1));
 
-            /*
-             * Save the position.
-             */
+            // Store the position.
             this.drag_position = [newPos.scrCoords[1], newPos.scrCoords[2]];
             this.drag_position = Statistics.add(this.drag_position, this._drag_offset);
+
+            // Store status of key presses for 3D movement
+            this._shiftKey = evt.shiftKey;
+            this._ctrlKey = evt.ctrlKey;
+
             //
             // We have to distinguish between CoordsElements and other elements like lines.
             // The latter need the difference between two move events.
@@ -2406,13 +2409,8 @@ JXG.extend(
          * @returns {Boolean} ...
          */
         pointerDownListener: function (evt, object) {
-            var i,
-                j,
-                k,
-                pos,
-                elements,
-                sel,
-                target_obj,
+            var i, j, k, pos,
+                elements, sel, target_obj,
                 type = 'mouse', // Used in case of no browser
                 found, target, ta;
 

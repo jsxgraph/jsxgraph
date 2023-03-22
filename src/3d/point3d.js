@@ -283,9 +283,14 @@ JXG.extend(
                 if (this.slide) {
                     this.projectCoords2Surface();
                 } else {
-                    // Drag the point in its xy plane
-                    foot = [1, 0, 0, this.coords[3]];
-                    c3d = this.view.project2DTo3DPlane(this.element2D, [1, 0, 0, 1], foot);
+                    if (this.element2D.board._shiftKey) {
+                        // Drag the point in its vertical to the xy plane
+                        c3d = this.view.project2DTo3DVertical(this.element2D, this.coords);
+                    } else {
+                        // Drag the point in its xy plane
+                        foot = [1, 0, 0, this.coords[3]];
+                        c3d = this.view.project2DTo3DPlane(this.element2D, [1, 0, 0, 1], foot);
+                    }
                     if (c3d[0] !== 0) {
                         this.coords = this.view.project3DToCube(c3d);
                     }
