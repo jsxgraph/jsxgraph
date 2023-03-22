@@ -2056,7 +2056,7 @@ JXG.Options = {
          * Minimum distance in pixel of equidistant ticks in case insertTicks==true.
          * @name Ticks#minTicksDistance
          * @type: Number
-         * @default: 10
+         * @default 10
          * @see Ticks#insertTicks
          */
         minTicksDistance: 10,
@@ -2864,7 +2864,7 @@ JXG.Options = {
          *
          * @type String
          * @name Boxplot#dir
-         * @default: 'vertical'
+         * @default 'vertical'
          */
         dir: 'vertical',
 
@@ -2873,7 +2873,7 @@ JXG.Options = {
          *
          * @type Number
          * @name Boxplot#smallWidth
-         * @default: 0.5
+         * @default 0.5
          */
         smallWidth: 0.5,
 
@@ -5395,7 +5395,7 @@ JXG.Options = {
          *
          * @type: Boolean
          * @name Slider#moveOnUp
-         * @default: true
+         * @default true
          */
         moveOnUp: true
 
