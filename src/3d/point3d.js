@@ -283,7 +283,7 @@ JXG.extend(
                 if (this.slide) {
                     this.projectCoords2Surface();
                 } else {
-                    if (this.element2D.board._shiftKey) {
+                    if (this.view.isVerticalDrag()) {
                         // Drag the point in its vertical to the xy plane
                         c3d = this.view.project2DTo3DVertical(this.element2D, this.coords);
                     } else {

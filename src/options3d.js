@@ -316,7 +316,30 @@ JXG.extend(Options, {
     },
 
     view3d: {
-        needsRegularUpdate: true
+        /**#@+
+         * @visprop
+         */
+        needsRegularUpdate: true,
+
+        /**
+         * Allow vertical dragging of objects, i.e. in direction of the z-axis.
+         * Subobjects are
+         * <ul>
+         *  <li>enabled: true
+         *  <li>key: 'shift'
+         * </ul>
+         * <p>
+         * Possible values for attribute <i>key</i>: 'shift' or 'ctrl'.
+         * 
+         * @name View3D#verticalDrag
+         * @type Object
+         * @default {enabled: true, key: 'shift'}
+         */
+        verticalDrag: {
+            enabled: true,
+            key: 'shift' // ctrl
+        }
+        /**#@-*/
     }
 });
 

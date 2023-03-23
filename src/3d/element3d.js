@@ -78,4 +78,7 @@ JXG.GeometryElement3D = function (view, elType) {
     }
 };
 
+JXG.extend(JXG.GeometryElement3D.prototype, {
+});
+
 export default JXG.GeometryElement3D;

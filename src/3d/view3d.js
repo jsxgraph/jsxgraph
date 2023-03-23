@@ -604,9 +604,25 @@ JXG.extend(
         stopAzimuth: function () {
             clearTimeout(this.timeoutAzimuth);
             this.timeoutAzimuth = null;
+        },
+
+        /**
+         * Check if vertical dragging is enabled and which action is needed.
+         * Default is shiftKey.
+         *
+         * @returns Boolean
+         * @private
+         */
+        isVerticalDrag: function() {
+            var b = this.board,
+                key;
+            if (!Type.evaluate(this.visProp.verticaldrag.enabled)) {
+                return false;
+            }
+            key = '_' + Type.evaluate(this.visProp.verticaldrag.key) + 'Key';
+            return b[key];
         }
-    }
-);
+});
 
 /**
  * @class This element creates a 3D view.
@@ -747,7 +763,7 @@ JXG.createView3D = function (board, parents, attributes) {
             brd = el.board,
             p = null;
 
-        if (el.board._shiftKey) {
+        if (view.isVerticalDrag()) {
             pre = '<span style="color:black; font-size:200%">\u21C5 &nbsp;</span>';
         }
         // Search 3D parent
@@ -767,7 +783,7 @@ JXG.createView3D = function (board, parents, attributes) {
             d = Type.evaluate(p.visProp.infoboxdigits);
             if (d === "auto") {
                 view.board.highlightCustomInfobox(
-                    pre + 
+                    pre +
                     "(" +
                         Type.autoDigits(p.X()) +
                         " | " +
@@ -779,7 +795,7 @@ JXG.createView3D = function (board, parents, attributes) {
                 );
             } else {
                 view.board.highlightCustomInfobox(
-                    pre + 
+                    pre +
                     "(" +
                         Type.toFixed(p.X(), d) +
                         " | " +
@@ -799,6 +815,7 @@ JXG.createView3D = function (board, parents, attributes) {
 
     return view;
 };
+
 JXG.registerElement("view3d", JXG.createView3D);
 
 export default JXG.View3D;
