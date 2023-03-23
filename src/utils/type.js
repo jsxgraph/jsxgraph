@@ -54,12 +54,12 @@ JXG.extend(
         isBoard: function (v) {
             return v !== null &&
                 typeof v === "object" &&
-                !!v.BOARD_MODE_NONE &&
-                !!v.objects &&
-                !!v.jc &&
-                !!v.update &&
+                this.isNumber(v.BOARD_MODE_NONE) &&
+                this.isArray(v.objects) &&
+                this.isObject(v.jc) &&
+                this.isFunction(v.update) &&
                 !!v.containerObj &&
-                !!v.id;
+                this.isString(v.id);
         },
 
         /**
