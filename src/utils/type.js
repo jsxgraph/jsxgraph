@@ -47,6 +47,22 @@ JXG.extend(
     JXG,
     /** @lends JXG */ {
         /**
+         * Checks if the given object is an JSXGraph board.
+         * @param {Object} v
+         * @returns {Boolean}
+         */
+        isBoard: function (v) {
+            return v !== null &&
+                typeof v === "object" &&
+                !!v.BOARD_MODE_NONE &&
+                !!v.objects &&
+                !!v.jc &&
+                !!v.update &&
+                !!v.containerObj &&
+                !!v.id;
+        },
+
+        /**
          * Checks if the given string is an id within the given board.
          * @param {JXG.Board} board
          * @param {String} s
