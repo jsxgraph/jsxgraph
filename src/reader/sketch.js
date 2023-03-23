@@ -379,6 +379,9 @@
                             set_str += ", snaptogrid: " + JXG.Options.elements.snapToGrid;
                             set_str +=
                                 ", snaptopoints: " + JXG.Options.elements.snapToPoints + ">>; ";
+                            set_str += step.dest_id + ".hasInnerPoints = function() { " +
+                                "return !(" + step.dest_id + ".fillColor == 'transparent' || " + step.dest_id + ".fillColor == 'none' || " + step.dest_id + ".fillOpacity == 0); " +
+                                "}; "
                         } else if (step.args.type === "line" || step.args.type === "vector") {
                             set_str = "";
                             el = step.src_ids[step.src_ids.length - 1];
@@ -474,8 +477,10 @@
                             set_str += ", snaptogrid: " + JXG.Options.elements.snapToGrid;
                             set_str +=
                                 ", snaptopoints: " + JXG.Options.elements.snapToPoints + ">>";
-
                             set_str += ">>; ";
+                            set_str += step.dest_id + ".hasInnerPoints = function() { " +
+                                "return !(" + step.dest_id + ".fillColor == 'transparent' || " + step.dest_id + ".fillColor == 'none' || " + step.dest_id + ".fillOpacity == 0); " +
+                                "}; "
                         } else {
                             set_str =
                                 assign +
@@ -569,6 +574,9 @@
                             set_str += ", snaptogrid: " + JXG.Options.elements.snapToGrid;
                             set_str +=
                                 ", snaptopoints: " + JXG.Options.elements.snapToPoints + ">>; ";
+                            set_str += step.dest_id + ".hasInnerPoints = function() { " +
+                                "return !(" + step.dest_id + ".fillColor == 'transparent' || " + step.dest_id + ".fillColor == 'none' || " + step.dest_id + ".fillOpacity == 0); " +
+                                "}; "
                         } else if (step.args.type === "line" || step.args.type === "vector") {
                             set_str = "";
                             el = step.src_ids[step.src_ids.length - 1];
@@ -666,6 +674,9 @@
                                 ", snaptopoints: " + JXG.Options.elements.snapToPoints + ">>";
 
                             set_str += ">>; ";
+                            set_str += step.dest_id + ".hasInnerPoints = function() { " +
+                                "return !(" + step.dest_id + ".fillColor == 'transparent' || " + step.dest_id + ".fillColor == 'none' || " + step.dest_id + ".fillOpacity == 0); " +
+                                "}; "
                         } else {
                             set_str =
                                 assign +
@@ -1215,6 +1226,9 @@
                                 JXG.Options.elements.snapToPoints +
                                 ", hasInnerPoints: true" +
                                 ">>;";
+                            set_str += step.dest_id + ".hasInnerPoints = function() { " +
+                                "return !(" + step.dest_id + ".fillColor == 'transparent' || " + step.dest_id + ".fillColor == 'none' || " + step.dest_id + ".fillOpacity == 0); " +
+                                "}; "
 
                             reset_str =
                                 "remove(" +
@@ -1277,6 +1291,9 @@
                                 JXG.Options.elements.snapToPoints +
                                 ", hasInnerPoints: true" +
                                 ">>;";
+                            set_str += step.dest_id + ".hasInnerPoints = function() { " +
+                                "return !(" + step.dest_id + ".fillColor == 'transparent' || " + step.dest_id + ".fillColor == 'none' || " + step.dest_id + ".fillOpacity == 0); " +
+                                "}; "
 
                             reset_str =
                                 "remove(" +
@@ -1752,6 +1769,9 @@
                         set_str += ", snaptogrid: " + JXG.Options.elements.snapToGrid;
                         set_str +=
                             ", snaptopoints: " + JXG.Options.elements.snapToPoints + ">>; ";
+                        set_str += step.dest_id + ".hasInnerPoints = function() { " +
+                            "return !(" + step.dest_id + ".fillColor == 'transparent' || " + step.dest_id + ".fillColor == 'none' || " + step.dest_id + ".fillOpacity == 0); " +
+                            "}; "
                         break;
 
                     case JXG.GENTYPE_QUADRILATERAL:
@@ -1806,6 +1826,9 @@
                         set_str += ", snaptogrid: " + JXG.Options.elements.snapToGrid;
                         set_str +=
                             ", snaptopoints: " + JXG.Options.elements.snapToPoints + ">>; ";
+                        set_str += step.dest_id + ".hasInnerPoints = function() { " +
+                            "return !(" + step.dest_id + ".fillColor == 'transparent' || " + step.dest_id + ".fillColor == 'none' || " + step.dest_id + ".fillOpacity == 0); " +
+                            "}; "
                         break;
 
                     case JXG.GENTYPE_TEXT:
@@ -1930,6 +1953,9 @@
                          ", hasInnerPoints_Org: " + JXG.Options.polygon.hasInnerPoints; */
                         set_str += ", hasInnerPoints: " + JXG.Options.polygon.hasInnerPoints;
                         set_str += ", name: ''>>; ";
+                        set_str += step.dest_id + ".hasInnerPoints = function() { " +
+                            "return !(" + step.dest_id + ".fillColor == 'transparent' || " + step.dest_id + ".fillColor == 'none' || " + step.dest_id + ".fillOpacity == 0); " +
+                            "}; "
                         reset_str = "remove(" + step.dest_id + "); ";
                         break;
 
@@ -1996,6 +2022,9 @@
                          ", hasInnerPoints_Org: " + JXG.Options.polygon.hasInnerPoints; */
                         set_str += ", hasInnerPoints: " + JXG.Options.polygon.hasInnerPoints;
                         set_str += ", name: ''>>; ";
+                        set_str += step.dest_id + ".hasInnerPoints = function() { " +
+                            "return !(" + step.dest_id + ".fillColor == 'transparent' || " + step.dest_id + ".fillColor == 'none' || " + step.dest_id + ".fillOpacity == 0); " +
+                            "}; "
                         reset_str += "remove(" + step.dest_id + "); ";
                         break;
 
@@ -2047,6 +2076,9 @@
                          ", hasInnerPoints_Org: " + JXG.Options.polygon.hasInnerPoints; */
                         set_str += ", hasInnerPoints: " + JXG.Options.polygon.hasInnerPoints;
                         set_str += ", name: ''>>; ";
+                        set_str += step.dest_id + ".hasInnerPoints = function() { " +
+                            "return !(" + step.dest_id + ".fillColor == 'transparent' || " + step.dest_id + ".fillColor == 'none' || " + step.dest_id + ".fillOpacity == 0); " +
+                            "}; "
                         reset_str = "remove(" + step.dest_id + "); " + reset_str;
 
                         break;
@@ -2058,6 +2090,9 @@
                         set_str += "<<";
                         set_str += attrid + " name: '', fillOpacity: " + JXG.Options.opacityLevel + ", hasInnerPoints: true";
                         set_str += ", arc: <<id: '" + step.dest_sub_ids[0] + "'>> >>; ";
+                        set_str += step.dest_id + ".hasInnerPoints = function() { " +
+                            "return !(" + step.dest_id + ".fillColor == 'transparent' || " + step.dest_id + ".fillColor == 'none' || " + step.dest_id + ".fillOpacity == 0); " +
+                            "}; "
 
                         set_str += "glider(function () { return " + step.src_ids[2] + ".X(); }, function () { return " + step.src_ids[2] + ".Y(); }, " + step.dest_id + ") ";
                         set_str += "<<id: '" + (step.dest_sub_ids[1] ?? step.dest_id + "_point") + "', name:'', parents: ['" + step.dest_sub_ids[0] + "', '" + step.src_ids[2] + "'] >>; ";
