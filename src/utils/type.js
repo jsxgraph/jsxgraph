@@ -55,7 +55,7 @@ JXG.extend(
             return v !== null &&
                 typeof v === "object" &&
                 this.isNumber(v.BOARD_MODE_NONE) &&
-                this.isArray(v.objects) &&
+                this.isObject(v.objects) &&
                 this.isObject(v.jc) &&
                 this.isFunction(v.update) &&
                 !!v.containerObj &&
