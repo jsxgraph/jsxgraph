@@ -1980,6 +1980,19 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
     },
 
     /**
+     * This is used as the global perimeter() function.
+     * @param {JXG.Circle|JXG.Polygon} obj
+     * @returns {Number}
+     */
+    perimeter: function (obj) {
+        if (!Type.exists(obj) || !Type.exists(obj.Perimeter)) {
+            this._error('Error: Can\'t calculate perimeter.');
+        }
+
+        return obj.Perimeter();
+    },
+
+    /**
      * This is used as the global dist() function.
      * @param {JXG.Point} p1
      * @param {JXG.Point} p2
@@ -2368,6 +2381,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                 deg: Geometry.trueAngle,
                 A: that.area,
                 area: that.area,
+                perimeter: that.perimeter,
                 dist: that.dist,
                 R: that.radius,
                 radius: that.radius,
@@ -2403,7 +2417,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                 getName: that.getName,
                 name: that.getName,
                 '$board': that.board,
-                '$log': that.log
+                '$log': that.log,
             };
 
         // special scopes for factorial, deg, and rad
@@ -2433,6 +2447,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
         builtIn.erfi.src = 'JXG.Math.erfi';
         builtIn.A.src = '$jc$.area';
         builtIn.area.src = '$jc$.area';
+        builtIn.perimeter.src = '$jc$.perimeter';
         builtIn.dist.src = '$jc$.dist';
         builtIn.R.src = '$jc$.radius';
         builtIn.radius.src = '$jc$.radius';
@@ -2470,7 +2485,31 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
         }
         builtIn.$log.src = '$jc$.log';
 
+        builtIn = JXG.merge(builtIn, that._addedBuiltIn);
+
         return builtIn;
+    },
+
+    _addedBuiltIn: {},
+
+    addBuiltIn: function (name, func) {
+        if (Type.exists(this.builtIn)) {
+            if (Type.exists(this.builtIn[name])) {
+                return;
+            }
+            this.builtIn[name] = func;
+            this.builtIn[name].src = '$jc$.' + name;
+        }
+
+        if (Type.exists(this._addedBuiltIn[name])) {
+            return;
+        }
+        this._addedBuiltIn[name] = func;
+        this._addedBuiltIn[name].src = '$jc$.' + name;
+
+        JXG.JessieCode.prototype[name] = func;
+
+        console.log('added', name, func)
     },
 
     /**
@@ -2479,7 +2518,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
      */
     getPossibleOperands: function () {
         var FORBIDDEN = ['E'],
-            jessiecode = this.defineBuiltIn(),
+            jessiecode = this.builtIn || this.defineBuiltIn(),
             math = Math,
             jc, ma, merge,
             i, j, p, len, e,
@@ -2513,6 +2552,8 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                     value: that,
                     origin: origin,
                 };
+            } else if (name.startsWith('$')) {
+                // do nothing
             } else if (that !== undefined) {
                 console.error('undefined type', that);
             }
