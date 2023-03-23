@@ -367,8 +367,8 @@
                             set_str += ", names: [" + x.join() + "]";
                             set_str += ">>, " + attrid + " fillOpacity: ";
                             set_str += step.args.opacity + ", name: '' ";
-                            set_str +=
-                                ", hasInnerPoints_Org: " + JXG.Options.polygon.hasInnerPoints;
+                            /* set_str +=
+                             ", hasInnerPoints_Org: " + JXG.Options.polygon.hasInnerPoints; */
                             set_str +=
                                 ", hasInnerPoints: " + JXG.Options.polygon.hasInnerPoints;
                             if (step.args.name !== "") {
@@ -557,8 +557,8 @@
                             set_str += ", names: [" + x.join() + "]";
                             set_str += ">>, " + attrid + " fillOpacity: ";
                             set_str += step.args.opacity + ", name: '' ";
-                            set_str +=
-                                ", hasInnerPoints_Org: " + JXG.Options.polygon.hasInnerPoints;
+                            /* set_str +=
+                             ", hasInnerPoints_Org: " + JXG.Options.polygon.hasInnerPoints; */
                             set_str +=
                                 ", hasInnerPoints: " + JXG.Options.polygon.hasInnerPoints;
                             if (step.args.name !== "") {
@@ -1746,8 +1746,8 @@
                         set_str += ", names: ['', '', '']";
                         set_str += ">>, " + attrid + " fillOpacity: ";
                         set_str += JXG.Options.opacityLevel + ", name: '' ";
-                        set_str +=
-                            ", hasInnerPoints_Org: " + JXG.Options.polygon.hasInnerPoints;
+                        /* set_str +=
+                         ", hasInnerPoints_Org: " + JXG.Options.polygon.hasInnerPoints; */
                         set_str += ", hasInnerPoints: " + JXG.Options.polygon.hasInnerPoints;
                         set_str += ", snaptogrid: " + JXG.Options.elements.snapToGrid;
                         set_str +=
@@ -1800,8 +1800,8 @@
                         set_str += ">>, " + attrid;
                         set_str += " fillOpacity: ";
                         set_str += JXG.Options.opacityLevel + ", name: '' ";
-                        set_str +=
-                            ", hasInnerPoints_Org: " + JXG.Options.polygon.hasInnerPoints;
+                        /* set_str +=
+                         ", hasInnerPoints_Org: " + JXG.Options.polygon.hasInnerPoints; */
                         set_str += ", hasInnerPoints: " + JXG.Options.polygon.hasInnerPoints;
                         set_str += ", snaptogrid: " + JXG.Options.elements.snapToGrid;
                         set_str +=
@@ -1926,8 +1926,8 @@
                         set_str += "]";
                         set_str +=
                             ">>, " + attrid + " fillOpacity: " + JXG.Options.opacityLevel;
-                        set_str +=
-                            ", hasInnerPoints_Org: " + JXG.Options.polygon.hasInnerPoints;
+                        /* set_str +=
+                         ", hasInnerPoints_Org: " + JXG.Options.polygon.hasInnerPoints; */
                         set_str += ", hasInnerPoints: " + JXG.Options.polygon.hasInnerPoints;
                         set_str += ", name: ''>>; ";
                         reset_str = "remove(" + step.dest_id + "); ";
@@ -1992,8 +1992,8 @@
                         set_str += "]";
                         set_str +=
                             ">>, " + attrid + " fillOpacity: " + JXG.Options.opacityLevel;
-                        set_str +=
-                            ", hasInnerPoints_Org: " + JXG.Options.polygon.hasInnerPoints;
+                        /* set_str +=
+                         ", hasInnerPoints_Org: " + JXG.Options.polygon.hasInnerPoints; */
                         set_str += ", hasInnerPoints: " + JXG.Options.polygon.hasInnerPoints;
                         set_str += ", name: ''>>; ";
                         reset_str += "remove(" + step.dest_id + "); ";
@@ -2043,8 +2043,8 @@
                         // set_str += ', opacity: \'' + JXG.Options.intersection.opacity + '\'';
                         set_str += ">>, " + attrid;
                         set_str += " fillOpacity: " + JXG.Options.opacityLevel;
-                        set_str +=
-                            ", hasInnerPoints_Org: " + JXG.Options.polygon.hasInnerPoints;
+                        /* set_str +=
+                         ", hasInnerPoints_Org: " + JXG.Options.polygon.hasInnerPoints; */
                         set_str += ", hasInnerPoints: " + JXG.Options.polygon.hasInnerPoints;
                         set_str += ", name: ''>>; ";
                         reset_str = "remove(" + step.dest_id + "); " + reset_str;
