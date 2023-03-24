@@ -1196,9 +1196,9 @@ JXG.extend(
                 collect[0].rendNode.parentNode.appendChild(collect[0].rendNode);
             }
 
-            // Init rotation angle and scale factor for two finger movements
-            this.previousRotation = 0.0;
-            this.previousScale = 1.0;
+            // // Init rotation angle and scale factor for two finger movements
+            // this.previousRotation = 0.0;
+            // this.previousScale = 1.0;
 
             if (collect.length >= 1) {
                 collect[0].highlight(true);
@@ -1331,23 +1331,10 @@ JXG.extend(
          * @param {Number} id pointerId of the event. In case of old touch event this is emulated.
          */
         twoFingerTouchObject: function (tar, drag, id) {
-            var np,
-                op,
-                nd,
-                od,
-                d,
-                alpha = 0,
-                S,
-                t1,
-                t3,
-                t4,
-                t5,
-                ar,
-                i,
-                len,
-                fixEl,
-                moveEl,
-                fix;
+            var np, op, nd, od, d, S,
+                t1, t3, t4, t5,
+                ar, i, len, fixEl, moveEl, fix,
+                alpha = 0;
 
             if (
                 Type.exists(tar[0]) &&
@@ -1385,20 +1372,20 @@ JXG.extend(
                 if (Type.evaluate(drag.visProp.rotatable)) {
                     alpha = Geometry.rad(op.slice(1), fix.slice(1), np.slice(1));
                 }
-
                 t1 = this.create("transform", [alpha, [fix[1], fix[2]]], {
                     type: "rotate"
                 });
                 t1.update();
 
                 if (Type.evaluate(drag.visProp.scalable)) {
-                    // Scale
-                    d = Geometry.distance(np, fix) / Geometry.distance(op, fix);
-
+                    // Move to origin
                     t3 = this.create("transform", [-fix[1], -fix[2]], {
                         type: "translate"
                     });
+                    // Scale
+                    d = Geometry.distance(np, fix) / Geometry.distance(op, fix);
                     t4 = this.create("transform", [d, d], { type: "scale" });
+                    // Move back
                     t5 = this.create("transform", [fix[1], fix[2]], {
                         type: "translate"
                     });
@@ -2466,7 +2453,7 @@ JXG.extend(
             type = this._inputDevice;
             this.options.precision.hasPoint = this.options.precision[type];
 
-            // Handling of multi touch with pointer events should be easier than the touch events.
+            // Handling of multi touch with pointer events should be easier than with touch events.
             // Every pointer device has its own pointerId, e.g. the mouse
             // always has id 1 or 0, fingers and pens get unique ids every time a pointerDown event is fired and they will
             // keep this id until a pointerUp event is fired. What we have to do here is:
