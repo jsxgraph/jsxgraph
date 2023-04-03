@@ -2278,20 +2278,19 @@ JXG.Options = {
          *
          * @type Number
          * @name Ticks#maxLabelLength
-         * @see Ticks#precision
+         * @see Ticks#digits
          * @default 5
          */
         maxLabelLength: 5,
 
         /**
          * If a label exceeds {@link Ticks#maxLabelLength} this determines the precision used to shorten the tick label.
-         * Replaced by the digits attribute.
+         * Deprecated! Replaced by the digits attribute.
          *
          * @type Number
          * @name Ticks#precision
          * @see Ticks#maxLabelLength
          * @see Ticks#digits
-         * @deprecated
          * @default 3
          */
         precision: 3,
@@ -3169,6 +3168,87 @@ JXG.Options = {
             name: ''
         }
         /**#@-*/
+    },
+
+    /* special options for comb */
+    comb: {
+        /**#@+
+         * @visprop
+         */
+
+        /**
+         * Frequency of comb elements.
+         *
+         * @type Number
+         * @name Comb#frequency
+         * @default 0.2
+         */
+        frequency: 0.2,
+
+        /**
+         * Width of the comb.
+         *
+         * @type Number
+         * @name Comb#width
+         * @default 0.4
+         */
+        width: 0.4,
+
+        /**
+         * Angle under which comb elements are positioned.
+         *
+         * @type Number
+         * @name Comb#angle
+         * @default 60 degrees
+         */
+        angle: Math.PI / 3,
+
+        /**
+         * Should the comb go right to left instead of left to right.
+         *
+         * @type Boolean
+         * @name Comb#reverse
+         * @default false
+         */
+        reverse: false,
+
+        /**
+         * Attributes for first defining point of the comb.
+         *
+         * @type Point
+         * @name Comb#point1
+         */
+        point1: {
+            visible: false,
+            withLabel: false,
+            fixed: false,
+            name: ''
+        },
+
+        /**
+         * Attributes for second defining point of the comb.
+         *
+         * @type Point
+         * @name Comb#point2
+         */
+        point2: {
+            visible: false,
+            withLabel: false,
+            fixed: false,
+            name: ''
+        },
+
+        /**
+         * Attributes for the curve displaying the comb.
+         *
+         * @type Curve
+         * @name Comb#curve
+         */
+        curve: {
+            strokeWidth: 1,
+            strokeColor: '#000000',
+            fillColor: 'none'
+        }
     },
 
     /* special conic options */
@@ -5400,87 +5480,6 @@ JXG.Options = {
         moveOnUp: true
 
         /**#@-*/
-    },
-
-    /* special options for comb */
-    comb: {
-        /**#@+
-         * @visprop
-         */
-
-        /**
-         * Frequency of comb elements.
-         *
-         * @type Number
-         * @name Comb#frequency
-         * @default 0.2
-         */
-        frequency: 0.2,
-
-        /**
-         * Width of the comb.
-         *
-         * @type Number
-         * @name Comb#width
-         * @default 0.4
-         */
-        width: 0.4,
-
-        /**
-         * Angle under which comb elements are positioned.
-         *
-         * @type Number
-         * @name Comb#angle
-         * @default 60 degrees
-         */
-        angle: Math.PI / 3,
-
-        /**
-         * Should the comb go right to left instead of left to right.
-         *
-         * @type Boolean
-         * @name Comb#reverse
-         * @default false
-         */
-        reverse: false,
-
-        /**
-         * Attributes for first defining point of the comb.
-         *
-         * @type Point
-         * @name Comb#point1
-         */
-        point1: {
-            visible: false,
-            withLabel: false,
-            fixed: false,
-            name: ''
-        },
-
-        /**
-         * Attributes for second defining point of the comb.
-         *
-         * @type Point
-         * @name Comb#point2
-         */
-        point2: {
-            visible: false,
-            withLabel: false,
-            fixed: false,
-            name: ''
-        },
-
-        /**
-         * Attributes for the curve displaying the comb.
-         *
-         * @type Curve
-         * @name Comb#curve
-         */
-        curve: {
-            strokeWidth: 1,
-            strokeColor: '#000000',
-            fillColor: 'none'
-        }
     },
 
     /* special options for slope triangle */

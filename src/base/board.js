@@ -1324,6 +1324,59 @@ JXG.extend(
             }
         },
 
+        getTwoFingerTransform(pos1, pos2) {
+            var crd,
+                x1, y1, x2, y2,
+                dx, dy,
+                xx1, yy1, xx2, yy2,
+                dxx, dyy,
+                C, S, LL, tx, ty, lbda;
+
+            crd = new Coords(Const.COORDS_BY_SCREEN, [pos1.Xprev, pos1.Yprev], this).usrCoords;
+            x1 = crd[1];
+            y1 = crd[2];
+            crd = new Coords(Const.COORDS_BY_SCREEN, [pos2.Xprev, pos2.Yprev], this).usrCoords;
+            x2 = crd[1];
+            y2 = crd[2];
+
+            crd = new Coords(Const.COORDS_BY_SCREEN, [pos1.X, pos1.Y], this).usrCoords;
+            xx1 = crd[1];
+            yy1 = crd[2];
+            crd = new Coords(Const.COORDS_BY_SCREEN, [pos2.X, pos2.Y], this).usrCoords;
+            xx2 = crd[1];
+            yy2 = crd[2];
+
+            dx = x2 - x1;
+            dy = y2 - y1;
+            dxx = xx2 - xx1;
+            dyy = yy2 - xx2;
+
+            LL = dx * dx + dy * dy;
+            C = (dxx * dx + dyy * dy) / LL;
+            S = (dyy * dx - dxx * dy) / LL;
+            tx = (dx * (xx1 * x2 - xx2 * x1) + dy * (xx1 * y2 - xx2 * y1) + dyy * (x2 * y1 - x1 * y2)) / LL;
+            ty = (dxx * (x1 * y2 - x2 * y1) + dy * (yy1 * y2 - yy2 * y1) + dx * (yy1 * x2 - yy2 * x1)) / LL;
+            lbda = Math.sqrt(C * C + S * S);
+            C /= lbda;
+            S /= lbda;
+
+            // tx = 0.5 * (xx1 + xx2 - C * (x1 + x2) + S * (y1 + y2)); 
+            // ty = 0.5 * (yy1 + yy2 - S * (x1 + x2) - C * (y1 + y2)); 
+
+            tx = (xx1 + xx2 - x1 - x2) * 0.25;
+            ty = (yy1 + yy2 - y1 - y2) * 0.25;
+
+            // console.log(x1, y1, x2, y2, xx1, yy1, xx2, yy2)
+            console.log(lbda, Math.atan2(S, C) * 180 / Math.PI, [tx, ty])
+            // console.log(dx, dy, dxx, dyy)
+            return [1, 0 , 0,  
+                    tx, C, -S,  
+                    ty, S, C];
+            // return [1, 0 , 0,  
+            //         tx, 1, 0,  
+            //         ty, 0, 1];
+        },
+
         /**
          * Moves, rotates and scales a line or polygon with two fingers.
          * @param {Array} tar Array containing touch event objects: {JXG.Board#touches.targets}.
@@ -1332,7 +1385,8 @@ JXG.extend(
          */
         twoFingerTouchObject: function (tar, drag, id) {
             var np, op, nd, od, d, S,
-                t1, t3, t4, t5,
+                t1, t3, t4, t5, 
+                T,
                 ar, i, len, fixEl, moveEl, fix,
                 alpha = 0;
 
@@ -1341,6 +1395,7 @@ JXG.extend(
                 Type.exists(tar[1]) &&
                 !isNaN(tar[0].Xprev + tar[0].Yprev + tar[1].Xprev + tar[1].Yprev)
             ) {
+
                 if (id === tar[0].num) {
                     fixEl = tar[1];
                     moveEl = tar[0];
@@ -1348,6 +1403,12 @@ JXG.extend(
                     fixEl = tar[0];
                     moveEl = tar[1];
                 }
+
+                // T = this.getTwoFingerTransform(fixEl, moveEl);
+                // t1 = this.create("transform", T, {
+                //     type: "generic"
+                // });
+                // t1.update();
 
                 fix = new Coords(Const.COORDS_BY_SCREEN, [fixEl.Xprev, fixEl.Yprev], this)
                     .usrCoords;
@@ -1366,7 +1427,7 @@ JXG.extend(
 
                 // If parallel translate, otherwise rotate
                 if (Math.abs(S[0]) < Mat.eps) {
-                    return;
+                        return;
                 }
 
                 if (Type.evaluate(drag.visProp.rotatable)) {
@@ -2658,13 +2719,13 @@ JXG.extend(
                 );
             } else if (!this.mouseOriginMove(evt)) {
                 if (this.mode === this.BOARD_MODE_DRAG) {
+                    pos = this.getMousePosition(evt);
                     // Run through all jsxgraph elements which are touched by at least one finger.
                     for (i = 0; i < this.touches.length; i++) {
                         touchTargets = this.touches[i].targets;
                         // Run through all touch events which have been started on this jsxgraph element.
                         for (j = 0; j < touchTargets.length; j++) {
                             if (touchTargets[j].num === evt.pointerId) {
-                                pos = this.getMousePosition(evt);
                                 touchTargets[j].X = pos[0];
                                 touchTargets[j].Y = pos[1];
 

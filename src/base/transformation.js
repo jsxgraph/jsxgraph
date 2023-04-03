@@ -657,7 +657,7 @@ JXG.extend(
  * @example
  * // One time application of a transform to points A, B
  * var p1 = board.create('point', [1, 1]),
- *     p2 = board.create('point', [1, 1]),
+ *     p2 = board.create('point', [-1, -2]),
  *     t = board.create('transform', [3, 2], {type: 'shear'});
  * t.applyOnce([p1, p2]);
  *
@@ -665,7 +665,7 @@ JXG.extend(
  * <script type="text/javascript">
  *     (function() {
  *         var board = JXG.JSXGraph.initBoard('JXGb6cee1c4-2ad6-11e5-8dd9-901b0e1b8723',
- *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+ *             {boundingbox: [-5, 5, 5, -5], axis: true, showcopyright: false, shownavigation: false});
  *     var p1 = board.create('point', [1, 1]),
  *         p2 = board.create('point', [-1, -2]),
  *         t = board.create('transform', [3, 2], {type: 'shear'});
