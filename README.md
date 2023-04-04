@@ -110,7 +110,7 @@ and the minified version `jsxgraphcore.js` into the folder `distrib`.
   - Edit the source files in the folder `src`
   - Write unit tests in folder `test`
   - Run `$ npm run eslint` and `$ npm run test` to check for errors
-  - Run `$ npm run check-format` and `$ npm run format` to adapt the formatting of the source code
+  - Run `$ npm run check-format` to check the formatting of the source code
   - Submit a pull request
 
 
