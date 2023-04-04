@@ -79,6 +79,14 @@ JXG.GeometryElement3D = function (view, elType) {
 };
 
 JXG.extend(JXG.GeometryElement3D.prototype, {
+  
+    setAttr2D: function(attr3D) {
+        var attr2D = attr3D;
+
+        attr2D.name = this.name;
+        attr2D.visible = 'inherit';
+        return attr2D;
+    }
 });
 
 export default JXG.GeometryElement3D;

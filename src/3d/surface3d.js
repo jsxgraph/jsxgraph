@@ -201,14 +201,8 @@ JXG.extend(
  */
 JXG.createParametricSurface3D = function (board, parents, attributes) {
     var view = parents[0],
-        F,
-        X,
-        Y,
-        Z,
-        range_u,
-        range_v,
-        attr,
-        el;
+        F, X, Y, Z,
+        range_u, range_v, attr, el;
 
     if (parents.length === 4) {
         F = parents[1];
@@ -229,6 +223,7 @@ JXG.createParametricSurface3D = function (board, parents, attributes) {
     attr = Type.copyAttributes(attributes, board.options, "surface3d");
     el = new JXG.Surface3D(view, F, X, Y, Z, range_u, range_v, attr);
 
+    attr = el.setAttr2D(attr);
     el.element2D = view.create("curve", [[], []], attr);
     el.element2D.updateDataArray = function () {
         var ret = el.updateDataArray();

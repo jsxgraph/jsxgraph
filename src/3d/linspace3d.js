@@ -218,14 +218,9 @@ JXG.extend(
  */
 JXG.createLine3D = function (board, parents, attributes) {
     var view = parents[0],
-        attr,
-        points,
-        point,
-        direction,
-        range,
-        point1,
-        point2,
-        el;
+        attr, points, 
+        point, direction, range, 
+        point1, point2, el;
 
     attr = Type.copyAttributes(attributes, board.options, 'line3d');
 
@@ -292,6 +287,7 @@ JXG.createLine3D = function (board, parents, attributes) {
     }
     // TODO Throw error
 
+    attr = el.setAttr2D(attr);
     el.element2D = view.create('segment', [point1.element2D, point2.element2D], attr);
     el.addChild(el.element2D);
     el.inherits.push(el.element2D);
@@ -465,27 +461,14 @@ JXG.extend(
         },
 
         updateDataArray: function () {
-            var s1,
-                e1,
-                s2,
-                e2,
-                c2d,
-                l1,
-                l2,
+            var s1, e1, s2, e2, c2d, l1, l2,
                 planes = ['xPlaneRear', 'yPlaneRear', 'zPlaneRear'],
                 points = [],
                 v1 = [0, 0, 0],
                 v2 = [0, 0, 0],
                 q = [0, 0, 0],
                 p = [0, 0, 0],
-                d,
-                i,
-                j,
-                a,
-                b,
-                first,
-                pos,
-                pos_akt,
+                d, i, j, a, b, first, pos, pos_akt,
                 view = this.view;
 
             this.dataX = [];
@@ -674,6 +657,7 @@ JXG.createPlane3D = function (board, parents, attributes) {
     el = new JXG.Plane3D(view, point, dir1, range1, dir2, range2, attr);
     point.addChild(el);
 
+    attr = el.setAttr2D(attr);
     el.element2D = view.create('curve', [[], []], attr);
     el.element2D.updateDataArray = function () {
         var ret = el.updateDataArray();
@@ -691,18 +675,12 @@ JXG.createPlane3D = function (board, parents, attributes) {
         Math.abs(el.range2[0]) !== Infinity &&
         Math.abs(el.range2[1]) !== Infinity
     ) {
-        grid = view.create(
-            'mesh3d',
-            [
+        grid = view.create('mesh3d', [
                 function () {
                     return point.coords;
                 },
-                dir1,
-                range1,
-                dir2,
-                range2
-            ],
-            attr
+                dir1, range1, dir2, range2
+            ], attr
         );
         el.grid = grid;
         el.addChild(grid);

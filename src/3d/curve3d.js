@@ -103,14 +103,7 @@ JXG.extend(
     /** @lends JXG.Curve3D.prototype */ {
         updateDataArray: function () {
             var steps = Type.evaluate(this.visProp.numberpointshigh),
-                r,
-                s,
-                e,
-                delta,
-                c2d,
-                u,
-                dataX,
-                dataY,
+                r, s, e, delta, c2d, u, dataX, dataY,
                 p = [0, 0, 0];
 
             dataX = [];
@@ -174,13 +167,7 @@ JXG.extend(
  */
 JXG.createCurve3D = function (board, parents, attributes) {
     var view = parents[0],
-        F,
-        X,
-        Y,
-        Z,
-        range,
-        attr,
-        el;
+        F, X, Y, Z, range, attr, el;
 
     if (parents.length === 3) {
         F = parents[1];
@@ -200,7 +187,8 @@ JXG.createCurve3D = function (board, parents, attributes) {
     attr = Type.copyAttributes(attributes, board.options, "curve3d");
     el = new JXG.Curve3D(view, F, X, Y, Z, range, attr);
 
-    el.element2D = board.create("curve", [[], []], attr);
+    attr = el.setAttr2D(attr);
+    el.element2D = view.create("curve", [[], []], attr);
     el.element2D.updateDataArray = function () {
         var ret = el.updateDataArray();
         this.dataX = ret.X;

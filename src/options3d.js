@@ -233,7 +233,8 @@ JXG.extend(Options, {
         highlight: false,
         tabindex: -1,
         strokeWidth: 1,
-        numberPointsHigh: 200
+        numberPointsHigh: 200,
+        visible: true
 
         /**#@-*/
     },
@@ -276,6 +277,7 @@ JXG.extend(Options, {
         gradientAngle: Math.PI,
         fillColor: "#a7a7a7",
         fillOpacity: 0.6,
+        visible: true,
 
         point: { visible: false, name: "", fixed: true }
     },
@@ -286,7 +288,8 @@ JXG.extend(Options, {
         gradient: "radial",
         gradientSecondColor: "#555555",
         fillColor: "yellow",
-        highlightStrokeColor: "#555555"
+        highlightStrokeColor: "#555555",
+        visible: true
     },
 
     surface3d: {
@@ -330,7 +333,7 @@ JXG.extend(Options, {
          * </ul>
          * <p>
          * Possible values for attribute <i>key</i>: 'shift' or 'ctrl'.
-         * 
+         *
          * @name View3D#verticalDrag
          * @type Object
          * @default {enabled: true, key: 'shift'}

@@ -418,11 +418,7 @@ JXG.createPoint3D = function (board, parents, attributes) {
     //   parents[1..3]: coordinates
 
     var view = parents[0],
-        attr,
-        F,
-        slide,
-        c2d,
-        el;
+        attr, F, slide, c2d, el;
 
     // If the last element of parents is a 3D object,
     // the point is a glider on that element.
@@ -450,14 +446,14 @@ JXG.createPoint3D = function (board, parents, attributes) {
         //  "\nPossible parent types: [[x,y,z]], [x,y,z], [element,transformation]"); // TODO
     }
 
-    attr = Type.copyAttributes(attributes, board.options, "point3d");
+    attr = Type.copyAttributes(attributes, board.options, 'point3d');
     el = new JXG.Point3D(view, F, slide, attr);
     el.initCoords();
 
     c2d = view.project3DTo2D(el.coords);
 
-    attr.name = el.name;
-    el.element2D = view.create("point", c2d, attr);
+    attr = el.setAttr2D(attr);
+    el.element2D = view.create('point', c2d, attr);
     el.addChild(el.element2D);
     el.inherits.push(el.element2D);
     el.element2D.setParents(el);
