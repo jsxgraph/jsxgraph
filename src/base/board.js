@@ -1324,7 +1324,18 @@ JXG.extend(
             }
         },
 
-        getTwoFingerTransform(pos1, pos2) {
+        /**
+         * Compute the transformation matrix to move an element according to the
+         * previous and actual positions of finger 1 and finger 2.
+         * See also https://math.stackexchange.com/questions/4010538/solve-for-2d-translation-rotation-and-scale-given-two-touch-point-movements
+         * 
+         * @param {Object} finger1 Actual and previous position of finger 1
+         * @param {Object} finger1 Actual and previous position of finger 1
+         * @param {Boolean} scalable Flag if element may be scaled
+         * @param {Boolean} rotatable Flag if element may be rotated
+         * @returns 
+         */
+        getTwoFingerTransform(finger1, finger2, scalable, rotatable) {
             var crd,
                 x1, y1, x2, y2,
                 dx, dy,
@@ -1332,49 +1343,42 @@ JXG.extend(
                 dxx, dyy,
                 C, S, LL, tx, ty, lbda;
 
-            crd = new Coords(Const.COORDS_BY_SCREEN, [pos1.Xprev, pos1.Yprev], this).usrCoords;
+            crd = new Coords(Const.COORDS_BY_SCREEN, [finger1.Xprev, finger1.Yprev], this).usrCoords;
             x1 = crd[1];
             y1 = crd[2];
-            crd = new Coords(Const.COORDS_BY_SCREEN, [pos2.Xprev, pos2.Yprev], this).usrCoords;
+            crd = new Coords(Const.COORDS_BY_SCREEN, [finger2.Xprev, finger2.Yprev], this).usrCoords;
             x2 = crd[1];
             y2 = crd[2];
 
-            crd = new Coords(Const.COORDS_BY_SCREEN, [pos1.X, pos1.Y], this).usrCoords;
+            crd = new Coords(Const.COORDS_BY_SCREEN, [finger1.X, finger1.Y], this).usrCoords;
             xx1 = crd[1];
             yy1 = crd[2];
-            crd = new Coords(Const.COORDS_BY_SCREEN, [pos2.X, pos2.Y], this).usrCoords;
+            crd = new Coords(Const.COORDS_BY_SCREEN, [finger2.X, finger2.Y], this).usrCoords;
             xx2 = crd[1];
             yy2 = crd[2];
 
             dx = x2 - x1;
             dy = y2 - y1;
             dxx = xx2 - xx1;
-            dyy = yy2 - xx2;
+            dyy = yy2 - yy1;
 
             LL = dx * dx + dy * dy;
             C = (dxx * dx + dyy * dy) / LL;
             S = (dyy * dx - dxx * dy) / LL;
-            tx = (dx * (xx1 * x2 - xx2 * x1) + dy * (xx1 * y2 - xx2 * y1) + dyy * (x2 * y1 - x1 * y2)) / LL;
-            ty = (dxx * (x1 * y2 - x2 * y1) + dy * (yy1 * y2 - yy2 * y1) + dx * (yy1 * x2 - yy2 * x1)) / LL;
-            lbda = Math.sqrt(C * C + S * S);
-            C /= lbda;
-            S /= lbda;
+            if (!scalable) {
+                lbda = Math.sqrt(C * C + S * S);
+                C /= lbda;
+                S /= lbda;
+            }
+            if (!rotatable) {
+                S = 0;
+            }
+            tx = 0.5 * (xx1 + xx2 - C * (x1 + x2) + S * (y1 + y2));
+            ty = 0.5 * (yy1 + yy2 - S * (x1 + x2) - C * (y1 + y2));
 
-            // tx = 0.5 * (xx1 + xx2 - C * (x1 + x2) + S * (y1 + y2)); 
-            // ty = 0.5 * (yy1 + yy2 - S * (x1 + x2) - C * (y1 + y2)); 
-
-            tx = (xx1 + xx2 - x1 - x2) * 0.25;
-            ty = (yy1 + yy2 - y1 - y2) * 0.25;
-
-            // console.log(x1, y1, x2, y2, xx1, yy1, xx2, yy2)
-            console.log(lbda, Math.atan2(S, C) * 180 / Math.PI, [tx, ty])
-            // console.log(dx, dy, dxx, dyy)
-            return [1, 0 , 0,  
-                    tx, C, -S,  
+            return [1, 0 , 0,
+                    tx, C, -S,
                     ty, S, C];
-            // return [1, 0 , 0,  
-            //         tx, 1, 0,  
-            //         ty, 0, 1];
         },
 
         /**
@@ -1384,11 +1388,8 @@ JXG.extend(
          * @param {Number} id pointerId of the event. In case of old touch event this is emulated.
          */
         twoFingerTouchObject: function (tar, drag, id) {
-            var np, op, nd, od, d, S,
-                t1, t3, t4, t5, 
-                T,
-                ar, i, len, fixEl, moveEl, fix,
-                alpha = 0;
+            var t, T,
+                ar, i, len;
 
             if (
                 Type.exists(tar[0]) &&
@@ -1396,62 +1397,14 @@ JXG.extend(
                 !isNaN(tar[0].Xprev + tar[0].Yprev + tar[1].Xprev + tar[1].Yprev)
             ) {
 
-                if (id === tar[0].num) {
-                    fixEl = tar[1];
-                    moveEl = tar[0];
-                } else {
-                    fixEl = tar[0];
-                    moveEl = tar[1];
-                }
-
-                // T = this.getTwoFingerTransform(fixEl, moveEl);
-                // t1 = this.create("transform", T, {
-                //     type: "generic"
-                // });
-                // t1.update();
-
-                fix = new Coords(Const.COORDS_BY_SCREEN, [fixEl.Xprev, fixEl.Yprev], this)
-                    .usrCoords;
-                // Previous finger position
-                op = new Coords(Const.COORDS_BY_SCREEN, [moveEl.Xprev, moveEl.Yprev], this)
-                    .usrCoords;
-                // New finger position
-                np = new Coords(Const.COORDS_BY_SCREEN, [moveEl.X, moveEl.Y], this).usrCoords;
-
-                // Old and new directions
-                od = Mat.crossProduct(fix, op);
-                nd = Mat.crossProduct(fix, np);
-
-                // Intersection between the two directions
-                S = Mat.crossProduct(od, nd);
-
-                // If parallel translate, otherwise rotate
-                if (Math.abs(S[0]) < Mat.eps) {
-                        return;
-                }
-
-                if (Type.evaluate(drag.visProp.rotatable)) {
-                    alpha = Geometry.rad(op.slice(1), fix.slice(1), np.slice(1));
-                }
-                t1 = this.create("transform", [alpha, [fix[1], fix[2]]], {
-                    type: "rotate"
+                T = this.getTwoFingerTransform(
+                        tar[0], tar[1],
+                        Type.evaluate(drag.visProp.scalable),
+                        Type.evaluate(drag.visProp.rotatable));
+                t = this.create("transform", T, {
+                    type: 'generic'
                 });
-                t1.update();
-
-                if (Type.evaluate(drag.visProp.scalable)) {
-                    // Move to origin
-                    t3 = this.create("transform", [-fix[1], -fix[2]], {
-                        type: "translate"
-                    });
-                    // Scale
-                    d = Geometry.distance(np, fix) / Geometry.distance(op, fix);
-                    t4 = this.create("transform", [d, d], { type: "scale" });
-                    // Move back
-                    t5 = this.create("transform", [fix[1], fix[2]], {
-                        type: "translate"
-                    });
-                    t1.melt(t3).melt(t4).melt(t5);
-                }
+                t.update();
 
                 if (drag.elementClass === Const.OBJECT_CLASS_LINE) {
                     ar = [];
@@ -1461,7 +1414,7 @@ JXG.extend(
                     if (drag.point2.draggable()) {
                         ar.push(drag.point2);
                     }
-                    t1.applyOnce(ar);
+                    t.applyOnce(ar);
                 } else if (drag.type === Const.OBJECT_TYPE_POLYGON) {
                     ar = [];
                     len = drag.vertices.length - 1;
@@ -1470,7 +1423,7 @@ JXG.extend(
                             ar.push(drag.vertices[i]);
                         }
                     }
-                    t1.applyOnce(ar);
+                    t.applyOnce(ar);
                 }
 
                 this.update();
