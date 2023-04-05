@@ -189,11 +189,14 @@
                     attrid = "";
                     assign = step.dest_id + " = ";
 
-                    for (i = 0; i < step.src_ids.length; i++) {
-                        str = board.jc.findSymbol(getObject(step.src_ids[i]), 0);
 
-                        if (str.length > 0) {
-                            step.src_ids[i] = str[0];
+                    if (JXG.isArray(step.src_ids)) {
+                        for (i = 0; i < step.src_ids.length; i++) {
+                            str = board.jc.findSymbol(getObject(step.src_ids[i]), 0);
+
+                            if (str.length > 0) {
+                                step.src_ids[i] = str[0];
+                            }
                         }
                     }
                 }
@@ -1225,7 +1228,7 @@
                                 ", snaptopoints: " +
                                 JXG.Options.elements.snapToPoints +
                                 ", hasInnerPoints: true" +
-                                ">>;";
+                                ">>; ";
                             set_str += step.dest_id + ".hasInnerPoints = function() { " +
                                 "return !(" + step.dest_id + ".fillColor == 'transparent' || " + step.dest_id + ".fillColor == 'none' || " + step.dest_id + ".fillOpacity == 0); " +
                                 "}; "
@@ -1290,7 +1293,7 @@
                                 ", snaptopoints: " +
                                 JXG.Options.elements.snapToPoints +
                                 ", hasInnerPoints: true" +
-                                ">>;";
+                                ">>; ";
                             set_str += step.dest_id + ".hasInnerPoints = function() { " +
                                 "return !(" + step.dest_id + ".fillColor == 'transparent' || " + step.dest_id + ".fillColor == 'none' || " + step.dest_id + ".fillOpacity == 0); " +
                                 "}; "

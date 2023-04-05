@@ -162,6 +162,7 @@ export const isInArray = JXG.isInArray;
 export const isInObject = JXG.isInObject;
 export const isMetroApp = JXG.isMetroApp;
 export const isMozilla = JXG.isMozilla;
+export const isBoard = JXG.isBoard;
 export const isName = JXG.isName;
 export const isNode = JXG.isNode;
 export const isNumber = JXG.isNumber;
