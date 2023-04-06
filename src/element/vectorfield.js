@@ -148,6 +148,19 @@ import Type from "../utils/type";
 JXG.createVectorField = function(board, parents, attributes) {
     var el, attr;
 
+    if (!(parents.length >= 3 &&
+        (Type.isArray(parents[0]) || Type.isFunction(parents[0])) &&
+        (Type.isArray(parents[1]) && parents[1].length === 3) &&
+        (Type.isArray(parents[2]) && parents[2].length === 3)
+    )) {
+        throw new Error(
+            "JSXGraph: Can't create vector field with parent types " +
+                "'" + typeof parents[0] + "', " +
+                "'" + typeof parents[1] + "', " +
+                "'" + typeof parents[2] + "'."
+        );
+    }
+
     attr = Type.copyAttributes(attributes, board.options, 'vectorfield');
     el = board.create('curve', [[], []], attr);
     el.elType = 'vectorfield';
@@ -174,22 +187,9 @@ JXG.createVectorField = function(board, parents, attributes) {
         return this;
     };
 
-    if (parents.length >= 3 &&
-        (Type.isArray(parents[0]) || Type.isFunction(parents[0])) &&
-        (Type.isArray(parents[1]) && parents[1].length === 3) &&
-        (Type.isArray(parents[2]) && parents[2].length === 3)
-    ) {
-        el.setF(parents[0]);
-        el.xData = parents[1];
-        el.yData = parents[2];
-    } else {
-        throw new Error(
-            "JSXGraph: Can't create vector field with parent types " +
-                "'" + typeof parents[0] + "', " +
-                "'" + typeof parents[1] + "', " +
-                "'" + typeof parents[2] + "'."
-        );
-    }
+    el.setF(parents[0]);
+    el.xData = parents[1];
+    el.yData = parents[2];
 
     el.updateDataArray = function() {
         var x, y, i, j,
@@ -249,7 +249,155 @@ JXG.createVectorField = function(board, parents, attributes) {
             }
         }
     };
+
     return el;
 };
 
 JXG.registerElement("vectorfield", JXG.createVectorField);
+
+/**
+ * @class Slope field.
+ * <p>
+ * Plot a slope field given by a function f(x, y) returning a number.
+ *
+ * @pseudo
+ * @name Slopefield
+ * @augments Vectorfield
+ * @constructor
+ * @type JXG.Curve
+ * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
+ * Parameter options:
+ * @param {Function} F Function f(x, y) returning a number.
+ * @param {Array} xData Array of length 3 containing start value for x, number of steps, end value of x. The slope field will contain
+ * (number of steps) + 1 vectors in direction of x.
+ * @param {Array} yData Array of length 3 containing start value for y, number of steps, end value of y. The slope field will contain
+ * (number of steps) + 1 vectors in direction of y.
+ * @example
+ * var field = board.create('slopefield', [
+ *     (x, y) => x * x - x - 2,
+ *     [-6, 25, 6], // Horizontal mesh
+ *     [-5, 20, 5]  // Vertical mesh
+ * ]);
+ *
+ * </pre><div id="JXG8a2ee562-eea1-4ce0-91ca-46b71fc7543d" class="jxgbox" style="width: 500px; height: 500px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXG8a2ee562-eea1-4ce0-91ca-46b71fc7543d',
+ *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+ *     var field = board.create('slopefield', [
+ *         (x, y) => x * x - x - 2,
+ *         [-6, 25, 6], [-5, 20, 5]
+ *     ]);
+ *
+ *     })();
+ *
+ * </script><pre>
+ *
+ * @example
+ * // Slider to control length of vectors
+ * var s = board.create('slider', [[-3, 7], [3, 7], [0, 0.33, 1]], {name: 'length'});
+ * // Slider to control number of steps
+ * var stepsize = board.create('slider', [[-3, 6], [3, 6], [1, 20, 100]], {name: 'steps', snapWidth: 1});
+ *
+ * var field = board.create('slopefield', [
+ *     (x, y) => x * x - y * y,
+ *     [-6, () => stepsize.Value(), 6],
+ *     [-5, () => stepsize.Value(), 5]],
+ *     {
+ *         strokeWidth: 1.5,
+ *         highlightStrokeWidth: 0.5,
+ *         highlightStrokeColor: JXG.palette.blue,
+ *
+ *         scale: () => s.Value(),
+ *
+ *         arrowHead: {
+ *             enabled: false,
+ *             size: 8,
+ *             angle: Math.PI / 16
+ *         }
+ *     });
+ *
+ * </pre><div id="JXG1ec9e4d7-6094-4d2b-b72f-4efddd514f55" class="jxgbox" style="width: 500px; height: 500px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXG1ec9e4d7-6094-4d2b-b72f-4efddd514f55',
+ *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+ *     // Slider to control length of vectors
+ *     var s = board.create('slider', [[-3, 7], [3, 7], [0, 0.33, 1]], {name: 'length'});
+ *     // Slider to control number of steps
+ *     var stepsize = board.create('slider', [[-3, 6], [3, 6], [1, 20, 100]], {name: 'steps', snapWidth: 1});
+ *
+ *     var field = board.create('slopefield', [
+ *         (x, y) => x * x - y * y,
+ *         [-6, () => stepsize.Value(), 6],
+ *         [-5, () => stepsize.Value(), 5]],
+ *         {
+ *             strokeWidth: 1.5,
+ *             highlightStrokeWidth: 0.5,
+ *             highlightStrokeColor: JXG.palette.blue,
+ *
+ *             scale: () => s.Value(),
+ *
+ *             arrowHead: {
+ *                 enabled: false,
+ *                 size: 8,
+ *                 angle: Math.PI / 16
+ *             }
+ *         });
+ *
+ *     })();
+ *
+ * </script><pre>
+ *
+ */
+JXG.createSlopeField = function(board, parents, attributes) {
+    var el, f, attr;
+
+    if (!(parents.length >= 3 &&
+        Type.isFunction(parents[0]) &&
+        (Type.isArray(parents[1]) && parents[1].length === 3) &&
+        (Type.isArray(parents[2]) && parents[2].length === 3)
+    )) {
+        throw new Error(
+            "JSXGraph: Can't create vector field with parent types " +
+                "'" + typeof parents[0] + "', " +
+                "'" + typeof parents[1] + "', " +
+                "'" + typeof parents[2] + "'."
+        );
+    }
+
+    f = parents[0];
+    parents[0] = function(x, y) {
+        var z = f(x, y),
+            nrm = Math.sqrt(1 + z * z);
+        return [1 / nrm, z / nrm];
+    };
+    attr = Type.copyAttributes(attributes, board.options, 'slopefield');
+    el = board.create('vectorfield', parents, attr);
+    el.elType = 'slopefield';
+
+    /**
+     * Set the defining functions of slope field.
+     * @memberOf Slopefield.prototype
+     * @name setF
+     * @function
+     * @param {Function} func Function f(x, y) returning a number.
+     * @returns {Object} Reference to the slope field object.
+     *
+     * @example
+     * field.setF((x, y) => x * x + y * y);
+     * board.update();
+     *
+     */
+    el.setF = function(func) {
+        this.F = function(x, y) {
+            var z = func(x, y),
+                nrm = Math.sqrt(1 + z * z);
+            return [1 / nrm, z / nrm];
+        }
+    };
+
+    return el;
+};
+
+JXG.registerElement("slopefield", JXG.createSlopeField);

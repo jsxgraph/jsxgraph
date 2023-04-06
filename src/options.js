@@ -5482,6 +5482,49 @@ JXG.Options = {
         /**#@-*/
     },
 
+    /* special vector field options */
+    slopefield: {
+        /**#@+
+         * @visprop
+         */
+
+        strokeWidth: 0.5,
+        highlightStrokeWidth: 0.5,
+        highlightStrokeColor: Color.palette.blue,
+        highlightStrokeOpacity: 0.8,
+
+        /**
+         * Set length of the vectors in user coordinates. This in contrast to vector fields, where this attribute just scales the vector.
+         * @name scale
+         * @memberOf Slopefield.prototype
+         * @type {Number|Function}
+         * @see Vectorfield.scale
+         * @default 1
+         */
+        scale: 1,
+
+        /**
+         * Customize arrow heads of vectors. Be careful! If enabled this will slow down the performance.
+         * Fields are:
+         * <ul>
+         *  <li> enabled: Boolean
+         *  <li> size: length of the arrow head legs (in pixel)
+         *  <li> angle: angle of the arrow head legs In radians.
+         * </ul>
+         * @name arrowhead
+         * @memberOf Slopefield.prototype
+         * @type {Object}
+         * @default <tt>{enabled: false, size: 5, angle: Math.PI * 0.125}</tt>
+         */
+        arrowhead: {
+            enabled: false,
+            size: 5,
+            angle: Math.PI * 0.125
+        }
+
+        /**#@-*/
+    },
+
     /* special options for slope triangle */
     slopetriangle: {
         /**#@+
@@ -6454,10 +6497,11 @@ JXG.Options = {
         highlightStrokeOpacity: 0.8,
 
         /**
-         * Scaling factor of the vectors.
+         * Scaling factor of the vectors. This in contrast to slope fields, where this attribute sets the vector to the given length.
          * @name scale
          * @memberOf Vectorfield.prototype
          * @type {Number|Function}
+         * @see Slopefield.scale
          * @default 1
          */
         scale: 1,
