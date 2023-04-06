@@ -919,7 +919,7 @@ Mat.Clip = {
      * user coordinates and screen coordinates.
      */
     _handleFullyDegenerateCase: function (S, C, board) {
-        var P, Q, l, M, crds, 
+        var P, Q, l, M, crds,
             q1, q2, node, i, j,
             leP, leQ, is_on_Q,
             tmp, is_fully_degenerated,

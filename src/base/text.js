@@ -817,7 +817,7 @@ JXG.extend(
 
         /**
          * Converts the sketchometry tag <sketchofont> to
-         * HTML span tags with proper CSS formatting. 
+         * HTML span tags with proper CSS formatting.
          *
          * @param {String|Function|Number} s Text
          * @param {Boolean} escape Flag if ticks should be escaped. Escaping is necessary
@@ -825,10 +825,10 @@ JXG.extend(
          * @private
          * @see JXG.Text._setText
          * @see JXG.Text.convertGeonextAndSketchometry2CSS
-         * 
+         *
          */
         convertSketchometry2CSS: function (s, escape) {
-            var t1 = "<span class=\"sketcho sketcho-inherit sketcho-", 
+            var t1 = "<span class=\"sketcho sketcho-inherit sketcho-",
                 t2 = "\"></span>";
 
             if (Type.isString(s)) {
@@ -845,7 +845,7 @@ JXG.extend(
 
         /**
          * Alias for convertGeonext2CSS and convertSketchometry2CSS
-         * 
+         *
          * @param {String|Function|Number} s Text
          * @param {Boolean} escape Flag if ticks should be escaped
          * @private

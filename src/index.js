@@ -69,6 +69,7 @@ import "./element/slopetriangle";
 import "./element/checkbox";
 import "./element/input";
 import "./element/button";
+import "./element/vectorfield";
 import "./base/foreignobject";
 import "./options3d";
 import "./3d/view3d";

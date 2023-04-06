@@ -261,6 +261,7 @@ JXG.createSlider = function (board, parents, attributes) {
     /**
      * Sets the maximum value of the slider.
      * @memberOf Slider.prototype
+     * @function
      * @name setMax
      * @param {Number} val New maximum value
      * @returns {Object} this object
@@ -275,6 +276,7 @@ JXG.createSlider = function (board, parents, attributes) {
      * by a board update call.
      * @memberOf Slider.prototype
      * @name setValue
+     * @function
      * @param {Number} val New value
      * @returns {Object} this object
      */
@@ -294,6 +296,7 @@ JXG.createSlider = function (board, parents, attributes) {
      * Sets the minimum value of the slider.
      * @memberOf Slider.prototype
      * @name setMin
+     * @function
      * @param {Number} val New minimum value
      * @returns {Object} this object
      */

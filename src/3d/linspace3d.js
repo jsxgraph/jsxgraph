@@ -218,8 +218,8 @@ JXG.extend(
  */
 JXG.createLine3D = function (board, parents, attributes) {
     var view = parents[0],
-        attr, points, 
-        point, direction, range, 
+        attr, points,
+        point, direction, range,
         point1, point2, el;
 
     attr = Type.copyAttributes(attributes, board.options, 'line3d');

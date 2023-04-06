@@ -6237,12 +6237,12 @@ JXG.Options = {
 
         /**
          * Object or function returning an object that contains macros for KaTeX.
-         * 
+         *
          * @name katexMacros
          * @memberOf Text.prototype
          * @default {}
          * @type Object
-         * 
+         *
          * @example
          * // to globally apply macros to all text elements use:
          * JXG.Options.text.katexMacros = {'\\jxg': 'JSXGraph is awesome'};
@@ -6417,7 +6417,7 @@ JXG.Options = {
         /**#@-*/
     },
 
-    /*special turtle options */
+    /* special turtle options */
     turtle: {
         /**#@+
          * @visprop
@@ -6439,6 +6439,48 @@ JXG.Options = {
             strokeColor: Color.palette.red,
             lastArrow: true
         }
+        /**#@-*/
+    },
+
+    /* special vector field options */
+    vectorfield: {
+        /**#@+
+         * @visprop
+         */
+
+        strokeWidth: 0.5,
+        highlightStrokeWidth: 0.5,
+        highlightStrokeColor: Color.palette.blue,
+        highlightStrokeOpacity: 0.8,
+
+        /**
+         * Scaling factor of the vectors.
+         * @name scale
+         * @memberOf Vectorfield.prototype
+         * @type {Number|Function}
+         * @default 1
+         */
+        scale: 1,
+
+        /**
+         * Customize arrow heads of vectors. Be careful! If enabled this will slow down the performance.
+         * Fields are:
+         * <ul>
+         *  <li> enabled: Boolean
+         *  <li> size: length of the arrow head legs (in pixel)
+         *  <li> angle: angle of the arrow head legs In radians.
+         * </ul>
+         * @name arrowhead
+         * @memberOf Vectorfield.prototype
+         * @type {Object}
+         * @default <tt>{enabled: true, size: 5, angle: Math.PI * 0.125}</tt>
+         */
+        arrowhead: {
+            enabled: true,
+            size: 5,
+            angle: Math.PI * 0.125
+        }
+
         /**#@-*/
     },
 

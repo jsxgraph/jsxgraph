@@ -1456,7 +1456,7 @@ JXG.extend(
                             first2 = Type.evaluate(el2.visProp.straightfirst),
                             last2 = Type.evaluate(el2.visProp.straightlast),
                             a_not;
-                        
+
                         a_not = (!Type.evaluate(alwaysintersect) && (!first1 || !last1 || !first2 || !last2));
                         return that.meetPolygonLine(el2, el1, i, el1.board, a_not);
                     };
@@ -1468,7 +1468,7 @@ JXG.extend(
                             first2 = Type.evaluate(el2.visProp.straightfirst),
                             last2 = Type.evaluate(el2.visProp.straightlast),
                             a_not;
-                        
+
                         a_not = (!Type.evaluate(alwaysintersect) && (!first1 || !last1 || !first2 || !last2));
                         return that.meetPolygonLine(el1, el2, i, el1.board, a_not);
                     };
