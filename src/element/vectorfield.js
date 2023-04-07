@@ -48,7 +48,7 @@ import Type from "../utils/type";
  * @type JXG.Curve
  * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
  * Parameter options:
- * @param {Array|Function} F Either an array containing two functions f1(x, y) and f2(x, y) or function f(x, y) returning an array of length 2.
+ * @param {Array|Function|String} F Either an array containing two functions f1(x, y) and f2(x, y) or function f(x, y) returning an array of length 2.
  * @param {Array} xData Array of length 3 containing start value for x, number of steps, end value of x. The vector field will contain
  * (number of steps) + 1 vectors in direction of x.
  * @param {Array} yData Array of length 3 containing start value for y, number of steps, end value of y. The vector field will contain
@@ -149,7 +149,7 @@ JXG.createVectorField = function(board, parents, attributes) {
     var el, attr;
 
     if (!(parents.length >= 3 &&
-        (Type.isArray(parents[0]) || Type.isFunction(parents[0])) &&
+        (Type.isArray(parents[0]) || Type.isFunction(parents[0]) || Type.isString(parents[0])) &&
         (Type.isArray(parents[1]) && parents[1].length === 3) &&
         (Type.isArray(parents[2]) && parents[2].length === 3)
     )) {
@@ -178,16 +178,19 @@ JXG.createVectorField = function(board, parents, attributes) {
      * board.update();
      *
      */
-    el.setF = function(func) {
+    el.setF = function(func, varnames) {
+        var f0, f1;
         if (Type.isArray(func)) {
-            this.F = function(x, y) { return [func[0](x, y), func[1](x, y)]; };
+            f0 = Type.createFunction(func[0], this.board, varnames);
+            f1 = Type.createFunction(func[1], this.board, varnames);
+            this.F = function(x, y) { return [f0(x, y), f1(x, y)]; };
         } else {
-            this.F = func;
+            this.F = Type.createFunction(func, el.board, varnames);
         }
         return this;
     };
 
-    el.setF(parents[0]);
+    el.setF(parents[0], 'x, y');
     el.xData = parents[1];
     el.yData = parents[2];
 
@@ -250,6 +253,10 @@ JXG.createVectorField = function(board, parents, attributes) {
         }
     };
 
+    el.methodMap = Type.deepCopy(el.methodMap, {
+        setF: "setF"
+    });
+
     return el;
 };
 
@@ -267,7 +274,7 @@ JXG.registerElement("vectorfield", JXG.createVectorField);
  * @type JXG.Curve
  * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
  * Parameter options:
- * @param {Function} F Function f(x, y) returning a number.
+ * @param {Function|String} F Function f(x, y) returning a number.
  * @param {Array} xData Array of length 3 containing start value for x, number of steps, end value of x. The slope field will contain
  * (number of steps) + 1 vectors in direction of x.
  * @param {Array} yData Array of length 3 containing start value for y, number of steps, end value of y. The slope field will contain
@@ -354,19 +361,19 @@ JXG.createSlopeField = function(board, parents, attributes) {
     var el, f, attr;
 
     if (!(parents.length >= 3 &&
-        Type.isFunction(parents[0]) &&
+        (Type.isFunction(parents[0]) || Type.isString(parents[0])) &&
         (Type.isArray(parents[1]) && parents[1].length === 3) &&
         (Type.isArray(parents[2]) && parents[2].length === 3)
     )) {
         throw new Error(
-            "JSXGraph: Can't create vector field with parent types " +
+            "JSXGraph: Can't create slope field with parent types " +
                 "'" + typeof parents[0] + "', " +
                 "'" + typeof parents[1] + "', " +
                 "'" + typeof parents[2] + "'."
         );
     }
 
-    f = parents[0];
+    f = Type.createFunction(parents[0], board, 'x, y');
     parents[0] = function(x, y) {
         var z = f(x, y),
             nrm = Math.sqrt(1 + z * z);
@@ -389,13 +396,19 @@ JXG.createSlopeField = function(board, parents, attributes) {
      * board.update();
      *
      */
-    el.setF = function(func) {
+    el.setF = function(func, varnames) {
+        var f = Type.createFunction(func, el.board, varnames);
+
         this.F = function(x, y) {
-            var z = func(x, y),
+            var z = f(x, y),
                 nrm = Math.sqrt(1 + z * z);
             return [1 / nrm, z / nrm];
         }
     };
+
+    el.methodMap = Type.deepCopy(el.methodMap, {
+        setF: "setF"
+    });
 
     return el;
 };

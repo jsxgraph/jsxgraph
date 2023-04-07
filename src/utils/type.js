@@ -334,8 +334,8 @@ JXG.extend(
          * @param {JXG.Board} board Reference to a JSXGraph board. It is required to resolve dependencies given
          * by a GEONE<sub>X</sub>T string, thus it must be a valid reference only in case one of the param
          * values is of type string.
-         * @param {String} variableName Only required if evalGeonext is set to true. Describes the variable name
-         * of the variable in a GEONE<sub>X</sub>T string given as term.
+         * @param {String} variableName Only required if function is supplied as JessieCode string or evalGeonext is set to true.
+         * Describes the variable name of the variable in a GEONE<sub>X</sub>T string given as term.
          * @param {Boolean} [evalGeonext=true] Set this true, if term should be treated as a GEONE<sub>X</sub>T string.
          * @returns {Function} A function evaluation the value given by term or null if term is not of type string,
          * function or number.
