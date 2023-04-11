@@ -209,7 +209,16 @@ JXG.extend(
             this.orgText = text;
 
             if (Type.isFunction(text)) {
-                // <value> tags will not be evaluated if text is provided by a function
+                /**
+                 * Dynamically created function to update the content 
+                 * of a text. Can not be overwritten.
+                 * <p>
+                 * &lt;value&gt; tags will not be evaluated if text is provided by a function
+                 * <p>
+                 * Sets the property <tt>plaintext</tt> of the text element.
+                 * 
+                 * @private 
+                 */
                 this.updateText = function () {
                     resolvedText = text().toString(); // Evaluate function
                     if (ev_p && !ev_um && !ev_uk) {
@@ -617,6 +626,8 @@ JXG.extend(
          * Also, all Objects whose name appears in the term are searched and
          * the text is added as child to these objects.
          * This method is called if the attribute parse==true is set.
+         * 
+         * Obsolete, replaced by JXG.Text.valueTagToJessieCode
          *
          * @param{String} contentStr String to be parsed
          * @param{Boolean} [expand] Optional flag if shortened math syntax is allowed (e.g. 3x instead of 3*x).
@@ -626,8 +637,11 @@ JXG.extend(
          * If true, "_" and "^" are NOT replaced by HTML tags sub and sup. Default: false, i.e. the replacement is done.
          * This flag allows the combination of &lt;value&gt; tag containing calculations with TeX output.
          *
+         * @deprecated
          * @private
-         * @see JXG.GeonextParser.geonext2JS
+         * @see JXG.GeonextParser#geonext2JS
+         * @see JXG.Text#valueTagToJessieCode
+         * 
          */
         generateTerm: function (contentStr, expand, avoidGeonext2JS) {
             var res,
@@ -715,11 +729,18 @@ JXG.extend(
             return plaintext;
         },
 
+        /**
+         * Replace value-tags in string by JessieCode functions.
+         * @param {String} contentStr 
+         * @returns String
+         * @private 
+         * @example
+         * "The x-coordinate of A is &lt;value&gt;X(A)&lt;/value&gt;"
+         * 
+         */
         valueTagToJessieCode: function (contentStr) {
-            var res,
-                term,
-                i,
-                j,
+            var res, term,
+                i, j,
                 expandShortMath = true,
                 textComps = [],
                 tick = '"';
@@ -782,6 +803,17 @@ JXG.extend(
             return textComps.join(" + ").replace(/&amp;/g, "&");
         },
 
+        /**
+         * Simple math rendering using HTML / CSS only.
+         * 
+         * @param {String} s 
+         * @returns String
+         * @see JXG.Text#convertGeonextAndSketchometry2CSS
+         * @private
+         * @see JXG.Text#replaceSub
+         * @see JXG.Text#replaceSup
+         * @see JXG.Text#convertGeonextAndSketchometry2CSS
+         */
         poorMansTeX: function (s) {
             s = s
                 .replace(/<arc\s*\/*>/g, "&ang;")
@@ -791,10 +823,25 @@ JXG.extend(
             return this.convertGeonextAndSketchometry2CSS(this.replaceSub(this.replaceSup(s)), true);
         },
 
+        /**
+         * Replace ticks by URI escape sequences
+         * 
+         * @param {String} s 
+         * @returns String
+         * @private
+         * 
+         */
         escapeTicks: function (s) {
             return s.replace(/"/g, "%22").replace(/'/g, "%27");
         },
 
+        /**
+         * Replace escape sequences for ticks by ticks
+         * 
+         * @param {String} s 
+         * @returns String
+         * @private
+         */
         unescapeTicks: function (s) {
             return s.replace(/%22/g, '"').replace(/%27/g, "'");
         },
@@ -803,7 +850,7 @@ JXG.extend(
          * Converts the GEONExT tags <overline> and <arrow> to
          * HTML span tags with proper CSS formatting.
          * @private
-         * @see JXG.Text.generateTerm
+         * @see JXG.Text.poorMansTeX
          * @see JXG.Text._setText
          */
         convertGeonext2CSS: function (s) {
@@ -916,6 +963,17 @@ JXG.extend(
             return p;
         },
 
+        /**
+         * Returns the bounding box of the text element in user coordinates as an 
+         * array of length 4: [upper left x, upper left y, lower right x, lower right y].
+         * The method assumes that the lower left corner is at position [el.X(), el.Y()]
+         * of the text element el, i.e. the attributes anchorX, anchorY are ignored.
+         * 
+         * <p>
+         * or labels, [0, 0, 0, 0] is returned.
+         * 
+         * @returns Array 
+         */
         bounds: function () {
             var c = this.coords.usrCoords;
 
@@ -934,6 +992,12 @@ JXG.extend(
             ];
         },
 
+        /**
+         * Returns the value of the attribute "anchorX". If this equals "auto",
+         * returns "left", "middle", or "right", depending on the 
+         * value of the attribute "position".
+         * @returns String
+         */
         getAnchorX: function () {
             var a = Type.evaluate(this.visProp.anchorx);
             if (a === "auto") {
@@ -955,6 +1019,12 @@ JXG.extend(
             return a;
         },
 
+        /**
+         * Returns the value of the attribute "anchorY". If this equals "auto",
+         * returns "bottom", "middle", or "top", depending on the 
+         * value of the attribute "position".
+         * @returns String
+         */
         getAnchorY: function () {
             var a = Type.evaluate(this.visProp.anchory);
             if (a === "auto") {
