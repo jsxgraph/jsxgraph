@@ -184,4 +184,9 @@ describe("Test text handling", function () {
         expect(el.rendNode.innerHTML).toEqual("√val<sub>x</sub> 1+1+π=5.14");
     });
 
+    it("button", function () {
+        var txt = board.create('button', [0, 0, 'test', ()=>{}], {visible: false});
+        expect(JXG.exists(txt.rendNodeButton)).toBeTrue();
+    });
+
 });

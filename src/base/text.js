@@ -71,6 +71,8 @@ var priv = {
  *
  */
 JXG.Text = function (board, coords, attributes, content) {
+    var tmp;
+
     this.constructor(board, attributes, Const.OBJECT_TYPE_TEXT, Const.OBJECT_CLASS_TEXT);
 
     this.element = this.board.select(attributes.anchor);
@@ -101,7 +103,13 @@ JXG.Text = function (board, coords, attributes, content) {
     // this._createFctUpdateText(content);
     // this.updateText();
 
+    // Set attribute visible to true. This is necessary to 
+    // create all sub-elements for button, input and checkbox
+    tmp = this.visProp.visible;
+    this.visProp.visible = true;
     this.setText(content);
+    // Restore the correct attribute visible.
+    this.visProp.visible = tmp;
 
     if (Type.isString(this.content)) {
         this.notifyParents(this.content);

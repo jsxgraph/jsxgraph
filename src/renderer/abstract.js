@@ -150,7 +150,7 @@ JXG.AbstractRenderer = function () {
 
     /**
      * True if the browsers' SVG engine supports foreignObject.
-     * Not supported browsers are IE 9 - 11. 
+     * Not supported browsers are IE 9 - 11.
      * It is tested in svg renderer.
      *
      * @type Boolean
@@ -1099,15 +1099,11 @@ JXG.extend(
          */
         updateText: function (el) {
             var content = el.plaintext,
-                v,
-                c,
+                v, c,
                 parentNode,
-                scale,
-                vshift,
-                id,
-                wrap_id,
-                ax,
-                ay;
+                scale, vshift,
+                id, wrap_id,
+                ax, ay;
 
             if (el.visPropCalc.visible) {
                 this.updateTextStyle(el, false);
