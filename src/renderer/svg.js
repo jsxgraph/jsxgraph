@@ -188,6 +188,30 @@ JXG.SVGRenderer = function (container, dim) {
     this.defs.appendChild(this.createShadowFilter(this.container.id + '_' + 'f1', 'none', 1, 0.1, 3, [5, 5]));
 
     /**
+     * Combine arguments to an URL string of the form 
+     * url(#...)
+     * Masks the container id.
+     * 
+     * @params {Objects} parts of the string
+     * @returns URL string
+     * @private
+     * @example
+     * this.toURL('aaa', '_', 'bbb', 'TriangleEnd')
+     * // Output:
+     * // url(#xxx_bbbTriangleEnd)
+     * 
+     */
+    this.toURL = function(){
+        // ES6 would be [...arguments].join()
+        var str = Array.prototype.slice.call(arguments).join('');
+        // Mask special symbols like '/' and '\' in id
+        if (Type.exists(CSS) && Type.exists(CSS.escape)) {
+            str = CSS.escape(str);
+        }
+        return 'url(#' + str + ')';
+    };
+
+    /**
      * JSXGraph uses a layer system to sort the elements on the board. This puts certain types of elements in front
      * of other types of elements. For the order used see {@link JXG.Options.layer}. The number of layers is documented
      * there, too. The higher the number, the "more on top" are the elements on this layer.
@@ -823,7 +847,8 @@ JXG.extend(
                     el.rendNode.setAttributeNS(
                         null,
                         "marker-start",
-                        "url(#" + this.container.id + "_" + el.id + "TriangleEnd)"
+                        // "url(#" + this.container.id + "_" + el.id + "TriangleEnd)"
+                        this.toURL(this.container.id, '_', el.id, 'TriangleEnd')
                     );
                 } else {
                     this.defs.appendChild(node2);
@@ -843,7 +868,8 @@ JXG.extend(
                     el.rendNode.setAttributeNS(
                         null,
                         "marker-end",
-                        "url(#" + this.container.id + "_" + el.id + "TriangleStart)"
+                        // "url(#" + this.container.id + "_" + el.id + "TriangleStart)"
+                        this.toURL(this.container.id, '_', el.id, 'TriangleStart')
                     );
                 } else {
                     this.defs.appendChild(node2);
@@ -1309,8 +1335,9 @@ JXG.extend(
                 this.defs.appendChild(node);
                 fillNode.setAttributeNS(
                     null,
-                    "style",
-                    "fill:url(#" + this.container.id + "_" + el.id + "_gradient)"
+                    'style',
+                    // "fill:url(#" + this.container.id + "_" + el.id + "_gradient)"
+                    'fill:' + this.toURL(this.container.id + '_' + el.id + '_gradient')
                 );
                 el.gradNode1 = node2;
                 el.gradNode2 = node3;
@@ -1741,7 +1768,8 @@ JXG.extend(
             if (Type.exists(el.rendNode)) {
                 if (show) {
                     if (use_board_filter) {
-                        el.rendNode.setAttributeNS(null, 'filter', 'url(#' + this.container.id + '_' + 'f1)');
+                        el.rendNode.setAttributeNS(null, 'filter', this.toURL(this.container.id + '_' + 'f1'))
+                        // 'url(#' + this.container.id + '_' + 'f1)');
                     } else {
                         node = this.container.ownerDocument.getElementById(id);
                         if (node) {
@@ -1749,7 +1777,8 @@ JXG.extend(
                         }
                         id = el.rendNode.id + '_' + 'f1';
                         this.defs.appendChild(this.createShadowFilter(id, c, op, bl, b, o));
-                        el.rendNode.setAttributeNS(null, 'filter', 'url(#' + id + ')');
+                        el.rendNode.setAttributeNS(null, 'filter', this.toURL(id));
+                        // 'url(#' + id + ')');
                     }
                 } else {
                     el.rendNode.removeAttributeNS(null, 'filter');
