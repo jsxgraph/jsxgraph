@@ -256,6 +256,7 @@ JXG.extend(Options, {
         strokeColor: "black",
         fixed: true,
         tabindex: null,
+        visible: true,
 
         gradient: "linear",
         gradientSecondColor: "#ffffff",
