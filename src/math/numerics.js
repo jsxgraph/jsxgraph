@@ -2429,12 +2429,7 @@ Mat.Numerics = {
      * @memberof JXG.Math.Numerics
      */
     regressionPolynomial: function (degree, dataX, dataY) {
-        var coeffs,
-            deg,
-            dX,
-            dY,
-            inputType,
-            fct,
+        var coeffs, deg, dX, dY, inputType, fct,
             term = "";
 
         // Slider
@@ -2485,15 +2480,8 @@ Mat.Numerics = {
 
         /** @ignore */
         fct = function (x, suspendedUpdate) {
-            var i,
-                j,
-                M,
-                MT,
-                y,
-                B,
-                c,
-                s,
-                d,
+            var i, j,
+                M, MT, y, B, c, s, d,
                 // input data
                 len = dataX.length;
 
@@ -2542,11 +2530,9 @@ Mat.Numerics = {
                 }
 
                 M = [];
-
                 for (j = 0; j < len; j++) {
                     M.push([1]);
                 }
-
                 for (i = 1; i <= d; i++) {
                     for (j = 0; j < len; j++) {
                         M[j][i] = M[j][i - 1] * dX[j];
