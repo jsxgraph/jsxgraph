@@ -57,7 +57,6 @@ JXG.Surface3D = function (view, F, X, Y, Z, range_u, range_v, attributes) {
     );
     this.constructor3D(view, "surface3d");
 
-    this.id = this.view.board.setId(this, "S3D");
     this.board.finalizeAdding(this);
 
     this.F = F;

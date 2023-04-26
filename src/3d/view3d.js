@@ -62,7 +62,7 @@ JXG.View3D = function (board, parents, attributes) {
      * @type Array
      * @private
      */
-    this.objectsList = [];
+    // this.objectsList = [];
 
     /**
      * An associative array / dictionary to store the objects of the board by name. The name of the object is the key and value is a reference to the object.
@@ -287,7 +287,42 @@ JXG.extend(
     },
 
     removeObject: function(object, saveMethod) {
+        var el, i;
+
         this.board.removeObject(object, saveMethod);
+        /*
+        if (Type.isArray(object)) {
+            for (i = 0; i < object.length; i++) {
+                this.removeObject(object[i]);
+            }
+            return this;
+        }
+
+        object = this.select(object);
+
+        // // If the object which is about to be removed unknown or a string, do nothing.
+        // // it is a string if a string was given and could not be resolved to an element.
+        if (!Type.exists(object) || Type.isString(object)) {
+            return this;
+        }
+
+        try {
+        //     // remove all children.
+        //     for (el in object.childElements) {
+        //         if (object.childElements.hasOwnProperty(el)) {
+        //             object.childElements[el].board.removeObject(object.childElements[el]);
+        //         }
+        //     }
+
+            // delete this.objects[object.id];
+        } catch (e) {
+            JXG.debug("View3D " + object.id + ": Could not be removed: " + e);
+        }
+
+        // this.update();
+
+        this.board.removeObject(object, saveMethod);
+        */
     },
 
     /**

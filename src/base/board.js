@@ -4893,8 +4893,8 @@ JXG.extend(
                 // remove the object itself from our control structures
                 if (object._pos > -1) {
                     this.objectsList.splice(object._pos, 1);
-                    for (el = object._pos; el < this.objectsList.length; el++) {
-                        this.objectsList[el]._pos--;
+                    for (i = object._pos; i < this.objectsList.length; i++) {
+                        this.objectsList[i]._pos--;
                     }
                 } else if (object.type !== Const.OBJECT_TYPE_TURTLE) {
                     JXG.debug(
