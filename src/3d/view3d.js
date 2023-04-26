@@ -145,11 +145,11 @@ JXG.extend(
      */
     create: function (elementType, parents, attributes) {
         var prefix = [],
-            is3D = false,
+            // is3D = false,
             el;
 
         if (elementType.indexOf("3d") > 0) {
-            is3D = true;
+            // is3D = true;
             prefix.push(this);
         }
         el = this.board.create(elementType, prefix.concat(parents), attributes);
@@ -287,10 +287,9 @@ JXG.extend(
     },
 
     removeObject: function(object, saveMethod) {
-        var el, i;
+        var i;
 
-        this.board.removeObject(object, saveMethod);
-        /*
+        // this.board.removeObject(object, saveMethod);
         if (Type.isArray(object)) {
             for (i = 0; i < object.length; i++) {
                 this.removeObject(object[i]);
@@ -314,7 +313,7 @@ JXG.extend(
         //         }
         //     }
 
-            // delete this.objects[object.id];
+            delete this.objects[object.id];
         } catch (e) {
             JXG.debug("View3D " + object.id + ": Could not be removed: " + e);
         }
@@ -322,7 +321,8 @@ JXG.extend(
         // this.update();
 
         this.board.removeObject(object, saveMethod);
-        */
+
+        return this;
     },
 
     /**
