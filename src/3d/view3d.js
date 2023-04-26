@@ -286,6 +286,10 @@ JXG.extend(
         return this;
     },
 
+    removeObject: function(object, saveMethod) {
+        this.board.removeObject(object, saveMethod);
+    },
+
     /**
      * Project 3D coordinates to 2D board coordinates
      * The 3D coordinates are provides as three numbers x, y, z or one array of length 3.

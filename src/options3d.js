@@ -233,8 +233,8 @@ JXG.extend(Options, {
         highlight: false,
         tabindex: -1,
         strokeWidth: 1,
-        numberPointsHigh: 200,
-        visible: true
+        numberPointsHigh: 200
+        // visible: true
 
         /**#@-*/
     },
@@ -256,7 +256,7 @@ JXG.extend(Options, {
         strokeColor: "black",
         fixed: true,
         tabindex: null,
-        visible: true,
+        // visible: true,
 
         gradient: "linear",
         gradientSecondColor: "#ffffff",
@@ -278,7 +278,7 @@ JXG.extend(Options, {
         gradientAngle: Math.PI,
         fillColor: "#a7a7a7",
         fillOpacity: 0.6,
-        visible: true,
+        // visible: true,
 
         point: { visible: false, name: "", fixed: true }
     },
@@ -289,8 +289,8 @@ JXG.extend(Options, {
         gradient: "radial",
         gradientSecondColor: "#555555",
         fillColor: "yellow",
-        highlightStrokeColor: "#555555",
-        visible: true
+        highlightStrokeColor: "#555555"
+        // visible: true
     },
 
     surface3d: {
@@ -316,7 +316,7 @@ JXG.extend(Options, {
          */
         stepsV: 30,
 
-        visible: true
+        // visible: true
 
         /**#@-*/
     },

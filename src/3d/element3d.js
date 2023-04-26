@@ -29,6 +29,7 @@
 /*global JXG:true, define: true*/
 
 import JXG from "../jxg";
+import Type from "../utils/type";
 
 /**
  * Constructs a new GeometryElement3D object.
@@ -70,6 +71,7 @@ JXG.GeometryElement3D = function (view, elType) {
      * @private
      */
     this.is3D = true;
+
     this.view.objects[this.id] = this;
     this.view.objectsList.push(this);
 
@@ -84,8 +86,14 @@ JXG.extend(JXG.GeometryElement3D.prototype, {
         var attr2D = attr3D;
 
         attr2D.name = this.name;
-        attr2D.visible = 'inherit';
+        // attr2D.visible = 'inherit';
         return attr2D;
+    },
+
+    setAttribute: function(attributes) {
+        if (Type.exists(this.element2D)) {
+            this.element2D.setAttribute(attributes);
+        }
     }
 });
 

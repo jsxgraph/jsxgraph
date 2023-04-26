@@ -292,6 +292,7 @@ JXG.createLine3D = function (board, parents, attributes) {
     el.addChild(el.element2D);
     el.inherits.push(el.element2D);
     el.element2D.setParents(el);
+    // el.setParents([point1.id, point2.id]);
 
     point1.addChild(el);
     point2.addChild(el);
