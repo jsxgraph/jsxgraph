@@ -1040,6 +1040,7 @@
                                 JXG.Options.elements.snapToGrid +
                                 ", snaptopoints: " +
                                 JXG.Options.elements.snapToPoints +
+                                (JXG.exists(step.args.name) ? ", name: '" + step.args.name + "'" : "") +
                                 ">>") +
                             "; ";
 
