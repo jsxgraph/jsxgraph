@@ -594,6 +594,7 @@ JXG.extend(
                     this._stroke(el);
                     break;
                 case "triangleup":
+                case "A":
                 case "a":
                 case "^":
                     context.beginPath();

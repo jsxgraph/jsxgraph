@@ -285,7 +285,7 @@ JXG.extend(
             } else if (face === "[]") {
                 prim = "rect";
             } else {
-                // cross/x, diamond/<>, triangleup/a/^, triangledown/v, triangleleft/<,
+                // cross/x, diamond/<>, triangleup/A/^, triangledown/v, triangleleft/<,
                 // triangleright/>, plus/+, |, -
                 prim = "path";
             }

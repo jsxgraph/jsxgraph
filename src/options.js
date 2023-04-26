@@ -4630,7 +4630,7 @@ JXG.Options = {
          * <tr><td>minus</td><td>-</td></tr>
          * <tr><td>divide</td><td>|</td></tr>
          * <tr><td>diamond</td><td>&lt;&gt;</td></tr>
-         * <tr><td>triangleup</td><td>A</td></tr>
+         * <tr><td>triangleup</td><td>^, a, A</td></tr>
          * <tr><td>triangledown</td><td>v</td></tr>
          * <tr><td>triangleleft</td><td>&lt;</td></tr>
          * <tr><td>triangleright</td><td>&gt;</td></tr>
@@ -6682,7 +6682,7 @@ JXG.Options = {
      * <tr><td>minus</td><td>-</td></tr>
      * <tr><td>divide</td><td>|</td></tr>
      * <tr><td>diamond</td><td>&lt;&gt;</td></tr>
-     * <tr><td>triangleup</td><td>A</td></tr>
+     * <tr><td>triangleup</td><td>^, a, A</td></tr>
      * <tr><td>triangledown</td><td>v</td></tr>
      * <tr><td>triangleleft</td><td>&lt;</td></tr>
      * <tr><td>triangleright</td><td>&gt;</td></tr>
@@ -6708,6 +6708,7 @@ JXG.Options = {
             diamond: '<>',
             '<>': '<>',
             triangleup: '^',
+            A: '^',
             a: '^',
             '^': '^',
             triangledown: 'v',

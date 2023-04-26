@@ -314,7 +314,9 @@ JXG.extend(Options, {
          * @type Number
          * @name ParametricSurface3D#stepsV
          */
-        stepsV: 30
+        stepsV: 30,
+
+        visible: true
 
         /**#@-*/
     },
