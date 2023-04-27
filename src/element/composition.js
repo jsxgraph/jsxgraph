@@ -3378,11 +3378,10 @@ JXG.createGrid = function (board, parents, attributes) {
      * @ignore
      */
     c.updateDataArray = function () {
-        var start,
-            end,
-            i,
-            topLeft,
-            bottomRight,
+        var start, end, i,
+            max_lines = 5000,
+            is_finite,
+            topLeft, bottomRight,
             gridX = Type.evaluate(this.visProp.gridx),
             gridY = Type.evaluate(this.visProp.gridy);
 
@@ -3470,8 +3469,9 @@ JXG.createGrid = function (board, parents, attributes) {
             end = Math.floor(topLeft.usrCoords[2] / gridY) * gridY;
         }
 
-        // start with the horizontal grid:
-        for (i = start; i > end - gridY; i -= gridY) {
+        // Start with the horizontal grid:
+        is_finite = (!isFinite(start) || !isFinite(end) || Math.abs(end) > Math.abs(gridY * max_lines)) ? false : true;
+        for (i = start; is_finite && i > end - gridY; i -= gridY) {
             c.dataX.push(topLeft.usrCoords[1], bottomRight.usrCoords[1], NaN);
             c.dataY.push(i, i, NaN);
         }
@@ -3485,14 +3485,15 @@ JXG.createGrid = function (board, parents, attributes) {
             end = Math.ceil(topLeft.usrCoords[1] / gridX) * gridX;
         }
 
-        // build vertical grid
-        for (i = start; i < end + gridX; i += gridX) {
+        // Build vertical grid
+        is_finite = (!isFinite(start) || !isFinite(end) || Math.abs(end) > Math.abs(gridX * max_lines)) ? false : true;
+        for (i = start; is_finite && i < end + gridX; i += gridX) {
             c.dataX.push(i, i, NaN);
             c.dataY.push(topLeft.usrCoords[2], bottomRight.usrCoords[2], NaN);
         }
     };
 
-    // we don't care about highlighting so we turn it off completely to save a lot of
+    // We don't care about highlighting so we turn it off completely to save a lot of
     // time on every mouse move
     c.hasPoint = function () {
         return false;

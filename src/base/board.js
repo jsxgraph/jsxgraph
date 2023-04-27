@@ -5053,10 +5053,17 @@ JXG.extend(
                 oX = (this.canvasWidth - oldWidth) / 2;
                 oY = (this.canvasHeight - oldHeight) / 2;
 
-                this.moveOrigin(
-                    this.origin.scrCoords[1] + oX,
-                    this.origin.scrCoords[2] + oY
-                );
+                if (isFinite(this.origin.scrCoords[1]) && isFinite(this.origin.scrCoords[2])) {
+                    this.moveOrigin(
+                        this.origin.scrCoords[1] + oX,
+                        this.origin.scrCoords[2] + oY
+                    );
+                } else {
+                    this.moveOrigin(
+                        this.canvasWidth / 2,
+                        this.canvasHeight / 2
+                    );
+                }
             }
 
             return this;
