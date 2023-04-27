@@ -402,10 +402,8 @@ JXG.extend(
                     return { width: element.clientWidth, height: element.clientHeight };
                 }
 
-                // a parent might be set to display:none; try reading them from styles
-                style = window.getComputedStyle
-                    ? window.getComputedStyle(element)
-                    : element.style;
+                // A parent might be set to display:none; try reading them from styles
+                style = window.getComputedStyle ? window.getComputedStyle(element) : element.style;
                 return {
                     width: pixelDimRegExp.test(style.width) ? parseFloat(style.width) : 0,
                     height: pixelDimRegExp.test(style.height) ? parseFloat(style.height) : 0
