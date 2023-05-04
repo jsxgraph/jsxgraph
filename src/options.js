@@ -2055,7 +2055,7 @@ JXG.Options = {
         /**
          * Minimum distance in pixel of equidistant ticks in case insertTicks==true.
          * @name Ticks#minTicksDistance
-         * @type: Number
+         * @type Number
          * @default 10
          * @see Ticks#insertTicks
          */
@@ -4006,7 +4006,7 @@ JXG.Options = {
 
         /**
          * Default style of a legend element. The only possible value is 'vertical'.
-         * @name: Legend#style
+         * @name Legend#style
          * @type String
          * @default 'vertical'
          */
@@ -4014,7 +4014,7 @@ JXG.Options = {
 
         /**
          * Label names of a legend element.
-         * @name: Legend#labels
+         * @name Legend#labels
          * @type Array
          * @default "['1', '2', '3', '4', '5', '6', '7', '8']"
          */
@@ -4022,7 +4022,7 @@ JXG.Options = {
 
         /**
          * (Circular) array of label colors.
-         * @name: Legend#colors
+         * @name Legend#colors
          * @type Array
          * @default "['#B02B2C', '#3F4C6B', '#C79810', '#D15600', '#FFFF88', '#c3d9ff', '#4096EE', '#008C00']"
          */
@@ -4030,7 +4030,7 @@ JXG.Options = {
 
         /**
          * Height (in px) of one legend entry
-         * @name: Legend#rowHeight
+         * @name Legend#rowHeight
          * @type Number
          * @default 20
          *
@@ -4209,7 +4209,7 @@ JXG.Options = {
          * ends exactly at the border, if negative there is a margin to the inside, if positive the line
          * ends outside of the canvas (which is invisible).
          *
-         * @name: Line#margin
+         * @name Line#margin
          * @type Number
          * @default 0
          */
@@ -4272,8 +4272,9 @@ JXG.Options = {
         /**
          * Attributes for ticks of the line.
          *
-         * @type Ticks
          * @name Line#ticks
+         * @type Object
+         * @see Ticks
          */
         ticks: {
             drawLabels: true,
@@ -4294,8 +4295,9 @@ JXG.Options = {
         /**
          * Attributes for the line label.
          *
-         * @type Label
+         * @type Object
          * @name Line#label
+         * @see Label
          */
         label: {
             position: 'llft'
@@ -5473,7 +5475,7 @@ JXG.Options = {
         /**
          * If true, 'up' events on the baseline will trigger slider moves.
          *
-         * @type: Boolean
+         * @type Boolean
          * @name Slider#moveOnUp
          * @default true
          */
