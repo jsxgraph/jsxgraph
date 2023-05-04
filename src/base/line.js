@@ -475,14 +475,14 @@ JXG.extend(
             return this;
         },
 
-        /**
-         * Used to generate a polynomial for a point p that lies on this line, i.e. p is collinear to
-         * {@link JXG.Line#point1} and {@link JXG.Line#point2}.
-         *
-         * @param {JXG.Point} p The point for that the polynomial is generated.
-         * @returns {Array} An array containing the generated polynomial.
-         * @private
-         */
+        // /**
+        //  * Used to generate a polynomial for a point p that lies on this line, i.e. p is collinear to
+        //  * {@link JXG.Line#point1} and {@link JXG.Line#point2}.
+        //  *
+        //  * @param {JXG.Point} p The point for that the polynomial is generated.
+        //  * @returns {Array} An array containing the generated polynomial.
+        //  * @private
+        //  */
         generatePolynomial: function (p) {
             var u1 = this.point1.symbolic.x,
                 u2 = this.point1.symbolic.y,

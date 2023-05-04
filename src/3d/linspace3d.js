@@ -658,6 +658,10 @@ JXG.createPlane3D = function (board, parents, attributes) {
 
     attr = el.setAttr2D(attr);
     el.element2D = view.create('curve', [[], []], attr);
+
+    /**
+     * @ignore
+     */
     el.element2D.updateDataArray = function () {
         var ret = el.updateDataArray();
         this.dataX = ret.X;

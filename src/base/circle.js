@@ -239,12 +239,12 @@ JXG.extend(
             return Math.abs(dist - r) < prec;
         },
 
-        /**
-         * Used to generate a polynomial for a point p that lies on this circle.
-         * @param {JXG.Point} p The point for which the polynomial is generated.
-         * @returns {Array} An array containing the generated polynomial.
-         * @private
-         */
+        // /**
+        //  * Used to generate a polynomial for a point p that lies on this circle.
+        //  * @param {JXG.Point} p The point for which the polynomial is generated.
+        //  * @returns {Array} An array containing the generated polynomial.
+        //  * @private
+        //  */
         generatePolynomial: function (p) {
             /*
              * We have four methods to construct a circle:

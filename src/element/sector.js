@@ -216,12 +216,16 @@ JXG.createSector = function (board, parents, attributes) {
     el.elType = "sector";
 
     /**
-     * Set a radius if the attribute `radius` has value 'auto'.
+     * Sets radius if the attribute `radius` has value 'auto'.
      * Sets a radius between 20 and 50 points, depending on the distance
      * between the center and the radius point.
      * This function is used in {@link Angle}.
      *
+     * @name autoRadius
+     * @memberof Sector.prototype
+     * @function
      * @returns {Number} returns a radius value in user coordinates.
+     * @private
      */
     el.autoRadius = function () {
         var r1 = 20 / el.board.unitX, // 20px
@@ -1164,10 +1168,10 @@ JXG.createAngle = function (board, parents, attributes) {
          * </pre>
          *
          * @name setAngle
+         * @memberof Angle.prototype
          * @function
          * @param {Number|Function} val Number or Function which returns the size of the angle in Radians
          * @returns {Object} Pointer to the angle element..
-         * @memberOf Angle.prototype
          * @see Angle#free
          *
          * @example
@@ -1303,8 +1307,8 @@ JXG.createAngle = function (board, parents, attributes) {
          * "setAngle()" previously. The anglepoint is set to a free point.
          * @name free
          * @function
+         * @memberof Angle.prototype
          * @returns {Object} Pointer to the angle element..
-         * @memberOf Angle.prototype
          * @see Angle#setAngle
          */
         el.free = function () {
@@ -1416,6 +1420,7 @@ JXG.createAngle = function (board, parents, attributes) {
         }
     };
 
+    attrsub = Type.copyAttributes(attributes, board.options, "angle", "dot");
     /**
      * Indicates a right angle. Invisible by default, use <tt>dot.visible: true</tt> to show.
      * Though this dot indicates a right angle, it can be visible even if the angle is not a right
@@ -1424,7 +1429,6 @@ JXG.createAngle = function (board, parents, attributes) {
      * @name dot
      * @memberOf Angle.prototype
      */
-    attrsub = Type.copyAttributes(attributes, board.options, "angle", "dot");
     el.dot = board.create(
         "point",
         [
