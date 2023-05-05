@@ -52,7 +52,6 @@ JXG.Point3D = function (view, F, slide, attributes) {
     this.constructor(view.board, attributes, Const.OBJECT_TYPE_POINT3D, Const.OBJECT_CLASS_3D);
     this.constructor3D(view, "point3d");
 
-    this.id = this.view.board.setId(this, "P3D");
     this.board.finalizeAdding(this);
 
     /**

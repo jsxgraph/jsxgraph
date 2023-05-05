@@ -45,11 +45,8 @@
         /** @lends JXG.GraphReader.prototype */ {
             parseData: function (directed) {
                 var splitted,
-                    n,
-                    i,
-                    j,
-                    tmp,
-                    tmp2,
+                    n, i, j,
+                    tmp, tmp2,
                     nodes = [],
                     adjMatrix = [],
                     nodenumbers = {},
@@ -171,13 +168,7 @@
             },
 
             drawGraph: function (graph) {
-                var i,
-                    j,
-                    s,
-                    t,
-                    p,
-                    x,
-                    y,
+                var i, j, s, t, p, x, y,
                     n = graph.n,
                     nodes = graph.nodes,
                     adjMatrix = graph.adjMatrix;

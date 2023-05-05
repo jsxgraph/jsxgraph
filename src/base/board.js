@@ -4893,8 +4893,8 @@ JXG.extend(
                 // remove the object itself from our control structures
                 if (object._pos > -1) {
                     this.objectsList.splice(object._pos, 1);
-                    for (el = object._pos; el < this.objectsList.length; el++) {
-                        this.objectsList[el]._pos--;
+                    for (i = object._pos; i < this.objectsList.length; i++) {
+                        this.objectsList[i]._pos--;
                     }
                 } else if (object.type !== Const.OBJECT_TYPE_TURTLE) {
                     JXG.debug(
@@ -5006,40 +5006,16 @@ JXG.extend(
             var box,
                 oldWidth, oldHeight,
                 oX, oY;
-                // w, h, cx, cy;
-                // box_act,
-                // shift_x = 0,
-                // shift_y = 0;
 
             oldWidth = this.canvasWidth;
             oldHeight = this.canvasHeight;
 
             if (!dontSetBoundingBox) {
-                // box_act = this.getBoundingBox();
                 box = this.getBoundingBox();    // This is the actual bounding box.
             }
 
-            this.canvasWidth = parseFloat(canvasWidth);
-            this.canvasHeight = parseFloat(canvasHeight);
-
-            // if (!dontSetBoundingBox) {
-            //     box     = this.attr.boundingbox;    // This is the intended bounding box.
-
-            //     // The shift values compensate the follow-up correction
-            //     // in setBoundingBox in case of "this.keepaspectratio==true"
-            //     // Otherwise, shift_x and shift_y will be zero.
-            //     // Obsolet since setBoundingBox centers in case of "this.keepaspectratio==true".
-            //     // shift_x = box_act[0] - box[0] / this.zoomX;
-            //     // shift_y = box_act[1] - box[1] / this.zoomY;
-
-            //     cx = (box[2] + box[0]) * 0.5; // + shift_x;
-            //     cy = (box[3] + box[1]) * 0.5; // + shift_y;
-
-            //     w = (box[2] - box[0]) * 0.5 / this.zoomX;
-            //     h = (box[1] - box[3]) * 0.5 / this.zoomY;
-
-            //     box = [cx - w, cy + h, cx + w, cy - h];
-            // }
+            this.canvasWidth = Math.max(parseFloat(canvasWidth), Mat.eps);
+            this.canvasHeight = Math.max(parseFloat(canvasHeight), Mat.eps);
 
             if (!dontset) {
                 this.containerObj.style.width = this.canvasWidth + "px";

@@ -42,6 +42,7 @@
 import JXG from "./jxg";
 import Env from "./utils/env";
 import Type from "./utils/type";
+import Mat from "./math/math.js";
 import Board from "./base/board";
 import FileReader from "./reader/file";
 import Options from "./options";
@@ -304,21 +305,14 @@ JXG.JSXGraph = {
      * @see JXG.AbstractRenderer#drawZoomBar
      */
     initBoard: function (box, attributes) {
-        var originX,
-            originY,
-            unitX,
-            unitY,
+        var originX, originY,
+            unitX, unitY,
             renderer,
             offX = 0,
             offY = 0,
-            w,
-            h,
-            dimensions,
-            bbox,
-            attr,
-            axattr,
-            axattr_x,
-            axattr_y,
+            w, h,
+            dimensions, bbox,
+            attr, axattr, axattr_x, axattr_y,
             board;
 
         attributes = attributes || {};
@@ -346,8 +340,11 @@ JXG.JSXGraph = {
                 bbox[3] = attr.maxboundingbox[3];
             }
 
-            w = parseInt(dimensions.width, 10);
-            h = parseInt(dimensions.height, 10);
+            // Size of HTML div.
+            // If zero, the size is set to a small value to avoid
+            // division by zero.
+            w = Math.max(parseInt(dimensions.width, 10), Mat.eps);
+            h = Math.max(parseInt(dimensions.height, 10), Mat.eps);
 
             if (Type.exists(bbox) && attr.keepaspectratio) {
                 /*

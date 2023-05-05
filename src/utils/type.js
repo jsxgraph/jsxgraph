@@ -1050,7 +1050,7 @@ JXG.extend(
                 return obj;
             }
 
-            // missing hasOwnProperty is on purpose in this function
+            // Missing hasOwnProperty is on purpose in this function
             if (this.isArray(obj)) {
                 c = [];
                 for (i = 0; i < obj.length; i++) {

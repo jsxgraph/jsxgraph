@@ -1982,15 +1982,47 @@ JXG.extend(
          * @param {Boolean} ignoreTexts If true, the foreignObject tag is set to display=none.
          * This is necessary for older versions of Safari. Default: false
          * @returns {String}  data URI string
+         * 
+         * @example
+         * var A = board.create('point', [2, 2]);
+         * 
+         * var txt = board.renderer.dumpToDataURI(false);
+         * // txt consists of a string of the form
+         * // data:image/svg+xml;base64,PHN2Zy. base64 encoded SVG..+PC9zdmc+
+         * // Behind the comma, there is the base64 encoded SVG code
+         * // which is decoded with atob().
+         * // The call of decodeURIComponent(escape(...)) is necessary
+         * // to handle unicode strings correctly.
+         * var ar = txt.split(',');
+         * document.getElementById('output').value = decodeURIComponent(escape(atob(ar[1])));
+         * 
+         * </pre><div id="JXG1bad4bec-6d08-4ce0-9b7f-d817e8dd762d" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <textarea id="output2023" rows="5" cols="50"></textarea>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG1bad4bec-6d08-4ce0-9b7f-d817e8dd762d',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *     var A = board.create('point', [2, 2]);
+         *     
+         *     var txt = board.renderer.dumpToDataURI(false);
+         *     // txt consists of a string of the form
+         *     // data:image/svg+xml;base64,PHN2Zy. base64 encoded SVG..+PC9zdmc+
+         *     // Behind the comma, there is the base64 encoded SVG code
+         *     // which is decoded with atob().
+         *     // The call of decodeURIComponent(escape(...)) is necessary
+         *     // to handle unicode strings correctly.
+         *     var ar = txt.split(',');
+         *     document.getElementById('output2023').value = decodeURIComponent(escape(atob(ar[1])));
+         * 
+         *     })();
+         * 
+         * </script><pre>
+         * 
          */
         dumpToDataURI: function (ignoreTexts) {
             var svgRoot = this.svgRoot,
                 btoa = window.btoa || Base64.encode,
-                svg,
-                virtualNode,
-                doc,
-                i,
-                len,
+                svg, i, len,
                 values = [];
 
             // Move all HTML tags (beside the SVG root) of the container

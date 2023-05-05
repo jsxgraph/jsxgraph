@@ -1571,12 +1571,16 @@ JXG.Options = {
 
         /**
          * A private element will be inaccessible in certain environments, e.g. a graphical user interface.
+         * 
+         * @name JXG.GeometryElement#priv
+         * @type Boolean
          * @default false
          */
         priv: false,
 
         /**
          * Display layer which will contain the element.
+         * @name JXG.GeometryElement#layer
          * @see JXG.Options#layer
          * @default See {@link JXG.Options#layer}
          */
@@ -1836,14 +1840,15 @@ JXG.Options = {
          */
         precision: 'inherit',
 
-        /*draft options */
+        /**
+         * If draft.draft: true the element will be drawn in grey scale colors (as default) 
+         * to visualize that it's only a draft.
+         * 
+         * @name JXG.GeometryElement#draft
+         * @type Object
+         * @default {@link JXG.Options.elements.draft#draft}
+         */
         draft: {
-            /**
-             * If true the element will be drawn in grey scale colors to visualize that it's only a draft.
-             * @type Boolean
-             * @name JXG.GeometryElement#draft
-             * @default {@link JXG.Options.elements.draft#draft}
-             */
             draft: false,
             strokeColor: '#565656',
             fillColor: '#565656',
@@ -1853,6 +1858,8 @@ JXG.Options = {
         },
 
         /**
+         * @name JXG.GeometryElement#isLabel
+         * @default false
          * @private
          * By default, an element is not a label. Do not change this.
          */
@@ -2055,7 +2062,7 @@ JXG.Options = {
         /**
          * Minimum distance in pixel of equidistant ticks in case insertTicks==true.
          * @name Ticks#minTicksDistance
-         * @type: Number
+         * @type Number
          * @default 10
          * @see Ticks#insertTicks
          */
@@ -2322,7 +2329,7 @@ JXG.Options = {
          * Possible other values are '<' and '>'. These faces are used in
          * {@link JXG.Hatch} for hatch marking parallel lines.
          * @type String
-         * @name{Ticks#face}
+         * @name Ticks#face
          * @see hatch
          * @default '|'
          * @example
@@ -2561,6 +2568,8 @@ JXG.Options = {
         highlightFillOpacity: 0.3,
 
         /**
+         * @name Angle#radiuspoint
+         * @type Object
          * @deprecated
          */
         radiuspoint: {
@@ -2570,6 +2579,8 @@ JXG.Options = {
         },
 
         /**
+         * @name Angle#pointsquare
+         * @type Object
          * @deprecated
          */
         pointsquare: {
@@ -2578,6 +2589,12 @@ JXG.Options = {
             name: ''
         },
 
+        /**
+         * Attributes of the dot point marking right angles.
+         * @name Angle#dot
+         * @type Object
+         * @default {face: 'o', size: 2}
+         */
         dot: {
             visible: false,
             strokeColor: 'none',
@@ -3525,14 +3542,22 @@ JXG.Options = {
         /* snap to grid options */
 
         /**
+         * @name Grid#snapToGrid
+         * @type Boolean
          * @deprecated
          */
         snapToGrid: false,
+
         /**
+         * @name Grid#snapSizeX
+         * @type Boolean
          * @deprecated
          */
         snapSizeX: 10,
+
         /**
+         * @name Grid#snapSizeY
+         * @type Boolean
          * @deprecated
          */
         snapSizeY: 10
@@ -3550,11 +3575,11 @@ JXG.Options = {
          * @visprop
          */
 
-        /**
-         *
-         * These affect the DOM element input type="range".
-         * The other attributes affect the DOM element div containing the range element.
-         */
+        // /**
+        //  *
+        //  * These affect the DOM element input type="range".
+        //  * The other attributes affect the DOM element div containing the range element.
+        //  */
         widthRange: 100,
         widthOut: 34,
         step: 0.01,
@@ -3727,7 +3752,7 @@ JXG.Options = {
          *
          * @type Number
          * @default -20
-         * @name infobox#distanceX
+         * @name JXG.Board.infobox#distanceX
          * @visprop
          */
         distanceX: -20,
@@ -3737,7 +3762,7 @@ JXG.Options = {
          *
          * @type Number
          * @default 25
-         * @name infobox#distanceX
+         * @name JXG.Board.infobox#distanceY
          * @visprop
          */
         distanceY: 25,
@@ -4006,7 +4031,7 @@ JXG.Options = {
 
         /**
          * Default style of a legend element. The only possible value is 'vertical'.
-         * @name: Legend#style
+         * @name Legend#style
          * @type String
          * @default 'vertical'
          */
@@ -4014,7 +4039,7 @@ JXG.Options = {
 
         /**
          * Label names of a legend element.
-         * @name: Legend#labels
+         * @name Legend#labels
          * @type Array
          * @default "['1', '2', '3', '4', '5', '6', '7', '8']"
          */
@@ -4022,7 +4047,7 @@ JXG.Options = {
 
         /**
          * (Circular) array of label colors.
-         * @name: Legend#colors
+         * @name Legend#colors
          * @type Array
          * @default "['#B02B2C', '#3F4C6B', '#C79810', '#D15600', '#FFFF88', '#c3d9ff', '#4096EE', '#008C00']"
          */
@@ -4030,7 +4055,7 @@ JXG.Options = {
 
         /**
          * Height (in px) of one legend entry
-         * @name: Legend#rowHeight
+         * @name Legend#rowHeight
          * @type Number
          * @default 20
          *
@@ -4209,7 +4234,7 @@ JXG.Options = {
          * ends exactly at the border, if negative there is a margin to the inside, if positive the line
          * ends outside of the canvas (which is invisible).
          *
-         * @name: Line#margin
+         * @name Line#margin
          * @type Number
          * @default 0
          */
@@ -4272,8 +4297,9 @@ JXG.Options = {
         /**
          * Attributes for ticks of the line.
          *
-         * @type Ticks
          * @name Line#ticks
+         * @type Object
+         * @see Ticks
          */
         ticks: {
             drawLabels: true,
@@ -4294,8 +4320,9 @@ JXG.Options = {
         /**
          * Attributes for the line label.
          *
-         * @type Label
+         * @type Object
          * @name Line#label
+         * @see Label
          */
         label: {
             position: 'llft'
@@ -5019,7 +5046,7 @@ JXG.Options = {
          * if a circle is the mirror element and the transformation type is 'Euclidean'
          *
          * @type Point
-         * @name mirrorelement#center
+         * @name Mirrorelement#center
          */
         center: {},
 
@@ -5030,7 +5057,7 @@ JXG.Options = {
          * otherwise it is a conic section.
          *
          * @type String
-         * @name reflection#type
+         * @name Reflection#type
          * @default 'Euclidean'
          */
         type: 'Euclidean'
@@ -5473,7 +5500,7 @@ JXG.Options = {
         /**
          * If true, 'up' events on the baseline will trigger slider moves.
          *
-         * @type: Boolean
+         * @type Boolean
          * @name Slider#moveOnUp
          * @default true
          */

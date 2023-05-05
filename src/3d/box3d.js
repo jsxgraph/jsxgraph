@@ -237,6 +237,9 @@ JXG.createMesh3D = function (board, parents, attr) {
         el;
 
     el = view.create("curve", [[], []], attr);
+    /**
+     * @ignore
+     */
     el.updateDataArray = function () {
         var s1 = range1[0],
             e1 = range1[1],

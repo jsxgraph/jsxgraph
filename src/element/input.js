@@ -40,6 +40,9 @@ import JXG from "../jxg";
 import Env from "../utils/env";
 import Type from "../utils/type";
 
+/**
+ * @ignore
+ */
 var priv = {
     InputInputEventHandler: function (evt) {
         this._value = this.rendNodeInput.value;

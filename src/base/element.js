@@ -1058,8 +1058,8 @@ JXG.extend(
         },
 
         /**
-         * Sets the value of property <tt>property</tt> to <tt>value</tt>.
-         * @param {String} property The property's name.
+         * Sets the value of attribute <tt>attribute</tt> to <tt>value</tt>.
+         * @param {String} attribute The attribute's name.
          * @param value The new value
          * @private
          */
@@ -1195,7 +1195,7 @@ JXG.extend(
          *
          * @function
          * @example
-         * // Set property directly on creation of an element using the attributes object parameter
+         * // Set attribute directly on creation of an element using the attributes object parameter
          * var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-1, 5, 5, 1]};
          * var p = board.create('point', [2, 2], {visible: false});
          *
@@ -1205,10 +1205,10 @@ JXG.extend(
          *     visible: true
          * });
          */
-        setAttribute: function (attributes) {
+        setAttribute: function (attr) {
             var i, j, le, key, value, arg,
                 opacity, pair, oldvalue,
-                properties = {};
+                attributes = {};
 
             // Normalize the user input
             for (i = 0; i < arguments.length; i++) {
@@ -1216,23 +1216,23 @@ JXG.extend(
                 if (Type.isString(arg)) {
                     // pairRaw is string of the form 'key:value'
                     pair = arg.split(":");
-                    properties[Type.trim(pair[0])] = Type.trim(pair[1]);
+                    attributes[Type.trim(pair[0])] = Type.trim(pair[1]);
                 } else if (!Type.isArray(arg)) {
                     // pairRaw consists of objects of the form {key1:value1,key2:value2,...}
-                    JXG.extend(properties, arg);
+                    JXG.extend(attributes, arg);
                 } else {
                     // pairRaw consists of array [key,value]
-                    properties[arg[0]] = arg[1];
+                    attributes[arg[0]] = arg[1];
                 }
             }
 
             // Handle shortcuts
-            properties = this.resolveShortcuts(properties);
+            attributes = this.resolveShortcuts(attributes);
 
-            for (i in properties) {
-                if (properties.hasOwnProperty(i)) {
+            for (i in attributes) {
+                if (attributes.hasOwnProperty(i)) {
                     key = i.replace(/\s+/g, "").toLowerCase();
-                    value = properties[i];
+                    value = attributes[i];
 
                     // This handles the subobjects, if the key:value pairs are contained in an object.
                     // Example:
@@ -1460,7 +1460,7 @@ JXG.extend(
                 }
             }
 
-            this.triggerEventHandlers(["attribute"], [properties, this]);
+            this.triggerEventHandlers(["attribute"], [attributes, this]);
 
             if (!Type.evaluate(this.visProp.needsregularupdate)) {
                 this.board.fullUpdate();

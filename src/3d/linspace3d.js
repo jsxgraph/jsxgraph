@@ -59,7 +59,6 @@ JXG.Line3D = function (view, point, direction, range, attributes) {
     this.constructor(view.board, attributes, Const.OBJECT_TYPE_LINE3D, Const.OBJECT_CLASS_3D);
     this.constructor3D(view, 'line3d');
 
-    this.id = this.view.board.setId(this, 'L3D');
     this.board.finalizeAdding(this);
 
     /**
@@ -328,7 +327,6 @@ JXG.Plane3D = function (view, point, dir1, range1, dir2, range2, attributes) {
     this.constructor(view.board, attributes, Const.OBJECT_TYPE_PLANE3D, Const.OBJECT_CLASS_3D);
     this.constructor3D(view, 'plane3d');
 
-    this.id = this.view.board.setId(this, 'PL3D');
     this.board.finalizeAdding(this);
 
     /**
@@ -660,6 +658,10 @@ JXG.createPlane3D = function (board, parents, attributes) {
 
     attr = el.setAttr2D(attr);
     el.element2D = view.create('curve', [[], []], attr);
+
+    /**
+     * @ignore
+     */
     el.element2D.updateDataArray = function () {
         var ret = el.updateDataArray();
         this.dataX = ret.X;

@@ -109,7 +109,7 @@ JXG.extend(
             }
             r = parseFloat(Type.evaluate(this.visProp.size));
             if (unit === "user") {
-                r *= Math.sqrt(this.board.unitX * this.board.unitY);
+                r *= Math.sqrt(Math.abs(this.board.unitX * this.board.unitY));
             }
 
             r += parseFloat(Type.evaluate(this.visProp.strokewidth)) * 0.5;

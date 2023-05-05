@@ -234,12 +234,15 @@ JXG.extend(Options, {
         tabindex: -1,
         strokeWidth: 1,
         numberPointsHigh: 200
-        // visible: true
 
         /**#@-*/
     },
 
     mesh3d: {
+        /**#@+
+         * @visprop
+         */
+
         strokeWidth: 1,
         strokeColor: "#9a9a9a",
         strokeOpacity: 0.6,
@@ -249,6 +252,7 @@ JXG.extend(Options, {
         tabindex: null,
 
         visible: "inherit"
+        /**#@-*/
     },
 
     line3d: {
@@ -256,8 +260,6 @@ JXG.extend(Options, {
         strokeColor: "black",
         fixed: true,
         tabindex: null,
-        // visible: true,
-
         gradient: "linear",
         gradientSecondColor: "#ffffff",
 
@@ -278,7 +280,6 @@ JXG.extend(Options, {
         gradientAngle: Math.PI,
         fillColor: "#a7a7a7",
         fillOpacity: 0.6,
-        // visible: true,
 
         point: { visible: false, name: "", fixed: true }
     },
@@ -290,7 +291,6 @@ JXG.extend(Options, {
         gradientSecondColor: "#555555",
         fillColor: "yellow",
         highlightStrokeColor: "#555555"
-        // visible: true
     },
 
     surface3d: {
@@ -314,9 +314,7 @@ JXG.extend(Options, {
          * @type Number
          * @name ParametricSurface3D#stepsV
          */
-        stepsV: 30,
-
-        // visible: true
+        stepsV: 30
 
         /**#@-*/
     },

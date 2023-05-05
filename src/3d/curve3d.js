@@ -49,9 +49,8 @@ import Type from "../utils/type";
  */
 JXG.Curve3D = function (view, F, X, Y, Z, range, attributes) {
     this.constructor(view.board, attributes, Const.OBJECT_TYPE_CURVE3D, Const.OBJECT_CLASS_3D);
-    this.constructor3D(view, "surface3d");
+    this.constructor3D(view, "curve3d");
 
-    this.id = this.view.board.setId(this, "S3D");
     this.board.finalizeAdding(this);
 
     this.F = F;
@@ -189,6 +188,9 @@ JXG.createCurve3D = function (board, parents, attributes) {
 
     attr = el.setAttr2D(attr);
     el.element2D = view.create("curve", [[], []], attr);
+    /**
+     * @ignore
+     */
     el.element2D.updateDataArray = function () {
         var ret = el.updateDataArray();
         this.dataX = ret.X;
