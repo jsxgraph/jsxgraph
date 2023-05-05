@@ -240,12 +240,13 @@ constants = /** @lends JXG */ {
     GENTYPE_CTX_TYPE_I: 79,
     GENTYPE_CTX_HASINNERPOINTS: 80,
     GENTYPE_CTX_SNAPWIDTH: 81,
-    GENTYPE_CTX_SNAPTOGRID: 82
+    GENTYPE_CTX_SNAPTOGRID: 82,
+    GENTYPE_CTX_STROKEDASH: 83
 };
 
 JXG.extendConstants(JXG, constants);
 
 export default constants;
 // const COORDS_BY_SCREEN = constants.COORDS_BY_SCREEN;
-// export {constants as default, 
+// export {constants as default,
 //         COORDS_BY_SCREEN};
