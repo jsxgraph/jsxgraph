@@ -209,14 +209,11 @@ JXG.extend(
          * @private
          */
         hasPoint: function (x, y) {
-            var prec,
-                type,
+            var prec, type,
                 mp = this.center.coords.usrCoords,
                 p = new Coords(Const.COORDS_BY_SCREEN, [x, y], this.board),
                 r = this.Radius(),
-                dx,
-                dy,
-                dist;
+                dx, dy, dist;
 
             if (Type.isObject(Type.evaluate(this.visProp.precision))) {
                 type = this.board._inputDevice;
@@ -228,9 +225,10 @@ JXG.extend(
             dx = mp[1] - p.usrCoords[1];
             dy = mp[2] - p.usrCoords[2];
             dist = Math.sqrt(dx * dx + dy * dy);
+
             // We have to use usrCoords, since Radius is available in usrCoords only.
             prec += Type.evaluate(this.visProp.strokewidth) * 0.5;
-            prec /= Math.sqrt(this.board.unitX * this.board.unitY);
+            prec /= Math.sqrt(Math.abs(this.board.unitX * this.board.unitY));
 
             if (Type.evaluate(this.visProp.hasinnerpoints)) {
                 return dist < r + prec;

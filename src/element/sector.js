@@ -530,7 +530,7 @@ JXG.createSector = function (board, parents, attributes) {
             // 'inherit'
             prec = this.board.options.precision.hasPoint;
         }
-        prec /= Math.min(this.board.unitX, this.board.unitY);
+        prec /= Math.min(Math.abs(this.board.unitX), Math.abs(this.board.unitY));
         has = Math.abs(dist - r) < prec;
         if (has) {
             angle = Geometry.rad(this.point2, this.center, checkPoint.usrCoords.slice(1));

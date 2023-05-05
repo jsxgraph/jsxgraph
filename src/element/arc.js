@@ -287,7 +287,7 @@ JXG.createArc = function (board, parents, attributes) {
             // 'inherit'
             prec = this.board.options.precision.hasPoint;
         }
-        prec /= Math.min(this.board.unitX, this.board.unitY);
+        prec /= Math.min(Math.abs(this.board.unitX), Math.abs(this.board.unitY));
         checkPoint = new Coords(Const.COORDS_BY_SCREEN, [x, y], this.board);
 
         if (this.transformations.length > 0) {

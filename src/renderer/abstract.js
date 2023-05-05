@@ -323,7 +323,7 @@ JXG.extend(
 
             if (!isNaN(el.coords.scrCoords[2] + el.coords.scrCoords[1])) {
                 if (unit === "user") {
-                    size *= Math.sqrt(el.board.unitX * el.board.unitY);
+                    size *= Math.sqrt(Math.abs(el.board.unitX * el.board.unitY));
                 }
                 size *= !el.board || !zoom ? 1.0 : Math.sqrt(el.board.zoomX * el.board.zoomY);
                 s1 = size === 0 ? 0 : size + 1;
