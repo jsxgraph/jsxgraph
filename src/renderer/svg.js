@@ -133,7 +133,7 @@ JXG.SVGRenderer = function (container, dim) {
      * @returns DOM node to be added to this.defs.
      * @private
      */
-    this.createShadowFilter = function(id, rgb, opacity, blend, blur, offset) {
+    this.createShadowFilter = function (id, rgb, opacity, blend, blur, offset) {
         var filter = this.container.ownerDocument.createElementNS(this.svgNamespace, 'filter'),
             feOffset, feColor, feGaussianBlur, feBlend,
             mat;
@@ -162,9 +162,9 @@ JXG.SVGRenderer = function (container, dim) {
             rgb[1] /= 255;
             rgb[2] /= 255;
             mat = blend + ' 0 0 0 ' + rgb[0] +
-                      '  0 ' + blend + ' 0 0 ' + rgb[1] +
-                      '  0 0 ' + blend + ' 0 ' + rgb[2] +
-                      '  0 0 0 ' + opacity + ' 0';
+                '  0 ' + blend + ' 0 0 ' + rgb[1] +
+                '  0 0 ' + blend + ' 0 ' + rgb[2] +
+                '  0 0 0 ' + opacity + ' 0';
             feColor.setAttributeNS(null, 'values', mat);
         }
         filter.appendChild(feColor);
@@ -188,10 +188,10 @@ JXG.SVGRenderer = function (container, dim) {
     this.defs.appendChild(this.createShadowFilter(this.container.id + '_' + 'f1', 'none', 1, 0.1, 3, [5, 5]));
 
     /**
-     * Combine arguments to an URL string of the form 
+     * Combine arguments to an URL string of the form
      * url(#...)
      * Masks the container id.
-     * 
+     *
      * @params {Objects} parts of the string
      * @returns URL string
      * @private
@@ -199,9 +199,9 @@ JXG.SVGRenderer = function (container, dim) {
      * this.toURL('aaa', '_', 'bbb', 'TriangleEnd')
      * // Output:
      * // url(#xxx_bbbTriangleEnd)
-     * 
+     *
      */
-    this.toURL = function(){
+    this.toURL = function () {
         // ES6 would be [...arguments].join()
         var str = Array.prototype.slice.call(arguments).join('');
         // Mask special symbols like '/' and '\' in id
@@ -239,20 +239,6 @@ JXG.SVGRenderer = function (container, dim) {
     } catch (e) {
         this.supportsForeignObject = false;
     }
-
-    /**
-     * Defines dash patterns. Defined styles are: <ol>
-     * <li value="-1"> 2px dash, 2px space</li>
-     * <li> 5px dash, 5px space</li>
-     * <li> 10px dash, 10px space</li>
-     * <li> 20px dash, 20px space</li>
-     * <li> 20px dash, 10px space, 10px dash, 10px dash</li>
-     * <li> 20px dash, 5px space, 10px dash, 5px space</li></ol>
-     * @type Array
-     * @default ['2, 2', '5, 5', '10, 10', '20, 20', '20, 10, 10, 10', '20, 5, 10, 5']
-     * @see https://www.w3.org/TR/SVG2/painting.html#StrokeProperties
-     */
-    this.dashArray = ["2, 2", "5, 5", "10, 10", "20, 20", "20, 10, 10, 10", "20, 5, 10, 5"];
 };
 
 JXG.SVGRenderer.prototype = new AbstractRenderer();
@@ -598,8 +584,8 @@ JXG.extend(
                 null,
                 "style",
                 "font-family:Arial,Helvetica,sans-serif; font-size:" +
-                    fontsize +
-                    "px; fill:#356AA0;  opacity:0.3;"
+                fontsize +
+                "px; fill:#356AA0;  opacity:0.3;"
             );
             t = this.container.ownerDocument.createTextNode(str);
             node.appendChild(t);
@@ -1307,10 +1293,16 @@ JXG.extend(
         // documented in JXG.AbstractRenderer
         setDashStyle: function (el) {
             var dashStyle = Type.evaluate(el.visProp.dash),
+                ds = Type.evaluate(el.visProp.dashscale),
+                sw = ds ? 0.5 * Type.evaluate(el.visProp.strokewidth) : 1,
                 node = el.rendNode;
 
             if (dashStyle > 0) {
-                node.setAttributeNS(null, "stroke-dasharray", this.dashArray[dashStyle - 1]);
+                node.setAttributeNS(null, "stroke-dasharray",
+                    // sw could distinguish highlighting or not.
+                    // But it seems to preferable to ignore this.
+                    this.dashArray[dashStyle - 1].map(function (x) { return x * sw; }).join(',')
+                );
             } else {
                 if (node.hasAttributeNS(null, "stroke-dasharray")) {
                     node.removeAttributeNS(null, "stroke-dasharray");
@@ -1428,9 +1420,9 @@ JXG.extend(
                 null,
                 "style",
                 "stop-color:" +
-                    Type.evaluate(el.visProp.gradientsecondcolor) +
-                    ";stop-opacity:" +
-                    Type.evaluate(el.visProp.gradientsecondopacity)
+                Type.evaluate(el.visProp.gradientsecondcolor) +
+                ";stop-opacity:" +
+                Type.evaluate(el.visProp.gradientsecondopacity)
             );
             node2.setAttributeNS(
                 null,
@@ -1500,7 +1492,7 @@ JXG.extend(
                 len = props.length;
             }
             for (i = 0; i < len; i++) {
-                transitionArr.push(props[i] + ' ' + duration+ 'ms');
+                transitionArr.push(props[i] + ' ' + duration + 'ms');
             }
             transitionStr = transitionArr.join(', ');
 
@@ -1880,24 +1872,24 @@ JXG.extend(
                     null,
                     "d",
                     "M " +
-                        (x - d) +
-                        " " +
-                        y +
-                        " " +
-                        "L " +
-                        (x + d) +
-                        " " +
-                        y +
-                        " " +
-                        "M " +
-                        x +
-                        " " +
-                        (y - d) +
-                        " " +
-                        "L " +
-                        x +
-                        " " +
-                        (y + d)
+                    (x - d) +
+                    " " +
+                    y +
+                    " " +
+                    "L " +
+                    (x + d) +
+                    " " +
+                    y +
+                    " " +
+                    "M " +
+                    x +
+                    " " +
+                    (y - d) +
+                    " " +
+                    "L " +
+                    x +
+                    " " +
+                    (y + d)
                 );
                 this.updateEllipsePrim(this.touchpoints[2 * i + 1], pos[0], pos[1], 25, 25);
             }
@@ -1982,10 +1974,10 @@ JXG.extend(
          * @param {Boolean} ignoreTexts If true, the foreignObject tag is set to display=none.
          * This is necessary for older versions of Safari. Default: false
          * @returns {String}  data URI string
-         * 
+         *
          * @example
          * var A = board.create('point', [2, 2]);
-         * 
+         *
          * var txt = board.renderer.dumpToDataURI(false);
          * // txt consists of a string of the form
          * // data:image/svg+xml;base64,PHN2Zy. base64 encoded SVG..+PC9zdmc+
@@ -1995,7 +1987,7 @@ JXG.extend(
          * // to handle unicode strings correctly.
          * var ar = txt.split(',');
          * document.getElementById('output').value = decodeURIComponent(escape(atob(ar[1])));
-         * 
+         *
          * </pre><div id="JXG1bad4bec-6d08-4ce0-9b7f-d817e8dd762d" class="jxgbox" style="width: 300px; height: 300px;"></div>
          * <textarea id="output2023" rows="5" cols="50"></textarea>
          * <script type="text/javascript">
@@ -2003,7 +1995,7 @@ JXG.extend(
          *         var board = JXG.JSXGraph.initBoard('JXG1bad4bec-6d08-4ce0-9b7f-d817e8dd762d',
          *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
          *     var A = board.create('point', [2, 2]);
-         *     
+         *
          *     var txt = board.renderer.dumpToDataURI(false);
          *     // txt consists of a string of the form
          *     // data:image/svg+xml;base64,PHN2Zy. base64 encoded SVG..+PC9zdmc+
@@ -2013,11 +2005,11 @@ JXG.extend(
          *     // to handle unicode strings correctly.
          *     var ar = txt.split(',');
          *     document.getElementById('output2023').value = decodeURIComponent(escape(atob(ar[1])));
-         * 
+         *
          *     })();
-         * 
+         *
          * </script><pre>
-         * 
+         *
          */
         dumpToDataURI: function (ignoreTexts) {
             var svgRoot = this.svgRoot,

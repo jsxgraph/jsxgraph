@@ -157,6 +157,37 @@ JXG.AbstractRenderer = function () {
      * @private
      */
     this.supportsForeignObject = false;
+
+    /**
+     * Defines dash patterns. Sizes are in pixel.
+     * Defined styles are:
+     * <ol>
+     * <li> 2 dash, 2 space</li>
+     * <li> 5 dash, 5 space</li>
+     * <li> 10 dash, 10 space</li>
+     * <li> 20 dash, 20 space</li>
+     * <li> 20 dash, 10 space, 10 dash, 10 space</li>
+     * <li> 20 dash, 5 space, 10 dash, 5 space</li>
+     * </ol>
+     * This means, the numbering is <b>1-based</b>.
+     * Solid lines are set with dash:0.
+     * If the object's attribute "dashScale:true" the dash pattern is multiplied by
+     * strokeWidth / 2.
+     *
+     * @type Array
+     * @default [[2, 2], [5, 5], [10, 10], [20, 20], [20, 10, 10, 10], [20, 5, 10, 5]]
+     * @see JXG.GeometryElement#dash
+     * @see JXG.GeometryElement#dashScale
+     */
+    this.dashArray = [
+        [2, 2],
+        [5, 5],
+        [10, 10],
+        [20, 20],
+        [20, 10, 10, 10],
+        [20, 5, 10, 5]
+    ];
+
 };
 
 JXG.extend(

@@ -76,14 +76,7 @@ JXG.CanvasRenderer = function (container, dim) {
         }
 
         this.container.innerHTML = [
-            '<canvas id="',
-            this.canvasId,
-            '" width="',
-            dim.width,
-            'px" height="',
-            dim.height,
-            'px"><',
-            "/canvas>"
+            '<canvas id="', this.canvasId, '" width="', dim.width, 'px" height="', dim.height, 'px"></canvas>'
         ].join("");
         this.canvasRoot = this.container.ownerDocument.getElementById(this.canvasId);
         this.canvasRoot.style.display = "block";
@@ -107,15 +100,6 @@ JXG.CanvasRenderer = function (container, dim) {
                 '    JXG.createCanvas = createCanvas;\n');
         }
     }
-
-    this.dashArray = [
-        [2, 2],
-        [5, 5],
-        [10, 10],
-        [20, 20],
-        [20, 10, 10, 10],
-        [20, 5, 10, 5]
-    ];
 };
 
 JXG.CanvasRenderer.prototype = new AbstractRenderer();
@@ -442,13 +426,19 @@ JXG.extend(
          */
         _stroke: function (el) {
             var context = this.context,
-                ev_dash = Type.evaluate(el.visProp.dash);
+                ev_dash = Type.evaluate(el.visProp.dash),
+                ds = Type.evaluate(el.visProp.dashscale),
+                sw = ds ? 0.5 * Type.evaluate(el.visProp.strokewidth) : 1;
 
             context.save();
 
             if (ev_dash > 0) {
                 if (context.setLineDash) {
-                    context.setLineDash(this.dashArray[ev_dash]);
+                    context.setLineDash(
+                        // sw could distinguish highlighting or not.
+                        // But it seems to preferable to ignore this.
+                        this.dashArray[ev_dash - 1].map(function(x) { return x * sw; })
+                    );
                 }
             } else {
                 this.context.lineDashArray = [];

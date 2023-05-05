@@ -1571,7 +1571,7 @@ JXG.Options = {
 
         /**
          * A private element will be inaccessible in certain environments, e.g. a graphical user interface.
-         * 
+         *
          * @name JXG.GeometryElement#priv
          * @type Boolean
          * @default false
@@ -1592,15 +1592,17 @@ JXG.Options = {
          * <ul><li>0 for a solid line</li>
          * <li>1 for a dotted line</li>
          * <li>2 for a line with small dashes</li>
-
-
          * <li>3 for a line with medium dashes</li>
          * <li>4 for a line with big dashes</li>
          * <li>5 for a line with alternating medium and big dashes and large gaps</li>
          * <li>6 for a line with alternating medium and big dashes and small gaps</li></ul>
+         * The dash patterns are defined in {@link JXG.AbstractRenderer#dashArray}.
+         *
          * @type Number
          * @name JXG.GeometryElement#dash
          * @default 0
+         *
+         * @see JXG.AbstractRenderer#dashArray
          */
         dash: 0,
 
@@ -1841,9 +1843,9 @@ JXG.Options = {
         precision: 'inherit',
 
         /**
-         * If draft.draft: true the element will be drawn in grey scale colors (as default) 
+         * If draft.draft: true the element will be drawn in grey scale colors (as default)
          * to visualize that it's only a draft.
-         * 
+         *
          * @name JXG.GeometryElement#draft
          * @type Object
          * @default {@link JXG.Options.elements.draft#draft}
@@ -1880,7 +1882,18 @@ JXG.Options = {
          * @see JXG.GeometryElement#fixed
          * @see JXG.GeometryElement#visible
          */
-        tabindex: 0
+        tabindex: 0,
+
+        /**
+         * If true, the dash pattern is multiplied by strokeWidth / 2.
+         * @name JXG.GeometryElement#dashScale
+         * @type Boolean
+         * @default false
+         *
+         * @see JXG.GeometryElement#dash
+         * @see JXG.AbstractRenderer#dashArray
+         */
+        dashScale: false
 
         // close the meta tag
         /**#@-*/
