@@ -1595,13 +1595,16 @@ JXG.Options = {
          * <li>3 for a line with medium dashes</li>
          * <li>4 for a line with big dashes</li>
          * <li>5 for a line with alternating medium and big dashes and large gaps</li>
-         * <li>6 for a line with alternating medium and big dashes and small gaps</li></ul>
+         * <li>6 for a line with alternating medium and big dashes and small gaps</li>
+         * <li>7 for a dotted line. Needs {@link JXG.GeometryElement#linecap} set to "round" for round dots.</li>
+         * </ul>
          * The dash patterns are defined in {@link JXG.AbstractRenderer#dashArray}.
          *
          * @type Number
          * @name JXG.GeometryElement#dash
          * @default 0
          *
+         * @see JXG.GeometryElement#linecap
          * @see JXG.AbstractRenderer#dashArray
          */
         dash: 0,

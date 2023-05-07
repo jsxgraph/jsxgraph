@@ -168,6 +168,7 @@ JXG.AbstractRenderer = function () {
      * <li> 20 dash, 20 space</li>
      * <li> 20 dash, 10 space, 10 dash, 10 space</li>
      * <li> 20 dash, 5 space, 10 dash, 5 space</li>
+     * <li> 0 dash, 5 space (dotted line)</li>
      * </ol>
      * This means, the numbering is <b>1-based</b>.
      * Solid lines are set with dash:0.
@@ -175,7 +176,7 @@ JXG.AbstractRenderer = function () {
      * strokeWidth / 2.
      *
      * @type Array
-     * @default [[2, 2], [5, 5], [10, 10], [20, 20], [20, 10, 10, 10], [20, 5, 10, 5]]
+     * @default [[2, 2], [5, 5], [10, 10], [20, 20], [20, 10, 10, 10], [20, 5, 10, 5], [0, 5]]
      * @see JXG.GeometryElement#dash
      * @see JXG.GeometryElement#dashScale
      */
@@ -185,7 +186,8 @@ JXG.AbstractRenderer = function () {
         [10, 10],
         [20, 20],
         [20, 10, 10, 10],
-        [20, 5, 10, 5]
+        [20, 5, 10, 5],
+        [0, 5]
     ];
 
 };
