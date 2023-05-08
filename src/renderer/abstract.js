@@ -985,6 +985,7 @@ JXG.extend(
                     radius * el.board.unitY
                 );
             }
+            this.setLineCap(el);
         },
 
         /* **************************
