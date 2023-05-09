@@ -2128,7 +2128,7 @@
                             } else {
                                 set_str += ", radius: '" + step.args.radius + "'";
                             }
-                        set_str += ">>; ";
+                        set_str += ", hasInnerPoints: true>>; ";
                         reset_str = "remove(" + step.dest_id + "); ";
                         reset_str += "remove(" + step.dest_sub_ids[0] + "); ";
                         break;
