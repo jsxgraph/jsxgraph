@@ -135,7 +135,7 @@ import Type from "../utils/type";
  * var A = board.create('point', [3, -2]),
  *     B = board.create('point', [-2, -2]),
  *     C = board.create('point', [0, 4]);
- * 
+ *
  * var angle = board.create('sector', [B, A, C], {
  *         strokeWidth: 0,
  *         arc: {
@@ -147,7 +147,7 @@ import Type from "../utils/type";
  *       });
  * //angle.arc.setAttribute({firstArrow: false});
  * angle.arc.setAttribute({lastArrow: false});
- * 
+ *
  * </pre><div id="JXGca37b99e-1510-49fa-ac9e-efd60e956104" class="jxgbox" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
  *     (function() {
@@ -156,7 +156,7 @@ import Type from "../utils/type";
  *     var A = board.create('point', [3, -2]),
  *         B = board.create('point', [-2, -2]),
  *         C = board.create('point', [0, 4]);
- *     
+ *
  *     var angle = board.create('sector', [B, A, C], {
  *             strokeWidth: 0,
  *             arc: {
@@ -168,12 +168,12 @@ import Type from "../utils/type";
  *           });
  *     //angle.arc.setAttribute({firstArrow: false});
  *     angle.arc.setAttribute({lastArrow: false});
- * 
+ *
  *     })();
- * 
+ *
  * </script><pre>
- * 
- * 
+ *
+ *
  */
 JXG.createSector = function (board, parents, attributes) {
     var el,
@@ -659,6 +659,20 @@ JXG.createSector = function (board, parents, attributes) {
      * @param {Number, Function} value New radius.
      */
     el.setRadius = function (val) {
+        var analysis,
+            e = Type.evaluate(val);
+
+        if (val === "auto" || e === "auto") {
+            analysis = "auto";
+        } else if (Type.isNumber(val)) {
+            analysis = "number";
+        } else if (Type.isFunction(val) && !Type.isString(e)) {
+            analysis = "function";
+        } else {
+            analysis = "undefined";
+        }
+        this.visProp.radius = analysis;
+
         /**
          * @ignore
          */
@@ -814,12 +828,12 @@ JXG.registerElement("circumcirclesector", JXG.createCircumcircleSector);
  *       a = board.create('minorsector', [p1, p2, p3]);
  * })();
  * </script><pre>
- * 
+ *
  * @example
  * var A = board.create('point', [3, -2]),
  *     B = board.create('point', [-2, -2]),
  *     C = board.create('point', [0, 4]);
- * 
+ *
  * var angle = board.create('minorsector', [B, A, C], {
  *         strokeWidth: 0,
  *         arc: {
@@ -831,8 +845,8 @@ JXG.registerElement("circumcirclesector", JXG.createCircumcircleSector);
  *       });
  * //angle.arc.setAttribute({firstArrow: false});
  * angle.arc.setAttribute({lastArrow: false});
- * 
- * 
+ *
+ *
  * </pre><div id="JXGdddf3c8f-4b0c-4268-8171-8fcd30e71f60" class="jxgbox" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
  *     (function() {
@@ -841,7 +855,7 @@ JXG.registerElement("circumcirclesector", JXG.createCircumcircleSector);
  *     var A = board.create('point', [3, -2]),
  *         B = board.create('point', [-2, -2]),
  *         C = board.create('point', [0, 4]);
- *     
+ *
  *     var angle = board.create('minorsector', [B, A, C], {
  *             strokeWidth: 0,
  *             arc: {
@@ -853,12 +867,12 @@ JXG.registerElement("circumcirclesector", JXG.createCircumcircleSector);
  *           });
  *     //angle.arc.setAttribute({firstArrow: false});
  *     angle.arc.setAttribute({lastArrow: false});
- *     
- * 
+ *
+ *
  *     })();
- * 
+ *
  * </script><pre>
- * 
+ *
  */
 JXG.createMinorSector = function (board, parents, attributes) {
     attributes.selection = "minor";
