@@ -184,8 +184,22 @@ JXG.SVGRenderer = function (container, dim) {
         return filter;
     };
 
-    /* Default shadow filter */
-    this.defs.appendChild(this.createShadowFilter(this.container.id + '_' + 'f1', 'none', 1, 0.1, 3, [5, 5]));
+    /**
+     * Create a "unique" string id from the arguments of the function.
+     * Concatenate all arguments by "_".
+     * "Unique" is achieved by simply prepending the container id.
+     * Do not escape the string.
+     *
+     * If the id is used in an "url()" call it must be eascaped.
+     *
+     * @params {String} one or strings which will be concatenated.
+     * @return {String}
+     * @private
+     */
+    this.uniqName = function() {
+        return this.container.id + '_' +
+            Array.prototype.slice.call(arguments).join('_');
+    };
 
     /**
      * Combine arguments to an URL string of the form
@@ -211,6 +225,9 @@ JXG.SVGRenderer = function (container, dim) {
         return 'url(#' + str + ')';
     };
 
+    /* Default shadow filter */
+    this.defs.appendChild(this.createShadowFilter(this.uniqName('f1'), 'none', 1, 0.1, 3, [5, 5]));
+
     /**
      * JSXGraph uses a layer system to sort the elements on the board. This puts certain types of elements in front
      * of other types of elements. For the order used see {@link JXG.Options.layer}. The number of layers is documented
@@ -233,7 +250,7 @@ JXG.SVGRenderer = function (container, dim) {
         this.foreignObjLayer.setAttribute("y", 0);
         this.foreignObjLayer.setAttribute("width", "100%");
         this.foreignObjLayer.setAttribute("height", "100%");
-        this.foreignObjLayer.setAttribute("id", this.container.id + "_foreignObj");
+        this.foreignObjLayer.setAttribute("id", this.uniqName('foreignObj'));
         this.svgRoot.appendChild(this.foreignObjLayer);
         this.supportsForeignObject = true;
     } catch (e) {
@@ -782,7 +799,7 @@ JXG.extend(
         // Already documented in JXG.AbstractRenderer
         createPrim: function (type, id) {
             var node = this.container.ownerDocument.createElementNS(this.svgNamespace, type);
-            node.setAttributeNS(null, "id", this.container.id + "_" + id);
+            node.setAttributeNS(null, "id", this.uniqName(id));
             node.style.position = "absolute";
             if (type === "path") {
                 node.setAttributeNS(null, "stroke-linecap", "round");
@@ -2273,7 +2290,7 @@ JXG.extend(
 
             // Hide navigation bar in board
             // zbar = document.getElementById(this.container.id + '_navigationbar');
-            zbar = doc.getElementById(this.container.id + "_navigationbar");
+            zbar = doc.getElementById(this.uniqName('navigationbar'));
             if (Type.exists(zbar)) {
                 zbarDisplay = zbar.style.display;
                 zbar.style.display = "none";
