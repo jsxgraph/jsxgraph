@@ -103,6 +103,7 @@ JXG.extend(
         updateDataArray: function () {
             var steps = Type.evaluate(this.visProp.numberpointshigh),
                 r, s, e, delta, c2d, u, dataX, dataY,
+                i,
                 p = [0, 0, 0];
 
             dataX = [];
@@ -121,7 +122,7 @@ JXG.extend(
                 s = Type.evaluate(r[0]);
                 e = Type.evaluate(r[1]);
                 delta = (e - s) / (steps - 1);
-                for (u = s; u <= e; u += delta) {
+                for (i = 0, u = s; i < steps && u <= e; i++, u += delta) {
                     if (this.F !== null) {
                         p = this.F(u);
                     } else {
