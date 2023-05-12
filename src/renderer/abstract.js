@@ -1297,12 +1297,12 @@ JXG.extend(
                     }
 
                     angle = Type.evaluate(el.visProp.rotate);
-                    if (angle != 0) {
+                    if (angle !== 0) {
                         // Don't forget to convert to rad
                         angle *= (Math.PI / 180);
                         co = Math.cos(angle);
                         si = Math.sin(angle);
-                        
+
                         el.rendNode.style['transform'] = 'matrix(' +
                                 [co, -1 * si, si, co, 0, 0].join(',') +
                             ')';
