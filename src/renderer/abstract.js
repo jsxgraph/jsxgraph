@@ -1137,7 +1137,7 @@ JXG.extend(
                 parentNode,
                 scale, vshift,
                 id, wrap_id,
-                ax, ay,
+                ax, ay, angle, co, si,
                 to_h, to_v;
 
             if (el.visPropCalc.visible) {
@@ -1296,16 +1296,16 @@ JXG.extend(
                         }
                     }
 
-                    let angle = Type.evaluate(el.visProp.rotate),
-                        co, si;
-
+                    angle = Type.evaluate(el.visProp.rotate);
                     if (angle != 0) {
                         // Don't forget to convert to rad
-                        angle = angle / 180 * Math.PI;
+                        angle *= (Math.PI / 180);
                         co = Math.cos(angle);
                         si = Math.sin(angle);
                         
-                        el.rendNode.style['transform'] = `matrix(${co}, ${-1 * si}, ${si}, ${co}, 0, 0)`;
+                        el.rendNode.style['transform'] = 'matrix(' +
+                                [co, -1 * si, si, co, 0, 0].join(',') +
+                            ')';
                         el.rendNode.style['transform-origin'] = to_v + ' ' + to_h;
                     }
                 } else {

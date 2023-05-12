@@ -709,8 +709,7 @@ JXG.extend(
 
         // Already documented in JXG.AbstractRenderer
         transformImage: function (el, t) {
-            var s,
-                m,
+            var s, m,
                 node = el.rendNode,
                 str = "",
                 len = t.length;
@@ -718,8 +717,10 @@ JXG.extend(
             if (len > 0) {
                 m = this.joinTransforms(el, t);
                 s = [m[1][1], m[2][1], m[1][2], m[2][2], m[1][0], m[2][0]].join(",");
-                str += " matrix(" + s + ") ";
-                node.setAttributeNS(null, "transform", str);
+                if (s.indexOf('NaN') === -1) {
+                    str += " matrix(" + s + ") ";
+                    node.setAttributeNS(null, "transform", str);
+                }
             }
         },
 
