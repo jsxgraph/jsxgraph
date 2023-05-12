@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2022
+    Copyright 2008-2023
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -25,8 +25,8 @@
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
-    and <http://opensource.org/licenses/MIT/>.
+    the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
+    and <https://opensource.org/licenses/MIT/>.
  */
 
 /*global JXG: true, define: true*/
@@ -135,7 +135,7 @@ import Type from "../utils/type";
  * var A = board.create('point', [3, -2]),
  *     B = board.create('point', [-2, -2]),
  *     C = board.create('point', [0, 4]);
- * 
+ *
  * var angle = board.create('sector', [B, A, C], {
  *         strokeWidth: 0,
  *         arc: {
@@ -147,7 +147,7 @@ import Type from "../utils/type";
  *       });
  * //angle.arc.setAttribute({firstArrow: false});
  * angle.arc.setAttribute({lastArrow: false});
- * 
+ *
  * </pre><div id="JXGca37b99e-1510-49fa-ac9e-efd60e956104" class="jxgbox" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
  *     (function() {
@@ -156,7 +156,7 @@ import Type from "../utils/type";
  *     var A = board.create('point', [3, -2]),
  *         B = board.create('point', [-2, -2]),
  *         C = board.create('point', [0, 4]);
- *     
+ *
  *     var angle = board.create('sector', [B, A, C], {
  *             strokeWidth: 0,
  *             arc: {
@@ -168,12 +168,12 @@ import Type from "../utils/type";
  *           });
  *     //angle.arc.setAttribute({firstArrow: false});
  *     angle.arc.setAttribute({lastArrow: false});
- * 
+ *
  *     })();
- * 
+ *
  * </script><pre>
- * 
- * 
+ *
+ *
  */
 JXG.createSector = function (board, parents, attributes) {
     var el,
@@ -216,12 +216,16 @@ JXG.createSector = function (board, parents, attributes) {
     el.elType = "sector";
 
     /**
-     * Set a radius if the attribute `radius` has value 'auto'.
+     * Sets radius if the attribute `radius` has value 'auto'.
      * Sets a radius between 20 and 50 points, depending on the distance
      * between the center and the radius point.
      * This function is used in {@link Angle}.
      *
+     * @name autoRadius
+     * @memberof Sector.prototype
+     * @function
      * @returns {Number} returns a radius value in user coordinates.
+     * @private
      */
     el.autoRadius = function () {
         var r1 = 20 / el.board.unitX, // 20px
@@ -526,7 +530,7 @@ JXG.createSector = function (board, parents, attributes) {
             // 'inherit'
             prec = this.board.options.precision.hasPoint;
         }
-        prec /= Math.min(this.board.unitX, this.board.unitY);
+        prec /= Math.min(Math.abs(this.board.unitX), Math.abs(this.board.unitY));
         has = Math.abs(dist - r) < prec;
         if (has) {
             angle = Geometry.rad(this.point2, this.center, checkPoint.usrCoords.slice(1));
@@ -655,6 +659,22 @@ JXG.createSector = function (board, parents, attributes) {
      * @param {Number, Function} value New radius.
      */
     el.setRadius = function (val) {
+        var res,
+            e = Type.evaluate(val);
+
+        if (val === 'auto' || e === 'auto') {
+            res = 'auto';
+        } else if (Type.isNumber(val)) {
+            res = 'number';
+        } else if (Type.isFunction(val) && !Type.isString(e)) {
+            res = 'function';
+        } else {
+            res = 'undefined';
+        }
+        if (res !== 'undefined') {
+            this.visProp.radius = val;
+        }
+
         /**
          * @ignore
          */
@@ -685,9 +705,7 @@ JXG.createSector = function (board, parents, attributes) {
      */
     if (type === "3points") {
         el.setPositionDirectly = function (method, coords, oldcoords) {
-            var dc,
-                t,
-                i,
+            var dc, t,
                 c = new Coords(method, coords, this.board),
                 oldc = new Coords(method, oldcoords, this.board);
 
@@ -742,7 +760,7 @@ JXG.registerElement("sector", JXG.createSector);
  * </script><pre>
  */
 JXG.createCircumcircleSector = function (board, parents, attributes) {
-    var el, mp, attr, points, i;
+    var el, mp, attr, points;
 
     points = Type.providePoints(board, parents, attributes, "point");
     if (points === false) {
@@ -812,12 +830,12 @@ JXG.registerElement("circumcirclesector", JXG.createCircumcircleSector);
  *       a = board.create('minorsector', [p1, p2, p3]);
  * })();
  * </script><pre>
- * 
+ *
  * @example
  * var A = board.create('point', [3, -2]),
  *     B = board.create('point', [-2, -2]),
  *     C = board.create('point', [0, 4]);
- * 
+ *
  * var angle = board.create('minorsector', [B, A, C], {
  *         strokeWidth: 0,
  *         arc: {
@@ -829,8 +847,8 @@ JXG.registerElement("circumcirclesector", JXG.createCircumcircleSector);
  *       });
  * //angle.arc.setAttribute({firstArrow: false});
  * angle.arc.setAttribute({lastArrow: false});
- * 
- * 
+ *
+ *
  * </pre><div id="JXGdddf3c8f-4b0c-4268-8171-8fcd30e71f60" class="jxgbox" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
  *     (function() {
@@ -839,7 +857,7 @@ JXG.registerElement("circumcirclesector", JXG.createCircumcircleSector);
  *     var A = board.create('point', [3, -2]),
  *         B = board.create('point', [-2, -2]),
  *         C = board.create('point', [0, 4]);
- *     
+ *
  *     var angle = board.create('minorsector', [B, A, C], {
  *             strokeWidth: 0,
  *             arc: {
@@ -851,12 +869,12 @@ JXG.registerElement("circumcirclesector", JXG.createCircumcircleSector);
  *           });
  *     //angle.arc.setAttribute({firstArrow: false});
  *     angle.arc.setAttribute({lastArrow: false});
- *     
- * 
+ *
+ *
  *     })();
- * 
+ *
  * </script><pre>
- * 
+ *
  */
 JXG.createMinorSector = function (board, parents, attributes) {
     attributes.selection = "minor";
@@ -1166,10 +1184,10 @@ JXG.createAngle = function (board, parents, attributes) {
          * </pre>
          *
          * @name setAngle
+         * @memberof Angle.prototype
          * @function
          * @param {Number|Function} val Number or Function which returns the size of the angle in Radians
          * @returns {Object} Pointer to the angle element..
-         * @memberOf Angle.prototype
          * @see Angle#free
          *
          * @example
@@ -1305,8 +1323,8 @@ JXG.createAngle = function (board, parents, attributes) {
          * "setAngle()" previously. The anglepoint is set to a free point.
          * @name free
          * @function
+         * @memberof Angle.prototype
          * @returns {Object} Pointer to the angle element..
-         * @memberOf Angle.prototype
          * @see Angle#setAngle
          */
         el.free = function () {
@@ -1418,6 +1436,7 @@ JXG.createAngle = function (board, parents, attributes) {
         }
     };
 
+    attrsub = Type.copyAttributes(attributes, board.options, "angle", "dot");
     /**
      * Indicates a right angle. Invisible by default, use <tt>dot.visible: true</tt> to show.
      * Though this dot indicates a right angle, it can be visible even if the angle is not a right
@@ -1426,7 +1445,6 @@ JXG.createAngle = function (board, parents, attributes) {
      * @name dot
      * @memberOf Angle.prototype
      */
-    attrsub = Type.copyAttributes(attributes, board.options, "angle", "dot");
     el.dot = board.create(
         "point",
         [
@@ -1659,12 +1677,12 @@ JXG.createReflexAngle = function (board, parents, attributes) {
 
 JXG.registerElement("reflexangle", JXG.createReflexAngle);
 
-export default {
-    createSector: JXG.createSector,
-    createCircumcircleSector: JXG.createCircumcircleSector,
-    createMinorSector: JXG.createMinorSector,
-    createMajorSector: JXG.createMajorSector,
-    createAngle: JXG.createAngle,
-    createReflexAngle: JXG.createReflexAngle,
-    createNonreflexAngle: JXG.createNonreflexAngle
-};
+// export default {
+//     createSector: JXG.createSector,
+//     createCircumcircleSector: JXG.createCircumcircleSector,
+//     createMinorSector: JXG.createMinorSector,
+//     createMajorSector: JXG.createMajorSector,
+//     createAngle: JXG.createAngle,
+//     createReflexAngle: JXG.createReflexAngle,
+//     createNonreflexAngle: JXG.createNonreflexAngle
+// };

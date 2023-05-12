@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2022
+    Copyright 2008-2023
         Matthias Ehmann,
         Carsten Miller,
         Andreas Walter,
@@ -23,8 +23,8 @@
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
-    and <http://opensource.org/licenses/MIT/>.
+    the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
+    and <https://opensource.org/licenses/MIT/>.
  */
 /*global JXG:true, define: true*/
 
@@ -52,7 +52,6 @@ JXG.Point3D = function (view, F, slide, attributes) {
     this.constructor(view.board, attributes, Const.OBJECT_TYPE_POINT3D, Const.OBJECT_CLASS_3D);
     this.constructor3D(view, "point3d");
 
-    this.id = this.view.board.setId(this, "P3D");
     this.board.finalizeAdding(this);
 
     /**
@@ -160,7 +159,7 @@ JXG.extend(
     JXG.Point3D.prototype,
     /** @lends JXG.Point3D.prototype */ {
         /**
-         * Update the the homogeneous coords array.
+         * Update the homogeneous coords array.
          *
          * @name updateCoords
          * @memberOf Point3D
@@ -283,9 +282,14 @@ JXG.extend(
                 if (this.slide) {
                     this.projectCoords2Surface();
                 } else {
-                    // Drag the point in its xy plane
-                    foot = [1, 0, 0, this.coords[3]];
-                    c3d = this.view.project2DTo3DPlane(this.element2D, [1, 0, 0, 1], foot);
+                    if (this.view.isVerticalDrag()) {
+                        // Drag the point in its vertical to the xy plane
+                        c3d = this.view.project2DTo3DVertical(this.element2D, this.coords);
+                    } else {
+                        // Drag the point in its xy plane
+                        foot = [1, 0, 0, this.coords[3]];
+                        c3d = this.view.project2DTo3DPlane(this.element2D, [1, 0, 0, 1], foot);
+                    }
                     if (c3d[0] !== 0) {
                         this.coords = this.view.project3DToCube(c3d);
                     }
@@ -413,11 +417,7 @@ JXG.createPoint3D = function (board, parents, attributes) {
     //   parents[1..3]: coordinates
 
     var view = parents[0],
-        attr,
-        F,
-        slide,
-        c2d,
-        el;
+        attr, F, slide, c2d, el;
 
     // If the last element of parents is a 3D object,
     // the point is a glider on that element.
@@ -445,14 +445,14 @@ JXG.createPoint3D = function (board, parents, attributes) {
         //  "\nPossible parent types: [[x,y,z]], [x,y,z], [element,transformation]"); // TODO
     }
 
-    attr = Type.copyAttributes(attributes, board.options, "point3d");
+    attr = Type.copyAttributes(attributes, board.options, 'point3d');
     el = new JXG.Point3D(view, F, slide, attr);
     el.initCoords();
 
     c2d = view.project3DTo2D(el.coords);
 
-    attr.name = el.name;
-    el.element2D = view.create("point", c2d, attr);
+    attr = el.setAttr2D(attr);
+    el.element2D = view.create('point', c2d, attr);
     el.addChild(el.element2D);
     el.inherits.push(el.element2D);
     el.element2D.setParents(el);

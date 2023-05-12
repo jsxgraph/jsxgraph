@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2022
+    Copyright 2008-2023
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -25,8 +25,8 @@
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
-    and <http://opensource.org/licenses/MIT/>.
+    the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
+    and <https://opensource.org/licenses/MIT/>.
  */
 
 /*global JXG: true, define: true*/
@@ -162,7 +162,7 @@ JXG.extend(
          *
          */
         setMatrix: function (board, type, params) {
-            var i;
+            var i, e, obj;
 
             this.isNumericMatrix = true;
 
@@ -214,14 +214,14 @@ JXG.extend(
                     // line
                     if (params.length === 1) {
                         v = params[0].stdform;
-                        // two points
                     } else if (params.length === 2) {
+                        // two points
                         v = Mat.crossProduct(
                             params[1].coords.usrCoords,
                             params[0].coords.usrCoords
                         );
-                        // two points coordinates [px,py,qx,qy]
                     } else if (params.length === 4) {
+                        // two points coordinates [px,py,qx,qy]
                         v = Mat.crossProduct(
                             [1, this.evalParam(2), this.evalParam(3)],
                             [1, this.evalParam(0), this.evalParam(1)]
@@ -324,6 +324,16 @@ JXG.extend(
                     this.matrix[2][2] = this.evalParam(8);
                 };
             }
+
+            // Handle dependencies
+            // NO: transformations do not have method addParents
+            // if (Type.exists(this.evalParam)) {
+            //     for (e in this.evalParam.deps) {
+            //         obj = this.evalParam.deps[e];
+            //         this.addParents(obj);
+            //         obj.addChild(this);
+            //     }
+            // }
         },
 
         /**
@@ -647,7 +657,7 @@ JXG.extend(
  * @example
  * // One time application of a transform to points A, B
  * var p1 = board.create('point', [1, 1]),
- *     p2 = board.create('point', [1, 1]),
+ *     p2 = board.create('point', [-1, -2]),
  *     t = board.create('transform', [3, 2], {type: 'shear'});
  * t.applyOnce([p1, p2]);
  *
@@ -655,7 +665,7 @@ JXG.extend(
  * <script type="text/javascript">
  *     (function() {
  *         var board = JXG.JSXGraph.initBoard('JXGb6cee1c4-2ad6-11e5-8dd9-901b0e1b8723',
- *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+ *             {boundingbox: [-5, 5, 5, -5], axis: true, showcopyright: false, shownavigation: false});
  *     var p1 = board.create('point', [1, 1]),
  *         p2 = board.create('point', [-1, -2]),
  *         t = board.create('transform', [3, 2], {type: 'shear'});
@@ -740,9 +750,10 @@ JXG.createTransform = function (board, parents, attributes) {
     return new JXG.Transformation(board, attributes.type, parents);
 };
 
-JXG.registerElement("transform", JXG.createTransform);
+JXG.registerElement('transform', JXG.createTransform);
 
-export default {
-    Transformation: JXG.Transformation,
-    createTransform: JXG.createTransform
-};
+export default JXG.Transformation;
+// export default {
+//     Transformation: JXG.Transformation,
+//     createTransform: JXG.createTransform
+// };

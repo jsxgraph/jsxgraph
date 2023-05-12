@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2022
+    Copyright 2008-2023
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -24,8 +24,8 @@ console.log("P:", P.coords.usrCoords, P.data.type)
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
-    and <http://opensource.org/licenses/MIT/>.
+    the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
+    and <https://opensource.org/licenses/MIT/>.
  */
 
 /*global JXG: true, define: true*/
@@ -356,23 +356,12 @@ Mat.Clip = {
      * @see JXG.Clip#Vertex
      */
     findIntersections: function (S, C, board) {
-        var res = [],
-            eps = Mat.eps,
-            i,
-            j,
-            crds,
+        var res = [], eps = Mat.eps * 100,
+            i, j, crds,
             S_le = S.length,
             C_le = C.length,
-            Si,
-            Si1,
-            Cj,
-            Cj1,
-            d1,
-            d2,
-            alpha,
-            type,
-            IS,
-            IC,
+            Si, Si1, Cj, Cj1, d1, d2,
+            alpha, type, IS, IC,
             S_intersect = [],
             C_intersect = [],
             S_crossings = [],
@@ -930,21 +919,10 @@ Mat.Clip = {
      * user coordinates and screen coordinates.
      */
     _handleFullyDegenerateCase: function (S, C, board) {
-        var P,
-            Q,
-            l,
-            M,
-            crds,
-            q1,
-            q2,
-            node,
-            i,
-            j,
-            leP,
-            leQ,
-            is_on_Q,
-            tmp,
-            is_fully_degenerated,
+        var P, Q, l, M, crds,
+            q1, q2, node, i, j,
+            leP, leQ, is_on_Q,
+            tmp, is_fully_degenerated,
             arr = [S, C];
 
         for (l = 0; l < 2; l++) {
@@ -1259,11 +1237,8 @@ Mat.Clip = {
      *      the resulting path.
      */
     tracing: function (S, S_intersect, clip_type) {
-        var P,
-            current,
-            start,
+        var P, status, current, start,
             cnt = 0,
-            status,
             maxCnt = 10000,
             S_idx = 0,
             path = [],
@@ -1617,13 +1592,8 @@ Mat.Clip = {
      * @see JXG.Math.Clip#greinerHormann
      */
     _getPath: function (obj, board) {
-        var i,
-            len,
-            r,
-            rad,
-            angle,
-            alpha,
-            steps,
+        var i, len, r,
+            rad, angle, alpha, steps,
             S = [];
 
         // Collect all points into path array S

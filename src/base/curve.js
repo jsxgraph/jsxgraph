@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2022
+    Copyright 2008-2023
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -25,8 +25,8 @@
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
-    and <http://opensource.org/licenses/MIT/>.
+    the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
+    and <https://opensource.org/licenses/MIT/>.
  */
 
 /*global JXG: true, define: true*/
@@ -343,7 +343,8 @@ JXG.extend(
 
                 for (i = start; i < len; i++) {
                     if (this.bezierDegree === 3) {
-                        res.push(Geometry.projectCoordsToBeziersegment([1, x, y], this, i));
+                        //res.push(Geometry.projectCoordsToBeziersegment([1, x, y], this, i));
+                        res = Geometry.projectCoordsToBeziersegment([1, x, y], this, i);
                     } else {
                         if (qdt) {
                             if (points[i].prev) {
@@ -1045,10 +1046,12 @@ JXG.extend(
                 this.X = function (phi) {
                     return xterm(phi) * Math.cos(phi) + fx();
                 };
+                this.X.deps = fx.deps;
 
                 this.Y = function (phi) {
                     return xterm(phi) * Math.sin(phi) + fy();
                 };
+                this.Y.deps = fy.deps;
 
                 this.visProp.curvetype = "polar";
             }
@@ -1060,6 +1063,8 @@ JXG.extend(
             if (Type.exists(ma)) {
                 this.maxX = Type.createFunction(ma, this.board, "");
             }
+
+            this.addParentsFromJCFunctions([this.X, this.Y, this.minX, this.maxX]);
         },
 
         /**
@@ -1638,7 +1643,7 @@ JXG.registerElement("plot", JXG.createFunctiongraph);
  * @param {JXG.Board} board Reference to the board the spline is drawn on.
  * @param {Array} parents Array of points the spline interpolates. This can be
  *   <ul>
- *   <li> an array of JXGGraph points</li>
+ *   <li> an array of JSXGraph points</li>
  *   <li> an array of coordinate pairs</li>
  *   <li> an array of functions returning coordinate pairs</li>
  *   <li> an array consisting of an array with x-coordinates and an array of y-coordinates</li>
@@ -1790,7 +1795,7 @@ JXG.registerElement("spline", JXG.createSpline);
  * <p>
  *   First entry: Array of points the spline interpolates. This can be
  *   <ul>
- *   <li> an array of JXGGraph points</li>
+ *   <li> an array of JSXGraph points</li>
  *   <li> an array of coordinate pairs</li>
  *   <li> an array of functions returning coordinate pairs</li>
  *   <li> an array consisting of an array with x-coordinates and an array of y-coordinates</li>
@@ -2001,7 +2006,7 @@ JXG.registerElement("cardinalspline", JXG.createCardinalSpline);
  * <p>
  *   First entry: Array of points the spline interpolates. This can be
  *   <ul>
- *   <li> an array of JXGGraph points</li>
+ *   <li> an array of JSXGraph points</li>
  *   <li> an object of coordinate pairs</li>
  *   <li> an array of functions returning coordinate pairs</li>
  *   <li> an array consisting of an array with x-coordinates and an array of y-coordinates</li>
@@ -2162,7 +2167,7 @@ JXG.createMetapostSpline = function (board, parents, attributes) {
     }
 
     if (attributes.createpoints === true) {
-        points = Type.providePoints(board, q, attributes, "metapostspline", ["points"]);
+        points = Type.providePoints(board, q, attributes, 'metapostspline', ['points']);
     } else {
         points = [];
 
@@ -2347,6 +2352,8 @@ JXG.createRiemannsum = function (board, parents, attributes) {
         // Update "Riemann sum"
         this.sum = u[2];
     };
+
+    c.addParentsFromJCFunctions([n, type]);
 
     return c;
 };
@@ -2921,10 +2928,7 @@ JXG.registerElement("curveunion", JXG.createCurveUnion);
  *
  */
 JXG.createBoxPlot = function (board, parents, attributes) {
-    var box,
-        i,
-        len,
-        w2,
+    var box, i, len, w2,
         attr = Type.copyAttributes(attributes, board.options, "boxplot");
 
     if (parents.length !== 3) {
@@ -2989,24 +2993,32 @@ JXG.createBoxPlot = function (board, parents, attributes) {
             this.dataY = v1;
         }
     };
+
+    box.addParentsFromJCFunctions([box.Q, box.x, box.w]);
+
     return box;
 };
 
 JXG.registerElement("boxplot", JXG.createBoxPlot);
 
-export default {
-    Curve: JXG.Curve,
-    createCardinalSpline: JXG.createCardinalSpline,
-    createCurve: JXG.createCurve,
-    createCurveDifference: JXG.createCurveDifference,
-    createCurveIntersection: JXG.createCurveIntersection,
-    createCurveUnion: JXG.createCurveUnion,
-    createDerivative: JXG.createDerivative,
-    createFunctiongraph: JXG.createFunctiongraph,
-    createMetapostSpline: JXG.createMetapostSpline,
-    createPlot: JXG.createFunctiongraph,
-    createSpline: JXG.createSpline,
-    createRiemannsum: JXG.createRiemannsum,
-    createStepfunction: JXG.createStepfunction,
-    createTracecurve: JXG.createTracecurve
-};
+export default JXG.Curve;
+
+// export default {
+//     Curve: JXG.Curve,
+//     createCardinalSpline: JXG.createCardinalSpline,
+//     createCurve: JXG.createCurve,
+//     createCurveDifference: JXG.createCurveDifference,
+//     createCurveIntersection: JXG.createCurveIntersection,
+//     createCurveUnion: JXG.createCurveUnion,
+//     createDerivative: JXG.createDerivative,
+//     createFunctiongraph: JXG.createFunctiongraph,
+//     createMetapostSpline: JXG.createMetapostSpline,
+//     createPlot: JXG.createFunctiongraph,
+//     createSpline: JXG.createSpline,
+//     createRiemannsum: JXG.createRiemannsum,
+//     createStepfunction: JXG.createStepfunction,
+//     createTracecurve: JXG.createTracecurve
+// };
+
+// const Curve = JXG.Curve;
+// export { Curve as default, Curve};

@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2022
+    Copyright 2008-2023
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -25,8 +25,8 @@
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
-    and <http://opensource.org/licenses/MIT/>.
+    the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
+    and <https://opensource.org/licenses/MIT/>.
  */
 
 /*global JXG: true, define: true, AMprocessNode: true, MathJax: true, window: true, document: true, init: true, translateASCIIMath: true, google: true*/
@@ -137,503 +137,517 @@ JXG.Board = function (
      */
     this.BOARD_QUALITY_HIGH = 0x2;
 
-        /**
-         * Pointer to the document element containing the board.
-         * @type Object
-         */
-        // Former version:
-        // this.document = attributes.document || document;
-        if (Type.exists(attributes.document) && attributes.document !== false) {
-            this.document = attributes.document;
-        } else if (Env.isBrowser) {
-            this.document = document;
-        }
-
-        /**
-         * The html-id of the html element containing the board.
-         * @type String
-         */
-        this.container = container;
-
-        /**
-         * Pointer to the html element containing the board.
-         * @type Object
-         */
-        this.containerObj = (Env.isBrowser ? this.document.getElementById(this.container) : null);
-
-        if (Env.isBrowser && renderer.type !== 'no' && this.containerObj === null) {
-            throw new Error("\nJSXGraph: HTML container element '" + container + "' not found.");
-        }
-
-        /**
-         * A reference to this boards renderer.
-         * @type JXG.AbstractRenderer
-         * @name JXG.Board#renderer
-         * @private
-         * @ignore
-         */
-        this.renderer = renderer;
-
-        /**
-         * Grids keeps track of all grids attached to this board.
-         * @type Array
-         * @private
-         */
-        this.grids = [];
-
-        /**
-         * Some standard options
-         * @type JXG.Options
-         */
-        this.options = Type.deepCopy(Options);
-        this.attr = attributes;
-
-        /**
-         * Dimension of the board.
-         * @default 2
-         * @type Number
-         */
-        this.dimension = 2;
-
-        this.jc = new JessieCode();
-        this.jc.use(this);
-
-        /**
-         * Coordinates of the boards origin. This a object with the two properties
-         * usrCoords and scrCoords. usrCoords always equals [1, 0, 0] and scrCoords
-         * stores the boards origin in homogeneous screen coordinates.
-         * @type Object
-         * @private
-         */
-        this.origin = {};
-        this.origin.usrCoords = [1, 0, 0];
-        this.origin.scrCoords = [1, origin[0], origin[1]];
-
-        /**
-         * Zoom factor in X direction. It only stores the zoom factor to be able
-         * to get back to 100% in zoom100().
-         * @name JXG.Board.zoomX
-         * @type Number
-         * @private
-         * @ignore
-         */
-        this.zoomX = zoomX;
-
-        /**
-         * Zoom factor in Y direction. It only stores the zoom factor to be able
-         * to get back to 100% in zoom100().
-         * @name JXG.Board.zoomY
-         * @type Number
-         * @private
-         * @ignore
-         */
-        this.zoomY = zoomY;
-
-        /**
-         * The number of pixels which represent one unit in user-coordinates in x direction.
-         * @type Number
-         * @private
-         */
-        this.unitX = unitX * this.zoomX;
-
-        /**
-         * The number of pixels which represent one unit in user-coordinates in y direction.
-         * @type Number
-         * @private
-         */
-        this.unitY = unitY * this.zoomY;
-
-        /**
-         * Keep aspect ratio if bounding box is set and the width/height ratio differs from the
-         * width/height ratio of the canvas.
-         * @type Boolean
-         * @private
-         */
-        this.keepaspectratio = false;
-
-        /**
-         * Canvas width.
-         * @type Number
-         * @private
-         */
-        this.canvasWidth = canvasWidth;
-
-        /**
-         * Canvas Height
-         * @type Number
-         * @private
-         */
-        this.canvasHeight = canvasHeight;
-
-        // If the given id is not valid, generate an unique id
-        if (Type.exists(id) && id !== '' && Env.isBrowser && !Type.exists(this.document.getElementById(id))) {
-            this.id = id;
-        } else {
-            this.id = this.generateId();
-        }
-
-        EventEmitter.eventify(this);
-
-        this.hooks = [];
-
-        /**
-         * An array containing all other boards that are updated after this board has been updated.
-         * @type Array
-         * @see JXG.Board#addChild
-         * @see JXG.Board#removeChild
-         */
-        this.dependentBoards = [];
-
-        /**
-         * During the update process this is set to false to prevent an endless loop.
-         * @default false
-         * @type Boolean
-         */
-        this.inUpdate = false;
-
-        /**
-         * An associative array containing all geometric objects belonging to the board. Key is the id of the object and value is a reference to the object.
-         * @type Object
-         */
-        this.objects = {};
-
-        /**
-         * An array containing all geometric objects on the board in the order of construction.
-         * @type Array
-         */
-        this.objectsList = [];
-
-        /**
-         * An associative array containing all groups belonging to the board. Key is the id of the group and value is a reference to the object.
-         * @type Object
-         */
-        this.groups = {};
-
-        /**
-         * Stores all the objects that are currently running an animation.
-         * @type Object
-         */
-        this.animationObjects = {};
-
-        /**
-         * An associative array containing all highlighted elements belonging to the board.
-         * @type Object
-         */
-        this.highlightedObjects = {};
-
-        /**
-         * Number of objects ever created on this board. This includes every object, even invisible and deleted ones.
-         * @type Number
-         */
-        this.numObjects = 0;
-
-        /**
-         * An associative array / dictionary to store the objects of the board by name. The name of the object is the key and value is a reference to the object.
-         * @type Object
-         */
-        this.elementsByName = {};
-
-        /**
-         * The board mode the board is currently in. Possible values are
-         * <ul>
-         * <li>JXG.Board.BOARD_MODE_NONE</li>
-         * <li>JXG.Board.BOARD_MODE_DRAG</li>
-         * <li>JXG.Board.BOARD_MODE_MOVE_ORIGIN</li>
-         * </ul>
-         * @type Number
-         */
-        this.mode = this.BOARD_MODE_NONE;
-
-        /**
-         * The update quality of the board. In most cases this is set to {@link JXG.Board#BOARD_QUALITY_HIGH}.
-         * If {@link JXG.Board#mode} equals {@link JXG.Board#BOARD_MODE_DRAG} this is set to
-         * {@link JXG.Board#BOARD_QUALITY_LOW} to speed up the update process by e.g. reducing the number of
-         * evaluation points when plotting functions. Possible values are
-         * <ul>
-         * <li>BOARD_QUALITY_LOW</li>
-         * <li>BOARD_QUALITY_HIGH</li>
-         * </ul>
-         * @type Number
-         * @see JXG.Board#mode
-         */
-        this.updateQuality = this.BOARD_QUALITY_HIGH;
-
-        /**
-         * If true updates are skipped.
-         * @type Boolean
-         */
-        this.isSuspendedRedraw = false;
-
-        this.calculateSnapSizes();
-
-        /**
-         * The distance from the mouse to the dragged object in x direction when the user clicked the mouse button.
-         * @type Number
-         * @see JXG.Board#drag_dy
-         * @see JXG.Board#drag_obj
-         */
-        this.drag_dx = 0;
-
-        /**
-         * The distance from the mouse to the dragged object in y direction when the user clicked the mouse button.
-         * @type Number
-         * @see JXG.Board#drag_dx
-         * @see JXG.Board#drag_obj
-         */
-        this.drag_dy = 0;
-
-        /**
-         * The last position where a drag event has been fired.
-         * @type Array
-         * @see JXG.Board#moveObject
-         */
-        this.drag_position = [0, 0];
-
-        /**
-         * References to the object that is dragged with the mouse on the board.
-         * @type JXG.GeometryElement
-         * @see JXG.Board#touches
-         */
-        this.mouse = {};
-
-        /**
-         * Keeps track on touched elements, like {@link JXG.Board#mouse} does for mouse events.
-         * @type Array
-         * @see JXG.Board#mouse
-         */
-        this.touches = [];
-
-        /**
-         * A string containing the XML text of the construction.
-         * This is set in {@link JXG.FileReader.parseString}.
-         * Only useful if a construction is read from a GEONExT-, Intergeo-, Geogebra-, or Cinderella-File.
-         * @type String
-         */
-        this.xmlString = '';
-
-        /**
-         * Cached result of getCoordsTopLeftCorner for touch/mouseMove-Events to save some DOM operations.
-         * @type Array
-         */
-        this.cPos = [];
-
-        /**
-         * Contains the last time (epoch, msec) since the last touchMove event which was not thrown away or since
-         * touchStart because Android's Webkit browser fires too much of them.
-         * @type Number
-         */
-        this.touchMoveLast = 0;
-
-        /**
-         * Contains the pointerId of the last touchMove event which was not thrown away or since
-         * touchStart because Android's Webkit browser fires too much of them.
-         * @type Number
-         */
-         this.touchMoveLastId = Infinity;
-
-        /**
-         * Contains the last time (epoch, msec) since the last getCoordsTopLeftCorner call which was not thrown away.
-         * @type Number
-         */
-        this.positionAccessLast = 0;
-
-        /**
-         * Collects all elements that triggered a mouse down event.
-         * @type Array
-         */
-        this.downObjects = [];
-
-        if (this.attr.showcopyright) {
-            this.renderer.displayCopyright(Const.licenseText, parseInt(this.options.text.fontSize, 10));
-        }
-
-        /**
-         * Full updates are needed after zoom and axis translates. This saves some time during an update.
-         * @default false
-         * @type Boolean
-         */
-        this.needsFullUpdate = false;
-
-        /**
-         * If reducedUpdate is set to true then only the dragged element and few (e.g. 2) following
-         * elements are updated during mouse move. On mouse up the whole construction is
-         * updated. This enables us to be fast even on very slow devices.
-         * @type BooleanupdateQuality: 2
-         * @default false
-         */
-        this.reducedUpdate = false;
-
-        /**
-         * The current color blindness deficiency is stored in this property. If color blindness is not emulated
-         * at the moment, it's value is 'none'.
-         */
-        this.currentCBDef = 'none';
-
-        /**
-         * If GEONExT constructions are displayed, then this property should be set to true.
-         * At the moment there should be no difference. But this may change.
-         * This is set in {@link JXG.GeonextReader.readGeonext}.
-         * @type Boolean
-         * @default false
-         * @see JXG.GeonextReader.readGeonext
-         */
-        this.geonextCompatibilityMode = false;
-
-        if (this.options.text.useASCIIMathML && translateASCIIMath) {
-            init();
-        } else {
-            this.options.text.useASCIIMathML = false;
-        }
-
-        /**
-         * A flag which tells if the board registers mouse events.
-         * @type Boolean
-         * @default false
-         */
-        this.hasMouseHandlers = false;
-
-        /**
-         * A flag which tells if the board registers touch events.
-         * @type Boolean
-         * @default false
-         */
-        this.hasTouchHandlers = false;
-
-        /**
-         * A flag which stores if the board registered pointer events.
-         * @type Boolean
-         * @default false
-         */
-        this.hasPointerHandlers = false;
-
-        /**
-         * A flag which tells if the board the JXG.Board#mouseUpListener is currently registered.
-         * @type Boolean
-         * @default false
-         */
-        this.hasMouseUp = false;
-
-        /**
-         * A flag which tells if the board the JXG.Board#touchEndListener is currently registered.
-         * @type Boolean
-         * @default false
-         */
-        this.hasTouchEnd = false;
-
-        /**
-         * A flag which tells us if the board has a pointerUp event registered at the moment.
-         * @type Boolean
-         * @default false
-         */
-        this.hasPointerUp = false;
-
-        /**
-         * Offset for large coords elements like images
-         * @type Array
-         * @private
-         * @default [0, 0]
-         */
-        this._drag_offset = [0, 0];
-
-        /**
-         * Stores the input device used in the last down or move event.
-         * @type String
-         * @private
-         * @default 'mouse'
-         */
-        this._inputDevice = 'mouse';
-
-        /**
-         * Keeps a list of pointer devices which are currently touching the screen.
-         * @type Array
-         * @private
-         */
-        this._board_touches = [];
-
-        /**
-         * A flag which tells us if the board is in the selecting mode
-         * @type Boolean
-         * @default false
-         */
-        this.selectingMode = false;
-
-        /**
-         * A flag which tells us if the user is selecting
-         * @type Boolean
-         * @default false
-         */
-        this.isSelecting = false;
-
-        /**
-         * A flag which tells us if the user is scrolling the viewport
-         * @type Boolean
-         * @private
-         * @default false
-         * @see JXG.Board#scrollListener
-         */
-        this._isScrolling = false;
-
-        /**
-         * A flag which tells us if a resize is in process
-         * @type Boolean
-         * @private
-         * @default false
-         * @see JXG.Board#resizeListener
-         */
-        this._isResizing = false;
-
-        /**
-         * A bounding box for the selection
-         * @type Array
-         * @default [ [0,0], [0,0] ]
-         */
-        this.selectingBox = [[0, 0], [0, 0]];
-
-        /**
-         * Array to log user activity. 
-         * Entries are objects of the form "{type, id, start, end}" notifying
-         * the start time as well as the last time of a single event of type "type"
-         * on a JSXGraph element of id "id". 
-         * <p> "start" and "end" contain the amount of milliseconds elapsed between 1 January 1970 00:00:00 UTC
-         * and the time the event happened.
-         * <p>
-         * For the time being (i.e. v1.5.0) the only supported type is 'drag'.
-         * @type Array
-         */
-        this.userLog = [];
-
-        this.mathLib = Math;        // Math or JXG.Math.IntervalArithmetic
-        this.mathLibJXG = JXG.Math; // JXG.Math or JXG.Math.IntervalArithmetic
-
-        if (this.attr.registerevents) {
-            this.addEventHandlers();
-        }
-
-        this.methodMap = {
-            update: 'update',
-            fullUpdate: 'fullUpdate',
-            on: 'on',
-            off: 'off',
-            trigger: 'trigger',
-            setView: 'setBoundingBox',
-            setBoundingBox: 'setBoundingBox',
-            migratePoint: 'migratePoint',
-            colorblind: 'emulateColorblindness',
-            suspendUpdate: 'suspendUpdate',
-            unsuspendUpdate: 'unsuspendUpdate',
-            clearTraces: 'clearTraces',
-            left: 'clickLeftArrow',
-            right: 'clickRightArrow',
-            up: 'clickUpArrow',
-            down: 'clickDownArrow',
-            zoomIn: 'zoomIn',
-            zoomOut: 'zoomOut',
-            zoom100: 'zoom100',
-            zoomElements: 'zoomElements',
-            remove: 'removeObject',
-            removeObject: 'removeObject'
-        };
+    /**
+     * Pointer to the document element containing the board.
+     * @type Object
+     */
+    // Former version:
+    // this.document = attributes.document || document;
+    if (Type.exists(attributes.document) && attributes.document !== false) {
+        this.document = attributes.document;
+    } else if (Env.isBrowser) {
+        this.document = document;
+    }
+
+    /**
+     * The html-id of the html element containing the board.
+     * @type String
+     */
+    this.container = container;
+
+    /**
+     * Pointer to the html element containing the board.
+     * @type Object
+     */
+    this.containerObj = (Env.isBrowser ? this.document.getElementById(this.container) : null);
+
+    if (Env.isBrowser && renderer.type !== 'no' && this.containerObj === null) {
+        throw new Error("\nJSXGraph: HTML container element '" + container + "' not found.");
+    }
+
+    /**
+     * A reference to this boards renderer.
+     * @type JXG.AbstractRenderer
+     * @name JXG.Board#renderer
+     * @private
+     * @ignore
+     */
+    this.renderer = renderer;
+
+    /**
+     * Grids keeps track of all grids attached to this board.
+     * @type Array
+     * @private
+     */
+    this.grids = [];
+
+    /**
+     * Some standard options
+     * @type JXG.Options
+     */
+    this.options = Type.deepCopy(Options);
+    this.attr = attributes;
+
+    /**
+     * Dimension of the board.
+     * @default 2
+     * @type Number
+     */
+    this.dimension = 2;
+
+    this.jc = new JessieCode();
+    this.jc.use(this);
+
+    /**
+     * Coordinates of the boards origin. This a object with the two properties
+     * usrCoords and scrCoords. usrCoords always equals [1, 0, 0] and scrCoords
+     * stores the boards origin in homogeneous screen coordinates.
+     * @type Object
+     * @private
+     */
+    this.origin = {};
+    this.origin.usrCoords = [1, 0, 0];
+    this.origin.scrCoords = [1, origin[0], origin[1]];
+
+    /**
+     * Zoom factor in X direction. It only stores the zoom factor to be able
+     * to get back to 100% in zoom100().
+     * @name JXG.Board.zoomX
+     * @type Number
+     * @private
+     * @ignore
+     */
+    this.zoomX = zoomX;
+
+    /**
+     * Zoom factor in Y direction. It only stores the zoom factor to be able
+     * to get back to 100% in zoom100().
+     * @name JXG.Board.zoomY
+     * @type Number
+     * @private
+     * @ignore
+     */
+    this.zoomY = zoomY;
+
+    /**
+     * The number of pixels which represent one unit in user-coordinates in x direction.
+     * @type Number
+     * @private
+     */
+    this.unitX = unitX * this.zoomX;
+
+    /**
+     * The number of pixels which represent one unit in user-coordinates in y direction.
+     * @type Number
+     * @private
+     */
+    this.unitY = unitY * this.zoomY;
+
+    /**
+     * Keep aspect ratio if bounding box is set and the width/height ratio differs from the
+     * width/height ratio of the canvas.
+     * @type Boolean
+     * @private
+     */
+    this.keepaspectratio = false;
+
+    /**
+     * Canvas width.
+     * @type Number
+     * @private
+     */
+    this.canvasWidth = canvasWidth;
+
+    /**
+     * Canvas Height
+     * @type Number
+     * @private
+     */
+    this.canvasHeight = canvasHeight;
+
+    // If the given id is not valid, generate an unique id
+    if (Type.exists(id) && id !== '' && Env.isBrowser && !Type.exists(this.document.getElementById(id))) {
+        this.id = id;
+    } else {
+        this.id = this.generateId();
+    }
+
+    EventEmitter.eventify(this);
+
+    this.hooks = [];
+
+    /**
+     * An array containing all other boards that are updated after this board has been updated.
+     * @type Array
+     * @see JXG.Board#addChild
+     * @see JXG.Board#removeChild
+     */
+    this.dependentBoards = [];
+
+    /**
+     * During the update process this is set to false to prevent an endless loop.
+     * @default false
+     * @type Boolean
+     */
+    this.inUpdate = false;
+
+    /**
+     * An associative array containing all geometric objects belonging to the board. Key is the id of the object and value is a reference to the object.
+     * @type Object
+     */
+    this.objects = {};
+
+    /**
+     * An array containing all geometric objects on the board in the order of construction.
+     * @type Array
+     */
+    this.objectsList = [];
+
+    /**
+     * An associative array containing all groups belonging to the board. Key is the id of the group and value is a reference to the object.
+     * @type Object
+     */
+    this.groups = {};
+
+    /**
+     * Stores all the objects that are currently running an animation.
+     * @type Object
+     */
+    this.animationObjects = {};
+
+    /**
+     * An associative array containing all highlighted elements belonging to the board.
+     * @type Object
+     */
+    this.highlightedObjects = {};
+
+    /**
+     * Number of objects ever created on this board. This includes every object, even invisible and deleted ones.
+     * @type Number
+     */
+    this.numObjects = 0;
+
+    /**
+     * An associative array / dictionary to store the objects of the board by name. The name of the object is the key and value is a reference to the object.
+     * @type Object
+     */
+    this.elementsByName = {};
+
+    /**
+     * The board mode the board is currently in. Possible values are
+     * <ul>
+     * <li>JXG.Board.BOARD_MODE_NONE</li>
+     * <li>JXG.Board.BOARD_MODE_DRAG</li>
+     * <li>JXG.Board.BOARD_MODE_MOVE_ORIGIN</li>
+     * </ul>
+     * @type Number
+     */
+    this.mode = this.BOARD_MODE_NONE;
+
+    /**
+     * The update quality of the board. In most cases this is set to {@link JXG.Board#BOARD_QUALITY_HIGH}.
+     * If {@link JXG.Board#mode} equals {@link JXG.Board#BOARD_MODE_DRAG} this is set to
+     * {@link JXG.Board#BOARD_QUALITY_LOW} to speed up the update process by e.g. reducing the number of
+     * evaluation points when plotting functions. Possible values are
+     * <ul>
+     * <li>BOARD_QUALITY_LOW</li>
+     * <li>BOARD_QUALITY_HIGH</li>
+     * </ul>
+     * @type Number
+     * @see JXG.Board#mode
+     */
+    this.updateQuality = this.BOARD_QUALITY_HIGH;
+
+    /**
+     * If true updates are skipped.
+     * @type Boolean
+     */
+    this.isSuspendedRedraw = false;
+
+    this.calculateSnapSizes();
+
+    /**
+     * The distance from the mouse to the dragged object in x direction when the user clicked the mouse button.
+     * @type Number
+     * @see JXG.Board#drag_dy
+     * @see JXG.Board#drag_obj
+     */
+    this.drag_dx = 0;
+
+    /**
+     * The distance from the mouse to the dragged object in y direction when the user clicked the mouse button.
+     * @type Number
+     * @see JXG.Board#drag_dx
+     * @see JXG.Board#drag_obj
+     */
+    this.drag_dy = 0;
+
+    /**
+     * The last position where a drag event has been fired.
+     * @type Array
+     * @see JXG.Board#moveObject
+     */
+    this.drag_position = [0, 0];
+
+    /**
+     * References to the object that is dragged with the mouse on the board.
+     * @type JXG.GeometryElement
+     * @see JXG.Board#touches
+     */
+    this.mouse = {};
+
+    /**
+     * Keeps track on touched elements, like {@link JXG.Board#mouse} does for mouse events.
+     * @type Array
+     * @see JXG.Board#mouse
+     */
+    this.touches = [];
+
+    /**
+     * A string containing the XML text of the construction.
+     * This is set in {@link JXG.FileReader.parseString}.
+     * Only useful if a construction is read from a GEONExT-, Intergeo-, Geogebra-, or Cinderella-File.
+     * @type String
+     */
+    this.xmlString = '';
+
+    /**
+     * Cached result of getCoordsTopLeftCorner for touch/mouseMove-Events to save some DOM operations.
+     * @type Array
+     */
+    this.cPos = [];
+
+    /**
+     * Contains the last time (epoch, msec) since the last touchMove event which was not thrown away or since
+     * touchStart because Android's Webkit browser fires too much of them.
+     * @type Number
+     */
+    this.touchMoveLast = 0;
+
+    /**
+     * Contains the pointerId of the last touchMove event which was not thrown away or since
+     * touchStart because Android's Webkit browser fires too much of them.
+     * @type Number
+     */
+    this.touchMoveLastId = Infinity;
+
+    /**
+     * Contains the last time (epoch, msec) since the last getCoordsTopLeftCorner call which was not thrown away.
+     * @type Number
+     */
+    this.positionAccessLast = 0;
+
+    /**
+     * Collects all elements that triggered a mouse down event.
+     * @type Array
+     */
+    this.downObjects = [];
+
+    /**
+     * Collects all elements that have keyboard focus. Should be either one or no element.
+     * Elements are stored with their id.
+     * @type Array
+     */
+    this.focusObjects = [];
+
+    if (this.attr.showcopyright) {
+        this.renderer.displayCopyright(Const.licenseText, parseInt(this.options.text.fontSize, 10));
+    }
+
+    /**
+     * Full updates are needed after zoom and axis translates. This saves some time during an update.
+     * @default false
+     * @type Boolean
+     */
+    this.needsFullUpdate = false;
+
+    /**
+     * If reducedUpdate is set to true then only the dragged element and few (e.g. 2) following
+     * elements are updated during mouse move. On mouse up the whole construction is
+     * updated. This enables us to be fast even on very slow devices.
+     * @type Boolean
+     * @default false
+     */
+    this.reducedUpdate = false;
+
+    /**
+     * The current color blindness deficiency is stored in this property. If color blindness is not emulated
+     * at the moment, it's value is 'none'.
+     */
+    this.currentCBDef = 'none';
+
+    /**
+     * If GEONExT constructions are displayed, then this property should be set to true.
+     * At the moment there should be no difference. But this may change.
+     * This is set in {@link JXG.GeonextReader.readGeonext}.
+     * @type Boolean
+     * @default false
+     * @see JXG.GeonextReader.readGeonext
+     */
+    this.geonextCompatibilityMode = false;
+
+    if (this.options.text.useASCIIMathML && translateASCIIMath) {
+        init();
+    } else {
+        this.options.text.useASCIIMathML = false;
+    }
+
+    /**
+     * A flag which tells if the board registers mouse events.
+     * @type Boolean
+     * @default false
+     */
+    this.hasMouseHandlers = false;
+
+    /**
+     * A flag which tells if the board registers touch events.
+     * @type Boolean
+     * @default false
+     */
+    this.hasTouchHandlers = false;
+
+    /**
+     * A flag which stores if the board registered pointer events.
+     * @type Boolean
+     * @default false
+     */
+    this.hasPointerHandlers = false;
+
+    /**
+     * A flag which tells if the board the JXG.Board#mouseUpListener is currently registered.
+     * @type Boolean
+     * @default false
+     */
+    this.hasMouseUp = false;
+
+    /**
+     * A flag which tells if the board the JXG.Board#touchEndListener is currently registered.
+     * @type Boolean
+     * @default false
+     */
+    this.hasTouchEnd = false;
+
+    /**
+     * A flag which tells us if the board has a pointerUp event registered at the moment.
+     * @type Boolean
+     * @default false
+     */
+    this.hasPointerUp = false;
+
+    /**
+     * Offset for large coords elements like images
+     * @type Array
+     * @private
+     * @default [0, 0]
+     */
+    this._drag_offset = [0, 0];
+
+    /**
+     * Stores the input device used in the last down or move event.
+     * @type String
+     * @private
+     * @default 'mouse'
+     */
+    this._inputDevice = 'mouse';
+
+    /**
+     * Keeps a list of pointer devices which are currently touching the screen.
+     * @type Array
+     * @private
+     */
+    this._board_touches = [];
+
+    /**
+     * A flag which tells us if the board is in the selecting mode
+     * @type Boolean
+     * @default false
+     */
+    this.selectingMode = false;
+
+    /**
+     * A flag which tells us if the user is selecting
+     * @type Boolean
+     * @default false
+     */
+    this.isSelecting = false;
+
+    /**
+     * A flag which tells us if the user is scrolling the viewport
+     * @type Boolean
+     * @private
+     * @default false
+     * @see JXG.Board#scrollListener
+     */
+    this._isScrolling = false;
+
+    /**
+     * A flag which tells us if a resize is in process
+     * @type Boolean
+     * @private
+     * @default false
+     * @see JXG.Board#resizeListener
+     */
+    this._isResizing = false;
+
+    /**
+     * A bounding box for the selection
+     * @type Array
+     * @default [ [0,0], [0,0] ]
+     */
+    this.selectingBox = [[0, 0], [0, 0]];
+
+    /**
+     * Array to log user activity.
+     * Entries are objects of the form "{type, id, start, end}" notifying
+     * the start time as well as the last time of a single event of type "type"
+     * on a JSXGraph element of id "id".
+     * <p> "start" and "end" contain the amount of milliseconds elapsed between 1 January 1970 00:00:00 UTC
+     * and the time the event happened.
+     * <p>
+     * For the time being (i.e. v1.5.0) the only supported type is 'drag'.
+     * @type Array
+     */
+    this.userLog = [];
+
+    this.mathLib = Math;        // Math or JXG.Math.IntervalArithmetic
+    this.mathLibJXG = JXG.Math; // JXG.Math or JXG.Math.IntervalArithmetic
+
+    if (this.attr.registerevents) {
+        this.addEventHandlers();
+    }
+    if (this.attr.registerresizeevent) {
+        this.addResizeEventHandlers();
+    }
+    if (this.attr.registerfullscreenevent) {
+        this.addFullscreenEventHandlers();
+    }
+
+
+    this.methodMap = {
+        update: 'update',
+        fullUpdate: 'fullUpdate',
+        on: 'on',
+        off: 'off',
+        trigger: 'trigger',
+        setView: 'setBoundingBox',
+        setBoundingBox: 'setBoundingBox',
+        migratePoint: 'migratePoint',
+        colorblind: 'emulateColorblindness',
+        suspendUpdate: 'suspendUpdate',
+        unsuspendUpdate: 'unsuspendUpdate',
+        clearTraces: 'clearTraces',
+        left: 'clickLeftArrow',
+        right: 'clickRightArrow',
+        up: 'clickUpArrow',
+        down: 'clickDownArrow',
+        zoomIn: 'zoomIn',
+        zoomOut: 'zoomOut',
+        zoom100: 'zoom100',
+        zoomElements: 'zoomElements',
+        remove: 'removeObject',
+        removeObject: 'removeObject'
     };
+};
 
 JXG.extend(
     JXG.Board.prototype,
@@ -1028,7 +1042,7 @@ JXG.extend(
         },
 
         /**
-         * Get the position of the mouse in screen coordinates, relative to the upper left corner
+         * Get the position of the pointing device in screen coordinates, relative to the upper left corner
          * of the host tag.
          * @param {Event} e Event object given by the browser.
          * @param {Number} [i] Only use in case of touch events. This determines which finger to use and should not be set
@@ -1093,6 +1107,10 @@ JXG.extend(
                 len = this.objectsList.length,
                 dragEl = { visProp: { layer: -10000 } };
 
+            // Store status of key presses for 3D movement
+            this._shiftKey = evt.shiftKey;
+            this._ctrlKey = evt.ctrlKey;
+
             //for (el in this.objects) {
             for (el = 0; el < len; el++) {
                 pEl = this.objectsList[el];
@@ -1103,8 +1121,7 @@ JXG.extend(
                     this.downObjects.push(pEl);
                 }
 
-                if (
-                    haspoint &&
+                if (haspoint &&
                     pEl.isDraggable &&
                     pEl.visPropCalc.visible &&
                     ((this.geonextCompatibilityMode &&
@@ -1131,7 +1148,6 @@ JXG.extend(
                         ) {
                             dragEl = pEl;
                             collect.push(dragEl);
-
                             // Save offset for large coords elements.
                             if (Type.exists(dragEl.coords)) {
                                 offset.push(
@@ -1171,8 +1187,7 @@ JXG.extend(
             }
 
             // Move drag element to the top of the layer
-            if (
-                this.renderer.type === "svg" &&
+            if (this.renderer.type === "svg" &&
                 Type.exists(collect[0]) &&
                 Type.evaluate(collect[0].visProp.dragtotopoflayer) &&
                 collect.length === 1 &&
@@ -1181,9 +1196,9 @@ JXG.extend(
                 collect[0].rendNode.parentNode.appendChild(collect[0].rendNode);
             }
 
-            // Init rotation angle and scale factor for two finger movements
-            this.previousRotation = 0.0;
-            this.previousScale = 1.0;
+            // // Init rotation angle and scale factor for two finger movements
+            // this.previousRotation = 0.0;
+            // this.previousScale = 1.0;
 
             if (collect.length >= 1) {
                 collect[0].highlight(true);
@@ -1216,18 +1231,21 @@ JXG.extend(
             }
             drag = o.obj;
 
-            // Save updates for very small movements of coordsElements, see below
+            // Avoid updates for very small movements of coordsElements, see below
             if (drag.coords) {
                 dragScrCoords = drag.coords.scrCoords.slice();
             }
 
-            this.addLogEntry('drag', drag);
+            this.addLogEntry('drag', drag, newPos.usrCoords.slice(1));
 
-            /*
-             * Save the position.
-             */
+            // Store the position.
             this.drag_position = [newPos.scrCoords[1], newPos.scrCoords[2]];
             this.drag_position = Statistics.add(this.drag_position, this._drag_offset);
+
+            // Store status of key presses for 3D movement
+            this._shiftKey = evt.shiftKey;
+            this._ctrlKey = evt.ctrlKey;
+
             //
             // We have to distinguish between CoordsElements and other elements like lines.
             // The latter need the difference between two move events.
@@ -1307,85 +1325,86 @@ JXG.extend(
         },
 
         /**
+         * Compute the transformation matrix to move an element according to the
+         * previous and actual positions of finger 1 and finger 2.
+         * See also https://math.stackexchange.com/questions/4010538/solve-for-2d-translation-rotation-and-scale-given-two-touch-point-movements
+         * 
+         * @param {Object} finger1 Actual and previous position of finger 1
+         * @param {Object} finger1 Actual and previous position of finger 1
+         * @param {Boolean} scalable Flag if element may be scaled
+         * @param {Boolean} rotatable Flag if element may be rotated
+         * @returns 
+         */
+        getTwoFingerTransform(finger1, finger2, scalable, rotatable) {
+            var crd,
+                x1, y1, x2, y2,
+                dx, dy,
+                xx1, yy1, xx2, yy2,
+                dxx, dyy,
+                C, S, LL, tx, ty, lbda;
+
+            crd = new Coords(Const.COORDS_BY_SCREEN, [finger1.Xprev, finger1.Yprev], this).usrCoords;
+            x1 = crd[1];
+            y1 = crd[2];
+            crd = new Coords(Const.COORDS_BY_SCREEN, [finger2.Xprev, finger2.Yprev], this).usrCoords;
+            x2 = crd[1];
+            y2 = crd[2];
+
+            crd = new Coords(Const.COORDS_BY_SCREEN, [finger1.X, finger1.Y], this).usrCoords;
+            xx1 = crd[1];
+            yy1 = crd[2];
+            crd = new Coords(Const.COORDS_BY_SCREEN, [finger2.X, finger2.Y], this).usrCoords;
+            xx2 = crd[1];
+            yy2 = crd[2];
+
+            dx = x2 - x1;
+            dy = y2 - y1;
+            dxx = xx2 - xx1;
+            dyy = yy2 - yy1;
+
+            LL = dx * dx + dy * dy;
+            C = (dxx * dx + dyy * dy) / LL;
+            S = (dyy * dx - dxx * dy) / LL;
+            if (!scalable) {
+                lbda = Math.sqrt(C * C + S * S);
+                C /= lbda;
+                S /= lbda;
+            }
+            if (!rotatable) {
+                S = 0;
+            }
+            tx = 0.5 * (xx1 + xx2 - C * (x1 + x2) + S * (y1 + y2));
+            ty = 0.5 * (yy1 + yy2 - S * (x1 + x2) - C * (y1 + y2));
+
+            return [1, 0 , 0,
+                    tx, C, -S,
+                    ty, S, C];
+        },
+
+        /**
          * Moves, rotates and scales a line or polygon with two fingers.
-         * @param {Array} tar Array conatining touch event objects: {JXG.Board#touches.targets}.
+         * @param {Array} tar Array containing touch event objects: {JXG.Board#touches.targets}.
          * @param {object} drag The object that is dragged:
          * @param {Number} id pointerId of the event. In case of old touch event this is emulated.
          */
         twoFingerTouchObject: function (tar, drag, id) {
-            var np,
-                op,
-                nd,
-                od,
-                d,
-                alpha = 0,
-                S,
-                t1,
-                t3,
-                t4,
-                t5,
-                ar,
-                i,
-                len,
-                fixEl,
-                moveEl,
-                fix;
+            var t, T,
+                ar, i, len;
 
             if (
                 Type.exists(tar[0]) &&
                 Type.exists(tar[1]) &&
                 !isNaN(tar[0].Xprev + tar[0].Yprev + tar[1].Xprev + tar[1].Yprev)
             ) {
-                if (id === tar[0].num) {
-                    fixEl = tar[1];
-                    moveEl = tar[0];
-                } else {
-                    fixEl = tar[0];
-                    moveEl = tar[1];
-                }
 
-                fix = new Coords(Const.COORDS_BY_SCREEN, [fixEl.Xprev, fixEl.Yprev], this)
-                    .usrCoords;
-                // Previous finger position
-                op = new Coords(Const.COORDS_BY_SCREEN, [moveEl.Xprev, moveEl.Yprev], this)
-                    .usrCoords;
-                // New finger position
-                np = new Coords(Const.COORDS_BY_SCREEN, [moveEl.X, moveEl.Y], this).usrCoords;
-
-                // Old and new directions
-                od = Mat.crossProduct(fix, op);
-                nd = Mat.crossProduct(fix, np);
-
-                // Intersection between the two directions
-                S = Mat.crossProduct(od, nd);
-
-                // If parallel translate, otherwise rotate
-                if (Math.abs(S[0]) < Mat.eps) {
-                    return;
-                }
-
-                if (Type.evaluate(drag.visProp.rotatable)) {
-                    alpha = Geometry.rad(op.slice(1), fix.slice(1), np.slice(1));
-                }
-
-                t1 = this.create("transform", [alpha, [fix[1], fix[2]]], {
-                    type: "rotate"
+                T = this.getTwoFingerTransform(
+                        tar[0], tar[1],
+                        Type.evaluate(drag.visProp.scalable),
+                        Type.evaluate(drag.visProp.rotatable));
+                t = this.create("transform", T, {
+                    type: 'generic'
                 });
-                t1.update();
-
-                if (Type.evaluate(drag.visProp.scalable)) {
-                    // Scale
-                    d = Geometry.distance(np, fix) / Geometry.distance(op, fix);
-
-                    t3 = this.create("transform", [-fix[1], -fix[2]], {
-                        type: "translate"
-                    });
-                    t4 = this.create("transform", [d, d], { type: "scale" });
-                    t5 = this.create("transform", [fix[1], fix[2]], {
-                        type: "translate"
-                    });
-                    t1.melt(t3).melt(t4).melt(t5);
-                }
+                t.update();
 
                 if (drag.elementClass === Const.OBJECT_CLASS_LINE) {
                     ar = [];
@@ -1395,7 +1414,7 @@ JXG.extend(
                     if (drag.point2.draggable()) {
                         ar.push(drag.point2);
                     }
-                    t1.applyOnce(ar);
+                    t.applyOnce(ar);
                 } else if (drag.type === Const.OBJECT_TYPE_POLYGON) {
                     ar = [];
                     len = drag.vertices.length - 1;
@@ -1404,7 +1423,7 @@ JXG.extend(
                             ar.push(drag.vertices[i]);
                         }
                     }
-                    t1.applyOnce(ar);
+                    t.applyOnce(ar);
                 }
 
                 this.update();
@@ -1675,7 +1694,8 @@ JXG.extend(
          **********************************************************/
 
         /**
-         *  Add all possible event handlers to the board object
+         * Add all possible event handlers to the board object
+         * which move objects, i.e. mouse, pointer and touch events.
          */
         addEventHandlers: function () {
             if (Env.supportsPointerEvents()) {
@@ -1686,7 +1706,7 @@ JXG.extend(
             }
 
             // This one produces errors on IE
-            //Env.addEvent(this.containerObj, 'contextmenu', function (e) { e.preventDefault(); return false;}, this);
+            // // Env.addEvent(this.containerObj, 'contextmenu', function (e) { e.preventDefault(); return false;}, this);
             // This one works on IE, Firefox and Chromium with default configurations. On some Safari
             // or Opera versions the user must explicitly allow the deactivation of the context menu.
             if (this.containerObj !== null) {
@@ -1698,14 +1718,22 @@ JXG.extend(
                 };
             }
 
-            this.addFullscreenEventHandlers();
             this.addKeyboardEventHandlers();
+        },
 
+        /**
+         * Add resize event handlers
+         *
+         */
+        addResizeEventHandlers: function () {
             if (Env.isBrowser) {
                 try {
+                    // Supported by all new browsers
                     // resizeObserver: triggered if size of the JSXGraph div changes.
                     this.startResizeObserver();
                 } catch (err) {
+                    // Certain Safari and edge version do not support
+                    // resizeObserver, but intersectionObserver.
                     // resize event: triggered if size of window changes
                     Env.addEvent(window, "resize", this.resizeListener, this);
                     // intersectionObserver: triggered if JSXGraph becomes visible.
@@ -1728,6 +1756,7 @@ JXG.extend(
 
             this.removeFullscreenEventHandlers();
             this.removeKeyboardEventHandlers();
+
             if (Env.isBrowser) {
                 if (Type.exists(this.resizeObserver)) {
                     this.stopResizeObserver();
@@ -1845,11 +1874,11 @@ JXG.extend(
                 ],
                 le = events.length;
 
-            if (!this.hasFullsceenEventHandlers && Env.isBrowser) {
+            if (!this.hasFullscreenEventHandlers && Env.isBrowser) {
                 for (i = 0; i < le; i++) {
                     Env.addEvent(this.document, events[i], this.fullscreenListener, this);
                 }
-                this.hasFullsceenEventHandlers = true;
+                this.hasFullscreenEventHandlers = true;
             }
         },
 
@@ -1888,11 +1917,11 @@ JXG.extend(
                 ],
                 le = events.length;
 
-            if (this.hasFullsceenEventHandlers && Env.isBrowser) {
+            if (this.hasFullscreenEventHandlers && Env.isBrowser) {
                 for (i = 0; i < le; i++) {
                     Env.removeEvent(this.document, events[i], this.fullscreenListener, this);
                 }
-                this.hasFullsceenEventHandlers = false;
+                this.hasFullscreenEventHandlers = false;
             }
         },
 
@@ -2385,13 +2414,8 @@ JXG.extend(
          * @returns {Boolean} ...
          */
         pointerDownListener: function (evt, object) {
-            var i,
-                j,
-                k,
-                pos,
-                elements,
-                sel,
-                target_obj,
+            var i, j, k, pos,
+                elements, sel, target_obj,
                 type = 'mouse', // Used in case of no browser
                 found, target, ta;
 
@@ -2443,7 +2467,7 @@ JXG.extend(
             type = this._inputDevice;
             this.options.precision.hasPoint = this.options.precision[type];
 
-            // Handling of multi touch with pointer events should be easier than the touch events.
+            // Handling of multi touch with pointer events should be easier than with touch events.
             // Every pointer device has its own pointerId, e.g. the mouse
             // always has id 1 or 0, fingers and pens get unique ids every time a pointerDown event is fired and they will
             // keep this id until a pointerUp event is fired. What we have to do here is:
@@ -2648,13 +2672,13 @@ JXG.extend(
                 );
             } else if (!this.mouseOriginMove(evt)) {
                 if (this.mode === this.BOARD_MODE_DRAG) {
+                    pos = this.getMousePosition(evt);
                     // Run through all jsxgraph elements which are touched by at least one finger.
                     for (i = 0; i < this.touches.length; i++) {
                         touchTargets = this.touches[i].targets;
                         // Run through all touch events which have been started on this jsxgraph element.
                         for (j = 0; j < touchTargets.length; j++) {
                             if (touchTargets[j].num === evt.pointerId) {
-                                pos = this.getMousePosition(evt);
                                 touchTargets[j].X = pos[0];
                                 touchTargets[j].Y = pos[1];
 
@@ -3571,6 +3595,7 @@ JXG.extend(
                 // are converted to user coordinates
                 dx = Type.evaluate(this.attr.keyboard.dx) / this.unitX,
                 dy = Type.evaluate(this.attr.keyboard.dy) / this.unitY,
+                // u = 100,
                 doZoom = false,
                 done = true,
                 dir,
@@ -3579,6 +3604,9 @@ JXG.extend(
             if (!this.attr.keyboard.enabled || id_node === "") {
                 return false;
             }
+
+            // dx = Math.round(dx * u) / u;
+            // dy = Math.round(dy * u) / u;
 
             // An element of type input or textarea has foxus, get out of here.
             doc = this.containerObj.shadowRoot || document;
@@ -3694,6 +3722,7 @@ JXG.extend(
                         !Type.evaluate(el.visProp.fixed)
                     ) {
 
+
                     this.mode = this.BOARD_MODE_DRAG;
                     if (Type.exists(el.coords)) {
                         dir[0] += actPos[0];
@@ -3701,10 +3730,18 @@ JXG.extend(
                     }
                     // For coordsElement setPosition has to call setPositionDirectly.
                     // Otherwise the position is set by a translation.
-                    el.setPosition(JXG.COORDS_BY_USER, dir);
                     if (Type.exists(el.coords)) {
+                        el.setPosition(JXG.COORDS_BY_USER, dir);
                         this.updateInfobox(el);
+                    } else {
+                        this.displayInfobox(false);
+                        el.setPositionDirectly(
+                            Const.COORDS_BY_USER,
+                            dir,
+                            [0, 0]
+                        );
                     }
+
                     this.triggerEventHandlers(['keymove', 'move'], [evt, this.mode]);
                     el.triggerEventHandlers(['keydrag', 'drag'], [evt]);
                     this.mode = this.BOARD_MODE_NONE;
@@ -3743,6 +3780,7 @@ JXG.extend(
             el = this.select(id);
             if (Type.exists(el.highlight)) {
                 el.highlight(true);
+                this.focusObjects = [id];
                 el.triggerEventHandlers(['hit'], [evt]);
             }
             if (Type.exists(el.coords)) {
@@ -3765,11 +3803,7 @@ JXG.extend(
             if (!this.attr.keyboard.enabled) {
                 return false;
             }
-            // var id_node = evt.target.id,
-            //     id, el;
-
-            // id = id_node.replace(this.containerObj.id + '_', '');
-            // el = this.select(id);
+            this.focusObjects = []; // This has to be before displayInfobox(false)
             this.dehighlightAll();
             this.displayInfobox(false);
         },
@@ -3989,7 +4023,7 @@ JXG.extend(
          * @returns {JXG.Board} Reference to the board
          */
         initInfobox: function () {
-            var attr = Type.copyAttributes({}, this.options, "infobox");
+            var attr = Type.copyAttributes({}, this.options, 'infobox');
 
             attr.id = this.id + "_infobox";
             /**
@@ -3999,12 +4033,8 @@ JXG.extend(
              * @type JXG.Text
              *
              */
-            this.infobox = this.create("text", [0, 0, "0,0"], attr);
-
-            this.infobox.distanceX = -20;
-            this.infobox.distanceY = 25;
+            this.infobox = this.create('text', [0, 0, '0,0'], attr);
             // this.infobox.needsUpdateSize = false;  // That is not true, but it speeds drawing up.
-
             this.infobox.dump = false;
 
             this.displayInfobox(false);
@@ -4021,11 +4051,9 @@ JXG.extend(
          *
          */
         updateInfobox: function (el) {
-            var x,
-                y,
-                xc,
-                yc,
+            var x, y, xc, yc,
                 vpinfoboxdigits,
+                distX, distY,
                 vpsi = Type.evaluate(el.visProp.showinfobox);
 
             if ((!Type.evaluate(this.attr.showinfobox) && vpsi === "inherit") || !vpsi) {
@@ -4035,11 +4063,13 @@ JXG.extend(
             if (Type.isPoint(el)) {
                 xc = el.coords.usrCoords[1];
                 yc = el.coords.usrCoords[2];
+                distX = Type.evaluate(this.infobox.visProp.distancex);
+                distY = Type.evaluate(this.infobox.visProp.distancey);
 
                 vpinfoboxdigits = Type.evaluate(el.visProp.infoboxdigits);
                 this.infobox.setCoords(
-                    xc + this.infobox.distanceX / this.unitX,
-                    yc + this.infobox.distanceY / this.unitY
+                    xc + distX / this.unitX,
+                    yc + distY / this.unitY
                 );
 
                 if (typeof el.infoboxText !== "string") {
@@ -4076,6 +4106,11 @@ JXG.extend(
          *
          */
         displayInfobox: function (val) {
+            if (!val && this.focusObjects.length > 0 &&
+                this.select(this.focusObjects[0]).elementClass === Const.OBJECT_CLASS_POINT) {
+                // If an element has focus we do not hide its infobox
+                return this;
+            }
             if (this.infobox.hiddenByParent === val) {
                 this.infobox.hiddenByParent = !val;
                 this.infobox.prepareUpdate().updateVisibility(val).updateRenderer();
@@ -4119,18 +4154,21 @@ JXG.extend(
         dehighlightAll: function () {
             var el,
                 pEl,
-                needsDehighlight = false;
+                stillHighlighted = {},
+                needsDeHighlight = false;
 
             for (el in this.highlightedObjects) {
                 if (this.highlightedObjects.hasOwnProperty(el)) {
+
                     pEl = this.highlightedObjects[el];
-
-                    if (this.hasMouseHandlers || this.hasPointerHandlers) {
-                        pEl.noHighlight();
+                    if (this.focusObjects.indexOf(el) < 0) { // Element does not have focus
+                        if (this.hasMouseHandlers || this.hasPointerHandlers) {
+                            pEl.noHighlight();
+                        }
+                        needsDeHighlight = true;
+                    } else {
+                        stillHighlighted[el] = pEl;
                     }
-
-                    needsDehighlight = true;
-
                     // In highlightedObjects should only be objects which fulfill all these conditions
                     // And in case of complex elements, like a turtle based fractal, it should be faster to
                     // just de-highlight the element instead of checking hasPoint...
@@ -4138,13 +4176,13 @@ JXG.extend(
                 }
             }
 
-            this.highlightedObjects = {};
+            this.highlightedObjects = stillHighlighted;
 
             // We do not need to redraw during dehighlighting in CanvasRenderer
             // because we are redrawing anyhow
             //  -- We do need to redraw during dehighlighting. Otherwise objects won't be dehighlighted until
             // another object is highlighted.
-            if (this.renderer.type === "canvas" && needsDehighlight) {
+            if (this.renderer.type === "canvas" && needsDeHighlight) {
                 this.prepareUpdate();
                 this.renderer.suspendRedraw(this);
                 this.updateRenderer();
@@ -4267,9 +4305,17 @@ JXG.extend(
 
                 if (Type.exists(el.coords)) {
                     if (Type.evaluate(el.visProp.frozen)) {
-                        el.coords.screen2usr();
+                        if (el.is3D) {
+                            el.element2D.coords.screen2usr();
+                        } else {
+                            el.coords.screen2usr();
+                        }
                     } else {
-                        el.coords.usr2screen();
+                        if (el.is3D) {
+                            el.element2D.coords.usr2screen();
+                        } else{
+                            el.coords.usr2screen();
+                        }
                     }
                 }
             }
@@ -4847,8 +4893,8 @@ JXG.extend(
                 // remove the object itself from our control structures
                 if (object._pos > -1) {
                     this.objectsList.splice(object._pos, 1);
-                    for (el = object._pos; el < this.objectsList.length; el++) {
-                        this.objectsList[el]._pos--;
+                    for (i = object._pos; i < this.objectsList.length; i++) {
+                        this.objectsList[i]._pos--;
                     }
                 } else if (object.type !== Const.OBJECT_TYPE_TURTLE) {
                     JXG.debug(
@@ -4960,40 +5006,16 @@ JXG.extend(
             var box,
                 oldWidth, oldHeight,
                 oX, oY;
-                // w, h, cx, cy;
-                // box_act,
-                // shift_x = 0,
-                // shift_y = 0;
 
             oldWidth = this.canvasWidth;
             oldHeight = this.canvasHeight;
 
             if (!dontSetBoundingBox) {
-                // box_act = this.getBoundingBox();
                 box = this.getBoundingBox();    // This is the actual bounding box.
             }
 
-            this.canvasWidth = parseFloat(canvasWidth);
-            this.canvasHeight = parseFloat(canvasHeight);
-
-            // if (!dontSetBoundingBox) {
-            //     box     = this.attr.boundingbox;    // This is the intended bounding box.
-
-            //     // The shift values compensate the follow-up correction
-            //     // in setBoundingBox in case of "this.keepaspectratio==true"
-            //     // Otherwise, shift_x and shift_y will be zero.
-            //     // Obsolet since setBoundingBox centers in case of "this.keepaspectratio==true".
-            //     // shift_x = box_act[0] - box[0] / this.zoomX;
-            //     // shift_y = box_act[1] - box[1] / this.zoomY;
-
-            //     cx = (box[2] + box[0]) * 0.5; // + shift_x;
-            //     cy = (box[3] + box[1]) * 0.5; // + shift_y;
-
-            //     w = (box[2] - box[0]) * 0.5 / this.zoomX;
-            //     h = (box[1] - box[3]) * 0.5 / this.zoomY;
-
-            //     box = [cx - w, cy + h, cx + w, cy - h];
-            // }
+            this.canvasWidth = Math.max(parseFloat(canvasWidth), Mat.eps);
+            this.canvasHeight = Math.max(parseFloat(canvasHeight), Mat.eps);
 
             if (!dontset) {
                 this.containerObj.style.width = this.canvasWidth + "px";
@@ -6793,17 +6815,20 @@ JXG.extend(
 
         /**
          * Add user activity to the array "board.userLog".
-         * 
+         *
          * @param {String} type Event type, e.g. "drag"
          * @param {Object} obj JSXGraph element object
-         * 
+         *
          * @see JXG.Board#userLog
          * @return {JXG.Board} Reference to the board
          */
-        addLogEntry: function(type, obj) {
-            var t,
-                id = obj.id,
+        addLogEntry: function(type, obj, pos) {
+            var t, id,
                 last = this.userLog.length - 1;
+
+            if (Type.exists(obj.elementClass)) {
+                id = obj.id;
+            }
             if (Type.evaluate(this.attr.logging.enabled)) {
                 t = (new Date()).getTime();
                 if (last >= 0 &&
@@ -6814,12 +6839,18 @@ JXG.extend(
                     t - this.userLog[last].end < 500) {
 
                     this.userLog[last].end = t;
+                    this.userLog[last].endpos = pos;
                 } else {
                     this.userLog.push({
                         type: type,
                         id: id,
                         start: t,
-                        end: t
+                        startpos: pos,
+                        end: t,
+                        endpos: pos,
+                        bbox: this.getBoundingBox(),
+                        canvas: [this.canvasWidth, this.canvasHeight],
+                        zoom: [this.zoomX, this.zoomY]
                     });
                 }
             }
@@ -6841,13 +6872,13 @@ JXG.extend(
          * @example
          *
          * // Line which will be the floor to roll upon.
-         * var line = brd.create('curve', [function (t) { return t;}, function (t){ return 1;}], {strokeWidth:6});
+         * var line = board.create('curve', [function (t) { return t;}, function (t){ return 1;}], {strokeWidth:6});
          * // Center of the rolling circle
-         * var C = brd.create('point',[0,2],{name:'C'});
+         * var C = board.create('point',[0,2],{name:'C'});
          * // Starting point of the rolling circle
-         * var P = brd.create('point',[0,1],{name:'P', trace:true});
+         * var P = board.create('point',[0,1],{name:'P', trace:true});
          * // Circle defined as a curve. The circle "starts" at P, i.e. circle(0) = P
-         * var circle = brd.create('curve',[
+         * var circle = board.create('curve',[
          *           function (t){var d = P.Dist(C),
          *                           beta = JXG.Math.Geometry.rad([C.X()+1,C.Y()],C,P);
          *                       t += beta;
@@ -6862,8 +6893,8 @@ JXG.extend(
          *           {strokeWidth:6, strokeColor:'green'});
          *
          * // Point on circle
-         * var B = brd.create('glider',[0,2,circle],{name:'B', color:'blue',trace:false});
-         * var roll = brd.createRoulette(line, circle, 0, Math.PI/20, 1, 100, [C,P,B]);
+         * var B = board.create('glider',[0,2,circle],{name:'B', color:'blue',trace:false});
+         * var roll = board.createRoulette(line, circle, 0, Math.PI/20, 1, 100, [C,P,B]);
          * roll.start() // Start the rolling, to be stopped by roll.stop()
          *
          * </pre><div class="jxgbox" id="JXGe5e1b53c-a036-4a46-9e35-190d196beca5" style="width: 300px; height: 300px;"></div>

@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2022
+    Copyright 2008-2023
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -25,8 +25,8 @@
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
-    and <http://opensource.org/licenses/MIT/>.
+    the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
+    and <https://opensource.org/licenses/MIT/>.
  */
 
 /*global JXG: true, define: true*/
@@ -42,7 +42,6 @@ import JXG from "../jxg";
 import GeometryElement from "./element";
 import Coords from "./coords";
 import Const from "./constants";
-import Conic from "../element/conic";
 import GeonextParser from "../parser/geonext";
 import Type from "../utils/type";
 
@@ -139,6 +138,7 @@ JXG.Circle = function (board, method, par1, par2, attributes) {
         this.updateRadius = Type.createFunction(par2, this.board, null, true);
         // First evaluation of the radius function
         this.updateRadius();
+        this.addParentsFromJCFunctions([this.updateRadius]);
     } else if (method === "pointLine") {
         // dann ist p2 die Id eines Objekts vom Typ Line!
         this.line = board.select(par2);
@@ -209,14 +209,11 @@ JXG.extend(
          * @private
          */
         hasPoint: function (x, y) {
-            var prec,
-                type,
+            var prec, type,
                 mp = this.center.coords.usrCoords,
                 p = new Coords(Const.COORDS_BY_SCREEN, [x, y], this.board),
                 r = this.Radius(),
-                dx,
-                dy,
-                dist;
+                dx, dy, dist;
 
             if (Type.isObject(Type.evaluate(this.visProp.precision))) {
                 type = this.board._inputDevice;
@@ -228,9 +225,10 @@ JXG.extend(
             dx = mp[1] - p.usrCoords[1];
             dy = mp[2] - p.usrCoords[2];
             dist = Math.sqrt(dx * dx + dy * dy);
+
             // We have to use usrCoords, since Radius is available in usrCoords only.
             prec += Type.evaluate(this.visProp.strokewidth) * 0.5;
-            prec /= Math.sqrt(this.board.unitX * this.board.unitY);
+            prec /= Math.sqrt(Math.abs(this.board.unitX * this.board.unitY));
 
             if (Type.evaluate(this.visProp.hasinnerpoints)) {
                 return dist < r + prec;
@@ -239,12 +237,12 @@ JXG.extend(
             return Math.abs(dist - r) < prec;
         },
 
-        /**
-         * Used to generate a polynomial for a point p that lies on this circle.
-         * @param {JXG.Point} p The point for which the polynomial is generated.
-         * @returns {Array} An array containing the generated polynomial.
-         * @private
-         */
+        // /**
+        //  * Used to generate a polynomial for a point p that lies on this circle.
+        //  * @param {JXG.Point} p The point for which the polynomial is generated.
+        //  * @returns {Array} An array containing the generated polynomial.
+        //  * @private
+        //  */
         generatePolynomial: function (p) {
             /*
              * We have four methods to construct a circle:
@@ -380,34 +378,10 @@ JXG.extend(
 
                 this.numberPoints = 13;
                 this.dataX = [
-                    x + r,
-                    x + r,
-                    x + r * c,
-                    x,
-                    x - r * c,
-                    x - r,
-                    x - r,
-                    x - r,
-                    x - r * c,
-                    x,
-                    x + r * c,
-                    x + r,
-                    x + r
+                    x + r, x + r, x + r * c, x, x - r * c, x - r, x - r, x - r, x - r * c, x, x + r * c, x + r, x + r
                 ];
                 this.dataY = [
-                    y,
-                    y + r * c,
-                    y + r,
-                    y + r,
-                    y + r,
-                    y + r * c,
-                    y,
-                    y - r * c,
-                    y - r,
-                    y - r,
-                    y - r,
-                    y - r * c,
-                    y
+                    y, y + r * c, y + r, y + r, y + r, y + r * c, y, y - r * c, y - r, y - r, y - r, y - r * c, y
                 ];
                 this.bezierDegree = 3;
                 for (i = 0; i < this.numberPoints; i++) {
@@ -538,6 +512,7 @@ JXG.extend(
          */
         setRadius: function (r) {
             this.updateRadius = Type.createFunction(r, this.board, null, true);
+            this.addParentsFromJCFunctions([this.updateRadius]);
             this.board.update();
 
             return this;
@@ -911,7 +886,7 @@ JXG.createCircle = function (board, parents, attributes) {
         //     el = JXG.createCircle(board, [obj.center, function() { return obj.Radius(); }], attr);
         // } else {
         // Create a conic element from a circle and a projective transformation
-        el = Conic.createEllipse(
+        el = JXG.createEllipse(
             board,
             [
                 obj.center,
@@ -1010,7 +985,8 @@ JXG.createCircle = function (board, parents, attributes) {
 
 JXG.registerElement("circle", JXG.createCircle);
 
-export default {
-    Circle: JXG.Circle,
-    createCircle: JXG.createCircle
-};
+export default JXG.Circle;
+// export default {
+//     Circle: JXG.Circle,
+//     createCircle: JXG.createCircle
+// };

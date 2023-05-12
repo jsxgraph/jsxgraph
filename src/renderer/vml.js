@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2022
+    Copyright 2008-2023
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -25,8 +25,8 @@
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
-    and <http://opensource.org/licenses/MIT/>.
+    the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
+    and <https://opensource.org/licenses/MIT/>.
  */
 
 /*global JXG: true, define: true, AMprocessNode: true, MathJax: true, document: true */
@@ -63,7 +63,7 @@ JXG.VMLRenderer = function (container) {
         return false;
     };
 
-    this.resolution = 10; // Paths are drawn with a a resolution of this.resolution/pixel.
+    this.resolution = 10; // Paths are drawn with a resolution of this.resolution/pixel.
 
     // Add VML includes and namespace
     // Original: IE <=7
@@ -383,13 +383,11 @@ JXG.extend(
         // Already documented in JXG.AbstractRenderer
         transformImage: function (el, t) {
             var m,
-                s,
                 maxX,
                 maxY,
                 minX,
                 minY,
                 i,
-                nt,
                 node = el.rendNode,
                 p = [],
                 len = t.length;
@@ -1123,8 +1121,7 @@ JXG.extend(
                 rgbo,
                 o = Type.evaluate(opacity),
                 oo,
-                node = el.rendNode,
-                t;
+                node = el.rendNode;
 
             o = o > 0 ? o : 0;
 
@@ -1179,7 +1176,6 @@ JXG.extend(
             var rgba = Type.evaluate(color),
                 c,
                 rgbo,
-                t,
                 o = Type.evaluate(opacity),
                 oo,
                 node = el.rendNode,

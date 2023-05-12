@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2022
+    Copyright 2008-2023
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -26,8 +26,8 @@
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
-    and <http://opensource.org/licenses/MIT/>.
+    the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
+    and <https://opensource.org/licenses/MIT/>.
  */
 
 /*global JXG: true, define: true*/
@@ -36,7 +36,7 @@
 
 /**
  * Functions for color conversions. This was originally based on a class to parse color values by
- * Stoyan Stefanov <sstoo@gmail.com> (see http://www.phpied.com/rgb-color-parser-in-javascript/)
+ * Stoyan Stefanov <sstoo@gmail.com> (see https://www.phpied.com/rgb-color-parser-in-javascript/)
  */
 
 import JXG from "../jxg";
@@ -395,7 +395,7 @@ JXG.hex2rgb = function (hex) {
  * Converts HSV color to RGB color.
  * Based on C Code in "Computer Graphics -- Principles and Practice,"
  * Foley et al, 1996, p. 593.
- * See also http://www.efg2.com/Lab/Graphics/Colors/HSV.htm
+ * See also https://www.had2know.org/technology/hsv-rgb-conversion-formula-calculator.html
  * @param {Number} H value between 0 and 360
  * @param {Number} S value between 0.0 (shade of gray) to 1.0 (pure color)
  * @param {Number} V value between 0.0 (black) to 1.0 (white)
@@ -484,7 +484,7 @@ JXG.hsv2rgb = function (H, S, V) {
  * @param {Number} ag
  * @param {Number} ab
  * @returns {Array} Contains the h, s, and v value in this order.
- * @see http://zach.in.tu-clausthal.de/teaching/cg1_0708/folien/13_color_3_4up.pdf
+ * @see https://www.had2know.org/technology/hsv-rgb-conversion-formula-calculator.html
  */
 JXG.rgb2hsv = function (color, ag, ab) {
     var r, g, b, fr, fg, fb, fmax, fmin, h, s, v, max, min;

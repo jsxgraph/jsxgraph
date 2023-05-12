@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2022
+    Copyright 2008-2023
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -25,8 +25,8 @@
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
-    and <http://opensource.org/licenses/MIT/>.
+    the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
+    and <https://opensource.org/licenses/MIT/>.
  */
 
 /*global JXG: true, define: true*/
@@ -534,8 +534,28 @@ JXG.extend(
         },
 
         /**
+         * Add dependence on elements in JessieCode functions.
+         * @param {Array} function_array Array of functions containing potential properties "deps" with
+         * elements the function depends on.
+         * @returns {JXG.Object} reference to the object itself
+         * @private
+         */
+        addParentsFromJCFunctions: function(function_array) {
+            var i, e, obj;
+            for (i = 0; i < function_array.length; i++) {
+                for (e in function_array[i].deps) {
+                    obj = function_array[i].deps[e];
+                    this.addParents(obj);
+                    obj.addChild(this);
+                }
+            }
+            return this;
+        },
+
+        /**
          * Remove an element as a child from the current element.
          * @param {JXG.GeometryElement} obj The dependent object.
+         * @returns {JXG.Object} reference to the object itself
          */
         removeChild: function (obj) {
             //var el, el2;
@@ -575,7 +595,7 @@ JXG.extend(
          * Removes the given object from the descendants list of this object and all its child objects.
          * @param {JXG.GeometryElement} obj The element that is to be removed from the descendants list.
          * @private
-         * @return
+         * @returns {JXG.Object} reference to the object itself
          */
         removeDescendants: function (obj) {
             var el;
@@ -1038,8 +1058,8 @@ JXG.extend(
         },
 
         /**
-         * Sets the value of property <tt>property</tt> to <tt>value</tt>.
-         * @param {String} property The property's name.
+         * Sets the value of attribute <tt>attribute</tt> to <tt>value</tt>.
+         * @param {String} attribute The attribute's name.
          * @param value The new value
          * @private
          */
@@ -1175,7 +1195,7 @@ JXG.extend(
          *
          * @function
          * @example
-         * // Set property directly on creation of an element using the attributes object parameter
+         * // Set attribute directly on creation of an element using the attributes object parameter
          * var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-1, 5, 5, 1]};
          * var p = board.create('point', [2, 2], {visible: false});
          *
@@ -1185,17 +1205,10 @@ JXG.extend(
          *     visible: true
          * });
          */
-        setAttribute: function (attributes) {
-            var i,
-                j,
-                le,
-                key,
-                value,
-                arg,
-                opacity,
-                pair,
-                oldvalue,
-                properties = {};
+        setAttribute: function (attr) {
+            var i, j, le, key, value, arg,
+                opacity, pair, oldvalue,
+                attributes = {};
 
             // Normalize the user input
             for (i = 0; i < arguments.length; i++) {
@@ -1203,23 +1216,23 @@ JXG.extend(
                 if (Type.isString(arg)) {
                     // pairRaw is string of the form 'key:value'
                     pair = arg.split(":");
-                    properties[Type.trim(pair[0])] = Type.trim(pair[1]);
+                    attributes[Type.trim(pair[0])] = Type.trim(pair[1]);
                 } else if (!Type.isArray(arg)) {
                     // pairRaw consists of objects of the form {key1:value1,key2:value2,...}
-                    JXG.extend(properties, arg);
+                    JXG.extend(attributes, arg);
                 } else {
                     // pairRaw consists of array [key,value]
-                    properties[arg[0]] = arg[1];
+                    attributes[arg[0]] = arg[1];
                 }
             }
 
             // Handle shortcuts
-            properties = this.resolveShortcuts(properties);
+            attributes = this.resolveShortcuts(attributes);
 
-            for (i in properties) {
-                if (properties.hasOwnProperty(i)) {
+            for (i in attributes) {
+                if (attributes.hasOwnProperty(i)) {
                     key = i.replace(/\s+/g, "").toLowerCase();
-                    value = properties[i];
+                    value = attributes[i];
 
                     // This handles the subobjects, if the key:value pairs are contained in an object.
                     // Example:
@@ -1447,7 +1460,7 @@ JXG.extend(
                 }
             }
 
-            this.triggerEventHandlers(["attribute"], [properties, this]);
+            this.triggerEventHandlers(["attribute"], [attributes, this]);
 
             if (!Type.evaluate(this.visProp.needsregularupdate)) {
                 this.board.fullUpdate();
@@ -2231,7 +2244,7 @@ JXG.extend(
          * @memberof JXG.GeometryElement
          * @function
          */
-        addEvent: JXG.shortcut(JXG.GeometryElement.prototype, "on"),
+        addEvent: JXG.shortcut(JXG.GeometryElement.prototype, 'on'),
 
         /**
          * Alias of {@link JXG.EventEmitter.off}.
@@ -2240,7 +2253,7 @@ JXG.extend(
          * @memberof JXG.GeometryElement
          * @function
          */
-        removeEvent: JXG.shortcut(JXG.GeometryElement.prototype, "off"),
+        removeEvent: JXG.shortcut(JXG.GeometryElement.prototype, 'off'),
 
         /* **************************
          *     EVENT DEFINITION
@@ -2431,3 +2444,5 @@ JXG.extend(
 );
 
 export default JXG.GeometryElement;
+// const GeometryElement = JXG.GeometryElement;
+// export { GeometryElement as default,  GeometryElement };

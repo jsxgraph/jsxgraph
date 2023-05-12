@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2022
+    Copyright 2008-2023
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -25,8 +25,8 @@
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
-    and <http://opensource.org/licenses/MIT/>.
+    the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
+    and <https://opensource.org/licenses/MIT/>.
  */
 
 /*global JXG: true, define: true, AMprocessNode: true, MathJax: true, document: true, window: true */
@@ -151,13 +151,45 @@ JXG.AbstractRenderer = function () {
     /**
      * True if the browsers' SVG engine supports foreignObject.
      * Not supported browsers are IE 9 - 11.
-     * All other browsers return ture, since it is tested with
-     * document.implementation.hasFeature() which is deprecated.
+     * It is tested in svg renderer.
      *
      * @type Boolean
      * @private
      */
     this.supportsForeignObject = false;
+
+    /**
+     * Defines dash patterns. Sizes are in pixel.
+     * Defined styles are:
+     * <ol>
+     * <li> 2 dash, 2 space</li>
+     * <li> 5 dash, 5 space</li>
+     * <li> 10 dash, 10 space</li>
+     * <li> 20 dash, 20 space</li>
+     * <li> 20 dash, 10 space, 10 dash, 10 space</li>
+     * <li> 20 dash, 5 space, 10 dash, 5 space</li>
+     * <li> 0 dash, 5 space (dotted line)</li>
+     * </ol>
+     * This means, the numbering is <b>1-based</b>.
+     * Solid lines are set with dash:0.
+     * If the object's attribute "dashScale:true" the dash pattern is multiplied by
+     * strokeWidth / 2.
+     *
+     * @type Array
+     * @default [[2, 2], [5, 5], [10, 10], [20, 20], [20, 10, 10, 10], [20, 5, 10, 5], [0, 5]]
+     * @see JXG.GeometryElement#dash
+     * @see JXG.GeometryElement#dashScale
+     */
+    this.dashArray = [
+        [2, 2],
+        [5, 5],
+        [10, 10],
+        [20, 20],
+        [20, 10, 10, 10],
+        [20, 5, 10, 5],
+        [0, 5]
+    ];
+
 };
 
 JXG.extend(
@@ -286,8 +318,8 @@ JXG.extend(
             } else if (face === "[]") {
                 prim = "rect";
             } else {
-                // cross/x, diamond/<>, triangleup/a/^, triangledown/v, triangleleft/<,
-                // triangleright/>, plus/+,
+                // cross/x, diamond/<>, triangleup/A/^, triangledown/v, triangleleft/<,
+                // triangleright/>, plus/+, |, -
                 prim = "path";
             }
 
@@ -324,7 +356,7 @@ JXG.extend(
 
             if (!isNaN(el.coords.scrCoords[2] + el.coords.scrCoords[1])) {
                 if (unit === "user") {
-                    size *= Math.sqrt(el.board.unitX * el.board.unitY);
+                    size *= Math.sqrt(Math.abs(el.board.unitX * el.board.unitY));
                 }
                 size *= !el.board || !zoom ? 1.0 : Math.sqrt(el.board.zoomX * el.board.zoomY);
                 s1 = size === 0 ? 0 : size + 1;
@@ -540,7 +572,7 @@ JXG.extend(
                Handle arrow heads.
 
                The default arrow head is an isosceles triangle with base length 10 units and height 10 units.
-               These 10 units are scaled to strokeWidth * arrowSize pixels pixels.
+               These 10 units are scaled to strokeWidth * arrowSize pixels.
             */
             if (ev_fa || ev_la) {
                 if (Type.exists(ev_fa.type)) {
@@ -728,7 +760,7 @@ JXG.extend(
                Handle arrow heads.
 
                The default arrow head (type==1) is an isosceles triangle with base length 10 units and height 10 units.
-               These 10 units are scaled to strokeWidth * arrowSize pixels pixels.
+               These 10 units are scaled to strokeWidth * arrowSize pixels.
             */
             if (a.evFirst || a.evLast) {
                 // Correct the position of the arrow heads
@@ -940,11 +972,9 @@ JXG.extend(
             var radius = el.Radius();
 
             if (
-                radius > 0.0 &&
+                /*radius > 0.0 &&*/
                 Math.abs(el.center.coords.usrCoords[0]) > Mat.eps &&
-                !isNaN(
-                    radius + el.center.coords.scrCoords[1] + el.center.coords.scrCoords[2]
-                ) &&
+                !isNaN(radius + el.center.coords.scrCoords[1] + el.center.coords.scrCoords[2]) &&
                 radius * el.board.unitX < 2000000
             ) {
                 this.updateEllipsePrim(
@@ -955,6 +985,7 @@ JXG.extend(
                     radius * el.board.unitY
                 );
             }
+            this.setLineCap(el);
         },
 
         /* **************************
@@ -1102,17 +1133,12 @@ JXG.extend(
          */
         updateText: function (el) {
             var content = el.plaintext,
-                v,
-                c,
+                v, c,
                 parentNode,
-                scale,
-                vshift,
-                id,
-                wrap_id,
-                ax,
-                ay,
-                to_h,
-                to_v;
+                scale, vshift,
+                id, wrap_id,
+                ax, ay,
+                to_h, to_v;
 
             if (el.visPropCalc.visible) {
                 this.updateTextStyle(el, false);
@@ -1221,7 +1247,6 @@ JXG.extend(
 
                         if (Type.evaluate(el.visProp.usemathjax)) {
                             // Typesetting directly might not work because mathjax was not loaded completely
-                            // see http://www.mathjax.org/docs/1.1/typeset.html
                             try {
                                 if (MathJax.typeset) {
                                     // Version 3
@@ -1252,20 +1277,21 @@ JXG.extend(
                             try {
                                 /* eslint-disable no-undef */
                                 katex.render(content, el.rendNode, {
+                                    macros: Type.evaluate(el.visProp.katexmacros),
                                     throwOnError: false
                                 });
                                 /* eslint-enable no-undef */
                             } catch (e) {
-                                JXG.debug("KaTeX (not yet) loaded");
+                                JXG.debug("KaTeX not loaded (yet)");
                             }
                         } else if (Type.evaluate(el.visProp.useasciimathml)) {
                             // This is not a constructor.
-                            // See http://www1.chapman.edu/~jipsen/mathml/asciimath.html for more information
+                            // See http://asciimath.org/ for more information
                             // about AsciiMathML and the project's source code.
                             try {
                                 AMprocessNode(el.rendNode, false);
                             } catch (e) {
-                                JXG.debug("AsciiMathML (not yet) loaded");
+                                JXG.debug("AsciiMathML not loaded (yet)");
                             }
                         }
                     }
@@ -1417,6 +1443,8 @@ JXG.extend(
                     el.visPropOld.fontsize = fs;
                 }
             }
+
+            this.setTabindex(el);
 
             this.setObjectTransition(el);
             if (display === "html" && this.type !== "no") {
@@ -1707,7 +1735,7 @@ JXG.extend(
          * @param {Number} size A positive number describing the size. Usually the half of the width and height of
          * the drawn point.
          * @param {String} type A string describing the point's face. This method only accepts the shortcut version of
-         * each possible face: <tt>x, +, <>, ^, v, >, < </tt>
+         * each possible face: <tt>x, +, |, -, [], <>, ^, v, >, < </tt>
          */
         updatePathStringPoint: function (element, size, type) {
             /* stub */
@@ -1824,7 +1852,7 @@ JXG.extend(
          * because it is called from outside the renderer.
          * @param {Node} node The SVG DOM Node which buffering type to update.
          * @param {String} type Either 'auto', 'dynamic', or 'static'. For an explanation see
-         *   {@link http://www.w3.org/TR/SVGTiny12/painting.html#BufferedRenderingProperty}.
+         *   {@link https://www.w3.org/TR/SVGTiny12/painting.html#BufferedRenderingProperty}.
          */
         setBuffering: function (node, type) {
             /* stub */
@@ -2270,10 +2298,16 @@ JXG.extend(
          * @returns {Object} Reference to a JavaScript object. In case of SVG/VMLRenderer it's a reference to a SVG/VML node.
          */
         getElementById: function (id) {
+            var str;
             if (Type.exists(this.container)) {
                 // Use querySelector over getElementById for compatibility with both 'regular' document
                 // and ShadowDOM fragments.
-                return this.container.querySelector('#' + this.container.id + '_' + id);
+                str = this.container.id + '_' + id;
+                // Mask special symbols like '/' and '\' in id
+                if (Type.exists(CSS) && Type.exists(CSS.escape)) {
+                    str = CSS.escape(str);
+                }
+                return this.container.querySelector('#' + str);
             }
             return "";
         },

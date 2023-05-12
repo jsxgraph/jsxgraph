@@ -9,7 +9,7 @@
 // Definitions by: David Holmes https://github.com/geometryzen
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
 //
-// Copyright 2015-2022 David Holmes, https://github.com/geometryzen
+// Copyright 2015-2023 David Holmes, https://github.com/geometryzen
 //
 
 /**
@@ -365,7 +365,7 @@ declare namespace JXG {
     ): void;
     export function filterElements<T>(list: T[], filter: object | Function): T[];
     export function getBoardByContainerId(s: string): Board | null;
-    export function getCSSTrasform(cPos: number[], obj: Element): number[];
+    export function getCSSTransform(cPos: number[], obj: Element): number[];
     export function getCSSTransformMatrix(obj: unknown): number[];
     export function getDimensions(
         elementId: string,
@@ -3524,11 +3524,11 @@ declare namespace JXG {
          */
         lt(angle: number): Turtle;
         /**
-         * Gives the upper bound of the parameter if the the turtle is treated as parametric curve.
+         * Gives the upper bound of the parameter if the turtle is treated as parametric curve.
          */
         maxX(): number;
         /**
-         * Gives the lower bound of the parameter if the the turtle is treated as parametric curve.
+         * Gives the lower bound of the parameter if the turtle is treated as parametric curve.
          */
         minX(): number;
         /**
@@ -5614,6 +5614,7 @@ declare namespace JXG {
         useCaja?: boolean;
         useMathJax?: boolean;
         useKatex?: boolean;
+        katexMacros: Object;
         visible?: boolean;
         withLabel?: boolean;
     }
@@ -6251,7 +6252,7 @@ declare namespace JXG {
         ): number;
         /**
          * Solve initial value problems numerically using Runge-Kutta-methods.
-         * See http://en.wikipedia.org/wiki/Runge-Kutta_methods for more information on the algorithm.
+         * See https://en.wikipedia.org/wiki/Runge-Kutta_methods for more information on the algorithm.
          * @param butcher
          * @param x0
          * @param I

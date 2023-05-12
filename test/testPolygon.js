@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2022
+    Copyright 2008-2023
         Matthias Ehmann,
         Carsten Miller,
         Andreas Walter,
@@ -23,8 +23,8 @@
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
-    and <http://opensource.org/licenses/MIT/>.
+    the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
+    and <https://opensource.org/licenses/MIT/>.
  */
 describe("Test polygons", function () {
     var board,
@@ -201,5 +201,34 @@ describe("Test polygons", function () {
         po.removePoints(0, 1, 2);
         expect(po.vertices.length).toEqual(0);
         expect(po.borders.length).toEqual(0);
+    });
+
+    it("remove slopetriangle", function () {
+        var f = board.jc.snippet('sin(x)', true, 'x');
+        var graph = board.create('functiongraph', [f]);
+
+        // Glider on curve
+        var p = board.create('glider', [1, 0, graph]);
+        // Tangent in P
+        var t = board.create('tangent', [p]);
+        // Slope triangle in P
+        var st = board.create('slopetriangle', [t]);
+
+        JXG.JSXGraph.freeBoard(board);
+        board = JXG.JSXGraph.initBoard("jxgbox", {
+            renderer: "svg",
+            axis: false,
+            grid: false,
+            boundingbox: [-10, 10, 10, -10],
+            keyboard: {
+                enabled: true,
+                dy: 20,
+                dx: 20,
+                panShift: true,
+                panCtrl: false
+            },
+            showCopyright: false,
+            showNavigation: false
+        });
     });
 });

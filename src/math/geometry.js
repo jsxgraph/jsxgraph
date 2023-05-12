@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2022
+    Copyright 2008-2023
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -26,8 +26,8 @@
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
-    and <http://opensource.org/licenses/MIT/>.
+    the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
+    and <https://opensource.org/licenses/MIT/>.
  */
 
 /*global JXG: true, define: true*/
@@ -1383,7 +1383,7 @@ JXG.extend(
          * Generate the function which computes the coordinates of the intersection point.
          * Primarily used in {@link JXG.Point#createIntersectionPoint}.
          * @param {JXG.Board} board object
-         * @param {JXG.Line,JXG.Circle_JXG.Line,JXG.Circle_Number} el1,el2,i The result will be a intersection point on el1 and el2.
+         * @param {JXG.Line,JXG.Circle_JXG.Line,JXG.Circle_Number|Function} el1,el2,i The result will be a intersection point on el1 and el2.
          * i determines the intersection point if two points are available: <ul>
          *   <li>i==0: use the positive square root,</li>
          *   <li>i==1: use the negative square root.</li></ul>
@@ -1437,7 +1437,7 @@ JXG.extend(
                 // with the exception that the curve is of arc type
                 /** @ignore */
                 func = function () {
-                    return that.meetCurveLine(el1, el2, i, el1.board, alwaysintersect);
+                    return that.meetCurveLine(el1, el2, i, el1.board, Type.evaluate(alwaysintersect));
                 };
             } else if (
                 el1.type === Const.OBJECT_TYPE_POLYGON ||
@@ -1451,12 +1451,26 @@ JXG.extend(
                     // line - path
                     /** @ignore */
                     func = function () {
-                        return that.meetPolygonLine(el2, el1, i, el1.board, alwaysintersect);
+                        var first1 = Type.evaluate(el1.visProp.straightfirst),
+                            last1 = Type.evaluate(el1.visProp.straightlast),
+                            first2 = Type.evaluate(el2.visProp.straightfirst),
+                            last2 = Type.evaluate(el2.visProp.straightlast),
+                            a_not;
+
+                        a_not = (!Type.evaluate(alwaysintersect) && (!first1 || !last1 || !first2 || !last2));
+                        return that.meetPolygonLine(el2, el1, i, el1.board, a_not);
                     };
                 } else if (el2.elementClass === Const.OBJECT_CLASS_LINE) {
                     // path - line
                     func = function () {
-                        return that.meetPolygonLine(el1, el2, i, el1.board, alwaysintersect);
+                        var first1 = Type.evaluate(el1.visProp.straightfirst),
+                            last1 = Type.evaluate(el1.visProp.straightlast),
+                            first2 = Type.evaluate(el2.visProp.straightfirst),
+                            last2 = Type.evaluate(el2.visProp.straightlast),
+                            a_not;
+
+                        a_not = (!Type.evaluate(alwaysintersect) && (!first1 || !last1 || !first2 || !last2));
+                        return that.meetPolygonLine(el1, el2, i, el1.board, a_not);
                     };
                 } else {
                     // path - path
@@ -1525,7 +1539,7 @@ JXG.extend(
                         r,
                         dx;
 
-                    if (alwaysintersect) {
+                    if (Type.evaluate(alwaysintersect)) {
                         return res;
                     }
                     if (el1.elementClass === Const.OBJECT_CLASS_LINE) {
@@ -1595,7 +1609,7 @@ JXG.extend(
          * It uses the internal data array stdform of these elements.
          * @param {Array} el1 stdform of the first element (line or circle)
          * @param {Array} el2 stdform of the second element (line or circle)
-         * @param {Number} i Index of the intersection point that should be returned.
+         * @param {Number|Function} i Index of the intersection point that should be returned.
          * @param board Reference to the board.
          * @returns {JXG.Coords} Coordinates of one of the possible two or more intersection points.
          * Which point will be returned is determined by i.
@@ -1732,7 +1746,7 @@ JXG.extend(
          * Intersection of line and circle.
          * @param {Array} lin stdform of the line
          * @param {Array} circ stdform of the circle
-         * @param {number} i number of the returned intersection point.
+         * @param {number|function} i number of the returned intersection point.
          *   i==0: use the positive square root,
          *   i==1: use the negative square root.
          * @param {JXG.Board} board Reference to a board.
@@ -1771,7 +1785,7 @@ JXG.extend(
                 k = Math.sqrt(Math.abs(k));
                 t = [(-B + k) / (2 * A), (-B - k) / (2 * A)];
 
-                return i === 0
+                return Type.evaluate(i) === 0
                     ? new Coords(
                           Const.COORDS_BY_USER,
                           [-t[0] * -n[1] - d * n[0], -t[0] * n[0] - d * n[1]],
@@ -1791,7 +1805,7 @@ JXG.extend(
          * Intersection of two circles.
          * @param {Array} circ1 stdform of the first circle
          * @param {Array} circ2 stdform of the second circle
-         * @param {number} i number of the returned intersection point.
+         * @param {number|function} i number of the returned intersection point.
          *   i==0: use the positive square root,
          *   i==1: use the negative square root.
          * @param {JXG.Board} board Reference to the board.
@@ -1847,7 +1861,7 @@ JXG.extend(
          * Methods: segment-wise intersections (default) or generalized Newton method.
          * @param {JXG.Curve} c1 Curve, Line or Circle
          * @param {JXG.Curve} c2 Curve, Line or Circle
-         * @param {Number} nr the nr-th intersection point will be returned.
+         * @param {Number|Function} nr the nr-th intersection point will be returned.
          * @param {Number} t2ini not longer used.
          * @param {JXG.Board} [board=c1.board] Reference to a board object.
          * @param {String} [method='segment'] Intersection method, possible values are 'newton' and 'segment'.
@@ -1857,7 +1871,7 @@ JXG.extend(
             var co;
 
             if (Type.exists(method) && method === "newton") {
-                co = Numerics.generalizedNewton(c1, c2, nr, t2ini);
+                co = Numerics.generalizedNewton(c1, c2, Type.evaluate(nr), t2ini);
             } else {
                 if (c1.bezierDegree === 3 || c2.bezierDegree === 3) {
                     co = this.meetBezierCurveRedBlueSegments(c1, c2, nr);
@@ -1879,7 +1893,7 @@ JXG.extend(
          *
          * @param {JXG.Curve,JXG.Line} el1 Curve or Line
          * @param {JXG.Curve,JXG.Line} el2 Curve or Line
-         * @param {Number} nr the nr-th intersection point will be returned.
+         * @param {Number|Function} nr the nr-th intersection point will be returned.
          * @param {JXG.Board} [board=el1.board] Reference to a board object.
          * @param {Boolean} alwaysIntersect If false just the segment between the two defining points are tested for intersection
          * @returns {JXG.Coords} Intersection point. In case no intersection point is detected,
@@ -1915,7 +1929,7 @@ JXG.extend(
          *
          * @param {JXG.Curve} cu Curve
          * @param {JXG.Line} li Line
-         * @param {Number} nr Will return the nr-th intersection point.
+         * @param {NumberFunction} nr Will return the nr-th intersection point.
          * @param {JXG.Board} board
          * @param {Boolean} testSegment Test if intersection has to be inside of the segment or somewhere on the
          * line defined by the segment
@@ -2006,7 +2020,7 @@ JXG.extend(
          * Finding the nr-th intersection point should work for all nr.
          * @param {JXG.Curve} cu
          * @param {JXG.Line} li
-         * @param {Number} nr
+         * @param {Number|Function} nr
          * @param {JXG.Board} board
          * @param {Boolean} testSegment Test if intersection has to be inside of the segment or somewhere on the
          * line defined by the segment
@@ -2017,6 +2031,7 @@ JXG.extend(
         meetCurveLineDiscrete: function (cu, li, nr, board, testSegment) {
             var i,
                 j,
+                n = Type.evaluate(nr),
                 p1,
                 p2,
                 p,
@@ -2065,7 +2080,7 @@ JXG.extend(
                     for (j = 0; j < res.length; j++) {
                         p = res[j];
                         if (0 <= p[1] && p[1] <= 1) {
-                            if (cnt === nr) {
+                            if (cnt === n) {
                                 /**
                                  * If the intersection point is not part of the segment,
                                  * this intersection point is set to non-existent.
@@ -2103,11 +2118,12 @@ JXG.extend(
          *
          * @param {JXG.Curve} red
          * @param {JXG.Curve} blue
-         * @param {Number} nr
+         * @param {Number|Function} nr
          */
         meetCurveRedBlueSegments: function (red, blue, nr) {
             var i,
                 j,
+                n = Type.evaluate(nr),
                 red1,
                 red2,
                 blue1,
@@ -2148,7 +2164,7 @@ JXG.extend(
                                 (i === lenRed - 1 && m[1] === 1.0) ||
                                 (j === lenBlue - 1 && m[2] === 1.0))
                         ) {
-                            if (iFound === nr) {
+                            if (iFound === n) {
                                 return m[0];
                             }
 
@@ -2215,7 +2231,7 @@ JXG.extend(
          *
          * @param {JXG.Circle|JXG.Curve|JXG.Polygon} path1
          * @param {JXG.Circle|JXG.Curve|JXG.Polygon} path2
-         * @param {Number} n
+         * @param {Number|Function} n
          * @param {JXG.Board} board
          *
          * @returns {JXG.Coords} Intersection point. In case no intersection point is detected,
@@ -2223,7 +2239,8 @@ JXG.extend(
          *
          */
         meetPathPath: function (path1, path2, nr, board) {
-            var S, C, len, intersections;
+            var S, C, len, intersections,
+                n = Type.evaluate(nr);
 
             S = JXG.Math.Clip._getPath(path1, board);
             len = S.length;
@@ -2253,8 +2270,8 @@ JXG.extend(
             JXG.Math.Clip.makeDoublyLinkedList(C);
 
             intersections = JXG.Math.Clip.findIntersections(S, C, board)[0];
-            if (nr < intersections.length) {
-                return intersections[nr].coords;
+            if (n < intersections.length) {
+                return intersections[n].coords;
             }
             return new Coords(Const.COORDS_BY_USER, [0, 0, 0], board);
         },
@@ -2263,7 +2280,7 @@ JXG.extend(
          * Find the n-th intersection point between a polygon and a line.
          * @param {JXG.Polygon} path
          * @param {JXG.Line} line
-         * @param {Number} nr
+         * @param {Number|Function} nr
          * @param {JXG.Board} board
          * @param {Boolean} alwaysIntersect If false just the segment between the two defining points of the line are tested for intersection.
          *
@@ -2272,6 +2289,7 @@ JXG.extend(
          */
         meetPolygonLine: function (path, line, nr, board, alwaysIntersect) {
             var i,
+                n = Type.evaluate(nr),
                 res,
                 border,
                 crds = [0, 0, 0],
@@ -2296,8 +2314,8 @@ JXG.extend(
                 }
             }
 
-            if (nr >= 0 && nr < intersections.length) {
-                crds = intersections[nr];
+            if (n >= 0 && n < intersections.length) {
+                crds = intersections[n];
             }
             return new Coords(Const.COORDS_BY_USER, crds, board);
         },
@@ -2585,7 +2603,7 @@ JXG.extend(
          * Find the nr-th intersection point of two Bezier curves, i.e. curves with bezierDegree == 3.
          * @param {JXG.Curve} red Curve with bezierDegree == 3
          * @param {JXG.Curve} blue Curve with bezierDegree == 3
-         * @param {Number} nr The number of the intersection point which should be returned.
+         * @param {Number|Function} nr The number of the intersection point which should be returned.
          * @returns {Array} The homogeneous coordinates of the nr-th intersection point.
          */
         meetBezierCurveRedBlueSegments: function (red, blue, nr) {
@@ -2593,6 +2611,7 @@ JXG.extend(
                 i,
                 j,
                 k,
+                n = Type.evaluate(nr),
                 po,
                 redArr,
                 blueArr,
@@ -2657,14 +2676,14 @@ JXG.extend(
                             }
                             L.push(po);
                         }
-                        if (L.length > nr) {
-                            return L[nr][0];
+                        if (L.length > n) {
+                            return L[n][0];
                         }
                     }
                 }
             }
-            if (L.length > nr) {
-                return L[nr][0];
+            if (L.length > n) {
+                return L[n][0];
             }
 
             return [0, NaN, NaN];

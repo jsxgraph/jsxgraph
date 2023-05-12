@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2022
+    Copyright 2008-2023
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -25,8 +25,8 @@
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
-    and <http://opensource.org/licenses/MIT/>.
+    the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
+    and <https://opensource.org/licenses/MIT/>.
  */
 
 /*global JXG: true, define: true, window: true*/
@@ -71,6 +71,8 @@ var priv = {
  *
  */
 JXG.Text = function (board, coords, attributes, content) {
+    var tmp;
+
     this.constructor(board, attributes, Const.OBJECT_TYPE_TEXT, Const.OBJECT_CLASS_TEXT);
 
     this.element = this.board.select(attributes.anchor);
@@ -86,7 +88,7 @@ JXG.Text = function (board, coords, attributes, content) {
     this.hiddenByParent = false;
 
     /**
-     * Width and height of the the text element in pixel.
+     * Width and height of the text element in pixel.
      *
      * @private
      * @type Array
@@ -101,7 +103,13 @@ JXG.Text = function (board, coords, attributes, content) {
     // this._createFctUpdateText(content);
     // this.updateText();
 
+    // Set attribute visible to true. This is necessary to 
+    // create all sub-elements for button, input and checkbox
+    tmp = this.visProp.visible;
+    this.visProp.visible = true;
     this.setText(content);
+    // Restore the correct attribute visible.
+    this.visProp.visible = tmp;
 
     if (Type.isString(this.content)) {
         this.notifyParents(this.content);
@@ -123,10 +131,10 @@ JXG.extend(
     /** @lends JXG.Text.prototype */ {
         /**
          * @private
-         * Test if the the screen coordinates (x,y) are in a small stripe
+         * Test if the screen coordinates (x,y) are in a small stripe
          * at the left side or at the right side of the text.
          * Sensitivity is set in this.board.options.precision.hasPoint.
-         * If dragarea is set to 'all' (default), tests if the the screen
+         * If dragarea is set to 'all' (default), tests if the screen
          * coordinates (x,y) are in within the text boundary.
          * @param {Number} x
          * @param {Number} y
@@ -191,7 +199,7 @@ JXG.extend(
          * @private
          */
         _createFctUpdateText: function (text) {
-            var updateText,
+            var updateText, e,
                 resolvedText,
                 ev_p = Type.evaluate(this.visProp.parse),
                 ev_um = Type.evaluate(this.visProp.usemathjax),
@@ -201,13 +209,22 @@ JXG.extend(
             this.orgText = text;
 
             if (Type.isFunction(text)) {
-                // <value> tags will not be evaluated if text is provided by a function
+                /**
+                 * Dynamically created function to update the content 
+                 * of a text. Can not be overwritten.
+                 * <p>
+                 * &lt;value&gt; tags will not be evaluated if text is provided by a function
+                 * <p>
+                 * Sets the property <tt>plaintext</tt> of the text element.
+                 * 
+                 * @private 
+                 */
                 this.updateText = function () {
                     resolvedText = text().toString(); // Evaluate function
                     if (ev_p && !ev_um && !ev_uk) {
                         this.plaintext = this.replaceSub(
                             this.replaceSup(
-                                this.convertGeonextAndSketchometry2CSS(resolvedText)
+                                this.convertGeonextAndSketchometry2CSS(resolvedText, false)
                             )
                         );
                     } else {
@@ -224,8 +241,9 @@ JXG.extend(
                     } else if (ev_um || ev_uk) {
                         // MathJax or KaTeX
                         // Replace value-tags by functions
+                        // sketchofont is ignored
                         this.content = this.valueTagToJessieCode(text);
-                        this.content = this.content.replace(/\\/g, "\\\\"); // Replace single backshlash by double
+                        this.content = this.content.replace(/\\/g, "\\\\"); // Replace single backslash by double
                     } else {
                         // No TeX involved.
                         // Converts GEONExT syntax into JavaScript string
@@ -241,8 +259,12 @@ JXG.extend(
                 if (convertJessieCode) {
                     // Convert JessieCode to JS function
                     updateText = this.board.jc.snippet(this.content, true, "", false);
+                    for (e in updateText.deps) {
+                        this.addParents(updateText.deps[e]);
+                        updateText.deps[e].addChild(this);
+                    }
 
-                    // Ticks have been esacped in valueTagToJessieCode
+                    // Ticks have been escaped in valueTagToJessieCode
                     this.updateText = function () {
                         this.plaintext = this.unescapeTicks(updateText());
                     };
@@ -604,6 +626,8 @@ JXG.extend(
          * Also, all Objects whose name appears in the term are searched and
          * the text is added as child to these objects.
          * This method is called if the attribute parse==true is set.
+         * 
+         * Obsolete, replaced by JXG.Text.valueTagToJessieCode
          *
          * @param{String} contentStr String to be parsed
          * @param{Boolean} [expand] Optional flag if shortened math syntax is allowed (e.g. 3x instead of 3*x).
@@ -613,8 +637,11 @@ JXG.extend(
          * If true, "_" and "^" are NOT replaced by HTML tags sub and sup. Default: false, i.e. the replacement is done.
          * This flag allows the combination of &lt;value&gt; tag containing calculations with TeX output.
          *
+         * @deprecated
          * @private
-         * @see JXG.GeonextParser.geonext2JS
+         * @see JXG.GeonextParser#geonext2JS
+         * @see JXG.Text#valueTagToJessieCode
+         * 
          */
         generateTerm: function (contentStr, expand, avoidGeonext2JS) {
             var res,
@@ -702,11 +729,18 @@ JXG.extend(
             return plaintext;
         },
 
+        /**
+         * Replace value-tags in string by JessieCode functions.
+         * @param {String} contentStr 
+         * @returns String
+         * @private 
+         * @example
+         * "The x-coordinate of A is &lt;value&gt;X(A)&lt;/value&gt;"
+         * 
+         */
         valueTagToJessieCode: function (contentStr) {
-            var res,
-                term,
-                i,
-                j,
+            var res, term,
+                i, j,
                 expandShortMath = true,
                 textComps = [],
                 tick = '"';
@@ -769,20 +803,45 @@ JXG.extend(
             return textComps.join(" + ").replace(/&amp;/g, "&");
         },
 
+        /**
+         * Simple math rendering using HTML / CSS only.
+         * 
+         * @param {String} s 
+         * @returns String
+         * @see JXG.Text#convertGeonextAndSketchometry2CSS
+         * @private
+         * @see JXG.Text#replaceSub
+         * @see JXG.Text#replaceSup
+         * @see JXG.Text#convertGeonextAndSketchometry2CSS
+         */
         poorMansTeX: function (s) {
             s = s
                 .replace(/<arc\s*\/*>/g, "&ang;")
                 .replace(/&lt;arc\s*\/*&gt;/g, "&ang;")
                 .replace(/<sqrt\s*\/*>/g, "&radic;")
                 .replace(/&lt;sqrt\s*\/*&gt;/g, "&radic;");
-
-            return this.convertGeonextAndSketchometry2CSS(this.replaceSub(this.replaceSup(s)));
+            return this.convertGeonextAndSketchometry2CSS(this.replaceSub(this.replaceSup(s)), true);
         },
 
+        /**
+         * Replace ticks by URI escape sequences
+         * 
+         * @param {String} s 
+         * @returns String
+         * @private
+         * 
+         */
         escapeTicks: function (s) {
             return s.replace(/"/g, "%22").replace(/'/g, "%27");
         },
 
+        /**
+         * Replace escape sequences for ticks by ticks
+         * 
+         * @param {String} s 
+         * @returns String
+         * @private
+         */
         unescapeTicks: function (s) {
             return s.replace(/%22/g, '"').replace(/%27/g, "'");
         },
@@ -791,7 +850,7 @@ JXG.extend(
          * Converts the GEONExT tags <overline> and <arrow> to
          * HTML span tags with proper CSS formatting.
          * @private
-         * @see JXG.Text.generateTerm
+         * @see JXG.Text.poorMansTeX
          * @see JXG.Text._setText
          */
         convertGeonext2CSS: function (s) {
@@ -814,22 +873,26 @@ JXG.extend(
         /**
          * Converts the sketchometry tag <sketchofont> to
          * HTML span tags with proper CSS formatting.
+         *
+         * @param {String|Function|Number} s Text
+         * @param {Boolean} escape Flag if ticks should be escaped. Escaping is necessary
+         * if s is a text. It has to be avoided if s is a function returning text.
          * @private
-         * @see JXG.Text.generateTerm
          * @see JXG.Text._setText
+         * @see JXG.Text.convertGeonextAndSketchometry2CSS
+         *
          */
-        convertSketchometry2CSS: function (s) {
+        convertSketchometry2CSS: function (s, escape) {
+            var t1 = "<span class=\"sketcho sketcho-inherit sketcho-",
+                t2 = "\"></span>";
+
             if (Type.isString(s)) {
-                s = s.replace(
-                    /(<|&lt;)sketchofont(>|&gt;)/g,
-                    "<span style=font-family:sketchometry-light;font-weight:500;>"
-                );
-                s = s.replace(/(<|&lt;)\/sketchofont(>|&gt;)/g, "</span>");
-                s = s.replace(
-                    /(<|&lt;)sketchometry-light(>|&gt;)/g,
-                    "<span style=font-family:sketchometry-light;font-weight:500;>"
-                );
-                s = s.replace(/(<|&lt;)\/sketchometry-light(>|&gt;)/g, "</span>");
+                if (escape) {
+                    t1 = this.escapeTicks(t1);
+                    t2 = this.escapeTicks(t2);
+                }
+                s = s.replace(/(<|&lt;)sketchofont(>|&gt;)/g, t1);
+                s = s.replace(/(<|&lt;)\/sketchofont(>|&gt;)/g, t2);
             }
 
             return s;
@@ -837,13 +900,16 @@ JXG.extend(
 
         /**
          * Alias for convertGeonext2CSS and convertSketchometry2CSS
+         *
+         * @param {String|Function|Number} s Text
+         * @param {Boolean} escape Flag if ticks should be escaped
          * @private
          * @see JXG.Text.convertGeonext2CSS
          * @see JXG.Text.convertSketchometry2CSS
          */
-        convertGeonextAndSketchometry2CSS: function (s) {
+        convertGeonextAndSketchometry2CSS: function (s, escape) {
             s = this.convertGeonext2CSS(s);
-            s = this.convertSketchometry2CSS(s);
+            s = this.convertSketchometry2CSS(s, escape);
             return s;
         },
 
@@ -897,6 +963,17 @@ JXG.extend(
             return p;
         },
 
+        /**
+         * Returns the bounding box of the text element in user coordinates as an 
+         * array of length 4: [upper left x, upper left y, lower right x, lower right y].
+         * The method assumes that the lower left corner is at position [el.X(), el.Y()]
+         * of the text element el, i.e. the attributes anchorX, anchorY are ignored.
+         * 
+         * <p>
+         * or labels, [0, 0, 0, 0] is returned.
+         * 
+         * @returns Array 
+         */
         bounds: function () {
             var c = this.coords.usrCoords;
 
@@ -915,6 +992,12 @@ JXG.extend(
             ];
         },
 
+        /**
+         * Returns the value of the attribute "anchorX". If this equals "auto",
+         * returns "left", "middle", or "right", depending on the 
+         * value of the attribute "position".
+         * @returns String
+         */
         getAnchorX: function () {
             var a = Type.evaluate(this.visProp.anchorx);
             if (a === "auto") {
@@ -936,6 +1019,12 @@ JXG.extend(
             return a;
         },
 
+        /**
+         * Returns the value of the attribute "anchorY". If this equals "auto",
+         * returns "bottom", "middle", or "top", depending on the 
+         * value of the attribute "position".
+         * @returns String
+         */
         getAnchorY: function () {
             var a = Type.evaluate(this.visProp.anchory);
             if (a === "auto") {
@@ -1317,8 +1406,9 @@ JXG.createHTMLSlider = function (board, parents, attributes) {
 
 JXG.registerElement("htmlslider", JXG.createHTMLSlider);
 
-export default {
-    Text: JXG.Text,
-    createText: JXG.createText,
-    createHTMLSlider: JXG.createHTMLSlider
-};
+export default JXG.Text;
+// export default {
+//     Text: JXG.Text,
+//     createText: JXG.createText,
+//     createHTMLSlider: JXG.createHTMLSlider
+// };

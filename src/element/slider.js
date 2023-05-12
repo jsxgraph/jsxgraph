@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2022
+    Copyright 2008-2023
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -25,8 +25,8 @@
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
-    and <http://opensource.org/licenses/MIT/>.
+    the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
+    and <https://opensource.org/licenses/MIT/>.
  */
 
 /*global JXG: true, define: true*/
@@ -162,29 +162,14 @@ import Point from "../base/point";
  *
  */
 JXG.createSlider = function (board, parents, attributes) {
-    var pos0,
-        pos1,
-        smin,
-        start,
-        smax,
-        sdiff,
-        p1,
-        p2,
-        l1,
-        ticks,
-        ti,
-        startx,
-        starty,
-        p3,
-        l2,
-        t,
-        withText,
-        withTicks,
-        snapWidth,
-        sw,
-        s,
-        attr,
-        digits;
+    var pos0, pos1,
+        smin, start, smax, sdiff,
+        p1, p2, p3, l1, l2,
+        ticks, ti, t,
+        startx, starty,
+        withText, withTicks,
+        snapWidth, sw, s,
+        attr;
 
     attr = Type.copyAttributes(attributes, board.options, "slider");
     withTicks = attr.withticks;
@@ -276,6 +261,7 @@ JXG.createSlider = function (board, parents, attributes) {
     /**
      * Sets the maximum value of the slider.
      * @memberOf Slider.prototype
+     * @function
      * @name setMax
      * @param {Number} val New maximum value
      * @returns {Object} this object
@@ -290,6 +276,7 @@ JXG.createSlider = function (board, parents, attributes) {
      * by a board update call.
      * @memberOf Slider.prototype
      * @name setValue
+     * @function
      * @param {Number} val New value
      * @returns {Object} this object
      */
@@ -309,6 +296,7 @@ JXG.createSlider = function (board, parents, attributes) {
      * Sets the minimum value of the slider.
      * @memberOf Slider.prototype
      * @name setMin
+     * @function
      * @param {Number} val New minimum value
      * @returns {Object} this object
      */
@@ -470,7 +458,7 @@ JXG.createSlider = function (board, parents, attributes) {
         board.removeObject(p2);
         board.removeObject(p1);
 
-        Point.Point.prototype.remove.call(p3);
+        Point.prototype.remove.call(p3);
     };
 
     p1.dump = false;
@@ -562,6 +550,6 @@ JXG.createSlider = function (board, parents, attributes) {
 
 JXG.registerElement("slider", JXG.createSlider);
 
-export default {
-    createSlider: JXG.createSlider
-};
+// export default {
+//     createSlider: JXG.createSlider
+// };

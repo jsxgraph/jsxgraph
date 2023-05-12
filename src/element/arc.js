@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2022
+    Copyright 2008-2023
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -25,8 +25,8 @@
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
-    and <http://opensource.org/licenses/MIT/>.
+    the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
+    and <https://opensource.org/licenses/MIT/>.
  */
 
 /*global JXG: true, define: true*/
@@ -287,7 +287,7 @@ JXG.createArc = function (board, parents, attributes) {
             // 'inherit'
             prec = this.board.options.precision.hasPoint;
         }
-        prec /= Math.min(this.board.unitX, this.board.unitY);
+        prec /= Math.min(Math.abs(this.board.unitX), Math.abs(this.board.unitY));
         checkPoint = new Coords(Const.COORDS_BY_SCREEN, [x, y], this.board);
 
         if (this.transformations.length > 0) {
@@ -387,10 +387,10 @@ JXG.createArc = function (board, parents, attributes) {
     };
 
     // documentation in jxg.circle
-    el.updateQuadraticform = Circle.Circle.prototype.updateQuadraticform;
+    el.updateQuadraticform = Circle.prototype.updateQuadraticform;
 
     // documentation in jxg.circle
-    el.updateStdform = Circle.Circle.prototype.updateStdform;
+    el.updateStdform = Circle.prototype.updateStdform;
 
     el.methodMap = JXG.deepCopy(el.methodMap, {
         getRadius: "getRadius",
@@ -629,10 +629,10 @@ JXG.createMajorArc = function (board, parents, attributes) {
 
 JXG.registerElement("majorarc", JXG.createMajorArc);
 
-export default {
-    createArc: JXG.createArc,
-    createSemicircle: JXG.createSemicircle,
-    createCircumcircleArc: JXG.createCircumcircleArc,
-    createMinorArc: JXG.createMinorArc,
-    createMajorArc: JXG.createMajorArc
-};
+// export default {
+//     createArc: JXG.createArc,
+//     createSemicircle: JXG.createSemicircle,
+//     createCircumcircleArc: JXG.createCircumcircleArc,
+//     createMinorArc: JXG.createMinorArc,
+//     createMajorArc: JXG.createMajorArc
+// };

@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2022
+    Copyright 2008-2023
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -23,8 +23,8 @@
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
-    and <http://opensource.org/licenses/MIT/>.
+    the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
+    and <https://opensource.org/licenses/MIT/>.
  */
 
 /*global JXG: true, define: true, console: true, window: true*/
@@ -1376,8 +1376,7 @@ JXG.extend(
          * @see JXG.GeonextParser#geonext2JS
          */
         addConstraint: function (terms) {
-            var i,
-                v,
+            var i, v,
                 newfuncs = [],
                 what = ["X", "Y"],
                 makeConstFunction = function (z) {
@@ -1406,7 +1405,9 @@ JXG.extend(
                     //newfuncs[i] = new Function('','return ' + t + ';');
                     //v = GeonextParser.replaceNameById(v, this.board);
                     newfuncs[i] = this.board.jc.snippet(v, true, null, true);
+                    this.addParentsFromJCFunctions([newfuncs[i]]);
 
+                    // Store original term as 'Xjc' or 'Yjc'
                     if (terms.length === 2) {
                         this[what[i] + "jc"] = terms[i];
                     }
@@ -1440,8 +1441,7 @@ JXG.extend(
             } else if (terms.length === 2) {
                 this.XEval = newfuncs[0];
                 this.YEval = newfuncs[1];
-
-                this.setParents([newfuncs[0].origin, newfuncs[1].origin]);
+                this.addParents([newfuncs[0].origin, newfuncs[1].origin]);
 
                 this.updateConstraint = function () {
                     this.coords.setCoordinates(Const.COORDS_BY_USER, [
@@ -1456,7 +1456,7 @@ JXG.extend(
                 this.XEval = newfuncs[1];
                 this.YEval = newfuncs[2];
 
-                this.setParents([newfuncs[0].origin, newfuncs[1].origin, newfuncs[2].origin]);
+                this.addParents([newfuncs[0].origin, newfuncs[1].origin, newfuncs[2].origin]);
 
                 this.updateConstraint = function () {
                     this.coords.setCoordinates(Const.COORDS_BY_USER, [
@@ -1609,10 +1609,10 @@ JXG.extend(
 
         /**
          * Animate the point.
-         * @param {Number} direction The direction the glider is animated. Can be +1 or -1.
-         * @param {Number} stepCount The number of steps in which the parent element is divided.
+         * @param {Number,Function} direction The direction the glider is animated. Can be +1 or -1.
+         * @param {Number,Function} stepCount The number of steps in which the parent element is divided.
          * Must be at least 1.
-         * @param {Number} delay Time in msec between two animation steps. Default is 250.
+         * @param {Number,Function} delay Time in msec between two animation steps. Default is 250.
          * @returns {JXG.CoordsElement} Reference to iself.
          *
          * @name Glider#startAnimation
@@ -1661,13 +1661,15 @@ JXG.extend(
          *
          */
         startAnimation: function (direction, stepCount, delay) {
-            var that = this;
+            var dir = Type.evaluate(direction),
+                sc = Type.evaluate(stepCount),
+                that = this;
 
-            delay = delay || 250;
+            delay = Type.evaluate(delay) || 250;
 
             if (this.type === Const.OBJECT_TYPE_GLIDER && !Type.exists(this.intervalCode)) {
                 this.intervalCode = window.setInterval(function () {
-                    that._anim(direction, stepCount);
+                    that._anim(dir, sc);
                 }, delay);
 
                 if (!Type.exists(this.intervalCount)) {

@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2022
+    Copyright 2008-2023
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -25,8 +25,8 @@
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
-    and <http://opensource.org/licenses/MIT/>.
+    the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
+    and <https://opensource.org/licenses/MIT/>.
  */
 
 /*global JXG: true, define: true*/
@@ -855,14 +855,14 @@ JXG.extend(
         },
 
         /**
-         * Gives the lower bound of the parameter if the the turtle is treated as parametric curve.
+         * Gives the lower bound of the parameter if the turtle is treated as parametric curve.
          */
         minX: function () {
             return 0;
         },
 
         /**
-         * Gives the upper bound of the parameter if the the turtle is treated as parametric curve.
+         * Gives the upper bound of the parameter if the turtle is treated as parametric curve.
          * May be overwritten in @see generateTerm.
          */
         maxX: function () {
@@ -930,7 +930,8 @@ JXG.createTurtle = function (board, parents, attributes) {
 
 JXG.registerElement("turtle", JXG.createTurtle);
 
-export default {
-    Turtle: JXG.Turtle,
-    createTurtle: JXG.createTurtle
-};
+export default JXG.Turtle;
+// export default {
+//     Turtle: JXG.Turtle,
+//     createTurtle: JXG.createTurtle
+// };

@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2022
+    Copyright 2008-2023
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -26,8 +26,8 @@
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
-    and <http://opensource.org/licenses/MIT/>.
+    the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
+    and <https://opensource.org/licenses/MIT/>.
  */
 
 /*global JXG: true, define: true, window: true, document: true, navigator: true, module: true, global: true, self: true, require: true*/
@@ -131,7 +131,7 @@ JXG.extend(
          * @default false
          */
         supportsES6: function () {
-            var testMap;
+            // var testMap;
             /* jshint ignore:start */
             try {
                 // This would kill the old uglifyjs: testMap = (a = 0) => a;
@@ -157,13 +157,12 @@ JXG.extend(
          * @returns {Boolean} True, if the browser supports SVG.
          */
         supportsSVG: function () {
-            return (
-                this.isBrowser &&
-                document.implementation.hasFeature(
-                    "http://www.w3.org/TR/SVG11/feature#BasicStructure",
-                    "1.1"
-                )
-            );
+            var svgSupport;
+            if (!this.isBrowser) {
+                return false;
+            }
+            svgSupport = !!document.createElementNS && !!document.createElementNS('http://www.w3.org/2000/svg', 'svg').createSVGRect;
+            return svgSupport;
         },
 
         /**
@@ -171,15 +170,27 @@ JXG.extend(
          * @returns {Boolean} True, if the browser supports HTML canvas.
          */
         supportsCanvas: function () {
-            var c,
-                hasCanvas = false;
+            var hasCanvas = false;
+
+            // if (this.isNode()) {
+            //     try {
+            //         // c = typeof module === "object" ? module.require("canvas") : $__canvas;
+            //         c = typeof module === "object" ? module.require("canvas") : import('canvas');
+            //         hasCanvas = !!c;
+            //     } catch (err) {}
+            // }
 
             if (this.isNode()) {
-                try {
-                    // c = typeof module === "object" ? module.require("canvas") : $__canvas;
-                    c = typeof module === "object" ? module.require("canvas") : import('canvas');
-                    hasCanvas = !!c;
-                } catch (err) {}
+                //try {
+                //    JXG.createCanvas(500, 500);
+                    hasCanvas = true;
+                // } catch (err) {
+                //     throw new Error('JXG.createCanvas not available.\n' +
+                //         'Install the npm package `canvas`\n' +
+                //         'and call:\n' +
+                //         '    import { createCanvas } from "canvas";\n' +
+                //         '    JXG.createCanvas = createCanvas;\n');
+                // }
             }
 
             return (
@@ -224,7 +235,7 @@ JXG.extend(
         },
 
         /**
-         * Checks if the environments supports the W3C Pointer Events API {@link http://www.w3.org/Submission/pointer-events/}
+         * Checks if the environments supports the W3C Pointer Events API {@link https://www.w3.org/TR/pointerevents/}
          * @returns {Boolean}
          */
         supportsPointerEvents: function () {
@@ -391,10 +402,8 @@ JXG.extend(
                     return { width: element.clientWidth, height: element.clientHeight };
                 }
 
-                // a parent might be set to display:none; try reading them from styles
-                style = window.getComputedStyle
-                    ? window.getComputedStyle(element)
-                    : element.style;
+                // A parent might be set to display:none; try reading them from styles
+                style = window.getComputedStyle ? window.getComputedStyle(element) : element.style;
                 return {
                     width: pixelDimRegExp.test(style.width) ? parseFloat(style.width) : 0,
                     height: pixelDimRegExp.test(style.height) ? parseFloat(style.height) : 0
@@ -438,7 +447,7 @@ JXG.extend(
          * @param {Object} owner The scope in which the event trigger is called.
          * @param {Object|Boolean} [options=false] This parameter is passed as the third parameter to the method addEventListener. Depending on the data type it is either
          * an options object or the useCapture Boolean.
-         * 
+         *
          */
         addEvent: function (obj, type, fn, owner, options) {
             var el = function () {
@@ -536,7 +545,9 @@ JXG.extend(
         },
 
         /**
-         * Cross browser mouse / touch coordinates retrieval relative to the board's top left corner.
+         * Cross browser mouse / pointer / touch coordinates retrieval relative to the documents's top left corner.
+         * This method might be a bit outdated today, since pointer events and clientX/Y are omnipresent.
+         * 
          * @param {Object} [e] The browsers event object. If omitted, <tt>window.event</tt> will be used.
          * @param {Number} [index] If <tt>e</tt> is a touch event, this provides the index of the touch coordinates, i.e. it determines which finger.
          * @param {Object} [doc] The document object.

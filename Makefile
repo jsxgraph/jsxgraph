@@ -77,6 +77,8 @@ release: core docs
 	$(MKDIR) $(MKDIRFLAGS) $(TMP)
 	$(CP) $(OUTPUT)/jsxgraphcore.js $(TMP)/jsxgraphcore.js
 	$(CP) $(OUTPUT)/jsxgraphsrc.js  $(TMP)/jsxgraphsrc.js
+	$(CP) $(OUTPUT)/jsxgraphcore.mjs $(TMP)/jsxgraphcore.mjs
+	$(CP) $(OUTPUT)/jsxgraphsrc.mjs  $(TMP)/jsxgraphsrc.mjs
 	$(CP) $(OUTPUT)/jsxgraph.css    $(TMP)/jsxgraph.css
 	$(CP) $(OUTPUT)/docs.zip        $(TMP)/docs.zip
 	$(CP) src/index.d.ts            $(TMP)/index.d.ts
@@ -131,7 +133,6 @@ tmpreaders/%.min.js: src/reader/%.js
 
 compressor: core
 	$(WEBPACK) --config config/webpack.config.compressor.js
-	$(CP) $(OUTPUT)/jsxgraphcore.js JSXCompressor/jsxgraphcore.js
 	$(CP) $(OUTPUT)/jsxgraph.css    JSXCompressor/jsxgraph.css
 
 plot:
@@ -139,13 +140,13 @@ plot:
 	$(WEBPACK) --config config/webpack.config.plot.js
 
 hint:
-	$(HINT) src/$(LINTLIST).js
+	$(HINT) $(LINTLIST)
 
 lint:
-	$(LINT) $(LINTFLAGS) src/$(LINTLIST).js
+	$(LINT) $(LINTFLAGS) $(LINTLIST)
 
 eslint:
-	$(ESLINT) $(ESLINTFLAGS) src/$(LINTLIST).js
+	$(ESLINT) $(ESLINTFLAGS) $(LINTLIST)
 
 test: core
 	$(KARMA) start karma/karma.conf.js

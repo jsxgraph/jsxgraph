@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2022
+    Copyright 2008-2023
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -25,8 +25,8 @@
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
-    and <http://opensource.org/licenses/MIT/>.
+    the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
+    and <https://opensource.org/licenses/MIT/>.
  */
 
 /*global JXG: true, define: true*/
@@ -69,6 +69,7 @@ JXG.Image = function (board, coords, attributes, url, size) {
 
     this.W = Type.createFunction(size[0], this.board, "");
     this.H = Type.createFunction(size[1], this.board, "");
+    this.addParentsFromJCFunctions([this.W, this.H]);
 
     this.usrSize = [this.W(), this.H()];
 
@@ -346,7 +347,7 @@ JXG.extend(
         setSize: function (width, height) {
             this.W = Type.createFunction(width, this.board, "");
             this.H = Type.createFunction(height, this.board, "");
-
+            this.addParentsFromJCFunctions([this.W, this.H]);
             // this.fullUpdate();
 
             return this;
@@ -425,7 +426,8 @@ JXG.createImage = function (board, parents, attributes) {
 
 JXG.registerElement("image", JXG.createImage);
 
-export default {
-    Image: JXG.Image,
-    createImage: JXG.createImage
-};
+export default JXG.Image;
+// export default {
+//     Image: JXG.Image,
+//     createImage: JXG.createImage
+// };

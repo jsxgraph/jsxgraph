@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2022
+    Copyright 2008-2023
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -26,8 +26,8 @@
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
-    and <http://opensource.org/licenses/MIT/>.
+    the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
+    and <https://opensource.org/licenses/MIT/>.
  */
 
 /*global JXG: true, define: true, html_sanitize: true*/
@@ -46,6 +46,22 @@ import Const from "../base/constants";
 JXG.extend(
     JXG,
     /** @lends JXG */ {
+        /**
+         * Checks if the given object is an JSXGraph board.
+         * @param {Object} v
+         * @returns {Boolean}
+         */
+        isBoard: function (v) {
+            return v !== null &&
+                typeof v === "object" &&
+                this.isNumber(v.BOARD_MODE_NONE) &&
+                this.isObject(v.objects) &&
+                this.isObject(v.jc) &&
+                this.isFunction(v.update) &&
+                !!v.containerObj &&
+                this.isString(v.id);
+        },
+
         /**
          * Checks if the given string is an id within the given board.
          * @param {JXG.Board} board
@@ -209,6 +225,15 @@ JXG.extend(
         },
 
         /**
+         * Checks if v is an empty object or empty.
+         * @param v {Object|Array}
+         * @returns {boolean} True, if v is an empty object or array.
+         */
+        isEmpty: function (v) {
+            return Object.keys(v).length === 0;
+        },
+
+        /**
          * Checks if a given variable is neither undefined nor null. You should not use this together with global
          * variables!
          * @param v A variable of any type.
@@ -238,15 +263,6 @@ JXG.extend(
         //         return result;
         //     };
         // }()),
-
-        /**
-         * Checks if v is an empty object or empty.
-         * @param v {Object|Array}
-         * @returns {boolean} True, if v is an empty object or array.
-         */
-        isEmpty: function (v) {
-            return Object.keys(v).length === 0;
-        },
 
         /**
          * Handle default parameters.
@@ -294,16 +310,22 @@ JXG.extend(
          * to evaluate.
          */
         createEvalFunction: function (board, param, n) {
-            var f = [],
-                i;
+            var f = [], func, i, e,
+                deps = {};
 
             for (i = 0; i < n; i++) {
                 f[i] = JXG.createFunction(param[i], board, "", true);
+                for (e in f[i].deps) {
+                    deps[e] = f[i].deps;
+                }
             }
 
-            return function (k) {
+            func = function (k) {
                 return f[k]();
             };
+            func.deps = deps;
+
+            return func;
         },
 
         /**
@@ -312,8 +334,8 @@ JXG.extend(
          * @param {JXG.Board} board Reference to a JSXGraph board. It is required to resolve dependencies given
          * by a GEONE<sub>X</sub>T string, thus it must be a valid reference only in case one of the param
          * values is of type string.
-         * @param {String} variableName Only required if evalGeonext is set to true. Describes the variable name
-         * of the variable in a GEONE<sub>X</sub>T string given as term.
+         * @param {String} variableName Only required if function is supplied as JessieCode string or evalGeonext is set to true.
+         * Describes the variable name of the variable in a GEONE<sub>X</sub>T string given as term.
          * @param {Boolean} [evalGeonext=true] Set this true, if term should be treated as a GEONE<sub>X</sub>T string.
          * @returns {Function} A function evaluation the value given by term or null if term is not of type string,
          * function or number.
@@ -331,17 +353,20 @@ JXG.extend(
                 f = board.jc.snippet(term, true, variableName, true);
             } else if (this.isFunction(term)) {
                 f = term;
+                f.deps = {};
             } else if (this.isNumber(term)) {
                 /** @ignore */
                 f = function () {
                     return term;
                 };
+                f.deps = {};
             } else if (this.isString(term)) {
                 // In case of string function like fontsize
                 /** @ignore */
                 f = function () {
                     return term;
                 };
+                f.deps = {};
             }
 
             if (f !== null) {
@@ -921,37 +946,86 @@ JXG.extend(
         },
 
         /**
-         * Recursively merges obj2 into obj1. Contrary to {@link JXG#deepCopy} this won't create a new object
+         * Recursively merges obj2 into obj1 in-place. Contrary to {@link JXG#deepCopy} this won't create a new object
          * but instead will overwrite obj1.
+         * <p>
+         * In contrast to method JXG.mergeAttr, merge recurses into any kind of object, e.g. DOM object and JSXGraph objects.
+         * So, please be careful.
          * @param {Object} obj1
          * @param {Object} obj2
          * @returns {Object}
+         * @see JXG#mergeAttr
+         *
+         * @example
+         * JXG.Options = JXG.merge(JXG.Options, {
+         *     board: {
+         *         showNavigation: false,
+         *         showInfobox: true
+         *     },
+         *     point: {
+         *         face: 'o',
+         *         size: 4,
+         *         fillColor: '#eeeeee',
+         *         highlightFillColor: '#eeeeee',
+         *         strokeColor: 'white',
+         *         highlightStrokeColor: 'white',
+         *         showInfobox: 'inherit'
+         *     }
+         * });
+         *
+         * </pre><div id="JXGc5bf0f2a-bd5a-4612-97c2-09f17b1bbc6b" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXGc5bf0f2a-bd5a-4612-97c2-09f17b1bbc6b',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *     JXG.Options = JXG.merge(JXG.Options, {
+         *         board: {
+         *             showNavigation: false,
+         *             showInfobox: true
+         *         },
+         *         point: {
+         *             face: 'o',
+         *             size: 4,
+         *             fillColor: '#eeeeee',
+         *             highlightFillColor: '#eeeeee',
+         *             strokeColor: 'white',
+         *             highlightStrokeColor: 'white',
+         *             showInfobox: 'inherit'
+         *         }
+         *     });
+         *
+         *
+         *     })();
+         *
+         * </script><pre>
          */
         merge: function (obj1, obj2) {
-            var i, j;
+            var i, j, o, oo;
 
             for (i in obj2) {
                 if (obj2.hasOwnProperty(i)) {
-                    if (this.isArray(obj2[i])) {
+                    o = obj2[i];
+                    if (this.isArray(o)) {
                         if (!obj1[i]) {
                             obj1[i] = [];
                         }
 
-                        for (j = 0; j < obj2[i].length; j++) {
-                            if (typeof obj2[i][j] === "object") {
-                                obj1[i][j] = this.merge(obj1[i][j], obj2[i][j]);
+                        for (j = 0; j < o.length; j++) {
+                            oo = obj2[i][j];
+                            if (typeof obj2[i][j] === 'object') {
+                                obj1[i][j] = this.merge(obj1[i][j], oo);
                             } else {
                                 obj1[i][j] = obj2[i][j];
                             }
                         }
-                    } else if (typeof obj2[i] === "object") {
+                    } else if (typeof o === 'object') {
                         if (!obj1[i]) {
                             obj1[i] = {};
                         }
 
-                        obj1[i] = this.merge(obj1[i], obj2[i]);
+                        obj1[i] = this.merge(obj1[i], o);
                     } else {
-                        obj1[i] = obj2[i];
+                        obj1[i] = o;
                     }
                 }
             }
@@ -976,7 +1050,7 @@ JXG.extend(
                 return obj;
             }
 
-            // missing hasOwnProperty is on purpose in this function
+            // Missing hasOwnProperty is on purpose in this function
             if (this.isArray(obj)) {
                 c = [];
                 for (i = 0; i < obj.length; i++) {
@@ -1035,12 +1109,16 @@ JXG.extend(
 
         /**
          * In-place (deep) merging of attributes. Allows attributes like `{shadow: {enabled: true...}}`
+         * <p>
+         * In contrast to method JXG.merge, mergeAttr does not recurse into DOM objects and JSXGraph objects. Instead
+         * handles (pointers) to these objects are used.
          *
          * @param {Object} attr Object with attributes - usually containing default options
          * @param {Object} special Special option values which overwrite (recursively) the default options
          * @param {Boolean} [toLower=true] If true the keys are convert to lower case.
          *
-         * @private
+         * @see JXG#merge
+         *
          */
         mergeAttr: function (attr, special, toLower) {
             var e, e2, o;
@@ -1086,14 +1164,11 @@ JXG.extend(
          * @returns {Object} The resulting attributes object
          */
         copyAttributes: function (attributes, options, s) {
-            var a,
-                i,
-                len,
-                o,
-                isAvail,
+            var a, i, len, o, isAvail,
                 primitives = {
                     circle: 1,
                     curve: 1,
+                    foreignobject: 1,
                     image: 1,
                     line: 1,
                     point: 1,

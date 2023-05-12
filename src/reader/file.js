@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2022
+    Copyright 2008-2023
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -25,8 +25,8 @@
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
-    and <http://opensource.org/licenses/MIT/>.
+    the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
+    and <https://opensource.org/licenses/MIT/>.
  */
 
 /*global JXG:true, define: true, ActiveXObject:true, jxgBinFileReader:true, DOMParser:true, XMLHttpRequest:true, document:true, navigator:true*/
@@ -170,13 +170,13 @@ JXG.FileReader = {
      * @param {JXG.Board|function} board Either a board or in case <tt>format</tt> equals 'raw' this has to be a callback function.
      * @param {String} format The expected file format. Possible values are <dl>
      * <dt>raw</dt><dd>Raw text file. In this case <tt>board</tt> has to be a callback function.</dd>
-     * <dt>geonext</dt><dd>Geonext File <a href="http://www.geonext.de">http://www.geonext.de</a></dd>
-     * <dt>intergeo</dt><dd>Intergeo file format <a href="http://www.i2geo.net">http://www.i2geo.net</a></dd>
-     * <dt>tracenpoche</dt><dd>Tracenpoche construction <a href="http://www.tracenpoche.net">http://www.tracenpoche.net</a></dd>
+     * <dt>geonext</dt><dd>Geonext File <a href="https://www.geonext.de">https://www.geonext.de</a></dd>
+     * <dt>intergeo</dt><dd>Intergeo file format <a href="https://www.i2geo.net">https://www.i2geo.net</a></dd>
+     * <dt>tracenpoche</dt><dd>Tracenpoche construction <a href="https://tracenpoche.sesamath.net/">https://tracenpoche.sesamath.net/</a></dd>
      * <dt>graph</dt><dd>Graph file</dd>
      * <dt>digraph</dt><dd>DiGraph file</dd>
-     * <dt>geogebra</dt><dd>Geogebra File <a href="http://www.geogebra.org">http://www.geogebra.org</a></dd>
-     * <dl><dt>cdy or cinderella</dt><dd>Cinderella (<a href="http://www.cinderella.de/">http://www.cinderella.de</a></dd>
+     * <dt>geogebra</dt><dd>Geogebra File <a href="https://www.geogebra.org">https://www.geogebra.org</a></dd>
+     * <dl><dt>cdy or cinderella</dt><dd>Cinderella (<a href="https://www.cinderella.de/">https://www.cinderella.de</a></dd>
      * </dl>
      * @param {Boolean} async Call ajax asynchonously.
      * @param {function} callback A function that is run when the board is ready.
@@ -195,13 +195,13 @@ JXG.FileReader = {
      * @param {JXG.Board} board The board the construction in the file should be loaded in.
      * @param {String} format Possible values are <dl>
      * <dt>raw</dt><dd>Raw text file. In this case <tt>board</tt> has to be a callback function.</dd>
-     * <dt>geonext</dt><dd>Geonext File <a href="http://www.geonext.de">http://www.geonext.de</a></dd>
-     * <dt>intergeo</dt><dd>Intergeo file format <a href="http://www.i2geo.net">http://www.i2geo.net</a></dd>
-     * <dt>tracenpoche</dt><dd>Tracenpoche construction <a href="http://www.tracenpoche.net">http://www.tracenpoche.net</a></dd>
+     * <dt>geonext</dt><dd>Geonext File <a href="https://www.geonext.de">https://www.geonext.de</a></dd>
+     * <dt>intergeo</dt><dd>Intergeo file format <a href="https://www.i2geo.net">https://www.i2geo.net</a></dd>
+     * <dt>tracenpoche</dt><dd>Tracenpoche construction <a href="https://tracenpoche.sesamath.net/">https://tracenpoche.sesamath.net/</a></dd>
      * <dt>graph</dt><dd>Graph file</dd>
      * <dt>digraph</dt><dd>DiGraph file</dd>
-     * <dt>geogebra</dt><dd>Geogebra File <a href="http://www.geogebra.org">http://www.geogebra.org</a></dd>
-     * <dl><dt>cdy or cinderella</dt><dd>Cinderella (<a href="http://www.cinderella.de/">http://www.cinderella.de</a></dd>
+     * <dt>geogebra</dt><dd>Geogebra File <a href="https://www.geogebra.org">https://www.geogebra.org</a></dd>
+     * <dl><dt>cdy or cinderella</dt><dd>Cinderella (<a href="https://www.cinderella.de/">https://www.cinderella.de</a></dd>
      * </dl>
      * @param {function} callback
      */

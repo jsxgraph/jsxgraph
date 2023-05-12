@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2022
+    Copyright 2008-2023
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -25,8 +25,8 @@
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
-    and <http://opensource.org/licenses/MIT/>.
+    the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
+    and <https://opensource.org/licenses/MIT/>.
  */
 
 describe("Test text handling", function () {
@@ -182,6 +182,11 @@ describe("Test text handling", function () {
                 { parse: true }
             );
         expect(el.rendNode.innerHTML).toEqual("√val<sub>x</sub> 1+1+π=5.14");
+    });
+
+    it("button", function () {
+        var txt = board.create('button', [0, 0, 'test', ()=>{}], {visible: false});
+        expect(JXG.exists(txt.rendNodeButton)).toBeTrue();
     });
 
 });

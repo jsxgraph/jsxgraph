@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2022
+    Copyright 2008-2023
         Matthias Ehmann,
         Carsten Miller,
         Andreas Walter,
@@ -23,8 +23,8 @@
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
-    and <http://opensource.org/licenses/MIT/>.
+    the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
+    and <https://opensource.org/licenses/MIT/>.
  */
 describe("Test JessieCode", function () {
     var board, target,
@@ -57,6 +57,30 @@ describe("Test JessieCode", function () {
     it("Jessiecode function graph", function() {
         var f = board.create('functiongraph', ['x^2']);
         expect(f.Y(2)).toEqual(4);
+    });
+
+    it("Jessiecode arithmetic 1", function() {
+        board.jc.parse(
+            'a = +1;'+
+            'b = 1+1;'+
+
+            'c = [1, 2] + [3, 4];'+
+            's = \'hello\';' +
+            'r = s + \' world\';' +
+            't = s + b;'
+        );
+        expect(board.jc.scope.locals.a).toEqual(1);
+        expect(board.jc.scope.locals.b).toEqual(2);
+        expect(board.jc.scope.locals.c.length).toEqual(2);
+        expect(board.jc.scope.locals.c[0]).toEqual(4);
+        expect(board.jc.scope.locals.c[1]).toEqual(6);
+        expect(board.jc.scope.locals.r).toEqual('hello world');
+        expect(board.jc.scope.locals.t).toEqual('hello2');
+    });
+
+    it("Jessiecode unary minus", function() {
+        board.jc.parse('y = -2^4;');
+        expect(board.jc.scope.locals.y).toEqual(-16);
     });
 
 });

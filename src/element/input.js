@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2022
+    Copyright 2008-2023
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -25,8 +25,8 @@
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
-    and <http://opensource.org/licenses/MIT/>.
+    the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
+    and <https://opensource.org/licenses/MIT/>.
  */
 
 /*global JXG: true, define: true, window: true*/
@@ -40,6 +40,9 @@ import JXG from "../jxg";
 import Env from "../utils/env";
 import Type from "../utils/type";
 
+/**
+ * @ignore
+ */
 var priv = {
     InputInputEventHandler: function (evt) {
         this._value = this.rendNodeInput.value;
@@ -178,6 +181,57 @@ var priv = {
  * 
  *     })();
  * 
+ * </script><pre>
+ * 
+ * 
+ * @example
+ *   Apply CSS classes to label and input tag
+ *     &lt;style&gt;
+ *         div.JXGtext_inp {
+ *             font-weight: bold;
+ *         }
+ * 
+ *         // Label
+ *         div.JXGtext_inp > span > span {
+ *             padding: 3px;
+ *         }
+ * 
+ *         // Input field
+ *         div.JXGtext_inp > span > input {
+ *             width: 100px;
+ *             border: solid 4px red;
+ *             border-radius: 25px;
+ *         }
+ *     &lt;/style&gt;
+ * 
+ * var inp = board.create('input', [-6, 1, 'x', 'y'], {
+ *      CssClass: 'JXGtext_inp', HighlightCssClass: 'JXGtext_inp'
+ * });
+ * 
+ * </pre>
+ *         <style>
+ *             div.JXGtext_inp {
+ *                 font-weight: bold;
+ *             }
+ *     
+ *             div.JXGtext_inp > span > span {
+ *                 padding: 3px;
+ *             }
+ *     
+ *             div.JXGtext_inp > span > input {
+ *                 width: 100px;
+ *                 border: solid 4px red;
+ *                 border-radius: 25px;
+ *             }
+ *         </style>
+ * <div id="JXGa3642ebd-a7dc-41ac-beb2-0c9e705ab8b4" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXGa3642ebd-a7dc-41ac-beb2-0c9e705ab8b4',
+ *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+ *         var inp = board.create('input', [-6, 1, 'x', 'y'], {CssClass: 'JXGtext_inp', HighlightCssClass: 'JXGtext_inp'});
+ * 
+ *     })();
  * </script><pre>
  * 
  */
@@ -320,6 +374,6 @@ JXG.createInput = function (board, parents, attributes) {
 
 JXG.registerElement("input", JXG.createInput);
 
-export default {
-    createInput: JXG.createInput
-};
+// export default {
+//     createInput: JXG.createInput
+// };

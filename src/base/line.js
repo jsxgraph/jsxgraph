@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2022
+    Copyright 2008-2023
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -25,8 +25,8 @@
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
-    and <http://opensource.org/licenses/MIT/>.
+    the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
+    and <https://opensource.org/licenses/MIT/>.
  */
 
 /*global JXG: true, define: true*/
@@ -47,7 +47,6 @@ import Const from "./constants";
 import Coords from "./coords";
 import GeometryElement from "./element";
 import Type from "../utils/type";
-import Point from "./point";
 
 /**
  * The Line class is a basic class for all kind of line objects, e.g. line, arrow, and axis. It is usually defined by two points and can
@@ -158,16 +157,8 @@ JXG.extend(
         hasPoint: function (x, y) {
             // Compute the stdform of the line in screen coordinates.
             var c = [],
-                s,
                 v = [1, x, y],
-                vnew,
-                p1c,
-                p2c,
-                d,
-                pos,
-                i,
-                prec,
-                type,
+                s, vnew, p1c, p2c, d, pos, i, prec, type,
                 sw = Type.evaluate(this.visProp.strokewidth);
 
             if (Type.isObject(Type.evaluate(this.visProp.precision))) {
@@ -476,14 +467,14 @@ JXG.extend(
             return this;
         },
 
-        /**
-         * Used to generate a polynomial for a point p that lies on this line, i.e. p is collinear to
-         * {@link JXG.Line#point1} and {@link JXG.Line#point2}.
-         *
-         * @param {JXG.Point} p The point for that the polynomial is generated.
-         * @returns {Array} An array containing the generated polynomial.
-         * @private
-         */
+        // /**
+        //  * Used to generate a polynomial for a point p that lies on this line, i.e. p is collinear to
+        //  * {@link JXG.Line#point1} and {@link JXG.Line#point2}.
+        //  *
+        //  * @param {JXG.Point} p The point for that the polynomial is generated.
+        //  * @returns {Array} An array containing the generated polynomial.
+        //  * @private
+        //  */
         generatePolynomial: function (p) {
             var u1 = this.point1.symbolic.x,
                 u2 = this.point1.symbolic.y,
@@ -619,8 +610,7 @@ JXG.extend(
 
         // documented in geometry element
         getLabelAnchor: function () {
-            var x,
-                y,
+            var x, y,
                 fs = 0,
                 c1 = new Coords(Const.COORDS_BY_USER, this.point1.coords.usrCoords, this.board),
                 c2 = new Coords(Const.COORDS_BY_USER, this.point2.coords.usrCoords, this.board),
@@ -639,6 +629,14 @@ JXG.extend(
             }
 
             switch (Type.evaluate(this.label.visProp.position)) {
+                case 'last':
+                    x = c2[1];
+                    y = c2[2];
+                    break
+                case 'first':
+                    x = c1[1];
+                    y = c1[2];
+                    break
                 case "lft":
                 case "llft":
                 case "ulft":
@@ -1063,12 +1061,7 @@ JXG.extend(
  * </script><pre>
  */
 JXG.createLine = function (board, parents, attributes) {
-    var ps,
-        el,
-        p1,
-        p2,
-        i,
-        attr,
+    var ps, el, p1, p2, i, attr,
         c = [],
         doTransform = false,
         constrained = false,
@@ -1094,7 +1087,7 @@ JXG.createLine = function (board, parents, attributes) {
             parents[0]().length >= 2
         ) {
             attr = Type.copyAttributes(attributes, board.options, "line", "point1");
-            p1 = Point.createPoint(board, parents[0](), attr);
+            p1 = JXG.createPoint(board, parents[0](), attr);
             constrained = true;
         } else if (Type.isObject(parents[0]) && Type.isTransformationOrArray(parents[1])) {
             doTransform = true;
@@ -1129,7 +1122,7 @@ JXG.createLine = function (board, parents, attributes) {
             parents[1]().length >= 2
         ) {
             attr = Type.copyAttributes(attributes, board.options, "line", "point2");
-            p2 = Point.createPoint(board, parents[1](), attr);
+            p2 = JXG.createPoint(board, parents[1](), attr);
             constrained = true;
         } else {
             throw new Error(
@@ -1143,7 +1136,6 @@ JXG.createLine = function (board, parents, attributes) {
         }
 
         attr = Type.copyAttributes(attributes, board.options, "line");
-
         el = new JXG.Line(board, p1, p2, attr);
 
         if (constrained) {
@@ -1185,22 +1177,16 @@ JXG.createLine = function (board, parents, attributes) {
             }
         }
 
-        // point 1 is the midpoint between (0,c,-b) and point 2. => point1 is finite.
+        // point 1 is the midpoint between (0, c, -b) and point 2. => point1 is finite.
         attr = Type.copyAttributes(attributes, board.options, "line", "point1");
         if (isDraggable) {
-            p1 = board.create(
-                "point",
-                [
+            p1 = board.create("point", [
                     c[2]() * c[2]() + c[1]() * c[1](),
                     c[2]() - c[1]() * c[0]() + c[2](),
                     -c[1]() - c[2]() * c[0]() - c[1]()
-                ],
-                attr
-            );
+                ], attr);
         } else {
-            p1 = board.create(
-                "point",
-                [
+            p1 = board.create("point", [
                     function () {
                         return (c[2]() * c[2]() + c[1]() * c[1]()) * 0.5;
                     },
@@ -1210,27 +1196,19 @@ JXG.createLine = function (board, parents, attributes) {
                     function () {
                         return (-c[1]() - c[2]() * c[0]() - c[1]()) * 0.5;
                     }
-                ],
-                attr
-            );
+                ], attr);
         }
 
         // point 2: (b^2+c^2,-ba+c,-ca-b)
         attr = Type.copyAttributes(attributes, board.options, "line", "point2");
         if (isDraggable) {
-            p2 = board.create(
-                "point",
-                [
+            p2 = board.create("point", [
                     c[2]() * c[2]() + c[1]() * c[1](),
                     -c[1]() * c[0]() + c[2](),
                     -c[2]() * c[0]() - c[1]()
-                ],
-                attr
-            );
+                ], attr);
         } else {
-            p2 = board.create(
-                "point",
-                [
+            p2 = board.create("point", [
                     function () {
                         return c[2]() * c[2]() + c[1]() * c[1]();
                     },
@@ -1240,9 +1218,7 @@ JXG.createLine = function (board, parents, attributes) {
                     function () {
                         return -c[2]() * c[0]() - c[1]();
                     }
-                ],
-                attr
-            );
+                ], attr);
         }
 
         // If the line will have a glider and board.suspendUpdate() has been called, we
@@ -1280,9 +1256,7 @@ JXG.createLine = function (board, parents, attributes) {
         ps = parents[0];
 
         attr = Type.copyAttributes(attributes, board.options, "line", "point1");
-        p1 = board.create(
-            "point",
-            [
+        p1 = board.create("point", [
                 function () {
                     var c = ps();
 
@@ -1292,14 +1266,10 @@ JXG.createLine = function (board, parents, attributes) {
                         (-c[1] - c[2] * c[0] - c[1]) * 0.5
                     ];
                 }
-            ],
-            attr
-        );
+            ], attr);
 
         attr = Type.copyAttributes(attributes, board.options, "line", "point2");
-        p2 = board.create(
-            "point",
-            [
+        p2 = board.create("point", [
                 function () {
                     var c = ps();
 
@@ -1309,9 +1279,7 @@ JXG.createLine = function (board, parents, attributes) {
                         -c[2] * c[0] - c[1]
                     ];
                 }
-            ],
-            attr
-        );
+            ], attr);
 
         attr = Type.copyAttributes(attributes, board.options, "line");
         el = new JXG.Line(board, p1, p2, attr);
@@ -2080,7 +2048,7 @@ JXG.createRadicalAxis = function (board, parents, attributes) {
  * @description The polar line is the unique reciprocal relationship of a point with respect to a conic.
  * The lines through the intersections of a conic and the polar line of a point with respect to that conic and through that point are tangent to the conic.
  * A point on a conic has the polar line of that point with respect to that conic as the tangent line to that conic at that point.
- * See {@link http://en.wikipedia.org/wiki/Pole_and_polar} for more information on pole and polar.
+ * See {@link https://en.wikipedia.org/wiki/Pole_and_polar} for more information on pole and polar.
  * @name PolarLine
  * @augments JXG.Line
  * @constructor
@@ -2190,14 +2158,15 @@ JXG.registerElement("polar", JXG.createTangent);
 JXG.registerElement("radicalaxis", JXG.createRadicalAxis);
 JXG.registerElement("polarline", JXG.createPolarLine);
 
-export default {
-    Line: JXG.Line,
-    createLine: JXG.createLine,
-    createTangent: JXG.createTangent,
-    createPolar: JXG.createTangent,
-    createSegment: JXG.createSegment,
-    createAxis: JXG.createAxis,
-    createArrow: JXG.createArrow,
-    createRadicalAxis: JXG.createRadicalAxis,
-    createPolarLine: JXG.createPolarLine
-};
+export default JXG.Line;
+// export default {
+//     Line: JXG.Line,
+//     createLine: JXG.createLine,
+//     createTangent: JXG.createTangent,
+//     createPolar: JXG.createTangent,
+//     createSegment: JXG.createSegment,
+//     createAxis: JXG.createAxis,
+//     createArrow: JXG.createArrow,
+//     createRadicalAxis: JXG.createRadicalAxis,
+//     createPolarLine: JXG.createPolarLine
+// };

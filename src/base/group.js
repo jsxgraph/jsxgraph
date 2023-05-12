@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2022
+    Copyright 2008-2023
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -25,8 +25,8 @@
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
-    and <http://opensource.org/licenses/MIT/>.
+    the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
+    and <https://opensource.org/licenses/MIT/>.
  */
 
 /*global JXG: true, define: true*/
@@ -976,7 +976,8 @@ JXG.createGroup = function (board, parents, attributes) {
 
 JXG.registerElement("group", JXG.createGroup);
 
-export default {
-    Group: JXG.Group,
-    createGroup: JXG.createGroup
-};
+export default JXG.Group;
+// export default {
+//     Group: JXG.Group,
+//     createGroup: JXG.createGroup
+// };

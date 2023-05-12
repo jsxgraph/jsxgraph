@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2022
+    Copyright 2008-2023
         Matthias Ehmann,
         Carsten Miller,
         Andreas Walter,
@@ -23,8 +23,8 @@
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
-    and <http://opensource.org/licenses/MIT/>.
+    the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
+    and <https://opensource.org/licenses/MIT/>.
  */
 /*global JXG:true, define: true*/
 
@@ -237,15 +237,15 @@ JXG.createMesh3D = function (board, parents, attr) {
         el;
 
     el = view.create("curve", [[], []], attr);
+    /**
+     * @ignore
+     */
     el.updateDataArray = function () {
         var s1 = range1[0],
             e1 = range1[1],
             s2 = range2[0],
             e2 = range2[1],
-            l1,
-            l2,
-            res,
-            i,
+            l1, l2, res, i,
             sol,
             v1 = [0, 0, 0],
             v2 = [0, 0, 0],

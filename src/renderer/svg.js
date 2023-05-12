@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2022
+    Copyright 2008-2023
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -25,8 +25,8 @@
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
-    and <http://opensource.org/licenses/MIT/>.
+    the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
+    and <https://opensource.org/licenses/MIT/>.
  */
 
 /*global JXG: true, define: true, AMprocessNode: true, MathJax: true, document: true */
@@ -68,7 +68,7 @@ JXG.SVGRenderer = function (container, dim) {
 
     /**
      * The SVG Namespace used in JSXGraph.
-     * @see http://www.w3.org/TR/SVG/
+     * @see http://www.w3.org/TR/SVG2/
      * @type String
      * @default http://www.w3.org/2000/svg
      */
@@ -107,105 +107,140 @@ JXG.SVGRenderer = function (container, dim) {
     /**
      * The <tt>defs</tt> element is a container element to reference reusable SVG elements.
      * @type Node
-     * @see http://www.w3.org/TR/SVG/struct.html#DefsElement
+     * @see https://www.w3.org/TR/SVG2/struct.html#DefsElement
      */
     this.defs = this.container.ownerDocument.createElementNS(this.svgNamespace, "defs");
     this.svgRoot.appendChild(this.defs);
 
-        /**
-         * Filters are used to apply shadows.
-         * @type Node
-         * @see http://www.w3.org/TR/SVG/filters.html#FilterElement
-         */
+    /**
+     * Filters are used to apply shadows.
+     * @type Node
+     * @see https://www.w3.org/TR/SVG2/struct.html#DefsElement
+     */
+    /**
+     * Create an SVG shadow filter. If the object's RGB color is [r,g,b], it's opacity is op, and
+     * the parameter color is given as [r', g', b'] with opacity op'
+     * the shadow will have RGB color [blend*r + r', blend*g + g', blend*b + b'] and the opacity will be equal to op * op'.
+     * Further, blur and offset can be adjusted.
+     *
+     * The shadow color is [r*ble
+     * @param {String} id Node is of the filter.
+     * @param {Array|String} rgb RGB value for the blend color or the string 'none' for default values. Default 'black'.
+     * @param {Number} opacity Value between 0 and 1, default is 1.
+     * @param {Number} blend  Value between 0 and 1, default is 0.1.
+     * @param {Number} blur  Default: 3
+     * @param {Array} offset [dx, dy]. Default is [5,5].
+     * @returns DOM node to be added to this.defs.
+     * @private
+     */
+    this.createShadowFilter = function (id, rgb, opacity, blend, blur, offset) {
+        var filter = this.container.ownerDocument.createElementNS(this.svgNamespace, 'filter'),
+            feOffset, feColor, feGaussianBlur, feBlend,
+            mat;
 
-        /**
-         * Create an SVG shadow filter. If the object's RGB color is [r,g,b], it's opacity is op, and
-         * the parameter color is given as [r', g', b'] with opacity op'
-         * the shadow will have RGB color [blend*r + r', blend*g + g', blend*b + b'] and the opacity will be equal to op * op'.
-         * Further, blur and offset can be adjusted.
-         * 
-         * The shadow color is [r*ble
-         * @param {String} id Node is of the filter.
-         * @param {Array|String} rgb RGB value for the blend color or the string 'none' for default values. Default 'black'.
-         * @param {Number} opacity Value between 0 and 1, default is 1.
-         * @param {Number} blend  Value between 0 and 1, default is 0.1.
-         * @param {Number} blur  Default: 3
-         * @param {Array} offset [dx, dy]. Default is [5,5].
-         * @returns DOM node to be added to this.defs.
-         * @private
-         */
-        this.createShadowFilter = function(id, rgb, opacity, blend, blur, offset) {
-            var filter = this.container.ownerDocument.createElementNS(this.svgNamespace, 'filter'),
-                feOffset, feColor, feGaussianBlur, feBlend,
-                mat;
+        filter.setAttributeNS(null, 'id', id);
+        filter.setAttributeNS(null, 'width', '300%');
+        filter.setAttributeNS(null, 'height', '300%');
+        filter.setAttributeNS(null, 'filterUnits', 'userSpaceOnUse');
 
-            filter.setAttributeNS(null, 'id', id);
-            filter.setAttributeNS(null, 'width', '300%');
-            filter.setAttributeNS(null, 'height', '300%');
-            filter.setAttributeNS(null, 'filterUnits', 'userSpaceOnUse');
+        feOffset = this.container.ownerDocument.createElementNS(this.svgNamespace, 'feOffset');
+        feOffset.setAttributeNS(null, 'in', 'SourceGraphic'); // b/w: SourceAlpha, Color: SourceGraphic
+        feOffset.setAttributeNS(null, 'result', 'offOut');
+        feOffset.setAttributeNS(null, 'dx', offset[0]);
+        feOffset.setAttributeNS(null, 'dy', offset[1]);
+        filter.appendChild(feOffset);
 
-            feOffset = this.container.ownerDocument.createElementNS(this.svgNamespace, 'feOffset');
-            feOffset.setAttributeNS(null, 'in', 'SourceGraphic'); // b/w: SourceAlpha, Color: SourceGraphic
-            feOffset.setAttributeNS(null, 'result', 'offOut');
-            feOffset.setAttributeNS(null, 'dx', offset[0]);
-            feOffset.setAttributeNS(null, 'dy', offset[1]);
-            filter.appendChild(feOffset);
-
-            feColor = this.container.ownerDocument.createElementNS(this.svgNamespace, 'feColorMatrix');
-            feColor.setAttributeNS(null, 'in', 'offOut');
-            feColor.setAttributeNS(null, 'result', 'colorOut');
-            feColor.setAttributeNS(null, 'type', 'matrix');
-            // See https://developer.mozilla.org/en-US/docs/Web/SVG/Element/feColorMatrix
-            if (rgb === 'none' || !Type.isArray(rgb) || rgb.length < 3) {
-                feColor.setAttributeNS(null, 'values', '0.1 0 0 0 0  0 0.1 0 0 0  0 0 0.1 0 0  0 0 0 ' + opacity + ' 0');
-            } else {
-                rgb[0] /= 255;
-                rgb[1] /= 255;
-                rgb[2] /= 255;
-                mat = blend + ' 0 0 0 ' + rgb[0] +
-                          '  0 ' + blend + ' 0 0 ' + rgb[1] +
-                          '  0 0 ' + blend + ' 0 ' + rgb[2] +
-                          '  0 0 0 ' + opacity + ' 0';
-                feColor.setAttributeNS(null, 'values', mat);
-            }
-            filter.appendChild(feColor);
-
-            feGaussianBlur = this.container.ownerDocument.createElementNS(this.svgNamespace, 'feGaussianBlur');
-            feGaussianBlur.setAttributeNS(null, 'in', 'colorOut');
-            feGaussianBlur.setAttributeNS(null, 'result', 'blurOut');
-            feGaussianBlur.setAttributeNS(null, 'stdDeviation', blur);
-            filter.appendChild(feGaussianBlur);
-
-            feBlend = this.container.ownerDocument.createElementNS(this.svgNamespace, 'feBlend');
-            feBlend.setAttributeNS(null, 'in', 'SourceGraphic');
-            feBlend.setAttributeNS(null, 'in2', 'blurOut');
-            feBlend.setAttributeNS(null, 'mode', 'normal');
-            filter.appendChild(feBlend);
-
-            return filter;
-        };
-        /* Default shadow filter */
-        this.defs.appendChild(this.createShadowFilter(this.container.id + '_' + 'f1', 'none', 1, 0.1, 3, [5, 5]));
-
-        /**
-         * JSXGraph uses a layer system to sort the elements on the board. This puts certain types of elements in front
-         * of other types of elements. For the order used see {@link JXG.Options.layer}. The number of layers is documented
-         * there, too. The higher the number, the "more on top" are the elements on this layer.
-         * @type Array
-         */
-        this.layer = [];
-        for (i = 0; i < Options.layer.numlayers; i++) {
-            this.layer[i] = this.container.ownerDocument.createElementNS(this.svgNamespace, 'g');
-            this.svgRoot.appendChild(this.layer[i]);
+        feColor = this.container.ownerDocument.createElementNS(this.svgNamespace, 'feColorMatrix');
+        feColor.setAttributeNS(null, 'in', 'offOut');
+        feColor.setAttributeNS(null, 'result', 'colorOut');
+        feColor.setAttributeNS(null, 'type', 'matrix');
+        // See https://developer.mozilla.org/en-US/docs/Web/SVG/Element/feColorMatrix
+        if (rgb === 'none' || !Type.isArray(rgb) || rgb.length < 3) {
+            feColor.setAttributeNS(null, 'values', '0.1 0 0 0 0  0 0.1 0 0 0  0 0 0.1 0 0  0 0 0 ' + opacity + ' 0');
+        } else {
+            rgb[0] /= 255;
+            rgb[1] /= 255;
+            rgb[2] /= 255;
+            mat = blend + ' 0 0 0 ' + rgb[0] +
+                '  0 ' + blend + ' 0 0 ' + rgb[1] +
+                '  0 0 ' + blend + ' 0 ' + rgb[2] +
+                '  0 0 0 ' + opacity + ' 0';
+            feColor.setAttributeNS(null, 'values', mat);
         }
+        filter.appendChild(feColor);
 
-    // Already documented in JXG.AbstractRenderer
-    this.supportsForeignObject = document.implementation.hasFeature(
-        "http://w3.org/TR/SVG11/feature#Extensibility",
-        "1.1"
-    );
+        feGaussianBlur = this.container.ownerDocument.createElementNS(this.svgNamespace, 'feGaussianBlur');
+        feGaussianBlur.setAttributeNS(null, 'in', 'colorOut');
+        feGaussianBlur.setAttributeNS(null, 'result', 'blurOut');
+        feGaussianBlur.setAttributeNS(null, 'stdDeviation', blur);
+        filter.appendChild(feGaussianBlur);
 
-    if (this.supportsForeignObject) {
+        feBlend = this.container.ownerDocument.createElementNS(this.svgNamespace, 'feBlend');
+        feBlend.setAttributeNS(null, 'in', 'SourceGraphic');
+        feBlend.setAttributeNS(null, 'in2', 'blurOut');
+        feBlend.setAttributeNS(null, 'mode', 'normal');
+        filter.appendChild(feBlend);
+
+        return filter;
+    };
+
+    /**
+     * Create a "unique" string id from the arguments of the function.
+     * Concatenate all arguments by "_".
+     * "Unique" is achieved by simply prepending the container id.
+     * Do not escape the string.
+     *
+     * If the id is used in an "url()" call it must be eascaped.
+     *
+     * @params {String} one or strings which will be concatenated.
+     * @return {String}
+     * @private
+     */
+    this.uniqName = function() {
+        return this.container.id + '_' +
+            Array.prototype.slice.call(arguments).join('_');
+    };
+
+    /**
+     * Combine arguments to an URL string of the form
+     * url(#...)
+     * Masks the container id.
+     *
+     * @params {Objects} parts of the string
+     * @returns URL string
+     * @private
+     * @example
+     * this.toURL('aaa', '_', 'bbb', 'TriangleEnd')
+     * // Output:
+     * // url(#xxx_bbbTriangleEnd)
+     *
+     */
+    this.toURL = function () {
+        // ES6 would be [...arguments].join()
+        var str = Array.prototype.slice.call(arguments).join('');
+        // Mask special symbols like '/' and '\' in id
+        if (Type.exists(CSS) && Type.exists(CSS.escape)) {
+            str = CSS.escape(str);
+        }
+        return 'url(#' + str + ')';
+    };
+
+    /* Default shadow filter */
+    this.defs.appendChild(this.createShadowFilter(this.uniqName('f1'), 'none', 1, 0.1, 3, [5, 5]));
+
+    /**
+     * JSXGraph uses a layer system to sort the elements on the board. This puts certain types of elements in front
+     * of other types of elements. For the order used see {@link JXG.Options.layer}. The number of layers is documented
+     * there, too. The higher the number, the "more on top" are the elements on this layer.
+     * @type Array
+     */
+    this.layer = [];
+    for (i = 0; i < Options.layer.numlayers; i++) {
+        this.layer[i] = this.container.ownerDocument.createElementNS(this.svgNamespace, 'g');
+        this.svgRoot.appendChild(this.layer[i]);
+    }
+
+    try {
         this.foreignObjLayer = this.container.ownerDocument.createElementNS(
             this.svgNamespace,
             "foreignObject"
@@ -215,23 +250,12 @@ JXG.SVGRenderer = function (container, dim) {
         this.foreignObjLayer.setAttribute("y", 0);
         this.foreignObjLayer.setAttribute("width", "100%");
         this.foreignObjLayer.setAttribute("height", "100%");
-        this.foreignObjLayer.setAttribute("id", this.container.id + "_foreignObj");
+        this.foreignObjLayer.setAttribute("id", this.uniqName('foreignObj'));
         this.svgRoot.appendChild(this.foreignObjLayer);
+        this.supportsForeignObject = true;
+    } catch (e) {
+        this.supportsForeignObject = false;
     }
-
-    /**
-     * Defines dash patterns. Defined styles are: <ol>
-     * <li value="-1"> 2px dash, 2px space</li>
-     * <li> 5px dash, 5px space</li>
-     * <li> 10px dash, 10px space</li>
-     * <li> 20px dash, 20px space</li>
-     * <li> 20px dash, 10px space, 10px dash, 10px dash</li>
-     * <li> 20px dash, 5px space, 10px dash, 5px space</li></ol>
-     * @type Array
-     * @default ['2, 2', '5, 5', '10, 10', '20, 20', '20, 10, 10, 10', '20, 5, 10, 5']
-     * @see http://www.w3.org/TR/SVG/painting.html#StrokeProperties
-     */
-    this.dashArray = ["2, 2", "5, 5", "10, 10", "20, 20", "20, 10, 10, 10", "20, 5, 10, 5"];
 };
 
 JXG.SVGRenderer.prototype = new AbstractRenderer();
@@ -284,7 +308,7 @@ JXG.extend(
                Defined by Bezier curves from mp_arrowheads.html
 
                In any case but type 3 the arrow head is 10 units long,
-               type 3 is 10 unitsb high.
+               type 3 is 10 units high.
                These 10 units are scaled to strokeWidth * arrowSize pixels, see
                this._setArrowWidth().
 
@@ -577,8 +601,8 @@ JXG.extend(
                 null,
                 "style",
                 "font-family:Arial,Helvetica,sans-serif; font-size:" +
-                    fontsize +
-                    "px; fill:#356AA0;  opacity:0.3;"
+                fontsize +
+                "px; fill:#356AA0;  opacity:0.3;"
             );
             t = this.container.ownerDocument.createTextNode(str);
             node.appendChild(t);
@@ -775,7 +799,7 @@ JXG.extend(
         // Already documented in JXG.AbstractRenderer
         createPrim: function (type, id) {
             var node = this.container.ownerDocument.createElementNS(this.svgNamespace, type);
-            node.setAttributeNS(null, "id", this.container.id + "_" + id);
+            node.setAttributeNS(null, "id", this.uniqName(id));
             node.style.position = "absolute";
             if (type === "path") {
                 node.setAttributeNS(null, "stroke-linecap", "round");
@@ -826,7 +850,8 @@ JXG.extend(
                     el.rendNode.setAttributeNS(
                         null,
                         "marker-start",
-                        "url(#" + this.container.id + "_" + el.id + "TriangleEnd)"
+                        // "url(#" + this.container.id + "_" + el.id + "TriangleEnd)"
+                        this.toURL(this.container.id, '_', el.id, 'TriangleEnd')
                     );
                 } else {
                     this.defs.appendChild(node2);
@@ -846,7 +871,8 @@ JXG.extend(
                     el.rendNode.setAttributeNS(
                         null,
                         "marker-end",
-                        "url(#" + this.container.id + "_" + el.id + "TriangleStart)"
+                        // "url(#" + this.container.id + "_" + el.id + "TriangleStart)"
+                        this.toURL(this.container.id, '_', el.id, 'TriangleStart')
                     );
                 } else {
                     this.defs.appendChild(node2);
@@ -950,6 +976,26 @@ JXG.extend(
                     scr[1] +
                     " " +
                     (scr[2] + size);
+            } else if (type === "|") {
+                s =
+                    " M " +
+                    scr[1] +
+                    " " +
+                    (scr[2] - size) +
+                    " L " +
+                    scr[1] +
+                    " " +
+                    (scr[2] + size);
+            } else if (type === "-") {
+                s =
+                    " M " +
+                    (scr[1] - size) +
+                    " " +
+                    scr[2] +
+                    " L " +
+                    (scr[1] + size) +
+                    " " +
+                    scr[2];
             } else if (type === "<>") {
                 s =
                     " M " +
@@ -1264,10 +1310,16 @@ JXG.extend(
         // documented in JXG.AbstractRenderer
         setDashStyle: function (el) {
             var dashStyle = Type.evaluate(el.visProp.dash),
+                ds = Type.evaluate(el.visProp.dashscale),
+                sw = ds ? 0.5 * Type.evaluate(el.visProp.strokewidth) : 1,
                 node = el.rendNode;
 
             if (dashStyle > 0) {
-                node.setAttributeNS(null, "stroke-dasharray", this.dashArray[dashStyle - 1]);
+                node.setAttributeNS(null, "stroke-dasharray",
+                    // sw could distinguish highlighting or not.
+                    // But it seems to preferable to ignore this.
+                    this.dashArray[dashStyle - 1].map(function (x) { return x * sw; }).join(',')
+                );
             } else {
                 if (node.hasAttributeNS(null, "stroke-dasharray")) {
                     node.removeAttributeNS(null, "stroke-dasharray");
@@ -1292,8 +1344,9 @@ JXG.extend(
                 this.defs.appendChild(node);
                 fillNode.setAttributeNS(
                     null,
-                    "style",
-                    "fill:url(#" + this.container.id + "_" + el.id + "_gradient)"
+                    'style',
+                    // "fill:url(#" + this.container.id + "_" + el.id + "_gradient)"
+                    'fill:' + this.toURL(this.container.id + '_' + el.id + '_gradient')
                 );
                 el.gradNode1 = node2;
                 el.gradNode2 = node3;
@@ -1384,9 +1437,9 @@ JXG.extend(
                 null,
                 "style",
                 "stop-color:" +
-                    Type.evaluate(el.visProp.gradientsecondcolor) +
-                    ";stop-opacity:" +
-                    Type.evaluate(el.visProp.gradientsecondopacity)
+                Type.evaluate(el.visProp.gradientsecondcolor) +
+                ";stop-opacity:" +
+                Type.evaluate(el.visProp.gradientsecondopacity)
             );
             node2.setAttributeNS(
                 null,
@@ -1415,38 +1468,50 @@ JXG.extend(
 
         // documented in JXG.AbstractRenderer
         setObjectTransition: function (el, duration) {
-            var node,
+            var node, props,
+                transitionArr = [],
                 transitionStr,
-                i, len,
+                i,
+                len = 0,
                 nodes = ["rendNode", "rendNodeTriangleStart", "rendNodeTriangleEnd"];
 
             if (duration === undefined) {
                 duration = Type.evaluate(el.visProp.transitionduration);
             }
 
-            if (duration === el.visPropOld.transitionduration) {
+            props = Type.evaluate(el.visProp.transitionproperties);
+            if (duration === el.visPropOld.transitionduration &&
+                props === el.visPropOld.transitionproperties) {
                 return;
             }
 
-            if (
-                el.elementClass === Const.OBJECT_CLASS_TEXT &&
-                Type.evaluate(el.visProp.display) === "html"
-            ) {
-                // transitionStr = " color " + duration + "ms," +
-                //     " opacity " + duration + "ms";
-                transitionStr = " all " + duration + "ms ease";
-            } else {
-                transitionStr =
-                    " fill " + duration + "ms," +
-                    " fill-opacity " + duration + "ms," +
-                    " stroke " + duration + "ms," +
-                    " stroke-opacity " + duration + "ms," +
-                    " stroke-width " + duration + "ms," +
-                    " width " + duration + "ms," +
-                    " height " + duration + "ms," +
-                    " rx " + duration + "ms," +
-                    " ry " + duration + "ms";
+            // if (
+            //     el.elementClass === Const.OBJECT_CLASS_TEXT &&
+            //     Type.evaluate(el.visProp.display) === "html"
+            // ) {
+            //     // transitionStr = " color " + duration + "ms," +
+            //     //     " opacity " + duration + "ms";
+            //     transitionStr = " all " + duration + "ms ease";
+            // } else {
+            //     transitionStr =
+            //         " fill " + duration + "ms," +
+            //         " fill-opacity " + duration + "ms," +
+            //         " stroke " + duration + "ms," +
+            //         " stroke-opacity " + duration + "ms," +
+            //         " stroke-width " + duration + "ms," +
+            //         " width " + duration + "ms," +
+            //         " height " + duration + "ms," +
+            //         " rx " + duration + "ms," +
+            //         " ry " + duration + "ms";
+            // }
+
+            if (Type.exists(props)) {
+                len = props.length;
             }
+            for (i = 0; i < len; i++) {
+                transitionArr.push(props[i] + ' ' + duration + 'ms');
+            }
+            transitionStr = transitionArr.join(', ');
 
             len = nodes.length;
             for (i = 0; i < len; ++i) {
@@ -1457,6 +1522,7 @@ JXG.extend(
             }
 
             el.visPropOld.transitionduration = duration;
+            el.visPropOld.transitionproperties = props;
         },
 
         /**
@@ -1610,9 +1676,7 @@ JXG.extend(
                     if (Type.evaluate(el.visProp.firstarrow)) {
                         this._setArrowColor(
                             el.rendNodeTriangleStart,
-                            c,
-                            oo,
-                            el,
+                            c, oo, el,
                             el.visPropCalc.typeFirst
                         );
                     }
@@ -1620,9 +1684,7 @@ JXG.extend(
                     if (Type.evaluate(el.visProp.lastarrow)) {
                         this._setArrowColor(
                             el.rendNodeTriangleEnd,
-                            c,
-                            oo,
-                            el,
+                            c, oo, el,
                             el.visPropCalc.typeLast
                         );
                     }
@@ -1715,7 +1777,8 @@ JXG.extend(
             if (Type.exists(el.rendNode)) {
                 if (show) {
                     if (use_board_filter) {
-                        el.rendNode.setAttributeNS(null, 'filter', 'url(#' + this.container.id + '_' + 'f1)');
+                        el.rendNode.setAttributeNS(null, 'filter', this.toURL(this.container.id + '_' + 'f1'))
+                        // 'url(#' + this.container.id + '_' + 'f1)');
                     } else {
                         node = this.container.ownerDocument.getElementById(id);
                         if (node) {
@@ -1723,7 +1786,8 @@ JXG.extend(
                         }
                         id = el.rendNode.id + '_' + 'f1';
                         this.defs.appendChild(this.createShadowFilter(id, c, op, bl, b, o));
-                        el.rendNode.setAttributeNS(null, 'filter', 'url(#' + id + ')');
+                        el.rendNode.setAttributeNS(null, 'filter', this.toURL(id));
+                        // 'url(#' + id + ')');
                     }
                 } else {
                     el.rendNode.removeAttributeNS(null, 'filter');
@@ -1825,24 +1889,24 @@ JXG.extend(
                     null,
                     "d",
                     "M " +
-                        (x - d) +
-                        " " +
-                        y +
-                        " " +
-                        "L " +
-                        (x + d) +
-                        " " +
-                        y +
-                        " " +
-                        "M " +
-                        x +
-                        " " +
-                        (y - d) +
-                        " " +
-                        "L " +
-                        x +
-                        " " +
-                        (y + d)
+                    (x - d) +
+                    " " +
+                    y +
+                    " " +
+                    "L " +
+                    (x + d) +
+                    " " +
+                    y +
+                    " " +
+                    "M " +
+                    x +
+                    " " +
+                    (y - d) +
+                    " " +
+                    "L " +
+                    x +
+                    " " +
+                    (y + d)
                 );
                 this.updateEllipsePrim(this.touchpoints[2 * i + 1], pos[0], pos[1], 25, 25);
             }
@@ -1927,15 +1991,47 @@ JXG.extend(
          * @param {Boolean} ignoreTexts If true, the foreignObject tag is set to display=none.
          * This is necessary for older versions of Safari. Default: false
          * @returns {String}  data URI string
+         *
+         * @example
+         * var A = board.create('point', [2, 2]);
+         *
+         * var txt = board.renderer.dumpToDataURI(false);
+         * // txt consists of a string of the form
+         * // data:image/svg+xml;base64,PHN2Zy. base64 encoded SVG..+PC9zdmc+
+         * // Behind the comma, there is the base64 encoded SVG code
+         * // which is decoded with atob().
+         * // The call of decodeURIComponent(escape(...)) is necessary
+         * // to handle unicode strings correctly.
+         * var ar = txt.split(',');
+         * document.getElementById('output').value = decodeURIComponent(escape(atob(ar[1])));
+         *
+         * </pre><div id="JXG1bad4bec-6d08-4ce0-9b7f-d817e8dd762d" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <textarea id="output2023" rows="5" cols="50"></textarea>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG1bad4bec-6d08-4ce0-9b7f-d817e8dd762d',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *     var A = board.create('point', [2, 2]);
+         *
+         *     var txt = board.renderer.dumpToDataURI(false);
+         *     // txt consists of a string of the form
+         *     // data:image/svg+xml;base64,PHN2Zy. base64 encoded SVG..+PC9zdmc+
+         *     // Behind the comma, there is the base64 encoded SVG code
+         *     // which is decoded with atob().
+         *     // The call of decodeURIComponent(escape(...)) is necessary
+         *     // to handle unicode strings correctly.
+         *     var ar = txt.split(',');
+         *     document.getElementById('output2023').value = decodeURIComponent(escape(atob(ar[1])));
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
          */
         dumpToDataURI: function (ignoreTexts) {
             var svgRoot = this.svgRoot,
                 btoa = window.btoa || Base64.encode,
-                svg,
-                virtualNode,
-                doc,
-                i,
-                len,
+                svg, i, len,
                 values = [];
 
             // Move all HTML tags (beside the SVG root) of the container
@@ -2194,7 +2290,7 @@ JXG.extend(
 
             // Hide navigation bar in board
             // zbar = document.getElementById(this.container.id + '_navigationbar');
-            zbar = doc.getElementById(this.container.id + "_navigationbar");
+            zbar = doc.getElementById(this.uniqName('navigationbar'));
             if (Type.exists(zbar)) {
                 zbarDisplay = zbar.style.display;
                 zbar.style.display = "none";

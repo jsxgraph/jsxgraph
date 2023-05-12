@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2022
+    Copyright 2008-2023
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -25,8 +25,8 @@
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
-    and <http://opensource.org/licenses/MIT/>.
+    the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
+    and <https://opensource.org/licenses/MIT/>.
  */
 
 /*global JXG: true, define: true, AMprocessNode: true, document: true, Image: true, module: true, require: true */
@@ -76,42 +76,23 @@ JXG.CanvasRenderer = function (container, dim) {
         }
 
         this.container.innerHTML = [
-            '<canvas id="',
-            this.canvasId,
-            '" width="',
-            dim.width,
-            'px" height="',
-            dim.height,
-            'px"><',
-            "/canvas>"
+            '<canvas id="', this.canvasId, '" width="', dim.width, 'px" height="', dim.height, 'px"></canvas>'
         ].join("");
         this.canvasRoot = this.container.ownerDocument.getElementById(this.canvasId);
         this.canvasRoot.style.display = "block";
         this.context = this.canvasRoot.getContext("2d");
     } else if (Env.isNode()) {
-        // Do not use try to get more concise error message
-        // try {
-            // this.canvasId = typeof module === "object" ? module.require("canvas") : $__canvas;
-            // this.canvasRoot = new this.canvasId(500, 500);
-            this.canvasId = typeof module === "object" ? module.require('canvas') : import('canvas');
-            // this.canvasId = (typeof module === 'object' ? module.require('canvas') : require('canvas'));
-            this.canvasRoot = this.canvasId.createCanvas(500, 500);
+        try {
+            this.canvasRoot = JXG.createCanvas(500, 500);
             this.context = this.canvasRoot.getContext("2d");
-        // } catch (err) {
-        //     console.log(
-        //         "Warning: 'canvas' not found. You might need to call 'npm install canvas'"
-        //     );
-        // }
+        } catch (err) {
+            throw new Error('JXG.createCanvas not available.\n' +
+                'Install the npm package `canvas`\n' +
+                'and call:\n' +
+                '    import { createCanvas } from "canvas";\n' +
+                '    JXG.createCanvas = createCanvas;\n');
+        }
     }
-
-    this.dashArray = [
-        [2, 2],
-        [5, 5],
-        [10, 10],
-        [20, 20],
-        [20, 10, 10, 10],
-        [20, 5, 10, 5]
-    ];
 };
 
 JXG.CanvasRenderer.prototype = new AbstractRenderer();
@@ -438,13 +419,19 @@ JXG.extend(
          */
         _stroke: function (el) {
             var context = this.context,
-                ev_dash = Type.evaluate(el.visProp.dash);
+                ev_dash = Type.evaluate(el.visProp.dash),
+                ds = Type.evaluate(el.visProp.dashscale),
+                sw = ds ? 0.5 * Type.evaluate(el.visProp.strokewidth) : 1;
 
             context.save();
 
             if (ev_dash > 0) {
                 if (context.setLineDash) {
-                    context.setLineDash(this.dashArray[ev_dash]);
+                    context.setLineDash(
+                        // sw could distinguish highlighting or not.
+                        // But it seems to preferable to ignore this.
+                        this.dashArray[ev_dash - 1].map(function(x) { return x * sw; })
+                    );
                 }
             } else {
                 this.context.lineDashArray = [];
@@ -558,6 +545,26 @@ JXG.extend(
                     context.closePath();
                     this._stroke(el);
                     break;
+                case "divide":
+                case "|":
+                    context.beginPath();
+                    context.moveTo(scr[1], scr[2] - size);
+                    context.lineTo(scr[1], scr[2] + size);
+                    context.lineCap = "round";
+                    context.lineJoin = "round";
+                    context.closePath();
+                    this._stroke(el);
+                    break;
+                case "minus":
+                case "-":
+                    context.beginPath();
+                    context.moveTo(scr[1] - size, scr[2]);
+                    context.lineTo(scr[1] + size, scr[2]);
+                    context.lineCap = "round";
+                    context.lineJoin = "round";
+                    context.closePath();
+                    this._stroke(el);
+                    break;
                 case "diamond": // <>
                 case "<>":
                     context.beginPath();
@@ -570,6 +577,7 @@ JXG.extend(
                     this._stroke(el);
                     break;
                 case "triangleup":
+                case "A":
                 case "a":
                 case "^":
                     context.beginPath();
@@ -1661,7 +1669,7 @@ JXG.extend(
             this.context = this.canvasRoot.getContext("2d");
             // The width and height of the canvas is set to twice the CSS values,
             // followed by an appropiate scaling.
-            // See http://stackoverflow.com/questions/22416462/canvas-element-with-blurred-lines
+            // See https://stackoverflow.com/questions/22416462/canvas-element-with-blurred-lines
             this.context.scale(2, 2);
         },
 

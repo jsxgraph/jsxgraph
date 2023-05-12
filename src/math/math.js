@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2022
+    Copyright 2008-2023
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -25,8 +25,8 @@
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
-    and <http://opensource.org/licenses/MIT/>.
+    the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
+    and <https://opensource.org/licenses/MIT/>.
  */
 
 /*global JXG: true, define: true, Float32Array: true */
@@ -791,7 +791,7 @@ JXG.Math = {
 
     /**
      * Greatest common divisor (gcd) of two numbers.
-     * @see <a href="http://rosettacode.org/wiki/Greatest_common_divisor#JavaScript">rosettacode.org</a>
+     * @see <a href="https://rosettacode.org/wiki/Greatest_common_divisor#JavaScript">rosettacode.org</a>
      *
      * @param  {Number} a First number
      * @param  {Number} b Second number

@@ -26,7 +26,7 @@
     the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
     and <https://opensource.org/licenses/MIT/>.
  */
-describe("Test angles", function () {
+describe("Test dependencies", function () {
     var board,
         target,
         pointerId = 0;
@@ -39,7 +39,7 @@ describe("Test angles", function () {
         renderer: "svg",
         axis: false,
         grid: false,
-        boundingbox: [-5, 5, 5, -5],
+        boundingbox: [-10, 10, 10, -10],
         keyboard: {
             enabled: true,
             dy: 20,
@@ -51,54 +51,22 @@ describe("Test angles", function () {
         showNavigation: false
     });
 
-    it("Test bidrectional setAngle", function () {
-        var A, B, C, angle, phi, evt;
-
-        phi = Math.PI / 2;
-        A = board.create("point", [3, 0]);
-        B = board.create("point", [0, 0]);
-        C = board.create("point", [2, 2]);
-
-        angle = board.create("angle", [A, B, C], { radius: "auto" });
-        angle.setAngle(phi);
-        expect(C.X()).toBeCloseTo(0, 12);
-        expect(C.Y()).toBeCloseTo(3, 12);
-
-        // Move A
-        evt = new PointerEvent("pointerdown", {
-            pointerId: pointerId,
-            clientX: 400,
-            clientY: 250
-        });
-        board.pointerDownListener(evt);
-
-        evt = new PointerEvent("pointermove", {
-            pointerId: pointerId,
-            clientX: 250,
-            clientY: 100
-        });
-        board.pointerMoveListener(evt);
-        board.pointerUpListener(evt);
-        expect(C.X()).toBeCloseTo(-3, 12);
-        expect(C.Y()).toBeCloseTo(0, 12);
-
-        // Move C
-        pointerId++;
-        evt = new PointerEvent("pointerdown", {
-            pointerId: pointerId,
-            clientX: 100,
-            clientY: 250
-        });
-        board.pointerDownListener(evt);
-
-        evt = new PointerEvent("pointermove", {
-            pointerId: pointerId,
-            clientX: 250,
-            clientY: 100
-        });
-        board.pointerMoveListener(evt);
-        board.pointerUpListener(evt);
-        expect(A.X()).toBeCloseTo(3, 12);
-        expect(A.Y()).toBeCloseTo(0, 12);
+    it("point depends on X(A)", function () {
+        var p1 = board.create("point", [0, 0], { face: "+", name: "A" });
+        var p2 = board.create("point", ['X(A)', 2], { face: "o", name: "B" });
+        board.removeObject(p1);
     });
+
+    it("circle depends on X(A)", function () {
+        var p1 = board.create("point", [0, 0], { name: "A" });
+        var c = board.create("circle", [[0, 2], 'X(A)'], { name: "B" });
+        board.removeObject(p1);
+    });
+
+    it("curve depends on X(A)", function () {
+        var p1 = board.create("point", [0, 0], { name: "A" });
+        var e = board.create("functiongraph", ['X(A)*sin(x)'], {});
+        board.removeObject(p1);
+    });
+
 });

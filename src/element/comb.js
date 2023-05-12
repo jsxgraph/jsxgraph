@@ -1,5 +1,5 @@
 /*
-    Copyright 2018-2022
+    Copyright 2018-2023
         Alfred Wassermann,
         Tigran Saluev
 
@@ -21,8 +21,8 @@
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
-    and <http://opensource.org/licenses/MIT/>.
+    the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
+    and <https://opensource.org/licenses/MIT/>.
  */
 
 /*global JXG: true, define: true*/
@@ -34,7 +34,6 @@
 
 import JXG from "../jxg";
 import Type from "../utils/type";
-import Point from "../base/point";
 
 /**
  * @class A comb to display domains of inequalities.
@@ -138,7 +137,7 @@ JXG.createComb = function (board, parents, attributes) {
             parents[0]().length >= 2
         ) {
             attr = Type.copyAttributes(attributes, board.options, "comb", "point1");
-            p1 = Point.createPoint(board, parents[0](), attr);
+            p1 = JXG.createPoint(board, parents[0](), attr);
         } else {
             throw new Error(
                 "JSXGraph: Can't create comb with parent types '" +
@@ -164,7 +163,7 @@ JXG.createComb = function (board, parents, attributes) {
             parents[1]().length >= 2
         ) {
             attr = Type.copyAttributes(attributes, board.options, "comb", "point2");
-            p2 = Point.createPoint(board, parents[1](), attr);
+            p2 = JXG.createPoint(board, parents[1](), attr);
         } else {
             throw new Error(
                 "JSXGraph: Can't create comb with parent types '" +
@@ -257,6 +256,6 @@ JXG.createComb = function (board, parents, attributes) {
 
 JXG.registerElement("comb", JXG.createComb);
 
-export default {
-    createComb: JXG.createComb
-};
+// export default {
+//     createComb: JXG.createComb
+// };

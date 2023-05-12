@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2022
+    Copyright 2008-2023
         Matthias Ehmann,
         Carsten Miller,
         Andreas Walter,
@@ -23,8 +23,8 @@
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
-    and <http://opensource.org/licenses/MIT/>.
+    the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
+    and <https://opensource.org/licenses/MIT/>.
  */
 /*global JXG:true, define: true*/
 
@@ -49,9 +49,8 @@ import Type from "../utils/type";
  */
 JXG.Curve3D = function (view, F, X, Y, Z, range, attributes) {
     this.constructor(view.board, attributes, Const.OBJECT_TYPE_CURVE3D, Const.OBJECT_CLASS_3D);
-    this.constructor3D(view, "surface3d");
+    this.constructor3D(view, "curve3d");
 
-    this.id = this.view.board.setId(this, "S3D");
     this.board.finalizeAdding(this);
 
     this.F = F;
@@ -103,14 +102,8 @@ JXG.extend(
     /** @lends JXG.Curve3D.prototype */ {
         updateDataArray: function () {
             var steps = Type.evaluate(this.visProp.numberpointshigh),
-                r,
-                s,
-                e,
-                delta,
-                c2d,
-                u,
-                dataX,
-                dataY,
+                r, s, e, delta, c2d, u, dataX, dataY,
+                i,
                 p = [0, 0, 0];
 
             dataX = [];
@@ -129,7 +122,7 @@ JXG.extend(
                 s = Type.evaluate(r[0]);
                 e = Type.evaluate(r[1]);
                 delta = (e - s) / (steps - 1);
-                for (u = s; u <= e; u += delta) {
+                for (i = 0, u = s; i < steps && u <= e; i++, u += delta) {
                     if (this.F !== null) {
                         p = this.F(u);
                     } else {
@@ -174,13 +167,7 @@ JXG.extend(
  */
 JXG.createCurve3D = function (board, parents, attributes) {
     var view = parents[0],
-        F,
-        X,
-        Y,
-        Z,
-        range,
-        attr,
-        el;
+        F, X, Y, Z, range, attr, el;
 
     if (parents.length === 3) {
         F = parents[1];
@@ -200,7 +187,11 @@ JXG.createCurve3D = function (board, parents, attributes) {
     attr = Type.copyAttributes(attributes, board.options, "curve3d");
     el = new JXG.Curve3D(view, F, X, Y, Z, range, attr);
 
-    el.element2D = board.create("curve", [[], []], attr);
+    attr = el.setAttr2D(attr);
+    el.element2D = view.create("curve", [[], []], attr);
+    /**
+     * @ignore
+     */
     el.element2D.updateDataArray = function () {
         var ret = el.updateDataArray();
         this.dataX = ret.X;

@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2022
+    Copyright 2008-2023
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -25,8 +25,8 @@
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
-    and <http://opensource.org/licenses/MIT/>.
+    the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
+    and <https://opensource.org/licenses/MIT/>.
  */
 
 /*global JXG: true, define: true*/
@@ -89,6 +89,10 @@ JXG.EventEmitter = {
      * Register a new event handler. For a list of possible events see documentation
      * of the elements and objects implementing
      * the {@link EventEmitter} interface.
+     * 
+     * As of version 1.5.0, it is only possible to access the element via "this" if the event listener 
+     * is supplied as regular JavaScript function and not as arrow function.
+     * 
      * @param {String} event
      * @param {Function} handler
      * @param {Object} [context] The context the handler will be called in, default is the element itself.

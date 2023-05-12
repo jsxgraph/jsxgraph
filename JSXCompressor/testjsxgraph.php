@@ -16,22 +16,17 @@ function jxgcompress($filename)
 
 <link rel="stylesheet" type="text/css" href="./jsxgraph.css" />
 <script type="text/javascript">
-<?php 
-   jxgcompress("./prototype.js");
-?>   
-eval(JXG.decompress(jxgcompressed));
 
 <?php 
    jxgcompress("../distrib/jsxgraphcore.js");
 ?>   
-eval(JXG.decompress(jxgcompressed));
+eval(JSXCompressor.default.decompress(jxgcompressed));
 </script>
 </head>
 
 <body>
-<h1>Bezier curves with the JSX Compressor</h1>
+<h1>Bezier curves with JSXCompressor</h1>
 <div id="jxgbox" class="jxgbox" style="width:600px; height:600px;"></div>
-<div id="debug" style="display:block;"></div>
 <script type="text/javascript">
     /* <![CDATA[ */
 
@@ -44,9 +39,9 @@ eval(JXG.decompress(jxgcompressed));
             } else {
                 col = 'blue';
             }
-            p.push(board.createElement('point',[Math.random()*8-4,Math.random()*8-4],{strokeColor:col,fillColor:col}));
+            p.push(board.create('point',[Math.random()*8-4,Math.random()*8-4],{strokeColor:col,fillColor:col}));
         }
-        var c = board.createElement('curve', JXG.Math.Numerics.bezier(p),{strokecolor:'blue', strokeWidth:2}); 
+        var c = board.create('curve', JXG.Math.Numerics.bezier(p),{strokecolor:'blue', strokeWidth:2}); 
         
 /* ]]> */
 </script>

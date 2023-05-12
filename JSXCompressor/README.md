@@ -37,14 +37,14 @@ License
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License and
-    the Apache License along with JSXCompressor. If not, see <http://www.gnu.org/licenses/>
+    the Apache License along with JSXCompressor. If not, see <https://www.gnu.org/licenses/>
     and <https://www.apache.org/licenses/LICENSE-2.0.html>.
 
     This product includes software developed at
     Lehrstuhl fuer Mathematik und ihre Didaktik
     University of Bayreuth, Germany
 
-    http://dmi.uni-bayreuth.de/
+    https://jsxgraph.org/
 
 
 Usage
@@ -78,7 +78,7 @@ To uncompress and run this code, the following code has to be included:
 <!-- -------------------------------------------------------- -->
 <script src="./jsxcompressor.js" type="text/javascript"></script>
 <script type="text/javascript">
-eval(JXG.decompress(jxgcompressed));
+eval(JSXCompressor.default.decompress(jxgcompressed));
 </script>
 <!-- -------------------------------------------------------- -->
 

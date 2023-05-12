@@ -1,6 +1,6 @@
 /**
  * Generate a random uuid.
- * Written by http://www.broofa.com (robert@broofa.com)
+ * Written by https://www.broofa.com (robert@broofa.com)
  *
  * Copyright (c) 2010 Robert Kieffer
  * Dual licensed under the MIT and GPL licenses.

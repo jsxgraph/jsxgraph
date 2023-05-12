@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2022
+    Copyright 2008-2023
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -25,8 +25,8 @@
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
-    and <http://opensource.org/licenses/MIT/>.
+    the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
+    and <https://opensource.org/licenses/MIT/>.
  */
 
 /*global JXG: true, define: true*/
@@ -47,7 +47,6 @@ import Const from "./constants";
 import GeometryElement from "./element";
 import Coords from "./coords";
 import Type from "../utils/type";
-import Text from "./text";
 
 /**
  * Creates ticks for an axis.
@@ -340,7 +339,7 @@ JXG.extend(
                 }
             }
 
-            // Get Zero (coords element for lines , number for curves)
+            // Get Zero (coords element for lines, number for curves)
             coordsZero = this.getZeroCoordinates();
 
             // Calculate lower bound and upper bound limits based on distance
@@ -452,15 +451,8 @@ JXG.extend(
          * @private
          */
         getZeroCoordinates: function () {
-            var c1x,
-                c1y,
-                c1z,
-                c2x,
-                c2y,
-                c2z,
-                t,
-                mi,
-                ma,
+            var c1x, c1y, c1z, c2x, c2y, c2z,
+                t, mi, ma,
                 ev_a = Type.evaluate(this.visProp.anchor);
 
             if (this.line.elementClass === Const.OBJECT_CLASS_LINE) {
@@ -1458,7 +1450,7 @@ JXG.extend(
                     attr = Type.deepCopy(attr, this.visProp.label);
                     attr.id = this.id + ld.i + "Label" + this.labelCounter;
 
-                    label = Text.createText(this.board, [ld.x, ld.y, ld.t], attr);
+                    label = JXG.createText(this.board, [ld.x, ld.y, ld.t], attr);
                     this.addChild(label);
                     label.setParents(this);
                     label.isDraggable = false;
@@ -1722,9 +1714,10 @@ JXG.registerElement("ticks", JXG.createTicks);
 JXG.registerElement("hash", JXG.createHatchmark);
 JXG.registerElement("hatch", JXG.createHatchmark);
 
-export default {
-    Ticks: JXG.Ticks,
-    createTicks: JXG.createTicks,
-    createHashmark: JXG.createHatchmark,
-    createHatchmark: JXG.createHatchmark
-};
+export default JXG.Ticks;
+// export default {
+//     Ticks: JXG.Ticks,
+//     createTicks: JXG.createTicks,
+//     createHashmark: JXG.createHatchmark,
+//     createHatchmark: JXG.createHatchmark
+// };

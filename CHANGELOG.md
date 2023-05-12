@@ -1,10 +1,63 @@
-1.4.6
+1.5.0
 ====
 
 New features
 -----------
 
-- New attribute `majorTickEndings`
+- API change in JSXCompressor. Old: `JXG.decompress` New: `JSXCompressor.default.decompress`
+- Code base switched from AMD to ES6 imports
+- New attributes `majorTickEndings`, `ignoreInfiniteTickEndings`
+- New math class Mat.Heap
+- New board attribute `browserPan`: allows to scroll web page by swiping in JSXGraph board
+- New element attribute `shadow`: enables individual shadows for each stroke element (in SVG)
+- New turtle methods: getPenColor, getHighlightPenColor, getPenSize
+- New events for keyboad handling:
+    - keymove for board
+    - keydrag for elements
+- New board attribute fullscreen{ scale: 0.85 }
+- New board attribute `logging`: enables logs of user activity
+- New attribute transitionProperties: enables more flexible transitions
+- New point faces | ('divide') and - ('minus')
+- New attributes distanceX/Y for infobox element
+
+Improvements
+------------
+
+- Stability of bounding box after orientation changes or resizes if `keepaspectratio=true`
+- Remove all 3rd party dependencies of jsxgraphcore.js, e.g. canvas.
+- Ecosystem:
+    - .gitignore, Makefile, package.json
+    - Add github actions
+    - Add `distrib/jsxgraphcore.js` and `distrib/jsxgraphsrc.js` to .gitignore
+    - Update README.md
+    - Add version number to API references
+- Add unit tests
+- Continuous improvement of `index.d.ts`
+- Deep merging of attributes: new method `mergeAttr` in `env.js`
+- Merge document attribute as black box instead of object (shadowDOM)
+- Improve shadow DOM support
+- Improve browserless support
+- API docs
+- Click on slider triggers 'drag' event
+- Add dependence on elements when creating JessieCode function
+- startAnimation: allow functions as parameters
+- Update JSXCompressor package
+
+Bug fixes
+---------
+
+- 3D curves
+- Swap ids of navigation buttons up/down
+- Coords event handler
+- Pass explicit reference to $jc$ in jessiecode.js
+- inherited visibility of hatch
+- Keep resized view centered if not setting bounding box
+- Set renderer argument when loading board from string
+- Some fixes for IE11 compatibility
+- Fix regression in snapToGrid
+- updateContainerDims: avoid NaN when containerObj is not attached to the page
+- Remove the global variable `x_internalload`
+- Speed improvement in defaultAxes
 
 1.4.6
 ====

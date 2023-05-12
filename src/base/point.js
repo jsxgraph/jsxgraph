@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2022
+    Copyright 2008-2023
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -25,8 +25,8 @@
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
-    and <http://opensource.org/licenses/MIT/>.
+    the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
+    and <https://opensource.org/licenses/MIT/>.
  */
 
 /*global JXG: true, define: true, console: true, window: true*/
@@ -109,7 +109,7 @@ JXG.extend(
             }
             r = parseFloat(Type.evaluate(this.visProp.size));
             if (unit === "user") {
-                r *= Math.sqrt(this.board.unitX * this.board.unitY);
+                r *= Math.sqrt(Math.abs(this.board.unitX * this.board.unitY));
             }
 
             r += parseFloat(Type.evaluate(this.visProp.strokewidth)) * 0.5;
@@ -202,7 +202,7 @@ JXG.extend(
                 el2,
                 i,
                 j,
-                Type.evaluate(this.visProp.alwaysintersect)
+                this.visProp.alwaysintersect
             );
             this.addConstraint([func]);
 
@@ -598,7 +598,7 @@ JXG.createGlider = function (board, parents, attributes) {
 };
 
 /**
- * @class An intersection point is a point which lives on two JSXGraph elements, i.e. it is one point of the the set
+ * @class An intersection point is a point which lives on two JSXGraph elements, i.e. it is one point of the set
  * consisting of the intersection points of the two elements. The following element types can be (mutually) intersected: line, circle,
  * curve, polygon, polygonal chain.
  *
@@ -608,7 +608,7 @@ JXG.createGlider = function (board, parents, attributes) {
  * @constructor
  * @type JXG.Point
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {JXG.Line,JXG.Circle_JXG.Line,JXG.Circle_Number} el1,el2,i The result will be a intersection point on el1 and el2. i determines the
+ * @param {JXG.Line,JXG.Circle_JXG.Line,JXG.Circle_Number|Function} el1,el2,i The result will be a intersection point on el1 and el2. i determines the
  * intersection point if two points are available: <ul>
  *   <li>i==0: use the positive square root,</li>
  *   <li>i==1: use the negative square root.</li></ul>
@@ -810,7 +810,7 @@ JXG.createOtherIntersectionPoint = function (board, parents, attributes) {
  * @description The pole point is the unique reciprocal relationship of a line with respect to a conic.
  * The lines tangent to the intersections of a conic and a line intersect at the pole point of that line with respect to that conic.
  * A line tangent to a conic has the pole point of that line with respect to that conic as the tangent point.
- * See {@link http://en.wikipedia.org/wiki/Pole_and_polar} for more information on pole and polar.
+ * See {@link https://en.wikipedia.org/wiki/Pole_and_polar} for more information on pole and polar.
  * @name PolePoint
  * @augments JXG.Point
  * @constructor
@@ -951,11 +951,12 @@ JXG.registerElement("intersection", JXG.createIntersectionPoint);
 JXG.registerElement("otherintersection", JXG.createOtherIntersectionPoint);
 JXG.registerElement("polepoint", JXG.createPolePoint);
 
-export default {
-    Point: JXG.Point,
-    createPoint: JXG.createPoint,
-    createGlider: JXG.createGlider,
-    createIntersection: JXG.createIntersectionPoint,
-    createOtherIntersection: JXG.createOtherIntersectionPoint,
-    createPolePoint: JXG.createPolePoint
-};
+export default JXG.Point;
+// export default {
+//     Point: JXG.Point,
+//     createPoint: JXG.createPoint,
+//     createGlider: JXG.createGlider,
+//     createIntersection: JXG.createIntersectionPoint,
+//     createOtherIntersection: JXG.createOtherIntersectionPoint,
+//     createPolePoint: JXG.createPolePoint
+// };

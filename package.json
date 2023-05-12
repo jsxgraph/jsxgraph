@@ -2,8 +2,12 @@
   "name": "jsxgraph",
   "description": "Interactive geometry, plotting, visualization",
   "homepage": "https://jsxgraph.org",
-  "version": "1.5.0-rc1",
-  "main": "./src/index.js",
+  "version": "1.5.0",
+  "exports": {
+    "types": "./src/index.d.ts",
+    "default": "./src/index.js"
+  },
+  "main": "./distrib/jsxgraphcore.js",
   "module": "./src/index.js",
   "types": "./src/index.d.ts",
   "files": [
@@ -53,10 +57,6 @@
     "tabWidth": 4,
     "trailingComma": "none"
   },
-  "dependencies": {
-    "canvas": "^2.10.2",
-    "path-browserify": "^1.0.1"
-  },
   "devDependencies": {
     "eslint": "^8.4.1",
     "eslint-config-prettier": "^8.5.0",
@@ -66,9 +66,10 @@
     "jsdoc2": "^2.4.0",
     "jshint": "^2.13.1",
     "jslint": "^0.12.1",
-    "karma": "^6.3.7",
+    "karma": "^6.4.1",
     "karma-chrome-launcher": "^3.1.0",
     "karma-jasmine": "^4.0.1",
+    "path-browserify": "^1.0.1",
     "prettier": "^2.7.1",
     "terser": "^5.10.0",
     "webpack": "^5.38.1",

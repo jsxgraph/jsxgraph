@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2022
+    Copyright 2008-2023
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -25,8 +25,8 @@
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
-    and <http://opensource.org/licenses/MIT/>.
+    the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
+    and <https://opensource.org/licenses/MIT/>.
  */
 
 /*global JXG: true*/
@@ -45,11 +45,8 @@
         /** @lends JXG.GraphReader.prototype */ {
             parseData: function (directed) {
                 var splitted,
-                    n,
-                    i,
-                    j,
-                    tmp,
-                    tmp2,
+                    n, i, j,
+                    tmp, tmp2,
                     nodes = [],
                     adjMatrix = [],
                     nodenumbers = {},
@@ -171,13 +168,7 @@
             },
 
             drawGraph: function (graph) {
-                var i,
-                    j,
-                    s,
-                    t,
-                    p,
-                    x,
-                    y,
+                var i, j, s, t, p, x, y,
                     n = graph.n,
                     nodes = graph.nodes,
                     adjMatrix = graph.adjMatrix;

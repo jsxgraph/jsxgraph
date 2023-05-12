@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2022
+    Copyright 2008-2023
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -25,8 +25,8 @@
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
-    and <http://opensource.org/licenses/MIT/>.
+    the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
+    and <https://opensource.org/licenses/MIT/>.
  */
 
 /*global JXG: true, define: true*/
@@ -45,7 +45,7 @@ import Geometry from "../math/geometry";
 import Type from "../utils/type";
 
 /**
- * @class This element is used to provide a constructor for an ellipse. An ellipse is given by two points (the foci) and a third point on the the ellipse or
+ * @class This element is used to provide a constructor for an ellipse. An ellipse is given by two points (the foci) and a third point on the ellipse or
  * the length of the major axis.
  * @pseudo
  * @description
@@ -323,7 +323,7 @@ JXG.createEllipse = function (board, parents, attributes) {
 };
 
 /**
- * @class This element is used to provide a constructor for an hyperbola. An hyperbola is given by two points (the foci) and a third point on the the hyperbola or
+ * @class This element is used to provide a constructor for an hyperbola. An hyperbola is given by two points (the foci) and a third point on the hyperbola or
  * the length of the major axis.
  * @pseudo
  * @description
@@ -1101,7 +1101,7 @@ JXG.createConic = function (board, parents, attributes) {
         return polarForm(phi, suspendUpdate)[2];
     };
 
-    // Center coordinates see http://en.wikipedia.org/wiki/Matrix_representation_of_conic_sections
+    // Center coordinates see https://en.wikipedia.org/wiki/Matrix_representation_of_conic_sections
     curve.midpoint = board.create(
         "point",
         [
@@ -1144,9 +1144,9 @@ JXG.registerElement("hyperbola", JXG.createHyperbola);
 JXG.registerElement("parabola", JXG.createParabola);
 JXG.registerElement("conic", JXG.createConic);
 
-export default {
-    createEllipse: JXG.createEllipse,
-    createHyperbola: JXG.createHyperbola,
-    createParabola: JXG.createParabola,
-    createConic: JXG.createConic
-};
+// export default {
+//     createEllipse: JXG.createEllipse,
+//     createHyperbola: JXG.createHyperbola,
+//     createParabola: JXG.createParabola,
+//     createConic: JXG.createConic
+// };

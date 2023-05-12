@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2022
+    Copyright 2008-2023
         Matthias Ehmann,
         Carsten Miller,
         Andreas Walter,
@@ -23,8 +23,8 @@
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
-    and <http://opensource.org/licenses/MIT/>.
+    the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
+    and <https://opensource.org/licenses/MIT/>.
  */
 /*global JXG:true, define: true*/
 
@@ -57,7 +57,6 @@ JXG.Surface3D = function (view, F, X, Y, Z, range_u, range_v, attributes) {
     );
     this.constructor3D(view, "surface3d");
 
-    this.id = this.view.board.setId(this, "S3D");
     this.board.finalizeAdding(this);
 
     this.F = F;
@@ -108,6 +107,10 @@ Type.copyPrototypeMethods(JXG.Surface3D, JXG.GeometryElement3D, "constructor3D")
 JXG.extend(
     JXG.Surface3D.prototype,
     /** @lends JXG.Surface3D.prototype */ {
+
+        /**
+         * @ignore
+         */
         updateDataArray: function () {
             var steps_u = Type.evaluate(this.visProp.stepsu),
                 steps_v = Type.evaluate(this.visProp.stepsv),
@@ -201,14 +204,8 @@ JXG.extend(
  */
 JXG.createParametricSurface3D = function (board, parents, attributes) {
     var view = parents[0],
-        F,
-        X,
-        Y,
-        Z,
-        range_u,
-        range_v,
-        attr,
-        el;
+        F, X, Y, Z,
+        range_u, range_v, attr, el;
 
     if (parents.length === 4) {
         F = parents[1];
@@ -229,7 +226,12 @@ JXG.createParametricSurface3D = function (board, parents, attributes) {
     attr = Type.copyAttributes(attributes, board.options, "surface3d");
     el = new JXG.Surface3D(view, F, X, Y, Z, range_u, range_v, attr);
 
+    attr = el.setAttr2D(attr);
     el.element2D = view.create("curve", [[], []], attr);
+    
+    /**
+     * @ignore
+     */
     el.element2D.updateDataArray = function () {
         var ret = el.updateDataArray();
         this.dataX = ret.X;

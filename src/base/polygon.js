@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2022
+    Copyright 2008-2023
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -25,8 +25,8 @@
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
-    and <http://opensource.org/licenses/MIT/>.
+    the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
+    and <https://opensource.org/licenses/MIT/>.
  */
 
 /*global JXG:true, define: true*/
@@ -559,7 +559,6 @@ JXG.extend(
          * @param {JXG.Point} p Arbitrary number of points or coordinate arrays
          * @returns {JXG.Polygon} Reference to the polygon
          * @example
-         * const board = JXG.JSXGraph.initBoard('jxgbox', {axis:true});
          * var pg = board.create('polygon', [[1,2], [3,4], [-3,1]], {hasInnerPoints: true});
          * var newPoint = board.create('point', [-1, -1]);
          * var newPoint2 = board.create('point', [-1, -2]);
@@ -570,7 +569,6 @@ JXG.extend(
          *     (function() {
          *         var board = JXG.JSXGraph.initBoard('JXG70eb0fd2-d20f-4ba9-9ab6-0eac92aabfa5',
          *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
-         *     const board = JXG.JSXGraph.initBoard('jxgbox', {axis:true});
          *     var pg = board.create('polygon', [[1,2], [3,4], [-3,1]], {hasInnerPoints: true});
          *     var newPoint = board.create('point', [-1, -1]);
          *     var newPoint2 = board.create('point', [-1, -2]);
@@ -607,7 +605,6 @@ JXG.extend(
          * @returns {JXG.Polygon} Reference to the polygon object
          *
          * @example
-         * const board = JXG.JSXGraph.initBoard('jxgbox', {axis:true});
          * var pg = board.create('polygon', [[1,2], [3,4], [-3,1]], {hasInnerPoints: true});
          * var newPoint = board.create('point', [-1, -1]);
          * pg.insertPoints(0, newPoint, newPoint, [1, -2]);
@@ -617,7 +614,6 @@ JXG.extend(
          *     (function() {
          *         var board = JXG.JSXGraph.initBoard('JXG17b84b2a-a851-4e3f-824f-7f6a60f166ca',
          *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
-         *     const board = JXG.JSXGraph.initBoard('jxgbox', {axis:true});
          *     var pg = board.create('polygon', [[1,2], [3,4], [-3,1]], {hasInnerPoints: true});
          *     var newPoint = board.create('point', [-1, -1]);
          *     pg.insertPoints(0, newPoint, newPoint, [1, -2]);
@@ -707,10 +703,7 @@ JXG.extend(
          * @returns {JXG.Polygon} Reference to the polygon
          */
         removePoints: function (p) {
-            var i,
-                j,
-                j0,
-                idx,
+            var i, j, idx,
                 firstPoint,
                 nvertices = [],
                 nborders = [],
@@ -853,7 +846,7 @@ JXG.extend(
                     this.borders.push(
                         this.board.create(
                             "segment",
-                            [this.vertices[0], this.vertices[this.vertices.length - 2]],
+                            [this.vertices[this.vertices.length - 2], this.vertices[0]],
                             this.attr_line
                         )
                     );
@@ -1489,8 +1482,9 @@ JXG.registerElement("polygon", JXG.createPolygon);
 JXG.registerElement("regularpolygon", JXG.createRegularPolygon);
 JXG.registerElement("polygonalchain", JXG.createPolygonalChain);
 
-export default {
-    Polygon: JXG.Polygon,
-    createPolygon: JXG.createPolygon,
-    createRegularPolygon: JXG.createRegularPolygon
-};
+export default JXG.Polygon;
+// export default {
+//     Polygon: JXG.Polygon,
+//     createPolygon: JXG.createPolygon,
+//     createRegularPolygon: JXG.createRegularPolygon
+// };

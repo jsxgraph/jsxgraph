@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2022
+    Copyright 2008-2023
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -25,14 +25,14 @@
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
-    and <http://opensource.org/licenses/MIT/>.
+    the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
+    and <https://opensource.org/licenses/MIT/>.
 
 
     Metapost/Hobby curves, see e.g. https://bosker.wordpress.com/2013/11/13/beyond-bezier-curves/
 
     * Ported to Python for the project PyX. Copyright (C) 2011 Michael Schindler <m-schindler@users.sourceforge.net>
-    * Ported to javascript from the PyX implementation (http://pyx.sourceforge.net/) by Vlad-X.
+    * Ported to javascript from the PyX implementation (https://pyx-project.org/) by Vlad-X.
     * Adapted to JSXGraph and some code changes by Alfred Wassermann 2020.
 
     This program is distributed in the hope that it will be useful,
@@ -46,10 +46,10 @@
 
     Internal functions of MetaPost
     This file re-implements some of the functionality of MetaPost
-    (http://tug.org/metapost). MetaPost was developed by John D. Hobby and
+    (https://tug.org/metapost.html). MetaPost was developed by John D. Hobby and
     others. The code of Metapost is in the public domain, which we understand as
     an implicit permission to reuse the code here (see the comment at
-    http://www.gnu.org/licenses/license-list.html)
+    https://www.gnu.org/licenses/license-list.html)
 
     This file is based on the MetaPost version distributed by TeXLive:
     svn://tug.org/texlive/trunk/Build/source/texk/web2c/mplibdir revision 22737 #
@@ -486,7 +486,7 @@ Mat.Metapost = {
         return Math.min(
             4.0,
             ((3.0 - alpha) * alpha * alpha * gamma + beta * beta * beta) /
-                (alpha * alpha * alpha * gamma + (3.0 - beta) * beta * beta)
+            (alpha * alpha * alpha * gamma + (3.0 - beta) * beta * beta)
         );
     },
 
@@ -510,7 +510,7 @@ Mat.Metapost = {
         return Math.min(
             4.0,
             (2.0 + Math.sqrt(2) * (st - sf / 16.0) * (sf - st / 16.0) * (ct - cf)) /
-                (1.5 * t * (2 + (Math.sqrt(5) - 1) * ct + (3 - Math.sqrt(5)) * cf))
+            (1.5 * t * (2 + (Math.sqrt(5) - 1) * ct + (3 - Math.sqrt(5)) * cf))
         );
     },
 
@@ -536,12 +536,9 @@ Mat.Metapost = {
      * @param {Number} tension
      * @param {Boolean} cycle
      */
-    makeknots: function (p, tension, cycle) {
-        var i,
-            len,
+    makeknots: function (p, tension) {
+        var i, len,
             knots = [];
-
-        tension = tension || 1;
 
         len = p.length;
         for (i = 0; i < len; i++) {
@@ -550,10 +547,10 @@ Mat.Metapost = {
                 y: p[i][1],
                 ltype: this.MP_OPEN,
                 rtype: this.MP_OPEN,
+                lx: false,
+                rx: false,
                 ly: tension,
                 ry: tension,
-                lx: tension,
-                rx: tension,
                 left_curl: function () {
                     return this.lx || 0;
                 },
@@ -561,25 +558,20 @@ Mat.Metapost = {
                     return this.rx || 0;
                 },
                 left_tension: function () {
-                    if (!this.ly) {
-                        this.ly = 1;
-                    }
-                    return this.ly;
+                    return this.ly || 1;
                 },
                 right_tension: function () {
-                    if (!this.ry) {
-                        this.ry = 1;
-                    }
-                    return this.ry;
+                    return this.ry || 1;
                 },
-                set_right_curl: function (x) {
-                    this.rx = x || 0;
+                set_right_curl: function (v) {
+                    this.rx = v || 0;
                 },
-                set_left_curl: function (x) {
-                    this.lx = x || 0;
+                set_left_curl: function (v) {
+                    this.lx = v || 0;
                 }
             });
         }
+
         len = knots.length;
         for (i = 0; i < len; i++) {
             knots[i].next = knots[i + 1] || knots[i];
@@ -589,13 +581,6 @@ Mat.Metapost = {
             knots[i].left_given = knots[i].left_curl;
         }
         knots[len - 1].next = knots[0];
-
-        if (!cycle) {
-            knots[len - 1].rtype = this.MP_ENDPOINT;
-
-            knots[len - 1].ltype = this.MP_CURL;
-            knots[0].rtype = this.MP_CURL;
-        }
 
         return knots;
     },
@@ -608,10 +593,9 @@ Mat.Metapost = {
      * @returns {Array}
      */
     curve: function (point_list, controls) {
-        var knots,
-            len,
-            i,
-            val,
+        var knots, len, i, ii,
+            val, obj,
+            isClosed = false,
             x = [],
             y = [];
 
@@ -622,65 +606,152 @@ Mat.Metapost = {
             isClosed: false
         };
 
-        knots = this.makeknots(point_list, Type.evaluate(controls.tension), controls.isClosed);
+        // Change default tension
+        val = 1;
+        if (controls.hasOwnProperty('tension')) {
+            val = Type.evaluate(controls.tension);
+        }
+
+        knots = this.makeknots(point_list, val);
 
         len = knots.length;
-        for (i in controls.direction) {
-            if (controls.direction.hasOwnProperty(i)) {
-                val = Type.evaluate(controls.direction[i]);
-                if (Type.isArray(val)) {
-                    if (val[0] !== false) {
-                        knots[i].lx = (val[0] * Math.PI) / 180;
-                        knots[i].ltype = this.MP_GIVEN;
+        if (Type.exists(controls.isClosed) && Type.evaluate(controls.isClosed)) {
+            isClosed = true;
+        }
+
+        if (!isClosed) {
+            knots[0].ltype = this.MP_ENDPOINT;
+            knots[0].rtype = this.MP_CURL;
+            knots[len - 1].rtype = this.MP_ENDPOINT;
+            knots[len - 1].ltype = this.MP_CURL;
+        }
+
+        // for (i in controls.direction) {
+        //     if (controls.direction.hasOwnProperty(i)) {
+        //         val = Type.evaluate(controls.direction[i]);
+        //         if (Type.isArray(val)) {
+        //             if (val[0] !== false) {
+        //                 knots[i].lx = (val[0] * Math.PI) / 180;
+        //                 knots[i].ltype = this.MP_GIVEN;
+        //             }
+        //             if (val[1] !== false) {
+        //                 knots[i].rx = (val[1] * Math.PI) / 180;
+        //                 knots[i].rtype = this.MP_GIVEN;
+        //             }
+        //         } else {
+        //             knots[i].lx = (val * Math.PI) / 180;
+        //             knots[i].rx = (val * Math.PI) / 180;
+        //             knots[i].ltype = knots[i].rtype = this.MP_GIVEN;
+        //         }
+        //     }
+        // }
+
+        // for (i in controls.curl) {
+        //     if (controls.curl.hasOwnProperty(i)) {
+        //         val = Type.evaluate(controls.curl[i]);
+        //         if (parseInt(i, 10) === 0) {
+        //             knots[i].rtype = this.MP_CURL;
+        //             knots[i].set_right_curl(val);
+        //         } else if (parseInt(i, 10) === len - 1) {
+        //             knots[i].ltype = this.MP_CURL;
+        //             knots[i].set_left_curl(val);
+        //         }
+        //     }
+        // }
+
+        // Set individual point control values
+        for (ii in controls) {
+            if (controls.hasOwnProperty(ii)) {
+                i = parseInt(ii, 10);
+                if (isNaN(i) || i < 0 || i >= len) {
+                    continue;
+                }
+
+                // Handle individual curl
+                obj = controls[i];
+                if (Type.exists(obj.type)) {
+                    switch (obj.type) {
+                        case 'curl':
+                            val = Type.evaluate(obj.curl);
+                            if (i === 0) {
+                                knots[i].rtype = this.MP_CURL;
+                                knots[i].set_right_curl(val);
+                            } else if (i === len - 1) {
+                                knots[i].ltype = this.MP_CURL;
+                                knots[i].set_left_curl(val);
+                            } else {
+                                knots[i].ltype = this.MP_CURL;
+                                knots[i].rtype = this.MP_CURL;
+                                knots[i].lx = val;
+                                knots[i].rx = val;
+                            }
+                            break;
+                        }
                     }
-                    if (val[1] !== false) {
-                        knots[i].rx = (val[1] * Math.PI) / 180;
-                        knots[i].rtype = this.MP_GIVEN;
+
+                    // Handle individual directions
+                    if (Type.exists(obj.direction)) {
+                        val = Type.evaluate(obj.direction);
+                        if (Type.isArray(val)) {
+                            if (val[0] !== false) {
+                                knots[i].lx = (val[0] * Math.PI) / 180;
+                                knots[i].ltype = this.MP_GIVEN;
+                            }
+                            if (val[1] !== false) {
+                                knots[i].rx = (val[1] * Math.PI) / 180;
+                                knots[i].rtype = this.MP_GIVEN;
+                            }
+                        } else {
+                            knots[i].lx = (val * Math.PI) / 180;
+                            knots[i].rx = (val * Math.PI) / 180;
+                            knots[i].ltype = knots[i].rtype = this.MP_GIVEN;
+                        }
                     }
-                } else {
-                    knots[i].lx = (val * Math.PI) / 180;
-                    knots[i].rx = (val * Math.PI) / 180;
-                    knots[i].ltype = knots[i].rtype = this.MP_GIVEN;
+
+                    // Handle individual tension
+                    if (Type.exists(obj.tension)) {
+                        val = Type.evaluate(obj.tension);
+                        if (Type.isArray(val)) {
+                            if (val[0] !== false) {
+                                knots[i].ly = Type.evaluate(val[0]);
+                            }
+                            if (val[1] !== false) {
+                                knots[i].ry = Type.evaluate(val[1]);
+                            }
+                        } else {
+                            knots[i].ly = val;
+                            knots[i].ry = val;
+                        }
+                    }
                 }
             }
-        }
-        for (i in controls.curl) {
-            if (controls.curl.hasOwnProperty(i)) {
-                val = Type.evaluate(controls.curl[i]);
-                if (parseInt(i, 10) === 0) {
-                    knots[i].rtype = this.MP_CURL;
-                    knots[i].set_right_curl(val);
-                } else if (parseInt(i, 10) === len - 1) {
-                    knots[i].ltype = this.MP_CURL;
-                    knots[i].set_left_curl(val);
-                }
+
+            // Generate ths Bezier curve
+            this.make_choices(knots);
+
+            // Return the coordinates
+            for (i = 0; i < len - 1; i++) {
+                x.push(knots[i].x);
+                x.push(knots[i].rx);
+                x.push(knots[i + 1].lx);
+                y.push(knots[i].y);
+                y.push(knots[i].ry);
+                y.push(knots[i + 1].ly);
             }
+            x.push(knots[len - 1].x);
+            y.push(knots[len - 1].y);
+
+            if (isClosed) {
+                x.push(knots[len - 1].rx);
+                y.push(knots[len - 1].ry);
+                x.push(knots[0].lx);
+                y.push(knots[0].ly);
+                x.push(knots[0].x);
+                y.push(knots[0].y);
+            }
+
+            return [x, y];
         }
+    };
 
-        this.make_choices(knots);
-
-        for (i = 0; i < len - 1; i++) {
-            x.push(knots[i].x);
-            x.push(knots[i].rx);
-            x.push(knots[i + 1].lx);
-            y.push(knots[i].y);
-            y.push(knots[i].ry);
-            y.push(knots[i + 1].ly);
-        }
-        x.push(knots[len - 1].x);
-        y.push(knots[len - 1].y);
-
-        if (controls.isClosed) {
-            x.push(knots[len - 1].rx);
-            y.push(knots[len - 1].ry);
-            x.push(knots[0].lx);
-            y.push(knots[0].ly);
-            x.push(knots[0].x);
-            y.push(knots[0].y);
-        }
-
-        return [x, y];
-    }
-};
-
-export default Mat.Metapost;
+    export default Mat.Metapost;

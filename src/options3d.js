@@ -239,6 +239,10 @@ JXG.extend(Options, {
     },
 
     mesh3d: {
+        /**#@+
+         * @visprop
+         */
+
         strokeWidth: 1,
         strokeColor: "#9a9a9a",
         strokeOpacity: 0.6,
@@ -248,6 +252,7 @@ JXG.extend(Options, {
         tabindex: null,
 
         visible: "inherit"
+        /**#@-*/
     },
 
     line3d: {
@@ -255,12 +260,11 @@ JXG.extend(Options, {
         strokeColor: "black",
         fixed: true,
         tabindex: null,
-
         gradient: "linear",
         gradientSecondColor: "#ffffff",
 
-        point: { visible: false, name: "" }, // Used only in case of point/point
-        point1: { visible: false, name: "" }, // Used only in case of point/direction/range
+        point: { visible: false, name: "" }, // Used in cases of point/direction/range
+        point1: { visible: false, name: "" }, // Used in point/point
         point2: { visible: false, name: "" }
     },
 
@@ -316,7 +320,30 @@ JXG.extend(Options, {
     },
 
     view3d: {
-        needsRegularUpdate: true
+        /**#@+
+         * @visprop
+         */
+        needsRegularUpdate: true,
+
+        /**
+         * Allow vertical dragging of objects, i.e. in direction of the z-axis.
+         * Subobjects are
+         * <ul>
+         *  <li>enabled: true
+         *  <li>key: 'shift'
+         * </ul>
+         * <p>
+         * Possible values for attribute <i>key</i>: 'shift' or 'ctrl'.
+         *
+         * @name View3D#verticalDrag
+         * @type Object
+         * @default {enabled: true, key: 'shift'}
+         */
+        verticalDrag: {
+            enabled: true,
+            key: 'shift' // ctrl
+        }
+        /**#@-*/
     }
 });
 

@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2022
+    Copyright 2008-2023
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -26,8 +26,8 @@
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
-    and <http://opensource.org/licenses/MIT/>.
+    the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
+    and <https://opensource.org/licenses/MIT/>.
  */
 
 /*global JXG: true, define: true*/
@@ -37,9 +37,9 @@ import JXG from "../jxg";
 
 var major = 1,
     minor = 5,
-    patch = 0,
-    add = "rc1", //'dev'
-    version = major + "." + minor + "." + patch + (add ? "-" + add : ""),
+    patch = 1,
+    add = 'rc2', //'dev'
+    version = major + '.' + minor + '.' + patch + (add ? '-' + add : ''),
     constants;
 
 constants = /** @lends JXG */ {
@@ -240,9 +240,13 @@ constants = /** @lends JXG */ {
     GENTYPE_CTX_TYPE_I: 79,
     GENTYPE_CTX_HASINNERPOINTS: 80,
     GENTYPE_CTX_SNAPWIDTH: 81,
-    GENTYPE_CTX_SNAPTOGRID: 82
+    GENTYPE_CTX_SNAPTOGRID: 82,
+    GENTYPE_CTX_STROKEDASH: 83
 };
 
 JXG.extendConstants(JXG, constants);
 
 export default constants;
+// const COORDS_BY_SCREEN = constants.COORDS_BY_SCREEN;
+// export {constants as default,
+//         COORDS_BY_SCREEN};
