@@ -5698,6 +5698,15 @@ JXG.Options = {
         withLabel: true,
 
         /**
+         * Text rotation in degrees.
+         *
+         * @name Tapemeasure#rotate
+         * @type Number
+         * @default 0
+         */
+        rotate: 0,
+
+        /**
          * The precision of the tape measure value displayed in the optional text.
          * Replaced by the attribute digits
          *

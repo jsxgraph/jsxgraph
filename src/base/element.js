@@ -1761,7 +1761,7 @@ JXG.extend(
         },
 
         /**
-         * Rotate texts or images by a given degree. Works only for texts where JXG.Text#display equal to "internal".
+         * Rotate texts or images by a given degree.
          * @param {number} angle The degree of the rotation (90 means vertical text).
          * @see JXG.GeometryElement#rotate
          */
@@ -1774,8 +1774,7 @@ JXG.extend(
                 that = this;
 
             if (
-                ((this.elementClass === Const.OBJECT_CLASS_TEXT &&
-                    Type.evaluate(this.visProp.display) === "internal") ||
+                (this.elementClass === Const.OBJECT_CLASS_TEXT ||
                     this.type === Const.OBJECT_TYPE_IMAGE) &&
                 angle !== 0
             ) {
