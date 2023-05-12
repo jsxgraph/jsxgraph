@@ -659,19 +659,21 @@ JXG.createSector = function (board, parents, attributes) {
      * @param {Number, Function} value New radius.
      */
     el.setRadius = function (val) {
-        var analysis,
+        var res,
             e = Type.evaluate(val);
 
-        if (val === "auto" || e === "auto") {
-            analysis = "auto";
+        if (val === 'auto' || e === 'auto') {
+            res = 'auto';
         } else if (Type.isNumber(val)) {
-            analysis = "number";
+            res = 'number';
         } else if (Type.isFunction(val) && !Type.isString(e)) {
-            analysis = "function";
+            res = 'function';
         } else {
-            analysis = "undefined";
+            res = 'undefined';
         }
-        this.visProp.radius = analysis;
+        if (res !== 'undefined') {
+            this.visProp.radius = val;
+        }
 
         /**
          * @ignore
