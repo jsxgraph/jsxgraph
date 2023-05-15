@@ -1488,7 +1488,7 @@ JXG.extend(
          * this anchor element.
          * This is handled with this.relativeCoords. If the element is a label
          * relativeCoords are given in scrCoords, otherwise in usrCoords.
-         * @param{Array} coordinates Offset from th anchor element. These are the values for this.relativeCoords.
+         * @param{Array} coordinates Offset from the anchor element. These are the values for this.relativeCoords.
          * In case of a label, coordinates are screen coordinates. Otherwise, coordinates are user coordinates.
          * @param{Boolean} isLabel Yes/no
          * @private
@@ -1560,7 +1560,6 @@ JXG.extend(
             this.isConstrained = true;
 
             this.updateConstraint();
-            //this.coords = new Coords(Const.COORDS_BY_SCREEN, [0, 0], this.board);
         },
 
         /**
