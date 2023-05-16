@@ -142,35 +142,66 @@ JXG.createSmartLabel = function (board, parents, attributes) {
         };
 
     } else if (p.elementClass === Const.OBJECT_CLASS_LINE) {
-        el = board.create('text', [
-            function () { return (p.point1.X() + p.point2.X()) * 0.5; },
-            function () { return (p.point1.Y() + p.point2.Y()) * 0.5; },
-            ''
-        ], attr);
 
-        txt_fun = function () {
-            var str = '',
-                digits = Type.evaluate(el.visProp.digits),
-                u = Type.evaluate(el.visProp.unit),
-                mj = Type.evaluate(el.visProp.usemathjax);
+        if (attr.measure === 'length') {
+            el = board.create('text', [
+                function () { return (p.point1.X() + p.point2.X()) * 0.5; },
+                function () { return (p.point1.Y() + p.point2.Y()) * 0.5; },
+                ''
+            ], attr);
 
-            if (txt === '') {
-                if (mj) {
-                    str = ['\\(',
-                        (p.name.length > 0 ? p.name + '=' : ''),
-                        Type.toFixed(p.L(), digits),
-                        '\\,', u, '\\)'
-                    ].join('');
+            txt_fun = function () {
+                var str = '',
+                    digits = Type.evaluate(el.visProp.digits),
+                    u = Type.evaluate(el.visProp.unit),
+                    mj = Type.evaluate(el.visProp.usemathjax);
+
+                if (txt === '') {
+                    if (mj) {
+                        str = ['\\(',
+                            (p.name.length > 0 ? p.name + '=' : ''),
+                            Type.toFixed(p.L(), digits),
+                            '\\,', u, '\\)'
+                        ].join('');
+                    } else {
+                        str = [(p.name.length > 0 ? p.name + ' = ' : ''),
+                        Type.toFixed(p.L(), digits), ' ', u
+                        ].join('');
+                    }
                 } else {
-                    str = [(p.name.length > 0 ? p.name + ' = ' : ''),
-                    Type.toFixed(p.L(), digits), ' ', u
-                    ].join('');
+                    str = txt;
                 }
-            } else {
-                str = txt;
-            }
-            return str;
-        };
+                return str;
+            };
+
+        } else if (attr.measure === 'slope') {
+            el = board.create('text', [
+                function () { return (p.point1.X() * 0.25 + p.point2.X() * 0.75); },
+                function () { return (p.point1.Y() * 0.25 + p.point2.Y() * 0.75); },
+                ''
+            ], attr);
+
+            txt_fun = function () {
+                var str = '',
+                    digits = Type.evaluate(el.visProp.digits),
+                    u = Type.evaluate(el.visProp.unit),
+                    mj = Type.evaluate(el.visProp.usemathjax);
+
+                if (txt === '') {
+                    if (mj) {
+                        str = ['\\(\\Delta = ',
+                            Type.toFixed(p.getSlope(), digits),
+                            '\\)'
+                        ].join('');
+                    } else {
+                        str = ['&Delta; = ', Type.toFixed(p.getSlope(), digits)].join('');
+                    }
+                } else {
+                    str = txt;
+                }
+                return str;
+            };
+        }
 
     } else if (p.elementClass === Const.OBJECT_CLASS_CIRCLE) {
         if (attr.measure === 'radius') {
@@ -265,20 +296,19 @@ JXG.createSmartLabel = function (board, parents, attributes) {
                 return str;
             };
         }
-
     } else if (p.type === Const.OBJECT_TYPE_POLYGON) {
         if (attr.measure === 'area') {
             el = board.create('text', [
                 function () { return p.getTextAnchor(); },
                 ''
             ], attr);
-    
+
             txt_fun = function () {
                 var str = '',
                     digits = Type.evaluate(el.visProp.digits),
                     u = Type.evaluate(el.visProp.unit),
                     mj = Type.evaluate(el.visProp.usemathjax);
-    
+
                 if (txt === '') {
                     if (mj) {
                         str = ['\\(',
@@ -298,15 +328,15 @@ JXG.createSmartLabel = function (board, parents, attributes) {
         } else if (attr.measure === 'perimeter') {
             el = board.create('text', [
                 function () {
-                    var last = p.borders.length - 1; 
-                        if (last >= 0) {
-                            return [
-                                (p.borders[last].point1.X() + p.borders[last].point2.X()) * 0.5,
-                                (p.borders[last].point1.Y() + p.borders[last].point2.Y()) * 0.5
-                            ];
-                        } else {
-                            return p.getTextAnchor();
-                        }
+                    var last = p.borders.length - 1;
+                    if (last >= 0) {
+                        return [
+                            (p.borders[last].point1.X() + p.borders[last].point2.X()) * 0.5,
+                            (p.borders[last].point1.Y() + p.borders[last].point2.Y()) * 0.5
+                        ];
+                    } else {
+                        return p.getTextAnchor();
+                    }
                 },
                 ''
             ], attr);
@@ -316,7 +346,7 @@ JXG.createSmartLabel = function (board, parents, attributes) {
                     digits = Type.evaluate(el.visProp.digits),
                     u = Type.evaluate(el.visProp.unit),
                     mj = Type.evaluate(el.visProp.usemathjax);
-    
+
                 if (txt === '') {
                     if (mj) {
                         str = ['\\(',
@@ -338,8 +368,8 @@ JXG.createSmartLabel = function (board, parents, attributes) {
 
     } else if (p.type === Const.OBJECT_TYPE_ANGLE) {
         el = board.create('text', [
-            function () { 
-                return p.getLabelAnchor(); 
+            function () {
+                return p.getLabelAnchor();
             },
             ''
         ], attr);

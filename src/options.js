@@ -5705,7 +5705,8 @@ JXG.Options = {
 
         useMathJax: true,
 
-        unit: 'cm'
+        unit: 'cm',
+        measure: 'length'
     },
 
     smartlabelpoint: {
