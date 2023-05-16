@@ -4278,7 +4278,7 @@ JXG.Options = {
          */
         straightLast: true,
 
-        fillColor: 'none',               // Important for VML on IE
+        fillColor: 'none',           // Important for VML on IE
         highlightFillColor: 'none',  // Important for VML on IE
         strokeColor: Color.palette.blue,
         highlightStrokeColor: '#c3d9ff',
@@ -4291,6 +4291,12 @@ JXG.Options = {
          * @name Line#point1
          */
         point1: {                  // Default values for point1 if created by line
+            fillColor: Color.palette.red,
+            strokeColor: Color.palette.red,
+            highlightFillColor: '#c3d9ff',
+            highlightStrokeColor: '#c3d9ff',
+            layer: 9,
+
             visible: false,
             withLabel: false,
             fixed: false,
@@ -4304,6 +4310,12 @@ JXG.Options = {
          * @name Line#point2
          */
         point2: {                  // Default values for point2 if created by line
+            fillColor: Color.palette.red,
+            strokeColor: Color.palette.red,
+            highlightFillColor: '#c3d9ff',
+            highlightStrokeColor: '#c3d9ff',
+            layer: 9,
+
             visible: false,
             withLabel: false,
             fixed: false,

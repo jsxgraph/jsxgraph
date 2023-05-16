@@ -1072,9 +1072,8 @@ JXG.createLine = function (board, parents, attributes) {
      * In the latter case, the points are created.
      */
     if (parents.length === 2) {
-        // point 1 given by coordinates
+        attr = Type.copyAttributes(attributes, board.options, "line", "point1");
         if (Type.isArray(parents[0]) && parents[0].length > 1) {
-            attr = Type.copyAttributes(attributes, board.options, "line", "point1");
             p1 = board.create("point", parents[0], attr);
         } else if (Type.isString(parents[0]) || Type.isPoint(parents[0])) {
             p1 = board.select(parents[0]);
@@ -1086,12 +1085,10 @@ JXG.createLine = function (board, parents, attributes) {
             parents[0]().length &&
             parents[0]().length >= 2
         ) {
-            attr = Type.copyAttributes(attributes, board.options, "line", "point1");
             p1 = JXG.createPoint(board, parents[0](), attr);
             constrained = true;
         } else if (Type.isObject(parents[0]) && Type.isTransformationOrArray(parents[1])) {
             doTransform = true;
-            attr = Type.copyAttributes(attributes, board.options, "line", "point1");
             p1 = board.create("point", [parents[0].point1, parents[1]], attr);
         } else {
             throw new Error(
@@ -1105,11 +1102,10 @@ JXG.createLine = function (board, parents, attributes) {
         }
 
         // point 2 given by coordinates
+        attr = Type.copyAttributes(attributes, board.options, "line", "point2");
         if (doTransform) {
-            attr = Type.copyAttributes(attributes, board.options, "line", "point2");
             p2 = board.create("point", [parents[0].point2, parents[1]], attr);
         } else if (Type.isArray(parents[1]) && parents[1].length > 1) {
-            attr = Type.copyAttributes(attributes, board.options, "line", "point2");
             p2 = board.create("point", parents[1], attr);
         } else if (Type.isString(parents[1]) || Type.isPoint(parents[1])) {
             p2 = board.select(parents[1]);
@@ -1121,7 +1117,6 @@ JXG.createLine = function (board, parents, attributes) {
             parents[1]().length &&
             parents[1]().length >= 2
         ) {
-            attr = Type.copyAttributes(attributes, board.options, "line", "point2");
             p2 = JXG.createPoint(board, parents[1](), attr);
             constrained = true;
         } else {
