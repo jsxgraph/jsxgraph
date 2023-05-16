@@ -5679,13 +5679,48 @@ JXG.Options = {
         /**#@-*/
     },
 
-    smartlabel: {
-        class: 'solid',
-        dir: 'column',  // row or col|column
-        useMathJax: true,
-        unit: 'cm',
+    smartlabelcircle: {
+        cssClass: 'smart-label-solid circle',
+        highlightCssClass:'smart-label-solid circle',
+        anchorX: 'middle',
 
+        useMathJax: true,
+
+        unit: 'cm',
         measure: 'radius'
+    },
+
+    smartlabelline: {
+        cssClass: 'smart-label-solid line',
+        highlightCssClass:'smart-label-solid line',
+        anchorX: 'middle',
+
+        useMathJax: true,
+
+        unit: 'cm'
+    },
+
+    smartlabelpoint: {
+        cssClass: 'smart-label-solid point',
+        highlightCssClass:'smart-label-solid point',
+        anchorX: 'middle',
+        anchorY: 'top',
+
+        useMathJax: true,
+
+        dir: 'column',  // row or col|column
+        unit: 'cm'
+    },
+
+    smartlabelpolygon: {
+        cssClass: 'smart-label-solid polygon',
+        highlightCssClass:'smart-label-solid polygon',
+        anchorX: 'middle',
+
+        useMathJax: true,
+
+        unit: 'cm',
+        measure: 'area'
     },
 
     /* special options for step functions */
