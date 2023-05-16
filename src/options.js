@@ -5679,6 +5679,7 @@ JXG.Options = {
         /**#@-*/
     },
 
+    /* special options for smartlabel of angle */
     smartlabelangle: {
         cssClass: 'smart-label-solid angle',
         highlightCssClass:'smart-label-solid angle',
@@ -5687,17 +5688,85 @@ JXG.Options = {
         useMathJax: true
     },
 
+    /* special options for smartlabel of circle */
     smartlabelcircle: {
+        /**#@+
+         * @visprop
+         */
+
+        /**
+         * CSS classes for the smart label. Available classes are:
+         * <ul>
+         * <li> 'smart-label-solid'
+         * <li> 'smart-label-outline'
+         * <li> 'smart-label-pure'
+         * </ul>
+         * 
+         * By default, an additional class is given specific for the element type.
+         * Available classes are 'angle', 'circle', 'line', 'point', 'polygon'.
+         * 
+         * @example
+         *  cssClass: 'smart-label-solid point'
+         * 
+         * @type String
+         * @name Smartlabel#cssClass
+         * @see Smartlabel#highlightCssClass
+         * @default <ul>
+         *  <li> 'smart-label-solid circle' for circles</li>
+         *  <li> 'smart-label-solid point' for points</li>
+         *  <li> ...</li>
+         * </ul>
+         */
         cssClass: 'smart-label-solid circle',
+
+        /**
+         * CSS classes for the smart label when highlighted.
+         * 
+         * @type String
+         * @name Smartlabel#highlightCssClass
+         * @see Smartlabel#cssClass
+         * @default <ul>
+         *  <li> 'smart-label-solid circle' for circles</li>
+         *  <li> 'smart-label-solid point' for points</li>
+         *  <li> ...</li>
+         * </ul>
+         */
         highlightCssClass:'smart-label-solid circle',
         anchorX: 'middle',
-
         useMathJax: true,
 
+        /**
+         * Measurement unit appended to the output text. For areas, the unit is squared automatically.
+
+         * @type String
+         * @name Smartlabel#unit
+         * @default 'cm'
+         */
         unit: 'cm',
-        measure: 'radius'
+
+        /**
+         * Type of measurement.
+         * Available values are:
+         *  <ul>
+         *  <li> 'radius', 'area', 'perimeter' for circles</li>
+         *  <li> 'length', 'slope' for lines</li>
+         *  <li> 'area', 'perimeter' for polygons</li>
+         * </ul>
+
+         * @type String
+         * @name Smartlabel#measure
+         * @default <ul>
+         *   <li> 'radius' for circles</li>
+         *   <li> 'length' for lines</li>
+         *   <li> 'area' for polygons</li>
+         * </ul>
+         */
+        measure: 'radius',
+
+        /**#@-*/
     },
 
+    /* special options for smartlabel of line */
     smartlabelline: {
         cssClass: 'smart-label-solid line',
         highlightCssClass:'smart-label-solid line',
@@ -5709,7 +5778,12 @@ JXG.Options = {
         measure: 'length'
     },
 
+    /* special options for smartlabel of point */
     smartlabelpoint: {
+        /**#@+
+         * @visprop
+         */
+
         cssClass: 'smart-label-solid point',
         highlightCssClass:'smart-label-solid point',
         anchorX: 'middle',
@@ -5717,10 +5791,20 @@ JXG.Options = {
 
         useMathJax: true,
 
-        dir: 'column',  // row or col|column
+        /**
+         * Display of point coordinates either as row vector or column vector.
+         * Available values are 'row' or 'column'.
+         * @type String
+         * @name Smartlabel#dir
+         * @default 'row'
+         */
+        dir: 'row',
+
         unit: 'cm'
+        /**#@-*/
     },
 
+    /* special options for smartlabel of polygon */
     smartlabelpolygon: {
         cssClass: 'smart-label-solid polygon',
         highlightCssClass:'smart-label-solid polygon',
