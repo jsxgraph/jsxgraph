@@ -1053,11 +1053,8 @@ JXG.registerElement("majorsector", JXG.createMajorSector);
  */
 JXG.createAngle = function (board, parents, attributes) {
     var el,
-        radius,
-        attr,
-        attrsub,
-        i,
-        points,
+        radius, attr, attrsub,
+        i, points,
         type = "invalid";
 
     // Two lines or three points?
@@ -1069,7 +1066,10 @@ JXG.createAngle = function (board, parents, attributes) {
     ) {
         type = "2lines";
     } else {
-        points = Type.providePoints(board, parents, attributes, "point");
+        attr = {
+            name: ''
+        }
+        points = Type.providePoints(board, parents, attr, "point");
         if (points === false) {
             throw new Error(
                 "JSXGraph: Can't create angle with parent types '" +
@@ -1274,8 +1274,7 @@ JXG.createAngle = function (board, parents, attributes) {
          *
          */
         el.setAngle = function (val) {
-            var t1,
-                t2,
+            var t1, t2,
                 val2,
                 p = this.anglepoint,
                 q = this.radiuspoint;
@@ -1354,15 +1353,9 @@ JXG.createAngle = function (board, parents, attributes) {
     el.subs = {};
 
     el.updateDataArraySquare = function () {
-        var A,
-            B,
-            C,
-            r = this.Radius(),
-            d1,
-            d2,
-            v,
-            l1,
-            l2;
+        var A, B, C,
+            d1, d2, v, l1, l2,
+            r = this.Radius();
 
         if (type === "2lines") {
             // This is necessary to update this.point1, this.point2, this.point3.
@@ -1500,14 +1493,7 @@ JXG.createAngle = function (board, parents, attributes) {
     el.getLabelAnchor = function () {
         var vec,
             dx = 12,
-            A,
-            B,
-            r,
-            d,
-            a2,
-            co,
-            si,
-            mat,
+            A, B, r, d, a2, co, si, mat,
             vp_s = Type.evaluate(el.visProp.selection),
             l_vp = this.label ? this.label.visProp : this.visProp.label;
 
