@@ -5679,6 +5679,14 @@ JXG.Options = {
         /**#@-*/
     },
 
+    smartlabelangle: {
+        cssClass: 'smart-label-solid angle',
+        highlightCssClass:'smart-label-solid angle',
+        anchorX: 'left',
+
+        useMathJax: true
+    },
+
     smartlabelcircle: {
         cssClass: 'smart-label-solid circle',
         highlightCssClass:'smart-label-solid circle',
