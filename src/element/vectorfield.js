@@ -30,7 +30,7 @@
 /*jslint nomen: true, plusplus: true*/
 
 /**
- * @fileoverview Example file for a triangle implemented as a extension to JSXGraph.
+ * @fileoverview Implementation of vector fields and slope fields.
  */
 
 import JXG from "../jxg";

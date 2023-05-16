@@ -5672,6 +5672,13 @@ JXG.Options = {
         /**#@-*/
     },
 
+    smartlabel: {
+        class: 'solid',
+        dir: 'column',  // row or col|column
+        useMathJax: true,
+        unit: 'cm'
+    },
+
     /* special options for step functions */
     stepfunction: {
         /**#@+
