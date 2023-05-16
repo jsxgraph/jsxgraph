@@ -237,12 +237,12 @@ JXG.createSmartLabel = function (board, parents, attributes) {
                     if (mj) {
                         str = ['\\(',
                             'U = ',
-                            Type.toFixed(2 * Math.PI * p.Radius(), digits),
+                            Type.toFixed(p.Perimeter(), digits),
                             '\\,', u, '\\)'
                         ].join('');
                     } else {
                         str = [
-                            'U = ', Type.toFixed(2 * Math.PI * p.Radius(), digits), ' ', u, ''
+                            'U = ', Type.toFixed(p.Perimeter(), digits), ' ', u, ''
                         ].join('');
                     }
                 } else {

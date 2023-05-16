@@ -748,6 +748,14 @@ JXG.extend(
         },
 
         /**
+         * Perimeter (circumference) of circle.
+         * @returns {Number} Perimeter of circle in user units.
+         */
+        Perimeter: function () {
+            return 2 * this.Radius() * Math.PI;
+        },
+
+        /**
          * Get bounding box of the circle.
          * @returns {Array} [x1, y1, x2, y2]
          */
