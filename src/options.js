@@ -3090,6 +3090,7 @@ JXG.Options = {
             strokeColor: Color.palette.red,
             highlightFillColor: '#c3d9ff',
             highlightStrokeColor: '#c3d9ff',
+            layer: 9,
 
             name: ''
         },
@@ -3101,6 +3102,12 @@ JXG.Options = {
          * @name Circle#center
          */
         point2: {
+            fillColor: Color.palette.red,
+            strokeColor: Color.palette.red,
+            highlightFillColor: '#c3d9ff',
+            highlightStrokeColor: '#c3d9ff',
+            layer: 9,
+
             visible: false,
             withLabel: false,
             fixed: false,
@@ -4152,7 +4159,7 @@ JXG.Options = {
         firstArrow: false,
 
         /**
-         * Configute the arrow head at the position of its second point or the corresponding
+         * Configure the arrow head at the position of its second point or the corresponding
          * intersection with the canvas border.
          *
          * In case lastArrow is an object it has the sub-attributes:
@@ -5676,7 +5683,9 @@ JXG.Options = {
         class: 'solid',
         dir: 'column',  // row or col|column
         useMathJax: true,
-        unit: 'cm'
+        unit: 'cm',
+
+        measure: 'radius'
     },
 
     /* special options for step functions */

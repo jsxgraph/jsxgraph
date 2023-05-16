@@ -92,6 +92,13 @@ JXG.createSmartLabel = function (board, parents, attributes) {
         attr.highlightCssClass += ' line';
         attr.rotate = function () { return Math.atan(p.getSlope()) * 180 / Math.PI; };
         attr.visible = function () { return (p.L() < 1.5) ? false : true; };
+
+    } else if (p.elementClass === Const.OBJECT_CLASS_CIRCLE) {
+        attr.anchorX = 'middle';
+        attr.cssClass += ' line';
+        attr.highlightCssClass += ' line';
+        attr.rotate = function () { return 0; };
+        attr.visible = function () { return (p.Radius() < 1.5) ? false : true; };
     }
 
     if (p.elementClass === Const.OBJECT_CLASS_POINT) {
@@ -129,6 +136,7 @@ JXG.createSmartLabel = function (board, parents, attributes) {
             }
             return str;
         };
+
     } else if (p.elementClass === Const.OBJECT_CLASS_LINE) {
         el = board.create('text', [
             function () { return (p.point1.X() + p.point2.X()) * 0.5; },
@@ -159,6 +167,39 @@ JXG.createSmartLabel = function (board, parents, attributes) {
             }
             return str;
         };
+
+    } else if (p.elementClass === Const.OBJECT_CLASS_CIRCLE) {
+        if (attr.measure === 'radius') {
+            el = board.create('text', [
+                function () { return p.center.X() + p.Radius() * 0.5; },
+                function () { return p.center.Y(); },
+                ''
+            ], attr);
+
+            txt_fun = function () {
+                var str = '',
+                    digits = Type.evaluate(el.visProp.digits),
+                    u = Type.evaluate(el.visProp.unit),
+                    mj = Type.evaluate(el.visProp.usemathjax);
+
+                if (txt === '') {
+                    if (mj) {
+                        str = ['\\(',
+                            (p.name.length > 0 ? p.name + '=' : ''),
+                            Type.toFixed(p.Radius(), digits),
+                            '\\,', u, '\\)'
+                        ].join('');
+                    } else {
+                        str = [(p.name.length > 0 ? p.name + '=' : ''),
+                        Type.toFixed(p.Radius(), digits), ' ', u
+                        ].join('');
+                    }
+                } else {
+                    str = txt;
+                }
+                return str;
+            };
+        }
     }
     el.setText(txt_fun);
 
