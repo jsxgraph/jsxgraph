@@ -1502,8 +1502,8 @@ JXG.createAngle = function (board, parents, attributes) {
         //    this.label.relativeCoords = new Coords(Const.COORDS_BY_SCREEN, [0, 0], this.board);
         //}
 
-        if (Type.exists(this.label.visProp.fontSize)) {
-            dx = Type.evaluate(this.label.visProp.fontSize);
+        if (Type.exists(this.label) && Type.exists(this.label.visProp.fontsize)) {
+            dx = Type.evaluate(this.label.visProp.fontsize);
         }
         dx /= this.board.unitX;
 

@@ -5686,6 +5686,10 @@ JXG.Options = {
         anchorX: 'left',
         anchorY: 'middle',
 
+        unit: '°',
+        prefix: '',
+        suffix: '',
+
         useMathJax: true
     },
 
@@ -5745,6 +5749,8 @@ JXG.Options = {
          * @default 'cm'
          */
         unit: 'cm',
+        prefix: '',
+        suffix: '',
 
         /**
          * Type of measurement.

@@ -210,6 +210,60 @@ JXG.createSmartLabel = function (board, parents, attributes) {
         };
     }
 
+    var getTextFun = function (el, p, elType, mType) {
+        var measure;
+        switch (mType) {
+            case 'length':
+                measure = function () { return p.L(); };
+                break;
+            case 'slope':
+                measure = function () { return p.getSlope(); };
+                break;
+            case 'area':
+                measure = function () { return p.Area(); };
+                break;
+            case 'radius':
+                measure = function () { return p.Radius(); };
+                break;
+            case 'perimeter':
+                measure = function () { return p.Perimeter(); };
+                break;
+            case 'angle':
+                measure = function () { return p.Value(); };
+                break;
+            default:
+                measure = function () { return 0.0; };
+        }
+
+        return function () {
+            var str = '',
+                txt = Type.evaluate(user_supplied_text),
+                digits = Type.evaluate(el.visProp.digits),
+                u = Type.evaluate(el.visProp.unit),
+                pre = Type.evaluate(el.visProp.prefix),
+                suf = Type.evaluate(el.visProp.suffix),
+                mj = Type.evaluate(el.visProp.usemathjax) || Type.evaluate(el.visProp.usekatex),
+                dir, x, y;
+
+            if (elType === 'point') {
+                dir = Type.evaluate(el.visProp.dir),
+                    x = Type.toFixed(p.X(), digits),
+                    y = Type.toFixed(p.Y(), digits);
+            }
+
+            if (txt === '') {
+                if (mj) {
+                    str = ['\\(', pre, Type.toFixed(measure(), digits), '\\,', u, suf, '\\)'].join('');
+                } else {
+                    str = [pre, Type.toFixed(measure(), digits), u, suf].join('');
+                }
+            } else {
+                str = txt;
+            }
+            return str;
+        };
+    };
+
     if (p.elementClass === Const.OBJECT_CLASS_POINT) {
         el = board.create('text', [
             function () { return p.X(); },
@@ -222,8 +276,10 @@ JXG.createSmartLabel = function (board, parents, attributes) {
                 txt = Type.evaluate(user_supplied_text),
                 digits = Type.evaluate(el.visProp.digits),
                 u = Type.evaluate(el.visProp.unit),
+                pre = Type.evaluate(el.visProp.prefix),
+                suf = Type.evaluate(el.visProp.suffix),
                 dir = Type.evaluate(el.visProp.dir),
-                mj = Type.evaluate(el.visProp.usemathjax),
+                mj = Type.evaluate(el.visProp.usemathjax) || Type.evaluate(el.visProp.usekatex),
                 x = Type.toFixed(p.X(), digits),
                 y = Type.toFixed(p.Y(), digits);
 
@@ -255,31 +311,7 @@ JXG.createSmartLabel = function (board, parents, attributes) {
                 function () { return (p.point1.Y() + p.point2.Y()) * 0.5; },
                 ''
             ], attr);
-
-            txt_fun = function () {
-                var str = '',
-                    txt = Type.evaluate(user_supplied_text),
-                    digits = Type.evaluate(el.visProp.digits),
-                    u = Type.evaluate(el.visProp.unit),
-                    mj = Type.evaluate(el.visProp.usemathjax);
-
-                if (txt === '') {
-                    if (mj) {
-                        str = ['\\(',
-                            (p.name.length > 0 ? p.name + '=' : ''),
-                            Type.toFixed(p.L(), digits),
-                            '\\,', u, '\\)'
-                        ].join('');
-                    } else {
-                        str = [(p.name.length > 0 ? p.name + ' = ' : ''),
-                        Type.toFixed(p.L(), digits), ' ', u
-                        ].join('');
-                    }
-                } else {
-                    str = txt;
-                }
-                return str;
-            };
+            txt_fun = getTextFun(el, p, 'line', 'length');
 
         } else if (attr.measure === 'slope') {
             el = board.create('text', [
@@ -287,27 +319,7 @@ JXG.createSmartLabel = function (board, parents, attributes) {
                 function () { return (p.point1.Y() * 0.25 + p.point2.Y() * 0.75); },
                 ''
             ], attr);
-
-            txt_fun = function () {
-                var str = '',
-                    txt = Type.evaluate(user_supplied_text),
-                    digits = Type.evaluate(el.visProp.digits),
-                    mj = Type.evaluate(el.visProp.usemathjax);
-
-                if (txt === '') {
-                    if (mj) {
-                        str = ['\\(\\Delta = ',
-                            Type.toFixed(p.getSlope(), digits),
-                            '\\)'
-                        ].join('');
-                    } else {
-                        str = ['&Delta; = ', Type.toFixed(p.getSlope(), digits)].join('');
-                    }
-                } else {
-                    str = txt;
-                }
-                return str;
-            };
+            txt_fun = getTextFun(el, p, 'line', 'slope');
         }
 
     } else if (p.elementClass === Const.OBJECT_CLASS_CIRCLE) {
@@ -317,31 +329,7 @@ JXG.createSmartLabel = function (board, parents, attributes) {
                 function () { return p.center.Y(); },
                 ''
             ], attr);
-
-            txt_fun = function () {
-                var str = '',
-                    txt = Type.evaluate(user_supplied_text),
-                    digits = Type.evaluate(el.visProp.digits),
-                    u = Type.evaluate(el.visProp.unit),
-                    mj = Type.evaluate(el.visProp.usemathjax);
-
-                if (txt === '') {
-                    if (mj) {
-                        str = ['\\(',
-                            (p.name.length > 0 ? p.name + '=' : ''),
-                            Type.toFixed(p.Radius(), digits),
-                            '\\,', u, '\\)'
-                        ].join('');
-                    } else {
-                        str = [(p.name.length > 0 ? p.name + ' = ' : ''),
-                        Type.toFixed(p.Radius(), digits), ' ', u
-                        ].join('');
-                    }
-                } else {
-                    str = txt;
-                }
-                return str;
-            };
+            txt_fun = getTextFun(el, p, 'circle', 'radius');
 
         } else if (attr.measure === 'area') {
             el = board.create('text', [
@@ -349,62 +337,15 @@ JXG.createSmartLabel = function (board, parents, attributes) {
                 function () { return p.center.Y() + p.Radius() * 0.5; },
                 ''
             ], attr);
-
-            txt_fun = function () {
-                var str = '',
-                    txt = Type.evaluate(user_supplied_text),
-                    digits = Type.evaluate(el.visProp.digits),
-                    u = Type.evaluate(el.visProp.unit),
-                    mj = Type.evaluate(el.visProp.usemathjax);
-
-                if (txt === '') {
-                    if (mj) {
-                        str = ['\\(',
-                            'A=',
-                            Type.toFixed(p.Area(), digits),
-                            '\\,', u, '^2\\)'
-                        ].join('');
-                    } else {
-                        str = [
-                            'A = ', Type.toFixed(p.Area(), digits), ' ', u, '^2'
-                        ].join('');
-                    }
-                } else {
-                    str = txt;
-                }
-                return str;
-            };
+            txt_fun = getTextFun(el, p, 'circle', 'area');
 
         } else if (attr.measure === 'circumference' || attr.measure === 'perimeter') {
             el = board.create('text', [
                 function () { return p.getLabelAnchor(); },
                 ''
             ], attr);
+            txt_fun = getTextFun(el, p, 'circle', 'perimeter');
 
-            txt_fun = function () {
-                var str = '',
-                    txt = Type.evaluate(user_supplied_text),
-                    digits = Type.evaluate(el.visProp.digits),
-                    u = Type.evaluate(el.visProp.unit),
-                    mj = Type.evaluate(el.visProp.usemathjax);
-
-                if (txt === '') {
-                    if (mj) {
-                        str = ['\\(',
-                            'U = ',
-                            Type.toFixed(p.Perimeter(), digits),
-                            '\\,', u, '\\)'
-                        ].join('');
-                    } else {
-                        str = [
-                            'U = ', Type.toFixed(p.Perimeter(), digits), ' ', u, ''
-                        ].join('');
-                    }
-                } else {
-                    str = txt;
-                }
-                return str;
-            };
         }
     } else if (p.type === Const.OBJECT_TYPE_POLYGON) {
         if (attr.measure === 'area') {
@@ -412,30 +353,8 @@ JXG.createSmartLabel = function (board, parents, attributes) {
                 function () { return p.getTextAnchor(); },
                 ''
             ], attr);
+            txt_fun = getTextFun(el, p, 'polygon', 'area');
 
-            txt_fun = function () {
-                var str = '',
-                    txt = Type.evaluate(user_supplied_text),
-                    digits = Type.evaluate(el.visProp.digits),
-                    u = Type.evaluate(el.visProp.unit),
-                    mj = Type.evaluate(el.visProp.usemathjax);
-
-                if (txt === '') {
-                    if (mj) {
-                        str = ['\\(',
-                            'A = ',
-                            Type.toFixed(p.Area(), digits),
-                            '\\,', u, '^2\\)'
-                        ].join('');
-                    } else {
-                        str = ['A = ', Type.toFixed(p.Area(), digits), ' ', u, '^2'
-                        ].join('');
-                    }
-                } else {
-                    str = txt;
-                }
-                return str;
-            };
         } else if (attr.measure === 'perimeter') {
             el = board.create('text', [
                 function () {
@@ -451,31 +370,7 @@ JXG.createSmartLabel = function (board, parents, attributes) {
                 },
                 ''
             ], attr);
-
-            txt_fun = function () {
-                var str = '',
-                    txt = Type.evaluate(user_supplied_text),
-                    digits = Type.evaluate(el.visProp.digits),
-                    u = Type.evaluate(el.visProp.unit),
-                    mj = Type.evaluate(el.visProp.usemathjax);
-
-                if (txt === '') {
-                    if (mj) {
-                        str = ['\\(',
-                            'U=',
-                            Type.toFixed(p.Perimeter(), digits),
-                            '\\,', u, '\\)'
-                        ].join('');
-                    } else {
-                        str = [
-                            'U = ', Type.toFixed(p.Perimeter(), digits), ' ', u,
-                        ].join('');
-                    }
-                } else {
-                    str = txt;
-                }
-                return str;
-            };
+            txt_fun = getTextFun(el, p, 'polygon', 'perimeter');
         }
 
     } else if (p.type === Const.OBJECT_TYPE_ANGLE) {
@@ -485,32 +380,9 @@ JXG.createSmartLabel = function (board, parents, attributes) {
             },
             ''
         ], attr);
-
-        txt_fun = function () {
-            var str = '',
-                txt = Type.evaluate(user_supplied_text),
-                digits = Type.evaluate(el.visProp.digits),
-                mj = Type.evaluate(el.visProp.usemathjax);
-
-            if (txt === '') {
-                if (mj) {
-                    str = ['\\(',
-                        (p.name.length > 0 ? p.name + '=' : ''),
-                        Type.toFixed(p.Value() / Math.PI * 180, digits),
-                        ' °\\)'
-                    ].join('');
-                } else {
-                    str = [(p.name.length > 0 ? p.name + ' = ' : ''),
-                    Type.toFixed(p.Value() / Math.PI * 180, digits), ' °'
-                    ].join('');
-                }
-            } else {
-                str = txt;
-            }
-            return str;
-        };
-
+        txt_fun = getTextFun(el, p, 'angle', 'angle');
     }
+
     if (Type.exists(el)) {
         el.setText(txt_fun);
         p.addChild(el);
