@@ -5690,6 +5690,7 @@ JXG.Options = {
         prefix: '',
         suffix: '',
 
+        measure: 'deg',
         useMathJax: true
     },
 

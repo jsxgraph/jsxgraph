@@ -228,10 +228,13 @@ JXG.createSmartLabel = function (board, parents, attributes) {
             case 'perimeter':
                 measure = function () { return p.Perimeter(); };
                 break;
-            case 'angle':
+            case 'rad':
                 measure = function () { return p.Value(); };
                 break;
-            default:
+                case 'deg':
+                    measure = function () { return p.Value() * 180 / Math.PI; };
+                    break;
+                default:
                 measure = function () { return 0.0; };
         }
 
@@ -380,7 +383,7 @@ JXG.createSmartLabel = function (board, parents, attributes) {
             },
             ''
         ], attr);
-        txt_fun = getTextFun(el, p, 'angle', 'angle');
+        txt_fun = getTextFun(el, p, 'angle', attr.measure);
     }
 
     if (Type.exists(el)) {
