@@ -38,7 +38,15 @@ import Const from "../base/constants";
 import Type from "../utils/type";
 
 /**
- * @class Smart label.
+ * @class Smart label. These are customized text elements for displaying measurements, like length of a
+ * segment, perimeter or area of a circle or polygon, slope of a line, value of an angle, and coordinates of a point.
+ * <p>
+ * If additionally a text, or a function is supplied and the content is not the empty string,
+ * that text is displayed instead of the measurement.
+ * <p>
+ * Smartlabels use custom made CSS layouts defined in jsxgraph.css. These CSS classes can be replaced by 
+ * other classes.
+ *  
  *
  * @pseudo
  * @name Smartlabel
@@ -47,7 +55,7 @@ import Type from "../utils/type";
  * @type JXG.Text
  * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
  * @param {JXG.GeometryElement} Parent parent object: point, line, circle, polygon, angle.
- * @param {String} Text Optional text. In case, this text is not an empty string, 
+ * @param {String|Function} Text Optional text. In case, this content is not the empty string, 
  *  the measurement is overwritten by this text.
  *      
  * @example
@@ -111,11 +119,51 @@ import Type from "../utils/type";
  * 
  * </script><pre>
  * 
+ * @example
+ * var p2 = board.create('polygon', [[-6, -6], [6, 4], [-4, 3]], {});
+ * board.create('smartlabel', [p2], {
+ *     unit: 'm',
+ *     measure: 'area',
+ *     useMathJax: false,
+ *     cssClass: 'smart-label-pure polygon',
+ *     highlightCssClass: 'smart-label-pure polygon'
+ * });
+ * board.create('smartlabel', [p2, () => 'x = ' + p2.vertices[0].X().toFixed(1)], {
+ *     measure: 'perimeter',
+ *     useMathJax: false,
+ *     cssClass: 'smart-label-outline polygon',
+ *     highlightCssClass: 'smart-label-outline polygon'
+ * });
+ * 
+ * </pre><div id="JXG64b5419c-1d9e-4d6b-965d-f43706546c33" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXG64b5419c-1d9e-4d6b-965d-f43706546c33',
+ *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+ *     var p2 = board.create('polygon', [[-6, -6], [6, 4], [-4, 3]], {});
+ *     board.create('smartlabel', [p2], {
+ *         unit: 'm',
+ *         measure: 'area',
+ *         useMathJax: false,
+ *         cssClass: 'smart-label-pure smart-label-polygon',
+ *         highlightCssClass: 'smart-label-pure smart-label-polygon'
+ *     });
+ *     board.create('smartlabel', [p2, () => 'x = ' + p2.vertices[0].X().toFixed(1)], {
+ *         measure: 'perimeter',
+ *         useMathJax: false,
+ *         cssClass: 'smart-label-outline smart-label-polygon',
+ *         highlightCssClass: 'smart-label-outline smart-label-polygon'
+ *     });
+ * 
+ *     })();
+ * 
+ * </script><pre>
+ * 
  */
 JXG.createSmartLabel = function (board, parents, attributes) {
     var el, attr,
         p = parents[0],
-        txt = parents[1] || '',
+        user_supplied_text = parents[1] || '',
         txt_fun;
 
     /*
@@ -171,6 +219,7 @@ JXG.createSmartLabel = function (board, parents, attributes) {
 
         txt_fun = function () {
             var str = '',
+                txt = Type.evaluate(user_supplied_text),
                 digits = Type.evaluate(el.visProp.digits),
                 u = Type.evaluate(el.visProp.unit),
                 dir = Type.evaluate(el.visProp.dir),
@@ -209,6 +258,7 @@ JXG.createSmartLabel = function (board, parents, attributes) {
 
             txt_fun = function () {
                 var str = '',
+                    txt = Type.evaluate(user_supplied_text),
                     digits = Type.evaluate(el.visProp.digits),
                     u = Type.evaluate(el.visProp.unit),
                     mj = Type.evaluate(el.visProp.usemathjax);
@@ -240,6 +290,7 @@ JXG.createSmartLabel = function (board, parents, attributes) {
 
             txt_fun = function () {
                 var str = '',
+                    txt = Type.evaluate(user_supplied_text),
                     digits = Type.evaluate(el.visProp.digits),
                     mj = Type.evaluate(el.visProp.usemathjax);
 
@@ -269,6 +320,7 @@ JXG.createSmartLabel = function (board, parents, attributes) {
 
             txt_fun = function () {
                 var str = '',
+                    txt = Type.evaluate(user_supplied_text),
                     digits = Type.evaluate(el.visProp.digits),
                     u = Type.evaluate(el.visProp.unit),
                     mj = Type.evaluate(el.visProp.usemathjax);
@@ -300,6 +352,7 @@ JXG.createSmartLabel = function (board, parents, attributes) {
 
             txt_fun = function () {
                 var str = '',
+                    txt = Type.evaluate(user_supplied_text),
                     digits = Type.evaluate(el.visProp.digits),
                     u = Type.evaluate(el.visProp.unit),
                     mj = Type.evaluate(el.visProp.usemathjax);
@@ -330,6 +383,7 @@ JXG.createSmartLabel = function (board, parents, attributes) {
 
             txt_fun = function () {
                 var str = '',
+                    txt = Type.evaluate(user_supplied_text),
                     digits = Type.evaluate(el.visProp.digits),
                     u = Type.evaluate(el.visProp.unit),
                     mj = Type.evaluate(el.visProp.usemathjax);
@@ -361,6 +415,7 @@ JXG.createSmartLabel = function (board, parents, attributes) {
 
             txt_fun = function () {
                 var str = '',
+                    txt = Type.evaluate(user_supplied_text),
                     digits = Type.evaluate(el.visProp.digits),
                     u = Type.evaluate(el.visProp.unit),
                     mj = Type.evaluate(el.visProp.usemathjax);
@@ -399,6 +454,7 @@ JXG.createSmartLabel = function (board, parents, attributes) {
 
             txt_fun = function () {
                 var str = '',
+                    txt = Type.evaluate(user_supplied_text),
                     digits = Type.evaluate(el.visProp.digits),
                     u = Type.evaluate(el.visProp.unit),
                     mj = Type.evaluate(el.visProp.usemathjax);
@@ -432,6 +488,7 @@ JXG.createSmartLabel = function (board, parents, attributes) {
 
         txt_fun = function () {
             var str = '',
+                txt = Type.evaluate(user_supplied_text),
                 digits = Type.evaluate(el.visProp.digits),
                 mj = Type.evaluate(el.visProp.usemathjax);
 

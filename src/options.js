@@ -5681,9 +5681,10 @@ JXG.Options = {
 
     /* special options for smartlabel of angle */
     smartlabelangle: {
-        cssClass: 'smart-label-solid angle',
-        highlightCssClass:'smart-label-solid angle',
+        cssClass: 'smart-label-solid smart-label-angle',
+        highlightCssClass:'smart-label-solid smart-label-angle',
         anchorX: 'left',
+        anchorY: 'middle',
 
         useMathJax: true
     },
@@ -5703,21 +5704,22 @@ JXG.Options = {
          * </ul>
          * 
          * By default, an additional class is given specific for the element type.
-         * Available classes are 'angle', 'circle', 'line', 'point', 'polygon'.
+         * Available classes are 'smart-label-angle', 'smart-label-circle', 
+         * 'smart-label-line', 'smart-label-point', 'smart-label-polygon'.
          * 
          * @example
-         *  cssClass: 'smart-label-solid point'
+         *  cssClass: 'smart-label-solid smart-label-point'
          * 
          * @type String
          * @name Smartlabel#cssClass
          * @see Smartlabel#highlightCssClass
          * @default <ul>
-         *  <li> 'smart-label-solid circle' for circles</li>
-         *  <li> 'smart-label-solid point' for points</li>
+         *  <li> 'smart-label-solid smart-label-circle' for circles</li>
+         *  <li> 'smart-label-solid smart-label-point' for points</li>
          *  <li> ...</li>
          * </ul>
          */
-        cssClass: 'smart-label-solid circle',
+        cssClass: 'smart-label-solid smart-label-circle',
 
         /**
          * CSS classes for the smart label when highlighted.
@@ -5726,12 +5728,12 @@ JXG.Options = {
          * @name Smartlabel#highlightCssClass
          * @see Smartlabel#cssClass
          * @default <ul>
-         *  <li> 'smart-label-solid circle' for circles</li>
-         *  <li> 'smart-label-solid point' for points</li>
+         *  <li> 'smart-label-solid smart-label-circle' for circles</li>
+         *  <li> 'smart-label-solid smart-label-point' for points</li>
          *  <li> ...</li>
          * </ul>
          */
-        highlightCssClass:'smart-label-solid circle',
+        highlightCssClass:'smart-label-solid smart-label-circle',
         anchorX: 'middle',
         useMathJax: true,
 
@@ -5752,7 +5754,9 @@ JXG.Options = {
          *  <li> 'length', 'slope' for lines</li>
          *  <li> 'area', 'perimeter' for polygons</li>
          * </ul>
-
+         * Dependent on this value, i.e. the type of measurement, the label is
+         * positioned differently on the object.
+         * 
          * @type String
          * @name Smartlabel#measure
          * @default <ul>
@@ -5768,8 +5772,8 @@ JXG.Options = {
 
     /* special options for smartlabel of line */
     smartlabelline: {
-        cssClass: 'smart-label-solid line',
-        highlightCssClass:'smart-label-solid line',
+        cssClass: 'smart-label-solid smart-label-line',
+        highlightCssClass:'smart-label-solid smart-label-line',
         anchorX: 'middle',
 
         useMathJax: true,
@@ -5784,8 +5788,8 @@ JXG.Options = {
          * @visprop
          */
 
-        cssClass: 'smart-label-solid point',
-        highlightCssClass:'smart-label-solid point',
+        cssClass: 'smart-label-solid smart-label-point',
+        highlightCssClass:'smart-label-solid smart-label-point',
         anchorX: 'middle',
         anchorY: 'top',
 
@@ -5806,8 +5810,8 @@ JXG.Options = {
 
     /* special options for smartlabel of polygon */
     smartlabelpolygon: {
-        cssClass: 'smart-label-solid polygon',
-        highlightCssClass:'smart-label-solid polygon',
+        cssClass: 'smart-label-solid smart-label-polygon',
+        highlightCssClass:'smart-label-solid smart-label-polygon',
         anchorX: 'middle',
 
         useMathJax: true,
