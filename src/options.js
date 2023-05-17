@@ -1587,6 +1587,22 @@ JXG.Options = {
         layer: 0,
 
         /**
+         * Line endings (linecap) of a stroke element, i.e. line, circle, curve.
+         * Possible values are:
+         * <ul>
+         * <li> 'butt',
+         * <li> 'round',
+         * <li> 'square'.
+         * </ul>
+         * Not available for VML renderer.
+         * 
+         * @name JXG.GeometryElement#lineCap
+         * @type String
+         * @default 'butt'
+         */
+        lineCap: 'butt',
+
+        /**
          * Determines the elements border-style.
          * Possible values are:
          * <ul><li>0 for a solid line</li>
@@ -1604,7 +1620,7 @@ JXG.Options = {
          * @name JXG.GeometryElement#dash
          * @default 0
          *
-         * @see JXG.GeometryElement#linecap
+         * @see JXG.GeometryElement#lineCap
          * @see JXG.AbstractRenderer#dashArray
          */
         dash: 0,
@@ -4425,22 +4441,6 @@ JXG.Options = {
          * @default false
          */
         touchLastPoint: false,
-
-        /**
-         * Line endings (linecap) of a straight line.
-         * Possible values are:
-         * <ul>
-         * <li> 'butt',
-         * <li> 'round',
-         * <li> 'square'.
-         * </ul>
-         * Not available for VML renderer.
-         * [lineCap description]
-         * @name Line#lineCap
-         * @type String
-         * @default 'butt'
-         */
-        lineCap: 'butt'
 
         /**#@-*/
     },

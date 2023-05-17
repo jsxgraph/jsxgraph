@@ -44,9 +44,9 @@ import Type from "../utils/type";
  * If additionally a text, or a function is supplied and the content is not the empty string,
  * that text is displayed instead of the measurement.
  * <p>
- * Smartlabels use custom made CSS layouts defined in jsxgraph.css. These CSS classes can be replaced by 
+ * Smartlabels use custom made CSS layouts defined in jsxgraph.css. These CSS classes can be replaced by
  * other classes.
- *  
+ *
  *
  * @pseudo
  * @name Smartlabel
@@ -55,9 +55,9 @@ import Type from "../utils/type";
  * @type JXG.Text
  * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
  * @param {JXG.GeometryElement} Parent parent object: point, line, circle, polygon, angle.
- * @param {String|Function} Text Optional text. In case, this content is not the empty string, 
+ * @param {String|Function} Text Optional text. In case, this content is not the empty string,
  *  the measurement is overwritten by this text.
- *      
+ *
  * @example
  * board.options.text.fontSize = 8;
  * board.options.smartlabelangle.useMathJax = false;
@@ -65,26 +65,26 @@ import Type from "../utils/type";
  * board.options.smartlabelline.useMathJax = false;
  * board.options.smartlabelpoint.useMathJax = false;
  * board.options.smartlabelpolygon.useMathJax = false;
- * 
+ *
  * var p1 = board.create('point', [1, 1], {showInfobox: false});
  * board.create('smartlabel', [p1], {digits: 1, unit: 'm', dir: 'col', useMathJax: true});
- * 
+ *
  * var s1 = board.create('segment', [[-7, 2], [-5, 9]], {point1: {visible:true}, point2: {visible:true}});
  * board.create('smartlabel', [s1], {unit: 'm', measure: 'length'});
  * board.create('smartlabel', [s1], {unit: 'm',  measure: 'slope'});
- * 
+ *
  * var c1 = board.create('circle', [[0, 5], [5, 5]], {point2: {visible: true}});
  * board.create('smartlabel', [c1], {unit: 'm', measure: 'perimeter'});
  * board.create('smartlabel', [c1], {unit: 'm', measure: 'area'});
  * board.create('smartlabel', [c1], {unit: 'm', measure: 'radius'});
- * 
+ *
  * var p2 = board.create('polygon', [[-6, -8], [8, -8], [-4, -2]], {});
  * board.create('smartlabel', [p2], {unit: 'm', measure: 'area'});
  * board.create('smartlabel', [p2], {unit: 'm', measure: 'perimeter'});
- * 
+ *
  * var a1 = board.create('angle', [[8, -1.5], [5, -2], [5, 1]], {name: '&beta;'});
  * board.create('smartlabel', [a1], {digits: 1});
- * 
+ *
  * </pre><div id="JXG4e575eaf-990d-42ff-a9d9-77cc5695f196" class="jxgbox" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
  *     (function() {
@@ -98,27 +98,27 @@ import Type from "../utils/type";
  * board.options.smartlabelpolygon.useMathJax = false;
  *     var p1 = board.create('point', [1, 1], {showInfobox: false});
  *     board.create('smartlabel', [p1], {digits: 1, unit: 'm', dir: 'col'});
- *     
+ *
  *     var s1 = board.create('segment', [[-7, 2], [-5, 9]], {point1: {visible:true}, point2: {visible:true}});
  *     board.create('smartlabel', [s1], {unit: 'm', measure: 'length'});
  *     board.create('smartlabel', [s1], {unit: 'm',  measure: 'slope'});
- *     
+ *
  *     var c1 = board.create('circle', [[0, 5], [5, 5]], {point2: {visible: true}});
  *     board.create('smartlabel', [c1], {unit: 'm', measure: 'perimeter'});
  *     board.create('smartlabel', [c1], {unit: 'm', measure: 'area'});
  *     board.create('smartlabel', [c1], {unit: 'm', measure: 'radius'});
- *     
+ *
  *     var p2 = board.create('polygon', [[-6, -8], [8, -8], [-4, -2]], {});
  *     board.create('smartlabel', [p2], {unit: 'm', measure: 'area'});
  *     board.create('smartlabel', [p2], {unit: 'm', measure: 'perimeter'});
- *     
+ *
  *     var a1 = board.create('angle', [[8, -1.5], [5, -2], [5, 1]], {name: '&beta;'});
  *     board.create('smartlabel', [a1], {digits: 1});
- * 
+ *
  *     })();
- * 
+ *
  * </script><pre>
- * 
+ *
  * @example
  * var p2 = board.create('polygon', [[-6, -6], [6, 4], [-4, 3]], {});
  * board.create('smartlabel', [p2], {
@@ -134,7 +134,7 @@ import Type from "../utils/type";
  *     cssClass: 'smart-label-outline polygon',
  *     highlightCssClass: 'smart-label-outline polygon'
  * });
- * 
+ *
  * </pre><div id="JXG64b5419c-1d9e-4d6b-965d-f43706546c33" class="jxgbox" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
  *     (function() {
@@ -154,11 +154,11 @@ import Type from "../utils/type";
  *         cssClass: 'smart-label-outline smart-label-polygon',
  *         highlightCssClass: 'smart-label-outline smart-label-polygon'
  *     });
- * 
+ *
  *     })();
- * 
+ *
  * </script><pre>
- * 
+ *
  */
 JXG.createSmartLabel = function (board, parents, attributes) {
     var el, attr,
@@ -231,10 +231,10 @@ JXG.createSmartLabel = function (board, parents, attributes) {
             case 'rad':
                 measure = function () { return p.Value(); };
                 break;
-                case 'deg':
-                    measure = function () { return p.Value() * 180 / Math.PI; };
-                    break;
-                default:
+            case 'deg':
+                measure = function () { return p.Value() * 180 / Math.PI; };
+                break;
+            default:
                 measure = function () { return 0.0; };
         }
 

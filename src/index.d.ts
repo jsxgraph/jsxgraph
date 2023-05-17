@@ -2779,7 +2779,7 @@ declare namespace JXG {
                   size?: number;
               };
         /**
-         * Line endings (linecap) of a straight line.
+         * Line endings (linecap) of a stroke element, i.e. line, circle, curve.
          *
          * Not available for VML renderer.
          *
@@ -2880,7 +2880,7 @@ declare namespace JXG {
                   size?: number;
               };
         /**
-         * Line endings (linecap) of a straight line.
+         * Line endings (linecap) of a stroke element, i.e. line, circle, curve.
          *
          * Not available for VML renderer.
          *
