@@ -138,6 +138,7 @@ JXG.Line = function (board, p1, p2, attributes) {
         getRise: "getRise",
         getYIntersect: "getRise",
         getAngle: "getAngle",
+        Slope: "Slope",
         L: "L",
         length: "L"
     });
@@ -547,12 +548,22 @@ JXG.extend(
          * Calculates the slope of the line.
          * @returns {Number} The slope of the line or Infinity if the line is parallel to the y-axis.
          */
-        getSlope: function () {
+        Slope: function () {
             if (Math.abs(this.stdform[2]) >= Mat.eps) {
                 return -this.stdform[1] / this.stdform[2];
             }
 
             return Infinity;
+        },
+
+        /**
+         * Alias for line.Slope
+         * @returns {Number} The slope of the line or Infinity if the line is parallel to the y-axis.
+         * @deprecated
+         * @see #Slope
+         */
+        getSlope: function () {
+            return this.Slope();
         },
 
         /**

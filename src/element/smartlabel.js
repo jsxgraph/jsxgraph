@@ -217,7 +217,7 @@ JXG.createSmartLabel = function (board, parents, attributes) {
                 measure = function () { return p.L(); };
                 break;
             case 'slope':
-                measure = function () { return p.getSlope(); };
+                measure = function () { return p.Slope(); };
                 break;
             case 'area':
                 measure = function () { return p.Area(); };

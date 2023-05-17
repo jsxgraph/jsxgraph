@@ -2740,6 +2740,11 @@ declare namespace JXG {
          * The distance between the two points defining the line.
          */
         L(): number;
+
+        /**
+         * Calculates the slope of the line.
+         */
+        Slope(): number;
         setAttribute(attributes: LineAttributes): this;
     }
     /**
