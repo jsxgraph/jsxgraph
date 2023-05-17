@@ -5686,7 +5686,7 @@ JXG.Options = {
         anchorX: 'left',
         anchorY: 'middle',
 
-        unit: '°',
+        unit: '',
         prefix: '',
         suffix: '',
 
@@ -5744,20 +5744,38 @@ JXG.Options = {
 
         /**
          * Measurement unit appended to the output text. For areas, the unit is squared automatically.
-
-         * @type String
+         * Comes directly after the measurement value.
+         * 
+         * @type {String|Function}
          * @name Smartlabel#unit
-         * @default 'cm'
+         * @default ''
          */
-        unit: 'cm',
+        unit: '',
+
+        /**
+         * Prefix text for the smartlabel. Comes before the measurement value.
+         *
+         * @type {String|Function}
+         * @name Smartlabel#prefix
+         * @default ''
+         */
         prefix: '',
+
+        /**
+         * Suffix text for the smartlabel. Comes after unit.
+         *
+         * @type {String|Function}
+         * @name Smartlabel#suffix
+         * @default ''
+         */
         suffix: '',
 
         /**
          * Type of measurement.
          * Available values are:
          *  <ul>
-         *  <li> 'radius', 'area', 'perimeter' for circles</li>
+         *  <li> 'deg', 'rad' for angles</li>
+         *  <li> 'area', 'perimeter', 'radius' for circles</li>
          *  <li> 'length', 'slope' for lines</li>
          *  <li> 'area', 'perimeter' for polygons</li>
          * </ul>
@@ -5770,6 +5788,7 @@ JXG.Options = {
          *   <li> 'radius' for circles</li>
          *   <li> 'length' for lines</li>
          *   <li> 'area' for polygons</li>
+         *   <li> 'deg' for angles</li>
          * </ul>
          */
         measure: 'radius',
@@ -5785,7 +5804,7 @@ JXG.Options = {
 
         useMathJax: true,
 
-        unit: 'cm',
+        unit: '',
         measure: 'length'
     },
 
@@ -5811,7 +5830,7 @@ JXG.Options = {
          */
         dir: 'row',
 
-        unit: 'cm'
+        unit: ''
         /**#@-*/
     },
 
@@ -5823,7 +5842,7 @@ JXG.Options = {
 
         useMathJax: true,
 
-        unit: 'cm',
+        unit: '',
         measure: 'area'
     },
 
