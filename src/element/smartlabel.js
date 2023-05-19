@@ -38,14 +38,23 @@ import Const from "../base/constants";
 import Type from "../utils/type";
 
 /**
- * @class Smart label. These are customized text elements for displaying measurements, like length of a
- * segment, perimeter or area of a circle or polygon, slope of a line, value of an angle, and coordinates of a point.
+ * @class Smart label. These are customized text elements for displaying measurements of JSXGraph elements, like length of a
+ * segment, perimeter or area of a circle or polygon (including polygonal chain), slope of a line, value of an angle, and coordinates of a point.
  * <p>
  * If additionally a text, or a function is supplied and the content is not the empty string,
  * that text is displayed instead of the measurement.
  * <p>
- * Smartlabels use custom made CSS layouts defined in jsxgraph.css. These CSS classes can be replaced by
- * other classes.
+ * Smartlabels use custom made CSS layouts defined in jsxgraph.css. Therefore, the inclusion of the file jsxgraph.css is mandatory or
+ * the CSS classes have to be replaced by other classes.
+ * <p>
+ * The default attributes for smartlabels are defined for each type of measured element in the following sub-objects:
+ * <ul>
+ *  <li> <tt>JXG.Options.smartlabelangle</tt> for smartlabels of angle objects
+ *  <li> <tt>JXG.Options.smartlabelcircle</tt> for smartlabels of circle objects
+ *  <li> <tt>JXG.Options.smartlabelline</tt> for smartlabels of line objects
+ *  <li> <tt>JXG.Options.smartlabelpoint</tt> for smartlabels of point objects.
+ *  <li> <tt>JXG.Options.smartlabelpolygon</tt> for smartlabels of polygon objects.
+ * </ul>
  *
  *
  * @pseudo

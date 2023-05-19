@@ -1595,7 +1595,7 @@ JXG.Options = {
          * <li> 'square'.
          * </ul>
          * Not available for VML renderer.
-         * 
+         *
          * @name JXG.GeometryElement#lineCap
          * @type String
          * @default 'butt'
@@ -4147,7 +4147,7 @@ JXG.Options = {
          * <script type="text/javascript">
          *     (function() {
          *         var board = JXG.JSXGraph.initBoard('JXGc94a93da-c942-4204-8bb6-b39726cbb09b',
-         *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false});
+         *             {boundingbox: [-6, 6, 4,-4], axis: false, showcopyright: false, shownavigation: false});
          *         board.options.line.lastArrow = false;
          *         board.options.line.firstArrow = {size: 10, highlightSize: 10};
          *         board.options.line.point1 = {visible: false, withLabel: true, label: {visible: true, anchorX: 'right'}};
@@ -4242,7 +4242,7 @@ JXG.Options = {
          * <script type="text/javascript">
          *     (function() {
          *         var board = JXG.JSXGraph.initBoard('JXGca206b1c-e319-4899-8b90-778f53fd926d',
-         *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false});
+         *             {boundingbox: [-6, 6, 6,-4], axis: false, showcopyright: false, shownavigation: false});
          *         board.options.line.strokeWidth = 4;
          *         board.options.line.highlightStrokeWidth = 4;
          *         board.options.line.firstArrow = false;
@@ -5707,14 +5707,14 @@ JXG.Options = {
          * <li> 'smart-label-outline'
          * <li> 'smart-label-pure'
          * </ul>
-         * 
+         *
          * By default, an additional class is given specific for the element type.
-         * Available classes are 'smart-label-angle', 'smart-label-circle', 
+         * Available classes are 'smart-label-angle', 'smart-label-circle',
          * 'smart-label-line', 'smart-label-point', 'smart-label-polygon'.
-         * 
+         *
          * @example
          *  cssClass: 'smart-label-solid smart-label-point'
-         * 
+         *
          * @type String
          * @name Smartlabel#cssClass
          * @see Smartlabel#highlightCssClass
@@ -5728,7 +5728,7 @@ JXG.Options = {
 
         /**
          * CSS classes for the smart label when highlighted.
-         * 
+         *
          * @type String
          * @name Smartlabel#highlightCssClass
          * @see Smartlabel#cssClass
@@ -5745,7 +5745,7 @@ JXG.Options = {
         /**
          * Measurement unit appended to the output text. For areas, the unit is squared automatically.
          * Comes directly after the measurement value.
-         * 
+         *
          * @type {String|Function}
          * @name Smartlabel#unit
          * @default ''
@@ -5781,7 +5781,7 @@ JXG.Options = {
          * </ul>
          * Dependent on this value, i.e. the type of measurement, the label is
          * positioned differently on the object.
-         * 
+         *
          * @type String
          * @name Smartlabel#measure
          * @default <ul>

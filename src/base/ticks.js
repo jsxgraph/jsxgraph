@@ -57,7 +57,7 @@ import Type from "../utils/type";
  * @param {Object} attributes Properties
  * @see JXG.Line#addTicks
  * @constructor
- * @extends JXG.GeometryElement
+ * @augments JXG.GeometryElement
  */
 JXG.Ticks = function (line, ticks, attributes) {
     this.constructor(line.board, attributes, Const.OBJECT_TYPE_TICKS, Const.OBJECT_CLASS_OTHER);

@@ -44,15 +44,14 @@ import GeometryElement from "./element";
  * Creates a new instance of JXG.Polygon.
  * @class Polygon stores all style and functional properties that are required
  * to draw and to interactact with a polygon.
+ * @constructor
+ * @augments JXG.GeometryElement
  * @param {JXG.Board} board Reference to the board the polygon is to be drawn on.
  * @param {Array} vertices Unique identifiers for the points defining the polygon.
  * Last point must be first point. Otherwise, the first point will be added at the list.
  * @param {Object} attributes An object which contains properties as given in {@link JXG.Options.elements}
  * and {@link JXG.Options.polygon}.
- * @constructor
- * @extends JXG.GeometryElement
  */
-
 JXG.Polygon = function (board, vertices, attributes) {
     this.constructor(board, attributes, Const.OBJECT_TYPE_POLYGON, Const.OBJECT_CLASS_AREA);
 
@@ -431,8 +430,10 @@ JXG.extend(
         },
 
         /**
-         * Perimeter of polygon.
+         * Perimeter of polygon. For a polygonal chain, this method returns its length.
+         *
          * @returns {Number} Perimeter of polygon in user units.
+         * @see JXG.Polygon#L
          *
          * @example
          * var p = [[0.0, 2.0], [2.0, 1.0], [4.0, 6.0], [1.0, 3.0]];
@@ -460,6 +461,16 @@ JXG.extend(
             }
 
             return val;
+        },
+
+        /**
+         * Alias for Perimeter. For polygons, the perimeter is returned. For polygonal chains the length is returned.
+         *
+         * @returns Number
+         * @see JXG.Polygon#Perimeter
+         */
+        L: function() {
+            return this.Perimeter();
         },
 
         /**
@@ -592,7 +603,7 @@ JXG.extend(
         },
 
         /**
-         * Insert points to the vertex list of the polygon after index <tt><idx</tt>.
+         * Insert points to the vertex list of the polygon after index <tt>idx</tt>.
          * The attributes of new border segments are set to the same values
          * as those used when the polygon was created.
          * If new vertices are supplied by coordinates, the default attributes of polygon
@@ -1131,7 +1142,7 @@ JXG.extend(
  * @pseudo
  * @constructor
  * @name Polygon
- * @type Polygon
+ * @type JXG.Polygon
  * @augments JXG.Polygon
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
  * @param {Array} vertices The polygon's vertices. If the first and the last vertex don't match the first one will be
