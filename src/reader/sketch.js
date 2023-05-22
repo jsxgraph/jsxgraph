@@ -2295,10 +2295,10 @@
                             "[" + pn(step.args.min ?? step.args.start) + ", " + pn(step.args.start ?? step.args.ini) + ", " + pn(step.args.max ?? step.args.end) + "]) ";
                         set_str += "<<" + attrid;
                         set_str += " snapWidth: " + pn(step.args.step ?? "0.1") + ", ";
-                        set_str += "baseline: <<id: '" + step.dest_sub_ids[0] + "', name: '', priv: true>>, ";
-                        set_str += "highline: <<id: '" + step.dest_sub_ids[1] + "', name: '', priv: true>>, ";
-                        set_str += "point1: <<id: '" + step.dest_sub_ids[2] + "', name: '', priv: false, frozen: true>>, ";
-                        set_str += "point2: <<id: '" + step.dest_sub_ids[3] + "', name: '', priv: false, frozen: true>>, ";
+                        set_str += "baseline: <<id: '" + step.dest_sub_ids[0] + "', name: ''>>, ";
+                        set_str += "highline: <<id: '" + step.dest_sub_ids[1] + "', name: ''>>, ";
+                        set_str += "point1: <<id: '" + step.dest_sub_ids[2] + "', name: ''>>, ";
+                        set_str += "point2: <<id: '" + step.dest_sub_ids[3] + "', name: ''>>, ";
                         set_str += "label: <<id: '" + step.dest_sub_ids[4] + "', name: '', priv: true>>";
                         set_str += ", name: '" + step.args.name + "'>>; ";
 
