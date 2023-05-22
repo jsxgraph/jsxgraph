@@ -356,16 +356,12 @@ JXG.extend(
                 f.deps = {};
             } else if (this.isNumber(term)) {
                 /** @ignore */
-                f = function () {
-                    return term;
-                };
+                f = function () { return term; };
                 f.deps = {};
             } else if (this.isString(term)) {
                 // In case of string function like fontsize
                 /** @ignore */
-                f = function () {
-                    return term;
-                };
+                f = function () { return term; };
                 f.deps = {};
             }
 

@@ -54,7 +54,7 @@ import QDT from "../math/qdt";
  * type {@link Curve}, or {@link Functiongraph} instead.
  * @augments JXG.GeometryElement
  * @param {String|JXG.Board} board The board the new curve is drawn on.
- * @param {Array} parents defining terms An array with the functon terms or the data points of the curve.
+ * @param {Array} parents defining terms An array with the function terms or the data points of the curve.
  * @param {Object} attributes Defines the visual appearance of the curve.
  * @see JXG.Board#generateName
  * @see JXG.Board#addCurve
@@ -1622,6 +1622,7 @@ JXG.registerElement("curve", JXG.createCurve);
 JXG.createFunctiongraph = function (board, parents, attributes) {
     var attr,
         par = ["x", "x"].concat(parents);
+        // par = ["x", function(x) { return x; }].concat(parents);
 
     attr = Type.copyAttributes(attributes, board.options, "curve");
     attr.curvetype = "functiongraph";
