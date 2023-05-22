@@ -334,15 +334,7 @@ JXG.Dump = {
                 script.push("// " + elements[i].attributes.name);
             }
             script.push(
-                "s" +
-                    i +
-                    " = " +
-                    elements[i].type +
-                    "(" +
-                    elements[i].parents.join(", ") +
-                    ") " +
-                    this.toJCAN(elements[i].attributes).replace(/\n/, "\\n") +
-                    ";"
+                "s" + i + " = " + elements[i].type + "(" + elements[i].parents.join(", ") + ") " + this.toJCAN(elements[i].attributes).replace(/\n/, "\\n") + ";"
             );
 
             if (elements[i].type === "axis") {
