@@ -1069,7 +1069,6 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                 if (Type.exists(node.children[i - 1])) {
                     this.collectDependencies(node.children[i - 1], result);
                 }
-
             }
         }
     },
