@@ -104,12 +104,19 @@ JXG.extend(
         /**
          * Checks if the value of a given variable is of type number.
          * @param v A variable of any type.
+         * @param {Boolean} [dontAcceptNaN=false] If set to true, the function returns true for v=NaN.
          * @returns {Boolean} True, if v is of type number.
          */
-        isNumber: function (v) {
-            return (
+        isNumber: function (v, dontAcceptNaN) {
+            var result = (
                 typeof v === "number" || Object.prototype.toString.call(v) === "[Object Number]"
             );
+            dontAcceptNaN = dontAcceptNaN || false;
+
+            if(!dontAcceptNaN) {
+                return result && !isNaN(v);
+            }
+            return result;
         },
 
         /**
