@@ -113,7 +113,7 @@ JXG.extend(
             );
             dontAcceptNaN = dontAcceptNaN || false;
 
-            if(!dontAcceptNaN) {
+            if(dontAcceptNaN) {
                 return result && !isNaN(v);
             }
             return result;
