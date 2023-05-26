@@ -1051,12 +1051,12 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
         v = node.value;
 
         if (node.type === 'node_var' && 
-                varnames.indexOf(v) < 0 // v is not contained in the list of variables of that function
-            ) {
+            varnames.indexOf(v) < 0 // v is not contained in the list of variables of that function
+        ) {
             e = this.getvar(v);
             if (e && e.visProp && e.type && e.elementClass && e.id &&
-                    e.type === Const.OBJECT_TYPE_SLIDER // Sliders are the only elements which are given by names.
-                ) {
+                e.type === Const.OBJECT_TYPE_SLIDER // Sliders are the only elements which are given by names.
+            ) {
                 result[e.id] = e;
             }
         }
@@ -1464,7 +1464,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                             e = this.line;
 
                             // creator methods are the only ones that take properties, hence this special case
-                            // try {
+                            try {
                                 ret = fun(parents, attr);
                                 ret.jcLineStart = e;
                                 ret.jcLineEnd = node.eline;
@@ -1474,9 +1474,9 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                                 }
 
                                 ret.debugParents = this.dpstack[this.pscope];
-                            // } catch (ex) {
-                            //     this._error(ex.toString());
-                            // }
+                            } catch (ex) {
+                                this._error(ex.toString());
+                            }
                         } else {
                             this._error('Function \'' + fun + '\' is undefined.');
                         }
@@ -1745,7 +1745,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                         }
                         ret = this.compile(node.children[0], js) + '(' + list.join(', ') + (node.children[2] && js ? ', ' + e : '') + ')' + (node.children[2] && !js ? ' ' + e : '');
                         if (js) {
-                            // Inserting a newline here allows simulataneously
+                            // Inserting a newline here allows simultaneously
                             // - procedural calls like Q.moveTo(...); and
                             // - function calls in expressions like log(x) + 1;
                             // Problem: procedural calls will not be ended by a semicolon.

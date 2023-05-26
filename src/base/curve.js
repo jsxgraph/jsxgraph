@@ -1621,7 +1621,7 @@ JXG.registerElement("curve", JXG.createCurve);
  */
 JXG.createFunctiongraph = function (board, parents, attributes) {
     var attr,
-        par = ["x", "x"].concat(parents);
+        par = ["x", "x"].concat(parents); // variable name and identity function for x-coordinate
         // par = ["x", function(x) { return x; }].concat(parents);
 
     attr = Type.copyAttributes(attributes, board.options, "curve");
