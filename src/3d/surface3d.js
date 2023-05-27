@@ -228,7 +228,7 @@ JXG.createParametricSurface3D = function (board, parents, attributes) {
 
     attr = el.setAttr2D(attr);
     el.element2D = view.create("curve", [[], []], attr);
-    
+
     /**
      * @ignore
      */
