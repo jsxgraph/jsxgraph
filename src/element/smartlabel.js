@@ -187,27 +187,27 @@ import Type from "../utils/type";
  */
 JXG.createSmartLabel = function (board, parents, attributes) {
     var el, attr,
-        p = parents[0],
-        user_supplied_text = parents[1] || '',
+        p, user_supplied_text,
         getTextFun, txt_fun;
 
-    /*
-    if (!(parents.length >= 3 &&
-        (Type.isArray(parents[0]) || Type.isFunction(parents[0]) || Type.isString(parents[0])) &&
-        (Type.isArray(parents[1]) && parents[1].length === 3) &&
-        (Type.isArray(parents[2]) && parents[2].length === 3)
-    )) {
+    if (parents.length === 0 || (
+        [Const.OBJECT_CLASS_POINT, Const.OBJECT_CLASS_LINE,Const.OBJECT_CLASS_CIRCLE].indexOf(p.elementClass) < 0 &&
+        [Const.OBJECT_TYPE_POLYGON, Const.OBJECT_TYPE_ANGLE].indexOf(p.type) < 0
+        )
+    ) {
         throw new Error(
-            "JSXGraph: Can't create vector field with parent types " +
+            "JSXGraph: Can't create smartlabel with parent types " +
                 "'" + typeof parents[0] + "', " +
-                "'" + typeof parents[1] + "', " +
-                "'" + typeof parents[2] + "'."
+                "'" + typeof parents[1] + "'."
         );
     }
-    */
+
+    p = parents[0];
+    user_supplied_text = parents[1] || '';
 
     if (p.elementClass === Const.OBJECT_CLASS_POINT) {
         attr = Type.copyAttributes(attributes, board.options, 'smartlabelpoint');
+
     } else if (p.elementClass === Const.OBJECT_CLASS_LINE) {
         attr = Type.copyAttributes(attributes, board.options, 'smartlabelline');
         attr.rotate = function () { return Math.atan(p.getSlope()) * 180 / Math.PI; };
