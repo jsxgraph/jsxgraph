@@ -1,3 +1,46 @@
+1.6.0
+====
+
+New features
+-----------
+
+- New board attributes: registerResizeEvent  and registerFullscreenEvent
+- Allow KaTeX macros
+- Line elements: New values for label attribute position 'first' and 'last'
+- New elements vectorfield and slopefield
+
+Improvements
+------------
+
+- TypeScript support
+- API documentation
+- Intersections: allow function as number of the intersection
+- Metapost curves: new API, improved support of tension, curl, ...
+- Improve 3D API and bug fixes
+- Keyboard control: mode texts and polygons
+- Keyboard control: keep elements highlighted while having focus
+- Allow slashes in IDs, i.e. SVG IDs are escaped.
+- Numerical stability of path clipping
+- Logging of user activity: add more data, like positions
+- 3D: Allow vertical movements of 3D points by pressing the shift key
+- Much improved two-finger handling of objects
+- New method JXG.isBoard()
+
+Bug fixes
+---------
+
+- `hasPoint` method of curves of Bezier degree 3
+- Fix regression: dragging of lines
+- Triangles were hexagons
+- Dependency check for transformations. This bug broke reflections and mirror elements
+- intersection of polygons with line through infinite point
+- Add and remove polygon vertices
+- circle.setRadius(0)
+- Attributes for foreignobject
+- 3D panning
+- Invisible button, checkbox, input element was not created correctly
+- Point face 'triangleup'
+
 1.5.0
 ====
 
