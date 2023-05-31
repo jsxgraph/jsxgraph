@@ -2255,8 +2255,7 @@
                     case JXG.GENTYPE_PATH:
                         le = step.args.points.length;
 
-                        set_str = assign + "cardinalspline([";
-
+                        set_str += assign + "cardinalspline([";
                         for (i = 0; i < step.args.points.length; i++) {
                             if (JXG.isString(step.args.points[i])) {
                                 set_str += "'" + step.args.points[i] + "'";
@@ -2274,11 +2273,17 @@
                                 set_str += ",";
                             }
                         }
-
-                        set_str += "], " + step.args.tau + ", " + step.args.type;
+                        set_str += "], function() { " +
+                            "   o = $('" + step.dest_id + "'); " +
+                            "   if(o) {" +
+                            "      return o.tau; " +
+                            "   } else {" +
+                            "      return 1; " +
+                            "   }" +
+                            "}, " + step.args.type;
                         set_str += ") <<";
 
-                        set_str += attrid + "name: '', withLabel: false, ";
+                        set_str += attrid + "name: '', withLabel: false, tau: " + step.args.tau + ", ";
                         set_str += "fixed: false, ";
                         if (!step.args.createPoints) {
                             set_str += "createPoints: false, ";
