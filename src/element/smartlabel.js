@@ -191,8 +191,8 @@ JXG.createSmartLabel = function (board, parents, attributes) {
         getTextFun, txt_fun;
 
     if (parents.length === 0 || (
-        [Const.OBJECT_CLASS_POINT, Const.OBJECT_CLASS_LINE,Const.OBJECT_CLASS_CIRCLE].indexOf(p.elementClass) < 0 &&
-        [Const.OBJECT_TYPE_POLYGON, Const.OBJECT_TYPE_ANGLE].indexOf(p.type) < 0
+        [Const.OBJECT_CLASS_POINT, Const.OBJECT_CLASS_LINE,Const.OBJECT_CLASS_CIRCLE].indexOf(parents[0].elementClass) < 0 &&
+        [Const.OBJECT_TYPE_POLYGON, Const.OBJECT_TYPE_ANGLE].indexOf(parents[0].type) < 0
         )
     ) {
         throw new Error(
