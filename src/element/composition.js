@@ -2983,21 +2983,10 @@ JXG.createMirrorPoint = function (board, parents, attributes) {
  * </script><pre>
  */
 JXG.createIntegral = function (board, parents, attributes) {
-    var interval,
-        curve,
-        attr,
-        start,
-        end,
-        startx,
-        starty,
-        endx,
-        endy,
-        pa_on_curve,
-        pa_on_axis,
-        pb_on_curve,
-        pb_on_axis,
-        t = null,
-        p;
+    var interval, curve, attr, start, end,
+        startx, starty, endx, endy,
+        pa_on_curve, pa_on_axis, pb_on_curve, pb_on_axis,
+        t = null, p;
 
     if (Type.isArray(parents[0]) && parents[1].elementClass === Const.OBJECT_CLASS_CURVE) {
         interval = parents[0];
@@ -3055,27 +3044,21 @@ JXG.createIntegral = function (board, parents, attributes) {
         pa_on_curve.hideElement();
     }
 
-    attr = Type.copyAttributes(attributes, board.options, "integral", "baseLeft");
-    pa_on_axis = board.create(
-        "point",
-        [
+    attr = Type.copyAttributes(attributes, board.options, 'integral', 'baseLeft');
+    pa_on_axis = board.create('point', [
             function () {
                 if (Type.evaluate(p.visProp.axis) === "y") {
                     return 0;
                 }
-
                 return pa_on_curve.X();
             },
             function () {
                 if (Type.evaluate(p.visProp.axis) === "y") {
                     return pa_on_curve.Y();
                 }
-
                 return 0;
             }
-        ],
-        attr
-    );
+        ], attr);
 
     attr = Type.copyAttributes(attributes, board.options, "integral", "curveRight");
     pb_on_curve = board.create("glider", [endx, endy, curve], attr);
@@ -3084,9 +3067,7 @@ JXG.createIntegral = function (board, parents, attributes) {
     }
 
     attr = Type.copyAttributes(attributes, board.options, "integral", "baseRight");
-    pb_on_axis = board.create(
-        "point",
-        [
+    pb_on_axis = board.create('point', [
             function () {
                 if (Type.evaluate(p.visProp.axis) === "y") {
                     return 0;
@@ -3100,18 +3081,14 @@ JXG.createIntegral = function (board, parents, attributes) {
 
                 return 0;
             }
-        ],
-        attr
-    );
+        ], attr);
 
     attr = Type.copyAttributes(attributes, board.options, "integral");
     if (attr.withlabel !== false && attr.axis !== "y") {
         attr = Type.copyAttributes(attributes, board.options, "integral", "label");
         attr = Type.copyAttributes(attr, board.options, "label");
 
-        t = board.create(
-            "text",
-            [
+        t = board.create('text', [
                 function () {
                     var off = new Coords(
                             Const.COORDS_BY_SCREEN,
@@ -3162,9 +3139,7 @@ JXG.createIntegral = function (board, parents, attributes) {
                     var Int = Numerics.NewtonCotes([pa_on_axis.X(), pb_on_axis.X()], curve.Y);
                     return "&int; = " + Type.toFixed(Int, 4);
                 }
-            ],
-            attr
-        );
+            ], attr);
 
         t.dump = false;
 

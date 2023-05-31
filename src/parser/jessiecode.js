@@ -423,7 +423,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
      * @param {String} vname Name of the variable
      * @param {Boolean} [local=false] Only look up the internal symbol table and don't look for
      * the <tt>vname</tt> in Math or the element list.
-     * @param {Boolean} [isFunctionName=false] Lookup function of tpye builtIn, Math.*, creator.
+     * @param {Boolean} [isFunctionName=false] Lookup function of type builtIn, Math.*, creator.
      *
      * @see JXG.JessieCode#resolveType
      */
@@ -434,6 +434,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
 
         // Local scope has always precedence
         s = this.isLocalVariable(vname);
+
         if (s !== null) {
             return s.locals[vname];
         }
@@ -702,7 +703,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
         }(this));
 
         fun.deps = {};
-        this.collectDependencies(node.children[1], fun.deps);
+        this.collectDependencies(node.children[1], node.children[0], fun.deps);
 
         return fun;
     },
@@ -1033,24 +1034,29 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
      * Search the parse tree below <tt>node</tt> for <em>stationary</em> dependencies, i.e. dependencies hard coded into
      * the function.
      * @param {Object} node
+     * @param {Array} varnames List of variable names of the function
      * @param {Object} result An object where the referenced elements will be stored. Access key is their id.
      */
-    collectDependencies: function (node, result) {
+    collectDependencies: function (node, varnames, result) {
         var i, v, e, le;
 
         if (Type.isArray(node)) {
             le = node.length;
             for (i = 0; i < le; i++) {
-                this.collectDependencies(node[i], result);
+                this.collectDependencies(node[i], varnames, result);
             }
             return;
         }
 
         v = node.value;
 
-        if (node.type === 'node_var') {
+        if (node.type === 'node_var' && 
+            varnames.indexOf(v) < 0 // v is not contained in the list of variables of that function
+        ) {
             e = this.getvar(v);
-            if (e && e.visProp && e.type && e.elementClass && e.id) {
+            if (e && e.visProp && e.type && e.elementClass && e.id &&
+                e.type === Const.OBJECT_TYPE_SLIDER // Sliders are the only elements which are given by names.
+            ) {
                 result[e.id] = e;
             }
         }
@@ -1067,7 +1073,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
         if (node.children) {
             for (i = node.children.length; i > 0; i--) {
                 if (Type.exists(node.children[i - 1])) {
-                    this.collectDependencies(node.children[i - 1], result);
+                    this.collectDependencies(node.children[i - 1], varnames, result);
                 }
             }
         }
@@ -1739,7 +1745,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                         }
                         ret = this.compile(node.children[0], js) + '(' + list.join(', ') + (node.children[2] && js ? ', ' + e : '') + ')' + (node.children[2] && !js ? ' ' + e : '');
                         if (js) {
-                            // Inserting a newline here allows simulataneously
+                            // Inserting a newline here allows simultaneously
                             // - procedural calls like Q.moveTo(...); and
                             // - function calls in expressions like log(x) + 1;
                             // Problem: procedural calls will not be ended by a semicolon.

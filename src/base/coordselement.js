@@ -552,20 +552,11 @@ JXG.extend(
          * @private
          */
         updateGliderFromParent: function () {
-            var p1c,
-                p2c,
-                r,
-                lbda,
-                c,
+            var p1c, p2c, r, lbda, c,
                 slide = this.slideObject,
                 slides = [],
-                res,
-                i,
-                isTransformed,
-                baseangle,
-                alpha,
-                angle,
-                beta,
+                res, i, isTransformed,
+                baseangle, alpha, angle, beta,
                 delta = 2.0 * Math.PI;
 
             if (!this.needsUpdateFromParent) {
@@ -1193,9 +1184,7 @@ JXG.extend(
         makeGlider: function (slide) {
             var slideobj = this.board.select(slide),
                 onPolygon = false,
-                min,
-                i,
-                dist;
+                min, i, dist;
 
             if (slideobj.type === Const.OBJECT_TYPE_POLYGON) {
                 // Search for the closest edge of the polygon.
@@ -1226,7 +1215,7 @@ JXG.extend(
             this.addParents(slide);
 
             this.type = Const.OBJECT_TYPE_GLIDER;
-            this.elType = "glider";
+            this.elType = 'glider';
             this.visProp.snapwidth = -1; // By default, deactivate snapWidth
             this.slideObject.addChild(this);
             this.isDraggable = true;

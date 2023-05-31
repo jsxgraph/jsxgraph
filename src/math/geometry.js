@@ -3009,27 +3009,11 @@ JXG.extend(
          * the position on the curve.
          */
         projectCoordsToCurve: function (x, y, t, curve, board) {
-            var newCoords,
-                newCoordsObj,
-                i,
-                j,
-                mindist,
-                dist,
-                lbda,
-                v,
-                coords,
-                d,
-                p1,
-                p2,
-                res,
-                minfunc,
-                t_new,
-                f_new,
-                f_old,
-                delta,
-                steps,
-                minX,
-                maxX,
+            var newCoords, newCoordsObj,
+                i, j, mindist, dist, lbda,
+                v, coords, d, p1, p2, res, minfunc,
+                t_new, f_new, f_old,
+                delta, delta1, delta2, steps, minX, maxX,
                 infty = Number.POSITIVE_INFINITY;
 
             if (!Type.exists(board)) {
@@ -3123,10 +3107,28 @@ JXG.extend(
                     t_new += delta;
                 }
 
-                //t = Numerics.root(Numerics.D(minfunc), t);
+                // t = Numerics.root(Numerics.D(minfunc), t);
+                // Ensure that minfunc is defined on the
+                // enclsoing interval [t-delta1, t+delta2]
+                delta1 = delta;
+                for (i = 0;
+                    i < 20 && isNaN(minfunc(t - delta1));
+                    i++, delta1 *= 0.5);
+
+                if (isNaN(minfunc(t - delta1))) {
+                    delta1 = 0.0;
+                }
+                delta2 = delta;
+                for (i = 0;
+                    i < 20 && isNaN(minfunc(t + delta2));
+                    i++, delta2 *= 0.5);
+                if (isNaN(minfunc(t + delta2))) {
+                    delta2 = 0.0;
+                }
+
                 t = Numerics.fminbr(minfunc, [
-                    Math.max(t - delta, minX),
-                    Math.min(t + delta, maxX)
+                    Math.max(t - delta1, minX),
+                    Math.min(t + delta2, maxX)
                 ]);
 
                 // Distinction between closed and open curves is not necessary.
@@ -3134,7 +3136,7 @@ JXG.extend(
                 // if (Math.abs(curve.X(minX) - curve.X(maxX)) < Mat.eps &&
                 //     Math.abs(curve.Y(minX) - curve.Y(maxX)) < Mat.eps) {
                 //     // Cyclically
-                //     if (t < minX) {
+                //     if (t < minX) {console.log(t)
                 //         t = maxX + t - minX;
                 //     }
                 //     if (t > maxX) {

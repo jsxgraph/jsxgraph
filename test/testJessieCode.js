@@ -83,4 +83,22 @@ describe("Test JessieCode", function () {
         expect(board.jc.scope.locals.y).toEqual(-16);
     });
 
+    it("Jessiecode snippet with x", function() {
+        board.create('point', [1,1], {name: 'x'});
+        var f = board.create( 'functiongraph', ['x*x']);
+        expect(f.Y(2)).toEqual(4);
+    });
+
+    it("Jessiecode snippet with id", function() {
+        board.create('point', [1,1], {name: 'x'});
+        var f = board.create( 'functiongraph', ['x']);
+        expect(f.Y(2)).toEqual(2);
+    });
+
+    it("Jessiecode curve", function() {
+        board.create('point', [1,1], {name: 'x'});
+        var f = board.create('curve', ['x*x', 'x']);
+        expect(f.X(2)).toEqual(4);
+    });
+
 });

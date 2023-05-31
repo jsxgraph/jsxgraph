@@ -1328,12 +1328,12 @@ JXG.extend(
          * Compute the transformation matrix to move an element according to the
          * previous and actual positions of finger 1 and finger 2.
          * See also https://math.stackexchange.com/questions/4010538/solve-for-2d-translation-rotation-and-scale-given-two-touch-point-movements
-         * 
+         *
          * @param {Object} finger1 Actual and previous position of finger 1
          * @param {Object} finger1 Actual and previous position of finger 1
          * @param {Boolean} scalable Flag if element may be scaled
          * @param {Boolean} rotatable Flag if element may be rotated
-         * @returns 
+         * @returns
          */
         getTwoFingerTransform(finger1, finger2, scalable, rotatable) {
             var crd,
@@ -5466,7 +5466,9 @@ JXG.extend(
                             elementType === "button") &&
                         (i === 2 || i === 3)
                     ) &&
-                    !(elementType === "curve" && i > 0) // Allow curve plots with jessiecode
+                    !(elementType === "curve" /*&& i > 0*/) && // Allow curve plots with jessiecode, parents[0] is the
+                                                               // variable name
+                    !(elementType === "functiongraph") // Prevent problems with function terms like 'x'
                 ) {
                     parents[i] = this.select(parents[i]);
                 }

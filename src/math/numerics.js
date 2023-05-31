@@ -3558,22 +3558,10 @@ Mat.Numerics = {
      * @memberof JXG.Math.Numerics
      **/
     fminbr: function (f, x0, context) {
-        var a,
-            b,
-            x,
-            v,
-            w,
-            fx,
-            fv,
-            fw,
-            range,
-            middle_range,
-            tol_act,
-            new_step,
-            p,
-            q,
-            t,
-            ft,
+        var a, b, x, v, w,
+            fx, fv, fw,
+            range, middle_range, tol_act, new_step,
+            p, q, t, ft,
             // Golden section ratio
             r = (3.0 - Math.sqrt(5.0)) * 0.5,
             tol = Mat.eps,
