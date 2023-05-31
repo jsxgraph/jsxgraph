@@ -130,6 +130,8 @@
                     pid1,
                     pid2,
                     pid3,
+                    pid4,
+                    pid5,
                     xstart,
                     ystart,
                     el,
@@ -2090,28 +2092,37 @@
                     case JXG.GENTYPE_SECTOR:
                         set_str = assign;
 
+                        // ids
+                        pid1 = step.dest_id;                                      // id of sector
+                        pid2 = step.dest_sub_ids[0];                              // id of arc
+                        pid3 = pid1 + (step.args.suffix_glider ?? "_glider");     // id of glider
+                        pid4 = pid1 + (step.args.suffix_segment1 ?? "_segment1"); // id of segment 1 (mid - radiuspoint)
+                        pid5 = pid1 + (step.args.suffix_segment2 ?? "_segment2"); // id of segment 2 (mid - glider)
+
+                        // sector
                         set_str += "sector(" + step.src_ids.join(", ") + ") ";
-                        set_str += "<<";
-                        set_str += attrid + " name: '', fillOpacity: " + JXG.Options.opacityLevel + ", hasInnerPoints: true";
-                        set_str += ", arc: <<id: '" + step.dest_sub_ids[0] + "'>> >>; ";
-                        set_str += step.dest_id + ".hasInnerPoints = function() { " +
-                            "return !(" + step.dest_id + ".fillColor == 'transparent' || " + step.dest_id + ".fillColor == 'none' || " + step.dest_id + ".fillOpacity == 0); " +
-                            "}; "
+                        set_str += "<<" + attrid + " name: '', fillOpacity: " + JXG.Options.opacityLevel + ", hasInnerPoints: true, arc: <<id: '" + pid2 + "', priv:true>> >>; ";
+                        set_str += pid1 + ".hasInnerPoints = function() { " +
+                            "return !(" + pid1 + ".fillColor == 'transparent' || " + pid1 + ".fillColor == 'none' || " + pid1 + ".fillOpacity == 0); " +
+                            "}; ";
 
-                        set_str += "glider(function () { return " + step.src_ids[2] + ".X(); }, function () { return " + step.src_ids[2] + ".Y(); }, " + step.dest_id + ") ";
-                        set_str += "<<id: '" + (step.dest_sub_ids[1] ?? step.dest_id + "_point") + "', name:'', parents: ['" + step.dest_sub_ids[0] + "', '" + step.src_ids[2] + "'] >>; ";
+                        // glider
+                        set_str += "glider(function () { return " + step.src_ids[2] + ".X(); }, function () { return " + step.src_ids[2] + ".Y(); }, " + pid2 + ") ";
+                        set_str += "<<id: '" + pid3 + "', name:'', parents: ['" + pid1 + "', '" + pid2 + "', '" + step.src_ids[2] + "'], priv:true>>; ";
 
+                        // segment 1 (mid - radiuspoint)
                         set_str += "segment(" + step.src_ids[0] + ", " + step.src_ids[1] + ") ";
-                        set_str += "<<id: '" + (step.dest_sub_ids[2] ?? step.dest_id + "_segment1") + "', name:'', parents: ['" + step.dest_sub_ids[0] + "', '" + step.src_ids[0] + "', '" + step.src_ids[1] + "'] >>; ";
+                        set_str += "<<id: '" + pid4 + "', name:'', parents: ['" + pid1 + "', '" + step.src_ids[0] + "', '" + step.src_ids[1] + "'], priv:true>>; ";
 
-                        set_str += "segment(" + step.src_ids[0] + ", " + (step.dest_sub_ids[1] ?? step.dest_id + "_point") + ") ";
-                        set_str += "<<id: '" + (step.dest_sub_ids[3] ?? step.dest_id + "_segment2") + "', name:'', parents: ['" + step.dest_sub_ids[0] + "', '" + step.src_ids[0] + "', '" + (step.dest_sub_ids[1] ?? step.dest_id + "_point") + "'] >>; ";
+                        // segment 2 (mid - glider)
+                        set_str += "segment(" + step.src_ids[0] + ", " + pid3 + ") ";
+                        set_str += "<<id: '" + pid5 + "', name:'', parents: ['" + pid1 + "', '" + step.src_ids[0] + "', '" + pid3 + "'], priv:true>>; ";
 
                         reset_str = "";
-                        reset_str += "remove(" + (step.dest_sub_ids[1] ?? step.dest_id + "_point") + "); ";
-                        reset_str += "remove(" + (step.dest_sub_ids[2] ?? step.dest_id + "_segment1") + "); ";
-                        reset_str += "remove(" + (step.dest_sub_ids[3] ?? step.dest_id + "_segment2") + "); ";
-                        reset_str += "remove(" + step.dest_id + "); ";
+                        reset_str += "remove(" + pid3 + "); ";
+                        reset_str += "remove(" + pid4 + "); ";
+                        reset_str += "remove(" + pid5 + "); ";
+                        reset_str += "remove(" + pid1 + "); ";
                         break;
 
                     case JXG.GENTYPE_ANGLE:
