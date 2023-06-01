@@ -102,7 +102,9 @@
                 toFixed: 8, // should be enough for now ...
                 freeLine: false,
                 useGlider: false,
-                useSymbols: false
+                useSymbols: false,
+                useSliderVars: false,
+                sliderVarPrefix: 'slider'
             },
 
             /**
@@ -2303,7 +2305,11 @@
                         break;
 
                     case JXG.GENTYPE_SLIDER:
-                        set_str =
+                        set_str = "";
+                        if (options.useSliderVars) {
+                            set_str += options.sliderVarPrefix + step.dest_id + " = ";
+                        }
+                        set_str +=
                             assign +
                             "slider(" +
                             "[" + pn(step.args.x1) + ", " + pn(step.args.y1) + "], " +
