@@ -258,7 +258,7 @@ JXG.extend(
                     }
 
                     if (!not.gradient) {
-                        this.setShadow(el);
+                        this.setGradient(el);
                     }
 
                     if (!not.tabindex) {
