@@ -1969,6 +1969,7 @@ Mat.Numerics = {
      * var f = JXG.Math.Numerics.lagrangePolynomial(points);
      * var graph = board.create('functiongraph', [f,-10, 10], {strokeWidth:3});
      * var txt = board.create('text', [-3, -4,  () => f.getTerm(2, 't', ' * ')], {fontSize: 16});
+     * var txt2 = board.create('text', [-3, -6,  () => f.getCoefficients()], {fontSize: 12});
      *
      * </pre><div id="JXG73fdaf12-e257-4374-b488-ae063e4eecbb" class="jxgbox" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
@@ -1983,6 +1984,7 @@ Mat.Numerics = {
      *     var f = JXG.Math.Numerics.lagrangePolynomial(points);
      *     var graph = board.create('functiongraph', [f,-10, 10], {strokeWidth:3});
      *     var txt = board.create('text', [-3, -4,  () => f.getTerm(2, 't', ' * ')], {fontSize: 16});
+     *     var txt2 = board.create('text', [-3, -6,  () => f.getCoefficients()], {fontSize: 12});
      *
      *     })();
      *
@@ -2080,9 +2082,51 @@ Mat.Numerics = {
             return that.lagrangePolynomialTerm(p, digits, param, dot)();
         };
 
+        /**
+         * Get the coefficients of the Lagrange polynomial as array. The leading
+         * coefficient is at position 0.
+         * Calls {@link JXG.Math.Numerics#lagrangePolynomialCoefficients}.
+         *
+         * @name JXG.Math.Numerics#lagrangePolynomial.getCoefficients
+         * @returns {Array} containing the coefficients of the Lagrange polynomial.
+         * @see JXG.Math.Numerics#lagrangePolynomial.getTerm
+         * @see JXG.Math.Numerics#lagrangePolynomialTerm
+         * @see JXG.Math.Numerics#lagrangePolynomialCoefficients
+         * @example
+         * var points = [];
+         * points[0] = board.create('point', [-1,2], {size:4});
+         * points[1] = board.create('point', [0, 0], {size:4});
+         * points[2] = board.create('point', [2, 1], {size:4});
+         *
+         * var f = JXG.Math.Numerics.lagrangePolynomial(points);
+         * var graph = board.create('functiongraph', [f,-10, 10], {strokeWidth:3});
+         * var txt = board.create('text', [1, -4,  () => f.getCoefficients()], {fontSize: 10});
+         *
+         * </pre><div id="JXG52a883a5-2e0c-4caf-8f84-8650c173c365" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG52a883a5-2e0c-4caf-8f84-8650c173c365',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *     var points = [];
+         *     points[0] = board.create('point', [-1,2], {size:4});
+         *     points[1] = board.create('point', [0, 0], {size:4});
+         *     points[2] = board.create('point', [2, 1], {size:4});
+         *
+         *     var f = JXG.Math.Numerics.lagrangePolynomial(points);
+         *     var graph = board.create('functiongraph', [f,-10, 10], {strokeWidth:3});
+         *     var txt = board.create('text', [1, -4,  () => f.getCoefficients()], {fontSize: 10});
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
+         */
+        fct.getCoefficients = function () {
+            return that.lagrangePolynomialCoefficients(p)();
+        };
+
         return fct;
     },
-    // fct.getTerm = that.lagrangePolynomialTerm(p, 2, 'x');
 
     /**
      * Determine the Lagrange polynomial through an array of points and
@@ -2092,8 +2136,8 @@ Mat.Numerics = {
      * @param {Number} digits Number of decimal digits of the coefficients
      * @param {String} param Name of the parameter. Default: 'x'.
      * @param {String} dot Multiplication symbol. Default: ' * '.
-     * @returns {Function} returning the Lagrange polynomial through
-     *    the supplied points.
+     * @returns {Function} returning the Lagrange polynomial term through
+     *    the supplied points as string
      * @memberof JXG.Math.Numerics
      *
      * @example
@@ -2130,23 +2174,98 @@ Mat.Numerics = {
      *
      */
     lagrangePolynomialTerm: function (points, digits, param, dot) {
+        var that = this;
+
         return function () {
             var len = points.length,
-                zeroes = [],
                 coeffs = [],
-                coeffs_sum = [],
                 isLeading = true,
-                n,
-                t,
-                i,
-                j,
-                c,
-                p;
+                n, t, j, c;
 
             param = param || "x";
             if (dot === undefined) {
                 dot = " * ";
             }
+
+            n = len - 1; // (Max) degree of the polynomial
+            coeffs = that.lagrangePolynomialCoefficients(points)();
+
+            t = "";
+            for (j = 0; j < coeffs.length; j++) {
+                c = coeffs[j];
+                if (Math.abs(c) < Mat.eps) {
+                    continue;
+                }
+                if (JXG.exists(digits)) {
+                    c = Env._round10(c, -digits);
+                }
+                if (isLeading) {
+                    t += c > 0 ? c : "-" + -c;
+                    isLeading = false;
+                } else {
+                    t += c > 0 ? " + " + c : " - " + -c;
+                }
+
+                if (n - j > 1) {
+                    t += dot + param + "^" + (n - j);
+                } else if (n - j === 1) {
+                    t += dot + param;
+                }
+            }
+            return t; // board.jc.manipulate('f = map(x) -> ' + t + ';');
+        };
+    },
+
+    /**
+     * Determine the Lagrange polynomial through an array of points and
+     * return the coefficients of the polynomial as array.
+     * The leading coefficient is at position 0.
+     *
+     * @param {Array} points Array of JXG.Points
+     * @returns {Function} returning the coefficients of the Lagrange polynomial through
+     *    the supplied points.
+     * @memberof JXG.Math.Numerics
+     *
+     * @example
+     * var points = [];
+     * points[0] = board.create('point', [-1,2], {size:4});
+     * points[1] = board.create('point', [0, 0], {size:4});
+     * points[2] = board.create('point', [2, 1], {size:4});
+     *
+     * var f = JXG.Math.Numerics.lagrangePolynomial(points);
+     * var graph = board.create('functiongraph', [f,-10, 10], {strokeWidth:3});
+     *
+     * var f_arr = JXG.Math.Numerics.lagrangePolynomialCoefficients(points);
+     * var txt = board.create('text', [1, -4, f_arr], {fontSize: 10});
+     *
+     * </pre><div id="JXG1778f0d1-a420-473f-99e8-1755ef4be97e" class="jxgbox" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     *     (function() {
+     *         var board = JXG.JSXGraph.initBoard('JXG1778f0d1-a420-473f-99e8-1755ef4be97e',
+     *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+     *     var points = [];
+     *     points[0] = board.create('point', [-1,2], {size:4});
+     *     points[1] = board.create('point', [0, 0], {size:4});
+     *     points[2] = board.create('point', [2, 1], {size:4});
+     *
+     *     var f = JXG.Math.Numerics.lagrangePolynomial(points);
+     *     var graph = board.create('functiongraph', [f,-10, 10], {strokeWidth:3});
+     *
+     *     var f_arr = JXG.Math.Numerics.lagrangePolynomialCoefficients(points);
+     *     var txt = board.create('text', [1, -4, f_arr], {fontSize: 10});
+     *
+     *     })();
+     *
+     * </script><pre>
+     *
+     */
+    lagrangePolynomialCoefficients: function (points) {
+        return function () {
+            var len = points.length,
+                zeroes = [],
+                coeffs = [],
+                coeffs_sum = [],
+                n, i, j, c, p;
 
             n = len - 1; // (Max) degree of the polynomial
             for (j = 0; j < len; j++) {
@@ -2169,29 +2288,7 @@ Mat.Numerics = {
                 }
             }
 
-            t = "";
-            for (j = 0; j < coeffs_sum.length; j++) {
-                c = coeffs_sum[j];
-                if (Math.abs(c) < Mat.eps) {
-                    continue;
-                }
-                if (JXG.exists(digits)) {
-                    c = Env._round10(c, -digits);
-                }
-                if (isLeading) {
-                    t += c > 0 ? c : "-" + -c;
-                    isLeading = false;
-                } else {
-                    t += c > 0 ? " + " + c : " - " + -c;
-                }
-
-                if (n - j > 1) {
-                    t += dot + param + "^" + (n - j);
-                } else if (n - j === 1) {
-                    t += dot + param;
-                }
-            }
-            return t; // board.jc.manipulate('f = map(x) -> ' + t + ';');
+            return coeffs_sum;
         };
     },
 
@@ -2231,8 +2328,7 @@ Mat.Numerics = {
         var p,
             coeffs = [],
             makeFct,
-            tau,
-            _tau,
+            tau, _tau,
             that = this;
 
         if (Type.isFunction(tau_param)) {
