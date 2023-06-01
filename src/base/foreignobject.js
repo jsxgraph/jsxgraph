@@ -128,15 +128,7 @@ JXG.extend(
          * @returns {Boolean} True if (x,y) is over the image, False otherwise.
          */
         hasPoint: function (x, y) {
-            var dx,
-                dy,
-                r,
-                type,
-                prec,
-                c,
-                v,
-                p,
-                dot,
+            var dx, dy, r, type, prec, c, v, p, dot,
                 len = this.transformations.length;
 
             if (Type.isObject(Type.evaluate(this.visProp.precision))) {

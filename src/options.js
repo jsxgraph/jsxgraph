@@ -1353,7 +1353,6 @@ JXG.Options = {
          */
         gradientEndOffset: 1.0,
 
-
         /**
          * Angle (in radians) of the gradiant in case the gradient is of type 'linear'.
          * If the angle is 0, the first color is on the left and the second color is on the right.
