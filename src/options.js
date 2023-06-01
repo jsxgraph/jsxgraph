@@ -3545,9 +3545,9 @@ JXG.Options = {
          * @visprop
          */
 
-        attractors: [],
         fixed: true,
-        visible: true
+        visible: true,
+        needsRegularUpdate: false
 
         /**#@-*/
     },
