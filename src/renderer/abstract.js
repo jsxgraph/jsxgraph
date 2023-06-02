@@ -816,12 +816,13 @@ JXG.extend(
             if (a.evFirst || a.evLast) {
                 d = d1x = d1y = d2x = d2y = 0.0;
 
-                s1 =
-                    Type.evaluate(el.point1.visProp.size) +
-                    Type.evaluate(el.point1.visProp.strokewidth);
-                s2 =
-                    Type.evaluate(el.point2.visProp.size) +
-                    Type.evaluate(el.point2.visProp.strokewidth);
+                s1 = (Type.evaluate(el.point1.visProp.visible) ? 1 : 0 ) *
+                    (Type.evaluate(el.point1.visProp.size) +
+                    Type.evaluate(el.point1.visProp.strokewidth));
+
+                s2 = (Type.evaluate(el.point2.visProp.visible) ? 1 : 0 ) *
+                    (Type.evaluate(el.point2.visProp.size) +
+                    Type.evaluate(el.point2.visProp.strokewidth));
 
                 // Handle touchlastpoint /touchfirstpoint
                 if (a.evFirst && Type.evaluate(el.visProp.touchfirstpoint)) {
