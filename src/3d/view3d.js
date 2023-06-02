@@ -732,12 +732,8 @@ JXG.extend(
  *
  */
 JXG.createView3D = function (board, parents, attributes) {
-    var view,
-        attr,
-        x,
-        y,
-        w,
-        h,
+    var view, attr,
+        x, y, w, h,
         coords = parents[0], // llft corner
         size = parents[1]; // [w, h]
 

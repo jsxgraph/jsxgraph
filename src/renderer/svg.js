@@ -1331,9 +1331,7 @@ JXG.extend(
         // documented in JXG.AbstractRenderer
         setGradient: function (el) {
             var fillNode = el.rendNode,
-                node,
-                node2,
-                node3,
+                node, node2, node3,
                 ev_g = Type.evaluate(el.visProp.gradient);
 
             if (ev_g === "linear" || ev_g === "radial") {
