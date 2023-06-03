@@ -825,14 +825,14 @@ JXG.extend(
                     Type.evaluate(el.point2.visProp.strokewidth));
 
                 // Handle touchlastpoint /touchfirstpoint
-                if (a.evFirst && Type.evaluate(el.visProp.touchfirstpoint)) {
+                if (a.evFirst && Type.evaluate(el.visProp.touchfirstpoint) && Type.evaluate(el.point1.visProp.visible)) {
                     d = c1.distance(Const.COORDS_BY_SCREEN, c2);
                     //if (d > s) {
                     d1x = ((c2.scrCoords[1] - c1.scrCoords[1]) * s1) / d;
                     d1y = ((c2.scrCoords[2] - c1.scrCoords[2]) * s1) / d;
                     //}
                 }
-                if (a.evLast && Type.evaluate(el.visProp.touchlastpoint)) {
+                if (a.evLast && Type.evaluate(el.visProp.touchlastpoint) && Type.evaluate(el.point2.visProp.visible)) {
                     d = c1.distance(Const.COORDS_BY_SCREEN, c2);
                     //if (d > s) {
                     d2x = ((c2.scrCoords[1] - c1.scrCoords[1]) * s2) / d;
