@@ -1220,9 +1220,9 @@
                             set_str +=
                                 assign +
                                 "circle(" +
-                                step.dest_sub_ids[0] +
+                                (!JXG.exists(step.args.center_existing) || !step.args.center_existing ? step.dest_sub_ids[0] : step.src_ids[0]) +
                                 ", " +
-                                step.src_ids[0] +
+                                step.src_ids[1] +
                                 ") <<" +
                                 attrid;
                             set_str +=
@@ -1238,12 +1238,10 @@
                                 "return !(" + step.dest_id + ".fillColor == 'transparent' || " + step.dest_id + ".fillColor == 'none' || " + step.dest_id + ".fillOpacity == 0); " +
                                 "}; "
 
-                            reset_str =
-                                "remove(" +
-                                step.dest_id +
-                                "); remove(" +
-                                step.dest_sub_ids[0] +
-                                "); ";
+                            reset_str = "remove(" + step.dest_id + "); ";
+                            if (!JXG.exists(step.args.center_existing) || !step.args.center_existing) {
+                                reset_str += "remove(" + step.dest_sub_ids[0] + "); ";
+                            }
                         } else if (step.args.create_by_radius) {
                             set_str = "";
                             if (
@@ -1276,7 +1274,7 @@
                                 set_str +=
                                     assign +
                                     "circle('" +
-                                    step.dest_sub_ids[0] +
+                                    (!JXG.exists(step.args.center_existing) || !step.args.center_existing ? step.dest_sub_ids[0] : step.src_ids[0]) +
                                     "', " +
                                     pn(step.args.r) +
                                     ") <<" +
@@ -1285,7 +1283,7 @@
                                 set_str +=
                                     assign +
                                     "circle('" +
-                                    step.dest_sub_ids[0] +
+                                    (!JXG.exists(step.args.center_existing) || !step.args.center_existing ? step.dest_sub_ids[0] : step.src_ids[0]) +
                                     "', " +
                                     pn(step.args.radius) +
                                     ") <<" +
@@ -1303,12 +1301,10 @@
                                 "return !(" + step.dest_id + ".fillColor == 'transparent' || " + step.dest_id + ".fillColor == 'none' || " + step.dest_id + ".fillOpacity == 0); " +
                                 "}; "
 
-                            reset_str =
-                                "remove(" +
-                                step.dest_id +
-                                "); remove(" +
-                                step.dest_sub_ids[0] +
-                                "); ";
+                            reset_str = "remove(" + step.dest_id + "); ";
+                            if (!JXG.exists(step.args.center_existing) || !step.args.center_existing) {
+                                reset_str += "remove(" + step.dest_sub_ids[0] + "); ";
+                            }
                         } else {
                             if (step.src_ids.length === 2) {
                                 set_str =
@@ -1341,12 +1337,10 @@
                                     JXG.Options.elements.snapToPoints +
                                     ">>;";
 
-                                reset_str =
-                                    "remove(" +
-                                    step.dest_id +
-                                    "); remove(" +
-                                    step.dest_sub_ids[0] +
-                                    "); ";
+                                reset_str = "remove(" + step.dest_id + "); ";
+                                if (!JXG.exists(step.args.center_existing) || !step.args.center_existing) {
+                                    reset_str += "remove(" + step.dest_sub_ids[0] + "); ";
+                                }
                             } else {
                                 set_str =
                                     assign +
@@ -1372,12 +1366,10 @@
                                     JXG.Options.elements.snapToPoints +
                                     ">>; ";
 
-                                reset_str =
-                                    "remove(" +
-                                    step.dest_id +
-                                    "); remove(" +
-                                    step.dest_sub_ids[0] +
-                                    "); ";
+                                reset_str = "remove(" + step.dest_id + "); ";
+                                if (!JXG.exists(step.args.center_existing) || !step.args.center_existing) {
+                                    reset_str += "remove(" + step.dest_sub_ids[0] + "); ";
+                                }
                             }
                         }
                         break;
