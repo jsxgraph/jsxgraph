@@ -2095,22 +2095,32 @@
 
                         // sector
                         set_str += "sector(" + step.src_ids.join(", ") + ") ";
-                        set_str += "<<" + attrid + " name: '', fillOpacity: " + JXG.Options.opacityLevel + ", hasInnerPoints: true, arc: <<id: '" + pid2 + "', priv:true>> >>; ";
+                        set_str += "<<" + attrid + " name: '', fillOpacity: " + JXG.Options.opacityLevel + ", hasInnerPoints: true, arc: <<id: '" + pid2 + "'>> >>; ";
                         set_str += pid1 + ".hasInnerPoints = function() { " +
                             "return !(" + pid1 + ".fillColor == 'transparent' || " + pid1 + ".fillColor == 'none' || " + pid1 + ".fillOpacity == 0); " +
                             "}; ";
+                        set_str += pid1 + ".arc.name = ''; ";
 
                         // glider
                         set_str += "glider(function () { return " + step.src_ids[2] + ".X(); }, function () { return " + step.src_ids[2] + ".Y(); }, " + pid2 + ") ";
-                        set_str += "<<id: '" + pid3 + "', name:'', parents: ['" + pid1 + "', '" + pid2 + "', '" + step.src_ids[2] + "'], priv:true>>; ";
+                        set_str += "<<id: '" + pid3 + "', name:'', parents: ['" + pid1 + "', '" + pid2 + "', '" + step.src_ids[2] + "'], isPartOfSector:true, " +
+                            "strokeWidth: " + JXG.Options.intersection.strokeWidth + ", " +
+                            "strokeColor: \'" + JXG.Options.intersection.strokeColor + "\', " +
+                            "fillColor: \'" + JXG.Options.intersection.fillColor + "\', " +
+                            "fillOpacity: " + JXG.Options.intersection.fillOpacity + ", " +
+                            "highlightStrokeWidth: " + JXG.Options.intersection.highlightStrokeWidth + ", " +
+                            "highlightStrokeColor: \'" + JXG.Options.intersection.highlightStrokeColor + "\', " +
+                            "highlightFillColor: \'" + JXG.Options.intersection.highlightFillColor + "\', " +
+                            "highlightFillOpacity: " + JXG.Options.intersection.highlightFillOpacity +
+                            ">>; ";
 
                         // segment 1 (mid - radiuspoint)
                         set_str += "segment(" + step.src_ids[0] + ", " + step.src_ids[1] + ") ";
-                        set_str += "<<id: '" + pid4 + "', name:'', parents: ['" + pid1 + "', '" + step.src_ids[0] + "', '" + step.src_ids[1] + "'], priv:true>>; ";
+                        set_str += "<<id: '" + pid4 + "', name:'', fixed:true, parents: ['" + pid1 + "', '" + step.src_ids[0] + "', '" + step.src_ids[1] + "'], isPartOfSector:true>>; ";
 
                         // segment 2 (mid - glider)
                         set_str += "segment(" + step.src_ids[0] + ", " + pid3 + ") ";
-                        set_str += "<<id: '" + pid5 + "', name:'', parents: ['" + pid1 + "', '" + step.src_ids[0] + "', '" + pid3 + "'], priv:true>>; ";
+                        set_str += "<<id: '" + pid5 + "', name:'', fixed:true, parents: ['" + pid1 + "', '" + step.src_ids[0] + "', '" + pid3 + "'], isPartOfSector:true>>; ";
 
                         reset_str = "";
                         reset_str += "remove(" + pid3 + "); ";
