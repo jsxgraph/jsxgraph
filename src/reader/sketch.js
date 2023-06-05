@@ -2095,11 +2095,11 @@
                         set_str = assign;
 
                         // ids
-                        pid1 = step.dest_id;                                      // id of sector
-                        pid2 = step.dest_sub_ids[0];                              // id of arc
-                        pid3 = pid1 + (step.args.suffix_glider ?? "_glider");     // id of glider
-                        pid4 = pid1 + (step.args.suffix_segment1 ?? "_segment1"); // id of segment 1 (mid - radiuspoint)
-                        pid5 = pid1 + (step.args.suffix_segment2 ?? "_segment2"); // id of segment 2 (mid - glider)
+                        pid1 = step.dest_id;         // id of sector
+                        pid2 = step.dest_sub_ids[0]; // id of arc
+                        pid3 = pid1 + "_glider";     // id of glider
+                        pid4 = pid1 + "_segment1";   // id of segment 1 (mid - radiuspoint)
+                        pid5 = pid1 + "_segment2";   // id of segment 2 (mid - glider)
 
                         // sector
                         set_str += "sector(" + step.src_ids.join(", ") + ") ";
@@ -2185,7 +2185,7 @@
                         set_str = assign + "slopetriangle(" + step.src_ids.join(", ") + ") <<";
                         set_str += attrid + " name: '',";
                         set_str +=
-                            "borders:   <<ids: ['" +
+                            "borders: <<ids: ['" +
                             step.dest_sub_ids[4] +
                             "', '" +
                             step.dest_sub_ids[5] +
@@ -2197,15 +2197,15 @@
                             step.dest_sub_ids[0] +
                             "', name: '', priv: true >>, ";
                         set_str +=
-                            "baseline:  <<id: '" +
+                            "baseline: <<id: '" +
                             step.dest_sub_ids[1] +
                             "', name: '', priv: true >>,";
                         set_str +=
-                            "glider:    <<id: '" +
+                            "glider: <<id: '" +
                             step.dest_sub_ids[2] +
                             "', name: '', priv: false >>, ";
                         set_str +=
-                            "toppoint:  <<id: '" +
+                            "toppoint: <<id: '" +
                             step.dest_sub_ids[3] +
                             "', name: '', priv: false >>";
                         if (step.dest_sub_ids.length === 8) {
