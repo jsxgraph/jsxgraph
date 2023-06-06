@@ -145,7 +145,7 @@
                     le,
                     x,
                     y,
-                    key,
+                    key, val,
                     copy_log = [],
                     set_str = "",
                     reset_str = "",
@@ -351,7 +351,13 @@
                                 } else {
                                     set_str += ', name: ""';
                                 }
-                                set_str += ", color: '" + step.args.strokeColor + "'";
+                                for (key in board.options.reflectionAttribs.point) {
+                                    if (!board.options.reflectionAttribs.point.hasOwnProperty(key)) continue;
+                                    val = board.options.reflectionAttribs.point[key];
+                                    if (JXG.isString(val))
+                                        val = "'" + val + "'";
+                                    set_str += ", " + key + ": " + val;
+                                }
                                 set_str += ", snaptogrid: " + JXG.Options.elements.snapToGrid;
                                 set_str +=
                                     ", snaptopoints: " +
@@ -372,23 +378,37 @@
                             }
 
                             set_str += ", names: [" + x.join() + "]";
-                            set_str += ">>, " + attrid + " fillOpacity: ";
-                            set_str += step.args.opacity + ", name: '' ";
-                            /* set_str +=
-                             ", hasInnerPoints_Org: " + JXG.Options.polygon.hasInnerPoints; */
-                            set_str +=
-                                ", hasInnerPoints: " + JXG.Options.polygon.hasInnerPoints;
+                            for (key in board.options.reflectionAttribs.stroke) {
+                                if (!board.options.reflectionAttribs.stroke.hasOwnProperty(key)) continue;
+                                val = board.options.reflectionAttribs.stroke[key];
+                                if (JXG.isString(val))
+                                    val = "'" + val + "'";
+                                set_str += ", " + key + ": " + val;
+                            }
+                            set_str += ">>, " + attrid + " hasInnerPoints: " + JXG.Options.polygon.hasInnerPoints;
                             if (step.args.name !== "") {
                                 set_str += ', name: "' + step.args.name + '"';
                                 set_str += ", withLabel: true";
                             }
-                            set_str += ", fillColor: '" + step.args.fillColor + "'";
+                            if (!step.args.isEmpty)
+                                for (key in board.options.reflectionAttribs.fill) {
+                                    if (!board.options.reflectionAttribs.fill.hasOwnProperty(key)) continue;
+                                    val = board.options.reflectionAttribs.fill[key];
+                                    if (JXG.isString(val))
+                                        val = "'" + val + "'";
+                                    set_str += ", " + key + ": " + val;
+                                }
+                            else
+                                set_str += ", fillColor: 'transparent'";
                             set_str += ", snaptogrid: " + JXG.Options.elements.snapToGrid;
                             set_str +=
                                 ", snaptopoints: " + JXG.Options.elements.snapToPoints + ">>; ";
                             set_str += step.dest_id + ".hasInnerPoints = function() { " +
                                 "return !(" + step.dest_id + ".fillColor == 'transparent' || " + step.dest_id + ".fillColor == 'none' || " + step.dest_id + ".fillOpacity == 0); " +
                                 "}; "
+
+                            ///////////////
+
                         } else if (step.args.type === "line" || step.args.type === "vector") {
                             set_str = "";
                             el = step.src_ids[step.src_ids.length - 1];
@@ -408,7 +428,13 @@
                                 } else {
                                     set_str += ', name: ""';
                                 }
-                                set_str += ", color: '" + step.args.strokeColor + "'";
+                                for (key in board.options.reflectionAttribs.point) {
+                                    if (!board.options.reflectionAttribs.point.hasOwnProperty(key)) continue;
+                                    val = board.options.reflectionAttribs.point[key];
+                                    if (JXG.isString(val))
+                                        val = "'" + val + "'";
+                                    set_str += ", " + key + ": " + val;
+                                }
                                 set_str += ", snaptogrid: " + JXG.Options.elements.snapToGrid;
                                 set_str +=
                                     ", snaptopoints: " +
@@ -434,22 +460,34 @@
                                     ") ";
                             }
                             set_str += "<<";
-                            set_str += attrid;
-                            set_str += "strokeColor: '" + step.args.strokeColor + "'";
-                            set_str += ", opacity: '" + step.args.opacity + "'";
-                            set_str += ', name: "' + step.args.name + '"';
-                            set_str += ', id: "' + step.dest_id + '"';
-                            if (JXG.exists(step.args.attr)) {
-                                for (key in step.args.attr)
-                                    if (step.args.attr.hasOwnProperty(key)) {
-                                        set_str += ", " + key + ": " + step.args.attr[key] + "";
-                                    }
+                            set_str += attrid + ' name: "' + step.args.name + '"';
+                            for (key in board.options.reflectionAttribs.stroke) {
+                                if (!board.options.reflectionAttribs.stroke.hasOwnProperty(key)) continue;
+                                val = board.options.reflectionAttribs.stroke[key];
+                                if (JXG.isString(val))
+                                    val = "'" + val + "'";
+                                set_str += ", " + key + ": " + val;
                             }
+                            if (step.args.type === "line")
+                                if (JXG.exists(step.args.attr)) {
+                                    set_str += ", firstArrow: " + step.args.attr.firstArrow;
+                                    set_str += ", lastArrow: " + step.args.attr.lastArrow;
+                                    set_str += ", straightFirst: " + step.args.attr.straightFirst;
+                                    set_str += ", straightLast: " + step.args.attr.straightLast;
+                                } else {
+                                    set_str += ", firstArrow: " + step.args.firstArrow;
+                                    set_str += ", lastArrow: " + step.args.lastArrow;
+                                    set_str += ", straightFirst: " + step.args.straightFirst;
+                                    set_str += ", straightLast: " + step.args.straightLast;
+                                }
 
                             if (step.args.name !== "") {
                                 set_str += ", withLabel: true";
                             }
                             set_str += ">>; ";
+
+                            ///////////////
+
                         } else if (step.args.type === "circle") {
                             set_str +=
                                 assign +
@@ -459,17 +497,24 @@
                                 step.src_ids[2] +
                                 ") ";
                             set_str += "<<";
-                            set_str += attrid;
-                            set_str += "strokeColor: '" + step.args.strokeColor + "'";
-                            set_str += ", opacity: '" + step.args.opacity + "'";
-                            set_str += ', name: "' + step.args.name + '"';
-                            set_str += ', id: "' + step.dest_id + '"';
-                            if (JXG.exists(step.args.attr)) {
-                                for (key in step.args.attr)
-                                    if (step.args.attr.hasOwnProperty(key)) {
-                                        set_str += ", " + key + ": " + step.args.attr[key] + "";
-                                    }
+                            set_str += attrid + ' name: "' + step.args.name + '"';
+                            for (key in board.options.reflectionAttribs.stroke) {
+                                if (!board.options.reflectionAttribs.stroke.hasOwnProperty(key)) continue;
+                                val = board.options.reflectionAttribs.stroke[key];
+                                if (JXG.isString(val))
+                                    val = "'" + val + "'";
+                                set_str += ", " + key + ": " + val;
                             }
+                            if (!step.args.isEmpty)
+                                for (key in board.options.reflectionAttribs.fill) {
+                                    if (!board.options.reflectionAttribs.fill.hasOwnProperty(key)) continue;
+                                    val = board.options.reflectionAttribs.fill[key];
+                                    if (JXG.isString(val))
+                                        val = "'" + val + "'";
+                                    set_str += ", " + key + ": " + val;
+                                }
+                            else
+                                set_str += ", fillColor: 'transparent'";
                             if (step.args.name !== "") {
                                 set_str += ", withLabel: true";
                             }
@@ -480,7 +525,13 @@
                             } else {
                                 set_str += ', name: ""';
                             }
-                            set_str += ", color: '" + step.args.strokeColor + "'";
+                            for (key in board.options.reflectionAttribs.point) {
+                                if (!board.options.reflectionAttribs.point.hasOwnProperty(key)) continue;
+                                val = board.options.reflectionAttribs.point[key];
+                                if (JXG.isString(val))
+                                    val = "'" + val + "'";
+                                set_str += ", " + key + ": " + val;
+                            }
                             set_str += ", snaptogrid: " + JXG.Options.elements.snapToGrid;
                             set_str +=
                                 ", snaptopoints: " + JXG.Options.elements.snapToPoints + ">>";
@@ -488,6 +539,33 @@
                             set_str += step.dest_id + ".hasInnerPoints = function() { " +
                                 "return !(" + step.dest_id + ".fillColor == 'transparent' || " + step.dest_id + ".fillColor == 'none' || " + step.dest_id + ".fillOpacity == 0); " +
                                 "}; "
+
+                            ///////////////
+
+                        } else if (step.args.type === "point") {
+                            set_str =
+                                assign +
+                                "reflection(" +
+                                step.src_ids[0] +
+                                ", " +
+                                step.src_ids[1] +
+                                ")";
+                            set_str += "<<" + attrid + ' name: "' + step.args.name + '"';
+                            for (key in board.options.reflectionAttribs.point) {
+                                if (!board.options.reflectionAttribs.point.hasOwnProperty(key)) continue;
+                                val = board.options.reflectionAttribs.point[key];
+                                if (JXG.isString(val))
+                                    val = "'" + val + "'";
+                                set_str += ", " + key + ": " + val;
+                            }
+
+                            if (step.args.name !== "") {
+                                set_str += ", withLabel: true";
+                            }
+                            set_str += ">>; ";
+
+                            ///////////////
+
                         } else {
                             set_str =
                                 assign +
@@ -495,21 +573,25 @@
                                 step.src_ids[0] +
                                 ", " +
                                 step.src_ids[1] +
-                                ") <<" +
-                                attrid;
-                            set_str += "fillColor: '" + step.args.fillColor + "'";
-                            if (JXG.exists(step.args.strokeColor)) {
-                                set_str += ", strokeColor: '" + step.args.strokeColor + "'";
-                                set_str += ", opacity: '" + step.args.opacity + "'";
+                                ")";
+                            set_str += "<<" + attrid + ' name: "' + step.args.name + '"';
+                            for (key in board.options.reflectionAttribs.stroke) {
+                                if (!board.options.reflectionAttribs.stroke.hasOwnProperty(key)) continue;
+                                val = board.options.reflectionAttribs.stroke[key];
+                                if (JXG.isString(val))
+                                    val = "'" + val + "'";
+                                set_str += ", " + key + ": " + val;
                             }
-                            set_str += ', name: "' + step.args.name + '"';
-                            set_str += ', id: "' + step.dest_id + '"';
-                            if (JXG.exists(step.args.attr)) {
-                                for (key in step.args.attr)
-                                    if (step.args.attr.hasOwnProperty(key)) {
-                                        set_str += ", " + key + ": " + step.args.attr[key] + "";
-                                    }
-                            }
+                            if (!step.args.isEmpty)
+                                for (key in board.options.reflectionAttribs.fill) {
+                                    if (!board.options.reflectionAttribs.fill.hasOwnProperty(key)) continue;
+                                    val = board.options.reflectionAttribs.fill[key];
+                                    if (JXG.isString(val))
+                                        val = "'" + val + "'";
+                                    set_str += ", " + key + ": " + val;
+                                }
+                            else
+                                set_str += ", fillColor: 'transparent'";
 
                             if (step.args.name !== "") {
                                 set_str += ", withLabel: true";
