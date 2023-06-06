@@ -2087,15 +2087,26 @@
                         set_str = assign;
 
                         // ids
-                        pid1 = step.dest_id;         // id of sector
-                        pid2 = step.dest_sub_ids[0]; // id of arc
-                        pid3 = pid1 + "_glider";     // id of glider
-                        pid4 = pid1 + "_segment1";   // id of segment 1 (mid - radiuspoint)
-                        pid5 = pid1 + "_segment2";   // id of segment 2 (mid - glider)
+                        pid1 = step.dest_id;                  // id of sector
+                        pid2 = step.dest_sub_ids[0];          // id of arc
+                        if (JXG.exists(step.dest_sub_ids[1])) // id of glider
+                            pid3 = step.dest_sub_ids[1];
+                        else
+                            pid3 = pid1 + "_glider";
+                        if (JXG.exists(step.dest_sub_ids[2])) // id of segment 1 (mid - radiuspoint)
+                            pid4 = step.dest_sub_ids[2];
+                        else
+                            pid4 = pid1 + "_segment1";
+                        if (JXG.exists(step.dest_sub_ids[3])) // id of segment 2 (mid - glider)
+                            pid5 = step.dest_sub_ids[3];
+                        else
+                            pid5 = pid1 + "_segment2";
 
                         // sector
                         set_str += "sector(" + step.src_ids.join(", ") + ") ";
-                        set_str += "<<" + attrid + " name: '', fillOpacity: " + JXG.Options.opacityLevel + ", hasInnerPoints: true, arc: <<id: '" + pid2 + "'>> >>; ";
+                        set_str += "<<" + attrid + " name: '', fillOpacity: " + JXG.Options.opacityLevel + ", hasInnerPoints: true, arc: <<id: '" + pid2 + "'>>, "
+                        set_str += "idGlider: '" + pid3 + "', idSegment1: '" + pid4 + "', idSegment2: '" + pid5 + "'"
+                        set_str += ">>; ";
                         set_str += pid1 + ".hasInnerPoints = function() { " +
                             "return !(" + pid1 + ".fillColor == 'transparent' || " + pid1 + ".fillColor == 'none' || " + pid1 + ".fillOpacity == 0); " +
                             "}; ";
