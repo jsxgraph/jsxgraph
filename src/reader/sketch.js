@@ -254,49 +254,112 @@
                             "', fixed: true, priv: true, visible: false>>; ";
 
                         // x-axis
+                        set_str += step.args.name[3] + " = axis(" + step.args.name[0] + ", " + step.args.name[1] + ") ";
                         set_str +=
-                            step.args.name[3] +
-                            " = axis(" +
-                            step.args.name[0] +
-                            ", " +
-                            step.args.name[1] +
-                            ") ";
-                        set_str +=
-                            "<<id: '" +
-                            step.dest_sub_ids[3] +
-                            "', name: '" +
-                            step.args.name[3] +
-                            "', ticks: ";
-                        set_str +=
-                            "<<minorHeight:0, majorHeight:10, insertTicks: true, ticksDistance: 1, drawLabels: true";
-                        set_str +=
-                            ', label: <<offset: [-4, -16], parse: false, display: "internal">>';
-                        set_str += ", drawZero: false>>>>; ";
+                            "<<id: '" + step.dest_sub_ids[3] + "', name: '" + step.args.name[3] + "', ticks: ";
+                        set_str += '<<' +
+                            'label: <<offset: [-4, -16], parse: false, display: "internal">>, ' +
+                            'drawLabels: true, ' +
+                            'drawZero: false' +
+                            '>> ';
+                        set_str += '>>; ';
 
                         // y-axis
+                        set_str += step.args.name[4] + " = axis(" + step.args.name[0] + ", " + step.args.name[2] + ") ";
                         set_str +=
-                            step.args.name[4] +
-                            " = axis(" +
-                            step.args.name[0] +
-                            ", " +
-                            step.args.name[2] +
-                            ") ";
-                        set_str +=
-                            "<<id: '" +
-                            step.dest_sub_ids[4] +
-                            "', name: '" +
-                            step.args.name[4] +
-                            "', ticks: ";
-                        set_str +=
-                            "<<minorHeight:0, majorHeight:10, insertTicks: true, ticksDistance: 1, drawLabels: true";
-                        set_str +=
-                            ', label: <<offset: [10, 0], parse: false, display: "internal">>';
-                        set_str += ", drawZero: false>>>>; ";
+                            "<<id: '" + step.dest_sub_ids[4] + "', name: '" + step.args.name[4] + "', ticks: ";
+                        set_str += '<<' +
+                            'label: <<offset: [10, 0], parse: false, display: "internal">>, ' +
+                            'drawLabels: true, ' +
+                            'drawZero: false' +
+                            '>> ';
+                        set_str += '>>; ';
 
+                        // automatics x-axis
+                        set_str += step.dest_sub_ids[3] + '.ticks.drawZero = function() { ' +
+                            'return !' + step.dest_sub_ids[4] + '.visible; ' +
+                            '}; ';
+                        set_str += step.dest_sub_ids[3] + '.ticks.drawLabels = function() { ' +
+                            'return ' + step.dest_sub_ids[3] + '.visible; ' +
+                            '}; ';
+                        set_str += step.dest_sub_ids[3] + '.ticks.strokeColor = function() { ' +
+                            'if(' + step.dest_sub_ids[3] + '.ticks.majorHeight >= 0) {' +
+                            'if(' + step.dest_sub_ids[3] + '.ticks.tickColor == "auto") {' +
+                            ' return ' + step.dest_sub_ids[3] + '.strokeColor; ' +
+                            '} else {' +
+                            ' return ' + step.dest_sub_ids[3] + '.ticks.tickColor; ' +
+                            '} ' +
+                            '} else {' +
+                            ' return ' + step.dest_sub_ids[3] + '.ticks.gridColor;' +
+                            '} ' +
+                            '}; ';
+                        set_str += step.dest_sub_ids[3] + '.ticks.strokeOpacity = function() { ' +
+                            'if(' + step.dest_sub_ids[3] + '.ticks.majorHeight >= 0) {' +
+                            'if(' + step.dest_sub_ids[3] + '.ticks.tickOpacity == "auto") {' +
+                            ' return ' + step.dest_sub_ids[3] + '.strokeOpacity; ' +
+                            '} else {' +
+                            ' return ' + step.dest_sub_ids[3] + '.ticks.tickOpacity; ' +
+                            '} ' +
+                            '} else {' +
+                            ' return ' + step.dest_sub_ids[3] + '.ticks.gridOpacity;' +
+                            '} ' +
+                            '}; ';
+                        set_str += step.dest_sub_ids[3] + '.ticks.strokeWidth = function() { ' +
+                            'if(' + step.dest_sub_ids[3] + '.ticks.majorHeight >= 0) {' +
+                            'if(' + step.dest_sub_ids[3] + '.ticks.tickWidth == "auto") {' +
+                            ' return ' + step.dest_sub_ids[3] + '.strokeWidth; ' +
+                            '} else {' +
+                            ' return ' + step.dest_sub_ids[3] + '.ticks.tickWidth; ' +
+                            '} ' +
+                            '} else {' +
+                            ' return ' + step.dest_sub_ids[3] + '.ticks.gridWidth;' +
+                            '} ' +
+                            '}; ';
+
+                        // automatics y-axis
+                        set_str += step.dest_sub_ids[4] + '.ticks.drawZero = function() { ' +
+                            'return !' + step.dest_sub_ids[3] + '.visible; ' +
+                            '}; ';
+                        set_str += step.dest_sub_ids[4] + '.ticks.drawLabels = function() { ' +
+                            'return ' + step.dest_sub_ids[4] + '.visible; ' +
+                            '}; ';
+                        set_str += step.dest_sub_ids[4] + '.ticks.strokeColor = function() { ' +
+                            'if(' + step.dest_sub_ids[4] + '.ticks.majorHeight >= 0) {' +
+                            'if(' + step.dest_sub_ids[4] + '.ticks.tickColor == "auto") {' +
+                            ' return ' + step.dest_sub_ids[4] + '.strokeColor; ' +
+                            '} else {' +
+                            ' return ' + step.dest_sub_ids[4] + '.ticks.tickColor; ' +
+                            '} ' +
+                            '} else {' +
+                            ' return ' + step.dest_sub_ids[4] + '.ticks.gridColor;' +
+                            '} ' +
+                            '}; ';
+                        set_str += step.dest_sub_ids[4] + '.ticks.strokeOpacity = function() { ' +
+                            'if(' + step.dest_sub_ids[4] + '.ticks.majorHeight >= 0) {' +
+                            'if(' + step.dest_sub_ids[4] + '.ticks.tickOpacity == "auto") {' +
+                            ' return ' + step.dest_sub_ids[4] + '.strokeOpacity; ' +
+                            '} else {' +
+                            ' return ' + step.dest_sub_ids[4] + '.ticks.tickOpacity; ' +
+                            '} ' +
+                            '} else {' +
+                            ' return ' + step.dest_sub_ids[4] + '.ticks.gridOpacity;' +
+                            '} ' +
+                            '}; ';
+                        set_str += step.dest_sub_ids[4] + '.ticks.strokeWidth = function() { ' +
+                            'if(' + step.dest_sub_ids[4] + '.ticks.majorHeight >= 0) {' +
+                            'if(' + step.dest_sub_ids[4] + '.ticks.tickWidth == "auto") {' +
+                            ' return ' + step.dest_sub_ids[4] + '.strokeWidth; ' +
+                            '} else {' +
+                            ' return ' + step.dest_sub_ids[4] + '.ticks.tickWidth; ' +
+                            '} ' +
+                            '} else {' +
+                            ' return ' + step.dest_sub_ids[4] + '.ticks.gridWidth;' +
+                            '} ' +
+                            '}; ';
+
+                        // hide
                         set_str += step.dest_sub_ids[3] + ".visible = false; ";
                         set_str += step.dest_sub_ids[4] + ".visible = false; ";
-
-                        // set_str += 'remove(jxgBoard1_infobox); ';
 
                         reset_str =
                             "remove(" +
