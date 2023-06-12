@@ -276,6 +276,7 @@
                         set_str += '>>; ';
 
                         // automatics x-axis
+                        set_str += step.dest_sub_ids[3] + '.ticks.visible = function() { return ' + step.dest_sub_ids[3] + '.visible; }; ';
                         set_str += step.dest_sub_ids[3] + '.ticks.drawZero = function() { ' +
                             'return !' + step.dest_sub_ids[4] + '.visible; ' +
                             '}; ';
@@ -307,8 +308,12 @@
                         set_str += step.dest_sub_ids[3] + '.ticks.strokeWidth = function() { ' +
                             'if(' + step.dest_sub_ids[3] + '.ticks.majorHeight >= 0) {' +
                             'if(' + step.dest_sub_ids[3] + '.ticks.tickWidth == "auto") {' +
+                            step.dest_sub_ids[3] + '.ticks.minorHeight = ' + JXG.Options.axis.ticks.minorHeight + ' + 1*' + step.dest_sub_ids[3] + '.strokeWidth; ' +
+                            step.dest_sub_ids[3] + '.ticks.majorHeight = ' + JXG.Options.axis.ticks.majorHeight + ' + 2*' + step.dest_sub_ids[3] + '.strokeWidth; ' +
                             ' return ' + step.dest_sub_ids[3] + '.strokeWidth; ' +
                             '} else {' +
+                            step.dest_sub_ids[3] + '.ticks.minorHeight = ' + JXG.Options.axis.ticks.minorHeight + ' + 1*' + step.dest_sub_ids[3] + '.ticks.tickWidth; ' +
+                            step.dest_sub_ids[3] + '.ticks.majorHeight = ' + JXG.Options.axis.ticks.majorHeight + ' + 2*' + step.dest_sub_ids[3] + '.ticks.tickWidth; ' +
                             ' return ' + step.dest_sub_ids[3] + '.ticks.tickWidth; ' +
                             '} ' +
                             '} else {' +
@@ -317,6 +322,7 @@
                             '}; ';
 
                         // automatics y-axis
+                        set_str += step.dest_sub_ids[4] + '.ticks.visible = function() { return ' + step.dest_sub_ids[4] + '.visible; }; ';
                         set_str += step.dest_sub_ids[4] + '.ticks.drawZero = function() { ' +
                             'return !' + step.dest_sub_ids[3] + '.visible; ' +
                             '}; ';
@@ -348,8 +354,12 @@
                         set_str += step.dest_sub_ids[4] + '.ticks.strokeWidth = function() { ' +
                             'if(' + step.dest_sub_ids[4] + '.ticks.majorHeight >= 0) {' +
                             'if(' + step.dest_sub_ids[4] + '.ticks.tickWidth == "auto") {' +
+                            step.dest_sub_ids[4] + '.ticks.minorHeight = ' + JXG.Options.axis.ticks.minorHeight + ' + 1*' + step.dest_sub_ids[4] + '.strokeWidth; ' +
+                            step.dest_sub_ids[4] + '.ticks.majorHeight = ' + JXG.Options.axis.ticks.majorHeight + ' + 2*' + step.dest_sub_ids[4] + '.strokeWidth; ' +
                             ' return ' + step.dest_sub_ids[4] + '.strokeWidth; ' +
                             '} else {' +
+                            step.dest_sub_ids[4] + '.ticks.minorHeight = ' + JXG.Options.axis.ticks.minorHeight + ' + 1*' + step.dest_sub_ids[4] + '.ticks.tickWidth; ' +
+                            step.dest_sub_ids[4] + '.ticks.majorHeight = ' + JXG.Options.axis.ticks.majorHeight + ' + 2*' + step.dest_sub_ids[4] + '.ticks.tickWidth; ' +
                             ' return ' + step.dest_sub_ids[4] + '.ticks.tickWidth; ' +
                             '} ' +
                             '} else {' +
