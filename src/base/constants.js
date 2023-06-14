@@ -250,6 +250,7 @@ constants = /** @lends JXG */ {
     // space for 89 - 99
     GENTYPE_CTX_GRID_VISIBILITY: 100,
     GENTYPE_CTX_AXES_VISIBILITY: 101,
+    GENTYPE_CTX_AXES_SCALE: 102,
 };
 
 JXG.extendConstants(JXG, constants);
