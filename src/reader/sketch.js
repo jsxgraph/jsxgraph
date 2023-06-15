@@ -1352,7 +1352,7 @@
 
                         if (
                             step.args.create_by_additional_point ||
-                            /* backwards compatibility */ step.args.create_point
+                            step.args.create_point // backwards compatibility
                         ) {
                             if (
                                 !JXG.exists(step.args.center_existing) ||
@@ -1397,6 +1397,7 @@
                             if (!JXG.exists(step.args.center_existing) || !step.args.center_existing) {
                                 reset_str += "remove(" + step.dest_sub_ids[0] + "); ";
                             }
+
                         } else if (step.args.create_by_radius) {
                             set_str = "";
                             if (
@@ -1460,6 +1461,7 @@
                             if (!JXG.exists(step.args.center_existing) || !step.args.center_existing) {
                                 reset_str += "remove(" + step.dest_sub_ids[0] + "); ";
                             }
+
                         } else {
                             if (step.src_ids.length === 2) {
                                 set_str =
@@ -1509,9 +1511,17 @@
                                     ") <<center: <<id: '" +
                                     step.dest_sub_ids[0] +
                                     "', " +
-                                    withName;
+                                    withName+
+                                    " visible: true";
+                                for (key in board.options.sketchometry.circle3pointsCenter) {
+                                    if (!board.options.sketchometry.circle3pointsCenter.hasOwnProperty(key)) continue;
+                                    val = board.options.sketchometry.circle3pointsCenter[key];
+                                    if (JXG.isString(val))
+                                        val = "'" + val + "'";
+                                    set_str += ", " + key + ": " + val;
+                                }
                                 set_str +=
-                                    " visible: true>>, " +
+                                    ">>, " +
                                     attrid +
                                     "name: '', fillOpacity: " +
                                     JXG.Options.opacityLevel +
