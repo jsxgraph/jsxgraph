@@ -3545,9 +3545,9 @@ JXG.Options = {
          * @visprop
          */
 
-        attractors: [],
         fixed: true,
-        visible: true
+        visible: true,
+        needsRegularUpdate: false
 
         /**#@-*/
     },
@@ -4421,8 +4421,8 @@ JXG.Options = {
         snapSizeY: 1,
 
         /**
-         * If set to true and {@link Line#firstArrow} is set to true, the arrow head will just touch
-         * the circle line of the start point of the line.
+         * If set to true, {@link Line#firstArrow} is set to true and the point is visible, 
+         * the arrow head will just touch the circle line of the start point of the line.
          *
          * @see Line#firstArrow
          * @type Boolean
@@ -4432,8 +4432,8 @@ JXG.Options = {
         touchFirstPoint: false,
 
         /**
-         * If set to true and {@link Line#lastArrow} is set to true, the arrow head will just touch
-         * the circle line of the start point of the line.
+         * If set to true, {@link Line#lastArrow} is set to true and the point is visible, 
+         * the arrow head will just touch the circle line of the start point of the line.
          * @see Line#firstArrow
          * @type Boolean
          * @name Line#touchLastPoint

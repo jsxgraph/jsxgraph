@@ -240,7 +240,7 @@ JXG.extend(
         // Update 3D-to-2D transformation matrix with the actual
         // elevation and azimuth angles.
 
-        var e, r, a, f, mat;
+        var e, r, a, f, mat, shift;
 
         if (
             !Type.exists(this.el_slide) ||
@@ -260,6 +260,17 @@ JXG.extend(
             [0, 0, 1]
         ];
 
+        // Rotate the scenery around the center of the box,
+        // not around the origin
+        shift = [
+            [1, 0, 0, 0],
+            [-0.5 * (this.bbox3D[0][0] + this.bbox3D[0][1]), 1, 0, 0],
+            [-0.5 * (this.bbox3D[1][0] + this.bbox3D[1][1]), 0, 1, 0],
+            [-0.5 * (this.bbox3D[2][0] + this.bbox3D[2][1]), 0, 0, 1]
+        ];
+
+        // matrix3D projects homogeneous 3D coords in the View3D
+        // to homogeneous 2D coordinates in the board
         this.matrix3D = [
             [1, 0, 0, 0],
             [0, 1, 0, 0],
@@ -272,11 +283,19 @@ JXG.extend(
         this.matrix3D[2][2] = f * Math.cos(a);
         this.matrix3D[2][3] = Math.cos(e);
 
+        // Add a second transformation to scale and shift the projection
+        // on the board
         mat[1][1] = this.size[0] / (this.bbox3D[0][1] - this.bbox3D[0][0]); // w / d_x
         mat[2][2] = this.size[1] / (this.bbox3D[1][1] - this.bbox3D[1][0]); // h / d_y
-        mat[1][0] = this.llftCorner[0] - mat[1][1] * this.bbox3D[0][0]; // llft_x
-        mat[2][0] = this.llftCorner[1] - mat[2][2] * this.bbox3D[1][0]; // llft_y
-        this.matrix3D = Mat.matMatMult(mat, this.matrix3D);
+        mat[1][0] = this.llftCorner[0] + mat[1][1] * 0.5 * (this.bbox3D[0][1] - this.bbox3D[0][0]); // llft_x
+        mat[2][0] = this.llftCorner[1] + mat[2][2] * 0.5 * (this.bbox3D[1][1] - this.bbox3D[1][0]); // llft_y
+
+        // Combine the two projections
+        this.matrix3D = Mat.matMatMult(mat,
+            // Mat.matMatMult(shift2,
+                Mat.matMatMult(this.matrix3D, shift)
+            //)
+        );
 
         return this;
     },
@@ -732,12 +751,8 @@ JXG.extend(
  *
  */
 JXG.createView3D = function (board, parents, attributes) {
-    var view,
-        attr,
-        x,
-        y,
-        w,
-        h,
+    var view, attr,
+        x, y, w, h,
         coords = parents[0], // llft corner
         size = parents[1]; // [w, h]
 
