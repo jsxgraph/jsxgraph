@@ -251,6 +251,7 @@ constants = /** @lends JXG */ {
     GENTYPE_CTX_GRID_VISIBILITY: 100,
     GENTYPE_CTX_AXES_VISIBILITY: 101,
     GENTYPE_CTX_AXES_SCALE: 102,
+    GENTYPE_CTX_BACKGROUND: 103,
 };
 
 JXG.extendConstants(JXG, constants);
