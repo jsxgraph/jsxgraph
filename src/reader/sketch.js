@@ -211,7 +211,7 @@
 
                 switch (step.type) {
                     case JXG.GENTYPE_TRUNCATE:
-                        if (!JXG.exists(step.args.s)) {
+                        if (!JXG.exists(step.args) || !JXG.exists(step.args.s)) {
                             set_str = "trunclen = " + JXG.Options.trunclen + "; ";
                         } else {
                             set_str = "trunclen = " + step.args.s + "; ";
@@ -2036,12 +2036,6 @@
                             " ], [ " +
                             step.args.p2 +
                             " ]) <<";
-                        /*
-                         set_str += attrid + 'name: \'\', point1: <<id: \'' + step.dest_sub_ids[0] + '\', snaptogrid: '
-                         + JXG.Options.elements.snapToGrid + ', snaptopoints: ' + JXG.Options.elements.snapToPoints + '>>, '
-                         + 'point2: <<id: \'' + step.dest_sub_ids[1] + '\''+ ', snaptogrid: '
-                         + JXG.Options.elements.snapToGrid + ', snaptopoints: ' + JXG.Options.elements.snapToPoints + '>> >>; ';
-                         */
                         set_str +=
                             attrid +
                             "name: ''" +
