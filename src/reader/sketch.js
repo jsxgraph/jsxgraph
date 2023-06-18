@@ -211,7 +211,12 @@
 
                 switch (step.type) {
                     case JXG.GENTYPE_TRUNCATE:
-                        set_str = "trunclen = " + JXG.Options.trunclen + "; ";
+                        if (!JXG.exists(step.args.s)) {
+                            set_str = "trunclen = " + JXG.Options.trunclen + "; ";
+                        } else {
+                            set_str = "trunclen = " + step.args.s + "; ";
+                            reset_str = "trunclen = " + step.args.old + "; ";
+                        }
                         break;
 
                     case JXG.GENTYPE_JCODE:
@@ -1511,7 +1516,7 @@
                                     ") <<center: <<id: '" +
                                     step.dest_sub_ids[0] +
                                     "', " +
-                                    withName+
+                                    withName +
                                     " visible: true";
                                 for (key in board.options.sketchometry.circle3pointsCenter) {
                                     if (!board.options.sketchometry.circle3pointsCenter.hasOwnProperty(key)) continue;
