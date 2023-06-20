@@ -2279,6 +2279,7 @@
                         // glider
                         set_str += "glider(function () { return " + step.src_ids[2] + ".X(); }, function () { return " + step.src_ids[2] + ".Y(); }, " + pid2 + ") ";
                         set_str += "<<id: '" + pid3 + "', name:'', parents: ['" + pid1 + "', '" + pid2 + "', '" + step.src_ids[2] + "'], isPartOfSector:true, " +
+                            "layer: " + JXG.Options.intersection.layer + ", " +
                             "strokeWidth: " + JXG.Options.intersection.strokeWidth + ", " +
                             "strokeColor: \'" + JXG.Options.intersection.strokeColor + "\', " +
                             "fillColor: \'" + JXG.Options.intersection.fillColor + "\', " +
