@@ -186,10 +186,9 @@ JXG.createComb = function (board, parents, attributes) {
         );
     }
 
-    // attr = Type.copyAttributes(attributes, board.options, 'comb', 'curve');
-    attr = Type.copyAttributes(attributes, board.options, "comb");
-    Type.merge(attr, Type.copyAttributes(attributes, board.options, "comb", "curve"));
-    c = board.create("curve", [[0], [0]], attr);
+    attr = Type.copyAttributes(attributes, board.options, 'comb');
+    // Type.merge(attr, Type.copyAttributes(attributes, board.options, 'comb', 'curve'));
+    c = board.create('curve', [[0], [0]], attr);
 
     /**
      * @ignore
@@ -197,18 +196,10 @@ JXG.createComb = function (board, parents, attributes) {
     c.updateDataArray = function () {
         var s = 0,
             max_s = p1.Dist(p2),
-            cs,
-            sn,
-            dx,
-            dy,
-            x,
-            y,
-            f,
+            cs, sn, dx, dy, x, y, f,
             p1_inner = p1,
             p2_inner = p2,
-            ds,
-            angle,
-            width;
+            ds, angle, width;
 
         ds = Type.evaluate(c.visProp.frequency);
         angle = -Type.evaluate(c.visProp.angle);
