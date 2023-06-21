@@ -436,11 +436,7 @@
                                         val = "'" + val + "'";
                                     set_str += ", " + key + ": " + val;
                                 }
-                                set_str += ", snaptogrid: " + JXG.Options.elements.snapToGrid;
-                                set_str +=
-                                    ", snaptopoints: " +
-                                    JXG.Options.elements.snapToPoints +
-                                    ">>;\n";
+                                set_str += ">>;\n";
                             }
 
                             le = step.dest_sub_ids.length / 2;
@@ -478,9 +474,7 @@
                                 }
                             else
                                 set_str += ", fillColor: 'transparent'";
-                            set_str += ", snaptogrid: " + JXG.Options.elements.snapToGrid;
-                            set_str +=
-                                ", snaptopoints: " + JXG.Options.elements.snapToPoints + ">>; ";
+                            set_str += ">>; ";
                             set_str += step.dest_id + ".hasInnerPoints = function() { " +
                                 "return !(" + step.dest_id + ".fillColor == 'transparent' || " + step.dest_id + ".fillColor == 'none' || " + step.dest_id + ".fillOpacity == 0); " +
                                 "}; "
@@ -513,11 +507,7 @@
                                         val = "'" + val + "'";
                                     set_str += ", " + key + ": " + val;
                                 }
-                                set_str += ", snaptogrid: " + JXG.Options.elements.snapToGrid;
-                                set_str +=
-                                    ", snaptopoints: " +
-                                    JXG.Options.elements.snapToPoints +
-                                    ">>;\n";
+                                set_str += ">>;\n";
                             }
 
                             if (step.args.type === "vector") {
@@ -610,9 +600,7 @@
                                     val = "'" + val + "'";
                                 set_str += ", " + key + ": " + val;
                             }
-                            set_str += ", snaptogrid: " + JXG.Options.elements.snapToGrid;
-                            set_str +=
-                                ", snaptopoints: " + JXG.Options.elements.snapToPoints + ">>";
+                            set_str += ">>";
                             set_str += ">>; ";
                             set_str += step.dest_id + ".hasInnerPoints = function() { " +
                                 "return !(" + step.dest_id + ".fillColor == 'transparent' || " + step.dest_id + ".fillColor == 'none' || " + step.dest_id + ".fillOpacity == 0); " +
@@ -708,11 +696,7 @@
                                     set_str += ', name: ""';
                                 }
                                 set_str += ", color: '" + step.args.strokeColor + "'";
-                                set_str += ", snaptogrid: " + JXG.Options.elements.snapToGrid;
-                                set_str +=
-                                    ", snaptopoints: " +
-                                    JXG.Options.elements.snapToPoints +
-                                    ">>;\n";
+                                set_str += ">>;\n";
                             }
 
                             le = step.dest_sub_ids.length / 2;
@@ -738,9 +722,7 @@
                                 set_str += ", withLabel: true";
                             }
                             set_str += ", fillColor: '" + step.args.fillColor + "'";
-                            set_str += ", snaptogrid: " + JXG.Options.elements.snapToGrid;
-                            set_str +=
-                                ", snaptopoints: " + JXG.Options.elements.snapToPoints + ">>; ";
+                            set_str += ">>; ";
                             set_str += step.dest_id + ".hasInnerPoints = function() { " +
                                 "return !(" + step.dest_id + ".fillColor == 'transparent' || " + step.dest_id + ".fillColor == 'none' || " + step.dest_id + ".fillOpacity == 0); " +
                                 "}; "
@@ -764,11 +746,7 @@
                                     set_str += ', name: ""';
                                 }
                                 set_str += ", color: '" + step.args.strokeColor + "'";
-                                set_str += ", snaptogrid: " + JXG.Options.elements.snapToGrid;
-                                set_str +=
-                                    ", snaptopoints: " +
-                                    JXG.Options.elements.snapToPoints +
-                                    ">>;\n";
+                                set_str += ">>;\n";
                             }
 
                             if (step.args.type === "vector") {
@@ -836,9 +814,7 @@
                                 set_str += ', name: ""';
                             }
                             set_str += ", color: '" + step.args.strokeColor + "'";
-                            set_str += ", snaptogrid: " + JXG.Options.elements.snapToGrid;
-                            set_str +=
-                                ", snaptopoints: " + JXG.Options.elements.snapToPoints + ">>";
+                            set_str += ">>";
 
                             set_str += ">>; ";
                             set_str += step.dest_id + ".hasInnerPoints = function() { " +
@@ -1197,16 +1173,18 @@
                             ")" +
                             (options.useSymbols
                                 ? ""
-                                : " <<id: '" +
-                                step.dest_id +
-                                "'" +
-                                ", snaptogrid: " +
-                                JXG.Options.elements.snapToGrid +
-                                ", snaptopoints: " +
-                                JXG.Options.elements.snapToPoints +
+                                : " <<id: '" + step.dest_id + "'" +
+                                ", snapToGridIntern: " + JXG.Options.elements.snapToGrid +
+                                ", snapToPointsIntern: " + JXG.Options.elements.snapToPoints +
                                 (JXG.exists(step.args.name) ? ", name: '" + step.args.name + "'" : "") +
                                 ">>") +
                             "; ";
+                        set_str += step.dest_id + ".snapToGrid = function() { " +
+                            "return sketchoAttribute('snapToGridGlobal') ? sketchoAttribute('snapToGridGlobal') : " + step.dest_id + ".snapToGridIntern; " +
+                            "}; ";
+                        set_str += step.dest_id + ".snapToPoints = function() { " +
+                            "return sketchoAttribute('snapToPointsGlobal') ? sketchoAttribute('snapToPointsGlobal') : " + step.dest_id + ".snapToPointsIntern; " +
+                            "}; ";
 
                         reset_str = "remove(" + step.dest_id + "); ";
                         break;
@@ -1223,13 +1201,13 @@
                             set_str +=
                                 (options.useSymbols
                                     ? ""
-                                    : "<<id: '" +
-                                    step.dest_id +
-                                    "'" +
-                                    ", snaptogrid: false, snaptopoints: false" +
-                                    ", snaptopoints: " +
-                                    JXG.Options.elements.snapToPoints +
+                                    : "<<id: '" + step.dest_id + "'" +
+                                    ", snaptogrid: false" +
+                                    ", snapToPointsIntern: " + JXG.Options.elements.snapToPoints +
                                     ">>") + ";";
+                            set_str += step.dest_id + ".snapToPoints = function() { " +
+                                "return sketchoAttribute('snapToPointsGlobal') ? sketchoAttribute('snapToPointsGlobal') : " + step.dest_id + ".snapToPointsIntern; " +
+                                "}; ";
                         } else {
                             set_str =
                                 assign +
@@ -1240,14 +1218,17 @@
                             set_str +=
                                 ") <<" +
                                 attrid +
-                                "fillColor: '" +
-                                JXG.Options.glider.fillColor +
+                                "fillColor: '" + JXG.Options.glider.fillColor +
                                 "'";
                             set_str +=
-                                ", strokeColor: '" + JXG.Options.glider.strokeColor + "'";
-                            set_str += ", snapToGrid: false, snapToPoints: false";
-                            set_str += ">>; " + step.dest_id;
-                            set_str += ".glide(" + step.src_ids[0] + "); ";
+                                ", strokeColor: '" + JXG.Options.glider.strokeColor + "'" +
+                                ", snapToGrid: false" +
+                                ", snapToPointsIntern: " + JXG.Options.elements.snapToPoints;
+                            set_str += ">>; "
+                            set_str += step.dest_id + ".glide(" + step.src_ids[0] + "); ";
+                            set_str += step.dest_id + ".snapToPoints = function() { " +
+                                "return sketchoAttribute('snapToPointsGlobal') ? sketchoAttribute('snapToPointsGlobal') : " + step.dest_id + ".snapToPointsIntern; " +
+                                "}; ";
                         }
                         set_str += step.dest_id + ".onPolygon = " + !!step.args.onPolygon + ";";
 
@@ -1370,11 +1351,17 @@
                                     pn(step.args.usrCoords[2]) +
                                     ") ";
                                 set_str +=
-                                    "<<id: '" +
-                                    step.dest_sub_ids[0] +
-                                    "', " +
+                                    "<<id: '" +                                    step.dest_sub_ids[0] +                                    "', " +
                                     withName +
-                                    " visible: true, priv: false>>; ";
+                                    " snapToGridIntern: " + JXG.Options.elements.snapToGrid +
+                                    ", snapToPointsIntern: " + JXG.Options.elements.snapToPoints +
+                                    ", visible: true, priv: false>>; ";
+                                set_str += step.dest_sub_ids[0] + ".snapToGrid = function() { " +
+                                    "return sketchoAttribute('snapToGridGlobal') ? sketchoAttribute('snapToGridGlobal') : " + step.dest_sub_ids[0] + ".snapToGridIntern; " +
+                                    "}; ";
+                                set_str += step.dest_sub_ids[0] + ".snapToPoints = function() { " +
+                                    "return sketchoAttribute('snapToPointsGlobal') ? sketchoAttribute('snapToPointsGlobal') : " + step.dest_sub_ids[0] + ".snapToPointsIntern; " +
+                                    "}; ";
                             }
 
                             set_str +=
@@ -1386,12 +1373,7 @@
                                 ") <<" +
                                 attrid;
                             set_str +=
-                                "name: '', fillOpacity: " +
-                                JXG.Options.opacityLevel +
-                                ", snaptogrid: " +
-                                JXG.Options.elements.snapToGrid +
-                                ", snaptopoints: " +
-                                JXG.Options.elements.snapToPoints +
+                                "name: '', fillOpacity: " + JXG.Options.opacityLevel +
                                 ", hasInnerPoints: true" +
                                 ">>; ";
                             set_str += step.dest_id + ".hasInnerPoints = function() { " +
@@ -1428,7 +1410,15 @@
                                     step.dest_sub_ids[0] +
                                     "', " +
                                     withName +
-                                    " visible: true, priv: false>>; ";
+                                    " snapToGridIntern: " + JXG.Options.elements.snapToGrid +
+                                    ", snapToPointsIntern: " + JXG.Options.elements.snapToPoints +
+                                    ", visible: true, priv: false>>; ";
+                                set_str += step.dest_sub_ids[0]  + ".snapToGrid = function() { " +
+                                    "return sketchoAttribute('snapToGridGlobal') ? sketchoAttribute('snapToGridGlobal') : " + step.dest_sub_ids[0]  + ".snapToGridIntern; " +
+                                    "}; ";
+                                set_str += step.dest_sub_ids[0] + ".snapToPoints = function() { " +
+                                    "return sketchoAttribute('snapToPointsGlobal') ? sketchoAttribute('snapToPointsGlobal') : " + step.dest_sub_ids[0] + ".snapToPointsIntern; " +
+                                    "}; ";
                             }
 
                             if (JXG.exists(step.args.r))
@@ -1450,12 +1440,7 @@
                                     ") <<" +
                                     attrid;
                             set_str +=
-                                "name: '', fillOpacity: " +
-                                JXG.Options.opacityLevel +
-                                ", snaptogrid: " +
-                                JXG.Options.elements.snapToGrid +
-                                ", snaptopoints: " +
-                                JXG.Options.elements.snapToPoints +
+                                "name: '', fillOpacity: " + JXG.Options.opacityLevel +
                                 ", hasInnerPoints: true" +
                                 ">>; ";
                             set_str += step.dest_id + ".hasInnerPoints = function() { " +
@@ -1480,7 +1465,15 @@
                                     step.dest_sub_ids[0] +
                                     "', " +
                                     withName +
-                                    " visible: true, priv: false>>; ";
+                                    " snapToGridIntern: " + JXG.Options.elements.snapToGrid +
+                                    ", snapToPointsIntern: " + JXG.Options.elements.snapToPoints +
+                                    ", visible: true, priv: false>>; ";
+                                set_str +=  step.dest_sub_ids[0] + ".snapToGrid = function() { " +
+                                    "return sketchoAttribute('snapToGridGlobal') ? sketchoAttribute('snapToGridGlobal') : " +  step.dest_sub_ids[0] + ".snapToGridIntern; " +
+                                    "}; ";
+                                set_str +=  step.dest_sub_ids[0] + ".snapToPoints = function() { " +
+                                    "return sketchoAttribute('snapToPointsGlobal') ? sketchoAttribute('snapToPointsGlobal') : " +  step.dest_sub_ids[0] + ".snapToPointsIntern; " +
+                                    "}; ";
 
                                 set_str +=
                                     assign +
@@ -1491,13 +1484,8 @@
                                     ") <<" +
                                     attrid;
                                 set_str +=
-                                    "name: '', fillOpacity: " +
-                                    JXG.Options.opacityLevel +
-                                    ", snaptogrid: " +
-                                    JXG.Options.elements.snapToGrid +
-                                    ", snaptopoints: " +
-                                    JXG.Options.elements.snapToPoints +
-                                    ">>;";
+                                    "name: '', fillOpacity: " + JXG.Options.opacityLevel +
+                                   ">>;";
 
                                 reset_str = "remove(" + step.dest_id + "); ";
                                 if (!JXG.exists(step.args.center_existing) || !step.args.center_existing) {
@@ -1513,9 +1501,7 @@
                                     ", " +
                                     step.src_ids[2];
                                 set_str +=
-                                    ") <<center: <<id: '" +
-                                    step.dest_sub_ids[0] +
-                                    "', " +
+                                    ") <<center: <<id: '" + step.dest_sub_ids[0] + "', " +
                                     withName +
                                     " visible: true";
                                 for (key in board.options.sketchometry.circle3pointsCenter) {
@@ -1528,12 +1514,7 @@
                                 set_str +=
                                     ">>, " +
                                     attrid +
-                                    "name: '', fillOpacity: " +
-                                    JXG.Options.opacityLevel +
-                                    ", snaptogrid: " +
-                                    JXG.Options.elements.snapToGrid +
-                                    ", snaptopoints: " +
-                                    JXG.Options.elements.snapToPoints +
+                                    "name: '', fillOpacity: " + JXG.Options.opacityLevel +
                                     ">>; ";
 
                                 reset_str = "remove(" + step.dest_id + "); ";
@@ -1563,8 +1544,16 @@
                                 pn(step.args.x2) +
                                 ", " +
                                 pn(step.args.y2) +
-                                ") <<id: '";
-                            set_str += step.dest_sub_ids[1] + "'>>; ";
+                                ") <<id: '"+ step.dest_sub_ids[1] + "'"+
+                                ", snapToGridIntern: " + JXG.Options.elements.snapToGrid +
+                                ", snapToPointsIntern: " + JXG.Options.elements.snapToPoints +
+                                ">>; ";
+                            set_str += step.dest_sub_ids[1] + ".snapToGrid = function() { " +
+                                "return sketchoAttribute('snapToGridGlobal') ? sketchoAttribute('snapToGridGlobal') : " + step.dest_sub_ids[1]+ ".snapToGridIntern; " +
+                                "}; ";
+                            set_str += step.dest_sub_ids[1] + ".snapToPoints = function() { " +
+                                "return sketchoAttribute('snapToPointsGlobal') ? sketchoAttribute('snapToPointsGlobal') : " + step.dest_sub_ids[1] + ".snapToPointsIntern; " +
+                                "}; ";
                             set_str +=
                                 assign +
                                 "circle(" +
@@ -1574,12 +1563,7 @@
                                 ") <<" +
                                 attrid;
                             set_str +=
-                                "name: '', fillOpacity: " +
-                                JXG.Options.opacityLevel +
-                                ", snaptogrid: " +
-                                JXG.Options.elements.snapToGrid +
-                                ", snaptopoints: " +
-                                JXG.Options.elements.snapToPoints +
+                                "name: '', fillOpacity: " + JXG.Options.opacityLevel +
                                 ">>; ";
 
                             reset_str =
@@ -1595,9 +1579,16 @@
                                 pn(step.args.x) +
                                 ", " +
                                 pn(step.args.y) +
-                                ") <<id: '" +
-                                step.dest_sub_ids[0];
-                            set_str += "'>>; ";
+                                ") <<id: '" +                                step.dest_sub_ids[0]+ "'"+
+                                ", snapToGridIntern: " + JXG.Options.elements.snapToGrid +
+                                ", snapToPointsIntern: " + JXG.Options.elements.snapToPoints +
+                                ">>; ";
+                            set_str += step.dest_sub_ids[0] + ".snapToGrid = function() { " +
+                                "return sketchoAttribute('snapToGridGlobal') ? sketchoAttribute('snapToGridGlobal') : " + step.dest_sub_ids[0] + ".snapToGridIntern; " +
+                                "}; ";
+                            set_str += step.dest_sub_ids[0] + ".snapToPoints = function() { " +
+                                "return sketchoAttribute('snapToPointsGlobal') ? sketchoAttribute('snapToPointsGlobal') : " +step.dest_sub_ids[0] + ".snapToPointsIntern; " +
+                                "}; ";
                             set_str +=
                                 assign +
                                 "circle(" +
@@ -1607,12 +1598,7 @@
                                 ") <<" +
                                 attrid;
                             set_str +=
-                                "name: '', fillOpacity: " +
-                                JXG.Options.opacityLevel +
-                                ", snaptogrid: " +
-                                JXG.Options.elements.snapToGrid +
-                                ", snaptopoints: " +
-                                JXG.Options.elements.snapToPoints +
+                                "name: '', fillOpacity: " + JXG.Options.opacityLevel +
                                 ">>; ";
 
                             reset_str =
@@ -1631,12 +1617,7 @@
                                 ") <<" +
                                 attrid;
                             set_str +=
-                                "name: '', fillOpacity: " +
-                                JXG.Options.opacityLevel +
-                                ", snaptogrid: " +
-                                JXG.Options.elements.snapToGrid +
-                                ", snaptopoints: " +
-                                JXG.Options.elements.snapToPoints +
+                                "name: '', fillOpacity: " + JXG.Options.opacityLevel +
                                 ">>; ";
 
                             reset_str = "remove(" + step.dest_id + "); ";
@@ -1650,12 +1631,7 @@
                                 ") <<" +
                                 attrid;
                             set_str +=
-                                "name: '', fillOpacity: " +
-                                JXG.Options.opacityLevel +
-                                ", snaptogrid: " +
-                                JXG.Options.elements.snapToGrid +
-                                ", snaptopoints: " +
-                                JXG.Options.elements.snapToPoints +
+                                "name: '', fillOpacity: " + JXG.Options.opacityLevel +
                                 ">>; ";
 
                             reset_str = "remove(" + step.dest_id + "); ";
@@ -1770,22 +1746,13 @@
                                 " <<" +
                                 str1 +
                                 attrid +
-                                ", name: '', snaptogrid: " +
-                                JXG.Options.elements.snapToGrid +
-                                ", snaptopoints: " +
-                                JXG.Options.elements.snapToPoints +
-                                ">>; ";
+                                ", name: ''>>; ";
                         } else {
                             set_str +=
-                                " <<name: '', snaptogrid: " +
-                                JXG.Options.elements.snapToGrid +
-                                ", snaptopoints: " +
-                                JXG.Options.elements.snapToPoints +
-                                ">>; ";
+                                " <<name: ''>>; ";
                         }
 
                         reset_str = "remove(" + step.dest_id + "); " + reset_str;
-
                         break;
 
                     case JXG.GENTYPE_VECTOR:
@@ -1805,11 +1772,17 @@
                                 str1.join(", ") +
                                 ") <<id: '" +
                                 pid1 +
-                                "', name: '', visible: true, ";
+                                "', name: '', visible: true";
                             set_str +=
-                                "snaptogrid: " +
-                                JXG.Options.elements.snapToGrid +
-                                ", snaptopoints: false, priv: false>>; ";
+                                ", snapToGridIntern: " + JXG.Options.elements.snapToGrid +
+                                ", snapToPointsIntern: " + JXG.Options.elements.snapToPoints +
+                                ", priv: false>>; ";
+                            set_str += pid1 + ".snapToGrid = function() { " +
+                                "return sketchoAttribute('snapToGridGlobal') ? sketchoAttribute('snapToGridGlobal') : " + pid1 + ".snapToGridIntern; " +
+                                "}; ";
+                            set_str += pid1 + ".snapToPoints = function() { " +
+                                "return sketchoAttribute('snapToPointsGlobal') ? sketchoAttribute('snapToPointsGlobal') : " + pid1 + ".snapToPointsIntern; " +
+                                "}; ";
                             reset_str = "remove(" + pid1 + "); ";
                         } else {
                             pid1 = step.src_ids[j];
@@ -1829,11 +1802,17 @@
                                 ") <<id: '" +
                                 pid2 +
                                 "', name: '', visible: true, ";
-                            set_str += "layer: " + JXG.Options.layer.line + ", opacity: 0.2, ";
+                            set_str += "layer: " + JXG.Options.layer.line + ", opacity: 0.2";
                             set_str +=
-                                "snaptogrid: " +
-                                JXG.Options.elements.snapToGrid +
-                                ", snaptopoints: false, priv: false>>; ";
+                                ", snapToGridIntern: " + JXG.Options.elements.snapToGrid +
+                                ", snapToPointsIntern: " + JXG.Options.elements.snapToPoints +
+                                ", priv: false>>; ";
+                            set_str += pid2 + ".snapToGrid = function() { " +
+                                "return sketchoAttribute('snapToGridGlobal') ? sketchoAttribute('snapToGridGlobal') : " + pid2 + ".snapToGridIntern; " +
+                                "}; ";
+                            set_str += pid2 + ".snapToPoints = function() { " +
+                                "return sketchoAttribute('snapToPointsGlobal') ? sketchoAttribute('snapToPointsGlobal') : " + pid2 + ".snapToPointsIntern; " +
+                                "}; ";
                             reset_str = "remove(" + pid2 + "); " + reset_str;
                         } else {
                             pid2 = step.src_ids[j];
@@ -1858,17 +1837,11 @@
                                 " <<" +
                                 str1 +
                                 attrid +
-                                ", name: '', strokeColor: 'black', snaptogrid: " +
-                                JXG.Options.elements.snapToGrid +
-                                ", snaptopoints: " +
-                                JXG.Options.elements.snapToPoints +
+                                ", name: '', strokeColor: 'black'" +
                                 ">>; ";
                         } else {
                             set_str +=
-                                " <<name: '', strokeColor: 'black', snaptogrid: " +
-                                JXG.Options.elements.snapToGrid +
-                                ", snaptopoints: " +
-                                JXG.Options.elements.snapToPoints +
+                                " <<name: '', strokeColor: 'black'" +
                                 ">>; ";
                         }
 
@@ -1883,13 +1856,16 @@
                                     "point(" + pn(step.args.coords[i].usrCoords[1]) + ", ";
                                 set_str +=
                                     pn(step.args.coords[i].usrCoords[2]) +
-                                    ") <<id: '" +
-                                    step.dest_sub_ids[i];
-                                set_str += "', snaptogrid: " + JXG.Options.elements.snapToGrid;
-                                set_str +=
-                                    ", snaptopoints: " +
-                                    JXG.Options.elements.snapToPoints +
+                                    ") <<id: '" + step.dest_sub_ids[i] + "'" +
+                                    ", snapToGridIntern: " + JXG.Options.elements.snapToGrid +
+                                    ", snapToPointsIntern: " + JXG.Options.elements.snapToPoints +
                                     ">>; ";
+                                set_str += step.dest_sub_ids[i] + ".snapToGrid = function() { " +
+                                    "return sketchoAttribute('snapToGridGlobal') ? sketchoAttribute('snapToGridGlobal') : " + step.dest_sub_ids[i] + ".snapToGridIntern; " +
+                                    "}; ";
+                                set_str += step.dest_sub_ids[i] + ".snapToPoints = function() { " +
+                                    "return sketchoAttribute('snapToPointsGlobal') ? sketchoAttribute('snapToPointsGlobal') : " + step.dest_sub_ids[i] + ".snapToPointsIntern; " +
+                                    "}; ";
                             }
                         }
 
@@ -1933,12 +1909,8 @@
                         set_str += ", names: ['', '', '']";
                         set_str += ">>, " + attrid + " fillOpacity: ";
                         set_str += JXG.Options.opacityLevel + ", name: '' ";
-                        /* set_str +=
-                         ", hasInnerPoints_Org: " + JXG.Options.polygon.hasInnerPoints; */
-                        set_str += ", hasInnerPoints: " + JXG.Options.polygon.hasInnerPoints;
-                        set_str += ", snaptogrid: " + JXG.Options.elements.snapToGrid;
-                        set_str +=
-                            ", snaptopoints: " + JXG.Options.elements.snapToPoints + ">>; ";
+                        set_str += ", hasInnerPoints: " + JXG.Options.polygon.hasInnerPoints +
+                            ">>; ";
                         set_str += step.dest_id + ".hasInnerPoints = function() { " +
                             "return !(" + step.dest_id + ".fillColor == 'transparent' || " + step.dest_id + ".fillColor == 'none' || " + step.dest_id + ".fillOpacity == 0); " +
                             "}; "
@@ -1951,13 +1923,16 @@
                                     "point(" + pn(step.args.coords[i].usrCoords[1]) + ", ";
                                 set_str +=
                                     pn(step.args.coords[i].usrCoords[2]) +
-                                    ") <<id: '" +
-                                    step.dest_sub_ids[i];
-                                set_str += "', snaptogrid: " + JXG.Options.elements.snapToGrid;
-                                set_str +=
-                                    ", snaptopoints: " +
-                                    JXG.Options.elements.snapToPoints +
+                                    ") <<id: '" + step.dest_sub_ids[i] + "'" +
+                                    ", snapToGridIntern: " + JXG.Options.elements.snapToGrid +
+                                    ", snapToPointsIntern: " + JXG.Options.elements.snapToPoints +
                                     ">>; ";
+                                set_str += step.dest_sub_ids[i] + ".snapToGrid = function() { " +
+                                    "return sketchoAttribute('snapToGridGlobal') ? sketchoAttribute('snapToGridGlobal') : " + step.dest_sub_ids[i] + ".snapToGridIntern; " +
+                                    "}; ";
+                                set_str += step.dest_sub_ids[i] + ".snapToPoints = function() { " +
+                                    "return sketchoAttribute('snapToPointsGlobal') ? sketchoAttribute('snapToPointsGlobal') : " + step.dest_sub_ids[i] + ".snapToPointsIntern; " +
+                                    "}; ";
                             }
                         }
 
@@ -1988,14 +1963,9 @@
                         set_str += step.dest_sub_ids[6] + "', '" + step.dest_sub_ids[7] + "' ]";
                         set_str += ", names: ['', '', '', '']";
                         set_str += ">>, " + attrid;
-                        set_str += " fillOpacity: ";
-                        set_str += JXG.Options.opacityLevel + ", name: '' ";
-                        /* set_str +=
-                         ", hasInnerPoints_Org: " + JXG.Options.polygon.hasInnerPoints; */
-                        set_str += ", hasInnerPoints: " + JXG.Options.polygon.hasInnerPoints;
-                        set_str += ", snaptogrid: " + JXG.Options.elements.snapToGrid;
-                        set_str +=
-                            ", snaptopoints: " + JXG.Options.elements.snapToPoints + ">>; ";
+                        set_str += " fillOpacity: " + JXG.Options.opacityLevel + ", name: ''";
+                        set_str += ", hasInnerPoints: " + JXG.Options.polygon.hasInnerPoints +
+                            ">>; ";
                         set_str += step.dest_id + ".hasInnerPoints = function() { " +
                             "return !(" + step.dest_id + ".fillColor == 'transparent' || " + step.dest_id + ".fillColor == 'none' || " + step.dest_id + ".fillOpacity == 0); " +
                             "}; "
@@ -2039,18 +2009,12 @@
                         set_str +=
                             attrid +
                             "name: ''" +
-                            ", precision: " +
-                            JXG.Options.trunclen +
-                            ", point1: <<id: '" +
-                            step.dest_sub_ids[0] +
-                            "', snaptogrid: " +
-                            JXG.Options.elements.snapToGrid +
+                            ", precision: " +                            JXG.Options.trunclen +
+                            ", point1: <<id: '" + step.dest_sub_ids[0] + "'" +
+                            ", snapToGrid: false" +
                             ">>, " +
-                            "point2: <<id: '" +
-                            step.dest_sub_ids[1] +
-                            "'" +
-                            ", snaptogrid: " +
-                            JXG.Options.elements.snapToGrid +
+                            "point2: <<id: '" + step.dest_sub_ids[1] + "'" +
+                            ", snapToGrid: false" +
                             ">> >>; ";
                         reset_str = "remove(" + step.dest_id + "); ";
                         break;
@@ -2063,14 +2027,16 @@
                                         "point(" + pn(step.args.coords[i].usrCoords[1]) + ", ";
                                     set_str +=
                                         pn(step.args.coords[i].usrCoords[2]) +
-                                        ") <<id: '" +
-                                        step.dest_sub_ids[i];
-                                    set_str +=
-                                        "', snaptogrid: " + JXG.Options.elements.snapToGrid;
-                                    set_str +=
-                                        ", snaptopoints: " +
-                                        JXG.Options.elements.snapToPoints +
+                                        ") <<id: '" + step.dest_sub_ids[i] + "'" +
+                                        ", snapToGridIntern: " + JXG.Options.elements.snapToGrid +
+                                        ", snapToPointsIntern: " + JXG.Options.elements.snapToPoints +
                                         ">>; ";
+                                    set_str +=step.dest_sub_ids[i]+ ".snapToGrid = function() { " +
+                                        "return sketchoAttribute('snapToGridGlobal') ? sketchoAttribute('snapToGridGlobal') : " + step.dest_sub_ids[i] + ".snapToGridIntern; " +
+                                        "}; ";
+                                    set_str += step.dest_sub_ids[i] + ".snapToPoints = function() { " +
+                                        "return sketchoAttribute('snapToPointsGlobal') ? sketchoAttribute('snapToPointsGlobal') : " + step.dest_sub_ids[i]+ ".snapToPointsIntern; " +
+                                        "}; ";
                                 }
                             }
 
@@ -2140,15 +2106,17 @@
                                 ")" +
                                 (options.useSymbols
                                     ? ""
-                                    : " <<id: '" +
-                                    step.dest_sub_ids[i] +
-                                    "'" +
-                                    ", snaptogrid: " +
-                                    JXG.Options.elements.snapToGrid +
-                                    ", snaptopoints: " +
-                                    JXG.Options.elements.snapToPoints +
+                                    : " <<id: '" + step.dest_sub_ids[i] + "'" +
+                                    ", snapToGridIntern: " + JXG.Options.elements.snapToGrid +
+                                    ", snapToPointsIntern: " + JXG.Options.elements.snapToPoints +
                                     ">>") +
                                 "; ";
+                            set_str += step.dest_sub_ids[i] + ".snapToGrid = function() { " +
+                                "return sketchoAttribute('snapToGridGlobal') ? sketchoAttribute('snapToGridGlobal') : " + step.dest_sub_ids[i] + ".snapToGridIntern; " +
+                                "}; ";
+                            set_str += step.dest_sub_ids[i] + ".snapToPoints = function() { " +
+                                "return sketchoAttribute('snapToPointsGlobal') ? sketchoAttribute('snapToPointsGlobal') : " + step.dest_sub_ids[i] + ".snapToPointsIntern; " +
+                                "}; ";
 
                             reset_str += "remove(" + step.dest_sub_ids[i] + "); ";
                         }
