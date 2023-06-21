@@ -345,7 +345,7 @@ JXG.extend(
             // Calculate lower bound and upper bound limits based on distance
             // between p1 and center and p2 and center
             if (this.line.elementClass === Const.OBJECT_CLASS_LINE) {
-                bounds = this.getLowerAndUpperBounds(coordsZero);
+                bounds = this.getLowerAndUpperBounds(coordsZero, 'ticksdistance');
             } else {
                 bounds = {
                     lower: this.line.minX(),

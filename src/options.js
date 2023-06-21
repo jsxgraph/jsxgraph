@@ -3293,18 +3293,21 @@ JXG.Options = {
             name: ''
         },
 
-        /**
-         * Attributes for the curve displaying the comb.
-         *
-         * @type Curve
-         * @name Comb#curve
-         */
-        curve: {
-            strokeWidth: 1,
-            strokeColor: '#000000',
-            fillColor: 'none'
-        }
-    },
+        // /**
+        //  * Attributes for the curve displaying the comb.
+        //  *
+        //  * @type Curve
+        //  * @name Comb#curve
+        //  */
+        // curve: {
+        //     strokeWidth: 1,
+        //     strokeColor: '#0000ff',
+        //     fillColor: 'none'
+        // },
+        strokeWidth: 1,
+        strokeColor: '#0000ff',
+        fillColor: 'none'
+},
 
     /* special conic options */
     conic: {

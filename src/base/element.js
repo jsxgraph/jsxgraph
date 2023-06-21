@@ -2173,17 +2173,17 @@ JXG.extend(
                         if (!fromParent) {
                             mi = Math.min(boardBB[0], boardBB[2]);
                             ma = Math.max(boardBB[0], boardBB[2]);
-                            if (x < mi) {
+                            if (x < mi && x > mi - sX) {
                                 x += sX;
-                            } else if (x > ma) {
+                            } else if (x > ma && x < ma + sX) {
                                 x -= sX;
                             }
 
                             mi = Math.min(boardBB[1], boardBB[3]);
                             ma = Math.max(boardBB[1], boardBB[3]);
-                            if (y < mi) {
+                            if (y < mi && y > mi - sY) {
                                 y += sY;
-                            } else if (y > ma) {
+                            } else if (y > ma && y < ma + sY) {
                                 y -= sY;
                             }
                         }
