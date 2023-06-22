@@ -423,7 +423,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
      * @param {String} vname Name of the variable
      * @param {Boolean} [local=false] Only look up the internal symbol table and don't look for
      * the <tt>vname</tt> in Math or the element list.
-     * @param {Boolean} [isFunctionName=false] Lookup function of tpye builtIn, Math.*, creator.
+     * @param {Boolean} [isFunctionName=false] Lookup function of type builtIn, Math.*, creator.
      *
      * @see JXG.JessieCode#resolveType
      */
@@ -434,6 +434,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
 
         // Local scope has always precedence
         s = this.isLocalVariable(vname);
+
         if (s !== null) {
             return s.locals[vname];
         }
@@ -697,12 +698,12 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
         fun.toJS = fun.toString;
         fun.toString = (function (_that) {
             return function () {
-                return _that.compile(_that.replaceIDs(Type.deepCopy(node)), true);
+                return _that.compile(_that.replaceIDs(Type.deepCopy(node)));
             };
         }(this));
 
         fun.deps = {};
-        this.collectDependencies(node.children[1], fun.deps);
+        this.collectDependencies(node.children[1], node.children[0], fun.deps);
 
         return fun;
     },
@@ -1033,24 +1034,29 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
      * Search the parse tree below <tt>node</tt> for <em>stationary</em> dependencies, i.e. dependencies hard coded into
      * the function.
      * @param {Object} node
+     * @param {Array} varnames List of variable names of the function
      * @param {Object} result An object where the referenced elements will be stored. Access key is their id.
      */
-    collectDependencies: function (node, result) {
+    collectDependencies: function (node, varnames, result) {
         var i, v, e, le;
 
         if (Type.isArray(node)) {
             le = node.length;
             for (i = 0; i < le; i++) {
-                this.collectDependencies(node[i], result);
+                this.collectDependencies(node[i], varnames, result);
             }
             return;
         }
 
         v = node.value;
 
-        if (node.type === 'node_var') {
+        if (node.type === 'node_var' && 
+            varnames.indexOf(v) < 0 // v is not contained in the list of variables of that function
+        ) {
             e = this.getvar(v);
-            if (e && e.visProp && e.type && e.elementClass && e.id) {
+            if (e && e.visProp && e.type && e.elementClass && e.id &&
+                e.type === Const.OBJECT_TYPE_SLIDER // Sliders are the only elements which are given by names.
+            ) {
                 result[e.id] = e;
             }
         }
@@ -1067,7 +1073,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
         if (node.children) {
             for (i = node.children.length; i > 0; i--) {
                 if (Type.exists(node.children[i - 1])) {
-                    this.collectDependencies(node.children[i - 1], result);
+                    this.collectDependencies(node.children[i - 1], varnames, result);
                 }
             }
         }
@@ -1421,7 +1427,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                         delete node.children[0]._isFunctionName;
 
                         // determine the scope the function wants to run in
-                        if (fun && fun.sc) {
+                        if (Type.exists(fun) && Type.exists(fun.sc)) {
                             sc = fun.sc;
                         } else {
                             sc = this;
@@ -1482,6 +1488,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                     case 'op_property':
                         e = this.execute(node.children[0]);
                         v = node.children[1];
+
 
                         ret = this.resolveProperty(e, v, false);
 
@@ -2742,190 +2749,190 @@ performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* actio
 var $0 = $$.length - 1;
 switch (yystate) {
 case 1:
- return $$[$0-1]; 
+ return $$[$0-1];
 break;
 case 2:
- this.$ = AST.createNode(lc(_$[$0-4]), 'node_op', 'op_if', $$[$0-2], $$[$0]); 
+ this.$ = AST.createNode(lc(_$[$0-4]), 'node_op', 'op_if', $$[$0-2], $$[$0]);
 break;
 case 3:
- this.$ = AST.createNode(lc(_$[$0-6]), 'node_op', 'op_if_else', $$[$0-4], $$[$0-2], $$[$0]); 
+ this.$ = AST.createNode(lc(_$[$0-6]), 'node_op', 'op_if_else', $$[$0-4], $$[$0-2], $$[$0]);
 break;
 case 4:
- this.$ = AST.createNode(lc(_$[$0-4]), 'node_op', 'op_while', $$[$0-2], $$[$0]); 
+ this.$ = AST.createNode(lc(_$[$0-4]), 'node_op', 'op_while', $$[$0-2], $$[$0]);
 break;
 case 5:
- this.$ = AST.createNode(lc(_$[$0-8]), 'node_op', 'op_for', $$[$0-6], $$[$0-4], $$[$0-2], $$[$0]); 
+ this.$ = AST.createNode(lc(_$[$0-8]), 'node_op', 'op_for', $$[$0-6], $$[$0-4], $$[$0-2], $$[$0]);
 break;
 case 6:
- this.$ = AST.createNode(lc(_$[$0-6]), 'node_op', 'op_do', $$[$0-5], $$[$0-2]); 
+ this.$ = AST.createNode(lc(_$[$0-6]), 'node_op', 'op_do', $$[$0-5], $$[$0-2]);
 break;
 case 7:
- this.$ = AST.createNode(lc(_$[$0-1]), 'node_op', 'op_use', $$[$0]); 
+ this.$ = AST.createNode(lc(_$[$0-1]), 'node_op', 'op_use', $$[$0]);
 break;
 case 8:
- this.$ = AST.createNode(lc(_$[$0-1]), 'node_op', 'op_delete', $$[$0]); 
+ this.$ = AST.createNode(lc(_$[$0-1]), 'node_op', 'op_delete', $$[$0]);
 break;
 case 9:
- this.$ = AST.createNode(lc(_$[$0-1]), 'node_op', 'op_return', undefined); 
+ this.$ = AST.createNode(lc(_$[$0-1]), 'node_op', 'op_return', undefined);
 break;
 case 10:
- this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_return', $$[$0-1]); 
+ this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_return', $$[$0-1]);
 break;
 case 11: case 14:
- this.$ = AST.createNode(lc(_$[$0]), 'node_op', 'op_none'); 
+ this.$ = AST.createNode(lc(_$[$0]), 'node_op', 'op_none');
 break;
 case 12:
- this.$ = $$[$0-1]; this.$.needsBrackets = true; 
+ this.$ = $$[$0-1]; this.$.needsBrackets = true;
 break;
 case 13:
- this.$ = AST.createNode(lc(_$[$0-1]), 'node_op', 'op_none', $$[$0-1], $$[$0]); 
+ this.$ = AST.createNode(lc(_$[$0-1]), 'node_op', 'op_none', $$[$0-1], $$[$0]);
 break;
 case 15: case 16: case 17: case 18: case 19: case 20: case 21: case 23: case 24: case 26: case 28: case 30: case 32: case 36: case 41: case 44: case 48: case 50: case 52: case 54: case 55: case 56: case 58: case 62: case 81: case 84: case 85: case 86:
- this.$ = $$[$0]; 
+ this.$ = $$[$0];
 break;
 case 22: case 65: case 93:
- this.$ = $$[$0-1]; 
+ this.$ = $$[$0-1];
 break;
 case 25:
- this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_assign', $$[$0-2], $$[$0]); this.$.isMath = false; 
+ this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_assign', $$[$0-2], $$[$0]); this.$.isMath = false;
 break;
 case 27:
- this.$ = AST.createNode(lc(_$[$0-4]), 'node_op', 'op_conditional', $$[$0-4], $$[$0-2], $$[$0]); this.$.isMath = false; 
+ this.$ = AST.createNode(lc(_$[$0-4]), 'node_op', 'op_conditional', $$[$0-4], $$[$0-2], $$[$0]); this.$.isMath = false;
 break;
 case 29:
- this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_or', $$[$0-2], $$[$0]); this.$.isMath = false; 
+ this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_or', $$[$0-2], $$[$0]); this.$.isMath = false;
 break;
 case 31:
- this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_and', $$[$0-2], $$[$0]); this.$.isMath = false; 
+ this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_and', $$[$0-2], $$[$0]); this.$.isMath = false;
 break;
 case 33:
- this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_eq', $$[$0-2], $$[$0]); this.$.isMath = false; 
+ this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_eq', $$[$0-2], $$[$0]); this.$.isMath = false;
 break;
 case 34:
- this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_neq', $$[$0-2], $$[$0]); this.$.isMath = false; 
+ this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_neq', $$[$0-2], $$[$0]); this.$.isMath = false;
 break;
 case 35:
- this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_approx', $$[$0-2], $$[$0]); this.$.isMath = false; 
+ this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_approx', $$[$0-2], $$[$0]); this.$.isMath = false;
 break;
 case 37:
- this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_lt', $$[$0-2], $$[$0]); this.$.isMath = false; 
+ this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_lt', $$[$0-2], $$[$0]); this.$.isMath = false;
 break;
 case 38:
- this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_gt', $$[$0-2], $$[$0]); this.$.isMath = false; 
+ this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_gt', $$[$0-2], $$[$0]); this.$.isMath = false;
 break;
 case 39:
- this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_leq', $$[$0-2], $$[$0]); this.$.isMath = false; 
+ this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_leq', $$[$0-2], $$[$0]); this.$.isMath = false;
 break;
 case 40:
- this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_geq', $$[$0-2], $$[$0]); this.$.isMath = false; 
+ this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_geq', $$[$0-2], $$[$0]); this.$.isMath = false;
 break;
 case 42:
- this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_add', $$[$0-2], $$[$0]); this.$.isMath = true; 
+ this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_add', $$[$0-2], $$[$0]); this.$.isMath = true;
 break;
 case 43:
- this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_sub', $$[$0-2], $$[$0]); this.$.isMath = true; 
+ this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_sub', $$[$0-2], $$[$0]); this.$.isMath = true;
 break;
 case 45:
- this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_mul', $$[$0-2], $$[$0]); this.$.isMath = true; 
+ this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_mul', $$[$0-2], $$[$0]); this.$.isMath = true;
 break;
 case 46:
- this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_div', $$[$0-2], $$[$0]); this.$.isMath = true; 
+ this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_div', $$[$0-2], $$[$0]); this.$.isMath = true;
 break;
 case 47:
- this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_mod', $$[$0-2], $$[$0]); this.$.isMath = true; 
+ this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_mod', $$[$0-2], $$[$0]); this.$.isMath = true;
 break;
 case 49:
- this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_exp', $$[$0-2], $$[$0]); this.$.isMath = true; 
+ this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_exp', $$[$0-2], $$[$0]); this.$.isMath = true;
 break;
 case 51:
- this.$ = AST.createNode(lc(_$[$0-1]), 'node_op', 'op_not', $$[$0]); this.$.isMath = false; 
+ this.$ = AST.createNode(lc(_$[$0-1]), 'node_op', 'op_not', $$[$0]); this.$.isMath = false;
 break;
 case 53:
- this.$ = AST.createNode(lc(_$[$0-1]), 'node_op', 'op_neg', $$[$0]); this.$.isMath = true; 
+ this.$ = AST.createNode(lc(_$[$0-1]), 'node_op', 'op_neg', $$[$0]); this.$.isMath = true;
 break;
 case 57: case 63: case 64: case 66: case 67: case 68: case 97:
- this.$ = $$[$0]; this.$.isMath = false; 
+ this.$ = $$[$0]; this.$.isMath = false;
 break;
 case 59: case 91:
- this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_property', $$[$0-2], $$[$0]); this.$.isMath = true; 
+ this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_property', $$[$0-2], $$[$0]); this.$.isMath = true;
 break;
 case 60: case 90:
- this.$ = AST.createNode(lc(_$[$0-3]), 'node_op', 'op_extvalue', $$[$0-3], $$[$0-1]); this.$.isMath = true; 
+ this.$ = AST.createNode(lc(_$[$0-3]), 'node_op', 'op_extvalue', $$[$0-3], $$[$0-1]); this.$.isMath = true;
 break;
 case 61:
- this.$ = AST.createNode(lc(_$[$0]), 'node_var', $$[$0]); 
+ this.$ = AST.createNode(lc(_$[$0]), 'node_var', $$[$0]);
 break;
 case 69:
- this.$ = $$[$0]; this.$.isMath = true; 
+ this.$ = $$[$0]; this.$.isMath = true;
 break;
 case 70:
- this.$ = AST.createNode(lc(_$[$0]), 'node_const', null); 
+ this.$ = AST.createNode(lc(_$[$0]), 'node_const', null);
 break;
 case 71:
- this.$ = AST.createNode(lc(_$[$0]), 'node_const_bool', true); 
+ this.$ = AST.createNode(lc(_$[$0]), 'node_const_bool', true);
 break;
 case 72:
- this.$ = AST.createNode(lc(_$[$0]), 'node_const_bool', false); 
+ this.$ = AST.createNode(lc(_$[$0]), 'node_const_bool', false);
 break;
 case 73:
- this.$ = AST.createNode(lc(_$[$0]), 'node_str', $$[$0].substring(1, $$[$0].length - 1)); 
+ this.$ = AST.createNode(lc(_$[$0]), 'node_str', $$[$0].substring(1, $$[$0].length - 1));
 break;
 case 74:
- this.$ = AST.createNode(lc(_$[$0]), 'node_const', parseFloat($$[$0])); 
+ this.$ = AST.createNode(lc(_$[$0]), 'node_const', parseFloat($$[$0]));
 break;
 case 75:
- this.$ = AST.createNode(lc(_$[$0]), 'node_const', NaN); 
+ this.$ = AST.createNode(lc(_$[$0]), 'node_const', NaN);
 break;
 case 76:
- this.$ = AST.createNode(lc(_$[$0]), 'node_const', Infinity); 
+ this.$ = AST.createNode(lc(_$[$0]), 'node_const', Infinity);
 break;
 case 77:
- this.$ = AST.createNode(lc(_$[$0-1]), 'node_op', 'op_array', []); 
+ this.$ = AST.createNode(lc(_$[$0-1]), 'node_op', 'op_array', []);
 break;
 case 78:
- this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_array', $$[$0-1]); 
+ this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_array', $$[$0-1]);
 break;
 case 79:
- this.$ = AST.createNode(lc(_$[$0-1]), 'node_op', 'op_emptyobject', {}); this.$.needsBrackets = true; 
+ this.$ = AST.createNode(lc(_$[$0-1]), 'node_op', 'op_emptyobject', {}); this.$.needsBrackets = true;
 break;
 case 80:
- this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_proplst_val', $$[$0-1]); this.$.needsBrackets = true; 
+ this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_proplst_val', $$[$0-1]); this.$.needsBrackets = true;
 break;
 case 82:
- this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_proplst', $$[$0-2], $$[$0]); 
+ this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_proplst', $$[$0-2], $$[$0]);
 break;
 case 83:
- this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_prop', $$[$0-2], $$[$0]); 
+ this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_prop', $$[$0-2], $$[$0]);
 break;
 case 87: case 89:
- this.$ = AST.createNode(lc(_$[$0-1]), 'node_op', 'op_execfun', $$[$0-1], $$[$0]); this.$.isMath = true; 
+ this.$ = AST.createNode(lc(_$[$0-1]), 'node_op', 'op_execfun', $$[$0-1], $$[$0]); this.$.isMath = true;
 break;
 case 88:
- this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_execfun', $$[$0-2], $$[$0-1], $$[$0], true); this.$.isMath = false; 
+ this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_execfun', $$[$0-2], $$[$0-1], $$[$0], true); this.$.isMath = false;
 break;
 case 92:
- this.$ = []; 
+ this.$ = [];
 break;
 case 94: case 98: case 104:
- this.$ = [$$[$0]]; 
+ this.$ = [$$[$0]];
 break;
 case 95: case 99: case 105:
- this.$ = $$[$0-2].concat($$[$0]); 
+ this.$ = $$[$0-2].concat($$[$0]);
 break;
 case 96:
- this.$ = AST.createNode(lc(_$[$0]), 'node_var', $$[$0]); this.$.isMath = true; 
+ this.$ = AST.createNode(lc(_$[$0]), 'node_var', $$[$0]); this.$.isMath = true;
 break;
 case 100:
- this.$ = AST.createNode(lc(_$[$0-3]), 'node_op', 'op_function', [], $$[$0]); this.$.isMath = false; 
+ this.$ = AST.createNode(lc(_$[$0-3]), 'node_op', 'op_function', [], $$[$0]); this.$.isMath = false;
 break;
 case 101:
- this.$ = AST.createNode(lc(_$[$0-4]), 'node_op', 'op_function', $$[$0-2], $$[$0]); this.$.isMath = false; 
+ this.$ = AST.createNode(lc(_$[$0-4]), 'node_op', 'op_function', $$[$0-2], $$[$0]); this.$.isMath = false;
 break;
 case 102:
- this.$ = AST.createNode(lc(_$[$0-4]), 'node_op', 'op_map', [], $$[$0]); 
+ this.$ = AST.createNode(lc(_$[$0-4]), 'node_op', 'op_map', [], $$[$0]);
 break;
 case 103:
- this.$ = AST.createNode(lc(_$[$0-5]), 'node_op', 'op_map', $$[$0-3], $$[$0]); 
+ this.$ = AST.createNode(lc(_$[$0-5]), 'node_op', 'op_map', $$[$0-3], $$[$0]);
 break;
 }
 },
@@ -3443,9 +3450,9 @@ case 1:return 78
 break;
 case 2:return 78
 break;
-case 3: return 77; 
+case 3: return 77;
 break;
-case 4: return 77; 
+case 4: return 77;
 break;
 case 5:/* ignore comment */
 break;
