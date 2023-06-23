@@ -1362,7 +1362,10 @@
                                 ") <<" +
                                 attrid;
                             set_str +=
-                                "name: '', fillOpacity: " + JXG.Options.opacityLevel +
+                                "name: ''" +
+                                ", creationGesture: 'center-point'" +
+                                ", creationCenterExisting: " + (JXG.exists(step.args.center_existing) && step.args.center_existing) +
+                                ", fillOpacity: " + JXG.Options.opacityLevel +
                                 ", hasInnerPoints: true" +
                                 ">>; ";
                             set_str += step.dest_id + ".hasInnerPoints = function() { " +
@@ -1406,26 +1409,19 @@
                                     set_str += step.dest_sub_ids[0] + ".moveTo([" + pn(step.args.usrCoords[1]) + ", " + pn(step.args.usrCoords[2]) + "]); ";
                             }
 
-                            if (JXG.exists(step.args.r))
-                                set_str +=
-                                    assign +
-                                    "circle('" +
-                                    (!JXG.exists(step.args.center_existing) || !step.args.center_existing ? step.dest_sub_ids[0] : step.src_ids[0]) +
-                                    "', " +
-                                    pn(step.args.r) +
-                                    ") <<" +
-                                    attrid;
-                            else
-                                set_str +=
-                                    assign +
-                                    "circle('" +
-                                    (!JXG.exists(step.args.center_existing) || !step.args.center_existing ? step.dest_sub_ids[0] : step.src_ids[0]) +
-                                    "', " +
-                                    pn(step.args.radius) +
-                                    ") <<" +
-                                    attrid;
                             set_str +=
-                                "name: '', fillOpacity: " + JXG.Options.opacityLevel +
+                                assign +
+                                "circle('" +
+                                (!JXG.exists(step.args.center_existing) || !step.args.center_existing ? step.dest_sub_ids[0] : step.src_ids[0]) +
+                                "', " +
+                                pn(JXG.exists(step.args.r) ? step.args.r : step.args.radius) +
+                                ") <<" +
+                                attrid;
+                            set_str +=
+                                " name: ''" +
+                                ", creationGesture: 'free'" +
+                                ", creationCenterExisting: " + (JXG.exists(step.args.center_existing) && step.args.center_existing) +
+                                ", fillOpacity: " + JXG.Options.opacityLevel +
                                 ", hasInnerPoints: true" +
                                 ">>; ";
                             set_str += step.dest_id + ".hasInnerPoints = function() { " +
@@ -1457,7 +1453,10 @@
                                     ") <<" +
                                     attrid;
                                 set_str +=
-                                    "name: '', fillOpacity: " + JXG.Options.opacityLevel +
+                                    "name: ''"+
+                                    ", creationGesture: 'circum-2-points'" +
+                                    ", creationCenterExisting: false" +
+                                    ", fillOpacity: " + JXG.Options.opacityLevel +
                                     ">>;";
 
                                 reset_str = "remove(" + step.dest_id + "); ";
@@ -1487,7 +1486,10 @@
                                 set_str +=
                                     ">>, " +
                                     attrid +
-                                    "name: '', fillOpacity: " + JXG.Options.opacityLevel +
+                                    "name: ''"+
+                                    ", creationGesture: 'circum-3-points'" +
+                                    ", creationCenterExisting: false" +
+                                    ", fillOpacity: " + JXG.Options.opacityLevel +
                                     ">>; ";
 
                                 reset_str = "remove(" + step.dest_id + "); ";
@@ -2750,105 +2752,70 @@
                         break;
 
                     case JXG.GENTYPE_MOVEMENT:
-                        if (
-                            step.args.obj_type === JXG.OBJECT_TYPE_LINE ||
-                            step.args.obj_type === JXG.OBJECT_TYPE_VECTOR
-                        ) {
-                            set_str =
-                                step.src_ids[0] +
-                                ".move([" +
-                                pn(step.args.coords[0].usrCoords[0]) +
-                                ", ";
-                            set_str +=
-                                pn(step.args.coords[0].usrCoords[1]) +
-                                ", " +
-                                pn(step.args.coords[0].usrCoords[2]) +
-                                "]); ";
-                            reset_str =
-                                step.src_ids[0] +
-                                ".move([" +
-                                step.args.zstart[0] +
-                                ", " +
-                                step.args.xstart[0] +
-                                ", ";
-                            reset_str += step.args.ystart[0] + "]); ";
-
-                            set_str +=
-                                step.src_ids[1] +
-                                ".move([" +
-                                pn(step.args.coords[1].usrCoords[0]) +
-                                ", ";
-                            set_str +=
-                                pn(step.args.coords[1].usrCoords[1]) +
-                                ", " +
-                                pn(step.args.coords[1].usrCoords[2]) +
-                                "]); ";
-                            reset_str +=
-                                step.src_ids[1] +
-                                ".move([" +
-                                step.args.zstart[1] +
-                                ", " +
-                                step.args.xstart[1] +
-                                ", ";
-                            reset_str += step.args.ystart[1] + "]); ";
-                        } else if (step.args.obj_type === JXG.OBJECT_TYPE_CIRCLE) {
-                            set_str =
-                                step.src_ids[0] +
-                                ".move([" +
-                                pn(step.args.coords[0].usrCoords[1]) +
-                                ", ";
-                            set_str += pn(step.args.coords[0].usrCoords[2]) + "]); ";
-                            reset_str =
-                                step.src_ids[0] +
-                                ".move([" +
-                                step.args.xstart +
-                                ", " +
-                                step.args.ystart +
-                                "]); ";
-
-                            if (step.args.has_point2) {
-                                set_str +=
-                                    step.src_ids[1] +
-                                    ".move([" +
-                                    pn(step.args.coords[1].usrCoords[1]) +
-                                    ", ";
-                                set_str += pn(step.args.coords[1].usrCoords[2]) + "]); ";
-                                reset_str +=
-                                    step.src_ids[1] +
-                                    ".move([" +
-                                    step.args.old_p2x +
-                                    ", " +
-                                    step.args.old_p2y;
-                                reset_str += "]); ";
-                            }
-                        } else if (step.args.obj_type === JXG.OBJECT_TYPE_POLYGON) {
-                            set_str = reset_str = "";
+                        if (JXG.exists(step.args.coordsTo) && JXG.exists(step.args.coordsFrom)) {
 
                             for (i = 0; i < step.src_ids.length; i++) {
-                                set_str +=
-                                    step.src_ids[i] +
-                                    ".move([" +
-                                    pn(step.args.coords[i].usrCoords[1]) +
-                                    ", ";
-                                set_str += pn(step.args.coords[i].usrCoords[2]) + "]); ";
-                                reset_str +=
-                                    step.src_ids[i] +
-                                    ".move([" +
-                                    step.args.xstart[i] +
-                                    ", " +
-                                    step.args.ystart[i];
-                                reset_str += "]); ";
+                                set_str += step.src_ids[i] + ".move([" +
+                                    pn(step.args.coordsTo[i][0]) + ", " +
+                                    pn(step.args.coordsTo[i][1]) + ", " +
+                                    pn(step.args.coordsTo[i][2]) +
+                                    "]); ";
+                                reset_str += step.src_ids[i] + ".move([" +
+                                    pn(step.args.coordsFrom[i][0]) + ", " +
+                                    pn(step.args.coordsFrom[i][1]) + ", " +
+                                    pn(step.args.coordsFrom[i][2]) +
+                                    "]); ";
                             }
-                        } else {
-                            // Upwards compatibility of pre 1.0 files
-                            if (JXG.exists(step.args.coords[0])) {
+
+                        } else { //Backwards compatibility
+                            if (
+                                step.args.obj_type === JXG.OBJECT_TYPE_LINE ||
+                                step.args.obj_type === JXG.OBJECT_TYPE_VECTOR
+                            ) {
+                                set_str =
+                                    step.src_ids[0] +
+                                    ".move([" +
+                                    pn(step.args.coords[0].usrCoords[0]) +
+                                    ", ";
+                                set_str +=
+                                    pn(step.args.coords[0].usrCoords[1]) +
+                                    ", " +
+                                    pn(step.args.coords[0].usrCoords[2]) +
+                                    "]); ";
+                                reset_str =
+                                    step.src_ids[0] +
+                                    ".move([" +
+                                    step.args.zstart[0] +
+                                    ", " +
+                                    step.args.xstart[0] +
+                                    ", ";
+                                reset_str += step.args.ystart[0] + "]); ";
+
+                                set_str +=
+                                    step.src_ids[1] +
+                                    ".move([" +
+                                    pn(step.args.coords[1].usrCoords[0]) +
+                                    ", ";
+                                set_str +=
+                                    pn(step.args.coords[1].usrCoords[1]) +
+                                    ", " +
+                                    pn(step.args.coords[1].usrCoords[2]) +
+                                    "]); ";
+                                reset_str +=
+                                    step.src_ids[1] +
+                                    ".move([" +
+                                    step.args.zstart[1] +
+                                    ", " +
+                                    step.args.xstart[1] +
+                                    ", ";
+                                reset_str += step.args.ystart[1] + "]); ";
+                            } else if (step.args.obj_type === JXG.OBJECT_TYPE_CIRCLE) {
                                 set_str =
                                     step.src_ids[0] +
                                     ".move([" +
                                     pn(step.args.coords[0].usrCoords[1]) +
                                     ", ";
                                 set_str += pn(step.args.coords[0].usrCoords[2]) + "]); ";
-
                                 reset_str =
                                     step.src_ids[0] +
                                     ".move([" +
@@ -2856,9 +2823,60 @@
                                     ", " +
                                     step.args.ystart +
                                     "]); ";
+
+                                if (step.args.has_point2) {
+                                    set_str +=
+                                        step.src_ids[1] +
+                                        ".move([" +
+                                        pn(step.args.coords[1].usrCoords[1]) +
+                                        ", ";
+                                    set_str += pn(step.args.coords[1].usrCoords[2]) + "]); ";
+                                    reset_str +=
+                                        step.src_ids[1] +
+                                        ".move([" +
+                                        step.args.old_p2x +
+                                        ", " +
+                                        step.args.old_p2y;
+                                    reset_str += "]); ";
+                                }
+                            } else if (step.args.obj_type === JXG.OBJECT_TYPE_POLYGON) {
+                                set_str = reset_str = "";
+
+                                for (i = 0; i < step.src_ids.length; i++) {
+                                    set_str +=
+                                        step.src_ids[i] +
+                                        ".move([" +
+                                        pn(step.args.coords[i].usrCoords[1]) +
+                                        ", ";
+                                    set_str += pn(step.args.coords[i].usrCoords[2]) + "]); ";
+                                    reset_str +=
+                                        step.src_ids[i] +
+                                        ".move([" +
+                                        step.args.xstart[i] +
+                                        ", " +
+                                        step.args.ystart[i];
+                                    reset_str += "]); ";
+                                }
+                            } else {
+                                // Backwards compatibility of pre 1.0 files
+                                if (JXG.exists(step.args.coords[0])) {
+                                    set_str =
+                                        step.src_ids[0] +
+                                        ".move([" +
+                                        pn(step.args.coords[0].usrCoords[1]) +
+                                        ", ";
+                                    set_str += pn(step.args.coords[0].usrCoords[2]) + "]); ";
+
+                                    reset_str =
+                                        step.src_ids[0] +
+                                        ".move([" +
+                                        step.args.xstart +
+                                        ", " +
+                                        step.args.ystart +
+                                        "]); ";
+                                }
                             }
                         }
-
                         break;
 
                     default:
