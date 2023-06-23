@@ -2210,7 +2210,7 @@
                         // sector
                         set_str += "sector(" + step.src_ids.join(", ") + ") ";
                         set_str += "<<" + attrid + " name: '', fillOpacity: " + JXG.Options.opacityLevel + ", hasInnerPoints: true, arc: <<id: '" + pid2 + "'>>, "
-                        set_str += "idGlider: '" + pid3 + "', idSegment1: '" + pid4 + "', idSegment2: '" + pid5 + "'"
+                        set_str += "idArc: '" + pid2 + "', idGlider: '" + pid3 + "', idSegment1: '" + pid4 + "', idSegment2: '" + pid5 + "'"
                         set_str += ">>; ";
                         set_str += pid1 + ".hasInnerPoints = function() { " +
                             "return !(" + pid1 + ".fillColor == 'transparent' || " + pid1 + ".fillColor == 'none' || " + pid1 + ".fillOpacity == 0); " +
