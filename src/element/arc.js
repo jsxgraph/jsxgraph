@@ -609,7 +609,7 @@ JXG.registerElement("minorarc", JXG.createMinorArc);
  * var p2 = board.create('point', [1.0, 0.5]);
  * var p3 = board.create('point', [3.5, 1.0]);
  *
- * var a = board.create('minorarc', [p1, p2, p3]);
+ * var a = board.create('majorarc', [p1, p2, p3]);
  * </pre><div class="jxgbox" id="JXG17a10d38-5629-40a4-b150-f41806edee9f" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
  * (function () {

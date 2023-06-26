@@ -423,7 +423,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
      * @param {String} vname Name of the variable
      * @param {Boolean} [local=false] Only look up the internal symbol table and don't look for
      * the <tt>vname</tt> in Math or the element list.
-     * @param {Boolean} [isFunctionName=false] Lookup function of tpye builtIn, Math.*, creator.
+     * @param {Boolean} [isFunctionName=false] Lookup function of type builtIn, Math.*, creator.
      *
      * @see JXG.JessieCode#resolveType
      */
@@ -434,6 +434,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
 
         // Local scope has always precedence
         s = this.isLocalVariable(vname);
+
         if (s !== null) {
             return s.locals[vname];
         }
@@ -697,12 +698,12 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
         fun.toJS = fun.toString;
         fun.toString = (function (_that) {
             return function () {
-                return _that.compile(_that.replaceIDs(Type.deepCopy(node)), true);
+                return _that.compile(_that.replaceIDs(Type.deepCopy(node)));
             };
         }(this));
 
         fun.deps = {};
-        this.collectDependencies(node.children[1], fun.deps);
+        this.collectDependencies(node.children[1], node.children[0], fun.deps);
 
         return fun;
     },
@@ -1033,24 +1034,29 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
      * Search the parse tree below <tt>node</tt> for <em>stationary</em> dependencies, i.e. dependencies hard coded into
      * the function.
      * @param {Object} node
+     * @param {Array} varnames List of variable names of the function
      * @param {Object} result An object where the referenced elements will be stored. Access key is their id.
      */
-    collectDependencies: function (node, result) {
+    collectDependencies: function (node, varnames, result) {
         var i, v, e, le;
 
         if (Type.isArray(node)) {
             le = node.length;
             for (i = 0; i < le; i++) {
-                this.collectDependencies(node[i], result);
+                this.collectDependencies(node[i], varnames, result);
             }
             return;
         }
 
         v = node.value;
 
-        if (node.type === 'node_var') {
+        if (node.type === 'node_var' &&
+            varnames.indexOf(v) < 0 // v is not contained in the list of variables of that function
+        ) {
             e = this.getvar(v);
-            if (e && e.visProp && e.type && e.elementClass && e.id) {
+            if (e && e.visProp && e.type && e.elementClass && e.id &&
+                e.type === Const.OBJECT_TYPE_SLIDER // Sliders are the only elements which are given by names.
+            ) {
                 result[e.id] = e;
             }
         }
@@ -1067,7 +1073,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
         if (node.children) {
             for (i = node.children.length; i > 0; i--) {
                 if (Type.exists(node.children[i - 1])) {
-                    this.collectDependencies(node.children[i - 1], result);
+                    this.collectDependencies(node.children[i - 1], varnames, result);
                 }
             }
         }
@@ -1898,10 +1904,13 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
         }
 
         if (node.needsBrackets) {
+            ret = '{\n' + ret + ' }\n';
+        }
+        if (node.needsAngleBrackets) {
             if (js) {
-                ret = '{\n' + ret + '\n}\n';
+                ret = '{\n' + ret + ' }\n';
             } else {
-                ret = '<< ' + ret + ' >>';
+                ret = '<< ' + ret + ' >>\n';
             }
         }
 
@@ -2884,10 +2893,10 @@ case 78:
  this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_array', $$[$0-1]); 
 break;
 case 79:
- this.$ = AST.createNode(lc(_$[$0-1]), 'node_op', 'op_emptyobject', {}); this.$.needsBrackets = true; 
+ this.$ = AST.createNode(lc(_$[$0-1]), 'node_op', 'op_emptyobject', {}); this.$.needsAngleBrackets = true; 
 break;
 case 80:
- this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_proplst_val', $$[$0-1]); this.$.needsBrackets = true; 
+ this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_proplst_val', $$[$0-1]); this.$.needsAngleBrackets = true; 
 break;
 case 82:
  this.$ = AST.createNode(lc(_$[$0-2]), 'node_op', 'op_proplst', $$[$0-2], $$[$0]); 
