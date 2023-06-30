@@ -2433,9 +2433,11 @@ JXG.extend(
          * This method is called by the browser when a pointing device is pressed on the screen.
          * @param {Event} evt The browsers event object.
          * @param {Object} object If the object to be dragged is already known, it can be submitted via this parameter
-         * @returns {Boolean} ...
+         * @param {Boolean} [allowDefaultEventHandling=false] If true event is not canceled, i.e. prevent call of evt.preventDefault()
+         * @returns {Boolean} false if the the first finger event is sent twice, or not a browser, or
+         *  or in selection mode. Otherwise returns true.
          */
-        pointerDownListener: function (evt, object) {
+        pointerDownListener: function (evt, object, allowDefaultEventHandling) {
             var i, j, k, pos,
                 elements, sel, target_obj,
                 type = 'mouse', // Used in case of no browser
@@ -2564,14 +2566,15 @@ JXG.extend(
                 // Prevent accidental text selection
                 // this could get us new trouble: input fields, links and drop down boxes placed as text
                 // on the board don't work anymore.
-                if (evt && evt.preventDefault) {
+                if (evt && evt.preventDefault && !allowDefaultEventHandling) {
                     evt.preventDefault();
-                } else if (window.event) {
-                    window.event.returnValue = false;
+                    // All browser supporting pointer events know preventDefault()
+                    // } else if (window.event) {
+                    //     window.event.returnValue = false;
                 }
             }
 
-            if (this.touches.length > 0) {
+            if (this.touches.length > 0 && !allowDefaultEventHandling) {
                 evt.preventDefault();
                 evt.stopPropagation();
             }
