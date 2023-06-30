@@ -22,6 +22,7 @@ UNZIP=unzip
 
 # Directories
 OUTPUT=distrib
+BETA=beta
 THIRDPARTY=3rdparty
 BUILD=build
 TMP=tmp
@@ -87,6 +88,21 @@ release: core docs
 	$(CD) $(TMP) && $(ZIP) $(ZIPFLAGS) jsxgraph.zip jsxgraph* themes/ index.d.ts docs.zip README.md LICENSE.*
 	$(CP) $(TMP)/jsxgraph.zip $(OUTPUT)/jsxgraph.zip
 	$(RM) $(RMFLAGS) $(TMP)
+
+beta: docs
+	# $(WEBPACK) --config config/webpack.config.js
+	cp $(OUTPUT)/*.js $(BETA)
+	cp $(OUTPUT)/*.mjs $(BETA)
+	cp $(OUTPUT)/*.map $(BETA)
+	cp $(OUTPUT)/*.css $(BETA)
+	rm -r $(BETA)/docs
+	cp -r $(OUTPUT)/docs/ $(BETA)/docs
+	# Update version number in line 2 of file COPYRIGHT
+	sed -i '2s/.*/    JSXGraph $(VERSION)/' COPYRIGHT
+	# Prepend file to the jsxgraphcore.* files
+	cat COPYRIGHT $(BETA)/jsxgraphcore.js >$(BETA)/tmp.file; mv $(BETA)/tmp.file $(BETA)/jsxgraphcore.js
+	cat COPYRIGHT $(BETA)/jsxgraphcore.mjs >$(BETA)/tmp.file; mv $(BETA)/tmp.file $(BETA)/jsxgraphcore.mjs
+
 
 docs: core
 	# Set up tmp dir
