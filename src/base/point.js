@@ -461,6 +461,7 @@ JXG.extend(
  * and the property fixed is not set or set to false. If one or more parent elements is not a number but a string containing a GEONE<sub>x</sub>T
  * constraint or a function the point will be considered as constrained). That means that the user won't be able to change the point's
  * position directly.
+ * @see Glider for a non-free point that is attached to another geometric element.
  * @pseudo
  * @description
  * @name Point

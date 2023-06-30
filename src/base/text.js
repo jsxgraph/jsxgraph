@@ -119,7 +119,7 @@ JXG.Text = function (board, coords, attributes, content) {
     this.methodMap = Type.deepCopy(this.methodMap, {
         setText: "setTextJessieCode",
         // free: 'free',
-        move: "setCoords"
+        // move: "setCoords"
     });
 };
 
