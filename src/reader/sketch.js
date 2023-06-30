@@ -1453,7 +1453,7 @@
                                     ") <<" +
                                     attrid;
                                 set_str +=
-                                    "name: ''"+
+                                    "name: ''" +
                                     ", creationGesture: 'circum-2-points'" +
                                     ", creationCenterExisting: false" +
                                     ", fillOpacity: " + JXG.Options.opacityLevel +
@@ -1486,7 +1486,7 @@
                                 set_str +=
                                     ">>, " +
                                     attrid +
-                                    "name: ''"+
+                                    "name: ''" +
                                     ", creationGesture: 'circum-3-points'" +
                                     ", creationCenterExisting: false" +
                                     ", fillOpacity: " + JXG.Options.opacityLevel +
@@ -2767,111 +2767,87 @@
                                     "]); ";
                             }
 
-                        } else { //Backwards compatibility
+                        } else { // Backwards compatibility
                             if (
                                 step.args.obj_type === JXG.OBJECT_TYPE_LINE ||
                                 step.args.obj_type === JXG.OBJECT_TYPE_VECTOR
                             ) {
                                 set_str =
-                                    step.src_ids[0] +
-                                    ".move([" +
-                                    pn(step.args.coords[0].usrCoords[0]) +
-                                    ", ";
-                                set_str +=
-                                    pn(step.args.coords[0].usrCoords[1]) +
-                                    ", " +
+                                    step.src_ids[0] + ".move([" +
+                                    pn(step.args.coords[0].usrCoords[0]) + ", " +
+                                    pn(step.args.coords[0].usrCoords[1]) + ", " +
                                     pn(step.args.coords[0].usrCoords[2]) +
                                     "]); ";
                                 reset_str =
-                                    step.src_ids[0] +
-                                    ".move([" +
-                                    step.args.zstart[0] +
-                                    ", " +
-                                    step.args.xstart[0] +
-                                    ", ";
-                                reset_str += step.args.ystart[0] + "]); ";
+                                    step.src_ids[0] + ".move([" +
+                                    step.args.zstart[0] + ", " +
+                                    step.args.xstart[0] + ", " +
+                                    step.args.ystart[0] +
+                                    "]); ";
 
                                 set_str +=
-                                    step.src_ids[1] +
-                                    ".move([" +
-                                    pn(step.args.coords[1].usrCoords[0]) +
-                                    ", ";
-                                set_str +=
-                                    pn(step.args.coords[1].usrCoords[1]) +
-                                    ", " +
+                                    step.src_ids[1] + ".move([" +
+                                    pn(step.args.coords[1].usrCoords[0]) + ", " +
+                                    pn(step.args.coords[1].usrCoords[1]) + ", " +
                                     pn(step.args.coords[1].usrCoords[2]) +
                                     "]); ";
                                 reset_str +=
-                                    step.src_ids[1] +
-                                    ".move([" +
-                                    step.args.zstart[1] +
-                                    ", " +
-                                    step.args.xstart[1] +
-                                    ", ";
-                                reset_str += step.args.ystart[1] + "]); ";
+                                    step.src_ids[1] + ".move([" +
+                                    step.args.zstart[1] + ", " +
+                                    step.args.xstart[1] + ", " +
+                                    step.args.ystart[1] +
+                                    "]); ";
+
                             } else if (step.args.obj_type === JXG.OBJECT_TYPE_CIRCLE) {
                                 set_str =
-                                    step.src_ids[0] +
-                                    ".move([" +
-                                    pn(step.args.coords[0].usrCoords[1]) +
-                                    ", ";
-                                set_str += pn(step.args.coords[0].usrCoords[2]) + "]); ";
+                                    step.src_ids[0] + ".move([" +
+                                    pn(step.args.coords[0].usrCoords[1]) + ", " +
+                                    pn(step.args.coords[0].usrCoords[2]) +
+                                    "]); ";
                                 reset_str =
-                                    step.src_ids[0] +
-                                    ".move([" +
-                                    step.args.xstart +
-                                    ", " +
+                                    step.src_ids[0] + ".move([" +
+                                    step.args.xstart + ", " +
                                     step.args.ystart +
                                     "]); ";
 
                                 if (step.args.has_point2) {
                                     set_str +=
-                                        step.src_ids[1] +
-                                        ".move([" +
-                                        pn(step.args.coords[1].usrCoords[1]) +
-                                        ", ";
-                                    set_str += pn(step.args.coords[1].usrCoords[2]) + "]); ";
+                                        step.src_ids[1] + ".move([" +
+                                        pn(step.args.coords[1].usrCoords[1]) + ", " +
+                                        pn(step.args.coords[1].usrCoords[2]) +
+                                        "]); ";
                                     reset_str +=
-                                        step.src_ids[1] +
-                                        ".move([" +
-                                        step.args.old_p2x +
-                                        ", " +
-                                        step.args.old_p2y;
-                                    reset_str += "]); ";
+                                        step.src_ids[1] + ".move([" +
+                                        step.args.old_p2x + ", " +
+                                        step.args.old_p2y +
+                                        "]); ";
                                 }
                             } else if (step.args.obj_type === JXG.OBJECT_TYPE_POLYGON) {
                                 set_str = reset_str = "";
 
                                 for (i = 0; i < step.src_ids.length; i++) {
                                     set_str +=
-                                        step.src_ids[i] +
-                                        ".move([" +
-                                        pn(step.args.coords[i].usrCoords[1]) +
-                                        ", ";
-                                    set_str += pn(step.args.coords[i].usrCoords[2]) + "]); ";
+                                        step.src_ids[i] + ".move([" +
+                                        pn(step.args.coords[i].usrCoords[1]) + ", " +
+                                        pn(step.args.coords[i].usrCoords[2]) +
+                                        "]); ";
                                     reset_str +=
-                                        step.src_ids[i] +
-                                        ".move([" +
-                                        step.args.xstart[i] +
-                                        ", " +
-                                        step.args.ystart[i];
-                                    reset_str += "]); ";
+                                        step.src_ids[i] + ".move([" +
+                                        step.args.xstart[i] + ", " +
+                                        step.args.ystart[i] +
+                                        "]); ";
                                 }
                             } else {
                                 // Backwards compatibility of pre 1.0 files
                                 if (JXG.exists(step.args.coords[0])) {
                                     set_str =
-                                        step.src_ids[0] +
-                                        ".move([" +
-                                        pn(step.args.coords[0].usrCoords[1]) +
-                                        ", ";
-                                    set_str += pn(step.args.coords[0].usrCoords[2]) + "]); ";
-
+                                        step.src_ids[0] + ".move([" +
+                                        pn(step.args.coords[0].usrCoords[1]) + ", " +
+                                        pn(step.args.coords[0].usrCoords[2]) +
+                                        "]); ";
                                     reset_str =
-                                        step.src_ids[0] +
-                                        ".move([" +
-                                        step.args.xstart +
-                                        ", " +
+                                        step.src_ids[0] + ".move([" +
+                                        step.args.xstart + ", " +
                                         step.args.ystart +
                                         "]); ";
                                 }
