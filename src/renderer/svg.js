@@ -1983,7 +1983,7 @@ JXG.extend(
         },
 
         /**
-         * Return a data URI of the SVG code representeing the construction.
+         * Return a data URI of the SVG code representing the construction.
          * The SVG code of the construction is base64 encoded. The return string starts
          * with "data:image/svg+xml;base64,...".
          *
@@ -2081,6 +2081,8 @@ JXG.extend(
             // Safari fails if the svg string contains a "&nbsp;"
             // Obsolete with Safari 12+
             svg = svg.replace(/&nbsp;/g, " ");
+
+            svg = svg.replace(/url\(&quot;(.*)&quot;\)/g, "url($1)");
 
             // Move all HTML tags back from
             // the foreignObject element to the container
