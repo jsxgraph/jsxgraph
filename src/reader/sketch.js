@@ -188,7 +188,7 @@
                 if (
                     JXG.exists(board) &&
                     options.useSymbols &&
-                    step.type !== JXG.GENTYPE_ABLATION
+                    step.type !== JXG.GENTYPE_CIRCLECOPY
                 ) {
                     attrid = "";
                     assign = step.dest_id + " = ";
@@ -2628,7 +2628,7 @@
 
                         break;
 
-                    case JXG.GENTYPE_ABLATION:
+                    case JXG.GENTYPE_CIRCLECOPY:
                         xstart = getObject(step.src_ids[0]).coords.usrCoords[1];
                         ystart = getObject(step.src_ids[0]).coords.usrCoords[2];
 
