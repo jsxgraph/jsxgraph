@@ -2550,61 +2550,93 @@
                         break;
 
                     case JXG.GENTYPE_CIRCLECOPY:
-                        xstart = getObject(step.src_ids[0]).coords.usrCoords[1];
-                        ystart = getObject(step.src_ids[0]).coords.usrCoords[2];
+                        if (JXG.exists(step.args.centerCoords)) {
 
-                        set_str =
-                            "point(" +
-                            pn(xstart - step.args.x) +
-                            ", " +
-                            pn(ystart - step.args.y) +
-                            ") <<id: '";
-                        set_str += step.dest_sub_ids[0] + "', name: '', withLabel: false>>; ";
-                        set_str +=
-                            "circle('" +
-                            step.dest_sub_ids[0] +
-                            "', 1) <<id: '" +
-                            step.dest_sub_ids[1];
-                        set_str += "', fillOpacity: " + JXG.Options.opacityLevel;
-                        set_str +=
-                            ", strokeColor: '#888888', visible: true, name: '', withLabel: false>>; ";
-
-                        if (step.args.fids.length === 1) {
-                            step.args.func = step.args.fids[0] + ".radius()";
-                        } else {
-                            step.args.func =
-                                "dist(" + step.args.fids[0] + ", " + step.args.fids[1] + ")";
-                        }
-
-                        set_str +=
-                            step.dest_sub_ids[1] +
-                            ".setRadius(function() { return " +
-                            step.args.func +
-                            "; }); ";
-
-                        for (j = 0; j < step.src_ids.length; j++) {
+                            set_str =
+                                "point(" + pn(step.args.centerCoords[1]) + ", " + pn(step.args.centerCoords[2]) + ") " +
+                                "<<id: '" + step.dest_sub_ids[0] + "'" +
+                                ", name: ''" +
+                                ", withLabel: false" +
+                                getAttribsString(board.options.sketchometry.migration.point) +
+                                ">>; ";
                             set_str +=
-                                step.src_ids[j] + ".addChild(" + step.dest_sub_ids[0] + "); ";
-                            set_str +=
-                                step.src_ids[j] + ".addChild(" + step.dest_sub_ids[1] + "); ";
-                        }
+                                "circle('" + step.dest_sub_ids[0] + "', 1) " +
+                                "<<id: '" + step.dest_id + "'" +
+                                ", name: '', withLabel: false" +
+                                getAttribsString(board.options.sketchometry.migration.stroke) +
+                                (!step.args.isEmpty
+                                        ? getAttribsString(board.options.sketchometry.migration.fill)
+                                        : ", fillColor: 'transparent'"
+                                ) +
+                                ">>; ";
+                            if (step.args.createdBy === 'segment') {
+                                set_str += step.dest_id + ".setRadius(function() { " +
+                                    "return dist(" + step.src_ids[0] + ", " + step.src_ids[1] + "); " +
+                                    "}); ";
+                            } else if (step.args.createdBy === 'circle') {
+                            }
 
-                        if (step.args.migrate !== 0 && step.args.migrate !== -1) {
-                            set_str +=
-                                "$board.migratePoint(" +
-                                step.dest_sub_ids[0] +
+                            reset_str =
+                                "remove(" + step.dest_id + "); " +
+                                "remove(" + step.dest_sub_ids[0] + "); ";
+
+                        } else { // backwards compatibility
+
+                            xstart = getObject(step.src_ids[0]).coords.usrCoords[1];
+                            ystart = getObject(step.src_ids[0]).coords.usrCoords[2];
+
+                            set_str =
+                                "point(" +
+                                pn(xstart - step.args.x) +
                                 ", " +
-                                step.args.migrate +
+                                pn(ystart - step.args.y) +
+                                ") <<id: '";
+                            set_str += step.dest_sub_ids[0] + "', name: '', withLabel: false>>; ";
+                            set_str +=
+                                "circle('" +
+                                step.dest_sub_ids[0] +
+                                "', 1) <<id: '" +
+                                step.dest_sub_ids[1];
+                            set_str += "', fillOpacity: " + JXG.Options.opacityLevel;
+                            set_str +=
+                                ", strokeColor: '#888888', visible: true, name: '', withLabel: false>>; ";
+
+                            if (step.args.fids.length === 1) {
+                                step.args.func = step.args.fids[0] + ".radius()";
+                            } else {
+                                step.args.func =
+                                    "dist(" + step.args.fids[0] + ", " + step.args.fids[1] + ")";
+                            }
+
+                            set_str +=
+                                step.dest_sub_ids[1] +
+                                ".setRadius(function() { return " +
+                                step.args.func +
+                                "; }); ";
+
+                            for (j = 0; j < step.src_ids.length; j++) {
+                                set_str +=
+                                    step.src_ids[j] + ".addChild(" + step.dest_sub_ids[0] + "); ";
+                                set_str +=
+                                    step.src_ids[j] + ".addChild(" + step.dest_sub_ids[1] + "); ";
+                            }
+
+                            if (step.args.migrate !== 0 && step.args.migrate !== -1) {
+                                set_str +=
+                                    "$board.migratePoint(" +
+                                    step.dest_sub_ids[0] +
+                                    ", " +
+                                    step.args.migrate +
+                                    "); ";
+                            }
+
+                            reset_str =
+                                "remove(" +
+                                step.dest_sub_ids[1] +
+                                "); remove(" +
+                                step.dest_sub_ids[0] +
                                 "); ";
                         }
-
-                        reset_str =
-                            "remove(" +
-                            step.dest_sub_ids[1] +
-                            "); remove(" +
-                            step.dest_sub_ids[0] +
-                            "); ";
-
                         break;
 
                     case JXG.GENTYPE_VECTORCOPY:
