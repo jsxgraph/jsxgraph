@@ -2563,6 +2563,8 @@
                                 "circle('" + step.dest_sub_ids[0] + "', 1) " +
                                 "<<id: '" + step.dest_id + "'" +
                                 ", name: '', withLabel: false" +
+                                ", creationGesture: 'copy'" +
+                                ", creationCenterExisting: false" +
                                 getAttribsString(board.options.sketchometry.migration.stroke) +
                                 (!step.args.isEmpty
                                         ? getAttribsString(board.options.sketchometry.migration.fill)
