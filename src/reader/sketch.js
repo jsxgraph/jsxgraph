@@ -177,6 +177,18 @@
                         }
 
                         return o;
+                    },
+
+                    getAttribsString = function (object) {
+                        var str = "", key, val;
+                        for (key in object) {
+                            if (!object.hasOwnProperty(key)) continue;
+                            val = object[key];
+                            if (JXG.isString(val))
+                                val = "'" + val + "'";
+                            str += ", " + key + ": " + val;
+                        }
+                        return str;
                     };
 
                 options = JXG.SketchReader.generator;
@@ -429,13 +441,7 @@
                                 } else {
                                     set_str += ', name: ""';
                                 }
-                                for (key in board.options.sketchometry.reflection.point) {
-                                    if (!board.options.sketchometry.reflection.point.hasOwnProperty(key)) continue;
-                                    val = board.options.sketchometry.reflection.point[key];
-                                    if (JXG.isString(val))
-                                        val = "'" + val + "'";
-                                    set_str += ", " + key + ": " + val;
-                                }
+                                set_str += getAttribsString(board.options.sketchometry.reflection.point);
                                 set_str += ">>;\n";
                             }
 
@@ -452,26 +458,14 @@
                             }
 
                             set_str += ", names: [" + x.join() + "]";
-                            for (key in board.options.sketchometry.reflection.stroke) {
-                                if (!board.options.sketchometry.reflection.stroke.hasOwnProperty(key)) continue;
-                                val = board.options.sketchometry.reflection.stroke[key];
-                                if (JXG.isString(val))
-                                    val = "'" + val + "'";
-                                set_str += ", " + key + ": " + val;
-                            }
+                            set_str += getAttribsString(board.options.sketchometry.reflection.stroke);
                             set_str += ">>, " + attrid + " hasInnerPoints: " + JXG.Options.polygon.hasInnerPoints;
                             if (step.args.name !== "") {
                                 set_str += ', name: "' + step.args.name + '"';
                                 set_str += ", withLabel: true";
                             }
                             if (!step.args.isEmpty)
-                                for (key in board.options.sketchometry.reflection.fill) {
-                                    if (!board.options.sketchometry.reflection.fill.hasOwnProperty(key)) continue;
-                                    val = board.options.sketchometry.reflection.fill[key];
-                                    if (JXG.isString(val))
-                                        val = "'" + val + "'";
-                                    set_str += ", " + key + ": " + val;
-                                }
+                                set_str += getAttribsString(board.options.sketchometry.reflection.fill);
                             else
                                 set_str += ", fillColor: 'transparent'";
                             set_str += ">>; ";
@@ -500,13 +494,7 @@
                                 } else {
                                     set_str += ', name: ""';
                                 }
-                                for (key in board.options.sketchometry.reflection.point) {
-                                    if (!board.options.sketchometry.reflection.point.hasOwnProperty(key)) continue;
-                                    val = board.options.sketchometry.reflection.point[key];
-                                    if (JXG.isString(val))
-                                        val = "'" + val + "'";
-                                    set_str += ", " + key + ": " + val;
-                                }
+                                set_str += getAttribsString(board.options.sketchometry.reflection.point);
                                 set_str += ">>;\n";
                             }
 
@@ -529,13 +517,7 @@
                             }
                             set_str += "<<";
                             set_str += attrid + ' name: "' + step.args.name + '"';
-                            for (key in board.options.sketchometry.reflection.stroke) {
-                                if (!board.options.sketchometry.reflection.stroke.hasOwnProperty(key)) continue;
-                                val = board.options.sketchometry.reflection.stroke[key];
-                                if (JXG.isString(val))
-                                    val = "'" + val + "'";
-                                set_str += ", " + key + ": " + val;
-                            }
+                            set_str += getAttribsString(board.options.sketchometry.reflection.stroke);
                             if (step.args.type === "line")
                                 if (JXG.exists(step.args.attr)) {
                                     set_str += ", firstArrow: " + step.args.attr.firstArrow;
@@ -566,21 +548,9 @@
                                 ") ";
                             set_str += "<<";
                             set_str += attrid + ' name: "' + step.args.name + '"';
-                            for (key in board.options.sketchometry.reflection.stroke) {
-                                if (!board.options.sketchometry.reflection.stroke.hasOwnProperty(key)) continue;
-                                val = board.options.sketchometry.reflection.stroke[key];
-                                if (JXG.isString(val))
-                                    val = "'" + val + "'";
-                                set_str += ", " + key + ": " + val;
-                            }
+                            set_str += getAttribsString(board.options.sketchometry.reflection.stroke);
                             if (!step.args.isEmpty)
-                                for (key in board.options.sketchometry.reflection.fill) {
-                                    if (!board.options.sketchometry.reflection.fill.hasOwnProperty(key)) continue;
-                                    val = board.options.sketchometry.reflection.fill[key];
-                                    if (JXG.isString(val))
-                                        val = "'" + val + "'";
-                                    set_str += ", " + key + ": " + val;
-                                }
+                                set_str += getAttribsString(board.options.sketchometry.reflection.fill);
                             else
                                 set_str += ", fillColor: 'transparent'";
                             if (step.args.name !== "") {
@@ -593,13 +563,7 @@
                             } else {
                                 set_str += ', name: ""';
                             }
-                            for (key in board.options.sketchometry.reflection.point) {
-                                if (!board.options.sketchometry.reflection.point.hasOwnProperty(key)) continue;
-                                val = board.options.sketchometry.reflection.point[key];
-                                if (JXG.isString(val))
-                                    val = "'" + val + "'";
-                                set_str += ", " + key + ": " + val;
-                            }
+                            set_str += getAttribsString(board.options.sketchometry.reflection.point);
                             set_str += ">>";
                             set_str += ">>; ";
                             set_str += step.dest_id + ".hasInnerPoints = function() { " +
@@ -617,17 +581,9 @@
                                 step.src_ids[1] +
                                 ")";
                             set_str += "<<" + attrid + ' name: "' + step.args.name + '"';
-                            for (key in board.options.sketchometry.reflection.point) {
-                                if (!board.options.sketchometry.reflection.point.hasOwnProperty(key)) continue;
-                                val = board.options.sketchometry.reflection.point[key];
-                                if (JXG.isString(val))
-                                    val = "'" + val + "'";
-                                set_str += ", " + key + ": " + val;
-                            }
-
-                            if (step.args.name !== "") {
+                            set_str += getAttribsString(board.options.sketchometry.reflection.point);
+                            if (step.args.name !== "")
                                 set_str += ", withLabel: true";
-                            }
                             set_str += ">>; ";
 
                             ///////////////
@@ -641,27 +597,14 @@
                                 step.src_ids[1] +
                                 ")";
                             set_str += "<<" + attrid + ' name: "' + step.args.name + '"';
-                            for (key in board.options.sketchometry.reflection.stroke) {
-                                if (!board.options.sketchometry.reflection.stroke.hasOwnProperty(key)) continue;
-                                val = board.options.sketchometry.reflection.stroke[key];
-                                if (JXG.isString(val))
-                                    val = "'" + val + "'";
-                                set_str += ", " + key + ": " + val;
-                            }
+                            set_str += getAttribsString(board.options.sketchometry.reflection.stroke);
                             if (!step.args.isEmpty)
-                                for (key in board.options.sketchometry.reflection.fill) {
-                                    if (!board.options.sketchometry.reflection.fill.hasOwnProperty(key)) continue;
-                                    val = board.options.sketchometry.reflection.fill[key];
-                                    if (JXG.isString(val))
-                                        val = "'" + val + "'";
-                                    set_str += ", " + key + ": " + val;
-                                }
+                                set_str += getAttribsString(board.options.sketchometry.reflection.fill);
                             else
                                 set_str += ", fillColor: 'transparent'";
 
-                            if (step.args.name !== "") {
+                            if (step.args.name !== "")
                                 set_str += ", withLabel: true";
-                            }
                             set_str += ">>; ";
                         }
 
@@ -772,12 +715,7 @@
                             set_str += ", opacity: '" + step.args.opacity + "'";
                             set_str += ', name: "' + step.args.name + '"';
                             set_str += ', id: "' + step.dest_id + '"';
-                            if (JXG.exists(step.args.attr)) {
-                                for (key in step.args.attr)
-                                    if (step.args.attr.hasOwnProperty(key)) {
-                                        set_str += ", " + key + ": " + step.args.attr[key] + "";
-                                    }
-                            }
+                            set_str += getAttribsString(step.args.attr);
 
                             if (step.args.name !== "") {
                                 set_str += ", withLabel: true";
@@ -797,15 +735,10 @@
                             set_str += ", opacity: '" + step.args.opacity + "'";
                             set_str += ', name: "' + step.args.name + '"';
                             set_str += ', id: "' + step.dest_id + '"';
-                            if (JXG.exists(step.args.attr)) {
-                                for (key in step.args.attr)
-                                    if (step.args.attr.hasOwnProperty(key)) {
-                                        set_str += ", " + key + ": " + step.args.attr[key] + "";
-                                    }
-                            }
-                            if (step.args.name !== "") {
+                            if (JXG.exists(step.args.attr))
+                                set_str += getAttribsString(step.args.attr);
+                            if (step.args.name !== "")
                                 set_str += ", withLabel: true";
-                            }
 
                             set_str += ', center: <<id:"' + step.dest_sub_ids[0] + '"';
                             if (JXG.exists(step.args.subnames)) {
@@ -836,15 +769,10 @@
                             }
                             set_str += ', id: "' + step.dest_id + '"';
                             set_str += ', name: "' + step.args.name + '"';
-                            if (JXG.exists(step.args.attr)) {
-                                for (key in step.args.attr)
-                                    if (step.args.attr.hasOwnProperty(key)) {
-                                        set_str += ", " + key + ": " + step.args.attr[key] + "";
-                                    }
-                            }
-                            if (step.args.name !== "") {
+                            if (JXG.exists(step.args.attr))
+                                set_str += getAttribsString(step.args.attr);
+                            if (step.args.name !== "")
                                 set_str += ", withLabel: true";
-                            }
                             set_str += ">>; ";
                         }
 
@@ -1476,13 +1404,7 @@
                                     ") <<center: <<id: '" + step.dest_sub_ids[0] + "', " +
                                     withName +
                                     " visible: true";
-                                for (key in board.options.sketchometry.circle3pointsCenter) {
-                                    if (!board.options.sketchometry.circle3pointsCenter.hasOwnProperty(key)) continue;
-                                    val = board.options.sketchometry.circle3pointsCenter[key];
-                                    if (JXG.isString(val))
-                                        val = "'" + val + "'";
-                                    set_str += ", " + key + ": " + val;
-                                }
+                                set_str += getAttribsString(board.options.sketchometry.circle3pointsCenter);
                                 set_str +=
                                     ">>, " +
                                     attrid +
