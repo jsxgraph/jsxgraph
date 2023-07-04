@@ -181,6 +181,7 @@ JXG.extend(
                     b = this.getLowerAndUpperBounds(this.getZeroCoordinates(), "ticksdistance");
                     dist = b.upper - b.lower;
 
+                    // delta: Proposed distance in user units between two major ticks
                     delta = Math.pow(10, Math.floor(Math.log(0.6 * dist) / Math.LN10));
                     if (dist <= 6 * delta) {
                         delta *= 0.5;
@@ -800,11 +801,14 @@ JXG.extend(
                 Const.COORDS_BY_SCREEN,
                 new Coords(Const.COORDS_BY_USER, [nx, ny], this.board)
             );
+// console.log(deltas, distScr, this.board.unitX, this.board.unitY, "ticksDelta:", ticksDelta);
 
             if (ticksDelta === 0.0) {
                 return 0.0;
             }
 
+// console.log(">>>>>>", ticksDelta)
+// console.log(":", distScr, ev_minti + 1, distScr / (ev_minti + 1), this.minTicksDistance)
             while (distScr / (ev_minti + 1) < this.minTicksDistance) {
                 if (sgn === 1) {
                     ticksDelta *= 2;
@@ -819,7 +823,11 @@ JXG.extend(
                     Const.COORDS_BY_SCREEN,
                     new Coords(Const.COORDS_BY_USER, [nx, ny], this.board)
                 );
+// console.log(">", distScr, ev_minti + 1, distScr / (ev_minti + 1), this.minTicksDistance)
+
             }
+// console.log("<<<<<<", ticksDelta)
+
             return ticksDelta;
         },
 
