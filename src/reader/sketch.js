@@ -1997,12 +1997,12 @@
                         break;
 
                     case JXG.GENTYPE_POLYGON:
-                        if (step.args.create_point)
+                        if (step.args.create_point) {
                             for (i = 0; i < step.args.create_point.length; i++) {
                                 if (step.args.create_point[i]) {
                                     set_str +=
-                                        "point(" + pn(step.args.coords[i].usrCoords[1]) + ", " + pn(step.args.coords[i].usrCoords[2]) + ")" +
-                                        " <<id: '" + step.dest_sub_ids[i] + "'" +
+                                        "point(" + pn(step.args.coords[i].usrCoords[1]) + ", " + pn(step.args.coords[i].usrCoords[2]) + ") <<" +
+                                        "id: '" + step.dest_sub_ids[i] + "'" +
                                         ", snapToGridIntern: " + JXG.Options.elements.snapToGrid +
                                         ", snapToPointsIntern: " + JXG.Options.elements.snapToPoints +
                                         ">>; ";
@@ -2015,6 +2015,7 @@
                                     set_str += step.dest_sub_ids[i] + ".moveTo([" + pn(step.args.coords[i].usrCoords[1]) + ", " + pn(step.args.coords[i].usrCoords[2]) + "]); ";
                                 }
                             }
+                        }
 
                         if (step.dest_sub_ids)
                             for (i = 0; i < step.dest_sub_ids.length; i++) {
@@ -2037,7 +2038,7 @@
 
                         set_str += ") <<borders: <<ids: ['";
 
-                        for (i = 0; i < step.dest_sub_ids.length; i++) {
+                        for (i = step.args.coords.length; i < step.dest_sub_ids.length; i++) {
                             set_str += step.dest_sub_ids[i];
                             if (i < step.dest_sub_ids.length - 1) {
                                 set_str += "', '";
@@ -2046,7 +2047,7 @@
                         set_str += "']";
 
                         set_str += ", names: [";
-                        for (i = 0; i < step.dest_sub_ids.length; i++) {
+                        for (i = step.args.coords.length; i < step.dest_sub_ids.length; i++) {
                             set_str += "''";
                             if (i < step.dest_sub_ids.length - 1) {
                                 set_str += ", ";
@@ -2055,8 +2056,6 @@
                         set_str += "]";
                         set_str +=
                             ">>, " + attrid + " fillOpacity: " + JXG.Options.opacityLevel;
-                        /* set_str +=
-                         ", hasInnerPoints_Org: " + JXG.Options.polygon.hasInnerPoints; */
                         set_str += ", hasInnerPoints: " + JXG.Options.polygon.hasInnerPoints;
                         set_str += ", name: ''>>; ";
                         set_str += step.dest_id + ".hasInnerPoints = function() { " +
