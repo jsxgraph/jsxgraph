@@ -3216,7 +3216,7 @@ declare namespace JXG {
         /**
          *
          */
-        defaultDistance?: number;
+        // defaultDistance?: number;
         /**
          *
          */
@@ -3304,7 +3304,7 @@ declare namespace JXG {
     export interface TicksOptions extends GeometryElementOptions {
         anchor?: "left" | "middle" | "right";
         beautifulScientificTickLabels?: boolean;
-        defaultDistance?: number;
+        // defaultDistance?: number;
         drawLabels?: boolean;
         drawZero?: boolean;
         face?: "|" | "<" | ">";

@@ -37,11 +37,11 @@ JXG.Options = JXG.merge(JXG.Options, {
             drawLabels: true,
             drawZero: false,
             insertTicks: false,
+            ticksDistance: 1,
             minTicksDistance: 50,
             minorHeight: 4,
             majorHeight: 10,
-            minorTicks: 4,
-            defaultDistance: 1
+            minorTicks: 4
         },
         labelOffsets: [10, 10]
     },
@@ -135,10 +135,10 @@ JXG.Options = JXG.merge(JXG.Options, {
             drawLabels: false,
             drawZero: true,
             insertTicks: true,
+            ticksDistance: 1,
             minorHeight: 4, // if <0: full width and height
             majorHeight: 10, // if <0: full width and height
             minorTicks: 0,
-            defaultDistance: 1,
             opacity: 1,
             strokeWidth: 2,
             strokeColor: "#ddd"

@@ -2062,6 +2062,7 @@ JXG.Options = {
          *
          * @type Boolean
          * @name Ticks#insertTicks
+         * @see Ticks#ticksDistance
          * @see Ticks#minTicksDistance
          * @default false
          * @example
@@ -4361,11 +4362,11 @@ JXG.Options = {
             },
             drawZero: false,
             insertTicks: false,
+            ticksDistance: 1,
             minTicksDistance: 50,
             minorHeight: 4,          // if <0: full width and height
             majorHeight: -1,         // if <0: full width and height
             minorTicks: 4,
-            defaultDistance: 1,
             strokeOpacity: 0.3,
             visible: 'inherit'
         },
@@ -5495,10 +5496,10 @@ JXG.Options = {
 
             minTicksDistance: 30,
             insertTicks: true,
-            minorHeight: 4,         // if <0: full width and height
+            ticksDistance: 1,      // Not necessary, since insertTicks = true
+            minorHeight: 4,        // if <0: full width and height
             majorHeight: 5,        // if <0: full width and height
             minorTicks: 0,
-            defaultDistance: 1,
             strokeOpacity: 1,
             strokeWidth: 1,
             tickEndings: [0, 1],
@@ -5968,12 +5969,12 @@ JXG.Options = {
             drawLabels: false,
             drawZero: true,
             insertTicks: true,
+            ticksDistance: 0.1, // Ignored, since insertTicks=true
             minorHeight: 8,
             majorHeight: 16,
             minorTicks: 4,
             tickEndings: [0, 1],
             majorTickEndings: [0, 1],
-            defaultDistance: 0.1,
             strokeOpacity: 1,
             strokeWidth: 1,
             strokeColor: '#000000',
@@ -6833,7 +6834,7 @@ JXG.Options = {
             validators = {
                 attractorDistance: validateNotNegative,
                 color: validateColor,
-                defaultDistance: Type.isNumber,
+                // defaultDistance: Type.isNumber,
                 display: validateDisplay,
                 doAdvancedPlot: false,
                 draft: false,
