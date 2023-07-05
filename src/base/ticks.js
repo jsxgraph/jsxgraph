@@ -729,7 +729,7 @@ JXG.extend(
                 eps2 = Mat.eps,
                 deltas, ticksDelta,
                 // Distance between two major ticks in user coordinates
-                ev_it = Type.evaluate(this.visProp.insertticks),
+                // ev_it = Type.evaluate(this.visProp.insertticks),
                 ev_mt = Type.evaluate(this.visProp.minorticks);
 
             // Determine a proposed distance between major ticks in user units
@@ -854,9 +854,9 @@ JXG.extend(
 
                 // < v1.6.0:
                 // delta = Math.pow(10, Math.floor(Math.log(0.6 * dist) / Math.LN10));
-                if (false && dist <= 6 * delta) {
-                    delta *= 0.5;
-                }
+                // if (false && dist <= 6 * delta) {
+                //     delta *= 0.5;
+                // }
                 return delta;
             }
 
