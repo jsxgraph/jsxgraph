@@ -3250,7 +3250,8 @@ Mat.Numerics = {
      * @param {Function} f Function, whose root is to be found
      * @param {Number} x0 Start value
      * @param {Object} object Parent object in case f is method of it
-     * @returns {Array} [x_0, f(x_0), x_1, f(x_1)]
+     * @returns {Array} [x_0, f(x_0), x_1, f(x_1)] in case that x_0 <= x_1 
+     *   or [x_1, f(x_1), x_0, f(x_0)] in case that x_1 < x_0.
      *
      * @see JXG.Math.Numerics.fzero
      * @see JXG.Math.Numerics.chandrupatla

@@ -513,7 +513,7 @@ JXG.extend(
          */
         updatePathWithArrowHeads: function (el, doHighlight) {
             var ev = el.visProp,
-                hl = doHighlight ? "highlight" : "",
+                hl = doHighlight ? 'highlight' : '',
                 w,
                 arrowData;
 
@@ -743,26 +743,24 @@ JXG.extend(
          * Shorten the length of a line element such that the arrow head touches
          * the start or end point and such that the arrow head ends exactly
          * at the start / end position of the line.
-         *
+         * <p>
+         * The Coords objects c1 and c2 are changed in place. In object a, the Boolean properties
+         * 'showFirst' and 'showLast' are set.
+         * 
          * @param  {JXG.Line} el Reference to the line object that gets arrow heads.
          * @param  {JXG.Coords} c1  Coords of the first point of the line (after {@link JXG.Math.Geometry#calcStraight}).
          * @param  {JXG.Coords} c2  Coords of the second point of the line (after {@link JXG.Math.Geometry#calcStraight}).
-         * @param  {Object}  a
-         * @return {object} Object containing how much the line has to be shortened.
-         * Data structure: {c1, c2, d1x, d1y, d2x, d2y, sFirst, sLast}. sFirst and sLast is the length by which
-         * firstArrow and lastArrow have to shifted such that there is no gap between arrow head and line.
-         * Additionally, if one of these values is zero, the arrow is not displayed. This is the case, if the
-         * line length is very short.
+         * @param  {Object}  a Object { evFirst: Boolean, evLast: Boolean} containing information about arrow heads.
+         * @see JXG.AbstractRenderer#getArrowHeadData
+         * 
          */
         getPositionArrowHead: function (el, c1, c2, a) {
             var d, d1x, d1y, d2x, d2y;
 
-            /*
-               Handle arrow heads.
+            //    Handle arrow heads.
 
-               The default arrow head (type==1) is an isosceles triangle with base length 10 units and height 10 units.
-               These 10 units are scaled to strokeWidth * arrowSize pixels.
-            */
+            //    The default arrow head (type==1) is an isosceles triangle with base length 10 units and height 10 units.
+            //    These 10 units are scaled to strokeWidth * arrowSize pixels.
             if (a.evFirst || a.evLast) {
                 // Correct the position of the arrow heads
                 d1x = d1y = d2x = d2y = 0.0;
@@ -809,6 +807,7 @@ JXG.extend(
          * @param {JXG.Coords} c1 Coordinates of the start of the line. The coordinates are changed in place.
          * @param {JXG.Coords} c2 Coordinates of the end of the line. The coordinates are changed in place.
          * @param {Object} a
+         * @see JXG.AbstractRenderer#getArrowHeadData
          */
         handleTouchpoints: function (el, c1, c2, a) {
             var s1, s2, d, d1x, d1y, d2x, d2y;

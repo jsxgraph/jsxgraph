@@ -220,7 +220,7 @@ JXG.createComb = function (board, parents, attributes) {
 
         this.dataX = [];
         this.dataY = [];
-        // TODO Handle infinite boundaries?
+        // TODO Handle infinite bounds?
         while (s < max_s) {
             x = p1_inner.X() + dx * s;
             y = p1_inner.Y() + dy * s;

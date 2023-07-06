@@ -120,4 +120,29 @@ describe("Test geometry functions", function () {
         expect(p.X()).toBeCloseTo(-0.7142857142857143, 7);
         expect(p.Y()).toBeCloseTo(1.1428571428571428, 7);
     });
+
+    it("bisectorParallels", function () {
+        var li1, li2,
+
+        li1 = board.create('line', [[0, -5], [-4, 2]]);
+        li2 = board.create('parallel', [[2, 1], li1]);
+
+        // First bisector
+        g1 =  board.create('glider', [-156972, 19333, li1]);
+        g2 =  board.create('glider', [-156972, 19333, li2]);
+        i1 = board.create('intersection', [li1, li2]);
+        a1 = board.create('bisector', [g1, i1, g2]);
+
+        // Second bisector
+        g3 =  board.create('glider', [-186972, 19333, li1]);
+        g4 =  board.create('glider', [-186972, 19333, a1]);
+        i2 = board.create('intersection', [li1, a1]);
+        // a2 = board.create('bisector', [g3, i2, g4]);
+
+        expect(i2.Z()).toEqual(0);
+        expect(i2.X()).toBeCloseTo(-1.169230769228601, 10);
+        expect(i2.Y()).toBeCloseTo(2.046153846150052, 10);
+    });
+
+
 });

@@ -1618,17 +1618,17 @@ JXG.extend(
             var result,
                 eps = Mat.eps;
 
-            // line line
             if (Math.abs(el1[3]) < eps && Math.abs(el2[3]) < eps) {
+                // line line
                 result = this.meetLineLine(el1, el2, i, board);
-                // circle line
             } else if (Math.abs(el1[3]) >= eps && Math.abs(el2[3]) < eps) {
+                // circle line
                 result = this.meetLineCircle(el2, el1, i, board);
-                // line circle
             } else if (Math.abs(el1[3]) < eps && Math.abs(el2[3]) >= eps) {
+                // line circle
                 result = this.meetLineCircle(el1, el2, i, board);
-                // circle circle
             } else {
+                // circle circle
                 result = this.meetCircleCircle(el1, el2, i, board);
             }
 
@@ -1729,16 +1729,12 @@ JXG.extend(
          * @returns {JXG.Coords} Coordinates of the intersection point.
          */
         meetLineLine: function (l1, l2, i, board) {
-            /*
-            var s = Mat.crossProduct(l1, l2);
-
-            if (Math.abs(s[0]) > Mat.eps) {
-                s[1] /= s[0];
-                s[2] /= s[0];
-                s[0] = 1.0;
-            }
-            */
             var s = isNaN(l1[5] + l2[5]) ? [0, 0, 0] : Mat.crossProduct(l1, l2);
+
+            // Make intersection of parallel lines more robust:
+            if (Math.abs(s[0]) < 1.0e-14) {
+                s[0] = 0;
+            }
             return new Coords(Const.COORDS_BY_USER, s, board);
         },
 

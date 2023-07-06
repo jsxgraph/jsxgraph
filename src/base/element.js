@@ -1393,11 +1393,11 @@ JXG.extend(
                                 this.addRotation(value);
                             }
                             break;
-                        case "ticksdistance":
-                            if (this.type === Const.OBJECT_TYPE_TICKS && Type.isNumber(value)) {
-                                this.ticksFunction = this.makeTicksFunction(value);
-                            }
-                            break;
+                        // case "ticksdistance":
+                        //     if (this.type === Const.OBJECT_TYPE_TICKS && Type.isNumber(value)) {
+                        //         this.ticksFunction = this.makeTicksFunction(value);
+                        //     }
+                        //     break;
                         case "generatelabelvalue":
                             if (
                                 this.type === Const.OBJECT_TYPE_TICKS &&

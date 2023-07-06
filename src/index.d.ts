@@ -3216,7 +3216,7 @@ declare namespace JXG {
         /**
          *
          */
-        defaultDistance?: number;
+        // defaultDistance?: number;
         /**
          *
          */
@@ -3304,7 +3304,7 @@ declare namespace JXG {
     export interface TicksOptions extends GeometryElementOptions {
         anchor?: "left" | "middle" | "right";
         beautifulScientificTickLabels?: boolean;
-        defaultDistance?: number;
+        // defaultDistance?: number;
         drawLabels?: boolean;
         drawZero?: boolean;
         face?: "|" | "<" | ">";
@@ -3315,7 +3315,7 @@ declare namespace JXG {
         generateLabelValue?: ((labeled: Coords, center: Coords) => string) | null;
         highlightFillColor?: string;
         highlightStrokeColor?: string;
-        includeBoundaries?: boolean | number;
+        includeBoundaries?: boolean;
         insertTicks?: boolean;
         label?: LabelOptions;
         labels?: any[];
