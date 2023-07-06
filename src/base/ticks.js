@@ -176,37 +176,37 @@ JXG.extend(
         //  */
         // // makeTicksFunction: function (ticks) {
         //     // return function () {
-//         ticksFunction: function () {
-//                     var delta, b, dist,
-//                     number_major_tick_intervals = 5;
+        //         ticksFunction: function () {
+        //                     var delta, b, dist,
+        //                     number_major_tick_intervals = 5;
 
-//                 if (Type.evaluate(this.visProp.insertticks)) {
-//                     b = this.getLowerAndUpperBounds(this.getZeroCoordinates(), 'ticksdistance');
-//                     dist = b.upper - b.lower;
+        //                 if (Type.evaluate(this.visProp.insertticks)) {
+        //                     b = this.getLowerAndUpperBounds(this.getZeroCoordinates(), 'ticksdistance');
+        //                     dist = b.upper - b.lower;
 
-//                     // delta: Proposed distance in user units between two major ticks
-//                     delta = Math.pow(10, Math.floor(Math.log(dist / number_major_tick_intervals) / Math.LN10));
-// console.log("delta", delta,  b.upper, b.lower, dist, dist / number_major_tick_intervals * 1.1)
-//                     if (5 * delta < dist / number_major_tick_intervals * 1.1) {
-//                         return 5 * delta;
-//                     }
-//                     if (2 * delta < dist / number_major_tick_intervals * 1.1) {
-//                         return 2 * delta;
-//                     }
-                    
-//                     // < v1.6.0:
-//                     // delta = Math.pow(10, Math.floor(Math.log(0.6 * dist) / Math.LN10));
-//                     if (false && dist <= 6 * delta) {
-//                         delta *= 0.5;
-//                     }
-//                     return delta;
-//                 }
+        //                     // delta: Proposed distance in user units between two major ticks
+        //                     delta = Math.pow(10, Math.floor(Math.log(dist / number_major_tick_intervals) / Math.LN10));
+        // console.log("delta", delta,  b.upper, b.lower, dist, dist / number_major_tick_intervals * 1.1)
+        //                     if (5 * delta < dist / number_major_tick_intervals * 1.1) {
+        //                         return 5 * delta;
+        //                     }
+        //                     if (2 * delta < dist / number_major_tick_intervals * 1.1) {
+        //                         return 2 * delta;
+        //                     }
 
-//                 // In case of insertTicks==false
-//                 return Type.evaluate(this.visProp.ticksdistance);
-//                 // return ticks;
-//             // };
-//         },
+        //                     // < v1.6.0:
+        //                     // delta = Math.pow(10, Math.floor(Math.log(0.6 * dist) / Math.LN10));
+        //                     if (false && dist <= 6 * delta) {
+        //                         delta *= 0.5;
+        //                     }
+        //                     return delta;
+        //                 }
+
+        //                 // In case of insertTicks==false
+        //                 return Type.evaluate(this.visProp.ticksdistance);
+        //                 // return ticks;
+        //             // };
+        //         },
 
         /**
          * Checks whether (x,y) is near the line.
@@ -256,10 +256,10 @@ JXG.extend(
                         !(
                             (this.line.stdform[1] === 0 &&
                                 Math.abs(t[0][0] - this.line.point1.coords.scrCoords[1]) <
-                                    Mat.eps) ||
+                                Mat.eps) ||
                             (this.line.stdform[2] === 0 &&
                                 Math.abs(t[1][0] - this.line.point1.coords.scrCoords[2]) <
-                                    Mat.eps)
+                                Mat.eps)
                         )
                     ) {
                         // tick length is not zero, ie. at least one pixel
@@ -342,7 +342,7 @@ JXG.extend(
          * @private
          */
         calculateTicksCoordinates: function () {
-            var coordsZero, bounds, r_max, bb;
+            var coordsZero, b, r_max, bb;
 
             if (this.line.elementClass === Const.OBJECT_CLASS_LINE) {
                 // Calculate Ticks width and height in Screen and User Coordinates
@@ -360,9 +360,9 @@ JXG.extend(
             // Calculate lower bound and upper bound limits based on distance
             // between p1 and center and p2 and center
             if (this.line.elementClass === Const.OBJECT_CLASS_LINE) {
-                bounds = this.getLowerAndUpperBounds(coordsZero, 'ticksdistance');
+                b = this.getLowerAndUpperBounds(coordsZero, 'ticksdistance');
             } else {
-                bounds = {
+                b = {
                     lower: this.line.minX(),
                     upper: this.line.maxX()
                 };
@@ -374,7 +374,7 @@ JXG.extend(
                     Math.sqrt(bb[0] * bb[0] + bb[1] * bb[1]),
                     Math.sqrt(bb[2] * bb[2] + bb[3] * bb[3])
                 );
-                bounds.upper = r_max;
+                b.upper = r_max;
             }
 
             // Clean up
@@ -382,9 +382,9 @@ JXG.extend(
             this.labelsData = [];
             // Create Ticks Coordinates and Labels
             if (this.equidistant) {
-                this.generateEquidistantTicks(coordsZero, bounds);
+                this.generateEquidistantTicks(coordsZero, b);
             } else {
-                this.generateFixedTicks(coordsZero, bounds);
+                this.generateFixedTicks(coordsZero, b);
             }
 
             return this;
@@ -442,7 +442,7 @@ JXG.extend(
             // After this, the length of the vector (dxMaj, dyMaj) in screen coordinates is equal to distMaj pixel.
             d = Math.sqrt(
                 this.dxMaj * this.dxMaj * this.board.unitX * this.board.unitX +
-                    this.dyMaj * this.dyMaj * this.board.unitY * this.board.unitY
+                this.dyMaj * this.dyMaj * this.board.unitY * this.board.unitY
             );
             this.dxMaj *= (distMaj / d) * this.board.unitX;
             this.dyMaj *= (distMaj / d) * this.board.unitY;
@@ -532,27 +532,26 @@ JXG.extend(
          * If {@link JXG.Ticks#includeBoundaries} is false, the boundaries will exclude point1 and point2
          *
          * @param  {JXG.Coords} coordsZero
-         * @returns {String} type  (Optional) If type=='ticksdistance' the bounds are
-         *                         the intersection of the line with the bounding box of the board.
+         * @returns {String} [type] If type=='ticksdistance', the bounds are
+         *                         the intersection of the line with the bounding box of the board, respecting
+         *                         the value of the attribute 'margin' and the width of arrow heads.
          *                         Otherwise, it is the projection of the corners of the bounding box
-         *                         to the line. The first case is needed to automatically
-         *                         generate ticks. The second case is for drawing of the ticks.
-         * @returns {Object}     contains the lower and upper bounds
+         *                         to the line - without the attribute 'margin' and width of arrow heads.
+         *  <br>
+         *                         The first case is needed to determine which ticks are displayed, i.e. where to stop.
+         *                         The second case is to determine the distance between ticks in case of 'insertTicks:true'.
+         * @returns {Object}     {lower: Number, upper: Number } containing the lower and upper bounds in user units.
          *
          * @private
          */
         getLowerAndUpperBounds: function (coordsZero, type) {
-            var lowerBound,
-                upperBound,
-                fA,
-                lA,
-                point1,
-                point2,
-                isPoint1inBoard,
-                isPoint2inBoard,
+            var lowerBound, upperBound,
+                fA, lA,
+                point1, point2,
+                isPoint1inBoard, isPoint2inBoard,
                 // We use the distance from zero to P1 and P2 to establish lower and higher points
-                dZeroPoint1,
-                dZeroPoint2,
+                dZeroPoint1, dZeroPoint2,
+                arrowData,
                 ev_sf = Type.evaluate(this.line.visProp.straightfirst),
                 ev_sl = Type.evaluate(this.line.visProp.straightlast),
                 ev_i = Type.evaluate(this.visProp.includeboundaries);
@@ -565,16 +564,9 @@ JXG.extend(
                 };
             }
 
-            point1 = new Coords(
-                Const.COORDS_BY_USER,
-                this.line.point1.coords.usrCoords,
-                this.board
-            );
-            point2 = new Coords(
-                Const.COORDS_BY_USER,
-                this.line.point2.coords.usrCoords,
-                this.board
-            );
+            point1 = new Coords(Const.COORDS_BY_USER, this.line.point1.coords.usrCoords, this.board);
+            point2 = new Coords(Const.COORDS_BY_USER, this.line.point2.coords.usrCoords, this.board);
+
             // Are the original defining points within the board?
             isPoint1inBoard =
                 Math.abs(point1.usrCoords[0]) >= Mat.eps &&
@@ -590,15 +582,10 @@ JXG.extend(
                 point2.scrCoords[2] <= this.board.canvasHeight;
 
             // Adjust line limit points to be within the board
-            if (Type.exists(type) || type === "tickdistance") {
+            if (Type.exists(type) && type === 'ticksdistance') {
                 // The good old calcStraight is needed for determining the distance between major ticks.
                 // Here, only the visual area is of importance
-                Geometry.calcStraight(
-                    this.line,
-                    point1,
-                    point2,
-                    Type.evaluate(this.line.visProp.margin)
-                );
+                Geometry.calcStraight(this.line, point1, point2, Type.evaluate(this.line.visProp.margin));
             } else {
                 // This function projects the corners of the board to the line.
                 // This is important for diagonal lines with infinite tick lines.
@@ -608,38 +595,22 @@ JXG.extend(
             // Shorten ticks bounds such that ticks are not through arrow heads
             fA = Type.evaluate(this.line.visProp.firstarrow);
             lA = Type.evaluate(this.line.visProp.lastarrow);
+
             if (fA || lA) {
+                // Do not display ticks at through arrow heads.
+                // In arrowData we ignore the highlighting status.
+                // Ticks would appear to be too nervous.
+                arrowData = this.board.renderer.getArrowHeadData(
+                    this.line, 
+                    Type.evaluate(this.line.visProp.strokewidth), 
+                    '');
+
                 this.board.renderer.getPositionArrowHead(
                     this.line,
                     point1,
                     point2,
-                    Type.evaluate(this.line.visProp.strokewidth)
+                    arrowData
                 );
-
-                if (fA) {
-                    point1.setCoordinates(Const.COORDS_BY_SCREEN, [
-                        point1.scrCoords[1],
-                        point1.scrCoords[2]
-                    ]);
-                }
-                if (lA) {
-                    point2.setCoordinates(Const.COORDS_BY_SCREEN, [
-                        point2.scrCoords[1],
-                        point2.scrCoords[2]
-                    ]);
-                }
-                // if (fA) {
-                //     point1.setCoordinates(Const.COORDS_BY_SCREEN, [
-                //         point1.scrCoords[1] - obj.d1x,
-                //         point1.scrCoords[2] - obj.d1y
-                //     ]);
-                // }
-                // if (lA) {
-                //     point2.setCoordinates(Const.COORDS_BY_SCREEN, [
-                //         point2.scrCoords[1] - obj.d2x,
-                //         point2.scrCoords[2] - obj.d2y
-                //     ]);
-                // }
             }
 
             // Calculate (signed) distance from Zero to P1 and to P2
@@ -816,7 +787,9 @@ JXG.extend(
                 maxDist, minDist, ev_minti;
 
             if (Type.evaluate(this.visProp.insertticks)) {
-                b = this.getLowerAndUpperBounds(this.getZeroCoordinates(), 'ticksdistance');
+                // Case of insertTicks==true:
+                // Here, we ignore the attribute 'margin'
+                b = this.getLowerAndUpperBounds(this.getZeroCoordinates(), '');
 
                 dist = (b.upper - b.lower);
                 scale = Type.evaluate(this.visProp.scale);
@@ -828,7 +801,7 @@ JXG.extend(
                 d = this.getXandYdeltas();
                 d.x *= this.board.unitX;
                 d.y *= this.board.unitY;
-                minDist /= Math.sqrt(d.x * d.x + d.y *d.y);
+                minDist /= Math.sqrt(d.x * d.x + d.y * d.y);
                 minDist *= (ev_minti + 1);
 
                 // Determine minimal delta to fulfill the minTicksDistance constraint
@@ -846,11 +819,9 @@ JXG.extend(
                 } else if (2 * delta2 < maxDist) {
                     delta2 *= 2;
                 }
-                // Take the larger value, that is
+                // Take the larger value of the two delta's, that is
                 // minTicksDistance has priority over numberMajorTicks
                 delta = Math.max(delta, delta2);
-
-    // console.log("delta", delta, minDist, maxDist)
 
                 // < v1.6.0:
                 // delta = Math.pow(10, Math.floor(Math.log(0.6 * dist) / Math.LN10));
@@ -860,67 +831,67 @@ JXG.extend(
                 return delta;
             }
 
-            // In case of insertTicks==false
+            // Case of insertTicks==false
             return Type.evaluate(this.visProp.ticksdistance);
         },
 
-//         /**
-//          * Auxiliary method used by {@link JXG.Ticks#generateEquidistantTicks} to adjust the
-//          * distance between two ticks depending on {@link JXG.Ticks#minTicksDistance} value
-//          *
-//          * @param  {Number}     ticksDelta  distance between two major ticks in user coordinates
-//          * @param  {JXG.Coords} coordsZero  coordinates of the point considered zero
-//          * @param  {Object}     deltas      x and y distance in pixel between two user units
-//          * @param  {Object}     bounds      upper and lower bound of the tick positions in user units.
-//          * @private
-//          */
-//         adjustTickDistance: function (ticksDelta, coordsZero, deltas) {
-//             var nx,
-//                 ny,
-//                 // bounds,
-//                 distScr,
-//                 sgn = 1,
-//                 ev_mintd = Type.evaluate(this.visProp.minticksdistance),
-//                 ev_minti = Type.evaluate(this.visProp.minorticks);
+        //         /**
+        //          * Auxiliary method used by {@link JXG.Ticks#generateEquidistantTicks} to adjust the
+        //          * distance between two ticks depending on {@link JXG.Ticks#minTicksDistance} value
+        //          *
+        //          * @param  {Number}     ticksDelta  distance between two major ticks in user coordinates
+        //          * @param  {JXG.Coords} coordsZero  coordinates of the point considered zero
+        //          * @param  {Object}     deltas      x and y distance in pixel between two user units
+        //          * @param  {Object}     bounds      upper and lower bound of the tick positions in user units.
+        //          * @private
+        //          */
+        //         adjustTickDistance: function (ticksDelta, coordsZero, deltas) {
+        //             var nx,
+        //                 ny,
+        //                 // bounds,
+        //                 distScr,
+        //                 sgn = 1,
+        //                 ev_mintd = Type.evaluate(this.visProp.minticksdistance),
+        //                 ev_minti = Type.evaluate(this.visProp.minorticks);
 
-//             if (this.line.elementClass === Const.OBJECT_CLASS_CURVE) {
-//                 return ticksDelta;
-//             }
-//             // Seems to be ignored:
-//             // bounds = this.getLowerAndUpperBounds(coordsZero, "ticksdistance");
+        //             if (this.line.elementClass === Const.OBJECT_CLASS_CURVE) {
+        //                 return ticksDelta;
+        //             }
+        //             // Seems to be ignored:
+        //             // bounds = this.getLowerAndUpperBounds(coordsZero, "ticksdistance");
 
-//             // distScr is the distance between two major Ticks in pixel
-//             nx = coordsZero.usrCoords[1] + deltas.x * ticksDelta;
-//             ny = coordsZero.usrCoords[2] + deltas.y * ticksDelta;
-//             distScr = coordsZero.distance(
-//                 Const.COORDS_BY_SCREEN,
-//                 new Coords(Const.COORDS_BY_USER, [nx, ny], this.board)
-//             );
-// // console.log(deltas, distScr, this.board.unitX, this.board.unitY, "ticksDelta:", ticksDelta);
+        //             // distScr is the distance between two major Ticks in pixel
+        //             nx = coordsZero.usrCoords[1] + deltas.x * ticksDelta;
+        //             ny = coordsZero.usrCoords[2] + deltas.y * ticksDelta;
+        //             distScr = coordsZero.distance(
+        //                 Const.COORDS_BY_SCREEN,
+        //                 new Coords(Const.COORDS_BY_USER, [nx, ny], this.board)
+        //             );
+        // // console.log(deltas, distScr, this.board.unitX, this.board.unitY, "ticksDelta:", ticksDelta);
 
-//             if (ticksDelta === 0.0) {
-//                 return 0.0;
-//             }
+        //             if (ticksDelta === 0.0) {
+        //                 return 0.0;
+        //             }
 
-// // console.log(":", distScr, ev_minti + 1, distScr / (ev_minti + 1), ev_mintd)
-//             while (false && distScr / (ev_minti + 1) < ev_mintd) {
-//                 if (sgn === 1) {
-//                     ticksDelta *= 2;
-//                 } else {
-//                     ticksDelta *= 5;
-//                 }
-//                 sgn *= -1;
+        // // console.log(":", distScr, ev_minti + 1, distScr / (ev_minti + 1), ev_mintd)
+        //             while (false && distScr / (ev_minti + 1) < ev_mintd) {
+        //                 if (sgn === 1) {
+        //                     ticksDelta *= 2;
+        //                 } else {
+        //                     ticksDelta *= 5;
+        //                 }
+        //                 sgn *= -1;
 
-//                 nx = coordsZero.usrCoords[1] + deltas.x * ticksDelta;
-//                 ny = coordsZero.usrCoords[2] + deltas.y * ticksDelta;
-//                 distScr = coordsZero.distance(
-//                     Const.COORDS_BY_SCREEN,
-//                     new Coords(Const.COORDS_BY_USER, [nx, ny], this.board)
-//                 );
-//             }
+        //                 nx = coordsZero.usrCoords[1] + deltas.x * ticksDelta;
+        //                 ny = coordsZero.usrCoords[2] + deltas.y * ticksDelta;
+        //                 distScr = coordsZero.distance(
+        //                     Const.COORDS_BY_SCREEN,
+        //                     new Coords(Const.COORDS_BY_USER, [nx, ny], this.board)
+        //                 );
+        //             }
 
-//             return ticksDelta;
-//         },
+        //             return ticksDelta;
+        //         },
 
         /**
          * Auxiliary method used by {@link JXG.Ticks#generateEquidistantTicks} to create a tick
@@ -960,7 +931,7 @@ JXG.extend(
             // a multiple of the number of minorticks+1
             tickCoords.major =
                 Math.round(tickPosition / ticksDelta) %
-                    (Type.evaluate(this.visProp.minorticks) + 1) ===
+                (Type.evaluate(this.visProp.minorticks) + 1) ===
                 0;
 
             if (!ticksPerLabel) {
@@ -1697,86 +1668,86 @@ JXG.createTicks = function (board, parents, attributes) {
     return el;
 };
 
-    /**
-     * @class Hatches can be used to mark congruent lines or curves.
-     * @pseudo
-     * @description
-     * @name Hatch
-     * @augments JXG.Ticks
-     * @constructor
-     * @type JXG.Ticks
-     * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
-     * @param {JXG.Line|JXG.curve} line The line or curve the hatch marks are going to be attached to.
-     * @param {Number} numberofhashes Number of dashes. The distance of the hashes can be controlled with the attribute ticksDistance.
-     * @example
-     * // Create an axis providing two coords pairs.
-     *   var p1 = board.create('point', [0, 3]);
-     *   var p2 = board.create('point', [1, 3]);
-     *   var l1 = board.create('line', [p1, p2]);
-     *   var t = board.create('hatch', [l1, 3]);
-     * </pre><div class="jxgbox" id="JXG4a20af06-4395-451c-b7d1-002757cf01be" style="width: 300px; height: 300px;"></div>
-     * <script type="text/javascript">
-     * (function () {
-     *   var board = JXG.JSXGraph.initBoard('JXG4a20af06-4395-451c-b7d1-002757cf01be', {boundingbox: [-1, 7, 7, -1], showcopyright: false, shownavigation: false});
-     *   var p1 = board.create('point', [0, 3]);
-     *   var p2 = board.create('point', [1, 3]);
-     *   var l1 = board.create('line', [p1, p2]);
-     *   var t = board.create('hatch', [l1, 3]);
-     * })();
-     * </script><pre>
-     *
-     * @example
-     * // Alter the position of the hatch
-     *
-     * var p = board.create('point', [-5, 0]);
-     * var q = board.create('point', [5, 0]);
-     * var li = board.create('line', [p, q]);
-     * var h = board.create('hatch', [li, 2], {anchor: 0.2, ticksDistance:0.4});
-     *
-     * </pre><div id="JXG05d720ee-99c9-11e6-a9c7-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
-     * <script type="text/javascript">
-     *     (function() {
-     *         var board = JXG.JSXGraph.initBoard('JXG05d720ee-99c9-11e6-a9c7-901b0e1b8723',
-     *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
-     *
-     *     var p = board.create('point', [-5, 0]);
-     *     var q = board.create('point', [5, 0]);
-     *     var li = board.create('line', [p, q]);
-     *     var h = board.create('hatch', [li, 2], {anchor: 0.2, ticksDistance:0.4});
-     *
-     *     })();
-     *
-     * </script><pre>
-     *
-     * @example
-     * // Alternative hatch faces
-     *
-     * var li = board.create('line', [[-6,0], [6,3]]);
-     * var h1 = board.create('hatch', [li, 2], {tickEndings: [1,1], face:'|'});
-     * var h2 = board.create('hatch', [li, 2], {tickEndings: [1,1], face:'>', anchor: 0.3});
-     * var h3 = board.create('hatch', [li, 2], {tickEndings: [1,1], face:'<', anchor: 0.7});
-     *
-     * </pre><div id="JXG974f7e89-eac8-4187-9aa3-fb8068e8384b" class="jxgbox" style="width: 300px; height: 300px;"></div>
-     * <script type="text/javascript">
-     *     (function() {
-     *         var board = JXG.JSXGraph.initBoard('JXG974f7e89-eac8-4187-9aa3-fb8068e8384b',
-     *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
-     *     // Alternative hatch faces
-     *
-     *     var li = board.create('line', [[-6,0], [6,3]]);
-     *     var h1 = board.create('hatch', [li, 2], {tickEndings: [1,1], face:'|'});
-     *     var h2 = board.create('hatch', [li, 2], {tickEndings: [1,1], face:'>', anchor: 0.3});
-     *     var h3 = board.create('hatch', [li, 2], {tickEndings: [1,1], face:'<', anchor: 0.7});
-     *
-     *     })();
-     *
-     * </script><pre>
-     *
-     */
-    JXG.createHatchmark = function (board, parents, attributes) {
-        var num, i, base, width, totalwidth, el,
-            pos = [],
-            attr = Type.copyAttributes(attributes, board.options, 'hatch');
+/**
+ * @class Hatches can be used to mark congruent lines or curves.
+ * @pseudo
+ * @description
+ * @name Hatch
+ * @augments JXG.Ticks
+ * @constructor
+ * @type JXG.Ticks
+ * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
+ * @param {JXG.Line|JXG.curve} line The line or curve the hatch marks are going to be attached to.
+ * @param {Number} numberofhashes Number of dashes. The distance of the hashes can be controlled with the attribute ticksDistance.
+ * @example
+ * // Create an axis providing two coords pairs.
+ *   var p1 = board.create('point', [0, 3]);
+ *   var p2 = board.create('point', [1, 3]);
+ *   var l1 = board.create('line', [p1, p2]);
+ *   var t = board.create('hatch', [l1, 3]);
+ * </pre><div class="jxgbox" id="JXG4a20af06-4395-451c-b7d1-002757cf01be" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ * (function () {
+ *   var board = JXG.JSXGraph.initBoard('JXG4a20af06-4395-451c-b7d1-002757cf01be', {boundingbox: [-1, 7, 7, -1], showcopyright: false, shownavigation: false});
+ *   var p1 = board.create('point', [0, 3]);
+ *   var p2 = board.create('point', [1, 3]);
+ *   var l1 = board.create('line', [p1, p2]);
+ *   var t = board.create('hatch', [l1, 3]);
+ * })();
+ * </script><pre>
+ *
+ * @example
+ * // Alter the position of the hatch
+ *
+ * var p = board.create('point', [-5, 0]);
+ * var q = board.create('point', [5, 0]);
+ * var li = board.create('line', [p, q]);
+ * var h = board.create('hatch', [li, 2], {anchor: 0.2, ticksDistance:0.4});
+ *
+ * </pre><div id="JXG05d720ee-99c9-11e6-a9c7-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXG05d720ee-99c9-11e6-a9c7-901b0e1b8723',
+ *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+ *
+ *     var p = board.create('point', [-5, 0]);
+ *     var q = board.create('point', [5, 0]);
+ *     var li = board.create('line', [p, q]);
+ *     var h = board.create('hatch', [li, 2], {anchor: 0.2, ticksDistance:0.4});
+ *
+ *     })();
+ *
+ * </script><pre>
+ *
+ * @example
+ * // Alternative hatch faces
+ *
+ * var li = board.create('line', [[-6,0], [6,3]]);
+ * var h1 = board.create('hatch', [li, 2], {tickEndings: [1,1], face:'|'});
+ * var h2 = board.create('hatch', [li, 2], {tickEndings: [1,1], face:'>', anchor: 0.3});
+ * var h3 = board.create('hatch', [li, 2], {tickEndings: [1,1], face:'<', anchor: 0.7});
+ *
+ * </pre><div id="JXG974f7e89-eac8-4187-9aa3-fb8068e8384b" class="jxgbox" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *     (function() {
+ *         var board = JXG.JSXGraph.initBoard('JXG974f7e89-eac8-4187-9aa3-fb8068e8384b',
+ *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+ *     // Alternative hatch faces
+ *
+ *     var li = board.create('line', [[-6,0], [6,3]]);
+ *     var h1 = board.create('hatch', [li, 2], {tickEndings: [1,1], face:'|'});
+ *     var h2 = board.create('hatch', [li, 2], {tickEndings: [1,1], face:'>', anchor: 0.3});
+ *     var h3 = board.create('hatch', [li, 2], {tickEndings: [1,1], face:'<', anchor: 0.7});
+ *
+ *     })();
+ *
+ * </script><pre>
+ *
+ */
+JXG.createHatchmark = function (board, parents, attributes) {
+    var num, i, base, width, totalwidth, el,
+        pos = [],
+        attr = Type.copyAttributes(attributes, board.options, 'hatch');
 
     if (
         (parents[0].elementClass !== Const.OBJECT_CLASS_LINE &&
@@ -1785,12 +1756,12 @@ JXG.createTicks = function (board, parents, attributes) {
     ) {
         throw new Error(
             "JSXGraph: Can't create Hatch mark with parent types '" +
-                typeof parents[0] +
-                "' and '" +
-                typeof parents[1] +
-                " and ''" +
-                typeof parents[2] +
-                "'."
+            typeof parents[0] +
+            "' and '" +
+            typeof parents[1] +
+            " and ''" +
+            typeof parents[2] +
+            "'."
         );
     }
 
@@ -1803,9 +1774,9 @@ JXG.createTicks = function (board, parents, attributes) {
         pos[i] = base + i * width;
     }
 
-        el = board.create('ticks', [parents[0], pos], attr);
-        el.elType = 'hatch';
-        parents[0].inherits.push(el);
+    el = board.create('ticks', [parents[0], pos], attr);
+    el.elType = 'hatch';
+    parents[0].inherits.push(el);
 
     return el;
 };
