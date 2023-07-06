@@ -2564,12 +2564,13 @@ JXG.Options = {
 
         /**
          * If a label exceeds {@link Ticks#maxLabelLength} this determines the precision used to shorten the tick label.
-         * Deprecated! Replaced by the digits attribute.
+         * Deprecated! Replaced by the attribute <tt>digits</tt>.
          *
          * @type Number
          * @name Ticks#precision
          * @see Ticks#maxLabelLength
          * @see Ticks#digits
+         * @deprecated
          * @default 3
          */
         precision: 3,
