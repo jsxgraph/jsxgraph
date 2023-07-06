@@ -2044,8 +2044,6 @@
                         set_str += "]";
                         set_str +=
                             ">>, " + attrid + " fillOpacity: " + JXG.Options.opacityLevel;
-                        /* set_str +=
-                         ", hasInnerPoints_Org: " + JXG.Options.polygon.hasInnerPoints; */
                         set_str += ", hasInnerPoints: " + JXG.Options.polygon.hasInnerPoints;
                         set_str += ", name: ''>>; ";
                         set_str += step.dest_id + ".hasInnerPoints = function() { " +
@@ -2093,13 +2091,8 @@
                         }
                         set_str += " ]";
                         set_str += ", name: ''";
-                        // set_str += ', fillColor: \'' + JXG.Options.regularpolygon.fillColor + '\'';
-                        // set_str += ', strokeColor: \'' + JXG.Options.intersection.strokeColor + '\'';
-                        // set_str += ', opacity: \'' + JXG.Options.intersection.opacity + '\'';
                         set_str += ">>, " + attrid;
                         set_str += " fillOpacity: " + JXG.Options.opacityLevel;
-                        /* set_str +=
-                         ", hasInnerPoints_Org: " + JXG.Options.polygon.hasInnerPoints; */
                         set_str += ", hasInnerPoints: " + JXG.Options.polygon.hasInnerPoints;
                         set_str += ", name: ''>>; ";
                         set_str += step.dest_id + ".hasInnerPoints = function() { " +
