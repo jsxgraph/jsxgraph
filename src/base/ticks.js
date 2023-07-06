@@ -65,33 +65,42 @@ JXG.Ticks = function (line, ticks, attributes) {
     /**
      * The line the ticks belong to.
      * @type JXG.Line
+     * @private
      */
     this.line = line;
 
     /**
      * The board the ticks line is drawn on.
      * @type JXG.Board
+     * @private
      */
     this.board = this.line.board;
 
-    /**
-     * A function calculating ticks delta depending on the ticks number.
-     * @type Function
-     */
-    // this.ticksFunction = null;
+    // /**
+    //  * A function calculating ticks delta depending on the ticks number.
+    //  * @type Function
+    //  */
+    // // this.ticksFunction = null;
 
     /**
      * Array of fixed ticks.
      * @type Array
+     * @private
      */
     this.fixedTicks = null;
 
     /**
-     * Equidistant ticks. If true, distance is defined by ticksFunction
+     * Flag if the ticks are equidistant. If true, their distance is defined by ticksFunction.
      * @type Boolean
+     * @private
      */
     this.equidistant = false;
 
+    /**
+     * A list of labels which have to be displayed in updateRenderer.
+     * @type Array
+     * @private
+     */
     this.labelsData = [];
 
     if (Type.isFunction(ticks)) {
@@ -106,51 +115,41 @@ JXG.Ticks = function (line, ticks, attributes) {
         // if (Math.abs(ticks) < Mat.eps || ticks < 0) {
         //     ticks = attributes.defaultdistance;
         // }
-
-        /*
-         * Ticks function:
-         * determines the distance (in user units) of two major ticks
-         */
-        // this.ticksFunction = this.makeTicksFunction();
-
         this.equidistant = true;
     }
 
-    /**
-     * Least distance between two ticks, measured in pixels.
-     * @type int
-     */
-    // this.minTicksDistance = attributes.minticksdistance;
+    // /**
+    //  * Least distance between two ticks, measured in pixels.
+    //  * @type int
+    //  */
+    // // this.minTicksDistance = attributes.minticksdistance;
 
     /**
      * Stores the ticks coordinates
      * @type Array
+     * @private
      */
     this.ticks = [];
 
-    /**
-     * Distance between two major ticks in user coordinates
-     * @type Number
-     */
-    this.ticksDelta = 1;
+    // /**
+    //  * Distance between two major ticks in user coordinates
+    //  * @type Number
+    //  */
+    // this.ticksDelta = 1;
 
     /**
      * Array where the labels are saved. There is an array element for every tick,
      * even for minor ticks which don't have labels. In this case the array element
      * contains just <tt>null</tt>.
      * @type Array
+     * @private
      */
     this.labels = [];
 
     /**
-     * A list of labels which have to be displayed in updateRenderer.
-     * @type Array
-     */
-    this.labelData = [];
-
-    /**
-     * To ensure the uniqueness of label ids this counter is used.
+     * Used to ensure the uniqueness of label ids this counter is used.
      * @type number
+     * @private
      */
     this.labelCounter = 0;
 
@@ -528,13 +527,13 @@ JXG.extend(
         },
 
         /**
-         * Calculate the lower and upper bounds for tick rendering
-         * If {@link JXG.Ticks#includeBoundaries} is false, the boundaries will exclude point1 and point2
+         * Calculate the lower and upper bounds for tick rendering.
+         * If {@link JXG.Ticks#includeBoundaries} is false, the boundaries will exclude point1 and point2.
          *
          * @param  {JXG.Coords} coordsZero
          * @returns {String} [type] If type=='ticksdistance', the bounds are
          *                         the intersection of the line with the bounding box of the board, respecting
-         *                         the value of the attribute 'margin' and the width of arrow heads.
+         *                         the value of the line attribute 'margin' and the width of arrow heads.
          *                         Otherwise, it is the projection of the corners of the bounding box
          *                         to the line - without the attribute 'margin' and width of arrow heads.
          *  <br>
@@ -601,8 +600,8 @@ JXG.extend(
                 // In arrowData we ignore the highlighting status.
                 // Ticks would appear to be too nervous.
                 arrowData = this.board.renderer.getArrowHeadData(
-                    this.line, 
-                    Type.evaluate(this.line.visProp.strokewidth), 
+                    this.line,
+                    Type.evaluate(this.line.visProp.strokewidth),
                     '');
 
                 this.board.renderer.getPositionArrowHead(
@@ -618,7 +617,7 @@ JXG.extend(
             dZeroPoint2 = this.getDistanceFromZero(coordsZero, point2);
 
             // We have to establish if the direction is P1->P2 or P2->P1 to set the lower and upper
-            // boundaries appropriately. As the distances contain also a sign to indicate direction,
+            // bounds appropriately. As the distances contain also a sign to indicate direction,
             // we can compare dZeroPoint1 and dZeroPoint2 to establish the line direction
             if (dZeroPoint1 < dZeroPoint2) {
                 // Line goes P1->P2
@@ -689,10 +688,11 @@ JXG.extend(
 
         /**
          * Creates ticks coordinates and labels automatically.
-         * The frequency of ticks is affected by the values of {@link JXG.Ticks#insertTicks} and {@link JXG.Ticks#ticksDistance}
+         * The frequency of ticks is affected by the values of {@link JXG.Ticks#insertTicks}, {@link JXG.Ticks#minTicksDistance},
+         * and {@link JXG.Ticks#ticksDistance}
          *
          * @param  {JXG.Coords} coordsZero coordinates of the point considered zero
-         * @param  {Object}     bounds     contains the lower and upper boundaries for ticks placement
+         * @param  {Object}     bounds     contains the lower and upper bounds for ticks placement
          * @private
          */
         generateEquidistantTicks: function (coordsZero, bounds) {
@@ -707,7 +707,7 @@ JXG.extend(
             ticksDelta = this.getDistanceMajorTicks();
 
             // Obsolete, since this.equidistant is always true at this point
-            // ticksDelta = this.equidistant ? this.ticksFunction(1) : this.ticksDelta; 
+            // ticksDelta = this.equidistant ? this.ticksFunction(1) : this.ticksDelta;
 
             if (this.line.elementClass === Const.OBJECT_CLASS_LINE) {
                 // Calculate x and y distances between two points on the line which are 1 unit apart
@@ -769,12 +769,12 @@ JXG.extend(
          * <ul>
          * <li> If the attribute "insertTicks" is false, the value of the attribute
          * "ticksDistance" is returned. The attribute "minTicksDistance" is ignored in this case.
-         * <li> If the attribute "insertTicks" is true, the attribute "ticksDistance" is ignored. 
+         * <li> If the attribute "insertTicks" is true, the attribute "ticksDistance" is ignored.
          * The distance between two major ticks is computed
-         * as <i>a 10<sup>i</sup></i>, where <i>a</i> is one of <i>{1, 2, 5}</i> and 
+         * as <i>a 10<sup>i</sup></i>, where <i>a</i> is one of <i>{1, 2, 5}</i> and
          * the number <i>a 10<sup>i</sup></i> is maximized such that there are approximately
          * 6 major ticks and there are at least "minTicksDistance" pixel between minor ticks.
-         * The latter has priority over the number of major ticks.
+         * The latter restriction has priority over the number of major ticks.
          * </ul>
          * @returns Number
          * @private
@@ -965,7 +965,7 @@ JXG.extend(
          * Creates ticks coordinates and labels based on {@link JXG.Ticks#fixedTicks} and {@link JXG.Ticks#labels}.
          *
          * @param  {JXG.Coords} coordsZero Coordinates of the point considered zero
-         * @param  {Object}     bounds     contains the lower and upper boundaries for ticks placement
+         * @param  {Object}     bounds     contains the lower and upper bounds for ticks placement
          * @private
          */
         generateFixedTicks: function (coordsZero, bounds) {
@@ -1593,41 +1593,69 @@ JXG.extend(
 
 /**
  * @class Ticks are used as distance markers on a line or curve.
- * They are
- * mainly used for axis elements and slider elements. Ticks may stretch infinitely
+ * They are mainly used for axis elements and slider elements. Ticks may stretch infinitely
  * or finitely, which can be set with {@link Ticks#majorHeight} and {@link Ticks#minorHeight}.
+ * <p>
+ * There are the following ways to position the tick lines:
+ * <ol>
+ *  <li> If an array is given as optional second parameter for the constructor
+ * like e.g. <tt>board.create('ticks', [line, [1, 4, 5]])</tt>, then there will be (fixed) ticks at position
+ * 1, 4 and 5 of the line.
+ *  <li> If there is only one parameter given, like e.g. <tt>board.create('ticks', [line])</tt>, the ticks will be set
+ * equidistant across the line element. There are two variants:
+ *    <ol type="i">
+ *      <li> Setting the attribute <tt>insertTicks:false</tt>: in this case the distance between two major ticks
+ *          is determined by the attribute <tt>ticksDistance</tt>. This distance is given in user units.
+ *      <li> Setting the attribute <tt>insertTicks:true</tt>: in this case the distance between two major ticks
+ *          is set automatically, depending on
+ *          <ul>
+ *              <li> the size of the board,
+ *              <li> the attribute <tt>minTicksDistance</tt>,  which is the minimum distance between two consecutive minor ticks (in pixel).
+ *          </ul>
+ * The distance between two major ticks is a value of the form
+ * <i>a 10<sup>i</sup></i>, where <i>a</i> is one of <i>{1, 2, 5}</i> and
+ * the number <i>a 10<sup>i</sup></i> is maximized such that there are approximately
+ * 6 major ticks and there are at least "minTicksDistance" pixel between minor ticks.
+ * </ol>
+ * <p>
+ * For arbitrary lines (and not axes) a "zero coordinate" is determined
+ * which defines where the first tick is positioned. This zero coordinate
+ * can be altered with the attribute <tt>anchor</tt>. Possible values are "left", "middle", "right" or a number.
+ * The default value is "left".
  *
  * @pseudo
- * @description Ticks are markers on straight line elements or curves.
+ * @description
  * @name Ticks
  * @augments JXG.Ticks
  * @constructor
  * @type JXG.Ticks
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
  * @param {JXG.Line|JXG.Curve} line The parents consist of the line or curve the ticks are going to be attached to.
- * @param {Number|Array} distance Number defining the distance between two major ticks or an
- * array defining static ticks. In case a number is specified, the ticks are <i>equidistant</i>,
- * in case of an array, a fixed number of static ticks is created at user-supplied positions.
- * Alternatively, the distance can be specified with the attribute
- * "ticksDistance". For arbitrary lines (and not axes) a "zero coordinate" is determined
- * which defines where the first tick is positioned. This zero coordinate
- * can be altered with the attribute "anchor". Possible values are "left", "middle", "right" or a number.
- * The default value is "left".
+ * @param {Array} [ticks] Optional array of numbers. If given, a fixed number of static ticks is created
+ * at these user-supplied positions.
+ * <p>
+ * Deprecated: Alternatively, a number defining the distance between two major ticks
+ * can be specified. However, this is meanwhile ignored. Use attribute <tt>ticksDistance</tt> instead.
  *
  * @example
- * // Create an axis providing two coordinate pairs.
+ * // Add ticks to line 'l1' through 'p1' and 'p2'. The major ticks are
+ * // two units apart and 40 px long.
  *   var p1 = board.create('point', [0, 3]);
  *   var p2 = board.create('point', [1, 3]);
  *   var l1 = board.create('line', [p1, p2]);
- *   var t = board.create('ticks', [l1], {ticksDistance: 2});
+ *   var t = board.create('ticks', [l1], {
+ *      ticksDistance: 2,
+ *      majorHeight: 40
+ *   });
  * </pre><div class="jxgbox" id="JXGee7f2d68-75fc-4ec0-9931-c76918427e63" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
  * (function () {
- *   var board = JXG.JSXGraph.initBoard('JXGee7f2d68-75fc-4ec0-9931-c76918427e63', {boundingbox: [-1, 7, 7, -1], showcopyright: false, shownavigation: false});
+ *   var board = JXG.JSXGraph.initBoard('JXGee7f2d68-75fc-4ec0-9931-c76918427e63', {
+ *   boundingbox: [-1, 7, 7, -1], axis: true, showcopyright: false, shownavigation: true});
  *   var p1 = board.create('point', [0, 3]);
  *   var p2 = board.create('point', [1, 3]);
  *   var l1 = board.create('line', [p1, p2]);
- *   var t = board.create('ticks', [l1, 2], {ticksDistance: 2});
+ *   var t = board.create('ticks', [l1, 2], {ticksDistance: 2, majorHeight: 40});
  * })();
  * </script><pre>
  */
@@ -1637,7 +1665,7 @@ JXG.createTicks = function (board, parents, attributes) {
         attr = Type.copyAttributes(attributes, board.options, "ticks");
 
     if (parents.length < 2) {
-        dist = attr.ticksdistance;
+        dist = attr.ticksdistance; // Will be ignored anyhow and attr.ticksDistance will be used instead
     } else {
         dist = parents[1];
     }

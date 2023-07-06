@@ -3315,7 +3315,7 @@ declare namespace JXG {
         generateLabelValue?: ((labeled: Coords, center: Coords) => string) | null;
         highlightFillColor?: string;
         highlightStrokeColor?: string;
-        includeBoundaries?: boolean | number;
+        includeBoundaries?: boolean;
         insertTicks?: boolean;
         label?: LabelOptions;
         labels?: any[];

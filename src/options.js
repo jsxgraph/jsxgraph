@@ -1933,6 +1933,64 @@ JXG.Options = {
          *
          * @type function
          * @name Ticks#generateLabelText
+         *
+         * @example
+         * const board = JXG.JSXGraph.initBoard('jxgbox', { boundingBox: [-10, 10, 10, -10], axis: true,
+         *     defaultAxes: {
+         *         x: {
+         *                 margin: -4,
+         *                 ticks: {
+         *                     minTicksDistance: 0,
+         *                     minorTicks:4,
+         *                     ticksDistance: 3,
+         *                     scale: Math.PI,
+         *                     scaleSymbol: 'π',
+         *                     insertTicks: true
+         *                 }
+         *              },
+         *         y: {}
+         *     }
+         * });
+         *
+         * // Generate a logarithmic labelling of the vertical axis.
+         * board.defaultAxes.y.ticks[0].generateLabelText = function (tick, zero) {
+         *     var value = Math.pow(10, Math.round(tick.usrCoords[2] - zero.usrCoords[2])),
+         *         distance, labelText;
+         *     return this.formatLabelText(value);
+         * };
+         *
+         * </pre><div id="JXG3d2203ee-a797-416a-a33c-409581fafdd7" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG3d2203ee-a797-416a-a33c-409581fafdd7',
+         *             {boundingbox: [-10, 10, 10, -10], axis: true, showcopyright: false, shownavigation: false,
+         *         defaultAxes: {
+         *             x: {
+         *                     margin: -4,
+         *                     ticks: {
+         *                         minTicksDistance: 0,
+         *                         minorTicks:4,
+         *                         ticksDistance: 3,
+         *                         scale: Math.PI,
+         *                         scaleSymbol: 'π',
+         *                         insertTicks: true
+         *                     }
+         *                  },
+         *             y: {}
+         *         }
+         *     });
+         *
+         *     // Generate a logarithmic labelling of the vertical axis.
+         *     board.defaultAxes.y.ticks[0].generateLabelText = function (tick, zero) {
+         *         var value = Math.pow(10, Math.round(tick.usrCoords[2] - zero.usrCoords[2])),
+         *             distance, labelText;
+         *         return this.formatLabelText(value);
+         *     };
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
          */
         generateLabelText: null,
 
@@ -2041,6 +2099,81 @@ JXG.Options = {
          * @type String
          * @name Ticks#anchor
          * @default 'left'
+         *
+         * @example
+         * var li = board.create('segment', [[-4, -3], [4, 2]]);
+         * var t = board.create('ticks', [li], {
+         *     // drawZero: true,
+         *     anchor: 'left',
+         *     drawLabels: true,
+         *     minorTicks: 0,
+         *     label: {
+         *         anchorX: 'middle',
+         *         anchorY: 'top',
+         *         offset: [0, -5]
+         *     }
+         * });
+         *
+         *
+         * </pre><div id="JXG3dd23f77-a31d-4649-b0f0-7472722158d8" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG3dd23f77-a31d-4649-b0f0-7472722158d8',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *     var li = board.create('segment', [[-4, -3], [4, 2]]);
+         *     var t = board.create('ticks', [li], {
+         *         // drawZero: true,
+         *         anchor: 'left',
+         *         drawLabels: true,
+         *         minorTicks: 0,
+         *         label: {
+         *             anchorX: 'middle',
+         *             anchorY: 'top',
+         *             offset: [0, -5]
+         *         }
+         *     });
+         *
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
+         * @example
+         * var li = board.create('segment', [[-4, -3], [4, 2]]);
+         * var t = board.create('ticks', [li], {
+         *     drawZero: true,
+         *     anchor: 'middle',
+         *     drawLabels: true,
+         *     minorTicks: 0,
+         *     label: {
+         *         anchorX: 'middle',
+         *         anchorY: 'top',
+         *         offset: [0, -5]
+         *     }
+         * });
+         *
+         * </pre><div id="JXG430914fd-4e12-44de-b510-e3cc2fd473e0" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG430914fd-4e12-44de-b510-e3cc2fd473e0',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *     var li = board.create('segment', [[-4, -3], [4, 2]]);
+         *     var t = board.create('ticks', [li], {
+         *         drawZero: true,
+         *         anchor: 'middle',
+         *         drawLabels: true,
+         *         minorTicks: 0,
+         *         label: {
+         *             anchorX: 'middle',
+         *             anchorY: 'top',
+         *             offset: [0, -5]
+         *         }
+         *     });
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
          */
         anchor: 'left',
 
@@ -2050,15 +2183,77 @@ JXG.Options = {
          * @type Boolean
          * @name Ticks#drawZero
          * @default false
+         *
+         * @example
+         * var li = board.create('segment', [[-4, 2], [4, 2]]);
+         * var t = board.create('ticks', [li], {
+         *     drawZero: false,
+         *     anchor: 'middle',
+         *     drawLabels: true,
+         *     minorTicks: 0,
+         *     label: {
+         *         anchorX: 'middle',
+         *         anchorY: 'top',
+         *         offset: [0, -5]
+         *     }
+         * });
+         *
+         * var li2 = board.create('segment', [[-4, -2], [4, -2]]);
+         * var t2 = board.create('ticks', [li2], {
+         *     drawZero: true,
+         *     anchor: 'middle',
+         *     drawLabels: true,
+         *     minorTicks: 0,
+         *     label: {
+         *         anchorX: 'middle',
+         *         anchorY: 'top',
+         *         offset: [0, -5]
+         *     }
+         * });
+         *
+         * </pre><div id="JXG91584dc4-0ca8-4b3e-841c-c877f2ccdcf1" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG91584dc4-0ca8-4b3e-841c-c877f2ccdcf1',
+         *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false});
+         *     var li = board.create('segment', [[-4, 2], [4, 2]]);
+         *     var t = board.create('ticks', [li], {
+         *         drawZero: false,
+         *         anchor: 'middle',
+         *         drawLabels: true,
+         *         minorTicks: 0,
+         *         label: {
+         *             anchorX: 'middle',
+         *             anchorY: 'top',
+         *             offset: [0, -5]
+         *         }
+         *     });
+         *
+         *     var li2 = board.create('segment', [[-4, -2], [4, -2]]);
+         *     var t2 = board.create('ticks', [li2], {
+         *         drawZero: true,
+         *         anchor: 'middle',
+         *         drawLabels: true,
+         *         minorTicks: 0,
+         *         label: {
+         *             anchorX: 'middle',
+         *             anchorY: 'top',
+         *             offset: [0, -5]
+         *         }
+         *     });
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
          */
-        drawZero: false,
+           drawZero: false,
 
         /**
-         * If the distance between two ticks is too big we could insert new ticks. If insertTicks
-         * is <tt>true</tt>, we'll do so, otherwise we leave the distance as is.
-         * This option is ignored if equidistant is false. In the example below the distance between
-         * two ticks is given as <tt>1</tt> but because insertTicks is set to true many ticks will
-         * be omitted in the rendering process to keep the display clear.
+         * Let JSXGraph determine the distance between ticks automatically.
+         * If <tt>true</tt>, the attribute <tt>ticksDistance</tt> is ignored.
+         * The distance between ticks is affected by the size of the board and
+         * the attribute <tt>minTicksDistance</tt> (in pixel).
          *
          * @type Boolean
          * @name Ticks#insertTicks
@@ -2070,7 +2265,7 @@ JXG.Options = {
          *   var p1 = board.create('point', [0, 0]);
          *   var p2 = board.create('point', [50, 25]);
          *   var l1 = board.create('line', [p1, p2]);
-         *   var t = board.create('ticks', [l1, 1], {
+         *   var t = board.create('ticks', [l1], {
          *      insertTicks: true,
          *      majorHeight: -1,
          *      label: {
@@ -2081,11 +2276,12 @@ JXG.Options = {
          * </pre><div class="jxgbox" id="JXG2f6fb842-40bd-4223-aa28-3e9369d2097f" style="width: 300px; height: 300px;"></div>
          * <script type="text/javascript">
          * (function () {
-         *   var board = JXG.JSXGraph.initBoard('JXG2f6fb842-40bd-4223-aa28-3e9369d2097f', {boundingbox: [-100, 70, 70, -100], showcopyright: false, shownavigation: false});
+         *   var board = JXG.JSXGraph.initBoard('JXG2f6fb842-40bd-4223-aa28-3e9369d2097f', {
+         *     boundingbox: [-100, 70, 70, -100], axis: true, showcopyright: false, shownavigation: true});
          *   var p1 = board.create('point', [0, 0]);
          *   var p2 = board.create('point', [50, 25]);
          *   var l1 = board.create('line', [p1, p2]);
-         *   var t = board.create('ticks', [l1, 1], {insertTicks: true, majorHeight: -1, label: {offset: [4, -9]}, drawLabels: true});
+         *   var t = board.create('ticks', [l1], {insertTicks: true, majorHeight: -1, label: {offset: [4, -9]}, drawLabels: true});
          * })();
          * </script><pre>
          */
@@ -2287,6 +2483,50 @@ JXG.Options = {
          * @default 1
          * @name Ticks#scale
          * @see Ticks#scaleSymbol
+         *
+         * @example
+         * const board = JXG.JSXGraph.initBoard('jxgbox', { boundingBox: [-10, 10, 10, -10], axis: true,
+         *     defaultAxes: {
+         *         x : {
+         *                 margin: -4,
+         *                 ticks: {
+         *                     minTicksDistance: 0,
+         *                     minorTicks:4,
+         *                     ticksDistance: 3,
+         *                     scale: Math.PI,
+         *                     scaleSymbol: 'π',
+         *                     insertTicks: true
+         *                 }
+         *              },
+         *         y : {}
+         *     }
+         * });
+         *
+         * </pre><div id="JXG23bfda5d-4a85-4469-a552-aa9b4cf62b4a" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG23bfda5d-4a85-4469-a552-aa9b4cf62b4a',
+         *             {boundingbox: [-10, 10, 10, -10], axis: true, showcopyright: false, shownavigation: false,
+         *         defaultAxes: {
+         *             x : {
+         *                     margin: -4,
+         *                     ticks: {
+         *                         minTicksDistance: 0,
+         *                         minorTicks:4,
+         *                         ticksDistance: 3,
+         *                         scale: Math.PI,
+         *                         scaleSymbol: 'π',
+         *                         insertTicks: true
+         *                     }
+         *                  },
+         *             y : {
+         *                  }
+         *         }
+         *     });
+         *
+         *     })();
+         *
+         * </script><pre>
          */
         scale: 1,
 
@@ -2357,7 +2597,7 @@ JXG.Options = {
         ticksDistance: 1,
 
         /**
-         * Tick face for ticks of finite length.  By default (face: '|') this is a straight line.
+         * Tick face for major ticks of finite length.  By default (face: '|') this is a straight line.
          * Possible other values are '<' and '>'. These faces are used in
          * {@link JXG.Hatch} for hatch marking parallel lines.
          * @type String
@@ -2368,7 +2608,7 @@ JXG.Options = {
          *   var p1 = board.create('point', [0, 3]);
          *   var p2 = board.create('point', [1, 3]);
          *   var l1 = board.create('line', [p1, p2]);
-         *   var t = board.create('ticks', [l1], {ticksDistance: 2, face: '>'});
+         *   var t = board.create('ticks', [l1], {ticksDistance: 2, face: '>', minorTicks: 0});
          *
          * </pre><div id="JXG950a568a-1264-4e3a-b61d-b6881feecf4b" class="jxgbox" style="width: 300px; height: 300px;"></div>
          * <script type="text/javascript">
@@ -2378,7 +2618,7 @@ JXG.Options = {
          *       var p1 = board.create('point', [0, 3]);
          *       var p2 = board.create('point', [1, 3]);
          *       var l1 = board.create('line', [p1, p2]);
-         *       var t = board.create('ticks', [l1], {ticksDistance: 2, face: '>'});
+         *       var t = board.create('ticks', [l1], {ticksDistance: 2, face: '>', minorTicks: 0});
          *
          *     })();
          *
@@ -2396,8 +2636,10 @@ JXG.Options = {
         visible: 'inherit',
 
         /**
-         * Whether line boundaries should be counted or not in the lower and upper bounds when
-         * creating ticks.
+         * Whether line boundaries should be included or not in the lower and upper bounds when
+         * creating ticks. In mathematical terms: if a segment considered as interval is open (includeBoundaries:false)
+         * or closed (includeBoundaries:true). In case of open interval, the interval is shortened by a small
+         * &epsilon;.
          *
          * @type Boolean
          * @name Ticks#includeBoundaries
@@ -4425,7 +4667,7 @@ JXG.Options = {
         snapSizeY: 1,
 
         /**
-         * If set to true, {@link Line#firstArrow} is set to true and the point is visible, 
+         * If set to true, {@link Line#firstArrow} is set to true and the point is visible,
          * the arrow head will just touch the circle line of the start point of the line.
          *
          * @see Line#firstArrow
@@ -4436,7 +4678,7 @@ JXG.Options = {
         touchFirstPoint: false,
 
         /**
-         * If set to true, {@link Line#lastArrow} is set to true and the point is visible, 
+         * If set to true, {@link Line#lastArrow} is set to true and the point is visible,
          * the arrow head will just touch the circle line of the start point of the line.
          * @see Line#firstArrow
          * @type Boolean
@@ -5487,7 +5729,7 @@ JXG.Options = {
             // Label drawing
             drawLabels: false,
             digits: 2,
-            includeBoundaries: 1,
+            includeBoundaries: true,
             drawZero: true,
             label: {
                 offset: [-4, -14],
