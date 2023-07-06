@@ -200,7 +200,7 @@
                 if (
                     JXG.exists(board) &&
                     options.useSymbols &&
-                    step.type !== JXG.GENTYPE_CIRCLECOPY
+                    step.type !== JXG.GENTYPE_CIRCLECLONE
                 ) {
                     attrid = "";
                     assign = step.dest_id + " = ";
@@ -2549,7 +2549,7 @@
 
                         break;
 
-                    case JXG.GENTYPE_CIRCLECOPY:
+                    case JXG.GENTYPE_CIRCLECLONE:
                         if (JXG.exists(step.args.centerCoords)) {
 
                             set_str =
@@ -2576,6 +2576,9 @@
                                     "return dist(" + step.src_ids[0] + ", " + step.src_ids[1] + "); " +
                                     "}); ";
                             } else if (step.args.createdBy === 'circle') {
+                                set_str += step.dest_id + ".setRadius(function() { " +
+                                    "return " + step.src_ids[0] + ".radius(); " +
+                                    "}); ";
                             }
 
                             reset_str =
