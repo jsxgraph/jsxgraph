@@ -2655,6 +2655,37 @@ JXG.Options = {
          * @type String
          * @name Ticks#type
          * @default 'linear'
+         * 
+         * @example
+         * var ax = board.create('axis', [[0,0], [1,0]], { 
+         *              needsRegularUpdate: false, 
+         *              ticks: { 
+         *                      type: 'linear', 
+         *                      majorHeight: 0
+         *                  }
+         *              });
+         * var ay = board.create('axis', [[0,0], [0,1]], { 
+         *              ticks: { 
+         *                      type: 'polar'
+         *                  }
+         *              });
+         * 
+         * var p = board.create('point', [3, 2]);
+         * 
+         * </pre><div id="JXG9ab0b50c-b486-4f95-9698-c0dd276155ff" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG9ab0b50c-b486-4f95-9698-c0dd276155ff',
+         *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false});
+         *     var ax = board.create('axis', [[0,0], [1,0]], { needsRegularUpdate: false, ticks: { type: 'linear', majorHeight: 0}});
+         *     var ay = board.create('axis', [[0,0], [0,1]], { ticks: { type: 'polar'}});
+         *     
+         *     var p = board.create('point', [3, 2]);
+         * 
+         *     })();
+         * 
+         * </script><pre>
+         * 
          */
         type: 'linear'
 
