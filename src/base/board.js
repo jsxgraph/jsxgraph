@@ -1401,9 +1401,7 @@ JXG.extend(
                         tar[0], tar[1],
                         Type.evaluate(drag.visProp.scalable),
                         Type.evaluate(drag.visProp.rotatable));
-                t = this.create("transform", T, {
-                    type: 'generic'
-                });
+                t = this.create("transform", T, {type: 'generic'});
                 t.update();
 
                 if (drag.elementClass === Const.OBJECT_CLASS_LINE) {

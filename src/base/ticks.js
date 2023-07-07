@@ -551,6 +551,7 @@ JXG.extend(
                 // We use the distance from zero to P1 and P2 to establish lower and higher points
                 dZeroPoint1, dZeroPoint2,
                 arrowData,
+                eps = Mat.eps * 10,
                 ev_sf = Type.evaluate(this.line.visProp.straightfirst),
                 ev_sl = Type.evaluate(this.line.visProp.straightlast),
                 ev_i = Type.evaluate(this.visProp.includeboundaries);
@@ -622,22 +623,24 @@ JXG.extend(
             if (dZeroPoint1 < dZeroPoint2) {
                 // Line goes P1->P2
                 lowerBound = dZeroPoint1;
-                if (!ev_sf && isPoint1inBoard && !ev_i) {
-                    lowerBound += Mat.eps;
-                }
                 upperBound = dZeroPoint2;
+
+                if (!ev_sf && isPoint1inBoard && !ev_i) {
+                    lowerBound += eps;
+                }
                 if (!ev_sl && isPoint2inBoard && !ev_i) {
-                    upperBound -= Mat.eps;
+                    upperBound -= eps;
                 }
             } else if (dZeroPoint2 < dZeroPoint1) {
                 // Line goes P2->P1
                 lowerBound = dZeroPoint2;
-                if (!ev_sl && isPoint2inBoard && !ev_i) {
-                    lowerBound += Mat.eps;
-                }
                 upperBound = dZeroPoint1;
+
+                if (!ev_sl && isPoint2inBoard && !ev_i) {
+                    lowerBound += eps;
+                }
                 if (!ev_sf && isPoint1inBoard && !ev_i) {
-                    upperBound -= Mat.eps;
+                    upperBound -= eps;
                 }
             } else {
                 // P1 = P2 = Zero, we can't do a thing
