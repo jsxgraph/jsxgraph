@@ -2645,6 +2645,73 @@ JXG.Options = {
          * @type Boolean
          * @name Ticks#includeBoundaries
          * @default false
+         * 
+         * @example
+         * var li = board.create('segment', [[-4, 2], [4, 2]]);
+         * var t = board.create('ticks', [li], {
+         *     includeBoundaries: true,
+         *     drawZero: true,
+         *     anchor: 'middle',
+         *     drawLabels: true,
+         *     minorTicks: 0,
+         *     label: {
+         *         anchorX: 'middle',
+         *         anchorY: 'top',
+         *         offset: [0, -5]
+         *     }
+         * });
+         * 
+         * var li2 = board.create('segment', [[-4, -2], [4, -2]]);
+         * var t2 = board.create('ticks', [li2], {
+         *     includeBoundaries: false,
+         *     drawZero: true,
+         *     anchor: 'middle',
+         *     drawLabels: true,
+         *     minorTicks: 0,
+         *     label: {
+         *         anchorX: 'middle',
+         *         anchorY: 'top',
+         *         offset: [0, -5]
+         *     }
+         * });
+         * 
+         * </pre><div id="JXG08e79180-7c9a-4638-bb72-8aa7fd8a8b96" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('JXG08e79180-7c9a-4638-bb72-8aa7fd8a8b96',
+         *             {boundingbox: [-8, 8, 8,-8], axis: false, showcopyright: false, shownavigation: false});
+         *     var li = board.create('segment', [[-4, 2], [4, 2]]);
+         *     var t = board.create('ticks', [li], {
+         *         includeBoundaries: true,
+         *         drawZero: true,
+         *         anchor: 'middle',
+         *         drawLabels: true,
+         *         minorTicks: 0,
+         *         label: {
+         *             anchorX: 'middle',
+         *             anchorY: 'top',
+         *             offset: [0, -5]
+         *         }
+         *     });
+         *     
+         *     var li2 = board.create('segment', [[-4, -2], [4, -2]]);
+         *     var t2 = board.create('ticks', [li2], {
+         *         includeBoundaries: false,
+         *         drawZero: true,
+         *         anchor: 'middle',
+         *         drawLabels: true,
+         *         minorTicks: 0,
+         *         label: {
+         *             anchorX: 'middle',
+         *             anchorY: 'top',
+         *             offset: [0, -5]
+         *         }
+         *     });
+         * 
+         *     })();
+         * 
+         * </script><pre>
+         * 
          */
         includeBoundaries: false,
 
