@@ -1553,10 +1553,10 @@ JXG.extend(
                     this.labels.push(label);
                 }
 
-                // Look-ahead if the label inherits visiblity.
+                // Look-ahead if the label inherits visibility.
                 // If yes, update label.
                 visible = Type.evaluate(this.visProp.label.visible);
-                if (visible === "inherit") {
+                if (visible === 'inherit') {
                     visible = this.visPropCalc.visible;
                 }
 

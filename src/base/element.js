@@ -883,6 +883,11 @@ JXG.extend(
         /**
          * Show the element or hide it. If hidden, it will still exist but not be
          * visible on the board.
+         * <p>
+         * Sets also the display of the inherits elements. These can be
+         * JSXGraph elements or arrays of JSXGraph elements.
+         * However, deeper nesting than this is not supported.
+         *
          * @param  {Boolean} val true: show the element, false: hide the element
          * @return {JXG.GeometryElement} Reference to the element
          * @private
@@ -911,7 +916,7 @@ JXG.extend(
                         if (
                             Type.exists(obj[i]) &&
                             Type.exists(obj[i].rendNode) &&
-                            Type.evaluate(obj[i].visProp.visible) === "inherit"
+                            Type.evaluate(obj[i].visProp.visible) === 'inherit'
                         ) {
                             obj[i].setDisplayRendNode(val);
                         }
@@ -920,7 +925,7 @@ JXG.extend(
                     if (
                         Type.exists(obj) &&
                         Type.exists(obj.rendNode) &&
-                        Type.evaluate(obj.visProp.visible) === "inherit"
+                        Type.evaluate(obj.visProp.visible) === 'inherit'
                     ) {
                         obj.setDisplayRendNode(val);
                     }
@@ -2343,7 +2348,7 @@ JXG.extend(
 
         /**
          * @event
-         * @description This event is fired whenever the user drags the element by pressing arrow keys 
+         * @description This event is fired whenever the user drags the element by pressing arrow keys
          * on the keyboard.
          * @name JXG.GeometryElement#keydrag
          * @param {Event} e The browser's event object.
