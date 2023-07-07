@@ -363,7 +363,11 @@ JXG.extend(
             } else {
                 b = {
                     lower: this.line.minX(),
-                    upper: this.line.maxX()
+                    upper: this.line.maxX(),
+                    a1: 0,
+                    a2: 0,
+                    m1: 0,
+                    m2: 0
                 };
             }
 
@@ -551,6 +555,7 @@ JXG.extend(
                 // We use the distance from zero to P1 and P2 to establish lower and higher points
                 dZeroPoint1, dZeroPoint2,
                 arrowData,
+                a1, a2, m1, m2,
                 eps = Mat.eps * 10,
                 ev_sf = Type.evaluate(this.line.visProp.straightfirst),
                 ev_sl = Type.evaluate(this.line.visProp.straightlast),
@@ -585,7 +590,12 @@ JXG.extend(
             if (Type.exists(type) && type === 'ticksdistance') {
                 // The good old calcStraight is needed for determining the distance between major ticks.
                 // Here, only the visual area is of importance
+                Geometry.calcStraight(this.line, point1, point2, 0);
+                m1 = this.getDistanceFromZero(coordsZero, point1);
+                m2 = this.getDistanceFromZero(coordsZero, point2);
                 Geometry.calcStraight(this.line, point1, point2, Type.evaluate(this.line.visProp.margin));
+                m1 = this.getDistanceFromZero(coordsZero, point1) - m1;
+                m2 = this.getDistanceFromZero(coordsZero, point2) . m2;
             } else {
                 // This function projects the corners of the board to the line.
                 // This is important for diagonal lines with infinite tick lines.
@@ -596,6 +606,8 @@ JXG.extend(
             fA = Type.evaluate(this.line.visProp.firstarrow);
             lA = Type.evaluate(this.line.visProp.lastarrow);
 
+            a1 = this.getDistanceFromZero(coordsZero, point1);
+            a2 = this.getDistanceFromZero(coordsZero, point2);
             if (fA || lA) {
                 // Do not display ticks at through arrow heads.
                 // In arrowData we ignore the highlighting status.
@@ -603,7 +615,8 @@ JXG.extend(
                 arrowData = this.board.renderer.getArrowHeadData(
                     this.line,
                     Type.evaluate(this.line.visProp.strokewidth),
-                    '');
+                    ''
+                );
 
                 this.board.renderer.getPositionArrowHead(
                     this.line,
@@ -612,10 +625,13 @@ JXG.extend(
                     arrowData
                 );
             }
-
             // Calculate (signed) distance from Zero to P1 and to P2
             dZeroPoint1 = this.getDistanceFromZero(coordsZero, point1);
             dZeroPoint2 = this.getDistanceFromZero(coordsZero, point2);
+            
+            // Recompute lengths of arrow heads
+            a1 = dZeroPoint1 - a1;
+            a2 = dZeroPoint1 - a2;
 
             // We have to establish if the direction is P1->P2 or P2->P1 to set the lower and upper
             // bounds appropriately. As the distances contain also a sign to indicate direction,
@@ -650,7 +666,11 @@ JXG.extend(
 
             return {
                 lower: lowerBound,
-                upper: upperBound
+                upper: upperBound,
+                a1: a1,
+                a2: a2,
+                m1: m1,
+                m2: m2
             };
         },
 
@@ -700,10 +720,11 @@ JXG.extend(
          */
         generateEquidistantTicks: function (coordsZero, bounds) {
             var tickPosition,
-                eps2 = Mat.eps,
+                eps = Mat.eps,
                 deltas, ticksDelta,
-                // Distance between two major ticks in user coordinates
-                // ev_it = Type.evaluate(this.visProp.insertticks),
+                ev_mia = Type.evaluate(this.visProp.minorticksinarrow),
+                ev_maa = Type.evaluate(this.visProp.minorticksinarrow),
+                ev_mla = Type.evaluate(this.visProp.minorticksinarrow),
                 ev_mt = Type.evaluate(this.visProp.minorticks);
 
             // Determine a proposed distance between major ticks in user units
@@ -738,9 +759,9 @@ JXG.extend(
             if (!Type.evaluate(this.visProp.drawzero)) {
                 tickPosition = ticksDelta;
             }
-            while (tickPosition <= bounds.upper + eps2) {
+            while (tickPosition <= bounds.upper + eps) {
                 // Only draw ticks when we are within bounds, ignore case where tickPosition < lower < upper
-                if (tickPosition >= bounds.lower - eps2) {
+                if (tickPosition >= bounds.lower - eps) {
                     this.processTickPosition(coordsZero, tickPosition, ticksDelta, deltas);
                 }
                 tickPosition += ticksDelta;
@@ -753,9 +774,9 @@ JXG.extend(
 
             // Position ticks from zero (not inclusive) to the negative side while not reaching the lower boundary
             tickPosition = -ticksDelta;
-            while (tickPosition >= bounds.lower - eps2) {
+            while (tickPosition >= bounds.lower - eps) {
                 // Only draw ticks when we are within bounds, ignore case where lower < upper < tickPosition
-                if (tickPosition <= bounds.upper + eps2) {
+                if (tickPosition <= bounds.upper + eps) {
                     this.processTickPosition(coordsZero, tickPosition, ticksDelta, deltas);
                 }
                 tickPosition -= ticksDelta;

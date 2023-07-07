@@ -2754,7 +2754,14 @@ JXG.Options = {
          * </script><pre>
          * 
          */
-        type: 'linear'
+        type: 'linear',
+
+        minorTicksInArrow: false,
+        majorTicksInArrow: true,
+        labelInArrow: true,
+        minorTicksInMargin: false,
+        majorTicksInMargin: true,
+        labelInMargin: true
 
         // close the meta tag
         /**#@-*/
