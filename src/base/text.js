@@ -234,9 +234,9 @@ JXG.extend(
             } else {
                 if (Type.isNumber(text)) {
                     this.content = Type.toFixed(text, Type.evaluate(this.visProp.digits));
-                    // if (Type.exists(this.visProp.intl.format)) {
+                    if (Type.exists(this.visProp.intl)) {
                         this.content = this.visProp.intl(this.content);
-                    // }
+                    }
                 } else if (Type.isString(text) && ev_p) {
                     if (Type.evaluate(this.visProp.useasciimathml)) {
                         // ASCIIMathML
