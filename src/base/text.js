@@ -234,6 +234,9 @@ JXG.extend(
             } else {
                 if (Type.isNumber(text)) {
                     this.content = Type.toFixed(text, Type.evaluate(this.visProp.digits));
+                    // if (Type.exists(this.visProp.intl.format)) {
+                        this.content = this.visProp.intl(this.content);
+                    // }
                 } else if (Type.isString(text) && ev_p) {
                     if (Type.evaluate(this.visProp.useasciimathml)) {
                         // ASCIIMathML
@@ -270,7 +273,7 @@ JXG.extend(
                     };
                 } else {
                     this.updateText = function () {
-                        this.plaintext = text;
+                        this.plaintext = text; // this.content; // text;
                     };
                 }
             }
@@ -696,21 +699,16 @@ JXG.extend(
                         // output of a value tag
                         if (
                             Type.isNumber(
-                                Type.bind(this.board.jc.snippet(res, true, "", false), this)()
+                                Type.bind(this.board.jc.snippet(res, true, '', false), this)()
                             )
                         ) {
                             // may also be a string
-                            plaintext +=
-                                "+(" +
-                                res +
-                                ").toFixed(" +
-                                Type.evaluate(this.visProp.digits) +
-                                ")";
+                            plaintext += '+(' + res + ').toFixed(' + Type.evaluate(this.visProp.digits) + ')';
                         } else {
-                            plaintext += "+(" + res + ")";
+                            plaintext += '+(' + res + ')';
                         }
                     } else {
-                        plaintext += "+(" + res + ")";
+                        plaintext += '+(' + res + ')';
                     }
 
                     contentStr = contentStr.slice(j + 8);
@@ -779,11 +777,7 @@ JXG.extend(
                         ) {
                             // Output is number
                             textComps.push(
-                                "(" +
-                                    res +
-                                    ").toFixed(" +
-                                    Type.evaluate(this.visProp.digits) +
-                                    ")"
+                                '(' + res + ').toFixed(' + Type.evaluate(this.visProp.digits) + ')'
                             );
                         } else {
                             // Output is a string

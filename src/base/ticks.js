@@ -1302,6 +1302,11 @@ JXG.extend(
             // if value is Number
             if (Type.isNumber(value)) {
                 labelText = (Math.round(value * 1e11) / 1e11).toString();
+
+                if (Type.exists(this.visProp.intl)) {
+                    labelText = this.visProp.intl(labelText);
+                }
+
                 if (
                     labelText.length > Type.evaluate(this.visProp.maxlabellength) ||
                     labelText.indexOf("e") !== -1

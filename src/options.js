@@ -6395,6 +6395,8 @@ JXG.Options = {
          */
         digits: 2,
 
+        intl: null,
+
         /**
          * If set to true, the text is parsed and evaluated.
          * For labels parse==true results in converting names of the form k_a to subscripts.
