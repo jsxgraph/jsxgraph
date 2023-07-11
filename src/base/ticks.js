@@ -1301,24 +1301,24 @@ JXG.extend(
 
             // if value is Number
             if (Type.isNumber(value)) {
-                labelText = (Math.round(value * 1e11) / 1e11).toString();
-
                 if (Type.exists(this.visProp.intl)) {
-                    labelText = this.visProp.intl(labelText);
-                }
+                    labelText = this.visProp.intl(value);
+                } else {
+                    labelText = (Math.round(value * 1e11) / 1e11).toString();
 
-                if (
-                    labelText.length > Type.evaluate(this.visProp.maxlabellength) ||
-                    labelText.indexOf("e") !== -1
-                ) {
-                    digits = Type.evaluate(this.visProp.digits);
-                    if (Type.evaluate(this.visProp.precision) !== 3 && digits === 3) {
-                        // Use the deprecated attribute "precision"
-                        digits = Type.evaluate(this.visProp.precision);
+                    if (
+                        labelText.length > Type.evaluate(this.visProp.maxlabellength) ||
+                        labelText.indexOf("e") !== -1
+                    ) {
+                        digits = Type.evaluate(this.visProp.digits);
+                        if (Type.evaluate(this.visProp.precision) !== 3 && digits === 3) {
+                            // Use the deprecated attribute "precision"
+                            digits = Type.evaluate(this.visProp.precision);
+                        }
+
+                        //labelText = value.toPrecision(digits).toString();
+                        labelText = value.toExponential(digits).toString();
                     }
-
-                    //labelText = value.toPrecision(digits).toString();
-                    labelText = value.toExponential(digits).toString();
                 }
 
                 if (Type.evaluate(this.visProp.beautifulscientificticklabels)) {

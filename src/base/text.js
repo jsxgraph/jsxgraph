@@ -194,9 +194,10 @@ JXG.extend(
 
         /**
          * This sets the updateText function of this element depending on the type of text content passed.
-         * Used by {@link JXG.Text#_setText} and {@link JXG.Text} constructor.
+         * Used by {@link JXG.Text#_setText}.
          * @param {String|Function|Number} text
          * @private
+         * @see JXG.Text#_setText
          */
         _createFctUpdateText: function (text) {
             var updateText, e,
@@ -256,6 +257,8 @@ JXG.extend(
                         this.content = this.poorMansTeX(this.valueTagToJessieCode(text));
                     }
                     convertJessieCode = true;
+                } else {
+                    this.content = text;
                 }
 
                 // Generate function which returns the text to be displayed
@@ -273,7 +276,7 @@ JXG.extend(
                     };
                 } else {
                     this.updateText = function () {
-                        this.plaintext = text; // this.content; // text;
+                        this.plaintext = this.content; // text;
                     };
                 }
             }
