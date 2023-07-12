@@ -200,9 +200,8 @@ JXG.extend(
          * @see JXG.Text#_setText
          */
         _createFctUpdateText: function (text) {
-            var updateText, e,
+            var updateText, e, digits,
                 resolvedText,
-                loc, opt, f,
                 ev_p = Type.evaluate(this.visProp.parse),
                 ev_um = Type.evaluate(this.visProp.usemathjax),
                 ev_uk = Type.evaluate(this.visProp.usekatex),
@@ -235,10 +234,11 @@ JXG.extend(
                 };
             } else {
                 if (Type.isNumber(text)) {
+                    digits = Type.evaluate(this.visProp.digits);
                     if (this.useLocale()) {
-                        this.content = this.formatNumberLocale(text);
+                        this.content = this.formatNumberLocale(text, digits);
                     } else {
-                        this.content = Type.toFixed(text, Type.evaluate(this.visProp.digits));
+                        this.content = Type.toFixed(text, digits);
                     }
                 } else if (Type.isString(text) && ev_p) {
                     if (Type.evaluate(this.visProp.useasciimathml)) {

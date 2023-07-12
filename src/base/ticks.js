@@ -1300,9 +1300,10 @@ JXG.extend(
                 ev_s = Type.evaluate(this.visProp.scalesymbol);
 
             if (Type.isNumber(value)) {
+                digits = Type.evaluate(this.visProp.digits);
 
                 if (this.useLocale()) {
-                    labelText = this.formatNumberLocale(value);
+                    labelText = this.formatNumberLocale(value, digits);
                 } else {
                     labelText = (Math.round(value * 1e11) / 1e11).toString();
 
@@ -1310,7 +1311,6 @@ JXG.extend(
                         labelText.length > Type.evaluate(this.visProp.maxlabellength) ||
                         labelText.indexOf("e") !== -1
                     ) {
-                        digits = Type.evaluate(this.visProp.digits);
                         if (Type.evaluate(this.visProp.precision) !== 3 && digits === 3) {
                             // Use the deprecated attribute "precision"
                             digits = Type.evaluate(this.visProp.precision);

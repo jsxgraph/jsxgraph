@@ -2260,7 +2260,7 @@ JXG.extend(
          */
         removeEvent: JXG.shortcut(JXG.GeometryElement.prototype, 'off'),
 
-        formatNumberLocale: function(value) {
+        formatNumberLocale: function(value, digits) {
             var loc, opt, key,
                 optCalc = {},
                 // These options are case sensitive:
@@ -2289,7 +2289,7 @@ JXG.extend(
 
                 loc = Type.evaluate(this.visProp.intl.locale) ||
                         Type.evaluate(this.board.attr.intl.locale);
-                opt = Type.evaluate(this.visProp.intl.options);
+                opt = Type.evaluate(this.visProp.intl.options) || {};
 
                 // Transfer back to camel case if necessary
                 // and evaluate
@@ -2307,7 +2307,12 @@ JXG.extend(
                 // the value of the attribute "digits" is taken instead.
                 key = 'maximumfractiondigits';
                 if (!Type.exists(opt[key])) {
-                    optCalc[translate[key]] = Type.evaluate(this.visProp.digits);
+                    optCalc[translate[key]] = digits;
+
+                    // key = 'minimumfractiondigits';
+                    // if (!Type.exists(opt[key]) || Type.evaluate(opt[key]) > digits) {
+                    //     optCalc[translate[key]] = digits;
+                    // }
                 }
 
                 return Intl.NumberFormat(loc, optCalc).format(value);

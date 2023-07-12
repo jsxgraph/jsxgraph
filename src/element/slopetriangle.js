@@ -219,7 +219,12 @@ JXG.createSlopeTriangle = function (board, parents, attributes) {
     );
 
     label._setText(function () {
-        return Type.toFixed(el.Value(), Type.evaluate(label.visProp.digits));
+        var digits = Type.evaluate(label.visProp.digits);
+
+        if (label.useLocale()) {
+            return label.formatNumberLocale(el.Value(), digits);
+        }
+        return Type.toFixed(el.Value(), digits);
     });
     label.fullUpdate();
 

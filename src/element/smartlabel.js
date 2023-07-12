@@ -265,6 +265,7 @@ JXG.createSmartLabel = function (board, parents, attributes) {
 
         return function () {
             var str = '',
+                val, 
                 txt = Type.evaluate(user_supplied_text),
                 digits = Type.evaluate(el.visProp.digits),
                 u = Type.evaluate(el.visProp.unit),
@@ -279,10 +280,15 @@ JXG.createSmartLabel = function (board, parents, attributes) {
             // }
 
             if (txt === '') {
-                if (mj) {
-                    str = ['\\(', pre, Type.toFixed(measure(), digits), '\\,', u, suf, '\\)'].join('');
+                if (el.useLocale()) {
+                    val = el.formatNumberLocale(measure(), digits);
                 } else {
-                    str = [pre, Type.toFixed(measure(), digits), u, suf].join('');
+                    val = Type.toFixed(measure(), digits);
+                }
+                if (mj) {
+                    str = ['\\(', pre, val, '\\,', u, suf, '\\)'].join('');
+                } else {
+                    str = [pre, val, u, suf].join('');
                 }
             } else {
                 str = txt;
