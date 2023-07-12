@@ -71,6 +71,9 @@ JXG.Options = {
          *
          * @name JXG.Board#boundingbox
          * @type Array
+         * @see JXG.Board#maxBoundingBox
+         * @see JXG.Board#keepAspectRatio
+         * 
          * @default [-5, 5, 5, -5]
          * @example
          * var board = JXG.JSXGraph.initBoard('jxgbox', {
@@ -86,10 +89,11 @@ JXG.Options = {
          * [x<sub>1</sub>, y<sub>1</sub>, x<sub>2</sub>, y<sub>2</sub>]
          *
          * The bounding box of the canvas must be inside of this maximal
-         * boundings box.
+         * bounding box.
+         * 
          * @name JXG.Board#maxboundingbox
          * @type Array
-         * @see JXG.Board#boundingbox
+         * @see JXG.Board#boundingBox
          * @default [-Infinity, Infinity, Infinity, -Infinity]
          *
          * @example
@@ -117,6 +121,28 @@ JXG.Options = {
          *
          */
         maxBoundingBox: [-Infinity, Infinity, Infinity, -Infinity],
+
+        /**
+         * If set to true, the ratio between horizontal and vertical unit sizes
+         * stays constant - independent of size changes of the hosting HTML div element.
+         * <p>
+         * If the aspect ration of the hosting div changes, JSXGraphs will change
+         * the user supplied bounding box accordingly.
+         * This is necessary if circles should look like circles and not
+         * like ellipses. It is recommended to set keepAspectRatio = true
+         * for geometric applets.
+         * <p>
+         * For function plotting keepAspectRatio = false
+         * might be the better choice.
+         *
+         * @name JXG.Board#keepAspectRatio
+         * @see JXG.Board#boundingBox
+         * @see JXG.Board#maxBoundingBox
+         * @see JXG.Board#setBoundingBox
+         * @type Boolean
+         * @default false
+         */
+        keepAspectRatio: false,
 
         /**
          * Additional zoom factor multiplied to {@link JXG.Board#zoomX} and {@link JXG.Board#zoomY}.
@@ -444,27 +470,6 @@ JXG.Options = {
          * @see JXG.AbstractRenderer#drawZoomBar
          */
         showClearTraces: false,
-
-        /**
-         * If set to true, the ratio between horizontal and vertical unit sizes
-         * stays constant - independent of size changes of the hosting HTML div element.
-         * <p>
-         * If the aspect ration of the hosting div changes, JSXGraphs will change
-         * the user supplied bounding box accordingly.
-         * This is necessary if circles should look like circles and not
-         * like ellipses. It is recommended to set keepAspectRatio = true
-         * for geometric applets.
-         * <p>
-         * For function plotting keepAspectRatio = false
-         * might be the better choice.
-         *
-         * @name JXG.Board#keepAspectRatio
-         * @see JXG.Board#boundingbox
-         * @see JXG.Board#setBoundingBox
-         * @type Boolean
-         * @default false
-         */
-        keepAspectRatio: false,
 
         /**
          * If set true and
