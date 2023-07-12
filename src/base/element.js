@@ -2261,7 +2261,28 @@ JXG.extend(
         removeEvent: JXG.shortcut(JXG.GeometryElement.prototype, 'off'),
 
         formatNumberLocale: function(value) {
-            var loc, opt;
+            var loc, opt, key,
+                optCalc = {},
+                // These options are case sensitive:
+                translate = {
+                    maximumfractiondigits: 'maximumFractionDigits', 
+                    minimumfractiondigits: 'minimumFractionDigits',
+                    compactdisplay: 'compactDisplay',
+                    currencydisplay: 'currencyDisplay',
+                    currencysign: 'currencySign',
+                    localematcher: 'localeMatcher',
+                    numberingsystem: 'numberingSystem',
+                    signdisplay: 'signDisplay',
+                    unitdisplay: 'unitDisplay',
+                    usegrouping: 'useGrouping',
+                    roundingmode: 'roundingMode',
+                    roundingpriority: 'roundingPriority',
+                    roundingincrement: 'roundingIncrement',
+                    trailingzerodisplay: 'trailingZeroDisplay',
+                    minimumintegerdigits: 'minimumIntegerDigits',
+                    minimumsignificantdigits: 'minimumSignificantDigits',
+                    maximumsignificantdigits: 'maximumSignificantDigits',
+                };
 
             if (Type.exists(Intl) &&
                 this.useLocale())  {
@@ -2269,7 +2290,27 @@ JXG.extend(
                 loc = Type.evaluate(this.visProp.intl.locale) ||
                         Type.evaluate(this.board.attr.intl.locale);
                 opt = Type.evaluate(this.visProp.intl.options);
-                return new Intl.NumberFormat(loc, opt).format(value);
+
+                // Transfer back to camel case if necessary
+                // and evaluate
+                for (key in opt) {
+                    if (opt.hasOwnProperty(key)) {
+                        if (translate.hasOwnProperty(key)) {
+                            optCalc[translate[key]] = Type.evaluate(opt[key]);
+                        } else {
+                            optCalc[key] = Type.evaluate(opt[key]);
+                        }
+                    }
+                }
+
+                // If maximumfractiondigits is not set,
+                // the value of the attribute "digits" is taken instead.
+                key = 'maximumfractiondigits';
+                if (!Type.exists(opt[key])) {
+                    optCalc[translate[key]] = Type.evaluate(this.visProp.digits);
+                }
+
+                return Intl.NumberFormat(loc, optCalc).format(value);
             }
 
             return value;
@@ -2287,7 +2328,6 @@ JXG.extend(
             // Check if intl is supported explicitly enabled for this element
             val = Type.evaluate(this.visProp.intl.enabled);
 
-// console.log(">>>", val);
             if (val === true) {
                 return true;
             }

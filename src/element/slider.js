@@ -307,9 +307,7 @@ JXG.createSlider = function (board, parents, attributes) {
 
     if (withText) {
         attr = Type.copyAttributes(attributes, board.options, "slider", "label");
-        t = board.create(
-            "text",
-            [
+        t = board.create('text', [
                 function () {
                     return (p2.X() - p1.X()) * 0.05 + p2.X();
                 },

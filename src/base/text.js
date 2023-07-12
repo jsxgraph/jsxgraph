@@ -235,8 +235,11 @@ JXG.extend(
                 };
             } else {
                 if (Type.isNumber(text)) {
-                    this.content = Type.toFixed(text, Type.evaluate(this.visProp.digits));
-                    this.content = this.formatNumberLocale(this.content);
+                    if (this.useLocale()) {
+                        this.content = this.formatNumberLocale(text);
+                    } else {
+                        this.content = Type.toFixed(text, Type.evaluate(this.visProp.digits));
+                    }
                 } else if (Type.isString(text) && ev_p) {
                     if (Type.evaluate(this.visProp.useasciimathml)) {
                         // ASCIIMathML
