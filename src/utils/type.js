@@ -1557,7 +1557,20 @@ JXG.extend(
             }
 
             return s;
+        },
+
+        formatNumberLocale: function(value, el) {
+            var loc, opt;
+
+            if (this.evaluate(el.board.attr.intl.enabled))  {
+                loc = this.evaluate(el.board.attr.intl.locale);
+                opt = this.evaluate(el.visProp.intl.options);
+                return new Intl.NumberFormat(loc, opt).format(value);
+            }
+
+            return value;
         }
+
     }
 );
 

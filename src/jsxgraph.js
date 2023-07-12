@@ -175,7 +175,7 @@ JXG.JSXGraph = {
         var attr = Type.copyAttributes(attributes, Options, 'board'),
 
             // These attributes which are objects have to be copied separately
-            list = ['drag', 'fullscreen',
+            list = ['drag', 'fullscreen', 'intl',
                 'keyboard', 'logging',
                 'navbar', 'pan', 'resize',
                 'screenshot', 'selection',

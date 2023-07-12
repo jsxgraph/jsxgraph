@@ -1058,6 +1058,11 @@ JXG.Options = {
          */
         logging: {
             enabled: false
+        },
+
+        intl: {
+            enabled: true,
+            locales: 'de-DE',
         }
 
         /**#@-*/
