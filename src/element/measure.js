@@ -115,7 +115,7 @@ JXG.createTapemeasure = function (board, parents, attributes) {
             var digits = Type.evaluate(li.label.visProp.digits);
 
             if (li.label.useLocale()) {
-                return n + li.label.formatNumberLocale(el.Value(), digits);
+                return n + li.label.formatNumberLocale(p1.Dist(p2), digits);
             }
             return n + Type.toFixed(p1.Dist(p2), digits);
         });
