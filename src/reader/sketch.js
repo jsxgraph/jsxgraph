@@ -802,9 +802,12 @@
                             }
                             set_str += ">>; " + sub_id + ".glide(";
                             set_str += step.src_ids[0] + "); ";
+                            set_str += sub_id + '.isPartOfTangent = true;'
                             reset_str = "remove(" + sub_id + "); ";
                         } else {
                             sub_id = step.src_ids[0];
+                            set_str += sub_id + '.isPartOfTangent = true;'
+                            reset_str = sub_id + '.isPartOfTangent = false;'
                         }
 
                         set_str +=
@@ -2090,7 +2093,7 @@
                                 reset_str;
                         }
                         set_str += " ]";
-                        set_str += ", name: ''";
+                        set_str += ", name: '', isPartOfRegpol: true";
                         set_str += ">>, " + attrid;
                         set_str += " fillOpacity: " + JXG.Options.opacityLevel;
                         set_str += ", hasInnerPoints: " + JXG.Options.polygon.hasInnerPoints;
@@ -2133,16 +2136,8 @@
 
                         // glider
                         set_str += "glider(function () { return " + step.src_ids[2] + ".X(); }, function () { return " + step.src_ids[2] + ".Y(); }, " + pid2 + ") ";
-                        set_str += "<<id: '" + pid3 + "', name:'', parents: ['" + pid1 + "', '" + pid2 + "', '" + step.src_ids[2] + "'], isPartOfSector:true, " +
-                            "layer: " + JXG.Options.intersection.layer + ", " +
-                            "strokeWidth: " + JXG.Options.intersection.strokeWidth + ", " +
-                            "strokeColor: \'" + JXG.Options.intersection.strokeColor + "\', " +
-                            "fillColor: \'" + JXG.Options.intersection.fillColor + "\', " +
-                            "fillOpacity: " + JXG.Options.intersection.fillOpacity + ", " +
-                            "highlightStrokeWidth: " + JXG.Options.intersection.highlightStrokeWidth + ", " +
-                            "highlightStrokeColor: \'" + JXG.Options.intersection.highlightStrokeColor + "\', " +
-                            "highlightFillColor: \'" + JXG.Options.intersection.highlightFillColor + "\', " +
-                            "highlightFillOpacity: " + JXG.Options.intersection.highlightFillOpacity +
+                        set_str += "<<id: '" + pid3 + "', name:'', parents: ['" + pid1 + "', '" + pid2 + "', '" + step.src_ids[2] + "'], isPartOfSector:true" +
+                            getAttribsString(board.options.sketchometry.sectorCorner) +
                             ">>; ";
 
                         // segment 1 (mid - radiuspoint)
@@ -2228,19 +2223,19 @@
                         set_str +=
                             "basepoint: <<id: '" +
                             step.dest_sub_ids[0] +
-                            "', name: '', priv: true >>, ";
+                            "', name: '', priv: true, isPartOfSlopetriangle:true >>, ";
                         set_str +=
                             "baseline: <<id: '" +
                             step.dest_sub_ids[1] +
-                            "', name: '', priv: true >>,";
+                            "', name: '', priv: true, isPartOfSlopetriangle:true >>,";
                         set_str +=
                             "glider: <<id: '" +
                             step.dest_sub_ids[2] +
-                            "', name: '', priv: false >>, ";
+                            "', name: '', priv: false, isPartOfSlopetriangle:true >>, ";
                         set_str +=
                             "toppoint: <<id: '" +
                             step.dest_sub_ids[3] +
-                            "', name: '', priv: false >>";
+                            "', name: '', priv: false, isPartOfSlopetriangle:true >>";
                         if (step.dest_sub_ids.length === 8) {
                             // The test is needed for backwards compatibility
                             set_str +=
