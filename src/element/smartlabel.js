@@ -265,7 +265,7 @@ JXG.createSmartLabel = function (board, parents, attributes) {
 
         return function () {
             var str = '',
-                val, 
+                val,
                 txt = Type.evaluate(user_supplied_text),
                 digits = Type.evaluate(el.visProp.digits),
                 u = Type.evaluate(el.visProp.unit),

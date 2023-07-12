@@ -2265,7 +2265,7 @@ JXG.extend(
                 optCalc = {},
                 // These options are case sensitive:
                 translate = {
-                    maximumfractiondigits: 'maximumFractionDigits', 
+                    maximumfractiondigits: 'maximumFractionDigits',
                     minimumfractiondigits: 'minimumFractionDigits',
                     compactdisplay: 'compactDisplay',
                     currencydisplay: 'currencyDisplay',
