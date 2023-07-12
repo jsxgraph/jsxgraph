@@ -628,7 +628,7 @@ JXG.extend(
             // Calculate (signed) distance from Zero to P1 and to P2
             dZeroPoint1 = this.getDistanceFromZero(coordsZero, point1);
             dZeroPoint2 = this.getDistanceFromZero(coordsZero, point2);
-            
+
             // Recompute lengths of arrow heads
             a1 = dZeroPoint1 - a1;
             a2 = dZeroPoint1 - a2;
