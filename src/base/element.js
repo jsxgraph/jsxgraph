@@ -2260,6 +2260,48 @@ JXG.extend(
          */
         removeEvent: JXG.shortcut(JXG.GeometryElement.prototype, 'off'),
 
+        formatNumberLocale: function(value) {
+            var loc, opt;
+
+            if (Type.exists(Intl) &&
+                this.useLocale())  {
+
+                loc = Type.evaluate(this.visProp.intl.locale) ||
+                        Type.evaluate(this.board.attr.intl.locale);
+                opt = Type.evaluate(this.visProp.intl.options);
+                return new Intl.NumberFormat(loc, opt).format(value);
+            }
+
+            return value;
+        },
+
+        useLocale: function() {
+            var val;
+
+            // Check if element supports intl
+            if (!Type.exists(this.visProp.intl) ||
+                !Type.exists(this.visProp.intl.enabled)) {
+                return false;
+            }
+
+            // Check if intl is supported explicitly enabled for this element
+            val = Type.evaluate(this.visProp.intl.enabled);
+
+// console.log(">>>", val);
+            if (val === true) {
+                return true;
+            }
+
+            // Check intl attribute of the board
+            if (val === 'inherit') {
+                if (Type.evaluate(this.board.attr.intl.enabled) === true) {
+                    return true;
+                }
+            }
+
+            return false;
+        },
+
         /* **************************
          *     EVENT DEFINITION
          * for documentation purposes

@@ -1299,12 +1299,10 @@ JXG.extend(
                 digits,
                 ev_s = Type.evaluate(this.visProp.scalesymbol);
 
-            // if value is Number
             if (Type.isNumber(value)) {
-                if (Type.exists(this.visProp.intl) &&
-                    Type.exists(this.visProp.intl.enabled) &&
-                    Type.evaluate(this.visProp.intl.enabled)) {
-                    labelText = Type.formatNumberLocale(value, this);
+
+                if (this.useLocale()) {
+                    labelText = this.formatNumberLocale(value);
                 } else {
                     labelText = (Math.round(value * 1e11) / 1e11).toString();
 

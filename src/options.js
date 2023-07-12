@@ -1062,7 +1062,7 @@ JXG.Options = {
 
         intl: {
             enabled: true,
-            locales: 'de-DE',
+            locale: 'en-US'
         }
 
         /**#@-*/
@@ -2765,6 +2765,12 @@ JXG.Options = {
          * 
          */
         type: 'linear',
+
+        intl: {
+            enabled: 'inherit',
+            options: {
+            }
+        },
 
         minorTicksInArrow: false,
         majorTicksInArrow: true,
@@ -6405,7 +6411,11 @@ JXG.Options = {
          */
         digits: 2,
 
-        intl: null,
+        intl: {
+            enabled: 'inherit',
+            options: {
+            }
+        },
 
         /**
          * If set to true, the text is parsed and evaluated.

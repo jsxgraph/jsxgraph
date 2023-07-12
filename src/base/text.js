@@ -236,7 +236,7 @@ JXG.extend(
             } else {
                 if (Type.isNumber(text)) {
                     this.content = Type.toFixed(text, Type.evaluate(this.visProp.digits));
-                    this.content = Type.formatNumberLocale(this.content, this);
+                    this.content = this.formatNumberLocale(this.content);
                 } else if (Type.isString(text) && ev_p) {
                     if (Type.evaluate(this.visProp.useasciimathml)) {
                         // ASCIIMathML
