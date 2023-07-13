@@ -135,18 +135,6 @@ constants = /** @lends JXG */ {
     GENTYPE_AXIS: 2,
     GENTYPE_MID: 3,
 
-    /**
-     * @ignore
-     * @deprecated, now use {@link JXG.GENTYPE_REFLECTION_ON_LINE}
-     *
-     */
-    GENTYPE_REFLECTION: 4,
-    /**
-     * @ignore
-     * @deprecated, now use {@link JXG.GENTYPE_REFLECTION_ON_POINT}
-     */
-    GENTYPE_MIRRORELEMENT: 5,
-
     GENTYPE_REFLECTION_ON_LINE: 4,
     GENTYPE_REFLECTION_ON_POINT: 5,
     GENTYPE_TANGENT: 6,

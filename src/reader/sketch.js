@@ -33,6 +33,8 @@
 /*global JXG: true*/
 /*jslint nomen: true, plusplus: true*/
 
+import type from "../utils/type";
+
 (function () {
     "use strict";
 
@@ -145,7 +147,7 @@
                     le,
                     x,
                     y,
-                    key, val,
+                    operator,
                     copy_log = [],
                     set_str = "",
                     reset_str = "",
@@ -186,6 +188,8 @@
                             val = object[key];
                             if (JXG.isString(val))
                                 val = "'" + val + "'";
+                            if (JXG.isObject(val))
+                                val = '<<' + getAttribsString(val) + '>>';
                             str += ", " + key + ": " + val;
                         }
                         return str;
@@ -420,8 +424,13 @@
                         reset_str = "remove(" + step.dest_id + "); ";
                         break;
 
-                    case JXG.GENTYPE_REFLECTION:
                     case JXG.GENTYPE_REFLECTION_ON_LINE:
+                    case JXG.GENTYPE_REFLECTION_ON_POINT:
+
+                        operator = 'reflection';
+                        if (step.type === JXG.GENTYPE_REFLECTION_ON_POINT)
+                            operator = 'mirrorelement'
+
                         // Polygon:
                         if (step.args.type === "polygon") {
                             set_str = "";
@@ -429,13 +438,11 @@
                             for (i = 1; i < step.src_ids.length - 1; i++) {
                                 set_str +=
                                     assign +
-                                    "reflection(" +
+                                    operator + "(" +
                                     step.src_ids[i] +
                                     ", " +
                                     el +
-                                    ') <<id:"' +
-                                    step.dest_sub_ids[i - 1] +
-                                    '"';
+                                    ') <<id:"' + step.dest_sub_ids[i - 1] + '"';
                                 if (JXG.exists(step.args.subnames)) {
                                     set_str += ', name:"' + step.args.subnames[i - 1] + '"';
                                 } else {
@@ -456,7 +463,6 @@
                             for (i = 0; i < le; i++) {
                                 x.push("''");
                             }
-
                             set_str += ", names: [" + x.join() + "]";
                             set_str += getAttribsString(board.options.sketchometry.reflection.stroke);
                             set_str += ">>, " + attrid + " hasInnerPoints: " + JXG.Options.polygon.hasInnerPoints;
@@ -472,6 +478,11 @@
                             set_str += step.dest_id + ".hasInnerPoints = function() { " +
                                 "return !(" + step.dest_id + ".fillColor == 'transparent' || " + step.dest_id + ".fillColor == 'none' || " + step.dest_id + ".fillOpacity == 0); " +
                                 "}; "
+                            for (i = le; i < 2 * le; i++) {
+                                set_str += step.dest_sub_ids[i] + '.highlightStrokeWidth = function() { ' +
+                                    'return ' + step.dest_sub_ids[i] + '.strokeWidth + ' + (JXG.Options.sketchometry.highlightStrokeWidthAddition) + '; ' +
+                                    ' };'
+                            }
 
                             ///////////////
 
@@ -482,7 +493,7 @@
                             for (i = 1; i < step.src_ids.length - 1; i++) {
                                 set_str +=
                                     assign +
-                                    "reflection(" +
+                                    operator + "(" +
                                     step.src_ids[i] +
                                     ", " +
                                     el +
@@ -535,13 +546,16 @@
                                 set_str += ", withLabel: true";
                             }
                             set_str += ">>; ";
+                            set_str += step.dest_id + '.highlightStrokeWidth = function() { ' +
+                                'return ' + step.dest_id + '.strokeWidth + ' + (JXG.Options.sketchometry.highlightStrokeWidthAddition) + '; ' +
+                                ' };'
 
                             ///////////////
 
                         } else if (step.args.type === "circle") {
                             set_str +=
                                 assign +
-                                "reflection(" +
+                                operator + "(" +
                                 step.src_ids[0] +
                                 "," +
                                 step.src_ids[2] +
@@ -569,13 +583,16 @@
                             set_str += step.dest_id + ".hasInnerPoints = function() { " +
                                 "return !(" + step.dest_id + ".fillColor == 'transparent' || " + step.dest_id + ".fillColor == 'none' || " + step.dest_id + ".fillOpacity == 0); " +
                                 "}; "
+                            set_str += step.dest_id + '.highlightStrokeWidth = function() { ' +
+                                'return ' + step.dest_id + '.strokeWidth + ' + (JXG.Options.sketchometry.highlightStrokeWidthAddition) + '; ' +
+                                ' };'
 
                             ///////////////
 
                         } else if (step.args.type === "point") {
                             set_str =
                                 assign +
-                                "reflection(" +
+                                operator + "(" +
                                 step.src_ids[0] +
                                 ", " +
                                 step.src_ids[1] +
@@ -591,7 +608,7 @@
                         } else {
                             set_str =
                                 assign +
-                                "reflection(" +
+                                operator + "(" +
                                 step.src_ids[0] +
                                 ", " +
                                 step.src_ids[1] +
@@ -606,6 +623,9 @@
                             if (step.args.name !== "")
                                 set_str += ", withLabel: true";
                             set_str += ">>; ";
+                            set_str += step.dest_id + '.highlightStrokeWidth = function() { ' +
+                                'return ' + step.dest_id + '.strokeWidth + ' + (JXG.Options.sketchometry.highlightStrokeWidthAddition) + '; ' +
+                                ' };'
                         }
 
                         reset_str = "";
@@ -618,175 +638,6 @@
 
                         break;
 
-                    case JXG.GENTYPE_MIRRORELEMENT:
-                    case JXG.GENTYPE_REFLECTION_ON_POINT:
-                        if (step.args.type === "polygon") {
-                            set_str = "";
-                            el = step.src_ids[step.src_ids.length - 1];
-                            for (i = 1; i < step.src_ids.length - 1; i++) {
-                                set_str +=
-                                    assign +
-                                    "mirrorelement(" +
-                                    step.src_ids[i] +
-                                    ", " +
-                                    el +
-                                    ') <<id:"' +
-                                    step.dest_sub_ids[i - 1] +
-                                    '"';
-                                if (JXG.exists(step.args.subnames)) {
-                                    set_str += ', name:"' + step.args.subnames[i - 1] + '"';
-                                } else {
-                                    set_str += ', name: ""';
-                                }
-                                set_str += ", color: '" + step.args.strokeColor + "'";
-                                set_str += ">>;\n";
-                            }
-
-                            le = step.dest_sub_ids.length / 2;
-                            set_str += assign + "polygon(";
-                            set_str += step.dest_sub_ids.slice(0, le).join();
-                            set_str +=
-                                ") <<borders: <<ids: ['" +
-                                step.dest_sub_ids.slice(le, 2 * le).join("', '") +
-                                "']";
-                            x = [];
-                            for (i = 0; i < le; i++) {
-                                x.push("''");
-                            }
-                            set_str += ", names: [" + x.join() + "]";
-                            set_str += ">>, " + attrid + " fillOpacity: ";
-                            set_str += step.args.opacity + ", name: '' ";
-                            /* set_str +=
-                             ", hasInnerPoints_Org: " + JXG.Options.polygon.hasInnerPoints; */
-                            set_str +=
-                                ", hasInnerPoints: " + JXG.Options.polygon.hasInnerPoints;
-                            if (step.args.name !== "") {
-                                set_str += ', name: "' + step.args.name + '"';
-                                set_str += ", withLabel: true";
-                            }
-                            set_str += ", fillColor: '" + step.args.fillColor + "'";
-                            set_str += ">>; ";
-                            set_str += step.dest_id + ".hasInnerPoints = function() { " +
-                                "return !(" + step.dest_id + ".fillColor == 'transparent' || " + step.dest_id + ".fillColor == 'none' || " + step.dest_id + ".fillOpacity == 0); " +
-                                "}; "
-                        } else if (step.args.type === "line" || step.args.type === "vector") {
-                            set_str = "";
-                            el = step.src_ids[step.src_ids.length - 1];
-                            // Create two end points.
-                            for (i = 1; i < step.src_ids.length - 1; i++) {
-                                set_str +=
-                                    assign +
-                                    "mirrorelement(" +
-                                    step.src_ids[i] +
-                                    ", " +
-                                    el +
-                                    ') <<id:"' +
-                                    step.dest_sub_ids[i - 1] +
-                                    '"';
-                                if (JXG.exists(step.args.subnames)) {
-                                    set_str += ', name:"' + step.args.subnames[i - 1] + '"';
-                                } else {
-                                    set_str += ', name: ""';
-                                }
-                                set_str += ", color: '" + step.args.strokeColor + "'";
-                                set_str += ">>;\n";
-                            }
-
-                            if (step.args.type === "vector") {
-                                set_str +=
-                                    assign +
-                                    "arrow(" +
-                                    step.dest_sub_ids[0] +
-                                    "," +
-                                    step.dest_sub_ids[1] +
-                                    ") ";
-                            } else {
-                                set_str +=
-                                    assign +
-                                    "line(" +
-                                    step.dest_sub_ids[0] +
-                                    "," +
-                                    step.dest_sub_ids[1] +
-                                    ") ";
-                            }
-                            set_str += "<<";
-                            set_str += attrid;
-                            set_str += "strokeColor: '" + step.args.strokeColor + "'";
-                            set_str += ", opacity: '" + step.args.opacity + "'";
-                            set_str += ', name: "' + step.args.name + '"';
-                            set_str += ', id: "' + step.dest_id + '"';
-                            set_str += getAttribsString(step.args.attr);
-
-                            if (step.args.name !== "") {
-                                set_str += ", withLabel: true";
-                            }
-                            set_str += ">>; ";
-                        } else if (step.args.type === "circle") {
-                            set_str +=
-                                assign +
-                                "mirrorelement(" +
-                                step.src_ids[0] +
-                                "," +
-                                step.src_ids[2] +
-                                ") ";
-                            set_str += "<<";
-                            set_str += attrid;
-                            set_str += "strokeColor: '" + step.args.strokeColor + "'";
-                            set_str += ", opacity: '" + step.args.opacity + "'";
-                            set_str += ', name: "' + step.args.name + '"';
-                            set_str += ', id: "' + step.dest_id + '"';
-                            if (JXG.exists(step.args.attr))
-                                set_str += getAttribsString(step.args.attr);
-                            if (step.args.name !== "")
-                                set_str += ", withLabel: true";
-
-                            set_str += ', center: <<id:"' + step.dest_sub_ids[0] + '"';
-                            if (JXG.exists(step.args.subnames)) {
-                                set_str += ', name:"' + step.args.subnames[0] + '"';
-                            } else {
-                                set_str += ', name: ""';
-                            }
-                            set_str += ", color: '" + step.args.strokeColor + "'";
-                            set_str += ">>";
-
-                            set_str += ">>; ";
-                            set_str += step.dest_id + ".hasInnerPoints = function() { " +
-                                "return !(" + step.dest_id + ".fillColor == 'transparent' || " + step.dest_id + ".fillColor == 'none' || " + step.dest_id + ".fillOpacity == 0); " +
-                                "}; "
-                        } else {
-                            set_str =
-                                assign +
-                                "mirrorelement(" +
-                                step.src_ids[0] +
-                                ", " +
-                                step.src_ids[1] +
-                                ") <<" +
-                                attrid;
-                            set_str += "fillColor: '" + step.args.fillColor + "'";
-                            if (JXG.exists(step.args.strokeColor)) {
-                                set_str += ", strokeColor: '" + step.args.strokeColor + "'";
-                                set_str += ", opacity: '" + step.args.opacity + "'";
-                            }
-                            set_str += ', id: "' + step.dest_id + '"';
-                            set_str += ', name: "' + step.args.name + '"';
-                            if (JXG.exists(step.args.attr))
-                                set_str += getAttribsString(step.args.attr);
-                            if (step.args.name !== "")
-                                set_str += ", withLabel: true";
-                            set_str += ">>; ";
-                        }
-
-                        reset_str = "";
-                        for (i = 0; i < step.dest_sub_ids.length; i++) {
-                            if (step.dest_sub_ids[i] !== 0) {
-                                reset_str +=
-                                    "remove(" + step.dest_sub_ids[i] + "); " + reset_str;
-                            }
-                        }
-                        reset_str += "remove(" + step.dest_id + "); " + reset_str;
-
-                        break;
-
                     case JXG.GENTYPE_TANGENT:
                         if (step.args.create_point) {
                             sub_id = step.dest_sub_ids[2];
@@ -796,11 +647,10 @@
                                 "," +
                                 pn(step.args.usrCoords[2]) +
                                 ") <<id: '";
-                            set_str += sub_id + "', fillColor: '" + step.args.fillColor + "'";
-                            if (JXG.exists(step.args.strokeColor)) {
-                                set_str += ", strokeColor: '" + step.args.strokeColor + "'";
-                            }
-                            set_str += ">>; " + sub_id + ".glide(";
+                            set_str += sub_id + "'" +
+                                getAttribsString(board.options.glider) +
+                                ">>; " +
+                                sub_id + ".glide(";
                             set_str += step.src_ids[0] + "); ";
                             set_str += sub_id + '.isPartOfTangent = true;'
                             reset_str = "remove(" + sub_id + "); ";
@@ -822,6 +672,9 @@
                             step.dest_sub_ids[0] +
                             "', priv: true>>, point2: <<name: '";
                         set_str += "', id: '" + step.dest_sub_ids[1] + "', priv: true>> >>; ";
+                        set_str += step.dest_id + '.highlightStrokeWidth = function() { ' +
+                            'return ' + step.dest_id + '.strokeWidth + ' + (JXG.Options.sketchometry.highlightStrokeWidthAddition) + '; ' +
+                            ' };'
                         reset_str = "remove(" + step.dest_sub_ids[0] + "); " + reset_str;
                         reset_str =
                             "remove(" +
@@ -857,6 +710,9 @@
                             attrid +
                             "name: '', point: <<id: '";
                         set_str += step.dest_sub_ids[0] + "', name: ''>> >>; ";
+                        set_str += step.dest_id + '.highlightStrokeWidth = function() { ' +
+                            'return ' + step.dest_id + '.strokeWidth + ' + (JXG.Options.sketchometry.highlightStrokeWidthAddition) + '; ' +
+                            ' };'
                         reset_str =
                             "remove(" +
                             step.dest_id +
@@ -1033,6 +889,9 @@
                                 step.dest_sub_ids[0] +
                                 ");";
                         }
+                        set_str += step.dest_id + '.highlightStrokeWidth = function() { ' +
+                            'return ' + step.dest_id + '.strokeWidth + ' + (JXG.Options.sketchometry.highlightStrokeWidthAddition) + '; ' +
+                            ' };'
                         break;
 
                     case JXG.GENTYPE_NORMAL:
@@ -1063,6 +922,9 @@
                         set_str +=
                             "name: '', point: <<id: '" + step.dest_sub_ids[0] + "', name: '";
                         set_str += "'>> >>; ";
+                        set_str += step.dest_id + '.highlightStrokeWidth = function() { ' +
+                            'return ' + step.dest_id + '.strokeWidth + ' + (JXG.Options.sketchometry.highlightStrokeWidthAddition) + '; ' +
+                            ' };'
                         reset_str =
                             "remove(" +
                             step.dest_id +
@@ -1084,6 +946,9 @@
                         set_str +=
                             "name: '', point: <<id: '" + step.dest_sub_ids[0] + "', name: '";
                         set_str += "'>> >>; ";
+                        set_str += step.dest_id + '.highlightStrokeWidth = function() { ' +
+                            'return ' + step.dest_id + '.strokeWidth + ' + (JXG.Options.sketchometry.highlightStrokeWidthAddition) + '; ' +
+                            ' };'
                         reset_str =
                             "remove(" +
                             step.dest_id +
@@ -1302,6 +1167,9 @@
                             set_str += step.dest_id + ".hasInnerPoints = function() { " +
                                 "return !(" + step.dest_id + ".fillColor == 'transparent' || " + step.dest_id + ".fillColor == 'none' || " + step.dest_id + ".fillOpacity == 0); " +
                                 "}; "
+                            set_str += step.dest_id + '.highlightStrokeWidth = function() { ' +
+                                'return ' + step.dest_id + '.strokeWidth + ' + (JXG.Options.sketchometry.highlightStrokeWidthAddition) + '; ' +
+                                ' };'
 
                             reset_str = "remove(" + step.dest_id + "); ";
                             if (!JXG.exists(step.args.center_existing) || !step.args.center_existing) {
@@ -1358,6 +1226,9 @@
                             set_str += step.dest_id + ".hasInnerPoints = function() { " +
                                 "return !(" + step.dest_id + ".fillColor == 'transparent' || " + step.dest_id + ".fillColor == 'none' || " + step.dest_id + ".fillOpacity == 0); " +
                                 "}; "
+                            set_str += step.dest_id + '.highlightStrokeWidth = function() { ' +
+                                'return ' + step.dest_id + '.strokeWidth + ' + (JXG.Options.sketchometry.highlightStrokeWidthAddition) + '; ' +
+                                ' };'
 
                             reset_str = "remove(" + step.dest_id + "); ";
                             if (!JXG.exists(step.args.center_existing) || !step.args.center_existing) {
@@ -1388,7 +1259,14 @@
                                     ", creationGesture: 'circum-2-points'" +
                                     ", creationCenterExisting: false" +
                                     ", fillOpacity: " + JXG.Options.opacityLevel +
-                                    ">>;";
+                                    ", hasInnerPoints: true" +
+                                    ">>; ";
+                                set_str += step.dest_id + ".hasInnerPoints = function() { " +
+                                    "return !(" + step.dest_id + ".fillColor == 'transparent' || " + step.dest_id + ".fillColor == 'none' || " + step.dest_id + ".fillOpacity == 0); " +
+                                    "}; "
+                                set_str += step.dest_id + '.highlightStrokeWidth = function() { ' +
+                                    'return ' + step.dest_id + '.strokeWidth + ' + (JXG.Options.sketchometry.highlightStrokeWidthAddition) + '; ' +
+                                    ' };'
 
                                 reset_str = "remove(" + step.dest_id + "); ";
                                 if (!JXG.exists(step.args.center_existing) || !step.args.center_existing) {
@@ -1415,7 +1293,14 @@
                                     ", creationGesture: 'circum-3-points'" +
                                     ", creationCenterExisting: false" +
                                     ", fillOpacity: " + JXG.Options.opacityLevel +
+                                    ", hasInnerPoints: true" +
                                     ">>; ";
+                                set_str += step.dest_id + ".hasInnerPoints = function() { " +
+                                    "return !(" + step.dest_id + ".fillColor == 'transparent' || " + step.dest_id + ".fillColor == 'none' || " + step.dest_id + ".fillOpacity == 0); " +
+                                    "}; "
+                                set_str += step.dest_id + '.highlightStrokeWidth = function() { ' +
+                                    'return ' + step.dest_id + '.strokeWidth + ' + (JXG.Options.sketchometry.highlightStrokeWidthAddition) + '; ' +
+                                    ' };'
 
                                 reset_str = "remove(" + step.dest_id + "); ";
                                 if (!JXG.exists(step.args.center_existing) || !step.args.center_existing) {
@@ -1655,6 +1540,9 @@
                             set_str +=
                                 " <<name: ''>>; ";
                         }
+                        set_str += step.dest_id + '.highlightStrokeWidth = function() { ' +
+                            'return ' + step.dest_id + '.strokeWidth + ' + (JXG.Options.sketchometry.highlightStrokeWidthAddition) + '; ' +
+                            ' };'
 
                         reset_str = "remove(" + step.dest_id + "); " + reset_str;
                         break;
@@ -1803,10 +1691,8 @@
 
                         set_str +=
                             ") <<borders: <<ids: ['" +
-                            step.dest_sub_ids[3] +
-                            "', '" +
-                            step.dest_sub_ids[4] +
-                            "', '" +
+                            step.dest_sub_ids[3] + "', '" +
+                            step.dest_sub_ids[4] + "', '" +
                             step.dest_sub_ids[5] +
                             "']";
                         set_str += ", names: ['', '', '']";
@@ -1814,6 +1700,11 @@
                         set_str += JXG.Options.opacityLevel + ", name: '' ";
                         set_str += ", hasInnerPoints: " + JXG.Options.polygon.hasInnerPoints +
                             ">>; ";
+                        for (i = 3; i < 6; i++) {
+                            set_str += step.dest_sub_ids[i] + '.highlightStrokeWidth = function() { ' +
+                                'return ' + step.dest_sub_ids[i] + '.strokeWidth + ' + (JXG.Options.sketchometry.highlightStrokeWidthAddition) + '; ' +
+                                ' };'
+                        }
                         set_str += step.dest_id + ".hasInnerPoints = function() { " +
                             "return !(" + step.dest_id + ".fillColor == 'transparent' || " + step.dest_id + ".fillColor == 'none' || " + step.dest_id + ".fillOpacity == 0); " +
                             "}; "
@@ -1858,11 +1749,11 @@
 
                         set_str +=
                             ") <<borders: <<ids: [ '" +
-                            step.dest_sub_ids[4] +
-                            "', '" +
-                            step.dest_sub_ids[5];
-                        set_str += "', '";
-                        set_str += step.dest_sub_ids[6] + "', '" + step.dest_sub_ids[7] + "' ]";
+                            step.dest_sub_ids[4] + "', '" +
+                            step.dest_sub_ids[5] + "', '" +
+                            step.dest_sub_ids[6] + "', '" +
+                            step.dest_sub_ids[7] +
+                            "' ]";
                         set_str += ", names: ['', '', '', '']";
                         set_str += ">>, " + attrid;
                         set_str += " fillOpacity: " + JXG.Options.opacityLevel + ", name: ''";
@@ -1871,6 +1762,11 @@
                         set_str += step.dest_id + ".hasInnerPoints = function() { " +
                             "return !(" + step.dest_id + ".fillColor == 'transparent' || " + step.dest_id + ".fillColor == 'none' || " + step.dest_id + ".fillOpacity == 0); " +
                             "}; "
+                        for (i = 4; i < 8; i++) {
+                            set_str += step.dest_sub_ids[i] + '.highlightStrokeWidth = function() { ' +
+                                'return ' + step.dest_sub_ids[i] + '.strokeWidth + ' + (JXG.Options.sketchometry.highlightStrokeWidthAddition) + '; ' +
+                                ' };'
+                        }
                         break;
 
                     case JXG.GENTYPE_TEXT:
@@ -1986,6 +1882,11 @@
                         set_str += step.dest_id + ".hasInnerPoints = function() { " +
                             "return !(" + step.dest_id + ".fillColor == 'transparent' || " + step.dest_id + ".fillColor == 'none' || " + step.dest_id + ".fillOpacity == 0); " +
                             "}; "
+                        for (i = step.args.coords.length; i < step.dest_sub_ids.length; i++) {
+                            set_str += step.dest_sub_ids[i] + '.highlightStrokeWidth = function() { ' +
+                                'return ' + step.dest_sub_ids[i] + '.strokeWidth + ' + (JXG.Options.sketchometry.highlightStrokeWidthAddition) + '; ' +
+                                ' };'
+                        }
                         reset_str = "remove(" + step.dest_id + "); ";
                         break;
 
@@ -2052,6 +1953,11 @@
                         set_str += step.dest_id + ".hasInnerPoints = function() { " +
                             "return !(" + step.dest_id + ".fillColor == 'transparent' || " + step.dest_id + ".fillColor == 'none' || " + step.dest_id + ".fillOpacity == 0); " +
                             "}; "
+                        for (i = le; i < step.dest_sub_ids.length; i++) {
+                            set_str += step.dest_sub_ids[i] + '.highlightStrokeWidth = function() { ' +
+                                'return ' + step.dest_sub_ids[i] + '.strokeWidth + ' + (JXG.Options.sketchometry.highlightStrokeWidthAddition) + '; ' +
+                                ' };'
+                        }
                         reset_str += "remove(" + step.dest_id + "); ";
                         break;
 
@@ -2101,6 +2007,11 @@
                         set_str += step.dest_id + ".hasInnerPoints = function() { " +
                             "return !(" + step.dest_id + ".fillColor == 'transparent' || " + step.dest_id + ".fillColor == 'none' || " + step.dest_id + ".fillOpacity == 0); " +
                             "}; "
+                        for (i = 0; i < step.args.corners; i++) {
+                            set_str += step.dest_sub_ids[i] + '.highlightStrokeWidth = function() { ' +
+                                'return ' + step.dest_sub_ids[i] + '.strokeWidth + ' + (JXG.Options.sketchometry.highlightStrokeWidthAddition) + '; ' +
+                                ' };'
+                        }
                         reset_str = "remove(" + step.dest_id + "); " + reset_str;
 
                         break;
@@ -2244,6 +2155,11 @@
                                 "', priv: true, point1: <<name: '', priv: true >>, point2: <<name: '', priv: true >> >>";
                         }
                         set_str += ">>;";
+                        /* for (i = 4; i <= 6; i++) {
+                         set_str += step.dest_sub_ids[i] + '.highlightStrokeWidth = function() { ' +
+                         'return ' + step.dest_sub_ids[i] + '.strokeWidth + ' + (JXG.Options.sketchometry.highlightStrokeWidthAddition) + '; ' +
+                         ' };'
+                         } */
                         reset_str = "remove(" + step.dest_id + "); ";
 
                         break;
@@ -2318,9 +2234,10 @@
                         if (!step.args.createPoints) {
                             set_str += "createPoints: false, ";
                         }
-                        set_str += "isArrayOfCoordinates: true, ";
-                        set_str += "strokeWidth: " + step.args.strokeWidth + ", ";
-                        set_str += "strokeColor: '" + step.args.strokeColor + "' >>; ";
+                        set_str += "isArrayOfCoordinates: true >>; ";
+                        set_str += step.dest_id + '.highlightStrokeWidth = function() { ' +
+                            'return ' + step.dest_id + '.strokeWidth + ' + (JXG.Options.sketchometry.highlightStrokeWidthAddition) + '; ' +
+                            ' };'
                         reset_str = "remove(" + step.dest_id + "); ";
 
                         break;
@@ -2545,7 +2462,6 @@
                                 "<<id: '" + step.dest_sub_ids[0] + "'" +
                                 ", name: ''" +
                                 ", withLabel: false" +
-                                getAttribsString(board.options.sketchometry.migration.point) +
                                 ">>; ";
                             set_str +=
                                 "circle('" + step.dest_sub_ids[0] + "', 1) " +
@@ -2568,6 +2484,9 @@
                                     "return " + step.src_ids[0] + ".radius(); " +
                                     "}); ";
                             }
+                            set_str += step.dest_id + '.highlightStrokeWidth = function() { ' +
+                                'return ' + step.dest_id + '.strokeWidth + ' + (JXG.Options.sketchometry.highlightStrokeWidthAddition) + '; ' +
+                                ' };'
 
                             reset_str =
                                 "remove(" + step.dest_id + "); " +
