@@ -3060,7 +3060,6 @@ JXG.extend(
                                         touchTargets[0].num,
                                         evt
                                     );
-                                    // this.twoFingerMove(this.touches[i], touchTargets[1].num);
 
                                     touchTargets[0].Xprev = pos1[0];
                                     touchTargets[0].Yprev = pos1[1];
