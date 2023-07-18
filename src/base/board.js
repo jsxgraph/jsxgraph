@@ -2252,7 +2252,23 @@ JXG.extend(
          * @returns {JXG.Board} Reference to the board
          * @private
          */
-        _pointerClearTouches: function () {
+        _pointerClearTouches: function (pId) {
+            // var i;
+
+            // console.log("C", pId, this.touches)
+            // console.log("A", pId, this._board_touches)
+            // if (pId) {
+            //     for (i = 0; i < this._board_touches.length; i++) {
+            //         if (pId === this._board_touches[i].pointerId) {
+            //             this._board_touches.splice(i, i);
+            //             break;
+            //         }
+            //     }
+            // }
+            // console.log("B", this._board_touches)
+    
+            // if (!pId || this._board_touches.length === 0) {
+            // }
             if (this._board_touches.length > 0) {
                 this.dehighlightAll();
             }
@@ -2710,7 +2726,7 @@ JXG.extend(
             }
 
             // After one finger leaves the screen the gesture is stopped.
-            this._pointerClearTouches();
+            this._pointerClearTouches(evt.pointerId);
 
             return true;
         },
