@@ -2254,9 +2254,6 @@ JXG.extend(
          */
         _pointerClearTouches: function (pId) {
             // var i;
-
-            // console.log("C", pId, this.touches)
-            // console.log("A", pId, this._board_touches)
             // if (pId) {
             //     for (i = 0; i < this._board_touches.length; i++) {
             //         if (pId === this._board_touches[i].pointerId) {
@@ -2264,10 +2261,7 @@ JXG.extend(
             //             break;
             //         }
             //     }
-            // }
-            // console.log("B", this._board_touches)
-    
-            // if (!pId || this._board_touches.length === 0) {
+            // } else {
             // }
             if (this._board_touches.length > 0) {
                 this.dehighlightAll();
@@ -2334,7 +2328,7 @@ JXG.extend(
 
             if (!object && evt.isPrimary) {
                 // First finger down. To be on the safe side this._board_touches is cleared.
-                this._pointerClearTouches();
+                // this._pointerClearTouches();
             }
 
             if (!this.hasPointerUp) {
