@@ -480,7 +480,7 @@ import type from "../utils/type";
                                 "}; "
                             for (i = le; i < 2 * le; i++) {
                                 set_str += step.dest_sub_ids[i] + '.highlightStrokeWidth = function() { ' +
-                                    'return ' + step.dest_sub_ids[i] + '.strokeWidth + ' + (JXG.Options.sketchometry.highlightStrokeWidthAddition) + '; ' +
+                                    'return ' + step.dest_sub_ids[i] + '.strokeWidth ' + JXG.Options.sketchometry.highlightStrokeWidthOperation + '; ' +
                                     ' };'
                             }
 
@@ -547,7 +547,7 @@ import type from "../utils/type";
                             }
                             set_str += ">>; ";
                             set_str += step.dest_id + '.highlightStrokeWidth = function() { ' +
-                                'return ' + step.dest_id + '.strokeWidth + ' + (JXG.Options.sketchometry.highlightStrokeWidthAddition) + '; ' +
+                                'return ' + step.dest_id + '.strokeWidth ' + JXG.Options.sketchometry.highlightStrokeWidthOperation + '; ' +
                                 ' };'
 
                             ///////////////
@@ -584,7 +584,7 @@ import type from "../utils/type";
                                 "return !(" + step.dest_id + ".fillColor == 'transparent' || " + step.dest_id + ".fillColor == 'none' || " + step.dest_id + ".fillOpacity == 0); " +
                                 "}; "
                             set_str += step.dest_id + '.highlightStrokeWidth = function() { ' +
-                                'return ' + step.dest_id + '.strokeWidth + ' + (JXG.Options.sketchometry.highlightStrokeWidthAddition) + '; ' +
+                                'return ' + step.dest_id + '.strokeWidth ' + JXG.Options.sketchometry.highlightStrokeWidthOperation + '; ' +
                                 ' };'
 
                             ///////////////
@@ -624,7 +624,7 @@ import type from "../utils/type";
                                 set_str += ", withLabel: true";
                             set_str += ">>; ";
                             set_str += step.dest_id + '.highlightStrokeWidth = function() { ' +
-                                'return ' + step.dest_id + '.strokeWidth + ' + (JXG.Options.sketchometry.highlightStrokeWidthAddition) + '; ' +
+                                'return ' + step.dest_id + '.strokeWidth ' + JXG.Options.sketchometry.highlightStrokeWidthOperation + '; ' +
                                 ' };'
                         }
 
@@ -673,7 +673,7 @@ import type from "../utils/type";
                             "', priv: true>>, point2: <<name: '";
                         set_str += "', id: '" + step.dest_sub_ids[1] + "', priv: true>> >>; ";
                         set_str += step.dest_id + '.highlightStrokeWidth = function() { ' +
-                            'return ' + step.dest_id + '.strokeWidth + ' + (JXG.Options.sketchometry.highlightStrokeWidthAddition) + '; ' +
+                            'return ' + step.dest_id + '.strokeWidth ' + JXG.Options.sketchometry.highlightStrokeWidthOperation + '; ' +
                             ' };'
                         reset_str = "remove(" + step.dest_sub_ids[0] + "); " + reset_str;
                         reset_str =
@@ -711,7 +711,7 @@ import type from "../utils/type";
                             "name: '', point: <<id: '";
                         set_str += step.dest_sub_ids[0] + "', name: ''>> >>; ";
                         set_str += step.dest_id + '.highlightStrokeWidth = function() { ' +
-                            'return ' + step.dest_id + '.strokeWidth + ' + (JXG.Options.sketchometry.highlightStrokeWidthAddition) + '; ' +
+                            'return ' + step.dest_id + '.strokeWidth ' + JXG.Options.sketchometry.highlightStrokeWidthOperation + '; ' +
                             ' };'
                         reset_str =
                             "remove(" +
@@ -890,7 +890,7 @@ import type from "../utils/type";
                                 ");";
                         }
                         set_str += step.dest_id + '.highlightStrokeWidth = function() { ' +
-                            'return ' + step.dest_id + '.strokeWidth + ' + (JXG.Options.sketchometry.highlightStrokeWidthAddition) + '; ' +
+                            'return ' + step.dest_id + '.strokeWidth ' + JXG.Options.sketchometry.highlightStrokeWidthOperation + '; ' +
                             ' };'
                         break;
 
@@ -923,7 +923,7 @@ import type from "../utils/type";
                             "name: '', point: <<id: '" + step.dest_sub_ids[0] + "', name: '";
                         set_str += "'>> >>; ";
                         set_str += step.dest_id + '.highlightStrokeWidth = function() { ' +
-                            'return ' + step.dest_id + '.strokeWidth + ' + (JXG.Options.sketchometry.highlightStrokeWidthAddition) + '; ' +
+                            'return ' + step.dest_id + '.strokeWidth ' + JXG.Options.sketchometry.highlightStrokeWidthOperation + '; ' +
                             ' };'
                         reset_str =
                             "remove(" +
@@ -947,7 +947,7 @@ import type from "../utils/type";
                             "name: '', point: <<id: '" + step.dest_sub_ids[0] + "', name: '";
                         set_str += "'>> >>; ";
                         set_str += step.dest_id + '.highlightStrokeWidth = function() { ' +
-                            'return ' + step.dest_id + '.strokeWidth + ' + (JXG.Options.sketchometry.highlightStrokeWidthAddition) + '; ' +
+                            'return ' + step.dest_id + '.strokeWidth ' + JXG.Options.sketchometry.highlightStrokeWidthOperation + '; ' +
                             ' };'
                         reset_str =
                             "remove(" +
@@ -1168,7 +1168,7 @@ import type from "../utils/type";
                                 "return !(" + step.dest_id + ".fillColor == 'transparent' || " + step.dest_id + ".fillColor == 'none' || " + step.dest_id + ".fillOpacity == 0); " +
                                 "}; "
                             set_str += step.dest_id + '.highlightStrokeWidth = function() { ' +
-                                'return ' + step.dest_id + '.strokeWidth + ' + (JXG.Options.sketchometry.highlightStrokeWidthAddition) + '; ' +
+                                'return ' + step.dest_id + '.strokeWidth ' + JXG.Options.sketchometry.highlightStrokeWidthOperation + '; ' +
                                 ' };'
 
                             reset_str = "remove(" + step.dest_id + "); ";
@@ -1227,7 +1227,7 @@ import type from "../utils/type";
                                 "return !(" + step.dest_id + ".fillColor == 'transparent' || " + step.dest_id + ".fillColor == 'none' || " + step.dest_id + ".fillOpacity == 0); " +
                                 "}; "
                             set_str += step.dest_id + '.highlightStrokeWidth = function() { ' +
-                                'return ' + step.dest_id + '.strokeWidth + ' + (JXG.Options.sketchometry.highlightStrokeWidthAddition) + '; ' +
+                                'return ' + step.dest_id + '.strokeWidth ' + JXG.Options.sketchometry.highlightStrokeWidthOperation + '; ' +
                                 ' };'
 
                             reset_str = "remove(" + step.dest_id + "); ";
@@ -1265,7 +1265,7 @@ import type from "../utils/type";
                                     "return !(" + step.dest_id + ".fillColor == 'transparent' || " + step.dest_id + ".fillColor == 'none' || " + step.dest_id + ".fillOpacity == 0); " +
                                     "}; "
                                 set_str += step.dest_id + '.highlightStrokeWidth = function() { ' +
-                                    'return ' + step.dest_id + '.strokeWidth + ' + (JXG.Options.sketchometry.highlightStrokeWidthAddition) + '; ' +
+                                    'return ' + step.dest_id + '.strokeWidth ' + JXG.Options.sketchometry.highlightStrokeWidthOperation + '; ' +
                                     ' };'
 
                                 reset_str = "remove(" + step.dest_id + "); ";
@@ -1299,7 +1299,7 @@ import type from "../utils/type";
                                     "return !(" + step.dest_id + ".fillColor == 'transparent' || " + step.dest_id + ".fillColor == 'none' || " + step.dest_id + ".fillOpacity == 0); " +
                                     "}; "
                                 set_str += step.dest_id + '.highlightStrokeWidth = function() { ' +
-                                    'return ' + step.dest_id + '.strokeWidth + ' + (JXG.Options.sketchometry.highlightStrokeWidthAddition) + '; ' +
+                                    'return ' + step.dest_id + '.strokeWidth ' + JXG.Options.sketchometry.highlightStrokeWidthOperation + '; ' +
                                     ' };'
 
                                 reset_str = "remove(" + step.dest_id + "); ";
@@ -1541,7 +1541,7 @@ import type from "../utils/type";
                                 " <<name: ''>>; ";
                         }
                         set_str += step.dest_id + '.highlightStrokeWidth = function() { ' +
-                            'return ' + step.dest_id + '.strokeWidth + ' + (JXG.Options.sketchometry.highlightStrokeWidthAddition) + '; ' +
+                            'return ' + step.dest_id + '.strokeWidth ' + JXG.Options.sketchometry.highlightStrokeWidthOperation + '; ' +
                             ' };'
 
                         reset_str = "remove(" + step.dest_id + "); " + reset_str;
@@ -1551,91 +1551,78 @@ import type from "../utils/type";
                         k = 0;
                         j = 0;
 
+                        set_str = "";
+                        reset_str = "";
+
                         if (step.args.create_point1) {
                             pid1 = step.dest_sub_ids[k];
-                            k += 1;
-                            str1 = [];
-                            for (i = 0; i < step.args.p1.length; i++) {
-                                str1[i] = pn(step.args.p1[i]);
-                            }
+                            k++;
+                            str = [];
+                            for (i = 0; i < step.args.p1.length; i++)
+                                str[i] = pn(step.args.p1[i]);
 
-                            set_str =
-                                "point(" + str1.join(", ") + ") <<id: '" +
-                                pid1 +
-                                "', name: '', visible: true";
                             set_str +=
+                                "point(" + str.join(", ") + ") <<id: '" + pid1 + "', name: ''" +
+                                ", visible: true" +
                                 ", snapToGridIntern: " + JXG.Options.elements.snapToGrid +
                                 ", snapToPointsIntern: " + JXG.Options.elements.snapToPoints +
+                                getAttribsString(board.options.sketchometry.vectorBasepoint) +
                                 ", priv: false>>; ";
+                            set_str += pid1 + '.isPartOfVector = true;'
                             set_str += pid1 + ".snapToGrid = function() { " +
                                 "return sketchoAttribute('snapToGridGlobal') ? sketchoAttribute('snapToGridGlobal') : " + pid1 + ".snapToGridIntern; " +
                                 "}; ";
                             set_str += pid1 + ".snapToPoints = function() { " +
                                 "return sketchoAttribute('snapToPointsGlobal') ? sketchoAttribute('snapToPointsGlobal') : " + pid1 + ".snapToPointsIntern; " +
                                 "}; ";
-                            set_str += pid1 + ".moveTo([" + str1.join(", ") + "]); ";
+                            set_str += pid1 + ".moveTo([" + str.join(", ") + "]); ";
 
-                            reset_str = "remove(" + pid1 + "); ";
+                            reset_str += "remove(" + pid1 + "); ";
                         } else {
                             pid1 = step.src_ids[j];
                             j += 1;
                         }
 
                         if (step.args.create_point2) {
-                            pid2 = step.dest_sub_ids[k++];
-                            str1 = [];
-                            for (i = 0; i < step.args.p2.length; i++) {
-                                str1[i] = pn(step.args.p2[i]);
-                            }
+                            pid2 = step.dest_sub_ids[k];
+                            k++;
+                            str = [];
+                            for (i = 0; i < step.args.p2.length; i++)
+                                str[i] = pn(step.args.p2[i]);
 
                             set_str +=
-                                "point(" + str1.join(", ") + ") <<id: '" +
-                                pid2 +
-                                "', name: '', visible: true, ";
-                            set_str += "layer: " + JXG.Options.layer.line + ", opacity: 0.2";
-                            set_str +=
+                                "point(" + str.join(", ") + ") <<id: '" + pid2 + "', name: ''" +
+                                ", visible: true" +
                                 ", snapToGridIntern: " + JXG.Options.elements.snapToGrid +
                                 ", snapToPointsIntern: " + JXG.Options.elements.snapToPoints +
+                                getAttribsString(board.options.sketchometry.vectorLacepoint) +
                                 ", priv: false>>; ";
+                            set_str += pid2 + '.isPartOfVector = true;'
                             set_str += pid2 + ".snapToGrid = function() { " +
-                                "return sketchoAttribute('snapToGridGlobal') ? sketchoAttribute('snapToGridGlobal') : " + pid2 + ".snapToGridIntern; " +
+                                "return sketchoAttribute('snapToGridGlobal') ? sketchoAttribute('snapToGridGlobal') : " + pid1 + ".snapToGridIntern; " +
                                 "}; ";
                             set_str += pid2 + ".snapToPoints = function() { " +
-                                "return sketchoAttribute('snapToPointsGlobal') ? sketchoAttribute('snapToPointsGlobal') : " + pid2 + ".snapToPointsIntern; " +
+                                "return sketchoAttribute('snapToPointsGlobal') ? sketchoAttribute('snapToPointsGlobal') : " + pid1 + ".snapToPointsIntern; " +
                                 "}; ";
-                            set_str += pid2 + ".moveTo([" + str1.join(", ") + "]); ";
+                            set_str += pid2 + ".moveTo([" + str.join(", ") + "]); ";
 
-                            reset_str = "remove(" + pid2 + "); " + reset_str;
+                            reset_str += "remove(" + pid2 + "); ";
                         } else {
                             pid2 = step.src_ids[j];
                             j += 1;
                         }
 
-                        str1 = "";
-                        // the line's parents
-                        str2 = pid1 + ", " + pid2;
-                        str = "arrow";
-
                         // this is a corner case, we have to get rid of the ',' at the end
                         // simple solution: rebuild attrid
-                        if (!options.useSymbols) {
-                            attrid = "id: '" + step.dest_id + "'";
-                        }
-
-                        set_str += assign + str + "(" + str2 + ")";
-
-                        if (str1.length + attrid.length > 0) {
-                            set_str +=
-                                " <<" +
-                                str1 +
-                                attrid +
-                                ", name: '', strokeColor: 'black'" +
-                                ">>; ";
-                        } else {
-                            set_str +=
-                                " <<name: '', strokeColor: 'black'" +
-                                ">>; ";
-                        }
+                        if (!options.useSymbols) attrid = "id: '" + step.dest_id + "'";
+                        set_str += assign + "arrow(" + pid1 + ", " + pid2 + ") <<";
+                        if (attrid.length > 0)
+                            set_str += attrid + ", ";
+                        set_str += "name: '' " +
+                            ">>; ";
+                        set_str += step.dest_id + '.highlightStrokeWidth = function() { ' +
+                            'return ' + step.dest_id + '.strokeWidth ' + JXG.Options.sketchometry.highlightStrokeWidthOperation + '; ' +
+                            ' };'
 
                         reset_str = "remove(" + step.dest_id + "); " + reset_str;
 
@@ -1702,7 +1689,7 @@ import type from "../utils/type";
                             ">>; ";
                         for (i = 3; i < 6; i++) {
                             set_str += step.dest_sub_ids[i] + '.highlightStrokeWidth = function() { ' +
-                                'return ' + step.dest_sub_ids[i] + '.strokeWidth + ' + (JXG.Options.sketchometry.highlightStrokeWidthAddition) + '; ' +
+                                'return ' + step.dest_sub_ids[i] + '.strokeWidth ' + JXG.Options.sketchometry.highlightStrokeWidthOperation + '; ' +
                                 ' };'
                         }
                         set_str += step.dest_id + ".hasInnerPoints = function() { " +
@@ -1764,7 +1751,7 @@ import type from "../utils/type";
                             "}; "
                         for (i = 4; i < 8; i++) {
                             set_str += step.dest_sub_ids[i] + '.highlightStrokeWidth = function() { ' +
-                                'return ' + step.dest_sub_ids[i] + '.strokeWidth + ' + (JXG.Options.sketchometry.highlightStrokeWidthAddition) + '; ' +
+                                'return ' + step.dest_sub_ids[i] + '.strokeWidth ' + JXG.Options.sketchometry.highlightStrokeWidthOperation + '; ' +
                                 ' };'
                         }
                         break;
@@ -1884,7 +1871,7 @@ import type from "../utils/type";
                             "}; "
                         for (i = step.args.coords.length; i < step.dest_sub_ids.length; i++) {
                             set_str += step.dest_sub_ids[i] + '.highlightStrokeWidth = function() { ' +
-                                'return ' + step.dest_sub_ids[i] + '.strokeWidth + ' + (JXG.Options.sketchometry.highlightStrokeWidthAddition) + '; ' +
+                                'return ' + step.dest_sub_ids[i] + '.strokeWidth ' + JXG.Options.sketchometry.highlightStrokeWidthOperation + '; ' +
                                 ' };'
                         }
                         reset_str = "remove(" + step.dest_id + "); ";
@@ -1955,7 +1942,7 @@ import type from "../utils/type";
                             "}; "
                         for (i = le; i < step.dest_sub_ids.length; i++) {
                             set_str += step.dest_sub_ids[i] + '.highlightStrokeWidth = function() { ' +
-                                'return ' + step.dest_sub_ids[i] + '.strokeWidth + ' + (JXG.Options.sketchometry.highlightStrokeWidthAddition) + '; ' +
+                                'return ' + step.dest_sub_ids[i] + '.strokeWidth ' + JXG.Options.sketchometry.highlightStrokeWidthOperation + '; ' +
                                 ' };'
                         }
                         reset_str += "remove(" + step.dest_id + "); ";
@@ -2009,7 +1996,7 @@ import type from "../utils/type";
                             "}; "
                         for (i = 0; i < step.args.corners; i++) {
                             set_str += step.dest_sub_ids[i] + '.highlightStrokeWidth = function() { ' +
-                                'return ' + step.dest_sub_ids[i] + '.strokeWidth + ' + (JXG.Options.sketchometry.highlightStrokeWidthAddition) + '; ' +
+                                'return ' + step.dest_sub_ids[i] + '.strokeWidth ' + JXG.Options.sketchometry.highlightStrokeWidthOperation + '; ' +
                                 ' };'
                         }
                         reset_str = "remove(" + step.dest_id + "); " + reset_str;
@@ -2157,7 +2144,7 @@ import type from "../utils/type";
                         set_str += ">>;";
                         /* for (i = 4; i <= 6; i++) {
                          set_str += step.dest_sub_ids[i] + '.highlightStrokeWidth = function() { ' +
-                         'return ' + step.dest_sub_ids[i] + '.strokeWidth + ' + (JXG.Options.sketchometry.highlightStrokeWidthAddition) + '; ' +
+                         'return ' + step.dest_sub_ids[i] + '.strokeWidth ' + JXG.Options.sketchometry.highlightStrokeWidthOperation + '; ' +
                          ' };'
                          } */
                         reset_str = "remove(" + step.dest_id + "); ";
@@ -2236,7 +2223,7 @@ import type from "../utils/type";
                         }
                         set_str += "isArrayOfCoordinates: true >>; ";
                         set_str += step.dest_id + '.highlightStrokeWidth = function() { ' +
-                            'return ' + step.dest_id + '.strokeWidth + ' + (JXG.Options.sketchometry.highlightStrokeWidthAddition) + '; ' +
+                            'return ' + step.dest_id + '.strokeWidth ' + JXG.Options.sketchometry.highlightStrokeWidthOperation + '; ' +
                             ' };'
                         reset_str = "remove(" + step.dest_id + "); ";
 
@@ -2485,7 +2472,7 @@ import type from "../utils/type";
                                     "}); ";
                             }
                             set_str += step.dest_id + '.highlightStrokeWidth = function() { ' +
-                                'return ' + step.dest_id + '.strokeWidth + ' + (JXG.Options.sketchometry.highlightStrokeWidthAddition) + '; ' +
+                                'return ' + step.dest_id + '.strokeWidth ' + JXG.Options.sketchometry.highlightStrokeWidthOperation + '; ' +
                                 ' };'
 
                             reset_str =
