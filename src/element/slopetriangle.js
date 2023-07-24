@@ -117,15 +117,9 @@ var priv = {
  * </script><pre>
  */
 JXG.createSlopeTriangle = function (board, parents, attributes) {
-    var el,
-        tangent,
-        tglide,
-        glider,
-        toppoint,
-        baseline,
-        basepoint,
-        label,
-        attr,
+    var el, tangent, tglide, glider,
+        toppoint, baseline, basepoint,
+        label, attr,
         isPrivateTangent = false;
 
     if (parents.length === 1 && parents[0].type === Const.OBJECT_TYPE_TANGENT) {
