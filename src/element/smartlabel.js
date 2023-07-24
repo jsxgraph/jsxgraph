@@ -273,12 +273,6 @@ JXG.createSmartLabel = function (board, parents, attributes) {
                 suf = Type.evaluate(el.visProp.suffix),
                 mj = Type.evaluate(el.visProp.usemathjax) || Type.evaluate(el.visProp.usekatex);
 
-            // if (elType === 'point') {
-            //     dir = Type.evaluate(el.visProp.dir),
-            //         x = Type.toFixed(p.X(), digits),
-            //         y = Type.toFixed(p.Y(), digits);
-            // }
-
             if (txt === '') {
                 if (el.useLocale()) {
                     val = el.formatNumberLocale(measure(), digits);
@@ -313,8 +307,15 @@ JXG.createSmartLabel = function (board, parents, attributes) {
                 suf = Type.evaluate(el.visProp.suffix),
                 dir = Type.evaluate(el.visProp.dir),
                 mj = Type.evaluate(el.visProp.usemathjax) || Type.evaluate(el.visProp.usekatex),
-                x = Type.toFixed(p.X(), digits),
+                x, y;
+
+            if (el.useLocale()) {
+                x = el.formatNumberLocale(p.X(), digits);
+                y = el.formatNumberLocale(p.Y(), digits);
+            } else {
+                x = Type.toFixed(p.X(), digits);
                 y = Type.toFixed(p.Y(), digits);
+            }
 
             if (txt === '') {
                 if (dir === 'row') {

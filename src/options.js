@@ -4284,7 +4284,13 @@ JXG.Options = {
          * @name Integral#label
          */
         label: {
-            fontSize: 20
+            fontSize: 20,
+            digits: 4,
+            intl: {
+                enabled: false,
+                options: {
+                }
+            }
         }
         /**#@-*/
     },

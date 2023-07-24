@@ -2986,6 +2986,7 @@ JXG.createIntegral = function (board, parents, attributes) {
     var interval, curve, attr, start, end,
         startx, starty, endx, endy,
         pa_on_curve, pa_on_axis, pb_on_curve, pb_on_axis,
+        txt_fun,
         t = null, p;
 
     if (Type.isArray(parents[0]) && parents[1].elementClass === Const.OBJECT_CLASS_CURVE) {
@@ -3135,12 +3136,22 @@ JXG.createIntegral = function (board, parents, attributes) {
 
                     return y + off.usrCoords[2];
                 },
-                function () {
-                    var Int = Numerics.NewtonCotes([pa_on_axis.X(), pb_on_axis.X()], curve.Y);
-                    return "&int; = " + Type.toFixed(Int, 4);
-                }
+                ''
             ], attr);
 
+        txt_fun = function () {
+            var Int = Numerics.NewtonCotes([pa_on_axis.X(), pb_on_axis.X()], curve.Y),
+                digits = Type.evaluate(t.visProp.digits),
+                val;
+
+            if (t.useLocale()) {
+                val = t.formatNumberLocale(Int, digits);
+            } else {
+                val = Type.toFixed(Int, digits);
+            }
+            return '&int; = ' + val;
+        };
+        t.setText(txt_fun);
         t.dump = false;
 
         pa_on_curve.addChild(t);
