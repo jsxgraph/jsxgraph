@@ -1842,6 +1842,41 @@ import type from "../utils/type";
                         reset_str = "remove(" + step.dest_id + "); ";
                         break;
 
+                    case JXG.GENTYPE_PARALLELOGRAM:
+                        pid1 = step.dest_sub_ids[0] // id for parallelpoint
+
+                        set_str =
+                            assign +
+                            "parallelpoint( " + step.src_ids.join(', ') + ") <<" +
+                            "id: '" + pid1 + "', name: ''" +
+                            // TODO after solving issue #569
+                            getAttribsString(board.options.parallelpoint) +
+                            " >>; ";
+                        reset_str = "remove(" + pid1 + "); ";
+
+                        set_str += assign + "polygon(" + step.src_ids[0] + ", " + step.src_ids[1] + ", " + pid1 + ", " + step.src_ids[2] + ") << " +
+                            attrid + "name: ''" +
+                            ", borders: <<ids: [ '" +
+                            step.dest_sub_ids[1] + "', '" +
+                            step.dest_sub_ids[2] + "', '" +
+                            step.dest_sub_ids[3] + "', '" +
+                            step.dest_sub_ids[4] +
+                            "' ]" +
+                            ", names: ['', '', '', '']" +
+                            ">>" +
+                            ", fillOpacity: " + JXG.Options.opacityLevel +
+                            ", hasInnerPoints: " + JXG.Options.polygon.hasInnerPoints +
+                            ">>; ";
+                        set_str += step.dest_id + ".hasInnerPoints = function() { " +
+                            "return !(" + step.dest_id + ".fillColor == 'transparent' || " + step.dest_id + ".fillColor == 'none' || " + step.dest_id + ".fillOpacity == 0); " +
+                            "}; "
+                        for (i = 1; i <= 4; i++) {
+                            set_str += step.dest_sub_ids[i] + '.highlightStrokeWidth = function() { ' +
+                                'return ' + step.dest_sub_ids[i] + '.strokeWidth ' + JXG.Options.sketchometry.highlightStrokeWidthOperation + '; ' +
+                                ' };'
+                        }
+                        break;
+
                     case JXG.GENTYPE_POLYGON:
                         if (step.args.create_point) {
                             for (i = 0; i < step.args.create_point.length; i++) {
